@@ -1,0 +1,54 @@
+====================================================================================================
+KEY NEW|TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean|TCSlib.Cryptography.GI.unarySqrt_poly|seal|first error l.146: Application type mismatch: The argument | seal | TCSlib.Cryptography.GI.unarySqrt_poly
+  record: first error l.146: Application type mismatch: The argument
+  counts sA=0 sB=2 cA=0 cB=2 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_ZeroKnowledge_GraphIsomorphism_Efficiency.log:257
+  DECL at 141, header ends 141
+      141| theorem unarySqrt_poly : PolyTimeComputable fun w => List.replicate (Nat.sqrt w.length) true := by
+  -- coe-B line 143 cascade=True cls=Type mismatch
+     providers=['Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'Complexity.StateLoop.orbit', 'Complexity.pairFstD', 'Complexity.pairSndD', 'Turing.pairEncode']
+     referenced=['Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'Complexity.StateLoop.orbit', 'Complexity.pairFstD', 'Complexity.pairSndD', 'Turing.pairEncode']
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop, polyTimeComputable_unary@PolyTimePairing, polyTimeComputable_pairEq@Repetition, polyTimeComputable_iterate@Repetition, polyTimeComputable_pairXor@Repetition, polyTimeComputable_prepend@PolyTimePairing, polyTimeComputable_blockMap@Repetition, polyTimeComputable_emitIter@PolyTimeBlockLoop, polyTimeComputable_majority@Repetition, polyTimeComputable_pairFstD@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, polyTimeComputable_pairSwap@PolyTimePairing, polyTimeComputable_of_linear@PolyTimePairing, polyTimeComputable_polyUnary@PolyTimePairing, polyTimeComputable_stateFind@Repetition, polyTimeComputable_transduce@Transducer, polyTimeComputable_unaryPoly@Primitives, polyTimeComputable_pairConcat@PolyTimePairing, polyTimeComputable_iterateEmit@Repetition, polyTimeComputable_iterateFind@Repetition, polyTimeComputable_sliceDropAt@PolyTimeBlockLoop, polyTimeComputable_sliceTakeAt@PolyTimeBlockLoop, polyTimeComputable_unaryNormal@PolyExpr, polyTimeComputable_blockAnyTest@PolyTimeBlockTests, polyTimeComputable_pairDropPoly@Primitives, polyTimeComputable_pairTakePoly@Primitives, polyTimeComputable_blockXorAnyTest@PolyTimeBlockTests, polyTimeComputable_iterate_pairFstD@PolyTimePairing, polyTimeComputable_blockMajorityTest@PolyTimeBlockMajority, polyTimeComputable_dropPrefixByLength@PolyTimePrefix, polyTimeComputable_of_computesInSpace@ConfigCount, polyTimeComputable_takePrefixByLength@PolyTimePrefix
+     [Complexity.StateLoop.orbit] readers: orbit_succ@StateLoop, orbit_zero@StateLoop
+     [Complexity.pairFstD] readers: pairFstD_eq@PolyTimePairing, pairFstD_nil@PolyTimeBlockLoop, pairFstD_pairEncode@PolyTimePairing, pairFstD_of_pairDecode_eq_none@PolyTimePairing
+     [Complexity.pairSndD] readers: pairSndD_eq@PolyTimePairing, pairSndD_pairEncode@PolyTimePairing, pairSndD_of_pairDecode_eq_none@PolyTimePairing
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Type mismatch
+     >   Nat.sqrt_le_self ?m.13
+     > has type
+     >   Nat.sqrt ?m.13 ≤ ?m.13
+     > but is expected to have type
+     >   (fun w => w.length.sqrt) w ≤ PolyExpr.var.eval w.length
+     > G06-COMPONENT label=SealB_Cryptography_ZeroKnowledge_GraphIsomorphism_Efficiency phase=eof spelling=BoolCircuit.decodeNat key=[["str","BoolCircuit"],["str","decodeNat"]] home_key=[["str","TCSlib"],["str","Complexity"],["
+     > G06-COMPONENT label=SealB_Cryptography_ZeroKnowledge_GraphIsomorphism_Efficiency phase=eof spelling=BoolCircuit.decodeNat._sunfold key=[["str","BoolCircuit"],["str","decodeNat"],["str","_sunfold"]] home_key=[["str","TCSl
+     > G06-COMPONENT label=SealB_Cryptography_ZeroKnowledge_GraphIsomorphism_Efficiency phase=eof spelling=BoolCircuit.decodeNat._unsafe_rec key=[["str","BoolCircuit"],["str","decodeNat"],["str","_unsafe_rec"]] home_key=[["str"
+     > G06-COMPONENT label=SealB_Cryptography_ZeroKnowledge_GraphIsomorphism_Efficiency phase=eof spelling=BoolCircuit.decodeNat.match_1 key=[["str","BoolCircuit"],["str","decodeNat"],["str","match_1"]] home_key=[["str","TCSlib
+     > G06-COMPONENT label=SealB_Cryptography_ZeroKnowledge_GraphIsomorphism_Efficiency phase=eof spelling=BoolCircuit.encodeNat key=[["str","BoolCircuit"],["str","encodeNat"]] home_key=[["str","TCSlib"],["str","Complexity"],["
+     > G06-COMPONENT label=SealB_Cryptography_ZeroKnowledge_GraphIsomorphism_Efficiency phase=eof spelling=Complexity.BinArith.DivInv key=[["str","Complexity"],["str","BinArith"],["str","DivInv"]] home_key=[["str","TCSlib"],["s
+     > G06-COMPONENT label=SealB_Cryptography_ZeroKnowledge_GraphIsomorphism_Efficiency phase=eof spelling=Complexity.BinArith.MulInv key=[["str","Complexity"],["str","BinArith"],["str","MulInv"]] home_key=[["str","TCSlib"],["s
+     > G06-COMPONENT label=SealB_Cryptography_ZeroKnowledge_GraphIsomorphism_Efficiency phase=eof spelling=Complexity.BinArith.SlotsLe key=[["str","Complexity"],["str","BinArith"],["str","SlotsLe"]] home_key=[["str","TCSlib"],[
+       140| `|w| < (i + 1)²` (`Nat.le_sqrt'`, `Nat.lt_succ_sqrt'`), at most `|w|` rounds. -/
+       141| theorem unarySqrt_poly : PolyTimeComputable fun w => List.replicate (Nat.sqrt w.length) true := by
+       142|   have h := stateFind SqrtLoop.start_poly SqrtLoop.step_poly SqrtLoop.acc_poly SqrtLoop.out_poly
+    *  143|     .var .var (fun w => Nat.sqrt w.length) (fun w => Nat.sqrt_le_self _)
+       144|     (fun w i hi => by
+       145|       rw [SqrtLoop.orbit_eq, List.length_replicate]
+  -- coe-B line 146 cascade=False cls=Application type mismatch: The argument
+     providers=[]
+     referenced=['Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'Complexity.StateLoop.orbit', 'Complexity.pairFstD', 'Complexity.pairSndD', 'Turing.pairEncode']
+     > Application type mismatch: The argument
+     >   Nat.sqrt_le_self ?m.43
+     > has type
+     >   Nat.sqrt ?m.43 ≤ ?m.43
+     > but is expected to have type
+     >   (fun w => w.length.sqrt) w ≤ PolyExpr.var.eval w.length
+     > in the application
+     >   LE.le.trans hi (Nat.sqrt_le_self ?m.43)
+       143|     .var .var (fun w => Nat.sqrt w.length) (fun w => Nat.sqrt_le_self _)
+       144|     (fun w i hi => by
+       145|       rw [SqrtLoop.orbit_eq, List.length_replicate]
+    *  146|       exact hi.trans (Nat.sqrt_le_self _))
+       147|     (fun w i hi => by
+       148|       simp only [SqrtLoop.acc, SqrtLoop.orbit_eq, pairFstD_pairEncode, pairSndD_pairEncode,

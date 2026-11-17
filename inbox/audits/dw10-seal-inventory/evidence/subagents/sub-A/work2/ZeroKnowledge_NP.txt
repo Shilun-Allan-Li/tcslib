@@ -1,0 +1,205 @@
+====================================================================================================
+KEY H:219 | seal | TCSlib.Cryptography.Strategy.pullback_efficient
+  record: TCSlib.Cryptography.Strategy.pullback_efficient (lines 253; #248 OPEN_INCOMPLETE)
+  counts sA=2 sB=2 cA=2 cB=2 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.Strategy.efficient_iff (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_NP.log:482
+  DECL at 249, header ends 252
+      249| theorem Strategy.pullback_efficient {S : Strategy} (hS : S.Efficient) {f : List Bool → List Bool}
+      250|     (hf : PolyTimeComputable f) {g : List Bool → List Bool → List Bool}
+      251|     (hg : PolyTimeComputable fun z => g (pairFstD z) (pairSndD z)) {p : PolyExpr}
+      252|     (hx : ∀ x, (f x).length = p.eval x.length) : (S.pullback f g p).Efficient := by
+  -- coe-A line 261 cascade=False cls=Invalid X notation: The expected type X is not an inductive type
+     providers=['TCSlib.Cryptography.Strategy.Efficient']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.runAtL', 'Complexity.PolyExpr.subst', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.Strategy.ofNUPPT', 'Turing.pairEncode']
+     [TCSlib.Cryptography.Strategy.Efficient] readers: efficient_iff@Interaction, ofNUPPT_efficient@Interaction, pullback_efficient@NP
+     > Invalid `⟨...⟩` notation: The expected type `(S.pullback f g p).Efficient` is not an inductive type
+     > 
+     > Note: This notation can only be used when the expected type is an inductive type with a single constructor
+       258|       (hg.comp polyTimeComputable_pairFstD)).pairEncode polyTimeComputable_pairSndD
+       259|   obtain ⟨B, hBc, -, hBadv, hB⟩ := A.exists_comp hpre polyTimeComputable_id
+       260|   obtain ⟨C, hCc, hCu, hC⟩ := B.exists_reparam p
+    *  261|   refine ⟨C, hCu fun n => by rw [hBadv]; exact hA n, ?_, fun x z r hist => ?_⟩
+       262|   · show S.coins.subst p = C.coins
+       263|     rw [hCc, hBc, hc]
+  -- coe-A line 262 cascade=True cls=No goals to be solved
+     providers=[]
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.runAtL', 'Complexity.PolyExpr.subst', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.Strategy.ofNUPPT', 'Turing.pairEncode']
+     > No goals to be solved
+       259|   obtain ⟨B, hBc, -, hBadv, hB⟩ := A.exists_comp hpre polyTimeComputable_id
+       260|   obtain ⟨C, hCc, hCu, hC⟩ := B.exists_reparam p
+       261|   refine ⟨C, hCu fun n => by rw [hBadv]; exact hA n, ?_, fun x z r hist => ?_⟩
+    *  262|   · show S.coins.subst p = C.coins
+       263|     rw [hCc, hBc, hc]
+       264|   · rw [Strategy.ofNUPPT_next, hC, hB]
+====================================================================================================
+KEY H:221 | seal | TCSlib.Cryptography.LevinReduction.efficientProverProofErr
+  record: TCSlib.Cryptography.LevinReduction.efficientProverProofErr (lines 436; #248 OPEN_TYPED_COINS)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | add TCSlib.Cryptography.LevinTransfer.coinTrunc_eq (or _iff/_apply) in TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_NP.log:642
+  DECL at 395, header ends 400
+      395| theorem LevinReduction.efficientProverProofErr {L L' : Language Bool}
+      396|     {R R' : List Bool → List Bool → Prop} {f : List Bool → List Bool}
+      397|     {w : List Bool → List Bool → List Bool} {p : PolyExpr} (h : LevinReduction L L' R R' f w p)
+      398|     (hLR : ∀ x ∈ L, ∃ y, R x y) {π : Protocol} {s : ℕ → ℝ}
+      399|     (hπ : EfficientProverProofErr π L' R' s) :
+      400|     EfficientProverProofErr (π.pullback f w p) L R (fun N => s (p.eval N)) := by
+  -- coe-A line 421 cascade=False cls=Application type mismatch: The argument
+     providers=['TCSlib.Cryptography.LevinTransfer.coinTrunc', 'TCSlib.Cryptography.Strategy.coinLen']
+     referenced=['Complexity.PolyExpr.subst', 'TCSlib.Cryptography.LevinTransfer.UnifProj', 'TCSlib.Cryptography.LevinTransfer.coinTrunc', 'TCSlib.Cryptography.Protocol.ProverBounded', 'TCSlib.Cryptography.Protocol.outV', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.uprob']
+     [TCSlib.Cryptography.LevinTransfer.coinTrunc] readers: ofFn_coinTrunc@NPLemmas, unifProj_coinTrunc@NPLemmas
+     [TCSlib.Cryptography.Strategy.coinLen] readers: coinLen_eq@Interaction, coinLen_pullback@NP
+     > Application type mismatch: The argument
+     >   le_rfl
+     > has type
+     >   ?m.253 ≤ ?m.253
+     > but is expected to have type
+     >   { next := fun x_1 x_2 r hist => P'.next x [] r hist, coins := PolyExpr.const (P'.coinLen x.length) }.coinLen
+     >       (f x).length ≤
+     >     P'.coinLen x.length
+     > in the application
+     >   coinTrunc ⋯
+       418|     ⟨B.subst p, hB.pullback h⟩, hcompl⟩
+       419|   · have hlen := h.length_eq x
+       420|     have hfx : f x ∉ L' := fun hfx => hx ((h.mem_iff x).2 hfx)
+    *  421|     have hU : UnifProj (Prod.map (coinTrunc le_rfl)
+       422|         (coinTrunc (coinLen_le_coinLen_pullback π.V f (fun _ z => z) hlen)) :
+       423|           (π.pullback f w p).ExecCoins P' x →
+====================================================================================================
+KEY H:222 | seal | TCSlib.Cryptography.LevinReduction.zk
+  record: TCSlib.Cryptography.LevinReduction.zk (lines 499; #248 OPEN_INCOMPLETE)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.NUPPT.uniform_iff (TCSlib/Complexity/Randomized/PPT.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_NP.log:705
+  DECL at 480, header ends 483
+      480| theorem LevinReduction.zk {L L' : Language Bool} {R R' : List Bool → List Bool → Prop}
+      481|     {f : List Bool → List Bool} {w : List Bool → List Bool → List Bool} {p : PolyExpr}
+      482|     (h : LevinReduction L L' R R' f w p) {π : Protocol} (hzk : ZK π R') :
+      483|     ZK (π.pullback f w p) R := by
+  -- coe-A line 484 cascade=False cls=Tactic X failed: There are no additional binders or X bindings in the goal to in
+     providers=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.distinguisherL', 'Complexity.NUPPT.runAtL', 'Complexity.NUPPT.simulate', 'Complexity.PolyExpr.subst', 'Complexity.pairFstD', 'TCSlib.Cryptography.LevinTransfer.coinTrunc', 'TCSlib.Cryptography.LevinTransfer.liftVerifier', 'TCSlib.Cryptography.LevinTransfer.postView', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.Protocol.withV', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.ZK', 'TCSlib.Cryptography.distAdv', 'TCSlib.Cryptography.exec', 'Turing.pairEncode']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.distinguisherL', 'Complexity.NUPPT.runAtL', 'Complexity.NUPPT.simulate', 'Complexity.PolyExpr.subst', 'Complexity.pairFstD', 'TCSlib.Cryptography.LevinTransfer.coinTrunc', 'TCSlib.Cryptography.LevinTransfer.liftVerifier', 'TCSlib.Cryptography.LevinTransfer.postView', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.Protocol.withV', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.ZK', 'TCSlib.Cryptography.distAdv', 'TCSlib.Cryptography.exec', 'Turing.pairEncode']
+     [Complexity.NUPPT.Uniform] readers: uniform_iff@PPT, ofPolyTime_uniform@NonUniform, ofPolyTimeUniform_uniform@PPT
+     [Complexity.NUPPT.coinLen] readers: coinLen_eq@PPT, coinLen_reparam@HardCoreLemmas
+     [Complexity.NUPPT.distinguisherL] readers: distinguisherL_eq@Adversary
+     [Complexity.NUPPT.runAtL] readers: runAtL_eq@PPT, runAtL_wrap@ReductionSupport, runAtL_preComp@ReductionSupport, runAtL_precomp@HardCoreGL, runAtL_reparam@HardCoreLemmas, runLit_eq_runAtL@NonUniform, runAtL_ofPolyTime@PPT, runAtL_eq_output_layout@Closure, runAtL_ofPolyTimeUniform@PPT, polyTimeComputable_runAtL@NonUniform
+     [Complexity.NUPPT.simulate] readers: simulate_eq@Defs
+     [Complexity.PolyExpr.subst] readers: subst_var@PolyExpr, eval_subst@PolyExpr
+     [Complexity.pairFstD] readers: pairFstD_eq@PolyTimePairing, pairFstD_nil@PolyTimeBlockLoop, pairFstD_pairEncode@PolyTimePairing, polyTimeComputable_pairFstD@PolyTimePairing, pairFstD_of_pairDecode_eq_none@PolyTimePairing, polyTimeComputable_iterate_pairFstD@PolyTimePairing
+     [TCSlib.Cryptography.LevinTransfer.coinTrunc] readers: ofFn_coinTrunc@NPLemmas, unifProj_coinTrunc@NPLemmas
+     [TCSlib.Cryptography.LevinTransfer.liftVerifier] readers: liftVerifier_next@NPLemmas, liftVerifier_coinLen@NPLemmas, liftVerifier_efficient@NPLemmas; struct fields: next, coins
+     [TCSlib.Cryptography.LevinTransfer.postView] readers: postView_encode@NPLemmas, polyTimeComputable_postView@NPLemmas
+     [TCSlib.Cryptography.Negligible] readers: negligible_iff@Negligible, negligible_zero@Negligible, glColl_negligible@HardCoreGLColl, negligible_two_pow_neg@Negligible, negligible_exp_neg_sqrt_div@Defs, negligible_inv_pow_sqrt_div@Defs, negligible_mul_permFailBound@GraphIsomorphism, negligible_two_pow_neg_sqrt_div@Defs, negligible_of_le_inv_pow_sqrt_div@Defs
+     [TCSlib.Cryptography.Protocol.viewV] readers: viewV_eq@Interaction, viewV_withV@Interaction; struct fields: x, z, r, received
+     [TCSlib.Cryptography.Protocol.withV] readers: withV_P@Interaction, withV_V@Interaction, outV_withV@Interaction, withV_self@Interaction, viewV_withV@Interaction, withV_rounds@Interaction, withV_verifierFirst@Interaction, withV_vCoinsEquiv_ofFn@Interaction; struct fields: P, V, rounds, verifierFirst
+     [TCSlib.Cryptography.Strategy.Efficient] readers: efficient_iff@Interaction, ofNUPPT_efficient@Interaction, pullback_efficient@NP
+     [TCSlib.Cryptography.Strategy.coinLen] readers: coinLen_eq@Interaction, coinLen_pullback@NP
+     [TCSlib.Cryptography.View.encode] readers: encode_mk@Interaction
+     [TCSlib.Cryptography.ZK] readers: ZK_iff@Defs
+     [TCSlib.Cryptography.distAdv] readers: distAdv_def@Experiments, distAdv_comp@Indistinguishability, distAdv_padXor_le@FromPRG, distAdv_mixDist_eq@Indistinguishability, distAdv_ggmBitsDist@GGM, distAdv_le_statDist@Experiments, distAdv_sunglassRed@Indistinguishability, distAdv_multi_le_sum@EnsembleSecurity, distAdv_tuple_le_mul@Hybrid, distAdv_tuple_le_sum@Hybrid, distAdv_prfEncReal_le@Hybrid, distAdv_le_of_statClose@Sampling, distAdv_multicopyAvgRed@Indistinguishability, distAdv_prfEncRealOut_le@Hybrid; struct fields: cauchy
+     [TCSlib.Cryptography.exec] readers: exec_succ@Interaction, exec_zero@Interaction, exec_length@Interaction; struct fields: fst, snd
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, length_pairEncode@Encoding, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairDecode_pairEncode@Encoding, pairSplitAt_pairEncode@PairSplit, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+     > 
+     > L L' : Language Bool
+     > R R' : List Bool → List Bool → Prop
+     > f : List Bool → List Bool
+     > w : List Bool → List Bool → List Bool
+     > p : PolyExpr
+     > h : LevinReduction L L' R R' f w p
+     > π : Protocol
+     > hzk : ZK π R'
+     > ⊢ ZK (π.pullback f w p) R
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_NP_part1 phase=eof spelling=BoolCircuit.CompileListSpec.mk._flat_ctor key=[["str","BoolCircuit"],["str","CompileListSpec"],["str","mk"],["str","_flat_ctor"]] home_key=
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_NP_part1 phase=eof spelling=BoolCircuit.CompileSpec.mk._flat_ctor key=[["str","BoolCircuit"],["str","CompileSpec"],["str","mk"],["str","_flat_ctor"]] home_key=[["str",
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_NP_part1 phase=eof spelling=BoolCircuit.DAGCircuit.IsFaninTwo key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","IsFaninTwo"]] home_key=[["str","TCSlib"],["str","
+     >> ⊢ ZK (π.pullback f w p) R
+       481|     {f : List Bool → List Bool} {w : List Bool → List Bool → List Bool} {p : PolyExpr}
+       482|     (h : LevinReduction L L' R R' f w p) {π : Protocol} (hzk : ZK π R') :
+       483|     ZK (π.pullback f w p) R := by
+    *  484|   intro V' hV'
+       485|   obtain ⟨S', hS'u, hS'⟩ := hzk (liftVerifier V') (liftVerifier_efficient hV')
+       486|   obtain ⟨S, hSc, hSu, hS⟩ := exists_liftSimulator S' h.f_poly V'.coins p
+DUP SEAL-0398 -> same decl TCSlib.Cryptography.Strategy.pullback_efficient | tool: STAGE2 | use TCSlib.Cryptography.Strategy.efficient_iff (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean) | record: TCSlib.Cryptography.Strategy.pullback_efficient l.261: Invalid `⟨...⟩` notation: The expected type `(S.pullback f g p).Efficient` is not an inductive 
+DUP SEAL-0399 -> same decl TCSlib.Cryptography.Strategy.pullback_efficient | tool: STAGE2 | use TCSlib.Cryptography.Strategy.efficient_iff (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean) | record: TCSlib.Cryptography.Strategy.pullback_efficient l.262: No goals to be solved (#248 inherited_reviewed_conversion)
+DUP SEAL-0401 -> same decl TCSlib.Cryptography.LevinReduction.efficientProverProofErr | tool: STAGE2 | add TCSlib.Cryptography.LevinTransfer.coinTrunc_eq (or _iff/_apply) in TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean | record: TCSlib.Cryptography.LevinReduction.efficientProverProofErr l.437: Application type mismatch: The argument (#248 inherited_same_native_step)
+DUP SEAL-0402 -> same decl TCSlib.Cryptography.LevinReduction.zk | tool: STAGE2 | use Complexity.NUPPT.uniform_iff (TCSlib/Complexity/Randomized/PPT.lean) | record: TCSlib.Cryptography.LevinReduction.zk l.500: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce (#248 
+====================================================================================================
+KEY NEW|TCSlib/Cryptography/ZeroKnowledge/NP.lean|TCSlib.Cryptography.LevinReduction.refl|seal|first error l.163: Type mismatch | seal | TCSlib.Cryptography.LevinReduction.refl
+  record: first error l.163: Type mismatch
+  counts sA=0 sB=1 cA=0 cB=1 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_ZeroKnowledge_NP.log:384
+  DECL at 156, header ends 157
+      156| theorem LevinReduction.refl (L : Language Bool) (R : List Bool → List Bool → Prop) :
+      157|     LevinReduction L L R R id (fun _ y => y) .var where
+  -- coe-B line 163 cascade=False cls=Type mismatch
+     providers=[]
+     referenced=[]
+     > Type mismatch
+     >   le_rfl
+     > has type
+     >   ?m.24 ≤ ?m.24
+     > but is expected to have type
+     >   x✝ ≤ PolyExpr.var.eval x✝
+       160|   mem_iff _ := Iff.rfl
+       161|   witness _ _ h := h
+       162|   length_eq _ := rfl
+    *  163|   le_eval _ := le_rfl
+       164| 
+       165| /-- Sanity: Levin reductions compose, with length polynomial `p'.subst p`.
+====================================================================================================
+KEY NEW|TCSlib/Cryptography/ZeroKnowledge/NP.lean|TCSlib.Cryptography.outV_pullback_cheat|seal|first error l.349: Application type mismatch: The argument; providers TCSlib.Cryptography.LevinTransfer.coinTrunc,TCSlib.Cryptography.Strategy.coinLen | seal | TCSlib.Cryptography.outV_pullback_cheat
+  record: first error l.349: Application type mismatch: The argument; providers TCSlib.Cryptography.LevinTransfer.coinTrunc,TCSlib.Cryptography.Strategy.coinLen
+  counts sA=0 sB=2 cA=0 cB=2 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_ZeroKnowledge_NP.log:570
+  DECL at 342, header ends 349
+      342| private theorem outV_pullback_cheat (π : Protocol) (f : List Bool → List Bool)
+      343|     (w : List Bool → List Bool → List Bool) {p : PolyExpr} {x : List Bool}
+      344|     (hx : (f x).length = p.eval x.length) (P' : Strategy) (z : List Bool)
+      345|     (r : (π.pullback f w p).ExecCoins P' x) :
+      346|     (π.pullback f w p).outV P' x [] z r =
+      347|       π.outV ⟨fun _ _ r hist => P'.next x [] r hist, .const (P'.coinLen x.length)⟩ (f x) [] z
+      348|         (Prod.map (coinTrunc (Strategy.coinLen_eq _ _).le)
+      349|           (coinTrunc (coinLen_le_coinLen_pullback π.V f (fun _ z => z) hx)) r) := by
+  -- coe-B line 349 cascade=False cls=Application type mismatch: The argument
+     providers=['TCSlib.Cryptography.LevinTransfer.coinTrunc', 'TCSlib.Cryptography.Strategy.coinLen']
+     referenced=['Complexity.PolyExpr.eval', 'TCSlib.Cryptography.LevinTransfer.coinTrunc', 'TCSlib.Cryptography.Protocol.outV', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.exec']
+     [TCSlib.Cryptography.LevinTransfer.coinTrunc] readers: ofFn_coinTrunc@NPLemmas, unifProj_coinTrunc@NPLemmas
+     [TCSlib.Cryptography.Strategy.coinLen] readers: coinLen_eq@Interaction, coinLen_pullback@NP
+     > Application type mismatch: The argument
+     >   r
+     > has type
+     >   (π.pullback f w p).ExecCoins P' x
+     > but is expected to have type
+     >   (Fin
+     >         ({ next := fun x_1 x_2 r hist => P'.next x [] r hist, coins := PolyExpr.const (P'.coinLen x.length) }.coins.eval
+     >           (f x).length) →
+     >       Bool) ×
+     >     (Fin ((π.V.pullback f (fun x z => z) p).coinLen x.length) → Bool)
+     > in the application
+     >   Prod.map (coinTrunc ⋯) (coinTrunc ⋯) r
+       346|     (π.pullback f w p).outV P' x [] z r =
+       347|       π.outV ⟨fun _ _ r hist => P'.next x [] r hist, .const (P'.coinLen x.length)⟩ (f x) [] z
+       348|         (Prod.map (coinTrunc (Strategy.coinLen_eq _ _).le)
+    *  349|           (coinTrunc (coinLen_le_coinLen_pullback π.V f (fun _ z => z) hx)) r) := by
+       350|   have hc : (⟨fun _ _ r hist => P'.next x [] r hist, .const (P'.coinLen x.length)⟩ :
+       351|       Strategy).coinLen (f x).length = P'.coinLen x.length := Strategy.coinLen_eq _ _
+  -- coe-B line 351 cascade=True cls=Type mismatch
+     providers=['Complexity.PolyExpr.eval', 'TCSlib.Cryptography.Strategy.coinLen']
+     referenced=['Complexity.PolyExpr.eval', 'TCSlib.Cryptography.LevinTransfer.coinTrunc', 'TCSlib.Cryptography.Protocol.outV', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.exec']
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr, polyBound_eval@PolyExpr
+     [TCSlib.Cryptography.Strategy.coinLen] readers: coinLen_eq@Interaction, coinLen_pullback@NP
+     > Type mismatch
+     >   Strategy.coinLen_eq ?m.41 ?m.42
+     > has type
+     >   Strategy.coinLen ?m.41 ?m.42 = (Strategy.coins ?m.41).eval ?m.42
+     > but is expected to have type
+       348|         (Prod.map (coinTrunc (Strategy.coinLen_eq _ _).le)
+       349|           (coinTrunc (coinLen_le_coinLen_pullback π.V f (fun _ z => z) hx)) r) := by
+       350|   have hc : (⟨fun _ _ r hist => P'.next x [] r hist, .const (P'.coinLen x.length)⟩ :
+    *  351|       Strategy).coinLen (f x).length = P'.coinLen x.length := Strategy.coinLen_eq _ _
+       352|   rw [Protocol.pullback_outV]
+       353|   simp only [Protocol.outV_eq, Protocol.transcriptWith_eq, Prod.map_fst, Prod.map_snd]

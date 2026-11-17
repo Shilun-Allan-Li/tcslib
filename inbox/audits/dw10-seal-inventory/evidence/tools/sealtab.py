@@ -3,6 +3,8 @@
 # evidence/seals.tsv (one row per owner and variant) and evidence/seal-decls.tsv (one row per failing declaration and
 # variant), and seal-errors.jsonl (every error with its message). Usage:
 #   python3 -I sealtab.py <evidence> <dedup.json>... -- <rundir> <out-prefix>
+# Change (final): each error also records its column (`col`, Lean's 0-based codepoint column; the probe line equals the
+# source line, so the column applies to the source), for the statement test of reconcile.py.
 # Errors are counted in both forms: `^\S+\.lean:\d+:\d+: error[:(]` and the substring `error`. Install/EOF: every harness
 # part (label or label_partN) must log `G06-SEAL label=<part> requested=R ... verified=R` and `G06-SEAL-END label=<part>
 # requested=R verified=R` (requested = verified, summed over parts = the record's request count). Message class: the
@@ -104,7 +106,7 @@ for d in dedup:
         pv, refd = providers(e['msg'], name)
         k = name; first = k not in perdecl
         perdecl.setdefault(k, []).append(dict(src=s, cls=mclass(e['msg']), prov=pv, refd=refd, static=static))
-        errs_out.append(dict(path=d['path'], variant=v, run_module=rm, probe_line=e['line'], source_line=s, declaration=name,
+        errs_out.append(dict(path=d['path'], variant=v, run_module=rm, probe_line=e['line'], col=e['col'], source_line=s, declaration=name,
                              static_name=static, cascade=not first, message_class=mclass(e['msg']), providers=pv, referenced=refd, message=e['msg'][:4000]))
     for k, es in perdecl.items():
         f0 = es[0]

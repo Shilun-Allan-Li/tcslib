@@ -1,0 +1,646 @@
+====================================================================================================
+KEY H:257 | seal | TCSlib.Cryptography.uprob_colSimAttemptH_none
+  record: TCSlib.Cryptography.uprob_colSimAttemptH_none (lines 261; #248 OPEN_INCOMPLETE)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | add TCSlib.Cryptography.ColSimLemmas.attemptCoinsEquiv_eq (or _iff/_apply) in TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator.log:484
+  DECL at 253, header ends 255
+      253| theorem uprob_colSimAttemptH_none [Fintype ρ] [Nonempty ρ] (hm : 0 < edgeCount G)
+      254|     (c : Fin n → Fin 3) (V : List Bool → ρ → List Bool) :
+      255|     uprob (fun w => colSimAttemptH Com ℓn G c V w = none) = 1 - 1 / (edgeCount G : ℝ) := by
+  -- coe-A line 263 cascade=False cls='show' tactic failed, pattern
+     providers=['TCSlib.Cryptography.ColSimLemmas.attemptCoinsEquiv', 'TCSlib.Cryptography.colCommit', 'TCSlib.Cryptography.colOpen', 'TCSlib.Cryptography.edgeIdxOfMsg', 'TCSlib.Cryptography.edgeOf']
+     referenced=['TCSlib.Cryptography.ColSimLemmas.attemptCoinsEquiv', 'TCSlib.Cryptography.colCommit', 'TCSlib.Cryptography.colOpen', 'TCSlib.Cryptography.edgeIdxOfMsg', 'TCSlib.Cryptography.edgeOf', 'TCSlib.Cryptography.uprob']
+     [TCSlib.Cryptography.ColSimLemmas.attemptCoinsEquiv] struct fields: toFun, invFun, left_inv, right_inv
+     [TCSlib.Cryptography.colCommit] readers: colCommit_eq@Protocol
+     [TCSlib.Cryptography.colOpen] readers: colOpen_eq@Protocol
+     [TCSlib.Cryptography.edgeIdxOfMsg] readers: edgeIdxOfMsg_eq@Language, edgeIdxOfMsg_lt@Language, edgeIdxOfMsg_edgeMsg@Language
+     [TCSlib.Cryptography.edgeOf] readers: edgeOf_eq@Language, edgeOf_adj@Language; struct fields: fst, snd
+     > 'show' tactic failed, pattern
+     >   (if edgeIdxOfMsg (edgeCount G) (V (colCommit Com n ℓn (fun i => π (c i)) r) ρ₀) = ↑e then
+     >         some (ρ₀, colCommit Com n ℓn (fun i => π (c i)) r, colOpen (fun i => π (c i)) r (edgeOf G e))
+     >       else none) =
+     >       none ↔
+     >     ?m.120
+     > is not definitionally equal to target
+     >   colSimAttemptH Com ℓn G c V ((attemptCoinsEquiv (edgeCount G) (Fin n → Fin ℓn → Bool) ρ).symm (((π, r), ρ₀), e)) =
+     >       none ↔
+     >     ¬edgeIdxOfMsg (edgeCount G)
+     >           (V (colCommit Com n ℓn (fun i => (((π, r), ρ₀), e).1.1.1 (c i)) (((π, r), ρ₀), e).1.1.2)
+     >             (((π, r), ρ₀), e).1.2) =
+     >         ↑(((π, r), ρ₀), e).2
+       260|         ¬ edgeIdxOfMsg (edgeCount G)
+       261|           (V (colCommit Com n ℓn (fun i => z.1.1.1 (c i)) z.1.1.2) z.1.2) = (z.2 : ℕ) := by
+       262|     rintro ⟨⟨⟨π, r⟩, ρ₀⟩, e⟩
+    *  263|     show (if edgeIdxOfMsg (edgeCount G) (V (colCommit Com n ℓn (fun i => π (c i)) r) ρ₀) = (e : ℕ)
+       264|         then some (ρ₀, colCommit Com n ℓn (fun i => π (c i)) r,
+       265|           colOpen (fun i => π (c i)) r (edgeOf G e)) else none) = none ↔ _
+====================================================================================================
+KEY H:258 | seal | TCSlib.Cryptography.uprob_colSimAttemptH_some
+  record: TCSlib.Cryptography.uprob_colSimAttemptH_some (lines 300; #248 OPEN_INCOMPLETE)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | add TCSlib.Cryptography.ColSimLemmas.attemptCoinsEquiv_eq (or _iff/_apply) in TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator.log:523
+  DECL at 288, header ends 293
+      288| theorem uprob_colSimAttemptH_some [Fintype ρ] (hm : 0 < edgeCount G)
+      289|     (c : Fin n → Fin 3) (V : List Bool → ρ → List Bool) (T : ColView ρ → Prop) :
+      290|     uprob (fun w => ∃ v, colSimAttemptH Com ℓn G c V w = some v ∧ T v) =
+      291|       1 / (edgeCount G : ℝ) *
+      292|         uprob (fun w : (Equiv.Perm (Fin 3) × (Fin n → Fin ℓn → Bool)) × ρ =>
+      293|           T (colRealView Com ℓn G c V w)) := by
+  -- coe-A line 302 cascade=False cls='show' tactic failed, pattern
+     providers=['TCSlib.Cryptography.ColSimLemmas.attemptCoinsEquiv', 'TCSlib.Cryptography.colCommit', 'TCSlib.Cryptography.colOpen', 'TCSlib.Cryptography.edgeAt', 'TCSlib.Cryptography.edgeIdxOfMsg', 'TCSlib.Cryptography.edgeOf']
+     referenced=['TCSlib.Cryptography.ColSimLemmas.attemptCoinsEquiv', 'TCSlib.Cryptography.colCommit', 'TCSlib.Cryptography.colOpen', 'TCSlib.Cryptography.edgeAt', 'TCSlib.Cryptography.edgeIdxOfMsg', 'TCSlib.Cryptography.edgeOf', 'TCSlib.Cryptography.uprob']
+     [TCSlib.Cryptography.ColSimLemmas.attemptCoinsEquiv] struct fields: toFun, invFun, left_inv, right_inv
+     [TCSlib.Cryptography.colCommit] readers: colCommit_eq@Protocol
+     [TCSlib.Cryptography.colOpen] readers: colOpen_eq@Protocol
+     [TCSlib.Cryptography.edgeAt] readers: edgeAt_def@Language, edgeAt_adj@Language, edgeAt_isSome@Language, edgeAt_eq_none_iff@Language, edgeAt_eq_some_edgeOf@Language
+     [TCSlib.Cryptography.edgeIdxOfMsg] readers: edgeIdxOfMsg_eq@Language, edgeIdxOfMsg_lt@Language, edgeIdxOfMsg_edgeMsg@Language
+     [TCSlib.Cryptography.edgeOf] readers: edgeOf_eq@Language, edgeOf_adj@Language; struct fields: fst, snd
+     > 'show' tactic failed, pattern
+     >   (∃ v,
+     >       (if edgeIdxOfMsg (edgeCount G) (V (colCommit Com n ℓn (fun i => π (c i)) r) ρ₀) = ↑e then
+     >             some (ρ₀, colCommit Com n ℓn (fun i => π (c i)) r, colOpen (fun i => π (c i)) r (edgeOf G e))
+     >           else none) =
+     >           some v ∧
+     >         T v) ↔
+     >     edgeIdxOfMsg (edgeCount G) (V (colCommit Com n ℓn (fun i => π (c i)) r) ρ₀) = ↑e ∧
+     >       T
+     >         (ρ₀, colCommit Com n ℓn (fun i => π (c i)) r,
+     >           match edgeAt G (edgeIdxOfMsg (edgeCount G) (V (colCommit Com n ℓn (fun i => π (c i)) r) ρ₀)) with
+     >           | some p => colOpen (fun i => π (c i)) r p
+     >           | none => [])
+     > is not definitionally equal to target
+       299|           (V (colCommit Com n ℓn (fun i => z.1.1.1 (c i)) z.1.1.2) z.1.2) = (z.2 : ℕ) ∧
+       300|           T (colRealView Com ℓn G c V z.1)) := by
+       301|     rintro ⟨⟨⟨π, r⟩, ρ₀⟩, e⟩
+    *  302|     show (∃ v, (if edgeIdxOfMsg (edgeCount G) (V (colCommit Com n ℓn (fun i => π (c i)) r) ρ₀) =
+       303|         (e : ℕ) then some (ρ₀, colCommit Com n ℓn (fun i => π (c i)) r,
+       304|           colOpen (fun i => π (c i)) r (edgeOf G e)) else none) = some v ∧ T v) ↔
+====================================================================================================
+KEY H:259 | seal | TCSlib.Cryptography.statClose_colSimTruncH
+  record: TCSlib.Cryptography.statClose_colSimTruncH (lines 356; #248 OPEN_INCOMPLETE)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.statClose_iff (TCSlib/Cryptography/Asymptotic/Sampling.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator.log:579
+  DECL at 347, header ends 352
+      347| theorem statClose_colSimTruncH [Fintype ρ] [Nonempty ρ] (hm : 0 < edgeCount G)
+      348|     (c : Fin n → Fin 3) (V : List Bool → ρ → List Bool) (N : ℕ) :
+      349|     StatClose (colSimTruncH Com ℓn G c V N)
+      350|       (fun w : (Equiv.Perm (Fin 3) × (Fin n → Fin ℓn → Bool)) × ρ =>
+      351|         some (colRealView Com ℓn G c V w))
+      352|       ((1 - 1 / (edgeCount G : ℝ)) ^ N) := by
+  -- coe-A line 358 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.uprob']
+     referenced=['TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.uprob']
+     [TCSlib.Cryptography.StatClose] readers: statClose_iff@Sampling, statClose_one@Sampling, statClose_firstHit@Sampling, statClose_giSimTrunc@GraphIsomorphismZK, statClose_samplePerm@GraphIsomorphism, statClose_colRealView@Simulator, statClose_samplePerm3@Language, statClose_colSimTruncH@Simulator, statClose_giHonestView@GraphIsomorphismZK, statClose_glPadSampler@HardCoreLemmas, statClose_permFromCoins@Permutations, statClose_sampleEdgeIdx@Language, statClose_rejectionSample@Sampling, statClose_sampleColorPair@Simulator, statClose_iff_epsClose_map@SamplingFinDist, statClose_of_pushesUniform@Sampling, statClose_colSim_colSimTrunc@Simulator, statClose_permFromCoins_two_pow@Permutations, statClose_getD_of_uniform_of_some@Sampling
+     [TCSlib.Cryptography.uprob] readers: uprob_def@Probability, uprob_fst@Probability, uprob_not@Probability, uprob_snd@LazySampling, uprob_mono@Probability, uprob_prod@Probability, uprob_true@Probability, uprob_congr@LazySampling, uprob_false@Probability, uprob_or_le@Probability, uprob_le_one@Probability, uprob_nonneg@Probability, uprob_eq_uexp@Probability, uprob_bool_prod@GeneratorFromPermutation, uprob_exists_le@Probability, uprob_prod_comm@LazySampling, uprob_comp_equiv@Probability, uprob_eq_of_equiv@Indistinguishability, uprob_bitsToNat_lt@Sampling, uprob_col_cheat_le@Protocol, uprob_tdpPredictor@TrapdoorPredictor, uprob_update_split@LazySampling, uprob_firstHit_none@Sampling, uprob_gni_rep_cheat@GraphIsomorphism, uprob_pi_forall_dep@Permutations, uprob_update_absorb@LazySampling, uprob_adaptive_guess@GraphIsomorphism, uprob_eq_card_filter@Probability, uprob_sections_congr@LazySampling, uprob_update_absorb'@LazySampling, uprob_adaptive_escape@Protocol, uprob_colSimTruncW_eq@Simulator, uprob_comp_eq_sum_map@Experiments, uprob_giHonestView_eq@GraphIsomorphismZK, uprob_giSimTrunc_none@GraphIsomorphismZK, uprob_gi_rep_cheat_le@GraphIsomorphism, uprob_gi_cheat_le_half@GraphIsomorphism, uprob_not_injective_le@Hybrid, uprob_colSimAttemptW_eq@Simulator, uprob_colSimTruncH_none@Simulator, uprob_comp_eq_sum_fiber@Sampling, uprob_fiber_le_card_mul@Universal, uprob_giSimAttempt_none@GraphIsomorphismZK, uprob_giSimAttempt_some@GraphIsomorphismZK, uprob_colSimAttemptH_none@Simulator, uprob_colSimAttemptH_some@Simulator, uprob_comp_eq_probTrue_map@SamplingFinDist, uprob_rejectionSample_none@Sampling, uprob_uniformFromBits_none@Sampling, uprob_permFromCoins_none_le@Permutations, uprob_uniformFromBits_eq_some@Sampling, uprob_permGraph_eq_of_isomorphic@GraphIsomorphism, uprob_permGraph_eq_of_isomorphic'@GraphIsomorphism, uprob_permFromCoins_none_le_two_pow@Permutations, uprob_rejectionSample_none_le_half_pow@Sampling; struct fields: cauchy
+     > Type mismatch
+     >   statClose_truncAttempts (colSimAttemptH Com ℓn G c V) (colRealView Com ℓn G c V) hθ
+     >     (uprob_colSimAttemptH_none Com ℓn G hm c V)
+     >     (fun T =>
+     >       Eq.mpr
+     >         (id
+     >           (congrArg (fun _a => _a = (1 - (1 - 1 / ↑(edgeCount G))) * uprob fun u => T (colRealView Com ℓn G c V u))
+     >             (uprob_colSimAttemptH_some Com ℓn G hm c V T)))
+     >         ((fun {α β γ} [HMul α β γ] a a_1 e_a =>
+     >             Eq.rec (motive := fun a_2 e_a => ∀ (a_3 a_4 : β), a_3 = a_4 → a * a_3 = a_2 * a_4)
+     >               (fun a_2 a_3 e_a => e_a ▸ Eq.refl (a * a_2)) e_a)
+     >           (1 / ↑(edgeCount G)) (1 - (1 - 1 / ↑(edgeCount G)))
+     >           (Mathlib.Tactic.Ring.of_eq
+     >             (Mathlib.Tactic.Ring.div_congr
+       355|     exact_mod_cast hm
+       356|   haveI : Nonempty (AttemptCoins (edgeCount G) (Fin n → Fin ℓn → Bool) ρ) :=
+       357|     ⟨(((⟨0, hm⟩, 1), fun _ _ => false), Classical.arbitrary ρ)⟩
+    *  358|   exact statClose_truncAttempts (colSimAttemptH Com ℓn G c V) (colRealView Com ℓn G c V) hθ
+       359|     (uprob_colSimAttemptH_none Com ℓn G hm c V)
+       360|     (fun T => by rw [uprob_colSimAttemptH_some Com ℓn G hm c V T]; congr 1; ring) N
+====================================================================================================
+KEY H:260 | seal | TCSlib.Cryptography.colSimAttemptPlanted_W
+  record: TCSlib.Cryptography.colSimAttemptPlanted_W (lines 448; #248 OPEN_INCOMPLETE)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.ColSimLemmas.mergeAt_def (TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator.log:671
+  DECL at 438, header ends 443
+      438| private theorem colSimAttemptPlanted_W (c : Fin n → Fin 3) (V : List Bool → ρ → List Bool)
+      439|     (ep : Fin (edgeCount G) × Equiv.Perm (Fin 3)) (r' : Fin n → Fin ℓn → Bool)
+      440|     (w : AttemptCoins (edgeCount G) (Fin n → Fin ℓn → Bool) ρ) :
+      441|     colSimAttemptPlanted Com ℓn G c V ep.1 ep.2
+      442|         (multiCom Com (fun i => padColor n (simColorsW (edgeOf G ep.1) ep.2 c i)) r') w =
+      443|       colSimAttemptW Com ℓn G c V ((ep, mergeAt (edgeOf G ep.1) w.1.2 r'), w.2) := by
+  -- coe-A line 450 cascade=False cls='show' tactic failed, pattern
+     providers=['TCSlib.Cryptography.ColSimLemmas.mergeAt', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.colCommit', 'TCSlib.Cryptography.msgAt', 'TCSlib.Cryptography.multiCom', 'TCSlib.Cryptography.padColor', 'Turing.pairEncode']
+     referenced=['TCSlib.Cryptography.ColSimLemmas.mergeAt', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.colCommit', 'TCSlib.Cryptography.colOpen', 'TCSlib.Cryptography.edgeIdxOfMsg', 'TCSlib.Cryptography.edgeOf', 'TCSlib.Cryptography.encColor', 'TCSlib.Cryptography.msgAt', 'TCSlib.Cryptography.multiCom', 'TCSlib.Cryptography.padColor', 'Turing.pairEncode']
+     [TCSlib.Cryptography.ColSimLemmas.mergeAt] readers: mergeAt_def@SimulatorLemmas, mergeAt_fst@SimulatorLemmas, mergeAt_snd@SimulatorLemmas, mergeAt_self@SimulatorLemmas, mergeAt_mergeAt_left@SimulatorLemmas, mergeAt_mergeAt_right@SimulatorLemmas
+     [TCSlib.Cryptography.Strategy.encodeMsgs] readers: encodeMsgs_nil@Interaction, encodeMsgs_cons@Interaction
+     [TCSlib.Cryptography.colCommit] readers: colCommit_eq@Protocol
+     [TCSlib.Cryptography.msgAt] readers: msgAt_eq@Protocol, msgAt_encodeMsgs@Protocol
+     [TCSlib.Cryptography.multiCom] readers: multiCom_def@Commitment
+     [TCSlib.Cryptography.padColor] readers: padColor_def@Language, padColor_injective@Language
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > 'show' tactic failed, pattern
+     >   ?m.105 =
+     >     Strategy.encodeMsgs
+     >       (List.ofFn fun i =>
+     >         Com (pairEncode (List.ofFn (padColor n (simColorsW p ep.2 c i))) (List.ofFn (mergeAt p w.1.2 r' i))))
+     > is not definitionally equal to target
+     >   Strategy.encodeMsgs
+     >       (List.ofFn fun i =>
+     >         if i = p.1 ∨ i = p.2 then Com (pairEncode (List.ofFn (padColor n (ep.2 (c i)))) (List.ofFn (w.1.2 i)))
+     >         else msgAt (multiCom Com (fun i => padColor n (simColorsW p ep.2 c i)) r') ↑i) =
+     >     colCommit Com n ℓn (simColorsW p ep.2 c) (mergeAt p w.1.2 r')
+       447|         Com (pairEncode (List.ofFn (padColor n (ep.2 (c i)))) (List.ofFn (w.1.2 i)))
+       448|       else msgAt (multiCom Com (fun i => padColor n (simColorsW p ep.2 c i)) r') i) =
+       449|       colCommit Com n ℓn (simColorsW p ep.2 c) (mergeAt p w.1.2 r') := by
+    *  450|     show _ = Strategy.encodeMsgs (List.ofFn fun i =>
+       451|       Com (pairEncode (List.ofFn (padColor n (simColorsW p ep.2 c i)))
+       452|         (List.ofFn (mergeAt p w.1.2 r' i))))
+====================================================================================================
+KEY H:261 | seal | TCSlib.Cryptography.colSimAttemptPlanted_H
+  record: TCSlib.Cryptography.colSimAttemptPlanted_H (lines 499; #248 OPEN_INCOMPLETE)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.ColSimLemmas.mergeAt_def (TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator.log:722
+  DECL at 489, header ends 494
+      489| private theorem colSimAttemptPlanted_H (c : Fin n → Fin 3) (V : List Bool → ρ → List Bool)
+      490|     (ep : Fin (edgeCount G) × Equiv.Perm (Fin 3)) (r' : Fin n → Fin ℓn → Bool)
+      491|     (w : AttemptCoins (edgeCount G) (Fin n → Fin ℓn → Bool) ρ) :
+      492|     colSimAttemptPlanted Com ℓn G c V ep.1 ep.2
+      493|         (multiCom Com (fun i => padColor n (ep.2 (c i))) r') w =
+      494|       colSimAttemptH Com ℓn G c V ((ep, mergeAt (edgeOf G ep.1) w.1.2 r'), w.2) := by
+  -- coe-A line 501 cascade=False cls='show' tactic failed, pattern
+     providers=['TCSlib.Cryptography.ColSimLemmas.mergeAt', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.colCommit', 'TCSlib.Cryptography.msgAt', 'TCSlib.Cryptography.multiCom', 'TCSlib.Cryptography.padColor', 'Turing.pairEncode']
+     referenced=['TCSlib.Cryptography.ColSimLemmas.mergeAt', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.colCommit', 'TCSlib.Cryptography.colOpen', 'TCSlib.Cryptography.edgeIdxOfMsg', 'TCSlib.Cryptography.edgeOf', 'TCSlib.Cryptography.encColor', 'TCSlib.Cryptography.msgAt', 'TCSlib.Cryptography.multiCom', 'TCSlib.Cryptography.padColor', 'Turing.pairEncode']
+     [TCSlib.Cryptography.ColSimLemmas.mergeAt] readers: mergeAt_def@SimulatorLemmas, mergeAt_fst@SimulatorLemmas, mergeAt_snd@SimulatorLemmas, mergeAt_self@SimulatorLemmas, mergeAt_mergeAt_left@SimulatorLemmas, mergeAt_mergeAt_right@SimulatorLemmas
+     [TCSlib.Cryptography.Strategy.encodeMsgs] readers: encodeMsgs_nil@Interaction, encodeMsgs_cons@Interaction
+     [TCSlib.Cryptography.colCommit] readers: colCommit_eq@Protocol
+     [TCSlib.Cryptography.msgAt] readers: msgAt_eq@Protocol, msgAt_encodeMsgs@Protocol
+     [TCSlib.Cryptography.multiCom] readers: multiCom_def@Commitment
+     [TCSlib.Cryptography.padColor] readers: padColor_def@Language, padColor_injective@Language
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > 'show' tactic failed, pattern
+     >   ?m.103 =
+     >     Strategy.encodeMsgs
+     >       (List.ofFn fun i => Com (pairEncode (List.ofFn (padColor n (ep.2 (c i)))) (List.ofFn (mergeAt p w.1.2 r' i))))
+     > is not definitionally equal to target
+     >   Strategy.encodeMsgs
+     >       (List.ofFn fun i =>
+     >         if i = p.1 ∨ i = p.2 then Com (pairEncode (List.ofFn (padColor n (ep.2 (c i)))) (List.ofFn (w.1.2 i)))
+     >         else msgAt (multiCom Com (fun i => padColor n (ep.2 (c i))) r') ↑i) =
+     >     colCommit Com n ℓn (fun i => ep.2 (c i)) (mergeAt p w.1.2 r')
+       498|         Com (pairEncode (List.ofFn (padColor n (ep.2 (c i)))) (List.ofFn (w.1.2 i)))
+       499|       else msgAt (multiCom Com (fun i => padColor n (ep.2 (c i))) r') i) =
+       500|       colCommit Com n ℓn (fun i => ep.2 (c i)) (mergeAt p w.1.2 r') := by
+    *  501|     show _ = Strategy.encodeMsgs (List.ofFn fun i =>
+       502|       Com (pairEncode (List.ofFn (padColor n (ep.2 (c i)))) (List.ofFn (mergeAt p w.1.2 r' i))))
+       503|     congr 2
+====================================================================================================
+KEY H:262 | seal | TCSlib.Cryptography.exists_colSimulator
+  record: TCSlib.Cryptography.exists_colSimulator (lines 676, 676; #248 OPEN_TYPED_COINS)
+  counts sA=2 sB=2 cA=2 cB=2 scan=-
+  tool: STAGE2 | stmt=no | add TCSlib.Cryptography.ColSimMachine.simCoins_eq (or _iff/_apply) in TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator.log:939
+  DECL at 713, header ends 716
+      713| theorem exists_colSimulator {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+      714|     (ℓ : PolyExpr) (V' : Strategy) (hV' : V'.Efficient) :
+      715|     ∃ S : NUPPT, S.Uniform ∧ S.coins = colSimCoins ℓ V' ∧
+      716|       ∀ x z (r : S.Coins x.length), S.simulate x z r = colSim Com ℓ V' x z (List.ofFn r) := by
+  -- coe-A line 718 cascade=False cls=Application type mismatch: The argument
+     providers=['TCSlib.Cryptography.ColSimMachine.simCoins']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.simulate', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.ColSimMachine.sim', 'TCSlib.Cryptography.ColSimMachine.simCoins', 'TCSlib.Cryptography.Strategy.Efficient']
+     > Application type mismatch: The argument
+     >   hc
+     > has type
+     >   S.coins = ColSimMachine.simCoins ℓ V'
+     > but is expected to have type
+     >   S.coins = colSimCoins ℓ V'
+     > in the application
+     >   And.intro hc
+       715|     ∃ S : NUPPT, S.Uniform ∧ S.coins = colSimCoins ℓ V' ∧
+       716|       ∀ x z (r : S.Coins x.length), S.simulate x z r = colSim Com ℓ V' x z (List.ofFn r) := by
+       717|   obtain ⟨S, hS, hc, hsim⟩ := ColSimMachine.exists_simulator hCom ℓ hV'
+    *  718|   exact ⟨S, hS, hc, fun x z r => (hsim x z r).trans rfl⟩
+       719| 
+       720| /-! ### The fill ladder of `col_zk` -/
+  -- coe-A line 718 cascade=True cls=Application type mismatch: The argument
+     providers=['TCSlib.Cryptography.ColSimMachine.sim']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.simulate', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.ColSimMachine.sim', 'TCSlib.Cryptography.ColSimMachine.simCoins', 'TCSlib.Cryptography.Strategy.Efficient']
+     [TCSlib.Cryptography.ColSimMachine.sim] readers: sim_eq@SimulatorMachine, sim_def@SimulatorNumeric, sim_poly@SimulatorMachine
+     > Application type mismatch: The argument
+     >   rfl
+     > has type
+     >   ?m.68 = ?m.68
+     > but is expected to have type
+     >   ColSimMachine.sim Com ℓ V' x z (List.ofFn r) = colSim Com ℓ V' x z (List.ofFn r)
+     > in the application
+     >   Eq.trans (hsim x z r) rfl
+       715|     ∃ S : NUPPT, S.Uniform ∧ S.coins = colSimCoins ℓ V' ∧
+       716|       ∀ x z (r : S.Coins x.length), S.simulate x z r = colSim Com ℓ V' x z (List.ofFn r) := by
+       717|   obtain ⟨S, hS, hc, hsim⟩ := ColSimMachine.exists_simulator hCom ℓ hV'
+    *  718|   exact ⟨S, hS, hc, fun x z r => (hsim x z r).trans rfl⟩
+       719| 
+       720| /-! ### The fill ladder of `col_zk` -/
+====================================================================================================
+KEY H:263 | seal | TCSlib.Cryptography.Negligible.comp_sqrt
+  record: TCSlib.Cryptography.Negligible.comp_sqrt (lines 690; #248 OPEN_INCOMPLETE)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.negligible_iff (TCSlib/Cryptography/Foundations/Negligible.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator.log:1410
+  DECL at 1187, header ends 1188
+     1187| theorem Negligible.comp_sqrt {μ : ℕ → ℝ} (hμ : Negligible μ) :
+     1188|     Negligible fun N => μ (Nat.sqrt N) := by
+  -- coe-A line 1189 cascade=False cls=Tactic X failed: There are no additional binders or X bindings in the goal to in
+     providers=['TCSlib.Cryptography.Negligible']
+     referenced=['TCSlib.Cryptography.Negligible']
+     [TCSlib.Cryptography.Negligible] readers: negligible_iff@Negligible, negligible_zero@Negligible, negligible_two_pow_neg@Negligible, negligible_exp_neg_sqrt_div@Defs, negligible_inv_pow_sqrt_div@Defs, negligible_mul_permFailBound@GraphIsomorphism, negligible_two_pow_neg_sqrt_div@Defs, negligible_of_le_inv_pow_sqrt_div@Defs
+     > Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+     > 
+     > μ : ℕ → ℝ
+     > hμ : Negligible μ
+     > ⊢ Negligible fun N => μ N.sqrt
+      1186| `|μ n| < 1/n^{2c+1} ≤ 1/N^c`. -/
+      1187| theorem Negligible.comp_sqrt {μ : ℕ → ℝ} (hμ : Negligible μ) :
+      1188|     Negligible fun N => μ (Nat.sqrt N) := by
+    * 1189|   intro c
+      1190|   obtain ⟨n₀, hn₀⟩ := hμ (2 * c + 1)
+      1191|   set K := max (max n₀ (4 ^ c)) 1 with hK
+====================================================================================================
+KEY H:264 | seal | TCSlib.Cryptography.col_hvzk
+  record: TCSlib.Cryptography.col_hvzk (lines 789; #248 OPEN_INCOMPLETE)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | add TCSlib.Cryptography.HVZK_eq (or _iff/_apply) in TCSlib/Cryptography/ZeroKnowledge/Defs.lean
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator.log:1867
+  DECL at 1644, header ends 1645
+     1644| theorem col_hvzk {Com : List Bool → List Bool} {ℓ : PolyExpr} (hC : Commitment Com ℓ) :
+     1645|     HVZK (colProtocol Com ℓ) R3COL :=
+  -- coe-A line 1646 cascade=False cls=Application type mismatch: The argument
+     providers=['TCSlib.Cryptography.HVZK', 'TCSlib.Cryptography.R3COL', 'TCSlib.Cryptography.colProtocol']
+     referenced=['TCSlib.Cryptography.HVZK', 'TCSlib.Cryptography.R3COL', 'TCSlib.Cryptography.colProtocol']
+     [TCSlib.Cryptography.R3COL] readers: R3COL_iff@Language, R3COL_witnessRelation@Protocol
+     [TCSlib.Cryptography.colProtocol] readers: colProtocol_P@Protocol, colProtocol_V@Protocol, colProtocol_rounds@Protocol, colProtocol_proverBounded@Protocol, colProtocol_verifierFirst@Protocol; struct fields: P, V, rounds, verifierFirst
+     > Application type mismatch: The argument
+     >   colVerifier_efficient hC.easy ℓ
+     > has type
+     >   (colVerifier Com ℓ).Efficient
+     > but is expected to have type
+     >   (colProtocol Com ℓ).V.Efficient
+     > in the application
+     >   ZK.hvzk (colVerifier_efficient hC.easy ℓ)
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator_part1 phase=eof spelling=BoolCircuit.CompileListSpec.mk._flat_ctor key=[["str","BoolCircuit"],["str","CompileListSpec"],["str","mk"],["str","_f
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator_part1 phase=eof spelling=BoolCircuit.CompileSpec.mk._flat_ctor key=[["str","BoolCircuit"],["str","CompileSpec"],["str","mk"],["str","_flat_ctor
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator_part1 phase=eof spelling=BoolCircuit.DAGCircuit.IsFaninTwo key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","IsFaninTwo"]] home_key=[["st
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator_part1 phase=eof spelling=BoolCircuit.DAGCircuit.IsWellFormed key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","IsWellFormed"]] home_key=[
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator_part1 phase=eof spelling=BoolCircuit.DAGCircuit._sizeOf_1 key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","_sizeOf_1"]] home_key=[["str"
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator_part1 phase=eof spelling=BoolCircuit.DAGCircuit._sizeOf_inst key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","_sizeOf_inst"]] home_key=[
+      1643| [PS10, Proposition 128.8 with the honest verifier] (`ZK.hvzk`, `colVerifier_efficient`). -/
+      1644| theorem col_hvzk {Com : List Bool → List Bool} {ℓ : PolyExpr} (hC : Commitment Com ℓ) :
+      1645|     HVZK (colProtocol Com ℓ) R3COL :=
+    * 1646|   (col_zk hC).hvzk (colVerifier_efficient hC.easy ℓ)
+      1647| 
+      1648| /-- **[PS10, Proposition 127.6]: Protocol 127.5 is a zero-knowledge proof for `3COL`**
+====================================================================================================
+KEY SEAL-0423 | seal | TCSlib.Cryptography.uprob_colSimAttemptH_none
+  record: TCSlib.Cryptography.uprob_colSimAttemptH_none l.263: 'show' tactic failed, pattern (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | add TCSlib.Cryptography.ColSimLemmas.attemptCoinsEquiv_eq (or _iff/_apply) in TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator.log:484
+  DECL at 253, header ends 255
+      253| theorem uprob_colSimAttemptH_none [Fintype ρ] [Nonempty ρ] (hm : 0 < edgeCount G)
+      254|     (c : Fin n → Fin 3) (V : List Bool → ρ → List Bool) :
+      255|     uprob (fun w => colSimAttemptH Com ℓn G c V w = none) = 1 - 1 / (edgeCount G : ℝ) := by
+  -- coe-A line 263 cascade=False cls='show' tactic failed, pattern
+     providers=['TCSlib.Cryptography.ColSimLemmas.attemptCoinsEquiv', 'TCSlib.Cryptography.colCommit', 'TCSlib.Cryptography.colOpen', 'TCSlib.Cryptography.edgeIdxOfMsg', 'TCSlib.Cryptography.edgeOf']
+     referenced=['TCSlib.Cryptography.ColSimLemmas.attemptCoinsEquiv', 'TCSlib.Cryptography.colCommit', 'TCSlib.Cryptography.colOpen', 'TCSlib.Cryptography.edgeIdxOfMsg', 'TCSlib.Cryptography.edgeOf', 'TCSlib.Cryptography.uprob']
+     [TCSlib.Cryptography.ColSimLemmas.attemptCoinsEquiv] struct fields: toFun, invFun, left_inv, right_inv
+     [TCSlib.Cryptography.colCommit] readers: colCommit_eq@Protocol
+     [TCSlib.Cryptography.colOpen] readers: colOpen_eq@Protocol
+     [TCSlib.Cryptography.edgeIdxOfMsg] readers: edgeIdxOfMsg_eq@Language, edgeIdxOfMsg_lt@Language, edgeIdxOfMsg_edgeMsg@Language
+     [TCSlib.Cryptography.edgeOf] readers: edgeOf_eq@Language, edgeOf_adj@Language; struct fields: fst, snd
+     > 'show' tactic failed, pattern
+     >   (if edgeIdxOfMsg (edgeCount G) (V (colCommit Com n ℓn (fun i => π (c i)) r) ρ₀) = ↑e then
+     >         some (ρ₀, colCommit Com n ℓn (fun i => π (c i)) r, colOpen (fun i => π (c i)) r (edgeOf G e))
+     >       else none) =
+     >       none ↔
+     >     ?m.120
+     > is not definitionally equal to target
+     >   colSimAttemptH Com ℓn G c V ((attemptCoinsEquiv (edgeCount G) (Fin n → Fin ℓn → Bool) ρ).symm (((π, r), ρ₀), e)) =
+     >       none ↔
+     >     ¬edgeIdxOfMsg (edgeCount G)
+     >           (V (colCommit Com n ℓn (fun i => (((π, r), ρ₀), e).1.1.1 (c i)) (((π, r), ρ₀), e).1.1.2)
+     >             (((π, r), ρ₀), e).1.2) =
+     >         ↑(((π, r), ρ₀), e).2
+       260|         ¬ edgeIdxOfMsg (edgeCount G)
+       261|           (V (colCommit Com n ℓn (fun i => z.1.1.1 (c i)) z.1.1.2) z.1.2) = (z.2 : ℕ) := by
+       262|     rintro ⟨⟨⟨π, r⟩, ρ₀⟩, e⟩
+    *  263|     show (if edgeIdxOfMsg (edgeCount G) (V (colCommit Com n ℓn (fun i => π (c i)) r) ρ₀) = (e : ℕ)
+       264|         then some (ρ₀, colCommit Com n ℓn (fun i => π (c i)) r,
+       265|           colOpen (fun i => π (c i)) r (edgeOf G e)) else none) = none ↔ _
+====================================================================================================
+KEY SEAL-0424 | seal | TCSlib.Cryptography.uprob_colSimAttemptH_some
+  record: TCSlib.Cryptography.uprob_colSimAttemptH_some l.302: 'show' tactic failed, pattern (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | add TCSlib.Cryptography.ColSimLemmas.attemptCoinsEquiv_eq (or _iff/_apply) in TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator.log:523
+  DECL at 288, header ends 293
+      288| theorem uprob_colSimAttemptH_some [Fintype ρ] (hm : 0 < edgeCount G)
+      289|     (c : Fin n → Fin 3) (V : List Bool → ρ → List Bool) (T : ColView ρ → Prop) :
+      290|     uprob (fun w => ∃ v, colSimAttemptH Com ℓn G c V w = some v ∧ T v) =
+      291|       1 / (edgeCount G : ℝ) *
+      292|         uprob (fun w : (Equiv.Perm (Fin 3) × (Fin n → Fin ℓn → Bool)) × ρ =>
+      293|           T (colRealView Com ℓn G c V w)) := by
+  -- coe-A line 302 cascade=False cls='show' tactic failed, pattern
+     providers=['TCSlib.Cryptography.ColSimLemmas.attemptCoinsEquiv', 'TCSlib.Cryptography.colCommit', 'TCSlib.Cryptography.colOpen', 'TCSlib.Cryptography.edgeAt', 'TCSlib.Cryptography.edgeIdxOfMsg', 'TCSlib.Cryptography.edgeOf']
+     referenced=['TCSlib.Cryptography.ColSimLemmas.attemptCoinsEquiv', 'TCSlib.Cryptography.colCommit', 'TCSlib.Cryptography.colOpen', 'TCSlib.Cryptography.edgeAt', 'TCSlib.Cryptography.edgeIdxOfMsg', 'TCSlib.Cryptography.edgeOf', 'TCSlib.Cryptography.uprob']
+     [TCSlib.Cryptography.ColSimLemmas.attemptCoinsEquiv] struct fields: toFun, invFun, left_inv, right_inv
+     [TCSlib.Cryptography.colCommit] readers: colCommit_eq@Protocol
+     [TCSlib.Cryptography.colOpen] readers: colOpen_eq@Protocol
+     [TCSlib.Cryptography.edgeAt] readers: edgeAt_def@Language, edgeAt_adj@Language, edgeAt_isSome@Language, edgeAt_eq_none_iff@Language, edgeAt_eq_some_edgeOf@Language
+     [TCSlib.Cryptography.edgeIdxOfMsg] readers: edgeIdxOfMsg_eq@Language, edgeIdxOfMsg_lt@Language, edgeIdxOfMsg_edgeMsg@Language
+     [TCSlib.Cryptography.edgeOf] readers: edgeOf_eq@Language, edgeOf_adj@Language; struct fields: fst, snd
+     > 'show' tactic failed, pattern
+     >   (∃ v,
+     >       (if edgeIdxOfMsg (edgeCount G) (V (colCommit Com n ℓn (fun i => π (c i)) r) ρ₀) = ↑e then
+     >             some (ρ₀, colCommit Com n ℓn (fun i => π (c i)) r, colOpen (fun i => π (c i)) r (edgeOf G e))
+     >           else none) =
+     >           some v ∧
+     >         T v) ↔
+     >     edgeIdxOfMsg (edgeCount G) (V (colCommit Com n ℓn (fun i => π (c i)) r) ρ₀) = ↑e ∧
+     >       T
+     >         (ρ₀, colCommit Com n ℓn (fun i => π (c i)) r,
+     >           match edgeAt G (edgeIdxOfMsg (edgeCount G) (V (colCommit Com n ℓn (fun i => π (c i)) r) ρ₀)) with
+     >           | some p => colOpen (fun i => π (c i)) r p
+     >           | none => [])
+     > is not definitionally equal to target
+       299|           (V (colCommit Com n ℓn (fun i => z.1.1.1 (c i)) z.1.1.2) z.1.2) = (z.2 : ℕ) ∧
+       300|           T (colRealView Com ℓn G c V z.1)) := by
+       301|     rintro ⟨⟨⟨π, r⟩, ρ₀⟩, e⟩
+    *  302|     show (∃ v, (if edgeIdxOfMsg (edgeCount G) (V (colCommit Com n ℓn (fun i => π (c i)) r) ρ₀) =
+       303|         (e : ℕ) then some (ρ₀, colCommit Com n ℓn (fun i => π (c i)) r,
+       304|           colOpen (fun i => π (c i)) r (edgeOf G e)) else none) = some v ∧ T v) ↔
+====================================================================================================
+KEY SEAL-0425 | seal | TCSlib.Cryptography.statClose_colSimTruncH
+  record: TCSlib.Cryptography.statClose_colSimTruncH l.358: Type mismatch (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.statClose_iff (TCSlib/Cryptography/Asymptotic/Sampling.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator.log:579
+  DECL at 347, header ends 352
+      347| theorem statClose_colSimTruncH [Fintype ρ] [Nonempty ρ] (hm : 0 < edgeCount G)
+      348|     (c : Fin n → Fin 3) (V : List Bool → ρ → List Bool) (N : ℕ) :
+      349|     StatClose (colSimTruncH Com ℓn G c V N)
+      350|       (fun w : (Equiv.Perm (Fin 3) × (Fin n → Fin ℓn → Bool)) × ρ =>
+      351|         some (colRealView Com ℓn G c V w))
+      352|       ((1 - 1 / (edgeCount G : ℝ)) ^ N) := by
+  -- coe-A line 358 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.uprob']
+     referenced=['TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.uprob']
+     [TCSlib.Cryptography.StatClose] readers: statClose_iff@Sampling, statClose_one@Sampling, statClose_firstHit@Sampling, statClose_giSimTrunc@GraphIsomorphismZK, statClose_samplePerm@GraphIsomorphism, statClose_colRealView@Simulator, statClose_samplePerm3@Language, statClose_colSimTruncH@Simulator, statClose_giHonestView@GraphIsomorphismZK, statClose_glPadSampler@HardCoreLemmas, statClose_permFromCoins@Permutations, statClose_sampleEdgeIdx@Language, statClose_rejectionSample@Sampling, statClose_sampleColorPair@Simulator, statClose_iff_epsClose_map@SamplingFinDist, statClose_of_pushesUniform@Sampling, statClose_colSim_colSimTrunc@Simulator, statClose_permFromCoins_two_pow@Permutations, statClose_getD_of_uniform_of_some@Sampling
+     [TCSlib.Cryptography.uprob] readers: uprob_def@Probability, uprob_fst@Probability, uprob_not@Probability, uprob_snd@LazySampling, uprob_mono@Probability, uprob_prod@Probability, uprob_true@Probability, uprob_congr@LazySampling, uprob_false@Probability, uprob_or_le@Probability, uprob_le_one@Probability, uprob_nonneg@Probability, uprob_eq_uexp@Probability, uprob_bool_prod@GeneratorFromPermutation, uprob_exists_le@Probability, uprob_prod_comm@LazySampling, uprob_comp_equiv@Probability, uprob_eq_of_equiv@Indistinguishability, uprob_bitsToNat_lt@Sampling, uprob_col_cheat_le@Protocol, uprob_tdpPredictor@TrapdoorPredictor, uprob_update_split@LazySampling, uprob_firstHit_none@Sampling, uprob_gni_rep_cheat@GraphIsomorphism, uprob_pi_forall_dep@Permutations, uprob_update_absorb@LazySampling, uprob_adaptive_guess@GraphIsomorphism, uprob_eq_card_filter@Probability, uprob_sections_congr@LazySampling, uprob_update_absorb'@LazySampling, uprob_adaptive_escape@Protocol, uprob_colSimTruncW_eq@Simulator, uprob_comp_eq_sum_map@Experiments, uprob_giHonestView_eq@GraphIsomorphismZK, uprob_giSimTrunc_none@GraphIsomorphismZK, uprob_gi_rep_cheat_le@GraphIsomorphism, uprob_gi_cheat_le_half@GraphIsomorphism, uprob_not_injective_le@Hybrid, uprob_colSimAttemptW_eq@Simulator, uprob_colSimTruncH_none@Simulator, uprob_comp_eq_sum_fiber@Sampling, uprob_fiber_le_card_mul@Universal, uprob_giSimAttempt_none@GraphIsomorphismZK, uprob_giSimAttempt_some@GraphIsomorphismZK, uprob_colSimAttemptH_none@Simulator, uprob_colSimAttemptH_some@Simulator, uprob_comp_eq_probTrue_map@SamplingFinDist, uprob_rejectionSample_none@Sampling, uprob_uniformFromBits_none@Sampling, uprob_permFromCoins_none_le@Permutations, uprob_uniformFromBits_eq_some@Sampling, uprob_permGraph_eq_of_isomorphic@GraphIsomorphism, uprob_permGraph_eq_of_isomorphic'@GraphIsomorphism, uprob_permFromCoins_none_le_two_pow@Permutations, uprob_rejectionSample_none_le_half_pow@Sampling; struct fields: cauchy
+     > Type mismatch
+     >   statClose_truncAttempts (colSimAttemptH Com ℓn G c V) (colRealView Com ℓn G c V) hθ
+     >     (uprob_colSimAttemptH_none Com ℓn G hm c V)
+     >     (fun T =>
+     >       Eq.mpr
+     >         (id
+     >           (congrArg (fun _a => _a = (1 - (1 - 1 / ↑(edgeCount G))) * uprob fun u => T (colRealView Com ℓn G c V u))
+     >             (uprob_colSimAttemptH_some Com ℓn G hm c V T)))
+     >         ((fun {α β γ} [HMul α β γ] a a_1 e_a =>
+     >             Eq.rec (motive := fun a_2 e_a => ∀ (a_3 a_4 : β), a_3 = a_4 → a * a_3 = a_2 * a_4)
+     >               (fun a_2 a_3 e_a => e_a ▸ Eq.refl (a * a_2)) e_a)
+     >           (1 / ↑(edgeCount G)) (1 - (1 - 1 / ↑(edgeCount G)))
+     >           (Mathlib.Tactic.Ring.of_eq
+     >             (Mathlib.Tactic.Ring.div_congr
+       355|     exact_mod_cast hm
+       356|   haveI : Nonempty (AttemptCoins (edgeCount G) (Fin n → Fin ℓn → Bool) ρ) :=
+       357|     ⟨(((⟨0, hm⟩, 1), fun _ _ => false), Classical.arbitrary ρ)⟩
+    *  358|   exact statClose_truncAttempts (colSimAttemptH Com ℓn G c V) (colRealView Com ℓn G c V) hθ
+       359|     (uprob_colSimAttemptH_none Com ℓn G hm c V)
+       360|     (fun T => by rw [uprob_colSimAttemptH_some Com ℓn G hm c V T]; congr 1; ring) N
+====================================================================================================
+KEY SEAL-0426 | seal | TCSlib.Cryptography.colSimAttemptPlanted_W
+  record: TCSlib.Cryptography.colSimAttemptPlanted_W l.450: 'show' tactic failed, pattern (#248 inherited_same_step_after_other_repairs)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.ColSimLemmas.mergeAt_def (TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator.log:671
+  DECL at 438, header ends 443
+      438| private theorem colSimAttemptPlanted_W (c : Fin n → Fin 3) (V : List Bool → ρ → List Bool)
+      439|     (ep : Fin (edgeCount G) × Equiv.Perm (Fin 3)) (r' : Fin n → Fin ℓn → Bool)
+      440|     (w : AttemptCoins (edgeCount G) (Fin n → Fin ℓn → Bool) ρ) :
+      441|     colSimAttemptPlanted Com ℓn G c V ep.1 ep.2
+      442|         (multiCom Com (fun i => padColor n (simColorsW (edgeOf G ep.1) ep.2 c i)) r') w =
+      443|       colSimAttemptW Com ℓn G c V ((ep, mergeAt (edgeOf G ep.1) w.1.2 r'), w.2) := by
+  -- coe-A line 450 cascade=False cls='show' tactic failed, pattern
+     providers=['TCSlib.Cryptography.ColSimLemmas.mergeAt', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.colCommit', 'TCSlib.Cryptography.msgAt', 'TCSlib.Cryptography.multiCom', 'TCSlib.Cryptography.padColor', 'Turing.pairEncode']
+     referenced=['TCSlib.Cryptography.ColSimLemmas.mergeAt', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.colCommit', 'TCSlib.Cryptography.colOpen', 'TCSlib.Cryptography.edgeIdxOfMsg', 'TCSlib.Cryptography.edgeOf', 'TCSlib.Cryptography.encColor', 'TCSlib.Cryptography.msgAt', 'TCSlib.Cryptography.multiCom', 'TCSlib.Cryptography.padColor', 'Turing.pairEncode']
+     [TCSlib.Cryptography.ColSimLemmas.mergeAt] readers: mergeAt_def@SimulatorLemmas, mergeAt_fst@SimulatorLemmas, mergeAt_snd@SimulatorLemmas, mergeAt_self@SimulatorLemmas, mergeAt_mergeAt_left@SimulatorLemmas, mergeAt_mergeAt_right@SimulatorLemmas
+     [TCSlib.Cryptography.Strategy.encodeMsgs] readers: encodeMsgs_nil@Interaction, encodeMsgs_cons@Interaction
+     [TCSlib.Cryptography.colCommit] readers: colCommit_eq@Protocol
+     [TCSlib.Cryptography.msgAt] readers: msgAt_eq@Protocol, msgAt_encodeMsgs@Protocol
+     [TCSlib.Cryptography.multiCom] readers: multiCom_def@Commitment
+     [TCSlib.Cryptography.padColor] readers: padColor_def@Language, padColor_injective@Language
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > 'show' tactic failed, pattern
+     >   ?m.105 =
+     >     Strategy.encodeMsgs
+     >       (List.ofFn fun i =>
+     >         Com (pairEncode (List.ofFn (padColor n (simColorsW p ep.2 c i))) (List.ofFn (mergeAt p w.1.2 r' i))))
+     > is not definitionally equal to target
+     >   Strategy.encodeMsgs
+     >       (List.ofFn fun i =>
+     >         if i = p.1 ∨ i = p.2 then Com (pairEncode (List.ofFn (padColor n (ep.2 (c i)))) (List.ofFn (w.1.2 i)))
+     >         else msgAt (multiCom Com (fun i => padColor n (simColorsW p ep.2 c i)) r') ↑i) =
+     >     colCommit Com n ℓn (simColorsW p ep.2 c) (mergeAt p w.1.2 r')
+       447|         Com (pairEncode (List.ofFn (padColor n (ep.2 (c i)))) (List.ofFn (w.1.2 i)))
+       448|       else msgAt (multiCom Com (fun i => padColor n (simColorsW p ep.2 c i)) r') i) =
+       449|       colCommit Com n ℓn (simColorsW p ep.2 c) (mergeAt p w.1.2 r') := by
+    *  450|     show _ = Strategy.encodeMsgs (List.ofFn fun i =>
+       451|       Com (pairEncode (List.ofFn (padColor n (simColorsW p ep.2 c i)))
+       452|         (List.ofFn (mergeAt p w.1.2 r' i))))
+====================================================================================================
+KEY SEAL-0427 | seal | TCSlib.Cryptography.colSimAttemptPlanted_H
+  record: TCSlib.Cryptography.colSimAttemptPlanted_H l.501: 'show' tactic failed, pattern (#248 inherited_same_step_after_other_repairs)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.ColSimLemmas.mergeAt_def (TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator.log:722
+  DECL at 489, header ends 494
+      489| private theorem colSimAttemptPlanted_H (c : Fin n → Fin 3) (V : List Bool → ρ → List Bool)
+      490|     (ep : Fin (edgeCount G) × Equiv.Perm (Fin 3)) (r' : Fin n → Fin ℓn → Bool)
+      491|     (w : AttemptCoins (edgeCount G) (Fin n → Fin ℓn → Bool) ρ) :
+      492|     colSimAttemptPlanted Com ℓn G c V ep.1 ep.2
+      493|         (multiCom Com (fun i => padColor n (ep.2 (c i))) r') w =
+      494|       colSimAttemptH Com ℓn G c V ((ep, mergeAt (edgeOf G ep.1) w.1.2 r'), w.2) := by
+  -- coe-A line 501 cascade=False cls='show' tactic failed, pattern
+     providers=['TCSlib.Cryptography.ColSimLemmas.mergeAt', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.colCommit', 'TCSlib.Cryptography.msgAt', 'TCSlib.Cryptography.multiCom', 'TCSlib.Cryptography.padColor', 'Turing.pairEncode']
+     referenced=['TCSlib.Cryptography.ColSimLemmas.mergeAt', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.colCommit', 'TCSlib.Cryptography.colOpen', 'TCSlib.Cryptography.edgeIdxOfMsg', 'TCSlib.Cryptography.edgeOf', 'TCSlib.Cryptography.encColor', 'TCSlib.Cryptography.msgAt', 'TCSlib.Cryptography.multiCom', 'TCSlib.Cryptography.padColor', 'Turing.pairEncode']
+     [TCSlib.Cryptography.ColSimLemmas.mergeAt] readers: mergeAt_def@SimulatorLemmas, mergeAt_fst@SimulatorLemmas, mergeAt_snd@SimulatorLemmas, mergeAt_self@SimulatorLemmas, mergeAt_mergeAt_left@SimulatorLemmas, mergeAt_mergeAt_right@SimulatorLemmas
+     [TCSlib.Cryptography.Strategy.encodeMsgs] readers: encodeMsgs_nil@Interaction, encodeMsgs_cons@Interaction
+     [TCSlib.Cryptography.colCommit] readers: colCommit_eq@Protocol
+     [TCSlib.Cryptography.msgAt] readers: msgAt_eq@Protocol, msgAt_encodeMsgs@Protocol
+     [TCSlib.Cryptography.multiCom] readers: multiCom_def@Commitment
+     [TCSlib.Cryptography.padColor] readers: padColor_def@Language, padColor_injective@Language
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > 'show' tactic failed, pattern
+     >   ?m.103 =
+     >     Strategy.encodeMsgs
+     >       (List.ofFn fun i => Com (pairEncode (List.ofFn (padColor n (ep.2 (c i)))) (List.ofFn (mergeAt p w.1.2 r' i))))
+     > is not definitionally equal to target
+     >   Strategy.encodeMsgs
+     >       (List.ofFn fun i =>
+     >         if i = p.1 ∨ i = p.2 then Com (pairEncode (List.ofFn (padColor n (ep.2 (c i)))) (List.ofFn (w.1.2 i)))
+     >         else msgAt (multiCom Com (fun i => padColor n (ep.2 (c i))) r') ↑i) =
+     >     colCommit Com n ℓn (fun i => ep.2 (c i)) (mergeAt p w.1.2 r')
+       498|         Com (pairEncode (List.ofFn (padColor n (ep.2 (c i)))) (List.ofFn (w.1.2 i)))
+       499|       else msgAt (multiCom Com (fun i => padColor n (ep.2 (c i))) r') i) =
+       500|       colCommit Com n ℓn (fun i => ep.2 (c i)) (mergeAt p w.1.2 r') := by
+    *  501|     show _ = Strategy.encodeMsgs (List.ofFn fun i =>
+       502|       Com (pairEncode (List.ofFn (padColor n (ep.2 (c i)))) (List.ofFn (mergeAt p w.1.2 r' i))))
+       503|     congr 2
+====================================================================================================
+KEY SEAL-0428 | seal | TCSlib.Cryptography.exists_colSimulator
+  record: TCSlib.Cryptography.exists_colSimulator l.718: Application type mismatch: The argument (#248 inherited_same_native_step)
+  counts sA=2 sB=2 cA=2 cB=2 scan=-
+  tool: STAGE2 | stmt=no | add TCSlib.Cryptography.ColSimMachine.simCoins_eq (or _iff/_apply) in TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator.log:939
+  DECL at 713, header ends 716
+      713| theorem exists_colSimulator {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+      714|     (ℓ : PolyExpr) (V' : Strategy) (hV' : V'.Efficient) :
+      715|     ∃ S : NUPPT, S.Uniform ∧ S.coins = colSimCoins ℓ V' ∧
+      716|       ∀ x z (r : S.Coins x.length), S.simulate x z r = colSim Com ℓ V' x z (List.ofFn r) := by
+  -- coe-A line 718 cascade=False cls=Application type mismatch: The argument
+     providers=['TCSlib.Cryptography.ColSimMachine.simCoins']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.simulate', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.ColSimMachine.sim', 'TCSlib.Cryptography.ColSimMachine.simCoins', 'TCSlib.Cryptography.Strategy.Efficient']
+     > Application type mismatch: The argument
+     >   hc
+     > has type
+     >   S.coins = ColSimMachine.simCoins ℓ V'
+     > but is expected to have type
+     >   S.coins = colSimCoins ℓ V'
+     > in the application
+     >   And.intro hc
+       715|     ∃ S : NUPPT, S.Uniform ∧ S.coins = colSimCoins ℓ V' ∧
+       716|       ∀ x z (r : S.Coins x.length), S.simulate x z r = colSim Com ℓ V' x z (List.ofFn r) := by
+       717|   obtain ⟨S, hS, hc, hsim⟩ := ColSimMachine.exists_simulator hCom ℓ hV'
+    *  718|   exact ⟨S, hS, hc, fun x z r => (hsim x z r).trans rfl⟩
+       719| 
+       720| /-! ### The fill ladder of `col_zk` -/
+  -- coe-A line 718 cascade=True cls=Application type mismatch: The argument
+     providers=['TCSlib.Cryptography.ColSimMachine.sim']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.simulate', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.ColSimMachine.sim', 'TCSlib.Cryptography.ColSimMachine.simCoins', 'TCSlib.Cryptography.Strategy.Efficient']
+     [TCSlib.Cryptography.ColSimMachine.sim] readers: sim_eq@SimulatorMachine, sim_def@SimulatorNumeric, sim_poly@SimulatorMachine
+     > Application type mismatch: The argument
+     >   rfl
+     > has type
+     >   ?m.68 = ?m.68
+     > but is expected to have type
+     >   ColSimMachine.sim Com ℓ V' x z (List.ofFn r) = colSim Com ℓ V' x z (List.ofFn r)
+     > in the application
+     >   Eq.trans (hsim x z r) rfl
+       715|     ∃ S : NUPPT, S.Uniform ∧ S.coins = colSimCoins ℓ V' ∧
+       716|       ∀ x z (r : S.Coins x.length), S.simulate x z r = colSim Com ℓ V' x z (List.ofFn r) := by
+       717|   obtain ⟨S, hS, hc, hsim⟩ := ColSimMachine.exists_simulator hCom ℓ hV'
+    *  718|   exact ⟨S, hS, hc, fun x z r => (hsim x z r).trans rfl⟩
+       719| 
+       720| /-! ### The fill ladder of `col_zk` -/
+====================================================================================================
+KEY SEAL-0429 | seal | TCSlib.Cryptography.exists_colSimulator
+  record: TCSlib.Cryptography.exists_colSimulator l.718: Application type mismatch: The argument (#248 inherited_same_native_step)
+  counts sA=2 sB=2 cA=2 cB=2 scan=-
+  tool: STAGE2 | stmt=no | add TCSlib.Cryptography.ColSimMachine.simCoins_eq (or _iff/_apply) in TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator.log:939
+  DECL at 713, header ends 716
+      713| theorem exists_colSimulator {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+      714|     (ℓ : PolyExpr) (V' : Strategy) (hV' : V'.Efficient) :
+      715|     ∃ S : NUPPT, S.Uniform ∧ S.coins = colSimCoins ℓ V' ∧
+      716|       ∀ x z (r : S.Coins x.length), S.simulate x z r = colSim Com ℓ V' x z (List.ofFn r) := by
+  -- coe-A line 718 cascade=False cls=Application type mismatch: The argument
+     providers=['TCSlib.Cryptography.ColSimMachine.simCoins']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.simulate', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.ColSimMachine.sim', 'TCSlib.Cryptography.ColSimMachine.simCoins', 'TCSlib.Cryptography.Strategy.Efficient']
+     > Application type mismatch: The argument
+     >   hc
+     > has type
+     >   S.coins = ColSimMachine.simCoins ℓ V'
+     > but is expected to have type
+     >   S.coins = colSimCoins ℓ V'
+     > in the application
+     >   And.intro hc
+       715|     ∃ S : NUPPT, S.Uniform ∧ S.coins = colSimCoins ℓ V' ∧
+       716|       ∀ x z (r : S.Coins x.length), S.simulate x z r = colSim Com ℓ V' x z (List.ofFn r) := by
+       717|   obtain ⟨S, hS, hc, hsim⟩ := ColSimMachine.exists_simulator hCom ℓ hV'
+    *  718|   exact ⟨S, hS, hc, fun x z r => (hsim x z r).trans rfl⟩
+       719| 
+       720| /-! ### The fill ladder of `col_zk` -/
+  -- coe-A line 718 cascade=True cls=Application type mismatch: The argument
+     providers=['TCSlib.Cryptography.ColSimMachine.sim']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.simulate', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.ColSimMachine.sim', 'TCSlib.Cryptography.ColSimMachine.simCoins', 'TCSlib.Cryptography.Strategy.Efficient']
+     [TCSlib.Cryptography.ColSimMachine.sim] readers: sim_eq@SimulatorMachine, sim_def@SimulatorNumeric, sim_poly@SimulatorMachine
+     > Application type mismatch: The argument
+     >   rfl
+     > has type
+     >   ?m.68 = ?m.68
+     > but is expected to have type
+     >   ColSimMachine.sim Com ℓ V' x z (List.ofFn r) = colSim Com ℓ V' x z (List.ofFn r)
+     > in the application
+     >   Eq.trans (hsim x z r) rfl
+       715|     ∃ S : NUPPT, S.Uniform ∧ S.coins = colSimCoins ℓ V' ∧
+       716|       ∀ x z (r : S.Coins x.length), S.simulate x z r = colSim Com ℓ V' x z (List.ofFn r) := by
+       717|   obtain ⟨S, hS, hc, hsim⟩ := ColSimMachine.exists_simulator hCom ℓ hV'
+    *  718|   exact ⟨S, hS, hc, fun x z r => (hsim x z r).trans rfl⟩
+       719| 
+       720| /-! ### The fill ladder of `col_zk` -/
+====================================================================================================
+KEY SEAL-0430 | seal | TCSlib.Cryptography.Negligible.comp_sqrt
+  record: TCSlib.Cryptography.Negligible.comp_sqrt l.1189: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.negligible_iff (TCSlib/Cryptography/Foundations/Negligible.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator.log:1410
+  DECL at 1187, header ends 1188
+     1187| theorem Negligible.comp_sqrt {μ : ℕ → ℝ} (hμ : Negligible μ) :
+     1188|     Negligible fun N => μ (Nat.sqrt N) := by
+  -- coe-A line 1189 cascade=False cls=Tactic X failed: There are no additional binders or X bindings in the goal to in
+     providers=['TCSlib.Cryptography.Negligible']
+     referenced=['TCSlib.Cryptography.Negligible']
+     [TCSlib.Cryptography.Negligible] readers: negligible_iff@Negligible, negligible_zero@Negligible, negligible_two_pow_neg@Negligible, negligible_exp_neg_sqrt_div@Defs, negligible_inv_pow_sqrt_div@Defs, negligible_mul_permFailBound@GraphIsomorphism, negligible_two_pow_neg_sqrt_div@Defs, negligible_of_le_inv_pow_sqrt_div@Defs
+     > Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+     > 
+     > μ : ℕ → ℝ
+     > hμ : Negligible μ
+     > ⊢ Negligible fun N => μ N.sqrt
+      1186| `|μ n| < 1/n^{2c+1} ≤ 1/N^c`. -/
+      1187| theorem Negligible.comp_sqrt {μ : ℕ → ℝ} (hμ : Negligible μ) :
+      1188|     Negligible fun N => μ (Nat.sqrt N) := by
+    * 1189|   intro c
+      1190|   obtain ⟨n₀, hn₀⟩ := hμ (2 * c + 1)
+      1191|   set K := max (max n₀ (4 ^ c)) 1 with hK
+====================================================================================================
+KEY SEAL-0431 | seal | TCSlib.Cryptography.col_hvzk
+  record: TCSlib.Cryptography.col_hvzk l.1646: Application type mismatch: The argument (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | add TCSlib.Cryptography.HVZK_eq (or _iff/_apply) in TCSlib/Cryptography/ZeroKnowledge/Defs.lean
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator.log:1867
+  DECL at 1644, header ends 1645
+     1644| theorem col_hvzk {Com : List Bool → List Bool} {ℓ : PolyExpr} (hC : Commitment Com ℓ) :
+     1645|     HVZK (colProtocol Com ℓ) R3COL :=
+  -- coe-A line 1646 cascade=False cls=Application type mismatch: The argument
+     providers=['TCSlib.Cryptography.HVZK', 'TCSlib.Cryptography.R3COL', 'TCSlib.Cryptography.colProtocol']
+     referenced=['TCSlib.Cryptography.HVZK', 'TCSlib.Cryptography.R3COL', 'TCSlib.Cryptography.colProtocol']
+     [TCSlib.Cryptography.R3COL] readers: R3COL_iff@Language, R3COL_witnessRelation@Protocol
+     [TCSlib.Cryptography.colProtocol] readers: colProtocol_P@Protocol, colProtocol_V@Protocol, colProtocol_rounds@Protocol, colProtocol_proverBounded@Protocol, colProtocol_verifierFirst@Protocol; struct fields: P, V, rounds, verifierFirst
+     > Application type mismatch: The argument
+     >   colVerifier_efficient hC.easy ℓ
+     > has type
+     >   (colVerifier Com ℓ).Efficient
+     > but is expected to have type
+     >   (colProtocol Com ℓ).V.Efficient
+     > in the application
+     >   ZK.hvzk (colVerifier_efficient hC.easy ℓ)
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator_part1 phase=eof spelling=BoolCircuit.CompileListSpec.mk._flat_ctor key=[["str","BoolCircuit"],["str","CompileListSpec"],["str","mk"],["str","_f
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator_part1 phase=eof spelling=BoolCircuit.CompileSpec.mk._flat_ctor key=[["str","BoolCircuit"],["str","CompileSpec"],["str","mk"],["str","_flat_ctor
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator_part1 phase=eof spelling=BoolCircuit.DAGCircuit.IsFaninTwo key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","IsFaninTwo"]] home_key=[["st
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator_part1 phase=eof spelling=BoolCircuit.DAGCircuit.IsWellFormed key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","IsWellFormed"]] home_key=[
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator_part1 phase=eof spelling=BoolCircuit.DAGCircuit._sizeOf_1 key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","_sizeOf_1"]] home_key=[["str"
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Simulator_part1 phase=eof spelling=BoolCircuit.DAGCircuit._sizeOf_inst key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","_sizeOf_inst"]] home_key=[
+      1643| [PS10, Proposition 128.8 with the honest verifier] (`ZK.hvzk`, `colVerifier_efficient`). -/
+      1644| theorem col_hvzk {Com : List Bool → List Bool} {ℓ : PolyExpr} (hC : Commitment Com ℓ) :
+      1645|     HVZK (colProtocol Com ℓ) R3COL :=
+    * 1646|   (col_zk hC).hvzk (colVerifier_efficient hC.easy ℓ)
+      1647| 
+      1648| /-- **[PS10, Proposition 127.6]: Protocol 127.5 is a zero-knowledge proof for `3COL`**

@@ -1,0 +1,17 @@
+====================================================================================================
+KEY NEW|TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean|TCSlib.Cryptography.SecureComputation.sliceMultiMessageSecure_of_prfOut|unfold|301 dsimp Complexity.P | unfold | TCSlib.Cryptography.SecureComputation.sliceMultiMessageSecure_of_prfOut
+  record: 301 dsimp Complexity.P (semireducible)
+  counts sA=- sB=- cA=- cB=- scan=301 dsimp Complexity.P
+  tool: STAGE2 | stmt=no | use Complexity.P_def (TCSlib/Complexity/ClassP/P.lean)
+  ev: evidence/scan/b4/explicit.json#items[1324]
+  DECL at 239
+      239| theorem sliceMultiMessageSecure_of_prfOut {ℓ : PolyExpr}
+       297|         sliceMultiEncDist G n (q.eval n) (off n p.1) (len n p.1) v =
+       298|           fun t => P (X v t) := by
+       299|       funext t
+       300|       rw [sliceMultiEncDist_apply]
+    *  301|       dsimp only [P, X, W]
+       302|       rw [hadvice, SliceReduction.slicePost_tuple (G n) _ _ p.1.2]
+       303|       apply congrArg PrivateKeyScheme.encodeList
+       304|       apply congrArg List.ofFn
+     [Complexity.P] readers: P_def@P, univ_mem_P@PClosure, P_subset_NP@NP, P_subset_PH@Levels, compl_mem_P@CoNP, empty_mem_P@PClosure, inter_mem_P@PClosure, lenEq_mem_P@PClosure, lenLe_mem_P@PClosure, union_mem_P@PClosure, P_subset_EXP@EXP, P_subset_PiP@Levels, test_of_mem_P@PClosure, P_subset_PPoly@PSubsetPPoly

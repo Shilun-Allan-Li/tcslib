@@ -1,0 +1,17 @@
+====================================================================================================
+KEY NEW|TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GarbledRun.lean|TCSlib.Cryptography.SecureComputation.YaoHybridProof.garbledRunWith_poly|unfold|117 simpa Complexity.P | unfold | TCSlib.Cryptography.SecureComputation.YaoHybridProof.garbledRunWith_poly
+  record: 117 simpa Complexity.P (semireducible)
+  counts sA=- sB=- cA=- cB=- scan=117 simpa Complexity.P
+  tool: STAGE2 | stmt=no | use Complexity.P_def (TCSlib/Complexity/ClassP/P.lean)
+  ev: evidence/scan/b4/explicit.json#items[4138]
+  DECL at 87
+       87| theorem garbledRunWith_poly {E₁ E₂ N tableWord : List Bool → List Bool}
+       113|     simpa only [G, PolyExpr.eval_normal] using hCg x
+       114|   have hi x : (BinArith.encWords ((init x).map List.ofFn)).length ≤ I.eval x.length := by
+       115|     simpa only [I, PolyExpr.eval_normal] using hCi x
+       116|   have hn x : (N x).length ≤ P.eval x.length := by
+    *  117|     simpa only [P, PolyExpr.eval_normal] using hCn x
+       118|   have hgl x : (gs x).length ≤ G.eval x.length := by
+       119|     have h := BinArith.length_decWords_le (BinArith.encWords ((gs x).map gateCode))
+       120|     rw [BinArith.decWords_encWords, List.length_map] at h
+     [Complexity.P] readers: P_def@P, univ_mem_P@PClosure, P_subset_NP@NP, P_subset_PH@Levels, compl_mem_P@CoNP, empty_mem_P@PClosure, inter_mem_P@PClosure, lenEq_mem_P@PClosure, lenLe_mem_P@PClosure, union_mem_P@PClosure, P_subset_EXP@EXP, P_subset_PiP@Levels, test_of_mem_P@PClosure, P_subset_PPoly@PSubsetPPoly

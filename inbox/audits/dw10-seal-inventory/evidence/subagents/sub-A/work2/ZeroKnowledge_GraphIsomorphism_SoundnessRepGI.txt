@@ -1,0 +1,189 @@
+====================================================================================================
+KEY H:198 | seal | TCSlib.Cryptography.GI.giVerifierRep_next_end_enc
+  record: TCSlib.Cryptography.GI.giVerifierRep_next_end_enc (lines 197; #248 OPEN_INCOMPLETE)
+  counts sA=2 sB=2 cA=2 cB=2 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.pairSndD_eq (TCSlib/Complexity/ClassNP/PolyTimePairing.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_SoundnessRepGI.log:309
+  DECL at 190, header ends 195
+      190| theorem giVerifierRep_next_end_enc {n : ℕ} (G₀ G₁ : Graph n) (z r : List Bool) (hist : List (List Bool))
+      191|     (h1 : hist.length % 2 ≠ 1) (h2 : ¬ hist.length < 2 * (encInstance G₀ G₁).length) :
+      192|     giVerifierRep.next (encInstance G₀ G₁) z r hist =
+      193|       [decide (∀ j : Fin (encInstance G₀ G₁).length,
+      194|         encGraph (permGraph (cond (r.getD j false) G₁ G₀) (decPerm n (hist.getD (2 * j + 1) []))) =
+      195|           hist.getD (2 * j) [])] := by
+  -- coe-A line 195 cascade=True cls=unsolved goals
+     providers=['Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.GI.decGraphAt', 'TCSlib.Cryptography.GI.encInstance', 'TCSlib.Cryptography.GI.instanceVertexCount', 'TCSlib.Cryptography.decPerm', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.permGraph']
+     referenced=['Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.GI.decGraphAt', 'TCSlib.Cryptography.GI.encInstance', 'TCSlib.Cryptography.GI.giVerifierRep', 'TCSlib.Cryptography.GI.instanceG₀', 'TCSlib.Cryptography.GI.instanceG₁', 'TCSlib.Cryptography.GI.instanceVertexCount', 'TCSlib.Cryptography.GI.wellFormedInstance', 'TCSlib.Cryptography.decPerm', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.permGraph']
+     [Complexity.pairFstD] readers: pairFstD_eq@PolyTimePairing, pairFstD_nil@PolyTimeBlockLoop, pairFstD_pairEncode@PolyTimePairing, polyTimeComputable_pairFstD@PolyTimePairing, pairFstD_of_pairDecode_eq_none@PolyTimePairing, polyTimeComputable_iterate_pairFstD@PolyTimePairing
+     [Complexity.pairSndD] readers: pairSndD_eq@PolyTimePairing, pairSndD_pairEncode@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, pairSndD_of_pairDecode_eq_none@PolyTimePairing
+     [TCSlib.Cryptography.GI.decGraphAt] readers: decGraphAt_apply@Proofs, decGraphAt_padSq@Efficiency, decGraphAt_encGraph@Proofs, encGraph_decGraphAt@Proofs, decGraph_eq_decGraphAt@Proofs
+     [TCSlib.Cryptography.GI.encInstance] readers: encInstance_eq@Proofs, length_encInstance@Proofs, encInstance_mem_Liso_iff@Proofs, encInstance_mem_Lniso_iff@Proofs, wellFormedInstance_encInstance@Proofs, instanceVertexCount_encInstance@Proofs, instanceVertices_length_encInstance@Proofs
+     [TCSlib.Cryptography.GI.instanceVertexCount] readers: instanceVertexCount_def@Proofs, instanceVertexCount_encInstance@Proofs
+     [TCSlib.Cryptography.decPerm] readers: decPerm_def@Encoding, decPerm_val@Encoding, decPerm_encPerm@Encoding, decPerm_symm_val@Encoding
+     [TCSlib.Cryptography.encGraph] readers: encGraph_def@Encoding, encGraph_getD@Encoding, length_encGraph@Encoding, decGraph_encGraph@Encoding, encGraph_getD_nat@Encoding, encGraph_injective@Encoding, decGraphAt_encGraph@GraphIsomorphism, encGraph_getD_of_le@Encoding, colWellFormed_encGraph@Protocol, encGraph_mem_L3COL_iff@Language
+     [TCSlib.Cryptography.permGraph] readers: permGraph_apply@Encoding, permGraph_mul@Encoding, permGraph_one@Encoding, permGraph_injective@GraphIsomorphism, isomorphic_permGraph@GraphIsomorphism, permGraph_mul_inv_of_eq@Encoding, permGraph_permGraph_inv@Encoding
+     > unsolved goals
+     > n : ℕ
+     > G₀ G₁ : Graph n
+     > z r : List Bool
+     > hist : List (List Bool)
+     >> ⊢ [decide
+       192|     giVerifierRep.next (encInstance G₀ G₁) z r hist =
+       193|       [decide (∀ j : Fin (encInstance G₀ G₁).length,
+       194|         encGraph (permGraph (cond (r.getD j false) G₁ G₀) (decPerm n (hist.getD (2 * j + 1) []))) =
+    *  195|           hist.getD (2 * j) [])] := by
+       196|   rw [giVerifierRep_next_end _ _ _ _ h1 h2, wellFormedInstance_encInstance]
+       197|   simp only [true_and]
+  -- coe-A line 198 cascade=False cls=Type mismatch
+     providers=['Complexity.pairSndD', 'TCSlib.Cryptography.GI.encInstance', 'TCSlib.Cryptography.encGraph']
+     referenced=['Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.GI.decGraphAt', 'TCSlib.Cryptography.GI.encInstance', 'TCSlib.Cryptography.GI.giVerifierRep', 'TCSlib.Cryptography.GI.instanceG₀', 'TCSlib.Cryptography.GI.instanceG₁', 'TCSlib.Cryptography.GI.instanceVertexCount', 'TCSlib.Cryptography.GI.wellFormedInstance', 'TCSlib.Cryptography.decPerm', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.permGraph']
+     [Complexity.pairSndD] readers: pairSndD_eq@PolyTimePairing, pairSndD_pairEncode@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, pairSndD_of_pairDecode_eq_none@PolyTimePairing
+     [TCSlib.Cryptography.GI.encInstance] readers: encInstance_eq@Proofs, length_encInstance@Proofs, encInstance_mem_Liso_iff@Proofs, encInstance_mem_Lniso_iff@Proofs, wellFormedInstance_encInstance@Proofs, instanceVertexCount_encInstance@Proofs, instanceVertices_length_encInstance@Proofs
+     [TCSlib.Cryptography.encGraph] readers: encGraph_def@Encoding, encGraph_getD@Encoding, length_encGraph@Encoding, decGraph_encGraph@Encoding, encGraph_getD_nat@Encoding, encGraph_injective@Encoding, decGraphAt_encGraph@GraphIsomorphism, encGraph_getD_of_le@Encoding, colWellFormed_encGraph@Protocol, encGraph_mem_L3COL_iff@Language
+     > Type mismatch
+     >   pairSndD_pairEncode ?m.75 ?m.76
+     > has type
+     >   pairSndD (pairEncode ?m.75 ?m.76) = ?m.76
+     > but is expected to have type
+     >   pairSndD (encInstance G₀ G₁) = encGraph G₁
+       195|           hist.getD (2 * j) [])] := by
+       196|   rw [giVerifierRep_next_end _ _ _ _ h1 h2, wellFormedInstance_encInstance]
+       197|   simp only [true_and]
+    *  198|   rw [instanceG₀_def, instanceG₁_def, show pairSndD (encInstance G₀ G₁) = encGraph G₁ from pairSndD_pairEncode _ _,
+       199|     show pairFstD (encInstance G₀ G₁) = encGraph G₀ from pairFstD_pairEncode _ _]
+       200|   generalize hm : instanceVertexCount (encInstance G₀ G₁) = m
+====================================================================================================
+KEY H:202 | seal | TCSlib.Cryptography.GI.giRep_accept_le
+  record: TCSlib.Cryptography.GI.giRep_accept_le (lines 433; #248 OPEN_TYPED_COINS)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.GI.decGraphAt_apply (TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_SoundnessRepGI.log:536
+  DECL at 400, header ends 403
+      400| theorem giRep_accept_le {n : ℕ} {G₀ G₁ : Graph n} (h : ¬ Isomorphic G₀ G₁) (P' : Strategy)
+      401|     (y z : List Bool) :
+      402|     uprob (fun r : giProtocolRep.ExecCoins P' (encInstance G₀ G₁) =>
+      403|       giProtocolRep.outV P' (encInstance G₀ G₁) y z r = [true]) ≤ (2 : ℝ)⁻¹ ^ (encInstance G₀ G₁).length := by
+  -- coe-A line 425 cascade=False cls='show' tactic failed, pattern
+     providers=['TCSlib.Cryptography.GI.decGraphAt', 'TCSlib.Cryptography.GI.encInstance', 'TCSlib.Cryptography.GI.prefixLE', 'TCSlib.Cryptography.GI.prefixLT', 'TCSlib.Cryptography.decPerm', 'TCSlib.Cryptography.permGraph']
+     referenced=['TCSlib.Cryptography.GI.Isomorphic', 'TCSlib.Cryptography.GI.decGraphAt', 'TCSlib.Cryptography.GI.encInstance', 'TCSlib.Cryptography.GI.giProtocolRep', 'TCSlib.Cryptography.GI.giVerifierRep', 'TCSlib.Cryptography.GI.prefixLE', 'TCSlib.Cryptography.GI.prefixLT', 'TCSlib.Cryptography.Protocol.outV', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.decPerm', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.exec', 'TCSlib.Cryptography.permGraph', 'TCSlib.Cryptography.uprob']
+     [TCSlib.Cryptography.GI.decGraphAt] readers: decGraphAt_apply@Proofs, decGraphAt_padSq@Efficiency, decGraphAt_encGraph@Proofs, encGraph_decGraphAt@Proofs, decGraph_eq_decGraphAt@Proofs
+     [TCSlib.Cryptography.GI.encInstance] readers: encInstance_eq@Proofs, length_encInstance@Proofs, encInstance_mem_Liso_iff@Proofs, encInstance_mem_Lniso_iff@Proofs, wellFormedInstance_encInstance@Proofs, instanceVertexCount_encInstance@Proofs, instanceVertices_length_encInstance@Proofs
+     [TCSlib.Cryptography.GI.prefixLE] readers: prefixLE_apply@Concrete, prefixLE_last@SoundnessRepGI, PsOfFin_init_prefixLE@SoundnessRepGI
+     [TCSlib.Cryptography.GI.prefixLT] readers: prefixLT_apply@Concrete, PsOfFin_prefixLT@SoundnessRepGI
+     [TCSlib.Cryptography.decPerm] readers: decPerm_def@Encoding, decPerm_val@Encoding, decPerm_encPerm@Encoding, decPerm_symm_val@Encoding
+     [TCSlib.Cryptography.permGraph] readers: permGraph_apply@Encoding, permGraph_mul@Encoding, permGraph_one@Encoding, permGraph_injective@GraphIsomorphism, isomorphic_permGraph@GraphIsomorphism, permGraph_mul_inv_of_eq@Encoding, permGraph_permGraph_inv@Encoding
+     > 'show' tactic failed, pattern
+     >   permGraph (bif (List.ofFn b).getD (↑i) false then G₁ else G₀)
+     >         (decPerm n
+     >           (P'.next ?m.244 y (List.ofFn r₁)
+     >             (PsOf (fun k => (List.ofFn b).getD k false) ↑i ++ [[(List.ofFn b).getD (↑i) false]]))) =
+     >       decGraphAt n (P'.next ?m.262 y (List.ofFn r₁) (PsOf (fun k => (List.ofFn b).getD k false) ↑i)) ↔
+     >     permGraph (bif b i then G₁ else G₀) (γfun P' (encInstance G₀ G₁) y i (prefixLE b i) r₁) =
+     >       Hfun P' (encInstance G₀ G₁) y i (prefixLT b i) r₁
+     > is not definitionally equal to target
+     >   permGraph (bif (List.ofFn ((giRepCoins P' (encInstance G₀ G₁)) (b, r₁)).2).getD (↑i) false then G₁ else G₀)
+     >         (decPerm n
+     >           (P'.next (encInstance G₀ G₁) y (List.ofFn ((giRepCoins P' (encInstance G₀ G₁)) (b, r₁)).1)
+     >             (PsOf (fun k => (List.ofFn ((giRepCoins P' (encInstance G₀ G₁)) (b, r₁)).2).getD k false) ↑i ++
+     >               [[(List.ofFn ((giRepCoins P' (encInstance G₀ G₁)) (b, r₁)).2).getD (↑i) false]]))) =
+       422|     (uprob_gi_rep_cheat_le h (Hfun P' (encInstance G₀ G₁) y) (γfun P' (encInstance G₀ G₁) y))
+       423|   rintro ⟨b, r₁⟩
+       424|   refine forall_congr' fun i => ?_
+    *  425|   show permGraph (cond ((List.ofFn b).getD i false) G₁ G₀) (decPerm n (P'.next _ y (List.ofFn r₁)
+       426|       (PsOf (fun k => (List.ofFn b).getD k false) i ++ [[(List.ofFn b).getD i false]]))) =
+       427|     decGraphAt n (P'.next _ y (List.ofFn r₁) (PsOf (fun k => (List.ofFn b).getD k false) i)) ↔
+====================================================================================================
+KEY H:203 | seal | TCSlib.Cryptography.GI.gi_rep_efficientProverProofErr
+  record: TCSlib.Cryptography.GI.gi_rep_efficientProverProofErr (lines 448, 477, 479, 451, 481; #248 OPEN_TYPED_COINS)
+  counts sA=3 sB=4 cA=3 cB=4 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.GI.giProtocolRep_P (TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_SoundnessRepGI.log:556
+  DECL at 438, header ends 439
+      438| theorem gi_rep_efficientProverProofErr (hP : giProverRep.Efficient) (hV : giVerifierRep.Efficient) :
+      439|     EfficientProverProofErr giProtocolRep Liso Riso (fun N => (2 : ℝ)⁻¹ ^ N) where
+  -- coe-A line 445 cascade=False cls=Application type mismatch: The argument
+     providers=['TCSlib.Cryptography.GI.giProtocolRep', 'TCSlib.Cryptography.GI.giProverRep', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.encPerm', 'Turing.pairEncode']
+     referenced=['TCSlib.Cryptography.GI.Isomorphic', 'TCSlib.Cryptography.GI.Liso', 'TCSlib.Cryptography.GI.Riso', 'TCSlib.Cryptography.GI.encInstance', 'TCSlib.Cryptography.GI.giProtocolRep', 'TCSlib.Cryptography.GI.giProverRep', 'TCSlib.Cryptography.GI.giVerifierRep', 'TCSlib.Cryptography.GI.instanceG₀', 'TCSlib.Cryptography.GI.instanceG₁', 'TCSlib.Cryptography.GI.instanceVertexCount', 'TCSlib.Cryptography.GI.wellFormedInstance', 'TCSlib.Cryptography.Protocol.ProverBounded', 'TCSlib.Cryptography.Protocol.outV', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.decPerm', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.encPerm', 'TCSlib.Cryptography.exec', 'TCSlib.Cryptography.permGraph', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [TCSlib.Cryptography.GI.giProtocolRep] readers: giProtocolRep_P@Proofs, giProtocolRep_V@Proofs, giProtocolRep_outV@SoundnessRepGI, giProtocolRep_rounds@Proofs, giProtocolRep_V_coinLen@Proofs, giProtocolRep_verifierFirst@Proofs; struct fields: P, V, rounds, verifierFirst
+     [TCSlib.Cryptography.GI.giProverRep] readers: giProverRep_next@Proofs, giProverRep_coins@Proofs, giProverRep_next_odd@SoundnessRepGI, giProverRep_efficient@EfficiencyRepGI, giProverRep_length_le@Proofs, giProverRep_next_even@SoundnessRepGI, giProverRep_next_graph@Proofs, giProverRep_next_reply@Proofs; struct fields: next, coins
+     [TCSlib.Cryptography.encGraph] readers: encGraph_def@Encoding, encGraph_getD@Encoding, length_encGraph@Encoding, decGraph_encGraph@Encoding, encGraph_getD_nat@Encoding, encGraph_injective@Encoding, decGraphAt_encGraph@GraphIsomorphism, encGraph_getD_of_le@Encoding, colWellFormed_encGraph@Protocol, encGraph_mem_L3COL_iff@Language
+     [TCSlib.Cryptography.encPerm] readers: encPerm_getD@Encoding, length_encPerm@Encoding, decPerm_encPerm@Encoding, encPerm_find_row@Encoding, encPerm_getD_nat@Encoding, encPerm_injective@Encoding, encPerm_getD_of_le@Encoding
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, length_pairEncode@Encoding, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairDecode_pairEncode@Encoding, pairSplitAt_pairEncode@PairSplit, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Application type mismatch: The argument
+     >   giProverRep_length_le ?m.81 ?m.82
+     > has type
+     >   ∀ (r : List Bool) (hist : List (List Bool)), (giProverRep.next ?m.81 ?m.82 r hist).length ≤ List.length ?m.81
+     > but is expected to have type
+     >   ∀ (r : List Bool) (hist : List (List Bool)),
+     >     (giProtocolRep.P.next (pairEncode (encGraph G₀) (encGraph G₁)) (encPerm σ) r hist).length ≤
+     >       PolyExpr.var.eval (pairEncode (encGraph G₀) (encGraph G₁)).length
+     > in the application
+     >   And.intro (giProverRep_length_le ?m.81 ?m.82)
+       442|     refine ⟨.var, ?_⟩
+       443|     intro x hx
+       444|     obtain ⟨n, G₀, G₁, σ, rfl, hσ⟩ := (mem_Liso_iff x).1 hx
+    *  445|     exact ⟨encPerm σ, giProverRep_length_le _ _, fun z => giRep_complete hσ z⟩
+       446|   sound := by
+       447|     intro x hx P' z
+  -- coe-A line 445 cascade=True cls=Type mismatch
+     providers=['TCSlib.Cryptography.GI.encInstance', 'TCSlib.Cryptography.GI.giProtocolRep', 'TCSlib.Cryptography.GI.giProverRep', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.encPerm', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     referenced=['TCSlib.Cryptography.GI.Isomorphic', 'TCSlib.Cryptography.GI.Liso', 'TCSlib.Cryptography.GI.Riso', 'TCSlib.Cryptography.GI.encInstance', 'TCSlib.Cryptography.GI.giProtocolRep', 'TCSlib.Cryptography.GI.giProverRep', 'TCSlib.Cryptography.GI.giVerifierRep', 'TCSlib.Cryptography.GI.instanceG₀', 'TCSlib.Cryptography.GI.instanceG₁', 'TCSlib.Cryptography.GI.instanceVertexCount', 'TCSlib.Cryptography.GI.wellFormedInstance', 'TCSlib.Cryptography.Protocol.ProverBounded', 'TCSlib.Cryptography.Protocol.outV', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.decPerm', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.encPerm', 'TCSlib.Cryptography.exec', 'TCSlib.Cryptography.permGraph', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [TCSlib.Cryptography.GI.encInstance] readers: encInstance_eq@Proofs, length_encInstance@Proofs, encInstance_mem_Liso_iff@Proofs, encInstance_mem_Lniso_iff@Proofs, wellFormedInstance_encInstance@Proofs, instanceVertexCount_encInstance@Proofs, instanceVertices_length_encInstance@Proofs
+     [TCSlib.Cryptography.GI.giProtocolRep] readers: giProtocolRep_P@Proofs, giProtocolRep_V@Proofs, giProtocolRep_outV@SoundnessRepGI, giProtocolRep_rounds@Proofs, giProtocolRep_V_coinLen@Proofs, giProtocolRep_verifierFirst@Proofs; struct fields: P, V, rounds, verifierFirst
+     [TCSlib.Cryptography.GI.giProverRep] readers: giProverRep_next@Proofs, giProverRep_coins@Proofs, giProverRep_next_odd@SoundnessRepGI, giProverRep_efficient@EfficiencyRepGI, giProverRep_length_le@Proofs, giProverRep_next_even@SoundnessRepGI, giProverRep_next_graph@Proofs, giProverRep_next_reply@Proofs; struct fields: next, coins
+     [TCSlib.Cryptography.encGraph] readers: encGraph_def@Encoding, encGraph_getD@Encoding, length_encGraph@Encoding, decGraph_encGraph@Encoding, encGraph_getD_nat@Encoding, encGraph_injective@Encoding, decGraphAt_encGraph@GraphIsomorphism, encGraph_getD_of_le@Encoding, colWellFormed_encGraph@Protocol, encGraph_mem_L3COL_iff@Language
+     [TCSlib.Cryptography.encPerm] readers: encPerm_getD@Encoding, length_encPerm@Encoding, decPerm_encPerm@Encoding, encPerm_find_row@Encoding, encPerm_getD_nat@Encoding, encPerm_injective@Encoding, encPerm_getD_of_le@Encoding
+     [TCSlib.Cryptography.uprob] readers: uprob_def@Probability, uprob_fst@Probability, uprob_not@Probability, uprob_snd@LazySampling, uprob_mono@Probability, uprob_prod@Probability, uprob_true@Probability, uprob_congr@LazySampling, uprob_false@Probability, uprob_or_le@Probability, uprob_le_one@Probability, uprob_nonneg@Probability, uprob_eq_uexp@Probability, uprob_bool_prod@GeneratorFromPermutation; struct fields: cauchy
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, length_pairEncode@Encoding, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairDecode_pairEncode@Encoding, pairSplitAt_pairEncode@PairSplit, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Type mismatch
+     >   giRep_complete hσ z
+     > has type
+     >   (uprob fun (r : giProtocolRep.ExecCoins giProverRep (encInstance G₀ G₁)) =>
+     >       giProtocolRep.outV giProverRep (encInstance G₀ G₁) (encPerm σ) z r = [true]) =
+       442|     refine ⟨.var, ?_⟩
+       443|     intro x hx
+       444|     obtain ⟨n, G₀, G₁, σ, rfl, hσ⟩ := (mem_Liso_iff x).1 hx
+    *  445|     exact ⟨encPerm σ, giProverRep_length_le _ _, fun z => giRep_complete hσ z⟩
+       446|   sound := by
+       447|     intro x hx P' z
+  -- coe-A line 480 cascade=True cls=Type mismatch
+     providers=['TCSlib.Cryptography.GI.Isomorphic', 'TCSlib.Cryptography.GI.Liso', 'TCSlib.Cryptography.GI.Riso', 'TCSlib.Cryptography.GI.encInstance', 'TCSlib.Cryptography.GI.giProtocolRep', 'TCSlib.Cryptography.GI.giProverRep', 'TCSlib.Cryptography.GI.giVerifierRep', 'TCSlib.Cryptography.GI.instanceG₀', 'TCSlib.Cryptography.GI.instanceG₁', 'TCSlib.Cryptography.GI.instanceVertexCount', 'TCSlib.Cryptography.GI.wellFormedInstance', 'TCSlib.Cryptography.Protocol.ProverBounded', 'TCSlib.Cryptography.Protocol.outV', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.decPerm', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.encPerm', 'TCSlib.Cryptography.exec', 'TCSlib.Cryptography.permGraph', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     referenced=['TCSlib.Cryptography.GI.Isomorphic', 'TCSlib.Cryptography.GI.Liso', 'TCSlib.Cryptography.GI.Riso', 'TCSlib.Cryptography.GI.encInstance', 'TCSlib.Cryptography.GI.giProtocolRep', 'TCSlib.Cryptography.GI.giProverRep', 'TCSlib.Cryptography.GI.giVerifierRep', 'TCSlib.Cryptography.GI.instanceG₀', 'TCSlib.Cryptography.GI.instanceG₁', 'TCSlib.Cryptography.GI.instanceVertexCount', 'TCSlib.Cryptography.GI.wellFormedInstance', 'TCSlib.Cryptography.Protocol.ProverBounded', 'TCSlib.Cryptography.Protocol.outV', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.decPerm', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.encPerm', 'TCSlib.Cryptography.exec', 'TCSlib.Cryptography.permGraph', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [TCSlib.Cryptography.GI.Isomorphic] readers: isomorphic_iff@Proofs, isomorphic_permGraph@Proofs
+     [TCSlib.Cryptography.GI.Riso] readers: riso_iff@Proofs, Riso_decidable@Efficiency
+     [TCSlib.Cryptography.GI.encInstance] readers: encInstance_eq@Proofs, length_encInstance@Proofs, encInstance_mem_Liso_iff@Proofs, encInstance_mem_Lniso_iff@Proofs, wellFormedInstance_encInstance@Proofs, instanceVertexCount_encInstance@Proofs, instanceVertices_length_encInstance@Proofs
+     [TCSlib.Cryptography.GI.giProtocolRep] readers: giProtocolRep_P@Proofs, giProtocolRep_V@Proofs, giProtocolRep_outV@SoundnessRepGI, giProtocolRep_rounds@Proofs, giProtocolRep_V_coinLen@Proofs, giProtocolRep_verifierFirst@Proofs; struct fields: P, V, rounds, verifierFirst
+     [TCSlib.Cryptography.GI.giProverRep] readers: giProverRep_next@Proofs, giProverRep_coins@Proofs, giProverRep_next_odd@SoundnessRepGI, giProverRep_efficient@EfficiencyRepGI, giProverRep_length_le@Proofs, giProverRep_next_even@SoundnessRepGI, giProverRep_next_graph@Proofs, giProverRep_next_reply@Proofs; struct fields: next, coins
+     [TCSlib.Cryptography.GI.giVerifierRep] readers: giVerifierRep_next@Proofs, giVerifierRep_next_end@SoundnessRepGI, giVerifierRep_next_mid@SoundnessRepGI, giVerifierRep_next_odd@SoundnessRepGI, giVerifierRep_efficient@EfficiencyRepGI, giVerifierRep_next_end_enc@SoundnessRepGI; struct fields: next, coins
+     [TCSlib.Cryptography.GI.instanceG₀] readers: instanceG₀_def@Proofs
+     [TCSlib.Cryptography.GI.instanceG₁] readers: instanceG₁_def@Proofs
+     [TCSlib.Cryptography.GI.instanceVertexCount] readers: instanceVertexCount_def@Proofs, instanceVertexCount_encInstance@Proofs
+     [TCSlib.Cryptography.GI.wellFormedInstance] readers: wellFormedInstance_def@Proofs, wellFormedInstance_encInstance@Proofs
+     [TCSlib.Cryptography.Protocol.ProverBounded] readers: proverBounded_iff@Interaction
+     [TCSlib.Cryptography.Protocol.outV] readers: outV_eq@Interaction, outV_withV@Interaction, outV_eq_out@Interaction, pullback_outV@NP, outV_eq_getLast_of_moverIsV@Interaction
+     [TCSlib.Cryptography.Strategy.Efficient] readers: efficient_iff@Interaction, ofNUPPT_efficient@Interaction, pullback_efficient@NP
+     [TCSlib.Cryptography.Strategy.coinLen] readers: coinLen_eq@Interaction, coinLen_pullback@NP
+     [TCSlib.Cryptography.decPerm] readers: decPerm_def@Encoding, decPerm_val@Encoding, decPerm_encPerm@Encoding, decPerm_symm_val@Encoding
+     [TCSlib.Cryptography.encGraph] readers: encGraph_def@Encoding, encGraph_getD@Encoding, length_encGraph@Encoding, decGraph_encGraph@Encoding, encGraph_getD_nat@Encoding, encGraph_injective@Encoding, decGraphAt_encGraph@GraphIsomorphism, encGraph_getD_of_le@Encoding, colWellFormed_encGraph@Protocol, encGraph_mem_L3COL_iff@Language
+     [TCSlib.Cryptography.encPerm] readers: encPerm_getD@Encoding, length_encPerm@Encoding, decPerm_encPerm@Encoding, encPerm_find_row@Encoding, encPerm_getD_nat@Encoding, encPerm_injective@Encoding, encPerm_getD_of_le@Encoding
+     [TCSlib.Cryptography.exec] readers: exec_succ@Interaction, exec_zero@Interaction, exec_length@Interaction; struct fields: fst, snd
+     [TCSlib.Cryptography.permGraph] readers: permGraph_apply@Encoding, permGraph_mul@Encoding, permGraph_one@Encoding, permGraph_injective@GraphIsomorphism, isomorphic_permGraph@GraphIsomorphism, permGraph_mul_inv_of_eq@Encoding, permGraph_permGraph_inv@Encoding
+     [TCSlib.Cryptography.uprob] readers: uprob_def@Probability, uprob_fst@Probability, uprob_not@Probability, uprob_snd@LazySampling, uprob_mono@Probability, uprob_prod@Probability, uprob_true@Probability, uprob_congr@LazySampling, uprob_false@Probability, uprob_or_le@Probability, uprob_le_one@Probability, uprob_nonneg@Probability, uprob_eq_uexp@Probability, uprob_bool_prod@GeneratorFromPermutation; struct fields: cauchy
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, length_pairEncode@Encoding, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairDecode_pairEncode@Encoding, pairSplitAt_pairEncode@PairSplit, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Type mismatch
+     >   giRep_complete hσ z
+     > has type
+     >   (uprob fun (r : giProtocolRep.ExecCoins giProverRep (encInstance G₀ G₁)) =>
+     >       giProtocolRep.outV giProverRep (encInstance G₀ G₁) (encPerm σ) z r = [true]) =
+       477|   completeWitness := by
+       478|     intro x y hxy z
+       479|     obtain ⟨n, G₀, G₁, σ, rfl, rfl, hσ⟩ := (riso_iff x y).1 hxy
+    *  480|     exact giRep_complete hσ z
+       481| 
+       482| /-- **[PS10, Proposition 120.7], repeated:** the `|x|`-fold graph isomorphism protocol is an
+DUP SEAL-0372 -> same decl TCSlib.Cryptography.GI.giVerifierRep_next_end_enc | tool: STAGE2 | use Complexity.pairSndD_eq (TCSlib/Complexity/ClassNP/PolyTimePairing.lean) | record: TCSlib.Cryptography.GI.giVerifierRep_next_end_enc l.198: Type mismatch (#248 inherited_reached_in_baseline_probe)
+DUP SEAL-0373 -> same decl TCSlib.Cryptography.GI.giVerifierRep_next_end_enc | tool: STAGE2 | use Complexity.pairSndD_eq (TCSlib/Complexity/ClassNP/PolyTimePairing.lean) | record: TCSlib.Cryptography.GI.giVerifierRep_next_end_enc l.195: unsolved goals (#248 inherited_reached_in_baseline_probe)
+DUP SEAL-0374 -> same decl TCSlib.Cryptography.GI.giRep_accept_le | tool: STAGE2 | use TCSlib.Cryptography.GI.decGraphAt_apply (TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean) | record: TCSlib.Cryptography.GI.giRep_accept_le l.425: 'show' tactic failed, pattern (#248 inherited_same_native_step)
+DUP SEAL-0375 -> same decl TCSlib.Cryptography.GI.gi_rep_efficientProverProofErr | tool: STAGE2 | use TCSlib.Cryptography.GI.giProtocolRep_P (TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean) | record: TCSlib.Cryptography.GI.gi_rep_efficientProverProofErr l.445: Application type mismatch: The argument (#248 inherited_reached_in_baseline_probe)
+DUP SEAL-0376 -> same decl TCSlib.Cryptography.GI.gi_rep_efficientProverProofErr | tool: STAGE2 | use TCSlib.Cryptography.GI.giProtocolRep_P (TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean) | record: TCSlib.Cryptography.GI.gi_rep_efficientProverProofErr l.445: Type mismatch (#248 inherited_reached_in_baseline_probe)
+DUP SEAL-0377 -> same decl TCSlib.Cryptography.GI.gi_rep_efficientProverProofErr | tool: STAGE2 | use TCSlib.Cryptography.GI.giProtocolRep_P (TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean) | record: TCSlib.Cryptography.GI.gi_rep_efficientProverProofErr l.480: Type mismatch (#248 inherited_reached_in_baseline_probe)

@@ -20,6 +20,13 @@
 # NEW rows: each failing declaration (any variant) with no seal item, each foreign scan item (subkinds semireducible,
 # irreducible, instance; abbrev/reducible/projection items are notation and only counted) with no unfold item, each
 # attributed eqref with no eqn item.
+# Change 2026-11-17 (lead): file-level seal diagnostics. The ledger's NO-DECLARATION SEAL ids (whole-file diagnostics with no
+#  declaration) are matched by path, line, message class and the named definition against the seal errors outside any
+#  declaration (they were wrongly reported CHANGED/removed); seal failures made only of `failed to set [local irreducible]`
+#  (the owner's own attribute line meeting the seal's) get no class, fix HFIX and pending DW10-W5.
+# Change 2026-11-17 (lead, from sub-B's review): the statement test compares the error column with the top-level `:=` /
+#  `where` of the header's last line; eqn items match the reference with only the private prefix removed (the equation
+#  lemma suffix kept), one-to-one; unqualified scan items bound locally in their declaration are dropped (scan-shadowed.tsv); open-items.tsv shows the tool's class (with the reviewer and reviewed class), not the override; before, any error on that line counted as the statement (one-line declarations, `:= by`).
 import sys, os, re, json, csv, glob, collections, subprocess
 ev, pack, repo, base, outp, outs = sys.argv[1:7]
 def tsv(p): return list(csv.DictReader((l for l in open(p, encoding='utf-8') if not l.startswith('#')), delimiter='\t'))
@@ -29,6 +36,7 @@ batches = [l.rstrip('\n').split('\t') for l in open(os.path.join(ev, 'collect/ba
 owner = {r[2]: dict(batch=r[0], module=r[1], tier=r[3], agent=r[4]) for r in batches}
 mod2path = {r[1]: r[2] for r in batches}
 AUX = re.compile(r'\.(proof_\d+|match_\d+|eq_\d+|eq_def|eq_unfold|_unary|_binary|_sunfold|_unsafe_rec|splitter|_proof_\d+|_simp_\d+|_cstage\d|_lambda_\d+|_eq_\d+)$')
+def nopriv(n): return re.sub(r'^_private\.[^ ]*?\.0\.', '', n)
 def userbase(n):
     n = re.sub(r'^_private\.[^ ]*?\.0\.', '', n) if n.startswith('_private.') else n
     while AUX.search(n): n = AUX.sub('', n)
@@ -97,9 +105,10 @@ def stmt_end(path, d):
                 for k, ch in enumerate(t):
                     if ch in '([{⟨': depth += 1
                     elif ch in ')]}⟩': depth -= 1
-                    elif depth == 0 and t.startswith(':=', k): return (x['decl_line'], i + 1)
-                if depth == 0 and (re.search(r'(^|\s)where\b', t) and i >= x['decl_line']): return (x['decl_line'], i + 1)
-                if i > x['decl_line'] - 1 and re.match(r'^\s*\|', t): return (x['decl_line'], i)
+                    elif depth == 0 and t.startswith(':=', k): return (x['decl_line'], i + 1, k)
+                mw = re.search(r'(^|\s)where\b', t)
+                if depth == 0 and (mw and i >= x['decl_line']): return (x['decl_line'], i + 1, mw.end() - 5)
+                if i > x['decl_line'] - 1 and re.match(r'^\s*\|', t): return (x['decl_line'], i, None)
             return (x['decl_line'], x['end'])
     return None
 LIST = {l.split('\t')[0] for l in open(os.path.join(pack, 'list-only.txt'), encoding='utf-8') if l.strip() and not l.startswith(('#', 'path\t'))}
@@ -139,11 +148,24 @@ def known(path, d):
     if path.endswith('Asymptotic/Universal.lean'): return 'Gate 35; Gate 11'
     if path in GATE11: return 'Gate 11'
     return '-'
+ATTR = 'failed to set `[local irreducible]`'
+HFIX = ("none: the owner's own `attribute [local irreducible]` line meets the seal's attribute (harness interaction; #248 "
+        "inherited_source_attribute_interaction); DW10-W5")
+def harness_only(path, d):
+    es = [e for v in V for e in errs[(path, d)][v]] if d else []
+    return bool(es) and all(e['message'].startswith(ATTR) for e in es)
+def in_stmt(sp, line, col):
+    # the header spans sp[0]..sp[1]; on its last line only the text before the top-level `:=` / `where` (column sp[2]) is the
+    # statement: an error at or after that column (an `rfl` term, the `by` of an unsolved proof) is in the proof
+    if not sp or not line or not (sp[0] <= line <= sp[1]): return False
+    if line == sp[1] and sp[2] is not None and col is not None and col >= sp[2]: return False
+    return True
 def classify_seal(path, d):
+    if harness_only(path, d): return ('-', 'no', HFIX)
     c = counts(path, d)
     if c['coe-A'] > 0:
         e0 = errs[(path, d)]['coe-A'][0]; sp = stmt_end(path, d)
-        if sp and e0['source_line'] and sp[0] <= e0['source_line'] <= sp[1]:
+        if in_stmt(sp, e0['source_line'], e0.get('col')):
             return ('STATEMENT', 'yes', 'separate ruling: the statement reads ' + (','.join(e0['providers']) or 'a sealed definition'))
         prov = next((p for e in errs[(path, d)]['coe-A'] for p in e['providers']), None)
         cl, fx = fixfor(prov)
@@ -154,7 +176,8 @@ def classify_seal(path, d):
     return ('-', 'no', '-')
 def classify_read(path, d, prov, line):
     sp = stmt_end(path, d)
-    if sp and line and sp[0] <= int(line) <= sp[1]: return ('STATEMENT', 'yes', f'separate ruling: the statement reads {prov}')
+    # a tactic read on the header's last line follows its `:= by`: the proof
+    if in_stmt(sp, int(line) if line else None, 10 ** 9): return ('STATEMENT', 'yes', f'separate ruling: the statement reads {prov}')
     cl, fx = fixfor(prov); return (cl, 'no', fx)
 OUT = []
 def row(item_id, source, channel, path, d, record, status, change, cnt=None, scan_s='-', cls='-', stl='no', fix='-', pending='-', kr='-', evid='-'):
@@ -169,6 +192,36 @@ def seal_evidence(path, d):
     r = sealrows.get(path, {}).get('coe-A')
     return f"evidence/seals/runs/mods/{r['run_module'].replace('/', '_')}.log" if r else '-'
 used_seal = set(); used_scan = set(); used_eq = set()
+# ---- local shadowing: an unqualified scan item whose name is bound locally in its declaration before the read (`let`, `set`,
+# `have`, `obtain`, `intro`, `fun`, a binder `(X :`) names the local, not the foreign definition the archived lexer resolved it to
+# (for example `let P := …` read as Complexity.P). Such items are dropped and listed in evidence/scan-shadowed.tsv.
+def shadowed(it):
+    x = it['item']
+    if '.' in x or not re.fullmatch(r"[\w'₀-₉]+", x): return None
+    decls = touched.get(it['file'], {}).get('declarations', [])
+    dd = [q for q in decls if q['decl_line'] <= it['line'] <= q['end']]
+    if not dd: return None
+    if it['file'] not in srccache: srccache[it['file']] = subprocess.run(['git', '-C', repo, 'show', f'{base}:{it["file"]}'], capture_output=True, text=True).stdout.split('\n')
+    L = srccache[it['file']]; X = re.escape(x)
+    N = r"(?<![\w.'])" + X + r"(?![\w'])"
+    pat = re.compile(r'\b(?:let|set|have)\s+' + X + r"(?![\w'])" + '|' + r'\b(?:intro|intros|rintro|obtain|rcases)\b[^:=\n]*?' + N + '|' +
+                     r'\bfun\b[^=\n]*?' + N + r'[^=\n]*=>' + '|' + r"[({\[⦃]\s*(?:[\w']+\s+)*" + X + r'\s*:(?!=)')
+    for i in range(dd[0]['decl_line'] - 1, it['line']):
+        t = re.sub(r'--.*', '', L[i])
+        if pat.search(t): return f'l.{i + 1}: {t.strip()[:120]}'
+    return None
+SHADOW = []
+for k in list(scan):
+    keep = []
+    for it in scan[k]:
+        why = shadowed(it)
+        if why: SHADOW.append((it, why))
+        else: keep.append(it)
+    scan[k] = keep
+with open(os.path.join(ev, 'scan-shadowed.tsv'), 'w', encoding='utf-8') as f:
+    f.write('path\tdeclaration\tline\ttactic\titem\tresolved_by_lexer\tlocal_binding\tevidence\n')
+    for it, why in SHADOW: f.write('\t'.join([it['file'], it['decl'], str(it['line']), it['tactic'], it['item'], it['resolved'], why.replace('\t', ' '), it['ev']]) + '\n')
+print('scan items dropped as local shadowing', len(SHADOW), file=sys.stderr)
 # ---- current SEAL ids (needed first: historical rows and pairs use them)
 seal_status = {}
 bydecl = collections.defaultdict(list)
@@ -211,7 +264,7 @@ def seal_item(item_id, source, r, path, d, record, status, change, pend='-'):
     if status in ('FIXED_SINCE', 'HANDED-OFF', 'NOT_CHECKED') or not d: cl = ('-', 'no', '-')
     else: cl = classify_seal(path, d)
     row(item_id, source, 'seal', path, d, record, status, change, counts(path, d) if d else None, '-', cl[0], cl[1], cl[2],
-        '#347' if known(path, d) == 'F-01' else pend, known(path, d), seal_evidence(path, d) if d else '-')
+        '#347' if known(path, d) == 'F-01' else ('DW10-W5' if harness_only(path, d) else pend), known(path, d), seal_evidence(path, d) if d else '-')
 # ---- historical
 for r in H:
     iid = f"H:{r['row']}"; path = r['base_path']; ch = r['channel']
@@ -258,8 +311,8 @@ for r in H:
     else:
         ref = r['detail'].strip()
         its = eqr.get((path, d), [])
-        hit = next((x for x in its if userbase(x['ref']) == userbase(ref) or re.sub(r'^_private\.[^ ]*?\.0\.', '', x['ref']) == ref), None)
-        hit2 = hit or next((x for x in its if userbase(x['target']) == userbase(ref)), None)
+        hit = next((x for x in its if id(x) not in used_eq and nopriv(x['ref']) == nopriv(ref)), None)
+        hit2 = hit or next((x for x in its if id(x) not in used_eq and userbase(x['target']) == userbase(ref)), None)
         if hit2 is None: st, chg = 'FIXED_SINCE', ('stayed fixed' if r['disposition_248'].startswith('REPAIRED') else '-')
         else:
             used_eq.add(id(hit2)); st = 'STILL_OPEN' if hit and not r['disposition_248'].startswith('REPAIRED') and not mv else 'CHANGED'
@@ -271,7 +324,20 @@ for r in C:
     iid = r['id']; path = r['base_path']; rec = f"{r['declaration']} l.{r['line_248']}: {r['error_or_item'][:120]} (#248 {r['disposition_248']})"
     chn = 'seal' if iid.startswith('SEAL') else ('unfold' if iid.startswith('C1') else 'eqn')
     if r['scope'] == 'HANDED-OFF': row(iid, '#248-current', chn, path, r['declaration'], rec, 'HANDED-OFF', '-'); continue
-    if r['scope'] == 'NO-DECLARATION': row(iid, '#248-current', chn, path, r['declaration'], rec, 'CHANGED', 'declaration removed: not found at the base (collector)'); continue
+    if r['scope'] == 'NO-DECLARATION':
+        # file-level seal diagnostics (no declaration, #248 inherited_source_attribute_interaction): matched by path, line,
+        # message class and the definition named in the message, against the seal errors outside any declaration
+        L = r['line_248']; fp = path or r['path_248']; od = f'<outside src:{L}>' if L else None
+        if chn == 'seal' and od and sealed(fp) and (fp, od) in errs:
+            A = errs[(fp, od)]['strict-A']; short = r['providers'].split('.')[-1]
+            if any(e['message'].startswith(ATTR) and ('`' + short + '`') in e['message'] for e in A):
+                used_seal.add((fp, od))
+                nids = sum(1 for q in C if q['scope'] == 'NO-DECLARATION' and q['path_248'] == r['path_248'] and q['line_248'] == L)
+                st = 'STILL_OPEN' if len(A) == nids and harness_only(fp, od) else 'CHANGED'
+                row(iid, '#248-current', chn, fp, od, rec, st, f'no declaration: file-level attribute line {L}' + ('' if st == 'STILL_OPEN' else f'; {len(A)} errors on the line (strict-A) for {nids} ids'),
+                    counts(fp, od), '-', '-', 'no', HFIX, 'DW10-W5', '-', seal_evidence(fp, od)); continue
+            row(iid, '#248-current', chn, fp, r['declaration'], rec, 'FIXED_SINCE', 'file-level diagnostic gone at the base'); continue
+        row(iid, '#248-current', chn, path, r['declaration'], rec, 'CHANGED', 'declaration removed: not found at the base (collector)'); continue
     d = resolve(path, r['declaration']); mv = r['base_match'] == 'moved'
     if not d: row(iid, '#248-current', chn, path, r['declaration'], rec, 'CHANGED', 'declaration not found at the base (collector)'); continue
     if chn == 'seal':
@@ -281,7 +347,10 @@ for r in C:
         m = re.match(r'(\S+)\s+(\S+)', r['error_or_item']); tac = m.group(1) if m else None; prov = r['providers']
         its = [x for x in scan.get((path, d), []) if (path, d, id(x)) not in used_scan]
         hit = next((x for x in its if x['resolved'] == prov and x['tactic'] == tac), None) or next((x for x in its if x['resolved'] == prov), None)
-        if hit is None: st, chg, sc = 'FIXED_SINCE', '-', '-'
+        shd = next((it for it, why in SHADOW if it['file'] == path and it['decl'] == d and it['resolved'] == prov), None)
+        if hit is None and shd is not None:
+            st, chg, sc = 'FIXED_SINCE', f"no read: the item is the local `{shd['item']}` bound in the declaration, which the lexer resolved to {prov} (scan-shadowed.tsv; DW10-W7)", '-'
+        elif hit is None: st, chg, sc = 'FIXED_SINCE', '-', '-'
         else:
             used_scan.add((path, d, id(hit))); sc = f"{hit['line']} {hit['tactic']} {hit['resolved']}"
             st = 'STILL_OPEN' if hit['tactic'] == tac and not mv else 'CHANGED'
@@ -290,8 +359,8 @@ for r in C:
         row(iid, '#248-current', chn, path, d, rec, st, chg, None, sc, *cl, '-', known(path, d), hit['ev'] if hit else '-')
     else:
         ref = r['error_or_item'].strip(); its = eqr.get((path, d), [])
-        hit = next((x for x in its if x['ref'] == ref or userbase(x['ref']) == userbase(ref)), None)
-        hit2 = hit or next((x for x in its if userbase(x['target']) == userbase(r['providers'])), None)
+        hit = next((x for x in its if id(x) not in used_eq and nopriv(x['ref']) == nopriv(ref)), None)
+        hit2 = hit or next((x for x in its if id(x) not in used_eq and userbase(x['target']) == userbase(r['providers'])), None)
         if hit2 is None: st, chg = 'FIXED_SINCE', '-'
         else: used_eq.add(id(hit2)); st = 'STILL_OPEN' if hit and not mv else 'CHANGED'; chg = '-' if st == 'STILL_OPEN' else ('reference ' + hit2['ref'] if not hit else 'moved')
         cl = classify_read(path, d, hit2['target'], None) if hit2 else ('-', 'no', '-')
@@ -353,7 +422,7 @@ for (path, d), vv in sorted(errs.items(), key=lambda x: (x[0][0], str(x[0][1])))
     rec = f"first error l.{e0['source_line']}: {e0['message_class']}" + (f"; providers {','.join(e0['providers'])}" if e0['providers'] else '')
     cl = classify_seal(path, d)
     row(f'NEW:{newn}', 'new', 'seal', path, d, rec, 'NEW', (f'{cascades} cascade error(s) after the first (coe-A)' if cascades else '-'),
-        c, '-', cl[0], cl[1], cl[2], '#347' if known(path, d) == 'F-01' else '-', known(path, d), seal_evidence(path, d))
+        c, '-', cl[0], cl[1], cl[2], '#347' if known(path, d) == 'F-01' else ('DW10-W5' if harness_only(path, d) else '-'), known(path, d), seal_evidence(path, d))
 for (path, d), its in sorted(scan.items(), key=lambda x: (x[0][0], str(x[0][1]))):
     if path not in owner: continue
     for it in its:
@@ -368,6 +437,31 @@ for (path, d), its in sorted(eqr.items(), key=lambda x: (x[0][0], str(x[0][1])))
         if id(it) in used_eq: continue
         newn += 1; cl = classify_read(path, d, it['target'], None)
         row(f'NEW:{newn}', 'new', 'eqn', path, d, f"{it['ref']} (target {it['target']}, {it['target_home']})", 'NEW', '-', None, it['ref'], cl[0], cl[1], cl[2], '-', known(path, d), it['ev'])
+# ---- review overrides (classification review, brief: "the classification review"): evidence/review/overrides-*.tsv with
+# columns key, class, statement_level, fix, note (key = item_id for input rows; NEW|path|declaration|channel|read for NEW rows,
+# stable across re-runs). An override replaces the tool's class/statement_level/fix of an open item; the open-items sheet
+# evidence/review/open-items.tsv lists every open item with its key for the reviewers.
+def okey(x): return x[0] if not x[0].startswith('NEW:') else '|'.join(['NEW', x[3], x[5], x[2], x[11] if x[11] != '-' else x[6]])
+ov = {}
+for f in sorted(glob.glob(os.path.join(ev, 'review/overrides-*.tsv'))):
+    for r in csv.DictReader(open(f, encoding='utf-8'), delimiter='\t'): ov[r['key']] = dict(r, file=os.path.basename(f))
+applied = 0
+TOOL = {id(x): (x[14], x[15], x[16]) for x in OUT}   # the tool's own classification (open-items.tsv shows it, not the override)
+for x in OUT:
+    o = ov.get(okey(x))
+    if o and x[12] in ('STILL_OPEN', 'CHANGED', 'NEW') and x[14] != '-':
+        x[14], x[15], x[16] = o['class'], o['statement_level'], o['fix']; applied += 1
+os.makedirs(os.path.join(ev, 'review'), exist_ok=True)
+agent_of = {p: v['agent'] for p, v in owner.items()}
+with open(os.path.join(ev, 'review/open-items.tsv'), 'w', encoding='utf-8') as f:
+    f.write('key\tagent\titem_id\tchannel\tbase_path\tdeclaration\trecord\tstrict_A\tstrict_B\tcoe_A\tcoe_B\tscan\tstatus\tclass\tstatement_level\tfix\tknown_record\tevidence\treviewed_by\treviewed_class\n')
+    for x in OUT:
+        t = TOOL[id(x)]
+        if t[0] not in ('-', '') and x[12] in ('STILL_OPEN', 'CHANGED', 'NEW'):
+            o = ov.get(okey(x))
+            f.write('\t'.join(str(v).replace('\t', ' ').replace('\n', ' ') for v in [okey(x), agent_of.get(x[3], '-'), x[0], x[2], x[3], x[5], x[6], x[7], x[8], x[9], x[10], x[11], x[12], t[0], t[1], t[2], x[18], x[19],
+                    o['file'].replace('overrides-', '').replace('.tsv', '') if o else '-', o['class'] if o else '-']) + '\n')
+print('overrides applied', applied, 'of', len(ov), file=sys.stderr)
 HD = ['item_id', 'source', 'channel', 'base_path', 'tier', 'declaration', 'record', 'strict_A', 'strict_B', 'coe_A', 'coe_B', 'scan', 'status',
       'change', 'class', 'statement_level', 'fix', 'pending', 'known_record', 'evidence']
 with open(outp, 'w', encoding='utf-8') as f:

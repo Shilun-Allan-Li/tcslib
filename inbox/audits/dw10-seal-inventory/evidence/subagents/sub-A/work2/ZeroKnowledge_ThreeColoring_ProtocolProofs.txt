@@ -1,0 +1,216 @@
+====================================================================================================
+KEY H:252 | seal | TCSlib.Cryptography.ColProofs.colProver_next_eq
+  record: TCSlib.Cryptography.ColProofs.colProver_next_eq (lines 180; #248 OPEN_INCOMPLETE)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.Strategy.encodeMsgs_nil (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_ProtocolProofs.log:291
+  DECL at 175, header ends 177
+      175| theorem colProver_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (x y r : List Bool)
+      176|     (hist : List (List Bool)) :
+      177|     (colProver Com ℓ).next x y r hist = proverStr Com ℓ (ilayout x y hist r) := by
+  -- coe-A line 180 cascade=False cls=Tactic X failed: The left-hand side
+     providers=['TCSlib.Cryptography.Strategy.encodeMsgs']
+     referenced=['TCSlib.Cryptography.ColMachines.argM', 'TCSlib.Cryptography.ColMachines.commitStr', 'TCSlib.Cryptography.ColMachines.ilayout', 'TCSlib.Cryptography.ColMachines.mOf', 'TCSlib.Cryptography.ColMachines.openStr', 'TCSlib.Cryptography.ColMachines.proverStr', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.decColoring', 'TCSlib.Cryptography.decGraph', 'TCSlib.Cryptography.edgeAt', 'TCSlib.Cryptography.edgeIdxOfMsg', 'TCSlib.Cryptography.edgeOf', 'TCSlib.Cryptography.encColor', 'TCSlib.Cryptography.multiCom', 'TCSlib.Cryptography.padColor', 'TCSlib.Cryptography.samplePerm3', 'Turing.pairEncode']
+     [TCSlib.Cryptography.Strategy.encodeMsgs] readers: encodeMsgs_nil@Interaction, encodeMsgs_cons@Interaction, pairFstD_encodeMsgs@Interaction
+     > Tactic `rfl` failed: The left-hand side
+     >   Strategy.encodeMsgs []
+     > is not definitionally equal to the right-hand side
+     >   []
+     > 
+     > Com : List Bool → List Bool
+     > ℓ : PolyExpr
+     > x y r : List Bool
+     > ⊢ Strategy.encodeMsgs [] = []
+       177|     (colProver Com ℓ).next x y r hist = proverStr Com ℓ (ilayout x y hist r) := by
+       178|   cases hist with
+       179|   | nil =>
+    *  180|     rw [proverStr_def, if_pos (by rw [argM_ilayout]; rfl), commitStr_ilayout]
+       181|     rfl
+       182|   | cons w hist' =>
+====================================================================================================
+KEY H:253 | seal | TCSlib.Cryptography.ColProofs.colVerifier_next_eq
+  record: TCSlib.Cryptography.ColProofs.colVerifier_next_eq (lines 224, 231, 233, 243; #248 OPEN_INCOMPLETE)
+  counts sA=4 sB=4 cA=4 cB=4 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.Strategy.encodeMsgs_nil (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_ProtocolProofs.log:335
+  DECL at 220, header ends 222
+      220| theorem colVerifier_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (x z r : List Bool)
+      221|     (hist : List (List Bool)) :
+      222|     (colVerifier Com ℓ).next x z r hist = verifierStr Com ℓ (ilayout x z hist r) := by
+  -- coe-A line 224 cascade=False cls=Tactic X failed: The left-hand side
+     providers=['TCSlib.Cryptography.Strategy.encodeMsgs']
+     referenced=['Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.ColMachines.LOf', 'TCSlib.Cryptography.ColMachines.argM', 'TCSlib.Cryptography.ColMachines.argX', 'TCSlib.Cryptography.ColMachines.checkStr', 'TCSlib.Cryptography.ColMachines.eOf', 'TCSlib.Cryptography.ColMachines.ilayout', 'TCSlib.Cryptography.ColMachines.mOf', 'TCSlib.Cryptography.ColMachines.nOf', 'TCSlib.Cryptography.ColMachines.verdictStr', 'TCSlib.Cryptography.ColMachines.verifierStr', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.decGraph', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.sampleEdgeIdx', 'Turing.pairEncode']
+     [TCSlib.Cryptography.Strategy.encodeMsgs] readers: encodeMsgs_nil@Interaction, encodeMsgs_cons@Interaction, pairFstD_encodeMsgs@Interaction
+     > Tactic `rfl` failed: The left-hand side
+     >   Strategy.encodeMsgs []
+     > is not definitionally equal to the right-hand side
+     >   []
+     > 
+     > Com : List Bool → List Bool
+     > ℓ : PolyExpr
+     > x z r : List Bool
+     > ⊢ Strategy.encodeMsgs [] = []
+       221|     (hist : List (List Bool)) :
+       222|     (colVerifier Com ℓ).next x z r hist = verifierStr Com ℓ (ilayout x z hist r) := by
+       223|   rcases hist with _ | ⟨com, _ | ⟨opn, _ | ⟨m3, t⟩⟩⟩
+    *  224|   · rw [verifierStr_def, if_pos (by rw [argM_ilayout]; rfl)]
+       225|     rfl
+       226|   · have c1 : argM (ilayout x z [com] r) ≠ [] := by
+  -- coe-A line 231 cascade=True cls=Tactic X failed: The left-hand side
+     providers=['TCSlib.Cryptography.ColMachines.argM', 'TCSlib.Cryptography.ColMachines.ilayout', 'TCSlib.Cryptography.Strategy.encodeMsgs']
+     referenced=['Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.ColMachines.LOf', 'TCSlib.Cryptography.ColMachines.argM', 'TCSlib.Cryptography.ColMachines.argX', 'TCSlib.Cryptography.ColMachines.checkStr', 'TCSlib.Cryptography.ColMachines.eOf', 'TCSlib.Cryptography.ColMachines.ilayout', 'TCSlib.Cryptography.ColMachines.mOf', 'TCSlib.Cryptography.ColMachines.nOf', 'TCSlib.Cryptography.ColMachines.verdictStr', 'TCSlib.Cryptography.ColMachines.verifierStr', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.decGraph', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.sampleEdgeIdx', 'Turing.pairEncode']
+     [TCSlib.Cryptography.ColMachines.argM] readers: argM_poly@Machines, argM_ilayout@Machines
+     [TCSlib.Cryptography.ColMachines.ilayout] readers: ilayout_def@Machines, LOf_ilayout@Parties, blk_ilayout@Parties, eOf_ilayout@Parties, mOf_ilayout@Parties, nOf_ilayout@Parties, argM_ilayout@Machines, argX_ilayout@Machines, argZ_ilayout@Machines, eRep_ilayout@Parties, comAt_ilayout@Parties, tblOf_ilayout@Parties, colBits_ilayout@Parties, inCoins_ilayout@Machines
+     [TCSlib.Cryptography.Strategy.encodeMsgs] readers: encodeMsgs_nil@Interaction, encodeMsgs_cons@Interaction, pairFstD_encodeMsgs@Interaction
+     > Tactic `rfl` failed: The left-hand side
+     >   Strategy.encodeMsgs []
+     > is not definitionally equal to the right-hand side
+     >   []
+     > 
+       228|       exact Turing.pairEncode_ne_nil _ _
+       229|     have c2 : pairSndD (argM (ilayout x z [com] r)) = [] := by
+       230|       rw [argM_ilayout, Strategy.encodeMsgs_cons, pairSndD_pairEncode]
+    *  231|       rfl
+       232|     rw [verifierStr_def, if_neg c1, if_pos c2, eOf_ilayout]
+       233|     rfl
+  -- coe-A line 233 cascade=True cls=Tactic X failed: The left-hand side
+     providers=['Complexity.pairSndD', 'TCSlib.Cryptography.ColMachines.argM', 'TCSlib.Cryptography.ColMachines.ilayout', 'TCSlib.Cryptography.decGraph', 'TCSlib.Cryptography.sampleEdgeIdx']
+     referenced=['Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.ColMachines.LOf', 'TCSlib.Cryptography.ColMachines.argM', 'TCSlib.Cryptography.ColMachines.argX', 'TCSlib.Cryptography.ColMachines.checkStr', 'TCSlib.Cryptography.ColMachines.eOf', 'TCSlib.Cryptography.ColMachines.ilayout', 'TCSlib.Cryptography.ColMachines.mOf', 'TCSlib.Cryptography.ColMachines.nOf', 'TCSlib.Cryptography.ColMachines.verdictStr', 'TCSlib.Cryptography.ColMachines.verifierStr', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.decGraph', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.sampleEdgeIdx', 'Turing.pairEncode']
+     [Complexity.pairSndD] readers: pairSndD_eq@PolyTimePairing, pairSndD_pairEncode@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, pairSndD_of_pairDecode_eq_none@PolyTimePairing
+     [TCSlib.Cryptography.ColMachines.argM] readers: argM_poly@Machines, argM_ilayout@Machines
+     [TCSlib.Cryptography.ColMachines.ilayout] readers: ilayout_def@Machines, LOf_ilayout@Parties, blk_ilayout@Parties, eOf_ilayout@Parties, mOf_ilayout@Parties, nOf_ilayout@Parties, argM_ilayout@Machines, argX_ilayout@Machines, argZ_ilayout@Machines, eRep_ilayout@Parties, comAt_ilayout@Parties, tblOf_ilayout@Parties, colBits_ilayout@Parties, inCoins_ilayout@Machines
+     [TCSlib.Cryptography.decGraph] readers: decGraph_eq@Encoding, decGraph_fst@Encoding, decGraph_snd@GraphIsomorphism, decGraph_encGraph@Encoding, decGraph_snd_apply@Encoding; struct fields: fst, snd
+     [TCSlib.Cryptography.sampleEdgeIdx] readers: sampleEdgeIdx_def@Language, sampleEdgeIdx_lt@Language, statClose_sampleEdgeIdx@Language
+     > Tactic `rfl` failed: The left-hand side
+     >   (colVerifier Com ℓ).next x z r [com]
+     > is not definitionally equal to the right-hand side
+     >   List.replicate (sampleEdgeIdx (edgeCount (decGraph x).snd) x.length r) true
+     > 
+       230|       rw [argM_ilayout, Strategy.encodeMsgs_cons, pairSndD_pairEncode]
+       231|       rfl
+       232|     rw [verifierStr_def, if_neg c1, if_pos c2, eOf_ilayout]
+    *  233|     rfl
+       234|   · have c1 : argM (ilayout x z [com, opn] r) ≠ [] := by
+       235|       rw [argM_ilayout, Strategy.encodeMsgs_cons]
+  -- coe-A line 243 cascade=True cls=Tactic X failed: The left-hand side
+     providers=['Complexity.pairSndD', 'TCSlib.Cryptography.ColMachines.argM', 'TCSlib.Cryptography.ColMachines.ilayout', 'TCSlib.Cryptography.Strategy.encodeMsgs']
+     referenced=['Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.ColMachines.LOf', 'TCSlib.Cryptography.ColMachines.argM', 'TCSlib.Cryptography.ColMachines.argX', 'TCSlib.Cryptography.ColMachines.checkStr', 'TCSlib.Cryptography.ColMachines.eOf', 'TCSlib.Cryptography.ColMachines.ilayout', 'TCSlib.Cryptography.ColMachines.mOf', 'TCSlib.Cryptography.ColMachines.nOf', 'TCSlib.Cryptography.ColMachines.verdictStr', 'TCSlib.Cryptography.ColMachines.verifierStr', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.decGraph', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.sampleEdgeIdx', 'Turing.pairEncode']
+     [Complexity.pairSndD] readers: pairSndD_eq@PolyTimePairing, pairSndD_pairEncode@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, pairSndD_of_pairDecode_eq_none@PolyTimePairing
+     [TCSlib.Cryptography.ColMachines.argM] readers: argM_poly@Machines, argM_ilayout@Machines
+     [TCSlib.Cryptography.ColMachines.ilayout] readers: ilayout_def@Machines, LOf_ilayout@Parties, blk_ilayout@Parties, eOf_ilayout@Parties, mOf_ilayout@Parties, nOf_ilayout@Parties, argM_ilayout@Machines, argX_ilayout@Machines, argZ_ilayout@Machines, eRep_ilayout@Parties, comAt_ilayout@Parties, tblOf_ilayout@Parties, colBits_ilayout@Parties, inCoins_ilayout@Machines
+     [TCSlib.Cryptography.Strategy.encodeMsgs] readers: encodeMsgs_nil@Interaction, encodeMsgs_cons@Interaction, pairFstD_encodeMsgs@Interaction
+     > Tactic `rfl` failed: The left-hand side
+     >   Strategy.encodeMsgs []
+     > is not definitionally equal to the right-hand side
+     >   []
+     > 
+       240|     have c3 : pairSndD (pairSndD (argM (ilayout x z [com, opn] r))) = [] := by
+       241|       rw [argM_ilayout, Strategy.encodeMsgs_cons, pairSndD_pairEncode, Strategy.encodeMsgs_cons,
+       242|         pairSndD_pairEncode]
+    *  243|       rfl
+       244|     rw [verifierStr_def, if_neg c1, if_neg c2, if_pos c3]
+       245|     show [decide _] = [verdictStr Com ℓ (ilayout x z [com, opn] r)]
+====================================================================================================
+KEY H:254 | seal | TCSlib.Cryptography.ColProofs.colProverRep_next_eq
+  record: TCSlib.Cryptography.ColProofs.colProverRep_next_eq (lines 297; #248 OPEN_TYPED_COINS)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.NUPPT.layout_eq (TCSlib/Complexity/Randomized/Closure.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_ProtocolProofs.log:409
+  DECL at 276, header ends 278
+      276| theorem colProverRep_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (x y r : List Bool)
+      277|     (hist : List (List Bool)) :
+      278|     (colProverRep Com ℓ).next x y r hist = proverRepStr Com ℓ (ilayout x y hist r) := by
+  -- coe-A line 298 cascade=False cls=Tactic X failed: The left-hand side
+     providers=['Complexity.NUPPT.layout', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.ColMachines.proverCoinsOf', 'TCSlib.Cryptography.ColMachines.proverStr', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.decGraph', 'Turing.pairEncode']
+     referenced=['Complexity.NUPPT.inCoins', 'Complexity.NUPPT.layout', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.ColMachines.argM', 'TCSlib.Cryptography.ColMachines.argX', 'TCSlib.Cryptography.ColMachines.argZ', 'TCSlib.Cryptography.ColMachines.histLen', 'TCSlib.Cryptography.ColMachines.ilayout', 'TCSlib.Cryptography.ColMachines.mOf', 'TCSlib.Cryptography.ColMachines.nOf', 'TCSlib.Cryptography.ColMachines.proverCoinsOf', 'TCSlib.Cryptography.ColMachines.proverRepStr', 'TCSlib.Cryptography.ColMachines.proverStr', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.decColoring', 'TCSlib.Cryptography.decGraph', 'TCSlib.Cryptography.edgeAt', 'TCSlib.Cryptography.edgeIdxOfMsg', 'TCSlib.Cryptography.samplePerm3', 'Turing.pairEncode']
+     [Complexity.NUPPT.layout] readers: layout_eq@Closure, inArg_layout@Closure, inCoins_layout@Closure, inParam_layout@Closure, inAdvice_layout@Closure, runAtL_eq_output_layout@Closure, polyTimeComputable_layout@Closure
+     [Complexity.pairFstD] readers: pairFstD_eq@PolyTimePairing, pairFstD_nil@PolyTimeBlockLoop, pairFstD_pairEncode@PolyTimePairing, polyTimeComputable_pairFstD@PolyTimePairing, pairFstD_of_pairDecode_eq_none@PolyTimePairing, polyTimeComputable_iterate_pairFstD@PolyTimePairing
+     [Complexity.pairSndD] readers: pairSndD_eq@PolyTimePairing, pairSndD_pairEncode@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, pairSndD_of_pairDecode_eq_none@PolyTimePairing
+     [TCSlib.Cryptography.ColMachines.proverCoinsOf] readers: proverCoinsOf_def@Parties
+     [TCSlib.Cryptography.ColMachines.proverStr] readers: proverStr_def@Parties, proverStr_poly@Parties
+     [TCSlib.Cryptography.Strategy.coinLen] readers: coinLen_eq@Interaction, coinLen_pullback@NP
+     [TCSlib.Cryptography.Strategy.encodeMsgs] readers: encodeMsgs_nil@Interaction, encodeMsgs_cons@Interaction, pairFstD_encodeMsgs@Interaction
+     [TCSlib.Cryptography.decGraph] readers: decGraph_eq@Encoding, decGraph_fst@Encoding, decGraph_snd@GraphIsomorphism, decGraph_encGraph@Encoding, decGraph_snd_apply@Encoding; struct fields: fst, snd
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, length_pairEncode@Encoding, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairDecode_pairEncode@Encoding, pairSplitAt_pairEncode@PairSplit, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Tactic `rfl` failed: The left-hand side
+     >   proverStr Com ℓ
+     >     (NUPPT.layout (List.replicate x.length true) (pairEncode (pairEncode x y) (Strategy.encodeMsgs [])) []
+     >       (List.take (proverCoinsOf ℓ x.length) (List.drop (hist.length / 2 * proverCoinsOf ℓ x.length) r)))
+     > is not definitionally equal to the right-hand side
+     >   proverStr Com ℓ
+     >     (NUPPT.layout (List.replicate x.length true) (pairEncode (pairEncode x y) []) []
+     >       (List.take (proverCoinsOf ℓ x.length) (List.drop (hist.length / 2 * proverCoinsOf ℓ x.length) r)))
+     > 
+     > case pos
+     > Com : List Bool → List Bool
+     > ℓ : PolyExpr
+     > x y r : List Bool
+     > hist : List (List Bool)
+     >> ⊢ proverStr Com ℓ
+       295|     simp only [ilayout_def]
+       296|     by_cases h2 : hist.length % 2 = 0
+       297|     · rw [if_pos h2, if_pos h2]
+    *  298|       rfl
+       299|     · rw [if_neg h2, if_neg h2, Strategy.encodeMsgs_cons, Strategy.encodeMsgs_nil, hlast]
+       300|   · rw [if_neg h1, if_neg h1]
+====================================================================================================
+KEY H:255 | seal | TCSlib.Cryptography.ColProofs.colVerifierRep_next_eq
+  record: TCSlib.Cryptography.ColProofs.colVerifierRep_next_eq (lines 329; #248 OPEN_INCOMPLETE)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.pairFstD_eq (TCSlib/Complexity/ClassNP/PolyTimePairing.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_ProtocolProofs.log:441
+  DECL at 310, header ends 312
+      310| theorem colVerifierRep_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (x z r : List Bool)
+      311|     (hist : List (List Bool)) :
+      312|     (colVerifierRep Com ℓ).next x z r hist = verifierRepStr Com ℓ (ilayout x z hist r) := by
+  -- coe-A line 330 cascade=False cls=Tactic X failed: The left-hand side
+     providers=['Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.ColMachines.LOf', 'TCSlib.Cryptography.ColMachines.argM', 'TCSlib.Cryptography.ColMachines.argX', 'TCSlib.Cryptography.ColMachines.checkRep', 'TCSlib.Cryptography.ColMachines.checkStr', 'TCSlib.Cryptography.ColMachines.eRep', 'TCSlib.Cryptography.ColMachines.histLen', 'TCSlib.Cryptography.ColMachines.ilayout', 'TCSlib.Cryptography.ColMachines.mOf', 'TCSlib.Cryptography.ColMachines.nOf', 'TCSlib.Cryptography.ColMachines.verdictRepStr', 'TCSlib.Cryptography.ColMachines.verifierRepStr', 'TCSlib.Cryptography.EncodingMachines.firstIdx', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.decGraph', 'TCSlib.Cryptography.edgeMsg', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.sampleEdgeIdx']
+     referenced=['Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.ColMachines.LOf', 'TCSlib.Cryptography.ColMachines.argM', 'TCSlib.Cryptography.ColMachines.argX', 'TCSlib.Cryptography.ColMachines.checkRep', 'TCSlib.Cryptography.ColMachines.checkStr', 'TCSlib.Cryptography.ColMachines.eRep', 'TCSlib.Cryptography.ColMachines.histLen', 'TCSlib.Cryptography.ColMachines.ilayout', 'TCSlib.Cryptography.ColMachines.mOf', 'TCSlib.Cryptography.ColMachines.nOf', 'TCSlib.Cryptography.ColMachines.verdictRepStr', 'TCSlib.Cryptography.ColMachines.verifierRepStr', 'TCSlib.Cryptography.EncodingMachines.firstIdx', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.decGraph', 'TCSlib.Cryptography.edgeMsg', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.sampleEdgeIdx']
+     [Complexity.pairFstD] readers: pairFstD_eq@PolyTimePairing, pairFstD_nil@PolyTimeBlockLoop, pairFstD_pairEncode@PolyTimePairing, polyTimeComputable_pairFstD@PolyTimePairing, pairFstD_of_pairDecode_eq_none@PolyTimePairing, polyTimeComputable_iterate_pairFstD@PolyTimePairing
+     [Complexity.pairSndD] readers: pairSndD_eq@PolyTimePairing, pairSndD_pairEncode@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, pairSndD_of_pairDecode_eq_none@PolyTimePairing
+     [TCSlib.Cryptography.ColMachines.LOf] readers: LOf_poly@Parties, LOf_ilayout@Parties
+     [TCSlib.Cryptography.ColMachines.argM] readers: argM_poly@Machines, argM_ilayout@Machines
+     [TCSlib.Cryptography.ColMachines.argX] readers: argX_eq@Machines, argX_poly@Machines, argX_ilayout@Machines
+     [TCSlib.Cryptography.ColMachines.checkRep] readers: checkRep_def@Parties, checkRep_poly@Parties
+     [TCSlib.Cryptography.ColMachines.checkStr] readers: checkStr_def@Parties, checkStr_poly@Parties
+     [TCSlib.Cryptography.ColMachines.eRep] readers: eRep_poly@Parties, eRep_ilayout@Parties
+     [TCSlib.Cryptography.ColMachines.histLen] readers: histLen_poly@Machines, histLen_encodeMsgs@Machines
+     [TCSlib.Cryptography.ColMachines.ilayout] readers: ilayout_def@Machines, LOf_ilayout@Parties, blk_ilayout@Parties, eOf_ilayout@Parties, mOf_ilayout@Parties, nOf_ilayout@Parties, argM_ilayout@Machines, argX_ilayout@Machines, argZ_ilayout@Machines, eRep_ilayout@Parties, comAt_ilayout@Parties, tblOf_ilayout@Parties, colBits_ilayout@Parties, inCoins_ilayout@Machines
+     [TCSlib.Cryptography.ColMachines.mOf] readers: mOf_poly@Parties, mOf_ilayout@Parties
+     [TCSlib.Cryptography.ColMachines.nOf] readers: nOf_poly@Parties, nOf_ilayout@Parties
+     [TCSlib.Cryptography.ColMachines.verdictRepStr] readers: verdictRepStr_def@Parties, verdictRepStr_poly@Parties
+     [TCSlib.Cryptography.ColMachines.verifierRepStr] readers: verifierRepStr_def@Parties, verifierRepStr_poly@Parties
+     [TCSlib.Cryptography.EncodingMachines.firstIdx] readers: q_firstIdx@EncodingMachines, firstIdx_le@EncodingMachines, firstIdx_min@EncodingMachines, firstIdx_congr@EncodingMachines, firstIdx_eq_of@EncodingMachines, firstIdx_eq_iff@EncodingMachines, firstIdx_lt_iff@EncodingMachines, firstIdx_eq_of_forall@EncodingMachines, polyTimeComputable_firstIdx@EncodingMachines
+     [TCSlib.Cryptography.Strategy.encodeMsgs] readers: encodeMsgs_nil@Interaction, encodeMsgs_cons@Interaction, pairFstD_encodeMsgs@Interaction
+     [TCSlib.Cryptography.decGraph] readers: decGraph_eq@Encoding, decGraph_fst@Encoding, decGraph_snd@GraphIsomorphism, decGraph_encGraph@Encoding, decGraph_snd_apply@Encoding; struct fields: fst, snd
+     [TCSlib.Cryptography.edgeMsg] readers: edgeIdxOfMsg_edgeMsg@Language
+     [TCSlib.Cryptography.encGraph] readers: encGraph_def@Encoding, encGraph_getD@Encoding, length_encGraph@Encoding, decGraph_encGraph@Encoding, encGraph_getD_nat@Encoding, encGraph_injective@Encoding, decGraphAt_encGraph@GraphIsomorphism, encGraph_getD_of_le@Encoding, colWellFormed_encGraph@Protocol, encGraph_mem_L3COL_iff@Language
+     [TCSlib.Cryptography.sampleEdgeIdx] readers: sampleEdgeIdx_def@Language, sampleEdgeIdx_lt@Language, statClose_sampleEdgeIdx@Language
+     > Tactic `rfl` failed: The left-hand side
+     >   edgeMsg
+     >     (sampleEdgeIdx (edgeCount (decGraph x).snd) x.length
+     >       (List.take ((x.length + 1) ^ 2) (List.drop (hist.length / 2 * (x.length + 1) ^ 2) r)))
+     > is not definitionally equal to the right-hand side
+     >   List.replicate
+     >     (sampleEdgeIdx (edgeCount (decGraph x).snd) x.length
+     >       (List.take ((x.length + 1) ^ 2) (List.drop (hist.length / 2 * (x.length + 1) ^ 2) r)))
+     >     true
+     > 
+     > case pos
+     > Com : List Bool → List Bool
+     > ℓ : PolyExpr
+     > x z r : List Bool
+     >> ⊢ edgeMsg
+       327|   · rw [if_pos h1, if_pos h1]
+       328|     by_cases h2 : hist.length / 2 < (decGraph x).1 * edgeCount (decGraph x).2
+       329|     · rw [if_pos h2, if_pos h2, eRep_ilayout]
+    *  330|       rfl
+       331|     · rw [if_neg h2, if_neg h2]
+       332|   · rw [if_neg h1, if_neg h1]
+DUP SEAL-0416 -> same decl TCSlib.Cryptography.ColProofs.colProver_next_eq | tool: STAGE2 | use TCSlib.Cryptography.Strategy.encodeMsgs_nil (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean) | record: TCSlib.Cryptography.ColProofs.colProver_next_eq l.180: Tactic `rfl` failed: The left-hand side (#248 inherited_reviewed_conversion)
+DUP SEAL-0417 -> same decl TCSlib.Cryptography.ColProofs.colVerifier_next_eq | tool: STAGE2 | use TCSlib.Cryptography.Strategy.encodeMsgs_nil (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean) | record: TCSlib.Cryptography.ColProofs.colVerifier_next_eq l.224: Tactic `rfl` failed: The left-hand side (#248 inherited_reviewed_conversion)
+DUP SEAL-0418 -> same decl TCSlib.Cryptography.ColProofs.colVerifier_next_eq | tool: STAGE2 | use TCSlib.Cryptography.Strategy.encodeMsgs_nil (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean) | record: TCSlib.Cryptography.ColProofs.colVerifier_next_eq l.231: Tactic `rfl` failed: The left-hand side (#248 inherited_same_step_after_other_repairs)
+DUP SEAL-0419 -> same decl TCSlib.Cryptography.ColProofs.colVerifier_next_eq | tool: STAGE2 | use TCSlib.Cryptography.Strategy.encodeMsgs_nil (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean) | record: TCSlib.Cryptography.ColProofs.colVerifier_next_eq l.233: Tactic `rfl` failed: The left-hand side (#248 inherited_same_step_after_other_repairs)
+DUP SEAL-0420 -> same decl TCSlib.Cryptography.ColProofs.colVerifier_next_eq | tool: STAGE2 | use TCSlib.Cryptography.Strategy.encodeMsgs_nil (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean) | record: TCSlib.Cryptography.ColProofs.colVerifier_next_eq l.243: Tactic `rfl` failed: The left-hand side (#248 inherited_same_step_after_other_repairs)
+DUP SEAL-0421 -> same decl TCSlib.Cryptography.ColProofs.colProverRep_next_eq | tool: STAGE2 | use Complexity.NUPPT.layout_eq (TCSlib/Complexity/Randomized/Closure.lean) | record: TCSlib.Cryptography.ColProofs.colProverRep_next_eq l.298: Tactic `rfl` failed: The left-hand side (#248 inherited_same_step_after_other_repairs)
+DUP SEAL-0422 -> same decl TCSlib.Cryptography.ColProofs.colVerifierRep_next_eq | tool: STAGE2 | use Complexity.pairFstD_eq (TCSlib/Complexity/ClassNP/PolyTimePairing.lean) | record: TCSlib.Cryptography.ColProofs.colVerifierRep_next_eq l.330: Tactic `rfl` failed: The left-hand side (#248 inherited_same_step_after_other_repairs)

@@ -1,0 +1,887 @@
+====================================================================================================
+KEY H:145 | seal | TCSlib.Cryptography.exists_multiRed_bound
+  record: TCSlib.Cryptography.exists_multiRed_bound (lines 308; #248 OPEN_INCOMPLETE)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.distAdv_def (TCSlib/Cryptography/Foundations/Experiments.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Commitment.log:427
+  DECL at 289, header ends 300
+      289| private theorem exists_multiRed_bound {Com : List Bool → List Bool} (ℓ q : PolyExpr) (D : NUPPT)
+      290|     {C c : ℕ} (hCc : ∀ x, (Com x).length ≤ C * (x.length + 1) ^ c) (n : ℕ) :
+      291|     ∃ (pre suf : List Bool) (a a' : Fin n → Bool),
+      292|       2 * pre.length + 2 + suf.length ≤ (multiAdvBound ℓ q C c).eval n ∧
+      293|       ∀ v v' : Fin (q.eval n) → Fin n → Bool,
+      294|         distAdv (fun r : Fin (q.eval n) → Fin (ℓ.eval n) → Bool => multiCom Com v r)
+      295|           (fun r : Fin (q.eval n) → Fin (ℓ.eval n) → Bool => multiCom Com v' r)
+      296|           (D.distinguisherL n) ≤
+      297|         q.eval n * distAdv
+      298|           (fun r : Fin (ℓ.eval n) → Bool => Com (pairEncode (List.ofFn a) (List.ofFn r)))
+      299|           (fun r : Fin (ℓ.eval n) → Bool => Com (pairEncode (List.ofFn a') (List.ofFn r)))
+      300|           (fun z c => D.distinguisherL n (pre ++ pairEncode z suf) c) := by
+  -- coe-A line 316 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.distAdv']
+     referenced=['Complexity.NUPPT.coinLen', 'Complexity.NUPPT.distinguisherL', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.distAdv', 'Turing.pairEncode']
+     [TCSlib.Cryptography.distAdv] readers: distAdv_def@Experiments, distAdv_comp@Indistinguishability, distAdv_padXor_le@FromPRG, distAdv_mixDist_eq@Indistinguishability, distAdv_ggmBitsDist@GGM, distAdv_le_statDist@Experiments, distAdv_sunglassRed@Indistinguishability, distAdv_multi_le_sum@EnsembleSecurity, distAdv_tuple_le_mul@Hybrid, distAdv_tuple_le_sum@Hybrid, distAdv_prfEncReal_le@Hybrid, distAdv_le_of_statClose@Sampling, distAdv_multicopyAvgRed@Indistinguishability, distAdv_prfEncRealOut_le@Hybrid, distAdv_prfEncReal_random_otp_le@Hybrid, distAdv_prfEncRealOut_random_otp_le@Hybrid; struct fields: cauchy
+     > Type mismatch
+     >   rfl
+     > has type
+     >   ?m.221 = ?m.221
+     > but is expected to have type
+     >   distAdv (fun r => multiCom Com v r) (fun r => multiCom Com v' r) (D.distinguisherL n) =
+     >     distAdv (pairTuple (cm v)) (pairTuple (cm v')) D'
+       313|   have hadv : ∀ v v' : Fin t → Fin n → Bool,
+       314|       distAdv (fun r : Fin t → Fin (ℓ.eval n) → Bool => multiCom Com v r)
+       315|         (fun r : Fin t → Fin (ℓ.eval n) → Bool => multiCom Com v' r) (D.distinguisherL n) =
+    *  316|       distAdv (pairTuple (cm v)) (pairTuple (cm v')) D' := fun v v' => rfl
+       317|   obtain ⟨⟨v, v'⟩, -, hmax⟩ := Finset.exists_max_image Finset.univ
+       318|     (fun p : (Fin t → Fin n → Bool) × (Fin t → Fin n → Bool) =>
+====================================================================================================
+KEY H:146 | seal | TCSlib.Cryptography.exists_bitComPredictor
+  record: TCSlib.Cryptography.exists_bitComPredictor (lines 596, 600, 604; #248 OPEN_INCOMPLETE)
+  counts sA=3 sB=3 cA=3 cB=3 scan=-
+  tool: STAGE2 | stmt=no | add TCSlib.Cryptography.owpPair_eq (or _iff/_apply) in TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Commitment.log:715
+  DECL at 582, header ends 586
+      582| theorem exists_bitComPredictor {ρ : Type*} [Fintype ρ] [Nonempty ρ] {n : ℕ}
+      583|     (f : (Fin n → Bool) ≃ (Fin n → Bool)) (h : (Fin n → Bool) → Bool)
+      584|     (D : (Fin (n + 1) → Bool) → ρ → Bool) :
+      585|     ∃ flip : Bool, predProb f h (owpPredictorSnoc D flip) =
+      586|       1 / 2 + distAdv (bitCom f h false) (bitCom f h true) D / 2 := by
+  -- coe-A line 604 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.owpPair', 'TCSlib.Cryptography.owpPredictor', 'TCSlib.Cryptography.owpPredictorSnoc']
+     referenced=['TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.distAdv', 'TCSlib.Cryptography.owpGen', 'TCSlib.Cryptography.owpGenNot', 'TCSlib.Cryptography.owpPair', 'TCSlib.Cryptography.owpPredictor', 'TCSlib.Cryptography.owpPredictorSnoc', 'TCSlib.Cryptography.predProb']
+     [TCSlib.Cryptography.owpPair] struct fields: fst, snd
+     [TCSlib.Cryptography.owpPredictor] readers: owpPredictor_apply@GeneratorFromPermutation
+     [TCSlib.Cryptography.owpPredictorSnoc] readers: owpPredictorSnoc_eq@FromPermutation
+     > Type mismatch
+     >   Iff.rfl
+     > has type
+     >   ?m.155 ↔ ?m.155
+     > but is expected to have type
+     >   owpPredictorSnoc D flip (f x✝.1) x✝.2 = h x✝.1 ↔
+     >     owpPredictor (fun z r => D (e z) r) flip
+     >         (owpPair f
+     >           ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).1)
+     >         ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).2 =
+     >       h ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).1.1
+       601|          left_inv := fun _ => rfl
+       602|          right_inv := fun _ => rfl } :
+       603|         (Fin n → Bool) × (Bool × ρ) ≃ ((Fin n → Bool) × Unit) × (Bool × ρ))
+    *  604|       fun _ => Iff.rfl
+       605|   have h0 : acceptProb (owpGen f fun w : (Fin n → Bool) × Unit => h w.1) (fun z r => D (e z) r) =
+       606|       acceptProb (bitCom f h false) D := by
+  -- coe-A line 608 cascade=True cls=Tactic X failed: The left-hand side
+     providers=['TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.owpGen', 'TCSlib.Cryptography.owpPair', 'TCSlib.Cryptography.owpPredictor', 'TCSlib.Cryptography.owpPredictorSnoc', 'TCSlib.Cryptography.predProb']
+     referenced=['TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.distAdv', 'TCSlib.Cryptography.owpGen', 'TCSlib.Cryptography.owpGenNot', 'TCSlib.Cryptography.owpPair', 'TCSlib.Cryptography.owpPredictor', 'TCSlib.Cryptography.owpPredictorSnoc', 'TCSlib.Cryptography.predProb']
+     [TCSlib.Cryptography.acceptProb] readers: acceptProb_def@Experiments, acceptProb_fst@Indistinguishability, acceptProb_snd@Indistinguishability, acceptProb_bind@Indistinguishability, acceptProb_congr@Defs, acceptProb_castLE@Stretch, acceptProb_id_owp@GeneratorFromPermutation, acceptProb_otpEnc@Hybrid, acceptProb_padXor@FromPRG, acceptProb_update@Indistinguishability, acceptProb_mixDist@Indistinguishability, acceptProb_otpEncOut@Hybrid, acceptProb_comp_equiv@Experiments, acceptProb_coins_equiv@ReductionSupport, acceptProb_nextBitDist@Concrete, acceptProb_pairRed_left@Commitment, acceptProb_pairRed_right@Commitment, acceptProb_tableDist_prg@SubHybrids, acceptProb_prgExtRed_left@Generators, acceptProb_prgHybrid_self@Generators, acceptProb_prgHybrid_zero@Generators, acceptProb_random_eq_lazy@Defs, acceptProb_eq_uexp_sum_map@Experiments, acceptProb_pairHybrid_self@Commitment, acceptProb_pairHybrid_zero@Commitment, acceptProb_prgExtRed_right@Generators, acceptProb_multicopyRed_left@Indistinguishability, acceptProb_nextBitHybrid_mix@Concrete, acceptProb_tableDist_uniform@SubHybrids, acceptProb_multicopyRed_right@Indistinguishability, acceptProb_nextBitHybrid_self@Concrete, acceptProb_nextBitHybrid_zero@Concrete, acceptProb_distinguisherL_coins@HybridMachine, acceptProb_multicopyHybrid_self@Indistinguishability, acceptProb_multicopyHybrid_zero@Indistinguishability, acceptProb_oracleDist_multiMsgAdv@Hybrid, acceptProb_oracleDist_multiMsgAdvOut@Hybrid; struct fields: cauchy
+     [TCSlib.Cryptography.owpGen] struct fields: fst, snd
+     [TCSlib.Cryptography.owpPair] struct fields: fst, snd
+     [TCSlib.Cryptography.owpPredictor] readers: owpPredictor_apply@GeneratorFromPermutation
+     [TCSlib.Cryptography.owpPredictorSnoc] readers: owpPredictorSnoc_eq@FromPermutation
+     [TCSlib.Cryptography.predProb] readers: predProb_def@Experiments, predProb_glHalf_odd@GoldreichLevin, predProb_coins_equiv@ReductionSupport, predProb_glHalf_even@GoldreichLevin, predProb_pkPredictor_true@Trapdoor, predProb_owpPredictor_true@GeneratorFromPermutation, predProb_pkPredictor_false@Trapdoor, predProb_owpPredictor_false@GeneratorFromPermutation; struct fields: cauchy
+     > Tactic `rfl` failed: The left-hand side
+     >   acceptProb (owpGen f fun w => h w.1) fun z r => D (e z) r
+     > is not definitionally equal to the right-hand side
+     >   acceptProb (fun z => Fin.snoc (f z.1) (h z.1)) D
+     > 
+     > ρ : Type u_1
+     > inst✝¹ : Fintype ρ
+     > inst✝ : Nonempty ρ
+     > n : ℕ
+     > f : (Fin n → Bool) ≃ (Fin n → Bool)
+     > h : (Fin n → Bool) → Bool
+     > D : (Fin (n + 1) → Bool) → ρ → Bool
+     > e : (Fin n → Bool) × Unit × Bool ≃ (Fin (n + 1) → Bool) :=
+     >   { toFun := fun z => Fin.snoc z.1 z.2.2, invFun := fun t => (Fin.init t, (), t (Fin.last n)), left_inv := ⋯,
+     >> ⊢ (acceptProb (owpGen f fun w => h w.1) fun z r => D (e z) r) = acceptProb (fun z => Fin.snoc (f z.1) (h z.1)) D
+       605|   have h0 : acceptProb (owpGen f fun w : (Fin n → Bool) × Unit => h w.1) (fun z r => D (e z) r) =
+       606|       acceptProb (bitCom f h false) D := by
+       607|     rw [bitCom_false, ← acceptProb_fst (τ := Unit) (fun r => Fin.snoc (f r) (h r)) D]
+    *  608|     rfl
+       609|   have h0' : acceptProb (owpGenNot f fun w : (Fin n → Bool) × Unit => h w.1)
+       610|       (fun z r => D (e z) r) = acceptProb (bitCom f h true) D := by
+  -- coe-A line 612 cascade=True cls=Tactic X failed: The left-hand side
+     providers=['TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.owpGen', 'TCSlib.Cryptography.owpGenNot', 'TCSlib.Cryptography.owpPair', 'TCSlib.Cryptography.owpPredictor', 'TCSlib.Cryptography.owpPredictorSnoc', 'TCSlib.Cryptography.predProb']
+     referenced=['TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.distAdv', 'TCSlib.Cryptography.owpGen', 'TCSlib.Cryptography.owpGenNot', 'TCSlib.Cryptography.owpPair', 'TCSlib.Cryptography.owpPredictor', 'TCSlib.Cryptography.owpPredictorSnoc', 'TCSlib.Cryptography.predProb']
+     [TCSlib.Cryptography.acceptProb] readers: acceptProb_def@Experiments, acceptProb_fst@Indistinguishability, acceptProb_snd@Indistinguishability, acceptProb_bind@Indistinguishability, acceptProb_congr@Defs, acceptProb_castLE@Stretch, acceptProb_id_owp@GeneratorFromPermutation, acceptProb_otpEnc@Hybrid, acceptProb_padXor@FromPRG, acceptProb_update@Indistinguishability, acceptProb_mixDist@Indistinguishability, acceptProb_otpEncOut@Hybrid, acceptProb_comp_equiv@Experiments, acceptProb_coins_equiv@ReductionSupport, acceptProb_nextBitDist@Concrete, acceptProb_pairRed_left@Commitment, acceptProb_pairRed_right@Commitment, acceptProb_tableDist_prg@SubHybrids, acceptProb_prgExtRed_left@Generators, acceptProb_prgHybrid_self@Generators, acceptProb_prgHybrid_zero@Generators, acceptProb_random_eq_lazy@Defs, acceptProb_eq_uexp_sum_map@Experiments, acceptProb_pairHybrid_self@Commitment, acceptProb_pairHybrid_zero@Commitment, acceptProb_prgExtRed_right@Generators, acceptProb_multicopyRed_left@Indistinguishability, acceptProb_nextBitHybrid_mix@Concrete, acceptProb_tableDist_uniform@SubHybrids, acceptProb_multicopyRed_right@Indistinguishability, acceptProb_nextBitHybrid_self@Concrete, acceptProb_nextBitHybrid_zero@Concrete, acceptProb_distinguisherL_coins@HybridMachine, acceptProb_multicopyHybrid_self@Indistinguishability, acceptProb_multicopyHybrid_zero@Indistinguishability, acceptProb_oracleDist_multiMsgAdv@Hybrid, acceptProb_oracleDist_multiMsgAdvOut@Hybrid; struct fields: cauchy
+     [TCSlib.Cryptography.owpGen] struct fields: fst, snd
+     [TCSlib.Cryptography.owpGenNot] struct fields: fst, snd
+     [TCSlib.Cryptography.owpPair] struct fields: fst, snd
+     [TCSlib.Cryptography.owpPredictor] readers: owpPredictor_apply@GeneratorFromPermutation
+     [TCSlib.Cryptography.owpPredictorSnoc] readers: owpPredictorSnoc_eq@FromPermutation
+     [TCSlib.Cryptography.predProb] readers: predProb_def@Experiments, predProb_glHalf_odd@GoldreichLevin, predProb_coins_equiv@ReductionSupport, predProb_glHalf_even@GoldreichLevin, predProb_pkPredictor_true@Trapdoor, predProb_owpPredictor_true@GeneratorFromPermutation, predProb_pkPredictor_false@Trapdoor, predProb_owpPredictor_false@GeneratorFromPermutation; struct fields: cauchy
+     > Tactic `rfl` failed: The left-hand side
+     >   acceptProb (owpGenNot f fun w => h w.1) fun z r => D (e z) r
+     > is not definitionally equal to the right-hand side
+     >   acceptProb (fun z => Fin.snoc (f z.1) !h z.1) D
+     > 
+     > ρ : Type u_1
+     > inst✝¹ : Fintype ρ
+     > inst✝ : Nonempty ρ
+     > n : ℕ
+     > f : (Fin n → Bool) ≃ (Fin n → Bool)
+     > h : (Fin n → Bool) → Bool
+     > D : (Fin (n + 1) → Bool) → ρ → Bool
+     > e : (Fin n → Bool) × Unit × Bool ≃ (Fin (n + 1) → Bool) :=
+     >   { toFun := fun z => Fin.snoc z.1 z.2.2, invFun := fun t => (Fin.init t, (), t (Fin.last n)), left_inv := ⋯,
+     >> ⊢ (acceptProb (owpGenNot f fun w => h w.1) fun z r => D (e z) r) = acceptProb (fun z => Fin.snoc (f z.1) !h z.1) D
+       609|   have h0' : acceptProb (owpGenNot f fun w : (Fin n → Bool) × Unit => h w.1)
+       610|       (fun z r => D (e z) r) = acceptProb (bitCom f h true) D := by
+       611|     rw [bitCom_true, ← acceptProb_fst (τ := Unit) (fun r => Fin.snoc (f r) (!h r)) D]
+    *  612|     rfl
+       613|   rcases le_total 0 (acceptProb (bitCom f h false) D - acceptProb (bitCom f h true) D) with
+       614|     hs | hs
+====================================================================================================
+KEY H:147 | seal | TCSlib.Cryptography.exists_bitRed_bound
+  record: TCSlib.Cryptography.exists_bitRed_bound (lines 712; #248 OPEN_TYPED_COINS)
+  counts sA=1 sB=0 cA=1 cB=0 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.FunFamily.blocks_apply (TCSlib/Cryptography/Asymptotic/Adversary.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Commitment.log:831
+  DECL at 690, header ends 700
+      690| private theorem exists_bitRed_bound (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool) (D : NUPPT)
+      691|     (n : ℕ) :
+      692|     ∃ pre suf : List Bool, 2 * pre.length + 2 + suf.length ≤ 3 * (n * (n + 1)) + 2 ∧
+      693|       ∀ v₀ v₁ : Fin n → Bool,
+      694|         distAdv (fun r : Fin (owpComLen.eval n) → Bool =>
+      695|             owpComStr P h (pairEncode (List.ofFn v₀) (List.ofFn r)))
+      696|           (fun r : Fin (owpComLen.eval n) → Bool =>
+      697|             owpComStr P h (pairEncode (List.ofFn v₁) (List.ofFn r)))
+      698|           (D.distinguisherL n) ≤
+      699|         n * distAdv (bitCom (P.f n) (h n) false) (bitCom (P.f n) (h n) true)
+      700|           (fun z c => D.distinguisherL n (pre ++ List.ofFn z ++ suf) c) := by
+  -- coe-A line 720 cascade=False cls=Tactic X failed: The left-hand side
+     providers=['TCSlib.Cryptography.FunFamily.blocks', 'TCSlib.Cryptography.acceptProb']
+     referenced=['Complexity.NUPPT.coinLen', 'Complexity.NUPPT.distinguisherL', 'TCSlib.Cryptography.FunFamily.blocks', 'TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.distAdv', 'Turing.pairEncode']
+     [TCSlib.Cryptography.FunFamily.blocks] readers: blocks_apply@Adversary, blocks_symm_apply@Adversary; struct fields: toFun, invFun, left_inv, right_inv
+     [TCSlib.Cryptography.acceptProb] readers: acceptProb_def@Experiments, acceptProb_fst@Indistinguishability, acceptProb_snd@Indistinguishability, acceptProb_bind@Indistinguishability, acceptProb_congr@Defs, acceptProb_castLE@Stretch, acceptProb_id_owp@GeneratorFromPermutation, acceptProb_otpEnc@Hybrid, acceptProb_padXor@FromPRG, acceptProb_update@Indistinguishability, acceptProb_mixDist@Indistinguishability, acceptProb_otpEncOut@Hybrid, acceptProb_comp_equiv@Experiments, acceptProb_coins_equiv@ReductionSupport, acceptProb_nextBitDist@Concrete, acceptProb_pairRed_left@Commitment, acceptProb_pairRed_right@Commitment, acceptProb_tableDist_prg@SubHybrids, acceptProb_prgExtRed_left@Generators, acceptProb_prgHybrid_self@Generators, acceptProb_prgHybrid_zero@Generators, acceptProb_random_eq_lazy@Defs, acceptProb_eq_uexp_sum_map@Experiments, acceptProb_pairHybrid_self@Commitment, acceptProb_pairHybrid_zero@Commitment, acceptProb_prgExtRed_right@Generators, acceptProb_multicopyRed_left@Indistinguishability, acceptProb_nextBitHybrid_mix@Concrete, acceptProb_tableDist_uniform@SubHybrids, acceptProb_multicopyRed_right@Indistinguishability, acceptProb_nextBitHybrid_self@Concrete, acceptProb_nextBitHybrid_zero@Concrete, acceptProb_distinguisherL_coins@HybridMachine, acceptProb_multicopyHybrid_self@Indistinguishability, acceptProb_multicopyHybrid_zero@Indistinguishability, acceptProb_oracleDist_multiMsgAdv@Hybrid, acceptProb_oracleDist_multiMsgAdvOut@Hybrid; struct fields: cauchy
+     > Tactic `rfl` failed: The left-hand side
+     >   |acceptProb (fun r => List.ofFn ((FunFamily.blocks n (n + 1)).symm (owpCom P h n v₀ ((FunFamily.blocks n n) r))))
+     >         (D.distinguisherL n) -
+     >       acceptProb (fun r => List.ofFn ((FunFamily.blocks n (n + 1)).symm (owpCom P h n v₁ ((FunFamily.blocks n n) r))))
+     >         (D.distinguisherL n)|
+     > is not definitionally equal to the right-hand side
+     >   |acceptProb (fun s => pairTuple (bc v₀) ((FunFamily.blocks n n) s)) D' -
+     >       acceptProb (fun s => pairTuple (bc v₁) ((FunFamily.blocks n n) s)) D'|
+     > 
+     > P : PermFamily
+     > h : (n : ℕ) → (Fin n → Bool) → Bool
+     > D : NUPPT
+     > n : ℕ
+     > hn : n > 0
+     >> ⊢ |acceptProb (fun r => List.ofFn ((FunFamily.blocks n (n + 1)).symm (owpCom P h n v₀ ((FunFamily.blocks n n) r))))
+       717|     simp only [distAdv_def]
+       718|     rw [← acceptProb_comp_equiv (FunFamily.blocks n n) (pairTuple (bc v₀)) D',
+       719|       ← acceptProb_comp_equiv (FunFamily.blocks n n) (pairTuple (bc v₁)) D']
+    *  720|     rfl
+       721|   obtain ⟨⟨v, v'⟩, -, hmax⟩ := Finset.exists_max_image Finset.univ
+       722|     (fun p : (Fin n → Bool) × (Fin n → Bool) =>
+====================================================================================================
+KEY H:148 | seal | TCSlib.Cryptography.owpComStr_eq_loopOut
+  record: TCSlib.Cryptography.owpComStr_eq_loopOut (lines 843, 844; #248 OPEN_INCOMPLETE)
+  counts sA=2 sB=2 cA=2 cB=2 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.NUPPT.advInput_eq (TCSlib/Complexity/Randomized/PPT.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Commitment.log:962
+  DECL at 833, header ends 837
+      833| private theorem owpComStr_eq_loopOut (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool)
+      834|     {F H : List Bool → List Bool}
+      835|     (hFx : ∀ n (x : Fin n → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (P.f n x))
+      836|     (hHx : ∀ n (x : Fin n → Bool), H (NUPPT.advInput n (List.ofFn x)) = [h n x]) (w : List Bool) :
+      837|     owpComStr P h w = ComLoop.loopOut F H (ComLoop.init w) := by
+  -- coe-A line 851 cascade=False cls=Tactic X failed: The left-hand side
+     providers=['Complexity.NUPPT.advInput', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.emit', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.init', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.step', 'TCSlib.Cryptography.EnsembleLemmas.blocks', 'TCSlib.Cryptography.FunFamily.blocks', 'TCSlib.Cryptography.padFin', 'Turing.pairEncode']
+     referenced=['Complexity.NUPPT.advInput', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.emit', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.init', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.step', 'TCSlib.Cryptography.EnsembleLemmas.blocks', 'TCSlib.Cryptography.EnsembleLemmas.padL', 'TCSlib.Cryptography.FunFamily.blocks', 'TCSlib.Cryptography.padFin', 'Turing.pairEncode']
+     [Complexity.NUPPT.advInput] readers: advInput_eq@PPT
+     [TCSlib.Cryptography.CommitmentLemmas.ComLoop.emit] readers: emit_poly@CommitmentLemmas, emit_init_of_le@CommitmentLemmas, emit_init_of_lt@CommitmentLemmas
+     [TCSlib.Cryptography.CommitmentLemmas.ComLoop.init] readers: init_eq@CommitmentLemmas, init_poly@CommitmentLemmas
+     [TCSlib.Cryptography.CommitmentLemmas.ComLoop.step] readers: step_poly@CommitmentLemmas
+     [TCSlib.Cryptography.EnsembleLemmas.blocks] readers: blocks_eq@EnsemblesLemmas, blocks_apply@EnsemblesLemmas, blocks_symm_apply@EnsemblesLemmas; struct fields: toFun, invFun, left_inv, right_inv
+     [TCSlib.Cryptography.FunFamily.blocks] readers: blocks_apply@Adversary, blocks_symm_apply@Adversary; struct fields: toFun, invFun, left_inv, right_inv
+     [TCSlib.Cryptography.padFin] readers: padFin_def@Adversary, padFin_apply@Adversary, padFin_ofFn@Adversary
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Tactic `rfl` failed: The left-hand side
+     >   List.ofFn
+     >     (Fin.snoc ((P.f v.length) ((EnsembleLemmas.blocks v.length v.length) (padFin (v.length * v.length) r) ⟨i, hi⟩))
+     >       (v.getD i false ^^
+     >         h v.length ((EnsembleLemmas.blocks v.length v.length) (padFin (v.length * v.length) r) ⟨i, hi⟩)))
+     > is not definitionally equal to the right-hand side
+     >   List.ofFn (T ⟨i, hi⟩)
+     > 
+     > P : PermFamily
+     > h : (n : ℕ) → (Fin n → Bool) → Bool
+     > F H : List Bool → List Bool
+     > hFx : ∀ (n : ℕ) (x : Fin n → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn ((P.f n) x)
+     > hHx : ∀ (n : ℕ) (x : Fin n → Bool), H (NUPPT.advInput n (List.ofFn x)) = [h n x]
+     > w v r : List Bool
+     >> ⊢ List.ofFn
+       848|     intro i hi
+       849|     simp only [hE]
+       850|     rw [ComLoop.emit_init_of_lt F H hi, hFx, hHx, List.headD_cons, ← ofFn_snoc_eq]
+    *  851|     rfl
+       852|   have hb : FunFamily.blocks n (n + 1) = EnsembleLemmas.blocks n (n + 1) := rfl
+       853|   rw [hb, EnsembleLemmas.ofFn_blocks_symm T E hEi]
+  -- coe-A line 852 cascade=True cls=Type mismatch
+     providers=['TCSlib.Cryptography.EnsembleLemmas.blocks', 'TCSlib.Cryptography.FunFamily.blocks']
+     referenced=['Complexity.NUPPT.advInput', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.emit', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.init', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.step', 'TCSlib.Cryptography.EnsembleLemmas.blocks', 'TCSlib.Cryptography.EnsembleLemmas.padL', 'TCSlib.Cryptography.FunFamily.blocks', 'TCSlib.Cryptography.padFin', 'Turing.pairEncode']
+     [TCSlib.Cryptography.EnsembleLemmas.blocks] readers: blocks_eq@EnsemblesLemmas, blocks_apply@EnsemblesLemmas, blocks_symm_apply@EnsemblesLemmas; struct fields: toFun, invFun, left_inv, right_inv
+     [TCSlib.Cryptography.FunFamily.blocks] readers: blocks_apply@Adversary, blocks_symm_apply@Adversary; struct fields: toFun, invFun, left_inv, right_inv
+     > Type mismatch
+     >   rfl
+     > has type
+     >   ?m.136 = ?m.136
+     > but is expected to have type
+     >   FunFamily.blocks n (n + 1) = EnsembleLemmas.blocks n (n + 1)
+       849|     simp only [hE]
+       850|     rw [ComLoop.emit_init_of_lt F H hi, hFx, hHx, List.headD_cons, ← ofFn_snoc_eq]
+       851|     rfl
+    *  852|   have hb : FunFamily.blocks n (n + 1) = EnsembleLemmas.blocks n (n + 1) := rfl
+       853|   rw [hb, EnsembleLemmas.ofFn_blocks_symm T E hEi]
+       854|   refine (flatMap_range_eq_of_nil E ?_ fun i hi => ComLoop.emit_init_of_le F H hi).symm
+====================================================================================================
+KEY H:149 | seal | TCSlib.Cryptography.owpComStr_polyTimeComputable
+  record: TCSlib.Cryptography.owpComStr_polyTimeComputable (lines 870; #248 OPEN_INCOMPLETE)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.NUPPT.advInput_eq (TCSlib/Complexity/Randomized/PPT.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Commitment.log:994
+  DECL at 873, header ends 877
+      873| theorem owpComStr_polyTimeComputable (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool)
+      874|     (hF : P.toFunFamily.Easy)
+      875|     (hH : ∃ H : List Bool → List Bool, PolyTimeComputable H ∧
+      876|       ∀ n (x : Fin n → Bool), H (NUPPT.advInput n (List.ofFn x)) = [h n x]) :
+      877|     PolyTimeComputable (owpComStr P h) := by
+  -- coe-A line 883 cascade=False cls=Application type mismatch: The argument
+     providers=['Complexity.NUPPT.advInput', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.init', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut', 'TCSlib.Cryptography.FunFamily.Easy', 'TCSlib.Cryptography.PermFamily.toFunFamily']
+     referenced=['Complexity.NUPPT.advInput', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.init', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut', 'TCSlib.Cryptography.FunFamily.Easy', 'TCSlib.Cryptography.PermFamily.toFunFamily']
+     [Complexity.NUPPT.advInput] readers: advInput_eq@PPT
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop, polyTimeComputable_unary@PolyTimePairing, polyTimeComputable_pairEq@Repetition, polyTimeComputable_iterate@Repetition, polyTimeComputable_pairXor@Repetition, polyTimeComputable_prepend@PolyTimePairing, polyTimeComputable_blockMap@Repetition, polyTimeComputable_emitIter@PolyTimeBlockLoop, polyTimeComputable_majority@Repetition, polyTimeComputable_pairFstD@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, polyTimeComputable_pairSwap@PolyTimePairing, polyTimeComputable_of_linear@PolyTimePairing, polyTimeComputable_polyUnary@PolyTimePairing, polyTimeComputable_stateFind@Repetition, polyTimeComputable_transduce@Transducer, polyTimeComputable_unaryPoly@Primitives, polyTimeComputable_pairConcat@PolyTimePairing, polyTimeComputable_iterateEmit@Repetition, polyTimeComputable_iterateFind@Repetition, polyTimeComputable_sliceDropAt@PolyTimeBlockLoop, polyTimeComputable_sliceTakeAt@PolyTimeBlockLoop, polyTimeComputable_unaryNormal@PolyExpr, polyTimeComputable_blockAnyTest@PolyTimeBlockTests, polyTimeComputable_pairDropPoly@Primitives, polyTimeComputable_pairTakePoly@Primitives, polyTimeComputable_blockXorAnyTest@PolyTimeBlockTests, polyTimeComputable_iterate_pairFstD@PolyTimePairing, polyTimeComputable_blockMajorityTest@PolyTimeBlockMajority, polyTimeComputable_dropPrefixByLength@PolyTimePrefix, polyTimeComputable_of_computesInSpace@ConfigCount, polyTimeComputable_takePrefixByLength@PolyTimePrefix
+     [TCSlib.Cryptography.CommitmentLemmas.ComLoop.init] readers: init_eq@CommitmentLemmas, init_poly@CommitmentLemmas
+     [TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut] readers: loopOut_poly@CommitmentLemmas
+     [TCSlib.Cryptography.FunFamily.Easy] readers: easy_iff@OneWay
+     [TCSlib.Cryptography.PermFamily.toFunFamily] readers: toFunFamily_f@OneWay, toFunFamily_f_domEquiv@OneWay, toFunFamily_inLen_eval@OneWay, toFunFamily_outLen_eval@OneWay, toFunFamily_codEquiv_ofFn@OneWay, toFunFamily_domEquiv_ofFn@OneWay, toFunFamily_domEquiv_symm_ofFn@OneWay; struct fields: inLen, outLen, f
+     > Application type mismatch: The argument
+     >   hFx
+     > has type
+     >   ∀ (n : ℕ) (x : Fin (P.toFunFamily.inLen.eval n) → Bool),
+     >     F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (P.toFunFamily.f n x)
+     > but is expected to have type
+     >   ∀ (n : ℕ) (x : Fin n → Bool), ?m.107 (NUPPT.advInput n (List.ofFn x)) = List.ofFn ((P.f n) x)
+     > in the application
+     >   owpComStr_eq_loopOut P h hFx
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_Commitment phase=eof spelling=BoolCircuit.CompileListSpec.mk._flat_ctor key=[["str","BoolCircuit"],["str","CompileListSpec"],["str","mk"],["str","_flat_ctor"]] home_ke
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_Commitment phase=eof spelling=BoolCircuit.CompileSpec.mk._flat_ctor key=[["str","BoolCircuit"],["str","CompileSpec"],["str","mk"],["str","_flat_ctor"]] home_key=[["str
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_Commitment phase=eof spelling=BoolCircuit.DAGCircuit.IsFaninTwo key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","IsFaninTwo"]] home_key=[["str","TCSlib"],["str"
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_Commitment phase=eof spelling=BoolCircuit.DAGCircuit.IsWellFormed key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","IsWellFormed"]] home_key=[["str","TCSlib"],["
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_Commitment phase=eof spelling=BoolCircuit.DAGCircuit._sizeOf_1 key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","_sizeOf_1"]] home_key=[["str","TCSlib"],["str","
+       880|   convert (CommitmentLemmas.ComLoop.loopOut_poly F H hF hH).comp
+       881|     CommitmentLemmas.ComLoop.init_poly using 1
+       882|   funext w
+    *  883|   exact owpComStr_eq_loopOut P h hFx hHx w
+       884| 
+       885| /-- **Commitment schemes from one-way permutations** [PS10, Theorem 126.4]: if `f` is a
+====================================================================================================
+KEY SEAL-0308 | seal | TCSlib.Cryptography.exists_multiRed_bound
+  record: TCSlib.Cryptography.exists_multiRed_bound l.315: Type mismatch (#248 inherited_same_step_after_other_repairs)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.distAdv_def (TCSlib/Cryptography/Foundations/Experiments.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Commitment.log:427
+  DECL at 289, header ends 300
+      289| private theorem exists_multiRed_bound {Com : List Bool → List Bool} (ℓ q : PolyExpr) (D : NUPPT)
+      290|     {C c : ℕ} (hCc : ∀ x, (Com x).length ≤ C * (x.length + 1) ^ c) (n : ℕ) :
+      291|     ∃ (pre suf : List Bool) (a a' : Fin n → Bool),
+      292|       2 * pre.length + 2 + suf.length ≤ (multiAdvBound ℓ q C c).eval n ∧
+      293|       ∀ v v' : Fin (q.eval n) → Fin n → Bool,
+      294|         distAdv (fun r : Fin (q.eval n) → Fin (ℓ.eval n) → Bool => multiCom Com v r)
+      295|           (fun r : Fin (q.eval n) → Fin (ℓ.eval n) → Bool => multiCom Com v' r)
+      296|           (D.distinguisherL n) ≤
+      297|         q.eval n * distAdv
+      298|           (fun r : Fin (ℓ.eval n) → Bool => Com (pairEncode (List.ofFn a) (List.ofFn r)))
+      299|           (fun r : Fin (ℓ.eval n) → Bool => Com (pairEncode (List.ofFn a') (List.ofFn r)))
+      300|           (fun z c => D.distinguisherL n (pre ++ pairEncode z suf) c) := by
+  -- coe-A line 316 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.distAdv']
+     referenced=['Complexity.NUPPT.coinLen', 'Complexity.NUPPT.distinguisherL', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.distAdv', 'Turing.pairEncode']
+     [TCSlib.Cryptography.distAdv] readers: distAdv_def@Experiments, distAdv_comp@Indistinguishability, distAdv_padXor_le@FromPRG, distAdv_mixDist_eq@Indistinguishability, distAdv_ggmBitsDist@GGM, distAdv_le_statDist@Experiments, distAdv_sunglassRed@Indistinguishability, distAdv_multi_le_sum@EnsembleSecurity, distAdv_tuple_le_mul@Hybrid, distAdv_tuple_le_sum@Hybrid, distAdv_prfEncReal_le@Hybrid, distAdv_le_of_statClose@Sampling, distAdv_multicopyAvgRed@Indistinguishability, distAdv_prfEncRealOut_le@Hybrid, distAdv_prfEncReal_random_otp_le@Hybrid, distAdv_prfEncRealOut_random_otp_le@Hybrid; struct fields: cauchy
+     > Type mismatch
+     >   rfl
+     > has type
+     >   ?m.221 = ?m.221
+     > but is expected to have type
+     >   distAdv (fun r => multiCom Com v r) (fun r => multiCom Com v' r) (D.distinguisherL n) =
+     >     distAdv (pairTuple (cm v)) (pairTuple (cm v')) D'
+       313|   have hadv : ∀ v v' : Fin t → Fin n → Bool,
+       314|       distAdv (fun r : Fin t → Fin (ℓ.eval n) → Bool => multiCom Com v r)
+       315|         (fun r : Fin t → Fin (ℓ.eval n) → Bool => multiCom Com v' r) (D.distinguisherL n) =
+    *  316|       distAdv (pairTuple (cm v)) (pairTuple (cm v')) D' := fun v v' => rfl
+       317|   obtain ⟨⟨v, v'⟩, -, hmax⟩ := Finset.exists_max_image Finset.univ
+       318|     (fun p : (Fin t → Fin n → Bool) × (Fin t → Fin n → Bool) =>
+====================================================================================================
+KEY SEAL-0309 | seal | TCSlib.Cryptography.exists_bitComPredictor
+  record: TCSlib.Cryptography.exists_bitComPredictor l.603: Type mismatch (#248 inherited_reviewed_conversion)
+  counts sA=3 sB=3 cA=3 cB=3 scan=-
+  tool: STAGE2 | stmt=no | add TCSlib.Cryptography.owpPair_eq (or _iff/_apply) in TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Commitment.log:715
+  DECL at 582, header ends 586
+      582| theorem exists_bitComPredictor {ρ : Type*} [Fintype ρ] [Nonempty ρ] {n : ℕ}
+      583|     (f : (Fin n → Bool) ≃ (Fin n → Bool)) (h : (Fin n → Bool) → Bool)
+      584|     (D : (Fin (n + 1) → Bool) → ρ → Bool) :
+      585|     ∃ flip : Bool, predProb f h (owpPredictorSnoc D flip) =
+      586|       1 / 2 + distAdv (bitCom f h false) (bitCom f h true) D / 2 := by
+  -- coe-A line 604 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.owpPair', 'TCSlib.Cryptography.owpPredictor', 'TCSlib.Cryptography.owpPredictorSnoc']
+     referenced=['TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.distAdv', 'TCSlib.Cryptography.owpGen', 'TCSlib.Cryptography.owpGenNot', 'TCSlib.Cryptography.owpPair', 'TCSlib.Cryptography.owpPredictor', 'TCSlib.Cryptography.owpPredictorSnoc', 'TCSlib.Cryptography.predProb']
+     [TCSlib.Cryptography.owpPair] struct fields: fst, snd
+     [TCSlib.Cryptography.owpPredictor] readers: owpPredictor_apply@GeneratorFromPermutation
+     [TCSlib.Cryptography.owpPredictorSnoc] readers: owpPredictorSnoc_eq@FromPermutation
+     > Type mismatch
+     >   Iff.rfl
+     > has type
+     >   ?m.155 ↔ ?m.155
+     > but is expected to have type
+     >   owpPredictorSnoc D flip (f x✝.1) x✝.2 = h x✝.1 ↔
+     >     owpPredictor (fun z r => D (e z) r) flip
+     >         (owpPair f
+     >           ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).1)
+     >         ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).2 =
+     >       h ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).1.1
+       601|          left_inv := fun _ => rfl
+       602|          right_inv := fun _ => rfl } :
+       603|         (Fin n → Bool) × (Bool × ρ) ≃ ((Fin n → Bool) × Unit) × (Bool × ρ))
+    *  604|       fun _ => Iff.rfl
+       605|   have h0 : acceptProb (owpGen f fun w : (Fin n → Bool) × Unit => h w.1) (fun z r => D (e z) r) =
+       606|       acceptProb (bitCom f h false) D := by
+  -- coe-A line 608 cascade=True cls=Tactic X failed: The left-hand side
+     providers=['TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.owpGen', 'TCSlib.Cryptography.owpPair', 'TCSlib.Cryptography.owpPredictor', 'TCSlib.Cryptography.owpPredictorSnoc', 'TCSlib.Cryptography.predProb']
+     referenced=['TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.distAdv', 'TCSlib.Cryptography.owpGen', 'TCSlib.Cryptography.owpGenNot', 'TCSlib.Cryptography.owpPair', 'TCSlib.Cryptography.owpPredictor', 'TCSlib.Cryptography.owpPredictorSnoc', 'TCSlib.Cryptography.predProb']
+     [TCSlib.Cryptography.acceptProb] readers: acceptProb_def@Experiments, acceptProb_fst@Indistinguishability, acceptProb_snd@Indistinguishability, acceptProb_bind@Indistinguishability, acceptProb_congr@Defs, acceptProb_castLE@Stretch, acceptProb_id_owp@GeneratorFromPermutation, acceptProb_otpEnc@Hybrid, acceptProb_padXor@FromPRG, acceptProb_update@Indistinguishability, acceptProb_mixDist@Indistinguishability, acceptProb_otpEncOut@Hybrid, acceptProb_comp_equiv@Experiments, acceptProb_coins_equiv@ReductionSupport, acceptProb_nextBitDist@Concrete, acceptProb_pairRed_left@Commitment, acceptProb_pairRed_right@Commitment, acceptProb_tableDist_prg@SubHybrids, acceptProb_prgExtRed_left@Generators, acceptProb_prgHybrid_self@Generators, acceptProb_prgHybrid_zero@Generators, acceptProb_random_eq_lazy@Defs, acceptProb_eq_uexp_sum_map@Experiments, acceptProb_pairHybrid_self@Commitment, acceptProb_pairHybrid_zero@Commitment, acceptProb_prgExtRed_right@Generators, acceptProb_multicopyRed_left@Indistinguishability, acceptProb_nextBitHybrid_mix@Concrete, acceptProb_tableDist_uniform@SubHybrids, acceptProb_multicopyRed_right@Indistinguishability, acceptProb_nextBitHybrid_self@Concrete, acceptProb_nextBitHybrid_zero@Concrete, acceptProb_distinguisherL_coins@HybridMachine, acceptProb_multicopyHybrid_self@Indistinguishability, acceptProb_multicopyHybrid_zero@Indistinguishability, acceptProb_oracleDist_multiMsgAdv@Hybrid, acceptProb_oracleDist_multiMsgAdvOut@Hybrid; struct fields: cauchy
+     [TCSlib.Cryptography.owpGen] struct fields: fst, snd
+     [TCSlib.Cryptography.owpPair] struct fields: fst, snd
+     [TCSlib.Cryptography.owpPredictor] readers: owpPredictor_apply@GeneratorFromPermutation
+     [TCSlib.Cryptography.owpPredictorSnoc] readers: owpPredictorSnoc_eq@FromPermutation
+     [TCSlib.Cryptography.predProb] readers: predProb_def@Experiments, predProb_glHalf_odd@GoldreichLevin, predProb_coins_equiv@ReductionSupport, predProb_glHalf_even@GoldreichLevin, predProb_pkPredictor_true@Trapdoor, predProb_owpPredictor_true@GeneratorFromPermutation, predProb_pkPredictor_false@Trapdoor, predProb_owpPredictor_false@GeneratorFromPermutation; struct fields: cauchy
+     > Tactic `rfl` failed: The left-hand side
+     >   acceptProb (owpGen f fun w => h w.1) fun z r => D (e z) r
+     > is not definitionally equal to the right-hand side
+     >   acceptProb (fun z => Fin.snoc (f z.1) (h z.1)) D
+     > 
+     > ρ : Type u_1
+     > inst✝¹ : Fintype ρ
+     > inst✝ : Nonempty ρ
+     > n : ℕ
+     > f : (Fin n → Bool) ≃ (Fin n → Bool)
+     > h : (Fin n → Bool) → Bool
+     > D : (Fin (n + 1) → Bool) → ρ → Bool
+     > e : (Fin n → Bool) × Unit × Bool ≃ (Fin (n + 1) → Bool) :=
+     >   { toFun := fun z => Fin.snoc z.1 z.2.2, invFun := fun t => (Fin.init t, (), t (Fin.last n)), left_inv := ⋯,
+     >> ⊢ (acceptProb (owpGen f fun w => h w.1) fun z r => D (e z) r) = acceptProb (fun z => Fin.snoc (f z.1) (h z.1)) D
+       605|   have h0 : acceptProb (owpGen f fun w : (Fin n → Bool) × Unit => h w.1) (fun z r => D (e z) r) =
+       606|       acceptProb (bitCom f h false) D := by
+       607|     rw [bitCom_false, ← acceptProb_fst (τ := Unit) (fun r => Fin.snoc (f r) (h r)) D]
+    *  608|     rfl
+       609|   have h0' : acceptProb (owpGenNot f fun w : (Fin n → Bool) × Unit => h w.1)
+       610|       (fun z r => D (e z) r) = acceptProb (bitCom f h true) D := by
+  -- coe-A line 612 cascade=True cls=Tactic X failed: The left-hand side
+     providers=['TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.owpGen', 'TCSlib.Cryptography.owpGenNot', 'TCSlib.Cryptography.owpPair', 'TCSlib.Cryptography.owpPredictor', 'TCSlib.Cryptography.owpPredictorSnoc', 'TCSlib.Cryptography.predProb']
+     referenced=['TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.distAdv', 'TCSlib.Cryptography.owpGen', 'TCSlib.Cryptography.owpGenNot', 'TCSlib.Cryptography.owpPair', 'TCSlib.Cryptography.owpPredictor', 'TCSlib.Cryptography.owpPredictorSnoc', 'TCSlib.Cryptography.predProb']
+     [TCSlib.Cryptography.acceptProb] readers: acceptProb_def@Experiments, acceptProb_fst@Indistinguishability, acceptProb_snd@Indistinguishability, acceptProb_bind@Indistinguishability, acceptProb_congr@Defs, acceptProb_castLE@Stretch, acceptProb_id_owp@GeneratorFromPermutation, acceptProb_otpEnc@Hybrid, acceptProb_padXor@FromPRG, acceptProb_update@Indistinguishability, acceptProb_mixDist@Indistinguishability, acceptProb_otpEncOut@Hybrid, acceptProb_comp_equiv@Experiments, acceptProb_coins_equiv@ReductionSupport, acceptProb_nextBitDist@Concrete, acceptProb_pairRed_left@Commitment, acceptProb_pairRed_right@Commitment, acceptProb_tableDist_prg@SubHybrids, acceptProb_prgExtRed_left@Generators, acceptProb_prgHybrid_self@Generators, acceptProb_prgHybrid_zero@Generators, acceptProb_random_eq_lazy@Defs, acceptProb_eq_uexp_sum_map@Experiments, acceptProb_pairHybrid_self@Commitment, acceptProb_pairHybrid_zero@Commitment, acceptProb_prgExtRed_right@Generators, acceptProb_multicopyRed_left@Indistinguishability, acceptProb_nextBitHybrid_mix@Concrete, acceptProb_tableDist_uniform@SubHybrids, acceptProb_multicopyRed_right@Indistinguishability, acceptProb_nextBitHybrid_self@Concrete, acceptProb_nextBitHybrid_zero@Concrete, acceptProb_distinguisherL_coins@HybridMachine, acceptProb_multicopyHybrid_self@Indistinguishability, acceptProb_multicopyHybrid_zero@Indistinguishability, acceptProb_oracleDist_multiMsgAdv@Hybrid, acceptProb_oracleDist_multiMsgAdvOut@Hybrid; struct fields: cauchy
+     [TCSlib.Cryptography.owpGen] struct fields: fst, snd
+     [TCSlib.Cryptography.owpGenNot] struct fields: fst, snd
+     [TCSlib.Cryptography.owpPair] struct fields: fst, snd
+     [TCSlib.Cryptography.owpPredictor] readers: owpPredictor_apply@GeneratorFromPermutation
+     [TCSlib.Cryptography.owpPredictorSnoc] readers: owpPredictorSnoc_eq@FromPermutation
+     [TCSlib.Cryptography.predProb] readers: predProb_def@Experiments, predProb_glHalf_odd@GoldreichLevin, predProb_coins_equiv@ReductionSupport, predProb_glHalf_even@GoldreichLevin, predProb_pkPredictor_true@Trapdoor, predProb_owpPredictor_true@GeneratorFromPermutation, predProb_pkPredictor_false@Trapdoor, predProb_owpPredictor_false@GeneratorFromPermutation; struct fields: cauchy
+     > Tactic `rfl` failed: The left-hand side
+     >   acceptProb (owpGenNot f fun w => h w.1) fun z r => D (e z) r
+     > is not definitionally equal to the right-hand side
+     >   acceptProb (fun z => Fin.snoc (f z.1) !h z.1) D
+     > 
+     > ρ : Type u_1
+     > inst✝¹ : Fintype ρ
+     > inst✝ : Nonempty ρ
+     > n : ℕ
+     > f : (Fin n → Bool) ≃ (Fin n → Bool)
+     > h : (Fin n → Bool) → Bool
+     > D : (Fin (n + 1) → Bool) → ρ → Bool
+     > e : (Fin n → Bool) × Unit × Bool ≃ (Fin (n + 1) → Bool) :=
+     >   { toFun := fun z => Fin.snoc z.1 z.2.2, invFun := fun t => (Fin.init t, (), t (Fin.last n)), left_inv := ⋯,
+     >> ⊢ (acceptProb (owpGenNot f fun w => h w.1) fun z r => D (e z) r) = acceptProb (fun z => Fin.snoc (f z.1) !h z.1) D
+       609|   have h0' : acceptProb (owpGenNot f fun w : (Fin n → Bool) × Unit => h w.1)
+       610|       (fun z r => D (e z) r) = acceptProb (bitCom f h true) D := by
+       611|     rw [bitCom_true, ← acceptProb_fst (τ := Unit) (fun r => Fin.snoc (f r) (!h r)) D]
+    *  612|     rfl
+       613|   rcases le_total 0 (acceptProb (bitCom f h false) D - acceptProb (bitCom f h true) D) with
+       614|     hs | hs
+====================================================================================================
+KEY SEAL-0310 | seal | TCSlib.Cryptography.exists_bitComPredictor
+  record: TCSlib.Cryptography.exists_bitComPredictor l.607: Tactic `rfl` failed: The left-hand side (#248 inherited_same_step_after_other_repairs)
+  counts sA=3 sB=3 cA=3 cB=3 scan=-
+  tool: STAGE2 | stmt=no | add TCSlib.Cryptography.owpPair_eq (or _iff/_apply) in TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Commitment.log:715
+  DECL at 582, header ends 586
+      582| theorem exists_bitComPredictor {ρ : Type*} [Fintype ρ] [Nonempty ρ] {n : ℕ}
+      583|     (f : (Fin n → Bool) ≃ (Fin n → Bool)) (h : (Fin n → Bool) → Bool)
+      584|     (D : (Fin (n + 1) → Bool) → ρ → Bool) :
+      585|     ∃ flip : Bool, predProb f h (owpPredictorSnoc D flip) =
+      586|       1 / 2 + distAdv (bitCom f h false) (bitCom f h true) D / 2 := by
+  -- coe-A line 604 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.owpPair', 'TCSlib.Cryptography.owpPredictor', 'TCSlib.Cryptography.owpPredictorSnoc']
+     referenced=['TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.distAdv', 'TCSlib.Cryptography.owpGen', 'TCSlib.Cryptography.owpGenNot', 'TCSlib.Cryptography.owpPair', 'TCSlib.Cryptography.owpPredictor', 'TCSlib.Cryptography.owpPredictorSnoc', 'TCSlib.Cryptography.predProb']
+     [TCSlib.Cryptography.owpPair] struct fields: fst, snd
+     [TCSlib.Cryptography.owpPredictor] readers: owpPredictor_apply@GeneratorFromPermutation
+     [TCSlib.Cryptography.owpPredictorSnoc] readers: owpPredictorSnoc_eq@FromPermutation
+     > Type mismatch
+     >   Iff.rfl
+     > has type
+     >   ?m.155 ↔ ?m.155
+     > but is expected to have type
+     >   owpPredictorSnoc D flip (f x✝.1) x✝.2 = h x✝.1 ↔
+     >     owpPredictor (fun z r => D (e z) r) flip
+     >         (owpPair f
+     >           ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).1)
+     >         ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).2 =
+     >       h ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).1.1
+       601|          left_inv := fun _ => rfl
+       602|          right_inv := fun _ => rfl } :
+       603|         (Fin n → Bool) × (Bool × ρ) ≃ ((Fin n → Bool) × Unit) × (Bool × ρ))
+    *  604|       fun _ => Iff.rfl
+       605|   have h0 : acceptProb (owpGen f fun w : (Fin n → Bool) × Unit => h w.1) (fun z r => D (e z) r) =
+       606|       acceptProb (bitCom f h false) D := by
+  -- coe-A line 608 cascade=True cls=Tactic X failed: The left-hand side
+     providers=['TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.owpGen', 'TCSlib.Cryptography.owpPair', 'TCSlib.Cryptography.owpPredictor', 'TCSlib.Cryptography.owpPredictorSnoc', 'TCSlib.Cryptography.predProb']
+     referenced=['TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.distAdv', 'TCSlib.Cryptography.owpGen', 'TCSlib.Cryptography.owpGenNot', 'TCSlib.Cryptography.owpPair', 'TCSlib.Cryptography.owpPredictor', 'TCSlib.Cryptography.owpPredictorSnoc', 'TCSlib.Cryptography.predProb']
+     [TCSlib.Cryptography.acceptProb] readers: acceptProb_def@Experiments, acceptProb_fst@Indistinguishability, acceptProb_snd@Indistinguishability, acceptProb_bind@Indistinguishability, acceptProb_congr@Defs, acceptProb_castLE@Stretch, acceptProb_id_owp@GeneratorFromPermutation, acceptProb_otpEnc@Hybrid, acceptProb_padXor@FromPRG, acceptProb_update@Indistinguishability, acceptProb_mixDist@Indistinguishability, acceptProb_otpEncOut@Hybrid, acceptProb_comp_equiv@Experiments, acceptProb_coins_equiv@ReductionSupport, acceptProb_nextBitDist@Concrete, acceptProb_pairRed_left@Commitment, acceptProb_pairRed_right@Commitment, acceptProb_tableDist_prg@SubHybrids, acceptProb_prgExtRed_left@Generators, acceptProb_prgHybrid_self@Generators, acceptProb_prgHybrid_zero@Generators, acceptProb_random_eq_lazy@Defs, acceptProb_eq_uexp_sum_map@Experiments, acceptProb_pairHybrid_self@Commitment, acceptProb_pairHybrid_zero@Commitment, acceptProb_prgExtRed_right@Generators, acceptProb_multicopyRed_left@Indistinguishability, acceptProb_nextBitHybrid_mix@Concrete, acceptProb_tableDist_uniform@SubHybrids, acceptProb_multicopyRed_right@Indistinguishability, acceptProb_nextBitHybrid_self@Concrete, acceptProb_nextBitHybrid_zero@Concrete, acceptProb_distinguisherL_coins@HybridMachine, acceptProb_multicopyHybrid_self@Indistinguishability, acceptProb_multicopyHybrid_zero@Indistinguishability, acceptProb_oracleDist_multiMsgAdv@Hybrid, acceptProb_oracleDist_multiMsgAdvOut@Hybrid; struct fields: cauchy
+     [TCSlib.Cryptography.owpGen] struct fields: fst, snd
+     [TCSlib.Cryptography.owpPair] struct fields: fst, snd
+     [TCSlib.Cryptography.owpPredictor] readers: owpPredictor_apply@GeneratorFromPermutation
+     [TCSlib.Cryptography.owpPredictorSnoc] readers: owpPredictorSnoc_eq@FromPermutation
+     [TCSlib.Cryptography.predProb] readers: predProb_def@Experiments, predProb_glHalf_odd@GoldreichLevin, predProb_coins_equiv@ReductionSupport, predProb_glHalf_even@GoldreichLevin, predProb_pkPredictor_true@Trapdoor, predProb_owpPredictor_true@GeneratorFromPermutation, predProb_pkPredictor_false@Trapdoor, predProb_owpPredictor_false@GeneratorFromPermutation; struct fields: cauchy
+     > Tactic `rfl` failed: The left-hand side
+     >   acceptProb (owpGen f fun w => h w.1) fun z r => D (e z) r
+     > is not definitionally equal to the right-hand side
+     >   acceptProb (fun z => Fin.snoc (f z.1) (h z.1)) D
+     > 
+     > ρ : Type u_1
+     > inst✝¹ : Fintype ρ
+     > inst✝ : Nonempty ρ
+     > n : ℕ
+     > f : (Fin n → Bool) ≃ (Fin n → Bool)
+     > h : (Fin n → Bool) → Bool
+     > D : (Fin (n + 1) → Bool) → ρ → Bool
+     > e : (Fin n → Bool) × Unit × Bool ≃ (Fin (n + 1) → Bool) :=
+     >   { toFun := fun z => Fin.snoc z.1 z.2.2, invFun := fun t => (Fin.init t, (), t (Fin.last n)), left_inv := ⋯,
+     >> ⊢ (acceptProb (owpGen f fun w => h w.1) fun z r => D (e z) r) = acceptProb (fun z => Fin.snoc (f z.1) (h z.1)) D
+       605|   have h0 : acceptProb (owpGen f fun w : (Fin n → Bool) × Unit => h w.1) (fun z r => D (e z) r) =
+       606|       acceptProb (bitCom f h false) D := by
+       607|     rw [bitCom_false, ← acceptProb_fst (τ := Unit) (fun r => Fin.snoc (f r) (h r)) D]
+    *  608|     rfl
+       609|   have h0' : acceptProb (owpGenNot f fun w : (Fin n → Bool) × Unit => h w.1)
+       610|       (fun z r => D (e z) r) = acceptProb (bitCom f h true) D := by
+  -- coe-A line 612 cascade=True cls=Tactic X failed: The left-hand side
+     providers=['TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.owpGen', 'TCSlib.Cryptography.owpGenNot', 'TCSlib.Cryptography.owpPair', 'TCSlib.Cryptography.owpPredictor', 'TCSlib.Cryptography.owpPredictorSnoc', 'TCSlib.Cryptography.predProb']
+     referenced=['TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.distAdv', 'TCSlib.Cryptography.owpGen', 'TCSlib.Cryptography.owpGenNot', 'TCSlib.Cryptography.owpPair', 'TCSlib.Cryptography.owpPredictor', 'TCSlib.Cryptography.owpPredictorSnoc', 'TCSlib.Cryptography.predProb']
+     [TCSlib.Cryptography.acceptProb] readers: acceptProb_def@Experiments, acceptProb_fst@Indistinguishability, acceptProb_snd@Indistinguishability, acceptProb_bind@Indistinguishability, acceptProb_congr@Defs, acceptProb_castLE@Stretch, acceptProb_id_owp@GeneratorFromPermutation, acceptProb_otpEnc@Hybrid, acceptProb_padXor@FromPRG, acceptProb_update@Indistinguishability, acceptProb_mixDist@Indistinguishability, acceptProb_otpEncOut@Hybrid, acceptProb_comp_equiv@Experiments, acceptProb_coins_equiv@ReductionSupport, acceptProb_nextBitDist@Concrete, acceptProb_pairRed_left@Commitment, acceptProb_pairRed_right@Commitment, acceptProb_tableDist_prg@SubHybrids, acceptProb_prgExtRed_left@Generators, acceptProb_prgHybrid_self@Generators, acceptProb_prgHybrid_zero@Generators, acceptProb_random_eq_lazy@Defs, acceptProb_eq_uexp_sum_map@Experiments, acceptProb_pairHybrid_self@Commitment, acceptProb_pairHybrid_zero@Commitment, acceptProb_prgExtRed_right@Generators, acceptProb_multicopyRed_left@Indistinguishability, acceptProb_nextBitHybrid_mix@Concrete, acceptProb_tableDist_uniform@SubHybrids, acceptProb_multicopyRed_right@Indistinguishability, acceptProb_nextBitHybrid_self@Concrete, acceptProb_nextBitHybrid_zero@Concrete, acceptProb_distinguisherL_coins@HybridMachine, acceptProb_multicopyHybrid_self@Indistinguishability, acceptProb_multicopyHybrid_zero@Indistinguishability, acceptProb_oracleDist_multiMsgAdv@Hybrid, acceptProb_oracleDist_multiMsgAdvOut@Hybrid; struct fields: cauchy
+     [TCSlib.Cryptography.owpGen] struct fields: fst, snd
+     [TCSlib.Cryptography.owpGenNot] struct fields: fst, snd
+     [TCSlib.Cryptography.owpPair] struct fields: fst, snd
+     [TCSlib.Cryptography.owpPredictor] readers: owpPredictor_apply@GeneratorFromPermutation
+     [TCSlib.Cryptography.owpPredictorSnoc] readers: owpPredictorSnoc_eq@FromPermutation
+     [TCSlib.Cryptography.predProb] readers: predProb_def@Experiments, predProb_glHalf_odd@GoldreichLevin, predProb_coins_equiv@ReductionSupport, predProb_glHalf_even@GoldreichLevin, predProb_pkPredictor_true@Trapdoor, predProb_owpPredictor_true@GeneratorFromPermutation, predProb_pkPredictor_false@Trapdoor, predProb_owpPredictor_false@GeneratorFromPermutation; struct fields: cauchy
+     > Tactic `rfl` failed: The left-hand side
+     >   acceptProb (owpGenNot f fun w => h w.1) fun z r => D (e z) r
+     > is not definitionally equal to the right-hand side
+     >   acceptProb (fun z => Fin.snoc (f z.1) !h z.1) D
+     > 
+     > ρ : Type u_1
+     > inst✝¹ : Fintype ρ
+     > inst✝ : Nonempty ρ
+     > n : ℕ
+     > f : (Fin n → Bool) ≃ (Fin n → Bool)
+     > h : (Fin n → Bool) → Bool
+     > D : (Fin (n + 1) → Bool) → ρ → Bool
+     > e : (Fin n → Bool) × Unit × Bool ≃ (Fin (n + 1) → Bool) :=
+     >   { toFun := fun z => Fin.snoc z.1 z.2.2, invFun := fun t => (Fin.init t, (), t (Fin.last n)), left_inv := ⋯,
+     >> ⊢ (acceptProb (owpGenNot f fun w => h w.1) fun z r => D (e z) r) = acceptProb (fun z => Fin.snoc (f z.1) !h z.1) D
+       609|   have h0' : acceptProb (owpGenNot f fun w : (Fin n → Bool) × Unit => h w.1)
+       610|       (fun z r => D (e z) r) = acceptProb (bitCom f h true) D := by
+       611|     rw [bitCom_true, ← acceptProb_fst (τ := Unit) (fun r => Fin.snoc (f r) (!h r)) D]
+    *  612|     rfl
+       613|   rcases le_total 0 (acceptProb (bitCom f h false) D - acceptProb (bitCom f h true) D) with
+       614|     hs | hs
+====================================================================================================
+KEY SEAL-0311 | seal | TCSlib.Cryptography.exists_bitComPredictor
+  record: TCSlib.Cryptography.exists_bitComPredictor l.611: Tactic `rfl` failed: The left-hand side (#248 inherited_same_step_after_other_repairs)
+  counts sA=3 sB=3 cA=3 cB=3 scan=-
+  tool: STAGE2 | stmt=no | add TCSlib.Cryptography.owpPair_eq (or _iff/_apply) in TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Commitment.log:715
+  DECL at 582, header ends 586
+      582| theorem exists_bitComPredictor {ρ : Type*} [Fintype ρ] [Nonempty ρ] {n : ℕ}
+      583|     (f : (Fin n → Bool) ≃ (Fin n → Bool)) (h : (Fin n → Bool) → Bool)
+      584|     (D : (Fin (n + 1) → Bool) → ρ → Bool) :
+      585|     ∃ flip : Bool, predProb f h (owpPredictorSnoc D flip) =
+      586|       1 / 2 + distAdv (bitCom f h false) (bitCom f h true) D / 2 := by
+  -- coe-A line 604 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.owpPair', 'TCSlib.Cryptography.owpPredictor', 'TCSlib.Cryptography.owpPredictorSnoc']
+     referenced=['TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.distAdv', 'TCSlib.Cryptography.owpGen', 'TCSlib.Cryptography.owpGenNot', 'TCSlib.Cryptography.owpPair', 'TCSlib.Cryptography.owpPredictor', 'TCSlib.Cryptography.owpPredictorSnoc', 'TCSlib.Cryptography.predProb']
+     [TCSlib.Cryptography.owpPair] struct fields: fst, snd
+     [TCSlib.Cryptography.owpPredictor] readers: owpPredictor_apply@GeneratorFromPermutation
+     [TCSlib.Cryptography.owpPredictorSnoc] readers: owpPredictorSnoc_eq@FromPermutation
+     > Type mismatch
+     >   Iff.rfl
+     > has type
+     >   ?m.155 ↔ ?m.155
+     > but is expected to have type
+     >   owpPredictorSnoc D flip (f x✝.1) x✝.2 = h x✝.1 ↔
+     >     owpPredictor (fun z r => D (e z) r) flip
+     >         (owpPair f
+     >           ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).1)
+     >         ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).2 =
+     >       h ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).1.1
+       601|          left_inv := fun _ => rfl
+       602|          right_inv := fun _ => rfl } :
+       603|         (Fin n → Bool) × (Bool × ρ) ≃ ((Fin n → Bool) × Unit) × (Bool × ρ))
+    *  604|       fun _ => Iff.rfl
+       605|   have h0 : acceptProb (owpGen f fun w : (Fin n → Bool) × Unit => h w.1) (fun z r => D (e z) r) =
+       606|       acceptProb (bitCom f h false) D := by
+  -- coe-A line 608 cascade=True cls=Tactic X failed: The left-hand side
+     providers=['TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.owpGen', 'TCSlib.Cryptography.owpPair', 'TCSlib.Cryptography.owpPredictor', 'TCSlib.Cryptography.owpPredictorSnoc', 'TCSlib.Cryptography.predProb']
+     referenced=['TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.distAdv', 'TCSlib.Cryptography.owpGen', 'TCSlib.Cryptography.owpGenNot', 'TCSlib.Cryptography.owpPair', 'TCSlib.Cryptography.owpPredictor', 'TCSlib.Cryptography.owpPredictorSnoc', 'TCSlib.Cryptography.predProb']
+     [TCSlib.Cryptography.acceptProb] readers: acceptProb_def@Experiments, acceptProb_fst@Indistinguishability, acceptProb_snd@Indistinguishability, acceptProb_bind@Indistinguishability, acceptProb_congr@Defs, acceptProb_castLE@Stretch, acceptProb_id_owp@GeneratorFromPermutation, acceptProb_otpEnc@Hybrid, acceptProb_padXor@FromPRG, acceptProb_update@Indistinguishability, acceptProb_mixDist@Indistinguishability, acceptProb_otpEncOut@Hybrid, acceptProb_comp_equiv@Experiments, acceptProb_coins_equiv@ReductionSupport, acceptProb_nextBitDist@Concrete, acceptProb_pairRed_left@Commitment, acceptProb_pairRed_right@Commitment, acceptProb_tableDist_prg@SubHybrids, acceptProb_prgExtRed_left@Generators, acceptProb_prgHybrid_self@Generators, acceptProb_prgHybrid_zero@Generators, acceptProb_random_eq_lazy@Defs, acceptProb_eq_uexp_sum_map@Experiments, acceptProb_pairHybrid_self@Commitment, acceptProb_pairHybrid_zero@Commitment, acceptProb_prgExtRed_right@Generators, acceptProb_multicopyRed_left@Indistinguishability, acceptProb_nextBitHybrid_mix@Concrete, acceptProb_tableDist_uniform@SubHybrids, acceptProb_multicopyRed_right@Indistinguishability, acceptProb_nextBitHybrid_self@Concrete, acceptProb_nextBitHybrid_zero@Concrete, acceptProb_distinguisherL_coins@HybridMachine, acceptProb_multicopyHybrid_self@Indistinguishability, acceptProb_multicopyHybrid_zero@Indistinguishability, acceptProb_oracleDist_multiMsgAdv@Hybrid, acceptProb_oracleDist_multiMsgAdvOut@Hybrid; struct fields: cauchy
+     [TCSlib.Cryptography.owpGen] struct fields: fst, snd
+     [TCSlib.Cryptography.owpPair] struct fields: fst, snd
+     [TCSlib.Cryptography.owpPredictor] readers: owpPredictor_apply@GeneratorFromPermutation
+     [TCSlib.Cryptography.owpPredictorSnoc] readers: owpPredictorSnoc_eq@FromPermutation
+     [TCSlib.Cryptography.predProb] readers: predProb_def@Experiments, predProb_glHalf_odd@GoldreichLevin, predProb_coins_equiv@ReductionSupport, predProb_glHalf_even@GoldreichLevin, predProb_pkPredictor_true@Trapdoor, predProb_owpPredictor_true@GeneratorFromPermutation, predProb_pkPredictor_false@Trapdoor, predProb_owpPredictor_false@GeneratorFromPermutation; struct fields: cauchy
+     > Tactic `rfl` failed: The left-hand side
+     >   acceptProb (owpGen f fun w => h w.1) fun z r => D (e z) r
+     > is not definitionally equal to the right-hand side
+     >   acceptProb (fun z => Fin.snoc (f z.1) (h z.1)) D
+     > 
+     > ρ : Type u_1
+     > inst✝¹ : Fintype ρ
+     > inst✝ : Nonempty ρ
+     > n : ℕ
+     > f : (Fin n → Bool) ≃ (Fin n → Bool)
+     > h : (Fin n → Bool) → Bool
+     > D : (Fin (n + 1) → Bool) → ρ → Bool
+     > e : (Fin n → Bool) × Unit × Bool ≃ (Fin (n + 1) → Bool) :=
+     >   { toFun := fun z => Fin.snoc z.1 z.2.2, invFun := fun t => (Fin.init t, (), t (Fin.last n)), left_inv := ⋯,
+     >> ⊢ (acceptProb (owpGen f fun w => h w.1) fun z r => D (e z) r) = acceptProb (fun z => Fin.snoc (f z.1) (h z.1)) D
+       605|   have h0 : acceptProb (owpGen f fun w : (Fin n → Bool) × Unit => h w.1) (fun z r => D (e z) r) =
+       606|       acceptProb (bitCom f h false) D := by
+       607|     rw [bitCom_false, ← acceptProb_fst (τ := Unit) (fun r => Fin.snoc (f r) (h r)) D]
+    *  608|     rfl
+       609|   have h0' : acceptProb (owpGenNot f fun w : (Fin n → Bool) × Unit => h w.1)
+       610|       (fun z r => D (e z) r) = acceptProb (bitCom f h true) D := by
+  -- coe-A line 612 cascade=True cls=Tactic X failed: The left-hand side
+     providers=['TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.owpGen', 'TCSlib.Cryptography.owpGenNot', 'TCSlib.Cryptography.owpPair', 'TCSlib.Cryptography.owpPredictor', 'TCSlib.Cryptography.owpPredictorSnoc', 'TCSlib.Cryptography.predProb']
+     referenced=['TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.distAdv', 'TCSlib.Cryptography.owpGen', 'TCSlib.Cryptography.owpGenNot', 'TCSlib.Cryptography.owpPair', 'TCSlib.Cryptography.owpPredictor', 'TCSlib.Cryptography.owpPredictorSnoc', 'TCSlib.Cryptography.predProb']
+     [TCSlib.Cryptography.acceptProb] readers: acceptProb_def@Experiments, acceptProb_fst@Indistinguishability, acceptProb_snd@Indistinguishability, acceptProb_bind@Indistinguishability, acceptProb_congr@Defs, acceptProb_castLE@Stretch, acceptProb_id_owp@GeneratorFromPermutation, acceptProb_otpEnc@Hybrid, acceptProb_padXor@FromPRG, acceptProb_update@Indistinguishability, acceptProb_mixDist@Indistinguishability, acceptProb_otpEncOut@Hybrid, acceptProb_comp_equiv@Experiments, acceptProb_coins_equiv@ReductionSupport, acceptProb_nextBitDist@Concrete, acceptProb_pairRed_left@Commitment, acceptProb_pairRed_right@Commitment, acceptProb_tableDist_prg@SubHybrids, acceptProb_prgExtRed_left@Generators, acceptProb_prgHybrid_self@Generators, acceptProb_prgHybrid_zero@Generators, acceptProb_random_eq_lazy@Defs, acceptProb_eq_uexp_sum_map@Experiments, acceptProb_pairHybrid_self@Commitment, acceptProb_pairHybrid_zero@Commitment, acceptProb_prgExtRed_right@Generators, acceptProb_multicopyRed_left@Indistinguishability, acceptProb_nextBitHybrid_mix@Concrete, acceptProb_tableDist_uniform@SubHybrids, acceptProb_multicopyRed_right@Indistinguishability, acceptProb_nextBitHybrid_self@Concrete, acceptProb_nextBitHybrid_zero@Concrete, acceptProb_distinguisherL_coins@HybridMachine, acceptProb_multicopyHybrid_self@Indistinguishability, acceptProb_multicopyHybrid_zero@Indistinguishability, acceptProb_oracleDist_multiMsgAdv@Hybrid, acceptProb_oracleDist_multiMsgAdvOut@Hybrid; struct fields: cauchy
+     [TCSlib.Cryptography.owpGen] struct fields: fst, snd
+     [TCSlib.Cryptography.owpGenNot] struct fields: fst, snd
+     [TCSlib.Cryptography.owpPair] struct fields: fst, snd
+     [TCSlib.Cryptography.owpPredictor] readers: owpPredictor_apply@GeneratorFromPermutation
+     [TCSlib.Cryptography.owpPredictorSnoc] readers: owpPredictorSnoc_eq@FromPermutation
+     [TCSlib.Cryptography.predProb] readers: predProb_def@Experiments, predProb_glHalf_odd@GoldreichLevin, predProb_coins_equiv@ReductionSupport, predProb_glHalf_even@GoldreichLevin, predProb_pkPredictor_true@Trapdoor, predProb_owpPredictor_true@GeneratorFromPermutation, predProb_pkPredictor_false@Trapdoor, predProb_owpPredictor_false@GeneratorFromPermutation; struct fields: cauchy
+     > Tactic `rfl` failed: The left-hand side
+     >   acceptProb (owpGenNot f fun w => h w.1) fun z r => D (e z) r
+     > is not definitionally equal to the right-hand side
+     >   acceptProb (fun z => Fin.snoc (f z.1) !h z.1) D
+     > 
+     > ρ : Type u_1
+     > inst✝¹ : Fintype ρ
+     > inst✝ : Nonempty ρ
+     > n : ℕ
+     > f : (Fin n → Bool) ≃ (Fin n → Bool)
+     > h : (Fin n → Bool) → Bool
+     > D : (Fin (n + 1) → Bool) → ρ → Bool
+     > e : (Fin n → Bool) × Unit × Bool ≃ (Fin (n + 1) → Bool) :=
+     >   { toFun := fun z => Fin.snoc z.1 z.2.2, invFun := fun t => (Fin.init t, (), t (Fin.last n)), left_inv := ⋯,
+     >> ⊢ (acceptProb (owpGenNot f fun w => h w.1) fun z r => D (e z) r) = acceptProb (fun z => Fin.snoc (f z.1) !h z.1) D
+       609|   have h0' : acceptProb (owpGenNot f fun w : (Fin n → Bool) × Unit => h w.1)
+       610|       (fun z r => D (e z) r) = acceptProb (bitCom f h true) D := by
+       611|     rw [bitCom_true, ← acceptProb_fst (τ := Unit) (fun r => Fin.snoc (f r) (!h r)) D]
+    *  612|     rfl
+       613|   rcases le_total 0 (acceptProb (bitCom f h false) D - acceptProb (bitCom f h true) D) with
+       614|     hs | hs
+====================================================================================================
+KEY SEAL-0312 | seal | TCSlib.Cryptography.exists_bitRed_bound
+  record: TCSlib.Cryptography.exists_bitRed_bound l.719: Tactic `rfl` failed: The left-hand side (#248 inherited_same_step_after_other_repairs)
+  counts sA=1 sB=0 cA=1 cB=0 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.FunFamily.blocks_apply (TCSlib/Cryptography/Asymptotic/Adversary.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Commitment.log:831
+  DECL at 690, header ends 700
+      690| private theorem exists_bitRed_bound (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool) (D : NUPPT)
+      691|     (n : ℕ) :
+      692|     ∃ pre suf : List Bool, 2 * pre.length + 2 + suf.length ≤ 3 * (n * (n + 1)) + 2 ∧
+      693|       ∀ v₀ v₁ : Fin n → Bool,
+      694|         distAdv (fun r : Fin (owpComLen.eval n) → Bool =>
+      695|             owpComStr P h (pairEncode (List.ofFn v₀) (List.ofFn r)))
+      696|           (fun r : Fin (owpComLen.eval n) → Bool =>
+      697|             owpComStr P h (pairEncode (List.ofFn v₁) (List.ofFn r)))
+      698|           (D.distinguisherL n) ≤
+      699|         n * distAdv (bitCom (P.f n) (h n) false) (bitCom (P.f n) (h n) true)
+      700|           (fun z c => D.distinguisherL n (pre ++ List.ofFn z ++ suf) c) := by
+  -- coe-A line 720 cascade=False cls=Tactic X failed: The left-hand side
+     providers=['TCSlib.Cryptography.FunFamily.blocks', 'TCSlib.Cryptography.acceptProb']
+     referenced=['Complexity.NUPPT.coinLen', 'Complexity.NUPPT.distinguisherL', 'TCSlib.Cryptography.FunFamily.blocks', 'TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.distAdv', 'Turing.pairEncode']
+     [TCSlib.Cryptography.FunFamily.blocks] readers: blocks_apply@Adversary, blocks_symm_apply@Adversary; struct fields: toFun, invFun, left_inv, right_inv
+     [TCSlib.Cryptography.acceptProb] readers: acceptProb_def@Experiments, acceptProb_fst@Indistinguishability, acceptProb_snd@Indistinguishability, acceptProb_bind@Indistinguishability, acceptProb_congr@Defs, acceptProb_castLE@Stretch, acceptProb_id_owp@GeneratorFromPermutation, acceptProb_otpEnc@Hybrid, acceptProb_padXor@FromPRG, acceptProb_update@Indistinguishability, acceptProb_mixDist@Indistinguishability, acceptProb_otpEncOut@Hybrid, acceptProb_comp_equiv@Experiments, acceptProb_coins_equiv@ReductionSupport, acceptProb_nextBitDist@Concrete, acceptProb_pairRed_left@Commitment, acceptProb_pairRed_right@Commitment, acceptProb_tableDist_prg@SubHybrids, acceptProb_prgExtRed_left@Generators, acceptProb_prgHybrid_self@Generators, acceptProb_prgHybrid_zero@Generators, acceptProb_random_eq_lazy@Defs, acceptProb_eq_uexp_sum_map@Experiments, acceptProb_pairHybrid_self@Commitment, acceptProb_pairHybrid_zero@Commitment, acceptProb_prgExtRed_right@Generators, acceptProb_multicopyRed_left@Indistinguishability, acceptProb_nextBitHybrid_mix@Concrete, acceptProb_tableDist_uniform@SubHybrids, acceptProb_multicopyRed_right@Indistinguishability, acceptProb_nextBitHybrid_self@Concrete, acceptProb_nextBitHybrid_zero@Concrete, acceptProb_distinguisherL_coins@HybridMachine, acceptProb_multicopyHybrid_self@Indistinguishability, acceptProb_multicopyHybrid_zero@Indistinguishability, acceptProb_oracleDist_multiMsgAdv@Hybrid, acceptProb_oracleDist_multiMsgAdvOut@Hybrid; struct fields: cauchy
+     > Tactic `rfl` failed: The left-hand side
+     >   |acceptProb (fun r => List.ofFn ((FunFamily.blocks n (n + 1)).symm (owpCom P h n v₀ ((FunFamily.blocks n n) r))))
+     >         (D.distinguisherL n) -
+     >       acceptProb (fun r => List.ofFn ((FunFamily.blocks n (n + 1)).symm (owpCom P h n v₁ ((FunFamily.blocks n n) r))))
+     >         (D.distinguisherL n)|
+     > is not definitionally equal to the right-hand side
+     >   |acceptProb (fun s => pairTuple (bc v₀) ((FunFamily.blocks n n) s)) D' -
+     >       acceptProb (fun s => pairTuple (bc v₁) ((FunFamily.blocks n n) s)) D'|
+     > 
+     > P : PermFamily
+     > h : (n : ℕ) → (Fin n → Bool) → Bool
+     > D : NUPPT
+     > n : ℕ
+     > hn : n > 0
+     >> ⊢ |acceptProb (fun r => List.ofFn ((FunFamily.blocks n (n + 1)).symm (owpCom P h n v₀ ((FunFamily.blocks n n) r))))
+       717|     simp only [distAdv_def]
+       718|     rw [← acceptProb_comp_equiv (FunFamily.blocks n n) (pairTuple (bc v₀)) D',
+       719|       ← acceptProb_comp_equiv (FunFamily.blocks n n) (pairTuple (bc v₁)) D']
+    *  720|     rfl
+       721|   obtain ⟨⟨v, v'⟩, -, hmax⟩ := Finset.exists_max_image Finset.univ
+       722|     (fun p : (Fin n → Bool) × (Fin n → Bool) =>
+====================================================================================================
+KEY SEAL-0313 | seal | TCSlib.Cryptography.owpComStr_eq_loopOut
+  record: TCSlib.Cryptography.owpComStr_eq_loopOut l.850: Tactic `rfl` failed: The left-hand side (#248 inherited_same_native_step)
+  counts sA=2 sB=2 cA=2 cB=2 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.NUPPT.advInput_eq (TCSlib/Complexity/Randomized/PPT.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Commitment.log:962
+  DECL at 833, header ends 837
+      833| private theorem owpComStr_eq_loopOut (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool)
+      834|     {F H : List Bool → List Bool}
+      835|     (hFx : ∀ n (x : Fin n → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (P.f n x))
+      836|     (hHx : ∀ n (x : Fin n → Bool), H (NUPPT.advInput n (List.ofFn x)) = [h n x]) (w : List Bool) :
+      837|     owpComStr P h w = ComLoop.loopOut F H (ComLoop.init w) := by
+  -- coe-A line 851 cascade=False cls=Tactic X failed: The left-hand side
+     providers=['Complexity.NUPPT.advInput', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.emit', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.init', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.step', 'TCSlib.Cryptography.EnsembleLemmas.blocks', 'TCSlib.Cryptography.FunFamily.blocks', 'TCSlib.Cryptography.padFin', 'Turing.pairEncode']
+     referenced=['Complexity.NUPPT.advInput', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.emit', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.init', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.step', 'TCSlib.Cryptography.EnsembleLemmas.blocks', 'TCSlib.Cryptography.EnsembleLemmas.padL', 'TCSlib.Cryptography.FunFamily.blocks', 'TCSlib.Cryptography.padFin', 'Turing.pairEncode']
+     [Complexity.NUPPT.advInput] readers: advInput_eq@PPT
+     [TCSlib.Cryptography.CommitmentLemmas.ComLoop.emit] readers: emit_poly@CommitmentLemmas, emit_init_of_le@CommitmentLemmas, emit_init_of_lt@CommitmentLemmas
+     [TCSlib.Cryptography.CommitmentLemmas.ComLoop.init] readers: init_eq@CommitmentLemmas, init_poly@CommitmentLemmas
+     [TCSlib.Cryptography.CommitmentLemmas.ComLoop.step] readers: step_poly@CommitmentLemmas
+     [TCSlib.Cryptography.EnsembleLemmas.blocks] readers: blocks_eq@EnsemblesLemmas, blocks_apply@EnsemblesLemmas, blocks_symm_apply@EnsemblesLemmas; struct fields: toFun, invFun, left_inv, right_inv
+     [TCSlib.Cryptography.FunFamily.blocks] readers: blocks_apply@Adversary, blocks_symm_apply@Adversary; struct fields: toFun, invFun, left_inv, right_inv
+     [TCSlib.Cryptography.padFin] readers: padFin_def@Adversary, padFin_apply@Adversary, padFin_ofFn@Adversary
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Tactic `rfl` failed: The left-hand side
+     >   List.ofFn
+     >     (Fin.snoc ((P.f v.length) ((EnsembleLemmas.blocks v.length v.length) (padFin (v.length * v.length) r) ⟨i, hi⟩))
+     >       (v.getD i false ^^
+     >         h v.length ((EnsembleLemmas.blocks v.length v.length) (padFin (v.length * v.length) r) ⟨i, hi⟩)))
+     > is not definitionally equal to the right-hand side
+     >   List.ofFn (T ⟨i, hi⟩)
+     > 
+     > P : PermFamily
+     > h : (n : ℕ) → (Fin n → Bool) → Bool
+     > F H : List Bool → List Bool
+     > hFx : ∀ (n : ℕ) (x : Fin n → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn ((P.f n) x)
+     > hHx : ∀ (n : ℕ) (x : Fin n → Bool), H (NUPPT.advInput n (List.ofFn x)) = [h n x]
+     > w v r : List Bool
+     >> ⊢ List.ofFn
+       848|     intro i hi
+       849|     simp only [hE]
+       850|     rw [ComLoop.emit_init_of_lt F H hi, hFx, hHx, List.headD_cons, ← ofFn_snoc_eq]
+    *  851|     rfl
+       852|   have hb : FunFamily.blocks n (n + 1) = EnsembleLemmas.blocks n (n + 1) := rfl
+       853|   rw [hb, EnsembleLemmas.ofFn_blocks_symm T E hEi]
+  -- coe-A line 852 cascade=True cls=Type mismatch
+     providers=['TCSlib.Cryptography.EnsembleLemmas.blocks', 'TCSlib.Cryptography.FunFamily.blocks']
+     referenced=['Complexity.NUPPT.advInput', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.emit', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.init', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.step', 'TCSlib.Cryptography.EnsembleLemmas.blocks', 'TCSlib.Cryptography.EnsembleLemmas.padL', 'TCSlib.Cryptography.FunFamily.blocks', 'TCSlib.Cryptography.padFin', 'Turing.pairEncode']
+     [TCSlib.Cryptography.EnsembleLemmas.blocks] readers: blocks_eq@EnsemblesLemmas, blocks_apply@EnsemblesLemmas, blocks_symm_apply@EnsemblesLemmas; struct fields: toFun, invFun, left_inv, right_inv
+     [TCSlib.Cryptography.FunFamily.blocks] readers: blocks_apply@Adversary, blocks_symm_apply@Adversary; struct fields: toFun, invFun, left_inv, right_inv
+     > Type mismatch
+     >   rfl
+     > has type
+     >   ?m.136 = ?m.136
+     > but is expected to have type
+     >   FunFamily.blocks n (n + 1) = EnsembleLemmas.blocks n (n + 1)
+       849|     simp only [hE]
+       850|     rw [ComLoop.emit_init_of_lt F H hi, hFx, hHx, List.headD_cons, ← ofFn_snoc_eq]
+       851|     rfl
+    *  852|   have hb : FunFamily.blocks n (n + 1) = EnsembleLemmas.blocks n (n + 1) := rfl
+       853|   rw [hb, EnsembleLemmas.ofFn_blocks_symm T E hEi]
+       854|   refine (flatMap_range_eq_of_nil E ?_ fun i hi => ComLoop.emit_init_of_le F H hi).symm
+====================================================================================================
+KEY SEAL-0314 | seal | TCSlib.Cryptography.owpComStr_eq_loopOut
+  record: TCSlib.Cryptography.owpComStr_eq_loopOut l.851: Type mismatch (#248 inherited_same_native_step)
+  counts sA=2 sB=2 cA=2 cB=2 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.NUPPT.advInput_eq (TCSlib/Complexity/Randomized/PPT.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Commitment.log:962
+  DECL at 833, header ends 837
+      833| private theorem owpComStr_eq_loopOut (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool)
+      834|     {F H : List Bool → List Bool}
+      835|     (hFx : ∀ n (x : Fin n → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (P.f n x))
+      836|     (hHx : ∀ n (x : Fin n → Bool), H (NUPPT.advInput n (List.ofFn x)) = [h n x]) (w : List Bool) :
+      837|     owpComStr P h w = ComLoop.loopOut F H (ComLoop.init w) := by
+  -- coe-A line 851 cascade=False cls=Tactic X failed: The left-hand side
+     providers=['Complexity.NUPPT.advInput', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.emit', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.init', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.step', 'TCSlib.Cryptography.EnsembleLemmas.blocks', 'TCSlib.Cryptography.FunFamily.blocks', 'TCSlib.Cryptography.padFin', 'Turing.pairEncode']
+     referenced=['Complexity.NUPPT.advInput', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.emit', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.init', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.step', 'TCSlib.Cryptography.EnsembleLemmas.blocks', 'TCSlib.Cryptography.EnsembleLemmas.padL', 'TCSlib.Cryptography.FunFamily.blocks', 'TCSlib.Cryptography.padFin', 'Turing.pairEncode']
+     [Complexity.NUPPT.advInput] readers: advInput_eq@PPT
+     [TCSlib.Cryptography.CommitmentLemmas.ComLoop.emit] readers: emit_poly@CommitmentLemmas, emit_init_of_le@CommitmentLemmas, emit_init_of_lt@CommitmentLemmas
+     [TCSlib.Cryptography.CommitmentLemmas.ComLoop.init] readers: init_eq@CommitmentLemmas, init_poly@CommitmentLemmas
+     [TCSlib.Cryptography.CommitmentLemmas.ComLoop.step] readers: step_poly@CommitmentLemmas
+     [TCSlib.Cryptography.EnsembleLemmas.blocks] readers: blocks_eq@EnsemblesLemmas, blocks_apply@EnsemblesLemmas, blocks_symm_apply@EnsemblesLemmas; struct fields: toFun, invFun, left_inv, right_inv
+     [TCSlib.Cryptography.FunFamily.blocks] readers: blocks_apply@Adversary, blocks_symm_apply@Adversary; struct fields: toFun, invFun, left_inv, right_inv
+     [TCSlib.Cryptography.padFin] readers: padFin_def@Adversary, padFin_apply@Adversary, padFin_ofFn@Adversary
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Tactic `rfl` failed: The left-hand side
+     >   List.ofFn
+     >     (Fin.snoc ((P.f v.length) ((EnsembleLemmas.blocks v.length v.length) (padFin (v.length * v.length) r) ⟨i, hi⟩))
+     >       (v.getD i false ^^
+     >         h v.length ((EnsembleLemmas.blocks v.length v.length) (padFin (v.length * v.length) r) ⟨i, hi⟩)))
+     > is not definitionally equal to the right-hand side
+     >   List.ofFn (T ⟨i, hi⟩)
+     > 
+     > P : PermFamily
+     > h : (n : ℕ) → (Fin n → Bool) → Bool
+     > F H : List Bool → List Bool
+     > hFx : ∀ (n : ℕ) (x : Fin n → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn ((P.f n) x)
+     > hHx : ∀ (n : ℕ) (x : Fin n → Bool), H (NUPPT.advInput n (List.ofFn x)) = [h n x]
+     > w v r : List Bool
+     >> ⊢ List.ofFn
+       848|     intro i hi
+       849|     simp only [hE]
+       850|     rw [ComLoop.emit_init_of_lt F H hi, hFx, hHx, List.headD_cons, ← ofFn_snoc_eq]
+    *  851|     rfl
+       852|   have hb : FunFamily.blocks n (n + 1) = EnsembleLemmas.blocks n (n + 1) := rfl
+       853|   rw [hb, EnsembleLemmas.ofFn_blocks_symm T E hEi]
+  -- coe-A line 852 cascade=True cls=Type mismatch
+     providers=['TCSlib.Cryptography.EnsembleLemmas.blocks', 'TCSlib.Cryptography.FunFamily.blocks']
+     referenced=['Complexity.NUPPT.advInput', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.emit', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.init', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.step', 'TCSlib.Cryptography.EnsembleLemmas.blocks', 'TCSlib.Cryptography.EnsembleLemmas.padL', 'TCSlib.Cryptography.FunFamily.blocks', 'TCSlib.Cryptography.padFin', 'Turing.pairEncode']
+     [TCSlib.Cryptography.EnsembleLemmas.blocks] readers: blocks_eq@EnsemblesLemmas, blocks_apply@EnsemblesLemmas, blocks_symm_apply@EnsemblesLemmas; struct fields: toFun, invFun, left_inv, right_inv
+     [TCSlib.Cryptography.FunFamily.blocks] readers: blocks_apply@Adversary, blocks_symm_apply@Adversary; struct fields: toFun, invFun, left_inv, right_inv
+     > Type mismatch
+     >   rfl
+     > has type
+     >   ?m.136 = ?m.136
+     > but is expected to have type
+     >   FunFamily.blocks n (n + 1) = EnsembleLemmas.blocks n (n + 1)
+       849|     simp only [hE]
+       850|     rw [ComLoop.emit_init_of_lt F H hi, hFx, hHx, List.headD_cons, ← ofFn_snoc_eq]
+       851|     rfl
+    *  852|   have hb : FunFamily.blocks n (n + 1) = EnsembleLemmas.blocks n (n + 1) := rfl
+       853|   rw [hb, EnsembleLemmas.ofFn_blocks_symm T E hEi]
+       854|   refine (flatMap_range_eq_of_nil E ?_ fun i hi => ComLoop.emit_init_of_le F H hi).symm
+====================================================================================================
+KEY SEAL-0315 | seal | TCSlib.Cryptography.owpComStr_polyTimeComputable
+  record: TCSlib.Cryptography.owpComStr_polyTimeComputable l.882: Application type mismatch: The argument (#248 inherited_reached_in_baseline_probe)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.NUPPT.advInput_eq (TCSlib/Complexity/Randomized/PPT.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Commitment.log:994
+  DECL at 873, header ends 877
+      873| theorem owpComStr_polyTimeComputable (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool)
+      874|     (hF : P.toFunFamily.Easy)
+      875|     (hH : ∃ H : List Bool → List Bool, PolyTimeComputable H ∧
+      876|       ∀ n (x : Fin n → Bool), H (NUPPT.advInput n (List.ofFn x)) = [h n x]) :
+      877|     PolyTimeComputable (owpComStr P h) := by
+  -- coe-A line 883 cascade=False cls=Application type mismatch: The argument
+     providers=['Complexity.NUPPT.advInput', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.init', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut', 'TCSlib.Cryptography.FunFamily.Easy', 'TCSlib.Cryptography.PermFamily.toFunFamily']
+     referenced=['Complexity.NUPPT.advInput', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.init', 'TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut', 'TCSlib.Cryptography.FunFamily.Easy', 'TCSlib.Cryptography.PermFamily.toFunFamily']
+     [Complexity.NUPPT.advInput] readers: advInput_eq@PPT
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop, polyTimeComputable_unary@PolyTimePairing, polyTimeComputable_pairEq@Repetition, polyTimeComputable_iterate@Repetition, polyTimeComputable_pairXor@Repetition, polyTimeComputable_prepend@PolyTimePairing, polyTimeComputable_blockMap@Repetition, polyTimeComputable_emitIter@PolyTimeBlockLoop, polyTimeComputable_majority@Repetition, polyTimeComputable_pairFstD@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, polyTimeComputable_pairSwap@PolyTimePairing, polyTimeComputable_of_linear@PolyTimePairing, polyTimeComputable_polyUnary@PolyTimePairing, polyTimeComputable_stateFind@Repetition, polyTimeComputable_transduce@Transducer, polyTimeComputable_unaryPoly@Primitives, polyTimeComputable_pairConcat@PolyTimePairing, polyTimeComputable_iterateEmit@Repetition, polyTimeComputable_iterateFind@Repetition, polyTimeComputable_sliceDropAt@PolyTimeBlockLoop, polyTimeComputable_sliceTakeAt@PolyTimeBlockLoop, polyTimeComputable_unaryNormal@PolyExpr, polyTimeComputable_blockAnyTest@PolyTimeBlockTests, polyTimeComputable_pairDropPoly@Primitives, polyTimeComputable_pairTakePoly@Primitives, polyTimeComputable_blockXorAnyTest@PolyTimeBlockTests, polyTimeComputable_iterate_pairFstD@PolyTimePairing, polyTimeComputable_blockMajorityTest@PolyTimeBlockMajority, polyTimeComputable_dropPrefixByLength@PolyTimePrefix, polyTimeComputable_of_computesInSpace@ConfigCount, polyTimeComputable_takePrefixByLength@PolyTimePrefix
+     [TCSlib.Cryptography.CommitmentLemmas.ComLoop.init] readers: init_eq@CommitmentLemmas, init_poly@CommitmentLemmas
+     [TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut] readers: loopOut_poly@CommitmentLemmas
+     [TCSlib.Cryptography.FunFamily.Easy] readers: easy_iff@OneWay
+     [TCSlib.Cryptography.PermFamily.toFunFamily] readers: toFunFamily_f@OneWay, toFunFamily_f_domEquiv@OneWay, toFunFamily_inLen_eval@OneWay, toFunFamily_outLen_eval@OneWay, toFunFamily_codEquiv_ofFn@OneWay, toFunFamily_domEquiv_ofFn@OneWay, toFunFamily_domEquiv_symm_ofFn@OneWay; struct fields: inLen, outLen, f
+     > Application type mismatch: The argument
+     >   hFx
+     > has type
+     >   ∀ (n : ℕ) (x : Fin (P.toFunFamily.inLen.eval n) → Bool),
+     >     F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (P.toFunFamily.f n x)
+     > but is expected to have type
+     >   ∀ (n : ℕ) (x : Fin n → Bool), ?m.107 (NUPPT.advInput n (List.ofFn x)) = List.ofFn ((P.f n) x)
+     > in the application
+     >   owpComStr_eq_loopOut P h hFx
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_Commitment phase=eof spelling=BoolCircuit.CompileListSpec.mk._flat_ctor key=[["str","BoolCircuit"],["str","CompileListSpec"],["str","mk"],["str","_flat_ctor"]] home_ke
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_Commitment phase=eof spelling=BoolCircuit.CompileSpec.mk._flat_ctor key=[["str","BoolCircuit"],["str","CompileSpec"],["str","mk"],["str","_flat_ctor"]] home_key=[["str
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_Commitment phase=eof spelling=BoolCircuit.DAGCircuit.IsFaninTwo key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","IsFaninTwo"]] home_key=[["str","TCSlib"],["str"
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_Commitment phase=eof spelling=BoolCircuit.DAGCircuit.IsWellFormed key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","IsWellFormed"]] home_key=[["str","TCSlib"],["
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_Commitment phase=eof spelling=BoolCircuit.DAGCircuit._sizeOf_1 key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","_sizeOf_1"]] home_key=[["str","TCSlib"],["str","
+       880|   convert (CommitmentLemmas.ComLoop.loopOut_poly F H hF hH).comp
+       881|     CommitmentLemmas.ComLoop.init_poly using 1
+       882|   funext w
+    *  883|   exact owpComStr_eq_loopOut P h hFx hHx w
+       884| 
+       885| /-- **Commitment schemes from one-way permutations** [PS10, Theorem 126.4]: if `f` is a
+====================================================================================================
+KEY NEW|TCSlib/Cryptography/ZeroKnowledge/Commitment.lean|TCSlib.Cryptography.multiAdvBound_eval|seal|first error l.272: Type mismatch; providers Complexity.PolyExpr.eval | seal | TCSlib.Cryptography.multiAdvBound_eval
+  record: first error l.272: Type mismatch; providers Complexity.PolyExpr.eval
+  counts sA=0 sB=1 cA=0 cB=1 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_ZeroKnowledge_Commitment.log:383
+  DECL at 270, header ends 272
+      270| private theorem multiAdvBound_eval (ℓ q : PolyExpr) (C c n : ℕ) :
+      271|     (multiAdvBound ℓ q C c).eval n =
+      272|       3 * (q.eval n * (2 * (C * (2 * n + 3 + ℓ.eval n) ^ c) + 2)) + 2 := rfl
+  -- coe-B line 272 cascade=False cls=Type mismatch
+     providers=['Complexity.PolyExpr.eval']
+     referenced=['Complexity.PolyExpr.eval']
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr
+     > Type mismatch
+     >   rfl
+     > has type
+     >   ?m.55 = ?m.55
+     > but is expected to have type
+     >   (multiAdvBound ℓ q C c).eval n = 3 * (q.eval n * (2 * (C * (2 * n + 3 + ℓ.eval n) ^ c) + 2)) + 2
+       269| /-- Unfolding the advice bound of the multi-value hiding reduction. -/
+       270| private theorem multiAdvBound_eval (ℓ q : PolyExpr) (C c n : ℕ) :
+       271|     (multiAdvBound ℓ q C c).eval n =
+    *  272|       3 * (q.eval n * (2 * (C * (2 * n + 3 + ℓ.eval n) ^ c) + 2)) + 2 := rfl
+       273| 
+       274| open CommitmentLemmas in
+====================================================================================================
+KEY NEW|TCSlib/Cryptography/ZeroKnowledge/Commitment.lean|TCSlib.Cryptography.owpComLen_eval|seal|first error l.515: Type mismatch | seal | TCSlib.Cryptography.owpComLen_eval
+  record: first error l.515: Type mismatch
+  counts sA=0 sB=1 cA=0 cB=1 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_ZeroKnowledge_Commitment.log:626
+  DECL at 515, header ends 515
+      515| @[simp] theorem owpComLen_eval (n : ℕ) : owpComLen.eval n = n * n := rfl
+  -- coe-B line 515 cascade=False cls=Type mismatch
+     providers=[]
+     referenced=['Complexity.PolyExpr.eval']
+     > Type mismatch
+     >   rfl
+     > has type
+     >   ?m.7 = ?m.7
+     > but is expected to have type
+     >   owpComLen.eval n = n * n
+       512| def owpComLen : PolyExpr := .mul .var .var
+       513| 
+       514| /-- `ℓ(n) = n²`. -/
+    *  515| @[simp] theorem owpComLen_eval (n : ℕ) : owpComLen.eval n = n * n := rfl
+       516| 
+       517| /-- Unfolding `owpComStr` on a well-formed pair. -/
+====================================================================================================
+KEY NEW|TCSlib/Cryptography/ZeroKnowledge/Commitment.lean|TCSlib.Cryptography.owpComStr_ofFn|seal|first error l.534: Application type mismatch: The argument; providers TCSlib.Cryptography.FunFamily.blocks | seal | TCSlib.Cryptography.owpComStr_ofFn
+  record: first error l.534: Application type mismatch: The argument; providers TCSlib.Cryptography.FunFamily.blocks
+  counts sA=0 sB=1 cA=0 cB=1 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_ZeroKnowledge_Commitment.log:645
+  DECL at 531, header ends 534
+      531| theorem owpComStr_ofFn (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool) {n : ℕ}
+      532|     (v : Fin n → Bool) (r : Fin (owpComLen.eval n) → Bool) :
+      533|     owpComStr P h (pairEncode (List.ofFn v) (List.ofFn r)) =
+      534|       List.ofFn ((FunFamily.blocks n (n + 1)).symm (owpCom P h n v (FunFamily.blocks n n r))) := by
+  -- coe-B line 534 cascade=False cls=Application type mismatch: The argument
+     providers=['TCSlib.Cryptography.FunFamily.blocks']
+     referenced=['Complexity.PolyExpr.eval', 'TCSlib.Cryptography.FunFamily.blocks', 'Turing.pairEncode']
+     [TCSlib.Cryptography.FunFamily.blocks] readers: blocks_apply@Adversary, blocks_symm_apply@Adversary; struct fields: toFun, invFun, left_inv, right_inv
+     > Application type mismatch: The argument
+     >   r
+     > has type
+     >   Fin (owpComLen.eval n) → Bool
+     > but is expected to have type
+     >   Fin (n * n) → Bool
+     > in the application
+     >   (FunFamily.blocks n n) r
+       531| theorem owpComStr_ofFn (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool) {n : ℕ}
+       532|     (v : Fin n → Bool) (r : Fin (owpComLen.eval n) → Bool) :
+       533|     owpComStr P h (pairEncode (List.ofFn v) (List.ofFn r)) =
+    *  534|       List.ofFn ((FunFamily.blocks n (n + 1)).symm (owpCom P h n v (FunFamily.blocks n n r))) := by
+       535|   rw [owpComStr_pairEncode, List.length_ofFn, owpComAt_ofFn]
+       536| 

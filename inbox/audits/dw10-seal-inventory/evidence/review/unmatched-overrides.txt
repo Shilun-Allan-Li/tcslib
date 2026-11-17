@@ -1,0 +1,9 @@
+Override rows with no open item in the final inventory (5), all explained:
+- (overrides-lead.tsv is generated from the open items, so the lead's two `Complexity.P` items, which its first pass had confirmed and which
+  are now known to be local `let P` bindings (DW10-W7), no longer appear in it; C1-0284 is FIXED_SINCE with that reason.)
+- overrides-sub-A.tsv NEW …/SpecialEncryptionMulti.lean … 301 dsimp Complexity.P; NEW …/GarbledRun.lean … 117 simpa Complexity.P:
+  the same false positive, which sub-A found; dropped (DW10-W7).
+- overrides-sub-B.tsv NEW …/GGM.lean|<outside src:68>, NEW …/SubHybrids.lean|<outside src:68>: harness interactions (DW10-W5). They
+  get no class, so they are not open. The SubHybrids line is SEAL-0306/0307 (STILL_OPEN, no class).
+- overrides-sub-B.tsv NEW …/GGM/Run.lean … queryOf.match_1.eq_2: the duplicate of C3-0002 that sub-B flagged, resolved by the
+  one-to-one eqn matcher.

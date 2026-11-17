@@ -2,6 +2,7 @@
 # the evidence tables (seals.tsv, seal-decls.tsv, controls.tsv, scan.tsv): totals, status by source, class by tier, the
 # named-finding counts, the Stage 2 fix list by file, the provider-reader list by provider file, the separate-ruling lists,
 # the strict-only diagnostics, the HANDED-OFF counts and the NEW failures by file. Prints Markdown.
+# Change (final): the controls line counts `negative only` (ctltab's label); the DW10-W5 list added.
 # Usage: python3 -I report_tables.py <delivery-dir>
 import sys, os, csv, collections, json
 dl = sys.argv[1]; ev = os.path.join(dl, 'evidence')
@@ -34,7 +35,7 @@ table(['variant', 'owners', 'requests (sum)', 'requests (max)', 'failing owners'
 if ctl:
     P('### Controls'); P('')
     c = collections.Counter(r['status'] for r in ctl)
-    P(f"Owners: {len(ctl)}; pairs {c.get('pair', 0)}; negative only (`no reader`) {c.get('no reader', 0)}; defines nothing {c.get('defines nothing', 0)}; "
+    P(f"Owners: {len(ctl)}; pairs {c.get('pair', 0)}; negative only (readers exist, none `rfl`-checkable; DW10-W3) {c.get('negative only', 0) + c.get('no reader', 0)}; defines nothing {c.get('defines nothing', 0)}; "
       f"no passing candidate {c.get('no passing candidate', 0)}.")
     P('')
 if scan:
@@ -88,6 +89,10 @@ for k in ('SEAL-B-ONLY', 'STATEMENT'):
 P('### STRICT-ONLY (notation, no fix): recorded diagnostics only (Q3)'); P('')
 rr = [r for r in inv if r['class'].startswith('STRICT-ONLY')]
 table(['file', 'items', 'strict errors (A+B)'], [[p.split('TCSlib/')[-1], len(v), sum(int(x['strict_A']) + int(x['strict_B']) for x in v if x['strict_A'] not in ('-', ''))] for p, v in bypath(rr).items()])
+P('### Harness interactions: file-level `failed to set [local irreducible]` (DW10-W5; no class)'); P('')
+rr = [r for r in inv if r['pending'] == 'DW10-W5']
+table(['file', 'item', 'status', 'line', 'errors per variant (sA/sB/cA/cB)'], [[r['base_path'].split('TCSlib/')[-1], r['item_id'], r['status'], r['declaration'],
+      '/'.join(r[k] for k in ('strict_A', 'strict_B', 'coe_A', 'coe_B'))] for r in sorted(rr, key=lambda r: (r['base_path'], r['declaration'], r['item_id']))])
 P('### HANDED-OFF'); P('')
 ho = [r for r in inv if r['status'] == 'HANDED-OFF']
 c = collections.Counter(r['source'] for r in ho)

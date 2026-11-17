@@ -1,0 +1,176 @@
+====================================================================================================
+KEY SEAL-0352 | seal | TCSlib.Cryptography.GI.length_pairSndD_le
+  record: TCSlib.Cryptography.GI.length_pairSndD_le l.75: Tactic `rfl` failed: The left-hand side (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.pairSndD_eq (TCSlib/Complexity/ClassNP/PolyTimePairing.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRep.log:187
+  DECL at 74, header ends 74
+       74| theorem length_pairSndD_le (w : List Bool) : (pairSndD w).length ≤ w.length := by
+  -- coe-A line 76 cascade=False cls=Tactic X failed: The left-hand side
+     providers=['Complexity.pairSndD']
+     referenced=['Complexity.pairSndD']
+     [Complexity.pairSndD] readers: pairSndD_eq@PolyTimePairing, pairSndD_pairEncode@PolyTimePairing, pairSndD_of_pairDecode_eq_none@PolyTimePairing
+     > Tactic `rfl` failed: The left-hand side
+     >   (pairSndD []).length
+     > is not definitionally equal to the right-hand side
+     >   [].length
+     > 
+     > case inl
+     > ⊢ (pairSndD []).length ≤ [].length
+        73| /-- The second component of a word is no longer than the word. -/
+        74| theorem length_pairSndD_le (w : List Bool) : (pairSndD w).length ≤ w.length := by
+        75|   rcases eq_or_ne w [] with rfl | h
+    *   76|   · rfl
+        77|   · exact (length_pairSndD_lt h).le
+        78| 
+====================================================================================================
+KEY SEAL-0353 | seal | TCSlib.Cryptography.GI.iterate_pairSndD_nil
+  record: TCSlib.Cryptography.GI.iterate_pairSndD_nil l.89: Type mismatch (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.pairSndD_eq (TCSlib/Complexity/ClassNP/PolyTimePairing.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRep.log:201
+  DECL at 88, header ends 88
+       88| theorem iterate_pairSndD_nil : ∀ k : ℕ, pairSndD^[k] [] = []
+  -- coe-A line 90 cascade=False cls=Type mismatch
+     providers=['Complexity.pairSndD']
+     referenced=['Complexity.pairSndD']
+     [Complexity.pairSndD] readers: pairSndD_eq@PolyTimePairing, pairSndD_pairEncode@PolyTimePairing, pairSndD_of_pairDecode_eq_none@PolyTimePairing
+     > Type mismatch
+     >   iterate_pairSndD_nil k
+     > has type
+     >   pairSndD^[k] [] = []
+     > but is expected to have type
+     >   pairSndD^[k] (pairSndD []) = []
+        87| /-- Peeling the empty word gives the empty word. -/
+        88| theorem iterate_pairSndD_nil : ∀ k : ℕ, pairSndD^[k] [] = []
+        89|   | 0 => rfl
+    *   90|   | k + 1 => by rw [Function.iterate_succ_apply]; exact iterate_pairSndD_nil k
+        91| 
+        92| /-- Peeling the encoding of a history drops its first message. -/
+====================================================================================================
+KEY SEAL-0354 | seal | TCSlib.Cryptography.GI.pairSndD_encodeMsgs
+  record: TCSlib.Cryptography.GI.pairSndD_encodeMsgs l.95: Tactic `rfl` failed: The left-hand side (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.pairSndD_eq (TCSlib/Complexity/ClassNP/PolyTimePairing.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRep.log:207
+  DECL at 93, header ends 94
+       93| theorem pairSndD_encodeMsgs (hist : List (List Bool)) :
+       94|     pairSndD (Strategy.encodeMsgs hist) = Strategy.encodeMsgs (hist.drop 1) := by
+  -- coe-A line 96 cascade=False cls=Tactic X failed: The left-hand side
+     providers=['Complexity.pairSndD', 'TCSlib.Cryptography.Strategy.encodeMsgs']
+     referenced=['Complexity.pairSndD', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'Turing.pairEncode']
+     [Complexity.pairSndD] readers: pairSndD_eq@PolyTimePairing, pairSndD_pairEncode@PolyTimePairing, pairSndD_of_pairDecode_eq_none@PolyTimePairing
+     [TCSlib.Cryptography.Strategy.encodeMsgs] readers: encodeMsgs_nil@Interaction, encodeMsgs_cons@Interaction
+     > Tactic `rfl` failed: The left-hand side
+     >   pairSndD (Strategy.encodeMsgs [])
+     > is not definitionally equal to the right-hand side
+     >   Strategy.encodeMsgs (List.drop 1 [])
+     > 
+     > case nil
+     > ⊢ pairSndD (Strategy.encodeMsgs []) = Strategy.encodeMsgs (List.drop 1 [])
+        93| theorem pairSndD_encodeMsgs (hist : List (List Bool)) :
+        94|     pairSndD (Strategy.encodeMsgs hist) = Strategy.encodeMsgs (hist.drop 1) := by
+        95|   cases hist with
+    *   96|   | nil => rfl
+        97|   | cons m h => rw [Strategy.encodeMsgs_cons, pairSndD_pairEncode, List.drop_succ_cons, List.drop_zero]
+        98| 
+====================================================================================================
+KEY SEAL-0355 | seal | TCSlib.Cryptography.GI.dec_sndD_last
+  record: TCSlib.Cryptography.GI.dec_sndD_last l.315: Application type mismatch: The argument (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.pairSndD_eq (TCSlib/Complexity/ClassNP/PolyTimePairing.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRep.log:427
+  DECL at 312, header ends 312
+      312| theorem dec_sndD_last : ∀ w : List Bool, decide (pairSndD w = []) = false → (pairSndD w).length < w.length := by
+  -- coe-A line 316 cascade=False cls=Application type mismatch: The argument
+     providers=['Complexity.pairSndD']
+     referenced=['Complexity.pairSndD']
+     [Complexity.pairSndD] readers: pairSndD_eq@PolyTimePairing, pairSndD_pairEncode@PolyTimePairing, pairSndD_of_pairDecode_eq_none@PolyTimePairing
+     > Application type mismatch: The argument
+     >   rfl
+     > has type
+     >   ?m.31 = ?m.31
+     > but is expected to have type
+     >   pairSndD [] = []
+     > in the application
+     >   Eq.mp decide_eq_false_iff_not._simp_1 hw rfl
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRep phase=eof spelling=BoolCircuit.decodeNat key=[["str","BoolCircuit"],["str","decodeNat"]] home_key=[["str","TCSlib"],["str","Complexity"]
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRep phase=eof spelling=BoolCircuit.decodeNat._sunfold key=[["str","BoolCircuit"],["str","decodeNat"],["str","_sunfold"]] home_key=[["str","T
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRep phase=eof spelling=BoolCircuit.decodeNat._unsafe_rec key=[["str","BoolCircuit"],["str","decodeNat"],["str","_unsafe_rec"]] home_key=[["s
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRep phase=eof spelling=BoolCircuit.decodeNat.match_1 key=[["str","BoolCircuit"],["str","decodeNat"],["str","match_1"]] home_key=[["str","TCS
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRep phase=eof spelling=BoolCircuit.encodeNat key=[["str","BoolCircuit"],["str","encodeNat"]] home_key=[["str","TCSlib"],["str","Complexity"]
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRep phase=eof spelling=Complexity.BinArith.DivInv key=[["str","Complexity"],["str","BinArith"],["str","DivInv"]] home_key=[["str","TCSlib"],
+       313|   intro w hw
+       314|   apply length_pairSndD_lt
+       315|   rintro rfl
+    *  316|   exact (by simpa using hw : ¬ pairSndD ([] : List Bool) = []) rfl
+       317| 
+       318| /-- The rounds to the last message of an encoded history. -/
+====================================================================================================
+KEY NEW|TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean|TCSlib.Cryptography.GI.iterUnary_poly|seal|first error l.423: Type mismatch; providers Complexity.PolyExpr.eval,Complexity.PolyTimeComputable,Complexity.StateLoop.orbit,Complexity.pairFstD,Complexity.pairSndD,Turing.pairEncode | seal | TCSlib.Cryptography.GI.iterUnary_poly
+  record: first error l.423: Type mismatch; providers Complexity.PolyExpr.eval,Complexity.PolyTimeComputable,Complexity.StateLoop.orbit,Complexity.pairFstD,Complexity.pairSndD,Turing.pairEncode
+  counts sA=0 sB=1 cA=0 cB=1 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRep.log:534
+  DECL at 393, header ends 396
+      393| theorem iterUnary_poly {step : List Bool → List Bool} (hstep : PolyTimeComputable step) (B : PolyExpr)
+      394|     (hbound : ∀ x₀ k, k ≤ (pairFstD x₀).length →
+      395|       ((fun s => step (pairEncode x₀ s))^[k] (pairSndD x₀)).length ≤ B.eval x₀.length) :
+      396|     PolyTimeComputable fun x₀ => (fun s => step (pairEncode x₀ s))^[(pairFstD x₀).length] (pairSndD x₀) := by
+  -- coe-B line 423 cascade=False cls=Type mismatch
+     providers=['Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'Complexity.StateLoop.orbit', 'Complexity.pairFstD', 'Complexity.pairSndD', 'Turing.pairEncode']
+     referenced=['Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'Complexity.StateLoop.orbit', 'Complexity.pairFstD', 'Complexity.pairSndD', 'Turing.pairEncode']
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop, polyTimeComputable_unary@PolyTimePairing, polyTimeComputable_pairEq@Repetition, polyTimeComputable_iterate@Repetition, polyTimeComputable_pairXor@Repetition, polyTimeComputable_prepend@PolyTimePairing, polyTimeComputable_blockMap@Repetition, polyTimeComputable_emitIter@PolyTimeBlockLoop, polyTimeComputable_majority@Repetition, polyTimeComputable_pairFstD@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, polyTimeComputable_pairSwap@PolyTimePairing, polyTimeComputable_of_linear@PolyTimePairing, polyTimeComputable_polyUnary@PolyTimePairing, polyTimeComputable_stateFind@Repetition, polyTimeComputable_transduce@Transducer, polyTimeComputable_unaryPoly@Primitives, polyTimeComputable_pairConcat@PolyTimePairing, polyTimeComputable_iterateEmit@Repetition, polyTimeComputable_iterateFind@Repetition, polyTimeComputable_sliceDropAt@PolyTimeBlockLoop, polyTimeComputable_sliceTakeAt@PolyTimeBlockLoop, polyTimeComputable_unaryNormal@PolyExpr, polyTimeComputable_blockAnyTest@PolyTimeBlockTests, polyTimeComputable_pairDropPoly@Primitives, polyTimeComputable_pairTakePoly@Primitives, polyTimeComputable_blockXorAnyTest@PolyTimeBlockTests, polyTimeComputable_iterate_pairFstD@PolyTimePairing, polyTimeComputable_blockMajorityTest@PolyTimeBlockMajority, polyTimeComputable_dropPrefixByLength@PolyTimePrefix, polyTimeComputable_of_computesInSpace@ConfigCount, polyTimeComputable_takePrefixByLength@PolyTimePrefix
+     [Complexity.StateLoop.orbit] readers: orbit_succ@StateLoop, orbit_zero@StateLoop
+     [Complexity.pairFstD] readers: pairFstD_eq@PolyTimePairing, pairFstD_nil@PolyTimeBlockLoop, pairFstD_pairEncode@PolyTimePairing, pairFstD_of_pairDecode_eq_none@PolyTimePairing
+     [Complexity.pairSndD] readers: pairSndD_eq@PolyTimePairing, pairSndD_pairEncode@PolyTimePairing, pairSndD_of_pairDecode_eq_none@PolyTimePairing
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Type mismatch
+     >   length_pairFstD_le x₀
+     > has type
+     >   (pairFstD x₀).length ≤ x₀.length
+     > but is expected to have type
+     >   (fun x₀ => (pairFstD x₀).length) x₀ ≤ PolyExpr.var.eval x₀.length
+     > G06-COMPONENT label=SealB_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRep phase=eof spelling=BoolCircuit.decodeNat key=[["str","BoolCircuit"],["str","decodeNat"]] home_key=[["str","TCSlib"],["str","Complexity"]
+     > G06-COMPONENT label=SealB_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRep phase=eof spelling=BoolCircuit.decodeNat._sunfold key=[["str","BoolCircuit"],["str","decodeNat"],["str","_sunfold"]] home_key=[["str","T
+     > G06-COMPONENT label=SealB_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRep phase=eof spelling=BoolCircuit.decodeNat._unsafe_rec key=[["str","BoolCircuit"],["str","decodeNat"],["str","_unsafe_rec"]] home_key=[["s
+     > G06-COMPONENT label=SealB_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRep phase=eof spelling=BoolCircuit.decodeNat.match_1 key=[["str","BoolCircuit"],["str","decodeNat"],["str","match_1"]] home_key=[["str","TCS
+     > G06-COMPONENT label=SealB_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRep phase=eof spelling=BoolCircuit.encodeNat key=[["str","BoolCircuit"],["str","encodeNat"]] home_key=[["str","TCSlib"],["str","Complexity"]
+     > G06-COMPONENT label=SealB_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRep phase=eof spelling=Complexity.BinArith.DivInv key=[["str","Complexity"],["str","BinArith"],["str","DivInv"]] home_key=[["str","TCSlib"],
+     > G06-COMPONENT label=SealB_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRep phase=eof spelling=Complexity.BinArith.MulInv key=[["str","Complexity"],["str","BinArith"],["str","MulInv"]] home_key=[["str","TCSlib"],
+     > G06-COMPONENT label=SealB_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRep phase=eof spelling=Complexity.BinArith.SlotsLe key=[["str","Complexity"],["str","BinArith"],["str","SlotsLe"]] home_key=[["str","TCSlib"
+       420|     polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
+       421|   have h := stateFind hstart hstep' hacc hout .var
+       422|     (.add (.mul (.const 2) B) (.add (.const 2) .var)) (fun x₀ => (pairFstD x₀).length)
+    *  423|     (fun x₀ => length_pairFstD_le x₀)
+       424|     (fun x₀ k hk => by
+       425|       rw [horbit, length_pairEncode, List.length_replicate]
+====================================================================================================
+KEY NEW|TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean|TCSlib.Cryptography.GI.peelLoop_poly|seal|first error l.210: Type mismatch | seal | TCSlib.Cryptography.GI.peelLoop_poly
+  record: first error l.210: Type mismatch
+  counts sA=0 sB=1 cA=0 cB=1 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRep.log:321
+  DECL at 184, header ends 189
+      184| theorem peelLoop_poly {f : List Bool → List Bool} (hf : PolyTimeComputable f)
+      185|     (hle : ∀ w, (f w).length ≤ w.length) {stop : List Bool → Bool}
+      186|     (hstop : PolyTimeComputable fun w => [stop w])
+      187|     (hdec : ∀ w, stop w = false → (f w).length < w.length) :
+      188|     PolyTimeComputable fun w =>
+      189|       pairEncode (f^[peelSteps f stop w] w) (List.replicate (peelSteps f stop w) true) := by
+  -- coe-B line 210 cascade=False cls=Type mismatch
+     providers=[]
+     referenced=['Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'Complexity.StateLoop.orbit', 'Complexity.pairFstD', 'Complexity.pairSndD', 'Turing.pairEncode']
+     > Type mismatch
+     >   (peelSteps_spec f stop hdec w).right.right
+     > has type
+     >   peelSteps f stop w ≤ w.length
+     > but is expected to have type
+     >   peelSteps f stop w ≤ PolyExpr.var.eval w.length
+       207|     hstop.comp (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD)
+       208|   have h := stateFind hstart hstep hacc
+       209|     polyTimeComputable_pairSndD .var (.add (.mul (.const 3) .var) (.const 2)) (peelSteps f stop)
+    *  210|     (fun w => (peelSteps_spec f stop hdec w).2.2)
+       211|     (fun w k hk => by
+       212|       rw [horbit, length_pairEncode, List.length_replicate]

@@ -1,0 +1,56 @@
+====================================================================================================
+KEY SG-F07:3 | seal | TCSlib.Cryptography.SecureComputation.GarblingCoins.nestedSpecial_wrongKeyBot_of_string_bounds
+  record: TCSlib.Cryptography.SecureComputation.GarblingCoins.nestedSpecial_wrongKeyBot_of_string_bounds: 1 errors, variant B (strict = coe) (rfl needs (var+innerLen).eval n = n + innerLen.eval n)
+  counts sA=0 sB=1 cA=0 cB=1 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_SecureComputation_GarblingSecurity_NestedBounds.log:223
+  DECL at 64, header ends 81
+       64| theorem nestedSpecial_wrongKeyBot_of_string_bounds
+       65|     (G₁ : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (n + n) → Bool))
+       66|     (G₂ : ∀ n, (Fin n → Bool) → (Fin n → Bool) →
+       67|       (Fin ((PolyExpr.add .var innerLen).eval n) → Bool))
+       68|     (E₁ E₂ : List Bool → List Bool)
+       69|     (hGE₁ : ∀ n (k r : Fin n → Bool), E₁ (pairEncode (List.ofFn k) (List.ofFn r)) =
+       70|       List.ofFn (G₁ n k r))
+       71|     (hGE₂ : ∀ n (k r : Fin n → Bool), E₂ (pairEncode (List.ofFn k) (List.ofFn r)) =
+       72|       List.ofFn (G₂ n k r)) (n : ℕ) {ε₁ ε₂ : ℝ} (hε₁ : 0 ≤ ε₁) (hε₂ : 0 ≤ ε₂)
+       73|     (h₁ : ∀ m : Fin n → Bool,
+       74|       uprob (fun t : (Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool) =>
+       75|         (spDecStr E₁ n n (List.ofFn t.2.1)
+       76|           (spEncStr E₁ (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2))).isSome = true) ≤ ε₁)
+       77|     (h₂ : ∀ m : Fin (innerLen.eval n) → Bool,
+       78|       uprob (fun t : (Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool) =>
+       79|         (spDecStr E₂ n (innerLen.eval n) (List.ofFn t.2.1)
+       80|           (spEncStr E₂ (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2))).isSome = true) ≤ ε₂) :
+       81|     (nestedSpecial E₁ E₂ n).WrongKeyBot (ε₁ + ε₂) := by
+  -- coe-B line 112 cascade=False cls=Tactic X failed: The left-hand side
+     providers=['Complexity.PolyExpr.eval', 'TCSlib.Cryptography.SecureComputation.innerLen', 'TCSlib.Cryptography.SecureComputation.spDecStr', 'TCSlib.Cryptography.SecureComputation.spEncStr', 'TCSlib.Cryptography.decodeFin', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     referenced=['Complexity.PolyExpr.eval', 'TCSlib.Cryptography.HardcoreBit.PushesUniform', 'TCSlib.Cryptography.SecureComputation.MultiEnc.WrongKeyBot', 'TCSlib.Cryptography.SecureComputation.innerLen', 'TCSlib.Cryptography.SecureComputation.nestedSpecial', 'TCSlib.Cryptography.SecureComputation.spDecStr', 'TCSlib.Cryptography.SecureComputation.spEncStr', 'TCSlib.Cryptography.decodeFin', 'TCSlib.Cryptography.padFin', 'TCSlib.Cryptography.uexp', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr
+     [TCSlib.Cryptography.SecureComputation.innerLen] readers: innerLen_eq@GarblingSpecial
+     [TCSlib.Cryptography.SecureComputation.spDecStr] readers: spDecStr_eq@SpecialEncryption, spDecStr_spEncStr@SpecialEncryption, spDecStr_wrongKey@SpecialEncryptionSecurity
+     [TCSlib.Cryptography.SecureComputation.spEncStr] readers: spEncStr_eq@SpecialEncryption, spEncStr_eq_sliceMask@Pad, spEncStr_eq_zeroPrefixMask@Pad
+     [TCSlib.Cryptography.decodeFin] readers: decodeFin_eq@Adversary, decodeFin_ofFn@Adversary, decodeFin_eq_some_iff@Adversary, decodeFin_runAt_prfDec_of_not_wf@FromPRF
+     [TCSlib.Cryptography.uprob] readers: uprob_def@Probability, uprob_fst@Probability, uprob_not@Probability, uprob_snd@LazySampling, uprob_mono@Probability, uprob_prod@Probability, uprob_true@Probability, uprob_congr@LazySampling, uprob_false@Probability, uprob_or_le@Probability, uprob_le_one@Probability, uprob_nonneg@Probability, uprob_eq_uexp@Probability, uprob_bool_prod@GeneratorFromPermutation, uprob_exists_le@Probability, uprob_prod_comm@LazySampling, uprob_comp_equiv@Probability, uprob_eq_of_equiv@Indistinguishability, uprob_bitsToNat_lt@Sampling, uprob_col_cheat_le@Protocol, uprob_tdpPredictor@TrapdoorPredictor, uprob_update_split@LazySampling, uprob_firstHit_none@Sampling, uprob_gni_rep_cheat@GraphIsomorphism, uprob_pi_forall_dep@Permutations, uprob_update_absorb@LazySampling, uprob_adaptive_guess@GraphIsomorphism, uprob_eq_card_filter@Probability, uprob_sections_congr@LazySampling, uprob_update_absorb'@LazySampling, uprob_adaptive_escape@Protocol, uprob_colSimTruncW_eq@Simulator, uprob_comp_eq_sum_map@Experiments, uprob_giHonestView_eq@GraphIsomorphismZK, uprob_giSimTrunc_none@GraphIsomorphismZK, uprob_gi_rep_cheat_le@GraphIsomorphism, uprob_gi_cheat_le_half@GraphIsomorphism, uprob_not_injective_le@Hybrid, uprob_colSimAttemptW_eq@Simulator, uprob_colSimTruncH_none@Simulator, uprob_comp_eq_sum_fiber@Sampling, uprob_fiber_le_card_mul@Universal, uprob_giSimAttempt_none@GraphIsomorphismZK, uprob_giSimAttempt_some@GraphIsomorphismZK, uprob_colSimAttemptH_none@Simulator, uprob_colSimAttemptH_some@Simulator, uprob_comp_eq_probTrue_map@SamplingFinDist, uprob_rejectionSample_none@Sampling, uprob_uniformFromBits_none@Sampling, uprob_permFromCoins_none_le@Permutations, uprob_uniformFromBits_eq_some@Sampling, uprob_permGraph_eq_of_isomorphic@GraphIsomorphism, uprob_permGraph_eq_of_isomorphic'@GraphIsomorphism, uprob_permFromCoins_none_le_two_pow@Permutations, uprob_rejectionSample_none_le_half_pow@Sampling; struct fields: cauchy
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Tactic `rfl` failed: The left-hand side
+     >   (PolyExpr.var.add innerLen).eval n
+     > is not definitionally equal to the right-hand side
+     >   n + innerLen.eval n
+     > 
+     > G₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool
+     > G₂ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add innerLen).eval n) → Bool
+     > E₁ E₂ : List Bool → List Bool
+     > hGE₁ : ∀ (n : ℕ) (k r : Fin n → Bool), E₁ (pairEncode (List.ofFn k) (List.ofFn r)) = List.ofFn (G₁ n k r)
+     > hGE₂ : ∀ (n : ℕ) (k r : Fin n → Bool), E₂ (pairEncode (List.ofFn k) (List.ofFn r)) = List.ofFn (G₂ n k r)
+     > n : ℕ
+     > ε₁ ε₂ : ℝ
+     > hε₁ : 0 ≤ ε₁
+     > hε₂ : 0 ≤ ε₂
+     >> ⊢ (PolyExpr.var.add innerLen).eval n = n + innerLen.eval n
+       109|       have hp : (E₂ (pairEncode (List.ofFn (t.1 0 (a 0))) (List.ofFn t.2.1))).length =
+       110|           n + innerLen.eval n := by
+       111|         rw [hGE₂, List.length_ofFn]
+    *  112|         rfl
+       113|       rw [← hfirst, spDecStr_spEncStr E₂ List.length_ofFn hc List.length_ofFn hp,
+       114|         Option.bind_some] at ht

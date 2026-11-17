@@ -1,6 +1,7 @@
 # make_report.py (dw10-seal-inventory, Claude lead, 2026-11-17): NEW. Writes REPORT.md: the fixed narrative (base, pins,
 # preflight, tree, who did what, tool changes, method, questions) with figures read from the evidence, then the tables of
-# report_tables.py. Usage: python3 -I make_report.py <delivery-dir> <checkpoint|final> <n>
+# report_tables.py. Change (final): deviations section, reader index attempt 4, classification review.
+# Usage: python3 -I make_report.py <delivery-dir> <checkpoint|final> <n>
 import sys, os, json, subprocess, csv, re, collections
 dl, mode, n = sys.argv[1:4]; ev = os.path.join(dl, 'evidence')
 def rd(p): return open(os.path.join(ev, p), encoding='utf-8').read()
@@ -47,8 +48,11 @@ the 'one Lean process at a time on the host' rule ... Be mindful of making sure 
 Seyoon's ruling (`workflow.md` §4.1 *Lean parallelism*, main #353): cloud workers run a pool of at most nproc Lean processes,
 keeping about 2 GB (15%) available. Before the override, the bootstrap, the collectors, the scan kinds probes, the locator, the
 first 12 seal probes and the first controls pretest ran strictly one at a time. Afterwards the seals ran in a pool of 4 workers
-(lock slots w1..w4 as the counting semaphore; claim files so no probe runs twice; a probe starts only when MemAvailable is at least
-4.5 GiB): `seals/PARALLEL.txt`. Measured (30 s samples, `logs/memsample.log`): at most {maxl} Lean processes at once, minimum
+(lock slots w1..w4 as the counting semaphore; claim files against running a probe twice; a probe starts only when MemAvailable is
+at least 4.5 GiB): `seals/PARALLEL.txt`. One probe did run twice. When the workers were restarted after a background time limit,
+two of them took over the same dead claim at once, because the takeover is not atomic. That probe was
+`SealA_Cryptography_Encryption_PrivateKey_FromPRF_Hybrid`. The two runs gave identical records (rc 0, 0 errors, same log SHA-256)
+and wrote only that log, not an olean. Later Lean runs used the same slots: the reader-index attempt 4 probe and the controls. Measured (30 s samples, `logs/memsample.log`): at most {maxl} Lean processes at once, minimum
 MemAvailable {mins / 1048576:.1f} GiB, peak private (anonymous) memory of one Lean process {maxanon / 1024:.0f} MiB, peak RSS
 {maxrss / 1048576:.2f} GiB (mostly shared olean mappings). The running seal phase was not interrupted to switch over (the ruling's
 instruction); the pool is recorded per phase in `seals/PARALLEL.txt`.
@@ -81,9 +85,27 @@ The archived Gate 06/10 instrumenter (`seal/review/archived-gate10-tools/`) is u
 - **Generated-equation reads** (`eqrefs.tsv`): from the collectors' `eqn_refs` (`eq_<n>`, `eq_def`, `eq_unfold`, `splitter`).
 - **Controls** (`controls/`): `tools/mkctl_dw10.py`, one pair per owner, 20 harnesses of up to 25 owners, unsealed pretest first
   (attempt 1 stopped after a 48-minute unbounded `rfl`; attempt 2 bounds every control body by `maxHeartbeats 400000`).
-- **Reader index** (`readers/`): every TCSlib theorem `<P>_*` (or lower-camel) whose type mentions a definition P; the classification
-  uses as published readers `_eq`, `_def`, `_apply`, `_iff`, `_eq_def` and run/contract lemmas.
+- **Reader index** (`readers/`): every TCSlib theorem whose type mentions a definition P and whose name is `<P>_*` (or the
+  lower-camel form). Attempt 3 added the field equations of structure-valued definitions. Attempt 4, after checkpoint 1, added the
+  suffix form `<field>_<P>`, for example `Complexity.NUPPT.coins_ofPolyTimeUniform`: the Randomized library names its field
+  equations this way, and attempt 3 had missed 1,452 such readers. Attempts 1–3 are kept. The classification uses as published
+  readers `_eq`, `_def`, `_apply`, `_iff`, `_eq_def`, field equations, case lemmas and run/contract lemmas.
+- **Classification review** (`review/`, `subagents/`): the tool's class and fix for every open item were reviewed item by item. The
+  lead reviewed its owner set, and two sub-agents reviewed theirs from a frozen snapshot of the evidence (`review/`, *Who did what*).
+  Each override row gives the class, fix and a note (`confirmed`, `changed …`, `needs a check`); `tools/reconcile.py` applies them.
+  The fixes name the published reader to use, or the reader to add with its statement.
 - **Reconciliation** (`tools/reconcile.py`, matching rules in its header) and the report (`tools/report_tables.py`, this file).
+
+## Deviations and corrections after checkpoint 1
+
+- **Signed checkpoint commit.** The checkpoint 1 commit `82d1966006fec33ec8c5c34e2bdd0b8a07365e56` was created unsigned, but the
+  `git pull --rebase` before the push re-created it under the host's global `commit.gpgsign=true`, so the pushed commit carries an SSH
+  signature. It was not rewritten, because a force-push is not allowed (`logs/signing-note.txt`). The final commit and its rebase
+  both run with `-c commit.gpgsign=false`, and both commits were checked for a `gpgsig` header before the push.
+- **File-level seal diagnostics.** At checkpoint 1, SEAL-0306 and SEAL-0307 (no declaration; `SubHybrids` l.68,
+  `inherited_source_attribute_interaction`) were reported CHANGED ("declaration removed"). They are now matched by path, line,
+  message class and the named definition, and are STILL_OPEN. They and the same diagnostics elsewhere get no class (DW10-W5).
+- **Reader index attempt 4** (above). The classification was re-run with it, and the reviews used it.
 
 ## Owner check (Checks, step 2)
 

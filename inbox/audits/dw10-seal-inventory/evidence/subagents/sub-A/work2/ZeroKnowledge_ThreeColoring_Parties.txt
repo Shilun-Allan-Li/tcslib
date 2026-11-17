@@ -1,0 +1,39 @@
+====================================================================================================
+KEY NEW|TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean|TCSlib.Cryptography.ColMachines.eRep_poly|seal|first error l.424: Type mismatch; providers Complexity.NUPPT.inCoins,Complexity.PolyExpr.eval,Complexity.PolyTimeComputable,Complexity.pairFstD,Complexity.pairSndD,TCSlib.Cryptography.ColMachines.argX,TCSlib.Cryptography.ColMachines.countTrue,Turing.pairEncode | seal | TCSlib.Cryptography.ColMachines.eRep_poly
+  record: first error l.424: Type mismatch; providers Complexity.NUPPT.inCoins,Complexity.PolyExpr.eval,Complexity.PolyTimeComputable,Complexity.pairFstD,Complexity.pairSndD,TCSlib.Cryptography.ColMachines.argX,TCSlib.Cryptography.ColMachines.countTrue,Turing.pairEncode
+  counts sA=0 sB=1 cA=0 cB=1 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_ZeroKnowledge_ThreeColoring_Parties.log:535
+  DECL at 422, header ends 422
+      422| theorem eRep_poly : PolyTimeComputable fun v => List.replicate (eRep (pairSndD v) (pairFstD v).length) true := by
+  -- coe-B line 424 cascade=False cls=Type mismatch
+     providers=['Complexity.NUPPT.inCoins', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.ColMachines.argX', 'TCSlib.Cryptography.ColMachines.countTrue', 'Turing.pairEncode']
+     referenced=['Complexity.NUPPT.inCoins', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.ColMachines.argX', 'TCSlib.Cryptography.ColMachines.countTrue', 'Turing.pairEncode']
+     [Complexity.NUPPT.inCoins] readers: inCoins_eq@Closure, inCoins_layout@Closure, polyTimeComputable_inCoins@Closure
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr, polyBound_eval@PolyExpr
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop
+     [Complexity.pairFstD] readers: pairFstD_eq@PolyTimePairing, pairFstD_nil@PolyTimeBlockLoop, pairFstD_pairEncode@PolyTimePairing, polyTimeComputable_pairFstD@PolyTimePairing, pairFstD_of_pairDecode_eq_none@PolyTimePairing, polyTimeComputable_iterate_pairFstD@PolyTimePairing
+     [Complexity.pairSndD] readers: pairSndD_eq@PolyTimePairing, pairSndD_pairEncode@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, pairSndD_of_pairDecode_eq_none@PolyTimePairing
+     [TCSlib.Cryptography.ColMachines.argX] readers: argX_eq@Machines, argX_poly@Machines, argX_ilayout@Machines
+     [TCSlib.Cryptography.ColMachines.countTrue] readers: countTrue_le@Machines, countTrue_mono@Machines, countTrue_poly@Machines, countTrue_succ@Machines, countTrue_zero@Machines
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, length_pairEncode@Encoding, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairDecode_pairEncode@Encoding, pairSplitAt_pairEncode@PairSplit, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Type mismatch
+     >   unaryPolyOf_poly ((PolyExpr.var.add (PolyExpr.const 1)).pow 2)
+     >     (unaryLength_poly (PolyTimeComputable.comp argX_poly polyTimeComputable_pairSndD))
+     > has type
+     >   PolyTimeComputable fun x =>
+     >     List.replicate (((PolyExpr.var.add (PolyExpr.const 1)).pow 2).eval ((argX ∘ pairSndD) x).length) true
+     > but is expected to have type
+     >   PolyTimeComputable fun v => List.replicate (((argX (pairSndD v)).length + 1) ^ 2) true
+     > G06-COMPONENT label=SealB_Cryptography_ZeroKnowledge_ThreeColoring_Parties phase=eof spelling=BoolCircuit.CompileListSpec.mk._flat_ctor key=[["str","BoolCircuit"],["str","CompileListSpec"],["str","mk"],["str","_flat_ctor
+     > G06-COMPONENT label=SealB_Cryptography_ZeroKnowledge_ThreeColoring_Parties phase=eof spelling=BoolCircuit.CompileSpec.mk._flat_ctor key=[["str","BoolCircuit"],["str","CompileSpec"],["str","mk"],["str","_flat_ctor"]] home
+     > G06-COMPONENT label=SealB_Cryptography_ZeroKnowledge_ThreeColoring_Parties phase=eof spelling=BoolCircuit.DAGCircuit.IsFaninTwo key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","IsFaninTwo"]] home_key=[["str","TCSl
+     > G06-COMPONENT label=SealB_Cryptography_ZeroKnowledge_ThreeColoring_Parties phase=eof spelling=BoolCircuit.DAGCircuit.IsWellFormed key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","IsWellFormed"]] home_key=[["str","
+     > G06-COMPONENT label=SealB_Cryptography_ZeroKnowledge_ThreeColoring_Parties phase=eof spelling=BoolCircuit.DAGCircuit._sizeOf_1 key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","_sizeOf_1"]] home_key=[["str","TCSlib
+     > G06-COMPONENT label=SealB_Cryptography_ZeroKnowledge_ThreeColoring_Parties phase=eof spelling=BoolCircuit.DAGCircuit._sizeOf_inst key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","_sizeOf_inst"]] home_key=[["str","
+       421| /-- The challenges of the repeated verifier are polynomial-time in `⟨1^t, w⟩`. -/
+       422| theorem eRep_poly : PolyTimeComputable fun v => List.replicate (eRep (pairSndD v) (pairFstD v).length) true := by
+       423|   have hB : PolyTimeComputable fun v => List.replicate (((argX (pairSndD v)).length + 1) ^ 2) true :=
+    *  424|     unaryPolyOf_poly (.pow (.add .var (.const 1)) 2)
+       425|       (unaryLength_poly (argX_poly.comp polyTimeComputable_pairSndD))
+       426|   have hdrop : PolyTimeComputable fun v => (NUPPT.inCoins (pairSndD v)).drop

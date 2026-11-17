@@ -8,7 +8,8 @@
 #            (logs of running probes are left for the next delivery).
 # Then evidence/SHA256SUMS lists every delivered evidence file except itself and the top-level SHA256SUMS every delivered
 # file except itself (sha256sum format, relative paths, no leading ./); <out-filelist> lists the delivered paths for
-# `git add`. Previous parts of a group are replaced. Nothing is moved or deleted outside evidence/zip/.
+# `git add`. Previous parts of a group are replaced, unless (change, final) the group's files equal its entries lists exactly,
+# in which case the parts are kept as they are. Nothing is moved or deleted outside evidence/zip/.
 import sys, os, zipfile, hashlib, glob, json
 dl, planp, outl = sys.argv[1:4]; ev = os.path.join(dl, 'evidence'); zd = os.path.join(ev, 'zip'); os.makedirs(zd, exist_ok=True)
 plan = json.load(open(planp)); LIM = 87 * 1000 * 1000
@@ -21,7 +22,6 @@ def expand(gs): return sorted({os.path.relpath(p, ev) for g in gs for p in glob.
 delivered = set()
 for p in expand(plan['plain']): delivered.add('evidence/' + p)
 for grp in plan['zip']:
-    for old in glob.glob(os.path.join(zd, grp['name'] + '.part*')): os.remove(old)
     files = expand(grp['globs'])
     for rd in grp.get('only_done', []):
         done = set()
@@ -30,6 +30,17 @@ for grp in plan['zip']:
                 x = json.loads(l)
                 if 'module' in x: done.add(x['module'].replace('/', '_') + '.log')
         files = [p for p in files if not (p.startswith(rd + '/mods/') and os.path.basename(p) not in done)]
+    # keep the existing parts when their entries list exactly these files with the same size and SHA-256 (no re-zip, so the
+    # delivered bytes do not change)
+    oldents = sorted(glob.glob(os.path.join(zd, grp['name'] + '.part*.entries.txt')))
+    if oldents:
+        have = sorted(tuple(l.rstrip('\n').split('\t')) for e in oldents for l in open(e) if l.strip())
+        want = sorted((p, str(os.path.getsize(os.path.join(ev, p))), sha(os.path.join(ev, p))) for p in files)
+        if have == want:
+            for e in oldents:
+                delivered.add(os.path.relpath(e, dl)); delivered.add(os.path.relpath(e.replace('.entries.txt', '.zip'), dl))
+            print(grp['name'], 'unchanged, kept', len(oldents), 'parts'); continue
+    for old in glob.glob(os.path.join(zd, grp['name'] + '.part*')): os.remove(old)
     part, z, ents, size = 0, None, [], 0
     def close():
         global z, ents

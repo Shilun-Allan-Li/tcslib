@@ -1,0 +1,468 @@
+====================================================================================================
+KEY H:243 | seal | TCSlib.Cryptography.colProver_efficient
+  record: TCSlib.Cryptography.colProver_efficient (lines 567; #248 OPEN_INCOMPLETE)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.Strategy.efficient_iff (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol.log:792
+  DECL at 569, header ends 570
+      569| theorem colProver_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+      570|     (ℓ : PolyExpr) : (colProver Com ℓ).Efficient :=
+  -- coe-A line 571 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.Strategy.Efficient']
+     referenced=['Complexity.PolyTimeComputable', 'TCSlib.Cryptography.Strategy.Efficient']
+     [TCSlib.Cryptography.Strategy.Efficient] readers: efficient_iff@Interaction
+     > Type mismatch
+     >   ColProofs.colProver_efficient hCom ℓ
+     > has type
+     >   (ColProofs.colProver Com ℓ).Efficient
+     > but is expected to have type
+     >   (colProver Com ℓ).Efficient
+       568| `NUPPT.runAtL_ofPolyTimeUniform` and `Strategy.pairFstD_encodeMsgs`. -/
+       569| theorem colProver_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+       570|     (ℓ : PolyExpr) : (colProver Com ℓ).Efficient :=
+    *  571|   ColProofs.colProver_efficient hCom ℓ
+       572| 
+       573| /-- The verifier of one iteration is efficient (D8) when `Com` is polynomial-time
+====================================================================================================
+KEY H:244 | seal | TCSlib.Cryptography.colVerifier_efficient
+  record: TCSlib.Cryptography.colVerifier_efficient (lines 582; #248 OPEN_INCOMPLETE)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.Strategy.efficient_iff (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol.log:807
+  DECL at 584, header ends 585
+      584| theorem colVerifier_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+      585|     (ℓ : PolyExpr) : (colVerifier Com ℓ).Efficient :=
+  -- coe-A line 586 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.Strategy.Efficient']
+     referenced=['Complexity.PolyTimeComputable', 'TCSlib.Cryptography.Strategy.Efficient']
+     [TCSlib.Cryptography.Strategy.Efficient] readers: efficient_iff@Interaction
+     > Type mismatch
+     >   ColProofs.colVerifier_efficient hCom ℓ
+     > has type
+     >   (ColProofs.colVerifier Com ℓ).Efficient
+     > but is expected to have type
+     >   (colVerifier Com ℓ).Efficient
+       583| the colour comparison. -/
+       584| theorem colVerifier_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+       585|     (ℓ : PolyExpr) : (colVerifier Com ℓ).Efficient :=
+    *  586|   ColProofs.colVerifier_efficient hCom ℓ
+       587| 
+       588| /-- The prover of the `n|E|`-fold protocol is efficient (D8) (Inf-4.2): `colProver_efficient`
+====================================================================================================
+KEY H:245 | seal | TCSlib.Cryptography.colProverRep_efficient
+  record: TCSlib.Cryptography.colProverRep_efficient (lines 589; #248 OPEN_INCOMPLETE)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.Strategy.efficient_iff (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol.log:814
+  DECL at 591, header ends 592
+      591| theorem colProverRep_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+      592|     (ℓ : PolyExpr) : (colProverRep Com ℓ).Efficient :=
+  -- coe-A line 593 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.Strategy.Efficient']
+     referenced=['Complexity.PolyTimeComputable', 'TCSlib.Cryptography.Strategy.Efficient']
+     [TCSlib.Cryptography.Strategy.Efficient] readers: efficient_iff@Interaction
+     > Type mismatch
+     >   ColProofs.colProverRep_efficient hCom ℓ
+     > has type
+     >   (ColProofs.colProverRep Com ℓ).Efficient
+     > but is expected to have type
+     >   (colProverRep Com ℓ).Efficient
+       590| iteration tests by `polyTimeComputable_lenLe` on unary counters. -/
+       591| theorem colProverRep_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+       592|     (ℓ : PolyExpr) : (colProverRep Com ℓ).Efficient :=
+    *  593|   ColProofs.colProverRep_efficient hCom ℓ
+       594| 
+       595| /-- The verifier of the `n|E|`-fold protocol is efficient (D8) (Inf-4.2): the challenge as in
+====================================================================================================
+KEY H:246 | seal | TCSlib.Cryptography.colVerifierRep_efficient
+  record: TCSlib.Cryptography.colVerifierRep_efficient (lines 597; #248 OPEN_INCOMPLETE)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.Strategy.efficient_iff (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol.log:822
+  DECL at 599, header ends 600
+      599| theorem colVerifierRep_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+      600|     (ℓ : PolyExpr) : (colVerifierRep Com ℓ).Efficient :=
+  -- coe-A line 601 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.Strategy.Efficient']
+     referenced=['Complexity.PolyTimeComputable', 'TCSlib.Cryptography.Strategy.Efficient']
+     [TCSlib.Cryptography.Strategy.Efficient] readers: efficient_iff@Interaction
+     > Type mismatch
+     >   ColProofs.colVerifierRep_efficient hCom ℓ
+     > has type
+     >   (ColProofs.colVerifierRep Com ℓ).Efficient
+     > but is expected to have type
+     >   (colVerifierRep Com ℓ).Efficient
+       598| `colVerify` checks). -/
+       599| theorem colVerifierRep_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+       600|     (ℓ : PolyExpr) : (colVerifierRep Com ℓ).Efficient :=
+    *  601|   ColProofs.colVerifierRep_efficient hCom ℓ
+       602| 
+       603| /-! ### Bounded prover messages (ruling G3-3 of gate 03) -/
+====================================================================================================
+KEY H:247 | seal | TCSlib.Cryptography.colProver_length_le
+  record: TCSlib.Cryptography.colProver_length_le (lines 629; #248 OPEN_INCOMPLETE)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.decGraph_eq (TCSlib/Cryptography/ZeroKnowledge/Encoding.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol.log:854
+  DECL at 626, header ends 628
+      626| theorem colProver_length_le {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+      627|     (ℓ : PolyExpr) : ∃ B : PolyExpr, ∀ x y r hist,
+      628|       ((colProver Com ℓ).next x y r hist).length ≤ B.eval x.length := by
+  -- coe-A line 633 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.decGraph']
+     referenced=['Complexity.PolyTimeComputable', 'TCSlib.Cryptography.decColoring', 'TCSlib.Cryptography.decGraph', 'TCSlib.Cryptography.edgeAt', 'TCSlib.Cryptography.edgeIdxOfMsg', 'TCSlib.Cryptography.encColoring', 'TCSlib.Cryptography.multiCom', 'TCSlib.Cryptography.padColor', 'TCSlib.Cryptography.samplePerm3', 'Turing.pairEncode']
+     [TCSlib.Cryptography.decGraph] readers: decGraph_eq@Encoding, decGraph_fst@Encoding, decGraph_snd@GraphIsomorphism, decGraph_encGraph@Encoding, decGraph_snd_apply@Encoding; struct fields: fst, snd
+     > Type mismatch
+     >   Nat.sqrt_le_self ?m.54
+     > has type
+     >   Nat.sqrt ?m.54 ≤ ?m.54
+     > but is expected to have type
+     >   (decGraph x).fst ≤ x.length
+       630|   refine ⟨.add (.mul .var (.add (.mul (.const 2) (.mul (.const C)
+       631|     (.pow (.add (.add (.mul (.const 2) .var) (.const 3)) ℓ) c))) (.const 2)))
+       632|     (.add (.mul (.const 3) ℓ) (.const 20)), fun x y r hist => ?_⟩
+    *  633|   have hn : (decGraph x).1 ≤ x.length := Nat.sqrt_le_self _
+       634|   have hℓ : ℓ.eval (decGraph x).1 ≤ ℓ.eval x.length := ℓ.eval_mono hn
+       635|   have hcom : (decGraph x).1 * (2 * (C * (2 * (decGraph x).1 + 3 + ℓ.eval (decGraph x).1) ^ c) + 2)
+====================================================================================================
+KEY H:248 | seal | TCSlib.Cryptography.colProtocol_outV
+  record: TCSlib.Cryptography.colProtocol_outV (lines 746; #248 OPEN_INCOMPLETE)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STATEMENT | stmt=yes | separate ruling: the statement reads TCSlib.Cryptography.Protocol.outV
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol.log:971
+  DECL at 744, header ends 750
+      744| private theorem colProtocol_outV (Com : List Bool → List Bool) (ℓ : PolyExpr) (P' : Strategy)
+      745|     (x y z : List Bool) (r : (colProtocol Com ℓ).ExecCoins P' x) :
+      746|     (colProtocol Com ℓ).outV P' x y z r =
+      747|       (colVerifier Com ℓ).next x z (List.ofFn r.2)
+      748|         [P'.next x y (List.ofFn r.1) [],
+      749|           P'.next x y (List.ofFn r.1)
+      750|             [(colVerifier Com ℓ).next x z (List.ofFn r.2) [P'.next x y (List.ofFn r.1) []]]] := rfl
+  -- coe-A line 750 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.Protocol.outV']
+     referenced=['TCSlib.Cryptography.Protocol.outV', 'TCSlib.Cryptography.Strategy.coinLen']
+     [TCSlib.Cryptography.Protocol.outV] readers: outV_eq@Interaction, outV_withV@Interaction, outV_eq_out@Interaction, outV_eq_getLast_of_moverIsV@Interaction
+     > Type mismatch
+     >   rfl
+     > has type
+     >   ?m.32 = ?m.32
+     > but is expected to have type
+     >   (colProtocol Com ℓ).outV P' x y z r =
+     >     (colVerifier Com ℓ).next x z (List.ofFn r.2)
+     >       [P'.next x y (List.ofFn r.1) [],
+     >         P'.next x y (List.ofFn r.1) [(colVerifier Com ℓ).next x z (List.ofFn r.2) [P'.next x y (List.ofFn r.1) []]]]
+       747|       (colVerifier Com ℓ).next x z (List.ofFn r.2)
+       748|         [P'.next x y (List.ofFn r.1) [],
+       749|           P'.next x y (List.ofFn r.1)
+    *  750|             [(colVerifier Com ℓ).next x z (List.ofFn r.2) [P'.next x y (List.ofFn r.1) []]]] := rfl
+       751| 
+       752| /-! ### Completeness -/
+====================================================================================================
+KEY H:249 | seal | TCSlib.Cryptography.uprob_check_uniform_le
+  record: TCSlib.Cryptography.uprob_check_uniform_le (lines 790; #248 OPEN_INCOMPLETE)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | add TCSlib.Cryptography.ColProofs.finOneEquiv_eq (or _iff/_apply) in TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol.log:1015
+  DECL at 781, header ends 785
+      781| private theorem uprob_check_uniform_le {Com : List Bool → List Bool} {ℓ : PolyExpr}
+      782|     (hC : Commitment Com ℓ) {n : ℕ} (hn : 2 ≤ n) {G : Graph n} (hG : ¬ ThreeColorable G)
+      783|     (com : List Bool) (opn : ℕ → List Bool) :
+      784|     uprob (fun e : Fin (edgeCount G) => colVerify Com (ℓ.eval n) G e com (opn e) = true) ≤
+      785|       1 - 1 / (edgeCount G : ℝ) := by
+  -- coe-A line 794 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.ColProofs.finOneEquiv']
+     referenced=['TCSlib.Cryptography.ColProofs.finOneEquiv', 'TCSlib.Cryptography.ThreeColorable', 'TCSlib.Cryptography.uprob']
+     [TCSlib.Cryptography.ColProofs.finOneEquiv] struct fields: toFun, invFun, left_inv, right_inv
+     > Type mismatch
+     >   he
+     > has type
+     >   colVerify Com (ℓ.eval n) G (↑e) com (opn ↑e) = true
+     > but is expected to have type
+     >   colVerify Com (ℓ.eval n) G (↑(((ColProofs.finOneEquiv (edgeCount G)) e).1 0)) com
+     >       (opn ↑(challengesUpTo ((ColProofs.finOneEquiv (edgeCount G)) e).1 0 (Fin.last ↑0))) =
+     >     true
+       791|   apply uprob_mono
+       792|   intro e he i
+       793|   rw [Fin.fin_one_eq_zero i]
+    *  794|   exact he
+       795| 
+       796| /-- **Soundness of one iteration** [PS10, Proposition 127.6]: for `x ∉ 3COL` and any prover,
+====================================================================================================
+KEY H:250 | seal | TCSlib.Cryptography.colProtocol_sound
+  record: TCSlib.Cryptography.colProtocol_sound (lines 853; #248 OPEN_TYPED_COINS)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.ColMachines.countTrue_succ (TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol.log:1078
+  DECL at 803, header ends 807
+      803| private theorem colProtocol_sound {Com : List Bool → List Bool} {ℓ : PolyExpr} (hC : Commitment Com ℓ)
+      804|     (x : List Bool) (hx : x ∉ L3COL) (P' : Strategy) (z : List Bool) :
+      805|     1 - (1 - 1 / (x.length : ℝ) + (1 / 2 : ℝ) ^ x.length) ≤
+      806|       uprob (fun r : (colProtocol Com ℓ).ExecCoins P' x =>
+      807|         (colProtocol Com ℓ).outV P' x [] z r = [false]) := by
+  -- coe-A line 857 cascade=False cls='show' tactic failed, pattern
+     providers=['TCSlib.Cryptography.ColMachines.countTrue', 'TCSlib.Cryptography.L3COL', 'TCSlib.Cryptography.Protocol.outV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.ThreeColorable', 'TCSlib.Cryptography.decGraph', 'TCSlib.Cryptography.edgeList', 'TCSlib.Cryptography.edgeMsg', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.sampleEdgeIdx', 'TCSlib.Cryptography.uprob']
+     referenced=['TCSlib.Cryptography.ColMachines.countTrue', 'TCSlib.Cryptography.L3COL', 'TCSlib.Cryptography.Protocol.outV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.ThreeColorable', 'TCSlib.Cryptography.decGraph', 'TCSlib.Cryptography.edgeList', 'TCSlib.Cryptography.edgeMsg', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.sampleEdgeIdx', 'TCSlib.Cryptography.uprob']
+     [TCSlib.Cryptography.ColMachines.countTrue] readers: countTrue_le@Machines, countTrue_mono@Machines, countTrue_poly@Machines, countTrue_succ@Machines, countTrue_zero@Machines
+     [TCSlib.Cryptography.Protocol.outV] readers: outV_eq@Interaction, outV_withV@Interaction, outV_eq_out@Interaction, outV_eq_getLast_of_moverIsV@Interaction
+     [TCSlib.Cryptography.StatClose] readers: statClose_iff@Sampling, statClose_one@Sampling, statClose_firstHit@Sampling, statClose_giSimTrunc@GraphIsomorphismZK, statClose_samplePerm@GraphIsomorphism, statClose_colRealView@Simulator, statClose_samplePerm3@Language, statClose_colSimTruncH@Simulator, statClose_giHonestView@GraphIsomorphismZK, statClose_glPadSampler@HardCoreLemmas, statClose_permFromCoins@Permutations, statClose_sampleEdgeIdx@Language, statClose_rejectionSample@Sampling, statClose_sampleColorPair@Simulator, statClose_iff_epsClose_map@SamplingFinDist, statClose_of_pushesUniform@Sampling, statClose_colSim_colSimTrunc@Simulator, statClose_permFromCoins_two_pow@Permutations, statClose_getD_of_uniform_of_some@Sampling
+     [TCSlib.Cryptography.Strategy.coinLen] readers: coinLen_eq@Interaction, coinLen_pullback@NP
+     [TCSlib.Cryptography.ThreeColorable] readers: threeColorable_iff@Language, threeColorable_ofSimpleGraph_iff@Language, threeColorable_of_edgeCount_eq_zero@Language
+     [TCSlib.Cryptography.decGraph] readers: decGraph_eq@Encoding, decGraph_fst@Encoding, decGraph_snd@GraphIsomorphism, decGraph_encGraph@Encoding, decGraph_snd_apply@Encoding; struct fields: fst, snd
+     [TCSlib.Cryptography.edgeList] readers: edgeList_def@Language
+     [TCSlib.Cryptography.encGraph] readers: encGraph_def@Encoding, encGraph_getD@Encoding, encGraph_getD_nat@Encoding, encGraph_injective@Encoding, encGraph_getD_of_le@Encoding, encGraph_mem_L3COL_iff@Language
+     [TCSlib.Cryptography.sampleEdgeIdx] readers: sampleEdgeIdx_def@Language, sampleEdgeIdx_lt@Language
+     [TCSlib.Cryptography.uprob] readers: uprob_def@Probability, uprob_fst@Probability, uprob_not@Probability, uprob_snd@LazySampling, uprob_mono@Probability, uprob_prod@Probability, uprob_true@Probability, uprob_congr@LazySampling, uprob_false@Probability, uprob_or_le@Probability, uprob_le_one@Probability, uprob_nonneg@Probability, uprob_eq_uexp@Probability, uprob_bool_prod@GeneratorFromPermutation, uprob_exists_le@Probability, uprob_prod_comm@LazySampling, uprob_comp_equiv@Probability, uprob_eq_of_equiv@Indistinguishability, uprob_bitsToNat_lt@Sampling, uprob_col_cheat_le@Protocol, uprob_tdpPredictor@TrapdoorPredictor, uprob_update_split@LazySampling, uprob_firstHit_none@Sampling, uprob_gni_rep_cheat@GraphIsomorphism, uprob_pi_forall_dep@Permutations, uprob_update_absorb@LazySampling, uprob_adaptive_guess@GraphIsomorphism, uprob_eq_card_filter@Probability, uprob_sections_congr@LazySampling, uprob_update_absorb'@LazySampling, uprob_adaptive_escape@Protocol, uprob_colSimTruncW_eq@Simulator, uprob_comp_eq_sum_map@Experiments, uprob_giHonestView_eq@GraphIsomorphismZK, uprob_giSimTrunc_none@GraphIsomorphismZK, uprob_gi_rep_cheat_le@GraphIsomorphism, uprob_gi_cheat_le_half@GraphIsomorphism, uprob_not_injective_le@Hybrid, uprob_colSimAttemptW_eq@Simulator, uprob_colSimTruncH_none@Simulator, uprob_comp_eq_sum_fiber@Sampling, uprob_fiber_le_card_mul@Universal, uprob_giSimAttempt_none@GraphIsomorphismZK, uprob_giSimAttempt_some@GraphIsomorphismZK, uprob_colSimAttemptH_none@Simulator, uprob_colSimAttemptH_some@Simulator, uprob_comp_eq_probTrue_map@SamplingFinDist, uprob_rejectionSample_none@Sampling, uprob_uniformFromBits_none@Sampling, uprob_permFromCoins_none_le@Permutations, uprob_uniformFromBits_eq_some@Sampling, uprob_permGraph_eq_of_isomorphic@GraphIsomorphism, uprob_permGraph_eq_of_isomorphic'@GraphIsomorphism, uprob_permFromCoins_none_le_two_pow@Permutations, uprob_rejectionSample_none_le_half_pow@Sampling; struct fields: cauchy
+     > 'show' tactic failed, pattern
+     >   x.length * (edgeCount G).size ≤ 1 * (x.length + 1) ^ 2
+     > is not definitionally equal to target
+     >   x.length * (edgeCount G).size ≤ (colVerifier Com ℓ).coinLen x.length
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol_part1 phase=eof spelling=BoolCircuit.CompileListSpec.mk._flat_ctor key=[["str","BoolCircuit"],["str","CompileListSpec"],["str","mk"],["str","_fl
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol_part1 phase=eof spelling=BoolCircuit.CompileSpec.mk._flat_ctor key=[["str","BoolCircuit"],["str","CompileSpec"],["str","mk"],["str","_flat_ctor"
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol_part1 phase=eof spelling=BoolCircuit.DAGCircuit.IsFaninTwo key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","IsFaninTwo"]] home_key=[["str
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol_part1 phase=eof spelling=BoolCircuit.DAGCircuit.IsWellFormed key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","IsWellFormed"]] home_key=[[
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol_part1 phase=eof spelling=BoolCircuit.DAGCircuit._sizeOf_1 key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","_sizeOf_1"]] home_key=[["str",
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol_part1 phase=eof spelling=BoolCircuit.DAGCircuit._sizeOf_inst key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","_sizeOf_inst"]] home_key=[[
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol_part1 phase=eof spelling=BoolCircuit.DAGCircuit.binarize key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","binarize"]] home_key=[["str","T
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol_part1 phase=eof spelling=BoolCircuit.DAGCircuit.deMorgan key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","deMorgan"]] home_key=[["str","T
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol_part1 phase=eof spelling=BoolCircuit.DAGCircuit.depth key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","depth"]] home_key=[["str","TCSlib"
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol_part1 phase=eof spelling=BoolCircuit.DAGCircuit.depthAt key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","depthAt"]] home_key=[["str","TCS
+       854|         rw [edgeCount_eq G x (decGraph_apply x), h1]
+       855|         exact countTrue_le _ _
+       856|       have hle : x.length * Nat.size (edgeCount G) ≤ (colVerifier Com ℓ).coinLen x.length := by
+    *  857|         show x.length * Nat.size (edgeCount G) ≤ 1 * (x.length + 1) ^ 2
+       858|         have h1 : Nat.size (edgeCount G) ≤ x.length :=
+       859|           (Nat.size_le_size hmx).trans (Nat.size_le.2 Nat.lt_two_pow_self)
+====================================================================================================
+KEY SEAL-0408 | seal | TCSlib.Cryptography.colProver_efficient
+  record: TCSlib.Cryptography.colProver_efficient l.571: Type mismatch (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.Strategy.efficient_iff (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol.log:792
+  DECL at 569, header ends 570
+      569| theorem colProver_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+      570|     (ℓ : PolyExpr) : (colProver Com ℓ).Efficient :=
+  -- coe-A line 571 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.Strategy.Efficient']
+     referenced=['Complexity.PolyTimeComputable', 'TCSlib.Cryptography.Strategy.Efficient']
+     [TCSlib.Cryptography.Strategy.Efficient] readers: efficient_iff@Interaction
+     > Type mismatch
+     >   ColProofs.colProver_efficient hCom ℓ
+     > has type
+     >   (ColProofs.colProver Com ℓ).Efficient
+     > but is expected to have type
+     >   (colProver Com ℓ).Efficient
+       568| `NUPPT.runAtL_ofPolyTimeUniform` and `Strategy.pairFstD_encodeMsgs`. -/
+       569| theorem colProver_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+       570|     (ℓ : PolyExpr) : (colProver Com ℓ).Efficient :=
+    *  571|   ColProofs.colProver_efficient hCom ℓ
+       572| 
+       573| /-- The verifier of one iteration is efficient (D8) when `Com` is polynomial-time
+====================================================================================================
+KEY SEAL-0409 | seal | TCSlib.Cryptography.colVerifier_efficient
+  record: TCSlib.Cryptography.colVerifier_efficient l.586: Type mismatch (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.Strategy.efficient_iff (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol.log:807
+  DECL at 584, header ends 585
+      584| theorem colVerifier_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+      585|     (ℓ : PolyExpr) : (colVerifier Com ℓ).Efficient :=
+  -- coe-A line 586 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.Strategy.Efficient']
+     referenced=['Complexity.PolyTimeComputable', 'TCSlib.Cryptography.Strategy.Efficient']
+     [TCSlib.Cryptography.Strategy.Efficient] readers: efficient_iff@Interaction
+     > Type mismatch
+     >   ColProofs.colVerifier_efficient hCom ℓ
+     > has type
+     >   (ColProofs.colVerifier Com ℓ).Efficient
+     > but is expected to have type
+     >   (colVerifier Com ℓ).Efficient
+       583| the colour comparison. -/
+       584| theorem colVerifier_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+       585|     (ℓ : PolyExpr) : (colVerifier Com ℓ).Efficient :=
+    *  586|   ColProofs.colVerifier_efficient hCom ℓ
+       587| 
+       588| /-- The prover of the `n|E|`-fold protocol is efficient (D8) (Inf-4.2): `colProver_efficient`
+====================================================================================================
+KEY SEAL-0410 | seal | TCSlib.Cryptography.colProverRep_efficient
+  record: TCSlib.Cryptography.colProverRep_efficient l.593: Type mismatch (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.Strategy.efficient_iff (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol.log:814
+  DECL at 591, header ends 592
+      591| theorem colProverRep_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+      592|     (ℓ : PolyExpr) : (colProverRep Com ℓ).Efficient :=
+  -- coe-A line 593 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.Strategy.Efficient']
+     referenced=['Complexity.PolyTimeComputable', 'TCSlib.Cryptography.Strategy.Efficient']
+     [TCSlib.Cryptography.Strategy.Efficient] readers: efficient_iff@Interaction
+     > Type mismatch
+     >   ColProofs.colProverRep_efficient hCom ℓ
+     > has type
+     >   (ColProofs.colProverRep Com ℓ).Efficient
+     > but is expected to have type
+     >   (colProverRep Com ℓ).Efficient
+       590| iteration tests by `polyTimeComputable_lenLe` on unary counters. -/
+       591| theorem colProverRep_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+       592|     (ℓ : PolyExpr) : (colProverRep Com ℓ).Efficient :=
+    *  593|   ColProofs.colProverRep_efficient hCom ℓ
+       594| 
+       595| /-- The verifier of the `n|E|`-fold protocol is efficient (D8) (Inf-4.2): the challenge as in
+====================================================================================================
+KEY SEAL-0411 | seal | TCSlib.Cryptography.colVerifierRep_efficient
+  record: TCSlib.Cryptography.colVerifierRep_efficient l.601: Type mismatch (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.Strategy.efficient_iff (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol.log:822
+  DECL at 599, header ends 600
+      599| theorem colVerifierRep_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+      600|     (ℓ : PolyExpr) : (colVerifierRep Com ℓ).Efficient :=
+  -- coe-A line 601 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.Strategy.Efficient']
+     referenced=['Complexity.PolyTimeComputable', 'TCSlib.Cryptography.Strategy.Efficient']
+     [TCSlib.Cryptography.Strategy.Efficient] readers: efficient_iff@Interaction
+     > Type mismatch
+     >   ColProofs.colVerifierRep_efficient hCom ℓ
+     > has type
+     >   (ColProofs.colVerifierRep Com ℓ).Efficient
+     > but is expected to have type
+     >   (colVerifierRep Com ℓ).Efficient
+       598| `colVerify` checks). -/
+       599| theorem colVerifierRep_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+       600|     (ℓ : PolyExpr) : (colVerifierRep Com ℓ).Efficient :=
+    *  601|   ColProofs.colVerifierRep_efficient hCom ℓ
+       602| 
+       603| /-! ### Bounded prover messages (ruling G3-3 of gate 03) -/
+====================================================================================================
+KEY SEAL-0412 | seal | TCSlib.Cryptography.colProver_length_le
+  record: TCSlib.Cryptography.colProver_length_le l.633: Type mismatch (#248 inherited_same_step_after_other_repairs)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.decGraph_eq (TCSlib/Cryptography/ZeroKnowledge/Encoding.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol.log:854
+  DECL at 626, header ends 628
+      626| theorem colProver_length_le {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+      627|     (ℓ : PolyExpr) : ∃ B : PolyExpr, ∀ x y r hist,
+      628|       ((colProver Com ℓ).next x y r hist).length ≤ B.eval x.length := by
+  -- coe-A line 633 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.decGraph']
+     referenced=['Complexity.PolyTimeComputable', 'TCSlib.Cryptography.decColoring', 'TCSlib.Cryptography.decGraph', 'TCSlib.Cryptography.edgeAt', 'TCSlib.Cryptography.edgeIdxOfMsg', 'TCSlib.Cryptography.encColoring', 'TCSlib.Cryptography.multiCom', 'TCSlib.Cryptography.padColor', 'TCSlib.Cryptography.samplePerm3', 'Turing.pairEncode']
+     [TCSlib.Cryptography.decGraph] readers: decGraph_eq@Encoding, decGraph_fst@Encoding, decGraph_snd@GraphIsomorphism, decGraph_encGraph@Encoding, decGraph_snd_apply@Encoding; struct fields: fst, snd
+     > Type mismatch
+     >   Nat.sqrt_le_self ?m.54
+     > has type
+     >   Nat.sqrt ?m.54 ≤ ?m.54
+     > but is expected to have type
+     >   (decGraph x).fst ≤ x.length
+       630|   refine ⟨.add (.mul .var (.add (.mul (.const 2) (.mul (.const C)
+       631|     (.pow (.add (.add (.mul (.const 2) .var) (.const 3)) ℓ) c))) (.const 2)))
+       632|     (.add (.mul (.const 3) ℓ) (.const 20)), fun x y r hist => ?_⟩
+    *  633|   have hn : (decGraph x).1 ≤ x.length := Nat.sqrt_le_self _
+       634|   have hℓ : ℓ.eval (decGraph x).1 ≤ ℓ.eval x.length := ℓ.eval_mono hn
+       635|   have hcom : (decGraph x).1 * (2 * (C * (2 * (decGraph x).1 + 3 + ℓ.eval (decGraph x).1) ^ c) + 2)
+====================================================================================================
+KEY SEAL-0413 | seal | TCSlib.Cryptography.colProtocol_outV
+  record: TCSlib.Cryptography.colProtocol_outV l.750: Type mismatch (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STATEMENT | stmt=yes | separate ruling: the statement reads TCSlib.Cryptography.Protocol.outV
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol.log:971
+  DECL at 744, header ends 750
+      744| private theorem colProtocol_outV (Com : List Bool → List Bool) (ℓ : PolyExpr) (P' : Strategy)
+      745|     (x y z : List Bool) (r : (colProtocol Com ℓ).ExecCoins P' x) :
+      746|     (colProtocol Com ℓ).outV P' x y z r =
+      747|       (colVerifier Com ℓ).next x z (List.ofFn r.2)
+      748|         [P'.next x y (List.ofFn r.1) [],
+      749|           P'.next x y (List.ofFn r.1)
+      750|             [(colVerifier Com ℓ).next x z (List.ofFn r.2) [P'.next x y (List.ofFn r.1) []]]] := rfl
+  -- coe-A line 750 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.Protocol.outV']
+     referenced=['TCSlib.Cryptography.Protocol.outV', 'TCSlib.Cryptography.Strategy.coinLen']
+     [TCSlib.Cryptography.Protocol.outV] readers: outV_eq@Interaction, outV_withV@Interaction, outV_eq_out@Interaction, outV_eq_getLast_of_moverIsV@Interaction
+     > Type mismatch
+     >   rfl
+     > has type
+     >   ?m.32 = ?m.32
+     > but is expected to have type
+     >   (colProtocol Com ℓ).outV P' x y z r =
+     >     (colVerifier Com ℓ).next x z (List.ofFn r.2)
+     >       [P'.next x y (List.ofFn r.1) [],
+     >         P'.next x y (List.ofFn r.1) [(colVerifier Com ℓ).next x z (List.ofFn r.2) [P'.next x y (List.ofFn r.1) []]]]
+       747|       (colVerifier Com ℓ).next x z (List.ofFn r.2)
+       748|         [P'.next x y (List.ofFn r.1) [],
+       749|           P'.next x y (List.ofFn r.1)
+    *  750|             [(colVerifier Com ℓ).next x z (List.ofFn r.2) [P'.next x y (List.ofFn r.1) []]]] := rfl
+       751| 
+       752| /-! ### Completeness -/
+====================================================================================================
+KEY SEAL-0414 | seal | TCSlib.Cryptography.uprob_check_uniform_le
+  record: TCSlib.Cryptography.uprob_check_uniform_le l.794: Type mismatch (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | add TCSlib.Cryptography.ColProofs.finOneEquiv_eq (or _iff/_apply) in TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol.log:1015
+  DECL at 781, header ends 785
+      781| private theorem uprob_check_uniform_le {Com : List Bool → List Bool} {ℓ : PolyExpr}
+      782|     (hC : Commitment Com ℓ) {n : ℕ} (hn : 2 ≤ n) {G : Graph n} (hG : ¬ ThreeColorable G)
+      783|     (com : List Bool) (opn : ℕ → List Bool) :
+      784|     uprob (fun e : Fin (edgeCount G) => colVerify Com (ℓ.eval n) G e com (opn e) = true) ≤
+      785|       1 - 1 / (edgeCount G : ℝ) := by
+  -- coe-A line 794 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.ColProofs.finOneEquiv']
+     referenced=['TCSlib.Cryptography.ColProofs.finOneEquiv', 'TCSlib.Cryptography.ThreeColorable', 'TCSlib.Cryptography.uprob']
+     [TCSlib.Cryptography.ColProofs.finOneEquiv] struct fields: toFun, invFun, left_inv, right_inv
+     > Type mismatch
+     >   he
+     > has type
+     >   colVerify Com (ℓ.eval n) G (↑e) com (opn ↑e) = true
+     > but is expected to have type
+     >   colVerify Com (ℓ.eval n) G (↑(((ColProofs.finOneEquiv (edgeCount G)) e).1 0)) com
+     >       (opn ↑(challengesUpTo ((ColProofs.finOneEquiv (edgeCount G)) e).1 0 (Fin.last ↑0))) =
+     >     true
+       791|   apply uprob_mono
+       792|   intro e he i
+       793|   rw [Fin.fin_one_eq_zero i]
+    *  794|   exact he
+       795| 
+       796| /-- **Soundness of one iteration** [PS10, Proposition 127.6]: for `x ∉ 3COL` and any prover,
+====================================================================================================
+KEY SEAL-0415 | seal | TCSlib.Cryptography.colProtocol_sound
+  record: TCSlib.Cryptography.colProtocol_sound l.857: 'show' tactic failed, pattern (#248 inherited_same_step_after_other_repairs)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.ColMachines.countTrue_succ (TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol.log:1078
+  DECL at 803, header ends 807
+      803| private theorem colProtocol_sound {Com : List Bool → List Bool} {ℓ : PolyExpr} (hC : Commitment Com ℓ)
+      804|     (x : List Bool) (hx : x ∉ L3COL) (P' : Strategy) (z : List Bool) :
+      805|     1 - (1 - 1 / (x.length : ℝ) + (1 / 2 : ℝ) ^ x.length) ≤
+      806|       uprob (fun r : (colProtocol Com ℓ).ExecCoins P' x =>
+      807|         (colProtocol Com ℓ).outV P' x [] z r = [false]) := by
+  -- coe-A line 857 cascade=False cls='show' tactic failed, pattern
+     providers=['TCSlib.Cryptography.ColMachines.countTrue', 'TCSlib.Cryptography.L3COL', 'TCSlib.Cryptography.Protocol.outV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.ThreeColorable', 'TCSlib.Cryptography.decGraph', 'TCSlib.Cryptography.edgeList', 'TCSlib.Cryptography.edgeMsg', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.sampleEdgeIdx', 'TCSlib.Cryptography.uprob']
+     referenced=['TCSlib.Cryptography.ColMachines.countTrue', 'TCSlib.Cryptography.L3COL', 'TCSlib.Cryptography.Protocol.outV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.ThreeColorable', 'TCSlib.Cryptography.decGraph', 'TCSlib.Cryptography.edgeList', 'TCSlib.Cryptography.edgeMsg', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.sampleEdgeIdx', 'TCSlib.Cryptography.uprob']
+     [TCSlib.Cryptography.ColMachines.countTrue] readers: countTrue_le@Machines, countTrue_mono@Machines, countTrue_poly@Machines, countTrue_succ@Machines, countTrue_zero@Machines
+     [TCSlib.Cryptography.Protocol.outV] readers: outV_eq@Interaction, outV_withV@Interaction, outV_eq_out@Interaction, outV_eq_getLast_of_moverIsV@Interaction
+     [TCSlib.Cryptography.StatClose] readers: statClose_iff@Sampling, statClose_one@Sampling, statClose_firstHit@Sampling, statClose_giSimTrunc@GraphIsomorphismZK, statClose_samplePerm@GraphIsomorphism, statClose_colRealView@Simulator, statClose_samplePerm3@Language, statClose_colSimTruncH@Simulator, statClose_giHonestView@GraphIsomorphismZK, statClose_glPadSampler@HardCoreLemmas, statClose_permFromCoins@Permutations, statClose_sampleEdgeIdx@Language, statClose_rejectionSample@Sampling, statClose_sampleColorPair@Simulator, statClose_iff_epsClose_map@SamplingFinDist, statClose_of_pushesUniform@Sampling, statClose_colSim_colSimTrunc@Simulator, statClose_permFromCoins_two_pow@Permutations, statClose_getD_of_uniform_of_some@Sampling
+     [TCSlib.Cryptography.Strategy.coinLen] readers: coinLen_eq@Interaction, coinLen_pullback@NP
+     [TCSlib.Cryptography.ThreeColorable] readers: threeColorable_iff@Language, threeColorable_ofSimpleGraph_iff@Language, threeColorable_of_edgeCount_eq_zero@Language
+     [TCSlib.Cryptography.decGraph] readers: decGraph_eq@Encoding, decGraph_fst@Encoding, decGraph_snd@GraphIsomorphism, decGraph_encGraph@Encoding, decGraph_snd_apply@Encoding; struct fields: fst, snd
+     [TCSlib.Cryptography.edgeList] readers: edgeList_def@Language
+     [TCSlib.Cryptography.encGraph] readers: encGraph_def@Encoding, encGraph_getD@Encoding, encGraph_getD_nat@Encoding, encGraph_injective@Encoding, encGraph_getD_of_le@Encoding, encGraph_mem_L3COL_iff@Language
+     [TCSlib.Cryptography.sampleEdgeIdx] readers: sampleEdgeIdx_def@Language, sampleEdgeIdx_lt@Language
+     [TCSlib.Cryptography.uprob] readers: uprob_def@Probability, uprob_fst@Probability, uprob_not@Probability, uprob_snd@LazySampling, uprob_mono@Probability, uprob_prod@Probability, uprob_true@Probability, uprob_congr@LazySampling, uprob_false@Probability, uprob_or_le@Probability, uprob_le_one@Probability, uprob_nonneg@Probability, uprob_eq_uexp@Probability, uprob_bool_prod@GeneratorFromPermutation, uprob_exists_le@Probability, uprob_prod_comm@LazySampling, uprob_comp_equiv@Probability, uprob_eq_of_equiv@Indistinguishability, uprob_bitsToNat_lt@Sampling, uprob_col_cheat_le@Protocol, uprob_tdpPredictor@TrapdoorPredictor, uprob_update_split@LazySampling, uprob_firstHit_none@Sampling, uprob_gni_rep_cheat@GraphIsomorphism, uprob_pi_forall_dep@Permutations, uprob_update_absorb@LazySampling, uprob_adaptive_guess@GraphIsomorphism, uprob_eq_card_filter@Probability, uprob_sections_congr@LazySampling, uprob_update_absorb'@LazySampling, uprob_adaptive_escape@Protocol, uprob_colSimTruncW_eq@Simulator, uprob_comp_eq_sum_map@Experiments, uprob_giHonestView_eq@GraphIsomorphismZK, uprob_giSimTrunc_none@GraphIsomorphismZK, uprob_gi_rep_cheat_le@GraphIsomorphism, uprob_gi_cheat_le_half@GraphIsomorphism, uprob_not_injective_le@Hybrid, uprob_colSimAttemptW_eq@Simulator, uprob_colSimTruncH_none@Simulator, uprob_comp_eq_sum_fiber@Sampling, uprob_fiber_le_card_mul@Universal, uprob_giSimAttempt_none@GraphIsomorphismZK, uprob_giSimAttempt_some@GraphIsomorphismZK, uprob_colSimAttemptH_none@Simulator, uprob_colSimAttemptH_some@Simulator, uprob_comp_eq_probTrue_map@SamplingFinDist, uprob_rejectionSample_none@Sampling, uprob_uniformFromBits_none@Sampling, uprob_permFromCoins_none_le@Permutations, uprob_uniformFromBits_eq_some@Sampling, uprob_permGraph_eq_of_isomorphic@GraphIsomorphism, uprob_permGraph_eq_of_isomorphic'@GraphIsomorphism, uprob_permFromCoins_none_le_two_pow@Permutations, uprob_rejectionSample_none_le_half_pow@Sampling; struct fields: cauchy
+     > 'show' tactic failed, pattern
+     >   x.length * (edgeCount G).size ≤ 1 * (x.length + 1) ^ 2
+     > is not definitionally equal to target
+     >   x.length * (edgeCount G).size ≤ (colVerifier Com ℓ).coinLen x.length
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol_part1 phase=eof spelling=BoolCircuit.CompileListSpec.mk._flat_ctor key=[["str","BoolCircuit"],["str","CompileListSpec"],["str","mk"],["str","_fl
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol_part1 phase=eof spelling=BoolCircuit.CompileSpec.mk._flat_ctor key=[["str","BoolCircuit"],["str","CompileSpec"],["str","mk"],["str","_flat_ctor"
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol_part1 phase=eof spelling=BoolCircuit.DAGCircuit.IsFaninTwo key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","IsFaninTwo"]] home_key=[["str
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol_part1 phase=eof spelling=BoolCircuit.DAGCircuit.IsWellFormed key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","IsWellFormed"]] home_key=[[
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol_part1 phase=eof spelling=BoolCircuit.DAGCircuit._sizeOf_1 key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","_sizeOf_1"]] home_key=[["str",
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol_part1 phase=eof spelling=BoolCircuit.DAGCircuit._sizeOf_inst key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","_sizeOf_inst"]] home_key=[[
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol_part1 phase=eof spelling=BoolCircuit.DAGCircuit.binarize key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","binarize"]] home_key=[["str","T
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol_part1 phase=eof spelling=BoolCircuit.DAGCircuit.deMorgan key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","deMorgan"]] home_key=[["str","T
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol_part1 phase=eof spelling=BoolCircuit.DAGCircuit.depth key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","depth"]] home_key=[["str","TCSlib"
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_Protocol_part1 phase=eof spelling=BoolCircuit.DAGCircuit.depthAt key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","depthAt"]] home_key=[["str","TCS
+       854|         rw [edgeCount_eq G x (decGraph_apply x), h1]
+       855|         exact countTrue_le _ _
+       856|       have hle : x.length * Nat.size (edgeCount G) ≤ (colVerifier Com ℓ).coinLen x.length := by
+    *  857|         show x.length * Nat.size (edgeCount G) ≤ 1 * (x.length + 1) ^ 2
+       858|         have h1 : Nat.size (edgeCount G) ≤ x.length :=
+       859|           (Nat.size_le_size hmx).trans (Nat.size_le.2 Nat.lt_two_pow_self)

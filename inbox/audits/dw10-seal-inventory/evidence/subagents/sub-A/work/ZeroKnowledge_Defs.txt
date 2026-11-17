@@ -1,0 +1,787 @@
+====================================================================================================
+KEY H:151 | seal | TCSlib.Cryptography.perfectZK_zeroRounds
+  record: TCSlib.Cryptography.perfectZK_zeroRounds (lines 291, 292; #248 OPEN_INCOMPLETE)
+  counts sA=2 sB=2 cA=2 cB=2 scan=-
+  tool: STAGE2 | stmt=no | add Complexity.NUPPT.ofPolyTimeUniform_eq (or _iff/_apply) in TCSlib/Complexity/Randomized/PPT.lean; related: Complexity.NUPPT.ofPolyTimeUniform_uniform
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Defs.log:413
+  DECL at 294, header ends 295
+      294| theorem perfectZK_zeroRounds (P V : Strategy) (b : Bool) (R : List Bool → List Bool → Prop) :
+      295|     PerfectZK ⟨P, V, .const 0, b⟩ R := by
+  -- coe-A line 302 cascade=False cls=Application type mismatch: The argument
+     providers=['Complexity.NUPPT.ofPolyTimeUniform', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.Protocol.withV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.View.encode']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.advInput', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.inArg', 'Complexity.NUPPT.inCoins', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.Protocol.withV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [Complexity.NUPPT.ofPolyTimeUniform] readers: ofPolyTimeUniform_uniform@PPT; struct fields: M, Ct, ct, coins, adv, advice, advice_length, halts
+     [TCSlib.Cryptography.Protocol.viewV] readers: viewV_eq@Interaction, viewV_withV@Interaction; struct fields: x, z, r, received
+     [TCSlib.Cryptography.Protocol.withV] readers: withV_P@Interaction, withV_V@Interaction, withV_self@Interaction, withV_rounds@Interaction, withV_verifierFirst@Interaction, withV_vCoinsEquiv_ofFn@Interaction; struct fields: P, V, rounds, verifierFirst
+     [TCSlib.Cryptography.StatClose] readers: statClose_iff@Sampling, statClose_one@Sampling, statClose_firstHit@Sampling, statClose_giSimTrunc@GraphIsomorphismZK, statClose_samplePerm@GraphIsomorphism, statClose_colRealView@Simulator, statClose_samplePerm3@Language, statClose_colSimTruncH@Simulator, statClose_giHonestView@GraphIsomorphismZK, statClose_glPadSampler@HardCoreLemmas, statClose_permFromCoins@Permutations, statClose_sampleEdgeIdx@Language, statClose_rejectionSample@Sampling, statClose_sampleColorPair@Simulator, statClose_iff_epsClose_map@SamplingFinDist, statClose_of_pushesUniform@Sampling, statClose_colSim_colSimTrunc@Simulator, statClose_permFromCoins_two_pow@Permutations, statClose_getD_of_uniform_of_some@Sampling
+     [TCSlib.Cryptography.View.encode] readers: encode_mk@Interaction
+     > Application type mismatch: The argument
+     >   fun x y z x_1 T => ?m.30
+     > has type
+     >   (x y z : List Bool) → (x_1 : R x y) → (T : ?m.31 x y z x_1) → ?m.32 x y z x_1 T
+     > but is expected to have type
+     >   ∀ (x y z : List Bool),
+     >     R x y →
+     >       StatClose
+     >         (fun r => (({ P := P, V := V, rounds := PolyExpr.const 0, verifierFirst := b }.withV V').viewV x y z r).encode)
+     >         ((NUPPT.ofPolyTimeUniform hF V'.coins).simulate x z) ((fun x => 0) x.length)
+     > in the application
+     >   ⟨NUPPT.ofPolyTimeUniform_uniform hF V'.coins, fun x y z x_1 T => ?m.30⟩
+       299|     NUPPT.polyTimeComputable_inArg.pairEncode
+       300|       (NUPPT.polyTimeComputable_inCoins.pairEncode (polyTimeComputable_const []))
+       301|   refine ⟨NUPPT.ofPolyTimeUniform hF V'.coins, NUPPT.ofPolyTimeUniform_uniform hF _,
+    *  302|     fun x y z _ T => ?_⟩
+       303|   have h1 : uprob (fun r : (Protocol.withV ⟨P, V, .const 0, b⟩ V').ExecCoins P x =>
+       304|       T ((Protocol.withV ⟨P, V, .const 0, b⟩ V').viewV x y z r).encode) =
+  -- coe-A line 303 cascade=True cls=No goals to be solved
+     providers=[]
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.advInput', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.inArg', 'Complexity.NUPPT.inCoins', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.Protocol.withV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     > No goals to be solved
+       300|       (NUPPT.polyTimeComputable_inCoins.pairEncode (polyTimeComputable_const []))
+       301|   refine ⟨NUPPT.ofPolyTimeUniform hF V'.coins, NUPPT.ofPolyTimeUniform_uniform hF _,
+       302|     fun x y z _ T => ?_⟩
+    *  303|   have h1 : uprob (fun r : (Protocol.withV ⟨P, V, .const 0, b⟩ V').ExecCoins P x =>
+       304|       T ((Protocol.withV ⟨P, V, .const 0, b⟩ V').viewV x y z r).encode) =
+       305|       uprob (fun ρ : V'.Coins x.length =>
+====================================================================================================
+KEY H:152 | seal | TCSlib.Cryptography.AbortRetry.attempt_poly
+  record: TCSlib.Cryptography.AbortRetry.attempt_poly (lines 394; #248 OPEN_TYPED_COINS)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.NUPPT.inParam_eq (TCSlib/Complexity/Randomized/Closure.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Defs.log:516
+  DECL at 395, header ends 396
+      395| theorem attempt_poly (S : NUPPT) :
+      396|     PolyTimeComputable fun u => attempt S (pairSndD u) (pairFstD u).length := by
+  -- coe-A line 405 cascade=False cls=Type mismatch
+     providers=['Complexity.NUPPT.inParam', 'Complexity.PolyTimeComputable', 'Complexity.pairSndD']
+     referenced=['Complexity.NUPPT.coinLen', 'Complexity.NUPPT.inArg', 'Complexity.NUPPT.inCoins', 'Complexity.NUPPT.inParam', 'Complexity.NUPPT.layout', 'Complexity.NUPPT.output', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'Turing.pairEncode']
+     [Complexity.NUPPT.inParam] readers: inParam_eq@Closure, inParam_layout@Closure
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop, polyTimeComputable_unary@PolyTimePairing, polyTimeComputable_pairEq@Repetition, polyTimeComputable_iterate@Repetition, polyTimeComputable_pairXor@Repetition, polyTimeComputable_prepend@PolyTimePairing, polyTimeComputable_blockMap@Repetition, polyTimeComputable_emitIter@PolyTimeBlockLoop, polyTimeComputable_majority@Repetition, polyTimeComputable_pairFstD@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, polyTimeComputable_pairSwap@PolyTimePairing, polyTimeComputable_of_linear@PolyTimePairing, polyTimeComputable_polyUnary@PolyTimePairing, polyTimeComputable_stateFind@Repetition, polyTimeComputable_transduce@Transducer, polyTimeComputable_unaryPoly@Primitives, polyTimeComputable_pairConcat@PolyTimePairing, polyTimeComputable_iterateEmit@Repetition, polyTimeComputable_iterateFind@Repetition, polyTimeComputable_sliceDropAt@PolyTimeBlockLoop, polyTimeComputable_sliceTakeAt@PolyTimeBlockLoop, polyTimeComputable_unaryNormal@PolyExpr, polyTimeComputable_blockAnyTest@PolyTimeBlockTests, polyTimeComputable_pairDropPoly@Primitives, polyTimeComputable_pairTakePoly@Primitives, polyTimeComputable_blockXorAnyTest@PolyTimeBlockTests, polyTimeComputable_iterate_pairFstD@PolyTimePairing, polyTimeComputable_blockMajorityTest@PolyTimeBlockMajority, polyTimeComputable_dropPrefixByLength@PolyTimePrefix, polyTimeComputable_of_computesInSpace@ConfigCount, polyTimeComputable_takePrefixByLength@PolyTimePrefix
+     [Complexity.pairSndD] readers: pairSndD_eq@PolyTimePairing, pairSndD_pairEncode@PolyTimePairing, pairSndD_of_pairDecode_eq_none@PolyTimePairing
+     > Type mismatch
+     >   unaryPoly_comp S.coins hpar
+     > has type
+     >   PolyTimeComputable fun x => List.replicate (S.coins.eval (NUPPT.inParam (pairSndD x)).length) true
+     > but is expected to have type
+     >   PolyTimeComputable fun u => List.replicate (S.coinLen (NUPPT.inParam (pairSndD u)).length) true
+       402|     NUPPT.polyTimeComputable_inCoins.comp polyTimeComputable_pairSndD
+       403|   have hc : PolyTimeComputable fun u =>
+       404|       List.replicate (S.coinLen (NUPPT.inParam (pairSndD u)).length) true :=
+    *  405|     unaryPoly_comp S.coins hpar
+       406|   have ht : PolyTimeComputable fun u => List.replicate (pairFstD u).length true :=
+       407|     unaryLength_poly polyTimeComputable_pairFstD
+====================================================================================================
+KEY H:153 | seal | TCSlib.Cryptography.AbortRetry.exists_retrySimulator
+  record: TCSlib.Cryptography.AbortRetry.exists_retrySimulator (lines 440, 438; #248 OPEN_TYPED_COINS)
+  counts sA=2 sB=2 cA=2 cB=2 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.NUPPT.advInput_eq (TCSlib/Complexity/Randomized/PPT.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Defs.log:562
+  DECL at 444, header ends 447
+      444| theorem exists_retrySimulator (S : NUPPT) :
+      445|     ∃ S' : NUPPT, S'.Uniform ∧ S'.coins = .mul .var S.coins ∧
+      446|       ∀ x z (r : S'.Coins x.length), S'.simulate x z r =
+      447|         retry S (NUPPT.layout (List.replicate x.length true) (pairEncode x z) [] (List.ofFn r)) :=
+  -- coe-A line 449 cascade=True cls=Application type mismatch: The argument
+     providers=['Complexity.NUPPT.ofPolyTimeUniform']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.advInput', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.layout', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'Turing.pairEncode']
+     [Complexity.NUPPT.ofPolyTimeUniform] readers: ofPolyTimeUniform_uniform@PPT; struct fields: M, Ct, ct, coins, adv, advice, advice_length, halts
+     > Application type mismatch: The argument
+     >   rfl
+     > has type
+     >   ?m.43 = ?m.43
+     > but is expected to have type
+     >   (NUPPT.ofPolyTimeUniform ⋯ (PolyExpr.var.mul S.coins)).coins = PolyExpr.var.mul S.coins
+     > in the application
+     >   And.intro rfl
+       446|       ∀ x z (r : S'.Coins x.length), S'.simulate x z r =
+       447|         retry S (NUPPT.layout (List.replicate x.length true) (pairEncode x z) [] (List.ofFn r)) :=
+       448|   ⟨NUPPT.ofPolyTimeUniform (retry_poly S) (.mul .var S.coins),
+    *  449|     NUPPT.ofPolyTimeUniform_uniform _ _, rfl, fun x z r => by
+       450|       rw [NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
+       451|       rfl⟩
+  -- coe-A line 451 cascade=False cls=Tactic X failed: The left-hand side
+     providers=['Complexity.NUPPT.advInput', 'Complexity.NUPPT.layout', 'Complexity.NUPPT.ofPolyTimeUniform', 'Turing.pairEncode']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.advInput', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.layout', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'Turing.pairEncode']
+     [Complexity.NUPPT.advInput] readers: advInput_eq@PPT
+     [Complexity.NUPPT.layout] readers: layout_eq@Closure
+     [Complexity.NUPPT.ofPolyTimeUniform] readers: ofPolyTimeUniform_uniform@PPT; struct fields: M, Ct, ct, coins, adv, advice, advice_length, halts
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Tactic `rfl` failed: The left-hand side
+     >   retry S (pairEncode (pairEncode (NUPPT.advInput x.length (pairEncode x z)) []) (List.ofFn r))
+     > is not definitionally equal to the right-hand side
+     >   retry S (NUPPT.layout (List.replicate x.length true) (pairEncode x z) [] (List.ofFn r))
+     > 
+     > S : NUPPT
+     > x z : List Bool
+     > r : (NUPPT.ofPolyTimeUniform ⋯ (PolyExpr.var.mul S.coins)).Coins x.length
+     > ⊢ retry S (pairEncode (pairEncode (NUPPT.advInput x.length (pairEncode x z)) []) (List.ofFn r)) =
+     >     retry S (NUPPT.layout (List.replicate x.length true) (pairEncode x z) [] (List.ofFn r))
+       448|   ⟨NUPPT.ofPolyTimeUniform (retry_poly S) (.mul .var S.coins),
+       449|     NUPPT.ofPolyTimeUniform_uniform _ _, rfl, fun x z r => by
+       450|       rw [NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
+    *  451|       rfl⟩
+       452| 
+       453| /-- The first hit of `K` draws read through `EncodingMachines.firstIdx`: if `a t` is `g` of
+====================================================================================================
+KEY H:154 | seal | TCSlib.Cryptography.AbortRetry.statClose_retry
+  record: TCSlib.Cryptography.AbortRetry.statClose_retry (lines 513; #248 OPEN_INCOMPLETE)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.statClose_iff (TCSlib/Cryptography/Asymptotic/Sampling.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Defs.log:635
+  DECL at 516, header ends 522
+      516| theorem statClose_retry {Ω τ : Type*} [Fintype Ω] [DecidableEq Ω] [Nonempty Ω] [Fintype τ]
+      517|     (E : Ω → Prop) [DecidablePred E] (g : Ω → List Bool) (Y : τ → List Bool) (d₀ : List Bool)
+      518|     (habort : uprob (fun ω => ¬ E ω) ≤ 1 / 2)
+      519|     (hcond : ∀ T : List Bool → Prop,
+      520|       uprob (fun t => T (Y t)) * uprob E = uprob (fun ω => E ω ∧ T (g ω)))
+      521|     (K : ℕ) :
+      522|     StatClose Y (fun ws : Fin K → Ω => ((firstHit E ws).map g).getD d₀) ((2 : ℝ)⁻¹ ^ K) := by
+  -- coe-A line 524 cascade=False cls=Tactic X failed: There are no additional binders or X bindings in the goal to in
+     providers=['TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.firstHit', 'TCSlib.Cryptography.uprob']
+     referenced=['TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.firstHit', 'TCSlib.Cryptography.uprob']
+     [TCSlib.Cryptography.StatClose] readers: statClose_iff@Sampling, statClose_one@Sampling, statClose_firstHit@Sampling, statClose_giSimTrunc@GraphIsomorphismZK, statClose_samplePerm@GraphIsomorphism, statClose_colRealView@Simulator, statClose_samplePerm3@Language, statClose_colSimTruncH@Simulator, statClose_giHonestView@GraphIsomorphismZK, statClose_glPadSampler@HardCoreLemmas, statClose_permFromCoins@Permutations, statClose_sampleEdgeIdx@Language, statClose_rejectionSample@Sampling, statClose_sampleColorPair@Simulator, statClose_iff_epsClose_map@SamplingFinDist, statClose_of_pushesUniform@Sampling, statClose_colSim_colSimTrunc@Simulator, statClose_permFromCoins_two_pow@Permutations, statClose_getD_of_uniform_of_some@Sampling
+     [TCSlib.Cryptography.firstHit] readers: firstHit_eq@Sampling, firstHit_eq_none_iff@Sampling, firstHit_eq_some_imp@Sampling, firstHit_uniform_of_some@Sampling
+     [TCSlib.Cryptography.uprob] readers: uprob_def@Probability, uprob_fst@Probability, uprob_not@Probability, uprob_snd@LazySampling, uprob_mono@Probability, uprob_prod@Probability, uprob_true@Probability, uprob_congr@LazySampling, uprob_false@Probability, uprob_or_le@Probability, uprob_le_one@Probability, uprob_nonneg@Probability, uprob_eq_uexp@Probability, uprob_bool_prod@GeneratorFromPermutation, uprob_exists_le@Probability, uprob_prod_comm@LazySampling, uprob_comp_equiv@Probability, uprob_eq_of_equiv@Indistinguishability, uprob_bitsToNat_lt@Sampling, uprob_col_cheat_le@Protocol, uprob_tdpPredictor@TrapdoorPredictor, uprob_update_split@LazySampling, uprob_firstHit_none@Sampling, uprob_gni_rep_cheat@GraphIsomorphism, uprob_pi_forall_dep@Permutations, uprob_update_absorb@LazySampling, uprob_adaptive_guess@GraphIsomorphism, uprob_eq_card_filter@Probability, uprob_sections_congr@LazySampling, uprob_update_absorb'@LazySampling, uprob_adaptive_escape@Protocol, uprob_colSimTruncW_eq@Simulator, uprob_comp_eq_sum_map@Experiments, uprob_giHonestView_eq@GraphIsomorphismZK, uprob_giSimTrunc_none@GraphIsomorphismZK, uprob_gi_rep_cheat_le@GraphIsomorphism, uprob_gi_cheat_le_half@GraphIsomorphism, uprob_not_injective_le@Hybrid, uprob_colSimAttemptW_eq@Simulator, uprob_colSimTruncH_none@Simulator, uprob_comp_eq_sum_fiber@Sampling, uprob_fiber_le_card_mul@Universal, uprob_giSimAttempt_none@GraphIsomorphismZK, uprob_giSimAttempt_some@GraphIsomorphismZK, uprob_colSimAttemptH_none@Simulator, uprob_colSimAttemptH_some@Simulator, uprob_comp_eq_probTrue_map@SamplingFinDist, uprob_rejectionSample_none@Sampling, uprob_uniformFromBits_none@Sampling, uprob_permFromCoins_none_le@Permutations, uprob_uniformFromBits_eq_some@Sampling, uprob_permGraph_eq_of_isomorphic@GraphIsomorphism, uprob_permGraph_eq_of_isomorphic'@GraphIsomorphism, uprob_permFromCoins_none_le_two_pow@Permutations, uprob_rejectionSample_none_le_half_pow@Sampling; struct fields: cauchy
+     > Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+     > 
+     > Ω : Type u_1
+     > τ : Type u_2
+     > inst✝⁴ : Fintype Ω
+     > inst✝³ : DecidableEq Ω
+     > inst✝² : Nonempty Ω
+     > inst✝¹ : Fintype τ
+     > E : Ω → Prop
+     > inst✝ : DecidablePred E
+     > g : Ω → List Bool
+     > Y : τ → List Bool
+     > d₀ : List Bool
+     > habort : (uprob fun ω => ¬E ω) ≤ 1 / 2
+     >> ⊢ StatClose Y (fun ws => (Option.map g (firstHit E ws)).getD d₀) (2⁻¹ ^ K)
+       521|     (K : ℕ) :
+       522|     StatClose Y (fun ws : Fin K → Ω => ((firstHit E ws).map g).getD d₀) ((2 : ℝ)⁻¹ ^ K) := by
+       523|   classical
+    *  524|   intro T
+       525|   have hpE : uprob E = 1 - uprob (fun ω => ¬ E ω) := by rw [uprob_not]; ring
+       526|   obtain ⟨d, hd⟩ : ∃ d, E d := by
+====================================================================================================
+KEY H:155 | seal | TCSlib.Cryptography.PerfectZKAbort.statZK
+  record: TCSlib.Cryptography.PerfectZKAbort.statZK (lines 629, 641, 643; #248 OPEN_TYPED_COINS)
+  counts sA=3 sB=3 cA=3 cB=3 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.Protocol.viewV_eq (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Defs.log:751
+  DECL at 604, header ends 605
+      604| theorem PerfectZKAbort.statZK {π : Protocol} {R : List Bool → List Bool → Prop}
+      605|     (h : PerfectZKAbort π R) : StatZK π R (fun n => (2 : ℝ)⁻¹ ^ n) := by
+  -- coe-A line 640 cascade=False cls=Invalid rewrite argument: Expected an equality or iff proof or definition name,
+     providers=[]
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.inArg', 'Complexity.NUPPT.inCoins', 'Complexity.NUPPT.inParam', 'Complexity.NUPPT.layout', 'Complexity.NUPPT.output', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'TCSlib.Cryptography.EncodingMachines.firstIdx', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.Protocol.withV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.firstHit', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     > Invalid rewrite argument: Expected an equality or iff proof or definition name, but `hSu` is a proof of
+     >   S.Uniform
+       637|     intro r t ht
+       638|     simp only [attempt, NUPPT.inParam_layout, NUPPT.inArg_layout, NUPPT.inCoins_layout,
+       639|       List.length_replicate]
+    *  640|     rw [hblock r t ht, NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_eq_output_layout, hSu]
+       641|   have heq : ∀ r : S'.Coins x.length, S'.simulate x z r =
+       642|       ((firstHit (fun ω => S.simulate x z ω ≠ []) (e r)).map (S.simulate x z)).getD [] := by
+  -- coe-A line 652 cascade=True cls=Application type mismatch: The argument
+     providers=['TCSlib.Cryptography.Protocol.viewV']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.inArg', 'Complexity.NUPPT.inCoins', 'Complexity.NUPPT.inParam', 'Complexity.NUPPT.layout', 'Complexity.NUPPT.output', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'TCSlib.Cryptography.EncodingMachines.firstIdx', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.Protocol.withV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.firstHit', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [TCSlib.Cryptography.Protocol.viewV] readers: viewV_eq@Interaction, viewV_withV@Interaction; struct fields: x, z, r, received
+     > Application type mismatch: The argument
+     >   r
+     > has type
+     >   (π.withV V').ExecCoins π.P x
+     > but is expected to have type
+     >   (π.withV V').ExecCoins (π.withV V').P x
+     > in the application
+     >   (π.withV V').viewV x y z r
+       649|       (hatt r) (fun t ht => by simp only [hatt r t ht])]
+       650|     simp only [retry, NUPPT.inParam_layout, List.length_replicate]
+       651|   have key := (statClose_retry (fun ω => S.simulate x z ω ≠ []) (S.simulate x z)
+    *  652|     (fun r : (π.withV V').ExecCoins π.P x => ((π.withV V').viewV x y z r).encode) []
+       653|     (uprob_not_ne_nil_le _ habort) hcond x.length).comp_equiv_right e
+       654|   intro T
+  -- coe-A line 654 cascade=True cls=Tactic X failed: There are no additional binders or X bindings in the goal to in
+     providers=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.layout', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.firstHit', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.inArg', 'Complexity.NUPPT.inCoins', 'Complexity.NUPPT.inParam', 'Complexity.NUPPT.layout', 'Complexity.NUPPT.output', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'TCSlib.Cryptography.EncodingMachines.firstIdx', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.Protocol.withV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.firstHit', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [Complexity.NUPPT.Uniform] readers: uniform_iff@PPT
+     [Complexity.NUPPT.coinLen] readers: coinLen_eq@PPT, coinLen_reparam@HardCoreLemmas
+     [Complexity.NUPPT.layout] readers: layout_eq@Closure
+     [TCSlib.Cryptography.Protocol.viewV] readers: viewV_eq@Interaction, viewV_withV@Interaction; struct fields: x, z, r, received
+     [TCSlib.Cryptography.StatClose] readers: statClose_iff@Sampling, statClose_one@Sampling, statClose_firstHit@Sampling, statClose_giSimTrunc@GraphIsomorphismZK, statClose_samplePerm@GraphIsomorphism, statClose_colRealView@Simulator, statClose_samplePerm3@Language, statClose_colSimTruncH@Simulator, statClose_giHonestView@GraphIsomorphismZK, statClose_glPadSampler@HardCoreLemmas, statClose_permFromCoins@Permutations, statClose_sampleEdgeIdx@Language, statClose_rejectionSample@Sampling, statClose_sampleColorPair@Simulator, statClose_iff_epsClose_map@SamplingFinDist, statClose_of_pushesUniform@Sampling, statClose_colSim_colSimTrunc@Simulator, statClose_permFromCoins_two_pow@Permutations, statClose_getD_of_uniform_of_some@Sampling
+     [TCSlib.Cryptography.Strategy.Efficient] readers: efficient_iff@Interaction
+     [TCSlib.Cryptography.Strategy.coinLen] readers: coinLen_eq@Interaction, coinLen_pullback@NP
+     [TCSlib.Cryptography.View.encode] readers: encode_mk@Interaction
+     [TCSlib.Cryptography.firstHit] readers: firstHit_eq@Sampling, firstHit_eq_none_iff@Sampling, firstHit_eq_some_imp@Sampling, firstHit_uniform_of_some@Sampling
+     [TCSlib.Cryptography.uprob] readers: uprob_def@Probability, uprob_fst@Probability, uprob_not@Probability, uprob_snd@LazySampling, uprob_mono@Probability, uprob_prod@Probability, uprob_true@Probability, uprob_congr@LazySampling, uprob_false@Probability, uprob_or_le@Probability, uprob_le_one@Probability, uprob_nonneg@Probability, uprob_eq_uexp@Probability, uprob_bool_prod@GeneratorFromPermutation, uprob_exists_le@Probability, uprob_prod_comm@LazySampling, uprob_comp_equiv@Probability, uprob_eq_of_equiv@Indistinguishability, uprob_bitsToNat_lt@Sampling, uprob_col_cheat_le@Protocol, uprob_tdpPredictor@TrapdoorPredictor, uprob_update_split@LazySampling, uprob_firstHit_none@Sampling, uprob_gni_rep_cheat@GraphIsomorphism, uprob_pi_forall_dep@Permutations, uprob_update_absorb@LazySampling, uprob_adaptive_guess@GraphIsomorphism, uprob_eq_card_filter@Probability, uprob_sections_congr@LazySampling, uprob_update_absorb'@LazySampling, uprob_adaptive_escape@Protocol, uprob_colSimTruncW_eq@Simulator, uprob_comp_eq_sum_map@Experiments, uprob_giHonestView_eq@GraphIsomorphismZK, uprob_giSimTrunc_none@GraphIsomorphismZK, uprob_gi_rep_cheat_le@GraphIsomorphism, uprob_gi_cheat_le_half@GraphIsomorphism, uprob_not_injective_le@Hybrid, uprob_colSimAttemptW_eq@Simulator, uprob_colSimTruncH_none@Simulator, uprob_comp_eq_sum_fiber@Sampling, uprob_fiber_le_card_mul@Universal, uprob_giSimAttempt_none@GraphIsomorphismZK, uprob_giSimAttempt_some@GraphIsomorphismZK, uprob_colSimAttemptH_none@Simulator, uprob_colSimAttemptH_some@Simulator, uprob_comp_eq_probTrue_map@SamplingFinDist, uprob_rejectionSample_none@Sampling, uprob_uniformFromBits_none@Sampling, uprob_permFromCoins_none_le@Permutations, uprob_uniformFromBits_eq_some@Sampling, uprob_permGraph_eq_of_isomorphic@GraphIsomorphism, uprob_permGraph_eq_of_isomorphic'@GraphIsomorphism, uprob_permFromCoins_none_le_two_pow@Permutations, uprob_rejectionSample_none_le_half_pow@Sampling; struct fields: cauchy
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+     > 
+     > π : Protocol
+     > R : List Bool → List Bool → Prop
+     > h : PerfectZKAbort π R
+     > V' : Strategy
+     > hV' : V'.Efficient
+     > S : NUPPT
+     > hSu : S.Uniform
+     > hS :
+     >   ∀ (x y z : List Bool),
+     >     R x y →
+     >       (uprob fun r => S.simulate x z r = []) ≤ 1 / 2 ∧
+     >         ∀ (T : List Bool → Prop),
+     >> ⊢ StatClose (fun r => ((π.withV V').viewV x y z r).encode) (S'.simulate x z) ((fun n => 2⁻¹ ^ n) x.length)
+       651|   have key := (statClose_retry (fun ω => S.simulate x z ω ≠ []) (S.simulate x z)
+       652|     (fun r : (π.withV V').ExecCoins π.P x => ((π.withV V').viewV x y z r).encode) []
+       653|     (uprob_not_ne_nil_le _ habort) hcond x.length).comp_equiv_right e
+    *  654|   intro T
+       655|   have hu : uprob (fun t : S'.Coins x.length => T (S'.simulate x z t)) =
+       656|       uprob (fun t : S'.Coins x.length => T (((firstHit (fun ω => S.simulate x z ω ≠ []) (e t)).map
+====================================================================================================
+KEY H:156 | seal | TCSlib.Cryptography.negligible_inv_pow_sqrt_div
+  record: TCSlib.Cryptography.negligible_inv_pow_sqrt_div (lines 673; #248 OPEN_INCOMPLETE)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.negligible_iff (TCSlib/Cryptography/Foundations/Negligible.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Defs.log:795
+  DECL at 682, header ends 683
+      682| theorem negligible_inv_pow_sqrt_div {a : ℝ} (ha : 1 < a) {C : ℕ} (hC : 0 < C) :
+      683|     Negligible fun N => a⁻¹ ^ Nat.sqrt (N / C) := by
+  -- coe-A line 684 cascade=False cls=Tactic X failed: There are no additional binders or X bindings in the goal to in
+     providers=['TCSlib.Cryptography.Negligible']
+     referenced=['TCSlib.Cryptography.Negligible']
+     [TCSlib.Cryptography.Negligible] readers: negligible_iff@Negligible, negligible_zero@Negligible, negligible_two_pow_neg@Negligible, negligible_exp_neg_sqrt_div@Defs, negligible_inv_pow_sqrt_div@Defs, negligible_mul_permFailBound@GraphIsomorphism, negligible_two_pow_neg_sqrt_div@Defs, negligible_of_le_inv_pow_sqrt_div@Defs
+     > Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+     > 
+     > a : ℝ
+     > ha : 1 < a
+     > C : ℕ
+     > hC : 0 < C
+     > ⊢ Negligible fun N => a⁻¹ ^ (N / C).sqrt
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_Defs phase=eof spelling=BoolCircuit.decodeNat key=[["str","BoolCircuit"],["str","decodeNat"]] home_key=[["str","TCSlib"],["str","Complexity"],["str","CircuitComplexity
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_Defs phase=eof spelling=BoolCircuit.decodeNat._sunfold key=[["str","BoolCircuit"],["str","decodeNat"],["str","_sunfold"]] home_key=[["str","TCSlib"],["str","Complexity
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_Defs phase=eof spelling=BoolCircuit.decodeNat._unsafe_rec key=[["str","BoolCircuit"],["str","decodeNat"],["str","_unsafe_rec"]] home_key=[["str","TCSlib"],["str","Comp
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_Defs phase=eof spelling=BoolCircuit.decodeNat.match_1 key=[["str","BoolCircuit"],["str","decodeNat"],["str","match_1"]] home_key=[["str","TCSlib"],["str","Complexity"]
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_Defs phase=eof spelling=BoolCircuit.encodeNat key=[["str","BoolCircuit"],["str","encodeNat"]] home_key=[["str","TCSlib"],["str","Complexity"],["str","CircuitComplexity
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_Defs phase=eof spelling=Complexity.BinArith.DivInv key=[["str","Complexity"],["str","BinArith"],["str","DivInv"]] home_key=[["str","TCSlib"],["str","Complexity"],["str
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_Defs phase=eof spelling=Complexity.BinArith.MulInv key=[["str","Complexity"],["str","BinArith"],["str","MulInv"]] home_key=[["str","TCSlib"],["str","Complexity"],["str
+     >> ⊢ Negligible fun N => a⁻¹ ^ (N / C).sqrt
+       681| `a⁻¹ ^ t = 1 / a^t < 1 / ((2C)^c (t+1)^{2c}) ≤ 1 / N^c`. -/
+       682| theorem negligible_inv_pow_sqrt_div {a : ℝ} (ha : 1 < a) {C : ℕ} (hC : 0 < C) :
+       683|     Negligible fun N => a⁻¹ ^ Nat.sqrt (N / C) := by
+    *  684|   intro c
+       685|   have ha0 : (0 : ℝ) < a := zero_lt_one.trans ha
+       686|   have hCr : (0 : ℝ) < (C : ℝ) ^ c := by positivity
+====================================================================================================
+KEY SEAL-0322 | seal | TCSlib.Cryptography.perfectZK_zeroRounds
+  record: TCSlib.Cryptography.perfectZK_zeroRounds l.291: Application type mismatch: The argument (#248 inherited_same_step_after_other_repairs)
+  counts sA=2 sB=2 cA=2 cB=2 scan=-
+  tool: STAGE2 | stmt=no | add Complexity.NUPPT.ofPolyTimeUniform_eq (or _iff/_apply) in TCSlib/Complexity/Randomized/PPT.lean; related: Complexity.NUPPT.ofPolyTimeUniform_uniform
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Defs.log:413
+  DECL at 294, header ends 295
+      294| theorem perfectZK_zeroRounds (P V : Strategy) (b : Bool) (R : List Bool → List Bool → Prop) :
+      295|     PerfectZK ⟨P, V, .const 0, b⟩ R := by
+  -- coe-A line 302 cascade=False cls=Application type mismatch: The argument
+     providers=['Complexity.NUPPT.ofPolyTimeUniform', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.Protocol.withV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.View.encode']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.advInput', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.inArg', 'Complexity.NUPPT.inCoins', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.Protocol.withV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [Complexity.NUPPT.ofPolyTimeUniform] readers: ofPolyTimeUniform_uniform@PPT; struct fields: M, Ct, ct, coins, adv, advice, advice_length, halts
+     [TCSlib.Cryptography.Protocol.viewV] readers: viewV_eq@Interaction, viewV_withV@Interaction; struct fields: x, z, r, received
+     [TCSlib.Cryptography.Protocol.withV] readers: withV_P@Interaction, withV_V@Interaction, withV_self@Interaction, withV_rounds@Interaction, withV_verifierFirst@Interaction, withV_vCoinsEquiv_ofFn@Interaction; struct fields: P, V, rounds, verifierFirst
+     [TCSlib.Cryptography.StatClose] readers: statClose_iff@Sampling, statClose_one@Sampling, statClose_firstHit@Sampling, statClose_giSimTrunc@GraphIsomorphismZK, statClose_samplePerm@GraphIsomorphism, statClose_colRealView@Simulator, statClose_samplePerm3@Language, statClose_colSimTruncH@Simulator, statClose_giHonestView@GraphIsomorphismZK, statClose_glPadSampler@HardCoreLemmas, statClose_permFromCoins@Permutations, statClose_sampleEdgeIdx@Language, statClose_rejectionSample@Sampling, statClose_sampleColorPair@Simulator, statClose_iff_epsClose_map@SamplingFinDist, statClose_of_pushesUniform@Sampling, statClose_colSim_colSimTrunc@Simulator, statClose_permFromCoins_two_pow@Permutations, statClose_getD_of_uniform_of_some@Sampling
+     [TCSlib.Cryptography.View.encode] readers: encode_mk@Interaction
+     > Application type mismatch: The argument
+     >   fun x y z x_1 T => ?m.30
+     > has type
+     >   (x y z : List Bool) → (x_1 : R x y) → (T : ?m.31 x y z x_1) → ?m.32 x y z x_1 T
+     > but is expected to have type
+     >   ∀ (x y z : List Bool),
+     >     R x y →
+     >       StatClose
+     >         (fun r => (({ P := P, V := V, rounds := PolyExpr.const 0, verifierFirst := b }.withV V').viewV x y z r).encode)
+     >         ((NUPPT.ofPolyTimeUniform hF V'.coins).simulate x z) ((fun x => 0) x.length)
+     > in the application
+     >   ⟨NUPPT.ofPolyTimeUniform_uniform hF V'.coins, fun x y z x_1 T => ?m.30⟩
+       299|     NUPPT.polyTimeComputable_inArg.pairEncode
+       300|       (NUPPT.polyTimeComputable_inCoins.pairEncode (polyTimeComputable_const []))
+       301|   refine ⟨NUPPT.ofPolyTimeUniform hF V'.coins, NUPPT.ofPolyTimeUniform_uniform hF _,
+    *  302|     fun x y z _ T => ?_⟩
+       303|   have h1 : uprob (fun r : (Protocol.withV ⟨P, V, .const 0, b⟩ V').ExecCoins P x =>
+       304|       T ((Protocol.withV ⟨P, V, .const 0, b⟩ V').viewV x y z r).encode) =
+  -- coe-A line 303 cascade=True cls=No goals to be solved
+     providers=[]
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.advInput', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.inArg', 'Complexity.NUPPT.inCoins', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.Protocol.withV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     > No goals to be solved
+       300|       (NUPPT.polyTimeComputable_inCoins.pairEncode (polyTimeComputable_const []))
+       301|   refine ⟨NUPPT.ofPolyTimeUniform hF V'.coins, NUPPT.ofPolyTimeUniform_uniform hF _,
+       302|     fun x y z _ T => ?_⟩
+    *  303|   have h1 : uprob (fun r : (Protocol.withV ⟨P, V, .const 0, b⟩ V').ExecCoins P x =>
+       304|       T ((Protocol.withV ⟨P, V, .const 0, b⟩ V').viewV x y z r).encode) =
+       305|       uprob (fun ρ : V'.Coins x.length =>
+====================================================================================================
+KEY SEAL-0323 | seal | TCSlib.Cryptography.perfectZK_zeroRounds
+  record: TCSlib.Cryptography.perfectZK_zeroRounds l.292: No goals to be solved (#248 inherited_same_step_after_other_repairs)
+  counts sA=2 sB=2 cA=2 cB=2 scan=-
+  tool: STAGE2 | stmt=no | add Complexity.NUPPT.ofPolyTimeUniform_eq (or _iff/_apply) in TCSlib/Complexity/Randomized/PPT.lean; related: Complexity.NUPPT.ofPolyTimeUniform_uniform
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Defs.log:413
+  DECL at 294, header ends 295
+      294| theorem perfectZK_zeroRounds (P V : Strategy) (b : Bool) (R : List Bool → List Bool → Prop) :
+      295|     PerfectZK ⟨P, V, .const 0, b⟩ R := by
+  -- coe-A line 302 cascade=False cls=Application type mismatch: The argument
+     providers=['Complexity.NUPPT.ofPolyTimeUniform', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.Protocol.withV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.View.encode']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.advInput', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.inArg', 'Complexity.NUPPT.inCoins', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.Protocol.withV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [Complexity.NUPPT.ofPolyTimeUniform] readers: ofPolyTimeUniform_uniform@PPT; struct fields: M, Ct, ct, coins, adv, advice, advice_length, halts
+     [TCSlib.Cryptography.Protocol.viewV] readers: viewV_eq@Interaction, viewV_withV@Interaction; struct fields: x, z, r, received
+     [TCSlib.Cryptography.Protocol.withV] readers: withV_P@Interaction, withV_V@Interaction, withV_self@Interaction, withV_rounds@Interaction, withV_verifierFirst@Interaction, withV_vCoinsEquiv_ofFn@Interaction; struct fields: P, V, rounds, verifierFirst
+     [TCSlib.Cryptography.StatClose] readers: statClose_iff@Sampling, statClose_one@Sampling, statClose_firstHit@Sampling, statClose_giSimTrunc@GraphIsomorphismZK, statClose_samplePerm@GraphIsomorphism, statClose_colRealView@Simulator, statClose_samplePerm3@Language, statClose_colSimTruncH@Simulator, statClose_giHonestView@GraphIsomorphismZK, statClose_glPadSampler@HardCoreLemmas, statClose_permFromCoins@Permutations, statClose_sampleEdgeIdx@Language, statClose_rejectionSample@Sampling, statClose_sampleColorPair@Simulator, statClose_iff_epsClose_map@SamplingFinDist, statClose_of_pushesUniform@Sampling, statClose_colSim_colSimTrunc@Simulator, statClose_permFromCoins_two_pow@Permutations, statClose_getD_of_uniform_of_some@Sampling
+     [TCSlib.Cryptography.View.encode] readers: encode_mk@Interaction
+     > Application type mismatch: The argument
+     >   fun x y z x_1 T => ?m.30
+     > has type
+     >   (x y z : List Bool) → (x_1 : R x y) → (T : ?m.31 x y z x_1) → ?m.32 x y z x_1 T
+     > but is expected to have type
+     >   ∀ (x y z : List Bool),
+     >     R x y →
+     >       StatClose
+     >         (fun r => (({ P := P, V := V, rounds := PolyExpr.const 0, verifierFirst := b }.withV V').viewV x y z r).encode)
+     >         ((NUPPT.ofPolyTimeUniform hF V'.coins).simulate x z) ((fun x => 0) x.length)
+     > in the application
+     >   ⟨NUPPT.ofPolyTimeUniform_uniform hF V'.coins, fun x y z x_1 T => ?m.30⟩
+       299|     NUPPT.polyTimeComputable_inArg.pairEncode
+       300|       (NUPPT.polyTimeComputable_inCoins.pairEncode (polyTimeComputable_const []))
+       301|   refine ⟨NUPPT.ofPolyTimeUniform hF V'.coins, NUPPT.ofPolyTimeUniform_uniform hF _,
+    *  302|     fun x y z _ T => ?_⟩
+       303|   have h1 : uprob (fun r : (Protocol.withV ⟨P, V, .const 0, b⟩ V').ExecCoins P x =>
+       304|       T ((Protocol.withV ⟨P, V, .const 0, b⟩ V').viewV x y z r).encode) =
+  -- coe-A line 303 cascade=True cls=No goals to be solved
+     providers=[]
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.advInput', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.inArg', 'Complexity.NUPPT.inCoins', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.Protocol.withV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     > No goals to be solved
+       300|       (NUPPT.polyTimeComputable_inCoins.pairEncode (polyTimeComputable_const []))
+       301|   refine ⟨NUPPT.ofPolyTimeUniform hF V'.coins, NUPPT.ofPolyTimeUniform_uniform hF _,
+       302|     fun x y z _ T => ?_⟩
+    *  303|   have h1 : uprob (fun r : (Protocol.withV ⟨P, V, .const 0, b⟩ V').ExecCoins P x =>
+       304|       T ((Protocol.withV ⟨P, V, .const 0, b⟩ V').viewV x y z r).encode) =
+       305|       uprob (fun ρ : V'.Coins x.length =>
+====================================================================================================
+KEY SEAL-0324 | seal | TCSlib.Cryptography.AbortRetry.attempt_poly
+  record: TCSlib.Cryptography.AbortRetry.attempt_poly l.394: Type mismatch (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.NUPPT.inParam_eq (TCSlib/Complexity/Randomized/Closure.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Defs.log:516
+  DECL at 395, header ends 396
+      395| theorem attempt_poly (S : NUPPT) :
+      396|     PolyTimeComputable fun u => attempt S (pairSndD u) (pairFstD u).length := by
+  -- coe-A line 405 cascade=False cls=Type mismatch
+     providers=['Complexity.NUPPT.inParam', 'Complexity.PolyTimeComputable', 'Complexity.pairSndD']
+     referenced=['Complexity.NUPPT.coinLen', 'Complexity.NUPPT.inArg', 'Complexity.NUPPT.inCoins', 'Complexity.NUPPT.inParam', 'Complexity.NUPPT.layout', 'Complexity.NUPPT.output', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'Turing.pairEncode']
+     [Complexity.NUPPT.inParam] readers: inParam_eq@Closure, inParam_layout@Closure
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop, polyTimeComputable_unary@PolyTimePairing, polyTimeComputable_pairEq@Repetition, polyTimeComputable_iterate@Repetition, polyTimeComputable_pairXor@Repetition, polyTimeComputable_prepend@PolyTimePairing, polyTimeComputable_blockMap@Repetition, polyTimeComputable_emitIter@PolyTimeBlockLoop, polyTimeComputable_majority@Repetition, polyTimeComputable_pairFstD@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, polyTimeComputable_pairSwap@PolyTimePairing, polyTimeComputable_of_linear@PolyTimePairing, polyTimeComputable_polyUnary@PolyTimePairing, polyTimeComputable_stateFind@Repetition, polyTimeComputable_transduce@Transducer, polyTimeComputable_unaryPoly@Primitives, polyTimeComputable_pairConcat@PolyTimePairing, polyTimeComputable_iterateEmit@Repetition, polyTimeComputable_iterateFind@Repetition, polyTimeComputable_sliceDropAt@PolyTimeBlockLoop, polyTimeComputable_sliceTakeAt@PolyTimeBlockLoop, polyTimeComputable_unaryNormal@PolyExpr, polyTimeComputable_blockAnyTest@PolyTimeBlockTests, polyTimeComputable_pairDropPoly@Primitives, polyTimeComputable_pairTakePoly@Primitives, polyTimeComputable_blockXorAnyTest@PolyTimeBlockTests, polyTimeComputable_iterate_pairFstD@PolyTimePairing, polyTimeComputable_blockMajorityTest@PolyTimeBlockMajority, polyTimeComputable_dropPrefixByLength@PolyTimePrefix, polyTimeComputable_of_computesInSpace@ConfigCount, polyTimeComputable_takePrefixByLength@PolyTimePrefix
+     [Complexity.pairSndD] readers: pairSndD_eq@PolyTimePairing, pairSndD_pairEncode@PolyTimePairing, pairSndD_of_pairDecode_eq_none@PolyTimePairing
+     > Type mismatch
+     >   unaryPoly_comp S.coins hpar
+     > has type
+     >   PolyTimeComputable fun x => List.replicate (S.coins.eval (NUPPT.inParam (pairSndD x)).length) true
+     > but is expected to have type
+     >   PolyTimeComputable fun u => List.replicate (S.coinLen (NUPPT.inParam (pairSndD u)).length) true
+       402|     NUPPT.polyTimeComputable_inCoins.comp polyTimeComputable_pairSndD
+       403|   have hc : PolyTimeComputable fun u =>
+       404|       List.replicate (S.coinLen (NUPPT.inParam (pairSndD u)).length) true :=
+    *  405|     unaryPoly_comp S.coins hpar
+       406|   have ht : PolyTimeComputable fun u => List.replicate (pairFstD u).length true :=
+       407|     unaryLength_poly polyTimeComputable_pairFstD
+====================================================================================================
+KEY SEAL-0325 | seal | TCSlib.Cryptography.AbortRetry.exists_retrySimulator
+  record: TCSlib.Cryptography.AbortRetry.exists_retrySimulator l.440: Tactic `rfl` failed: The left-hand side (#248 inherited_same_native_step)
+  counts sA=2 sB=2 cA=2 cB=2 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.NUPPT.advInput_eq (TCSlib/Complexity/Randomized/PPT.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Defs.log:562
+  DECL at 444, header ends 447
+      444| theorem exists_retrySimulator (S : NUPPT) :
+      445|     ∃ S' : NUPPT, S'.Uniform ∧ S'.coins = .mul .var S.coins ∧
+      446|       ∀ x z (r : S'.Coins x.length), S'.simulate x z r =
+      447|         retry S (NUPPT.layout (List.replicate x.length true) (pairEncode x z) [] (List.ofFn r)) :=
+  -- coe-A line 449 cascade=True cls=Application type mismatch: The argument
+     providers=['Complexity.NUPPT.ofPolyTimeUniform']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.advInput', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.layout', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'Turing.pairEncode']
+     [Complexity.NUPPT.ofPolyTimeUniform] readers: ofPolyTimeUniform_uniform@PPT; struct fields: M, Ct, ct, coins, adv, advice, advice_length, halts
+     > Application type mismatch: The argument
+     >   rfl
+     > has type
+     >   ?m.43 = ?m.43
+     > but is expected to have type
+     >   (NUPPT.ofPolyTimeUniform ⋯ (PolyExpr.var.mul S.coins)).coins = PolyExpr.var.mul S.coins
+     > in the application
+     >   And.intro rfl
+       446|       ∀ x z (r : S'.Coins x.length), S'.simulate x z r =
+       447|         retry S (NUPPT.layout (List.replicate x.length true) (pairEncode x z) [] (List.ofFn r)) :=
+       448|   ⟨NUPPT.ofPolyTimeUniform (retry_poly S) (.mul .var S.coins),
+    *  449|     NUPPT.ofPolyTimeUniform_uniform _ _, rfl, fun x z r => by
+       450|       rw [NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
+       451|       rfl⟩
+  -- coe-A line 451 cascade=False cls=Tactic X failed: The left-hand side
+     providers=['Complexity.NUPPT.advInput', 'Complexity.NUPPT.layout', 'Complexity.NUPPT.ofPolyTimeUniform', 'Turing.pairEncode']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.advInput', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.layout', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'Turing.pairEncode']
+     [Complexity.NUPPT.advInput] readers: advInput_eq@PPT
+     [Complexity.NUPPT.layout] readers: layout_eq@Closure
+     [Complexity.NUPPT.ofPolyTimeUniform] readers: ofPolyTimeUniform_uniform@PPT; struct fields: M, Ct, ct, coins, adv, advice, advice_length, halts
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Tactic `rfl` failed: The left-hand side
+     >   retry S (pairEncode (pairEncode (NUPPT.advInput x.length (pairEncode x z)) []) (List.ofFn r))
+     > is not definitionally equal to the right-hand side
+     >   retry S (NUPPT.layout (List.replicate x.length true) (pairEncode x z) [] (List.ofFn r))
+     > 
+     > S : NUPPT
+     > x z : List Bool
+     > r : (NUPPT.ofPolyTimeUniform ⋯ (PolyExpr.var.mul S.coins)).Coins x.length
+     > ⊢ retry S (pairEncode (pairEncode (NUPPT.advInput x.length (pairEncode x z)) []) (List.ofFn r)) =
+     >     retry S (NUPPT.layout (List.replicate x.length true) (pairEncode x z) [] (List.ofFn r))
+       448|   ⟨NUPPT.ofPolyTimeUniform (retry_poly S) (.mul .var S.coins),
+       449|     NUPPT.ofPolyTimeUniform_uniform _ _, rfl, fun x z r => by
+       450|       rw [NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
+    *  451|       rfl⟩
+       452| 
+       453| /-- The first hit of `K` draws read through `EncodingMachines.firstIdx`: if `a t` is `g` of
+====================================================================================================
+KEY SEAL-0326 | seal | TCSlib.Cryptography.AbortRetry.exists_retrySimulator
+  record: TCSlib.Cryptography.AbortRetry.exists_retrySimulator l.438: Application type mismatch: The argument (#248 inherited_same_native_step)
+  counts sA=2 sB=2 cA=2 cB=2 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.NUPPT.advInput_eq (TCSlib/Complexity/Randomized/PPT.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Defs.log:562
+  DECL at 444, header ends 447
+      444| theorem exists_retrySimulator (S : NUPPT) :
+      445|     ∃ S' : NUPPT, S'.Uniform ∧ S'.coins = .mul .var S.coins ∧
+      446|       ∀ x z (r : S'.Coins x.length), S'.simulate x z r =
+      447|         retry S (NUPPT.layout (List.replicate x.length true) (pairEncode x z) [] (List.ofFn r)) :=
+  -- coe-A line 449 cascade=True cls=Application type mismatch: The argument
+     providers=['Complexity.NUPPT.ofPolyTimeUniform']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.advInput', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.layout', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'Turing.pairEncode']
+     [Complexity.NUPPT.ofPolyTimeUniform] readers: ofPolyTimeUniform_uniform@PPT; struct fields: M, Ct, ct, coins, adv, advice, advice_length, halts
+     > Application type mismatch: The argument
+     >   rfl
+     > has type
+     >   ?m.43 = ?m.43
+     > but is expected to have type
+     >   (NUPPT.ofPolyTimeUniform ⋯ (PolyExpr.var.mul S.coins)).coins = PolyExpr.var.mul S.coins
+     > in the application
+     >   And.intro rfl
+       446|       ∀ x z (r : S'.Coins x.length), S'.simulate x z r =
+       447|         retry S (NUPPT.layout (List.replicate x.length true) (pairEncode x z) [] (List.ofFn r)) :=
+       448|   ⟨NUPPT.ofPolyTimeUniform (retry_poly S) (.mul .var S.coins),
+    *  449|     NUPPT.ofPolyTimeUniform_uniform _ _, rfl, fun x z r => by
+       450|       rw [NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
+       451|       rfl⟩
+  -- coe-A line 451 cascade=False cls=Tactic X failed: The left-hand side
+     providers=['Complexity.NUPPT.advInput', 'Complexity.NUPPT.layout', 'Complexity.NUPPT.ofPolyTimeUniform', 'Turing.pairEncode']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.advInput', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.layout', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'Turing.pairEncode']
+     [Complexity.NUPPT.advInput] readers: advInput_eq@PPT
+     [Complexity.NUPPT.layout] readers: layout_eq@Closure
+     [Complexity.NUPPT.ofPolyTimeUniform] readers: ofPolyTimeUniform_uniform@PPT; struct fields: M, Ct, ct, coins, adv, advice, advice_length, halts
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Tactic `rfl` failed: The left-hand side
+     >   retry S (pairEncode (pairEncode (NUPPT.advInput x.length (pairEncode x z)) []) (List.ofFn r))
+     > is not definitionally equal to the right-hand side
+     >   retry S (NUPPT.layout (List.replicate x.length true) (pairEncode x z) [] (List.ofFn r))
+     > 
+     > S : NUPPT
+     > x z : List Bool
+     > r : (NUPPT.ofPolyTimeUniform ⋯ (PolyExpr.var.mul S.coins)).Coins x.length
+     > ⊢ retry S (pairEncode (pairEncode (NUPPT.advInput x.length (pairEncode x z)) []) (List.ofFn r)) =
+     >     retry S (NUPPT.layout (List.replicate x.length true) (pairEncode x z) [] (List.ofFn r))
+       448|   ⟨NUPPT.ofPolyTimeUniform (retry_poly S) (.mul .var S.coins),
+       449|     NUPPT.ofPolyTimeUniform_uniform _ _, rfl, fun x z r => by
+       450|       rw [NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
+    *  451|       rfl⟩
+       452| 
+       453| /-- The first hit of `K` draws read through `EncodingMachines.firstIdx`: if `a t` is `g` of
+====================================================================================================
+KEY SEAL-0327 | seal | TCSlib.Cryptography.AbortRetry.statClose_retry
+  record: TCSlib.Cryptography.AbortRetry.statClose_retry l.513: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.statClose_iff (TCSlib/Cryptography/Asymptotic/Sampling.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Defs.log:635
+  DECL at 516, header ends 522
+      516| theorem statClose_retry {Ω τ : Type*} [Fintype Ω] [DecidableEq Ω] [Nonempty Ω] [Fintype τ]
+      517|     (E : Ω → Prop) [DecidablePred E] (g : Ω → List Bool) (Y : τ → List Bool) (d₀ : List Bool)
+      518|     (habort : uprob (fun ω => ¬ E ω) ≤ 1 / 2)
+      519|     (hcond : ∀ T : List Bool → Prop,
+      520|       uprob (fun t => T (Y t)) * uprob E = uprob (fun ω => E ω ∧ T (g ω)))
+      521|     (K : ℕ) :
+      522|     StatClose Y (fun ws : Fin K → Ω => ((firstHit E ws).map g).getD d₀) ((2 : ℝ)⁻¹ ^ K) := by
+  -- coe-A line 524 cascade=False cls=Tactic X failed: There are no additional binders or X bindings in the goal to in
+     providers=['TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.firstHit', 'TCSlib.Cryptography.uprob']
+     referenced=['TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.firstHit', 'TCSlib.Cryptography.uprob']
+     [TCSlib.Cryptography.StatClose] readers: statClose_iff@Sampling, statClose_one@Sampling, statClose_firstHit@Sampling, statClose_giSimTrunc@GraphIsomorphismZK, statClose_samplePerm@GraphIsomorphism, statClose_colRealView@Simulator, statClose_samplePerm3@Language, statClose_colSimTruncH@Simulator, statClose_giHonestView@GraphIsomorphismZK, statClose_glPadSampler@HardCoreLemmas, statClose_permFromCoins@Permutations, statClose_sampleEdgeIdx@Language, statClose_rejectionSample@Sampling, statClose_sampleColorPair@Simulator, statClose_iff_epsClose_map@SamplingFinDist, statClose_of_pushesUniform@Sampling, statClose_colSim_colSimTrunc@Simulator, statClose_permFromCoins_two_pow@Permutations, statClose_getD_of_uniform_of_some@Sampling
+     [TCSlib.Cryptography.firstHit] readers: firstHit_eq@Sampling, firstHit_eq_none_iff@Sampling, firstHit_eq_some_imp@Sampling, firstHit_uniform_of_some@Sampling
+     [TCSlib.Cryptography.uprob] readers: uprob_def@Probability, uprob_fst@Probability, uprob_not@Probability, uprob_snd@LazySampling, uprob_mono@Probability, uprob_prod@Probability, uprob_true@Probability, uprob_congr@LazySampling, uprob_false@Probability, uprob_or_le@Probability, uprob_le_one@Probability, uprob_nonneg@Probability, uprob_eq_uexp@Probability, uprob_bool_prod@GeneratorFromPermutation, uprob_exists_le@Probability, uprob_prod_comm@LazySampling, uprob_comp_equiv@Probability, uprob_eq_of_equiv@Indistinguishability, uprob_bitsToNat_lt@Sampling, uprob_col_cheat_le@Protocol, uprob_tdpPredictor@TrapdoorPredictor, uprob_update_split@LazySampling, uprob_firstHit_none@Sampling, uprob_gni_rep_cheat@GraphIsomorphism, uprob_pi_forall_dep@Permutations, uprob_update_absorb@LazySampling, uprob_adaptive_guess@GraphIsomorphism, uprob_eq_card_filter@Probability, uprob_sections_congr@LazySampling, uprob_update_absorb'@LazySampling, uprob_adaptive_escape@Protocol, uprob_colSimTruncW_eq@Simulator, uprob_comp_eq_sum_map@Experiments, uprob_giHonestView_eq@GraphIsomorphismZK, uprob_giSimTrunc_none@GraphIsomorphismZK, uprob_gi_rep_cheat_le@GraphIsomorphism, uprob_gi_cheat_le_half@GraphIsomorphism, uprob_not_injective_le@Hybrid, uprob_colSimAttemptW_eq@Simulator, uprob_colSimTruncH_none@Simulator, uprob_comp_eq_sum_fiber@Sampling, uprob_fiber_le_card_mul@Universal, uprob_giSimAttempt_none@GraphIsomorphismZK, uprob_giSimAttempt_some@GraphIsomorphismZK, uprob_colSimAttemptH_none@Simulator, uprob_colSimAttemptH_some@Simulator, uprob_comp_eq_probTrue_map@SamplingFinDist, uprob_rejectionSample_none@Sampling, uprob_uniformFromBits_none@Sampling, uprob_permFromCoins_none_le@Permutations, uprob_uniformFromBits_eq_some@Sampling, uprob_permGraph_eq_of_isomorphic@GraphIsomorphism, uprob_permGraph_eq_of_isomorphic'@GraphIsomorphism, uprob_permFromCoins_none_le_two_pow@Permutations, uprob_rejectionSample_none_le_half_pow@Sampling; struct fields: cauchy
+     > Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+     > 
+     > Ω : Type u_1
+     > τ : Type u_2
+     > inst✝⁴ : Fintype Ω
+     > inst✝³ : DecidableEq Ω
+     > inst✝² : Nonempty Ω
+     > inst✝¹ : Fintype τ
+     > E : Ω → Prop
+     > inst✝ : DecidablePred E
+     > g : Ω → List Bool
+     > Y : τ → List Bool
+     > d₀ : List Bool
+     > habort : (uprob fun ω => ¬E ω) ≤ 1 / 2
+     >> ⊢ StatClose Y (fun ws => (Option.map g (firstHit E ws)).getD d₀) (2⁻¹ ^ K)
+       521|     (K : ℕ) :
+       522|     StatClose Y (fun ws : Fin K → Ω => ((firstHit E ws).map g).getD d₀) ((2 : ℝ)⁻¹ ^ K) := by
+       523|   classical
+    *  524|   intro T
+       525|   have hpE : uprob E = 1 - uprob (fun ω => ¬ E ω) := by rw [uprob_not]; ring
+       526|   obtain ⟨d, hd⟩ : ∃ d, E d := by
+====================================================================================================
+KEY SEAL-0328 | seal | TCSlib.Cryptography.PerfectZKAbort.statZK
+  record: TCSlib.Cryptography.PerfectZKAbort.statZK l.629: Invalid rewrite argument: Expected an equality or iff proof or definition name, but `hSu` is a proof of (#248 inherited_same_step_after_other_repairs)
+  counts sA=3 sB=3 cA=3 cB=3 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.Protocol.viewV_eq (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Defs.log:751
+  DECL at 604, header ends 605
+      604| theorem PerfectZKAbort.statZK {π : Protocol} {R : List Bool → List Bool → Prop}
+      605|     (h : PerfectZKAbort π R) : StatZK π R (fun n => (2 : ℝ)⁻¹ ^ n) := by
+  -- coe-A line 640 cascade=False cls=Invalid rewrite argument: Expected an equality or iff proof or definition name,
+     providers=[]
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.inArg', 'Complexity.NUPPT.inCoins', 'Complexity.NUPPT.inParam', 'Complexity.NUPPT.layout', 'Complexity.NUPPT.output', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'TCSlib.Cryptography.EncodingMachines.firstIdx', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.Protocol.withV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.firstHit', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     > Invalid rewrite argument: Expected an equality or iff proof or definition name, but `hSu` is a proof of
+     >   S.Uniform
+       637|     intro r t ht
+       638|     simp only [attempt, NUPPT.inParam_layout, NUPPT.inArg_layout, NUPPT.inCoins_layout,
+       639|       List.length_replicate]
+    *  640|     rw [hblock r t ht, NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_eq_output_layout, hSu]
+       641|   have heq : ∀ r : S'.Coins x.length, S'.simulate x z r =
+       642|       ((firstHit (fun ω => S.simulate x z ω ≠ []) (e r)).map (S.simulate x z)).getD [] := by
+  -- coe-A line 652 cascade=True cls=Application type mismatch: The argument
+     providers=['TCSlib.Cryptography.Protocol.viewV']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.inArg', 'Complexity.NUPPT.inCoins', 'Complexity.NUPPT.inParam', 'Complexity.NUPPT.layout', 'Complexity.NUPPT.output', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'TCSlib.Cryptography.EncodingMachines.firstIdx', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.Protocol.withV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.firstHit', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [TCSlib.Cryptography.Protocol.viewV] readers: viewV_eq@Interaction, viewV_withV@Interaction; struct fields: x, z, r, received
+     > Application type mismatch: The argument
+     >   r
+     > has type
+     >   (π.withV V').ExecCoins π.P x
+     > but is expected to have type
+     >   (π.withV V').ExecCoins (π.withV V').P x
+     > in the application
+     >   (π.withV V').viewV x y z r
+       649|       (hatt r) (fun t ht => by simp only [hatt r t ht])]
+       650|     simp only [retry, NUPPT.inParam_layout, List.length_replicate]
+       651|   have key := (statClose_retry (fun ω => S.simulate x z ω ≠ []) (S.simulate x z)
+    *  652|     (fun r : (π.withV V').ExecCoins π.P x => ((π.withV V').viewV x y z r).encode) []
+       653|     (uprob_not_ne_nil_le _ habort) hcond x.length).comp_equiv_right e
+       654|   intro T
+  -- coe-A line 654 cascade=True cls=Tactic X failed: There are no additional binders or X bindings in the goal to in
+     providers=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.layout', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.firstHit', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.inArg', 'Complexity.NUPPT.inCoins', 'Complexity.NUPPT.inParam', 'Complexity.NUPPT.layout', 'Complexity.NUPPT.output', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'TCSlib.Cryptography.EncodingMachines.firstIdx', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.Protocol.withV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.firstHit', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [Complexity.NUPPT.Uniform] readers: uniform_iff@PPT
+     [Complexity.NUPPT.coinLen] readers: coinLen_eq@PPT, coinLen_reparam@HardCoreLemmas
+     [Complexity.NUPPT.layout] readers: layout_eq@Closure
+     [TCSlib.Cryptography.Protocol.viewV] readers: viewV_eq@Interaction, viewV_withV@Interaction; struct fields: x, z, r, received
+     [TCSlib.Cryptography.StatClose] readers: statClose_iff@Sampling, statClose_one@Sampling, statClose_firstHit@Sampling, statClose_giSimTrunc@GraphIsomorphismZK, statClose_samplePerm@GraphIsomorphism, statClose_colRealView@Simulator, statClose_samplePerm3@Language, statClose_colSimTruncH@Simulator, statClose_giHonestView@GraphIsomorphismZK, statClose_glPadSampler@HardCoreLemmas, statClose_permFromCoins@Permutations, statClose_sampleEdgeIdx@Language, statClose_rejectionSample@Sampling, statClose_sampleColorPair@Simulator, statClose_iff_epsClose_map@SamplingFinDist, statClose_of_pushesUniform@Sampling, statClose_colSim_colSimTrunc@Simulator, statClose_permFromCoins_two_pow@Permutations, statClose_getD_of_uniform_of_some@Sampling
+     [TCSlib.Cryptography.Strategy.Efficient] readers: efficient_iff@Interaction
+     [TCSlib.Cryptography.Strategy.coinLen] readers: coinLen_eq@Interaction, coinLen_pullback@NP
+     [TCSlib.Cryptography.View.encode] readers: encode_mk@Interaction
+     [TCSlib.Cryptography.firstHit] readers: firstHit_eq@Sampling, firstHit_eq_none_iff@Sampling, firstHit_eq_some_imp@Sampling, firstHit_uniform_of_some@Sampling
+     [TCSlib.Cryptography.uprob] readers: uprob_def@Probability, uprob_fst@Probability, uprob_not@Probability, uprob_snd@LazySampling, uprob_mono@Probability, uprob_prod@Probability, uprob_true@Probability, uprob_congr@LazySampling, uprob_false@Probability, uprob_or_le@Probability, uprob_le_one@Probability, uprob_nonneg@Probability, uprob_eq_uexp@Probability, uprob_bool_prod@GeneratorFromPermutation, uprob_exists_le@Probability, uprob_prod_comm@LazySampling, uprob_comp_equiv@Probability, uprob_eq_of_equiv@Indistinguishability, uprob_bitsToNat_lt@Sampling, uprob_col_cheat_le@Protocol, uprob_tdpPredictor@TrapdoorPredictor, uprob_update_split@LazySampling, uprob_firstHit_none@Sampling, uprob_gni_rep_cheat@GraphIsomorphism, uprob_pi_forall_dep@Permutations, uprob_update_absorb@LazySampling, uprob_adaptive_guess@GraphIsomorphism, uprob_eq_card_filter@Probability, uprob_sections_congr@LazySampling, uprob_update_absorb'@LazySampling, uprob_adaptive_escape@Protocol, uprob_colSimTruncW_eq@Simulator, uprob_comp_eq_sum_map@Experiments, uprob_giHonestView_eq@GraphIsomorphismZK, uprob_giSimTrunc_none@GraphIsomorphismZK, uprob_gi_rep_cheat_le@GraphIsomorphism, uprob_gi_cheat_le_half@GraphIsomorphism, uprob_not_injective_le@Hybrid, uprob_colSimAttemptW_eq@Simulator, uprob_colSimTruncH_none@Simulator, uprob_comp_eq_sum_fiber@Sampling, uprob_fiber_le_card_mul@Universal, uprob_giSimAttempt_none@GraphIsomorphismZK, uprob_giSimAttempt_some@GraphIsomorphismZK, uprob_colSimAttemptH_none@Simulator, uprob_colSimAttemptH_some@Simulator, uprob_comp_eq_probTrue_map@SamplingFinDist, uprob_rejectionSample_none@Sampling, uprob_uniformFromBits_none@Sampling, uprob_permFromCoins_none_le@Permutations, uprob_uniformFromBits_eq_some@Sampling, uprob_permGraph_eq_of_isomorphic@GraphIsomorphism, uprob_permGraph_eq_of_isomorphic'@GraphIsomorphism, uprob_permFromCoins_none_le_two_pow@Permutations, uprob_rejectionSample_none_le_half_pow@Sampling; struct fields: cauchy
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+     > 
+     > π : Protocol
+     > R : List Bool → List Bool → Prop
+     > h : PerfectZKAbort π R
+     > V' : Strategy
+     > hV' : V'.Efficient
+     > S : NUPPT
+     > hSu : S.Uniform
+     > hS :
+     >   ∀ (x y z : List Bool),
+     >     R x y →
+     >       (uprob fun r => S.simulate x z r = []) ≤ 1 / 2 ∧
+     >         ∀ (T : List Bool → Prop),
+     >> ⊢ StatClose (fun r => ((π.withV V').viewV x y z r).encode) (S'.simulate x z) ((fun n => 2⁻¹ ^ n) x.length)
+       651|   have key := (statClose_retry (fun ω => S.simulate x z ω ≠ []) (S.simulate x z)
+       652|     (fun r : (π.withV V').ExecCoins π.P x => ((π.withV V').viewV x y z r).encode) []
+       653|     (uprob_not_ne_nil_le _ habort) hcond x.length).comp_equiv_right e
+    *  654|   intro T
+       655|   have hu : uprob (fun t : S'.Coins x.length => T (S'.simulate x z t)) =
+       656|       uprob (fun t : S'.Coins x.length => T (((firstHit (fun ω => S.simulate x z ω ≠ []) (e t)).map
+====================================================================================================
+KEY SEAL-0329 | seal | TCSlib.Cryptography.PerfectZKAbort.statZK
+  record: TCSlib.Cryptography.PerfectZKAbort.statZK l.641: Application type mismatch: The argument (#248 inherited_same_step_after_other_repairs)
+  counts sA=3 sB=3 cA=3 cB=3 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.Protocol.viewV_eq (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Defs.log:751
+  DECL at 604, header ends 605
+      604| theorem PerfectZKAbort.statZK {π : Protocol} {R : List Bool → List Bool → Prop}
+      605|     (h : PerfectZKAbort π R) : StatZK π R (fun n => (2 : ℝ)⁻¹ ^ n) := by
+  -- coe-A line 640 cascade=False cls=Invalid rewrite argument: Expected an equality or iff proof or definition name,
+     providers=[]
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.inArg', 'Complexity.NUPPT.inCoins', 'Complexity.NUPPT.inParam', 'Complexity.NUPPT.layout', 'Complexity.NUPPT.output', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'TCSlib.Cryptography.EncodingMachines.firstIdx', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.Protocol.withV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.firstHit', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     > Invalid rewrite argument: Expected an equality or iff proof or definition name, but `hSu` is a proof of
+     >   S.Uniform
+       637|     intro r t ht
+       638|     simp only [attempt, NUPPT.inParam_layout, NUPPT.inArg_layout, NUPPT.inCoins_layout,
+       639|       List.length_replicate]
+    *  640|     rw [hblock r t ht, NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_eq_output_layout, hSu]
+       641|   have heq : ∀ r : S'.Coins x.length, S'.simulate x z r =
+       642|       ((firstHit (fun ω => S.simulate x z ω ≠ []) (e r)).map (S.simulate x z)).getD [] := by
+  -- coe-A line 652 cascade=True cls=Application type mismatch: The argument
+     providers=['TCSlib.Cryptography.Protocol.viewV']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.inArg', 'Complexity.NUPPT.inCoins', 'Complexity.NUPPT.inParam', 'Complexity.NUPPT.layout', 'Complexity.NUPPT.output', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'TCSlib.Cryptography.EncodingMachines.firstIdx', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.Protocol.withV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.firstHit', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [TCSlib.Cryptography.Protocol.viewV] readers: viewV_eq@Interaction, viewV_withV@Interaction; struct fields: x, z, r, received
+     > Application type mismatch: The argument
+     >   r
+     > has type
+     >   (π.withV V').ExecCoins π.P x
+     > but is expected to have type
+     >   (π.withV V').ExecCoins (π.withV V').P x
+     > in the application
+     >   (π.withV V').viewV x y z r
+       649|       (hatt r) (fun t ht => by simp only [hatt r t ht])]
+       650|     simp only [retry, NUPPT.inParam_layout, List.length_replicate]
+       651|   have key := (statClose_retry (fun ω => S.simulate x z ω ≠ []) (S.simulate x z)
+    *  652|     (fun r : (π.withV V').ExecCoins π.P x => ((π.withV V').viewV x y z r).encode) []
+       653|     (uprob_not_ne_nil_le _ habort) hcond x.length).comp_equiv_right e
+       654|   intro T
+  -- coe-A line 654 cascade=True cls=Tactic X failed: There are no additional binders or X bindings in the goal to in
+     providers=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.layout', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.firstHit', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.inArg', 'Complexity.NUPPT.inCoins', 'Complexity.NUPPT.inParam', 'Complexity.NUPPT.layout', 'Complexity.NUPPT.output', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'TCSlib.Cryptography.EncodingMachines.firstIdx', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.Protocol.withV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.firstHit', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [Complexity.NUPPT.Uniform] readers: uniform_iff@PPT
+     [Complexity.NUPPT.coinLen] readers: coinLen_eq@PPT, coinLen_reparam@HardCoreLemmas
+     [Complexity.NUPPT.layout] readers: layout_eq@Closure
+     [TCSlib.Cryptography.Protocol.viewV] readers: viewV_eq@Interaction, viewV_withV@Interaction; struct fields: x, z, r, received
+     [TCSlib.Cryptography.StatClose] readers: statClose_iff@Sampling, statClose_one@Sampling, statClose_firstHit@Sampling, statClose_giSimTrunc@GraphIsomorphismZK, statClose_samplePerm@GraphIsomorphism, statClose_colRealView@Simulator, statClose_samplePerm3@Language, statClose_colSimTruncH@Simulator, statClose_giHonestView@GraphIsomorphismZK, statClose_glPadSampler@HardCoreLemmas, statClose_permFromCoins@Permutations, statClose_sampleEdgeIdx@Language, statClose_rejectionSample@Sampling, statClose_sampleColorPair@Simulator, statClose_iff_epsClose_map@SamplingFinDist, statClose_of_pushesUniform@Sampling, statClose_colSim_colSimTrunc@Simulator, statClose_permFromCoins_two_pow@Permutations, statClose_getD_of_uniform_of_some@Sampling
+     [TCSlib.Cryptography.Strategy.Efficient] readers: efficient_iff@Interaction
+     [TCSlib.Cryptography.Strategy.coinLen] readers: coinLen_eq@Interaction, coinLen_pullback@NP
+     [TCSlib.Cryptography.View.encode] readers: encode_mk@Interaction
+     [TCSlib.Cryptography.firstHit] readers: firstHit_eq@Sampling, firstHit_eq_none_iff@Sampling, firstHit_eq_some_imp@Sampling, firstHit_uniform_of_some@Sampling
+     [TCSlib.Cryptography.uprob] readers: uprob_def@Probability, uprob_fst@Probability, uprob_not@Probability, uprob_snd@LazySampling, uprob_mono@Probability, uprob_prod@Probability, uprob_true@Probability, uprob_congr@LazySampling, uprob_false@Probability, uprob_or_le@Probability, uprob_le_one@Probability, uprob_nonneg@Probability, uprob_eq_uexp@Probability, uprob_bool_prod@GeneratorFromPermutation, uprob_exists_le@Probability, uprob_prod_comm@LazySampling, uprob_comp_equiv@Probability, uprob_eq_of_equiv@Indistinguishability, uprob_bitsToNat_lt@Sampling, uprob_col_cheat_le@Protocol, uprob_tdpPredictor@TrapdoorPredictor, uprob_update_split@LazySampling, uprob_firstHit_none@Sampling, uprob_gni_rep_cheat@GraphIsomorphism, uprob_pi_forall_dep@Permutations, uprob_update_absorb@LazySampling, uprob_adaptive_guess@GraphIsomorphism, uprob_eq_card_filter@Probability, uprob_sections_congr@LazySampling, uprob_update_absorb'@LazySampling, uprob_adaptive_escape@Protocol, uprob_colSimTruncW_eq@Simulator, uprob_comp_eq_sum_map@Experiments, uprob_giHonestView_eq@GraphIsomorphismZK, uprob_giSimTrunc_none@GraphIsomorphismZK, uprob_gi_rep_cheat_le@GraphIsomorphism, uprob_gi_cheat_le_half@GraphIsomorphism, uprob_not_injective_le@Hybrid, uprob_colSimAttemptW_eq@Simulator, uprob_colSimTruncH_none@Simulator, uprob_comp_eq_sum_fiber@Sampling, uprob_fiber_le_card_mul@Universal, uprob_giSimAttempt_none@GraphIsomorphismZK, uprob_giSimAttempt_some@GraphIsomorphismZK, uprob_colSimAttemptH_none@Simulator, uprob_colSimAttemptH_some@Simulator, uprob_comp_eq_probTrue_map@SamplingFinDist, uprob_rejectionSample_none@Sampling, uprob_uniformFromBits_none@Sampling, uprob_permFromCoins_none_le@Permutations, uprob_uniformFromBits_eq_some@Sampling, uprob_permGraph_eq_of_isomorphic@GraphIsomorphism, uprob_permGraph_eq_of_isomorphic'@GraphIsomorphism, uprob_permFromCoins_none_le_two_pow@Permutations, uprob_rejectionSample_none_le_half_pow@Sampling; struct fields: cauchy
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+     > 
+     > π : Protocol
+     > R : List Bool → List Bool → Prop
+     > h : PerfectZKAbort π R
+     > V' : Strategy
+     > hV' : V'.Efficient
+     > S : NUPPT
+     > hSu : S.Uniform
+     > hS :
+     >   ∀ (x y z : List Bool),
+     >     R x y →
+     >       (uprob fun r => S.simulate x z r = []) ≤ 1 / 2 ∧
+     >         ∀ (T : List Bool → Prop),
+     >> ⊢ StatClose (fun r => ((π.withV V').viewV x y z r).encode) (S'.simulate x z) ((fun n => 2⁻¹ ^ n) x.length)
+       651|   have key := (statClose_retry (fun ω => S.simulate x z ω ≠ []) (S.simulate x z)
+       652|     (fun r : (π.withV V').ExecCoins π.P x => ((π.withV V').viewV x y z r).encode) []
+       653|     (uprob_not_ne_nil_le _ habort) hcond x.length).comp_equiv_right e
+    *  654|   intro T
+       655|   have hu : uprob (fun t : S'.Coins x.length => T (S'.simulate x z t)) =
+       656|       uprob (fun t : S'.Coins x.length => T (((firstHit (fun ω => S.simulate x z ω ≠ []) (e t)).map
+====================================================================================================
+KEY SEAL-0330 | seal | TCSlib.Cryptography.PerfectZKAbort.statZK
+  record: TCSlib.Cryptography.PerfectZKAbort.statZK l.643: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce (#248 inherited_same_step_after_other_repairs)
+  counts sA=3 sB=3 cA=3 cB=3 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.Protocol.viewV_eq (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Defs.log:751
+  DECL at 604, header ends 605
+      604| theorem PerfectZKAbort.statZK {π : Protocol} {R : List Bool → List Bool → Prop}
+      605|     (h : PerfectZKAbort π R) : StatZK π R (fun n => (2 : ℝ)⁻¹ ^ n) := by
+  -- coe-A line 640 cascade=False cls=Invalid rewrite argument: Expected an equality or iff proof or definition name,
+     providers=[]
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.inArg', 'Complexity.NUPPT.inCoins', 'Complexity.NUPPT.inParam', 'Complexity.NUPPT.layout', 'Complexity.NUPPT.output', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'TCSlib.Cryptography.EncodingMachines.firstIdx', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.Protocol.withV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.firstHit', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     > Invalid rewrite argument: Expected an equality or iff proof or definition name, but `hSu` is a proof of
+     >   S.Uniform
+       637|     intro r t ht
+       638|     simp only [attempt, NUPPT.inParam_layout, NUPPT.inArg_layout, NUPPT.inCoins_layout,
+       639|       List.length_replicate]
+    *  640|     rw [hblock r t ht, NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_eq_output_layout, hSu]
+       641|   have heq : ∀ r : S'.Coins x.length, S'.simulate x z r =
+       642|       ((firstHit (fun ω => S.simulate x z ω ≠ []) (e r)).map (S.simulate x z)).getD [] := by
+  -- coe-A line 652 cascade=True cls=Application type mismatch: The argument
+     providers=['TCSlib.Cryptography.Protocol.viewV']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.inArg', 'Complexity.NUPPT.inCoins', 'Complexity.NUPPT.inParam', 'Complexity.NUPPT.layout', 'Complexity.NUPPT.output', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'TCSlib.Cryptography.EncodingMachines.firstIdx', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.Protocol.withV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.firstHit', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [TCSlib.Cryptography.Protocol.viewV] readers: viewV_eq@Interaction, viewV_withV@Interaction; struct fields: x, z, r, received
+     > Application type mismatch: The argument
+     >   r
+     > has type
+     >   (π.withV V').ExecCoins π.P x
+     > but is expected to have type
+     >   (π.withV V').ExecCoins (π.withV V').P x
+     > in the application
+     >   (π.withV V').viewV x y z r
+       649|       (hatt r) (fun t ht => by simp only [hatt r t ht])]
+       650|     simp only [retry, NUPPT.inParam_layout, List.length_replicate]
+       651|   have key := (statClose_retry (fun ω => S.simulate x z ω ≠ []) (S.simulate x z)
+    *  652|     (fun r : (π.withV V').ExecCoins π.P x => ((π.withV V').viewV x y z r).encode) []
+       653|     (uprob_not_ne_nil_le _ habort) hcond x.length).comp_equiv_right e
+       654|   intro T
+  -- coe-A line 654 cascade=True cls=Tactic X failed: There are no additional binders or X bindings in the goal to in
+     providers=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.layout', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.firstHit', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.inArg', 'Complexity.NUPPT.inCoins', 'Complexity.NUPPT.inParam', 'Complexity.NUPPT.layout', 'Complexity.NUPPT.output', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'TCSlib.Cryptography.EncodingMachines.firstIdx', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.Protocol.withV', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.firstHit', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [Complexity.NUPPT.Uniform] readers: uniform_iff@PPT
+     [Complexity.NUPPT.coinLen] readers: coinLen_eq@PPT, coinLen_reparam@HardCoreLemmas
+     [Complexity.NUPPT.layout] readers: layout_eq@Closure
+     [TCSlib.Cryptography.Protocol.viewV] readers: viewV_eq@Interaction, viewV_withV@Interaction; struct fields: x, z, r, received
+     [TCSlib.Cryptography.StatClose] readers: statClose_iff@Sampling, statClose_one@Sampling, statClose_firstHit@Sampling, statClose_giSimTrunc@GraphIsomorphismZK, statClose_samplePerm@GraphIsomorphism, statClose_colRealView@Simulator, statClose_samplePerm3@Language, statClose_colSimTruncH@Simulator, statClose_giHonestView@GraphIsomorphismZK, statClose_glPadSampler@HardCoreLemmas, statClose_permFromCoins@Permutations, statClose_sampleEdgeIdx@Language, statClose_rejectionSample@Sampling, statClose_sampleColorPair@Simulator, statClose_iff_epsClose_map@SamplingFinDist, statClose_of_pushesUniform@Sampling, statClose_colSim_colSimTrunc@Simulator, statClose_permFromCoins_two_pow@Permutations, statClose_getD_of_uniform_of_some@Sampling
+     [TCSlib.Cryptography.Strategy.Efficient] readers: efficient_iff@Interaction
+     [TCSlib.Cryptography.Strategy.coinLen] readers: coinLen_eq@Interaction, coinLen_pullback@NP
+     [TCSlib.Cryptography.View.encode] readers: encode_mk@Interaction
+     [TCSlib.Cryptography.firstHit] readers: firstHit_eq@Sampling, firstHit_eq_none_iff@Sampling, firstHit_eq_some_imp@Sampling, firstHit_uniform_of_some@Sampling
+     [TCSlib.Cryptography.uprob] readers: uprob_def@Probability, uprob_fst@Probability, uprob_not@Probability, uprob_snd@LazySampling, uprob_mono@Probability, uprob_prod@Probability, uprob_true@Probability, uprob_congr@LazySampling, uprob_false@Probability, uprob_or_le@Probability, uprob_le_one@Probability, uprob_nonneg@Probability, uprob_eq_uexp@Probability, uprob_bool_prod@GeneratorFromPermutation, uprob_exists_le@Probability, uprob_prod_comm@LazySampling, uprob_comp_equiv@Probability, uprob_eq_of_equiv@Indistinguishability, uprob_bitsToNat_lt@Sampling, uprob_col_cheat_le@Protocol, uprob_tdpPredictor@TrapdoorPredictor, uprob_update_split@LazySampling, uprob_firstHit_none@Sampling, uprob_gni_rep_cheat@GraphIsomorphism, uprob_pi_forall_dep@Permutations, uprob_update_absorb@LazySampling, uprob_adaptive_guess@GraphIsomorphism, uprob_eq_card_filter@Probability, uprob_sections_congr@LazySampling, uprob_update_absorb'@LazySampling, uprob_adaptive_escape@Protocol, uprob_colSimTruncW_eq@Simulator, uprob_comp_eq_sum_map@Experiments, uprob_giHonestView_eq@GraphIsomorphismZK, uprob_giSimTrunc_none@GraphIsomorphismZK, uprob_gi_rep_cheat_le@GraphIsomorphism, uprob_gi_cheat_le_half@GraphIsomorphism, uprob_not_injective_le@Hybrid, uprob_colSimAttemptW_eq@Simulator, uprob_colSimTruncH_none@Simulator, uprob_comp_eq_sum_fiber@Sampling, uprob_fiber_le_card_mul@Universal, uprob_giSimAttempt_none@GraphIsomorphismZK, uprob_giSimAttempt_some@GraphIsomorphismZK, uprob_colSimAttemptH_none@Simulator, uprob_colSimAttemptH_some@Simulator, uprob_comp_eq_probTrue_map@SamplingFinDist, uprob_rejectionSample_none@Sampling, uprob_uniformFromBits_none@Sampling, uprob_permFromCoins_none_le@Permutations, uprob_uniformFromBits_eq_some@Sampling, uprob_permGraph_eq_of_isomorphic@GraphIsomorphism, uprob_permGraph_eq_of_isomorphic'@GraphIsomorphism, uprob_permFromCoins_none_le_two_pow@Permutations, uprob_rejectionSample_none_le_half_pow@Sampling; struct fields: cauchy
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+     > 
+     > π : Protocol
+     > R : List Bool → List Bool → Prop
+     > h : PerfectZKAbort π R
+     > V' : Strategy
+     > hV' : V'.Efficient
+     > S : NUPPT
+     > hSu : S.Uniform
+     > hS :
+     >   ∀ (x y z : List Bool),
+     >     R x y →
+     >       (uprob fun r => S.simulate x z r = []) ≤ 1 / 2 ∧
+     >         ∀ (T : List Bool → Prop),
+     >> ⊢ StatClose (fun r => ((π.withV V').viewV x y z r).encode) (S'.simulate x z) ((fun n => 2⁻¹ ^ n) x.length)
+       651|   have key := (statClose_retry (fun ω => S.simulate x z ω ≠ []) (S.simulate x z)
+       652|     (fun r : (π.withV V').ExecCoins π.P x => ((π.withV V').viewV x y z r).encode) []
+       653|     (uprob_not_ne_nil_le _ habort) hcond x.length).comp_equiv_right e
+    *  654|   intro T
+       655|   have hu : uprob (fun t : S'.Coins x.length => T (S'.simulate x z t)) =
+       656|       uprob (fun t : S'.Coins x.length => T (((firstHit (fun ω => S.simulate x z ω ≠ []) (e t)).map
+====================================================================================================
+KEY SEAL-0331 | seal | TCSlib.Cryptography.negligible_inv_pow_sqrt_div
+  record: TCSlib.Cryptography.negligible_inv_pow_sqrt_div l.673: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.negligible_iff (TCSlib/Cryptography/Foundations/Negligible.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_Defs.log:795
+  DECL at 682, header ends 683
+      682| theorem negligible_inv_pow_sqrt_div {a : ℝ} (ha : 1 < a) {C : ℕ} (hC : 0 < C) :
+      683|     Negligible fun N => a⁻¹ ^ Nat.sqrt (N / C) := by
+  -- coe-A line 684 cascade=False cls=Tactic X failed: There are no additional binders or X bindings in the goal to in
+     providers=['TCSlib.Cryptography.Negligible']
+     referenced=['TCSlib.Cryptography.Negligible']
+     [TCSlib.Cryptography.Negligible] readers: negligible_iff@Negligible, negligible_zero@Negligible, negligible_two_pow_neg@Negligible, negligible_exp_neg_sqrt_div@Defs, negligible_inv_pow_sqrt_div@Defs, negligible_mul_permFailBound@GraphIsomorphism, negligible_two_pow_neg_sqrt_div@Defs, negligible_of_le_inv_pow_sqrt_div@Defs
+     > Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+     > 
+     > a : ℝ
+     > ha : 1 < a
+     > C : ℕ
+     > hC : 0 < C
+     > ⊢ Negligible fun N => a⁻¹ ^ (N / C).sqrt
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_Defs phase=eof spelling=BoolCircuit.decodeNat key=[["str","BoolCircuit"],["str","decodeNat"]] home_key=[["str","TCSlib"],["str","Complexity"],["str","CircuitComplexity
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_Defs phase=eof spelling=BoolCircuit.decodeNat._sunfold key=[["str","BoolCircuit"],["str","decodeNat"],["str","_sunfold"]] home_key=[["str","TCSlib"],["str","Complexity
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_Defs phase=eof spelling=BoolCircuit.decodeNat._unsafe_rec key=[["str","BoolCircuit"],["str","decodeNat"],["str","_unsafe_rec"]] home_key=[["str","TCSlib"],["str","Comp
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_Defs phase=eof spelling=BoolCircuit.decodeNat.match_1 key=[["str","BoolCircuit"],["str","decodeNat"],["str","match_1"]] home_key=[["str","TCSlib"],["str","Complexity"]
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_Defs phase=eof spelling=BoolCircuit.encodeNat key=[["str","BoolCircuit"],["str","encodeNat"]] home_key=[["str","TCSlib"],["str","Complexity"],["str","CircuitComplexity
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_Defs phase=eof spelling=Complexity.BinArith.DivInv key=[["str","Complexity"],["str","BinArith"],["str","DivInv"]] home_key=[["str","TCSlib"],["str","Complexity"],["str
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_Defs phase=eof spelling=Complexity.BinArith.MulInv key=[["str","Complexity"],["str","BinArith"],["str","MulInv"]] home_key=[["str","TCSlib"],["str","Complexity"],["str
+     >> ⊢ Negligible fun N => a⁻¹ ^ (N / C).sqrt
+       681| `a⁻¹ ^ t = 1 / a^t < 1 / ((2C)^c (t+1)^{2c}) ≤ 1 / N^c`. -/
+       682| theorem negligible_inv_pow_sqrt_div {a : ℝ} (ha : 1 < a) {C : ℕ} (hC : 0 < C) :
+       683|     Negligible fun N => a⁻¹ ^ Nat.sqrt (N / C) := by
+    *  684|   intro c
+       685|   have ha0 : (0 : ℝ) < a := zero_lt_one.trans ha
+       686|   have hCr : (0 : ℝ) < (C : ℝ) ^ c := by positivity

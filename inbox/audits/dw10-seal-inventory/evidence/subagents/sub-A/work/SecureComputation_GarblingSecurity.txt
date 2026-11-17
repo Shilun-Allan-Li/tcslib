@@ -1,0 +1,91 @@
+====================================================================================================
+KEY SG-F07:1 | seal | TCSlib.Cryptography.SecureComputation.nestedSpecial_wrongKeyBot
+  record: TCSlib.Cryptography.SecureComputation.nestedSpecial_wrongKeyBot: 2 errors, variant B (strict = coe) (frozen header and the body call spDecStr_wrongKey .var G1 (file total 3e/2d; base 2e/2d))
+  counts sA=0 sB=2 cA=0 cB=2 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_SecureComputation_GarblingSecurity.log:188
+  DECL at 77, header ends 79
+       77| theorem nestedSpecial_wrongKeyBot (hG₁ : PRFOut (.add .var .var) G₁)
+       78|     (hG₂ : PRFOut (.add .var innerLen) G₂) :
+       79|     ∃ δ : ℕ → ℝ, Negligible δ ∧ ∀ n, (nestedSpecial E₁ E₂ n).WrongKeyBot (δ n) := by
+  -- coe-B line 77 cascade=False cls=Application type mismatch: The argument
+     providers=['Complexity.PolyExpr.eval']
+     referenced=['Complexity.PolyExpr.eval', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.SecureComputation.MultiEnc.WrongKeyBot', 'TCSlib.Cryptography.SecureComputation.innerLen', 'TCSlib.Cryptography.SecureComputation.nestedSpecial', 'TCSlib.Cryptography.SecureComputation.spDecStr', 'TCSlib.Cryptography.SecureComputation.spEncStr', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr
+     > Application type mismatch: The argument
+     >   G₁
+     > has type
+     >   (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool
+     > but is expected to have type
+     >   (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool
+     > in the application
+     >   PRFOut (PolyExpr.var.add PolyExpr.var) G₁
+        74| (`GarblingCoins.uprob_isSome_lt_of_none`), and
+        75| `GarblingCoins.nestedSpecial_wrongKeyBot_of_string_bounds` carries out the case analysis,
+        76| including the zero-position case, which has no distinct choices. -/
+    *   77| theorem nestedSpecial_wrongKeyBot (hG₁ : PRFOut (.add .var .var) G₁)
+        78|     (hG₂ : PRFOut (.add .var innerLen) G₂) :
+        79|     ∃ δ : ℕ → ℝ, Negligible δ ∧ ∀ n, (nestedSpecial E₁ E₂ n).WrongKeyBot (δ n) := by
+  -- coe-B line 80 cascade=True cls=Application type mismatch: The argument
+     providers=['Complexity.PolyExpr.eval']
+     referenced=['Complexity.PolyExpr.eval', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.SecureComputation.MultiEnc.WrongKeyBot', 'TCSlib.Cryptography.SecureComputation.innerLen', 'TCSlib.Cryptography.SecureComputation.nestedSpecial', 'TCSlib.Cryptography.SecureComputation.spDecStr', 'TCSlib.Cryptography.SecureComputation.spEncStr', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr
+     > Application type mismatch: The argument
+     >   G₁
+     > has type
+     >   (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool
+     > but is expected to have type
+     >   (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool
+     > in the application
+     >   spDecStr_wrongKey PolyExpr.var G₁
+        77| theorem nestedSpecial_wrongKeyBot (hG₁ : PRFOut (.add .var .var) G₁)
+        78|     (hG₂ : PRFOut (.add .var innerLen) G₂) :
+        79|     ∃ δ : ℕ → ℝ, Negligible δ ∧ ∀ n, (nestedSpecial E₁ E₂ n).WrongKeyBot (δ n) := by
+    *   80|   obtain ⟨ε₁, hε₁, hb₁⟩ := spDecStr_wrongKey .var G₁ E₁ hGE₁ hG₁
+        81|   simp only [PolyExpr.eval_var] at hb₁
+        82|   obtain ⟨ε₂, hε₂, hb₂⟩ := spDecStr_wrongKey innerLen G₂ E₂ hGE₂ hG₂
+====================================================================================================
+KEY SG-F07:2 | seal | TCSlib.Cryptography.SecureComputation.garbling_good_whp
+  record: TCSlib.Cryptography.SecureComputation.garbling_good_whp: 1 errors, variant B (strict = coe) (frozen header)
+  counts sA=0 sB=1 cA=0 cB=1 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_SecureComputation_GarblingSecurity.log:217
+  DECL at 106, header ends 110
+      106| theorem garbling_good_whp (hG₁ : PRFOut (.add .var .var) G₁)
+      107|     (hG₂ : PRFOut (.add .var innerLen) G₂) :
+      108|     ∃ δ : ℕ → ℝ, Negligible δ ∧ ∀ (n m : ℕ) (Cc : DAGCircuit m), Cc.IsFaninTwo →
+      109|       uprob (fun s : GarbleSeed Cc (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)) =>
+      110|         ¬ Good (nestedSpecial E₁ E₂ n) Cc s) ≤ 12 * Cc.gates.length * δ n := by
+  -- coe-B line 106 cascade=False cls=Application type mismatch: The argument
+     providers=['BoolCircuit.DAGCircuit.IsFaninTwo', 'BoolCircuit.DAGCircuit.size', 'Complexity.PolyExpr.eval', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.SecureComputation.Good', 'TCSlib.Cryptography.SecureComputation.MultiEnc.WrongKeyBot', 'TCSlib.Cryptography.SecureComputation.innerLen', 'TCSlib.Cryptography.SecureComputation.nestedSpecial', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     referenced=['BoolCircuit.DAGCircuit.IsFaninTwo', 'BoolCircuit.DAGCircuit.size', 'Complexity.PolyExpr.eval', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.SecureComputation.Good', 'TCSlib.Cryptography.SecureComputation.MultiEnc.WrongKeyBot', 'TCSlib.Cryptography.SecureComputation.innerLen', 'TCSlib.Cryptography.SecureComputation.nestedSpecial', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [BoolCircuit.DAGCircuit.IsFaninTwo] readers: isFaninTwo_iff@DAGCircuit
+     [BoolCircuit.DAGCircuit.size] readers: size_eq@DAGCircuit, size_le_length_encode@Uniform
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr
+     [TCSlib.Cryptography.Negligible] readers: negligible_iff@Negligible, negligible_zero@Negligible, negligible_two_pow_neg@Negligible, negligible_exp_neg_sqrt_div@Defs, negligible_inv_pow_sqrt_div@Defs, negligible_mul_permFailBound@GraphIsomorphism, negligible_two_pow_neg_sqrt_div@Defs, negligible_of_le_inv_pow_sqrt_div@Defs
+     [TCSlib.Cryptography.SecureComputation.Good] readers: good_iff@Garbling, good_of_no_crossOpening@Garbling
+     [TCSlib.Cryptography.SecureComputation.MultiEnc.WrongKeyBot] readers: wrongKeyBot_iff@Garbling
+     [TCSlib.Cryptography.SecureComputation.innerLen] readers: innerLen_eq@GarblingSpecial
+     [TCSlib.Cryptography.SecureComputation.nestedSpecial] readers: nestedSpecial_dec@GarblingSpecial, nestedSpecial_enc@GarblingSpecial, nestedSpecial_decCorrect@GarblingSpecial, nestedSpecial_wrongKeyBot@GarblingSecurity; struct fields: enc, dec
+     [TCSlib.Cryptography.uprob] readers: uprob_def@Probability, uprob_fst@Probability, uprob_not@Probability, uprob_snd@LazySampling, uprob_mono@Probability, uprob_prod@Probability, uprob_true@Probability, uprob_congr@LazySampling, uprob_false@Probability, uprob_or_le@Probability, uprob_le_one@Probability, uprob_nonneg@Probability, uprob_eq_uexp@Probability, uprob_bool_prod@GeneratorFromPermutation, uprob_exists_le@Probability, uprob_prod_comm@LazySampling, uprob_comp_equiv@Probability, uprob_eq_of_equiv@Indistinguishability, uprob_bitsToNat_lt@Sampling, uprob_col_cheat_le@Protocol, uprob_tdpPredictor@TrapdoorPredictor, uprob_update_split@LazySampling, uprob_firstHit_none@Sampling, uprob_gni_rep_cheat@GraphIsomorphism, uprob_pi_forall_dep@Permutations, uprob_update_absorb@LazySampling, uprob_adaptive_guess@GraphIsomorphism, uprob_eq_card_filter@Probability, uprob_sections_congr@LazySampling, uprob_update_absorb'@LazySampling, uprob_adaptive_escape@Protocol, uprob_colSimTruncW_eq@Simulator, uprob_comp_eq_sum_map@Experiments, uprob_giHonestView_eq@GraphIsomorphismZK, uprob_giSimTrunc_none@GraphIsomorphismZK, uprob_gi_rep_cheat_le@GraphIsomorphism, uprob_gi_cheat_le_half@GraphIsomorphism, uprob_not_injective_le@Hybrid, uprob_colSimAttemptW_eq@Simulator, uprob_colSimTruncH_none@Simulator, uprob_comp_eq_sum_fiber@Sampling, uprob_fiber_le_card_mul@Universal, uprob_giSimAttempt_none@GraphIsomorphismZK, uprob_giSimAttempt_some@GraphIsomorphismZK, uprob_colSimAttemptH_none@Simulator, uprob_colSimAttemptH_some@Simulator, uprob_comp_eq_probTrue_map@SamplingFinDist, uprob_rejectionSample_none@Sampling, uprob_uniformFromBits_none@Sampling, uprob_permFromCoins_none_le@Permutations, uprob_uniformFromBits_eq_some@Sampling, uprob_permGraph_eq_of_isomorphic@GraphIsomorphism, uprob_permGraph_eq_of_isomorphic'@GraphIsomorphism, uprob_permFromCoins_none_le_two_pow@Permutations, uprob_rejectionSample_none_le_half_pow@Sampling; struct fields: cauchy
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Application type mismatch: The argument
+     >   G₁
+     > has type
+     >   (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool
+     > but is expected to have type
+     >   (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool
+     > in the application
+     >   PRFOut (PolyExpr.var.add PolyExpr.var) G₁
+     > G06-COMPONENT label=SealB_Cryptography_SecureComputation_GarblingSecurity phase=eof spelling=BoolCircuit.CompileListSpec.mk._flat_ctor key=[["str","BoolCircuit"],["str","CompileListSpec"],["str","mk"],["str","_flat_ctor"
+     > G06-COMPONENT label=SealB_Cryptography_SecureComputation_GarblingSecurity phase=eof spelling=BoolCircuit.CompileSpec.mk._flat_ctor key=[["str","BoolCircuit"],["str","CompileSpec"],["str","mk"],["str","_flat_ctor"]] home_
+     > G06-COMPONENT label=SealB_Cryptography_SecureComputation_GarblingSecurity phase=eof spelling=BoolCircuit.DAGCircuit.IsFaninTwo key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","IsFaninTwo"]] home_key=[["str","TCSli
+     > G06-COMPONENT label=SealB_Cryptography_SecureComputation_GarblingSecurity phase=eof spelling=BoolCircuit.DAGCircuit.IsWellFormed key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","IsWellFormed"]] home_key=[["str","T
+     > G06-COMPONENT label=SealB_Cryptography_SecureComputation_GarblingSecurity phase=eof spelling=BoolCircuit.DAGCircuit._sizeOf_1 key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","_sizeOf_1"]] home_key=[["str","TCSlib"
+     > G06-COMPONENT label=SealB_Cryptography_SecureComputation_GarblingSecurity phase=eof spelling=BoolCircuit.DAGCircuit._sizeOf_inst key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","_sizeOf_inst"]] home_key=[["str","T
+       103| random garbling is good, and so evaluates correctly (`garbledOutput_eq`), except with
+       104| probability at most `12 · |gates| · δ(n)`. Goodness here concerns the first successful opening
+       105| for every assignment; the stronger source assertion of unique opening is not this conclusion. -/
+    *  106| theorem garbling_good_whp (hG₁ : PRFOut (.add .var .var) G₁)
+       107|     (hG₂ : PRFOut (.add .var innerLen) G₂) :
+       108|     ∃ δ : ℕ → ℝ, Negligible δ ∧ ∀ (n m : ℕ) (Cc : DAGCircuit m), Cc.IsFaninTwo →

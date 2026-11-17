@@ -19,3 +19,15 @@ user's override (pool 4 = nproc, lock slots w1..w4 acting as the counting semaph
 not interrupted. From the next phase the pool starts at the ruling's min(nproc=4, floor(MemAvailable/4 GB)) and is
 recorded per phase; memory is sampled every 30 s to logs/memsample.log (tools/memsample.sh).
 main b986b8620fc6117034462212df7070c80a79ff65 (merge of #353): workflow.md §4.1 Lean parallelism, verified 2026-11-17T05:15:16Z
+2026-11-17 ~07:12Z: the four workers' background jobs reached the tool's 2-hour limit and were stopped (442 probes recorded); the
+in-flight probes had no record and their claims named dead pids, so they are re-taken. The four workers were restarted detached
+(setsid nohup, pids recorded by the lead) on the same shared queue, lock slots, claims and memory guard.
+2026-11-17 ~07:30Z: the controls runner (slot w4) reached the tool's 2-hour limit; restarted detached on the same order (claims/results skip finished harnesses).
+2026-11-17T09:07:21Z readers attempt 4 probe (DW10Probe/Readers) ran once through lock slot w1 (runworker w1, readers/runs4), inside the 4-slot semaphore
+2026-11-17T12:37Z seal phase complete: 1,487 of 1,487 probes recorded (workers w1..w4 exited rc 0, last at 12:36:50Z).
+Duplicate run (a claim-takeover race): when the four workers were restarted at 07:11:57Z after the background time limit,
+w2 and w4 both found the dead claim of DW10Probe/S/SealA_Cryptography_Encryption_PrivateKey_FromPRF_Hybrid and both took it
+over. They ran the same probe concurrently (07:11:57–07:12:51 and 07:11:57–07:16:19) and wrote the same log path. Both records
+are identical: rc 0, 0 errors, log SHA-256 162056f7…, source SHA-256 58e4216a…. No olean is written (no `-o`), so the only
+shared file was that log, whose final content matches both records. No other probe has more than one record. The takeover check
+is not atomic; a later pool should take over by rename instead of overwrite.

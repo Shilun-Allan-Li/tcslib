@@ -1,0 +1,444 @@
+====================================================================================================
+KEY SEAL-0432 | seal | TCSlib.Cryptography.ColSimMachine.length_simX_le
+  record: TCSlib.Cryptography.ColSimMachine.length_simX_le l.235: Application type mismatch: The argument (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.NUPPT.inArg_eq (TCSlib/Complexity/Randomized/Closure.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorMachine.log:456
+  DECL at 234, header ends 234
+      234| theorem length_simX_le (w : List Bool) : (simX w).length ≤ w.length :=
+  -- coe-A line 235 cascade=False cls=Application type mismatch: The argument
+     providers=['Complexity.NUPPT.inArg', 'Complexity.pairFstD', 'Complexity.pairSndD']
+     referenced=['Complexity.NUPPT.inArg', 'Complexity.pairFstD', 'Complexity.pairSndD']
+     [Complexity.NUPPT.inArg] readers: inArg_eq@Closure, inArg_layout@Closure
+     [Complexity.pairFstD] readers: pairFstD_eq@PolyTimePairing, pairFstD_nil@PolyTimeBlockLoop, pairFstD_pairEncode@PolyTimePairing, pairFstD_of_pairDecode_eq_none@PolyTimePairing
+     [Complexity.pairSndD] readers: pairSndD_eq@PolyTimePairing, pairSndD_pairEncode@PolyTimePairing, pairSndD_of_pairDecode_eq_none@PolyTimePairing
+     > Application type mismatch: The argument
+     >   LE.le.trans (length_pairSndD_le (pairFstD (pairFstD ?m.23)))
+     >     (LE.le.trans (length_pairFstD_le (pairFstD ?m.23)) (length_pairFstD_le ?m.23))
+     > has type
+     >   (pairSndD (pairFstD (pairFstD ?m.23))).length ≤ List.length ?m.23
+     > but is expected to have type
+     >   (NUPPT.inArg w).length ≤ w.length
+     > in the application
+     >   LE.le.trans (length_pairFstD_le (NUPPT.inArg w))
+     >     (LE.le.trans (length_pairSndD_le (pairFstD (pairFstD ?m.23)))
+     >       (LE.le.trans (length_pairFstD_le (pairFstD ?m.23)) (length_pairFstD_le ?m.23)))
+       232| 
+       233| /-- The common input is no longer than the machine input. -/
+       234| theorem length_simX_le (w : List Bool) : (simX w).length ≤ w.length :=
+    *  235|   (length_pairFstD_le _).trans ((length_pairSndD_le _).trans
+       236|     ((length_pairFstD_le _).trans (length_pairFstD_le _)))
+       237| 
+====================================================================================================
+KEY SEAL-0433 | seal | TCSlib.Cryptography.ColSimMachine.blk_poly
+  record: TCSlib.Cryptography.ColSimMachine.blk_poly l.258: Type mismatch (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.polyTimeComputable_iff (TCSlib/Complexity/ClassNP/PolyTime.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorMachine.log:479
+  DECL at 246, header ends 249
+      246| theorem blk_poly (ℓ : PolyExpr) (V' : Strategy) (hX : PolyTimeComputable X)
+      247|     (hT : PolyTimeComputable fun w => List.replicate (T w) true) (hR : PolyTimeComputable R) :
+      248|     PolyTimeComputable fun w =>
+      249|       colCoinSlice ((blockPoly ℓ V').eval (X w).length) (T w) (R w) := by
+  -- coe-A line 258 cascade=False cls=Type mismatch
+     providers=['Complexity.PolyTimeComputable', 'TCSlib.Cryptography.ColSimMachine.blockPoly', 'TCSlib.Cryptography.colCoinSlice']
+     referenced=['Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.ColSimMachine.blockPoly', 'TCSlib.Cryptography.colCoinSlice', 'Turing.pairEncode']
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop, polyTimeComputable_unary@PolyTimePairing, polyTimeComputable_pairEq@Repetition, polyTimeComputable_iterate@Repetition, polyTimeComputable_pairXor@Repetition, polyTimeComputable_prepend@PolyTimePairing, polyTimeComputable_blockMap@Repetition, polyTimeComputable_emitIter@PolyTimeBlockLoop, polyTimeComputable_majority@Repetition, polyTimeComputable_pairFstD@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, polyTimeComputable_pairSwap@PolyTimePairing, polyTimeComputable_of_linear@PolyTimePairing, polyTimeComputable_polyUnary@PolyTimePairing, polyTimeComputable_stateFind@Repetition, polyTimeComputable_transduce@Transducer, polyTimeComputable_unaryPoly@Primitives, polyTimeComputable_pairConcat@PolyTimePairing, polyTimeComputable_iterateEmit@Repetition, polyTimeComputable_iterateFind@Repetition, polyTimeComputable_sliceDropAt@PolyTimeBlockLoop, polyTimeComputable_sliceTakeAt@PolyTimeBlockLoop, polyTimeComputable_unaryNormal@PolyExpr, polyTimeComputable_blockAnyTest@PolyTimeBlockTests, polyTimeComputable_pairDropPoly@Primitives, polyTimeComputable_pairTakePoly@Primitives, polyTimeComputable_blockXorAnyTest@PolyTimeBlockTests, polyTimeComputable_iterate_pairFstD@PolyTimePairing, polyTimeComputable_blockMajorityTest@PolyTimeBlockMajority, polyTimeComputable_dropPrefixByLength@PolyTimePrefix, polyTimeComputable_of_computesInSpace@ConfigCount, polyTimeComputable_takePrefixByLength@PolyTimePrefix
+     [TCSlib.Cryptography.colCoinSlice] readers: colCoinSlice_eq@Protocol
+     > Type mismatch
+     >   truncate_poly hdrop hB
+     > has type
+     >   PolyTimeComputable fun x =>
+     >     List.take ((blockPoly ℓ V').eval (X x).length) (List.drop (T x * (blockPoly ℓ V').eval (X x).length) (R x))
+     > but is expected to have type
+     >   PolyTimeComputable fun w => colCoinSlice ((blockPoly ℓ V').eval (X w).length) (T w) (R w)
+       255|     refine ptc_congr ((polyTimeComputable_pairDropPoly .var).comp
+       256|       ((unaryMul_poly hT hB).pairEncode hR)) fun w => ?_
+       257|     simp
+    *  258|   exact truncate_poly hdrop hB
+       259| 
+       260| /-- The vertex count is unary polynomial-time (`EncodingMachines.unarySqrt_poly`). -/
+====================================================================================================
+KEY SEAL-0434 | seal | TCSlib.Cryptography.ColSimMachine.nV_poly
+  record: TCSlib.Cryptography.ColSimMachine.nV_poly l.263: Type mismatch (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.polyTimeComputable_iff (TCSlib/Complexity/ClassNP/PolyTime.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorMachine.log:484
+  DECL at 261, header ends 262
+      261| theorem nV_poly (hX : PolyTimeComputable X) :
+      262|     PolyTimeComputable fun w => List.replicate (nV (X w)) true :=
+  -- coe-A line 263 cascade=False cls=Type mismatch
+     providers=['Complexity.PolyTimeComputable']
+     referenced=['Complexity.PolyTimeComputable', 'TCSlib.Cryptography.ColSimMachine.nV']
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop, polyTimeComputable_unary@PolyTimePairing, polyTimeComputable_pairEq@Repetition, polyTimeComputable_iterate@Repetition, polyTimeComputable_pairXor@Repetition, polyTimeComputable_prepend@PolyTimePairing, polyTimeComputable_blockMap@Repetition, polyTimeComputable_emitIter@PolyTimeBlockLoop, polyTimeComputable_majority@Repetition, polyTimeComputable_pairFstD@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, polyTimeComputable_pairSwap@PolyTimePairing, polyTimeComputable_of_linear@PolyTimePairing, polyTimeComputable_polyUnary@PolyTimePairing, polyTimeComputable_stateFind@Repetition, polyTimeComputable_transduce@Transducer, polyTimeComputable_unaryPoly@Primitives, polyTimeComputable_pairConcat@PolyTimePairing, polyTimeComputable_iterateEmit@Repetition, polyTimeComputable_iterateFind@Repetition, polyTimeComputable_sliceDropAt@PolyTimeBlockLoop, polyTimeComputable_sliceTakeAt@PolyTimeBlockLoop, polyTimeComputable_unaryNormal@PolyExpr, polyTimeComputable_blockAnyTest@PolyTimeBlockTests, polyTimeComputable_pairDropPoly@Primitives, polyTimeComputable_pairTakePoly@Primitives, polyTimeComputable_blockXorAnyTest@PolyTimeBlockTests, polyTimeComputable_iterate_pairFstD@PolyTimePairing, polyTimeComputable_blockMajorityTest@PolyTimeBlockMajority, polyTimeComputable_dropPrefixByLength@PolyTimePrefix, polyTimeComputable_of_computesInSpace@ConfigCount, polyTimeComputable_takePrefixByLength@PolyTimePrefix
+     > Type mismatch
+     >   unarySqrt_poly (unaryLength_poly hX)
+     > has type
+     >   PolyTimeComputable fun x => List.replicate (X x).length.sqrt true
+     > but is expected to have type
+     >   PolyTimeComputable fun w => List.replicate (nV (X w)) true
+       260| /-- The vertex count is unary polynomial-time (`EncodingMachines.unarySqrt_poly`). -/
+       261| theorem nV_poly (hX : PolyTimeComputable X) :
+       262|     PolyTimeComputable fun w => List.replicate (nV (X w)) true :=
+    *  263|   unarySqrt_poly (unaryLength_poly hX)
+       264| 
+       265| /-- The edge count is unary polynomial-time (`countBits_poly`). -/
+====================================================================================================
+KEY SEAL-0435 | seal | TCSlib.Cryptography.ColSimMachine.mE_poly
+  record: TCSlib.Cryptography.ColSimMachine.mE_poly l.268: Type mismatch (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.polyTimeComputable_iff (TCSlib/Complexity/ClassNP/PolyTime.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorMachine.log:489
+  DECL at 266, header ends 267
+      266| theorem mE_poly (hX : PolyTimeComputable X) :
+      267|     PolyTimeComputable fun w => List.replicate (mE (X w)) true :=
+  -- coe-A line 268 cascade=False cls=Type mismatch
+     providers=['Complexity.PolyTimeComputable']
+     referenced=['Complexity.PolyTimeComputable', 'TCSlib.Cryptography.ColSimMachine.mE', 'TCSlib.Cryptography.ColSimMachine.nV']
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop, polyTimeComputable_unary@PolyTimePairing, polyTimeComputable_pairEq@Repetition, polyTimeComputable_iterate@Repetition, polyTimeComputable_pairXor@Repetition, polyTimeComputable_prepend@PolyTimePairing, polyTimeComputable_blockMap@Repetition, polyTimeComputable_emitIter@PolyTimeBlockLoop, polyTimeComputable_majority@Repetition, polyTimeComputable_pairFstD@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, polyTimeComputable_pairSwap@PolyTimePairing, polyTimeComputable_of_linear@PolyTimePairing, polyTimeComputable_polyUnary@PolyTimePairing, polyTimeComputable_stateFind@Repetition, polyTimeComputable_transduce@Transducer, polyTimeComputable_unaryPoly@Primitives, polyTimeComputable_pairConcat@PolyTimePairing, polyTimeComputable_iterateEmit@Repetition, polyTimeComputable_iterateFind@Repetition, polyTimeComputable_sliceDropAt@PolyTimeBlockLoop, polyTimeComputable_sliceTakeAt@PolyTimeBlockLoop, polyTimeComputable_unaryNormal@PolyExpr, polyTimeComputable_blockAnyTest@PolyTimeBlockTests, polyTimeComputable_pairDropPoly@Primitives, polyTimeComputable_pairTakePoly@Primitives, polyTimeComputable_blockXorAnyTest@PolyTimeBlockTests, polyTimeComputable_iterate_pairFstD@PolyTimePairing, polyTimeComputable_blockMajorityTest@PolyTimeBlockMajority, polyTimeComputable_dropPrefixByLength@PolyTimePrefix, polyTimeComputable_of_computesInSpace@ConfigCount, polyTimeComputable_takePrefixByLength@PolyTimePrefix
+     > Type mismatch
+     >   countBits_poly hX (unaryMul_poly (nV_poly hX) (nV_poly hX))
+     > has type
+     >   PolyTimeComputable fun z => List.replicate (countBits (X z) (nV (X z) * nV (X z))) true
+     > but is expected to have type
+     >   PolyTimeComputable fun w => List.replicate (mE (X w)) true
+       265| /-- The edge count is unary polynomial-time (`countBits_poly`). -/
+       266| theorem mE_poly (hX : PolyTimeComputable X) :
+       267|     PolyTimeComputable fun w => List.replicate (mE (X w)) true :=
+    *  268|   countBits_poly hX (unaryMul_poly (nV_poly hX) (nV_poly hX))
+       269| 
+       270| /-- The offset `baseR` of the commitment randomness is unary polynomial-time. -/
+====================================================================================================
+KEY SEAL-0436 | seal | TCSlib.Cryptography.ColSimMachine.baseR_poly
+  record: TCSlib.Cryptography.ColSimMachine.baseR_poly l.273: Type mismatch (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.polyTimeComputable_iff (TCSlib/Complexity/ClassNP/PolyTime.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorMachine.log:494
+  DECL at 271, header ends 272
+      271| theorem baseR_poly (hX : PolyTimeComputable X) :
+      272|     PolyTimeComputable fun w => List.replicate (baseR (X w)) true :=
+  -- coe-A line 273 cascade=False cls=Type mismatch
+     providers=['Complexity.PolyTimeComputable', 'TCSlib.Cryptography.ColSimMachine.baseR']
+     referenced=['Complexity.PolyTimeComputable', 'TCSlib.Cryptography.ColSimMachine.baseR']
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop, polyTimeComputable_unary@PolyTimePairing, polyTimeComputable_pairEq@Repetition, polyTimeComputable_iterate@Repetition, polyTimeComputable_pairXor@Repetition, polyTimeComputable_prepend@PolyTimePairing, polyTimeComputable_blockMap@Repetition, polyTimeComputable_emitIter@PolyTimeBlockLoop, polyTimeComputable_majority@Repetition, polyTimeComputable_pairFstD@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, polyTimeComputable_pairSwap@PolyTimePairing, polyTimeComputable_of_linear@PolyTimePairing, polyTimeComputable_polyUnary@PolyTimePairing, polyTimeComputable_stateFind@Repetition, polyTimeComputable_transduce@Transducer, polyTimeComputable_unaryPoly@Primitives, polyTimeComputable_pairConcat@PolyTimePairing, polyTimeComputable_iterateEmit@Repetition, polyTimeComputable_iterateFind@Repetition, polyTimeComputable_sliceDropAt@PolyTimeBlockLoop, polyTimeComputable_sliceTakeAt@PolyTimeBlockLoop, polyTimeComputable_unaryNormal@PolyExpr, polyTimeComputable_blockAnyTest@PolyTimeBlockTests, polyTimeComputable_pairDropPoly@Primitives, polyTimeComputable_pairTakePoly@Primitives, polyTimeComputable_blockXorAnyTest@PolyTimeBlockTests, polyTimeComputable_iterate_pairFstD@PolyTimePairing, polyTimeComputable_blockMajorityTest@PolyTimeBlockMajority, polyTimeComputable_dropPrefixByLength@PolyTimePrefix, polyTimeComputable_of_computesInSpace@ConfigCount, polyTimeComputable_takePrefixByLength@PolyTimePrefix
+     [TCSlib.Cryptography.ColSimMachine.baseR] readers: baseR_poly@SimulatorMachine
+     > Type mismatch
+     >   unaryAdd_poly (unaryPolyOf_poly ((PolyExpr.var.add (PolyExpr.const 1)).pow 2) (unaryLength_poly hX))
+     >     (unaryMul_poly (unaryConst_poly 3) (unaryLength_poly hX))
+     > has type
+     >   PolyTimeComputable fun x =>
+     >     List.replicate (((PolyExpr.var.add (PolyExpr.const 1)).pow 2).eval (X x).length + 3 * (X x).length) true
+     > but is expected to have type
+     >   PolyTimeComputable fun w => List.replicate (baseR (X w)) true
+       270| /-- The offset `baseR` of the commitment randomness is unary polynomial-time. -/
+       271| theorem baseR_poly (hX : PolyTimeComputable X) :
+       272|     PolyTimeComputable fun w => List.replicate (baseR (X w)) true :=
+    *  273|   unaryAdd_poly (unaryPolyOf_poly (.pow (.add .var (.const 1)) 2) (unaryLength_poly hX))
+       274|     (unaryMul_poly (unaryConst_poly 3) (unaryLength_poly hX))
+       275| 
+====================================================================================================
+KEY SEAL-0437 | seal | TCSlib.Cryptography.ColSimMachine.vIdx_poly
+  record: TCSlib.Cryptography.ColSimMachine.vIdx_poly l.301: Type mismatch (#248 inherited_same_step_after_other_repairs)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.polyTimeComputable_iff (TCSlib/Complexity/ClassNP/PolyTime.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorMachine.log:522
+  DECL at 292, header ends 294
+      292| theorem vIdx_poly (hX : PolyTimeComputable X) {B : List Bool → List Bool}
+      293|     (hB : PolyTimeComputable B) :
+      294|     PolyTimeComputable fun w => List.replicate (vIdx (X w) (B w)) true := by
+  -- coe-A line 301 cascade=False cls=Type mismatch
+     providers=['Complexity.PolyTimeComputable', 'TCSlib.Cryptography.ColSimMachine.vIdx']
+     referenced=['Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.ColSimMachine.vIdx', 'Turing.pairEncode']
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop, polyTimeComputable_unary@PolyTimePairing, polyTimeComputable_pairEq@Repetition, polyTimeComputable_iterate@Repetition, polyTimeComputable_pairXor@Repetition, polyTimeComputable_prepend@PolyTimePairing, polyTimeComputable_blockMap@Repetition, polyTimeComputable_emitIter@PolyTimeBlockLoop, polyTimeComputable_majority@Repetition, polyTimeComputable_pairFstD@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, polyTimeComputable_pairSwap@PolyTimePairing, polyTimeComputable_of_linear@PolyTimePairing, polyTimeComputable_polyUnary@PolyTimePairing, polyTimeComputable_stateFind@Repetition, polyTimeComputable_transduce@Transducer, polyTimeComputable_unaryPoly@Primitives, polyTimeComputable_pairConcat@PolyTimePairing, polyTimeComputable_iterateEmit@Repetition, polyTimeComputable_iterateFind@Repetition, polyTimeComputable_sliceDropAt@PolyTimeBlockLoop, polyTimeComputable_sliceTakeAt@PolyTimeBlockLoop, polyTimeComputable_unaryNormal@PolyExpr, polyTimeComputable_blockAnyTest@PolyTimeBlockTests, polyTimeComputable_pairDropPoly@Primitives, polyTimeComputable_pairTakePoly@Primitives, polyTimeComputable_blockXorAnyTest@PolyTimeBlockTests, polyTimeComputable_iterate_pairFstD@PolyTimePairing, polyTimeComputable_blockMajorityTest@PolyTimeBlockMajority, polyTimeComputable_dropPrefixByLength@PolyTimePrefix, polyTimeComputable_of_computesInSpace@ConfigCount, polyTimeComputable_takePrefixByLength@PolyTimePrefix
+     [TCSlib.Cryptography.ColSimMachine.vIdx] readers: vIdx_poly@SimulatorMachine
+     > Type mismatch
+     >   sampleNum_poly (unaryConst_poly 6) (unaryConst_poly 3) (unaryLength_poly hX) hdrop (unaryConst_poly 8) fun x =>
+     >     Mathlib.Meta.NormNum.isNat_le_true
+     >       (Mathlib.Meta.NormNum.isNat_pow (Eq.refl HPow.hPow) (Mathlib.Meta.NormNum.isNat_ofNat ℕ (Eq.refl 2))
+     >         (Mathlib.Meta.NormNum.isNat_ofNat ℕ (Eq.refl 3))
+     >         (Mathlib.Meta.NormNum.IsNatPowT.run Mathlib.Meta.NormNum.IsNatPowT.bit1))
+     >       (Mathlib.Meta.NormNum.isNat_ofNat ℕ (Eq.refl 8)) (Eq.refl true)
+     > has type
+     >   PolyTimeComputable fun z =>
+     >     List.replicate (sampleNum 6 3 (X z).length (List.drop (((X z).length + 1) ^ 2) (B z))) true
+     > but is expected to have type
+     >   PolyTimeComputable fun w => List.replicate (vIdx (X w) (B w)) true
+       298|       fun w => ?_
+       299|     simp [PolyExpr.eval_const, PolyExpr.eval_var, PolyExpr.eval_add, PolyExpr.eval_mul,
+       300|         PolyExpr.eval_pow, PolyExpr.eval_normal]
+    *  301|   exact sampleNum_poly (unaryConst_poly 6) (unaryConst_poly 3) (unaryLength_poly hX) hdrop
+       302|     (unaryConst_poly 8) (fun _ => by norm_num)
+       303| 
+====================================================================================================
+KEY SEAL-0438 | seal | TCSlib.Cryptography.ColSimMachine.kPos_poly
+  record: TCSlib.Cryptography.ColSimMachine.kPos_poly l.320: Type mismatch (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.polyTimeComputable_iff (TCSlib/Complexity/ClassNP/PolyTime.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorMachine.log:541
+  DECL at 307, header ends 309
+      307| theorem kPos_poly (hX : PolyTimeComputable X) {B : List Bool → List Bool}
+      308|     (hB : PolyTimeComputable B) :
+      309|     PolyTimeComputable fun w => List.replicate (kPos (X w) (B w)) true := by
+  -- coe-A line 320 cascade=False cls=Type mismatch
+     providers=['Complexity.PolyTimeComputable', 'TCSlib.Cryptography.ColSimMachine.countBits', 'TCSlib.Cryptography.ColSimMachine.eIdx', 'TCSlib.Cryptography.ColSimMachine.kPos']
+     referenced=['Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.ColSimMachine.countBits', 'TCSlib.Cryptography.ColSimMachine.eIdx', 'TCSlib.Cryptography.ColSimMachine.kPos', 'TCSlib.Cryptography.ColSimMachine.nV']
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop, polyTimeComputable_unary@PolyTimePairing, polyTimeComputable_pairEq@Repetition, polyTimeComputable_iterate@Repetition, polyTimeComputable_pairXor@Repetition, polyTimeComputable_prepend@PolyTimePairing, polyTimeComputable_blockMap@Repetition, polyTimeComputable_emitIter@PolyTimeBlockLoop, polyTimeComputable_majority@Repetition, polyTimeComputable_pairFstD@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, polyTimeComputable_pairSwap@PolyTimePairing, polyTimeComputable_of_linear@PolyTimePairing, polyTimeComputable_polyUnary@PolyTimePairing, polyTimeComputable_stateFind@Repetition, polyTimeComputable_transduce@Transducer, polyTimeComputable_unaryPoly@Primitives, polyTimeComputable_pairConcat@PolyTimePairing, polyTimeComputable_iterateEmit@Repetition, polyTimeComputable_iterateFind@Repetition, polyTimeComputable_sliceDropAt@PolyTimeBlockLoop, polyTimeComputable_sliceTakeAt@PolyTimeBlockLoop, polyTimeComputable_unaryNormal@PolyExpr, polyTimeComputable_blockAnyTest@PolyTimeBlockTests, polyTimeComputable_pairDropPoly@Primitives, polyTimeComputable_pairTakePoly@Primitives, polyTimeComputable_blockXorAnyTest@PolyTimeBlockTests, polyTimeComputable_iterate_pairFstD@PolyTimePairing, polyTimeComputable_blockMajorityTest@PolyTimeBlockMajority, polyTimeComputable_dropPrefixByLength@PolyTimePrefix, polyTimeComputable_of_computesInSpace@ConfigCount, polyTimeComputable_takePrefixByLength@PolyTimePrefix
+     [TCSlib.Cryptography.ColSimMachine.countBits] readers: countBits_def@SimulatorNumeric, countBits_le@SimulatorMachine, countBits_poly@SimulatorMachine, countBits_succ@SimulatorMachine, countBits_lt_of_lt@SimulatorNumeric
+     [TCSlib.Cryptography.ColSimMachine.eIdx] readers: eIdx_def@SimulatorNumeric, eIdx_poly@SimulatorMachine
+     [TCSlib.Cryptography.ColSimMachine.kPos] readers: kPos_poly@SimulatorMachine
+     > Type mismatch
+     >   polyTimeComputable_firstIdx hp (unaryMul_poly (nV_poly hX) (nV_poly hX))
+     > has type
+     >   PolyTimeComputable fun z =>
+     >     List.replicate
+     >       (firstIdx (fun k => (X z).getD k false && decide (countBits (X z) k = eIdx (X z) (B z))) (nV (X z) * nV (X z)))
+     >       true
+     > but is expected to have type
+     >   PolyTimeComputable fun w => List.replicate (kPos (X w) (B w)) true
+       317|       (eqTest_poly (countBits_poly (hX.comp polyTimeComputable_pairSndD)
+       318|         (unaryLength_poly polyTimeComputable_pairFstD))
+       319|         (unaryComp_poly (eIdx_poly hX hB) polyTimeComputable_pairSndD))
+    *  320|   exact polyTimeComputable_firstIdx
+       321|     (p := fun w k => (X w).getD k false && decide (countBits (X w) k = eIdx (X w) (B w))) hp
+       322|     (unaryMul_poly (nV_poly hX) (nV_poly hX))
+====================================================================================================
+KEY SEAL-0439 | seal | TCSlib.Cryptography.ColSimMachine.chunk_poly
+  record: TCSlib.Cryptography.ColSimMachine.chunk_poly l.402: Type mismatch (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.polyTimeComputable_iff (TCSlib/Complexity/ClassNP/PolyTime.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorMachine.log:623
+  DECL at 393, header ends 398
+      393| theorem chunk_poly {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com) (ℓ : PolyExpr)
+      394|     (hX : PolyTimeComputable X) {B : List Bool → List Bool} (hB : PolyTimeComputable B)
+      395|     {c : List Bool → ℕ → Fin 3} {I : List Bool → ℕ}
+      396|     (hI : PolyTimeComputable fun w => List.replicate (I w) true)
+      397|     (hc : PolyTimeComputable fun w => encColor (c w (I w))) :
+      398|     PolyTimeComputable fun w => chunk Com ℓ (X w) (B w) (c w) (I w) := by
+  -- coe-A line 402 cascade=False cls=Type mismatch
+     providers=['Complexity.PolyTimeComputable', 'TCSlib.Cryptography.ColSimMachine.chunk', 'TCSlib.Cryptography.ColSimMachine.rrStr', 'TCSlib.Cryptography.EnsembleLemmas.padL', 'TCSlib.Cryptography.encColor', 'Turing.pairEncode']
+     referenced=['Complexity.PolyTimeComputable', 'TCSlib.Cryptography.ColSimMachine.chunk', 'TCSlib.Cryptography.ColSimMachine.nV', 'TCSlib.Cryptography.ColSimMachine.rrStr', 'TCSlib.Cryptography.EnsembleLemmas.padL', 'TCSlib.Cryptography.encColor', 'Turing.pairEncode']
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop, polyTimeComputable_unary@PolyTimePairing, polyTimeComputable_pairEq@Repetition, polyTimeComputable_iterate@Repetition, polyTimeComputable_pairXor@Repetition, polyTimeComputable_prepend@PolyTimePairing, polyTimeComputable_blockMap@Repetition, polyTimeComputable_emitIter@PolyTimeBlockLoop, polyTimeComputable_majority@Repetition, polyTimeComputable_pairFstD@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, polyTimeComputable_pairSwap@PolyTimePairing, polyTimeComputable_of_linear@PolyTimePairing, polyTimeComputable_polyUnary@PolyTimePairing, polyTimeComputable_stateFind@Repetition, polyTimeComputable_transduce@Transducer, polyTimeComputable_unaryPoly@Primitives, polyTimeComputable_pairConcat@PolyTimePairing, polyTimeComputable_iterateEmit@Repetition, polyTimeComputable_iterateFind@Repetition, polyTimeComputable_sliceDropAt@PolyTimeBlockLoop, polyTimeComputable_sliceTakeAt@PolyTimeBlockLoop, polyTimeComputable_unaryNormal@PolyExpr, polyTimeComputable_blockAnyTest@PolyTimeBlockTests, polyTimeComputable_pairDropPoly@Primitives, polyTimeComputable_pairTakePoly@Primitives, polyTimeComputable_blockXorAnyTest@PolyTimeBlockTests, polyTimeComputable_iterate_pairFstD@PolyTimePairing, polyTimeComputable_blockMajorityTest@PolyTimeBlockMajority, polyTimeComputable_dropPrefixByLength@PolyTimePrefix, polyTimeComputable_of_computesInSpace@ConfigCount, polyTimeComputable_takePrefixByLength@PolyTimePrefix
+     [TCSlib.Cryptography.ColSimMachine.chunk] readers: chunk_poly@SimulatorMachine
+     [TCSlib.Cryptography.ColSimMachine.rrStr] readers: rrStr_def@SimulatorNumeric, rrStr_poly@SimulatorMachine
+     [TCSlib.Cryptography.EnsembleLemmas.padL] readers: padL_eq@EnsemblesLemmas
+     [TCSlib.Cryptography.encColor] readers: encColor_def@Language, encColor_getD_ne@Language
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Type mismatch
+     >   PolyTimeComputable.pairEncode
+     >     (PolyTimeComputable.comp hCom (PolyTimeComputable.pairEncode hpad (rrStr_poly ℓ hX hB hI)))
+     >     (polyTimeComputable_const [])
+     > has type
+     >   PolyTimeComputable fun x =>
+     >     pairEncode
+     >       ((Com ∘ fun x => pairEncode (EnsembleLemmas.padL (nV (X x)) (encColor (c x (I x)))) (rrStr ℓ (X x) (B x) (I x)))
+     >         x)
+     >       []
+     > but is expected to have type
+     >   PolyTimeComputable fun w => chunk Com ℓ (X w) (B w) (c w) (I w)
+       399|   have hpad : PolyTimeComputable fun w => EnsembleLemmas.padL (nV (X w)) (encColor (c w (I w))) := by
+       400|     refine ptc_congr (EnsembleLemmas.polyTimeComputable_padL .var (nV_poly hX) hc) fun w => ?_
+       401|     simp
+    *  402|   exact (hCom.comp (hpad.pairEncode (rrStr_poly ℓ hX hB hI))).pairEncode
+       403|     (polyTimeComputable_const [])
+       404| 
+====================================================================================================
+KEY SEAL-0440 | seal | TCSlib.Cryptography.ColSimMachine.comStr_poly
+  record: TCSlib.Cryptography.ColSimMachine.comStr_poly l.417: Type mismatch (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | reader to be identified (no provider named in the message; see seal-errors.jsonl)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorMachine.log:638
+  DECL at 406, header ends 409
+      406| theorem comStr_poly {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com) (ℓ : PolyExpr)
+      407|     (hX : PolyTimeComputable X) (hXle : ∀ w, (X w).length ≤ w.length)
+      408|     {B : List Bool → List Bool} (hB : PolyTimeComputable B) :
+      409|     PolyTimeComputable fun w => comStr Com ℓ (X w) (B w) (colorNum (X w) (B w)) := by
+  -- coe-A line 417 cascade=False cls=Type mismatch
+     providers=[]
+     referenced=['Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.ColSimMachine.chunk', 'TCSlib.Cryptography.ColSimMachine.colorNum', 'TCSlib.Cryptography.ColSimMachine.comStr', 'TCSlib.Cryptography.ColSimMachine.nV']
+     > Type mismatch
+     >   LE.le.trans (Nat.sqrt_le_self (X w).length) (LE.le.trans (hXle w) (Nat.le_succ w.length))
+     > has type
+     >   (X w).length.sqrt ≤ w.length.succ
+     > but is expected to have type
+     >   nV (X w) ≤ w.length + 1
+       414|     (colorStr_poly (hX.comp polyTimeComputable_pairSndD) (hB.comp polyTimeComputable_pairSndD)
+       415|       (unaryLength_poly polyTimeComputable_pairFstD))
+       416|   exact emitLoop_poly (F := fun w i => chunk Com ℓ (X w) (B w) (colorNum (X w) (B w)) i) hF
+    *  417|     (nV_poly hX) (fun w => (Nat.sqrt_le_self _).trans ((hXle w).trans (Nat.le_succ _)))
+       418| 
+       419| /-- The all-zero commitment message is polynomial-time (`emitLoop_poly`). -/
+====================================================================================================
+KEY SEAL-0441 | seal | TCSlib.Cryptography.ColSimMachine.comStr0_poly
+  record: TCSlib.Cryptography.ColSimMachine.comStr0_poly l.428: Type mismatch (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | reader to be identified (no provider named in the message; see seal-errors.jsonl)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorMachine.log:649
+  DECL at 420, header ends 423
+      420| theorem comStr0_poly {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com) (ℓ : PolyExpr)
+      421|     (hX : PolyTimeComputable X) (hXle : ∀ w, (X w).length ≤ w.length)
+      422|     {B : List Bool → List Bool} (hB : PolyTimeComputable B) :
+      423|     PolyTimeComputable fun w => comStr Com ℓ (X w) (B w) (fun _ => 0) := by
+  -- coe-A line 428 cascade=False cls=Type mismatch
+     providers=[]
+     referenced=['Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.ColSimMachine.chunk', 'TCSlib.Cryptography.ColSimMachine.comStr', 'TCSlib.Cryptography.ColSimMachine.nV', 'TCSlib.Cryptography.encColor']
+     > Type mismatch
+     >   LE.le.trans (Nat.sqrt_le_self (X w).length) (LE.le.trans (hXle w) (Nat.le_succ w.length))
+     > has type
+     >   (X w).length.sqrt ≤ w.length.succ
+     > but is expected to have type
+     >   nV (X w) ≤ w.length + 1
+       425|     (hB.comp polyTimeComputable_pairSndD) (c := fun _ _ => 0)
+       426|     (unaryLength_poly polyTimeComputable_pairFstD) (polyTimeComputable_const (encColor 0))
+       427|   exact emitLoop_poly (F := fun w i => chunk Com ℓ (X w) (B w) (fun _ => 0) i) hF
+    *  428|     (nV_poly hX) (fun w => (Nat.sqrt_le_self _).trans ((hXle w).trans (Nat.le_succ _)))
+       429| 
+       430| /-- The tape handed to `V'` is polynomial-time. -/
+====================================================================================================
+KEY SEAL-0442 | seal | TCSlib.Cryptography.ColSimMachine.opnStr_poly
+  record: TCSlib.Cryptography.ColSimMachine.opnStr_poly l.476: Type mismatch (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.polyTimeComputable_iff (TCSlib/Complexity/ClassNP/PolyTime.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorMachine.log:697
+  DECL at 473, header ends 475
+      473| theorem opnStr_poly (ℓ : PolyExpr) (hX : PolyTimeComputable X) {B : List Bool → List Bool}
+      474|     (hB : PolyTimeComputable B) :
+      475|     PolyTimeComputable fun w => opnStr ℓ (X w) (B w) :=
+  -- coe-A line 476 cascade=False cls=Type mismatch
+     providers=['Complexity.PolyTimeComputable', 'TCSlib.Cryptography.ColSimMachine.colorNum', 'TCSlib.Cryptography.ColSimMachine.kPos', 'TCSlib.Cryptography.ColSimMachine.opnStr', 'TCSlib.Cryptography.ColSimMachine.rrStr', 'TCSlib.Cryptography.encColor', 'Turing.pairEncode']
+     referenced=['Complexity.PolyTimeComputable', 'TCSlib.Cryptography.ColSimMachine.colorNum', 'TCSlib.Cryptography.ColSimMachine.kPos', 'TCSlib.Cryptography.ColSimMachine.nV', 'TCSlib.Cryptography.ColSimMachine.opnStr', 'TCSlib.Cryptography.ColSimMachine.rrStr', 'TCSlib.Cryptography.encColor', 'Turing.pairEncode']
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop, polyTimeComputable_unary@PolyTimePairing, polyTimeComputable_pairEq@Repetition, polyTimeComputable_iterate@Repetition, polyTimeComputable_pairXor@Repetition, polyTimeComputable_prepend@PolyTimePairing, polyTimeComputable_blockMap@Repetition, polyTimeComputable_emitIter@PolyTimeBlockLoop, polyTimeComputable_majority@Repetition, polyTimeComputable_pairFstD@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, polyTimeComputable_pairSwap@PolyTimePairing, polyTimeComputable_of_linear@PolyTimePairing, polyTimeComputable_polyUnary@PolyTimePairing, polyTimeComputable_stateFind@Repetition, polyTimeComputable_transduce@Transducer, polyTimeComputable_unaryPoly@Primitives, polyTimeComputable_pairConcat@PolyTimePairing, polyTimeComputable_iterateEmit@Repetition, polyTimeComputable_iterateFind@Repetition, polyTimeComputable_sliceDropAt@PolyTimeBlockLoop, polyTimeComputable_sliceTakeAt@PolyTimeBlockLoop, polyTimeComputable_unaryNormal@PolyExpr, polyTimeComputable_blockAnyTest@PolyTimeBlockTests, polyTimeComputable_pairDropPoly@Primitives, polyTimeComputable_pairTakePoly@Primitives, polyTimeComputable_blockXorAnyTest@PolyTimeBlockTests, polyTimeComputable_iterate_pairFstD@PolyTimePairing, polyTimeComputable_blockMajorityTest@PolyTimeBlockMajority, polyTimeComputable_dropPrefixByLength@PolyTimePrefix, polyTimeComputable_of_computesInSpace@ConfigCount, polyTimeComputable_takePrefixByLength@PolyTimePrefix
+     [TCSlib.Cryptography.ColSimMachine.colorNum] readers: colorNum_def@SimulatorNumeric; struct fields: val, isLt
+     [TCSlib.Cryptography.ColSimMachine.kPos] readers: kPos_poly@SimulatorMachine
+     [TCSlib.Cryptography.ColSimMachine.opnStr] readers: opnStr_poly@SimulatorMachine
+     [TCSlib.Cryptography.ColSimMachine.rrStr] readers: rrStr_def@SimulatorNumeric, rrStr_poly@SimulatorMachine
+     [TCSlib.Cryptography.encColor] readers: encColor_def@Language, encColor_getD_ne@Language
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Type mismatch
+     >   PolyTimeComputable.pairEncode
+     >     (PolyTimeComputable.pairEncode (colorStr_poly hX hB (p1_poly hX hB)) (rrStr_poly ℓ hX hB (p1_poly hX hB)))
+     >     (PolyTimeComputable.pairEncode (colorStr_poly hX hB (p2_poly hX hB)) (rrStr_poly ℓ hX hB (p2_poly hX hB)))
+     > has type
+     >   PolyTimeComputable fun x =>
+     >     pairEncode
+     >       (pairEncode (encColor (colorNum (X x) (B x) (kPos (X x) (B x) / nV (X x))))
+     >         (rrStr ℓ (X x) (B x) (kPos (X x) (B x) / nV (X x))))
+     >       (pairEncode (encColor (colorNum (X x) (B x) (kPos (X x) (B x) % nV (X x))))
+     >         (rrStr ℓ (X x) (B x) (kPos (X x) (B x) % nV (X x))))
+     > but is expected to have type
+     >   PolyTimeComputable fun w => opnStr ℓ (X w) (B w)
+       473| theorem opnStr_poly (ℓ : PolyExpr) (hX : PolyTimeComputable X) {B : List Bool → List Bool}
+       474|     (hB : PolyTimeComputable B) :
+       475|     PolyTimeComputable fun w => opnStr ℓ (X w) (B w) :=
+    *  476|   ((colorStr_poly hX hB (p1_poly hX hB)).pairEncode (rrStr_poly ℓ hX hB (p1_poly hX hB))).pairEncode
+       477|     ((colorStr_poly hX hB (p2_poly hX hB)).pairEncode (rrStr_poly ℓ hX hB (p2_poly hX hB)))
+       478| 
+====================================================================================================
+KEY SEAL-0443 | seal | TCSlib.Cryptography.ColSimMachine.view_poly
+  record: TCSlib.Cryptography.ColSimMachine.view_poly l.484: Type mismatch (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.polyTimeComputable_iff (TCSlib/Complexity/ClassNP/PolyTime.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorMachine.log:705
+  DECL at 480, header ends 483
+      480| theorem view_poly (hX : PolyTimeComputable X) (hZ : PolyTimeComputable Z)
+      481|     {Rv C O : List Bool → List Bool} (hRv : PolyTimeComputable Rv) (hC : PolyTimeComputable C)
+      482|     (hO : PolyTimeComputable O) :
+      483|     PolyTimeComputable fun w => View.encode ⟨X w, Z w, Rv w, [C w, O w]⟩ :=
+  -- coe-A line 484 cascade=False cls=Type mismatch
+     providers=['Complexity.PolyTimeComputable', 'TCSlib.Cryptography.View.encode', 'Turing.pairEncode']
+     referenced=['Complexity.PolyTimeComputable', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.View.encode', 'Turing.pairEncode']
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop, polyTimeComputable_unary@PolyTimePairing, polyTimeComputable_pairEq@Repetition, polyTimeComputable_iterate@Repetition, polyTimeComputable_pairXor@Repetition, polyTimeComputable_prepend@PolyTimePairing, polyTimeComputable_blockMap@Repetition, polyTimeComputable_emitIter@PolyTimeBlockLoop, polyTimeComputable_majority@Repetition, polyTimeComputable_pairFstD@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, polyTimeComputable_pairSwap@PolyTimePairing, polyTimeComputable_of_linear@PolyTimePairing, polyTimeComputable_polyUnary@PolyTimePairing, polyTimeComputable_stateFind@Repetition, polyTimeComputable_transduce@Transducer, polyTimeComputable_unaryPoly@Primitives, polyTimeComputable_pairConcat@PolyTimePairing, polyTimeComputable_iterateEmit@Repetition, polyTimeComputable_iterateFind@Repetition, polyTimeComputable_sliceDropAt@PolyTimeBlockLoop, polyTimeComputable_sliceTakeAt@PolyTimeBlockLoop, polyTimeComputable_unaryNormal@PolyExpr, polyTimeComputable_blockAnyTest@PolyTimeBlockTests, polyTimeComputable_pairDropPoly@Primitives, polyTimeComputable_pairTakePoly@Primitives, polyTimeComputable_blockXorAnyTest@PolyTimeBlockTests, polyTimeComputable_iterate_pairFstD@PolyTimePairing, polyTimeComputable_blockMajorityTest@PolyTimeBlockMajority, polyTimeComputable_dropPrefixByLength@PolyTimePrefix, polyTimeComputable_of_computesInSpace@ConfigCount, polyTimeComputable_takePrefixByLength@PolyTimePrefix
+     [TCSlib.Cryptography.View.encode] readers: encode_mk@Interaction
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Type mismatch
+     >   PolyTimeComputable.pairEncode (PolyTimeComputable.pairEncode hX hZ)
+     >     (PolyTimeComputable.pairEncode hRv
+     >       (PolyTimeComputable.pairEncode hC (PolyTimeComputable.pairEncode hO (polyTimeComputable_const []))))
+     > has type
+     >   PolyTimeComputable fun x =>
+     >     pairEncode (pairEncode (X x) (Z x)) (pairEncode (Rv x) (pairEncode (C x) (pairEncode (O x) [])))
+     > but is expected to have type
+     >   PolyTimeComputable fun w => { x := X w, z := Z w, r := Rv w, received := [C w, O w] }.encode
+       481|     {Rv C O : List Bool → List Bool} (hRv : PolyTimeComputable Rv) (hC : PolyTimeComputable C)
+       482|     (hO : PolyTimeComputable O) :
+       483|     PolyTimeComputable fun w => View.encode ⟨X w, Z w, Rv w, [C w, O w]⟩ :=
+    *  484|   (hX.pairEncode hZ).pairEncode
+       485|     (hRv.pairEncode (hC.pairEncode (hO.pairEncode (polyTimeComputable_const []))))
+       486| 
+====================================================================================================
+KEY SEAL-0444 | seal | TCSlib.Cryptography.ColSimMachine.sim_eq
+  record: TCSlib.Cryptography.ColSimMachine.sim_eq l.573: Type mismatch (#248 inherited_same_step_after_other_repairs)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.decGraph_eq (TCSlib/Cryptography/ZeroKnowledge/Encoding.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorMachine.log:794
+  DECL at 565, header ends 572
+      565| theorem sim_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (V' : Strategy) (w : List Bool) :
+      566|     sim Com ℓ V' (simX w) (simZ w) (simR w) =
+      567|       if mE (simX w) = 0 then (attemptAt Com ℓ V' w 0).getD []
+      568|       else if firstIdx (fun t => (attemptAt Com ℓ V' w t).isSome) (nV (simX w) * mE (simX w)) <
+      569|           nV (simX w) * mE (simX w) then
+      570|         (attemptAt Com ℓ V' w
+      571|           (firstIdx (fun t => (attemptAt Com ℓ V' w t).isSome) (nV (simX w) * mE (simX w)))).getD []
+      572|       else [] := by
+  -- coe-A line 573 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.decGraph']
+     referenced=['TCSlib.Cryptography.ColSimMachine.attemptStr', 'TCSlib.Cryptography.ColSimMachine.blockPoly', 'TCSlib.Cryptography.ColSimMachine.mE', 'TCSlib.Cryptography.ColSimMachine.nV', 'TCSlib.Cryptography.ColSimMachine.sim', 'TCSlib.Cryptography.EncodingMachines.firstIdx', 'TCSlib.Cryptography.colCoinSlice', 'TCSlib.Cryptography.colIterations', 'TCSlib.Cryptography.decGraph']
+     [TCSlib.Cryptography.decGraph] readers: decGraph_eq@Encoding, decGraph_fst@Encoding, decGraph_snd@GraphIsomorphism, decGraph_encGraph@Encoding, decGraph_snd_apply@Encoding; struct fields: fst, snd
+     > Type mismatch
+     >   edgeCount_eq_countBits ?m.41
+     > has type
+     >   edgeCount (decGraph ?m.41).snd = countBits ?m.41 ((decGraph ?m.41).fst * (decGraph ?m.41).fst)
+     > but is expected to have type
+     >   edgeCount (decGraph (simX w)).snd = mE (simX w)
+       570|         (attemptAt Com ℓ V' w
+       571|           (firstIdx (fun t => (attemptAt Com ℓ V' w t).isSome) (nV (simX w) * mE (simX w)))).getD []
+       572|       else [] := by
+    *  573|   have hm : edgeCount (decGraph (simX w)).2 = mE (simX w) := edgeCount_eq_countBits _
+       574|   have hit : colIterations (simX w) = nV (simX w) * mE (simX w) := by
+       575|     simp only [colIterations_eq]
+====================================================================================================
+KEY SEAL-0445 | seal | TCSlib.Cryptography.ColSimMachine.exists_simulator
+  record: TCSlib.Cryptography.ColSimMachine.exists_simulator l.632: Application type mismatch: The argument (#248 inherited_same_step_after_other_repairs)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.NUPPT.uniform_iff (TCSlib/Complexity/Randomized/PPT.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorMachine.log:853
+  DECL at 627, header ends 630
+      627| theorem exists_simulator {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+      628|     (ℓ : PolyExpr) {V' : Strategy} (hV' : V'.Efficient) :
+      629|     ∃ S : NUPPT, S.Uniform ∧ S.coins = simCoins ℓ V' ∧
+      630|       ∀ x z (r : S.Coins x.length), S.simulate x z r = sim Com ℓ V' x z (List.ofFn r) := by
+  -- coe-A line 632 cascade=False cls=Application type mismatch: The argument
+     providers=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.advInput', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'Complexity.NUPPT.simulate', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.ColSimMachine.sim', 'TCSlib.Cryptography.ColSimMachine.simCoins', 'TCSlib.Cryptography.Strategy.Efficient', 'Turing.pairEncode']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.advInput', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'Complexity.NUPPT.simulate', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.ColSimMachine.sim', 'TCSlib.Cryptography.ColSimMachine.simCoins', 'TCSlib.Cryptography.Strategy.Efficient', 'Turing.pairEncode']
+     [Complexity.NUPPT.Uniform] readers: uniform_iff@PPT
+     [Complexity.NUPPT.advInput] readers: advInput_eq@PPT
+     [Complexity.NUPPT.coinLen] readers: coinLen_eq@PPT, coinLen_reparam@HardCoreLemmas
+     [Complexity.NUPPT.ofPolyTimeUniform] readers: ofPolyTimeUniform_uniform@PPT; struct fields: M, Ct, ct, coins, adv, advice, advice_length, halts
+     [Complexity.NUPPT.runAt] readers: runAt_eq@PPT, runAt_wrap@ReductionSupport, runAt_preComp@ReductionSupport, runAt_reparam@HardCoreLemmas, runAt_coinsCongr@PPT
+     [Complexity.NUPPT.runAtL] readers: runAtL_eq@PPT, runAtL_wrap@ReductionSupport, runAtL_preComp@ReductionSupport, runAtL_precomp@HardCoreGL, runAtL_reparam@HardCoreLemmas, runAtL_ofPolyTime@PPT, runAtL_eq_output_layout@Closure, runAtL_ofPolyTimeUniform@PPT
+     [Complexity.NUPPT.simulate] readers: simulate_eq@Defs
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop, polyTimeComputable_unary@PolyTimePairing, polyTimeComputable_pairEq@Repetition, polyTimeComputable_iterate@Repetition, polyTimeComputable_pairXor@Repetition, polyTimeComputable_prepend@PolyTimePairing, polyTimeComputable_blockMap@Repetition, polyTimeComputable_emitIter@PolyTimeBlockLoop, polyTimeComputable_majority@Repetition, polyTimeComputable_pairFstD@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, polyTimeComputable_pairSwap@PolyTimePairing, polyTimeComputable_of_linear@PolyTimePairing, polyTimeComputable_polyUnary@PolyTimePairing, polyTimeComputable_stateFind@Repetition, polyTimeComputable_transduce@Transducer, polyTimeComputable_unaryPoly@Primitives, polyTimeComputable_pairConcat@PolyTimePairing, polyTimeComputable_iterateEmit@Repetition, polyTimeComputable_iterateFind@Repetition, polyTimeComputable_sliceDropAt@PolyTimeBlockLoop, polyTimeComputable_sliceTakeAt@PolyTimeBlockLoop, polyTimeComputable_unaryNormal@PolyExpr, polyTimeComputable_blockAnyTest@PolyTimeBlockTests, polyTimeComputable_pairDropPoly@Primitives, polyTimeComputable_pairTakePoly@Primitives, polyTimeComputable_blockXorAnyTest@PolyTimeBlockTests, polyTimeComputable_iterate_pairFstD@PolyTimePairing, polyTimeComputable_blockMajorityTest@PolyTimeBlockMajority, polyTimeComputable_dropPrefixByLength@PolyTimePrefix, polyTimeComputable_of_computesInSpace@ConfigCount, polyTimeComputable_takePrefixByLength@PolyTimePrefix
+     [Complexity.pairFstD] readers: pairFstD_eq@PolyTimePairing, pairFstD_nil@PolyTimeBlockLoop, pairFstD_pairEncode@PolyTimePairing, pairFstD_of_pairDecode_eq_none@PolyTimePairing
+     [Complexity.pairSndD] readers: pairSndD_eq@PolyTimePairing, pairSndD_pairEncode@PolyTimePairing, pairSndD_of_pairDecode_eq_none@PolyTimePairing
+     [TCSlib.Cryptography.ColSimMachine.sim] readers: sim_eq@SimulatorMachine, sim_def@SimulatorNumeric, sim_poly@SimulatorMachine
+     [TCSlib.Cryptography.Strategy.Efficient] readers: efficient_iff@Interaction
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Application type mismatch: The argument
+     >   rfl
+     > has type
+     >   ?m.44 = ?m.44
+     > but is expected to have type
+     >   (NUPPT.ofPolyTimeUniform hF (simCoins ℓ V')).coins = simCoins ℓ V'
+     > in the application
+     >   And.intro rfl
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorMachine_part1 phase=eof spelling=BoolCircuit.CompileListSpec.mk._flat_ctor key=[["str","BoolCircuit"],["str","CompileListSpec"],["str","mk"],["s
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorMachine_part1 phase=eof spelling=BoolCircuit.CompileSpec.mk._flat_ctor key=[["str","BoolCircuit"],["str","CompileSpec"],["str","mk"],["str","_fl
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorMachine_part1 phase=eof spelling=BoolCircuit.DAGCircuit.IsFaninTwo key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","IsFaninTwo"]] home_ke
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorMachine_part1 phase=eof spelling=BoolCircuit.DAGCircuit.IsWellFormed key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","IsWellFormed"]] hom
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorMachine_part1 phase=eof spelling=BoolCircuit.DAGCircuit._sizeOf_1 key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","_sizeOf_1"]] home_key=
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorMachine_part1 phase=eof spelling=BoolCircuit.DAGCircuit._sizeOf_inst key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","_sizeOf_inst"]] hom
+       629|     ∃ S : NUPPT, S.Uniform ∧ S.coins = simCoins ℓ V' ∧
+       630|       ∀ x z (r : S.Coins x.length), S.simulate x z r = sim Com ℓ V' x z (List.ofFn r) := by
+       631|   have hF := sim_poly hCom ℓ hV'
+    *  632|   refine ⟨NUPPT.ofPolyTimeUniform hF (simCoins ℓ V'), NUPPT.ofPolyTimeUniform_uniform _ _, rfl, ?_⟩
+       633|   intro x z r
+       634|   rw [NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]

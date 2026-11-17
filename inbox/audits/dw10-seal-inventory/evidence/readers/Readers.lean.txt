@@ -463,7 +463,13 @@ run_cmd do
       let p := Name.str pre ("_".intercalate (parts.take i))
       if let some q := ps[p]? then
        if used.contains q then
-        IO.println ("READER " ++ (Json.mkObj [("provider", toJson q.toString), ("reader", toJson t.toString), ("home", toJson home.toString), ("private", toJson (isPrivateName t))]).compress)
+        IO.println ("READER " ++ (Json.mkObj [("provider", toJson q.toString), ("reader", toJson t.toString), ("home", toJson home.toString), ("private", toJson (isPrivateName t)), ("form", toJson "prefix")]).compress)
+        n := n + 1
+    for i in [1:parts.length] do
+      let p := Name.str pre ("_".intercalate (parts.drop i))
+      if let some q := ps[p]? then
+       if used.contains q then
+        IO.println ("READER " ++ (Json.mkObj [("provider", toJson q.toString), ("reader", toJson t.toString), ("home", toJson home.toString), ("private", toJson (isPrivateName t)), ("form", toJson "suffix")]).compress)
         n := n + 1
   for (q, _) in ps.toList do
     let some ci := env.find? q | continue

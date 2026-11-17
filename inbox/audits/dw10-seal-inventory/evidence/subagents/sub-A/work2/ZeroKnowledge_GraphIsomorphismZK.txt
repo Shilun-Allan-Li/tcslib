@@ -1,0 +1,162 @@
+====================================================================================================
+KEY SEAL-0378 | seal | TCSlib.Cryptography.statClose_giHonestView
+  record: TCSlib.Cryptography.statClose_giHonestView l.143: Type mismatch (#248 inherited_same_native_step)
+  counts sA=2 sB=2 cA=2 cB=2 scan=-
+  tool: STATEMENT | stmt=yes | separate ruling: the statement reads TCSlib.Cryptography.StatClose
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_GraphIsomorphismZK.log:254
+  DECL at 142, header ends 143
+      142| theorem statClose_giHonestView {n : ℕ} {G₀ G₁ : Graph n} {σ : Equiv.Perm (Fin n)}
+      143|     (hσ : permGraph G₀ σ = G₁) : StatClose (giHonestView G₀ σ) (giHVSim G₀ G₁) 0 := fun T => by
+  -- coe-A line 143 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.StatClose']
+     referenced=['TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.permGraph', 'TCSlib.Cryptography.uprob']
+     [TCSlib.Cryptography.StatClose] readers: statClose_iff@Sampling, statClose_one@Sampling, statClose_firstHit@Sampling, statClose_giSimTrunc@GraphIsomorphismZK, statClose_samplePerm@GraphIsomorphism, uexp_le_of_statClose@Sampling, statClose_colRealView@Simulator, statClose_samplePerm3@Language, statClose_colSimTruncH@Simulator, statClose_giHonestView@GraphIsomorphismZK, statClose_glPadSampler@HardCoreLemmas, distAdv_le_of_statClose@Sampling, statClose_permFromCoins@Permutations, statClose_sampleEdgeIdx@Language
+     > Type mismatch
+     >   fun T => ?m.14
+     > has type
+     >   (T : ?m.12) → ?m.15 T
+     > but is expected to have type
+     >   StatClose (giHonestView G₀ σ) (giHVSim G₀ G₁) 0
+       140| /-- The honest view is statistically `0`-close to the honest-verifier simulator
+       141| (Thm-122.3.hv in the `StatClose` form consumed by `StatZK`). -/
+       142| theorem statClose_giHonestView {n : ℕ} {G₀ G₁ : Graph n} {σ : Equiv.Perm (Fin n)}
+    *  143|     (hσ : permGraph G₀ σ = G₁) : StatClose (giHonestView G₀ σ) (giHVSim G₀ G₁) 0 := fun T => by
+       144|   rw [uprob_giHonestView_eq hσ T, sub_self, abs_zero]
+       145| 
+  -- coe-A line 144 cascade=True cls=Tactic X failed: Did not find an occurrence of the pattern
+     providers=['TCSlib.Cryptography.permGraph', 'TCSlib.Cryptography.uprob']
+     referenced=['TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.permGraph', 'TCSlib.Cryptography.uprob']
+     [TCSlib.Cryptography.permGraph] readers: permGraph_apply@Encoding, permGraph_mul@Encoding, permGraph_one@Encoding, permGraph_injective@GraphIsomorphism, isomorphic_permGraph@GraphIsomorphism, permGraph_mul_inv_of_eq@Encoding, permGraph_permGraph_inv@Encoding
+     [TCSlib.Cryptography.uprob] readers: uprob_def@Probability, uprob_fst@Probability, uprob_not@Probability, uprob_snd@LazySampling, uprob_mono@Probability, uprob_prod@Probability, uprob_true@Probability, uprob_congr@LazySampling, uprob_false@Probability, uprob_or_le@Probability, uprob_le_one@Probability, uprob_nonneg@Probability, uprob_eq_uexp@Probability, uprob_bool_prod@GeneratorFromPermutation; struct fields: cauchy
+     > Tactic `rewrite` failed: Did not find an occurrence of the pattern
+     >   uprob fun w => T (giHonestView G₀ σ w)
+     > in the target expression
+     >   ?m.15 T
+     > 
+       141| (Thm-122.3.hv in the `StatClose` form consumed by `StatZK`). -/
+       142| theorem statClose_giHonestView {n : ℕ} {G₀ G₁ : Graph n} {σ : Equiv.Perm (Fin n)}
+       143|     (hσ : permGraph G₀ σ = G₁) : StatClose (giHonestView G₀ σ) (giHVSim G₀ G₁) 0 := fun T => by
+    *  144|   rw [uprob_giHonestView_eq hσ T, sub_self, abs_zero]
+       145| 
+       146| /-! ### Lemma 123.5 -/
+DUP SEAL-0379 -> same decl TCSlib.Cryptography.statClose_giHonestView | tool: STATEMENT | separate ruling: the statement reads TCSlib.Cryptography.StatClose | record: TCSlib.Cryptography.statClose_giHonestView l.144: Tactic `rewrite` failed: Did not find an occurrence of the pattern (#248 inherited_same_native_step)
+====================================================================================================
+KEY SEAL-0380 | seal | TCSlib.Cryptography.statClose_giSimTrunc
+  record: TCSlib.Cryptography.statClose_giSimTrunc l.472: Type mismatch (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.statClose_iff (TCSlib/Cryptography/Asymptotic/Sampling.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_GraphIsomorphismZK.log:583
+  DECL at 468, header ends 471
+      468| theorem statClose_giSimTrunc {n : ℕ} {ρ : Type*} [Fintype ρ] [Nonempty ρ] {G₀ G₁ : Graph n}
+      469|     {σ : Equiv.Perm (Fin n)} (hσ : permGraph G₀ σ = G₁) (V : Graph n → ρ → Bool) (N : ℕ) :
+      470|     StatClose (giSimTrunc G₀ G₁ V N)
+      471|       (fun w : Equiv.Perm (Fin n) × ρ => some (giRealView G₀ σ V w)) ((2 : ℝ)⁻¹ ^ N) :=
+  -- coe-A line 472 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.StatClose']
+     referenced=['TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.permGraph']
+     [TCSlib.Cryptography.StatClose] readers: statClose_iff@Sampling, statClose_one@Sampling, statClose_firstHit@Sampling, statClose_giSimTrunc@GraphIsomorphismZK, statClose_samplePerm@GraphIsomorphism, uexp_le_of_statClose@Sampling, statClose_colRealView@Simulator, statClose_samplePerm3@Language, statClose_colSimTruncH@Simulator, statClose_giHonestView@GraphIsomorphismZK, statClose_glPadSampler@HardCoreLemmas, distAdv_le_of_statClose@Sampling, statClose_permFromCoins@Permutations, statClose_sampleEdgeIdx@Language
+     > Type mismatch
+     >   fun T => abs_uprob_giSimTrunc_sub_le hσ V N T
+     > has type
+     >   ∀ (T : Option (ρ × Graph n × Equiv.Perm (Fin n)) → Prop),
+     >     |(uprob fun c => T (giSimTrunc G₀ G₁ V N c)) - uprob fun w => T (some (giRealView G₀ σ V w))| ≤ 2⁻¹ ^ N
+     > but is expected to have type
+     >   StatClose (giSimTrunc G₀ G₁ V N) (fun w => some (giRealView G₀ σ V w)) (2⁻¹ ^ N)
+       469|     {σ : Equiv.Perm (Fin n)} (hσ : permGraph G₀ σ = G₁) (V : Graph n → ρ → Bool) (N : ℕ) :
+       470|     StatClose (giSimTrunc G₀ G₁ V N)
+       471|       (fun w : Equiv.Perm (Fin n) × ρ => some (giRealView G₀ σ V w)) ((2 : ℝ)⁻¹ ^ N) :=
+    *  472|   fun T => abs_uprob_giSimTrunc_sub_le hσ V N T
+       473| 
+       474| /-! ### The string-level simulator [PS10, Algorithm 123.4] (Alg-123.4, Claim-123.d) -/
+====================================================================================================
+KEY SEAL-0381 | seal | TCSlib.Cryptography.exists_giSimulator
+  record: TCSlib.Cryptography.exists_giSimulator l.533: Type mismatch (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | reader to be identified (no provider named in the message; see seal-errors.jsonl)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_GraphIsomorphismZK.log:644
+  DECL at 530, header ends 532
+      530| theorem exists_giSimulator (V' : Strategy) (hV' : V'.Efficient) :
+      531|     ∃ S : NUPPT, S.Uniform ∧ S.coins = giSimCoins V' ∧
+      532|       ∀ x z (r : S.Coins x.length), S.simulate x z r = giSim V' x z (List.ofFn r) :=
+  -- coe-A line 533 cascade=False cls=Type mismatch
+     providers=[]
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.simulate', 'TCSlib.Cryptography.Strategy.Efficient']
+     > Type mismatch
+     >   GIZK.exists_simulator V' hV'
+     > has type
+     >   ∃ S,
+     >     S.Uniform ∧
+     >       S.coins = GIZK.simCoins V' ∧
+     >         ∀ (x z : List Bool) (r : S.Coins x.length), S.simulate x z r = GIZK.sim V' x z (List.ofFn r)
+     > but is expected to have type
+     >   ∃ S,
+     >     S.Uniform ∧
+     >       S.coins = giSimCoins V' ∧
+     >         ∀ (x z : List Bool) (r : S.Coins x.length), S.simulate x z r = giSim V' x z (List.ofFn r)
+       530| theorem exists_giSimulator (V' : Strategy) (hV' : V'.Efficient) :
+       531|     ∃ S : NUPPT, S.Uniform ∧ S.coins = giSimCoins V' ∧
+       532|       ∀ x z (r : S.Coins x.length), S.simulate x z r = giSim V' x z (List.ofFn r) :=
+    *  533|   GIZK.exists_simulator V' hV'
+       534| 
+       535| /-! ### Theorem 122.3 -/
+====================================================================================================
+KEY SEAL-0382 | seal | TCSlib.Cryptography.gi_statZK
+  record: TCSlib.Cryptography.gi_statZK l.566: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce (#248 inherited_same_step_after_other_repairs)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | add TCSlib.Cryptography.Riso_eq (or _iff/_apply) in TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean; related: TCSlib.Cryptography.Riso_witnessRelation
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_GraphIsomorphismZK.log:677
+  DECL at 563, header ends 563
+      563| theorem gi_statZK : ∃ δ : ℕ → ℝ, Negligible δ ∧ StatZK giProtocol Riso δ := by
+  -- coe-A line 566 cascade=False cls=Tactic X failed: There are no additional binders or X bindings in the goal to in
+     providers=['TCSlib.Cryptography.Riso', 'TCSlib.Cryptography.StatZK', 'TCSlib.Cryptography.giProtocol', 'TCSlib.Cryptography.instanceVertices', 'TCSlib.Cryptography.permFailBound']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.simulate', 'TCSlib.Cryptography.GIZK.blockLen', 'TCSlib.Cryptography.GIZK.sim', 'TCSlib.Cryptography.GIZK.vstar', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.Protocol.withV', 'TCSlib.Cryptography.Riso', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.StatZK', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.encInstance', 'TCSlib.Cryptography.encPerm', 'TCSlib.Cryptography.giProtocol', 'TCSlib.Cryptography.instanceVertices', 'TCSlib.Cryptography.permFailBound', 'TCSlib.Cryptography.permGraph', 'Turing.pairEncode']
+     [TCSlib.Cryptography.Riso] readers: Riso_witnessRelation@GraphIsomorphism
+     [TCSlib.Cryptography.StatZK] readers: StatZK_iff@Defs, gi_statZK@GraphIsomorphismZK
+     [TCSlib.Cryptography.giProtocol] readers: giProtocol_eq@GraphIsomorphism, giProtocol_proverBounded@GraphIsomorphism; struct fields: P, V, rounds, verifierFirst
+     [TCSlib.Cryptography.instanceVertices] readers: instanceVertices_length_encInstance@GraphIsomorphism
+     [TCSlib.Cryptography.permFailBound] readers: permFailBound_def@GraphIsomorphism, negligible_mul_permFailBound@GraphIsomorphism; struct fields: cauchy
+     > Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+     > 
+     > ⊢ StatZK giProtocol Riso fun N =>
+     >     2⁻¹ ^ instanceVertices N + (↑(instanceVertices N) + 1) * permFailBound (instanceVertices N)
+       563| theorem gi_statZK : ∃ δ : ℕ → ℝ, Negligible δ ∧ StatZK giProtocol Riso δ := by
+       564|   refine ⟨fun N => (2 : ℝ)⁻¹ ^ instanceVertices N +
+       565|     ((instanceVertices N : ℝ) + 1) * permFailBound (instanceVertices N), GIZK.negligible_delta, ?_⟩
+    *  566|   intro V' hV'
+       567|   obtain ⟨S, hS, hc, hsim⟩ := exists_giSimulator V' hV'
+       568|   refine ⟨S, hS, ?_⟩
+====================================================================================================
+KEY SEAL-0383 | seal | TCSlib.Cryptography.gi_hvzk
+  record: TCSlib.Cryptography.gi_hvzk l.594: Application type mismatch: The argument (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | add TCSlib.Cryptography.HVZK_eq (or _iff/_apply) in TCSlib/Cryptography/ZeroKnowledge/Defs.lean
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_GraphIsomorphismZK.log:705
+  DECL at 592, header ends 592
+      592| theorem gi_hvzk : HVZK giProtocol Riso := by
+  -- coe-A line 594 cascade=False cls=Application type mismatch: The argument
+     providers=['TCSlib.Cryptography.HVZK', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.Riso', 'TCSlib.Cryptography.StatZK', 'TCSlib.Cryptography.giProtocol']
+     referenced=['TCSlib.Cryptography.HVZK', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.Riso', 'TCSlib.Cryptography.StatZK', 'TCSlib.Cryptography.giProtocol']
+     [TCSlib.Cryptography.Negligible] readers: negligible_iff@Negligible, negligible_zero@Negligible, glColl_negligible@HardCoreGLColl, negligible_two_pow_neg@Negligible, negligible_exp_neg_sqrt_div@Defs, negligible_inv_pow_sqrt_div@Defs, negligible_mul_permFailBound@GraphIsomorphism, negligible_two_pow_neg_sqrt_div@Defs, negligible_of_le_inv_pow_sqrt_div@Defs
+     [TCSlib.Cryptography.Riso] readers: Riso_witnessRelation@GraphIsomorphism
+     [TCSlib.Cryptography.StatZK] readers: StatZK_iff@Defs, gi_statZK@GraphIsomorphismZK
+     [TCSlib.Cryptography.giProtocol] readers: giProtocol_eq@GraphIsomorphism, giProtocol_proverBounded@GraphIsomorphism; struct fields: P, V, rounds, verifierFirst
+     > Application type mismatch: The argument
+     >   giVerifier_efficient
+     > has type
+     >   giVerifier.Efficient
+     > but is expected to have type
+     >   giProtocol.V.Efficient
+     > in the application
+     >   StatZK.hvzk hδ giVerifier_efficient
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphismZK phase=eof spelling=BoolCircuit.decodeNat key=[["str","BoolCircuit"],["str","decodeNat"]] home_key=[["str","TCSlib"],["str","Complexity"],["str","Cir
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphismZK phase=eof spelling=BoolCircuit.decodeNat._sunfold key=[["str","BoolCircuit"],["str","decodeNat"],["str","_sunfold"]] home_key=[["str","TCSlib"],["st
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphismZK phase=eof spelling=BoolCircuit.decodeNat._unsafe_rec key=[["str","BoolCircuit"],["str","decodeNat"],["str","_unsafe_rec"]] home_key=[["str","TCSlib"
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphismZK phase=eof spelling=BoolCircuit.decodeNat.match_1 key=[["str","BoolCircuit"],["str","decodeNat"],["str","match_1"]] home_key=[["str","TCSlib"],["str"
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphismZK phase=eof spelling=BoolCircuit.encodeNat key=[["str","BoolCircuit"],["str","encodeNat"]] home_key=[["str","TCSlib"],["str","Complexity"],["str","Cir
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphismZK phase=eof spelling=Complexity.BinArith.DivInv key=[["str","Complexity"],["str","BinArith"],["str","DivInv"]] home_key=[["str","TCSlib"],["str","Comp
+       591| zero-knowledge for `R_iso` (`StatZK.hvzk` with `giVerifier_efficient`). -/
+       592| theorem gi_hvzk : HVZK giProtocol Riso := by
+       593|   obtain ⟨δ, hδ, h⟩ := gi_statZK
+    *  594|   exact h.hvzk hδ giVerifier_efficient
+       595| 
+       596| end TCSlib.Cryptography

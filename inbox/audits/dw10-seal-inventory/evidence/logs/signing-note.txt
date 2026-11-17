@@ -1,0 +1,7 @@
+Checkpoint 1 commit 82d1966006fec33ec8c5c34e2bdd0b8a07365e56 on exchange/pass-shelat-ch5-8 carries an SSH signature (gpgsig header),
+contrary to the brief ("Commit unsigned"). Cause: the commit was created with `git -c commit.gpgsign=false commit` (unsigned, local
+6a553e2a7481441c6711872ebff86c5dc76e1348), then `git pull --rebase origin exchange/pass-shelat-ch5-8` replayed it onto the new tip
+2467bc3befdad8472b1f359337bf3a203e3651e1 and re-created the commit under the host's global configuration (/root/.gitconfig:
+commit.gpgsign=true, gpg.format=ssh, injected by the environment), which signed it. It was pushed before the signature was noticed.
+It is not rewritten (no force-push). Every later commit and rebase runs with `-c commit.gpgsign=false` on the rebase as well, and each
+pushed commit is checked for a gpgsig header before and after the push. Same mechanism as bb1-sim's BS-F08.

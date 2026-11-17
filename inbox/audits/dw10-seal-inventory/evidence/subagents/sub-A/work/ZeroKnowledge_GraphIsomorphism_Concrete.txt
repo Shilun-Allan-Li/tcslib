@@ -1,0 +1,150 @@
+====================================================================================================
+KEY SEAL-0349 | seal | TCSlib.Cryptography.GI.negligible_mul_permFailBound
+  record: TCSlib.Cryptography.GI.negligible_mul_permFailBound l.62: Type mismatch (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | add TCSlib.Cryptography.GI.instanceVertices_eq (or _iff/_apply) in TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean; related: TCSlib.Cryptography.GI.instanceVertices_length_encInstance
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_Concrete.log:173
+  DECL at 58, header ends 59
+       58| theorem negligible_mul_permFailBound :
+       59|     Negligible fun N : ℕ => (N : ℝ) * permFailBound (instanceVertices N) := by
+  -- coe-A line 62 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.GI.instanceVertices']
+     referenced=['TCSlib.Cryptography.GI.instanceVertices', 'TCSlib.Cryptography.GI.permFailBound', 'TCSlib.Cryptography.Negligible']
+     [TCSlib.Cryptography.GI.instanceVertices] readers: instanceVertices_length_encInstance@Proofs
+     > Type mismatch
+     >   LE.le.trans (Nat.sqrt_le_self 8) hN
+     > has type
+     >   Nat.sqrt 8 ≤ N
+     > but is expected to have type
+     >   instanceVertices N ≤ N
+        59|     Negligible fun N : ℕ => (N : ℝ) * permFailBound (instanceVertices N) := by
+        60|   refine ((negligible_two_pow_neg_sqrt_div (C := 4) (by norm_num)).mul_pow 2).mono
+        61|     ⟨8, fun N hN => ?_⟩
+    *   62|   have hv : instanceVertices N ≤ N := (Nat.sqrt_le_self _).trans (by omega)
+        63|   have hsq : Nat.sqrt (N / 4) ≤ instanceVertices N := Nat.sqrt_le_sqrt (by omega)
+        64|   have hpow : (2 : ℝ)⁻¹ ^ instanceVertices N ≤ (2 : ℝ)⁻¹ ^ Nat.sqrt (N / 4) :=
+====================================================================================================
+KEY SEAL-0350 | seal | TCSlib.Cryptography.GI.uprob_gi_rep_cheat_le
+  record: TCSlib.Cryptography.GI.uprob_gi_rep_cheat_le l.208: Invalid `⟨...⟩` notation: The expected type (#248 inherited_same_native_step)
+  counts sA=2 sB=2 cA=2 cB=2 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.GI.isomorphic_iff (TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_Concrete.log:319
+  DECL at 189, header ends 194
+      189| theorem uprob_gi_rep_cheat_le {n m : ℕ} {ρ : Type*} [Fintype ρ] {G₀ G₁ : Graph n}
+      190|     (h : ¬ Isomorphic G₀ G₁) (H : (i : Fin m) → (Fin i → Bool) → ρ → Graph n)
+      191|     (γ : (i : Fin m) → (Fin (i + 1) → Bool) → ρ → Equiv.Perm (Fin n)) :
+      192|     uprob (fun z : (Fin m → Bool) × ρ => ∀ i,
+      193|       permGraph (cond (z.1 i) G₁ G₀) (γ i (prefixLE z.1 i) z.2) = H i (prefixLT z.1 i) z.2) ≤
+      194|       (2 : ℝ)⁻¹ ^ m := by
+  -- coe-A line 208 cascade=False cls=Invalid X notation: The expected type
+     providers=['TCSlib.Cryptography.GI.Isomorphic']
+     referenced=['TCSlib.Cryptography.GI.Isomorphic', 'TCSlib.Cryptography.GI.instDecidableIsomorphic', 'TCSlib.Cryptography.permGraph', 'TCSlib.Cryptography.uprob']
+     [TCSlib.Cryptography.GI.Isomorphic] readers: isomorphic_iff@Proofs, isomorphic_permGraph@Proofs
+     > Invalid `⟨...⟩` notation: The expected type
+     >   Isomorphic G₀ (H i (prefixLT z.1 i) z.2)
+     > is not an inductive type
+     > 
+     > Note: This notation can only be used when the expected type is an inductive type with a single constructor
+       205|     have hi := hz i
+       206|     cases hb : z.1 i
+       207|     · rw [hb] at hi
+    *  208|       have h0 : Isomorphic G₀ (H i (prefixLT z.1 i) z.2) := ⟨_, hi⟩
+       209|       exact (decide_eq_false fun h1 => not_isomorphic_both h ⟨h0, h1⟩).symm
+       210|     · rw [hb] at hi
+  -- coe-A line 211 cascade=True cls=Invalid X notation: The expected type
+     providers=['TCSlib.Cryptography.GI.Isomorphic', 'TCSlib.Cryptography.GI.instDecidableIsomorphic', 'TCSlib.Cryptography.permGraph', 'TCSlib.Cryptography.uprob']
+     referenced=['TCSlib.Cryptography.GI.Isomorphic', 'TCSlib.Cryptography.GI.instDecidableIsomorphic', 'TCSlib.Cryptography.permGraph', 'TCSlib.Cryptography.uprob']
+     [TCSlib.Cryptography.GI.Isomorphic] readers: isomorphic_iff@Proofs, isomorphic_permGraph@Proofs
+     [TCSlib.Cryptography.permGraph] readers: permGraph_apply@Encoding, permGraph_mul@Encoding, permGraph_one@Encoding, permGraph_injective@GraphIsomorphism, permGraph_mul_inv_of_eq@Encoding, permGraph_permGraph_inv@Encoding
+     [TCSlib.Cryptography.uprob] readers: uprob_def@Probability, uprob_fst@Probability, uprob_not@Probability, uprob_snd@LazySampling, uprob_mono@Probability, uprob_prod@Probability, uprob_true@Probability, uprob_congr@LazySampling, uprob_false@Probability, uprob_or_le@Probability, uprob_le_one@Probability, uprob_nonneg@Probability, uprob_eq_uexp@Probability, uprob_bool_prod@GeneratorFromPermutation, uprob_exists_le@Probability, uprob_prod_comm@LazySampling, uprob_comp_equiv@Probability, uprob_eq_of_equiv@Indistinguishability, uprob_bitsToNat_lt@Sampling, uprob_col_cheat_le@Protocol, uprob_tdpPredictor@TrapdoorPredictor, uprob_update_split@LazySampling, uprob_firstHit_none@Sampling, uprob_gni_rep_cheat@GraphIsomorphism, uprob_pi_forall_dep@Permutations, uprob_update_absorb@LazySampling, uprob_adaptive_guess@GraphIsomorphism, uprob_eq_card_filter@Probability, uprob_sections_congr@LazySampling, uprob_update_absorb'@LazySampling, uprob_adaptive_escape@Protocol, uprob_colSimTruncW_eq@Simulator, uprob_comp_eq_sum_map@Experiments, uprob_giHonestView_eq@GraphIsomorphismZK, uprob_giSimTrunc_none@GraphIsomorphismZK, uprob_gi_rep_cheat_le@GraphIsomorphism, uprob_gi_cheat_le_half@GraphIsomorphism, uprob_not_injective_le@Hybrid, uprob_colSimAttemptW_eq@Simulator, uprob_colSimTruncH_none@Simulator, uprob_comp_eq_sum_fiber@Sampling, uprob_fiber_le_card_mul@Universal, uprob_giSimAttempt_none@GraphIsomorphismZK, uprob_giSimAttempt_some@GraphIsomorphismZK, uprob_colSimAttemptH_none@Simulator, uprob_colSimAttemptH_some@Simulator, uprob_comp_eq_probTrue_map@SamplingFinDist, uprob_rejectionSample_none@Sampling, uprob_uniformFromBits_none@Sampling, uprob_permFromCoins_none_le@Permutations, uprob_uniformFromBits_eq_some@Sampling, uprob_permGraph_eq_of_isomorphic@GraphIsomorphism, uprob_permGraph_eq_of_isomorphic'@GraphIsomorphism, uprob_permFromCoins_none_le_two_pow@Permutations, uprob_rejectionSample_none_le_half_pow@Sampling; struct fields: cauchy
+     > Invalid `⟨...⟩` notation: The expected type
+     >   Isomorphic G₁ (H i (prefixLT z.1 i) z.2)
+     > is not an inductive type
+     > 
+     > Note: This notation can only be used when the expected type is an inductive type with a single constructor
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_Concrete phase=eof spelling=BoolCircuit.decodeNat key=[["str","BoolCircuit"],["str","decodeNat"]] home_key=[["str","TCSlib"],["str","Complexity"],["st
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_Concrete phase=eof spelling=BoolCircuit.decodeNat._sunfold key=[["str","BoolCircuit"],["str","decodeNat"],["str","_sunfold"]] home_key=[["str","TCSlib
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_Concrete phase=eof spelling=BoolCircuit.decodeNat._unsafe_rec key=[["str","BoolCircuit"],["str","decodeNat"],["str","_unsafe_rec"]] home_key=[["str","
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_Concrete phase=eof spelling=BoolCircuit.decodeNat.match_1 key=[["str","BoolCircuit"],["str","decodeNat"],["str","match_1"]] home_key=[["str","TCSlib"]
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_Concrete phase=eof spelling=BoolCircuit.encodeNat key=[["str","BoolCircuit"],["str","encodeNat"]] home_key=[["str","TCSlib"],["str","Complexity"],["st
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_Concrete phase=eof spelling=Complexity.BinArith.DivInv key=[["str","Complexity"],["str","BinArith"],["str","DivInv"]] home_key=[["str","TCSlib"],["str
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_Concrete phase=eof spelling=Complexity.BinArith.MulInv key=[["str","Complexity"],["str","BinArith"],["str","MulInv"]] home_key=[["str","TCSlib"],["str
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_Concrete phase=eof spelling=Complexity.BinArith.SlotsLe key=[["str","Complexity"],["str","BinArith"],["str","SlotsLe"]] home_key=[["str","TCSlib"],["s
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_Concrete phase=eof spelling=Complexity.BinArith.add key=[["str","Complexity"],["str","BinArith"],["str","add"]] home_key=[["str","TCSlib"],["str","Com
+       208|       have h0 : Isomorphic G₀ (H i (prefixLT z.1 i) z.2) := ⟨_, hi⟩
+       209|       exact (decide_eq_false fun h1 => not_isomorphic_both h ⟨h0, h1⟩).symm
+       210|     · rw [hb] at hi
+    *  211|       exact (decide_eq_true ⟨_, hi⟩).symm
+       212| 
+       213| /-- The change of variables of Lem-119.b, `σ_i ↦ if b_i then σ_i σ₀⁻¹ else σ_i`, with the
+====================================================================================================
+KEY SEAL-0351 | seal | TCSlib.Cryptography.GI.uprob_gi_rep_cheat_le
+  record: TCSlib.Cryptography.GI.uprob_gi_rep_cheat_le l.211: Invalid `⟨...⟩` notation: The expected type (#248 inherited_same_native_step)
+  counts sA=2 sB=2 cA=2 cB=2 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.GI.isomorphic_iff (TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_Concrete.log:319
+  DECL at 189, header ends 194
+      189| theorem uprob_gi_rep_cheat_le {n m : ℕ} {ρ : Type*} [Fintype ρ] {G₀ G₁ : Graph n}
+      190|     (h : ¬ Isomorphic G₀ G₁) (H : (i : Fin m) → (Fin i → Bool) → ρ → Graph n)
+      191|     (γ : (i : Fin m) → (Fin (i + 1) → Bool) → ρ → Equiv.Perm (Fin n)) :
+      192|     uprob (fun z : (Fin m → Bool) × ρ => ∀ i,
+      193|       permGraph (cond (z.1 i) G₁ G₀) (γ i (prefixLE z.1 i) z.2) = H i (prefixLT z.1 i) z.2) ≤
+      194|       (2 : ℝ)⁻¹ ^ m := by
+  -- coe-A line 208 cascade=False cls=Invalid X notation: The expected type
+     providers=['TCSlib.Cryptography.GI.Isomorphic']
+     referenced=['TCSlib.Cryptography.GI.Isomorphic', 'TCSlib.Cryptography.GI.instDecidableIsomorphic', 'TCSlib.Cryptography.permGraph', 'TCSlib.Cryptography.uprob']
+     [TCSlib.Cryptography.GI.Isomorphic] readers: isomorphic_iff@Proofs, isomorphic_permGraph@Proofs
+     > Invalid `⟨...⟩` notation: The expected type
+     >   Isomorphic G₀ (H i (prefixLT z.1 i) z.2)
+     > is not an inductive type
+     > 
+     > Note: This notation can only be used when the expected type is an inductive type with a single constructor
+       205|     have hi := hz i
+       206|     cases hb : z.1 i
+       207|     · rw [hb] at hi
+    *  208|       have h0 : Isomorphic G₀ (H i (prefixLT z.1 i) z.2) := ⟨_, hi⟩
+       209|       exact (decide_eq_false fun h1 => not_isomorphic_both h ⟨h0, h1⟩).symm
+       210|     · rw [hb] at hi
+  -- coe-A line 211 cascade=True cls=Invalid X notation: The expected type
+     providers=['TCSlib.Cryptography.GI.Isomorphic', 'TCSlib.Cryptography.GI.instDecidableIsomorphic', 'TCSlib.Cryptography.permGraph', 'TCSlib.Cryptography.uprob']
+     referenced=['TCSlib.Cryptography.GI.Isomorphic', 'TCSlib.Cryptography.GI.instDecidableIsomorphic', 'TCSlib.Cryptography.permGraph', 'TCSlib.Cryptography.uprob']
+     [TCSlib.Cryptography.GI.Isomorphic] readers: isomorphic_iff@Proofs, isomorphic_permGraph@Proofs
+     [TCSlib.Cryptography.permGraph] readers: permGraph_apply@Encoding, permGraph_mul@Encoding, permGraph_one@Encoding, permGraph_injective@GraphIsomorphism, permGraph_mul_inv_of_eq@Encoding, permGraph_permGraph_inv@Encoding
+     [TCSlib.Cryptography.uprob] readers: uprob_def@Probability, uprob_fst@Probability, uprob_not@Probability, uprob_snd@LazySampling, uprob_mono@Probability, uprob_prod@Probability, uprob_true@Probability, uprob_congr@LazySampling, uprob_false@Probability, uprob_or_le@Probability, uprob_le_one@Probability, uprob_nonneg@Probability, uprob_eq_uexp@Probability, uprob_bool_prod@GeneratorFromPermutation, uprob_exists_le@Probability, uprob_prod_comm@LazySampling, uprob_comp_equiv@Probability, uprob_eq_of_equiv@Indistinguishability, uprob_bitsToNat_lt@Sampling, uprob_col_cheat_le@Protocol, uprob_tdpPredictor@TrapdoorPredictor, uprob_update_split@LazySampling, uprob_firstHit_none@Sampling, uprob_gni_rep_cheat@GraphIsomorphism, uprob_pi_forall_dep@Permutations, uprob_update_absorb@LazySampling, uprob_adaptive_guess@GraphIsomorphism, uprob_eq_card_filter@Probability, uprob_sections_congr@LazySampling, uprob_update_absorb'@LazySampling, uprob_adaptive_escape@Protocol, uprob_colSimTruncW_eq@Simulator, uprob_comp_eq_sum_map@Experiments, uprob_giHonestView_eq@GraphIsomorphismZK, uprob_giSimTrunc_none@GraphIsomorphismZK, uprob_gi_rep_cheat_le@GraphIsomorphism, uprob_gi_cheat_le_half@GraphIsomorphism, uprob_not_injective_le@Hybrid, uprob_colSimAttemptW_eq@Simulator, uprob_colSimTruncH_none@Simulator, uprob_comp_eq_sum_fiber@Sampling, uprob_fiber_le_card_mul@Universal, uprob_giSimAttempt_none@GraphIsomorphismZK, uprob_giSimAttempt_some@GraphIsomorphismZK, uprob_colSimAttemptH_none@Simulator, uprob_colSimAttemptH_some@Simulator, uprob_comp_eq_probTrue_map@SamplingFinDist, uprob_rejectionSample_none@Sampling, uprob_uniformFromBits_none@Sampling, uprob_permFromCoins_none_le@Permutations, uprob_uniformFromBits_eq_some@Sampling, uprob_permGraph_eq_of_isomorphic@GraphIsomorphism, uprob_permGraph_eq_of_isomorphic'@GraphIsomorphism, uprob_permFromCoins_none_le_two_pow@Permutations, uprob_rejectionSample_none_le_half_pow@Sampling; struct fields: cauchy
+     > Invalid `⟨...⟩` notation: The expected type
+     >   Isomorphic G₁ (H i (prefixLT z.1 i) z.2)
+     > is not an inductive type
+     > 
+     > Note: This notation can only be used when the expected type is an inductive type with a single constructor
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_Concrete phase=eof spelling=BoolCircuit.decodeNat key=[["str","BoolCircuit"],["str","decodeNat"]] home_key=[["str","TCSlib"],["str","Complexity"],["st
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_Concrete phase=eof spelling=BoolCircuit.decodeNat._sunfold key=[["str","BoolCircuit"],["str","decodeNat"],["str","_sunfold"]] home_key=[["str","TCSlib
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_Concrete phase=eof spelling=BoolCircuit.decodeNat._unsafe_rec key=[["str","BoolCircuit"],["str","decodeNat"],["str","_unsafe_rec"]] home_key=[["str","
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_Concrete phase=eof spelling=BoolCircuit.decodeNat.match_1 key=[["str","BoolCircuit"],["str","decodeNat"],["str","match_1"]] home_key=[["str","TCSlib"]
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_Concrete phase=eof spelling=BoolCircuit.encodeNat key=[["str","BoolCircuit"],["str","encodeNat"]] home_key=[["str","TCSlib"],["str","Complexity"],["st
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_Concrete phase=eof spelling=Complexity.BinArith.DivInv key=[["str","Complexity"],["str","BinArith"],["str","DivInv"]] home_key=[["str","TCSlib"],["str
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_Concrete phase=eof spelling=Complexity.BinArith.MulInv key=[["str","Complexity"],["str","BinArith"],["str","MulInv"]] home_key=[["str","TCSlib"],["str
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_Concrete phase=eof spelling=Complexity.BinArith.SlotsLe key=[["str","Complexity"],["str","BinArith"],["str","SlotsLe"]] home_key=[["str","TCSlib"],["s
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_Concrete phase=eof spelling=Complexity.BinArith.add key=[["str","Complexity"],["str","BinArith"],["str","add"]] home_key=[["str","TCSlib"],["str","Com
+       208|       have h0 : Isomorphic G₀ (H i (prefixLT z.1 i) z.2) := ⟨_, hi⟩
+       209|       exact (decide_eq_false fun h1 => not_isomorphic_both h ⟨h0, h1⟩).symm
+       210|     · rw [hb] at hi
+    *  211|       exact (decide_eq_true ⟨_, hi⟩).symm
+       212| 
+       213| /-- The change of variables of Lem-119.b, `σ_i ↦ if b_i then σ_i σ₀⁻¹ else σ_i`, with the
+====================================================================================================
+KEY C1-0308 | unfold | TCSlib.Cryptography.GI.negligible_mul_permFailBound
+  record: TCSlib.Cryptography.GI.negligible_mul_permFailBound l.67: unfold permFailBound (foreign-def) (#248 inherited_same_tactic_item)
+  counts sA=- sB=- cA=- cB=- scan=67 unfold TCSlib.Cryptography.GI.permFailBound
+  tool: STAGE2 | stmt=no | add TCSlib.Cryptography.GI.permFailBound_eq (or _iff/_apply) in TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean; related: TCSlib.Cryptography.GI.permFailBound_nonneg
+  ev: evidence/scan/b3/explicit.json#items[2581]
+  DECL at 58
+       58| theorem negligible_mul_permFailBound :
+        63|   have hsq : Nat.sqrt (N / 4) ≤ instanceVertices N := Nat.sqrt_le_sqrt (by omega)
+        64|   have hpow : (2 : ℝ)⁻¹ ^ instanceVertices N ≤ (2 : ℝ)⁻¹ ^ Nat.sqrt (N / 4) :=
+        65|     pow_le_pow_of_le_one (by norm_num) (by norm_num) hsq
+        66|   have hv' : (instanceVertices N : ℝ) ≤ N := by exact_mod_cast hv
+    *   67|   unfold permFailBound
+        68|   rw [abs_of_nonneg (by positivity), abs_of_nonneg (by positivity)]
+        69|   calc (N : ℝ) * (instanceVertices N * (2 : ℝ)⁻¹ ^ instanceVertices N)
+        70|       ≤ N * (N * (2 : ℝ)⁻¹ ^ Nat.sqrt (N / 4)) := by gcongr
+     [TCSlib.Cryptography.GI.permFailBound] readers: permFailBound_nonneg@Proofs; struct fields: cauchy

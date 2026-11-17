@@ -1,0 +1,127 @@
+====================================================================================================
+KEY H:212 | seal | TCSlib.Cryptography.GIZK.decGraphAt_padSq
+  record: TCSlib.Cryptography.GIZK.decGraphAt_padSq (lines 167; #248 OPEN_INCOMPLETE)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | add TCSlib.Cryptography.decGraphAt_eq (or _iff/_apply) in TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean; related: TCSlib.Cryptography.decGraphAt_encGraph
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_GraphIsomorphismZK_Simulator.log:292
+  DECL at 180, header ends 180
+      180| theorem decGraphAt_padSq (n : ℕ) (w : List Bool) : decGraphAt n (padSq n w) = decGraphAt n w :=
+  -- coe-A line 181 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.decGraphAt']
+     referenced=['TCSlib.Cryptography.decGraphAt']
+     [TCSlib.Cryptography.decGraphAt] readers: decGraphAt_encGraph@GraphIsomorphism
+     > Type mismatch
+     >   getD_padSq n w (finProdFinEquiv (u, v)).isLt
+     > has type
+     >   (padSq n w).getD (↑(finProdFinEquiv (u, v))) false = w.getD (↑(finProdFinEquiv (u, v))) false
+     > but is expected to have type
+     >   decGraphAt n (padSq n w) u v = decGraphAt n w u v
+       178| 
+       179| /-- Padding does not change the decoded graph on `n` vertices. -/
+       180| theorem decGraphAt_padSq (n : ℕ) (w : List Bool) : decGraphAt n (padSq n w) = decGraphAt n w :=
+    *  181|   funext fun u => funext fun v => getD_padSq n w (finProdFinEquiv (u, v)).isLt
+       182| 
+       183| /-- Padding to the square of a unary count is polynomial-time: on `⟨u, w⟩`, `padSq |u| w`
+====================================================================================================
+KEY H:213 | seal | TCSlib.Cryptography.GIZK.decGraph_eq_of_sqrt
+  record: TCSlib.Cryptography.GIZK.decGraph_eq_of_sqrt (lines 186; #248 OPEN_INCOMPLETE)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.decGraph_eq (TCSlib/Cryptography/ZeroKnowledge/Encoding.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_GraphIsomorphismZK_Simulator.log:311
+  DECL at 197, header ends 198
+      197| theorem decGraph_eq_of_sqrt {w : List Bool} {n : ℕ} (h : Nat.sqrt w.length = n) :
+      198|     decGraph w = ⟨n, decGraphAt n w⟩ := by
+  -- coe-A line 200 cascade=False cls=Tactic X failed: The left-hand side
+     providers=['TCSlib.Cryptography.decGraph', 'TCSlib.Cryptography.decGraphAt']
+     referenced=['TCSlib.Cryptography.decGraph', 'TCSlib.Cryptography.decGraphAt']
+     [TCSlib.Cryptography.decGraph] readers: decGraph_eq@Encoding, decGraph_fst@Encoding, decGraph_snd@GraphIsomorphism, decGraph_encGraph@Encoding, decGraph_snd_apply@Encoding; struct fields: fst, snd
+     [TCSlib.Cryptography.decGraphAt] readers: decGraphAt_encGraph@GraphIsomorphism
+     > Tactic `rfl` failed: The left-hand side
+     >   decGraph w
+     > is not definitionally equal to the right-hand side
+     >   ⟨w.length.sqrt, decGraphAt w.length.sqrt w⟩
+     > 
+     > w : List Bool
+     > ⊢ decGraph w = ⟨w.length.sqrt, decGraphAt w.length.sqrt w⟩
+       197| theorem decGraph_eq_of_sqrt {w : List Bool} {n : ℕ} (h : Nat.sqrt w.length = n) :
+       198|     decGraph w = ⟨n, decGraphAt n w⟩ := by
+       199|   subst h
+    *  200|   rfl
+       201| 
+       202| /-- Relabelling a graph decoded on a given vertex count is polynomial-time: on
+====================================================================================================
+KEY H:215 | seal | TCSlib.Cryptography.GIZK.sim_poly
+  record: TCSlib.Cryptography.GIZK.sim_poly (lines 440; #248 OPEN_INCOMPLETE)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.polyTimeComputable_iff (TCSlib/Complexity/ClassNP/PolyTime.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_GraphIsomorphismZK_Simulator.log:585
+  DECL at 470, header ends 471
+      470| theorem sim_poly (V' : Strategy) (hV' : V'.Efficient) :
+      471|     PolyTimeComputable fun w => sim V' (simX w) (simZ w) (simR w) := by
+  -- coe-A line 474 cascade=False cls=Type mismatch
+     providers=['Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'TCSlib.Cryptography.instanceVertexCount']
+     referenced=['Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.EncodingMachines.firstIdx', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.instanceVertexCount', 'Turing.pairEncode']
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop
+     [Complexity.pairFstD] readers: pairFstD_eq@PolyTimePairing, pairFstD_nil@PolyTimeBlockLoop, pairFstD_pairEncode@PolyTimePairing, polyTimeComputable_pairFstD@PolyTimePairing, pairFstD_of_pairDecode_eq_none@PolyTimePairing, polyTimeComputable_iterate_pairFstD@PolyTimePairing
+     [TCSlib.Cryptography.instanceVertexCount] readers: instanceVertexCount_eq@GraphIsomorphism, instanceVertexCount_encInstance@GraphIsomorphism
+     > Type mismatch
+     >   unarySqrt_poly (unaryLength_poly (PolyTimeComputable.comp polyTimeComputable_pairFstD simX_poly))
+     > has type
+     >   PolyTimeComputable fun x => List.replicate ((pairFstD ∘ simX) x).length.sqrt true
+     > but is expected to have type
+     >   PolyTimeComputable fun w => List.replicate (instanceVertexCount (simX w)) true
+       471|     PolyTimeComputable fun w => sim V' (simX w) (simZ w) (simR w) := by
+       472|   obtain ⟨hp, hout⟩ := attemptAt_poly V' hV'
+       473|   have hlen : PolyTimeComputable fun w => List.replicate (instanceVertexCount (simX w)) true :=
+    *  474|     unarySqrt_poly (unaryLength_poly (polyTimeComputable_pairFstD.comp simX_poly))
+       475|   have hidx := polyTimeComputable_firstIdx (p := fun w t => (attemptAt V' w t).isSome) hp hlen
+       476|   have hsel : PolyTimeComputable fun w =>
+====================================================================================================
+KEY H:216 | seal | TCSlib.Cryptography.GIZK.exists_simulator
+  record: TCSlib.Cryptography.GIZK.exists_simulator (lines 459; #248 OPEN_TYPED_COINS)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.NUPPT.uniform_iff (TCSlib/Complexity/Randomized/PPT.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_GraphIsomorphismZK_Simulator.log:604
+  DECL at 489, header ends 491
+      489| theorem exists_simulator (V' : Strategy) (hV' : V'.Efficient) :
+      490|     ∃ S : NUPPT, S.Uniform ∧ S.coins = simCoins V' ∧
+      491|       ∀ x z (r : S.Coins x.length), S.simulate x z r = sim V' x z (List.ofFn r) := by
+  -- coe-A line 493 cascade=False cls=Application type mismatch: The argument
+     providers=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.advInput', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'Complexity.NUPPT.simulate', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.Strategy.Efficient', 'Turing.pairEncode']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.advInput', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'Complexity.NUPPT.simulate', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.Strategy.Efficient', 'Turing.pairEncode']
+     [Complexity.NUPPT.Uniform] readers: uniform_iff@PPT, ofPolyTime_uniform@NonUniform, ofPolyTimeUniform_uniform@PPT
+     [Complexity.NUPPT.advInput] readers: advInput_eq@PPT, length_advInput@PPT
+     [Complexity.NUPPT.coinLen] readers: coinLen_eq@PPT, coinLen_reparam@HardCoreLemmas
+     [Complexity.NUPPT.ofPolyTimeUniform] readers: coins_ofPolyTimeUniform@PPT, output_ofPolyTimeUniform@PPT, runAtL_ofPolyTimeUniform@PPT, runLit_ofPolyTimeUniform@NonUniform, ofPolyTimeUniform_uniform@PPT; struct fields: M, Ct, ct, coins, adv, advice, advice_length, halts
+     [Complexity.NUPPT.runAt] readers: runAt_eq@PPT, runAt_wrap@ReductionSupport, runAt_preComp@ReductionSupport, runAt_reparam@HardCoreLemmas, runLit_eq_runAt@NonUniform, runAt_coinsCongr@PPT, withIndexParam_runAt@CollectionsHelpers
+     [Complexity.NUPPT.runAtL] readers: runAtL_eq@PPT, runAtL_wrap@ReductionSupport, runAtL_preComp@ReductionSupport, runAtL_precomp@HardCoreGL, runAtL_reparam@HardCoreLemmas, runLit_eq_runAtL@NonUniform, runAtL_ofPolyTime@PPT, runAtL_eq_output_layout@Closure, runAtL_ofPolyTimeUniform@PPT, polyTimeComputable_runAtL@NonUniform
+     [Complexity.NUPPT.simulate] readers: simulate_eq@Defs
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop
+     [Complexity.pairFstD] readers: pairFstD_eq@PolyTimePairing, pairFstD_nil@PolyTimeBlockLoop, pairFstD_pairEncode@PolyTimePairing, polyTimeComputable_pairFstD@PolyTimePairing, pairFstD_of_pairDecode_eq_none@PolyTimePairing, polyTimeComputable_iterate_pairFstD@PolyTimePairing
+     [Complexity.pairSndD] readers: pairSndD_eq@PolyTimePairing, pairSndD_pairEncode@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, pairSndD_of_pairDecode_eq_none@PolyTimePairing
+     [TCSlib.Cryptography.Strategy.Efficient] readers: efficient_iff@Interaction, ofNUPPT_efficient@Interaction, pullback_efficient@NP
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, length_pairEncode@Encoding, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairDecode_pairEncode@Encoding, pairSplitAt_pairEncode@PairSplit, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Application type mismatch: The argument
+     >   rfl
+     > has type
+     >   ?m.42 = ?m.42
+     > but is expected to have type
+     >   (NUPPT.ofPolyTimeUniform hF (simCoins V')).coins = simCoins V'
+     > in the application
+     >   And.intro rfl
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphismZK_Simulator phase=eof spelling=BoolCircuit.decodeNat key=[["str","BoolCircuit"],["str","decodeNat"]] home_key=[["str","TCSlib"],["str","Complexity"],[
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphismZK_Simulator phase=eof spelling=BoolCircuit.decodeNat._sunfold key=[["str","BoolCircuit"],["str","decodeNat"],["str","_sunfold"]] home_key=[["str","TCS
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphismZK_Simulator phase=eof spelling=BoolCircuit.decodeNat._unsafe_rec key=[["str","BoolCircuit"],["str","decodeNat"],["str","_unsafe_rec"]] home_key=[["str
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphismZK_Simulator phase=eof spelling=BoolCircuit.decodeNat.match_1 key=[["str","BoolCircuit"],["str","decodeNat"],["str","match_1"]] home_key=[["str","TCSli
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphismZK_Simulator phase=eof spelling=BoolCircuit.encodeNat key=[["str","BoolCircuit"],["str","encodeNat"]] home_key=[["str","TCSlib"],["str","Complexity"],[
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_GraphIsomorphismZK_Simulator phase=eof spelling=Complexity.BinArith.DivInv key=[["str","Complexity"],["str","BinArith"],["str","DivInv"]] home_key=[["str","TCSlib"],["
+       490|     ∃ S : NUPPT, S.Uniform ∧ S.coins = simCoins V' ∧
+       491|       ∀ x z (r : S.Coins x.length), S.simulate x z r = sim V' x z (List.ofFn r) := by
+       492|   have hF := sim_poly V' hV'
+    *  493|   refine ⟨NUPPT.ofPolyTimeUniform hF (simCoins V'), NUPPT.ofPolyTimeUniform_uniform _ _, rfl, ?_⟩
+       494|   intro x z r
+       495|   rw [NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
+DUP SEAL-0394 -> same decl TCSlib.Cryptography.GIZK.decGraphAt_padSq | tool: STAGE2 | add TCSlib.Cryptography.decGraphAt_eq (or _iff/_apply) in TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean; related: TCSlib.Cryptography.decGraphAt_encGraph | record: TCSlib.Cryptography.GIZK.decGraphAt_padSq l.181: Type mismatch (#248 inherited_same_native_step)
+DUP SEAL-0395 -> same decl TCSlib.Cryptography.GIZK.decGraph_eq_of_sqrt | tool: STAGE2 | use TCSlib.Cryptography.decGraph_eq (TCSlib/Cryptography/ZeroKnowledge/Encoding.lean) | record: TCSlib.Cryptography.GIZK.decGraph_eq_of_sqrt l.200: Tactic `rfl` failed: The left-hand side (#248 inherited_same_native_step)
+DUP SEAL-0396 -> same decl TCSlib.Cryptography.GIZK.sim_poly | tool: STAGE2 | use Complexity.polyTimeComputable_iff (TCSlib/Complexity/ClassNP/PolyTime.lean) | record: TCSlib.Cryptography.GIZK.sim_poly l.474: Type mismatch (#248 inherited_same_native_step)
+DUP SEAL-0397 -> same decl TCSlib.Cryptography.GIZK.exists_simulator | tool: STAGE2 | use Complexity.NUPPT.uniform_iff (TCSlib/Complexity/Randomized/PPT.lean) | record: TCSlib.Cryptography.GIZK.exists_simulator l.493: Application type mismatch: The argument (#248 inherited_same_step_after_other_repairs)

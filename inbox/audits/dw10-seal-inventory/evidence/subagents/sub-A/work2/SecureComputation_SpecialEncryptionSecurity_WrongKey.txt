@@ -1,0 +1,113 @@
+====================================================================================================
+KEY SG-F07:9 | seal | TCSlib.Cryptography.SecureComputation.SpecialWrongKey.exists_negligible_prefix_collision
+  record: TCSlib.Cryptography.SecureComputation.SpecialWrongKey.exists_negligible_prefix_collision: 5 errors, variant B (strict = coe) ()
+  counts sA=0 sB=5 cA=0 cB=5 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_SecureComputation_SpecialEncryptionSecurity_WrongKey.log:217
+  DECL at 100, header ends 106
+      100| theorem exists_negligible_prefix_collision (ℓ : PolyExpr)
+      101|     (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) →
+      102|       (Fin ((PolyExpr.add .var ℓ).eval n) → Bool))
+      103|     (E : List Bool → List Bool) (hE : PolyTimeComputable E)
+      104|     (hFE : ∀ n (k r : Fin n → Bool), E (pairEncode (List.ofFn k) (List.ofFn r)) =
+      105|       List.ofFn (F n k r))
+      106|     (hF : (OracleEnsemble.keyed (ℓ₁ := .var) (ℓ₂ := .add .var ℓ) F).Indist
+  -- coe-B line 106 cascade=False cls=Application type mismatch: The argument
+     providers=['Complexity.PolyExpr.eval', 'TCSlib.Cryptography.OracleEnsemble.keyed', 'TCSlib.Cryptography.QueryTree.eval']
+     referenced=['Complexity.NUPPT.advInput', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.coinsEquiv_ofPolyTimeUniform', 'Complexity.NUPPT.inArg', 'Complexity.NUPPT.inCoins', 'Complexity.NUPPT.inParam', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'Complexity.NUPPT.toOracleAdversary', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.OracleEnsemble.Indist', 'TCSlib.Cryptography.OracleEnsemble.keyed', 'TCSlib.Cryptography.OracleEnsemble.random', 'TCSlib.Cryptography.QueryTree.eval', 'TCSlib.Cryptography.prfAdv', 'TCSlib.Cryptography.uexp', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr, polyBound_eval@PolyExpr
+     [TCSlib.Cryptography.OracleEnsemble.keyed] readers: keyed_O@Defs; struct fields: σ, fintype, O
+     [TCSlib.Cryptography.QueryTree.eval] readers: eval_ret@OracleAdversary, eval_query@OracleAdversary, eval_simulate@OracleAdversary
+     > Application type mismatch: The argument
+     >   F
+     > has type
+     >   (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add ℓ).eval n) → Bool
+     > but is expected to have type
+     >   (n : ℕ) → (Fin n → Bool) → (Fin (PolyExpr.var.eval n) → Bool) → Fin ((PolyExpr.var.add ℓ).eval n) → Bool
+     > in the application
+     >   OracleEnsemble.keyed F
+       103|     (E : List Bool → List Bool) (hE : PolyTimeComputable E)
+       104|     (hFE : ∀ n (k r : Fin n → Bool), E (pairEncode (List.ofFn k) (List.ofFn r)) =
+       105|       List.ofFn (F n k r))
+    *  106|     (hF : (OracleEnsemble.keyed (ℓ₁ := .var) (ℓ₂ := .add .var ℓ) F).Indist
+       107|       (OracleEnsemble.random .var (.add .var ℓ))) :
+       108|     ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n,
+  -- coe-B line 122 cascade=True cls=Type mismatch
+     providers=[]
+     referenced=['Complexity.NUPPT.advInput', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.coinsEquiv_ofPolyTimeUniform', 'Complexity.NUPPT.inArg', 'Complexity.NUPPT.inCoins', 'Complexity.NUPPT.inParam', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'Complexity.NUPPT.toOracleAdversary', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.OracleEnsemble.Indist', 'TCSlib.Cryptography.OracleEnsemble.keyed', 'TCSlib.Cryptography.OracleEnsemble.random', 'TCSlib.Cryptography.QueryTree.eval', 'TCSlib.Cryptography.prfAdv', 'TCSlib.Cryptography.uexp', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     > Type mismatch
+     >   ((Equiv.refl (Fin n → Bool)).prodCongr eD.symm).trans φ
+     > has type
+     >   (Fin n → Bool) × (Fin (PolyExpr.var.eval n) → Bool) ≃ B.Coins n
+     > but is expected to have type
+       119|   · obtain ⟨φ, hφ⟩ := hB n
+       120|     let eD := NUPPT.coinsEquiv_ofPolyTimeUniform htest .var n
+       121|     let χ : ((Fin n → Bool) × (Fin n → Bool)) ≃ B.Coins n :=
+    *  122|       ((Equiv.refl (Fin n → Bool)).prodCongr eD.symm).trans φ
+       123|     have hχ : ∀ (g : (Fin n → Bool) →
+       124|         (Fin ((PolyExpr.add .var ℓ).eval n) → Bool)) (r k : Fin n → Bool),
+  -- coe-B line 128 cascade=True cls=Application type mismatch: The argument
+     providers=[]
+     referenced=['Complexity.NUPPT.advInput', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.coinsEquiv_ofPolyTimeUniform', 'Complexity.NUPPT.inArg', 'Complexity.NUPPT.inCoins', 'Complexity.NUPPT.inParam', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'Complexity.NUPPT.toOracleAdversary', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.OracleEnsemble.Indist', 'TCSlib.Cryptography.OracleEnsemble.keyed', 'TCSlib.Cryptography.OracleEnsemble.random', 'TCSlib.Cryptography.QueryTree.eval', 'TCSlib.Cryptography.prfAdv', 'TCSlib.Cryptography.uexp', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     > Application type mismatch: The argument
+     >   k
+     > has type
+     >   Fin n → Bool
+     > but is expected to have type
+       125|         (B.toOracleAdversary n n ((PolyExpr.add .var ℓ).eval n) 1 (χ (r, k))).eval g =
+       126|           decide ((List.ofFn (g r)).take n = (List.ofFn (F n k r)).take n) := by
+       127|       intro g r k
+    *  128|       have hcoins : List.ofFn (eD.symm k) = List.ofFn k := by
+       129|         simpa only [eD, Equiv.apply_symm_apply] using
+       130|           (NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn htest .var n (eD.symm k)).symm
+  -- coe-B line 130 cascade=True cls=Application type mismatch: The argument
+     providers=[]
+     referenced=['Complexity.NUPPT.advInput', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.coinsEquiv_ofPolyTimeUniform', 'Complexity.NUPPT.inArg', 'Complexity.NUPPT.inCoins', 'Complexity.NUPPT.inParam', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'Complexity.NUPPT.toOracleAdversary', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.OracleEnsemble.Indist', 'TCSlib.Cryptography.OracleEnsemble.keyed', 'TCSlib.Cryptography.OracleEnsemble.random', 'TCSlib.Cryptography.QueryTree.eval', 'TCSlib.Cryptography.prfAdv', 'TCSlib.Cryptography.uexp', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     > Application type mismatch: The argument
+     >   k
+     > has type
+     >   Fin n → Bool
+     > but is expected to have type
+       127|       intro g r k
+       128|       have hcoins : List.ofFn (eD.symm k) = List.ofFn k := by
+       129|         simpa only [eD, Equiv.apply_symm_apply] using
+    *  130|           (NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn htest .var n (eD.symm k)).symm
+       131|       rw [show χ (r, k) = φ (r, eD.symm k) from rfl, hφ]
+       132|       have hrun : D.runAt n (pairEncode (List.ofFn r) (List.ofFn (g r))) (eD.symm k) =
+  -- coe-B line 131 cascade=True cls=Application type mismatch: The argument
+     providers=['Complexity.NUPPT.advInput', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.coinsEquiv_ofPolyTimeUniform', 'Complexity.NUPPT.inArg', 'Complexity.NUPPT.inCoins', 'Complexity.NUPPT.inParam', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'Complexity.NUPPT.toOracleAdversary', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.OracleEnsemble.Indist', 'TCSlib.Cryptography.OracleEnsemble.keyed', 'TCSlib.Cryptography.OracleEnsemble.random', 'TCSlib.Cryptography.QueryTree.eval', 'TCSlib.Cryptography.prfAdv', 'TCSlib.Cryptography.uexp', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     referenced=['Complexity.NUPPT.advInput', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.coinsEquiv_ofPolyTimeUniform', 'Complexity.NUPPT.inArg', 'Complexity.NUPPT.inCoins', 'Complexity.NUPPT.inParam', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAt', 'Complexity.NUPPT.runAtL', 'Complexity.NUPPT.toOracleAdversary', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.OracleEnsemble.Indist', 'TCSlib.Cryptography.OracleEnsemble.keyed', 'TCSlib.Cryptography.OracleEnsemble.random', 'TCSlib.Cryptography.QueryTree.eval', 'TCSlib.Cryptography.prfAdv', 'TCSlib.Cryptography.uexp', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [Complexity.NUPPT.advInput] readers: advInput_eq@PPT, length_advInput@PPT
+     [Complexity.NUPPT.coinLen] readers: coinLen_eq@PPT, coinLen_reparam@HardCoreLemmas
+     [Complexity.NUPPT.coinsEquiv_ofPolyTimeUniform] readers: coinsEquiv_ofPolyTimeUniform_ofFn@PPT; struct fields: toFun, invFun, left_inv, right_inv
+     [Complexity.NUPPT.inArg] readers: inArg_eq@Closure, inArg_layout@Closure, polyTimeComputable_inArg@Closure
+     [Complexity.NUPPT.inCoins] readers: inCoins_eq@Closure, inCoins_layout@Closure, polyTimeComputable_inCoins@Closure
+     [Complexity.NUPPT.inParam] readers: inParam_eq@Closure, inParam_layout@Closure, polyTimeComputable_inParam@Closure
+     [Complexity.NUPPT.ofPolyTimeUniform] readers: coins_ofPolyTimeUniform@PPT, output_ofPolyTimeUniform@PPT, runAtL_ofPolyTimeUniform@PPT, runLit_ofPolyTimeUniform@NonUniform, ofPolyTimeUniform_uniform@PPT; struct fields: M, Ct, ct, coins, adv, advice, advice_length, halts
+     [Complexity.NUPPT.runAt] readers: runAt_eq@PPT, runAt_wrap@ReductionSupport, runAt_preComp@ReductionSupport, runAt_reparam@HardCoreLemmas, runLit_eq_runAt@NonUniform, runAt_coinsCongr@PPT, withIndexParam_runAt@CollectionsHelpers
+     [Complexity.NUPPT.runAtL] readers: runAtL_eq@PPT, runAtL_wrap@ReductionSupport, runAtL_preComp@ReductionSupport, runAtL_precomp@HardCoreGL, runAtL_reparam@HardCoreLemmas, runLit_eq_runAtL@NonUniform, runAtL_ofPolyTime@PPT, runAtL_eq_output_layout@Closure, runAtL_ofPolyTimeUniform@PPT, polyTimeComputable_runAtL@NonUniform
+     [Complexity.NUPPT.toOracleAdversary] readers: toOracleAdversary_eq@Defs, toOracleAdversary_boundedBy@Defs
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr, polyBound_eval@PolyExpr
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop
+     [Complexity.pairFstD] readers: pairFstD_eq@PolyTimePairing, pairFstD_nil@PolyTimeBlockLoop, pairFstD_pairEncode@PolyTimePairing, polyTimeComputable_pairFstD@PolyTimePairing, pairFstD_of_pairDecode_eq_none@PolyTimePairing, polyTimeComputable_iterate_pairFstD@PolyTimePairing
+     [Complexity.pairSndD] readers: pairSndD_eq@PolyTimePairing, pairSndD_pairEncode@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, pairSndD_of_pairDecode_eq_none@PolyTimePairing
+     [TCSlib.Cryptography.Negligible] readers: negligible_iff@Negligible, negligible_zero@Negligible, glColl_negligible@HardCoreGLColl, negligible_two_pow_neg@Negligible, negligible_exp_neg_sqrt_div@Defs, negligible_inv_pow_sqrt_div@Defs, negligible_mul_permFailBound@GraphIsomorphism, negligible_two_pow_neg_sqrt_div@Defs, negligible_of_le_inv_pow_sqrt_div@Defs
+     [TCSlib.Cryptography.OracleEnsemble.Indist] readers: indist_iff@Defs
+     [TCSlib.Cryptography.OracleEnsemble.keyed] readers: keyed_O@Defs; struct fields: σ, fintype, O
+     [TCSlib.Cryptography.OracleEnsemble.random] readers: random_O@Defs; struct fields: σ, fintype, O
+     [TCSlib.Cryptography.QueryTree.eval] readers: eval_ret@OracleAdversary, eval_query@OracleAdversary, eval_simulate@OracleAdversary
+     [TCSlib.Cryptography.prfAdv] readers: prfAdv_eq@Defs, prfAdv_def@Defs, prfAdv_nonneg@Defs, prfAdv_eq_expect@Defs, prfAdv_multiMsgAdv@Hybrid, prfAdv_multiMsgAdvOut@Hybrid, prfAdv_toOracleAdversary@Defs, prfAdv_toOracleAdversary_out@Defs; struct fields: cauchy
+     [TCSlib.Cryptography.uexp] readers: uexp_def@Probability, uexp_half_add@TrapdoorPredictor, uexp_half_sub@TrapdoorPredictor, uprob_eq_uexp@Probability, uexp_le_of_statClose@Sampling; struct fields: cauchy
+     [TCSlib.Cryptography.uprob] readers: uprob_def@Probability, uprob_fst@Probability, uprob_not@Probability, uprob_snd@LazySampling, uprob_mono@Probability, uprob_prod@Probability, uprob_true@Probability, uprob_congr@LazySampling, uprob_false@Probability, uprob_or_le@Probability, uprob_le_one@Probability, uprob_nonneg@Probability, uprob_eq_uexp@Probability, uprob_bool_prod@GeneratorFromPermutation; struct fields: cauchy
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, length_pairEncode@Encoding, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairDecode_pairEncode@Encoding, pairSplitAt_pairEncode@PairSplit, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Application type mismatch: The argument
+     >   k
+     > has type
+     >   Fin n → Bool
+     > but is expected to have type
+       128|       have hcoins : List.ofFn (eD.symm k) = List.ofFn k := by
+       129|         simpa only [eD, Equiv.apply_symm_apply] using
+       130|           (NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn htest .var n (eD.symm k)).symm
+    *  131|       rw [show χ (r, k) = φ (r, eD.symm k) from rfl, hφ]
+       132|       have hrun : D.runAt n (pairEncode (List.ofFn r) (List.ofFn (g r))) (eD.symm k) =
+       133|           [decide ((List.ofFn (g r)).take n = (List.ofFn (F n k r)).take n)] := by

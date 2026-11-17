@@ -1,0 +1,122 @@
+====================================================================================================
+KEY SEAL-0356 | seal | TCSlib.Cryptography.GI.gi_verdict_iff
+  record: TCSlib.Cryptography.GI.gi_verdict_iff l.305: Type mismatch (#248 inherited_same_native_step)
+  counts sA=2 sB=2 cA=2 cB=2 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.pairFstD_eq (TCSlib/Complexity/ClassNP/PolyTimePairing.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRepGI.log:417
+  DECL at 294, header ends 300
+      294| theorem gi_verdict_iff (x : List Bool) (hist : List (List Bool)) (r : List Bool) (N : ℕ) :
+      295|     (∀ j : Fin N, encGraph (permGraph (if r.getD j false then instanceG₁ x else instanceG₀ x)
+      296|         (decPerm (instanceVertexCount x) (hist.getD (2 * j + 1) []))) = hist.getD (2 * j) []) ↔
+      297|       ∀ j < N, relabelAt (List.replicate (Nat.sqrt (pairFstD x).length) true)
+      298|         (if (r.drop j).headD false then pairSndD x else pairFstD x)
+      299|         (pairFstD (pairSndD ((fun v => pairSndD (pairSndD v))^[j] (Strategy.encodeMsgs hist)))) =
+      300|           pairFstD ((fun v => pairSndD (pairSndD v))^[j] (Strategy.encodeMsgs hist)) := by
+  -- coe-A line 306 cascade=False cls=Type mismatch
+     providers=['Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.GI.decGraphAt', 'TCSlib.Cryptography.GI.instanceG₀', 'TCSlib.Cryptography.GI.instanceG₁', 'TCSlib.Cryptography.GI.instanceVertexCount', 'TCSlib.Cryptography.decPerm', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.permGraph']
+     referenced=['Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.GI.decGraphAt', 'TCSlib.Cryptography.GI.instanceG₀', 'TCSlib.Cryptography.GI.instanceG₁', 'TCSlib.Cryptography.GI.instanceVertexCount', 'TCSlib.Cryptography.GI.relabelAt', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.decPerm', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.permGraph']
+     [Complexity.pairFstD] readers: pairFstD_eq@PolyTimePairing, pairFstD_nil@PolyTimeBlockLoop, pairFstD_pairEncode@PolyTimePairing, polyTimeComputable_pairFstD@PolyTimePairing, pairFstD_of_pairDecode_eq_none@PolyTimePairing, polyTimeComputable_iterate_pairFstD@PolyTimePairing
+     [Complexity.pairSndD] readers: pairSndD_eq@PolyTimePairing, pairSndD_pairEncode@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, pairSndD_of_pairDecode_eq_none@PolyTimePairing
+     [TCSlib.Cryptography.GI.decGraphAt] readers: decGraphAt_apply@Proofs, decGraphAt_padSq@Efficiency, decGraphAt_encGraph@Proofs, encGraph_decGraphAt@Proofs, decGraph_eq_decGraphAt@Proofs
+     [TCSlib.Cryptography.GI.instanceG₀] readers: instanceG₀_def@Proofs
+     [TCSlib.Cryptography.GI.instanceG₁] readers: instanceG₁_def@Proofs
+     [TCSlib.Cryptography.GI.instanceVertexCount] readers: instanceVertexCount_def@Proofs, instanceVertexCount_encInstance@Proofs
+     [TCSlib.Cryptography.decPerm] readers: decPerm_def@Encoding, decPerm_val@Encoding, decPerm_encPerm@Encoding, decPerm_symm_val@Encoding
+     [TCSlib.Cryptography.encGraph] readers: encGraph_def@Encoding, encGraph_getD@Encoding, length_encGraph@Encoding, decGraph_encGraph@Encoding, encGraph_getD_nat@Encoding, encGraph_injective@Encoding, decGraphAt_encGraph@GraphIsomorphism, encGraph_getD_of_le@Encoding, colWellFormed_encGraph@Protocol, encGraph_mem_L3COL_iff@Language
+     [TCSlib.Cryptography.permGraph] readers: permGraph_apply@Encoding, permGraph_mul@Encoding, permGraph_one@Encoding, permGraph_injective@GraphIsomorphism, isomorphic_permGraph@GraphIsomorphism, permGraph_mul_inv_of_eq@Encoding, permGraph_permGraph_inv@Encoding
+     > Type mismatch
+     >   Iff.rfl
+     > has type
+     >   ?m.126 ↔ ?m.126
+     > but is expected to have type
+     >   encGraph
+     >         (permGraph (if false = true then instanceG₁ x else instanceG₀ x)
+     >           (decPerm (instanceVertexCount x) (hist.getD (2 * j + 1) []))) =
+     >       hist.getD (2 * j) [] ↔
+     >     encGraph
+     >         (permGraph (decGraphAt (pairFstD x).length.sqrt (if false = true then pairSndD x else pairFstD x))
+     >           (decPerm (pairFstD x).length.sqrt (hist.getD (2 * j + 1) []))) =
+     >       hist.getD (2 * j) []
+       303|   rw [Fin.val_mk, iterate_sndD_two_encodeMsgs, pairSndD_encodeMsgs, Strategy.pairFstD_encodeMsgs,
+       304|     Strategy.pairFstD_encodeMsgs, List.drop_drop, relabelAt_replicate, headD_drop,
+       305|     headD_drop, headD_drop]
+    *  306|   cases r.getD j false <;> exact Iff.rfl
+       307| 
+       308| /-- The verifier of the `|x|`-fold graph isomorphism protocol is efficient (D8) (Inf-4.2).
+  -- coe-A line 306 cascade=True cls=Type mismatch
+     providers=['Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.GI.decGraphAt', 'TCSlib.Cryptography.GI.instanceG₀', 'TCSlib.Cryptography.GI.instanceG₁', 'TCSlib.Cryptography.GI.instanceVertexCount', 'TCSlib.Cryptography.decPerm', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.permGraph']
+     referenced=['Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.GI.decGraphAt', 'TCSlib.Cryptography.GI.instanceG₀', 'TCSlib.Cryptography.GI.instanceG₁', 'TCSlib.Cryptography.GI.instanceVertexCount', 'TCSlib.Cryptography.GI.relabelAt', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.decPerm', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.permGraph']
+     [Complexity.pairFstD] readers: pairFstD_eq@PolyTimePairing, pairFstD_nil@PolyTimeBlockLoop, pairFstD_pairEncode@PolyTimePairing, polyTimeComputable_pairFstD@PolyTimePairing, pairFstD_of_pairDecode_eq_none@PolyTimePairing, polyTimeComputable_iterate_pairFstD@PolyTimePairing
+     [Complexity.pairSndD] readers: pairSndD_eq@PolyTimePairing, pairSndD_pairEncode@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, pairSndD_of_pairDecode_eq_none@PolyTimePairing
+     [TCSlib.Cryptography.GI.decGraphAt] readers: decGraphAt_apply@Proofs, decGraphAt_padSq@Efficiency, decGraphAt_encGraph@Proofs, encGraph_decGraphAt@Proofs, decGraph_eq_decGraphAt@Proofs
+     [TCSlib.Cryptography.GI.instanceG₀] readers: instanceG₀_def@Proofs
+     [TCSlib.Cryptography.GI.instanceG₁] readers: instanceG₁_def@Proofs
+     [TCSlib.Cryptography.GI.instanceVertexCount] readers: instanceVertexCount_def@Proofs, instanceVertexCount_encInstance@Proofs
+     [TCSlib.Cryptography.decPerm] readers: decPerm_def@Encoding, decPerm_val@Encoding, decPerm_encPerm@Encoding, decPerm_symm_val@Encoding
+     [TCSlib.Cryptography.encGraph] readers: encGraph_def@Encoding, encGraph_getD@Encoding, length_encGraph@Encoding, decGraph_encGraph@Encoding, encGraph_getD_nat@Encoding, encGraph_injective@Encoding, decGraphAt_encGraph@GraphIsomorphism, encGraph_getD_of_le@Encoding, colWellFormed_encGraph@Protocol, encGraph_mem_L3COL_iff@Language
+     [TCSlib.Cryptography.permGraph] readers: permGraph_apply@Encoding, permGraph_mul@Encoding, permGraph_one@Encoding, permGraph_injective@GraphIsomorphism, isomorphic_permGraph@GraphIsomorphism, permGraph_mul_inv_of_eq@Encoding, permGraph_permGraph_inv@Encoding
+     > Type mismatch
+     >   Iff.rfl
+     > has type
+     >   ?m.126 ↔ ?m.126
+     > but is expected to have type
+       303|   rw [Fin.val_mk, iterate_sndD_two_encodeMsgs, pairSndD_encodeMsgs, Strategy.pairFstD_encodeMsgs,
+       304|     Strategy.pairFstD_encodeMsgs, List.drop_drop, relabelAt_replicate, headD_drop,
+       305|     headD_drop, headD_drop]
+    *  306|   cases r.getD j false <;> exact Iff.rfl
+       307| 
+       308| /-- The verifier of the `|x|`-fold graph isomorphism protocol is efficient (D8) (Inf-4.2).
+DUP SEAL-0357 -> same decl TCSlib.Cryptography.GI.gi_verdict_iff | tool: STAGE2 | use Complexity.pairFstD_eq (TCSlib/Complexity/ClassNP/PolyTimePairing.lean) | record: TCSlib.Cryptography.GI.gi_verdict_iff l.305: Type mismatch (#248 inherited_same_native_step)
+====================================================================================================
+KEY SEAL-0358 | seal | TCSlib.Cryptography.GI.giVerifierRep_efficient
+  record: TCSlib.Cryptography.GI.giVerifierRep_efficient l.321: 'show' tactic failed, pattern (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.NUPPT.inCoins_eq (TCSlib/Complexity/Randomized/Closure.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRepGI.log:433
+  DECL at 315, header ends 315
+      315| theorem giVerifierRep_efficient : giVerifierRep.Efficient := by
+  -- coe-A line 322 cascade=False cls='show' tactic failed, pattern
+     providers=['Complexity.NUPPT.inCoins', 'Complexity.NUPPT.inParam', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.GI.argM', 'TCSlib.Cryptography.GI.argX', 'TCSlib.Cryptography.GI.giVerifierRep', 'TCSlib.Cryptography.GI.halfCount', 'TCSlib.Cryptography.GI.ilayout', 'TCSlib.Cryptography.GI.instanceG₀', 'TCSlib.Cryptography.GI.instanceG₁', 'TCSlib.Cryptography.GI.instanceVertexCount', 'TCSlib.Cryptography.GI.msgCount', 'TCSlib.Cryptography.GI.relabelAt', 'TCSlib.Cryptography.GI.vcount', 'TCSlib.Cryptography.GI.wellFormedInstance', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.decPerm', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.permGraph']
+     referenced=['Complexity.NUPPT.inCoins', 'Complexity.NUPPT.inParam', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.GI.argM', 'TCSlib.Cryptography.GI.argX', 'TCSlib.Cryptography.GI.giVerifierRep', 'TCSlib.Cryptography.GI.halfCount', 'TCSlib.Cryptography.GI.ilayout', 'TCSlib.Cryptography.GI.instanceG₀', 'TCSlib.Cryptography.GI.instanceG₁', 'TCSlib.Cryptography.GI.instanceVertexCount', 'TCSlib.Cryptography.GI.msgCount', 'TCSlib.Cryptography.GI.relabelAt', 'TCSlib.Cryptography.GI.vcount', 'TCSlib.Cryptography.GI.wellFormedInstance', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.decPerm', 'TCSlib.Cryptography.encGraph', 'TCSlib.Cryptography.permGraph']
+     [Complexity.NUPPT.inCoins] readers: inCoins_eq@Closure, inCoins_layout@Closure, polyTimeComputable_inCoins@Closure
+     [Complexity.NUPPT.inParam] readers: inParam_eq@Closure, inParam_layout@Closure, polyTimeComputable_inParam@Closure
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop
+     [Complexity.pairFstD] readers: pairFstD_eq@PolyTimePairing, pairFstD_nil@PolyTimeBlockLoop, pairFstD_pairEncode@PolyTimePairing, polyTimeComputable_pairFstD@PolyTimePairing, pairFstD_of_pairDecode_eq_none@PolyTimePairing, polyTimeComputable_iterate_pairFstD@PolyTimePairing
+     [Complexity.pairSndD] readers: pairSndD_eq@PolyTimePairing, pairSndD_pairEncode@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, pairSndD_of_pairDecode_eq_none@PolyTimePairing
+     [TCSlib.Cryptography.GI.argM] readers: argM_poly@Efficiency, argM_ilayout@Efficiency
+     [TCSlib.Cryptography.GI.argX] readers: argX_poly@Efficiency, argX_ilayout@Efficiency
+     [TCSlib.Cryptography.GI.giVerifierRep] readers: giVerifierRep_next@Proofs, giVerifierRep_next_end@SoundnessRepGI, giVerifierRep_next_mid@SoundnessRepGI, giVerifierRep_next_odd@SoundnessRepGI, giVerifierRep_efficient@EfficiencyRepGI, giVerifierRep_next_end_enc@SoundnessRepGI; struct fields: next, coins
+     [TCSlib.Cryptography.GI.halfCount] readers: halfCount_encodeMsgs@EfficiencyRep
+     [TCSlib.Cryptography.GI.ilayout] readers: ilayout_def@Proofs, argM_ilayout@Efficiency, argX_ilayout@Efficiency, argZ_ilayout@Efficiency, vcount_ilayout@Efficiency, inCoins_ilayout@Efficiency, inParam_ilayout@Efficiency
+     [TCSlib.Cryptography.GI.instanceG₀] readers: instanceG₀_def@Proofs
+     [TCSlib.Cryptography.GI.instanceG₁] readers: instanceG₁_def@Proofs
+     [TCSlib.Cryptography.GI.instanceVertexCount] readers: instanceVertexCount_def@Proofs, instanceVertexCount_encInstance@Proofs
+     [TCSlib.Cryptography.GI.msgCount] readers: msgCount_poly@EfficiencyRep, msgCount_encodeMsgs@EfficiencyRep
+     [TCSlib.Cryptography.GI.relabelAt] readers: relabelAt_poly@Efficiency, relabelAt_replicate@Efficiency
+     [TCSlib.Cryptography.GI.vcount] readers: vcount_poly@Efficiency, vcount_ilayout@Efficiency
+     [TCSlib.Cryptography.GI.wellFormedInstance] readers: wellFormedInstance_def@Proofs, wellFormedInstance_encInstance@Proofs
+     [TCSlib.Cryptography.Strategy.Efficient] readers: efficient_iff@Interaction, ofNUPPT_efficient@Interaction, pullback_efficient@NP
+     [TCSlib.Cryptography.Strategy.encodeMsgs] readers: encodeMsgs_nil@Interaction, encodeMsgs_cons@Interaction, pairFstD_encodeMsgs@Interaction
+     [TCSlib.Cryptography.decPerm] readers: decPerm_def@Encoding, decPerm_val@Encoding, decPerm_encPerm@Encoding, decPerm_symm_val@Encoding
+     [TCSlib.Cryptography.encGraph] readers: encGraph_def@Encoding, encGraph_getD@Encoding, length_encGraph@Encoding, decGraph_encGraph@Encoding, encGraph_getD_nat@Encoding, encGraph_injective@Encoding, decGraphAt_encGraph@GraphIsomorphism, encGraph_getD_of_le@Encoding, colWellFormed_encGraph@Protocol, encGraph_mem_L3COL_iff@Language
+     [TCSlib.Cryptography.permGraph] readers: permGraph_apply@Encoding, permGraph_mul@Encoding, permGraph_one@Encoding, permGraph_injective@GraphIsomorphism, isomorphic_permGraph@GraphIsomorphism, permGraph_mul_inv_of_eq@Encoding, permGraph_permGraph_inv@Encoding
+     > 'show' tactic failed, pattern
+     >   (if hist.length % 2 = 1 then ?m.47 else if hist.length < 2 * x.length then ?m.61 else ?m.62) = ?m.64
+     > is not definitionally equal to target
+     >   giVerifierRep.next x z r hist =
+     >     if
+     >         (decide
+     >             ¬(fun v => pairSndD (pairSndD v))^[halfCount (argM (ilayout x z hist r))] (argM (ilayout x z hist r)) =
+     >                 []) =
+     >           true then
+     >       [(List.drop (halfCount (argM (ilayout x z hist r))) (NUPPT.inCoins (ilayout x z hist r))).headD false]
+     >     else
+     >       if
+     >           decide
+     >               (msgCount (argM (ilayout x z hist r)) <
+       319|     (polyTimeComputable_ite ltLen2_poly (polyTimeComputable_const []) hverdict)
+       320|   refine efficient_of_polyTime giVerifierRep hF ?_
+       321|   intro x z r hist
+    *  322|   show (if hist.length % 2 = 1 then _ else if hist.length < 2 * x.length then _ else _) = _
+       323|   simp only [argM_ilayout, halfCount_encodeMsgs, halfRem_ne_nil_iff, msgCount_encodeMsgs, inParam_ilayout,
+       324|     List.length_replicate, inCoins_ilayout, argX_ilayout, vcount_ilayout, PolyExpr.eval_mul,

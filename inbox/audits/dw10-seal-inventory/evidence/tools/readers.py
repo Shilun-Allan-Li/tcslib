@@ -12,6 +12,9 @@
 # Attempt 3: also prints STRUCT {provider, fields} for every provider whose result type (after the binders) is a structure,
 # so that the field equations <P>_<field> (policy.md §1: a structure-valued definition is read through its field equations)
 # count as published readers. Attempt 2's log is kept as readers/attempt2/.
+# Attempt 4: also the suffix form <field>_<P> (for example Complexity.NUPPT.coins_ofPolyTimeUniform, output_ofPolyTime),
+# the naming the Randomized library uses for field equations; ranked after the prefix forms of the same length class.
+# Attempt 3's outputs are kept as readers/attempt3/.
 # Usage: python3 -I readers.py probe <providers.txt> <out.lean> <module>... | parse <log> <out.json>
 import sys, json
 if sys.argv[1] == 'probe':
@@ -42,7 +45,13 @@ if sys.argv[1] == 'probe':
            '      let p := Name.str pre ("_".intercalate (parts.take i))',
            '      if let some q := ps[p]? then',
            '       if used.contains q then',
-           '        IO.println ("READER " ++ (Json.mkObj [("provider", toJson q.toString), ("reader", toJson t.toString), ("home", toJson home.toString), ("private", toJson (isPrivateName t))]).compress)',
+           '        IO.println ("READER " ++ (Json.mkObj [("provider", toJson q.toString), ("reader", toJson t.toString), ("home", toJson home.toString), ("private", toJson (isPrivateName t)), ("form", toJson "prefix")]).compress)',
+           '        n := n + 1',
+           '    for i in [1:parts.length] do',
+           '      let p := Name.str pre ("_".intercalate (parts.drop i))',
+           '      if let some q := ps[p]? then',
+           '       if used.contains q then',
+           '        IO.println ("READER " ++ (Json.mkObj [("provider", toJson q.toString), ("reader", toJson t.toString), ("home", toJson home.toString), ("private", toJson (isPrivateName t)), ("form", toJson "suffix")]).compress)',
            '        n := n + 1',
            '  for (q, _) in ps.toList do',
            '    let some ci := env.find? q | continue',

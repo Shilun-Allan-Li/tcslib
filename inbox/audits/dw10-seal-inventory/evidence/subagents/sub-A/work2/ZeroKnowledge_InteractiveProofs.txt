@@ -1,0 +1,219 @@
+====================================================================================================
+KEY NEW|TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean|TCSlib.Cryptography.npProtocol_efficientP|seal|first error l.466: Invalid X notation: The expected type X is not an inductive type | seal | TCSlib.Cryptography.npProtocol_efficientP
+  record: first error l.466: Invalid X notation: The expected type X is not an inductive type
+  counts sA=2 sB=2 cA=2 cB=2 scan=-
+  tool: STAGE2 | stmt=no | use Complexity.NUPPT.uniform_iff (TCSlib/Complexity/Randomized/PPT.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_InteractiveProofs.log:577
+  DECL at 460, header ends 461
+      460| theorem npProtocol_efficientP (T : List Bool → Bool) (p : PolyExpr) :
+      461|     (npProtocol T p).P.Efficient := by
+  -- coe-A line 466 cascade=False cls=Invalid X notation: The expected type X is not an inductive type
+     providers=[]
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.advInput', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAtL', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.Strategy.ofNUPPT', 'Turing.pairEncode']
+     > Invalid `⟨...⟩` notation: The expected type `(npProtocol T p).P.Efficient` is not an inductive type
+     > 
+     > Note: This notation can only be used when the expected type is an inductive type with a single constructor
+       463|     polyTimeComputable_pairSndD.comp (polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD)
+       464|   have hF : PolyTimeComputable fun w => pairSndD (pairFstD (pairSndD (pairFstD (pairFstD w)))) :=
+       465|     polyTimeComputable_pairSndD.comp (polyTimeComputable_pairFstD.comp harg)
+    *  466|   refine ⟨NUPPT.ofPolyTimeUniform hF (.const 0), NUPPT.ofPolyTimeUniform_uniform hF _, rfl,
+       467|     fun x z r hist => ?_⟩
+       468|   simp [npProtocol, Strategy.ofNUPPT_next, NUPPT.runAtL_ofPolyTimeUniform, NUPPT.advInput]
+  -- coe-A line 468 cascade=True cls=No goals to be solved
+     providers=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.advInput', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAtL', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.Strategy.ofNUPPT', 'Turing.pairEncode']
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.advInput', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAtL', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.Strategy.ofNUPPT', 'Turing.pairEncode']
+     [Complexity.NUPPT.Uniform] readers: uniform_iff@PPT, ofPolyTime_uniform@NonUniform, ofPolyTimeUniform_uniform@PPT
+     [Complexity.NUPPT.advInput] readers: advInput_eq@PPT, length_advInput@PPT
+     [Complexity.NUPPT.ofPolyTimeUniform] readers: coins_ofPolyTimeUniform@PPT, output_ofPolyTimeUniform@PPT, runAtL_ofPolyTimeUniform@PPT, runLit_ofPolyTimeUniform@NonUniform, ofPolyTimeUniform_uniform@PPT; struct fields: M, Ct, ct, coins, adv, advice, advice_length, halts
+     [Complexity.NUPPT.runAtL] readers: runAtL_eq@PPT, runAtL_wrap@ReductionSupport, runAtL_preComp@ReductionSupport, runAtL_precomp@HardCoreGL, runAtL_reparam@HardCoreLemmas, runLit_eq_runAtL@NonUniform, runAtL_ofPolyTime@PPT, runAtL_eq_output_layout@Closure, runAtL_ofPolyTimeUniform@PPT, polyTimeComputable_runAtL@NonUniform
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop
+     [Complexity.pairFstD] readers: pairFstD_eq@PolyTimePairing, pairFstD_nil@PolyTimeBlockLoop, pairFstD_pairEncode@PolyTimePairing, polyTimeComputable_pairFstD@PolyTimePairing, pairFstD_of_pairDecode_eq_none@PolyTimePairing, polyTimeComputable_iterate_pairFstD@PolyTimePairing
+     [Complexity.pairSndD] readers: pairSndD_eq@PolyTimePairing, pairSndD_pairEncode@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, pairSndD_of_pairDecode_eq_none@PolyTimePairing
+     [TCSlib.Cryptography.Strategy.Efficient] readers: efficient_iff@Interaction, ofNUPPT_efficient@Interaction, pullback_efficient@NP
+     [TCSlib.Cryptography.Strategy.encodeMsgs] readers: encodeMsgs_nil@Interaction, encodeMsgs_cons@Interaction, pairFstD_encodeMsgs@Interaction
+     [TCSlib.Cryptography.Strategy.ofNUPPT] readers: ofNUPPT_next@Interaction, ofNUPPT_efficient@Interaction; struct fields: next, coins
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, length_pairEncode@Encoding, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairDecode_pairEncode@Encoding, pairSplitAt_pairEncode@PairSplit, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > No goals to be solved
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_InteractiveProofs phase=eof spelling=Complexity.BlockLoop.emit key=[["str","Complexity"],["str","BlockLoop"],["str","emit"]] home_key=[["str","TCSlib"],["str","Complex
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_InteractiveProofs phase=eof spelling=Complexity.BlockLoop.step key=[["str","Complexity"],["str","BlockLoop"],["str","step"]] home_key=[["str","TCSlib"],["str","Complex
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_InteractiveProofs phase=eof spelling=Complexity.CounterProg.Goes key=[["str","Complexity"],["str","CounterProg"],["str","Goes"]] home_key=[["str","TCSlib"],["str","Com
+     > G06-COMPONENT label=SealA_Cryptography_ZeroKnowledge_InteractiveProofs phase=eof spelling=Complexity.CounterProg.Goes.mono.match_1_1 key=[["str","Complexity"],["str","CounterProg"],["str","Goes"],["str","mono"],["str","m
+       465|     polyTimeComputable_pairSndD.comp (polyTimeComputable_pairFstD.comp harg)
+       466|   refine ⟨NUPPT.ofPolyTimeUniform hF (.const 0), NUPPT.ofPolyTimeUniform_uniform hF _, rfl,
+       467|     fun x z r hist => ?_⟩
+    *  468|   simp [npProtocol, Strategy.ofNUPPT_next, NUPPT.runAtL_ofPolyTimeUniform, NUPPT.advInput]
+       469| 
+       470| /-- The prover of `npProtocol T p` sends its auxiliary input, so on witnesses of length at most
+====================================================================================================
+KEY NEW|TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean|TCSlib.Cryptography.npProtocol_efficientV|seal|first error l.453: Invalid X notation: The expected type X is not an inductive type | seal | TCSlib.Cryptography.npProtocol_efficientV
+  record: first error l.453: Invalid X notation: The expected type X is not an inductive type
+  counts sA=2 sB=2 cA=2 cB=2 scan=-
+  tool: STAGE2 | stmt=no | reader to be identified (no provider named in the message; see seal-errors.jsonl)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_InteractiveProofs.log:564
+  DECL at 434, header ends 435
+      434| theorem npProtocol_efficientV (T : List Bool → Bool) (p : PolyExpr)
+      435|     (hT : PolyTimeComputable fun z => [T z]) : (npProtocol T p).V.Efficient := by
+  -- coe-A line 453 cascade=False cls=Invalid X notation: The expected type X is not an inductive type
+     providers=[]
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.advInput', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAtL', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.Strategy.ofNUPPT', 'Turing.pairEncode']
+     > Invalid `⟨...⟩` notation: The expected type `(npProtocol T p).V.Efficient` is not an inductive type
+     > 
+     > Note: This notation can only be used when the expected type is an inductive type with a single constructor
+       450|         ((pairFstD (pairSndD (pairSndD (pairFstD (pairFstD w))))).take
+       451|           (p.eval (pairFstD (pairFstD (pairSndD (pairFstD (pairFstD w))))).length)))] :=
+       452|     hT.comp (hx.pairEncode htake)
+    *  453|   refine ⟨NUPPT.ofPolyTimeUniform hF (.const 0), NUPPT.ofPolyTimeUniform_uniform hF _, rfl,
+       454|     fun x z r hist => ?_⟩
+       455|   simp [npProtocol, Strategy.ofNUPPT_next, NUPPT.runAtL_ofPolyTimeUniform, NUPPT.advInput,
+  -- coe-A line 455 cascade=True cls=No goals to be solved
+     providers=[]
+     referenced=['Complexity.NUPPT.Uniform', 'Complexity.NUPPT.advInput', 'Complexity.NUPPT.ofPolyTimeUniform', 'Complexity.NUPPT.runAtL', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.Strategy.ofNUPPT', 'Turing.pairEncode']
+     > No goals to be solved
+       452|     hT.comp (hx.pairEncode htake)
+       453|   refine ⟨NUPPT.ofPolyTimeUniform hF (.const 0), NUPPT.ofPolyTimeUniform_uniform hF _, rfl,
+       454|     fun x z r hist => ?_⟩
+    *  455|   simp [npProtocol, Strategy.ofNUPPT_next, NUPPT.runAtL_ofPolyTimeUniform, NUPPT.advInput,
+       456|     Strategy.pairFstD_encodeMsgs]
+       457| 
+====================================================================================================
+KEY NEW|TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean|TCSlib.Cryptography.npProtocol_readsPrefix|seal|first error l.419: Tactic X failed: There are no additional binders or X bindings in the goal to in | seal | TCSlib.Cryptography.npProtocol_readsPrefix
+  record: first error l.419: Tactic X failed: There are no additional binders or X bindings in the goal to in
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | reader to be identified (no provider named in the message; see seal-errors.jsonl)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_InteractiveProofs.log:530
+  DECL at 417, header ends 418
+      417| theorem npProtocol_readsPrefix (T : List Bool → Bool) (p : PolyExpr) :
+      418|     (npProtocol T p).V.ReadsPrefix p := by
+  -- coe-A line 419 cascade=False cls=Tactic X failed: There are no additional binders or X bindings in the goal to in
+     providers=[]
+     referenced=['TCSlib.Cryptography.Strategy.ReadsPrefix', 'Turing.pairEncode']
+     > Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+     > 
+     > T : List Bool → Bool
+     > p : PolyExpr
+     > ⊢ (npProtocol T p).V.ReadsPrefix p
+       416| (`List.take_take`). -/
+       417| theorem npProtocol_readsPrefix (T : List Bool → Bool) (p : PolyExpr) :
+       418|     (npProtocol T p).V.ReadsPrefix p := by
+    *  419|   intro x z r hist
+       420|   cases hist with
+       421|   | nil => rfl
+====================================================================================================
+KEY NEW|TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean|TCSlib.Cryptography.exists_witnessRelation_of_mem_NP|unfold|333 simp Turing.MultiTapeTM.indicator | unfold | TCSlib.Cryptography.exists_witnessRelation_of_mem_NP
+  record: 333 simp Turing.MultiTapeTM.indicator (semireducible)
+  counts sA=- sB=- cA=- cB=- scan=333 simp Turing.MultiTapeTM.indicator
+  tool: STAGE2 | stmt=no | use Turing.MultiTapeTM.indicator_def (TCSlib/Complexity/TuringMachine/Deterministic.lean)
+  ev: evidence/scan/b3/explicit.json#items[1630]
+  DECL at 318
+      318| theorem exists_witnessRelation_of_mem_NP {L : Language Bool} (h : L ∈ NP) :
+       329|       convert hlen using 1
+       330|       funext z
+       331|       simp [PolyExpr.eval_normal]
+       332|     · intro x y
+    *  333|       simp [MultiTapeTM.indicator]
+       334| 
+       335| /-! ### Efficient provers -/
+       336| 
+     [Turing.MultiTapeTM.indicator] readers: indicator_def@Deterministic
+====================================================================================================
+KEY NEW|TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean|TCSlib.Cryptography.npProtocol_efficientP|unfold|468 simp Complexity.NUPPT.advInput | unfold | TCSlib.Cryptography.npProtocol_efficientP
+  record: 468 simp Complexity.NUPPT.advInput (semireducible)
+  counts sA=- sB=- cA=- cB=- scan=468 simp Complexity.NUPPT.advInput
+  tool: STAGE2 | stmt=no | use Complexity.NUPPT.advInput_eq (TCSlib/Complexity/Randomized/PPT.lean)
+  ev: evidence/scan/b3/explicit.json#items[1649]
+  DECL at 460
+      460| theorem npProtocol_efficientP (T : List Bool → Bool) (p : PolyExpr) :
+       464|   have hF : PolyTimeComputable fun w => pairSndD (pairFstD (pairSndD (pairFstD (pairFstD w)))) :=
+       465|     polyTimeComputable_pairSndD.comp (polyTimeComputable_pairFstD.comp harg)
+       466|   refine ⟨NUPPT.ofPolyTimeUniform hF (.const 0), NUPPT.ofPolyTimeUniform_uniform hF _, rfl,
+       467|     fun x z r hist => ?_⟩
+    *  468|   simp [npProtocol, Strategy.ofNUPPT_next, NUPPT.runAtL_ofPolyTimeUniform, NUPPT.advInput]
+       469| 
+       470| /-- The prover of `npProtocol T p` sends its auxiliary input, so on witnesses of length at most
+       471| `p(|x|)` its message has at most `p(|x|)` bits (ruling G3-3 of gate 03). -/
+     [Complexity.NUPPT.advInput] readers: advInput_eq@PPT, length_advInput@PPT
+====================================================================================================
+KEY NEW|TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean|TCSlib.Cryptography.npProtocol_efficientV|unfold|455 simp Complexity.NUPPT.advInput | unfold | TCSlib.Cryptography.npProtocol_efficientV
+  record: 455 simp Complexity.NUPPT.advInput (semireducible)
+  counts sA=- sB=- cA=- cB=- scan=455 simp Complexity.NUPPT.advInput
+  tool: STAGE2 | stmt=no | use Complexity.NUPPT.advInput_eq (TCSlib/Complexity/Randomized/PPT.lean)
+  ev: evidence/scan/b3/explicit.json#items[1644]
+  DECL at 434
+      434| theorem npProtocol_efficientV (T : List Bool → Bool) (p : PolyExpr)
+       451|           (p.eval (pairFstD (pairFstD (pairSndD (pairFstD (pairFstD w))))).length)))] :=
+       452|     hT.comp (hx.pairEncode htake)
+       453|   refine ⟨NUPPT.ofPolyTimeUniform hF (.const 0), NUPPT.ofPolyTimeUniform_uniform hF _, rfl,
+       454|     fun x z r hist => ?_⟩
+    *  455|   simp [npProtocol, Strategy.ofNUPPT_next, NUPPT.runAtL_ofPolyTimeUniform, NUPPT.advInput,
+       456|     Strategy.pairFstD_encodeMsgs]
+       457| 
+       458| /-- The prover of `npProtocol T p` is efficient: it copies the auxiliary input, the projection
+     [Complexity.NUPPT.advInput] readers: advInput_eq@PPT, length_advInput@PPT
+====================================================================================================
+KEY NEW|TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean|TCSlib.Cryptography.npProtocol_outV|unfold|413 simp TCSlib.Cryptography.Protocol.outV | unfold | TCSlib.Cryptography.npProtocol_outV
+  record: 413 simp TCSlib.Cryptography.Protocol.outV (semireducible)
+  counts sA=- sB=- cA=- cB=- scan=413 simp TCSlib.Cryptography.Protocol.outV
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.Protocol.outV_eq (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean)
+  ev: evidence/scan/b3/explicit.json#items[1631]
+  DECL at 409
+      409| theorem npProtocol_outV (T : List Bool → Bool) (p : PolyExpr) (P' : Strategy) (x y z : List Bool)
+       409| theorem npProtocol_outV (T : List Bool → Bool) (p : PolyExpr) (P' : Strategy) (x y z : List Bool)
+       410|     (r : (npProtocol T p).ExecCoins P' x) :
+       411|     (npProtocol T p).outV P' x y z r =
+       412|       [T (pairEncode x ((P'.next x y (List.ofFn r.1) []).take (p.eval x.length)))] := by
+    *  413|   simp [Protocol.outV, Protocol.transcriptWith, npProtocol, exec, moverIsV]
+       414| 
+       415| /-- The verifier of `npProtocol T p` reads only the first `p(|x|)` bits of the message
+       416| (`List.take_take`). -/
+     [TCSlib.Cryptography.Protocol.outV] readers: outV_eq@Interaction, outV_withV@Interaction, outV_eq_out@Interaction, pullback_outV@NP, outV_eq_getLast_of_moverIsV@Interaction
+====================================================================================================
+KEY NEW|TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean|TCSlib.Cryptography.npProtocol_outV|unfold|413 simp TCSlib.Cryptography.Protocol.transcriptWith | unfold | TCSlib.Cryptography.npProtocol_outV
+  record: 413 simp TCSlib.Cryptography.Protocol.transcriptWith (semireducible)
+  counts sA=- sB=- cA=- cB=- scan=413 simp TCSlib.Cryptography.Protocol.transcriptWith
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.Protocol.transcriptWith_eq (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean)
+  ev: evidence/scan/b3/explicit.json#items[1632]
+  DECL at 409
+      409| theorem npProtocol_outV (T : List Bool → Bool) (p : PolyExpr) (P' : Strategy) (x y z : List Bool)
+       409| theorem npProtocol_outV (T : List Bool → Bool) (p : PolyExpr) (P' : Strategy) (x y z : List Bool)
+       410|     (r : (npProtocol T p).ExecCoins P' x) :
+       411|     (npProtocol T p).outV P' x y z r =
+       412|       [T (pairEncode x ((P'.next x y (List.ofFn r.1) []).take (p.eval x.length)))] := by
+    *  413|   simp [Protocol.outV, Protocol.transcriptWith, npProtocol, exec, moverIsV]
+       414| 
+       415| /-- The verifier of `npProtocol T p` reads only the first `p(|x|)` bits of the message
+       416| (`List.take_take`). -/
+     [TCSlib.Cryptography.Protocol.transcriptWith] readers: transcriptWith_eq@Interaction, transcript_eq_transcriptWith@Interaction; struct fields: fst, snd
+====================================================================================================
+KEY NEW|TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean|TCSlib.Cryptography.npProtocol_outV|unfold|413 simp TCSlib.Cryptography.exec | unfold | TCSlib.Cryptography.npProtocol_outV
+  record: 413 simp TCSlib.Cryptography.exec (semireducible)
+  counts sA=- sB=- cA=- cB=- scan=413 simp TCSlib.Cryptography.exec
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.exec_succ (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean)
+  ev: evidence/scan/b3/explicit.json#items[1634]
+  DECL at 409
+      409| theorem npProtocol_outV (T : List Bool → Bool) (p : PolyExpr) (P' : Strategy) (x y z : List Bool)
+       409| theorem npProtocol_outV (T : List Bool → Bool) (p : PolyExpr) (P' : Strategy) (x y z : List Bool)
+       410|     (r : (npProtocol T p).ExecCoins P' x) :
+       411|     (npProtocol T p).outV P' x y z r =
+       412|       [T (pairEncode x ((P'.next x y (List.ofFn r.1) []).take (p.eval x.length)))] := by
+    *  413|   simp [Protocol.outV, Protocol.transcriptWith, npProtocol, exec, moverIsV]
+       414| 
+       415| /-- The verifier of `npProtocol T p` reads only the first `p(|x|)` bits of the message
+       416| (`List.take_take`). -/
+     [TCSlib.Cryptography.exec] readers: exec_succ@Interaction, exec_zero@Interaction, exec_length@Interaction; struct fields: fst, snd
+====================================================================================================
+KEY NEW|TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean|TCSlib.Cryptography.npProtocol_outV|unfold|413 simp TCSlib.Cryptography.moverIsV | unfold | TCSlib.Cryptography.npProtocol_outV
+  record: 413 simp TCSlib.Cryptography.moverIsV (semireducible)
+  counts sA=- sB=- cA=- cB=- scan=413 simp TCSlib.Cryptography.moverIsV
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.moverIsV_def (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean)
+  ev: evidence/scan/b3/explicit.json#items[1635]
+  DECL at 409
+      409| theorem npProtocol_outV (T : List Bool → Bool) (p : PolyExpr) (P' : Strategy) (x y z : List Bool)
+       409| theorem npProtocol_outV (T : List Bool → Bool) (p : PolyExpr) (P' : Strategy) (x y z : List Bool)
+       410|     (r : (npProtocol T p).ExecCoins P' x) :
+       411|     (npProtocol T p).outV P' x y z r =
+       412|       [T (pairEncode x ((P'.next x y (List.ofFn r.1) []).take (p.eval x.length)))] := by
+    *  413|   simp [Protocol.outV, Protocol.transcriptWith, npProtocol, exec, moverIsV]
+       414| 
+       415| /-- The verifier of `npProtocol T p` reads only the first `p(|x|)` bits of the message
+       416| (`List.take_take`). -/
+     [TCSlib.Cryptography.moverIsV] readers: moverIsV_def@Interaction, moverIsV_true@Interaction, moverIsV_false@Interaction

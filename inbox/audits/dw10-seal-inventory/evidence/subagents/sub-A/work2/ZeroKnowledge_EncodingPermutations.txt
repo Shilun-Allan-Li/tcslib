@@ -1,0 +1,119 @@
+====================================================================================================
+KEY C1-0300 | unfold | TCSlib.Cryptography.EncodingMachines.bitsToNat_eq_blockVal
+  record: TCSlib.Cryptography.EncodingMachines.bitsToNat_eq_blockVal l.225: simp bitsToNat (foreign-def) (#248 inherited_same_tactic_item)
+  counts sA=- sB=- cA=- cB=- scan=225 simp TCSlib.Cryptography.bitsToNat
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.bitsToNat_def (TCSlib/Cryptography/Asymptotic/Sampling.lean)
+  ev: evidence/scan/b3/explicit.json#items[1287]
+  DECL at 223
+      223| theorem bitsToNat_eq_blockVal (r : List Bool) (base : ℕ) :
+       221| /-- `bitsToNat` of a block of the tape is `blockVal` (induction on the block length through
+       222| `List.ofFn_succ'`). -/
+       223| theorem bitsToNat_eq_blockVal (r : List Bool) (base : ℕ) :
+       224|     ∀ k, bitsToNat (fun j : Fin k => r.getD (base + j) false) = blockVal r base k
+    *  225|   | 0 => by simp [bitsToNat]
+       226|   | k + 1 => by
+       227|     rw [blockVal_succ, ← bitsToNat_eq_blockVal r base k]
+       228|     unfold bitsToNat
+     [TCSlib.Cryptography.bitsToNat] readers: bitsToNat_def@Sampling, bitsToNat_lt@Sampling, bitsToNat_injective@Sampling
+====================================================================================================
+KEY C1-0301 | unfold | TCSlib.Cryptography.EncodingMachines.bitsToNat_eq_blockVal
+  record: TCSlib.Cryptography.EncodingMachines.bitsToNat_eq_blockVal l.228: unfold bitsToNat (foreign-def) (#248 inherited_same_tactic_item)
+  counts sA=- sB=- cA=- cB=- scan=228 unfold TCSlib.Cryptography.bitsToNat
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.bitsToNat_def (TCSlib/Cryptography/Asymptotic/Sampling.lean)
+  ev: evidence/scan/b3/explicit.json#items[1290]
+  DECL at 223
+      223| theorem bitsToNat_eq_blockVal (r : List Bool) (base : ℕ) :
+       224|     ∀ k, bitsToNat (fun j : Fin k => r.getD (base + j) false) = blockVal r base k
+       225|   | 0 => by simp [bitsToNat]
+       226|   | k + 1 => by
+       227|     rw [blockVal_succ, ← bitsToNat_eq_blockVal r base k]
+    *  228|     unfold bitsToNat
+       229|     rw [List.ofFn_succ', List.concat_eq_append, List.foldl_append, List.foldl_cons, List.foldl_nil]
+       230|     simp only [Fin.coe_castSucc, Fin.val_last]
+       231|     congr 1
+     [TCSlib.Cryptography.bitsToNat] readers: bitsToNat_def@Sampling, bitsToNat_lt@Sampling, bitsToNat_injective@Sampling
+====================================================================================================
+KEY C1-0303 | unfold | TCSlib.Cryptography.EncodingMachines.rejectionSample_eq_dite
+  record: TCSlib.Cryptography.EncodingMachines.rejectionSample_eq_dite l.618: unfold rejectionSample (foreign-def) (#248 inherited_same_tactic_item)
+  counts sA=- sB=- cA=- cB=- scan=618 unfold TCSlib.Cryptography.rejectionSample
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.rejectionSample_def (TCSlib/Cryptography/Asymptotic/Sampling.lean)
+  ev: evidence/scan/b3/explicit.json#items[1377]
+  DECL at 609
+      609| theorem rejectionSample_eq_dite {n k T i : ℕ} {r : List Bool} {c : Fin T → Fin k → Bool}
+       614|     rw [← bitsToNat_eq_blockVal]
+       615|     congr 1
+       616|     funext j
+       617|     exact hc t j
+    *  618|   unfold rejectionSample
+       619|   rw [findSome?_finRange_eq, findSome?_range_eq]
+       620|   have hq : firstIdx (fun t => (if h : t < T then uniformFromBits (n - i) k (c ⟨t, h⟩) else none).isSome) T =
+       621|       trialIdx n k T r i := by
+     [TCSlib.Cryptography.rejectionSample] readers: rejectionSample_def@Sampling, statClose_rejectionSample@Sampling, rejectionSample_eq_none_iff@Sampling, sampleIdx_eq_rejectionSample@Language, rejectionSample_uniform_of_some@Sampling, sampleIdx_ofFn_eq_rejectionSample@Language
+====================================================================================================
+KEY C1-0304 | unfold | TCSlib.Cryptography.EncodingMachines.rejectionSample_eq_dite
+  record: TCSlib.Cryptography.EncodingMachines.rejectionSample_eq_dite l.625: unfold uniformFromBits (foreign-def) (#248 inherited_same_tactic_item)
+  counts sA=- sB=- cA=- cB=- scan=625 unfold TCSlib.Cryptography.uniformFromBits
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.uniformFromBits_def (TCSlib/Cryptography/Asymptotic/Sampling.lean)
+  ev: evidence/scan/b3/explicit.json#items[1381]
+  DECL at 609
+      609| theorem rejectionSample_eq_dite {n k T i : ℕ} {r : List Bool} {c : Fin T → Fin k → Bool}
+       621|       trialIdx n k T r i := by
+       622|     apply firstIdx_congr
+       623|     intro t ht
+       624|     rw [dif_pos ht]
+    *  625|     unfold uniformFromBits
+       626|     rw [hval]
+       627|     split_ifs with h <;> simp [h]
+       628|   rw [hq]
+     [TCSlib.Cryptography.uniformFromBits] readers: uniformFromBits_def@Sampling, uniformFromBits_eq_none_iff@Sampling, uniformFromBits_eq_some_iff@Sampling
+====================================================================================================
+KEY C1-0305 | unfold | TCSlib.Cryptography.EncodingMachines.rejectionSample_eq_dite
+  record: TCSlib.Cryptography.EncodingMachines.rejectionSample_eq_dite l.631: unfold uniformFromBits (foreign-def) (#248 inherited_same_tactic_item)
+  counts sA=- sB=- cA=- cB=- scan=631 unfold TCSlib.Cryptography.uniformFromBits
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.uniformFromBits_def (TCSlib/Cryptography/Asymptotic/Sampling.lean)
+  ev: evidence/scan/b3/explicit.json#items[1388]
+  DECL at 609
+      609| theorem rejectionSample_eq_dite {n k T i : ℕ} {r : List Bool} {c : Fin T → Fin k → Bool}
+       627|     split_ifs with h <;> simp [h]
+       628|   rw [hq]
+       629|   by_cases h : trialIdx n k T r i < T
+       630|   · rw [if_pos h, dif_pos h, dif_pos h]
+    *  631|     unfold uniformFromBits
+       632|     rw [hval]
+       633|     split_ifs with h2
+       634|     · rfl
+     [TCSlib.Cryptography.uniformFromBits] readers: uniformFromBits_def@Sampling, uniformFromBits_eq_none_iff@Sampling, uniformFromBits_eq_some_iff@Sampling
+====================================================================================================
+KEY C1-0306 | unfold | TCSlib.Cryptography.EncodingMachines.fisherYates_val_eq
+  record: TCSlib.Cryptography.EncodingMachines.fisherYates_val_eq l.684: unfold fisherYates (foreign-def) (#248 inherited_same_tactic_item)
+  counts sA=- sB=- cA=- cB=- scan=684 unfold TCSlib.Cryptography.fisherYates
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.fisherYates_succ (TCSlib/Cryptography/Asymptotic/Permutations.lean)
+  ev: evidence/scan/b3/explicit.json#items[1411]
+  DECL at 681
+      681| theorem fisherYates_val_eq {n k T : ℕ} {r : List Bool} {c : Fin n → ℕ}
+       680| (`foldr_swap_val`; no modulus wraps since every accepted offset is below `n - i`). -/
+       681| theorem fisherYates_val_eq {n k T : ℕ} {r : List Bool} {c : Fin n → ℕ}
+       682|     (hok : ∀ i : Fin n, trialIdx n k T r i < T) (hc : ∀ i : Fin n, c i = offsetVal n k T r i)
+       683|     (x : Fin n) : ((fisherYates n c x : Fin n) : ℕ) = fyApply n k T r x := by
+    *  684|   unfold fisherYates fyApply
+       685|   rw [← List.map_coe_finRange]
+       686|   apply foldr_swap_val
+       687|   intro i
+     [TCSlib.Cryptography.fisherYates] readers: fisherYates_succ@Permutations, fisherYates_injOn@Permutations
+====================================================================================================
+KEY C1-0307 | unfold | TCSlib.Cryptography.EncodingMachines.permFromCoins_getD_val
+  record: TCSlib.Cryptography.EncodingMachines.permFromCoins_getD_val l.721: unfold permFromCoins (foreign-def) (#248 inherited_same_tactic_item)
+  counts sA=- sB=- cA=- cB=- scan=721 unfold TCSlib.Cryptography.permFromCoins
+  tool: STAGE2 | stmt=no | add TCSlib.Cryptography.permFromCoins_eq (or _iff/_apply) in TCSlib/Cryptography/Asymptotic/Permutations.lean; related: TCSlib.Cryptography.permFromCoins_eq_none_iff, TCSlib.Cryptography.permFromCoins_eq_some_iff, TCSlib.Cryptography.permFromCoins_uniform_of_some
+  ev: evidence/scan/b3/explicit.json#items[1426]
+  DECL at 701
+      701| theorem permFromCoins_getD_val {n k T : ℕ} {r : List Bool} {b : Fin n → Fin T → Fin k → Bool}
+       717|       obtain ⟨i, hi⟩ := not_forall.1 hnot
+       718|       refine ⟨i, i.isLt, ?_⟩
+       719|       rw [decide_eq_true_eq]
+       720|       exact le_antisymm firstIdx_le (not_lt.1 (mt (hsome i).2 hi))
+    *  721|   unfold permFromCoins permFromCoinsNum
+       722|   split_ifs with h1 h2 h2
+       723|   · exact absurd h1 (hfail.1 h2)
+       724|   · rw [Option.getD_some]
+     [TCSlib.Cryptography.permFromCoins] readers: statClose_permFromCoins@Permutations, permFromCoins_eq_none_iff@Permutations, permFromCoins_eq_some_iff@Permutations, permFromCoins_uniform_of_some@Permutations

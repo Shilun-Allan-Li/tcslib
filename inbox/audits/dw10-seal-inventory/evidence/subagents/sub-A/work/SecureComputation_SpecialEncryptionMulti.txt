@@ -1,0 +1,17 @@
+====================================================================================================
+KEY NEW|TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean|TCSlib.Cryptography.SecureComputation.sliceMultiMessageSecure_of_prfOut|unfold|301 dsimp Complexity.P | unfold | TCSlib.Cryptography.SecureComputation.sliceMultiMessageSecure_of_prfOut
+  record: 301 dsimp Complexity.P (semireducible)
+  counts sA=- sB=- cA=- cB=- scan=301 dsimp Complexity.P
+  tool: STAGE2 | stmt=no | use Complexity.P_def (TCSlib/Complexity/ClassP/P.lean)
+  ev: evidence/scan/b4/explicit.json#items[1324]
+  DECL at 239
+      239| theorem sliceMultiMessageSecure_of_prfOut {ℓ : PolyExpr}
+       297|         sliceMultiEncDist G n (q.eval n) (off n p.1) (len n p.1) v =
+       298|           fun t => P (X v t) := by
+       299|       funext t
+       300|       rw [sliceMultiEncDist_apply]
+    *  301|       dsimp only [P, X, W]
+       302|       rw [hadvice, SliceReduction.slicePost_tuple (G n) _ _ p.1.2]
+       303|       apply congrArg PrivateKeyScheme.encodeList
+       304|       apply congrArg List.ofFn
+     [Complexity.P] readers: P_def@P, P_subset_NP@NP, P_subset_PH@Levels, P_subset_EXP@EXP, P_subset_PiP@Levels, P_subset_PPoly@PSubsetPPoly, P_ssubset_PPoly@PSubsetPPoly, P_subset_SigmaP@Levels, P_subset_PAdvicePoly@Advice, P_ne_NP_of_EXP_ne_NEXP@Nondeterminism, P_subset_NP_inter_coNP@CoNP, P_eq_NP_of_NPHard_mem_P@Reductions, P_ssubset_PPoly_of_subset@UHaltMachine, P_ne_NP_of_not_NP_subset_PPoly@PSubsetPPoly

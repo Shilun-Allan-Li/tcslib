@@ -1,0 +1,408 @@
+====================================================================================================
+KEY SEAL-0446 | seal | TCSlib.Cryptography.ColSimMachine.sampleIdx_eq
+  record: TCSlib.Cryptography.ColSimMachine.sampleIdx_eq l.213: 'show' tactic failed, pattern (#248 inherited_same_native_step)
+  counts sA=2 sB=2 cA=2 cB=2 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.sampleIdx_def (TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorNumeric.log:434
+  DECL at 207, header ends 209
+      207| theorem sampleIdx_eq (m k T : ℕ) (r : List Bool) :
+      208|     sampleIdx m k T r =
+      209|       if h : sampleNum m k T r < m then some ⟨sampleNum m k T r, h⟩ else none := by
+  -- coe-A line 213 cascade=False cls='show' tactic failed, pattern
+     providers=['TCSlib.Cryptography.sampleIdx', 'TCSlib.Cryptography.uniformFromBits']
+     referenced=['TCSlib.Cryptography.EncodingMachines.blockVal', 'TCSlib.Cryptography.EncodingMachines.firstIdx', 'TCSlib.Cryptography.EncodingMachines.trialIdx', 'TCSlib.Cryptography.bitsToNat', 'TCSlib.Cryptography.sampleIdx', 'TCSlib.Cryptography.uniformFromBits']
+     [TCSlib.Cryptography.sampleIdx] readers: sampleIdx_def@Language, sampleIdx_eq_rejectionSample@Language, sampleIdx_ofFn_eq_rejectionSample@Language
+     [TCSlib.Cryptography.uniformFromBits] readers: uniformFromBits_def@Sampling, uniformFromBits_eq_none_iff@Sampling, uniformFromBits_eq_some_iff@Sampling
+     > 'show' tactic failed, pattern
+     >   List.findSome? (fun t => uniformFromBits m k fun j => r.getD (↑t * k + ↑j) false) (List.finRange T) = ?m.66
+     > is not definitionally equal to target
+     >   sampleIdx m k T r = List.findSome? g (List.range T)
+       210|   set g : ℕ → Option (Fin m) := fun t =>
+       211|     if h : blockVal r (t * k) k < m then some ⟨blockVal r (t * k) k, h⟩ else none with hg
+       212|   have h1 : sampleIdx m k T r = (List.range T).findSome? g := by
+    *  213|     show (List.finRange T).findSome? (fun t : Fin T =>
+       214|       uniformFromBits m k (fun j : Fin k => r.getD ((t : ℕ) * k + j) false)) = _
+       215|     rw [← List.map_coe_finRange, List.findSome?_map]
+  -- coe-A line 224 cascade=True cls='show' tactic failed, pattern
+     providers=['TCSlib.Cryptography.EncodingMachines.blockVal', 'TCSlib.Cryptography.EncodingMachines.firstIdx', 'TCSlib.Cryptography.EncodingMachines.trialIdx']
+     referenced=['TCSlib.Cryptography.EncodingMachines.blockVal', 'TCSlib.Cryptography.EncodingMachines.firstIdx', 'TCSlib.Cryptography.EncodingMachines.trialIdx', 'TCSlib.Cryptography.bitsToNat', 'TCSlib.Cryptography.sampleIdx', 'TCSlib.Cryptography.uniformFromBits']
+     [TCSlib.Cryptography.EncodingMachines.blockVal] readers: blockVal_lt@EncodingPermutations, blockVal_poly@EncodingPermutations, blockVal_succ@EncodingPermutations, blockVal_zero@EncodingPermutations, bitsToNat_eq_blockVal@EncodingPermutations
+     [TCSlib.Cryptography.EncodingMachines.firstIdx] readers: q_firstIdx@EncodingMachines, firstIdx_le@EncodingMachines, firstIdx_min@EncodingMachines, firstIdx_congr@EncodingMachines, firstIdx_eq_of@EncodingMachines, firstIdx_eq_iff@EncodingMachines, firstIdx_lt_iff@EncodingMachines, firstIdx_eq_of_forall@EncodingMachines, polyTimeComputable_firstIdx@EncodingMachines
+     [TCSlib.Cryptography.EncodingMachines.trialIdx] readers: trialIdx_poly@EncodingPermutations
+     > 'show' tactic failed, pattern
+     >   (if trialIdx m k T r 0 < T then g (trialIdx m k T r 0) else none) = ?m.134
+     > is not definitionally equal to target
+     >   (if firstIdx (fun t => decide (blockVal r ((0 * T + t) * k) k < m - 0)) T < T then
+     >       g (firstIdx (fun t => decide (blockVal r ((0 * T + t) * k) k < m - 0)) T)
+       221|     simp only [hg, zero_mul, zero_add, Nat.sub_zero]
+       222|     split_ifs <;> simp_all
+       223|   rw [h1, findSome?_range_eq, firstIdx_congr (fun t _ => h2 t)]
+    *  224|   show (if trialIdx m k T r 0 < T then g (trialIdx m k T r 0) else none) = _
+       225|   unfold sampleNum
+       226|   by_cases ht : trialIdx m k T r 0 < T
+DUP SEAL-0447 -> same decl TCSlib.Cryptography.ColSimMachine.sampleIdx_eq | tool: STAGE2 | use TCSlib.Cryptography.sampleIdx_def (TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean) | record: TCSlib.Cryptography.ColSimMachine.sampleIdx_eq l.224: 'show' tactic failed, pattern (#248 inherited_same_native_step)
+====================================================================================================
+KEY SEAL-0448 | seal | TCSlib.Cryptography.ColSimMachine.edgeList_eq_map
+  record: TCSlib.Cryptography.ColSimMachine.edgeList_eq_map l.357: 'show' tactic failed, pattern (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.decGraph_eq (TCSlib/Cryptography/ZeroKnowledge/Encoding.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorNumeric.log:578
+  DECL at 347, header ends 351
+      347| theorem edgeList_eq_map (x : List Bool) :
+      348|     edgeList (decGraph x).2 =
+      349|       (((List.finRange ((decGraph x).1 * (decGraph x).1)).filter
+      350|         fun k : Fin ((decGraph x).1 * (decGraph x).1) => x.getD k false).map
+      351|           finProdFinEquiv.symm) := by
+  -- coe-A line 357 cascade=False cls='show' tactic failed, pattern
+     providers=['TCSlib.Cryptography.decGraph']
+     referenced=['TCSlib.Cryptography.decGraph', 'TCSlib.Cryptography.edgeList']
+     [TCSlib.Cryptography.decGraph] readers: decGraph_eq@Encoding, decGraph_fst@Encoding, decGraph_snd@GraphIsomorphism, decGraph_encGraph@Encoding, decGraph_snd_apply@Encoding; struct fields: fst, snd
+     > 'show' tactic failed, pattern
+     >   x.getD (↑(finProdFinEquiv (finProdFinEquiv.symm k))) false = x.getD (↑k) false
+     > is not definitionally equal to target
+     >   ((fun p => (decGraph x).snd p.1 p.2) ∘ ⇑finProdFinEquiv.symm) k = x.getD (↑k) false
+       354|   congr 1
+       355|   apply List.filter_congr
+       356|   intro k _
+    *  357|   show x.getD (finProdFinEquiv (finProdFinEquiv.symm k)) false = x.getD k false
+       358|   rw [Equiv.apply_symm_apply]
+       359| 
+====================================================================================================
+KEY SEAL-0449 | seal | TCSlib.Cryptography.ColSimMachine.encodeMsgs_eq_flatMap
+  record: TCSlib.Cryptography.ColSimMachine.encodeMsgs_eq_flatMap l.506: Tactic `rfl` failed: The left-hand side (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.Strategy.encodeMsgs_nil (TCSlib/Cryptography/ZeroKnowledge/Interaction.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorNumeric.log:727
+  DECL at 503, header ends 504
+      503| theorem encodeMsgs_eq_flatMap (l : List (List Bool)) :
+      504|     Strategy.encodeMsgs l = l.flatMap fun m => pairEncode m [] := by
+  -- coe-A line 506 cascade=False cls=Tactic X failed: The left-hand side
+     providers=['TCSlib.Cryptography.Strategy.encodeMsgs', 'Turing.pairEncode']
+     referenced=['TCSlib.Cryptography.Strategy.encodeMsgs', 'Turing.pairEncode']
+     [TCSlib.Cryptography.Strategy.encodeMsgs] readers: encodeMsgs_nil@Interaction, encodeMsgs_cons@Interaction, pairFstD_encodeMsgs@Interaction
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, length_pairEncode@Encoding, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairDecode_pairEncode@Encoding, pairSplitAt_pairEncode@PairSplit, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Tactic `rfl` failed: The left-hand side
+     >   Strategy.encodeMsgs []
+     > is not definitionally equal to the right-hand side
+     >   List.flatMap (fun m => pairEncode m []) []
+     > 
+     > case nil
+     > ⊢ Strategy.encodeMsgs [] = List.flatMap (fun m => pairEncode m []) []
+       503| theorem encodeMsgs_eq_flatMap (l : List (List Bool)) :
+       504|     Strategy.encodeMsgs l = l.flatMap fun m => pairEncode m [] := by
+       505|   induction l with
+    *  506|   | nil => rfl
+       507|   | cons m l ih =>
+       508|     rw [Strategy.encodeMsgs_cons, List.flatMap_cons, ih]
+====================================================================================================
+KEY SEAL-0450 | seal | TCSlib.Cryptography.ColSimMachine.colCommit_eq_comStr
+  record: TCSlib.Cryptography.ColSimMachine.colCommit_eq_comStr l.638: Tactic `rfl` failed: The left-hand side (#248 inherited_same_native_step)
+  counts sA=1 sB=1 cA=1 cB=1 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.EnsembleLemmas.padL_eq (TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorNumeric.log:859
+  DECL at 629, header ends 633
+      629| theorem colCommit_eq_comStr (Com : List Bool → List Bool) (ℓ : PolyExpr) (x blk : List Bool)
+      630|     (c' : Fin (nV x) → Fin 3) (c : ℕ → Fin 3) (hc : ∀ i : Fin (nV x), c' i = c i) :
+      631|     colCommit Com (nV x) (ℓ.eval (nV x)) c'
+      632|         (fun i j => blk.getD ((x.length + 1) ^ 2 + 3 * x.length + i * ℓ.eval (nV x) + j) false) =
+      633|       comStr Com ℓ x blk c := by
+  -- coe-A line 638 cascade=False cls=Tactic X failed: The left-hand side
+     providers=['TCSlib.Cryptography.EnsembleLemmas.padL', 'TCSlib.Cryptography.encColor', 'TCSlib.Cryptography.padColor', 'Turing.pairEncode']
+     referenced=['TCSlib.Cryptography.EnsembleLemmas.padL', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.colCommit', 'TCSlib.Cryptography.encColor', 'TCSlib.Cryptography.multiCom', 'TCSlib.Cryptography.padColor', 'Turing.pairEncode']
+     [TCSlib.Cryptography.EnsembleLemmas.padL] readers: padL_eq@EnsemblesLemmas, length_padL@EnsemblesLemmas, ofFn_padFin_eq_padL@EnsemblesLemmas, polyTimeComputable_padL@EnsemblesLemmas
+     [TCSlib.Cryptography.encColor] readers: encColor_def@Language, encColor_getD_ne@Language, decColor_encColor@Language
+     [TCSlib.Cryptography.padColor] readers: padColor_def@Language, padColor_injective@Language
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, length_pairEncode@Encoding, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairDecode_pairEncode@Encoding, pairSplitAt_pairEncode@PairSplit, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Tactic `rfl` failed: The left-hand side
+     >   Com
+     >     (pairEncode (List.ofFn (padColor (nV x) (c ↑i)))
+     >       (List.ofFn fun j => blk.getD ((x.length + 1) ^ 2 + 3 * x.length + ↑i * ℓ.eval (nV x) + ↑j) false))
+     > is not definitionally equal to the right-hand side
+     >   Com
+     >     (pairEncode (EnsembleLemmas.padL (nV x) (encColor (c ↑i)))
+     >       (List.ofFn fun j => blk.getD (baseR x + ↑i * ℓ.eval (nV x) + ↑j) false))
+     > 
+     > case hF
+     > Com : List Bool → List Bool
+     > ℓ : PolyExpr
+     > x blk : List Bool
+     > c' : Fin (nV x) → Fin 3
+     >> ⊢ Com
+       635|   apply encodeMsgs_ofFn_eq_flatMap
+       636|   intro i
+       637|   simp only [rrStr, hc i, ← ofFn_getD_eq_padL]
+    *  638|   rfl
+       639| 
+       640| /-- **One attempt of the string simulator is its numeric form** (the content of the machine's
+====================================================================================================
+KEY SEAL-0451 | seal | TCSlib.Cryptography.ColSimMachine.attemptStr_eq_attemptNum
+  record: TCSlib.Cryptography.ColSimMachine.attemptStr_eq_attemptNum l.652: Type mismatch (#248 inherited_same_native_step)
+  counts sA=2 sB=2 cA=2 cB=2 scan=-
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.decGraph_eq (TCSlib/Cryptography/ZeroKnowledge/Encoding.lean)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealA_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorNumeric.log:873
+  DECL at 650, header ends 651
+      650| theorem attemptStr_eq_attemptNum (Com : List Bool → List Bool) (ℓ : PolyExpr) (V' : Strategy)
+      651|     (x z blk : List Bool) : attemptStr Com ℓ V' x z blk = attemptNum Com ℓ V' x z blk := by
+  -- coe-A line 652 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.decGraph']
+     referenced=['TCSlib.Cryptography.EnsembleLemmas.padL', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.colCommit', 'TCSlib.Cryptography.colOpen', 'TCSlib.Cryptography.decGraph', 'TCSlib.Cryptography.edgeAt', 'TCSlib.Cryptography.edgeIdxOfMsg', 'TCSlib.Cryptography.edgeOf', 'TCSlib.Cryptography.encColor', 'TCSlib.Cryptography.sampleEdgeIdx', 'Turing.pairEncode']
+     [TCSlib.Cryptography.decGraph] readers: decGraph_eq@Encoding, decGraph_fst@Encoding, decGraph_snd@GraphIsomorphism, decGraph_encGraph@Encoding, decGraph_snd_apply@Encoding; struct fields: fst, snd
+     > Type mismatch
+     >   edgeCount_eq_countBits x
+     > has type
+     >   edgeCount (decGraph x).snd = countBits x ((decGraph x).fst * (decGraph x).fst)
+     > but is expected to have type
+     >   edgeCount (decGraph x).snd = mE x
+       649| commitments are `comStr` and the opening is `opnStr`. -/
+       650| theorem attemptStr_eq_attemptNum (Com : List Bool → List Bool) (ℓ : PolyExpr) (V' : Strategy)
+       651|     (x z blk : List Bool) : attemptStr Com ℓ V' x z blk = attemptNum Com ℓ V' x z blk := by
+    *  652|   have hm : edgeCount (decGraph x).2 = mE x := edgeCount_eq_countBits x
+       653|   have hn : (decGraph x).1 = nV x := rfl
+       654|   unfold attemptStr attemptNum
+  -- coe-A line 653 cascade=True cls=Type mismatch
+     providers=['TCSlib.Cryptography.EnsembleLemmas.padL', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.colCommit', 'TCSlib.Cryptography.colOpen', 'TCSlib.Cryptography.decGraph', 'TCSlib.Cryptography.edgeAt', 'TCSlib.Cryptography.edgeIdxOfMsg', 'TCSlib.Cryptography.edgeOf', 'TCSlib.Cryptography.encColor', 'TCSlib.Cryptography.sampleEdgeIdx', 'Turing.pairEncode']
+     referenced=['TCSlib.Cryptography.EnsembleLemmas.padL', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.colCommit', 'TCSlib.Cryptography.colOpen', 'TCSlib.Cryptography.decGraph', 'TCSlib.Cryptography.edgeAt', 'TCSlib.Cryptography.edgeIdxOfMsg', 'TCSlib.Cryptography.edgeOf', 'TCSlib.Cryptography.encColor', 'TCSlib.Cryptography.sampleEdgeIdx', 'Turing.pairEncode']
+     [TCSlib.Cryptography.EnsembleLemmas.padL] readers: padL_eq@EnsemblesLemmas, length_padL@EnsemblesLemmas, ofFn_padFin_eq_padL@EnsemblesLemmas, polyTimeComputable_padL@EnsemblesLemmas
+     [TCSlib.Cryptography.View.encode] readers: encode_mk@Interaction
+     [TCSlib.Cryptography.colCommit] readers: colCommit_eq@Protocol
+     [TCSlib.Cryptography.colOpen] readers: colOpen_eq@Protocol
+     [TCSlib.Cryptography.decGraph] readers: decGraph_eq@Encoding, decGraph_fst@Encoding, decGraph_snd@GraphIsomorphism, decGraph_encGraph@Encoding, decGraph_snd_apply@Encoding; struct fields: fst, snd
+     [TCSlib.Cryptography.edgeAt] readers: edgeAt_def@Language, edgeAt_adj@Language, edgeAt_isSome@Language, edgeAt_eq_none_iff@Language, edgeAt_eq_some_edgeOf@Language
+     [TCSlib.Cryptography.edgeIdxOfMsg] readers: edgeIdxOfMsg_eq@Language, edgeIdxOfMsg_lt@Language, edgeIdxOfMsg_edgeMsg@Language
+     [TCSlib.Cryptography.edgeOf] readers: edgeOf_eq@Language, edgeOf_adj@Language, edgeAt_eq_some_edgeOf@Language; struct fields: fst, snd
+     [TCSlib.Cryptography.encColor] readers: encColor_def@Language, encColor_getD_ne@Language, decColor_encColor@Language
+     [TCSlib.Cryptography.sampleEdgeIdx] readers: sampleEdgeIdx_def@Language, sampleEdgeIdx_lt@Language, statClose_sampleEdgeIdx@Language
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, length_pairEncode@Encoding, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairDecode_pairEncode@Encoding, pairSplitAt_pairEncode@PairSplit, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Type mismatch
+     >   rfl
+     > has type
+     >   ?m.13 = ?m.13
+     > but is expected to have type
+       650| theorem attemptStr_eq_attemptNum (Com : List Bool → List Bool) (ℓ : PolyExpr) (V' : Strategy)
+       651|     (x z blk : List Bool) : attemptStr Com ℓ V' x z blk = attemptNum Com ℓ V' x z blk := by
+       652|   have hm : edgeCount (decGraph x).2 = mE x := edgeCount_eq_countBits x
+    *  653|   have hn : (decGraph x).1 = nV x := rfl
+       654|   unfold attemptStr attemptNum
+       655|   simp only []
+DUP SEAL-0452 -> same decl TCSlib.Cryptography.ColSimMachine.attemptStr_eq_attemptNum | tool: STAGE2 | use TCSlib.Cryptography.decGraph_eq (TCSlib/Cryptography/ZeroKnowledge/Encoding.lean) | record: TCSlib.Cryptography.ColSimMachine.attemptStr_eq_attemptNum l.653: Type mismatch (#248 inherited_same_native_step)
+====================================================================================================
+KEY C1-0325 | unfold | TCSlib.Cryptography.ColSimMachine.bitsToNat_getD_eq_blockVal
+  record: TCSlib.Cryptography.ColSimMachine.bitsToNat_getD_eq_blockVal l.138: simp bitsToNat (foreign-def) (#248 inherited_same_tactic_item)
+  counts sA=- sB=- cA=- cB=- scan=138 simp TCSlib.Cryptography.bitsToNat
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.bitsToNat_def (TCSlib/Cryptography/Asymptotic/Sampling.lean)
+  ev: evidence/scan/b3/explicit.json#items[4907]
+  DECL at 136
+      136| theorem bitsToNat_getD_eq_blockVal (r : List Bool) (base : ℕ) :
+       134| /-- The `k` bits of the tape from position `base` read as a number: `bitsToNat` of the block
+       135| is `EncodingMachines.blockVal` (induction on `k`, `List.ofFn_succ'`, `blockVal_succ`). -/
+       136| theorem bitsToNat_getD_eq_blockVal (r : List Bool) (base : ℕ) :
+       137|     ∀ k, bitsToNat (fun j : Fin k => r.getD (base + j) false) = blockVal r base k
+    *  138|   | 0 => by simp [bitsToNat]
+       139|   | k + 1 => by
+       140|     rw [blockVal_succ, ← bitsToNat_getD_eq_blockVal r base k]
+       141|     unfold bitsToNat
+     [TCSlib.Cryptography.bitsToNat] readers: bitsToNat_def@Sampling, bitsToNat_lt@Sampling, bitsToNat_injective@Sampling
+====================================================================================================
+KEY C1-0326 | unfold | TCSlib.Cryptography.ColSimMachine.bitsToNat_getD_eq_blockVal
+  record: TCSlib.Cryptography.ColSimMachine.bitsToNat_getD_eq_blockVal l.141: unfold bitsToNat (foreign-def) (#248 inherited_same_tactic_item)
+  counts sA=- sB=- cA=- cB=- scan=141 unfold TCSlib.Cryptography.bitsToNat
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.bitsToNat_def (TCSlib/Cryptography/Asymptotic/Sampling.lean)
+  ev: evidence/scan/b3/explicit.json#items[4910]
+  DECL at 136
+      136| theorem bitsToNat_getD_eq_blockVal (r : List Bool) (base : ℕ) :
+       137|     ∀ k, bitsToNat (fun j : Fin k => r.getD (base + j) false) = blockVal r base k
+       138|   | 0 => by simp [bitsToNat]
+       139|   | k + 1 => by
+       140|     rw [blockVal_succ, ← bitsToNat_getD_eq_blockVal r base k]
+    *  141|     unfold bitsToNat
+       142|     rw [List.ofFn_succ', List.concat_eq_append, List.foldl_append, List.foldl_cons, List.foldl_nil]
+       143|     simp only [Fin.coe_castSucc, Fin.val_last]
+       144|     congr 1
+     [TCSlib.Cryptography.bitsToNat] readers: bitsToNat_def@Sampling, bitsToNat_lt@Sampling, bitsToNat_injective@Sampling
+====================================================================================================
+KEY C1-0327 | unfold | TCSlib.Cryptography.ColSimMachine.findSome?_range_eq
+  record: TCSlib.Cryptography.ColSimMachine.findSome?_range_eq l.161: simp firstIdx (foreign-def) (#248 inherited_same_tactic_item)
+  counts sA=- sB=- cA=- cB=- scan=161 simp TCSlib.Cryptography.EncodingMachines.firstIdx
+  tool: STAGE2 | stmt=no | add TCSlib.Cryptography.EncodingMachines.firstIdx_eq (or _iff/_apply) in TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean; related: TCSlib.Cryptography.EncodingMachines.firstIdx_le, TCSlib.Cryptography.EncodingMachines.firstIdx_min, TCSlib.Cryptography.EncodingMachines.firstIdx_congr
+  ev: evidence/scan/b3/explicit.json#items[4920]
+  DECL at 156
+      156| theorem findSome?_range_eq {α : Type*} (g : ℕ → Option α) (T : ℕ) :
+       157|     (List.range T).findSome? g =
+       158|       if firstIdx (fun t => (g t).isSome) T < T then g (firstIdx (fun t => (g t).isSome) T)
+       159|       else none := by
+       160|   induction T with
+    *  161|   | zero => simp [firstIdx]
+       162|   | succ T ih =>
+       163|     rw [List.range_succ, List.findSome?_append, ih, List.findSome?_singleton]
+       164|     by_cases h : firstIdx (fun t => (g t).isSome) T < T
+     [TCSlib.Cryptography.EncodingMachines.firstIdx] readers: q_firstIdx@EncodingMachines, firstIdx_le@EncodingMachines, firstIdx_min@EncodingMachines, firstIdx_congr@EncodingMachines, firstIdx_eq_of@EncodingMachines, firstIdx_eq_iff@EncodingMachines, firstIdx_lt_iff@EncodingMachines, firstIdx_eq_of_forall@EncodingMachines, polyTimeComputable_firstIdx@EncodingMachines
+====================================================================================================
+KEY C1-0329 | unfold | TCSlib.Cryptography.ColSimMachine.sampleIdx_eq
+  record: TCSlib.Cryptography.ColSimMachine.sampleIdx_eq l.218: simp uniformFromBits (foreign-def) (#248 inherited_same_tactic_item)
+  counts sA=- sB=- cA=- cB=- scan=218 simp TCSlib.Cryptography.uniformFromBits
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.uniformFromBits_def (TCSlib/Cryptography/Asymptotic/Sampling.lean)
+  ev: evidence/scan/b3/explicit.json#items[4939]
+  DECL at 207
+      207| theorem sampleIdx_eq (m k T : ℕ) (r : List Bool) :
+       214|       uniformFromBits m k (fun j : Fin k => r.getD ((t : ℕ) * k + j) false)) = _
+       215|     rw [← List.map_coe_finRange, List.findSome?_map]
+       216|     congr 1
+       217|     funext t
+    *  218|     simp only [Function.comp, uniformFromBits, hg, bitsToNat_getD_eq_blockVal]
+       219|   have h2 : ∀ t, (g t).isSome = decide (blockVal r ((0 * T + t) * k) k < m - 0) := by
+       220|     intro t
+       221|     simp only [hg, zero_mul, zero_add, Nat.sub_zero]
+     [TCSlib.Cryptography.uniformFromBits] readers: uniformFromBits_def@Sampling, uniformFromBits_eq_none_iff@Sampling, uniformFromBits_eq_some_iff@Sampling
+====================================================================================================
+KEY C1-0330 | unfold | TCSlib.Cryptography.ColSimMachine.sampleEdgeIdx_eq
+  record: TCSlib.Cryptography.ColSimMachine.sampleEdgeIdx_eq l.234: unfold sampleEdgeIdx (foreign-def) (#248 inherited_same_tactic_item)
+  counts sA=- sB=- cA=- cB=- scan=234 unfold TCSlib.Cryptography.sampleEdgeIdx
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.sampleEdgeIdx_def (TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean)
+  ev: evidence/scan/b3/explicit.json#items[4955]
+  DECL at 231
+      231| theorem sampleEdgeIdx_eq (m T : ℕ) (r : List Bool) :
+       230| /-- The sampled edge index is the numeric sample when it is in range, `0` otherwise. -/
+       231| theorem sampleEdgeIdx_eq (m T : ℕ) (r : List Bool) :
+       232|     sampleEdgeIdx m T r =
+       233|       if sampleNum m (Nat.size m) T r < m then sampleNum m (Nat.size m) T r else 0 := by
+    *  234|   unfold sampleEdgeIdx
+       235|   rw [sampleIdx_eq]
+       236|   split_ifs <;> rfl
+       237| 
+     [TCSlib.Cryptography.sampleEdgeIdx] readers: sampleEdgeIdx_def@Language, sampleEdgeIdx_lt@Language, statClose_sampleEdgeIdx@Language
+====================================================================================================
+KEY C1-0333 | unfold | TCSlib.Cryptography.ColSimMachine.edgeList_eq_map
+  record: TCSlib.Cryptography.ColSimMachine.edgeList_eq_map l.352: unfold edgeList (foreign-def) (#248 inherited_same_tactic_item)
+  counts sA=- sB=- cA=- cB=- scan=352 unfold TCSlib.Cryptography.edgeList
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.edgeList_def (TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean)
+  ev: evidence/scan/b3/explicit.json#items[4993]
+  DECL at 347
+      347| theorem edgeList_eq_map (x : List Bool) :
+       348|     edgeList (decGraph x).2 =
+       349|       (((List.finRange ((decGraph x).1 * (decGraph x).1)).filter
+       350|         fun k : Fin ((decGraph x).1 * (decGraph x).1) => x.getD k false).map
+       351|           finProdFinEquiv.symm) := by
+    *  352|   unfold edgeList
+       353|   rw [finRange_product_eq, List.filter_map]
+       354|   congr 1
+       355|   apply List.filter_congr
+     [TCSlib.Cryptography.edgeList] readers: edgeList_def@Language
+====================================================================================================
+KEY C1-0334 | unfold | TCSlib.Cryptography.ColSimMachine.edgeOf_val_eq
+  record: TCSlib.Cryptography.ColSimMachine.edgeOf_val_eq l.480: unfold edgeOf (foreign-def) (#248 inherited_same_tactic_item)
+  counts sA=- sB=- cA=- cB=- scan=480 unfold TCSlib.Cryptography.edgeOf
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.edgeOf_eq (TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean)
+  ev: evidence/scan/b3/explicit.json#items[5046]
+  DECL at 466
+      466| theorem edgeOf_val_eq (x : List Bool) (e : Fin (edgeCount (decGraph x).2)) :
+       476|     simpa using hlen
+       477|   have hget : edgeOf (decGraph x).2 e = finProdFinEquiv.symm
+       478|       (((List.finRange ((decGraph x).1 * (decGraph x).1)).filter
+       479|         fun k : Fin ((decGraph x).1 * (decGraph x).1) => x.getD k false)[e.val]'hLe) := by
+    *  480|     unfold edgeOf
+       481|     rw [List.get_eq_getElem, List.getElem_of_eq (edgeList_eq_map x), List.getElem_map]
+       482|   have hval : (((((List.finRange ((decGraph x).1 * (decGraph x).1)).filter
+       483|       fun k : Fin ((decGraph x).1 * (decGraph x).1) => x.getD k false)[e.val]'hLe) :
+     [TCSlib.Cryptography.edgeOf] readers: edgeOf_eq@Language, edgeOf_adj@Language, edgeAt_eq_some_edgeOf@Language; struct fields: fst, snd
+====================================================================================================
+KEY C1-0337 | unfold | TCSlib.Cryptography.ColSimMachine.encodeMsgs_eq_flatMap
+  record: TCSlib.Cryptography.ColSimMachine.encodeMsgs_eq_flatMap l.509: simp pairEncode (foreign-def) (#248 inherited_same_tactic_item)
+  counts sA=- sB=- cA=- cB=- scan=509 simp Turing.pairEncode
+  tool: STAGE2 | stmt=no | use Turing.pairEncode_eq (TCSlib/Complexity/TuringMachine/Encoding.lean)
+  ev: evidence/scan/b3/explicit.json#items[5060]
+  DECL at 503
+      503| theorem encodeMsgs_eq_flatMap (l : List (List Bool)) :
+       505|   induction l with
+       506|   | nil => rfl
+       507|   | cons m l ih =>
+       508|     rw [Strategy.encodeMsgs_cons, List.flatMap_cons, ih]
+    *  509|     simp [pairEncode, List.append_assoc]
+       510| 
+       511| /-- The encoding of a message list given by a function on `Fin n` is the concatenation over
+       512| `List.range n` of the encodings of a numeric form of the function. -/
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, length_pairEncode@Encoding, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairDecode_pairEncode@Encoding, pairSplitAt_pairEncode@PairSplit, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+====================================================================================================
+KEY C1-0338 | unfold | TCSlib.Cryptography.ColSimMachine.ofFn_getD_eq_padL
+  record: TCSlib.Cryptography.ColSimMachine.ofFn_getD_eq_padL l.526: unfold EnsembleLemmas.padL (foreign-def) (#248 inherited_same_tactic_item)
+  counts sA=- sB=- cA=- cB=- scan=526 unfold TCSlib.Cryptography.EnsembleLemmas.padL
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.EnsembleLemmas.padL_eq (TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean)
+  ev: evidence/scan/b3/explicit.json#items[5068]
+  DECL at 524
+      524| theorem ofFn_getD_eq_padL (blk : List Bool) (s ℓ : ℕ) :
+       522| /-- The `ℓ`-bit randomness read from position `s` of a tape, as a string: `List.ofFn` of the
+       523| `getD` reading is `padL` of the dropped tape. -/
+       524| theorem ofFn_getD_eq_padL (blk : List Bool) (s ℓ : ℕ) :
+       525|     List.ofFn (fun j : Fin ℓ => blk.getD (s + j) false) = EnsembleLemmas.padL ℓ (blk.drop s) := by
+    *  526|   unfold EnsembleLemmas.padL
+       527|   congr 1
+       528|   funext j
+       529|   simp [padFin, List.getD_eq_getElem?_getD, List.getElem?_drop]
+     [TCSlib.Cryptography.EnsembleLemmas.padL] readers: padL_eq@EnsemblesLemmas, length_padL@EnsemblesLemmas, ofFn_padFin_eq_padL@EnsemblesLemmas, polyTimeComputable_padL@EnsemblesLemmas
+====================================================================================================
+KEY C1-0339 | unfold | TCSlib.Cryptography.ColSimMachine.ofFn_getD_eq_padL
+  record: TCSlib.Cryptography.ColSimMachine.ofFn_getD_eq_padL l.529: simp padFin (foreign-def) (#248 inherited_same_tactic_item)
+  counts sA=- sB=- cA=- cB=- scan=529 simp TCSlib.Cryptography.padFin
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.padFin_def (TCSlib/Cryptography/Asymptotic/Adversary.lean)
+  ev: evidence/scan/b3/explicit.json#items[5069]
+  DECL at 524
+      524| theorem ofFn_getD_eq_padL (blk : List Bool) (s ℓ : ℕ) :
+       525|     List.ofFn (fun j : Fin ℓ => blk.getD (s + j) false) = EnsembleLemmas.padL ℓ (blk.drop s) := by
+       526|   unfold EnsembleLemmas.padL
+       527|   congr 1
+       528|   funext j
+    *  529|   simp [padFin, List.getD_eq_getElem?_getD, List.getElem?_drop]
+       530| 
+       531| /-- The vertex count read off an adjacency word. -/
+       532| def nV (x : List Bool) : ℕ := Nat.sqrt x.length
+     [TCSlib.Cryptography.padFin] readers: padFin_def@Adversary, padFin_apply@Adversary, padFin_ofFn@Adversary
+====================================================================================================
+KEY C1-0340 | unfold | TCSlib.Cryptography.ColSimMachine.colCommit_eq_comStr
+  record: TCSlib.Cryptography.ColSimMachine.colCommit_eq_comStr l.634: unfold colCommit (foreign-def) (#248 inherited_same_tactic_item)
+  counts sA=- sB=- cA=- cB=- scan=634 unfold TCSlib.Cryptography.colCommit
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.colCommit_eq (TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean)
+  ev: evidence/scan/b3/explicit.json#items[5072]
+  DECL at 629
+      629| theorem colCommit_eq_comStr (Com : List Bool → List Bool) (ℓ : PolyExpr) (x blk : List Bool)
+       630|     (c' : Fin (nV x) → Fin 3) (c : ℕ → Fin 3) (hc : ∀ i : Fin (nV x), c' i = c i) :
+       631|     colCommit Com (nV x) (ℓ.eval (nV x)) c'
+       632|         (fun i j => blk.getD ((x.length + 1) ^ 2 + 3 * x.length + i * ℓ.eval (nV x) + j) false) =
+       633|       comStr Com ℓ x blk c := by
+    *  634|   unfold colCommit multiCom comStr
+       635|   apply encodeMsgs_ofFn_eq_flatMap
+       636|   intro i
+       637|   simp only [rrStr, hc i, ← ofFn_getD_eq_padL]
+     [TCSlib.Cryptography.colCommit] readers: colCommit_eq@Protocol
+====================================================================================================
+KEY C1-0341 | unfold | TCSlib.Cryptography.ColSimMachine.colCommit_eq_comStr
+  record: TCSlib.Cryptography.ColSimMachine.colCommit_eq_comStr l.634: unfold multiCom (foreign-def) (#248 inherited_same_tactic_item)
+  counts sA=- sB=- cA=- cB=- scan=634 unfold TCSlib.Cryptography.multiCom
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.multiCom_def (TCSlib/Cryptography/ZeroKnowledge/Commitment.lean)
+  ev: evidence/scan/b3/explicit.json#items[5073]
+  DECL at 629
+      629| theorem colCommit_eq_comStr (Com : List Bool → List Bool) (ℓ : PolyExpr) (x blk : List Bool)
+       630|     (c' : Fin (nV x) → Fin 3) (c : ℕ → Fin 3) (hc : ∀ i : Fin (nV x), c' i = c i) :
+       631|     colCommit Com (nV x) (ℓ.eval (nV x)) c'
+       632|         (fun i j => blk.getD ((x.length + 1) ^ 2 + 3 * x.length + i * ℓ.eval (nV x) + j) false) =
+       633|       comStr Com ℓ x blk c := by
+    *  634|   unfold colCommit multiCom comStr
+       635|   apply encodeMsgs_ofFn_eq_flatMap
+       636|   intro i
+       637|   simp only [rrStr, hc i, ← ofFn_getD_eq_padL]
+     [TCSlib.Cryptography.multiCom] readers: multiCom_def@Commitment
+====================================================================================================
+KEY C1-0342 | unfold | TCSlib.Cryptography.ColSimMachine.attemptStr_eq_attemptNum
+  record: TCSlib.Cryptography.ColSimMachine.attemptStr_eq_attemptNum l.698: unfold colOpen (foreign-def) (#248 inherited_same_tactic_item)
+  counts sA=- sB=- cA=- cB=- scan=698 unfold TCSlib.Cryptography.colOpen
+  tool: STAGE2 | stmt=no | use TCSlib.Cryptography.colOpen_eq (TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean)
+  ev: evidence/scan/b3/explicit.json#items[5096]
+  DECL at 650
+      650| theorem attemptStr_eq_attemptNum (Com : List Bool → List Bool) (ℓ : PolyExpr) (V' : Strategy)
+       694|         (simColors (edgeOf (decGraph x).2 ef) (sampleColorPair x.length (blk.drop ((x.length + 1) ^ 2))))
+       695|         (fun (i : Fin (nV x)) (j : Fin (ℓ.eval (nV x))) =>
+       696|           blk.getD ((x.length + 1) ^ 2 + 3 * x.length + i * ℓ.eval (nV x) + j) false)
+       697|         (edgeOf (decGraph x).2 ef) = opnStr ℓ x blk := by
+    *  698|       unfold colOpen opnStr
+       699|       simp only [hcol]
+       700|       rw [hp1, hp2]
+       701|       unfold rrStr
+     [TCSlib.Cryptography.colOpen] readers: colOpen_eq@Protocol

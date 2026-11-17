@@ -1,0 +1,183 @@
+====================================================================================================
+KEY SG-F07:4 | seal | TCSlib.Cryptography.SecureComputation.PRFOut
+  record: TCSlib.Cryptography.SecureComputation.PRFOut: ? errors, variant B (strict = coe) (file total 6e/5d (base 4e/4d): PRFOut, prfOut_var_iff, specialScheme_multiMessageSecure, specialSche)
+  counts sA=0 sB=1 cA=0 cB=1 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_SecureComputation_SpecialEncryptionSecurity.log:182
+  DECL at 65, header ends 66
+       65| structure PRFOut (ℓ₂ : PolyExpr)
+       66|     (G : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (ℓ₂.eval n) → Bool)) : Prop where
+  -- coe-B line 71 cascade=False cls=Application type mismatch: The argument
+     providers=[]
+     referenced=['Complexity.PolyExpr.eval']
+     > Application type mismatch: The argument
+     >   G
+     > has type
+     >   (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (ℓ₂.eval n) → Bool
+     > but is expected to have type
+     >   (n : ℕ) → (Fin n → Bool) → (Fin (PolyExpr.var.eval n) → Bool) → Fin (ℓ₂.eval n) → Bool
+     > in the application
+     >   OracleEnsemble.keyed G
+        68|   easy : ∃ E : List Bool → List Bool, PolyTimeComputable E ∧
+        69|     ∀ n (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G n s x)
+        70|   /-- Clause (2): `{s ← U_n : f_s} ≈ {F ← RF : F}` as oracle ensembles. -/
+    *   71|   pseudorandom : (OracleEnsemble.keyed (ℓ₁ := .var) (ℓ₂ := ℓ₂) G).Indist
+        72|     (OracleEnsemble.random .var ℓ₂)
+        73| 
+====================================================================================================
+KEY SG-F07:5 | seal | TCSlib.Cryptography.SecureComputation.prfOut_var_iff
+  record: TCSlib.Cryptography.SecureComputation.prfOut_var_iff: ? errors, variant B (strict = coe) ()
+  counts sA=0 sB=1 cA=0 cB=1 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_SecureComputation_SpecialEncryptionSecurity.log:188
+  DECL at 76, header ends 77
+       76| theorem prfOut_var_iff (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool)) :
+       77|     PRFOut .var F ↔ PRF F :=
+  -- coe-B line 77 cascade=False cls=Application type mismatch: The argument
+     providers=[]
+     referenced=[]
+     > Application type mismatch: The argument
+     >   F
+     > has type
+     >   (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin n → Bool
+     > but is expected to have type
+     >   (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (PolyExpr.var.eval n) → Bool
+     > in the application
+     >   PRFOut PolyExpr.var F
+        74| /-- With `n`-bit outputs, `PRFOut` is the ch. 2–4 layer's `PRF` (duplication-ledger item DL-8:
+        75| `PRFOut` generalizes `PRF`, and agrees with it at `ℓ₂ = n`). -/
+        76| theorem prfOut_var_iff (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool)) :
+    *   77|     PRFOut .var F ↔ PRF F :=
+        78|   ⟨fun h => ⟨h.easy, h.pseudorandom⟩, fun h => ⟨h.easy, h.pseudorandom⟩⟩
+        79| 
+====================================================================================================
+KEY SG-F07:6 | seal | TCSlib.Cryptography.SecureComputation.specialScheme_multiMessageSecure
+  record: TCSlib.Cryptography.SecureComputation.specialScheme_multiMessageSecure: ? errors, variant B (strict = coe) ()
+  counts sA=0 sB=1 cA=0 cB=1 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_SecureComputation_SpecialEncryptionSecurity.log:311
+  DECL at 200, header ends 201
+      200| theorem specialScheme_multiMessageSecure (hG : PRFOut (.add .var .var) G) :
+      201|     (specialScheme G E hE hGE).MultiMessageSecure := by
+  -- coe-B line 200 cascade=False cls=Application type mismatch: The argument
+     providers=['Complexity.PolyExpr.eval']
+     referenced=['Complexity.NUPPT.coinLen', 'Complexity.NUPPT.distinguisherL', 'Complexity.NUPPT.runAt', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.PrivateKeyScheme.MultiMessageSecure', 'TCSlib.Cryptography.PrivateKeyScheme.encodeList', 'TCSlib.Cryptography.PrivateKeyScheme.multiEncDist', 'TCSlib.Cryptography.SecureComputation.spEncStr', 'TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.distAdv', 'TCSlib.Cryptography.encodeTupleOut', 'TCSlib.Cryptography.prfEncRealOut', 'Turing.pairEncode']
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr
+     > Application type mismatch: The argument
+     >   G
+     > has type
+     >   (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool
+     > but is expected to have type
+     >   (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool
+     > in the application
+     >   PRFOut (PolyExpr.var.add PolyExpr.var) G
+       197| The shared zero-prefix identity identifies each ciphertext with the corresponding masked
+       198| PRF tuple entry. Relabelling preserves both acceptance probabilities, and the D4 bound
+       199| applies to every pair of mask vectors. This uses D4 directly in this upstream module. -/
+    *  200| theorem specialScheme_multiMessageSecure (hG : PRFOut (.add .var .var) G) :
+       201|     (specialScheme G E hE hGE).MultiMessageSecure := by
+       202|   rw [PrivateKeyScheme.multiMessageSecure_iff]
+====================================================================================================
+KEY SG-F07:7 | seal | TCSlib.Cryptography.SecureComputation.specialScheme_wrongKey
+  record: TCSlib.Cryptography.SecureComputation.specialScheme_wrongKey: ? errors, variant B (strict = coe) (header and body)
+  counts sA=0 sB=2 cA=0 cB=2 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_SecureComputation_SpecialEncryptionSecurity.log:397
+  DECL at 286, header ends 295
+      286| theorem specialScheme_wrongKey (hG : PRFOut (.add .var .var) G) :
+      287|     ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n (m : Fin n → Bool),
+      288|       1 - ε n < uprob (fun t : (specialScheme G E hE hGE).gen.Coins n ×
+      289|           (specialScheme G E hE hGE).gen.Coins n × (specialScheme G E hE hGE).enc.Coins n ×
+      290|           (specialScheme G E hE hGE).dec.Coins n =>
+      291|         decodeFin n ((specialScheme G E hE hGE).dec.runAt n
+      292|           (pairEncode ((specialScheme G E hE hGE).gen.runAt n [] t.2.1)
+      293|             ((specialScheme G E hE hGE).enc.runAt n
+      294|               (pairEncode ((specialScheme G E hE hGE).gen.runAt n [] t.1) (List.ofFn m)) t.2.2.1))
+      295|           t.2.2.2) = none) := by
+  -- coe-B line 286 cascade=False cls=Application type mismatch: The argument
+     providers=['Complexity.PolyExpr.eval']
+     referenced=['Complexity.NUPPT.coinLen', 'Complexity.NUPPT.runAt', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.SecureComputation.spDecStr', 'TCSlib.Cryptography.SecureComputation.spEncStr', 'TCSlib.Cryptography.decodeFin', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr
+     > Application type mismatch: The argument
+     >   G
+     > has type
+     >   (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool
+     > but is expected to have type
+     >   (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool
+     > in the application
+     >   PRFOut (PolyExpr.var.add PolyExpr.var) G
+       283| unused decryption coins. The public activation readers identify string encryption and
+       284| decryption. String failure produces the overlong word `1^{n+1}`, which decodes to `none`;
+       285| monotonicity therefore transfers the string lower bound to the scheme's failure event. -/
+    *  286| theorem specialScheme_wrongKey (hG : PRFOut (.add .var .var) G) :
+       287|     ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n (m : Fin n → Bool),
+       288|       1 - ε n < uprob (fun t : (specialScheme G E hE hGE).gen.Coins n ×
+  -- coe-B line 296 cascade=True cls=Application type mismatch: The argument
+     providers=['Complexity.NUPPT.coinLen', 'Complexity.NUPPT.runAt', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.SecureComputation.spDecStr', 'TCSlib.Cryptography.SecureComputation.spEncStr', 'TCSlib.Cryptography.decodeFin', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     referenced=['Complexity.NUPPT.coinLen', 'Complexity.NUPPT.runAt', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.SecureComputation.spDecStr', 'TCSlib.Cryptography.SecureComputation.spEncStr', 'TCSlib.Cryptography.decodeFin', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [Complexity.NUPPT.coinLen] readers: coinLen_eq@PPT, coinLen_reparam@HardCoreLemmas
+     [Complexity.NUPPT.runAt] readers: runAt_eq@PPT, runAt_wrap@ReductionSupport, runAt_preComp@ReductionSupport, runAt_reparam@HardCoreLemmas, runAt_coinsCongr@PPT
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop, polyTimeComputable_unary@PolyTimePairing, polyTimeComputable_pairEq@Repetition, polyTimeComputable_iterate@Repetition, polyTimeComputable_pairXor@Repetition, polyTimeComputable_prepend@PolyTimePairing, polyTimeComputable_blockMap@Repetition, polyTimeComputable_emitIter@PolyTimeBlockLoop, polyTimeComputable_majority@Repetition, polyTimeComputable_pairFstD@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, polyTimeComputable_pairSwap@PolyTimePairing, polyTimeComputable_of_linear@PolyTimePairing, polyTimeComputable_polyUnary@PolyTimePairing, polyTimeComputable_stateFind@Repetition, polyTimeComputable_transduce@Transducer, polyTimeComputable_unaryPoly@Primitives, polyTimeComputable_pairConcat@PolyTimePairing, polyTimeComputable_iterateEmit@Repetition, polyTimeComputable_iterateFind@Repetition, polyTimeComputable_sliceDropAt@PolyTimeBlockLoop, polyTimeComputable_sliceTakeAt@PolyTimeBlockLoop, polyTimeComputable_unaryNormal@PolyExpr, polyTimeComputable_blockAnyTest@PolyTimeBlockTests, polyTimeComputable_pairDropPoly@Primitives, polyTimeComputable_pairTakePoly@Primitives, polyTimeComputable_blockXorAnyTest@PolyTimeBlockTests, polyTimeComputable_iterate_pairFstD@PolyTimePairing, polyTimeComputable_blockMajorityTest@PolyTimeBlockMajority, polyTimeComputable_dropPrefixByLength@PolyTimePrefix, polyTimeComputable_of_computesInSpace@ConfigCount, polyTimeComputable_takePrefixByLength@PolyTimePrefix
+     [TCSlib.Cryptography.Negligible] readers: negligible_iff@Negligible, negligible_zero@Negligible, negligible_two_pow_neg@Negligible, negligible_exp_neg_sqrt_div@Defs, negligible_inv_pow_sqrt_div@Defs, negligible_mul_permFailBound@GraphIsomorphism, negligible_two_pow_neg_sqrt_div@Defs, negligible_of_le_inv_pow_sqrt_div@Defs
+     [TCSlib.Cryptography.SecureComputation.spDecStr] readers: spDecStr_eq@SpecialEncryption, spDecStr_spEncStr@SpecialEncryption, spDecStr_wrongKey@SpecialEncryptionSecurity
+     [TCSlib.Cryptography.SecureComputation.spEncStr] readers: spEncStr_eq@SpecialEncryption, spEncStr_eq_sliceMask@Pad, spEncStr_eq_zeroPrefixMask@Pad
+     [TCSlib.Cryptography.decodeFin] readers: decodeFin_eq@Adversary, decodeFin_ofFn@Adversary, decodeFin_eq_some_iff@Adversary, decodeFin_runAt_prfDec_of_not_wf@FromPRF
+     [TCSlib.Cryptography.uprob] readers: uprob_def@Probability, uprob_fst@Probability, uprob_not@Probability, uprob_snd@LazySampling, uprob_mono@Probability, uprob_prod@Probability, uprob_true@Probability, uprob_congr@LazySampling, uprob_false@Probability, uprob_or_le@Probability, uprob_le_one@Probability, uprob_nonneg@Probability, uprob_eq_uexp@Probability, uprob_bool_prod@GeneratorFromPermutation, uprob_exists_le@Probability, uprob_prod_comm@LazySampling, uprob_comp_equiv@Probability, uprob_eq_of_equiv@Indistinguishability, uprob_bitsToNat_lt@Sampling, uprob_col_cheat_le@Protocol, uprob_tdpPredictor@TrapdoorPredictor, uprob_update_split@LazySampling, uprob_firstHit_none@Sampling, uprob_gni_rep_cheat@GraphIsomorphism, uprob_pi_forall_dep@Permutations, uprob_update_absorb@LazySampling, uprob_adaptive_guess@GraphIsomorphism, uprob_eq_card_filter@Probability, uprob_sections_congr@LazySampling, uprob_update_absorb'@LazySampling, uprob_adaptive_escape@Protocol, uprob_colSimTruncW_eq@Simulator, uprob_comp_eq_sum_map@Experiments, uprob_giHonestView_eq@GraphIsomorphismZK, uprob_giSimTrunc_none@GraphIsomorphismZK, uprob_gi_rep_cheat_le@GraphIsomorphism, uprob_gi_cheat_le_half@GraphIsomorphism, uprob_not_injective_le@Hybrid, uprob_colSimAttemptW_eq@Simulator, uprob_colSimTruncH_none@Simulator, uprob_comp_eq_sum_fiber@Sampling, uprob_fiber_le_card_mul@Universal, uprob_giSimAttempt_none@GraphIsomorphismZK, uprob_giSimAttempt_some@GraphIsomorphismZK, uprob_colSimAttemptH_none@Simulator, uprob_colSimAttemptH_some@Simulator, uprob_comp_eq_probTrue_map@SamplingFinDist, uprob_rejectionSample_none@Sampling, uprob_uniformFromBits_none@Sampling, uprob_permFromCoins_none_le@Permutations, uprob_uniformFromBits_eq_some@Sampling, uprob_permGraph_eq_of_isomorphic@GraphIsomorphism, uprob_permGraph_eq_of_isomorphic'@GraphIsomorphism, uprob_permFromCoins_none_le_two_pow@Permutations, uprob_rejectionSample_none_le_half_pow@Sampling; struct fields: cauchy
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Application type mismatch: The argument
+     >   G
+     > has type
+     >   (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool
+     > but is expected to have type
+     >   (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool
+     > in the application
+     >   spDecStr_wrongKey PolyExpr.var G
+     > G06-COMPONENT label=SealB_Cryptography_SecureComputation_SpecialEncryptionSecurity phase=eof spelling=BoolCircuit.CompileListSpec.mk._flat_ctor key=[["str","BoolCircuit"],["str","CompileListSpec"],["str","mk"],["str","_f
+     > G06-COMPONENT label=SealB_Cryptography_SecureComputation_SpecialEncryptionSecurity phase=eof spelling=BoolCircuit.CompileSpec.mk._flat_ctor key=[["str","BoolCircuit"],["str","CompileSpec"],["str","mk"],["str","_flat_ctor
+     > G06-COMPONENT label=SealB_Cryptography_SecureComputation_SpecialEncryptionSecurity phase=eof spelling=BoolCircuit.DAGCircuit.IsFaninTwo key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","IsFaninTwo"]] home_key=[["st
+     > G06-COMPONENT label=SealB_Cryptography_SecureComputation_SpecialEncryptionSecurity phase=eof spelling=BoolCircuit.DAGCircuit.IsWellFormed key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","IsWellFormed"]] home_key=[
+     > G06-COMPONENT label=SealB_Cryptography_SecureComputation_SpecialEncryptionSecurity phase=eof spelling=BoolCircuit.DAGCircuit._sizeOf_1 key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","_sizeOf_1"]] home_key=[["str"
+     > G06-COMPONENT label=SealB_Cryptography_SecureComputation_SpecialEncryptionSecurity phase=eof spelling=BoolCircuit.DAGCircuit._sizeOf_inst key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","_sizeOf_inst"]] home_key=[
+       293|             ((specialScheme G E hE hGE).enc.runAt n
+       294|               (pairEncode ((specialScheme G E hE hGE).gen.runAt n [] t.1) (List.ofFn m)) t.2.2.1))
+       295|           t.2.2.2) = none) := by
+    *  296|   obtain ⟨ε, hε, hb⟩ := spDecStr_wrongKey .var G E hGE hG
+       297|   simp only [PolyExpr.eval_var] at hb
+       298|   refine ⟨ε, hε, fun n m => ?_⟩
+====================================================================================================
+KEY SG-F07:8 | seal | TCSlib.Cryptography.SecureComputation.spDecStr_wrongKey
+  record: TCSlib.Cryptography.SecureComputation.spDecStr_wrongKey: ? errors, variant B (strict = coe) ()
+  counts sA=0 sB=1 cA=0 cB=1 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_SecureComputation_SpecialEncryptionSecurity.log:380
+  DECL at 246, header ends 255
+      246| theorem spDecStr_wrongKey (ℓ : PolyExpr)
+      247|     (G' : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin ((PolyExpr.add .var ℓ).eval n) → Bool))
+      248|     (E' : List Bool → List Bool)
+      249|     (hGE' : ∀ n (s x : Fin n → Bool), E' (pairEncode (List.ofFn s) (List.ofFn x)) =
+      250|       List.ofFn (G' n s x))
+      251|     (hG' : PRFOut (.add .var ℓ) G') :
+      252|     ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n (m : Fin (ℓ.eval n) → Bool),
+      253|       1 - ε n < uprob (fun t : (Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool) =>
+      254|         spDecStr E' n (ℓ.eval n) (List.ofFn t.2.1)
+      255|           (spEncStr E' (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2)) = none) := by
+  -- coe-B line 269 cascade=False cls=Type mismatch
+     providers=['TCSlib.Cryptography.SecureComputation.spDecStr', 'TCSlib.Cryptography.SecureComputation.spEncStr']
+     referenced=['Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.SecureComputation.spDecStr', 'TCSlib.Cryptography.SecureComputation.spEncStr', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [TCSlib.Cryptography.SecureComputation.spDecStr] readers: spDecStr_eq@SpecialEncryption, spDecStr_spEncStr@SpecialEncryption, spDecStr_wrongKey@SpecialEncryptionSecurity
+     [TCSlib.Cryptography.SecureComputation.spEncStr] readers: spEncStr_eq@SpecialEncryption, spEncStr_eq_sliceMask@Pad, spEncStr_eq_zeroPrefixMask@Pad
+     > Type mismatch
+     >   SpecialWrongKey.spDecStr_none_iff_prefix_ne ?m.179 E' ?m.181 t.1 t.2.1 t.2.2 m
+     > has type
+     >   spDecStr E' n (ℓ.eval n) (List.ofFn t.2.1) (spEncStr E' (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2)) = none ↔
+     >     List.take n (List.ofFn (?m.179 t.1 t.2.2)) ≠ List.take n (List.ofFn (?m.179 t.2.1 t.2.2))
+     > but is expected to have type
+     >   spDecStr E' n (ℓ.eval n) (List.ofFn t.2.1) (spEncStr E' (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2)) = none ↔
+     >     List.take n (List.ofFn (?m.179 t.1 t.2.2)) ≠ List.take n (List.ofFn (?m.179 t.2.1 t.2.2))
+       266|             (List.ofFn (G' n t.2.1 t.2.2)).take n) := by
+       267|     rw [OneWay.uprob_congr (fun t :
+       268|         (Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool) =>
+    *  269|       SpecialWrongKey.spDecStr_none_iff_prefix_ne
+       270|       (G' n) E' (hGE' n) t.1 t.2.1 t.2.2 m), uprob_not]
+       271|   rw [hevent]

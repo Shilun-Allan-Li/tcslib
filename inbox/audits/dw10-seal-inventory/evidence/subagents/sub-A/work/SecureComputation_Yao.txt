@@ -1,0 +1,553 @@
+====================================================================================================
+KEY SY-F07:1 | seal | TCSlib.Cryptography.SecureComputation.yaoCoins_eval
+  record: yaoCoins_eval: 1 errors, variant B (strict = coe) (file total 24e/9d (SG-F07 recorded 15e/8d before sc-yao); seal A 0)
+  counts sA=0 sB=1 cA=0 cB=1 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_SecureComputation_Yao.log:504
+  DECL at 282, header ends 283
+      282| theorem yaoCoins_eval (Y : YaoCircuit) (n : ℕ) :
+      283|     (yaoCoins Y).eval n = 10 * Y.sizeBound.eval n * n + 2 * Y.sizeBound.eval n := rfl
+  -- coe-B line 283 cascade=False cls=Type mismatch
+     providers=['Complexity.PolyExpr.eval']
+     referenced=['Complexity.PolyExpr.eval']
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr
+     > Type mismatch
+     >   rfl
+     > has type
+     >   ?m.23 = ?m.23
+     > but is expected to have type
+     >   (yaoCoins Y).eval n = 10 * Y.sizeBound.eval n * n + 2 * Y.sizeBound.eval n
+       280| 
+       281| /-- Alice has `10 · S(n) · n + 2 · S(n)` coins. -/
+       282| theorem yaoCoins_eval (Y : YaoCircuit) (n : ℕ) :
+    *  283|     (yaoCoins Y).eval n = 10 * Y.sizeBound.eval n * n + 2 * Y.sizeBound.eval n := rfl
+       284| 
+       285| /-- **The garbling's randomness from Alice's coins** [PS10, §6.2.2–6.2.3: random key pairs,
+====================================================================================================
+KEY SY-F07:2 | seal | TCSlib.Cryptography.SecureComputation.yaoHybrid
+  record: yaoHybrid: 3 errors, variant B (strict = coe) (file total 24e/9d (SG-F07 recorded 15e/8d before sc-yao); seal A 0)
+  counts sA=0 sB=3 cA=0 cB=3 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_SecureComputation_Yao.log:812
+  DECL at 588, header ends 588
+      588| noncomputable def yaoHybrid : HybridProtocol otFunctionality where
+  -- coe-B line 591 cascade=False cls=Application type mismatch: The argument
+     providers=['Complexity.PolyExpr.eval']
+     referenced=['Complexity.PolyExpr.eval', 'TCSlib.Cryptography.SecureComputation.keyAt', 'TCSlib.Cryptography.SecureComputation.otFunctionality']
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr
+     > Application type mismatch: The argument
+     >   j
+     > has type
+     >   Fin ((Y.inB.mul PolyExpr.var).eval n)
+     > but is expected to have type
+     >   Fin (Y.inB.eval n * n)
+     > in the application
+     >   yaoCall Y n j
+       588| noncomputable def yaoHybrid : HybridProtocol otFunctionality where
+       589|   main := yaoMain Y E₁ E₂
+       590|   calls := .mul Y.inB .var
+    *  591|   callA n _ r j c := keyAt (Y.circ n) (yaoSeed Y n r) (Y.inA.eval n + (yaoCall Y n j).1)
+       592|     (decide ((c : ℕ) = 1)) (yaoCall Y n j).2
+       593|   callB n y _ j _ := y.getD (yaoCall Y n j).1 false
+  -- coe-B line 592 cascade=True cls=Application type mismatch: The argument
+     providers=['Complexity.PolyExpr.eval']
+     referenced=['Complexity.PolyExpr.eval', 'TCSlib.Cryptography.SecureComputation.keyAt', 'TCSlib.Cryptography.SecureComputation.otFunctionality']
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr
+     > Application type mismatch: The argument
+     >   j
+     > has type
+     >   Fin ((Y.inB.mul PolyExpr.var).eval n)
+     > but is expected to have type
+     >   Fin (Y.inB.eval n * n)
+     > in the application
+     >   yaoCall Y n j
+       589|   main := yaoMain Y E₁ E₂
+       590|   calls := .mul Y.inB .var
+       591|   callA n _ r j c := keyAt (Y.circ n) (yaoSeed Y n r) (Y.inA.eval n + (yaoCall Y n j).1)
+    *  592|     (decide ((c : ℕ) = 1)) (yaoCall Y n j).2
+       593|   callB n y _ j _ := y.getD (yaoCall Y n j).1 false
+       594| 
+  -- coe-B line 593 cascade=True cls=Application type mismatch: The argument
+     providers=['Complexity.PolyExpr.eval']
+     referenced=['Complexity.PolyExpr.eval', 'TCSlib.Cryptography.SecureComputation.keyAt', 'TCSlib.Cryptography.SecureComputation.otFunctionality']
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr
+     > Application type mismatch: The argument
+     >   j
+     > has type
+     >   Fin ((Y.inB.mul PolyExpr.var).eval n)
+     > but is expected to have type
+     >   Fin (Y.inB.eval n * n)
+     > in the application
+     >   yaoCall Y n j
+       590|   calls := .mul Y.inB .var
+       591|   callA n _ r j c := keyAt (Y.circ n) (yaoSeed Y n r) (Y.inA.eval n + (yaoCall Y n j).1)
+       592|     (decide ((c : ℕ) = 1)) (yaoCall Y n j).2
+    *  593|   callB n y _ j _ := y.getD (yaoCall Y n j).1 false
+       594| 
+       595| attribute [simps (config := { isSimp := false }) main calls] yaoHybrid
+====================================================================================================
+KEY SY-F07:3 | seal | TCSlib.Cryptography.SecureComputation.yaoHybrid_callA
+  record: yaoHybrid_callA: 1 errors, variant B (strict = coe) (file total 24e/9d (SG-F07 recorded 15e/8d before sc-yao); seal A 0)
+  counts sA=0 sB=1 cA=0 cB=1 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_SecureComputation_Yao.log:820
+  DECL at 598, header ends 603
+      598| theorem yaoHybrid_callA (n : ℕ) (xs r : List Bool) (j : Fin (Y.inB.eval n * n)) (c : Fin 2) :
+      599|     (yaoHybrid Y E₁ E₂).callA n xs r j
+      600|         (Fin.cast ((congrArg (fun p : PolyExpr => p.eval n) otFunctionality_inA).trans
+      601|           (PolyExpr.eval_const 2 n)).symm c) =
+      602|       keyAt (Y.circ n) (yaoSeed Y n r) (Y.inA.eval n + (yaoCall Y n j).1) (decide ((c : ℕ) = 1))
+      603|         (yaoCall Y n j).2 := rfl
+  -- coe-B line 599 cascade=False cls=Application type mismatch: The argument
+     providers=[]
+     referenced=['Complexity.PolyExpr.eval', 'TCSlib.Cryptography.SecureComputation.keyAt', 'TCSlib.Cryptography.SecureComputation.otFunctionality']
+     > Application type mismatch: The argument
+     >   j
+     > has type
+     >   Fin (Y.inB.eval n * n)
+     > but is expected to have type
+     >   Fin ((yaoHybrid Y E₁ E₂).calls.eval n)
+     > in the application
+     >   (yaoHybrid Y E₁ E₂).callA n xs r j
+       596| 
+       597| /-- Alice's input to call `j = (i, t)` is `c ↦ k_{inA + i}^{c = 1}[t]`. -/
+       598| theorem yaoHybrid_callA (n : ℕ) (xs r : List Bool) (j : Fin (Y.inB.eval n * n)) (c : Fin 2) :
+    *  599|     (yaoHybrid Y E₁ E₂).callA n xs r j
+       600|         (Fin.cast ((congrArg (fun p : PolyExpr => p.eval n) otFunctionality_inA).trans
+       601|           (PolyExpr.eval_const 2 n)).symm c) =
+====================================================================================================
+KEY SY-F07:4 | seal | TCSlib.Cryptography.SecureComputation.yaoHybrid_callB
+  record: yaoHybrid_callB: 1 errors, variant B (strict = coe) (file total 24e/9d (SG-F07 recorded 15e/8d before sc-yao); seal A 0)
+  counts sA=0 sB=1 cA=0 cB=1 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_SecureComputation_Yao.log:828
+  DECL at 606, header ends 609
+      606| theorem yaoHybrid_callB (n : ℕ) (ys r : List Bool) (j : Fin (Y.inB.eval n * n)) (c : Fin 1) :
+      607|     (yaoHybrid Y E₁ E₂).callB n ys r j
+      608|         (Fin.cast ((congrArg (fun p : PolyExpr => p.eval n) otFunctionality_inB).trans
+      609|           (PolyExpr.eval_const 1 n)).symm c) = ys.getD (yaoCall Y n j).1 false := rfl
+  -- coe-B line 607 cascade=False cls=Application type mismatch: The argument
+     providers=[]
+     referenced=['Complexity.PolyExpr.eval', 'TCSlib.Cryptography.SecureComputation.otFunctionality']
+     > Application type mismatch: The argument
+     >   j
+     > has type
+     >   Fin (Y.inB.eval n * n)
+     > but is expected to have type
+     >   Fin ((yaoHybrid Y E₁ E₂).calls.eval n)
+     > in the application
+     >   (yaoHybrid Y E₁ E₂).callB n ys r j
+       604| 
+       605| /-- Bob's input to call `j = (i, t)` is his bit `y_i`. -/
+       606| theorem yaoHybrid_callB (n : ℕ) (ys r : List Bool) (j : Fin (Y.inB.eval n * n)) (c : Fin 1) :
+    *  607|     (yaoHybrid Y E₁ E₂).callB n ys r j
+       608|         (Fin.cast ((congrArg (fun p : PolyExpr => p.eval n) otFunctionality_inB).trans
+       609|           (PolyExpr.eval_const 1 n)).symm c) = ys.getD (yaoCall Y n j).1 false := rfl
+====================================================================================================
+KEY SY-F07:5 | seal | TCSlib.Cryptography.SecureComputation.yaoHybrid_answersB_getD
+  record: yaoHybrid_answersB_getD: 4 errors, variant B (strict = coe) (file total 24e/9d (SG-F07 recorded 15e/8d before sc-yao); seal A 0)
+  counts sA=0 sB=4 cA=0 cB=4 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_SecureComputation_Yao.log:939
+  DECL at 711, header ends 714
+      711| theorem yaoHybrid_answersB_getD (n : ℕ) (xs ys rA rB : List Bool) (i : Fin (Y.inB.eval n))
+      712|     (t : Fin n) :
+      713|     ((yaoHybrid Y E₁ E₂).answersB n xs ys rA rB).getD (i * n + t) false =
+      714|       keyAt (Y.circ n) (yaoSeed Y n rA) (Y.inA.eval n + i) (ys.getD i false) t := by
+  -- coe-B line 718 cascade=False cls=Application type mismatch: The argument
+     providers=[]
+     referenced=['Complexity.PolyExpr.eval', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.answersB', 'TCSlib.Cryptography.SecureComputation.keyAt', 'TCSlib.Cryptography.SecureComputation.otFunctionality']
+     > Application type mismatch: The argument
+     >   j
+     > has type
+     >   Fin (Y.inB.eval n * n)
+     > but is expected to have type
+     >   Fin ((yaoHybrid Y E₁ E₂).calls.eval n)
+     > in the application
+     >   (yaoHybrid Y E₁ E₂).callA n xs rA j
+       715|   have h := flatten_ofFn_one (k := Y.inB.eval n * n) (l := otFunctionality.outB.eval n)
+       716|     ((congrArg (fun p : PolyExpr => p.eval n) otFunctionality_outB).trans
+       717|       (PolyExpr.eval_const 1 n))
+    *  718|     fun j => (otFunctionality.f n ((yaoHybrid Y E₁ E₂).callA n xs rA j)
+       719|       ((yaoHybrid Y E₁ E₂).callB n ys rB j)).2
+       720|   have hj : i * n + t = (finProdFinEquiv (i, t) : ℕ) := by
+  -- coe-B line 719 cascade=True cls=Application type mismatch: The argument
+     providers=[]
+     referenced=['Complexity.PolyExpr.eval', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.answersB', 'TCSlib.Cryptography.SecureComputation.keyAt', 'TCSlib.Cryptography.SecureComputation.otFunctionality']
+     > Application type mismatch: The argument
+     >   j
+     > has type
+     >   Fin (Y.inB.eval n * n)
+     > but is expected to have type
+     >   Fin ((yaoHybrid Y E₁ E₂).calls.eval n)
+     > in the application
+     >   (yaoHybrid Y E₁ E₂).callB n ys rB j
+       716|     ((congrArg (fun p : PolyExpr => p.eval n) otFunctionality_outB).trans
+       717|       (PolyExpr.eval_const 1 n))
+       718|     fun j => (otFunctionality.f n ((yaoHybrid Y E₁ E₂).callA n xs rA j)
+    *  719|       ((yaoHybrid Y E₁ E₂).callB n ys rB j)).2
+       720|   have hj : i * n + t = (finProdFinEquiv (i, t) : ℕ) := by
+       721|     rw [finProdFinEquiv_apply_val]; ring
+  -- coe-B line 725 cascade=True cls=Application type mismatch: The argument
+     providers=[]
+     referenced=['Complexity.PolyExpr.eval', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.answersB', 'TCSlib.Cryptography.SecureComputation.keyAt', 'TCSlib.Cryptography.SecureComputation.otFunctionality']
+     > Application type mismatch: The argument
+     >   j
+     > has type
+     >   Fin (Y.inB.eval n * n)
+     > but is expected to have type
+     >   Fin ((yaoHybrid Y E₁ E₂).calls.eval n)
+     > in the application
+     >   (yaoHybrid Y E₁ E₂).callA n xs rA j
+       722|   rw [HybridProtocol.answersB_eq]
+       723|   -- Normalize the owner-local hybrid call count in the list binder before using `h`.
+       724|   change (List.ofFn (fun j : Fin (Y.inB.eval n * n) =>
+    *  725|     List.ofFn ((otFunctionality.f n ((yaoHybrid Y E₁ E₂).callA n xs rA j)
+       726|       ((yaoHybrid Y E₁ E₂).callB n ys rB j)).2))).flatten.getD (i * n + t) false = _
+       727|   rw [h, hj, getD_ofFn', otFunctionality_f_snd_apply,
+  -- coe-B line 726 cascade=True cls=Application type mismatch: The argument
+     providers=[]
+     referenced=['Complexity.PolyExpr.eval', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.answersB', 'TCSlib.Cryptography.SecureComputation.keyAt', 'TCSlib.Cryptography.SecureComputation.otFunctionality']
+     > Application type mismatch: The argument
+     >   j
+     > has type
+     >   Fin (Y.inB.eval n * n)
+     > but is expected to have type
+     >   Fin ((yaoHybrid Y E₁ E₂).calls.eval n)
+     > in the application
+     >   (yaoHybrid Y E₁ E₂).callB n ys rB j
+       723|   -- Normalize the owner-local hybrid call count in the list binder before using `h`.
+       724|   change (List.ofFn (fun j : Fin (Y.inB.eval n * n) =>
+       725|     List.ofFn ((otFunctionality.f n ((yaoHybrid Y E₁ E₂).callA n xs rA j)
+    *  726|       ((yaoHybrid Y E₁ E₂).callB n ys rB j)).2))).flatten.getD (i * n + t) false = _
+       727|   rw [h, hj, getD_ofFn', otFunctionality_f_snd_apply,
+       728|     yaoHybrid_callA, yaoHybrid_callB, yaoCall_finProdFinEquiv]
+====================================================================================================
+KEY SY-F07:6 | seal | TCSlib.Cryptography.SecureComputation.yaoSeed_good_whp
+  record: yaoSeed_good_whp: 1 errors, variant B (strict = coe) (file total 24e/9d (SG-F07 recorded 15e/8d before sc-yao); seal A 0)
+  counts sA=0 sB=1 cA=0 cB=1 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_SecureComputation_Yao.log:1030
+  DECL at 809, header ends 814
+      809| theorem yaoSeed_good_whp (hG₁ : PRFOut (.add .var .var) G₁)
+      810|     (hG₂ : PRFOut (.add .var innerLen) G₂) :
+      811|     ∃ δ : ℕ → ℝ, Negligible δ ∧ ∀ n, uprob (fun r : Fin ((yaoCoins Y).eval n) → Bool =>
+      812|       ¬ (Good (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n (List.ofFn r)) ∧
+      813|         ∀ j, keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.outs n j) false ≠
+      814|           keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.outs n j) true)) ≤ δ n := by
+  -- coe-B line 809 cascade=False cls=Application type mismatch: The argument
+     providers=['Complexity.PolyExpr.eval']
+     referenced=['BoolCircuit.DAGCircuit.IsFaninTwo', 'BoolCircuit.DAGCircuit.size', 'Complexity.PolyExpr.eval', 'TCSlib.Cryptography.HardcoreBit.PushesUniform', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.SecureComputation.Good', 'TCSlib.Cryptography.SecureComputation.MultiEnc.WrongKeyBot', 'TCSlib.Cryptography.SecureComputation.innerLen', 'TCSlib.Cryptography.SecureComputation.keyAt', 'TCSlib.Cryptography.SecureComputation.nestedSpecial', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr
+     > Application type mismatch: The argument
+     >   G₁
+     > has type
+     >   (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool
+     > but is expected to have type
+     >   (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool
+     > in the application
+     >   PRFOut (PolyExpr.var.add PolyExpr.var) G₁
+       806| row permutations, including the XOR shifts. Each output's two keys coincide with probability
+       807| `2^{-n}`. The output union bound allows repeated vertices. Thus failure is at most
+       808| `12*S(n)*δ₀(n) + outLen(n)*2^{-n}`, a sum of polynomial multiples of negligible functions. -/
+    *  809| theorem yaoSeed_good_whp (hG₁ : PRFOut (.add .var .var) G₁)
+       810|     (hG₂ : PRFOut (.add .var innerLen) G₂) :
+       811|     ∃ δ : ℕ → ℝ, Negligible δ ∧ ∀ n, uprob (fun r : Fin ((yaoCoins Y).eval n) → Bool =>
+====================================================================================================
+KEY SY-F07:7 | seal | TCSlib.Cryptography.SecureComputation.yaoHybrid_polyTime
+  record: yaoHybrid_polyTime: 2 errors, variant B (strict = coe) (file total 24e/9d (SG-F07 recorded 15e/8d before sc-yao); seal A 0)
+  counts sA=0 sB=2 cA=0 cB=2 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_SecureComputation_Yao.log:1177
+  DECL at 863, header ends 864
+      863| theorem yaoHybrid_polyTime (hE₁ : PolyTimeComputable E₁) (hE₂ : PolyTimeComputable E₂) :
+      864|     (yaoHybrid Y E₁ E₂).PolyTime (yaoFunctionality Y) := by
+  -- coe-B line 956 cascade=False cls=Tactic X failed: could not unify the conclusion of `CallEquations.inputA_eq Y.in
+     providers=['Complexity.PolyTimeComputable', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.otInputA', 'TCSlib.Cryptography.SecureComputation.otFunctionality', 'TCSlib.Cryptography.Strategy.Efficient', 'Turing.pairEncode']
+     referenced=['BoolCircuit.DAGCircuit.IsFaninTwo', 'BoolCircuit.DAGCircuit.encode', 'BoolCircuit.DAGCircuit.size', 'BoolCircuit.encodeNat', 'BoolCircuit.runWith', 'Complexity.BinArith.decWords', 'Complexity.BinArith.encWords', 'Complexity.NUPPT.inCoins', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.GI.argM', 'TCSlib.Cryptography.GI.argX', 'TCSlib.Cryptography.GI.argZ', 'TCSlib.Cryptography.Protocol.transcript', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.PolyTime', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobInit.initWords', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.otInputA', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.otInputB', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.aliceMessageBound', 'TCSlib.Cryptography.SecureComputation.evalGate', 'TCSlib.Cryptography.SecureComputation.garbledTable', 'TCSlib.Cryptography.SecureComputation.keyAt', 'TCSlib.Cryptography.SecureComputation.nestedSpecial', 'TCSlib.Cryptography.SecureComputation.otFunctionality', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.padFin', 'Turing.pairEncode']
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop, polyTimeComputable_unary@PolyTimePairing, polyTimeComputable_pairEq@Repetition, polyTimeComputable_iterate@Repetition, polyTimeComputable_pairXor@Repetition, polyTimeComputable_prepend@PolyTimePairing, polyTimeComputable_blockMap@Repetition, polyTimeComputable_emitIter@PolyTimeBlockLoop, polyTimeComputable_majority@Repetition, polyTimeComputable_pairFstD@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, polyTimeComputable_pairSwap@PolyTimePairing, polyTimeComputable_of_linear@PolyTimePairing, polyTimeComputable_polyUnary@PolyTimePairing, polyTimeComputable_stateFind@Repetition, polyTimeComputable_transduce@Transducer, polyTimeComputable_unaryPoly@Primitives, polyTimeComputable_pairConcat@PolyTimePairing, polyTimeComputable_iterateEmit@Repetition, polyTimeComputable_iterateFind@Repetition, polyTimeComputable_sliceDropAt@PolyTimeBlockLoop, polyTimeComputable_sliceTakeAt@PolyTimeBlockLoop, polyTimeComputable_unaryNormal@PolyExpr, polyTimeComputable_blockAnyTest@PolyTimeBlockTests, polyTimeComputable_pairDropPoly@Primitives, polyTimeComputable_pairTakePoly@Primitives, polyTimeComputable_blockXorAnyTest@PolyTimeBlockTests, polyTimeComputable_iterate_pairFstD@PolyTimePairing, polyTimeComputable_blockMajorityTest@PolyTimeBlockMajority, polyTimeComputable_dropPrefixByLength@PolyTimePrefix, polyTimeComputable_of_computesInSpace@ConfigCount, polyTimeComputable_takePrefixByLength@PolyTimePrefix
+     [TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.otInputA] readers: otInputA_eq@OTInputs, otInputA_layout@OTInputs
+     [TCSlib.Cryptography.SecureComputation.otFunctionality] readers: otFunctionality_f@Defs, otFunctionality_inA@Defs, otFunctionality_inB@Defs, otFunctionality_outA@Defs, otFunctionality_outB@Defs, otFunctionality_f_snd@Defs, otFunctionality_f_snd_apply@Defs; struct fields: inA, inB, outA, outB, f
+     [TCSlib.Cryptography.Strategy.Efficient] readers: efficient_iff@Interaction
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Tactic `apply` failed: could not unify the conclusion of `CallEquations.inputA_eq Y.inA Y.sizeBound n (Y.inB.eval n) x
+     >   r`
+     >   OTInputs.otInputA Y.inA Y.sizeBound
+     >       (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑?j) true)))) =
+     >     List.ofFn (?call ?j)
+     > with the goal
+     >   OTInputs.otInputA Y.inA Y.sizeBound
+     >       (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =
+     >     List.ofFn fun i => (yaoHybrid Y E₁ E₂).callA n x r j (Fin.cast ⋯ i)
+     > 
+     > Note: The full type of `CallEquations.inputA_eq Y.inA Y.sizeBound n (Y.inB.eval n) x r` is
+     >   ∀ (call : Fin (Y.inB.eval n * n) → Fin 2 → Bool),
+     >     (∀ (i : Fin (Y.inB.eval n)) (t : Fin n) (c : Fin 2),
+     >         call (finProdFinEquiv (i, t)) c =
+     >> ⊢ OTInputs.otInputA Y.inA Y.sizeBound
+       953|     have hlen : otFunctionality.inA.eval n = 2 := by
+       954|       rw [otFunctionality_inA, PolyExpr.eval_const]
+       955|     rw [List.ofFn_congr hlen]
+    *  956|     apply CallEquations.inputA_eq Y.inA Y.sizeBound n (Y.inB.eval n) x r
+       957|     intro i t c
+       958|     rw [yaoHybrid_callA, yaoCall_finProdFinEquiv]
+  -- coe-B line 970 cascade=True cls=Tactic X failed: could not unify the conclusion of X
+     providers=['Complexity.PolyTimeComputable', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.otInputB', 'TCSlib.Cryptography.SecureComputation.otFunctionality', 'TCSlib.Cryptography.Strategy.Efficient', 'Turing.pairEncode']
+     referenced=['BoolCircuit.DAGCircuit.IsFaninTwo', 'BoolCircuit.DAGCircuit.encode', 'BoolCircuit.DAGCircuit.size', 'BoolCircuit.encodeNat', 'BoolCircuit.runWith', 'Complexity.BinArith.decWords', 'Complexity.BinArith.encWords', 'Complexity.NUPPT.inCoins', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'Complexity.pairFstD', 'Complexity.pairSndD', 'TCSlib.Cryptography.GI.argM', 'TCSlib.Cryptography.GI.argX', 'TCSlib.Cryptography.GI.argZ', 'TCSlib.Cryptography.Protocol.transcript', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.PolyTime', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobInit.initWords', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.otInputA', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.otInputB', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.aliceMessageBound', 'TCSlib.Cryptography.SecureComputation.evalGate', 'TCSlib.Cryptography.SecureComputation.garbledTable', 'TCSlib.Cryptography.SecureComputation.keyAt', 'TCSlib.Cryptography.SecureComputation.nestedSpecial', 'TCSlib.Cryptography.SecureComputation.otFunctionality', 'TCSlib.Cryptography.Strategy.Efficient', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.padFin', 'Turing.pairEncode']
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop, polyTimeComputable_unary@PolyTimePairing, polyTimeComputable_pairEq@Repetition, polyTimeComputable_iterate@Repetition, polyTimeComputable_pairXor@Repetition, polyTimeComputable_prepend@PolyTimePairing, polyTimeComputable_blockMap@Repetition, polyTimeComputable_emitIter@PolyTimeBlockLoop, polyTimeComputable_majority@Repetition, polyTimeComputable_pairFstD@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, polyTimeComputable_pairSwap@PolyTimePairing, polyTimeComputable_of_linear@PolyTimePairing, polyTimeComputable_polyUnary@PolyTimePairing, polyTimeComputable_stateFind@Repetition, polyTimeComputable_transduce@Transducer, polyTimeComputable_unaryPoly@Primitives, polyTimeComputable_pairConcat@PolyTimePairing, polyTimeComputable_iterateEmit@Repetition, polyTimeComputable_iterateFind@Repetition, polyTimeComputable_sliceDropAt@PolyTimeBlockLoop, polyTimeComputable_sliceTakeAt@PolyTimeBlockLoop, polyTimeComputable_unaryNormal@PolyExpr, polyTimeComputable_blockAnyTest@PolyTimeBlockTests, polyTimeComputable_pairDropPoly@Primitives, polyTimeComputable_pairTakePoly@Primitives, polyTimeComputable_blockXorAnyTest@PolyTimeBlockTests, polyTimeComputable_iterate_pairFstD@PolyTimePairing, polyTimeComputable_blockMajorityTest@PolyTimeBlockMajority, polyTimeComputable_dropPrefixByLength@PolyTimePrefix, polyTimeComputable_of_computesInSpace@ConfigCount, polyTimeComputable_takePrefixByLength@PolyTimePrefix
+     [TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.otInputB] readers: otInputB_eq@OTInputs, otInputB_layout@OTInputs
+     [TCSlib.Cryptography.SecureComputation.otFunctionality] readers: otFunctionality_f@Defs, otFunctionality_inA@Defs, otFunctionality_inB@Defs, otFunctionality_outA@Defs, otFunctionality_outB@Defs, otFunctionality_f_snd@Defs, otFunctionality_f_snd_apply@Defs; struct fields: inA, inB, outA, outB, f
+     [TCSlib.Cryptography.Strategy.Efficient] readers: efficient_iff@Interaction
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Tactic `apply` failed: could not unify the conclusion of `CallEquations.inputB_eq n (Y.inB.eval n) x r`
+     >   OTInputs.otInputB (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑?j) true)))) =
+     >     List.ofFn (?call ?j)
+     > with the goal
+     >   OTInputs.otInputB (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =
+     >     List.ofFn fun i => (yaoHybrid Y E₁ E₂).callB n x r j (Fin.cast ⋯ i)
+     > 
+     > Note: The full type of `CallEquations.inputB_eq n (Y.inB.eval n) x r` is
+     >   ∀ (call : Fin (Y.inB.eval n * n) → Fin 1 → Bool),
+     >     (∀ (i : Fin (Y.inB.eval n)) (t : Fin n) (c : Fin 1), call (finProdFinEquiv (i, t)) c = x.getD (↑i) false) →
+     >       ∀ (j : Fin (Y.inB.eval n * n)),
+     >         OTInputs.otInputB
+     >             (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =
+     >           List.ofFn (call j)
+     >> ⊢ OTInputs.otInputB (pairEncode (List.replicate n true) (pairEncode x (pairEncode r (List.replicate (↑j) true)))) =
+       967|     have hlen : otFunctionality.inB.eval n = 1 := by
+       968|       rw [otFunctionality_inB, PolyExpr.eval_const]
+       969|     rw [List.ofFn_congr hlen]
+    *  970|     apply CallEquations.inputB_eq n (Y.inB.eval n) x r
+       971|     intro i t c
+       972|     rw [yaoHybrid_callB, yaoCall_finProdFinEquiv]
+====================================================================================================
+KEY SY-F07:8 | seal | TCSlib.Cryptography.SecureComputation.yaoHybrid_simulators
+  record: yaoHybrid_simulators: 9 errors, variant B (strict = coe) (file total 24e/9d (SG-F07 recorded 15e/8d before sc-yao); seal A 0)
+  counts sA=0 sB=9 cA=0 cB=9 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_SecureComputation_Yao.log:1259
+  DECL at 1037, header ends 1047
+     1037| theorem yaoHybrid_simulators (hE₁ : PolyTimeComputable E₁) (hE₂ : PolyTimeComputable E₂)
+     1038|     (hG₁ : PRFOut (.add .var .var) G₁) (hG₂ : PRFOut (.add .var innerLen) G₂)
+     1039|     (hG₁₂ : PRFOut (.add (.add .var .var) (.add .var innerLen))
+     1040|       (fun n s x => Fin.append (G₁ n s x) (G₂ n s x))) :
+     1041|     ∃ SA SB : NUPPT, ∀ D : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧
+     1042|       ∀ n (x : Fin ((yaoFunctionality Y).inA.eval n) → Bool)
+     1043|         (y : Fin ((yaoFunctionality Y).inB.eval n) → Bool),
+     1044|         distAdv ((yaoHybrid Y E₁ E₂).realA (yaoFunctionality Y) n x y)
+     1045|             ((yaoFunctionality Y).idealA SA n x y) (D.distinguisherL n) ≤ ε n ∧
+     1046|           distAdv ((yaoHybrid Y E₁ E₂).realB (yaoFunctionality Y) n x y)
+     1047|             ((yaoFunctionality Y).idealB SB n x y) (D.distinguisherL n) ≤ ε n := by
+  -- coe-B line 1038 cascade=False cls=Application type mismatch: The argument
+     providers=['Complexity.PolyExpr.eval']
+     referenced=['BoolCircuit.DAGCircuit.IsFaninTwo', 'BoolCircuit.DAGCircuit.encode', 'BoolCircuit.DAGCircuit.size', 'BoolCircuit.DAGCircuit.values', 'BoolCircuit.encodeNat', 'Complexity.BinArith.encWords', 'Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.coinsEquivPoly', 'Complexity.NUPPT.distinguisherL', 'Complexity.NUPPT.runAtL', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.Protocol.outP', 'TCSlib.Cryptography.Protocol.outV', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.SecureComputation.Functionality.idealA', 'TCSlib.Cryptography.SecureComputation.Functionality.idealB', 'TCSlib.Cryptography.SecureComputation.Good', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.privA', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.privB', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.realA', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.realB', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.activeAnswers', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.message', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample', 'TCSlib.Cryptography.SecureComputation.garbledTable', 'TCSlib.Cryptography.SecureComputation.innerLen', 'TCSlib.Cryptography.SecureComputation.keyAt', 'TCSlib.Cryptography.SecureComputation.nestedSpecial', 'TCSlib.Cryptography.SecureComputation.otFunctionality', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.distAdv', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr
+     > Application type mismatch: The argument
+     >   G₁
+     > has type
+     >   (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool
+     > but is expected to have type
+     >   (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool
+     > in the application
+     >   PRFOut (PolyExpr.var.add PolyExpr.var) G₁
+      1035| The last-stage payload is the fixed Bob simulator's canonical prescribed-output view.
+      1036| Exact endpoint transport and the statistical bound give their negligible sum for both sides. -/
+      1037| theorem yaoHybrid_simulators (hE₁ : PolyTimeComputable E₁) (hE₂ : PolyTimeComputable E₂)
+    * 1038|     (hG₁ : PRFOut (.add .var .var) G₁) (hG₂ : PRFOut (.add .var innerLen) G₂)
+      1039|     (hG₁₂ : PRFOut (.add (.add .var .var) (.add .var innerLen))
+      1040|       (fun n s x => Fin.append (G₁ n s x) (G₂ n s x))) :
+  -- coe-B line 1040 cascade=True cls=Type mismatch
+     providers=['Complexity.PolyExpr.eval', 'TCSlib.Cryptography.SecureComputation.innerLen']
+     referenced=['BoolCircuit.DAGCircuit.IsFaninTwo', 'BoolCircuit.DAGCircuit.encode', 'BoolCircuit.DAGCircuit.size', 'BoolCircuit.DAGCircuit.values', 'BoolCircuit.encodeNat', 'Complexity.BinArith.encWords', 'Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.coinsEquivPoly', 'Complexity.NUPPT.distinguisherL', 'Complexity.NUPPT.runAtL', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.Protocol.outP', 'TCSlib.Cryptography.Protocol.outV', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.SecureComputation.Functionality.idealA', 'TCSlib.Cryptography.SecureComputation.Functionality.idealB', 'TCSlib.Cryptography.SecureComputation.Good', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.privA', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.privB', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.realA', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.realB', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.activeAnswers', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.message', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample', 'TCSlib.Cryptography.SecureComputation.garbledTable', 'TCSlib.Cryptography.SecureComputation.innerLen', 'TCSlib.Cryptography.SecureComputation.keyAt', 'TCSlib.Cryptography.SecureComputation.nestedSpecial', 'TCSlib.Cryptography.SecureComputation.otFunctionality', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.distAdv', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr
+     [TCSlib.Cryptography.SecureComputation.innerLen] readers: innerLen_eq@GarblingSpecial
+     > Type mismatch
+     >   Fin.append (G₁ n s x) (G₂ n s x)
+     > has type
+     >   Fin (n + n + (PolyExpr.var.add innerLen).eval n) → Bool
+     > but is expected to have type
+     >   Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) → Bool
+      1037| theorem yaoHybrid_simulators (hE₁ : PolyTimeComputable E₁) (hE₂ : PolyTimeComputable E₂)
+      1038|     (hG₁ : PRFOut (.add .var .var) G₁) (hG₂ : PRFOut (.add .var innerLen) G₂)
+      1039|     (hG₁₂ : PRFOut (.add (.add .var .var) (.add .var innerLen))
+    * 1040|       (fun n s x => Fin.append (G₁ n s x) (G₂ n s x))) :
+      1041|     ∃ SA SB : NUPPT, ∀ D : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧
+      1042|       ∀ n (x : Fin ((yaoFunctionality Y).inA.eval n) → Bool)
+  -- coe-B line 1059 cascade=True cls=Application type mismatch: The argument
+     providers=['Complexity.PolyExpr.eval']
+     referenced=['BoolCircuit.DAGCircuit.IsFaninTwo', 'BoolCircuit.DAGCircuit.encode', 'BoolCircuit.DAGCircuit.size', 'BoolCircuit.DAGCircuit.values', 'BoolCircuit.encodeNat', 'Complexity.BinArith.encWords', 'Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.coinsEquivPoly', 'Complexity.NUPPT.distinguisherL', 'Complexity.NUPPT.runAtL', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.Protocol.outP', 'TCSlib.Cryptography.Protocol.outV', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.SecureComputation.Functionality.idealA', 'TCSlib.Cryptography.SecureComputation.Functionality.idealB', 'TCSlib.Cryptography.SecureComputation.Good', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.privA', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.privB', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.realA', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.realB', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.activeAnswers', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.message', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample', 'TCSlib.Cryptography.SecureComputation.garbledTable', 'TCSlib.Cryptography.SecureComputation.innerLen', 'TCSlib.Cryptography.SecureComputation.keyAt', 'TCSlib.Cryptography.SecureComputation.nestedSpecial', 'TCSlib.Cryptography.SecureComputation.otFunctionality', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.distAdv', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr
+     > Application type mismatch: The argument
+     >   Y.circ
+     > has type
+     >   (n : ℕ) → DAGCircuit (Y.inA.eval n + Y.inB.eval n)
+     > but is expected to have type
+     >   (n : ℕ) → DAGCircuit ((Y.inA.add Y.inB).eval n)
+     > in the application
+     >   FakeSimulatorFactory.exists_simulator E₁ E₂ hE₁ hE₂ Y.sizeBound (Y.inA.add Y.inB) Y.inA Y.inB Y.outLen gen hgen Y.circ
+      1056|   obtain ⟨SB, hSBuniform, hSBcoins, _, hIdeal⟩ := FakeSimulatorFactory.exists_simulator
+      1057|     (E₁ := E₁) (E₂ := E₂) (E₁_poly := hE₁) (E₂_poly := hE₂)
+      1058|     (bound := Y.sizeBound) (inputs := .add Y.inA Y.inB) (inA := Y.inA) (inB := Y.inB)
+    * 1059|     (outLen := Y.outLen) (gen := gen) (gen_poly := hgen) (circuit := Y.circ)
+      1060|     (output := Y.outs) (output_lt := Y.outs_lt) (seed := yaoSeed Y) (fanin := hFan)
+      1061|     (shape := fun n => by
+  -- coe-B line 1063 cascade=True cls=Type mismatch
+     providers=['Complexity.PolyExpr.eval']
+     referenced=['BoolCircuit.DAGCircuit.IsFaninTwo', 'BoolCircuit.DAGCircuit.encode', 'BoolCircuit.DAGCircuit.size', 'BoolCircuit.DAGCircuit.values', 'BoolCircuit.encodeNat', 'Complexity.BinArith.encWords', 'Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.coinsEquivPoly', 'Complexity.NUPPT.distinguisherL', 'Complexity.NUPPT.runAtL', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.Protocol.outP', 'TCSlib.Cryptography.Protocol.outV', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.SecureComputation.Functionality.idealA', 'TCSlib.Cryptography.SecureComputation.Functionality.idealB', 'TCSlib.Cryptography.SecureComputation.Good', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.privA', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.privB', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.realA', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.realB', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.activeAnswers', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.message', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample', 'TCSlib.Cryptography.SecureComputation.garbledTable', 'TCSlib.Cryptography.SecureComputation.innerLen', 'TCSlib.Cryptography.SecureComputation.keyAt', 'TCSlib.Cryptography.SecureComputation.nestedSpecial', 'TCSlib.Cryptography.SecureComputation.otFunctionality', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.distAdv', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr
+     > Type mismatch
+     >   Nat.le_refl (Y.inA.eval n + Y.inB.eval n)
+     > has type
+     >   Y.inA.eval n + Y.inB.eval n ≤ Y.inA.eval n + Y.inB.eval n
+     > but is expected to have type
+     >   Y.inA.eval n + Y.inB.eval n ≤ (Y.inA.add Y.inB).eval n
+      1060|     (output := Y.outs) (output_lt := Y.outs_lt) (seed := yaoSeed Y) (fanin := hFan)
+      1061|     (shape := fun n => by
+      1062|       simpa only [encodeCircuit_eq, encodeMsgs_eq_encWords] using hgenEq n)
+    * 1063|     (input_range := fun n => Nat.le_refl (Y.inA.eval n + Y.inB.eval n))
+      1064|     (key := by intro n q w hw b; funext t; rw [keyAt_eq, dif_pos hw, hSeedK, readBits_apply])
+      1065|     (nonce₀ := by intro n q i a t; simp only [hSeedR₀, readBits_apply, assignIdx_eq])
+  -- coe-B line 1064 cascade=True cls=unsolved goals
+     providers=['BoolCircuit.DAGCircuit.size', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.SecureComputation.innerLen', 'Turing.pairEncode']
+     referenced=['BoolCircuit.DAGCircuit.IsFaninTwo', 'BoolCircuit.DAGCircuit.encode', 'BoolCircuit.DAGCircuit.size', 'BoolCircuit.DAGCircuit.values', 'BoolCircuit.encodeNat', 'Complexity.BinArith.encWords', 'Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.coinsEquivPoly', 'Complexity.NUPPT.distinguisherL', 'Complexity.NUPPT.runAtL', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.Protocol.outP', 'TCSlib.Cryptography.Protocol.outV', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.SecureComputation.Functionality.idealA', 'TCSlib.Cryptography.SecureComputation.Functionality.idealB', 'TCSlib.Cryptography.SecureComputation.Good', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.privA', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.privB', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.realA', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.realB', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.activeAnswers', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.message', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample', 'TCSlib.Cryptography.SecureComputation.garbledTable', 'TCSlib.Cryptography.SecureComputation.innerLen', 'TCSlib.Cryptography.SecureComputation.keyAt', 'TCSlib.Cryptography.SecureComputation.nestedSpecial', 'TCSlib.Cryptography.SecureComputation.otFunctionality', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.distAdv', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [BoolCircuit.DAGCircuit.size] readers: size_eq@DAGCircuit, size_le_length_encode@Uniform
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop, polyTimeComputable_unary@PolyTimePairing, polyTimeComputable_pairEq@Repetition, polyTimeComputable_iterate@Repetition, polyTimeComputable_pairXor@Repetition, polyTimeComputable_prepend@PolyTimePairing, polyTimeComputable_blockMap@Repetition, polyTimeComputable_emitIter@PolyTimeBlockLoop, polyTimeComputable_majority@Repetition, polyTimeComputable_pairFstD@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, polyTimeComputable_pairSwap@PolyTimePairing, polyTimeComputable_of_linear@PolyTimePairing, polyTimeComputable_polyUnary@PolyTimePairing, polyTimeComputable_stateFind@Repetition, polyTimeComputable_transduce@Transducer, polyTimeComputable_unaryPoly@Primitives, polyTimeComputable_pairConcat@PolyTimePairing, polyTimeComputable_iterateEmit@Repetition, polyTimeComputable_iterateFind@Repetition, polyTimeComputable_sliceDropAt@PolyTimeBlockLoop, polyTimeComputable_sliceTakeAt@PolyTimeBlockLoop, polyTimeComputable_unaryNormal@PolyExpr, polyTimeComputable_blockAnyTest@PolyTimeBlockTests, polyTimeComputable_pairDropPoly@Primitives, polyTimeComputable_pairTakePoly@Primitives, polyTimeComputable_blockXorAnyTest@PolyTimeBlockTests, polyTimeComputable_iterate_pairFstD@PolyTimePairing, polyTimeComputable_blockMajorityTest@PolyTimeBlockMajority, polyTimeComputable_dropPrefixByLength@PolyTimePrefix, polyTimeComputable_of_computesInSpace@ConfigCount, polyTimeComputable_takePrefixByLength@PolyTimePrefix
+     [TCSlib.Cryptography.SecureComputation.innerLen] readers: innerLen_eq@GarblingSpecial
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > unsolved goals
+     > case h
+     > Y : YaoCircuit
+     > E₁ E₂ : List Bool → List Bool
+     > G₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool
+     > G₂ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add innerLen).eval n) → Bool
+     > hGE₁ : ∀ (n : ℕ) (s x : Fin n → Bool), E₁ (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₁ n s x)
+     > hGE₂ : ∀ (n : ℕ) (s x : Fin n → Bool), E₂ (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₂ n s x)
+     > hE₁ : PolyTimeComputable E₁
+     > hE₂ : PolyTimeComputable E₂
+     > hG₁ : PRFOut (PolyExpr.var.add PolyExpr.var) sorry
+     > hG₂ : PRFOut (PolyExpr.var.add innerLen) G₂
+     > hG₁₂ : PRFOut ((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)) fun n s x => sorry
+     > hFan : ∀ (n : ℕ) (i : Fin (Y.circ n).gates.length), (Y.circ n).gates[↑i].args.length ≤ 2
+     >> ⊢ (if h : w < (sorry n).size then (sorry n q).1 ⟨w, h⟩ b else default) t =
+      1061|     (shape := fun n => by
+      1062|       simpa only [encodeCircuit_eq, encodeMsgs_eq_encWords] using hgenEq n)
+      1063|     (input_range := fun n => Nat.le_refl (Y.inA.eval n + Y.inB.eval n))
+    * 1064|     (key := by intro n q w hw b; funext t; rw [keyAt_eq, dif_pos hw, hSeedK, readBits_apply])
+      1065|     (nonce₀ := by intro n q i a t; simp only [hSeedR₀, readBits_apply, assignIdx_eq])
+      1066|     (nonce₁ := by intro n q i a t; simp only [hSeedR₁, readBits_apply, assignIdx_eq])
+  -- coe-B line 1065 cascade=True cls=X made no progress
+     providers=[]
+     referenced=['BoolCircuit.DAGCircuit.IsFaninTwo', 'BoolCircuit.DAGCircuit.encode', 'BoolCircuit.DAGCircuit.size', 'BoolCircuit.DAGCircuit.values', 'BoolCircuit.encodeNat', 'Complexity.BinArith.encWords', 'Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.coinsEquivPoly', 'Complexity.NUPPT.distinguisherL', 'Complexity.NUPPT.runAtL', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.Protocol.outP', 'TCSlib.Cryptography.Protocol.outV', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.SecureComputation.Functionality.idealA', 'TCSlib.Cryptography.SecureComputation.Functionality.idealB', 'TCSlib.Cryptography.SecureComputation.Good', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.privA', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.privB', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.realA', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.realB', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.activeAnswers', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.message', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample', 'TCSlib.Cryptography.SecureComputation.garbledTable', 'TCSlib.Cryptography.SecureComputation.innerLen', 'TCSlib.Cryptography.SecureComputation.keyAt', 'TCSlib.Cryptography.SecureComputation.nestedSpecial', 'TCSlib.Cryptography.SecureComputation.otFunctionality', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.distAdv', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     > `simp` made no progress
+      1062|       simpa only [encodeCircuit_eq, encodeMsgs_eq_encWords] using hgenEq n)
+      1063|     (input_range := fun n => Nat.le_refl (Y.inA.eval n + Y.inB.eval n))
+      1064|     (key := by intro n q w hw b; funext t; rw [keyAt_eq, dif_pos hw, hSeedK, readBits_apply])
+    * 1065|     (nonce₀ := by intro n q i a t; simp only [hSeedR₀, readBits_apply, assignIdx_eq])
+      1066|     (nonce₁ := by intro n q i a t; simp only [hSeedR₁, readBits_apply, assignIdx_eq])
+      1067|     (permutation := by
+  -- coe-B line 1066 cascade=True cls=X made no progress
+     providers=[]
+     referenced=['BoolCircuit.DAGCircuit.IsFaninTwo', 'BoolCircuit.DAGCircuit.encode', 'BoolCircuit.DAGCircuit.size', 'BoolCircuit.DAGCircuit.values', 'BoolCircuit.encodeNat', 'Complexity.BinArith.encWords', 'Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.coinsEquivPoly', 'Complexity.NUPPT.distinguisherL', 'Complexity.NUPPT.runAtL', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.Protocol.outP', 'TCSlib.Cryptography.Protocol.outV', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.SecureComputation.Functionality.idealA', 'TCSlib.Cryptography.SecureComputation.Functionality.idealB', 'TCSlib.Cryptography.SecureComputation.Good', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.privA', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.privB', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.realA', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.realB', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.activeAnswers', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.message', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample', 'TCSlib.Cryptography.SecureComputation.garbledTable', 'TCSlib.Cryptography.SecureComputation.innerLen', 'TCSlib.Cryptography.SecureComputation.keyAt', 'TCSlib.Cryptography.SecureComputation.nestedSpecial', 'TCSlib.Cryptography.SecureComputation.otFunctionality', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.distAdv', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     > `simp` made no progress
+      1063|     (input_range := fun n => Nat.le_refl (Y.inA.eval n + Y.inB.eval n))
+      1064|     (key := by intro n q w hw b; funext t; rw [keyAt_eq, dif_pos hw, hSeedK, readBits_apply])
+      1065|     (nonce₀ := by intro n q i a t; simp only [hSeedR₀, readBits_apply, assignIdx_eq])
+    * 1066|     (nonce₁ := by intro n q i a t; simp only [hSeedR₁, readBits_apply, assignIdx_eq])
+      1067|     (permutation := by
+      1068|       intro n q i a t; simp only [yaoSeed_snd_snd, xorShift_apply, readBits_apply])
+  -- coe-B line 1068 cascade=True cls=X made no progress
+     providers=[]
+     referenced=['BoolCircuit.DAGCircuit.IsFaninTwo', 'BoolCircuit.DAGCircuit.encode', 'BoolCircuit.DAGCircuit.size', 'BoolCircuit.DAGCircuit.values', 'BoolCircuit.encodeNat', 'Complexity.BinArith.encWords', 'Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.coinsEquivPoly', 'Complexity.NUPPT.distinguisherL', 'Complexity.NUPPT.runAtL', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.Protocol.outP', 'TCSlib.Cryptography.Protocol.outV', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.SecureComputation.Functionality.idealA', 'TCSlib.Cryptography.SecureComputation.Functionality.idealB', 'TCSlib.Cryptography.SecureComputation.Good', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.privA', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.privB', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.realA', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.realB', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.activeAnswers', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.message', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample', 'TCSlib.Cryptography.SecureComputation.garbledTable', 'TCSlib.Cryptography.SecureComputation.innerLen', 'TCSlib.Cryptography.SecureComputation.keyAt', 'TCSlib.Cryptography.SecureComputation.nestedSpecial', 'TCSlib.Cryptography.SecureComputation.otFunctionality', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.distAdv', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     > `simp` made no progress
+      1065|     (nonce₀ := by intro n q i a t; simp only [hSeedR₀, readBits_apply, assignIdx_eq])
+      1066|     (nonce₁ := by intro n q i a t; simp only [hSeedR₁, readBits_apply, assignIdx_eq])
+      1067|     (permutation := by
+    * 1068|       intro n q i a t; simp only [yaoSeed_snd_snd, xorShift_apply, readBits_apply])
+      1069|     (coins := yaoCoins Y)
+      1070|   obtain ⟨δ, hδ, hWHP⟩ := yaoSeed_good_whp Y E₁ E₂ G₁ G₂ hGE₁ hGE₂ hG₁ hG₂
+  -- coe-B line 1111 cascade=True cls=Type mismatch
+     providers=['Complexity.PolyExpr.eval', 'TCSlib.Cryptography.SecureComputation.innerLen']
+     referenced=['BoolCircuit.DAGCircuit.IsFaninTwo', 'BoolCircuit.DAGCircuit.encode', 'BoolCircuit.DAGCircuit.size', 'BoolCircuit.DAGCircuit.values', 'BoolCircuit.encodeNat', 'Complexity.BinArith.encWords', 'Complexity.NUPPT.Uniform', 'Complexity.NUPPT.coinLen', 'Complexity.NUPPT.coinsEquivPoly', 'Complexity.NUPPT.distinguisherL', 'Complexity.NUPPT.runAtL', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.Protocol.outP', 'TCSlib.Cryptography.Protocol.outV', 'TCSlib.Cryptography.Protocol.viewV', 'TCSlib.Cryptography.SecureComputation.Functionality.idealA', 'TCSlib.Cryptography.SecureComputation.Functionality.idealB', 'TCSlib.Cryptography.SecureComputation.Good', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.privA', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.privB', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.realA', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.realB', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.activeAnswers', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.message', 'TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample', 'TCSlib.Cryptography.SecureComputation.garbledTable', 'TCSlib.Cryptography.SecureComputation.innerLen', 'TCSlib.Cryptography.SecureComputation.keyAt', 'TCSlib.Cryptography.SecureComputation.nestedSpecial', 'TCSlib.Cryptography.SecureComputation.otFunctionality', 'TCSlib.Cryptography.StatClose', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.Strategy.encodeMsgs', 'TCSlib.Cryptography.View.encode', 'TCSlib.Cryptography.acceptProb', 'TCSlib.Cryptography.distAdv', 'TCSlib.Cryptography.uprob', 'Turing.pairEncode']
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr
+     [TCSlib.Cryptography.SecureComputation.innerLen] readers: innerLen_eq@GarblingSpecial
+     > Type mismatch
+     >   Fin.append (G₁ n s x) (G₂ n s x)
+     > has type
+     >   Fin (n + n + (PolyExpr.var.add innerLen).eval n) → Bool
+     > but is expected to have type
+     >   Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) → Bool
+      1108|       (fun n z => GateHybrids.values_consistent (Y.circ n) (Fin.append z.1 z.2)) Y.outs_sink
+      1109|       (fun n z => by simp only [List.length_ofFn, le_refl])
+      1110|       (fun n z => by simp only [List.length_ofFn, le_refl])
+    * 1111|       (fun n s x => Fin.append (G₁ n s x) (G₂ n s x)) G₁ G₂ E₁ E₂ hE₂
+      1112|       (fun n s x => List.ofFn_fin_append (G₁ n s x) (G₂ n s x)) hGE₁ hGE₂
+      1113|       (fun n => by
+====================================================================================================
+KEY SY-F07:9 | seal | TCSlib.Cryptography.SecureComputation.yaoHybrid_hbcSecure
+  record: yaoHybrid_hbcSecure: 2 errors, variant B (strict = coe) (file total 24e/9d (SG-F07 recorded 15e/8d before sc-yao); seal A 0)
+  counts sA=0 sB=2 cA=0 cB=2 scan=-
+  tool: SEAL-B-ONLY | stmt=no | separate ruling (PolyExpr.eval, DW-10)
+  ev: evidence/seals/runs/mods/DW10Probe_C_SealB_Cryptography_SecureComputation_Yao.log:1406
+  DECL at 1184, header ends 1188
+     1184| theorem yaoHybrid_hbcSecure (hE₁ : PolyTimeComputable E₁) (hE₂ : PolyTimeComputable E₂)
+     1185|     (hG₁ : PRFOut (.add .var .var) G₁) (hG₂ : PRFOut (.add .var innerLen) G₂)
+     1186|     (hG₁₂ : PRFOut (.add (.add .var .var) (.add .var innerLen))
+     1187|       (fun n s x => Fin.append (G₁ n s x) (G₂ n s x))) :
+     1188|     (yaoHybrid Y E₁ E₂).HBCSecure (yaoFunctionality Y) :=
+  -- coe-B line 1185 cascade=False cls=Application type mismatch: The argument
+     providers=['Complexity.PolyExpr.eval']
+     referenced=['Complexity.NUPPT.coinLen', 'Complexity.NUPPT.distinguisherL', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.SecureComputation.Functionality.idealA', 'TCSlib.Cryptography.SecureComputation.Functionality.idealB', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.HBCSecure', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.PolyTime', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.realA', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.realB', 'TCSlib.Cryptography.SecureComputation.innerLen', 'TCSlib.Cryptography.SecureComputation.otFunctionality', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.distAdv', 'Turing.pairEncode']
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr
+     > Application type mismatch: The argument
+     >   G₁
+     > has type
+     >   (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool
+     > but is expected to have type
+     >   (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool
+     > in the application
+     >   PRFOut (PolyExpr.var.add PolyExpr.var) G₁
+      1182| 
+      1183| Proved from `yaoHybrid_polyTime` and `yaoHybrid_simulators`. -/
+      1184| theorem yaoHybrid_hbcSecure (hE₁ : PolyTimeComputable E₁) (hE₂ : PolyTimeComputable E₂)
+    * 1185|     (hG₁ : PRFOut (.add .var .var) G₁) (hG₂ : PRFOut (.add .var innerLen) G₂)
+      1186|     (hG₁₂ : PRFOut (.add (.add .var .var) (.add .var innerLen))
+      1187|       (fun n s x => Fin.append (G₁ n s x) (G₂ n s x))) :
+  -- coe-B line 1187 cascade=True cls=Type mismatch
+     providers=['Complexity.NUPPT.coinLen', 'Complexity.NUPPT.distinguisherL', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.SecureComputation.Functionality.idealA', 'TCSlib.Cryptography.SecureComputation.Functionality.idealB', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.HBCSecure', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.PolyTime', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.realA', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.realB', 'TCSlib.Cryptography.SecureComputation.innerLen', 'TCSlib.Cryptography.SecureComputation.otFunctionality', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.distAdv', 'Turing.pairEncode']
+     referenced=['Complexity.NUPPT.coinLen', 'Complexity.NUPPT.distinguisherL', 'Complexity.PolyExpr.eval', 'Complexity.PolyTimeComputable', 'TCSlib.Cryptography.Negligible', 'TCSlib.Cryptography.SecureComputation.Functionality.idealA', 'TCSlib.Cryptography.SecureComputation.Functionality.idealB', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.HBCSecure', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.PolyTime', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.realA', 'TCSlib.Cryptography.SecureComputation.HybridProtocol.realB', 'TCSlib.Cryptography.SecureComputation.innerLen', 'TCSlib.Cryptography.SecureComputation.otFunctionality', 'TCSlib.Cryptography.Strategy.coinLen', 'TCSlib.Cryptography.distAdv', 'Turing.pairEncode']
+     [Complexity.NUPPT.coinLen] readers: coinLen_eq@PPT, coinLen_reparam@HardCoreLemmas
+     [Complexity.NUPPT.distinguisherL] readers: distinguisherL_eq@Adversary
+     [Complexity.PolyExpr.eval] readers: eval_le@PolyExpr, eval_add@PolyExpr, eval_mul@PolyExpr, eval_pow@PolyExpr, eval_var@PolyExpr, eval_mono@PolyExpr, eval_const@PolyExpr, eval_subst@PolyExpr, eval_normal@PolyExpr
+     [Complexity.PolyTimeComputable] readers: polyTimeComputable_id@PolyTime, polyTimeComputable_or@PolyTimeBlockLoop, polyTimeComputable_and@PolyTimePairing, polyTimeComputable_iff@PolyTime, polyTimeComputable_ite@PolyTimePairing, polyTimeComputable_not@PolyTimeBlockLoop, polyTimeComputable_tail@PolyTimeBlockLoop, polyTimeComputable_xorD@PolyTimeBlockLoop, polyTimeComputable_const@PolyTimePairing, polyTimeComputable_headD@PolyTimeBlockLoop, polyTimeComputable_isNil@PolyTimeBlockLoop, polyTimeComputable_lenEq@PolyTimePairing, polyTimeComputable_lenLe@PolyTimePairing, polyTimeComputable_take1@PolyTimeBlockLoop, polyTimeComputable_unary@PolyTimePairing, polyTimeComputable_pairEq@Repetition, polyTimeComputable_iterate@Repetition, polyTimeComputable_pairXor@Repetition, polyTimeComputable_prepend@PolyTimePairing, polyTimeComputable_blockMap@Repetition, polyTimeComputable_emitIter@PolyTimeBlockLoop, polyTimeComputable_majority@Repetition, polyTimeComputable_pairFstD@PolyTimePairing, polyTimeComputable_pairSndD@PolyTimePairing, polyTimeComputable_pairSwap@PolyTimePairing, polyTimeComputable_of_linear@PolyTimePairing, polyTimeComputable_polyUnary@PolyTimePairing, polyTimeComputable_stateFind@Repetition, polyTimeComputable_transduce@Transducer, polyTimeComputable_unaryPoly@Primitives, polyTimeComputable_pairConcat@PolyTimePairing, polyTimeComputable_iterateEmit@Repetition, polyTimeComputable_iterateFind@Repetition, polyTimeComputable_sliceDropAt@PolyTimeBlockLoop, polyTimeComputable_sliceTakeAt@PolyTimeBlockLoop, polyTimeComputable_unaryNormal@PolyExpr, polyTimeComputable_blockAnyTest@PolyTimeBlockTests, polyTimeComputable_pairDropPoly@Primitives, polyTimeComputable_pairTakePoly@Primitives, polyTimeComputable_blockXorAnyTest@PolyTimeBlockTests, polyTimeComputable_iterate_pairFstD@PolyTimePairing, polyTimeComputable_blockMajorityTest@PolyTimeBlockMajority, polyTimeComputable_dropPrefixByLength@PolyTimePrefix, polyTimeComputable_of_computesInSpace@ConfigCount, polyTimeComputable_takePrefixByLength@PolyTimePrefix
+     [TCSlib.Cryptography.Negligible] readers: negligible_iff@Negligible, negligible_zero@Negligible, negligible_two_pow_neg@Negligible, negligible_exp_neg_sqrt_div@Defs, negligible_inv_pow_sqrt_div@Defs, negligible_mul_permFailBound@GraphIsomorphism, negligible_two_pow_neg_sqrt_div@Defs, negligible_of_le_inv_pow_sqrt_div@Defs
+     [TCSlib.Cryptography.SecureComputation.Functionality.idealA] readers: idealA_eq@Defs
+     [TCSlib.Cryptography.SecureComputation.Functionality.idealB] readers: idealB_eq@Defs
+     [TCSlib.Cryptography.SecureComputation.HybridProtocol.PolyTime] readers: polyTime_iff@Hybrid, polyTime_compose@ComposeSecurity
+     [TCSlib.Cryptography.SecureComputation.HybridProtocol.realA] readers: realA_eq@Hybrid
+     [TCSlib.Cryptography.SecureComputation.HybridProtocol.realB] readers: realB_eq@Hybrid
+     [TCSlib.Cryptography.SecureComputation.innerLen] readers: innerLen_eq@GarblingSpecial
+     [TCSlib.Cryptography.SecureComputation.otFunctionality] readers: otFunctionality_f@Defs, otFunctionality_inA@Defs, otFunctionality_inB@Defs, otFunctionality_outA@Defs, otFunctionality_outB@Defs, otFunctionality_f_snd@Defs, otFunctionality_f_snd_apply@Defs; struct fields: inA, inB, outA, outB, f
+     [TCSlib.Cryptography.Strategy.coinLen] readers: coinLen_eq@Interaction, coinLen_pullback@NP
+     [TCSlib.Cryptography.distAdv] readers: distAdv_def@Experiments, distAdv_comp@Indistinguishability, distAdv_padXor_le@FromPRG, distAdv_mixDist_eq@Indistinguishability, distAdv_ggmBitsDist@GGM, distAdv_le_statDist@Experiments, distAdv_sunglassRed@Indistinguishability, distAdv_multi_le_sum@EnsembleSecurity, distAdv_tuple_le_mul@Hybrid, distAdv_tuple_le_sum@Hybrid, distAdv_prfEncReal_le@Hybrid, distAdv_le_of_statClose@Sampling, distAdv_multicopyAvgRed@Indistinguishability, distAdv_prfEncRealOut_le@Hybrid, distAdv_prfEncReal_random_otp_le@Hybrid, distAdv_prfEncRealOut_random_otp_le@Hybrid; struct fields: cauchy
+     [Turing.pairEncode] readers: pairEncode_eq@Encoding, pairEncode_drop@InputDevice, pairEncode_eq_dbl@Encoding, pairEncode_ne_nil@Encoding, pairEncode_injective@Encoding, pairEncode_replicate_inj@Encoding, pairEncode_pairEncode_drop@InputDevice, pairEncode_pairEncode_length@InputDevice
+     > Type mismatch
+     >   Fin.append (G₁ n s x) (G₂ n s x)
+     > has type
+     >   Fin (n + n + (PolyExpr.var.add innerLen).eval n) → Bool
+     > but is expected to have type
+     >   Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) → Bool
+     > G06-COMPONENT label=SealB_Cryptography_SecureComputation_Yao_part1 phase=eof spelling=BoolCircuit.CompileListSpec.mk._flat_ctor key=[["str","BoolCircuit"],["str","CompileListSpec"],["str","mk"],["str","_flat_ctor"]] home
+     > G06-COMPONENT label=SealB_Cryptography_SecureComputation_Yao_part1 phase=eof spelling=BoolCircuit.CompileSpec.mk._flat_ctor key=[["str","BoolCircuit"],["str","CompileSpec"],["str","mk"],["str","_flat_ctor"]] home_key=[["
+     > G06-COMPONENT label=SealB_Cryptography_SecureComputation_Yao_part1 phase=eof spelling=BoolCircuit.DAGCircuit.IsFaninTwo key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","IsFaninTwo"]] home_key=[["str","TCSlib"],["s
+     > G06-COMPONENT label=SealB_Cryptography_SecureComputation_Yao_part1 phase=eof spelling=BoolCircuit.DAGCircuit.IsWellFormed key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","IsWellFormed"]] home_key=[["str","TCSlib"]
+     > G06-COMPONENT label=SealB_Cryptography_SecureComputation_Yao_part1 phase=eof spelling=BoolCircuit.DAGCircuit.Satisfiable key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","Satisfiable"]] home_key=[["str","TCSlib"],[
+     > G06-COMPONENT label=SealB_Cryptography_SecureComputation_Yao_part1 phase=eof spelling=BoolCircuit.DAGCircuit._sizeOf_1 key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","_sizeOf_1"]] home_key=[["str","TCSlib"],["str
+     > G06-COMPONENT label=SealB_Cryptography_SecureComputation_Yao_part1 phase=eof spelling=BoolCircuit.DAGCircuit._sizeOf_inst key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","_sizeOf_inst"]] home_key=[["str","TCSlib"]
+     > G06-COMPONENT label=SealB_Cryptography_SecureComputation_Yao_part1 phase=eof spelling=BoolCircuit.DAGCircuit.binarize key=[["str","BoolCircuit"],["str","DAGCircuit"],["str","binarize"]] home_key=[["str","TCSlib"],["str",
+      1184| theorem yaoHybrid_hbcSecure (hE₁ : PolyTimeComputable E₁) (hE₂ : PolyTimeComputable E₂)
+      1185|     (hG₁ : PRFOut (.add .var .var) G₁) (hG₂ : PRFOut (.add .var innerLen) G₂)
+      1186|     (hG₁₂ : PRFOut (.add (.add .var .var) (.add .var innerLen))
+    * 1187|       (fun n s x => Fin.append (G₁ n s x) (G₂ n s x))) :
+      1188|     (yaoHybrid Y E₁ E₂).HBCSecure (yaoFunctionality Y) :=
+      1189|   (HybridProtocol.hbcSecure_iff (yaoHybrid Y E₁ E₂) (yaoFunctionality Y)).mpr
