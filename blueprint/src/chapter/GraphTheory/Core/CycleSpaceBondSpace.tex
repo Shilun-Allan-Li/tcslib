@@ -261,21 +261,6 @@ called the basis matrix of \texttt{$\mathcal{B}$}
 corresponding to \texttt{T}.}
 \end{definition}
 
-\begin{definition}[$C$ is the tree-$T$ basis matrix of the cycle space (rows indexed by $\bar{T}$)]
-\lean{CycleSpace.IsBasisMatrixOfTree'}
-\label{CycleSpace.IsBasisMatrixOfTree'}
-\texttt{C} is the tree-\texttt{T} basis matrix of the cycle space (rows indexed by \texttt{$\bar{T}$}).
-
-\emph{The \texttt{($\varepsilon$-$\nu$+$\omega$) $\times$ $\varepsilon$} matrix
-\texttt{C}
-whose rows are \texttt{f\_a}, \texttt{a $\in$ $\bar{T}$}, is a basis matrix of
-\texttt{$\mathcal{C}$}. This follows from the fact
-that each row is a circulation and that \texttt{rank C = $\varepsilon$ - $\nu$ +
-$\omega$} (because \texttt{C | $\bar{T}$} is an
-identity matrix). We refer to \texttt{C} as the basis matrix of \texttt{$\mathcal{C}$}
-corresponding to \texttt{T}.}
-\end{definition}
-
 \begin{definition}[$\tau(G)$: the number of spanning trees]
 \lean{CycleSpace.tau}
 \label{CycleSpace.tau}
@@ -446,7 +431,7 @@ trees of $D$ satisfies \[ \tau(D) = \det\!\left(B B^{\mathsf T}\right). \]
 \lean{CycleSpace.isUnimodular_basisMatrix_cycleSpace}
 \label{CycleSpace.isUnimodular_basisMatrix_cycleSpace}
 \leanok
-\uses{CycleSpace.IsBasisMatrixOfTree', CycleSpace.IsSpanningTree, Matrix.IsUnimodular}
+\uses{CycleSpace.IsSpanningTree, Matrix.IsUnimodular}
 Let $T$ be a spanning tree of a finite digraph on vertex set $V$ with arc set $A$, and
 let $C$ be the integer basis matrix of the cycle space corresponding to $T$ — the matrix
 whose rows are indexed by the arcs outside $T$ and whose columns are indexed by all of
@@ -457,7 +442,7 @@ set of columns equal in number to the rows has determinant $0$, $+1$, or $-1$.
 \begin{theorem}[Spanning-tree count as a Gram determinant of the cycle-space basis matrix]
 \lean{CycleSpace.tau_eq_det_mul_transpose_cycleSpace}
 \label{CycleSpace.tau_eq_det_mul_transpose_cycleSpace}
-\uses{CycleSpace.IsBasisMatrixOfTree', CycleSpace.IsSpanningTree, CycleSpace.tau}
+\uses{CycleSpace.IsSpanningTree, CycleSpace.tau}
 Let $G$ be a directed graph with finite vertex set $V$ and finite arc set $A$, each arc
 assigned a tail and a head in $V$, and let $\tau$ denote the number of spanning trees of
 $G$. Fix a spanning tree $T \subseteq A$, and let $C$ be the integer matrix over the
@@ -472,7 +457,7 @@ indexed by the arcs $a \notin T$ and its columns by the arcs of $A$. Then
 \lean{CycleSpace.tau_eq_det_fromBlocks}
 \label{CycleSpace.tau_eq_det_fromBlocks}
 \leanok
-\uses{CycleSpace.IsBasisMatrixOfTree, CycleSpace.IsBasisMatrixOfTree', CycleSpace.IsSpanningTree, CycleSpace.tau}
+\uses{CycleSpace.IsBasisMatrixOfTree, CycleSpace.IsSpanningTree, CycleSpace.tau}
 Let $G$ be a finite digraph with vertex set $V$ and arc set $A$, and let $T$ be a
 spanning tree of $G$. Let $B$ be the basis matrix of the bond space $\mathcal{B}$
 corresponding to $T$, whose rows are indexed by the arcs of $T$, and let $C$ be the

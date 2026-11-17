@@ -17,16 +17,6 @@ separator bits $0,1$, then $b$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection*{Turing Machine --- Build --- Primitives: Results}
 
-\begin{definition}[Fixed-prefix emitter machine]
-\lean{Turing.FinTM.catalogPrefixTM}
-\label{Turing.FinTM.catalogPrefixTM}
-\leanok
-\uses{Turing.FinTM}
-For a fixed word $w \in \{0,1\}^*$, a finite Turing machine with no work tapes
-and $\abs{w}+1$ control states that first writes the bits of $w$ to its output
-tape, one per step, and then copies its input to the output verbatim.
-\end{definition}
-
 \begin{definition}[Prefix-emitter configuration]
 \lean{Turing.FinTM.catalogPrefixCfg}
 \label{Turing.FinTM.catalogPrefixCfg}
@@ -46,30 +36,6 @@ the machine has no work tapes, so the work-tape fields are trivial.
 Let $w,x$ be Boolean words. For every natural number $i\le |w|$, after $i$ steps from
 the prefix emitter's initial configuration on input $x$, its control state is $i$, its
 input head remains at position $1$, and its output is the prefix of $w$ of length $i$.
-\end{lemma}
-
-\begin{lemma}[Copy phase of the prefix emitter]
-\lean{Turing.FinTM.catalogPrefixTM_copy}
-\label{Turing.FinTM.catalogPrefixTM_copy}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg.ext_zero_tapes, Turing.Cfg.inputSymbol, Turing.FinTM.catalogPrefixCfg, Turing.FinTM.prependTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.inputSymbolInner, Turing.moveInputPos, Turing.moveInputPos_pos_of_ne_right}
-\difficulty{4}
-Let $w,x$ be Boolean words. For every natural number $i\le |x|$, after $i$ steps from
-the configuration in control state $|w|$, with input head at position $1$ and output
-$w$, the machine remains in control state $|w|$, has input head at position $i+1$, and
-has output $w$ followed by the first $i$ symbols of $x$.
-\end{lemma}
-
-\begin{lemma}[Time bound for prefix emission]
-\lean{Turing.FinTM.catalogPrefixTM_computes}
-\label{Turing.FinTM.catalogPrefixTM_computes}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.FinTM.ComputesFunInTime, Turing.FinTM.catalogPrefixCfg, Turing.FinTM.catalogPrefixTM, Turing.FinTM.catalogPrefixTM_copy, Turing.FinTM.catalogPrefixTM_emit, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
-\difficulty{3}
-For every fixed word $w$ and every input $x$, the prefix emitter for $w$
-halts on $x$ within $\abs{w} + \abs{x} + 1$ steps, and its output is the
-concatenation $w x$; the final step is the halting transition on the right
-blank.
 \end{lemma}
 
 \begin{definition}[Zero-work-tape scan configuration]
@@ -94,26 +60,11 @@ state $q$, input head at position $i+1$, and output $o$, the symbol under the in
 is the optional entry $x[i]?$ (so it is blank when $i=|x|$).
 \end{lemma}
 
-\begin{lemma}[Copy-state run invariant]
-\lean{Turing.FinTM.scanCopy_run}
-\label{Turing.FinTM.scanCopy_run}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg.ext_zero_tapes, Turing.Cfg.inputSymbol, Turing.FinTM.scanCfg, Turing.FinTM.scanCfg_read, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
-\difficulty{4}
-Let $M$ be a machine with no work tapes over the Boolean alphabet, and let $q$ be a
-state. Suppose that for every input symbol and work-tape tuple, in state $q$ the
-transition on a bit $b$ moves right, emits $b$, and returns to $q$, while on blank it
-stays in place, emits nothing, and halts. For every finite Boolean string $x$, output
-string $o$, and $j\le |x|$, after $j$ steps from the scan configuration at position $0$
-in state $q$ with output $o$, the machine is in state $q$ at position $j$ with output
-$o$ followed by the first $j$ entries of $x$.
-\end{lemma}
-
 \begin{lemma}[Completion of a copy state]
 \lean{Turing.FinTM.scanCopy_finish}
 \label{Turing.FinTM.scanCopy_finish}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg.ext_zero_tapes, Turing.Cfg.inputSymbol, Turing.FinTM.scanCfg, Turing.FinTM.scanCfg_read, Turing.FinTM.scanCopy_run, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
+\uses{Turing.Action.apply, Turing.Cfg.ext_zero_tapes, Turing.Cfg.inputSymbol, Turing.FinTM.scanCfg, Turing.FinTM.scanCfg_read, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{3}
 Let $M$ be a machine with no work tapes over the Boolean alphabet, and let $q$ be a
 state. Suppose that in state $q$, on any scanned symbol and any work-tape tuple, the
@@ -122,40 +73,6 @@ the transition on a blank makes no input-head movement, emits nothing, and halts
 every finite Boolean string $x$ and output string $o$, after $|x|+1$ steps from the scan
 configuration at position $0$ in state $q$ with output $o$, the machine is in the halted
 scan configuration at position $|x|$ with output $o$ followed by $x$.
-\end{lemma}
-
-\begin{definition}[Input duplicator machine]
-\lean{Turing.FinTM.pairDupTM}
-\label{Turing.FinTM.pairDupTM}
-\leanok
-\uses{Turing.FinTM, Turing.FinTM.controlAction}
-A five-state machine without work tapes that transforms its input $x$ into the
-self-delimiting pair code of $(x,x)$: on a first pass it emits every input bit
-twice, then it emits the separator bit $0$, rewinds to the start, emits the
-separator bit $1$, and copies $x$ once more.
-\end{definition}
-
-\begin{lemma}[Intermediate state of the doubling pass]
-\lean{Turing.FinTM.pairDup_double}
-\label{Turing.FinTM.pairDup_double}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg.ext_zero_tapes, Turing.FinTM.pairDupTM, Turing.FinTM.scanCfg, Turing.FinTM.scanCfg_read, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
-\difficulty{4}
-For every finite bit string $x$, every $j\le |x|$, and the corresponding bound
-hypothesis $j\le |x|$, after $2j$ steps from its initial configuration on input $x$, the
-duplicator is in its scanning state at input position $j$ and its output consists of
-each of the first $j$ bits of $x$ written twice.
-\end{lemma}
-
-\begin{lemma}[Time bound for pair duplication]
-\lean{Turing.FinTM.pairDup_computes}
-\label{Turing.FinTM.pairDup_computes}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.ext_zero_tapes, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.FinTM.pairDupTM, Turing.FinTM.pairDup_double, Turing.FinTM.rewind_scan, Turing.FinTM.scanCfg, Turing.FinTM.scanCfg_read, Turing.FinTM.scanCopy_finish, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_neg_of_ne_left, Turing.pairEncode}
-\difficulty{5}
-For every finite bit string $x$, the duplicator machine halts after exactly $4(|x|+1)$
-steps and outputs the encoding consisting of each bit of $x$ repeated twice, followed by
-$01$ and then $x$.
 \end{lemma}
 
 \begin{lemma}[Copying a suffix from an interior position]
@@ -215,18 +132,6 @@ a $1$ in place of the first $0$, and the remaining bits unchanged; an
 all-ones input halts with empty output.
 \end{definition}
 
-\begin{lemma}[Time bound for fixed-width increment]
-\lean{Turing.FinTM.incFixed_computes}
-\label{Turing.FinTM.incFixed_computes}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.ext_zero_tapes, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesInTime_iff, Turing.FinTM.controlAction, Turing.FinTM.incFixedTM, Turing.FinTM.incFixed_cases, Turing.FinTM.rewind_scan, Turing.FinTM.scanCfg, Turing.FinTM.scanCfg_read, Turing.FinTM.scanCopy_suffix, Turing.FinTM.scanTrues_run, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.incFixed, Turing.moveInputPos_neg_of_ne_left, Turing.moveInputPos_pos_of_ne_right}
-\difficulty{5}
-On every input $x$, including the empty word, the increment machine halts
-within $3(\abs{x}+1)$ steps; its output is the fixed-width binary increment of
-$x$ (least-significant bit first) when no overflow occurs, and is empty when
-$x$ consists entirely of ones.
-\end{lemma}
-
 \begin{lemma}[Single right-moving scan step]
 \lean{Turing.FinTM.scanStep_right}
 \label{Turing.FinTM.scanStep_right}
@@ -279,17 +184,6 @@ Let $x$, $r$, and $p$ be Boolean words and suppose $x=p\,r$. There is a time $t\
 |r|+1$ such that, starting in the block state at position $|p|$ with empty output, the
 validity tester has halted after $t$ steps and its output is the single bit indicating
 whether the aligned pair parser successfully decodes $r$.
-\end{lemma}
-
-\begin{lemma}[Time bound for the validity test]
-\lean{Turing.FinTM.pairValid_computes}
-\label{Turing.FinTM.pairValid_computes}
-\leanok
-\uses{Turing.Cfg.ext_zero_tapes, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesInTime_iff, Turing.FinTM.pairValidTM, Turing.FinTM.pairValid_run, Turing.FinTM.scanCfg, Turing.MultiTapeTM.initCfg, Turing.pairDecode}
-\difficulty{3}
-For every input $x$, the pair-validity tester halts on $x$ within
-$\abs{x}+1$ steps, and its output is the single bit recording whether $x$
-decodes under the self-delimiting pair code.
 \end{lemma}
 
 \begin{definition}[Pair component extractor]
@@ -439,18 +333,6 @@ with input head just past $p$, buffer $a$, work head at $|a|$, and empty output,
 halted. Its output is $(a b)$ when the first flag is true, followed by $c$ when the
 second flag is true, if $r$ decodes as the pair $(b,c)$; if $r$ does not decode, its
 output is empty.
-\end{lemma}
-
-\begin{lemma}[Time bound for pair extraction]
-\lean{Turing.FinTM.pairExtract_computes}
-\label{Turing.FinTM.pairExtract_computes}
-\leanok
-\uses{Turing.Cfg.init, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesInTime_iff, Turing.FinTM.extractCfg, Turing.FinTM.extract_run, Turing.FinTM.pairExtractTM, Turing.MultiTapeTM.initCfg, Turing.pairDecode}
-\difficulty{3}
-On every input $x$ the pair extractor halts within $5(\abs{x}+1)$ steps; if
-$x$ decodes under the self-delimiting pair code as $(a,b)$, the output is $a$
-(when the first flag is set) followed by $b$ (when the second flag is set),
-and if $x$ is not a valid pair code the output is empty.
 \end{lemma}
 
 \begin{definition}[Control states of the polynomial generator]
@@ -788,28 +670,11 @@ exactly when the pair parser decodes $s$ as a pair whose second component has le
 most $r$; otherwise its output is the single bit $0$.
 \end{lemma}
 
-\begin{lemma}[Bounded input rewind]
-\lean{Turing.FinTM.catalogRewind}
-\label{Turing.FinTM.catalogRewind}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.moveInputPos_neg_val, Turing.FinTM.rewind_scan, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.step, Turing.moveInputPos}
-\difficulty{4}
-Let $k$ be a nonnegative integer, let $S$ be a state set, and let $x$ be a Boolean input
-word. Suppose a machine with $k$ work tapes has states $\mathrm{start}$ and
-$\mathrm{scan}$ and a destination state that may be absent. From $\mathrm{start}$, every
-transition moves the input head left and enters $\mathrm{scan}$, regardless of the
-scanned symbols; in $\mathrm{scan}$, every transition on an input bit moves left and
-stays in $\mathrm{scan}$, while a transition on a blank input cell moves right and
-enters the destination state. Then from every configuration $c$ in state
-$\mathrm{start}$, there is a number of steps $r \leq c$'s input-head position plus $2$
-after which the state is the destination and the input-head position is $1$.
-\end{lemma}
-
 \begin{lemma}[Checker startup after simulation]
 \lean{Turing.FinTM.lenStart}
 \label{Turing.FinTM.lenStart}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.init, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.output_unique, Turing.FinTM.catalogRewind, Turing.FinTM.computesInTime_iff, Turing.FinTM.lenAction, Turing.FinTM.lenCfg, Turing.FinTM.pairCountTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.captureCfg, Turing.capture_run, Turing.moveInputPos_zero}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.init, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.output_unique, Turing.FinTM.computesInTime_iff, Turing.FinTM.lenAction, Turing.FinTM.lenCfg, Turing.FinTM.pairCountTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.captureCfg, Turing.capture_run, Turing.moveInputPos_zero}
 \difficulty{5}
 Let $M$ be a finite Boolean Turing machine, and let $x,w$ be Boolean words. If $M$
 computes $w$ from $x$ within $T$ steps, then there are a time $t\le T+|x|+4$ and a
@@ -989,17 +854,6 @@ For every Boolean input word $x$, the marker-existence scanner computes the one-
 whose bit is true exactly when $x$ contains a true bit, within $|x|+1$ steps.
 \end{lemma}
 
-\begin{lemma}[Decoding inverts the pair encoding]
-\lean{Turing.FinTM.catalogPair_inverse}
-\label{Turing.FinTM.catalogPair_inverse}
-\leanok
-\uses{Turing.pairDecode, Turing.pairEncode}
-\difficulty{4}
-If a word $x$ decodes under the self-delimiting pair code as the pair
-$(a,v)$, then $x$ is exactly the pair encoding of $(a,v)$: each bit of $a$
-doubled, then the separator bits $0,1$, then $v$.
-\end{lemma}
-
 \begin{lemma}[Dichotomy for the last-marker split]
 \lean{Turing.FinTM.catalogMarker_cases}
 \label{Turing.FinTM.catalogMarker_cases}
@@ -1021,20 +875,6 @@ $pu$.
 For every Boolean word $x$, take the second component returned by the aligned pair
 parser on $x$, or the empty word if parsing is undefined. Its length is at most the
 length of $x$.
-\end{lemma}
-
-\begin{lemma}[Computing on the extracted payload]
-\lean{Turing.FinTM.catalogPayload_computes}
-\label{Turing.FinTM.catalogPayload_computes}
-\leanok
-\uses{Turing.Cfg.init, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.VirtualTag, Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedComp_start, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.bufferedSecondCfg_run, Turing.FinTM.catalogPayload_length, Turing.FinTM.computesInTime_iff, Turing.FinTM.pairExtractTM, Turing.FinTM.pairExtractTM_computes, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom_add, Turing.pairDecode}
-\difficulty{5}
-Let $M_g$ be a finite Turing machine that computes a total function $g$ on Boolean words
-within time bound $T_g$, and suppose $T_g$ is monotone. Then the buffered composition of
-the pair-component extractor and $M_g$ computes the function that sends each Boolean
-word $x$ to $g(b)$, where $b$ is the second component returned by the aligned pair
-parser on $x$, taken to be the empty word if parsing is undefined. On inputs of length
-$n$, this computation finishes within $6(n+1)+T_g(n)+1$ steps.
 \end{lemma}
 
 \begin{theorem}[Prepending a fixed Boolean word]
@@ -1146,7 +986,7 @@ when that parser succeeds, and outputs the empty word when it fails.
 \lean{Turing.FinTM.computesFunInTime_pairDup}
 \label{Turing.FinTM.computesFunInTime_pairDup}
 \leanok
-\uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.pairDupTM, Turing.FinTM.pairDup_computes, Turing.pairEncode}
+\uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.pairEncode}
 \difficulty{1}
 There exist a finite Turing machine $M$ over the Boolean alphabet and a constant
 $c\in\mathbb{N}$ such that, on every Boolean word $x$, $M$ halts within $c(|x|+1)$ steps
@@ -1154,228 +994,11 @@ and outputs the pair encoding of $(x,x)$: each bit of $x$ doubled, followed by t
 separator $01$, followed by $x$.
 \end{theorem}
 
-\begin{definition}[Administrative action of the threaded map]
-\lean{Turing.FinTM.mapAction}
-\label{Turing.FinTM.mapAction}
-\leanok
-\uses{Turing.Action, Turing.FinTM}
-For a machine $M$, an action of the threaded-map controller built over $M$:
-it moves the input head and the final (capture) work head by the given
-directions, optionally emits one output bit, and passes to the given control
-state, writing no tape cell.
-\end{definition}
-
-\begin{definition}[Threaded-map controller machine]
-\lean{Turing.FinTM.pairMapTM}
-\label{Turing.FinTM.pairMapTM}
-\leanok
-\uses{Turing.FinTM, Turing.FinTM.controlAction, Turing.FinTM.mapAction, Turing.captureAction}
-Given a machine $M$, the threaded-map controller over $M$ is a machine with
-one extra work tape that first simulates $M$ on the input while capturing
-the output of $M$ on the extra tape, rewinds the capture head and the input,
-silently validates the input's membership in the self-delimiting pair code,
-and only on success rewinds the input once more and emits the input's
-doubled prefix and separator followed by the captured word; malformed inputs
-halt without any emission.
-\end{definition}
-
-\begin{definition}[Threaded-map configuration]
-\lean{Turing.FinTM.mapCfg}
-\label{Turing.FinTM.mapCfg}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.pairMapTM, Turing.captureCfg}
-A configuration of the threaded-map controller that preserves the completed
-tape bank of the simulated machine and its captured word, and records the
-controller's state, the input position, the capture-head displacement, and
-the output written so far.
-\end{definition}
-
-\begin{lemma}[Effect of a threaded-map action]
-\lean{Turing.FinTM.mapAction_apply}
-\label{Turing.FinTM.mapAction_apply}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.mapAction, Turing.FinTM.mapCfg, Turing.FinTM.pairMapTM, Turing.moveInputPos}
-\difficulty{3}
-Let $M$ be a finite Turing machine over the Boolean alphabet, let $c$ be a configuration
-of $M$ on input $x$, and let $q,q'$ be optional states of the threaded-map controller
-built over $M$. Let $p$ be an input-head position, $h$ an integer capture-head position,
-$o$ a Boolean word, $m,d\in\{-1,0,1\}$ be directions, and $b$ an optional Boolean output
-symbol. Applying the administrative action with input movement $m$, capture-head
-movement $d$, output symbol $b$, and successor state $q'$ to the threaded-map
-configuration determined by $c,q,p,h,o$ gives the threaded-map configuration determined
-by $c,q'$, the input-head position obtained by moving $p$ by $m$, capture-head position
-$h+d$, and output word $o$ followed by $b$ when present.
-\end{lemma}
-
-\begin{lemma}[Capture-head rewind of the threaded map]
-\lean{Turing.FinTM.mapBuffer_rewind}
-\label{Turing.FinTM.mapBuffer_rewind}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.bufferTape_left, Turing.FinTM.mapAction, Turing.FinTM.mapAction_apply, Turing.FinTM.mapCfg, Turing.FinTM.pairMapTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.captureCfg, Turing.moveInputPos_zero}
-\difficulty{4}
-Let $M$ be a finite Turing machine over the Boolean alphabet, let $x$ be a Boolean input
-word, and let $c$ be a configuration of $M$ on $x$. For any valid input-head position
-$p$ and any natural number $j$ no greater than the length of the output in $c$, running
-the threaded-map controller for $j+1$ steps from the configuration that preserves $c$'s
-tape bank, has the controller in its capture-rewind state, places the input head at $p$
-and the capture head at displacement $j-1$, and has empty output, yields the
-configuration with the controller in its input-rewind state, input head still at $p$,
-capture head at displacement $0$, and empty output.
-\end{lemma}
-
-\begin{lemma}[Startup of the threaded-map controller]
-\lean{Turing.FinTM.mapStart}
-\label{Turing.FinTM.mapStart}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.init, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.output_unique, Turing.FinTM.catalogRewind, Turing.FinTM.computesInTime_iff, Turing.FinTM.mapAction, Turing.FinTM.mapBuffer_rewind, Turing.FinTM.mapCfg, Turing.FinTM.pairMapTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.captureCfg, Turing.capture_run, Turing.moveInputPos_zero}
-\difficulty{5}
-Let $M$ be a finite Turing machine over the Boolean alphabet, and let $x,w$ be Boolean
-words and $T$ a natural number. Suppose there is a space bound such that $M$ halts on
-input $x$ after exactly $T$ steps, outputs $w$, and uses that space. Then there exist a
-natural number $t\leq T+|w|+|x|+5$ and a configuration $c$ of $M$ on $x$ whose output is
-$w$, such that the threaded-map controller started on $x$ reaches after $t$ steps its
-silent validation state, with input head at position $1$, capture head at displacement
-$0$, and empty output, while preserving the tape contents and head positions of $c$.
-\end{lemma}
-
-\begin{lemma}[Input symbol at an interior position]
-\lean{Turing.FinTM.mapCfg_read}
-\label{Turing.FinTM.mapCfg_read}
-\leanok
-\uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM, Turing.FinTM.inputSymbol_at, Turing.FinTM.mapCfg, Turing.FinTM.pairMapTM}
-\difficulty{1}
-Let $M$ be a finite Turing machine over the Boolean alphabet, let $x$ be a Boolean word,
-and let $c$ be a configuration of $M$ on $x$. For any natural number $i\leq |x|$, any
-controller state, any integer capture-head displacement, and any output word, the
-threaded-map configuration with input head at position $i+1$ reads the $i$-th bit of
-$x$, or no symbol if $i=|x|$.
-\end{lemma}
-
-\begin{lemma}[Reading the first bit of a parse block]
-\lean{Turing.FinTM.mapParse_first}
-\label{Turing.FinTM.mapParse_first}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.mapAction_apply, Turing.FinTM.mapCfg, Turing.FinTM.mapCfg_read, Turing.FinTM.pairMapTM, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
-\difficulty{3}
-Let $M$ be a finite Turing machine over the Boolean alphabet, let
-$x=\mathrm{pre}\,b\,\mathrm{rest}$ for Boolean words $\mathrm{pre},\mathrm{rest}$ and a
-bit $b$, and let $c$ be a configuration of $M$ on $x$. From the threaded-map parser's
-pair-reading state with emitting flag $e$, input head at position $|\mathrm{pre}|+1$,
-capture head at displacement $0$, and output $\mathrm{out}$, one step advances the input
-head to position $|\mathrm{pre}|+2$, records $b$ in the controller state, and appends
-$b$ to the output exactly when $e$ is true; the capture head remains at displacement
-$0$.
-\end{lemma}
-
-\begin{lemma}[Parsing one aligned bit pair]
-\lean{Turing.FinTM.mapParse_block}
-\label{Turing.FinTM.mapParse_block}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.mapAction_apply, Turing.FinTM.mapCfg, Turing.FinTM.mapCfg_read, Turing.FinTM.mapParse_first, Turing.FinTM.pairMapTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
-\difficulty{4}
-Let $M$ be a finite Turing machine over the Boolean alphabet, let
-$x=\mathrm{pre}\,b\,d\,\mathrm{rest}$ for Boolean words $\mathrm{pre},\mathrm{rest}$ and
-bits $b,d$, let $c$ be a configuration of $M$ on $x$, and let $\mathrm{out}$ be a
-Boolean word. Starting in the threaded-map parser with its pair-reading state set by an
-emitting flag $e$, input head at position $|\mathrm{pre}|+1$, capture head at
-displacement $0$, and output $\mathrm{out}$, after two steps the input head is at
-position $|\mathrm{pre}|+3$ and the output is $\mathrm{out}$ followed by $[b,d]$ if $e$
-is true, and is otherwise unchanged. The resulting state continues pair parsing if
-$b=d$, halts if $b=1,d=0$, and enters the post-separator phase if $b=0,d=1$.
-\end{lemma}
-
-\begin{lemma}[Silent validation of encoded pairs]
-\lean{Turing.FinTM.mapValidate}
-\label{Turing.FinTM.mapValidate}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.mapAction, Turing.FinTM.mapCfg, Turing.FinTM.mapCfg_read, Turing.FinTM.mapParse_block, Turing.FinTM.mapParse_first, Turing.FinTM.pairMapTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.captureCfg, Turing.pairDecode}
-\difficulty{5}
-Let $M$ be a Boolean finite Turing machine, let $x$ be a Boolean word, let $c$ be a
-configuration of $M$ on $x$, and let $r$ be a Boolean word. For every split $x=u r$,
-there exist an integer time $t\le |r|+1$ such that the controller started in its silent
-validation state at input position $|u|+1$ has the following behavior: if the pair
-parser succeeds on $r$, then for some input-head position $p$ its configuration after
-$t$ steps is the corresponding configuration with the same simulated tape contents,
-empty output, input head at $p$, and controller state for the next phase. If the parser
-fails on $r$, then after $t$ steps the controller is halted and its output is empty.
-\end{lemma}
-
-\begin{lemma}[Replay of the encoded prefix]
-\lean{Turing.FinTM.mapPrefix_replay}
-\label{Turing.FinTM.mapPrefix_replay}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.mapCfg, Turing.FinTM.mapParse_block, Turing.FinTM.pairMapTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.pairEncode}
-\difficulty{4}
-Let $M$ be a finite Turing machine over the Boolean alphabet, let $x,a,b$ be Boolean
-words, let $c$ be a configuration of $M$ on $x$, and suppose $x=\mathrm{pre}\,\langle
-a,b\rangle$, where $\mathrm{pre}$ is a Boolean word and $\langle a,b\rangle$ is the
-self-delimiting pair encoding. For every prior output word $\mathrm{out}$, there is a
-valid input-head position $p$ such that, from the emitting pair-reading state at
-position $|\mathrm{pre}|+1$, with capture head at displacement $0$ and output
-$\mathrm{out}$, after $2|a|+2$ steps the controller is in the payload-replay state with
-capture head at displacement $0$ and output $\mathrm{out}$ followed by the encoding of
-$a$ paired with the empty word.
-\end{lemma}
-
-\begin{lemma}[Replay of a captured word]
-\lean{Turing.FinTM.mapPayload_replay}
-\label{Turing.FinTM.mapPayload_replay}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.mapAction_apply, Turing.FinTM.mapCfg, Turing.FinTM.pairMapTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.captureCfg, Turing.moveInputPos_zero}
-\difficulty{4}
-Let $M$ be a finite Turing machine over the Boolean alphabet, let $x$ be a Boolean word,
-let $c$ be a configuration of $M$ on input $x$, let $p$ be a valid input-head position,
-and let $o$ be a Boolean word. For every natural number $j$ with $j\leq |c.output|$,
-running the threaded-map controller for $j$ steps from its payload-replay state, with
-capture head at displacement $0$ and output $o$, yields the configuration in that same
-controller state with input-head position $p$, capture-head displacement $j$, and output
-$o$ followed by the first $j$ symbols of $c.output$; the simulated machine's tape
-contents and head positions are preserved.
-\end{lemma}
-
-\begin{lemma}[Completion of Payload Replay]
-\lean{Turing.FinTM.mapPayload_finish}
-\label{Turing.FinTM.mapPayload_finish}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.mapAction, Turing.FinTM.mapCfg, Turing.FinTM.mapPayload_replay, Turing.FinTM.pairMapTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.captureCfg}
-\difficulty{2}
-Let $M$ be a finite Turing machine over the Boolean alphabet, let $x$ be a Boolean word,
-let $c$ be a configuration of $M$ on input $x$, let $p$ be a valid input-head position
-for $x$, and let $o$ be a Boolean word. Starting the threaded-map controller in its
-payload-replay state, with capture-head displacement $0$ and output word $o$, after
-$|c.	ext{output}|+1$ steps it has halted and its output is $o$ followed by the output
-word of $c$.
-\end{lemma}
-
-\begin{lemma}[Length of a pair encoding]
-\lean{Turing.FinTM.catalogPair_length}
-\label{Turing.FinTM.catalogPair_length}
-\leanok
-\uses{Turing.pairEncode}
-\difficulty{1}
-For all words $a$ and $b$, the self-delimiting pair encoding of $(a,b)$ has
-length exactly $2\abs{a} + 2 + \abs{b}$.
-\end{lemma}
-
-\begin{lemma}[Time bound for the threaded-map controller]
-\lean{Turing.FinTM.pairMap_computes}
-\label{Turing.FinTM.pairMap_computes}
-\leanok
-\uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.catalogRewind, Turing.FinTM.computesInTime_iff, Turing.FinTM.mapCfg, Turing.FinTM.mapPayload_finish, Turing.FinTM.mapPrefix_replay, Turing.FinTM.mapStart, Turing.FinTM.mapValidate, Turing.FinTM.pairMapTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.output_length_le, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.eq_pairEncode_of_pairDecode, Turing.length_pairEncode, Turing.pairDecode, Turing.pairEncode}
-\difficulty{5}
-Let $M$ be a finite Turing machine over the Boolean alphabet, let $f$ map Boolean words
-to Boolean words, and let $T$ be a time bound. If $M$ computes $f(x)$ within $T(|x|)$
-steps for every Boolean word $x$, then the threaded-map controller built over $M$
-computes, on every input $x$, the word obtained by pairing the first component $a$ of
-the decoded pair with $f(x)$ when decoding succeeds, and the empty word when decoding
-fails, within $4(T(|x|)+|x|+3)$ steps.
-\end{lemma}
-
 \begin{theorem}[Mapping the second component in a pair]
 \lean{Turing.FinTM.computesFunInTime_pairMapSnd}
 \label{Turing.FinTM.computesFunInTime_pairMapSnd}
 \leanok
-\uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.bufferedCompTM, Turing.FinTM.catalogPayload_computes, Turing.FinTM.pairExtractTM, Turing.FinTM.pairMapTM, Turing.FinTM.pairMap_computes, Turing.pairDecode, Turing.pairEncode}
+\uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.bufferedCompTM, Turing.FinTM.pairExtractTM, Turing.pairDecode, Turing.pairEncode}
 \difficulty{3}
 Let $g$ be a function from Boolean words to Boolean words, and let
 $T_g:\mathbb{N}\to\mathbb{N}$ be monotone. Suppose a finite Turing machine computes $g$
@@ -1473,17 +1096,6 @@ through $|w|$ for the first index at which the split acceptance test holds on th
 corresponding iterate of the split step gives the same result as the arithmetic search
 for the least $i\in\{0,\ldots,|w|\}$ satisfying $i+C(i+1)^e=|w|$, with no result when no
 such index exists.
-\end{lemma}
-
-\begin{lemma}[Failure of the split search]
-\lean{Turing.FinTM.splitFind_none}
-\label{Turing.FinTM.splitFind_none}
-\leanok
-\uses{Turing.FinTM.splitAccept, Turing.FinTM.splitFind_eq, Turing.FinTM.splitStep, Turing.solveSplit}
-\difficulty{1}
-The arithmetic split search at parameters $C$, $e$, and $\abs{w}$ fails if
-and only if the split-acceptance test rejects the $i$-th iterate of the split
-step on the empty candidate for every $i \le \abs{w}$.
 \end{lemma}
 
 \begin{lemma}[Output of the split search loop]
@@ -1640,7 +1252,7 @@ the same input-head position and tape contents and all work heads at displacemen
 \lean{Turing.FinTM.splitRestore_run}
 \label{Turing.FinTM.splitRestore_run}
 \leanok
-\uses{Turing.Cfg.ofWords, Turing.FinTM.catalogRewind, Turing.FinTM.splitPos, Turing.FinTM.splitRestoreClean, Turing.FinTM.splitRestoreScan, Turing.FinTM.splitRestoreTM, Turing.FinTM.splitRestore_append, Turing.FinTM.splitRestore_rewind, Turing.FinTM.splitRestore_scan, Turing.FinTM.splitStep, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.stateWord}
+\uses{Turing.Cfg.ofWords, Turing.FinTM.splitPos, Turing.FinTM.splitRestoreClean, Turing.FinTM.splitRestoreScan, Turing.FinTM.splitRestoreTM, Turing.FinTM.splitRestore_append, Turing.FinTM.splitRestore_rewind, Turing.FinTM.splitRestore_scan, Turing.FinTM.splitStep, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.stateWord}
 \difficulty{4}
 Let $k$ be a nonnegative integer and let $w$ and $s$ be Boolean words. There is a time
 $t\le 2|s|+|w|+5$ at which the cleanup machine, started in its scan configuration at
@@ -1776,19 +1388,6 @@ H$. The overflow test is false and the input head of $\tau$ scans no symbol if a
 if $|s|+|c\text{'s output}|=|w|$.
 \end{lemma}
 
-\begin{lemma}[Stopping the counted simulation at the first halt]
-\lean{Turing.FinTM.splitCount_firstHalt}
-\label{Turing.FinTM.splitCount_firstHalt}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM.splitCountAction, Turing.FinTM.splitCountCfg, Turing.FinTM.splitCount_run, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt}
-\difficulty{4}
-Suppose the host's transitions on embedded states agree with the
-emission-counting transform of the source's transitions, and the source run
-from $c$ reaches a halted configuration $d$ after $T$ steps. Then there is a
-time $t \le T$ at which the host run from the embedding of $c$ equals the
-embedding of $d$.
-\end{lemma}
-
 \begin{definition}[Preparation machine of the split search]
 \lean{Turing.FinTM.splitPrepareTM}
 \label{Turing.FinTM.splitPrepareTM}
@@ -1876,18 +1475,6 @@ heads at position $0$, after exactly $2(|s|+1)$ steps the machine is in state $2
 all work heads at position $0$, the input head at the saturated position for $s$, the
 first tape still storing $s$, and every scratch tape storing the unary word of length
 $|s|+1$. The Boolean flag in this final state is true exactly when $|w|<|s|$.
-\end{lemma}
-
-\begin{lemma}[First-entry form of preparation]
-\lean{Turing.FinTM.splitPrepare_first}
-\label{Turing.FinTM.splitPrepare_first}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg.ofWords, Turing.FinTM.catalogFirstEntry, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.splitPrepareReady, Turing.FinTM.splitPrepareTM, Turing.FinTM.splitPrepare_run, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step, Turing.moveInputPos_zero, Turing.stateWord}
-\difficulty{3}
-For any input $w$ and candidate $s$, there is a time $t \le 2(\abs{s}+1)$
-such that the preparation machine, started from the canonical anchored
-configuration carrying $s$, never visits its return state before time $t$
-and at time $t$ sits in the prepared configuration with all heads at $0$.
 \end{lemma}
 
 \begin{definition}[Anchor-free trace]
@@ -2003,18 +1590,6 @@ $w$ is the configuration in its anchor state with all work tapes blank, all work
 heads at position $0$, input head at position $1$, and empty output.
 \end{lemma}
 
-\begin{lemma}[Full-run state embedding]
-\lean{Turing.FinTM.splitEmbed_run}
-\label{Turing.FinTM.splitEmbed_run}
-\leanok
-\uses{Turing.Action.mapState, Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_comm_of_step, Turing.MultiTapeTM.step}
-\difficulty{3}
-If a host machine's transitions on all embedded states equal the mapped
-transitions of a source machine, then for every start configuration $c$ and
-time $t$, the host run from the embedded $c$ equals the embedding of the
-source run from $c$, including through halting.
-\end{lemma}
-
 \begin{lemma}[Preparation phase of the round]
 \lean{Turing.FinTM.splitBody_prepare}
 \label{Turing.FinTM.splitBody_prepare}
@@ -2052,7 +1627,7 @@ state.
 \lean{Turing.FinTM.splitBody_rewind}
 \label{Turing.FinTM.splitBody_rewind}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.mapState, Turing.FinTM, Turing.FinTM.catalogRewind, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.splitBodyTM, Turing.FinTM.splitEmbed_cut, Turing.FinTM.splitRewindTM, Turing.FinTM.splitSafe, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.mapState, Turing.FinTM, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.splitBodyTM, Turing.FinTM.splitEmbed_cut, Turing.FinTM.splitRewindTM, Turing.FinTM.splitSafe, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
 Let $M$ be a finite Turing machine over the Boolean alphabet, let $start$ be a state of
 $M$, let $w$ be a Boolean word, and let $ok$ be a Boolean value. For any configuration
@@ -2374,79 +1949,6 @@ satisfying $i+f(i)=|w|$, or the empty word if no such $i$ exists, and halts afte
 exactly $c(|w|+1)(T_E(|w|+1)+|w|+2)$ steps.
 \end{lemma}
 
-\begin{definition}[Idle placeholder machine]
-\lean{Turing.FinTM.emitterIdleTM}
-\label{Turing.FinTM.emitterIdleTM}
-\leanok
-\uses{Turing.FinTM, Turing.FinTM.controlAction}
-A single-state machine with no work tapes, used only to supply the empty
-inactive bank of the virtual-input wrapper; its own transition is never
-entered by the phase that uses it.
-\end{definition}
-
-\begin{definition}[Candidate evaluator machine]
-\lean{Turing.FinTM.emitterEvalTM}
-\label{Turing.FinTM.emitterEvalTM}
-\leanok
-\uses{Turing.FinTM, Turing.FinTM.bufferedCompTM, Turing.FinTM.controlAction, Turing.FinTM.emitterIdleTM, Turing.captureAction}
-Given a machine $M$, the candidate evaluator obtained by wrapping the
-virtual-input phase of the buffered composition over $M$ with the capture
-transformer: $M$ runs on a buffered candidate as virtual input, every
-emission lands on a final capture tape rather than the physical output, and
-completion passes to a live return state.
-\end{definition}
-
-\begin{definition}[Evaluator configuration]
-\lean{Turing.FinTM.emitterEvalCfg}
-\label{Turing.FinTM.emitterEvalCfg}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.emitterEvalTM, Turing.FinTM.emitterIdleTM, Turing.captureCfg}
-A configuration of the candidate evaluator in which the preserved candidate
-occupies the first work tape, the simulated machine's work bank follows it,
-and the final tape captures every emission of the simulated machine; the
-physical input head stays at a fixed position and the physical output is
-empty.
-\end{definition}
-
-\begin{lemma}[Guarded run of the candidate evaluator]
-\lean{Turing.FinTM.emitter_eval_run}
-\label{Turing.FinTM.emitter_eval_run}
-\leanok
-\uses{Turing.Cfg, Turing.Cfg.Halted, Turing.FinTM, Turing.FinTM.VirtualTag, Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.bufferedSecondCfg_run, Turing.FinTM.emitterEvalCfg, Turing.FinTM.emitterEvalTM, Turing.FinTM.emitterIdleTM, Turing.MultiTapeTM.runFrom, Turing.capture_run}
-\difficulty{4}
-Let the simulated machine, started from a configuration $c$ over the
-candidate with a valid virtual-input tag, stay live for all times before
-$t$. Then $t$ steps of the candidate evaluator from the evaluator
-configuration of $c$ land exactly on the evaluator configuration of the
-simulated machine's configuration at time $t$, with a valid tag.
-\end{lemma}
-
-\begin{lemma}[Initial configuration of the candidate evaluator]
-\lean{Turing.FinTM.emitter_eval_initial}
-\label{Turing.FinTM.emitter_eval_initial}
-\leanok
-\uses{Turing.Cfg.init, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.emitterEvalCfg, Turing.FinTM.emitterEvalTM, Turing.FinTM.emitterIdleTM, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM.initCfg, Turing.captureCfg, Turing.stateWord}
-\difficulty{4}
-The evaluator configuration of the simulated machine's initial configuration
-on a candidate $s$ --- candidate buffered, source work bank blank, capture
-tape empty, all heads at zero --- equals the canonical anchored configuration
-whose stored words carry $s$, at the evaluator's initial virtual state.
-\end{lemma}
-
-\begin{lemma}[First halt of the candidate evaluator]
-\lean{Turing.FinTM.emitter_eval_first}
-\label{Turing.FinTM.emitter_eval_first}
-\leanok
-\uses{Turing.Cfg.init, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.output_unique, Turing.FinTM.VirtualTag, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.computesInTime_iff, Turing.FinTM.emitterEvalCfg, Turing.FinTM.emitterEvalTM, Turing.FinTM.emitter_eval_run, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.captureCfg}
-\difficulty{5}
-Let $M$, on the candidate $s$, halt within $T$ steps with output $o$. Then
-there is a time $t \le T$ at which $M$'s run on $s$ has first halted, with
-output $o$ and a valid virtual tag, such that the candidate evaluator never
-visits its return state before time $t$ and at time $t$ sits in the
-evaluator configuration of $M$'s halted configuration, its capture tape
-holding exactly $o$.
-\end{lemma}
-
 \begin{lemma}[Equality of Extended Word Prefixes]
 \lean{Turing.FinTM.emitter_take_succ_eq}
 \label{Turing.FinTM.emitter_take_succ_eq}
@@ -2528,349 +2030,6 @@ equal to the truth value of $u=v$ and both heads at zero; the other configuratio
 are as specified initially.
 \end{lemma}
 
-\begin{definition}[Visited-interval marker]
-\lean{Turing.FinTM.emitterInterval}
-\label{Turing.FinTM.emitterInterval}
-\leanok
-The marker tape of a contiguous visited interval of a given left endpoint
-and width: exactly the cells of the interval are marked, independently of
-the simulated data.
-\end{definition}
-
-\begin{definition}[Partially cleared data tape]
-\lean{Turing.FinTM.emitterCleared}
-\label{Turing.FinTM.emitterCleared}
-\leanok
-For a data tape, a left endpoint $m$, and a count $j$, the partially cleared
-tape is blank at every cell $z$ with $m \le z < m + j$ and agrees with the
-data tape at every other cell.
-\end{definition}
-
-\begin{lemma}[One step of interval clearing]
-\lean{Turing.FinTM.emitter_cleared_step}
-\label{Turing.FinTM.emitter_cleared_step}
-\leanok
-\uses{Turing.FinTM.emitterCleared}
-\difficulty{3}
-Blanking the cell at offset $j$ from the left endpoint of a tape whose first
-$j$ interval cells are already cleared yields the tape with $j+1$ interval
-cells cleared.
-\end{lemma}
-
-\begin{definition}[Native interval cleaner machine]
-\lean{Turing.FinTM.emitterClearTM}
-\label{Turing.FinTM.emitterClearTM}
-\leanok
-\uses{Turing.FinTM, Turing.FinTM.controlAction}
-A four-state machine with three work tapes --- data, interval marker, and
-origin marker --- that clears a finite marked work interval natively: it
-scans left to the marked interval's left end, clears data and marker in
-lockstep moving right, rewinds using the origin marker, and erases that
-marker at the origin, stalling silently in its return state. Blank holes in
-the data are permitted; all heads stay aligned.
-\end{definition}
-
-\begin{definition}[Cleaner configuration]
-\lean{Turing.FinTM.emitterClearCfg}
-\label{Turing.FinTM.emitterClearCfg}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM.emitterClearTM}
-A configuration of the interval cleaner on physical input $w$: the three
-tapes hold the data, the interval marker, and the origin marker, with all
-three heads at a common displacement; the physical input head and output are
-untouched.
-\end{definition}
-
-\begin{lemma}[Left scan of the cleaner]
-\lean{Turing.FinTM.emitter_clear_left}
-\label{Turing.FinTM.emitter_clear_left}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape, Turing.FinTM.emitterClearCfg, Turing.FinTM.emitterClearTM, Turing.FinTM.emitterInterval, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
-\difficulty{4}
-Let a marked interval have left endpoint $m$ and width $W$, and let
-$j < W$. Then $j+2$ steps of the cleaner, started in its initial scan state
-at offset $j$ from the left end, yield its clearing state at the left end
-$m$, regardless of blank holes in the data; the data, interval marker, and
-origin marker are unchanged.
-\end{lemma}
-
-\begin{lemma}[Clearing nothing changes nothing]
-\lean{Turing.FinTM.emitter_cleared_zero}
-\label{Turing.FinTM.emitter_cleared_zero}
-\leanok
-\uses{Turing.FinTM.emitterCleared}
-\difficulty{1}
-For every data tape and every left endpoint, the tape obtained by clearing
-zero cells of the visited interval is the original data tape.
-\end{lemma}
-
-\begin{lemma}[Clearing the whole interval]
-\lean{Turing.FinTM.emitter_cleared_all}
-\label{Turing.FinTM.emitter_cleared_all}
-\leanok
-\uses{Turing.FinTM.emitterCleared}
-\difficulty{2}
-If the data tape is blank outside the visited interval, then clearing the
-entire interval produces the all-blank tape; no assumption is made about
-holes or values inside the interval.
-\end{lemma}
-
-\begin{lemma}[Right clearing scan]
-\lean{Turing.FinTM.emitter_clear_scan}
-\label{Turing.FinTM.emitter_clear_scan}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape, Turing.FinTM.emitterClearCfg, Turing.FinTM.emitterClearTM, Turing.FinTM.emitterCleared, Turing.FinTM.emitterInterval, Turing.FinTM.emitter_cleared_step, Turing.FinTM.emitter_cleared_zero, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
-\difficulty{4}
-Let a marked interval have left endpoint $m$ and width $W$, and let
-$j \le W$. Then $j$ steps of the cleaner from its clearing state at $m$
-yield the configuration in which the first $j$ cells of both the data and
-the interval marker are cleared and all heads are at offset $j$, while the
-origin marker is intact.
-\end{lemma}
-
-\begin{lemma}[Erasing the origin marker]
-\lean{Turing.FinTM.emitter_origin_erase}
-\label{Turing.FinTM.emitter_origin_erase}
-\leanok
-\uses{Turing.FinTM.bufferTape}
-\difficulty{3}
-The tape obtained by blanking cell $0$ of the tape holding the single-cell
-marker word is the all-blank tape.
-\end{lemma}
-
-\begin{lemma}[Origin-guided rewind of the cleaner]
-\lean{Turing.FinTM.emitter_clear_origin}
-\label{Turing.FinTM.emitter_clear_origin}
-\leanok
-\uses{Turing.Action, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat, Turing.FinTM.emitterClearCfg, Turing.FinTM.emitterClearTM, Turing.FinTM.emitter_origin_erase, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
-\difficulty{4}
-For every $n$, if the data and interval-marker tapes are already blank and
-the cleaner is in its rewind state at displacement $n$, then exactly $n+1$
-steps return all heads to the origin and erase the origin marker, reaching
-the return state with all three tapes blank.
-\end{lemma}
-
-\begin{lemma}[Complete native cleanup of a marked interval]
-\lean{Turing.FinTM.emitter_clear_run}
-\label{Turing.FinTM.emitter_clear_run}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape, Turing.FinTM.emitterClearCfg, Turing.FinTM.emitterClearTM, Turing.FinTM.emitterInterval, Turing.FinTM.emitter_clear_left, Turing.FinTM.emitter_clear_origin, Turing.FinTM.emitter_clear_scan, Turing.FinTM.emitter_cleared_all, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
-\difficulty{5}
-Let a marked interval of width $W$ contain the origin ($\mathrm{left} \le 0
-< \mathrm{left} + W$), let the data vanish outside it, and start the cleaner
-anywhere inside it. Then there is a time $t$ with $0 < t \le 3W + 4$ after
-which the cleaner is in its return state with all three tapes blank and all
-heads at the origin.
-\end{lemma}
-
-\begin{definition}[Closed visited span]
-\lean{Turing.FinTM.emitterSpan}
-\label{Turing.FinTM.emitterSpan}
-\leanok
-The marker tape of a closed interval of visited cells from a lower to an
-upper endpoint; the data it tracks may have arbitrary blank holes inside the
-span.
-\end{definition}
-
-\begin{lemma}[Extending a visited span]
-\lean{Turing.FinTM.emitter_span_extend}
-\label{Turing.FinTM.emitter_span_extend}
-\leanok
-\uses{Turing.FinTM.emitterSpan}
-\difficulty{3}
-If $\mathrm{lo} \le \mathrm{hi}$ and a head position $h$ lies within one
-cell of the closed span $[\mathrm{lo}, \mathrm{hi}]$, then marking cell $h$
-turns the span marker into the marker of
-$[\min(\mathrm{lo}, h), \max(\mathrm{hi}, h)]$.
-\end{lemma}
-
-\begin{definition}[Three-bank tape layout]
-\lean{Turing.FinTM.emitterSlots}
-\label{Turing.FinTM.emitterSlots}
-\leanok
-Given three families $D$, $V$, $O$, each indexed by $k$ positions, the
-three-bank layout is the family indexed by $k + (k + k)$ positions that
-lists $D$ first, then $V$, then $O$; it is used to place simulated data,
-visited-cell markers, and origin markers in corresponding slots.
-\end{definition}
-
-\begin{definition}[Tracked evaluator machine]
-\lean{Turing.FinTM.emitterTrackTM}
-\label{Turing.FinTM.emitterTrackTM}
-\leanok
-\uses{Turing.FinTM, Turing.FinTM.emitterSlots}
-Given a machine $M$, the tracked evaluator that simulates $M$ using two
-native steps per source step: an initialization step marks each origin in
-both marker banks, the first microstep of each round performs $M$'s action
-(moving the corresponding marker heads along), and the second stamps the
-newly reached head cells in the visited bank before possibly halting; the
-physical output is exactly $M$'s output.
-\end{definition}
-
-\begin{definition}[Tracked configuration]
-\lean{Turing.FinTM.emitterTrackCfg}
-\label{Turing.FinTM.emitterTrackCfg}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.emitterSlots, Turing.FinTM.emitterSpan, Turing.FinTM.emitterTrackTM}
-The configuration of the tracked evaluator after a completed source step:
-the data bank holds the source configuration's work tapes unchanged, each
-visited-span marker covers the corresponding current source head, and each
-origin tape carries its single marker.
-\end{definition}
-
-\begin{definition}[Intermediate stamp configuration]
-\lean{Turing.FinTM.emitterTrackMid}
-\label{Turing.FinTM.emitterTrackMid}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.emitterTrackCfg, Turing.FinTM.emitterTrackTM}
-The configuration of the tracked evaluator between the two microsteps of a
-round: the source data, input position, heads, and emitted output already
-reflect the source action, while the visited-interval markers are still the
-previous ones.
-\end{definition}
-
-\begin{lemma}[Source-action microstep]
-\lean{Turing.FinTM.emitter_track_action}
-\label{Turing.FinTM.emitter_track_action}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.emitterSlots, Turing.FinTM.emitterTrackCfg, Turing.FinTM.emitterTrackMid, Turing.FinTM.emitterTrackTM, Turing.MultiTapeTM.step}
-\difficulty{4}
-For a live source configuration $c$, one step of the tracked evaluator from
-the tracked configuration of $c$ yields the intermediate stamp
-configuration of the source configuration after one source step: the data
-simulation is exact (including any halting emission), and both marker heads
-move with the data head without writing.
-\end{lemma}
-
-\begin{lemma}[Stamping microstep]
-\lean{Turing.FinTM.emitter_track_stamp}
-\label{Turing.FinTM.emitter_track_stamp}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.emitterSlots, Turing.FinTM.emitterTrackCfg, Turing.FinTM.emitterTrackMid, Turing.FinTM.emitterTrackTM, Turing.FinTM.emitter_span_extend, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
-\difficulty{4}
-Suppose each visited span $[\mathrm{lo}_i, \mathrm{hi}_i]$ is nonempty and
-each current source head lies within one cell of it. Then one step of the
-tracked evaluator from the intermediate stamp configuration marks every
-current head cell, producing the tracked configuration whose spans are
-extended to $[\min(\mathrm{lo}_i, h_i), \max(\mathrm{hi}_i, h_i)]$, and only
-then dispatches the stored successor state.
-\end{lemma}
-
-\begin{definition}[Leftmost visited position]
-\lean{Turing.FinTM.emitterLo}
-\label{Turing.FinTM.emitterLo}
-\leanok
-\uses{Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
-For a machine $M$, an input $x$, and a work tape, the leftmost visited
-position at time $0$ is $0$, and at time $t+1$ it is the minimum of its
-value at time $t$ and the position of that work head after $t+1$ steps of
-$M$ on $x$.
-\end{definition}
-
-\begin{definition}[Rightmost visited position]
-\lean{Turing.FinTM.emitterHi}
-\label{Turing.FinTM.emitterHi}
-\leanok
-\uses{Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
-For a machine $M$, an input $x$, and a work tape, the rightmost visited
-position at time $0$ is $0$, and at time $t+1$ it is the maximum of its
-value at time $t$ and the position of that work head after $t+1$ steps of
-$M$ on $x$.
-\end{definition}
-
-\begin{lemma}[Extent of the visited interval]
-\lean{Turing.FinTM.emitter_track_extent}
-\label{Turing.FinTM.emitter_track_extent}
-\leanok
-\uses{Turing.Cfg.init, Turing.FinTM, Turing.FinTM.emitterHi, Turing.FinTM.emitterLo, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.workTapePos_step_le}
-\difficulty{4}
-For every time $t$ and work tape $i$, the visited interval
-$[\mathrm{lo}, \mathrm{hi}]$ of the run contains $0$ and the current head
-position, and satisfies $-t \le \mathrm{lo}$ and $\mathrm{hi} \le t$; in
-particular its width is at most $2t + 1$.
-\end{lemma}
-
-\begin{lemma}[Support of the written cells]
-\lean{Turing.FinTM.emitter_track_support}
-\label{Turing.FinTM.emitter_track_support}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.emitterHi, Turing.FinTM.emitterLo, Turing.FinTM.emitter_track_extent, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
-\difficulty{4}
-At every time $t$, every work-tape cell lying outside the visited interval
-of its tape is blank; blank cells inside the interval are permitted.
-\end{lemma}
-
-\begin{lemma}[Zero-width span is the origin marker]
-\lean{Turing.FinTM.emitter_span_zero}
-\label{Turing.FinTM.emitter_span_zero}
-\leanok
-\uses{Turing.FinTM.bufferTape, Turing.FinTM.emitterSpan}
-\difficulty{3}
-The closed visited span from $0$ to $0$ equals the tape holding the
-single-cell marker word.
-\end{lemma}
-
-\begin{lemma}[Initialization of the tracked evaluator]
-\lean{Turing.FinTM.emitter_track_initial}
-\label{Turing.FinTM.emitter_track_initial}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg.init, Turing.FinTM, Turing.FinTM.bufferTape_append, Turing.FinTM.bufferTape_nil, Turing.FinTM.emitterSlots, Turing.FinTM.emitterTrackCfg, Turing.FinTM.emitterTrackTM, Turing.FinTM.emitter_span_zero, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
-\difficulty{4}
-For every machine $M$ and input $x$, one step of the tracked evaluator for
-$M$ from its initial configuration on $x$ yields the tracked configuration
-of the initial configuration of $M$ on $x$ with every visited span equal to
-$[0, 0]$: both origin markers are installed, the source work tapes are
-blank, and the output is empty.
-\end{lemma}
-
-\begin{lemma}[Main run of the tracked evaluator]
-\lean{Turing.FinTM.emitter_track_run}
-\label{Turing.FinTM.emitter_track_run}
-\leanok
-\uses{Turing.FinTM, Turing.FinTM.emitterHi, Turing.FinTM.emitterLo, Turing.FinTM.emitterTrackCfg, Turing.FinTM.emitterTrackTM, Turing.FinTM.emitter_track_action, Turing.FinTM.emitter_track_extent, Turing.FinTM.emitter_track_initial, Turing.FinTM.emitter_track_stamp, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_of_halt, Turing.MultiTapeTM.workTapePos_step_le}
-\difficulty{5}
-For every time $t$, the tracked evaluator's configuration after $1 + 2t$
-native steps is exactly the tracked configuration of the source machine's
-configuration after $t$ steps, with visited intervals given by the leftmost
-and rightmost visited positions through time $t$; this holds also after the
-source has halted.
-\end{lemma}
-
-\begin{lemma}[Cost of tracking]
-\lean{Turing.FinTM.emitter_track_computes}
-\label{Turing.FinTM.emitter_track_computes}
-\leanok
-\uses{Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.FinTM.emitterTrackCfg, Turing.FinTM.emitterTrackTM, Turing.FinTM.emitter_track_run}
-\difficulty{2}
-If a machine halts on input $x$ with output $o$ within $T$ steps, then its
-tracked evaluator halts on $x$ with the same output $o$ within $1 + 2T$
-steps.
-\end{lemma}
-
-\begin{lemma}[Spans as cleaner intervals]
-\lean{Turing.FinTM.emitter_span_interval}
-\label{Turing.FinTM.emitter_span_interval}
-\leanok
-\uses{Turing.FinTM.emitterInterval, Turing.FinTM.emitterSpan}
-\difficulty{3}
-For $\mathrm{lo} \le \mathrm{hi}$, the closed visited span
-$[\mathrm{lo}, \mathrm{hi}]$ equals the cleaner's half-open interval marker
-with left endpoint $\mathrm{lo}$ and width $\mathrm{hi} - \mathrm{lo} + 1$.
-\end{lemma}
-
-\begin{lemma}[Tracked tapes meet the cleaner contract]
-\lean{Turing.FinTM.emitter_track_clearable}
-\label{Turing.FinTM.emitter_track_clearable}
-\leanok
-\uses{Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.emitterClearCfg, Turing.FinTM.emitterClearTM, Turing.FinTM.emitterHi, Turing.FinTM.emitterLo, Turing.FinTM.emitterSpan, Turing.FinTM.emitter_clear_run, Turing.FinTM.emitter_span_interval, Turing.FinTM.emitter_track_extent, Turing.FinTM.emitter_track_support, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
-\difficulty{4}
-For each work tape of a source machine run for $T$ steps, there is a time
-$t$ with $0 < t \le 6T + 7$ after which the interval cleaner, started on
-that tape's data together with its tracked visited span and origin marker at
-the tape's current head position, reaches its return state with all three
-tapes blank and all heads at the origin.
-\end{lemma}
-
 \begin{lemma}[First Entry into a Stopping Set]
 \lean{Turing.FinTM.emitter_first_entry}
 \label{Turing.FinTM.emitter_first_entry}
@@ -2898,271 +2057,12 @@ return phase with its register equal to the truth value of $u=v$, both word-tape
 at zero, and its other configuration data as initially specified.
 \end{lemma}
 
-\begin{lemma}[First return of a tracked-tape cleanup]
-\lean{Turing.FinTM.emitter_clear_first}
-\label{Turing.FinTM.emitter_clear_first}
-\leanok
-\uses{Turing.Action.apply, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.emitterClearCfg, Turing.FinTM.emitterClearTM, Turing.FinTM.emitterHi, Turing.FinTM.emitterLo, Turing.FinTM.emitterSpan, Turing.FinTM.emitter_first_entry, Turing.FinTM.emitter_track_clearable, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
-\difficulty{4}
-For each work tape of a source machine run for $T$ steps, there is a time
-$t$ with $0 < t \le 6T + 7$ such that the interval cleaner, started on that
-tape's data with its tracked span and origin marker, never visits its return
-state before time $t$ and at time $t$ has reached the all-blank return
-configuration.
-\end{lemma}
-
 \begin{lemma}[Injectivity of binary representation]
 \lean{Turing.FinTM.emitter_bits_injective}
 \label{Turing.FinTM.emitter_bits_injective}
 \leanok
 \difficulty{4}
 The map sending a natural number to its binary digit word is injective.
-\end{lemma}
-
-\begin{definition}[Selecting one bank triple]
-\lean{Turing.FinTM.emitterBankSymbols}
-\label{Turing.FinTM.emitterBankSymbols}
-\leanok
-For a work-tape index $i$, the bank-triple projection sends a symbol vector
-over the tracked three-bank layout to the triple of its data, visited-marker,
-and origin-marker symbols at index $i$.
-\end{definition}
-
-\begin{definition}[One component of simultaneous cleanup]
-\lean{Turing.FinTM.emitterBankPart}
-\label{Turing.FinTM.emitterBankPart}
-\leanok
-\uses{Turing.Action, Turing.FinTM.controlAction, Turing.FinTM.emitterBankSymbols, Turing.FinTM.emitterClearTM}
-The action performed by one component of the simultaneous cleanup: a live
-component takes its interval cleaner's transition on its own triple of
-symbols, and a stopped component performs the stationary silent action; the
-native input is ignored.
-\end{definition}
-
-\begin{definition}[Simultaneous cleaner bank machine]
-\lean{Turing.FinTM.emitterBankTM}
-\label{Turing.FinTM.emitterBankTM}
-\leanok
-\uses{Turing.FinTM, Turing.FinTM.emitterBankPart, Turing.FinTM.emitterSlots}
-The machine running $k$ interval cleaners simultaneously on disjoint
-data/marker/origin triples: its finite control stores the vector of all
-component cleaner states, and no source-time clock is present.
-\end{definition}
-
-\begin{definition}[Assembled bank configuration]
-\lean{Turing.FinTM.emitterBankCfg}
-\label{Turing.FinTM.emitterBankCfg}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM.emitterBankTM, Turing.FinTM.emitterSlots}
-Given $k$ interval-cleaner configurations on a physical input $w$ and an
-input-head position $p$, the assembled bank configuration is the
-configuration of the simultaneous cleaner bank whose control state is the
-vector of the $k$ cleaner states, whose data, visited-marker, and
-origin-marker banks carry the corresponding tapes and head positions of the
-$k$ cleaners, whose input head is at $p$, and whose physical output is empty.
-\end{definition}
-
-\begin{lemma}[Component projection of the bank]
-\lean{Turing.FinTM.emitterBank_part}
-\label{Turing.FinTM.emitterBank_part}
-\leanok
-\uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM.controlAction, Turing.FinTM.emitterBankCfg, Turing.FinTM.emitterBankPart, Turing.FinTM.emitterBankSymbols, Turing.FinTM.emitterClearTM, Turing.FinTM.emitterSlots}
-\difficulty{3}
-Selecting component $i$ of the assembled bank configuration recovers exactly
-the $i$-th cleaner's transition on its own configuration, including all
-three independently positioned work heads; a halted component yields the
-stationary action.
-\end{lemma}
-
-\begin{lemma}[Bank step is componentwise]
-\lean{Turing.FinTM.emitterBank_step}
-\label{Turing.FinTM.emitterBank_step}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM.controlAction, Turing.FinTM.emitterBankCfg, Turing.FinTM.emitterBankPart, Turing.FinTM.emitterBankTM, Turing.FinTM.emitterBank_part, Turing.FinTM.emitterClearTM, Turing.FinTM.emitterSlots, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
-\difficulty{4}
-One step of the simultaneous cleaner bank from an assembled configuration
-equals the assembly of one step of every component cleaner; the physical
-input and output are preserved.
-\end{lemma}
-
-\begin{lemma}[Bank run is componentwise]
-\lean{Turing.FinTM.emitterBank_run}
-\label{Turing.FinTM.emitterBank_run}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM.emitterBankCfg, Turing.FinTM.emitterBankTM, Turing.FinTM.emitterBank_step, Turing.FinTM.emitterClearTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
-\difficulty{3}
-For every time $t$, the simultaneous cleaner bank's run from an assembled
-configuration equals the assembly of each component cleaner's $t$-step run.
-\end{lemma}
-
-\begin{lemma}[A returned cleaner is absorbing]
-\lean{Turing.FinTM.emitterClear_fixed}
-\label{Turing.FinTM.emitterClear_fixed}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.emitterClearTM, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
-\difficulty{2}
-Any configuration of the interval cleaner in its return state is a fixed
-point of the step function: every field is preserved by further steps.
-\end{lemma}
-
-\begin{lemma}[Simultaneous cleanup of the tracked bank]
-\lean{Turing.FinTM.emitterBank_clear}
-\label{Turing.FinTM.emitterBank_clear}
-\leanok
-\uses{Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.emitterBankCfg, Turing.FinTM.emitterBankTM, Turing.FinTM.emitterBank_run, Turing.FinTM.emitterClearCfg, Turing.FinTM.emitterClear_fixed, Turing.FinTM.emitterHi, Turing.FinTM.emitterLo, Turing.FinTM.emitterSpan, Turing.FinTM.emitter_track_clearable, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
-\difficulty{3}
-After a source machine has run for $T$ steps, exactly $6T + 7$ steps of the
-simultaneous cleaner bank, started on the assembly of all tracked tapes with
-their spans and origin markers, clear the entire bank: all data, marker, and
-origin tapes become blank with every work head at zero, while the physical
-input head and output are unchanged; this includes a source with no work
-tapes.
-\end{lemma}
-
-\begin{lemma}[A completed bank is absorbing]
-\lean{Turing.FinTM.emitterBank_fixed}
-\label{Turing.FinTM.emitterBank_fixed}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.FinTM.controlAction, Turing.FinTM.emitterBankPart, Turing.FinTM.emitterBankTM, Turing.FinTM.emitterClearTM, Turing.FinTM.emitterSlots, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
-\difficulty{3}
-Any configuration of the simultaneous cleaner bank whose every component is
-in its return state is a fixed point of the step function: no tape, head, or
-control field changes on further steps.
-\end{lemma}
-
-\begin{lemma}[First return of the simultaneous bank]
-\lean{Turing.FinTM.emitterBank_first}
-\label{Turing.FinTM.emitterBank_first}
-\leanok
-\uses{Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.catalogFirstEntry, Turing.FinTM.emitterBankCfg, Turing.FinTM.emitterBankTM, Turing.FinTM.emitterBank_clear, Turing.FinTM.emitterBank_fixed, Turing.FinTM.emitterClearCfg, Turing.FinTM.emitterHi, Turing.FinTM.emitterLo, Turing.FinTM.emitterSpan, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
-\difficulty{2}
-After a source machine has run for $T$ steps, there is a time
-$t \le 6T + 7$ such that the simultaneous cleaner bank, started on the
-assembly of all tracked tapes, never shows the all-returned state vector
-before time $t$ and at time $t$ has reached the fully blank assembled
-endpoint; a bank over zero tapes may return at time zero.
-\end{lemma}
-
-\begin{definition}[Right-boundary normalization wrapper]
-\lean{Turing.FinTM.emitterRightTM}
-\label{Turing.FinTM.emitterRightTM}
-\leanok
-\uses{Turing.FinTM, Turing.FinTM.controlAction}
-Given a machine $M$, the right-boundary wrapper is the machine that
-simulates $M$ exactly and, after the actual halt of $M$, moves the input
-head to the right input boundary without altering the output or work tapes
-of $M$; the initial positive move of the scan handles the two distinct
-blanks of an empty input correctly.
-\end{definition}
-
-\begin{definition}[Wrapper configuration before the scan]
-\lean{Turing.FinTM.emitterRightCfg}
-\label{Turing.FinTM.emitterRightCfg}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.emitterRightTM}
-The right-boundary wrapper's configuration corresponding to a source
-configuration: all fields are preserved, with a halted source state replaced
-by a live administrative state.
-\end{definition}
-
-\begin{lemma}[Wrapper follows live source steps]
-\lean{Turing.FinTM.emitter_right_step}
-\label{Turing.FinTM.emitter_right_step}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.emitterRightCfg, Turing.FinTM.emitterRightTM, Turing.MultiTapeTM.step}
-\difficulty{3}
-For a live source configuration $c$, one step of the right-boundary wrapper
-from the wrapper configuration of $c$ equals the wrapper configuration of
-the source configuration after one step, including any halting emission;
-only the control-state encoding differs.
-\end{lemma}
-
-\begin{lemma}[Wrapper run up to the source halt]
-\lean{Turing.FinTM.emitter_right_run}
-\label{Turing.FinTM.emitter_right_run}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.emitterRightCfg, Turing.FinTM.emitterRightTM, Turing.FinTM.emitter_right_step, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
-\difficulty{3}
-If the source stays live for all times before $t$, then $t$ steps of the
-right-boundary wrapper from the wrapper configuration of $c$ equal the
-wrapper configuration of the source run at time $t$.
-\end{lemma}
-
-\begin{definition}[Rightward scan configuration]
-\lean{Turing.FinTM.emitterRightScan}
-\label{Turing.FinTM.emitterRightScan}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.emitterRightTM}
-A configuration of the right-boundary wrapper during its final scan: the
-completed source's work tapes and output are carried verbatim, and only the
-physical input position varies.
-\end{definition}
-
-\begin{lemma}[Rightward scan to the boundary]
-\lean{Turing.FinTM.emitter_right_scan}
-\label{Turing.FinTM.emitter_right_scan}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.emitterRightScan, Turing.FinTM.emitterRightTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.inputSymbolInner, Turing.moveInputPos_pos_of_ne_right, Turing.moveInputPos_zero}
-\difficulty{4}
-Let $x$ be an input and let $c$ be a source configuration on $x$. For all
-$j$ and $r$ with $j + r = \abs{x}$, exactly $r + 1$ silent steps of the
-right-boundary wrapper from the scan configuration of $c$ at position $j$
-reach the halted scan configuration of $c$ at position $\abs{x}$; the scan
-never mistakes a blank work cell for the end of the input.
-\end{lemma}
-
-\begin{lemma}[Entering the rightward scan]
-\lean{Turing.FinTM.emitter_right_finish}
-\label{Turing.FinTM.emitter_right_finish}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.emitterRightCfg, Turing.FinTM.emitterRightScan, Turing.FinTM.emitterRightTM, Turing.FinTM.emitter_right_scan, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.step, Turing.moveInputPos}
-\difficulty{4}
-For a halted source configuration $c$, there is a time $t \le \abs{x} + 2$
-after which the right-boundary wrapper, started from the wrapper
-configuration of $c$, has reached the halted scan configuration at the right
-boundary; neither the mandatory initial positive move nor the scan changes
-the completed work tapes or output.
-\end{lemma}
-
-\begin{lemma}[Endpoint of right-boundary normalization]
-\lean{Turing.FinTM.emitter_right_endpoint}
-\label{Turing.FinTM.emitter_right_endpoint}
-\leanok
-\uses{Turing.FinTM, Turing.FinTM.emitterRightCfg, Turing.FinTM.emitterRightScan, Turing.FinTM.emitterRightTM, Turing.FinTM.emitter_right_finish, Turing.FinTM.emitter_right_run, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt}
-\difficulty{4}
-If a source machine has halted on input $x$ by time $T$, then
-$T + \abs{x} + 2$ steps of its right-boundary wrapper from the initial
-configuration reach the halted scan configuration carrying the complete
-source configuration at time $T$ --- work tapes included --- with the input
-head at the right boundary.
-\end{lemma}
-
-\begin{lemma}[Cost of right-boundary normalization]
-\lean{Turing.FinTM.emitter_right_computes}
-\label{Turing.FinTM.emitter_right_computes}
-\leanok
-\uses{Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.FinTM.emitterRightTM, Turing.FinTM.emitter_right_endpoint, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
-\difficulty{2}
-If a machine halts on input $x$ with output $o$ within $T$ steps, then its
-right-boundary wrapper halts on $x$ with output $o$ within
-$T + \abs{x} + 2$ steps, and at that time its input head sits at position
-$\abs{x} + 1$.
-\end{lemma}
-
-\begin{lemma}[First return of the prepared evaluation]
-\lean{Turing.FinTM.emitter_prepared_eval_first}
-\label{Turing.FinTM.emitter_prepared_eval_first}
-\leanok
-\uses{Turing.Cfg.init, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.FinTM.emitterEvalCfg, Turing.FinTM.emitterEvalTM, Turing.FinTM.emitterHi, Turing.FinTM.emitterLo, Turing.FinTM.emitterRightScan, Turing.FinTM.emitterRightTM, Turing.FinTM.emitterTrackCfg, Turing.FinTM.emitterTrackTM, Turing.FinTM.emitter_eval_first, Turing.FinTM.emitter_right_computes, Turing.FinTM.emitter_right_endpoint, Turing.FinTM.emitter_track_computes, Turing.FinTM.emitter_track_run, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt, Turing.MultiTapeTM.runFrom_zero}
-\difficulty{5}
-Let $M$, on the candidate $s$, halt within $T$ steps with output $o$, and
-let the composite evaluator capture the tracked, right-normalized simulation
-of $M$. Then there is a time $t$ with
-$0 < t \le 1 + 2T + \abs{s} + 2$ such that the composite never visits its
-return state before $t$ and at time $t$ sits in the evaluator configuration
-carrying the full tracked trace banks, the complete captured output, the
-candidate head at the right boundary, nothing on the physical output, and
-the physical input head fixed at position one.
 \end{lemma}
 
 \begin{lemma}[Binary representation and width equation]
@@ -3188,66 +2088,6 @@ Boolean input $r$, $E$ halts within $T_E(|r|)$ steps with output the binary
 representation of $f(|r|)$. For Boolean words $s$ and $w$ with $|s|\le |w|+1$, $E$
 computes that binary representation on input $s$ within $T_E(|s|)$ steps; its length is
 at most $T_E(|s|)$, and $T_E(|s|)\le T_E(|w|+1)$.
-\end{lemma}
-
-\begin{lemma}[First return of the width evaluation]
-\lean{Turing.FinTM.emitter_width_eval_first}
-\label{Turing.FinTM.emitter_width_eval_first}
-\leanok
-\uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.emitterEvalCfg, Turing.FinTM.emitterEvalTM, Turing.FinTM.emitterHi, Turing.FinTM.emitterLo, Turing.FinTM.emitterRightScan, Turing.FinTM.emitterRightTM, Turing.FinTM.emitterTrackCfg, Turing.FinTM.emitterTrackTM, Turing.FinTM.emitter_prepared_eval_first, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
-\difficulty{3}
-Let a machine compute the binary width word within a monotone bound $T_E$,
-and let the candidate $s$ have length at most $\abs{w} + 1$. Then the
-composite evaluator has a first return at some positive time
-$t \le 3(T_E(\abs{w}+1) + \abs{w} + 2)$, at which it retains its tracked
-work banks and the exact captured width word.
-\end{lemma}
-
-\begin{definition}[Relocating an action to host slots]
-\lean{Turing.FinTM.emitterP2Action}
-\label{Turing.FinTM.emitterP2Action}
-\leanok
-\uses{Turing.Action}
-The transform relocating an action of a $k$-tape machine to an arbitrary
-fixed set of slots among $l$ host tapes, specified by a partial selection
-map: selected tapes perform the original writes and moves, and every
-unselected tape is stationary.
-\end{definition}
-
-\begin{definition}[Relocated configuration]
-\lean{Turing.FinTM.emitterP2Cfg}
-\label{Turing.FinTM.emitterP2Cfg}
-\leanok
-\uses{Turing.Cfg}
-The host configuration embedding a $k$-tape configuration into $l$ host
-tapes via a selection map: selected slots carry the source tapes and heads,
-unselected slots keep given contents and head positions, and the output is
-the source's physical output.
-\end{definition}
-
-\begin{lemma}[Relocation commutes with one action]
-\lean{Turing.FinTM.emitterP2_apply}
-\label{Turing.FinTM.emitterP2_apply}
-\leanok
-\uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.FinTM.emitterP2Action, Turing.FinTM.emitterP2Cfg}
-\difficulty{3}
-Applying a relocated action to a relocated configuration equals relocating
-the result of applying the original action: the write, head motion, and
-emission are reproduced on the selected slots, and unselected tape contents
-and positions are fixed.
-\end{lemma}
-
-\begin{lemma}[Guarded relocated run]
-\lean{Turing.FinTM.emitterP2_relocate_run}
-\label{Turing.FinTM.emitterP2_relocate_run}
-\leanok
-\uses{Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.emitterP2Action, Turing.FinTM.emitterP2Cfg, Turing.FinTM.emitterP2_apply, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_of_halt}
-\difficulty{4}
-Let the host's transitions on embedded good states equal the relocated
-source transitions, with the selection map a left inverse of the tape
-indexing. If every state visited by the source before time $t$ is good, then
-$t$ host steps from the relocated configuration equal the relocation of the
-source's $t$-step run.
 \end{lemma}
 
 \begin{definition}[Administrative-word eraser]
@@ -3422,7 +2262,7 @@ reaches $e$, then running it from $c$ for $a+b$ steps reaches $e$.
 \lean{Turing.FinTM.emitterP2_prepare_run}
 \label{Turing.FinTM.emitterP2_prepare_run}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape_nat, Turing.FinTM.catalogRewind, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.emitterP2PrepareCfg, Turing.FinTM.emitterP2PrepareTM, Turing.FinTM.emitterP2_join, Turing.FinTM.emitterP2_prepare_candidate, Turing.FinTM.emitterP2_prepare_rewind_candidate, Turing.FinTM.emitterP2_prepare_rewind_suffix, Turing.FinTM.emitterP2_prepare_suffix, Turing.FinTM.splitPos, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
+\uses{Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape_nat, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.emitterP2PrepareCfg, Turing.FinTM.emitterP2PrepareTM, Turing.FinTM.emitterP2_join, Turing.FinTM.emitterP2_prepare_candidate, Turing.FinTM.emitterP2_prepare_rewind_candidate, Turing.FinTM.emitterP2_prepare_rewind_suffix, Turing.FinTM.emitterP2_prepare_suffix, Turing.FinTM.splitPos, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{5}
 For any Boolean words $w,s$, there is a natural number $t\le 5(|s|+|w|+3)$ such that the
 preparation machine started from its initial frame reaches phase $8$ at time $t$, with
@@ -3445,35 +2285,6 @@ heads and the input head at their specified initial positions, and overflow flag
 to the truth value of $|w|<|s|$.
 \end{lemma}
 
-\begin{lemma}[Relocated phase with anchor exclusion]
-\lean{Turing.FinTM.emitterP2_segment}
-\label{Turing.FinTM.emitterP2_segment}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM.emitterP2Action, Turing.FinTM.emitterP2Cfg, Turing.FinTM.emitterP2_relocate_run, Turing.FinTM.splitSafe, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom}
-\difficulty{3}
-Under the relocation hypotheses --- the selection map inverts the tape
-indexing, no embedded state equals the host anchor, and host transitions on
-embedded good states equal the relocated source transitions --- an exact
-source run from $c$ to $d$ in $t$ steps, all of whose visited states are
-good, relocates to an exact host run between the relocated configurations
-whose whole trace avoids the anchor.
-\end{lemma}
-
-\begin{lemma}[Entering a clean-call phase]
-\lean{Turing.FinTM.emitterP2_call_segment}
-\label{Turing.FinTM.emitterP2_call_segment}
-\leanok
-\uses{Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.emitterP2Action, Turing.FinTM.emitterP2Cfg, Turing.FinTM.emitterP2_apply, Turing.FinTM.emitterP2_relocate_run, Turing.FinTM.splitSafe, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step}
-\difficulty{5}
-Let a host enter a relocated module through a dedicated entry control state
-that performs the module entry state's action unconditionally, and agree
-with the relocated module transitions away from the module's exit state. If
-the module runs from its entry configuration to $d$ in $t > 0$ steps with no
-interior visit to the exit state, then $t$ host steps from the entry
-configuration land on the relocation of $d$, with the whole trace avoiding
-the host anchor; this covers modules whose entry and exit states coincide.
-\end{lemma}
-
 \begin{definition}[Host word layout]
 \lean{Turing.FinTM.emitterP2Words}
 \label{Turing.FinTM.emitterP2Words}
@@ -3494,14 +2305,6 @@ width-call machine (with $i < k$) to host position $i + 1$, immediately
 after the preserved candidate tape at position $0$.
 \end{definition}
 
-\begin{definition}[Width-bank selection]
-\lean{Turing.FinTM.emitterP2LeftSelect}
-\label{Turing.FinTM.emitterP2LeftSelect}
-\leanok
-The partial selection map recognizing exactly the width-call bank among the
-host tapes.
-\end{definition}
-
 \begin{definition}[Length-bank tape injection]
 \lean{Turing.FinTM.emitterP2RightIndex}
 \label{Turing.FinTM.emitterP2RightIndex}
@@ -3510,34 +2313,6 @@ For all bank sizes $k$ and $l$, the length-bank injection sends tape $i$ of the
 suffix-length-call machine (with $i < l$) to host position $k + i + 1$,
 immediately after the width-call bank.
 \end{definition}
-
-\begin{definition}[Length-bank selection]
-\lean{Turing.FinTM.emitterP2RightSelect}
-\label{Turing.FinTM.emitterP2RightSelect}
-\leanok
-The partial selection map recognizing exactly the suffix-length-call bank
-among the host tapes.
-\end{definition}
-
-\begin{lemma}[Width-bank selection inverts injection]
-\lean{Turing.FinTM.emitterP2_left_inverse}
-\label{Turing.FinTM.emitterP2_left_inverse}
-\leanok
-\uses{Turing.FinTM.emitterP2LeftIndex, Turing.FinTM.emitterP2LeftSelect}
-\difficulty{1}
-Selecting the host slot at the width-bank injection of index $i$ returns
-exactly $i$.
-\end{lemma}
-
-\begin{lemma}[Length-bank selection inverts injection]
-\lean{Turing.FinTM.emitterP2_right_inverse}
-\label{Turing.FinTM.emitterP2_right_inverse}
-\leanok
-\uses{Turing.FinTM.emitterP2RightIndex, Turing.FinTM.emitterP2RightSelect}
-\difficulty{1}
-Selecting the host slot at the length-bank injection of index $i$ returns
-exactly $i$.
-\end{lemma}
 
 \begin{lemma}[Left-bank configuration frame]
 \lean{Turing.FinTM.emitterP2_left_frame}
@@ -3583,24 +2358,6 @@ For natural numbers $k,l$ and a Boolean word $s$, the host word layout with both
 words empty equals the standard word assignment for $s$ on $k+l+1$ tapes.
 \end{lemma}
 
-\begin{definition}[Single-tape selection]
-\lean{Turing.FinTM.emitterP2OneSelect}
-\label{Turing.FinTM.emitterP2OneSelect}
-\leanok
-The partial selection map recognizing one designated physical tape, so that
-a one-tape phase relocated through it leaves every other tape fixed.
-\end{definition}
-
-\begin{lemma}[Single-tape selection inverts injection]
-\lean{Turing.FinTM.emitterP2_one_inverse}
-\label{Turing.FinTM.emitterP2_one_inverse}
-\leanok
-\uses{Turing.FinTM.emitterP2OneSelect}
-\difficulty{1}
-Selecting the designated slot through the single-tape selection map returns
-the unique one-tape index.
-\end{lemma}
-
 \begin{lemma}[One-Tape Configuration Embedding]
 \lean{Turing.FinTM.emitterP2_one_frame}
 \label{Turing.FinTM.emitterP2_one_frame}
@@ -3626,26 +2383,6 @@ sends index $0$ to the candidate position $0$, index $1$ to host position
 $1$ (the first width-bank tape), and index $2$ to host position $k + 1$ (the
 first length-bank tape).
 \end{definition}
-
-\begin{definition}[Administrative-triple selection]
-\lean{Turing.FinTM.emitterP2SmallSelect}
-\label{Turing.FinTM.emitterP2SmallSelect}
-\leanok
-The partial selection map recognizing the three administrative word slots
---- candidate, width word, and length word --- and leaving all module
-scratch tapes inactive.
-\end{definition}
-
-\begin{lemma}[Triple selection inverts injection]
-\lean{Turing.FinTM.emitterP2_small_inverse}
-\label{Turing.FinTM.emitterP2_small_inverse}
-\leanok
-\uses{Turing.FinTM.emitterP2LeftIndex, Turing.FinTM.emitterP2RightIndex, Turing.FinTM.emitterP2SmallIndex, Turing.FinTM.emitterP2SmallSelect}
-\difficulty{2}
-For positive bank sizes, selecting the host slot at the
-administrative-triple injection of any of the three indices returns that
-index.
-\end{lemma}
 
 \begin{lemma}[Frame for relocated preparation]
 \lean{Turing.FinTM.emitterP2_small_frame}
@@ -3673,24 +2410,6 @@ empty output.
 The injection sending the comparator's two tapes to the first tapes of the
 two call banks, which hold the two words to be compared.
 \end{definition}
-
-\begin{definition}[Comparator-pair selection]
-\lean{Turing.FinTM.emitterP2PairSelect}
-\label{Turing.FinTM.emitterP2PairSelect}
-\leanok
-The partial selection map recognizing the two comparison word slots while
-keeping the candidate and all scratch tapes fixed.
-\end{definition}
-
-\begin{lemma}[Pair selection inverts injection]
-\lean{Turing.FinTM.emitterP2_pair_inverse}
-\label{Turing.FinTM.emitterP2_pair_inverse}
-\leanok
-\uses{Turing.FinTM.emitterP2LeftIndex, Turing.FinTM.emitterP2PairIndex, Turing.FinTM.emitterP2PairSelect, Turing.FinTM.emitterP2RightIndex}
-\difficulty{2}
-For positive bank sizes, selecting the host slot at the comparator-pair
-injection of either index returns that index.
-\end{lemma}
 
 \begin{lemma}[Embedded Comparator Configuration]
 \lean{Turing.FinTM.emitterP2_pair_frame}
@@ -4076,19 +2795,6 @@ $\{0,\ldots,n\}$ satisfying $i+f(i)=n$; if no such $i$ exists, its output is the
 word.
 \end{theorem}
 
-\begin{definition}[Streaming unary-token encoder]
-\lean{Turing.FinTM.emitterTokenTM}
-\label{Turing.FinTM.emitterTokenTM}
-\leanok
-\uses{Turing.FinTM}
-A six-state machine without work tapes that splits off its input's leading
-unary token in one streaming pass: each token bit is emitted doubled, the
-token's terminating $0$ is followed by the separator bits $0,1$, and the
-remainder is copied verbatim; a right blank during token scanning starts
-the separator directly, so an unterminated token and the empty input are
-both retained.
-\end{definition}
-
 \begin{lemma}[Two-step token bit encoding]
 \lean{Turing.FinTM.emitterToken_double}
 \label{Turing.FinTM.emitterToken_double}
@@ -4150,16 +2856,6 @@ first following $0$ if there is one, together with the remaining suffix. If the 
 consists entirely of $1$ bits, the token is the whole input and the remainder is empty.
 \end{theorem}
 
-\begin{definition}[Bit-appending machine]
-\lean{Turing.FinTM.emitterAppendTM}
-\label{Turing.FinTM.emitterAppendTM}
-\leanok
-\uses{Turing.FinTM}
-For a fixed bit $b$, the bit-appending machine is the single-state machine
-without work tapes that copies each input bit to the output and emits $b$ on
-the right-blank halting transition.
-\end{definition}
-
 \begin{lemma}[Run of the bit appender before its final step]
 \lean{Turing.FinTM.emitterAppend_run}
 \label{Turing.FinTM.emitterAppend_run}
@@ -4202,7 +2898,7 @@ remains in that state; on a blank input cell it halts without emitting a symbol.
 \lean{Turing.FinTM.prependTM_computes}
 \label{Turing.FinTM.prependTM_computes}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.FinTM.ComputesFunInTime, Turing.FinTM.catalogPrefixCfg, Turing.FinTM.catalogPrefixTM_copy, Turing.FinTM.catalogPrefixTM_emit, Turing.FinTM.computesInTime_iff, Turing.FinTM.prependTM, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
+\uses{Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.FinTM.ComputesFunInTime, Turing.FinTM.catalogPrefixCfg, Turing.FinTM.catalogPrefixTM_emit, Turing.FinTM.computesInTime_iff, Turing.FinTM.prependTM, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{3}
 For every Boolean word $w$, the finite Turing machine that emits $w$ and then copies its
 input computes the function $x\mapsto w\mathbin{++}x$ in time $|w|+|x|+1$, where

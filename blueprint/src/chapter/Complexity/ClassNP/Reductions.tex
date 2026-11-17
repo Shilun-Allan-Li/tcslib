@@ -799,83 +799,11 @@ $x$, the halting recognizer of $M$ halts on $x$ within some finite time, with so
 output, if and only if $p(x)=\mathrm{true}$.
 \end{lemma}
 
-\begin{definition}[Machine prepending a fixed word]
-\lean{Complexity.prefixTM}
-\label{Complexity.prefixTM}
-\leanok
-\uses{Turing.FinTM}
-For a binary string $w = w_0 w_1 \cdots w_{m-1}$, the prefixing machine $P_w$ is
-the binary-alphabet Turing machine with no work tapes, states
-$\{0, 1, \ldots, m\}$ and start state $0$. In state $i < m$ it emits $w_i$ and
-moves to state $i+1$ without moving its input head; in state $m$, if the input
-head scans a bit $b$ it emits $b$, moves the input head right and stays in state
-$m$, and if it scans a blank it halts without emitting anything.
-\end{definition}
-
-\begin{definition}[Configurations of the prefixing machine]
-\lean{Complexity.prefixCfg}
-\label{Complexity.prefixCfg}
-\leanok
-\uses{Turing.Cfg}
-For binary strings $w$ and $x$, an optional state
-$q \in \{0, 1, \ldots, |w|\} \cup \{\bot\}$ ($\bot$ meaning halted), an
-input-head position $p \in \{0, 1, \ldots, |x|+1\}$ (positions $0$ and $|x|+1$
-being the blank cells flanking $x$) and an output string $u$, this is the
-configuration of a machine with no work tapes and state set
-$\{0, 1, \ldots, |w|\}$ on input $x$ that is in state $q$, has its input head at
-position $p$, and has $u$ on its output tape.
-\end{definition}
-
-\begin{lemma}[Emission phase of the prefixing machine]
-\lean{Complexity.prefixTM_emit}
-\label{Complexity.prefixTM_emit}
-\leanok
-\uses{Complexity.prefixCfg, Complexity.prefixTM, Turing.Action.apply, Turing.Cfg.ext_zero_tapes, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
-\difficulty{4}
-Let $w$ and $x$ be binary strings. For every $i\in\mathbb{N}$ with $i\le |w|$, after $i$
-steps of the prefixing machine on input $x$, it is in state $i$, its input head remains
-at position $1$, and its output is the prefix of $w$ of length $i$.
-\end{lemma}
-
-\begin{lemma}[Emission phase of the prefixing machine]
-\lean{Complexity.prefixTM_copy}
-\label{Complexity.prefixTM_copy}
-\leanok
-\uses{Complexity.prefixCfg, Complexity.prefixTM, Turing.Action.apply, Turing.Cfg.ext_zero_tapes, Turing.Cfg.inputSymbol, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.inputSymbolInner, Turing.moveInputPos, Turing.moveInputPos_pos_of_ne_right}
-\difficulty{4}
-Let $w$ and $x$ be binary strings. For every $i\in\mathbb{N}$ with $i\le |w|$, after $i$
-steps of the prefixing machine on input $x$, it is in state $i$, its input head remains
-at position $1$, and its output is the prefix of $w$ of length $i$.
-\end{lemma}
-
-\begin{lemma}[Copy phase of the prefixing machine]
-\lean{Complexity.prefixTM_computes}
-\label{Complexity.prefixTM_computes}
-\leanok
-\uses{Complexity.prefixCfg, Complexity.prefixTM, Complexity.prefixTM_copy, Complexity.prefixTM_emit, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.FinTM.ComputesFunInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
-\difficulty{4}
-Let $w$ and $x$ be binary strings. For every $i\in\mathbb{N}$ with $i\le |x|$, after $i$
-steps from the configuration in the final prefixing state, with the input head at
-position $1$ and output $w$, the machine is still in that state, its input head is at
-position $i+1$, and its output is $w$ followed by the first $i$ bits of $x$.
-\end{lemma}
-
-\begin{lemma}[Running time of fixed-string pairing]
-\lean{Complexity.fixedPair_computes}
-\label{Complexity.fixedPair_computes}
-\leanok
-\uses{Complexity.prefixTM, Complexity.prefixTM_computes, Turing.FinTM.ComputesFunInTime, Turing.pairEncode}
-\difficulty{4}
-Let $\alpha$ be a finite binary string. There is a finite binary-alphabet Turing machine
-that, on every binary input $x$, outputs the string formed by doubling each bit of $x$,
-then appending $01$ and $\alpha$, and halts within $2|\alpha|+|x|+3$ steps.
-\end{lemma}
-
 \begin{lemma}[Polynomial-time fixed-string pairing]
 \lean{Complexity.fixedPair_polyTime}
 \label{Complexity.fixedPair_polyTime}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.fixedPair_computes, Complexity.prefixTM, Turing.FinTM.ComputesInTime.mono, Turing.pairEncode}
+\uses{Complexity.PolyTimeComputable, Turing.FinTM.ComputesInTime.mono, Turing.pairEncode}
 \difficulty{3}
 Let $\alpha$ be a finite binary string. The function that maps each binary string $x$ to
 the string formed by doubling each bit of $x$, then appending $01$ and $\alpha$, is

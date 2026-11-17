@@ -191,18 +191,6 @@ all work-head positions $0$, empty output, and tape contents equal to $s$ on the
 tape and blank everywhere on every other tape.
 \end{definition}
 
-\begin{theorem}[Composition of state renamings]
-\lean{Turing.guessRun_mapState_mapState}
-\label{Turing.guessRun_mapState_mapState}
-\leanok
-\uses{Turing.Cfg, Turing.Cfg.mapState}
-\difficulty{3}
-Let $c$ be a configuration of a machine with $k$ work tapes on a Boolean input, and let
-$f:S\to S'$ and $g:S'\to S''$ be functions between state sets. Renaming the state of $c$
-first by $f$ and then by $g$ gives the same configuration as renaming it once by the
-composite function $g\circ f$.
-\end{theorem}
-
 \begin{theorem}[Splitting a Boolean word at a given position]
 \lean{Turing.guessRun_split}
 \label{Turing.guessRun_split}
@@ -216,7 +204,7 @@ there are Boolean words $a,r$ and a Boolean $b$ such that $w=a\,b\,r$ and $|a|=L
 \lean{Turing.guessRunTM_runWith_handoff}
 \label{Turing.guessRunTM_runWith_handoff}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_left, Turing.FinTM.bufferTape_nat, Turing.GuessRunPhase.State, Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.toNDTM, Turing.MultiTapeTM.toNDTM_runWith, Turing.NDTM.initCfg, Turing.NDTM.phaseHostND, Turing.NDTM.phaseHostND_run, Turing.NDTM.runWith, Turing.NDTM.runWith_append, Turing.NDWriterState, Turing.SeekPhase, Turing.guessRunCfg, Turing.guessRunPhases, Turing.guessRunRed, Turing.guessRunTM, Turing.guessRun_mapState_mapState, Turing.guessRun_split, Turing.ndWriterTM_run_block, Turing.skipBackTM, Turing.skipBackTM_run_ofCfg, Turing.skipTM, Turing.skipTM_run_ofCfg}
+\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_left, Turing.FinTM.bufferTape_nat, Turing.GuessRunPhase.State, Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.toNDTM, Turing.MultiTapeTM.toNDTM_runWith, Turing.NDTM.initCfg, Turing.NDTM.phaseHostND, Turing.NDTM.phaseHostND_run, Turing.NDTM.runWith, Turing.NDTM.runWith_append, Turing.NDWriterState, Turing.SeekPhase, Turing.guessRunCfg, Turing.guessRunPhases, Turing.guessRunRed, Turing.guessRunTM, Turing.guessRun_split, Turing.ndWriterTM_run_block, Turing.skipBackTM, Turing.skipBackTM_run_ofCfg, Turing.skipTM, Turing.skipTM_run_ofCfg}
 \difficulty{7}
 Let $P$ and $Q$ be deterministic machines with $k$ Boolean work tapes, let $j$ be a work
 tape index, and choose states $p_{\mathrm{exit}}$ of $P$ and

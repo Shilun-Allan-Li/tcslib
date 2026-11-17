@@ -45,28 +45,6 @@ $c_{j+1}$. Then from $c_0$ the machine halts within $(N+1)B$ steps, with output 
 single bit indicating whether $a(j)$ is true for at least one $j<N$.
 \end{theorem}
 
-\begin{lemma}[Liveness propagates to earlier times]
-\lean{Turing.FinTM.loop_live_prefix}
-\label{Turing.FinTM.loop_live_prefix}
-\leanok
-\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt}
-\difficulty{3}
-Let $M$ be a multi-tape Turing machine over the Boolean alphabet and $c$ a configuration
-of $M$. If after $t$ steps from $c$ the machine has not halted, then for every $u \le t$
-the machine has not halted after $u$ steps either.
-\end{lemma}
-
-\begin{lemma}[Empty final output forces empty earlier outputs]
-\lean{Turing.FinTM.loop_silent_prefix}
-\label{Turing.FinTM.loop_silent_prefix}
-\leanok
-\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.output_prefix, Turing.MultiTapeTM.runFrom}
-\difficulty{3}
-Let $M$ be a multi-tape Turing machine over the Boolean alphabet and $c$ a configuration
-of $M$. If the output after $t$ steps from $c$ is empty, then the output after $u$ steps
-is empty for every $u \le t$, since output is append-only.
-\end{lemma}
-
 \begin{lemma}[First halting time]
 \lean{Turing.FinTM.loop_first_halt}
 \label{Turing.FinTM.loop_first_halt}
@@ -105,28 +83,6 @@ within $T(|y|)$ steps with output the binary digit word of $R(|y|)$. Then, for e
 Boolean word $x$, the length of the binary digit word of $R(|x|)$ is at most $T(|x|)$.
 \end{lemma}
 
-\begin{lemma}[One input move advances position by at most one]
-\lean{Turing.FinTM.loop_input_move_le}
-\label{Turing.FinTM.loop_input_move_le}
-\leanok
-\uses{Turing.FinTM.moveInputPos_neg_val, Turing.moveInputPos, Turing.moveInputPos_pos_of_ne_right, Turing.moveInputPos_rightBoundary}
-\difficulty{4}
-For every clamped input-head position $p$ among the $n+2$ positions of an input of
-length $n$ and every direction $m$ (left, stay, or right), the position reached by one
-native input-head move in direction $m$ has value at most the value of $p$ plus one.
-\end{lemma}
-
-\begin{lemma}[Input displacement is bounded by elapsed time]
-\lean{Turing.FinTM.loop_input_run_le}
-\label{Turing.FinTM.loop_input_run_le}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM.loop_input_move_le, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
-\difficulty{4}
-Let $M$ be a multi-tape Turing machine over the Boolean alphabet and $c$ a configuration
-of $M$. After running $t$ steps from $c$, the input-head position is at most the input-
-head position of $c$ plus $t$.
-\end{lemma}
-
 \begin{lemma}[Output length after a bounded run]
 \lean{Turing.FinTM.loop_output_length_le}
 \label{Turing.FinTM.loop_output_length_le}
@@ -136,22 +92,6 @@ head position of $c$ plus $t$.
 Let $M$ be a multi-tape Turing machine over the Boolean alphabet, let $c$ be a
 configuration, and let $t$ be a natural number. The output length after running $M$ from
 $c$ for $t$ steps is at most the initial output length of $c$ plus $t$.
-\end{lemma}
-
-\begin{lemma}[Bounded rewind of the input head]
-\lean{Turing.FinTM.loop_rewind_bounded}
-\label{Turing.FinTM.loop_rewind_bounded}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.moveInputPos_neg_val, Turing.FinTM.rewind_scan, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.step, Turing.moveInputPos}
-\difficulty{5}
-Let $M$ be a multi-tape Turing machine over the Boolean alphabet, let $s$ and $r$ be
-states, and let $d$ be an optional state. Suppose that every transition from $s$,
-regardless of the scanned symbols, moves the input head one position left and enters
-$r$; every transition from $r$ moves the head one position left and remains in $r$ when
-an input symbol is scanned, and moves it one position right and enters $d$ when no input
-symbol is scanned. From any configuration $c$ in state $s$, there is a time $t$ with $t
-\le p+2$, where $p$ is the input-head position of $c$, at which the machine is in state
-$d$ with input-head position $1$, and every other component of $c$ is unchanged.
 \end{lemma}
 
 \begin{definition}[Fixed-width little-endian decrement]
@@ -278,81 +218,6 @@ containing $p$ followed by $u$ and then $b$ to $v$ gives the buffer containing $
 followed by $v$ and then $b$.
 \end{lemma}
 
-\begin{definition}[One-tape counter decrement machine]
-\lean{Turing.FinTM.loopDebitTM}
-\label{Turing.FinTM.loopDebitTM}
-\leanok
-\uses{Turing.FinTM, Turing.FinTM.controlAction}
-A bundled finite machine over the Boolean alphabet with one work tape that performs a
-fixed-width little-endian decrement followed by a rewind to cell zero. Its live control
-states are a borrow state, rewind states remembering the success flag, and silent
-waiting return states indexed by that flag; no transition emits physical output.
-\end{definition}
-
-\begin{definition}[Configuration of the decrement machine]
-\lean{Turing.FinTM.loopDebitCfg}
-\label{Turing.FinTM.loopDebitCfg}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.FinTM.loopDebitTM}
-For an input word $x$, an input-head position $p$, a control state $q$, a work head
-position $z$, and a counter word $u$, the configuration of the one-tape counter
-decrement machine whose single work tape is the buffer tape of $u$, with head at $z$,
-control $q$, input head at $p$, and empty output.
-\end{definition}
-
-\begin{lemma}[One borrow transition of the decrement machine]
-\lean{Turing.FinTM.loopBorrow_step}
-\label{Turing.FinTM.loopBorrow_step}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.loopBuffer_read, Turing.FinTM.loopBuffer_write, Turing.FinTM.loopDebitCfg, Turing.FinTM.loopDebitTM, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
-\difficulty{4}
-Let $p$ and $b$ be Boolean words. One step of the one-tape counter decrement machine
-from its borrow state, at cell $|p|$ of the buffer tape holding $p$ followed by $b$,
-behaves as follows: on an empty $b$ it enters the rewind state with failure flag one
-cell to the left without writing; on a leading $\mathrm{true}$ bit it writes
-$\mathrm{false}$, moves left, and enters the rewind state with success flag; on a
-leading $\mathrm{false}$ bit it writes $\mathrm{true}$, moves right, and stays in the
-borrow state.
-\end{lemma}
-
-\begin{lemma}[The borrow phase in exact time]
-\lean{Turing.FinTM.loopBorrow_run}
-\label{Turing.FinTM.loopBorrow_run}
-\leanok
-\uses{Turing.FinTM.loopBorrowPos, Turing.FinTM.loopBorrow_step, Turing.FinTM.loopDebit, Turing.FinTM.loopDebitCfg, Turing.FinTM.loopDebitTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step}
-\difficulty{4}
-Let $p$ and $u$ be Boolean words and let $j$ be the length of the maximal
-$\mathrm{false}$ prefix of $u$. Starting the one-tape counter decrement machine in its
-borrow state at cell $|p|$ of the buffer tape holding $p$ followed by $u$, after exactly
-$j + 1$ steps it is in the rewind state carrying the decrement's success flag, at cell
-$|p| + j - 1$, with tape contents $p$ followed by the decremented word.
-\end{lemma}
-
-\begin{lemma}[The rewind phase in exact time]
-\lean{Turing.FinTM.loopBorrow_rewind}
-\label{Turing.FinTM.loopBorrow_rewind}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape_left, Turing.FinTM.bufferTape_nat, Turing.FinTM.loopDebitCfg, Turing.FinTM.loopDebitTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
-\difficulty{4}
-Let $u$ be a Boolean word, $b$ a flag bit, and $j \le |u|$. Starting the one-tape
-counter decrement machine in its rewind state with flag $b$ at cell $j - 1$ over the
-buffer tape of $u$, after exactly $j + 1$ steps it is in the return state indexed by
-$b$, at cell zero, with the word $u$ unchanged.
-\end{lemma}
-
-\begin{lemma}[Complete decrement-and-rewind contract]
-\lean{Turing.FinTM.loopBorrow_correct}
-\label{Turing.FinTM.loopBorrow_correct}
-\leanok
-\uses{Turing.FinTM.loopBorrowPos, Turing.FinTM.loopBorrowPos_le, Turing.FinTM.loopBorrow_rewind, Turing.FinTM.loopBorrow_run, Turing.FinTM.loopDebit, Turing.FinTM.loopDebitCfg, Turing.FinTM.loopDebitTM, Turing.FinTM.loopDebit_length, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
-\difficulty{4}
-Let $u$ be a Boolean word and $j$ the length of its maximal $\mathrm{false}$ prefix.
-Then $2j + 2 \le 2|u| + 2$, and running the one-tape counter decrement machine for
-exactly $2j + 2$ steps from its borrow state at cell zero over the buffer tape of $u$
-ends in the return state indexed by the decrement's success flag, at cell zero, holding
-the decremented word, with nothing emitted.
-\end{lemma}
-
 \begin{definition}[Stop wrapper for a loop body]
 \lean{Turing.FinTM.loopBodyTM}
 \label{Turing.FinTM.loopBodyTM}
@@ -421,20 +286,6 @@ otherwise, and with flag true exactly when that body configuration is halted (th
 is empty when it is live).
 \end{lemma}
 
-\begin{lemma}[Capture of the stopped body in an agreeing host]
-\lean{Turing.FinTM.loopBody_capture}
-\label{Turing.FinTM.loopBody_capture}
-\leanok
-\uses{Turing.Cfg, Turing.Cfg.Halted, Turing.FinTM, Turing.FinTM.loopBodyCfg, Turing.FinTM.loopBodyTM, Turing.FinTM.loopBody_run, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.captureAction, Turing.captureCfg, Turing.capture_run}
-\difficulty{4}
-Let a host machine agree, on a family of embedded control states, with the capture
-transformation of the stop wrapper of a loop body, and let $c$ be a live body
-configuration together with a release bit and a time $t$ satisfying the liveness and no-
-early-anchor guards. Then the host run for $t$ steps from the capture embedding of $c$
-equals the capture embedding of the simulated stop-wrapper endpoint at time $t$,
-including any output bit emitted by a halting transition.
-\end{lemma}
-
 \begin{definition}[Control states of the loop controller]
 \lean{Turing.FinTM.LoopHostState}
 \label{Turing.FinTM.LoopHostState}
@@ -475,35 +326,6 @@ pairs, an optional emitted bit, and a successor control state, the action of the
 host that performs exactly these operations; it touches only the flag, counter, and
 capture (payload) tapes, and every body and fuel tape is stationary under it.
 \end{definition}
-
-\begin{definition}[The concrete loop controller]
-\lean{Turing.FinTM.loopHost}
-\label{Turing.FinTM.loopHost}
-\leanok
-\uses{Turing.FinTM, Turing.FinTM.LoopHostState, Turing.FinTM.loopBodySource, Turing.FinTM.loopControlAction, Turing.FinTM.loopFuelSource, Turing.captureAction}
-Given a loop body with anchor, a fuel machine, and an output mode, the bundled finite
-machine that runs the fuel machine under capture, rewinds and copies the captured fuel
-word into a fixed-width binary counter, rewinds the native input, and then repeatedly
-calls the body between anchor visits: a startup call releases the first round free of
-charge, each rejecting round decrements the counter in place, and the run ends either at
-an accepting round -- emitting the verdict bit $\mathrm{true}$ in decision mode or
-replaying the captured payload in find mode -- or at counter underflow, emitting
-$\mathrm{false}$ in decision mode and nothing in find mode. Its fourteen controller
-phases cover fuel rewind, counter copy, head rewinds, startup and round returns, borrow,
-success and underflow rewinds, exhaustion, and payload replay.
-\end{definition}
-
-\begin{lemma}[Body calls agree with the capture discipline]
-\lean{Turing.FinTM.loopHost_body_capture}
-\label{Turing.FinTM.loopHost_body_capture}
-\leanok
-\uses{Turing.Cfg, Turing.Cfg.Halted, Turing.FinTM, Turing.FinTM.loopBodySource, Turing.FinTM.loopHost, Turing.MultiTapeTM.runFrom, Turing.captureCfg, Turing.capture_run}
-\difficulty{1}
-Let $c$ be a configuration of the extended stopped-body source on the loop host's tape
-layout and $t$ a time before which that source does not halt. Then the loop host run for
-$t$ steps from the capture embedding of $c$ (with the return phase determined by whether
-the call is a startup call) equals the capture embedding of the source run at time $t$.
-\end{lemma}
 
 \begin{lemma}[Fuel Phase Captures the Fuel Run]
 \lean{Turing.FinTM.loopHost_fuel_capture}
@@ -551,7 +373,7 @@ unchanged.
 \lean{Turing.FinTM.loopHost_input_rewind}
 \label{Turing.FinTM.loopHost_input_rewind}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.loopControl_idle, Turing.FinTM.loopHostM, Turing.FinTM.loop_rewind_bounded, Turing.MultiTapeTM.runFrom}
+\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.loopControl_idle, Turing.FinTM.loopHostM, Turing.MultiTapeTM.runFrom}
 \difficulty{3}
 Let $B$ and $F$ be Boolean finite Turing machines, let $a$ be a state of $B$, choose the
 forward and find-mode settings, and let $x$ be a Boolean input word. For any loop host
@@ -734,18 +556,6 @@ the Boolean alphabet, and let $x$ be a Boolean input word. For any base configur
 the loop host on input $x$, any control state, input position, flag, counter, and
 payload tapes, head positions $c$ and $p$, and output word, the symbol scanned on the
 counter track of the resulting controller frame is the value of the counter tape at $c$.
-\end{lemma}
-
-\begin{lemma}[Phase one rewinds the capture head]
-\lean{Turing.FinTM.loopHost_fuel_rewind}
-\label{Turing.FinTM.loopHost_fuel_rewind}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.LoopHostState, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_left, Turing.FinTM.bufferTape_nat, Turing.FinTM.loopControlAction, Turing.FinTM.loopControl_apply, Turing.FinTM.loopFrame, Turing.FinTM.loopFrame_payload, Turing.FinTM.loopHost, Turing.FinTM.loopWrite, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
-\difficulty{5}
-Let $w$ be a stored word and $j \le |w|$. Starting the loop host in its fuel-rewind
-phase on a controller frame whose payload track is the buffer tape of $w$ with payload
-head at cell $j - 1$, after exactly $j + 1$ steps the host is in the counter-copy phase
-with the payload head at cell zero and every other frame component unchanged.
 \end{lemma}
 
 \begin{definition}[Capture tape during fuel copying]
@@ -1160,18 +970,6 @@ succeeds, the resulting configuration is the released non-startup call on the
 configuration obtained from $c$ by setting its state to $a$, with the decremented word
 as counter and no stop flag; if the decrement fails, the resulting configuration is
 halted and its output is empty in find mode and the one-bit word false otherwise.
-\end{lemma}
-
-\begin{lemma}[Phase twelve rewinds the accepted payload]
-\lean{Turing.FinTM.loopHost_payload_rewind}
-\label{Turing.FinTM.loopHost_payload_rewind}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.LoopHostState, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_left, Turing.FinTM.bufferTape_nat, Turing.FinTM.loopControlAction, Turing.FinTM.loopControl_apply, Turing.FinTM.loopFrame, Turing.FinTM.loopFrame_payload, Turing.FinTM.loopHost, Turing.FinTM.loopWrite, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
-\difficulty{5}
-Let $w$ be a captured payload word and $j \le |w|$. Running the loop host for exactly $j
-+ 1$ steps from its payload-rewind phase on a frame whose payload track is the buffer
-tape of $w$ with payload head at cell $j - 1$ reaches the replay phase with the payload
-head at cell zero and every other frame component unchanged.
 \end{lemma}
 
 \begin{lemma}[Replay of a Stored Word]
@@ -1950,56 +1748,6 @@ the halted tracked computation after the candidate input head has been scanned t
 right boundary.
 \end{lemma}
 
-\begin{definition}[Action relocation onto selected host tapes]
-\lean{Turing.FinTM.emCallAction}
-\label{Turing.FinTM.emCallAction}
-\leanok
-\uses{Turing.Action}
-For a partial selection assigning to each host tape an optional source tape, an
-embedding of source control states into host states, and a source action, the host
-action whose selected tapes receive the source operations, whose unselected tapes are
-stationary, and whose input move, emission, and successor state are those of the source
-action under the state embedding.
-\end{definition}
-
-\begin{definition}[Configuration relocation onto selected host tapes]
-\lean{Turing.FinTM.emCallCfg}
-\label{Turing.FinTM.emCallCfg}
-\leanok
-\uses{Turing.Cfg}
-For a partial tape selection, a control-state embedding, default host tapes and heads
-for the unselected slots, and a source configuration $c$, the host configuration whose
-selected tapes and heads come from $c$, whose unselected tapes and heads are the
-defaults, and whose control, input position, and output are those of $c$ under the state
-embedding.
-\end{definition}
-
-\begin{lemma}[Relocation commutes with one action]
-\lean{Turing.FinTM.emCall_apply}
-\label{Turing.FinTM.emCall_apply}
-\leanok
-\uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.FinTM.emCallAction, Turing.FinTM.emCallCfg}
-\difficulty{3}
-For every partial tape selection, control embedding, default tapes and heads, source
-action $a$, and source configuration $c$: applying the relocated action to the relocated
-configuration of $c$ equals the relocated configuration of $a$ applied to $c$, including
-the write, head motion, and emission; unselected tapes and heads are fixed.
-\end{lemma}
-
-\begin{lemma}[Guarded relocation is exact]
-\lean{Turing.FinTM.emCall_relocate_run}
-\label{Turing.FinTM.emCall_relocate_run}
-\leanok
-\uses{Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.emCallAction, Turing.FinTM.emCallCfg, Turing.FinTM.emCall_apply, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_of_halt}
-\difficulty{5}
-Let a source machine, a host machine, a tape index map with a partial inverse selection,
-and a control embedding be given such that on all good source states the host transition
-equals the relocated source transition. If every live state visited by the source run
-from a configuration $c$ before time $t$ is good, then the host run for $t$ steps from
-the relocated configuration of $c$ equals the relocated configuration of the source run
-at time $t$.
-\end{lemma}
-
 \begin{definition}[Two-tape result finalizer]
 \lean{Turing.FinTM.emCallFinishTM}
 \label{Turing.FinTM.emCallFinishTM}
@@ -2190,20 +1938,6 @@ the argument slot and the capture role at the capture slot and is undefined else
 For every finite Boolean Turing machine $M$ and either of the two roles $i$ (argument or
 capture), selecting a role at its physical call-layout index returns that same role.
 \end{lemma}
-
-\begin{definition}[The native clean-call controller]
-\lean{Turing.FinTM.emCallTM}
-\label{Turing.FinTM.emCallTM}
-\leanok
-\uses{Turing.FinTM, Turing.FinTM.controlAction, Turing.FinTM.emCallAction, Turing.FinTM.emCallClearTM, Turing.FinTM.emCallFinishTM, Turing.FinTM.emCallPairIndex, Turing.FinTM.emCallPairSelect, Turing.FinTM.emCallRightTM, Turing.FinTM.emCallSource, Turing.FinTM.emCallState, Turing.FinTM.emCallTrackTM, Turing.FinTM.emCallTripleIndex, Turing.FinTM.emCallTripleSelect}
-For a bundled finite machine $M$ and a mode bit, the controller machine that evaluates
-$M$ on a tape-resident argument through the prepared tracked source and captures the
-result at its observed return, then sequentially runs the interval cleaner on each
-tracked bank, each dispatched at its observed return, and finally installs the captured
-result on the argument tape (install mode) or forwards it to the physical output while
-preserving the argument (emit mode), erasing the capture. No deadline or source running
-time occurs in its transition table.
-\end{definition}
 
 \begin{definition}[Canonical tape layout of the clean call]
 \lean{Turing.FinTM.emCallLayout}
@@ -2510,30 +2244,6 @@ emit mode and $c$ in install mode, all other tapes blank, all heads at the origi
 output $c$ in emit mode and empty in install mode.
 \end{lemma}
 
-\begin{lemma}[One step commutes with an output prefix]
-\lean{Turing.FinTM.emLoop_step_prefix}
-\label{Turing.FinTM.emLoop_step_prefix}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM, Turing.MultiTapeTM.step}
-\difficulty{3}
-Let $M$ be a multi-tape Turing machine over the Boolean alphabet, $c$ a configuration,
-and $p$ a word. One step of $M$ from $c$ with $p$ prepended to its output equals the
-one-step successor of $c$ with $p$ prepended to its output: transitions never inspect
-the append-only output.
-\end{lemma}
-
-\begin{lemma}[Runs commute with an output prefix]
-\lean{Turing.FinTM.emLoop_run_prefix}
-\label{Turing.FinTM.emLoop_run_prefix}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM.emLoop_step_prefix, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
-\difficulty{3}
-Let $M$ be a multi-tape Turing machine over the Boolean alphabet, $c$ a configuration,
-$p$ a word, and $t$ a time. Running $M$ for $t$ steps from $c$ with $p$ prepended to its
-output equals the run of $M$ from $c$ at time $t$ with $p$ prepended to its output,
-including halted tails.
-\end{lemma}
-
 \begin{definition}[The forwarding loop controller]
 \lean{Turing.FinTM.emLoopHost}
 \label{Turing.FinTM.emLoopHost}
@@ -2545,186 +2255,6 @@ controller whose body calls route every body emission directly to the physical o
 administrative transitions are those of the original controller.
 \end{definition}
 
-\begin{lemma}[Fuel capture in the forwarding host]
-\lean{Turing.FinTM.emLoopHost_fuel_capture}
-\label{Turing.FinTM.emLoopHost_fuel_capture}
-\leanok
-\uses{Turing.Cfg, Turing.Cfg.Halted, Turing.FinTM, Turing.FinTM.emLoopHost, Turing.FinTM.loopFuelSource, Turing.MultiTapeTM.runFrom, Turing.captureCfg, Turing.capture_run}
-\difficulty{1}
-Let $c$ be a configuration of the relocated fuel source on the forwarding host's tape
-layout and $t$ a time before which that source does not halt. Then the forwarding host
-run for $t$ steps from the capture embedding of $c$ equals the capture embedding of the
-fuel source run at time $t$.
-\end{lemma}
-
-\begin{lemma}[Initial configuration of the forwarding host]
-\lean{Turing.FinTM.emLoopHost_init}
-\label{Turing.FinTM.emLoopHost_init}
-\leanok
-\uses{Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.emLoopHost, Turing.FinTM.loopFuelSource, Turing.FinTM.loopHost, Turing.MultiTapeTM.initCfg, Turing.captureCfg, Turing.initCfg_ofWords}
-\difficulty{2}
-For every input word $x$, the initial configuration of the forwarding host on $x$ equals
-the capture embedding (with empty buffers and return phase zero) of the initial
-configuration of the relocated fuel source on $x$.
-\end{lemma}
-
-\begin{lemma}[Input rewind in the forwarding host]
-\lean{Turing.FinTM.emLoopHost_input_rewind}
-\label{Turing.FinTM.emLoopHost_input_rewind}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.emLoopHost, Turing.FinTM.loopControl_idle, Turing.FinTM.loop_rewind_bounded, Turing.MultiTapeTM.runFrom}
-\difficulty{3}
-Let $c$ be a configuration of the forwarding host in controller phase four. Then there
-is a time $t$ at most the input-head position of $c$ plus two after which the host sits
-in the startup body-call state with input head at position one and every other component
-of $c$ unchanged.
-\end{lemma}
-
-\begin{lemma}[Fuel rewind phase in the forwarding host]
-\lean{Turing.FinTM.emLoopHost_fuel_rewind}
-\label{Turing.FinTM.emLoopHost_fuel_rewind}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.LoopHostState, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_left, Turing.FinTM.bufferTape_nat, Turing.FinTM.emLoopHost, Turing.FinTM.loopControlAction, Turing.FinTM.loopControl_apply, Turing.FinTM.loopFrame, Turing.FinTM.loopFrame_payload, Turing.FinTM.loopWrite, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
-\difficulty{5}
-Let $w$ be a stored word and $j \le |w|$. Starting the forwarding host in its fuel-
-rewind phase on a controller frame whose payload track is the buffer tape of $w$ with
-payload head at cell $j - 1$, after exactly $j + 1$ steps the host is in the counter-
-copy phase with the payload head at cell zero and every other frame component unchanged.
-\end{lemma}
-
-\begin{lemma}[Fuel copy phase in the forwarding host]
-\lean{Turing.FinTM.emLoopHost_fuel_copy}
-\label{Turing.FinTM.emLoopHost_fuel_copy}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.LoopHostState, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_append, Turing.FinTM.emLoopHost, Turing.FinTM.loopControlAction, Turing.FinTM.loopControl_apply, Turing.FinTM.loopCopyTape, Turing.FinTM.loopCopy_erase, Turing.FinTM.loopCopy_final, Turing.FinTM.loopCopy_read, Turing.FinTM.loopFrame, Turing.FinTM.loopFrame_payload, Turing.FinTM.loopWrite, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
-\difficulty{5}
-Let $p$ be the already-copied prefix and $r$ the remaining fuel suffix. Starting the
-forwarding host in its counter-copy phase on a controller frame whose counter track is
-the buffer tape of $p$ and whose payload track is the partially cleared copying tape,
-with both heads at cell $|p|$, after exactly $|r| + 1$ steps the host is in the
-synchronized-rewind phase with the counter track holding the full fuel word, the payload
-track blank, and both heads one cell left of the word's right end.
-\end{lemma}
-
-\begin{lemma}[Synchronized rewind in the forwarding host]
-\lean{Turing.FinTM.emLoopHost_fuel_return}
-\label{Turing.FinTM.emLoopHost_fuel_return}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.LoopHostState, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_left, Turing.FinTM.bufferTape_nat, Turing.FinTM.emLoopHost, Turing.FinTM.loopControlAction, Turing.FinTM.loopControl_apply, Turing.FinTM.loopFrame, Turing.FinTM.loopFrame_counter, Turing.FinTM.loopWrite, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
-\difficulty{5}
-Let $w$ be the copied counter word and $j \le |w|$. Starting the forwarding host in its
-synchronized-rewind phase on a controller frame whose counter track is the buffer tape
-of $w$ and whose payload track is blank, with both heads at cell $j - 1$, after exactly
-$j + 1$ steps the host is in the input-rewind phase with both heads at cell zero and
-every other frame component unchanged.
-\end{lemma}
-
-\begin{lemma}[Fuel setup of the forwarding host]
-\lean{Turing.FinTM.emLoopHost_fuel_setup}
-\label{Turing.FinTM.emLoopHost_fuel_setup}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.LoopHostState, Turing.FinTM.bufferTape, Turing.FinTM.emLoopHost, Turing.FinTM.emLoopHost_fuel_copy, Turing.FinTM.emLoopHost_fuel_return, Turing.FinTM.emLoopHost_fuel_rewind, Turing.FinTM.loopControlAction, Turing.FinTM.loopControl_apply, Turing.FinTM.loopCopy_initial, Turing.FinTM.loopFrame, Turing.FinTM.loopWrite, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step}
-\difficulty{4}
-Let $w$ be the captured fuel word. Starting the forwarding host in controller phase zero
-on a frame whose counter track is blank and whose payload track is the buffer tape of
-$w$ with payload head at cell $|w|$, after exactly $3|w| + 4$ steps the host is in the
-input-rewind phase with the counter track holding $w$, the payload track blank, both
-heads at cell zero, and all inactive data unchanged.
-\end{lemma}
-
-\begin{lemma}[Preparation of the forwarding host]
-\lean{Turing.FinTM.emLoopHost_prepare}
-\label{Turing.FinTM.emLoopHost_prepare}
-\leanok
-\uses{Turing.Cfg, Turing.Cfg.Halted, Turing.Cfg.init, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.bufferTape, Turing.FinTM.emLoopHost, Turing.FinTM.emLoopHost_fuel_capture, Turing.FinTM.emLoopHost_fuel_setup, Turing.FinTM.emLoopHost_init, Turing.FinTM.emLoopHost_input_rewind, Turing.FinTM.loopFrame, Turing.FinTM.loopFuelCaptured, Turing.FinTM.loopFuelCaptured_frame, Turing.FinTM.loopFuelCfg, Turing.FinTM.loopFuel_init, Turing.FinTM.loopFuel_run, Turing.FinTM.loopReady, Turing.FinTM.loop_first_halt, Turing.FinTM.loop_fuel_width, Turing.FinTM.loop_input_run_le, Turing.FinTM.rightCfg, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
-\difficulty{5}
-Let the fuel machine compute, in time $T$, the function sending each input $x$ to the
-binary digit word of $R(|x|)$. Then for every input $x$ there are a halted fuel
-configuration $c$ with output exactly that digit word and a time $t \le 5\,T(|x|) + 7$
-such that the forwarding host, run for $t$ steps from its initial configuration on $x$,
-reaches the prepared startup configuration built from $c$.
-\end{lemma}
-
-\begin{lemma}[Startup release in the forwarding host]
-\lean{Turing.FinTM.emLoopHost_release}
-\label{Turing.FinTM.emLoopHost_release}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.emLoopHost, Turing.FinTM.leftCfg, Turing.FinTM.loopBodyCfg, Turing.FinTM.loopBodyPadded, Turing.FinTM.loopCall, Turing.FinTM.loopControlAction, Turing.MultiTapeTM.step, Turing.captureCfg, Turing.moveInputPos_zero}
-\difficulty{4}
-Let $c$ be a body configuration, $w$ a counter word, and $f$ a fuel configuration. One
-step of the forwarding host from the startup call on $c$ with control removed, release
-clear, and flag $\mathrm{false}$ yields the active call on $c$ with control the anchor,
-release set, and no flag, changing no body, counter, or fuel data.
-\end{lemma}
-
-\begin{lemma}[One borrow step in the forwarding host]
-\lean{Turing.FinTM.emLoopHost_borrow_step}
-\label{Turing.FinTM.emLoopHost_borrow_step}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.LoopHostState, Turing.FinTM.bufferTape, Turing.FinTM.emLoopHost, Turing.FinTM.loopBuffer_read, Turing.FinTM.loopBuffer_write, Turing.FinTM.loopControlAction, Turing.FinTM.loopControl_apply, Turing.FinTM.loopFrame, Turing.FinTM.loopFrame_counter, Turing.FinTM.loopWrite, Turing.MultiTapeTM.step}
-\difficulty{4}
-Let $p$ and $r$ be Boolean words. One step of the forwarding host from its borrow phase
-on a frame whose counter track is the buffer tape of $p$ followed by $r$ with counter
-head at $|p|$ behaves as the standalone decrement machine: an empty $r$ enters the
-underflow rewind, a leading $\mathrm{true}$ writes $\mathrm{false}$ and enters the
-success rewind, and a leading $\mathrm{false}$ writes $\mathrm{true}$ and continues the
-borrow. Only the counter track changes.
-\end{lemma}
-
-\begin{lemma}[The borrow scan in the forwarding host]
-\lean{Turing.FinTM.emLoopHost_borrow_run}
-\label{Turing.FinTM.emLoopHost_borrow_run}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.LoopHostState, Turing.FinTM.bufferTape, Turing.FinTM.emLoopHost, Turing.FinTM.emLoopHost_borrow_step, Turing.FinTM.loopBorrowPos, Turing.FinTM.loopDebit, Turing.FinTM.loopFrame, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step}
-\difficulty{4}
-Let $p$ and $w$ be Boolean words and $j$ the length of the maximal $\mathrm{false}$
-prefix of $w$. Running the forwarding host for exactly $j + 1$ steps from its borrow
-phase on a frame whose counter track holds $p$ followed by $w$ with head at $|p|$
-reaches the success- or underflow-rewind phase according to the decrement's flag, with
-the counter track holding $p$ followed by the decremented word and head at $|p| + j -
-1$.
-\end{lemma}
-
-\begin{lemma}[Borrow rewinds in the forwarding host]
-\lean{Turing.FinTM.emLoopHost_borrow_rewind}
-\label{Turing.FinTM.emLoopHost_borrow_rewind}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.LoopHostState, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_left, Turing.FinTM.bufferTape_nat, Turing.FinTM.emLoopHost, Turing.FinTM.loopControlAction, Turing.FinTM.loopControl_apply, Turing.FinTM.loopFrame, Turing.FinTM.loopFrame_counter, Turing.FinTM.loopWrite, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
-\difficulty{5}
-Let $w$ be a counter word, $b$ a success bit, and $j \le |w|$. Running the forwarding
-host for exactly $j + 1$ steps from the rewind phase selected by $b$ on a frame whose
-counter track is the buffer tape of $w$ with head at cell $j - 1$ returns the counter
-head to zero and dispatches: success releases the next anchor call, underflow enters the
-exhaustion phase without yet emitting.
-\end{lemma}
-
-\begin{lemma}[Complete counter operation in the forwarding host]
-\lean{Turing.FinTM.emLoopHost_borrow}
-\label{Turing.FinTM.emLoopHost_borrow}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.LoopHostState, Turing.FinTM.bufferTape, Turing.FinTM.emLoopHost, Turing.FinTM.emLoopHost_borrow_rewind, Turing.FinTM.emLoopHost_borrow_run, Turing.FinTM.loopBorrowPos, Turing.FinTM.loopBorrowPos_le, Turing.FinTM.loopDebit, Turing.FinTM.loopDebit_length, Turing.FinTM.loopFrame, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
-\difficulty{4}
-Let $w$ be a counter word and $j$ the length of its maximal $\mathrm{false}$ prefix.
-Then $2j + 2 \le 2|w| + 2$, and running the forwarding host for exactly $2j + 2$ steps
-from its borrow phase on a frame whose counter track is the buffer tape of $w$ with head
-at zero ends with the counter track holding the decremented word, head at zero, in the
-released next-anchor call state on success and in the exhaustion phase on underflow.
-\end{lemma}
-
-\begin{lemma}[A rejecting round in the forwarding host]
-\lean{Turing.FinTM.emLoopHost_reject}
-\label{Turing.FinTM.emLoopHost_reject}
-\leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.emLoopHost, Turing.FinTM.emLoopHost_borrow, Turing.FinTM.leftCfg, Turing.FinTM.loopBodyCfg, Turing.FinTM.loopBodyPadded, Turing.FinTM.loopBorrowPos, Turing.FinTM.loopBorrowPos_le, Turing.FinTM.loopCall, Turing.FinTM.loopCall_frame, Turing.FinTM.loopCall_reframe, Turing.FinTM.loopControlAction, Turing.FinTM.loopControl_apply, Turing.FinTM.loopDebit, Turing.FinTM.loopFlag_clear, Turing.FinTM.loopFrame, Turing.FinTM.loopFrame_flag, Turing.FinTM.loopWrite, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.captureCfg}
-\difficulty{5}
-Let $c$ be a halted body configuration with empty output, $w$ a counter word, and $f$ a
-fuel configuration. Then there is a time $t \le 2|w| + 4$ such that, from the stopped
-call on $c$ with stop flag $\mathrm{false}$: if the fixed-width decrement of $w$
-succeeds, the forwarding host at time $t$ is at the released next-anchor call with the
-decremented counter word; otherwise the host at time $t$ has halted with output empty in
-find mode and the single bit $\mathrm{false}$ in decision mode.
-\end{lemma}
-
 \begin{definition}[Forwarded body configuration]
 \lean{Turing.FinTM.emLoopForwardCfg}
 \label{Turing.FinTM.emLoopForwardCfg}
@@ -2735,33 +2265,6 @@ configuration $c$, the host configuration that embeds $c$ with one extra blank i
 tape, carries $p$ followed by the output of $c$ as physical output, and embeds the
 control of $c$, using the return state when $c$ has halted.
 \end{definition}
-
-\begin{lemma}[A forwarded action acts on a forwarded frame]
-\lean{Turing.FinTM.emLoop_forward_apply}
-\label{Turing.FinTM.emLoop_forward_apply}
-\leanok
-\uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.FinTM.emLoopForwardCfg, Turing.FinTM.leftAction, Turing.FinTM.leftCfg_apply, Turing.emitAction, Turing.emitCfg}
-\difficulty{3}
-For every control embedding, return state, output prefix $p$, source action $a$, and
-source configuration $c$: applying the padded forwarding action of $a$ to the forwarded
-configuration of $c$ equals the forwarded configuration of $a$ applied to $c$, appending
-the optional emitted bit after the accumulated prefix, including on a halting action.
-\end{lemma}
-
-\begin{lemma}[Guarded forwarding with one inactive tape]
-\lean{Turing.FinTM.emLoop_forward_run}
-\label{Turing.FinTM.emLoop_forward_run}
-\leanok
-\uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM.emLoopForwardCfg, Turing.FinTM.emLoop_forward_apply, Turing.FinTM.leftAction, Turing.FinTM.leftCfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.emitAction, Turing.emitCfg}
-\difficulty{4}
-Let a source machine and a host machine be given, together with a control embedding and
-a return state, such that on every embedded state the host transition is the padded
-forwarding of the source transition. If the source run from a configuration $c$ stays
-live before time $t$, then the host run for $t$ steps from the forwarded configuration
-of $c$ with prefix $p$ equals the forwarded configuration of the source run at time $t$
-with the same prefix; the source may halt on the final action, whose emission is
-forwarded.
-\end{lemma}
 
 \begin{definition}[A forwarding body call]
 \lean{Turing.FinTM.emLoopCall}
@@ -2790,34 +2293,6 @@ configuration's physical output replaced by the prefix followed by the original 
 of $c$.
 \end{lemma}
 
-\begin{lemma}[Forwarding of the stopped-body run]
-\lean{Turing.FinTM.emLoopHost_body_forward}
-\label{Turing.FinTM.emLoopHost_body_forward}
-\leanok
-\uses{Turing.Cfg, Turing.Cfg.Halted, Turing.FinTM, Turing.FinTM.emLoopForwardCfg, Turing.FinTM.emLoopHost, Turing.FinTM.emLoop_forward_run, Turing.FinTM.loopBodySource, Turing.MultiTapeTM.runFrom}
-\difficulty{1}
-Let $c$ be a configuration of the extended stopped-body source on the forwarding host's
-layout, $p$ an output prefix, and $t$ a time before which that source does not halt.
-Then the forwarding host run for $t$ steps from the forwarded embedding of $c$ with
-prefix $p$ equals the forwarded embedding of the source run at time $t$ with the same
-prefix.
-\end{lemma}
-
-\begin{lemma}[Anchor returns in the forwarding host]
-\lean{Turing.FinTM.emLoopHost_anchor_return}
-\label{Turing.FinTM.emLoopHost_anchor_return}
-\leanok
-\uses{Turing.Cfg, Turing.Cfg.Halted, Turing.FinTM, Turing.FinTM.emLoopCall, Turing.FinTM.emLoopHost, Turing.FinTM.emLoopHost_body_forward, Turing.FinTM.leftCfg, Turing.FinTM.loopBodyCfg, Turing.FinTM.loopBodyPadded, Turing.FinTM.loopBodySource_run, Turing.FinTM.loopBodyTM, Turing.FinTM.loopBody_run, Turing.FinTM.loopBody_stop, Turing.FinTM.loop_live_prefix, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
-\difficulty{5}
-Let $c$ be a body configuration, $p$ an output prefix, and $t$ a time at which the body
-run from $c$ sits in the anchor state, with no earlier anchor visit except possibly a
-released step at time zero and with the release bit clear whenever $t = 0$. Then the
-forwarding host, run for $t + 1$ steps from the forwarding call on $c$ with prefix $p$,
-reaches the forwarding stopped call on the body run at time $t$ with control removed,
-release clear, and stop flag $\mathrm{false}$, the counter word and fuel residue
-unchanged.
-\end{lemma}
-
 \begin{lemma}[Empty-prefix call identity]
 \lean{Turing.FinTM.emLoopCall_empty}
 \label{Turing.FinTM.emLoopCall_empty}
@@ -2829,20 +2304,6 @@ and choose a startup marker, a configuration $c$ of $B$ on a Boolean input, a re
 bit, an optional flag bit, a Boolean word, and a configuration of $F$ on that input. If
 the output of $c$ is empty, then the forwarding call with empty prefix equals the
 corresponding capturing call.
-\end{lemma}
-
-\begin{lemma}[Silent startup of the forwarding host]
-\lean{Turing.FinTM.emLoopHost_start}
-\label{Turing.FinTM.emLoopHost_start}
-\leanok
-\uses{Turing.Cfg, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.emLoopCall_empty, Turing.FinTM.emLoopHost, Turing.FinTM.emLoopHost_anchor_return, Turing.FinTM.emLoopHost_release, Turing.FinTM.loopCall, Turing.FinTM.loopReady, Turing.FinTM.loopReady_call, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.stateWord}
-\difficulty{3}
-Let $s$ be a word, $f$ a fuel configuration, and $t$ a time such that the body, run from
-its initial configuration, first visits the anchor at time $t$, arriving at the clean
-seam that carries $s$ on work tape zero with all other work tapes blank. Then the
-forwarding host, run for $t + 2$ steps from the prepared startup configuration, reaches
-the released call on that seam with counter word the output of $f$ and fuel residue $f$,
-with nothing emitted and no fuel debited.
 \end{lemma}
 
 \begin{lemma}[One emitting loop round]

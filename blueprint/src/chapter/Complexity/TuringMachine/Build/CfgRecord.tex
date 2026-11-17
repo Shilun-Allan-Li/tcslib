@@ -163,81 +163,6 @@ represents $F$ on tape $r$ if, for every integer $p$ with $-1 \le p \le
 units from its head equals the tape content specified by $F$ at offset $p$.
 \end{definition}
 
-\begin{definition}[Bounded run between configurations]
-\lean{Turing.RecordRun}
-\label{Turing.RecordRun}
-\leanok
-\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom}
-Let $R$ be a $K$-tape machine over input alphabet $\Gamma$ and state set $S$, let $x$ be
-a finite input over $\Gamma$, let $a,b$ be configurations on $x$, let $y,n$ be
-designated states, let $\beta$ assign an integer base position to each work tape, and
-let $\rho,t$ be natural numbers. The run of $R$ from $a$ reaches $b$ in exactly $t$
-steps; at every earlier time $u<t$ its state is neither $y$ nor $n$; and at every time
-$u\le t$, each work-tape head is at distance at most $\rho$ from its assigned base
-position.
-\end{definition}
-
-\begin{theorem}[Zero-Length Recorded Run]
-\lean{Turing.recordRun_zero}
-\label{Turing.recordRun_zero}
-\leanok
-\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.RecordRun}
-\difficulty{3}
-Let $R$ be a multi-tape Turing machine, let $yes$ and $no$ be states, and choose a base
-position for each work tape and a natural-number radius. If configuration $a$ has every
-work-tape head within that radius of its base position, then the run from $a$ to itself
-in zero steps avoids both distinguished states at every time strictly before its
-endpoint and satisfies the head-position bound at every time through its endpoint.
-\end{theorem}
-
-\begin{theorem}[Concatenation of Recorded Runs]
-\lean{Turing.recordRun_trans}
-\label{Turing.recordRun_trans}
-\leanok
-\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom_add, Turing.RecordRun}
-\difficulty{5}
-Let $R$ be a multi-tape Turing machine with distinguished states $yes$ and $no$, and fix
-a base head position for each work tape and a radius. If a run from configuration $a$
-reaches $b$ in $t$ steps, avoids both distinguished states at every time before $t$, and
-keeps every work-tape head within the specified radius of its base position through time
-$t$, and a run from $b$ reaches $c$ in $v$ steps with the same avoidance and
-head-position bounds, then the run from $a$ reaches $c$ in $t+v$ steps, avoids both
-distinguished states before that time, and satisfies the same head-position bounds
-throughout.
-\end{theorem}
-
-\begin{theorem}[State tag excludes a differently tagged state]
-\lean{Turing.record_tag_ne}
-\label{Turing.record_tag_ne}
-\leanok
-\uses{Turing.Cfg, Turing.Cfg.mapState}
-\difficulty{4}
-Let $K$ be a natural number, let $\Gamma$ and $I$ be types, and let $\mathrm{Ph}$ assign
-a type to each element of $I$. Choose $i\in I$, an element $v$ of the dependent sum of
-the types $\mathrm{Ph}(j)$ over $j\in I$, and a configuration $c$ on an input word $x$
-whose states lie in $\mathrm{Ph}(i)$. If $i$ differs from the first component of $v$,
-then after replacing each state $q$ by the pair $(i,q)$, the configuration's state is
-not $v$.
-\end{theorem}
-
-\begin{theorem}[Tagged run satisfies recorded-run conditions]
-\lean{Turing.recordRun_tagged}
-\label{Turing.recordRun_tagged}
-\leanok
-\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecordRun, Turing.record_tag_ne}
-\difficulty{5}
-Let $R$ be a machine whose states are tagged phase states, and let $M$ be a machine with
-phase states indexed by $i$. Suppose that through every time $u\le t$, the run of $R$
-from $a$ agrees with the run of $M$ from $c$ after tagging its state by $i$. Suppose the
-run of $R$ from $a$ reaches $b$ after $t+1$ steps, the phase index $i$ differs from the
-phase indices of both distinguished states $\mathrm{yes}$ and $\mathrm{no}$, and the
-work-head distances from the specified base positions are at most $r$ at every time
-$u\le t$ in the run of $M$ and at time $t+1$ in configuration $b$. Then the run of $R$
-from $a$ to $b$ in $t+1$ steps avoids both distinguished states at all earlier times and
-has all work-head distances from the base positions at most $r$ at every time through
-$t+1$.
-\end{theorem}
-
 \begin{theorem}[Width of the successor value]
 \lean{Turing.recordStep_width_one}
 \label{Turing.recordStep_width_one}
@@ -290,20 +215,6 @@ Let $w$ be a Boolean word and $q$ a natural number. If the binary value of $w$ i
 $2^{|w|}-1$ and $q+1<2^{|w|}$, then complementing each bit of the word obtained by
 applying the fixed-width decrement operation $q+1$ times to $w$ gives the width-$|w|$
 binary digit list of $q+1$.
-\end{theorem}
-
-\begin{theorem}[Preservation of the tape window]
-\lean{Turing.recordStep_window}
-\label{Turing.recordStep_window}
-\leanok
-\uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.Cfg.InWindow}
-\difficulty{5}
-Let $c$ be a configuration of a machine with $k$ Boolean work tapes whose heads lie in
-the integer interval $[-s,s]$ and whose tape contents are blank outside that interval,
-where $s\in\mathbb{N}$. For any action $a$, the configuration obtained by applying $a$
-still has all heads in that interval and all tape contents blank outside it if and only
-if, on every tape, the head is not at $-s$ while moving left and is not at $s$ while
-moving right.
 \end{theorem}
 
 \begin{theorem}[Restriction to embedded Boolean tapes]
@@ -847,7 +758,7 @@ have decidable equality.
 \lean{Turing.recordStep_state_run}
 \label{Turing.recordStep_state_run}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecordRun, Turing.RecordStepControl, Turing.RecordStepIndex, Turing.ScanPhase, Turing.phaseHostTM_run, Turing.recordRun_tagged, Turing.recordStepEntry, Turing.recordStepMachine, Turing.recordStepNext, Turing.recordStepRows, Turing.recordStepVerdict, Turing.scanFold, Turing.scanKeep, Turing.scanResult, Turing.scanResult_fold, Turing.scanTM, Turing.scanTM_run_ofCfg}
+\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecordStepControl, Turing.RecordStepIndex, Turing.ScanPhase, Turing.phaseHostTM_run, Turing.recordStepEntry, Turing.recordStepMachine, Turing.recordStepNext, Turing.recordStepRows, Turing.recordStepVerdict, Turing.scanFold, Turing.scanKeep, Turing.scanResult, Turing.scanResult_fold, Turing.scanTM, Turing.scanTM_run_ofCfg}
 \difficulty{5}
 Let $Q,T,S$ be types with decidable equality. Let $M$ be a Boolean multi-tape machine
 with $k$ work tapes, let
@@ -867,7 +778,7 @@ within distance one of its initial position through that time.
 \lean{Turing.recordStep_phase_run}
 \label{Turing.recordStep_phase_run}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecordRun, Turing.RecordStepControl, Turing.RecordStepIndex, Turing.phaseHostTM_run, Turing.recordRun_tagged, Turing.recordStepEntry, Turing.recordStepMachine, Turing.recordStepNext, Turing.recordStepPhase, Turing.recordStepRows, Turing.recordStepVerdict}
+\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecordStepControl, Turing.RecordStepIndex, Turing.phaseHostTM_run, Turing.recordStepEntry, Turing.recordStepMachine, Turing.recordStepNext, Turing.recordStepPhase, Turing.recordStepRows, Turing.recordStepVerdict}
 \difficulty{3}
 Let $M$ be a $k$-tape Boolean machine with state set $Q$, let
 $\mathrm{upd}:T\to\mathrm{Option}(\mathrm{Bool})\to T$, and let $\mathrm{seek}$ be a
@@ -883,25 +794,6 @@ adjoining phase index $i$ to $c$ to the configuration obtained by replacing the 
 $c'$ with $o$, in $t+1$ steps, without visiting either verdict state before the final
 time; throughout these steps all four work-head displacements from the specified base
 positions are at most $r$.
-\end{theorem}
-
-\begin{theorem}[Preservation during a two-pass scan]
-\lean{Turing.recordStep_scan_preserves}
-\label{Turing.recordStep_scan_preserves}
-\leanok
-\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.ScanPhase, Turing.scanResult, Turing.scanTM, Turing.scanTM_run_ofCfg}
-\difficulty{4}
-Let $A$ and $\Gamma$ be types, let $x,w$ be lists over $\Gamma$, let $i$ be one of four
-work-tape indices, and let $\delta_f,\delta_b:A\times\Gamma\to A\times\Gamma$ be
-transition maps. Suppose a configuration $c$ of the four-tape scan machine on input $x$
-is in forward phase with state $a$, and tape $i$, at every offset $z$ from its head with
-$-1\le z\le |w|$, contains the corresponding symbol of $w$ (and is blank where that word
-has no symbol). If the forward-and-backward scan of $w$ from state $a$ returns the pair
-$(b,w)$, then after $2|w|+2$ steps the machine is in configuration $c$ with state
-changed to the completed phase carrying $b$. It has not entered any completed phase
-earlier, and through that time tape $i$'s head remains between its initial position
-minus one and its initial position plus $|w|$, while every other work-tape head stays
-fixed.
 \end{theorem}
 
 \begin{definition}[Record Step Snapshot]
@@ -934,7 +826,7 @@ contents and head positions, and the same output as $d$.
 \lean{Turing.recordStep_read_prefix}
 \label{Turing.recordStep_read_prefix}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordAt, Turing.RecordRun, Turing.RecordStepControl, Turing.RecordStepData, Turing.binDigits, Turing.cfgRecord, Turing.cfgRecord_length, Turing.copyTM, Turing.copyTM_run_ofCfg, Turing.fieldOffset, Turing.fieldOffset_add_length_le, Turing.fieldsTape_field, Turing.joinFields, Turing.posWidth, Turing.recordRun_trans, Turing.recordStepEntry, Turing.recordStepMachine, Turing.recordStepPosFold, Turing.recordStepRows, Turing.recordStepSnapshot, Turing.recordStepSnapshot_empty, Turing.recordStepVerdict, Turing.recordStep_phase_run, Turing.recordStep_position_fold, Turing.recordStep_scan_preserves, Turing.recordStep_state_run, Turing.record_digits_value, Turing.record_pos_lt, Turing.scanFold, Turing.scanKeep, Turing.scanResult, Turing.scanTM, Turing.skipTM, Turing.skipTM_run_ofCfg}
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordAt, Turing.RecordStepControl, Turing.RecordStepData, Turing.binDigits, Turing.cfgRecord, Turing.cfgRecord_length, Turing.copyTM, Turing.copyTM_run_ofCfg, Turing.fieldOffset, Turing.fieldOffset_add_length_le, Turing.fieldsTape_field, Turing.joinFields, Turing.posWidth, Turing.recordStepEntry, Turing.recordStepMachine, Turing.recordStepPosFold, Turing.recordStepRows, Turing.recordStepSnapshot, Turing.recordStepSnapshot_empty, Turing.recordStepVerdict, Turing.recordStep_phase_run, Turing.recordStep_position_fold, Turing.recordStep_state_run, Turing.record_digits_value, Turing.record_pos_lt, Turing.scanFold, Turing.scanKeep, Turing.scanResult, Turing.scanTM, Turing.skipTM, Turing.skipTM_run_ofCfg}
 \difficulty{6}
 Let $M$ be a $k$-work-tape Turing machine on Boolean symbols with state set $Q$, let $T$
 be a tag set, let $u:T\times\{\text{blank},0,1\}\to T$ be a tag update rule, and let $S$
@@ -994,7 +886,7 @@ scan phase at the fuel stage.
 \lean{Turing.recordStep_read_fields}
 \label{Turing.recordStep_read_fields}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.InWindow, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordAt, Turing.RecordRun, Turing.RecordStepControl, Turing.RecordStepData, Turing.binDigits, Turing.cfgRecord, Turing.cfgRecord_length, Turing.fieldOffset, Turing.fieldOffset_add_length_le, Turing.fieldOffset_cons_succ, Turing.fieldOffset_succ, Turing.fieldsTape_field, Turing.joinFields, Turing.posWidth, Turing.recordRun_trans, Turing.recordRun_zero, Turing.recordStepFirstTape, Turing.recordStepMachine, Turing.recordStepNext, Turing.recordStepReadData, Turing.recordStepReadData_succ, Turing.recordStepReadExit, Turing.recordStepRows, Turing.recordStepSnapshot, Turing.recordStepTapeFold, Turing.recordStepVerdict, Turing.recordStep_phase_run, Turing.recordStep_scan_preserves, Turing.recordStep_tape_fold, Turing.scanFold, Turing.scanKeep, Turing.scanResult, Turing.scanResult_fold, Turing.scanTM, Turing.skipBackTM, Turing.skipBackTM_run_ofCfg, Turing.skipTM, Turing.skipTM_run_ofCfg}
+\uses{Turing.Cfg, Turing.Cfg.InWindow, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordAt, Turing.RecordStepControl, Turing.RecordStepData, Turing.binDigits, Turing.cfgRecord, Turing.cfgRecord_length, Turing.fieldOffset, Turing.fieldOffset_add_length_le, Turing.fieldOffset_cons_succ, Turing.fieldOffset_succ, Turing.fieldsTape_field, Turing.joinFields, Turing.posWidth, Turing.recordStepFirstTape, Turing.recordStepMachine, Turing.recordStepNext, Turing.recordStepReadData, Turing.recordStepReadData_succ, Turing.recordStepReadExit, Turing.recordStepRows, Turing.recordStepSnapshot, Turing.recordStepTapeFold, Turing.recordStepVerdict, Turing.recordStep_phase_run, Turing.recordStep_tape_fold, Turing.scanFold, Turing.scanKeep, Turing.scanResult, Turing.scanResult_fold, Turing.scanTM, Turing.skipBackTM, Turing.skipBackTM_run_ofCfg, Turing.skipTM, Turing.skipTM_run_ofCfg}
 \difficulty{7}
 Let $M$ be a Turing machine with $k$ work tapes, Boolean work symbols, and state set
 $Q$, let $T$ be a tag set, and let $u:T\times\operatorname{Option}(\{0,1\})\to T$ be a
@@ -1017,7 +909,7 @@ within distance $L+1$ of its initial position.
 \lean{Turing.recordStep_read_all}
 \label{Turing.recordStep_read_all}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.InWindow, Turing.MultiTapeTM, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordAt, Turing.RecordRun, Turing.RecordStepControl, Turing.binDigits, Turing.cfgRecord, Turing.cfgRecord_length, Turing.fieldOffset_add_length_le, Turing.joinFields, Turing.posWidth, Turing.recordRun_trans, Turing.recordStepEntry, Turing.recordStepMachine, Turing.recordStepReadData, Turing.recordStepReadExit, Turing.recordStepSnapshot, Turing.recordStepVerdict, Turing.recordStep_read_fields, Turing.recordStep_read_prefix}
+\uses{Turing.Cfg, Turing.Cfg.InWindow, Turing.MultiTapeTM, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordAt, Turing.RecordStepControl, Turing.binDigits, Turing.cfgRecord, Turing.cfgRecord_length, Turing.fieldOffset_add_length_le, Turing.joinFields, Turing.posWidth, Turing.recordStepEntry, Turing.recordStepMachine, Turing.recordStepReadData, Turing.recordStepReadExit, Turing.recordStepSnapshot, Turing.recordStepVerdict, Turing.recordStep_read_fields, Turing.recordStep_read_prefix}
 \difficulty{4}
 Let $k$ be natural, let $Q,T,S$ be types with decidable equality, let $M$ be a $k$-tape
 Boolean Turing machine, let $u:T\times\mathrm{Option}(\mathrm{Bool})\to T$, let $N$ be a
@@ -1070,7 +962,7 @@ position in $d$.
 \lean{Turing.recordStep_halt_run}
 \label{Turing.recordStep_halt_run}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.RecSym, Turing.RecordRun, Turing.RecordStepControl, Turing.RecordStepData, Turing.recordRun_trans, Turing.recordStepMachine, Turing.recordStepReadExit, Turing.recordStepSnapshot, Turing.recordStepVerdict, Turing.recordStep_clear_heads, Turing.recordStep_clear_snapshot, Turing.recordStep_phase_run}
+\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.RecSym, Turing.RecordStepControl, Turing.RecordStepData, Turing.recordStepMachine, Turing.recordStepReadExit, Turing.recordStepSnapshot, Turing.recordStepVerdict, Turing.recordStep_clear_heads, Turing.recordStep_clear_snapshot, Turing.recordStep_phase_run}
 \difficulty{5}
 Let $M$ be a deterministic machine with $k$ Boolean work tapes and state set $Q$, let
 $T$ be a tag type, and let $S$ be the state type of a two-work-tape seeking machine.
@@ -1133,7 +1025,7 @@ its position in the initial snapshot.
 \lean{Turing.recordStep_empty_run}
 \label{Turing.recordStep_empty_run}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.RecSym, Turing.RecordRun, Turing.RecordStepControl, Turing.RecordStepData, Turing.recordStepApply, Turing.recordStepMachine, Turing.recordStepReadExit, Turing.recordStepSnapshot, Turing.recordStepVerdict, Turing.recordStep_clear_heads, Turing.recordStep_clear_snapshot, Turing.recordStep_phase_run}
+\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.RecSym, Turing.RecordStepControl, Turing.RecordStepData, Turing.recordStepApply, Turing.recordStepMachine, Turing.recordStepReadExit, Turing.recordStepSnapshot, Turing.recordStepVerdict, Turing.recordStep_clear_heads, Turing.recordStep_clear_snapshot, Turing.recordStep_phase_run}
 \difficulty{4}
 Let $M$ be a deterministic machine with $k$ Boolean work tapes and state set $Q$, let
 $T$ be a tag type, and let $S$ be the state type of a two-work-tape seeking machine.
@@ -1151,7 +1043,7 @@ corresponding position in $d$.
 \lean{Turing.recordStep_reject_run}
 \label{Turing.recordStep_reject_run}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.RecSym, Turing.RecordRun, Turing.RecordStepControl, Turing.RecordStepData, Turing.recordStepApply, Turing.recordStepMachine, Turing.recordStepOutside, Turing.recordStepSnapshot, Turing.recordStepVerdict, Turing.recordStep_clear_heads, Turing.recordStep_clear_snapshot, Turing.recordStep_phase_run}
+\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.RecSym, Turing.RecordStepControl, Turing.RecordStepData, Turing.recordStepApply, Turing.recordStepMachine, Turing.recordStepOutside, Turing.recordStepSnapshot, Turing.recordStepVerdict, Turing.recordStep_clear_heads, Turing.recordStep_clear_snapshot, Turing.recordStep_phase_run}
 \difficulty{4}
 Let $M$ be a $k$-work-tape Turing machine on Boolean symbols with state set $Q$, let $T$
 be a tag set, let $u:T\times\{\text{blank},0,1\}\to T$ be a tag update rule, and let $S$
@@ -1191,7 +1083,7 @@ complements of the resulting counter word have binary value $p+1$.
 \lean{Turing.recordStep_prepare_native}
 \label{Turing.recordStep_prepare_native}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.CounterLoopState, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordRun, Turing.RecordStepControl, Turing.RecordStepData, Turing.counterWord, Turing.recordRun_trans, Turing.recordStepMachine, Turing.recordStepProbe, Turing.recordStepReadExit, Turing.recordStepSnapshot, Turing.recordStepVerdict, Turing.recordStep_complement_value, Turing.recordStep_map_snapshot, Turing.recordStep_phase_run, Turing.recordStep_probe_run, Turing.recordStep_save_transport, Turing.scanKeep, Turing.scanMap, Turing.scanTM}
+\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.CounterLoopState, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordStepControl, Turing.RecordStepData, Turing.counterWord, Turing.recordStepMachine, Turing.recordStepProbe, Turing.recordStepReadExit, Turing.recordStepSnapshot, Turing.recordStepVerdict, Turing.recordStep_complement_value, Turing.recordStep_map_snapshot, Turing.recordStep_phase_run, Turing.recordStep_probe_run, Turing.recordStep_save_transport, Turing.scanKeep, Turing.scanMap, Turing.scanTM}
 \difficulty{7}
 Let $k$ be natural, let $Q,T,S$ be types with decidable equality, let $M$ be a $k$-tape
 Boolean Turing machine, let $u:T\times\mathrm{Option}(\mathrm{Bool})\to T$, let $N$ be a
@@ -1212,7 +1104,7 @@ $|w|+1$ of its initial position, and satisfies $t\le 6|w|+5|x|+12$.
 \lean{Turing.recordStep_seek_read}
 \label{Turing.recordStep_seek_read}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.liftSymbols, Turing.Cfg.liftSymbols_inputSymbol, Turing.Cfg.mapState, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_map, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordRun, Turing.RecordStepControl, Turing.RecordStepData, Turing.decodeBool, Turing.decodeBool_apply, Turing.recordRun_trans, Turing.recordStepMachine, Turing.recordStepNext, Turing.recordStepRead, Turing.recordStepSeekBank, Turing.recordStepSnapshot, Turing.recordStepVerdict, Turing.recordStep_native_frame, Turing.recordStep_phase_run, Turing.recordStep_read_run, Turing.recordStep_seek_transport}
+\uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.liftSymbols, Turing.Cfg.liftSymbols_inputSymbol, Turing.Cfg.mapState, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_map, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordStepControl, Turing.RecordStepData, Turing.decodeBool, Turing.decodeBool_apply, Turing.recordStepMachine, Turing.recordStepNext, Turing.recordStepRead, Turing.recordStepSeekBank, Turing.recordStepSnapshot, Turing.recordStepVerdict, Turing.recordStep_native_frame, Turing.recordStep_phase_run, Turing.recordStep_read_run, Turing.recordStep_seek_transport}
 \difficulty{6}
 Let $Q,T,S$ be types with decidable equality, let $M$ be a Boolean multi-tape machine
 with $k$ work tapes, let
@@ -1253,25 +1145,11 @@ other tape contents unchanged. Before that time it never has either done state, 
 throughout the run each tape head moves by at most $|w|+1$ from its initial position.
 \end{theorem}
 
-\begin{theorem}[Monotonicity of the recorded run radius]
-\lean{Turing.recordRun_mono}
-\label{Turing.recordRun_mono}
-\leanok
-\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.RecordRun}
-\difficulty{1}
-Let a run of a $K$-work-tape machine $R$ on input $x$ start at configuration $a$, end at
-configuration $b$ after $t$ steps, and avoid the states $\mathrm{yes}$ and $\mathrm{no}$
-at every time $u<t$. Suppose also that, at every time $u\le t$ and on every tape $j$,
-the distance between the work-head position and a specified base position is at most
-$r$. For any natural number $r'\ge r$, these same run and state-avoidance conditions
-hold, and all those distances are at most $r'$.
-\end{theorem}
-
 \begin{theorem}[Digit restoration during a recorded step]
 \lean{Turing.recordStep_restore_digits}
 \label{Turing.recordStep_restore_digits}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordRun, Turing.RecordStepControl, Turing.RecordStepData, Turing.RecordStepIndex, Turing.binDigits, Turing.counterWord, Turing.counterWord_length, Turing.recordRun_trans, Turing.recordStepDigitBank, Turing.recordStepMachine, Turing.recordStepNext, Turing.recordStepSnapshot, Turing.recordStepVerdict, Turing.recordStep_arithmetic_transport, Turing.recordStep_complement_value, Turing.recordStep_digits_succ, Turing.recordStep_map_snapshot, Turing.recordStep_phase_run, Turing.recordStep_saved_digits, Turing.scanKeep, Turing.scanMap, Turing.scanTM}
+\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordStepControl, Turing.RecordStepData, Turing.RecordStepIndex, Turing.binDigits, Turing.counterWord, Turing.counterWord_length, Turing.recordStepDigitBank, Turing.recordStepMachine, Turing.recordStepNext, Turing.recordStepSnapshot, Turing.recordStepVerdict, Turing.recordStep_arithmetic_transport, Turing.recordStep_complement_value, Turing.recordStep_digits_succ, Turing.recordStep_map_snapshot, Turing.recordStep_phase_run, Turing.recordStep_saved_digits, Turing.scanKeep, Turing.scanMap, Turing.scanTM}
 \difficulty{6}
 Let $k$ be a natural number, let $Q,T,S$ be types with decidable equality, let $M$ be a
 $k$-work-tape Boolean Turing machine with states in $Q$, let
@@ -1312,7 +1190,7 @@ tapes, work-head positions, and output are unchanged from configuration $a$.
 \lean{Turing.recordStep_restore_native}
 \label{Turing.recordStep_restore_native}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_map, Turing.MultiTapeTM, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordRun, Turing.RecordStepControl, Turing.RecordStepData, Turing.RecordStepSeekSpec, Turing.binDigits, Turing.counterWord, Turing.recordRun_mono, Turing.recordRun_trans, Turing.recordStepApply, Turing.recordStepMachine, Turing.recordStepNext, Turing.recordStepSeekBank, Turing.recordStepSnapshot, Turing.recordStepVerdict, Turing.recordStep_clear_heads, Turing.recordStep_clear_snapshot, Turing.recordStep_phase_run, Turing.recordStep_restore_digits, Turing.recordStep_seek_transport, Turing.record_digits_value}
+\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_map, Turing.MultiTapeTM, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordStepControl, Turing.RecordStepData, Turing.RecordStepSeekSpec, Turing.binDigits, Turing.counterWord, Turing.recordStepApply, Turing.recordStepMachine, Turing.recordStepNext, Turing.recordStepSeekBank, Turing.recordStepSnapshot, Turing.recordStepVerdict, Turing.recordStep_clear_heads, Turing.recordStep_clear_snapshot, Turing.recordStep_phase_run, Turing.recordStep_restore_digits, Turing.recordStep_seek_transport, Turing.record_digits_value}
 \difficulty{6}
 Let $k$ be a natural number, let $Q,T,S$ be types with decidable equality, let $M$ be a
 Boolean Turing machine with $k$ work tapes and state set $Q$, let
@@ -1349,7 +1227,7 @@ position stays within distance $(C+1)(W+1)$ of its position in $d$.
 \lean{Turing.recordStep_live_native}
 \label{Turing.recordStep_live_native}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.MultiTapeTM, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordRun, Turing.RecordStepControl, Turing.RecordStepData, Turing.RecordStepSeekSpec, Turing.binDigits, Turing.counterWord, Turing.posWidth, Turing.recordRun_mono, Turing.recordRun_trans, Turing.recordStepApply, Turing.recordStepMachine, Turing.recordStepReadExit, Turing.recordStepSnapshot, Turing.recordStepVerdict, Turing.recordStep_empty_run, Turing.recordStep_input_blank, Turing.recordStep_prepare_native, Turing.recordStep_restore_native, Turing.recordStep_seek_read, Turing.recordStep_width_one, Turing.record_digits_value, Turing.record_pos_lt}
+\uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.MultiTapeTM, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordStepControl, Turing.RecordStepData, Turing.RecordStepSeekSpec, Turing.binDigits, Turing.counterWord, Turing.posWidth, Turing.recordStepApply, Turing.recordStepMachine, Turing.recordStepReadExit, Turing.recordStepSnapshot, Turing.recordStepVerdict, Turing.recordStep_empty_run, Turing.recordStep_input_blank, Turing.recordStep_prepare_native, Turing.recordStep_restore_native, Turing.recordStep_seek_read, Turing.recordStep_width_one, Turing.record_digits_value, Turing.record_pos_lt}
 \difficulty{6}
 Let $M$ be a deterministic machine with $k$ Boolean work tapes, let $\mathrm{upd}$
 update a tag from an optional output bit, and let a two-tape Boolean machine
@@ -1378,7 +1256,7 @@ at most $(C+1)(\mathrm{width}(|x|)+1)$.
 \lean{Turing.recordStep_observed_action}
 \label{Turing.recordStep_observed_action}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.InWindow, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM, Turing.MultiTapeTM.outputSymbol, Turing.MultiTapeTM.step, Turing.recordStepAction, Turing.recordStepOutside, Turing.recordStepReadData, Turing.recordStep_window}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.InWindow, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM, Turing.MultiTapeTM.outputSymbol, Turing.MultiTapeTM.step, Turing.recordStepAction, Turing.recordStepOutside, Turing.recordStepReadData}
 \difficulty{4}
 Let $M$ be a Boolean-input, Boolean-work-tape machine with state set $Q$, let $s$ be a
 natural number, and let $c$ be a configuration on a Boolean input $x$. Suppose every
@@ -1396,7 +1274,7 @@ condition.
 \lean{Turing.recordStep_tape_run}
 \label{Turing.recordStep_tape_run}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.InWindow, Turing.Cfg.mapState, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordRun, Turing.RecordStepControl, Turing.RecordStepData, Turing.ScanPhase, Turing.recordRun_trans, Turing.recordStepAction, Turing.recordStepGetMark, Turing.recordStepMachine, Turing.recordStepRows, Turing.recordStepSetMark, Turing.recordStepVerdict, Turing.recordStepWriteCell, Turing.recordStep_phase_run, Turing.recordStep_tape_word, Turing.scanKeep, Turing.scanMap, Turing.scanResult, Turing.scanResult_map, Turing.scanShift, Turing.scanTM, Turing.scanTM_run_ofCfg}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.InWindow, Turing.Cfg.mapState, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordStepControl, Turing.RecordStepData, Turing.ScanPhase, Turing.recordStepAction, Turing.recordStepGetMark, Turing.recordStepMachine, Turing.recordStepRows, Turing.recordStepSetMark, Turing.recordStepVerdict, Turing.recordStepWriteCell, Turing.recordStep_phase_run, Turing.recordStep_tape_word, Turing.scanKeep, Turing.scanMap, Turing.scanResult, Turing.scanResult_map, Turing.scanShift, Turing.scanTM, Turing.scanTM_run_ofCfg}
 \difficulty{6}
 Let $M$ be a deterministic machine with $k$ Boolean work tapes, let
 $\mathrm{upd}:T\times\mathrm{Option}(\mathrm{Bool})\to T$, and let $S$ be the state set
@@ -1421,7 +1299,7 @@ $2s$ is unchanged.
 \lean{Turing.recordStep_copyback_run}
 \label{Turing.recordStep_copyback_run}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecordRun, Turing.RecordStepControl, Turing.RecordStepData, Turing.copyTM, Turing.copyTM_run_ofCfg, Turing.recordRun_trans, Turing.recordStepMachine, Turing.recordStepSnapshot, Turing.recordStepVerdict, Turing.recordStep_clear_heads, Turing.recordStep_clear_snapshot, Turing.recordStep_phase_run}
+\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecordStepControl, Turing.RecordStepData, Turing.copyTM, Turing.copyTM_run_ofCfg, Turing.recordStepMachine, Turing.recordStepSnapshot, Turing.recordStepVerdict, Turing.recordStep_clear_heads, Turing.recordStep_clear_snapshot, Turing.recordStep_phase_run}
 \difficulty{5}
 Let $M$ be a deterministic machine with $k$ Boolean work tapes and state set $Q$, let
 $T$ be a type of tags, let $S$ be a state type for a two-work-tape seeking machine, and
@@ -1440,7 +1318,7 @@ of its position in $d$.
 \lean{Turing.recordStep_write_back}
 \label{Turing.recordStep_write_back}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecordAt, Turing.RecordRun, Turing.RecordStepControl, Turing.RecordStepData, Turing.fieldOffset, Turing.fieldOffset_add_length_le, Turing.fieldOffset_succ, Turing.fieldsTape_field, Turing.joinFields, Turing.recordRun_trans, Turing.recordStepMachine, Turing.recordStepNext, Turing.recordStepSnapshot, Turing.recordStepVerdict, Turing.recordStep_phase_run, Turing.skipBackTM, Turing.skipBackTM_run_ofCfg}
+\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecordAt, Turing.RecordStepControl, Turing.RecordStepData, Turing.fieldOffset, Turing.fieldOffset_add_length_le, Turing.fieldOffset_succ, Turing.fieldsTape_field, Turing.joinFields, Turing.recordStepMachine, Turing.recordStepNext, Turing.recordStepSnapshot, Turing.recordStepVerdict, Turing.recordStep_phase_run, Turing.skipBackTM, Turing.skipBackTM_run_ofCfg}
 \difficulty{6}
 Let $M$ be a deterministic machine with $k$ Boolean work tapes, let
 $\mathrm{upd}:T\times\mathrm{Option}(\mathrm{Bool})\to T$, and let $\mathrm{seek}$ be a
@@ -1460,7 +1338,7 @@ work-tape heads remain within distance $L+1$ of their initial positions.
 \lean{Turing.recordStep_position_run}
 \label{Turing.recordStep_position_run}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.mapState, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.liftSymbols, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordRun, Turing.RecordStepControl, Turing.RecordStepData, Turing.binDigits, Turing.decFixed, Turing.decrementTM, Turing.embedEmitTM, Turing.incFixed, Turing.incrementTM, Turing.posWidth, Turing.recordRun_trans, Turing.recordStepAction, Turing.recordStepDigitBank, Turing.recordStepMachine, Turing.recordStepSnapshot, Turing.recordStepVerdict, Turing.recordStep_arithmetic_transport, Turing.recordStep_clear_heads, Turing.recordStep_clear_snapshot, Turing.recordStep_copyback_run, Turing.recordStep_phase_run, Turing.recordStep_position_digits}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.mapState, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.liftSymbols, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordStepControl, Turing.RecordStepData, Turing.binDigits, Turing.decFixed, Turing.decrementTM, Turing.embedEmitTM, Turing.incFixed, Turing.incrementTM, Turing.posWidth, Turing.recordStepAction, Turing.recordStepDigitBank, Turing.recordStepMachine, Turing.recordStepSnapshot, Turing.recordStepVerdict, Turing.recordStep_arithmetic_transport, Turing.recordStep_clear_heads, Turing.recordStep_clear_snapshot, Turing.recordStep_copyback_run, Turing.recordStep_phase_run, Turing.recordStep_position_digits}
 \difficulty{6}
 Let $k$ be a natural number, let $Q,T,S$ be types with decidable equality, let $M$ be a
 $k$-work-tape Turing machine over Boolean symbols with states $Q$, let
@@ -1490,7 +1368,7 @@ distance $w+1$ of its initial position.
 \lean{Turing.recordStep_apply_run}
 \label{Turing.recordStep_apply_run}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.InWindow, Turing.Cfg.inputSymbol, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordAt, Turing.RecordRun, Turing.RecordStepControl, Turing.RecordStepData, Turing.binDigits, Turing.cfgRecord, Turing.cfgRecord_length, Turing.fieldOffset, Turing.fieldOffset_add_length_le, Turing.fieldOffset_succ, Turing.fieldsTape, Turing.fieldsTape_field, Turing.joinFields, Turing.length_joinFields_add_one, Turing.posWidth, Turing.recordRun_trans, Turing.recordRun_zero, Turing.recordStepAction, Turing.recordStepFirstTape, Turing.recordStepMachine, Turing.recordStepNext, Turing.recordStepSnapshot, Turing.recordStepVerdict, Turing.recordStep_phase_run, Turing.recordStep_position_run, Turing.recordStep_tape_run, Turing.recordStep_write_back, Turing.scanKeep, Turing.scanMap, Turing.scanResult_map, Turing.scanTM, Turing.scanTM_run_ofCfg, Turing.skipTM, Turing.skipTM_run_ofCfg}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.InWindow, Turing.Cfg.inputSymbol, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordAt, Turing.RecordStepControl, Turing.RecordStepData, Turing.binDigits, Turing.cfgRecord, Turing.cfgRecord_length, Turing.fieldOffset, Turing.fieldOffset_add_length_le, Turing.fieldOffset_succ, Turing.fieldsTape, Turing.fieldsTape_field, Turing.joinFields, Turing.length_joinFields_add_one, Turing.posWidth, Turing.recordStepAction, Turing.recordStepFirstTape, Turing.recordStepMachine, Turing.recordStepNext, Turing.recordStepSnapshot, Turing.recordStepVerdict, Turing.recordStep_phase_run, Turing.recordStep_position_run, Turing.recordStep_tape_run, Turing.recordStep_write_back, Turing.scanKeep, Turing.scanMap, Turing.scanResult_map, Turing.scanTM, Turing.scanTM_run_ofCfg, Turing.skipTM, Turing.skipTM_run_ofCfg}
 \difficulty{7}
 Let $M$ be a Boolean-input multi-tape machine with state set $Q$, let $T$ be a type of
 tags, let $upd:T\times\{\text{absent},\text{false},\text{true}\}\to T$, and let $seek$
@@ -1514,7 +1392,7 @@ $t$.
 \lean{Turing.exists_recordStepTM}
 \label{Turing.exists_recordStepTM}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.InWindow, Turing.Cfg.inputSymbol, Turing.MultiTapeTM, Turing.MultiTapeTM.outputSymbol, Turing.MultiTapeTM.outputSymbol_of_halt, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_of_halt, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordAt, Turing.RecordRun, Turing.RecordStepControl, Turing.binDigits, Turing.cfgRecord, Turing.cfgRecord_length, Turing.exists_inputSeekTM, Turing.fieldOffset_add_length_le, Turing.fieldsTape, Turing.joinFields, Turing.posWidth, Turing.recordRun_mono, Turing.recordRun_trans, Turing.recordStepAction, Turing.recordStepApply, Turing.recordStepEntry, Turing.recordStepMachine, Turing.recordStepOutside, Turing.recordStepReadData, Turing.recordStepReadExit, Turing.recordStepSnapshot, Turing.recordStepSnapshot_empty, Turing.recordStepVerdict, Turing.recordStep_apply_run, Turing.recordStep_halt_run, Turing.recordStep_live_native, Turing.recordStep_observed_action, Turing.recordStep_read_all, Turing.recordStep_reject_run}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.InWindow, Turing.Cfg.inputSymbol, Turing.MultiTapeTM, Turing.MultiTapeTM.outputSymbol, Turing.MultiTapeTM.outputSymbol_of_halt, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_of_halt, Turing.RecSym, Turing.RecSym.digitEmb, Turing.RecordAt, Turing.RecordStepControl, Turing.binDigits, Turing.cfgRecord, Turing.cfgRecord_length, Turing.exists_inputSeekTM, Turing.fieldOffset_add_length_le, Turing.fieldsTape, Turing.joinFields, Turing.posWidth, Turing.recordStepAction, Turing.recordStepApply, Turing.recordStepEntry, Turing.recordStepMachine, Turing.recordStepOutside, Turing.recordStepReadData, Turing.recordStepReadExit, Turing.recordStepSnapshot, Turing.recordStepSnapshot_empty, Turing.recordStepVerdict, Turing.recordStep_apply_run, Turing.recordStep_halt_run, Turing.recordStep_live_native, Turing.recordStep_observed_action, Turing.recordStep_read_all, Turing.recordStep_reject_run}
 \difficulty{6}
 Let $k$ be a natural number, let $Q,T$ be finite decidable types, let $M$ be a
 deterministic $k$-work-tape machine over the binary alphabet with state type $Q$, and
@@ -1601,7 +1479,7 @@ verdict indices have no successor in any phase.
 \lean{Turing.exists_recordEqTM}
 \label{Turing.exists_recordEqTM}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecordAt, Turing.RecordEqIndex, Turing.RecordRun, Turing.compareTM_run_ofCfg, Turing.fieldOffset, Turing.fieldOffset_add_length_le, Turing.fieldOffset_succ, Turing.fieldsTape_field, Turing.joinFields, Turing.phaseHostTM, Turing.phaseHostTM_run, Turing.recordEqBack, Turing.recordEqNext, Turing.recordEqPhase, Turing.recordEqRows, Turing.recordRun_tagged, Turing.recordRun_trans, Turing.recordRun_zero, Turing.skipBackTM, Turing.skipBackTM_run_ofCfg, Turing.skipTM, Turing.skipTM_run_ofCfg}
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecordAt, Turing.RecordEqIndex, Turing.compareTM_run_ofCfg, Turing.fieldOffset, Turing.fieldOffset_add_length_le, Turing.fieldOffset_succ, Turing.fieldsTape_field, Turing.joinFields, Turing.phaseHostTM, Turing.phaseHostTM_run, Turing.recordEqBack, Turing.recordEqNext, Turing.recordEqPhase, Turing.recordEqRows, Turing.skipBackTM, Turing.skipBackTM_run_ofCfg, Turing.skipTM, Turing.skipTM_run_ofCfg}
 \difficulty{7}
 For every natural number $k$ and finite decidable state types $Q$ and $T$, there are a
 finite decidable state type $P$, a deterministic two-work-tape machine $R$ over the
@@ -1695,7 +1573,7 @@ successor, and verdict indices have no successor in any phase.
 \lean{Turing.exists_recordTestTM}
 \label{Turing.exists_recordTestTM}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecordAt, Turing.RecordRun, Turing.RecordTestIndex, Turing.cfgRecord, Turing.cfgRecord_length, Turing.fieldOffset, Turing.fieldOffset_add_length_le, Turing.fieldOffset_succ, Turing.fieldsTape_field, Turing.joinFields, Turing.phaseHostTM, Turing.phaseHostTM_run, Turing.recordReadState, Turing.recordReadTag, Turing.recordRun_tagged, Turing.recordRun_trans, Turing.recordRun_zero, Turing.recordTestNext, Turing.recordTestPhase, Turing.recordTestRows, Turing.scanFold, Turing.scanKeep, Turing.scanResult_fold, Turing.scanTM, Turing.scanTM_run_ofCfg, Turing.skipBackTM, Turing.skipBackTM_run_ofCfg, Turing.skipTM, Turing.skipTM_run_ofCfg}
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RecSym, Turing.RecordAt, Turing.RecordTestIndex, Turing.cfgRecord, Turing.cfgRecord_length, Turing.fieldOffset, Turing.fieldOffset_add_length_le, Turing.fieldOffset_succ, Turing.fieldsTape_field, Turing.joinFields, Turing.phaseHostTM, Turing.phaseHostTM_run, Turing.recordReadState, Turing.recordReadTag, Turing.recordTestNext, Turing.recordTestPhase, Turing.recordTestRows, Turing.scanFold, Turing.scanKeep, Turing.scanResult_fold, Turing.scanTM, Turing.scanTM_run_ofCfg, Turing.skipBackTM, Turing.skipBackTM_run_ofCfg, Turing.skipTM, Turing.skipTM_run_ofCfg}
 \difficulty{7}
 For finite decidable types $Q,T$ and any predicate $P$ on an optional state in $Q$ and a
 tag in $T$, there are a finite decidable state type $P'$, a deterministic one-work-tape

@@ -15,15 +15,6 @@ For a natural number $n$, define the budget to be $2^{(\lfloor\log_2 n\rfloor)^2
 where $\lfloor\log_2 n\rfloor$ is the natural logarithm to base $2$.
 \end{definition}
 
-\begin{theorem}[Binary expansion length]
-\lean{Randomized.length_bits_eq}
-\label{Randomized.length_bits_eq}
-\leanok
-\difficulty{4}
-For every natural number $n$, the length of its binary expansion is $0$ if $n=0$, and
-otherwise is $\lfloor\log_2 n\rfloor+1$.
-\end{theorem}
-
 \begin{theorem}[Quasipolynomial budget bound]
 \lean{Randomized.le_quasiPolyBudget}
 \label{Randomized.le_quasiPolyBudget}
@@ -181,7 +172,7 @@ concatenation of the all-true list obtained after dropping the first two bits, a
 \lean{Randomized.budgetSeed_eq}
 \label{Randomized.budgetSeed_eq}
 \leanok
-\uses{Randomized.allTrue_eq, Randomized.budgetSeed, Randomized.length_bits_eq}
+\uses{Randomized.allTrue_eq, Randomized.budgetSeed}
 \difficulty{3}
 For every Boolean word $x$, the word formed by concatenating a block of true bits of
 length equal to the number of binary digits of $|x|$ after the first two, then a false

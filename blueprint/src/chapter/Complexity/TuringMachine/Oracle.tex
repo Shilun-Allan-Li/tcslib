@@ -135,19 +135,6 @@ $M$, then one step from $c$ relative to $O_1$ equals one step from $c$ relative 
 $O_2$.
 \end{theorem}
 
-\begin{lemma}[Work tape cells away from the head]
-\lean{Turing.OracleTM.apply_workTapes_eq_of_ne}
-\label{Turing.OracleTM.apply_workTapes_eq_of_ne}
-\leanok
-\uses{Turing.Action, Turing.Action.apply, Turing.Cfg}
-\difficulty{3}
-Let $k'$ be a natural number, let $\mathrm{Symbol}$ and $\mathrm{State}$ be types, and
-fix an input word. For an action $a$ on $k'$ work tapes and a configuration $c$ for that
-input, the content at position $z \in \mathbb{Z}$ on tape $i$ is unchanged by applying
-$a$ to $c$ whenever $i$ is a tape index and $z$ differs from the position of the $i$-th
-work-tape head in $c$.
-\end{lemma}
-
 \begin{lemma}[Bound on work-head movement]
 \lean{Turing.OracleTM.workTapePos_step_le}
 \label{Turing.OracleTM.workTapePos_step_le}
@@ -164,7 +151,7 @@ value after one step of $M$ relative to $O$: $\left|p_i'-p_i\right|\le 1$.
 \lean{Turing.OracleTM.workTapes_step_eq_of_ne}
 \label{Turing.OracleTM.workTapes_step_eq_of_ne}
 \leanok
-\uses{Turing.Cfg, Turing.OracleTM, Turing.OracleTM.apply_workTapes_eq_of_ne, Turing.OracleTM.step}
+\uses{Turing.Cfg, Turing.OracleTM, Turing.OracleTM.step}
 \difficulty{3}
 Let $M$ be an oracle Turing machine with $k$ ordinary work tapes, let $O$ be an oracle
 language, and let $c$ be a configuration with $k+1$ work tapes. For any tape index $i$

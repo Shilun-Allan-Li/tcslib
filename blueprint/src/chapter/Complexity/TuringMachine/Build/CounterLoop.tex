@@ -527,40 +527,11 @@ integer interval from $cp-1$ to $cp+width$, inclusive, and the first $k$ work-ta
 positions satisfy $R$.
 \end{definition}
 
-\begin{lemma}[Concatenating counter spans]
-\lean{Turing.counter_span_append}
-\label{Turing.counter_span_append}
-\leanok
-\uses{Turing.Cfg, Turing.CounterLoopState, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.counterSpan}
-\difficulty{5}
-Let $k$ be a natural number, let $\Gamma$ and $S$ be types, let $x$ be a finite input
-word over $\Gamma$, and let $H$ be a machine with $k+1$ work tapes and states of the
-counter-loop form over $S$. For an initial configuration $z$, natural times $s,t$, an
-integer counter position $cp$, a natural width, and predicates $R_1,R_2,R$ on the
-positions of the first $k$ work heads, suppose the run from $z$ spans time $s$ with
-invariant $R_1$, and the run from its time-$s$ configuration spans time $t$ with
-invariant $R_2$. If each of $R_1$ and $R_2$ implies $R$, then the run from $z$ spans
-time $s+t$ with invariant $R$: it avoids both exit anchors before that time, keeps the
-final work-head position in the interval from $cp-1$ to $cp+\mathrm{width}$ at every
-time up to it, and satisfies $R$ for the first $k$ head positions throughout.
-\end{lemma}
-
-\begin{definition}[Counter tape patch]
-\lean{Turing.counterPatch}
-\label{Turing.counterPatch}
-\leanok
-\uses{Turing.FinTM.bufferTape}
-Given a tape $c\colon\mathbb{Z}\to\mathrm{Option}(\Gamma)$, a starting position
-$p\in\mathbb{Z}$, and a finite word $w$ over $\Gamma$, define a new tape by placing the
-buffer encoding of $w$ at positions $p$ through $p+|w|-1$, with each position indexed
-relative to $p$, and leaving all other tape cells unchanged.
-\end{definition}
-
 \begin{lemma}[Idempotence of counter patching]
 \lean{Turing.counter_patch_twice}
 \label{Turing.counter_patch_twice}
 \leanok
-\uses{Turing.counterPatch}
+
 \difficulty{3}
 Let $ct$ be an integer-indexed tape of optional symbols, let $cp$ be an integer, and let
 $u$ and $v$ be words over an alphabet. If $u$ and $v$ have equal lengths, then patching
@@ -572,7 +543,7 @@ the same tape as patching $ct$ directly with $v$ at $cp$.
 \lean{Turing.counter_patch_frame}
 \label{Turing.counter_patch_frame}
 \leanok
-\uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_left, Turing.FinTM.bufferTape_nat, Turing.counterPatch}
+\uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_left, Turing.FinTM.bufferTape_nat}
 \difficulty{4}
 Let $w$ and $v$ be words over an alphabet, let $ct$ be an integer-indexed tape of
 optional symbols, and let $cp$ be an integer. Suppose $v$ and $w$ have equal lengths,
@@ -586,7 +557,7 @@ at position $cp+p$.
 \lean{Turing.counter_debit}
 \label{Turing.counter_debit}
 \leanok
-\uses{Turing.Action.mapWorkSymbols, Turing.Cfg, Turing.Cfg.decodeSymbols, Turing.Cfg.liftOver, Turing.Cfg.liftOver_decodeSymbols, Turing.Cfg.liftSymbols, Turing.Cfg.mapState, Turing.CounterLoopState, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_map, Turing.FinTM.bufferTape_map_decode, Turing.FlagPhase, Turing.MultiTapeTM, Turing.MultiTapeTM.liftSymbols, Turing.MultiTapeTM.liftSymbols_runFrom_over, Turing.MultiTapeTM.mapWorkSymbols, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_mapState_of_agreeOn, Turing.MultiTapeTM.runFrom_zero, Turing.counterLoopCfg, Turing.counterLoopDecExit, Turing.counterLoopTMVia, Turing.counterPatch, Turing.counterSpan, Turing.counter_dec_injective, Turing.counter_dec_spec, Turing.counter_layout, Turing.decFixed, Turing.decodeBool, Turing.decodeBool_eq_some, Turing.decrementTM, Turing.decrementTM_run_succ_ofCfg, Turing.decrementTM_run_underflow_ofCfg, Turing.embedEmitCfg, Turing.embedEmitCfg_selected_pos, Turing.embedEmitCfg_selected_tape, Turing.embedEmitTM, Turing.embedEmitTM_frame, Turing.embedEmitTM_runFrom, Turing.incrementTM, Turing.lastEmb}
+\uses{Turing.Action.mapWorkSymbols, Turing.Cfg, Turing.Cfg.decodeSymbols, Turing.Cfg.liftOver, Turing.Cfg.liftOver_decodeSymbols, Turing.Cfg.liftSymbols, Turing.Cfg.mapState, Turing.CounterLoopState, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_map, Turing.FinTM.bufferTape_map_decode, Turing.FlagPhase, Turing.MultiTapeTM, Turing.MultiTapeTM.liftSymbols, Turing.MultiTapeTM.liftSymbols_runFrom_over, Turing.MultiTapeTM.mapWorkSymbols, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_mapState_of_agreeOn, Turing.MultiTapeTM.runFrom_zero, Turing.counterLoopCfg, Turing.counterLoopDecExit, Turing.counterLoopTMVia, Turing.counterSpan, Turing.counter_dec_injective, Turing.counter_dec_spec, Turing.counter_layout, Turing.decFixed, Turing.decodeBool, Turing.decodeBool_eq_some, Turing.decrementTM, Turing.decrementTM_run_succ_ofCfg, Turing.decrementTM_run_underflow_ofCfg, Turing.embedEmitCfg, Turing.embedEmitCfg_selected_pos, Turing.embedEmitCfg_selected_tape, Turing.embedEmitTM, Turing.embedEmitTM_frame, Turing.embedEmitTM_runFrom, Turing.incrementTM, Turing.lastEmb}
 \difficulty{7}
 Let $k$ be a natural number, let $S$ and $\Gamma$ be types with decidable equality, let
 $e$ be an embedding of the Boolean alphabet into $\Gamma$, and let $M$ be a
@@ -651,7 +622,7 @@ actions at every state, input symbol, and tuple of work-tape symbols.
 \lean{Turing.counter_rounds}
 \label{Turing.counter_rounds}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_zero, Turing.counterLoopCfg, Turing.counterLoopOrbit, Turing.counterLoopRedirect, Turing.counterLoopTMVia, Turing.counterOverhead, Turing.counterPatch, Turing.counterSpan, Turing.counterWord, Turing.counterWord_length, Turing.counter_body, Turing.counter_debit, Turing.counter_layout, Turing.counter_patch_frame, Turing.counter_patch_twice, Turing.counter_span_append, Turing.counter_word_decrement, Turing.decFixed, Turing.roundOrbit}
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_zero, Turing.counterLoopCfg, Turing.counterLoopOrbit, Turing.counterLoopRedirect, Turing.counterLoopTMVia, Turing.counterOverhead, Turing.counterSpan, Turing.counterWord, Turing.counterWord_length, Turing.counter_body, Turing.counter_debit, Turing.counter_layout, Turing.counter_patch_frame, Turing.counter_patch_twice, Turing.counter_word_decrement, Turing.decFixed, Turing.roundOrbit}
 \difficulty{7}
 Let $k$ be a natural number, let $\Gamma$ and $S$ be types with decidable equality, let
 $x$ be a finite input word over $\Gamma$, let
@@ -682,7 +653,7 @@ at some time within one of the first $n$ rounds, or at time zero of round $n$.
 \lean{Turing.counterLoopTMVia_run_done}
 \label{Turing.counterLoopTMVia_run_done}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.counterLoopCfg, Turing.counterLoopOrbit, Turing.counterLoopRedirect, Turing.counterLoopTMVia, Turing.counterOverhead, Turing.counterPatch, Turing.counterWord, Turing.counterWord_length, Turing.counter_debit, Turing.counter_dec_zero, Turing.counter_patch_frame, Turing.counter_patch_twice, Turing.counter_rounds, Turing.counter_span_append, Turing.counter_word_exhausted, Turing.decFixed}
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.counterLoopCfg, Turing.counterLoopOrbit, Turing.counterLoopRedirect, Turing.counterLoopTMVia, Turing.counterOverhead, Turing.counterWord, Turing.counterWord_length, Turing.counter_debit, Turing.counter_dec_zero, Turing.counter_patch_frame, Turing.counter_patch_twice, Turing.counter_rounds, Turing.counter_word_exhausted, Turing.decFixed}
 \difficulty{6}
 Let $M$ be a deterministic machine with $k$ Boolean work tapes and state $a$, and let
 $exit$ be an optional state. Let $w$ be a Boolean word with binary value $d$, and
@@ -705,7 +676,7 @@ $u\le\tau(c_r)$ or $r=d$ and $u=0$.
 \lean{Turing.counterLoopTMVia_run_escape}
 \label{Turing.counterLoopTMVia_run_escape}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.counterLoopCfg, Turing.counterLoopOrbit, Turing.counterLoopRedirect, Turing.counterLoopTMVia, Turing.counterOverhead, Turing.counterPatch, Turing.counterWord, Turing.counterWord_length, Turing.counter_rounds}
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.counterLoopCfg, Turing.counterLoopOrbit, Turing.counterLoopRedirect, Turing.counterLoopTMVia, Turing.counterOverhead, Turing.counterWord, Turing.counterWord_length, Turing.counter_rounds}
 \difficulty{3}
 Let $M$ be a deterministic machine with $k$ Boolean work tapes and distinct states $a$
 and $e$. Let $w$ be a Boolean word, and suppose the extra tape initially agrees with the

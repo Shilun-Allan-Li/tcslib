@@ -235,58 +235,6 @@ For every binary string $x$, the syntax scanner started in its exact-end state a
 $x$ if and only if $x$ is empty.
 \end{lemma}
 
-\begin{lemma}[Unary scanner partition]
-\lean{Complexity.taut_takeTrues_shape}
-\label{Complexity.taut_takeTrues_shape}
-\leanok
-\uses{Std.Sat.CNF.takeTrues}
-\difficulty{3}
-For every binary string $x$, if the leading-ones scanner returns the count $k$ and the
-suffix $s$ on $x$, then $x = 1^{k} \mathbin{+\!\!+} s$.
-\end{lemma}
-
-\begin{lemma}[Literal parsing reconstructs its input]
-\lean{Complexity.taut_parseLit_shape}
-\label{Complexity.taut_parseLit_shape}
-\leanok
-\uses{Complexity.taut_takeTrues_shape, Std.Sat.CNF.parseLit, Std.Sat.CNF.serializeLit}
-\difficulty{3}
-If the literal parser succeeds on a binary string $x$, returning a literal $\ell$ and
-a remainder $r$, then $x$ is exactly the serialization of $\ell$ followed by $r$.
-\end{lemma}
-
-\begin{lemma}[Clause parsing reconstructs its input]
-\lean{Complexity.taut_parseClause_shape}
-\label{Complexity.taut_parseClause_shape}
-\leanok
-\uses{Complexity.taut_parseLit_shape, Std.Sat.CNF.parseClause, Std.Sat.CNF.parseLit, Std.Sat.CNF.serializeClause}
-\difficulty{5}
-For every fuel value, if the fuel-indexed clause parser succeeds on a binary string
-$x$, returning a clause $C$ and a remainder $r$, then $x$ is exactly the serialization
-of $C$ (including its closing $0$) followed by $r$.
-\end{lemma}
-
-\begin{lemma}[Formula parsing reconstructs its input]
-\lean{Complexity.taut_parseClauses_shape}
-\label{Complexity.taut_parseClauses_shape}
-\leanok
-\uses{Complexity.taut_parseClause_shape, Std.Sat.CNF.parseClause, Std.Sat.CNF.parseClauses, Std.Sat.CNF.serialize}
-\difficulty{5}
-For every fuel value, if the fuel-indexed formula parser succeeds on a binary string
-$x$, returning a formula $\varphi$ and a remainder $r$, then $x$ is exactly the
-serialization of $\varphi$ followed by $r$.
-\end{lemma}
-
-\begin{lemma}[Exact parsing is inverse serialization]
-\lean{Complexity.taut_parse_shape}
-\label{Complexity.taut_parse_shape}
-\leanok
-\uses{Complexity.taut_parseClauses_shape, Std.Sat.CNF.parse, Std.Sat.CNF.serialize}
-\difficulty{3}
-If the exact-consumption formula parser succeeds on a binary string $x$, returning
-the formula $\varphi$, then $x$ equals the serialization of $\varphi$.
-\end{lemma}
-
 \begin{lemma}[Syntax scan from the unary state]
 \lean{Complexity.taut_syntax_unary}
 \label{Complexity.taut_syntax_unary}
