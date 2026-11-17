@@ -19,7 +19,7 @@ assembled from it rather than built by hand.
 
 - `FormulaArith.Combinators`: the balanced binary gate `BoolCircuit.TreeCircuit.balanced` (fan-in
   two, `⌈log₂ |cs|⌉ + 1` extra depth), with its value, fan-in, depth and size lemmas; De Morgan
-  negation `neg`, substitution `subst`, `rename`, `const`, and the gadgets `and2`, `or2`, `xor2`,
+  negation `neg`, substitution `subst`, `const`, and the gadgets `and2`, `or2`, `xor2`,
   `xor3`, `maj3`.
 - `FormulaArith.CarrySave`: formula numbers (`val`) and the carry-save (3:2) reduction to two.
 - `FormulaArith.Compare`: the carry-out `carryOut` and the comparison with a constant `geConst`.

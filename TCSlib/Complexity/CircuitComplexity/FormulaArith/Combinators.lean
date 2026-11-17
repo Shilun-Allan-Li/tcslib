@@ -21,8 +21,9 @@ unchanged; `BoolCircuit.TreeCircuit.toBinary` now calls it from there.
 * `BoolCircuit.TreeCircuit.balanced` — the balanced binary tree of `b`-gates over a child list.
 * `BoolCircuit.TreeCircuit.neg` — the De Morgan negation (literals flip sign, gates flip
   kind), depth- and fan-in-preserving.
-* `BoolCircuit.TreeCircuit.subst`, `rename` — substitution of formulas for variables (a
-  negative literal becomes the negated formula), and its literal case.
+* `BoolCircuit.TreeCircuit.subst` — substitution of formulas for variables (a negative
+  literal becomes the negated formula).  Its literal case, renaming the variables, is the
+  existing `BoolCircuit.TreeCircuit.reidx` (`BooleanAnalysis/LMN/CircuitReindex.lean`).
 * `BoolCircuit.TreeCircuit.const` — the constant formula `node b []`.
 * `BoolCircuit.TreeCircuit.and2`, `or2`, `xor2`, `xor3`, `maj3` — the fan-in-2 gadgets, of
   depth `+1`, `+1`, `+2`, `+4`, `+3` over their arguments.
@@ -34,8 +35,8 @@ unchanged; `BoolCircuit.TreeCircuit.toBinary` now calls it from there.
   fan-in two, `⌈log₂ |cs|⌉ + 1` extra depth, `|cs| + 1` extra size.
 * `BoolCircuit.TreeCircuit.balanced_nil`, `balanced_singleton` — the readers on short lists.
 * `BoolCircuit.TreeCircuit.neg_eval`, `depth_neg`, `maxFanin_neg` — negation (F1; targets).
-* `BoolCircuit.TreeCircuit.subst_eval`, `depth_subst_le`, `maxFanin_subst_le`, `rename_eval`,
-  `depth_rename` — substitution and renaming (F2; targets).
+* `BoolCircuit.TreeCircuit.subst_eval`, `depth_subst_le`, `maxFanin_subst_le` — substitution
+  (F2; targets).
 * `BoolCircuit.TreeCircuit.const_eval`, `xor3_eval`, `maj3_eval`, and the value, depth and
   fan-in lemmas of every gadget (F3; targets).
 
@@ -362,17 +363,6 @@ theorem TreeCircuit.subst_node {m : ℕ} (b : Bool) (cs : List (TreeCircuit n))
     (TreeCircuit.node b cs).subst f = TreeCircuit.node b (cs.map fun c => c.subst f) :=
   congrArg (TreeCircuit.node b) (substList_eq_map f cs)
 
-/-- Renaming the variables of a formula along `e : Fin n → Fin m`, the literal case of
-substitution: `c.rename e = c.subst fun i => lit ⟨e i, true⟩`, so `x_i` becomes `x_{e i}` and
-`¬x_i` becomes `¬x_{e i}`.  Glue. -/
-def TreeCircuit.rename {m : ℕ} (c : TreeCircuit n) (e : Fin n → Fin m) : TreeCircuit m :=
-  c.subst fun i => TreeCircuit.lit ⟨e i, true⟩
-
-/-- Renaming is substitution of positive literals:
-`c.rename e = c.subst fun i => TreeCircuit.lit ⟨e i, true⟩`. -/
-theorem TreeCircuit.rename_eq {m : ℕ} (c : TreeCircuit n) (e : Fin n → Fin m) :
-    c.rename e = c.subst fun i => TreeCircuit.lit ⟨e i, true⟩ := rfl
-
 /-- **F2, value.** Substitution computes the formula on the substituted values:
 `(c.subst f).eval x = c.eval fun i => (f i).eval x`.  Glue (r3 §H5.7, F2).
 
@@ -413,26 +403,6 @@ arity (`subst_node`, `List.length_map`), and `maxFanin_node`, `maxFaninL_cons` a
 induction hypothesis bound the children. -/
 theorem TreeCircuit.maxFanin_subst_le {m : ℕ} (c : TreeCircuit n) (f : Fin n → TreeCircuit m) :
     (c.subst f).maxFanin ≤ max c.maxFanin (Finset.univ.sup fun i => (f i).maxFanin) := by
-  sorry
-
-/-- **F2, renaming: value.** A renamed formula reads the renamed variables:
-`(c.rename e).eval x = c.eval (x ∘ e)`.  Glue (r3 §H5.7, F2).
-
-**Proof sketch.** `rename_eq` and `subst_eval`: the substituted value of variable `i` is
-`(lit ⟨e i, true⟩).eval x = x (e i)` (`eval_lit` and the literal's value), which is
-`(x ∘ e) i`. -/
-theorem TreeCircuit.rename_eval {m : ℕ} (c : TreeCircuit n) (e : Fin n → Fin m)
-    (x : Fin m → Bool) : (c.rename e).eval x = c.eval (x ∘ e) := by
-  sorry
-
-/-- **F2, renaming: depth.** Renaming preserves the depth: `(c.rename e).depth = c.depth`.
-Glue (r3 §H5.7, F2).
-
-**Proof sketch.** Induction on `c` (`TreeCircuit.ind`) after `rename_eq`: a literal becomes a
-literal (`subst_lit`, `neg_lit`; depth `0`), and a gate keeps its children's depths
-(`subst_node`, `depth_node`, `maxDepth_cons`).  (`depth_subst_le` alone gives only `≤`.) -/
-theorem TreeCircuit.depth_rename {m : ℕ} (c : TreeCircuit n) (e : Fin n → Fin m) :
-    (c.rename e).depth = c.depth := by
   sorry
 
 /-! ### Constants and the fan-in-2 gadgets (F3) -/
