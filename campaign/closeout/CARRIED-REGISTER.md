@@ -37,6 +37,7 @@ place, why, and the first step if it is taken up later. Figures come from
 | **R2c** | Seyoon (earlier) | Measured and carried |
 | **CK-1**, the codec deciders' check readers | Seyoon, 2026-11-17 | Gate 153's seal: touching `acceptLang_mem`/`initLang_mem` exposes older reads of Codec/Machine's `CA` table and `CMode` instance; a repair needs two new `CA_vDone_*` table lemmas. The two `_def` lemmas were dropped with it |
 | **IR-1's ExhaustiveReplay copy** (`xr_inRewindTM`) | Seyoon, 2026-11-17 | The public `inputRewindTM_run` needs the input head at position 1 or more, but the replay rewinds from position 0 too. Covering it needs a new zero-start lemma in Build/InputRewind, which grows the net count. The ER machine already runs on the generic `FinTM.timed_rewind`. UniversalK's copy is retired (stage 2, Fill A) |
+| **RN-1's `universalCapture_embed`** (UniversalStartup, new in #350) | Gate 154 G154-02 (2026-11-17) | Citing `Cfg.mapState_eq_of_fields` needs a CfgFacts import into chapter 1's UniversalStartup (not approved); about −2 lines |
 | **G147-01**, two stale historical notes in Nondeterminism | Seyoon, 2026-11-17 | Gate 153's seal: editing the docstrings of `ntime_expPow_subset_NEXP` and `EXP_eq_NEXP_of_P_eq_NP` exposes their direct `NTIME`/`NEXP` reads, and `NEXP` has no published reader. The notes still name two deleted lemmas; the W5/W6 docs pass may revisit them |
 
 ## Done in the closeout (for contrast)

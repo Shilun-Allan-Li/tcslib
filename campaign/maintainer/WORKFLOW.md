@@ -230,6 +230,14 @@ Repository standards bind first: `policy.md`, `workflow.md`, `campaign/standards
   - Mathlib's cache hosts need custom network access;
   - the GitHub proxy rejects GraphQL, so use `gh api repos/…` (REST) instead of `gh pr …`.
 
+**Every flag of the Lean-backed sweep is dispositioned** (gate 154 G154-01, 2026-11-17). Its
+`foreign_definitions` list includes Core and Mathlib constants. Each one is located in the changed
+proofs' tactic lists and classified: a definition passed to `simp`/`rw`/`unfold` is an explicit
+read and must be replaced by its published equations, whatever library it comes from. Simprocs
+(`reduceIte`, `Int.reduceNeg`, …) and constants inside proof-term arguments (`if_pos rfl`,
+`Bool.noConfusion (…)`, `List.take_append_drop (Nat.find h) w`) are not reads. "Outside TCSlib" is
+not a disposition.
+
 **Bundles carry citation homes** (gate 147 G147-02, 2026-11-16). A gate bundle includes the source
 file of every public lemma that a changed proof newly cites, pinned at the audited head, alongside
 the changed owners.

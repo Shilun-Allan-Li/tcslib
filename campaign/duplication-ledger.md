@@ -1394,6 +1394,18 @@ eleven `Cfg.ext` blocks (`nf_sweep_run`, `nf_entry` and nine leaf-run endpoints)
 configuration-record equations, not renamings, so they are not members. Census: `NDNormalForm`
 1 of 104 declarations at `e8994dc1`, none at `10c01517`.
 
+**RN-1 at closeout stage 2** (gate 154, minor G154-02; 2026-11-17). Fill C (#350) converted
+CodeSimulator's remaining blocks to `Cfg.mapState_eq_of_fields` (or
+`Cfg.mapState_const_eq_mapState_sigma`): `canonStageInnerSpec`, `canonStageOuterSpec`,
+`canonStageFrontSpec`, `canonStageLeg_of`, `canonReturnAdapter`, `exists_canonRecordRound` and
+`exists_canonGrammarStage`. `us_start` stays (RS-1, carried). **New member, carried:**
+`UniversalStartup`'s private `universalCapture_embed` (MIG-7's capture bridge, new in #350). It
+proves a renamed configuration equal to the capture configuration with `Cfg.ext` and the five
+`Cfg.mapState_*` rewrites before its embedding-to-capture field calculations. Citing
+`Cfg.mapState_eq_of_fields` (about −2 lines) needs `UniversalStartup` (chapter 1) to import
+`TuringMachine/CfgFacts`, which is not approved; it is re-pointed when that import is. Census:
+`UniversalStartup` 1 member; `CodeSimulator` 1 (`us_start`).
+
 **NF's landing, gate 95's major 1: repaired, no new family** (#191; ruled by the user,
 2026-11-05: **repair**). At the landed head `NDNormalForm` imports `TuringMachine/BufferWords`,
 but three inline steps still re-proved its identities, outside every acknowledged family (ED-IN
