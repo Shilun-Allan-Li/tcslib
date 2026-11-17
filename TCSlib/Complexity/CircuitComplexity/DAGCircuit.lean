@@ -395,6 +395,12 @@ acyclicity condition `DAGCircuit.args_lt` for a bare gate list. -/
 def GatesAcyclic (n : ℕ) (gs : List DAGGate) : Prop :=
   ∀ (i : ℕ) (h : i < gs.length), ∀ a ∈ (gs[i]).args, a < n + i
 
+/-- Reader of `GatesAcyclic`:
+`GatesAcyclic n gs ↔ ∀ (i : ℕ) (h : i < gs.length), ∀ a ∈ (gs[i]).args, a < n + i`.  Glue. -/
+theorem gatesAcyclic_iff {n : ℕ} {gs : List DAGGate} :
+    GatesAcyclic n gs ↔ ∀ (i : ℕ) (h : i < gs.length), ∀ a ∈ (gs[i]).args, a < n + i :=
+  Iff.rfl
+
 /-- The empty gate list is acyclic. -/
 theorem GatesAcyclic.nil {n : ℕ} : GatesAcyclic n [] := fun i h => absurd h (by simp)
 
@@ -507,6 +513,12 @@ theorem size_eq : C.size = n + C.gates.length := rfl
 /-- `¬` gates have exactly one input, and no gate reads a vertex twice. -/
 def IsWellFormed : Prop :=
   ∀ g ∈ C.gates, g.args.Nodup ∧ (g.kind = .not → g.args.length = 1)
+
+/-- Reader of `IsWellFormed`:
+`C.IsWellFormed ↔ ∀ g ∈ C.gates, g.args.Nodup ∧ (g.kind = .not → g.args.length = 1)`.  Glue. -/
+theorem isWellFormed_iff :
+    C.IsWellFormed ↔ ∀ g ∈ C.gates, g.args.Nodup ∧ (g.kind = .not → g.args.length = 1) :=
+  Iff.rfl
 
 /-- Well formed, with every gate reading at most two vertices.  [AB09, Def 6.1] -/
 def IsFaninTwo : Prop :=
