@@ -1,13 +1,14 @@
 # GSW 6a reader PR #360: addendum `vertexValue_eq`, `vertexDepth_eq` (Seyoon ruling 2026-11-17)
 
-**Status: committed locally and checked. NOT pushed: the fast-forward push to `land/gsw-6a-readers` was denied by
-the permission system. The PR #360 body is not updated, and the U6 follow-up has not started.**
+**Status: pushed.** The maintainer pushed `cc05f76c` (fast-forward from `3ea428fd`) after Seyoon approved. The PR #360
+body is updated with an addendum section, two new rows in the readers table, the new head and the checks below. U6 now
+uses `vertexDepth_eq` (fill head `b65668a90bd627e004dc61052cdce8a92601a796`).
 
 | | |
 |---|---|
 | Branch | `land/gsw-6a-readers` (sparse worktree `$SP/wt-rd2`) |
 | Old head (remote, confirmed) | `3ea428fd8b99ffe33cdfb8dbe8068d0eb000d032` |
-| New head (local only) | **`cc05f76c43cd2d2f565ff0dfaec1c85b47e06d25`**: one SSH-signed commit with the two trailers |
+| New head (pushed) | **`cc05f76c43cd2d2f565ff0dfaec1c85b47e06d25`**: one SSH-signed commit with the two trailers |
 | Diff | 1 file, **+10 / −0**: a pure insertion in `TCSlib/Complexity/CircuitComplexity/TreeDAG.lean` |
 
 ## The readers
@@ -74,10 +75,18 @@ All evidence is under `$SP/fill86/rd/ev/`.
   - `campaign_style_lint --check8b` on `CircuitComplexity/`: only the INFO line count changes (696 → 706 lines, 39 → 41
     public). There is no new FAIL or WARN.
 
-## Pending, blocked on the push
-- Push `cc05f76c` fast-forward to `land/gsw-6a-readers`, then update the PR #360 body to add the two readers, the new
-  head and the checks above.
-- The U6 follow-up:
-  - merge the new #360 head into `fill/gsw-6a-u8-u6`;
-  - replace `vertexDepth_eq_getD` with `vertexDepth_eq` (and `depth_runWith_eq` with a direct use if it becomes one);
-  - rebuild, then rerun the axiom probe, the seal and the lint.
+## Merge-tree
+`cc05f76c` merges clean with each of #358 `a616adca`, #359 `73aedcda`, #357 `dfdc56f2`, #347 `daa6e173`, #355
+`d3c7cb00`, and the current tip `b5526836`.
+
+## U6 follow-up (`fill/gsw-6a-u8-u6`)
+- `8aabc21b96954905d9be376008408b8ccbc2f24a`: a signed `--no-ff` merge of `cc05f76c`.
+- `b65668a90bd627e004dc61052cdce8a92601a796`: deletes the private bridge `vertexDepth_eq_getD`.
+  - `depth_runWith_eq` stays private. It composes `DAGGate.depth_eq` with `vertexDepth_eq` (through `funext`), so it is
+    not an instance of a single reader. It drops its in-range hypothesis and is now one line.
+  - NANDForm goes from 548 to 520 lines.
+- **Build:** 16/16 rc 0, with 0 errors, covering `TreeDAG` and everything downstream of it in the fill tree's closure.
+  Admissions are unchanged: Combinators 0 and NANDForm 0. All rebuilt oleans have link count 1.
+- **Axioms:** 120 theorem constants, standard axioms only, with no `sorryAx`.
+- **Seals:** NANDForm coe-A base vs head: 180 = 180 requests, identical rows, 0 = 0 errors. `vertexDepth` is sealed.
+- **Lint:** `style_lint` gives 0 findings; campaign lint has no new FAIL or WARN.
