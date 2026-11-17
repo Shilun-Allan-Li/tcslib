@@ -73,9 +73,8 @@ The pipeline's planner now finds **no undocumented declaration in scope**.
 - **`VALIDATE.txt`:** `scripts/blueprint_validate.py`, run against the refreshed dependency
   graph.
   - **0 dangling `\uses`, 0 duplicate bindings, 0 `\uses` cycles.**
-  - **1,572 "orphan" labels.** Almost all are private declarations, which the graph stores under
-    Lean's mangled `_private.<module>.0.` names. With those names demangled, the chapter scope has
-    no orphan left.
+  - **1,572 "orphan" labels**, none in the chapter scope. Corrected in round 2: see
+    `resolutions.md` G157-03 and `evidence/ORPHANS-CLASSIFIED.json`.
 - **`COVERAGE.json`:** the 896 declarations by module.
 - **`WORKPLAN.json`:** the 40 writer jobs and their order.
 - **`DEP-GRAPH.json`:** how the graph the planner reads was rebuilt.

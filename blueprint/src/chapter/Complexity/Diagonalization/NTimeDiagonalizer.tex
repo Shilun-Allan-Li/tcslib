@@ -1177,10 +1177,13 @@ For all natural numbers $n, a, b$ with $a \le b$, one has $(n + 1)^a \le (n + 1)
 \uses{Complexity.TimeConstructible, Complexity.timeConstructible_iff, Turing.FinTM.ComputesFunInTime, Turing.FinTM.computesFunInTime_appendBit, Turing.FinTM.computesFunInTime_iff, Turing.FinTM.computesFunInTime_lengthBits, Turing.FinTM.computesFunInTime_polyBits, Turing.FinTM.computesFunInTime_polyUnary, Turing.FinTM.computesFunInTime_prepend, Turing.NTimeDiag.QyInSpec, Turing.NTimeDiag.QyKit, Turing.NTimeDiag.QySpec, Turing.NTimeDiag.QySpec.mono, Turing.NTimeDiag.qy_clocked_call, Turing.NTimeDiag.qy_inputSpec, Turing.NTimeDiag.qy_installSpec, Turing.NTimeDiag.qy_pow_mono, Turing.exists_inputSeekTM, Turing.length_bits_le_self}
 \difficulty{5}
 Let $f, g : \mathbb{N} \to \mathbb{N}$ be time-constructible. Then there exists a kit for $f$ and
-$g$: input calls computing $\mathrm{bits}(|x|)$ and $\mathrm{bits}(g(|x|))$, install calls
-computing $\mathrm{bits}(f(|y|))$, $1^{(|y|+1)^4}$, $y\,1$, a fixed all-ones prefix followed by
-$y$, $\mathrm{bits}(|y|)$ and $\mathrm{bits}((|y|+1)^2)$, each meeting its stated linear or
-polynomial time bound, together with a step clock over the call of $f$'s witness and an input seek.
+$g$, each call with its own constant $A$: input calls computing $\mathrm{bits}(|x|)$ within
+$A(n + 1)$ steps and $\mathrm{bits}(g(|x|))$ within $A(g(n) + 1)$ steps on inputs of length $n$;
+install calls computing $y\,1$, a fixed all-ones prefix followed by $y$, and $\mathrm{bits}(|y|)$,
+each within $A(|y| + 1)$ steps, $1^{(|y|+1)^4}$ within $A(|y| + 1)^5$ steps,
+$\mathrm{bits}((|y|+1)^2)$ within $A(|y| + 1)^3$ steps, and $\mathrm{bits}(f(|y|))$ within
+$A(c(f(|y|) + 1) + |y| + |\mathrm{bits}(f(|y|))| + 1)$ steps for a constant $c$; together with a
+step clock over the call of $f$'s witness and an input seek.
 \end{theorem}
 
 \begin{definition}[Tape count of the stage-query machine]
@@ -3041,7 +3044,7 @@ constant $A$ such that $M$ computes the map $x \mapsto q_{f,g}(1^{|x|})$ within 
 on inputs of length $n$.
 \end{theorem}
 
-\begin{theorem}[The stage query in linear time]
+\begin{theorem}[The stage query within a multiple of $g(n) + 1$]
 \lean{Turing.NTimeDiag.exists_queryTM}
 \label{Turing.NTimeDiag.exists_queryTM}
 \leanok
@@ -3269,10 +3272,13 @@ clock's clause.
 \difficulty{5}
 Let $f, g : \mathbb{N} \to \mathbb{N}$ be time-constructible, let $c$ be an effective coding scheme
 for nondeterministic machines and let $B_F$ be a finite deterministic machine over bits. Then a
-diagonalizer's kit for $f, g, c, B_F$ exists: linear-time input calls for the stage query, for
-$\mathrm{bits}(g(|x|))$ and for prepending $1$; linear-time install calls for $\mathrm{bits}(|y|)$
-and for the inner second component of a nested pair; an interpreter core for the codes of $c$; and
-hosted clocks over the core and over $B_F$.
+diagonalizer's kit for $f, g, c, B_F$ exists: input calls for the stage query, for
+$\mathrm{bits}(g(|x|))$ and for prepending $1$, each running within $A(g(n) + 1)$ steps on inputs of
+length $n$ for its own constant $A$ (and the stage query's output has length at most
+$A(g(|x|) + 1)$); install calls for $\mathrm{bits}(|y|)$ and for the inner second component of a
+nested pair, each within $A(|y| + 1)$ steps (and the latter's output has length at most
+$A(|y| + 1)$); an interpreter core for the codes of $c$; and hosted clocks over the core and over
+$B_F$.
 \end{theorem}
 
 \begin{definition}[Tape count of the diagonalizer]
