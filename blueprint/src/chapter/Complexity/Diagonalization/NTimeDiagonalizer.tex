@@ -10,6 +10,7 @@ embeddings into a larger host machine.
 
 \begin{definition}[Budget of a stage]
 \lean{Turing.NTimeDiag.budget}
+\label{Turing.NTimeDiag.budget}
 \leanok
 For a function $f : \mathbb{N} \to \mathbb{N}$ and a natural number $\ell$ (the bottom ladder value
 of a stage), let $a = \ell + 1$. The budget of the stage is $T^* = (f(a) + a + 1)^2$.
@@ -17,6 +18,7 @@ of a stage), let $a = \ell + 1$. The budget of the stage is $T^* = (f(a) + a + 1
 
 \begin{theorem}[Budget formula]
 \lean{Turing.NTimeDiag.budget_eq}
+\label{Turing.NTimeDiag.budget_eq}
 \leanok
 \uses{Turing.NTimeDiag.budget}
 \difficulty{1}
@@ -26,6 +28,7 @@ the stage with bottom ladder value $\ell$ equals $(f(\ell + 1) + (\ell + 1) + 1)
 
 \begin{definition}[The ladder]
 \lean{Turing.NTimeDiag.ladder}
+\label{Turing.NTimeDiag.ladder}
 \leanok
 \uses{Turing.NTimeDiag.budget}
 For a function $f : \mathbb{N} \to \mathbb{N}$, write $B_f(\ell) = (f(\ell+1) + \ell + 2)^2$ for
@@ -35,6 +38,7 @@ and $\ell_{i+1} = 2^{B_f(\ell_i)^2}$.
 
 \begin{theorem}[The ladder starts at two]
 \lean{Turing.NTimeDiag.ladder_zero}
+\label{Turing.NTimeDiag.ladder_zero}
 \leanok
 \uses{Turing.NTimeDiag.ladder}
 \difficulty{1}
@@ -44,6 +48,7 @@ sequence $\ell_0 = 2$, $\ell_{i+1} = 2^{(f(\ell_i+1) + \ell_i + 2)^4}$) is $\ell
 
 \begin{theorem}[Next rung of the ladder]
 \lean{Turing.NTimeDiag.ladder_succ}
+\label{Turing.NTimeDiag.ladder_succ}
 \leanok
 \uses{Turing.NTimeDiag.budget, Turing.NTimeDiag.ladder}
 \difficulty{1}
@@ -54,6 +59,7 @@ $\ell_{i+1} = 2^{B_f(\ell_i)^2}$.
 
 \begin{theorem}[The ladder more than doubles]
 \lean{Turing.NTimeDiag.two_mul_lt_ladder_succ}
+\label{Turing.NTimeDiag.two_mul_lt_ladder_succ}
 \leanok
 \uses{Turing.NTimeDiag.budget, Turing.NTimeDiag.ladder, Turing.NTimeDiag.ladder_succ}
 \difficulty{4}
@@ -64,6 +70,7 @@ $2\ell_i < \ell_{i+1}$ for every $i \in \mathbb{N}$.
 
 \begin{theorem}[The ladder dominates its index]
 \lean{Turing.NTimeDiag.le_ladder}
+\label{Turing.NTimeDiag.le_ladder}
 \leanok
 \uses{Turing.NTimeDiag.ladder, Turing.NTimeDiag.ladder_zero, Turing.NTimeDiag.two_mul_lt_ladder_succ}
 \difficulty{3}
@@ -74,6 +81,7 @@ every $i \in \mathbb{N}$.
 
 \begin{theorem}[The ladder is strictly increasing]
 \lean{Turing.NTimeDiag.ladder_strictMono}
+\label{Turing.NTimeDiag.ladder_strictMono}
 \leanok
 \uses{Turing.NTimeDiag.ladder, Turing.NTimeDiag.two_mul_lt_ladder_succ}
 \difficulty{2}
@@ -84,6 +92,7 @@ $\ell_i < \ell_j$.
 
 \begin{theorem}[Every length lies below some rung]
 \lean{Turing.NTimeDiag.exists_le_ladder_succ}
+\label{Turing.NTimeDiag.exists_le_ladder_succ}
 \leanok
 \uses{Turing.NTimeDiag.ladder, Turing.NTimeDiag.le_ladder}
 \difficulty{2}
@@ -94,6 +103,7 @@ there is an index $i$ with $n \le \ell_{i+1}$.
 
 \begin{definition}[Stage of a length]
 \lean{Turing.NTimeDiag.stage}
+\label{Turing.NTimeDiag.stage}
 \leanok
 \uses{Turing.NTimeDiag.exists_le_ladder_succ}
 Let $f : \mathbb{N} \to \mathbb{N}$ and let $(\ell_i)$ be the ladder of $f$, given by
@@ -103,6 +113,7 @@ $n \in \mathbb{N}$ is the least index $i$ with $n \le \ell_{i+1}$.
 
 \begin{theorem}[The stage brackets its length]
 \lean{Turing.NTimeDiag.stage_spec}
+\label{Turing.NTimeDiag.stage_spec}
 \leanok
 \uses{Turing.NTimeDiag.exists_le_ladder_succ, Turing.NTimeDiag.ladder, Turing.NTimeDiag.ladder_zero, Turing.NTimeDiag.stage}
 \difficulty{4}
@@ -113,6 +124,7 @@ $n \le \ell_{i+1}$. If $n \ge 3$, then $\ell_{s_f(n)} < n \le \ell_{s_f(n)+1}$.
 
 \begin{theorem}[The stage is determined by its bracket]
 \lean{Turing.NTimeDiag.stage_eq}
+\label{Turing.NTimeDiag.stage_eq}
 \leanok
 \uses{Turing.NTimeDiag.exists_le_ladder_succ, Turing.NTimeDiag.ladder, Turing.NTimeDiag.ladder_strictMono, Turing.NTimeDiag.stage}
 \difficulty{4}
@@ -124,6 +136,7 @@ $s_f(n) = i$.
 
 \begin{theorem}[Short lengths lie in stage zero]
 \lean{Turing.NTimeDiag.stage_of_le_two}
+\label{Turing.NTimeDiag.stage_of_le_two}
 \leanok
 \uses{Turing.NTimeDiag.exists_le_ladder_succ, Turing.NTimeDiag.le_ladder, Turing.NTimeDiag.stage}
 \difficulty{2}
@@ -134,6 +147,7 @@ $n \le \ell_{i+1}$. If $n \le 2$, then $s_f(n) = 0$.
 
 \begin{definition}[Code diagonalized at a stage]
 \lean{Turing.NTimeDiag.stageCode}
+\label{Turing.NTimeDiag.stageCode}
 \leanok
 For a stage index $i \in \mathbb{N}$, let $j$ be the first component of the image of $i$ under the
 standard unpairing bijection $\mathbb{N} \to \mathbb{N} \times \mathbb{N}$. The code of stage $i$
@@ -143,6 +157,7 @@ bit first) by deleting its last, most significant, bit.
 
 \begin{theorem}[Stage code formula]
 \lean{Turing.NTimeDiag.stageCode_eq}
+\label{Turing.NTimeDiag.stageCode_eq}
 \leanok
 \uses{Turing.NTimeDiag.stageCode}
 \difficulty{1}
@@ -153,6 +168,7 @@ of the standard unpairing of $i$.
 
 \begin{theorem}[Every code recurs at unboundedly many stages]
 \lean{Turing.NTimeDiag.stageCode_frequently}
+\label{Turing.NTimeDiag.stageCode_frequently}
 \leanok
 \uses{Turing.NTimeDiag.stageCode}
 \difficulty{5}
@@ -164,6 +180,7 @@ there is a stage $i \ge N$ with $\alpha_i = \alpha$.
 
 \begin{definition}[The stage query]
 \lean{Turing.NTimeDiag.query}
+\label{Turing.NTimeDiag.query}
 \leanok
 \uses{Turing.NTimeDiag.budget, Turing.NTimeDiag.ladder, Turing.NTimeDiag.stage, Turing.NTimeDiag.stageCode, Turing.pairEncode}
 Let $f, g : \mathbb{N} \to \mathbb{N}$, let $(\ell_i)$ be the ladder of $f$, let $s_f(n)$ be the
@@ -180,6 +197,7 @@ input, $q_{f,g}(x)$ is the empty word.
 
 \begin{theorem}[Stage query on unary inputs]
 \lean{Turing.NTimeDiag.query_eq}
+\label{Turing.NTimeDiag.query_eq}
 \leanok
 \uses{Turing.NTimeDiag.budget, Turing.NTimeDiag.ladder, Turing.NTimeDiag.query, Turing.NTimeDiag.stage, Turing.NTimeDiag.stageCode, Turing.pairEncode}
 \difficulty{1}
@@ -194,6 +212,7 @@ $\langle\langle \mathrm{bin}(g(n)), \alpha_i\rangle, 1^{n+1}\rangle$ otherwise.
 
 \begin{theorem}[Stage query off its guard is empty]
 \lean{Turing.NTimeDiag.query_of_not_guard}
+\label{Turing.NTimeDiag.query_of_not_guard}
 \leanok
 \uses{Turing.NTimeDiag.query}
 \difficulty{1}
@@ -203,6 +222,7 @@ with $n \ge 3$. Then the stage query $q_{f,g}(x)$ of the lazy diagonalizer is th
 
 \begin{theorem}[Bounded language of a halting NDTM is in NTIME]
 \lean{Turing.NTimeDiag.acceptLang_mem_NTIME}
+\label{Turing.NTimeDiag.acceptLang_mem_NTIME}
 \leanok
 \uses{Complexity.NTIME, Turing.FinNDTM, Turing.FinNDTM.AcceptsWithin, Turing.NDTM.HaltsWithin}
 \difficulty{1}
@@ -214,6 +234,7 @@ $D$ accepts within $K(g(|x|) + 1)$ steps belongs to $\mathbf{NTIME}(g(n) + 1)$.
 
 \begin{theorem}[Stage query reduces to unary words]
 \lean{Turing.NTimeDiag.qy_guard}
+\label{Turing.NTimeDiag.qy_guard}
 \leanok
 \uses{Turing.NTimeDiag.query, Turing.NTimeDiag.query_of_not_guard}
 \difficulty{3}
@@ -224,6 +245,7 @@ $|x| \ge 3$, and $q_{f,g}(x)$ is the empty word otherwise.
 
 \begin{theorem}[Linear-time unary guard decider]
 \lean{Turing.NTimeDiag.qy_guard_decider}
+\label{Turing.NTimeDiag.qy_guard_decider}
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_allTrue, Turing.FinTM.computesFunInTime_cond, Turing.FinTM.computesFunInTime_const, Turing.FinTM.computesFunInTime_decideEq, Turing.FinTM.computesFunInTime_iff}
 \difficulty{5}
@@ -234,6 +256,7 @@ with the one-bit output $1$ if $x$ consists only of ones and $|x| \ge 3$, and $0
 
 \begin{theorem}[Full stage query from its unary part]
 \lean{Turing.NTimeDiag.qy_query_of_main}
+\label{Turing.NTimeDiag.qy_query_of_main}
 \leanok
 \uses{Complexity.TimeConstructible, Complexity.timeConstructible_iff, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_cond, Turing.FinTM.computesFunInTime_const, Turing.FinTM.computesFunInTime_iff, Turing.NTimeDiag.query, Turing.NTimeDiag.qy_guard, Turing.NTimeDiag.qy_guard_decider}
 \difficulty{4}
@@ -246,6 +269,7 @@ $q_{f,g}$ itself within $C(g(n) + 1)$ steps on inputs of length $n$.
 
 \begin{theorem}[Next rung as a fourth power]
 \lean{Turing.NTimeDiag.qy_ladder_succ_eq}
+\label{Turing.NTimeDiag.qy_ladder_succ_eq}
 \leanok
 \uses{Turing.NTimeDiag.budget_eq, Turing.NTimeDiag.ladder, Turing.NTimeDiag.ladder_succ}
 \difficulty{1}
@@ -256,6 +280,7 @@ every $i$, $\ell_{i+1} = 2^{X^4}$ where $X = f(\ell_i + 1) + (\ell_i + 1) + 1$.
 
 \begin{theorem}[Sum of earlier rungs]
 \lean{Turing.NTimeDiag.qy_ledger}
+\label{Turing.NTimeDiag.qy_ledger}
 \leanok
 \uses{Turing.NTimeDiag.ladder, Turing.NTimeDiag.two_mul_lt_ladder_succ}
 \difficulty{3}
@@ -266,6 +291,7 @@ $\ell_0 = 2$ and $\ell_{i+1} = 2^{(f(\ell_i+1) + \ell_i + 2)^4}$. For every $s \
 
 \begin{theorem}[Value of the all-ones counter]
 \lean{Turing.NTimeDiag.qy_ones_val}
+\label{Turing.NTimeDiag.qy_ones_val}
 \leanok
 \difficulty{3}
 For every $m \in \mathbb{N}$, the word $1^m$, read as a binary numeral, has value $2^m - 1$.
@@ -273,6 +299,7 @@ For every $m \in \mathbb{N}$, the word $1^m$, read as a binary numeral, has valu
 
 \begin{theorem}[Value of zeros followed by a one]
 \lean{Turing.NTimeDiag.qy_rung_val}
+\label{Turing.NTimeDiag.qy_rung_val}
 \leanok
 \difficulty{3}
 For every $m \in \mathbb{N}$, the word $0^m 1$, read as a binary numeral with the least
@@ -281,6 +308,7 @@ significant digit first, has value $2^m$.
 
 \begin{theorem}[The all-ones counter is large enough]
 \lean{Turing.NTimeDiag.qy_ones_ge}
+\label{Turing.NTimeDiag.qy_ones_ge}
 \leanok
 \uses{Complexity.LogProg.lt_two_pow_bits}
 \difficulty{4}
@@ -291,6 +319,7 @@ of $m$,
 
 \begin{theorem}[Install-call bound for small arguments]
 \lean{Turing.NTimeDiag.qy_call_bound}
+\label{Turing.NTimeDiag.qy_call_bound}
 \leanok
 \uses{Turing.length_bits_le_self}
 \difficulty{4}
@@ -301,6 +330,7 @@ $f(a) \le n$. Writing $|\mathrm{bin}(m)|$ for the length of the binary expansion
 
 \begin{theorem}[Exponential lower bound on the ladder]
 \lean{Turing.NTimeDiag.qy_two_pow_le_ladder}
+\label{Turing.NTimeDiag.qy_two_pow_le_ladder}
 \leanok
 \uses{Turing.NTimeDiag.ladder, Turing.NTimeDiag.ladder_zero, Turing.NTimeDiag.two_mul_lt_ladder_succ}
 \difficulty{3}
@@ -311,6 +341,7 @@ every $i \in \mathbb{N}$.
 
 \begin{theorem}[Stage index is below the logarithm]
 \lean{Turing.NTimeDiag.qy_stage_lt_log}
+\label{Turing.NTimeDiag.qy_stage_lt_log}
 \leanok
 \uses{Turing.NTimeDiag.qy_two_pow_le_ladder, Turing.NTimeDiag.stage, Turing.NTimeDiag.stage_spec}
 \difficulty{3}
@@ -321,6 +352,7 @@ $n \le \ell_{i+1}$. For every $n \ge 3$, $s_f(n) < \lfloor \log_2 n \rfloor$.
 
 \begin{theorem}[Timeout certificate]
 \lean{Turing.NTimeDiag.qy_timeout_cert}
+\label{Turing.NTimeDiag.qy_timeout_cert}
 \leanok
 \uses{Turing.NTimeDiag.qy_call_bound, Turing.NTimeDiag.qy_ones_ge}
 \difficulty{3}
@@ -332,6 +364,7 @@ $2^{|\mathrm{bin}(n)| + |\mathrm{bin}(c'(c+2))|} - 1 < t$. Then $n < f(a)$.
 
 \begin{definition}[Normal-form configuration]
 \lean{Turing.NTimeDiag.qyC}
+\label{Turing.NTimeDiag.qyC}
 \leanok
 \uses{Turing.Cfg}
 For a multi-tape machine with $K$ work tapes over the binary alphabet, an input $x$, a state $s$,
@@ -343,6 +376,7 @@ $s$ and exactly these input head, tapes, heads and output.
 
 \begin{theorem}[Renaming states of normal-form configurations]
 \lean{Turing.NTimeDiag.qyC_mapState}
+\label{Turing.NTimeDiag.qyC_mapState}
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.mapState, Turing.NTimeDiag.qyC}
 \difficulty{2}
@@ -354,6 +388,7 @@ $\langle \varphi(s), p, T, P, o \rangle$.
 
 \begin{theorem}[A hosted phase is a segment]
 \lean{Turing.NTimeDiag.qy_hosted'}
+\label{Turing.NTimeDiag.qy_hosted'}
 \leanok
 \uses{Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_state_ne_none_of_le, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qyC_mapState, Turing.Segment, Turing.phaseHostTM, Turing.phaseHostTM_run, Turing.segment_iff}
 \difficulty{4}
@@ -372,6 +407,7 @@ $t + 1$.
 
 \begin{theorem}[A hosted phase avoids foreign states]
 \lean{Turing.NTimeDiag.qy_hosted}
+\label{Turing.NTimeDiag.qy_hosted}
 \leanok
 \uses{Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qy_hosted', Turing.Segment, Turing.phaseHostTM}
 \difficulty{1}
@@ -389,6 +425,7 @@ without visiting $F$ before time $t + 1$.
 
 \begin{theorem}[A hosted last phase is a segment]
 \lean{Turing.NTimeDiag.qy_hosted_last}
+\label{Turing.NTimeDiag.qy_hosted_last}
 \leanok
 \uses{Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_state_ne_none_of_le, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qyC_mapState, Turing.Segment, Turing.phaseHostTM, Turing.phaseHostTM_run_le, Turing.segment_iff}
 \difficulty{4}
@@ -406,6 +443,7 @@ steps, with no state in $F$ before time $t$.
 
 \begin{theorem}[Run of a hosted phase]
 \lean{Turing.NTimeDiag.qy_hosted_run}
+\label{Turing.NTimeDiag.qy_hosted_run}
 \leanok
 \uses{Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qy_hosted, Turing.phaseHostTM, Turing.segment_iff}
 \difficulty{1}
@@ -422,6 +460,7 @@ $\langle q', p', T', P', o'\rangle$.
 
 \begin{theorem}[Writing at the end of a buffer appends]
 \lean{Turing.NTimeDiag.qy_patch_end}
+\label{Turing.NTimeDiag.qy_patch_end}
 \leanok
 \uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_append_shift, Turing.FinTM.bufferTape_eq, Turing.FinTM.bufferTape_eq_none_of_not_mem}
 \difficulty{4}
@@ -433,6 +472,7 @@ equals $\mathrm{buf}(uw)$.
 
 \begin{theorem}[Buffer of a mapped word]
 \lean{Turing.NTimeDiag.qy_bufferTape_map}
+\label{Turing.NTimeDiag.qy_bufferTape_map}
 \leanok
 \uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_eq}
 \difficulty{2}
@@ -444,6 +484,7 @@ image under $g$ of cell $z$ of $\mathrm{buf}(w)$ (blank if that cell is blank).
 
 \begin{theorem}[Redirect guard from a first-visit cut]
 \lean{Turing.NTimeDiag.qy_guard_of_cut}
+\label{Turing.NTimeDiag.qy_guard_of_cut}
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom}
 \difficulty{1}
@@ -455,6 +496,7 @@ every state that this run occupies at any time $u < t$.
 
 \begin{theorem}[Mapped copy appending to a word]
 \lean{Turing.NTimeDiag.qy_copy}
+\label{Turing.NTimeDiag.qy_copy}
 \leanok
 \uses{Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qy_bufferTape_map, Turing.NTimeDiag.qy_patch_end, Turing.copyMapTM, Turing.copyMapTM_run_ofCfg}
 \difficulty{4}
@@ -472,6 +514,7 @@ input head, all other tapes, all heads and the output unchanged.
 
 \begin{theorem}[Mapped copy overwriting a word]
 \lean{Turing.NTimeDiag.qy_copy_over}
+\label{Turing.NTimeDiag.qy_copy_over}
 \leanok
 \uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_eq_none_of_not_mem, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qy_bufferTape_map, Turing.copyMapTM, Turing.copyMapTM_run_ofCfg}
 \difficulty{4}
@@ -489,6 +532,7 @@ $\mathrm{buf}(g(w))$ and everything else unchanged.
 
 \begin{theorem}[Mapped move appending to a word]
 \lean{Turing.NTimeDiag.qy_transfer}
+\label{Turing.NTimeDiag.qy_transfer}
 \leanok
 \uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_eq_none_of_not_mem, Turing.FinTM.bufferTape_nil, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qy_bufferTape_map, Turing.NTimeDiag.qy_patch_end, Turing.transferMapTM, Turing.transferMapTM_run_ofCfg}
 \difficulty{4}
@@ -506,6 +550,7 @@ $\mathrm{dst}$ equal to $\mathrm{buf}(u \, g(w))$, and everything else unchanged
 
 \begin{theorem}[Clearing a word]
 \lean{Turing.NTimeDiag.qy_clear}
+\label{Turing.NTimeDiag.qy_clear}
 \leanok
 \uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_eq_none_of_not_mem, Turing.FinTM.bufferTape_nil, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.qyC, Turing.clearTM, Turing.clearTM_run_ofCfg}
 \difficulty{4}
@@ -520,6 +565,7 @@ before, its exit state with tape $i$ entirely blank and everything else unchange
 
 \begin{theorem}[Appending a constant word]
 \lean{Turing.NTimeDiag.qy_writeConst}
+\label{Turing.NTimeDiag.qy_writeConst}
 \leanok
 \uses{Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qy_patch_end, Turing.WritePhase, Turing.writeConstTM, Turing.writeConstTM_run_ofCfg}
 \difficulty{4}
@@ -535,6 +581,7 @@ everything else, including the head of tape $i$, unchanged.
 
 \begin{theorem}[Rewinding a head]
 \lean{Turing.NTimeDiag.qy_rewind}
+\label{Turing.NTimeDiag.qy_rewind}
 \leanok
 \uses{Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.qyC, Turing.rewindTM, Turing.rewindTM_run_ofCfg}
 \difficulty{3}
@@ -549,6 +596,7 @@ head of tape $i$ at $0$ and everything else unchanged.
 
 \begin{theorem}[Embedded run as a transported run]
 \lean{Turing.NTimeDiag.qy_embed_gen}
+\label{Turing.NTimeDiag.qy_embed_gen}
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.qyC, Turing.embedEmitCfg, Turing.embedEmitCfg_eq, Turing.embedEmitTM, Turing.embedEmitTM_runFrom}
 \difficulty{2}
@@ -565,6 +613,7 @@ those of $T$ and $P$, and whose output is $o$ followed by that run's output.
 
 \begin{theorem}[Embedded run in normal form]
 \lean{Turing.NTimeDiag.qy_embed}
+\label{Turing.NTimeDiag.qy_embed}
 \leanok
 \uses{Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qy_embed_gen, Turing.embedEmitCfg_eq, Turing.embedEmitTM}
 \difficulty{2}
@@ -581,6 +630,7 @@ $\langle s', p', T', P', o\, o'\rangle$.
 
 \begin{theorem}[States of an embedded run]
 \lean{Turing.NTimeDiag.qy_embed_state}
+\label{Turing.NTimeDiag.qy_embed_state}
 \leanok
 \uses{Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qy_embed_gen, Turing.embedEmitTM}
 \difficulty{1}
@@ -594,6 +644,7 @@ run from $\langle s, p, T \circ \sigma, P \circ \sigma, \varepsilon\rangle$ afte
 
 \begin{theorem}[A released call in normal form]
 \lean{Turing.NTimeDiag.qy_call}
+\label{Turing.NTimeDiag.qy_call}
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.mapState, Turing.Cfg.ofWords, Turing.Cfg.ofWords_inputPos, Turing.Cfg.ofWords_output, Turing.Cfg.ofWords_state, Turing.Cfg.ofWords_workTapePos, Turing.Cfg.ofWords_workTapes, Turing.FinTM, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_zero, Turing.NTimeDiag.qyC, Turing.seamReleaseTM, Turing.seamReleaseTM_runFrom_pos, Turing.stateWord}
 \difficulty{4}
@@ -612,6 +663,7 @@ and it is not in that state at any earlier time.
 
 \begin{theorem}[A hosted released call]
 \lean{Turing.NTimeDiag.qy_callHost}
+\label{Turing.NTimeDiag.qy_callHost}
 \leanok
 \uses{Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qy_call, Turing.NTimeDiag.qy_embed, Turing.NTimeDiag.qy_embed_state, Turing.embedEmitTM, Turing.seamReleaseTM, Turing.stateWord, Turing.stateWord_eq}
 \difficulty{4}
@@ -633,6 +685,7 @@ earlier time.
 
 \begin{theorem}[One silent step in normal form]
 \lean{Turing.NTimeDiag.qy_step}
+\label{Turing.NTimeDiag.qy_step}
 \leanok
 \uses{Turing.Action.apply_workTapes, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.Cfg.workTapeSymbols_eq, Turing.MultiTapeTM, Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_of_some, Turing.NTimeDiag.qyC, Turing.moveInputPos_zero}
 \difficulty{3}
@@ -648,6 +701,7 @@ if any.
 
 \begin{definition}[States of the length comparison]
 \lean{Turing.NTimeDiag.QyCmp}
+\label{Turing.NTimeDiag.QyCmp}
 \leanok
 The control states of the length-comparison machine: a forward scanning state, a return state
 for each verdict in $\{<, =, >\}$, and a live exit state for each verdict.
@@ -655,6 +709,7 @@ for each verdict in $\{<, =, >\}$, and a live exit state for each verdict.
 
 \begin{definition}[Length-comparison machine]
 \lean{Turing.NTimeDiag.qyCmpTM}
+\label{Turing.NTimeDiag.qyCmpTM}
 \leanok
 \uses{Turing.MultiTapeTM, Turing.NTimeDiag.QyCmp}
 For $K \in \mathbb{N}$ and two work tapes $a, b$ among $K$, the length-comparison machine starts
@@ -668,6 +723,7 @@ and never emits.
 
 \begin{definition}[Lockstep head vector]
 \lean{Turing.NTimeDiag.qyAt2}
+\label{Turing.NTimeDiag.qyAt2}
 \leanok
 For a head-position vector $P$ over $K$ work tapes, two tapes $a, b$ and an integer $i$, the
 lockstep head vector is $P$ with the heads of $a$ and $b$ both set to $i$.
@@ -675,6 +731,7 @@ lockstep head vector is $P$ with the heads of $a$ and $b$ both set to $i$.
 
 \begin{theorem}[Moving both compared heads]
 \lean{Turing.NTimeDiag.qyAt2_move}
+\label{Turing.NTimeDiag.qyAt2_move}
 \leanok
 \uses{Turing.NTimeDiag.qyAt2}
 \difficulty{3}
@@ -686,6 +743,7 @@ other heads in place gives $P^{a,b}_{i + d_{\mathbb{Z}}}$.
 
 \begin{theorem}[Run of the length comparison]
 \lean{Turing.NTimeDiag.qy_cmp_run}
+\label{Turing.NTimeDiag.qy_cmp_run}
 \leanok
 \uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_left, Turing.FinTM.bufferTape_nat, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.NTimeDiag.qyAt2, Turing.NTimeDiag.qyAt2_move, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qyCmpTM, Turing.NTimeDiag.qy_step}
 \difficulty{6}
@@ -702,6 +760,7 @@ earlier time is it in any exit state.
 
 \begin{definition}[States of the emitter]
 \lean{Turing.NTimeDiag.QyEm}
+\label{Turing.NTimeDiag.QyEm}
 \leanok
 For natural numbers $n_p, n_s, r$, the control states of the emitter are: a prefix state for each
 position $0, \dots, n_p$; a reading state; a holding state for each bit; a copying state for each
@@ -711,6 +770,7 @@ state.
 
 \begin{definition}[The emitter machine]
 \lean{Turing.NTimeDiag.qyEmitTM}
+\label{Turing.NTimeDiag.qyEmitTM}
 \leanok
 \uses{Turing.MultiTapeTM, Turing.NTimeDiag.QyEm}
 For $K \in \mathbb{N}$, a work tape $i$, fixed binary words $\mathit{pre}$ and $\mathit{suf}$,
@@ -723,6 +783,7 @@ writes and never moves the input head.
 
 \begin{definition}[Body emitted by the emitter]
 \lean{Turing.NTimeDiag.qyBody}
+\label{Turing.NTimeDiag.qyBody}
 \leanok
 For a flag $\delta$, $r \in \mathbb{N}$ and a binary word $w$, let $w'$ be $w$ with its last
 symbol removed if $\delta$ is set, and $w$ otherwise. The emitter body is the word obtained from
@@ -731,6 +792,7 @@ $w'$ by replacing each symbol $c$ with $c^{r+1}$.
 
 \begin{theorem}[Zero displacement leaves heads in place]
 \lean{Turing.NTimeDiag.qy_noMove}
+\label{Turing.NTimeDiag.qy_noMove}
 \leanok
 \difficulty{1}
 For every head-position vector $P$ over $K$ work tapes, moving every head by $0$ yields $P$.
@@ -738,6 +800,7 @@ For every head-position vector $P$ over $K$ work tapes, moving every head by $0$
 
 \begin{theorem}[Moving one head right]
 \lean{Turing.NTimeDiag.qy_moveOne}
+\label{Turing.NTimeDiag.qy_moveOne}
 \leanok
 \difficulty{3}
 For every head-position vector $P$ over $K$ work tapes and every tape $i$, moving head $i$ by
@@ -746,6 +809,7 @@ $+1$ and every other head by $0$ yields $P$ with entry $i$ replaced by $P_i + 1$
 
 \begin{theorem}[Two steps of a run]
 \lean{Turing.NTimeDiag.qy_run_two}
+\label{Turing.NTimeDiag.qy_run_two}
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{1}
@@ -755,6 +819,7 @@ is one step of $M$ applied to the run after one step.
 
 \begin{theorem}[Run of the emitter]
 \lean{Turing.NTimeDiag.qy_emit_run}
+\label{Turing.NTimeDiag.qy_emit_run}
 \leanok
 \uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_one, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.NTimeDiag.qyBody, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qyEmitTM, Turing.NTimeDiag.qy_moveOne, Turing.NTimeDiag.qy_noMove, Turing.NTimeDiag.qy_run_two, Turing.NTimeDiag.qy_step}
 \difficulty{6}
@@ -773,6 +838,7 @@ not in the exit state at any earlier time.
 
 \begin{theorem}[A released call first stops at its exit time]
 \lean{Turing.NTimeDiag.qy_release_first_stop}
+\label{Turing.NTimeDiag.qy_release_first_stop}
 \leanok
 \uses{Turing.Cfg.Stopped, Turing.Cfg.mapState, Turing.Cfg.ofWords, Turing.Cfg.ofWords_state, Turing.Cfg.stopped_iff, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_state_ne_none_of_le, Turing.MultiTapeTM.runFrom_zero, Turing.seamReleaseTM, Turing.seamReleaseTM_runFrom_pos, Turing.stateWord}
 \difficulty{4}
@@ -791,6 +857,7 @@ $\mathrm{seam}(\mathit{exit}, b)$ with tagged state at time $t$.
 
 \begin{theorem}[A call is silent before its exit]
 \lean{Turing.NTimeDiag.qy_call_output_nil}
+\label{Turing.NTimeDiag.qy_call_output_nil}
 \leanok
 \uses{Turing.Cfg.ofWords, Turing.Cfg.ofWords_output, Turing.FinTM, Turing.MultiTapeTM.output_prefix, Turing.MultiTapeTM.runFrom, Turing.stateWord}
 \difficulty{2}
@@ -804,6 +871,7 @@ $v \le t$.
 
 \begin{theorem}[The clocked released call]
 \lean{Turing.NTimeDiag.qy_clocked_call}
+\label{Turing.NTimeDiag.qy_clocked_call}
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.Stopped, Turing.Cfg.mapState, Turing.Cfg.ofWords, Turing.Cfg.ofWords_output, Turing.Cfg.ofWords_state, Turing.FinTM, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_zero, Turing.NTimeDiag.qy_call_output_nil, Turing.NTimeDiag.qy_ones_val, Turing.NTimeDiag.qy_release_first_stop, Turing.clockCfg, Turing.exists_stepClockTMVia, Turing.seamReleaseTM, Turing.seamReleaseTM_runFrom_pos, Turing.stateWord, Turing.wordPatch}
 \difficulty{5}
@@ -826,6 +894,7 @@ timeout state with empty output. In both cases no finish or timeout state occurs
 
 \begin{theorem}[Patching over an all-ones word]
 \lean{Turing.NTimeDiag.qy_wordPatch_ones}
+\label{Turing.NTimeDiag.qy_wordPatch_ones}
 \leanok
 \uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_eq_none_of_not_mem, Turing.wordPatch, Turing.wordPatch_of_mem, Turing.wordPatch_of_not_mem}
 \difficulty{3}
@@ -836,6 +905,7 @@ $0, \dots, m - 1$ of $\mathrm{buf}(1^m)$ with $w$ yields $\mathrm{buf}(w)$.
 
 \begin{definition}[Specification of a clocked call]
 \lean{Turing.NTimeDiag.QyClockSpec}
+\label{Turing.NTimeDiag.QyClockSpec}
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.mapState, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.clockCfg, Turing.stateWord, Turing.wordPatch}
 Let $C$ be a finite deterministic $k$-tape machine over bits with states $\mathit{entry}$,
@@ -856,6 +926,7 @@ no finish or timeout state occurs earlier.
 
 \begin{theorem}[Start of the clocked call in normal form]
 \lean{Turing.NTimeDiag.qy_clock_start}
+\label{Turing.NTimeDiag.qy_clock_start}
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.mapState, Turing.Cfg.ofWords, Turing.Cfg.ofWords_inputPos, Turing.Cfg.ofWords_output, Turing.Cfg.ofWords_workTapePos, Turing.Cfg.ofWords_workTapes, Turing.FinTM, Turing.FinTM.bufferTape, Turing.NTimeDiag.qyC, Turing.clockCfg, Turing.stateWord}
 \difficulty{4}
@@ -872,6 +943,7 @@ head at $0$.
 
 \begin{theorem}[Hosted clocked call that finishes]
 \lean{Turing.NTimeDiag.qy_clockHost_finish}
+\label{Turing.NTimeDiag.qy_clockHost_finish}
 \leanok
 \uses{Turing.Cfg.ofWords, Turing.Cfg.ofWords_inputPos, Turing.Cfg.ofWords_output, Turing.Cfg.ofWords_workTapePos, Turing.Cfg.ofWords_workTapes, Turing.FinTM, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.QyClockSpec, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qy_clock_start, Turing.NTimeDiag.qy_embed, Turing.NTimeDiag.qy_embed_state, Turing.NTimeDiag.qy_wordPatch_ones, Turing.embedEmitTM, Turing.stateWord, Turing.stateWord_eq}
 \difficulty{5}
@@ -894,6 +966,7 @@ or timeout state occurs before $T_1$.
 
 \begin{theorem}[Hosted clocked call that times out]
 \lean{Turing.NTimeDiag.qy_clockHost_timeout}
+\label{Turing.NTimeDiag.qy_clockHost_timeout}
 \leanok
 \uses{Turing.Cfg.mapState, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.QyClockSpec, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qy_clock_start, Turing.NTimeDiag.qy_embed_gen, Turing.NTimeDiag.qy_embed_state, Turing.clockCfg, Turing.embedEmitCfg, Turing.embedEmitCfg_unselected, Turing.embedEmitTM, Turing.stateWord}
 \difficulty{4}
@@ -915,6 +988,7 @@ state occurs before $T_1$.
 
 \begin{theorem}[Start of the expansion in normal form]
 \lean{Turing.NTimeDiag.qy_expand_start}
+\label{Turing.NTimeDiag.qy_expand_start}
 \leanok
 \uses{Turing.Cfg, Turing.CounterLoopState, Turing.NTimeDiag.qyC, Turing.counterLoopCfg, Turing.counter_cfg_eq}
 \difficulty{3}
@@ -928,6 +1002,7 @@ and empty output, and whose counter tape is $T(\mathrm{ctr})$ with head $P(\math
 
 \begin{theorem}[Hosted unary expansion]
 \lean{Turing.NTimeDiag.qy_expandHost}
+\label{Turing.NTimeDiag.qy_expandHost}
 \leanok
 \uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_eq, Turing.FinTM.bufferTape_eq_none_of_not_mem, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qy_embed, Turing.NTimeDiag.qy_embed_state, Turing.NTimeDiag.qy_expand_start, Turing.NTimeDiag.qy_patch_end, Turing.counterOverhead, Turing.counter_cfg_eq, Turing.embedEmitTM, Turing.expandTM, Turing.expandTM_run_ofCfg}
 \difficulty{5}
@@ -948,6 +1023,7 @@ $\mathrm{buf}(1^{|w|})$, and everything else unchanged; and it is not in the exi
 
 \begin{theorem}[Hosted input seek]
 \lean{Turing.NTimeDiag.qy_seekHost}
+\label{Turing.NTimeDiag.qy_seekHost}
 \leanok
 \uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nil, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qy_embed, Turing.NTimeDiag.qy_embed_state, Turing.embedEmitTM}
 \difficulty{4}
@@ -968,6 +1044,7 @@ $\mathit{exit}$ earlier.
 
 \begin{theorem}[The emitter halts at its exit]
 \lean{Turing.NTimeDiag.qy_emit_halt}
+\label{Turing.NTimeDiag.qy_emit_halt}
 \leanok
 \uses{Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_one, Turing.MultiTapeTM.step_of_some, Turing.NTimeDiag.QyEm, Turing.NTimeDiag.qyC, Turing.NTimeDiag.qyEmitTM}
 \difficulty{3}
@@ -979,6 +1056,7 @@ exit state with output $o$, one step of the emitter halts and leaves the output 
 
 \begin{definition}[Specification of an install call]
 \lean{Turing.NTimeDiag.QySpec}
+\label{Turing.NTimeDiag.QySpec}
 \leanok
 \uses{Turing.Cfg.ofWords, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.stateWord}
 Let $C$ be a finite deterministic $k$-tape machine over bits with states $\mathit{entry}$ and
@@ -993,6 +1071,7 @@ $\mathrm{seam}_x(\mathit{exit}, F(a))$ at time $t$.
 
 \begin{definition}[Specification of an input call]
 \lean{Turing.NTimeDiag.QyInSpec}
+\label{Turing.NTimeDiag.QyInSpec}
 \leanok
 \uses{Turing.Cfg.ofWords, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.stateWord}
 Let $C$ be a finite deterministic $k$-tape machine over bits with states $\mathit{entry}$ and
@@ -1007,6 +1086,7 @@ $\mathrm{seam}_x(\mathit{exit}, F(x))$ at time $t$.
 
 \begin{theorem}[Install-call specification is monotone in its bound]
 \lean{Turing.NTimeDiag.QySpec.mono}
+\label{Turing.NTimeDiag.QySpec.mono}
 \leanok
 \uses{Turing.FinTM, Turing.NTimeDiag.QySpec}
 \difficulty{2}
