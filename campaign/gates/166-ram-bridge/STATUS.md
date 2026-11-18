@@ -1,1 +1,1 @@
-**Gate 166 staged** (2026-11-18), not yet dispatched: PR #379 (crypto bridge wave 1: statements and the fill's proofs) at `36fd655a`.
+**Gate 166 CLEAR** (2026-11-18; 0/0/0, 7 notes): PR #379 at `36fd655a` is clear to merge. The auditor verified the bundle, the 43 replay receipts, the eight seals and 48 control pairs, and reran the copy screen (10 → 8, none new). The two `polyTimeComputable_*` results stay proved modulo `WordRAM.exists_simulation`, as disclosed (G166-07).
