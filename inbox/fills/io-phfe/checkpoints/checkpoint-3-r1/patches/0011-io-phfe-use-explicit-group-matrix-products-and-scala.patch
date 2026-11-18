@@ -1,0 +1,196 @@
+From 73d750b23d3478fa6d4d7e6a2a76a257da047baa Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 03:08:37 -0800
+Subject: [PATCH 11/36] io-phfe: use explicit group matrix products and scalar
+ transports
+
+---
+ .../FunctionalEncryption/Wee20/Linear.lean    | 12 +++++------
+ .../Wee20/LinearCorrect.lean                  |  8 ++++----
+ .../Wee20/LinearSecurity/Keys.lean            | 20 +++++++++----------
+ .../Wee20/LinearSimulator.lean                | 16 +++++++--------
+ TCSlib/Cryptography/Pairing/Exponents.lean    |  1 +
+ 5 files changed, 29 insertions(+), 28 deletions(-)
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean
+index f5299f6b5..651b8febd 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean
+@@ -213,9 +213,9 @@ def keyCore (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+   let Tbar := fun i j => T i (Sum.inr j)
+   let tensorR := Matrix.kroneckerMap (fun a b => a * b)
+     (1 : Matrix (Fin (ℓ.eval κ)) (Fin (ℓ.eval κ)) (ZMod pp.group.order)) R
+-  ⟨pp.group.expMat pp.generator Tbar * matMulGroup msk.W M,
+-    pp.group.expMat pp.generator (T * PG.L1 κ pp.orderParam f + msk.U * tensorR),
+-    pp.group.expMat pp.generator (T * PG.L0 κ pp.orderParam f + msk.V * R),
++  ⟨pp.group.expMat pp.generator Tbar ⊙ matMulGroup msk.W M,
++    pp.group.expMat pp.generator (T * (show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ pp.orderParam f) + msk.U * tensorR),
++    pp.group.expMat pp.generator (T * (show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam f) + msk.V * R),
+     pp.group.expMat pp.generator R⟩
+ 
+ /-- Key generation is the displayed scalar garbling arithmetic and group matrix action. -/
+@@ -227,11 +227,11 @@ theorem keyCore_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ →
+     keyCore G PG zDim κ pp msk f M ω =
+       let tensorR := Matrix.kroneckerMap (fun a b => a * b)
+         (1 : Matrix (Fin (ℓ.eval κ)) (Fin (ℓ.eval κ)) (ZMod pp.group.order)) ω.2
+-      ⟨pp.group.expMat pp.generator (fun i j => ω.1 i (Sum.inr j)) * matMulGroup msk.W M,
++      ⟨pp.group.expMat pp.generator (fun i j => ω.1 i (Sum.inr j)) ⊙ matMulGroup msk.W M,
+         pp.group.expMat pp.generator
+-          (ω.1 * PG.L1 κ pp.orderParam f + msk.U * tensorR),
++          (ω.1 * (show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ pp.orderParam f) + msk.U * tensorR),
+         pp.group.expMat pp.generator
+-          (ω.1 * PG.L0 κ pp.orderParam f + msk.V * ω.2),
++          (ω.1 * (show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam f) + msk.V * ω.2),
+         pp.group.expMat pp.generator ω.2⟩ := rfl
+ 
+ /-- Decryption's first block is `e(c1,M)/e(c0,K1)`
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean
+index 0c91ed344..48679ab92 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean
+@@ -64,9 +64,9 @@ read the remaining coefficient through the single-coordinate dot-product lemmas.
+ theorem rec_matrix_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+     (PG : PartialGarbling.Raw ℓ n' Fn) (κ : ℕ) (pp : PublicParams G κ)
+     (f : Fn κ pp.orderParam) (x : Fin (ℓ.eval κ) → ZMod pp.group.order) :
+-    (PG.L1 κ pp.orderParam f *
++    ((show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ pp.orderParam f) *
+         PartialGarbling.publicTensor (p := pp.orderParam) (M := PG.MIdx κ pp.orderParam f) x +
+-      PG.L0 κ pp.orderParam f) *ᵥ (fun u => PG.recVec κ pp.orderParam f x (Sum.inr u)) =
++      (show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam f)) *ᵥ (fun u => PG.recVec κ pp.orderParam f x (Sum.inr u)) =
+         Sum.elim (fun _ => 0) (PG.eval κ pp.orderParam f x) := sorry
+ 
+ /-- The leakage is the product of the supplied group-matrix entries raised to the known
+@@ -121,9 +121,9 @@ theorem decSecond_correct (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → 
+           (pp.group.expVec pp.generator z) s) =
+       pp.group.expVecT (pp.group.pair pp.generator pp.generator)
+         (Matrix.vecMul (Matrix.vecMul (Matrix.vecMul s a.1) t.1)
+-          (PG.L1 κ pp.orderParam f *
++          ((show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ pp.orderParam f) *
+               PartialGarbling.publicTensor (p := pp.orderParam)
+-                (M := PG.MIdx κ pp.orderParam f) x + PG.L0 κ pp.orderParam f)) := sorry
++                (M := PG.MIdx κ pp.orderParam f) x + (show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam f))) := sorry
+ 
+ /-- Π decrypts to `e(g,[zMf(x)^T])` for every honest draw and an arbitrary source-group
+ matrix `M` [Wee20, §4.2, p. 10, (11)]. This is perfect correctness in the exponent.
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean
+index 16b970a5f..2d26f9ba7 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean
+@@ -105,11 +105,11 @@ def projectedKey (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Ty
+   let A := st.Aᵀ
+   let tensorR := Matrix.kroneckerMap (fun a b => b ^ a.val)
+     (1 : Matrix (Fin (ℓ.eval κ)) (Fin (ℓ.eval κ)) (ZMod pp.group.order)) R
+-  ⟨pp.group.expMat pp.generator (A * (fun i j => T i (Sum.inr j))) *
++  ⟨pp.group.expMat pp.generator (A * (fun i j => T i (Sum.inr j))) ⊙
+       matMulGroup (A * st.W) query.matrix,
+-    pp.group.expMat pp.generator ((A * T) * PG.L1 κ pp.orderParam query.fn) *
++    pp.group.expMat pp.generator ((A * T) * (show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ pp.orderParam query.fn)) ⊙
+       matMulGroup (A * st.U) tensorR,
+-    pp.group.expMat pp.generator ((A * T) * PG.L0 κ pp.orderParam query.fn) *
++    pp.group.expMat pp.generator ((A * T) * (show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam query.fn)) ⊙
+       matMulGroup (A * st.V) R⟩
+ 
+ /-- Projected key rows use known scalar coefficients and the supplied group matrix R. -/
+@@ -123,11 +123,11 @@ theorem projectedKey_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+
+       let A := st.Aᵀ
+       let tensorR := Matrix.kroneckerMap (fun a b => b ^ a.val)
+         (1 : Matrix (Fin (ℓ.eval κ)) (Fin (ℓ.eval κ)) (ZMod pp.group.order)) R
+-      ⟨pp.group.expMat pp.generator (A * (fun i j => T i (Sum.inr j))) *
++      ⟨pp.group.expMat pp.generator (A * (fun i j => T i (Sum.inr j))) ⊙
+           matMulGroup (A * st.W) query.matrix,
+-        pp.group.expMat pp.generator ((A * T) * PG.L1 κ pp.orderParam query.fn) *
++        pp.group.expMat pp.generator ((A * T) * (show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ pp.orderParam query.fn)) ⊙
+           matMulGroup (A * st.U) tensorR,
+-        pp.group.expMat pp.generator ((A * T) * PG.L0 κ pp.orderParam query.fn) *
++        pp.group.expMat pp.generator ((A * T) * (show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam query.fn)) ⊙
+           matMulGroup (A * st.V) R⟩ := rfl
+ 
+ /-- The middle key formula accepts GROUP R and GROUP uhat, allowing the two MDDH challenge
+@@ -147,9 +147,9 @@ def semiKey (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+     (M := PG.MIdx κ pp.orderParam query.fn) msg.1
+   let low1 := pp.group.expVec pp.generator (fun j => t (Sum.inr j)) *
+     groupVecMul (st.w - msg.2) query.matrix
+-  let low2 := pp.group.expVec pp.generator (Matrix.vecMul t (PG.L1 κ pp.orderParam query.fn)) *
++  let low2 := pp.group.expVec pp.generator (Matrix.vecMul t ((show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ pp.orderParam query.fn))) *
+     uhat
+-  let low3 := fun u => pp.generator ^ (Matrix.vecMul t (PG.L0 κ pp.orderParam query.fn) u).val *
++  let low3 := fun u => pp.generator ^ (Matrix.vecMul t ((show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam query.fn)) u).val *
+     (groupDot uhat (fun i => X i u))⁻¹ * groupVecMul st.v R u
+   let C := fun i j => st.basisInv i (Fin.castSucc j)
+   let a := fun i => st.basisInv i (Fin.last 2)
+@@ -173,9 +173,9 @@ theorem semiKey_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ →
+       let low1 := pp.group.expVec pp.generator (fun j => t (Sum.inr j)) *
+         groupVecMul (st.w - msg.2) query.matrix
+       let low2 :=
+-        pp.group.expVec pp.generator (Matrix.vecMul t (PG.L1 κ pp.orderParam query.fn)) * uhat
++        pp.group.expVec pp.generator (Matrix.vecMul t ((show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ pp.orderParam query.fn))) * uhat
+       let low3 := fun u =>
+-        pp.generator ^ (Matrix.vecMul t (PG.L0 κ pp.orderParam query.fn) u).val *
++        pp.generator ^ (Matrix.vecMul t ((show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam query.fn)) u).val *
+           (groupDot uhat (fun i => X i u))⁻¹ * groupVecMul st.v R u
+       let C := fun i j => st.basisInv i (Fin.castSucc j)
+       let a := fun i => st.basisInv i (Fin.last 2)
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean
+index 40645fca8..21da559d5 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean
+@@ -218,13 +218,13 @@ theorem simEncCore_eq (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ)
+ def combineRows (G : BilinearGen) (κ : ℕ) (pp : PublicParams G κ) {J : Type}
+     (C : Matrix (Fin 3) (Fin 2) (ZMod pp.group.order)) (a : Fin 3 → ZMod pp.group.order)
+     (hi : Matrix (Fin 2) J pp.group.G) (lo : J → pp.group.G) : Matrix (Fin 3) J pp.group.G :=
+-  matMulGroup C hi * fun i j => lo j ^ (a i).val
++  matMulGroup C hi ⊙ (fun i j => lo j ^ (a i).val)
+ 
+ /-- The inverse-basis combination is its known-matrix action times the hidden-row powers. -/
+ theorem combineRows_eq (G : BilinearGen) (κ : ℕ) (pp : PublicParams G κ) {J : Type}
+     (C : Matrix (Fin 3) (Fin 2) (ZMod pp.group.order)) (a : Fin 3 → ZMod pp.group.order)
+     (hi : Matrix (Fin 2) J pp.group.G) (lo : J → pp.group.G) :
+-    combineRows G κ pp C a hi lo = matMulGroup C hi * fun i j => lo j ^ (a i).val := rfl
++    combineRows G κ pp C a hi lo = matMulGroup C hi ⊙ (fun i j => lo j ^ (a i).val) := rfl
+ 
+ /-- A simulated key draws `T`, the independent `uhat`, `R`, and partial-garbling coins
+ [Wee20, §4.2, p. 10, KeyGen* and (12)]. -/
+@@ -275,12 +275,12 @@ def simKeyCore (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type
+   let X := PartialGarbling.publicTensor (p := pp.orderParam)
+     (M := PG.MIdx κ pp.orderParam f) x
+   let pstar := groupPGStar G PG κ pp f x mu t
+-  let high1 := pp.group.expMat pp.generator (A * (fun i j => T i (Sum.inr j))) *
++  let high1 := pp.group.expMat pp.generator (A * (fun i j => T i (Sum.inr j))) ⊙
+     matMulGroup (A * st.W) M
+   let high2 := pp.group.expMat pp.generator
+-    ((A * T) * PG.L1 κ pp.orderParam f + (A * st.U) * tensorR)
++    ((A * T) * (show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ pp.orderParam f) + (A * st.U) * tensorR)
+   let high3 := pp.group.expMat pp.generator
+-    ((A * T) * PG.L0 κ pp.orderParam f + (A * st.V) * R)
++    ((A * T) * (show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam f) + (A * st.V) * R)
+   let low1 := fun j => (pstar (Sum.inl j))⁻¹ * groupVecMul st.w M j
+   let low2 := pp.group.expVec pp.generator uhat
+   let low3 := fun u => pstar (Sum.inr u) *
+@@ -311,12 +311,12 @@ theorem simKeyCore_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ 
+       let X := PartialGarbling.publicTensor (p := pp.orderParam)
+         (M := PG.MIdx κ pp.orderParam f) x
+       let pstar := groupPGStar G PG κ pp f x mu t
+-      let high1 := pp.group.expMat pp.generator (A * (fun i j => T i (Sum.inr j))) *
++      let high1 := pp.group.expMat pp.generator (A * (fun i j => T i (Sum.inr j))) ⊙
+         matMulGroup (A * st.W) M
+       let high2 := pp.group.expMat pp.generator
+-        ((A * T) * PG.L1 κ pp.orderParam f + (A * st.U) * tensorR)
++        ((A * T) * (show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ pp.orderParam f) + (A * st.U) * tensorR)
+       let high3 := pp.group.expMat pp.generator
+-        ((A * T) * PG.L0 κ pp.orderParam f + (A * st.V) * R)
++        ((A * T) * (show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam f) + (A * st.V) * R)
+       let low1 := fun j => (pstar (Sum.inl j))⁻¹ * groupVecMul st.w M j
+       let low2 := pp.group.expVec pp.generator uhat
+       let low3 := fun u => pstar (Sum.inr u) *
+diff --git a/TCSlib/Cryptography/Pairing/Exponents.lean b/TCSlib/Cryptography/Pairing/Exponents.lean
+index fddb5b8e4..1fcaf61b3 100644
+--- a/TCSlib/Cryptography/Pairing/Exponents.lean
++++ b/TCSlib/Cryptography/Pairing/Exponents.lean
+@@ -5,6 +5,7 @@ Authors: TCSlib contributors
+ -/
+ import TCSlib.Cryptography.Pairing.Group
+ import Mathlib.Data.Matrix.Mul
++import Mathlib.LinearAlgebra.Matrix.Hadamard
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false

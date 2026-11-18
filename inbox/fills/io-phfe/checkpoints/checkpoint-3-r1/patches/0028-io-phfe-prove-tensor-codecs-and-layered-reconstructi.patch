@@ -1,0 +1,516 @@
+From dc9fdccf8bcaa454936263a2be05b446238330e4 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 06:47:15 -0800
+Subject: [PATCH 28/36] io-phfe: prove tensor codecs and layered reconstruction
+
+---
+ .../FunctionalEncryption/Classes.lean         |  79 ++++++++--
+ .../PartialGarbling/Layered.lean              | 139 +++++++++++++++++-
+ .../PartialGarbling/PathAlgebra.lean          |  48 +++++-
+ .../SemiAdaptive/Security.lean                |   5 +-
+ .../Simulation/Security.lean                  |   5 +-
+ .../Wee20/LinearCorrect.lean                  |  25 +++-
+ .../Wee20/QuadraticCorrect.lean               |  11 +-
+ 7 files changed, 287 insertions(+), 25 deletions(-)
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean
+index 20c52a9a4..3884d9b14 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean
+@@ -149,6 +149,33 @@ theorem decodeResidues_apply (p : ℕ+) (count width : ℕ)
+       (ZMod.val_cast_of_lt (lt_of_lt_of_le (Candidates.listToNat_lt_two_pow _)
+         (Nat.pow_le_pow_right (Nat.succ_pos 1) (List.length_take_le _ _)))))
+ 
++/-- Each coordinate of total residue decoding reads its canonical row-major bit
++block and reduces that block's natural value modulo p. This is technical wire-
++representation glue, valid for every word without a canonicality or width bound.
++
++**Proof sketch.** Read decodeResidues_apply. Identify its drop/take block with the
++finite list of the row's width bit coordinates, using the published list element,
++length, and finite-product coordinate equations. Then transport the list equality
++through listToNat and the residue cast; no range rejection is introduced. -/
++theorem decodeResidues_block (p : ℕ+) (count width : ℕ)
++    (word : Fin (count * width) → Bool) (i : Fin count) :
++    decodeResidues p count width word i =
++      (listToNat (List.ofFn (fun j : Fin width => word (finProdFinEquiv (i, j)))) :
++        ZMod (p : ℕ)) := by
++  rw [decodeResidues_apply]
++  apply congrArg (fun bits : List Bool => (listToNat bits : ZMod (p : ℕ)))
++  apply List.ext_getElem
++  · rw [List.length_take, List.length_drop, List.length_ofFn, List.length_ofFn]
++    apply Nat.min_eq_left
++    have hcut := Nat.mul_le_mul_right width (Nat.succ_le_of_lt i.isLt)
++    rw [Nat.succ_mul] at hcut
++    omega
++  · intro j hj hk
++    simp only [List.getElem_take, List.getElem_drop, List.getElem_ofFn]
++    apply congrArg word
++    apply Fin.ext
++    simp only [finProdFinEquiv_apply_val, Nat.mul_comm, Nat.add_comm]
++
+ /-- Equal modulus values give the same decoded residues after the natural cast.
+ This is the reader used when replacing a drawn order by a fixed prime schedule.
+ 
+@@ -157,18 +184,26 @@ that equality and use the residue representative casting identity coordinatewise
+ theorem decodeResidues_modulus (p q : ℕ+) (hpq : (p : ℕ) = (q : ℕ)) (count width : ℕ)
+     (word : Fin (count * width) → Bool) :
+     (fun i => ((decodeResidues p count width word i).val : ZMod (q : ℕ))) =
+-      decodeResidues q count width word := sorry
++      decodeResidues q count width word := by
++  cases PNat.coe_injective hpq
++  exact funext fun i => ZMod.natCast_zmod_val (decodeResidues p count width word i)
+ 
+ /-- Total decoding inverts a canonical vector encoding when its residues fit.
+ 
+-**Proof sketch.** Reinterpret the same integer representatives at the word
+-modulus, use the published modular-vector round trip, then cast each representative
+-back into p. The width hypothesis prevents any truncation of an original residue. -/
++**Proof sketch.** Apply the published modular-vector round trip at the canonical
++word, then read its successful parsing branch coordinatewise. The total decoding
++reader returns the same block's representative cast, so it equals the original
++residue. The round trip rules out a failed parsing branch. -/
+ theorem decodeResidues_encodeVector (p : ℕ+) (count width : ℕ)
+     (hwidth : (p : ℕ) ≤ 2 ^ width) (v : Fin count → ZMod (p : ℕ))
+     (word : Fin (count * width) → Bool)
+     (hword : List.ofFn word = Encoding.Modular.encodeVector width v) :
+-    decodeResidues p count width word = v := sorry
++    decodeResidues p count width word = v := by
++  have hparse := Encoding.Modular.decodeVector_encodeVector width hwidth v
++  rw [← hword, Encoding.Modular.decodeVector_eq] at hparse
++  split_ifs at hparse
++  · exact funext fun i => (decodeResidues_apply p count width word i).trans
++      (congrFun (Option.some.inj hparse) i)
+ 
+ /-- Encode a coefficient tensor as a row-major modular matrix using the explicit
+ padded-tuple ordering. This reuses the published modular matrix encoder. -/
+@@ -199,8 +234,9 @@ theorem encodeTensorBits_eq {p : ℕ+} {l n d : ℕ} (width : ℕ) (C : PolyTens
+ **Proof sketch.** The encoder's length is already known. Apply the list reading
+ round trip at that length; no padding or truncation occurs at any finite index. -/
+ theorem ofFn_encodeTensorBits {p : ℕ+} {l n d : ℕ} (width : ℕ)
+-    (C : PolyTensor p l n d) : List.ofFn (encodeTensorBits width C) = encodeTensor width C :=
+-  sorry
++    (C : PolyTensor p l n d) : List.ofFn (encodeTensorBits width C) = encodeTensor width C := by
++  simpa only [encodeTensorBits_eq, padFin_def] using
++    (ofFn_padFin_of_length (encodeTensor_length width C))
+ 
+ /-- Decode a coefficient tensor by total modular vector decoding and the explicit
+ row/tuple finite-product coordinates. This is wire-representation glue. -/
+@@ -222,7 +258,17 @@ theorem decodeTensor_eq (p : ℕ+) (l n d width : ℕ)
+ interpretation, and the explicit tuple equivalence's inverse laws coordinatewise. -/
+ theorem decodeTensor_encodeTensorBits {p : ℕ+} {l n d : ℕ} (width : ℕ)
+     (hwidth : (p : ℕ) ≤ 2 ^ width) (C : PolyTensor p l n d) :
+-    decodeTensor p l n d width (encodeTensorBits width C) = C := sorry
++    decodeTensor p l n d width (encodeTensorBits width C) = C := by
++  have hparse := Encoding.Modular.decodeMatrix_encodeMatrix width hwidth
++    (fun j k => C j ((tupleCoord l d).symm k))
++  rw [← encodeTensor_eq, ← ofFn_encodeTensorBits,
++    Encoding.Modular.decodeMatrix_eq, Encoding.Modular.decodeVector_eq] at hparse
++  split_ifs at hparse
++  · simp only [Option.map_some, Option.some.injEq] at hparse
++    funext j tau
++    simpa only [decodeTensor_eq, decodeResidues_apply, Equiv.symm_apply_apply] using
++      congrFun (congrFun hparse j) (tupleCoord l d tau)
++  · simp only [Option.map_none, reduceCtorEq] at hparse
+ 
+ /-- Fixed-width coefficient descriptions are injective when every residue fits.
+ 
+@@ -230,7 +276,10 @@ theorem decodeTensor_encodeTensorBits {p : ℕ+} {l n d : ℕ} (width : ℕ)
+ round trip. This delegates the actual modular encoding argument to the published API. -/
+ theorem encodeTensorBits_injective {p : ℕ+} {l n d : ℕ} (width : ℕ)
+     (hwidth : (p : ℕ) ≤ 2 ^ width) :
+-    Function.Injective (encodeTensorBits (p := p) (l := l) (n := n) (d := d) width) := sorry
++    Function.Injective (encodeTensorBits (p := p) (l := l) (n := n) (d := d) width) :=
++  fun C D h => (decodeTensor_encodeTensorBits width hwidth C).symm.trans
++    ((congrArg (decodeTensor p l n d width) h).trans
++      (decodeTensor_encodeTensorBits width hwidth D))
+ 
+ /-- The private tensor is the Kronecker product z1 ⊗ z2 in row-major pair order.
+ [Wee20, §3, p.6]. -/
+@@ -279,7 +328,12 @@ commute scalar factors in each term. Reuse finite-product sum reindexing. -/
+ theorem phfeEval_sum {p : ℕ+} {l n d : ℕ} (C : PolyTensor p l (n * n) d)
+     (x : Fin l → ZMod (p : ℕ)) (y : Fin n → ZMod (p : ℕ)) :
+     phfeEval C x y = ∑ j : Fin n, ∑ k : Fin n,
+-      polyTensorEval C x (finProdFinEquiv (j, k)) * y j * y k := sorry
++      polyTensorEval C x (finProdFinEquiv (j, k)) * y j * y k := by
++  rw [phfeEval_eq, quadEval_eq]
++  show (∑ i : Fin (n * n), privateTensor y y i * polyTensorEval C x i) = _
++  rw [← finProdFinEquiv.sum_comp, Fintype.sum_prod_type]
++  simp only [privateTensor_eq, Matrix.kroneckerMap_apply, Equiv.symm_apply_apply,
++    mul_comm, mul_left_comm, mul_assoc]
+ 
+ /-- The tensor-description width is n(l+1)^d residue blocks of width w. -/
+ def tensorFnLen (l n w : PolyExpr) (d : ℕ) : PolyExpr :=
+@@ -412,7 +466,10 @@ theorem phfeClass_eval_encoded (l n w : PolyExpr) (d kappa : ℕ) (p : ℕ+)
+     (hx : List.ofFn xword = Encoding.Modular.encodeVector (w.eval kappa) x)
+     (hy : List.ofFn yword = Encoding.Modular.encodeVector (w.eval kappa) y) :
+     (phfeClass l n w d).eval kappa p (encodeTensorBits (w.eval kappa) C) xword yword =
+-      phfeEval C x y := sorry
++      phfeEval C x y := by
++  rw [phfeClass_eval, decodeTensor_encodeTensorBits (w.eval kappa) hwidth C,
++    decodeResidues_encodeVector p (l.eval kappa) (w.eval kappa) hwidth x xword hx,
++    decodeResidues_encodeVector p (n.eval kappa) (w.eval kappa) hwidth y yword hy]
+ 
+ /-- The quadratic wire class permits two independently sized private vectors.
+ [Wee20, §3, p.6]. Scalar outputs remain unembedded at the function-class layer. -/
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean
+index 4a002afe3..5d9eba0ee 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean
+@@ -140,13 +140,28 @@ theorem nodeBound_succ (l : PolyExpr) (d : ℕ) :
+ At a successor, use Fin.sum_univ_castSucc to split the last layer; its count
+ is exactly the power added by nodeBound_succ. -/
+ theorem nodeBound_eval (l : PolyExpr) (d kappa : ℕ) :
+-    (nodeBound l d).eval kappa = nodeCount (l.eval kappa) d := sorry
++    (nodeBound l d).eval kappa = nodeCount (l.eval kappa) d := by
++  induction d with
++  | zero =>
++      simp only [nodeBound_zero, nodeCount_eq, Fin.sum_univ_one, Fin.val_zero, pow_zero]
++      rfl
++  | succ d ih =>
++      rw [nodeBound_succ]
++      change (nodeBound l d).eval kappa + (l.eval kappa + 1) ^ (d + 1) =
++        nodeCount (l.eval kappa) (d + 1)
++      rw [ih]
++      simpa only [nodeCount_eq, Fin.coe_castSucc, Fin.val_last] using
++        (Fin.sum_univ_castSucc
++          (fun k : Fin (d + 2) => (l.eval kappa + 1) ^ k.val)).symm
+ 
+ /-- Removing the source leaves exactly the auxiliary prefix nodes.
+ 
+ **Proof sketch.** Split the geometric sum at depth zero using Fin.sum_univ_succ;
+ the first term is 1 and the remaining terms are exactly auxCount. -/
+-theorem auxCount_add_one (l d : ℕ) : auxCount l d + 1 = nodeCount l d := sorry
++theorem auxCount_add_one (l d : ℕ) : auxCount l d + 1 = nodeCount l d := by
++  rw [auxCount_eq, nodeCount_eq, Fin.sum_univ_succ]
++  simp only [Fin.val_zero, Fin.val_succ, pow_zero]
++  exact Nat.add_comm _ _
+ 
+ /-- Node coordinates use the explicit tuple equivalence within each depth and
+ the published finite-sigma equivalence between depths. No opaque enumeration is used. -/
+@@ -226,6 +241,26 @@ def matrix (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ)) :
+ theorem matrix_eq (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ)) :
+     matrix C x = L1 C * PartialGarbling.publicTensor x + L0 C := rfl
+ 
++/-- A non-root input-matrix row has its padded edge weight at the parent and a
++negative unit at its node. This is the layered incidence formula of
++[AGW20, Appendix A, (32), p.38].
++
++**Proof sketch.** Evaluate the abstract padded-incidence identity at the chosen
++row and column. Identify its matrices using the published incidence, public-input
++and padding readers, with the product-index sum formula. -/
++theorem matrix_inl (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
++    (v : TIdx l d) (u : MIdx l d) :
++    matrix C x (Sum.inl v) u =
++      (if u = parent v then xhat x (lastLabel v) else 0) -
++        (if u = node v then 1 else 0) := by
++  have h := congrArg
++    (fun B : Matrix (TIdx l d) (MIdx l d) (ZMod (p : ℕ)) => B v u)
++    (PathAlgebra.paddedIncidence_eq
++      (parent : TIdx l d → MIdx l d) node lastLabel x)
++  simpa only [matrix_eq, Matrix.add_apply, Matrix.mul_apply, Matrix.of_apply,
++    Fintype.sum_prod_type, L1_inl, L0_inl, PartialGarbling.publicTensor_apply,
++    xhat_eq] using h
++
+ /-- A forward path value is the product of the labels in its prefix. This replaces
+ the cofactor description of rec in [AGW20, Appendix A, p.38] by its path formula. -/
+ def forward (x : Fin l → ZMod (p : ℕ)) (u : MIdx l d) : ZMod (p : ℕ) :=
+@@ -235,10 +270,27 @@ def forward (x : Fin l → ZMod (p : ℕ)) (u : MIdx l d) : ZMod (p : ℕ) :=
+ theorem forward_eq (x : Fin l → ZMod (p : ℕ)) (u : MIdx l d) :
+     forward x u = ∏ i : Fin u.1.val, xhat x (u.2 i) := rfl
+ 
++/-- A non-root prefix's forward value is its parent's value times its final edge
++weight. This is a technical recurrence for the layered path-sum specialization of
++[AGW20, Appendix A, (32), p.38].
++
++**Proof sketch.** Apply the published node, parent, edge-label and forward readers.
++Split the final factor with Fin.prod_univ_castSucc; Fin.init_def identifies the
++remaining product with the parent's path value. -/
++theorem forward_node (x : Fin l → ZMod (p : ℕ)) (v : TIdx l d) :
++    forward x (node v) = forward x (parent v) * xhat x (lastLabel v) := by
++  simpa only [node_eq, parent_eq, lastLabel_eq, forward_eq, Fin.val_succ,
++    Fin.coe_castSucc, Fin.init_def] using
++    (Fin.prod_univ_castSucc (fun i : Fin (v.1.val + 1) => xhat x (v.2 i)))
++
+ /-- The source's forward value is the empty product 1.
+ 
+ **Proof sketch.** The root tuple has domain Fin 0; its finite product is empty. -/
+-theorem forward_root (x : Fin l → ZMod (p : ℕ)) : forward x (root l d) = 1 := sorry
++theorem forward_root (x : Fin l → ZMod (p : ℕ)) : forward x (root l d) = 1 :=
++  (congrArg (forward (d := d) x) (root_eq l d)).trans
++    ((forward_eq x
++      (⟨⟨0, Nat.zero_lt_succ d⟩, Fin.elim0⟩ : MIdx l d)).trans
++      (Fin.prod_univ_zero (fun i : Fin 0 => xhat x (Fin.elim0 i))))
+ 
+ /-- Reconstruction consists of the polynomial outputs followed by all forward
+ prefix values. [AGW20, Lemma 2, p.12; Appendix A, p.38]. -/
+@@ -306,7 +358,30 @@ recurrence. At each non-root prefix its parent's weighted forward value cancels
+ its own value. Output rows sum the coefficient-weighted full prefix products. -/
+ theorem forward_action (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ)) :
+     Matrix.mulVec (matrix C x) (forward x) =
+-      Sum.elim (fun _ : TIdx l d => 0) (polyTensorEval C x) := sorry
++      Sum.elim (fun _ : TIdx l d => 0) (polyTensorEval C x) := by
++  funext row
++  cases row with
++  | inl v =>
++    -- The abstract incidence action is the parent-to-child cancellation.
++    change Matrix.mulVec (matrix C x) (forward x) (Sum.inl v) = 0
++    have h := congrFun
++      (PathAlgebra.weightedIncidence_mulVec
++        (parent : TIdx l d → MIdx l d) node
++        (fun w => xhat x (lastLabel w)) (forward x)) v
++    simpa only [Matrix.mulVec_eq_sum, Finset.sum_apply, Pi.smul_apply,
++      Matrix.transpose_apply, Matrix.of_apply, op_smul_eq_mul, matrix_inl,
++      forward_node, mul_comm, sub_self] using h
++  | inr j =>
++    -- The zero variable block leaves the terminal coefficient rows.
++    change Matrix.mulVec (matrix C x) (forward x) (Sum.inr j) = polyTensorEval C x j
++    simp only [Matrix.mulVec_eq_sum, Finset.sum_apply, Pi.smul_apply,
++      Matrix.transpose_apply, op_smul_eq_mul, matrix_eq, Matrix.add_apply,
++      Matrix.mul_apply, L1_inr, zero_mul, Finset.sum_const_zero, zero_add, L0_inr]
++    -- Swap the node and tuple sums; each tuple selects precisely its own leaf.
++    simp only [Finset.sum_mul]
++    rw [Finset.sum_comm]
++    simp only [ite_mul, zero_mul, Fintype.sum_ite_eq', leaf_eq, forward_eq,
++      Fin.val_last, polyTensorEval_eq]
+ 
+ /-- The backward value at the source is the allowed scalar z·f(x).
+ 
+@@ -315,7 +390,44 @@ Its extension is itself. Exchange the finite output/tuple sums and regroup the
+ coefficient products into polyTensorEval. -/
+ theorem backward_root (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
+     (z : Fin n → ZMod (p : ℕ)) :
+-    backward C x z (root l d) = dotProduct z (polyTensorEval C x) := sorry
++    backward C x z (root l d) = dotProduct z (polyTensorEval C x) :=
++  let u0 : MIdx l d := ⟨⟨0, Nat.zero_lt_succ d⟩, Fin.elim0⟩
++  let hCast : d = 0 + d := (Nat.zero_add d).symm
++  let monomial := fun sigma : Fin d → Fin (l + 1) => ∏ i : Fin d, xhat x (sigma i)
++  have hExtend : ∀ sigma : Fin d → Fin (l + 1), extend u0 sigma = sigma :=
++    fun sigma => (extend_eq u0 sigma).trans
++      (funext fun i =>
++        (show Fin.append Fin.elim0 sigma (Fin.cast hCast i) = sigma i from
++          (congrFun (Fin.elim0_append sigma) (Fin.cast hCast i)).trans
++            (congrArg sigma
++              ((Fin.cast_cast hCast (Nat.zero_add d) (i := i)).trans
++                (congrFun (Fin.cast_refl d (hCast.trans (Nat.zero_add d))) i)))))
++  have hWeight : ∀ (sigma : Fin d → Fin (l + 1)) (j : Fin n),
++      (C j sigma * z j) * monomial sigma = z j * (C j sigma * monomial sigma) :=
++    fun sigma j =>
++      (congrArg (fun v : ZMod (p : ℕ) => v * monomial sigma)
++        (mul_comm (C j sigma) (z j))).trans (mul_assoc (z j) (C j sigma) (monomial sigma))
++  have hSum : (∑ sigma : Fin d → Fin (l + 1),
++      (∑ j : Fin n, C j sigma * z j) * monomial sigma) =
++        dotProduct z (polyTensorEval C x) :=
++    (Finset.sum_congr rfl (fun sigma _ =>
++      Finset.sum_mul Finset.univ (fun j : Fin n => C j sigma * z j) (monomial sigma))).trans
++      ((Finset.sum_comm (s := Finset.univ) (t := Finset.univ)
++        (f := fun (sigma : Fin d → Fin (l + 1)) (j : Fin n) =>
++          (C j sigma * z j) * monomial sigma)).trans
++        ((Finset.sum_congr rfl (fun j _ =>
++          ((Finset.sum_congr rfl (fun sigma _ => hWeight sigma j)).trans
++            (Finset.mul_sum Finset.univ
++              (fun sigma : Fin d → Fin (l + 1) => C j sigma * monomial sigma) (z j)).symm).trans
++            (congrArg (fun v : ZMod (p : ℕ) => z j * v)
++              (polyTensorEval_eq C x j).symm))).trans
++          (show (∑ j : Fin n, z j * polyTensorEval C x j) =
++              dotProduct z (polyTensorEval C x) from rfl)))
++  (congrArg (backward C x z) (root_eq l d)).trans
++    ((backward_eq C x z u0).trans
++      ((Finset.sum_congr rfl (fun sigma _ =>
++        congrArg (fun tau : Fin d → Fin (l + 1) =>
++          (∑ j : Fin n, C j tau * z j) * monomial sigma) (hExtend sigma))).trans hSum))
+ 
+ /-- Multiplying the backward draw shift by the input matrix cancels every column
+ except the source column, whose value is the allowed scalar.
+@@ -340,7 +452,22 @@ output contribution cancels the draw contribution, leaving z·f(x). -/
+ theorem rec_spec (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
+     (z : Fin n → ZMod (p : ℕ)) (t : (TIdx l d ⊕ Fin n) → ZMod (p : ℕ)) :
+     dotProduct (PartialGarbling.pgbCore (L1 C) (L0 C) x z t) (rec C x) =
+-      dotProduct z (polyTensorEval C x) := sorry
++      dotProduct z (polyTensorEval C x) := by
++  -- Read the reconstruction blocks without unfolding their definition.
++  have hrec : rec C x = Sum.elim (polyTensorEval C x) (forward x) :=
++    (Sum.elim_comp_inl_inr (rec C x)).symm.trans
++      (congrArg₂ Sum.elim (funext (rec_inl C x)) (funext (rec_inr C x)))
++  -- The adversary draw paired with the output-only vector is its output block.
++  have ht := sumElim_dotProduct_sumElim
++    (u := t ∘ Sum.inl) (x := t ∘ Sum.inr)
++    (v := fun _ : TIdx l d => 0) (y := polyTensorEval C x)
++  simp only [Sum.elim_comp_inl_inr, dotProduct_zero', zero_add] at ht
++  rw [PartialGarbling.pgbCore_eq, hrec, sumElim_dotProduct_sumElim,
++    ← matrix_eq C x, ← Matrix.dotProduct_mulVec, forward_action, ht]
++  -- Forward reconstruction leaves equal and opposite mask terms.
++  change dotProduct (z - t ∘ Sum.inr) (polyTensorEval C x) +
++    dotProduct (t ∘ Sum.inr) (polyTensorEval C x) = dotProduct z (polyTensorEval C x)
++  rw [sub_dotProduct, sub_add_cancel]
+ 
+ /-- Subtracting the backward draw shift transforms the real garbling exactly
+ into the simulated garbling at its allowed scalar. [AGW20, Appendix A, (28)–(30),
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean
+index fc012f034..de394d09f 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean
+@@ -50,7 +50,22 @@ theorem weightedIncidence_mulVec {V E R : Type*} [Fintype V] [DecidableEq V]
+       (Matrix.of fun e v =>
+         (if v = parent e then weight e else 0) -
+           (if v = child e then 1 else 0)) values =
+-      fun e => weight e * values (parent e) - values (child e) := sorry
++      fun e => weight e * values (parent e) - values (child e) :=
++  funext fun e =>
++    show dotProduct
++      (fun v => (if v = parent e then weight e else 0) -
++        (if v = child e then 1 else 0)) values =
++        weight e * values (parent e) - values (child e) from
++      (congrArg (fun row : V → R => dotProduct row values)
++        (funext fun v =>
++          congrArg₂ (fun a b : R => a - b)
++            (Pi.single_apply (parent e) (weight e) v).symm
++            (Pi.single_apply (child e) (1 : R) v).symm)).trans
++        ((sub_dotProduct (Pi.single (parent e) (weight e))
++          (Pi.single (child e) (1 : R)) values).trans
++          (congrArg₂ (fun a b : R => a - b)
++            (single_dotProduct values (weight e) (parent e))
++            (single_one_dotProduct (child e) values)))
+ 
+ /-- The backward action of weighted endpoint rows is the sum of outgoing
+ weighted edge values minus the sum of incoming edge values at each node.
+@@ -66,7 +81,14 @@ theorem weightedIncidence_vecMul {V E R : Type*} [Fintype E] [DecidableEq V]
+           (if v = child e then 1 else 0)) =
+       fun v =>
+         (∑ e, if parent e = v then flow e * weight e else 0) -
+-          ∑ e, if child e = v then flow e else 0 := sorry
++          ∑ e, if child e = v then flow e else 0 := by
++  change Matrix.vecMul flow
++    ((Matrix.of fun e v => if v = parent e then weight e else 0) -
++      (Matrix.of fun e v => if v = child e then (1 : R) else 0)) = _
++  rw [Matrix.vecMul_sub]
++  funext v
++  simp only [Pi.sub_apply, Matrix.vecMul_eq_sum, Finset.sum_apply, Pi.smul_apply,
++    Matrix.of_apply, smul_eq_mul, mul_ite, mul_zero, mul_one, eq_comm]
+ 
+ /-- A variable incidence matrix contracted against the public-input tensor,
+ plus its constant-edge and negative-child entries, equals the weighted endpoint
+@@ -89,7 +111,27 @@ theorem paddedIncidence_eq {V E R : Type*} [Fintype V] [DecidableEq V]
+           (if v = child e then 1 else 0)) =
+       Matrix.of (fun e v =>
+         (if v = parent e then Fin.snoc (α := fun _ => R) x (1 : R) (label e) else 0) -
+-          (if v = child e then 1 else 0)) := sorry
++          (if v = child e then 1 else 0)) := by
++  funext e v
++  -- Contract the product index and its single supported node coordinate.
++  simp only [Matrix.add_apply, Matrix.mul_apply, Matrix.of_apply,
++    Fintype.sum_prod_type, ite_and, ite_mul, one_mul, zero_mul,
++    Fintype.sum_ite_eq']
++  have hlast (i : Fin l) : Fin.last l ≠ i.castSucc :=
++    Ne.symm (Fin.castSucc_ne_last i)
++  -- At the parent column, split the label into variable and constant cases.
++  by_cases hv : v = parent e
++  · subst v
++    generalize label e = a
++    refine Fin.lastCases ?_ (fun i => ?_) a
++    · simp only [hlast, if_false, if_true, Fin.snoc_last,
++        Finset.sum_const_zero, zero_add]
++    · simp only [Fin.castSucc_inj, Fin.castSucc_ne_last, if_false,
++        Fin.snoc_castSucc, Fintype.sum_ite_eq, if_true, mul_one,
++        sub_eq_add_neg, zero_add]
++  -- Every other column has zero parent contribution on both sides.
++  · simp only [if_neg hv, if_neg (Ne.symm hv), mul_zero, ite_self,
++      Finset.sum_const_zero, zero_add]
+ 
+ end PartialGarbling.PathAlgebra
+ end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Security.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Security.lean
+index 71c6ea212..eb9e9fd59 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Security.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Security.lean
+@@ -88,6 +88,9 @@ theorem subexpSASimSecure_iff :
+ SubexpSmall.negligible implication to each oracle machine and total-call budget.
+ No new asymptotic closure argument is needed. -/
+ theorem SubexpSASimSecureWith.saSimSecureWith {Sim : SASimulator.Raw S}
+-    (h : S.SubexpSASimSecureWith Sim) : S.SASimSecureWith Sim := sorry
++    (h : S.SubexpSASimSecureWith Sim) : S.SASimSecureWith Sim :=
++  Exists.elim ((S.subexpSASimSecureWith_iff Sim).1 h) fun _ hc =>
++    (S.saSimSecureWith_iff Sim).2 fun A q =>
++      SubexpSmall.negligible (hc.2 A q) hc.1
+ 
+ end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.FEScheme.Raw
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Security.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Security.lean
+index 9ff5eb9c4..d26e06a73 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Security.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Security.lean
+@@ -85,7 +85,10 @@ theorem subexpSimSecure_iff :
+ **Proof sketch.** Use the shared implication from subexponential smallness to negligibility
+ for each machine pair and query polynomial, at the common positive exponent. -/
+ theorem SubexpSimSecureWith.simSecureWith {Sim : Simulator.Raw S}
+-    (h : S.SubexpSimSecureWith Sim) : S.SimSecureWith Sim := sorry
++    (h : S.SubexpSimSecureWith Sim) : S.SimSecureWith Sim :=
++  Exists.elim ((S.subexpSimSecureWith_iff Sim).1 h) fun _ hc =>
++    (S.simSecureWith_iff Sim).2 fun A q =>
++      SubexpSmall.negligible (hc.2 A q) hc.1
+ 
+ end FEScheme.Raw
+ 
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean
+index 103435e6f..889611baf 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean
+@@ -53,7 +53,11 @@ theorem rec_output_eq_eval (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → 
+     (PG : PartialGarbling.Raw ℓ n' Fn) (κ : ℕ) (pp : PublicParams G κ)
+     (f : Fn κ pp.orderParam) (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
+     (j : Fin (n'.eval κ)) :
+-    PG.recVec κ pp.orderParam f x (Sum.inl j) = PG.eval κ pp.orderParam f x j := sorry
++    PG.recVec κ pp.orderParam f x (Sum.inl j) = PG.eval κ pp.orderParam f x j := by
++  simpa only [PartialGarbling.Raw.pgb_eq, PartialGarbling.pgbCore_eq,
++    Pi.zero_apply, sub_zero, Matrix.zero_vecMul, Sum.elim_single_zero,
++    single_one_dotProduct] using
++    (PG.reconstruct κ pp.orderParam f x (Pi.single j 1) 0)
+ 
+ /-- The reconstruction vector cancels every garbling-draw coordinate. This is coefficient
+ form of the reconstruction law [AGW20, Lemma 2, p. 12; Appendix A, (29), p. 37].
+@@ -69,7 +73,24 @@ theorem rec_matrix_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ 
+           pp.orderParam) (M := PG.MIdx κ pp.orderParam f) x) +
+       (show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam f)) *ᵥ (fun u => PG.recVec κ
+         pp.orderParam f x (Sum.inr u)) =
+-        Sum.elim (fun _ => 0) (PG.eval κ pp.orderParam f x) := sorry
++        Sum.elim (fun _ => 0) (PG.eval κ pp.orderParam f x) := by
++  funext i
++  have h := PG.reconstruct κ pp.orderParam f x 0 (Pi.single i 1)
++  rw [PartialGarbling.Raw.pgb_eq, PartialGarbling.pgbCore_eq,
++    ← Sum.elim_comp_inl_inr (PG.recVec κ pp.orderParam f x),
++    sumElim_dotProduct_sumElim, ← Matrix.dotProduct_mulVec, single_one_dotProduct,
++    zero_dotProduct] at h
++  cases i with
++  | inl a =>
++      simp only [Pi.zero_apply, Pi.single_eq_of_ne Sum.inr_ne_inl, sub_zero] at h
++      change (0 : Fin (n'.eval κ) → ZMod pp.group.order) ⬝ᵥ _ + _ = _ at h
++      simpa only [zero_dotProduct, zero_add, Sum.elim_inl] using h
++  | inr j =>
++      rw [← Sum.elim_zero_single j (1 : ZMod pp.group.order)] at h
++      simp only [Sum.elim_inr, Pi.zero_apply, zero_sub] at h
++      change (-Pi.single j (1 : ZMod pp.group.order)) ⬝ᵥ _ + _ = _ at h
++      rw [neg_dotProduct, single_one_dotProduct] at h
++      exact (eq_of_neg_add_eq_zero h).symm.trans (rec_output_eq_eval G PG κ pp f x j)
+ 
+ /-- The leakage is the product of the supplied group-matrix entries raised to the known
+ coefficients `z_a f_b(x)` [Wee20, §4, p. 8].
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean
+index 529dc74d6..89495fcfc 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean
+@@ -67,7 +67,16 @@ theorem signalGroup_exp (G : BilinearGen) (n1 n2 : PolyExpr) (κ : ℕ)
+     (z2 : Fin (n2.eval κ) → ZMod pp.group.order)
+     (y1 : Fin (n1.eval κ) → ZMod pp.group.order) :
+     signalGroup G n1 n2 κ pp s1 z2 (pp.group.expVec pp.generator y1) s2 =
+-      pp.group.expVec pp.generator (signalScalar (p := pp.orderParam) s1 z2 y1 s2) := sorry
++      pp.group.expVec pp.generator (signalScalar (p := pp.orderParam) s1 z2 y1 s2) := by
++  funext i
++  simp only [signalGroup_eq, signalScalar_eq, BilinearGroup.expVec_apply]
++  cases hi : (signalCoord (n1.eval κ) (n2.eval κ)).symm i with
++  | inl u => simp only [hi, Sum.elim_inl]
++  | inr u =>
++      simp only [hi, Sum.elim_inr, privateTensor_eq, Matrix.kroneckerMap_apply,
++        Equiv.symm_apply_apply]
++      simpa only [BilinearGroup.expVec_apply] using
++        congrFun (pp.group.expVec_tensor_left pp.generator y1 s2) u
+ 
+ /-- The two cross terms account for the masked tensor product
+ [Wee20, §3.1, p. 6, (4)].

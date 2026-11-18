@@ -1,0 +1,137 @@
+From c246e309e5061fee10309435e1e169ff68233e28 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 04:03:03 -0800
+Subject: [PATCH 21/36] io-phfe: keep the machine adapter in the functional
+ encryption namespace
+
+---
+ .../FunctionalEncryption/SemiAdaptive/Data.lean           | 8 ++++----
+ .../FunctionalEncryption/SemiAdaptive/Security.lean       | 8 ++++----
+ .../FunctionalEncryption/Wee20/PHFE/Adapter.lean          | 5 ++++-
+ .../FunctionalEncryption/Wee20/PHFE/Security.lean         | 4 ++--
+ .../Wee20/QuadraticSecurity/Games.lean                    | 5 ++++-
+ 5 files changed, 18 insertions(+), 12 deletions(-)
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean
+index e8fd47d59..6bc5a96a2 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean
+@@ -261,17 +261,17 @@ def toSAAdv {C : FnClass} {S : FEScheme.Raw C}
+ 
+ /-- The oracle-machine adversary uses its machine's original coin polynomial. -/
+ theorem toSAAdv_coins {C : FnClass} {S : FEScheme.Raw C}
+-    (A : NUPPT) (q : PolyExpr) : (A.toSAAdv (S := S) q).coins = A.coins := rfl
++    (A : NUPPT) (q : PolyExpr) : (toSAAdv (S := S) A q).coins = A.coins := rfl
+ 
+ /-- The oracle-machine adversary's budget is q total oracle calls. -/
+ theorem toSAAdv_budget {C : FnClass} {S : FEScheme.Raw C}
+-    (A : NUPPT) (q : PolyExpr) : (A.toSAAdv (S := S) q).budget = q := rfl
++    (A : NUPPT) (q : PolyExpr) : (toSAAdv (S := S) A q).budget = q := rfl
+ 
+ /-- Each next move is one machine activation on its initial view and encoded log. -/
+ theorem toSAAdv_next {C : FnClass} {S : FEScheme.Raw C}
+     (A : NUPPT) (q : PolyExpr) (kappa : ℕ) (pp : PublicParams S.G kappa)
+     (pk : S.MPK kappa pp) (r : List Bool) (hist : QueryLog (S.saSpec kappa)) :
+-    (A.toSAAdv (S := S) q).next kappa pp pk r hist = S.saReadMove kappa
++    (toSAAdv (S := S) A q).next kappa pp pk r hist = S.saReadMove kappa
+       (A.runAtL kappa (pairEncode (S.saInputWord kappa pp pk)
+         ((S.saCodec kappa).encodeLog hist)) r) := rfl
+ 
+@@ -283,7 +283,7 @@ entry; return and timeout branches differ only by reading the final bit. -/
+ theorem toSAAdv_run {C : FnClass} {S : FEScheme.Raw C}
+     (A : NUPPT) (q : PolyExpr) (kappa : ℕ) (pp : PublicParams S.G kappa)
+     (pk : S.MPK kappa pp) (r : A.Coins kappa) :
+-    (A.toSAAdv (S := S) q).run kappa pp pk (List.ofFn r) =
++    (toSAAdv (S := S) A q).run kappa pp pk (List.ofFn r) =
+       (fun b => b 0) <$> A.toCompOn
+         (bitCodec (S.saIn kappa) (S.saOut kappa) 1)
+         kappa (q.eval kappa) (S.saInputWord kappa pp pk) r := sorry
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Security.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Security.lean
+index f982230ca..71c6ea212 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Security.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Security.lean
+@@ -45,12 +45,12 @@ variable {C : FnClass} (S : FEScheme.Raw C)
+ /-- A specified raw simulator gives negligible advantage against every oracle
+ NUPPT and polynomial total-call budget. [Wee20, §2.2, p.5]. -/
+ def SASimSecureWith (Sim : SASimulator.Raw S) : Prop :=
+-  ∀ A : NUPPT, ∀ q : PolyExpr, Negligible (S.saSimAdv Sim (A.toSAAdv (S := S) q))
++  ∀ A : NUPPT, ∀ q : PolyExpr, Negligible (S.saSimAdv Sim (toSAAdv (S := S) A q))
+ 
+ /-- Raw semi-adaptive security is the displayed negligible-advantage condition. -/
+ theorem saSimSecureWith_iff (Sim : SASimulator.Raw S) :
+     S.SASimSecureWith Sim ↔
+-      ∀ A : NUPPT, ∀ q : PolyExpr, Negligible (S.saSimAdv Sim (A.toSAAdv (S := S) q)) :=
++      ∀ A : NUPPT, ∀ q : PolyExpr, Negligible (S.saSimAdv Sim (toSAAdv (S := S) A q)) :=
+   Iff.rfl
+ 
+ /-- Semi-adaptive simulation security names one efficient simulator before all
+@@ -65,13 +65,13 @@ theorem saSimSecure_iff :
+ all machines and query budgets. [JLS26, §1.1; Wee20, §2.2, p.5]. -/
+ def SubexpSASimSecureWith (Sim : SASimulator.Raw S) : Prop :=
+   ∃ c : ℝ, 0 < c ∧ ∀ A : NUPPT, ∀ q : PolyExpr,
+-    SubexpSmall c (S.saSimAdv Sim (A.toSAAdv (S := S) q))
++    SubexpSmall c (S.saSimAdv Sim (toSAAdv (S := S) A q))
+ 
+ /-- The common exponent precedes both the machine and query-budget quantifiers. -/
+ theorem subexpSASimSecureWith_iff (Sim : SASimulator.Raw S) :
+     S.SubexpSASimSecureWith Sim ↔
+       ∃ c : ℝ, 0 < c ∧ ∀ A : NUPPT, ∀ q : PolyExpr,
+-        SubexpSmall c (S.saSimAdv Sim (A.toSAAdv (S := S) q)) := Iff.rfl
++        SubexpSmall c (S.saSimAdv Sim (toSAAdv (S := S) A q)) := Iff.rfl
+ 
+ /-- Subexponential semi-adaptive security uses one efficient universal simulator.
+ [JLS26, §1.1; Wee20, §2.2, p.5]. -/
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Adapter.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Adapter.lean
+index a2965b9ca..4eee533c6 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Adapter.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Adapter.lean
+@@ -116,7 +116,10 @@ def replayStep (A : (S).SAAdv) (κ : ℕ) (pp : PublicParams (S).G κ)
+         else none
+     | _, _ => none
+ 
+-/-- The replay step has precisely the displayed checked query and answer branches. -/
++/-- The replay step has precisely the displayed checked query and answer branches. 
++
++**Proof sketch.** Each branch and named block is the same as in the deterministic
++definition, so the equation follows by reducing that definition alone. -/
+ theorem replayStep_eq (A : (S).SAAdv) (κ : ℕ) (pp : PublicParams (S).G κ)
+     (pk : Quadratic.MPK G ℓ n n κ (params κ pp)) (r : List Bool)
+     (acc : Option (QueryLog ((S).saSpec κ)))
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Security.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Security.lean
+index 214fc4b82..b83fe906b 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Security.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Security.lean
+@@ -126,7 +126,7 @@ The shared realiser constrains only encoded challenges and layout-length coins.
+ def Wee20RealizableSA (p : ℕ → ℕ)
+     (hp : ∀ κ r, (G.inst κ r).order = p κ) : Prop :=
+   ∀ (A : NUPPT) (q : PolyExpr),
+-    let B := A.toSAAdv (S := S) q
++    let B := toSAAdv (S := S) A q
+     ∀ φ : ∀ κ, Quadratic.MaskAdvice n n p κ,
+     ∀ ωPi : Fin 2 → ∀ κ, Linear.Advice PG (Quadratic.piDim n n) B.budget p κ,
+     ∀ ωOuter : Fin 2 → ∀ κ, Quadratic.Advice n n B.budget PG p κ,
+@@ -147,7 +147,7 @@ theorem wee20RealizableSA_iff (p : ℕ → ℕ)
+     (hp : ∀ κ r, (G.inst κ r).order = p κ) :
+     Wee20RealizableSA G ℓ n d PG p hp ↔
+   ∀ (A : NUPPT) (q : PolyExpr),
+-    let B := A.toSAAdv (S := S) q
++    let B := toSAAdv (S := S) A q
+     ∀ φ : ∀ κ, Quadratic.MaskAdvice n n p κ,
+     ∀ ωPi : Fin 2 → ∀ κ, Linear.Advice PG (Quadratic.piDim n n) B.budget p κ,
+     ∀ ωOuter : Fin 2 → ∀ κ, Quadratic.Advice n n B.budget PG p κ,
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Games.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Games.lean
+index 68a37f114..3e7c4db06 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Games.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Games.lean
+@@ -99,7 +99,10 @@ def gameHandler (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
+               (pp.generator ^ (value G n1 n2 PG κ pp f msg.1 msg.2.1 msg.2.2).val)
+           Linear.simKeyCore G PG (piDim n1 n2) κ pp st f M msg.1 mu sr⟩⟩)
+ 
+-/-- The handler exposes the five distinct ciphertext and key formulas. -/
++/-- The handler exposes the five distinct ciphertext and key formulas. 
++
++**Proof sketch.** Each branch and named block is the same as in the deterministic
++definition, so the equation follows by reducing that definition alone. -/
+ theorem gameHandler_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
+     {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (mode : Fin 5)
+     (κ : ℕ) (pp : PublicParams G κ) (m : Masks G n1 n2 κ pp)

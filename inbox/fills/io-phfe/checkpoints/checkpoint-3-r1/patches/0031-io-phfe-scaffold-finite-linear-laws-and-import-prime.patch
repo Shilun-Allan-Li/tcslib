@@ -1,0 +1,168 @@
+From 9ff3fc19f7cecd268ee7eb1a6b58590e97dbfee2 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 09:50:00 -0800
+Subject: [PATCH 31/36] io-phfe: scaffold finite-linear laws and import
+ prime-field instances
+
+---
+ TCSlib/Cryptography/Pairing/Linear.lean       | 29 +++++++-
+ TCSlib/Cryptography/Pairing/MatrixDH.lean     |  2 +
+ .../Cryptography/Pairing/MatrixDH/Defs.lean   |  1 +
+ .../Pairing/MatrixDH/FiniteLinear.lean        | 69 +++++++++++++++++++
+ 4 files changed, 100 insertions(+), 1 deletion(-)
+ create mode 100644 TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear.lean
+
+diff --git a/TCSlib/Cryptography/Pairing/Linear.lean b/TCSlib/Cryptography/Pairing/Linear.lean
+index d0b413d43..db0de5de2 100644
+--- a/TCSlib/Cryptography/Pairing/Linear.lean
++++ b/TCSlib/Cryptography/Pairing/Linear.lean
+@@ -10,6 +10,7 @@ import TCSlib.Cryptography.Asymptotic.Adversary
+ import TCSlib.Cryptography.Games.Advantage
+ import TCSlib.Cryptography.Foundations.Subexponential
+ import Mathlib.Data.Fin.VecNotation
++import Mathlib.Algebra.Field.ZMod
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -366,7 +367,33 @@ Use `expect_sample_equiv` for those bijections. Bound the acceptance difference
+ the exceptional event, whose exact probability is `2/p - 1/p^2`, and average over group coins. -/
+ theorem dlinMatrixGame_random_gap_le (D : NUPPT) (κ : ℕ) :
+     |accept (G.dlinMatrixGame D false κ) - accept (G.dlinGame D false κ)| ≤
+-      G.dlinMatrixSlack κ := sorry
++      G.dlinMatrixSlack κ := by
++  let H (pp : PublicParams G κ) (ab : Fin 2 → ZMod pp.group.order)
++      (u : Fin 3 → ZMod pp.group.order) : ℝ :=
++    ProbComp.prob (ProbComp.sample (D.Coins κ)) fun r =>
++      D.distinguisherL κ
++        (G.dlinEnc κ (G.dlinChallenge κ pp
++          (pp.generator ^ (ab 0).val) (pp.generator ^ (ab 1).val)
++          (pp.generator ^ (u 0).val) (pp.generator ^ (u 1).val)
++          (pp.generator ^ (u 2).val))) r = true
++  let P (pp : PublicParams G κ) : ℝ :=
++    ProbComp.expect (ProbComp.sample (Fin 2 → ZMod pp.group.order)) fun ab =>
++      ProbComp.expect (ProbComp.sample (Fin 3 → ZMod pp.group.order)) (H pp ab)
++  let Q (pp : PublicParams G κ) : ℝ :=
++    ProbComp.expect (ProbComp.sample (Fin 2 → ZMod pp.group.order)) fun ab =>
++      ProbComp.expect (ProbComp.sample (Fin 2 → ZMod pp.group.order)) fun rs =>
++        ProbComp.expect (ProbComp.sample (ZMod pp.group.order)) fun t =>
++          H pp ab ![ab 0 * rs 0, ab 1 * rs 1, t]
++  let loss (pp : PublicParams G κ) : ℝ :=
++    2 / (pp.group.order : ℝ) - 1 / (pp.group.order : ℝ) ^ 2
++  have hPoint (pp : PublicParams G κ) : |P pp - Q pp| ≤ loss pp := sorry
++  have hLoss : ProbComp.expect (publicParamsGen G κ) loss = G.dlinMatrixSlack κ := sorry
++  have hMatrixAccept : accept (G.dlinMatrixGame D false κ) =
++      ProbComp.expect (publicParamsGen G κ) P := sorry
++  have hTupleAccept : accept (G.dlinGame D false κ) =
++      ProbComp.expect (publicParamsGen G κ) Q := sorry
++  rw [hMatrixAccept, hTupleAccept, ← hLoss]
++  exact ProbComp.abs_expect_sub_le_expect (publicParamsGen G κ) hPoint
+ 
+ /-- Canonical DLIN bounds the matrix DLIN advantage with the explicit diagonal-zero slack
+ [GJLS21, Definition 3.3, p. 18; JLS26, §1.1, p. 3].
+diff --git a/TCSlib/Cryptography/Pairing/MatrixDH.lean b/TCSlib/Cryptography/Pairing/MatrixDH.lean
+index de895f56f..8d0913c84 100644
+--- a/TCSlib/Cryptography/Pairing/MatrixDH.lean
++++ b/TCSlib/Cryptography/Pairing/MatrixDH.lean
+@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.Pairing.MatrixDH.Parameters
+ import TCSlib.Cryptography.Pairing.MatrixDH.Diagonal
++import TCSlib.Cryptography.Pairing.MatrixDH.FiniteLinear
+ import TCSlib.Cryptography.Pairing.MatrixDH.Defs
+ import TCSlib.Cryptography.Pairing.MatrixDH.SelfReduction
+ 
+@@ -18,6 +19,7 @@ set_option autoImplicit false
+ 
+ * `Parameters`: generated group descriptions and public nonidentity generators.
+ * `Diagonal`: exact finite-field bounds for random diagonal masks.
++* `FiniteLinear`: uniform matrix images and exact small-row rank estimates.
+ * `Defs`: uniform-matrix experiments and their two-experiment advantage.
+ * `SelfReduction`: explicit column-hybrid preprocessing, advice, and advantage inequalities.
+ 
+diff --git a/TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean b/TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean
+index c768362ef..ad0b735a0 100644
+--- a/TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean
++++ b/TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean
+@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: TCSlib contributors
+ -/
+ import TCSlib.Cryptography.Pairing.Linear
++import TCSlib.Cryptography.Pairing.MatrixDH.FiniteLinear
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+diff --git a/TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear.lean b/TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear.lean
+new file mode 100644
+index 000000000..d9277067e
+--- /dev/null
++++ b/TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear.lean
+@@ -0,0 +1,69 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Games.Probability
++import TCSlib.Cryptography.Games.Bridges.Experiments
++import TCSlib.Cryptography.OneWayFunctions.Basic
++import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
++import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Card
++import Mathlib.LinearAlgebra.Dual.Lemmas
++import Mathlib.GroupTheory.Coset.Basic
++import Mathlib.Logic.Equiv.Sum
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Uniform matrix images over finite fields
++
++## Main definitions
++
++The results concern exact finite laws and introduce no sampling implementation.
++
++## Main results
++
++* `expect_sample_matrix_mul_of_mulVec_surjective`: uniform images under surjective matrix maps.
++* `smallRows_surjectivity_failure_le`: the two-column rank bound for at most two rows.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive, Report 2020/1420, Section 2.1.
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; ePrint 2020/764, revision of 3 January 2025, Definition 3.3.
++-/
++
++namespace TCSlib.Cryptography.Pairing
++
++open TCSlib.Cryptography.Games
++
++/-- A surjective scalar column map sends a uniform coefficient matrix to a uniform output
++matrix. This is finite-field distribution glue; no sampler or machine is constructed.
++
++**Proof sketch.** Regard the matrix product as independent applications of the surjective
++linear map to each column. All fibers are translates of its kernel and have equal size;
++reuse the finite linear quotient/fiber and uniform-average APIs. -/
++theorem expect_sample_matrix_mul_of_mulVec_surjective
++    {K : Type} [Field K] [Fintype K] {r m c : ℕ}
++    (M : Matrix (Fin r) (Fin m) K) (hM : Function.Surjective (Matrix.mulVec M))
++    (F : Matrix (Fin r) (Fin c) K → ℝ) :
++    ProbComp.expect (ProbComp.sample (Matrix (Fin m) (Fin c) K)) (fun S => F (M * S)) =
++      ProbComp.expect (ProbComp.sample (Matrix (Fin r) (Fin c) K)) F := sorry
++
++/-- A uniform matrix with two columns and at most two rows fails surjectivity with
++probability at most `2/|K|`. This is the exact rank-failure obligation for small-row MDDH.
++
++**Proof sketch.** Split the row count into zero, one and two. Zero rows are automatically
++surjective. One row fails only at the zero row, with mass `|K|⁻²`. For two rows use the
++existing finite-field general-linear cardinality formula to obtain singular mass
++`|K|⁻¹+|K|⁻²-|K|⁻³ ≤ 2/|K|`. -/
++theorem smallRows_surjectivity_failure_le {K : Type} [Field K] [Fintype K]
++    (r : ℕ) (hr : r ≤ 2) :
++    ProbComp.prob (ProbComp.sample (Matrix (Fin r) (Fin 2) K))
++        (fun M => ¬ Function.Surjective (Matrix.mulVec M)) ≤
++      2 / (Fintype.card K : ℝ) := sorry
++
++end TCSlib.Cryptography.Pairing

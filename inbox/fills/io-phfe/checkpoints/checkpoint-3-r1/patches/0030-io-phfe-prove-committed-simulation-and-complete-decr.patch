@@ -1,0 +1,1537 @@
+From c222e6b92d75478549e5057c37c9119bf6be50c1 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 09:02:04 -0800
+Subject: [PATCH 30/36] io-phfe: prove committed simulation and complete
+ decryption correctness
+
+---
+ .../PartialGarbling/Defs.lean                 |  38 ++
+ .../PartialGarbling/Layered.lean              | 101 +++-
+ .../SemiAdaptive/Data.lean                    |  56 ++-
+ .../SemiAdaptive/FromTwoStage.lean            | 457 +++++++++++++++++-
+ .../Wee20/LinearCorrect.lean                  | 134 ++++-
+ .../Wee20/QuadraticCorrect.lean               | 119 ++++-
+ TCSlib/Cryptography/Pairing/Linear.lean       |  58 ++-
+ TCSlib/Cryptography/Pairing/MatrixDH.lean     |   2 +
+ .../Cryptography/Pairing/MatrixDH/Defs.lean   |  72 ++-
+ .../Pairing/MatrixDH/Diagonal.lean            | 151 ++++++
+ .../Pairing/MatrixDH/Parameters.lean          |  25 +
+ 11 files changed, 1181 insertions(+), 32 deletions(-)
+ create mode 100644 TCSlib/Cryptography/Pairing/MatrixDH/Diagonal.lean
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Defs.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Defs.lean
+index 838160e8d..83c8a4ea2 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Defs.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Defs.lean
+@@ -9,6 +9,9 @@ import Mathlib.Data.PNat.Defs
+ import Mathlib.LinearAlgebra.Matrix.Kronecker
+ import Mathlib.Logic.Equiv.Fin.Basic
+ 
++import Mathlib.Algebra.BigOperators.Fin
++import Mathlib.LinearAlgebra.Matrix.Kronecker
++
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+@@ -39,6 +42,7 @@ made of the stronger single-coordinate syntax called affine in [IW14, Definition
+ 
+ ## Main results
+ 
++* `PartialGarbling.kronecker_mul_publicTensor`: the canonical mixed-product identity.
+ * The equation readers expose every derived definition without foreign unfolding.
+ * `PartialGarbling.Raw.reconstruct`: reconstruction of every canonical garbling.
+ * `PartialGarbling.Raw.exactPrivacy`: equality of the real and simulated laws.
+@@ -46,6 +50,8 @@ made of the stronger single-coordinate syntax called affine in [IW14, Definition
+ 
+ ## References
+ 
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, ePrint 2020/1420, Section 4.2, p.10.
+ * [AGW20] M. Abdalla, J. Gong, H. Wee, *Functional Encryption for Attribute-Weighted
+   Sums from k-Lin*, 2020, Lemma 2, p.12, Appendix A, pp.37–38, (28)–(32).
+ * [IW14] Y. Ishai, H. Wee, *Partial Garbling Schemes and Their Applications*, 2014,
+@@ -75,6 +81,38 @@ otherwise: `publicTensor x (i,u) v = x i * (if u=v then 1 else 0)`. -/
+ theorem publicTensor_apply (x : Fin l → ZMod (p : ℕ)) (i : Fin l) (u v : M) :
+     publicTensor x (i, u) v = x i * (if u = v then 1 else 0) := rfl
+ 
++/-- A known scalar matrix can move through the public-input tensor by the identity
++Kronecker block. This is the singleton-column specialization of the mixed-product
++law used in [Wee20, §4.2, p.10, (10); AGW20, Appendix A, (32), p.38].
++
++**Proof sketch.** Apply Mathlib's Matrix.mul_kronecker_mul to the identity, the
++single-column x matrix, R and the identity. Read the chosen singleton column through
++publicTensor_apply and the published matrix/product-index equations. The second
++mixed-product specialization uses the one-dimensional identity and gives the right
++side after dropping its unique singleton coordinate. Do not reprove the generic
++Kronecker mixed-product law. -/
++theorem kronecker_mul_publicTensor {p : ℕ+} {l : ℕ} {I J : Type}
++    [Fintype I] [Fintype J] [DecidableEq I] [DecidableEq J]
++    (x : Fin l → ZMod (p : ℕ)) (R : Matrix I J (ZMod (p : ℕ))) :
++    Matrix.kroneckerMap (fun a b => a * b)
++        (1 : Matrix (Fin l) (Fin l) (ZMod (p : ℕ))) R *
++      publicTensor (p := p) (M := J) x =
++        publicTensor (p := p) (M := I) x * R := by
++  let X : Matrix (Fin l) (Fin 1) (ZMod (p : ℕ)) := fun i _ => x i
++  have hLeft := Matrix.mul_kronecker_mul
++    (1 : Matrix (Fin l) (Fin l) (ZMod (p : ℕ))) X R
++    (1 : Matrix J J (ZMod (p : ℕ)))
++  have hRight := Matrix.mul_kronecker_mul X
++    (1 : Matrix (Fin 1) (Fin 1) (ZMod (p : ℕ)))
++    (1 : Matrix I I (ZMod (p : ℕ))) R
++  simp only [Matrix.one_mul, Matrix.mul_one] at hLeft hRight
++  funext iu j
++  rcases iu with ⟨i, u⟩
++  have h := congrFun (congrFun (hLeft.symm.trans hRight) (i, u)) (0, j)
++  simpa only [Matrix.mul_apply, Fintype.sum_prod_type, Fin.sum_univ_one,
++    Matrix.kroneckerMap_apply, Matrix.one_apply, publicTensor_apply,
++    ite_true, one_mul] using h
++
+ /-- The real partial garbling is `(z − last(t), tᵀ(L1(x ⊗ I) + L0))`.
+ [AGW20, Lemma 2, p.12; Appendix A, (31)–(32), p.38]. The printed L0/L1 shapes
+ in Lemma 2 are read with the correction forced by (32). -/
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean
+index 6308a8dc9..bd10e96cc 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean
+@@ -187,7 +187,13 @@ theorem auxCoord_eq (l d : ℕ) : auxCoord l d =
+ 
+ **Proof sketch.** Apply the published finite-sigma coordinate formula at depth
+ zero; its prefix sum is empty and its empty tuple has the only coordinate in Fin 1. -/
+-theorem nodeCoord_root (l d : ℕ) : (nodeCoord l d (root l d)).val = 0 := sorry
++theorem nodeCoord_root (l d : ℕ) : (nodeCoord l d (root l d)).val = 0 := by
++  rw [nodeCoord_eq, root_eq]
++  change (finSigmaFinEquiv
++    (⟨⟨0, Nat.zero_lt_succ d⟩, tupleCoord l 0 Fin.elim0⟩ :
++      Σ k : Fin (d + 1), Fin ((l + 1) ^ k.val))).val = 0
++  simp only [finSigmaFinEquiv_apply, tupleCoord_eq, finFunctionFinEquiv_apply,
++    Fin.sum_univ_zero, zero_add]
+ 
+ section Algorithms
+ 
+@@ -441,7 +447,80 @@ The source has no negative diagonal; apply backward_root there. -/
+ theorem backward_action (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
+     (z : Fin n → ZMod (p : ℕ)) :
+     Matrix.vecMul (shift C x z) (matrix C x) =
+-      fun u => if u = root l d then dotProduct z (polyTensorEval C x) else 0 := sorry
++      fun u => if u = root l d then dotProduct z (polyTensorEval C x) else 0 := by
++  let edges : Matrix (TIdx l d) (MIdx l d) (ZMod (p : ℕ)) :=
++    Matrix.of (fun v u =>
++      (if u = parent v then xhat x (lastLabel v) else 0) -
++        (if u = node v then 1 else 0))
++  let outputs : Matrix (Fin n) (MIdx l d) (ZMod (p : ℕ)) :=
++    Matrix.of (fun j u =>
++      ∑ tau : Fin d → Fin (l + 1), if u = leaf tau then C j tau else 0)
++  -- Read the source matrices as the two row blocks.
++  have hMatrix : matrix C x = Matrix.fromRows edges outputs := ?_
++  swap
++  · funext row u
++    cases row with
++    | inl v =>
++      rw [Matrix.fromRows_apply_inl]
++      change matrix C x (Sum.inl v) u =
++        (if u = parent v then xhat x (lastLabel v) else 0) -
++          (if u = node v then 1 else 0)
++      exact matrix_inl C x v u
++    | inr j =>
++      rw [Matrix.fromRows_apply_inr]
++      change matrix C x (Sum.inr j) u =
++        ∑ tau : Fin d → Fin (l + 1), if u = leaf tau then C j tau else 0
++      simp only [matrix_eq, Matrix.add_apply, Matrix.mul_apply, L1_inr,
++        zero_mul, Finset.sum_const_zero, zero_add, L0_inr]
++  have hShift : shift C x z =
++      Sum.elim (fun v => backward C x z (node v)) z :=
++    (Sum.elim_comp_inl_inr (shift C x z)).symm.trans
++      (congrArg₂ Sum.elim (funext (shift_inl C x z)) (funext (shift_inr C x z)))
++  -- The output block contributes exactly the terminal coefficient sum.
++  have hOutput : Matrix.vecMul z outputs = fun u =>
++      ∑ tau : Fin d → Fin (l + 1),
++        if u = leaf tau then (∑ j : Fin n, C j tau * z j) else 0 := ?_
++  swap
++  · funext u
++    rw [congrFun (Matrix.vecMul_eq_sum z outputs) u]
++    simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
++    change (∑ j : Fin n, z j *
++      (∑ tau : Fin d → Fin (l + 1), if u = leaf tau then C j tau else 0)) =
++        ∑ tau : Fin d → Fin (l + 1),
++          if u = leaf tau then (∑ j : Fin n, C j tau * z j) else 0
++    simp only [Finset.mul_sum, mul_ite, mul_zero]
++    rw [Finset.sum_comm]
++    simp only [Finset.sum_ite_irrel, Finset.sum_const_zero, mul_comm]
++  have hEdges := PathAlgebra.weightedIncidence_vecMul
++    (parent : TIdx l d → MIdx l d) node
++    (fun v => xhat x (lastLabel v)) (fun v => backward C x z (node v))
++  rw [hShift, hMatrix, Matrix.sumElim_vecMul_fromRows, hEdges, hOutput]
++  funext u
++  simp only [Pi.add_apply]
++  -- Specialize generic suffix conservation through the published path readers.
++  have hBalance :
++      (∑ v : TIdx l d,
++        if parent v = u then backward C x z (node v) * xhat x (lastLabel v) else 0) +
++      (∑ tau : Fin d → Fin (l + 1),
++        if u = leaf tau then (∑ j : Fin n, C j tau * z j) else 0) =
++        backward C x z u := ?_
++  swap
++  · simpa only [parent_eq, node_eq, lastLabel_eq, leaf_eq, backward_eq, extend_eq] using
++      (PrefixAlgebra.prefixFlow_balance d
++        (fun tau => ∑ j : Fin n, C j tau * z j) (xhat x) u)
++  have hIncoming :
++      (∑ v : TIdx l d,
++        if node v = u then backward C x z (node v) else 0) =
++      if u = root l d then 0 else backward C x z u := ?_
++  swap
++  · simpa only [node_eq, root_eq] using
++      (PrefixAlgebra.prefixIncoming_sum d (backward C x z) u)
++  -- Incoming cancellation leaves only the unbalanced source value.
++  rw [sub_add_eq_add_sub, hBalance, hIncoming]
++  by_cases hu : u = root l d
++  · subst u
++    simp only [eq_self, if_true, sub_zero, backward_root]
++  · simp only [hu, if_false, sub_self]
+ 
+ /-- Every real garbling reconstructs z·f(x), independently of its draw.
+ [AGW20, Lemma 2, p.12; Appendix A, p.38], proved by path sums.
+@@ -481,7 +560,16 @@ theorem translation (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
+     (z : Fin n → ZMod (p : ℕ)) (t : (TIdx l d ⊕ Fin n) → ZMod (p : ℕ)) :
+     PartialGarbling.pgbCore (L1 C) (L0 C) x z t =
+       PartialGarbling.pgbStarCore (L1 C) (L0 C) (root l d) x
+-        (dotProduct z (polyTensorEval C x)) (t - shift C x z) := sorry
++        (dotProduct z (polyTensorEval C x)) (t - shift C x z) := by
++  funext row
++  cases row with
++  | inl j =>
++    simp only [PartialGarbling.pgbCore_inl, PartialGarbling.pgbStarCore_inl,
++      Pi.sub_apply, shift_inr, neg_sub]
++  | inr u =>
++    simp only [PartialGarbling.pgbCore_inr, PartialGarbling.pgbStarCore_inr,
++      ← matrix_eq C x, Matrix.sub_vecMul, Pi.sub_apply, backward_action,
++      sub_add_cancel]
+ 
+ /-- Real and simulated layered garblings have identical laws, with no error term.
+ [IW14, Definition 1, p.6; AGW20, Appendix A, (28)–(30), p.37].
+@@ -495,7 +583,12 @@ theorem privacy (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
+         (fun t => test (PartialGarbling.pgbCore (L1 C) (L0 C) x z t)) =
+       ProbComp.expect (ProbComp.sample ((TIdx l d ⊕ Fin n) → ZMod (p : ℕ)))
+         (fun t => test (PartialGarbling.pgbStarCore (L1 C) (L0 C) (root l d)
+-          x (dotProduct z (polyTensorEval C x)) t)) := sorry
++          x (dotProduct z (polyTensorEval C x)) t)) := by
++  simp only [translation C x z]
++  simpa only [Equiv.coe_addRight, sub_eq_add_neg] using
++    (ProbComp.expect_sample_equiv (Equiv.addRight (-shift C x z))
++      (fun t => test (PartialGarbling.pgbStarCore (L1 C) (L0 C) (root l d)
++        x (dotProduct z (polyTensorEval C x)) t)))
+ 
+ end Algorithms
+ end PartialGarbling.Layered
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean
+index 6bc5a96a2..42a91a2ca 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean
+@@ -286,6 +286,60 @@ theorem toSAAdv_run {C : FnClass} {S : FEScheme.Raw C}
+     (toSAAdv (S := S) A q).run kappa pp pk (List.ofFn r) =
+       (fun b => b 0) <$> A.toCompOn
+         (bitCodec (S.saIn kappa) (S.saOut kappa) 1)
+-        kappa (q.eval kappa) (S.saInputWord kappa pp pk) r := sorry
++        kappa (q.eval kappa) (S.saInputWord kappa pp pk) r := by
++  rw [FEScheme.Raw.SAAdv.run_eq, toSAAdv_budget, NUPPT.toCompOn_eq,
++    ← S.saCodec_eq kappa]
++  let typedNext : QueryLog (S.saSpec kappa) → Move (S.saSpec kappa) Bool :=
++    (toSAAdv (S := S) A q).next kappa pp pk (List.ofFn r)
++  let wordNext : QueryLog (S.saSpec kappa) → Move (S.saSpec kappa) (Fin 1 → Bool) :=
++    fun hist => (S.saCodec kappa).decodeMove
++      (A.runAt kappa (pairEncode (S.saInputWord kappa pp pk)
++        ((S.saCodec kappa).encodeLog hist)) r)
++  change buildComp typedNext false (q.eval kappa) [] =
++    (fun b : Fin 1 → Bool => b 0) <$>
++      buildComp wordNext (S.saCodec kappa).timeout (q.eval kappa) []
++  generalize hbudget : q.eval kappa = budget
++  generalize hhist : ([] : QueryLog (S.saSpec kappa)) = hist
++  clear hbudget hhist
++  induction budget generalizing hist with
++  | zero =>
++      have hread := toSAAdv_next (S := S) A q kappa pp pk (List.ofFn r) hist
++      rw [FEScheme.Raw.saReadMove_eq, ← NUPPT.runAt_eq] at hread
++      change typedNext hist = (match wordNext hist with
++        | .ret b => .ret (b 0)
++        | .query i x => .query i x) at hread
++      cases hm : wordNext hist with
++      | ret b =>
++          simp only [hm] at hread
++          rw [buildComp_zero_of_ret (next := typedNext) hread,
++            buildComp_zero_of_ret (next := wordNext) hm,
++            OracleComp.map_eq_bind, OracleComp.pure_bind]
++      | query i x =>
++          simp only [hm] at hread
++          rw [buildComp_zero_of_query (next := typedNext) hread,
++            buildComp_zero_of_query (next := wordNext) hm,
++            OracleComp.map_eq_bind, OracleComp.pure_bind,
++            S.saCodec_eq kappa, bitCodec_timeout, zeroBits_apply]
++  | succ budget ih =>
++      have hread := toSAAdv_next (S := S) A q kappa pp pk (List.ofFn r) hist
++      rw [FEScheme.Raw.saReadMove_eq, ← NUPPT.runAt_eq] at hread
++      change typedNext hist = (match wordNext hist with
++        | .ret b => .ret (b 0)
++        | .query i x => .query i x) at hread
++      cases hm : wordNext hist with
++      | ret b =>
++          simp only [hm] at hread
++          rw [buildComp_succ_of_ret (next := typedNext) hread,
++            buildComp_succ_of_ret (next := wordNext) hm,
++            OracleComp.map_eq_bind, OracleComp.pure_bind]
++      | query i x =>
++          simp only [hm] at hread
++          rw [buildComp_succ_of_query (next := typedNext) hread,
++            buildComp_succ_of_query (next := wordNext) hm,
++            OracleComp.map_eq_bind, OracleComp.query_bind]
++          apply congrArg (OracleComp.query (spec := S.saSpec kappa) i x)
++          funext answer
++          simpa only [OracleComp.map_eq_bind] using
++            ih (hist ++ [⟨i, x, answer⟩])
+ 
+ end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean
+index 0db58fde6..953bc48da 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean
+@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.Security
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Simulation.Games
++import TCSlib.Cryptography.Games.Bridges.Experiments
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -28,6 +29,8 @@ No efficient simulator conversion or oracle-machine construction is claimed.
+ 
+ ## Main results
+ 
++* `stateT_mapM_lift`: a lifted traversal preserves the simulator state.
++* `TwoStage.simulate_saKeys_stateful`: a single stateful law for committed key calls.
+ * `expect_simGame_eq_saGame`: the two experiments have identical laws.
+ * `simAdv_eq_saSimAdv`: committed advantage is exactly the derived semi-adaptive advantage.
+ 
+@@ -134,6 +137,24 @@ theorem toSim_key (kappa : ℕ) (pp : PublicParams S.G kappa)
+ 
+ end FEScheme.Raw.SASimulator.Raw
+ 
++/-- Lifting every action of a list traversal preserves its state and returns the same
++ordered results as the underlying probability computation.
++
++**Proof sketch.** Induct on the list. Read the traversal and state-transformer bind laws;
++the head action preserves state, so the induction hypothesis applies at that same state. -/
++theorem stateT_mapM_lift {alpha beta sigma : Type}
++    (f : alpha → ProbComp beta) (xs : List alpha) (st : sigma) :
++    (List.mapM (m := StateT sigma ProbComp)
++        (fun x => StateT.lift (f x)) xs).run st =
++      (List.mapM f xs).bind fun ys => .pure (ys, st) := by
++  induction xs with
++  | nil => simp only [List.mapM_nil, StateT.run_pure,
++      OracleComp.pure_eq_pure, OracleComp.pure_bind]
++  | cons x xs ih =>
++      simp only [List.mapM_cons, StateT.run_bind, StateT.run_lift,
++        StateT.run_pure, OracleComp.bind_eq_bind, OracleComp.pure_eq_pure,
++        OracleComp.bind_assoc, OracleComp.pure_bind, ih]
++
+ namespace TwoStage
+ 
+ /-- The first machine uses the first block of the composed adversary's tape.
+@@ -241,6 +262,336 @@ theorem toSA_run {C : FnClass} {S : FEScheme.Raw C} (A : TwoStage) (q : PolyExpr
+       buildComp (A.saNext (S := S) q kappa pp pk r) false (q.eval kappa + 1) [] :=
+   FEScheme.Raw.SAAdv.run_eq (A.toSA (S := S) q) kappa pp pk r
+ 
++/-- The two machines' typed tapes are recovered by splitting their concatenated
++bit lists at the first machine's coin length. This is deterministic coin-layout glue.
++
++**Proof sketch.** Read the published first/second coin equations. At each finite
++coordinate, apply the list append and ofFn element readers; the first coordinate
++is before the split and the second is at its original offset after the split. -/
++theorem coinBlocks_ofFn_append (A : TwoStage) (kappa : ℕ)
++    (r1 : A.first.Coins kappa) (r2 : A.second.Coins kappa) :
++    (A.firstCoins kappa (List.ofFn r1 ++ List.ofFn r2),
++      A.secondCoins kappa (List.ofFn r1 ++ List.ofFn r2)) = (r1, r2) := by
++  have h1 : (List.ofFn r1).length = A.first.coinLen kappa := List.length_ofFn
++  have h2 : (List.ofFn r2).length = A.second.coinLen kappa := List.length_ofFn
++  apply Prod.ext
++  · change A.firstCoins kappa (List.ofFn r1 ++ List.ofFn r2) = r1
++    rw [firstCoins_eq]
++    funext i
++    change (List.ofFn r1 ++ List.ofFn r2).getD i.val false = r1 i
++    have hi := lt_of_lt_of_eq i.isLt h1.symm
++    rw [List.getD_append _ _ _ _ hi, List.getD_eq_getElem _ _ hi,
++      List.getElem_ofFn]
++  · change A.secondCoins kappa (List.ofFn r1 ++ List.ofFn r2) = r2
++    rw [secondCoins_eq]
++    funext i
++    change (List.ofFn r1 ++ List.ofFn r2).getD (A.first.coinLen kappa + i.val) false = r2 i
++    have hi := lt_of_lt_of_eq i.isLt h2.symm
++    rw [List.getD_append_right _ _ _ _
++      (le_trans (le_of_eq h1) (Nat.le_add_right _ _)), h1,
++      Nat.add_sub_cancel_left, List.getD_eq_getElem _ _ hi, List.getElem_ofFn]
++
++/-- The remaining scripted key calls follow any stateful key law represented by the handler.
++The joint conclusion retains the output and represented final state.
++
++**Proof sketch.** Induct once on the exact remaining call count, generalizing the
++history prefix and abstract state. At a query use its supplied one-call law and
++the published StateT mapM recurrence, then recurse from the returned state. The
++existing suffix and payload laws align the ordered final view. -/
++theorem simulate_saKeys_stateful {C : FnClass} {S : FEScheme.Raw C}
++    (A : TwoStage) (q : PolyExpr) (kappa : ℕ) (pp : PublicParams S.G kappa)
++    (pk : S.MPK kappa pp) (r : List Bool) {sigma tau : Type}
++    (impl : QueryImpl (S.saSpec kappa) tau unifSpec)
++    (stateMap : sigma → tau)
++    (key : (Fin (C.fnLen.eval kappa) → Bool) →
++      StateT sigma ProbComp (S.SK kappa pp))
++    (hkey : ∀ (f : Fin (C.fnLen.eval kappa) → Bool) (st : sigma),
++      impl 1 f (stateMap st) =
++        (key f st).bind fun ks =>
++          .pure (S.saSKAnswer kappa pp (some ks.1), stateMap ks.2))
++    (e : Sigma fun i => (S.saSpec kappa).dom i × (S.saSpec kappa).rng i)
++    (es : QueryLog (S.saSpec kappa))
++    (ctBits : Fin (S.ctLen.eval kappa) → Bool) (st : sigma)
++    (hct : S.saCTPayload kappa e.1 e.2.2 = some ctBits)
++    (hlen : es.length ≤ q.eval kappa) :
++    let a := A.saCommitment C q kappa r
++    simulate impl
++        (buildComp (A.saNext (S := S) q kappa pp pk r) false
++          (q.eval kappa - es.length) (e :: es)) (stateMap st) =
++      ((List.mapM (m := StateT sigma ProbComp)
++        (fun j => key (a.functions j))
++        ((List.finRange (q.eval kappa)).drop es.length)).run st).bind fun keys =>
++        .pure (A.second.distinguisherL kappa
++          (S.viewWordBits a pp (S.encMPK kappa pp pk)
++            ((es.filterMap fun entry => S.saSKPayload kappa entry.1 entry.2.2) ++
++              keys.1.map (S.encSK kappa pp)) ctBits)
++          (A.secondCoins kappa r), stateMap keys.2) := by
++  let a := A.saCommitment C q kappa r
++  let next := A.saNext (S := S) q kappa pp pk r
++  let call : Fin (q.eval kappa) → StateT sigma ProbComp (S.SK kappa pp) :=
++    fun j => key (a.functions j)
++  let payload : (Sigma fun i => (S.saSpec kappa).dom i × (S.saSpec kappa).rng i) →
++      Option (Fin (S.skLen.eval kappa) → Bool) :=
++    fun entry => S.saSKPayload kappa entry.1 entry.2.2
++  change simulate impl
++      (buildComp next false (q.eval kappa - es.length) (e :: es)) (stateMap st) =
++    ((List.mapM (m := StateT sigma ProbComp) call
++      ((List.finRange (q.eval kappa)).drop es.length)).run st).bind fun keys =>
++      .pure (A.second.distinguisherL kappa
++        (S.viewWordBits a pp (S.encMPK kappa pp pk)
++          (es.filterMap payload ++ keys.1.map (S.encSK kappa pp)) ctBits)
++        (A.secondCoins kappa r), stateMap keys.2)
++  generalize hremaining : q.eval kappa - es.length = remaining
++  induction remaining generalizing es st with
++  | zero =>
++      have hdone : es.length = q.eval kappa :=
++        Nat.le_antisymm hlen (Nat.sub_eq_zero_iff_le.mp hremaining)
++      have hn := A.saNext_cons (S := S) q kappa pp pk r e es
++      simp only [hct, dif_neg (not_lt_of_ge (le_of_eq hdone.symm))] at hn
++      change next (e :: es) = .ret (A.second.distinguisherL kappa
++        (S.viewWordBits a pp (S.encMPK kappa pp pk) (es.filterMap payload) ctBits)
++        (A.secondCoins kappa r)) at hn
++      have hdrop : (List.finRange (q.eval kappa)).drop es.length = [] :=
++        List.drop_of_length_le
++          (le_trans (le_of_eq List.length_finRange) (le_of_eq hdone.symm))
++      rw [buildComp_zero_of_ret (next := next) hn, simulate_pure]
++      simp only [hdrop, List.mapM_nil, StateT.run_pure,
++        OracleComp.pure_eq_pure, OracleComp.pure_bind, List.map_nil, List.append_nil]
++  | succ remaining ih =>
++      have hmore : es.length < q.eval kappa := Nat.lt_of_sub_eq_succ hremaining
++      let j : Fin (q.eval kappa) := ⟨es.length, hmore⟩
++      have hn := A.saNext_cons (S := S) q kappa pp pk r e es
++      simp only [hct, dif_pos hmore] at hn
++      rw [S.saKeyMove_eq] at hn
++      change next (e :: es) = .query 1 (a.functions j) at hn
++      have hi : es.length < (List.finRange (q.eval kappa)).length :=
++        lt_of_lt_of_eq hmore List.length_finRange.symm
++      have hindex : (List.finRange (q.eval kappa))[es.length]'hi = j :=
++        (List.getElem_finRange hi).trans (Fin.ext rfl)
++      have hdrop : (List.finRange (q.eval kappa)).drop es.length =
++          j :: (List.finRange (q.eval kappa)).drop (es.length + 1) :=
++        (List.drop_eq_getElem_cons hi).trans
++          (congrArg (fun index : Fin (q.eval kappa) =>
++            index :: (List.finRange (q.eval kappa)).drop (es.length + 1)) hindex)
++      rw [buildComp_succ_of_query (next := next) hn, simulate_query, hkey,
++        hdrop, List.mapM_cons]
++      simp only [StateT.run_bind, StateT.run_pure,
++        OracleComp.bind_eq_bind, OracleComp.pure_eq_pure,
++        OracleComp.bind_assoc, OracleComp.pure_bind, List.cons_append]
++      apply congrArg (fun continuation => ((call j).run st).bind continuation)
++      funext ks
++      rcases ks with ⟨sk, st'⟩
++      let entry : Sigma fun i => (S.saSpec kappa).dom i × (S.saSpec kappa).rng i :=
++        ⟨1, a.functions j, S.saSKAnswer kappa pp (some sk)⟩
++      let es' := es ++ [entry]
++      have hsize : es'.length = es.length + 1 := List.length_append
++      have hlen' : es'.length ≤ q.eval kappa :=
++        le_trans (le_of_eq hsize) (Nat.succ_le_of_lt hmore)
++      have hremaining' : q.eval kappa - es'.length = remaining := ?_
++      swap
++      · rw [hsize, Nat.sub_succ, hremaining, Nat.pred_succ]
++      have hsk : payload entry = some (S.encSK kappa pp sk) := ?_
++      swap
++      · change S.saSKPayload kappa 1 (S.saSKAnswer kappa pp (some sk)) =
++          some (S.encSK kappa pp sk)
++        rw [S.saSKPayload_one, S.saSKAnswer_eq, Option.map_some,
++          TCSlib.Cryptography.Composability.FixedLengthScheme.decAnswer_some,
++          Fin.cons_zero, if_pos rfl, Fin.tail_cons]
++      have hprefix : es'.filterMap payload =
++          es.filterMap payload ++ [S.encSK kappa pp sk] := ?_
++      swap
++      · change (es ++ [entry]).filterMap payload =
++          es.filterMap payload ++ [S.encSK kappa pp sk]
++        rw [List.filterMap_append, List.filterMap_cons_some hsk, List.filterMap_nil]
++      have hstep := ih (es := es') (st := st')
++        (hlen := hlen') (hremaining := hremaining')
++      rw [hsize] at hstep
++      change simulate impl
++        (buildComp next false remaining (e :: es')) (stateMap st') = _
++      rw [hstep]
++      apply congrArg (fun continuation =>
++        ((List.mapM (m := StateT sigma ProbComp) call
++          ((List.finRange (q.eval kappa)).drop (es.length + 1))).run st').bind
++            continuation)
++      funext keys
++      simp only [hprefix, List.map_cons, List.append_assoc,
++        List.cons_append, List.nil_append]
++
++/-- For any fixed composite tape, public key and master key, the scripted real
++oracle run is encryption followed by the committed keys in order and the second
++machine's activation on their public view. This is the typed protocol form of
++[GJLS21, Definition 4.3].
++
++**Proof sketch.** Unroll the accepted challenge and then the bounded committed-key
++queries through the published builder and handler readers. Retain the challenge
++entry and the answered-key prefix in the history invariant. The ordered key law
++is List.mapM; its final wire view is the published typed view. -/
++theorem simulate_toSA_real {C : FnClass} {S : FEScheme.Raw C}
++    (A : TwoStage) (q : PolyExpr) (kappa : ℕ) (pp : PublicParams S.G kappa)
++    (pk : S.MPK kappa pp) (msk : S.MSK kappa pp) (r : List Bool) :
++    Prod.fst <$> simulate (S.realSAImpl kappa pp pk msk)
++        ((A.toSA (S := S) q).run kappa pp pk r) none =
++      let a := A.saCommitment C q kappa r
++      (S.enc kappa pp pk a.publicInput a.privateInput).bind fun ct =>
++      (List.mapM (fun j => S.keyGen kappa pp msk (a.functions j))
++        (List.finRange (q.eval kappa))).bind fun keys =>
++        .pure (A.second.distinguisherL kappa (S.viewWord a pp pk keys ct)
++          (A.secondCoins kappa r)) := by
++  let a := A.saCommitment C q kappa r
++  let ch : SAChallenge C kappa := ⟨a.publicInput, a.privateInput⟩
++  let stateMap : Unit → S.SAState kappa := fun _ => some ch
++  let key : (Fin (C.fnLen.eval kappa) → Bool) →
++      StateT Unit ProbComp (S.SK kappa pp) :=
++    fun f => StateT.lift (S.keyGen kappa pp msk f)
++  have hkey : ∀ (f : Fin (C.fnLen.eval kappa) → Bool) (state : Unit),
++      S.realSAImpl kappa pp pk msk 1 f (stateMap state) =
++        (key f state).bind fun ks =>
++          .pure (S.saSKAnswer kappa pp (some ks.1), stateMap ks.2) := ?_
++  swap
++  · intro f state
++    change S.realSAImpl kappa pp pk msk 1 f (some ch) =
++      ((StateT.lift (S.keyGen kappa pp msk f) :
++        StateT Unit ProbComp (S.SK kappa pp)).run state).bind fun ks =>
++          .pure (S.saSKAnswer kappa pp (some ks.1), some ch)
++    rw [S.realSAImpl_eq, S.saImpl_one_onSpec, S.saKeyFunction_eq,
++      S.realSAKey_some, StateT.run_lift]
++    simp only [OracleComp.bind_eq_bind, OracleComp.pure_eq_pure,
++      OracleComp.bind_assoc, OracleComp.pure_bind]
++  have hfirst : A.saNext (S := S) q kappa pp pk r [] =
++      .query 0 (S.saChallengeQuery kappa a.publicInput a.privateInput) :=
++    (A.saNext_nil (S := S) q kappa pp pk r).trans
++      (S.saChallengeMove_eq kappa a.publicInput a.privateInput)
++  have hcall : S.realSAImpl kappa pp pk msk 0
++      (S.saChallengeQuery kappa a.publicInput a.privateInput) none =
++      (S.enc kappa pp pk a.publicInput a.privateInput).bind fun ct =>
++        .pure (S.saCTAnswer kappa pp (some ct), some ch) := ?_
++  swap
++  · rw [S.realSAImpl_eq, S.saImpl_zero_onSpec]
++    simp only [S.saSplitChallenge_fst, S.saSplitChallenge_snd,
++      S.saChallengeQuery_eq, Fin.append_left, Fin.append_right]
++    rw [S.realSAChallenge_none, OracleComp.bind_assoc]
++    simp only [OracleComp.pure_bind]
++    rfl
++  rw [A.toSA_run, buildComp_succ_of_query hfirst, simulate_query, hcall,
++    OracleComp.map_eq_bind]
++  simp only [OracleComp.bind_assoc, OracleComp.pure_bind, List.nil_append]
++  apply congrArg (fun continuation =>
++    (S.enc kappa pp pk a.publicInput a.privateInput).bind continuation)
++  funext ct
++  let entry : Sigma fun i => (S.saSpec kappa).dom i × (S.saSpec kappa).rng i :=
++    ⟨0, S.saChallengeQuery kappa a.publicInput a.privateInput,
++      S.saCTAnswer kappa pp (some ct)⟩
++  have hct : S.saCTPayload kappa entry.1 entry.2.2 =
++      some (S.encCT kappa pp ct) := ?_
++  swap
++  · change S.saCTPayload kappa 0 (S.saCTAnswer kappa pp (some ct)) =
++      some (S.encCT kappa pp ct)
++    rw [S.saCTPayload_zero, S.saCTAnswer_eq, Option.map_some,
++      TCSlib.Cryptography.Composability.FixedLengthScheme.decAnswer_some,
++      Fin.cons_zero, if_pos rfl, Fin.tail_cons]
++  have hloop := simulate_saKeys_stateful (S := S) A q kappa pp pk r
++    (S.realSAImpl kappa pp pk msk) stateMap key hkey entry []
++    (S.encCT kappa pp ct) () hct (Nat.zero_le _)
++  simp only [List.length_nil, Nat.sub_zero, List.drop_zero,
++    List.filterMap_nil, List.nil_append] at hloop
++  have hlift := stateT_mapM_lift
++    (fun j : Fin (q.eval kappa) => S.keyGen kappa pp msk (a.functions j))
++    (List.finRange (q.eval kappa)) ()
++  rw [hlift] at hloop
++  have hproject := congrArg
++    (fun c : ProbComp (Bool × S.SAState kappa) => Prod.fst <$> c) hloop
++  simpa only [OracleComp.map_eq_bind, OracleComp.bind_assoc, OracleComp.pure_bind,
++    S.viewWord_eq_viewWordBits] using hproject
++
++/-- For any fixed composite tape and initial simulator state, the scripted ideal
++oracle run threads that state through encryption and all committed keys, using
++exactly their allowed values. It ends with the second machine's activation on the
++same public view. This is the ideal typed protocol in [GJLS21, Definition 4.3].
++
++**Proof sketch.** Unroll the accepted challenge and ordered keys with a history
++invariant that retains the current simulator state and the answered-key prefix.
++Apply the stateful handler readers and existing mapM laws. Project away the state
++only after the last key, and read the final canonical public view. -/
++theorem simulate_toSA_ideal {C : FnClass} {S : FEScheme.Raw C}
++    (Sim : FEScheme.Raw.SASimulator.Raw S) (A : TwoStage) (q : PolyExpr)
++    (kappa : ℕ) (pp : PublicParams S.G kappa) (pk : S.MPK kappa pp)
++    (st : Sim.St kappa pp) (r : List Bool) :
++    Prod.fst <$> simulate (S.idealSAImpl Sim kappa pp)
++        ((A.toSA (S := S) q).run kappa pp pk r) (st, none) =
++      let a := A.saCommitment C q kappa r
++      (Sim.enc kappa pp st a.publicInput).bind fun cst =>
++      (List.mapM (m := StateT (Sim.St kappa pp) ProbComp)
++        (fun j st' => Sim.key kappa pp st' a.publicInput (a.functions j)
++          (C.eval kappa (S.cprm kappa pp) (a.functions j)
++            a.publicInput a.privateInput))
++        (List.finRange (q.eval kappa)) cst.2).bind fun keys =>
++        .pure (A.second.distinguisherL kappa (S.viewWord a pp pk keys.1 cst.1)
++          (A.secondCoins kappa r)) := by
++  let a := A.saCommitment C q kappa r
++  let ch : SAChallenge C kappa := ⟨a.publicInput, a.privateInput⟩
++  let stateMap : Sim.St kappa pp → S.SAIdealState Sim kappa pp :=
++    fun state => (state, some ch)
++  let key : (Fin (C.fnLen.eval kappa) → Bool) →
++      StateT (Sim.St kappa pp) ProbComp (S.SK kappa pp) :=
++    fun f state => Sim.key kappa pp state a.publicInput f
++      (C.eval kappa (S.cprm kappa pp) f a.publicInput a.privateInput)
++  have hkey : ∀ (f : Fin (C.fnLen.eval kappa) → Bool) (state : Sim.St kappa pp),
++      S.idealSAImpl Sim kappa pp 1 f (stateMap state) =
++        (key f state).bind fun ks =>
++          .pure (S.saSKAnswer kappa pp (some ks.1), stateMap ks.2) := ?_
++  swap
++  · intro f state
++    change S.idealSAImpl Sim kappa pp 1 f (state, some ch) =
++      (Sim.key kappa pp state a.publicInput f
++        (C.eval kappa (S.cprm kappa pp) f a.publicInput a.privateInput)).bind fun ks =>
++          .pure (S.saSKAnswer kappa pp (some ks.1), (ks.2, some ch))
++    rw [S.idealSAImpl_eq, S.saImpl_one_onSpec, S.saKeyFunction_eq,
++      S.idealSAKey_some, OracleComp.bind_assoc]
++    simp only [OracleComp.pure_bind]
++    rfl
++  have hfirst : A.saNext (S := S) q kappa pp pk r [] =
++      .query 0 (S.saChallengeQuery kappa a.publicInput a.privateInput) :=
++    (A.saNext_nil (S := S) q kappa pp pk r).trans
++      (S.saChallengeMove_eq kappa a.publicInput a.privateInput)
++  have hcall : S.idealSAImpl Sim kappa pp 0
++      (S.saChallengeQuery kappa a.publicInput a.privateInput) (st, none) =
++      (Sim.enc kappa pp st a.publicInput).bind fun cst =>
++        .pure (S.saCTAnswer kappa pp (some cst.1), (cst.2, some ch)) := ?_
++  swap
++  · rw [S.idealSAImpl_eq, S.saImpl_zero_onSpec]
++    simp only [S.saSplitChallenge_fst, S.saSplitChallenge_snd,
++      S.saChallengeQuery_eq, Fin.append_left, Fin.append_right]
++    rw [S.idealSAChallenge_none, OracleComp.bind_assoc]
++    simp only [OracleComp.pure_bind]
++    rfl
++  rw [A.toSA_run, buildComp_succ_of_query hfirst, simulate_query, hcall,
++    OracleComp.map_eq_bind]
++  simp only [OracleComp.bind_assoc, OracleComp.pure_bind, List.nil_append]
++  apply congrArg (fun continuation =>
++    (Sim.enc kappa pp st a.publicInput).bind continuation)
++  funext cst
++  rcases cst with ⟨ct, st'⟩
++  let entry : Sigma fun i => (S.saSpec kappa).dom i × (S.saSpec kappa).rng i :=
++    ⟨0, S.saChallengeQuery kappa a.publicInput a.privateInput,
++      S.saCTAnswer kappa pp (some ct)⟩
++  have hct : S.saCTPayload kappa entry.1 entry.2.2 =
++      some (S.encCT kappa pp ct) := ?_
++  swap
++  · change S.saCTPayload kappa 0 (S.saCTAnswer kappa pp (some ct)) =
++      some (S.encCT kappa pp ct)
++    rw [S.saCTPayload_zero, S.saCTAnswer_eq, Option.map_some,
++      TCSlib.Cryptography.Composability.FixedLengthScheme.decAnswer_some,
++      Fin.cons_zero, if_pos rfl, Fin.tail_cons]
++  have hloop := simulate_saKeys_stateful (S := S) A q kappa pp pk r
++    (S.idealSAImpl Sim kappa pp) stateMap key hkey entry []
++    (S.encCT kappa pp ct) st' hct (Nat.zero_le _)
++  simp only [List.length_nil, Nat.sub_zero, List.drop_zero,
++    List.filterMap_nil, List.nil_append] at hloop
++  have hproject := congrArg
++    (fun c : ProbComp (Bool × S.SAIdealState Sim kappa pp) => Prod.fst <$> c) hloop
++  simpa only [OracleComp.map_eq_bind, OracleComp.bind_assoc, OracleComp.pure_bind,
++    S.viewWord_eq_viewWordBits] using hproject
++
+ end TwoStage
+ 
+ namespace FEScheme.Raw
+@@ -261,7 +612,107 @@ the second-stage word through viewWord_eq_viewWordBits. -/
+ theorem expect_simGame_eq_saGame (Sim : FEScheme.Raw.SASimulator.Raw S) (A : TwoStage)
+     (q : PolyExpr) (real : Bool) (kappa : ℕ) (test : Bool → ℝ) :
+     ProbComp.expect (S.simGame Sim.toSim A q real kappa) test =
+-      ProbComp.expect (S.saGame Sim (A.toSA (S := S) q) real kappa) test := sorry
++      ProbComp.expect (S.saGame Sim (A.toSA (S := S) q) real kappa) test := by
++  let Tape := Fin ((A.toSA (S := S) q).coins.eval kappa) → Bool
++  have hlen : A.first.coinLen kappa + A.second.coinLen kappa =
++      (A.toSA (S := S) q).coins.eval kappa := ?_
++  swap
++  · rw [NUPPT.coinLen_eq, NUPPT.coinLen_eq, TwoStage.toSA_coins, PolyExpr.eval_add]
++  let e : A.first.Coins kappa × A.second.Coins kappa ≃ Tape :=
++    (Fin.appendEquiv (A.first.coinLen kappa) (A.second.coinLen kappa)).trans
++      (Equiv.arrowCongr (finCongr hlen) (Equiv.refl Bool))
++  have hword : ∀ (r1 : A.first.Coins kappa) (r2 : A.second.Coins kappa),
++      List.ofFn (e (r1, r2)) = List.ofFn r1 ++ List.ofFn r2 := ?_
++  swap
++  · intro r1 r2
++    change List.ofFn (fun i => Fin.append r1 r2 (Fin.cast hlen.symm i)) =
++      List.ofFn r1 ++ List.ofFn r2
++    exact (List.ofFn_congr hlen (Fin.append r1 r2)).symm.trans
++      (List.ofFn_fin_append r1 r2)
++  let result : Tape → ℝ := fun r => ProbComp.expect (S.pubGen kappa) fun pp =>
++    if real then
++      ProbComp.expect (S.setup kappa pp) fun k =>
++        ProbComp.expect
++          (Prod.fst <$> simulate (S.realSAImpl kappa pp k.1 k.2)
++            ((A.toSA (S := S) q).run kappa pp k.1 (List.ofFn r)) none) test
++    else
++      ProbComp.expect (Sim.setup kappa pp) fun k =>
++        ProbComp.expect
++          (Prod.fst <$> simulate (S.idealSAImpl Sim kappa pp)
++            ((A.toSA (S := S) q).run kappa pp k.1 (List.ofFn r)) (k.2, none)) test
++  have hsa : ProbComp.expect (S.saGame Sim (A.toSA (S := S) q) real kappa) test =
++      ProbComp.expect (ProbComp.sample Tape) result := ?_
++  swap
++  · rw [S.saGame_eq]
++    cases real <;>
++      simp only [Bool.false_eq_true, if_false, if_true, ProbComp.expect_bind]
++    all_goals
++      conv_lhs =>
++        arg 2
++        ext pp
++        rw [ProbComp.expect_expect_sample]
++      rw [ProbComp.expect_expect_sample]
++      rfl
++  have hsplit : ProbComp.expect (ProbComp.sample Tape) result =
++      ProbComp.expect (ProbComp.sample (A.first.Coins kappa)) fun r1 =>
++        ProbComp.expect (ProbComp.sample (A.second.Coins kappa)) fun r2 =>
++          result (e (r1, r2)) := ?_
++  swap
++  · have hpair := Bridge.expect_sample_pair
++      (fun p : A.first.Coins kappa × A.second.Coins kappa => result (e p))
++    simp only [ProbComp.expect_bind, ProbComp.expect_pure] at hpair
++    exact (ProbComp.expect_sample_equiv e result).symm.trans hpair.symm
++  have hfixed : ∀ (r1 : A.first.Coins kappa) (r2 : A.second.Coins kappa),
++      result (e (r1, r2)) =
++        let a := Commitment.decode C q kappa (A.first.runAt kappa [] r1)
++        ProbComp.expect (if real then S.realView a else S.idealView Sim.toSim a)
++          (fun v => test (A.second.distinguisherL kappa v r2)) := ?_
++  swap
++  · intro r1 r2
++    let a := Commitment.decode C q kappa (A.first.runAt kappa [] r1)
++    have hb := A.coinBlocks_ofFn_append kappa r1 r2
++    have hb1 : A.firstCoins kappa (List.ofFn r1 ++ List.ofFn r2) = r1 :=
++      congrArg Prod.fst hb
++    have hb2 : A.secondCoins kappa (List.ofFn r1 ++ List.ofFn r2) = r2 :=
++      congrArg Prod.snd hb
++    have hc : A.saCommitment C q kappa (List.ofFn r1 ++ List.ofFn r2) = a := ?_
++    swap
++    · rw [A.saCommitment_eq, hb1]
++    cases real with
++    | false =>
++        change ProbComp.expect (S.pubGen kappa) (fun pp =>
++          ProbComp.expect (Sim.setup kappa pp) (fun k =>
++            ProbComp.expect
++              (Prod.fst <$> simulate (S.idealSAImpl Sim kappa pp)
++                ((A.toSA (S := S) q).run kappa pp k.1
++                  (List.ofFn (e (r1, r2)))) (k.2, none)) test)) =
++          ProbComp.expect (S.idealView Sim.toSim a)
++            (fun v => test (A.second.distinguisherL kappa v r2))
++        simp only [hword, TwoStage.simulate_toSA_ideal, hc, hb2, S.idealView_eq,
++          FEScheme.Raw.SASimulator.Raw.toSim_setup,
++          FEScheme.Raw.SASimulator.Raw.toSim_enc,
++          FEScheme.Raw.SASimulator.Raw.toSim_key, Commitment.omega_eq,
++          ProbComp.expect_bind, ProbComp.expect_pure]
++        rfl
++    | true =>
++        change ProbComp.expect (S.pubGen kappa) (fun pp =>
++          ProbComp.expect (S.setup kappa pp) (fun k =>
++            ProbComp.expect
++              (Prod.fst <$> simulate (S.realSAImpl kappa pp k.1 k.2)
++                ((A.toSA (S := S) q).run kappa pp k.1
++                  (List.ofFn (e (r1, r2)))) none) test)) =
++          ProbComp.expect (S.realView a)
++            (fun v => test (A.second.distinguisherL kappa v r2))
++        simp only [hword, TwoStage.simulate_toSA_real, hc, hb2, S.realView_eq,
++          ProbComp.expect_bind, ProbComp.expect_pure]
++  rw [hsa, hsplit, S.simGame_eq]
++  simp only [ProbComp.expect_bind, ProbComp.expect_pure, hfixed]
++  apply congrArg (ProbComp.expect (ProbComp.sample (A.first.Coins kappa)))
++  funext r1
++  let a := Commitment.decode C q kappa (A.first.runAt kappa [] r1)
++  exact ProbComp.expect_expect_sample
++    (if real then S.realView a else S.idealView Sim.toSim a)
++    (A.second.Coins kappa) (fun v r2 => test (A.second.distinguisherL kappa v r2))
+ 
+ /-- The committed simulation advantage equals the semi-adaptive advantage of its
+ explicit typed embedding, with no loss. [GJLS21, Definition 4.3; Wee20, §2.2].
+@@ -270,7 +721,9 @@ explicit typed embedding, with no loss. [GJLS21, Definition 4.3; Wee20, §2.2].
+ acceptance test, then read the two advantages through their published equations. -/
+ theorem simAdv_eq_saSimAdv (Sim : FEScheme.Raw.SASimulator.Raw S) (A : TwoStage)
+     (q : PolyExpr) (kappa : ℕ) :
+-    S.simAdv Sim.toSim A q kappa = S.saSimAdv Sim (A.toSA (S := S) q) kappa := sorry
++    S.simAdv Sim.toSim A q kappa = S.saSimAdv Sim (A.toSA (S := S) q) kappa := by
++  simp only [S.simAdv_eq, S.saSimAdv_eq, advantage_eq, accept_eq,
++    ProbComp.prob_eq_expect, S.expect_simGame_eq_saGame]
+ 
+ end FEScheme.Raw
+ end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean
+index 3af9e1606..de36c9f5b 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean
+@@ -200,7 +200,80 @@ theorem decSecond_correct (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → 
+               (show Matrix _ _ (ZMod pp.group.order) from PartialGarbling.publicTensor (p :=
+                 pp.orderParam)
+                 (M := PG.MIdx κ pp.orderParam f) x) + (show Matrix _ _ (ZMod pp.group.order) from
+-                  PG.L0 κ pp.orderParam f))) := sorry
++                  PG.L0 κ pp.orderParam f))) :=
++  by
++    let X := (show Matrix _ _ (ZMod pp.group.order) from
++      PartialGarbling.publicTensor (p := pp.orderParam) (M := PG.MIdx κ pp.orderParam f) x)
++    let X2 := (show Matrix _ _ (ZMod pp.group.order) from
++      PartialGarbling.publicTensor (p := pp.orderParam) (M := Fin 2) x)
++    let T := t.1
++    let R := t.2
++    let U := a.2.2.1
++    let V := a.2.2.2
++    let H := Matrix.kroneckerMap (fun c r => c * r)
++      (1 : Matrix (Fin (ℓ.eval κ)) (Fin (ℓ.eval κ)) (ZMod pp.group.order)) R
++    let L1m := (show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ pp.orderParam f)
++    let L0m := (show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam f)
++    let sa := Matrix.vecMul s a.1
++    let value := Matrix.vecMul (Matrix.vecMul sa T) (L1m * X + L0m)
++    let mask := Matrix.vecMul (Matrix.vecMul sa (U * X2 + V)) R
++    let sk := keyCore G PG zDim κ pp (setupCore G ℓ zDim κ pp a).2 f M t
++    let ct := encCore G ℓ zDim κ pp (setupCore G ℓ zDim κ pp a).1 x
++      (pp.group.expVec pp.generator z) s
++    let K := groupMatMul sk.K2 X
++    have hMix : H * X = X2 * R := by
++      exact PartialGarbling.kronecker_mul_publicTensor (p := pp.orderParam) x R
++    have hMatrix : (T * L1m + U * H) * X + (T * L0m + V * R) =
++        T * (L1m * X + L0m) + (U * X2 + V) * R := ?_
++    swap
++    · simp only [Matrix.add_mul, Matrix.mul_add, Matrix.mul_assoc, hMix,
++        add_assoc, add_comm, add_left_comm]
++    have hNumerator (m : PG.MIdx κ pp.orderParam f) :
++        pp.group.pairVec ct.c0 (fun i => K i m * sk.K3 i m) =
++          pp.group.pair pp.generator pp.generator ^ (value m).val *
++            pp.group.pair pp.generator pp.generator ^ (mask m).val := by
++      have hColumn :
++          (fun i => pp.group.expMat pp.generator ((T * L1m + U * H) * X) i m *
++            pp.group.expMat pp.generator (T * L0m + V * R) i m) =
++          pp.group.expVec pp.generator
++            (fun i => (T * (L1m * X + L0m) + (U * X2 + V) * R) i m) := ?_
++      swap
++      · funext i
++        rw [pp.group.expMat_apply, pp.group.expMat_apply, pp.group.expVec_apply,
++          ← pp.group.pow_val_add]
++        exact congrArg (fun c : ZMod pp.group.order => pp.generator ^ c.val)
++          (congrFun (congrFun hMatrix i) m)
++      dsimp only [ct, K, sk]
++      simp only [encCore_eq, setupCore_eq, keyCore_eq]
++      rw [pp.group.expVec_vecMul, pp.group.expMat_mul, hColumn,
++        pp.group.pair_expVec]
++      change pp.group.pair pp.generator pp.generator ^
++        (Matrix.vecMul sa (T * (L1m * X + L0m) + (U * X2 + V) * R) m).val = _
++      rw [Matrix.vecMul_add, ← Matrix.vecMul_vecMul, ← Matrix.vecMul_vecMul]
++      change pp.group.pair pp.generator pp.generator ^ (value m + mask m).val = _
++      exact pp.group.pow_val_add_GT _ _ _
++    have hDenominator (m : PG.MIdx κ pp.orderParam f) :
++        pp.group.pairVec ct.c2 (fun i => sk.R i m) =
++          pp.group.pair pp.generator pp.generator ^ (mask m).val := by
++      have hR : (fun i => sk.R i m) =
++          pp.group.expVec pp.generator (fun i => R i m) := ?_
++      swap
++      · funext i
++        dsimp only [sk]
++        simp only [keyCore_eq, pp.group.expMat_apply, pp.group.expVec_apply]
++        rfl
++      rw [hR]
++      dsimp only [ct]
++      simp only [encCore_eq, setupCore_eq]
++      rw [pp.group.expMat_mul, pp.group.expVec_vecMul, pp.group.expVec_vecMul,
++        ← pp.group.expVec_add, Matrix.mul_assoc, ← Matrix.vecMul_add,
++        ← Matrix.mul_add, ← Matrix.vecMul_vecMul, pp.group.pair_expVec]
++      rfl
++    change decSecond G PG zDim κ pp f x sk ct =
++      pp.group.expVecT (pp.group.pair pp.generator pp.generator) value
++    rw [decSecond_eq]
++    funext m
++    rw [hNumerator m, hDenominator m, pp.group.expVecT_apply, mul_inv_cancel_right]
+ 
+ /-- Π decrypts to `e(g,[zMf(x)^T])` for every honest draw and an arbitrary source-group
+ matrix `M` [Wee20, §4.2, p. 10, (11)]. This is perfect correctness in the exponent.
+@@ -219,7 +292,61 @@ theorem pi_dec_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → T
+         (keyCore G PG zDim κ pp (setupCore G ℓ zDim κ pp a).2 f M t)
+         (encCore G ℓ zDim κ pp (setupCore G ℓ zDim κ pp a).1 x
+           (pp.group.expVec pp.generator z) s) =
+-      pp.group.pair pp.generator (leak G PG zDim κ pp f M x z) := sorry
++      pp.group.pair pp.generator (leak G PG zDim κ pp f M x z) := by
++  classical
++  let v := Matrix.vecMul (Matrix.vecMul s a.1) t.1
++  let K : Matrix (PG.TIdx κ pp.orderParam f ⊕ Fin (n'.eval κ))
++      (PG.MIdx κ pp.orderParam f) (ZMod pp.group.order) :=
++    (show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ pp.orderParam f) *
++        (show Matrix _ _ (ZMod pp.group.order) from PartialGarbling.publicTensor
++          (p := pp.orderParam) (M := PG.MIdx κ pp.orderParam f) x) +
++      (show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam f)
++  let e := PG.eval κ pp.orderParam f x
++  let r := fun m => PG.recVec κ pp.orderParam f x (Sum.inr m)
++  let egg := pp.group.pair pp.generator pp.generator
++  have hRec : K *ᵥ r = Sum.elim (fun _ => 0) e := rec_matrix_eq G PG κ pp f x
++  have hMask : dotProduct (Matrix.vecMul v K) r =
++      dotProduct (fun j => v (Sum.inr j)) e := ?_
++  swap
++  · rw [← Matrix.dotProduct_mulVec, hRec, ← Sum.elim_comp_inl_inr v,
++      sumElim_dotProduct_sumElim]
++    simp only [dotProduct_zero', zero_add, Sum.elim_inr]
++  have hLeak : groupDot (groupVecMul z M) e = leak G PG zDim κ pp f M x z := ?_
++  swap
++  · rw [groupDot_eq, leak_product]
++    simp only [groupVecMul_apply, groupDot_eq, ← Finset.prod_pow]
++    rw [Finset.prod_comm]
++    apply Finset.prod_congr rfl
++    intro i _
++    apply Finset.prod_congr rfl
++    intro j _
++    rw [← pow_mul, ← pp.group.pow_val_mul]
++  have hPair :
++      (∏ j, pp.group.pair pp.generator (groupVecMul z M j) ^ (e j).val) =
++        pp.group.pair pp.generator (leak G PG zDim κ pp f M x z) := ?_
++  swap
++  · rw [← hLeak, groupDot_eq, map_prod]
++    simp only [map_pow]
++  have hNeg :
++      (∏ j, (egg ^ (-v (Sum.inr j)).val) ^ (e j).val) =
++        (egg ^ (dotProduct (fun j => v (Sum.inr j)) e).val)⁻¹ := ?_
++  swap
++  · have h := pp.group.groupDot_expVecT egg
++      (-(fun j : Fin (n'.eval κ) => v (Sum.inr j))) e
++    rw [neg_dotProduct, pp.group.pow_val_neg_GT] at h
++    simpa only [groupDot_eq, pp.group.expVecT_apply, Pi.neg_apply] using h
++  rw [dec_eq, decFirst_correct, decSecond_correct, groupDot_eq,
++    Fintype.prod_sum_type]
++  simp only [Sum.elim_inl, Sum.elim_inr, rec_output_eq_eval G PG κ pp f x]
++  rw [← groupDot_eq (pp.group.expVecT egg (Matrix.vecMul v K)) r]
++  change
++    (∏ j, (pp.group.pair pp.generator (groupVecMul z M j) *
++        egg ^ (-v (Sum.inr j)).val) ^ (e j).val) *
++      groupDot (pp.group.expVecT egg (Matrix.vecMul v K)) r =
++        pp.group.pair pp.generator (leak G PG zDim κ pp f M x z)
++  simp only [mul_pow, Finset.prod_mul_distrib]
++  rw [hPair, hNeg, pp.group.groupDot_expVecT, hMask]
++  simp only [mul_assoc, inv_mul_cancel, mul_one]
+ 
+ /-- The internal raw algorithm bundle inherits perfect correctness for all its draws
+ [Wee20, §4.2, p. 10, (11)]. It has no efficiency hypothesis.
+@@ -234,6 +361,7 @@ theorem scheme_raw_correct (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → 
+     let S := scheme_raw G PG zDim κ pp
+     S.dec f M x (S.keyCore (S.setupCore a).2 f M t)
+         (S.encCore (S.setupCore a).1 x (pp.group.expVec pp.generator z) s) =
+-      pp.group.pair pp.generator (leak G PG zDim κ pp f M x z) := sorry
++      pp.group.pair pp.generator (leak G PG zDim κ pp f M x z) := by
++  simpa only [scheme_raw_eq] using (pi_dec_eq G PG zDim κ pp f M x z a s t)
+ 
+ end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean
+index 010e4cf2c..e480fe789 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean
+@@ -101,7 +101,76 @@ theorem cross_tensor_identity {p : ℕ+} {n1 n2 : ℕ}
+     let y1 := Matrix.vecMul s1 A1 + z1
+     let y2 := Matrix.vecMul s2 A2 + z2
+     privateTensor (p := p) y1 y2 = privateTensor (p := p) z1 z2 +
+-      Matrix.vecMul (signalScalar (p := p) s1 z2 y1 s2) (mixScalar (p := p) A1 A2) := sorry
++      Matrix.vecMul (signalScalar (p := p) s1 z2 y1 s2) (mixScalar (p := p) A1 A2) := by
++  let y1 := Matrix.vecMul s1 A1 + z1
++  let y2 := Matrix.vecMul s2 A2 + z2
++  let top := Matrix.kroneckerMap (fun a b => a * b) A1
++    (1 : Matrix (Fin n2) (Fin n2) (ZMod (p : ℕ)))
++  let bottom := Matrix.kroneckerMap (fun a b => a * b)
++    (1 : Matrix (Fin n1) (Fin n1) (ZMod (p : ℕ))) A2
++  change privateTensor (p := p) y1 y2 = privateTensor (p := p) z1 z2 +
++    Matrix.vecMul (signalScalar (p := p) s1 z2 y1 s2) (mixScalar (p := p) A1 A2)
++  funext q
++  obtain ⟨⟨i, j⟩, rfl⟩ :=
++    (finProdFinEquiv : Fin n1 × Fin n2 ≃ Fin (n1 * n2)).surjective q
++  have hTop :
++      dotProduct (fun u : Fin 2 × Fin n2 => s1 u.1 * z2 u.2)
++        (fun u => top u (i, j)) = Matrix.vecMul s1 A1 i * z2 j := ?_
++  swap
++  · have h := congrFun (congrFun (Matrix.mul_kronecker_mul
++        (fun (_ : Fin 1) k => s1 k) A1 (fun (_ : Fin 1) k => z2 k)
++        (1 : Matrix (Fin n2) (Fin n2) (ZMod (p : ℕ)))) (0, 0)) (i, j)
++    rw [Matrix.mul_one] at h
++    simpa only [Matrix.kroneckerMap_apply, Matrix.mul_apply'] using h.symm
++  have hBottom :
++      dotProduct (fun u : Fin n1 × Fin 2 => y1 u.1 * s2 u.2)
++        (fun u => bottom u (i, j)) = y1 i * Matrix.vecMul s2 A2 j := ?_
++  swap
++  · have h := congrFun (congrFun (Matrix.mul_kronecker_mul
++        (fun (_ : Fin 1) k => y1 k)
++        (1 : Matrix (Fin n1) (Fin n1) (ZMod (p : ℕ)))
++        (fun (_ : Fin 1) k => s2 k) A2) (0, 0)) (i, j)
++    rw [Matrix.mul_one] at h
++    simpa only [Matrix.kroneckerMap_apply, Matrix.mul_apply'] using h.symm
++  have hCross :
++      Matrix.vecMul (signalScalar (p := p) s1 z2 y1 s2)
++          (mixScalar (p := p) A1 A2) (finProdFinEquiv (i, j)) =
++        dotProduct (fun u : Fin 2 × Fin n2 => s1 u.1 * z2 u.2)
++            (fun u => top u (i, j)) +
++          dotProduct (fun u : Fin n1 × Fin 2 => y1 u.1 * s2 u.2)
++            (fun u => bottom u (i, j)) := ?_
++  swap
++  · change dotProduct (signalScalar (p := p) s1 z2 y1 s2)
++        (fun k => mixScalar (p := p) A1 A2 k (finProdFinEquiv (i, j))) = _
++    rw [← comp_equiv_dotProduct_comp_equiv _ _ (signalCoord n1 n2)]
++    change dotProduct
++      (fun u : (Fin 2 × Fin n2) ⊕ (Fin n1 × Fin 2) =>
++        signalScalar (p := p) s1 z2 y1 s2 (signalCoord n1 n2 u))
++      (fun u => mixScalar (p := p) A1 A2 (signalCoord n1 n2 u)
++        (finProdFinEquiv (i, j))) = _
++    simp only [signalScalar_eq, mixScalar_eq, Equiv.symm_apply_apply]
++    change dotProduct
++      (Sum.elim
++        (fun u : Fin 2 × Fin n2 =>
++          privateTensor (p := p) s1 z2 (finProdFinEquiv u))
++        (fun u : Fin n1 × Fin 2 =>
++          privateTensor (p := p) y1 s2 (finProdFinEquiv u)))
++      (Sum.elim (fun u => top u (i, j)) (fun u => bottom u (i, j))) = _
++    rw [sumElim_dotProduct_sumElim]
++    congr 1
++    · apply congrArg₂ dotProduct _ rfl
++      funext u
++      simp only [privateTensor_eq, Matrix.kroneckerMap_apply, Equiv.symm_apply_apply]
++    · apply congrArg₂ dotProduct _ rfl
++      funext u
++      simp only [privateTensor_eq, Matrix.kroneckerMap_apply, Equiv.symm_apply_apply]
++  simp only [privateTensor_eq, Matrix.kroneckerMap_apply, Equiv.symm_apply_apply,
++    Pi.add_apply]
++  rw [hCross, hTop, hBottom]
++  change (Matrix.vecMul s1 A1 i + z1 i) * (Matrix.vecMul s2 A2 j + z2 j) =
++    z1 i * z2 j + (Matrix.vecMul s1 A1 i * z2 j +
++      (Matrix.vecMul s1 A1 i + z1 i) * Matrix.vecMul s2 A2 j)
++  ring
+ 
+ /-- Evaluating the cross-term identity isolates the desired private quadratic value
+ [Wee20, §3.1, p. 6, (5)].
+@@ -118,7 +187,16 @@ theorem cross_value_identity {p : ℕ+} {n1 n2 : ℕ}
+     dotProduct (privateTensor (p := p) z1 z2) fx =
+       dotProduct (privateTensor (p := p) y1 y2) fx -
+         dotProduct (signalScalar (p := p) s1 z2 y1 s2)
+-          (mixScalar (p := p) A1 A2 *ᵥ fx) := sorry
++          (mixScalar (p := p) A1 A2 *ᵥ fx) := by
++  have h := congrArg (fun v : Fin (n1 * n2) → ZMod (p : ℕ) => dotProduct v fx)
++    (cross_tensor_identity A1 A2 s1 s2 z1 z2)
++  change dotProduct
++      (privateTensor (p := p) (Matrix.vecMul s1 A1 + z1) (Matrix.vecMul s2 A2 + z2)) fx =
++    dotProduct (privateTensor (p := p) z1 z2 +
++      Matrix.vecMul (signalScalar (p := p) s1 z2 (Matrix.vecMul s1 A1 + z1) s2)
++        (mixScalar (p := p) A1 A2)) fx at h
++  rw [add_dotProduct, ← Matrix.dotProduct_mulVec] at h
++  exact eq_sub_of_add_eq h.symm
+ 
+ /-- The raw quadratic scheme decrypts perfectly to the allowed value in the target group
+ for every honest setup, encryption and key draw [Wee20, §3.1, p. 6, (4)–(5)].
+@@ -138,7 +216,38 @@ theorem quadratic_dec_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
+     dec G n1 n2 PG κ pp f x
+         (keyCore G n1 n2 PG κ pp (setupCore G ℓ n1 n2 κ pp a).2 f t)
+         (encCore G ℓ n1 n2 κ pp (setupCore G ℓ n1 n2 κ pp a).1 x z1 z2 s) =
+-      pp.group.pair pp.generator pp.generator ^ (value G n1 n2 PG κ pp f x z1 z2).val := sorry
++      pp.group.pair pp.generator pp.generator ^ (value G n1 n2 PG κ pp f x z1 z2).val := by
++  let y1 := Matrix.vecMul s.1 a.1 + z1
++  let y2 := Matrix.vecMul s.2.1 a.2.1 + z2
++  let signal := signalScalar (p := pp.orderParam) s.1 z2 y1 s.2.1
++  let F := mixScalar (p := pp.orderParam) a.1 a.2.1
++  let fx := PG.eval κ pp.orderParam f x
++  let egg := pp.group.pair pp.generator pp.generator
++  have hTensor :
++      (fun i => pp.group.pairTensor (pp.group.expVec pp.generator y1)
++        (pp.group.expVec pp.generator y2) (finProdFinEquiv.symm i)) =
++      pp.group.expVecT egg (privateTensor (p := pp.orderParam) y1 y2) := ?_
++  swap
++  · rw [pp.group.pairTensor_expVec]
++    funext i
++    simp only [pp.group.expVecT_apply, privateTensor_eq, Matrix.kroneckerMap_apply]
++    rfl
++  have hLeak :
++      pp.group.pair pp.generator
++          (Linear.leak G PG (piDim n1 n2) κ pp f
++            (pp.group.expMat pp.generator F) x signal) =
++        egg ^ (dotProduct signal (F *ᵥ fx)).val := ?_
++  swap
++  · rw [Linear.leak_eq, pp.group.expMat_mulVec, pp.group.groupDot_expVec,
++      dotProduct_comm, pp.group.pair_pow_right]
++  have hValue : dotProduct (privateTensor (p := pp.orderParam) z1 z2) fx =
++      dotProduct (privateTensor (p := pp.orderParam) y1 y2) fx -
++        dotProduct signal (F *ᵥ fx) :=
++    cross_value_identity (p := pp.orderParam) a.1 a.2.1 s.1 s.2.1 z1 z2 fx
++  simp only [dec_eq, keyCore_eq, encCore_eq, setupCore_eq,
++    pp.group.expVec_vecMul, ← pp.group.expVec_add, mixGroup_exp, signalGroup_exp]
++  rw [Linear.pi_dec_eq, hTensor, pp.group.groupDot_expVecT, hLeak, value_eq,
++    hValue, sub_eq_add_neg, pp.group.pow_val_add_GT, pp.group.pow_val_neg_GT]
+ 
+ /-- The internal raw quadratic bundle inherits perfect correctness for every draw
+ [Wee20, §3.1, p. 6, (4)–(5)]. No efficiency target is assumed.
+@@ -155,6 +264,8 @@ theorem scheme_raw_correct (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
+     let S := scheme_raw G n1 n2 PG κ pp
+     S.dec f x (S.keyCore (S.setupCore a).2 f t)
+         (S.encCore (S.setupCore a).1 x z1 z2 s) =
+-      pp.group.pair pp.generator pp.generator ^ (value G n1 n2 PG κ pp f x z1 z2).val := sorry
++      pp.group.pair pp.generator pp.generator ^ (value G n1 n2 PG κ pp f x z1 z2).val := by
++  rw [scheme_raw_eq]
++  exact quadratic_dec_eq G n1 n2 PG κ pp f x z1 z2 a s t
+ 
+ end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
+diff --git a/TCSlib/Cryptography/Pairing/Linear.lean b/TCSlib/Cryptography/Pairing/Linear.lean
+index f43afb708..d0b413d43 100644
+--- a/TCSlib/Cryptography/Pairing/Linear.lean
++++ b/TCSlib/Cryptography/Pairing/Linear.lean
+@@ -5,6 +5,7 @@ Authors: TCSlib contributors
+ -/
+ import TCSlib.Cryptography.Pairing.Exponents
+ import TCSlib.Cryptography.Pairing.MatrixDH.Parameters
++import TCSlib.Cryptography.Pairing.MatrixDH.Diagonal
+ import TCSlib.Cryptography.Asymptotic.Adversary
+ import TCSlib.Cryptography.Games.Advantage
+ import TCSlib.Cryptography.Foundations.Subexponential
+@@ -96,7 +97,9 @@ and group width. This is serialization glue for [JLS26, §1.1, p. 3].
+ to each group encoding; collect the coefficients of the fixed width. -/
+ theorem length_dlinStr {wG wT : ℕ} (B : BilinearGroup wG wT) (d : List Bool)
+     (g a b u v w : B.G) :
+-    (dlinStr B d g a b u v w).length = 2 * d.length + 11 * wG + 12 := sorry
++    (dlinStr B d g a b u v w).length = 2 * d.length + 11 * wG + 12 := by
++  simp only [dlinStr_eq, length_pairEncode, List.length_ofFn]
++  omega
+ 
+ /-- The DLIN matrix has rows `(a,0)`, `(0,b)`, and `(1,1)`
+ [GJLS21, §3, p. 17, the distribution preceding Definition 3.3]. -/
+@@ -113,7 +116,11 @@ theorem dlinMatrix_eq {p : ℕ} (a b : ZMod p) :
+ **Proof sketch.** Read the three rows and the two column-vector coordinates; the three dot
+ products reduce to `a*r`, `b*s`, and `r+s`. -/
+ theorem dlinMatrix_mulVec {p : ℕ} (a b r s : ZMod p) :
+-    dlinMatrix a b *ᵥ ![r, s] = ![a * r, b * s, r + s] := sorry
++    dlinMatrix a b *ᵥ ![r, s] = ![a * r, b * s, r + s] := by
++  rw [dlinMatrix_eq]
++  change (Matrix.of ![![a, 0], ![0, b], ![1, 1]]) *ᵥ ![r, s] = _
++  simp only [Matrix.cons_mulVec, Matrix.empty_mulVec, Matrix.vec2_dotProduct',
++    zero_mul, one_mul, add_zero, zero_add]
+ 
+ namespace BilinearGen
+ 
+@@ -169,11 +176,32 @@ theorem dlinEnc_dlinChallenge (κ : ℕ) (pp : PublicParams G κ)
+ /-- Public challenge encoding is injective; in particular two generator coin strings yielding
+ one public description do not create distinct encoded objects. Serialization glue.
+ 
+-**Proof sketch.** Decode the description by `pairEncode_injective`, substitute equal
+-descriptions, then use the same pairing reader on the remaining six encodings. Apply
+-`List.ofFn_injective` and the group's `encG_injective`; proof irrelevance removes the
+-reachability and nonidentity witnesses of the shared public parameters. -/
+-theorem dlinEnc_injective (κ : ℕ) : Function.Injective (G.dlinEnc κ) := sorry
++**Proof sketch.** Separate the description and generator words by pair-encoding
++injectivity. Apply the shared public-parameter encoding injectivity theorem to align
++the dependent group types. Separate the five remaining words and use `List.ofFn_injective`
++and the group's `encG_injective` pointwise. -/
++theorem dlinEnc_injective (κ : ℕ) : Function.Injective (G.dlinEnc κ) := by
++  intro c₁ c₂ h
++  rcases c₁ with ⟨pp₁, a₁, b₁, u₁, v₁, w₁⟩
++  rcases c₂ with ⟨pp₂, a₂, b₂, u₂, v₂, w₂⟩
++  simp only [dlinEnc_eq, dlinStr_eq] at h
++  rcases Prod.mk.inj (pairEncode_injective h) with ⟨hdesc, h₀⟩
++  rcases Prod.mk.inj (pairEncode_injective h₀) with ⟨hgen, h₁⟩
++  have hpp : pp₁.encode = pp₂.encode :=
++    (PublicParams.encode_eq pp₁).trans
++      ((congrArg₂ pairEncode hdesc hgen).trans (PublicParams.encode_eq pp₂).symm)
++  have hPP : pp₁ = pp₂ := PublicParams.encode_injective hpp
++  cases hPP
++  rcases Prod.mk.inj (pairEncode_injective h₁) with ⟨hA, h₂⟩
++  rcases Prod.mk.inj (pairEncode_injective h₂) with ⟨hB, h₃⟩
++  rcases Prod.mk.inj (pairEncode_injective h₃) with ⟨hU, h₄⟩
++  rcases Prod.mk.inj (pairEncode_injective h₄) with ⟨hV, hW⟩
++  cases (G.group κ pp₁.description.val).encG_injective (List.ofFn_injective hA)
++  cases (G.group κ pp₁.description.val).encG_injective (List.ofFn_injective hB)
++  cases (G.group κ pp₁.description.val).encG_injective (List.ofFn_injective hU)
++  cases (G.group κ pp₁.description.val).encG_injective (List.ofFn_injective hV)
++  cases (G.group κ pp₁.description.val).encG_injective (List.ofFn_injective hW)
++  rfl
+ 
+ /-- A reachable public DLIN challenge has one fixed polynomial encoding length.
+ Serialization glue for [JLS26, §1.1, p. 3].
+@@ -181,7 +209,9 @@ Serialization glue for [JLS26, §1.1, p. 3].
+ **Proof sketch.** Use `length_dlinStr`. The shared description's reachability witness supplies
+ a generator coin string, so `length_desc` fixes the description length. -/
+ theorem length_dlinEnc (κ : ℕ) (c : G.DLINChallenge κ) :
+-    (G.dlinEnc κ c).length = 2 * G.descLen.eval κ + 11 * G.wG.eval κ + 12 := sorry
++    (G.dlinEnc κ c).length = 2 * G.descLen.eval κ + 11 * G.wG.eval κ + 12 := by
++  obtain ⟨r, hr⟩ := c.pp.description.property
++  rw [dlinEnc_eq, length_dlinStr, ← hr, G.length_desc]
+ 
+ /-- Sample the canonical DLIN challenge: group coins first, a uniform nonidentity generator,
+ then `a,b`, `r,s`, and the final random scalar `t` [JLS26, §1.1, p. 3]. The real response is
+@@ -316,11 +346,15 @@ theorem dlinMatrixSlack_eq (κ : ℕ) :
+ /-- The real tuple and compressed matrix presentations have identical acceptance laws
+ [GJLS21, Definition 3.3, p. 18; JLS26, §1.1, p. 3].
+ 
+-**Proof sketch.** Use `dlinMatrix_mulVec` to identify the response coordinates. Integrate
+-out the unused random response draws with the shared probability readers. The public group,
+-generator, diagonal scalars, coefficient vector and distinguisher coins coincide. -/
++**Proof sketch.** Read the two sampling laws, whose real response coordinates already
++coincide. Integrate out the unused random response draws with the shared probability
++readers. The public group, generator, diagonal scalars, coefficient vector and
++distinguisher coins coincide. -/
+ theorem dlinMatrixGame_real_accept (D : NUPPT) (κ : ℕ) :
+-    accept (G.dlinMatrixGame D true κ) = accept (G.dlinGame D true κ) := sorry
++    accept (G.dlinMatrixGame D true κ) = accept (G.dlinGame D true κ) := by
++  simp only [accept_eq, dlinMatrixGame_eq, dlinGame_eq, dlinMatrixSample_eq,
++    dlinSample_eq, ProbComp.prob_bind, ProbComp.expect_bind, ProbComp.expect_pure,
++    ProbComp.prob_pure, ↓reduceIte, ProbComp.expect_const]
+ 
+ /-- The two random presentations differ by at most the probability of a zero diagonal
+ coordinate [GJLS21, Definition 3.3, p. 18; JLS26, §1.1, p. 3]. This correction is explicit;
+diff --git a/TCSlib/Cryptography/Pairing/MatrixDH.lean b/TCSlib/Cryptography/Pairing/MatrixDH.lean
+index 1b3787bbb..de895f56f 100644
+--- a/TCSlib/Cryptography/Pairing/MatrixDH.lean
++++ b/TCSlib/Cryptography/Pairing/MatrixDH.lean
+@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.Pairing.MatrixDH.Parameters
++import TCSlib.Cryptography.Pairing.MatrixDH.Diagonal
+ import TCSlib.Cryptography.Pairing.MatrixDH.Defs
+ import TCSlib.Cryptography.Pairing.MatrixDH.SelfReduction
+ 
+@@ -16,6 +17,7 @@ set_option autoImplicit false
+ ## Contents
+ 
+ * `Parameters`: generated group descriptions and public nonidentity generators.
++* `Diagonal`: exact finite-field bounds for random diagonal masks.
+ * `Defs`: uniform-matrix experiments and their two-experiment advantage.
+ * `SelfReduction`: explicit column-hybrid preprocessing, advice, and advantage inequalities.
+ 
+diff --git a/TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean b/TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean
+index c73d04388..c768362ef 100644
+--- a/TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean
++++ b/TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean
+@@ -65,14 +65,58 @@ theorem groupMatrixEnc_eq (M : Matrix (Fin rows) (Fin cols) B.G) :
+ **Proof sketch.** Apply `List.length_flatten` and `List.length_ofFn` to both concatenations;
+ every point block has length `wG`. -/
+ theorem length_groupMatrixEnc (M : Matrix (Fin rows) (Fin cols) B.G) :
+-    (B.groupMatrixEnc M).length = rows * cols * wG := sorry
++    (B.groupMatrixEnc M).length = rows * cols * wG := by
++  have hrow (i : Fin rows) :
++      (List.ofFn (fun j : Fin cols => List.ofFn (B.encG (M i j)))).flatten.length =
++        cols * wG := by
++    rw [List.length_flatten, List.map_ofFn]
++    change (List.ofFn (fun j : Fin cols => (List.ofFn (B.encG (M i j))).length)).sum = _
++    simp only [List.length_ofFn, List.ofFn_const, List.sum_replicate_nat]
++  rw [groupMatrixEnc_eq, List.length_flatten, List.map_ofFn]
++  change (List.ofFn (fun i : Fin rows =>
++    (List.ofFn (fun j : Fin cols => List.ofFn (B.encG (M i j)))).flatten.length)).sum = _
++  simp only [hrow, List.ofFn_const, List.sum_replicate_nat, Nat.mul_assoc]
+ 
+ /-- Group-matrix serialization is injective, including empty dimensions. Serialization glue.
+ 
+ **Proof sketch.** Split equal concatenations into fixed-width rows and then point blocks,
+ using their known lengths. Apply `List.ofFn_injective` and `B.encG_injective` entrywise. -/
+ theorem groupMatrixEnc_injective :
+-    Function.Injective (B.groupMatrixEnc (rows := rows) (cols := cols)) := sorry
++    Function.Injective (B.groupMatrixEnc (rows := rows) (cols := cols)) := by
++  intro M N h
++  have hRows :
++      List.ofFn (fun i => (List.ofFn fun j => List.ofFn (B.encG (M i j))).flatten) =
++        List.ofFn (fun i => (List.ofFn fun j => List.ofFn (B.encG (N i j))).flatten) := ?_
++  swap
++  · apply List.eq_iff_flatten_eq.mpr
++    refine ⟨?_, ?_⟩
++    · simpa only [groupMatrixEnc_eq] using h
++    · rw [List.map_ofFn, List.map_ofFn]
++      apply congrArg List.ofFn
++      funext i
++      change (List.ofFn (fun j => List.ofFn (B.encG (M i j)))).flatten.length =
++        (List.ofFn (fun j => List.ofFn (B.encG (N i j)))).flatten.length
++      rw [List.length_flatten, List.length_flatten, List.map_ofFn, List.map_ofFn]
++      apply congrArg List.sum
++      apply congrArg List.ofFn
++      funext j
++      change (List.ofFn (B.encG (M i j))).length = (List.ofFn (B.encG (N i j))).length
++      rw [List.length_ofFn, List.length_ofFn]
++  have hRow := List.ofFn_injective hRows
++  funext i j
++  have hBlocks :
++      List.ofFn (fun k => List.ofFn (B.encG (M i k))) =
++        List.ofFn (fun k => List.ofFn (B.encG (N i k))) := ?_
++  swap
++  · apply List.eq_iff_flatten_eq.mpr
++    refine ⟨congrFun hRow i, ?_⟩
++    rw [List.map_ofFn, List.map_ofFn]
++    apply congrArg List.ofFn
++    funext k
++    change (List.ofFn (B.encG (M i k))).length = (List.ofFn (B.encG (N i k))).length
++    rw [List.length_ofFn, List.length_ofFn]
++  exact B.encG_injective
++    (List.ofFn_injective (congrFun (List.ofFn_injective hBlocks) j))
+ 
+ end BilinearGroup
+ 
+@@ -107,10 +151,21 @@ theorem mddhEnc_eq (d ℓ : PolyExpr) (κ : ℕ) (c : G.MDDHChallenge d ℓ κ)
+ /-- Matrix-challenge encoding is injective on reachable public challenges. Serialization glue.
+ 
+ **Proof sketch.** Use `pairEncode_injective` to separate public parameters and matrix words.
+-Read the shared public encoding and apply `encG_injective` to its generator; description
+-reachability witnesses are propositions. Then use `groupMatrixEnc_injective` twice. -/
++Apply shared public-parameter encoding injectivity to align the dependent group types.
++Then apply `groupMatrixEnc_injective` to both matrix words. -/
+ theorem mddhEnc_injective (d ℓ : PolyExpr) (κ : ℕ) :
+-    Function.Injective (G.mddhEnc d ℓ κ) := sorry
++    Function.Injective (G.mddhEnc d ℓ κ) := by
++  intro c₁ c₂ h
++  rcases c₁ with ⟨pp₁, M₁, R₁⟩
++  rcases c₂ with ⟨pp₂, M₂, R₂⟩
++  simp only [mddhEnc_eq] at h
++  rcases Prod.mk.inj (pairEncode_injective h) with ⟨hpp, hmat⟩
++  have hPP : pp₁ = pp₂ := PublicParams.encode_injective hpp
++  cases hPP
++  rcases Prod.mk.inj (pairEncode_injective hmat) with ⟨hM, hR⟩
++  cases (G.group κ pp₁.description.val).groupMatrixEnc_injective hM
++  cases (G.group κ pp₁.description.val).groupMatrixEnc_injective hR
++  rfl
+ 
+ /-- The matrix-challenge word has a fixed polynomial length. Serialization glue.
+ 
+@@ -119,7 +174,12 @@ theorem mddhEnc_injective (d ℓ : PolyExpr) (κ : ℕ) :
+ theorem length_mddhEnc (d ℓ : PolyExpr) (κ : ℕ) (c : G.MDDHChallenge d ℓ κ) :
+     (G.mddhEnc d ℓ κ c).length =
+       4 * G.descLen.eval κ + (2 + 4 * ℓ.eval κ + ℓ.eval κ * d.eval κ) * G.wG.eval κ + 8 :=
+-  sorry
++  by
++    obtain ⟨r, hr⟩ := c.pp.description.property
++    simp only [mddhEnc_eq, PublicParams.encode_eq, length_pairEncode,
++      BilinearGroup.length_groupMatrixEnc, List.length_ofFn]
++    rw [← hr, G.length_desc]
++    ring
+ 
+ /-- Sample a uniform two-column matrix `M`, an independent coefficient matrix `S`, and a
+ uniform response matrix `U`, after generating the public group parameters. Return `[M]`
+diff --git a/TCSlib/Cryptography/Pairing/MatrixDH/Diagonal.lean b/TCSlib/Cryptography/Pairing/MatrixDH/Diagonal.lean
+new file mode 100644
+index 000000000..ba8c2ab76
+--- /dev/null
++++ b/TCSlib/Cryptography/Pairing/MatrixDH/Diagonal.lean
+@@ -0,0 +1,151 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Pairing.Exponents
++import TCSlib.Cryptography.Games.Probability
++import TCSlib.Cryptography.Games.Bridges.Experiments
++import TCSlib.Cryptography.OneWayFunctions.Basic
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Diagonal masks over finite fields
++
++## Main definitions
++
++This module adds no algorithms or samplers.
++
++## Main results
++
++* `dlinDiagonal_random_gap_le`: the exact bad-diagonal bound for bounded tests.
++
++## References
++
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; ePrint 2020/764, revision of 3 January 2025, Definition 3.3.
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
++  Assumptions*, Journal of the ACM 73(1), Article 1, 2026, Section 1.1.
++-/
++
++namespace TCSlib.Cryptography.Pairing
++
++open TCSlib.Cryptography.Games
++
++/-- Uniform scalar responses and responses multiplied by two independent diagonal masks
++have expectation gap at most `2/N - 1/N²` for every test with values in `[0,1]`, where `N`
++is the finite field's cardinality. This is fixed-field probability glue for the random-law
++comparison [GJLS21, Definition 3.3, p.18; JLS26, §1.1, p.3].
++
++**Proof sketch.** Fix the diagonal pair. If both entries are nonzero, their coordinatewise
++multiplication permutations preserve the uniform response law. Otherwise each bounded
++expectation lies in `[0,1]`, so its gap is at most one. Average the resulting bad-event
++indicator with `abs_expect_sub_le_expect`. Reindex the two diagonal coordinates as a product
++and evaluate the exact bad mass `1/N + (1-1/N)/N = 2/N - 1/N²`, using existing singleton
++probability and sample/Fubini readers. No sampler is constructed. -/
++theorem dlinDiagonal_random_gap_le {K : Type} [Field K] [Fintype K]
++    (H : (Fin 2 → K) → (Fin 3 → K) → ℝ)
++    (hH0 : ∀ ab u, 0 ≤ H ab u) (hH1 : ∀ ab u, H ab u ≤ 1) :
++    |ProbComp.expect (ProbComp.sample (Fin 2 → K))
++        (fun ab => ProbComp.expect (ProbComp.sample (Fin 3 → K)) (H ab)) -
++      ProbComp.expect (ProbComp.sample (Fin 2 → K))
++        (fun ab => ProbComp.expect (ProbComp.sample (Fin 2 → K))
++          (fun rs => ProbComp.expect (ProbComp.sample K)
++            (fun t => H ab ![ab 0 * rs 0, ab 1 * rs 1, t])))| ≤
++      2 / (Fintype.card K : ℝ) - 1 / (Fintype.card K : ℝ) ^ 2 := by
++  classical
++  let A : (Fin 2 → K) → ℝ := fun ab =>
++    ProbComp.expect (ProbComp.sample (Fin 3 → K)) (H ab)
++  let B : (Fin 2 → K) → ℝ := fun ab =>
++    ProbComp.expect (ProbComp.sample (Fin 2 → K)) fun rs =>
++      ProbComp.expect (ProbComp.sample K) fun t => H ab ![ab 0 * rs 0, ab 1 * rs 1, t]
++  let bad : (Fin 2 → K) → Prop := fun ab => ab 0 = 0 ∨ ab 1 = 0
++  have hA0 (ab : Fin 2 → K) : 0 ≤ A ab := ProbComp.expect_nonneg _ (hH0 ab)
++  have hA1 (ab : Fin 2 → K) : A ab ≤ 1 :=
++    calc
++      A ab ≤ ProbComp.expect (ProbComp.sample (Fin 3 → K)) (fun _ => 1) :=
++        ProbComp.expect_mono _ (hH1 ab)
++      _ = 1 := ProbComp.expect_const _ 1
++  have hB0 (ab : Fin 2 → K) : 0 ≤ B ab :=
++    ProbComp.expect_nonneg _ (fun rs => ProbComp.expect_nonneg _
++      (fun t => hH0 ab ![ab 0 * rs 0, ab 1 * rs 1, t]))
++  have hB1 (ab : Fin 2 → K) : B ab ≤ 1 :=
++    calc
++      B ab ≤ ProbComp.expect (ProbComp.sample (Fin 2 → K)) (fun _ => 1) :=
++        ProbComp.expect_mono _ (fun rs =>
++          calc
++            ProbComp.expect (ProbComp.sample K)
++                (fun t => H ab ![ab 0 * rs 0, ab 1 * rs 1, t]) ≤
++              ProbComp.expect (ProbComp.sample K) (fun _ => 1) :=
++              ProbComp.expect_mono _ (fun t => hH1 ab ![ab 0 * rs 0, ab 1 * rs 1, t])
++            _ = 1 := ProbComp.expect_const _ 1)
++      _ = 1 := ProbComp.expect_const _ 1
++  have hGood : ∀ ab : Fin 2 → K, ab 0 ≠ 0 → ab 1 ≠ 0 → A ab = B ab := by
++    intro ab ha0 ha1
++    let scale : (Fin 2 → K) ≃ (Fin 2 → K) :=
++      (finTwoArrowEquiv K).trans
++        ((Equiv.prodCongr (Equiv.mulLeft₀ (ab 0) ha0)
++          (Equiv.mulLeft₀ (ab 1) ha1)).trans ((finTwoArrowEquiv K).symm))
++    let e : ((Fin 2 → K) × K) ≃ (Fin 3 → K) :=
++      (Equiv.prodCongr scale (Equiv.refl K)).trans ((Fin.succFunEquiv K 2).symm)
++    have hShape (rs : Fin 2 → K) (t : K) :
++        e (rs, t) = ![ab 0 * rs 0, ab 1 * rs 1, t] := ?_
++    swap
++    · funext i
++      fin_cases i <;> rfl
++    dsimp only [A, B]
++    rw [← ProbComp.expect_sample_equiv e (H ab), ← Bridge.expect_sample_pair]
++    simp only [ProbComp.expect_bind, ProbComp.expect_pure, hShape]
++  have hBadMass :
++      ProbComp.expect (ProbComp.sample (Fin 2 → K))
++          (fun ab => if bad ab then (1 : ℝ) else 0) =
++        2 / (Fintype.card K : ℝ) - 1 / (Fintype.card K : ℝ) ^ 2 := by
++    classical
++    let c : ℝ := 1 / (Fintype.card K : ℝ)
++    have hN : (Fintype.card K : ℝ) ≠ 0 := Nat.cast_ne_zero.2 Fintype.card_ne_zero
++    have hZero :
++        ProbComp.expect (ProbComp.sample K) (fun a => if a = 0 then (1 : ℝ) else 0) = c :=
++      (ProbComp.prob_eq_expect (ProbComp.sample K) (fun a : K => a = 0)).symm.trans
++        ((Bridge.prob_sample_eq_uprob (fun a : K => a = 0)).trans
++          (TCSlib.Cryptography.OneWay.uprob_eq_one_div_card (0 : K)))
++    have hInner (a : K) :
++        ProbComp.expect (ProbComp.sample K)
++            (fun b => if a = 0 ∨ b = 0 then (1 : ℝ) else 0) =
++          c + (1 - c) * (if a = 0 then (1 : ℝ) else 0) := ?_
++    swap
++    · by_cases ha : a = 0
++      · have hF : (fun b : K => if a = 0 ∨ b = 0 then (1 : ℝ) else 0) =
++            (fun _ => 1) := funext (fun b => if_pos (Or.inl ha))
++        rw [hF, ProbComp.expect_const, if_pos ha]
++        ring
++      · simpa only [ha, false_or, ite_false, mul_zero, add_zero] using hZero
++    dsimp only [bad]
++    rw [← ProbComp.expect_sample_equiv (finTwoArrowEquiv K).symm
++      (fun ab : Fin 2 → K => if ab 0 = 0 ∨ ab 1 = 0 then (1 : ℝ) else 0),
++      ← Bridge.expect_sample_pair]
++    simp only [ProbComp.expect_bind, ProbComp.expect_pure, finTwoArrowEquiv_symm_apply,
++      Matrix.cons_val_zero, Matrix.cons_val_one]
++    simp only [hInner]
++    rw [ProbComp.expect_add, ProbComp.expect_const, ProbComp.expect_const_mul, hZero]
++    dsimp only [c]
++    field_simp [hN] <;> ring
++  have hPoint : ∀ ab : Fin 2 → K,
++      |A ab - B ab| ≤ if bad ab then (1 : ℝ) else 0 := ?_
++  swap
++  · intro ab
++    by_cases hb : bad ab
++    · rw [if_pos hb, abs_le]
++      constructor <;> linarith [hA0 ab, hA1 ab, hB0 ab, hB1 ab]
++    · have ha0 : ab 0 ≠ 0 := fun h => hb (Or.inl h)
++      have ha1 : ab 1 ≠ 0 := fun h => hb (Or.inr h)
++      simpa only [if_neg hb, hGood ab ha0 ha1, sub_self, abs_zero] using
++        (le_refl (0 : ℝ))
++  have hAverage := ProbComp.abs_expect_sub_le_expect
++    (ProbComp.sample (Fin 2 → K)) hPoint
++  rw [hBadMass] at hAverage
++  exact hAverage
++
++end TCSlib.Cryptography.Pairing
+diff --git a/TCSlib/Cryptography/Pairing/MatrixDH/Parameters.lean b/TCSlib/Cryptography/Pairing/MatrixDH/Parameters.lean
+index 0a398ccf1..fa0c04131 100644
+--- a/TCSlib/Cryptography/Pairing/MatrixDH/Parameters.lean
++++ b/TCSlib/Cryptography/Pairing/MatrixDH/Parameters.lean
+@@ -5,6 +5,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ import TCSlib.Cryptography.Pairing.Group
+ import TCSlib.Cryptography.Games.Probability
+ 
++import Mathlib.Data.List.OfFn
++
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+@@ -24,6 +26,8 @@ public data do not create different parameter objects.
+ 
+ ## Main results
+ 
++* `PublicParams.encode_injective`: the public word determines its parameters.
++
+ Equation readers expose the public encoding and the exact generation law.
+ 
+ ## References
+@@ -91,6 +95,27 @@ theorem encode_eq {G : BilinearGen} {κ : ℕ} (pp : PublicParams G κ) :
+     pp.encode = pairEncode pp.description.val
+       (List.ofFn ((G.group κ pp.description.val).encG pp.generator)) := rfl
+ 
++/-- The encoded description and generator determine the public parameters uniquely.
++Reachability and nonidentity witnesses are propositions and do not distinguish parameters
++with the same public data. This is serialization glue for the public-parameter interface
++[GJLS21, Definition 4.1; Wee20, Section 2.1].
++
++**Proof sketch.** Read `encode_eq` and apply the shared pair-encoding injectivity theorem.
++Substitute equality of the description words to align the dependent group types. Apply
++`List.ofFn_injective` and the group's `encG_injective` to the generator words. Proof
++irrelevance removes the reachability and nonidentity witnesses. -/
++theorem encode_injective {G : BilinearGen} {κ : ℕ} :
++    Function.Injective (PublicParams.encode (G := G) (κ := κ)) := by
++  intro pp₁ pp₂ h
++  rcases pp₁ with ⟨⟨word₁, hreach₁⟩, g₁, hg₁⟩
++  rcases pp₂ with ⟨⟨word₂, hreach₂⟩, g₂, hg₂⟩
++  simp only [encode_eq] at h
++  rcases Prod.mk.inj (Turing.pairEncode_injective h) with ⟨hword, hgen⟩
++  change word₁ = word₂ at hword
++  subst word₂
++  cases (G.group κ word₁).encG_injective (List.ofFn_injective hgen)
++  rfl
++
+ end PublicParams
+ 
+ /-- A nonidentity group element is the additional draw made after the group description

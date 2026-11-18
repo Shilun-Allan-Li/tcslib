@@ -1,0 +1,767 @@
+From 419f3f0495d614dac928fee03cffa106327ecfdb Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 02:57:01 -0800
+Subject: [PATCH 09/36] io-phfe: draft honest PHFE cores and faithful wire
+ widths
+
+---
+ .../FunctionalEncryption/Wee20/Linear.lean    |  22 ++
+ .../Wee20/LinearSimulator.lean                |  16 ++
+ .../FunctionalEncryption/Wee20/PHFE/Core.lean | 110 ++++++++++
+ .../FunctionalEncryption/Wee20/PHFE/Data.lean |   2 +-
+ .../Wee20/PHFE/Encodings.lean                 | 178 ++++++++++++++++
+ .../Wee20/PHFE/Widths.lean                    |  88 ++++++++
+ .../FunctionalEncryption/Wee20/Quadratic.lean |  12 ++
+ .../Wee20/QuadraticSimulator.lean             |  12 ++
+ .../FunctionalEncryption/Wee20/WireDraws.lean | 196 ++++++++++++++++++
+ TCSlib/Cryptography/Pairing/Linear.lean       |   4 +-
+ 10 files changed, 637 insertions(+), 3 deletions(-)
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Core.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Widths.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/WireDraws.lean
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean
+index 62371bcdb..f5299f6b5 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean
+@@ -137,6 +137,28 @@ theorem keyDraw_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ →
+           (ZMod pp.group.order) ×
+         Matrix (Fin 2) (PG.MIdx κ pp.orderParam f) (ZMod pp.group.order)) := rfl
+ 
++instance instSetupDrawFinite (G : BilinearGen) (ℓ z : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++    Fintype (SetupDraw G ℓ z κ pp) := inferInstance
++
++instance instSetupDrawNonempty (G : BilinearGen) (ℓ z : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++    Nonempty (SetupDraw G ℓ z κ pp) := inferInstance
++
++instance instEncDrawFinite (G : BilinearGen) (κ : ℕ) (pp : PublicParams G κ) :
++    Fintype (EncDraw G κ pp) := inferInstance
++
++instance instEncDrawNonempty (G : BilinearGen) (κ : ℕ) (pp : PublicParams G κ) :
++    Nonempty (EncDraw G κ pp) := inferInstance
++
++instance instKeyDrawFinite (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) :
++    Fintype (KeyDraw G PG κ pp f) := inferInstance
++
++instance instKeyDrawNonempty (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) :
++    Nonempty (KeyDraw G PG κ pp f) := inferInstance
++
+ /-- Setup exponentiates the four public matrices and retains `W,U,V`
+ [Wee20, §4.2, p. 9, Setup]. -/
+ def setupCore (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean
+index 73a102404..40645fca8 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean
+@@ -150,6 +150,12 @@ theorem simSetupDraw_eq (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ)
+         Matrix (Fin 3) (Fin 2) (ZMod pp.group.order) ×
+         (Fin (zDim.eval κ) → ZMod pp.group.order) × (Fin 2 → ZMod pp.group.order)) := rfl
+ 
++instance instSimSetupDrawFinite (G : BilinearGen) (ℓ z : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++    Fintype (SimSetupDraw G ℓ z κ pp) := inferInstance
++
++instance instSimSetupDrawNonempty (G : BilinearGen) (ℓ z : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++    Nonempty (SimSetupDraw G ℓ z κ pp) := inferInstance
++
+ /-- Simulator setup computes the public key and the total inverse basis
+ [Wee20, §4.2, p. 10, Setup*]. Unlike the source's implicit full-rank proviso, singular
+ inputs are defined: Mathlib's inverse is zero when the determinant is not a unit. -/
+@@ -241,6 +247,16 @@ theorem simKeyDraw_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ 
+         Matrix (Fin 2) (PG.MIdx κ pp.orderParam f) (ZMod pp.group.order) ×
+         ((PG.TIdx κ pp.orderParam f ⊕ Fin (n'.eval κ)) → ZMod pp.group.order)) := rfl
+ 
++instance instSimKeyDrawFinite (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) :
++    Fintype (SimKeyDraw G PG κ pp f) := inferInstance
++
++instance instSimKeyDrawNonempty (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) :
++    Nonempty (SimKeyDraw G PG κ pp f) := inferInstance
++
+ /-- Simulated key generation computes equation (12) from the group-valued allowed value
+ [Wee20, §4.2, p. 10]. The rectangular key matrix is used through group actions only. -/
+ def simKeyCore (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Core.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Core.lean
+new file mode 100644
+index 000000000..caed13009
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Core.lean
+@@ -0,0 +1,110 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Data
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Honest PHFE cores
++
++The wire-level class is adapted to Wee's typed quadratic construction by total modular
++input decoding and by duplicating the private vector. Function keys retain their original
++function word. All randomized cores accept one complete finite draw; none samples internally.
++
++## Main definitions
++
++* `Wee20.PHFE.setupCore`, `encCore`, `keyCore`, `dec`: the four honest PHFE cores.
++
++## Main results
++
++Equation readers specify every adapter and the private-input duplication.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Sections 3.1 and 4.2.
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
++  revision of 3 January 2025, Definitions 4.1-4.2 and 4.6, Section 9.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE
++
++open Complexity Turing TCSlib.Cryptography.Pairing
++
++/-- PHFE setup is the quadratic setup with equal private-vector dimensions
++[Wee20, Section 3.1; GJLS21, Section 9]. -/
++def setupCore (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : Quadratic.SetupDraw G ℓ n n κ pp) :
++    Quadratic.MPK G ℓ n n κ pp × Quadratic.MSK G ℓ n n κ pp :=
++  Quadratic.setupCore G ℓ n n κ pp ω
++
++/-- The setup adapter uses the quadratic core with the two dimensions equal. -/
++theorem setupCore_eq (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (ω : Quadratic.SetupDraw G ℓ n n κ pp) :
++    setupCore G ℓ n κ pp ω = Quadratic.setupCore G ℓ n n κ pp ω := rfl
++
++/-- PHFE encryption decodes the input modulo the drawn order and uses the private
++vector in both quadratic slots [GJLS21, Section 9; Wee20, Section 3.1]. -/
++def encCore (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ) (pp : PublicParams G κ)
++    (pk : Quadratic.MPK G ℓ n n κ pp)
++    (x : Fin ((phfeClass ℓ n G.wG d).pubLen.eval κ) → Bool)
++    (y : Fin ((phfeClass ℓ n G.wG d).privLen.eval κ) → Bool)
++    (ω : Quadratic.EncDraw G κ pp) : Quadratic.CT G n n κ pp :=
++  let z := decodePrivate G ℓ n d κ pp y
++  Quadratic.encCore G ℓ n n κ pp pk (decodePublic G ℓ n d κ pp x) z z ω
++
++/-- The encryption adapter supplies the same decoded private vector twice. -/
++theorem encCore_eq (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ)
++    (pp : PublicParams G κ) (pk : Quadratic.MPK G ℓ n n κ pp)
++    (x : Fin ((phfeClass ℓ n G.wG d).pubLen.eval κ) → Bool)
++    (y : Fin ((phfeClass ℓ n G.wG d).privLen.eval κ) → Bool)
++    (ω : Quadratic.EncDraw G κ pp) :
++    encCore G ℓ n d κ pp pk x y ω =
++      let z := decodePrivate G ℓ n d κ pp y
++      Quadratic.encCore G ℓ n n κ pp pk (decodePublic G ℓ n d κ pp x) z z ω := rfl
++
++/-- PHFE key generation retains the original word and generates its typed quadratic key
++[Wee20, Section 3.1]. -/
++def keyCore (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
++    (pp : PublicParams G κ) (msk : Quadratic.MSK G ℓ n n κ pp)
++    (f : Fin ((phfeClass ℓ n G.wG d).fnLen.eval κ) → Bool)
++    (ω : Linear.KeyDraw G PG κ pp (decodeFunction G ℓ n d κ pp f)) : Key G PG κ pp :=
++  ⟨f, Quadratic.keyCore G n n PG κ pp msk (decodeFunction G ℓ n d κ pp f) ω⟩
++
++/-- The key adapter retains its original function word alongside the quadratic key. -/
++theorem keyCore_eq (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
++    (pp : PublicParams G κ) (msk : Quadratic.MSK G ℓ n n κ pp)
++    (f : Fin ((phfeClass ℓ n G.wG d).fnLen.eval κ) → Bool)
++    (ω : Linear.KeyDraw G PG κ pp (decodeFunction G ℓ n d κ pp f)) :
++    keyCore G PG κ pp msk f ω =
++      ⟨f, Quadratic.keyCore G n n PG κ pp msk (decodeFunction G ℓ n d κ pp f) ω⟩ := rfl
++
++/-- PHFE decryption decodes its public input and runs quadratic decryption using the
++function retained in the key [GJLS21, Definition 4.1; Wee20, Section 3.1]. -/
++def dec (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
++    (pp : PublicParams G κ) (sk : Key G PG κ pp)
++    (x : Fin ((phfeClass ℓ n G.wG d).pubLen.eval κ) → Bool)
++    (ct : Quadratic.CT G n n κ pp) : Option pp.group.GT :=
++  some (Quadratic.dec G n n PG κ pp (decodeFunction G ℓ n d κ pp sk.function)
++    (decodePublic G ℓ n d κ pp x) sk.quadratic ct)
++
++/-- PHFE decryption returns the displayed typed quadratic value. -/
++theorem dec_eq (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
++    (pp : PublicParams G κ) (sk : Key G PG κ pp)
++    (x : Fin ((phfeClass ℓ n G.wG d).pubLen.eval κ) → Bool)
++    (ct : Quadratic.CT G n n κ pp) :
++    dec G PG κ pp sk x ct =
++      some (Quadratic.dec G n n PG κ pp (decodeFunction G ℓ n d κ pp sk.function)
++        (decodePublic G ℓ n d κ pp x) sk.quadratic ct) := rfl
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Data.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Data.lean
+index 4c5f7d7c1..027a66de7 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Data.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Data.lean
+@@ -14,7 +14,7 @@ set_option autoImplicit false
+ 
+ The private input is used in both slots of Wee's quadratic scheme. The public input and
+ function descriptions are decoded modulo the order read from public parameters. Explicit
+-class codecs transport arbitrary class parameters and values to their residue interpretation;
++parameter and value codecs transport arbitrary class parameters and values to their residue interpretation;
+ foreign class bundles need not be unfolded by a consumer.
+ 
+ ## Main definitions
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean
+new file mode 100644
+index 000000000..79e2594d2
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean
+@@ -0,0 +1,178 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Widths
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.WireDraws
++import TCSlib.Cryptography.Asymptotic.Adversary
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Fixed-width PHFE encodings
++
++Public and master-secret keys use their exact word widths. Ciphertexts concatenate their
++source-group entries without framing overhead. Function keys are padded to the garbling's
++uniform polynomial bound and retain the original function word; it determines the actual
++coordinate lengths before padding. All data, including simulator state, are represented
++without extracting an exponent from a group element.
++
++## Main definitions
++
++* `Wee20.PHFE.encMPK`, `encMSK`, `encSK`, `encCT`: fixed-width data encodings.
++* `Wee20.PHFE.keyWord`: a function word and its typed quadratic key.
++
++## Main results
++
++Exact public/secret/ciphertext word lengths, a bounded function-key length, and injectivity
++of every data and simulator-state encoding.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Sections 3.1-3.2 and 4.2.
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
++  revision of 3 January 2025, Definitions 4.1-4.2 and 4.6.
++
++These encoding lemmas are technical representation glue for the cited algorithms.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE
++
++open Complexity Turing TCSlib.Cryptography.Pairing
++
++/-- The public key has its exact polynomial wire width.
++
++**Proof sketch.** Read the group-vector, matrix and public-key word equations. Use
++`length_pairEncode` and `List.length_ofFn` for each matrix row, then evaluate `mpkLen`.
++No padding is included in this count. -/
++theorem quadraticMPK_length (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (pk : Quadratic.MPK G ℓ n n κ pp) :
++    (Wire.quadraticMPK pp pk).length = (mpkLen G ℓ n).eval κ := sorry
++
++/-- The master secret has its exact polynomial wire width.
++
++**Proof sketch.** Count the public matrix entries and the three scalar matrix blocks using
++shared modular encoding length readers. Expand only the published wire equations and the
++numeric width reader; collect polynomial terms. -/
++theorem quadraticMSK_length (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (sk : Quadratic.MSK G ℓ n n κ pp) :
++    (Wire.quadraticMSK pp sk).length = (mskLen G ℓ n).eval κ := sorry
++
++/-- The ciphertext has exactly `6n+5` source-group entries.
++
++**Proof sketch.** Count the two outer vectors and the three linear ciphertext blocks;
++use concatenation lengths and the polynomial evaluation reader. -/
++theorem quadraticCT_length (G : BilinearGen) (n : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (ct : Quadratic.CT G n n κ pp) :
++    (Wire.quadraticCT pp ct).length = (ctLen G n).eval κ := sorry
++
++/-- A function key's word retains the original function bits before the typed key. -/
++def keyWord (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
++    (pp : PublicParams G κ) (sk : Key G PG κ pp) : List Bool :=
++  pairEncode (List.ofFn sk.function) (Wire.quadraticKey pp PG sk.quadratic)
++
++/-- The function-key word is exactly the original function and its quadratic-key word. -/
++theorem keyWord_eq (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
++    (pp : PublicParams G κ) (sk : Key G PG κ pp) :
++    keyWord G PG κ pp sk =
++      pairEncode (List.ofFn sk.function) (Wire.quadraticKey pp PG sk.quadratic) := rfl
++
++/-- Every function-key word fits the garbling's uniform fixed width.
++
++**Proof sketch.** Count the original function bits and group entries in each key block.
++Apply `mCount_le_mBound` to its actual function, then the explicit `skLen_eval` reader. -/
++theorem keyWord_length_le (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
++    (pp : PublicParams G κ) (sk : Key G PG κ pp) :
++    (keyWord G PG κ pp sk).length ≤ (skLen G PG).eval κ := sorry
++
++/-- Public-key encoding reads the exact word at its fixed polynomial width. -/
++def encMPK (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (pk : Quadratic.MPK G ℓ n n κ pp) : Fin ((mpkLen G ℓ n).eval κ) → Bool :=
++  padFin ((mpkLen G ℓ n).eval κ) (Wire.quadraticMPK pp pk)
++
++/-- The public-key encoder is the shared exact-width word adapter. -/
++theorem encMPK_eq (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (pk : Quadratic.MPK G ℓ n n κ pp) :
++    encMPK G ℓ n κ pp pk = padFin ((mpkLen G ℓ n).eval κ) (Wire.quadraticMPK pp pk) := rfl
++
++/-- Master-secret encoding uses the exact word at its fixed polynomial width. -/
++def encMSK (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (sk : Quadratic.MSK G ℓ n n κ pp) : Fin ((mskLen G ℓ n).eval κ) → Bool :=
++  padFin ((mskLen G ℓ n).eval κ) (Wire.quadraticMSK pp sk)
++
++/-- The master-secret encoder is the shared exact-width word adapter. -/
++theorem encMSK_eq (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (sk : Quadratic.MSK G ℓ n n κ pp) :
++    encMSK G ℓ n κ pp sk = padFin ((mskLen G ℓ n).eval κ) (Wire.quadraticMSK pp sk) := rfl
++
++/-- Function-key encoding pads the bounded word to its fixed polynomial width. -/
++def encSK (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
++    (pp : PublicParams G κ) (sk : Key G PG κ pp) : Fin ((skLen G PG).eval κ) → Bool :=
++  padFin ((skLen G PG).eval κ) (keyWord G PG κ pp sk)
++
++/-- The function-key encoder is the shared padding adapter at its uniform width. -/
++theorem encSK_eq (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
++    (pp : PublicParams G κ) (sk : Key G PG κ pp) :
++    encSK G PG κ pp sk = padFin ((skLen G PG).eval κ) (keyWord G PG κ pp sk) := rfl
++
++/-- Ciphertext encoding reads the concatenated group word at its exact width. -/
++def encCT (G : BilinearGen) (n : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (ct : Quadratic.CT G n n κ pp) : Fin ((ctLen G n).eval κ) → Bool :=
++  padFin ((ctLen G n).eval κ) (Wire.quadraticCT pp ct)
++
++/-- The ciphertext encoder is the shared exact-width word adapter. -/
++theorem encCT_eq (G : BilinearGen) (n : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (ct : Quadratic.CT G n n κ pp) :
++    encCT G n κ pp ct = padFin ((ctLen G n).eval κ) (Wire.quadraticCT pp ct) := rfl
++
++/-- Public-key encoding is injective on all typed public keys.
++
++**Proof sketch.** Use exact width to recover the complete word from equal encodings.
++Separate its pair blocks, then each fixed-width matrix entry. Apply encG_injective. -/
++theorem encMPK_injective (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) : Function.Injective (encMPK G ℓ n κ pp) := sorry
++
++/-- Master-secret encoding is injective on all typed master secrets.
++
++**Proof sketch.** Recover the exact word and its pair blocks. Use encG_injective for public
++matrix metadata and the shared modular-matrix injectivity under the group's order-width
++bound for all scalar blocks. -/
++theorem encMSK_injective (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) : Function.Injective (encMSK G ℓ n κ pp) := sorry
++
++/-- Function-key encoding is injective, including across different original function words.
++
++**Proof sketch.** Equal padded words first have equal fixed-length original function blocks.
++That fixes their coordinate dimensions, hence their unpadded lengths. Recover the complete
++key words and use pair and element-encoding injectivity in each block. -/
++theorem encSK_injective (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
++    (pp : PublicParams G κ) : Function.Injective (encSK G PG κ pp) := sorry
++
++/-- Ciphertext encoding is injective on all typed ciphertexts.
++
++**Proof sketch.** Recover the exact word. Split the fixed-width vector blocks and read their
++individual group encodings; encG_injective and record extensionality finish. -/
++theorem encCT_injective (G : BilinearGen) (n : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) : Function.Injective (encCT G n κ pp) := sorry
++
++/-- The complete private simulator-state word is injective on all typed states.
++
++**Proof sketch.** Separate the fixed number of nested blocks. Read the public group matrix
++and all scalar matrices/vectors with their public encoding injectivity theorems. The scalar
++modulus fits the source-group width by the existing order-width theorem. -/
++theorem quadraticSimState_injective (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) :
++    Function.Injective (Wire.quadraticSimState pp (ℓ := ℓ) (n1 := n) (n2 := n)) := sorry
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Widths.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Widths.lean
+new file mode 100644
+index 000000000..bf51d83a0
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Widths.lean
+@@ -0,0 +1,88 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Data
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Polynomial widths of the PHFE representations
++
++The public-key width is linear in the public and private vector dimensions. The ciphertext
++has exactly `6n+5` source-group entries, independent of the polynomial degree and garbling
++size. Secret and function keys may be larger; the latter use the garbling's uniform node
++bound to permit adaptive function descriptions within one fixed width.
++
++## Main definitions
++
++* `Wee20.PHFE.mpkLen`, `mskLen`, `skLen`, `ctLen`: explicit polynomial widths.
++
++## Main results
++
++Evaluation readers expose the exact numeric accounting of these widths.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Sections 3.1 and 4.2.
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
++  revision of 3 January 2025, Definitions 4.1-4.2 and 4.6, Section 9.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE
++
++open Complexity Turing TCSlib.Cryptography.Pairing
++
++/-- The public key occupies `(16+24n+8ℓ)wG+10` bits in the nested-pair encoding.
++This width is linear in the input dimensions [Wee20, Section 3.1]. -/
++def mpkLen (G : BilinearGen) (ℓ n : PolyExpr) : PolyExpr :=
++  (((.const 16).add ((.const 24).mul n)).add ((.const 8).mul ℓ)).mul G.wG |>.add (.const 10)
++
++/-- The public-key width has the displayed numeric evaluation. -/
++theorem mpkLen_eval (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ) :
++    (mpkLen G ℓ n).eval κ =
++      (16 + 24 * n.eval κ + 8 * ℓ.eval κ) * G.wG.eval κ + 10 := rfl
++
++/-- The master secret occupies `(8n³+24n+12ℓ+6)wG+6` bits, including the public
++matrix metadata [Wee20, Section 3.1]. -/
++def mskLen (G : BilinearGen) (ℓ n : PolyExpr) : PolyExpr :=
++  (((((.const 8).mul (n.pow 3)).add ((.const 24).mul n)).add
++    ((.const 12).mul ℓ)).add (.const 6)).mul G.wG |>.add (.const 6)
++
++/-- The master-secret width has the displayed numeric evaluation. -/
++theorem mskLen_eval (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ) :
++    (mskLen G ℓ n).eval κ =
++      (8 * n.eval κ ^ 3 + 24 * n.eval κ + 12 * ℓ.eval κ + 6) * G.wG.eval κ + 6 := rfl
++
++/-- The fixed function-key width includes the original function word, the public matrix,
++and the largest allowed garbling. The original function fixes the actual node dimensions
++[Wee20, Sections 3.1 and 4.2]. -/
++def skLen (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) : PolyExpr :=
++  (((.const 2).mul (tensorFnLen ℓ (n.mul n) G.wG d)).add
++    (((((.const 8).mul (n.pow 3)).add ((.const 6).mul (n.pow 2))).add
++      ((((.const 6).mul ℓ).add (.const 8)).mul PG.mBound)).mul G.wG)).add (.const 10)
++
++/-- The function-key width has the displayed polynomial node-bound accounting. -/
++theorem skLen_eval (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ) :
++    (skLen G PG).eval κ =
++      2 * (tensorFnLen ℓ (n.mul n) G.wG d).eval κ +
++        (8 * n.eval κ ^ 3 + 6 * n.eval κ ^ 2 +
++          (6 * ℓ.eval κ + 8) * PG.mBound.eval κ) * G.wG.eval κ + 10 := rfl
++
++/-- The ciphertext occupies exactly `(6n+5)wG` bits, independent of ℓ and the
++public-polynomial degree [Wee20, Section 3.1; GJLS21, Definition 4.6]. -/
++def ctLen (G : BilinearGen) (n : PolyExpr) : PolyExpr :=
++  (((.const 6).mul n).add (.const 5)).mul G.wG
++
++/-- The ciphertext width has the displayed numeric evaluation. -/
++theorem ctLen_eval (G : BilinearGen) (n : PolyExpr) (κ : ℕ) :
++    (ctLen G n).eval κ = (6 * n.eval κ + 5) * G.wG.eval κ := rfl
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic.lean
+index 06a8fa269..74d53448c 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic.lean
+@@ -224,6 +224,18 @@ theorem encDraw_eq (G : BilinearGen) (κ : ℕ) (pp : PublicParams G κ) :
+       ((Fin 2 → ZMod pp.group.order) × (Fin 2 → ZMod pp.group.order) ×
+         Linear.EncDraw G κ pp) := rfl
+ 
++instance instSetupDrawFinite (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++    Fintype (SetupDraw G ℓ n1 n2 κ pp) := inferInstance
++
++instance instSetupDrawNonempty (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++    Nonempty (SetupDraw G ℓ n1 n2 κ pp) := inferInstance
++
++instance instEncDrawFinite (G : BilinearGen) (κ : ℕ) (pp : PublicParams G κ) :
++    Fintype (EncDraw G κ pp) := inferInstance
++
++instance instEncDrawNonempty (G : BilinearGen) (κ : ℕ) (pp : PublicParams G κ) :
++    Nonempty (EncDraw G κ pp) := inferInstance
++
+ /-- Setup exponentiates the two masking matrices, computes the fixed group matrix and
+ runs Π's setup core [Wee20, §3.1, p. 6]. -/
+ def setupCore (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSimulator.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSimulator.lean
+index 79553d0ea..eac222357 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSimulator.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSimulator.lean
+@@ -85,6 +85,18 @@ theorem simEncDraw_eq (G : BilinearGen) (n1 n2 : PolyExpr) (κ : ℕ) (pp : Publ
+       ((Fin (n1.eval κ) → ZMod pp.group.order) ×
+         (Fin (n2.eval κ) → ZMod pp.group.order)) := rfl
+ 
++instance instSimSetupDrawFinite (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++    Fintype (SimSetupDraw G ℓ n1 n2 κ pp) := inferInstance
++
++instance instSimSetupDrawNonempty (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++    Nonempty (SimSetupDraw G ℓ n1 n2 κ pp) := inferInstance
++
++instance instSimEncDrawFinite (G : BilinearGen) (n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++    Fintype (SimEncDraw G n1 n2 κ pp) := inferInstance
++
++instance instSimEncDrawNonempty (G : BilinearGen) (n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++    Nonempty (SimEncDraw G n1 n2 κ pp) := inferInstance
++
+ /-- Simulator setup computes its public group matrices and retains the fixed group matrix
+ with Π's simulator state [Wee20, §3.2, p. 7, Setup*]. The two retained ciphertext masks are
+ initialized to zero. Π's total scalar inverse also specifies singular setups. -/
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/WireDraws.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/WireDraws.lean
+new file mode 100644
+index 000000000..c52406b56
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/WireDraws.lean
+@@ -0,0 +1,196 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Wire
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Complete draw and state words
++
++Every word retains all coordinates of one complete draw or simulator state. Matrix and
++vector scalar encodings reuse the public modular API. Function-dependent coordinates are
++ordered by the partial garbling's supplied equivalences. No coin decoder or sampler is built.
++
++## Main definitions
++
++* `Wee20.Wire.scalarVector`, `scalarMatrix`: public-width modular representation adapters.
++* `Wee20.Wire.linearSetupDraw`, `quadraticSetupDraw`, `quadraticEncDraw`, `linearKeyDraw`:
++  complete honest randomness words.
++* `Wee20.Wire.linearSimSetupDraw`, `quadraticSimSetupDraw`, `linearSimKeyDraw`:
++  complete simulator randomness words.
++* `Wee20.Wire.linearSimState`, `quadraticSimState`: complete private state words.
++
++## Main results
++
++Equation readers expose every complete coordinate list.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Sections 3.1-3.2 and 4.2.
++
++These wire encodings are technical glue for the cited algorithms.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Wire
++
++open Complexity Turing TCSlib.Cryptography.Pairing
++
++variable {G : BilinearGen} {κ : ℕ} (pp : PublicParams G κ)
++
++/-- Encode all scalar vector coordinates at the public source-group width. -/
++def scalarVector {n : ℕ} (v : Fin n → ZMod pp.group.order) : List Bool :=
++  Encoding.Modular.encodeVector (G.wG.eval κ) v
++
++/-- The word retains exactly the displayed complete coordinate blocks. -/
++theorem scalarVector_eq {n : ℕ} (v : Fin n → ZMod pp.group.order) :
++    scalarVector pp v =
++      Encoding.Modular.encodeVector (G.wG.eval κ) v := rfl
++
++/-- Encode all scalar matrix coordinates using the shared modular matrix representation. -/
++def scalarMatrix {m n : ℕ} (A : Matrix (Fin m) (Fin n) (ZMod pp.group.order)) : List Bool :=
++  Encoding.Modular.encodeMatrix (G.wG.eval κ) A
++
++/-- The word retains exactly the displayed complete coordinate blocks. -/
++theorem scalarMatrix_eq {m n : ℕ} (A : Matrix (Fin m) (Fin n) (ZMod pp.group.order)) :
++    scalarMatrix pp A =
++      Encoding.Modular.encodeMatrix (G.wG.eval κ) A := rfl
++
++/-- Encode all four scalar blocks of a linear setup draw. -/
++def linearSetupDraw {ℓ z : PolyExpr} (ω : Linear.SetupDraw G ℓ z κ pp) : List Bool :=
++  [scalarMatrix pp ω.1, scalarMatrix pp ω.2.1,
++    scalarMatrix pp (fun i j => ω.2.2.1 i (finProdFinEquiv.symm j)),
++    scalarMatrix pp ω.2.2.2].foldr pairEncode []
++
++/-- The word retains exactly the displayed complete coordinate blocks. -/
++theorem linearSetupDraw_eq {ℓ z : PolyExpr} (ω : Linear.SetupDraw G ℓ z κ pp) :
++    linearSetupDraw pp ω =
++      [scalarMatrix pp ω.1, scalarMatrix pp ω.2.1,
++        scalarMatrix pp (fun i j => ω.2.2.1 i (finProdFinEquiv.symm j)),
++        scalarMatrix pp ω.2.2.2].foldr pairEncode [] := rfl
++
++/-- Encode the outer masks and the complete linear setup draw. -/
++def quadraticSetupDraw {ℓ n1 n2 : PolyExpr}
++    (ω : Quadratic.SetupDraw G ℓ n1 n2 κ pp) : List Bool :=
++  [scalarMatrix pp ω.1, scalarMatrix pp ω.2.1,
++    linearSetupDraw pp ω.2.2].foldr pairEncode []
++
++/-- The word retains exactly the displayed complete coordinate blocks. -/
++theorem quadraticSetupDraw_eq {ℓ n1 n2 : PolyExpr}
++    (ω : Quadratic.SetupDraw G ℓ n1 n2 κ pp) :
++    quadraticSetupDraw pp ω =
++      [scalarMatrix pp ω.1, scalarMatrix pp ω.2.1,
++        linearSetupDraw pp ω.2.2].foldr pairEncode [] := rfl
++
++/-- Encode all six scalar coordinates of an outer encryption draw. -/
++def quadraticEncDraw (ω : Quadratic.EncDraw G κ pp) : List Bool :=
++  [scalarVector pp ω.1, scalarVector pp ω.2.1,
++    scalarVector pp ω.2.2].foldr pairEncode []
++
++/-- The word retains exactly the displayed complete coordinate blocks. -/
++theorem quadraticEncDraw_eq (ω : Quadratic.EncDraw G κ pp) :
++    quadraticEncDraw pp ω =
++      [scalarVector pp ω.1, scalarVector pp ω.2.1,
++        scalarVector pp ω.2.2].foldr pairEncode [] := rfl
++
++/-- Encode the complete function-dependent T and R draw in its supplied coordinates. -/
++def linearKeyDraw {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) {f : Fn κ pp.orderParam}
++    (ω : Linear.KeyDraw G PG κ pp f) : List Bool :=
++  [scalarMatrix pp (fun i j => ω.1 i ((PG.rowCoord κ pp.orderParam f).symm j)),
++    scalarMatrix pp (fun i j => ω.2 i ((PG.mCoord κ pp.orderParam f).symm j))].foldr
++    pairEncode []
++
++/-- The word retains exactly the displayed complete coordinate blocks. -/
++theorem linearKeyDraw_eq {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) {f : Fn κ pp.orderParam}
++    (ω : Linear.KeyDraw G PG κ pp f) :
++    linearKeyDraw pp PG ω =
++      [scalarMatrix pp (fun i j => ω.1 i ((PG.rowCoord κ pp.orderParam f).symm j)),
++        scalarMatrix pp (fun i j => ω.2 i ((PG.mCoord κ pp.orderParam f).symm j))].foldr
++        pairEncode [] := rfl
++
++/-- Encode all seven independent scalar blocks of a linear simulator setup draw. -/
++def linearSimSetupDraw {ℓ z : PolyExpr}
++    (ω : Linear.SimSetupDraw G ℓ z κ pp) : List Bool :=
++  [scalarMatrix pp ω.1, scalarVector pp ω.2.1, scalarMatrix pp ω.2.2.1,
++    scalarMatrix pp (fun i j => ω.2.2.2.1 i (finProdFinEquiv.symm j)),
++    scalarMatrix pp ω.2.2.2.2.1, scalarVector pp ω.2.2.2.2.2.1,
++    scalarVector pp ω.2.2.2.2.2.2].foldr pairEncode []
++
++/-- The word retains exactly the displayed complete coordinate blocks. -/
++theorem linearSimSetupDraw_eq {ℓ z : PolyExpr}
++    (ω : Linear.SimSetupDraw G ℓ z κ pp) :
++    linearSimSetupDraw pp ω =
++      [scalarMatrix pp ω.1, scalarVector pp ω.2.1, scalarMatrix pp ω.2.2.1,
++        scalarMatrix pp (fun i j => ω.2.2.2.1 i (finProdFinEquiv.symm j)),
++        scalarMatrix pp ω.2.2.2.2.1, scalarVector pp ω.2.2.2.2.2.1,
++        scalarVector pp ω.2.2.2.2.2.2].foldr pairEncode [] := rfl
++
++/-- Encode both outer masks and the complete linear simulator setup draw. -/
++def quadraticSimSetupDraw {ℓ n1 n2 : PolyExpr}
++    (ω : Quadratic.SimSetupDraw G ℓ n1 n2 κ pp) : List Bool :=
++  [scalarMatrix pp ω.1, scalarMatrix pp ω.2.1,
++    linearSimSetupDraw pp ω.2.2].foldr pairEncode []
++
++/-- The word retains exactly the displayed complete coordinate blocks. -/
++theorem quadraticSimSetupDraw_eq {ℓ n1 n2 : PolyExpr}
++    (ω : Quadratic.SimSetupDraw G ℓ n1 n2 κ pp) :
++    quadraticSimSetupDraw pp ω =
++      [scalarMatrix pp ω.1, scalarMatrix pp ω.2.1,
++        linearSimSetupDraw pp ω.2.2].foldr pairEncode [] := rfl
++
++/-- Encode all four blocks of a linear key-simulation draw. -/
++def linearSimKeyDraw {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) {f : Fn κ pp.orderParam}
++    (ω : Linear.SimKeyDraw G PG κ pp f) : List Bool :=
++  [scalarMatrix pp (fun i j => ω.1 i ((PG.rowCoord κ pp.orderParam f).symm j)),
++    scalarVector pp (fun j => ω.2.1 ((PG.l1ColCoord κ pp.orderParam f).symm j)),
++    scalarMatrix pp (fun i j => ω.2.2.1 i ((PG.mCoord κ pp.orderParam f).symm j)),
++    scalarVector pp (fun j => ω.2.2.2 ((PG.rowCoord κ pp.orderParam f).symm j))].foldr
++    pairEncode []
++
++/-- The word retains exactly the displayed complete coordinate blocks. -/
++theorem linearSimKeyDraw_eq {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) {f : Fn κ pp.orderParam}
++    (ω : Linear.SimKeyDraw G PG κ pp f) :
++    linearSimKeyDraw pp PG ω =
++      [scalarMatrix pp (fun i j => ω.1 i ((PG.rowCoord κ pp.orderParam f).symm j)),
++        scalarVector pp (fun j => ω.2.1 ((PG.l1ColCoord κ pp.orderParam f).symm j)),
++        scalarMatrix pp (fun i j => ω.2.2.1 i ((PG.mCoord κ pp.orderParam f).symm j)),
++        scalarVector pp (fun j => ω.2.2.2 ((PG.rowCoord κ pp.orderParam f).symm j))].foldr
++        pairEncode [] := rfl
++
++/-- Encode every scalar field of the linear simulator state, including the total inverse. -/
++def linearSimState {ℓ z : PolyExpr} (st : Linear.SimState G ℓ z κ pp) : List Bool :=
++  [scalarMatrix pp st.A, scalarMatrix pp st.W,
++    scalarMatrix pp (fun i j => st.U i (finProdFinEquiv.symm j)), scalarMatrix pp st.V,
++    scalarVector pp st.c, scalarVector pp st.w, scalarVector pp st.v,
++    scalarMatrix pp st.basisInv].foldr pairEncode []
++
++/-- The word retains exactly the displayed complete coordinate blocks. -/
++theorem linearSimState_eq {ℓ z : PolyExpr} (st : Linear.SimState G ℓ z κ pp) :
++    linearSimState pp st =
++      [scalarMatrix pp st.A, scalarMatrix pp st.W,
++        scalarMatrix pp (fun i j => st.U i (finProdFinEquiv.symm j)), scalarMatrix pp st.V,
++        scalarVector pp st.c, scalarVector pp st.w, scalarVector pp st.v,
++        scalarMatrix pp st.basisInv].foldr pairEncode [] := rfl
++
++/-- Encode the outer matrix, complete linear state and both retained scalar masks. -/
++def quadraticSimState {ℓ n1 n2 : PolyExpr}
++    (st : Quadratic.SimState G ℓ n1 n2 κ pp) : List Bool :=
++  [groupMatrix pp st.matrix, linearSimState pp st.linear,
++    scalarVector pp st.y1, scalarVector pp st.y2].foldr pairEncode []
++
++/-- The word retains exactly the displayed complete coordinate blocks. -/
++theorem quadraticSimState_eq {ℓ n1 n2 : PolyExpr}
++    (st : Quadratic.SimState G ℓ n1 n2 κ pp) :
++    quadraticSimState pp st =
++      [groupMatrix pp st.matrix, linearSimState pp st.linear,
++        scalarVector pp st.y1, scalarVector pp st.y2].foldr pairEncode [] := rfl
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Wire
+diff --git a/TCSlib/Cryptography/Pairing/Linear.lean b/TCSlib/Cryptography/Pairing/Linear.lean
+index 1676d0f5c..f43afb708 100644
+--- a/TCSlib/Cryptography/Pairing/Linear.lean
++++ b/TCSlib/Cryptography/Pairing/Linear.lean
+@@ -78,7 +78,7 @@ def dlinStr {wG wT : ℕ} (B : BilinearGroup wG wT) (d : List Bool)
+   pairEncode d (pairEncode (List.ofFn (B.encG g))
+     (pairEncode (List.ofFn (B.encG a)) (pairEncode (List.ofFn (B.encG b))
+       (pairEncode (List.ofFn (B.encG u))
+-        (pairEncode (List.ofFn (B.encG v)) (List.ofFn (B.encG w))))))
++        (pairEncode (List.ofFn (B.encG v)) (List.ofFn (B.encG w)))))))
+ 
+ /-- The DLIN input is the nested pair of the description and the six encoded group points. -/
+ theorem dlinStr_eq {wG wT : ℕ} (B : BilinearGroup wG wT) (d : List Bool)
+@@ -87,7 +87,7 @@ theorem dlinStr_eq {wG wT : ℕ} (B : BilinearGroup wG wT) (d : List Bool)
+       pairEncode d (pairEncode (List.ofFn (B.encG g))
+         (pairEncode (List.ofFn (B.encG a)) (pairEncode (List.ofFn (B.encG b))
+           (pairEncode (List.ofFn (B.encG u))
+-            (pairEncode (List.ofFn (B.encG v)) (List.ofFn (B.encG w)))))) := rfl
++            (pairEncode (List.ofFn (B.encG v)) (List.ofFn (B.encG w))))))) := rfl
+ 
+ /-- Fixed-width group encodings make the tuple length depend only on the description length
+ and group width. This is serialization glue for [JLS26, §1.1, p. 3].
