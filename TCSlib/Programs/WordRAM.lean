@@ -5,6 +5,7 @@ Authors: Seyoon Ragavan
 -/
 import TCSlib.Programs.WordRAM.Basic
 import TCSlib.Programs.WordRAM.Extended
+import TCSlib.Programs.WordRAM.Output
 import TCSlib.Programs.WordRAM.Steps
 
 /-!
@@ -16,6 +17,7 @@ The word RAM of [AFM26]: its nine instructions, runs, and the facts about runs t
 
 * `TCSlib.Programs.WordRAM.Basic`: The word RAM
 * `TCSlib.Programs.WordRAM.Extended`: The extended word RAM: input, output, coins and halving; footprints and halting
+* `TCSlib.Programs.WordRAM.Output`: The output of a word-RAM program (`progOut`)
 * `TCSlib.Programs.WordRAM.Steps`: Running the word RAM: words, steps, pieces of code, straight-line code, branches
 
 ## References

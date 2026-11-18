@@ -1,0 +1,1 @@
+**Gate 167 round 2 prepared** (2026-11-18): round 1 HOLD (0/4/2; `findings.md`). Seyoon ruled G167-03's scope: all three parts. The round-2 mirror (`items/ram-tm/prog2/PROG2Mirror.lean.txt`, 0 errors, 55 sorried statements) answers each finding (`resolutions.md`); pack `pack-r2.md`.

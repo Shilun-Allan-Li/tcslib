@@ -1,0 +1,45 @@
+{
+ "base_summary": "declarations screened: 88; copy pairs (target reproduces >= half of source): 10; reproduced text: 3,104 chars",
+ "head_summary": "declarations screened: 82; copy pairs (target reproduces >= half of source): 8; reproduced text: 2,524 chars",
+ "population_base": [
+  "TCSlib/Complexity/ClassNP/TMSAT.lean",
+  "TCSlib/Complexity/ClassP.lean",
+  "TCSlib/Complexity/RAMSimulation/Classes.lean",
+  "TCSlib/Complexity/RAMSimulation/WordSize.lean",
+  "TCSlib/Programs/WordRAM.lean"
+ ],
+ "population_head": [
+  "TCSlib/Complexity/ClassNP/TMSAT.lean",
+  "TCSlib/Complexity/ClassP.lean",
+  "TCSlib/Complexity/ClassP/TimeConstructiblePoly.lean",
+  "TCSlib/Complexity/RAMSimulation/Classes.lean",
+  "TCSlib/Complexity/RAMSimulation/WordSize.lean",
+  "TCSlib/Programs/WordRAM.lean",
+  "TCSlib/Programs/WordRAM/Output.lean"
+ ],
+ "new": 0,
+ "gone": 2,
+ "net_directed_pairs": "10 -> 8",
+ "pairs": [
+  {
+   "status": "GONE",
+   "target": "TMSAT.lean::poly_setup",
+   "source": "TMSAT.lean::poly_emit",
+   "chars": 290,
+   "source_chars": 423,
+   "pct": 69,
+   "class": "removed",
+   "note": "Both were phases of TMSAT's private unary polynomial generator, a duplicate of the catalog's public Turing.FinTM.polyUnaryTM. The duplicate machine is deleted in this PR, so the pair is gone."
+  },
+  {
+   "status": "GONE",
+   "target": "TMSAT.lean::poly_emit",
+   "source": "TMSAT.lean::poly_setup",
+   "chars": 290,
+   "source_chars": 474,
+   "pct": 61,
+   "class": "removed",
+   "note": "The reverse direction of the pair above."
+  }
+ ]
+}
