@@ -1,0 +1,2241 @@
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW.lean
+index 6b149d886..5984d64b7 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW.lean
+@@ -9,13 +9,24 @@ import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Scheme
+ import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Eval
+ import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Security
+ import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Symmetric
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Branching
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.DecryptFormula
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Bootstrap
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Circular
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Leveled
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.LeveledSecurity
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.PolyRatio
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Asymptotic
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+ /-!
+-# Leveled GSW homomorphic encryption from LWE
++# GSW homomorphic encryption from LWE: leveled, bootstrapped, and pure and leveled FHE
++
++The folder also covers NAND bootstrapping, pure and leveled fully homomorphic encryption,
++their security statements and the polynomial modulus-to-noise ratio (phase 6b).
+ 
+ ## Contents
+ 
+@@ -26,6 +37,17 @@ set_option autoImplicit false
+ * `Eval`: homomorphic evaluation of `BoolCircuit.DAGCircuit` and leveled correctness.
+ * `Security`: concrete IND-CPA hybrids from DLWE and column leftover hashing.
+ * `Symmetric`: batched secret-key GSW and its direct DLWE bound (optional unit).
++* `Branching`: the homomorphic selector and the evaluation of permutation branching programs
++  and of formulas through Barrington's construction.
++* `DecryptFormula`: the key bits, decryption as a formula in them, and the augmented NAND
++  formula with its depth.
++* `Bootstrap`: NAND bootstrapping, pure FHE evaluation of NAND-form and fan-in-2 circuits, and
++  the evaluation key.
++* `Circular`: the FHE view and concrete, per-distinguisher weak circular security.
++* `Leveled`: the leveled scheme, a consecutive key chain over layered NAND circuits.
++* `LeveledSecurity`: IND-CPA of the leveled scheme from DLWE by a top-down key hybrid.
++* `PolyRatio`: GSW parameters of an LWE family and correctness at a polynomial ratio.
++* `Asymptotic`: encodings, the asymptotic hypotheses and asymptotic IND-CPA statements.
+ 
+ ## References
+ 
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean
+new file mode 100644
+index 000000000..180c8eaf5
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean
+@@ -0,0 +1,338 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Circular
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.LeveledSecurity
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.PolyRatio
++import TCSlib.Cryptography.Asymptotic.EnsemblesLemmas
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Asymptotic security of public-key, pure and leveled GSW-FHE
++
++## Main definitions
++
++* `encodeCiphertext`, `encodeView`, `encodeFheView`, `encodeLeveledView`: canonical bit
++  encodings, built from `LWE.encodeChallenge` (public keys) and
++  `Encoding.Modular.encodeMatrix` (ciphertexts), with `_eq` and `_length` readers.
++* `WeakCircularSecureFamily F`: the headline hypothesis (A1), every non-uniform PPT
++  distinguisher has negligible advantage on the encoded FHE views.
++* `ReductionEfficient F`, `LeveledReductionEfficient F L`: the explicit reduction-efficiency
++  hypotheses (A4), domination statements, not machine constructions.
++
++## Main results
++
++* `indCPA_of_dlweAssumption` (A1): asymptotic IND-CPA of public-key GSW (the view without the
++  evaluation key) from `DLWEAssumption F` and (A4).
++* `leveledINDCPA_of_dlweAssumption` (A3): asymptotic IND-CPA of leveled GSW-FHE from
++  `DLWEAssumption F` and (A4), with no circular-security assumption.
++
++Both are admitted statement-phase targets. Ruling Q-6B-1 A: r3's A2 (`fheView_negligible`) is
++not a theorem; the reader `weakCircularSecureFamily_iff` is that statement, the pure-FHE reading
++of the hypothesis [BV11, Thm 3.2; BV14, Thm 2.14 second part]: pure-FHE security *is* (A1).
++
++**Compactness** holds by typing (`GSW/Bootstrap.lean`, `GSW/Leveled.lean`).
++
++**Sources and reconstruction (P6-Q19 B), for the leveled statements** (`LeveledReductionEfficient`,
++A3). The key chain is Gentry's [Gen09, §4.1, `KeyGen` of `E^(d)`, pp. 46–47, p056-b003], with
++his reverse order of the levels undone (`GSW/Leveled.lean`). The level hybrid of L4–L5 follows
++[Gen09, Thm 4.2.3 and its proof, pp. 50–51, p060-b001, p061-b001] (`GSW/LeveledSecurity.lean`),
++whose reduction loses the factor `ℓ(d + 1)` (Gentry's `ℓ` is the key length), linear in the
++depth; here the number of levels `L(κ)` is a polynomial.
++
++## References
++
++* [BV11] Z. Brakerski, V. Vaikuntanathan, *Efficient Fully Homomorphic Encryption from
++  (Standard) LWE*, FOCS 2011 full version; IACR ePrint 2011/344: Def 3.1, Thm 3.1, Thm 3.2,
++  Def 3.8.
++* [BV14] Z. Brakerski, V. Vaikuntanathan, *Lattice-Based FHE as Secure as PKE*, ITCS 2014;
++  IACR ePrint 2013/541: Thm 2.14, Thm 3.7.
++* [GSW13] C. Gentry, A. Sahai, B. Waters, CRYPTO 2013; IACR ePrint 2013/340, version dated
++  8 June 2013: §3.2.
++* [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, author version dated
++  17 February 2016, Definition 4.2.3.
++* [Gen09] C. Gentry, *A Fully Homomorphic Encryption Scheme*, PhD thesis, Stanford University,
++  September 2009: §4.1, Thm 4.2.3.
++
++**Deviations.** The asymptotic statements are over an `LWE.Family` with
++`P_κ = Parameters.ofFamily F κ` and the canonical encodings above. Machine efficiency of GSW
++encryption is not proved: there is no machine-level GSW encryptor (out of scope, as for phase 5),
++so the encryption reductions are covered by the explicit hypotheses (A4), stated as domination of
++real-valued advantages, which needs no transport between `(ofFamily F κ).lwe` and
++`F.parameters κ`.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
++
++open Complexity
++open Encryption.PublicKey
++
++/-! ### Encodings -/
++
++/-- The canonical bit encoding of a ciphertext: its `(n+1) × N` entries row by row, `ℓ` bits
++each, `encodeCiphertext P C = Encoding.Modular.encodeMatrix P.width C` [Pei16, Def 4.2.3,
++p024-b001, the binary representation convention]. -/
++def encodeCiphertext (P : Parameters) (C : Ciphertext P) : List Bool :=
++  Encoding.Modular.encodeMatrix P.width C
++
++/-- `encodeCiphertext P C` is `Encoding.Modular.encodeMatrix P.width C`. -/
++theorem encodeCiphertext_eq (P : Parameters) (C : Ciphertext P) :
++    encodeCiphertext P C = Encoding.Modular.encodeMatrix P.width C := rfl
++
++/-- An encoded ciphertext has `(n + 1)·N·ℓ` bits:
++`(encodeCiphertext P C).length = (P.lwe.dimension + 1) * P.columns * P.width`. -/
++theorem encodeCiphertext_length (P : Parameters) (C : Ciphertext P) :
++    (encodeCiphertext P C).length = (P.lwe.dimension + 1) * P.columns * P.width := by
++  rw [encodeCiphertext_eq, Encoding.Modular.encodeMatrix_length]
++
++/-- The canonical encoding of a phase-5 view `(pk, ct)`: the public key as an LWE challenge
++(`LWE.encodeChallenge`, width `ℓ`) followed by the ciphertext,
++`encodeView P v = LWE.encodeChallenge P.lwe P.width v.1 ++ encodeCiphertext P v.2`. -/
++def encodeView (P : Parameters) (v : PublicKey P × Ciphertext P) : List Bool :=
++  LWE.encodeChallenge P.lwe P.width v.1 ++ encodeCiphertext P v.2
++
++/-- `encodeView P v` is `LWE.encodeChallenge P.lwe P.width v.1 ++ encodeCiphertext P v.2`. -/
++theorem encodeView_eq (P : Parameters) (v : PublicKey P × Ciphertext P) :
++    encodeView P v = LWE.encodeChallenge P.lwe P.width v.1 ++ encodeCiphertext P v.2 := rfl
++
++/-- An encoded view has `m·(n + 1)·ℓ + (n + 1)·N·ℓ` bits. -/
++theorem encodeView_length (P : Parameters) (v : PublicKey P × Ciphertext P) :
++    (encodeView P v).length =
++      P.lwe.samples * (P.lwe.dimension + 1) * P.width +
++        (P.lwe.dimension + 1) * P.columns * P.width := by
++  rw [encodeView_eq, List.length_append, LWE.encodeChallenge_length, encodeCiphertext_length]
++
++/-- The canonical encoding of an FHE view `(pk, evk, ct)`: the public key, the `N`
++evaluation-key ciphertexts in order, and the challenge,
++`encodeFheView P v = LWE.encodeChallenge P.lwe P.width v.1 ++
++(List.ofFn fun i => encodeCiphertext P (v.2.1 i)).flatten ++ encodeCiphertext P v.2.2`. -/
++def encodeFheView (P : Parameters) (v : FheView P) : List Bool :=
++  LWE.encodeChallenge P.lwe P.width v.1 ++
++    (List.ofFn fun i => encodeCiphertext P (v.2.1 i)).flatten ++ encodeCiphertext P v.2.2
++
++/-- `encodeFheView P v` is `LWE.encodeChallenge P.lwe P.width v.1 ++
++(List.ofFn fun i => encodeCiphertext P (v.2.1 i)).flatten ++ encodeCiphertext P v.2.2`. -/
++theorem encodeFheView_eq (P : Parameters) (v : FheView P) :
++    encodeFheView P v =
++      LWE.encodeChallenge P.lwe P.width v.1 ++
++        (List.ofFn fun i => encodeCiphertext P (v.2.1 i)).flatten ++ encodeCiphertext P v.2.2 :=
++  rfl
++
++/-- An encoded FHE view has `m·(n + 1)·ℓ + N·((n + 1)·N·ℓ) + (n + 1)·N·ℓ` bits. -/
++theorem encodeFheView_length (P : Parameters) (v : FheView P) :
++    (encodeFheView P v).length =
++      P.lwe.samples * (P.lwe.dimension + 1) * P.width +
++        P.columns * ((P.lwe.dimension + 1) * P.columns * P.width) +
++        (P.lwe.dimension + 1) * P.columns * P.width := by
++  rw [encodeFheView_eq, List.length_append, List.length_append, LWE.encodeChallenge_length,
++    encodeCiphertext_length, List.ofFn_eq_map,
++    length_flatten_map_const (List.finRange P.columns) _ _
++      fun i => encodeCiphertext_length P (v.2.1 i),
++    List.length_finRange]
++
++/-- The canonical encoding of a leveled view: the `L + 1` public keys, the `L` level keys of
++`N` ciphertexts each (level by level, position by position), and the challenge,
++`encodeLeveledView P L v = (List.ofFn fun d => LWE.encodeChallenge P.lwe P.width (v.1 d)).flatten
++++ (List.ofFn fun e => (List.ofFn fun j => encodeCiphertext P (v.2.1 e j)).flatten).flatten ++
++encodeCiphertext P v.2.2`. -/
++def encodeLeveledView (P : Parameters) (L : ℕ) (v : LeveledView P L) : List Bool :=
++  (List.ofFn fun d => LWE.encodeChallenge P.lwe P.width (v.1 d)).flatten ++
++    (List.ofFn fun e => (List.ofFn fun j => encodeCiphertext P (v.2.1 e j)).flatten).flatten ++
++    encodeCiphertext P v.2.2
++
++/-- `encodeLeveledView P L v` is the concatenation of the encoded public keys, the encoded level
++keys and the encoded challenge (the formula of `encodeLeveledView`'s docstring). -/
++theorem encodeLeveledView_eq (P : Parameters) (L : ℕ) (v : LeveledView P L) :
++    encodeLeveledView P L v =
++      (List.ofFn fun d => LWE.encodeChallenge P.lwe P.width (v.1 d)).flatten ++
++        (List.ofFn fun e => (List.ofFn fun j => encodeCiphertext P (v.2.1 e j)).flatten).flatten ++
++        encodeCiphertext P v.2.2 := rfl
++
++/-- An encoded leveled view has `(L + 1)·(m·(n + 1)·ℓ) + L·(N·((n + 1)·N·ℓ)) + (n + 1)·N·ℓ`
++bits. -/
++theorem encodeLeveledView_length (P : Parameters) (L : ℕ) (v : LeveledView P L) :
++    (encodeLeveledView P L v).length =
++      (L + 1) * (P.lwe.samples * (P.lwe.dimension + 1) * P.width) +
++        L * (P.columns * ((P.lwe.dimension + 1) * P.columns * P.width)) +
++        (P.lwe.dimension + 1) * P.columns * P.width := by
++  have hcts : ∀ (n : ℕ) (f : Fin n → Ciphertext P),
++      (List.ofFn fun j => encodeCiphertext P (f j)).flatten.length =
++        n * ((P.lwe.dimension + 1) * P.columns * P.width) := fun n f => by
++    rw [List.ofFn_eq_map, length_flatten_map_const (List.finRange n) _ _
++      fun j => encodeCiphertext_length P (f j), List.length_finRange]
++  rw [encodeLeveledView_eq, List.length_append, List.length_append, encodeCiphertext_length,
++    List.ofFn_eq_map,
++    length_flatten_map_const (List.finRange (L + 1)) _ _
++      fun d => LWE.encodeChallenge_length P.lwe P.width (v.1 d),
++    List.ofFn_eq_map,
++    length_flatten_map_const (List.finRange L) _ _ fun e => hcts P.columns (v.2.1 e),
++    List.length_finRange, List.length_finRange]
++
++/-! ### The asymptotic hypotheses -/
++
++/-- **Weak circular security, asymptotic: the headline hypothesis** (A1; P6-Q15 A)
++[BV11, Def 3.8 with Def 3.1, p015-b001, p013-b002; BV14, Thm 2.14, p008-b003]: every
++non-uniform PPT distinguisher `D` has negligible advantage between the encoded FHE views of `0`
++and `1` at `P_κ = Parameters.ofFamily F κ`,
++`WeakCircularSecureFamily F ↔ ∀ D : NUPPT, Negligible fun κ => distAdv
++(fheView P_κ (F.noise κ) false) (fheView P_κ (F.noise κ) true)
++(fun v r => D.distinguisherL κ (encodeFheView P_κ v) r)`. Equivalently, each `D` satisfies the
++concrete `WeakCircularSecure` at every `κ` with a negligible `ε`. Its reader
++`weakCircularSecureFamily_iff` is r3's A2, the pure-FHE security statement [BV11, Thm 3.2,
++p015-b001; BV14, Thm 2.14 second part, p008-b003] (ruling Q-6B-1 A). A hypothesis, never derived
++from LWE. -/
++def WeakCircularSecureFamily (F : LWE.Family) : Prop :=
++  ∀ D : NUPPT, Negligible fun κ =>
++    distAdv (fheView (Parameters.ofFamily F κ) (F.noise κ) false)
++      (fheView (Parameters.ofFamily F κ) (F.noise κ) true)
++      (fun v r => D.distinguisherL κ (encodeFheView (Parameters.ofFamily F κ) v) r)
++
++/-- `WeakCircularSecureFamily F` holds exactly when every `D : NUPPT` has negligible advantage
++`distAdv (fheView P_κ (F.noise κ) false) (fheView P_κ (F.noise κ) true)
++(fun v r => D.distinguisherL κ (encodeFheView P_κ v) r)`, `P_κ = Parameters.ofFamily F κ`. This
++reader is r3's A2 (Q-6B-1 A). -/
++theorem weakCircularSecureFamily_iff (F : LWE.Family) :
++    WeakCircularSecureFamily F ↔ ∀ D : NUPPT, Negligible fun κ =>
++      distAdv (fheView (Parameters.ofFamily F κ) (F.noise κ) false)
++        (fheView (Parameters.ofFamily F κ) (F.noise κ) true)
++        (fun v r => D.distinguisherL κ (encodeFheView (Parameters.ofFamily F κ) v) r) :=
++  Iff.rfl
++
++/-- **(A4) Reduction efficiency, explicit hypothesis** (P6-Q10): for every non-uniform PPT
++distinguisher `D` of encoded phase-5 views and every bit `μ`, some non-uniform PPT `D'` has, at
++every `κ`, DLWE advantage at least that of phase 5's encryption reduction run on `D`,
++`decisionAdvantage P_κ.lwe χ_κ (reduction P_κ μ D_κ) ≤ F.advantageAt D' κ`, with
++`P_κ = ofFamily F κ`, `χ_κ = F.noise κ` and `D_κ v r = D.distinguisherL κ (encodeView P_κ v) r`
++[GSW13, §3.2, Lemma 1, p009-b002, p010-b001]. It says that encrypting a fixed bit under the
++challenge key with fresh binary coins, re-encoding and running `D` is polynomial-time. A
++domination statement, not a machine construction: the library has no machine-level GSW
++encryptor (out of scope, as for phase 5). Real-valued on both sides, so no transport between
++`(ofFamily F κ).lwe` and `F.parameters κ` is needed. -/
++def ReductionEfficient (F : LWE.Family) : Prop :=
++  ∀ (D : NUPPT) (μ : Bool), ∃ D' : NUPPT, ∀ κ,
++    LWE.decisionAdvantage (Parameters.ofFamily F κ).lwe (F.noise κ)
++        (reduction (Parameters.ofFamily F κ) μ fun v r =>
++          D.distinguisherL κ (encodeView (Parameters.ofFamily F κ) v) r) ≤
++      F.advantageAt D' κ
++
++/-- `ReductionEfficient F` holds exactly when for every `D : NUPPT` and `μ` some `D' : NUPPT`
++has `decisionAdvantage P_κ.lwe (F.noise κ) (reduction P_κ μ D_κ) ≤ F.advantageAt D' κ` at every
++`κ` (the formula of `ReductionEfficient`'s docstring). -/
++theorem reductionEfficient_iff (F : LWE.Family) :
++    ReductionEfficient F ↔ ∀ (D : NUPPT) (μ : Bool), ∃ D' : NUPPT, ∀ κ,
++      LWE.decisionAdvantage (Parameters.ofFamily F κ).lwe (F.noise κ)
++          (reduction (Parameters.ofFamily F κ) μ fun v r =>
++            D.distinguisherL κ (encodeView (Parameters.ofFamily F κ) v) r) ≤
++        F.advantageAt D' κ :=
++  Iff.rfl
++
++/-- **(A4) for the leveled hybrid** (P6-Q10, P6-Q11): for every non-uniform PPT distinguisher
++`D` of encoded leveled views (`L(κ)` levels) and every bit `μ`, one non-uniform PPT `D'`
++dominates, at every `κ`, the DLWE advantages of every level reduction
++`levelReduction P_κ χ_κ L(κ) μ e j b D_κ` (every level `e`, position `j` and side `b`, L4) and
++of the challenge reductions `reduction P_κ μ' (challengeDist P_κ χ_κ L(κ) D_κ)` (L5), with
++`D_κ v r = D.distinguisherL κ (encodeLeveledView P_κ L(κ) v) r`. One `D'` serves every
++`(e, j, b)`: non-uniform advice can select the worst one at each `κ` (r3 §H8 item 13). A
++domination statement, not a construction; real-valued, so no type-level transport. Deviation: r3
++names only the level reductions; the challenge reductions of L5's last step are added, since A3
++needs them. Reconstruction disclosed (module docstring). -/
++def LeveledReductionEfficient (F : LWE.Family) (L : PolyExpr) : Prop :=
++  ∀ (D : NUPPT) (μ : Bool), ∃ D' : NUPPT, ∀ κ,
++    (∀ (e : Fin (L.eval κ)) (j : Fin (Parameters.ofFamily F κ).columns) (b : Bool),
++      LWE.decisionAdvantage (Parameters.ofFamily F κ).lwe (F.noise κ)
++          (levelReduction (Parameters.ofFamily F κ) (F.noise κ) (L.eval κ) μ e j b fun v r =>
++            D.distinguisherL κ (encodeLeveledView (Parameters.ofFamily F κ) (L.eval κ) v) r) ≤
++        F.advantageAt D' κ) ∧
++    ∀ μ' : Bool,
++      LWE.decisionAdvantage (Parameters.ofFamily F κ).lwe (F.noise κ)
++          (reduction (Parameters.ofFamily F κ) μ'
++            (challengeDist (Parameters.ofFamily F κ) (F.noise κ) (L.eval κ) fun v r =>
++              D.distinguisherL κ (encodeLeveledView (Parameters.ofFamily F κ) (L.eval κ) v) r)) ≤
++        F.advantageAt D' κ
++
++/-- `LeveledReductionEfficient F L` holds exactly when for every `D : NUPPT` and `μ` some
++`D' : NUPPT` dominates at every `κ` the DLWE advantages of every level reduction and of the
++challenge reductions (the formula of `LeveledReductionEfficient`'s docstring). -/
++theorem leveledReductionEfficient_iff (F : LWE.Family) (L : PolyExpr) :
++    LeveledReductionEfficient F L ↔ ∀ (D : NUPPT) (μ : Bool), ∃ D' : NUPPT, ∀ κ,
++      (∀ (e : Fin (L.eval κ)) (j : Fin (Parameters.ofFamily F κ).columns) (b : Bool),
++        LWE.decisionAdvantage (Parameters.ofFamily F κ).lwe (F.noise κ)
++            (levelReduction (Parameters.ofFamily F κ) (F.noise κ) (L.eval κ) μ e j b fun v r =>
++              D.distinguisherL κ (encodeLeveledView (Parameters.ofFamily F κ) (L.eval κ) v) r) ≤
++          F.advantageAt D' κ) ∧
++      ∀ μ' : Bool,
++        LWE.decisionAdvantage (Parameters.ofFamily F κ).lwe (F.noise κ)
++            (reduction (Parameters.ofFamily F κ) μ'
++              (challengeDist (Parameters.ofFamily F κ) (F.noise κ) (L.eval κ) fun v r =>
++                D.distinguisherL κ (encodeLeveledView (Parameters.ofFamily F κ) (L.eval κ) v)
++                  r)) ≤
++          F.advantageAt D' κ :=
++  Iff.rfl
++
++/-! ### Targets A1, A3 -/
++
++/-- **A1. Asymptotic IND-CPA of public-key GSW** (the view without the evaluation key): for an
++LWE family `F` with `DLWEAssumption F`, the reduction-efficiency hypothesis (A4) and the width
++condition `(n + 1)·ℓ + 2κ ≤ m` at every `κ`, every non-uniform PPT `D` has negligible advantage
++between the encoded real views of `false` and `true` at `P_κ = ofFamily F κ`,
++`Negligible fun κ => distAdv (realView P_κ (F.noise κ) false) (realView P_κ (F.noise κ) true)
++(fun v r => D.distinguisherL κ (encodeView P_κ v) r)` [GSW13, §3.2, p009-b002; BV11, Def 3.1,
++p013-b002]. Deviation: concrete reductions covered by (A4).
++
++**Proof sketch.** At each `κ`, phase 5's `distAdv_encrypt_le_of_width` with `w = ℓ`
++(`q ≤ 2^ℓ` by the family's `modulus_le_pow`, `hm` read through `Parameters.ofFamily_lwe` and
++`Parameters.ofFamily_width`) bounds the advantage by the two DLWE advantages of `reduction`
++plus `N·2^{−κ}`. `heff` (`reductionEfficient_iff`) gives `D'₀`, `D'₁` dominating them by
++`F.advantageAt D'ᵢ κ`, negligible by `dlweAssumption_iff`. `N = (n + 1)·ℓ` is at most
++`(d(κ) + 1)·ℓ(κ)` (`dimension_le`, `PolyExpr.eval`), so `negligible_polyExpr_mul`
++(`Asymptotic/EnsemblesLemmas.lean`) with `negligible_two_pow_neg` makes the last term negligible;
++`Negligible.add` and `Negligible.mono` (`distAdv` is nonnegative) finish. -/
++theorem indCPA_of_dlweAssumption (F : LWE.Family) (hF : LWE.DLWEAssumption F)
++    (heff : ReductionEfficient F)
++    (hm : ∀ κ, ((F.parameters κ).dimension + 1) * F.residueBits.eval κ + 2 * κ ≤
++      (F.parameters κ).samples)
++    (D : NUPPT) :
++    Negligible fun κ =>
++      distAdv (realView (Parameters.ofFamily F κ) (F.noise κ) false)
++        (realView (Parameters.ofFamily F κ) (F.noise κ) true)
++        (fun v r => D.distinguisherL κ (encodeView (Parameters.ofFamily F κ) v) r) := by
++  sorry
++
++/-- **A3. Asymptotic IND-CPA of leveled GSW-FHE from DLWE**: for an LWE family `F` with
++`DLWEAssumption F`, a polynomial number of levels `L`, the leveled reduction-efficiency
++hypothesis (A4) and the width condition at every `κ`, every non-uniform PPT `D` has negligible
++advantage between the encoded leveled views of `false` and `true` at `P_κ = ofFamily F κ` with
++`L(κ)` levels,
++`Negligible fun κ => distAdv (leveledView P_κ (F.noise κ) (L.eval κ) false)
++(leveledView P_κ (F.noise κ) (L.eval κ) true)
++(fun v r => D.distinguisherL κ (encodeLeveledView P_κ (L.eval κ) v) r)` [BV14, Thm 3.7,
++p016-b001; BV11, Thm 3.1, p015-b001]. No circular-security assumption. Reconstruction
++disclosed (module docstring).
++
++**Proof sketch.** At each `κ`, L5 (`distAdv_leveledView_le`) bounds the advantage by
++`∑_{e < L(κ)} ∑_{j < N} (levelTerm₀ + levelTerm₁) + challengeTerm`. `heff`
++(`leveledReductionEfficient_iff`) for `μ = false` and `μ = true` gives `D'₀`, `D'₁` dominating
++every DLWE advantage in `levelTerm_eq` and `challengeTerm_eq`; `Regev.two_extractionError_le`
++with `hm` bounds `2·ε_LHL ≤ 2^{−κ}`. So the bound is at most
++`(2·L(κ)·N + 1)·(2·(advantageAt D'₀ κ + advantageAt D'₁ κ) + N·2^{−κ})`, a polynomial
++(`(d(κ) + 1)·ℓ(κ)` bounds `N`; `PolyExpr.eval`) times negligible functions
++(`dlweAssumption_iff`, `negligible_two_pow_neg`, `negligible_polyExpr_mul` from
++`Asymptotic/EnsemblesLemmas.lean`, `Negligible.add`, `Negligible.mono`). -/
++theorem leveledINDCPA_of_dlweAssumption (F : LWE.Family) (L : PolyExpr)
++    (hF : LWE.DLWEAssumption F) (heff : LeveledReductionEfficient F L)
++    (hm : ∀ κ, ((F.parameters κ).dimension + 1) * F.residueBits.eval κ + 2 * κ ≤
++      (F.parameters κ).samples)
++    (D : NUPPT) :
++    Negligible fun κ =>
++      distAdv (leveledView (Parameters.ofFamily F κ) (F.noise κ) (L.eval κ) false)
++        (leveledView (Parameters.ofFamily F κ) (F.noise κ) (L.eval κ) true)
++        (fun v r => D.distinguisherL κ (encodeLeveledView (Parameters.ofFamily F κ) (L.eval κ) v)
++          r) := by
++  sorry
++
++end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean
+new file mode 100644
+index 000000000..9c69ef4c4
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean
+@@ -0,0 +1,349 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Branching
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.DecryptFormula
++import TCSlib.Complexity.CircuitComplexity.NANDForm
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# NAND bootstrapping and pure fully homomorphic evaluation (GSW)
++
++## Main definitions
++
++* `PublicKey`, `Secret`, `Coins`, `KeySeed`: reducible names for the phase-5 types of a public
++  key, a secret, a binary coin matrix and a key-generation seed.
++* `bootNoise`: the bootstrapped noise `4^(decDepth P + 1)·(2·(N·β))`.
++* `bootNAND`: one bootstrapped NAND gate, the formula evaluation of `nandFormula` on the
++  evaluation key.
++* `bootGate`: `bootNAND` on a gate's arguments, fan-in 1 padded to `(a, a)` and fan-in 0 to
++  `(G, G)`.
++* `fheEval`: a NAND-form circuit run by the host `runWith` (registry row H19) with `bootGate`.
++* `fheEvalCircuit`: any fan-in-2 circuit, through the NAND conversion `toNANDForm`.
++* `evalKey`: the evaluation key, encryptions under the user's own `pk` of the key bits.
++
++## Main results
++
++* `encrypts_bootNAND` (G9): bootstrapped NAND in the key-switching form.
++* `decrypt_fheEval` (G10), `decrypt_fheEvalCircuit` (G18): pure FHE correctness for circuits
++  of every depth.
++* `encrypts_evalKey` (G11): evaluation-key noise `m·B`, a proved citation of phase 5's
++  `encrypts_encrypt`.
++* `decrypt_keygen_fheEvalCircuit` (G12): correctness for honest keys and every circuit.
++* `bootNoise_le` (G13): `bootNoise P β ≤ 4^33·N^19·(ℓ + ⌈log₂ N⌉ + 3)^4·(2·β)`.
++
++The targets G9, G10, G12, G13 and G18 are admitted; G11 is proved.
++
++**Compactness** [BV14, Def 2.12, p008-b001; BV11, Def 3.4, p014-b001; Lemma 3.3, p015-b001]
++holds by typing: `fheEval` and `fheEvalCircuit` return a `Ciphertext P`, an `(n+1) × N` matrix,
++whatever the circuit, so the decryption circuit is independent of the evaluated function. No
++separate theorem states it (P6-Q10).
++
++## References
++
++* [BV14] Z. Brakerski, V. Vaikuntanathan, *Lattice-Based FHE as Secure as PKE*, ITCS 2014;
++  IACR ePrint 2013/541: Def 2.12, Def 2.13, Thm 2.14, Thm 3.7, Lemma 4.4.
++* [BV11] Z. Brakerski, V. Vaikuntanathan, *Efficient Fully Homomorphic Encryption from
++  (Standard) LWE*, FOCS 2011 full version; IACR ePrint 2011/344: Defs 3.4–3.5, Thms 3.1–3.2,
++  Def 3.8, Lemma 3.3.
++
++**Deviations.** Bootstrapping is NAND only (P6-Q9): a circuit is evaluated in NAND form, every
++gate by the augmented formula of [BV14, Def 2.13]. A NAND gate of fan-in 1 is padded to
++`(a, a)` (`NAND(a, a) = ¬a`) and one of fan-in 0 to `(G, G)` (`G` encrypts `1` with zero noise
++and `NAND(1, 1) = 0 = NAND()`) (r3 §H3.9). The evaluation key holds public-key encryptions under
++the user's own `pk` (P6-Q8; [BV11, Def 3.8]'s `{Enc_pk(sk[i])}_i`), not [BV14, Lemma 4.4]'s
++secret-key encryptions, which costs a factor `m` in the noise. Noise and correctness are worst
++case for every key and coin, not with overwhelming probability [BV14, Thm 3.7].
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
++
++open BoolCircuit
++open Encryption.PublicKey
++
++/-! ### Key and coin types -/
++
++/-- A GSW public key: an LWE public key `(A, b)` with `A ∈ Z_q^{m×n}` and `b ∈ Z_q^m`, the type
++of `Regev.keygen`'s first component and of `encrypt`'s key. Reducible notation. -/
++abbrev PublicKey (P : Parameters) : Type :=
++  Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++    (Fin P.lwe.samples → ZMod P.lwe.modulus)
++
++/-- `PublicKey P` is `Matrix (Fin m) (Fin n) (ZMod q) × (Fin m → ZMod q)`. -/
++theorem PublicKey_eq (P : Parameters) :
++    PublicKey P = (Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++      (Fin P.lwe.samples → ZMod P.lwe.modulus)) := rfl
++
++/-- A GSW secret `s ∈ Z_q^n`, the type of `Regev.keygen`'s second component. Reducible
++notation. -/
++abbrev Secret (P : Parameters) : Type :=
++  Fin P.lwe.dimension → ZMod P.lwe.modulus
++
++/-- `Secret P` is `Fin n → ZMod q`. -/
++theorem Secret_eq (P : Parameters) : Secret P = (Fin P.lwe.dimension → ZMod P.lwe.modulus) :=
++  rfl
++
++/-- The binary coin matrix `R ∈ {0,1}^{m×N}` of one public-key GSW encryption (`encrypt`).
++Reducible notation. -/
++abbrev Coins (P : Parameters) : Type :=
++  Matrix (Fin P.lwe.samples) (Fin P.columns) Bool
++
++/-- `Coins P` is `Matrix (Fin m) (Fin N) Bool`. -/
++theorem Coins_eq (P : Parameters) : Coins P = Matrix (Fin P.lwe.samples) (Fin P.columns) Bool :=
++  rfl
++
++/-- A key-generation seed: the public matrix, the secret and one noise seed per sample, the
++seed type of `Regev.keygen P.lwe χ`. Reducible notation. -/
++abbrev KeySeed (P : Parameters) (χ : LWE.Noise) : Type :=
++  Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++    ((Fin P.lwe.dimension → ZMod P.lwe.modulus) × (Fin P.lwe.samples → χ.Coins))
++
++/-- `KeySeed P χ` is `Matrix (Fin m) (Fin n) (ZMod q) × ((Fin n → ZMod q) × (Fin m → χ.Coins))`. -/
++theorem KeySeed_eq (P : Parameters) (χ : LWE.Noise) :
++    KeySeed P χ = (Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
++      ((Fin P.lwe.dimension → ZMod P.lwe.modulus) × (Fin P.lwe.samples → χ.Coins))) := rfl
++
++/-! ### Bootstrapping -/
++
++/-- The **bootstrapped noise** for evaluation-key noise `β`:
++`bootNoise P β = 4^(decDepth P + 1)·(2·(N·β))`, the noise of `homEvalFormula` on the augmented
++NAND formula, whose depth is at most `decDepth P + 1` (r3 §H6) [BV14, Lemma 4.4, p019-b001].
++It does not depend on the noise of the ciphertexts being bootstrapped. -/
++def bootNoise (P : Parameters) (β : ℕ) : ℕ :=
++  4 ^ (decDepth P + 1) * (2 * (P.columns * β))
++
++/-- `bootNoise P β` is `4 ^ (decDepth P + 1) * (2 * (P.columns * β))`. -/
++theorem bootNoise_eq (P : Parameters) (β : ℕ) :
++    bootNoise P β = 4 ^ (decDepth P + 1) * (2 * (P.columns * β)) := rfl
++
++/-- **One bootstrapped NAND gate** [BV14, Def 2.13, p008-b002, Thm 2.14, p008-b003; Lemma 4.4,
++p019-b001]: homomorphically evaluate the augmented formula `f_{C₁,C₂}` on the evaluation key,
++`bootNAND P evk C₁ C₂ = homEvalFormula P (nandFormula P C₁ C₂) evk`. Computable. -/
++def bootNAND (P : Parameters) (evk : Fin P.columns → Ciphertext P) (C₁ C₂ : Ciphertext P) :
++    Ciphertext P :=
++  homEvalFormula P (nandFormula P C₁ C₂) evk
++
++/-- `bootNAND P evk C₁ C₂` is `homEvalFormula P (nandFormula P C₁ C₂) evk`. -/
++theorem bootNAND_eq (P : Parameters) (evk : Fin P.columns → Ciphertext P)
++    (C₁ C₂ : Ciphertext P) : bootNAND P evk C₁ C₂ = homEvalFormula P (nandFormula P C₁ C₂) evk :=
++  rfl
++
++/-- The **bootstrapped gate function** of `fheEval`: a gate is read as a NAND gate on its first
++two arguments' ciphertexts (`cts.getD a 0`), fan-in 1 padded to `(a, a)` and fan-in 0 to
++`(G, G)` (r3 §H3.9, disclosed). The gate's kind is not read: on a NAND-form circuit every gate
++is a `¬` gate of fan-in at most two (`DAGGate.IsNAND`). It is the gate function given to the
++host `runWith` (H19). Computable. -/
++def bootGate (P : Parameters) (evk : Fin P.columns → Ciphertext P) (g : DAGGate)
++    (cts : List (Ciphertext P)) : Ciphertext P :=
++  match g.args with
++  | [] => bootNAND P evk (gadget P) (gadget P)
++  | [a] => bootNAND P evk (cts.getD a 0) (cts.getD a 0)
++  | a :: b :: _ => bootNAND P evk (cts.getD a 0) (cts.getD b 0)
++
++/-- A gate of fan-in 0 is bootstrapped on `(G, G)`:
++`g.args = [] → bootGate P evk g cts = bootNAND P evk (gadget P) (gadget P)`. -/
++theorem bootGate_of_args_eq_nil (P : Parameters) (evk : Fin P.columns → Ciphertext P)
++    (g : DAGGate) (cts : List (Ciphertext P)) (h : g.args = []) :
++    bootGate P evk g cts = bootNAND P evk (gadget P) (gadget P) := by
++  unfold bootGate
++  rw [h]
++
++/-- A gate of fan-in 1 is bootstrapped on `(a, a)`:
++`g.args = [a] → bootGate P evk g cts = bootNAND P evk (cts.getD a 0) (cts.getD a 0)`. -/
++theorem bootGate_of_args_eq_singleton (P : Parameters) (evk : Fin P.columns → Ciphertext P)
++    (g : DAGGate) (cts : List (Ciphertext P)) (a : ℕ) (h : g.args = [a]) :
++    bootGate P evk g cts = bootNAND P evk (cts.getD a 0) (cts.getD a 0) := by
++  unfold bootGate
++  rw [h]
++
++/-- A gate of fan-in at least 2 is bootstrapped on its first two arguments:
++`g.args = a :: b :: l → bootGate P evk g cts = bootNAND P evk (cts.getD a 0) (cts.getD b 0)`. -/
++theorem bootGate_of_args_eq_cons_cons (P : Parameters) (evk : Fin P.columns → Ciphertext P)
++    (g : DAGGate) (cts : List (Ciphertext P)) (a b : ℕ) (l : List ℕ) (h : g.args = a :: b :: l) :
++    bootGate P evk g cts = bootNAND P evk (cts.getD a 0) (cts.getD b 0) := by
++  unfold bootGate
++  rw [h]
++
++/-- **Pure fully homomorphic evaluation** of a NAND-form circuit [BV14, Thm 2.14 second part,
++p008-b003; BV11, Thm 3.2, Def 3.5, p015-b001, p014-b001]: run the host `runWith` (H19) over the
++gates with the gate function `bootGate P evk`, from the input ciphertexts, and read the output
++vertex (the noiseless `0` out of range):
++`fheEval P evk Cc cts = (runWith (bootGate P evk) Cc.gates (List.ofFn cts)).getD Cc.output 0`.
++Computable. **Compactness by typing**: the result is a `Ciphertext P` whatever `Cc`. -/
++def fheEval (P : Parameters) (evk : Fin P.columns → Ciphertext P) {k : ℕ} (Cc : DAGCircuit k)
++    (cts : Fin k → Ciphertext P) : Ciphertext P :=
++  (runWith (bootGate P evk) Cc.gates (List.ofFn cts)).getD Cc.output 0
++
++/-- `fheEval P evk Cc cts` is `(runWith (bootGate P evk) Cc.gates (List.ofFn cts)).getD
++Cc.output 0`. -/
++theorem fheEval_eq (P : Parameters) (evk : Fin P.columns → Ciphertext P) {k : ℕ}
++    (Cc : DAGCircuit k) (cts : Fin k → Ciphertext P) :
++    fheEval P evk Cc cts = (runWith (bootGate P evk) Cc.gates (List.ofFn cts)).getD Cc.output 0 :=
++  rfl
++
++/-- **Pure fully homomorphic evaluation of any fan-in-2 circuit** [BV14, Thm 2.14, p008-b003;
++BV11, Def 3.5, p014-b001]: `fheEval` on the NAND form of `Cc` (6a's conversion
++`DAGCircuit.toNANDForm`), `fheEvalCircuit P evk Cc hC cts = fheEval P evk (Cc.toNANDForm hC)
++cts`. Computable. **Compactness by typing**: the result is a `Ciphertext P` whatever `Cc`. -/
++def fheEvalCircuit (P : Parameters) (evk : Fin P.columns → Ciphertext P) {k : ℕ}
++    (Cc : DAGCircuit k) (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2) (cts : Fin k → Ciphertext P) :
++    Ciphertext P :=
++  fheEval P evk (Cc.toNANDForm hC) cts
++
++/-- `fheEvalCircuit P evk Cc hC cts` is `fheEval P evk (Cc.toNANDForm hC) cts`. -/
++theorem fheEvalCircuit_eq (P : Parameters) (evk : Fin P.columns → Ciphertext P) {k : ℕ}
++    (Cc : DAGCircuit k) (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2) (cts : Fin k → Ciphertext P) :
++    fheEvalCircuit P evk Cc hC cts = fheEval P evk (Cc.toNANDForm hC) cts := rfl
++
++/-- **The evaluation key** (P6-Q8) [BV11, Def 3.8, p015-b001: `{Enc_pk(sk[i])}_i`; BV14,
++Lemma 4.4, p019-b001]: the public-key encryptions under the user's own `pk` of the `N` key bits
++of `s`, `evalKey P pk s R i = encrypt P pk (keyBits P s i) (R i)`, one coin matrix per bit.
++Deviation: BV14's Lemma 4.4 uses secret-key encryptions. -/
++def evalKey (P : Parameters) (pk : PublicKey P) (s : Secret P) (R : Fin P.columns → Coins P)
++    (i : Fin P.columns) : Ciphertext P :=
++  encrypt P pk (keyBits P s i) (R i)
++
++/-- `evalKey P pk s R i` is `encrypt P pk (keyBits P s i) (R i)`. -/
++theorem evalKey_eq (P : Parameters) (pk : PublicKey P) (s : Secret P)
++    (R : Fin P.columns → Coins P) (i : Fin P.columns) :
++    evalKey P pk s R i = encrypt P pk (keyBits P s i) (R i) := rfl
++
++/-! ### Targets G9–G13, G18 -/
++
++/-- **G9. Bootstrapped NAND, key-switching form.** If every evaluation-key ciphertext `evk i`
++encrypts the key bit `keyBits P s i` under the key vector `t'` with noise at most `βk`, then for
++**all** ciphertexts `C₁`, `C₂` the bootstrapped gate encrypts, under `t'`, the NAND of their
++decryptions under `s`, with noise at most `bootNoise P βk`:
++`Encrypts P t' (!(decrypt P s C₁ && decrypt P s C₂)).toNat (bootNoise P βk)
++(bootNAND P evk C₁ C₂)` [BV14, Thm 2.14, p008-b003; Lemma 4.4, p019-b001; BV11, Thm 3.1,
++p015-b001]. No hypothesis on `C₁`, `C₂`. Pure FHE takes `t' = secretVector P s`; the leveled
++scheme takes `s = s_{d−1}` and `t' = t_d`. Deviation: worst case; BV14's coordinate `1` is
++`σ 0` here (`homEvalFormula`).
++
++**Proof sketch.** `bootNAND_eq`, then G3 (`encrypts_homEvalFormula`) for the formula
++`nandFormula P C₁ C₂` on `N` inputs (instance `Parameters.neZero_columns`) with fan-in at most
++two (`maxFanin_nandFormula_le`, G8) and inputs `evk i` encrypting `keyBits P s i` (`hk`). Its
++message is `(nandFormula P C₁ C₂).eval (keyBits P s)`, which is
++`!(decrypt P s C₁ && decrypt P s C₂)` by G7 (`nandFormula_eval`). Its noise
++`4^depth·(2·(N·βk))` is at most `bootNoise P βk` by `depth_nandFormula_le` (G8),
++`Nat.pow_le_pow_right` and `bootNoise_eq`, through `Encrypts.mono`. -/
++theorem encrypts_bootNAND (P : Parameters)
++    {t' : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus} (s : Secret P) (βk : ℕ)
++    (evk : Fin P.columns → Ciphertext P)
++    (hk : ∀ i, Encrypts P t' ((keyBits P s i).toNat : ℤ) βk (evk i)) (C₁ C₂ : Ciphertext P) :
++    Encrypts P t' ((!(decrypt P s C₁ && decrypt P s C₂)).toNat : ℤ) (bootNoise P βk)
++      (bootNAND P evk C₁ C₂) := by
++  sorry
++
++/-- **G10. Pure-FHE correctness for NAND-form circuits of every depth.** Let `evk` encrypt
++the key bits of `s` under `t = secretVector P s` with noise at most `βk`, and the inputs
++`cts j` encrypt the bits `x j` with noise at most `βin`. If `2·(ℓ·βin) < ⌊q/2⌋` and
++`2·(ℓ·bootNoise P βk) < ⌊q/2⌋`, then for every NAND-form circuit `Cc`, of any depth,
++`decrypt P s (fheEval P evk Cc cts) = Cc.eval x` [BV14, Thm 2.14 second part, p008-b003; BV11,
++Thm 3.2, Def 3.5, p015-b001, p014-b001]. Deviations: the padding of fan-in 1 to `(a, a)` and
++of fan-in 0 to `(G, G)`; worst case.
++
++**Proof sketch.** Apply the host lemma `runWith_rel` (H19) to `DAGGate.eval` from
++`List.ofFn x` and `bootGate P evk` from `List.ofFn cts`, with the vertex relation "the
++ciphertext encrypts the vertex's value under `t` with noise at most `βin` (an input) or
++`bootNoise P βk` (a gate)", as `eval_encrypts` does for phase 5. Inputs: `hin`. A gate `g`
++(a NAND gate by `isNANDForm_iff`, `DAGGate.isNAND_iff`): its arguments are earlier vertices
++(`Cc.args_lt`), so they decrypt to their values by `decrypt_of_encrypts` with `hβin` or
++`hboot`; the padded `G` decrypts to `true` (`encrypts_gadget`, noise `0`, `q ≥ 2`). By the
++three case readers `bootGate_of_args_eq_nil`/`_singleton`/`_cons_cons` and G9
++(`encrypts_bootNAND`, `t' = t`), the gate's ciphertext encrypts `!(d₁ && d₂)` with noise
++`bootNoise P βk`, which is the gate's value by `DAGGate.eval_of_isNAND` (N1): `NAND() = false
++= NAND(1, 1)` and `NAND(a) = ¬a = NAND(a, a)`. The output vertex is in range (`Cc.output_lt`);
++`decrypt_of_encrypts` with `hβin` or `hboot` and `DAGCircuit.eval_eq`, `values_eq` finish,
++through `fheEval_eq`. -/
++theorem decrypt_fheEval (P : Parameters) {k : ℕ} (Cc : DAGCircuit k) (hNAND : Cc.IsNANDForm)
++    (s : Secret P) (evk : Fin P.columns → Ciphertext P) (βk βin : ℕ)
++    (hevk : ∀ i, Encrypts P (secretVector P s) ((keyBits P s i).toNat : ℤ) βk (evk i))
++    (x : Fin k → Bool) (cts : Fin k → Ciphertext P)
++    (hin : ∀ j, Encrypts P (secretVector P s) ((x j).toNat : ℤ) βin (cts j))
++    (hβin : 2 * (P.width * βin) < P.lwe.modulus / 2)
++    (hboot : 2 * (P.width * bootNoise P βk) < P.lwe.modulus / 2) :
++    decrypt P s (fheEval P evk Cc cts) = Cc.eval x := by
++  sorry
++
++/-- **G18. Pure-FHE correctness for every fan-in-2 circuit**, through the NAND conversion:
++under the hypotheses of G10, for every circuit `Cc` whose gates have at most two arguments,
++`decrypt P s (fheEvalCircuit P evk Cc hC cts) = Cc.eval x` [BV14, Thm 2.14, p008-b003; BV11,
++Def 3.5, p014-b001]. Deviation: NAND only (P6-Q9), through 6a's conversion.
++
++**Proof sketch.** `fheEvalCircuit_eq`; G10 (`decrypt_fheEval`) for `Cc.toNANDForm hC`, which
++is in NAND form (`DAGCircuit.toNANDForm_isNANDForm`, N4) and computes `Cc.eval`
++(`DAGCircuit.toNANDForm_eval`, N3). -/
++theorem decrypt_fheEvalCircuit (P : Parameters) {k : ℕ} (Cc : DAGCircuit k)
++    (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2) (s : Secret P)
++    (evk : Fin P.columns → Ciphertext P) (βk βin : ℕ)
++    (hevk : ∀ i, Encrypts P (secretVector P s) ((keyBits P s i).toNat : ℤ) βk (evk i))
++    (x : Fin k → Bool) (cts : Fin k → Ciphertext P)
++    (hin : ∀ j, Encrypts P (secretVector P s) ((x j).toNat : ℤ) βin (cts j))
++    (hβin : 2 * (P.width * βin) < P.lwe.modulus / 2)
++    (hboot : 2 * (P.width * bootNoise P βk) < P.lwe.modulus / 2) :
++    decrypt P s (fheEvalCircuit P evk Cc hC cts) = Cc.eval x := by
++  sorry
++
++/-- **G11. Evaluation-key noise.** For an honest public key `(A, A s + e)` with errors of
++magnitude at most `B`, every evaluation-key ciphertext encrypts its key bit under
++`t = secretVector P s` with noise at most `m·B`:
++`Encrypts P (secretVector P s) (keyBits P s i).toNat (P.lwe.samples * B)
++(evalKey P (A, LWE.noisyValues P.lwe A s e) s R i)` [BV11, Def 3.8, p015-b001; BV14, Lemma 4.4,
++p019-b001]. A citation, proved: it is phase 5's `encrypts_encrypt` read through `evalKey_eq`. -/
++theorem encrypts_evalKey (P : Parameters)
++    (A : Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus)) (s : Secret P)
++    (e : Fin P.lwe.samples → ℤ) (B : ℕ) (he : ∀ i, (e i).natAbs ≤ B)
++    (R : Fin P.columns → Coins P) (i : Fin P.columns) :
++    Encrypts P (secretVector P s) ((keyBits P s i).toNat : ℤ) (P.lwe.samples * B)
++      (evalKey P (A, LWE.noisyValues P.lwe A s e) s R i) := by
++  rw [evalKey_eq]
++  exact encrypts_encrypt P A s e B he (keyBits P s i) (R i)
++
++/-- **G12. Correctness for honest keys and every circuit.** For a `B`-bounded noise law, every
++key-generation seed, evaluation-key coins `R`, input bits `x` with encryption coins `R'`, and
++every fan-in-2 circuit `Cc`, if `2·(ℓ·bootNoise P (m·B)) < ⌊q/2⌋` then the pure FHE evaluation
++under the honest evaluation key decrypts to `Cc.eval x`:
++`decrypt P sk (fheEvalCircuit P (evalKey P pk sk R) Cc hC fun j => encrypt P pk (x j) (R' j)) =
++Cc.eval x` with `(pk, sk) = Regev.keygen P.lwe χ rg` [BV14, Thm 3.7, p016-b001, worst case and
++any depth]. Deviation: worst case for every seed; the ratio condition is explicit.
++
++**Proof sketch.** `Regev.keygen_fst`, `Regev.keygen_snd`, `LWE.sample_fst`, `LWE.sample_snd`
++write the key as `(A, A s + e)` with `eᵢ = χ.sample(seedᵢ)` bounded by `B`
++(`LWE.Noise.bounded_iff`). The inputs encrypt with noise `m·B` (`encrypts_keygen_encrypt`), and
++the evaluation key with noise `m·B` (G11, `encrypts_evalKey`). Since `N ≥ 1`
++(`Parameters.neZero_columns`), `m·B ≤ bootNoise P (m·B)` (`bootNoise_eq`), so `hsep` also gives
++the input condition. Then G18 (`decrypt_fheEvalCircuit`). -/
++theorem decrypt_keygen_fheEvalCircuit (P : Parameters) (χ : LWE.Noise) (rg : KeySeed P χ)
++    (B : ℕ) (hχ : χ.Bounded B) (R : Fin P.columns → Coins P) {k : ℕ} (Cc : DAGCircuit k)
++    (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2) (x : Fin k → Bool) (R' : Fin k → Coins P)
++    (hsep : 2 * (P.width * bootNoise P (P.lwe.samples * B)) < P.lwe.modulus / 2) :
++    decrypt P (Regev.keygen P.lwe χ rg).2
++        (fheEvalCircuit P (evalKey P (Regev.keygen P.lwe χ rg).1 (Regev.keygen P.lwe χ rg).2 R)
++          Cc hC fun j => encrypt P (Regev.keygen P.lwe χ rg).1 (x j) (R' j)) =
++      Cc.eval x := by
++  sorry
++
++/-- **G13. Closed form of the bootstrapped noise.** For every noise bound `β`,
++`bootNoise P β ≤ 4 ^ 33 * P.columns ^ 19 * (P.width + Nat.clog 2 P.columns + 3) ^ 4 * (2 * β)`:
++polynomial in `N` and `ℓ`, with no factor exponential in `ℓ` (r3 §H3.3, §H6). Glue; the
++constants of r3 G13 *(fix)* are settled here: `c₀ = 33`, `c₁ = 9`, `c₂ = 2`.
++
++**Proof sketch.** `bootNoise_eq`. If `N = 0` both sides are `0`. Otherwise `decDepth_le` (G8)
++gives `decDepth P + 1 ≤ 9a + 2b + 22` with `a = ⌈log₂ N⌉` and `b = ⌈log₂ X⌉`,
++`X = ℓ + ⌈log₂ N⌉ + 3 ≥ 1`. For `y ≥ 1`, `2^⌈log₂ y⌉ < 2y` (`Nat.pow_pred_clog_lt_self` for
++`y ≥ 2`; `Nat.clog_one_right` for `y = 1`), so `4^⌈log₂ y⌉ ≤ 4y²`. Hence
++`4^(decDepth P + 1) ≤ 4^22·(4N²)^9·(4X²)^2 = 4^33·N^18·X^4` (`Nat.pow_le_pow_right`,
++`Nat.pow_le_pow_left`, `pow_mul`), and multiplying by `2·(N·β)` gives the bound
++(`Nat.mul_le_mul_right`, `ring_nf`). -/
++theorem bootNoise_le (P : Parameters) (β : ℕ) :
++    bootNoise P β ≤
++      4 ^ 33 * P.columns ^ 19 * (P.width + Nat.clog 2 P.columns + 3) ^ 4 * (2 * β) := by
++  sorry
++
++end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean
+new file mode 100644
+index 000000000..a5420c769
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean
+@@ -0,0 +1,179 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Noise
++import TCSlib.Complexity.BranchingPrograms.Eval
++import TCSlib.Complexity.BranchingPrograms.Barrington
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Homomorphic evaluation of permutation branching programs and formulas (GSW)
++
++## Main definitions
++
++* `select`: the homomorphic selector `select P C U V = (G − C) ⊡ U + C ⊡ V`, fresh selector
++  on the left.
++* `homEvalPBP`: a branching program run homomorphically, the shared host
++  `BranchingProgram.evalWith` (registry row H18) instantiated with `select P`.
++* `homEvalFormula`: a fan-in-2 formula through Barrington's program (output `sigma1`), read at
++  coordinate `sigma1 0`.
++
++## Main results
++
++* `Encrypts.select` (G1): one selector step costs an additive `2·N·β`.
++* `encrypts_homEvalPBP` (G2): a permutation program of length `L` gives noise `L·2·N·β`.
++* `encrypts_homEvalFormula` (G3): a formula of depth `d` gives noise `4^d·2·N·β`.
++
++All three are statement-phase targets (admitted); the definitions are total and computable.
++
++## References
++
++* [BV14] Z. Brakerski, V. Vaikuntanathan, *Lattice-Based FHE as Secure as PKE*, ITCS 2014;
++  IACR ePrint 2013/541: §3.3 (Eq. (4), Eval with Eq. (5)–(6)), Thm 3.5, Lemma 3.6 with its
++  proof.
++* [AP14] J. Alperin-Sheriff, C. Peikert, *Faster Bootstrapping with Polynomial Error*,
++  CRYPTO 2014; IACR ePrint 2014/094: Eq. (4.1), Lemma 4.1.
++* [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, author version dated
++  17 February 2016, §6.1.3 (bootstrapping).
++* [Bar89] D. A. Mix Barrington, *Bounded-width polynomial-size branching programs recognize
++  exactly those languages in NC¹*, J. Comput. System Sci. 38(1) (1989), 150–164: Thm 1.
++
++**Deviations.** The selector carries the fresh ciphertext on the left of both products
++(`(G − C) ⊡ U`, `C ⊡ V`), mirroring [BV14, Eq. (5)–(6)], which multiplies the state on the
++left; with the library's `⊡` (`GSW.mul`, right operand decomposed) this order makes the noise
++of a step additive in the state's noise. Noise bounds are worst case, not probabilistic
++([BV14, Lemma 3.6] holds with overwhelming probability). The formula's output is coordinate
++`σ 0` of the state started at `0` (Barrington's C16 reading), not [BV14]'s coordinate `1`:
++a five-cycle moves `0`, so coordinate `0` would encode the complement.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
++
++open BoolCircuit
++
++/-- **The homomorphic selector** `select P C U V = (G − C) ⊡ U + C ⊡ V`: if `C` encrypts the
++bit `b`, the result encrypts `(1 − b)·u + b·v`, selecting `U`'s message when `b = 0` and `V`'s
++when `b = 1` [BV14, §3.3, Eq. (5)–(6), p014-b002, mirrored; AP14, Eq. (4.1), p011-b001].
++The fresh selector ciphertext is on the left of both products (Gate 41's convention). -/
++def select (P : Parameters) (C U V : Ciphertext P) : Ciphertext P :=
++  mul P (gadget P - C) U + mul P C V
++
++/-- `select P C U V` is `mul P (gadget P - C) U + mul P C V`. -/
++theorem select_eq (P : Parameters) (C U V : Ciphertext P) :
++    select P C U V = mul P (gadget P - C) U + mul P C V := rfl
++
++/-- **Homomorphic evaluation of a branching program**: the host
++`BranchingProgram.evalWith` (H18) with values and selectors in `Ciphertext P` and selector
++`select P`, `homEvalPBP P B cts V = B.evalWith (select P) cts V`; instruction `ι` selects with
++the input ciphertext `cts ι.var` [BV14, §3.3, Eval, p014-b002; AP14, Eq. (4.1), p011-b001].
++For a permutation program each step is the pull form `V'_i = select (cts var) (V (σ₀⁻¹ i))
++(V (σ₁⁻¹ i))` (`Instr.stepWith_of_isPermutation`). Computable. -/
++def homEvalPBP (P : Parameters) {w k : ℕ} (B : BranchingProgram w k)
++    (cts : Fin k → Ciphertext P) (V : Fin w → Ciphertext P) : Fin w → Ciphertext P :=
++  B.evalWith (select P) cts V
++
++/-- `homEvalPBP P B cts V` is `B.evalWith (select P) cts V`. -/
++theorem homEvalPBP_eq (P : Parameters) {w k : ℕ} (B : BranchingProgram w k)
++    (cts : Fin k → Ciphertext P) (V : Fin w → Ciphertext P) :
++    homEvalPBP P B cts V = B.evalWith (select P) cts V := rfl
++
++/-- **Homomorphic evaluation of a formula** [BV14, §3.3, Eval, p014-b002, with Thm 3.5,
++p014-b001; Pei16, §6.1.3, p070-b001]: convert the formula `c` on `k ≥ 1` inputs to
++Barrington's width-5 permutation program with output five-cycle `sigma1`, run it
++homomorphically from the state `Pi.single 0 G` (an encryption of the one-hot state `0` with
++zero noise), and read coordinate `sigma1 0`:
++`homEvalFormula P c cts = homEvalPBP P (barrington c sigma1) cts (Pi.single 0 (gadget P))
++(sigma1 0)`. Deviation: [BV14] outputs the state's coordinate `1`; here the accepting
++coordinate is `σ 0` (`barrington_yield_zero`, r3 §H3.7). Computable (P6-Q13). -/
++def homEvalFormula (P : Parameters) {k : ℕ} [NeZero k] (c : TreeCircuit k)
++    (cts : Fin k → Ciphertext P) : Ciphertext P :=
++  homEvalPBP P (BranchingProgram.barrington c BranchingProgram.sigma1) cts
++    (Pi.single 0 (gadget P)) (BranchingProgram.sigma1 0)
++
++/-- `homEvalFormula P c cts` is `homEvalPBP P (barrington c sigma1) cts (Pi.single 0 (gadget P))`
++at coordinate `sigma1 0`. -/
++theorem homEvalFormula_eq (P : Parameters) {k : ℕ} [NeZero k] (c : TreeCircuit k)
++    (cts : Fin k → Ciphertext P) :
++    homEvalFormula P c cts =
++      homEvalPBP P (BranchingProgram.barrington c BranchingProgram.sigma1) cts
++        (Pi.single 0 (gadget P)) (BranchingProgram.sigma1 0) := rfl
++
++/-! ### Targets G1–G3 -/
++
++/-- **G1. The selector step.** If `C` encrypts a bit `b ∈ {0, 1}` with noise at most `β` and
++`U`, `V` encrypt `u`, `v` with noise at most `βV`, all under the key vector `t`, then
++`select P C U V` encrypts `(1 − b)·u + b·v` with noise at most `βV + 2·(N·β)`, `N = P.columns`:
++`Encrypts P t ((1 - b) * u + b * v) (βV + 2 * (P.columns * β)) (select P C U V)`
++[BV14, §3.3, Eq. (5)–(6), p014-b002; Lemma 3.6 proof, p015-b002, mirrored; AP14, Eq. (4.1),
++p011-b001; Lemma 4.1, p012-b001]. Deviation: worst case, and the selector sits on the left.
++
++**Proof sketch.** `encrypts_gadget` and `Encrypts.sub` give `G − C` encrypting `1 − b` with
++noise `0 + β`. `Encrypts.mul` gives `(G − C) ⊡ U` with noise `N·β + |1 − b|·βV` and `C ⊡ V` with
++noise `N·β + |b|·βV`, the two products that `select_eq` exposes. `Encrypts.add` sums the
++two; since `b ∈ {0, 1}`, `|1 − b| + |b| = 1`, so the noise is at most `βV + 2·(N·β)` by
++`Encrypts.mono`, and the message is `(1 − b)·u + b·v`. -/
++theorem Encrypts.select (P : Parameters) {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus}
++    {b u v : ℤ} {β βV : ℕ} {C U V : Ciphertext P} (hC : Encrypts P t b β C)
++    (hU : Encrypts P t u βV U) (hV : Encrypts P t v βV V) (hb : b = 0 ∨ b = 1) :
++    Encrypts P t ((1 - b) * u + b * v) (βV + 2 * (P.columns * β)) (select P C U V) := by
++  sorry
++
++/-- **G2. Homomorphic permutation-program evaluation.** For a permutation program `B` of
++width `w` on `k` inputs, input ciphertexts `cts j` encrypting the bits `x j` with noise at most
++`β` under `t`, and the start state `Pi.single s₀ G`, coordinate `i` of the evaluated state
++encrypts the indicator of `B.yield x s₀ = i` with noise at most `B.length·(2·(N·β))`:
++`Encrypts P t (decide (B.yield x s₀ = i)).toNat (B.length * (2 * (P.columns * β)))
++(homEvalPBP P B cts (Pi.single s₀ (gadget P)) i)`
++[BV14, Lemma 3.6, p015-b001, with its proof, p015-b002; AP14, Lemma 4.1, p012-b001].
++Deviation: worst case (BV14: with overwhelming probability), for every permutation program.
++
++**Proof sketch.** Apply the host lemma `BranchingProgram.evalWith_rel` (C7) to the
++homomorphic run and to the Boolean run `evalWith (fun b u v => if b then v else u) x
++(Pi.single s₀ 1)` (whose result is `Pi.single (B.yield x s₀) 1` by `evalWith_single`, C8),
++with the relation at step `τ`: every coordinate `i` of the ciphertext state encrypts the
++natural number at coordinate `i` of the Boolean state, with noise at most `τ·(2·(N·β))`. At
++step `0`: `Pi.single` coordinates are `G` (`encrypts_gadget`) and `0` (`encrypts_zero`). Step:
++the instruction is a permutation (`isPermutation_iff`), so both steps are pull forms
++(`Instr.stepWith_of_isPermutation`, C6); coordinate `i` is `select (cts var) U V` with `U`, `V`
++the predecessors' ciphertexts, and `Encrypts.select` (G1) with `βV = τ·(2·(N·β))` gives
++`(τ + 1)·(2·(N·β))`; the messages agree because the Boolean coordinates are `0`/`1` and the
++selector picks the branch of `x var`. At `τ = B.length` read `evalWith_single` and
++`Pi.single_apply`. Uses the `homEvalPBP_eq` reader. -/
++theorem encrypts_homEvalPBP (P : Parameters) {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus}
++    {w k : ℕ} (B : BranchingProgram w k) (hB : B.IsPermutation) (x : Fin k → Bool)
++    (cts : Fin k → Ciphertext P) (β : ℕ)
++    (hin : ∀ j, Encrypts P t ((x j).toNat : ℤ) β (cts j)) (s₀ i : Fin w) :
++    Encrypts P t ((decide (B.yield x s₀ = i)).toNat : ℤ) (B.length * (2 * (P.columns * β)))
++      (homEvalPBP P B cts (Pi.single s₀ (gadget P)) i) := by
++  sorry
++
++/-- **G3. Homomorphic formula evaluation.** For a formula `c` of fan-in at most two on
++`k ≥ 1` inputs and input ciphertexts `cts j` encrypting the bits `x j` with noise at most `β`
++under `t`, `homEvalFormula P c cts` encrypts `c.eval x` with noise at most
++`4^(c.depth)·(2·(N·β))`:
++`Encrypts P t (c.eval x).toNat (4 ^ c.depth * (2 * (P.columns * β))) (homEvalFormula P c cts)`
++[BV14, Thm 3.5, p014-b001, with Lemma 3.6, p015-b001; Pei16, §6.1.3, p070-b001; Bar89, Thm 1,
++p003-b002]. Deviation: the output coordinate is `σ 0` (BV14: coordinate `1`), worst case.
++
++**Proof sketch.** `homEvalFormula_eq`, then G2 (`encrypts_homEvalPBP`) for the program
++`barrington c sigma1`, which is a permutation program (`isPermutation_barrington`, C15), at
++`s₀ = 0` and `i = sigma1 0`. Its message is `decide (yield x 0 = sigma1 0)`; by
++`barrington_yield_zero` (C16, with `isFiveCycle_sigma1`) the yield at `0` is `sigma1 0` if
++`c.eval x` and `0` otherwise, and `sigma1 0 ≠ 0` (a five-cycle has no fixed point:
++`isFiveCycle_iff`, or by `decide` on `Fin 5`), so the message is `(c.eval x).toNat`. The noise
++`length·(2·(N·β))` is at most `4^(c.depth)·(2·(N·β))` by `barrington_length_le` (C14) and
++`Encrypts.mono`. -/
++theorem encrypts_homEvalFormula (P : Parameters)
++    {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus} {k : ℕ} [NeZero k]
++    (c : TreeCircuit k) (hc : c.maxFanin ≤ 2) (x : Fin k → Bool) (cts : Fin k → Ciphertext P)
++    (β : ℕ) (hin : ∀ j, Encrypts P t ((x j).toNat : ℤ) β (cts j)) :
++    Encrypts P t ((c.eval x).toNat : ℤ) (4 ^ c.depth * (2 * (P.columns * β)))
++      (homEvalFormula P c cts) := by
++  sorry
++
++end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean
+new file mode 100644
+index 000000000..e72596abe
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean
+@@ -0,0 +1,146 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Bootstrap
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Security
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Weak circular security of public-key GSW (concrete, per distinguisher)
++
++## Main definitions
++
++* `FheView`, `Seeds`: reducible names for the FHE view `(pk, evk, ct)` and its seed type.
++* `fheView`: the FHE view of a bit from honest key generation, the evaluation key of P6-Q8 and
++  one public-key encryption.
++* `WeakCircularSecure P χ D ε`: one distinguisher `D` has advantage at most `ε` between the
++  FHE views of `0` and `1`; with its reader `weakCircularSecure_iff`.
++
++## Main results
++
++* `distAdv_fheView_noEvk_le` (G15): with the evaluation key dropped, the view inherits phase
++  5's IND-CPA bound `distAdv_encrypt_le` (two DLWE advantages plus `2·N·ε_LHL`).
++
++Ruling Q-6B-1 A: r3's G14 (`distAdv_fheView_le`) is not a theorem. The reader
++`weakCircularSecure_iff` is that statement: under the hypothesis `WeakCircularSecure P χ D ε`
++the advantage on the FHE views is at most `ε`. It is the security half of [BV11, Thm 3.2] and
++[BV14, Thm 2.14 second part]: pure-FHE security *is* the hypothesis (A1).
++
++## References
++
++* [BV14] Z. Brakerski, V. Vaikuntanathan, *Lattice-Based FHE as Secure as PKE*, ITCS 2014;
++  IACR ePrint 2013/541: §2.5, Thm 2.14.
++* [BV11] Z. Brakerski, V. Vaikuntanathan, *Efficient Fully Homomorphic Encryption from
++  (Standard) LWE*, FOCS 2011 full version; IACR ePrint 2011/344: Def 3.1, Thm 3.2, Def 3.8.
++* [GSW13] C. Gentry, A. Sahai, B. Waters, CRYPTO 2013; IACR ePrint 2013/340, version dated
++  8 June 2013: §3.2.
++* [AP14] J. Alperin-Sheriff, C. Peikert, *Faster Bootstrapping with Polynomial Error*,
++  CRYPTO 2014; IACR ePrint 2014/094: §5.3.
++* [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, author version dated
++  17 February 2016, §6.1.2 (circular security).
++
++**Deviations.** [BV11, Def 3.8] is asymptotic; `WeakCircularSecure` is its concrete form for
++one distinguisher (P6-Q15 A), and the asymptotic `WeakCircularSecureFamily`
++(`GSW/Asymptotic.lean`) is the headline hypothesis. Weak circular security is an explicit
++hypothesis (A1), never derived from LWE: its truth for GSW is open [Pei16, §6.1.2].
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
++
++open Encryption.PublicKey
++
++/-- The FHE view `(pk, evk, ct)`: a public key, the `N` evaluation-key ciphertexts and one
++challenge ciphertext. Reducible notation. -/
++abbrev FheView (P : Parameters) : Type :=
++  PublicKey P × (Fin P.columns → Ciphertext P) × Ciphertext P
++
++/-- `FheView P` is `PublicKey P × (Fin P.columns → Ciphertext P) × Ciphertext P`. -/
++theorem FheView_eq (P : Parameters) :
++    FheView P = (PublicKey P × (Fin P.columns → Ciphertext P) × Ciphertext P) := rfl
++
++/-- The seeds of the FHE view: a key-generation seed, the coins of the `N` evaluation-key
++encryptions and the coins of the challenge encryption. Reducible notation. -/
++abbrev Seeds (P : Parameters) (χ : LWE.Noise) : Type :=
++  KeySeed P χ × (Fin P.columns → Coins P) × Coins P
++
++/-- `Seeds P χ` is `KeySeed P χ × (Fin P.columns → Coins P) × Coins P`. -/
++theorem Seeds_eq (P : Parameters) (χ : LWE.Noise) :
++    Seeds P χ = (KeySeed P χ × (Fin P.columns → Coins P) × Coins P) := rfl
++
++/-- **The FHE view of a bit** `μ` [BV14, §2.5, p007-b001: "the adversary is given both pk and
++evk"; BV11, Def 3.1, p013-b002]: from a seed `r = (rg, R, R₀)`, honest key generation
++`(pk, s) = Regev.keygen P.lwe χ rg`, the evaluation key `evalKey P pk s R` (P6-Q8) and the
++challenge `encrypt P pk μ R₀`:
++`fheView P χ μ r = (pk, evalKey P pk s r.2.1, encrypt P pk μ r.2.2)`. -/
++@[simps! (config := { isSimp := false }) fst snd]
++def fheView (P : Parameters) (χ : LWE.Noise) (μ : Bool) (r : Seeds P χ) : FheView P :=
++  ((Regev.keygen P.lwe χ r.1).1,
++    evalKey P (Regev.keygen P.lwe χ r.1).1 (Regev.keygen P.lwe χ r.1).2 r.2.1,
++    encrypt P (Regev.keygen P.lwe χ r.1).1 μ r.2.2)
++
++/-- `fheView P χ μ r` is `(pk, evalKey P pk s r.2.1, encrypt P pk μ r.2.2)` with
++`(pk, s) = Regev.keygen P.lwe χ r.1`. -/
++theorem fheView_eq (P : Parameters) (χ : LWE.Noise) (μ : Bool) (r : Seeds P χ) :
++    fheView P χ μ r =
++      ((Regev.keygen P.lwe χ r.1).1,
++        evalKey P (Regev.keygen P.lwe χ r.1).1 (Regev.keygen P.lwe χ r.1).2 r.2.1,
++        encrypt P (Regev.keygen P.lwe χ r.1).1 μ r.2.2) := rfl
++
++/-- **Weak circular security, concrete, for one distinguisher** (P6-Q15 A) [BV11, Def 3.8,
++p015-b001; BV14, Thm 2.14, p008-b003; Pei16, §6.1.2, p068-b001]: the distinguisher `D`, with
++coins in `ρ`, has advantage at most `ε` between the FHE views of `0` and `1`,
++`WeakCircularSecure P χ D ε ↔ distAdv (fheView P χ false) (fheView P χ true) D ≤ ε`. A
++hypothesis (A1), never derived from LWE (phase-5 Q15). Its reader `weakCircularSecure_iff` is
++the security half of [BV11, Thm 3.2, p015-b001] and [BV14, Thm 2.14 second part, p008-b003]
++(ruling Q-6B-1 A: r3's G14). Deviation: BV11's definition is asymptotic, and
++`WeakCircularSecureFamily` is the headline form. It is stated per distinguisher because,
++quantified over **every** function `FheView P → ρ → Bool`, it would hold only for `ε` near `1`:
++an unbounded distinguisher recovers `s` from `pk` and decrypts the challenge. -/
++def WeakCircularSecure (P : Parameters) (χ : LWE.Noise) {ρ : Type*} [Fintype ρ] [Nonempty ρ]
++    (D : FheView P → ρ → Bool) (ε : ℝ) : Prop :=
++  distAdv (fheView P χ false) (fheView P χ true) D ≤ ε
++
++/-- `WeakCircularSecure P χ D ε` holds exactly when
++`distAdv (fheView P χ false) (fheView P χ true) D ≤ ε`. This reader is r3's G14 (Q-6B-1 A). -/
++theorem weakCircularSecure_iff (P : Parameters) (χ : LWE.Noise) {ρ : Type*} [Fintype ρ]
++    [Nonempty ρ] (D : FheView P → ρ → Bool) (ε : ℝ) :
++    WeakCircularSecure P χ D ε ↔ distAdv (fheView P χ false) (fheView P χ true) D ≤ ε :=
++  Iff.rfl
++
++/-! ### Target G15 -/
++
++/-- **G15. Without the evaluation key, the FHE view is phase 5's.** For every distinguisher
++`D` of `(pk, ct)` pairs and all bits `μ₀`, `μ₁`, the views `(pk, encrypt pk μ R₀)` read off
++`fheView`'s seeds (the evaluation key dropped) differ by at most two DLWE advantages plus
++`2·(N·ε_LHL)`, phase 5's bound:
++`distAdv (fun r => ((fheView P χ μ₀ r).1, (fheView P χ μ₀ r).2.2))
++(fun r => ((fheView P χ μ₁ r).1, (fheView P χ μ₁ r).2.2)) D ≤
++decisionAdvantage P.lwe χ (reduction P μ₀ D) + decisionAdvantage P.lwe χ (reduction P μ₁ D) +
++2 * (P.columns * Regev.extractionError P.lwe)` [GSW13, §3.2, p009-b002; AP14, §5.3,
++p015-b002]. Stated over the projection of `fheView`, not over `realView`, of which it would be
++a restatement (G45-01); its content is the transport of `distAdv_encrypt_le` along the coin
++regrouping.
++
++**Proof sketch.** Through `fheView_fst`, `fheView_snd` (or `fheView_eq`), `Regev.keygen_fst`
++and `realView_eq`, `view_eq`, the projected view at a seed `(rg, R, R₀)` is
++`realView P χ μ (rg, R₀)`: it does not read the evaluation-key coins `R`. Through
++`acceptProb_def` and `acceptProb_comp_equiv`, regroup the seed-and-coin space so that the
++unused coins `R` form the second factor, `((KeySeed P χ × Coins P) × ρ) × (Fin N → Coins P)`
++(`Equiv.prodComm`, `Equiv.prodAssoc`); the marginalization lemma `uprob_fst`
++(`Foundations/Probability.lean`) then drops that factor, so each `acceptProb` equals that of
++`realView P χ μ`. Then `distAdv_def` and phase 5's `distAdv_encrypt_le`. -/
++theorem distAdv_fheView_noEvk_le (P : Parameters) (χ : LWE.Noise) {ρ : Type*} [Fintype ρ]
++    [Nonempty ρ] (μ₀ μ₁ : Bool) (D : PublicKey P × Ciphertext P → ρ → Bool) :
++    distAdv (fun r : Seeds P χ => ((fheView P χ μ₀ r).1, (fheView P χ μ₀ r).2.2))
++        (fun r : Seeds P χ => ((fheView P χ μ₁ r).1, (fheView P χ μ₁ r).2.2)) D ≤
++      LWE.decisionAdvantage P.lwe χ (reduction P μ₀ D) +
++        LWE.decisionAdvantage P.lwe χ (reduction P μ₁ D) +
++        2 * (P.columns * Regev.extractionError P.lwe) := by
++  sorry
++
++end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean
+new file mode 100644
+index 000000000..a4f9cb418
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean
+@@ -0,0 +1,216 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Scheme
++import TCSlib.Complexity.CircuitComplexity.FormulaArith.ModSum
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The GSW decryption formula and the augmented NAND formula
++
++## Main definitions
++
++* `keyBits`: the `N` key bits `G⁻¹(t)` of `t = (−s, 1)`, the bits the evaluation key encrypts.
++* `decConstants`: the public constants `Gᵀc` of a ciphertext, `c` its decryption column.
++* `decryptFormula`: decryption as a fan-in-2 formula in the key bits, the modular interval sum
++  `FormulaArith.modSumInterval` over the constants with the decoding interval of O2.
++* `nandFormula`: BV14's augmented decryption function `f_{C₁,C₂}`, `¬(Dec C₁ ∧ Dec C₂)`, one key
++  block.
++* `decDepth`: the depth bound `FormulaArith.modSumDepth N q` of the decryption formula.
++* The instance `Parameters.neZero_columns`: `N = (n+1)·ℓ ≥ 1`, since `2 ≤ q ≤ 2^ℓ`.
++
++## Main results
++
++* `vecMul_secretVector_eq_sum` (G5): `⟨t, c⟩ = ∑ᵢ xᵢ·(Gᵀc)ᵢ` with `x = keyBits`.
++* `decryptFormula_eval` (G6), `nandFormula_eval` (G7): the formulas compute decryption and its
++  NAND on the key bits.
++* `depth_nandFormula_le`, `maxFanin_nandFormula_le`, `decDepth_le` (G8): depth `decDepth + 1`,
++  fan-in two, and the closed form `9⌈log₂ N⌉ + 2⌈log₂(ℓ + ⌈log₂ N⌉ + 3)⌉ + 21`, with no term
++  linear in `ℓ`.
++
++All are statement-phase targets (admitted); the definitions and the instance are proved.
++
++## References
++
++* [BV14] Z. Brakerski, V. Vaikuntanathan, *Lattice-Based FHE as Secure as PKE*, ITCS 2014;
++  IACR ePrint 2013/541: Prop 3.4, Def 2.13, Lemma 4.4.
++* [BV11] Z. Brakerski, V. Vaikuntanathan, *Efficient Fully Homomorphic Encryption from
++  (Standard) LWE*, FOCS 2011 full version; IACR ePrint 2011/344: Def 3.7, Lemma 4.5 with its
++  proof. [BV14] cites this lemma as "[BV11, Lemma 4.1]"; it is Lemma 4.5 in the version held.
++* [AP14] J. Alperin-Sheriff, C. Peikert, *Faster Bootstrapping with Polynomial Error*,
++  CRYPTO 2014; IACR ePrint 2014/094: §5.1.
++* [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, author version dated
++  17 February 2016, §5.4.3 (the gadget `G` and `G⁻¹`).
++
++**Deviations.** Decryption is the library's: the decryption column `c = C·G⁻¹(⌊q/2⌋·e_{n+1})`
++decoded by `LWE.BitEncoding.decode`, which is the interval test `decode_iff_mem_Ico` (O2). The
++formula is the carry-save modular interval sum of the formula layer (r3 §H3.4; BV11 computes
++the bit by subtracting the multiples of `q` and a selection tree), with depth stated by an
++explicit constant rather than `O(log N + log log q)`. The augmented formula reads one block of
++`N` key bits: the two decryptions share the key, BV14's `f_{c₁,c₂}` literally.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
++
++open BoolCircuit
++open Encryption.PublicKey
++
++/-- The ciphertext width `N = (n+1)·ℓ` is positive: `2 ≤ q ≤ 2^ℓ` forces `ℓ ≥ 1`. The
++decryption formula has `N` inputs, and Barrington's construction needs at least one. -/
++instance Parameters.neZero_columns (P : Parameters) : NeZero P.columns :=
++  ⟨Nat.mul_ne_zero (Nat.succ_ne_zero _)
++    (Nat.one_lt_two_pow_iff.mp (Nat.lt_of_lt_of_le P.lwe.modulus_ge_two P.modulus_le))⟩
++
++/-- The **key bits** of a secret `s`: the `N = (n+1)·ℓ` bits `G⁻¹(t)` of the key vector
++`t = (−s, 1)`, `keyBits P s = decomposeVec P (secretVector P s)`. They are what the
++evaluation key encrypts (P6-Q8) [BV11, Def 3.8, p015-b001: encryptions of the bits of the
++secret key; AP14, §5.1, p014-b001]. -/
++def keyBits (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus) :
++    Fin P.columns → Bool :=
++  decomposeVec P (secretVector P s)
++
++/-- `keyBits P s` is `decomposeVec P (secretVector P s)`. -/
++theorem keyBits_eq (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus) :
++    keyBits P s = decomposeVec P (secretVector P s) := rfl
++
++/-- The **public decryption constants** of a ciphertext `C`: `Gᵀc`, where
++`c = decryptColumn P C`, that is `decConstants P C = Matrix.vecMul (decryptColumn P C)
++(gadget P)`. Decryption is a binary subset sum of these constants weighted by the key bits
++[AP14, §5.1, p014-b001; Pei16, §5.4.3, p052-b001]. -/
++def decConstants (P : Parameters) (C : Ciphertext P) : Fin P.columns → ZMod P.lwe.modulus :=
++  Matrix.vecMul (decryptColumn P C) (gadget P)
++
++/-- `decConstants P C` is `Matrix.vecMul (decryptColumn P C) (gadget P)`. -/
++theorem decConstants_eq (P : Parameters) (C : Ciphertext P) :
++    decConstants P C = Matrix.vecMul (decryptColumn P C) (gadget P) := rfl
++
++/-- **The decryption formula** of `C`, on the `N` key bits: the modular interval sum of the
++formula layer over the representatives of the public constants, modulo `q`, with the decoding
++interval of O2,
++`decryptFormula P C = modSumInterval (fun i => (decConstants P C i).val) q (decodeLo P.lwe)
++(decodeHi P.lwe)` [BV14, Prop 3.4, p011-b001; BV11, Lemma 4.5, p029-b001]. It tests
++`decodeLo ≤ (∑ᵢ xᵢ·aᵢ) mod q < decodeHi`. -/
++def decryptFormula (P : Parameters) (C : Ciphertext P) : TreeCircuit P.columns :=
++  FormulaArith.modSumInterval (fun i => (decConstants P C i).val) P.lwe.modulus
++    (LWE.BitEncoding.decodeLo P.lwe) (LWE.BitEncoding.decodeHi P.lwe)
++
++/-- `decryptFormula P C` is `modSumInterval (fun i => (decConstants P C i).val) q (decodeLo P.lwe)
++(decodeHi P.lwe)`. -/
++theorem decryptFormula_eq (P : Parameters) (C : Ciphertext P) :
++    decryptFormula P C =
++      FormulaArith.modSumInterval (fun i => (decConstants P C i).val) P.lwe.modulus
++        (LWE.BitEncoding.decodeLo P.lwe) (LWE.BitEncoding.decodeHi P.lwe) := rfl
++
++/-- **The augmented NAND formula** `f_{C₁,C₂}` [BV14, Def 2.13, p008-b002; BV11, Def 3.7,
++p014-b002]: the De Morgan negation of the conjunction of the two decryption formulas, on one
++block of `N` key bits, `nandFormula P C₁ C₂ = (and2 (decryptFormula P C₁)
++(decryptFormula P C₂)).neg`. -/
++def nandFormula (P : Parameters) (C₁ C₂ : Ciphertext P) : TreeCircuit P.columns :=
++  (TreeCircuit.and2 (decryptFormula P C₁) (decryptFormula P C₂)).neg
++
++/-- `nandFormula P C₁ C₂` is `(and2 (decryptFormula P C₁) (decryptFormula P C₂)).neg`. -/
++theorem nandFormula_eq (P : Parameters) (C₁ C₂ : Ciphertext P) :
++    nandFormula P C₁ C₂ =
++      (TreeCircuit.and2 (decryptFormula P C₁) (decryptFormula P C₂)).neg := rfl
++
++/-- The depth bound of the decryption formula, `decDepth P = modSumDepth N q`, the formula
++layer's bound for `N` summands modulo `q` [BV14, Lemma 4.4, p019-b001: the augmented
++decryption circuit has depth `c_dec·log(k log(q(k))) + 1`]. -/
++def decDepth (P : Parameters) : ℕ :=
++  FormulaArith.modSumDepth P.columns P.lwe.modulus
++
++/-- `decDepth P` is `FormulaArith.modSumDepth P.columns P.lwe.modulus`. -/
++theorem decDepth_eq (P : Parameters) :
++    decDepth P = FormulaArith.modSumDepth P.columns P.lwe.modulus := rfl
++
++/-! ### Targets G5–G8 -/
++
++/-- **G5. Decryption is a binary subset sum of public constants.** For every secret `s` and
++ciphertext `C`, the inner product of the key vector `t = (−s, 1)` with the decryption column
++`c` is the sum of the public constants `Gᵀc` selected by the key bits:
++`secretVector P s ⬝ᵥ decryptColumn P C = ∑ i, ((keyBits P s i).toNat : ZMod q) *
++decConstants P C i` [AP14, §5.1, p014-b001; Pei16, §5.4.3, p052-b001, p053-b001].
++
++**Proof sketch.** `keyBits_eq` and `gadget_mulVec_decomposeVec` give `t = G·x` with `x` the
++lifted key bits, so `⟨t, c⟩ = ⟨G x, c⟩`. By `Matrix.dotProduct_mulVec` this is
++`⟨x, cᵀG⟩ = ⟨x, decConstants P C⟩` (`decConstants_eq`), and `dotProduct` unfolds to the stated
++sum (`dotProduct_comm` for the factor order). -/
++theorem vecMul_secretVector_eq_sum (P : Parameters)
++    (s : Fin P.lwe.dimension → ZMod P.lwe.modulus) (C : Ciphertext P) :
++    secretVector P s ⬝ᵥ decryptColumn P C =
++      ∑ i, ((keyBits P s i).toNat : ZMod P.lwe.modulus) * decConstants P C i := by
++  sorry
++
++/-- **G6. The decryption formula computes decryption.** On the key bits of `s`, the
++decryption formula of `C` evaluates to GSW decryption of `C` under `s`:
++`(decryptFormula P C).eval (keyBits P s) = decrypt P s C` [BV14, Prop 3.4, p011-b001; BV11,
++Lemma 4.5, p029-b001, with its proof, p029-b002]. Deviation: the interval-sum construction of
++the formula layer (module docstring).
++
++**Proof sketch.** Decryption is `decode` of `⟨t, c⟩` with `t = (−s, 1)`, by the owner-side
++reader `decrypt_eq_decode_dotProduct : decrypt P s C = LWE.BitEncoding.decode P.lwe
++(secretVector P s ⬝ᵥ decryptColumn P C)` in `GSW/Scheme.lean` (owner-side, ruling Q-C1); the
++fill does not re-derive it.
++By G5, `⟨t, c⟩` is `∑ᵢ xᵢ·aᵢ` in `ZMod q`. Its representative is `(∑ᵢ xᵢ·aᵢ.val) mod q`
++(`ZMod.val_natCast`, `Nat.cast_sum`, `ZMod.natCast_zmod_val`).
++`LWE.BitEncoding.decode_iff_mem_Ico` (O2) turns `decode` into the interval test, and
++`FormulaArith.modSumInterval_eval` (F9) evaluates the formula to the same test, with
++`aᵢ.val < q` (`ZMod.val_lt`) and `decodeLo ≤ decodeHi ≤ q` (`decodeLo_eq`, `decodeHi_eq`,
++`omega`). Both sides are Booleans equal as propositions. -/
++theorem decryptFormula_eval (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus)
++    (C : Ciphertext P) : (decryptFormula P C).eval (keyBits P s) = decrypt P s C := by
++  sorry
++
++/-- **G7. The augmented NAND formula** computes the NAND of the two decryptions under the
++same key: `(nandFormula P C₁ C₂).eval (keyBits P s) = !(decrypt P s C₁ && decrypt P s C₂)`
++[BV14, Def 2.13, p008-b002; BV11, Def 3.7, p014-b002]. One key block: both decryptions read
++the bits of the same `s` (r3 G7).
++
++**Proof sketch.** `nandFormula_eq`, `TreeCircuit.neg_eval` (F1), `TreeCircuit.and2_eval`
++(F3), then G6 for each operand. -/
++theorem nandFormula_eval (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus)
++    (C₁ C₂ : Ciphertext P) :
++    (nandFormula P C₁ C₂).eval (keyBits P s) = !(decrypt P s C₁ && decrypt P s C₂) := by
++  sorry
++
++/-- **G8, depth.** The augmented NAND formula has depth at most `decDepth P + 1`:
++`(nandFormula P C₁ C₂).depth ≤ decDepth P + 1` [BV14, Lemma 4.4, p019-b001: depth
++`c_dec·log(k log(q(k))) + 1`].
++
++**Proof sketch.** `nandFormula_eq`, `TreeCircuit.depth_neg` (F1),
++`TreeCircuit.depth_and2_le` (F3), and `FormulaArith.depth_modSumInterval_le` (F10) for both
++operands, read through `decryptFormula_eq` and `decDepth_eq`; `max_le` and `omega`. -/
++theorem depth_nandFormula_le (P : Parameters) (C₁ C₂ : Ciphertext P) :
++    (nandFormula P C₁ C₂).depth ≤ decDepth P + 1 := by
++  sorry
++
++/-- **G8, fan-in.** The augmented NAND formula has fan-in at most two:
++`(nandFormula P C₁ C₂).maxFanin ≤ 2` [BV11, Lemma 4.5, p029-b001: "fan-in 2 gates"].
++
++**Proof sketch.** `nandFormula_eq`, `TreeCircuit.maxFanin_neg` (F1),
++`TreeCircuit.maxFanin_and2_le` (F3) and `FormulaArith.maxFanin_modSumInterval_le` (F10) for
++both operands (`decryptFormula_eq`); `omega`. -/
++theorem maxFanin_nandFormula_le (P : Parameters) (C₁ C₂ : Ciphertext P) :
++    (nandFormula P C₁ C₂).maxFanin ≤ 2 := by
++  sorry
++
++/-- **G8, closed form.** The decryption depth is `O(log N + log log q)` with no term linear in
++`ℓ`: `decDepth P ≤ 9 * Nat.clog 2 P.columns + 2 * Nat.clog 2 (P.width + Nat.clog 2 P.columns
+++ 3) + 21` [BV14, Lemma 4.4, p019-b001; BV11, Lemma 4.5, p029-b001]. Deviation: an explicit
++constant (the *(fix)* of r3 G8, settled here) for BV14's `c_dec`, with `ℓ` for `⌈log₂ q⌉`.
++
++**Proof sketch.** `decDepth_eq`, then `FormulaArith.modSumDepth_le` (F10) for `M = N`; its
++inner term `⌈log₂ q⌉ ≤ ℓ` because `q ≤ 2^ℓ` (`P.modulus_le`, `Nat.clog_le_iff_le_pow`), so
++`Nat.clog_mono_right` bounds `⌈log₂(⌈log₂ q⌉ + ⌈log₂ N⌉ + 3)⌉` by
++`⌈log₂(ℓ + ⌈log₂ N⌉ + 3)⌉`; `omega`. -/
++theorem decDepth_le (P : Parameters) :
++    decDepth P ≤
++      9 * Nat.clog 2 P.columns + 2 * Nat.clog 2 (P.width + Nat.clog 2 P.columns + 3) + 21 := by
++  sorry
++
++end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean
+new file mode 100644
+index 000000000..70e29cbf3
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean
+@@ -0,0 +1,291 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Bootstrap
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Eval
++import TCSlib.Complexity.CircuitComplexity.NANDLayering
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Leveled fully homomorphic GSW: the consecutive key chain over layered NAND circuits
++
++## Main definitions
++
++* `LevelCoins`: the coins of the `N·L` level-key encryptions.
++* `levelKey`: the level-`d` evaluation key of the consecutive chain, the encryptions under
++  `pk_{d+1}` of the key bits of `s_d` (`d : Fin L`, so `evk_{d+1}` in one-based levels).
++* `literalCts`: the `2k` level-0 ciphertexts, `cts` followed by their negations `G − cts j`
++  (`homNot`).
++* `levelGate`: a gate at level `δ ≥ 1` bootstrapped with the level key `δ − 1`.
++* `leveledEval`: a layered NAND-form circuit on the `2k` literals run by the host `runWith`
++  (registry row H19), each gate by `levelGate` at its level `depthAt`.
++* `leveledEvalCircuit`: any fan-in-2 circuit, through `toNANDForm` and the layering
++  `layerNAND`.
++
++## Main results
++
++* `encrypts_levelKey` (L1): level-key noise `m·B`, a proved citation of phase 5's
++  `encrypts_keygen_encrypt`.
++* `encrypts_leveledEval` (L2): the output of a layered NAND circuit of depth at most `L`
++  encrypts its value under the key of its level, with noise `max βin (bootNoise P βk)`.
++* `decrypt_keygen_leveledEvalCircuit` (L3): honest keys, every fan-in-2 circuit whose NAND form
++  has depth at most `L`.
++
++L2 and L3 are admitted; L1 is proved.
++
++**Compactness** holds by typing: `leveledEval` and `leveledEvalCircuit` return a
++`Ciphertext P` whatever the circuit [BV14, Def 2.12, p008-b001]; only the evaluation key
++(`N·L` ciphertexts) depends on `L` [BV11, Thm 3.1, p015-b001].
++
++**Sources and reconstruction (P6-Q19 B).** The key chain is Gentry's [Gen09, §4.1, `KeyGen` of
++`E^(d)`, pp. 46–47, p056-b003]: `d + 1` independent key pairs and, for `i ∈ [1, d]`, the
++encryptions under `pk_{i−1}` of the representation of `sk_i` as plaintexts. Gentry encrypts the
++keys in reverse order [Gen09, §4.1, p. 46, p056-b002], so his evaluation runs down the index
++(inputs under `pk_d`, decryption under `sk_0`); here it runs up, and his level `i` is level
++`L − i` (`levelKey`). His circuits are layered as well: every wire joins consecutive levels,
++with trivial gates added where needed [Gen09, §4.1, p. 47, p057-b001]. The hybrid order is
++[Gen09, Thm 4.2.3, pp. 50–51, p060-b001, p061-b001] (`GSW/LeveledSecurity.lean`). Besides
++[Gen09] for the chain, the statements of the leveled scheme cite [BV11, Thm 3.1, Def 3.6],
++[BV14, Thm 2.14 first part, Thm 3.7] and [AP14, §5.3]; [BV14, Def 2.12, §3.3] and
++[Bar89, Thm 1] are cited for compactness and the literal inputs.
++
++## References
++
++* [BV14] Z. Brakerski, V. Vaikuntanathan, *Lattice-Based FHE as Secure as PKE*, ITCS 2014;
++  IACR ePrint 2013/541: Def 2.12, Thm 2.14 (first part), Thm 3.7.
++* [BV11] Z. Brakerski, V. Vaikuntanathan, *Efficient Fully Homomorphic Encryption from
++  (Standard) LWE*, FOCS 2011 full version; IACR ePrint 2011/344: Def 3.6, Thm 3.1.
++* [AP14] J. Alperin-Sheriff, C. Peikert, *Faster Bootstrapping with Polynomial Error*,
++  CRYPTO 2014; IACR ePrint 2014/094: §5.3.
++* [Bar89] D. A. Mix Barrington, *Bounded-width polynomial-size branching programs recognize
++  exactly those languages in NC¹*, J. Comput. System Sci. 38(1) (1989), 150–164: Thm 1
++  ("inputs and negated inputs").
++* [Gen09] C. Gentry, *A Fully Homomorphic Encryption Scheme*, PhD thesis, Stanford University,
++  September 2009: §4.1 (`KeyGen` of `E^(d)`, the reverse order, layered circuits), Thm 4.2.3.
++
++**Deviations.** `L + 1` independent key pairs in a consecutive chain (P6-Q14 B): `evk_{d+1}`
++encrypts under `pk_{d+1}` the `N` key bits of `s_d`, `N·L` ciphertexts in all. Circuits are
++layered NAND circuits on the `2k` literals (6a's `layerNAND`, `litInput`); the negative
++literals are `homNot P [C] = G − C`, under the same key with the same noise. Decryption uses
++the circuit's output level, which is public, as the key index ([BV11, Def 3.6]'s `Dec` is
++level-agnostic). Noise and correctness are worst case. The evaluation keys are public-key
++encryptions under the user's own keys (P6-Q8).
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
++
++open BoolCircuit
++open Encryption.PublicKey
++
++/-- The coins of the level keys: one coin matrix for each of the `N` positions of each of the
++`L` levels. Reducible notation. -/
++abbrev LevelCoins (P : Parameters) (L : ℕ) : Type :=
++  Fin L → Fin P.columns → Coins P
++
++/-- `LevelCoins P L` is `Fin L → Fin P.columns → Coins P`. -/
++theorem LevelCoins_eq (P : Parameters) (L : ℕ) :
++    LevelCoins P L = (Fin L → Fin P.columns → Coins P) := rfl
++
++/-- **The level key** of the consecutive chain (P6-Q14 B) [BV11, Thm 3.1, p015-b001: "only the
++length of the evaluation key depends on the level L"; BV14, Thm 2.14 first part, p008-b003]:
++for `d : Fin L`, the encryptions under `pk_{d+1}` of the `N` key bits of `s_d`, with the coins
++`R d`, `levelKey P pks ss R d = evalKey P (pks d.succ) (ss d.castSucc) (R d)`. In all `N·L`
++ciphertexts. The chain is [Gen09, §4.1, `KeyGen` of `E^(d)`, pp. 46–47, p056-b003] with the
++levels renumbered: Gentry encrypts `sk_i` under `pk_{i−1}`, in reverse order [Gen09, §4.1,
++p. 46, p056-b002], and his level `i` is level `L − i` here. -/
++def levelKey (P : Parameters) {L : ℕ} (pks : Fin (L + 1) → PublicKey P)
++    (ss : Fin (L + 1) → Secret P) (R : LevelCoins P L) (d : Fin L) :
++    Fin P.columns → Ciphertext P :=
++  evalKey P (pks d.succ) (ss d.castSucc) (R d)
++
++/-- `levelKey P pks ss R d` is `evalKey P (pks d.succ) (ss d.castSucc) (R d)`. -/
++theorem levelKey_eq (P : Parameters) {L : ℕ} (pks : Fin (L + 1) → PublicKey P)
++    (ss : Fin (L + 1) → Secret P) (R : LevelCoins P L) (d : Fin L) :
++    levelKey P pks ss R d = evalKey P (pks d.succ) (ss d.castSucc) (R d) := rfl
++
++/-- **The level-0 literal ciphertexts** [Bar89, Thm 1, p003-b002: "inputs and negated inputs";
++BV14, §3.3, p014-b002: the complements `I − C_k`]: the input ciphertexts followed by their
++negations `homNot P [cts j] = G − cts j`, in the order of 6a's `litInput`,
++`literalCts P cts = Fin.append cts (fun j => homNot P [cts j])`. -/
++def literalCts (P : Parameters) {k : ℕ} (cts : Fin k → Ciphertext P) :
++    Fin (k + k) → Ciphertext P :=
++  Fin.append cts fun j => homNot P [cts j]
++
++/-- `literalCts P cts` is `Fin.append cts (fun j => homNot P [cts j])`. -/
++theorem literalCts_eq (P : Parameters) {k : ℕ} (cts : Fin k → Ciphertext P) :
++    literalCts P cts = Fin.append cts fun j => homNot P [cts j] := rfl
++
++/-- The first `k` literal ciphertexts are the inputs:
++`literalCts P cts (Fin.castAdd k j) = cts j`. -/
++theorem literalCts_castAdd (P : Parameters) {k : ℕ} (cts : Fin k → Ciphertext P) (j : Fin k) :
++    literalCts P cts (Fin.castAdd k j) = cts j := by
++  rw [literalCts_eq, Fin.append_left]
++
++/-- The last `k` literal ciphertexts are the negations:
++`literalCts P cts (Fin.natAdd k j) = homNot P [cts j]`. -/
++theorem literalCts_natAdd (P : Parameters) {k : ℕ} (cts : Fin k → Ciphertext P) (j : Fin k) :
++    literalCts P cts (Fin.natAdd k j) = homNot P [cts j] := by
++  rw [literalCts_eq, Fin.append_right]
++
++/-- **The level gate**: a gate at level `δ` (its `depthAt`) with `1 ≤ δ ≤ L` is bootstrapped
++(`bootGate`, with its padding) under the level key `δ − 1`, which encrypts the bits of
++`s_{δ−1}` under `pk_δ`; above level `L` it gives the noiseless `0` (never read by the output of
++a circuit of depth at most `L`),
++`levelGate P lk δ g cts = if h : δ - 1 < L then bootGate P (lk ⟨δ - 1, h⟩) g cts else 0`.
++Reconstruction disclosed (module docstring). -/
++def levelGate (P : Parameters) {L : ℕ} (lk : Fin L → Fin P.columns → Ciphertext P) (δ : ℕ)
++    (g : DAGGate) (cts : List (Ciphertext P)) : Ciphertext P :=
++  if h : δ - 1 < L then bootGate P (lk ⟨δ - 1, h⟩) g cts else 0
++
++/-- Below the top: `δ - 1 < L → levelGate P lk δ g cts = bootGate P (lk ⟨δ - 1, h⟩) g cts`. -/
++theorem levelGate_of_lt (P : Parameters) {L : ℕ} (lk : Fin L → Fin P.columns → Ciphertext P)
++    (δ : ℕ) (g : DAGGate) (cts : List (Ciphertext P)) (h : δ - 1 < L) :
++    levelGate P lk δ g cts = bootGate P (lk ⟨δ - 1, h⟩) g cts := by
++  unfold levelGate
++  rw [dif_pos h]
++
++/-- Above the top: `L ≤ δ - 1 → levelGate P lk δ g cts = 0`. -/
++theorem levelGate_of_le (P : Parameters) {L : ℕ} (lk : Fin L → Fin P.columns → Ciphertext P)
++    (δ : ℕ) (g : DAGGate) (cts : List (Ciphertext P)) (h : L ≤ δ - 1) :
++    levelGate P lk δ g cts = 0 := by
++  unfold levelGate
++  rw [dif_neg (Nat.not_lt.mpr h)]
++
++/-- **Leveled evaluation** of a layered NAND-form circuit on the `2k` literal ciphertexts
++[BV14, Thm 2.14 first part, p008-b003; BV11, Thm 3.1, Def 3.6, p015-b001, p014-b001]: run the
++host `runWith` (H19) over the gates, the gate at vertex `v` (the length of the data so far) by
++`levelGate` at its level `Cc.depthAt v`, and read the output vertex,
++`leveledEval P lk Cc cts = (runWith (fun g vs => levelGate P lk (Cc.depthAt vs.length) g vs)
++Cc.gates (List.ofFn cts)).getD Cc.output 0`. Computable. **Compactness by typing**: the
++result is a `Ciphertext P` whatever `Cc`. Reconstruction disclosed (module docstring). -/
++def leveledEval (P : Parameters) {L k : ℕ} (lk : Fin L → Fin P.columns → Ciphertext P)
++    (Cc : DAGCircuit (k + k)) (cts : Fin (k + k) → Ciphertext P) : Ciphertext P :=
++  (runWith (fun g vs => levelGate P lk (Cc.depthAt vs.length) g vs) Cc.gates
++    (List.ofFn cts)).getD Cc.output 0
++
++/-- `leveledEval P lk Cc cts` is `(runWith (fun g vs => levelGate P lk (Cc.depthAt vs.length) g vs)
++Cc.gates (List.ofFn cts)).getD Cc.output 0`. -/
++theorem leveledEval_eq (P : Parameters) {L k : ℕ} (lk : Fin L → Fin P.columns → Ciphertext P)
++    (Cc : DAGCircuit (k + k)) (cts : Fin (k + k) → Ciphertext P) :
++    leveledEval P lk Cc cts =
++      (runWith (fun g vs => levelGate P lk (Cc.depthAt vs.length) g vs) Cc.gates
++        (List.ofFn cts)).getD Cc.output 0 := rfl
++
++/-- **Leveled evaluation of any fan-in-2 circuit** on `k ≥ 1` inputs [BV14, Thm 2.14 first
++part, p008-b003; BV11, Def 3.6, p014-b001]: `leveledEval` of the layered NAND form
++`(Cc.toNANDForm hC).layerNAND` (6a's N3–N13) on the literal ciphertexts,
++`leveledEvalCircuit P lk Cc hC cts = leveledEval P lk (Cc.toNANDForm hC).layerNAND
++(literalCts P cts)`. Computable. **Compactness by typing**. Reconstruction disclosed (module
++docstring). -/
++def leveledEvalCircuit (P : Parameters) {L k : ℕ} [NeZero k]
++    (lk : Fin L → Fin P.columns → Ciphertext P) (Cc : DAGCircuit k)
++    (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2) (cts : Fin k → Ciphertext P) : Ciphertext P :=
++  leveledEval P lk (Cc.toNANDForm hC).layerNAND (literalCts P cts)
++
++/-- `leveledEvalCircuit P lk Cc hC cts` is `leveledEval P lk (Cc.toNANDForm hC).layerNAND
++(literalCts P cts)`. -/
++theorem leveledEvalCircuit_eq (P : Parameters) {L k : ℕ} [NeZero k]
++    (lk : Fin L → Fin P.columns → Ciphertext P) (Cc : DAGCircuit k)
++    (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2) (cts : Fin k → Ciphertext P) :
++    leveledEvalCircuit P lk Cc hC cts =
++      leveledEval P lk (Cc.toNANDForm hC).layerNAND (literalCts P cts) := rfl
++
++/-! ### Targets L1–L3 -/
++
++/-- **L1. Level-key noise.** For a `B`-bounded noise law and honest key generation at every
++level, `pk_d = (Regev.keygen P.lwe χ (rgs d)).1` and `s_d = (Regev.keygen P.lwe χ (rgs d)).2`,
++every ciphertext of the level key `d` encrypts the key bit `j` of `s_d` under the key vector of
++`s_{d+1}` with noise at most `m·B`:
++`Encrypts P (secretVector P s_{d+1}) (keyBits P s_d j).toNat (P.lwe.samples * B)
++(levelKey P pks ss R d j)` [BV11, Thm 3.1, p015-b001; BV14, Thm 2.14 first part, p008-b003].
++A citation, proved: phase 5's `encrypts_keygen_encrypt` read through `levelKey_eq` and
++`evalKey_eq`. Reconstruction disclosed (module docstring). -/
++theorem encrypts_levelKey (P : Parameters) (χ : LWE.Noise) (B : ℕ) (hχ : χ.Bounded B) {L : ℕ}
++    (rgs : Fin (L + 1) → KeySeed P χ) (R : LevelCoins P L) (d : Fin L) (j : Fin P.columns) :
++    Encrypts P (secretVector P (Regev.keygen P.lwe χ (rgs d.succ)).2)
++      ((keyBits P (Regev.keygen P.lwe χ (rgs d.castSucc)).2 j).toNat : ℤ) (P.lwe.samples * B)
++      (levelKey P (fun e => (Regev.keygen P.lwe χ (rgs e)).1)
++        (fun e => (Regev.keygen P.lwe χ (rgs e)).2) R d j) := by
++  rw [levelKey_eq, evalKey_eq]
++  exact encrypts_keygen_encrypt P χ (rgs d.succ) B hχ _ (R d j)
++
++/-- **L2. Leveled correctness, noise form.** Let `ss : Fin (L + 1) → Secret P` be the level
++secrets, `lk d` encrypt the key bits of `s_d` under the key vector of `s_{d+1}` with noise at
++most `βk`, and the `2k` input ciphertexts encrypt the bits `y j` under `s_0` with noise at most
++`βin`. If `2·(ℓ·βin) < ⌊q/2⌋` and `2·(ℓ·bootNoise P βk) < ⌊q/2⌋`, then for every layered
++NAND-form circuit `Cc` of depth at most `L`, the output encrypts `Cc.eval y` under the key of
++level `Cc.depth` with noise at most `max βin (bootNoise P βk)`:
++`Encrypts P (secretVector P (ss ⟨Cc.depth, _⟩)) (Cc.eval y).toNat (max βin (bootNoise P βk))
++(leveledEval P lk Cc cts)` [BV14, Thm 2.14 first part, p008-b003; BV11, Thm 3.1, Def 3.6,
++p015-b001, p014-b001]. Deviations: layered circuits on literal inputs, the public output level,
++worst case; reconstruction disclosed (module docstring).
++
++**Proof sketch.** Apply the host lemma `runWith_rel` (H19) to `DAGGate.eval` from
++`List.ofFn y` and to the leveled gate function from `List.ofFn cts`, with the vertex relation:
++"if `Cc.depthAt v ≤ L`, the ciphertext encrypts the value under `s_{depthAt v}` with noise at most
++`max βin (bootNoise P βk)`". Inputs have level `0` (`depthAt_input`): `hin`. A gate at vertex
++`v = 2k + i` (`runWith` hands it the data of length `v`, `length_runWith`) has level
++`δ = Cc.depthAt v ≥ 1` (`depthAt_gate`, `DAGGate.depth_eq`); if `δ ≤ L`, `levelGate_of_lt`
++selects the level key `δ − 1`. The circuit is layered (`isLayered_iff`), so every argument is
++at level `δ − 1` and, by the relation and `decrypt_of_encrypts` (with `hβin` or `hboot`),
++decrypts under `s_{δ−1}` to its value; the padded `G` decrypts to `true` (`encrypts_gadget`).
++The three case readers of `bootGate` and G9 (`encrypts_bootNAND` with `s = s_{δ−1}`,
++`t' = t_δ`, `hk`) give an encryption under `s_δ` of the NAND of the argument values with noise
++`bootNoise P βk`, which is the gate's value (`isNANDForm_iff`, `DAGGate.eval_of_isNAND`, N1).
++Gates above level `L` are unconstrained and are never read by a vertex at level `≤ L`. At the
++output (`Cc.output_lt`, level `Cc.depth = depthAt Cc.output` by `depth_eq`, at most `L`), read
++`DAGCircuit.eval_eq`, `values_eq` and `leveledEval_eq`. -/
++theorem encrypts_leveledEval (P : Parameters) {L k : ℕ} (Cc : DAGCircuit (k + k))
++    (hNAND : Cc.IsNANDForm) (hlay : Cc.IsLayered) (hdepth : Cc.depth ≤ L)
++    (ss : Fin (L + 1) → Secret P) (lk : Fin L → Fin P.columns → Ciphertext P) (βk βin : ℕ)
++    (hk : ∀ d j, Encrypts P (secretVector P (ss d.succ)) ((keyBits P (ss d.castSucc) j).toNat : ℤ)
++      βk (lk d j))
++    (y : Fin (k + k) → Bool) (cts : Fin (k + k) → Ciphertext P)
++    (hin : ∀ j, Encrypts P (secretVector P (ss 0)) ((y j).toNat : ℤ) βin (cts j))
++    (hβin : 2 * (P.width * βin) < P.lwe.modulus / 2)
++    (hboot : 2 * (P.width * bootNoise P βk) < P.lwe.modulus / 2) :
++    Encrypts P (secretVector P (ss ⟨Cc.depth, Nat.lt_succ_of_le hdepth⟩)) ((Cc.eval y).toNat : ℤ)
++      (max βin (bootNoise P βk)) (leveledEval P lk Cc cts) := by
++  sorry
++
++/-- **L3. Leveled correctness for honest keys and every fan-in-2 circuit of NAND depth at most
++`L`.** For a `B`-bounded noise law, honest key generation at every level (seeds `rgs`), level
++coins `R`, input bits `x` encrypted under `pk_0` with coins `R'`, and a circuit `Cc` on
++`k ≥ 1` inputs whose NAND form has depth at most `L`, if `2·(ℓ·bootNoise P (m·B)) < ⌊q/2⌋` and
++`2·(ℓ·(m·B)) < ⌊q/2⌋`, then the leveled evaluation under the chain of level keys decrypts, under
++the secret of level `(Cc.toNANDForm hC).depth`, to `Cc.eval x`
++[BV14, Thm 3.7, p016-b001: "a leveled FHE scheme, without additional assumptions"]. Deviations:
++decryption uses the public output level; worst case; reconstruction disclosed (module
++docstring).
++
++**Proof sketch.** `leveledEvalCircuit_eq`. The level keys satisfy L2's `hk` with `βk = m·B` by
++L1 (`encrypts_levelKey`). The literal ciphertexts encrypt `litInput x` under `s_0` with noise
++`m·B`: the first half by `encrypts_keygen_encrypt` (`literalCts_castAdd`), the second half by
++`homNot_eq`, `homAnd_singleton`, `encrypts_gadget` and `Encrypts.sub` (`literalCts_natAdd`,
++noise `0 + m·B`), matched with `litInput_castAdd`, `litInput_natAdd`; every `j : Fin (k + k)`
++is one of the two (`Fin.addCases`). The layered circuit `(Cc.toNANDForm hC).layerNAND` is in
++NAND form (`layerNAND_isNANDForm` with `toNANDForm_isNANDForm`), layered
++(`layerNAND_isLayered`) and of depth `(Cc.toNANDForm hC).depth ≤ L` (`layerNAND_depth`), and
++evaluates on `litInput x` to `Cc.eval x` (`layerNAND_eval`, `toNANDForm_eval`). L2 then gives
++an encryption under the output level's secret with noise `max (m·B) (bootNoise P (m·B))`, and
++`decrypt_of_encrypts` with `hin`/`hsep` finishes. -/
++theorem decrypt_keygen_leveledEvalCircuit (P : Parameters) (χ : LWE.Noise) (B : ℕ)
++    (hχ : χ.Bounded B) {L k : ℕ} [NeZero k] (rgs : Fin (L + 1) → KeySeed P χ)
++    (R : LevelCoins P L) (Cc : DAGCircuit k) (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2)
++    (hdepth : (Cc.toNANDForm hC).depth ≤ L) (x : Fin k → Bool) (R' : Fin k → Coins P)
++    (hsep : 2 * (P.width * bootNoise P (P.lwe.samples * B)) < P.lwe.modulus / 2)
++    (hin : 2 * (P.width * (P.lwe.samples * B)) < P.lwe.modulus / 2) :
++    decrypt P (Regev.keygen P.lwe χ (rgs ⟨(Cc.toNANDForm hC).depth, Nat.lt_succ_of_le hdepth⟩)).2
++        (leveledEvalCircuit P
++          (levelKey P (fun e => (Regev.keygen P.lwe χ (rgs e)).1)
++            (fun e => (Regev.keygen P.lwe χ (rgs e)).2) R) Cc hC
++          fun j => encrypt P (Regev.keygen P.lwe χ (rgs 0)).1 (x j) (R' j)) =
++      Cc.eval x := by
++  sorry
++
++end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean
+new file mode 100644
+index 000000000..a07967b4b
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean
+@@ -0,0 +1,362 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Leveled
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Security
++import TCSlib.Cryptography.Encryption.PublicKey.EnsembleSecurity
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# IND-CPA of leveled GSW-FHE from DLWE: the top-down key hybrid
++
++## Main definitions
++
++* `LeveledSeeds`, `LeveledView`: the seeds and the view of the leveled scheme.
++* `leveledView`: the `L + 1` public keys, the `L` level keys and `Enc_{pk_0}(μ)`.
++* `levelHybrid`: the hybrid `H_h` in which the level keys `e ≥ h` encrypt `0` instead of the
++  key bits; `H_L` is the real view, `H_0` has no key bits at all.
++* `levelMsgs`, `levelAssemble`, `levelReduction`: the reduction of step `e` at position `j`,
++  `hybridPlant` (the shared multi-ciphertext hybrid) composed with phase 5's `reduction`.
++* `levelTerm`: its two DLWE advantages plus `2·(N·ε_LHL)`.
++* `challengeDist`, `challengeTerm`: the final phase-5 step on the challenge under `pk_0`.
++
++## Main results
++
++* `distAdv_levelHybrid_le` (L4): one level, `N` positions.
++* `distAdv_leveledView_le` (L5): IND-CPA of leveled GSW-FHE from DLWE.
++
++Both are admitted statement-phase targets.
++
++**Sources and reconstruction (P6-Q19 B).** The key chain is Gentry's [Gen09, §4.1, `KeyGen` of
++`E^(d)`, pp. 46–47, p056-b003], with his reverse order of the levels undone: his level `i` is
++level `L − i` here (`GSW/Leveled.lean`). The hybrid order is his [Gen09, Thm 4.2.3 and its
++proof, pp. 50–51, p060-b001, p061-b001]: Game `k` replaces the encryptions under `pk_{i−1}` of
++`sk_i` for `i ∈ [1, k]`, and the step from Game `k` to Game `k + 1` plants the challenge key as
++`pk_k`, whose secret occurs only in encryptions already replaced. Renumbered, Game `k` is
++`H_{L−k}`, and the order is the top-down order below. The statements cite [BV11, Thm 3.1,
++Def 3.6], [BV14, Thm 2.14 first part, Thm 3.7] and [AP14, §5.3], with [GSW13, §3.2, Lemma 1],
++[BV11, Def 3.1] and [BV14, §2.5] for the one-key steps and the view; [Gen09] is cited here, for
++the construction. Deviations from [Gen09, Thm 4.2.3]: a replaced level key encrypts `0`, not
++the bits of an unrelated fresh key; each level step is a hybrid over the `N` positions, not one
++challenge of Gentry's `ℓ`-fold scheme `(E)^ℓ`; each step reduces to DLWE (phase 5), not to the
++semantic security of the base scheme; and the middle step between the two chains is phase 5's
++challenge step, not Gentry's Game `d + 1` (a random plaintext).
++
++## References
++
++* [BV14] Z. Brakerski, V. Vaikuntanathan, *Lattice-Based FHE as Secure as PKE*, ITCS 2014;
++  IACR ePrint 2013/541: Thm 2.14 (first part), Thm 3.7.
++* [BV11] Z. Brakerski, V. Vaikuntanathan, *Efficient Fully Homomorphic Encryption from
++  (Standard) LWE*, FOCS 2011 full version; IACR ePrint 2011/344: Def 3.1, Def 3.6, Thm 3.1.
++* [AP14] J. Alperin-Sheriff, C. Peikert, *Faster Bootstrapping with Polynomial Error*,
++  CRYPTO 2014; IACR ePrint 2014/094: §5.3.
++* [GSW13] C. Gentry, A. Sahai, B. Waters, CRYPTO 2013; IACR ePrint 2013/340, version dated
++  8 June 2013: §3.2, Lemma 1.
++* [Gen09] C. Gentry, *A Fully Homomorphic Encryption Scheme*, PhD thesis, Stanford University,
++  September 2009: §4.1, Thm 4.2.3 (with its proof).
++
++**Deviations.** Levels are indexed from `0`: the level key `e : Fin L` encrypts the bits of
++`s_e` under `pk_{e+1}` (r3's `evk_d`, `d = e + 1`). The hybrid runs top-down: step `e` (from
++`H_{e+1}` to `H_e`, `e = L − 1, …, 0`) replaces the level key `e` by encryptions of `0`; it is
++legitimate because `s_{e+1}`, the secret of `pk_{e+1}`, occurs only in the level key `e + 1`,
++already replaced. Each step is a multi-ciphertext hybrid over the `N` positions; its messages,
++the bits of `s_e`, are random and are drawn inside the reduction's coins (r3 §H8 item 12).
++The challenge bit `μ` enters each step's reduction (which must simulate the challenge), so the
++level terms carry `μ`, and the bound of L5 sums the terms of the two chains (`μ₀` and `μ₁`)
++where r3 wrote `2·∑`. Concrete statements with function-level distinguishers, as phase 5.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
++
++open Encryption.PublicKey
++
++/-- The seeds of the leveled view: `L + 1` key-generation seeds, the coins of the `N·L` level-key
++encryptions and the coins of the challenge. Reducible notation. -/
++abbrev LeveledSeeds (P : Parameters) (χ : LWE.Noise) (L : ℕ) : Type :=
++  (Fin (L + 1) → KeySeed P χ) × LevelCoins P L × Coins P
++
++/-- `LeveledSeeds P χ L` is `(Fin (L + 1) → KeySeed P χ) × LevelCoins P L × Coins P`. -/
++theorem LeveledSeeds_eq (P : Parameters) (χ : LWE.Noise) (L : ℕ) :
++    LeveledSeeds P χ L = ((Fin (L + 1) → KeySeed P χ) × LevelCoins P L × Coins P) := rfl
++
++/-- The leveled view: `L + 1` public keys, `L` level keys of `N` ciphertexts each, and one
++challenge ciphertext. Reducible notation. -/
++abbrev LeveledView (P : Parameters) (L : ℕ) : Type :=
++  (Fin (L + 1) → PublicKey P) × (Fin L → Fin P.columns → Ciphertext P) × Ciphertext P
++
++/-- `LeveledView P L` is `(Fin (L + 1) → PublicKey P) × (Fin L → Fin P.columns → Ciphertext P) ×
++Ciphertext P`. -/
++theorem LeveledView_eq (P : Parameters) (L : ℕ) :
++    LeveledView P L =
++      ((Fin (L + 1) → PublicKey P) × (Fin L → Fin P.columns → Ciphertext P) × Ciphertext P) :=
++  rfl
++
++/-- **The leveled FHE view of a bit** `μ` [BV11, Def 3.1, p013-b002, for the leveled scheme;
++BV14, §2.5, p007-b001]: from independent honest key generations
++`(pk_d, s_d) = Regev.keygen P.lwe χ (r.1 d)`, the public keys, the chain of level keys
++`levelKey P pk s r.2.1` and the challenge `encrypt P pk_0 μ r.2.2`,
++`leveledView P χ L μ r = (pk, levelKey P pk s r.2.1, encrypt P (pk 0) μ r.2.2)`.
++Reconstruction disclosed (module docstring). -/
++def leveledView (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ : Bool) (r : LeveledSeeds P χ L) :
++    LeveledView P L :=
++  (fun d => (Regev.keygen P.lwe χ (r.1 d)).1,
++    levelKey P (fun d => (Regev.keygen P.lwe χ (r.1 d)).1)
++      (fun d => (Regev.keygen P.lwe χ (r.1 d)).2) r.2.1,
++    encrypt P (Regev.keygen P.lwe χ (r.1 0)).1 μ r.2.2)
++
++/-- `leveledView P χ L μ r` is `(pk, levelKey P pk s r.2.1, encrypt P (pk 0) μ r.2.2)` with
++`(pk d, s d) = Regev.keygen P.lwe χ (r.1 d)`. -/
++theorem leveledView_eq (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ : Bool)
++    (r : LeveledSeeds P χ L) :
++    leveledView P χ L μ r =
++      (fun d => (Regev.keygen P.lwe χ (r.1 d)).1,
++        levelKey P (fun d => (Regev.keygen P.lwe χ (r.1 d)).1)
++          (fun d => (Regev.keygen P.lwe χ (r.1 d)).2) r.2.1,
++        encrypt P (Regev.keygen P.lwe χ (r.1 0)).1 μ r.2.2) := rfl
++
++/-- **The level hybrid** `H_h`: as `leveledView`, except that every level key `e` with `h ≤ e`
++holds encryptions of `0` under `pk_{e+1}` (same coins) instead of the key bits of `s_e`.
++`H_L` is the real view (`h = L` replaces nothing) and `H_0` replaces every level key.
++`levelHybrid P χ L μ h r = (pk, fun e j => if h ≤ e then encrypt P (pk e.succ) false (r.2.1 e j)
++else levelKey P pk s r.2.1 e j, encrypt P (pk 0) μ r.2.2)`. Glue for the top-down hybrid;
++reconstruction disclosed (module docstring). -/
++def levelHybrid (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ : Bool) (h : ℕ)
++    (r : LeveledSeeds P χ L) : LeveledView P L :=
++  (fun d => (Regev.keygen P.lwe χ (r.1 d)).1,
++    fun e j => if h ≤ e.val then encrypt P (Regev.keygen P.lwe χ (r.1 e.succ)).1 false (r.2.1 e j)
++      else levelKey P (fun d => (Regev.keygen P.lwe χ (r.1 d)).1)
++        (fun d => (Regev.keygen P.lwe χ (r.1 d)).2) r.2.1 e j,
++    encrypt P (Regev.keygen P.lwe χ (r.1 0)).1 μ r.2.2)
++
++/-- `levelHybrid P χ L μ h r` is `(pk, fun e j => if h ≤ e then encrypt P (pk e.succ) false
++(r.2.1 e j) else levelKey P pk s r.2.1 e j, encrypt P (pk 0) μ r.2.2)`. -/
++theorem levelHybrid_eq (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ : Bool) (h : ℕ)
++    (r : LeveledSeeds P χ L) :
++    levelHybrid P χ L μ h r =
++      (fun d => (Regev.keygen P.lwe χ (r.1 d)).1,
++        fun e j => if h ≤ e.val then
++            encrypt P (Regev.keygen P.lwe χ (r.1 e.succ)).1 false (r.2.1 e j)
++          else levelKey P (fun d => (Regev.keygen P.lwe χ (r.1 d)).1)
++            (fun d => (Regev.keygen P.lwe χ (r.1 d)).2) r.2.1 e j,
++        encrypt P (Regev.keygen P.lwe χ (r.1 0)).1 μ r.2.2) := rfl
++
++/-- The messages of step `e`: the `N` key bits of `s_e`, indexed by `Fin (N − 1 + 1)` (the
++index shape of `hybridPlant`; `N ≥ 1`),
++`levelMsgs P χ L e r i = keyBits P (Regev.keygen P.lwe χ (r.1 e.castSucc)).2 (Fin.cast _ i)`.
++Glue. -/
++def levelMsgs (P : Parameters) (χ : LWE.Noise) (L : ℕ) (e : Fin L) (r : LeveledSeeds P χ L)
++    (i : Fin (P.columns - 1 + 1)) : Bool :=
++  keyBits P (Regev.keygen P.lwe χ (r.1 e.castSucc)).2
++    (Fin.cast (Nat.sub_one_add_one (NeZero.ne P.columns)) i)
++
++/-- `levelMsgs P χ L e r i` is
++`keyBits P (Regev.keygen P.lwe χ (r.1 e.castSucc)).2 (Fin.cast _ i)`. -/
++theorem levelMsgs_eq (P : Parameters) (χ : LWE.Noise) (L : ℕ) (e : Fin L)
++    (r : LeveledSeeds P χ L) (i : Fin (P.columns - 1 + 1)) :
++    levelMsgs P χ L e r i =
++      keyBits P (Regev.keygen P.lwe χ (r.1 e.castSucc)).2
++        (Fin.cast (Nat.sub_one_add_one (NeZero.ne P.columns)) i) := rfl
++
++/-- The view assembled by the step-`e` reduction around a planted key `v.1` (as `pk_{e+1}`) and
++`N` planted ciphertexts `v.2` (as the level key `e`), from its own seeds `c.1` and running `D`
++with the coins `c.2`: the other public keys from `c.1`, the level keys `e' > e` as encryptions of
++`0` (the hybrid `H_{e+1}`), the level keys `e' < e` honest, and the challenge `Enc_{pk_0}(μ)`.
++`levelAssemble P χ L μ e D v c = D (update pk e.succ v.1, fun e' j => if e' = e then
++v.2 (Fin.cast _ j) else if e < e' then encrypt P (pk e'.succ) false (c.1.2.1 e' j) else
++levelKey P pk s c.1.2.1 e' j, encrypt P (pk 0) μ c.1.2.2) c.2`. Glue. -/
++def levelAssemble (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ : Bool) (e : Fin L) {ρ : Type*}
++    (D : LeveledView P L → ρ → Bool)
++    (v : PublicKey P × (Fin (P.columns - 1 + 1) → Ciphertext P)) (c : LeveledSeeds P χ L × ρ) :
++    Bool :=
++  D (Function.update (fun d => (Regev.keygen P.lwe χ (c.1.1 d)).1) e.succ v.1,
++    fun e' j => if e' = e then v.2 (Fin.cast (Nat.sub_one_add_one (NeZero.ne P.columns)).symm j)
++      else if e.val < e'.val then
++        encrypt P (Regev.keygen P.lwe χ (c.1.1 e'.succ)).1 false (c.1.2.1 e' j)
++      else levelKey P (fun d => (Regev.keygen P.lwe χ (c.1.1 d)).1)
++        (fun d => (Regev.keygen P.lwe χ (c.1.1 d)).2) c.1.2.1 e' j,
++    encrypt P (Regev.keygen P.lwe χ (c.1.1 0)).1 μ c.1.2.2) c.2
++
++/-- `levelAssemble P χ L μ e D v c` runs `D` with the coins `c.2` on the view with `pk_{e+1}`
++planted as `v.1`, the level key `e` planted as `v.2`, the keys above `e` encrypting `0`, those
++below honest, and the challenge `Enc_{pk_0}(μ)` (the formula of `levelAssemble`'s docstring). -/
++theorem levelAssemble_eq (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ : Bool) (e : Fin L)
++    {ρ : Type*} (D : LeveledView P L → ρ → Bool)
++    (v : PublicKey P × (Fin (P.columns - 1 + 1) → Ciphertext P)) (c : LeveledSeeds P χ L × ρ) :
++    levelAssemble P χ L μ e D v c =
++      D (Function.update (fun d => (Regev.keygen P.lwe χ (c.1.1 d)).1) e.succ v.1,
++        fun e' j => if e' = e then
++            v.2 (Fin.cast (Nat.sub_one_add_one (NeZero.ne P.columns)).symm j)
++          else if e.val < e'.val then
++            encrypt P (Regev.keygen P.lwe χ (c.1.1 e'.succ)).1 false (c.1.2.1 e' j)
++          else levelKey P (fun d => (Regev.keygen P.lwe χ (c.1.1 d)).1)
++            (fun d => (Regev.keygen P.lwe χ (c.1.1 d)).2) c.1.2.1 e' j,
++        encrypt P (Regev.keygen P.lwe χ (c.1.1 0)).1 μ c.1.2.2) c.2 := rfl
++
++/-- **The reduction of step `e` at position `j`** (side `b`): the DLWE test that, on a challenge
++key `pk` and its coins `c = (R₀, Rs, r, ρ)`, plants `pk` as `pk_{e+1}`, encrypts under it the
++messages of step `e` (the key bits of `s_e`, from its own seeds `r`) at the positions after `j`
++and `0` at the positions before `j`, encrypts at position `j` the bit `b ∧ (bit j of s_e)` with
++the coins `R₀`, assembles the rest of the view itself (`levelAssemble`) and runs `D`. It is
++`hybridPlant` (`EnsembleSecurity.lean`) composed with phase 5's `reduction`:
++`levelReduction P χ L μ e j b D pk c = reduction P (if b then levelMsgs P χ L e c.2.2.1 j' else
++false) (hybridPlant (encrypt P) (levelMsgs P χ L e c.2.2.1) (fun _ => false) j'
++(levelAssemble P χ L μ e D)) pk c`, with `j' = Fin.cast _ j` [GSW13, §3.2, Lemma 1, p009-b002,
++p010-b001; AP14, §5.3, p015-b002]. Reconstruction disclosed (module docstring). -/
++def levelReduction (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ : Bool) (e : Fin L)
++    (j : Fin P.columns) (b : Bool) {ρ : Type*} (D : LeveledView P L → ρ → Bool)
++    (pk : PublicKey P)
++    (c : Coins P × ((Fin (P.columns - 1 + 1) → Coins P) × (LeveledSeeds P χ L × ρ))) : Bool :=
++  reduction P
++    (if b then
++      levelMsgs P χ L e c.2.2.1 (Fin.cast (Nat.sub_one_add_one (NeZero.ne P.columns)).symm j)
++    else false)
++    (hybridPlant (encrypt P) (levelMsgs P χ L e c.2.2.1) (fun _ => false)
++      (Fin.cast (Nat.sub_one_add_one (NeZero.ne P.columns)).symm j) (levelAssemble P χ L μ e D))
++    pk c
++
++/-- `levelReduction P χ L μ e j b D pk c` is `reduction P (if b then levelMsgs P χ L e c.2.2.1 j'
++else false) (hybridPlant (encrypt P) (levelMsgs P χ L e c.2.2.1) (fun _ => false) j'
++(levelAssemble P χ L μ e D)) pk c` with `j' = Fin.cast _ j`. -/
++theorem levelReduction_eq (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ : Bool) (e : Fin L)
++    (j : Fin P.columns) (b : Bool) {ρ : Type*} (D : LeveledView P L → ρ → Bool)
++    (pk : PublicKey P)
++    (c : Coins P × ((Fin (P.columns - 1 + 1) → Coins P) × (LeveledSeeds P χ L × ρ))) :
++    levelReduction P χ L μ e j b D pk c =
++      reduction P
++        (if b then
++          levelMsgs P χ L e c.2.2.1 (Fin.cast (Nat.sub_one_add_one (NeZero.ne P.columns)).symm j)
++        else false)
++        (hybridPlant (encrypt P) (levelMsgs P χ L e c.2.2.1)
++          (fun _ => false) (Fin.cast (Nat.sub_one_add_one (NeZero.ne P.columns)).symm j)
++          (levelAssemble P χ L μ e D))
++        pk c := rfl
++
++/-- **The term of step `e` at position `j`**: the two DLWE advantages of its reduction (sides
++`true` and `false`) plus `2·(N·ε_LHL)`, `ε_LHL = Regev.extractionError P.lwe`, the shape of
++`distAdv_encrypt_le`'s right-hand side,
++`levelTerm P χ L μ e j D = decisionAdvantage P.lwe χ (levelReduction P χ L μ e j true D) +
++decisionAdvantage P.lwe χ (levelReduction P χ L μ e j false D) +
++2 * (P.columns * Regev.extractionError P.lwe)` [GSW13, §3.2, Lemma 1, p009-b002, p010-b001].
++Glue. -/
++noncomputable def levelTerm (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ : Bool) (e : Fin L)
++    (j : Fin P.columns) {ρ : Type*} [Fintype ρ] [Nonempty ρ] (D : LeveledView P L → ρ → Bool) :
++    ℝ :=
++  LWE.decisionAdvantage P.lwe χ (levelReduction P χ L μ e j true D) +
++    LWE.decisionAdvantage P.lwe χ (levelReduction P χ L μ e j false D) +
++    2 * (P.columns * Regev.extractionError P.lwe)
++
++/-- `levelTerm P χ L μ e j D` is the sum of the two DLWE advantages of `levelReduction` (sides
++`true`, `false`) and `2 * (P.columns * Regev.extractionError P.lwe)`. -/
++theorem levelTerm_eq (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ : Bool) (e : Fin L)
++    (j : Fin P.columns) {ρ : Type*} [Fintype ρ] [Nonempty ρ] (D : LeveledView P L → ρ → Bool) :
++    levelTerm P χ L μ e j D =
++      LWE.decisionAdvantage P.lwe χ (levelReduction P χ L μ e j true D) +
++        LWE.decisionAdvantage P.lwe χ (levelReduction P χ L μ e j false D) +
++        2 * (P.columns * Regev.extractionError P.lwe) := rfl
++
++/-- The distinguisher of the final step: on a phase-5 view `v = (pk, ct)` and coins `c`, it
++plants `pk` as `pk_0` and `ct` as the challenge in the hybrid `H_0` (every level key an
++encryption of `0`) built from its own seeds `c.1`, and runs `D` with `c.2`,
++`challengeDist P χ L D v c = D (update pk 0 v.1, fun e j => encrypt P (pk e.succ) false
++(c.1.2.1 e j), v.2) c.2`. Glue. -/
++def challengeDist (P : Parameters) (χ : LWE.Noise) (L : ℕ) {ρ : Type*}
++    (D : LeveledView P L → ρ → Bool) (v : PublicKey P × Ciphertext P)
++    (c : LeveledSeeds P χ L × ρ) : Bool :=
++  D (Function.update (fun d => (Regev.keygen P.lwe χ (c.1.1 d)).1) 0 v.1,
++    fun e j => encrypt P (Regev.keygen P.lwe χ (c.1.1 e.succ)).1 false (c.1.2.1 e j), v.2) c.2
++
++/-- `challengeDist P χ L D v c` is `D (update pk 0 v.1, fun e j => encrypt P (pk e.succ) false
++(c.1.2.1 e j), v.2) c.2`. -/
++theorem challengeDist_eq (P : Parameters) (χ : LWE.Noise) (L : ℕ) {ρ : Type*}
++    (D : LeveledView P L → ρ → Bool) (v : PublicKey P × Ciphertext P)
++    (c : LeveledSeeds P χ L × ρ) :
++    challengeDist P χ L D v c =
++      D (Function.update (fun d => (Regev.keygen P.lwe χ (c.1.1 d)).1) 0 v.1,
++        fun e j => encrypt P (Regev.keygen P.lwe χ (c.1.1 e.succ)).1 false (c.1.2.1 e j), v.2)
++        c.2 := rfl
++
++/-- **The term of the challenge step**: phase 5's bound for the challenge under `pk_0` with the
++distinguisher `challengeDist`, `challengeTerm P χ L μ₀ μ₁ D =
++decisionAdvantage P.lwe χ (reduction P μ₀ (challengeDist P χ L D)) +
++decisionAdvantage P.lwe χ (reduction P μ₁ (challengeDist P χ L D)) +
++2 * (P.columns * Regev.extractionError P.lwe)` [GSW13, §3.2, p009-b002]. Glue. -/
++noncomputable def challengeTerm (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ₀ μ₁ : Bool)
++    {ρ : Type*} [Fintype ρ] [Nonempty ρ] (D : LeveledView P L → ρ → Bool) : ℝ :=
++  LWE.decisionAdvantage P.lwe χ (reduction P μ₀ (challengeDist P χ L D)) +
++    LWE.decisionAdvantage P.lwe χ (reduction P μ₁ (challengeDist P χ L D)) +
++    2 * (P.columns * Regev.extractionError P.lwe)
++
++/-- `challengeTerm P χ L μ₀ μ₁ D` is the two DLWE advantages of `reduction P μᵢ
++(challengeDist P χ L D)` plus `2 * (P.columns * Regev.extractionError P.lwe)`. -/
++theorem challengeTerm_eq (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ₀ μ₁ : Bool) {ρ : Type*}
++    [Fintype ρ] [Nonempty ρ] (D : LeveledView P L → ρ → Bool) :
++    challengeTerm P χ L μ₀ μ₁ D =
++      LWE.decisionAdvantage P.lwe χ (reduction P μ₀ (challengeDist P χ L D)) +
++        LWE.decisionAdvantage P.lwe χ (reduction P μ₁ (challengeDist P χ L D)) +
++        2 * (P.columns * Regev.extractionError P.lwe) := rfl
++
++/-! ### Targets L4–L5 -/
++
++/-- **L4. One level of the key hybrid.** For every level `e : Fin L`, bit `μ` and distinguisher
++`D`, replacing the `N` encryptions under `pk_{e+1}` of the key bits of `s_e` by encryptions of
++`0` (from `H_{e+1}` to `H_e`) costs at most the sum of the position terms,
++`distAdv (levelHybrid P χ L μ (e + 1)) (levelHybrid P χ L μ e) D ≤
++∑ j : Fin P.columns, levelTerm P χ L μ e j D` [AP14, §5.3, p015-b002 (independent keys);
++GSW13, §3.2, Lemma 1, p009-b002, p010-b001]. Legitimate because `s_{e+1}` occurs only in the
++level key `e + 1`, already replaced in `H_{e+1}` (top-down order). Reconstruction disclosed
++(module docstring).
++
++**Proof sketch.** Position hybrids `G_i` (`i ≤ N`) between `H_{e+1}` (`G_0`) and `H_e` (`G_N`):
++the first `i` ciphertexts of the level key `e` encrypt `0`. `abs_sub_le_sum_hybrids` reduces
++to the gaps `|Pr[D(G_i)] − Pr[D(G_{i+1})]|`, as in `distAdv_multi_le_sum` (whose
++`hybridPlant` the reduction uses; the messages, the bits of `s_e`, are drawn inside the
++reduction's coins, r3 §H8 item 12, so the multi-ciphertext lemma is applied per value of the
++other seeds or its proof is followed with them in the coins). The gap at `i = j` is the gap of
++`levelReduction P χ L μ e j b D` between a real LWE key and a uniform key, plus the gap
++between `b = true` and `b = false` under a uniform key: `levelReduction_eq`, `reduction_eq`,
++`hybridPlant_eq` (the planted position), `levelAssemble_eq`, `levelHybrid_eq`, `Regev.keygen_fst`
++(the planted key is distributed as `pk_{e+1}`, whose secret is otherwise unused in `H_{e+1}`),
++and the seed regrouping (`acceptProb_comp_equiv`, `OneWay.uprob_update`). As in phase 5's
++`distAdv_encrypt_le`: the two DLWE gaps are the exact advantages (`real_uniformKey_advantage`,
++`LWE.decisionAdvantage_eq`), and the uniform-key gap is at most `2·(N·ε_LHL)` for each value
++of the reduction's own seeds (`uniformKey_uniform_advantage_le`, twice), averaged. Sum over
++`j` (`levelTerm_eq`). -/
++theorem distAdv_levelHybrid_le (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ : Bool) (e : Fin L)
++    {ρ : Type*} [Fintype ρ] [Nonempty ρ] (D : LeveledView P L → ρ → Bool) :
++    distAdv (levelHybrid P χ L μ (e.val + 1)) (levelHybrid P χ L μ e.val) D ≤
++      ∑ j : Fin P.columns, levelTerm P χ L μ e j D := by
++  sorry
++
++/-- **L5. IND-CPA of leveled GSW-FHE from DLWE.** For all bits `μ₀`, `μ₁` and every
++distinguisher `D`, the leveled views of `μ₀` and `μ₁` differ by at most the sum of the level
++terms of both hybrid chains plus the challenge term,
++`distAdv (leveledView P χ L μ₀) (leveledView P χ L μ₁) D ≤
++∑ e : Fin L, ∑ j : Fin P.columns, (levelTerm P χ L μ₀ e j D + levelTerm P χ L μ₁ e j D) +
++challengeTerm P χ L μ₀ μ₁ D` [BV14, Thm 2.14 first part, p008-b003, and Thm 3.7, p016-b001;
++BV11, Thm 3.1, p015-b001]. No circular-security assumption. Deviation: r3's `2·∑ levelTerm`
++becomes the sum over the two chains, the level terms depending on the challenge bit;
++reconstruction disclosed (module docstring).
++
++**Proof sketch.** `leveledView P χ L μ = levelHybrid P χ L μ L` (`leveledView_eq`,
++`levelHybrid_eq`: no `e : Fin L` has `L ≤ e`). The chain `H_L(μ₀), …, H_0(μ₀), H_0(μ₁), …,
++H_L(μ₁)`: `abs_sub_le_sum_hybrids` (or the triangle inequality, `abs_sub_le`) on each side
++with L4 (`distAdv_levelHybrid_le`) for `e = L − 1, …, 0` (`Fin.sum_univ_eq_sum_range`). The
++middle step: `H_0(μ)` is `challengeDist P χ L D` run on phase 5's `realView P χ μ`, after the
++seed regrouping (`challengeDist_eq`, `realView_eq`, `view_eq`, `Regev.keygen_fst`, and
++`acceptProb_comp_equiv`; the seed of `pk_0` and the unused coordinates are integrated out), so
++phase 5's `distAdv_encrypt_le` bounds it by `challengeTerm P χ L μ₀ μ₁ D` (`challengeTerm_eq`).
++`linarith`. -/
++theorem distAdv_leveledView_le (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ₀ μ₁ : Bool)
++    {ρ : Type*} [Fintype ρ] [Nonempty ρ] (D : LeveledView P L → ρ → Bool) :
++    distAdv (leveledView P χ L μ₀) (leveledView P χ L μ₁) D ≤
++      ∑ e : Fin L, ∑ j : Fin P.columns,
++          (levelTerm P χ L μ₀ e j D + levelTerm P χ L μ₁ e j D) +
++        challengeTerm P χ L μ₀ μ₁ D := by
++  sorry
++
++end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean
+new file mode 100644
+index 000000000..2995b996e
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean
+@@ -0,0 +1,179 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Leveled
++import TCSlib.Cryptography.LWE.Ratio
++import Mathlib.Tactic.Simps.Basic
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Bootstrapped GSW at a polynomial modulus-to-noise ratio
++
++## Main definitions
++
++* `Parameters.ofFamily F κ`: the GSW parameters of an LWE family at `κ`, gadget width the
++  family's residue width.
++* `pBoot F`: an explicit syntactic polynomial in `κ` built from the family's dimension, sample
++  and residue-width bounds.
++
++## Main results
++
++* `bootRatio_le_poly` (G16): `8·(ℓ·bootNoise (ofFamily F κ) (m·B κ)) ≤ pBoot(κ)·B(κ)`.
++* `decrypt_fheEval_of_ratio`, `decrypt_leveledEval_of_ratio` (G17, split into the pure and the
++  leveled scheme): if `pBoot(κ)·B(κ) < q(κ)` and the noise is `B(κ)`-bounded, bootstrapped
++  GSW at `κ` is correct on every circuit, pure (G12) and leveled (L3).
++
++All three are admitted statement-phase targets. With `LWE.Family.RatioBounded F B p` the
++condition `pBoot(κ)·B(κ) < q(κ)` is the regime of a polynomial ratio `q/B` (assumption (A2)).
++
++**Sources and reconstruction (P6-Q19 B), for the leveled statement.** The key chain is
++Gentry's [Gen09, §4.1, `KeyGen` of `E^(d)`, pp. 46–47, p056-b003], with his reverse order of
++the levels undone (`GSW/Leveled.lean`); his correctness theorem for the leveled scheme is
++[Gen09, Thm 4.2.1, p. 49, p059-b001] (only its statement is ingested). The hybrid order,
++[Gen09, Thm 4.2.3, pp. 50–51, p060-b001, p061-b001], concerns security and is used in
++`GSW/LeveledSecurity.lean`, not here.
++
++## References
++
++* [BV14] Z. Brakerski, V. Vaikuntanathan, *Lattice-Based FHE as Secure as PKE*, ITCS 2014;
++  IACR ePrint 2013/541: §3.4, Thm 3.7.
++* [BV11] Z. Brakerski, V. Vaikuntanathan, *Efficient Fully Homomorphic Encryption from
++  (Standard) LWE*, FOCS 2011 full version; IACR ePrint 2011/344: Thm 3.1, Def 3.6.
++* [GSW13] C. Gentry, A. Sahai, B. Waters, CRYPTO 2013; IACR ePrint 2013/340, version dated
++  8 June 2013: §3.1 (parameters).
++* [Gen09] C. Gentry, *A Fully Homomorphic Encryption Scheme*, PhD thesis, Stanford University,
++  September 2009: §4.1, Thm 4.2.1, Thm 4.2.3.
++
++**Deviations.** Worst case, with an explicit polynomial (constant `2^70`; r3 §H6 drafted
++`c < 2^70` with the factor `4`), not [BV14, Thm 3.7]'s `Θ̃` noise rate. The constant `8`
++(r3 G16 wrote `4`) absorbs the floor in the decryption condition `2·(ℓ·β) < ⌊q/2⌋`, so that
++`pBoot(κ)·B(κ) < q(κ)` suffices in G17.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
++
++open Complexity
++open Encryption.PublicKey
++
++/-- **The GSW parameters of an LWE family** at the security parameter `κ` [GSW13, §3.1,
++p008-b002; phase-5 §G4]: the family's LWE parameters, gadget width `ℓ = F.residueBits(κ)`, and
++`q ≤ 2^ℓ` from the family's width bound, `(ofFamily F κ).lwe = F.parameters κ`,
++`(ofFamily F κ).width = F.residueBits.eval κ`. Read only through its non-simp `simps` readers
++`Parameters.ofFamily_lwe` and `Parameters.ofFamily_width` (type-level Rule 10). -/
++@[simps (config := { isSimp := false }) lwe width]
++def Parameters.ofFamily (F : LWE.Family) (κ : ℕ) : Parameters where
++  lwe := F.parameters κ
++  width := F.residueBits.eval κ
++  modulus_le := F.modulus_le_pow κ
++
++/-- **The bootstrapping polynomial** of a family (r3 G16 *(fix)*, settled here), with
++`d = F.dimensionBound`, `s = F.samplesBound`, `r = F.residueBits`:
++`pBoot F = 2^70 · r · ((d + 1)·r)^19 · (r + (d + 1)·r + 3)^4 · s`, evaluating to
++`2^70·ℓ·N̂^19·(ℓ + N̂ + 3)^4·m̂` with `N̂ = (d(κ) + 1)·ℓ ≥ N` and `m̂ = s(κ) ≥ m` [BV14, Thm 3.7,
++p016-b001, worst-case analogue]. Derivation: `bootNoise_le` (G13) gives
++`bootNoise P β ≤ 4^33·N^19·X^4·(2β)` with `X = ℓ + ⌈log₂ N⌉ + 3 ≤ ℓ + N̂ + 3`; times `8·ℓ` and
++with `β = m·B`, the constant is `8·4^33·2 = 2^70`. -/
++def pBoot (F : LWE.Family) : PolyExpr :=
++  .mul (.mul (.mul (.mul (.const (2 ^ 70)) F.residueBits)
++      (.pow (.mul (.add F.dimensionBound (.const 1)) F.residueBits) 19))
++    (.pow (.add (.add F.residueBits (.mul (.add F.dimensionBound (.const 1)) F.residueBits))
++      (.const 3)) 4))
++    F.samplesBound
++
++/-- `pBoot F` is the expression `2^70 · r · ((d + 1)·r)^19 · (r + (d + 1)·r + 3)^4 · s` with
++`d = F.dimensionBound`, `s = F.samplesBound`, `r = F.residueBits`. -/
++theorem pBoot_eq (F : LWE.Family) :
++    pBoot F =
++      .mul (.mul (.mul (.mul (.const (2 ^ 70)) F.residueBits)
++          (.pow (.mul (.add F.dimensionBound (.const 1)) F.residueBits) 19))
++        (.pow (.add (.add F.residueBits (.mul (.add F.dimensionBound (.const 1)) F.residueBits))
++          (.const 3)) 4))
++        F.samplesBound := rfl
++
++/-! ### Targets G16–G17 -/
++
++/-- **G16. The bootstrapped noise is polynomial in the noise bound.** For every family `F`,
++noise bound `B` and `κ`, with `P = ofFamily F κ`, `ℓ = P.width` and `m = P.lwe.samples`,
++`8 * (P.width * bootNoise P (P.lwe.samples * B κ)) ≤ (pBoot F).eval κ * B κ`
++[BV14, Thm 3.7, p016-b001, worst-case analogue]. Deviation: the factor `8` (r3: `4`), see the
++module docstring.
++
++**Proof sketch.** `bootNoise_le` (G13) at `β = m·B`. Read `P` through
++`Parameters.ofFamily_lwe`, `Parameters.ofFamily_width`, `Parameters.columns_eq`, and `pBoot`
++through `pBoot_eq` and `PolyExpr.eval` (notation). Bound `n ≤ d(κ)` and `m ≤ s(κ)` by the family's
++`dimension_le` and `samples_le`, so `N = (n + 1)·ℓ ≤ N̂`; `⌈log₂ N⌉ ≤ N`
++(`Nat.clog_le_iff_le_pow` with `N < 2^N`, `Nat.lt_two_pow_self`), so `X ≤ ℓ + N̂ + 3`; then
++monotonicity of products and powers (`Nat.mul_le_mul`, `Nat.pow_le_pow_left`) and
++`8·4^33·2 = 2^70` (`norm_num`). -/
++theorem bootRatio_le_poly (F : LWE.Family) (B : ℕ → ℕ) (κ : ℕ) :
++    8 * ((Parameters.ofFamily F κ).width *
++        bootNoise (Parameters.ofFamily F κ) ((Parameters.ofFamily F κ).lwe.samples * B κ)) ≤
++      (pBoot F).eval κ * B κ := by
++  sorry
++
++/-- **G17, pure scheme. Correctness at a polynomial ratio.** For every family `F`, noise bound
++`B` and `κ`, if the noise law `F.noise κ` is `B κ`-bounded and `pBoot(κ)·B(κ) < q(κ)`, then
++the pure bootstrapped GSW at `P = ofFamily F κ` decrypts every fan-in-2 circuit correctly, for
++every key seed `rg`, evaluation-key coins `R`, input bits `x` and coins `R'`:
++`decrypt P sk (fheEvalCircuit P (evalKey P pk sk R) Cc hC fun j => encrypt P pk (x j) (R' j)) =
++Cc.eval x` with `(pk, sk) = Regev.keygen P.lwe (F.noise κ) rg` [BV14, §3.4, Thm 3.7,
++p016-b001]. With `LWE.Family.RatioBounded F B p` (`ratioBounded_iff`) this is the regime of a
++polynomial ratio. Deviation: worst case.
++
++**Proof sketch.** G12 (`decrypt_keygen_fheEvalCircuit`) at `P`. Its condition
++`2·(ℓ·bootNoise P (m·B κ)) < ⌊q/2⌋` follows from G16 (`bootRatio_le_poly`) and `hq`:
++`8·y ≤ pBoot(κ)·B(κ) < q` gives `4·y + 2 ≤ q` when `y ≥ 1` (and trivially when `y = 0`, as
++`q ≥ 2`), hence `2·y < ⌊q/2⌋` (`omega`), with `y = ℓ·bootNoise`. `q` is read as
++`(ofFamily F κ).lwe.modulus` through `Parameters.ofFamily_lwe`. -/
++theorem decrypt_fheEval_of_ratio (F : LWE.Family) (B : ℕ → ℕ) (κ : ℕ)
++    (hχ : (F.noise κ).Bounded (B κ)) (hq : (pBoot F).eval κ * B κ < (F.parameters κ).modulus)
++    (rg : KeySeed (Parameters.ofFamily F κ) (F.noise κ))
++    (R : Fin (Parameters.ofFamily F κ).columns → Coins (Parameters.ofFamily F κ)) {k : ℕ}
++    (Cc : BoolCircuit.DAGCircuit k) (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2) (x : Fin k → Bool)
++    (R' : Fin k → Coins (Parameters.ofFamily F κ)) :
++    decrypt (Parameters.ofFamily F κ)
++        (Regev.keygen (Parameters.ofFamily F κ).lwe (F.noise κ) rg).2
++        (fheEvalCircuit (Parameters.ofFamily F κ)
++          (evalKey (Parameters.ofFamily F κ)
++            (Regev.keygen (Parameters.ofFamily F κ).lwe (F.noise κ) rg).1
++            (Regev.keygen (Parameters.ofFamily F κ).lwe (F.noise κ) rg).2 R) Cc hC
++          fun j => encrypt (Parameters.ofFamily F κ)
++            (Regev.keygen (Parameters.ofFamily F κ).lwe (F.noise κ) rg).1 (x j) (R' j)) =
++      Cc.eval x := by
++  sorry
++
++/-- **G17, leveled scheme. Correctness at a polynomial ratio.** For every family `F`, noise
++bound `B`, `κ` and level count `L`, if the noise law is `B κ`-bounded and
++`pBoot(κ)·B(κ) < q(κ)`, then the leveled bootstrapped GSW at `P = ofFamily F κ` decrypts, under
++the secret of the output level, every fan-in-2 circuit on `k ≥ 1` inputs whose NAND form has
++depth at most `L`, for every family of key seeds `rgs`, level coins `R`, input bits `x` and
++coins `R'` [BV14, §3.4, Thm 3.7, p016-b001; BV11, Thm 3.1, Def 3.6, p015-b001, p014-b001].
++Deviations: worst case; the public output level; reconstruction disclosed (module docstring).
++
++**Proof sketch.** L3 (`decrypt_keygen_leveledEvalCircuit`) at `P`. Its two conditions follow
++from G16 (`bootRatio_le_poly`) and `hq` as in `decrypt_fheEval_of_ratio`; the input condition
++because `m·B ≤ bootNoise P (m·B)` (`bootNoise_eq`, `N ≥ 1` by `Parameters.neZero_columns`). -/
++theorem decrypt_leveledEval_of_ratio (F : LWE.Family) (B : ℕ → ℕ) (κ : ℕ)
++    (hχ : (F.noise κ).Bounded (B κ)) (hq : (pBoot F).eval κ * B κ < (F.parameters κ).modulus)
++    {L k : ℕ} [NeZero k] (rgs : Fin (L + 1) → KeySeed (Parameters.ofFamily F κ) (F.noise κ))
++    (R : LevelCoins (Parameters.ofFamily F κ) L) (Cc : BoolCircuit.DAGCircuit k)
++    (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2) (hdepth : (Cc.toNANDForm hC).depth ≤ L)
++    (x : Fin k → Bool) (R' : Fin k → Coins (Parameters.ofFamily F κ)) :
++    decrypt (Parameters.ofFamily F κ)
++        (Regev.keygen (Parameters.ofFamily F κ).lwe (F.noise κ)
++          (rgs ⟨(Cc.toNANDForm hC).depth, Nat.lt_succ_of_le hdepth⟩)).2
++        (leveledEvalCircuit (Parameters.ofFamily F κ)
++          (levelKey (Parameters.ofFamily F κ)
++            (fun e => (Regev.keygen (Parameters.ofFamily F κ).lwe (F.noise κ) (rgs e)).1)
++            (fun e => (Regev.keygen (Parameters.ofFamily F κ).lwe (F.noise κ) (rgs e)).2) R)
++          Cc hC fun j => encrypt (Parameters.ofFamily F κ)
++            (Regev.keygen (Parameters.ofFamily F κ).lwe (F.noise κ) (rgs 0)).1 (x j) (R' j)) =
++      Cc.eval x := by
++  sorry
++
++end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
+diff --git a/TCSlib/Cryptography/LWE.lean b/TCSlib/Cryptography/LWE.lean
+index 9bb1db092..f41508218 100644
+--- a/TCSlib/Cryptography/LWE.lean
++++ b/TCSlib/Cryptography/LWE.lean
+@@ -11,6 +11,7 @@ import TCSlib.Cryptography.LWE.SampleSchedules
+ import TCSlib.Cryptography.LWE.BitEncoding
+ import TCSlib.Cryptography.LWE.BitNoise
+ import TCSlib.Cryptography.LWE.Sampling
++import TCSlib.Cryptography.LWE.Ratio
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -30,6 +31,7 @@ set_option autoImplicit false
+ * `BitEncoding`: bit codepoints, exact tie conventions and bounded-error decoding statements.
+ * `BitNoise`: explicit bit-seed laws and centered finite-noise profile statements.
+ * `Sampling`: actual-law fair-bit implementations of the real and uniform experiments.
++* `Ratio`: a polynomially bounded modulus-to-noise ratio for a family.
+ 
+ ## References
+ 
+diff --git a/TCSlib/Cryptography/LWE/Ratio.lean b/TCSlib/Cryptography/LWE/Ratio.lean
+new file mode 100644
+index 000000000..5dff56fba
+--- /dev/null
++++ b/TCSlib/Cryptography/LWE/Ratio.lean
+@@ -0,0 +1,59 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.LWE.Assumption
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# A polynomially bounded modulus-to-noise ratio for an LWE family
++
++## Main definitions
++
++* `Family.RatioBounded F B p`: at every security parameter `κ` the noise law of `F` is
++  `B κ`-bounded and the modulus is at most `p(κ)·B(κ)`, for a syntactic polynomial `p`.
++
++## Main results
++
++* `Family.ratioBounded_iff`: the reader of the predicate.
++
++The predicate is the regime of the phase-5 ruling Q16 (assumption (A2) of the GSW plan): DLWE
++for a family whose ratio `q/B` is polynomially bounded. Its consumers are the GSW
++polynomial-ratio statements (`GSW/PolyRatio.lean`); no theorem is stated here.
++
++## References
++
++* [BV14] Z. Brakerski, V. Vaikuntanathan, *Lattice-Based FHE as Secure as PKE*, ITCS 2014;
++  IACR ePrint 2013/541: §3.4, Thm 3.7 (a noise rate `α` inverse-polynomial in `n log q`).
++* [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, author version dated
++  17 February 2016, Definition 4.2.3 (decision-LWE).
++
++**Deviations.** [BV14, Thm 3.7] bounds a Gaussian noise rate `α`; here the noise law is the
++library's finite-seed `Noise` with a worst-case bound `B`, and the ratio is `q ≤ p(κ)·B(κ)`.
++-/
++
++namespace TCSlib.Cryptography.LWE
++
++open Complexity
++
++/-- **A polynomially bounded ratio** (phase-5 Q16; P6-Q12): for every security parameter `κ`,
++the noise law `F.noise κ` is `B κ`-bounded and the modulus is at most `p(κ)·B(κ)`,
++`F.RatioBounded B p ↔ ∀ κ, (F.noise κ).Bounded (B κ) ∧
++(F.parameters κ).modulus ≤ p.eval κ * B κ` [BV14, §3.4, Thm 3.7, p016-b001: the noise rate
++`α` inverse-polynomial; Pei16, Def 4.2.3, p024-b001]. Deviation: a worst-case bound on a
++finite-seed law instead of a Gaussian rate. -/
++def Family.RatioBounded (F : Family) (B : ℕ → ℕ) (p : PolyExpr) : Prop :=
++  ∀ κ, (F.noise κ).Bounded (B κ) ∧ (F.parameters κ).modulus ≤ p.eval κ * B κ
++
++/-- `F.RatioBounded B p` holds exactly when, for every `κ`, `(F.noise κ).Bounded (B κ)` and
++`(F.parameters κ).modulus ≤ p.eval κ * B κ`. -/
++theorem Family.ratioBounded_iff (F : Family) (B : ℕ → ℕ) (p : PolyExpr) :
++    F.RatioBounded B p ↔
++      ∀ κ, (F.noise κ).Bounded (B κ) ∧ (F.parameters κ).modulus ≤ p.eval κ * B κ :=
++  Iff.rfl
++
++end TCSlib.Cryptography.LWE
