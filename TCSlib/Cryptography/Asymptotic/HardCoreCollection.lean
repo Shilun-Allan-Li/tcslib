@@ -118,10 +118,12 @@ noncomputable def glPad (m : PolyExpr)
   eval_spec i z := by simp [F.eval_spec]
   sample_spec n r s := by
     obtain ⟨⟨s₁, s₂⟩, hs⟩ := (Fin.appendEquiv (F.sample.coins.eval n) (m.eval n)).surjective
-      (NUPPT.coinsEquiv_ofPolyTimeUniform (glPadSampleFun_poly F) (.add F.sample.coins m) n s)
+      (Equiv.arrowCongr (finCongr (PolyExpr.eval_add F.sample.coins m n)) (Equiv.refl Bool)
+        (NUPPT.coinsEquiv_ofPolyTimeUniform (glPadSampleFun_poly F) (.add F.sample.coins m) n s))
     have hofn : List.ofFn s = List.ofFn s₁ ++ List.ofFn s₂ := by
       rw [← NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn (glPadSampleFun_poly F)
-        (.add F.sample.coins m) n s, ← hs]
+        (.add F.sample.coins m) n s, ← ofFn_arrowCongr_finCongr (PolyExpr.eval_add F.sample.coins m n),
+        ← hs]
       exact List.ofFn_fin_append s₁ s₂
     have hA : (List.ofFn s).take (F.sample.coinLen n) = List.ofFn s₁ := by
       rw [hofn, NUPPT.coinLen_eq, List.take_left' List.length_ofFn]
@@ -175,7 +177,7 @@ theorem glPad_sample_runAtL (m : PolyExpr)
       pairEncode (F.sample.runAtL n i (r.take (F.sample.coinLen n))) (r.drop (F.sample.coinLen n)) := by
   simp only [glPad, NUPPT.runAtL_eq, NUPPT.output_ofPolyTimeUniform,
     glPadSampleFun_def, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, NUPPT.layout_eq,
-    pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, F.sample_uniform n,
+    pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, F.sample_uniform.advice_eq n,
     NUPPT.coinLen_eq]
 
 variable {F} in
@@ -353,17 +355,21 @@ inversion probability `≥ ε²/(4·2^{k(n)})`, inverse polynomial infinitely of
 theorem OneWay.glPad_hardCore {F : Collection} (m : PolyExpr)
     (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
     (h : F.OneWay) : (F.glPad m henc).HardCore F.glBit := by
-  refine ⟨?_, fun A => ?_⟩
+  refine (hardCore_iff _ _).2 ⟨?_, fun A => ?_⟩
   · obtain ⟨H, hH, hHx⟩ := exists_glBitCollEvaluator F
     exact ⟨H, hH, fun i x => hHx i x.1 x.2⟩
   · have hmax : ∀ x : ℝ, x ≤ 1 / 2 + max 0 (x - 1 / 2) := fun x => by
       linarith [le_max_right (0 : ℝ) (x - 1 / 2)]
     refine ⟨_, glColl_negligible F m (fun n r => (F.encD (F.index n r) default).length)
-      (fun n r => henc n r default) henc A (fun B => ?_), fun n => hmax _⟩
+      (fun n r => henc n r default) henc A (fun B => ?_), fun n => le_of_eq_of_le
+        (congrArg uexp (funext fun r => by rw [glPad_index m henc n r]; rfl)) (hmax _)⟩
     have key := (OneWay.glPad m henc h).hard B
     simp only [Collection.invProbAt_eq] at key
     simp only [glPad_decD_eq] at key
-    exact key
+    -- the index of the padded collection is that of `F` (`glPad_index`)
+    refine cast (congrArg Negligible (funext fun n => congrArg uexp (funext fun r => ?_))) key
+    rw [glPad_index m henc n r]
+    rfl
 
 end Collection
 
@@ -417,13 +423,13 @@ theorem PermCollection.glPad_perm (P : PermCollection) (m : PolyExpr)
 theorem PermCollection.OneWay.glPad {P : PermCollection} (m : PolyExpr)
     (henc : ∀ n (r : P.gen.Coins n) (x : P.D (P.index n r)), (P.encD (P.index n r) x).length = m.eval n)
     (h : P.OneWay) : (P.glPad m henc).OneWay :=
-  Collection.OneWay.glPad m henc h
+  (PermCollection.oneWay_iff _).2 (Collection.OneWay.glPad m henc ((PermCollection.oneWay_iff P).1 h))
 
 /-- **`⟨x, r⟩` is hard-core for the padded permutation collection**. -/
 theorem PermCollection.OneWay.glPad_hardCore {P : PermCollection} (m : PolyExpr)
     (henc : ∀ n (r : P.gen.Coins n) (x : P.D (P.index n r)), (P.encD (P.index n r) x).length = m.eval n)
     (h : P.OneWay) : (P.glPad m henc).toCollection.HardCore P.glBit :=
-  Collection.OneWay.glPad_hardCore m henc h
+  Collection.OneWay.glPad_hardCore m henc ((PermCollection.oneWay_iff P).1 h)
 
 /-- The padded collection of a collection of trapdoor permutations is a collection of
 trapdoor permutations [PS10, Theorem 87.3 for Definition 56.1, as used in Theorem 104.4]:
@@ -481,7 +487,8 @@ for Definition 56.1 (5)). -/
 theorem TrapdoorCollection.OneWay.glPad {T : TrapdoorCollection} (m : PolyExpr)
     (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
     (h : T.OneWay) : (T.glPad m henc).OneWay :=
-  Collection.OneWay.glPad m henc h
+  (TrapdoorCollection.oneWay_iff _).2
+    (Collection.OneWay.glPad m henc ((TrapdoorCollection.oneWay_iff T).1 h))
 
 /-- **`⟨x, r⟩` is hard-core for the padded trapdoor collection**: the hypothesis "trapdoor
 permutations with a hard-core predicate" of [PS10, Theorem 104.4] is satisfiable from trapdoor
@@ -490,7 +497,7 @@ candidate of the library satisfies it as parametrized, see `Collection.glPad`). 
 theorem TrapdoorCollection.OneWay.glPad_hardCore {T : TrapdoorCollection} (m : PolyExpr)
     (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
     (h : T.OneWay) : (T.glPad m henc).toCollection.HardCore T.glBit :=
-  Collection.OneWay.glPad_hardCore m henc h
+  Collection.OneWay.glPad_hardCore m henc ((TrapdoorCollection.oneWay_iff T).1 h)
 
 /-- **`⟨x, r⟩` is hard-core for the padded trapdoor collection**, the predicate read through the
 published domain equivalence `e = T.glPad_domEquiv m henc`: `z ↦ ⟨(e z).1, (e z).2⟩` is
