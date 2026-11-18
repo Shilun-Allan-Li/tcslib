@@ -234,19 +234,6 @@ private theorem constant_multiplier (c : ℕ) :
       Fin.val_zero, Nat.add_zero] using out
 
 
-/-- Successive control renamings compose, while all data fields stay fixed. -/
-private lemma cfg_map_comp {k : ℕ} {S T U : Type} {x : List Bool}
-    (f : S → T) (g : T → U) (d : Cfg k Bool S x) :
-    (d.mapState f).mapState g = d.mapState (g ∘ f) := by
-  apply Cfg.ext
-  · simp only [Cfg.mapState_state, Option.map_map]
-  · simp only [Cfg.mapState_inputPos]
-  · funext j z
-    simp only [Cfg.mapState_workTapes]
-  · funext j
-    simp only [Cfg.mapState_workTapePos]
-  · simp only [Cfg.mapState_output]
-
 /-- Changing the designated start state leaves runs from a fixed configuration, and
 therefore visited work space, unchanged. -/
 private lemma space_with_start {k : ℕ} {S : Type} {x : List Bool}
@@ -430,7 +417,7 @@ private theorem scale_computes (M : FinTM Bool) (c : ℕ) :
     rw [embedEmitTM_runFrom, vrun]
   have hrun := seamCompTM_run_ofCfg CR (Sum.inr .done) E (P.tm.q₀, true)
     crun (by rw [Cfg.mapState_state]; rfl) ccut (by
-      simpa only [cfg_map_comp, Function.comp_apply] using estart.symm ▸ erun)
+      simpa only [Turing.Cfg.mapState_mapState, Function.comp_apply] using estart.symm ▸ erun)
   have nstart : N.tm.initCfg x = ((a₀.mapState Sum.inl).mapState Sum.inl) := by
     rw [MultiTapeTM.initCfg_with_q₀]
     rw [show a₀ = Cfg.init (Sum.inl M.tm.q₀) x from
@@ -515,7 +502,7 @@ private theorem scale_computes (M : FinTM Bool) (c : ℕ) :
     have hspace := seamCompTM_spaceUsed_le_add_ofCfg CR (Sum.inr .done) E (P.tm.q₀, true)
       (T₂ := b) crun (by rw [Cfg.mapState_state]; rfl) ccut
     have eh : (r₁.mapState (Sum.inr : RewindPhase → (M.State ⊕ Unit) ⊕ RewindPhase)).mapState (fun _ => (P.tm.q₀, true)) = e₀ := by
-      rw [cfg_map_comp]
+      rw [Turing.Cfg.mapState_mapState]
       exact estart.symm
     rw [eh] at hspace
     have combined : H.spaceUsed ((a₀.mapState Sum.inl).mapState Sum.inl) u ≤
