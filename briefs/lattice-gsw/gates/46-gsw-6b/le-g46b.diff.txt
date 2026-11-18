@@ -1,0 +1,46 @@
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean
+index 180c8eaf5..a0c4823cd 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean
+@@ -55,7 +55,7 @@ depth; here the number of levels `L(κ)` is a polynomial.
+ * [GSW13] C. Gentry, A. Sahai, B. Waters, CRYPTO 2013; IACR ePrint 2013/340, version dated
+   8 June 2013: §3.2.
+ * [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, author version dated
+-  17 February 2016, Definition 4.2.3.
++  17 February 2016, §5.4.3.
+ * [Gen09] C. Gentry, *A Fully Homomorphic Encryption Scheme*, PhD thesis, Stanford University,
+   September 2009: §4.1, Thm 4.2.3.
+ 
+@@ -75,8 +75,10 @@ open Encryption.PublicKey
+ /-! ### Encodings -/
+ 
+ /-- The canonical bit encoding of a ciphertext: its `(n+1) × N` entries row by row, `ℓ` bits
+-each, `encodeCiphertext P C = Encoding.Modular.encodeMatrix P.width C` [Pei16, Def 4.2.3,
+-p024-b001, the binary representation convention]. -/
++each, `encodeCiphertext P C = Encoding.Modular.encodeMatrix P.width C`. Glue: a local
++encoding choice, which the cited sources do not fix. Each entry is written as the `ℓ`-bit binary
++numeral of its canonical residue in `{0, …, q − 1}`, the base-two representation of the
++canonical representative in [Pei16, §5.4.3, p052-b001]. -/
+ def encodeCiphertext (P : Parameters) (C : Ciphertext P) : List Bool :=
+   Encoding.Modular.encodeMatrix P.width C
+ 
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean
+index e72596abe..355fefbd0 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean
+@@ -98,9 +98,12 @@ coins in `ρ`, has advantage at most `ε` between the FHE views of `0` and `1`,
+ hypothesis (A1), never derived from LWE (phase-5 Q15). Its reader `weakCircularSecure_iff` is
+ the security half of [BV11, Thm 3.2, p015-b001] and [BV14, Thm 2.14 second part, p008-b003]
+ (ruling Q-6B-1 A: r3's G14). Deviation: BV11's definition is asymptotic, and
+-`WeakCircularSecureFamily` is the headline form. It is stated per distinguisher because,
+-quantified over **every** function `FheView P → ρ → Bool`, it would hold only for `ε` near `1`:
+-an unbounded distinguisher recovers `s` from `pk` and decrypts the challenge. -/
++`WeakCircularSecureFamily` is the headline form. It is stated per distinguisher because, for
++parameters under which decryption is correct, quantified over **every** function
++`FheView P → ρ → Bool` it would hold only for `ε` near `1`: an unbounded test can enumerate the
++key-generation seeds, take any seed whose public key is `pk`, and decrypt the challenge with
++that seed's secret. Recovering the original `s` uniquely is unnecessary. The definition also
++admits parameters that do not decrypt correctly, to which this argument does not apply. -/
+ def WeakCircularSecure (P : Parameters) (χ : LWE.Noise) {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+     (D : FheView P → ρ → Bool) (ε : ℝ) : Prop :=
+   distAdv (fheView P χ false) (fheView P χ true) D ≤ ε
