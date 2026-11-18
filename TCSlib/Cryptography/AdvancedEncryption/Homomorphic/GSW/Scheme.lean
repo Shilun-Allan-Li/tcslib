@@ -149,6 +149,27 @@ theorem decrypt_eq (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modu
       Regev.decrypt P.lwe s (Fin.init (decryptColumn P C), decryptColumn P C (Fin.last _)) :=
   rfl
 
+/-- **Decryption decodes `⟨t, c⟩`.** GSW decryption is `decode` of the inner product of the key
+vector `t = (−s, 1)` with the decryption column `c = C · G⁻¹(w)`:
+`decrypt P s C = decode (secretVector P s ⬝ᵥ decryptColumn P C)`, because the Regev residual
+`c_last − ⟨s, c_init⟩` of the split column is `⟨t, c⟩` [GSW13, Section 3.1, `Dec`; BV14,
+Section 3.1, `NCCrypt.Dec`].
+
+**Proof sketch.** `decrypt_eq` and `Regev.decrypt_eq` read decryption as `decode` of
+`c_last − ⟨s, c_init⟩`. Split `⟨t, c⟩` at the last coordinate (`Fin.sum_univ_castSucc`); by
+`secretVector_eq`, `Fin.snoc_castSucc` and `Fin.snoc_last` it is `−⟨s, c_init⟩ + c_last`
+(`Fin.init_def`), which is the residual (`abel`). -/
+theorem decrypt_eq_decode_dotProduct (P : Parameters)
+    (s : Fin P.lwe.dimension → ZMod P.lwe.modulus) (C : Ciphertext P) :
+    decrypt P s C = LWE.BitEncoding.decode P.lwe (secretVector P s ⬝ᵥ decryptColumn P C) := by
+  rw [decrypt_eq, Regev.decrypt_eq]
+  congr 1
+  change _ = ∑ i, secretVector P s i * decryptColumn P C i
+  rw [Fin.sum_univ_castSucc, secretVector_eq]
+  simp only [Fin.snoc_castSucc, Fin.snoc_last, Pi.neg_apply, neg_mul, one_mul,
+    Finset.sum_neg_distrib, Fin.init_def]
+  abel
+
 /-- **Fresh-encryption noise.** With row errors bounded by `B`, a public-key encryption of `μ`
 encrypts `μ` under `t = (−s,1)` with noise at most `m·B` [GSW13, Section 3.1, "The error
 `⟨Rᵢ, e⟩` has magnitude at most `‖e‖₁`"; Pei16, Section 6.1.3].
@@ -207,9 +228,10 @@ private theorem halfVector_eq_zero_of_ne_last (P : Parameters) (j : Fin (P.lwe.d
 `codepoint b` plus the integer error sum of `e` against the decomposition of `halfVector P`.
 Technical glue shared by the two decryption theorems.
 
-**Proof sketch.** The Regev residual of the split column `v = C x` is `⟨t, v⟩`, by splitting
-off the last coordinate. Then `⟨t, C x⟩ = ⟨tᵗ C, x⟩`, the invariant gives
-`b·⟨tᵗ G, x⟩ + ⟨e, x⟩ = b·⟨t, G x⟩ + ⟨e, x⟩`, `G x = w` and `⟨t, w⟩ = codepoint true`. -/
+**Proof sketch.** By `decrypt_eq_decode_dotProduct`, decryption decodes `⟨t, v⟩`, the Regev
+residual of the split column `v = C x` (splitting off the last coordinate). Then
+`⟨t, C x⟩ = ⟨tᵗ C, x⟩`, the invariant gives `b·⟨tᵗ G, x⟩ + ⟨e, x⟩ = b·⟨t, G x⟩ + ⟨e, x⟩`,
+`G x = w` and `⟨t, w⟩ = codepoint true`. -/
 private theorem decrypt_eq_decode_errorSum (P : Parameters)
     (s : Fin P.lwe.dimension → ZMod P.lwe.modulus) (b : Bool) (β : ℕ) (C : Ciphertext P)
     (h : Encrypts P (secretVector P s) (b.toNat : ℤ) β C) :
@@ -220,15 +242,7 @@ private theorem decrypt_eq_decode_errorSum (P : Parameters)
   obtain ⟨e, he, hC⟩ := (encrypts_iff P _ _ β C).1 h
   refine ⟨e, he, ?_⟩
   -- Step 1: the Regev residual of the split column `v = C x` is `⟨t, v⟩`.
-  have hsplit : decryptColumn P C (Fin.last _) - ∑ j, s j * Fin.init (decryptColumn P C) j =
-      dotProduct (secretVector P s) (C.mulVec
-        (fun i => ((decomposeVec P (halfVector P) i).toNat : ZMod P.lwe.modulus))) := by
-    rw [← decryptColumn_eq]
-    change _ = ∑ i, secretVector P s i * decryptColumn P C i
-    rw [Fin.sum_univ_castSucc, secretVector_eq]
-    simp only [Fin.snoc_castSucc, Fin.snoc_last, Pi.neg_apply, neg_mul, one_mul,
-      Finset.sum_neg_distrib, Fin.init_def]
-    abel
+  rw [decrypt_eq_decode_dotProduct, decryptColumn_eq]
   -- Step 2: `⟨t, w⟩ = codepoint true`, and `b · codepoint true = codepoint b`.
   have hw : dotProduct (secretVector P s) (halfVector P) =
       LWE.BitEncoding.codepoint P.lwe true := by
@@ -250,9 +264,7 @@ private theorem decrypt_eq_decode_errorSum (P : Parameters)
       ((decomposeVec P (halfVector P) i).toNat : ZMod P.lwe.modulus) = _
     simp only [Int.cast_sum, Int.cast_mul, Int.cast_natCast]
   -- Step 4: assemble `⟨t, C x⟩ = b·⟨t, G x⟩ + ⟨e, x⟩`.
-  rw [decrypt_eq, Regev.decrypt_eq]
-  dsimp only
-  rw [hsplit, Matrix.dotProduct_mulVec, hC, add_dotProduct, smul_dotProduct,
+  rw [Matrix.dotProduct_mulVec, hC, add_dotProduct, smul_dotProduct,
     ← Matrix.dotProduct_mulVec, gadget_mulVec_decomposeVec, hw, herr, smul_eq_mul, hb]
 
 /-- **Decryption from the invariant.** If `C` encrypts the bit `b` under `t = (−s,1)` with
@@ -261,7 +273,8 @@ noise `β` and `2·(ℓ·β) < ⌊q/2⌋`, then `decrypt P s C = b` [GSW13, Sect
 value"; AP14, Claim 3.4; BV14, Lemma 3.2].
 
 **Proof sketch.** The private glue lemma `decrypt_eq_decode_errorSum` does the algebra:
-`Regev.decrypt_eq` reads `c.2 − ⟨s, c.1⟩`, which for the split column `v` is `⟨t, v⟩`
+`decrypt_eq_decode_dotProduct` reads decryption as `decode ⟨t, v⟩`: the Regev residual
+`c.2 − ⟨s, c.1⟩` (`Regev.decrypt_eq`) of the split column `v` is `⟨t, v⟩`
 (`Fin.sum_univ_castSucc`, `secretVector_eq`). `Matrix.dotProduct_mulVec` turns `⟨t, C x⟩` into
 `⟨tᵗC, x⟩` with `x = G⁻¹(w)` lifted; substituting the invariant gives
 `b·⟨t, G x⟩ + ⟨e, x⟩ = b·⟨t, w⟩ + ⟨e, x⟩` by `gadget_mulVec_decomposeVec`, and `⟨t, w⟩ = ⌊q/2⌋`
