@@ -85,3 +85,33 @@ base, and the check logs. Push it, with any `<fill-name>-checkpoint-N.zip`, to
 do not force, and touch nothing else there. Also attach the final zip in chat. Do not push to
 any other branch, and do not open a pull request. The maintainer lands the delivery as a gated
 PR into `complexity/ram-simulation`.
+
+## Tier 2 addendum (jobs A–E; Seyoon, 2026-11-18)
+
+Tier 2 proves the 15 statements of PR #372 (gate 162, CLEAR) and then the two targets
+`WordRAM.exists_simulation` and `WordRAM.exists_ndSimulation`. Five jobs run **in parallel**, all
+on the same base. The design is `campaign/items/ram-tm/TIER2-DESIGN.md`; the statements' gate
+pack and findings are in `campaign/gates/162-ram-tier2-statements/`. Read the auditor's notes
+there: several give routes.
+
+These rules extend or replace the ones above, for tier 2 only:
+- **Proved modulo the other jobs.** You may cite the tier 2 statements owned by other jobs
+  exactly as stated. Your brief lists which. Each target's dependency walk may then list those
+  statements, and nothing else that is admitted. Never cite `Turing.exists_tableFindTM`,
+  `Turing.exists_tableAppendTM` or any other declaration admitted in `Build/RecordTable`.
+- **Files.** The jobs are larger than earlier fills (Seyoon: larger jobs, run in parallel).
+  - Jobs A, B and C keep their helpers `private` in their owned files. If a file passes about
+    1,500 lines, keep going and say so in the report: the maintainer splits it at landing.
+  - Jobs D and E may add new files under `TCSlib/Complexity/RAMSimulation/Sim/`, as their briefs
+    say. Their declarations are public in the namespace `WordRAM.Sim`: the simulation's internal
+    namespace (decision D1), not an API for other consumers. Each new file has the standard
+    header, a module docstring, docstrings with proof sketches, and is imported by the owned file
+    that needs it. List every new file and public declaration in `REPORT.md`.
+- **Reuse.** The construction layer is `TCSlib/Complexity/TuringMachine/Build/`. Compose with
+  `Turing.Contract` (`Build/Contract/*`): `Contract.ofReaches` turns a `ReachesWithin` row into
+  a contract, and `Contract.seq`, `inPhase`, `branch` and `embed` compose and place them. Cite the
+  catalog's rows (`copyTM`, `compareTM`, `clearTM`, `scanTM`, `skipTM`, the seek family,
+  `writeConstTM`, `rewindTM`, the counters) and their contracts, rather than writing a transition
+  table, wherever one fits. A hand-built machine is fine where none fits; its docstring says
+  what was missing.
+- **Checkpoints** are welcome: push `<fill-name>-checkpoint-N.zip` at each proved target.
