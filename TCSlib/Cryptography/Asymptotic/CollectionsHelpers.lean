@@ -109,8 +109,7 @@ theorem _root_.Complexity.NUPPT.length_runAt_le (A : NUPPT) (n : ℕ) (y : List 
   apply Nat.mul_le_mul_left
   apply Nat.pow_le_pow_left
   have := A.advice_length n
-  have hr : (List.ofFn r).length = A.coins.eval n := by
-    rw [List.length_ofFn, NUPPT.coinLen_eq]
+  have hr : (List.ofFn r).length = A.coins.eval n := NUPPT.length_ofFn_coins A n r
   simp only [length_pairEncode, NUPPT.length_advInput, hr]
   omega
 
