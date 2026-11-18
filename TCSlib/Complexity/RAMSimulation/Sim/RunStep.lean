@@ -252,6 +252,30 @@ theorem words_headD {b : Bool} (words : ℕ → List Bool) (hlen : ∀ n, (words
   rw [← hlen t]
   exact List.length_pos_iff.mpr hne
 
+/-- The ambient head envelope of a phase prefix started at the local entry: a selected tape stays
+within the phase's envelope about its encoded origin, and an unselected tape is where the frame
+clause leaves it. Shared by `host_ordinary` and `host_verdict`.
+
+**Proof sketch.** Split on whether the tape is selected. A selected head of `d` sits at its
+origin by the encoding, which the envelope bounds; an unselected one equals the local start,
+whose heads are `d`'s. -/
+theorem host_envelope {x : List Bool} {W : ℕ} {S : Type} (T : Finset ℤ) (c : XCfg W)
+    (o : Fin 8 → ℤ) (d : Turing.Cfg (8 + A.extraTapes) Bool A.State x)
+    (he : Encodes A.width fn T c (Fin.castAddEmb A.extraTapes) o d)
+    (locald e : Turing.Cfg (8 + A.extraTapes) Bool S x)
+    (hpos : locald.workTapePos = d.workTapePos) (B : ℕ)
+    (henv : ∀ r : Fin 8, |e.workTapePos (Fin.castAddEmb A.extraTapes r) - o r| ≤ (B : ℤ))
+    (hframe : ∀ j : Fin (8 + A.extraTapes), j ∉ Set.range (Fin.castAddEmb A.extraTapes) →
+      e.workTapePos j = locald.workTapePos j)
+    (j : Fin (8 + A.extraTapes)) :
+    |e.workTapePos j - d.workTapePos j| ≤ (B : ℤ) := by
+  by_cases hj : j ∈ Set.range (Fin.castAddEmb A.extraTapes)
+  · obtain ⟨r, rfl⟩ := hj
+    rw [((encodes_iff A.width fn T c (Fin.castAddEmb A.extraTapes) o d).mp he).1 r]
+    exact henv r
+  · rw [hframe j hj, hpos, sub_self, abs_zero]
+    exact Nat.cast_nonneg _
+
 /-- A continuing RAM instruction is simulated by one phase word and one dispatch choice.
 The endpoint encodes its successor at the opposite parity, every head is restored, and every
 prefix stays within the instruction's envelope around its starting heads.
@@ -334,13 +358,7 @@ theorem host_ordinary {x ρ : List Bool} {W : ℕ} (par b : Bool)
     · have huw : u ≤ w.length := by omega
       rw [List.take_append_of_le_length huw, hpre u huw,
         A.phase_branch_prefix p par b locald hd₀ w hb u huw, Cfg.mapState_workTapePos]
-      by_cases hj : j ∈ Set.range σ
-      · obtain ⟨r, rfl⟩ := hj
-        have hdh := ((encodes_iff A.width fn T c σ o d).mp he).1 r
-        rw [hdh]
-        exact henv u hut r
-      · rw [hframe u hut j hj, hpos, sub_self, abs_zero]
-        exact Nat.cast_nonneg _
+      exact A.host_envelope T c o d he locald _ hpos _ (henv u hut) (hframe u hut) j
     · have hue : u = t + 1 := by omega
       have hwle : (w ++ [dispatch t]).length ≤ u := by
         rw [List.length_append, hw, List.length_singleton, hue]
@@ -407,12 +425,6 @@ theorem host_verdict {x ρ : List Bool} {W : ℕ} (par b : Bool)
   · intro u hu j
     have huw : u ≤ w.length := by omega
     rw [hpre u huw, Cfg.mapState_workTapePos]
-    by_cases hj : j ∈ Set.range σ
-    · obtain ⟨r, rfl⟩ := hj
-      have hdh := ((encodes_iff A.width fn T c σ o d).mp he).1 r
-      rw [hdh]
-      exact henv u hu r
-    · rw [hframe u hu j hj, hpos, sub_self, abs_zero]
-      exact Nat.cast_nonneg _
+    exact A.host_envelope T c o d he locald _ hpos _ (henv u hu) (hframe u hu) j
 
 end WordRAM.Sim.RunSetup
