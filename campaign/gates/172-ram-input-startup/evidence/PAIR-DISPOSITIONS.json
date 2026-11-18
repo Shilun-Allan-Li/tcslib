@@ -1,0 +1,1211 @@
+{
+ "base_summary": "declarations screened: 42; copy pairs (target reproduces >= half of source): 22; reproduced text: 3,504 chars",
+ "head_summary": "declarations screened: 230; copy pairs (target reproduces >= half of source): 141; reproduced text: 26,856 chars",
+ "population_base": [
+  "TCSlib/Complexity/RAMSimulation/Sim/Startup.lean",
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Embed.lean",
+  "TCSlib/Complexity/TuringMachine/Build/Embed.lean",
+  "TCSlib/Complexity/TuringMachine/Build/InputBit.lean"
+ ],
+ "population_head": [
+  "TCSlib/Complexity/RAMSimulation/Sim/Startup.lean",
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Embed.lean",
+  "TCSlib/Complexity/TuringMachine/Build/Embed.lean",
+  "TCSlib/Complexity/TuringMachine/Build/InputBit.lean"
+ ],
+ "new": 119,
+ "gone": 0,
+ "net_directed_pairs": "22 -> 141",
+ "pairs": [
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupErase_select",
+   "source": "Startup.lean::startupErase_eq",
+   "chars": 185,
+   "source_chars": 185,
+   "pct": 100,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupErasePrevious_attach",
+   "source": "Startup.lean::startupErase_eq",
+   "chars": 181,
+   "source_chars": 185,
+   "pct": 98,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupExpand_attach",
+   "source": "Startup.lean::startupInputPost_attach",
+   "chars": 232,
+   "source_chars": 238,
+   "pct": 97,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupRewind_attach",
+   "source": "Startup.lean::startupErase_eq",
+   "chars": 178,
+   "source_chars": 185,
+   "pct": 96,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupExpand_attach",
+   "source": "Startup.lean::startupErase_eq",
+   "chars": 178,
+   "source_chars": 185,
+   "pct": 96,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupPatch_attach",
+   "source": "Startup.lean::startupErase_eq",
+   "chars": 177,
+   "source_chars": 185,
+   "pct": 96,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupInputPost_attach",
+   "source": "Startup.lean::startupErase_eq",
+   "chars": 177,
+   "source_chars": 185,
+   "pct": 96,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::inputBitCompareBack_post",
+   "source": "InputBit.lean::inputBitCompareBack_pre",
+   "chars": 140,
+   "source_chars": 147,
+   "pct": 95,
+   "class": "sibling-uniformity",
+   "note": "The compare contract's field equations (`_pre`, `_time`, `_post`, `_link`) for the forward and backward comparator rows."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupTable_attach",
+   "source": "Startup.lean::startupErase_eq",
+   "chars": 176,
+   "source_chars": 185,
+   "pct": 95,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupWords_advance",
+   "source": "Startup.lean::startupWords_patch",
+   "chars": 301,
+   "source_chars": 317,
+   "pct": 95,
+   "class": "parallel",
+   "note": "The start-up's word layout after advancing a head versus after a patch: the same layout readers, different updates."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupErase_eq",
+   "source": "Startup.lean::startupErase_select",
+   "chars": 185,
+   "source_chars": 199,
+   "pct": 93,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startup_init_mapState",
+   "source": "Startup.lean::startupErase_eq",
+   "chars": 171,
+   "source_chars": 185,
+   "pct": 92,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupErasePrevious_attach",
+   "source": "Startup.lean::startupErase_select",
+   "chars": 181,
+   "source_chars": 199,
+   "pct": 91,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupWords_patch",
+   "source": "Startup.lean::startupWords_advance",
+   "chars": 301,
+   "source_chars": 333,
+   "pct": 90,
+   "class": "parallel",
+   "note": "The start-up's word layout after advancing a head versus after a patch: the same layout readers, different updates."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupPatch_attach",
+   "source": "Startup.lean::startupInputPost_attach",
+   "chars": 215,
+   "source_chars": 238,
+   "pct": 90,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupTable_attach",
+   "source": "Startup.lean::startupPatch_attach",
+   "chars": 225,
+   "source_chars": 250,
+   "pct": 90,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupTable_attach",
+   "source": "Startup.lean::startupInputPost_attach",
+   "chars": 214,
+   "source_chars": 238,
+   "pct": 90,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupErasePrevious_attach",
+   "source": "Startup.lean::startupInputPost_attach",
+   "chars": 214,
+   "source_chars": 238,
+   "pct": 90,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupRewind_attach",
+   "source": "Startup.lean::startupErase_select",
+   "chars": 178,
+   "source_chars": 199,
+   "pct": 89,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupExpand_attach",
+   "source": "Startup.lean::startupErase_select",
+   "chars": 178,
+   "source_chars": 199,
+   "pct": 89,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::inputBitCompare_post",
+   "source": "InputBit.lean::inputBitCompare_pre",
+   "chars": 150,
+   "source_chars": 168,
+   "pct": 89,
+   "class": "sibling-uniformity",
+   "note": "The compare contract's field equations (`_pre`, `_time`, `_post`, `_link`) for the forward and backward comparator rows."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupLength_fresh",
+   "source": "Startup.lean::startupOrdinary_fresh",
+   "chars": 195,
+   "source_chars": 219,
+   "pct": 89,
+   "class": "sibling-uniformity",
+   "note": "The length-cell bank and the ordinary-cell bank of the start-up, and their fresh-entry facts: the same construction for two cell kinds."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupPatch_attach",
+   "source": "Startup.lean::startupErase_select",
+   "chars": 177,
+   "source_chars": 199,
+   "pct": 89,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupInputPost_attach",
+   "source": "Startup.lean::startupErase_select",
+   "chars": 177,
+   "source_chars": 199,
+   "pct": 89,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupErasePrevious_attach",
+   "source": "Startup.lean::startupPatch_attach",
+   "chars": 222,
+   "source_chars": 250,
+   "pct": 89,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupTable_attach",
+   "source": "Startup.lean::startupErase_select",
+   "chars": 176,
+   "source_chars": 199,
+   "pct": 88,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::inputBitCompareBack_pre",
+   "source": "InputBit.lean::inputBitCompareBack_time",
+   "chars": 93,
+   "source_chars": 106,
+   "pct": 88,
+   "class": "sibling-uniformity",
+   "note": "The compare contract's field equations (`_pre`, `_time`, `_post`, `_link`) for the forward and backward comparator rows."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupPatch_attach",
+   "source": "Startup.lean::startupTable_attach",
+   "chars": 225,
+   "source_chars": 258,
+   "pct": 87,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startup_keyLength_singleton",
+   "source": "Startup.lean::startup_keyLength_empty",
+   "chars": 66,
+   "source_chars": 76,
+   "pct": 87,
+   "class": "parallel",
+   "note": "`keyTableLength` of the empty and of the one-entry table."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupErasePrevious_attach",
+   "source": "Startup.lean::startupTable_attach",
+   "chars": 223,
+   "source_chars": 258,
+   "pct": 86,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupInputPost_attach",
+   "source": "Startup.lean::startupPatch_attach",
+   "chars": 215,
+   "source_chars": 250,
+   "pct": 86,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startup_init_mapState",
+   "source": "Startup.lean::startupErase_select",
+   "chars": 171,
+   "source_chars": 199,
+   "pct": 86,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupExpand_attach",
+   "source": "Startup.lean::startupPatch_attach",
+   "chars": 214,
+   "source_chars": 250,
+   "pct": 86,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::inputBitCompareBack_post",
+   "source": "InputBit.lean::inputBitCompareBack_time",
+   "chars": 90,
+   "source_chars": 106,
+   "pct": 85,
+   "class": "sibling-uniformity",
+   "note": "The compare contract's field equations (`_pre`, `_time`, `_post`, `_link`) for the forward and backward comparator rows."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupErasePrevious_attach",
+   "source": "Startup.lean::startupRewind_attach",
+   "chars": 216,
+   "source_chars": 255,
+   "pct": 85,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupTable_attach",
+   "source": "Startup.lean::startupErasePrevious_attach",
+   "chars": 223,
+   "source_chars": 268,
+   "pct": 83,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupInputPost_attach",
+   "source": "Startup.lean::startupTable_attach",
+   "chars": 214,
+   "source_chars": 258,
+   "pct": 83,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupPatch_attach",
+   "source": "Startup.lean::startupErasePrevious_attach",
+   "chars": 222,
+   "source_chars": 268,
+   "pct": 83,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupExpand_attach",
+   "source": "Startup.lean::startupTable_attach",
+   "chars": 213,
+   "source_chars": 258,
+   "pct": 83,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupRewind_attach",
+   "source": "Startup.lean::startupInputPost_attach",
+   "chars": 193,
+   "source_chars": 238,
+   "pct": 81,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupInputPost_attach",
+   "source": "Startup.lean::startupExpand_attach",
+   "chars": 232,
+   "source_chars": 287,
+   "pct": 81,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupRewind_attach",
+   "source": "Startup.lean::startupErasePrevious_attach",
+   "chars": 216,
+   "source_chars": 268,
+   "pct": 81,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupRewind_attach",
+   "source": "Startup.lean::startupPatch_attach",
+   "chars": 201,
+   "source_chars": 250,
+   "pct": 80,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupInputPost_attach",
+   "source": "Startup.lean::startupErasePrevious_attach",
+   "chars": 214,
+   "source_chars": 268,
+   "pct": 80,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupExpand_attach",
+   "source": "Startup.lean::startupErasePrevious_attach",
+   "chars": 214,
+   "source_chars": 268,
+   "pct": 80,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupTable_attach",
+   "source": "Startup.lean::startupRewind_attach",
+   "chars": 202,
+   "source_chars": 255,
+   "pct": 79,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupPatch_attach",
+   "source": "Startup.lean::startupRewind_attach",
+   "chars": 201,
+   "source_chars": 255,
+   "pct": 79,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::inputBitCompare_post",
+   "source": "Startup.lean::startupErase_eq",
+   "chars": 145,
+   "source_chars": 185,
+   "pct": 78,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupRewind_attach",
+   "source": "Startup.lean::startupTable_attach",
+   "chars": 202,
+   "source_chars": 258,
+   "pct": 78,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::inputBitCompareBack_post",
+   "source": "Startup.lean::startupErase_eq",
+   "chars": 144,
+   "source_chars": 185,
+   "pct": 78,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupInputPost_attach",
+   "source": "Startup.lean::startupRewind_attach",
+   "chars": 193,
+   "source_chars": 255,
+   "pct": 76,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupExpand_attach",
+   "source": "Startup.lean::startupRewind_attach",
+   "chars": 192,
+   "source_chars": 255,
+   "pct": 75,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupOrdinaryBank",
+   "source": "Startup.lean::startupLengthBank",
+   "chars": 162,
+   "source_chars": 216,
+   "pct": 75,
+   "class": "sibling-uniformity",
+   "note": "The length-cell bank and the ordinary-cell bank of the start-up, and their fresh-entry facts: the same construction for two cell kinds."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::InputBitData.cfg_mapState",
+   "source": "InputBit.lean::InputBitData.ofCfg_mapState",
+   "chars": 90,
+   "source_chars": 120,
+   "pct": 75,
+   "class": "parallel",
+   "note": "Renaming commutes with the two directions between `InputBitData` and configurations."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::inputBitResult_past",
+   "source": "InputBit.lean::inputBitResult_negative",
+   "chars": 100,
+   "source_chars": 134,
+   "pct": 75,
+   "class": "parallel",
+   "note": "The two out-of-input cases of the bit's value (index past the end; negative index), each to `0` by `inBitWord_def`."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupPatch_attach",
+   "source": "Startup.lean::startupExpand_attach",
+   "chars": 214,
+   "source_chars": 287,
+   "pct": 75,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupErasePrevious_attach",
+   "source": "Startup.lean::startupExpand_attach",
+   "chars": 214,
+   "source_chars": 287,
+   "pct": 75,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startup_assignment_stage",
+   "source": "Startup.lean::startup_integer_stage",
+   "chars": 841,
+   "source_chars": 1129,
+   "pct": 74,
+   "class": "parallel",
+   "note": "The keyed-assignment stage and the integer-constant stage, each composing its own native row (`exists_keyAssignTM`, `exists_wordIntTM`) through the shared stage frame."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupErase_select",
+   "source": "Startup.lean::startupInputPost_attach",
+   "chars": 177,
+   "source_chars": 238,
+   "pct": 74,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupErase_eq",
+   "source": "Startup.lean::startupInputPost_attach",
+   "chars": 177,
+   "source_chars": 238,
+   "pct": 74,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupTable_attach",
+   "source": "Startup.lean::startupExpand_attach",
+   "chars": 213,
+   "source_chars": 287,
+   "pct": 74,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupEmbed_table",
+   "source": "Startup.lean::startupEmbed_patch",
+   "chars": 258,
+   "source_chars": 351,
+   "pct": 74,
+   "class": "parallel",
+   "note": "Embedding the patch row versus the table row into the start-up's tape bank through `embedEmitCfg` readers."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::inputBitClearCall",
+   "source": "InputBit.lean::inputBitCopyCall",
+   "chars": 752,
+   "source_chars": 1024,
+   "pct": 73,
+   "class": "citation-shape",
+   "note": "Calls of different catalog rows (copy, clear, increment, sign, full) through the shared `Contract.ofReaches`/`Contract.inPhase` placement; the shared text is the placement obligations."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::inputBitCompare_post",
+   "source": "Startup.lean::startupErase_select",
+   "chars": 145,
+   "source_chars": 199,
+   "pct": 73,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::inputBitCompareBack_post",
+   "source": "Startup.lean::startupErase_select",
+   "chars": 144,
+   "source_chars": 199,
+   "pct": 72,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupEmbed_patch",
+   "source": "Startup.lean::startupEmbed_table",
+   "chars": 258,
+   "source_chars": 360,
+   "pct": 72,
+   "class": "parallel",
+   "note": "Embedding the patch row versus the table row into the start-up's tape bank through `embedEmitCfg` readers."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startup_init_mapState",
+   "source": "Startup.lean::startupInputPost_attach",
+   "chars": 170,
+   "source_chars": 238,
+   "pct": 71,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupErase_select",
+   "source": "Startup.lean::startupPatch_attach",
+   "chars": 177,
+   "source_chars": 250,
+   "pct": 71,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupErase_eq",
+   "source": "Startup.lean::startupPatch_attach",
+   "chars": 177,
+   "source_chars": 250,
+   "pct": 71,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupErase_select",
+   "source": "Startup.lean::startupRewind_attach",
+   "chars": 178,
+   "source_chars": 255,
+   "pct": 70,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupErase_eq",
+   "source": "Startup.lean::startupRewind_attach",
+   "chars": 178,
+   "source_chars": 255,
+   "pct": 70,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupErase_select",
+   "source": "Startup.lean::startupTable_attach",
+   "chars": 176,
+   "source_chars": 258,
+   "pct": 68,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupErase_eq",
+   "source": "Startup.lean::startupTable_attach",
+   "chars": 176,
+   "source_chars": 258,
+   "pct": 68,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startup_assignment_stage",
+   "source": "Startup.lean::startup_wordAt_erase",
+   "chars": 66,
+   "source_chars": 97,
+   "pct": 68,
+   "class": "parallel",
+   "note": "The keyed-assignment stage and the integer-constant stage, each composing its own native row (`exists_keyAssignTM`, `exists_wordIntTM`) through the shared stage frame."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startup_init_mapState",
+   "source": "Startup.lean::startupPatch_attach",
+   "chars": 170,
+   "source_chars": 250,
+   "pct": 68,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupErase_select",
+   "source": "Startup.lean::startupErasePrevious_attach",
+   "chars": 181,
+   "source_chars": 268,
+   "pct": 68,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupErase_eq",
+   "source": "Startup.lean::startupErasePrevious_attach",
+   "chars": 181,
+   "source_chars": 268,
+   "pct": 68,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::inputBitCompareBack_post",
+   "source": "Startup.lean::startupInputPost_attach",
+   "chars": 160,
+   "source_chars": 238,
+   "pct": 67,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startup_init_mapState",
+   "source": "Startup.lean::startupRewind_attach",
+   "chars": 171,
+   "source_chars": 255,
+   "pct": 67,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupRewind_attach",
+   "source": "Startup.lean::startupExpand_attach",
+   "chars": 192,
+   "source_chars": 287,
+   "pct": 67,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::inputBitCopyCall",
+   "source": "InputBit.lean::inputBitClearCall",
+   "chars": 752,
+   "source_chars": 1143,
+   "pct": 66,
+   "class": "citation-shape",
+   "note": "Calls of different catalog rows (copy, clear, increment, sign, full) through the shared `Contract.ofReaches`/`Contract.inPhase` placement; the shared text is the placement obligations."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startup_init_mapState",
+   "source": "Startup.lean::startupTable_attach",
+   "chars": 169,
+   "source_chars": 258,
+   "pct": 66,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupExpandPost",
+   "source": "Startup.lean::startupAdvancePost",
+   "chars": 73,
+   "source_chars": 112,
+   "pct": 65,
+   "class": "sibling-uniformity",
+   "note": "The post-states of two start-up stages (expand; advance), same record shape."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startup_keyLength_empty",
+   "source": "Startup.lean::startup_keyLength_singleton",
+   "chars": 66,
+   "source_chars": 102,
+   "pct": 65,
+   "class": "parallel",
+   "note": "`keyTableLength` of the empty and of the one-entry table."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::inputBitCompareBack_post",
+   "source": "Startup.lean::startupPatch_attach",
+   "chars": 160,
+   "source_chars": 250,
+   "pct": 64,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupLengthBank",
+   "source": "Startup.lean::startupOrdinaryBank",
+   "chars": 162,
+   "source_chars": 256,
+   "pct": 63,
+   "class": "sibling-uniformity",
+   "note": "The length-cell bank and the ordinary-cell bank of the start-up, and their fresh-entry facts: the same construction for two cell kinds."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::inputBitCompareBack_time",
+   "source": "InputBit.lean::inputBitCompareBack_pre",
+   "chars": 93,
+   "source_chars": 147,
+   "pct": 63,
+   "class": "sibling-uniformity",
+   "note": "The compare contract's field equations (`_pre`, `_time`, `_post`, `_link`) for the forward and backward comparator rows."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startup_init_mapState",
+   "source": "Startup.lean::startupErasePrevious_attach",
+   "chars": 169,
+   "source_chars": 268,
+   "pct": 63,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupErase_select",
+   "source": "Startup.lean::startupExpand_attach",
+   "chars": 178,
+   "source_chars": 287,
+   "pct": 62,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupErase_eq",
+   "source": "Startup.lean::startupExpand_attach",
+   "chars": 178,
+   "source_chars": 287,
+   "pct": 62,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startup_length_stage",
+   "source": "Startup.lean::startupInputPost_attach",
+   "chars": 147,
+   "source_chars": 238,
+   "pct": 62,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupRewind_attach",
+   "source": "Startup.lean::startup_init_mapState",
+   "chars": 171,
+   "source_chars": 277,
+   "pct": 62,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupErase_select",
+   "source": "Startup.lean::startup_init_mapState",
+   "chars": 171,
+   "source_chars": 277,
+   "pct": 62,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupErase_eq",
+   "source": "Startup.lean::startup_init_mapState",
+   "chars": 171,
+   "source_chars": 277,
+   "pct": 62,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startup_length_stage",
+   "source": "Startup.lean::startupErase_eq",
+   "chars": 114,
+   "source_chars": 185,
+   "pct": 62,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupPatch_attach",
+   "source": "Startup.lean::startup_init_mapState",
+   "chars": 170,
+   "source_chars": 277,
+   "pct": 61,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupInputPost_attach",
+   "source": "Startup.lean::startup_init_mapState",
+   "chars": 170,
+   "source_chars": 277,
+   "pct": 61,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupExpand_attach",
+   "source": "Startup.lean::startup_init_mapState",
+   "chars": 170,
+   "source_chars": 277,
+   "pct": 61,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupTable_attach",
+   "source": "Startup.lean::startup_init_mapState",
+   "chars": 169,
+   "source_chars": 277,
+   "pct": 61,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupErasePrevious_attach",
+   "source": "Startup.lean::startup_init_mapState",
+   "chars": 169,
+   "source_chars": 277,
+   "pct": 61,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::inputBitCompare_post",
+   "source": "Startup.lean::startupInputPost_attach",
+   "chars": 144,
+   "source_chars": 238,
+   "pct": 61,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::inputBitCompare_link",
+   "source": "InputBit.lean::inputBitCompare_pre",
+   "chars": 101,
+   "source_chars": 168,
+   "pct": 60,
+   "class": "sibling-uniformity",
+   "note": "The compare contract's field equations (`_pre`, `_time`, `_post`, `_link`) for the forward and backward comparator rows."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::inputBitSignCall",
+   "source": "InputBit.lean::inputBitFullCall",
+   "chars": 675,
+   "source_chars": 1128,
+   "pct": 60,
+   "class": "citation-shape",
+   "note": "Calls of different catalog rows (copy, clear, increment, sign, full) through the shared `Contract.ofReaches`/`Contract.inPhase` placement; the shared text is the placement obligations."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startup_init_mapState",
+   "source": "Startup.lean::startupExpand_attach",
+   "chars": 170,
+   "source_chars": 287,
+   "pct": 59,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::inputBitCompare_post",
+   "source": "Startup.lean::startupPatch_attach",
+   "chars": 144,
+   "source_chars": 250,
+   "pct": 58,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startup_length_stage",
+   "source": "Startup.lean::startupErase_select",
+   "chars": 114,
+   "source_chars": 199,
+   "pct": 57,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::inputBitCompareBack_post",
+   "source": "Startup.lean::startupExpand_attach",
+   "chars": 161,
+   "source_chars": 287,
+   "pct": 56,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::InputBitData.ofCfg_mapState",
+   "source": "InputBit.lean::InputBitData.cfg_mapState",
+   "chars": 90,
+   "source_chars": 168,
+   "pct": 54,
+   "class": "parallel",
+   "note": "Renaming commutes with the two directions between `InputBitData` and configurations."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::inputBitCompareBack_post",
+   "source": "Startup.lean::startup_init_mapState",
+   "chars": 144,
+   "source_chars": 277,
+   "pct": 52,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::inputBitCompare_post",
+   "source": "Startup.lean::startup_init_mapState",
+   "chars": 143,
+   "source_chars": 277,
+   "pct": 52,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startup_length_stage",
+   "source": "Startup.lean::startupExpand_attach",
+   "chars": 147,
+   "source_chars": 287,
+   "pct": 51,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::inputBitCompare_pre",
+   "source": "InputBit.lean::inputBitCompareBack_pre",
+   "chars": 75,
+   "source_chars": 147,
+   "pct": 51,
+   "class": "sibling-uniformity",
+   "note": "The compare contract's field equations (`_pre`, `_time`, `_post`, `_link`) for the forward and backward comparator rows."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::inputBitCompare_post",
+   "source": "InputBit.lean::inputBitCompareBack_pre",
+   "chars": 75,
+   "source_chars": 147,
+   "pct": 51,
+   "class": "sibling-uniformity",
+   "note": "The compare contract's field equations (`_pre`, `_time`, `_post`, `_link`) for the forward and backward comparator rows."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::StartupStage.radius_time",
+   "source": "Startup.lean::StartupStage.radius_of_box",
+   "chars": 61,
+   "source_chars": 121,
+   "pct": 50,
+   "class": "parallel",
+   "note": "Two radius bounds of a stage (from its time; from its box)."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::inputBitCompare_link",
+   "source": "InputBit.lean::inputBitCompareBack_pre",
+   "chars": 74,
+   "source_chars": 147,
+   "pct": 50,
+   "class": "sibling-uniformity",
+   "note": "The compare contract's field equations (`_pre`, `_time`, `_post`, `_link`) for the forward and backward comparator rows."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::inputBitCompare_post",
+   "source": "Startup.lean::startupExpand_attach",
+   "chars": 144,
+   "source_chars": 287,
+   "pct": 50,
+   "class": "sibling-uniformity",
+   "note": "Configuration equations for different local definitions (`startupErase`, `startupPatch`, `startupAttach`, the stage posts, the compare posts), each the two-line idiom `apply Cfg.ext <;> … <;> simp only [<definition>, Cfg.mapState_*, Cfg.select_eq, …]` over the published field readers; the statements differ. `startup_init_mapState` (a renamed initial configuration is initial) is also proved for the host in #383 (`RunSetup.host_initCfg`); a shared `Cfg.mapState_init` is a promotion candidate, raised to Seyoon."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupSkipBackStage",
+   "source": "Startup.lean::startupClearStage",
+   "chars": 320,
+   "source_chars": 638,
+   "pct": 50,
+   "class": "citation-shape",
+   "note": "Stages built from the catalog's copy, clear and skip-back rows through the shared stage constructor."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupCopyStage",
+   "source": "Startup.lean::startupClearStage",
+   "chars": 320,
+   "source_chars": 638,
+   "pct": 50,
+   "class": "citation-shape",
+   "note": "Stages built from the catalog's copy, clear and skip-back rows through the shared stage constructor."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::inputBitIncrementCall",
+   "source": "InputBit.lean::inputBitCopyCall",
+   "chars": 512,
+   "source_chars": 1024,
+   "pct": 50,
+   "class": "citation-shape",
+   "note": "Calls of different catalog rows (copy, clear, increment, sign, full) through the shared `Contract.ofReaches`/`Contract.inPhase` placement; the shared text is the placement obligations."
+  }
+ ]
+}
