@@ -30,7 +30,7 @@ Revisions:
 | `sources-r3.md` | **r3.** All five PDFs with SHA-256 (AGW20 `b74c2ac9…d11f`, IW14 `ef6c7c6a…5e77` new); pins for [AGW20] §4.1–§4.2, Lemma 2, App. A (28)–(32), App. B, and [IW14] Def 1, Thm 3, Cor 1, §4.2; **what [Wee20, Lemma 1] needs and where it is proved**; the L₀/L₁ shapes settled (W1 inherited from AGW20 Lemma 2); **the instance chosen** (the layered ABP of a polynomial vector, AGW20 App. A = IW14 §4.2 at t = 1, path-sum proofs, exact privacy); misprints W1–W5 and readings R1–R4; G3, G4, G7 updated |
 | `design-r3.md` | **r3.** What changed; rulings (§ 0); **rule 15** (§ 1E: raw bundles vs efficient interfaces, field forms, targets, assembly, the L1 link); deliverable, layout; realisers at two levels with the shared `RealizesOn`, `runDet`, R-DLOG, the vacuity rule (§ 4.4); the semi-adaptive notion and **the derivation of Def 4.3** (§ 4.5); partial garbling interface and layered instance (§ 4.7); semi-adaptive Π (Lemma 3 by an exact change of variables) and quadratic layer (§ 4.8); headlines on raw bundles and primitives (§ 4.10); milestones, size, **statements-gate order** (§ 6); questions (§ 7); risks |
 | `duplication-sweep-r3.md` | **r3.** Amended r2 rows; the shared realisation API (§ 0b); adaptive games and deterministic runs (§ 3b); Mathlib for the layered garbling and Lemma 3 (§ 5b); `UniformSampler` as a type for rule 15 |
-| `dispatch-prompt-r3.md` | **r3.** The prompt Seyoon pastes into Codex (Phase A); base filled (`iO/phase-a-base` at `5ed465f62e4ae0f93ded1a1ba49e807591b589eb`); one placeholder left, `<RECORDS>`; the `[Q-E1]` items take the must-reuse arm |
+| `dispatch-prompt-r3.md` | **r3.** The prompt Seyoon pastes into Codex (Phase A); base filled (`iO/phase-a-base` at `5ed465f62e4ae0f93ded1a1ba49e807591b589eb`); one placeholder left, `dbea2807532392781304e004715f3b0190025f5e`; the `[Q-E1]` items take the must-reuse arm |
 | `sources-r2.md`, `design-r2.md`, `duplication-sweep-r2.md` | r2; binding wherever r3 does not amend them |
 | `dispatch-prompt-r2.md` | r2 prompt (superseded) |
 | `sources.md`, `design-r1.md`, `duplication-sweep.md`, `dispatch-prompt.md` | r1, kept for the record |
@@ -92,7 +92,7 @@ One job, PARTIAL final allowed (Q4 A).
    sPRG job; `../contract/REPORT.md`); `rulings.md`; the base filled in the prompt; the source
    rule applied (no staging).
 2. Commit this folder (with `rulings.md`) and a decision-log row in `IOComponentsPlan.md`; put
-   that commit in `<RECORDS>` (`git rev-parse`, full hash) and push the records.
+   that commit in `dbea2807532392781304e004715f3b0190025f5e` (`git rev-parse`, full hash) and push the records.
 3. Seyoon prepares the local source folder with `gjls21.pdf`, `wee20.pdf`, `jls26.pdf`,
    `agw20.pdf` and `iw14.pdf` (hashes in `sources-r3.md` § 1 and the prompt) and names it when he
    dispatches.

@@ -31,7 +31,7 @@ supersedes the r2 and r1 prompts.
 | `rulings.md` | **every ruling in force** for this job (decision-log rows of 2026-11-18, rule 15, Q-E1 (A), the source rule, the base); it takes precedence over every other file here |
 | `design-r3.md` | **current** delta design note: what changed; **rule 15** (§1: raw bundles vs primitives, efficiency fields, `SamplesEfficiently`, targets T5–T6, assembly, renamed results); the shared realisation API (§2, must-reuse); Phase B outlook with #378's real names (§3); layout and size (§4); statements-gate order (§5); Dv16–Dv18 (§6); questions (§7: Q-E1, since ruled (A), `rulings.md`) |
 | `duplication-sweep-r3.md` | **current** delta sweep: amended r2 rows; the shared realisation API (§R, MR); the sampler bridge at the base (§S: `UniformSampler` type MR for the efficiency fields; the rest X/B; `SamplesEfficiently` MR from `CoinSampling/Contract.lean`, present) |
-| `dispatch-prompt-r3.md` | **current** prompt Seyoon pastes into Codex, Phase A only; base filled (`iO/phase-a-base` at `5ed465f62e4ae0f93ded1a1ba49e807591b589eb`); one placeholder left, `<RECORDS>`; the `[Q-E1]` items take the must-reuse arm |
+| `dispatch-prompt-r3.md` | **current** prompt Seyoon pastes into Codex, Phase A only; base filled (`iO/phase-a-base` at `5ed465f62e4ae0f93ded1a1ba49e807591b589eb`); one placeholder left, `dbea2807532392781304e004715f3b0190025f5e`; the `[Q-E1]` items take the must-reuse arm |
 | `design-r2.md`, `duplication-sweep-r2.md` | r2; **binding** wherever r3 does not amend them |
 | `dispatch-prompt-r2.md` | r2 prompt (superseded; kept for the record) |
 | `design-r1.md` | r1 design (binding only where design-r2 says "unchanged from r1") |
@@ -92,7 +92,7 @@ is staged on the exchange. Delivery is unchanged: `inbox/fills/io-sprg/` on the 
    (`iO/phase-a-base`, `../contract/REPORT.md`); `rulings.md` written; the base filled in the
    prompt; the source rule applied (no staging).
 2. Commit this folder (with `rulings.md`) and a decision-log row in `IOComponentsPlan.md`; put
-   that commit in `<RECORDS>` (`git rev-parse`) and push the records.
+   that commit in `dbea2807532392781304e004715f3b0190025f5e` (`git rev-parse`) and push the records.
 3. Check that `outbox/fills/codex-host-2026-11-15/host-addendum.md` and `lean-slot.sh` at the
    exchange commit the prompt pins (`bc9d982b83cb35ea351e2fb373752e8688945b1c`) hash to
    `02a6af16…` and `ff64d8d5…` (they did on 2026-11-18), and that the bb1-sim tools at exchange
@@ -102,4 +102,4 @@ is staged on the exchange. Delivery is unchanged: `inbox/fills/io-sprg/` on the 
 5. Tell Seyoon the two Codex jobs share the Mac with one Lean slot each (`io-sprg`, `io-phfe`;
    cap 3 in all).
 
-**Not yet ready to dispatch.** Pending: the records commit and push, then `<RECORDS>`.
+**Not yet ready to dispatch.** Pending: the records commit and push, then `dbea2807532392781304e004715f3b0190025f5e`.

@@ -20,7 +20,7 @@ never typed by hand):
 
 | Placeholder | Filled with |
 |---|---|
-| `<RECORDS>` | the records commit on `cryptography/pass-shelat-ch2-4` carrying these final files (`briefs/io-components/phfe/` r3 with `rulings.md`); a descendant of `6f59c25dcfa82edc8aa032d4bcad71cda3cf4631` (contract report; rule 15 at `32a40963`) |
+| `dbea2807532392781304e004715f3b0190025f5e` | the records commit on `cryptography/pass-shelat-ch2-4` carrying these final files (`briefs/io-components/phfe/` r3 with `rulings.md`); a descendant of `6f59c25dcfa82edc8aa032d4bcad71cda3cf4631` (contract report; rule 15 at `32a40963`) |
 
 **Sources.** No PDF is committed or pushed anywhere (pairing ruling Q12 (A), applied here; the
 ePrint PDFs are not ours to redistribute). Seyoon gives Codex a local folder holding the five PDFs
@@ -82,7 +82,7 @@ PINS (full hashes)
   - [Q-E1] foundations/coin-contract (8e01b720aa127f6cbdb066e629f883258b73cf9e),
     CoinSampling/Contract.lean, the shared sampler contract (DrawSamplable, CoreComputable,
     SamplesEfficiently, readers and closure; item 2).
-- Records: <RECORDS> on cryptography/pass-shelat-ch2-4. Read:
+- Records: dbea2807532392781304e004715f3b0190025f5e on cryptography/pass-shelat-ch2-4. Read:
   - briefs/io-components/phfe/README.md, rulings.md, sources-r3.md, design-r3.md,
     duplication-sweep-r3.md;
   - sources-r2.md, design-r2.md and duplication-sweep-r2.md: binding wherever the r3 files do
@@ -550,7 +550,7 @@ private local version, or a requested promotion, in REPORT.md.
     - #print axioms of every new constant and every headline: standard only;
     - a census of every stored constant of your modules: 0 non-standard;
     - a sorryAx dependency trace, empty for the headlines (a ready form is the #sorry_trace in
-      briefs/pairings/fills/bb1-sim/issued-fill-r1/staging-probe/Stmt.lean.txt at <RECORDS>).
+      briefs/pairings/fills/bb1-sim/issued-fill-r1/staging-probe/Stmt.lean.txt at dbea2807532392781304e004715f3b0190025f5e).
  5. Rule 10, with the canonical suite of the tools above:
     - the collector; seals A and B, strict and coe (coe-A canonical), with -DmaxErrors=0, over
       every new module: 0 failing declarations, apart from listed notation-only strict
@@ -643,7 +643,7 @@ The maintainer reviews your delivery for the PR that Seyoon approves. Lean reach
 branch only through that PR.
 ```
 
-Status: **not ready to dispatch**. Pending: the records commit and push, then `<RECORDS>`.
+Status: **not ready to dispatch**. Pending: the records commit and push, then `dbea2807532392781304e004715f3b0190025f5e`.
 Done:
 - Q-E1 (A), with `CoinSampling/Contract.lean` at the base;
 - the base, `iO/phase-a-base` at `5ed465f62e4ae0f93ded1a1ba49e807591b589eb`;

@@ -22,7 +22,7 @@ The worker is Codex in a local checkout (campaign ruling 2026-11-18; `workflow.m
 
 | Placeholder | Filled with |
 |---|---|
-| `<RECORDS>` | the records commit on `cryptography/pass-shelat-ch2-4` carrying these final files (`briefs/io-components/sprg/` r3 with `rulings.md`); a descendant of `6f59c25dcfa82edc8aa032d4bcad71cda3cf4631` (contract report; rule 15 at `32a40963`) |
+| `dbea2807532392781304e004715f3b0190025f5e` | the records commit on `cryptography/pass-shelat-ch2-4` carrying these final files (`briefs/io-components/sprg/` r3 with `rulings.md`); a descendant of `6f59c25dcfa82edc8aa032d4bcad71cda3cf4631` (contract report; rule 15 at `32a40963`) |
 
 **Sources.** No PDF is committed or pushed anywhere (pairing ruling Q12 (A), applied here; the
 ePrint PDFs are not ours to redistribute). Seyoon gives Codex a local folder holding `jls26.pdf`
@@ -84,7 +84,7 @@ PINS (full hashes)
   Of the sampler bridge you use ONLY the types UniformSampler and CoinSampler.fail; of the
   contract you use DrawSamplable, CoreComputable, SamplesEfficiently and their readers and
   closure lemmas (item 2).
-- Records: <RECORDS> on cryptography/pass-shelat-ch2-4 (read with git show <RECORDS>:<path>).
+- Records: dbea2807532392781304e004715f3b0190025f5e on cryptography/pass-shelat-ch2-4 (read with git show dbea2807532392781304e004715f3b0190025f5e:<path>).
   Read in full:
   - briefs/io-components/sprg/README.md, design-r3.md, duplication-sweep-r3.md, rulings.md;
   - briefs/io-components/contract/REPORT.md (the shared sampler contract: statements, readers,
@@ -648,9 +648,9 @@ design-r2 and design-r1 sections it keeps), the two sweeps and the two addenda a
 material.
 ```
 
-The status becomes **Ready to dispatch** once `<RECORDS>` is filled with the records commit
+The status becomes **Ready to dispatch** once `dbea2807532392781304e004715f3b0190025f5e` is filled with the records commit
 carrying these final files and that commit is pushed.
 
-**Not yet ready to dispatch.** Pending: the records commit and push, then `<RECORDS>`. Done:
+**Not yet ready to dispatch.** Pending: the records commit and push, then `dbea2807532392781304e004715f3b0190025f5e`. Done:
 Q-E1 (A) with the contract at the base, the base (`iO/phase-a-base`), `rulings.md`, and the
 source rule (Seyoon's local folder, SHA-256 pinned; nothing staged on the exchange).
