@@ -156,7 +156,8 @@ private lemma mul_back (x a : List Bool) (i : ℕ) (hi : i ≤ x.length) (out : 
     (j : ℕ) (hj : j ≤ a.length) :
     unaryMulTM.tm.runFrom (PairParse.cfg x (some .back) i hi a ((j : ℤ) - 1) out) (j + 1) =
       PairParse.cfg x (some .next) i hi a 0 out :=
-  PairParse.rewind_run unaryMulTM.tm .back .next mul_tr_back x a i hi out j hj
+  PairParse.rewind_run unaryMulTM.tm .back .next
+    (fun inp w => by rw [mul_tr_back]; cases w 0 <;> rfl) x a i hi out j hj
 
 /-- The emission walk: from cell `j` of the buffer with `k = |a| - j` cells ahead, `k + 1`
 transitions emit `1^k` and leave the work head on the last stored cell in the `back` state.
@@ -297,15 +298,17 @@ private lemma mul_run (x rest : List Bool) :
     refine ⟨1, by simp, ?_⟩
     simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
     rw [MultiTapeTM.step_of_some (PairParse.cfg_state _ _ _ _ _ _ _), PairParse.cfg_inputSymbol]
-    simp [hx, unaryMulTM, PairParse.cfg_output, pairDecode]
+    simp [hx, unaryMulTM, Action.apply_state, Action.apply_output, PairParse.cfg_output,
+      pairDecode_nil]
   | singleton b =>
     intro pre a hx _
     refine ⟨2, by simp, ?_⟩
-    change (unaryMulTM.tm.step (unaryMulTM.tm.step _)).state = none ∧
-      (unaryMulTM.tm.step (unaryMulTM.tm.step _)).output = _
+    rw [show (2 : ℕ) = 0 + 1 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
+      MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
     rw [PairParse.parse_first unaryMulTM.tm MulControl.parse mul_tr_first x pre [] a b hx,
       MultiTapeTM.step_of_some (PairParse.cfg_state _ _ _ _ _ _ _), PairParse.cfg_inputSymbol]
-    cases b <;> simp [hx, unaryMulTM, PairParse.cfg_output, pairDecode]
+    cases b <;> simp [hx, unaryMulTM, Action.apply_state, Action.apply_output,
+      PairParse.cfg_output, pairDecode_singleton]
   | cons_cons b c rest ih _ =>
     intro pre a hx hpre
     by_cases h : b = c
@@ -323,11 +326,12 @@ private lemma mul_run (x rest : List Bool) :
       refine ⟨?_, ?_⟩
       · simpa only [List.length_append, List.length_cons, List.length_nil] using hs
       · cases hd : pairDecode rest with
-        | none => cases b <;> simpa [pairDecode, hd] using ho
+        | none =>
+          cases b <;> simpa [pairDecode_false_false, pairDecode_true_true, hd] using ho
         | some p =>
           obtain ⟨u, v⟩ := p
           have e : a.length + (u.length + 1) = a.length + 1 + u.length := by omega
-          cases b <;> simpa [pairDecode, hd, e] using ho
+          cases b <;> simpa [pairDecode_false_false, pairDecode_true_true, hd, e] using ho
     · cases b <;> cases c
       · exact False.elim (h rfl)
       · obtain ⟨t, ht, hs, ho⟩ := mul_finish x (pre ++ [false, true]) rest a
@@ -343,11 +347,11 @@ private lemma mul_run (x rest : List Bool) :
           mul_tr_first mul_tr_second x pre rest a false true hx]
         simp only [Bool.false_eq_true, ↓reduceIte]
         simp only [List.length_append, List.length_cons, List.length_nil] at hs ho
-        exact ⟨hs, by simpa [pairDecode] using ho⟩
+        exact ⟨hs, by simpa [pairDecode_false_true] using ho⟩
       · refine ⟨2, by simp only [List.length_cons]; omega, ?_⟩
         rw [PairParse.parse_block unaryMulTM.tm MulControl.parse .back mul_tr_first mul_tr_second
           x pre rest a true false hx]
-        simp [PairParse.cfg_state, PairParse.cfg_output, pairDecode]
+        simp [PairParse.cfg_state, PairParse.cfg_output, pairDecode_true_false]
       · exact False.elim (h rfl)
 
 /-- The unary-multiplication machine halts on every input within `5 (|x| + 1) ^ 2` steps
@@ -365,12 +369,13 @@ private lemma mul_computes (x : List Bool) :
   obtain ⟨t, ht, hs, ho⟩ := mul_run x x [] [] rfl (by simp)
   have hinit : unaryMulTM.tm.initCfg x =
       PairParse.cfg x (some (.parse none)) 0 (by omega) [] 0 [] := by
+    rw [MultiTapeTM.initCfg_eq]
     refine Cfg.ext ?_ ?_ ?_ ?_ ?_
-    · simp [unaryMulTM, PairParse.cfg_state, MultiTapeTM.initCfg, Cfg.init]
-    · simp [PairParse.cfg_inputPos, MultiTapeTM.initCfg, Cfg.init]
-    · funext i z; simp [PairParse.cfg_workTapes, MultiTapeTM.initCfg, Cfg.init]
-    · funext i; simp [PairParse.cfg_workTapePos, MultiTapeTM.initCfg, Cfg.init]
-    · simp [PairParse.cfg_output, MultiTapeTM.initCfg, Cfg.init]
+    · simp [unaryMulTM, PairParse.cfg_state, Cfg.init_state]
+    · simp [PairParse.cfg_inputPos, Cfg.init_inputPos]
+    · funext i z; simp [PairParse.cfg_workTapes, Cfg.init_workTapes]
+    · funext i; simp [PairParse.cfg_workTapePos, Cfg.init_workTapePos]
+    · simp [PairParse.cfg_output, Cfg.init_output]
   have hh : unaryMulTM.ComputesInTime x
       (match pairDecode x with
         | some (u, v) => List.replicate (u.length * v.length) true
@@ -406,6 +411,6 @@ theorem exists_unaryMulTM :
           | some (u, v) => List.replicate (u.length * v.length) true
           | none => [])
         fun n => 5 * (n + 1) ^ 2 :=
-  ⟨unaryMulTM, fun x => mul_computes x⟩
+  ⟨unaryMulTM, (computesFunInTime_iff _ _ _).2 fun x => mul_computes x⟩
 
 end Turing.FinTM
