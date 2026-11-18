@@ -146,10 +146,12 @@ def fmult : FunFamily where
     (fmultNat (bitsToNat (FunFamily.blocks 2 n x 0)) (bitsToNat (FunFamily.blocks 2 n x 1)))
 
 /-- The input length of `f_mult` at parameter `n` is `2n`. -/
-@[simp] theorem fmult_inLen (n : ℕ) : fmult.inLen.eval n = 2 * n := rfl
+@[simp] theorem fmult_inLen (n : ℕ) : fmult.inLen.eval n = 2 * n := by
+  simp only [fmult, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
 
 /-- The output length of `f_mult` at parameter `n` is `2n`. -/
-@[simp] theorem fmult_outLen (n : ℕ) : fmult.outLen.eval n = 2 * n := rfl
+@[simp] theorem fmult_outLen (n : ℕ) : fmult.outLen.eval n = 2 * n := by
+  simp only [fmult, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
 
 /-- Unfolding `f_mult` on a `2n`-bit string. -/
 theorem fmult_f (n : ℕ) (x : Fin (2 * n) → Bool) :
@@ -193,21 +195,6 @@ private theorem fac_natToList_one (k : ℕ) : natToList k 1 = (List.replicate k 
     rw [listToNat_eq] at h
     exact h
 
-/-- The two `n`-bit halves of a `2n`-bit string are its two blocks:
-`(List.ofFn x).take n = List.ofFn (blocks 2 n x 0)` and `.drop n` is block `1`. -/
-private theorem fac_ofFn_halves (n : ℕ) (x : Fin (2 * n) → Bool) :
-    (List.ofFn x).take n = List.ofFn (FunFamily.blocks 2 n x 0) ∧
-      (List.ofFn x).drop n = List.ofFn (FunFamily.blocks 2 n x 1) := by
-  have hb (i : Fin 2) :
-      List.ofFn (FunFamily.blocks 2 n x i) = ((List.ofFn x).drop (i * n)).take n :=
-    (congrArg List.ofFn (funext (FunFamily.blocks_apply 2 n x i))).trans
-      (OneWay.ofFn_block_eq_take_drop x i)
-  have hlen : ((List.ofFn x).drop n).length ≤ n := by
-    simp only [List.length_drop, List.length_ofFn]; omega
-  refine ⟨?_, ?_⟩
-  · rw [hb 0, Fin.val_zero, zero_mul, List.drop_zero]
-  · rw [hb 1, Fin.val_one, one_mul, List.take_of_length_le hlen]
-
 /-- The test "the word reads as `1`" by two comparisons with the numeral `[true]` (`H.le`). -/
 private theorem fac_polyTimeComputable_isOne (H : ArithmeticFP) {g : List Bool → List Bool}
     (hg : PolyTimeComputable g) :
@@ -244,7 +231,12 @@ theorem fmult_easy (H : ArithmeticFP) : fmult.Easy := by
     simpa only [Function.comp_def, pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_const,
       PolyExpr.eval_var, PolyExpr.eval_mul] using h
   refine ⟨_, polyTimeComputable_ite htest hone (H.mul.comp (hx.pairEncode hy)), fun n x => ?_⟩
-  obtain ⟨h0, h1⟩ := fac_ofFn_halves n x
+  have h0 : (List.ofFn x).take n = List.ofFn (FunFamily.blocks 2 n x 0) := by
+    rw [FunFamily.ofFn_blocks, Fin.val_zero, zero_mul, List.drop_zero]
+  have h1 : (List.ofFn x).drop n = List.ofFn (FunFamily.blocks 2 n x 1) := by
+    rw [FunFamily.ofFn_blocks, Fin.val_one, one_mul, List.take_of_length_le]
+    simp only [List.length_drop, List.length_ofFn]
+    omega
   simp only [Function.comp_apply, NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode,
     List.length_replicate, h0, h1, mulStr_pairEncode, List.length_ofFn]
   have hf : List.ofFn (fmult.f n x) = natToList (2 * n)
@@ -484,7 +476,7 @@ factors a uniform pair of distinct primes with probability at least `1/2 − 2n/
 `Pr[E] ≥ 1/(4n²)` (`fac_density`). Conditioning (`one_sub_div_le_uprob_subtype`) gives
 `Pr[S | E] ≥ 1 − 4n²/(8(n+1)²) ≥ 1/2`. On `S ∧ E`, with `p, q` the two blocks,
 `f_mult(x) = ⟦pq⟧_{2n}` and block `0` of the preimage is `p` or `q` (`fmult_inv_factor`), which is
-what `A''` returns (`oneCallFactorer_runAtL`, `fac_ofFn_halves`, the coins through
+what `A''` returns (`oneCallFactorer_runAtL`, `FunFamily.ofFn_blocks`, the coins through
 `oneCallFactorer_coinsEquiv`). The good subtype is `Π_n × Π_n` (`fac_goodEquiv`), and dropping
 the diagonal costs `2n/2^n` (`fac_uprob_primes_le`); the experiment on distinct primes is
 `factorProb A'' n` (`modulusBits_eq`). -/
@@ -545,7 +537,7 @@ private theorem fac_weak_key (A : NUPPT) (n : ℕ) (hn : 2 ≤ n)
       rw [← oneCallFactorer_coinsEquiv_ofFn A n, Equiv.apply_symm_apply]
     rw [NUPPT.inverter_eq_some_iff, NUPPT.runAt_eq, oneCallFactorer_runAtL, hco, ← NUPPT.runAt_eq,
       hrun']
-    exact (fac_ofFn_halves n x').1
+    rw [FunFamily.ofFn_blocks, Fin.val_zero, zero_mul, List.drop_zero]
   -- the good subtype is `Π_n × Π_n`
   have htrans : uprob (fun z : {a // fac_PrimeBlocks n a} × A.Coins n =>
         G (bitsToNat (FunFamily.blocks 2 n z.1.1 0)) (bitsToNat (FunFamily.blocks 2 n z.1.1 1)) z.2) =
@@ -629,7 +621,9 @@ theorem fmult_weakOneWay (H : ArithmeticFP) (hF : FactoringAssumption) : fmult.W
 def fmultBlocks : PolyExpr := .mul (.const 4) (.pow .var 3)
 
 /-- `m_n = 4n³`. -/
-@[simp] theorem eval_fmultBlocks (n : ℕ) : fmultBlocks.eval n = 4 * n ^ 3 := rfl
+@[simp] theorem eval_fmultBlocks (n : ℕ) : fmultBlocks.eval n = 4 * n ^ 3 := by
+  simp only [fmultBlocks, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_pow,
+    PolyExpr.eval_var]
 
 /-- The input length of `f_mult^{m_n}` at parameter `n` is `4n³ · 2n = 8n⁴` (the text's `n'`). -/
 theorem fmult_prod_inLen (n : ℕ) : (fmult.prod fmultBlocks).inLen.eval n = 4 * n ^ 3 * (2 * n) := by
@@ -796,7 +790,7 @@ theorem exists_plantFactorer (H : ArithmeticFP) (A : NUPPT) :
       show List.ofFn (ce r) = List.ofFn (ce r) ++ [] from (List.append_nil _).symm,
       OneWay.YaoMachine.ans_layout (D := D) n hM (fmult.f n) hFe hF'' hPm'' N (ce r) []]
     unfold plantFactor
-    exact (fac_ofFn_halves n _).1
+    rw [FunFamily.ofFn_blocks, Fin.val_zero, zero_mul, List.drop_zero]
   -- the success event of the planting reduction with the padded inverter `yaoB`
   let P : (Fin (fmultBlocks.eval n) × (Fin (fmultBlocks.eval n) → Fin (fmult.inLen.eval n) → Bool) ×
       (Fin (A.coinLen n) → Bool)) → DistinctPrimes n → Prop := fun c z =>
