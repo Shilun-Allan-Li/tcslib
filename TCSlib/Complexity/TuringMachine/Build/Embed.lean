@@ -1093,6 +1093,13 @@ def Cfg.select {m : ℕ} {S : Type*} {x : List Γ} (σ : Fin m ↪ Fin k)
     (d : Cfg k Γ S x) : Cfg m Γ S x :=
   ⟨d.state, d.inputPos, fun i => d.workTapes (σ i), fun i => d.workTapePos (σ i), []⟩
 
+/-- Selecting a tape bank keeps the state and input head, restricts the work tapes and heads
+along the embedding, and gives the selected configuration an empty output. -/
+theorem Cfg.select_eq {m : ℕ} {S : Type*} {x : List Γ} (σ : Fin m ↪ Fin k)
+    (d : Cfg k Γ S x) :
+    d.select σ =
+      ⟨d.state, d.inputPos, fun i => d.workTapes (σ i), fun i => d.workTapePos (σ i), []⟩ := rfl
+
 /-- **The R1 reconstruction lemma** (MIG-0b; backlog F6-1(i), F7-1(b)): an embedded
 configuration is determined by its selected bank and its ambient frame. If `d` has the state,
 input position and selected tapes and heads of `c`, its output is `pre` followed by `c`'s, and

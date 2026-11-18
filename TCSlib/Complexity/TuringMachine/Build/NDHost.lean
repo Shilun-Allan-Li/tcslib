@@ -113,6 +113,16 @@ def phaseHostND {I : Type} {Ph : I → Type} (M : (i : I) → NDTM k Γ (Ph i))
     | some q' => ⟨0, fun _ => (none, 0), none, some q'⟩
     | none => ((M q.1).tr b q.2 inp w).mapState (Sigma.mk q.1)
 
+/-- The nondeterministic host dispatches silently at a redirect; elsewhere it takes the
+selected source transition and tags its successor with that source phase. -/
+theorem phaseHostND_tr {I : Type} {Ph : I → Type} (M : (i : I) → NDTM k Γ (Ph i))
+    (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i))
+    (b : Bool) (q : Σ i, Ph i) (inp : Option Γ) (work : Fin k → Option Γ) :
+    (phaseHostND M q0 red).tr b q inp work =
+      match red q.1 q.2 with
+      | some q' => ⟨0, fun _ => (none, 0), none, some q'⟩
+      | none => ((M q.1).tr b q.2 inp work).mapState (Sigma.mk q.1) := rfl
+
 /-- **Each slice of the ND phase host is a deterministic phase host**: fixing the choice `b`
 in `Turing.NDTM.phaseHostND` gives `Turing.phaseHostTM` over the phases' slices at `b`.
 
