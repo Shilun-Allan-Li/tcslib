@@ -10,13 +10,16 @@
   - 1 is the records edit S2A-N03;
   - **16 are left** (A30: 9 rows; A37: 7 rows).
 - **Checks:** the D2 replay is clean (345 modules rc 0, 0 errors; state check OK over 1,447). Admissions are unchanged.
-  decls2 matches the rulings. The 12 changed definition bodies are `rfl`-equal to their D1 bodies. The seals are in
-  §2, with the open residues.
+  decls2 matches the rulings. The 12 changed definition bodies are `rfl`-equal to their D1 bodies.
+- **Seals:** coe-A and coe-B give 0 on 36 of the 40 owners at the head. The 4 residues are:
+  - the open items A30 and A37;
+  - one `EpsClose` read;
+  - one `@[simps!]` failure that predates S2-A.
 - **Lint:** it shows new findings in files D2 touched (§2, Q-D2-3).
 
 Evidence is in the session scratchpad, `$SP/s2a-d2/`, where `$SP` is
 `/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad`. Its `SHA256SUMS` file has SHA-256
-`SHA256SUMS_TBD`.
+`7d0ecfdacda5865d848d501ca02238e639c7a2466e0a72077bdafc0930e299bd` (1,650 files).
 
 | Pin | Value |
 |---|---|
@@ -122,7 +125,50 @@ D1's replay output, since deleted):
   (Type mismatch), so the probe is not vacuous.
 - **Not probed:** the other 3 ruled bodies (`fmult`, `plantFactor`, `oddCoins`) are unchanged (A30 rest, A37).
 
-SEALS_TBD
+**Seals at the head** (`seal/d2/`):
+- **Setup:**
+  - **Collector and instrumenter:** a collector over **40 owners** (the 38 D2 code owners, including the untouched
+    consumer `HardCorePermutation/GoldreichLevin`, plus `SeedMajority/Enumeration` and `/State`). Then canonical
+    **coe-A** and **coe-B** with the archived Gate 06/10 instrumenter, unmodified.
+  - **Tree and runner:** the D2 replay output, through the gated runner (`lean -DmaxErrors=0`, no `-o`).
+  - **Deduplication:** 8 B probes are byte-identical to their A probe (normalized label), so 72 probes ran
+    (`order/ab-dedup.tsv`).
+- **Base comparison** (`seal/base/`):
+  - **Tree:** the same 38 code owners at `61a5f0fb`, on a temporary `cp -al` copy of snapshot #10 with the overlay
+    (since deleted); 69 probes after deduplication.
+  - **SeedMajority:** its base values are D1's (0/0).
+  - **Interrupted run:** the base run was stopped once by the 2-hour background limit and resumed on the remaining list
+    (`seal-runs2`, `seal-runs3`, `log/notes.txt`). The interrupted probe was re-run from the start.
+- **Table:** `seal/table.tsv`, with errors per probe.
+
+| Owner | coe-A base → head | coe-B base → head |
+|---|---|---|
+| `Ensembles`, `EnsemblesLemmas` | 12, 11 → **0** | 16, 11 → **0** |
+| `OneWay`, `OneWayYao` | 0, 10 → **0** | 32, 11 → **0** |
+| `HardCore/Functions`, `HardCoreCollection` | 6, 8 → **0** | 29, 9 → **0** |
+| `HardCoreGL`, `HardCoreLemmas`, `GLColl`, `GLFamily`, `HardCoreLoops` | 4, 1, 0, 0, 0 → **0** | 5, 9, 3, 3, 0 → **0** |
+| `Universal`, `UniversalLemmas`, `UniversalPadding` | 10, 5, 6 → **0** | 12, 5, 7 → **0** |
+| `Collections`, `CollectionsHelpers`, `BlockEncryptor` | 1, 0, 0 → **0** | 18, 0, 2 → **0** |
+| `GoldreichLevinDomain`, `InnerProduct` | 2, 3 → **0** | (= A) → **0** |
+| `Primality`, `Chebyshev`, `Entropy`, `LeftoverHash` | 1, 1, 5, 1 → **0** | 2, (= A), (= A), (= A) → **0** |
+| `RSA`, `Rabin`, `DDH` | 0 → 0 | 3, 3, 1 → **0** |
+| `Concrete`, `DyadicUniform`, `BooleanVector`, `CollisionResistant`, `FromDiscreteLog` ×3, `Relational`, SeedMajority ×2 | 0 → 0 | 0 → 0 |
+| `SamplingFinDist` | 2 → **1** | (= A) 2 → **1** |
+| `SIS/CollisionOutput` | 1 → 1 | 1 → 1 |
+| `Candidates/Factoring` | 0 → 0 | 22 → 24 |
+| `HardCorePermutation/GoldreichLevin` | 0 → 0 | 8 → 8 |
+
+Every remaining failure is mapped by enclosing declaration (`tools/errdecl.py`; `seal/d2/errdecl/`,
+`seal/base/errdecl/`). None is outside an item the report lists:
+- **`SamplingFinDist`:** `statClose_iff_epsClose_map`, the `EpsClose` residue of S2-SL-214 (§3, item 2; Q-D2-1).
+- **`CollisionOutput`:** the `@[simps!]` attribute at l.53. It fails identically at the base. It is not an S2-A item
+  (Q-D2-5).
+- **`Factoring` B:**
+  - **At the head:** the failures are only in the 9 declarations left in A30 (§5).
+  - **At the base:** they were in those 9, plus `fmult_inLen`, `fmult_outLen` and `eval_fmultBlocks`, which A30 fixed.
+  - **Why 22 → 24:** with the length readers fixed, elaboration gets further inside the remaining declarations. No new
+    declaration fails.
+- **`GoldreichLevin` B:** the 6 A37 declarations, with the same set at the base and the head (§5).
 
 **Lints** (`lint/`):
 - **`style_lint` on the 39 files** (D1's head vs D2's head):
