@@ -1,0 +1,107 @@
+{
+ "base_summary": "declarations screened: 9; copy pairs (target reproduces >= half of source): 0; reproduced text: 0 chars",
+ "head_summary": "declarations screened: 49; copy pairs (target reproduces >= half of source): 9; reproduced text: 1,818 chars",
+ "population_base": [
+  "TCSlib/Complexity/RAMSimulation/WordSize.lean",
+  "TCSlib/Programs/WordRAM/Extended.lean"
+ ],
+ "population_head": [
+  "TCSlib/Complexity/RAMSimulation/WordSize.lean",
+  "TCSlib/Programs/WordRAM/Extended.lean"
+ ],
+ "new": 9,
+ "gone": 0,
+ "net_directed_pairs": "0 -> 9",
+ "pairs": [
+  {
+   "status": "NEW",
+   "target": "Extended.lean::StepsIn.trans",
+   "source": "Extended.lean::XSteps.trans",
+   "chars": 120,
+   "source_chars": 146,
+   "pct": 82,
+   "class": "parallel",
+   "note": "The two `trans` lemmas compose runs of two different relations (base `StepsIn`, which also carries a footprint, and extended `XSteps`). The shared text is the four-line induction skeleton (`induction n generalizing c`, `Nat.zero_add`, `Nat.add_right_comm`); the footprint case adds the union bookkeeping. 146-character source."
+  },
+  {
+   "status": "NEW",
+   "target": "Extended.lean::Steps.exists_stepsIn",
+   "source": "Extended.lean::StepsIn.mono",
+   "chars": 105,
+   "source_chars": 129,
+   "pct": 81,
+   "class": "helper-call",
+   "note": "Both are short instantiations of the shared private `footprint_mono`/`exists_footprint` helpers for base runs; the shared text is the helper's argument list (the zero/successor equations of `StepsIn`). The logic is in the helper."
+  },
+  {
+   "status": "NEW",
+   "target": "Extended.lean::XSteps.of_steps_proj",
+   "source": "Extended.lean::XSteps.of_steps",
+   "chars": 200,
+   "source_chars": 272,
+   "pct": 74,
+   "class": "helper-call",
+   "note": "Both lift a base run to an extended run through the shared private `lift_run`; the shared text is `lift_run`'s argument list. The step obligations differ (`xstep_base_fetch` on the program itself vs. through `projected_fetch` on its projection)."
+  },
+  {
+   "status": "NEW",
+   "target": "Extended.lean::XSteps.of_steps",
+   "source": "Extended.lean::XSteps.of_steps_proj",
+   "chars": 200,
+   "source_chars": 295,
+   "pct": 68,
+   "class": "helper-call",
+   "note": "The reverse direction of the pair above: the same `lift_run` call shape."
+  },
+  {
+   "status": "NEW",
+   "target": "WordSize.lean::mul_scan",
+   "source": "WordSize.lean::mul_flush",
+   "chars": 587,
+   "source_chars": 881,
+   "pct": 67,
+   "class": "parallel",
+   "note": "The two phase-run lemmas of the multiplier `mulMachine` (the scan of the input word with a carry, and the final carry flush). Each is its own strong induction with its own invariant; the shared text is the per-step idiom `MultiTapeTM.step_of_some`, `Action.apply_state`/`apply_output`, `simp only [mulMachine, …]`, read through the published step and action equations."
+  },
+  {
+   "status": "NEW",
+   "target": "Extended.lean::XStepsIn.of_stepsIn_proj",
+   "source": "Extended.lean::XSteps.of_steps_proj",
+   "chars": 192,
+   "source_chars": 295,
+   "pct": 65,
+   "class": "helper-call",
+   "note": "Both instantiate `lift_run` with the projected fetch; this one carries the footprint conjunct as well. The shared text is the instantiation."
+  },
+  {
+   "status": "NEW",
+   "target": "WordSize.lean::scale_computes",
+   "source": "WordSize.lean::space_with_start",
+   "chars": 162,
+   "source_chars": 272,
+   "pct": 60,
+   "class": "parallel",
+   "note": "`space_with_start` proves that changing the start state leaves visited space unchanged; `scale_computes` applies the same published readers (`runFrom_with_q₀`, the visited-space equations) at its own start-state change while bounding the composed machine. The overlap is the reader sequence, not a re-proof of the lemma."
+  },
+  {
+   "status": "NEW",
+   "target": "Extended.lean::XSteps.trans",
+   "source": "Extended.lean::StepsIn.trans",
+   "chars": 120,
+   "source_chars": 206,
+   "pct": 58,
+   "class": "parallel",
+   "note": "The reverse direction of the pair above: the same four-line induction skeleton over a different relation."
+  },
+  {
+   "status": "NEW",
+   "target": "Extended.lean::XStepsIn.of_stepsIn_proj",
+   "source": "Extended.lean::XStepsIn.toXSteps",
+   "chars": 132,
+   "source_chars": 253,
+   "pct": 52,
+   "class": "helper-call",
+   "note": "Both instantiate `lift_run` for `XStepsIn`; the shared text is the relation arguments `(S := …) (R := XStepsIn P x ρ K)` and the `and_assoc` successor equation."
+  }
+ ]
+}

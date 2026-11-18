@@ -1,0 +1,38 @@
+{
+ "NEW|Extended.lean::StepsIn.trans|Extended.lean::XSteps.trans": [
+  "parallel",
+  "The two `trans` lemmas compose runs of two different relations (base `StepsIn`, which also carries a footprint, and extended `XSteps`). The shared text is the four-line induction skeleton (`induction n generalizing c`, `Nat.zero_add`, `Nat.add_right_comm`); the footprint case adds the union bookkeeping. 146-character source."
+ ],
+ "NEW|Extended.lean::XSteps.trans|Extended.lean::StepsIn.trans": [
+  "parallel",
+  "The reverse direction of the pair above: the same four-line induction skeleton over a different relation."
+ ],
+ "NEW|Extended.lean::Steps.exists_stepsIn|Extended.lean::StepsIn.mono": [
+  "helper-call",
+  "Both are short instantiations of the shared private `footprint_mono`/`exists_footprint` helpers for base runs; the shared text is the helper's argument list (the zero/successor equations of `StepsIn`). The logic is in the helper."
+ ],
+ "NEW|Extended.lean::XSteps.of_steps_proj|Extended.lean::XSteps.of_steps": [
+  "helper-call",
+  "Both lift a base run to an extended run through the shared private `lift_run`; the shared text is `lift_run`'s argument list. The step obligations differ (`xstep_base_fetch` on the program itself vs. through `projected_fetch` on its projection)."
+ ],
+ "NEW|Extended.lean::XSteps.of_steps|Extended.lean::XSteps.of_steps_proj": [
+  "helper-call",
+  "The reverse direction of the pair above: the same `lift_run` call shape."
+ ],
+ "NEW|Extended.lean::XStepsIn.of_stepsIn_proj|Extended.lean::XSteps.of_steps_proj": [
+  "helper-call",
+  "Both instantiate `lift_run` with the projected fetch; this one carries the footprint conjunct as well. The shared text is the instantiation."
+ ],
+ "NEW|Extended.lean::XStepsIn.of_stepsIn_proj|Extended.lean::XStepsIn.toXSteps": [
+  "helper-call",
+  "Both instantiate `lift_run` for `XStepsIn`; the shared text is the relation arguments `(S := …) (R := XStepsIn P x ρ K)` and the `and_assoc` successor equation."
+ ],
+ "NEW|WordSize.lean::mul_scan|WordSize.lean::mul_flush": [
+  "parallel",
+  "The two phase-run lemmas of the multiplier `mulMachine` (the scan of the input word with a carry, and the final carry flush). Each is its own strong induction with its own invariant; the shared text is the per-step idiom `MultiTapeTM.step_of_some`, `Action.apply_state`/`apply_output`, `simp only [mulMachine, …]`, read through the published step and action equations."
+ ],
+ "NEW|WordSize.lean::scale_computes|WordSize.lean::space_with_start": [
+  "parallel",
+  "`space_with_start` proves that changing the start state leaves visited space unchanged; `scale_computes` applies the same published readers (`runFrom_with_q₀`, the visited-space equations) at its own start-state change while bounding the composed machine. The overlap is the reader sequence, not a re-proof of the lemma."
+ ]
+}
