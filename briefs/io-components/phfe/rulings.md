@@ -72,3 +72,17 @@ the design notes, the source notes and the sweeps. Rows are the decision-log row
 ## Host
 - One Lean process for this job at any time, through `lean-slot.sh` (tag `io-phfe`); 3 in all on
   Seyoon's Mac, shared with io-sprg.
+
+## Rulings during the job (confirmed by Seyoon, 2026-11-18, Q-G51-3 (A))
+These were given in the worker's chat and recorded in the payload (`evidence/logs/rulings.json`);
+they are confirmed and filed here.
+- **Lean through the slot wrapper.** Every Lean command runs through `lean-slot.sh` (tag `io-phfe`).
+- **g in PPGen.** The public-parameter generator includes the uniform non-identity generator g, with an
+  efficiency field `FEScheme.pubGen_eff` and its target (a deviation from design-r3 §1E.1). Its
+  parameter word carries κ: `fun κ d => NUPPT.advInput κ d.val` (Gate 51 R3, statements r2).
+- **Best judgment while Seyoon is away**, every such decision disclosed in REPORT.
+- **Statement repairs:** statements r1 (PHFE-C0-F01, fixed-width simulator state) and statements r2
+  (Gate 51: R1 `CircuitLinearEfficient`, R2 `state_bounded`/`value_bounded`, R3, minors G51-01, 05–11).
+- **Payload limit** (Q-G51-1 A): source, patches, REPORT, SHA256SUMS and compact evidence of checks
+  actually run; ≤ 20 MB and ≤ 50,000 lines outside `src/` and `patches/` per checkpoint.
+- **Lean replay** is the maintainer's; the worker does not claim one.

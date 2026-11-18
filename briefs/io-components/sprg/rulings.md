@@ -63,3 +63,18 @@ dated 2026-11-18, named by their bold title.
 ## Host
 - One Lean process for this job at any time, through `lean-slot.sh` (tag `io-sprg`); 3 in all on
   Seyoon's Mac, shared with io-phfe.
+
+## Rulings during the job (confirmed by Seyoon, 2026-11-18, Q-G52-2 (A))
+These were given in the worker's chat and recorded in the payload (`evidence/route-requests/`);
+they are confirmed and filed here.
+- **SP-W1: the noise exponent δ is rational** ("Use rational δ throughout, coercing it to real values
+  for analysis"), so the rounded noise schedule is uniformly computable (T5). This restricts
+  Theorem 4.1's δ ∈ (0, 1) to rationals; the docstrings say so (Gate 52 G52-01). No bridge from the
+  real-δ assumption is proved.
+- **SP-W2:** the two hybrid chain-start identities are equalities of acceptance probabilities (the free
+  programs differ by an unused query).
+- **SP-W3:** `HasPolyStretch` includes `κ ≤ seedBits` (it excludes a bounded-length vacuity).
+- **AGENTS.md override:** for this job, Lean runs through the campaign tools and the slot wrapper, as the
+  campaign rules provide, not under the repository-wide "do not run Lean" advice.
+- **Payload limit** (Q-G52-1 A), as io-phfe. **Lean replay** is the maintainer's.
+- **Gate 52 closed** by maintainer closure (`../gates/52-sprg-statements/closure.md`).
