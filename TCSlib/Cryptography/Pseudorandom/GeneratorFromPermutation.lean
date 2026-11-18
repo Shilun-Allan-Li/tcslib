@@ -35,6 +35,7 @@ strings `{0,1}^n` and the output `{0,1}^{2n+1}`.
 
 ## Main results
 
+* `owpGen_apply`, `owpPair_apply`, `owpGenNot_apply`: the defining equations of the three maps.
 * `acceptProb_id_owp`: the uniform distribution is the even mixture of `H_0` and `H_1'`.
 * `predProb_owpPredictor_false`, `predProb_owpPredictor_true`: the exact success
   probabilities of the predictor and of its flip.
@@ -67,15 +68,32 @@ permutation `f` of `α` and a bit `B` of `(x, r)`. -/
 def owpGen (f : α ≃ α) (B : α × β → Bool) : α × β → α × β × Bool :=
   fun w => (f w.1, w.2, B w)
 
+/-- The defining equation of `owpGen`: `owpGen f B (x, r) = (f x, r, B (x, r))`, written
+`owpGen f B w = (f w.1, w.2, B w)`. Glue: the reader of `owpGen` [Gar26, Construction 3.2]. -/
+theorem owpGen_apply (f : α ≃ α) (B : α × β → Bool) (w : α × β) :
+    owpGen f B w = (f w.1, w.2, B w) :=
+  rfl
+
 /-- The function `g(x, r) = f(x) ‖ r` of [Gar26, Construction 3.2], for which `B` is
 assumed to be a hard-concentrate bit. -/
 def owpPair (f : α ≃ α) : α × β → α × β :=
   fun w => (f w.1, w.2)
 
+/-- The defining equation of `owpPair`: `owpPair f w = (f w.1, w.2)`. Glue: the reader of
+`owpPair` [Gar26, Construction 3.2]. -/
+theorem owpPair_apply (f : α ≃ α) (w : α × β) : owpPair f w = (f w.1, w.2) :=
+  rfl
+
 /-- The distribution `H_1' = f(x) ‖ r ‖ (1 - B(x, r))` of [Gar26, proof of Theorem 3.2]:
 the generator with its last bit flipped. -/
 def owpGenNot (f : α ≃ α) (B : α × β → Bool) : α × β → α × β × Bool :=
   fun w => (f w.1, w.2, !B w)
+
+/-- The defining equation of `owpGenNot`: `owpGenNot f B w = (f w.1, w.2, ¬B w)`. Glue: the
+reader of `owpGenNot` [Gar26, proof of Theorem 3.2]. -/
+theorem owpGenNot_apply (f : α ≃ α) (B : α × β → Bool) (w : α × β) :
+    owpGenNot f B w = (f w.1, w.2, !B w) :=
+  rfl
 
 /-- The predictor of [Gar26, proof of Theorem 3.2] built from a distinguisher `D`: on
 input `y = f(x) ‖ r`, draw a uniform bit `σ` and coins for `D`; output `σ` if
