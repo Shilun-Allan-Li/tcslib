@@ -1,13 +1,16 @@
-# gsw-6b-u12 · checkpoint 1
+# gsw-6b-u12 · final
 
 **Head: `afdaa9e2f29604052537652bf01165e61c52fb32`** (`fill/gsw-6b-u12`, local only).
 **Base:** B6 `bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d`, tree `845bdc982fd8f79aba755796bb13188922c4655d`.
 
-**All three targets are proved** at this checkpoint, which is more than checkpoint 1 requires (G1):
-G1 `Encrypts.select`, G2 `encrypts_homEvalPBP`, G3 `encrypts_homEvalFormula`. There is no `sorry` in
-`Branching.lean`. No statement changed, no hypothesis was added, and no scope request is open. Every check
-C1–C13 and the unit checks were run at this head and pass (§5). The final delivery will follow from the
-same proofs, with the checks run again.
+**All three targets are proved:** G1 `Encrypts.select`, G2 `encrypts_homEvalPBP`, G3
+`encrypts_homEvalFormula`. There is no `sorry` in `Branching.lean`. No statement changed, no hypothesis was
+added, and no scope request is open. Every check C1–C13 and the unit checks were run again at this head
+for the final and pass (§5).
+
+Checkpoint 1 (the same head, `afdaa9e2`, with all three targets already proved) was delivered as
+exchange commit `f190df177`. The final adds nothing to the source. It re-runs every check under the tag
+`final` and keeps the checkpoint's evidence beside it (`*-cp1*`).
 
 One input question: **`rulings.md` does not exist** in `briefs/lattice-gsw/phase6/issued-6b-fills-r1/` at
 the records pin `bbc930b3`, nor at the records tip at delivery (`978fd46c`). README *Blocking* 2 says U12
@@ -24,7 +27,7 @@ depends on no question, so I worked to `COMMON.md`, `U12/brief.md` and `dup-swee
   - The clone is separate: `git init`, then `git fetch --depth=1 file:///workspace/tcslib <B6>`, then the local branch `fill/gsw-6b-u12`.
   - `/workspace/tcslib` is this host's shallow mirror of the GitHub repository.
 - **Records tip at delivery:** `978fd46c18662882b5831b6b1c6049975d52086d`.
-  - `git merge-tree --write-tree afdaa9e2 978fd46c` is clean: rc 0, tree `b84570950ff49435ea213ef47eecd8bac12cc39e` (`evidence/git-merge-tree-cp1.txt`).
+  - `git merge-tree --write-tree afdaa9e2 978fd46c` is clean: rc 0, tree `b84570950ff49435ea213ef47eecd8bac12cc39e` (`evidence/git-merge-tree-final.txt`; the same at checkpoint 1).
   - I stayed on the base.
 
 | # | Commit | File |
@@ -128,29 +131,29 @@ The census with `path:line` is `evidence/rule10/reader-census.txt`: MISSING 0.
   New: "`sigma1 0 ≠ 0` (`sigma1_eq` and kernel `decide` on `Fin 5`)".
 - **Module docstring.** "All three are statement-phase targets (admitted); …" became "All three are proved here; …".
 
-## 5. Checks (C1–C13 and the unit checks; full runner `tools/lead/checks.sh`, log `evidence/checks-cp1.log`)
+## 5. Checks (C1–C13 and the unit checks; full runner `tools/lead/checks.sh`, log `evidence/checks-final.log`; checkpoint 1's run: `checks-cp1.log`)
 
 - **C1 Bootstrap and sweep.**
   - Bootstrap of `order.txt` at the base: **224/224 rc 0, 0 errors** in both forms (`evidence/build/bootstrap.tsv`, logs `bootstrap/`).
   - The sorry census equals `base-sorries.txt`: **42 in 16**, name by name (`sorry-census-base.txt`).
   - All 224 sources equal `SOURCE-SHA256SUMS` (`source-binding-base.txt`: 0 mismatches).
-  - Head sweep of the 10 `UNIT-DOWN` modules: Branching, Bootstrap, Circular, Leveled, LeveledSecurity, PolyRatio, Asymptotic and the three facades. Branching is the only changed module, so this is "changed + downstream". All **10/10 rc 0, 0 errors**, each source bound to `git show HEAD` (`evidence/build/summary-cp1.txt`: `RESULT modules=10 bad=0`).
+  - Head sweep of the 10 `UNIT-DOWN` modules: Branching, Bootstrap, Circular, Leveled, LeveledSecurity, PolyRatio, Asymptotic and the three facades. Branching is the only changed module, so this is "changed + downstream". All **10/10 rc 0, 0 errors**, each source bound to `git show HEAD` (`evidence/build/summary-final.txt`: `RESULT modules=10 bad=0`).
   - The root `TCSlib` is not built.
-- **C2 Admissions.** At the head: **39 declarations in 15 modules** = `base-sorries.txt` minus G1–G3, with the diff exactly the Branching row (`admissions-cp1-vs-base.txt`). No `sorry` token in the owned file. Nothing remains open.
+- **C2 Admissions.** At the head: **39 declarations in 15 modules** = `base-sorries.txt` minus G1–G3, with the diff exactly the Branching row (`admissions-final-vs-base.txt`). No `sorry` token in the owned file. Nothing remains open.
 - **C3 Statements.**
-  - decls2 gives **0 ADDED, 0 CHANGED, 0 REMOVED** (`evidence/stmt/decls2-cp1-summary.txt`).
-  - The StmtDump of the three targets (full names) is identical at base and head (`StmtDump-base.stripped`, `StmtDump-head-cp1.stripped`, `StmtDump-diff-cp1.txt`).
+  - decls2 gives **0 ADDED, 0 CHANGED, 0 REMOVED** (`evidence/stmt/decls2-final-summary.txt`).
+  - The StmtDump of the three targets (full names) is identical at base and head (`StmtDump-base.stripped`, `StmtDump-head-final.stripped`, `StmtDump-diff-final.txt`).
 - **C4 Frozen check** (`tools/lead/frozen_owned.py`, the 6a fill's tool with one added control). **PASS, 0 differences** against `allow.tsv`, which licenses only the module sentence.
   - The seven controls each FAIL as stated: header 1, prose spill 1, definition body 1, reader 1, unpermitted import 1, deleted target 2, unlisted new public declaration 1.
   - The unchanged file passes (`frozen-base-vs-base.txt`).
-  - `git diff --stat` lists only `Branching.lean` (`git-diff-stat-cp1.txt`).
-- **C5 Axioms** (`evidence/axioms/AxiomProbe-cp1.log`). All 13 stored constants of the module (auxiliaries and the private glue included) use only `propext`, `Classical.choice` and `Quot.sound`.
+  - `git diff --stat` lists only `Branching.lean` (`git-diff-stat-final.txt`).
+- **C5 Axioms** (`evidence/axioms/AxiomProbe-final.log`). All 13 stored constants of the module (auxiliaries and the private glue included) use only `propext`, `Classical.choice` and `Quot.sound`.
   - **No `sorryAx`**: `SORRY-REACHING 0`, so the dependency trace is empty, as the brief requires.
 - **C6 Rule 10** (`evidence/rule10/`).
-  - Whole-file seals strict-A, strict-B, coe-A and coe-B, `-DmaxErrors=0`, over the full import closure (census 945 constants, 200 requests), at the head (`cp1/`) and at the base (`base/`). **All 8 probes rc 0, 0 errors, no failing declaration**, each with its install and verify records.
+  - Whole-file seals strict-A, strict-B, coe-A and coe-B, `-DmaxErrors=0`, over the full import closure (census 945 constants, 200 requests), at the head (`final/`) and at the base (`base/`). **All 8 probes rc 0, 0 errors, no failing declaration**, each with its install and verify records.
   - The request sets were rebuilt at the base from its own oleans.
   - **Notation exemptions.** `PolyExpr.eval` and the `FinDist` coercion are not in this closure, so A = B and strict = coe here.
-  - **Liveness pair** (`live-cp1/`, source `live-src/`), appended to the owner's own probe:
+  - **Liveness pair** (`live-final/`, source `live-src/`), appended to the owner's own probe:
 
     | Variant | Negative (`BranchingProgram.evalWith` by `rfl`) | Positive (`evalWith_eq`) |
     |---|---|---|
@@ -158,18 +161,18 @@ The census with `path:line` is `evidence/rule10/reader-census.txt`: MISSING 0.
     | strict-A, strict-B, coe-A, coe-B | exactly 1 error each | 0 errors |
 
   - There is no new public definition, so no further pair is needed.
-  - Explicit-unfold scan: 19 identifiers, **0 foreign definitions** (`unfold-cp1/explicit-unfold-scan.txt`). The reader census has no MISSING entry.
+  - Explicit-unfold scan: 19 identifiers, **0 foreign definitions** (`unfold-final/explicit-unfold-scan.txt`). The reader census has no MISSING entry.
 - **C7 Lint.**
   - `style_lint` on the owned file: 0 findings.
-  - `campaign_style_lint TCSlib/Cryptography --check8b`: **92 FAIL / 103 WARN over 540 files** at both base and head, matching the maintainer's B6 figures. The line sets are identical: no new or gone FAIL or WARN (`campaign-diff-cp1.txt`).
-- **C8 Sizes:** §3 (`evidence/sizes/sizes-cp1.txt`). No line over 100, no file over 1,000.
-- **C9 Hygiene** (`evidence/docs/hygiene-cp1.txt`). The one helper has a formula and "Glue.". G1 (21 lines), G2 (49) and G3 (26) have sketches, and G2's proof has step comments at its `have`s. **flagged = 0**.
-- **C10 Clashes** (`evidence/clash/clash-cp1.txt`). One new name, private: `encrypts_select_ite`.
+  - `campaign_style_lint TCSlib/Cryptography --check8b`: **92 FAIL / 103 WARN over 540 files** at both base and head, matching the maintainer's B6 figures. The line sets are identical: no new or gone FAIL or WARN (`campaign-diff-final.txt`).
+- **C8 Sizes:** §3 (`evidence/sizes/sizes-final.txt`). No line over 100, no file over 1,000.
+- **C9 Hygiene** (`evidence/docs/hygiene-final.txt`). The one helper has a formula and "Glue.". G1 (21 lines), G2 (49) and G3 (26) have sketches, and G2's proof has step comments at its `have`s. **flagged = 0**.
+- **C10 Clashes** (`evidence/clash/clash-final.txt`). One new name, private: `encrypts_select_ite`.
   - It has 0 hits at the base, on `iO/phase-a-base` (`5ed465f6…`), on `cleanup/stage2-s2a` (`dff281b5…`) and at the records tip.
   - Being private, it cannot change any resolution in a `UNIT-DOWN` module.
 - **C11 Reuse and overlap:** §6.
 - **C12 Probe U12-P1** (`evidence/probes/U12-P1.log`, source `probe-sources/probes/U12P1.lean`). `#eval` of `select` on toy parameters `n = 1`, `q = 8`, `ℓ = 3`, with noise-free `b·G`, `u·G`, `v·G`, against `((1 − b)·u + b·v)·G` entrywise: **true for all 10 cases** (the four bit pairs with `u, v ∈ {0,1}`, plus `(b, 5, 3)` for `b = 0, 1`). Evidence only; no `native_decide`.
-- **C13 Reproduction** (`evidence/reproduce-cp1.log`). In a scratch clone (sparse to the owned file), reset to the base, `git am` of `patches/` with `COMMITS.tsv`'s committer data reproduces both hashes, and `src/` equals the head's file byte for byte.
+- **C13 Reproduction** (`evidence/reproduce-final.log`). In a scratch clone (sparse to the owned file), reset to the base, `git am` of `patches/` with `COMMITS.tsv`'s committer data reproduces both hashes, and `src/` equals the head's file byte for byte.
 
 ## 6. Overlap and reuse
 
@@ -248,6 +251,6 @@ None of these is restated.
 - `axioms/`.
 - `rule10/`: seals at the base and the head, liveness pair, unfold scan, reader census.
 - `lint/`, `sizes/`, `docs/`, `clash/`, `overlap/`, `probes/`.
-- `git-diff-stat-cp1.txt`, `git-merge-tree-cp1.txt`, `reproduce-cp1.log`, `checks-cp1.log`.
+- `git-diff-stat-{cp1,final}.txt`, `git-merge-tree-{cp1,final}.txt`, `reproduce-{cp1,final}.log`, `checks-{cp1,final}.log`.
 - `tools/`: the pool, census, StmtDump, check runner, seals, frozen check, unfold scan, lint diff, sizes and hygiene, delivery, and the records copy of `decls2.py`.
 - `probe-sources/`: the Lean sources of every probe, cache probe included. `rule10/probe-sources/` holds the seal probes.
