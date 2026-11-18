@@ -1,0 +1,102 @@
+head=1813ca6e2b9987be75908e8d527f898fb3bb8317
+source_sha256=296c944588fae0fe806d80bd753c6f216f0255c838f73378dc6c4cfda5ff276a
+start=2026-11-18T11:30:56.097830+00:00
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean:45:14: error: Type mismatch
+  fun ct => ?m.32 <$> enc G ℓ zDim κ pp pk msg.1 (pp.group.expVec pp.generator msg.2)
+has type
+  (ct : ?m.22) → ProbComp (?m.44 ct)
+but is expected to have type
+  OracleComp unifSpec ((saSpec G PG zDim κ pp).rng false × SAState G ℓ zDim κ pp)
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean:51:8: error: Application type mismatch: The argument
+  fun key => ?m.108 <$> keyGen G PG zDim κ pp msk query.fn query.matrix
+has type
+  (key : ?m.97) → ProbComp (?m.128 key)
+but is expected to have type
+  OracleComp unifSpec ((saSpec G PG zDim κ pp).rng true × SAState G ℓ zDim κ pp)
+in the application
+  ite (st.used < q.eval κ) fun key => ?m.108 <$> keyGen G PG zDim κ pp msk query.fn query.matrix
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean:45:35: error: Invalid `⟨...⟩` notation: The expected type of this term could not be determined
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean:51:26: error: Invalid `⟨...⟩` notation: The expected type of this term could not be determined
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean:51:43: error: Invalid `⟨...⟩` notation: The expected type of this term could not be determined
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean:63:16: error: Type mismatch
+  fun ct => ?m.28 <$> enc G ℓ zDim κ pp pk msg.1 (pp.group.expVec pp.generator msg.2)
+has type
+  (ct : ?m.18) → ProbComp (?m.40 ct)
+but is expected to have type
+  OracleComp unifSpec ((saSpec G PG zDim κ pp).rng false × SAState G ℓ zDim κ pp)
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean:63:37: error: Invalid `⟨...⟩` notation: The expected type of this term could not be determined
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean:77:10: error: Application type mismatch: The argument
+  fun key => ?m.50 <$> keyGen G PG zDim κ pp msk query.fn query.matrix
+has type
+  (key : ?m.39) → ProbComp (?m.70 key)
+but is expected to have type
+  OracleComp unifSpec ((saSpec G PG zDim κ pp).rng true × SAState G ℓ zDim κ pp)
+in the application
+  ite (st.used < q.eval κ) fun key => ?m.50 <$> keyGen G PG zDim κ pp msk query.fn query.matrix
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean:77:28: error: Invalid `⟨...⟩` notation: The expected type of this term could not be determined
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean:77:45: error: Invalid `⟨...⟩` notation: The expected type of this term could not be determined
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean:89:14: error: Type mismatch
+  fun ct => ?m.32 <$> simEnc G ℓ zDim κ pp sim msg.1
+has type
+  (ct : ?m.22) → ProbComp (?m.35 ct)
+but is expected to have type
+  OracleComp unifSpec ((saSpec G PG zDim κ pp).rng false × SAState G ℓ zDim κ pp)
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean:94:8: error: Application type mismatch: The argument
+  fun key =>
+    ?m.99 <$>
+      simKey G PG zDim κ pp sim query.fn query.matrix msg.1 (leak G PG zDim κ pp query.fn query.matrix msg.1 msg.2)
+has type
+  (key : ?m.88) → ProbComp (?m.144 key)
+but is expected to have type
+  OracleComp unifSpec ((saSpec G PG zDim κ pp).rng true × SAState G ℓ zDim κ pp)
+in the application
+  ite (st.used < q.eval κ) fun key =>
+    ?m.99 <$>
+      simKey G PG zDim κ pp sim query.fn query.matrix msg.1 (leak G PG zDim κ pp query.fn query.matrix msg.1 msg.2)
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean:89:35: error: Invalid `⟨...⟩` notation: The expected type of this term could not be determined
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean:94:26: error: Invalid `⟨...⟩` notation: The expected type of this term could not be determined
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean:94:43: error: Invalid `⟨...⟩` notation: The expected type of this term could not be determined
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean:106:16: error: Type mismatch
+  fun ct => ?m.28 <$> simEnc G ℓ zDim κ pp sim msg.1
+has type
+  (ct : ?m.18) → ProbComp (?m.31 ct)
+but is expected to have type
+  OracleComp unifSpec ((saSpec G PG zDim κ pp).rng false × SAState G ℓ zDim κ pp)
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean:106:37: error: Invalid `⟨...⟩` notation: The expected type of this term could not be determined
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean:118:10: error: Application type mismatch: The argument
+  fun key =>
+    ?m.50 <$>
+      simKey G PG zDim κ pp sim query.fn query.matrix msg.1 (leak G PG zDim κ pp query.fn query.matrix msg.1 msg.2)
+has type
+  (key : ?m.39) → ProbComp (?m.95 key)
+but is expected to have type
+  OracleComp unifSpec ((saSpec G PG zDim κ pp).rng true × SAState G ℓ zDim κ pp)
+in the application
+  ite (st.used < q.eval κ) fun key =>
+    ?m.50 <$>
+      simKey G PG zDim κ pp sim query.fn query.matrix msg.1 (leak G PG zDim κ pp query.fn query.matrix msg.1 msg.2)
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean:118:28: error: Invalid `⟨...⟩` notation: The expected type of this term could not be determined
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean:118:45: error: Invalid `⟨...⟩` notation: The expected type of this term could not be determined
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh): no fresh .olean produced
+        2.73 real         1.86 user         0.94 sys
+          2315010048  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              182688  page reclaims
+                  72  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  25  voluntary context switches
+                4051  involuntary context switches
+            32966273  instructions retired
+            14597022  cycles elapsed
+             1622352  peak memory footprint
+end=2026-11-18T11:30:58.857842+00:00
+rc=1

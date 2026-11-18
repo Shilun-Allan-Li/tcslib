@@ -1,0 +1,60 @@
+From 0e8536becd2d0f9e3fc1dccc04b33480e23b0b24 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 03:23:28 -0800
+Subject: [PATCH 16/25] io-phfe: spell raw simulator types explicitly
+
+---
+ .../FunctionalEncryption/SemiAdaptive/FromTwoStage.lean   | 8 ++++----
+ .../FunctionalEncryption/Wee20/LinearSecurity/Data.lean   | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean
+index d09d160bd..7b95533ff 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean
+@@ -47,12 +47,12 @@ open Complexity Turing TCSlib.Cryptography.Games
+ 
+ namespace FEScheme.Raw.SASimulator.Raw
+ 
+-variable {C : FnClass} {S : FEScheme.Raw C} (Sim : S.SASimulator.Raw)
++variable {C : FnClass} {S : FEScheme.Raw C} (Sim : FEScheme.Raw.SASimulator.Raw S)
+ 
+ /-- A semi-adaptive raw simulator yields the committed raw simulator by passing
+ only omega.publicInput to encryption and the indexed function/scalar to key simulation.
+ [GJLS21, Definition 4.3; Wee20, §2.2, p.5]. Draws remain the same single draw types. -/
+-def toSim : S.Simulator.Raw where
++def toSim : FEScheme.Raw.Simulator.Raw S where
+   St := Sim.St
+   encSt := Sim.encSt
+   encSt_injective := Sim.encSt_injective
+@@ -255,7 +255,7 @@ view. Unroll buildComp through its published case lemmas for one challenge and
+ q ordered key calls. The typed handler cases give the same state-threaded key
+ law as List.mapM. Convert the simulator through the toSim readers and identify
+ the second-stage word through viewWord_eq_viewWordBits. -/
+-theorem expect_simGame_eq_saGame (Sim : S.SASimulator.Raw) (A : TwoStage)
++theorem expect_simGame_eq_saGame (Sim : FEScheme.Raw.SASimulator.Raw S) (A : TwoStage)
+     (q : PolyExpr) (real : Bool) (kappa : ℕ) (test : Bool → ℝ) :
+     ProbComp.expect (S.simGame Sim.toSim A q real kappa) test =
+       ProbComp.expect (S.saGame Sim (A.toSA (S := S) q) real kappa) test := sorry
+@@ -265,7 +265,7 @@ explicit typed embedding, with no loss. [GJLS21, Definition 4.3; Wee20, §2.2].
+ 
+ **Proof sketch.** Apply the preceding exact law identity to each experiment's
+ acceptance test, then read the two advantages through their published equations. -/
+-theorem simAdv_eq_saSimAdv (Sim : S.SASimulator.Raw) (A : TwoStage)
++theorem simAdv_eq_saSimAdv (Sim : FEScheme.Raw.SASimulator.Raw S) (A : TwoStage)
+     (q : PolyExpr) (kappa : ℕ) :
+     S.simAdv Sim.toSim A q kappa = S.saSimAdv Sim (A.toSA (S := S) q) kappa := sorry
+ 
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Data.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Data.lean
+index fefe142ed..9deb0441e 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Data.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Data.lean
+@@ -311,7 +311,7 @@ theorem keyAt_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Ty
+       let n := n'.eval κ
+       ⟨(fun i u => getScalar (off 0 + j * (3 * (b + n)) + i.val * (b + n) +
+           paddedDrawIndex PG κ pp.orderParam f u)),
+-        (fun i u => at
++        (fun i u => getScalar
+           (off 1 + j * (2 * b) + i.val * b + (PG.mCoord κ pp.orderParam f u).val))⟩ := rfl
+ 
+ /-- Read the T,uhat,R,partial-garbling draw used by the ideal and intermediate games. -/

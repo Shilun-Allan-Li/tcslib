@@ -1,0 +1,102 @@
+$ rg -n def .*Move.*map|buildComp.*map|map.*buildComp|namespace Move /Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games
+exit=1
+(no matches)
+
+
+$ rg -n def bitCodec|theorem bitCodec_|def buildComp|theorem buildComp_|toCompOn_eq|toCompOn_costBoundedBy /Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/BitCodec.lean /Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Machines.lean
+exit=0
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Machines.lean:112:def buildComp {spec : OracleSpec ι} (next : QueryLog spec → Move spec α) (timeout : α) :
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Machines.lean:128:theorem buildComp_zero_of_ret {a : α} (h : next hist = .ret a) :
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Machines.lean:134:theorem buildComp_zero_of_query {i : ι} {x : spec.dom i} (h : next hist = .query i x) :
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Machines.lean:140:theorem buildComp_succ_of_ret {q : ℕ} {a : α} (h : next hist = .ret a) :
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Machines.lean:148:theorem buildComp_succ_of_query {q : ℕ} {i : ι} {x : spec.dom i} (h : next hist = .query i x) :
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Machines.lean:155:theorem buildComp_of_ret {q : ℕ} {a : α} (h : next hist = .ret a) :
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Machines.lean:164:theorem buildComp_costBoundedBy {spec : OracleSpec ι} (next : QueryLog spec → Move spec α)
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Machines.lean:198:theorem buildComp_budget_eq {spec : OracleSpec ι} (next : QueryLog spec → Move spec α) (t : α) :
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Machines.lean:266:theorem _root_.Complexity.NUPPT.toCompOn_eq {spec : OracleSpec ι} (D : NUPPT)
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Machines.lean:274:theorem _root_.Complexity.NUPPT.toCompOn_costBoundedBy {spec : OracleSpec ι} (D : NUPPT)
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Machines.lean:286:  rw [NUPPT.toCompOn_eq] at hc ⊢
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Machines.lean:287:  rw [NUPPT.toCompOn_eq]
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/BitCodec.lean:220:def bitCodec (din dout : Fin k → ℕ) (dα : ℕ) :
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/BitCodec.lean:229:theorem bitCodec_decodeMove (din dout : Fin k → ℕ) (dα : ℕ) (w : List Bool) :
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/BitCodec.lean:234:theorem bitCodec_encodeEntry (din dout : Fin k → ℕ) (dα : ℕ)
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/BitCodec.lean:242:theorem bitCodec_timeout (din dout : Fin k → ℕ) (dα : ℕ) :
+
+
+$ rg -n def decAnswer|theorem decAnswer_|def decOpen /Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean
+exit=0
+136:def decOpen : Attack → Bool → Bool
+161:def decAnswer {n : ℕ} : Option (Fin n → Bool) → (Fin (n + 1) → Bool)
+166:theorem decAnswer_some {n : ℕ} (m : Fin n → Bool) :
+170:theorem decAnswer_none (n : ℕ) : decAnswer (n := n) none = zeroBits (n + 1) := rfl
+
+
+$ rg -n coinsEquivPoly|coinLen_eq|runAt_eq /Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Complexity/Randomized/PPT.lean
+exit=0
+171:theorem coinLen_eq (n : ℕ) : A.coinLen n = A.coins.eval n := rfl
+230:  rw [List.length_ofFn, coinLen_eq]
+249:theorem runAt_eq (n : ℕ) (y : List Bool) (r : A.Coins n) :
+257:  Equiv.arrowCongr (finCongr (by rw [coinLen_eq, coinLen_eq, h])) (Equiv.refl Bool)
+262:  (List.ofFn_congr (by rw [coinLen_eq, coinLen_eq, h]) r).symm
+268:  rw [runAt_eq, coinsCongr_ofFn]
+274:def coinsEquivPoly {A : NUPPT} {c : PolyExpr} (h : A.coins = c) (n : ℕ) :
+276:  Equiv.arrowCongr (finCongr (by rw [coinLen_eq, h])) (Equiv.refl Bool)
+279:`List.ofFn (coinsEquivPoly h n r) = List.ofFn r`. -/
+280:theorem coinsEquivPoly_ofFn {A : NUPPT} {c : PolyExpr} (h : A.coins = c) (n : ℕ) (r : A.Coins n) :
+281:    List.ofFn (coinsEquivPoly h n r) = List.ofFn r :=
+282:  (List.ofFn_congr (by rw [coinLen_eq, h]) r).symm
+285:`List.ofFn ((coinsEquivPoly h n).symm w) = List.ofFn w`. -/
+286:theorem coinsEquivPoly_symm_ofFn {A : NUPPT} {c : PolyExpr} (h : A.coins = c) (n : ℕ)
+287:    (w : Fin (c.eval n) → Bool) : List.ofFn ((coinsEquivPoly h n).symm w) = List.ofFn w := by
+288:  rw [← coinsEquivPoly_ofFn h n, Equiv.apply_symm_apply]
+337:theorem Computes.runAt_eq {f : List Bool → List Bool} (h : A.Computes f) (n : ℕ)
+374:`(ofPolyTime hf coins adv advice hα).Coins n ≃ {0,1}^{coins(n)}` (`coinsEquivPoly`). -/
+378:  coinsEquivPoly (coins_ofPolyTime hf coins adv advice hα) n
+385:  coinsEquivPoly_ofFn _ n r
+424:`(ofPolyTimeUniform hf coins).Coins n ≃ {0,1}^{coins(n)}` (`coinsEquivPoly`). -/
+427:  coinsEquivPoly (coins_ofPolyTimeUniform hf coins) n
+433:  coinsEquivPoly_ofFn _ n r
+453:  rw [runAt_eq, runAtL_ofPolyTimeUniform]
+
+
+$ rg -n def saGame|structure SASimulator|def saImpl|def saReadMove|def saCommitment /Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography
+exit=0
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Games.lean:198:noncomputable def saGame (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Simulator.lean:47:structure SASimulator.Raw where
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Simulator.lean:208:structure SASimulator extends SASimulator.Raw S where
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Games.lean:73:noncomputable def saImpl {sigma : Type} (kappa : ℕ) (pp : PublicParams S.G kappa)
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Games.lean:224:noncomputable def saGame (Sim : SASimulator.Raw S) (A : S.SAAdv) (real : Bool)
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:157:def saCommitment (A : TwoStage) (C : FnClass) (q : PolyExpr) (kappa : ℕ)
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean:234:def saReadMove (kappa : ℕ) (w : List Bool) : Move (S.saSpec kappa) Bool :=
+
+
+$ rg -n def (buildComp|saImpl|saReadMove|saCommitment)|structure SASimulator /Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/.lake/packages/mathlib/Mathlib
+exit=1
+(no matches)
+
+
+$ rg -n expect_sample_comm|expect_expect_sample|expect_sample_equiv|expect_simulate_rel|simulate_bind|simulate_call /Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Probability.lean /Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Relational.lean /Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Simulate.lean
+exit=0
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Relational.lean:20:end in related states (`ProbComp.expect_simulate_rel`). "Alike" is measured by expectations: a
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Relational.lean:34:* `ProbComp.expect_simulate_rel`: implementations on related states simulate alike.
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Relational.lean:38:  `expect_simulate_rel` when a bijection of the samples matches the answers and relates the new
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Relational.lean:85:theorem expect_simulate_rel (impl₀ : QueryImpl spec σ unifSpec)
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Relational.lean:102:`expect_simulate_rel`, from related states `R s t` every event `P` on the output of `c` has the
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Relational.lean:110:`expect_simulate_rel` equates them. -/
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Relational.lean:120:  exact expect_simulate_rel impl₀ impl₁ R h c _ _ (fun _ _ _ _ => rfl) hst
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Relational.lean:126:`𝔼[g₀] c₀ = 𝔼[g₁] c₁`: the hypothesis of `expect_simulate_rel` for such a call.
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Relational.lean:129:average over `V` along `e` (`expect_sample_equiv`) and compare the two averages pointwise. -/
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Relational.lean:136:  rw [expect_bind, expect_bind, ← expect_sample_equiv e]
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Simulate.lean:40:* `Games.simulate_bind`: simulation commutes with sequencing.
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Simulate.lean:107:theorem simulate_bind (c : OracleComp spec α) (f : α → OracleComp spec β) (s : σ) :
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Simulate.lean:114:theorem simulate_call (i : ι) (x : spec.dom i) (s : σ) :
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Simulate.lean:197:under `impl₂` (`simulate_bind` on the left, the definition of `comp` on the right), and the
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Simulate.lean:207:    simp only [simulate_query, simulate_bind, QueryImpl.comp, OracleComp.bind_assoc,
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Probability.lean:46:* `ProbComp.expect_sample_equiv`, `expect_sample_comm`, `expect_sample_unique`,
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Probability.lean:50:* `ProbComp.expect_expect_sample`: exchanging an expectation with a uniform sample (Fubini).
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Probability.lean:304:theorem expect_sample_equiv [Fintype α] [Nonempty α] [Fintype β] [Nonempty β] (e : α ≃ β)
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Probability.lean:313:theorem expect_sample_comm [Fintype α] [Nonempty α] [Fintype β] [Nonempty β]
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Probability.lean:326:theorem expect_expect_sample (c : ProbComp α) (T : Type) [Fintype T] [Nonempty T]
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Probability.lean:380:**Proof sketch.** Exchange the samples on the right (`expect_sample_comm`) and resample the
+/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/TCSlib/Cryptography/Games/Probability.lean:387:  rw [expect_sample_comm, ← expect_sample_update j (fun T => F (T j) T)]
+

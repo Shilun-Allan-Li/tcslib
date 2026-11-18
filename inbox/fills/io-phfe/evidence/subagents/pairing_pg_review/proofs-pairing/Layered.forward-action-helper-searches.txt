@@ -1,0 +1,119 @@
+READ-ONLY SEARCH LOG
+Worktree: /Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange
+Layered snapshot: 493 lines; SHA-256 09b1074dd541ec70c64dbdf3d8dd93e3c022f82b3724474d804bcf80c5899475
+No Lean, lake, Git or proof-check commands were run.
+exact?/apply? remain pending for the lead, after the active census.
+
+$ rg -n forward_node|matrix_inl|forward.*parent|parent.*forward|xhat.*lastLabel|lastLabel.*xhat|publicTensor.*mulVec|mulVec.*publicTensor TCSlib .lake/packages/mathlib/Mathlib /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean
+exit=0
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean:303:recurrence. At each non-root prefix its parent's weighted forward value cancels
+
+$ rg -n kroneckerMap.*mulVec|mulVec.*kroneckerMap|kronecker.*mulVec|mulVec.*kronecker .lake/packages/mathlib/Mathlib/Data/Matrix .lake/packages/mathlib/Mathlib/LinearAlgebra/Matrix
+exit=0
+.lake/packages/mathlib/Mathlib/LinearAlgebra/Matrix/Vec.lean:111:/-- Technical lemma shared with `kronecker_mulVec_vec` and `vec_mul_eq_mulVec`. -/
+.lake/packages/mathlib/Mathlib/LinearAlgebra/Matrix/Vec.lean:112:theorem kronecker_mulVec_vec_of_commute (A : Matrix l m R) (X : Matrix m n R) (B : Matrix p n R)
+.lake/packages/mathlib/Mathlib/LinearAlgebra/Matrix/Vec.lean:116:  simp_rw [vec, mulVec, mul_apply, dotProduct, kroneckerMap_apply, Finset.sum_mul, transpose_apply,
+.lake/packages/mathlib/Mathlib/LinearAlgebra/Matrix/Vec.lean:132:theorem kronecker_mulVec_vec (A : Matrix l m R) (X : Matrix m n R) (B : Matrix p n R) :
+.lake/packages/mathlib/Mathlib/LinearAlgebra/Matrix/Vec.lean:134:  kronecker_mulVec_vec_of_commute _ _ _ fun _ _ _ => Commute.all _ _
+.lake/packages/mathlib/Mathlib/LinearAlgebra/Matrix/Vec.lean:147:  rw [kronecker_mulVec_vec_of_commute, transpose_one, Matrix.mul_one]
+
+$ rg -n prod_univ_castSucc|prod_univ_zero .lake/packages/mathlib/Mathlib/Algebra/BigOperators/Fin.lean
+exit=0
+17:The most important results are the induction formulas `Fin.prod_univ_castSucc`
+57:theorem prod_univ_zero (f : Fin 0 → M) : ∏ i, f i = 1 :=
+80:theorem prod_univ_castSucc (f : Fin (n + 1) → M) :
+101:  simp [prod_univ_castSucc]
+116:  rw [prod_univ_castSucc, prod_univ_two]
+121:  rw [prod_univ_castSucc, prod_univ_three]
+126:  rw [prod_univ_castSucc, prod_univ_four]
+131:  rw [prod_univ_castSucc, prod_univ_five]
+136:  rw [prod_univ_castSucc, prod_univ_six]
+142:  rw [prod_univ_castSucc, prod_univ_seven]
+426:    rw [Fin.prod_univ_castSucc, Fin.prod_univ_succ]
+602:      rw [Fin.prod_univ_castSucc, Fin.sum_univ_castSucc]
+
+$ rg -n init_def|append_left_snoc|append_right_cons .lake/packages/mathlib/Mathlib/Data/Fin/Tuple/Basic.lean
+exit=0
+489:theorem init_def {q : ∀ i, α i} :
+653:theorem append_left_snoc {n m} {α : Sort*} (xs : Fin n → α) (x : α) (ys : Fin m → α) :
+658:theorem append_right_cons {n m} {α : Sort*} (xs : Fin n → α) (y : α) (ys : Fin m → α) :
+661:  rw [append_left_snoc]; rfl
+
+$ rg -n sum_ite_eq|prod_ite_eq .lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Piecewise.lean
+exit=0
+136:theorem prod_ite_eq [DecidableEq ι] (s : Finset ι) (a : ι) (b : ι → M) :
+143:The difference with `Finset.prod_ite_eq` is that the arguments to `Eq` are swapped. -/
+147:The difference with `Finset.sum_ite_eq` is that the arguments to `Eq` are swapped. -/]
+148:theorem prod_ite_eq' [DecidableEq ι] (s : Finset ι) (a : ι) (b : ι → M) :
+153:theorem prod_ite_eq_of_mem [DecidableEq ι] (s : Finset ι) (a : ι) (b : ι → M) (h : a ∈ s) :
+155:  simp only [prod_ite_eq, if_pos h]
+157:/-- The difference with `Finset.prod_ite_eq_of_mem` is that the arguments to `Eq` are swapped. -/
+159:theorem prod_ite_eq_of_mem' [DecidableEq ι] (s : Finset ι) (a : ι) (b : ι → M) (h : a ∈ s) :
+161:  simp only [prod_ite_eq', if_pos h]
+264:lemma prod_ite_eq_ite_exists (p : ι → Prop) [DecidablePred p] (h : ∀ i j, p i → p j → i = j)
+286:/-- See also `Finset.prod_ite_eq`. -/
+287:@[to_additive /-- See also `Finset.sum_ite_eq`. -/]
+288:lemma prod_ite_eq (i : ι) (f : ι → M) : ∏ j, (if i = j then f j else 1) = f i := by
+289:  rw [Finset.prod_ite_eq, if_pos (mem_univ _)]
+291:/-- See also `Finset.prod_ite_eq'`. -/
+292:@[to_additive /-- See also `Finset.sum_ite_eq'`. -/]
+293:lemma prod_ite_eq' (i : ι) (f : ι → M) : ∏ j, (if j = i then f j else 1) = f i := by
+294:  rw [Finset.prod_ite_eq', if_pos (mem_univ _)]
+
+$ rg -n Fintype.sum_prod_type|Fintype.prod_prod_type .lake/packages/mathlib/Mathlib/Data/Fintype/BigOperators.lean
+exit=0
+250:in the reverse direction, use `Fintype.prod_prod_type'`. -/
+251:@[to_additive Fintype.sum_prod_type /-- The sum over a product type equals the sum of fiberwise
+252:sums. For rewriting in the reverse direction, use `Fintype.sum_prod_type'`. -/]
+253:theorem Fintype.prod_prod_type [CommMonoid γ] (f : α₁ × α₂ → γ) :
+258:in the reverse direction, use `Fintype.prod_prod_type`. -/
+259:@[to_additive Fintype.sum_prod_type' /-- The sum over a product type equals the sum of fiberwise
+260:sums. For rewriting in the reverse direction, use `Fintype.sum_prod_type`. -/]
+261:theorem Fintype.prod_prod_type' [CommMonoid γ] (f : α₁ → α₂ → γ) :
+265:@[to_additive Fintype.sum_prod_type_right]
+266:theorem Fintype.prod_prod_type_right [CommMonoid γ] (f : α₁ × α₂ → γ) :
+271:@[to_additive Fintype.sum_prod_type_right'
+273:theorem Fintype.prod_prod_type_right' [CommMonoid γ] (f : α₁ → α₂ → γ) :
+
+$ rg -n theorem mul_apply|theorem single_dotProduct|theorem dotProduct_single|theorem dotProduct_mulVec|theorem mulVec_mulVec .lake/packages/mathlib/Mathlib/Data/Matrix/Mul.lean
+exit=0
+178:theorem single_dotProduct (x : α) (i : m) : Pi.single i x ⬝ᵥ v = x * v i := by
+185:theorem dotProduct_single (x : α) (i : m) : v ⬝ᵥ Pi.single i x = v i * x := by
+201:theorem dotProduct_single_one [DecidableEq n] (v : n → α) (i : n) :
+293:theorem mul_apply [Fintype m] [Mul α] [AddCommMonoid α] {M : Matrix l m α} {N : Matrix m n α}
+299:theorem mul_apply' [Fintype m] [Mul α] [AddCommMonoid α] {M : Matrix l m α} {N : Matrix m n α}
+690:theorem mul_apply_eq_vecMul [Fintype n] (A : Matrix m n α) (B : Matrix n o α) (i : m) :
+710:theorem dotProduct_mulVec [Fintype n] [Fintype m] [NonUnitalSemiring R] (v : m → R)
+824:theorem mulVec_mulVec [Fintype n] [Fintype o] (v : o → α) (M : Matrix m n α) (N : Matrix n o α) :
+
+$ rg -n publicTensor_apply TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Defs.lean
+exit=0
+75:theorem publicTensor_apply (x : Fin l → ZMod (p : ℕ)) (i : Fin l) (u v : M) :
+
+$ rg -n xhat_castSucc|xhat_last|polyTensorEval_eq TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean
+exit=0
+79:theorem xhat_castSucc {p : ℕ+} {l : ℕ} (x : Fin l → ZMod (p : ℕ)) (i : Fin l) :
+83:theorem xhat_last {p : ℕ+} {l : ℕ} (x : Fin l → ZMod (p : ℕ)) :
+93:theorem polyTensorEval_eq {p : ℕ+} {l n d : ℕ} (C : PolyTensor p l n d)
+
+$ rg -n sum_cons_mul_prod|sum_append_product|sum.*Fin.cons|Fin.consEquiv.*sum_comp|consEquiv.*sum_comp TCSlib .lake/packages/mathlib/Mathlib /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean
+exit=0
+TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/Tensorization.lean:136:    simp only [Fin.sum_univ_succ, Fin.cons_zero, Fin.cons_succ, restrictLast,
+TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/Tensorization.lean:197:  simp only [Fin.sum_univ_succ, Fin.cons_zero, Fin.cons_succ, one_mul]
+TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/Interpolation.lean:187:    simp only [Fin.sum_univ_succ, Fin.cons_zero, Fin.cons_succ, add_zero, sub_zero,
+.lake/packages/mathlib/Mathlib/LinearAlgebra/LinearIndependent/Basic.lean:390:  simp_rw [Fin.sum_univ_succ, Fin.cons_zero, Fin.cons_succ] at total_eq
+TCSlib/BooleanAnalysis/Hypercontractivity/Products/Tensorization.lean:83:        rw [← (Fin.consEquiv Ω).sum_comp H, Fintype.sum_prod_type,
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Fin.lean:630:        simp_rw [Fin.sum_univ_succ, Fin.cons_succ]
+TCSlib/Complexity/Randomized/RandomWalkMixing.lean:196:  rw [← (Fin.consEquiv fun _ => Fin D).sum_comp, Fintype.sum_prod_type]
+TCSlib/Complexity/Randomized/BiasedCoin.lean:141:    rw [biasedProb_succ, ih, ih, ← (Fin.consEquiv fun _ => Bool).sum_comp,
+TCSlib/Complexity/Randomized/RandomWalk.lean:79:  rw [Finset.natCast_card_filter, ← (Fin.consEquiv fun _ => Fin D).sum_comp, Fintype.sum_prod_type,
+
+$ rg --files .lake/packages/mathlib/Mathlib/Tactic -g *LibrarySearch*
+exit=1
+
+CORRECTED PROBE IMPORT: Lean.Elab.Tactic.LibrarySearch (core), not Mathlib.
+$ rg -n builtin_tactic Lean.Parser.Tactic.exact|builtin_tactic Lean.Parser.Tactic.apply /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean/Elab/Tactic/LibrarySearch.lean
+exit=0
+57:@[builtin_tactic Lean.Parser.Tactic.exact?]
+64:@[builtin_tactic Lean.Parser.Tactic.apply?]
+

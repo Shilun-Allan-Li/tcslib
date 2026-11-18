@@ -1,0 +1,145 @@
+file	line	text
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean	160	decodeResidues q count width word := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean	171	decodeResidues p count width word = v := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean	203	sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean	225	decodeTensor p l n d width (encodeTensorBits width C) = C := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean	233	Function.Injective (encodeTensorBits (p := p) (l := l) (n := n) (d := d) width) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean	282	polyTensorEval C x (finProdFinEquiv (j, k)) * y j * y k := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean	415	phfeEval C x y := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean	534	(duplicatePrivateBits (n.eval kappa) (w.eval kappa) y) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean	565	MvPolynomial.eval (Sum.elim x y) P = phfeEval C x (Fin.snoc y 1) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean	141	(nodeBound l d).eval kappa = nodeCount (l.eval kappa) d := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean	147	theorem auxCount_add_one (l d : ℕ) : auxCount l d + 1 = nodeCount l d := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean	172	theorem nodeCoord_root (l d : ℕ) : (nodeCoord l d (root l d)).val = 0 := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean	239	theorem forward_root (x : Fin l → ZMod (p : ℕ)) : forward x (root l d) = 1 := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean	307	Sum.elim (fun _ : TIdx l d => 0) (polyTensorEval C x) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean	316	backward C x z (root l d) = dotProduct z (polyTensorEval C x) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean	329	fun u => if u = root l d then dotProduct z (polyTensorEval C x) else 0 := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean	341	dotProduct z (polyTensorEval C x) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean	354	(dotProduct z (polyTensorEval C x)) (t - shift C x z) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean	368	x (dotProduct z (polyTensorEval C x)) t)) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Run.lean	117	sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean	289	kappa (q.eval kappa) (S.saInputWord kappa pp pk) r := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean	264	ProbComp.expect (S.saGame Sim (A.toSA (S := S) q) real kappa) test := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean	273	S.simAdv Sim.toSim A q kappa = S.saSimAdv Sim (A.toSA (S := S) q) kappa := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Security.lean	91	(h : S.SubexpSASimSecureWith Sim) : S.SASimSecureWith Sim := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Security.lean	88	(h : S.SubexpSimSecureWith Sim) : S.SimSecureWith Sim := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean	56	PG.recVec κ pp.orderParam f x (Sum.inl j) = PG.eval κ pp.orderParam f x j := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean	72	Sum.elim (fun _ => 0) (PG.eval κ pp.orderParam f x) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean	87	sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean	107	(-(Matrix.vecMul (Matrix.vecMul s a.1) t.1 (Sum.inr j))).val := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean	131	PG.L0 κ pp.orderParam f))) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean	150	pp.group.pair pp.generator (leak G PG zDim κ pp f M x z) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean	165	pp.group.pair pp.generator (leak G PG zDim κ pp f M x z) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Endpoint.lean	58	accept (saGame G PG zDim A ideal κ) = accept (freshSaGame G PG zDim A ideal κ) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Endpoint.lean	68	saSimAdv G PG zDim A κ = freshSaSimAdv G PG zDim A κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Endpoint.lean	87	G.mddhAdv ℓ (PG.mBound.mul A.budget) (D 1) κ + linearSlack G κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Slack.lean	47	0 ≤ rankSlack pp := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Slack.lean	55	rankSlack pp ≤ 3 / (pp.group.order : ℝ) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Slack.lean	61	theorem linearSlack_nonneg (G : BilinearGen) (κ : ℕ) : 0 ≤ linearSlack G κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Slack.lean	69	linearSlack G κ ≤ 3 / (p κ : ℝ) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Slack.lean	79	{c : ℝ} (hc₀ : 0 < c) (hc₁ : c < 1) : SubexpSmall c (linearSlack G) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Slack.lean	87	Negligible (linearSlack G) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean	58	(adviceEnc G PG zDim q p hp κ ω).length ≤ (adviceLen G PG zDim q).eval κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean	68	Function.Injective (adviceEnc G PG zDim q p hp κ) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean	77	paddedDrawIndex PG κ p f u < PG.mBound.eval κ + n'.eval κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean	87	(PG.mCoord κ p f u).val * q.eval κ + j < (PG.mBound.mul q).eval κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean	101	.pure (runDet (A.next κ pp pk r) false h (A.budget.eval κ) [] s) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean	112	accept (game G PG zDim A 0 κ) = accept (saGame G PG zDim A false κ) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean	130	G.mddhAdv (PolyExpr.const 1) (PolyExpr.const 3) D κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean	146	runGameDet G PG zDim A 2 true κ pp ω r := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean	159	accept (game G PG zDim A 2 κ) = accept (game G PG zDim A 3 κ) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean	178	G.mddhAdv ℓ (PG.mBound.mul A.budget) D κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean	190	accept (game G PG zDim A 4 κ) = accept (game G PG zDim A 5 κ) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean	205	advantage (game G PG zDim A 2 κ) (game G PG zDim A 5 κ) + linearSlack G κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean	227	G.mddhAdv ℓ (PG.mBound.mul A.budget) (D 1) κ + linearSlack G κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean	98	pp.group.expVec pp.generator (PG.pgbStar κ pp.orderParam f x mu t) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean	200	(simSetupCore G ℓ zDim κ pp ω).2.basisInv = 0 := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean	402	(fun ω => IsUnit (basisMatrix G κ pp ω.1 ω.2.1).det) = 1 - rankSlack pp := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Adapter.lean	265	(Quadratic.freshSaGame G n n PG (toQuadratic G ℓ n d PG A) (!real) κ) test := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Adapter.lean	274	Quadratic.freshSaSimAdv G n n PG (toQuadratic G ℓ n d PG A) κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean	61	(PHFE.decodePrivate G ℓ n d κ pp y) (PHFE.decodePrivate G ℓ n d κ pp y) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean	72	(wee20PHFE_raw G ℓ n d PG).Correct := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean	81	(wee20PHFE_raw G ℓ n d PG).CorrectExcept (fun _ => 0) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean	55	(Wire.quadraticMPK pp pk).length = (mpkLen G ℓ n).eval κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean	64	(Wire.quadraticMSK pp sk).length = (mskLen G ℓ n).eval κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean	72	(Wire.quadraticCT pp ct).length = (ctLen G n).eval κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean	94	(keyWord G PG κ pp sk).length ≤ (skLen G PG).eval κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean	143	(pp : PublicParams G κ) : Function.Injective (encMPK G ℓ n κ pp) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean	151	(pp : PublicParams G κ) : Function.Injective (encMSK G ℓ n κ pp) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean	160	(pp : PublicParams G κ) : Function.Injective (encSK G PG κ pp) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean	167	(pp : PublicParams G κ) : Function.Injective (encCT G n κ pp) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean	176	Function.Injective (Wire.quadraticSimState pp (ℓ := ℓ) (n1 := n) (n2 := n)) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Headlines.lean	81	(P).toRaw.SimSecure := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Headlines.lean	93	(P).toRaw.SASimSecure := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Headlines.lean	105	(P).toRaw.SubexpSimSecure := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Headlines.lean	117	(P).toRaw.SubexpSASimSecure := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Security.lean	87	Linear.linearSlack G κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Security.lean	120	Linear.linearSlack G κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Security.lean	251	Quadratic.quadraticSlack G ℓ p κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Security.lean	286	Quadratic.quadraticSlack G ℓ p κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Security.lean	303	(h : G.DLINAssumption) : (S).SASimSecureWith (wee20SASim_raw G ℓ n d PG) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Security.lean	320	(h : G.DLINAssumption) : (S).SimSecureWith (wee20Sim_raw G ℓ n d PG) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Security.lean	340	(h : G.SubexpDLIN) : (S).SubexpSASimSecureWith (wee20SASim_raw G ℓ n d PG) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Security.lean	360	(h : G.SubexpDLIN) : (S).SubexpSimSecureWith (wee20Sim_raw G ℓ n d PG) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean	57	pp.group.expMat pp.generator (mixScalar (p := pp.orderParam) A1 A2) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean	70	pp.group.expVec pp.generator (signalScalar (p := pp.orderParam) s1 z2 y1 s2) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean	86	Matrix.vecMul (signalScalar (p := p) s1 z2 y1 s2) (mixScalar (p := p) A1 A2) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean	103	(mixScalar (p := p) A1 A2 *ᵥ fx) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean	123	pp.group.pair pp.generator pp.generator ^ (value G n1 n2 PG κ pp f x z1 z2).val := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean	140	pp.group.pair pp.generator pp.generator ^ (value G n1 n2 PG κ pp f x z1 z2).val := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Compose.lean	95	3 * BilinearGen.mddhSlack p (PolyExpr.const 1) κ + BilinearGen.mddhSlack p ℓ κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Compose.lean	130	quadraticSlack G ℓ p κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean	53	(maskAdviceEnc G n1 n2 p hp κ ω).length ≤ (maskAdviceLen G n1 n2).eval κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean	62	Function.Injective (maskAdviceEnc G n1 n2 p hp κ) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean	72	(adviceEnc G n1 n2 q PG p hp κ ω).length ≤ (adviceLen G n1 n2 q PG).eval κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean	82	Function.Injective (adviceEnc G n1 n2 q PG p hp κ) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean	97	pp.generator ^ (value G n1 n2 PG κ pp f x y1 y2).val * mu⁻¹ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean	112	pp.generator ^ (value G n1 n2 PG κ pp f x y1 y2).val * mu⁻¹ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean	133	(if ideal then 5 else 0) false κ pp ω r := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean	148	Linear.freshSaSimAdv G PG (piDim n1 n2) (toLinear G n1 n2 PG p hp A φ) κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean	160	accept (game G n1 n2 PG A 1 κ) = accept (game G n1 n2 PG A 2 κ) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean	178	G.mddhAdv (PolyExpr.const 1) n1 D κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean	194	G.mddhAdv (PolyExpr.const 1) n2 D κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean	210	accept (freshSaGame G n1 n2 PG A ideal κ) := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean	219	saSimAdv G n1 n2 PG A κ = freshSaSimAdv G n1 n2 PG A κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean	252	Linear.linearSlack G κ := sorry
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSimulator.lean	170	pp.generator ^ (value G n1 n2 PG κ pp f x st.y1 st.y2 - mu).val := sorry
+TCSlib/Cryptography/Pairing/Exponents.lean	183	gT ^ (a + b).val = gT ^ a.val * gT ^ b.val := sorry
+TCSlib/Cryptography/Pairing/Exponents.lean	190	gT ^ (-a).val = (gT ^ a.val)⁻¹ := sorry
+TCSlib/Cryptography/Pairing/Exponents.lean	197	B.expVec g (a + b) = B.expVec g a * B.expVec g b := sorry
+TCSlib/Cryptography/Pairing/Exponents.lean	204	B.expVec g (-a) = (B.expVec g a)⁻¹ := sorry
+TCSlib/Cryptography/Pairing/Exponents.lean	211	B.expVec g (c • a) = fun i => (B.expVec g a i) ^ c.val := sorry
+TCSlib/Cryptography/Pairing/Exponents.lean	218	B.expVecT gT (a + b) = B.expVecT gT a * B.expVecT gT b := sorry
+TCSlib/Cryptography/Pairing/Exponents.lean	225	B.expVecT gT (-a) = (B.expVecT gT a)⁻¹ := sorry
+TCSlib/Cryptography/Pairing/Exponents.lean	232	B.expVecT gT (c • a) = fun i => (B.expVecT gT a i) ^ c.val := sorry
+TCSlib/Cryptography/Pairing/Exponents.lean	240	groupDot (B.expVec g a) b = g ^ (dotProduct a b).val := sorry
+TCSlib/Cryptography/Pairing/Exponents.lean	247	groupDot (B.expVecT gT a) b = gT ^ (dotProduct a b).val := sorry
+TCSlib/Cryptography/Pairing/Exponents.lean	257	groupMulVec (B.expMat g M) a = B.expVec g (M *ᵥ a) := sorry
+TCSlib/Cryptography/Pairing/Exponents.lean	265	groupVecMul a (B.expMat g M) = B.expVec g (a ᵥ* M) := sorry
+TCSlib/Cryptography/Pairing/Exponents.lean	273	groupMatMul (B.expMat g M) N = B.expMat g (M * N) := sorry
+TCSlib/Cryptography/Pairing/Exponents.lean	281	matMulGroup M (B.expMat g N) = B.expMat g (M * N) := sorry
+TCSlib/Cryptography/Pairing/Exponents.lean	289	groupMulVec (B.expMatT gT M) a = B.expVecT gT (M *ᵥ a) := sorry
+TCSlib/Cryptography/Pairing/Exponents.lean	299	B.pairVec (B.expVec g a) (B.expVec h b) = B.pair g h ^ (dotProduct a b).val := sorry
+TCSlib/Cryptography/Pairing/Exponents.lean	307	B.pairMat (B.expMat g M) (B.expMat h N) = B.expMatT (B.pair g h) (M * N) := sorry
+TCSlib/Cryptography/Pairing/Exponents.lean	315	B.expVecT (B.pair g h) (fun ij : ι × κ => a ij.1 * b ij.2) := sorry
+TCSlib/Cryptography/Pairing/Exponents.lean	323	B.expVec g (fun ij : ι × κ => a ij.1 * b ij.2) := sorry
+TCSlib/Cryptography/Pairing/Exponents.lean	331	B.expVec g (fun ij : ι × κ => a ij.1 * b ij.2) := sorry
+TCSlib/Cryptography/Pairing/Linear.lean	99	(dlinStr B d g a b u v w).length = 2 * d.length + 11 * wG + 12 := sorry
+TCSlib/Cryptography/Pairing/Linear.lean	116	dlinMatrix a b *ᵥ ![r, s] = ![a * r, b * s, r + s] := sorry
+TCSlib/Cryptography/Pairing/Linear.lean	176	theorem dlinEnc_injective (κ : ℕ) : Function.Injective (G.dlinEnc κ) := sorry
+TCSlib/Cryptography/Pairing/Linear.lean	184	(G.dlinEnc κ c).length = 2 * G.descLen.eval κ + 11 * G.wG.eval κ + 12 := sorry
+TCSlib/Cryptography/Pairing/Linear.lean	323	accept (G.dlinMatrixGame D true κ) = accept (G.dlinGame D true κ) := sorry
+TCSlib/Cryptography/Pairing/Linear.lean	335	G.dlinMatrixSlack κ := sorry
+TCSlib/Cryptography/Pairing/Linear.lean	343	G.dlinMatrixAdv D κ ≤ G.dlinAdv D κ + G.dlinMatrixSlack κ := sorry
+TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean	68	(B.groupMatrixEnc M).length = rows * cols * wG := sorry
+TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean	75	Function.Injective (B.groupMatrixEnc (rows := rows) (cols := cols)) := sorry
+TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean	113	Function.Injective (G.mddhEnc d ℓ κ) := sorry
+TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean	122	sorry
+TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean	191	(fun r => 2 / ((G.inst κ r).order : ℝ)) := sorry
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean	166	(G.mddhAdviceEnc p hp d ℓ κ ω).length ≤ (G.mddhAdviceLen d ℓ).eval κ := sorry
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean	175	Function.Injective (G.mddhAdviceEnc p hp d ℓ κ) := sorry
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean	276	(d.eval κ : ℝ) * G.dlinAdv B κ + mddhSlack p d κ := sorry
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean	301	SubexpSmall c (mddhSlack p d) := sorry
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean	313	(h : G.DLINAssumption) (D : NUPPT) : Negligible (G.mddhAdv d ℓ D) := sorry
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean	324	(h : G.SubexpDLIN) : SubexpHard (G.mddhAdv d ℓ) := sorry

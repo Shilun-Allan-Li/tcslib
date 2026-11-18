@@ -1,0 +1,52 @@
+head=27215bc24c8d46c66014af9822d5c964c9ef7bb3
+source_sha256=0d8cba13af6af0804b0bb83bb04172c22f4db4f495e6eca1780b5d29d17340cf
+start=2026-11-18T11:10:59.960671+00:00
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Games.lean:85:2: error: Type mismatch
+  congrArg
+    (fun k =>
+      pairEncode a.state
+        (pairEncode pp.encode
+          (pairEncode (List.ofFn (S.encMPK κ pp pk))
+            (pairEncode ?m.48 (pairEncode (List.ofFn a.publicInput) (List.ofFn (S.encCT κ pp ct)))))))
+    List.map_map
+has type
+  pairEncode a.state
+      (pairEncode pp.encode
+        (pairEncode (List.ofFn (S.encMPK κ pp pk))
+          (pairEncode (?m.57 (List.map List.ofFn (List.map (S.encSK κ pp) keys)))
+            (pairEncode (List.ofFn a.publicInput) (List.ofFn (S.encCT κ pp ct)))))) =
+    pairEncode a.state
+      (pairEncode pp.encode
+        (pairEncode (List.ofFn (S.encMPK κ pp pk))
+          (pairEncode (?m.57 (List.map (List.ofFn ∘ S.encSK κ pp) keys))
+            (pairEncode (List.ofFn a.publicInput) (List.ofFn (S.encCT κ pp ct))))))
+but is expected to have type
+  S.viewWord a pp pk keys ct =
+    pairEncode a.state
+      (pairEncode pp.encode
+        (pairEncode (List.ofFn (S.encMPK κ pp pk))
+          (pairEncode (List.foldr pairEncode [] (List.map (fun sk => List.ofFn (S.encSK κ pp sk)) keys))
+            (pairEncode (List.ofFn a.publicInput) (List.ofFn (S.encCT κ pp ct))))))
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Games): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Games): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Games): no fresh .olean produced
+       14.23 real        11.74 user         1.19 sys
+          2311192576  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              155302  page reclaims
+               27145  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                1859  voluntary context switches
+               22897  involuntary context switches
+            32158684  instructions retired
+            17643819  cycles elapsed
+             1638736  peak memory footprint
+end=2026-11-18T11:11:14.217931+00:00
+rc=1

@@ -1,0 +1,622 @@
+From 1813ca6e2b9987be75908e8d527f898fb3bb8317 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 03:30:39 -0800
+Subject: [PATCH 18/25] io-phfe: repair target notation and fresh-law functor
+ maps
+
+---
+ .../Wee20/LinearSecurity/Fresh.lean           |  50 ++++-----
+ .../Wee20/LinearSecurity/Reductions.lean      |   4 +-
+ .../Wee20/QuadraticSecurity/Fresh.lean        |  55 +++++----
+ .../Wee20/QuadraticSecurity/Reductions.lean   |   8 +-
+ .../Wee20/Targets/Garbling.lean               |   8 +-
+ .../Wee20/Targets/Scheme.lean                 |  94 ++++++++--------
+ .../Wee20/Targets/Sim.lean                    | 105 +++++++++---------
+ 7 files changed, 162 insertions(+), 162 deletions(-)
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean
+index c82fbbadc..e80b6602f 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean
+@@ -42,14 +42,14 @@ noncomputable def freshRealHandler (G : BilinearGen) {ℓ n' : PolyExpr}
+     (msk : MSK G ℓ zDim κ pp) :
+     QueryImpl (saSpec G PG zDim κ pp) (SAState G ℓ zDim κ pp) unifSpec
+   | false, msg, st => match st.challenge with
+-    | none => (enc G ℓ zDim κ pp pk msg.1 (pp.group.expVec pp.generator msg.2)).map
+-        (fun ct => (some ct, ⟨some msg, st.used⟩))
++    | none => (fun ct => (some ct, ⟨some msg, st.used⟩) <$> (enc G ℓ zDim κ pp pk msg.1
++      (pp.group.expVec pp.generator msg.2)))
+     | some _ => .pure (none, st)
+   | true, query, st => match st.challenge with
+     | none => .pure (none, st)
+     | some _ => if st.used < q.eval κ then
+-        (keyGen G PG zDim κ pp msk query.fn query.matrix).map
+-          (fun key => (some ⟨query.fn, key⟩, ⟨st.challenge, st.used + 1⟩))
++        (fun key => (some ⟨query.fn, key⟩, ⟨st.challenge, st.used + 1⟩) <$> (keyGen G PG zDim κ pp
++          msk query.fn query.matrix))
+       else .pure (none, st)
+ 
+ /-- The fresh real challenge law encrypts its scalar private input in the source group. -/
+@@ -60,8 +60,8 @@ theorem freshRealHandler_challenge (G : BilinearGen) {ℓ n' : PolyExpr}
+     (st : SAState G ℓ zDim κ pp) :
+     freshRealHandler G PG zDim q κ pp pk msk false msg st =
+       match st.challenge with
+-      | none => (enc G ℓ zDim κ pp pk msg.1 (pp.group.expVec pp.generator msg.2)).map
+-          (fun ct => (some ct, ⟨some msg, st.used⟩))
++      | none => (fun ct => (some ct, ⟨some msg, st.used⟩) <$> (enc G ℓ zDim κ pp pk msg.1
++        (pp.group.expVec pp.generator msg.2)))
+       | some _ => .pure (none, st) := rfl
+ 
+ /-- The fresh real key law samples its actual function-dependent draw after acceptance. -/
+@@ -74,8 +74,8 @@ theorem freshRealHandler_key (G : BilinearGen) {ℓ n' : PolyExpr}
+       match st.challenge with
+       | none => .pure (none, st)
+       | some _ => if st.used < q.eval κ then
+-          (keyGen G PG zDim κ pp msk query.fn query.matrix).map
+-            (fun key => (some ⟨query.fn, key⟩, ⟨st.challenge, st.used + 1⟩))
++          (fun key => (some ⟨query.fn, key⟩, ⟨st.challenge, st.used + 1⟩) <$> (keyGen G PG zDim κ pp
++            msk query.fn query.matrix))
+         else .pure (none, st) := rfl
+ 
+ /-- The ideal oracle calls the actual simulator laws at each accepted query
+@@ -86,15 +86,14 @@ noncomputable def freshIdealHandler (G : BilinearGen) {ℓ n' : PolyExpr}
+     (κ : ℕ) (pp : PublicParams G κ) (sim : SimState G ℓ zDim κ pp) :
+     QueryImpl (saSpec G PG zDim κ pp) (SAState G ℓ zDim κ pp) unifSpec
+   | false, msg, st => match st.challenge with
+-    | none => (simEnc G ℓ zDim κ pp sim msg.1).map
+-        (fun ct => (some ct, ⟨some msg, st.used⟩))
++    | none => (fun ct => (some ct, ⟨some msg, st.used⟩) <$> (simEnc G ℓ zDim κ pp sim msg.1))
+     | some _ => .pure (none, st)
+   | true, query, st => match st.challenge with
+     | none => .pure (none, st)
+     | some msg => if st.used < q.eval κ then
+-        (simKey G PG zDim κ pp sim query.fn query.matrix msg.1
+-          (leak G PG zDim κ pp query.fn query.matrix msg.1 msg.2)).map
+-          (fun key => (some ⟨query.fn, key⟩, ⟨st.challenge, st.used + 1⟩))
++        (fun key => (some ⟨query.fn, key⟩, ⟨st.challenge, st.used + 1⟩) <$> (simKey G PG zDim κ pp
++          sim query.fn query.matrix msg.1
++          (leak G PG zDim κ pp query.fn query.matrix msg.1 msg.2)))
+       else .pure (none, st)
+ 
+ /-- The fresh ideal ciphertext law is the actual simulator encryption law. -/
+@@ -104,8 +103,7 @@ theorem freshIdealHandler_challenge (G : BilinearGen) {ℓ n' : PolyExpr}
+     (msg : Challenge G ℓ zDim κ pp) (st : SAState G ℓ zDim κ pp) :
+     freshIdealHandler G PG zDim q κ pp sim false msg st =
+       match st.challenge with
+-      | none => (simEnc G ℓ zDim κ pp sim msg.1).map
+-          (fun ct => (some ct, ⟨some msg, st.used⟩))
++      | none => (fun ct => (some ct, ⟨some msg, st.used⟩) <$> (simEnc G ℓ zDim κ pp sim msg.1))
+       | some _ => .pure (none, st) := rfl
+ 
+ /-- The fresh ideal key law uses the supplied matrix and its exact scalar-input leakage. -/
+@@ -117,9 +115,9 @@ theorem freshIdealHandler_key (G : BilinearGen) {ℓ n' : PolyExpr}
+       match st.challenge with
+       | none => .pure (none, st)
+       | some msg => if st.used < q.eval κ then
+-          (simKey G PG zDim κ pp sim query.fn query.matrix msg.1
+-            (leak G PG zDim κ pp query.fn query.matrix msg.1 msg.2)).map
+-            (fun key => (some ⟨query.fn, key⟩, ⟨st.challenge, st.used + 1⟩))
++          (fun key => (some ⟨query.fn, key⟩, ⟨st.challenge, st.used + 1⟩) <$> (simKey G PG zDim κ pp
++            sim query.fn query.matrix msg.1
++            (leak G PG zDim κ pp query.fn query.matrix msg.1 msg.2)))
+         else .pure (none, st) := rfl
+ 
+ /-- The raw semi-adaptive experiment samples the ACTUAL setup law and invokes the ACTUAL
+@@ -131,11 +129,11 @@ noncomputable def freshSaGame (G : BilinearGen) {ℓ n' : PolyExpr}
+   (publicParamsGen G κ).bind fun pp =>
+   (ProbComp.sample (Fin (A.coins.eval κ) → Bool)).bind fun r =>
+   if ideal then (simSetup G ℓ zDim κ pp).bind fun ctx =>
+-    (simulate (freshIdealHandler G PG zDim A.budget κ pp ctx.2)
+-      (SAAdv.run G PG zDim A κ pp ctx.1 (List.ofFn r)) ⟨none, 0⟩).map Prod.fst
++    (Prod.fst <$> (simulate (freshIdealHandler G PG zDim A.budget κ pp ctx.2)
++      (SAAdv.run G PG zDim A κ pp ctx.1 (List.ofFn r)) ⟨none, 0⟩))
+   else (setup G ℓ zDim κ pp).bind fun ctx =>
+-    (simulate (freshRealHandler G PG zDim A.budget κ pp ctx.1 ctx.2)
+-      (SAAdv.run G PG zDim A κ pp ctx.1 (List.ofFn r)) ⟨none, 0⟩).map Prod.fst
++    (Prod.fst <$> (simulate (freshRealHandler G PG zDim A.budget κ pp ctx.1 ctx.2)
++      (SAAdv.run G PG zDim A κ pp ctx.1 (List.ofFn r)) ⟨none, 0⟩))
+ 
+ /-- The fresh experiment is the displayed setup and stateful simulation of its raw laws. -/
+ theorem freshSaGame_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+@@ -145,11 +143,11 @@ theorem freshSaGame_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+
+       (publicParamsGen G κ).bind fun pp =>
+       (ProbComp.sample (Fin (A.coins.eval κ) → Bool)).bind fun r =>
+       if ideal then (simSetup G ℓ zDim κ pp).bind fun ctx =>
+-        (simulate (freshIdealHandler G PG zDim A.budget κ pp ctx.2)
+-          (SAAdv.run G PG zDim A κ pp ctx.1 (List.ofFn r)) ⟨none, 0⟩).map Prod.fst
++        (Prod.fst <$> (simulate (freshIdealHandler G PG zDim A.budget κ pp ctx.2)
++          (SAAdv.run G PG zDim A κ pp ctx.1 (List.ofFn r)) ⟨none, 0⟩))
+       else (setup G ℓ zDim κ pp).bind fun ctx =>
+-        (simulate (freshRealHandler G PG zDim A.budget κ pp ctx.1 ctx.2)
+-          (SAAdv.run G PG zDim A κ pp ctx.1 (List.ofFn r)) ⟨none, 0⟩).map Prod.fst := rfl
++        (Prod.fst <$> (simulate (freshRealHandler G PG zDim A.budget κ pp ctx.1 ctx.2)
++          (SAAdv.run G PG zDim A κ pp ctx.1 (List.ofFn r)) ⟨none, 0⟩)) := rfl
+ 
+ /-- Fresh-law simulation advantage compares the actual raw endpoints
+ [Wee20, Theorem 1, p. 8 and §2.2, p. 5]. -/
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Reductions.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Reductions.lean
+index 667529a68..e714eabcc 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Reductions.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Reductions.lean
+@@ -154,7 +154,7 @@ def red0Handler (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Typ
+   let ss := setupAt G PG zDim q κ c.pp ω
+   let msk : MSK G ℓ zDim κ c.pp := ⟨ss.2.2.1, ss.2.2.2.1, ss.2.2.2.2.1⟩
+   protocolHandler G PG zDim (q.eval κ) κ c.pp
+-    (maskedCipher G ℓ zDim κ c.pp msk (fun i => c.response i 0))
++    (maskedCipher G ℓ zDim κ c.pp msk (fun i => c.response i (0 : Fin 1)))
+     (fun j _ query => ⟨query.fn,
+       keyCore G PG zDim κ c.pp msk query.fn query.matrix (keyAt G PG zDim q κ c.pp ω j query.fn)⟩)
+ 
+@@ -167,7 +167,7 @@ theorem red0Handler_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+
+       let ss := setupAt G PG zDim q κ c.pp ω
+       let msk : MSK G ℓ zDim κ c.pp := ⟨ss.2.2.1, ss.2.2.2.1, ss.2.2.2.2.1⟩
+       protocolHandler G PG zDim (q.eval κ) κ c.pp
+-        (maskedCipher G ℓ zDim κ c.pp msk (fun i => c.response i 0))
++        (maskedCipher G ℓ zDim κ c.pp msk (fun i => c.response i (0 : Fin 1)))
+         (fun j _ query => ⟨query.fn, keyCore G PG zDim κ c.pp msk query.fn query.matrix
+           (keyAt G PG zDim q κ c.pp ω j query.fn)⟩) := rfl
+ 
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Fresh.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Fresh.lean
+index 95ece24a1..3c5a05321 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Fresh.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Fresh.lean
+@@ -41,14 +41,13 @@ noncomputable def freshRealHandler (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q :
+     (msk : MSK G ℓ n1 n2 κ pp) :
+     QueryImpl (saSpec G n1 n2 PG κ pp) (SAState G ℓ n1 n2 κ pp) unifSpec
+   | false, msg, st => match st.challenge with
+-    | none => (enc G ℓ n1 n2 κ pp pk msg.1 msg.2.1 msg.2.2).map
+-        (fun ct => (some ct, ⟨some msg, st.used⟩))
++    | none => (fun ct => (some ct, ⟨some msg, st.used⟩) <$> (enc G ℓ n1 n2 κ pp pk msg.1 msg.2.1
++      msg.2.2))
+     | some _ => .pure (none, st)
+   | true, f, st => match st.challenge with
+     | none => .pure (none, st)
+     | some _ => if st.used < q.eval κ then
+-        (keyGen G n1 n2 PG κ pp msk f).map
+-          (fun key => (some ⟨f, key⟩, ⟨st.challenge, st.used + 1⟩))
++        (fun key => (some ⟨f, key⟩, ⟨st.challenge, st.used + 1⟩) <$> (keyGen G n1 n2 PG κ pp msk f))
+       else .pure (none, st)
+ 
+ /-- A real challenge samples the actual honest encryption draw exactly once. -/
+@@ -59,8 +58,8 @@ theorem freshRealHandler_challenge (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q :
+     (st : SAState G ℓ n1 n2 κ pp) :
+     freshRealHandler G n1 n2 q PG κ pp pk msk false msg st =
+       match st.challenge with
+-      | none => (enc G ℓ n1 n2 κ pp pk msg.1 msg.2.1 msg.2.2).map
+-          (fun ct => (some ct, ⟨some msg, st.used⟩))
++      | none => (fun ct => (some ct, ⟨some msg, st.used⟩) <$> (enc G ℓ n1 n2 κ pp pk msg.1 msg.2.1
++        msg.2.2))
+       | some _ => .pure (none, st) := rfl
+ 
+ /-- An accepted real key samples its actual function-dependent draw. -/
+@@ -72,8 +71,8 @@ theorem freshRealHandler_key (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyE
+       match st.challenge with
+       | none => .pure (none, st)
+       | some _ => if st.used < q.eval κ then
+-          (keyGen G n1 n2 PG κ pp msk f).map
+-            (fun key => (some ⟨f, key⟩, ⟨st.challenge, st.used + 1⟩))
++          (fun key => (some ⟨f, key⟩, ⟨st.challenge, st.used + 1⟩) <$> (keyGen G n1 n2 PG κ pp msk
++            f))
+         else .pure (none, st) := rfl
+ 
+ /-- The ideal experiment retains both protocol state and the actual updated simulator
+@@ -93,16 +92,16 @@ noncomputable def freshIdealHandler (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q
+     (κ : ℕ) (pp : PublicParams G κ) :
+     QueryImpl (saSpec G n1 n2 PG κ pp) (FreshIdealState G ℓ n1 n2 κ pp) unifSpec
+   | false, msg, st => match st.protocol.challenge with
+-    | none => (simEnc G ℓ n1 n2 κ pp st.simulator msg.1).map
+-        (fun out => (some out.1, ⟨⟨some msg, st.protocol.used⟩, out.2⟩))
++    | none => (fun out => (some out.1, ⟨⟨some msg, st.protocol.used⟩, out.2⟩) <$> (simEnc G ℓ n1 n2
++      κ pp st.simulator msg.1))
+     | some _ => .pure (none, st)
+   | true, f, st => match st.protocol.challenge with
+     | none => .pure (none, st)
+     | some msg => if st.protocol.used < q.eval κ then
+-        (simKey G n1 n2 PG κ pp st.simulator f msg.1
+-          (pp.generator ^ (value G n1 n2 PG κ pp f msg.1 msg.2.1 msg.2.2).val)).map
+-          (fun key => (some ⟨f, key⟩,
+-            ⟨⟨st.protocol.challenge, st.protocol.used + 1⟩, st.simulator⟩))
++        (fun key => (some ⟨f, key⟩,
++            ⟨⟨st.protocol.challenge, st.protocol.used + 1⟩, st.simulator⟩) <$> (simKey G n1 n2 PG κ
++              pp st.simulator f msg.1
++          (pp.generator ^ (value G n1 n2 PG κ pp f msg.1 msg.2.1 msg.2.2).val)))
+       else .pure (none, st)
+ 
+ /-- Ideal encryption saves precisely the state returned by the actual simulator. -/
+@@ -112,8 +111,8 @@ theorem freshIdealHandler_challenge (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q
+     (st : FreshIdealState G ℓ n1 n2 κ pp) :
+     freshIdealHandler G n1 n2 q PG κ pp false msg st =
+       match st.protocol.challenge with
+-      | none => (simEnc G ℓ n1 n2 κ pp st.simulator msg.1).map
+-          (fun out => (some out.1, ⟨⟨some msg, st.protocol.used⟩, out.2⟩))
++      | none => (fun out => (some out.1, ⟨⟨some msg, st.protocol.used⟩, out.2⟩) <$> (simEnc G ℓ n1
++        n2 κ pp st.simulator msg.1))
+       | some _ => .pure (none, st) := rfl
+ 
+ /-- Ideal keys retain the simulator state and use the exact allowed scalar value. -/
+@@ -124,10 +123,10 @@ theorem freshIdealHandler_key (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : Poly
+       match st.protocol.challenge with
+       | none => .pure (none, st)
+       | some msg => if st.protocol.used < q.eval κ then
+-          (simKey G n1 n2 PG κ pp st.simulator f msg.1
+-            (pp.generator ^ (value G n1 n2 PG κ pp f msg.1 msg.2.1 msg.2.2).val)).map
+-            (fun key => (some ⟨f, key⟩,
+-              ⟨⟨st.protocol.challenge, st.protocol.used + 1⟩, st.simulator⟩))
++          (fun key => (some ⟨f, key⟩,
++              ⟨⟨st.protocol.challenge, st.protocol.used + 1⟩, st.simulator⟩) <$> (simKey G n1 n2 PG
++                κ pp st.simulator f msg.1
++            (pp.generator ^ (value G n1 n2 PG κ pp f msg.1 msg.2.1 msg.2.2).val)))
+         else .pure (none, st) := rfl
+ 
+ /-- The actual raw endpoint experiment calls setup or simSetup, then the actual fresh
+@@ -138,12 +137,12 @@ noncomputable def freshSaGame (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyEx
+   (publicParamsGen G κ).bind fun pp =>
+   (ProbComp.sample (Fin (A.coins.eval κ) → Bool)).bind fun r =>
+   if ideal then (simSetup G ℓ n1 n2 κ pp).bind fun ctx =>
+-    (simulate (freshIdealHandler G n1 n2 A.budget PG κ pp)
++    (Prod.fst <$> (simulate (freshIdealHandler G n1 n2 A.budget PG κ pp)
+       (SAAdv.run G n1 n2 PG A κ pp ctx.1 (List.ofFn r))
+-      ⟨⟨none, 0⟩, ctx.2⟩).map Prod.fst
++      ⟨⟨none, 0⟩, ctx.2⟩))
+   else (setup G ℓ n1 n2 κ pp).bind fun ctx =>
+-    (simulate (freshRealHandler G n1 n2 A.budget PG κ pp ctx.1 ctx.2)
+-      (SAAdv.run G n1 n2 PG A κ pp ctx.1 (List.ofFn r)) ⟨none, 0⟩).map Prod.fst
++    (Prod.fst <$> (simulate (freshRealHandler G n1 n2 A.budget PG κ pp ctx.1 ctx.2)
++      (SAAdv.run G n1 n2 PG A κ pp ctx.1 (List.ofFn r)) ⟨none, 0⟩))
+ 
+ /-- Fresh endpoint laws expose their actual setup and stateful interaction. -/
+ theorem freshSaGame_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
+@@ -152,12 +151,12 @@ theorem freshSaGame_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
+       (publicParamsGen G κ).bind fun pp =>
+       (ProbComp.sample (Fin (A.coins.eval κ) → Bool)).bind fun r =>
+       if ideal then (simSetup G ℓ n1 n2 κ pp).bind fun ctx =>
+-        (simulate (freshIdealHandler G n1 n2 A.budget PG κ pp)
++        (Prod.fst <$> (simulate (freshIdealHandler G n1 n2 A.budget PG κ pp)
+           (SAAdv.run G n1 n2 PG A κ pp ctx.1 (List.ofFn r))
+-          ⟨⟨none, 0⟩, ctx.2⟩).map Prod.fst
++          ⟨⟨none, 0⟩, ctx.2⟩))
+       else (setup G ℓ n1 n2 κ pp).bind fun ctx =>
+-        (simulate (freshRealHandler G n1 n2 A.budget PG κ pp ctx.1 ctx.2)
+-          (SAAdv.run G n1 n2 PG A κ pp ctx.1 (List.ofFn r)) ⟨none, 0⟩).map Prod.fst := rfl
++        (Prod.fst <$> (simulate (freshRealHandler G n1 n2 A.budget PG κ pp ctx.1 ctx.2)
++          (SAAdv.run G n1 n2 PG A κ pp ctx.1 (List.ofFn r)) ⟨none, 0⟩)) := rfl
+ 
+ /-- Actual raw simulation advantage compares the two fresh stateful endpoints
+ [Wee20, §3, p. 6, main claim with §3.3, pp. 7–8]. -/
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Reductions.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Reductions.lean
+index 27216f4c8..676ffe032 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Reductions.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Reductions.lean
+@@ -91,7 +91,7 @@ def red2Handler (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
+       (saSpec G n1 n2 PG κ c.pp).rng i × SAState G ℓ n1 n2 κ c.pp :=
+   let A2 := c.pp.group.expMat c.pp.generator m.A2
+   let M := mixGroup G n1 n2 κ c.pp c.matrixᵀ A2
+-  let first := fun (msg : Challenge G ℓ n1 n2 κ c.pp) => (fun i => c.response i 0) *
++  let first := fun (msg : Challenge G ℓ n1 n2 κ c.pp) => (fun i => c.response i (0 : Fin 1)) *
+     c.pp.group.expVec c.pp.generator msg.2.1
+   let second := fun (msg : Challenge G ℓ n1 n2 κ c.pp) => Matrix.vecMul m.s2 m.A2 + msg.2.2
+   protocolHandler G n1 n2 PG (q.eval κ) κ c.pp
+@@ -111,7 +111,7 @@ theorem red2Handler_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
+     red2Handler G n1 n2 q PG κ c m st ω =
+       let A2 := c.pp.group.expMat c.pp.generator m.A2
+       let M := mixGroup G n1 n2 κ c.pp c.matrixᵀ A2
+-      let first := fun (msg : Challenge G ℓ n1 n2 κ c.pp) => (fun i => c.response i 0) *
++      let first := fun (msg : Challenge G ℓ n1 n2 κ c.pp) => (fun i => c.response i (0 : Fin 1)) *
+         c.pp.group.expVec c.pp.generator msg.2.1
+       let second := fun (msg : Challenge G ℓ n1 n2 κ c.pp) => Matrix.vecMul m.s2 m.A2 + msg.2.2
+       protocolHandler G n1 n2 PG (q.eval κ) κ c.pp
+@@ -133,7 +133,7 @@ def red3Handler (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
+       (saSpec G n1 n2 PG κ c.pp).rng i × SAState G ℓ n1 n2 κ c.pp :=
+   let A1 := c.pp.group.expMat c.pp.generator m.A1
+   let M := mixGroup G n1 n2 κ c.pp A1 c.matrixᵀ
+-  let second := fun (msg : Challenge G ℓ n1 n2 κ c.pp) => (fun i => c.response i 0) *
++  let second := fun (msg : Challenge G ℓ n1 n2 κ c.pp) => (fun i => c.response i (0 : Fin 1)) *
+     c.pp.group.expVec c.pp.generator msg.2.2
+   protocolHandler G n1 n2 PG (q.eval κ) κ c.pp
+     (fun msg => ⟨c.pp.group.expVec c.pp.generator m.y1, second msg,
+@@ -152,7 +152,7 @@ theorem red3Handler_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
+     red3Handler G n1 n2 q PG κ c m st ω =
+       let A1 := c.pp.group.expMat c.pp.generator m.A1
+       let M := mixGroup G n1 n2 κ c.pp A1 c.matrixᵀ
+-      let second := fun (msg : Challenge G ℓ n1 n2 κ c.pp) => (fun i => c.response i 0) *
++      let second := fun (msg : Challenge G ℓ n1 n2 κ c.pp) => (fun i => c.response i (0 : Fin 1)) *
+         c.pp.group.expVec c.pp.generator msg.2.2
+       protocolHandler G n1 n2 PG (q.eval κ) κ c.pp
+         (fun msg => ⟨c.pp.group.expVec c.pp.generator m.y1, second msg,
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Garbling.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Garbling.lean
+index 0afb80ba3..c3756375b 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Garbling.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Garbling.lean
+@@ -51,23 +51,23 @@ structure PGTargets : Prop where
+   /-- One uniform map computes both matrices from the supplied modulus and tensor. -/
+   lgen_eff : ∃ a : List Bool → List Bool, PolyTimeComputable a ∧
+     ∀ κ (p : ℕ+) (f : PolyTensor p (ℓ.eval κ) (n.eval κ) d),
+-      a (PG.lgenInput κ p f) = PG.encLgen κ p f
++      a ((PG).lgenInput κ p f) = (PG).encLgen κ p f
+   /-- One uniform map computes reconstruction from the supplied modulus and public input. -/
+   rec_eff : ∃ a : List Bool → List Bool, PolyTimeComputable a ∧
+     ∀ κ (p : ℕ+) (f : PolyTensor p (ℓ.eval κ) (n.eval κ) d)
+       (x : Fin (ℓ.eval κ) → ZMod (p : ℕ)),
+-      a (PG.recInput κ p f x) = PG.encRec κ p f x
++      a ((PG).recInput κ p f x) = (PG).encRec κ p f x
+ 
+ /-- The target is exactly the conjunction of its displayed algorithm obligations. -/
+ theorem pgTargets_iff :
+     PGTargets ℓ n d ↔
+       (∃ a : List Bool → List Bool, PolyTimeComputable a ∧
+         ∀ κ (p : ℕ+) (f : PolyTensor p (ℓ.eval κ) (n.eval κ) d),
+-          a (PG.lgenInput κ p f) = PG.encLgen κ p f) ∧
++          a ((PG).lgenInput κ p f) = (PG).encLgen κ p f) ∧
+       (∃ a : List Bool → List Bool, PolyTimeComputable a ∧
+         ∀ κ (p : ℕ+) (f : PolyTensor p (ℓ.eval κ) (n.eval κ) d)
+           (x : Fin (ℓ.eval κ) → ZMod (p : ℕ)),
+-          a (PG.recInput κ p f x) = PG.encRec κ p f x) :=
++          a ((PG).recInput κ p f x) = (PG).encRec κ p f x) :=
+   ⟨fun h => ⟨h.lgen_eff, h.rec_eff⟩,
+     fun h => ⟨h.1, h.2⟩⟩
+ 
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Scheme.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Scheme.lean
+index 98d592e0c..7cdb90255 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Scheme.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Scheme.lean
+@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Raw
++import TCSlib.Cryptography.CoinSampling.Contract
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.Layered
+ 
+ set_option maxHeartbeats 0
+@@ -55,77 +56,78 @@ uniform description generator. Every sampler target uses one complete draw type.
+ structure SchemeTargets : Prop where
+   /-- Uniformly draw the nonidentity public generator after the group description. -/
+   pubGen_eff : SamplesEfficiently
+-    (fun κ (g : GroupDescription S.G κ) => g.val)
+-    (fun κ g (r : GeneratorDraw S.G κ g) => List.ofFn ((S.G.group κ g.val).encG r.val))
+-    (fun κ _ (pp : PublicParams S.G κ) => pp.encode) (publicParamsCore S.G)
++    (fun κ (g : GroupDescription (S).G κ) => g.val)
++    (fun κ g (r : GeneratorDraw (S).G κ g) => List.ofFn (((S).G.group κ g.val).encG r.val))
++    (fun κ _ (pp : PublicParams (S).G κ) => pp.encode) (publicParamsCore (S).G)
+   /-- Uniformly sample the complete honest setup draw and encode both keys. -/
+   setup_eff : SamplesEfficiently
+-    (fun κ (pp : PublicParams S.G κ) => pp.encode) S.encSetupDraw
+-    (fun κ pp (o : S.MPK κ pp × S.MSK κ pp) =>
+-      pairEncode (List.ofFn (S.encMPK κ pp o.1)) (List.ofFn (S.encMSK κ pp o.2))) S.setupCore
++    (fun κ (pp : PublicParams (S).G κ) => pp.encode) (S).encSetupDraw
++    (fun κ pp (o : (S).MPK κ pp × (S).MSK κ pp) =>
++      pairEncode (List.ofFn ((S).encMPK κ pp o.1)) (List.ofFn ((S).encMSK κ pp o.2))) (S).setupCore
+   /-- Uniformly sample encryption with pp, the public key, and both inputs supplied. -/
+   enc_eff : SamplesEfficiently
+-    (fun κ (π : Σ pp : PublicParams S.G κ,
+-        S.MPK κ pp × (Fin (C.pubLen.eval κ) → Bool) × (Fin (C.privLen.eval κ) → Bool)) =>
+-      pairEncode π.1.encode (pairEncode (List.ofFn (S.encMPK κ π.1 π.2.1))
++    (fun κ (π : Σ pp : PublicParams (S).G κ,
++        (S).MPK κ pp × (Fin ((C).pubLen.eval κ) → Bool) × (Fin ((C).privLen.eval κ) → Bool)) =>
++      pairEncode π.1.encode (pairEncode (List.ofFn ((S).encMPK κ π.1 π.2.1))
+         (pairEncode (List.ofFn π.2.2.1) (List.ofFn π.2.2.2))))
+-    (fun κ π => S.encEncDraw κ π.1 π.2.1 π.2.2.1 π.2.2.2)
+-    (fun κ π (o : S.CT κ π.1) => List.ofFn (S.encCT κ π.1 o))
+-    (fun κ π => S.encCore κ π.1 π.2.1 π.2.2.1 π.2.2.2)
++    (fun κ π => (S).encEncDraw κ π.1 π.2.1 π.2.2.1 π.2.2.2)
++    (fun κ π (o : (S).CT κ π.1) => List.ofFn ((S).encCT κ π.1 o))
++    (fun κ π => (S).encCore κ π.1 π.2.1 π.2.2.1 π.2.2.2)
+   /-- Uniformly sample a function key with pp, the master key, and function supplied. -/
+   keyGen_eff : SamplesEfficiently
+-    (fun κ (π : Σ pp : PublicParams S.G κ, S.MSK κ pp × (Fin (C.fnLen.eval κ) → Bool)) =>
++    (fun κ (π : Σ pp : PublicParams (S).G κ, (S).MSK κ pp × (Fin ((C).fnLen.eval κ) → Bool)) =>
+       pairEncode π.1.encode
+-        (pairEncode (List.ofFn (S.encMSK κ π.1 π.2.1)) (List.ofFn π.2.2)))
+-    (fun κ π => S.encKeyDraw κ π.1 π.2.1 π.2.2)
+-    (fun κ π (o : S.SK κ π.1) => List.ofFn (S.encSK κ π.1 o))
+-    (fun κ π => S.keyCore κ π.1 π.2.1 π.2.2)
++        (pairEncode (List.ofFn ((S).encMSK κ π.1 π.2.1)) (List.ofFn π.2.2)))
++    (fun κ π => (S).encKeyDraw κ π.1 π.2.1 π.2.2)
++    (fun κ π (o : (S).SK κ π.1) => List.ofFn ((S).encSK κ π.1 o))
++    (fun κ π => (S).keyCore κ π.1 π.2.1 π.2.2)
+   /-- One polynomial-time map computes deterministic decryption at every public group. -/
+   dec_eff : ∃ a : List Bool → List Bool, PolyTimeComputable a ∧
+-    ∀ κ (pp : PublicParams S.G κ) (sk : S.SK κ pp)
+-      (x : Fin (C.pubLen.eval κ) → Bool) (ct : S.CT κ pp),
++    ∀ κ (pp : PublicParams (S).G κ) (sk : (S).SK κ pp)
++      (x : Fin ((C).pubLen.eval κ) → Bool) (ct : (S).CT κ pp),
+       a (NUPPT.advInput κ (pairEncode pp.encode
+-        (pairEncode (List.ofFn (S.encSK κ pp sk))
+-          (pairEncode (List.ofFn x) (List.ofFn (S.encCT κ pp ct)))))) =
+-        match S.dec κ pp sk x ct with
++        (pairEncode (List.ofFn ((S).encSK κ pp sk))
++          (pairEncode (List.ofFn x) (List.ofFn ((S).encCT κ pp ct)))))) =
++        match (S).dec κ pp sk x ct with
+         | none => [false]
+-        | some o => true :: List.ofFn (S.encDecOut κ pp o)
++        | some o => true :: List.ofFn ((S).encDecOut κ pp o)
+ 
+ /-- The target is exactly the conjunction of its displayed algorithm obligations. -/
+ theorem schemeTargets_iff :
+     SchemeTargets G ℓ n d ↔
+       (SamplesEfficiently
+-        (fun κ (g : GroupDescription S.G κ) => g.val)
+-        (fun κ g (r : GeneratorDraw S.G κ g) => List.ofFn ((S.G.group κ g.val).encG r.val))
+-        (fun κ _ (pp : PublicParams S.G κ) => pp.encode) (publicParamsCore S.G)) ∧
++        (fun κ (g : GroupDescription (S).G κ) => g.val)
++        (fun κ g (r : GeneratorDraw (S).G κ g) => List.ofFn (((S).G.group κ g.val).encG r.val))
++        (fun κ _ (pp : PublicParams (S).G κ) => pp.encode) (publicParamsCore (S).G)) ∧
+       (SamplesEfficiently
+-        (fun κ (pp : PublicParams S.G κ) => pp.encode) S.encSetupDraw
+-        (fun κ pp (o : S.MPK κ pp × S.MSK κ pp) =>
+-          pairEncode (List.ofFn (S.encMPK κ pp o.1)) (List.ofFn (S.encMSK κ pp o.2))) S.setupCore) ∧
++        (fun κ (pp : PublicParams (S).G κ) => pp.encode) (S).encSetupDraw
++        (fun κ pp (o : (S).MPK κ pp × (S).MSK κ pp) =>
++          pairEncode (List.ofFn ((S).encMPK κ pp o.1)) (List.ofFn ((S).encMSK κ pp o.2)))
++            (S).setupCore) ∧
+       (SamplesEfficiently
+-        (fun κ (π : Σ pp : PublicParams S.G κ,
+-            S.MPK κ pp × (Fin (C.pubLen.eval κ) → Bool) × (Fin (C.privLen.eval κ) → Bool)) =>
+-          pairEncode π.1.encode (pairEncode (List.ofFn (S.encMPK κ π.1 π.2.1))
++        (fun κ (π : Σ pp : PublicParams (S).G κ,
++            (S).MPK κ pp × (Fin ((C).pubLen.eval κ) → Bool) × (Fin ((C).privLen.eval κ) → Bool)) =>
++          pairEncode π.1.encode (pairEncode (List.ofFn ((S).encMPK κ π.1 π.2.1))
+             (pairEncode (List.ofFn π.2.2.1) (List.ofFn π.2.2.2))))
+-        (fun κ π => S.encEncDraw κ π.1 π.2.1 π.2.2.1 π.2.2.2)
+-        (fun κ π (o : S.CT κ π.1) => List.ofFn (S.encCT κ π.1 o))
+-        (fun κ π => S.encCore κ π.1 π.2.1 π.2.2.1 π.2.2.2)) ∧
++        (fun κ π => (S).encEncDraw κ π.1 π.2.1 π.2.2.1 π.2.2.2)
++        (fun κ π (o : (S).CT κ π.1) => List.ofFn ((S).encCT κ π.1 o))
++        (fun κ π => (S).encCore κ π.1 π.2.1 π.2.2.1 π.2.2.2)) ∧
+       (SamplesEfficiently
+-        (fun κ (π : Σ pp : PublicParams S.G κ, S.MSK κ pp × (Fin (C.fnLen.eval κ) → Bool)) =>
++        (fun κ (π : Σ pp : PublicParams (S).G κ, (S).MSK κ pp × (Fin ((C).fnLen.eval κ) → Bool)) =>
+           pairEncode π.1.encode
+-            (pairEncode (List.ofFn (S.encMSK κ π.1 π.2.1)) (List.ofFn π.2.2)))
+-        (fun κ π => S.encKeyDraw κ π.1 π.2.1 π.2.2)
+-        (fun κ π (o : S.SK κ π.1) => List.ofFn (S.encSK κ π.1 o))
+-        (fun κ π => S.keyCore κ π.1 π.2.1 π.2.2)) ∧
++            (pairEncode (List.ofFn ((S).encMSK κ π.1 π.2.1)) (List.ofFn π.2.2)))
++        (fun κ π => (S).encKeyDraw κ π.1 π.2.1 π.2.2)
++        (fun κ π (o : (S).SK κ π.1) => List.ofFn ((S).encSK κ π.1 o))
++        (fun κ π => (S).keyCore κ π.1 π.2.1 π.2.2)) ∧
+       (∃ a : List Bool → List Bool, PolyTimeComputable a ∧
+-        ∀ κ (pp : PublicParams S.G κ) (sk : S.SK κ pp)
+-          (x : Fin (C.pubLen.eval κ) → Bool) (ct : S.CT κ pp),
++        ∀ κ (pp : PublicParams (S).G κ) (sk : (S).SK κ pp)
++          (x : Fin ((C).pubLen.eval κ) → Bool) (ct : (S).CT κ pp),
+           a (NUPPT.advInput κ (pairEncode pp.encode
+-            (pairEncode (List.ofFn (S.encSK κ pp sk))
+-              (pairEncode (List.ofFn x) (List.ofFn (S.encCT κ pp ct)))))) =
+-            match S.dec κ pp sk x ct with
++            (pairEncode (List.ofFn ((S).encSK κ pp sk))
++              (pairEncode (List.ofFn x) (List.ofFn ((S).encCT κ pp ct)))))) =
++            match (S).dec κ pp sk x ct with
+             | none => [false]
+-            | some o => true :: List.ofFn (S.encDecOut κ pp o)) :=
++            | some o => true :: List.ofFn ((S).encDecOut κ pp o)) :=
+   ⟨fun h => ⟨h.pubGen_eff, h.setup_eff, h.enc_eff, h.keyGen_eff, h.dec_eff⟩,
+     fun h => ⟨h.1, h.2.1, h.2.2.1, h.2.2.2.1, h.2.2.2.2⟩⟩
+ 
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Sim.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Sim.lean
+index 0dcdc08e1..a0deab30c 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Sim.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Sim.lean
+@@ -57,70 +57,71 @@ are stated separately: no input-preprocessing or product-sampler closure is assu
+ structure SimTargets : Prop where
+   /-- The concrete committed simulator's setup draw and core satisfy the shared contract. -/
+   sim_setup_eff : SamplesEfficiently
+-    (fun κ (pp : PublicParams S.G κ) => pp.encode) Sim.encSetupDraw
+-    (fun κ pp (o : S.MPK κ pp × Sim.St κ pp) =>
+-      pairEncode (List.ofFn (S.encMPK κ pp o.1)) (Sim.encSt κ pp o.2)) Sim.setupCore
++    (fun κ (pp : PublicParams (S).G κ) => pp.encode) (Sim).encSetupDraw
++    (fun κ pp (o : (S).MPK κ pp × (Sim).St κ pp) =>
++      pairEncode (List.ofFn ((S).encMPK κ pp o.1)) ((Sim).encSt κ pp o.2)) (Sim).setupCore
+   /-- The concrete committed simulator's enc draw and core satisfy the shared contract. -/
+-  sim_enc_eff : SamplesEfficiently Sim.encInputWord
+-    (fun κ π => Sim.encEncDraw κ π.pp π.state π.omega)
+-    (fun κ π (o : S.CT κ π.pp × Sim.St κ π.pp) =>
+-      pairEncode (List.ofFn (S.encCT κ π.pp o.1)) (Sim.encSt κ π.pp o.2))
+-    (fun κ π => Sim.encCore κ π.pp π.state π.omega)
++  sim_enc_eff : SamplesEfficiently (Sim).encInputWord
++    (fun κ π => (Sim).encEncDraw κ π.pp π.state π.omega)
++    (fun κ π (o : (S).CT κ π.pp × (Sim).St κ π.pp) =>
++      pairEncode (List.ofFn ((S).encCT κ π.pp o.1)) ((Sim).encSt κ π.pp o.2))
++    (fun κ π => (Sim).encCore κ π.pp π.state π.omega)
+   /-- The concrete committed simulator's key draw and core satisfy the shared contract. -/
+-  sim_key_eff : SamplesEfficiently Sim.keyInputWord
+-    (fun κ π => Sim.encKeyDraw κ π.pp π.state π.omega π.index)
+-    (fun κ π (o : S.SK κ π.pp × Sim.St κ π.pp) =>
+-      pairEncode (List.ofFn (S.encSK κ π.pp o.1)) (Sim.encSt κ π.pp o.2))
+-    (fun κ π => Sim.keyCore κ π.pp π.state π.omega π.index)
++  sim_key_eff : SamplesEfficiently (Sim).keyInputWord
++    (fun κ π => (Sim).encKeyDraw κ π.pp π.state π.omega π.index)
++    (fun κ π (o : (S).SK κ π.pp × (Sim).St κ π.pp) =>
++      pairEncode (List.ofFn ((S).encSK κ π.pp o.1)) ((Sim).encSt κ π.pp o.2))
++    (fun κ π => (Sim).keyCore κ π.pp π.state π.omega π.index)
+   /-- The concrete semi-adaptive simulator's setup draw and core satisfy the shared contract. -/
+   sa_setup_eff : SamplesEfficiently
+-    (fun κ (pp : PublicParams S.G κ) => pp.encode) SASim.encSetupDraw
+-    (fun κ pp (o : S.MPK κ pp × SASim.St κ pp) =>
+-      pairEncode (List.ofFn (S.encMPK κ pp o.1)) (SASim.encSt κ pp o.2)) SASim.setupCore
++    (fun κ (pp : PublicParams (S).G κ) => pp.encode) (SASim).encSetupDraw
++    (fun κ pp (o : (S).MPK κ pp × (SASim).St κ pp) =>
++      pairEncode (List.ofFn ((S).encMPK κ pp o.1)) ((SASim).encSt κ pp o.2)) (SASim).setupCore
+   /-- The concrete semi-adaptive simulator's enc draw and core satisfy the shared contract. -/
+-  sa_enc_eff : SamplesEfficiently SASim.encInputWord
+-    (fun κ π => SASim.encEncDraw κ π.pp π.state π.publicInput)
+-    (fun κ π (o : S.CT κ π.pp × SASim.St κ π.pp) =>
+-      pairEncode (List.ofFn (S.encCT κ π.pp o.1)) (SASim.encSt κ π.pp o.2))
+-    (fun κ π => SASim.encCore κ π.pp π.state π.publicInput)
++  sa_enc_eff : SamplesEfficiently (SASim).encInputWord
++    (fun κ π => (SASim).encEncDraw κ π.pp π.state π.publicInput)
++    (fun κ π (o : (S).CT κ π.pp × (SASim).St κ π.pp) =>
++      pairEncode (List.ofFn ((S).encCT κ π.pp o.1)) ((SASim).encSt κ π.pp o.2))
++    (fun κ π => (SASim).encCore κ π.pp π.state π.publicInput)
+   /-- The concrete semi-adaptive simulator's key draw and core satisfy the shared contract. -/
+-  sa_key_eff : SamplesEfficiently SASim.keyInputWord
+-    (fun κ π => SASim.encKeyDraw κ π.pp π.state π.publicInput π.function π.value)
+-    (fun κ π (o : S.SK κ π.pp × SASim.St κ π.pp) =>
+-      pairEncode (List.ofFn (S.encSK κ π.pp o.1)) (SASim.encSt κ π.pp o.2))
+-    (fun κ π => SASim.keyCore κ π.pp π.state π.publicInput π.function π.value)
++  sa_key_eff : SamplesEfficiently (SASim).keyInputWord
++    (fun κ π => (SASim).encKeyDraw κ π.pp π.state π.publicInput π.function π.value)
++    (fun κ π (o : (S).SK κ π.pp × (SASim).St κ π.pp) =>
++      pairEncode (List.ofFn ((S).encSK κ π.pp o.1)) ((SASim).encSt κ π.pp o.2))
++    (fun κ π => (SASim).keyCore κ π.pp π.state π.publicInput π.function π.value)
+ 
+ /-- The target is exactly the conjunction of its displayed algorithm obligations. -/
+ theorem simTargets_iff :
+     SimTargets G ℓ n d ↔
+       (SamplesEfficiently
+-        (fun κ (pp : PublicParams S.G κ) => pp.encode) Sim.encSetupDraw
+-        (fun κ pp (o : S.MPK κ pp × Sim.St κ pp) =>
+-          pairEncode (List.ofFn (S.encMPK κ pp o.1)) (Sim.encSt κ pp o.2)) Sim.setupCore) ∧
+-      (SamplesEfficiently Sim.encInputWord
+-        (fun κ π => Sim.encEncDraw κ π.pp π.state π.omega)
+-        (fun κ π (o : S.CT κ π.pp × Sim.St κ π.pp) =>
+-          pairEncode (List.ofFn (S.encCT κ π.pp o.1)) (Sim.encSt κ π.pp o.2))
+-        (fun κ π => Sim.encCore κ π.pp π.state π.omega)) ∧
+-      (SamplesEfficiently Sim.keyInputWord
+-        (fun κ π => Sim.encKeyDraw κ π.pp π.state π.omega π.index)
+-        (fun κ π (o : S.SK κ π.pp × Sim.St κ π.pp) =>
+-          pairEncode (List.ofFn (S.encSK κ π.pp o.1)) (Sim.encSt κ π.pp o.2))
+-        (fun κ π => Sim.keyCore κ π.pp π.state π.omega π.index)) ∧
++        (fun κ (pp : PublicParams (S).G κ) => pp.encode) (Sim).encSetupDraw
++        (fun κ pp (o : (S).MPK κ pp × (Sim).St κ pp) =>
++          pairEncode (List.ofFn ((S).encMPK κ pp o.1)) ((Sim).encSt κ pp o.2)) (Sim).setupCore) ∧
++      (SamplesEfficiently (Sim).encInputWord
++        (fun κ π => (Sim).encEncDraw κ π.pp π.state π.omega)
++        (fun κ π (o : (S).CT κ π.pp × (Sim).St κ π.pp) =>
++          pairEncode (List.ofFn ((S).encCT κ π.pp o.1)) ((Sim).encSt κ π.pp o.2))
++        (fun κ π => (Sim).encCore κ π.pp π.state π.omega)) ∧
++      (SamplesEfficiently (Sim).keyInputWord
++        (fun κ π => (Sim).encKeyDraw κ π.pp π.state π.omega π.index)
++        (fun κ π (o : (S).SK κ π.pp × (Sim).St κ π.pp) =>
++          pairEncode (List.ofFn ((S).encSK κ π.pp o.1)) ((Sim).encSt κ π.pp o.2))
++        (fun κ π => (Sim).keyCore κ π.pp π.state π.omega π.index)) ∧
+       (SamplesEfficiently
+-        (fun κ (pp : PublicParams S.G κ) => pp.encode) SASim.encSetupDraw
+-        (fun κ pp (o : S.MPK κ pp × SASim.St κ pp) =>
+-          pairEncode (List.ofFn (S.encMPK κ pp o.1)) (SASim.encSt κ pp o.2)) SASim.setupCore) ∧
+-      (SamplesEfficiently SASim.encInputWord
+-        (fun κ π => SASim.encEncDraw κ π.pp π.state π.publicInput)
+-        (fun κ π (o : S.CT κ π.pp × SASim.St κ π.pp) =>
+-          pairEncode (List.ofFn (S.encCT κ π.pp o.1)) (SASim.encSt κ π.pp o.2))
+-        (fun κ π => SASim.encCore κ π.pp π.state π.publicInput)) ∧
+-      (SamplesEfficiently SASim.keyInputWord
+-        (fun κ π => SASim.encKeyDraw κ π.pp π.state π.publicInput π.function π.value)
+-        (fun κ π (o : S.SK κ π.pp × SASim.St κ π.pp) =>
+-          pairEncode (List.ofFn (S.encSK κ π.pp o.1)) (SASim.encSt κ π.pp o.2))
+-        (fun κ π => SASim.keyCore κ π.pp π.state π.publicInput π.function π.value)) :=
++        (fun κ (pp : PublicParams (S).G κ) => pp.encode) (SASim).encSetupDraw
++        (fun κ pp (o : (S).MPK κ pp × (SASim).St κ pp) =>
++          pairEncode (List.ofFn ((S).encMPK κ pp o.1)) ((SASim).encSt κ pp o.2)) (SASim).setupCore)
++            ∧
++      (SamplesEfficiently (SASim).encInputWord
++        (fun κ π => (SASim).encEncDraw κ π.pp π.state π.publicInput)
++        (fun κ π (o : (S).CT κ π.pp × (SASim).St κ π.pp) =>
++          pairEncode (List.ofFn ((S).encCT κ π.pp o.1)) ((SASim).encSt κ π.pp o.2))
++        (fun κ π => (SASim).encCore κ π.pp π.state π.publicInput)) ∧
++      (SamplesEfficiently (SASim).keyInputWord
++        (fun κ π => (SASim).encKeyDraw κ π.pp π.state π.publicInput π.function π.value)
++        (fun κ π (o : (S).SK κ π.pp × (SASim).St κ π.pp) =>
++          pairEncode (List.ofFn ((S).encSK κ π.pp o.1)) ((SASim).encSt κ π.pp o.2))
++        (fun κ π => (SASim).keyCore κ π.pp π.state π.publicInput π.function π.value)) :=
+   ⟨fun h => ⟨h.sim_setup_eff, h.sim_enc_eff, h.sim_key_eff,
+       h.sa_setup_eff, h.sa_enc_eff, h.sa_key_eff⟩,
+     fun h => ⟨h.1, h.2.1, h.2.2.1, h.2.2.2.1, h.2.2.2.2.1, h.2.2.2.2.2⟩⟩

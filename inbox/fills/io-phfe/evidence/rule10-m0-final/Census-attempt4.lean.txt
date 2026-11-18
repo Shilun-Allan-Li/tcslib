@@ -1,0 +1,316 @@
+import Lean
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Classes
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs.Correctness
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs.Efficient
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs.Raw
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs.Simulator
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.Defs
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.Layered
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Run
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.Data
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.FromTwoStage
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.Games
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.Security
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.Simulator
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Simulation
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Simulation.Games
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Simulation.Security
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Simulation.TwoStage
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearCorrect
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Data
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Endpoint
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Fresh
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Games
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Keys
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Reductions
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Slack
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Theorems
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSimulator
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Adapter
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.CommittedSimulator
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Core
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Correctness
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Data
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Embedding
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Encodings
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Headlines
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Raw
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Security
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Simulator
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Widths
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticCorrect
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Advice
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Compose
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Data
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Derived
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Fresh
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Games
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Reduction
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Theorems
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSimulator
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.Assembly
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.Garbling
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.LinearEfficiency
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.MatrixDH
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.Scheme
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.Sim
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Wire
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.WireDraws
+import TCSlib.Cryptography.Pairing.Exponents
+import TCSlib.Cryptography.Pairing.Linear
+import TCSlib.Cryptography.Pairing.MatrixDH
+import TCSlib.Cryptography.Pairing.MatrixDH.Defs
+import TCSlib.Cryptography.Pairing.MatrixDH.Parameters
+import TCSlib.Cryptography.Pairing.MatrixDH.SelfReduction
+
+set_option maxHeartbeats 0
+set_option maxRecDepth 65536
+set_option pp.all true
+set_option pp.maxSteps 100000000
+open Lean Elab Command
+
+def censusOwners : List Name := [
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Classes,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs.Correctness,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs.Efficient,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs.Raw,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs.Simulator,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.Defs,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.Layered,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Run,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.Data,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.FromTwoStage,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.Games,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.Security,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.Simulator,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Simulation,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Simulation.Games,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Simulation.Security,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Simulation.TwoStage,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearCorrect,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Data,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Endpoint,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Fresh,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Games,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Keys,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Reductions,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Slack,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Theorems,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSimulator,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Adapter,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.CommittedSimulator,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Core,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Correctness,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Data,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Embedding,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Encodings,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Headlines,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Raw,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Security,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Simulator,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Widths,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticCorrect,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Advice,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Compose,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Data,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Derived,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Fresh,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Games,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Reduction,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Theorems,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSimulator,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.Assembly,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.Garbling,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.LinearEfficiency,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.MatrixDH,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.Scheme,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.Sim,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Wire,
+  `TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.WireDraws,
+  `TCSlib.Cryptography.Pairing.Exponents,
+  `TCSlib.Cryptography.Pairing.Linear,
+  `TCSlib.Cryptography.Pairing.MatrixDH,
+  `TCSlib.Cryptography.Pairing.MatrixDH.Defs,
+  `TCSlib.Cryptography.Pairing.MatrixDH.Parameters,
+  `TCSlib.Cryptography.Pairing.MatrixDH.SelfReduction]
+
+
+def censusOwned (env : Environment) : Array (Name × ConstantInfo) :=
+  (env.constants.toList.toArray.filter fun (n, _) =>
+    match env.getModuleIdxFor? n with
+    | none => false
+    | some i => censusOwners.contains env.header.moduleNames[i.toNat]!).qsort
+      (fun a b => a.1.toString < b.1.toString)
+
+def censusAxioms (cache : IO.Ref (Std.HashMap Name (Array Name))) (n : Name) : CommandElabM (Array Name) := do
+  if let some ax := (← cache.get)[n]? then return ax
+  let ax ← Lean.collectAxioms n
+  cache.modify (·.insert n ax)
+  return ax
+
+def censusTrace (cache : IO.Ref (Std.HashMap Name (Array Name))) (n : Name) : CommandElabM (List Name) := do
+  let env ← getEnv
+  let mut seen : Std.HashSet Name := {}
+  let mut stack : List (Name × List Name) := [(n, [n])]
+  while !stack.isEmpty do
+    let (a, path) := stack.head!
+    stack := stack.tail!
+    if seen.contains a then continue
+    seen := seen.insert a
+    if a == ``sorryAx then return path.reverse
+    if let some c := env.find? a then
+      let refs := c.type.getUsedConstants ++
+        ((c.value? (allowOpaque := true)).map (·.getUsedConstants)).getD #[]
+      if refs.contains ``sorryAx then return (``sorryAx :: path).reverse
+      for b in refs do
+        unless seen.contains b do
+          if (← censusAxioms cache b).contains ``sorryAx then
+            stack := (b, b :: path) :: stack
+  throwError "sorryAx dependency had no path: {n}"
+
+def censusChunk (start amount : Nat) : CommandElabM Unit := do
+  let env ← getEnv
+  let cache ← IO.mkRef ({} : Std.HashMap Name (Array Name))
+  let mut count := 0
+  let mut sorryCount := 0
+  let mut badCount := 0
+  for (n, ci) in ((censusOwned env).toList.drop start).take amount do
+    let typ ← liftTermElabM <| Lean.Meta.ppExpr ci.type
+    IO.println ("PHFE_STMT " ++ (Json.mkObj [("name", toJson n.toString),
+      ("module", toJson env.header.moduleNames[(env.getModuleIdxFor? n).get!.toNat]!.toString),
+      ("type", toJson typ.pretty)]).compress)
+    let ax ← censusAxioms cache n
+    let bad := ax.filter fun a => !([``propext, ``Classical.choice, ``Quot.sound].contains a)
+    let admitted := ax.contains ``sorryAx
+    sorryCount := sorryCount + admitted.toNat
+    badCount := badCount + (!bad.isEmpty).toNat
+    IO.println ("PHFE_AXIOMS " ++ (Json.mkObj [("name", toJson n.toString),
+      ("axioms", toJson (ax.map (·.toString))),
+      ("nonstandard", toJson (bad.map (·.toString)))]).compress)
+    elabCommand (← `(command| #print axioms $(mkIdent n)))
+    if admitted then
+      let trace ← censusTrace cache n
+      IO.println ("PHFE_SORRY_TRACE " ++ (Json.mkObj [("name", toJson n.toString),
+        ("path", toJson (trace.map (·.toString)))]).compress)
+    count := count + 1
+  IO.println ("PHFE_CENSUS_CHUNK " ++ (Json.mkObj [("start", toJson start),
+    ("count", toJson count), ("sorryAx_dependent", toJson sorryCount),
+    ("nonstandard_dependent", toJson badCount)]).compress)
+
+run_cmd censusChunk 0 50
+
+run_cmd censusChunk 50 50
+
+run_cmd censusChunk 100 50
+
+run_cmd censusChunk 150 50
+
+run_cmd censusChunk 200 50
+
+run_cmd censusChunk 250 50
+
+run_cmd censusChunk 300 50
+
+run_cmd censusChunk 350 50
+
+run_cmd censusChunk 400 50
+
+run_cmd censusChunk 450 50
+
+run_cmd censusChunk 500 50
+
+run_cmd censusChunk 550 50
+
+run_cmd censusChunk 600 50
+
+run_cmd censusChunk 650 50
+
+run_cmd censusChunk 700 50
+
+run_cmd censusChunk 750 50
+
+run_cmd censusChunk 800 50
+
+run_cmd censusChunk 850 50
+
+run_cmd censusChunk 900 50
+
+run_cmd censusChunk 950 50
+
+run_cmd censusChunk 1000 50
+
+run_cmd censusChunk 1050 50
+
+run_cmd censusChunk 1100 50
+
+run_cmd censusChunk 1150 50
+
+run_cmd censusChunk 1200 50
+
+run_cmd censusChunk 1250 50
+
+run_cmd censusChunk 1300 50
+
+run_cmd censusChunk 1350 50
+
+run_cmd censusChunk 1400 50
+
+run_cmd censusChunk 1450 50
+
+run_cmd censusChunk 1500 50
+
+run_cmd censusChunk 1550 50
+
+run_cmd censusChunk 1600 50
+
+run_cmd censusChunk 1650 50
+
+run_cmd censusChunk 1700 50
+
+run_cmd censusChunk 1750 50
+
+run_cmd censusChunk 1800 50
+
+run_cmd censusChunk 1850 50
+
+run_cmd censusChunk 1900 50
+
+run_cmd censusChunk 1950 50
+
+run_cmd censusChunk 2000 50
+
+run_cmd censusChunk 2050 50
+
+run_cmd censusChunk 2100 50
+
+run_cmd censusChunk 2150 50
+
+run_cmd censusChunk 2200 50
+
+run_cmd do
+  let expected := (censusOwned (← getEnv)).size
+  IO.println ("PHFE_CENSUS_DONE " ++ (Json.mkObj [("stored", toJson expected)]).compress)
+
+run_cmd IO.println "PHFE_SNAPSHOT {\"head\": \"70b85f9ba83f27393d98fa5bf88505aea3d22a8d\", \"snapshot_sha256\": \"6df18a46ecce31a1fdc9cbbb26712b476f4db6e560855c4dc29de2ae60fc1329\"}"

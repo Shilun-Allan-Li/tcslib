@@ -1,0 +1,43 @@
+Read-only search record, managed worktree; no Lean/lake/Git/build command.
+
+Exact existing target headers/readers:
+- Pairing/Exponents.lean:235-314 (groupDot source/GT, all5 matrix actions, pairVec/pairMat)
+- Group scalar/pairing laws were read in preceding preparations and reused unchanged.
+
+Name/conclusion search before drafting:
+rg -n 'pow.*(sum|prod).*val|sum.*pow_val|exp.*Hom|zmod.*pow|ZMod.*(AddMonoidHom|MonoidHom)|lift.*(MonoidHom|Add)|ofAdd.*sum|toMul_sum|ofMul_prod' \
+  TCSlib/Cryptography/Pairing .lake/packages/mathlib/Mathlib/Data/ZMod \
+  .lake/packages/mathlib/Mathlib/Algebra/Group/TypeTags \
+  .lake/packages/mathlib/Mathlib/Algebra/BigOperators
+Found nearest APIs: ZMod.lift (general additive-group quotient universal property),
+global map_sum/map_prod and global toMul_sum/ofMul_prod. No existing source-specific
+exponentMap or finite ZMod power-sum wrapper was found outside the target Exponents headers.
+ZMod.lift would add integer-power/cast glue; it is not needed because pow_val_add is already
+published. No new public helper is introduced.
+
+Finite-product primitives read at exact source:
+- Mathlib/Algebra/BigOperators/Group/Finset/Defs.lean:342 global map_prod, whose
+  to_additive declaration supplies global map_sum with arguments hom,function,finset.
+- Same file:839 ofMul_prod, :843 GLOBAL toMul_sum, :863 ofAdd_sum.
+  Verified namespace boundaries: Multiset ends787; only `open Additive Multiplicative`
+  follows. Thus `Additive.toMul_sum` would be WRONG. Final drafts use global toMul_sum.
+- Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:646 prod_pow_eq_pow_sum
+  is a nearest NATURAL-exponent result; it is reused indirectly through simpler scalar
+  power facts, not re-proved. The draft uses map_sum to avoid modular-value sum arithmetic.
+- Mathlib/Algebra/Group/Hom/Defs.lean:140 AddMonoidHom structure and its inherited fields.
+
+Matrix primitives read:
+- Mathlib/Data/Matrix/Mul.lean:67 dotProduct; :79 dotProduct_comm.
+- :299 Matrix.mul_apply' has implicit indices i,k and states a row/column dot product.
+- :658 Matrix.mulVec and :672 Matrix.vecMul; these normalize only in explicit show terms.
+- Data.Matrix.Mul directly imports BigOperators.Ring.Finset, which imports Group.Finset
+  pieces; the required finite-sum/tag results are in that existing import closure.
+  No new Mathlib import was added by these candidates.
+
+Global full-name search:
+rg for groupDot_expVec/groupDot_expVecT, expMat_mulVec, expVec_vecMul, expMat_mul,
+expMat_mul_left, expMatT_mulVec, pair_expVec and pair_expMat across TCSlib/Pairing,
+pinned Mathlib Group bigoperators/ZMod and Lean core Init found the target declarations
+and their uses only. No generic finite-product lemma was copied or independently proved.
+
+Exact?/apply? probes: NOT RUN. Root-only shapes are in finite-product-probe-statements.md.

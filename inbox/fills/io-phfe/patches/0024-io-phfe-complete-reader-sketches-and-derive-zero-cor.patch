@@ -1,0 +1,293 @@
+From 1e247f3f1c7fb61ec63fb60e3c94faac04f1c556 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 04:16:59 -0800
+Subject: [PATCH 24/25] io-phfe: complete reader sketches and derive zero
+ correctness error
+
+---
+ .../Defs/Correctness.lean                     |  7 ++++++-
+ .../SemiAdaptive/FromTwoStage.lean            |  5 ++++-
+ .../FunctionalEncryption/Wee20/Linear.lean    |  5 ++++-
+ .../Wee20/LinearSecurity/Keys.lean            |  5 ++++-
+ .../FunctionalEncryption/Wee20/PHFE/Raw.lean  |  2 +-
+ .../Wee20/PHFE/Security.lean                  | 10 ++++++++--
+ .../Wee20/PHFE/Simulator.lean                 |  5 ++++-
+ .../Wee20/QuadraticSecurity/Derived.lean      | 10 ++++++++--
+ .../Wee20/QuadraticSecurity/Reduction.lean    | 20 +++++++++++++++----
+ .../FunctionalEncryption/Wee20/Targets.lean   |  4 ++++
+ .../Wee20/Targets/Scheme.lean                 |  5 ++++-
+ .../Wee20/Targets/Sim.lean                    |  5 ++++-
+ .../Pairing/MatrixDH/SelfReduction.lean       |  4 +++-
+ 13 files changed, 70 insertions(+), 17 deletions(-)
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Correctness.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Correctness.lean
+index 9f0199e78..73f3c89bd 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Correctness.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Correctness.lean
+@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs.Raw
++import TCSlib.Cryptography.Games.Hopping
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -146,6 +147,10 @@ theorem correctExcept_iff (ε : ℕ → ℝ) : S.CorrectExcept ε ↔
+ **Proof sketch.** The all-outcomes identity makes the incorrect-decryption event false
+ throughout the support of each honest run. Its probability is zero, so it satisfies the
+ required bound. -/
+-theorem Correct.correctExcept_zero (h : S.Correct) : S.CorrectExcept 0 := sorry
++theorem Correct.correctExcept_zero (h : S.Correct) : S.CorrectExcept 0 :=
++  (S.correctExcept_iff 0).2 fun κ f x y =>
++    (ProbComp.prob_eq_zero_of_allOutputs
++      (OracleComp.AllOutputs.mono (fun _ hout hne => hne hout)
++        (S.correct_iff.1 h κ f x y))).le
+ 
+ end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.FEScheme.Raw
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean
+index 7b95533ff..0db58fde6 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean
+@@ -193,7 +193,10 @@ theorem saNext_nil {C : FnClass} {S : FEScheme.Raw C} (A : TwoStage) (q : PolyEx
+         (A.saCommitment C q kappa r).privateInput := rfl
+ 
+ /-- After the challenge the embedded adversary reads its payload, requests the
+-next committed key, or supplies the collected wire payloads to the second machine. -/
++next committed key, or supplies the collected wire payloads to the second machine. 
++
++**Proof sketch.** The defining case and record projections reduce to the displayed expression
++by reflexivity. -/
+ theorem saNext_cons {C : FnClass} {S : FEScheme.Raw C} (A : TwoStage) (q : PolyExpr)
+     (kappa : ℕ) (pp : PublicParams S.G kappa) (pk : S.MPK kappa pp) (r : List Bool)
+     (e : Sigma fun i => (S.saSpec kappa).dom i × (S.saSpec kappa).rng i)
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean
+index 196c099a6..c1247d6a5 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean
+@@ -220,7 +220,10 @@ def keyCore (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+       pp.orderParam f) + msk.V * R),
+     pp.group.expMat pp.generator R⟩
+ 
+-/-- Key generation is the displayed scalar garbling arithmetic and group matrix action. -/
++/-- Key generation is the displayed scalar garbling arithmetic and group matrix action. 
++
++**Proof sketch.** The defining case and record projections reduce to the displayed expression
++by reflexivity. -/
+ theorem keyCore_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+     (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
+     (msk : MSK G ℓ zDim κ pp) (f : Fn κ pp.orderParam)
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean
+index de35fabc9..865a52615 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean
+@@ -118,7 +118,10 @@ def projectedKey (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Ty
+       pp.orderParam query.fn)) ⊙
+       matMulGroup (A * st.V) R⟩
+ 
+-/-- Projected key rows use known scalar coefficients and the supplied group matrix R. -/
++/-- Projected key rows use known scalar coefficients and the supplied group matrix R. 
++
++**Proof sketch.** The defining case and record projections reduce to the displayed expression
++by reflexivity. -/
+ theorem projectedKey_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+     (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
+     (st : SimState G ℓ zDim κ pp) (query : KeyQuery G PG zDim κ pp)
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean
+index 56093c5d2..5fcab1eb5 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean
+@@ -16,7 +16,7 @@ set_option autoImplicit false
+ 
+ The raw bundle gives the generic functional-encryption interface explicit typed quadratic
+ cores and exact finite draw types. The private vector is duplicated, giving the quadratic
+-private class of GJLS21. Uniform efficiency remains an explicit later target; this module
++duplicated private class of GJLS21. Uniform efficiency remains an explicit later target; this module
+ constructs no efficient primitive, simulator, machine, or sampler.
+ 
+ ## Main definitions
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Security.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Security.lean
+index 140a8d513..5750159e3 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Security.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Security.lean
+@@ -142,7 +142,10 @@ def Wee20RealizableSA (p : ℕ → ℕ)
+       ((D 3).RealizesOn (G.mddhEnc (PolyExpr.const 1) n) B.coins
+         (Quadratic.red3 G n n PG p hp (Q B) (ωOuter 1)))
+ 
+-/-- The realisability hypothesis has exactly the displayed machine and advice quantifiers. -/
++/-- The realisability hypothesis has exactly the displayed machine and advice quantifiers. 
++
++**Proof sketch.** The defining case and record projections reduce to the displayed expression
++by reflexivity. -/
+ theorem wee20RealizableSA_iff (p : ℕ → ℕ)
+     (hp : ∀ κ r, (G.inst κ r).order = p κ) :
+     Wee20RealizableSA G ℓ n d PG p hp ↔
+@@ -186,7 +189,10 @@ def Wee20Realizable43 (p : ℕ → ℕ)
+       ((D 3).RealizesOn (G.mddhEnc (PolyExpr.const 1) n) B.coins
+         (Quadratic.red3 G n n PG p hp (Q B) (ωOuter 1)))
+ 
+-/-- The realisability hypothesis has exactly the displayed machine and advice quantifiers. -/
++/-- The realisability hypothesis has exactly the displayed machine and advice quantifiers. 
++
++**Proof sketch.** The defining case and record projections reduce to the displayed expression
++by reflexivity. -/
+ theorem wee20Realizable43_iff (p : ℕ → ℕ)
+     (hp : ∀ κ r, (G.inst κ r).order = p κ) :
+     Wee20Realizable43 G ℓ n d PG p hp ↔
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Simulator.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Simulator.lean
+index fce0ac9ce..0e68f0aa9 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Simulator.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Simulator.lean
+@@ -109,7 +109,10 @@ theorem wee20SASim_raw_encCore (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+       let c := Quadratic.simEncCore G ℓ n n κ pp' st (PHFE.decodePublic G ℓ n d κ pp' x) ω
+       ((PHFE.ctEquiv G ℓ n d PG κ pp).symm c.1, c.2) := rfl
+ 
+-/-- Raw simulated keys exponentiate the supplied scalar value and retain the state. -/
++/-- Raw simulated keys exponentiate the supplied scalar value and retain the state. 
++
++**Proof sketch.** The defining case and record projections reduce to the displayed expression
++by reflexivity. -/
+ theorem wee20SASim_raw_keyCore (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+     (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) (κ : ℕ)
+     (pp : PublicParams (wee20PHFE_raw G ℓ n d PG).G κ)
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Derived.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Derived.lean
+index 2b51a1d2b..ca9690337 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Derived.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Derived.lean
+@@ -97,7 +97,10 @@ theorem replayLinear_nil (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
+     (h : QueryLog (saSpec G n1 n2 PG κ pp)) :
+     replayLinear G n1 n2 PG A κ pp m pk r [] h = some h := rfl
+ 
+-/-- Nonempty replay uses the displayed next move and answer translation. -/
++/-- Nonempty replay uses the displayed next move and answer translation. 
++
++**Proof sketch.** The defining case and record projections reduce to the displayed expression
++by reflexivity. -/
+ theorem replayLinear_cons (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
+     {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
+     (A : SAAdv G n1 n2 PG) (κ : ℕ) (pp : PublicParams G κ)
+@@ -134,7 +137,10 @@ def derivedNext (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
+         signalScalar (p := pp.orderParam) m.s1 msg.2.2 (Matrix.vecMul m.s1 m.A1 + msg.2.1) m.s2)
+     | .query true f => .query true ⟨f, mixGroup G n1 n2 κ pp pub.A1 pub.A2⟩
+ 
+-/-- The derived next move is the displayed total replay-and-translation algorithm. -/
++/-- The derived next move is the displayed total replay-and-translation algorithm. 
++
++**Proof sketch.** The defining case and record projections reduce to the displayed expression
++by reflexivity. -/
+ theorem derivedNext_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
+     {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
+     (A : SAAdv G n1 n2 PG) (κ : ℕ) (pp : PublicParams G κ)
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Reduction.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Reduction.lean
+index 676ffe032..9375b8275 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Reduction.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Reduction.lean
+@@ -102,7 +102,10 @@ def red2Handler (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
+         (c.pp.generator ^ (value G n1 n2 PG κ c.pp f msg.1 msg.2.1 msg.2.2).val))
+       (Linear.simKeyAt G PG (piDim n1 n2) q κ c.pp ω j f)⟩⟩)
+ 
+-/-- The first replacement handler is the displayed pure protocol. -/
++/-- The first replacement handler is the displayed pure protocol. 
++
++**Proof sketch.** The defining case and record projections reduce to the displayed expression
++by reflexivity. -/
+ theorem red2Handler_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
+     {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (κ : ℕ)
+     (c : G.MDDHChallenge (PolyExpr.const 1) n1 κ) (m : Masks G n1 n2 κ c.pp)
+@@ -143,7 +146,10 @@ def red3Handler (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
+         (c.pp.generator ^ (value G n1 n2 PG κ c.pp f msg.1 msg.2.1 msg.2.2).val))
+       (Linear.simKeyAt G PG (piDim n1 n2) q κ c.pp ω j f)⟩⟩)
+ 
+-/-- The second replacement handler is the displayed pure protocol. -/
++/-- The second replacement handler is the displayed pure protocol. 
++
++**Proof sketch.** The defining case and record projections reduce to the displayed expression
++by reflexivity. -/
+ theorem red3Handler_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
+     {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (κ : ℕ)
+     (c : G.MDDHChallenge (PolyExpr.const 1) n2 κ) (m : Masks G n1 n2 κ c.pp)
+@@ -179,7 +185,10 @@ noncomputable def red2 (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
+     (red2Handler G n1 n2 A.budget PG κ c m ctx.2 tape.2)
+     (A.budget.eval κ) [] ⟨none, 0⟩).1]
+ 
+-/-- The first L2 reduction exposes its exact advice, public key and runDet result. -/
++/-- The first L2 reduction exposes its exact advice, public key and runDet result. 
++
++**Proof sketch.** The defining case and record projections reduce to the displayed expression
++by reflexivity. -/
+ theorem red2_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
+     {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (p : ℕ → ℕ)
+     (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G n1 n2 PG)
+@@ -213,7 +222,10 @@ noncomputable def red3 (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
+     (red3Handler G n1 n2 A.budget PG κ c m ctx.2 tape.2)
+     (A.budget.eval κ) [] ⟨none, 0⟩).1]
+ 
+-/-- The second L2 reduction exposes its exact advice, public key and runDet result. -/
++/-- The second L2 reduction exposes its exact advice, public key and runDet result. 
++
++**Proof sketch.** The defining case and record projections reduce to the displayed expression
++by reflexivity. -/
+ theorem red3_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
+     {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (p : ℕ → ℕ)
+     (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G n1 n2 PG)
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets.lean
+index 63b01051d..f497ad879 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets.lean
+@@ -4,6 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.Assembly
+ 
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
+ /-!
+ # PHFE uniform-efficiency targets and pure assembly
+ 
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Scheme.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Scheme.lean
+index 7cdb90255..a8b0e3b90 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Scheme.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Scheme.lean
+@@ -92,7 +92,10 @@ structure SchemeTargets : Prop where
+         | none => [false]
+         | some o => true :: List.ofFn ((S).encDecOut κ pp o)
+ 
+-/-- The target is exactly the conjunction of its displayed algorithm obligations. -/
++/-- The target is exactly the conjunction of its displayed algorithm obligations. 
++
++**Proof sketch.** Destructure the target record into its fields; in the reverse direction, assemble
++the record from the conjuncts. -/
+ theorem schemeTargets_iff :
+     SchemeTargets G ℓ n d ↔
+       (SamplesEfficiently
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Sim.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Sim.lean
+index a0deab30c..27aaf09c7 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Sim.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Sim.lean
+@@ -90,7 +90,10 @@ structure SimTargets : Prop where
+       pairEncode (List.ofFn ((S).encSK κ π.pp o.1)) ((SASim).encSt κ π.pp o.2))
+     (fun κ π => (SASim).keyCore κ π.pp π.state π.publicInput π.function π.value)
+ 
+-/-- The target is exactly the conjunction of its displayed algorithm obligations. -/
++/-- The target is exactly the conjunction of its displayed algorithm obligations. 
++
++**Proof sketch.** Destructure the target record into its fields; in the reverse direction, assemble
++the record from the conjuncts. -/
+ theorem simTargets_iff :
+     SimTargets G ℓ n d ↔
+       (SamplesEfficiently
+diff --git a/TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean b/TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean
+index 3fc9196ab..b659880e2 100644
+--- a/TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean
++++ b/TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean
+@@ -195,7 +195,9 @@ def mddhPreChallenge (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order = p 
+     else if j.val < ω.1.val then M i 0 ^ (S 0 j).val * M i 1 ^ (S 1 j).val
+     else c.pp.generator ^ (U i j).val⟩
+ 
+-/-- The typed preprocessor is precisely the displayed group-arithmetic embedding. -/
++/-- The typed preprocessor is precisely the displayed group-arithmetic embedding. 
++
++**Proof sketch.** The explicit preprocessing formula reduces by reflexivity. -/
+ theorem mddhPreChallenge_eq (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order = p κ)
+     (d ℓ : PolyExpr) (κ : ℕ) (ω : MddhAdvice p d ℓ κ) (c : G.DLINChallenge κ) :
+     G.mddhPreChallenge p hp d ℓ κ ω c =

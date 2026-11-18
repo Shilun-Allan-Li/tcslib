@@ -1,0 +1,442 @@
+[
+  {
+    "path": "clash/clash_controls.py",
+    "lines": 177,
+    "sha256": "6246099550c14f893cf01c5cc219280acdf4eaf6930d77bad1e63d977a8dec90",
+    "docstring": "(bb1-sim-statements, lead: copied unchanged from the bb1-machine delivery, evidence/clash/.)\nclash_controls.py <repo> <base-rev> <outdir>\n\nControls of clash_scan.py (fill bb1-machine), and the pre-scan of the planned glue names. Run as\n`python3 -I clash_controls.py /home/user/fill/wt-sub 7c0a55e0 <outdir>`. Loads clash_scan.py\nfrom its own directory (by path; `-I` puts no script directory on sys.path), builds the base index\nat <base-rev> from git objects, and runs the scanner's core (`added_decls` + `classify`) on\nsynthetic head files:\n  K1 a synthetic NEW file under namespaces mixing fake and existing names, each with an expected\n     status (CLASH for an existing public name; for an existing private name; for a dotted name\n     `IBEScheme.sidSpec_eq` inside the outer namespace; for a `_root_.`-qualified existing name;\n     inside `section`/`noncomputable section`/`mutual` blocks; after a partial `end`; OK for\n     fresh names; anonymous instances and names in comments/strings ignored).\n  K2 a synthetic ADDED LINE in the base Defs.lean (a duplicate `oracleImpl_one` inserted after\n     line 387, inside `namespace IBEScheme`): CLASH (same file, one more declaration than base).\n  K3 a synthetic CHANGED header line of an existing declaration (`oracleImpl_two` in Defs.lean,\n     binder renamed): MODIFIED (not a new name).\n  PRE the planned glue of `BonehBoyenMachine/Oracles.lean` (namespace\n     TCSlib.Cryptography.AdvancedEncryption.IdentityBased, then BB1Machine): the six private\n     `cast_eq_padFin`, `ofFn_padFin_ofFn`, `ofFn_decAnswer_some`, `sidSpec_rng_one'`,\n     `sidSpec_rng_two'`, `expect_bb1SimImpl` and the public\n     `abs_expect_bb1Sim_sub_distinguisherL_le`; written to <outdir>/planned-prescan.tsv.\nPrints one line per control and `ALL_CONTROLS_OK True|False`, then the pre-scan's RESULT.\n\nwritten by tools-agent (sub-agent), fill bb1-machine",
+    "functions": [
+      "load_core",
+      "main"
+    ],
+    "subprocess_calls": []
+  },
+  {
+    "path": "clash/clash_scan.py",
+    "lines": 317,
+    "sha256": "175371901853ffae116c3c21ce70b86cf919b414562cb46e47ca85ddd28bba68",
+    "docstring": "(bb1-sim-statements, lead: copied unchanged from the bb1-machine delivery, evidence/clash/.)\nclash_scan.py <repo> <base-rev> <head-rev> <out-dir-or-tsv>\n\nName-clash scan of fill bb1-machine (brief: \"Checks and report\" -> \"Name-clash scan\"). Run as\n`python3 -I clash_scan.py ...`. Reads git objects only (`git diff`, `git ls-tree -r`,\n`git cat-file --batch`), never the working tree; runs no Lean.\n\n1. New declarations: every declaration whose header line is added between <base-rev> and\n   <head-rev> in a `TCSlib/**/*.lean` file (new files: every line; changed files: the `+` lines of\n   `git diff -U0`). Kinds: theorem, lemma, def, abbrev, instance (named only), structure,\n   inductive, class (incl. `class inductive`), opaque, axiom, alias, irreducible_def; with the\n   modifiers private / protected / noncomputable / partial / unsafe / nonrec / scoped / local\n   recorded as flags. Only lines outside comments and strings count, whose first token is the\n   command (indentation allowed: one base file indents a `lemma`).\n2. Full names are resolved from the enclosing `namespace X.Y` / `section [S]` / `mutual` /\n   `end [..]` blocks (a dotted namespace contributes all its components; `end X.Y` closes it),\n   and a dotted declaration name `Foo.bar` inside namespace `N` resolves to `N.Foo.bar`;\n   `_root_.` is honoured.\n3. Base index: every `.lean` file of `TCSlib/` and `audits/` at <base-rev> is parsed the same way.\n   A new name is CLASH if a declaration with the same resolved full name exists at <base-rev> in\n   another file, or in the same file when the head file holds more declarations of that name than\n   the base file (otherwise a declaration whose full name already exists in the same file at\n   <base-rev> is classified MODIFIED: a changed header line of an existing declaration, not a new\n   name). Two new declarations with the same full name\n   are DUP-NEW. Same-short-name (last component) declarations elsewhere are listed as INFO.\nPrivate names are compared like public ones (the brief: \"public or private, namespaces resolved\").\nNot covered (stated, not checked): auto-generated names (structure fields/`mk`, inductive\nconstructors, `simps`/`to_additive`/equation lemmas), declarations produced by macros.\n\nOutput: <out>/clash.tsv (or <out> itself when it ends in .tsv) with columns\nstatus, full_name, kind, flags, head_location, clash_locations, info_same_short_name; and a\nsummary printed and appended as `RESULT: <n> new names, <k> clashes` (exit 0 iff k == 0 and no\nDUP-NEW).\n\nThe core is importable: `parse_decls(text)` -> declarations, `base_index(repo, rev)` -> index,\n`added_decls(text, added_lines, path)` -> new declarations of a (synthetic) head file,\n`classify(new_decls, index)` -> rows (used by clash_controls.py).\n\nwritten by tools-agent (sub-agent), fill bb1-machine",
+    "functions": [
+      "strip_code",
+      "parse_decls",
+      "git",
+      "cat_files",
+      "base_index",
+      "new_decls",
+      "added_decls",
+      "classify",
+      "fmt_locs",
+      "write_report",
+      "main"
+    ],
+    "subprocess_calls": [
+      {
+        "line": 166,
+        "function": "run",
+        "argument": "['git', '-C', repo] + list(args)"
+      }
+    ]
+  },
+  {
+    "path": "clash/probe_clash.py",
+    "lines": 44,
+    "sha256": "b946efd89a604a6021dc1513e4f2ab09720a580aec646a57159023bd236234c5",
+    "docstring": "probe_clash.py <repo> <out-dir> (bb1-sim-statements, lead): name-clash scan of the probe's reader\nset (probe/READERS-TO-INSERT.md \u00a72) with clash_scan.py's core (loaded by path from this directory).\nFor each owner, the head text is the owner at T4's head c90273fa with the block inserted after its\nanchor (the sub-agent's insertion/ blocks; anchors Defs.lean:430, BonehBoyen.lean:412); the block's\ndeclarations are classified against the base index (TCSlib/ and audits/) at the issue base\nbdcadd85 and at T4's head c90273fa. Exit 0 iff no CLASH and no DUP-NEW at either base.",
+    "functions": [],
+    "subprocess_calls": [
+      {
+        "line": 19,
+        "function": "run",
+        "argument": "['git', '-C', repo, 'show', f'{T4}:{path}']"
+      }
+    ]
+  },
+  {
+    "path": "deliver.py",
+    "lines": 71,
+    "sha256": "f569d78351de5c667596d69ebb88a7f2fda036aa52e8812eacd9cf9ce4ef4dd0",
+    "docstring": "deliver.py <delivery-dir> <base-rev> [<name>=<worktree>]... (bb1-sim-statements, lead): ADAPTED from the\nbb1-machine delivery's deliver.py. Changes: several series, one per <name>=<worktree> (patches/<name>/ and\nsrc/<name>/ from `git format-patch <base>..HEAD` of that worktree), the am-check log per series\n(evidence/delivery/am-check-<name>.out), and no series at all (manifests only). Unchanged: COMMITS.tsv (hash,\nauthor name/email/date, committer name/email/date, signing), `git am` of every patch at <base> in a scratch\nclone reproducing every hash, evidence/SHA256SUMS (every file under evidence/ except itself), the top-level\nSHA256SUMS (every delivered file except itself), and the path-equality check (no leading `./`).\nAlso: EXCLUDE (environment, comma-separated delivery-relative prefixes) leaves paths out of both manifests\n(a checkpoint omits a log directory that a running process is still writing; it is not committed either).",
+    "functions": [
+      "walk"
+    ],
+    "subprocess_calls": [
+      {
+        "line": 37,
+        "function": "run",
+        "argument": "['git', 'clone', '-q', '--shared', '--no-checkout', repo, tmp]"
+      },
+      {
+        "line": 43,
+        "function": "run",
+        "argument": "['git', '-c', 'commit.gpgsign=false', 'am', '-q', '--keep-cr', os.path.join(pd, p)]"
+      },
+      {
+        "line": 17,
+        "function": "run",
+        "argument": "['git', *a]"
+      },
+      {
+        "line": 34,
+        "function": "run",
+        "argument": "['git', 'show', f'HEAD:{f}']"
+      }
+    ]
+  },
+  {
+    "path": "dev/sk15.py",
+    "lines": 37,
+    "sha256": "257a067ce434e7d18f1d0defe0e3f27f318e888edafaffbdd8e08baf0cbad9c5",
+    "docstring": "(bb1-sim-statements, lead: copied unchanged from the bb1-machine delivery.)\nsk15.py <files>: proofs of >= 15 lines (style_lint's measure: from the declaration line to the next\ndeclaration, excluding blanks and the docstring) whose docstring lacks **Proof sketch.**",
+    "functions": [],
+    "subprocess_calls": []
+  },
+  {
+    "path": "drivers/bootstrap.sh",
+    "lines": 19,
+    "sha256": "ab8048609c9b6c75129f6a40e7a00900c0a7ffcb387cc64455c5e9f24f180ee1"
+  },
+  {
+    "path": "drivers/rule10_stmt.sh",
+    "lines": 75,
+    "sha256": "53926cf802a6024dbf1ad5b2f6997ddfa6ea9fb8dd4fa81ba5a856223b6c1e9a"
+  },
+  {
+    "path": "insert_blocks.py",
+    "lines": 14,
+    "sha256": "f7b50117343a151922df95955625158b089bf99f4228e2c5d8245bbada242b4b",
+    "docstring": "insert_blocks.py <file> <spec>... (bb1-sim-statements, lead): pure insertions. Each spec is\nAFTER_LINE:BLOCK_FILE (1-based line number of the base file after which the block's lines go).\nSpecs are applied bottom-up so the base line numbers stay valid. The block file's text is inserted\nverbatim (a trailing newline of the block file ends its last line).",
+    "functions": [],
+    "subprocess_calls": []
+  },
+  {
+    "path": "pkgcheck.py",
+    "lines": 17,
+    "sha256": "9778e4761e03804f3805df27be78f0e9c345ea491767ea31615ad77b679762a9",
+    "docstring": null,
+    "functions": [],
+    "subprocess_calls": [
+      {
+        "line": 11,
+        "function": "run",
+        "argument": "['git', '-C', d, 'remote', 'get-url', 'origin']"
+      },
+      {
+        "line": 12,
+        "function": "run",
+        "argument": "['git', '-C', d, 'rev-parse', 'HEAD']"
+      }
+    ]
+  },
+  {
+    "path": "review/runner.py",
+    "lines": 53,
+    "sha256": "c0e657636d7ad06b3020c79153a9fce1b4bb7035e261cc4720a98ee27f3e7e3c",
+    "docstring": "runner.py <worktree> <order> <tree> <logdir> [start-module]\nChecks modules in order, one Lean process at a time, through scripts/lean_check_tree.sh with\nTCSLIB_OLEANS=<tree>. Per module: full log <logdir>/mods/<module with / -> _>.log and a JSON line\nin <logdir>/results.jsonl (rc, error/sorry/warning counts, start/end UTC, seconds, maxrss_kb of\nthe checker process tree, source and object SHA-256).\nG26-N1 fix (prf-mac review): errors are counted in both forms, `error:` and `error(...)`, by\n^\\S+\\.lean:\\d+:\\d+: error[:(] (multiline); error_substr = raw count of the substring \"error\". Stops at the first failure (like ladder.sh).",
+    "functions": [],
+    "subprocess_calls": [
+      {
+        "line": 40,
+        "function": "Popen",
+        "argument": "['bash', LEAN_SLOT, 'nice', '-n', '10', 'bash', 'scripts/lean_check_tree.sh', m]"
+      }
+    ]
+  },
+  {
+    "path": "seal/decls2.py",
+    "lines": 65,
+    "sha256": "2f773b5c6fc8b4fa0657280c4f6980d5b540ed03e02d2e9a32e0e9e8a7c3e087",
+    "docstring": "decls2.py <root> <base-rev> <file>...: public declarations (full name -> (kind, line, normalized\nstatement)) at <base-rev> and in the working tree; prints added / removed / changed as TSV.\ndecls2 (gate 07 R2-03): a line starting with `|` that follows a `match \u2026 with` opened in the statement\n(before the declaration's top-level `:=`) is a match arm of the statement and does not end it; only\narms of an equation-compiler definition (no `match` in the statement), the `:=`, or the next\ndeclaration end a statement.",
+    "functions": [
+      "strip",
+      "decls",
+      "cut"
+    ],
+    "subprocess_calls": [
+      {
+        "line": 55,
+        "function": "run",
+        "argument": "['git', 'show', f'{base}:{f}']"
+      }
+    ]
+  },
+  {
+    "path": "seal/review/NmCollect.template.lean",
+    "lines": 81,
+    "sha256": "ae868cb24537ff757f6cc6d6ab3ab7988e02e0038c8341ccf41049a250d14ad3"
+  },
+  {
+    "path": "seal/review/archived-gate10-tools/build_controls.py",
+    "lines": 340,
+    "sha256": "7bc1d8052c7724e8aa9f603f1d7cc33d4b5cfda7a6f2d014adca6dcc5304a7c4",
+    "docstring": "Prepare Gate06 Rule-10 controls; never invoke Lean, Git, or a shell.\n\nRun only after build_seals.py has produced a completed seal-manifest.json:\n  python3 -I .lake/ps-maintainer/gate06/build_controls.py EVIDENCE_DIRECTORY --root WORKTREE\n\nAll Lean files go to ignored .lake scratch. Evidence receives .source.txt\ncopies and JSON only. Preparation does not establish control sensitivity.",
+    "functions": [
+      "require",
+      "load_builder",
+      "catalog_command",
+      "assemble",
+      "validate_selected",
+      "main"
+    ],
+    "subprocess_calls": []
+  },
+  {
+    "path": "seal/review/archived-gate10-tools/build_seals.py",
+    "lines": 570,
+    "sha256": "ecb8ff2359d36e9182b83ae318eabe4dd9d23c3dec4b0bbe8406ad9787421fb5",
+    "docstring": "Prepare, but never run, the 59 Gate06 whole-file conservative seals.\n\nUsage (from the integration worktree):\n  python3 -I .lake/ps-maintainer/gate06/build_seals.py EVIDENCE_DIRECTORY\n\nEVIDENCE_DIRECTORY is the completed evidence-rule10-r2 directory, which may\nlive in the records checkout. Read-only Git commands verify the pinned library.\nOnly ignored scratch probes and evidence .source.txt/JSON files are written.\nThe root coordinator reviews this script and runs/checks probes separately.",
+    "functions": [
+      "require",
+      "sha",
+      "unique_object",
+      "read_json",
+      "git",
+      "library_snapshot",
+      "blank_comments_strings",
+      "header",
+      "validate_metadata",
+      "completed_collector",
+      "collector_rows",
+      "lean_string",
+      "seal_command",
+      "instrument",
+      "json_bytes",
+      "main",
+      "blank",
+      "imports"
+    ],
+    "subprocess_calls": [
+      {
+        "line": 74,
+        "function": "check_output",
+        "argument": "['git', '--no-optional-locks', '-C', str(root), *args]"
+      }
+    ]
+  },
+  {
+    "path": "seal/review/archived-gate10-tools/legacy_request_payload_adapter.py",
+    "lines": 285,
+    "sha256": "ae79f1ec66e93c8bc7749a53e12e3d383feda020ad2978520a0cfa24b12eb5de",
+    "docstring": "Prepare, never run, Gate06 constant-AST harness retries for frozen ordinals 19--51.\n\nReview before invoking:\n  python3 -I .lake/ps-maintainer/gate06/repairs/prepare_rule10_harness_retry_v3.py EVIDENCE --root WORKTREE\n\nNo Lean, Git, shell, or subprocess invocation occurs. Existing manifests,\nprobes and evidence are never overwritten. All new results remain NOT_RUN.",
+    "functions": [
+      "require",
+      "load_module",
+      "payload_literal",
+      "request_code",
+      "replace_request_build",
+      "configure_builders",
+      "restore_original",
+      "main"
+    ],
+    "subprocess_calls": []
+  },
+  {
+    "path": "seal/review/archived-gate10-tools/request_payload_adapter.py",
+    "lines": 234,
+    "sha256": "9a8fee882126a1702fd2af07c5184d303f83c9d119cd36a31badedc6cf462e94",
+    "docstring": "Proposed combined-head adapter with a scoped instance unfolding mask.\n\nUses the reviewed constant-AST encoder and lossless Name metadata. The mask\nchanges only unfolding membership for requested definitions in sealed probes.",
+    "functions": [
+      "need",
+      "canonical",
+      "name_key",
+      "records",
+      "catalog_and_roots",
+      "enrich_rows",
+      "augment",
+      "insert_before",
+      "mask_seal",
+      "configure_builders",
+      "verify_component_log",
+      "verify_mask_log"
+    ],
+    "subprocess_calls": []
+  },
+  {
+    "path": "seal/review/archived-gate10-tools/scan_explicit.py",
+    "lines": 314,
+    "sha256": "fd2a0025d75aadfa431956ac843c77ef37a724425bdd1a70143dbf8391996c61",
+    "docstring": "Own continuation-list inventory and frozen primary-evidence reconciliation; no native.",
+    "functions": [
+      "need",
+      "sha",
+      "read",
+      "load",
+      "save",
+      "blank",
+      "closing",
+      "list_start",
+      "inventory",
+      "complete_declarations",
+      "main",
+      "hide",
+      "resolve"
+    ],
+    "subprocess_calls": [
+      {
+        "line": 250,
+        "function": "check_output",
+        "argument": "['git', '--no-optional-locks', '-C', str(ROOT), 'show', PRIOR + ':' + path.relative_to(ROOT).as_posix()]"
+      },
+      {
+        "line": 204,
+        "function": "check_output",
+        "argument": "['git', '--no-optional-locks', '-C', str(ROOT), 'show', PRIOR + ':' + path]"
+      }
+    ]
+  },
+  {
+    "path": "seal/review/ctlcheck2.py",
+    "lines": 27,
+    "sha256": "ce5e8a91e6eade21a0833fcf5a71210ca56de0398a95728367f33d87ba80c91e",
+    "docstring": "ctlcheck.py <plan.json> <rundir> <out.json>: verify control outcomes (unsealed rc 0; sealed: exactly one\nerror inside each negative control, none in positives, no harness error, seal install+EOF records).",
+    "functions": [],
+    "subprocess_calls": []
+  },
+  {
+    "path": "seal/review/mkcollect.py",
+    "lines": 13,
+    "sha256": "3ba04c6e459afb35d20c5483dc58d8bcbe9c8cf072123b987cdf81990b871a4f",
+    "docstring": "mkcollect.py <nm-review NmCollect.lean> <modules file> <title> <out.lean>: the nm-cca2 review collector\n(PkCollect lineage) with its owner list and imports replaced by <modules> (verbatim otherwise).",
+    "functions": [],
+    "subprocess_calls": []
+  },
+  {
+    "path": "seal/review/mkctl_bb1s.py",
+    "lines": 293,
+    "sha256": "23afc4af095722b715042b69dd21aecff003d454282070f00ff8d56f891da5f6",
+    "docstring": "mkctl_bb1s.py (bb1-sim-statements, Claude lead, 2026-11-16): mkctl_bb1m_readers.py with the harness unchanged\n(assemble, the covering-subset choice of seal records, the plan format, namespace PairingControls) and one row added\nfor the changed owner Games/Probability: Games.ProbComp.expect (negative: `expect (pure a) g = g a` by `rfl`, the\nunfolding the published reader replaces; positive: `ProbComp.expect_pure a g`). The changed owner Pairing/Group is\ncovered by the inherited rows BilinearGen.inst (ctlInst, positive inst_eq) and BilinearGen.desc (ctlDesc, positive\ndesc_eq). Relational defines nothing: no row. Every inherited row is kept verbatim (rows whose target is in no sealed\nrequest set are not exercised). Previous header (mkctl_bb1m_readers.py) follows.\nmkctl_bb1m_readers.py (fill bb1-machine, Claude lead, 2026-11-16): mkctl_bb1m.py with the harness unchanged\n(assemble, the covering-subset choice of seal records, the plan format, namespace PairingControls) and seven rows\nadded, one per approved reader, each a negative (the unfolding the reader replaces, stated in a consumer's context:\nthe reader's own statement, `type_of%` of the reader, proved by the owner's own proof term) and a positive (the\nreader): IBEScheme.oracleImpl (oracleImpl_zero_onSpec, oracleImpl_one_onSpec, oracleImpl_two_onSpec; negative\n`(OracleComp.bind_pure _).symm`), bb1Scheme (ofFn_bb1Scheme_encPP and ofFn_bb1Scheme_encSK, negative `rfl`;\nbb1Scheme_msgSpace_iff, negative `exists_congr fun _ => List.ofFn_inj.symm`) and bb1SimCt (ofFn_bb1SimCt, negative\n`by rw [padFin_ofFn]; rfl`). The fill adds no new definition, so no helper-definition row is added. The covering\nsubset picks, per target and variant, the sealed owner with the fewest requests containing it (a consumer of\nDefs/BonehBoyen, where these definitions are foreign). Previous header (mkctl_bb1m.py) follows.\nmkctl_bb1m.py (fill-bb1-machine, unit bb1-machine, T4): mkctl_pbdh.py with the harness unchanged (assemble, the\ncovering-subset choice of seal records, the plan format, namespace PairingControls) and thirteen rows added for\ndefinitions foreign to the sealed owners of this fill (the helper modules under BonehBoyenMachine/ and the owned\nBonehBoyenMachine.lean) that their proofs read only through published readers: IBEScheme.inLens (inLens_zero),\nIBEScheme.outLens (outLens_two), Pairing.tupleStr (tupleStr_eq), BB1.idToZ (idToZ_eq), Games.PolyHandler.input\n(input_eq), ETTGame.tapeImpl (tapeImpl_apply), and the helper definitions BB1Machine.qLen (qLen_zero), BB1Machine.draw\n(draw_eq; Draws, foreign to Words/Handler/Reduction), BB1Machine.sJ, BB1Machine.kT, BB1Machine.blkS, BB1Machine.uS\n(sJ_eq, kT_eq, blkS_eq, uS_eq; Words, foreign to Handler/Reduction) and BB1Machine.handler (handler_seedLen; Handler,\nforeign to Reduction); each negative the rfl unfolding, each positive the reader (stated as `type_of%` of the reader\nwhere the statement is long, as in the sidImpl row). The pbdh rows are kept verbatim (rows whose target is in no\nsealed request set are not exercised).\nPrevious header (mkctl_pbdh.py) follows.\nmkctl_pbdh.py (fill-pair-bdh, unit pair-bdh, T1): mkctl_g40.py with the harness unchanged (assemble, the covering-subset\nchoice of seal records, the plan format, namespace PairingControls) and nine rows added to B for definitions foreign to\nthe sealed owner Pairing/Assumptions that the T1 proof reads only through their published readers: NUPPT.distinguisherL\n(distinguisherL_eq), NUPPT.runAtL (runAtL_eq), NUPPT.layout (layout_eq), NUPPT.ofPolyTime (coins_ofPolyTime),\nNUPPT.advInput (advInput_eq), Games.accept (accept_eq), uprob (uprob_def), BilinearGen.OrderAtLeastExcept\n(orderAtLeastExcept_iff), BilinearGen.inst (inst_eq); each negative the rfl/Iff.rfl unfolding, each positive the reader.\nThe LE-gate40 rows are kept verbatim (rows whose target is in no sealed request set are not exercised).\nPrevious header (mkctl_g40.py) follows.\nmkctl_g40.py (LE-gate40, pairing statements PR #331): mkctl_g36.py with the harness unchanged\n(assemble, the covering-subset choice of seal records, the plan format) and the rows B replaced by\npairing rows, each a negative rfl/Iff.rfl unfolding of a definition foreign to some sealed owner\nand a positive through its published reader: PolyExpr.eval (B only), padFin (padFin_def),\nOracleComp.AllOutputs (allOutputs_pure), BilinearGen.desc (desc_eq), BilinearGen.DBDHAssumption\n(dbdhAssumption_iff), IBEScheme.Correct (correct_iff), IBEScheme.sidImpl (sidImpl_init_none),\nBB1.F (F_eq), KeyExchange.jouxMsg (jouxMsg_eq); namespace PairingControls.\nAttempt 2: the sidImpl row is stated as `type_of% (S.sidImpl_init_none \u2026)`; attempt 1 restated the\nequation, whose oracle-0 query and answer types only check by unfolding `inLens`/`outLens` (sealed\nforeign definitions of the control file), so both of its theorems failed twice under the seal (a\ncontrol-statement defect, not a module finding; rule10/controls-attempt1/).\nPrevious header (mkctl_g36.py) follows.\nmkctl_g36.py (LE-gate36): mkctl_sg.py unchanged except one added row B[PrivateKeyScheme.encodeList]\n(negative: the rfl unfolding on a cons; positive: the published reader PrivateKeyScheme.encodeList_cons), the definition\nunder the G36-01 lemma `length_le_length_encodeList`. Previously mkctl_sg.py (sc-garble review): mkctl_scot.py with sc-garble rows (PolyExpr.eval, the FinDist CoeFun instance,\nDAGCircuit.IsFaninTwo (the approved reader), spEncStr, sliceEnc, Good, and the helper definitions sliceMask (Pad),\nSliceReduction.slicePost (SliceParser) and SpecialWrongKey.prefixTest (WrongKey), foreign to their later consumers;\neach negative the rfl/Iff.rfl unfolding, each positive its published reader) and namespace ScGarbleControls.\nAttempt 2: per-row `open \u2026 in` prefixes (the IsFaninTwo row opens only BoolCircuit, the Good row BoolCircuit and\nSecureComputation), because Turing is not in Garbling's import closure (attempt 1: unknown namespace in the Garbling probes).\nPreviously mkctl_scot.py (sc-ot review): mkctl_learning.py with sc-ot rows (PolyExpr.eval, the FinDist CoeFun\ninstance, NUPPT.layout, Strategy.encodeMsgs, otFunctionality, and the helper definitions OT.mask, OT.simSeg, OT.inA2,\nOT.bobView, OT.hcBit, foreign to the later helpers and the owned file; each negative the rfl unfolding, each positive\nits published reader) and namespace ScGarbleControls. Previously: mkctl_learning.py (learning-r1 review): mkctl_lamport.py with learning rows (PolyExpr.eval, FinDist.uniform, the FinDist\nCoeFun instance, PAC.label, uprob, acceptProb, and the helper definitions LearnPRF.firstBit, tupleWord, learnerFn,\nforeign to the later helpers and the owned file) and namespace LearningControls. Previously: mkctl_lamport.py (lamport review): mkctl_dlcrh.py with lamport rows (padFin, PolyExpr.eval, ProbComp.expect, ProbComp.sample, OracleComp.bind (the three names of the patch-4 opacity block), LamportFill.secretWord, LamportFill.signatureBlock, LamportMachine.u). Previously: mkctl_dlcrh.py (dl-crh review): mkctl_extnosrc.py with dl-crh rows (padFin, PolyExpr.eval, Authentication.splitBits, Candidates.expSampleRaw (new reader expSampleRaw_eq), FromDiscreteLog.modularDifference, FromDiscreteLog.residueFinEquiv). Previously: mkctl_extnosrc.py: mkctl_dlfolds.py with ext-nosrc rows (padFin, PolyExpr.eval, FinDist.uniform, the FinDist CoeFun instance, Rejection.mixture, Rejection.select). Previously: mkctl_dlfolds.py: mkctl_dl.py with the dl-folds rows (iterEmit, rAns, finA, cntRead, ansRead, coinBlock, fwdHandler, logEmit, chunkMap, PolyExpr.eval, padFin). Original: mkctl_dl.py (attempt 2: rU negative row is the bare unfolding `rU w = pairFstD (pairFstD w)`; attempt 1 used `rU (input ..) = 1^n`, not rfl-true unsealed): the nm-cca2 review mkctl.py (verbatim harness) with dl-consolidation rows B (head names: Games.castImpl,\nFunFamily.blocks, EnsembleLemmas.padL, xorPerm, InteractiveHandler.rU, PK/SK indCodec, splitHalf, ChallengeSim.chRun,\nplus padFin, zeroBits, PolyExpr.eval) and a covering subset of seal records (see below). Original header follows.\nmkctl.py <archived-tools-dir> <seals-dir> <worktree> <probe-subdir> <outdir>\nnm-cca2 review (attempt 3: PK indImpl row stated at the spec type, as in the pk-cpa-cca1 attempt 2): the pk-cpa-cca1 review mkctl.py with its own rows B (below; the generic pairEncode/padFin/zeroBits/simulate/\ninLens/acDin/castImpl/seedIn/decAnswer/decOpen rows kept verbatim, plus PK outLens, PK indImpl, PolyExpr.eval, InteractiveHandler.finInput\nand the NMCCA2 helper definitions fwdHandler, finU, logEmit, cntRead, decHandler, encHandler, guessBit), seal records Seal?_*.json\n(A = PolyExpr.eval exempt, B = sealed) and namespace NmControls. Original header:\nSensitivity controls for the pk-cpa-cca1 review (the bitwise-cpa review's mkctl.py with the not-cca2 review's inLens/decAnswer/prfScheme rows\nand rows for the PRFGame helper definitions (attempt 2: pkHState/pkSeedTapes rows dropped, indImpl row stated at the spec type), FixedLengthScheme.indImpl and decOpen appended to B; bitwise-cpa header follows:\nB keeps every adaptive-cpa row and adds padCt, seedIn, coinBlock, blockState, PublicKeyScheme.padded, BitPublicKeyScheme.bitwise, and the\nBitwiseSim rows qDin, qHandler, plantAns (foreign to BitwiseCPA.lean only); originally:\nB keeps the pairEncode/padFin/zeroBits rows, the padded-cpa chRun/recAdvIn rows, and adds simulate, PK inLens and seven AdaptiveCPA rows), built like levin/final/tools/mkcontrols.py\n(same archived harness: build_seals.seal_command via request_payload_adapter). For each whole-file\nseal record Seal_<F>.json: ControlS_<F> imports F and installs F's exact request set, then body\nreadings (negative: must fail exactly once sealed) and published-reader positives; ControlU_<F> is\nthe same without the seal (all must pass). Bodies are chosen by which definitions F's request set\ncontains (see B).",
+    "functions": [
+      "load",
+      "row",
+      "trow",
+      "rrow",
+      "assemble",
+      "_chunked"
+    ],
+    "subprocess_calls": []
+  },
+  {
+    "path": "seal/review/mkseals_ab.py",
+    "lines": 88,
+    "sha256": "bf49e1c5fd539dae8c0b9bdeb812ef0c93796670b56da41997c936b0998f2cf8",
+    "docstring": "mkseals_ab.py (nm-cca2 review: levin mkseals.py with one change, SEAL_EVAL=1 empties the notation exclusion)\nmkseals.py <tools-dir> <collector-log> <worktree> <rev> <outdir> <probe-subdir> <label-prefix> <module>...\nBuilds whole-file conservative seals with the archived Gate06/Gate10 instrumenter\n(build_seals.instrument + request_payload_adapter.configure_builders: actual-Name component checks,\ninstance unfolding mask, EOF verification). Requests per owner = every ordinary TCSlib definition\nin the owner's transitive import closure (kind def, matcher or not status-reducible), minus the exact\nnotation exclusion PolyExpr.eval (the conservative closure that also covers anonymous commands).\nThe elaborated-term rows (foreign definitions referenced by any stored constant of the owner) must be\na subset of the closure rows or of the recorded reducible/abbrev/notation exclusions.\nSource bytes are taken from `git show <rev>:<path>` and must equal the worktree file when rev is HEAD.",
+    "functions": [
+      "load",
+      "_chunked",
+      "eligible"
+    ],
+    "subprocess_calls": [
+      {
+        "line": 53,
+        "function": "run",
+        "argument": "['git', '-C', wt, 'show', f'{rev}:{path}']"
+      }
+    ]
+  },
+  {
+    "path": "seal/review/mkseals_coe.py",
+    "lines": 90,
+    "sha256": "ae9c1ef82b0b9a1a8b30b0a2105b2a35c475a4c6bc77db5b1705102c72870ce6",
+    "docstring": "mkseals_coe.py (ext-nosrc review diagnostic): mkseals_ab.py with FinDist.instCoeFunForallReal also excluded as notation.\nmkseals_ab.py (nm-cca2 review: levin mkseals.py with one change, SEAL_EVAL=1 empties the notation exclusion)\nmkseals.py <tools-dir> <collector-log> <worktree> <rev> <outdir> <probe-subdir> <label-prefix> <module>...\nBuilds whole-file conservative seals with the archived Gate06/Gate10 instrumenter\n(build_seals.instrument + request_payload_adapter.configure_builders: actual-Name component checks,\ninstance unfolding mask, EOF verification). Requests per owner = every ordinary TCSlib definition\nin the owner's transitive import closure (kind def, matcher or not status-reducible), minus the exact\nnotation exclusion PolyExpr.eval (the conservative closure that also covers anonymous commands).\nThe elaborated-term rows (foreign definitions referenced by any stored constant of the owner) must be\na subset of the closure rows or of the recorded reducible/abbrev/notation exclusions.\nSource bytes are taken from `git show <rev>:<path>` and must equal the worktree file when rev is HEAD.",
+    "functions": [
+      "load",
+      "_chunked",
+      "eligible"
+    ],
+    "subprocess_calls": [
+      {
+        "line": 55,
+        "function": "run",
+        "argument": "['git', '-C', wt, 'show', f'{rev}:{path}']"
+      }
+    ]
+  },
+  {
+    "path": "seal/review/sealsum.py",
+    "lines": 31,
+    "sha256": "8800d05a8864193c9b6a5cef0f77f9d9c4860bfcd60278570145f4f387cec77e",
+    "docstring": "sealsum.py <records-dir> <rundir> <touched.json> <out.tsv>: per seal probe: requests, rc, error count,\ninstall/EOF records, and the failing declarations (error lines mapped back to source lines through the\nrecord's source_to_probe_lines, then to declaration spans of touched.json for the source path).",
+    "functions": [],
+    "subprocess_calls": []
+  },
+  {
+    "path": "seal/review/touched.py",
+    "lines": 91,
+    "sha256": "e1397c3d66333b5b64a42171b7b7f7cca5fe91e3b5bcefa9ab1faa4a843fd40d",
+    "docstring": "touched.py <repo> <base-rev> <head-rev> <out.json> <file>...\nDeclaration-level text comparison (private declarations included). Each top-level declaration\ncommand is cut from its doc comment/attributes to the next top-level command; it is keyed by its\nfull name (namespace-qualified; `_root_.` removed). A declaration is TOUCHED when it is new or its\ntext (doc comment, attributes, statement and body; trailing whitespace ignored) differs from the\nbase file at the same path. New files: every declaration is touched. Prints a TSV summary.",
+    "functions": [
+      "show",
+      "mask",
+      "decls"
+    ],
+    "subprocess_calls": [
+      {
+        "line": 15,
+        "function": "run",
+        "argument": "['git', '-C', repo, 'show', f'{rev}:{f}']"
+      }
+    ]
+  },
+  {
+    "path": "seal/rule10_b.sh",
+    "lines": 32,
+    "sha256": "5de7ca8d7872686d267145f919cfd8f0c9e91dcb02adc4e9f3aae50a72435397"
+  },
+  {
+    "path": "seal/runner_full.py",
+    "lines": 44,
+    "sha256": "05c411a8a58b64f209999cbe5ad8851ebdebb9ef6f7032b0d7ef50775c09003e",
+    "docstring": "runner_full.py <worktree> <order> <tree> <logdir> (sc-garble review): runner.py's record format (results.jsonl, mods/<module>.log,\nG26-N1 error count `^\\S+\\.lean:\\d+:\\d+: error[:(]`), but each probe runs `lean -DmaxErrors=0 <module>.lean` directly, with\nthe LEAN_PATH of probe.sh (<tree> plus the lake packages) and NO `-o`: nothing is written to <tree> (canonizer C-F02: full-file\nseals are not cut at Lean's default 100 errors). One Lean process at a time; does not stop on failure.",
+    "functions": [],
+    "subprocess_calls": [
+      {
+        "line": 33,
+        "function": "Popen",
+        "argument": "['bash', LEAN_SLOT, 'nice', '-n', '10', 'lean', '-DmaxErrors=0', m + '.lean']"
+      }
+    ]
+  },
+  {
+    "path": "seal/scan1_g40.py",
+    "lines": 103,
+    "sha256": "3ecaecbbf693008d5e436932352f856f93a860a8f810e39974f82f0186028e1e",
+    "docstring": "scan1_g40.py (LE-gate40): scan1.py with one change: the kinds probe imports the scanned\nmodules (environment variable SCAN_IMPORTS, space-separated) instead of the root `TCSlib`, which\nthis job does not build. Original header:\nscan1.py <scan_explicit.py> <worktree> <touched.json> <out.json> <probe.lean> <file>...\nPhase 1 of the final explicit-reader scan: runs the archived lexer (`inventory`, the reviewed\ncontinuation-list lexer of gates/10-efficiency/verification.zip) over each file, attaches each item\nto its declaration (touched.json spans), computes the namespace/open context, and writes a native\nkinds probe resolving every candidate full name of every head (and of the definition behind every\n`.eq_N`/`.eq_def`/`.eq_unfold` head).",
+    "functions": [],
+    "subprocess_calls": []
+  },
+  {
+    "path": "seal/scan2.py",
+    "lines": 47,
+    "sha256": "371f5f4a73c5de6f71ad9bb61949a9e5bd9f6ae752f38045e2eca6f517af201c",
+    "docstring": "scan2.py <items-phase1.json> <kinds-log> <out.json>: classify every explicit item.\nResolution: the first existing candidate in Lean's lookup order as generated by scan1 (innermost\nnamespace first, private, then opened namespaces); `.eq_N`/`.eq_def`/`.eq_unfold` read their target.",
+    "functions": [
+      "resolve"
+    ],
+    "subprocess_calls": []
+  },
+  {
+    "path": "sweepsum.py",
+    "lines": 21,
+    "sha256": "d281dbaa435ba6839105dbbd6249d56159c473fcd2c1f7011b20fd88d90b1801",
+    "docstring": "(bb1-sim-statements, lead: copied unchanged from the bb1-machine delivery.)\nsweepsum.py <repo> <results.jsonl> <base-sorries.txt> (fill bb1-machine, Claude lead): summary of a\nrunner.py sweep: rc, both error forms (`error:` and `error(`, G26-N1), sources bound to `git show HEAD`,\nand the `sorry` warnings per module (from each module log) against the brief's base-sorries.txt.",
+    "functions": [],
+    "subprocess_calls": [
+      {
+        "line": 11,
+        "function": "run",
+        "argument": "['git', '-C', repo, 'show', f\"HEAD:{r['module']}.lean\"]"
+      },
+      {
+        "line": 7,
+        "function": "run",
+        "argument": "['git', '-C', repo, 'rev-parse', 'HEAD']"
+      }
+    ]
+  },
+  {
+    "path": "widths.py",
+    "lines": 13,
+    "sha256": "1e6c64db6c07311c77c77062f107173e0ade35194a0e9a1253e79d8b684ba6b3",
+    "docstring": "(bb1-sim-statements, lead: copied unchanged from the bb1-machine delivery.)\nwidths.py <root> <file>... (fill bb1-machine, Claude lead): line widths (Python len) and line counts;\nprints every line over 100 characters and every file over 1000 lines, then a summary.",
+    "functions": [],
+    "subprocess_calls": []
+  }
+]

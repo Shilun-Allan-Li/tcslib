@@ -1,0 +1,12 @@
+Independent shape/arithmetic review at source HEAD70b85f9ba83f27393d98fa5bf88505aea3d22a8d.
+Published length_pairEncode is 2*first.length+2+second.length.
+Linear MPK blocks: A=6,AW=2z,AU=4ell,AV=4; nested word has
+(16+4z+8ell)*wG+6 bits. Outer A1,A2 add8n*wG+4 at z=4n,
+giving(16+24n+8ell)*wG+10.
+Linear MSK blocks W=3z,U=6ell,V=6: (6z+12ell+6)*wG+4.
+Outer public M=4n^3 adds8n^3*wG+2, giving stated MSK width.
+Linear key blocks K1=3n^2,K2=3ell*m,K3=3m,R=2m give
+(6n^2+(6ell+8)m)*wG+6; outer M and original function pairing
+add8n^3*wG+4+2fnLen. Replace actual m by published mBound.
+CT has two n-sized masks plus Pi blocks3,4n,2 =6n+5 group elements.
+This is source arithmetic review, not a replacement for admitted Lean length proofs.

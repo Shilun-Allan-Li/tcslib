@@ -1,0 +1,42 @@
+From 25f1af128f1f7deb2f6a057b0ab82de12b30b987 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 01:06:45 -0800
+Subject: [PATCH 01/25] io-phfe: initialize deterministic-run import scaffold
+
+---
+ .../FunctionalEncryption/Run.lean             | 26 +++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Run.lean
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Run.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Run.lean
+new file mode 100644
+index 000000000..22c664593
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Run.lean
+@@ -0,0 +1,26 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Games.Machines
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Deterministic runs of bounded oracle computations
++
++## Main definitions
++
++The deterministic stateful interpreter follows the bounded oracle-computation interface.
++
++## Main results
++
++The interpreter's simulation equation relates deterministic reductions to oracle runs.
++
++## References
++
++* TCSlib contributors, *TCSlib*, `Cryptography/Games/Machines.lean` and
++  `Cryptography/Games/Simulate.lean`: bounded oracle computations and simulation.
++-/

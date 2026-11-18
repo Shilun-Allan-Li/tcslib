@@ -1,0 +1,62 @@
+head=9d9f52411df509b02e944c47db698d7c173bc2f9
+source_sha256=80630e54e4c5babc50dd05f8f904d080e9f1e8010ae02e4d74e8cbac61e41bf5
+start=2026-11-18T11:14:07.253066+00:00
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic.lean:56:4: error(lean.invalidDottedIdent): Invalid dotted identifier notation: The expected type of `.const` could not be determined
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic.lean:60:20: error(lean.invalidDottedIdent): Invalid dotted identifier notation: The expected type of `.const` could not be determined
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic.lean:110:48: error: Application type mismatch: The argument
+  i
+has type
+  Fin ((piDim n1 n2).eval κ)
+but is expected to have type
+  Fin (2 * n2.eval κ + n1.eval κ * 2)
+in the application
+  (signalCoord (n1.eval κ) (n2.eval κ)).symm i
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic.lean:117:6: error: Type mismatch
+  let top := Matrix.kroneckerMap (fun a b => a ^ b.val) A1 1;
+  let bottom := Matrix.kroneckerMap (fun a b => b ^ a.val) 1 A2;
+  fun i j =>
+  Sum.elim (fun u => top u (finProdFinEquiv.symm j)) (fun u => bottom u (finProdFinEquiv.symm j))
+    ((signalCoord (n1.eval κ) (n2.eval κ)).symm i)
+has type
+  Fin (2 * n2.eval κ + n1.eval κ * 2) → Fin (n1.eval κ * n2.eval κ) → pp.group.G
+but is expected to have type
+  Matrix (Fin ((piDim n1 n2).eval κ)) (Fin ((n1.mul n2).eval κ)) pp.group.G
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic.lean:152:81: error: Application type mismatch: The argument
+  i
+has type
+  Fin ((piDim n1 n2).eval κ)
+but is expected to have type
+  Fin (2 * n2.eval κ + n1.eval κ * 2)
+in the application
+  (signalCoord (n1.eval κ) (n2.eval κ)).symm i
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic.lean:159:43: error: Type mismatch
+  fun i =>
+    Sum.elim (fun u => pp.group.expVec pp.generator (privateTensor s1 z2) (finProdFinEquiv u))
+      (fun u => y1 u.1 ^ (s2 u.2).val) ((signalCoord (n1.eval κ) (n2.eval κ)).symm i)
+has type
+  Fin (2 * n2.eval κ + n1.eval κ * 2) → pp.group.G
+but is expected to have type
+  Fin ((piDim n1 n2).eval κ) → pp.group.G
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic): no fresh .olean produced
+        2.87 real         2.26 user         1.01 sys
+          2329591808  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              183563  page reclaims
+                  40  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  15  voluntary context switches
+                7395  involuntary context switches
+            32125287  instructions retired
+            16592640  cycles elapsed
+             1638736  peak memory footprint
+end=2026-11-18T11:14:10.154056+00:00
+rc=1

@@ -1,0 +1,45 @@
+From 2955f5c9c0e79673799d1ce23f2fc5136a30d9e0 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 04:07:06 -0800
+Subject: [PATCH 22/25] io-phfe: make adaptive key-index transports explicit
+
+---
+ .../FunctionalEncryption/Wee20/PHFE/Adapter.lean              | 4 ++--
+ .../FunctionalEncryption/Wee20/QuadraticSecurity/Advice.lean  | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Adapter.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Adapter.lean
+index 4eee533c6..8c9856272 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Adapter.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Adapter.lean
+@@ -77,7 +77,7 @@ def wrapKey (κ : ℕ) (pp : PublicParams (S).G κ) (f : ((S).saSpec κ).dom 1)
+   let bits := (S).saKeyFunction κ f
+   let decoded := decodeFunction G ℓ n d κ (params κ pp) bits
+   if h : decoded = key.1 then
+-    some ((keyEquiv G ℓ n d PG κ pp).symm ⟨bits, h.symm ▸ key.2⟩)
++    some ((keyEquiv G ℓ n d PG κ pp).symm ⟨bits, Eq.mp (congrArg (fun f => Quadratic.Key G n n PG κ (params κ pp) f) h.symm) key.2⟩)
+   else none
+ 
+ /-- The key wrapper's only accepted branch retains the original function word. -/
+@@ -87,7 +87,7 @@ theorem wrapKey_eq (κ : ℕ) (pp : PublicParams (S).G κ) (f : ((S).saSpec κ).
+       let bits := (S).saKeyFunction κ f
+       let decoded := decodeFunction G ℓ n d κ (params κ pp) bits
+       if h : decoded = key.1 then
+-        some ((keyEquiv G ℓ n d PG κ pp).symm ⟨bits, h.symm ▸ key.2⟩)
++        some ((keyEquiv G ℓ n d PG κ pp).symm ⟨bits, Eq.mp (congrArg (fun f => Quadratic.Key G n n PG κ (params κ pp) f) h.symm) key.2⟩)
+       else none := rfl
+ 
+ /-- One replay step recovers the original next query from the original-bit history.
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Advice.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Advice.lean
+index dcf31ec07..e7b46231c 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Advice.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Advice.lean
+@@ -32,7 +32,7 @@ proof obligations are stated in `Theorems`; no scalar or realisation codec is du
+ 
+ namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
+ 
+-open Complexity TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
+ 
+ /-- Outer reduction advice is a scalar tape over the fixed order schedule. -/
+ abbrev MaskAdvice (n1 n2 : PolyExpr) (p : ℕ → ℕ) (κ : ℕ) :=

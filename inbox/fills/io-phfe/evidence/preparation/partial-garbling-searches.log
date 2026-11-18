@@ -1,0 +1,51 @@
+$ git grep -nEi partial.?garbl|pgbCore|pgbStarCore|publicTensor|def paramWord 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib audits
+exit=1
+(no matches)
+
+
+$ git grep -nE def encodeVector|def encodeMatrix|theorem encode(Vector|Matrix)_(eq|injective)|def advInput|theorem advInput_eq 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib/Cryptography/Encoding/Modular.lean TCSlib/Complexity/Randomized/PPT.lean
+exit=0
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/PPT.lean:210:def advInput (n : ℕ) (y : List Bool) : List Bool := pairEncode (List.replicate n true) y
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/PPT.lean:214:theorem advInput_eq (n : ℕ) (y : List Bool) :
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/Modular.lean:51:def encodeVector {q length : ℕ} [NeZero q] (width : ℕ)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/Modular.lean:57:theorem encodeVector_eq {q length : ℕ} [NeZero q] (width : ℕ)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/Modular.lean:65:def encodeMatrix {q rows columns : ℕ} [NeZero q] (width : ℕ)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/Modular.lean:71:theorem encodeMatrix_eq {q rows columns : ℕ} [NeZero q] (width : ℕ)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/Modular.lean:101:theorem encodeVector_injective {q length : ℕ} [NeZero q] (width : ℕ)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/Modular.lean:126:theorem encodeMatrix_injective {q rows columns : ℕ} [NeZero q] (width : ℕ)
+
+
+$ rg -n def kroneckerMap|theorem kroneckerMap_apply /Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/.lake/packages/mathlib/Mathlib/LinearAlgebra/Matrix/Kronecker.lean
+exit=0
+55:def kroneckerMap (f : α → β → γ) (A : Matrix l m α) (B : Matrix n p β) : Matrix (l × n) (m × p) γ :=
+60:theorem kroneckerMap_apply (f : α → β → γ) (A : Matrix l m α) (B : Matrix n p β) (i j) :
+185:def kroneckerMapBilinear [Semiring S] [Semiring R]
+
+
+$ rg -n def finSumFinEquiv|def finProdFinEquiv /Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/.lake/packages/mathlib/Mathlib/Logic/Equiv/Fin/Basic.lean
+exit=0
+219:def finSumFinEquiv : Fin m ⊕ Fin n ≃ Fin (m + n) where
+325:def finProdFinEquiv : Fin m × Fin n ≃ Fin (m * n) where
+
+
+$ rg -n theorem lt_size_self|theorem size_le /Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/.lake/packages/mathlib/Mathlib/Data/Nat/Size.lean
+exit=0
+81:theorem lt_size_self (n : ℕ) : n < 2 ^ size n := by
+92:theorem size_le {m n : ℕ} : size m ≤ n ↔ m < 2 ^ n :=
+123:theorem size_le_size {m n : ℕ} (h : m ≤ n) : size m ≤ size n :=
+
+
+$ rg -n NeZero.pnat /Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/.lake/packages/mathlib/Mathlib/Data/PNat/Defs.lean
+exit=0
+120:instance _root_.NeZero.pnat {a : ℕ+} : NeZero (a : ℕ) :=
+
+
+$ rg -n def (pgbCore|pgbStarCore|publicTensor)|partial.?garbl /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean
+exit=1
+(no matches)
+
+
+$ rg -n def (pgbCore|pgbStarCore|publicTensor)|partial.?garbl /Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/.lake/packages/mathlib/Mathlib
+exit=1
+(no matches)
+

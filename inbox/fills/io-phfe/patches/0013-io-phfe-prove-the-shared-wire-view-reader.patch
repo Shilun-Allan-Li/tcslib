@@ -1,0 +1,56 @@
+From 9d9f52411df509b02e944c47db698d7c173bc2f9 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 03:13:43 -0800
+Subject: [PATCH 13/25] io-phfe: prove the shared wire-view reader
+
+---
+ .../FunctionalEncryption/Simulation/Games.lean               | 2 +-
+ .../FunctionalEncryption/Wee20/LinearSecurity/Games.lean     | 5 ++++-
+ .../FunctionalEncryption/Wee20/LinearSecurity/Keys.lean      | 5 ++++-
+ 3 files changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Games.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Games.lean
+index 0b944c31d..14d38758c 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Games.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Games.lean
+@@ -82,7 +82,7 @@ theorem viewWord_eq {q : PolyExpr} {κ : ℕ} (a : Commitment C q κ)
+       (pairEncode (List.ofFn (S.encMPK κ pp pk))
+         (pairEncode ((keys.map fun sk => List.ofFn (S.encSK κ pp sk)).foldr pairEncode [])
+           (pairEncode (List.ofFn a.publicInput) (List.ofFn (S.encCT κ pp ct)))))) :=
+-  congrArg (fun k => pairEncode a.state (pairEncode pp.encode
++  congrArg (fun k : List (List Bool) => pairEncode a.state (pairEncode pp.encode
+     (pairEncode (List.ofFn (S.encMPK κ pp pk))
+       (pairEncode (k.foldr pairEncode [])
+         (pairEncode (List.ofFn a.publicInput) (List.ofFn (S.encCT κ pp ct)))))))
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Games.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Games.lean
+index 29bed5e6a..22f7828dd 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Games.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Games.lean
+@@ -73,7 +73,10 @@ def gameHandler (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Typ
+         else simKeyCore G PG zDim κ pp st query.fn query.matrix msg.1
+           (leak G PG zDim κ pp query.fn query.matrix msg.1 msg.2) sr⟩)
+ 
+-/-- The game handler is the displayed protocol with the six explicit source formulas. -/
++/-- The game handler is the displayed protocol with the six explicit source formulas. 
++
++**Proof sketch.** The equation displays the same branch formulas and named blocks as the
++deterministic definition, so reducing that definition alone gives the stated equation. -/
+ theorem gameHandler_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+     (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (mode : Fin 6)
+     (κ : ℕ) (pp : PublicParams G κ) (st : SimState G ℓ zDim κ pp)
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean
+index 2118f1012..4b11a592c 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean
+@@ -162,7 +162,10 @@ def semiKey (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+   ⟨combineRows G κ pp C a high.K1 low1, combineRows G κ pp C a high.K2 low2,
+     combineRows G κ pp C a high.K3 low3, R⟩
+ 
+-/-- The middle key is its exact projected part and displayed hidden-row formulas. -/
++/-- The middle key is its exact projected part and displayed hidden-row formulas. 
++
++**Proof sketch.** The equation displays the same branch formulas and named blocks as the
++deterministic definition, so reducing that definition alone gives the stated equation. -/
+ theorem semiKey_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+     (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
+     (st : SimState G ℓ zDim κ pp) (msg : Challenge G ℓ zDim κ pp)

@@ -1,0 +1,49 @@
+2026-11-18T08:59:14.026379+00:00
+seconds_since_initial=623.570
+$ vm_stat
+Mach Virtual Memory Statistics: (page size of 16384 bytes)
+Pages free:                                     3932.
+Pages active:                                 292748.
+Pages inactive:                               292444.
+Pages speculative:                              3150.
+Pages throttled:                                   0.
+Pages wired down:                             206390.
+Pages purgeable:                               11034.
+"Translation faults":                    24914619400.
+Pages copy-on-write:                       613011098.
+Pages zero filled:                       16525317641.
+Pages reactivated:                        1355710780.
+Pages purged:                              139211902.
+File-backed pages:                            157980.
+Anonymous pages:                              430362.
+Pages stored in compressor:                  1320221.
+Pages occupied by compressor:                 326040.
+Decompressions:                            743239493.
+Compressions:                             1013390145.
+Pageins:                                   846167015.
+Pageouts:                                    3510062.
+Swapins:                                     1387632.
+Swapouts:                                    2345668.
+rc=0
+$ memory_pressure -Q
+The system has 19327352832 (1179648 pages with a page size of 16384).
+System-wide memory free percentage: 52%
+rc=0
+$ df -k . /private/tmp
+Filesystem   1024-blocks      Used Available Capacity iused     ifree %iused  Mounted on
+/dev/disk3s5   971350180 847205856  95421332    90% 8686958 954213320    1%   /System/Volumes/Data
+/dev/disk3s5   971350180 847205856  95421332    90% 8686958 954213320    1%   /System/Volumes/Data
+rc=0
+$ mount
+/dev/disk3s1s1 on / (apfs, sealed, local, read-only, journaled)
+devfs on /dev (devfs, local, nobrowse)
+/dev/disk3s6 on /System/Volumes/VM (apfs, local, noexec, journaled, noatime, nobrowse)
+/dev/disk3s2 on /System/Volumes/Preboot (apfs, local, journaled, nobrowse)
+/dev/disk3s4 on /System/Volumes/Update (apfs, local, journaled, nobrowse)
+/dev/disk1s2 on /System/Volumes/xarts (apfs, local, noexec, journaled, noatime, nobrowse)
+/dev/disk1s1 on /System/Volumes/iSCPreboot (apfs, local, journaled, nobrowse)
+/dev/disk1s3 on /System/Volumes/Hardware (apfs, local, journaled, nobrowse)
+/dev/disk3s5 on /System/Volumes/Data (apfs, local, journaled, nobrowse, protect, root data)
+map auto_home on /System/Volumes/Data/home (autofs, automounted, nobrowse)
+rc=0
+headroom={'free': 3932, 'inactive': 292444, 'speculative': 3150, 'purgeable': 11034} * 16384 = 5088215040 bytes = 4.738770 GiB; floor=4 GiB; pass=True

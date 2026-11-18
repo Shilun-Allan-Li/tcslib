@@ -1,0 +1,3298 @@
+From d8cb2e746410cc7689b18fa1dedaf27bd8f6553d Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 03:03:38 -0800
+Subject: [PATCH 10/25] io-phfe: draft adaptive games and complete
+ deterministic Pi reductions
+
+---
+ .../SemiAdaptive/Data.lean                    | 286 +++++++++++++++
+ .../SemiAdaptive/FromTwoStage.lean            | 272 ++++++++++++++
+ .../SemiAdaptive/Games.lean                   | 263 +++++++++++++
+ .../SemiAdaptive/Security.lean                |  92 +++++
+ .../SemiAdaptive/Simulator.lean               | 227 ++++++++++++
+ .../Wee20/LinearSecurity/Data.lean            | 345 ++++++++++++++++++
+ .../Wee20/LinearSecurity/Endpoint.lean        |  89 +++++
+ .../Wee20/LinearSecurity/Fresh.lean           | 167 +++++++++
+ .../Wee20/LinearSecurity/Games.lean           | 228 ++++++++++++
+ .../Wee20/LinearSecurity/Keys.lean            | 185 ++++++++++
+ .../Wee20/LinearSecurity/Reductions.lean      | 288 +++++++++++++++
+ .../Wee20/LinearSecurity/Theorems.lean        | 228 ++++++++++++
+ .../Wee20/PHFE/Correctness.lean               |  89 +++++
+ .../FunctionalEncryption/Wee20/PHFE/Raw.lean  | 197 ++++++++++
+ .../Wee20/PHFE/Simulator.lean                 | 129 +++++++
+ .../Wee20/PHFE/Widths.lean                    |  14 +-
+ .../Pairing/MatrixDH/SelfReduction.lean       |  14 +-
+ 17 files changed, 3099 insertions(+), 14 deletions(-)
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Games.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Security.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Simulator.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Data.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Endpoint.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Games.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Reductions.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Simulator.lean
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean
+new file mode 100644
+index 000000000..7f3056fd0
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean
+@@ -0,0 +1,286 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs.Raw
++import TCSlib.Cryptography.Games.BitCodec
++import TCSlib.Cryptography.Encryption.PrivateKey.OracleSecurity
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Bounded semi-adaptive adversaries
++
++The adversary sees public parameters and the public key, asks its single challenge,
++and then requests function keys. Its fixed-width oracle interface uses the library's
++bitSpec and bitCodec. Typed internal handlers encode optional keys and ciphertexts.
++The budget counts every oracle call, including the challenge and rejected calls.
++
++## Main definitions
++
++* `FEScheme.Raw.saSpec`, `saCodec`: the two fixed-width oracles and machine codec.
++* `FEScheme.Raw.SAAdv`: a bounded next-move adversary with explicit coins.
++* `Complexity.NUPPT.toSAAdv`: an oracle machine as a typed bounded adversary.
++
++## Main results
++
++* Component readers expose every query/answer wire conversion.
++* `SAAdv.run_costBoundedBy`: run makes at most budget calls.
++* `NUPPT.toSAAdv_run`: run agrees with toCompOn using the library bitCodec.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; ePrint 2020/1420, §2.2, p.5.
++* [AGW20] M. Abdalla, J. Gong, H. Wee, *Functional Encryption for Attribute-Weighted
++  Sums from k-Lin*, 2020, §4.1, pp.11–12.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
++
++open Complexity Turing TCSlib.Cryptography.Games
++
++namespace FEScheme.Raw
++
++variable {C : FnClass} (S : FEScheme.Raw C)
++
++/-- Challenge queries contain the public and private words; key queries contain
++one function description. [Wee20, §2.2, p.5]. -/
++def saIn (S : FEScheme.Raw C) (kappa : ℕ) : Fin 2 → ℕ
++  | 0 => C.pubLen.eval kappa + C.privLen.eval kappa
++  | 1 => C.fnLen.eval kappa
++
++/-- The challenge-query width is the sum of the input widths. -/
++theorem saIn_zero (kappa : ℕ) :
++    S.saIn kappa 0 = C.pubLen.eval kappa + C.privLen.eval kappa := rfl
++
++/-- The key-query width is the function-description width. -/
++theorem saIn_one (kappa : ℕ) : S.saIn kappa 1 = C.fnLen.eval kappa := rfl
++
++/-- Oracle answers contain one validity bit and a ciphertext or key encoding. -/
++def saOut (kappa : ℕ) : Fin 2 → ℕ
++  | 0 => S.ctLen.eval kappa + 1
++  | 1 => S.skLen.eval kappa + 1
++
++/-- The challenge answer has one validity bit and its ciphertext payload. -/
++theorem saOut_zero (kappa : ℕ) : S.saOut kappa 0 = S.ctLen.eval kappa + 1 := rfl
++
++/-- The key answer has one validity bit and its key payload. -/
++theorem saOut_one (kappa : ℕ) : S.saOut kappa 1 = S.skLen.eval kappa + 1 := rfl
++
++/-- The semi-adaptive specification is the library's fixed-width bit specification. -/
++abbrev saSpec (kappa : ℕ) : OracleSpec (Fin 2) := bitSpec (S.saIn kappa) (S.saOut kappa)
++
++/-- The oracle specification has exactly the displayed input and output widths. -/
++theorem saSpec_eq (kappa : ℕ) :
++    S.saSpec kappa = bitSpec (S.saIn kappa) (S.saOut kappa) := rfl
++
++/-- The machine codec is the library's bitCodec with a one-bit final output. -/
++def saCodec (kappa : ℕ) : MachineCodec (S.saSpec kappa) (Fin 1 → Bool) :=
++  bitCodec (S.saIn kappa) (S.saOut kappa) 1
++
++/-- The semi-adaptive codec is the displayed instance of bitCodec. -/
++theorem saCodec_eq (kappa : ℕ) :
++    S.saCodec kappa = bitCodec (S.saIn kappa) (S.saOut kappa) 1 := rfl
++
++/-- Combine the typed public/private challenge words into one oracle query. -/
++def saChallengeQuery (kappa : ℕ) (x : Fin (C.pubLen.eval kappa) → Bool)
++    (y : Fin (C.privLen.eval kappa) → Bool) : (S.saSpec kappa).dom 0 :=
++  Fin.append x y
++
++/-- Challenge queries append the private word to the public word. -/
++theorem saChallengeQuery_eq (kappa : ℕ) (x : Fin (C.pubLen.eval kappa) → Bool)
++    (y : Fin (C.privLen.eval kappa) → Bool) :
++    S.saChallengeQuery kappa x y = Fin.append x y := rfl
++
++/-- Split a challenge query into its typed public and private input words. -/
++def saSplitChallenge (kappa : ℕ) (xy : (S.saSpec kappa).dom 0) :
++    (Fin (C.pubLen.eval kappa) → Bool) × (Fin (C.privLen.eval kappa) → Bool) :=
++  (fun i => xy (Fin.castAdd (C.privLen.eval kappa) i),
++    fun j => xy (Fin.natAdd (C.pubLen.eval kappa) j))
++
++/-- The challenge's public word occupies its first input block. -/
++theorem saSplitChallenge_fst (kappa : ℕ) (xy : (S.saSpec kappa).dom 0) :
++    (S.saSplitChallenge kappa xy).1 =
++      fun i => xy (Fin.castAdd (C.privLen.eval kappa) i) := rfl
++
++/-- The challenge's private word occupies its second input block. -/
++theorem saSplitChallenge_snd (kappa : ℕ) (xy : (S.saSpec kappa).dom 0) :
++    (S.saSplitChallenge kappa xy).2 =
++      fun j => xy (Fin.natAdd (C.pubLen.eval kappa) j) := rfl
++
++/-- Read the typed function description from a key query. -/
++def saKeyFunction (kappa : ℕ) (f : (S.saSpec kappa).dom 1) :
++    Fin (C.fnLen.eval kappa) → Bool := f
++
++/-- The key query is already the function-description word. -/
++theorem saKeyFunction_eq (kappa : ℕ) (f : (S.saSpec kappa).dom 1) :
++    S.saKeyFunction kappa f = f := rfl
++
++/-- A typed challenge request is a query to oracle zero. -/
++def saChallengeMove (kappa : ℕ) (x : Fin (C.pubLen.eval kappa) → Bool)
++    (y : Fin (C.privLen.eval kappa) → Bool) : Move (S.saSpec kappa) Bool :=
++  .query 0 (S.saChallengeQuery kappa x y)
++
++/-- The challenge move has the displayed oracle and combined query. -/
++theorem saChallengeMove_eq (kappa : ℕ) (x : Fin (C.pubLen.eval kappa) → Bool)
++    (y : Fin (C.privLen.eval kappa) → Bool) :
++    S.saChallengeMove kappa x y = .query 0 (S.saChallengeQuery kappa x y) := rfl
++
++/-- A typed key request is a query to oracle one. -/
++def saKeyMove (kappa : ℕ) (f : Fin (C.fnLen.eval kappa) → Bool) :
++    Move (S.saSpec kappa) Bool := .query 1 f
++
++/-- The key move has the displayed oracle and function description. -/
++theorem saKeyMove_eq (kappa : ℕ) (f : Fin (C.fnLen.eval kappa) → Bool) :
++    S.saKeyMove kappa f = .query 1 f := rfl
++
++/-- Encode an optional typed ciphertext using the common validity-bit answer format. -/
++def saCTAnswer (kappa : ℕ) (pp : PublicParams S.G kappa) (ct : Option (S.CT kappa pp)) :
++    (S.saSpec kappa).rng 0 :=
++  FixedLengthScheme.decAnswer (ct.map (S.encCT kappa pp))
++
++/-- Ciphertext answers use decAnswer on the optional ciphertext encoding. -/
++theorem saCTAnswer_eq (kappa : ℕ) (pp : PublicParams S.G kappa)
++    (ct : Option (S.CT kappa pp)) : S.saCTAnswer kappa pp ct =
++    FixedLengthScheme.decAnswer (ct.map (S.encCT kappa pp)) := rfl
++
++/-- Encode an optional typed key using the common validity-bit answer format. -/
++def saSKAnswer (kappa : ℕ) (pp : PublicParams S.G kappa) (sk : Option (S.SK kappa pp)) :
++    (S.saSpec kappa).rng 1 :=
++  FixedLengthScheme.decAnswer (sk.map (S.encSK kappa pp))
++
++/-- Key answers use decAnswer on the optional key encoding. -/
++theorem saSKAnswer_eq (kappa : ℕ) (pp : PublicParams S.G kappa)
++    (sk : Option (S.SK kappa pp)) : S.saSKAnswer kappa pp sk =
++    FixedLengthScheme.decAnswer (sk.map (S.encSK kappa pp)) := rfl
++
++/-- Extract a challenge payload from a successful challenge answer, without
++inverting its typed ciphertext encoding. Other oracle answers give none. -/
++def saCTPayload (kappa : ℕ) :
++    (i : Fin 2) → (S.saSpec kappa).rng i → Option (Fin (S.ctLen.eval kappa) → Bool)
++  | 0, a => if a 0 then some (Fin.tail a) else none
++  | 1, _ => none
++
++/-- A challenge payload is present exactly when its validity bit is true. -/
++theorem saCTPayload_zero (kappa : ℕ) (a : (S.saSpec kappa).rng 0) :
++    S.saCTPayload kappa 0 a = if a 0 then some (Fin.tail a) else none := rfl
++
++/-- A key answer never supplies a challenge payload. -/
++theorem saCTPayload_one (kappa : ℕ) (a : (S.saSpec kappa).rng 1) :
++    S.saCTPayload kappa 1 a = none := rfl
++
++/-- Extract a key payload from a successful key answer without recovering a typed
++key. Challenge answers give none. This is wire-reading glue for two-stage adversaries. -/
++def saSKPayload (kappa : ℕ) :
++    (i : Fin 2) → (S.saSpec kappa).rng i → Option (Fin (S.skLen.eval kappa) → Bool)
++  | 0, _ => none
++  | 1, a => if a 0 then some (Fin.tail a) else none
++
++/-- A challenge answer never supplies a key payload. -/
++theorem saSKPayload_zero (kappa : ℕ) (a : (S.saSpec kappa).rng 0) :
++    S.saSKPayload kappa 0 a = none := rfl
++
++/-- A key payload is present exactly when its validity bit is true. -/
++theorem saSKPayload_one (kappa : ℕ) (a : (S.saSpec kappa).rng 1) :
++    S.saSKPayload kappa 1 a = if a 0 then some (Fin.tail a) else none := rfl
++
++/-- The initial adversary word contains public parameters and the master public key.
++[Wee20, §2.2, p.5]. -/
++def saInputWord (kappa : ℕ) (pp : PublicParams S.G kappa) (pk : S.MPK kappa pp) :
++    List Bool := pairEncode pp.encode (List.ofFn (S.encMPK kappa pp pk))
++
++/-- The adversary's initial word is the displayed pair. -/
++theorem saInputWord_eq (kappa : ℕ) (pp : PublicParams S.G kappa) (pk : S.MPK kappa pp) :
++    S.saInputWord kappa pp pk = pairEncode pp.encode (List.ofFn (S.encMPK kappa pp pk)) := rfl
++
++/-- A typed semi-adaptive adversary has one coin polynomial, a total query budget,
++and a next move depending on its initial public view, fixed coins and full history.
++[Wee20, §2.2, p.5]. Its run is derived by the bounded library interpreter. -/
++structure SAAdv where
++  /-- The number of independent fair coins. -/
++  coins : PolyExpr
++  /-- The total number of oracle calls allowed, including the challenge. -/
++  budget : PolyExpr
++  /-- The next move for any public view, coin word and oracle history. -/
++  next : (kappa : ℕ) → (pp : PublicParams S.G kappa) → S.MPK kappa pp → List Bool →
++    QueryLog (S.saSpec kappa) → Move (S.saSpec kappa) Bool
++
++namespace SAAdv
++
++variable {S} (A : SAAdv S)
++
++/-- Run the next-move adversary with its total query budget, timing out to false. -/
++def run (kappa : ℕ) (pp : PublicParams S.G kappa) (pk : S.MPK kappa pp) (r : List Bool) :
++    OracleComp (S.saSpec kappa) Bool :=
++  buildComp (A.next kappa pp pk r) false (A.budget.eval kappa) []
++
++/-- Adversary run is precisely the existing bounded buildComp interpreter. -/
++theorem run_eq (kappa : ℕ) (pp : PublicParams S.G kappa) (pk : S.MPK kappa pp)
++    (r : List Bool) : A.run kappa pp pk r =
++    buildComp (A.next kappa pp pk r) false (A.budget.eval kappa) [] := rfl
++
++/-- The derived adversary computation never exceeds its total call budget. -/
++theorem run_costBoundedBy (kappa : ℕ) (pp : PublicParams S.G kappa)
++    (pk : S.MPK kappa pp) (r : List Bool) :
++    (A.run kappa pp pk r).CostBoundedBy (fun _ => 1) (A.budget.eval kappa) :=
++  buildComp_costBoundedBy (A.next kappa pp pk r) false (A.budget.eval kappa) []
++
++end SAAdv
++
++/-- A one-bit codec move is read as a Boolean verdict without changing any query. -/
++def saReadMove (kappa : ℕ) (w : List Bool) : Move (S.saSpec kappa) Bool :=
++  match (S.saCodec kappa).decodeMove w with
++  | .ret b => .ret (b 0)
++  | .query i x => .query i x
++
++/-- The move reader changes only the final one-bit output into Bool. -/
++theorem saReadMove_eq (kappa : ℕ) (w : List Bool) : S.saReadMove kappa w =
++    match (S.saCodec kappa).decodeMove w with
++    | .ret b => .ret (b 0)
++    | .query i x => .query i x := rfl
++
++end FEScheme.Raw
++
++/-- An oracle NUPPT uses the standard bitCodec and its encoded initial public view.
++[Wee20, §2.2, p.5], instantiated by the library's oracle-machine convention. -/
++def _root_.Complexity.NUPPT.toSAAdv {C : FnClass} {S : FEScheme.Raw C}
++    (A : NUPPT) (q : PolyExpr) : S.SAAdv where
++  coins := A.coins
++  budget := q
++  next := fun kappa pp pk r hist => S.saReadMove kappa
++    (A.runAtL kappa (pairEncode (S.saInputWord kappa pp pk)
++      ((S.saCodec kappa).encodeLog hist)) r)
++
++/-- The oracle-machine adversary uses its machine's original coin polynomial. -/
++theorem _root_.Complexity.NUPPT.toSAAdv_coins {C : FnClass} {S : FEScheme.Raw C}
++    (A : NUPPT) (q : PolyExpr) : (A.toSAAdv (S := S) q).coins = A.coins := rfl
++
++/-- The oracle-machine adversary's budget is q total oracle calls. -/
++theorem _root_.Complexity.NUPPT.toSAAdv_budget {C : FnClass} {S : FEScheme.Raw C}
++    (A : NUPPT) (q : PolyExpr) : (A.toSAAdv (S := S) q).budget = q := rfl
++
++/-- Each next move is one machine activation on its initial view and encoded log. -/
++theorem _root_.Complexity.NUPPT.toSAAdv_next {C : FnClass} {S : FEScheme.Raw C}
++    (A : NUPPT) (q : PolyExpr) (kappa : ℕ) (pp : PublicParams S.G kappa)
++    (pk : S.MPK kappa pp) (r : List Bool) (hist : QueryLog (S.saSpec kappa)) :
++    (A.toSAAdv (S := S) q).next kappa pp pk r hist = S.saReadMove kappa
++      (A.runAtL kappa (pairEncode (S.saInputWord kappa pp pk)
++        ((S.saCodec kappa).encodeLog hist)) r) := rfl
++
++/-- The typed run is exactly toCompOn with bitCodec, followed by reading its one bit.
++
++**Proof sketch.** Read toCompOn_eq and runAt_eq. Induct on the remaining budget;
++both computations use the same encoded history. Query branches append the same
++entry; return and timeout branches differ only by reading the final bit. -/
++theorem _root_.Complexity.NUPPT.toSAAdv_run {C : FnClass} {S : FEScheme.Raw C}
++    (A : NUPPT) (q : PolyExpr) (kappa : ℕ) (pp : PublicParams S.G kappa)
++    (pk : S.MPK kappa pp) (r : A.Coins kappa) :
++    (A.toSAAdv (S := S) q).run kappa pp pk (List.ofFn r) =
++      (fun b => b 0) <$> A.toCompOn
++        (bitCodec (S.saIn kappa) (S.saOut kappa) 1)
++        kappa (q.eval kappa) (S.saInputWord kappa pp pk) r := sorry
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean
+new file mode 100644
+index 000000000..004805cf0
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean
+@@ -0,0 +1,272 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.Security
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Simulation.Games
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Committed simulation as a semi-adaptive experiment
++
++A raw semi-adaptive simulator supplies a raw committed simulator by projecting the
++allowed information to its public input and indexed function/value. A two-stage
++adversary becomes a typed next-move adversary with disjoint first/second coin blocks,
++one challenge followed by its committed keys, and total budget q+1.
++
++The identity below concerns exact laws. The two experiments sample independent
++coins in different orders, so their OracleComp syntax trees are not asserted equal.
++No efficient simulator conversion or oracle-machine construction is claimed.
++
++## Main definitions
++
++* `SASimulator.Raw.toSim`: the raw stateful simulator conversion.
++* `TwoStage.toSA`: the committed machine pair as a typed semi-adaptive adversary.
++
++## Main results
++
++* `expect_simGame_eq_saGame`: the two experiments have identical laws.
++* `simAdv_eq_saSimAdv`: committed advantage is exactly the derived semi-adaptive advantage.
++
++## References
++
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; ePrint 2020/764, Definition 4.3, epsilon one, Remark 4.6.
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; ePrint 2020/1420, §2.2, p.5.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
++
++open Complexity Turing TCSlib.Cryptography.Games
++
++namespace FEScheme.Raw.SASimulator.Raw
++
++variable {C : FnClass} {S : FEScheme.Raw C} (Sim : S.SASimulator.Raw)
++
++/-- A semi-adaptive raw simulator yields the committed raw simulator by passing
++only omega.publicInput to encryption and the indexed function/scalar to key simulation.
++[GJLS21, Definition 4.3; Wee20, §2.2, p.5]. Draws remain the same single draw types. -/
++def toSim : S.Simulator.Raw where
++  St := Sim.St
++  encSt := Sim.encSt
++  encSt_injective := Sim.encSt_injective
++  SetupDraw := Sim.SetupDraw
++  setupFinite := Sim.setupFinite
++  setupNonempty := Sim.setupNonempty
++  setupCore := Sim.setupCore
++  EncDraw := fun kappa pp st omega => Sim.EncDraw kappa pp st omega.publicInput
++  encFinite := fun kappa pp st omega => Sim.encFinite kappa pp st omega.publicInput
++  encNonempty := fun kappa pp st omega => Sim.encNonempty kappa pp st omega.publicInput
++  encCore := fun kappa pp st omega => Sim.encCore kappa pp st omega.publicInput
++  KeyDraw := fun kappa pp st omega j =>
++    Sim.KeyDraw kappa pp st omega.publicInput (omega.functions j) (omega.values j)
++  keyFinite := fun kappa pp st omega j =>
++    Sim.keyFinite kappa pp st omega.publicInput (omega.functions j) (omega.values j)
++  keyNonempty := fun kappa pp st omega j =>
++    Sim.keyNonempty kappa pp st omega.publicInput (omega.functions j) (omega.values j)
++  keyCore := fun kappa pp st omega j =>
++    Sim.keyCore kappa pp st omega.publicInput (omega.functions j) (omega.values j)
++  encSetupDraw := Sim.encSetupDraw
++  encEncDraw := fun kappa pp st omega => Sim.encEncDraw kappa pp st omega.publicInput
++  encKeyDraw := fun kappa pp st omega j =>
++    Sim.encKeyDraw kappa pp st omega.publicInput (omega.functions j) (omega.values j)
++
++/-- The converted simulator retains the same state family. -/
++theorem toSim_St : Sim.toSim.St = Sim.St := rfl
++
++/-- The converted simulator retains the same canonical state encoding. -/
++theorem toSim_encSt : Sim.toSim.encSt = Sim.encSt := rfl
++
++/-- The converted simulator retains the complete setup draw family. -/
++theorem toSim_SetupDraw : Sim.toSim.SetupDraw = Sim.SetupDraw := rfl
++
++/-- The converted simulator retains the original deterministic setup core. -/
++theorem toSim_setupCore : Sim.toSim.setupCore = Sim.setupCore := rfl
++
++/-- The converted ciphertext draw depends only on the allowed public input. -/
++theorem toSim_EncDraw (kappa : ℕ) (pp : PublicParams S.G kappa)
++    (st : Sim.St kappa pp) (omega : S.Omega kappa pp) :
++    Sim.toSim.EncDraw kappa pp st omega = Sim.EncDraw kappa pp st omega.publicInput := rfl
++
++/-- The converted ciphertext core passes only the public input to the raw simulator. -/
++theorem toSim_encCore (kappa : ℕ) (pp : PublicParams S.G kappa)
++    (st : Sim.St kappa pp) (omega : S.Omega kappa pp) :
++    Sim.toSim.encCore kappa pp st omega = Sim.encCore kappa pp st omega.publicInput := rfl
++
++/-- The converted key draw uses the indexed function and scalar value. -/
++theorem toSim_KeyDraw (kappa : ℕ) (pp : PublicParams S.G kappa)
++    (st : Sim.St kappa pp) (omega : S.Omega kappa pp) (j : Fin omega.count) :
++    Sim.toSim.KeyDraw kappa pp st omega j =
++      Sim.KeyDraw kappa pp st omega.publicInput (omega.functions j) (omega.values j) := rfl
++
++/-- The converted key core uses the indexed function and scalar value. -/
++theorem toSim_keyCore (kappa : ℕ) (pp : PublicParams S.G kappa)
++    (st : Sim.St kappa pp) (omega : S.Omega kappa pp) (j : Fin omega.count) :
++    Sim.toSim.keyCore kappa pp st omega j =
++      Sim.keyCore kappa pp st omega.publicInput (omega.functions j) (omega.values j) := rfl
++
++/-- The converted exact setup algorithm is the original semi-adaptive setup. -/
++theorem toSim_setup (kappa : ℕ) (pp : PublicParams S.G kappa) :
++    Sim.toSim.setup kappa pp = Sim.setup kappa pp :=
++  (FEScheme.Raw.Simulator.Raw.setup_eq Sim.toSim kappa pp).trans
++    (setup_eq Sim kappa pp).symm
++
++/-- Converted exact ciphertext simulation is precisely public-input-only simulation. -/
++theorem toSim_enc (kappa : ℕ) (pp : PublicParams S.G kappa)
++    (st : Sim.St kappa pp) (omega : S.Omega kappa pp) :
++    Sim.toSim.enc kappa pp st omega = Sim.enc kappa pp st omega.publicInput :=
++  (FEScheme.Raw.Simulator.Raw.enc_eq Sim.toSim kappa pp st omega).trans
++    (enc_eq Sim kappa pp st omega.publicInput).symm
++
++/-- Converted exact key simulation is precisely the indexed function/scalar simulation. -/
++theorem toSim_key (kappa : ℕ) (pp : PublicParams S.G kappa)
++    (st : Sim.St kappa pp) (omega : S.Omega kappa pp) (j : Fin omega.count) :
++    Sim.toSim.key kappa pp st omega j =
++      Sim.key kappa pp st omega.publicInput (omega.functions j) (omega.values j) :=
++  (FEScheme.Raw.Simulator.Raw.key_eq Sim.toSim kappa pp st omega j).trans
++    (key_eq Sim kappa pp st omega.publicInput (omega.functions j) (omega.values j)).symm
++
++end FEScheme.Raw.SASimulator.Raw
++
++namespace TwoStage
++
++/-- The first machine uses the first block of the composed adversary's tape.
++This is deterministic coin-layout glue, not a sampler or an assumption reduction. -/
++def firstCoins (A : TwoStage) (kappa : ℕ) (r : List Bool) : A.first.Coins kappa :=
++  fun i => r.getD i.val false
++
++/-- The first coin block is read from the tape's initial coordinates. -/
++theorem firstCoins_eq (A : TwoStage) (kappa : ℕ) (r : List Bool) :
++    A.firstCoins kappa r = fun i => r.getD i.val false := rfl
++
++/-- The second machine uses the disjoint block immediately after the first coins. -/
++def secondCoins (A : TwoStage) (kappa : ℕ) (r : List Bool) : A.second.Coins kappa :=
++  fun i => r.getD (A.first.coinLen kappa + i.val) false
++
++/-- The second coin block starts exactly after the first machine's coin count. -/
++theorem secondCoins_eq (A : TwoStage) (kappa : ℕ) (r : List Bool) :
++    A.secondCoins kappa r = fun i => r.getD (A.first.coinLen kappa + i.val) false := rfl
++
++/-- The first machine's commitment depends only on its coin block, before it can
++observe pp or pk. [GJLS21, Definition 4.3]. -/
++def saCommitment (A : TwoStage) (C : FnClass) (q : PolyExpr) (kappa : ℕ)
++    (r : List Bool) : Commitment C q kappa :=
++  Commitment.decode C q kappa (A.first.runAt kappa [] (A.firstCoins kappa r))
++
++/-- The commitment is the canonical parser of the first machine's activation. -/
++theorem saCommitment_eq (A : TwoStage) (C : FnClass) (q : PolyExpr) (kappa : ℕ)
++    (r : List Bool) : A.saCommitment C q kappa r =
++    Commitment.decode C q kappa (A.first.runAt kappa [] (A.firstCoins kappa r)) := rfl
++
++/-- The next move first asks the committed challenge, then each committed key in
++order, and finally runs the second machine on the canonical public view. Failed
++challenge answers return false. No ciphertext or key encoding is inverted.
++[GJLS21, Definition 4.3; Wee20, §2.2, p.5], exact typed embedding. -/
++def saNext {C : FnClass} {S : FEScheme.Raw C} (A : TwoStage) (q : PolyExpr)
++    (kappa : ℕ) (pp : PublicParams S.G kappa) (pk : S.MPK kappa pp)
++    (r : List Bool) (hist : QueryLog (S.saSpec kappa)) : Move (S.saSpec kappa) Bool :=
++  let a := A.saCommitment C q kappa r
++  match hist with
++  | [] => S.saChallengeMove kappa a.publicInput a.privateInput
++  | e :: es =>
++    match S.saCTPayload kappa e.1 e.2.2 with
++    | none => .ret false
++    | some ct =>
++      if h : es.length < q.eval kappa then
++        S.saKeyMove kappa (a.functions ⟨es.length, h⟩)
++      else
++        let keys := es.filterMap fun entry => S.saSKPayload kappa entry.1 entry.2.2
++        .ret (A.second.distinguisherL kappa
++          (S.viewWordBits a pp (S.encMPK kappa pp pk) keys ct) (A.secondCoins kappa r))
++
++/-- On the empty history the embedded adversary asks its committed challenge. -/
++theorem saNext_nil {C : FnClass} {S : FEScheme.Raw C} (A : TwoStage) (q : PolyExpr)
++    (kappa : ℕ) (pp : PublicParams S.G kappa) (pk : S.MPK kappa pp) (r : List Bool) :
++    A.saNext (S := S) q kappa pp pk r [] =
++      S.saChallengeMove kappa (A.saCommitment C q kappa r).publicInput
++        (A.saCommitment C q kappa r).privateInput := rfl
++
++/-- After the challenge the embedded adversary reads its payload, requests the
++next committed key, or supplies the collected wire payloads to the second machine. -/
++theorem saNext_cons {C : FnClass} {S : FEScheme.Raw C} (A : TwoStage) (q : PolyExpr)
++    (kappa : ℕ) (pp : PublicParams S.G kappa) (pk : S.MPK kappa pp) (r : List Bool)
++    (e : Sigma fun i => (S.saSpec kappa).dom i × (S.saSpec kappa).rng i)
++    (es : QueryLog (S.saSpec kappa)) :
++    A.saNext (S := S) q kappa pp pk r (e :: es) =
++      let a := A.saCommitment C q kappa r
++      match S.saCTPayload kappa e.1 e.2.2 with
++      | none => .ret false
++      | some ct =>
++        if h : es.length < q.eval kappa then
++          S.saKeyMove kappa (a.functions ⟨es.length, h⟩)
++        else
++          let keys := es.filterMap fun entry => S.saSKPayload kappa entry.1 entry.2.2
++          .ret (A.second.distinguisherL kappa
++            (S.viewWordBits a pp (S.encMPK kappa pp pk) keys ct) (A.secondCoins kappa r)) := rfl
++
++/-- A committed machine pair becomes a typed semi-adaptive adversary with a total
++budget of q+1 calls and concatenated independent coin blocks. The first stage
++ignores pp and pk; the second sees exactly the specified public view.
++[GJLS21, Definition 4.3; Wee20, §2.2, p.5]. This constructs no oracle NUPPT. -/
++def toSA {C : FnClass} {S : FEScheme.Raw C} (A : TwoStage) (q : PolyExpr) : S.SAAdv where
++  coins := .add A.first.coins A.second.coins
++  budget := .add q (.const 1)
++  next := A.saNext (S := S) q
++
++/-- The composed tape has the sum of the two original coin polynomials. -/
++theorem toSA_coins {C : FnClass} {S : FEScheme.Raw C} (A : TwoStage) (q : PolyExpr) :
++    (A.toSA (S := S) q).coins = .add A.first.coins A.second.coins := rfl
++
++/-- The total query budget is exactly one challenge plus q keys. -/
++theorem toSA_budget {C : FnClass} {S : FEScheme.Raw C} (A : TwoStage) (q : PolyExpr) :
++    (A.toSA (S := S) q).budget = .add q (.const 1) := rfl
++
++/-- The embedded next move is the explicit committed protocol above. -/
++theorem toSA_next {C : FnClass} {S : FEScheme.Raw C} (A : TwoStage) (q : PolyExpr) :
++    (A.toSA (S := S) q).next = A.saNext (S := S) q := rfl
++
++/-- The embedded adversary uses the existing bounded interpreter at q+1 total calls. -/
++theorem toSA_run {C : FnClass} {S : FEScheme.Raw C} (A : TwoStage) (q : PolyExpr)
++    (kappa : ℕ) (pp : PublicParams S.G kappa) (pk : S.MPK kappa pp) (r : List Bool) :
++    (A.toSA (S := S) q).run kappa pp pk r =
++      buildComp (A.saNext (S := S) q kappa pp pk r) false (q.eval kappa + 1) [] :=
++  FEScheme.Raw.SAAdv.run_eq (A.toSA (S := S) q) kappa pp pk r
++
++end TwoStage
++
++namespace FEScheme.Raw
++
++variable {C : FnClass} (S : FEScheme.Raw C)
++
++/-- The committed and derived semi-adaptive games have exactly the same laws.
++[GJLS21, Definition 4.3; Wee20, §2.2, p.5]. This is expectation equality, since
++independent draws occur in different syntactic orders.
++
++**Proof sketch.** Reindex the composed tape by the finite-sum equivalence into
++first-stage and second-stage tapes, using the shared coin-polynomial readers.
++Commute the first-stage tape before pp/setup; its activation ignores the public
++view. Unroll buildComp through its published case lemmas for one challenge and
++q ordered key calls. The typed handler cases give the same state-threaded key
++law as List.mapM. Convert the simulator through the toSim readers and identify
++the second-stage word through viewWord_eq_viewWordBits. -/
++theorem expect_simGame_eq_saGame (Sim : S.SASimulator.Raw) (A : TwoStage)
++    (q : PolyExpr) (real : Bool) (kappa : ℕ) (test : Bool → ℝ) :
++    ProbComp.expect (S.simGame Sim.toSim A q real kappa) test =
++      ProbComp.expect (S.saGame Sim (A.toSA (S := S) q) real kappa) test := sorry
++
++/-- The committed simulation advantage equals the semi-adaptive advantage of its
++explicit typed embedding, with no loss. [GJLS21, Definition 4.3; Wee20, §2.2].
++
++**Proof sketch.** Apply the preceding exact law identity to each experiment's
++acceptance test, then read the two advantages through their published equations. -/
++theorem simAdv_eq_saSimAdv (Sim : S.SASimulator.Raw) (A : TwoStage)
++    (q : PolyExpr) (kappa : ℕ) :
++    S.simAdv Sim.toSim A q kappa = S.saSimAdv Sim (A.toSA (S := S) q) kappa := sorry
++
++end FEScheme.Raw
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Games.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Games.lean
+new file mode 100644
+index 000000000..c99f5e858
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Games.lean
+@@ -0,0 +1,263 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.Simulator
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs.Correctness
++import TCSlib.Cryptography.Games.Advantage
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The semi-adaptive simulation experiment
++
++Public parameters and the public key precede the adversary's challenge. Exactly
++one challenge is accepted. Keys before it and later challenges return failure.
++Real keys use the honest master key; ideal keys use the stored public challenge
++and each allowed scalar. The simulator never receives the private challenge.
++
++## Main definitions
++
++* `SAChallenge`: the challenger's committed input pair.
++* `FEScheme.Raw.saImpl`: the wire adapter for typed optional answers.
++* `FEScheme.Raw.realSAImpl`, `idealSAImpl`: actual stateful oracle handlers.
++* `FEScheme.Raw.saGame`, `saSimAdv`: the two-experiment simulation advantage.
++
++## Main results
++
++Handler case readers and complete experiment equations expose every branch.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; ePrint 2020/1420, §2.2, p.5.
++* [AGW20] M. Abdalla, J. Gong, H. Wee, *Functional Encryption for Attribute-Weighted
++  Sums from k-Lin*, 2020, §4.1, pp.11–12.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
++
++open Complexity Turing TCSlib.Cryptography.Games
++
++/-- The challenger retains the committed public/private pair to evaluate each
++adaptive query's allowed scalar. [Wee20, §2.2, p.5]. -/
++structure SAChallenge (C : FnClass) (kappa : ℕ) where
++  /-- The public challenge input. -/
++  publicInput : Fin (C.pubLen.eval kappa) → Bool
++  /-- The private challenge input, hidden from the simulator. -/
++  privateInput : Fin (C.privLen.eval kappa) → Bool
++
++namespace FEScheme.Raw
++
++variable {C : FnClass} (S : FEScheme.Raw C)
++
++/-- The real challenger records whether its one challenge has occurred. -/
++abbrev SAState (S : FEScheme.Raw C) (kappa : ℕ) : Type := Option (SAChallenge C kappa)
++
++/-- Real state is the optional committed challenge. -/
++theorem saState_eq (kappa : ℕ) : S.SAState kappa = Option (SAChallenge C kappa) := rfl
++
++/-- The ideal challenger retains simulator state separately from its hidden input pair. -/
++abbrev SAIdealState (Sim : SASimulator.Raw S) (kappa : ℕ) (pp : PublicParams S.G kappa) :
++    Type := Sim.St kappa pp × S.SAState kappa
++
++/-- Ideal state is exactly the simulator state paired with the challenger commitment. -/
++theorem saIdealState_eq (Sim : SASimulator.Raw S) (kappa : ℕ)
++    (pp : PublicParams S.G kappa) :
++    S.SAIdealState Sim kappa pp = (Sim.St kappa pp × S.SAState kappa) := rfl
++
++/-- Adapt typed challenge/key handlers to the library bit specification, using the
++shared optional-answer encoding. Technical oracle-interface glue. -/
++noncomputable def saImpl {sigma : Type} (kappa : ℕ) (pp : PublicParams S.G kappa)
++    (challenge : (Fin (C.pubLen.eval kappa) → Bool) →
++      (Fin (C.privLen.eval kappa) → Bool) → sigma → ProbComp (Option (S.CT kappa pp) × sigma))
++    (key : (Fin (C.fnLen.eval kappa) → Bool) → sigma →
++      ProbComp (Option (S.SK kappa pp) × sigma)) :
++    QueryImpl (S.saSpec kappa) sigma unifSpec
++  | 0, xy, st => (challenge (S.saSplitChallenge kappa xy).1
++      (S.saSplitChallenge kappa xy).2 st).bind fun o =>
++      .pure (S.saCTAnswer kappa pp o.1, o.2)
++  | 1, f, st => (key (S.saKeyFunction kappa f) st).bind fun o =>
++      .pure (S.saSKAnswer kappa pp o.1, o.2)
++
++/-- Oracle zero calls the typed challenge handler and encodes its optional answer. -/
++theorem saImpl_zero_onSpec {sigma : Type} (kappa : ℕ) (pp : PublicParams S.G kappa)
++    (challenge : (Fin (C.pubLen.eval kappa) → Bool) →
++      (Fin (C.privLen.eval kappa) → Bool) → sigma → ProbComp (Option (S.CT kappa pp) × sigma))
++    (key : (Fin (C.fnLen.eval kappa) → Bool) → sigma →
++      ProbComp (Option (S.SK kappa pp) × sigma))
++    (xy : (S.saSpec kappa).dom 0) (st : sigma) :
++    S.saImpl kappa pp challenge key 0 xy st =
++      (challenge (S.saSplitChallenge kappa xy).1 (S.saSplitChallenge kappa xy).2 st).bind
++        fun o => .pure (S.saCTAnswer kappa pp o.1, o.2) := rfl
++
++/-- Oracle one calls the typed key handler and encodes its optional answer. -/
++theorem saImpl_one_onSpec {sigma : Type} (kappa : ℕ) (pp : PublicParams S.G kappa)
++    (challenge : (Fin (C.pubLen.eval kappa) → Bool) →
++      (Fin (C.privLen.eval kappa) → Bool) → sigma → ProbComp (Option (S.CT kappa pp) × sigma))
++    (key : (Fin (C.fnLen.eval kappa) → Bool) → sigma →
++      ProbComp (Option (S.SK kappa pp) × sigma))
++    (f : (S.saSpec kappa).dom 1) (st : sigma) :
++    S.saImpl kappa pp challenge key 1 f st =
++      (key (S.saKeyFunction kappa f) st).bind fun o =>
++        .pure (S.saSKAnswer kappa pp o.1, o.2) := rfl
++
++/-- The real challenge handler accepts the first input pair and rejects repeats.
++[Wee20, §2.2, p.5]. -/
++noncomputable def realSAChallenge (kappa : ℕ) (pp : PublicParams S.G kappa)
++    (pk : S.MPK kappa pp) (x : Fin (C.pubLen.eval kappa) → Bool)
++    (y : Fin (C.privLen.eval kappa) → Bool) :
++    S.SAState kappa → ProbComp (Option (S.CT kappa pp) × S.SAState kappa)
++  | none => (S.enc kappa pp pk x y).bind fun ct => .pure (some ct, some ⟨x, y⟩)
++  | some a => .pure (none, some a)
++
++/-- The first real challenge produces an honest ciphertext and records its inputs. -/
++theorem realSAChallenge_none (kappa : ℕ) (pp : PublicParams S.G kappa)
++    (pk : S.MPK kappa pp) (x : Fin (C.pubLen.eval kappa) → Bool)
++    (y : Fin (C.privLen.eval kappa) → Bool) :
++    S.realSAChallenge kappa pp pk x y none =
++      (S.enc kappa pp pk x y).bind fun ct => .pure (some ct, some ⟨x, y⟩) := rfl
++
++/-- A repeated real challenge fails and leaves the commitment unchanged. -/
++theorem realSAChallenge_some (kappa : ℕ) (pp : PublicParams S.G kappa)
++    (pk : S.MPK kappa pp) (x : Fin (C.pubLen.eval kappa) → Bool)
++    (y : Fin (C.privLen.eval kappa) → Bool) (a : SAChallenge C kappa) :
++    S.realSAChallenge kappa pp pk x y (some a) = .pure (none, some a) := rfl
++
++/-- The real key handler rejects calls before the challenge and otherwise samples
++an honest key for the adaptive function query. [Wee20, §2.2, p.5]. -/
++noncomputable def realSAKey (kappa : ℕ) (pp : PublicParams S.G kappa)
++    (msk : S.MSK kappa pp) (f : Fin (C.fnLen.eval kappa) → Bool) :
++    S.SAState kappa → ProbComp (Option (S.SK kappa pp) × S.SAState kappa)
++  | none => .pure (none, none)
++  | some a => (S.keyGen kappa pp msk f).bind fun sk => .pure (some sk, some a)
++
++/-- A real key request before the challenge fails. -/
++theorem realSAKey_none (kappa : ℕ) (pp : PublicParams S.G kappa)
++    (msk : S.MSK kappa pp) (f : Fin (C.fnLen.eval kappa) → Bool) :
++    S.realSAKey kappa pp msk f none = .pure (none, none) := rfl
++
++/-- A real key request after the challenge samples its honest key. -/
++theorem realSAKey_some (kappa : ℕ) (pp : PublicParams S.G kappa)
++    (msk : S.MSK kappa pp) (f : Fin (C.fnLen.eval kappa) → Bool)
++    (a : SAChallenge C kappa) : S.realSAKey kappa pp msk f (some a) =
++    (S.keyGen kappa pp msk f).bind fun sk => .pure (some sk, some a) := rfl
++
++/-- The ideal challenge handler sends only x to the simulator and keeps y in
++challenger state for future scalar evaluations. [Wee20, §2.2, p.5]. -/
++noncomputable def idealSAChallenge (Sim : SASimulator.Raw S) (kappa : ℕ)
++    (pp : PublicParams S.G kappa) (x : Fin (C.pubLen.eval kappa) → Bool)
++    (y : Fin (C.privLen.eval kappa) → Bool) :
++    S.SAIdealState Sim kappa pp →
++      ProbComp (Option (S.CT kappa pp) × S.SAIdealState Sim kappa pp)
++  | (st, none) => (Sim.enc kappa pp st x).bind fun o => .pure (some o.1, o.2, some ⟨x, y⟩)
++  | (st, some a) => .pure (none, st, some a)
++
++/-- The first ideal challenge uses public-input-only simulation and records the pair. -/
++theorem idealSAChallenge_none (Sim : SASimulator.Raw S) (kappa : ℕ)
++    (pp : PublicParams S.G kappa) (x : Fin (C.pubLen.eval kappa) → Bool)
++    (y : Fin (C.privLen.eval kappa) → Bool) (st : Sim.St kappa pp) :
++    S.idealSAChallenge Sim kappa pp x y (st, none) =
++      (Sim.enc kappa pp st x).bind fun o => .pure (some o.1, o.2, some ⟨x, y⟩) := rfl
++
++/-- A repeated ideal challenge fails without changing either state component. -/
++theorem idealSAChallenge_some (Sim : SASimulator.Raw S) (kappa : ℕ)
++    (pp : PublicParams S.G kappa) (x : Fin (C.pubLen.eval kappa) → Bool)
++    (y : Fin (C.privLen.eval kappa) → Bool) (st : Sim.St kappa pp)
++    (a : SAChallenge C kappa) :
++    S.idealSAChallenge Sim kappa pp x y (st, some a) = .pure (none, st, some a) := rfl
++
++/-- The ideal key handler supplies exactly the function's allowed scalar to the
++stateful simulator, rejecting queries before the challenge. [Wee20, §2.2, p.5]. -/
++noncomputable def idealSAKey (Sim : SASimulator.Raw S) (kappa : ℕ)
++    (pp : PublicParams S.G kappa) (f : Fin (C.fnLen.eval kappa) → Bool) :
++    S.SAIdealState Sim kappa pp →
++      ProbComp (Option (S.SK kappa pp) × S.SAIdealState Sim kappa pp)
++  | (st, none) => .pure (none, st, none)
++  | (st, some a) =>
++    (Sim.key kappa pp st a.publicInput f
++      (C.eval kappa (S.cprm kappa pp) f a.publicInput a.privateInput)).bind fun o =>
++        .pure (some o.1, o.2, some a)
++
++/-- An ideal key request before the challenge fails. -/
++theorem idealSAKey_none (Sim : SASimulator.Raw S) (kappa : ℕ)
++    (pp : PublicParams S.G kappa) (f : Fin (C.fnLen.eval kappa) → Bool)
++    (st : Sim.St kappa pp) :
++    S.idealSAKey Sim kappa pp f (st, none) = .pure (none, st, none) := rfl
++
++/-- An ideal key request after the challenge uses precisely its allowed scalar. -/
++theorem idealSAKey_some (Sim : SASimulator.Raw S) (kappa : ℕ)
++    (pp : PublicParams S.G kappa) (f : Fin (C.fnLen.eval kappa) → Bool)
++    (st : Sim.St kappa pp) (a : SAChallenge C kappa) :
++    S.idealSAKey Sim kappa pp f (st, some a) =
++      (Sim.key kappa pp st a.publicInput f
++        (C.eval kappa (S.cprm kappa pp) f a.publicInput a.privateInput)).bind fun o =>
++          .pure (some o.1, o.2, some a) := rfl
++
++/-- The real oracle implementation is the wire adapter of the honest typed handlers. -/
++noncomputable def realSAImpl (kappa : ℕ) (pp : PublicParams S.G kappa)
++    (pk : S.MPK kappa pp) (msk : S.MSK kappa pp) :
++    QueryImpl (S.saSpec kappa) (S.SAState kappa) unifSpec :=
++  S.saImpl kappa pp (S.realSAChallenge kappa pp pk) (S.realSAKey kappa pp msk)
++
++/-- The real implementation is exactly the displayed adapter. -/
++theorem realSAImpl_eq (kappa : ℕ) (pp : PublicParams S.G kappa)
++    (pk : S.MPK kappa pp) (msk : S.MSK kappa pp) : S.realSAImpl kappa pp pk msk =
++    S.saImpl kappa pp (S.realSAChallenge kappa pp pk) (S.realSAKey kappa pp msk) := rfl
++
++/-- The ideal oracle implementation adapts its stateful typed simulation handlers. -/
++noncomputable def idealSAImpl (Sim : SASimulator.Raw S) (kappa : ℕ)
++    (pp : PublicParams S.G kappa) :
++    QueryImpl (S.saSpec kappa) (S.SAIdealState Sim kappa pp) unifSpec :=
++  S.saImpl kappa pp (S.idealSAChallenge Sim kappa pp) (S.idealSAKey Sim kappa pp)
++
++/-- The ideal implementation is exactly the displayed adapter. -/
++theorem idealSAImpl_eq (Sim : SASimulator.Raw S) (kappa : ℕ)
++    (pp : PublicParams S.G kappa) : S.idealSAImpl Sim kappa pp =
++    S.saImpl kappa pp (S.idealSAChallenge Sim kappa pp) (S.idealSAKey Sim kappa pp) := rfl
++
++/-- The semi-adaptive game first generates pp and the public key, then runs the
++bounded adversary with one independent coin tape. True selects the real experiment.
++[Wee20, §2.2, p.5]. -/
++noncomputable def saGame (Sim : SASimulator.Raw S) (A : S.SAAdv) (real : Bool)
++    (kappa : ℕ) : ProbComp Bool :=
++  (S.pubGen kappa).bind fun pp =>
++    if real then
++      (S.setup kappa pp).bind fun k =>
++      (ProbComp.sample (Fin (A.coins.eval kappa) → Bool)).bind fun r =>
++        Prod.fst <$> simulate (S.realSAImpl kappa pp k.1 k.2)
++          (A.run kappa pp k.1 (List.ofFn r)) none
++    else
++      (Sim.setup kappa pp).bind fun k =>
++      (ProbComp.sample (Fin (A.coins.eval kappa) → Bool)).bind fun r =>
++        Prod.fst <$> simulate (S.idealSAImpl Sim kappa pp)
++          (A.run kappa pp k.1 (List.ofFn r)) (k.2, none)
++
++/-- The complete game is the displayed exact stateful experiment. -/
++theorem saGame_eq (Sim : SASimulator.Raw S) (A : S.SAAdv) (real : Bool) (kappa : ℕ) :
++    S.saGame Sim A real kappa = (S.pubGen kappa).bind fun pp =>
++      if real then
++        (S.setup kappa pp).bind fun k =>
++        (ProbComp.sample (Fin (A.coins.eval kappa) → Bool)).bind fun r =>
++          Prod.fst <$> simulate (S.realSAImpl kappa pp k.1 k.2)
++            (A.run kappa pp k.1 (List.ofFn r)) none
++      else
++        (Sim.setup kappa pp).bind fun k =>
++        (ProbComp.sample (Fin (A.coins.eval kappa) → Bool)).bind fun r =>
++          Prod.fst <$> simulate (S.idealSAImpl Sim kappa pp)
++            (A.run kappa pp k.1 (List.ofFn r)) (k.2, none) := rfl
++
++/-- Semi-adaptive simulation advantage is the common two-experiment advantage.
++[Wee20, §2.2, p.5]. -/
++noncomputable def saSimAdv (Sim : SASimulator.Raw S) (A : S.SAAdv) (kappa : ℕ) : ℝ :=
++  advantage (S.saGame Sim A true kappa) (S.saGame Sim A false kappa)
++
++/-- Semi-adaptive advantage is the displayed real/ideal difference. -/
++theorem saSimAdv_eq (Sim : SASimulator.Raw S) (A : S.SAAdv) (kappa : ℕ) :
++    S.saSimAdv Sim A kappa =
++      advantage (S.saGame Sim A true kappa) (S.saGame Sim A false kappa) := rfl
++
++end FEScheme.Raw
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Security.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Security.lean
+new file mode 100644
+index 000000000..46d2049cb
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Security.lean
+@@ -0,0 +1,92 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.Games
++import TCSlib.Cryptography.Foundations.Subexponential
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Semi-adaptive simulation security
++
++Security uses one universal efficient stateful simulator before every oracle
++NUPPT and every polynomial total-call budget. The raw With predicates name a
++specified raw simulator. Core reduction inequalities may separately quantify over
++all typed adversaries; machine realisability never does so.
++
++## Main definitions
++
++* `FEScheme.Raw.SASimSecureWith`, `SASimSecure`: negligible simulation advantage.
++* `FEScheme.Raw.SubexpSASimSecureWith`, `SubexpSASimSecure`: a common positive exponent.
++
++## Main results
++
++The readers expose all quantifier orders. The subexponential-to-negligible reader
++uses the shared Foundations API.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; ePrint 2020/1420, §2.2, p.5.
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, Journal of the ACM, 2026, §1.1.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.FEScheme.Raw
++
++open Complexity Turing TCSlib.Cryptography.Games
++
++variable {C : FnClass} (S : FEScheme.Raw C)
++
++/-- A specified raw simulator gives negligible advantage against every oracle
++NUPPT and polynomial total-call budget. [Wee20, §2.2, p.5]. -/
++def SASimSecureWith (Sim : SASimulator.Raw S) : Prop :=
++  ∀ A : NUPPT, ∀ q : PolyExpr, Negligible (S.saSimAdv Sim (A.toSAAdv (S := S) q))
++
++/-- Raw semi-adaptive security is the displayed negligible-advantage condition. -/
++theorem saSimSecureWith_iff (Sim : SASimulator.Raw S) :
++    S.SASimSecureWith Sim ↔
++      ∀ A : NUPPT, ∀ q : PolyExpr, Negligible (S.saSimAdv Sim (A.toSAAdv (S := S) q)) :=
++  Iff.rfl
++
++/-- Semi-adaptive simulation security names one efficient simulator before all
++oracle machines and budgets. [Wee20, §2.2, p.5]. -/
++def SASimSecure : Prop := ∃ Sim : SASimulator S, S.SASimSecureWith Sim.toRaw
++
++/-- Semi-adaptive security quantifies over the efficient simulator interface. -/
++theorem saSimSecure_iff :
++    S.SASimSecure ↔ ∃ Sim : SASimulator S, S.SASimSecureWith Sim.toRaw := Iff.rfl
++
++/-- A specified raw simulator has one positive subexponential exponent before
++all machines and query budgets. [JLS26, §1.1; Wee20, §2.2, p.5]. -/
++def SubexpSASimSecureWith (Sim : SASimulator.Raw S) : Prop :=
++  ∃ c : ℝ, 0 < c ∧ ∀ A : NUPPT, ∀ q : PolyExpr,
++    SubexpSmall c (S.saSimAdv Sim (A.toSAAdv (S := S) q))
++
++/-- The common exponent precedes both the machine and query-budget quantifiers. -/
++theorem subexpSASimSecureWith_iff (Sim : SASimulator.Raw S) :
++    S.SubexpSASimSecureWith Sim ↔
++      ∃ c : ℝ, 0 < c ∧ ∀ A : NUPPT, ∀ q : PolyExpr,
++        SubexpSmall c (S.saSimAdv Sim (A.toSAAdv (S := S) q)) := Iff.rfl
++
++/-- Subexponential semi-adaptive security uses one efficient universal simulator.
++[JLS26, §1.1; Wee20, §2.2, p.5]. -/
++def SubexpSASimSecure : Prop :=
++  ∃ Sim : SASimulator S, S.SubexpSASimSecureWith Sim.toRaw
++
++/-- The public subexponential notion quantifies over efficient simulators. -/
++theorem subexpSASimSecure_iff :
++    S.SubexpSASimSecure ↔ ∃ Sim : SASimulator S, S.SubexpSASimSecureWith Sim.toRaw := Iff.rfl
++
++/-- A positive common subexponential exponent implies negligible raw advantage.
++
++**Proof sketch.** Choose the common exponent and apply the shared
++SubexpSmall.negligible implication to each oracle machine and total-call budget.
++No new asymptotic closure argument is needed. -/
++theorem SubexpSASimSecureWith.saSimSecureWith {Sim : SASimulator.Raw S}
++    (h : S.SubexpSASimSecureWith Sim) : S.SASimSecureWith Sim := sorry
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.FEScheme.Raw
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Simulator.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Simulator.lean
+new file mode 100644
+index 000000000..345f3028a
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Simulator.lean
+@@ -0,0 +1,227 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.Data
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs.Simulator
++import TCSlib.Cryptography.CoinSampling.Contract
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Stateful semi-adaptive simulation
++
++The simulator generates a public key before the challenge. Its ciphertext algorithm
++receives only the public input. Each subsequent key algorithm receives the public
++input, queried function and allowed scalar value, threading one private state.
++Every exact algorithm is a core applied to one finite complete draw.
++
++## Main definitions
++
++* `FEScheme.Raw.SASimulator.Raw`: the three explicit raw simulation algorithms.
++* `FEScheme.Raw.SASimulator`: their uniform sampler-efficiency interface.
++
++## Main results
++
++Algorithm and layout readers expose the exact stateful laws without unfolding.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; ePrint 2020/1420, §2.2, p.5.
++* [AGW20] M. Abdalla, J. Gong, H. Wee, *Functional Encryption for Attribute-Weighted
++  Sums from k-Lin*, 2020, §4.1, pp.11–12.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.FEScheme.Raw
++
++open Complexity Turing TCSlib.Cryptography.Games
++open TCSlib.Cryptography.CoinSampling
++
++variable {C : FnClass} (S : FEScheme.Raw C)
++
++/-- A raw semi-adaptive simulator has stateful setup, public-input-only ciphertext
++simulation, and key simulation from each allowed scalar. [Wee20, §2.2, p.5]. -/
++structure SASimulator.Raw where
++  /-- The simulator state over the drawn public parameters. -/
++  St : (kappa : ℕ) → PublicParams S.G kappa → Type
++  /-- The canonical state word used by uniform efficiency. -/
++  encSt : (kappa : ℕ) → (pp : PublicParams S.G kappa) → St kappa pp → List Bool
++  /-- State encodings lose no information. -/
++  encSt_injective : ∀ kappa pp, Function.Injective (encSt kappa pp)
++  /-- The complete setup draw. -/
++  SetupDraw : (kappa : ℕ) → PublicParams S.G kappa → Type
++  /-- Setup draws are finite. -/
++  [setupFinite : ∀ kappa pp, Fintype (SetupDraw kappa pp)]
++  /-- Setup draws are nonempty. -/
++  [setupNonempty : ∀ kappa pp, Nonempty (SetupDraw kappa pp)]
++  /-- Setup generates the simulated public key and initial private state. -/
++  setupCore : (kappa : ℕ) → (pp : PublicParams S.G kappa) → SetupDraw kappa pp →
++    S.MPK kappa pp × St kappa pp
++  /-- The complete ciphertext draw depends on the state and public input only. -/
++  EncDraw : (kappa : ℕ) → (pp : PublicParams S.G kappa) → St kappa pp →
++    (Fin (C.pubLen.eval kappa) → Bool) → Type
++  /-- Ciphertext draws are finite. -/
++  [encFinite : ∀ kappa pp st x, Fintype (EncDraw kappa pp st x)]
++  /-- Ciphertext draws are nonempty. -/
++  [encNonempty : ∀ kappa pp st x, Nonempty (EncDraw kappa pp st x)]
++  /-- Ciphertext simulation never receives the private challenge input. -/
++  encCore : (kappa : ℕ) → (pp : PublicParams S.G kappa) → (st : St kappa pp) →
++    (x : Fin (C.pubLen.eval kappa) → Bool) → EncDraw kappa pp st x →
++    S.CT kappa pp × St kappa pp
++  /-- One key's complete draw depends on its state, public input, function and value. -/
++  KeyDraw : (kappa : ℕ) → (pp : PublicParams S.G kappa) → St kappa pp →
++    (Fin (C.pubLen.eval kappa) → Bool) → (Fin (C.fnLen.eval kappa) → Bool) →
++    C.Out kappa (S.cprm kappa pp) → Type
++  /-- Key-simulation draws are finite. -/
++  [keyFinite : ∀ kappa pp st x f mu, Fintype (KeyDraw kappa pp st x f mu)]
++  /-- Key-simulation draws are nonempty. -/
++  [keyNonempty : ∀ kappa pp st x f mu, Nonempty (KeyDraw kappa pp st x f mu)]
++  /-- Key simulation receives exactly the public input, function and allowed scalar. -/
++  keyCore : (kappa : ℕ) → (pp : PublicParams S.G kappa) → (st : St kappa pp) →
++    (x : Fin (C.pubLen.eval kappa) → Bool) → (f : Fin (C.fnLen.eval kappa) → Bool) →
++    (mu : C.Out kappa (S.cprm kappa pp)) → KeyDraw kappa pp st x f mu →
++    S.SK kappa pp × St kappa pp
++  /-- Encode a complete setup draw. -/
++  encSetupDraw : (kappa : ℕ) → (pp : PublicParams S.G kappa) → SetupDraw kappa pp → List Bool
++  /-- Encode a complete ciphertext-simulation draw. -/
++  encEncDraw : (kappa : ℕ) → (pp : PublicParams S.G kappa) → (st : St kappa pp) →
++    (x : Fin (C.pubLen.eval kappa) → Bool) → EncDraw kappa pp st x → List Bool
++  /-- Encode a complete key-simulation draw. -/
++  encKeyDraw : (kappa : ℕ) → (pp : PublicParams S.G kappa) → (st : St kappa pp) →
++    (x : Fin (C.pubLen.eval kappa) → Bool) → (f : Fin (C.fnLen.eval kappa) → Bool) →
++    (mu : C.Out kappa (S.cprm kappa pp)) → KeyDraw kappa pp st x f mu → List Bool
++
++namespace SASimulator.Raw
++
++variable {S} (Sim : SASimulator.Raw S)
++
++instance instSetupFinite (kappa : ℕ) (pp : PublicParams S.G kappa) :
++    Fintype (Sim.SetupDraw kappa pp) := Sim.setupFinite kappa pp
++
++instance instSetupNonempty (kappa : ℕ) (pp : PublicParams S.G kappa) :
++    Nonempty (Sim.SetupDraw kappa pp) := Sim.setupNonempty kappa pp
++
++instance instEncFinite (kappa : ℕ) (pp : PublicParams S.G kappa) (st : Sim.St kappa pp)
++    (x : Fin (C.pubLen.eval kappa) → Bool) : Fintype (Sim.EncDraw kappa pp st x) :=
++  Sim.encFinite kappa pp st x
++
++instance instEncNonempty (kappa : ℕ) (pp : PublicParams S.G kappa) (st : Sim.St kappa pp)
++    (x : Fin (C.pubLen.eval kappa) → Bool) : Nonempty (Sim.EncDraw kappa pp st x) :=
++  Sim.encNonempty kappa pp st x
++
++instance instKeyFinite (kappa : ℕ) (pp : PublicParams S.G kappa) (st : Sim.St kappa pp)
++    (x : Fin (C.pubLen.eval kappa) → Bool) (f : Fin (C.fnLen.eval kappa) → Bool)
++    (mu : C.Out kappa (S.cprm kappa pp)) : Fintype (Sim.KeyDraw kappa pp st x f mu) :=
++  Sim.keyFinite kappa pp st x f mu
++
++instance instKeyNonempty (kappa : ℕ) (pp : PublicParams S.G kappa) (st : Sim.St kappa pp)
++    (x : Fin (C.pubLen.eval kappa) → Bool) (f : Fin (C.fnLen.eval kappa) → Bool)
++    (mu : C.Out kappa (S.cprm kappa pp)) : Nonempty (Sim.KeyDraw kappa pp st x f mu) :=
++  Sim.keyNonempty kappa pp st x f mu
++
++/-- A ciphertext-simulation input contains pp, the private state and public input. -/
++structure EncInput (kappa : ℕ) where
++  /-- The public parameters. -/
++  pp : PublicParams S.G kappa
++  /-- The current simulator state. -/
++  state : Sim.St kappa pp
++  /-- The public challenge input. -/
++  publicInput : Fin (C.pubLen.eval kappa) → Bool
++
++/-- A key-simulation input additionally contains the requested function and allowed scalar. -/
++structure KeyInput (kappa : ℕ) where
++  /-- The public parameters. -/
++  pp : PublicParams S.G kappa
++  /-- The current simulator state. -/
++  state : Sim.St kappa pp
++  /-- The public challenge input. -/
++  publicInput : Fin (C.pubLen.eval kappa) → Bool
++  /-- The requested function. -/
++  function : Fin (C.fnLen.eval kappa) → Bool
++  /-- The allowed scalar, before target-group embedding. -/
++  value : C.Out kappa (S.cprm kappa pp)
++
++/-- The ciphertext-simulation parameter word excludes the private input. -/
++def encInputWord (kappa : ℕ) (pi : Sim.EncInput kappa) : List Bool :=
++  pairEncode pi.pp.encode (pairEncode (Sim.encSt kappa pi.pp pi.state)
++    (List.ofFn pi.publicInput))
++
++/-- The ciphertext parameter word has exactly the displayed public information. -/
++theorem encInputWord_eq (kappa : ℕ) (pi : Sim.EncInput kappa) :
++    Sim.encInputWord kappa pi = pairEncode pi.pp.encode
++      (pairEncode (Sim.encSt kappa pi.pp pi.state) (List.ofFn pi.publicInput)) := rfl
++
++/-- The key-simulation word encodes the state, public input, function and scalar. -/
++def keyInputWord (kappa : ℕ) (pi : Sim.KeyInput kappa) : List Bool :=
++  pairEncode pi.pp.encode (pairEncode (Sim.encSt kappa pi.pp pi.state)
++    (pairEncode (List.ofFn pi.publicInput)
++      (pairEncode (List.ofFn pi.function) (C.encValue kappa (S.cprm kappa pi.pp) pi.value))))
++
++/-- The key-simulation word has the displayed nested-pair encoding. -/
++theorem keyInputWord_eq (kappa : ℕ) (pi : Sim.KeyInput kappa) :
++    Sim.keyInputWord kappa pi = pairEncode pi.pp.encode
++      (pairEncode (Sim.encSt kappa pi.pp pi.state)
++        (pairEncode (List.ofFn pi.publicInput)
++          (pairEncode (List.ofFn pi.function)
++            (C.encValue kappa (S.cprm kappa pi.pp) pi.value)))) := rfl
++
++/-- Simulated setup applies its deterministic core to one exact complete draw. -/
++noncomputable def setup (kappa : ℕ) (pp : PublicParams S.G kappa) :
++    ProbComp (S.MPK kappa pp × Sim.St kappa pp) :=
++  Sim.setupCore kappa pp <$> ProbComp.sample (Sim.SetupDraw kappa pp)
++
++/-- The setup law is the displayed pushforward of its complete draw. -/
++theorem setup_eq (kappa : ℕ) (pp : PublicParams S.G kappa) :
++    Sim.setup kappa pp = Sim.setupCore kappa pp <$> ProbComp.sample (Sim.SetupDraw kappa pp) :=
++  rfl
++
++/-- Ciphertext simulation sees only the public input and threads its state. -/
++noncomputable def enc (kappa : ℕ) (pp : PublicParams S.G kappa) (st : Sim.St kappa pp)
++    (x : Fin (C.pubLen.eval kappa) → Bool) : ProbComp (S.CT kappa pp × Sim.St kappa pp) :=
++  Sim.encCore kappa pp st x <$> ProbComp.sample (Sim.EncDraw kappa pp st x)
++
++/-- The ciphertext law is the displayed pushforward of its complete draw. -/
++theorem enc_eq (kappa : ℕ) (pp : PublicParams S.G kappa) (st : Sim.St kappa pp)
++    (x : Fin (C.pubLen.eval kappa) → Bool) : Sim.enc kappa pp st x =
++    Sim.encCore kappa pp st x <$> ProbComp.sample (Sim.EncDraw kappa pp st x) := rfl
++
++/-- Key simulation sees the queried function and its allowed scalar and threads state. -/
++noncomputable def key (kappa : ℕ) (pp : PublicParams S.G kappa) (st : Sim.St kappa pp)
++    (x : Fin (C.pubLen.eval kappa) → Bool) (f : Fin (C.fnLen.eval kappa) → Bool)
++    (mu : C.Out kappa (S.cprm kappa pp)) : ProbComp (S.SK kappa pp × Sim.St kappa pp) :=
++  Sim.keyCore kappa pp st x f mu <$> ProbComp.sample (Sim.KeyDraw kappa pp st x f mu)
++
++/-- The key law is the displayed pushforward of its complete draw. -/
++theorem key_eq (kappa : ℕ) (pp : PublicParams S.G kappa) (st : Sim.St kappa pp)
++    (x : Fin (C.pubLen.eval kappa) → Bool) (f : Fin (C.fnLen.eval kappa) → Bool)
++    (mu : C.Out kappa (S.cprm kappa pp)) : Sim.key kappa pp st x f mu =
++    Sim.keyCore kappa pp st x f mu <$> ProbComp.sample (Sim.KeyDraw kappa pp st x f mu) := rfl
++
++end SASimulator.Raw
++
++/-- A semi-adaptive simulation interface carries uniform efficiency for all three
++samplers. [Wee20, §2.2, p.5; AGW20, §4.1, pp.11–12]. The shared contract chooses
++one sampler/core witness before kappa and every public input. -/
++structure SASimulator extends SASimulator.Raw S where
++  /-- Setup and its encoded public key/state output are uniformly efficient. -/
++  setup_eff : SamplesEfficiently
++    (fun kappa (pp : PublicParams S.G kappa) => pp.encode) encSetupDraw
++    (fun kappa pp (o : S.MPK kappa pp × St kappa pp) =>
++      pairEncode (List.ofFn (S.encMPK kappa pp o.1)) (encSt kappa pp o.2)) setupCore
++  /-- Public-input-only ciphertext simulation is uniformly efficient. -/
++  enc_eff : SamplesEfficiently toRaw.encInputWord
++    (fun kappa pi => encEncDraw kappa pi.pp pi.state pi.publicInput)
++    (fun kappa pi (o : S.CT kappa pi.pp × St kappa pi.pp) =>
++      pairEncode (List.ofFn (S.encCT kappa pi.pp o.1)) (encSt kappa pi.pp o.2))
++    (fun kappa pi => encCore kappa pi.pp pi.state pi.publicInput)
++  /-- Key simulation is uniformly efficient with all permitted inputs on its word. -/
++  key_eff : SamplesEfficiently toRaw.keyInputWord
++    (fun kappa pi => encKeyDraw kappa pi.pp pi.state pi.publicInput pi.function pi.value)
++    (fun kappa pi (o : S.SK kappa pi.pp × St kappa pi.pp) =>
++      pairEncode (List.ofFn (S.encSK kappa pi.pp o.1)) (encSt kappa pi.pp o.2))
++    (fun kappa pi => keyCore kappa pi.pp pi.state pi.publicInput pi.function pi.value)
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.FEScheme.Raw
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Data.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Data.lean
+new file mode 100644
+index 000000000..28f414b9b
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Data.lean
+@@ -0,0 +1,345 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSimulator
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Run
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Typed adversaries and fixed tapes for linear PHFE
++
++## Main definitions
++
++* `Wee20.Linear.Challenge`, `KeyQuery`, `KeyPack`, `saSpec`: the typed semi-adaptive oracles.
++* `Wee20.Linear.SAAdv`, `SAState`, `protocolHandler`: bounded next moves and stateful refusals.
++* `Wee20.Linear.securityCount`, `SecurityDraw`, `securityAt`: one finite scalar tape.
++* `Wee20.Linear.setupAt`, `seedAt`, `globalUAt`, `keyAt`, `simKeyAt`: explicit tape blocks.
++
++## Main results
++
++Equation and oracle-case readers expose every definition. The total call budget is used
++without adding a challenge call. Every accepted key consumes a tape block, and a challenge
++must already have been accepted. The tapes use the supplied uniform garbling size bound.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, §2.2, p. 5 and Appendix B,
++  pp. 12–14 (semi-adaptive queries and game randomness).
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
++
++open Complexity TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++
++/-- The single challenge commits to scalar public and private inputs
++[Wee20, §2.2, p. 5]. -/
++abbrev Challenge (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :=
++  (Fin (ℓ.eval κ) → ZMod pp.group.order) × (Fin (zDim.eval κ) → ZMod pp.group.order)
++
++/-- The challenge type is its pair of scalar input vectors. -/
++theorem challenge_eq (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++    Challenge G ℓ zDim κ pp =
++      ((Fin (ℓ.eval κ) → ZMod pp.group.order) ×
++        (Fin (zDim.eval κ) → ZMod pp.group.order)) := rfl
++
++/-- Each adaptive key query specifies a function and a GROUP matrix
++[Wee20, §4, p. 8]. No group-word-to-exponent decoder is introduced. -/
++structure KeyQuery (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) where
++  /-- The queried function. -/
++  fn : Fn κ pp.orderParam
++  /-- The group matrix specified by that key. -/
++  matrix : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G
++
++/-- An answer retains its function index alongside its typed key. This dependent pair is
++DATA only; no finite-type instance or sampler on the pair is constructed. -/
++abbrev KeyPack (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (κ : ℕ) (pp : PublicParams G κ) :=
++  Σ f : Fn κ pp.orderParam, Key G PG κ pp f
++
++/-- A packed answer is a function index and a key at that index. -/
++theorem keyPack_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (κ : ℕ) (pp : PublicParams G κ) :
++    KeyPack G PG κ pp = (Σ f : Fn κ pp.orderParam, Key G PG κ pp f) := rfl
++
++/-- The challenge oracle is `false`; the adaptive-key oracle is `true`
++[Wee20, §2.2, p. 5; §4, p. 8]. Rejected requests return none. -/
++def saSpec (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++    OracleSpec Bool where
++  dom := fun | false => Challenge G ℓ zDim κ pp | true => KeyQuery G PG zDim κ pp
++  rng := fun | false => Option (CT G zDim κ pp) | true => Option (KeyPack G PG κ pp)
++
++/-- The oracle specification has its two displayed typed query and response families. -/
++theorem saSpec_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++    saSpec G PG zDim κ pp =
++      { dom := fun | false => Challenge G ℓ zDim κ pp | true => KeyQuery G PG zDim κ pp
++        rng := fun | false => Option (CT G zDim κ pp) | true => Option (KeyPack G PG κ pp) } :=
++  rfl
++
++/-- A typed semi-adaptive adversary fixes one coin polynomial, a TOTAL call budget, and
++next moves after seeing the public key [Wee20, §2.2, p. 5]. -/
++structure SAAdv (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) where
++  /-- Coins shared by the whole adaptive interaction. -/
++  coins : PolyExpr
++  /-- Total oracle-call budget, including the challenge call. -/
++  budget : PolyExpr
++  /-- The next move after the current typed history. -/
++  next : ∀ κ (pp : PublicParams G κ), MPK G ℓ zDim κ pp → List Bool →
++    QueryLog (saSpec G PG zDim κ pp) → Move (saSpec G PG zDim κ pp) Bool
++
++/-- Run the typed next-move adversary through the shared bounded oracle computation.
++The budget is total, so no challenge call is added [Wee20, §2.2, p. 5]. -/
++def SAAdv.run (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (A : SAAdv G PG zDim)
++    (κ : ℕ) (pp : PublicParams G κ) (pk : MPK G ℓ zDim κ pp) (r : List Bool) :
++    OracleComp (saSpec G PG zDim κ pp) Bool :=
++  buildComp (A.next κ pp pk r) false (A.budget.eval κ) []
++
++/-- The typed run uses exactly the shared buildComp next-move interpreter. -/
++theorem SAAdv.run_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (A : SAAdv G PG zDim)
++    (κ : ℕ) (pp : PublicParams G κ) (pk : MPK G ℓ zDim κ pp) (r : List Bool) :
++    SAAdv.run G PG zDim A κ pp pk r =
++      buildComp (A.next κ pp pk r) false (A.budget.eval κ) [] := rfl
++
++/-- The protocol retains the one committed challenge and the accepted-key count
++[Wee20, §2.2, p. 5]. -/
++structure SAState (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) where
++  /-- No key is answered before this challenge is committed. -/
++  challenge : Option (Challenge G ℓ zDim κ pp)
++  /-- The next unused per-key tape block. -/
++  used : ℕ
++
++/-- A deterministic stateful protocol refuses repeated challenges, keys before the
++challenge, and keys exceeding the total call budget. Technical oracle glue. -/
++def protocolHandler (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (q κ : ℕ) (pp : PublicParams G κ)
++    (makeCT : Challenge G ℓ zDim κ pp → CT G zDim κ pp)
++    (makeKey : ℕ → Challenge G ℓ zDim κ pp → KeyQuery G PG zDim κ pp → KeyPack G PG κ pp) :
++    ∀ i, (saSpec G PG zDim κ pp).dom i → SAState G ℓ zDim κ pp →
++      (saSpec G PG zDim κ pp).rng i × SAState G ℓ zDim κ pp
++  | false, msg, st => match st.challenge with
++    | none => (some (makeCT msg), ⟨some msg, st.used⟩)
++    | some _ => (none, st)
++  | true, query, st => match st.challenge with
++    | none => (none, st)
++    | some msg => if st.used < q then
++        (some (makeKey st.used msg query), ⟨st.challenge, st.used + 1⟩)
++      else (none, st)
++
++/-- The challenge branch either commits once or returns none without changing state. -/
++theorem protocolHandler_challenge (G : BilinearGen) {ℓ n' : PolyExpr}
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr)
++    (q κ : ℕ) (pp : PublicParams G κ)
++    (makeCT : Challenge G ℓ zDim κ pp → CT G zDim κ pp)
++    (makeKey : ℕ → Challenge G ℓ zDim κ pp → KeyQuery G PG zDim κ pp → KeyPack G PG κ pp)
++    (msg : Challenge G ℓ zDim κ pp) (st : SAState G ℓ zDim κ pp) :
++    protocolHandler G PG zDim q κ pp makeCT makeKey false msg st =
++      match st.challenge with
++      | none => (some (makeCT msg), ⟨some msg, st.used⟩)
++      | some _ => (none, st) := rfl
++
++/-- The key branch answers only after a challenge and within the accepted-key cap. -/
++theorem protocolHandler_key (G : BilinearGen) {ℓ n' : PolyExpr}
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr)
++    (q κ : ℕ) (pp : PublicParams G κ)
++    (makeCT : Challenge G ℓ zDim κ pp → CT G zDim κ pp)
++    (makeKey : ℕ → Challenge G ℓ zDim κ pp → KeyQuery G PG zDim κ pp → KeyPack G PG κ pp)
++    (query : KeyQuery G PG zDim κ pp) (st : SAState G ℓ zDim κ pp) :
++    protocolHandler G PG zDim q κ pp makeCT makeKey true query st =
++      match st.challenge with
++      | none => (none, st)
++      | some msg => if st.used < q then
++          (some (makeKey st.used msg query), ⟨st.challenge, st.used + 1⟩)
++        else (none, st) := rfl
++
++/-- The fixed scalar tape allocates setup blocks followed by padded per-key blocks.
++This is exact-law bookkeeping for [Wee20, Appendix B, pp. 12–14]. -/
++def securityCount {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) : PolyExpr :=
++  (((.const 19).add ((.const 4).mul zDim)).add ((.const 8).mul ℓ)).add
++    (q.mul ((((.const 6).add ℓ).mul PG.mBound).add ((.const 4).mul n')))
++
++/-- The scalar-tape count has its displayed setup and per-query polynomial terms. -/
++theorem securityCount_eq {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) :
++    securityCount PG zDim q =
++      (((.const 19).add ((.const 4).mul zDim)).add ((.const 8).mul ℓ)).add
++        (q.mul ((((.const 6).add ℓ).mul PG.mBound).add ((.const 4).mul n'))) := rfl
++
++/-- One uniform scalar tape supplies all game randomness, with no dependent-sum sampler. -/
++abbrev SecurityDraw (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :=
++  Fin ((securityCount PG zDim q).eval κ) → ZMod pp.group.order
++
++/-- The draw type is the displayed finite scalar vector. -/
++theorem securityDraw_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++    SecurityDraw G PG zDim q κ pp =
++      (Fin ((securityCount PG zDim q).eval κ) → ZMod pp.group.order) := rfl
++
++/-- A total tape read returns zero outside the allocated array. Actual accepted-query
++coordinates lie within their padded blocks by the supplied uniform garbling bound. -/
++def securityAt (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : SecurityDraw G PG zDim q κ pp) (i : ℕ) : ZMod pp.group.order :=
++  if h : i < (securityCount PG zDim q).eval κ then ω ⟨i, h⟩ else 0
++
++/-- The tape lookup is the in-bounds coordinate or its zero default. -/
++theorem securityAt_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : SecurityDraw G PG zDim q κ pp) (i : ℕ) :
++    securityAt G PG zDim q κ pp ω i =
++      if h : i < (securityCount PG zDim q).eval κ then ω ⟨i, h⟩ else 0 := rfl
++
++/-- The four per-query blocks start after setup, then T, R, and uhat respectively. -/
++def securityOffsets {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (κ : ℕ) : Fin 4 → ℕ :=
++  let base := 19 + 4 * zDim.eval κ + 8 * ℓ.eval κ
++  let T := 3 * q.eval κ * (PG.mBound.eval κ + n'.eval κ)
++  let R := 2 * q.eval κ * PG.mBound.eval κ
++  let U := q.eval κ * ℓ.eval κ * PG.mBound.eval κ
++  ![base, base + T, base + T + R, base + T + R + U]
++
++/-- The block offsets are their displayed prefix sums. -/
++theorem securityOffsets_eq {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (κ : ℕ) :
++    securityOffsets PG zDim q κ =
++      let base := 19 + 4 * zDim.eval κ + 8 * ℓ.eval κ
++      let T := 3 * q.eval κ * (PG.mBound.eval κ + n'.eval κ)
++      let R := 2 * q.eval κ * PG.mBound.eval κ
++      let U := q.eval κ * ℓ.eval κ * PG.mBound.eval κ
++      ![base, base + T, base + T + R, base + T + R + U] := rfl
++
++/-- Read the simulator-compatible setup draw A,c,W,U,V,w,v from the fixed tape. -/
++def setupAt (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : SecurityDraw G PG zDim q κ pp) : SimSetupDraw G ℓ zDim κ pp :=
++  let at := securityAt G PG zDim q κ pp ω
++  let z := zDim.eval κ
++  let l := ℓ.eval κ
++  ⟨(fun i j => at (2 * i.val + j.val)), (fun i => at (6 + i.val)),
++    (fun i j => at (9 + i.val * z + j.val)),
++    (fun i j => at (9 + 3 * z + i.val * (2 * l) + 2 * j.1.val + j.2.val)),
++    (fun i j => at (9 + 3 * z + 6 * l + 2 * i.val + j.val)),
++    (fun j => at (15 + 3 * z + 6 * l + j.val)),
++    (fun j => at (15 + 4 * z + 6 * l + j.val))⟩
++
++/-- The setup lookup exposes its exact coordinate formulas. -/
++theorem setupAt_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : SecurityDraw G PG zDim q κ pp) :
++    setupAt G PG zDim q κ pp ω =
++      let at := securityAt G PG zDim q κ pp ω
++      let z := zDim.eval κ
++      let l := ℓ.eval κ
++      ⟨(fun i j => at (2 * i.val + j.val)), (fun i => at (6 + i.val)),
++        (fun i j => at (9 + i.val * z + j.val)),
++        (fun i j => at (9 + 3 * z + i.val * (2 * l) + 2 * j.1.val + j.2.val)),
++        (fun i j => at (9 + 3 * z + 6 * l + 2 * i.val + j.val)),
++        (fun j => at (15 + 3 * z + 6 * l + j.val)),
++        (fun j => at (15 + 4 * z + 6 * l + j.val))⟩ := rfl
++
++/-- Read the honest encryption seed from its separate two-scalar block. -/
++def seedAt (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : SecurityDraw G PG zDim q κ pp) : EncDraw G κ pp :=
++  fun i => securityAt G PG zDim q κ pp ω (17 + 4 * zDim.eval κ + 8 * ℓ.eval κ + i.val)
++
++/-- The honest seed uses the two coordinates immediately before the key tapes. -/
++theorem seedAt_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : SecurityDraw G PG zDim q κ pp) :
++    seedAt G PG zDim q κ pp ω = fun i =>
++      securityAt G PG zDim q κ pp ω (17 + 4 * zDim.eval κ + 8 * ℓ.eval κ + i.val) := rfl
++
++/-- Read the global hidden public-variable row used in the third game. -/
++def globalUAt (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : SecurityDraw G PG zDim q κ pp) : (Fin (ℓ.eval κ) × Fin 2) → ZMod pp.group.order :=
++  fun i => securityAt G PG zDim q κ pp ω
++    (17 + 4 * zDim.eval κ + 6 * ℓ.eval κ + 2 * i.1.val + i.2.val)
++
++/-- The hidden global row is its displayed setup block. -/
++theorem globalUAt_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : SecurityDraw G PG zDim q κ pp) :
++    globalUAt G PG zDim q κ pp ω = fun i => securityAt G PG zDim q κ pp ω
++      (17 + 4 * zDim.eval κ + 6 * ℓ.eval κ + 2 * i.1.val + i.2.val) := rfl
++
++/-- Actual draw coordinates embed auxiliary indices before a padded final output block. -/
++def paddedDrawIndex {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (κ : ℕ) (p : ℕ+) (f : Fn κ p) :
++    (PG.TIdx κ p f ⊕ Fin (n'.eval κ)) → ℕ :=
++  Sum.elim (fun i => (PG.tCoord κ p f i).val) (fun j => PG.mBound.eval κ + j.val)
++
++/-- The padded index uses the supplied auxiliary coordinates and the final output offset. -/
++theorem paddedDrawIndex_eq {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (κ : ℕ) (p : ℕ+) (f : Fn κ p) :
++    paddedDrawIndex PG κ p f =
++      Sum.elim (fun i => (PG.tCoord κ p f i).val) (fun j => PG.mBound.eval κ + j.val) := rfl
++
++/-- Read one actual function-dependent key draw from the padded T/R tapes. -/
++def keyAt (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : SecurityDraw G PG zDim q κ pp) (j : ℕ) (f : Fn κ pp.orderParam) : KeyDraw G PG κ pp f :=
++  let at := securityAt G PG zDim q κ pp ω
++  let off := securityOffsets PG zDim q κ
++  let b := PG.mBound.eval κ
++  let n := n'.eval κ
++  ⟨(fun i u => at (off 0 + j * (3 * (b + n)) + i.val * (b + n) +
++      paddedDrawIndex PG κ pp.orderParam f u)),
++    (fun i u => at (off 1 + j * (2 * b) + i.val * b + (PG.mCoord κ pp.orderParam f u).val))⟩
++
++/-- The actual key draw is the displayed padded T/R restriction. -/
++theorem keyAt_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : SecurityDraw G PG zDim q κ pp) (j : ℕ) (f : Fn κ pp.orderParam) :
++    keyAt G PG zDim q κ pp ω j f =
++      let at := securityAt G PG zDim q κ pp ω
++      let off := securityOffsets PG zDim q κ
++      let b := PG.mBound.eval κ
++      let n := n'.eval κ
++      ⟨(fun i u => at (off 0 + j * (3 * (b + n)) + i.val * (b + n) +
++          paddedDrawIndex PG κ pp.orderParam f u)),
++        (fun i u => at
++          (off 1 + j * (2 * b) + i.val * b + (PG.mCoord κ pp.orderParam f u).val))⟩ := rfl
++
++/-- Read the T,uhat,R,partial-garbling draw used by the ideal and intermediate games. -/
++def simKeyAt (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : SecurityDraw G PG zDim q κ pp) (j : ℕ) (f : Fn κ pp.orderParam) :
++    SimKeyDraw G PG κ pp f :=
++  let kr := keyAt G PG zDim q κ pp ω j f
++  let at := securityAt G PG zDim q κ pp ω
++  let off := securityOffsets PG zDim q κ
++  let b := PG.mBound.eval κ
++  let n := n'.eval κ
++  ⟨kr.1, (fun u => at (off 2 + j * (ℓ.eval κ * b) + u.1.val * b +
++      (PG.mCoord κ pp.orderParam f u.2).val)), kr.2,
++    (fun u => at (off 3 + j * (b + n) + paddedDrawIndex PG κ pp.orderParam f u))⟩
++
++/-- The ideal key draw uses the displayed four padded blocks. -/
++theorem simKeyAt_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : SecurityDraw G PG zDim q κ pp) (j : ℕ) (f : Fn κ pp.orderParam) :
++    simKeyAt G PG zDim q κ pp ω j f =
++      let kr := keyAt G PG zDim q κ pp ω j f
++      let at := securityAt G PG zDim q κ pp ω
++      let off := securityOffsets PG zDim q κ
++      let b := PG.mBound.eval κ
++      let n := n'.eval κ
++      ⟨kr.1, (fun u => at (off 2 + j * (ℓ.eval κ * b) + u.1.val * b +
++          (PG.mCoord κ pp.orderParam f u.2).val)), kr.2,
++        (fun u => at (off 3 + j * (b + n) + paddedDrawIndex PG κ pp.orderParam f u))⟩ := rfl
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Endpoint.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Endpoint.lean
+new file mode 100644
+index 000000000..81b9c2c20
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Endpoint.lean
+@@ -0,0 +1,89 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Fresh
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Theorems
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The linear security bound for the actual fresh raw algorithms
++
++## Main definitions
++
++This module adds no algorithm or alternate security predicate.
++
++## Main results
++
++* `Wee20.Linear.saGame_eq_freshSaGame`: a substantive acceptance-law equivalence from the
++  padded unfiltered endpoints to actual fresh setup/encryption/key generation.
++* `Wee20.Linear.saSimAdv_eq_freshSaSimAdv`: transfer of simulation advantage.
++* `Wee20.Linear.linear_freshSaSimAdv_le`: the explicit two-reduction bound for those raw laws.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, §2.2, p. 5, §4.2,
++  pp. 9–10, and Appendix B, Theorem 1, pp. 12–14.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
++
++open Complexity TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++
++/-- Both unfiltered padded endpoints have EXACTLY the acceptance laws of actual fresh
++setup, encryption and adaptive key generation [Wee20, §4.2, pp. 9–10]. This is a fresh-law
++coupling statement, not a relabelling of the two padded endpoint definitions.
++
++**Proof sketch.** Read the actual setup/enc/keyGen and simSetup/simEnc/simKey laws through
++their published equation readers. Reindex the independent setup coordinates in the common
++scalar tape; real setup ignores c,w,v and the simulator ignores the encryption seed.
++For each function adaptively chosen from the past transcript, restrict a fresh padded
++block by injective mCoord/tCoord and the disjoint final-output offset. The restriction of
++uniform scalar functions is uniform on the actual function-dependent draw type, using
++shared coordinate-sampling and equivalence readers. Reuse Games.expect_simulate_tapeImpl,
++then Games.expect_simulate_abs_inv to discard unused blocks and relate the accepted-key
++counter to fresh key calls; refusals preserve the invariant and sample no actual draw.
++The honest encryption seed is independent of the selected challenge and all key blocks.
++Use simulate_buildComp_detImpl_eq_pure for the padded interpreter and buildComp's published
++query-cost bound for its TOTAL budget. Average pp and adversary coins. No rank condition
++is imposed, so the singular total-inverse branch is coupled on the ideal side as well. -/
++theorem saGame_eq_freshSaGame (G : BilinearGen) {ℓ n' : PolyExpr}
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr)
++    (A : SAAdv G PG zDim) (ideal : Bool) (κ : ℕ) :
++    accept (saGame G PG zDim A ideal κ) = accept (freshSaGame G PG zDim A ideal κ) := sorry
++
++/-- The padded and actual fresh raw simulation advantages coincide
++[Wee20, §2.2, p. 5; Appendix B, Theorem 1, p. 12].
++
++**Proof sketch.** Read both advantage definitions, substitute both acceptance equalities
++from saGame_eq_freshSaGame, and use the published advantage/acceptance reader. -/
++theorem saSimAdv_eq_freshSaSimAdv (G : BilinearGen) {ℓ n' : PolyExpr}
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr)
++    (A : SAAdv G PG zDim) (κ : ℕ) :
++    saSimAdv G PG zDim A κ = freshSaSimAdv G PG zDim A κ := sorry
++
++/-- Every typed adversary against the ACTUAL fresh raw laws has one advice family for
++which every pair of realising machines satisfies the two-MDDH bound with one exact rank
++loss [Wee20, Appendix B, Theorem 1, pp. 12–14].
++
++**Proof sketch.** Use linear_saSimAdv_le with its existing explicit reduction functions,
++then transfer its left side using saSimAdv_eq_freshSaSimAdv. This introduces no new
++realisability premise and no extra statistical loss. -/
++theorem linear_freshSaSimAdv_le (G : BilinearGen) {ℓ n' : PolyExpr}
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr)
++    (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G PG zDim) :
++    ∃ ω : Fin 2 → ∀ κ, Advice PG zDim A.budget p κ, ∀ D : Fin 2 → NUPPT,
++      (D 0).RealizesOn (G.mddhEnc (.const 1) (.const 3)) A.coins
++        (red0 G PG zDim p hp A (ω 0)) →
++      (D 1).RealizesOn (G.mddhEnc ℓ (PG.mBound.mul A.budget)) A.coins
++        (red1 G PG zDim p hp A (ω 1)) →
++      ∀ κ, freshSaSimAdv G PG zDim A κ ≤
++        G.mddhAdv (.const 1) (.const 3) (D 0) κ +
++        G.mddhAdv ℓ (PG.mBound.mul A.budget) (D 1) κ + linearSlack G κ := sorry
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean
+new file mode 100644
+index 000000000..c82fbbadc
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean
+@@ -0,0 +1,167 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Games
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Fresh-draw semi-adaptive experiments for the linear building block
++
++## Main definitions
++
++* `Wee20.Linear.freshRealHandler`: actual `enc` and `keyGen` at each accepted query.
++* `Wee20.Linear.freshIdealHandler`: actual `simEnc` and `simKey` at each accepted query.
++* `Wee20.Linear.freshSaGame`, `freshSaSimAdv`: setup followed by the stateful interaction.
++
++## Main results
++
++Equation readers expose all fresh core-plus-draw calls. `LinearSecurity.Endpoint` proves
++that these experiments have the same acceptance laws as the padded unfiltered endpoints.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, §2.2, p. 5 and §4.2,
++  pp. 9–10. The total call budget includes the challenge, and the key matrix is group-valued.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
++
++open Complexity TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++
++/-- The real oracle calls the actual honest laws with fresh randomness at each accepted
++query [Wee20, §2.2, p. 5; §4.2, p. 9]. Refusals sample nothing and preserve state. -/
++noncomputable def freshRealHandler (G : BilinearGen) {ℓ n' : PolyExpr}
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr)
++    (κ : ℕ) (pp : PublicParams G κ) (pk : MPK G ℓ zDim κ pp)
++    (msk : MSK G ℓ zDim κ pp) :
++    QueryImpl (saSpec G PG zDim κ pp) (SAState G ℓ zDim κ pp) unifSpec
++  | false, msg, st => match st.challenge with
++    | none => (enc G ℓ zDim κ pp pk msg.1 (pp.group.expVec pp.generator msg.2)).map
++        (fun ct => (some ct, ⟨some msg, st.used⟩))
++    | some _ => .pure (none, st)
++  | true, query, st => match st.challenge with
++    | none => .pure (none, st)
++    | some _ => if st.used < q.eval κ then
++        (keyGen G PG zDim κ pp msk query.fn query.matrix).map
++          (fun key => (some ⟨query.fn, key⟩, ⟨st.challenge, st.used + 1⟩))
++      else .pure (none, st)
++
++/-- The fresh real challenge law encrypts its scalar private input in the source group. -/
++theorem freshRealHandler_challenge (G : BilinearGen) {ℓ n' : PolyExpr}
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr)
++    (κ : ℕ) (pp : PublicParams G κ) (pk : MPK G ℓ zDim κ pp)
++    (msk : MSK G ℓ zDim κ pp) (msg : Challenge G ℓ zDim κ pp)
++    (st : SAState G ℓ zDim κ pp) :
++    freshRealHandler G PG zDim q κ pp pk msk false msg st =
++      match st.challenge with
++      | none => (enc G ℓ zDim κ pp pk msg.1 (pp.group.expVec pp.generator msg.2)).map
++          (fun ct => (some ct, ⟨some msg, st.used⟩))
++      | some _ => .pure (none, st) := rfl
++
++/-- The fresh real key law samples its actual function-dependent draw after acceptance. -/
++theorem freshRealHandler_key (G : BilinearGen) {ℓ n' : PolyExpr}
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr)
++    (κ : ℕ) (pp : PublicParams G κ) (pk : MPK G ℓ zDim κ pp)
++    (msk : MSK G ℓ zDim κ pp) (query : KeyQuery G PG zDim κ pp)
++    (st : SAState G ℓ zDim κ pp) :
++    freshRealHandler G PG zDim q κ pp pk msk true query st =
++      match st.challenge with
++      | none => .pure (none, st)
++      | some _ => if st.used < q.eval κ then
++          (keyGen G PG zDim κ pp msk query.fn query.matrix).map
++            (fun key => (some ⟨query.fn, key⟩, ⟨st.challenge, st.used + 1⟩))
++        else .pure (none, st) := rfl
++
++/-- The ideal oracle calls the actual simulator laws at each accepted query
++[Wee20, §2.2, p. 5; §4.2, p. 10]. Its setup state persists, and the protocol state retains
++x,z so every later key receives precisely its allowed source-group leakage. -/
++noncomputable def freshIdealHandler (G : BilinearGen) {ℓ n' : PolyExpr}
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr)
++    (κ : ℕ) (pp : PublicParams G κ) (sim : SimState G ℓ zDim κ pp) :
++    QueryImpl (saSpec G PG zDim κ pp) (SAState G ℓ zDim κ pp) unifSpec
++  | false, msg, st => match st.challenge with
++    | none => (simEnc G ℓ zDim κ pp sim msg.1).map
++        (fun ct => (some ct, ⟨some msg, st.used⟩))
++    | some _ => .pure (none, st)
++  | true, query, st => match st.challenge with
++    | none => .pure (none, st)
++    | some msg => if st.used < q.eval κ then
++        (simKey G PG zDim κ pp sim query.fn query.matrix msg.1
++          (leak G PG zDim κ pp query.fn query.matrix msg.1 msg.2)).map
++          (fun key => (some ⟨query.fn, key⟩, ⟨st.challenge, st.used + 1⟩))
++      else .pure (none, st)
++
++/-- The fresh ideal ciphertext law is the actual simulator encryption law. -/
++theorem freshIdealHandler_challenge (G : BilinearGen) {ℓ n' : PolyExpr}
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr)
++    (κ : ℕ) (pp : PublicParams G κ) (sim : SimState G ℓ zDim κ pp)
++    (msg : Challenge G ℓ zDim κ pp) (st : SAState G ℓ zDim κ pp) :
++    freshIdealHandler G PG zDim q κ pp sim false msg st =
++      match st.challenge with
++      | none => (simEnc G ℓ zDim κ pp sim msg.1).map
++          (fun ct => (some ct, ⟨some msg, st.used⟩))
++      | some _ => .pure (none, st) := rfl
++
++/-- The fresh ideal key law uses the supplied matrix and its exact scalar-input leakage. -/
++theorem freshIdealHandler_key (G : BilinearGen) {ℓ n' : PolyExpr}
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr)
++    (κ : ℕ) (pp : PublicParams G κ) (sim : SimState G ℓ zDim κ pp)
++    (query : KeyQuery G PG zDim κ pp) (st : SAState G ℓ zDim κ pp) :
++    freshIdealHandler G PG zDim q κ pp sim true query st =
++      match st.challenge with
++      | none => .pure (none, st)
++      | some msg => if st.used < q.eval κ then
++          (simKey G PG zDim κ pp sim query.fn query.matrix msg.1
++            (leak G PG zDim κ pp query.fn query.matrix msg.1 msg.2)).map
++            (fun key => (some ⟨query.fn, key⟩, ⟨st.challenge, st.used + 1⟩))
++        else .pure (none, st) := rfl
++
++/-- The raw semi-adaptive experiment samples the ACTUAL setup law and invokes the ACTUAL
++fresh encryption/key laws through the shared stateful simulator
++[Wee20, §2.2, p. 5; §4.2, pp. 9–10]. No basis filter is applied at either endpoint. -/
++noncomputable def freshSaGame (G : BilinearGen) {ℓ n' : PolyExpr}
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr)
++    (A : SAAdv G PG zDim) (ideal : Bool) (κ : ℕ) : ProbComp Bool :=
++  (publicParamsGen G κ).bind fun pp =>
++  (ProbComp.sample (Fin (A.coins.eval κ) → Bool)).bind fun r =>
++  if ideal then (simSetup G ℓ zDim κ pp).bind fun ctx =>
++    (simulate (freshIdealHandler G PG zDim A.budget κ pp ctx.2)
++      (SAAdv.run G PG zDim A κ pp ctx.1 (List.ofFn r)) ⟨none, 0⟩).map Prod.fst
++  else (setup G ℓ zDim κ pp).bind fun ctx =>
++    (simulate (freshRealHandler G PG zDim A.budget κ pp ctx.1 ctx.2)
++      (SAAdv.run G PG zDim A κ pp ctx.1 (List.ofFn r)) ⟨none, 0⟩).map Prod.fst
++
++/-- The fresh experiment is the displayed setup and stateful simulation of its raw laws. -/
++theorem freshSaGame_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (A : SAAdv G PG zDim)
++    (ideal : Bool) (κ : ℕ) :
++    freshSaGame G PG zDim A ideal κ =
++      (publicParamsGen G κ).bind fun pp =>
++      (ProbComp.sample (Fin (A.coins.eval κ) → Bool)).bind fun r =>
++      if ideal then (simSetup G ℓ zDim κ pp).bind fun ctx =>
++        (simulate (freshIdealHandler G PG zDim A.budget κ pp ctx.2)
++          (SAAdv.run G PG zDim A κ pp ctx.1 (List.ofFn r)) ⟨none, 0⟩).map Prod.fst
++      else (setup G ℓ zDim κ pp).bind fun ctx =>
++        (simulate (freshRealHandler G PG zDim A.budget κ pp ctx.1 ctx.2)
++          (SAAdv.run G PG zDim A κ pp ctx.1 (List.ofFn r)) ⟨none, 0⟩).map Prod.fst := rfl
++
++/-- Fresh-law simulation advantage compares the actual raw endpoints
++[Wee20, Theorem 1, p. 8 and §2.2, p. 5]. -/
++noncomputable def freshSaSimAdv (G : BilinearGen) {ℓ n' : PolyExpr}
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr)
++    (A : SAAdv G PG zDim) (κ : ℕ) : ℝ :=
++  advantage (freshSaGame G PG zDim A false κ) (freshSaGame G PG zDim A true κ)
++
++/-- Fresh-law advantage is the library advantage between the displayed raw experiments. -/
++theorem freshSaSimAdv_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (A : SAAdv G PG zDim) (κ : ℕ) :
++    freshSaSimAdv G PG zDim A κ =
++      advantage (freshSaGame G PG zDim A false κ) (freshSaGame G PG zDim A true κ) := rfl
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Games.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Games.lean
+new file mode 100644
+index 000000000..29bed5e6a
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Games.lean
+@@ -0,0 +1,228 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Keys
++import TCSlib.Cryptography.Games.Advantage
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Six explicit semi-adaptive games for linear PHFE
++
++## Main definitions
++
++* `Wee20.Linear.gameHandler`: the six actual ciphertext/key formulas of the source games.
++* `Wee20.Linear.game0Handler` through `game5Handler`: named oracle implementations.
++* `Wee20.Linear.runGameDet`, `game`: bounded deterministic runs and their exact laws.
++* `Wee20.Linear.saGame`, `saSimAdv`: the unfiltered real and ideal experiments.
++
++## Main results
++
++Equation readers expose every formula and run. The total adversary budget is unchanged.
++Intermediate games 2–5 return false on singular augmented bases. The first computational
++hop is unfiltered; the theorem compares the two endpoint bad portions together, charging
++one exact rank-failure probability rather than two triangle-inequality losses.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, §2.2, p. 5 and Appendix B,
++  pp. 12–14, Games 0–5 and Lemmas 2–5.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
++
++open Complexity TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++open scoped Matrix
++
++/-- The actual six handlers implement honest keys, the basis decomposition, the two
++middle key formulas, and the ideal group-leakage simulator in that order
++[Wee20, Appendix B, pp. 12–14, Games 0–5]. -/
++def gameHandler (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (mode : Fin 6)
++    (κ : ℕ) (pp : PublicParams G κ) (st : SimState G ℓ zDim κ pp)
++    (ω : SecurityDraw G PG zDim q κ pp) :
++    ∀ i, (saSpec G PG zDim κ pp).dom i → SAState G ℓ zDim κ pp →
++      (saSpec G PG zDim κ pp).rng i × SAState G ℓ zDim κ pp :=
++  protocolHandler G PG zDim (q.eval κ) κ pp
++    (fun msg => if mode.val ≤ 2 then
++      let c := if mode.val = 0 then
++          pp.group.expVec pp.generator (Matrix.vecMul (seedAt G PG zDim q κ pp ω) st.Aᵀ)
++        else pp.group.expVec pp.generator st.c
++      maskedCipher G ℓ zDim κ pp ⟨st.W, st.U, st.V⟩ c msg
++    else simEncCore G ℓ zDim κ pp st msg.1)
++    (fun j msg query =>
++      let kr := keyAt G PG zDim q κ pp ω j query.fn
++      let sr := simKeyAt G PG zDim q κ pp ω j query.fn
++      ⟨query.fn,
++        if mode.val ≤ 1 then keyCore G PG zDim κ pp ⟨st.W, st.U, st.V⟩ query.fn query.matrix kr
++        else if mode.val = 2 then decomposedKey G PG zDim κ pp st query kr
++        else if mode.val = 3 then
++          let tensorR := Matrix.kroneckerMap (fun a b => a * b)
++            (1 : Matrix (Fin (ℓ.eval κ)) (Fin (ℓ.eval κ)) (ZMod pp.group.order)) sr.2.2.1
++          semiKey G PG zDim κ pp st msg query sr.1 sr.2.2.2
++            (pp.group.expMat pp.generator sr.2.2.1)
++            (pp.group.expVec pp.generator
++              (Matrix.vecMul (globalUAt G PG zDim q κ pp ω) tensorR))
++        else if mode.val = 4 then semiKey G PG zDim κ pp st msg query sr.1 sr.2.2.2
++          (pp.group.expMat pp.generator sr.2.2.1) (pp.group.expVec pp.generator sr.2.1)
++        else simKeyCore G PG zDim κ pp st query.fn query.matrix msg.1
++          (leak G PG zDim κ pp query.fn query.matrix msg.1 msg.2) sr⟩)
++
++/-- The game handler is the displayed protocol with the six explicit source formulas. -/
++theorem gameHandler_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (mode : Fin 6)
++    (κ : ℕ) (pp : PublicParams G κ) (st : SimState G ℓ zDim κ pp)
++    (ω : SecurityDraw G PG zDim q κ pp) :
++    gameHandler G PG zDim q mode κ pp st ω =
++      protocolHandler G PG zDim (q.eval κ) κ pp
++        (fun msg => if mode.val ≤ 2 then
++          let c := if mode.val = 0 then
++              pp.group.expVec pp.generator (Matrix.vecMul (seedAt G PG zDim q κ pp ω) st.Aᵀ)
++            else pp.group.expVec pp.generator st.c
++          maskedCipher G ℓ zDim κ pp ⟨st.W, st.U, st.V⟩ c msg
++        else simEncCore G ℓ zDim κ pp st msg.1)
++        (fun j msg query =>
++          let kr := keyAt G PG zDim q κ pp ω j query.fn
++          let sr := simKeyAt G PG zDim q κ pp ω j query.fn
++          ⟨query.fn,
++            if mode.val ≤ 1 then
++              keyCore G PG zDim κ pp ⟨st.W, st.U, st.V⟩ query.fn query.matrix kr
++            else if mode.val = 2 then decomposedKey G PG zDim κ pp st query kr
++            else if mode.val = 3 then
++              let tensorR := Matrix.kroneckerMap (fun a b => a * b)
++                (1 : Matrix (Fin (ℓ.eval κ)) (Fin (ℓ.eval κ)) (ZMod pp.group.order)) sr.2.2.1
++              semiKey G PG zDim κ pp st msg query sr.1 sr.2.2.2
++                (pp.group.expMat pp.generator sr.2.2.1)
++                (pp.group.expVec pp.generator
++                  (Matrix.vecMul (globalUAt G PG zDim q κ pp ω) tensorR))
++            else if mode.val = 4 then semiKey G PG zDim κ pp st msg query sr.1 sr.2.2.2
++              (pp.group.expMat pp.generator sr.2.2.1) (pp.group.expVec pp.generator sr.2.1)
++            else simKeyCore G PG zDim κ pp st query.fn query.matrix msg.1
++              (leak G PG zDim κ pp query.fn query.matrix msg.1 msg.2) sr⟩) := rfl
++
++section NamedHandlers
++
++variable (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++  (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (κ : ℕ)
++  (pp : PublicParams G κ) (st : SimState G ℓ zDim κ pp)
++  (ω : SecurityDraw G PG zDim q κ pp)
++
++/-- The real handler uses the honest mask and honest key formula [Wee20, Game 0, p. 12]. -/
++def game0Handler := gameHandler G PG zDim q 0 κ pp st ω
++/-- The first handler replaces only the ciphertext mask [Wee20, Game 1, p. 12]. -/
++def game1Handler := gameHandler G PG zDim q 1 κ pp st ω
++/-- The second handler uses explicit basis-decomposed keys [Wee20, Game 2, p. 13]. -/
++def game2Handler := gameHandler G PG zDim q 2 κ pp st ω
++/-- The third handler has a global hidden row times each R [Wee20, Game 3, p. 13]. -/
++def game3Handler := gameHandler G PG zDim q 3 κ pp st ω
++/-- The fourth handler has independent hidden key rows [Wee20, Game 4, p. 13]. -/
++def game4Handler := gameHandler G PG zDim q 4 κ pp st ω
++/-- The fifth handler is the actual group-leakage simulator [Wee20, Game 5, p. 13]. -/
++def game5Handler := gameHandler G PG zDim q 5 κ pp st ω
++
++/-- The real handler is its indexed explicit formula. -/
++theorem game0Handler_eq : game0Handler G PG zDim q κ pp st ω =
++    gameHandler G PG zDim q 0 κ pp st ω := rfl
++/-- The first handler is its indexed explicit formula. -/
++theorem game1Handler_eq : game1Handler G PG zDim q κ pp st ω =
++    gameHandler G PG zDim q 1 κ pp st ω := rfl
++/-- The second handler is its indexed explicit formula. -/
++theorem game2Handler_eq : game2Handler G PG zDim q κ pp st ω =
++    gameHandler G PG zDim q 2 κ pp st ω := rfl
++/-- The third handler is its indexed explicit formula. -/
++theorem game3Handler_eq : game3Handler G PG zDim q κ pp st ω =
++    gameHandler G PG zDim q 3 κ pp st ω := rfl
++/-- The fourth handler is its indexed explicit formula. -/
++theorem game4Handler_eq : game4Handler G PG zDim q κ pp st ω =
++    gameHandler G PG zDim q 4 κ pp st ω := rfl
++/-- The ideal handler is its indexed explicit formula. -/
++theorem game5Handler_eq : game5Handler G PG zDim q κ pp st ω =
++    gameHandler G PG zDim q 5 κ pp st ω := rfl
++
++end NamedHandlers
++
++/-- Run the adversary with exactly its TOTAL call budget. Intermediate games are filtered
++on the known scalar basis; singular cases return false before any next move is run.
++This is the good-event form of [Wee20, Appendix B, Games 2–5, p. 13]. -/
++noncomputable def runGameDet (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (A : SAAdv G PG zDim)
++    (mode : Fin 6) (filtered : Bool) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : SecurityDraw G PG zDim A.budget κ pp) (r : List Bool) : Bool :=
++  let ctx := simSetupCore G ℓ zDim κ pp (setupAt G PG zDim A.budget κ pp ω)
++  if filtered && decide (2 ≤ mode.val) &&
++      decide ((basisMatrix G κ pp ctx.2.A ctx.2.c).det = 0) then false
++  else (runDet (A.next κ pp ctx.1 r) false
++    (gameHandler G PG zDim A.budget mode κ pp ctx.2 ω)
++    (A.budget.eval κ) [] ⟨none, 0⟩).1
++
++/-- The deterministic game run has its exact bad-event filter and total-budget interpreter. -/
++theorem runGameDet_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (A : SAAdv G PG zDim)
++    (mode : Fin 6) (filtered : Bool) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : SecurityDraw G PG zDim A.budget κ pp) (r : List Bool) :
++    runGameDet G PG zDim A mode filtered κ pp ω r =
++      let ctx := simSetupCore G ℓ zDim κ pp (setupAt G PG zDim A.budget κ pp ω)
++      if filtered && decide (2 ≤ mode.val) &&
++          decide ((basisMatrix G κ pp ctx.2.A ctx.2.c).det = 0) then false
++      else (runDet (A.next κ pp ctx.1 r) false
++        (gameHandler G PG zDim A.budget mode κ pp ctx.2 ω)
++        (A.budget.eval κ) [] ⟨none, 0⟩).1 := rfl
++
++/-- The six exact game laws draw shared public parameters, one uniform scalar tape and the
++adversary's independent coins [Wee20, Appendix B, pp. 12–14]. -/
++noncomputable def game (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (A : SAAdv G PG zDim)
++    (mode : Fin 6) (κ : ℕ) : ProbComp Bool :=
++  (publicParamsGen G κ).bind fun pp =>
++  (ProbComp.sample (SecurityDraw G PG zDim A.budget κ pp)).bind fun ω =>
++  (ProbComp.sample (Fin (A.coins.eval κ) → Bool)).bind fun r =>
++    .pure (runGameDet G PG zDim A mode true κ pp ω (List.ofFn r))
++
++/-- Each game law is its displayed sequence of uniform draws and deterministic run. -/
++theorem game_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (A : SAAdv G PG zDim)
++    (mode : Fin 6) (κ : ℕ) :
++    game G PG zDim A mode κ =
++      (publicParamsGen G κ).bind fun pp =>
++      (ProbComp.sample (SecurityDraw G PG zDim A.budget κ pp)).bind fun ω =>
++      (ProbComp.sample (Fin (A.coins.eval κ) → Bool)).bind fun r =>
++        .pure (runGameDet G PG zDim A mode true κ pp ω (List.ofFn r)) := rfl
++
++/-- The real and ideal experiments are UNFILTERED; ideal keys receive exactly the group
++leakage for each adaptive function/matrix query [Wee20, §2.2, p. 5; §4, p. 8]. -/
++noncomputable def saGame (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (A : SAAdv G PG zDim)
++    (ideal : Bool) (κ : ℕ) : ProbComp Bool :=
++  (publicParamsGen G κ).bind fun pp =>
++  (ProbComp.sample (SecurityDraw G PG zDim A.budget κ pp)).bind fun ω =>
++  (ProbComp.sample (Fin (A.coins.eval κ) → Bool)).bind fun r =>
++    .pure (runGameDet G PG zDim A (if ideal then 5 else 0) false κ pp ω (List.ofFn r))
++
++/-- The semi-adaptive game is its unfiltered exact draw-and-run law. -/
++theorem saGame_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (A : SAAdv G PG zDim)
++    (ideal : Bool) (κ : ℕ) :
++    saGame G PG zDim A ideal κ =
++      (publicParamsGen G κ).bind fun pp =>
++      (ProbComp.sample (SecurityDraw G PG zDim A.budget κ pp)).bind fun ω =>
++      (ProbComp.sample (Fin (A.coins.eval κ) → Bool)).bind fun r =>
++        .pure (runGameDet G PG zDim A (if ideal then 5 else 0) false κ pp ω (List.ofFn r)) := rfl
++
++/-- Π's simulation advantage compares its actual unfiltered endpoint experiments
++[Wee20, Appendix B, Theorem 1, p. 12]. -/
++noncomputable def saSimAdv (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (A : SAAdv G PG zDim) (κ : ℕ) : ℝ :=
++  advantage (saGame G PG zDim A false κ) (saGame G PG zDim A true κ)
++
++/-- The simulation advantage is the library's two-experiment advantage. -/
++theorem saSimAdv_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (A : SAAdv G PG zDim) (κ : ℕ) :
++    saSimAdv G PG zDim A κ =
++      advantage (saGame G PG zDim A false κ) (saGame G PG zDim A true κ) := rfl
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean
+new file mode 100644
+index 000000000..16b970a5f
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean
+@@ -0,0 +1,185 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Data
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Explicit ciphertext and key formulas for the linear hybrids
++
++## Main definitions
++
++* `Wee20.Linear.maskedCipher`: the real mask formula at any group-valued first block.
++* `Wee20.Linear.decomposedKey`: the inverse-basis form of the actual honest key.
++* `Wee20.Linear.ProjectedKey`, `projectedKey`: public projected key rows from group `R`.
++* `Wee20.Linear.semiKey`: the two middle hybrid key formulas, from group `R` and `uhat`.
++
++## Main results
++
++Every formula has a proved equation reader. All operations on unknown group elements are
++products or powers by known scalar coefficients. No draw, machine or decoder is constructed.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Appendix B, pp. 12–14,
++  Games 1–4; §4.2, p. 10, (12).
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
++
++open Complexity TCSlib.Cryptography.Pairing
++open scoped Matrix
++
++/-- Form the masked ciphertext at any supplied GROUP first block
++[Wee20, Appendix B, p. 12, Game 1]. -/
++def maskedCipher (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (st : MSK G ℓ zDim κ pp) (c : Fin 3 → pp.group.G)
++    (msg : Challenge G ℓ zDim κ pp) : CT G zDim κ pp :=
++  ⟨c, pp.group.expVec pp.generator msg.2 * groupMatMul (fun _ : Fin 1 => c) st.W 0,
++    groupMatMul (fun _ : Fin 1 => c)
++      (st.U * PartialGarbling.publicTensor (p := pp.orderParam) (M := Fin 2) msg.1 + st.V) 0⟩
++
++/-- The masked ciphertext is its displayed group row action and known-input mask. -/
++theorem maskedCipher_eq (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (st : MSK G ℓ zDim κ pp) (c : Fin 3 → pp.group.G)
++    (msg : Challenge G ℓ zDim κ pp) :
++    maskedCipher G ℓ zDim κ pp st c msg =
++      ⟨c, pp.group.expVec pp.generator msg.2 * groupMatMul (fun _ : Fin 1 => c) st.W 0,
++        groupMatMul (fun _ : Fin 1 => c)
++          (st.U * PartialGarbling.publicTensor (p := pp.orderParam) (M := Fin 2) msg.1 + st.V)
++          0⟩ := rfl
++
++/-- Rewrite the actual honest key through the known projected and hidden basis rows
++[Wee20, Appendix B, p. 13, Game 2]. The total inverse is used even on singular inputs. -/
++def decomposedKey (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (st : SimState G ℓ zDim κ pp) (query : KeyQuery G PG zDim κ pp)
++    (ω : KeyDraw G PG κ pp query.fn) : Key G PG κ pp query.fn :=
++  let sk := keyCore G PG zDim κ pp ⟨st.W, st.U, st.V⟩ query.fn query.matrix ω
++  let C := fun i j => st.basisInv i (Fin.castSucc j)
++  let a := fun i => st.basisInv i (Fin.last 2)
++  ⟨combineRows G κ pp C a (matMulGroup st.Aᵀ sk.K1) (groupVecMul st.c sk.K1),
++    combineRows G κ pp C a (matMulGroup st.Aᵀ sk.K2) (groupVecMul st.c sk.K2),
++    combineRows G κ pp C a (matMulGroup st.Aᵀ sk.K3) (groupVecMul st.c sk.K3), sk.R⟩
++
++/-- The second-game key has the exact projected/hidden decomposition of the honest key. -/
++theorem decomposedKey_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (st : SimState G ℓ zDim κ pp) (query : KeyQuery G PG zDim κ pp)
++    (ω : KeyDraw G PG κ pp query.fn) :
++    decomposedKey G PG zDim κ pp st query ω =
++      let sk := keyCore G PG zDim κ pp ⟨st.W, st.U, st.V⟩ query.fn query.matrix ω
++      let C := fun i j => st.basisInv i (Fin.castSucc j)
++      let a := fun i => st.basisInv i (Fin.last 2)
++      ⟨combineRows G κ pp C a (matMulGroup st.Aᵀ sk.K1) (groupVecMul st.c sk.K1),
++        combineRows G κ pp C a (matMulGroup st.Aᵀ sk.K2) (groupVecMul st.c sk.K2),
++        combineRows G κ pp C a (matMulGroup st.Aᵀ sk.K3) (groupVecMul st.c sk.K3), sk.R⟩ := rfl
++
++/-- The public projected part of a key consists of its three two-row blocks
++[Wee20, Appendix B, p. 13, Game 2]. -/
++structure ProjectedKey (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) where
++  /-- The output block. -/
++  K1 : Matrix (Fin 2) (Fin (n'.eval κ)) pp.group.G
++  /-- The public-variable block. -/
++  K2 : Matrix (Fin 2) (Fin (ℓ.eval κ) × PG.MIdx κ pp.orderParam f) pp.group.G
++  /-- The constant block. -/
++  K3 : Matrix (Fin 2) (PG.MIdx κ pp.orderParam f) pp.group.G
++
++/-- Compute the projected rows from known T and GROUP R
++[Wee20, Appendix B, p. 13, Games 3–4]. This form is usable by the MDDH reduction. -/
++def projectedKey (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (st : SimState G ℓ zDim κ pp) (query : KeyQuery G PG zDim κ pp)
++    (T : Matrix (Fin 3) (PG.TIdx κ pp.orderParam query.fn ⊕ Fin (n'.eval κ))
++      (ZMod pp.group.order))
++    (R : Matrix (Fin 2) (PG.MIdx κ pp.orderParam query.fn) pp.group.G) :
++    ProjectedKey G PG κ pp query.fn :=
++  let A := st.Aᵀ
++  let tensorR := Matrix.kroneckerMap (fun a b => b ^ a.val)
++    (1 : Matrix (Fin (ℓ.eval κ)) (Fin (ℓ.eval κ)) (ZMod pp.group.order)) R
++  ⟨pp.group.expMat pp.generator (A * (fun i j => T i (Sum.inr j))) *
++      matMulGroup (A * st.W) query.matrix,
++    pp.group.expMat pp.generator ((A * T) * PG.L1 κ pp.orderParam query.fn) *
++      matMulGroup (A * st.U) tensorR,
++    pp.group.expMat pp.generator ((A * T) * PG.L0 κ pp.orderParam query.fn) *
++      matMulGroup (A * st.V) R⟩
++
++/-- Projected key rows use known scalar coefficients and the supplied group matrix R. -/
++theorem projectedKey_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (st : SimState G ℓ zDim κ pp) (query : KeyQuery G PG zDim κ pp)
++    (T : Matrix (Fin 3) (PG.TIdx κ pp.orderParam query.fn ⊕ Fin (n'.eval κ))
++      (ZMod pp.group.order))
++    (R : Matrix (Fin 2) (PG.MIdx κ pp.orderParam query.fn) pp.group.G) :
++    projectedKey G PG zDim κ pp st query T R =
++      let A := st.Aᵀ
++      let tensorR := Matrix.kroneckerMap (fun a b => b ^ a.val)
++        (1 : Matrix (Fin (ℓ.eval κ)) (Fin (ℓ.eval κ)) (ZMod pp.group.order)) R
++      ⟨pp.group.expMat pp.generator (A * (fun i j => T i (Sum.inr j))) *
++          matMulGroup (A * st.W) query.matrix,
++        pp.group.expMat pp.generator ((A * T) * PG.L1 κ pp.orderParam query.fn) *
++          matMulGroup (A * st.U) tensorR,
++        pp.group.expMat pp.generator ((A * T) * PG.L0 κ pp.orderParam query.fn) *
++          matMulGroup (A * st.V) R⟩ := rfl
++
++/-- The middle key formula accepts GROUP R and GROUP uhat, allowing the two MDDH challenge
++branches to answer the same adaptive queries [Wee20, Appendix B, p. 13, Games 3–4]. -/
++def semiKey (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (st : SimState G ℓ zDim κ pp) (msg : Challenge G ℓ zDim κ pp)
++    (query : KeyQuery G PG zDim κ pp)
++    (T : Matrix (Fin 3) (PG.TIdx κ pp.orderParam query.fn ⊕ Fin (n'.eval κ))
++      (ZMod pp.group.order))
++    (t : (PG.TIdx κ pp.orderParam query.fn ⊕ Fin (n'.eval κ)) → ZMod pp.group.order)
++    (R : Matrix (Fin 2) (PG.MIdx κ pp.orderParam query.fn) pp.group.G)
++    (uhat : (Fin (ℓ.eval κ) × PG.MIdx κ pp.orderParam query.fn) → pp.group.G) :
++    Key G PG κ pp query.fn :=
++  let high := projectedKey G PG zDim κ pp st query T R
++  let X := PartialGarbling.publicTensor (p := pp.orderParam)
++    (M := PG.MIdx κ pp.orderParam query.fn) msg.1
++  let low1 := pp.group.expVec pp.generator (fun j => t (Sum.inr j)) *
++    groupVecMul (st.w - msg.2) query.matrix
++  let low2 := pp.group.expVec pp.generator (Matrix.vecMul t (PG.L1 κ pp.orderParam query.fn)) *
++    uhat
++  let low3 := fun u => pp.generator ^ (Matrix.vecMul t (PG.L0 κ pp.orderParam query.fn) u).val *
++    (groupDot uhat (fun i => X i u))⁻¹ * groupVecMul st.v R u
++  let C := fun i j => st.basisInv i (Fin.castSucc j)
++  let a := fun i => st.basisInv i (Fin.last 2)
++  ⟨combineRows G κ pp C a high.K1 low1, combineRows G κ pp C a high.K2 low2,
++    combineRows G κ pp C a high.K3 low3, R⟩
++
++/-- The middle key is its exact projected part and displayed hidden-row formulas. -/
++theorem semiKey_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (st : SimState G ℓ zDim κ pp) (msg : Challenge G ℓ zDim κ pp)
++    (query : KeyQuery G PG zDim κ pp)
++    (T : Matrix (Fin 3) (PG.TIdx κ pp.orderParam query.fn ⊕ Fin (n'.eval κ))
++      (ZMod pp.group.order))
++    (t : (PG.TIdx κ pp.orderParam query.fn ⊕ Fin (n'.eval κ)) → ZMod pp.group.order)
++    (R : Matrix (Fin 2) (PG.MIdx κ pp.orderParam query.fn) pp.group.G)
++    (uhat : (Fin (ℓ.eval κ) × PG.MIdx κ pp.orderParam query.fn) → pp.group.G) :
++    semiKey G PG zDim κ pp st msg query T t R uhat =
++      let high := projectedKey G PG zDim κ pp st query T R
++      let X := PartialGarbling.publicTensor (p := pp.orderParam)
++        (M := PG.MIdx κ pp.orderParam query.fn) msg.1
++      let low1 := pp.group.expVec pp.generator (fun j => t (Sum.inr j)) *
++        groupVecMul (st.w - msg.2) query.matrix
++      let low2 :=
++        pp.group.expVec pp.generator (Matrix.vecMul t (PG.L1 κ pp.orderParam query.fn)) * uhat
++      let low3 := fun u =>
++        pp.generator ^ (Matrix.vecMul t (PG.L0 κ pp.orderParam query.fn) u).val *
++          (groupDot uhat (fun i => X i u))⁻¹ * groupVecMul st.v R u
++      let C := fun i j => st.basisInv i (Fin.castSucc j)
++      let a := fun i => st.basisInv i (Fin.last 2)
++      ⟨combineRows G κ pp C a high.K1 low1, combineRows G κ pp C a high.K2 low2,
++        combineRows G κ pp C a high.K3 low3, R⟩ := rfl
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Reductions.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Reductions.lean
+new file mode 100644
+index 000000000..906eaca68
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Reductions.lean
+@@ -0,0 +1,288 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Games
++import TCSlib.Cryptography.Pairing.MatrixDH.SelfReduction
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Deterministic MDDH reduction functions for linear PHFE
++
++## Main definitions
++
++* `Wee20.Linear.Advice`, `adviceEnc`, `adviceLen`: fixed-schedule scalar advice and encoding.
++* `Wee20.Linear.adviceDraw`: transport advice into the public field through the order reader.
++* `Wee20.Linear.red0Handler`, `red0`: the unfiltered ciphertext hop against MDDH¹_{2,3}.
++* `Wee20.Linear.challengeR`, `challengeUhat`: padded per-query group blocks of MDDH data.
++* `Wee20.Linear.red1Handler`, `red1`: the good-filtered adaptive-key hop against
++  MDDH^ℓ_{2,mBound·q}.
++
++## Main results
++
++Readers expose every encoding, cast and deterministic run. Advice is finite and nonempty
++under the shared fixed prime schedule. No reduction samples or computes a group exponent.
++The shared realisation predicate constrains only encoded challenges and layout-length coins.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Appendix B, pp. 12–14,
++  Lemmas 2 and 4 (the two computational hops).
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
++
++open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++open scoped Matrix
++
++/-- Fixed-schedule advice stores all scalar tape coordinates, before the group draw.
++It contains no group elements or sampled response [Wee20, Appendix B, Lemmas 2 and 4]. -/
++abbrev Advice {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (p : ℕ → ℕ) (κ : ℕ) :=
++  Fin ((securityCount PG zDim q).eval κ) → ZMod (p κ)
++
++/-- Advice is exactly its fixed-schedule scalar vector. -/
++theorem advice_eq {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (p : ℕ → ℕ) (κ : ℕ) :
++    Advice PG zDim q p κ = (Fin ((securityCount PG zDim q).eval κ) → ZMod (p κ)) := rfl
++
++/-- The all-zero tape inhabits advice at every parameter. Technical glue. -/
++theorem advice_nonempty {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (p : ℕ → ℕ) (κ : ℕ) :
++    Nonempty (Advice PG zDim q p κ) := ⟨0⟩
++
++/-- Advice is finite by the shared prime-schedule reader, without an extra nonzero premise. -/
++theorem advice_finite (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) : Finite (Advice PG zDim q p κ) :=
++  letI : NeZero (p κ) := orderSchedule_neZero G p hp κ
++  inferInstance
++
++/-- Transport known advice scalars through the actual public-order equality. This is the
++shared Mathlib ring equivalence, not a new scalar extraction primitive. -/
++def adviceDraw (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : Advice PG zDim q p κ) : SecurityDraw G PG zDim q κ pp :=
++  fun i => ZMod.ringEquivCongr (order_eq_of_publicParams G p hp κ pp).symm (ω i)
++
++/-- The advice cast is coordinatewise `ZMod.ringEquivCongr`. -/
++theorem adviceDraw_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : Advice PG zDim q p κ) :
++    adviceDraw G PG zDim q p hp κ pp ω =
++      fun i => ZMod.ringEquivCongr (order_eq_of_publicParams G p hp κ pp).symm (ω i) := rfl
++
++/-- Public advice metadata explicitly supplies κ,ℓ,n',zDim,q and the uniform node bound. -/
++def adviceMeta {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (κ : ℕ) : List Bool :=
++  let num := fun n => Candidates.natToList (Nat.size n) n
++  pairEncode (List.replicate κ true) (pairEncode (num (ℓ.eval κ))
++    (pairEncode (num (n'.eval κ)) (pairEncode (num (zDim.eval κ))
++      (pairEncode (num (q.eval κ)) (num (PG.mBound.eval κ))))))
++
++/-- The metadata word uses the displayed unary parameter and binary dimension headers. -/
++theorem adviceMeta_eq {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (κ : ℕ) :
++    adviceMeta PG zDim q κ =
++      let num := fun n => Candidates.natToList (Nat.size n) n
++      pairEncode (List.replicate κ true) (pairEncode (num (ℓ.eval κ))
++        (pairEncode (num (n'.eval κ)) (pairEncode (num (zDim.eval κ))
++          (pairEncode (num (q.eval κ)) (num (PG.mBound.eval κ)))))) := rfl
++
++/-- Encode advice with public dimension headers and the existing modular-vector encoder. -/
++def adviceEnc (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) (ω : Advice PG zDim q p κ) : List Bool :=
++  letI : NeZero (p κ) := orderSchedule_neZero G p hp κ
++  pairEncode (adviceMeta PG zDim q κ) (Encoding.Modular.encodeVector (G.wG.eval κ) ω)
++
++/-- Advice encoding pairs its public metadata and fixed-width scalar vector. -/
++theorem adviceEnc_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) (ω : Advice PG zDim q p κ) :
++    adviceEnc G PG zDim q p hp κ ω =
++      letI : NeZero (p κ) := orderSchedule_neZero G p hp κ
++      pairEncode (adviceMeta PG zDim q κ) (Encoding.Modular.encodeVector (G.wG.eval κ) ω) := rfl
++
++/-- A polynomial bounds public headers and all scalar advice bits. Technical glue. -/
++def adviceLen (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) : PolyExpr :=
++  (((((((PolyExpr.var.mul (.const 4)).add ((.const 4).mul ℓ)).add ((.const 4).mul n')).add
++    ((.const 4).mul zDim)).add ((.const 4).mul q)).add ((.const 2).mul PG.mBound)).add
++    (.const 40)).add ((securityCount PG zDim q).mul G.wG)
++
++/-- The advice-length polynomial is its displayed header and scalar-block bound. -/
++theorem adviceLen_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) :
++    adviceLen G PG zDim q =
++      (((((((PolyExpr.var.mul (.const 4)).add ((.const 4).mul ℓ)).add ((.const 4).mul n')).add
++        ((.const 4).mul zDim)).add ((.const 4).mul q)).add ((.const 2).mul PG.mBound)).add
++        (.const 40)).add ((securityCount PG zDim q).mul G.wG) := rfl
++
++/-- The first reduction's public key uses only GROUP A and known scalar masks
++[Wee20, Appendix B, p. 12, Lemma 2]. -/
++def publicFromGroupA (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (A : Matrix (Fin 2) (Fin 3) pp.group.G) (st : MSK G ℓ zDim κ pp) : MPK G ℓ zDim κ pp :=
++  ⟨A, groupMatMul A st.W, groupMatMul A st.U, groupMatMul A st.V⟩
++
++/-- The public-key computation is its displayed known-scalar group matrix actions. -/
++theorem publicFromGroupA_eq (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (A : Matrix (Fin 2) (Fin 3) pp.group.G)
++    (st : MSK G ℓ zDim κ pp) :
++    publicFromGroupA G ℓ zDim κ pp A st =
++      ⟨A, groupMatMul A st.W, groupMatMul A st.U, groupMatMul A st.V⟩ := rfl
++
++/-- The first L2 handler uses the challenge's GROUP c and hardwired W,U,V,T,R. It answers
++adaptive key queries honestly and never samples [Wee20, Appendix B, Lemma 2, p. 13]. -/
++def red0Handler (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (κ : ℕ)
++    (c : G.MDDHChallenge (.const 1) (.const 3) κ)
++    (ω : SecurityDraw G PG zDim q κ c.pp) :
++    ∀ i, (saSpec G PG zDim κ c.pp).dom i → SAState G ℓ zDim κ c.pp →
++      (saSpec G PG zDim κ c.pp).rng i × SAState G ℓ zDim κ c.pp :=
++  let ss := setupAt G PG zDim q κ c.pp ω
++  let msk : MSK G ℓ zDim κ c.pp := ⟨ss.2.2.1, ss.2.2.2.1, ss.2.2.2.2.1⟩
++  protocolHandler G PG zDim (q.eval κ) κ c.pp
++    (maskedCipher G ℓ zDim κ c.pp msk (fun i => c.response i 0))
++    (fun j _ query => ⟨query.fn,
++      keyCore G PG zDim κ c.pp msk query.fn query.matrix (keyAt G PG zDim q κ c.pp ω j query.fn)⟩)
++
++/-- The first handler is the displayed closed deterministic protocol. -/
++theorem red0Handler_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (κ : ℕ)
++    (c : G.MDDHChallenge (.const 1) (.const 3) κ)
++    (ω : SecurityDraw G PG zDim q κ c.pp) :
++    red0Handler G PG zDim q κ c ω =
++      let ss := setupAt G PG zDim q κ c.pp ω
++      let msk : MSK G ℓ zDim κ c.pp := ⟨ss.2.2.1, ss.2.2.2.1, ss.2.2.2.2.1⟩
++      protocolHandler G PG zDim (q.eval κ) κ c.pp
++        (maskedCipher G ℓ zDim κ c.pp msk (fun i => c.response i 0))
++        (fun j _ query => ⟨query.fn, keyCore G PG zDim κ c.pp msk query.fn query.matrix
++          (keyAt G PG zDim q κ c.pp ω j query.fn)⟩) := rfl
++
++/-- The first L2 reduction runs the typed adversary on the MDDH¹_{2,3} challenge with
++hardwired answers. It contributes exactly the Game0-to-Game1 gap, with no statistical
++slack [Wee20, Appendix B, Lemma 2, p. 13]. -/
++def red0 (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G PG zDim)
++    (ω : ∀ κ, Advice PG zDim A.budget p κ) (κ : ℕ)
++    (c : G.MDDHChallenge (.const 1) (.const 3) κ) (r : List Bool) : List Bool :=
++  let tape := adviceDraw G PG zDim A.budget p hp κ c.pp (ω κ)
++  let ss := setupAt G PG zDim A.budget κ c.pp tape
++  let msk : MSK G ℓ zDim κ c.pp := ⟨ss.2.2.1, ss.2.2.2.1, ss.2.2.2.2.1⟩
++  let pk := publicFromGroupA G ℓ zDim κ c.pp c.matrixᵀ msk
++  [(runDet (A.next κ c.pp pk r) false (red0Handler G PG zDim A.budget κ c tape)
++    (A.budget.eval κ) [] ⟨none, 0⟩).1]
++
++/-- The first reduction is exactly the displayed deterministic run, with A's original coins. -/
++theorem red0_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G PG zDim)
++    (ω : ∀ κ, Advice PG zDim A.budget p κ) (κ : ℕ)
++    (c : G.MDDHChallenge (.const 1) (.const 3) κ) (r : List Bool) :
++    red0 G PG zDim p hp A ω κ c r =
++      let tape := adviceDraw G PG zDim A.budget p hp κ c.pp (ω κ)
++      let ss := setupAt G PG zDim A.budget κ c.pp tape
++      let msk : MSK G ℓ zDim κ c.pp := ⟨ss.2.2.1, ss.2.2.2.1, ss.2.2.2.2.1⟩
++      let pk := publicFromGroupA G ℓ zDim κ c.pp c.matrixᵀ msk
++      [(runDet (A.next κ c.pp pk r) false (red0Handler G PG zDim A.budget κ c tape)
++        (A.budget.eval κ) [] ⟨none, 0⟩).1] := rfl
++
++/-- Read the query's R block from the MDDH base matrix. Rows are ordered by node then query;
++out-of-range inputs return the identity. Accepted queries satisfy the published size bound. -/
++def challengeR (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (q : PolyExpr) (κ : ℕ)
++    (c : G.MDDHChallenge ℓ (PG.mBound.mul q) κ) (j : ℕ) (f : Fn κ c.pp.orderParam) :
++    Matrix (Fin 2) (PG.MIdx κ c.pp.orderParam f) c.pp.group.G :=
++  fun i u =>
++    let row := (PG.mCoord κ c.pp.orderParam f u).val * q.eval κ + j
++    if h : row < (PG.mBound.mul q).eval κ then c.matrix ⟨row, h⟩ i else 1
++
++/-- The group R lookup is exactly the displayed interleaved block extraction. -/
++theorem challengeR_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (q : PolyExpr) (κ : ℕ)
++    (c : G.MDDHChallenge ℓ (PG.mBound.mul q) κ) (j : ℕ) (f : Fn κ c.pp.orderParam) :
++    challengeR G PG q κ c j f = fun i u =>
++      let row := (PG.mCoord κ c.pp.orderParam f u).val * q.eval κ + j
++      if h : row < (PG.mBound.mul q).eval κ then c.matrix ⟨row, h⟩ i else 1 := rfl
++
++/-- Read uhat from the SAME query/node rows of the MDDH response matrix. In the real branch
++this is the hidden global row times R; in the random branch it is independently uniform. -/
++def challengeUhat (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (q : PolyExpr) (κ : ℕ)
++    (c : G.MDDHChallenge ℓ (PG.mBound.mul q) κ) (j : ℕ) (f : Fn κ c.pp.orderParam) :
++    (Fin (ℓ.eval κ) × PG.MIdx κ c.pp.orderParam f) → c.pp.group.G :=
++  fun u =>
++    let row := (PG.mCoord κ c.pp.orderParam f u.2).val * q.eval κ + j
++    if h : row < (PG.mBound.mul q).eval κ then c.response ⟨row, h⟩ u.1 else 1
++
++/-- The hidden-row lookup is the displayed response block on the matching R rows. -/
++theorem challengeUhat_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (q : PolyExpr) (κ : ℕ)
++    (c : G.MDDHChallenge ℓ (PG.mBound.mul q) κ) (j : ℕ) (f : Fn κ c.pp.orderParam) :
++    challengeUhat G PG q κ c j f = fun u =>
++      let row := (PG.mCoord κ c.pp.orderParam f u.2).val * q.eval κ + j
++      if h : row < (PG.mBound.mul q).eval κ then c.response ⟨row, h⟩ u.1 else 1 := rfl
++
++/-- The second L2 handler answers with GROUP R and GROUP uhat from the MDDH challenge,
++using all other coefficients from advice [Wee20, Appendix B, Lemma 4, p. 14]. -/
++def red1Handler (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (κ : ℕ)
++    (c : G.MDDHChallenge ℓ (PG.mBound.mul q) κ) (st : SimState G ℓ zDim κ c.pp)
++    (ω : SecurityDraw G PG zDim q κ c.pp) :
++    ∀ i, (saSpec G PG zDim κ c.pp).dom i → SAState G ℓ zDim κ c.pp →
++      (saSpec G PG zDim κ c.pp).rng i × SAState G ℓ zDim κ c.pp :=
++  protocolHandler G PG zDim (q.eval κ) κ c.pp (fun msg => simEncCore G ℓ zDim κ c.pp st msg.1)
++    (fun j msg query =>
++      let sr := simKeyAt G PG zDim q κ c.pp ω j query.fn
++      ⟨query.fn, semiKey G PG zDim κ c.pp st msg query sr.1 sr.2.2.2
++        (challengeR G PG q κ c j query.fn) (challengeUhat G PG q κ c j query.fn)⟩)
++
++/-- The second handler is its displayed deterministic middle-game oracle. -/
++theorem red1Handler_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (κ : ℕ)
++    (c : G.MDDHChallenge ℓ (PG.mBound.mul q) κ) (st : SimState G ℓ zDim κ c.pp)
++    (ω : SecurityDraw G PG zDim q κ c.pp) :
++    red1Handler G PG zDim q κ c st ω =
++      protocolHandler G PG zDim (q.eval κ) κ c.pp (fun msg => simEncCore G ℓ zDim κ c.pp st msg.1)
++        (fun j msg query =>
++          let sr := simKeyAt G PG zDim q κ c.pp ω j query.fn
++          ⟨query.fn, semiKey G PG zDim κ c.pp st msg query sr.1 sr.2.2.2
++            (challengeR G PG q κ c j query.fn) (challengeUhat G PG q κ c j query.fn)⟩) := rfl
++
++/-- The second L2 reduction filters singular known bases, then runs the adversary against
++its deterministic MDDH-block answers. It contributes the Game3-to-Game4 gap with no further
++slack [Wee20, Appendix B, Lemma 4, p. 14]. No response exponent is recovered. -/
++noncomputable def red1 (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G PG zDim)
++    (ω : ∀ κ, Advice PG zDim A.budget p κ) (κ : ℕ)
++    (c : G.MDDHChallenge ℓ (PG.mBound.mul A.budget) κ) (r : List Bool) : List Bool :=
++  let tape := adviceDraw G PG zDim A.budget p hp κ c.pp (ω κ)
++  let ctx := simSetupCore G ℓ zDim κ c.pp (setupAt G PG zDim A.budget κ c.pp tape)
++  if (basisMatrix G κ c.pp ctx.2.A ctx.2.c).det = 0 then [false]
++  else [(runDet (A.next κ c.pp ctx.1 r) false
++    (red1Handler G PG zDim A.budget κ c ctx.2 tape) (A.budget.eval κ) [] ⟨none, 0⟩).1]
++
++/-- The second reduction is exactly its displayed good-filtered deterministic run. -/
++theorem red1_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G PG zDim)
++    (ω : ∀ κ, Advice PG zDim A.budget p κ) (κ : ℕ)
++    (c : G.MDDHChallenge ℓ (PG.mBound.mul A.budget) κ) (r : List Bool) :
++    red1 G PG zDim p hp A ω κ c r =
++      let tape := adviceDraw G PG zDim A.budget p hp κ c.pp (ω κ)
++      let ctx := simSetupCore G ℓ zDim κ c.pp (setupAt G PG zDim A.budget κ c.pp tape)
++      if (basisMatrix G κ c.pp ctx.2.A ctx.2.c).det = 0 then [false]
++      else [(runDet (A.next κ c.pp ctx.1 r) false
++        (red1Handler G PG zDim A.budget κ c ctx.2 tape) (A.budget.eval κ) [] ⟨none, 0⟩).1] := rfl
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean
+new file mode 100644
+index 000000000..699c40079
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean
+@@ -0,0 +1,228 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Reductions
++import TCSlib.Cryptography.Games.Relational
++import TCSlib.Cryptography.Games.Tapes
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Semi-adaptive simulation bound for the raw linear building block
++
++## Main definitions
++
++This module introduces no reduction predicate or machine-construction target. It uses the
++shared RealizesOn API and the explicit functions in Reductions.
++
++## Main results
++
++* `Wee20.Linear.length_adviceEnc_le`, `adviceEnc_injective`: finite polynomial advice.
++* `Wee20.Linear.game0_game1_le`, `game3_game4_le`: the two computational hops.
++* `Wee20.Linear.game2_game3_accept`, `game4_game5_accept`: exact adaptive/statistical hops.
++* `Wee20.Linear.endpoint_good_comparison`: both endpoint bad portions cost ONE exact
++  rank-failure probability.
++* `Wee20.Linear.linear_saSimAdv_le`: every typed adversary has one advice family that works
++  for every realising machine family at every security parameter.
++
++No realisability hypothesis quantifies over all typed adversaries. Machine existence for
++the eventual derived outer adversaries remains a separate obligation.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Appendix B, Theorem 1,
++  pp. 12–14, Lemmas 2–5. The exact rank failure replaces the printed `1/p` accounting.
++* [AGW20] M. Abdalla, J. Gong, and H. Wee, *Functional Encryption for Attribute-Weighted
++  Sums from k-Lin*, CRYPTO 2020; full version, Cryptology ePrint Archive 2020/762,
++  Lemma 2, p. 12 and Appendix A, (28)–(32), pp. 37–38.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
++
++open Complexity TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++
++/-- Advice encoding has its explicit polynomial bound, uniformly over all scalar tapes.
++This is fixed-advice reduction glue.
++
++**Proof sketch.** Read `adviceEnc_eq` and `adviceMeta_eq`. Use the shared pair-length and
++modular-vector-length readers, bound binary numeral lengths by their values plus one,
++and evaluate `adviceLen`. -/
++theorem length_adviceEnc_le (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) (ω : Advice PG zDim q p κ) :
++    (adviceEnc G PG zDim q p hp κ ω).length ≤ (adviceLen G PG zDim q).eval κ := sorry
++
++/-- The advice word is injective on its complete scalar tape. Fixed-advice encoding glue.
++
++**Proof sketch.** Separate the fixed metadata with `pairEncode_injective`. Reuse
++`Encoding.Modular.encodeVector_injective`, the shared order schedule, and the published
++`BB1Machine.order_le_two_pow`; no scalar encoder is redefined. -/
++theorem adviceEnc_injective (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) :
++    Function.Injective (adviceEnc G PG zDim q p hp κ) := sorry
++
++/-- Padded garbling draw coordinates fit the tape block. Technical size glue.
++
++**Proof sketch.** For auxiliary coordinates use `PG.tCoord`, `auxCount_add_one` and
++`mCount_le_mBound`; for output coordinates use the final-block offset and Fin.isLt. -/
++theorem paddedDrawIndex_lt {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (κ : ℕ) (p : ℕ+) (f : Fn κ p)
++    (u : PG.TIdx κ p f ⊕ Fin (n'.eval κ)) :
++    paddedDrawIndex PG κ p f u < PG.mBound.eval κ + n'.eval κ := sorry
++
++/-- Every accepted key's group-challenge row is in bounds, even when its function-dependent
++node count is below the padded maximum. Technical size glue.
++
++**Proof sketch.** Bound mCoord by mCount and then mBound. Combine j<q with the canonical
++product-index bound. This also shows that no accepted query uses the identity default. -/
++theorem challengeRow_lt {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (q : PolyExpr) (κ : ℕ) (p : ℕ+) (f : Fn κ p)
++    (u : PG.MIdx κ p f) {j : ℕ} (hj : j < q.eval κ) :
++    (PG.mCoord κ p f u).val * q.eval κ + j < (PG.mBound.mul q).eval κ := sorry
++
++/-- Simulation of the typed bounded run by any deterministic handler has the shared
++runDet form. This is the handler-machine hypothesis shape, without constructing a machine.
++
++**Proof sketch.** Use `SAAdv.run_eq` and the published
++`simulate_buildComp_detImpl_eq_pure`, with the same budget, history and initial state. -/
++theorem simulate_saRun_det {ι' σ : Type} {spec' : OracleSpec ι'}
++    (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (A : SAAdv G PG zDim)
++    (κ : ℕ) (pp : PublicParams G κ) (pk : MPK G ℓ zDim κ pp) (r : List Bool)
++    (h : ∀ i, (saSpec G PG zDim κ pp).dom i → σ →
++      (saSpec G PG zDim κ pp).rng i × σ) (s : σ) :
++    simulate (detImpl (spec' := spec') h) (SAAdv.run G PG zDim A κ pp pk r) s =
++      .pure (runDet (A.next κ pp pk r) false h (A.budget.eval κ) [] s) := sorry
++
++/-- The padded-tape real endpoint has the same acceptance law as the semi-adaptive real
++experiment [Wee20, §2.2, p. 5; Appendix B, Game 0, p. 12].
++
++**Proof sketch.** The real endpoint has no rank filter. Project each fresh per-key padded
++block to its actual function coordinates through the supplied injective coordinate maps.
++Use the shared tape/fresh-oracle equivalence and per-query relational simulation readers;
++the accepted-key counter ensures each adaptive query reads a previously unused block. -/
++theorem game0_real_accept (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (A : SAAdv G PG zDim) (κ : ℕ) :
++    accept (game G PG zDim A 0 κ) = accept (saGame G PG zDim A false κ) := sorry
++
++/-- One MDDH¹_{2,3} realiser bounds the unfiltered ciphertext hop
++[Wee20, Appendix B, Lemma 2, p. 13]. The shared predicate constrains only encoded
++challenges and layout-length coin strings, which suffices for this bound.
++
++**Proof sketch.** Use the challenge base as group A and its response as the group first
++ciphertext block. All key answers use the known W,U,V and per-query tape coordinates.
++The two MDDH branches give exactly the two game laws. Fix the remaining scalar tape by
++`exists_expect_sample_le` and `abs_expect_sub_le_expect`, then transfer every realiser's
++verdict through `RealizesOn.distinguisherL_eq`. -/
++theorem game0_game1_le (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G PG zDim) :
++    ∃ ω : ∀ κ, Advice PG zDim A.budget p κ, ∀ D : NUPPT,
++      D.RealizesOn (G.mddhEnc (.const 1) (.const 3)) A.coins (red0 G PG zDim p hp A ω) →
++      ∀ κ, advantage (game G PG zDim A 0 κ) (game G PG zDim A 1 κ) ≤
++        G.mddhAdv (.const 1) (.const 3) D κ := sorry
++
++/-- The basis decomposition changes no good-event transcript
++[Wee20, Appendix B, Game 2, p. 13].
++
++**Proof sketch.** On nonzero determinant, use the total inverse's published left/right
++inverse laws and group matrix-action identities to reconstruct each honest key. Couple
++all adaptive queries with `expect_simulate_rel`; both filtered games return false on bad H. -/
++theorem game1_good_eq_game2 (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (A : SAAdv G PG zDim)
++    (κ : ℕ) (pp : PublicParams G κ) (ω : SecurityDraw G PG zDim A.budget κ pp)
++    (r : List Bool) :
++    (if (basisMatrix G κ pp
++          (setupAt G PG zDim A.budget κ pp ω).1
++          (setupAt G PG zDim A.budget κ pp ω).2.1).det = 0 then false
++      else runGameDet G PG zDim A 1 false κ pp ω r) =
++      runGameDet G PG zDim A 2 true κ pp ω r := sorry
++
++/-- The adaptive third-game change of variables is exact on the good basis event
++[Wee20, Appendix B, Lemma 3, pp. 13–14]. This replaces the paper's guessing argument.
++
++**Proof sketch.** Fix pp,A,c and adversary coins. Write a for the final inverse column.
++The triangular map U'=U, W'=W+a*z*, V'=V+a*((c^T U)X(x*)) fixes every public projection.
++Thus it preserves the chosen x*,z* and unchanged latent U; its inverse subtracts those
++same shifts. Reindex setup draws by this equivalence. Per-key inverse-basis coordinate
++changes preserve projected T and create a fresh independent low row. Couple the adaptive
++transcripts through `expect_simulate_rel`, retaining the same good-event filter. -/
++theorem game2_game3_accept (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (A : SAAdv G PG zDim) (κ : ℕ) :
++    accept (game G PG zDim A 2 κ) = accept (game G PG zDim A 3 κ) := sorry
++
++/-- One MDDH^ℓ_{2,mBound*q} realiser bounds the filtered adaptive-key hop
++[Wee20, Appendix B, Lemma 4, p. 14]. The shared predicate constrains only encoded
++challenges and layout-length coin strings, which suffices for this bound.
++
++**Proof sketch.** Preload R and uhat from identical query/node rows of the MDDH base and
++response. `challengeRow_lt` shows every accepted query uses valid coordinates. In the real
++branch the response is the common hidden row times each R block; in the random branch
++these rows are fresh uniform. Public coefficients and the good filter are known advice.
++Use fresh-block relational couplings, average the remaining tape, and apply the shared
++realiser verdict reader. There is no added rank or partial-garbling correction. -/
++theorem game3_game4_le (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G PG zDim) :
++    ∃ ω : ∀ κ, Advice PG zDim A.budget p κ, ∀ D : NUPPT,
++      D.RealizesOn (G.mddhEnc ℓ (PG.mBound.mul A.budget)) A.coins
++        (red1 G PG zDim p hp A ω) →
++      ∀ κ, advantage (game G PG zDim A 3 κ) (game G PG zDim A 4 κ) ≤
++        G.mddhAdv ℓ (PG.mBound.mul A.budget) D κ := sorry
++
++/-- The final partial-garbling hop has EXACT privacy, including adaptive group-matrix keys
++[Wee20, Appendix B, Lemma 5, p. 14; AGW20, Appendix A, (30), p. 37].
++
++**Proof sketch.** Translate the independent uhat row by the low garbling row times L1.
++Use the raw garbling's exactPrivacy at each query and map through group operations.
++For arbitrary group messages, existential scalar representatives may be eliminated in
++this proof only; no algorithm returns those representatives. Couple adaptive transcripts
++by the shared relational readers. Both sides retain the same good filter. -/
++theorem game4_game5_accept (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (A : SAAdv G PG zDim) (κ : ℕ) :
++    accept (game G PG zDim A 4 κ) = accept (game G PG zDim A 5 κ) := sorry
++
++/-- Splitting the TWO unfiltered endpoint laws by their common good event charges the
++rank failure ONCE [Wee20, Appendix B, Theorem 1, p. 12, with exact rank accounting].
++
++**Proof sketch.** Couple the common setup coordinates and partition both endpoint
++acceptances by the same basis event. On good H, use `game1_good_eq_game2` and the filtered
++ideal law. On bad H, the difference of the two conditional acceptance values is at most
++one, so its integral is at most rankSlack, not twice rankSlack. Average over public
++parameters using `simSetup_fullRank_prob`; keep the unfiltered first computational hop. -/
++theorem endpoint_good_comparison (G : BilinearGen) {ℓ n' : PolyExpr}
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr)
++    (A : SAAdv G PG zDim) (κ : ℕ) :
++    saSimAdv G PG zDim A κ ≤
++      advantage (game G PG zDim A 0 κ) (game G PG zDim A 1 κ) +
++      advantage (game G PG zDim A 2 κ) (game G PG zDim A 5 κ) + linearSlack G κ := sorry
++
++/-- For every typed semi-adaptive adversary there is fixed scalar advice such that EVERY
++pair of realising MDDH machines satisfies Π's explicit simulation bound at every parameter
++[Wee20, Appendix B, Theorem 1, p. 12 and Lemmas 2–5]. The shared realisation predicate
++constrains only encoded challenges and layout-length coin strings, which suffices here.
++
++**Proof sketch.** Choose the independent advice families from the two computational-hop
++lemmas. Apply `endpoint_good_comparison`. Rewrite the good-event middle endpoints by the
++exact adaptive change of variables and exact partial-garbling privacy, then apply the
++second computational-hop bound. The only statistical term is the exact single rank
++failure; no partial-garbling term or guessing factor occurs. -/
++theorem linear_saSimAdv_le (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G PG zDim) :
++    ∃ ω : Fin 2 → ∀ κ, Advice PG zDim A.budget p κ, ∀ D : Fin 2 → NUPPT,
++      (D 0).RealizesOn (G.mddhEnc (.const 1) (.const 3)) A.coins
++        (red0 G PG zDim p hp A (ω 0)) →
++      (D 1).RealizesOn (G.mddhEnc ℓ (PG.mBound.mul A.budget)) A.coins
++        (red1 G PG zDim p hp A (ω 1)) →
++      ∀ κ, saSimAdv G PG zDim A κ ≤
++        G.mddhAdv (.const 1) (.const 3) (D 0) κ +
++        G.mddhAdv ℓ (PG.mBound.mul A.budget) (D 1) κ + linearSlack G κ := sorry
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean
+new file mode 100644
+index 000000000..9277b2974
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean
+@@ -0,0 +1,89 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Raw
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticCorrect
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.Layered
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Perfect correctness of the raw PHFE wrapper
++
++Correctness holds for every raw garbling of the prescribed polynomial-vector semantics.
++It includes every public parameter, every wire description and input, and every honest
++finite draw. Consequently the exact honest experiment has zero correctness error.
++
++## Main definitions
++
++This module introduces no additional algorithm or efficiency target.
++
++## Main results
++
++* `Wee20.PHFE.class_eval_eq`: decoded class evaluation agrees with the quadratic value.
++* `Wee20.wee20PHFE_raw_correct`: perfect correctness on all honest draws.
++* `Wee20.wee20PHFE_raw_correctExcept_zero`: correctness in GJLS21's bounded-error syntax.
++* `Wee20.PHFE.layeredPG_sound`: the layered instance has the prescribed tensor semantics.
++
++## References
++
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
++  revision of 3 January 2025, Definition 4.2 and Section 9.
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Section 3.1, (4)-(5).
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20
++
++open Complexity TCSlib.Cryptography.Pairing
++
++/-- The allowed class value is the quadratic scheme's scalar value on the duplicated
++private input [GJLS21, Section 9; Wee20, Section 3.1].
++
++**Proof sketch.** Read the published class evaluation and parameter/value codec equations.
++Transport the three input widths through the supplied equality readers. Substitute the
++supplied garbling's semantic agreement and use the diagonal class embedding identity. -/
++theorem PHFE.class_eval_eq (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) (hPG : PHFE.PGSound PG)
++    (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fin ((phfeClass ℓ n G.wG d).fnLen.eval κ) → Bool)
++    (x : Fin ((phfeClass ℓ n G.wG d).pubLen.eval κ) → Bool)
++    (y : Fin ((phfeClass ℓ n G.wG d).privLen.eval κ) → Bool) :
++    phfeClassValueEquiv ℓ n G.wG d κ pp.orderParam
++        ((phfeClass ℓ n G.wG d).eval κ (PHFE.classParam G ℓ n d κ pp) f x y) =
++      Quadratic.value G n n PG κ pp (PHFE.decodeFunction G ℓ n d κ pp f)
++        (PHFE.decodePublic G ℓ n d κ pp x)
++        (PHFE.decodePrivate G ℓ n d κ pp y) (PHFE.decodePrivate G ℓ n d κ pp y) := sorry
++
++/-- The raw PHFE scheme is perfectly correct for every honest draw, in the target-group
++exponent [GJLS21, Definition 4.2; Wee20, Section 3.1, (4)-(5)].
++
++**Proof sketch.** Read the raw projection equations and honest experiment. Apply the typed
++quadratic correctness theorem to the decoded inputs and coefficient tensor. The class
++adapter identity identifies its scalar value with the generic class evaluation; the exact
++pushforward laws give AllOutputs of that result. -/
++theorem wee20PHFE_raw_correct (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) (hPG : PHFE.PGSound PG) :
++    (wee20PHFE_raw G ℓ n d PG).Correct := sorry
++
++/-- Perfect PHFE correctness implies zero error in GJLS21's bounded-error syntax
++[GJLS21, Definition 4.2].
++
++**Proof sketch.** Apply the shared perfect-correctness-to-zero-error implication to the raw
++correctness theorem. No probabilistic approximation is introduced. -/
++theorem wee20PHFE_raw_correctExcept_zero (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) (hPG : PHFE.PGSound PG) :
++    (wee20PHFE_raw G ℓ n d PG).CorrectExcept (fun _ => 0) := sorry
++
++/-- The layered raw garbling evaluates the coefficient tensor it represents.
++This is the semantic reader needed to instantiate raw PHFE correctness. -/
++theorem PHFE.layeredPG_sound (ℓ n : PolyExpr) (d : ℕ) :
++    PHFE.PGSound (layeredPG_raw ℓ (n.mul n) d) :=
++  fun κ p f x => congrFun (layeredPG_raw_eval ℓ (n.mul n) d κ p f) x
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean
+new file mode 100644
+index 000000000..3f1856534
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean
+@@ -0,0 +1,197 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Core
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Encodings
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs.Correctness
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The raw public-key PHFE bundle
++
++The raw bundle gives the generic functional-encryption interface explicit typed quadratic
++cores and exact finite draw types. The private vector is duplicated, giving the quadratic
++private class of GJLS21. Uniform efficiency remains an explicit later target; this module
++constructs no efficient primitive, simulator, machine, or sampler.
++
++## Main definitions
++
++* `Wee20.wee20PHFE_raw`: the complete raw PHFE bundle over a supplied raw garbling.
++
++## Main results
++
++Projection readers specify every honest core and the public modulus. Correctness is in
++`PHFE.Correctness`; assembly into efficient primitives is in `Targets`.
++
++## References
++
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
++  revision of 3 January 2025, Definitions 4.1-4.2 and Section 9.
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Section 3.1.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20
++
++open Complexity TCSlib.Cryptography.Pairing
++
++/-- The raw public-key PHFE bundle is Wee's quadratic scheme at the duplicated private
++input, with values embedded in the target group [GJLS21, Section 9; Wee20, Section 3.1].
++A supplied garbling's semantic agreement with the tensor class is a separate correctness
++hypothesis; no efficiency target is a hypothesis of raw correctness or security. -/
++def wee20PHFE_raw (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) :
++    FEScheme.Raw (phfeClass ℓ n G.wG d) where
++  G := G
++  cprm := PHFE.classParam G ℓ n d
++  mpkLen := PHFE.mpkLen G ℓ n
++  mskLen := PHFE.mskLen G ℓ n
++  skLen := PHFE.skLen G PG
++  ctLen := PHFE.ctLen G n
++  decOutLen := G.wT
++  MPK := Quadratic.MPK G ℓ n n
++  MSK := Quadratic.MSK G ℓ n n
++  SK := PHFE.Key G PG
++  CT := Quadratic.CT G n n
++  DecOut := fun _ pp => pp.group.GT
++  embed := PHFE.embedValue G ℓ n d
++  embed_injective := PHFE.embedValue_injective G ℓ n d
++  SetupDraw := Quadratic.SetupDraw G ℓ n n
++  setupDrawFintype := fun κ pp => inferInstance
++  setupDrawNonempty := fun κ pp => inferInstance
++  setupCore := PHFE.setupCore G ℓ n
++  EncDraw := fun κ pp _ _ _ => Quadratic.EncDraw G κ pp
++  encDrawFintype := fun κ pp _ _ _ => inferInstance
++  encDrawNonempty := fun κ pp _ _ _ => inferInstance
++  encCore := PHFE.encCore G ℓ n d
++  KeyDraw := fun κ pp _ f => Linear.KeyDraw G PG κ pp (PHFE.decodeFunction G ℓ n d κ pp f)
++  keyDrawFintype := fun κ pp _ f => inferInstance
++  keyDrawNonempty := fun κ pp _ f => inferInstance
++  keyCore := PHFE.keyCore G PG
++  dec := PHFE.dec G PG
++  encMPK := PHFE.encMPK G ℓ n
++  encMSK := PHFE.encMSK G ℓ n
++  encSK := PHFE.encSK G PG
++  encCT := PHFE.encCT G n
++  encDecOut := fun _ pp => pp.group.encT
++  encSetupDraw := fun _ pp => Wire.quadraticSetupDraw pp
++  encEncDraw := fun _ pp _ _ _ => Wire.quadraticEncDraw pp
++  encKeyDraw := fun _ pp _ _ => Wire.linearKeyDraw pp PG
++  encMPK_inj := fun κ pp _ _ => PHFE.encMPK_injective G ℓ n κ pp
++  encSK_inj := fun κ pp _ _ _ _ _ => PHFE.encSK_injective G PG κ pp
++  encCT_inj := fun κ pp _ _ _ _ _ _ _ => PHFE.encCT_injective G n κ pp
++  encDecOut_injective := fun _ pp => pp.group.encT_injective
++
++/-- The raw PHFE bundle keeps the supplied group-description generator. -/
++theorem wee20PHFE_raw_G (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) :
++    (wee20PHFE_raw G ℓ n d PG).G = G := rfl
++
++/-- The raw class parameter is the order read from the public group. -/
++theorem wee20PHFE_raw_cprm (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d))
++    (pp : PublicParams G κ) :
++    (wee20PHFE_raw G ℓ n d PG).cprm κ pp = PHFE.classParam G ℓ n d κ pp := rfl
++
++/-- Raw PHFE setup is the typed quadratic setup adapter. -/
++theorem wee20PHFE_raw_setupCore (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) :
++    (wee20PHFE_raw G ℓ n d PG).setupCore = PHFE.setupCore G ℓ n := rfl
++
++/-- Raw PHFE encryption duplicates the decoded private vector in the quadratic core. -/
++theorem wee20PHFE_raw_encCore (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) :
++    (wee20PHFE_raw G ℓ n d PG).encCore = PHFE.encCore G ℓ n d := rfl
++
++/-- Raw PHFE key generation retains the original function description. -/
++theorem wee20PHFE_raw_keyCore (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) :
++    (wee20PHFE_raw G ℓ n d PG).keyCore = PHFE.keyCore G PG := rfl
++
++/-- Raw PHFE decryption returns the typed quadratic result. -/
++theorem wee20PHFE_raw_dec (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) :
++    (wee20PHFE_raw G ℓ n d PG).dec = PHFE.dec G PG := rfl
++
++/-- The raw PHFE ciphertext width has exactly `6n+5` group entries. -/
++theorem wee20PHFE_raw_ctLen (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) :
++    (wee20PHFE_raw G ℓ n d PG).ctLen = PHFE.ctLen G n := rfl
++
++namespace PHFE
++
++/-- Transport the raw bundle's public parameters to its underlying group generator.
++This explicit codec prevents consumers from unfolding the raw bundle. -/
++def publicParamsEquiv (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ) :
++    PublicParams (wee20PHFE_raw G ℓ n d PG).G κ ≃ PublicParams G κ := Equiv.refl _
++
++/-- The public-parameter codec is internally the identity equivalence. -/
++theorem publicParamsEquiv_eq (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ) :
++    publicParamsEquiv G ℓ n d PG κ = Equiv.refl (PublicParams G κ) := rfl
++
++/-- Transport the raw bundle's MPK values through its public-parameter codec. -/
++def mpkEquiv (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
++    (pp : PublicParams (wee20PHFE_raw G ℓ n d PG).G κ) :
++    (wee20PHFE_raw G ℓ n d PG).MPK κ pp ≃
++      Quadratic.MPK G ℓ n n κ (publicParamsEquiv G ℓ n d PG κ pp) := Equiv.refl _
++
++/-- The data codec is internally the identity equivalence. -/
++theorem mpkEquiv_eq (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
++    (pp : PublicParams (wee20PHFE_raw G ℓ n d PG).G κ) :
++    mpkEquiv G ℓ n d PG κ pp = Equiv.refl (Quadratic.MPK G ℓ n n κ (publicParamsEquiv G ℓ n d PG κ pp)) := rfl
++
++/-- Transport the raw bundle's SK values through its public-parameter codec. -/
++def keyEquiv (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
++    (pp : PublicParams (wee20PHFE_raw G ℓ n d PG).G κ) :
++    (wee20PHFE_raw G ℓ n d PG).SK κ pp ≃
++      Key G PG κ (publicParamsEquiv G ℓ n d PG κ pp) := Equiv.refl _
++
++/-- The data codec is internally the identity equivalence. -/
++theorem keyEquiv_eq (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
++    (pp : PublicParams (wee20PHFE_raw G ℓ n d PG).G κ) :
++    keyEquiv G ℓ n d PG κ pp = Equiv.refl (Key G PG κ (publicParamsEquiv G ℓ n d PG κ pp)) := rfl
++
++/-- Transport the raw bundle's CT values through its public-parameter codec. -/
++def ctEquiv (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
++    (pp : PublicParams (wee20PHFE_raw G ℓ n d PG).G κ) :
++    (wee20PHFE_raw G ℓ n d PG).CT κ pp ≃
++      Quadratic.CT G n n κ (publicParamsEquiv G ℓ n d PG κ pp) := Equiv.refl _
++
++/-- The data codec is internally the identity equivalence. -/
++theorem ctEquiv_eq (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
++    (pp : PublicParams (wee20PHFE_raw G ℓ n d PG).G κ) :
++    ctEquiv G ℓ n d PG κ pp = Equiv.refl (Quadratic.CT G n n κ (publicParamsEquiv G ℓ n d PG κ pp)) := rfl
++
++/-- Transport a raw class value to its scalar at the drawn public modulus. -/
++def scalarValueEquiv (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
++    (pp : PublicParams (wee20PHFE_raw G ℓ n d PG).G κ) :
++    (phfeClass ℓ n G.wG d).Out κ ((wee20PHFE_raw G ℓ n d PG).cprm κ pp) ≃
++      ZMod (publicParamsEquiv G ℓ n d PG κ pp).group.order :=
++  phfeClassValueEquiv ℓ n G.wG d κ (publicParamsEquiv G ℓ n d PG κ pp).orderParam
++
++/-- The scalar-value codec is the published class codec at the public modulus. -/
++theorem scalarValueEquiv_eq (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
++    (pp : PublicParams (wee20PHFE_raw G ℓ n d PG).G κ) :
++    scalarValueEquiv G ℓ n d PG κ pp =
++      phfeClassValueEquiv ℓ n G.wG d κ
++        (publicParamsEquiv G ℓ n d PG κ pp).orderParam := rfl
++
++end PHFE
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Simulator.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Simulator.lean
+new file mode 100644
+index 000000000..fce0ac9ce
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Simulator.lean
+@@ -0,0 +1,129 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Raw
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.Simulator
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The raw semi-adaptive PHFE simulator
++
++The simulator samples the quadratic setup and retains its scalar masks. Ciphertext
++simulation receives only the public input. Each key receives its original function word
++and the allowed class value, which the public value codec turns into a scalar. Only the
++known scalar is exponentiated to supply the source-group leakage expected by the inner
++simulator. No exponent is recovered from a group element.
++
++## Main definitions
++
++* `Wee20.wee20SASim_raw`: the concrete raw semi-adaptive simulator.
++
++## Main results
++
++The core equation readers expose the exact stateful setup, encryption and key simulation.
++Uniform efficiency for this raw bundle and its committed conversion is stated in Targets.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Sections 2.2 and 3.2.
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
++  revision of 3 January 2025, Theorem 9.2 proof, Hybrid 1, printed p. 61.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20
++
++open Complexity Turing TCSlib.Cryptography.Pairing
++
++/-- The raw semi-adaptive PHFE simulator is the stateful quadratic simulator with explicit
++wire adapters [Wee20, Section 3.2]. Allowed values are scalar class values, following
++[GJLS21, Theorem 9.2 proof, Hybrid 1], rather than literal target-group encodings. -/
++noncomputable def wee20SASim_raw (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) :
++    FEScheme.Raw.SASimulator.Raw (wee20PHFE_raw G ℓ n d PG) where
++  St := fun κ pp =>
++    Quadratic.SimState G ℓ n n κ (PHFE.publicParamsEquiv G ℓ n d PG κ pp)
++  encSt := fun _ pp => Wire.quadraticSimState (PHFE.publicParamsEquiv G ℓ n d PG _ pp)
++  encSt_injective := fun κ pp =>
++    PHFE.quadraticSimState_injective G ℓ n κ (PHFE.publicParamsEquiv G ℓ n d PG κ pp)
++  SetupDraw := fun κ pp =>
++    Quadratic.SimSetupDraw G ℓ n n κ (PHFE.publicParamsEquiv G ℓ n d PG κ pp)
++  setupFinite := fun κ pp => inferInstance
++  setupNonempty := fun κ pp => inferInstance
++  setupCore := fun κ pp ω =>
++    let pp' := PHFE.publicParamsEquiv G ℓ n d PG κ pp
++    let k := Quadratic.simSetupCore G ℓ n n κ pp' ω
++    ((PHFE.mpkEquiv G ℓ n d PG κ pp).symm k.1, k.2)
++  EncDraw := fun κ pp _ _ =>
++    Quadratic.SimEncDraw G n n κ (PHFE.publicParamsEquiv G ℓ n d PG κ pp)
++  encFinite := fun κ pp _ _ => inferInstance
++  encNonempty := fun κ pp _ _ => inferInstance
++  encCore := fun κ pp st x ω =>
++    let pp' := PHFE.publicParamsEquiv G ℓ n d PG κ pp
++    let c := Quadratic.simEncCore G ℓ n n κ pp' st (PHFE.decodePublic G ℓ n d κ pp' x) ω
++    ((PHFE.ctEquiv G ℓ n d PG κ pp).symm c.1, c.2)
++  KeyDraw := fun κ pp _ _ f _ =>
++    let pp' := PHFE.publicParamsEquiv G ℓ n d PG κ pp
++    Linear.SimKeyDraw G PG κ pp' (PHFE.decodeFunction G ℓ n d κ pp' f)
++  keyFinite := fun κ pp _ _ f _ => inferInstance
++  keyNonempty := fun κ pp _ _ f _ => inferInstance
++  keyCore := fun κ pp st x f mu ω =>
++    let pp' := PHFE.publicParamsEquiv G ℓ n d PG κ pp
++    let scalar := PHFE.scalarValueEquiv G ℓ n d PG κ pp mu
++    let sk := Quadratic.simKeyCore G n n PG κ pp' st (PHFE.decodeFunction G ℓ n d κ pp' f)
++      (PHFE.decodePublic G ℓ n d κ pp' x) (pp'.generator ^ scalar.val) ω
++    ((PHFE.keyEquiv G ℓ n d PG κ pp).symm ⟨f, sk⟩, st)
++  encSetupDraw := fun _ pp =>
++    Wire.quadraticSimSetupDraw (PHFE.publicParamsEquiv G ℓ n d PG _ pp)
++  encEncDraw := fun _ pp _ _ ω =>
++    let pp' := PHFE.publicParamsEquiv G ℓ n d PG _ pp
++    [Wire.scalarVector pp' ω.1, Wire.scalarVector pp' ω.2].foldr pairEncode []
++  encKeyDraw := fun _ pp _ _ _ _ =>
++    Wire.linearSimKeyDraw (PHFE.publicParamsEquiv G ℓ n d PG _ pp) PG
++
++/-- Raw simulated setup runs the quadratic simulator and packages its public key. -/
++theorem wee20SASim_raw_setupCore (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) (κ : ℕ)
++    (pp : PublicParams (wee20PHFE_raw G ℓ n d PG).G κ)
++    (ω : (wee20SASim_raw G ℓ n d PG).SetupDraw κ pp) :
++    (wee20SASim_raw G ℓ n d PG).setupCore κ pp ω =
++      let pp' := PHFE.publicParamsEquiv G ℓ n d PG κ pp
++      let k := Quadratic.simSetupCore G ℓ n n κ pp' ω
++      ((PHFE.mpkEquiv G ℓ n d PG κ pp).symm k.1, k.2) := rfl
++
++/-- Raw simulated encryption uses only the decoded public input and fresh scalar masks. -/
++theorem wee20SASim_raw_encCore (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) (κ : ℕ)
++    (pp : PublicParams (wee20PHFE_raw G ℓ n d PG).G κ)
++    (st : (wee20SASim_raw G ℓ n d PG).St κ pp)
++    (x : Fin ((phfeClass ℓ n G.wG d).pubLen.eval κ) → Bool)
++    (ω : (wee20SASim_raw G ℓ n d PG).EncDraw κ pp st x) :
++    (wee20SASim_raw G ℓ n d PG).encCore κ pp st x ω =
++      let pp' := PHFE.publicParamsEquiv G ℓ n d PG κ pp
++      let c := Quadratic.simEncCore G ℓ n n κ pp' st (PHFE.decodePublic G ℓ n d κ pp' x) ω
++      ((PHFE.ctEquiv G ℓ n d PG κ pp).symm c.1, c.2) := rfl
++
++/-- Raw simulated keys exponentiate the supplied scalar value and retain the state. -/
++theorem wee20SASim_raw_keyCore (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) (κ : ℕ)
++    (pp : PublicParams (wee20PHFE_raw G ℓ n d PG).G κ)
++    (st : (wee20SASim_raw G ℓ n d PG).St κ pp)
++    (x : Fin ((phfeClass ℓ n G.wG d).pubLen.eval κ) → Bool)
++    (f : Fin ((phfeClass ℓ n G.wG d).fnLen.eval κ) → Bool)
++    (mu : (phfeClass ℓ n G.wG d).Out κ ((wee20PHFE_raw G ℓ n d PG).cprm κ pp))
++    (ω : (wee20SASim_raw G ℓ n d PG).KeyDraw κ pp st x f mu) :
++    (wee20SASim_raw G ℓ n d PG).keyCore κ pp st x f mu ω =
++      let pp' := PHFE.publicParamsEquiv G ℓ n d PG κ pp
++      let scalar := PHFE.scalarValueEquiv G ℓ n d PG κ pp mu
++      let sk := Quadratic.simKeyCore G n n PG κ pp' st
++        (PHFE.decodeFunction G ℓ n d κ pp' f) (PHFE.decodePublic G ℓ n d κ pp' x)
++        (pp'.generator ^ scalar.val) ω
++      ((PHFE.keyEquiv G ℓ n d PG κ pp).symm ⟨f, sk⟩, st) := rfl
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Widths.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Widths.lean
+index bf51d83a0..7ac2adb23 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Widths.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Widths.lean
+@@ -41,7 +41,7 @@ open Complexity Turing TCSlib.Cryptography.Pairing
+ /-- The public key occupies `(16+24n+8ℓ)wG+10` bits in the nested-pair encoding.
+ This width is linear in the input dimensions [Wee20, Section 3.1]. -/
+ def mpkLen (G : BilinearGen) (ℓ n : PolyExpr) : PolyExpr :=
+-  (((.const 16).add ((.const 24).mul n)).add ((.const 8).mul ℓ)).mul G.wG |>.add (.const 10)
++  (((PolyExpr.const 16).add ((PolyExpr.const 24).mul n)).add ((PolyExpr.const 8).mul ℓ)).mul G.wG |>.add (PolyExpr.const 10)
+ 
+ /-- The public-key width has the displayed numeric evaluation. -/
+ theorem mpkLen_eval (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ) :
+@@ -51,8 +51,8 @@ theorem mpkLen_eval (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ) :
+ /-- The master secret occupies `(8n³+24n+12ℓ+6)wG+6` bits, including the public
+ matrix metadata [Wee20, Section 3.1]. -/
+ def mskLen (G : BilinearGen) (ℓ n : PolyExpr) : PolyExpr :=
+-  (((((.const 8).mul (n.pow 3)).add ((.const 24).mul n)).add
+-    ((.const 12).mul ℓ)).add (.const 6)).mul G.wG |>.add (.const 6)
++  (((((PolyExpr.const 8).mul (n.pow 3)).add ((PolyExpr.const 24).mul n)).add
++    ((PolyExpr.const 12).mul ℓ)).add (PolyExpr.const 6)).mul G.wG |>.add (PolyExpr.const 6)
+ 
+ /-- The master-secret width has the displayed numeric evaluation. -/
+ theorem mskLen_eval (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ) :
+@@ -64,9 +64,9 @@ and the largest allowed garbling. The original function fixes the actual node di
+ [Wee20, Sections 3.1 and 4.2]. -/
+ def skLen (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
+     (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) : PolyExpr :=
+-  (((.const 2).mul (tensorFnLen ℓ (n.mul n) G.wG d)).add
+-    (((((.const 8).mul (n.pow 3)).add ((.const 6).mul (n.pow 2))).add
+-      ((((.const 6).mul ℓ).add (.const 8)).mul PG.mBound)).mul G.wG)).add (.const 10)
++  (((PolyExpr.const 2).mul (tensorFnLen ℓ (n.mul n) G.wG d)).add
++    (((((PolyExpr.const 8).mul (n.pow 3)).add ((PolyExpr.const 6).mul (n.pow 2))).add
++      ((((PolyExpr.const 6).mul ℓ).add (PolyExpr.const 8)).mul PG.mBound)).mul G.wG)).add (PolyExpr.const 10)
+ 
+ /-- The function-key width has the displayed polynomial node-bound accounting. -/
+ theorem skLen_eval (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
+@@ -79,7 +79,7 @@ theorem skLen_eval (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
+ /-- The ciphertext occupies exactly `(6n+5)wG` bits, independent of ℓ and the
+ public-polynomial degree [Wee20, Section 3.1; GJLS21, Definition 4.6]. -/
+ def ctLen (G : BilinearGen) (n : PolyExpr) : PolyExpr :=
+-  (((.const 6).mul n).add (.const 5)).mul G.wG
++  (((PolyExpr.const 6).mul n).add (PolyExpr.const 5)).mul G.wG
+ 
+ /-- The ciphertext width has the displayed numeric evaluation. -/
+ theorem ctLen_eval (G : BilinearGen) (n : PolyExpr) (κ : ℕ) :
+diff --git a/TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean b/TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean
+index 343f37429..75043b0cc 100644
+--- a/TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean
++++ b/TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean
+@@ -141,16 +141,16 @@ theorem mddhAdviceEnc_eq (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order =
+ /-- A polynomial bounds the parameter, dimension and one-hot headers and scalar blocks.
+ This is reduction-encoding glue. Binary lengths are bounded by their values plus one. -/
+ def mddhAdviceLen (d ℓ : PolyExpr) : PolyExpr :=
+-  ((((PolyExpr.var.mul (.const 2)).add ((.const 2).mul d)).add ((.const 2).mul ℓ)).add
+-    (.const 10)).add ((d.add (.const 1)).add
+-      ((((ℓ.mul (.const 3)).add ((.const 2).mul d)).add (ℓ.mul d)).mul G.wG))
++  ((((PolyExpr.var.mul (PolyExpr.const 2)).add ((PolyExpr.const 2).mul d)).add ((PolyExpr.const 2).mul ℓ)).add
++    (PolyExpr.const 10)).add ((d.add (PolyExpr.const 1)).add
++      ((((ℓ.mul (PolyExpr.const 3)).add ((PolyExpr.const 2).mul d)).add (ℓ.mul d)).mul G.wG))
+ 
+ /-- The advice-length expression has one term for each serialized block. -/
+ theorem mddhAdviceLen_eq (d ℓ : PolyExpr) :
+     G.mddhAdviceLen d ℓ =
+-      ((((PolyExpr.var.mul (.const 2)).add ((.const 2).mul d)).add ((.const 2).mul ℓ)).add
+-        (.const 10)).add ((d.add (.const 1)).add
+-          ((((ℓ.mul (.const 3)).add ((.const 2).mul d)).add (ℓ.mul d)).mul G.wG)) := rfl
++      ((((PolyExpr.var.mul (PolyExpr.const 2)).add ((PolyExpr.const 2).mul d)).add ((PolyExpr.const 2).mul ℓ)).add
++        (PolyExpr.const 10)).add ((d.add (PolyExpr.const 1)).add
++          ((((ℓ.mul (PolyExpr.const 3)).add ((PolyExpr.const 2).mul d)).add (ℓ.mul d)).mul G.wG)) := rfl
+ 
+ /-- Every advice family has the same polynomial length bound. Technical glue.
+ 
+@@ -242,7 +242,7 @@ theorem dlinToMddh_eq (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order = p
+ matrix has rank below two with probability `p⁻²`. On a random challenge the augmented
+ matrix is singular with probability `3/p-3/p²+1/p³`. Their sum is at most `4/p` per column.
+ This is an explicit loss for the column-hybrid route to [Wee20, §2.1, p. 4]. -/
+-def mddhSlack (p : ℕ → ℕ) (d : PolyExpr) (κ : ℕ) : ℝ :=
++noncomputable def mddhSlack (p : ℕ → ℕ) (d : PolyExpr) (κ : ℕ) : ℝ :=
+   (d.eval κ : ℝ) * (4 / (p κ : ℝ))
+ 
+ /-- The correction is the response-column count times the per-column `4/p` bound. -/

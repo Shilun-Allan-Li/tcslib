@@ -1,0 +1,1468 @@
+From ac8bfcddff11fc538c079afda00edf52808705fd Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 03:59:26 -0800
+Subject: [PATCH 20/25] io-phfe: draft public headlines and export the complete
+ interface
+
+---
+ TCSlib/Cryptography/AdvancedEncryption.lean   |  17 +
+ .../FunctionalEncryption.lean                 |   6 +-
+ .../FunctionalEncryption/Defs/Efficient.lean  |  51 +++
+ .../FunctionalEncryption/Defs/Simulator.lean  |  21 +
+ .../FunctionalEncryption/PartialGarbling.lean |   2 +
+ .../FunctionalEncryption/SemiAdaptive.lean    |  36 ++
+ .../SemiAdaptive/Data.lean                    |  18 +-
+ .../SemiAdaptive/Simulator.lean               |  21 +
+ .../FunctionalEncryption/Simulation.lean      |  35 ++
+ .../FunctionalEncryption/Wee20.lean           |  40 ++
+ .../Wee20/LinearSecurity/Data.lean            |   2 +-
+ .../FunctionalEncryption/Wee20/PHFE.lean      |  36 ++
+ .../Wee20/PHFE/Adapter.lean                   | 273 +++++++++++++
+ .../Wee20/PHFE/Correctness.lean               |   2 +-
+ .../FunctionalEncryption/Wee20/PHFE/Data.lean |  21 +-
+ .../Wee20/PHFE/Embedding.lean                 |   2 +-
+ .../Wee20/PHFE/Headlines.lean                 | 134 +++++++
+ .../FunctionalEncryption/Wee20/PHFE/Raw.lean  |   5 +-
+ .../Wee20/PHFE/Security.lean                  | 359 ++++++++++++++++++
+ .../{Composition.lean => Compose.lean}        |   0
+ .../Wee20/QuadraticSecurity/Data.lean         |   5 +-
+ .../{Reductions.lean => Reduction.lean}       |   0
+ .../Wee20/QuadraticSecurity/Theorems.lean     |   3 +-
+ TCSlib/Cryptography/Pairing.lean              |  20 +
+ 24 files changed, 1087 insertions(+), 22 deletions(-)
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Adapter.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Headlines.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Security.lean
+ rename TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/{Composition.lean => Compose.lean} (100%)
+ rename TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/{Reductions.lean => Reduction.lean} (100%)
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption.lean b/TCSlib/Cryptography/AdvancedEncryption.lean
+index c1bc37f9a..b75b6b1f4 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption.lean
+@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.AdvancedEncryption.Homomorphic
+ import TCSlib.Cryptography.AdvancedEncryption.IdentityBased
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -20,6 +21,9 @@ Encryption primitives beyond private-key and public-key encryption.
+ * `IdentityBased`: identity-based encryption, selective-identity security and the Boneh–Boyen
+   system (BB1).
+ 
++* `FunctionalEncryption`: public-key partially hiding functional encryption for quadratic
++  private computation, with stateful simulation security and explicit efficiency targets.
++
+ ## References
+ 
+ * [BB04] D. Boneh, X. Boyen, *Efficient Selective-ID Secure Identity Based Encryption Without
+@@ -27,4 +31,17 @@ Encryption primitives beyond private-key and public-key encryption.
+ * [GSW13] C. Gentry, A. Sahai, B. Waters, *Homomorphic Encryption from Learning with Errors:
+   Conceptually-Simpler, Asymptotically-Faster, Attribute-Based*, CRYPTO 2013; author version
+   dated 8 June 2013.
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
++  Definitions 4.1-4.3 and 4.6, Section 9 and Theorems 10.3-10.4.
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Sections 2-4 and Appendix B.
++* [AGW20] M. Abdalla, J. Gong, H. Wee, *Functional Encryption for Attribute-Weighted
++  Sums from k-Lin*, CRYPTO 2020; full version, Cryptology ePrint Archive 2020/762,
++  Lemma 2 and Appendix A, (28)-(32).
++* [IW14] Y. Ishai, H. Wee, *Partial Garbling Schemes and Their Applications*, ICALP 2014;
++  full version, Cryptology ePrint Archive 2014/995, Definition 1 and Theorem 3.
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
++  Assumptions*, J. ACM 73(1), Article 1, 2026, Section 1.4 and Theorem 5.1.
+ -/
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption.lean
+index c712ca300..03d076b12 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption.lean
+@@ -7,7 +7,9 @@ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Run
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Classes
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling
+ 
+-import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Simulation.Security
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Simulation
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -22,6 +24,8 @@ set_option autoImplicit false
+ * `Run`: deterministic bounded stateful oracle runs.
+ * `Classes`: polynomial public computation and quadratic private computation.
+ * `PartialGarbling`: corrected arithmetic partial garbling with exact privacy.
++* `Simulation`, `SemiAdaptive`: exact stateful simulation games in both adversarial orders.
++* `Wee20`: explicit PHFE algorithms, reductions, efficiency targets and assembled headlines.
+ 
+ ## References
+ 
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Efficient.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Efficient.lean
+index 1d0867b85..cff06d30e 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Efficient.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Efficient.lean
+@@ -82,4 +82,55 @@ structure FEScheme (C : FnClass) extends FEScheme.Raw C where
+         | none => [false]
+         | some o => true :: List.ofFn (encDecOut κ pp o)
+ 
++namespace FEScheme
++
++variable {C : FnClass} (S : FEScheme C)
++
++/-- The raw projection preserves the public group generator. -/
++theorem toRaw_G : S.toRaw.G = S.G := rfl
++
++/-- The raw projection preserves the class-parameter interpretation. -/
++theorem toRaw_cprm : S.toRaw.cprm = S.cprm := rfl
++
++/-- The raw projection preserves the master public-key family. -/
++theorem toRaw_MPK : S.toRaw.MPK = S.MPK := rfl
++
++/-- The raw projection preserves the master secret-key family. -/
++theorem toRaw_MSK : S.toRaw.MSK = S.MSK := rfl
++
++/-- The raw projection preserves the functional-key family. -/
++theorem toRaw_SK : S.toRaw.SK = S.SK := rfl
++
++/-- The raw projection preserves the ciphertext family. -/
++theorem toRaw_CT : S.toRaw.CT = S.CT := rfl
++
++/-- The raw projection preserves the successful decryption-output family. -/
++theorem toRaw_DecOut : S.toRaw.DecOut = S.DecOut := rfl
++
++/-- The raw projection preserves the interpretation of class values in the output group. -/
++theorem toRaw_embed : S.toRaw.embed = S.embed := rfl
++
++/-- The raw projection preserves the deterministic setup core. -/
++theorem toRaw_setupCore : S.toRaw.setupCore = S.setupCore := rfl
++
++/-- The raw projection preserves the deterministic encryption core. -/
++theorem toRaw_encCore : S.toRaw.encCore = S.encCore := rfl
++
++/-- The raw projection preserves the deterministic key-generation core. -/
++theorem toRaw_keyCore : S.toRaw.keyCore = S.keyCore := rfl
++
++/-- The raw projection preserves deterministic decryption, including its failure result. -/
++theorem toRaw_dec : S.toRaw.dec = S.dec := rfl
++
++/-- The raw projection preserves the master public-key encoding. -/
++theorem toRaw_encMPK : S.toRaw.encMPK = S.encMPK := rfl
++
++/-- The raw projection preserves the functional-key encoding. -/
++theorem toRaw_encSK : S.toRaw.encSK = S.encSK := rfl
++
++/-- The raw projection preserves the ciphertext encoding. -/
++theorem toRaw_encCT : S.toRaw.encCT = S.encCT := rfl
++
++end FEScheme
++
+ end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Simulator.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Simulator.lean
+index 97642027d..2fc7423e0 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Simulator.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Simulator.lean
+@@ -246,4 +246,25 @@ structure Simulator extends Simulator.Raw S where
+       pairEncode (List.ofFn (S.encSK κ π.pp o.1)) (encSt κ π.pp o.2))
+     (fun κ π => keyCore κ π.pp π.state π.omega π.index)
+ 
++namespace Simulator
++
++variable {S} (Sim : Simulator S)
++
++/-- The raw projection preserves the committed simulator's private-state family. -/
++theorem toRaw_St : Sim.toRaw.St = Sim.St := rfl
++
++/-- The raw projection preserves the committed simulator's private-state encoding. -/
++theorem toRaw_encSt : Sim.toRaw.encSt = Sim.encSt := rfl
++
++/-- The raw projection preserves the committed simulator's deterministic setup core. -/
++theorem toRaw_setupCore : Sim.toRaw.setupCore = Sim.setupCore := rfl
++
++/-- The raw projection preserves the committed simulator's deterministic ciphertext core. -/
++theorem toRaw_encCore : Sim.toRaw.encCore = Sim.encCore := rfl
++
++/-- The raw projection preserves the committed simulator's indexed deterministic key core. -/
++theorem toRaw_keyCore : Sim.toRaw.keyCore = Sim.keyCore := rfl
++
++end Simulator
++
+ end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.FEScheme.Raw
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling.lean
+index c841fb925..8305a3d99 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling.lean
+@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.Defs
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.Layered
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -14,6 +15,7 @@ set_option autoImplicit false
+ ## Contents
+ 
+ * `Defs`: corrected matrix syntax, exact reconstruction and privacy, and uniform efficiency.
++* `Layered`: the polynomial-tensor instance with explicit forward/backward path formulas.
+ 
+ ## References
+ 
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive.lean
+new file mode 100644
+index 000000000..29b0f0f54
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive.lean
+@@ -0,0 +1,36 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.FromTwoStage
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Semi-adaptive functional-encryption security
++
++## Contents
++
++* `Data`: bounded oracle adversaries and the fixed-width machine adapter.
++* `Simulator`: raw stateful algorithms and uniform efficiency.
++* `Games`, `Security`: exact experiments and security predicates.
++* `FromTwoStage`: the raw simulator conversion and exact committed-game identity.
++
++## References
++
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
++  Definitions 4.1-4.3 and 4.6, Section 9 and Theorems 10.3-10.4.
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Sections 2-4 and Appendix B.
++* [AGW20] M. Abdalla, J. Gong, H. Wee, *Functional Encryption for Attribute-Weighted
++  Sums from k-Lin*, CRYPTO 2020; full version, Cryptology ePrint Archive 2020/762,
++  Lemma 2 and Appendix A, (28)-(32).
++* [IW14] Y. Ishai, H. Wee, *Partial Garbling Schemes and Their Applications*, ICALP 2014;
++  full version, Cryptology ePrint Archive 2014/995, Definition 1 and Theorem 3.
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
++  Assumptions*, J. ACM 73(1), Article 1, 2026, Section 1.4 and Theorem 5.1.
++-/
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean
+index b79841f35..e8fd47d59 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean
+@@ -22,13 +22,13 @@ The budget counts every oracle call, including the challenge and rejected calls.
+ 
+ * `FEScheme.Raw.saSpec`, `saCodec`: the two fixed-width oracles and machine codec.
+ * `FEScheme.Raw.SAAdv`: a bounded next-move adversary with explicit coins.
+-* `Complexity.NUPPT.toSAAdv`: an oracle machine as a typed bounded adversary.
++* `toSAAdv`: an oracle machine as a typed bounded adversary.
+ 
+ ## Main results
+ 
+ * Component readers expose every query/answer wire conversion.
+ * `SAAdv.run_costBoundedBy`: run makes at most budget calls.
+-* `NUPPT.toSAAdv_run`: run agrees with toCompOn using the library bitCodec.
++* `toSAAdv_run`: run agrees with toCompOn using the library bitCodec.
+ 
+ ## References
+ 
+@@ -49,7 +49,7 @@ variable {C : FnClass} (S : FEScheme.Raw C)
+ 
+ /-- Challenge queries contain the public and private words; key queries contain
+ one function description. [Wee20, §2.2, p.5]. -/
+-def saIn (S : FEScheme.Raw C) (kappa : ℕ) : Fin 2 → ℕ
++abbrev saIn (S : FEScheme.Raw C) (kappa : ℕ) : Fin 2 → ℕ
+   | 0 => C.pubLen.eval kappa + C.privLen.eval kappa
+   | 1 => C.fnLen.eval kappa
+ 
+@@ -61,7 +61,7 @@ theorem saIn_zero (kappa : ℕ) :
+ theorem saIn_one (kappa : ℕ) : S.saIn kappa 1 = C.fnLen.eval kappa := rfl
+ 
+ /-- Oracle answers contain one validity bit and a ciphertext or key encoding. -/
+-def saOut (kappa : ℕ) : Fin 2 → ℕ
++abbrev saOut (kappa : ℕ) : Fin 2 → ℕ
+   | 0 => S.ctLen.eval kappa + 1
+   | 1 => S.skLen.eval kappa + 1
+ 
+@@ -251,7 +251,7 @@ end FEScheme.Raw
+ 
+ /-- An oracle NUPPT uses the standard bitCodec and its encoded initial public view.
+ [Wee20, §2.2, p.5], instantiated by the library's oracle-machine convention. -/
+-def _root_.Complexity.NUPPT.toSAAdv {C : FnClass} {S : FEScheme.Raw C}
++def toSAAdv {C : FnClass} {S : FEScheme.Raw C}
+     (A : NUPPT) (q : PolyExpr) : S.SAAdv where
+   coins := A.coins
+   budget := q
+@@ -260,15 +260,15 @@ def _root_.Complexity.NUPPT.toSAAdv {C : FnClass} {S : FEScheme.Raw C}
+       ((S.saCodec kappa).encodeLog hist)) r)
+ 
+ /-- The oracle-machine adversary uses its machine's original coin polynomial. -/
+-theorem _root_.Complexity.NUPPT.toSAAdv_coins {C : FnClass} {S : FEScheme.Raw C}
++theorem toSAAdv_coins {C : FnClass} {S : FEScheme.Raw C}
+     (A : NUPPT) (q : PolyExpr) : (A.toSAAdv (S := S) q).coins = A.coins := rfl
+ 
+ /-- The oracle-machine adversary's budget is q total oracle calls. -/
+-theorem _root_.Complexity.NUPPT.toSAAdv_budget {C : FnClass} {S : FEScheme.Raw C}
++theorem toSAAdv_budget {C : FnClass} {S : FEScheme.Raw C}
+     (A : NUPPT) (q : PolyExpr) : (A.toSAAdv (S := S) q).budget = q := rfl
+ 
+ /-- Each next move is one machine activation on its initial view and encoded log. -/
+-theorem _root_.Complexity.NUPPT.toSAAdv_next {C : FnClass} {S : FEScheme.Raw C}
++theorem toSAAdv_next {C : FnClass} {S : FEScheme.Raw C}
+     (A : NUPPT) (q : PolyExpr) (kappa : ℕ) (pp : PublicParams S.G kappa)
+     (pk : S.MPK kappa pp) (r : List Bool) (hist : QueryLog (S.saSpec kappa)) :
+     (A.toSAAdv (S := S) q).next kappa pp pk r hist = S.saReadMove kappa
+@@ -280,7 +280,7 @@ theorem _root_.Complexity.NUPPT.toSAAdv_next {C : FnClass} {S : FEScheme.Raw C}
+ **Proof sketch.** Read toCompOn_eq and runAt_eq. Induct on the remaining budget;
+ both computations use the same encoded history. Query branches append the same
+ entry; return and timeout branches differ only by reading the final bit. -/
+-theorem _root_.Complexity.NUPPT.toSAAdv_run {C : FnClass} {S : FEScheme.Raw C}
++theorem toSAAdv_run {C : FnClass} {S : FEScheme.Raw C}
+     (A : NUPPT) (q : PolyExpr) (kappa : ℕ) (pp : PublicParams S.G kappa)
+     (pk : S.MPK kappa pp) (r : A.Coins kappa) :
+     (A.toSAAdv (S := S) q).run kappa pp pk (List.ofFn r) =
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Simulator.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Simulator.lean
+index 468b457b5..8937ea1f0 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Simulator.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Simulator.lean
+@@ -225,4 +225,25 @@ structure SASimulator extends SASimulator.Raw S where
+       pairEncode (List.ofFn (S.encSK kappa pi.pp o.1)) (encSt kappa pi.pp o.2))
+     (fun kappa pi => keyCore kappa pi.pp pi.state pi.publicInput pi.function pi.value)
+ 
++namespace SASimulator
++
++variable {S} (Sim : SASimulator S)
++
++/-- The raw projection preserves the semi-adaptive simulator's private-state family. -/
++theorem toRaw_St : Sim.toRaw.St = Sim.St := rfl
++
++/-- The raw projection preserves the semi-adaptive simulator's private-state encoding. -/
++theorem toRaw_encSt : Sim.toRaw.encSt = Sim.encSt := rfl
++
++/-- The raw projection preserves the semi-adaptive simulator's deterministic setup core. -/
++theorem toRaw_setupCore : Sim.toRaw.setupCore = Sim.setupCore := rfl
++
++/-- The raw projection preserves the public-input-only deterministic ciphertext core. -/
++theorem toRaw_encCore : Sim.toRaw.encCore = Sim.encCore := rfl
++
++/-- The raw projection preserves key simulation from its function and allowed scalar. -/
++theorem toRaw_keyCore : Sim.toRaw.keyCore = Sim.keyCore := rfl
++
++end SASimulator
++
+ end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.FEScheme.Raw
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation.lean
+new file mode 100644
+index 000000000..dc50950aa
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation.lean
+@@ -0,0 +1,35 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Simulation.Security
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Committed simulation security
++
++## Contents
++
++* `TwoStage`: committed non-uniform machine pairs and their input parser.
++* `Games`: exact real and stateful ideal experiments.
++* `Security`: universal efficient simulation and common-exponent variants.
++
++## References
++
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
++  Definitions 4.1-4.3 and 4.6, Section 9 and Theorems 10.3-10.4.
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Sections 2-4 and Appendix B.
++* [AGW20] M. Abdalla, J. Gong, H. Wee, *Functional Encryption for Attribute-Weighted
++  Sums from k-Lin*, CRYPTO 2020; full version, Cryptology ePrint Archive 2020/762,
++  Lemma 2 and Appendix A, (28)-(32).
++* [IW14] Y. Ishai, H. Wee, *Partial Garbling Schemes and Their Applications*, ICALP 2014;
++  full version, Cryptology ePrint Archive 2014/995, Definition 1 and Theorem 3.
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
++  Assumptions*, J. ACM 73(1), Article 1, 2026, Section 1.4 and Theorem 5.1.
++-/
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20.lean
+new file mode 100644
+index 000000000..f78a41f6d
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20.lean
+@@ -0,0 +1,40 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Compose
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Slack
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Quadratic PHFE from symmetric DLIN
++
++## Contents
++
++* `Linear`, `LinearCorrect`, `LinearSimulator`: the internal building block.
++* `LinearSecurity`: explicit adaptive games, fresh-law coupling and deterministic reductions.
++* `Quadratic`, `QuadraticCorrect`, `QuadraticSimulator`: the outer typed construction.
++* `QuadraticSecurity`: outer hybrids, reductions and explicit DLIN composition.
++* `PHFE`: the GJLS21 class, generic-game adapters and public headlines.
++* `Targets`: named uniform-efficiency obligations and pure assembly.
++
++## References
++
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
++  Definitions 4.1-4.3 and 4.6, Section 9 and Theorems 10.3-10.4.
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Sections 2-4 and Appendix B.
++* [AGW20] M. Abdalla, J. Gong, H. Wee, *Functional Encryption for Attribute-Weighted
++  Sums from k-Lin*, CRYPTO 2020; full version, Cryptology ePrint Archive 2020/762,
++  Lemma 2 and Appendix A, (28)-(32).
++* [IW14] Y. Ishai, H. Wee, *Partial Garbling Schemes and Their Applications*, ICALP 2014;
++  full version, Cryptology ePrint Archive 2014/995, Definition 1 and Theorem 3.
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
++  Assumptions*, J. ACM 73(1), Article 1, 2026, Section 1.4 and Theorem 5.1.
++-/
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Data.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Data.lean
+index 9deb0441e..b0373ce01 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Data.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Data.lean
+@@ -70,7 +70,7 @@ theorem keyPack_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ →
+ 
+ /-- The challenge oracle is `false`; the adaptive-key oracle is `true`
+ [Wee20, §2.2, p. 5; §4, p. 8]. Rejected requests return none. -/
+-def saSpec (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++abbrev saSpec (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+     (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
+     OracleSpec Bool where
+   dom := fun | false => Challenge G ℓ zDim κ pp | true => KeyQuery G PG zDim κ pp
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE.lean
+new file mode 100644
+index 000000000..c7a856ee1
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE.lean
+@@ -0,0 +1,36 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Headlines
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The public-key PHFE construction
++
++## Contents
++
++* `Data`, `Core`, `Raw`: typed adapters and explicit honest algorithms.
++* `Embedding`, `Encodings`, `Correctness`: faithful representation and perfect correctness.
++* `Simulator`, `CommittedSimulator`: universal stateful raw simulators.
++* `Adapter`, `Security`, `Headlines`: actual machine games and security bounds.
++
++## References
++
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
++  Definitions 4.1-4.3 and 4.6, Section 9 and Theorems 10.3-10.4.
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Sections 2-4 and Appendix B.
++* [AGW20] M. Abdalla, J. Gong, H. Wee, *Functional Encryption for Attribute-Weighted
++  Sums from k-Lin*, CRYPTO 2020; full version, Cryptology ePrint Archive 2020/762,
++  Lemma 2 and Appendix A, (28)-(32).
++* [IW14] Y. Ishai, H. Wee, *Partial Garbling Schemes and Their Applications*, ICALP 2014;
++  full version, Cryptology ePrint Archive 2014/995, Definition 1 and Theorem 3.
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
++  Assumptions*, J. ACM 73(1), Article 1, 2026, Section 1.4 and Theorem 5.1.
++-/
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Adapter.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Adapter.lean
+new file mode 100644
+index 000000000..a2965b9ca
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Adapter.lean
+@@ -0,0 +1,273 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Correctness
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Simulator
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.Games
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Fresh
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Replay from wire adversaries to typed quadratic adversaries
++
++Scalar decoding may identify distinct fixed-width words. Reencoding decoded inputs would
++therefore change an adaptive machine's history. The adapter instead replays the original
++wire adversary from its initial public view and coins. It keeps each original query word,
++and reencodes only typed answers. A key is packaged with that original function word after
++its decoded tensor is checked against the returned key's type index.
++
++## Main definitions
++
++* `PHFE.decodeChallenge`: scalar decoding with the private vector duplicated.
++* `PHFE.wrapKey`: checked packaging that retains the original function bits.
++* `PHFE.replayStep`, `replay`: the existing List.foldl applied to wire-log reconstruction.
++* `PHFE.toQuadratic`: the concrete bounded typed adversary with identical coins and budget.
++
++## Main results
++
++* Equation readers specify every conversion and total refusal branch.
++* `PHFE.expect_saGame_eq_fresh`: exact endpoint laws, including noncanonical aliases.
++* `PHFE.saSimAdv_eq_fresh`: the adapter has no advantage loss.
++
++## References
++
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
++  revision of 3 January 2025, Section 9.
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Sections 2.2 and 3.1-3.2.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE
++
++open Complexity TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++
++section
++
++variable (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++variable (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d))
++
++local notation "S" => wee20PHFE_raw G ℓ n d PG
++local notation "params" => publicParamsEquiv G ℓ n d PG
++
++/-- Decode a wire challenge without changing the stored wire word
++[GJLS21, Section 9; Wee20, Section 3.1]. -/
++def decodeChallenge (κ : ℕ) (pp : PublicParams (S).G κ) (xy : ((S).saSpec κ).dom 0) :
++    Quadratic.Challenge G ℓ n n κ (params κ pp) :=
++  let msg := (S).saSplitChallenge κ xy
++  let z := decodePrivate G ℓ n d κ (params κ pp) msg.2
++  (decodePublic G ℓ n d κ (params κ pp) msg.1, z, z)
++
++/-- The decoded challenge uses the same private vector in both typed slots. -/
++theorem decodeChallenge_eq (κ : ℕ) (pp : PublicParams (S).G κ)
++    (xy : ((S).saSpec κ).dom 0) : decodeChallenge G ℓ n d PG κ pp xy =
++      let msg := (S).saSplitChallenge κ xy
++      let z := decodePrivate G ℓ n d κ (params κ pp) msg.2
++      (decodePublic G ℓ n d κ (params κ pp) msg.1, z, z) := rfl
++
++/-- Package a typed key under its original wire function after checking its tensor index.
++This is total adapter glue for [Wee20, Section 3.1]. No function encoding is inverted. -/
++def wrapKey (κ : ℕ) (pp : PublicParams (S).G κ) (f : ((S).saSpec κ).dom 1)
++    (key : Quadratic.KeyPack G n n PG κ (params κ pp)) : Option ((S).SK κ pp) :=
++  let bits := (S).saKeyFunction κ f
++  let decoded := decodeFunction G ℓ n d κ (params κ pp) bits
++  if h : decoded = key.1 then
++    some ((keyEquiv G ℓ n d PG κ pp).symm ⟨bits, h.symm ▸ key.2⟩)
++  else none
++
++/-- The key wrapper's only accepted branch retains the original function word. -/
++theorem wrapKey_eq (κ : ℕ) (pp : PublicParams (S).G κ) (f : ((S).saSpec κ).dom 1)
++    (key : Quadratic.KeyPack G n n PG κ (params κ pp)) :
++    wrapKey G ℓ n d PG κ pp f key =
++      let bits := (S).saKeyFunction κ f
++      let decoded := decodeFunction G ℓ n d κ (params κ pp) bits
++      if h : decoded = key.1 then
++        some ((keyEquiv G ℓ n d PG κ pp).symm ⟨bits, h.symm ▸ key.2⟩)
++      else none := rfl
++
++/-- One replay step recovers the original next query from the original-bit history.
++Its typed query and key index must agree with scalar decoding; inconsistent histories
++are rejected. This is adaptive bookkeeping for [Wee20, Section 2.2]. -/
++def replayStep (A : (S).SAAdv) (κ : ℕ) (pp : PublicParams (S).G κ)
++    (pk : Quadratic.MPK G ℓ n n κ (params κ pp)) (r : List Bool)
++    (acc : Option (QueryLog ((S).saSpec κ)))
++    (entry : Σ i, (Quadratic.saSpec G n n PG κ (params κ pp)).dom i ×
++      (Quadratic.saSpec G n n PG κ (params κ pp)).rng i) :
++    Option (QueryLog ((S).saSpec κ)) :=
++  acc.bind fun hist =>
++    match A.next κ pp ((mpkEquiv G ℓ n d PG κ pp).symm pk) r hist, entry with
++    | .query 0 xy, ⟨false, query, answer⟩ =>
++        if decodeChallenge G ℓ n d PG κ pp xy = query then
++          some (hist ++ [⟨0, xy, (S).saCTAnswer κ pp
++            (answer.map (ctEquiv G ℓ n d PG κ pp).symm)⟩])
++        else none
++    | .query 1 f, ⟨true, query, answer⟩ =>
++        if decodeFunction G ℓ n d κ (params κ pp) ((S).saKeyFunction κ f) = query then
++          let wireAnswer := match answer with
++            | none => some ((S).saSKAnswer κ pp none)
++            | some key => (wrapKey G ℓ n d PG κ pp f key).map
++                (fun sk => (S).saSKAnswer κ pp (some sk))
++          wireAnswer.map fun a => hist ++ [⟨1, f, a⟩]
++        else none
++    | _, _ => none
++
++/-- The replay step has precisely the displayed checked query and answer branches. -/
++theorem replayStep_eq (A : (S).SAAdv) (κ : ℕ) (pp : PublicParams (S).G κ)
++    (pk : Quadratic.MPK G ℓ n n κ (params κ pp)) (r : List Bool)
++    (acc : Option (QueryLog ((S).saSpec κ)))
++    (entry : Σ i, (Quadratic.saSpec G n n PG κ (params κ pp)).dom i ×
++      (Quadratic.saSpec G n n PG κ (params κ pp)).rng i) :
++    replayStep G ℓ n d PG A κ pp pk r acc entry =
++      acc.bind fun hist =>
++        match A.next κ pp ((mpkEquiv G ℓ n d PG κ pp).symm pk) r hist, entry with
++        | .query 0 xy, ⟨false, query, answer⟩ =>
++            if decodeChallenge G ℓ n d PG κ pp xy = query then
++              some (hist ++ [⟨0, xy, (S).saCTAnswer κ pp
++                (answer.map (ctEquiv G ℓ n d PG κ pp).symm)⟩])
++            else none
++        | .query 1 f, ⟨true, query, answer⟩ =>
++            if decodeFunction G ℓ n d κ (params κ pp) ((S).saKeyFunction κ f) = query then
++              let wireAnswer := match answer with
++                | none => some ((S).saSKAnswer κ pp none)
++                | some key => (wrapKey G ℓ n d PG κ pp f key).map
++                    (fun sk => (S).saSKAnswer κ pp (some sk))
++              wireAnswer.map fun a => hist ++ [⟨1, f, a⟩]
++            else none
++        | _, _ => none := rfl
++
++/-- Reconstruct the wire log by the library list fold, never by a new recursion host.
++Every accepted entry retains its original query bits [Wee20, Section 2.2]. -/
++def replay (A : (S).SAAdv) (κ : ℕ) (pp : PublicParams (S).G κ)
++    (pk : Quadratic.MPK G ℓ n n κ (params κ pp)) (r : List Bool)
++    (hist : QueryLog (Quadratic.saSpec G n n PG κ (params κ pp))) :
++    Option (QueryLog ((S).saSpec κ)) :=
++  hist.foldl (replayStep G ℓ n d PG A κ pp pk r) (some [])
++
++/-- Replay is exactly the displayed fold from the empty wire history. -/
++theorem replay_eq (A : (S).SAAdv) (κ : ℕ) (pp : PublicParams (S).G κ)
++    (pk : Quadratic.MPK G ℓ n n κ (params κ pp)) (r : List Bool)
++    (hist : QueryLog (Quadratic.saSpec G n n PG κ (params κ pp))) :
++    replay G ℓ n d PG A κ pp pk r hist =
++      hist.foldl (replayStep G ℓ n d PG A κ pp pk r) (some []) := rfl
++
++/-- Empty typed history reconstructs the empty original wire history. -/
++theorem replay_nil (A : (S).SAAdv) (κ : ℕ) (pp : PublicParams (S).G κ)
++    (pk : Quadratic.MPK G ℓ n n κ (params κ pp)) (r : List Bool) :
++    replay G ℓ n d PG A κ pp pk r [] = some [] := rfl
++
++/-- Appending one typed answer is exactly one replay step after the previous replay. -/
++theorem replay_append (A : (S).SAAdv) (κ : ℕ) (pp : PublicParams (S).G κ)
++    (pk : Quadratic.MPK G ℓ n n κ (params κ pp)) (r : List Bool)
++    (hist : QueryLog (Quadratic.saSpec G n n PG κ (params κ pp)))
++    (entry : Σ i, (Quadratic.saSpec G n n PG κ (params κ pp)).dom i ×
++      (Quadratic.saSpec G n n PG κ (params κ pp)).rng i) :
++    replay G ℓ n d PG A κ pp pk r (hist ++ [entry]) =
++      replayStep G ℓ n d PG A κ pp pk r (replay G ℓ n d PG A κ pp pk r hist) entry :=
++  List.foldl_append
++
++/-- The next typed move decodes only the newly replayed wire query
++[Wee20, Section 2.2; GJLS21, Section 9]. An inconsistent history terminates with false. -/
++def quadraticNext (A : (S).SAAdv) (κ : ℕ) (pp : PublicParams (S).G κ)
++    (pk : Quadratic.MPK G ℓ n n κ (params κ pp)) (r : List Bool)
++    (hist : QueryLog (Quadratic.saSpec G n n PG κ (params κ pp))) :
++    Move (Quadratic.saSpec G n n PG κ (params κ pp)) Bool :=
++  match replay G ℓ n d PG A κ pp pk r hist with
++  | none => .ret false
++  | some wire => match A.next κ pp ((mpkEquiv G ℓ n d PG κ pp).symm pk) r wire with
++    | .ret b => .ret b
++    | .query 0 xy => .query false (decodeChallenge G ℓ n d PG κ pp xy)
++    | .query 1 f => .query true
++        (decodeFunction G ℓ n d κ (params κ pp) ((S).saKeyFunction κ f))
++
++/-- The typed next move is the displayed replay-and-decode operation. -/
++theorem quadraticNext_eq (A : (S).SAAdv) (κ : ℕ) (pp : PublicParams (S).G κ)
++    (pk : Quadratic.MPK G ℓ n n κ (params κ pp)) (r : List Bool)
++    (hist : QueryLog (Quadratic.saSpec G n n PG κ (params κ pp))) :
++    quadraticNext G ℓ n d PG A κ pp pk r hist =
++      match replay G ℓ n d PG A κ pp pk r hist with
++      | none => .ret false
++      | some wire => match A.next κ pp ((mpkEquiv G ℓ n d PG κ pp).symm pk) r wire with
++        | .ret b => .ret b
++        | .query 0 xy => .query false (decodeChallenge G ℓ n d PG κ pp xy)
++        | .query 1 f => .query true
++            (decodeFunction G ℓ n d κ (params κ pp) ((S).saKeyFunction κ f)) := rfl
++
++/-- Transport the replayed move along the public codec's round trip. This explicit
++transport keeps foreign public-parameter and key types sealed. -/
++def toQuadraticNext (A : (S).SAAdv) (κ : ℕ) (pp : PublicParams G κ)
++    (pk : Quadratic.MPK G ℓ n n κ pp) (r : List Bool)
++    (hist : QueryLog (Quadratic.saSpec G n n PG κ pp)) :
++    Move (Quadratic.saSpec G n n PG κ pp) Bool :=
++  let wire := (params κ).symm pp
++  let h := (params κ).apply_symm_apply pp
++  let key : Quadratic.MPK G ℓ n n κ (params κ wire) := h.symm ▸ pk
++  let log : QueryLog (Quadratic.saSpec G n n PG κ (params κ wire)) := h.symm ▸ hist
++  h ▸ quadraticNext G ℓ n d PG A κ wire key r log
++
++/-- The next-move codec transports key, log and result using one public round trip. -/
++theorem toQuadraticNext_eq (A : (S).SAAdv) (κ : ℕ) (pp : PublicParams G κ)
++    (pk : Quadratic.MPK G ℓ n n κ pp) (r : List Bool)
++    (hist : QueryLog (Quadratic.saSpec G n n PG κ pp)) :
++    toQuadraticNext G ℓ n d PG A κ pp pk r hist =
++      let wire := (params κ).symm pp
++      let h := (params κ).apply_symm_apply pp
++      let key : Quadratic.MPK G ℓ n n κ (params κ wire) := h.symm ▸ pk
++      let log : QueryLog (Quadratic.saSpec G n n PG κ (params κ wire)) := h.symm ▸ hist
++      h ▸ quadraticNext G ℓ n d PG A κ wire key r log := rfl
++
++/-- The explicit typed quadratic adversary preserves the original coins and TOTAL call
++budget [Wee20, Section 2.2; GJLS21, Section 9]. It constructs no oracle machine. -/
++def toQuadratic (A : (S).SAAdv) : Quadratic.SAAdv G n n PG where
++  coins := A.coins
++  budget := A.budget
++  next := toQuadraticNext G ℓ n d PG A
++
++/-- The adapter preserves the original coin layout. -/
++theorem toQuadratic_coins (A : (S).SAAdv) :
++    (toQuadratic G ℓ n d PG A).coins = A.coins := rfl
++
++/-- The adapter preserves the TOTAL query budget without adding a call. -/
++theorem toQuadratic_budget (A : (S).SAAdv) :
++    (toQuadratic G ℓ n d PG A).budget = A.budget := rfl
++
++/-- The adapter uses precisely the published replayed next move. -/
++theorem toQuadratic_next (A : (S).SAAdv) :
++    (toQuadratic G ℓ n d PG A).next = toQuadraticNext G ℓ n d PG A := rfl
++
++/-- The wire and typed fresh experiments have identical laws on both branches
++[Wee20, Sections 2.2 and 3.1-3.2; GJLS21, Section 9]. The wire flag is true for real,
++whereas the typed fresh flag is true for ideal.
++
++**Proof sketch.** Reuse the public-parameter, MPK, CT and key codec readers, and couple
++actual setup and every complete finite draw by their published pushforward laws. Relate
++the buildComp histories by replay_append. Each accepted challenge retains its original
++x/y words, and each key retains its original function word; decoded aliases are never
++reencoded as inputs. Query and packed-key checks are equalities on these reachable
++histories. Duplicate challenges and pre-challenge keys give the same none encoding; the
++extra typed accepted-key cap cannot be reached within the identical TOTAL call budget.
++On the ideal branch class_eval_eq identifies the allowed scalar, and scalarValueEquiv_eq
++identifies its codec before known-scalar exponentiation. Apply expect_simulate_rel and
++average setup, public parameters and adversary coins. No exponent is recovered. -/
++theorem expect_saGame_eq_fresh (hPG : PGSound PG) (A : (S).SAAdv) (real : Bool)
++    (κ : ℕ) (test : Bool → ℝ) :
++    ProbComp.expect ((S).saGame (wee20SASim_raw G ℓ n d PG) A real κ) test =
++      ProbComp.expect
++        (Quadratic.freshSaGame G n n PG (toQuadratic G ℓ n d PG A) (!real) κ) test := sorry
++
++/-- Wire PHFE advantage equals the actual fresh typed quadratic advantage, without loss
++[Wee20, Section 3, main claim; GJLS21, Section 9].
++
++**Proof sketch.** Apply expect_saGame_eq_fresh to the two acceptance tests. Read both
++advantage equations and the shared advantage/acceptance reader. -/
++theorem saSimAdv_eq_fresh (hPG : PGSound PG) (A : (S).SAAdv) (κ : ℕ) :
++    (S).saSimAdv (wee20SASim_raw G ℓ n d PG) A κ =
++      Quadratic.freshSaSimAdv G n n PG (toQuadratic G ℓ n d PG A) κ := sorry
++
++end
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean
+index 9277b2974..1789b65c9 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean
+@@ -54,7 +54,7 @@ theorem PHFE.class_eval_eq (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+     (f : Fin ((phfeClass ℓ n G.wG d).fnLen.eval κ) → Bool)
+     (x : Fin ((phfeClass ℓ n G.wG d).pubLen.eval κ) → Bool)
+     (y : Fin ((phfeClass ℓ n G.wG d).privLen.eval κ) → Bool) :
+-    phfeClassValueEquiv ℓ n G.wG d κ pp.orderParam
++    PHFE.valueEquiv G ℓ n d κ pp
+         ((phfeClass ℓ n G.wG d).eval κ (PHFE.classParam G ℓ n d κ pp) f x y) =
+       Quadratic.value G n n PG κ pp (PHFE.decodeFunction G ℓ n d κ pp f)
+         (PHFE.decodePublic G ℓ n d κ pp x)
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Data.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Data.lean
+index 33d2253fe..e93b6b9ce 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Data.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Data.lean
+@@ -80,19 +80,36 @@ theorem classParam_eq (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ)
+     (pp : PublicParams G κ) : classParam G ℓ n d κ pp =
+       (phfeClassParamEquiv ℓ n G.wG d κ).symm pp.orderParam := rfl
+ 
++/-- Read a class value at the packaged public modulus as a scalar. This typed codec
++exposes the parameter transport without requiring consumers to unfold classParam. -/
++def valueEquiv (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ) (pp : PublicParams G κ) :
++    (phfeClass ℓ n G.wG d).Out κ (classParam G ℓ n d κ pp) ≃ ZMod pp.group.order :=
++  phfeClassValueEquiv ℓ n G.wG d κ pp.orderParam
++
++/-- The public-value codec is the class codec at the drawn positive modulus. -/
++theorem valueEquiv_eq (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ)
++    (pp : PublicParams G κ) : valueEquiv G ℓ n d κ pp =
++      phfeClassValueEquiv ℓ n G.wG d κ pp.orderParam := rfl
++
++/-- Packaging a supplied scalar and reading it back preserves it. -/
++theorem valueEquiv_apply_symm (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ)
++    (pp : PublicParams G κ) (a : ZMod pp.group.order) :
++    valueEquiv G ℓ n d κ pp ((valueEquiv G ℓ n d κ pp).symm a) = a :=
++  (valueEquiv G ℓ n d κ pp).apply_symm_apply a
++
+ /-- Embed the allowed scalar value in the target group at the public generator
+ [GJLS21, Definition 4.2 and Section 9]. -/
+ def embedValue (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ) (pp : PublicParams G κ)
+     (v : (phfeClass ℓ n G.wG d).Out κ (classParam G ℓ n d κ pp)) : pp.group.GT :=
+   pp.group.pair pp.generator pp.generator ^
+-    (phfeClassValueEquiv ℓ n G.wG d κ pp.orderParam v).val
++    (valueEquiv G ℓ n d κ pp v).val
+ 
+ /-- The embedding exponent is the scalar supplied by the published value codec. -/
+ theorem embedValue_eq (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ)
+     (pp : PublicParams G κ)
+     (v : (phfeClass ℓ n G.wG d).Out κ (classParam G ℓ n d κ pp)) :
+     embedValue G ℓ n d κ pp v = pp.group.pair pp.generator pp.generator ^
+-      (phfeClassValueEquiv ℓ n G.wG d κ pp.orderParam v).val := rfl
++      (valueEquiv G ℓ n d κ pp v).val := rfl
+ 
+ /-- The public word contains exactly ℓ residues at the source-group width. -/
+ theorem publicWidth (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ) :
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Embedding.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Embedding.lean
+index 53c75dba4..95350a5e8 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Embedding.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Embedding.lean
+@@ -38,7 +38,7 @@ open Complexity TCSlib.Cryptography.Pairing
+ This is the prime-order injectivity property, used only as a proof about supplied scalars. -/
+ theorem embedValue_injective (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ)
+     (pp : PublicParams G κ) : Function.Injective (embedValue G ℓ n d κ pp) :=
+-  fun a b h => (phfeClassValueEquiv ℓ n G.wG d κ pp.orderParam).injective
++  fun a b h => (valueEquiv G ℓ n d κ pp).injective
+     ((pp.group.pow_val_bijective pp.generator_ne_one).injective
+       ((embedValue_eq G ℓ n d κ pp a).symm.trans
+         (h.trans (embedValue_eq G ℓ n d κ pp b))))
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Headlines.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Headlines.lean
+new file mode 100644
+index 000000000..8b83baf6c
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Headlines.lean
+@@ -0,0 +1,134 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Security
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.Assembly
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Efficient public-key PHFE headlines
++
++The concrete efficiency targets assemble the efficient scheme and both simulators.
++The raw bounds discharge correctness and simulation security. Only the L2 realisability
++of machine-derived adversaries remains a reduction hypothesis; the shared L1 target
++supplies matrix-DH realisers. No efficient primitive is constructed in this module.
++
++## Main definitions
++
++This module introduces no new algorithm or target.
++
++## Main results
++
++* `wee20PHFE_correct`, `wee20PHFE_correctExcept_zero`: exact exponent correctness.
++* `wee20PHFE_simSecure`, `wee20PHFE_saSimSecure`: security with efficient simulators.
++* `wee20PHFE_subexpSimSecure`, `wee20PHFE_subexpSASimSecure`: common-exponent security.
++* `wee20PHFE_gjls21`: the Definition 4.3 many-key, epsilon-one PHFE package with linear efficiency.
++
++## References
++
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
++  revision of 3 January 2025, Definitions 4.1-4.3 and 4.6, Remarks 4.3 and 4.6,
++  Section 9 and Theorems 10.3-10.4.
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Section 3, main claim,
++  p.6, with Section 3.3, pp.7-8.
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, Journal of the ACM 73(1), Article 1, 2026, Section 1.1.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20
++
++open Complexity TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++
++section
++
++variable (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ) (hT : Targets G ℓ n d)
++
++local notation "PG" => layeredPG_raw ℓ (n.mul n) d
++local notation "P" => wee20PHFE G ℓ n d hT.scheme
++
++/-- The assembled PHFE is perfectly correct in the target-group exponent
++[GJLS21, Definition 4.2 and Section 9; Wee20, Section 3.1, (4)-(5)]. -/
++theorem wee20PHFE_correct : (P).toRaw.Correct :=
++  Eq.mpr (congrArg (fun S : FEScheme.Raw (phfeClass ℓ n G.wG d) => (S).Correct)
++    (wee20PHFE_toRaw G ℓ n d hT.scheme))
++    (wee20PHFE_raw_correct G ℓ n d PG (PHFE.layeredPG_sound ℓ n d))
++
++/-- Perfect exponent correctness gives zero correctness error in GJLS21's syntax
++[GJLS21, Definition 4.2]. -/
++theorem wee20PHFE_correctExcept_zero : (P).toRaw.CorrectExcept 0 :=
++  Eq.mpr (congrArg
++    (fun S : FEScheme.Raw (phfeClass ℓ n G.wG d) => (S).CorrectExcept 0)
++    (wee20PHFE_toRaw G ℓ n d hT.scheme))
++    (wee20PHFE_raw_correctExcept_zero G ℓ n d PG (PHFE.layeredPG_sound ℓ n d))
++
++/-- The assembled primitive has one efficient committed simulator before all machine
++pairs and key counts [GJLS21, Definition 4.3, epsilon one; Remark 4.6].
++
++**Proof sketch.** Supply the already assembled wee20Sim using hT.simulators. Use
++wee20PHFE_raw_simSecureWith and layeredPG_sound. Instantiate its L1 realisability by
++mddhRealizable_of_preTarget G hT.mddh for each polynomial dimension pair. Transport the
++scheme and simulator through their assembly readers. No sampler closure is assumed. -/
++theorem wee20PHFE_simSecure (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (hpb : ∀ κ, 2 ^ κ ≤ p κ)
++    (hR : Wee20Realizable43 G ℓ n d PG p hp) (h : G.DLINAssumption) :
++    (P).toRaw.SimSecure := sorry
++
++/-- The assembled primitive has one efficient semi-adaptive simulator before every
++oracle NUPPT and TOTAL budget [Wee20, Section 2.2].
++
++**Proof sketch.** Supply wee20SASim G ell n d hT.simulators, read its raw identity, and
++apply wee20PHFE_raw_saSimSecureWith with layeredPG_sound. Discharge shared L1 matrix
++realisability using mddhRealizable_of_preTarget and hT.mddh, then transport the scheme
++through wee20PHFE_toRaw. No machine is constructed from an arbitrary typed adversary. -/
++theorem wee20PHFE_saSimSecure (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (hpb : ∀ κ, 2 ^ κ ≤ p κ)
++    (hR : Wee20RealizableSA G ℓ n d PG p hp) (h : G.DLINAssumption) :
++    (P).toRaw.SASimSecure := sorry
++
++/-- One efficient committed simulator attains a common positive subexponential exponent
++[GJLS21, Definition 4.3; the subexponential convention in JLS26, Section 1.1].
++
++**Proof sketch.** Use wee20PHFE_raw_subexpSimSecureWith and the efficient committed
++simulator already assembled from hT.simulators. The raw theorem's exponent is chosen
++before the machine pair and key count. Discharge every L1 realisability obligation by
++hT.mddh and mddhRealizable_of_preTarget, then use the assembly readers. -/
++theorem wee20PHFE_subexpSimSecure (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (hpb : ∀ κ, 2 ^ κ ≤ p κ)
++    (hR : Wee20Realizable43 G ℓ n d PG p hp) (h : G.SubexpDLIN) :
++    (P).toRaw.SubexpSimSecure := sorry
++
++/-- One efficient semi-adaptive simulator attains a common positive subexponential
++exponent before every oracle machine and budget [Wee20, Section 2.2].
++
++**Proof sketch.** Use wee20PHFE_raw_subexpSASimSecureWith and the efficient semi-adaptive
++simulator assembled from hT.simulators. Discharge L1 realisability by hT.mddh through
++the shared link. Read the scheme/simulator raw identities. The common exponent is
++independent of the oracle machine and TOTAL call polynomial. -/
++theorem wee20PHFE_subexpSASimSecure (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (hpb : ∀ κ, 2 ^ κ ≤ p κ)
++    (hR : Wee20RealizableSA G ℓ n d PG p hp) (h : G.SubexpDLIN) :
++    (P).toRaw.SubexpSASimSecure := sorry
++
++/-- The assembled public-key PHFE has zero correctness error, many-key epsilon-one
++simulation security and the one uniform linear-encryption target
++[GJLS21, Definitions 4.1-4.3 and 4.6, Remark 4.6 and Section 9].
++The class is the original private quadratic polynomial class, with outputs embedded in
++GT. The simulator receives allowed scalar values via the recorded Theorem 9.2 Hybrid 1
++reading. The positive-size linear-time formulation is specified in LinearEfficient. -/
++theorem wee20PHFE_gjls21 (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (hpb : ∀ κ, 2 ^ κ ≤ p κ)
++    (hR : Wee20Realizable43 G ℓ n d PG p hp) (h : G.DLINAssumption) :
++    (P).toRaw.CorrectExcept 0 ∧ (P).toRaw.SimSecure ∧ LinearEfficient G :=
++  ⟨wee20PHFE_correctExcept_zero G ℓ n d hT,
++    wee20PHFE_simSecure G ℓ n d hT p hp hpb hR h, hT.linear⟩
++
++end
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean
+index c37481fbe..56093c5d2 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean
+@@ -205,15 +205,14 @@ def scalarValueEquiv (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+     (pp : PublicParams (wee20PHFE_raw G ℓ n d PG).G κ) :
+     (phfeClass ℓ n G.wG d).Out κ ((wee20PHFE_raw G ℓ n d PG).cprm κ pp) ≃
+       ZMod (publicParamsEquiv G ℓ n d PG κ pp).group.order :=
+-  phfeClassValueEquiv ℓ n G.wG d κ (publicParamsEquiv G ℓ n d PG κ pp).orderParam
++  valueEquiv G ℓ n d κ (publicParamsEquiv G ℓ n d PG κ pp)
+ 
+ /-- The scalar-value codec is the published class codec at the public modulus. -/
+ theorem scalarValueEquiv_eq (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+     (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
+     (pp : PublicParams (wee20PHFE_raw G ℓ n d PG).G κ) :
+     scalarValueEquiv G ℓ n d PG κ pp =
+-      phfeClassValueEquiv ℓ n G.wG d κ
+-        (publicParamsEquiv G ℓ n d PG κ pp).orderParam := rfl
++      valueEquiv G ℓ n d κ (publicParamsEquiv G ℓ n d PG κ pp) := rfl
+ 
+ end PHFE
+ 
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Security.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Security.lean
+new file mode 100644
+index 000000000..214fc4b82
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Security.lean
+@@ -0,0 +1,359 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Adapter
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.CommittedSimulator
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Compose
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Slack
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.Security
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Simulation.Security
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Raw PHFE security with explicit realisers
++
++The core inequality applies to every typed wire adversary. Replay preserves original
++noncanonical input words, while the outer quadratic theorem supplies four explicit
++reductions with exactly one rank loss. The committed inequality uses the actual
++TwoStage.toSA conversion; it assumes no abstract machine security implication.
++
++## Main definitions
++
++* `Wee20RealizableSA`: L2 realisability only for oracle-machine-derived adversaries.
++* `Wee20Realizable43`: L2 realisability only for committed machine pairs.
++
++## Main results
++
++* `wee20PHFE_saSimAdv_le`, `wee20PHFE_simAdv_le`: four explicit MDDH advantages and rank loss.
++* Raw negligible and subexponential security under machine-restricted realisability.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Section 3, main claim,
++  p.6, with Section 3.3, pp.7-8 and Appendix B, Theorem 1.
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
++  revision of 3 January 2025, Definition 4.3, Remark 4.6 and Section 9.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20
++
++open Complexity TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++
++section
++
++variable (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++variable (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d))
++
++local notation "S" => wee20PHFE_raw G ℓ n d PG
++local notation "Q" => PHFE.toQuadratic G ℓ n d PG
++
++/-- Every typed wire adversary has fixed scalar advice for which EVERY four realising
++machines satisfy the actual PHFE bound [Wee20, Section 3, p.6, with Section 3.3].
++Only encoded challenges and layout-length coins constrain each shared realiser. The sole
++statistical term is the unconditioned basis failure; partial-garbling privacy is exact.
++
++**Proof sketch.** Apply PHFE.saSimAdv_eq_fresh and Quadratic.quadratic_saSimAdv_le to the
++explicit PHFE.toQuadratic adversary. Read its coins and TOTAL budget through the adapter
++readers and transport the four realisation hypotheses through those equalities. The
++outer theorem chooses all scalar advice before any realiser. No efficiency is assumed.
++-/
++theorem wee20PHFE_saSimAdv_le (hPG : PHFE.PGSound PG) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : (S).SAAdv) :
++    ∃ φ : ∀ κ, Quadratic.MaskAdvice n n p κ,
++    ∃ ωPi : Fin 2 → ∀ κ, Linear.Advice PG (Quadratic.piDim n n) A.budget p κ,
++    ∃ ωOuter : Fin 2 → ∀ κ, Quadratic.Advice n n A.budget PG p κ,
++    ∀ D : Fin 4 → NUPPT,
++      (D 0).RealizesOn (G.mddhEnc (PolyExpr.const 1) (PolyExpr.const 3)) A.coins
++        (Linear.red0 G PG (Quadratic.piDim n n) p hp
++          (Quadratic.toLinear G n n PG p hp (Q A) φ) (ωPi 0)) →
++      (D 1).RealizesOn (G.mddhEnc ℓ (PG.mBound.mul A.budget)) A.coins
++        (Linear.red1 G PG (Quadratic.piDim n n) p hp
++          (Quadratic.toLinear G n n PG p hp (Q A) φ) (ωPi 1)) →
++      (D 2).RealizesOn (G.mddhEnc (PolyExpr.const 1) n) A.coins
++        (Quadratic.red2 G n n PG p hp (Q A) (ωOuter 0)) →
++      (D 3).RealizesOn (G.mddhEnc (PolyExpr.const 1) n) A.coins
++        (Quadratic.red3 G n n PG p hp (Q A) (ωOuter 1)) →
++      ∀ κ, (S).saSimAdv (wee20SASim_raw G ℓ n d PG) A κ ≤
++        G.mddhAdv (PolyExpr.const 1) (PolyExpr.const 3) (D 0) κ +
++        G.mddhAdv ℓ (PG.mBound.mul A.budget) (D 1) κ +
++        G.mddhAdv (PolyExpr.const 1) n (D 2) κ + G.mddhAdv (PolyExpr.const 1) n (D 3) κ +
++        Linear.linearSlack G κ := sorry
++
++/-- Every committed machine pair has the same explicit raw bound through its actual
++TwoStage.toSA conversion [GJLS21, Definition 4.3, epsilon one; Remark 4.6]. Only encoded
++challenges and layout-length coins constrain the realisers; the budget includes q keys
++AND the single challenge, hence q+1 TOTAL calls.
++
++**Proof sketch.** Read wee20Sim_raw_eq, then simAdv_eq_saSimAdv for the concrete raw
++semi-adaptive simulator. Apply wee20PHFE_saSimAdv_le to A.toSA q and read toSA_coins and
++toSA_budget. No oracle machine is built and no abstract secure-to-secure implication is
++used. The advice is chosen before all four machine realisers.
++-/
++theorem wee20PHFE_simAdv_le (hPG : PHFE.PGSound PG) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : TwoStage) (q : PolyExpr) :
++    let B := A.toSA (S := S) q
++    ∃ φ : ∀ κ, Quadratic.MaskAdvice n n p κ,
++    ∃ ωPi : Fin 2 → ∀ κ, Linear.Advice PG (Quadratic.piDim n n) B.budget p κ,
++    ∃ ωOuter : Fin 2 → ∀ κ, Quadratic.Advice n n B.budget PG p κ,
++    ∀ D : Fin 4 → NUPPT,
++      (D 0).RealizesOn (G.mddhEnc (PolyExpr.const 1) (PolyExpr.const 3)) B.coins
++        (Linear.red0 G PG (Quadratic.piDim n n) p hp
++          (Quadratic.toLinear G n n PG p hp (Q B) φ) (ωPi 0)) →
++      (D 1).RealizesOn (G.mddhEnc ℓ (PG.mBound.mul B.budget)) B.coins
++        (Linear.red1 G PG (Quadratic.piDim n n) p hp
++          (Quadratic.toLinear G n n PG p hp (Q B) φ) (ωPi 1)) →
++      (D 2).RealizesOn (G.mddhEnc (PolyExpr.const 1) n) B.coins
++        (Quadratic.red2 G n n PG p hp (Q B) (ωOuter 0)) →
++      (D 3).RealizesOn (G.mddhEnc (PolyExpr.const 1) n) B.coins
++        (Quadratic.red3 G n n PG p hp (Q B) (ωOuter 1)) →
++      ∀ κ, (S).simAdv (wee20Sim_raw G ℓ n d PG) A q κ ≤
++        G.mddhAdv (PolyExpr.const 1) (PolyExpr.const 3) (D 0) κ +
++        G.mddhAdv ℓ (PG.mBound.mul B.budget) (D 1) κ +
++        G.mddhAdv (PolyExpr.const 1) n (D 2) κ + G.mddhAdv (PolyExpr.const 1) n (D 3) κ +
++        Linear.linearSlack G κ := sorry
++
++/-- Every fixed-advice L2 reduction of a MACHINE-DERIVED adversary has realising machines.
++This is the reduction realisability hypothesis for [Wee20, Section 3.3], not an
++honest-algorithm efficiency condition. It quantifies only over oracle NUPPTs.
++The shared realiser constrains only encoded challenges and layout-length coins. -/
++def Wee20RealizableSA (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) : Prop :=
++  ∀ (A : NUPPT) (q : PolyExpr),
++    let B := A.toSAAdv (S := S) q
++    ∀ φ : ∀ κ, Quadratic.MaskAdvice n n p κ,
++    ∀ ωPi : Fin 2 → ∀ κ, Linear.Advice PG (Quadratic.piDim n n) B.budget p κ,
++    ∀ ωOuter : Fin 2 → ∀ κ, Quadratic.Advice n n B.budget PG p κ,
++    ∃ D : Fin 4 → NUPPT,
++      ((D 0).RealizesOn (G.mddhEnc (PolyExpr.const 1) (PolyExpr.const 3)) B.coins
++        (Linear.red0 G PG (Quadratic.piDim n n) p hp
++          (Quadratic.toLinear G n n PG p hp (Q B) φ) (ωPi 0))) ∧
++      ((D 1).RealizesOn (G.mddhEnc ℓ (PG.mBound.mul B.budget)) B.coins
++        (Linear.red1 G PG (Quadratic.piDim n n) p hp
++          (Quadratic.toLinear G n n PG p hp (Q B) φ) (ωPi 1))) ∧
++      ((D 2).RealizesOn (G.mddhEnc (PolyExpr.const 1) n) B.coins
++        (Quadratic.red2 G n n PG p hp (Q B) (ωOuter 0))) ∧
++      ((D 3).RealizesOn (G.mddhEnc (PolyExpr.const 1) n) B.coins
++        (Quadratic.red3 G n n PG p hp (Q B) (ωOuter 1)))
++
++/-- The realisability hypothesis has exactly the displayed machine and advice quantifiers. -/
++theorem wee20RealizableSA_iff (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) :
++    Wee20RealizableSA G ℓ n d PG p hp ↔
++  ∀ (A : NUPPT) (q : PolyExpr),
++    let B := A.toSAAdv (S := S) q
++    ∀ φ : ∀ κ, Quadratic.MaskAdvice n n p κ,
++    ∀ ωPi : Fin 2 → ∀ κ, Linear.Advice PG (Quadratic.piDim n n) B.budget p κ,
++    ∀ ωOuter : Fin 2 → ∀ κ, Quadratic.Advice n n B.budget PG p κ,
++    ∃ D : Fin 4 → NUPPT,
++      ((D 0).RealizesOn (G.mddhEnc (PolyExpr.const 1) (PolyExpr.const 3)) B.coins
++        (Linear.red0 G PG (Quadratic.piDim n n) p hp
++          (Quadratic.toLinear G n n PG p hp (Q B) φ) (ωPi 0))) ∧
++      ((D 1).RealizesOn (G.mddhEnc ℓ (PG.mBound.mul B.budget)) B.coins
++        (Linear.red1 G PG (Quadratic.piDim n n) p hp
++          (Quadratic.toLinear G n n PG p hp (Q B) φ) (ωPi 1))) ∧
++      ((D 2).RealizesOn (G.mddhEnc (PolyExpr.const 1) n) B.coins
++        (Quadratic.red2 G n n PG p hp (Q B) (ωOuter 0))) ∧
++      ((D 3).RealizesOn (G.mddhEnc (PolyExpr.const 1) n) B.coins
++        (Quadratic.red3 G n n PG p hp (Q B) (ωOuter 1))) := Iff.rfl
++
++/-- Every fixed-advice L2 reduction of a MACHINE-DERIVED adversary has realising machines.
++This is the reduction realisability hypothesis for [Wee20, Section 3.3], not an
++honest-algorithm efficiency condition. It quantifies only over committed machine pairs.
++The shared realiser constrains only encoded challenges and layout-length coins. -/
++def Wee20Realizable43 (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) : Prop :=
++  ∀ (A : TwoStage) (q : PolyExpr),
++    let B := A.toSA (S := S) q
++    ∀ φ : ∀ κ, Quadratic.MaskAdvice n n p κ,
++    ∀ ωPi : Fin 2 → ∀ κ, Linear.Advice PG (Quadratic.piDim n n) B.budget p κ,
++    ∀ ωOuter : Fin 2 → ∀ κ, Quadratic.Advice n n B.budget PG p κ,
++    ∃ D : Fin 4 → NUPPT,
++      ((D 0).RealizesOn (G.mddhEnc (PolyExpr.const 1) (PolyExpr.const 3)) B.coins
++        (Linear.red0 G PG (Quadratic.piDim n n) p hp
++          (Quadratic.toLinear G n n PG p hp (Q B) φ) (ωPi 0))) ∧
++      ((D 1).RealizesOn (G.mddhEnc ℓ (PG.mBound.mul B.budget)) B.coins
++        (Linear.red1 G PG (Quadratic.piDim n n) p hp
++          (Quadratic.toLinear G n n PG p hp (Q B) φ) (ωPi 1))) ∧
++      ((D 2).RealizesOn (G.mddhEnc (PolyExpr.const 1) n) B.coins
++        (Quadratic.red2 G n n PG p hp (Q B) (ωOuter 0))) ∧
++      ((D 3).RealizesOn (G.mddhEnc (PolyExpr.const 1) n) B.coins
++        (Quadratic.red3 G n n PG p hp (Q B) (ωOuter 1)))
++
++/-- The realisability hypothesis has exactly the displayed machine and advice quantifiers. -/
++theorem wee20Realizable43_iff (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) :
++    Wee20Realizable43 G ℓ n d PG p hp ↔
++  ∀ (A : TwoStage) (q : PolyExpr),
++    let B := A.toSA (S := S) q
++    ∀ φ : ∀ κ, Quadratic.MaskAdvice n n p κ,
++    ∀ ωPi : Fin 2 → ∀ κ, Linear.Advice PG (Quadratic.piDim n n) B.budget p κ,
++    ∀ ωOuter : Fin 2 → ∀ κ, Quadratic.Advice n n B.budget PG p κ,
++    ∃ D : Fin 4 → NUPPT,
++      ((D 0).RealizesOn (G.mddhEnc (PolyExpr.const 1) (PolyExpr.const 3)) B.coins
++        (Linear.red0 G PG (Quadratic.piDim n n) p hp
++          (Quadratic.toLinear G n n PG p hp (Q B) φ) (ωPi 0))) ∧
++      ((D 1).RealizesOn (G.mddhEnc ℓ (PG.mBound.mul B.budget)) B.coins
++        (Linear.red1 G PG (Quadratic.piDim n n) p hp
++          (Quadratic.toLinear G n n PG p hp (Q B) φ) (ωPi 1))) ∧
++      ((D 2).RealizesOn (G.mddhEnc (PolyExpr.const 1) n) B.coins
++        (Quadratic.red2 G n n PG p hp (Q B) (ωOuter 0))) ∧
++      ((D 3).RealizesOn (G.mddhEnc (PolyExpr.const 1) n) B.coins
++        (Quadratic.red3 G n n PG p hp (Q B) (ωOuter 1))) := Iff.rfl
++
++/-- The raw PHFE bound composes its four explicit L2 reductions with the four L1
++canonical-DLIN reductions, retaining one basis failure and all matrix corrections
++[Wee20, Sections 2.1 and 3.3]. EVERY realiser is quantified after its scalar advice,
++and shared realisers are constrained only on encoded challenges and layout-length coins.
++
++**Proof sketch.** Use PHFE.saSimAdv_eq_fresh and Quadratic.quadratic_saSimAdv_dlin_le for the
++explicit
++adapter. Read toQuadratic_coins/toQuadratic_budget. The response-column factors are
++1,ell,1,1, and quadraticSlack exposes the single basis loss and four 4*columns/p terms.
++-/
++theorem wee20PHFE_saSimAdv_dlin_le (hPG : PHFE.PGSound PG) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : (S).SAAdv) :
++    ∃ φ : ∀ κ, Quadratic.MaskAdvice n n p κ,
++    ∃ ωPi : Fin 2 → ∀ κ, Linear.Advice PG (Quadratic.piDim n n) A.budget p κ,
++    ∃ ωOuter : Fin 2 → ∀ κ, Quadratic.Advice n n A.budget PG p κ,
++    ∀ D : Fin 4 → NUPPT,
++      (D 0).RealizesOn (G.mddhEnc (PolyExpr.const 1) (PolyExpr.const 3)) A.coins
++        (Linear.red0 G PG (Quadratic.piDim n n) p hp
++          (Quadratic.toLinear G n n PG p hp (Q A) φ) (ωPi 0)) →
++      (D 1).RealizesOn (G.mddhEnc ℓ (PG.mBound.mul A.budget)) A.coins
++        (Linear.red1 G PG (Quadratic.piDim n n) p hp
++          (Quadratic.toLinear G n n PG p hp (Q A) φ) (ωPi 1)) →
++      (D 2).RealizesOn (G.mddhEnc (PolyExpr.const 1) n) A.coins
++        (Quadratic.red2 G n n PG p hp (Q A) (ωOuter 0)) →
++      (D 3).RealizesOn (G.mddhEnc (PolyExpr.const 1) n) A.coins
++        (Quadratic.red3 G n n PG p hp (Q A) (ωOuter 1)) →
++    ∃ η : ∀ i : Fin 4, ∀ κ,
++      BilinearGen.MddhAdvice p (Quadratic.hopCols ℓ i)
++        (Quadratic.hopRows n n A.budget PG i) κ,
++    ∀ B : Fin 4 → NUPPT,
++      (∀ i, (B i).RealizesOn G.dlinEnc (D i).coins
++        (G.dlinToMddh p hp (Quadratic.hopCols ℓ i)
++          (Quadratic.hopRows n n A.budget PG i) (D i) (η i))) →
++      ∀ κ, (S).saSimAdv (wee20SASim_raw G ℓ n d PG) A κ ≤
++        (∑ i : Fin 4, ((Quadratic.hopCols ℓ i).eval κ : ℝ) * G.dlinAdv (B i) κ) +
++        Quadratic.quadraticSlack G ℓ p κ := sorry
++
++/-- The raw PHFE bound composes its four explicit L2 reductions with the four L1
++canonical-DLIN reductions, retaining one basis failure and all matrix corrections
++[Wee20, Sections 2.1 and 3.3]. EVERY realiser is quantified after its scalar advice,
++and shared realisers are constrained only on encoded challenges and layout-length coins.
++
++**Proof sketch.** Read wee20Sim_raw_eq and simAdv_eq_saSimAdv, then apply the SA composition.
++-/
++theorem wee20PHFE_simAdv_dlin_le (hPG : PHFE.PGSound PG) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : TwoStage) (q : PolyExpr) :
++    let W := A.toSA (S := S) q
++    ∃ φ : ∀ κ, Quadratic.MaskAdvice n n p κ,
++    ∃ ωPi : Fin 2 → ∀ κ, Linear.Advice PG (Quadratic.piDim n n) W.budget p κ,
++    ∃ ωOuter : Fin 2 → ∀ κ, Quadratic.Advice n n W.budget PG p κ,
++    ∀ D : Fin 4 → NUPPT,
++      (D 0).RealizesOn (G.mddhEnc (PolyExpr.const 1) (PolyExpr.const 3)) W.coins
++        (Linear.red0 G PG (Quadratic.piDim n n) p hp
++          (Quadratic.toLinear G n n PG p hp (Q W) φ) (ωPi 0)) →
++      (D 1).RealizesOn (G.mddhEnc ℓ (PG.mBound.mul W.budget)) W.coins
++        (Linear.red1 G PG (Quadratic.piDim n n) p hp
++          (Quadratic.toLinear G n n PG p hp (Q W) φ) (ωPi 1)) →
++      (D 2).RealizesOn (G.mddhEnc (PolyExpr.const 1) n) W.coins
++        (Quadratic.red2 G n n PG p hp (Q W) (ωOuter 0)) →
++      (D 3).RealizesOn (G.mddhEnc (PolyExpr.const 1) n) W.coins
++        (Quadratic.red3 G n n PG p hp (Q W) (ωOuter 1)) →
++    ∃ η : ∀ i : Fin 4, ∀ κ,
++      BilinearGen.MddhAdvice p (Quadratic.hopCols ℓ i)
++        (Quadratic.hopRows n n W.budget PG i) κ,
++    ∀ B : Fin 4 → NUPPT,
++      (∀ i, (B i).RealizesOn G.dlinEnc (D i).coins
++        (G.dlinToMddh p hp (Quadratic.hopCols ℓ i)
++          (Quadratic.hopRows n n W.budget PG i) (D i) (η i))) →
++      ∀ κ, (S).simAdv (wee20Sim_raw G ℓ n d PG) A q κ ≤
++        (∑ i : Fin 4, ((Quadratic.hopCols ℓ i).eval κ : ℝ) * G.dlinAdv (B i) κ) +
++        Quadratic.quadraticSlack G ℓ p κ := sorry
++
++/-- The specified raw simulator gives negligible advantage under machine-restricted
++L2 realisability and shared L1 matrix realisability [Wee20, Section 3.3; GJLS21,
++Definition 4.3 for the committed case]. No honest efficiency target is assumed.
++
++**Proof sketch.** Read the raw SASimSecureWith predicate. For its oracle NUPPT, use the
++corresponding core inequality to choose advice, then the matching realisability reader
++to obtain four machine realisers. Apply mddhAdv_negligible to each fixed machine and
++polynomial dimension pair. Sum with the shared Negligible.add/mono API. The one rank
++failure is negligible by the published Linear.linearSlack_negligible bound. No new
++negligible or subexponential notion, rank-counting formula, or closure result is proved.
++-/
++theorem wee20PHFE_raw_saSimSecureWith (hPG : PHFE.PGSound PG) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (hpb : ∀ κ, 2 ^ κ ≤ p κ)
++    (hR : Wee20RealizableSA G ℓ n d PG p hp)
++    (hM : ∀ d' ℓ' : PolyExpr, G.MDDHRealizable p hp d' ℓ')
++    (h : G.DLINAssumption) : (S).SASimSecureWith (wee20SASim_raw G ℓ n d PG) := sorry
++
++/-- The specified raw simulator gives negligible advantage under machine-restricted
++L2 realisability and shared L1 matrix realisability [Wee20, Section 3.3; GJLS21,
++Definition 4.3 for the committed case]. No honest efficiency target is assumed.
++
++**Proof sketch.** Read the raw SimSecureWith predicate. For its machine pair, use the
++corresponding core inequality to choose advice, then the matching realisability reader
++to obtain four machine realisers. Apply mddhAdv_negligible to each fixed machine and
++polynomial dimension pair. Sum with the shared Negligible.add/mono API. The one rank
++failure is negligible by the published Linear.linearSlack_negligible bound. No new
++negligible or subexponential notion, rank-counting formula, or closure result is proved.
++-/
++theorem wee20PHFE_raw_simSecureWith (hPG : PHFE.PGSound PG) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (hpb : ∀ κ, 2 ^ κ ≤ p κ)
++    (hR : Wee20Realizable43 G ℓ n d PG p hp)
++    (hM : ∀ d' ℓ' : PolyExpr, G.MDDHRealizable p hp d' ℓ')
++    (h : G.DLINAssumption) : (S).SimSecureWith (wee20Sim_raw G ℓ n d PG) := sorry
++
++/-- The specified raw simulator gives one common positive subexponential exponent under
++machine-restricted L2 realisability and shared L1 matrix realisability [Wee20, Section 3.3; GJLS21,
++Definition 4.3 for the committed case]. No honest efficiency target is assumed.
++
++**Proof sketch.** Read SubexpDLIN and choose one positive exponent below its common
++exponent and one BEFORE the adversary and budget. For each oracle machine and budget,
++apply wee20PHFE_saSimAdv_dlin_le. The machine-restricted L2 hypothesis supplies four MDDH
++realisers, and hM supplies the subsequent four L1 DLIN realisers. Each DLIN advantage has
++the original common exponent; absorb its fixed polynomial factor at the previously
++chosen smaller exponent using the shared growth and SubexpSmall APIs. Apply the published
++Linear.linearSlack_subexpSmall and mddhSlack_subexpSmall at that same exponent. Sum and
++use the shared monotonicity reader. Do not choose an exponent from a per-dimension
++existential mddh_subexpHard result, since that would not establish budget uniformity.
++-/
++theorem wee20PHFE_raw_subexpSASimSecureWith (hPG : PHFE.PGSound PG) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (hpb : ∀ κ, 2 ^ κ ≤ p κ)
++    (hR : Wee20RealizableSA G ℓ n d PG p hp)
++    (hM : ∀ d' ℓ' : PolyExpr, G.MDDHRealizable p hp d' ℓ')
++    (h : G.SubexpDLIN) : (S).SubexpSASimSecureWith (wee20SASim_raw G ℓ n d PG) := sorry
++
++/-- The specified raw simulator gives one common positive subexponential exponent under
++machine-restricted L2 realisability and shared L1 matrix realisability [Wee20, Section 3.3; GJLS21,
++Definition 4.3 for the committed case]. No honest efficiency target is assumed.
++
++**Proof sketch.** Read SubexpDLIN and choose one positive exponent below its common
++exponent and one BEFORE the adversary and budget. For each committed machine pair and key count,
++apply wee20PHFE_simAdv_dlin_le. The machine-restricted L2 hypothesis supplies four MDDH
++realisers, and hM supplies the subsequent four L1 DLIN realisers. Each DLIN advantage has
++the original common exponent; absorb its fixed polynomial factor at the previously
++chosen smaller exponent using the shared growth and SubexpSmall APIs. Apply the published
++Linear.linearSlack_subexpSmall and mddhSlack_subexpSmall at that same exponent. Sum and
++use the shared monotonicity reader. Do not choose an exponent from a per-dimension
++existential mddh_subexpHard result, since that would not establish budget uniformity.
++-/
++theorem wee20PHFE_raw_subexpSimSecureWith (hPG : PHFE.PGSound PG) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (hpb : ∀ κ, 2 ^ κ ≤ p κ)
++    (hR : Wee20Realizable43 G ℓ n d PG p hp)
++    (hM : ∀ d' ℓ' : PolyExpr, G.MDDHRealizable p hp d' ℓ')
++    (h : G.SubexpDLIN) : (S).SubexpSimSecureWith (wee20Sim_raw G ℓ n d PG) := sorry
++
++
++end
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Composition.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Compose.lean
+similarity index 100%
+rename from TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Composition.lean
+rename to TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Compose.lean
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Data.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Data.lean
+index af109dc0d..3852d33e8 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Data.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Data.lean
+@@ -63,7 +63,7 @@ theorem keyPack_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
+ 
+ /-- False is the once-only challenge; true queries a function using the fixed public
+ matrix [Wee20, §2.2, p. 5; §3.1, p. 6]. Refused queries return none. -/
+-def saSpec (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++abbrev saSpec (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
+     {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
+     (κ : ℕ) (pp : PublicParams G κ) : OracleSpec Bool where
+   dom := fun | false => Challenge G ℓ n1 n2 κ pp | true => Fn κ pp.orderParam
+@@ -74,7 +74,8 @@ theorem saSpec_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
+     {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
+     (κ : ℕ) (pp : PublicParams G κ) : saSpec G n1 n2 PG κ pp =
+       { dom := fun | false => Challenge G ℓ n1 n2 κ pp | true => Fn κ pp.orderParam
+-        rng := fun | false => Option (CT G n1 n2 κ pp)
++        rng := fun
++          | false => Option (CT G n1 n2 κ pp)
+           | true => Option (KeyPack G n1 n2 PG κ pp) } := rfl
+ 
+ /-- A typed adversary sees the public key before selecting its challenge and its later
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Reductions.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Reduction.lean
+similarity index 100%
+rename from TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Reductions.lean
+rename to TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Reduction.lean
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean
+index 73f95b1e0..3761af834 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean
+@@ -4,8 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: TCSlib contributors
+ -/
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Fresh
+-import
+-  TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Reductions
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Reduction
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticCorrect
+ 
+ set_option maxHeartbeats 0
+diff --git a/TCSlib/Cryptography/Pairing.lean b/TCSlib/Cryptography/Pairing.lean
+index 37c1e2699..4a27d862d 100644
+--- a/TCSlib/Cryptography/Pairing.lean
++++ b/TCSlib/Cryptography/Pairing.lean
+@@ -5,6 +5,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ import TCSlib.Cryptography.Pairing.Group
+ import TCSlib.Cryptography.Pairing.Assumptions
+ import TCSlib.Cryptography.Pairing.Operations
++import TCSlib.Cryptography.Pairing.Exponents
++import TCSlib.Cryptography.Pairing.Linear
++import TCSlib.Cryptography.Pairing.MatrixDH
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -21,6 +24,10 @@ set_option autoImplicit false
+ * `Operations`: the efficiency contract of a generator (group operations and pairing as
+   polynomial-time string functions).
+ 
++* `Exponents`: known scalar actions and pairing products for implicit matrices.
++* `Linear`: symmetric DLIN and its explicit matrix presentation comparison.
++* `MatrixDH`: uniform-matrix games and deterministic DLIN self-reduction.
++
+ ## References
+ 
+ * [BB04] D. Boneh, X. Boyen, *Efficient Selective-ID Secure Identity Based Encryption Without
+@@ -28,4 +35,17 @@ set_option autoImplicit false
+   §2.2 and §3.1.
+ * [Jou00] A. Joux, *A One Round Protocol for Tripartite Diffie–Hellman*, ANTS-IV, LNCS 1838,
+   pp. 385–393, Springer, 2000.
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
++  Definitions 4.1-4.3 and 4.6, Section 9 and Theorems 10.3-10.4.
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Sections 2-4 and Appendix B.
++* [AGW20] M. Abdalla, J. Gong, H. Wee, *Functional Encryption for Attribute-Weighted
++  Sums from k-Lin*, CRYPTO 2020; full version, Cryptology ePrint Archive 2020/762,
++  Lemma 2 and Appendix A, (28)-(32).
++* [IW14] Y. Ishai, H. Wee, *Partial Garbling Schemes and Their Applications*, ICALP 2014;
++  full version, Cryptology ePrint Archive 2014/995, Definition 1 and Theorem 3.
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
++  Assumptions*, J. ACM 73(1), Article 1, 2026, Section 1.4 and Theorem 5.1.
+ -/

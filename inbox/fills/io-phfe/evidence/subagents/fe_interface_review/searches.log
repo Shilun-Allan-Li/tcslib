@@ -1,0 +1,26 @@
+$ git grep -nE def (runDet|evalDet|detRun|detImpl)|theorem .*simulate.*buildComp 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib audits
+exit=1
+(no matches)
+
+
+$ git grep -nE def OracleComp.evalFn|simulate_ofComp_pure|theorem hRaw_spec|theorem buildComp_(zero|succ)_of_ 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib/Cryptography/Games
+exit=0
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Games/Bridges/QueryTree.lean:42:* `Games.simulate_ofComp_pure`: simulating with a deterministic stateless implementation is
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Games/Bridges/QueryTree.lean:64:def OracleComp.evalFn {spec : OracleSpec ι} (f : ∀ i, spec.dom i → spec.rng i) :
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Games/Bridges/QueryTree.lean:83:theorem simulate_ofComp_pure {ι' : Type} {spec : OracleSpec ι} {spec' : OracleSpec ι'}
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Games/Efficiency/Handler.lean:389:theorem hRaw_spec {ι' : Type} {spec' : OracleSpec ι'} (n : ℕ) (z ω : List Bool) (r : A.Coins n)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Games/Machines.lean:128:theorem buildComp_zero_of_ret {a : α} (h : next hist = .ret a) :
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Games/Machines.lean:134:theorem buildComp_zero_of_query {i : ι} {x : spec.dom i} (h : next hist = .query i x) :
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Games/Machines.lean:140:theorem buildComp_succ_of_ret {q : ℕ} {a : α} (h : next hist = .ret a) :
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Games/Machines.lean:148:theorem buildComp_succ_of_query {q : ℕ} {i : ι} {x : spec.dom i} (h : next hist = .query i x) :
+
+
+$ rg -n (^|\s)(def|theorem) (runDet|evalDet|detRun|detImpl)|simulate.*buildComp /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean
+exit=1
+(no matches)
+
+
+$ rg -n (^|\s)(def|theorem) (runDet|evalDet|detRun|detImpl)|simulate.*buildComp|QueryLog.*Move /Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/.lake/packages/mathlib/Mathlib
+exit=1
+(no matches)
+

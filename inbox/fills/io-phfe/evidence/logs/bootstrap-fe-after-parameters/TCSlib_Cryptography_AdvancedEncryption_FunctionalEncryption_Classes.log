@@ -1,0 +1,97 @@
+head=4a0ba86726ae53578d82457aac19ed36d8759f34
+source_sha256=9f0433f81377acc3dadea743e443524e1047758cff58f7c6b23750b8d26ddb11
+start=2026-11-18T10:42:51.969139+00:00
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:80:31: error: Type mismatch
+  Fin.snoc_castSucc 1 ?m.10 i
+has type
+  Fin.snoc ?m.10 1 i.castSucc = ?m.10 i
+but is expected to have type
+  xhat x i.castSucc = x i
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:80:55: error: Application type mismatch: The argument
+  x
+has type
+  Fin l → ZMod ↑p
+but is expected to have type
+  (i : Fin l) → ?m.6 i.castSucc
+in the application
+  Fin.snoc_castSucc 1 x
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:84:31: error: Type mismatch
+  Fin.snoc_last 1 ?m.11
+has type
+  Fin.snoc ?m.11 1 (Fin.last ?m.6) = 1
+but is expected to have type
+  xhat x (Fin.last l) = 1
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:84:51: error: Application type mismatch: The argument
+  x
+has type
+  Fin l → ZMod ↑p
+but is expected to have type
+  (i : Fin ?m.6) → ?m.7 i.castSucc
+in the application
+  Fin.snoc_last 1 x
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:118:40: error: Type mismatch
+  fun i => ((Encoding.Modular.decodeVector width (List.ofFn word)).getD 0 i).val
+has type
+  Fin count → ℕ
+but is expected to have type
+  Fin count → ZMod ↑p
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:134:13: error: Function expected at
+  List.length_ofFn
+but this term has type
+  (List.ofFn ?m.50).length = ?m.48
+
+Note: Expected a function because this term is being applied to the argument
+  _
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:157:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:167:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:201:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:223:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:231:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:279:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:364:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:387:7: error: unexpected token 'private'; expected '(', ':=', 'rec', '|' or term
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:387:15: error: unexpected token ':='; expected 'lemma'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:390:23: error: unexpected token '('; expected 'lemma'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:391:23: error: unexpected token '('; expected 'lemma'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:418:0: error: Not a definitional equality: the left-hand side
+  (quadClass l n1 n2 w d).eval kappa p f x z
+is not definitionally equal to the right-hand side
+  quadEval (decodeTensor p (l.eval kappa) (n1.eval kappa * n2.eval kappa) d (w.eval kappa) f)
+    (decodeResidues p (l.eval kappa) (w.eval kappa) x)
+    (fun i => decodeResidues p (n1.eval kappa + n2.eval kappa) (w.eval kappa) z (Fin.castAdd (n2.eval kappa) i))
+    fun j => decodeResidues p (n1.eval kappa + n2.eval kappa) (w.eval kappa) z (Fin.natAdd (n1.eval kappa) j)
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:429:45: error: Type mismatch
+  rfl
+has type
+  ?m.36 = ?m.36
+but is expected to have type
+  (quadClass l n1 n2 w d).eval kappa p f x z =
+    quadEval (decodeTensor p (l.eval kappa) (n1.eval kappa * n2.eval kappa) d (w.eval kappa) f)
+      (decodeResidues p (l.eval kappa) (w.eval kappa) x)
+      (fun i => decodeResidues p (n1.eval kappa + n2.eval kappa) (w.eval kappa) z (Fin.castAdd (n2.eval kappa) i))
+      fun j => decodeResidues p (n1.eval kappa + n2.eval kappa) (w.eval kappa) z (Fin.natAdd (n1.eval kappa) j)
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:451:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:483:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes): no fresh .olean produced
+        2.51 real         2.08 user         0.96 sys
+          2316615680  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              182938  page reclaims
+                  29  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  19  voluntary context switches
+                8994  involuntary context switches
+            31989680  instructions retired
+            14646437  cycles elapsed
+             1638736  peak memory footprint
+end=2026-11-18T10:42:54.505643+00:00
+rc=1

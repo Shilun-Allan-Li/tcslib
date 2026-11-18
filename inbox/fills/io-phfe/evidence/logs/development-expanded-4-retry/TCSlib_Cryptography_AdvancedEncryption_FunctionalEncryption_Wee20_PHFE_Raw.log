@@ -1,0 +1,51 @@
+head=da902501633b4a41518fecad2bb33af3a6591e03
+source_sha256=c0799fb5141f37e89f9a57743bdd3d7196dce4bedd177e888a0cb7fbc5e577e1
+start=2026-11-18T11:19:00.358001+00:00
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean:86:32: error: Type mismatch
+  PHFE.encMPK_injective G ℓ n κ pp
+has type
+  Function.Injective (PHFE.encMPK G ℓ n κ pp)
+but is expected to have type
+  PHFE.encMPK G ℓ n κ pp (PHFE.setupCore G ℓ n κ pp x✝¹).1 = PHFE.encMPK G ℓ n κ pp (PHFE.setupCore G ℓ n κ pp x✝).1 →
+    (PHFE.setupCore G ℓ n κ pp x✝¹).1 = (PHFE.setupCore G ℓ n κ pp x✝).1
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean:87:37: error: Type mismatch
+  PHFE.encSK_injective G PG κ pp
+has type
+  Function.Injective (PHFE.encSK G PG κ pp)
+but is expected to have type
+  PHFE.encSK G PG κ pp (PHFE.keyCore G PG κ pp (PHFE.setupCore G ℓ n κ pp x✝⁴).2 x✝³ x✝¹) =
+      PHFE.encSK G PG κ pp (PHFE.keyCore G PG κ pp (PHFE.setupCore G ℓ n κ pp x✝⁴).2 x✝² x✝) →
+    PHFE.keyCore G PG κ pp (PHFE.setupCore G ℓ n κ pp x✝⁴).2 x✝³ x✝¹ =
+      PHFE.keyCore G PG κ pp (PHFE.setupCore G ℓ n κ pp x✝⁴).2 x✝² x✝
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean:88:41: error: Type mismatch
+  PHFE.encCT_injective G n κ pp
+has type
+  Function.Injective (PHFE.encCT G n κ pp)
+but is expected to have type
+  PHFE.encCT G n κ pp (PHFE.encCore G ℓ n d κ pp (PHFE.setupCore G ℓ n κ pp x✝⁶).1 x✝⁵ x✝⁴ x✝¹) =
+      PHFE.encCT G n κ pp (PHFE.encCore G ℓ n d κ pp (PHFE.setupCore G ℓ n κ pp x✝⁶).1 x✝³ x✝² x✝) →
+    PHFE.encCore G ℓ n d κ pp (PHFE.setupCore G ℓ n κ pp x✝⁶).1 x✝⁵ x✝⁴ x✝¹ =
+      PHFE.encCore G ℓ n d κ pp (PHFE.setupCore G ℓ n κ pp x✝⁶).1 x✝³ x✝² x✝
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw): no fresh .olean produced
+        2.30 real         1.50 user         1.00 sys
+          2321334272  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              183127  page reclaims
+                  19  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  17  voluntary context switches
+                6809  involuntary context switches
+            32199852  instructions retired
+            14464292  cycles elapsed
+             1638736  peak memory footprint
+end=2026-11-18T11:19:02.683214+00:00
+rc=1
