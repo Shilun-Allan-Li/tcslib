@@ -65,6 +65,7 @@ import TCSlib.Cryptography.TrapdoorFunctions
 import TCSlib.Cryptography.ZeroKnowledge
 import TCSlib.Cryptography.Games
 import TCSlib.Cryptography.Games.Bridges
+import TCSlib.Cryptography.CoinSampling
 import TCSlib.Cryptography.Authentication
 import TCSlib.Cryptography.Hashing
 import TCSlib.Cryptography.SecureComputation
