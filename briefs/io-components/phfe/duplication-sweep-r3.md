@@ -25,7 +25,9 @@ Reuse column as r2:
 | r2 row | r2 | r3 |
 |---|---|---|
 | § 8 "`Complexity.NUPPT.RealizesOn` … expected at `<BASE>`" | must if present, else a local file | **present: must** (§ 0b). No `FunctionalEncryption/Realization.lean`, no variant |
-| § 8 "`TCSlib/Cryptography/CoinSampling/` … not needed" | not needed | **at `<BASE>`; do not import** (no design section needs it). The same holds for `Games/Closeness.lean` |
+| § 8 "`TCSlib/Cryptography/CoinSampling/` … not needed" | not needed | **at `<BASE>`**. Rule 15 (design-r3 § 1E) needs only the **type** `UniformSampler` (`CoinSampling/Efficiency.lean:93`) and `CoinSampler.fail` (`Basic.lean:106`): **must (type only)** in the efficiency fields, never instantiated. Everything else in `CoinSampling` and `Games/Closeness.lean`: not imported |
+| `SamplesEfficiently` (Q-E1 (A): `CoinSampling/Contract.lean`, if at `<BASE>`) | — | **must when present**; otherwise a local `FunctionalEncryption/SamplerEfficiency.lean` with the same declaration |
+| § 4a `PolyTimeComputable`, `NUPPT.Uniform`/`Computes`, `FinTM.ComputesInTime`; § 1 `BilinearGen.gen_uniform`, `BilinearGen.Ops` (`_poly` fields) | must for the written `Prop`s | **must for the efficiency fields and targets** (rule 15); the generator and `Ops` already carry efficiency, so PPGen and group operations need no new field |
 | § 4a `Complexity.NUPPT.exists_reparam_pre_post` | Phase B | Phase B, now through `exists_realizesOn_of_preTarget_id` (§ 0b) for the L1 (DLIN ⇒ MDDH) realisers |
 | § 3 `MachineCodec`, `NUPPT.toComp`, `toCompOn`; § 2 `IBEScheme.sidImpl` … `SIDSecure` | must / must (pattern) | **central**: the semi-adaptive adversary is an oracle NUPPT (`toCompOn` with `bitCodec`), as `sidGame` (§ 3b) |
 | § 3 `PolyHandler`, `exists_handlerMachine` (T1), `InteractiveHandler` | must | **Phase B** for the L2 realisers; Phase A builds no machine. `PolyHandler.impl` is NR for `runDet` |

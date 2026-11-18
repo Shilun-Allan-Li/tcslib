@@ -6,6 +6,12 @@ Run 2026-11-18 at staging, before dispatch (binding practice since Gate 50, less
 
 **Result: one finding needs a ruling (S1). Everything else is a note with a disposition already on record.**
 
+**Update at re-staging (2026-11-18): S1 is ruled and fixed.** Seyoon ruled option A (fix now). Landing edit LE-g46
+(`7563734a8badba842223e0687c719b3b4692e9d2` on #377; `le-g46.md`) makes both proofs apply `length_flatten_map_const`
+after `List.ofFn_eq_map` and `List.length_finRange`; DL-61 reads "Repaid by LE-g46". The sweep's greps were re-run at
+the new head (`verification.zip` `checks/dup-sweep.txt`); apart from line numbers they differ only in the two proofs.
+The text below is the sweep as written at staging, at `680be9fa` (line numbers there).
+
 | Item | Kind | Disposition |
 |---|---|---|
 | **S1** | undisclosed inline re-derivation of a public TCSlib lemma (two proved readers in #377) | **ruling pending (Seyoon), question Q-G46-S1**; recorded today as ledger row **DL-61** (status open) |
@@ -82,7 +88,7 @@ Seyoon rules it accepted, Codex would grade it like GF-F03.
 Phase 1 (`final-6b-r1/review.md`, *Inline proofs*) read these proofs and wrote "The `_length` proofs use only library
 lemmas". That is the G50-05 pattern: the review looked at names and bodies, not at the statement shape.
 
-**Question Q-G46-S1 (Seyoon). Not decided here.**
+**Question Q-G46-S1 (Seyoon). Not decided here.** *(Ruled 2026-11-18: A, fix now; done by LE-g46.)*
 - **A. Fix now** with a proof-only landing edit **LE-g46** on #377. This follows the Gate 50 sweep ruling (fix now,
   LE-g50) and G48-01 (repaid before round 2).
   - It touches `GSW/Asymptotic.lean` only and changes both proofs to go through `length_flatten_map_const` (with
@@ -95,7 +101,8 @@ lemmas". That is the G50-05 pattern: the review looked at names and bodies, not 
   - Repayment: the U19 fill, or Cleanup Stage 2 together with the pre-existing family in N11.
   - No Lean is needed now.
 
-**Recorded today:** `briefs/pass-shelat-ch5-8/duplication-ledger.md` row **DL-61**, status *Open: ruling pending*. The
+**Recorded today:** `briefs/pass-shelat-ch5-8/duplication-ledger.md` row **DL-61**, status *Open: ruling pending*
+(now *Repaid by LE-g46*). The
 lattice rows (DL-50, DL-54) live in that ledger, and there is no separate lattice ledger. The row is updated with the
 ruling.
 

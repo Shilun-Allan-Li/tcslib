@@ -19,19 +19,25 @@ Round 1. The auditor is Codex, under the standing ruling of 2026-11-11 (Codex fo
   - It changes 1 file, +58/−0.
   - GitHub's REST `base.sha` is `1a9a32959cc58d7a882d0f6a7e2b0003b52f82ae`, a records-only descendant of `38123ccb`.
 - **PR #377 (statements):** draft [PR #377](https://github.com/Shilun-Allan-Li/tcslib/pull/377), branch
-  `land/gsw-6b-statements`, head **`680be9fa45a9cf5deeb7a59820e8e86aaaa4f068`** (tree
-  `956fc086044551e8f04298ab70dd5aa451069c16`). It is **stacked on #376**: base `land/gsw-6b-o2` at `04ba2446`.
-  - It has six SSH-signed commits:
+  `land/gsw-6b-statements`, head **`7563734a8badba842223e0687c719b3b4692e9d2`** (tree
+  `c56db4c403ccab179a994143c5f989d4f3718910`). It is **stacked on #376**: base `land/gsw-6b-o2` at `04ba2446`.
+  - **Re-pinned after LE-g46.** This pack was first staged at `680be9fa` (tree `956fc086`). The pre-dispatch sweep's S1
+    was ruled fix-now, so LE-g46 (section *LE-g46* below) moved the head before dispatch.
+  - It has seven SSH-signed commits:
     - five maintainer picks `47aae69d`, `c10e0d3e`, `80366e7f`, `52f52dc7`, `75c683b2` of the worker's
       `7a814546..8f92fe7d53967bc488a4075fb38210e7d40b9031` (range-diff 5/5 `=`; the tree of `~1`, `22349e8e`, is
       `git merge-tree 38123ccb 8f92fe7d`; every file is byte-equal to the worker's);
-    - the maintainer's landing-edit commit **`680be9fa`** (LE-6b1, LE-6b2, LE-6b3).
-  - It changes 11 files, +2108/−1.
+    - the maintainer's landing-edit commit **`680be9fa`** (LE-6b1, LE-6b2, LE-6b3);
+    - the maintainer's landing-edit commit **`7563734a`** (LE-g46: S1 fixed, and the [Gen09] citations).
+  - It changes 11 files, +2144/−1.
 - **Records pin: `<RECORDS>`.** This is the commit that files this directory, `briefs/lattice-gsw/gates/46-gsw-6b/`.
-  - Its parent is the records tip at staging, `dab31951abb5c892dc6279c229e49497ec95de10` ("Records: GSW 6b landed as
-    #376/#377; phase 2 PASS"), and the pin adds only this directory and ledger row DL-61.
-  - Every record this pack cites reads the same at `dab31951` and at the pin.
-  - `dab31951` is `38123ccb` plus 21 records-only commits (0 Lean paths; `checks/lean-equality.txt`).
+  - The records tip at re-staging is `9ae6b909305f868f51f5cc05787c66e4d336bf74`; the pin's parent is that tip or a
+    records-only descendant. The pin files this directory as re-staged (with `le-g46.md`, `le-g46.diff.txt` and
+    `le-g46-evidence.zip`) and ledger row DL-61 as repaid.
+  - The first staging's tip was `dab31951abb5c892dc6279c229e49497ec95de10`. Every record this pack cites at `dab31951`
+    (`verification.zip` `records/`, `sources.zip` `context/` and `references/`) reads the same at `9ae6b909`, except the
+    decision log and the ledger, whose extracts are re-cut at `9ae6b909`.
+  - `9ae6b909` is `38123ccb` plus 31 records-only commits (0 Lean paths; `checks/lean-equality.txt`).
 - **Delivery (exchange):** `inbox/fills/gsw-6b-statements/` at `3b340824dde77433b2135a3c8d20c7ed194cf18c` ("stmt gsw-6b:
   final", unsigned). The worker's six commits reproduce hash for hash by `git am` on the issued base
   `3e51b5f28900db6190f1eb2e6d207d27ee15d541` (phase 1).
@@ -56,6 +62,8 @@ Lean paths below are under `TCSlib/Cryptography/` unless they start with `TCSlib
     readers (the audited surface, `workflow.md` §2), the citations, the deviation notes and the sketches.
 - **The landing edits** LE-6b1, LE-6b2 and LE-6b3 (ruled Q-6B-F1 A): their identity with the proposed diff, and that
   they are docstrings-only apart from LE-6b3's proof.
+- **LE-g46** (ruled 2026-11-18): S1's proof-only fix, and the [Gen09] citations that replace the stale "not ingested"
+  disclosure (docs only).
 - **The disclosures:** phase 2's new infos **G6B-F10, G6B-F11, G6B-F12**, phase 1's G6B-F01 to F09, and this gate's
   pre-dispatch sweep item **S1** (question H).
 - **Out of scope** (mention only if something in scope depends on it):
@@ -80,7 +88,9 @@ at `dab31951`, which I re-hashed at staging.
 
 The brief's record point is that BV14's "[BV11, Lemma 4.1]" (Prop 3.4) is **Lemma 4.5** in the BV11 version held, so
 it is cited as [BV11, Lemma 4.5] with BV14's numbering noted. `sources.zip` carries all six (`.md` and `.raw.md`), and the
-[Gen09] ingest as well (question C3).
+[Gen09] ingest as well: `gentry-2009-fhe-thesis.md`, SHA-256
+`078db24941b2d00f6f307747ecff87a15d96878fdaab6a008b6c0de14a781d0d` (DW-8, records `bdcadd85`, 2026-11-16; tag `Gen09` in
+`sources.json`). The brief did not pin it; LE-g46 cites it on Seyoon's ruling (question C3).
 
 ## What changed
 
@@ -102,10 +112,10 @@ it is cited as [BV11, Lemma 4.5] with BV14's numbering noted. `sources.zip` carr
 | `GSW/DecryptFormula.lean` | new: `neZero_columns`, `keyBits`, `decConstants`, `decryptFormula`, `nandFormula`, `decDepth` | 6 (G5–G8) | 216 |
 | `GSW/Bootstrap.lean` | new: `PublicKey`, `Secret`, `Coins`, `KeySeed`, `bootNoise`, `bootNAND`, `bootGate`, `fheEval`, `fheEvalCircuit`, `evalKey`; G11 proved | 5 (G9, G10, G12, G13, G18) | 349 |
 | `GSW/Circular.lean` | new: `FheView`, `Seeds`, `fheView`, `WeakCircularSecure` (G14 reader-only) | 1 (G15) | 146 |
-| `GSW/Leveled.lean` | new: `LevelCoins`, `levelKey`, `literalCts`, `levelGate`, `leveledEval`, `leveledEvalCircuit`; L1 proved | 2 (L2, L3) | 284 |
-| `GSW/LeveledSecurity.lean` | new: `LeveledSeeds`, `LeveledView`, `leveledView`, `levelHybrid`, `levelMsgs`, `levelAssemble`, `levelReduction`, `levelTerm`, `challengeDist`, `challengeTerm` | 2 (L4, L5) | 351 |
-| `GSW/PolyRatio.lean` | new: `Parameters.ofFamily`, `pBoot` | 3 (G16, G17 ×2) | 175 |
-| `GSW/Asymptotic.lean` | new: the four encodings, `WeakCircularSecureFamily` (A2 reader-only), `ReductionEfficient`, `LeveledReductionEfficient` | 2 (A1, A3) | 324 |
+| `GSW/Leveled.lean` | new: `LevelCoins`, `levelKey`, `literalCts`, `levelGate`, `leveledEval`, `leveledEvalCircuit`; L1 proved | 2 (L2, L3) | 291 |
+| `GSW/LeveledSecurity.lean` | new: `LeveledSeeds`, `LeveledView`, `leveledView`, `levelHybrid`, `levelMsgs`, `levelAssemble`, `levelReduction`, `levelTerm`, `challengeDist`, `challengeTerm` | 2 (L4, L5) | 362 |
+| `GSW/PolyRatio.lean` | new: `Parameters.ofFamily`, `pBoot` | 3 (G16, G17 ×2) | 179 |
+| `GSW/Asymptotic.lean` | new: the four encodings, `WeakCircularSecureFamily` (A2 reader-only), `ReductionEfficient`, `LeveledReductionEfficient` | 2 (A1, A3) | 338 |
 | `LWE/Ratio.lean` | new: `Family.RatioBounded` | 0 | 59 |
 | `GSW.lean`, `LWE.lean` | facades: imports, contents entries, and the GSW title and opening line (brief, *Changed files*) | 0 | 35 → 57, 38 → 40 |
 
@@ -128,10 +138,29 @@ it is cited as [BV11, Lemma 4.5] with BV14's numbering noted. `sources.zip` carr
   - **LE-6b2** (G6B-F02, F03): PolyRatio's constant is exactly `2^70`; `Leveled` names its extra citations; and
     `LeveledSecurity` adds [BV14, §2.5].
   - **LE-6b3** (G6B-F04): `neZero_columns` uses core's `Nat.one_lt_two_pow_iff`.
+- **LE-g46** (`7563734a`, 4 files, +63/−27): see the section *LE-g46* below.
 - **Scope:** `TIP..#377` touches exactly the brief's 12 paths. No 6a (`TCSlib/Complexity/`) file, phase-5 GSW file,
   `TCSlib.lean`, `ComputationalModels.lean`, `machine-library-design.md`, `blueprint/` or `audits/` path changes
   (`checks/lean-equality.txt`).
-- **Sizes and style:** at most 351 lines and 99 characters wide; 0 tabs; 0 trailing spaces (`checks/sizes.tsv`).
+- **Sizes and style:** at most 362 lines and 99 characters wide; 0 tabs; 0 trailing spaces (`checks/sizes.tsv`).
+
+## LE-g46 (S1 fixed; [Gen09] citations)
+
+Seyoon's rulings of 2026-11-18 on this gate's pre-dispatch sweep (`LatticeCryptographyPlan.md`, decision-log row "Gate 46
+staged"): S1 is **fixed now** (Q-G46-S1 A, proof-only; ledger DL-61 → "Repaid by LE-g46"), and the stale [Gen09]
+disclosure is fixed in the same commit (docs only). Record: `le-g46.md`; diff: `le-g46.diff.txt`; evidence:
+`le-g46-evidence.zip`.
+- **Commit `7563734a8badba842223e0687c719b3b4692e9d2`** (tree `c56db4c4`), on `680be9fa`, SSH-signed, pushed
+  fast-forward. 4 files, +63/−27. No statement, declaration header or `_length` docstring changes.
+- **S1:** `encodeFheView_length` and `encodeLeveledView_length` (`GSW/Asymptotic.lean:127`, `:158` at the head) apply
+  `TCSlib.Cryptography.length_flatten_map_const` after `List.ofFn_eq_map` and `List.length_finRange`; the inline
+  `List.length_flatten`/`List.ofFn_comp'`/`List.ofFn_const`/`List.sum_replicate_nat` chains are gone (the probe's direct
+  constants confirm it).
+- **[Gen09]:** the stale sentences in `Leveled` (module and `levelKey`), `LeveledSecurity`, `PolyRatio` and `Asymptotic`
+  are replaced by citations to §4.1 (p056-b002, p056-b003, p057-b001), Thm 4.2.1 (p059-b001) and Thm 4.2.3 with its proof
+  (p060-b001, p061-b001), the index correspondence and the remaining deviations (question C3).
+- **Evidence:** the recheck R2-g46 (section *The replays*); comment-strip identity of the three docs-only files with
+  controls; the stripped diff of `Asymptotic.lean` is the two proofs.
 
 ## Rulings and records in force
 
@@ -145,7 +174,8 @@ it is cited as [BV11, Lemma 4.5] with BV14's numbering noted. `sources.zip` carr
    - **Q11/Q14 B:** the full leveled scheme with a consecutive key chain over layered NAND circuits on `2k` literals.
    - **Q12:** explicit `decDepth`/`bootNoise`, `RatioBounded` in `LWE/Ratio.lean`, and an explicit `PolyExpr` `pBoot`.
    - **Q13:** `fheEval` is computable.
-   - **Q19 B, refined:** no `[Gen09]`, plus a reconstruction disclosure (question C3).
+   - **Q19 B, refined:** no `[Gen09]` in the statement job, plus a reconstruction disclosure; the [Gen09] citation is a
+     docstring-only follow-up after the ingest, done by LE-g46 (question C3).
 2. **Plan section r3** (`records/phase6/plan-section.md`, SHA-256
    `06824b3db875e7388771b6f7a5e78d62bf7d77fa35571fc3a9deeebc329214fd`):
    - §H5.8 (O2) and §H5.9–H5.16 (G1–G18, L1–L5, A1–A3);
@@ -179,6 +209,21 @@ it is cited as [BV11, Lemma 4.5] with BV14's numbering noted. `sources.zip` carr
    insertions in `BitEncoding.lean`. This includes every 6a file, every phase-5 GSW file and the other `LWE/` files.
 9. **Signing** (BS-F08): the account's Claude sessions share one SSH signing key. A signature attests a session on the
    account, not the maintainer. Provenance rests on the pinned hashes and the cherry-picks.
+
+## Standing rule 15 (efficiency) and this gate (Seyoon, 2026-11-18)
+
+After this pack was first staged, Seyoon made efficiency mandatory (standing rule 15,
+`briefs/pass-shelat-ch5-8/MAINTAINER-HANDOFF.md` §2): honest algorithms must be proved efficient in
+uniform form, every security reduction must be a proved non-uniform PPT machine, and efficiency is
+part of every primitive's definition. #377's A1/A3 take the reduction's efficiency as hypotheses
+(`ReductionEfficient`, `LeveledReductionEfficient`), and GSW's honest algorithms are not proved
+efficient (`Asymptotic.lean` says so). **Seyoon's ruling for this gate:** Gate 46 audits statement
+fidelity now; these efficiency hypotheses are **known, tracked holes** under rule 15, to be closed by
+one lattice-wide remediation plan (from the efficiency audit `briefs/efficiency-gaps/audit-r1.md`, in
+progress), so as not to restate the 6b statements twice. **#377 does not merge until that plan
+exists.** Report the hypotheses as a single known item (not as new majors); do report any *other*
+efficiency hole you find, and any place where a hypothesis is stronger than "this specific
+reduction is efficient" (e.g. one that would make a statement vacuous or smuggle in security).
 
 ## Questions for the audit
 
@@ -240,7 +285,7 @@ fill and its consumers? Are the **edge cases** right (`N`, `k`, `L`, `B`, `β` e
    - `levelGate` uses `levelKey (δ − 1)` at `depthAt δ`, and `0` off the chain.
    - L2: the output is under `s_{depth}`, with noise `max βin (bootNoise βk)`.
    - L3's public output level is `(Cc.toNANDForm hC).depth`, through N10's exact `layerNAND_depth`.
-   - The P6-Q19 B disclosure.
+   - The P6-Q19 B paragraph, now with the [Gen09] citations (LE-g46; question C3).
 6. **LeveledSecurity, L4–L5**, against AP14 §5.3, GSW13 §3.2 Lemma 1, BV14 Thm 2.14 / Thm 3.7 / §2.5 and BV11 Thm 3.1.
    - `levelHybrid h` zeroes the levels `≥ h`.
    - L4 compares `h = e+1` with `h = e` over `N` positions, through `hybridPlant`/`distAdv_multi_le_sum`.
@@ -273,26 +318,36 @@ fill and its consumers? Are the **edge cases** right (`N`, `k`, `L`, `B`, `β` e
     (`evalWith`) and H19 (`runWith`) it uses? r3 §H7: "6b imports the 6a modules and restates none of them."
 
 **C. Sources, citations, docstrings**
-1. **The 123 anchors** (`checks/anchors.txt`): every `pNNN-bNNN` resolves in the ingest of its tag, 123/123, and there
-   is 0 `[Gen09]`.
+1. **The 140 anchors** (`checks/anchors.txt`): every `pNNN-bNNN` resolves in the ingest of its tag, 140/140. That is
+   phase 1's 123 plus the 17 [Gen09] anchors of LE-g46 (20 `[Gen09` occurrences in all).
    - Does each anchor point at the passage that supports the claim?
    - Do the locators name the right results (G44-02)?
    - Is BV11 Lemma 4.5 cited as the brief's record point says?
 2. **G6B-F03 and LE-6b2:** are the extra citations ([BV14, Def 2.12, §3.3], [Bar89, Thm 1], [GSW13, §3.2, Lemma 1],
    [BV11, Def 3.1], [BV14, §2.5]) attached to sub-facts only, and are the module sentences now accurate?
-3. **[Gen09] and the reconstruction disclosure (found at staging).** The leveled docstrings carry the disclosure
-   that P6-Q19 B and the brief prescribe:
-   - The text: "The key-chain construction and the hybrid order are reconstructed: no ingested passage gives them. …
-     that passage will be cited here once it is ingested."
-   - It appears at `Leveled.lean:45–47`, `:91–93` and in the LeveledSecurity, PolyRatio and Asymptotic docstrings.
-   - But the [Gen09] thesis passages (§4.1, the chain of encrypted keys; Thm 4.2.3 with its security hybrid; Remark
-     4.3.1) were ingested on 2026-11-16 by DW-8. That is records `bdcadd85`, an **ancestor of the 6b issue base**
-     (`blueprint/src/references/gentry-2009-fhe-thesis.md`, in `sources.zip`).
-   - The ingest records the index convention: Gentry encrypts `sk_i` under `pk_{i−1}` and evaluates down the index.
-   - The brief told the worker not to cite [Gen09], so the docstrings follow the brief.
-   - Grade the disclosure's accuracy. Are the 6b chain (`s_d` under `pk_{d+1}`, evaluation up the index) and the
-     top-down hybrid of L4/L5 consistent with Gen09 §4.1 and Thm 4.2.3, up to that mirror?
-   - The [Gen09] citation is the docstring-only follow-up of the P6-Q19 refinement. It is not a 6b statement change.
+3. **The [Gen09] citations (LE-g46).** Check that they are correct. At staging the leveled docstrings still said "no
+   ingested passage gives them … will be cited here once it is ingested", although the [Gen09] thesis passages were
+   ingested on 2026-11-16 (DW-8, records `bdcadd85`, an ancestor of the 6b issue base). Seyoon ruled a docs-only fix,
+   folded into LE-g46. The citations are now in `GSW/Leveled.lean` (module docstring, *Sources and reconstruction*, and
+   `levelKey`), `LeveledSecurity.lean`, `PolyRatio.lean` and `Asymptotic.lean`, each with a [Gen09] entry under
+   `## References` (`sources.zip` `references/gentry-2009-fhe-thesis.md`):
+   - the key chain, [Gen09, §4.1, `KeyGen` of `E^(d)`, pp. 46–47, p056-b003];
+   - the reverse order, [Gen09, §4.1, p. 46, p056-b002]: Gentry encrypts `sk_i` under `pk_{i−1}` and evaluates down the
+     index, so his level `i` is level `L − i` here and his `Enc(pk_{i−1}, sk_i)` is `levelKey (L − i)`;
+   - the layered circuits, [Gen09, §4.1, p. 47, p057-b001];
+   - correctness, [Gen09, Thm 4.2.1, p. 49, p059-b001] (statement only ingested; PolyRatio);
+   - the hybrid, [Gen09, Thm 4.2.3 and its proof, pp. 50–51, p060-b001, p061-b001]: Game `k` is `H_{L−k}`, and the step
+     `k → k + 1` plants `pk_k` (`pk_{e+1}` with `e = L − k − 1`), whose secret occurs only in encryptions already
+     replaced, which is L4/L5's top-down order;
+   - the deviations stated in `LeveledSecurity`: zeros instead of an unrelated fresh key's bits; a hybrid over the `N`
+     positions instead of one challenge of Gentry's `ℓ`-fold scheme; steps reduced to DLWE (phase 5), not to the base
+     scheme's semantic security; and phase 5's challenge step instead of Gentry's Game `d + 1`.
+
+   Do the anchors point at the passages cited? Are the index correspondence, the game correspondence and the stated
+   deviations right? Is anything still claimed "reconstructed" that Gen09 gives, or attributed to Gen09 that it does not
+   give? The declaration-level "Reconstruction disclosed (module docstring)" pointers are kept, and no target docstring
+   carries a [Gen09] tag: is that adequate under policy §2? This is a docstring-only change (comment-strip identity in
+   `le-g46.md`), not a statement change.
 4. **Sketches** (policy §3): does each target's `**Proof sketch.**` name its obligations, and does any rely on an unfold
    that Rule 10 forbids? Does G6's sketch now name `decrypt_eq_decode_dotProduct` and L4's `hybridPlant_eq` (LE-6b1)?
 
@@ -312,6 +367,9 @@ fill and its consumers? Are the **edge cases** right (`N`, `k`, `L`, `B`, `β` e
 - Is `680be9fa` exactly LE-6b1..3 as proposed (`checks/le-identity.txt`)?
 - Is LE-6b1's new prose true at the head? Phase 2's scan says no other stale passage remains.
 - Is LE-6b3 proof-only? decls2 against `75c683b2` is 0/0/0.
+- **LE-g46** (`le-g46.diff.txt`, `le-g46.md`): is it exactly S1's proof change in `Asymptotic.lean` plus docstrings? The
+  comment-stripped diff of `Asymptotic.lean` is the two `_length` proofs; `Leveled`, `LeveledSecurity` and `PolyRatio` are
+  comment-strip identical to `680be9fa` with mutation controls caught; decls2 `680be9fa` → `7563734a` is 0/0/0.
 
 **G. Seals, controls, admissions and axioms: recount from phase 2's evidence** (`evidence/`; `final-6b-r1/phase2.md`)
 1. **Admissions** are 192 at the tip, 192 at R1 and **216** at R2. The difference is exactly 8 module lines and 24
@@ -330,8 +388,12 @@ fill and its consumers? Are the **edge cases** right (`N`, `k`, `L`, `B`, `β` e
 5. **Unfold scan:** 101 items, 0 foreign.
 6. **G6B-F12:** root coe-A was not re-run (the root is unchanged and declares nothing, and both facades were sealed).
    Is that sufficient, or is it necessary evidence?
-7. **Binding:** do R1 and R2 bind to `04ba2446`/`680be9fa`? Tree `8b615e06` is merge-tree(tip, `5bd5ada5`); `~1` is
-   `22349e8e`; the head is `956fc086`. Exports match blob for blob (1599 and 1608 files).
+7. **Binding:** do R1, R2 and R2-g46 bind to `04ba2446`, `680be9fa` and `7563734a`? Tree `8b615e06` is merge-tree(tip,
+   `5bd5ada5`); `~2` is `22349e8e`; `680be9fa` is `956fc086`; the head is `c56db4c4` = merge-tree(tip, `7563734a`).
+   Exports match blob for blob (1599, 1608 and 1608 files).
+8. **LE-g46's recheck** (`le-g46.md`, `le-g46-evidence.zip`): 8 modules rebuilt on R2, rc 0; the `sorry` warnings are
+   exactly the 24 targets (EXACT); admissions 216; the two lemmas keep `[propext, Quot.sound]`; coe-A on the 4 edited
+   owners 0 errors with request sets equal to R2's. Is it sufficient?
 
 **H. Duplication** (policy §1; question 6's standard)
 1. **The pre-dispatch sweep** (`dup-sweep.md`; `checks/dup-sweep.txt`) found one item, **S1**.
@@ -340,9 +402,10 @@ fill and its consumers? Are the **edge cases** right (`N`, `k`, `L`, `B`, `β` e
    - The public `TCSlib.Cryptography.length_flatten_map_const` (`Foundations/BitLists.lean:175`) is in their import
      closure. The `List.ofFn` form `Authentication.length_flatten_ofFn` (`Lamport.lean:123`) is not.
    - It was undisclosed and missed by phase 1.
-   - **Its disposition (ledger row DL-61): `<S1-RULING>`.** If Seyoon rules fix-now, the fix is landing edit LE-g46 and
-     this pack is re-pinned to the new #377 head before dispatch.
-   - Grade S1, and its fix or its acceptance.
+   - **Its disposition (ledger row DL-61): fixed by LE-g46.** Seyoon ruled fix-now (Q-G46-S1 A); the fix is landing edit
+     LE-g46 (`7563734a`), and this pack is re-pinned to that head. DL-61 reads "Repaid by LE-g46".
+   - Grade S1 and its fix: do both proofs now go through `length_flatten_map_const` (with `List.ofFn_eq_map` and
+     `List.length_finRange`), and is no other inline flatten-length derivation left in #377?
 2. The notes N1–N11 of the sweep: `decDepth_le` vs F10, O2's `hsub`, `neZero_columns` (repaid by LE-6b3), the proved
    citations G11/L1, the reader-only G14/A2, G15's transport, the compositions, the thin wrappers, the case readers, the
    relatives from the brief's list, and the pre-existing flatten-length family. Do you agree that none of them is a
@@ -356,7 +419,7 @@ F05 (ruled), F06 (probe coverage), F10, F11 and F12.
 
 ## The replays (maintainer, 2026-11-18, on snapshot #10)
 
-| | #376 (R1 = tip × O2) | #377 (R2 = R1 × statements, with LE-6b1..3) |
+| | #376 (R1 = tip × O2) | #377 (R2 = R1 × statements, with LE-6b1..3; at `680be9fa`) |
 |---|---|---|
 | Range-diff | 1/1 `=` | 5/5 `=` + the LE commit |
 | Tree | `8b615e06` | `~1` `22349e8e`, head `956fc086` |
@@ -372,6 +435,14 @@ F05 (ruled), F06 (probe coverage), F10, F11 and F12.
 | Lint | FAIL/WARN = the tip's (92/103) | the same; `style_lint` 0 |
 | Snapshot #10 rehash | 0/0/0 | 0/0/0 (before, after R1, after R2, end) |
 
+**R2-g46 (LE-g46 recheck at `7563734a`, `le-g46.md`):** a `cp -al` copy of R2; 8 modules rebuilt (the 4 edited files,
+`GSW`, `Homomorphic`, `AdvancedEncryption`, the root), 1448 reused; rc 0, 0 errors; `sorry` warnings exactly the 24
+targets (EXACT); state 1456/1456 OK; link count 1; only the 4 edited oleans differ from R2; admissions 216 (equal per
+module); decls2 `680be9fa` → head 0/0/0; axioms of the two `_length` lemmas unchanged (`[propext, Quot.sound]`; closures
+913/914 → 1009), census 174 constants (the auxiliary `encodeLeveledView_length._simp_1_1` is gone), `sorryAx` in exactly
+the 24 targets; coe-A on the 4 edited owners 0 errors with request sets equal to R2's; lint unchanged; snapshot #10 and R2
+rehash 0/0/0. Output map `65ca0263…`.
+
 - **Recipe:** no `lake build` and no cache get. Modules ran through `scripts/lean_check_tree.sh`, and probes through
   `lean -DmaxErrors=0` without `-o`. Python ran as `python3 -I`, with one Lean process of this job at a time.
 - **Integrity at staging:**
@@ -386,46 +457,49 @@ F05 (ruled), F06 (probe coverage), F10, F11 and F12.
 - **Phase-1 locator.** `review.md` (*O2*) puts `Fin.coe_sub_iff_lt` at `Mathlib/Data/Fin/Basic.lean:306`. It is core's
   (`Init/Data/Fin/Lemmas.lean:1089`), and Mathlib's line 306 is `Fin.intCast_val_sub_eq_sub_add_ite`. The disposition is
   unchanged (sweep N2).
-- **Phase-1 line counts** are at `8f92fe7d`. After the LE commit: Bootstrap 349, DecryptFormula 216, Leveled 284,
-  PolyRatio 175.
-- **Phase-1 "inline proofs".** "The `_length` proofs use only library lemmas" is superseded by sweep S1.
+- **Phase-1 line counts** are at `8f92fe7d`. After LE-6b1..3: Bootstrap 349, DecryptFormula 216, Leveled 284,
+  PolyRatio 175. After LE-g46: Leveled 291, LeveledSecurity 362, PolyRatio 179, Asymptotic 338.
+- **Phase-1 "inline proofs".** "The `_length` proofs use only library lemmas" is superseded by sweep S1 (fixed by
+  LE-g46).
 - **#376's REST `base.sha`** is `1a9a3295`, a records-only descendant of the cut tip `38123ccb` (Lean-equal).
-- **#377's description** ends with "_Generated by [Claude Code](…)_" instead of the standard attribution line. Its
-  "+2166/−1, counting O2" is right (58 + 2108).
-- **The descriptions** (`pr376-description.md`, `pr377-description.md`) are the REST `.body` values at staging (#376
-  updated 2026-11-18T06:41:38Z, #377 06:41:15Z).
-- **The [Gen09] disclosure** is stale against the DW-8 ingest (question C3). It was found at staging and goes to Seyoon
-  separately.
-- **Authorship:** the six worker commits are an external Claude worker's (a lead with sub-agents `seal` and `probe`,
-  G6B-F08), delivered as patches and cherry-picked and signed by the maintainer. LE-6b1..3 are the maintainer's.
+- **#377's description** ended with "_Generated by [Claude Code](…)_" at staging. **Fixed** with the LE-g46 update: it
+  now ends with the standard two attribution lines. Its "+2202/−1, counting O2" is right (58 + 2144).
+- **The descriptions** (`pr376-description.md`, `pr377-description.md`) are the REST `.body` values at re-staging (#376
+  updated 2026-11-18T06:41:38Z, unchanged; #377 07:36:30Z, with LE-g46).
+- **The [Gen09] disclosure** was stale against the DW-8 ingest. Found at staging; **fixed by LE-g46** (docs only, on
+  Seyoon's ruling). Question C3 now checks the citations.
+- **Authorship:** the five picked worker commits are an external Claude worker's (a lead with sub-agents `seal` and `probe`,
+  G6B-F08), delivered as patches and cherry-picked and signed by the maintainer. LE-6b1..3 and LE-g46 are the maintainer's.
 - **No Lean, no `lake`, no seal or control was run for this staging.** `checks/` holds git-object reads and hashes; the
-  rest is the recorded evidence.
+  rest is the recorded evidence. The only Lean runs behind this re-staging are LE-g46's recheck (`le-g46.md`).
 
 ## Merge interaction (maintainer merge conditions, not audit items)
 
 `checks/lean-equality.txt`, `git merge-tree --write-tree`, git 2.43.0:
-- **#376 × the records tip `dab31951`:** clean, Lean-equal to `8b615e06` (0 Lean paths differ). **#377 × the tip:** clean,
-  Lean-equal to `956fc086`.
+- **#376 × the records tip `9ae6b909`:** clean, Lean-equal to `8b615e06` (0 Lean paths differ). **#377 × the tip:** clean,
+  Lean-equal to `c56db4c4`.
 - **Order:** #376 first. On merge, adopt `olean-replay-6b-o2` (map `e1d210bf…`) as snapshot #11 if the merge's Lean
-  equals `8b615e06`. Then #377, retargeted to `cryptography/pass-shelat-ch2-4`; adopt `olean-replay-6b-stmt` (map
-  `52ed7825…`) if the merge's Lean equals `956fc086`, and otherwise re-replay its 14 modules (`phase2.md` § *Merge and
-  adoption*).
-- **Merge condition:** Gate 46 closed, with zero blockers and zero majors. If S1 is fixed by LE-g46, the adoption tree
-  for #377 is the new head's, after its re-replay.
+  equals `8b615e06`. Then #377, retargeted to `cryptography/pass-shelat-ch2-4`; adopt `olean-replay-6b-stmt-g46` (map
+  `65ca0263…`, LE-g46) if the merge's Lean equals `c56db4c4`, and otherwise re-replay (`phase2.md` § *Merge and
+  adoption*; `le-g46.md`). `olean-replay-6b-stmt` (`956fc086`) is superseded for #377.
+- **Merge condition:** Gate 46 closed, with zero blockers and zero majors. S1 is fixed by LE-g46, so the adoption tree
+  for #377 is the new head's (`olean-replay-6b-stmt-g46`, already re-replayed).
 
 ## Evidence files
 
 - **`pack.md`** (this file), **`dispatch.md`** (the Codex prompt; records only) and **`dup-sweep.md`** (the pre-dispatch
   sweep).
 - **`pr376.diff.txt`:** `git diff 38123ccb 04ba2446` (1 file, +58/−0).
-- **`pr377.diff.txt`:** `git diff 04ba2446 680be9fa` (11 files, +2108/−1).
-- **`pr377-le.diff.txt`:** `git diff 75c683b2 680be9fa`, the landing-edit commit.
-- **`pr376-description.md`**, **`pr377-description.md`:** the PR bodies at staging.
+- **`pr377.diff.txt`:** `git diff 04ba2446 7563734a` (11 files, +2144/−1).
+- **`pr377-le.diff.txt`:** `git diff 75c683b2 680be9fa`, the LE-6b1..3 commit.
+- **`le-g46.md`**, **`le-g46.diff.txt`** (`git diff 680be9fa 7563734a`) and **`le-g46-evidence.zip`** (inner
+  `SHA256SUMS`): LE-g46 and its recheck.
+- **`pr376-description.md`**, **`pr377-description.md`:** the PR bodies at re-staging.
 - **`source-head.json`:** the pins; every commit of both PRs (parents, tree, author, committer, signature, files); and
   for each changed file its status, blob, SHA-256, line counts at base and head, maximum width, over-width, tabs and
   trailing spaces.
 - **`sources.zip`:**
-  - `head-680be9fa/`: the 12 files;
+  - `head-7563734a/`: the 12 files at the re-pinned head;
   - `base-38123ccb/`: the 3 changed files at the base;
   - `context/`: the phase-5 GSW files, `LWE/`, Regev, `EnsembleSecurity` and `Encoding/` files and the 6a files the
     statements consume, at the records tip, plus the S1 relatives (`BitLists`, `Lamport`);
@@ -436,8 +510,8 @@ F05 (ruled), F06 (probe coverage), F10, F11 and F12.
   - `checks/`: `series.txt`, `lean-equality.txt`, `le-identity.txt`, `targets.txt`, `anchors.txt`, `sizes.tsv`,
     `dup-sweep.txt` and `evidence-verify.txt`;
   - `tools/`: the staging scripts;
-  - `evidence/`: the phase-1 and phase-2 evidence ZIPs, nested unchanged, `landing-edits-proposed.diff` and
-    `evidence-SHA256SUMS`;
+  - `evidence/`: the phase-1 and phase-2 evidence ZIPs, nested unchanged, `landing-edits-proposed.diff`,
+    `evidence-SHA256SUMS`, and `le-g46/` (LE-g46's record, diff and evidence ZIP);
   - `records/`:
     - `review.md`, `phase2.md` and `checkpoint1-6b-review.md`;
     - the issued package (`README.md`, `brief.md`, `dispatch.md`, the addendum, `targets.txt`, `census.txt`,

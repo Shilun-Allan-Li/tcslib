@@ -12,12 +12,26 @@ The design note behind `dispatch-prompt-r3.md`. It was prepared 2026-11-18 at re
 
 | Pin | Value |
 |---|---|
-| Rulings | every decision-log row dated 2026-11-18, read at `43eacf95`; in particular *Phase A rulings, first batch* (Q1 A, Q2 A, Q4 A, Q5 A), *second batch* (Q3 = Wee20's semi-adaptive SIM for both layers), *Partial-garbling sources received*, *Sampler bridge implemented*, *Shared `Asymptotic/Realization.lean` written* |
+| Rulings | every decision-log row dated 2026-11-18, read at `32a40963de5ed5f7abb472cd9d432c6561c2e833`; in particular **standing rule 15** (*Efficiency is mandatory*, *Efficiency baked into definitions*; `briefs/pass-shelat-ch5-8/MAINTAINER-HANDOFF.md` §2), *Phase A rulings, first batch* (Q1 A, Q2 A, Q4 A, Q5 A), *second batch* (Q3 = Wee20's semi-adaptive SIM for both layers), *Partial-garbling sources received*, *Sampler bridge implemented*, *Shared `Asymptotic/Realization.lean` written* |
 | Shared realisation file | `foundations/realization` head `cdc0934f36365533d410607d0664a0570ae92679` (on #374's `cbce64d1`), `TCSlib/Cryptography/Asymptotic/Realization.lean`; report `briefs/io-components/realization/REPORT.md` |
 | Lean base | `<BASE>`: a branch stacking #374 + `foundations/realization` + #378 (`foundations/coin-sampling` `51dc7672`), shared with the sPRG job |
 
 ## What changed from r2
 
+0. **Rule 15: efficiency is mandatory and baked into the definitions** (§ 1E, binding).
+   - The generic `FEScheme`, the Def 4.3 `Simulator`, the `SASimulator` and the
+     `PartialGarbling` interface carry their algorithms' efficiency as structure fields, in
+     uniform form:
+     - `PolyTimeComputable` of the deterministic cores, with pp (the group description) on the
+       input;
+     - samplers as an exact-law core plus #378's `UniformSampler`.
+   - The constructions are **raw bundles** (`wee20PHFE_raw`, `wee20Sim_raw`, `wee20SASim_raw`,
+     `layeredPG_raw`), with correctness and security proved for them.
+   - The primitives (`wee20PHFE … hT`, …) are assembled from the raw bundles and the efficiency
+     targets.
+   - Reductions stay in `RealizesOn` form. The L1 link "pre-processing target ⇒ realiser" is
+     proved in Phase A.
+   - The statements gate checks "definitions carry efficiency" right after source fidelity.
 1. **Q3 ruled (B).** Both layers prove **[Wee20, §2.2]'s semi-adaptive simulation security**:
    - the outer scheme, and the building block Π of [Wee20, §4];
    - mpk first; then the challenge (x*, z*); then **adaptive** key queries, after ct*.
@@ -42,10 +56,14 @@ The design note behind `dispatch-prompt-r3.md`. It was prepared 2026-11-18 at re
 5. **Two-level realisers.** Wee20's hops reduce to **MDDH** distinguishers. Those are then
    composed with r2's DLIN ⇒ MDDH reduction. Each level has its own `RealizesOn` hypothesis
    and its own Phase B route (§ 4.4).
-6. **Base.** `<BASE>` carries #378 (`CoinSampling`, `Games.Closeness`) for Phase B's outlook only.
-   No design section needs it, so the job does **not** import it.
-7. **Size** ≈ 8,100–14,900 lines (r2: 7,400–13,800) (§ 6).
-8. **No open questions** (§ 7).
+6. **Base.** `<BASE>` carries #378 (`CoinSampling`, `Games.Closeness`).
+   - Rule 15's efficiency fields need the type `UniformSampler`, so `CoinSampling.Efficiency`
+     is imported **only** for that, in the definition files (§ 1E).
+   - No other `CoinSampling` module and not `Games.Closeness`.
+   - No sampler is built or proved efficient.
+7. **Size** ≈ 8,800–16,100 lines (r2: 7,400–13,800) (§ 6).
+8. **One open question, Q-E1** (§ 7.2): where `SamplesEfficiently` lives, the same question as
+   the sPRG pack's; rule them together.
 
 ## 0. Binding rulings applied (adds to design-r2 § 0)
 
@@ -56,7 +74,8 @@ The design note behind `dispatch-prompt-r3.md`. It was prepared 2026-11-18 at re
 | **Q3 = Wee20's semi-adaptive SIM for both layers** | § 4.5 (generic notion, the derivation of Def 4.3), § 4.8 (Π and the outer scheme), § 4.10 (headlines for both notions) |
 | **Q4 (A)** | One job, checkpoints M0–M5, PARTIAL final allowed |
 | **Q5 (A)** | § 4.4: the shared predicate, must-reuse |
-| **Base stacking** | #374 + realization + #378; `CoinSampling` and `Games.Closeness` must not be imported (no section needs them) |
+| **Base stacking** | #374 + realization + #378 (+ the Q-E1 file if (A)). Only `CoinSampling.Efficiency` is imported, for the type `UniformSampler` in rule 15's fields (§ 1E). No other `CoinSampling` module and not `Games.Closeness` |
+| **Rule 15** | § 1E: efficiency fields in every interface; raw bundles; assembly from targets; gate order (§ 6) |
 
 Unchanged from design-r2 § 0 and binding:
 - the journal pipeline;
@@ -84,7 +103,83 @@ r2's settled row **Q11 (game shape) is amended**:
 - **G7.** Closed: `sources-r3.md` § 3, design § 4.7.
 - G1, G2, G5, G6 and G8 are unchanged.
 
+## 1E. Rule 15 in this job (new; binding)
+
+### 1E.1 Raw bundles and primitives
+
+| Interface | Raw bundle (correctness and security are defined here) | Primitive (adds the efficiency fields; no instance without them) |
+|---|---|---|
+| FE scheme ([GJLS21, Defs 4.1–4.2]; [Wee20, §2.2]) | `FEScheme.Raw`: design-r2 § 4.5's `FEScheme` fields. Setup, Enc and KeyGen are in **core-plus-draw** form (`SetupDraw κ pp`, `setupCore`; `EncDraw κ pp`, `encCore`; `KeyDraw κ pp`, `keyCore`), with `setup`/`enc`/`keyGen` derived definitions with readers. Dec is deterministic. PPGen is the group generator's description (`BilinearGen.gen`, already a uniform NUPPT, `gen_uniform`) | `structure FEScheme extends FEScheme.Raw` with `setup_eff`, `enc_eff`, `keyGen_eff` (`SamplesEfficiently`, § 1E.2) and `dec_eff` (`PolyTimeComputable` of Dec's string form, pp on the input) |
+| Def 4.3 simulator ([GJLS21, Def 4.3]: "∃ a (possibly stateful) PPT simulator") | `Simulator.Raw` (design-r2 § 4.5's `Simulator`, core-plus-draw) | `Simulator extends Simulator.Raw` with the three samplers' efficiency |
+| semi-adaptive simulator ([Wee20, §2.2]: "a randomized simulator", efficient by the notion's reading) | `SASimulator.Raw` (§ 4.5) | `SASimulator extends SASimulator.Raw` with efficiency fields |
+| partial garbling ([Wee20, Lemma 1]: "four efficient algorithms") | `PartialGarbling.Raw` (§ 4.7's structure) | `PartialGarbling extends PartialGarbling.Raw` with `lgen_eff` and `rec_eff`: `PolyTimeComputable` of the string forms of (L₁, L₀) and of `rec`, with p and the class parameters on the input. pgb and pgb* are matrix arithmetic on them and need no field |
+
+- **The predicates `Correct`, `CorrectExcept`, `simAdv`, `saSimAdv` are defined on the raw
+  bundles.**
+  - `SimSecure S := ∃ Sim : S.Simulator, …` and `SASimSecure S := ∃ Sim : S.SASimulator, …`
+    quantify over **efficient** simulators, as Def 4.3 and Wee20 demand.
+  - Their raw-simulator forms `SimSecureWith (Sim : Simulator.Raw)` and `SASimSecureWith` are
+    named, with readers.
+- **Π** ([Wee20, §4]) is an internal building block, not a library interface: its keys carry
+  group elements (§ 4.8). It is a raw bundle only (`Linear.scheme_raw`). Its efficiency enters
+  through the outer scheme's targets (the outer KeyGen and Dec cores run Π's). This is
+  disclosed.
+- **Existing interfaces** this job only reuses (`BilinearGen` has `gen_uniform` and
+  `BilinearGen.Ops` has `_poly` fields, so they already comply) need no change.
+
+### 1E.2 Field forms (uniform only)
+
+- **Deterministic cores.** `∃ f, PolyTimeComputable f ∧ ∀ κ r inputs, f (NUPPT.advInput κ
+  ⟨G.desc κ r, inputs⟩) = output`.
+  - The map is quantified before κ and the group; pp is the description string on the input.
+  - Group operations appear only inside `f`'s specification, through `BilinearGen.Ops`
+    (`orderStr`, `mulG`, `powG`, `pairStr`, …).
+  - Never a bare `∃ A : NUPPT, A.Computes f`.
+- **Samplers.** `SamplesEfficiently y encDraw encOut core` with parameter word `y κ π` = the
+  encoded pp and the sampler's other inputs (design-r3 of the sPRG pack, § 1.2, gives the
+  declaration). In words: a #378 `UniformSampler`, an explicit equivalence to the draw type,
+  failure ≤ 2^{-κ}, and a `PolyTimeComputable` core. Home: **Q-E1** (§ 7.2).
+- The **R-DLOG** rule (§ 4.4) applies to every core: no discrete logarithms.
+
+### 1E.3 Targets and assembly
+
+Design-r2 § 4.11's written `Prop`s become **the targets that inhabit the primitives**:
+
+| Target | Content |
+|---|---|
+| `Wee20.SchemeTargets G ℓ n d` | `SamplesEfficiently` for Setup, Enc and KeyGen of `wee20PHFE_raw` (their cores run Π's and the quadratic layer's); Dec's `PolyTimeComputable` form |
+| `Wee20.SimTargets …` | the same for `wee20Sim_raw` (Def 4.3) and `wee20SASim_raw` (semi-adaptive) |
+| `Wee20.PGTargets ℓ n' d` | `lgen_eff`, `rec_eff` for `layeredPG_raw` |
+| `Wee20.LinearEfficient` | [GJLS21, Def 4.6] for Enc's core: one `FinTM` with a (ℓ + n)·q(κ) step bound (design-r2 § 4.11). Not an interface field; it is a property of this scheme that GJLS21 §9 requires |
+| `Wee20.MddhPreTargets` | L1: the `PolyTimeComputable` pre-processing of `dlinToMddh` on encodings (one map for every D, advice and κ) |
+| `Wee20.Targets` | the conjunction |
+
+**Assembly** (Phase A, pure, sorry-free; target witnesses chosen):
+```lean
+noncomputable def layeredPG (hT : Wee20.PGTargets ℓ n' d) : PartialGarbling …   -- toRaw = layeredPG_raw
+noncomputable def wee20PHFE (G) (ℓ n d) (hT : Wee20.Targets G ℓ n d) : FEScheme (phfeClass ℓ n G.wG d)
+noncomputable def wee20Sim (hT) : (wee20PHFE G ℓ n d hT).Simulator
+noncomputable def wee20SASim (hT) : (wee20PHFE G ℓ n d hT).SASimulator Λ
+theorem wee20PHFE_toRaw (hT) : (wee20PHFE G ℓ n d hT).toRaw = wee20PHFE_raw G layeredPG_raw ℓ n d
+```
+- The raw bundle `wee20PHFE_raw G PG ℓ n d` takes a **raw** garbling scheme `PG`, so it can be
+  proved correct and secure for any `PartialGarbling.Raw`.
+- The primitive uses the layered instance.
+
+**The L1 link (proved in Phase A; pure, as the sPRG's Q-S11 link):**
+```lean
+theorem mddhRealizable_of_preTarget (hT : Wee20.MddhPreTargets …) : MDDHRealizable G p hp d ℓ
+```
+It applies `Complexity.NUPPT.exists_realizesOn_of_preTarget_id D G.dlinEnc encΩ pre hf hT ω b hb`
+per MDDH distinguisher `D` (the φ = id shape). The L2 link (handler machines, T1) stays Phase B
+(§ 8).
+
 ## 2. The deliverable (replaces design-r2 § 2)
+
+*Rule 15 applies throughout (§ 1E).*
+- Items 2, 4 and 5 below are the **raw bundles**, plus the efficient primitive structures and
+  their assembly from targets.
+- Item 6's headlines are proved on the raw bundles and restated on the assembled primitives.
 
 1. **DLIN**, uniform-matrix **MDDH^d_{2,ℓ}**, and DLIN ⇒ MDDH as a reduction function with an
    explicit inequality (design-r2 § 4.1–§ 4.2, unchanged).
@@ -104,13 +199,14 @@ r2's settled row **Q11 (game shape) is amended**:
      adversaries;
    - **the Def 4.3 inequality and corollaries** (the GJLS21 target), derived;
    - the ciphertext width;
-   - efficiency `Prop`s.
+   - the efficiency targets, the assembled primitives (§ 1E.3) and the primitive-level
+     headlines;
+   - the L1 link `mddhRealizable_of_preTarget`.
 
 Phase B (not this job):
 - word-RAM programs and the RAM bridge;
-- realisers for the MDDH-level reductions (`Games.exists_handlerMachine`, T1) and for the
-  DLIN-level reductions (`exists_realizesOn_of_preTarget_id`);
-- proofs of the efficiency `Prop`s;
+- proofs of the targets, which make `wee20PHFE … hT` unconditional;
+- realisers for the MDDH-level reductions (`Games.exists_handlerMachine`, T1);
 - the unconditional corollaries.
 
 ## 3. Module layout (replaces design-r2 § 3's table; the other text of § 3 stands)
@@ -121,28 +217,35 @@ Phase B (not this job):
 | `Pairing/Linear.lean` | unchanged | 300–500 |
 | `Pairing/MatrixDH.lean` (+ `MatrixDH/SelfReduction.lean`) | unchanged: `mddhGame d ℓ`, `mddhEnc d ℓ` (the challenge encoding, for the MDDH-level realisers), `mddhAdv`, `dlinToMddh`, `mddhAdv_le` | 800–1,500 |
 | `AdvancedEncryption/FunctionalEncryption.lean` | facade | 40 |
-| `…/FunctionalEncryption/Defs.lean` | `FnClass`, `FEScheme`, `honestRun`, `Correct`, `CorrectExcept`, `Simulator`, `TwoStage`, `simGame`, `simAdv`, `SimSecure`, `SubexpSimSecure` (design-r2 § 4.5) | 500–800 |
+| `…/FunctionalEncryption/Defs.lean` (split at ~600 lines into `Defs.lean` + `Defs/Efficient.lean`) | `FnClass`; `FEScheme.Raw` (core-plus-draw) and `FEScheme` (efficiency fields, § 1E); `honestRun`, `Correct`, `CorrectExcept`; `Simulator.Raw`/`Simulator`; `TwoStage`, `simGame`, `simAdv`, `SimSecureWith`, `SimSecure`, `SubexpSimSecure` | 700–1,150 |
+| `…/FunctionalEncryption/SamplerEfficiency.lean` | only if Q-E1 (A) is not at `<BASE>`: `SamplesEfficiently` + readers, for a mechanical move later | 0–120 |
 | `…/FunctionalEncryption/Run.lean` | the deterministic oracle run `runDet` and its reader to `simulate` (§ 4.4) | 120–250 |
-| `…/FunctionalEncryption/SemiAdaptive.lean` | `saSpec`, `saCodec`, `saImpl` (+ case lemmas), `SAAdv`, `NUPPT.toSAAdv`, `SASimulator`, `saGame`, `saSimAdv`, `SASimSecure`, `SubexpSASimSecure`; `TwoStage.toSA`, `SASimulator.toSim`, **`simAdv_eq_saSimAdv`** | 450–800 |
+| `…/FunctionalEncryption/SemiAdaptive.lean` | `saSpec`, `saCodec`, `saImpl` (+ case lemmas), `SAAdv`, `NUPPT.toSAAdv`, `SASimulator.Raw`/`SASimulator`, `saGame`, `saSimAdv`, `SASimSecureWith`, `SASimSecure`, `SubexpSASimSecure`; `TwoStage.toSA`, `SASimulator.Raw.toSim` (+ the efficient form), **`simAdv_eq_saSimAdv`** | 500–900 |
 | `…/FunctionalEncryption/Classes.lean` | unchanged | 300–600 |
-| `…/FunctionalEncryption/PartialGarbling.lean` | interface (§ 4.7) | 150–250 |
-| `…/FunctionalEncryption/PartialGarbling/Layered.lean` | the layered instance, its three properties (§ 4.7) | 500–1,000 |
+| `…/FunctionalEncryption/PartialGarbling.lean` | interface: `PartialGarbling.Raw` (§ 4.7) and `PartialGarbling` (efficiency fields, § 1E) | 200–330 |
+| `…/FunctionalEncryption/PartialGarbling/Layered.lean` | `layeredPG_raw` and its three properties (§ 4.7); `Wee20.PGTargets`'s statement | 500–1,000 |
 | `…/FunctionalEncryption/Wee20/Linear.lean`, `LinearCorrect.lean`, `LinearSecurity/*.lean` | Π (§4.2); correctness (9)–(11); Π's semi-adaptive game and simulator; Games 0–5 typed; two MDDH reduction functions; Theorem 1 inequality | 2,400–4,500 |
 | `…/FunctionalEncryption/Wee20/Quadratic.lean`, `QuadraticCorrect.lean`, `QuadraticSecurity/*.lean` | §3.1 scheme; (4)–(5); §3.2 simulator; §3.3 Games 0–4 typed; two MDDH reduction functions; the derived Π adversary | 1,600–2,900 |
-| `…/FunctionalEncryption/Wee20.lean` | `wee20PHFE`, headlines for both notions, corollaries, ct width, efficiency `Prop`s | 600–1,200 |
-| **Total** | 16–20 new modules + 1 facade, + facade lines in `Pairing.lean` and `AdvancedEncryption.lean` | **≈ 8,100–14,900** |
+| `…/FunctionalEncryption/Wee20.lean` | `wee20PHFE_raw`, `wee20Sim_raw`, `wee20SASim_raw`; headlines on the raw bundles for both notions; corollaries; ct width | 600–1,200 |
+| `…/FunctionalEncryption/Wee20/Targets.lean` | the targets of § 1E.3; the assembly (`layeredPG`, `wee20PHFE`, `wee20Sim`, `wee20SASim`, `_toRaw`); `mddhRealizable_of_preTarget`; the primitive-level headlines | 400–700 |
+| **Total** | 18–22 new modules + 1 facade, + facade lines in `Pairing.lean` and `AdvancedEncryption.lean` | **≈ 8,800–16,100** |
 
 - **Removed:** `FunctionalEncryption/Realization.lean` (the shared file is at `<BASE>`).
 - **Imports.** Add `TCSlib.Cryptography.Asymptotic.Realization` where realisers appear.
-- **Do not import:** `CoinSampling` (any module), `Games.Closeness`, `Pairing/Assumptions.lean`
-  (unchanged rule), `TCSlib/Programs/*`, `TCSlib/Complexity/RAMSimulation/*`.
+- **Import `TCSlib.Cryptography.CoinSampling.Efficiency` only** in the files that state
+  sampler-efficiency fields or targets (`Defs`, `SemiAdaptive`, `PartialGarbling`, `Wee20/Targets`,
+  `SamplerEfficiency` if local). Use it only for the types `UniformSampler` and
+  `CoinSampler.fail` (§ 1E.2), with `Contract` if Q-E1 (A) is at `<BASE>`.
+- **Do not import:** any other `CoinSampling` module, `Games.Closeness`,
+  `Pairing/Assumptions.lean` (unchanged rule), `TCSlib/Programs/*`,
+  `TCSlib/Complexity/RAMSimulation/*`.
 
 ## 4. Statement shapes
 
 § 4.1 (DLIN), § 4.2 (MDDH and the self-reduction), § 4.3 (exponent vectors), § 4.6 (classes),
-§ 4.9 (`wee20PHFE`) and § 4.11 (efficiency `Prop`s) are **unchanged from design-r2**, except:
-- § 4.2's `mddhAdv_le` reads its realisers through the shared predicate (as written there);
-- § 4.11 adds two `Prop`s (§ 4.11 below).
+§ 4.9 (`wee20PHFE`, now named `wee20PHFE_raw`: the raw bundle, § 1E) are **unchanged from
+design-r2**, except that § 4.2's `mddhAdv_le` reads its realisers through the shared predicate
+(as written there). § 4.11 is replaced below.
 
 ### 4.4 Reduction functions and realisers (replaces design-r2 § 4.4)
 
@@ -266,6 +369,14 @@ def SASimSecure (leak) : Prop :=
 def SubexpSASimSecure (leak) : Prop :=
   ∃ Sim, SubexpHard fun (Aq : NUPPT × PolyExpr) => S.saSimAdv Sim leak (Aq.1.toSAAdv Aq.2)
 ```
+- **Rule 15 reading of this block (§ 1E.1).**
+  - The structure shown as `SASimulator` is `SASimulator.Raw`.
+  - `SASimulator` extends it with efficiency fields.
+  - `saGame`/`saSimAdv` take raw simulators.
+  - `SASimSecure`/`SubexpSASimSecure` quantify over efficient ones, with `SASimSecureWith` for a
+    given raw simulator.
+  - The same holds for `Simulator` and `SimSecure` (Def 4.3), and the game is over
+    `FEScheme.Raw`.
 - `saGame`, step by step:
   - pp ← pubGen;
   - real: (mpk, msk) ← setup; ideal: (mpk, st) ← Sim.setup;
@@ -343,8 +454,10 @@ structure PartialGarbling (p ℓ n' : ℕ) (Fn : Type) where
   group operations (`expVec` of `pgb' f x 0 t` times `[µ]` at `m₀`). This is what Π's KeyGen*
   needs under R-DLOG.
 - r2's δ parameter is dropped.
+- **Rule 15:** the structure above is `PartialGarbling.Raw`. `PartialGarbling` extends it with
+  `lgen_eff` and `rec_eff` (§ 1E.1), since Lemma 1 asks for "four efficient algorithms".
 
-**The instance** (`PartialGarbling/Layered.lean`): `layeredPG p ℓ n' d` for `Fn` = coefficient
+**The instance** (`PartialGarbling/Layered.lean`): `layeredPG_raw p ℓ n' d : PartialGarbling.Raw …` (rule 15: the efficient `layeredPG hT` is assembled in `Wee20/Targets.lean`, § 1E.3) for `Fn` = coefficient
 tensors `C : Fin n' → (Fin d → Fin (ℓ+1)) → ZMod p`, eval `f_j(x) = Σ_τ C j τ ∏_i x̂ (τ i)` (the
 `quadClass` representation of design-r2 § 4.6, x̂ = (x, 1)).
 - **Source:** [AGW20, App. A, (28)–(32), pp. 37–38] on the layered ABP Γ_C, the case t = 1 of
@@ -444,15 +557,18 @@ This is the count r2 named; Codex fixes it at M0.
 
 ### 4.10 Headlines (replaces design-r2 § 4.10)
 
+**On the raw bundles** (rule 15, § 1E). The core inequalities are about `wee20PHFE_raw` with
+the raw simulators, for any raw garbling scheme `PG`:
 ```lean
 /-- THE CORE INEQUALITY, semi-adaptive [Wee20, §3, p. 6; §3.3], for every typed adversary. -/
-theorem wee20PHFE_saSimAdv_le (p) (hp) (𝒜 : (wee20PHFE G PG ℓ n d).SAAdv) :
+theorem wee20PHFE_saSimAdv_le (p) (hp) (𝒜 : (wee20PHFE_raw G PG ℓ n d).SAAdv) :
     ∃ ω : (i : Fin 4) → ∀ κ, Wee20Advice G p ℓ n d 𝒜 i κ, ∀ D : Fin 4 → NUPPT,
       (∀ i, (D i).RealizesOn (G.mddhEnc (dimD i) (dimL i)) 𝒜.coins (wee20Red … 𝒜 i (ω i))) →
-      ∀ κ, (wee20PHFE G PG ℓ n d).saSimAdv (wee20SASim …) eval 𝒜 κ ≤
+      ∀ κ, (wee20PHFE_raw G PG ℓ n d).saSimAdv (wee20SASim_raw …) eval 𝒜 κ ≤
         ∑ i, G.mddhAdv (dimD i) (dimL i) (D i) κ + wee20Slack G ℓ n d p κ
 /-- Def 4.3 form (the GJLS21 target), for two-stage adversaries: by `simAdv_eq_saSimAdv`. -/
-theorem wee20PHFE_simAdv_le (p) (hp) (A : TwoStage) (q : PolyExpr) : … (same, at A.toSA q)
+theorem wee20PHFE_simAdv_le (p) (hp) (A : TwoStage) (q : PolyExpr) : … (same, at A.toSA q,
+    with `wee20Sim_raw`)
 /-- Phase B obligations (realisability), restricted to machine-derived adversaries (§ 4.4). -/
 def Wee20RealizableSA (G p hp ℓ n d) : Prop :=
   ∀ (A : NUPPT) (q : PolyExpr) i ω, ∃ D : NUPPT,
@@ -462,33 +578,53 @@ def Wee20Realizable43 (G p hp ℓ n d) : Prop :=
     D.RealizesOn (G.mddhEnc (dimD i) (dimL i)) (A.toSA q).coins (wee20Red … (A.toSA q) i ω)
 def MDDHRealizable (G p hp d ℓ) : Prop :=
   ∀ (D : NUPPT) ω, ∃ B : NUPPT, B.RealizesOn G.dlinEnc D.coins (dlinToMddh G hp d ℓ D ω)
-theorem wee20PHFE_saSimSecure (p hp) (hpb : ∀ κ, 2 ^ κ ≤ p κ) (hR : Wee20RealizableSA …)
+/-- Raw-simulator forms (the raw bundle with its raw simulator). -/
+theorem wee20PHFE_raw_saSimSecureWith (p hp) (hpb : ∀ κ, 2 ^ κ ≤ p κ) (hR : Wee20RealizableSA …)
     (hM : ∀ i, MDDHRealizable G p hp (dimD i) (dimL i)) (h : G.DLINAssumption) :
-    (wee20PHFE G PG ℓ n d).SASimSecure eval
-theorem wee20PHFE_subexpSASimSecure … (h : G.SubexpDLIN) : … .SubexpSASimSecure eval
-theorem wee20PHFE_simSecure (p hp hpb) (hR : Wee20Realizable43 …) (hM …) (h : G.DLINAssumption) :
-    (wee20PHFE G PG ℓ n d).SimSecure            -- [GJLS21, Def 4.3], ε = 1, many-key
-theorem wee20PHFE_subexpSimSecure … (h : G.SubexpDLIN) : (wee20PHFE G PG ℓ n d).SubexpSimSecure
+    (wee20PHFE_raw G PG ℓ n d).SASimSecureWith (wee20SASim_raw …) eval
+theorem wee20PHFE_raw_simSecureWith (p hp hpb) (hR : Wee20Realizable43 …) (hM …)
+    (h : G.DLINAssumption) : (wee20PHFE_raw G PG ℓ n d).SimSecureWith (wee20Sim_raw …)
+-- and the `Subexp` forms under `G.SubexpDLIN`
 ```
+
+**On the primitives** (assembled from targets, § 1E.3): the library-level statements, where the
+simulator's existence includes its efficiency.
+```lean
+theorem wee20PHFE_simSecure (p hp hpb) (hT : Wee20.Targets G ℓ n d) (hR : Wee20Realizable43 …)
+    (h : G.DLINAssumption) :
+    (wee20PHFE G ℓ n d hT).SimSecure            -- [GJLS21, Def 4.3], ε = 1, many-key
+theorem wee20PHFE_subexpSimSecure … (h : G.SubexpDLIN) : (wee20PHFE G ℓ n d hT).SubexpSimSecure
+theorem wee20PHFE_saSimSecure (p hp hpb) (hT) (hR : Wee20RealizableSA …) (h : G.DLINAssumption) :
+    (wee20PHFE G ℓ n d hT).SASimSecure eval
+theorem wee20PHFE_subexpSASimSecure … (h : G.SubexpDLIN) : … .SubexpSASimSecure eval
+/-- [GJLS21, §9]'s PHFE ingredient: correct (Def 4.2), simulation secure (Def 4.3, ε = 1,
+many-key), linear efficiency (Def 4.6). -/
+theorem wee20PHFE_gjls21 (p hp hpb) (hT) (hR) (h) :
+    (wee20PHFE G ℓ n d hT).CorrectExcept 0 ∧ (wee20PHFE G ℓ n d hT).SimSecure ∧
+      Wee20.LinearEfficient G ℓ n d
+```
+- At the primitive level, `hM` is discharged by `mddhRealizable_of_preTarget` from `hT`'s
+  `MddhPreTargets`, so it is not a hypothesis. `hR` (the L2 realisers) stays a Phase B
+  hypothesis.
 - `wee20PHFE_correct`, `wee20PHFE_correctExcept` and `wee20PHFE_ctLen_eq` are unchanged
-  (design-r2 § 4.10).
+  (design-r2 § 4.10), on the raw bundle. Readers transfer them to the primitive through
+  `wee20PHFE_toRaw`.
 - **`wee20Slack`** is explicit: Π's full-rank term plus the four `mddhSlack` terms after
   composition. There is **no partial-garbling term** (exact privacy). It is `SubexpSmall c` for
   c < 1 under `hpb`, as r2 described.
 - **Composition.** Each corollary composes the core inequality with `mddhAdv_le` per `D i` (L1).
-  `hM` supplies the L1 realisers, and `hR` the L2 realisers. The subexponential exponent is
-  uniform because there are four hops (r2's argument).
-- **The `Phase B` docstring note** on `hR` and `hM`: L2 via `Games.exists_handlerMachine`, and
-  L1 via `exists_realizesOn_of_preTarget_id`. Realising `TwoStage.toSA` needs a machine that
-  runs A₁ then A₂ as one oracle machine, which is also Phase B.
+  The subexponential exponent is uniform because there are four hops (r2's argument).
+- **The `Phase B` docstring note** on `hR`: L2 via `Games.exists_handlerMachine`. Realising
+  `TwoStage.toSA` needs a machine that runs A₁ then A₂ as one oracle machine, which is also
+  Phase B.
 
-### 4.11 Efficiency statements (adds to design-r2 § 4.11)
+### 4.11 Efficiency statements (replaces design-r2 § 4.11)
 
-- `PartialGarbling.LgenEfficient`, `PartialGarbling.RecEfficient`, for `layeredPG`:
-  `PolyTimeComputable` of the string forms of (L₁, L₀) and of `rec`, uniform in (ℓ, n', d) as
-  in r2's uniformity rule. KeyGen's and Dec's efficiency `Prop`s are stated with these as their
-  inner steps, as written `Prop`s only.
-- `Wee20.SimEfficient` covers the semi-adaptive simulator (Setup*, Enc*, KeyGen*).
+Under rule 15 the written efficiency `Prop`s of design-r2 § 4.11 are no longer free-standing.
+They are the **targets** of § 1E.3, which inhabit the primitives, plus `Wee20.LinearEfficient`
+([GJLS21, Def 4.6]). Each target is a named `Prop` with an `_iff` reader and the docstring
+"Phase B obligation; not proved in this development". There is no `sorry`, and no target is a
+hypothesis of a raw-bundle theorem.
 
 ## 5. Proof plan (replaces design-r2 § 5's table)
 
@@ -513,18 +649,20 @@ theorem wee20PHFE_subexpSimSecure … (h : G.SubexpDLIN) : (wee20PHFE G PG ℓ n
 
 | M | Content | Push | Est. lines |
 |---|---|---|---|
-| **M0** | **Statements commit**: every new file with definitions and readers (readers proved), every theorem stated with `sorry` under its sketch, the fidelity table (GJLS21 Defs 4.1–4.3, 4.6, §9 first; then Wee20 §2.2 and the Wee20/AGW20/IW14 table), facade lines, size re-estimate | checkpoint 0 | 2,200–3,300 (inside the totals) |
+| **M0** | **Statements commit.** Contents:<br>- every new file with its definitions and readers (readers proved), **including the raw/primitive splits, the efficiency fields, the targets and the assembly definitions**;<br>- every theorem stated with `sorry` under its sketch;<br>- in REPORT, the fidelity table (GJLS21 Defs 4.1–4.3, 4.6, §9 first; then Wee20 §2.2 and the Wee20/AGW20/IW14 table);<br>- **the rule-15 table** (each interface, its efficiency fields, its raw bundle, the targets that inhabit it);<br>- facade lines and a size re-estimate | checkpoint 0 | 2,500–3,700 (inside the totals) |
 | M1 | Exponents; DLIN; MDDH; P1 | checkpoint 1 | 1,400–2,500 |
-| M2 | generic FE: Def 4.3 readers, `runDet`, the semi-adaptive notion, P8; classes, P7's identity; partial garbling: interface and layered instance (P2) | checkpoint 2 | 2,100–3,800 |
+| M2 | generic FE (raw and efficient forms): Def 4.3 readers, `runDet`, the semi-adaptive notion, P8; classes, P7's identity; partial garbling: interface (both forms) and the layered raw instance (P2) | checkpoint 2 | 2,400–4,300 |
 | M3 | Π: P3, P4 (semi-adaptive) | checkpoint 3 | 2,400–4,500 |
 | M4 | quadratic: P5, P6 (semi-adaptive) | checkpoint 4 | 1,600–2,900 |
-| M5 | `wee20PHFE`, headlines for both notions, P9, ct width, efficiency `Prop`s; final checks | final | 600–1,200 |
-| | **Total** | | **≈ 8,100–14,900 (central ≈ 11,000)** |
+| M5 | `wee20PHFE_raw`, headlines for both notions on the raw bundle, P9, ct width; **the targets, the assembly, `mddhRealizable_of_preTarget`, the primitive-level headlines**; final checks | final | 1,000–1,900 |
+| | **Total** | | **≈ 8,800–16,100 (central ≈ 12,000)** |
 
 - **Against r2 (7,400–13,800).**
   - Q3 (B) adds ≈ +1,300–2,500: the semi-adaptive notion and `runDet` (+600–1,050), adaptive Π
     hops (+400–800), the adaptive outer hops and derived Π adversary (+300–600), and the second
     set of headlines (+200–400).
+  - **Rule 15 adds ≈ +700–1,200**: the raw/primitive splits of `FEScheme`, both simulators and
+    `PartialGarbling`; the targets; the assembly; and the L1 link.
   - The layered instance saves ≈ −700 to −1,500 (500–1,000 against 1,200–2,500).
   - The shared realisation file saves 0–150.
 - **Overrun.** A PARTIAL final (Q4 A) carries:
@@ -534,6 +672,18 @@ theorem wee20PHFE_subexpSimSecure … (h : G.SubexpDLIN) : (wee20PHFE G PG ℓ n
   - a continuation note.
 
   Suggested order of value if time is short: M0, M2 (garbling, notions), M3, M1, M4, M5.
+
+**Statements-gate order (binding).**
+1. Source fidelity ([GJLS21] Defs 4.1–4.3, 4.6, §9; then [Wee20], [AGW20], [IW14] items and
+   pages).
+2. **Definitions carry efficiency (rule 15).** Checks:
+   - each of `FEScheme`, `Simulator`, `SASimulator` and `PartialGarbling` has its efficiency
+     fields in uniform form only (§ 1E.2);
+   - no bare `∃ A : NUPPT, A.Computes f`;
+   - no value of those types is constructed except by the assembly from targets;
+   - the raw bundles carry the correctness and security theorems;
+   - the targets together inhabit every primitive the job constructs.
+3. Then the rest: R-DLOG, the vacuity rule, Rule 10, statement shapes.
 
 ## 7. Questions
 
@@ -549,9 +699,20 @@ theorem wee20PHFE_subexpSimSecure … (h : G.SubexpDLIN) : (wee20PHFE G PG ℓ n
 
 r2's table of r1 questions settled stands, with Q11 amended as § 0 says.
 
-### 7.2 Open
+| (new) efficiency in definitions | rule 15 (*Efficiency is mandatory*; *Efficiency baked into definitions*) | § 1E; the gate order (§ 6) |
 
-None.
+### 7.2 Open (multiple choice, recommended first)
+
+- **Q-E1. Where `SamplesEfficiently` lives** (the same question as the sPRG pack's Q-E1; rule
+  them together). Both jobs state sampler efficiency with one shape (sPRG design-r3 § 1.2), and
+  parallel definitions would be a duplication.
+  - **(A)** One shared in-house file, written by the maintainer before dispatch and stacked into
+    `<BASE>`, as the realisation file was: `TCSlib/Cryptography/CoinSampling/Contract.lean`
+    (`SamplesEfficiently` and readers, ≈ 60–120 lines, on #378). Both jobs reuse it
+    (must-reuse). If it is not at `<BASE>`, the job writes the same declaration in
+    `FunctionalEncryption/SamplerEfficiency.lean` for a mechanical move later. *Recommended.*
+  - (B) Each job defines its own, unified after both land (a disclosed duplication).
+  - (C) No named predicate: the fields are written out inline in each structure.
 
 ## 8. Risks (replaces design-r2 § 8)
 
@@ -562,6 +723,10 @@ None.
   public part is larger than (A^⊤U, A^⊤W, A^⊤V) (for example through pp), Codex re-derives Δ's
   domain. If the bijection fails, escalate E-STMT rather than fall back to guessing (complexity
   leveraging would lose a factor p^{ℓ+n'}).
+- **Rule 15 assembly** chooses target witnesses (`Classical.choose`) for the efficiency fields
+  only. The laws, algorithms and simulators of the primitive are the raw bundle's, by
+  `wee20PHFE_toRaw`, which is a reader of the assembly. A gate check confirms that no law
+  depends on a chosen witness.
 - **Phase B fit of L2 realisers.** `Games.exists_handlerMachine` gives `B` and a coin bijection φ
   with `B.runAt n z (φ (ω, r))`, not literally `B.coins = A.coins` with the identity layout.
   Phase B will need `NUPPT.coinsCongr` and possibly a layout lemma. This is a Phase B risk
