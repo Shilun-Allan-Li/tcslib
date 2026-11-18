@@ -39,9 +39,11 @@ of the hypothesis [BV11, Thm 3.2; BV14, Thm 2.14 second part]: pure-FHE security
 **Compactness** holds by typing (`GSW/Bootstrap.lean`, `GSW/Leveled.lean`).
 
 **Sources and reconstruction (P6-Q19 B), for the leveled statements** (`LeveledReductionEfficient`,
-A3). The key-chain construction and the hybrid order are reconstructed: no ingested passage
-gives them. BV11 and BV14 attribute leveled bootstrapping to Gentry's work; that passage will
-be cited here once it is ingested.
+A3). The key chain is Gentry's [Gen09, §4.1, `KeyGen` of `E^(d)`, pp. 46–47, p056-b003], with
+his reverse order of the levels undone (`GSW/Leveled.lean`). The level hybrid of L4–L5 follows
+[Gen09, Thm 4.2.3 and its proof, pp. 50–51, p060-b001, p061-b001] (`GSW/LeveledSecurity.lean`),
+whose reduction loses the factor `ℓ(d + 1)` (Gentry's `ℓ` is the key length), linear in the
+depth; here the number of levels `L(κ)` is a polynomial.
 
 ## References
 
@@ -54,6 +56,8 @@ be cited here once it is ingested.
   8 June 2013: §3.2.
 * [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, author version dated
   17 February 2016, Definition 4.2.3.
+* [Gen09] C. Gentry, *A Fully Homomorphic Encryption Scheme*, PhD thesis, Stanford University,
+  September 2009: §4.1, Thm 4.2.3.
 
 **Deviations.** The asymptotic statements are over an `LWE.Family` with
 `P_κ = Parameters.ofFamily F κ` and the canonical encodings above. Machine efficiency of GSW
@@ -126,8 +130,10 @@ theorem encodeFheView_length (P : Parameters) (v : FheView P) :
         P.columns * ((P.lwe.dimension + 1) * P.columns * P.width) +
         (P.lwe.dimension + 1) * P.columns * P.width := by
   rw [encodeFheView_eq, List.length_append, List.length_append, LWE.encodeChallenge_length,
-    encodeCiphertext_length, List.length_flatten, ← List.ofFn_comp']
-  simp only [encodeCiphertext_length, List.ofFn_const, List.sum_replicate_nat]
+    encodeCiphertext_length, List.ofFn_eq_map,
+    length_flatten_map_const (List.finRange P.columns) _ _
+      fun i => encodeCiphertext_length P (v.2.1 i),
+    List.length_finRange]
 
 /-- The canonical encoding of a leveled view: the `L + 1` public keys, the `L` level keys of
 `N` ciphertexts each (level by level, position by position), and the challenge,
@@ -154,10 +160,18 @@ theorem encodeLeveledView_length (P : Parameters) (L : ℕ) (v : LeveledView P L
       (L + 1) * (P.lwe.samples * (P.lwe.dimension + 1) * P.width) +
         L * (P.columns * ((P.lwe.dimension + 1) * P.columns * P.width)) +
         (P.lwe.dimension + 1) * P.columns * P.width := by
-  rw [encodeLeveledView_eq, List.length_append, List.length_append, List.length_flatten,
-    ← List.ofFn_comp', List.length_flatten, ← List.ofFn_comp', encodeCiphertext_length]
-  simp only [LWE.encodeChallenge_length, List.length_flatten, ← List.ofFn_comp',
-    encodeCiphertext_length, List.ofFn_const, List.sum_replicate_nat]
+  have hcts : ∀ (n : ℕ) (f : Fin n → Ciphertext P),
+      (List.ofFn fun j => encodeCiphertext P (f j)).flatten.length =
+        n * ((P.lwe.dimension + 1) * P.columns * P.width) := fun n f => by
+    rw [List.ofFn_eq_map, length_flatten_map_const (List.finRange n) _ _
+      fun j => encodeCiphertext_length P (f j), List.length_finRange]
+  rw [encodeLeveledView_eq, List.length_append, List.length_append, encodeCiphertext_length,
+    List.ofFn_eq_map,
+    length_flatten_map_const (List.finRange (L + 1)) _ _
+      fun d => LWE.encodeChallenge_length P.lwe P.width (v.1 d),
+    List.ofFn_eq_map,
+    length_flatten_map_const (List.finRange L) _ _ fun e => hcts P.columns (v.2.1 e),
+    List.length_finRange, List.length_finRange]
 
 /-! ### The asymptotic hypotheses -/
 

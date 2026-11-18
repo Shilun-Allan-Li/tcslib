@@ -31,10 +31,12 @@ set_option autoImplicit false
 All three are admitted statement-phase targets. With `LWE.Family.RatioBounded F B p` the
 condition `pBoot(κ)·B(κ) < q(κ)` is the regime of a polynomial ratio `q/B` (assumption (A2)).
 
-**Sources and reconstruction (P6-Q19 B), for the leveled statement.** The key-chain
-construction and the hybrid order are reconstructed: no ingested passage gives them. BV11 and
-BV14 attribute leveled bootstrapping to Gentry's work; that passage will be cited here once it
-is ingested.
+**Sources and reconstruction (P6-Q19 B), for the leveled statement.** The key chain is
+Gentry's [Gen09, §4.1, `KeyGen` of `E^(d)`, pp. 46–47, p056-b003], with his reverse order of
+the levels undone (`GSW/Leveled.lean`); his correctness theorem for the leveled scheme is
+[Gen09, Thm 4.2.1, p. 49, p059-b001] (only its statement is ingested). The hybrid order,
+[Gen09, Thm 4.2.3, pp. 50–51, p060-b001, p061-b001], concerns security and is used in
+`GSW/LeveledSecurity.lean`, not here.
 
 ## References
 
@@ -44,6 +46,8 @@ is ingested.
   (Standard) LWE*, FOCS 2011 full version; IACR ePrint 2011/344: Thm 3.1, Def 3.6.
 * [GSW13] C. Gentry, A. Sahai, B. Waters, CRYPTO 2013; IACR ePrint 2013/340, version dated
   8 June 2013: §3.1 (parameters).
+* [Gen09] C. Gentry, *A Fully Homomorphic Encryption Scheme*, PhD thesis, Stanford University,
+  September 2009: §4.1, Thm 4.2.1, Thm 4.2.3.
 
 **Deviations.** Worst case, with an explicit polynomial (constant `2^70`; r3 §H6 drafted
 `c < 2^70` with the factor `4`), not [BV14, Thm 3.7]'s `Θ̃` noise rate. The constant `8`

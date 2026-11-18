@@ -32,11 +32,20 @@ set_option autoImplicit false
 
 Both are admitted statement-phase targets.
 
-**Sources and reconstruction (P6-Q19 B).** The key-chain construction and the hybrid order are
-reconstructed: no ingested passage gives them. BV11 and BV14 attribute leveled bootstrapping
-to Gentry's work; that passage will be cited here once it is ingested. The statements cite
-[BV11, Thm 3.1, Def 3.6], [BV14, Thm 2.14 first part, Thm 3.7] and [AP14, §5.3] only, with
-[GSW13, §3.2, Lemma 1], [BV11, Def 3.1] and [BV14, §2.5] for the one-key steps and the view.
+**Sources and reconstruction (P6-Q19 B).** The key chain is Gentry's [Gen09, §4.1, `KeyGen` of
+`E^(d)`, pp. 46–47, p056-b003], with his reverse order of the levels undone: his level `i` is
+level `L − i` here (`GSW/Leveled.lean`). The hybrid order is his [Gen09, Thm 4.2.3 and its
+proof, pp. 50–51, p060-b001, p061-b001]: Game `k` replaces the encryptions under `pk_{i−1}` of
+`sk_i` for `i ∈ [1, k]`, and the step from Game `k` to Game `k + 1` plants the challenge key as
+`pk_k`, whose secret occurs only in encryptions already replaced. Renumbered, Game `k` is
+`H_{L−k}`, and the order is the top-down order below. The statements cite [BV11, Thm 3.1,
+Def 3.6], [BV14, Thm 2.14 first part, Thm 3.7] and [AP14, §5.3], with [GSW13, §3.2, Lemma 1],
+[BV11, Def 3.1] and [BV14, §2.5] for the one-key steps and the view; [Gen09] is cited here, for
+the construction. Deviations from [Gen09, Thm 4.2.3]: a replaced level key encrypts `0`, not
+the bits of an unrelated fresh key; each level step is a hybrid over the `N` positions, not one
+challenge of Gentry's `ℓ`-fold scheme `(E)^ℓ`; each step reduces to DLWE (phase 5), not to the
+semantic security of the base scheme; and the middle step between the two chains is phase 5's
+challenge step, not Gentry's Game `d + 1` (a random plaintext).
 
 ## References
 
@@ -48,6 +57,8 @@ to Gentry's work; that passage will be cited here once it is ingested. The state
   CRYPTO 2014; IACR ePrint 2014/094: §5.3.
 * [GSW13] C. Gentry, A. Sahai, B. Waters, CRYPTO 2013; IACR ePrint 2013/340, version dated
   8 June 2013: §3.2, Lemma 1.
+* [Gen09] C. Gentry, *A Fully Homomorphic Encryption Scheme*, PhD thesis, Stanford University,
+  September 2009: §4.1, Thm 4.2.3 (with its proof).
 
 **Deviations.** Levels are indexed from `0`: the level key `e : Fin L` encrypts the bits of
 `s_e` under `pk_{e+1}` (r3's `evk_d`, `d = e + 1`). The hybrid runs top-down: step `e` (from

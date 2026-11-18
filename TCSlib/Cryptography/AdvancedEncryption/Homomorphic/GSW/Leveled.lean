@@ -42,12 +42,17 @@ L2 and L3 are admitted; L1 is proved.
 `Ciphertext P` whatever the circuit [BV14, Def 2.12, p008-b001]; only the evaluation key
 (`N·L` ciphertexts) depends on `L` [BV11, Thm 3.1, p015-b001].
 
-**Sources and reconstruction (P6-Q19 B).** The key-chain construction and the hybrid order are
-reconstructed: no ingested passage gives them. BV11 and BV14 attribute leveled bootstrapping
-to Gentry's work; that passage will be cited here once it is ingested. For the leveled scheme
-the statements cite [BV11, Thm 3.1, Def 3.6], [BV14, Thm 2.14 first part, Thm 3.7] and
-[AP14, §5.3] only; [BV14, Def 2.12, §3.3] and [Bar89, Thm 1] are cited for compactness and the
-literal inputs.
+**Sources and reconstruction (P6-Q19 B).** The key chain is Gentry's [Gen09, §4.1, `KeyGen` of
+`E^(d)`, pp. 46–47, p056-b003]: `d + 1` independent key pairs and, for `i ∈ [1, d]`, the
+encryptions under `pk_{i−1}` of the representation of `sk_i` as plaintexts. Gentry encrypts the
+keys in reverse order [Gen09, §4.1, p. 46, p056-b002], so his evaluation runs down the index
+(inputs under `pk_d`, decryption under `sk_0`); here it runs up, and his level `i` is level
+`L − i` (`levelKey`). His circuits are layered as well: every wire joins consecutive levels,
+with trivial gates added where needed [Gen09, §4.1, p. 47, p057-b001]. The hybrid order is
+[Gen09, Thm 4.2.3, pp. 50–51, p060-b001, p061-b001] (`GSW/LeveledSecurity.lean`). Besides
+[Gen09] for the chain, the statements of the leveled scheme cite [BV11, Thm 3.1, Def 3.6],
+[BV14, Thm 2.14 first part, Thm 3.7] and [AP14, §5.3]; [BV14, Def 2.12, §3.3] and
+[Bar89, Thm 1] are cited for compactness and the literal inputs.
 
 ## References
 
@@ -60,6 +65,8 @@ literal inputs.
 * [Bar89] D. A. Mix Barrington, *Bounded-width polynomial-size branching programs recognize
   exactly those languages in NC¹*, J. Comput. System Sci. 38(1) (1989), 150–164: Thm 1
   ("inputs and negated inputs").
+* [Gen09] C. Gentry, *A Fully Homomorphic Encryption Scheme*, PhD thesis, Stanford University,
+  September 2009: §4.1 (`KeyGen` of `E^(d)`, the reverse order, layered circuits), Thm 4.2.3.
 
 **Deviations.** `L + 1` independent key pairs in a consecutive chain (P6-Q14 B): `evk_{d+1}`
 encrypts under `pk_{d+1}` the `N` key bits of `s_d`, `N·L` ciphertexts in all. Circuits are
@@ -88,9 +95,9 @@ theorem LevelCoins_eq (P : Parameters) (L : ℕ) :
 length of the evaluation key depends on the level L"; BV14, Thm 2.14 first part, p008-b003]:
 for `d : Fin L`, the encryptions under `pk_{d+1}` of the `N` key bits of `s_d`, with the coins
 `R d`, `levelKey P pks ss R d = evalKey P (pks d.succ) (ss d.castSucc) (R d)`. In all `N·L`
-ciphertexts. The key-chain construction is reconstructed: no ingested passage gives it; BV11
-and BV14 attribute leveled bootstrapping to Gentry's work, and that passage will be cited here
-once it is ingested. -/
+ciphertexts. The chain is [Gen09, §4.1, `KeyGen` of `E^(d)`, pp. 46–47, p056-b003] with the
+levels renumbered: Gentry encrypts `sk_i` under `pk_{i−1}`, in reverse order [Gen09, §4.1,
+p. 46, p056-b002], and his level `i` is level `L − i` here. -/
 def levelKey (P : Parameters) {L : ℕ} (pks : Fin (L + 1) → PublicKey P)
     (ss : Fin (L + 1) → Secret P) (R : LevelCoins P L) (d : Fin L) :
     Fin P.columns → Ciphertext P :=
