@@ -56,8 +56,8 @@ committed or dispatched.
 - **Q3**, which notion each layer proves: **(A) the weakest that suffice (Def 4.3 outer,
   group-first Π)** / (B) Wee20's semi-adaptive / (C) monolithic.
 - **Q4**, one job or two: **(A) one job, PARTIAL final allowed** / (B) two jobs.
-- **Q5**, where `ReductionFn`/`NUPPT.Realizes` live: **(A) in house at `<BASE>`, shared with the
-  sPRG job** / (B) private per job / (C) inline.
+- **Q5** (= sPRG Q-S9), where the shared `NUPPT.RealizesOn` lives: **(A) in house,
+  `Asymptotic/Realization.lean` at `<BASE>`** / (B) private per job / (C) inline.
 
 r1's Q1–Q5, Q7–Q12 and Q14 are settled by the sources and rulings (design-r2 § 7, table); r1's Q6
 and Q13 continue as Q3 and Q4.
@@ -71,8 +71,8 @@ and Q13 continue as Q3 and Q4.
    - the three PDFs: GJLS21 `481f999a…6eed`, Wee20 `d4def6b0…112a`, JLS26 `bb357e8d…2f3d`;
    - [AGW20] and [IW14], if Q2(A).
 3. **`<BASE>`.**
-   - Q5(A): the maintainer writes the realiser file in house, stacked on `foundations/subexp`
-     (#374). `<BASE>` is that branch's head.
+   - Q5(A) (= sPRG Q-S9(A)): the maintainer writes `Asymptotic/Realization.lean` in house, stacked
+     on `foundations/subexp` (#374). `<BASE>` is that branch's head, shared with the sPRG job.
    - Otherwise `<BASE>` is `foundations/subexp`'s head.
    - Name the branch in `rulings.md`.
 4. **Fill the placeholders** in `dispatch-prompt-r2.md`: `<BASE>`, `<RECORDS>` (the commit carrying

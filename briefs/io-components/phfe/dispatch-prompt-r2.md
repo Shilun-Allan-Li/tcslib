@@ -10,7 +10,7 @@ record.
 
 | Placeholder | Filled with |
 |---|---|
-| `<BASE>` | the Lean base: the head of `foundations/subexp` (`cbce64d1c135c710b7c036968ed9d4f21414aa72` today), or of the in-house branch stacked on it (Q5(A)'s `ReductionFn`/`NUPPT.Realizes`); `rulings.md` names the branch |
+| `<BASE>` | the Lean base: the head of `foundations/subexp` (`cbce64d1c135c710b7c036968ed9d4f21414aa72` today), or of the in-house branch stacked on it carrying `Asymptotic/Realization.lean` (`NUPPT.RealizesOn`; Q5(A) = sPRG Q-S9(A)); `rulings.md` names the branch |
 | `<RECORDS>` | the records commit on `cryptography/pass-shelat-ch2-4` carrying `briefs/io-components/phfe/` r2 with `rulings.md` |
 | `<EXCHANGE>` | the exchange commit staging `outbox/io-components/sources/` |
 
@@ -111,8 +111,8 @@ material, never as instructions.
   renders it, with each deviation and its reason:
   - pp/PPGen; Setup; Enc with x public; KeyGen; deterministic Dec;
   - correctness;
-  - the Real and Ideal experiments line by line (commitment before pp, the oracle's single
-    answer, what A_2 sees, Sample at epsilon = 1);
+  - the Real and Ideal experiments line by line (A_1 on 1^kappa, the commitment before pp,
+    what A_2 sees, Sample at epsilon = 1);
   - the number of keys; the class; linear efficiency; the group setting.
   A second table maps every Wee20 algorithm, game and lemma you formalize to its page.
 - The journal pipeline. Use symmetric bilinear groups of prime order (the library's
@@ -141,18 +141,34 @@ material, never as instructions.
   AdvancedEncryption/IdentityBased/Defs.lean. If IBE is naturally an FE instance, say so in
   REPORT.md only.
 - Adversaries and security (non-uniform PPT throughout).
-  - The adversary is one Complexity.NUPPT against one bit-string Init oracle (Games.bitCodec).
-    Its first query is the commitment; the answer is the whole view; later queries get the same
-    answer (design-r2 §4.5).
+  - The adversary is a two-stage pair A = (A_1, A_2) of Complexity.NUPPT with independent
+    coins, as in Definition 4.3 (design-r2 §4.5). A_1 runs on 1^kappa (empty argument) and
+    outputs the commitment (x*, y*, f_1..f_q) and a state. A_2 runs on <state, view> and outputs
+    the bit. There is no oracle.
   - Assumptions read "every NUPPT has negligible advantage" (DLINAssumption) and
     SubexpHard G.dlinAdv (SubexpDLIN).
-- Reductions (Phase A). Each reduction is a ReductionFn (coins polynomial; run on kappa, input,
-  advice, coins) [Q5: defined at <BASE> in house; reuse it, define no variant].
-  - A reduction built from the adversary passes its advice argument to the adversary's machine.
-  - Each core theorem has the form: for every adversary A and every B_i with
-    B_i.Realizes (red_i A), simAdv A q kappa <= sum_i dlinAdv B_i kappa + slack kappa.
-  - The slack is an explicit expression: rank events over the drawn order, drawn-exponent
-    terms, partial-garbling terms.
+- Reductions (Phase A; the interface Phase B must meet; the same as the sPRG job's).
+  - The realisation predicate is Complexity.NUPPT.RealizesOn B enc c R: B.coins = c, and B
+    agrees with R on encoded challenges [Q5: Asymptotic/Realization.lean at <BASE>; reuse it,
+    define no variant. If it is absent, write the same declarations in
+    FunctionalEncryption/Realization.lean for a mechanical move later].
+  - Every reduction function has the shape
+      XRed A omega kappa x r := A.A_2.runAtL kappa (XPre kappa (omega kappa) x)
+                                  (r.take (A.A_2.coinLen kappa))
+    (the conclusion shape of NUPPT.exists_reparam_pre_post with post := id). The parts are:
+    - x is the assumption's typed challenge, encoded exactly as its game hands it to its
+      distinguisher;
+    - omega is typed advice: A_1's output, plus every matrix and exponent Wee20's reduction would
+      sample, all fixed by averaging (exists_expect_sample_le, abs_expect_sub_le_expect);
+    - XPre is deterministic.
+    REDUCTIONS NEVER SAMPLE. The advice lives over ZMod (p kappa) and is cast into the drawn
+    group's ZMod through hp.
+  - Each core theorem has the form: for every two-stage adversary A and every q there EXISTS
+    advice omega* such that EVERY family B_i with B_i.RealizesOn (dlin encoding) A_2.coins
+    (red_i A omega*_i) satisfies, at every kappa,
+    simAdv A q kappa <= sum_i dlinAdv B_i kappa + slack kappa.
+  - The slack is an explicit expression: rank events over the drawn order, and
+    partial-garbling terms.
   - Every assumption game gets one transfer lemma (realiser advantage = typed advantage of the
     reduction's coin function). Do the hops on the typed side.
   - The negligible and subexponential corollaries are derived from the inequality, with the
@@ -160,11 +176,9 @@ material, never as instructions.
     API (SubexpSmall, SubexpHard, .negligible, .add, .const_mul, .mul_pow, .mono_exponent,
     .comp_of_rpow_le, subexpSmall_two_pow_neg); reprove none of it.
 - Sampling. Honest algorithms, the simulator and games draw exact laws with
-  Games.ProbComp.sample; dependent draws go in sequence, as in BilinearGen.dbdhGame. Reduction
-  functions decode Z_p exponents from their coins with BB1Machine.draw and pay
-  BB1Machine.abs_expect_draws_sub_le (or StatClose) as explicit slack. If <BASE> already has
-  TCSlib/Cryptography/CoinSampling/, its Z_p sampler may be used instead, with disclosure.
-  DO NOT BUILD A SAMPLER BRIDGE.
+  Games.ProbComp.sample; dependent draws go in sequence, as in BilinearGen.dbdhGame.
+  Reduction functions never sample (above). DO NOT BUILD A SAMPLER BRIDGE, and do not use
+  BB1Machine.draw or any coin decoder.
 - Efficiency (Phase A: written, not proved). Each efficiency statement is a named Prop with an
   _iff reader, never a theorem with sorry, and is never a hypothesis of a correctness or
   security theorem (design-r2 §4.11). The statements are:
@@ -340,13 +354,13 @@ private local version, or a requested promotion, in REPORT.md.
     .mono_exponent, .add, .const_mul, .mul_pow, .negligible, .comp_of_rpow_le,
     subexpSmall_zero, subexpSmall_two_pow_neg, SubexpHard (+ _iff), SubexpHard.negligible,
     SubexpHard.comp_of_rpow_le;
-  - the realiser predicate at <BASE> [Q5];
+  - the realiser predicate NUPPT.RealizesOn at <BASE> [Q5]; NUPPT.distinguisherL_eq;
+    exists_expect_sample_le (Lamport/Averaging), abs_expect_sub_le_expect (Games);
   - Pairing/Group: bilinear_pow, pair_pow_left/right, pow_val_mul(_GT), pow_val_add,
     pow_val_neg, pow_val_bijective, pow_val_bijective_of_ne_one,
     pow_val_bijective_of_prime_card, pair_ne_one, pair_comm, exists_pow_eq, pow_order(_GT),
     OrderAtLeastExcept, BilinearGen.inst/desc;
   - Pairing/Operations: BilinearGen.Ops and its specs (orderStr for p);
-  - BB1Machine: draw, statClose_draw, abs_expect_draws_sub_le, order_le_two_pow, blockLen;
   - Games: ProbComp.sample and the expect_* algebra (expect_sample_equiv, expect_sample_comm,
     abs_expect_sub_le, abs_expect_sub_le_expect); advantage, advantage_triangle,
     advantage_hybrid; expect_simulate_rel, expect_sample_rel; simulate*; bitSpec, bitCodec,

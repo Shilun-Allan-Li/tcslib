@@ -12,9 +12,9 @@ re-checks every row at `<BASE>`, because Stage 2 or a stacked in-house PR may mo
 
 **What changed from r1:**
 - § 0 (new): the `Foundations/Subexponential` API (must-reuse).
-- § 2: the machine-building rows are kept for reference, but **Phase A builds no machines**. Their
-  status is "Phase B" except the exponent decoder (`BB1Machine.draw` and its bounds), which reduction
-  functions use now.
+- § 2: the machine-building rows are kept for reference, but **Phase A builds no machines** and its
+  reductions never sample (randomness hardwired as advice, as in the sPRG pack). The machine rows
+  are "Phase B", and the exponent-decoder rows are "not used".
 - § 4a (new): the NUPPT activation, uniformity and time-bound items that Phase A's realiser predicate
   and written efficiency `Prop`s are stated with.
 - § 5a (new): Mathlib items for the MDDH self-reduction and partial garbling.
@@ -83,19 +83,21 @@ Column **Reuse:**
 
 ## 2. Machines and reductions (IBE / BB1 precedent)
 
-**Phase A status.** The reduction functions use only the decoder rows (`blockLen`, `draw`,
-`order_le_two_pow`, `statClose_draw`, `abs_expect_draws_sub_le`): **must**. The machine-assembly
-rows (`exists_bb1_distinguisher`, the `Words` rows, and the `PolyHandler` rows in § 3) are
-**Phase B**: listed so that Phase A neither re-creates them nor builds a machine. The IBE interface
+**Phase A status.** Phase A reductions **never sample**: their randomness is hardwired as advice
+by averaging (design-r2 § 4.4, aligned with the sPRG pack). So the decoder rows (`blockLen`,
+`draw`, `statClose_draw`, `abs_expect_draws_sub_le`) are **not used**; `order_le_two_pow` stays
+**if needed** (residue widths). The machine-assembly rows (`exists_bb1_distinguisher`, the `Words`
+rows, and the `PolyHandler` rows in § 3) are **Phase B**: listed so that Phase A neither
+re-creates them nor builds a machine. The IBE interface
 rows remain **must (pattern)** for the FE syntax and the oracle game.
 
 | Name | Where | Reuse | Note |
 |---|---|---|---|
-| `BB1Machine.blockLen`/`blockLen_eval` | `IdentityBased/BonehBoyenMachine/Draws.lean:131`, `:134` | must | n = κ + wG + 1 |
-| `BB1Machine.draw`/`draw_eq` | `Draws.lean:142`, `:148` | must | the ℤ_p exponent from n·n coins: **the** machine sampler (settled convention) |
-| `BB1Machine.order_le_two_pow` | `Draws.lean:156` | must | p ≤ 2^{wG}: residue width `wG` is lossless |
-| `BB1Machine.statClose_draw` | `Draws.lean:168` | must | (1/2)^n-close to uniform |
-| `BB1Machine.abs_expect_draws_sub_le` | `Draws.lean:448` | must | `cap` drawn vs ideal exponents on a {0,1} test |
+| `BB1Machine.blockLen`/`blockLen_eval` | `IdentityBased/BonehBoyenMachine/Draws.lean:131`, `:134` | not used (Phase A: reductions never sample) | n = κ + wG + 1 |
+| `BB1Machine.draw`/`draw_eq` | `Draws.lean:142`, `:148` | not used (Phase A: reductions never sample) | the ℤ_p exponent from n·n coins: **the** machine sampler (settled convention) |
+| `BB1Machine.order_le_two_pow` | `Draws.lean:156` | if needed | p ≤ 2^{wG}: residue width `wG` is lossless |
+| `BB1Machine.statClose_draw` | `Draws.lean:168` | not used (Phase A: reductions never sample) | (1/2)^n-close to uniform |
+| `BB1Machine.abs_expect_draws_sub_le` | `Draws.lean:448` | not used (Phase A: reductions never sample) | `cap` drawn vs ideal exponents on a {0,1} test |
 | `BB1Machine.exists_simulate_tape_eq_pure` | `Draws.lean:408` | must (pattern) | BB1-specific (`drawStep`); its proof pattern (determinism from a tape) is the model |
 | `BB1Machine.pS`, `modS`, `negS`, `addS`, `mulS`, `invS`, `mulGS`, `powGS`, `listToNat_modS`, `listToNat_invS`, `mulGS_ofFn`, `powGS_ofFn`, `poly_mulGS`, `poly_powGS` | `BonehBoyenMachine/Words.lean:147`–`:162`, `:357`–`:361`, `:489`–`:543` | no (pattern only) | tied to BB1's input layout (`zD`). A layout-generic twin is a **near-copy**: disclose it and request a promotion |
 | `BB1Machine.rU` … `rX` | `Words.lean:97`–`:107` | no | duplicates of `Games.PolyHandler` readers (S2-A Q-A5). Use the `Games` readers |
@@ -137,7 +139,7 @@ rows remain **must (pattern)** for the FE syntax and the oracle game.
 | `NUPPT`, `runAt`, `runAtL`, `coinsCongr`, `Uniform`, `ofPolyTime`, `ofPolyTimeUniform` | `Complexity/Randomized/PPT.lean:137`, `:235`, `:240`, `:256`, `:301`, `:345`, `:406` | must |
 | `NUPPT.exists_split` | `Complexity/Randomized/Closure.lean:390` | must |
 | `NUPPT.distinguisherL` | `Asymptotic/Adversary.lean:381` | must |
-| `Candidates.sampleBelowL`, `statClose_sampleBelowL` | `Candidates/DiscreteLog.lean:578`, `:618` | must (through `BB1Machine.draw`) |
+| `Candidates.sampleBelowL`, `statClose_sampleBelowL` | `Candidates/DiscreteLog.lean:578`, `:618` | not used (Phase A) |
 | `Candidates.ArithmeticFP`, `natToBits`, `natToList` | `Candidates/Arithmetic.lean:314`, `:97`, `:100` | must (exponent arithmetic in machines) |
 | `NumberTheory.listToNat` | `NumberTheory/Primality.lean:655` | must |
 | `Encoding.Modular.encodeVector`, `encodeMatrix` (+ `_eq`, `_length`, `_injective`); `decodeVector`, `decodeMatrix` (+ round-trip lemmas) | `Encoding/Modular.lean:51`–`:126`; `Encoding/ModularDecode.lean:47`–`:235` | must (residue vectors and coefficient tensors as strings) |
@@ -149,7 +151,11 @@ rows remain **must (pattern)** for the FE syntax and the oracle game.
 | Name | Where | Reuse | For |
 |---|---|---|---|
 | `NUPPT.output`, `advInput` | `Complexity/Randomized/PPT.lean:179`, `:210` | must | running an adversary's machine with a given advice inside a reduction function |
-| `NUPPT.runAt`, `runAtL`, `runAt_eq`, `coinsCongr`, `coinsCongr_ofFn` | `PPT.lean:235`, `:240`, `:249`, `:256`, `:260` | must | `NUPPT.Realizes` (coins and activation) |
+| `NUPPT.runAt`, `runAtL`, `runAt_eq`, `coinsCongr`, `coinsCongr_ofFn` | `PPT.lean:235`, `:240`, `:249`, `:256`, `:260` | must | the reduction shape `A₂.runAtL κ (XPre …) (r.take …)` and `RealizesOn` |
+| `Complexity.NUPPT.distinguisherL_eq` | `Asymptotic/Adversary.lean:386` | must | the transfer lemma (a realiser's verdict is the reduction function's) |
+| `exists_expect_sample_le` | `Authentication/Signatures/Lamport/Averaging.lean:114` (namespace `…LamportReduction`) | must | fixing the advice ω* by averaging; if its home is awkward to import, request a promotion and do not copy it |
+| `ProbComp.abs_expect_sub_le_expect` | `Games/Probability.lean:409` | must | the averaging step for a gap (a private copy at `EncryptThenTag/Forgery.lean:515` is not to be used) |
+| `Complexity.NUPPT.exists_reparam_pre_post` | `Asymptotic/UniversalLemmas.lean:79` | Phase B | the realiser construction the reduction shape is designed for (sPRG Q-S11; not proposed for PHFE Phase A) |
 | `NUPPT.Uniform`, `NUPPT.Computes` (+ `_iff`) | `PPT.lean:301`, `:328` | must | written efficiency `Prop`s in the `∃ A, A.Uniform ∧ A.Computes f` form; **never a bare `∃ A : NUPPT, A.Computes f`** (see that docstring) |
 | `NUPPT.ofPolyTimeUniform`, `runAtL_ofPolyTimeUniform`, `exists_uniform_computes` | `PPT.lean:406`, `:437`, `:448` | must (Phase B) | the bridge from `PolyTimeComputable` to a uniform machine |
 | `NUPPT.Computes.polyTimeComputable` | `Complexity/Randomized/Closure.lean:458` | must (Phase B) | the converse, for uniform machines |
@@ -213,8 +219,9 @@ rows remain **must (pattern)** for the FE syntax and the oracle game.
 
 ## 8. In-house items expected at `<BASE>` (check, then reuse)
 
-- `ReductionFn` / `NUPPT.Realizes` (design-r2 Q5(A)): if `<BASE>` has them, they are **must** and
-  the job defines no variant; if not, follow the Q5 ruling recorded in `rulings.md`.
-- `TCSlib/Cryptography/CoinSampling/` (sampler bridge, in house): if present at `<BASE>`, its ℤ_p
-  sampler may replace `BB1Machine.draw` in reduction functions, with disclosure. The job **builds no
-  sampler**.
+- `Complexity.NUPPT.RealizesOn` in `TCSlib/Cryptography/Asymptotic/Realization.lean` (design-r2
+  Q5(A) = sPRG Q-S9(A)): if `<BASE>` has it, it is **must** and the job defines no variant; if
+  not, the job writes the same declarations in `FunctionalEncryption/Realization.lean` (Q5(A)'s
+  fallback) or follows the ruling in `rulings.md`.
+- `TCSlib/Cryptography/CoinSampling/` (sampler bridge, in house): not needed in Phase A (honest
+  algorithms use exact laws; reductions never sample). The job **builds no sampler**.

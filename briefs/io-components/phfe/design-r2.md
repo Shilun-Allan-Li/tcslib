@@ -23,7 +23,8 @@ Seyoon's rulings on § 7 override this note. The maintainer records them in `rul
 Unchanged conventions (pairing precedent):
 - g uniform in G* (pairing Q2; r1 Q8);
 - typed honest algorithms and a typed universal simulator (pairing Q5; r1 Q12);
-- one adversary machine against bit-string oracles (pairing Q7; r1 Q11, adapted in § 4.5);
+- the adversary: **departed from** pairing Q7's one-machine-with-oracles shape, because the source
+  and the shared realiser force it (§ 4.5): Def 4.3's adversary is a two-stage pair (A₁, A₂);
 - the two-experiment advantage (pairing Q9);
 - encodings injective on reachable objects (G40-01);
 - PDFs not committed (pairing Q12).
@@ -147,9 +148,10 @@ Docstrings record:
   - Wee20's orientation (row vectors, sA) is a transpose; the docstring maps it.
 - **The reduction** `dlinToMddh G d ℓ D ω` (§ 4.4: pre-processing then D) and
   ```lean
-  theorem mddhAdv_le (d ℓ : PolyExpr) (D : NUPPT) :
-      ∃ ω : ∀ κ, MddhAdvice G d ℓ κ, ∀ B : NUPPT,
-        B.RealizesOn (G.dlinEnc) D.coins (dlinToMddh G d ℓ D ω) →
+  theorem mddhAdv_le (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order = p κ) (d ℓ : PolyExpr)
+      (D : NUPPT) :
+      ∃ ω : ∀ κ, MddhAdvice p d ℓ κ, ∀ B : NUPPT,
+        B.RealizesOn G.dlinEnc D.coins (dlinToMddh G hp d ℓ D ω) →
         ∀ κ, G.mddhAdv d ℓ D κ ≤ G.dlinAdv B κ + mddhSlack G d ℓ κ
   ```
   - Route: [EHKRV13] random self-reducibility, cited via [Wee20, §2.1]. Re-randomise the 3×2 DLIN
@@ -178,20 +180,27 @@ def Complexity.NUPPT.RealizesOn (B : NUPPT) {X : ℕ → Type} (enc : ∀ m, X m
 ```
 Every PHFE reduction function has this form:
 ```lean
-def XRed (A : NUPPT) (ω : ∀ κ, XAdvice κ) (κ : ℕ) (x : XChal κ) (r : List Bool) : List Bool :=
-  A.runAtL κ (XPre κ (ω κ) x) (r.take (A.coinLen κ))   -- or A's oracle run, see below
+def XRed (A : TwoStage) (ω : ∀ κ, XAdvice κ) (κ : ℕ) (x : XChal κ) (r : List Bool) :
+    List Bool :=
+  A.A₂.runAtL κ (XPre κ (ω κ) x) (r.take (A.A₂.coinLen κ))
 ```
+This is exactly the sPRG shape with φ = id and post := id, i.e. the conclusion shape of
+`NUPPT.exists_reparam_pre_post`. **PHFE needs nothing different**, for two reasons:
+- Def 4.3's A₁ runs on 1^κ alone, so its output (commitment and state) does not depend on the
+  challenge. It is fixed in ω* by averaging over A₁'s coins, with the reduction's own choices.
+- What is left is **one** activation of A₂ on a pre-processed view.
 - **Challenge.** `XChal κ` is the assumption's typed challenge (the DLIN tuple, or the MDDH
   matrices) and `enc` is exactly the string the assumption's game hands its distinguisher.
 - **Advice.** `XAdvice κ` is a finite type, inhabited at every κ, with an explicit encoding and
   `PolyExpr` length. It holds the reduction's own choices: the matrices and exponents Wee20's
-  reductions sample (A₁, A₂, W, U, V, s's, T_j, R_j, the partial-garbling coins…), and A's
-  commitment where useful. ω* is chosen by averaging (`exists_expect_sample_le`,
+  reductions sample (A₁, A₂, W, U, V, s's, T_j, R_j, the partial-garbling coins…) and A₁'s output
+  (commitment and state). ω* is chosen by averaging (`exists_expect_sample_le`,
   `abs_expect_sub_le_expect`), so **reductions never sample**.
-- **Pre-processing.** `XPre` is the deterministic pre-processing into A's view, the oracle answer
-  of § 4.5. It is typed in `ZMod` and the group, then encoded. Since A is an oracle machine, `XRed`
-  runs A's oracle computation with `XPre`'s answer, the way `IBEScheme.sidGame` does; it uses A only
-  through its activation map.
+- **Advice types need the fixed schedule.** The advice holds exponents in `ZMod (p κ)`. They are
+  fixed before the challenge's group is drawn, so the reduction lemmas take `hp`, and `XPre` casts
+  them into the drawn group's `ZMod` through `hp`. This is one more reason for Q-S2.
+- **Pre-processing.** `XPre` is the deterministic pre-processing into A₂'s input, i.e. A₁'s state
+  with the view of § 4.5. It is typed in `ZMod` and the group, then encoded.
 - **Statement form** (as sPRG `prop41`): **∃ advice ω* such that EVERY NUPPT realising the
   reductions at ω* satisfies, at every κ, the explicit inequality.**
 - **Transfer.** One lemma per assumption: for B realising R, `dlinAdv B κ` equals the typed
@@ -228,30 +237,36 @@ structure Simulator where
 - The simulator is typed and universal (∃ Sim before ∀ A). Its efficiency is a named `Prop`, as for
   honest algorithms.
 
+**The adversary** is `TwoStage := (A₁ A₂ : NUPPT)`, GJLS21's stateful A = (A₁, A₂), with
+independent coins.
+
 **The game `simGame Sim A q ideal κ`** ([GJLS21, Def 4.3]):
-- One `NUPPT` A, against one bit-string oracle **`Init`** (`Games.bitCodec`).
-- **The first query** is decoded (fixed width, total decoding mod the drawn p) as
-  (x*, y*, f_1, …, f_{q(κ)}). Then:
-  - pp ← pubGen (generator coins; g ← G*);
-  - real: (pk, msk) ← setup; ct ← enc pk (x*, y*); sk_j ← keyGen msk f_j;
-  - ideal: Sim.setup, Sim.enc, Sim.key on ω with µ_j = eval f_j (x*, y*);
-  - the answer is ⟨encPub pp, encMPK pk, encSK sk_1, …, encSK sk_q, x*, encCT ct⟩.
-- **Later queries** get the same answer.
-- **Why this is Def 4.3.** The part of A before its query is A₁(1^κ); the rest is A₂. A₁ sees
-  nothing of pp, as in Def 4.3. A₁ needs no `Pub` oracle: by Q-S2 the modulus is p κ for every coin
-  string, so A₁ can encode messages without seeing the group (r1's `Pub` oracle is dropped).
+- `c ← A₁.runAt κ []`.
+- **Commitment.** c is decoded (fixed width, total decoding mod the drawn p) as
+  (x*, y*, f_1, …, f_{q(κ)}) and a state string st.
+- pp ← pubGen (generator coins; g ← G*).
+- real: (pk, msk) ← setup; ct ← enc pk (x*, y*); sk_j ← keyGen msk f_j.
+- ideal: Sim.setup, Sim.enc and Sim.key on ω, with µ_j = eval f_j (x*, y*).
+- `α ← A₂.runAt κ ⟨st, ⟨encPub pp, encMPK pk, encSK sk_1, …, encSK sk_q, x*, encCT ct⟩⟩`.
+- **Why this shape.**
+  - It is Def 4.3 line by line. A₁ sees nothing of pp. A₁ needs no `Pub` oracle: by Q-S2 the
+    modulus is p κ for every coin string, so A₁ can encode messages without seeing the group (r1's
+    `Pub` oracle is dropped).
+  - The experiment is non-interactive, so no oracle is needed.
+  - It yields single-activation reductions (§ 4.4).
+  - Pairing Q7's oracle shape was for adaptive key queries, which Def 4.3 does not have.
 - **Decoding.** Residues are decoded mod the drawn order. Under `hp` this equals decoding mod
   p(κ), and a reader says so.
 
 **The predicates:**
 ```lean
-noncomputable def simAdv (Sim) (A : NUPPT) (q : PolyExpr) (κ : ℕ) : ℝ :=
+noncomputable def simAdv (Sim) (A : TwoStage) (q : PolyExpr) (κ : ℕ) : ℝ :=
   advantage (S.simGame Sim A q false κ) (S.simGame Sim A q true κ)
 /-- [GJLS21, Definition 4.3] with ε = 1 (Remark 4.3), many-key (Remark 4.6). -/
-def SimSecure : Prop := ∃ Sim, ∀ (A : NUPPT) (q : PolyExpr), Negligible (S.simAdv Sim A q)
+def SimSecure : Prop := ∃ Sim, ∀ (A : TwoStage) (q : PolyExpr), Negligible (S.simAdv Sim A q)
 /-- [GJLS21, Remark 4.5]: subexponential simulation security. -/
 def SubexpSimSecure : Prop :=
-  ∃ Sim, SubexpHard fun (Aq : NUPPT × PolyExpr) => S.simAdv Sim Aq.1 Aq.2
+  ∃ Sim, SubexpHard fun (Aq : TwoStage × PolyExpr) => S.simAdv Sim Aq.1 Aq.2
 ```
 - One-key is `q = 1`.
 - IND (Def 4.4), ε < 1 (Def 4.3's Sample coin), adaptive, many ciphertexts, secret key: documented
@@ -347,16 +362,16 @@ theorem wee20PHFE_ctLen_eq : (wee20PHFE G PG ℓ n d).ctLen = …   -- (6n + 5)�
                                                                   -- dependence beyond x itself
 /-- The core inequality, [GJLS21, Def 4.3] shape, explicit slack. -/
 theorem wee20PHFE_simAdv_le (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order = p κ)
-    (A : NUPPT) (q : PolyExpr) :
-    ∃ ω : (i : Fin 4) → ∀ κ, Wee20Advice G PG ℓ n d q i κ, ∀ B : Fin 4 → NUPPT,
-      (∀ i, (B i).RealizesOn G.dlinEnc A.coins (wee20Red G PG ℓ n d A q i (ω i))) →
+    (A : TwoStage) (q : PolyExpr) :
+    ∃ ω : (i : Fin 4) → ∀ κ, Wee20Advice G PG p ℓ n d q i κ, ∀ B : Fin 4 → NUPPT,
+      (∀ i, (B i).RealizesOn G.dlinEnc A.A₂.coins (wee20Red G PG hp ℓ n d A q i (ω i))) →
       ∀ κ, (wee20PHFE G PG ℓ n d).simAdv (wee20Sim G PG ℓ n d) A q κ ≤
         ∑ i, G.dlinAdv (B i) κ + wee20Slack G PG ℓ n d q p κ
 /-- Realisability of the reductions (Phase B constructs the realisers). -/
-def Wee20Realizable (G PG ℓ n d) : Prop :=
-  ∀ A q i ω, ∃ B : NUPPT, B.RealizesOn G.dlinEnc A.coins (wee20Red G PG ℓ n d A q i ω)
+def Wee20Realizable (G PG p hp ℓ n d) : Prop :=
+  ∀ A q i ω, ∃ B : NUPPT, B.RealizesOn G.dlinEnc A.A₂.coins (wee20Red G PG hp ℓ n d A q i ω)
 theorem wee20PHFE_simSecure (p) (hp) (hpb : ∀ κ, 2 ^ κ ≤ p κ)
-    (hreal : Wee20Realizable G PG ℓ n d)
+    (hreal : Wee20Realizable G PG p hp ℓ n d)
     (h : G.DLINAssumption) : (wee20PHFE G PG ℓ n d).SimSecure
 theorem wee20PHFE_subexpSimSecure (p) (hp) (hpb) (hreal) (h : G.SubexpDLIN) :
     (wee20PHFE G PG ℓ n d).SubexpSimSecure
@@ -372,7 +387,7 @@ theorem wee20PHFE_subexpSimSecure (p) (hp) (hpb) (hreal) (h : G.SubexpDLIN) :
   re-randomisation) and q·δ from partial garbling. It is `SubexpSmall c` for c < 1 under `hpb` (via `.mul_pow`, `.add`,
   `subexpSmall_two_pow_neg`, `.comp_of_rpow_le`).
 - **`hreal`** (`Wee20Realizable`) is what Phase B discharges. The corollaries need it now, and their
-  docstrings say so. Its coin polynomial is A's: the realiser hands its coins to A.
+  docstrings say so. Its coin polynomial is A₂'s: the realiser hands its coins to A₂.
 - **Subexponential corollary.** One exponent works for every (A, q) because the number of hops is
   constant: `SubexpSmall.add`, then `.mono_exponent` to min(c, 1)⁻.
 - If Q1 is (C), the predicate and statements change as § 7 says.
@@ -493,7 +508,7 @@ rule them together.
 | Q8 g | (A): uniform in G* | pairing Q2 |
 | Q9 modulus | superseded: fixed schedule `hp`; algorithms read p from pp | Q-S2; "p as input" |
 | Q10 sPRG link | (A): independent representations; `pad_one` makes the later bridge a lemma | jobs run in parallel |
-| Q11 game | one NUPPT, one `Init` oracle (Def 4.3's commitment and view); no `Pub` oracle | pairing Q7; Def 4.3; Q-S2 |
+| Q11 game | a two-stage adversary (A₁, A₂) of NUPPTs, Def 4.3 literally; no oracle, no `Pub` oracle. This departs from pairing Q7 because the source's experiment is non-interactive, and because single-activation reductions fit the shared `RealizesOn` (sPRG Q-S9) | Def 4.3; Q-S2; § 4.4 |
 | Q12 simulator | typed, universal; efficiency a written `Prop` | pairing Q5; Phase A |
 | Q14 k | k = k' = 2 (k' = 1 is impossible on symmetric groups, Wee20 p. 2); matrix lemmas generic in k where free | sources |
 
