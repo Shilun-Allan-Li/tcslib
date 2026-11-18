@@ -325,9 +325,9 @@ in the evidence: `recount_seals.py` and `recount_controls.py`.
 
 ## Landing
 
-- **The branch.** `land/ef-d1-lattice-families` is `iO/phase-a-base` plus maintainer-signed
-  cherry-picks of the 4 commits. It opens as a draft PR with base `iO/phase-a-base` (see
-  `phase2.md`).
+- **The branch.** `land/ef-d1-lattice-families` (`bd4c6f2d826b2fb91c02d720d8bd6b60c2a3795e`) is
+  `iO/phase-a-base` plus maintainer-signed cherry-picks of the 4 commits. It is open as **draft PR
+  #387**, with base `iO/phase-a-base` (see `phase2.md`).
 - **LE-efd1-imp (the `LWE.lean` facade line).** `import TCSlib.Cryptography.LWE.Efficient` plus its
   `## Contents` entry.
   - #377 is now merged on the records branch (`bff0567b`), but the PR's base `iO/phase-a-base` is
@@ -377,5 +377,5 @@ in the evidence: `recount_seals.py` and `recount_controls.py`.
   - (B) Require the residue form. This needs a new `UniformSampler` reading a pair component, or a
     core that recomputes `q` from `1^κ`.
 
-**Not yet clear to merge — draft PR stacked on `iO/phase-a-base` (#374, #378, #384, #380 unmerged);
+**Not yet clear to merge — draft PR #387 stacked on `iO/phase-a-base` (#374, #378, #384, #380 unmerged);
 EF-D1-R1 open; Codex gate to be staged; `LWE.lean` import is a landing edit.**
