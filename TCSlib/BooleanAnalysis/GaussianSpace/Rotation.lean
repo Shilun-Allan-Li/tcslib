@@ -88,6 +88,20 @@ theorem measurePreserving_gaussianRotation (t : ℝ) :
   exact he.comp (hpi.comp (MeasurePreserving.symm e he))
 )
 
+/-- Successive Gaussian rotations through angles `s` and `t` equal rotation
+through their sum. [OD14, Thm. 11.43 (proof)]
+
+**Proof sketch.** Expand both coordinates and use the sine and cosine addition
+formulas; the remaining coordinate equalities are polynomial identities. -/
+theorem gaussianRotation_comp {n : ℕ} (s t : ℝ)
+    (z : (Fin n → ℝ) × (Fin n → ℝ)) :
+    ContinuousLinearMap.rotation t (ContinuousLinearMap.rotation s z) =
+      ContinuousLinearMap.rotation (s + t) z := (by
+  ext i <;>
+      simp only [ContinuousLinearMap.rotation_apply, Real.cos_add, Real.sin_add,
+        Pi.add_apply, Pi.smul_apply, smul_eq_mul] <;> ring
+)
+
 /-- Gaussian rotation sensitivity is subadditive for arbitrary real angles.
 [OD14, Thm. 11.43, binary form]
 
@@ -109,10 +123,8 @@ theorem rotationSensitivity_subadditive (hA : MeasurableSet A) (s t : ℝ) :
     (Fin n → ℝ) × (Fin n → ℝ) →L[ℝ] (Fin n → ℝ) × (Fin n → ℝ))
   have hE : MeasurableSet E := hA.preimage measurable_fst
   have hf (u : ℝ) : Measurable (f u) := (f u).continuous.measurable
-  have hrot (z : (Fin n → ℝ) × (Fin n → ℝ)) : f t (f s z) = f (s + t) z := by
-    ext i <;>
-      simp [f, ContinuousLinearMap.rotation_apply, Real.cos_add, Real.sin_add,
-        Pi.add_apply, Pi.smul_apply, smul_eq_mul] <;> ring
+  have hrot (z : (Fin n → ℝ) × (Fin n → ℝ)) : f t (f s z) = f (s + t) z :=
+    gaussianRotation_comp s t z
   have hsens (u : ℝ) :
       rotationSensitivity A u = μ.real (symmDiff E (f u ⁻¹' E)) := by
     change μ.real {z | ¬ (z.1 ∈ A ↔

@@ -5,6 +5,12 @@ Authors: Owen McGinty
 -/
 
 import TCSlib.BooleanAnalysis.GaussianSpace.SurfaceRelaxation
+import TCSlib.BooleanAnalysis.GaussianSpace.SurfaceExamples.CenteredBall
+import TCSlib.BooleanAnalysis.GaussianSpace.SurfaceExamples.Cubes
+import TCSlib.BooleanAnalysis.GaussianSpace.SurfaceExamples.HalfspaceSharpness
+import TCSlib.BooleanAnalysis.GaussianSpace.SurfaceExamples.Crossings
+import TCSlib.BooleanAnalysis.GaussianSpace.SurfaceExamples.PolynomialBound
+import TCSlib.BooleanAnalysis.GaussianSpace.SurfaceExamples.Cones
 import TCSlib.BooleanAnalysis.GaussianSpace.SurfaceExamples.Intervals
 import TCSlib.BooleanAnalysis.GaussianSpace.SurfaceExamples.PolynomialSharpness
 import Mathlib.Algebra.MvPolynomial.Degrees
@@ -19,6 +25,16 @@ set_option autoImplicit false
 
 ## Contents
 
+* `SurfaceExamples.CenteredBall`: the exact centered-ball surface-area formula.
+* `SurfaceExamples.BallCrossings`: the radial representation of ball sensitivity.
+* `SurfaceExamples.RadialCrossings`: conditional radial crossing limits and bounds.
+
+* `SurfaceExamples.Cubes`: the Gaussian surface-area formula for coordinate cubes.
+* `SurfaceExamples.HalfspaceSharpness`: the halfspace-count lower bound.
+
+* `SurfaceExamples.Crossings`: averaging pointwise Gaussian rotation crossing bounds.
+* `SurfaceExamples.PolynomialBound`: the degree bound for arbitrary polynomial thresholds.
+* `SurfaceExamples.Cones`: the Gaussian surface-area bound for convex cones.
 * `SurfaceExamples.Intervals`: finite interval crossing estimates and their surface-area formula.
 * `SurfaceExamples.PolynomialSharpness`: polynomial constructions approaching the degree bound.
 
@@ -30,8 +46,9 @@ Sets are expressed directly in the existing vector carrier, transporting to
 ## Main results
 
 The interval, ball, convex-set, polytope, convex-cone and polynomial-threshold
-claims in Example 11.50, with universal constants. The interval formula and
-polynomial-threshold sharpness are proved; the remaining claims retain placeholder proofs.
+claims in Example 11.50, with universal constants. The interval and centered-ball formulas,
+translated-ball bound, convex-cone bound, halfspace-count lower bound, and polynomial-threshold upper
+bound and sharpness are proved; the remaining claims retain placeholder proofs.
 
 ## References
 
@@ -77,17 +94,55 @@ is the chi density, and identify boundary content with rotation perimeter. -/
 theorem surfaceArea_centered_ball {n : ℕ} (hn : 0 < n) (r : ℝ) (hr : 0 < r) :
     gaussianSurfaceArea {x : Fin n → ℝ | ‖(WithLp.toLp 2 x : EuclideanSpace ℝ (Fin n))‖ ≤ r} =
       ENNReal.ofReal ((2 : ℝ) ^ (1 - (n : ℝ) / 2) / Real.Gamma ((n : ℝ) / 2) *
-        r ^ (n - 1) * Real.exp (-(r ^ 2) / 2)) := sorry
+        r ^ (n - 1) * Real.exp (-(r ^ 2) / 2)) := (by
+  exact surfaceArea_centered_ball_formula hn r hr
+)
 
 /-- Every translated Euclidean ball has Gaussian surface area at most `√(2/π)`.
 [OD14, Example 11.50; KOS08]
 
-**Proof sketch.** Integrate the Gaussian density on the spherical boundary and
-use the uniform radial-density estimate, including nonzero centers. -/
+**Proof sketch.** Express the ball as the nonnegative region of the quadratic
+polynomial `r² - ∑ i, (x i - c i)²`. Apply the degree-two polynomial threshold
+bound and simplify `2/√(2π)` to `√(2/π)`. -/
 theorem surfaceArea_ball_le {n : ℕ} (c : Fin n → ℝ) (r : ℝ) (hr : 0 < r) :
     gaussianSurfaceArea {x : Fin n → ℝ |
       ‖(WithLp.toLp 2 (x - c) : EuclideanSpace ℝ (Fin n))‖ ≤ r} ≤
-      ENNReal.ofReal (Real.sqrt (2 / Real.pi)) := sorry
+      ENNReal.ofReal (Real.sqrt (2 / Real.pi)) := (by
+  classical
+    let p : MvPolynomial (Fin n) ℝ := MvPolynomial.C (r^2) -
+      ∑ i, (MvPolynomial.X i - MvPolynomial.C (c i))^2
+    have hdegree : p.totalDegree ≤ 2 := by
+      dsimp only [p]
+      apply (MvPolynomial.totalDegree_sub (MvPolynomial.C (r^2))
+        (∑ i, (MvPolynomial.X i - MvPolynomial.C (c i))^2)).trans
+      apply max_le
+      · rw [MvPolynomial.totalDegree_C]
+        omega
+      · apply MvPolynomial.totalDegree_finsetSum_le
+        intro i hi
+        apply (MvPolynomial.totalDegree_pow (MvPolynomial.X i - MvPolynomial.C (c i)) 2).trans
+        exact Nat.mul_le_mul_left 2
+          ((MvPolynomial.totalDegree_sub_C_le (MvPolynomial.X i) (c i)).trans
+            (by rw [MvPolynomial.totalDegree_X]))
+    have hset : {x : Fin n → ℝ |
+          ‖(WithLp.toLp 2 (x-c) : EuclideanSpace ℝ (Fin n))‖ ≤ r} =
+        {x : Fin n → ℝ | 0 ≤ MvPolynomial.eval x p} := by
+      ext x
+      have hn := EuclideanSpace.norm_sq_eq (WithLp.toLp 2 (x-c) : EuclideanSpace ℝ (Fin n))
+      simp only [Pi.sub_apply, Real.norm_eq_abs, sq_abs] at hn
+      simp only [Set.mem_setOf_eq, p, MvPolynomial.eval_sub, MvPolynomial.eval_C,
+        map_sum, map_pow, MvPolynomial.eval_X]
+      constructor <;> intro h <;> nlinarith [norm_nonneg
+        (WithLp.toLp 2 (x-c) : EuclideanSpace ℝ (Fin n))]
+    have hc : (2:ℝ) / Real.sqrt (2*Real.pi) = Real.sqrt (2/Real.pi) := by
+      calc
+        (2:ℝ) / Real.sqrt (2*Real.pi) = Real.sqrt ((2:ℝ)^2) / Real.sqrt (2*Real.pi) := by
+          rw [Real.sqrt_sq (by norm_num : (0:ℝ) ≤ 2)]
+        _ = Real.sqrt ((2:ℝ)^2 / (2*Real.pi)) := (Real.sqrt_div (by positivity) _).symm
+        _ = Real.sqrt (2/Real.pi) := by congr 1; field_simp
+    rw [hset]
+    simpa only [Nat.cast_ofNat, hc] using polynomial_threshold_surfaceArea_bound p hdegree
+)
 
 /-- Convex Gaussian sets have surface area `O(n^(1/4))`, uniformly in dimension.
 [OD14, Example 11.50; Bal93]
@@ -132,7 +187,9 @@ theorem exists_halfspace_intersection_surfaceArea_ge :
     ∃ c : ℝ, 0 < c ∧ ∀ m : ℕ, 2 ≤ m →
       ∃ (n : ℕ) (a : Fin m → Fin n → ℝ) (t : Fin m → ℝ),
         ENNReal.ofReal (c * Real.sqrt (Real.log (m : ℝ))) ≤
-          gaussianSurfaceArea {x : Fin n → ℝ | ∀ j, ∑ i, a j i * x i ≤ t j} := sorry
+          gaussianSurfaceArea {x : Fin n → ℝ | ∀ j, ∑ i, a j i * x i ≤ t j} := (by
+  exact exists_halfspace_count_surfaceArea_ge
+)
 
 /-- A measurable convex cone with apex at the origin has Gaussian surface area
 at most one. [OD14, Example 11.50; KOS08]
@@ -140,24 +197,32 @@ The source's word "cone" is interpreted as convex cone: arbitrary unions of
 many angular sectors violate this bound. This interpretation was confirmed by
 the maintainer when adding the statement layer.
 
-**Proof sketch.** Apply the Gaussian cone perimeter bound to its spherical
-cross-section and use conic scaling of the Gaussian radial integral. -/
+**Proof sketch.** On a rotation arc shorter than a half turn, convexity and
+conic scaling make membership order convex, giving at most two sampled
+transitions. Average using Gaussian rotation invariance and take the
+surface-area rotation limit. -/
 theorem surfaceArea_convex_cone_le {n : ℕ} (A : Set (Fin n → ℝ))
     (hA : MeasurableSet A) (hconvex : Convex ℝ A)
     (hcone : ∀ x ∈ A, ∀ t : ℝ, 0 ≤ t → t • x ∈ A) :
-    gaussianSurfaceArea A ≤ 1 := sorry
+    gaussianSurfaceArea A ≤ 1 := (by
+  exact surfaceArea_convex_cone_bound A hA hconvex hcone
+)
 
 /-- A degree-`k` polynomial threshold set has Gaussian surface area at most
 `k/√(2π)`. The polynomial need not be multilinear.
 [OD14, Example 11.50; Kan11]
 
-**Proof sketch.** Restrict the polynomial to Gaussian rotation circles. The
-number of sign transitions is at most twice its degree; average this count
-and take the infinitesimal rotation limit. -/
+**Proof sketch.** Shift the threshold slightly to make finitely many samples
+nonzero without changing their labels. Encode the circle restriction by a
+complex polynomial of at most twice the original degree. Each sign transition
+gives a distinct root. Average this count over Gaussian rotations and pass
+to the infinitesimal rotation limit. -/
 theorem surfaceArea_polynomial_threshold_le {n k : ℕ}
     (p : MvPolynomial (Fin n) ℝ) (hp : p.totalDegree ≤ k) :
     gaussianSurfaceArea {x : Fin n → ℝ | 0 ≤ MvPolynomial.eval x p} ≤
-      ENNReal.ofReal ((k : ℝ) / Real.sqrt (2 * Real.pi)) := sorry
+      ENNReal.ofReal ((k : ℝ) / Real.sqrt (2 * Real.pi)) := (by
+  exact polynomial_threshold_surfaceArea_bound p hp
+)
 
 /-- The degree bound for polynomial thresholds is approached arbitrarily
 closely already in dimension one. [OD14, Example 11.50; Kan11]
