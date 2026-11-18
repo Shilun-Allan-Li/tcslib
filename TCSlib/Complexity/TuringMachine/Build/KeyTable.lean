@@ -137,10 +137,14 @@ blank scratch tapes: the row writes over `w` the value stored under `k`, or `|w|
 absent, and stops at its exit within `C·(L + |k| + |w| + 1)` steps and radius, where `L` is the
 table's layout length. [AB09, Exercise 1.9]
 
-**Proof sketch.** For each entry in turn: compare its key field after the marker with tape `1`
-in lockstep (`Turing.compareTM`'s method, returning both heads); on a match, copy the value field
-after the marker to tape `2` (`Turing.copyTM`), return to the origin and exit; otherwise skip the
-entry's two fields (`Turing.skipTM`). At the blank pair after the last field, clear tape `2` to
+**Proof sketch.** The field payloads follow their markers, so the catalog's word rows, which
+need a blank at the word's offset `-1`, apply to a payload only through an adapter: blank the
+marker cell (one step), run the row on the payload, now delimited, and write the marker back (one
+step). An empty payload is then the empty word between two blanks. For each entry in turn:
+compare its key payload with tape `1` in lockstep through the adapter (`Turing.compareTM`'s
+method, returning both heads); on a match, copy the value payload to tape `2` through the adapter
+(`Turing.copyTM`), return to the origin and exit; otherwise skip the entry's two fields
+(`Turing.skipTM`). At the blank pair after the last field, clear tape `2` to
 zeros over its own length and return to the origin. Each entry is crossed a constant number of
 times. A comparison stops at the first differing cell, so it and the return of tape `1`'s head
 cost at most a constant times the entry's key field plus one; summed over the entries this is
@@ -165,8 +169,8 @@ scratch tapes: the row lays out `keyAssign es k v` from the origin, overwriting 
 `k` in place or appending `(k, v)`, and stops at its exit within `C·(L + |k| + |v| + 1)` steps
 and radius, where `L` is the old table's layout length. [AB09, Exercise 1.9]
 
-**Proof sketch.** Search as in `Turing.exists_keyLookupTM`. On a match, copy tape `2` over the
-value field after its marker (same length, so the layout is unchanged elsewhere), and continue
+**Proof sketch.** Search as in `Turing.exists_keyLookupTM`, with its marker adapter. On a match,
+copy tape `2` over the value payload through the adapter (same length, so the layout is unchanged elsewhere), and continue
 the search through the rest of the table, overwriting every further match. If there was no match,
 the head reaches the first blank of the pair after the table: write a separator, the field
 `true :: k` from tape `1`, a separator and the field `true :: v` from tape `2`; the cells beyond

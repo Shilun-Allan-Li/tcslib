@@ -106,8 +106,8 @@ theorem immBound_iff (a : ℕ) (ins : XInstr) :
 /-- **A table stores a memory over a set of cells.** `TableOf a W T m es`: the keys of `es` are
 distinct; every entry is the key of some cell `z ∈ T` in the range of `W + a` bits, with `m z`'s
 bits as its value; and every cell in that range where `m` is nonzero has an entry. So a lookup of
-a cell in range finds its word, or nothing exactly when the word is `0`, and `es` has at most
-`|T|` entries. -/
+a cell in range finds its word when it has an entry, and finds nothing only when the word is `0`
+(an entry may still hold the word `0`); and `es` has at most `|T|` entries. -/
 def TableOf (a W : ℕ) (T : Finset ℤ) (m : ℤ → BitVec W) (es : List (List Bool × List Bool)) :
     Prop :=
   (es.map Prod.fst).Nodup ∧

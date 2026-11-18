@@ -701,9 +701,8 @@ end Halting
 
 /-! ## Readers
 
-Equations for the definitions above, so that other files read them without unfolding them
-(policy rule 10; Seyoon, 2026-11-18, for stage 2's simulation). Each restates its definition and
-is proved by `rfl` or `Iff.rfl`. -/
+Equations for the definitions above, so that other files read them without unfolding them. Each
+restates its definition and is proved by `rfl` or `Iff.rfl`. -/
 
 section Readers
 
