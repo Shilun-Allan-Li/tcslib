@@ -1,0 +1,31 @@
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringWitness.lean:161:16: warning: declaration uses 'sorry'
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringWitness.lean:279:58: error: No goals to be solved
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringWitness.lean:426:77: error: Application type mismatch: The argument
+  hE
+has type
+  PolyTimeComputable fun w =>
+    (fun z t => colorBits (gadgetColor (pairFstD z).length (fun v => (pairSndD z).getD v false) t)) (pairSndD w)
+      (pairFstD w).length
+but is expected to have type
+  PolyTimeComputable fun w => ?m.67 (pairSndD w) (pairFstD w).length
+in the application
+  @SecureComputation.ComposeMachines.polyTimeComputable_flatMap_range ?m.67 hE
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringWitness): lean exited with status 1
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringWitness): error diagnostics reported
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringWitness): no fresh .olean produced
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringWitness.lean:259:16: error: unsolved goals
+case succ
+g : ℕ → Fin 3
+n✝ n : ℕ
+ih : (List.flatMap (fun t => colorBits (g t)) (List.range n)).length = 2 * n
+⊢ 2 * n + 2 = 2 * (n + 1)
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringWitness.lean:278:58: error: No goals to be solved
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringWitness): lean exited with status 1
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringWitness): error diagnostics reported
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringWitness): no fresh .olean produced
+scratch/SealC.lean:57:17: error: failed to set `[local irreducible]`, `Graph` is currently `[reducible]`, `[semireducible]` expected
+
+Note: Use `set_option allowUnsafeReducibility true` to override reducibility status validation
+FAIL(scratch/SealC): lean exited with status 1
+FAIL(scratch/SealC): error diagnostics reported
+FAIL(scratch/SealC): no fresh .olean produced

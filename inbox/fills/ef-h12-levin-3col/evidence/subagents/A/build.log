@@ -1,0 +1,130 @@
+@TQBFHard.toCNF_extension_iff : ∀ {n : ℕ} (C : DAGCircuit n),
+  (∀ g ∈ C.gates, g.args.length ≤ 2) →
+    ∀ (σ : ℕ → Bool), (∃ τ, (∀ v < n, τ v = σ v) ∧ CNF.eval τ C.toCNF = true) ↔ (C.eval fun i => σ ↑i) = true
+@TQBFHard.dagCktSatToSAT3_encode : ∀ {n : ℕ} (C : DAGCircuit n),
+  C.IsFaninTwo → dagCktSatToSAT3 C.encode = C.toCNF.serialize
+CNF.decode_serialize : ∀ (φ : CNF ℕ), CNF.decode φ.serialize = φ
+@CNF.eval_cons : ∀ {α : Type u_1} {c : CNF.Clause α} {f : List (CNF.Clause α)} (a : α → Bool),
+  CNF.eval a (c :: f) = (CNF.Clause.eval a c && CNF.eval a f)
+@CNF.Clause.eval_cons : ∀ {α : Type u_1} {i : Literal α} {c : List (Literal α)} (a : α → Bool),
+  CNF.Clause.eval a (i :: c) = (a i.1 == i.2 || CNF.Clause.eval a c)
+@CNF.Clause.eval_nil : ∀ {α : Type u_1} (a : α → Bool), CNF.Clause.eval a [] = false
+@CNF.Clause.eval : {α : Type u_1} → (α → Bool) → CNF.Clause α → Bool
+scratch/Probe.lean:14:8: error(lean.unknownIdentifier): Unknown identifier `Complexity.ComposeMachines.polyTimeComputable_flatMap_range`
+BinArith.polyTimeComputable_reverse : PolyTimeComputable fun w => w.reverse
+polyTimeComputable_dropPrefixByLength : PolyTimeComputable PrefixByLength.drop
+polyTimeComputable_unary : PolyTimeComputable fun x => List.replicate x.length true
+CircuitEval.verdict_pairEncode : ∀ (exact : Bool) (code x : List Bool),
+  CircuitEval.verdict exact (Turing.pairEncode code x) = true ↔
+    ∃ n C,
+      C.IsFaninTwo ∧
+        C.encode = code ∧ n ≤ x.length ∧ (exact = true → n = x.length) ∧ (C.eval fun i => x.getD (↑i) false) = true
+CircuitEval.evalTM_computes : ∀ (exact : Bool) (z : List Bool),
+  (CircuitEval.evalTM exact).ComputesInTime z [CircuitEval.verdict exact z] (12 * (z.length + 1) ^ 2)
+@DAGCircuit.eq_of_encode_eq : ∀ {n₁ n₂ : ℕ} {C₁ : DAGCircuit n₁} {C₂ : DAGCircuit n₂},
+  C₁.encode = C₂.encode → n₁ = n₂ ∧ C₁.gates = C₂.gates ∧ C₁.output = C₂.output
+@DAGCircuit.size_le_length_encode : ∀ {n : ℕ} (C : DAGCircuit n), C.size ≤ C.encode.length
+@decodeList_encodeList : ∀ {α : Type} (f : List Bool → Option (α × List Bool)) (g : α → List Bool) (as : List α),
+  (∀ a ∈ as, ∀ (r : List Bool), f (g a ++ r) = some (a, r)) →
+    ∀ (fuel : ℕ), as.length < fuel → ∀ (r : List Bool), decodeList f fuel (encodeList g as ++ r) = some (as, r)
+DAGGate.decode_encode : ∀ (g : DAGGate) (r : List Bool), DAGGate.decode (g.encode ++ r) = some (g, r)
+@List.drop_reverse : ∀ {α : Type u_1} {xs : List α} {i : ℕ},
+  List.drop i xs.reverse = (List.take (xs.length - i) xs).reverse
+@List.getD_append : ∀ {α : Type u_1} (l l' : List α) (d : α), ∀ n < l.length, (l ++ l').getD n d = l.getD n d
+@List.getD_replicate : ∀ {α : Type u_1} (x : α) {y : α} {i n : ℕ}, i < n → (List.replicate n x).getD i y = x
+@List.getD_map : ∀ {α : Type u_1} {β : Type u_2} (l : List α) (d : α) {n : ℕ} (f : α → β),
+  (List.map f l).getD n (f d) = f (l.getD n d)
+@List.getD_eq_default : ∀ {α : Type u_1} (l : List α) (d : α) {n : ℕ}, l.length ≤ n → l.getD n d = d
+@List.flatMap_singleton' : ∀ {α : Type u_1} (l : List α), List.flatMap (fun x => [x]) l = l
+@PolyTimeComputable.congr : ∀ {f g : List Bool → List Bool},
+  PolyTimeComputable f → (∀ (x : List Bool), f x = g x) → PolyTimeComputable g
+@PolyTimeComputable.congr : ∀ {f g : List Bool → List Bool},
+  PolyTimeComputable f → (∀ (x : List Bool), f x = g x) → PolyTimeComputable g
+@List.reverse_append : ∀ {α : Type u_1} {as bs : List α}, (as ++ bs).reverse = bs.reverse ++ as.reverse
+FAIL(scratch/Probe): lean exited with status 1
+FAIL(scratch/Probe): no fresh .olean produced
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/CircuitWitness.lean:122:90: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  transduce stripNext stripOut 1 (List.replicate k true ++ l)
+in the target expression
+  (if 1 = 0 then none else if 1 = 1 ∧ true = true then none else some true).toList ++
+      transduce stripNext stripOut (if 1 = 0 then 1 else if 1 = 1 ∧ true = true then 1 else 2)
+        (List.replicate k true ++ l) =
+    transduce stripNext stripOut 1 l
+
+case succ
+l : List Bool
+k : ℕ
+ih : transduce stripNext stripOut 1 (List.replicate k true ++ l) = transduce stripNext stripOut 1 l
+⊢ (if 1 = 0 then none else if 1 = 1 ∧ true = true then none else some true).toList ++
+      transduce stripNext stripOut (if 1 = 0 then 1 else if 1 = 1 ∧ true = true then 1 else 2)
+        (List.replicate k true ++ l) =
+    transduce stripNext stripOut 1 l
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/CircuitWitness.lean:148:4: warning: This simp argument is unused:
+  List.singleton_append
+
+Hint: Omit it from the simp argument list.
+  simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append,̵
+  ̵ ̵ ̵ ̵ ̵L̵i̵s̵t̵.̵s̵i̵n̵g̵l̵e̵t̵o̵n̵_̵a̵p̵p̵e̵n̵d̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/CircuitWitness.lean:152:64: warning: This simp argument is unused:
+  true_and
+
+Hint: Omit it from the simp argument list.
+  simp only [Fin.one_eq_zero_iff, OfNat.ofNat_ne_one, if_false, t̵r̵u̵e̵_̵a̵n̵d̵,̵ ̵Bool.false_eq_true,
+  ̵  ̵ ̵ ̵and_false,
+  ̲  ̲ ̲ ̲Option.toList_some, List.singleton_append, hcopy]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/CircuitWitness.lean:286:6: error: Type mismatch
+  fun i => u.getD i false
+has type
+  ℕ → Bool
+but is expected to have type
+  Fin n → Bool
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/CircuitWitness.lean:374:10: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  wireValue ?d ?u ?v
+in the target expression
+  ((fun z => [CircuitEval.verdict false z]) ∘ fun x =>
+        pairEncode (retarget (pairFstD (pairSndD x)) (pairFstD x).length)
+          (padInput (pairFstD (pairSndD x)) (pairSndD (pairSndD x))))
+      w =
+    (fun z i => [wireValue (pairFstD z) (pairSndD z) i]) (pairSndD w) (pairFstD w).length
+
+hV : PolyTimeComputable fun z => [CircuitEval.verdict false z]
+hD : PolyTimeComputable fun w => pairFstD (pairSndD w)
+hU : PolyTimeComputable fun w => pairSndD (pairSndD w)
+hR : PolyTimeComputable fun w => retarget (pairFstD (pairSndD w)) (pairFstD w).length
+hP : PolyTimeComputable fun w => padInput (pairFstD (pairSndD w)) (pairSndD (pairSndD w))
+w : List Bool
+⊢ ((fun z => [CircuitEval.verdict false z]) ∘ fun x =>
+        pairEncode (retarget (pairFstD (pairSndD x)) (pairFstD x).length)
+          (padInput (pairFstD (pairSndD x)) (pairSndD (pairSndD x))))
+      w =
+    (fun z i => [wireValue (pairFstD z) (pairSndD z) i]) (pairSndD w) (pairFstD w).length
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/CircuitWitness.lean:375:77: error: Application type mismatch: The argument
+  hE
+has type
+  PolyTimeComputable fun w => (fun z i => [wireValue (pairFstD z) (pairSndD z) i]) (pairSndD w) (pairFstD w).length
+but is expected to have type
+  PolyTimeComputable fun w => ?m.88 (pairSndD w) (pairFstD w).length
+in the application
+  @SecureComputation.ComposeMachines.polyTimeComputable_flatMap_range ?m.88 hE
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/CircuitWitness): lean exited with status 1
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/CircuitWitness): error diagnostics reported
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/CircuitWitness): no fresh .olean produced
+scratch/Sealed.lean:352:15: error: Tactic `rfl` failed: The left-hand side
+  transduce (fun x x_1 => ()) (fun x x_1 => some false) () []
+is not definitionally equal to the right-hand side
+  List.replicate [].length false
+
+case nil
+⊢ transduce (fun x x_1 => ()) (fun x x_1 => some false) () [] = List.replicate [].length false
+scratch/Sealed.lean:369:4: error: Invalid `⟨...⟩` notation: The expected type
+  PolyTimeComputable fun z => [CircuitEval.verdict false z]
+is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+FAIL(scratch/Sealed): lean exited with status 1
+FAIL(scratch/Sealed): error diagnostics reported
+FAIL(scratch/Sealed): no fresh .olean produced

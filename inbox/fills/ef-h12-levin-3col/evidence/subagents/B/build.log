@@ -1,0 +1,194 @@
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringGraph.lean:146:68: warning: This simp argument is unused:
+  Fin.val_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [Fin.zero_eta, Fin.isValue, Fin.reduceEq, ↓reduceIte, F̵i̵n̵.̵v̵a̵l̵_̵z̵e̵r̵o̵,̵ ̵pow_zero,
+  ̵  ̵ ̵ ̵ ̵ ̵Nat.div_one,
+  ̲  ̲ ̲ ̲Nat.add_mul_mod_self_left, Nat.mod_eq_of_lt ha, Matrix.cons_val_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringGraph.lean:148:66: warning: This simp argument is unused:
+  Fin.val_one
+
+Hint: Omit it from the simp argument list.
+  simp only [Fin.mk_one, Fin.isValue, Fin.reduceEq, ↓reduceIte, F̵i̵n̵.̵v̵a̵l̵_̵o̵n̵e̵,̵ ̵pow_one, hdiv,
+       ̵ ̵Nat.add_mul_mod_self_left, Nat.mod_eq_of_lt hb, Matrix.cons_val_one, Matrix.cons_val_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringGraph.lean:286:4: error: `simp` made no progress
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringGraph.lean:296:52: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (encGraph (gadgetGraph K mem)).getD i ?m.186
+in the target expression
+  (encGraph (gadgetGraph K mem))[i] = (encGraph (gadgetGraph K mem)).getD (i % N + gadgetN K * (i / N)) false
+
+K : ℕ
+mem : ℕ → Bool
+N : ℕ := gadgetN K
+hN : N = gadgetN K
+hN0 : 0 < N
+hmap :
+  List.flatMap (fun i => [gadgetAdj K mem (i / N) (i % N)]) (List.range (N * N)) =
+    List.map (fun i => gadgetAdj K mem (i / N) (i % N)) (List.range (N * N))
+i : ℕ
+h1 : i < (encGraph (gadgetGraph K mem)).length
+h2 : i < (List.map (fun i => gadgetAdj K mem (i / N) (i % N)) (List.range (N * N))).length
+hi : i < N * N
+hu : i / N < N
+hv : i % N < N
+hget : (encGraph (gadgetGraph K mem)).getD (i % N + gadgetN K * (i / N)) false = gadgetAdj K mem (i / N) (i % N)
+⊢ (encGraph (gadgetGraph K mem))[i] = (encGraph (gadgetGraph K mem)).getD (i % N + gadgetN K * (i / N)) false
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringGraph.lean:295:13: warning: This simp argument is unused:
+  Nat.mod_add_div
+
+Hint: Omit it from the simp argument list.
+  simp only [̵N̵a̵t̵.̵m̵o̵d̵_̵a̵d̵d̵_̵d̵i̵v̵]̵ ̵at hget
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringGraph): lean exited with status 1
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringGraph): error diagnostics reported
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringGraph): no fresh .olean produced
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringGraph.lean:286:5: error: Function expected at
+  List.map_eq_flatMap
+but this term has type
+  List.map ?m.88 ?m.89 = List.flatMap (fun x => [?m.88 x]) ?m.89
+
+Note: Expected a function because this term is being applied to the argument
+  _
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringGraph): lean exited with status 1
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringGraph): error diagnostics reported
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringGraph): no fresh .olean produced
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringGraph.lean:446:23: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  gadgetAdj ?K ?mem ?t ?t'
+in the target expression
+  (fun u v => gadgetAdj K mem ↑u ↑v = true) v u
+
+K : ℕ
+mem : ℕ → Bool
+u v : Fin (gadgetN K)
+h : (fun u v => gadgetAdj K mem ↑u ↑v = true) u v
+⊢ (fun u v => gadgetAdj K mem ↑u ↑v = true) v u
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringGraph.lean:447:25: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  gadgetAdj ?K ?mem ?t ?t
+in the target expression
+  (fun u v => gadgetAdj K mem ↑u ↑v = true) u u
+
+K : ℕ
+mem : ℕ → Bool
+u : Fin (gadgetN K)
+h : (fun u v => gadgetAdj K mem ↑u ↑v = true) u u
+⊢ False
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringGraph.lean:510:7: error: invalid 'calc' step, left-hand side is
+  c % (2 * K) + 2 * K * (c / (2 * K) % (2 * K)) + 2 * K * 2 * K * 0 + 2 * K * (2 * K) * (c / (2 * K) / (2 * K)) -
+    2 * K * 2 * K * 0 : Nat
+but is expected to be
+  c % (2 * K) + 2 * K * (c / 2 / K % (2 * K)) + 2 * K * (2 * K) * (c / (2 * K * (2 * K))) : Nat
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringGraph.lean:518:4: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringGraph): lean exited with status 1
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringGraph): error diagnostics reported
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringGraph): no fresh .olean produced
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringGraph.lean:610:2: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  c ≥ 0
+  b ≥ 0
+  b ≤ 0
+  a ≥ 0
+  2*a - c ≥ -2
+  2*a + 6*b - c ≥ -2
+where
+ a := ↑K
+ b := ↑X
+ c := ↑t
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringGraph): lean exited with status 1
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringGraph): error diagnostics reported
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringGraph): no fresh .olean produced
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:111:13: error(lean.unknownIdentifier): Unknown identifier `polyTimeComputable_lastBit.comp'`
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:110:56: error: unsolved goals
+σ : Type
+inst✝¹ : Fintype σ
+inst✝ : DecidableEq σ
+δ : σ → Bool → σ
+q₀ : σ
+acc : σ → Bool
+⊢ PolyTimeComputable fun x => [acc (List.foldl δ q₀ x)]
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:209:23: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  List.flatMap ?m.93 (?m.91 ++ ?m.92)
+in the target expression
+  List.flatMap clauseRec χ ++
+      (List.flatMap clauseRec (CNF.decode (List.drop p (List.flatMap clauseRec φ ++ [false]))) ++ [false]) =
+    (χ ++ ψ).serialize
+
+φ : CNF ℕ
+p : ℕ
+h : List.foldl CNF.syntaxStep 0 (List.take p φ.serialize) = 0
+χ : CNF ℕ
+hχ : List.take p φ.serialize = List.flatMap clauseRec χ
+hok : CNF.syntaxOK (List.drop p φ.serialize) = true
+ψ : CNF ℕ := CNF.decode (List.drop p φ.serialize)
+hψ : List.drop p φ.serialize = (CNF.decode (List.drop p φ.serialize)).serialize
+⊢ List.flatMap clauseRec χ ++
+      (List.flatMap clauseRec (CNF.decode (List.drop p (List.flatMap clauseRec φ ++ [false]))) ++ [false]) =
+    (χ ++ ψ).serialize
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:230:17: error: Application type mismatch: The argument
+  (List.cons.inj h).right
+has type
+  true :: (List.replicate v true ++ false :: β :: x) = (List.replicate (w + 1) true).append (false :: γ :: y)
+of sort `Prop` but is expected to have type
+  ℕ
+of sort `Type` in the application
+  ih (List.cons.inj h).right
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:228:13: error: unsolved goals
+case succ.succ
+x y : List Bool
+β γ : Bool
+v w : ℕ
+ih :
+  ∀ (w : ℕ),
+    List.replicate (v + 1) true ++ false :: β :: x = List.replicate (w + 1) true ++ false :: γ :: y →
+      (v = w ∧ β = γ) ∧ x = y
+h : true :: true :: (List.replicate v true ++ false :: β :: x) = List.replicate (w + 1 + 1) true ++ false :: γ :: y
+this :
+  List.replicate (v + 1) true ++ false :: β :: x = List.replicate (sorry () + 1) true ++ false :: γ :: y →
+    (v = sorry () ∧ β = γ) ∧ x = y
+⊢ (v = w ∧ β = γ) ∧ x = y
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:254:30: error: Application type mismatch: The argument
+  h'
+has type
+  List.flatMap CNF.serializeLit C ++ ([false] ++ x) = List.flatMap CNF.serializeLit D ++ ([false] ++ y)
+but is expected to have type
+  List.flatMap CNF.serializeLit C ++ [false] ++ x = List.flatMap CNF.serializeLit ?m.188 ++ [false] ++ y
+in the application
+  ih h'
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:254:14: error: Tactic `subst` failed: 'C' occurs at
+  ?m.188
+
+case cons.cons
+x y : List Bool
+a : Literal ℕ
+C : List (Literal ℕ)
+ih :
+  ∀ {D : CNF.Clause ℕ},
+    List.flatMap CNF.serializeLit C ++ [false] ++ x = List.flatMap CNF.serializeLit D ++ [false] ++ y → C = D ∧ x = y
+D : List (Literal ℕ)
+h' : List.flatMap CNF.serializeLit C ++ ([false] ++ x) = List.flatMap CNF.serializeLit D ++ ([false] ++ y)
+h :
+  CNF.serializeLit a ++ (List.flatMap CNF.serializeLit C ++ ([false] ++ x)) =
+    CNF.serializeLit a ++ (List.flatMap CNF.serializeLit D ++ ([false] ++ y))
+left✝ : C = ?m.188
+right✝ : x = y
+⊢ a :: C = a :: D ∧ x = y
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): lean exited with status 1
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): error diagnostics reported
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): no fresh .olean produced
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:111:13: error(lean.unknownIdentifier): Unknown identifier `polyTimeComputable_lastBit.comp'`
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:110:56: error: unsolved goals
+σ : Type
+inst✝¹ : Fintype σ
+inst✝ : DecidableEq σ
+δ : σ → Bool → σ
+q₀ : σ
+acc : σ → Bool
+⊢ PolyTimeComputable fun x => [acc (List.foldl δ q₀ x)]
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:234:12: error(lean.unknownIdentifier): Unknown identifier `hvw`
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): lean exited with status 1
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): error diagnostics reported
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): no fresh .olean produced
