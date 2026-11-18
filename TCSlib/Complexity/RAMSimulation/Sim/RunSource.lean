@@ -225,7 +225,7 @@ theorem runNextCoins_prefix (ins : XInstr) (coins : List Bool) (b : Bool) :
     simp only [runNextCoins_eq, hc, reduceCtorEq, if_false, List.append_nil]
   | true =>
     refine ⟨[b], ?_⟩
-    simp only [runNextCoins_eq, hc, reduceCtorEq, if_true]
+    simp only [runNextCoins_eq, hc, if_true]
 
 /-- A stream agreeing with the next consumed prefix supplies the selected entry bit whenever
 the instruction is a coin. -/
