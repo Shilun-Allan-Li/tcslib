@@ -66,6 +66,13 @@ in this folder (identical).
 13. **Mathlib.** Use Mathlib for elementary number theory where it has the fact ("piggyback
     mathlib"; ledger DL-21/DL-22).
 14. **`BlumDensity`** stays a hypothesis.
+15. **Efficiency is mandatory (Seyoon, 2026-11-18).** "Addressing efficiency concerns for honest
+    parties and in security reductions is MANDATORY." Every honest algorithm must be proved
+    efficient (uniformly: `PolyTimeComputable` or `∃ A, A.Uniform ∧ A.Computes f`, never a bare
+    `∃ A : NUPPT, A.Computes f`), and every security reduction must be a proved non-uniform PPT
+    machine, so that security theorems connect to the NUPPT-stated assumptions. Existing gaps
+    (inventory `briefs/efficiency-gaps/`) are holes to plug, not accepted debt. New statement
+    briefs, fills and gates check this; a missing efficiency proof is at least a major.
 
 ## 3. Rulings in force (full list: the decision log, `../../PassShelatChapter5-8Plan.md`)
 
