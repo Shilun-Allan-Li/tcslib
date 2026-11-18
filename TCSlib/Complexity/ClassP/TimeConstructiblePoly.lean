@@ -67,14 +67,14 @@ theorem timeConstructible_poly (C c : ℕ) (hC : 0 < C) :
     TimeConstructible fun n => C * (n + 1) ^ (c + 1) := by
   have hdom (n : ℕ) : (n + 1) ^ (c + 1) ≤ C * (n + 1) ^ (c + 1) := by
     simpa only [Nat.one_mul] using Nat.mul_le_mul_right ((n + 1) ^ (c + 1)) hC
-  refine ⟨fun n => ?_, ?_⟩
+  refine (timeConstructible_iff _).mpr ⟨fun n => ?_, ?_⟩
   · have hp : n + 1 ≤ (n + 1) ^ (c + 1) := by
       simpa only [Nat.pow_one] using Nat.pow_le_pow_right (Nat.succ_pos n)
         (show 1 ≤ c + 1 by omega)
     exact (Nat.le_succ n).trans (hp.trans (hdom n))
-  · obtain ⟨_, a, ha, M, hM⟩ := timeConstructible_id
+  · obtain ⟨_, a, ha, M, hM⟩ := (timeConstructible_iff _).mp timeConstructible_id
     have hcounter : M.ComputesFunInTime (fun x => x.length.bits) (fun n => a * (n + 1)) :=
-      hM
+      (FinTM.computesFunInTime_iff _ _ _).mpr hM
     obtain ⟨N, b, hN⟩ := FinTM.computesFunInTime_comp (FinTM.polyUnaryTM_computes C (c + 1)) hcounter
       (by intro m n h; exact Nat.mul_le_mul_left a (Nat.add_le_add_right h 1))
     let A := C + 5 * (c + 1) + 4

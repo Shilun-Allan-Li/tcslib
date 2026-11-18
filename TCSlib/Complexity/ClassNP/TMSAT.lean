@@ -121,6 +121,23 @@ private lemma polyTape_write (q : ℕ) :
     have he : (0 ≤ z ∧ z < (q : ℤ)) ↔ (0 ≤ z ∧ z < ((q + 1 : ℕ) : ℤ)) := by omega
     simp only [he]
 
+/-! ### The unary polynomial generator
+
+The catalog's generator `Turing.FinTM.polyUnaryTM`, under the names and argument order of the
+private machine this file used before `Complexity.timeConstructible_poly` moved to
+`ClassP/TimeConstructiblePoly` (where it, too, now cites the catalog's generator). -/
+
+/-- The unary polynomial generator at loop parameter `c` and coefficient `C`: it writes
+`C·(|x|+1)^(c+1)` ones. -/
+private abbrev polyUnaryTM (c C : ℕ) : FinTM Bool := FinTM.polyUnaryTM C (c + 1)
+
+/-- The generator's run: `C·(|x|+1)^(c+1)` ones within `(C + 5(c+1) + 4)·(n+1)^(c+1)` steps. -/
+private lemma poly_unary_computes (c C : ℕ) :
+    (polyUnaryTM c C).ComputesFunInTime
+      (fun x => List.replicate (C * (x.length + 1) ^ (c + 1)) true)
+      (fun n => (C + 5 * (c + 1) + 4) * (n + 1) ^ (c + 1)) :=
+  FinTM.polyUnaryTM_computes C (c + 1)
+
 /-! ### Quantitative timed-universal bridge -/
 
 /-- The canonizer's completed serialization cannot be longer than its run. -/
@@ -1228,8 +1245,10 @@ theorem TMSAT_NPHard (c : MachineCode) : NPHard (TMSAT c) := by
     -- the existing binary witnesses record the same exact values.
     have hq := tmsat_certificate_unary C₀ c₀
     have ht : PolyTimeComputable (fun x => List.replicate (T' x.length) true) := by
-      exact ⟨FinTM.polyUnaryTM D (2*e*r), D+5*(2*e*r)+4, 2*e*r,
-        FinTM.polyUnaryTM_computes D (2*e*r)⟩
+      have h := poly_unary_computes (2*e*r-1) D
+      have hexact : 2*e*r-1+1 = 2*e*r := by omega
+      rw [hexact] at h
+      exact ⟨polyUnaryTM (2*e*r-1) D,D+5*(2*e*r)+4,2*e*r,h⟩
     have hinner := polyTimeComputable_id.pairEncode (hq.pairEncode ht)
     have houter := polyTimeComputable_of_linear (FinTM.computesFunInTime_pairEncodeFixed α₀)
     exact houter.comp hinner
