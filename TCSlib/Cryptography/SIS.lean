@@ -6,6 +6,7 @@ import TCSlib.Cryptography.SIS.Basic
 import TCSlib.Cryptography.SIS.Experiments
 import TCSlib.Cryptography.SIS.Encoding
 import TCSlib.Cryptography.SIS.Assumption
+import TCSlib.Cryptography.SIS.Efficient
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -20,6 +21,7 @@ set_option autoImplicit false
 * `Experiments`: the concrete success probability of an optional integer-vector solver.
 * `Encoding`: matrix encodings and signed outputs with proved representation guarantees.
 * `Assumption`: polynomial representation budgets and success hardness against `NUPPT`.
+* `Efficient`: efficient families (a uniform parameter map), dyadic schedules, non-vacuity.
 
 ## References
 
