@@ -189,9 +189,7 @@ theorem fheEval_eq (P : Parameters) (evk : Fin P.columns → Ciphertext P) {k : 
 /-- **Pure fully homomorphic evaluation of any fan-in-2 circuit** [BV14, Thm 2.14, p008-b003;
 BV11, Def 3.5, p014-b001]: `fheEval` on the NAND form of `Cc` (6a's conversion
 `DAGCircuit.toNANDForm`), `fheEvalCircuit P evk Cc hC cts = fheEval P evk (Cc.toNANDForm hC)
-cts`. Computable. **Compactness by typing**: the result is a `Ciphertext P` whatever `Cc`.
-While 6a's N2 (`nandGadget_correct`) is admitted, `sorryAx` reaches this definition through
-`toNANDForm` only. -/
+cts`. Computable. **Compactness by typing**: the result is a `Ciphertext P` whatever `Cc`. -/
 def fheEvalCircuit (P : Parameters) (evk : Fin P.columns → Ciphertext P) {k : ℕ}
     (Cc : DAGCircuit k) (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2) (cts : Fin k → Ciphertext P) :
     Ciphertext P :=

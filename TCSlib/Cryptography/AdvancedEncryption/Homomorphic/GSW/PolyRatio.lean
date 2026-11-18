@@ -45,9 +45,10 @@ is ingested.
 * [GSW13] C. Gentry, A. Sahai, B. Waters, CRYPTO 2013; IACR ePrint 2013/340, version dated
   8 June 2013: §3.1 (parameters).
 
-**Deviations.** Worst case, with an explicit polynomial (r3 §H6: `c < 2^70`), not
-[BV14, Thm 3.7]'s `Θ̃` noise rate. The constant `8` (r3 G16 wrote `4`) absorbs the floor in the
-decryption condition `2·(ℓ·β) < ⌊q/2⌋`, so that `pBoot(κ)·B(κ) < q(κ)` suffices in G17.
+**Deviations.** Worst case, with an explicit polynomial (constant `2^70`; r3 §H6 drafted
+`c < 2^70` with the factor `4`), not [BV14, Thm 3.7]'s `Θ̃` noise rate. The constant `8`
+(r3 G16 wrote `4`) absorbs the floor in the decryption condition `2·(ℓ·β) < ⌊q/2⌋`, so that
+`pBoot(κ)·B(κ) < q(κ)` suffices in G17.
 -/
 
 namespace TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW

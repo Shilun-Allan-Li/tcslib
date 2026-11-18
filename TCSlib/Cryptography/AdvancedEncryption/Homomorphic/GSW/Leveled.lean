@@ -44,8 +44,10 @@ L2 and L3 are admitted; L1 is proved.
 
 **Sources and reconstruction (P6-Q19 B).** The key-chain construction and the hybrid order are
 reconstructed: no ingested passage gives them. BV11 and BV14 attribute leveled bootstrapping
-to Gentry's work; that passage will be cited here once it is ingested. The statements cite
-[BV11, Thm 3.1, Def 3.6], [BV14, Thm 2.14 first part, Thm 3.7] and [AP14, §5.3] only.
+to Gentry's work; that passage will be cited here once it is ingested. For the leveled scheme
+the statements cite [BV11, Thm 3.1, Def 3.6], [BV14, Thm 2.14 first part, Thm 3.7] and
+[AP14, §5.3] only; [BV14, Def 2.12, §3.3] and [Bar89, Thm 1] are cited for compactness and the
+literal inputs.
 
 ## References
 
@@ -171,9 +173,8 @@ theorem leveledEval_eq (P : Parameters) {L k : ℕ} (lk : Fin L → Fin P.column
 part, p008-b003; BV11, Def 3.6, p014-b001]: `leveledEval` of the layered NAND form
 `(Cc.toNANDForm hC).layerNAND` (6a's N3–N13) on the literal ciphertexts,
 `leveledEvalCircuit P lk Cc hC cts = leveledEval P lk (Cc.toNANDForm hC).layerNAND
-(literalCts P cts)`. Computable. **Compactness by typing**. While 6a's N2, N12 and N13 are
-admitted, `sorryAx` reaches this definition through `toNANDForm` and `layerNAND` only.
-Reconstruction disclosed (module docstring). -/
+(literalCts P cts)`. Computable. **Compactness by typing**. Reconstruction disclosed (module
+docstring). -/
 def leveledEvalCircuit (P : Parameters) {L k : ℕ} [NeZero k]
     (lk : Fin L → Fin P.columns → Ciphertext P) (Cc : DAGCircuit k)
     (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2) (cts : Fin k → Ciphertext P) : Ciphertext P :=

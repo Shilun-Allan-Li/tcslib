@@ -63,11 +63,8 @@ open Encryption.PublicKey
 /-- The ciphertext width `N = (n+1)·ℓ` is positive: `2 ≤ q ≤ 2^ℓ` forces `ℓ ≥ 1`. The
 decryption formula has `N` inputs, and Barrington's construction needs at least one. -/
 instance Parameters.neZero_columns (P : Parameters) : NeZero P.columns :=
-  ⟨Nat.mul_ne_zero (Nat.succ_ne_zero _) fun h => by
-    have hle := P.modulus_le
-    have hq := P.lwe.modulus_ge_two
-    rw [h, pow_zero] at hle
-    omega⟩
+  ⟨Nat.mul_ne_zero (Nat.succ_ne_zero _)
+    (Nat.one_lt_two_pow_iff.mp (Nat.lt_of_lt_of_le P.lwe.modulus_ge_two P.modulus_le))⟩
 
 /-- The **key bits** of a secret `s`: the `N = (n+1)·ℓ` bits `G⁻¹(t)` of the key vector
 `t = (−s, 1)`, `keyBits P s = decomposeVec P (secretVector P s)`. They are what the
@@ -157,9 +154,8 @@ the formula layer (module docstring).
 
 **Proof sketch.** Decryption is `decode` of `⟨t, c⟩` with `t = (−s, 1)`, by the owner-side
 reader `decrypt_eq_decode_dotProduct : decrypt P s C = LWE.BitEncoding.decode P.lwe
-(secretVector P s ⬝ᵥ decryptColumn P C)` in `GSW/Scheme.lean`. It is **MISSING** at the base
-(the step exists only inside the private `decrypt_eq_decode_errorSum`), listed in the reader
-census, and lands owner-side before this fill (ruling Q-C1); the fill does not re-derive it.
+(secretVector P s ⬝ᵥ decryptColumn P C)` in `GSW/Scheme.lean` (owner-side, ruling Q-C1); the
+fill does not re-derive it.
 By G5, `⟨t, c⟩` is `∑ᵢ xᵢ·aᵢ` in `ZMod q`. Its representative is `(∑ᵢ xᵢ·aᵢ.val) mod q`
 (`ZMod.val_natCast`, `Nat.cast_sum`, `ZMod.natCast_zmod_val`).
 `LWE.BitEncoding.decode_iff_mem_Ico` (O2) turns `decode` into the interval test, and

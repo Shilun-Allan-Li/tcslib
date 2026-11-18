@@ -36,7 +36,7 @@ Both are admitted statement-phase targets.
 reconstructed: no ingested passage gives them. BV11 and BV14 attribute leveled bootstrapping
 to Gentry's work; that passage will be cited here once it is ingested. The statements cite
 [BV11, Thm 3.1, Def 3.6], [BV14, Thm 2.14 first part, Thm 3.7] and [AP14, §5.3] only, with
-[GSW13, §3.2, Lemma 1] and [BV11, Def 3.1] for the one-key steps and the view.
+[GSW13, §3.2, Lemma 1], [BV11, Def 3.1] and [BV14, §2.5] for the one-key steps and the view.
 
 ## References
 
@@ -308,7 +308,7 @@ reduction's coins, r3 §H8 item 12, so the multi-ciphertext lemma is applied per
 other seeds or its proof is followed with them in the coins). The gap at `i = j` is the gap of
 `levelReduction P χ L μ e j b D` between a real LWE key and a uniform key, plus the gap
 between `b = true` and `b = false` under a uniform key: `levelReduction_eq`, `reduction_eq`,
-`hybridPlant`'s planted position, `levelAssemble_eq`, `levelHybrid_eq`, `Regev.keygen_fst`
+`hybridPlant_eq` (the planted position), `levelAssemble_eq`, `levelHybrid_eq`, `Regev.keygen_fst`
 (the planted key is distributed as `pk_{e+1}`, whose secret is otherwise unused in `H_{e+1}`),
 and the seed regrouping (`acceptProb_comp_equiv`, `OneWay.uprob_update`). As in phase 5's
 `distAdv_encrypt_le`: the two DLWE gaps are the exact advantages (`real_uniformKey_advantage`,
