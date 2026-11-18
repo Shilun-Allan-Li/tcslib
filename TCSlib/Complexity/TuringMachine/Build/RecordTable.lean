@@ -311,6 +311,10 @@ followed by the fields of the entries `es` in order. -/
 def tableFields {Γ : Type*} (h : List Γ) (es : List (List (List Γ))) : List (List Γ) :=
   h :: es.flatten
 
+/-- The fields of a table, as an equation: the header, then the entries' fields in order. -/
+theorem tableFields_eq {Γ : Type*} (h : List Γ) (es : List (List (List Γ))) :
+    tableFields h es = h :: es.flatten := rfl
+
 /-- **Entry offsets** (design §12.8b): the cell, relative to the table's origin,
 at which entry `j` of the table starts. At `j = |es|` it is where a further
 entry would start, two cells after the last field
@@ -325,6 +329,11 @@ counting fields. -/
 def TableWF {Γ : Type*} (m : ℕ) (h : List Γ) (es : List (List (List Γ))) : Prop :=
   h ≠ [] ∧ ∀ e ∈ es, e.length = m ∧ ∀ u ∈ e, u ≠ []
 
+/-- Well-formed tables, as an equivalence with the definition: a nonempty header, and entries of
+`m` fields each, every field nonempty. -/
+theorem tableWF_iff {Γ : Type*} (m : ℕ) (h : List Γ) (es : List (List (List Γ))) :
+    TableWF m h es ↔ h ≠ [] ∧ ∀ e ∈ es, e.length = m ∧ ∀ u ∈ e, u ≠ [] := Iff.rfl
+
 /-- **A table on a tape** (design §12.8b, decision 2): tape `r` holds the field
 layout of the table with header `h` and entries `es` from the origin `o`, with
 two blank cells before the header and two after the last field. The cells
@@ -333,6 +342,15 @@ def TableAt {K : ℕ} {Γ S : Type*} {x : List Γ} (d : Cfg K Γ S x) (r : Fin K
     (h : List Γ) (es : List (List (List Γ))) : Prop :=
   ∀ p : ℤ, -2 ≤ p → p ≤ ((joinFields (tableFields h es)).length : ℤ) + 1 →
     d.workTapes r (o + p) = fieldsTape (tableFields h es) p
+
+/-- A table on a tape, as an equivalence with the definition: from the origin `o`, the cells at
+offsets `-2` to `L + 1` of tape `r` hold the field layout, `L` the layout's length. -/
+theorem tableAt_iff {K : ℕ} {Γ S : Type*} {x : List Γ} (d : Cfg K Γ S x) (r : Fin K) (o : ℤ)
+    (h : List Γ) (es : List (List (List Γ))) :
+    TableAt d r o h es ↔
+      ∀ p : ℤ, -2 ≤ p → p ≤ ((joinFields (tableFields h es)).length : ℤ) + 1 →
+        d.workTapes r (o + p) = fieldsTape (tableFields h es) p :=
+  Iff.rfl
 
 /-- **Table fields are nonempty** (design §12.8b): the precondition of the seek
 rows, from well-formedness.
