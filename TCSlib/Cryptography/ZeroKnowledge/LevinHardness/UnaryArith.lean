@@ -21,6 +21,10 @@ quotient and remainder (by a unary function or a constant), constant powers, the
 word. All are read off the public rows of `ZeroKnowledge/EncodingMachines.lean`
 (`divNum_poly`, `modNum_poly`, `unaryMul_poly`, `getBit_poly`, …) through their readers.
 
+## Main definitions
+
+None: the file states polynomial-time rows only.
+
 ## Main results
 
 * `TCSlib.Cryptography.LevinHardness.unaryDiv_poly`, `unaryMod_poly` — `f / g`, `f % g`.

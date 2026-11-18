@@ -203,7 +203,10 @@ theorem eval_withOutput {n : ℕ} (C : DAGCircuit n) (v : ℕ) (hv : v < n + C.g
 
 /-- A description of the parts `encodeNat m ++ (encodeList DAGGate.encode G ++ encodeNat o)`
 determines them: `n = m`, `C.gates = G` and `C.output = o`. Glue (the parts form of
-`BoolCircuit.DAGCircuit.eq_of_encode_eq`, for parts that need not form a circuit). -/
+`BoolCircuit.DAGCircuit.eq_of_encode_eq`, for parts that need not form a circuit).
+
+**Proof sketch.** Decode the number of inputs (`decodeNat_encodeNat`), then the gate list
+(`decodeList_encodeList`), then the output from both sides of the equation, and compare. -/
 private theorem parts_of_encode_eq {n m : ℕ} {C : DAGCircuit n} {G : List DAGGate} {o : ℕ}
     (h : C.encode = encodeNat m ++ (encodeList DAGGate.encode G ++ encodeNat o)) :
     n = m ∧ C.gates = G ∧ C.output = o := by

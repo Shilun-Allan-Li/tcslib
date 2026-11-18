@@ -296,7 +296,11 @@ private theorem flatMap_colorBits (g : ℕ → Fin 3) (n : ℕ) :
 truth values (one-bit tests) and the index (unary):
 `x ↦ colorBits (gadgetNodeColor (a x) (b x) (c x) (i x))`, an `ite` tree of constants
 (`polyTimeComputable_ite`, `polyTimeComputable_and`, `polyTimeComputable_not`,
-`EncodingMachines.eqTest_poly`). -/
+`EncodingMachines.eqTest_poly`).
+
+**Proof sketch.** The colour table `gadgetNodeColor_eq` is a finite case split on the three
+truth values and the index; each branch is a constant chunk, so the chunk is an `ite` tree of
+constants guarded by polynomial-time one-bit tests, and both sides agree by `split_ifs`. -/
 private theorem gadgetNodeColorBits_poly {a b c : List Bool → Bool} {i : List Bool → ℕ}
     (ha : PolyTimeComputable fun x => [a x]) (hb : PolyTimeComputable fun x => [b x])
     (hc : PolyTimeComputable fun x => [c x])
@@ -325,7 +329,12 @@ private theorem gadgetNodeColorBits_poly {a b c : List Bool → Bool} {i : List 
 
 /-- Glue. The two bits of the colour `gadgetColor (K x) (a x).getD (t x)` are a polynomial-time
 function of the unary `K x`, `t x` and the word `a x` (an `ite` tree over the vertex ranges,
-`litVal_poly`, `clauseLit_poly`, `gadgetNodeColorBits_poly`). -/
+`litVal_poly`, `clauseLit_poly`, `gadgetNodeColorBits_poly`).
+
+**Proof sketch.** Split on the vertex range (`gadgetColor_eq`): the palette colour is the vertex
+itself, a literal colour is a test on `litVal_poly`, and a gadget colour is
+`gadgetNodeColorBits_poly` of the three literal values of the clause code `(t - L) / 6`
+(`unaryDivConst_poly`, `clauseLit_poly`) at index `(t - L) % 6`. -/
 private theorem gadgetColorBits_poly {K t : List Bool → ℕ} {a : List Bool → List Bool}
     (hK : PolyTimeComputable fun x => List.replicate (K x) true)
     (ht : PolyTimeComputable fun x => List.replicate (t x) true) (ha : PolyTimeComputable a) :

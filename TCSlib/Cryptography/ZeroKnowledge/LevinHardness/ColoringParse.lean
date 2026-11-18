@@ -235,7 +235,11 @@ private theorem serializeLit_append_inj {a b : Literal ℕ} {x y : List Bool}
       exact ⟨⟨by omega, hab.2⟩, hxy⟩
 
 /-- **Clause serializations are prefix-free**: `serializeClause C ++ x = serializeClause D ++ y`
-implies `C = D` and `x = y`. Glue. -/
+implies `C = D` and `x = y`. Glue.
+
+**Proof sketch.** Induction on `C`: a literal record starts with `1` and the clause terminator
+is `0`, so both sides end or continue together; two literal records followed by anything agree
+in their unary variable run, polarity bit and remainder (`serializeLit_eq`). -/
 theorem serializeClause_append_inj {C D : CNF.Clause ℕ} {x y : List Bool}
     (h : CNF.serializeClause C ++ x = CNF.serializeClause D ++ y) : C = D ∧ x = y := by
   rw [Bridge.serializeClause_eq, Bridge.serializeClause_eq] at h

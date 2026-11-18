@@ -37,6 +37,11 @@ This proves `LevinNPHard L3COL R3COL` ([PS10, §4.7, Theorem 124.1, step 2]; the
 `zk_proof_of_witnessRelation` and `zk_proof_of_mem_NP` in `ZeroKnowledge/NP.lean`), and with it
 the unconditional forms of [PS10, Theorem 124.1].
 
+## Main definitions
+
+None: the instance and witness maps of the reduction are explicit terms in the proof of
+`levinNPHard_L3COL`, built from the definitions of the step files.
+
 ## Main results
 
 * `TCSlib.Cryptography.LevinHardness.polyTimeComputable_certOf` — the certificate map.

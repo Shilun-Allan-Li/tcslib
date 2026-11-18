@@ -41,6 +41,10 @@ delivery's `REPORT.md`).
 | `reductionGraph_adj` | `SATtoColor.ReductionGraph` | same |
 | `edgeRelation_*` (case lemmas) | `SATtoColor.EdgeRelation` | same |
 
+## Main definitions
+
+None: this file only states readers.
+
 ## Main results
 
 The readers listed above (no new mathematics).
