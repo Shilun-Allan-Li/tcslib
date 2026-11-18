@@ -1,1 +1,1 @@
-**Gate 161 CLEAR** (2026-11-18; 0 blockers, 0 majors, 3 minors, 4 notes): PR #371 is clear to merge at `24aa4050`. The minors are records-only (`resolutions.md`).
+**Gate 161 CLOSED** (2026-11-18): CLEAR (0 blockers, 0 majors, 3 records-only minors; `resolutions.md`). PR #371 merged at `adb694d2`; its Lean equals the audited head `24aa4050`. The replay output `oleans-cl161-cl160` (898 objects, manifest verified) is the branch's build.
