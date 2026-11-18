@@ -6,6 +6,7 @@ Authors: TCSlib contributors
 import TCSlib.Complexity.CircuitComplexity.DAGCircuitSat
 import TCSlib.Complexity.NPReductions.ThreeSATToColoring
 import TCSlib.Complexity.Formulas.CNFEncoding
+import TCSlib.Cryptography.ZeroKnowledge.NP
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -25,6 +26,7 @@ delivery's `REPORT.md`).
 
 | Reader | Definition | Owner file |
 |---|---|---|
+| `levinNPHard_iff` | `TCSlib.Cryptography.LevinNPHard` | `ZeroKnowledge/NP.lean:654` |
 | `toCNF_eq` | `BoolCircuit.DAGCircuit.toCNF` | `CircuitComplexity/DAGCircuitSat.lean:267` |
 | `widthAtMost_iff` | `Std.Sat.CNF.WidthAtMost` | `Formulas/CNF.lean:102` |
 | `numVars_eq` | `CNF.numVars` | `Formulas/CNF.lean:96` |
@@ -53,8 +55,18 @@ The readers listed above (no new mathematics).
 
 namespace TCSlib.Cryptography.LevinHardness.Bridge
 
-open BoolCircuit SATtoColor
+open BoolCircuit SATtoColor Complexity
 open Std.Sat (CNF)
+
+/-! ### Levin NP-hardness -/
+
+/-- Reader for `LevinNPHard` (missing in `ZeroKnowledge/NP.lean`): `(L', R')` is NP-hard with
+Levin reductions iff every language with a witness relation has a Levin reduction to it,
+`LevinNPHard L' R' ↔ ∀ L R, WitnessRelation L R → ∃ f w p, LevinReduction L L' R R' f w p`. -/
+theorem levinNPHard_iff (L' : Language Bool) (R' : List Bool → List Bool → Prop) :
+    LevinNPHard L' R' ↔ ∀ (L : Language Bool) (R : List Bool → List Bool → Prop),
+      WitnessRelation L R → ∃ (f : List Bool → List Bool) (w : List Bool → List Bool → List Bool)
+        (p : PolyExpr), LevinReduction L L' R R' f w p := Iff.rfl
 
 /-! ### Circuits and formulas -/
 

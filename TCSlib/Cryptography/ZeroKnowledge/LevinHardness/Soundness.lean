@@ -37,7 +37,8 @@ completeness, is the explicit colouring of `ColoringWitness.lean`), so only that
 * `TCSlib.Cryptography.LevinHardness.isSatisfiable_of_colorable` — soundness through
   `SATtoColorReduction`.
 * `TCSlib.Cryptography.LevinHardness.exists_clauseSat_of_colorable` — a 3-colourable gadget
-  graph has an assignment satisfying every clause code accepted by `mem`.
+  graph has an assignment, `false` beyond the `K` variables, satisfying every clause code accepted
+  by `mem`.
 
 ## References
 
@@ -229,7 +230,8 @@ theorem satisfiesLiteral_litEquiv {K : ℕ} (a : Fin K → Bool) (ℓ : Fin (2 *
   · rw [if_neg h, if_neg h, Bridge.satisfiesLiteral_neg, dif_pos hK]
 
 /-- **A 3-colourable gadget graph has a satisfying assignment of its clause codes**: there is
-`val : ℕ → Bool` with `clauseSat K val c = true` for every code `c < (2K)³` with `mem c = true`.
+`val : ℕ → Bool`, `false` on `v ≥ K`, with `clauseSat K val c = true` for every code `c < (2K)³`
+with `mem c = true`.
 
 **Proof sketch.** By `isSatisfiable_of_colorable` some `a : Fin K → Bool` satisfies every clause
 of `gadgetFormula K mem`; for a code `c` with `mem c`, the clause `clauseEquiv K c` is in the
@@ -238,9 +240,11 @@ formula, its three literals are `litEquiv K` of the codes `clauseLit K c j`
 (`satisfiesLiteral_litEquiv`), which is `clauseSat K val c` (`clauseSat_eq`). -/
 theorem exists_clauseSat_of_colorable {K : ℕ} {mem : ℕ → Bool}
     (h : (gadgetSimpleGraph K mem).Colorable 3) :
-    ∃ val : ℕ → Bool, ∀ c, c < (2 * K) ^ 3 → mem c = true → clauseSat K val c = true := by
+    ∃ val : ℕ → Bool, (∀ v, K ≤ v → val v = false) ∧
+      ∀ c, c < (2 * K) ^ 3 → mem c = true → clauseSat K val c = true := by
   obtain ⟨a, ha⟩ := (Bridge.isSatisfiable_iff _).1 (isSatisfiable_of_colorable h)
-  refine ⟨fun v => if h : v < K then a ⟨v, h⟩ else false, fun c hc hm => ?_⟩
+  refine ⟨fun v => if h : v < K then a ⟨v, h⟩ else false,
+    fun v hv => dif_neg (Nat.not_lt.2 hv), fun c hc hm => ?_⟩
   rw [Bridge.satisfiesSat3_eq, List.all_eq_true] at ha
   have hmem : clauseEquiv K ⟨c, hc⟩ ∈ gadgetFormula K mem := by
     rw [gadgetFormula_eq]
