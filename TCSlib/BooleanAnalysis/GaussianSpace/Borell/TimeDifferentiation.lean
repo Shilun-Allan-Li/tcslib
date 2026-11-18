@@ -38,7 +38,7 @@ local instance {n : ℕ} (ρ : ℝ) : IsProbabilityMeasure (correlatedGaussianMe
   rw [correlatedGaussianMeasure_eq]
   exact Measure.isProbabilityMeasure_map (by fun_prop)
 /-- The Ornstein–Uhlenbeck generator of a C2 function is continuous. -/
-private lemma continuous_gaussianGenerator {n : ℕ} {g : (Fin n → ℝ) → ℝ}
+lemma continuous_gaussianGenerator {n : ℕ} {g : (Fin n → ℝ) → ℝ}
     (hg : ContDiff ℝ 2 g) : Continuous (fun x =>
       (∑ i, fderiv ℝ (fderiv ℝ g) x (Pi.single i 1) (Pi.single i 1)) -
         fderiv ℝ g x x) := by
@@ -53,11 +53,11 @@ Ornstein–Uhlenbeck generator.
 **Proof sketch.** Bound each diagonal Hessian entry by the Hessian operator
 norm, sum over the coordinates, and bound the drift by the gradient operator
 norm times the input norm. -/
-private lemma norm_gaussianGenerator_le {n : ℕ} {g : (Fin n → ℝ) → ℝ} {M K : ℝ}
+lemma norm_gaussianGenerator_le {n : ℕ} {g : (Fin n → ℝ) → ℝ} {M K : ℝ}
     (hm : ∀ x, ‖fderiv ℝ g x‖ ≤ M)
     (hk : ∀ x, ‖fderiv ℝ (fderiv ℝ g) x‖ ≤ K) (x : Fin n → ℝ) :
     ‖(∑ i, fderiv ℝ (fderiv ℝ g) x (Pi.single i 1) (Pi.single i 1)) -
-      fderiv ℝ g x x‖ ≤ (n : ℝ) * K + M * ‖x‖ := by
+      fderiv ℝ g x x‖ ≤ (n : ℝ) * K + M * ‖x‖ := (by
   have he (i : Fin n) :
       ‖fderiv ℝ (fderiv ℝ g) x (Pi.single i 1) (Pi.single i 1)‖ ≤ K := by
     calc
@@ -76,6 +76,7 @@ private lemma norm_gaussianGenerator_le {n : ℕ} {g : (Fin n → ℝ) → ℝ} 
         (((fderiv ℝ g x).le_opNorm x).trans
           (mul_le_mul_of_nonneg_right (hm x) (norm_nonneg x)))
     _ = _ := by simp
+)
 /-- For clipped C2 initial data with bounded first and second derivatives,
 the positive-time derivative of the Gaussian profile functional is the
 integral of its two slope-weighted Ornstein–Uhlenbeck generators.
