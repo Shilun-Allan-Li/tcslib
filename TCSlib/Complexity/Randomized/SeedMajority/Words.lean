@@ -42,7 +42,7 @@ open Turing
 /-- The width-`m` seed word for rank `i` is the first `m` bits of `Nat.bits i`
 followed by the binary word for `2 ^ m`, whose first `m` letters are zero:
 `word m i = (Nat.bits i ++ Nat.bits (2 ^ m)).take m`.
-[AB09, §7.1, p. 126]; [PS10, §8.2, Theorem 180.1, step 4] -/
+[AB09, §7.1, p. 126]; [PS10, §8.2, Theorem 180.1, final paragraph of the proof] -/
 def word (m i : ℕ) : List Bool := (Nat.bits i ++ Nat.bits (2 ^ m)).take m
 
 /-- The rank encoder satisfies
@@ -85,7 +85,7 @@ theorem word_eq_ofFn (m i : ℕ) (hi : i < 2 ^ m) :
 open Classical in
 /-- The prefix acceptance count is
 `count V x m i = #{j ∈ Finset.range i | pairEncode x (word m j) ∈ V}`.
-[AB09, §7.1, p. 126]; [PS10, §8.2, Theorem 180.1, step 4] -/
+[AB09, §7.1, p. 126]; [PS10, §8.2, Theorem 180.1, final paragraph of the proof] -/
 noncomputable def count (V : Language Bool) (x : List Bool) (m i : ℕ) : ℕ :=
   (Finset.range i |>.filter fun j => pairEncode x (word m j) ∈ V).card
 
@@ -113,7 +113,7 @@ theorem count_le (V : Language Bool) (x : List Bool) (m i : ℕ) : count V x m i
 open Classical in
 /-- One more seed increases the prefix count by its acceptance bit:
 `count V x m (i + 1) = count V x m i + if pairEncode x (word m i) ∈ V then 1 else 0`.
-[AB09, §7.1, p. 126]; [PS10, §8.2, Theorem 180.1, step 4] -/
+[AB09, §7.1, p. 126]; [PS10, §8.2, Theorem 180.1, final paragraph of the proof] -/
 theorem count_succ (V : Language Bool) (x : List Bool) (m i : ℕ) :
     count V x m (i + 1) =
       count V x m i + if pairEncode x (word m i) ∈ V then 1 else 0 := by
@@ -128,7 +128,7 @@ theorem count_succ (V : Language Bool) (x : List Bool) (m i : ℕ) :
 open Classical in
 /-- Counting every rank is counting every width-`m` Boolean tuple:
 `count V x m (2 ^ m) = #{u : Fin m → Bool | pairEncode x (List.ofFn u) ∈ V}`.
-[AB09, §7.1, p. 126]; [PS10, §8.2, Theorem 180.1, step 4]
+[AB09, §7.1, p. 126]; [PS10, §8.2, Theorem 180.1, final paragraph of the proof]
 
 **Proof sketch.** Map an accepted rank to the inverse of `Randomized.bitsEquiv`.
 `word_eq_ofFn` preserves its test result. Injectivity follows by applying that
@@ -160,7 +160,7 @@ theorem count_all (V : Language Bool) (x : List Bool) (m : ℕ) :
 
 /-- The state word stores the input, binary rank, and binary acceptance count:
 `state x i a = pairEncode x (pairEncode (Nat.bits i) (Nat.bits a))`.
-[AB09, §7.1, p. 126]; [PS10, §8.2, Theorem 180.1, step 4] -/
+[AB09, §7.1, p. 126]; [PS10, §8.2, Theorem 180.1, final paragraph of the proof] -/
 def state (x : List Bool) (i a : ℕ) : List Bool :=
   pairEncode x (pairEncode (Nat.bits i) (Nat.bits a))
 

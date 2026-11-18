@@ -39,7 +39,7 @@ open Classical in
 /-- A finite machine computes the seed-majority bit with the claimed time:
 `M.ComputesFunInTime (x ↦ [decide (2^(w |x|) < 2 * count_all)])`
 `(n ↦ c * (2^(w n) * (n+1)^e))` for some `M,c,e`.
-[AB09, §7.1, p. 126]; [PS10, Theorem 180.1, step 4]
+[AB09, §7.1, p. 126]; [PS10, Theorem 180.1, final paragraph of the proof]
 
 **Proof sketch.** Bound the unary width by a polynomial. Then the retained
 input and the two counters, including their terminal values, fit in a
