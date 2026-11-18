@@ -300,8 +300,8 @@ theorem TreeCircuit.neg_node (b : Bool) (cs : List (TreeCircuit n)) :
 `c.neg.eval x = !c.eval x`.  Glue (r3 §H5.7, F1).
 
 **Proof sketch.** Induction on `c` (`TreeCircuit.ind`).  A literal: `neg_lit`, then
-`eval_lit` and the value of a literal (`Lit.eval`, whose reader is missing; see the census)
-with the sign flipped.  A gate `node b cs`: `neg_node`; for `b = true` the negated gate is an
+`eval_lit` and the value of a literal (the reader `Lit.eval_eq` of `Lit.eval`) with the sign
+flipped.  A gate `node b cs`: `neg_node`; for `b = true` the negated gate is an
 `∨`-gate, so `eval_node_false` gives `(cs.map neg).any (·.eval x)`, which by the induction
 hypothesis is `cs.any (! ·.eval x) = !(cs.all (·.eval x))`, that is `!` of `eval_node_true`;
 `b = false` is symmetric. -/
@@ -326,7 +326,7 @@ theorem TreeCircuit.neg_eval (c : TreeCircuit n) (x : Fin n → Bool) :
 /-- **F1, depth.** De Morgan negation preserves the depth: `c.neg.depth = c.depth`.  Glue.
 
 **Proof sketch.** Induction on `c` (`TreeCircuit.ind`).  A literal stays a literal (depth `0`
-on both sides; the reader `depth_lit` is missing, see the census).  A gate: `neg_node` and
+on both sides, by the reader `TreeCircuit.depth_lit`).  A gate: `neg_node` and
 `depth_node` reduce the claim to `maxDepth (cs.map neg) = maxDepth cs`, an induction on the
 list with `maxDepth_nil`/`maxDepth_cons` and the induction hypothesis on each child. -/
 theorem TreeCircuit.depth_neg (c : TreeCircuit n) : c.neg.depth = c.depth := by

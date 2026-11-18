@@ -58,8 +58,8 @@ All are statement-phase targets (glue):
 * `BoolCircuit.DAGCircuit.toNANDForm_eval`, `toNANDForm_isNANDForm`, `toNANDForm_depth_le`,
   `toNANDForm_size_le` (N3–N6) — semantics, form, depth `≤ 2 · depth`, size `≤ n + 4 · #gates`.
 
-While N2 is admitted, `sorryAx` reaches `toNANDForm` (whose body passes `nandGadget_correct` to
-`rewrite`) and its consumers through N2 alone.
+N2 is proved (gsw-6a-fills), so no admission reaches `toNANDForm` (whose body passes
+`nandGadget_correct` to `rewrite`) or its consumers.
 
 ## References
 
@@ -396,8 +396,8 @@ evaluation, `DAGGate.eval_of_isNAND` (N1) and `DAGGate.eval_eq` give `!(a && b)`
 `!(!a && !b) = a || b`, `!true = false`, `!false = true` (`Bool` equation lemmas).  Depths:
 `vertexDepth_last`, `vertexDepth_append` and `DAGGate.depth_eq`: one level for a copied `¬` gate
 or `NAND[]`, two for the others.  New gates are `.not` gates of fan-in at most two by
-`DAGGate.isNAND_iff`.  The fill needs a reader for `GadgetCorrect`, which has none at the issue
-base (the owner-side `gadgetCorrect_iff`, plan section r3 §H2). -/
+`DAGGate.isNAND_iff`.  `GadgetCorrect` is read through the owner-side reader `gadgetCorrect_iff`
+(`DAGTransform.lean`; plan section r3 §H2), which the issue base lacked. -/
 theorem nandGadget_correct :
     GadgetCorrect n 2 (fun _ l => l ≤ 2) DAGGate.IsNAND (nandGadget n) := by
   rw [gadgetCorrect_iff]
@@ -452,8 +452,8 @@ theorem nandGadget_correct :
 /-- **The NAND form of a circuit** whose gates read at most two vertices: the gate-rewriting host
 applied to the NAND gadget, `C.toNANDForm hC = C.rewrite (nandGadget n) nandGadget_correct hC`.
 The domain is `∀ g ∈ C.gates, g.args.length ≤ 2` (not `IsFaninTwo`: a `¬` gate of fan-in two is
-already a NAND gate and is copied).  While N2 is admitted, `sorryAx` reaches this definition
-through `nandGadget_correct` only.  Glue; motivated by [BV14, Def 2.13, p008-b002;
+already a NAND gate and is copied).  N2 (`nandGadget_correct`) is proved, so no admission
+reaches this definition.  Glue; motivated by [BV14, Def 2.13, p008-b002;
 Thm 3.5, p014-b001]. -/
 def DAGCircuit.toNANDForm (C : DAGCircuit n) (hC : ∀ g ∈ C.gates, g.args.length ≤ 2) :
     DAGCircuit n :=

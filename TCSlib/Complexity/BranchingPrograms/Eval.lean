@@ -32,7 +32,8 @@ The push form needs no inverse, so the host is total and computable on the gener
 
 ## Main results
 
-All are statements of the 6a statement phase (targets admitted with `sorry`), except the readers.
+All are statements of the 6a statement phase (targets proved in the fill phase, gsw-6a-fills),
+except the readers.
 
 * `BranchingProgram.evalWith_nil`, `evalWith_append` — readers of the fold (C5).
 * `BranchingProgram.Instr.stepWith_of_isPermutation` — BV14's pull form for a permutation

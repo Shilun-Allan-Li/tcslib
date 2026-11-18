@@ -29,7 +29,8 @@ by a width-5 permutation branching program of length at most `4^d`.  The constru
 
 ## Main results
 
-All are statements of the 6a statement phase (targets admitted with `sorry`), except the readers.
+All are statements of the 6a statement phase (targets proved in the fill phase, gsw-6a-fills),
+except the readers.
 
 * `isFiveCycle_sigma1`, `isFiveCycle_sigma2`, `isFiveCycle_commutator` — Lemma 3 (C9).
 * `conjugator_conj` — the conjugator conjugates (C10).
@@ -605,6 +606,7 @@ private theorem length_commutatorProgram_le {P₁ P₂ : Perm (Fin 5) → Branch
 
 /-- Every Barrington program is nonempty: `0 < (barrington c σ).length`.  The proof of C14's
 `barrington_length_pos`, placed before C13, which needs it for Lemma 2 in the `∨` case.
+Glue for C13 and C14.
 
 **Proof sketch.** Induction on `c` (`TreeCircuit.ind`) generalizing `σ`, by the readers of
 `barrington`: literals and constants have one instruction; a fan-in-1 node is its child's

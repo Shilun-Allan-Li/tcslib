@@ -469,8 +469,9 @@ of the circuit on `n + n` inputs: `∀ (i : ℕ) (h : i < C.layerGates.length),
 `GatesAcyclic (n + n) C.layerGates`).  Glue.
 
 Stated in the field's form rather than as `GatesAcyclic (n + n) C.layerGates` (plan section r3
-§H5.6b): `GatesAcyclic` (`DAGCircuit.lean`) has no published reader, and filling the field from a
-`GatesAcyclic` proof would unfold it (Rule 10).  The meaning is identical (the body of
+§H5.6b): at the statement phase `GatesAcyclic` (`DAGCircuit.lean`) had no published reader, and
+filling the field from a `GatesAcyclic` proof would have unfolded it (Rule 10); the fill reads it
+through the owner-side reader `gatesAcyclic_iff`.  The meaning is identical (the body of
 `GatesAcyclic`).
 
 **Proof sketch.** Induction along the fold (`layerFold_eq`, `List.range_succ`,

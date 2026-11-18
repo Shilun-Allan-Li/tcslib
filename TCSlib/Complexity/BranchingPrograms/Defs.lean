@@ -29,7 +29,8 @@ bijection) are the predicate `IsPermutation`.
 
 ## Main results
 
-All are statements of the 6a statement phase (targets admitted with `sorry`), except the readers.
+All are statements of the 6a statement phase (targets proved in the fill phase, gsw-6a-fills),
+except the readers.
 
 * `BranchingProgram.yield_append`, `yield_nil` — the yield composes in program order (C1).
 * `BranchingProgram.yield_conj`, `length_conj`, `length_append` — conjugation (C2).
