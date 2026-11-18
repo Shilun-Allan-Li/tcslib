@@ -369,23 +369,34 @@ theorem WorstCaseOneWayLit.toParam {𝓕 : FunFamily} (hinj : Function.Injective
     B.inverter n (𝓕.inLen.eval n) (𝓕.outLen.eval n) (𝓕.f n x) r = some x' ∧
       𝓕.f n x' = 𝓕.f n x).trans (hB n x)
 
-/-- On a length-regular `f`, the family `ofString f p` is exactly `f` on encoded strings. -/
-theorem ofFn_ofString_f {f : List Bool → List Bool} {p : PolyExpr} (hf : LengthRegular f p)
-    (n : ℕ) (x : Fin n → Bool) : List.ofFn ((ofString f p).f n x) = f (List.ofFn x) := by
-  have hlen : (f (List.ofFn x)).length = p.eval n := by rw [hf, List.length_ofFn]
-  refine List.ext_get (by simp [ofString, hlen]) fun i h₁ h₂ => ?_
-  simp [ofString, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem h₂]
-
-/-- `ofFn_ofString_f` on the family's input space `{0,1}^{inLen(n)}`. -/
+/-- On a length-regular `f`, the family `ofString f p` is exactly `f` on encoded strings: for
+`x ∈ {0,1}^{inLen(n)}`, `⟦(ofString f p).f n x⟧ = f ⟦x⟧`. -/
 theorem ofFn_ofString_apply {f : List Bool → List Bool} {p : PolyExpr} (hf : LengthRegular f p)
     (n : ℕ) (x : Fin ((ofString f p).inLen.eval n) → Bool) :
-    List.ofFn ((ofString f p).f n x) = f (List.ofFn x) :=
-  ofFn_ofString_f hf n x
+    List.ofFn ((ofString f p).f n x) = f (List.ofFn x) := by
+  have hlen : (f (List.ofFn x)).length = (ofString f p).outLen.eval n := by
+    rw [(lengthRegular_iff f p).1 hf, List.length_ofFn, ofString_inLen_eval, ofString_outLen_eval]
+  refine List.ext_get (by rw [List.length_ofFn, hlen]) fun i h₁ h₂ => ?_
+  rw [List.get_eq_getElem, List.get_eq_getElem, List.getElem_ofFn, ofString_f_apply,
+    List.getD_eq_getElem?_getD, List.getElem?_eq_getElem h₂, Option.getD_some]
 
-/-- The identity family is the identity at every parameter. -/
-theorem ofString_id_f (n : ℕ) (x : Fin n → Bool) : (ofString id .var).f n x = x := by
-  have h := ofFn_ofString_f (f := id) (p := .var) (fun x => by simp) n x
-  exact List.ofFn_injective (by simpa using h)
+/-- `ofFn_ofString_apply` on `{0,1}^n`, read through `ofString_inLen_eval`:
+`⟦(ofString f p).f n (x ∘ cast)⟧ = f ⟦x⟧` for `x ∈ {0,1}^n`. -/
+theorem ofFn_ofString_f {f : List Bool → List Bool} {p : PolyExpr} (hf : LengthRegular f p)
+    (n : ℕ) (x : Fin n → Bool) :
+    List.ofFn ((ofString f p).f n (x ∘ Fin.cast (ofString_inLen_eval f p n))) = f (List.ofFn x) := by
+  rw [ofFn_ofString_apply hf]
+  exact congrArg f (List.ofFn_congr (ofString_inLen_eval f p n).symm x).symm
+
+/-- The identity family is the identity at every parameter, read through the length readers:
+`(ofString id var).f n (x ∘ cast) = x ∘ cast`. -/
+theorem ofString_id_f (n : ℕ) (x : Fin n → Bool) :
+    (ofString id .var).f n (x ∘ Fin.cast (ofString_inLen_eval id .var n)) =
+      x ∘ Fin.cast ((ofString_outLen_eval id .var n).trans (PolyExpr.eval_var n)) := by
+  have h := ofFn_ofString_f (f := id) (p := .var)
+    ((lengthRegular_iff id .var).2 fun x => (PolyExpr.eval_var _).symm) n x
+  refine List.ofFn_injective (h.trans ?_)
+  exact List.ofFn_congr ((ofString_outLen_eval id .var n).trans (PolyExpr.eval_var n)).symm x
 
 /-- The encoding of a tuple of blocks is the concatenation of the encodings of the blocks. -/
 theorem ofFn_blocks_symm (q ℓ : ℕ) (t : Fin q → Fin ℓ → Bool) :
@@ -424,10 +435,13 @@ theorem prod_outLen_eval (𝓕 : FunFamily) (q : PolyExpr) (n : ℕ) :
     (𝓕.prod q).outLen.eval n = q.eval n * 𝓕.outLen.eval n := by
   rw [prod_outLen, PolyExpr.eval_mul]
 
-/-- The direct product unfolded: `prodFun` between the block bijections. -/
-theorem prod_f (𝓕 : FunFamily) (q : PolyExpr) (n : ℕ) (x : Fin (q.eval n * 𝓕.inLen.eval n) → Bool) :
+/-- The direct product unfolded: `prodFun` between the block bijections, with the lengths read
+through `prod_inLen_eval` and `prod_outLen_eval`. -/
+theorem prod_f (𝓕 : FunFamily) (q : PolyExpr) (n : ℕ) (x : Fin ((𝓕.prod q).inLen.eval n) → Bool) :
     (𝓕.prod q).f n x = (blocks (q.eval n) (𝓕.outLen.eval n)).symm
-      (OneWay.prodFun (𝓕.f n) (q.eval n) (blocks (q.eval n) (𝓕.inLen.eval n) x)) := rfl
+      (OneWay.prodFun (𝓕.f n) (q.eval n)
+        (blocks (q.eval n) (𝓕.inLen.eval n) (x ∘ Fin.cast (𝓕.prod_inLen_eval q n).symm))) ∘
+      Fin.cast (𝓕.prod_outLen_eval q n) := rfl
 
 /-- The inversion probability of the direct product is the concrete `invProbOpt` of
 `OneWay.prodFun (f n) (q n)` against the inverter that encodes its challenge tuple by
@@ -441,21 +455,47 @@ theorem invProbAt_prod_eq (𝓕 : FunFamily) (q : PolyExpr) (A : NUPPT) (n : ℕ
       invProbOpt (OneWay.prodFun (𝓕.f n) (q.eval n)) fun ys r =>
         (A.inverter n (q.eval n * 𝓕.inLen.eval n) (q.eval n * 𝓕.outLen.eval n)
           ((blocks (q.eval n) (𝓕.outLen.eval n)).symm ys) r).map (blocks (q.eval n) (𝓕.inLen.eval n)) := by
-  unfold invProbAt
-  simp only [invProbOpt_def]
-  rw [← uprob_comp_equiv (Equiv.prodCongr (blocks (q.eval n) (𝓕.inLen.eval n)) (Equiv.refl _))]
+  rw [invProbAt_eq_uprob, invProbOpt_def]
+  have hin := 𝓕.prod_inLen_eval q n
+  have hout := 𝓕.prod_outLen_eval q n
+  -- the block tuples of `{0,1}^{q·inLen}`, read at the family's input length
+  let e : (Fin (q.eval n) → Fin (𝓕.inLen.eval n) → Bool) ≃ (Fin ((𝓕.prod q).inLen.eval n) → Bool) :=
+    (blocks (q.eval n) (𝓕.inLen.eval n)).symm.trans
+      (Equiv.arrowCongr (finCongr hin.symm) (Equiv.refl Bool))
+  have he : ∀ t, e t ∘ Fin.cast hin.symm = (blocks (q.eval n) (𝓕.inLen.eval n)).symm t :=
+    fun _ => rfl
+  rw [← uprob_comp_equiv (Equiv.prodCongr e (Equiv.refl _))]
   congr 1
   funext z
-  simp only [Equiv.prodCongr_apply, Equiv.coe_refl, Prod.map_fst, Prod.map_snd, id_eq, prod_f,
-    Option.map_eq_some_iff]
+  simp only [Equiv.prodCongr_apply, Equiv.coe_refl, Prod.map_fst, Prod.map_snd, id_eq,
+    Option.map_eq_some_iff, NUPPT.inverter_eq_some_iff]
   apply propext
+  have hW : List.ofFn ((𝓕.prod q).f n (e z.1)) = List.ofFn ((blocks (q.eval n) (𝓕.outLen.eval n)).symm
+      (OneWay.prodFun (𝓕.f n) (q.eval n) z.1)) := by
+    rw [prod_f, he, Equiv.apply_symm_apply]
+    exact (List.ofFn_congr hout.symm _).symm
+  have hinj : ∀ w : Fin ((𝓕.prod q).inLen.eval n) → Bool,
+      (𝓕.prod q).f n w = (𝓕.prod q).f n (e z.1) ↔
+        OneWay.prodFun (𝓕.f n) (q.eval n) (blocks _ _ (w ∘ Fin.cast hin.symm)) =
+          OneWay.prodFun (𝓕.f n) (q.eval n) z.1 := by
+    intro w
+    rw [prod_f, prod_f, he, Equiv.apply_symm_apply]
+    constructor
+    · intro h
+      exact (blocks (q.eval n) (𝓕.outLen.eval n)).symm.injective
+        (congrArg (· ∘ Fin.cast hout.symm) h)
+    · intro h
+      rw [h]
+  rw [hW]
   constructor
-  · rintro ⟨x', hx', hf⟩
-    refine ⟨blocks _ _ x', ⟨x', hx', rfl⟩, ?_⟩
-    have := congrArg (blocks (q.eval n) (𝓕.outLen.eval n)) hf
-    simpa using this
-  · rintro ⟨t, ⟨x', hx', rfl⟩, hf⟩
-    exact ⟨x', hx', by simp [hf]⟩
+  · rintro ⟨x', hrun, hfx⟩
+    refine ⟨blocks _ _ (x' ∘ Fin.cast hin.symm), ⟨x' ∘ Fin.cast hin.symm, ?_, rfl⟩, (hinj x').1 hfx⟩
+    rw [hrun]
+    exact List.ofFn_congr hin x'
+  · rintro ⟨t, ⟨a, hrun, rfl⟩, ht⟩
+    refine ⟨a ∘ Fin.cast hin, ?_, (hinj _).2 ht⟩
+    rw [hrun]
+    exact List.ofFn_congr hin.symm a
 
 /-- **The direct product is easy to compute.** If `𝓕` is easy then so is `𝓕.prod q`
 [PS10, Theorem 35.1, "`f'` is easy to compute"].
@@ -471,8 +511,16 @@ of `F ⟨1^n, block i⟩`, which is the concatenation of `List.ofFn (f n (blocks
 theorem Easy.prod {𝓕 : FunFamily} (h : 𝓕.Easy) (q : PolyExpr) : (𝓕.prod q).Easy := by
   obtain ⟨F, hF, hFx⟩ := h
   obtain ⟨F', hF', hspec⟩ := OneWay.exists_prodEval hF 𝓕.inLen q
-  refine ⟨F', hF', fun n x => ?_⟩
-  rw [NUPPT.advInput_eq, hspec, prod_f, ofFn_blocks_symm]
+  refine ⟨F', hF', fun n x₀ => ?_⟩
+  have hx : List.ofFn x₀ = List.ofFn (x₀ ∘ Fin.cast (𝓕.prod_inLen_eval q n).symm) :=
+    List.ofFn_congr (𝓕.prod_inLen_eval q n) x₀
+  have hy : List.ofFn ((𝓕.prod q).f n x₀) = List.ofFn ((blocks (q.eval n) (𝓕.outLen.eval n)).symm
+      (OneWay.prodFun (𝓕.f n) (q.eval n)
+        (blocks (q.eval n) (𝓕.inLen.eval n) (x₀ ∘ Fin.cast (𝓕.prod_inLen_eval q n).symm)))) := by
+    rw [prod_f]
+    exact (List.ofFn_congr (𝓕.prod_outLen_eval q n).symm _).symm
+  rw [NUPPT.advInput_eq, hx, hspec, hy, ofFn_blocks_symm]
+  generalize x₀ ∘ Fin.cast (𝓕.prod_inLen_eval q n).symm = x
   congr 2
   funext i
   have hb : (fun j => x (finProdFinEquiv (i, j))) = blocks (q.eval n) (𝓕.inLen.eval n) x i :=
@@ -799,7 +847,8 @@ theorem strong_prod_two {𝓕 : FunFamily} (h : FunFamily.StrongOneWay 𝓕) :
   set f := 𝓕.f n with hf
   -- the coin bijection `(xs, r') ↦ ⟨xs⟩ ++ r'`
   have hlen : 2 * ℓ + A'.coinLen n = A.coinLen n := by
-    simp only [A, NUPPT.coinLen_eq, NUPPT.coins_ofPolyTime]; rfl
+    simp only [A, NUPPT.coinLen_eq, NUPPT.coins_ofPolyTime, PolyExpr.eval_add, PolyExpr.eval_mul,
+      PolyExpr.eval_const, hℓ]
   let e : (Fin 2 → Fin ℓ → Bool) × A'.Coins n ≃ A.Coins n :=
     (Equiv.prodCongr (FunFamily.blocks 2 ℓ).symm (Equiv.refl _)).trans
       ((Fin.appendEquiv _ _).trans (Equiv.arrowCongr (finCongr hlen) (Equiv.refl Bool)))
@@ -830,8 +879,10 @@ theorem strong_prod_two {𝓕 : FunFamily} (h : FunFamily.StrongOneWay 𝓕) :
   let B' : (Fin 2 → Fin (𝓕.outLen.eval n) → Bool) → A'.Coins n → Option (Fin 2 → Fin ℓ → Bool) :=
     fun ys r => (A'.inverter n (2 * ℓ) (2 * 𝓕.outLen.eval n)
       ((FunFamily.blocks 2 (𝓕.outLen.eval n)).symm ys) r).map (FunFamily.blocks 2 ℓ)
-  have h1 : (𝓕.prod (.const 2)).invProbAt A' n = invProbOpt (OneWay.prodFun f 2) B' :=
-    FunFamily.invProbAt_prod_eq 𝓕 (.const 2) A' n
+  have h1 : (𝓕.prod (.const 2)).invProbAt A' n = invProbOpt (OneWay.prodFun f 2) B' := by
+    have h := FunFamily.invProbAt_prod_eq 𝓕 (.const 2) A' n
+    rw [PolyExpr.eval_const] at h
+    exact h
   have h2 := OneWay.invProbOpt_prodFun_le_yaoTryOpt f B' 0
   refine h1.trans_le (h2.trans ?_)
   unfold FunFamily.invProbAt
@@ -894,7 +945,9 @@ theorem FunFamily.invProbAt_ofString_id_eq_one {A : NUPPT}
       fun _ => True := by
     funext z
     refine propext ⟨fun _ => trivial, fun _ => ⟨z.1, ?_, rfl⟩⟩
-    rw [hA, FunFamily.ofString_id_f]
+    rw [hA]
+    exact FunFamily.ofFn_ofString_apply
+      ((FunFamily.lengthRegular_iff id .var).2 fun x => (PolyExpr.eval_var _).symm) n z.1
   rw [hp, uprob_true]
 
 /-- **The identity is not one-way** (non-vacuity of the adversary class, [PS10, §2.2]): the
@@ -945,7 +998,9 @@ theorem not_worstCaseOneWay_id : ¬ FunFamily.WorstCaseOneWay (FunFamily.ofStrin
       fun _ => True := by
     funext r
     refine propext ⟨fun _ => trivial, fun _ => ⟨x, ?_, rfl⟩⟩
-    rw [NUPPT.inverter_eq_some_iff, hA, FunFamily.ofString_id_f]
+    rw [NUPPT.inverter_eq_some_iff, hA]
+    exact FunFamily.ofFn_ofString_apply
+      ((FunFamily.lengthRegular_iff id .var).2 fun x => (PolyExpr.eval_var _).symm) n x
   rw [hp, uprob_true]
 
 /-! ## One-way permutations -/
@@ -971,16 +1026,6 @@ def OneWayPermutation (P : PermFamily) : Prop := P.toFunFamily.StrongOneWay
 theorem oneWayPermutation_iff (P : PermFamily) :
     OneWayPermutation P ↔ P.toFunFamily.StrongOneWay := Iff.rfl
 
-/-- **The evaluator of a one-way permutation**: a polynomial-time `F` with `F⟨1^n, x⟩ = f_n(x)`. -/
-theorem OneWayPermutation.evaluator {P : PermFamily} (hP : OneWayPermutation P) :
-    ∃ F : List Bool → List Bool, PolyTimeComputable F ∧
-      ∀ n (x : Fin n → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (P.f n x) :=
-  (FunFamily.easy_iff _).1 hP.easy
-
-/-- The function of a permutation family is the permutation. -/
-@[simp] theorem PermFamily.toFunFamily_f (P : PermFamily) (n : ℕ) (x : Fin n → Bool) :
-    P.toFunFamily.f n x = P.f n x := rfl
-
 /-- The input length of `P.toFunFamily` at `n` is `n`. -/
 theorem PermFamily.toFunFamily_inLen_eval (P : PermFamily) (n : ℕ) :
     P.toFunFamily.inLen.eval n = n := PolyExpr.eval_var n
@@ -1001,19 +1046,45 @@ def PermFamily.toFunFamily_codEquiv (P : PermFamily) (n : ℕ) :
     (Fin (P.toFunFamily.outLen.eval n) → Bool) ≃ (Fin n → Bool) :=
   Equiv.arrowCongr (finCongr (P.toFunFamily_outLen_eval n)) (Equiv.refl Bool)
 
+/-- The function of a permutation family is the permutation, read through the domain and range
+equivalences: `P.toFunFamily.f n x = codEquiv⁻¹ (P.f n (domEquiv x))`. -/
+@[simp] theorem PermFamily.toFunFamily_f (P : PermFamily) (n : ℕ)
+    (x : Fin (P.toFunFamily.inLen.eval n) → Bool) :
+    P.toFunFamily.f n x = (P.toFunFamily_codEquiv n).symm (P.f n (P.toFunFamily_domEquiv n x)) :=
+  rfl
+
 /-- The domain equivalence keeps the string. -/
 theorem PermFamily.toFunFamily_domEquiv_ofFn (P : PermFamily) (n : ℕ)
     (x : Fin (P.toFunFamily.inLen.eval n) → Bool) :
-    List.ofFn (P.toFunFamily_domEquiv n x) = List.ofFn x := rfl
+    List.ofFn (P.toFunFamily_domEquiv n x) = List.ofFn x :=
+  ofFn_arrowCongr_finCongr (P.toFunFamily_inLen_eval n) x
 
 /-- The inverse domain equivalence keeps the string. -/
 theorem PermFamily.toFunFamily_domEquiv_symm_ofFn (P : PermFamily) (n : ℕ) (x : Fin n → Bool) :
-    List.ofFn ((P.toFunFamily_domEquiv n).symm x) = List.ofFn x := rfl
+    List.ofFn ((P.toFunFamily_domEquiv n).symm x) = List.ofFn x :=
+  ofFn_arrowCongr_finCongr (P.toFunFamily_inLen_eval n).symm x
 
 /-- The range equivalence keeps the string. -/
 theorem PermFamily.toFunFamily_codEquiv_ofFn (P : PermFamily) (n : ℕ)
     (y : Fin (P.toFunFamily.outLen.eval n) → Bool) :
-    List.ofFn (P.toFunFamily_codEquiv n y) = List.ofFn y := rfl
+    List.ofFn (P.toFunFamily_codEquiv n y) = List.ofFn y :=
+  ofFn_arrowCongr_finCongr (P.toFunFamily_outLen_eval n) y
+
+/-- **The evaluator of a one-way permutation**: a polynomial-time `F` with `F⟨1^n, x⟩ = f_n(x)`.
+
+**Proof sketch.** The evaluator of `P.toFunFamily` (`FunFamily.easy_iff`) at
+`domEquiv⁻¹ x`, whose string is that of `x`; its output is `codEquiv⁻¹ (P.f n x)`
+(`toFunFamily_f`), whose string is that of `P.f n x`. -/
+theorem OneWayPermutation.evaluator {P : PermFamily} (hP : OneWayPermutation P) :
+    ∃ F : List Bool → List Bool, PolyTimeComputable F ∧
+      ∀ n (x : Fin n → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (P.f n x) := by
+  obtain ⟨F, hF, hFx⟩ := (FunFamily.easy_iff _).1 hP.easy
+  refine ⟨F, hF, fun n x => ?_⟩
+  have h := hFx n ((P.toFunFamily_domEquiv n).symm x)
+  rw [PermFamily.toFunFamily_domEquiv_symm_ofFn, PermFamily.toFunFamily_f,
+    Equiv.apply_symm_apply] at h
+  rw [h]
+  exact (PermFamily.toFunFamily_codEquiv_ofFn P n _).symm.trans (by rw [Equiv.apply_symm_apply])
 
 /-- Through the equivalences `P.toFunFamily` is `P`: `codEquiv (f_n x) = P.f n (domEquiv x)`. -/
 theorem PermFamily.toFunFamily_f_domEquiv (P : PermFamily) (n : ℕ)
