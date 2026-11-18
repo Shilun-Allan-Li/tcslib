@@ -11,6 +11,7 @@ import TCSlib.Cryptography.Games.Relational
 import TCSlib.Cryptography.Games.Protocols
 import TCSlib.Cryptography.Games.Forwarding
 import TCSlib.Cryptography.Games.Tapes
+import TCSlib.Cryptography.Games.Closeness
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -51,6 +52,8 @@ the interaction model `Strategy`.
   handlers read on lists, and hard-wiring a second input component (S2b layer).
 * `TCSlib.Cryptography.Games.Tapes`: simulation through a state abstraction in law, coins drawn in
   advance on tapes, and functions overridden by a table.
+* `TCSlib.Cryptography.Games.Closeness`: statistical closeness of computations, closed under
+  sequencing and simulation, and output inclusion (the transfer of every-outcome properties).
 
 ## References
 
