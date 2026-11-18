@@ -175,6 +175,19 @@ rule, and lands once what it cites is proved.
 4. **Landing:** each delivery through the gate kit, as with #371. `Simulation.lean` drops its last
    two admissions only when every piece below it is proved.
 
+## 5a. The statements PR (#372, gate 162)
+
+The statements landed as drafted here with one simplification. **There is no unary ruler.**
+Words keep one width throughout the run, so an operand's own blank delimiters bound every scan,
+and `W = 0` (empty words) needs no special case. The table's fields carry a marker bit, so no
+field is empty. The interfaces are:
+- `ReachesWithin` and `Contract.ofReaches` (proved);
+- the word rows, the keyed table and the input bit (`Build/WordArith`, `KeyTable`, `InputBit`);
+- `WordRAM.Sim.Encodes` (proved);
+- `exists_startup`, `exists_phase` and `exists_verdictPhase`.
+
+PR #372's description and gate 162's pack give the details.
+
 ## 6. Decisions (Seyoon, 2026-11-18)
 
 - **D1. New public homes. Approved as proposed.** The four new `Build/` modules L1–L4 with public contracts, and the

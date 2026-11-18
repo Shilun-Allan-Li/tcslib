@@ -1,0 +1,240 @@
+{
+ "owners": [
+  "TCSlib.Complexity.RAMSimulation",
+  "TCSlib.Complexity.RAMSimulation.Sim.Encoding",
+  "TCSlib.Complexity.RAMSimulation.Sim.Phases",
+  "TCSlib.Complexity.RAMSimulation.Sim.Startup",
+  "TCSlib.Complexity.RAMSimulation.Simulation",
+  "TCSlib.Complexity.TuringMachine",
+  "TCSlib.Complexity.TuringMachine.Build.Contract",
+  "TCSlib.Complexity.TuringMachine.Build.Contract.Reach",
+  "TCSlib.Complexity.TuringMachine.Build.InputBit",
+  "TCSlib.Complexity.TuringMachine.Build.KeyTable",
+  "TCSlib.Complexity.TuringMachine.Build.WordArith",
+  "TCSlib.Programs.WordRAM.Extended"
+ ],
+ "per_owner": {
+  "TCSlib/Complexity/RAMSimulation.lean": {
+   "identifiers": 0
+  },
+  "TCSlib/Complexity/RAMSimulation/Sim/Encoding.lean": {
+   "identifiers": 59,
+   "resolved": 28,
+   "newly_cited_foreign": [
+    [
+     "Turing.Cfg",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "WordRAM.InRange",
+     "def",
+     "TCSlib.Programs.WordRAM.Steps"
+    ]
+   ]
+  },
+  "TCSlib/Complexity/RAMSimulation/Sim/Phases.lean": {
+   "identifiers": 76,
+   "resolved": 29,
+   "newly_cited_foreign": [
+    [
+     "Turing.Cfg",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "Turing.MultiTapeTM",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Deterministic"
+    ],
+    [
+     "Turing.NDTM",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ]
+   ]
+  },
+  "TCSlib/Complexity/RAMSimulation/Sim/Startup.lean": {
+   "identifiers": 38,
+   "resolved": 14,
+   "newly_cited_foreign": [
+    [
+     "Turing.Cfg.init",
+     "def",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "Turing.FinTM",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Finite"
+    ],
+    [
+     "Turing.MultiTapeTM",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Deterministic"
+    ]
+   ]
+  },
+  "TCSlib/Complexity/RAMSimulation/Simulation.lean": {
+   "identifiers": 0
+  },
+  "TCSlib/Complexity/TuringMachine.lean": {
+   "identifiers": 0
+  },
+  "TCSlib/Complexity/TuringMachine/Build/Contract.lean": {
+   "identifiers": 0
+  },
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Reach.lean": {
+   "identifiers": 64,
+   "resolved": 19,
+   "newly_cited_foreign": [
+    [
+     "Turing.Cfg",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "Turing.Contract",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Build.Contract.Basic"
+    ],
+    [
+     "Turing.MultiTapeTM",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Deterministic"
+    ]
+   ]
+  },
+  "TCSlib/Complexity/TuringMachine/Build/InputBit.lean": {
+   "identifiers": 37,
+   "resolved": 16,
+   "newly_cited_foreign": [
+    [
+     "Turing.Cfg",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "Turing.MultiTapeTM",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Deterministic"
+    ]
+   ]
+  },
+  "TCSlib/Complexity/TuringMachine/Build/KeyTable.lean": {
+   "identifiers": 65,
+   "resolved": 36,
+   "newly_cited_foreign": [
+    [
+     "Turing.Cfg",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "Turing.MultiTapeTM",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Deterministic"
+    ],
+    [
+     "Turing.TableAt",
+     "def",
+     "TCSlib.Complexity.TuringMachine.Build.RecordTable"
+    ],
+    [
+     "Turing.fieldsTape",
+     "def",
+     "TCSlib.Complexity.TuringMachine.Build.Catalog"
+    ],
+    [
+     "Turing.joinFields",
+     "def",
+     "TCSlib.Complexity.TuringMachine.Build.Catalog"
+    ],
+    [
+     "Turing.tableFields",
+     "def",
+     "TCSlib.Complexity.TuringMachine.Build.RecordTable"
+    ]
+   ]
+  },
+  "TCSlib/Complexity/TuringMachine/Build/WordArith.lean": {
+   "identifiers": 69,
+   "resolved": 36,
+   "newly_cited_foreign": [
+    [
+     "Turing.Cfg",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "Turing.FinTM.bufferTape",
+     "def",
+     "TCSlib.Complexity.TuringMachine.Simulation"
+    ],
+    [
+     "Turing.MultiTapeTM",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Deterministic"
+    ]
+   ]
+  },
+  "TCSlib/Programs/WordRAM/Extended.lean": {
+   "identifiers": 71,
+   "resolved": 36,
+   "newly_cited_foreign": [
+    [
+     "WordRAM.Instr",
+     "induct",
+     "TCSlib.Programs.WordRAM.Basic"
+    ],
+    [
+     "WordRAM.effect",
+     "def",
+     "TCSlib.Programs.WordRAM.Steps"
+    ],
+    [
+     "WordRAM.wd",
+     "def",
+     "TCSlib.Programs.WordRAM.Steps"
+    ]
+   ]
+  }
+ },
+ "homes": {
+  "TCSlib/Complexity/TuringMachine/Build/Catalog.lean": [
+   "Turing.fieldsTape",
+   "Turing.joinFields"
+  ],
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean": [
+   "Turing.Contract"
+  ],
+  "TCSlib/Complexity/TuringMachine/Build/RecordTable.lean": [
+   "Turing.TableAt",
+   "Turing.tableFields"
+  ],
+  "TCSlib/Complexity/TuringMachine/Configuration.lean": [
+   "Turing.Cfg",
+   "Turing.Cfg.init"
+  ],
+  "TCSlib/Complexity/TuringMachine/Deterministic.lean": [
+   "Turing.MultiTapeTM"
+  ],
+  "TCSlib/Complexity/TuringMachine/Finite.lean": [
+   "Turing.FinTM"
+  ],
+  "TCSlib/Complexity/TuringMachine/Nondeterministic.lean": [
+   "Turing.NDTM"
+  ],
+  "TCSlib/Complexity/TuringMachine/Simulation.lean": [
+   "Turing.FinTM.bufferTape"
+  ],
+  "TCSlib/Programs/WordRAM/Basic.lean": [
+   "WordRAM.Instr"
+  ],
+  "TCSlib/Programs/WordRAM/Steps.lean": [
+   "WordRAM.InRange",
+   "WordRAM.effect",
+   "WordRAM.wd"
+  ]
+ }
+}
