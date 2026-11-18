@@ -101,22 +101,23 @@ private lemma copy_step (x : List Bool) (j : ℕ) (hj : j < x.length) :
   have hsym : (copyCfg x (some 0) (j + 1) (by omega) (x.take j) j).inputSymbol = some x[j] :=
     inputSymbolInner j (by simp [copyCfg]; omega) hj
   have hs : (copyCfg x (some 0) (j + 1) (by omega) (x.take j) j).state = some 0 := rfl
-  unfold MultiTapeTM.step
-  rw [hs]
-  dsimp only
-  rw [hsym]
+  rw [MultiTapeTM.step_of_some hs, hsym]
   show (⟨.pos, fun _ => (some (some x[j]), .pos), none, some 0⟩ :
     Action 1 Bool (Fin 2)).apply _ = _
-  refine Cfg.ext rfl ?_ ?_ ?_ rfl
-  · apply Fin.ext
-    simp only [Action.apply, copyCfg]
+  refine Cfg.ext ?_ ?_ (funext fun i => ?_) (funext fun i => ?_) ?_
+  · rw [Action.apply_state]
+    rfl
+  · rw [Action.apply_inputPos]
+    apply Fin.ext
+    simp only [copyCfg]
     rw [moveInputPos_pos_of_ne_right _ (by simp; omega)]
-  · funext i
-    simp only [Action.apply, copyCfg]
+  · rw [Action.apply_workTapes]
+    simp only [copyCfg, Option.getD_some]
     rw [List.take_succ_eq_append_getElem hj, FinTM.bufferTape_append, List.length_take,
       Nat.min_eq_left hj.le]
-  · funext i
-    simp [Action.apply, copyCfg]
+  · simp [Action.apply_workTapePos, copyCfg]
+  · rw [Action.apply_output]
+    rfl
 
 /-- At the right blank the copier turns: both heads move left and the control becomes `1`.
 
@@ -130,20 +131,20 @@ private lemma copy_turn (x : List Bool) :
     rw [FinTM.inputSymbol_at _ x.length le_rfl rfl]
     simp
   have hs : (copyCfg x (some 0) (x.length + 1) (by omega) x x.length).state = some 0 := rfl
-  unfold MultiTapeTM.step
-  rw [hs]
-  dsimp only
-  rw [hsym]
+  rw [MultiTapeTM.step_of_some hs, hsym]
   show (⟨.neg, fun _ => (none, .neg), none, some 1⟩ : Action 1 Bool (Fin 2)).apply _ = _
-  refine Cfg.ext rfl ?_ ?_ ?_ rfl
-  · apply Fin.ext
-    simp only [Action.apply, copyCfg]
+  refine Cfg.ext ?_ ?_ (funext fun i => ?_) (funext fun i => ?_) ?_
+  · rw [Action.apply_state]
+    rfl
+  · rw [Action.apply_inputPos]
+    apply Fin.ext
+    simp only [copyCfg]
     rw [FinTM.moveInputPos_neg_val]
     simp
-  · funext i
-    simp [Action.apply, copyCfg]
-  · funext i
-    simp [Action.apply, copyCfg, sub_eq_add_neg]
+  · simp [Action.apply_workTapes, copyCfg, Cfg.workTapeSymbols_eq]
+  · simp [Action.apply_workTapePos, copyCfg, sub_eq_add_neg]
+  · rw [Action.apply_output]
+    rfl
 
 /-- The rewind: from input position `p ≤ |x|` in control `1`, `p` left moves of both heads
 reach input position `0`.
@@ -163,20 +164,20 @@ private lemma copy_rewind (x : List Bool) (p : ℕ) (hp : p ≤ x.length) (z : �
       have hsym : (copyCfg x (some 1) (p + 1) (by omega) x z).inputSymbol = some x[p] :=
         inputSymbolInner p (by simp [copyCfg]; omega) (by omega)
       have hs : (copyCfg x (some 1) (p + 1) (by omega) x z).state = some 1 := rfl
-      unfold MultiTapeTM.step
-      rw [hs]
-      dsimp only
-      rw [hsym]
+      rw [MultiTapeTM.step_of_some hs, hsym]
       show (⟨.neg, fun _ => (none, .neg), none, some 1⟩ : Action 1 Bool (Fin 2)).apply _ = _
-      refine Cfg.ext rfl ?_ ?_ ?_ rfl
-      · apply Fin.ext
-        simp only [Action.apply, copyCfg]
+      refine Cfg.ext ?_ ?_ (funext fun i => ?_) (funext fun i => ?_) ?_
+      · rw [Action.apply_state]
+        rfl
+      · rw [Action.apply_inputPos]
+        apply Fin.ext
+        simp only [copyCfg]
         rw [FinTM.moveInputPos_neg_val]
         simp
-      · funext i
-        simp [Action.apply, copyCfg]
-      · funext i
-        simp [Action.apply, copyCfg, sub_eq_add_neg]
+      · simp [Action.apply_workTapes, copyCfg, Cfg.workTapeSymbols_eq]
+      · simp [Action.apply_workTapePos, copyCfg, sub_eq_add_neg]
+      · rw [Action.apply_output]
+        rfl
     rw [hstep, ih (by omega)]
     simp only [copyCfg, Nat.cast_succ]
     congr 1
