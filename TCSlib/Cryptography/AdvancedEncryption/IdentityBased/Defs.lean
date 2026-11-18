@@ -68,6 +68,8 @@ computations; their efficiency is not part of the interface (per-scheme contract
   oracles case by case; `oracleImpl_zero`, `oracleImpl_one`, `oracleImpl_two`.
 * `IBEScheme.honestRun_eq`, `correct_iff`, `sidGame_eq`, `sidSecure_iff` — the experiments and
   predicates through their published equations.
+* `IBEScheme.sidSpec_dom_zero`, `sidSpec_dom_one`, `sidSpec_dom_two`, `sidSpec_rng_zero`,
+  `sidSpec_rng_one`, `sidSpec_rng_two` — the game's query and answer types.
 
 ## References
 
@@ -234,6 +236,38 @@ abbrev sidSpec (κ : ℕ) : OracleSpec (Fin 3) := bitSpec (S.inLens κ) (S.outLe
 /-- The IND-sID-CPA oracle specification is the bit specification at the scheme's query and
 answer lengths: `S.sidSpec κ = bitSpec (S.inLens κ) (S.outLens κ)`. -/
 theorem sidSpec_eq (κ : ℕ) : S.sidSpec κ = bitSpec (S.inLens κ) (S.outLens κ) := rfl
+
+/-- `Init` queries are identities: `(S.sidSpec κ).dom 0 = (Fin (S.idLen.eval κ) → Bool)`
+(`sidSpec_eq`, `bitSpec_dom`, `inLens_zero`). Glue for the game's types. -/
+theorem sidSpec_dom_zero (κ : ℕ) : (S.sidSpec κ).dom 0 = (Fin (S.idLen.eval κ) → Bool) := by
+  rw [sidSpec_eq, bitSpec_dom, inLens_zero]
+
+/-- `KeyGen` queries are identities: `(S.sidSpec κ).dom 1 = (Fin (S.idLen.eval κ) → Bool)`
+(`sidSpec_eq`, `bitSpec_dom`, `inLens_one`). Glue for the game's types. -/
+theorem sidSpec_dom_one (κ : ℕ) : (S.sidSpec κ).dom 1 = (Fin (S.idLen.eval κ) → Bool) := by
+  rw [sidSpec_eq, bitSpec_dom, inLens_one]
+
+/-- `Challenge` queries are two messages:
+`(S.sidSpec κ).dom 2 = (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool)` (`sidSpec_eq`,
+`bitSpec_dom`, `inLens_two`). Glue for the game's types. -/
+theorem sidSpec_dom_two (κ : ℕ) :
+    (S.sidSpec κ).dom 2 = (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) := by
+  rw [sidSpec_eq, bitSpec_dom, inLens_two]
+
+/-- `Init` answers parameters: `(S.sidSpec κ).rng 0 = (Fin (S.ppLen.eval κ) → Bool)`
+(`sidSpec_eq`, `bitSpec_rng`, `outLens_zero`). Glue for the game's types. -/
+theorem sidSpec_rng_zero (κ : ℕ) : (S.sidSpec κ).rng 0 = (Fin (S.ppLen.eval κ) → Bool) := by
+  rw [sidSpec_eq, bitSpec_rng, outLens_zero]
+
+/-- `KeyGen` answers a bit and a key: `(S.sidSpec κ).rng 1 = (Fin (S.skLen.eval κ + 1) → Bool)`
+(`sidSpec_eq`, `bitSpec_rng`, `outLens_one`). Glue for the game's types. -/
+theorem sidSpec_rng_one (κ : ℕ) : (S.sidSpec κ).rng 1 = (Fin (S.skLen.eval κ + 1) → Bool) := by
+  rw [sidSpec_eq, bitSpec_rng, outLens_one]
+
+/-- `Challenge` answers a ciphertext: `(S.sidSpec κ).rng 2 = (Fin (S.ctLen.eval κ) → Bool)`
+(`sidSpec_eq`, `bitSpec_rng`, `outLens_two`). Glue for the game's types. -/
+theorem sidSpec_rng_two (κ : ℕ) : (S.sidSpec κ).rng 2 = (Fin (S.ctLen.eval κ) → Bool) := by
+  rw [sidSpec_eq, bitSpec_rng, outLens_two]
 
 /-- The state of the IND-sID-CPA game: the committed identity `ID*` (once `Init` is asked) and
 the challenge ciphertext (once issued). -/
