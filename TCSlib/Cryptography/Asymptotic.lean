@@ -13,6 +13,7 @@ import TCSlib.Cryptography.Asymptotic.OneWay
 import TCSlib.Cryptography.Asymptotic.Collections
 import TCSlib.Cryptography.Asymptotic.CollectionShift
 import TCSlib.Cryptography.Asymptotic.Universal
+import TCSlib.Cryptography.Asymptotic.Realization
 import TCSlib.Cryptography.Pseudorandom.NextBit
 import TCSlib.Cryptography.Asymptotic.GoldreichLevinDomain
 import TCSlib.Cryptography.Asymptotic.HardCoreCollection
@@ -68,6 +69,9 @@ machine-closure facts of `TCSlib/Complexity/Randomized`.
 * `Collections` — collections of one-way functions, one-way and trapdoor permutations
   [PS10, Definitions 41.1, 55.1, 56.1; Theorem 42.2].
 * `Universal` — Levin's universal one-way function [PS10, Theorem 63.1, Algorithm 64.2].
+* `Realization` — `NUPPT.RealizesOn`: a non-uniform machine realises a reduction function on
+  encoded challenges, and polynomial-time pre-processing targets yield realisers (for
+  reductions only; honest algorithms use `PolyTimeComputable`).
 * `Pseudorandom.Generators.Asymptotic.Defs` gives the PRG interface and relates it to
   pseudorandom ensembles [PS10, Definitions 74.1 and 77.1].
 * `Pseudorandom.NextBit` gives the next-bit test and its completeness
