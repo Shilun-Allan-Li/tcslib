@@ -34,8 +34,8 @@ set_option autoImplicit false
 
 Dv1 fixes one security parameter and a polynomial input-length schedule. Dv2 counts
 field-vector payload bits; Dv3 fixes exact integral rounding; Dv5 uses the Boolean
-stretch lower bound. The explicit threshold below is convention C10. SP-W1 uses
-rational delta as construction data, coerced to real values in these analytic bounds.
+stretch lower bound. The explicit threshold uses a generous fifth-power payload bound.
+The rational noise exponent is coerced to real values in these analytic bounds.
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
   3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
 -/
@@ -45,9 +45,9 @@ namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
 /-- A sufficient schedule exponent is
 `E0 d delta tau = floor(max(10/delta,5/(tau-1)))+1`.
 [JLS26, Claim 4.1, p. 18]. Dv1 makes sufficiently large polynomial seed length an
-explicit condition on E. Convention C10 uses a deliberately generous fifth-power
+explicit condition on E. The estimate uses a deliberately generous fifth-power
 seed bound; d is retained in the interface although this sufficient threshold is
-independent of it when d≥1. SP-W1 coerces the construction's rational delta to real. -/
+independent of it when d≥1. The construction's rational noise exponent is coerced to real. -/
 noncomputable def E0 (_d : ℕ) (δ τ : ℝ) : ℕ :=
   ⌊max (10 / δ) (5 / (τ - 1))⌋₊ + 1
 
@@ -72,7 +72,7 @@ theorem seedBitsAt_eq (P : Params) (κ : ℕ) :
 uniformly over every kappa and every public prime. [JLS26, proof of Claim 4.1, p. 18].
 Dv1 fixes the polynomial schedule; Dv2-Dv3 replace the asymptotic expression by this
 explicit integral upper bound. Natural division and the final one cover rounding
-and the zero-parameter boundary. SP-W1 uses rational delta.
+and the zero-parameter boundary. The noise exponent is rational.
 
 **Proof sketch.** Count the repeated public vectors, flags, tensor coordinates and two
 factor arrays. Bound the rounded bucket count by its quotient plus one, and cancel
@@ -416,9 +416,9 @@ theorem jls_seedBits_le (P : Params) (π : PrimeSchedule) :
 /-- The raw construction has polynomial stretch when its schedule exponent is at least E0.
 [JLS26, Claim 4.1, p. 18]. Dv1 replaces sufficiently large polynomial seed length by
 `E0 d delta tau ≤ E`; Dv3 uses rounded noise and Dv5 uses the input stretch lower bound.
-SP-W1 supplies rational delta, coerced to real for the threshold. Dv18 keeps this
+The rational noise exponent is coerced to real for the threshold. Dv18 keeps this
 stretch theorem on the raw bundle; honest efficiency is supplied by the later assembly.
-SP-W3 requires eventual seed growth as well as the power bound.
+Eventual seed growth is required as well as the power bound.
 
 **Proof sketch.** Read the sufficient exponent to obtain E*delta/2>5 and E*(tau-1)>5.
 Apply the fifth-power payload bound. The rounded noise width eventually grows like

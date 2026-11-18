@@ -27,7 +27,7 @@ set_option autoImplicit false
 
 ## Main results
 
-* `lpnNoise_law`: the exact scalar-noise probabilities (M0 statement).
+* `lpnNoise_law`: the exact scalar-noise probabilities.
 * Owner-side readers expose every definition and explicit finite-coordinate equivalence.
 
 ## References
@@ -410,8 +410,8 @@ theorem encDraw_eq (F : Raw) (ℓ : ℕ) (r : F.Draw ℓ) :
             (List.ofFn r.2.2))) := rfl
 
 /-- The exact joint draw encoding is injective, so every matrix, secret, selector and residue
-is retained. [JLS26, Definition 2.3, pp. 9-10]. Disclosed pre-M0 refinement: faithfulness
-is explicit for the concrete finite-coordinate encoding.
+is retained. [JLS26, Definition 2.3, pp. 9-10]. Faithfulness is explicit
+for the concrete finite-coordinate encoding.
 
 **Proof sketch.** Split the nested pairs, apply the existing modular matrix/vector
 injectivity readers with the raw width bound, and recover every selector/residue pair
@@ -494,8 +494,8 @@ theorem encSample_eq (F : Raw) (ℓ : ℕ) (s : F.Sample ℓ) :
           (Encoding.Modular.encodeVector (F.residueBits.eval ℓ) s.2.2)) := rfl
 
 /-- The exact joint sampler-output encoding is injective, retaining the matrix, secret and
-noise vector. [JLS26, Definition 2.3, pp. 9-10]. Disclosed pre-M0 refinement: faithfulness
-is explicit for the concrete finite-coordinate encoding.
+noise vector. [JLS26, Definition 2.3, pp. 9-10]. Faithfulness is explicit
+for the concrete finite-coordinate encoding.
 
 **Proof sketch.** Split the two nested pairs using the existing pair-encoding reader,
 then apply the canonical modular matrix and vector injectivity theorems with

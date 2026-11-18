@@ -1,0 +1,497 @@
+From 049067cb23eac1822fecdbc558ca5f31fc231982 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 14:15:14 -0800
+Subject: [PATCH 37/37] gate52 r1 minors: G52-01..05, 07..09
+
+G52-01/02/07: disclose the computable rational-parameter version and the unproved arbitrary-real bridge; state the integer-log/natural-division formula; remove campaign labels while preserving Dv tags.
+G52-03: make both inverse schedules public PadQuad.nu aliases and keep their public readers via PadQuad.nu_eq. Existing inverse proofs already use the public API.
+G52-04/05: retain the five paired equivalence families and the existing padding/OneWay probability imports; the checkpoint report records the consolidation plan and neutral-home promotion requests.
+G52-08/09: the checkpoint report is rewritten against this source head; replace all nineteen facade placeholders without changing exports.
+
+All 670 frozen headers and public readers are preserved. Twenty-four statement-prose changes are explicitly authorized by the received Gate52 ruling and hash-bound in local evidence. The M6 bodies were committed separately.
+
+Move two existing encoding-reader rewrites to the final pointwise M6 sampler equation, removing the full-build unused-simp warnings without changing a statement or witness.
+---
+ .../Obfuscation/StructuredSeed.lean           | 46 ++++++++++---------
+ .../Obfuscation/StructuredSeed/BoolPRG.lean   |  2 +-
+ .../Obfuscation/StructuredSeed/Claim42.lean   |  2 +-
+ .../Obfuscation/StructuredSeed/Defs.lean      |  2 +-
+ .../Obfuscation/StructuredSeed/Encoding.lean  | 10 ++--
+ .../Obfuscation/StructuredSeed/Hybrids.lean   |  8 ++--
+ .../Obfuscation/StructuredSeed/LPN.lean       | 10 ++--
+ .../Obfuscation/StructuredSeed/Params.lean    | 29 ++++++++----
+ .../Obfuscation/StructuredSeed/Samplers.lean  |  2 +-
+ .../Obfuscation/StructuredSeed/Security.lean  | 25 ++++++++--
+ .../Obfuscation/StructuredSeed/Stretch.lean   | 14 +++---
+ .../Obfuscation/StructuredSeed/Targets.lean   | 27 +++++++----
+ 12 files changed, 109 insertions(+), 68 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed.lean
+index 043162f7dba0ee12941efa9147f5e20ab2fd6271..eacff508d7d6fc99e9e1d447f706df28ab01e396 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed.lean
+@@ -34,34 +34,38 @@ set_option autoImplicit false
+ ## Contents
+ 
+ * `Basic`: reusable fixed-width tagged-list encoding lemmas.
+-* `LPN`: the lpn component.
+-* `BoolPRG`: the boolprg component.
+-* `Degree`: the degree component.
+-* `PolyTerms`: the polyterms component.
+-* `Defs`: the defs component.
+-* `Params`: the params component.
++* `LPN`: exact scalar noise, the canonical `LPNFamily.Raw` view and efficient `LPNFamily`.
++* `BoolPRG`: indexed Boolean generators, multilinear representations, locality and stretch.
++* `Degree`: `pubDegree` and `privDegree` with weighted polynomial degree bounds.
++* `PolyTerms`: finite polynomial term lists, `PolyTerms.denote` and faithful term encodings.
++* `Defs`: public prime inputs, raw and efficient sPRG syntax, security and complexity.
++* `Params`: rational noise data, power schedules, rounded dimensions and `lpnFamily_raw`.
+ * `Encoding`: explicit finite coordinates and construction encodings.
+-* `Buckets`: the buckets component.
+-* `SparseFactor`: the sparsefactor component.
+-* `Polys`: the polys component.
+-* `Samplers`: the samplers component.
+-* `Correctness`: the correctness component.
+-* `Stretch`: the stretch component.
+-* `Claim42.Load`: the claim42 load component.
+-* `Claim42`: the claim42 component.
+-* `Hybrids`: the hybrids component.
+-* `Reductions.LPN`: the reductions lpn component.
+-* `Reductions.PRG`: the reductions prg component.
+-* `Security`: the security component.
+-* `Targets`: the targets component.
++* `Buckets`: deterministic bucket ranks, optional grid positions and correction matrices.
++* `SparseFactor`: row-major sparse factors and reconstruction for bounded support.
++* `Polys`: the tensor and correction maps `G1`-`G4` and their public/private degree bounds.
++* `Samplers`: exact joint seed cores, their derived laws, `eval'` and `jlsSPRG_raw`.
++* `Correctness`: sampled-seed `G4_eval_eq`, `eval'_correct` and `jls_hasComplexity`.
++* `Stretch`: the sufficient exponent `E0` and growing-seed `jls_hasPolyStretch`.
++* `Claim42.Load`: binomial estimates and finite bucket-occupancy tail bounds.
++* `Claim42`: `Params.claim42`, the error bound uniform in every public prime.
++* `Hybrids`: exact hybrid/chain games, endpoint acceptance equalities and statistical hops.
++* `Reductions.LPN`: canonical LPN advice/preprocessing and the every-realiser `lpn_hop`.
++* `Reductions.PRG`: Boolean challenge advice/preprocessing and the every-realiser `prg_hop`.
++* `Security`: `prop41`, raw negligible/subexponential security and own-family existence.
++* `Targets`: six uniform efficiency targets, conditional links and primitive assemblies.
+ 
+ ## Main definitions
+ 
+-The imported modules provide the raw algorithm bundles, efficient primitives and Phase B targets.
++The principal types are `BoolPRG`, `LPNFamily.Raw`, `LPNFamily`, `SPRG.Raw`, `SPRG`
++and `Params`. `Params.Targets` names the uniform efficiency hypotheses used in assembly.
+ 
+ ## Main results
+ 
+-The imported modules state correctness, stretch and security for the structured-seed construction.
++`Params.G4_eval_eq` and `jls_hasComplexity` give algebraic correctness;
++`jls_hasPolyStretch` gives growing-seed stretch. `prop41` bounds advantage, and
++`theorem41` gives raw security, complexity and stretch from the stated assumptions.
++`theorem41_of_targets` and the efficient existence results are conditional on the targets.
+ 
+ ## References
+ 
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean
+index 96732802f08830bef1a98bbec6c3b96966134dfb..6aab7664f9c5e604be3b1129da7c4fd7bdddcb6a 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean
+@@ -45,7 +45,7 @@ open Complexity Turing Games
+ with uniformly efficient index sampling and evaluation. [JLS26, Definition 3.4, p. 11].
+ Deviations Dv4 and Dv17: the family is indexed by seed length, and index sampling is a
+ core applied to one exact finite draw; efficiency uses the shared sampler contract.
+-Disclosed pre-M0 refinement: supplied finite-coordinate equivalences and injective encodings
++Supplied finite-coordinate equivalences and injective encodings
+ retain the complete index and draw instead of hiding data in encoding collisions. -/
+ structure BoolPRG where
+   /-- The function-index type at seed length `n`. -/
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42.lean
+index e02b37af2d53e694e31ce3f8fa30c857d7251d3c..3c1f0f8aaa0cbf81ca3a707b683bb0df9f752a99 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42.lean
+@@ -48,7 +48,7 @@ namespace Params
+ 
+ /-- For all sufficiently large κ the error event has probability at most 2^(-κ),
+ uniformly in every public prime [JLS26, Claim 4.2, pp. 19-21]. Dv3 uses the rounded
+-rational noise schedule (SP-W1); Dv7 makes the common eventual threshold explicit.
++rational noise schedule; Dv7 makes the common eventual threshold explicit.
+ 
+ **Proof sketch.** Use the three-event decomposition. Locality and Markov bound Cond1,
+ conditionally on each fixed generator index. Independent noise repetitions then bound
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean
+index 842295789287a56436b47ee3318d2929cd2af68a..b837f7ae07714a5b0ecf7fe936f2c3549353de74 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean
+@@ -280,7 +280,7 @@ theorem seedBits_eq (S : Raw) (κ : ℕ) :
+ 
+ /-- Polynomial stretch expands seed bits by some exponent greater than one
+ [JLS26, Remark 3.1, p. 10]. Dv1 is the fixed polynomial schedule form.
+-SP-W3 also requires seed bits to be at least κ eventually, excluding constant-length
++Seed bits are also required to be at least κ eventually, excluding constant-length
+ vacuity in the single-parameter existence statements. -/
+ def HasPolyStretch (S : Raw) : Prop :=
+   ∃ τ : ℝ, 1 < τ ∧ ∃ κ₀, ∀ κ ≥ κ₀,
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean
+index 0ce60ea13fee0e7854365d2ebbb7107b734bd12c..015f4e57ed19be7a492c560a0d9500f6ec66157a 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean
+@@ -25,7 +25,7 @@ set_option autoImplicit false
+ ## Main results
+ 
+ Named injectivity and length statements accompany the explicit codes. Every definition
+-has an owner-side reader. These are the encoding part of the Phase A M0 checkpoint.
++has a proved reader that exposes its encoding and coordinate conventions.
+ 
+ ## References
+ 
+@@ -35,8 +35,9 @@ has an owner-side reader. These are the encoding part of the Phase A M0 checkpoi
+ 
+ Disclosed modular refinement: the encoding portion of `Samplers` has its own module.
+ Dv1 and Dv3 fix the single-parameter dimensions and exact rational noise schedule;
+-Dv15 and Dv17 use explicit finite coordinates and one exact product draw. SP-W1 keeps
+-rational delta as data. No core, sampler construction, or efficiency proof is defined here.
++Dv15 and Dv17 use explicit finite coordinates and one exact product draw. The noise
++exponent is rational construction data. No core, sampler construction, or efficiency proof is
++defined here.
+ * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
+   3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
+ -/
+@@ -424,7 +425,8 @@ theorem m_le_mBound (P : Params) (κ : ℕ) : P.m κ ≤ P.mBound.eval κ := by
+   exact (P.G.outLen_le _).trans (PolyExpr.eval_mono _ (P.n_le_nBound κ))
+ 
+ /-- The rounded noise denominator satisfies `W ≤ ell+1` at every parameter.
+-[JLS26, Section 4, p. 15]. Dv3 rounds the noise rate upward; SP-W1 supplies `0<delta<1`.
++[JLS26, Section 4, p. 15]. Dv3 rounds the noise rate upward and uses the rational exponent bounds
++`0<delta<1`.
+ 
+ **Proof sketch.** At dimension zero, max-one rounding gives W=1. At positive dimension,
+ compare the squared floor with the real power `ell^delta`, then use delta<1 and ell≥1. -/
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean
+index dcbee890d29e0c8ff2410cfb9d9a770601b7bd32..8c6e9e62dfb7369def22b6c7465ae0274781f759 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean
+@@ -176,8 +176,8 @@ theorem hyb_random_eq_raw (P : Params) (π : PrimeSchedule) (A : NUPPT) (κ : 
+     Bool.false_eq_true, ite_false]
+ 
+ /-- H1 and the real-tail chain's initial game have equal acceptance probabilities
+-[JLS26, Lemma 4.2, p. 19]. Dv8 includes buckets. Pre-M0 repair SP-W2 compares
+-probabilities: the free oracle programs differ by an unused uniform-vector query.
++[JLS26, Lemma 4.2, p. 19]. Dv8 includes buckets. The statement compares probabilities:
++the free oracle programs differ by an unused uniform-vector query.
+ 
+ **Proof sketch.** Read the core's public vectors, pass to acceptance expectations, and
+ sum out the unused uniform vectors using the existing exact uniform expectation law. -/
+@@ -191,8 +191,8 @@ theorem hyb_prg_accept_eq_chain_zero (P : Params) (A : NUPPT) (κ : ℕ)
+     if_false, ite_true, ProbComp.expect_const]
+ 
+ /-- H2 and the uniform-tail chain's initial game have equal acceptance probabilities
+-[JLS26, Lemma 4.2, p. 19]. Pre-M0 repair SP-W2 compares probabilities rather than
+-free oracle syntax, since the chain makes an additional unused uniform-vector query.
++[JLS26, Lemma 4.2, p. 19]. The statement compares probabilities rather than free oracle
++syntax, since the chain makes an additional unused uniform-vector query.
+ 
+ **Proof sketch.** Read the public vectors and use the uniform expectation law to
+ marginalize the unused draw inside acceptance probability. -/
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean
+index 13d3fb81ccc2f0406e9d3a19d4ee23daeae5e2a4..dfeb2a44cd4d9608e817e3e96795c5893ee09e4c 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean
+@@ -27,7 +27,7 @@ set_option autoImplicit false
+ 
+ ## Main results
+ 
+-* `lpnNoise_law`: the exact scalar-noise probabilities (M0 statement).
++* `lpnNoise_law`: the exact scalar-noise probabilities.
+ * Owner-side readers expose every definition and explicit finite-coordinate equivalence.
+ 
+ ## References
+@@ -410,8 +410,8 @@ theorem encDraw_eq (F : Raw) (ℓ : ℕ) (r : F.Draw ℓ) :
+             (List.ofFn r.2.2))) := rfl
+ 
+ /-- The exact joint draw encoding is injective, so every matrix, secret, selector and residue
+-is retained. [JLS26, Definition 2.3, pp. 9-10]. Disclosed pre-M0 refinement: faithfulness
+-is explicit for the concrete finite-coordinate encoding.
++is retained. [JLS26, Definition 2.3, pp. 9-10]. Faithfulness is explicit
++for the concrete finite-coordinate encoding.
+ 
+ **Proof sketch.** Split the nested pairs, apply the existing modular matrix/vector
+ injectivity readers with the raw width bound, and recover every selector/residue pair
+@@ -494,8 +494,8 @@ theorem encSample_eq (F : Raw) (ℓ : ℕ) (s : F.Sample ℓ) :
+           (Encoding.Modular.encodeVector (F.residueBits.eval ℓ) s.2.2)) := rfl
+ 
+ /-- The exact joint sampler-output encoding is injective, retaining the matrix, secret and
+-noise vector. [JLS26, Definition 2.3, pp. 9-10]. Disclosed pre-M0 refinement: faithfulness
+-is explicit for the concrete finite-coordinate encoding.
++noise vector. [JLS26, Definition 2.3, pp. 9-10]. Faithfulness is explicit
++for the concrete finite-coordinate encoding.
+ 
+ **Proof sketch.** Split the two nested pairs using the existing pair-encoding reader,
+ then apply the canonical modular matrix and vector injectivity theorems with
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean
+index 6ed2bd68b8e1f30cece292f5f8398e4d0a00c277..432103e9eef7a0b5167c88d117fbf21877eb2ee1 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean
+@@ -44,8 +44,12 @@ open Complexity
+ 
+ /-- The construction fixes degree, rational noise exponent, polynomial schedule
+ exponent, and an efficient Boolean PRG [JLS26, Theorem 4.1, p. 11; §4, p. 15].
+-Dv9: no prime is stored. SP-W1: δ is rational data, per the user's ruling,
+-so the exact rounded noise schedule can have a uniform implementation.
++Dv9: no prime is stored.
++
++The noise exponent is rational so that the rounded noise schedule is uniformly computable. This is
++the computable-parameter version of the construction; no bridge from the paper's arbitrary-real
++assumption is proved here.
++
+ Dv11 requires positive degree, and Dv4 carries the multilinear representation. -/
+ structure Params where
+   d : ℕ
+@@ -86,7 +90,7 @@ def m (P : Params) (κ : ℕ) : ℕ := P.G.outLen (P.n κ)
+ theorem m_eq (P : Params) (κ : ℕ) : P.m κ = P.G.outLen (P.n κ) := rfl
+ 
+ /-- The rounded square-root noise denominator is max 1 floor(L^(δ/2))
+-[JLS26, §4, p. 15]. Dv3 rounds in the noisier direction; SP-W1 uses rational δ. -/
++[JLS26, §4, p. 15]. Dv3 rounds in the noisier direction and uses a rational noise exponent. -/
+ noncomputable def noiseWidth (P : Params) (L : ℕ) : ℕ :=
+   max 1 ⌊(L : ℝ) ^ ((P.δ : ℝ) / 2)⌋₊
+ 
+@@ -101,7 +105,8 @@ noncomputable def noiseDenAt (P : Params) (L : ℕ) : ℕ := P.noiseWidth L ^ 2
+ /-- The noise denominator is the square of noiseWidth; glue. -/
+ theorem noiseDenAt_eq (P : Params) (L : ℕ) : P.noiseDenAt L = P.noiseWidth L ^ 2 := rfl
+ 
+-/-- At κ, `w=noiseWidth(ℓ κ)` [JLS26, §4, p. 15]. Dv3 and SP-W1 fix rounding. -/
++/-- At κ, `w=noiseWidth(ℓ κ)` [JLS26, §4, p. 15]. Dv3 fixes rounding with the rational noise
++exponent. -/
+ noncomputable def w (P : Params) (κ : ℕ) : ℕ := P.noiseWidth (P.ℓ κ)
+ 
+ /-- The construction's noise width is indexed by ℓ; glue. -/
+@@ -142,7 +147,10 @@ noncomputable def B (P : Params) (κ : ℕ) : ℕ :=
+ theorem B_eq (P : Params) (κ : ℕ) :
+     P.B κ = max 1 ((P.m κ * P.t κ + P.W κ - 1) / P.W κ) := rfl
+ 
+-/-- Bad-output threshold is floor(m*log₂(n)/W) [JLS26, §4, p. 15]. Dv3 fixes the floor. -/
++/-- The bad-output threshold is `m * Nat.log 2 n / W` [JLS26, §4, p. 15].
++The formula means: multiply m by the integer base-two logarithm of n, then divide by W using
++natural division. Dv3 adds downward rounding of the logarithm before multiplication, as well as
++the final natural division, relative to the real-logarithm expression in JLS26 p. 15. -/
+ noncomputable def Γ (P : Params) (κ : ℕ) : ℕ :=
+   P.m κ * Nat.log 2 (P.n κ) / P.W κ
+ 
+@@ -153,20 +161,21 @@ theorem Γ_eq (P : Params) (κ : ℕ) :
+ /-- The inverse LPN schedule is the greatest κ with κ^E≤L [JLS26, Remark 2.1, p. 9].
+ Dv1 and Dv3 reindex the fixed LPN family by its own secret dimension. -/
+ def kappaOf (P : Params) (L : ℕ) : ℕ :=
+-  Nat.findGreatest (fun κ => κ ^ P.E ≤ L) L
++  PadQuad.nu P.E L
+ 
+ /-- The LPN inverse is a bounded greatest search; glue. -/
+ theorem kappaOf_eq (P : Params) (L : ℕ) :
+-    P.kappaOf L = Nat.findGreatest (fun κ => κ ^ P.E ≤ L) L := rfl
++    P.kappaOf L = Nat.findGreatest (fun κ => κ ^ P.E ≤ L) L := PadQuad.nu_eq P.E L
+ 
+ /-- The inverse Boolean schedule uses exponent E*D [JLS26, Remark 2.1, p. 9].
+ Dv1 reindexes the Boolean assumption by its seed length. -/
+ def kappaOfN (P : Params) (N : ℕ) : ℕ :=
+-  Nat.findGreatest (fun κ => κ ^ (P.E * P.D) ≤ N) N
++  PadQuad.nu (P.E * P.D) N
+ 
+ /-- The Boolean inverse is a bounded greatest search; glue. -/
+ theorem kappaOfN_eq (P : Params) (N : ℕ) :
+-    P.kappaOfN N = Nat.findGreatest (fun κ => κ ^ (P.E * P.D) ≤ N) N := rfl
++    P.kappaOfN N = Nat.findGreatest (fun κ => κ ^ (P.E * P.D) ≤ N) N :=
++  PadQuad.nu_eq (P.E * P.D) N
+ 
+ /-- The public seed contains κ blocks of n residues and one error flag
+ [JLS26, SdSamp', pp. 15-16]. Dv2 counts field elements before their bit widths. -/
+@@ -363,7 +372,7 @@ theorem lpnSamples_le (P : Params) (L : ℕ) :
+ /-- The construction's raw LPN family is indexed by its own secret dimension
+ [JLS26, Definition 2.3, pp. 9-10]. Dv3 fixes its sample schedule, transpose,
+ rounded noise and L+1-bit residues. Dv9 reads an arbitrary public prime schedule.
+-SP-W1 uses rational δ; sampler efficiency is added only in the target assembly. -/
++The noise exponent is rational; sampler efficiency is added only in the target assembly. -/
+ noncomputable def lpnFamily_raw (P : Params) (π : PrimeSchedule) : LPNFamily.Raw where
+   samples L := L ^ P.D
+   modulus L := (π (P.kappaOf L)).p
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Samplers.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Samplers.lean
+index 18e9ca8439227d2271be3e91181c8ecff928a3ba..3f35c478e5775a24b16e37332ba41a2026ace7e1 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Samplers.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Samplers.lean
+@@ -351,7 +351,7 @@ end Params
+ pp. 15-17]. Dv1-Dv3 fix the polynomial schedule, field vectors and rounded
+ exact laws; Dv9 supplies an arbitrary prime schedule; Dv15 uses explicit
+ finite coordinates; Dv17-Dv18 add no sampler or efficiency proof here.
+-SP-W1 uses rational δ throughout. The primitive is assembled only from targets. -/
++The noise exponent is rational throughout. The primitive is assembled only from targets. -/
+ noncomputable def jlsSPRG_raw (P : Params) (π : PrimeSchedule) : SPRG.Raw where
+   modulus κ := (π κ).p
+   modulus_prime κ := (π κ).prime
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean
+index f69a0e868667d776fb87929efc0492797eb8e96d..932e9aa768a26123a51ab4f478d19925cd5649f5 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean
+@@ -413,7 +413,10 @@ theorem jls_subexpSecure (P : Params) (π : PrimeSchedule) {cLoc : ℕ}
+ polynomial stretch [JLS26, Theorem 4.1, p. 11]. Dv1 fixes a sufficiently large schedule;
+ Dv3 uses its own LPN family; Dv6 uses composite bidegree; Dv9 allows every prime schedule;
+ Dv10 follows p. 17's degree d; Dv14 assumes realisability; Dv18 uses Raw.
+-SP-W1 restricts δ to rational data, coerced to real values in the stretch threshold.
++
++The noise exponent is rational so that the rounded noise schedule is uniformly computable. This is
++the computable-parameter version of the construction; no bridge from the paper's arbitrary-real
++assumption is proved here.
+ 
+ **Proof sketch.** Combine raw security, the G4 correctness/degree theorem, and Claim 4.1. -/
+ theorem theorem41 (P : Params) (π : PrimeSchedule) {cLoc : ℕ} {τ : ℝ}
+@@ -427,8 +430,12 @@ theorem theorem41 (P : Params) (π : PrimeSchedule) {cLoc : ℕ} {τ : ℝ}
+     jls_hasPolyStretch P π hτ hs hE⟩
+ 
+ /-- The raw construction has the same complexity/stretch and subexponential security
+-[JLS26, Theorem 4.1, p. 11]. Dv13 means advantage against NUPPT, Dv14 assumes
+-realisability, and Dv18 leaves the primitive assembly to the targets.
++[JLS26, Theorem 4.1, p. 11]. Dv13 means advantage against NUPPT, Dv14 assumes realisability, and
++Dv18 leaves the primitive assembly to the targets.
++
++The noise exponent is rational so that the rounded noise schedule is uniformly computable. This is
++the computable-parameter version of the construction; no bridge from the paper's arbitrary-real
++assumption is proved here.
+ 
+ **Proof sketch.** Combine jls_subexpSecure, G4 correctness/degree, and Claim 4.1. -/
+ theorem theorem41_subexp (P : Params) (π : PrimeSchedule) {cLoc : ℕ} {τ : ℝ}
+@@ -444,7 +451,11 @@ theorem theorem41_subexp (P : Params) (π : PrimeSchedule) {cLoc : ℕ} {τ : 
+ /-- A secure raw structured-seed generator exists for every prime schedule
+ [JLS26, Theorem 4.1, p. 11]. Dv1 chooses a polynomial schedule; Dv3 assumes LPN
+ only for the construction's own families; Dv14 assumes realisability; Dv18 returns Raw.
+-SP-W1 uses rational δ; this statement does not claim a literal Definition 2.3 bridge.
++
++The noise exponent is rational so that the rounded noise schedule is uniformly computable. This is
++the computable-parameter version of the construction; no bridge from the paper's arbitrary-real
++assumption is proved here.
++This statement also does not claim a literal Definition 2.3 bridge.
+ 
+ **Proof sketch.** Choose E=max 1 E0, build Params from the given G and representation,
+ and apply theorem41 with the supplied family assumption and realisability. -/
+@@ -468,7 +479,11 @@ theorem exists_sprg_raw {d cLoc : ℕ} (hd : 1 ≤ d) {δ : ℚ} {τ : ℝ}
+ 
+ /-- A subexponentially secure raw generator exists for every prime schedule
+ [JLS26, Theorem 4.1, p. 11]. Dv13 uses a common subexponential advantage exponent;
+-Dv14 assumes realisability; Dv18 returns the raw bundle. SP-W1 uses rational δ.
++Dv14 assumes realisability; Dv18 returns the raw bundle.
++
++The noise exponent is rational so that the rounded noise schedule is uniformly computable. This is
++the computable-parameter version of the construction; no bridge from the paper's arbitrary-real
++assumption is proved here.
+ 
+ **Proof sketch.** Choose the same sufficiently large schedule exponent and apply
+  theorem41_subexp to the supplied family hardness and realisability. -/
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean
+index 23a9b6079f7b22cec10b9fd4df1946e287fab3b4..0896a2b68d45f0d9ef7f0c2662115cb44d195bd9 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean
+@@ -34,8 +34,8 @@ set_option autoImplicit false
+ 
+ Dv1 fixes one security parameter and a polynomial input-length schedule. Dv2 counts
+ field-vector payload bits; Dv3 fixes exact integral rounding; Dv5 uses the Boolean
+-stretch lower bound. The explicit threshold below is convention C10. SP-W1 uses
+-rational delta as construction data, coerced to real values in these analytic bounds.
++stretch lower bound. The explicit threshold uses a generous fifth-power payload bound.
++The rational noise exponent is coerced to real values in these analytic bounds.
+ * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
+   3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
+ -/
+@@ -45,9 +45,9 @@ namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+ /-- A sufficient schedule exponent is
+ `E0 d delta tau = floor(max(10/delta,5/(tau-1)))+1`.
+ [JLS26, Claim 4.1, p. 18]. Dv1 makes sufficiently large polynomial seed length an
+-explicit condition on E. Convention C10 uses a deliberately generous fifth-power
++explicit condition on E. The estimate uses a deliberately generous fifth-power
+ seed bound; d is retained in the interface although this sufficient threshold is
+-independent of it when d≥1. SP-W1 coerces the construction's rational delta to real. -/
++independent of it when d≥1. The construction's rational noise exponent is coerced to real. -/
+ noncomputable def E0 (_d : ℕ) (δ τ : ℝ) : ℕ :=
+   ⌊max (10 / δ) (5 / (τ - 1))⌋₊ + 1
+ 
+@@ -72,7 +72,7 @@ theorem seedBitsAt_eq (P : Params) (κ : ℕ) :
+ uniformly over every kappa and every public prime. [JLS26, proof of Claim 4.1, p. 18].
+ Dv1 fixes the polynomial schedule; Dv2-Dv3 replace the asymptotic expression by this
+ explicit integral upper bound. Natural division and the final one cover rounding
+-and the zero-parameter boundary. SP-W1 uses rational delta.
++and the zero-parameter boundary. The noise exponent is rational.
+ 
+ **Proof sketch.** Count the repeated public vectors, flags, tensor coordinates and two
+ factor arrays. Bound the rounded bucket count by its quotient plus one, and cancel
+@@ -416,9 +416,9 @@ theorem jls_seedBits_le (P : Params) (π : PrimeSchedule) :
+ /-- The raw construction has polynomial stretch when its schedule exponent is at least E0.
+ [JLS26, Claim 4.1, p. 18]. Dv1 replaces sufficiently large polynomial seed length by
+ `E0 d delta tau ≤ E`; Dv3 uses rounded noise and Dv5 uses the input stretch lower bound.
+-SP-W1 supplies rational delta, coerced to real for the threshold. Dv18 keeps this
++The rational noise exponent is coerced to real for the threshold. Dv18 keeps this
+ stretch theorem on the raw bundle; honest efficiency is supplied by the later assembly.
+-SP-W3 requires eventual seed growth as well as the power bound.
++Eventual seed growth is required as well as the power bound.
+ 
+ **Proof sketch.** Read the sufficient exponent to obtain E*delta/2>5 and E*(tau-1)>5.
+ Apply the fifth-power payload bound. The rounded noise width eventually grows like
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean
+index c5c4adf663737133bb914a6150be2158447142e0..b68dfef10d361a58131273ec1a07d8e506c0348c 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean
+@@ -308,19 +308,20 @@ theorem sdSampEfficient_of_targets (P : Params) (π : PrimeSchedule)
+       (fun κ I => (jlsSPRG_raw P π).sdCore κ I) := by
+   have hc := ((P.coreTarget_iff).mp hC).2
+   have hd := ((P.drawSamplerTarget_iff).mp hD).2
+-  simp only [Params.sdParam_eq, Params.sdWord_eq, Params.encSeed'_eq,
+-    PrimeParam.enc_eq] at hc hd
++  simp only [Params.sdParam_eq, Params.sdWord_eq, PrimeParam.enc_eq] at hc hd
+   obtain ⟨U, c, e, he, hfail⟩ := (drawSamplable_iff _ _).mp hd
+   obtain ⟨f, hf, hcore⟩ := (coreComputable_iff _ _ _ _).mp hc
+   rw [jlsSPRG_raw_eq]
+-  simp only [SPRG.Raw.sdWord_eq, SPRG.Raw.encPP_eq, SPRG.Raw.encSeed_eq,
++  simp only [SPRG.Raw.sdWord_eq, SPRG.Raw.encPP_eq,
+     PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const]
+   apply SamplesEfficiently.intro
+   · exact (drawSamplable_iff _ _).mpr
+       ⟨U, c, fun κ I => e κ ⟨π κ, I⟩, fun κ I w => he κ ⟨π κ, I⟩ w,
+         fun κ I => hfail κ ⟨π κ, I⟩⟩
+-  · exact (coreComputable_iff _ _ _ _).mpr
+-      ⟨f, hf, fun κ I d => hcore κ ⟨π κ, I⟩ d⟩
++  · apply (coreComputable_iff _ _ _ _).mpr
++    refine ⟨f, hf, ?_⟩
++    intro κ I d
++    simpa only [SPRG.Raw.encSeed_eq, Params.encSeed'_eq] using hcore κ ⟨π κ, I⟩ d
+ 
+ /-- T6 specializes to the sampler field of each raw LPN family; glue.
+ 
+@@ -392,7 +393,10 @@ theorem jlsSPRG_toRaw (P : Params) (π : PrimeSchedule) (hT : P.Targets) :
+ /-- The targets give a secure primitive with efficient (d,2) complexity and stretch
+ [JLS26, Theorem 4.1, p. 11]. Dv3 assumes the construction's own LPN family;
+ Dv6 uses composite bidegree; Dv9 allows every prime schedule; Dv18 assembles efficiency.
+-SP-W1 uses rational δ, coerced to real values in the schedule threshold.
++
++The noise exponent is rational so that the rounded noise schedule is uniformly computable. This is
++the computable-parameter version of the construction; no bridge from the paper's arbitrary-real
++assumption is proved here.
+ 
+ **Proof sketch.** Targets provide realisability and the primitive's honest efficiency.
+ Apply the raw theorem, transport its properties through jlsSPRG_toRaw, and use T2 for
+@@ -419,7 +423,10 @@ theorem theorem41_of_targets (P : Params) (π : PrimeSchedule) {cLoc : ℕ} {τ
+ /-- Under the efficiency targets an efficient secure sPRG exists
+ [JLS26, Theorem 4.1, p. 11]. Dv3 uses the construction's own LPN families; Dv18
+ inhabits the primitive from targets rather than asserting unproved efficiency.
+-SP-W1 restricts δ to rational data.
++
++The noise exponent is rational so that the rounded noise schedule is uniformly computable. This is
++the computable-parameter version of the construction; no bridge from the paper's arbitrary-real
++assumption is proved here.
+ 
+ **Proof sketch.** Choose E=max 1 E0, specialize the targets to those parameters, and apply
+  theorem41_of_targets to the given Boolean PRG and construction-family assumption. -/
+@@ -445,7 +452,11 @@ theorem exists_sprg_of_targets {d cLoc : ℕ} (hd : 1 ≤ d) {δ : ℚ} {τ : 
+ 
+ /-- Under the targets and subexponential assumptions an efficient subexponentially secure
+ sPRG exists [JLS26, Theorem 4.1, p. 11]. Dv13 bounds advantage against NUPPT;
+-Dv18 requires the honest efficiency fields. SP-W1 uses rational δ.
++Dv18 requires the honest efficiency fields.
++
++The noise exponent is rational so that the rounded noise schedule is uniformly computable. This is
++the computable-parameter version of the construction; no bridge from the paper's arbitrary-real
++assumption is proved here.
+ 
+ **Proof sketch.** Choose a sufficiently large E, use the raw subexponential theorem and
+ T2, then assemble the primitive from the specialized target witnesses. -/

@@ -413,7 +413,10 @@ theorem jls_subexpSecure (P : Params) (π : PrimeSchedule) {cLoc : ℕ}
 polynomial stretch [JLS26, Theorem 4.1, p. 11]. Dv1 fixes a sufficiently large schedule;
 Dv3 uses its own LPN family; Dv6 uses composite bidegree; Dv9 allows every prime schedule;
 Dv10 follows p. 17's degree d; Dv14 assumes realisability; Dv18 uses Raw.
-SP-W1 restricts δ to rational data, coerced to real values in the stretch threshold.
+
+The noise exponent is rational so that the rounded noise schedule is uniformly computable. This is
+the computable-parameter version of the construction; no bridge from the paper's arbitrary-real
+assumption is proved here.
 
 **Proof sketch.** Combine raw security, the G4 correctness/degree theorem, and Claim 4.1. -/
 theorem theorem41 (P : Params) (π : PrimeSchedule) {cLoc : ℕ} {τ : ℝ}
@@ -427,8 +430,12 @@ theorem theorem41 (P : Params) (π : PrimeSchedule) {cLoc : ℕ} {τ : ℝ}
     jls_hasPolyStretch P π hτ hs hE⟩
 
 /-- The raw construction has the same complexity/stretch and subexponential security
-[JLS26, Theorem 4.1, p. 11]. Dv13 means advantage against NUPPT, Dv14 assumes
-realisability, and Dv18 leaves the primitive assembly to the targets.
+[JLS26, Theorem 4.1, p. 11]. Dv13 means advantage against NUPPT, Dv14 assumes realisability, and
+Dv18 leaves the primitive assembly to the targets.
+
+The noise exponent is rational so that the rounded noise schedule is uniformly computable. This is
+the computable-parameter version of the construction; no bridge from the paper's arbitrary-real
+assumption is proved here.
 
 **Proof sketch.** Combine jls_subexpSecure, G4 correctness/degree, and Claim 4.1. -/
 theorem theorem41_subexp (P : Params) (π : PrimeSchedule) {cLoc : ℕ} {τ : ℝ}
@@ -444,7 +451,11 @@ theorem theorem41_subexp (P : Params) (π : PrimeSchedule) {cLoc : ℕ} {τ : �
 /-- A secure raw structured-seed generator exists for every prime schedule
 [JLS26, Theorem 4.1, p. 11]. Dv1 chooses a polynomial schedule; Dv3 assumes LPN
 only for the construction's own families; Dv14 assumes realisability; Dv18 returns Raw.
-SP-W1 uses rational δ; this statement does not claim a literal Definition 2.3 bridge.
+
+The noise exponent is rational so that the rounded noise schedule is uniformly computable. This is
+the computable-parameter version of the construction; no bridge from the paper's arbitrary-real
+assumption is proved here.
+This statement also does not claim a literal Definition 2.3 bridge.
 
 **Proof sketch.** Choose E=max 1 E0, build Params from the given G and representation,
 and apply theorem41 with the supplied family assumption and realisability. -/
@@ -468,7 +479,11 @@ theorem exists_sprg_raw {d cLoc : ℕ} (hd : 1 ≤ d) {δ : ℚ} {τ : ℝ}
 
 /-- A subexponentially secure raw generator exists for every prime schedule
 [JLS26, Theorem 4.1, p. 11]. Dv13 uses a common subexponential advantage exponent;
-Dv14 assumes realisability; Dv18 returns the raw bundle. SP-W1 uses rational δ.
+Dv14 assumes realisability; Dv18 returns the raw bundle.
+
+The noise exponent is rational so that the rounded noise schedule is uniformly computable. This is
+the computable-parameter version of the construction; no bridge from the paper's arbitrary-real
+assumption is proved here.
 
 **Proof sketch.** Choose the same sufficiently large schedule exponent and apply
  theorem41_subexp to the supplied family hardness and realisability. -/

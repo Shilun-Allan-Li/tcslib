@@ -48,7 +48,7 @@ namespace Params
 
 /-- For all sufficiently large κ the error event has probability at most 2^(-κ),
 uniformly in every public prime [JLS26, Claim 4.2, pp. 19-21]. Dv3 uses the rounded
-rational noise schedule (SP-W1); Dv7 makes the common eventual threshold explicit.
+rational noise schedule; Dv7 makes the common eventual threshold explicit.
 
 **Proof sketch.** Use the three-event decomposition. Locality and Markov bound Cond1,
 conditionally on each fixed generator index. Independent noise repetitions then bound

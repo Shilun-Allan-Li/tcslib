@@ -45,7 +45,7 @@ open Complexity Turing Games
 with uniformly efficient index sampling and evaluation. [JLS26, Definition 3.4, p. 11].
 Deviations Dv4 and Dv17: the family is indexed by seed length, and index sampling is a
 core applied to one exact finite draw; efficiency uses the shared sampler contract.
-Disclosed pre-M0 refinement: supplied finite-coordinate equivalences and injective encodings
+Supplied finite-coordinate equivalences and injective encodings
 retain the complete index and draw instead of hiding data in encoding collisions. -/
 structure BoolPRG where
   /-- The function-index type at seed length `n`. -/

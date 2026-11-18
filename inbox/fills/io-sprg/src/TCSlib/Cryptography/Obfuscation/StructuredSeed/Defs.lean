@@ -280,7 +280,7 @@ theorem seedBits_eq (S : Raw) (κ : ℕ) :
 
 /-- Polynomial stretch expands seed bits by some exponent greater than one
 [JLS26, Remark 3.1, p. 10]. Dv1 is the fixed polynomial schedule form.
-SP-W3 also requires seed bits to be at least κ eventually, excluding constant-length
+Seed bits are also required to be at least κ eventually, excluding constant-length
 vacuity in the single-parameter existence statements. -/
 def HasPolyStretch (S : Raw) : Prop :=
   ∃ τ : ℝ, 1 < τ ∧ ∃ κ₀, ∀ κ ≥ κ₀,

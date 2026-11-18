@@ -176,8 +176,8 @@ theorem hyb_random_eq_raw (P : Params) (π : PrimeSchedule) (A : NUPPT) (κ : �
     Bool.false_eq_true, ite_false]
 
 /-- H1 and the real-tail chain's initial game have equal acceptance probabilities
-[JLS26, Lemma 4.2, p. 19]. Dv8 includes buckets. Pre-M0 repair SP-W2 compares
-probabilities: the free oracle programs differ by an unused uniform-vector query.
+[JLS26, Lemma 4.2, p. 19]. Dv8 includes buckets. The statement compares probabilities:
+the free oracle programs differ by an unused uniform-vector query.
 
 **Proof sketch.** Read the core's public vectors, pass to acceptance expectations, and
 sum out the unused uniform vectors using the existing exact uniform expectation law. -/
@@ -191,8 +191,8 @@ theorem hyb_prg_accept_eq_chain_zero (P : Params) (A : NUPPT) (κ : ℕ)
     if_false, ite_true, ProbComp.expect_const]
 
 /-- H2 and the uniform-tail chain's initial game have equal acceptance probabilities
-[JLS26, Lemma 4.2, p. 19]. Pre-M0 repair SP-W2 compares probabilities rather than
-free oracle syntax, since the chain makes an additional unused uniform-vector query.
+[JLS26, Lemma 4.2, p. 19]. The statement compares probabilities rather than free oracle
+syntax, since the chain makes an additional unused uniform-vector query.
 
 **Proof sketch.** Read the public vectors and use the uniform expectation law to
 marginalize the unused draw inside acceptance probability. -/

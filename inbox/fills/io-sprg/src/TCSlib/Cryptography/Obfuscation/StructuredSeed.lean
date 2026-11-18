@@ -34,34 +34,38 @@ set_option autoImplicit false
 ## Contents
 
 * `Basic`: reusable fixed-width tagged-list encoding lemmas.
-* `LPN`: the lpn component.
-* `BoolPRG`: the boolprg component.
-* `Degree`: the degree component.
-* `PolyTerms`: the polyterms component.
-* `Defs`: the defs component.
-* `Params`: the params component.
+* `LPN`: exact scalar noise, the canonical `LPNFamily.Raw` view and efficient `LPNFamily`.
+* `BoolPRG`: indexed Boolean generators, multilinear representations, locality and stretch.
+* `Degree`: `pubDegree` and `privDegree` with weighted polynomial degree bounds.
+* `PolyTerms`: finite polynomial term lists, `PolyTerms.denote` and faithful term encodings.
+* `Defs`: public prime inputs, raw and efficient sPRG syntax, security and complexity.
+* `Params`: rational noise data, power schedules, rounded dimensions and `lpnFamily_raw`.
 * `Encoding`: explicit finite coordinates and construction encodings.
-* `Buckets`: the buckets component.
-* `SparseFactor`: the sparsefactor component.
-* `Polys`: the polys component.
-* `Samplers`: the samplers component.
-* `Correctness`: the correctness component.
-* `Stretch`: the stretch component.
-* `Claim42.Load`: the claim42 load component.
-* `Claim42`: the claim42 component.
-* `Hybrids`: the hybrids component.
-* `Reductions.LPN`: the reductions lpn component.
-* `Reductions.PRG`: the reductions prg component.
-* `Security`: the security component.
-* `Targets`: the targets component.
+* `Buckets`: deterministic bucket ranks, optional grid positions and correction matrices.
+* `SparseFactor`: row-major sparse factors and reconstruction for bounded support.
+* `Polys`: the tensor and correction maps `G1`-`G4` and their public/private degree bounds.
+* `Samplers`: exact joint seed cores, their derived laws, `eval'` and `jlsSPRG_raw`.
+* `Correctness`: sampled-seed `G4_eval_eq`, `eval'_correct` and `jls_hasComplexity`.
+* `Stretch`: the sufficient exponent `E0` and growing-seed `jls_hasPolyStretch`.
+* `Claim42.Load`: binomial estimates and finite bucket-occupancy tail bounds.
+* `Claim42`: `Params.claim42`, the error bound uniform in every public prime.
+* `Hybrids`: exact hybrid/chain games, endpoint acceptance equalities and statistical hops.
+* `Reductions.LPN`: canonical LPN advice/preprocessing and the every-realiser `lpn_hop`.
+* `Reductions.PRG`: Boolean challenge advice/preprocessing and the every-realiser `prg_hop`.
+* `Security`: `prop41`, raw negligible/subexponential security and own-family existence.
+* `Targets`: six uniform efficiency targets, conditional links and primitive assemblies.
 
 ## Main definitions
 
-The imported modules provide the raw algorithm bundles, efficient primitives and Phase B targets.
+The principal types are `BoolPRG`, `LPNFamily.Raw`, `LPNFamily`, `SPRG.Raw`, `SPRG`
+and `Params`. `Params.Targets` names the uniform efficiency hypotheses used in assembly.
 
 ## Main results
 
-The imported modules state correctness, stretch and security for the structured-seed construction.
+`Params.G4_eval_eq` and `jls_hasComplexity` give algebraic correctness;
+`jls_hasPolyStretch` gives growing-seed stretch. `prop41` bounds advantage, and
+`theorem41` gives raw security, complexity and stretch from the stated assumptions.
+`theorem41_of_targets` and the efficient existence results are conditional on the targets.
 
 ## References
 

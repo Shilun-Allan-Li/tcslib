@@ -351,7 +351,7 @@ end Params
 pp. 15-17]. Dv1-Dv3 fix the polynomial schedule, field vectors and rounded
 exact laws; Dv9 supplies an arbitrary prime schedule; Dv15 uses explicit
 finite coordinates; Dv17-Dv18 add no sampler or efficiency proof here.
-SP-W1 uses rational δ throughout. The primitive is assembled only from targets. -/
+The noise exponent is rational throughout. The primitive is assembled only from targets. -/
 noncomputable def jlsSPRG_raw (P : Params) (π : PrimeSchedule) : SPRG.Raw where
   modulus κ := (π κ).p
   modulus_prime κ := (π κ).prime

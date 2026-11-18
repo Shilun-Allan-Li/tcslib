@@ -1,0 +1,217 @@
+From 3da6977bc86df1687b0e1d4813157bc882e9cca9 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 14:04:24 -0800
+Subject: [PATCH 36/37] io-sprg: M6 conditional primitive and realization links
+
+---
+ .../Obfuscation/StructuredSeed/Targets.lean   | 144 ++++++++++++++++--
+ 1 file changed, 135 insertions(+), 9 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean
+index 4a20ab09283c91fa65f479d672ea5a9aebdf09fa..c5c4adf663737133bb914a6150be2158447142e0 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean
+@@ -230,13 +230,44 @@ Dv16 uses the shared layout-coin RealizesOn predicate and its public link theore
+ Apply exists_realizesOn_of_preTarget with the inverse parameter map, polynomial var,
+ the explicit advice encoding and length bound. Match the named reduction by its reader. -/
+ theorem realizable_of_targets (P : Params) (hT : P.ReductionTargets) :
+-    ∀ π : PrimeSchedule, P.Realizable π := sorry
++    ∀ π : PrimeSchedule, P.Realizable π := by
++  obtain ⟨hL, hG⟩ := (P.reductionTargets_iff).mp hT
++  obtain ⟨fL, hfL, hpreL⟩ := (P.lpnPreTarget_iff).mp hL
++  obtain ⟨fG, hfG, hpreG⟩ := (P.prgPreTarget_iff).mp hG
++  intro π
++  apply (P.realizable_iff π).mpr
++  constructor
++  · apply (P.LPNRealizable_iff π).mpr
++    intro A ω
++    obtain ⟨B, hB⟩ := NUPPT.exists_realizesOn_of_preTarget A P.kappaOf .var
++      (fun L : ℕ => (P.kappaOf_le L).trans (PolyExpr.eval_var L).ge)
++      (P.lpnEnc π) (P.encLPNAdvice π) (P.lpnPre π) hfL
++      (hpreL π) ω P.lpnAdviceBound
++      (fun L : ℕ => P.encLPNAdvice_length_le π L (ω L))
++    exact ⟨B, hB.congr (fun (L : ℕ) (x : P.LPNChal π L) (r : List Bool) _hr =>
++      (P.lpnRed_eq π A L (ω L) x r).symm)⟩
++  · apply (P.PRGRealizable_iff π).mpr
++    intro A ω
++    obtain ⟨B, hB⟩ := NUPPT.exists_realizesOn_of_preTarget A P.kappaOfN .var
++      (fun N : ℕ => (P.kappaOfN_le N).trans (PolyExpr.eval_var N).ge)
++      P.prgEnc (P.encPRGAdvice π) (P.prgPre π) hfG
++      (hpreG π) ω P.prgAdviceBound
++      (fun N : ℕ => P.encPRGAdvice_length_le π N (ω N))
++    exact ⟨B, hB.congr (fun (N : ℕ) (x : P.PRGChal N) (r : List Bool) _hr =>
++      (P.prgRed_eq π A N (ω N) x r).symm)⟩
+ 
+ /-- T1 gives the raw evaluator's uniform efficiency; glue.
+ 
+ **Proof sketch.** Specialize the target at pp=π κ and read the raw construction's encodings. -/
+ theorem evalEfficient_of_target (P : Params) (π : PrimeSchedule) (hT : P.evalTarget) :
+-    (jlsSPRG_raw P π).EvalEfficient := sorry
++    (jlsSPRG_raw P π).EvalEfficient := by
++  obtain ⟨f, hf, heval⟩ := (P.evalTarget_iff).mp hT
++  rw [SPRG.Raw.evalEfficient_iff, jlsSPRG_raw_eq]
++  refine ⟨f, hf, ?_⟩
++  intro κ I sd
++  simpa only [SPRG.Raw.encPP_eq, SPRG.Raw.encSeed_eq, Params.encSeed'_eq,
++    PrimeParam.enc_eq, PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const]
++    using heval κ (π κ) I sd
+ 
+ /-- T3 and T5 give the exact index sampler's efficiency through the shared contract; glue.
+ 
+@@ -248,7 +279,21 @@ theorem idSampEfficient_of_targets (P : Params) (π : PrimeSchedule)
+       (fun κ _ => (jlsSPRG_raw P π).idWord κ)
+       (fun κ _ => (jlsSPRG_raw P π).encIdDraw κ)
+       (fun κ _ => (jlsSPRG_raw P π).encIdx κ)
+-      (fun κ _ => (jlsSPRG_raw P π).idCore κ) := sorry
++      (fun κ _ => (jlsSPRG_raw P π).idCore κ) := by
++  have hc := ((P.coreTarget_iff).mp hC).1
++  have hd := ((P.drawSamplerTarget_iff).mp hD).1
++  simp only [Params.idWord_eq, PrimeParam.enc_eq] at hc hd
++  obtain ⟨U, c, e, he, hfail⟩ := (drawSamplable_iff _ _).mp hd
++  obtain ⟨f, hf, hcore⟩ := (coreComputable_iff _ _ _ _).mp hc
++  rw [jlsSPRG_raw_eq]
++  simp only [SPRG.Raw.idWord_eq, SPRG.Raw.encPP_eq,
++    PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const]
++  apply SamplesEfficiently.intro
++  · exact (drawSamplable_iff _ _).mpr
++      ⟨U, c, fun κ _ => e κ (π κ), fun κ _ w => he κ (π κ) w,
++        fun κ _ => hfail κ (π κ)⟩
++  · exact (coreComputable_iff _ _ _ _).mpr
++      ⟨f, hf, fun κ _ d => hcore κ (π κ) d⟩
+ 
+ /-- T3 and T5 give the exact seed sampler's efficiency through the shared contract; glue.
+ 
+@@ -260,7 +305,22 @@ theorem sdSampEfficient_of_targets (P : Params) (π : PrimeSchedule)
+       (fun κ I => (jlsSPRG_raw P π).sdWord κ I)
+       (fun κ I => (jlsSPRG_raw P π).encSdDraw κ I)
+       (fun κ _ => (jlsSPRG_raw P π).encSeed κ)
+-      (fun κ I => (jlsSPRG_raw P π).sdCore κ I) := sorry
++      (fun κ I => (jlsSPRG_raw P π).sdCore κ I) := by
++  have hc := ((P.coreTarget_iff).mp hC).2
++  have hd := ((P.drawSamplerTarget_iff).mp hD).2
++  simp only [Params.sdParam_eq, Params.sdWord_eq, Params.encSeed'_eq,
++    PrimeParam.enc_eq] at hc hd
++  obtain ⟨U, c, e, he, hfail⟩ := (drawSamplable_iff _ _).mp hd
++  obtain ⟨f, hf, hcore⟩ := (coreComputable_iff _ _ _ _).mp hc
++  rw [jlsSPRG_raw_eq]
++  simp only [SPRG.Raw.sdWord_eq, SPRG.Raw.encPP_eq, SPRG.Raw.encSeed_eq,
++    PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const]
++  apply SamplesEfficiently.intro
++  · exact (drawSamplable_iff _ _).mpr
++      ⟨U, c, fun κ I => e κ ⟨π κ, I⟩, fun κ I w => he κ ⟨π κ, I⟩ w,
++        fun κ I => hfail κ ⟨π κ, I⟩⟩
++  · exact (coreComputable_iff _ _ _ _).mpr
++      ⟨f, hf, fun κ I d => hcore κ ⟨π κ, I⟩ d⟩
+ 
+ /-- T6 specializes to the sampler field of each raw LPN family; glue.
+ 
+@@ -272,7 +332,14 @@ theorem lpnSamplerEfficient_of_target (P : Params) (π : PrimeSchedule)
+       (fun L _ => (P.lpnFamily_raw π).sampleWord L)
+       (fun L _ => (P.lpnFamily_raw π).encDraw L)
+       (fun L _ => (P.lpnFamily_raw π).encSample L)
+-      (fun L _ => (P.lpnFamily_raw π).sampleCore L) := sorry
++      (fun L _ => (P.lpnFamily_raw π).sampleCore L) := by
++  have hs := (P.lpnSamplerTarget_iff).mp hT
++  obtain ⟨U, c, e, he, hfail⟩ := (drawSamplable_iff _ _).mp hs.drawSamplable
++  obtain ⟨f, hf, hcore⟩ := (coreComputable_iff _ _ _ _).mp hs.coreComputable
++  apply SamplesEfficiently.intro
++  · exact (drawSamplable_iff _ _).mpr
++      ⟨U, c, fun L _ => e L π, fun L _ w => he L π w, fun L _ => hfail L π⟩
++  · exact (coreComputable_iff _ _ _ _).mpr ⟨f, hf, fun L _ d => hcore L π d⟩
+ 
+ /-- The construction's LPN primitive is assembled from its raw family and T6
+ [JLS26, Definition 2.3, pp. 9-10]. Dv18 requires this efficiency witness for any instance. -/
+@@ -291,7 +358,21 @@ theorem lpnFamily_toRaw (P : Params) (π : PrimeSchedule) (hT : P.Targets) :
+ **Proof sketch.** Use G4 as the polynomial witness, the target's term-list equations,
+ its degree theorem, and exact sampled-seed correctness. -/
+ theorem hasComplexityEff_of_target (P : Params) (π : PrimeSchedule)
+-    (hT : P.qGenTarget) : (jlsSPRG_raw P π).HasComplexityEff P.d 2 := sorry
++    (hT : P.qGenTarget) : (jlsSPRG_raw P π).HasComplexityEff P.d 2 := by
++  obtain ⟨f, hf, hgen⟩ := (P.qGenTarget_iff).mp hT
++  rw [SPRG.Raw.hasComplexityEff_iff, jlsSPRG_raw_eq]
++  refine ⟨f, hf, ?_⟩
++  intro κ I
++  refine ⟨P.G4 κ (π κ) I, ?_, ?_, ?_⟩
++  · intro j
++    simpa only [SPRG.Raw.encPP_eq, PrimeParam.enc_eq,
++      PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const]
++      using hgen κ (π κ) I j
++  · exact fun j => P.G4_degrees κ (π κ) I j
++  · have hsampler := jlsSPRG_raw_sdSamp P π κ I
++    simp only [jlsSPRG_raw_eq] at hsampler
++    rw [hsampler]
++    exact P.G4_seed_allOutputs κ (π κ) I
+ 
+ end Params
+ 
+@@ -321,7 +402,19 @@ theorem theorem41_of_targets (P : Params) (π : PrimeSchedule) {cLoc : ℕ} {τ
+     (hE : E0 P.d (P.δ : ℝ) τ ≤ P.E) (hT : P.Targets)
+     (hG : P.G.Secure) (hLPN : (P.lpnFamily_raw π).Assumption) :
+     (jlsSPRG P π hT).Secure ∧ (jlsSPRG P π hT).HasComplexityEff P.d 2 ∧
+-      (jlsSPRG P π hT).HasPolyStretch := sorry
++      (jlsSPRG P π hT).HasPolyStretch := by
++  have hR := P.realizable_of_targets hT.2.2.2.1 π
++  have hraw := theorem41 P π hLoc hτ hs hE hR hG hLPN
++  refine ⟨?_, ?_, ?_⟩
++  · apply (SPRG.secure_iff (jlsSPRG P π hT)).mpr
++    rw [jlsSPRG_toRaw]
++    exact hraw.1
++  · apply (SPRG.hasComplexityEff_iff (jlsSPRG P π hT) P.d 2).mpr
++    rw [jlsSPRG_toRaw]
++    exact P.hasComplexityEff_of_target π hT.2.1
++  · apply (SPRG.hasPolyStretch_iff (jlsSPRG P π hT)).mpr
++    rw [jlsSPRG_toRaw]
++    exact hraw.2.2
+ 
+ /-- Under the efficiency targets an efficient secure sPRG exists
+ [JLS26, Theorem 4.1, p. 11]. Dv3 uses the construction's own LPN families; Dv18
+@@ -338,7 +431,17 @@ theorem exists_sprg_of_targets {d cLoc : ℕ} (hd : 1 ≤ d) {δ : ℚ} {τ : 
+       (Params.lpnFamily_raw ⟨d, hd, δ, hδ, hδ1, E, hE, G, R⟩ π).Assumption)
+     (hT : ∀ P : Params, P.Targets) :
+     ∃ S : SPRG, (∀ κ, S.modulus κ = (π κ).p) ∧ S.Secure ∧
+-      S.HasComplexityEff d 2 ∧ S.HasPolyStretch := sorry
++      S.HasComplexityEff d 2 ∧ S.HasPolyStretch := by
++  let E := max 1 (E0 d (δ : ℝ) τ)
++  have hE1 : 1 ≤ E := le_max_left _ _
++  let P : Params := ⟨d, hd, δ, hδ, hδ1, E, hE1, G, R⟩
++  let hTP : P.Targets := hT P
++  have hEb : E0 P.d (P.δ : ℝ) τ ≤ P.E := le_max_right _ _
++  have hall := theorem41_of_targets P π hLoc hτ hs hEb hTP hG (hLPN E hE1)
++  refine ⟨jlsSPRG P π hTP, ?_, hall⟩
++  intro κ
++  exact (congrArg (fun S : SPRG.Raw => S.modulus κ) (jlsSPRG_toRaw P π hTP)).trans
++    (jlsSPRG_raw_modulus P π κ)
+ 
+ /-- Under the targets and subexponential assumptions an efficient subexponentially secure
+ sPRG exists [JLS26, Theorem 4.1, p. 11]. Dv13 bounds advantage against NUPPT;
+@@ -354,6 +457,29 @@ theorem exists_sprg_of_targets_subexp {d cLoc : ℕ} (hd : 1 ≤ d) {δ : ℚ} {
+       SubexpHard (Params.lpnFamily_raw ⟨d, hd, δ, hδ, hδ1, E, hE, G, R⟩ π).adv)
+     (hT : ∀ P : Params, P.Targets) :
+     ∃ S : SPRG, (∀ κ, S.modulus κ = (π κ).p) ∧ SubexpHard S.adv ∧
+-      S.HasComplexityEff d 2 ∧ S.HasPolyStretch := sorry
++      S.HasComplexityEff d 2 ∧ S.HasPolyStretch := by
++  let E := max 1 (E0 d (δ : ℝ) τ)
++  have hE1 : 1 ≤ E := le_max_left _ _
++  let P : Params := ⟨d, hd, δ, hδ, hδ1, E, hE1, G, R⟩
++  let hTP : P.Targets := hT P
++  have hEb : E0 P.d (P.δ : ℝ) τ ≤ P.E := le_max_right _ _
++  have hR := P.realizable_of_targets hTP.2.2.2.1 π
++  have hraw := theorem41_subexp P π hLoc hτ hs hEb hR hG (hLPN E hE1)
++  refine ⟨jlsSPRG P π hTP, ?_, ?_, ?_, ?_⟩
++  · intro κ
++    exact (congrArg (fun S : SPRG.Raw => S.modulus κ) (jlsSPRG_toRaw P π hTP)).trans
++      (jlsSPRG_raw_modulus P π κ)
++  · have hadv : (jlsSPRG P π hTP).adv = (jlsSPRG_raw P π).adv :=
++      funext (fun A => funext (fun κ =>
++        (SPRG.adv_eq (jlsSPRG P π hTP) A κ).trans
++          (congrArg (fun S : SPRG.Raw => S.adv A κ) (jlsSPRG_toRaw P π hTP))))
++    rw [hadv]
++    exact hraw.1
++  · apply (SPRG.hasComplexityEff_iff (jlsSPRG P π hTP) d 2).mpr
++    rw [jlsSPRG_toRaw]
++    exact P.hasComplexityEff_of_target π hTP.2.1
++  · apply (SPRG.hasPolyStretch_iff (jlsSPRG P π hTP)).mpr
++    rw [jlsSPRG_toRaw]
++    exact hraw.2.2
+ 
+ end TCSlib.Cryptography.Obfuscation.StructuredSeed

@@ -25,7 +25,7 @@ set_option autoImplicit false
 ## Main results
 
 Named injectivity and length statements accompany the explicit codes. Every definition
-has an owner-side reader. These are the encoding part of the Phase A M0 checkpoint.
+has a proved reader that exposes its encoding and coordinate conventions.
 
 ## References
 
@@ -35,8 +35,9 @@ has an owner-side reader. These are the encoding part of the Phase A M0 checkpoi
 
 Disclosed modular refinement: the encoding portion of `Samplers` has its own module.
 Dv1 and Dv3 fix the single-parameter dimensions and exact rational noise schedule;
-Dv15 and Dv17 use explicit finite coordinates and one exact product draw. SP-W1 keeps
-rational delta as data. No core, sampler construction, or efficiency proof is defined here.
+Dv15 and Dv17 use explicit finite coordinates and one exact product draw. The noise
+exponent is rational construction data. No core, sampler construction, or efficiency proof is
+defined here.
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
   3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
 -/
@@ -424,7 +425,8 @@ theorem m_le_mBound (P : Params) (κ : ℕ) : P.m κ ≤ P.mBound.eval κ := by
   exact (P.G.outLen_le _).trans (PolyExpr.eval_mono _ (P.n_le_nBound κ))
 
 /-- The rounded noise denominator satisfies `W ≤ ell+1` at every parameter.
-[JLS26, Section 4, p. 15]. Dv3 rounds the noise rate upward; SP-W1 supplies `0<delta<1`.
+[JLS26, Section 4, p. 15]. Dv3 rounds the noise rate upward and uses the rational exponent bounds
+`0<delta<1`.
 
 **Proof sketch.** At dimension zero, max-one rounding gives W=1. At positive dimension,
 compare the squared floor with the real power `ell^delta`, then use delta<1 and ell≥1. -/

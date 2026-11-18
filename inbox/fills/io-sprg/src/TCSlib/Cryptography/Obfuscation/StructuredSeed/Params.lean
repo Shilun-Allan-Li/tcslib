@@ -44,8 +44,12 @@ open Complexity
 
 /-- The construction fixes degree, rational noise exponent, polynomial schedule
 exponent, and an efficient Boolean PRG [JLS26, Theorem 4.1, p. 11; §4, p. 15].
-Dv9: no prime is stored. SP-W1: δ is rational data, per the user's ruling,
-so the exact rounded noise schedule can have a uniform implementation.
+Dv9: no prime is stored.
+
+The noise exponent is rational so that the rounded noise schedule is uniformly computable. This is
+the computable-parameter version of the construction; no bridge from the paper's arbitrary-real
+assumption is proved here.
+
 Dv11 requires positive degree, and Dv4 carries the multilinear representation. -/
 structure Params where
   d : ℕ
@@ -86,7 +90,7 @@ def m (P : Params) (κ : ℕ) : ℕ := P.G.outLen (P.n κ)
 theorem m_eq (P : Params) (κ : ℕ) : P.m κ = P.G.outLen (P.n κ) := rfl
 
 /-- The rounded square-root noise denominator is max 1 floor(L^(δ/2))
-[JLS26, §4, p. 15]. Dv3 rounds in the noisier direction; SP-W1 uses rational δ. -/
+[JLS26, §4, p. 15]. Dv3 rounds in the noisier direction and uses a rational noise exponent. -/
 noncomputable def noiseWidth (P : Params) (L : ℕ) : ℕ :=
   max 1 ⌊(L : ℝ) ^ ((P.δ : ℝ) / 2)⌋₊
 
@@ -101,7 +105,8 @@ noncomputable def noiseDenAt (P : Params) (L : ℕ) : ℕ := P.noiseWidth L ^ 2
 /-- The noise denominator is the square of noiseWidth; glue. -/
 theorem noiseDenAt_eq (P : Params) (L : ℕ) : P.noiseDenAt L = P.noiseWidth L ^ 2 := rfl
 
-/-- At κ, `w=noiseWidth(ℓ κ)` [JLS26, §4, p. 15]. Dv3 and SP-W1 fix rounding. -/
+/-- At κ, `w=noiseWidth(ℓ κ)` [JLS26, §4, p. 15]. Dv3 fixes rounding with the rational noise
+exponent. -/
 noncomputable def w (P : Params) (κ : ℕ) : ℕ := P.noiseWidth (P.ℓ κ)
 
 /-- The construction's noise width is indexed by ℓ; glue. -/
@@ -142,7 +147,10 @@ noncomputable def B (P : Params) (κ : ℕ) : ℕ :=
 theorem B_eq (P : Params) (κ : ℕ) :
     P.B κ = max 1 ((P.m κ * P.t κ + P.W κ - 1) / P.W κ) := rfl
 
-/-- Bad-output threshold is floor(m*log₂(n)/W) [JLS26, §4, p. 15]. Dv3 fixes the floor. -/
+/-- The bad-output threshold is `m * Nat.log 2 n / W` [JLS26, §4, p. 15].
+The formula means: multiply m by the integer base-two logarithm of n, then divide by W using
+natural division. Dv3 adds downward rounding of the logarithm before multiplication, as well as
+the final natural division, relative to the real-logarithm expression in JLS26 p. 15. -/
 noncomputable def Γ (P : Params) (κ : ℕ) : ℕ :=
   P.m κ * Nat.log 2 (P.n κ) / P.W κ
 
@@ -153,20 +161,21 @@ theorem Γ_eq (P : Params) (κ : ℕ) :
 /-- The inverse LPN schedule is the greatest κ with κ^E≤L [JLS26, Remark 2.1, p. 9].
 Dv1 and Dv3 reindex the fixed LPN family by its own secret dimension. -/
 def kappaOf (P : Params) (L : ℕ) : ℕ :=
-  Nat.findGreatest (fun κ => κ ^ P.E ≤ L) L
+  PadQuad.nu P.E L
 
 /-- The LPN inverse is a bounded greatest search; glue. -/
 theorem kappaOf_eq (P : Params) (L : ℕ) :
-    P.kappaOf L = Nat.findGreatest (fun κ => κ ^ P.E ≤ L) L := rfl
+    P.kappaOf L = Nat.findGreatest (fun κ => κ ^ P.E ≤ L) L := PadQuad.nu_eq P.E L
 
 /-- The inverse Boolean schedule uses exponent E*D [JLS26, Remark 2.1, p. 9].
 Dv1 reindexes the Boolean assumption by its seed length. -/
 def kappaOfN (P : Params) (N : ℕ) : ℕ :=
-  Nat.findGreatest (fun κ => κ ^ (P.E * P.D) ≤ N) N
+  PadQuad.nu (P.E * P.D) N
 
 /-- The Boolean inverse is a bounded greatest search; glue. -/
 theorem kappaOfN_eq (P : Params) (N : ℕ) :
-    P.kappaOfN N = Nat.findGreatest (fun κ => κ ^ (P.E * P.D) ≤ N) N := rfl
+    P.kappaOfN N = Nat.findGreatest (fun κ => κ ^ (P.E * P.D) ≤ N) N :=
+  PadQuad.nu_eq (P.E * P.D) N
 
 /-- The public seed contains κ blocks of n residues and one error flag
 [JLS26, SdSamp', pp. 15-16]. Dv2 counts field elements before their bit widths. -/
@@ -363,7 +372,7 @@ theorem lpnSamples_le (P : Params) (L : ℕ) :
 /-- The construction's raw LPN family is indexed by its own secret dimension
 [JLS26, Definition 2.3, pp. 9-10]. Dv3 fixes its sample schedule, transpose,
 rounded noise and L+1-bit residues. Dv9 reads an arbitrary public prime schedule.
-SP-W1 uses rational δ; sampler efficiency is added only in the target assembly. -/
+The noise exponent is rational; sampler efficiency is added only in the target assembly. -/
 noncomputable def lpnFamily_raw (P : Params) (π : PrimeSchedule) : LPNFamily.Raw where
   samples L := L ^ P.D
   modulus L := (π (P.kappaOf L)).p
