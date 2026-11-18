@@ -10,7 +10,9 @@ Local modifications (see policy.md §2, vendored code, and the repository NOTICE
   for compatibility with our v4.25.0 toolchain;
 * moved to `TCSlib/Programs/Light/Calls.lean`, with imports remapped;
 * added a `## References` section citing [AFM26];
-* added the repository-standard `set_option` header.
+* added the repository-standard `set_option` header;
+* appended reading lemmas (`rfl`/`Iff.rfl` restatements of definitions) for TCSlib's own
+  proofs, which do not unfold vendored definitions.
 The remaining content is unchanged.
 -/
 import TCSlib.Programs.Light.Frames
@@ -57,6 +59,15 @@ within T steps with a result r and a memory μ' that satisfy R r μ'. -/
 def Meets (lim : Limits) (P : Program) (p d : ℕ) (vals : List ℤ) (μ : ℕ → ℤ) (T : ℕ)
     (R : ℤ → (ℕ → ℤ) → Prop) : Prop :=
   ∃ body, P[p]? = some body ∧ Ends lim P d body ⟨frame vals, μ⟩ T fun σ' => R (σ'.loc 0) σ'.mem
+
+/-- A procedure specification consists of its body lookup and a bounded execution of that
+body from the argument frame. -/
+theorem meets_iff {lim : Limits} {P : Program} {p d : ℕ} {vals : List ℤ}
+    {μ : ℕ → ℤ} {T : ℕ} {R : ℤ → (ℕ → ℤ) → Prop} :
+    Meets lim P p d vals μ T R ↔
+      ∃ body, P[p]? = some body ∧
+        Ends lim P d body ⟨frame vals, μ⟩ T fun σ' => R (σ'.loc 0) σ'.mem :=
+  Iff.rfl
 
 section
 variable {p : ℕ} {vals : List ℤ} {μ : ℕ → ℤ} {T T' : ℕ} {R R' : ℤ → (ℕ → ℤ) → Prop}
