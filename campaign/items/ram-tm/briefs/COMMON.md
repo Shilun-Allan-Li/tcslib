@@ -115,3 +115,20 @@ These rules extend or replace the ones above, for tier 2 only:
   table, wherever one fits. A hand-built machine is fine where none fits; its docstring says
   what was missing.
 - **Checkpoints** are welcome: push `<fill-name>-checkpoint-N.zip` at each proved target.
+- **Missing readers (Seyoon, 2026-11-18).** Rule 2's E-READER stop is relaxed for pure
+  restatements. Suppose you need to read another file's definition and its file publishes no
+  equation for it. Then add the reader yourself, **beside the definition in its home file**:
+  - its statement restates the definition exactly (an equation `D … = body`, or an equivalence
+    `P … ↔ body` for a `Prop`);
+  - its proof is `rfl` or `Iff.rfl`;
+  - its docstring says what it reads.
+
+  Then continue. List every such reader in `REPORT.md`, with its file. The maintainer gates it
+  with your PR and reconciles duplicates between parallel jobs. Anything more than a restatement
+  is still a stop: a lemma that needs a proof, a `private` lemma made public, a changed statement.
+  Before adding a reader, check that it is not already published, including by PR #375 (below).
+- **Readers published since dispatch** (PR #375):
+  - `Build/RecordTable`: `tableFields_eq`, `tableWF_iff`, `tableAt_iff`;
+  - `Build/Catalog`: `catalogTrace_eq`, `mealyRun_nil`, `mealyRun_cons`, `scanResult_eq`, and
+    `mealyRun_append`, `mealyRun_induction`, `mealyRun_length`, `mealyRun_next`, now public;
+  - `Programs/WordRAM/Steps`: `inRange_iff`.
