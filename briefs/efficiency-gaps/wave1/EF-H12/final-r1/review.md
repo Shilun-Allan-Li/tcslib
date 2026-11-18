@@ -1,7 +1,31 @@
-# EF-H12 `ef-h12-levin-3col` · final r1 · phase-1 (static) maintainer review
+# EF-H12 `ef-h12-levin-3col` · final r1 · maintainer review (phase 1 static, phase 2 Lean replay)
 
-**Provisional verdict (phase 1 only; phase 2 pending): ACCEPT WITH LANDING EDITS, conditional on
-EF-H12-R1 (A) and a passing phase 2.**
+**Verdict after phase 2: ACCEPT WITH LANDING EDITS, conditional on EF-H12-R1 (A).** Phase 2 passed,
+with one new minor finding: EFH12-F08, a landing edit. The details are in
+[`phase2.md`](phase2.md).
+
+**Phase 2 (2026-11-18, 12:23–13:36 UTC)**
+- **Check head.** The 19 patches on `bff0567b` give `63d619e8`, whose tree `efdd41d8…` is the
+  predicted one.
+- **Build.** The predicted 16 modules, including the root `TCSlib` and `audits/pass-shelat/Checks`:
+  rc 0, with 0 errors, 0 `sorry` and 0 warnings.
+- **Axioms.** All 483 stored constants are standard, and the 245 decls2 constants equal the
+  worker's axiom sets.
+- **Seals.**
+  - Strict: 11/11 with 0 errors.
+  - Canonical coe-A and seal B: 10/11 with 0 errors. In both, `Verifier` fails only at
+    `polyTimeComputable_stripCert`, a foreign-matcher read (F08).
+  - `Bridge.lean`: the minimal unseal passes. Each of 20 readers needs exactly its named definition.
+    The 7 `simp [EdgeRelation]` readers need none, because they read through equation lemmas.
+  - Controls: 50 pairs, ALL_OK.
+  - Explicit-unfold scan: 7 hits, all in `Bridge.lean`.
+- **Bridge demonstrations.** Necessity: all 46 reader uses fail without the readers. Owner form: the
+  27 readers compile in their 5 owners.
+- **Landing-edit probes.** LE-h12-pow compiles, and its 10-module downstream is rc 0. `ProbeH12`
+  passes at the check head.
+- **Lint and snapshot.** Lint is unchanged, and snapshot #11 rehashes 0/0/0.
+- **Findings.** **F03 and F04 are closed. F05 is partly closed:** (a) and (b) are closed; (c) is a
+  landing edit and (d) stays on record.
 
 The headline is real. `TCSlib.Cryptography.levinNPHard_L3COL : LevinNPHard L3COL R3COL` takes no
 hypothesis. The statement of `LevinNPHard` and `LevinReduction` is used exactly as in
@@ -21,11 +45,16 @@ enters as a hypothesis.
   `unaryDiv_poly`/`unaryMod_poly` are new-name restatements of `divNum_poly`/`modNum_poly`,
   disclosed only in the module docstring.
 
-**Other findings:** minors EFH12-F03 to F07 (evidence gaps, stale text, disclosure gaps,
-attribution wording); information EFH12-I1 to I6.
+**Other findings:**
+- minors EFH12-F03 to F07: evidence gaps, stale text, disclosure gaps and attribution wording. After
+  phase 2, F03 and F04 are closed and F05 is partly closed.
+- **EFH12-F08 (minor, new in phase 2):** a foreign-matcher defeq read in
+  `polyTimeComputable_stripCert`; a landing edit.
+- information EFH12-I1 to I6.
 
-**Static only.** No Lean was run: the machine's three Lean slots belong to other jobs. Phase 2
-(plan below) runs as a separate job.
+**Phase 1 was static only:** no Lean was run, because the machine's three Lean slots belonged to
+other jobs. Phase 2 (plan below) ran as a separate job on 2026-11-18. Its results are in
+`phase2.md` and `ef-h12-final-r1-evidence.zip` (SHA-256 in `evidence-SHA256SUMS`).
 
 ## What was reviewed
 
@@ -82,7 +111,7 @@ attribution wording); information EFH12-I1 to I6.
 | **Clashes (C10)** | **PASS.**<br>• I grepped 13 distinctive new names (`levinNPHard_L3COL`, `LevinHardness`, `wireValues`, `colorInst`, `gadgetColor`, `padColWord`, `R_3SAT`, `R_CKT`, `certOf`, `verTest`, `gadgetN`, `unaryDiv_poly`, `polyTimeComputable_foldl_accept`) over the `TCSlib/` and `audits/` Lean files of all **336 distinct local heads**: 0 hits outside the delivery.<br>• Positive control: `encGraph_mem_L3COL_iff` is hit on 155 heads.<br>• The worker's two shared short names (`decode_eq`, `padGraph`) are in other namespaces.<br>• The worker's C10 counted 244 constants, which predates `verTime_eq` (F05b). |
 | **Axioms (C5), recounted from `axioms/stmtdump.txt`** | 245 constants, the same set as decls2:<br>• 116 with all three of `propext`, `Classical.choice`, `Quot.sound` (in various orders);<br>• 44 `[propext]`;<br>• 38 `[propext, Quot.sound]`;<br>• 47 `[]`;<br>• **0 `sorryAx`**, 245 STD.<br>• The headline and both corollaries are `[propext, Quot.sound, Classical.choice]`.<br>Phase 2 recomputes these independently. |
 | **Build (C1), recounted** | 14 modules: rc 0, 0/0 errors, 0 `sorry`. The 14 logs are empty (`e3b0c442…`), and each source SHA-256 in `summary.txt` equals `git show c8d5b3c7:<path>`, which I re-hashed. |
-| **Downstream (C2)** | **Incomplete (F04).**<br>• The root `TCSlib` was not built (PFR oleans).<br>• `audits/pass-shelat/Checks.lean` imports the changed `ZeroKnowledge` facade but is not listed: REPORT says the root is the only importer.<br>• Phase 2 closes this. |
+| **Downstream (C2)** | **Incomplete in phase 1 (F04); closed by phase 2.**<br>• The root `TCSlib` was not built (PFR oleans).<br>• `audits/pass-shelat/Checks.lean` imports the changed `ZeroKnowledge` facade but is not listed: REPORT says the root is the only importer.<br>• **Phase 2:** both are rc 0 on snapshot #11, 16/16 modules. |
 | **Seals (C6), recounted** | **Partial (F03).**<br>• *Plain:* 11 non-bridge owners, each sealed copy minus its single `attribute [local irreducible]` line equals the head source; Gadget has 0 candidates and an added comment line only. Each seal line's names equal the delivered candidate list (30/15/26/13/0/48/9/5/17/5/16). Every results line reads PASS (rc 0, 0 error lines).<br>• *Bridge:* the sealed copy minus seal and unseal wrappers equals the head. Its 20 names equal the candidates, and the run is PASS with 27 named exclusions.<br>• **Only the strict whole-file seal was run.** Canonical coe-A and seal B were not run, and raw Lean logs are not kept.<br>• 9 bridge declarations unseal more than the definition they are named for (F03).<br>• *Controls:* 9 pairs, one per owner with definitions. Each NEG fails exactly once (line 5), each POS passes, and unsealed runs have 0 errors.<br>• *Explicit-unfold scan:* my own TCSlib-name scan of the 11 non-bridge files reproduces the worker's adjudication. The only hits are lemma *arguments* (`DAGGate.encode/decode`, `CNF.serialize`) and own-file `unfold gadgetAdj`, so **0 foreign unfolds outside Bridge.lean**. |
 
 ## The headline, statement by statement
@@ -295,7 +324,7 @@ All 27 are used.
     - derive `unaryPow_poly` from `unaryPolyOf_poly (.pow .var n) hf` by `PolyExpr.eval_pow` (one
       line), or delete it and use `unaryPolyOf_poly` at its call sites;
     - record div/mod and the FormulaKit triplication in the ledger.
-- **EFH12-F03 (minor; phase 2 closes). Seal evidence is partial.**
+- **EFH12-F03 (minor; CLOSED by phase 2). Seal evidence is partial.**
   - **Variants not run.** Only the strict whole-file seal was run; canonical coe-A and seal B were
     not. The worker says these variants "are not among my inputs". In fact the gate-04 tools in
     its own `evidence/tools/gate04-seal-tools/` are byte-identical to the records'
@@ -315,17 +344,43 @@ All 27 are used.
 
     So "unsealed for exactly its own target" is not shown.
   - **Thin controls.** There are 9 control pairs for about 50 new public definitions.
-- **EFH12-F04 (minor; phase 2 closes). C2 is incomplete.** The root `TCSlib` was not built, and
+  - **Phase 2 closes every point:**
+    - canonical coe-A and seal B were run on the 11 owners, with raw logs kept;
+    - with each of the 27 bridge declarations unsealed for only its named definition, all 27
+      compile, so none of the 9 extra unseals is needed;
+    - 50 control pairs, one per new public definition, are ALL_OK.
+
+    The canonical seal also found **F08**.
+- **EFH12-F04 (minor; CLOSED by phase 2). C2 is incomplete.** The root `TCSlib` was not built, and
   `audits/pass-shelat/Checks.lean`, which imports `TCSlib.Cryptography.ZeroKnowledge`, is
   missing from REPORT's importer list.
-- **EFH12-F05 (minor; landing edit or phase 2). Stale evidence and text:**
+  - **Phase 2:** the root and `audits/pass-shelat/Checks` are rc 0 with 0 errors, among the
+    predicted 16 modules.
+- **EFH12-F05 (minor; PARTLY CLOSED by phase 2: (a) and (b) closed; (c) is a landing edit; (d)
+  stays on record). Stale evidence and text:**
   - **(a)** The C12 probe ran at `0c95b0b9` (commit 12). `Gadget.lean` and `ColoringWitness.lean`
-    changed afterwards.
-  - **(b)** C10 counted 244 new constants, before `verTime_eq`.
+    changed afterwards. *Closed:* `ProbeH12.lean` passes at the check head, with rc 0 and 0 errors.
+  - **(b)** C10 counted 244 new constants, before `verTime_eq`. *Closed as evidence:* the phase-2
+    census covers all 245, and their axiom sets equal `stmtdump.txt`.
   - **(c)** The `CircuitWitness.lean` module docstring still says `R_3SAT_wireValues` "takes [the
     `toCNF` equation] as the hypothesis" ("given the equation of the Tseitin formula"). It now uses
     `Bridge.toCNF_eq` and has no such hypothesis.
   - **(d)** The top-level `SHA256SUMS` omits `evidence/SHA256SUMS`.
+- **EFH12-F08 (minor, new in phase 2; landing edit LE-h12-strip). A definitional read of a foreign
+  matcher in `polyTimeComputable_stripCert` (`Verifier.lean:131-134`).**
+  - **What it is.** The proof checks `stripCert` against the catalog function of
+    `Turing.FinTM.computesFunInTime_stripLast` by defeq. That needs the compiler-generated foreign
+    matcher `Turing.FinTM.stripLastTM_computes.match_1`.
+  - **Evidence.** This is the only failure of the canonical coe-A seal, and of seal B. The worker's
+    strict seal did not include matchers, which is why it passed. With only that matcher sealed, the
+    proof fails the same way.
+  - **Precedent.** dl-c's `dlc_ssLoop_poly`: minor, not a Rule-10 violation in substance, but
+    avoidable.
+  - **Fix.** Transport along `stripCert_eq` and `split` both matches. This compiles with the matcher
+    and `stripCert` sealed (phase 2 `StripProbe` F1/F3).
+  - **Before landing:** check that the fix goes through the splitter and equation lemmas, not
+    constructor-discriminant reduction of the sealed matcher (the cleanup "N4 boundary"), and re-run
+    the canonical seal of `Verifier`.
 - **EFH12-F06 (minor; disclosure, for the ledger). Near-relatives missing from REPORT § *Overlap*,
   none a public re-proof:**
   - `polyTimeComputable_syntaxOK` is statement-identical to the private `satSyntax_poly`
@@ -364,8 +419,17 @@ All 27 are used.
   - REC is an ancestor of `bff0567b`.
   - The 12 Lean paths `bff0567b` changes (GSW/LWE) are **outside** the 302-module TCSlib import
     closure of the changed facade, so snapshot #11 covers the whole closure.
+  - *Confirmed in phase 2:* `git am` of the 19 patches on `bff0567b` gives tree `efdd41d8…`, and
+    `stateplan` rebuilds exactly 16 modules while reusing 1453.
 
 ## Phase 2 plan (one Lean process, when a slot frees; snapshots.md job recipe, as EF-D1 `phase2.md`)
+
+*Executed on 2026-11-18. The results are in [`phase2.md`](phase2.md), step by step.*
+
+- **Deviation: one coe-A and seal-B failure (F08).**
+- **Additions beyond the plan:**
+  - a no-unseal bridge control, which shows the 7 `simp` readers need no unseal;
+  - an attribution and fix probe for F08.
 
 `$SP` = `/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad`.
 
@@ -460,6 +524,9 @@ All 27 are used.
   plus the landing edits:
   - **LE-h12-pow** (F02);
   - **LE-h12-doc**: F01 docstrings, F05c and the F07 wording;
+  - **LE-h12-strip** (F08, added after phase 2): `polyTimeComputable_stripCert` by transport along
+    `stripCert_eq`. Its proof term is checked against the N4 boundary, and the canonical seal of
+    `Verifier` is re-run;
   - optionally **LE-h12-priv** (I2).
 - **The PR.** A draft PR on the records branch. It leaves draft after phase 2 passes, R1–R4 are
   answered, and the Codex gate (Q-H12-2 A: citations after ingestion) closes.
@@ -475,6 +542,16 @@ All 27 are used.
   - 17 by `rfl`/`Iff.rfl` and 10 as case lemmas, 7 of which pass `EdgeRelation` to `simp`.
 
   Did you rule this, and does it cover all 27?
+
+  *Facts established by phase 2 (no ruling implied):*
+  - **Minimal unseal.** Each of 20 readers compiles with only its named definition unsealed, and
+    fails with none. The 7 `simp [EdgeRelation]` readers compile with `EdgeRelation` **sealed**:
+    they read it through its equation lemmas, which a seal cannot block. Only the explicit-unfold
+    scan sees them (7 hits, all in `Bridge.lean`).
+  - **Necessity.** With the bridged definitions sealed and each reader use proved in place, all 46
+    uses in `CircuitWitness`, `ColoringParse`, `Soundness` and `Hardness` fail.
+  - **Owner form.** The 27 readers compile verbatim appended to their 5 owner files, with no added
+    import.
   - **(A, recommended)** Yes: confirm it as a **bounded, recorded Rule-10 exception** for exactly
     these 27 readers.
     - Landing edits:
@@ -508,6 +585,10 @@ All 27 are used.
   - (B) Remove `unaryDiv_poly`/`unaryMod_poly`/`unaryPow_poly`; the call sites use `divNum_poly` +
     `divNum_eq` and `unaryPolyOf_poly` directly.
   - (C) Accept as delivered, disclosure only.
+
+  *Fact established by phase 2:* the LE-h12-pow form
+  (`simpa only [PolyExpr.eval_pow, PolyExpr.eval_var] using unaryPolyOf_poly (.pow .var n) hf`)
+  compiles, and its 10-module downstream rebuilds with rc 0.
 - **EF-H12-R4 (Q-H12-2 A is still pending: [AB09] ch. 2 and 6 and a 3-colouring source are not
   ingested).**
   - **(A, recommended)** Phase 2 and the landing branch proceed now. The ingestion happens before
@@ -524,6 +605,6 @@ All 27 are used.
     scan). The duplication with that private scan goes in the ledger.
   - (B) Keep it local to EF-H12.
 
-**Not yet clear to merge — phase 1 only (provisional ACCEPT WITH LANDING EDITS); EF-H12-R1 (the
-unconfirmed "Readers in our files" ruling) and R2–R5 open; phase 2 (Lean) not yet run; landing
-branch not yet made; Q-H12-2 ingestion pending.**
+**Not yet clear to merge — phase 2 passed (ACCEPT WITH LANDING EDITS, new minor F08); EF-H12-R1 (the
+unconfirmed "Readers in our files" ruling) and R2–R5 open; landing branch (with LE-h12-pow,
+LE-h12-doc and LE-h12-strip) not yet made; Q-H12-2 ingestion pending.**
