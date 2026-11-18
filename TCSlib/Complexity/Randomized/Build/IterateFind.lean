@@ -311,7 +311,7 @@ finite machine computing the first accepted payload (or `[]` on exhaustion) with
 polynomial-time computable; `|init x| ≤ P.eval |x|`. A fuel machine computes
 `Nat.bits (R |x|)` within `aF * (|x| + 1) ^ dF`. The displayed common per-round budget
 `T n = A * (2 * n + 2 + P.eval n + 5) ^ D` is polynomial; no polynomial bound on `R`
-is assumed. [AB09, §7.1, p. 126]; [PS10, §8.2, Theorem 180.1, step 4]
+is assumed. [AB09, §7.1, p. 126]; [PS10, §8.2, Theorem 180.1, final paragraph of the proof]
 
 **Proof sketch.** Instance of `Turing.FinTM.exists_loopFindTM` for the repetition machine's
 host (the clean-module host with the control table `hostCtrl` and the return states
@@ -372,31 +372,17 @@ theorem computesFunInTime_find {g : List Bool → List Bool} (hg : PolyTimeCompu
   -- The three control steps (the table `hostCtrl`), read through the typed view.
   have hdisp (x w : List Bool) :
       H.tm.step (Cfg.ofWords (input := x) anchor (stateWord (K + 1) w)) =
-        Cfg.ofWords (ModuleHost.entry M 2) (stateWord (K + 1) w) := by
-    rw [ModuleHost.hostTMView_step_inl _ _ _ _ _ _ _ 0 (Cfg.ofWords_state _ _), hostCtrl_eq,
-      if_pos rfl, FinTM.controlAction_apply, moveInputPos_zero, Cfg.ofWords_def, Cfg.ofWords_def]
+        Cfg.ofWords (ModuleHost.entry M 2) (stateWord (K + 1) w) :=
+    host_dispatch_view M K hk x w
   have hbranch (x : List Bool) (b : Bool) (w : List Bool) (hw : w[0]? = some b) :
       H.tm.step (Cfg.ofWords (input := x) (.inl 1) (stateWord (K + 1) w)) =
-        Cfg.ofWords (ModuleHost.entry M (if b then 4 else 3)) (stateWord (K + 1) w) := by
-    have hread : (Cfg.ofWords (input := x) (.inl 1 : ModuleHost.State (Fin 3) M)
-        (stateWord (K + 1) w)).workTapeSymbols 0 = some b := by
-      simp only [Cfg.workTapeSymbols_eq, Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos,
-        stateWord_eq, FinTM.bufferTape_eq]
-      simpa using hw
-    rw [ModuleHost.hostTMView_step_inl _ _ _ _ _ _ _ 1 (Cfg.ofWords_state _ _), hostCtrl_eq,
-      if_neg (by decide), if_pos rfl, hread, FinTM.controlAction_apply, moveInputPos_zero,
-      Cfg.ofWords_def, Cfg.ofWords_def]
-    cases b <;> rfl
+        Cfg.ofWords (ModuleHost.entry M (if b then 4 else 3)) (stateWord (K + 1) w) :=
+    host_branch_view M K hk x b w hw
   have hhalt (x w o : List Bool) :
       H.tm.step {Cfg.ofWords (input := x) (.inl 2) (stateWord (K + 1) w) with output := o} =
         {Cfg.ofWords (input := x) (.inl 2 : ModuleHost.State (Fin 3) M) (stateWord (K + 1) w)
-          with state := none, output := o} := by
-    rw [ModuleHost.hostTMView_step_inl _ _ _ _ _ _
-      ({Cfg.ofWords (input := x) (.inl 2) (stateWord (K + 1) w) with output := o} :
-        Cfg (K + 1) Bool (ModuleHost.State (Fin 3) M) x) 2
-      (Cfg.ofWords_state (input := x) (.inl 2 : ModuleHost.State (Fin 3) M) (stateWord (K + 1) w)),
-      hostCtrl_eq, if_neg (by decide), if_neg (by decide),
-      FinTM.controlAction_apply, moveInputPos_zero]
+          with state := none, output := o} :=
+    host_halt_view M K hk x w o
   let D := dS + dV + dI + dE + dF + 1
   let A := aS + aV + aI + aE + aF + 5
   let pow (n : ℕ) := (2 * n + 2 + P.eval n + 5) ^ D
