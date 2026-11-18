@@ -78,24 +78,13 @@ theorem bitsToResidue_bijective {q : ℕ} [NeZero q] (width : ℕ)
 
 /-- A uniform block of bits induces the full uniform residue law at a dyadic modulus.
 
-**Proof sketch.** Apply the preceding bijection to each singleton fibre of the
-uniform pushforward, using `FinDist.map_apply` and `FinDist.uniform_apply`. -/
+**Proof sketch.** The pushforward of a uniform law along a bijection is uniform
+(`FinDist.map_uniform_equiv` at the equivalence of `bitsToResidue_bijective`). -/
 theorem bitsToResidue_uniform {q : ℕ} [NeZero q] (width : ℕ)
     (hq : q = 2 ^ width) :
     (FinDist.uniform (Fin width → Bool)).map (bitsToResidue (q := q) width) =
-      FinDist.uniform (ZMod q) := by
-  classical
-  have hb := bitsToResidue_bijective (q := q) width hq
-  apply FinDist.ext
-  intro y
-  rw [FinDist.map_apply, FinDist.uniform_apply, Finset.sum_filter]
-  simp only [FinDist.uniform_apply, Fintype.card_of_bijective hb]
-  calc
-    (∑ x : Fin width → Bool,
-        if bitsToResidue (q := q) width x = y then (Fintype.card (ZMod q) : ℝ)⁻¹ else 0) =
-        ∑ z : ZMod q, if z = y then (Fintype.card (ZMod q) : ℝ)⁻¹ else 0 :=
-      Fintype.sum_bijective _ hb _ _ (fun _ => rfl)
-    _ = _ := by simp
+      FinDist.uniform (ZMod q) :=
+  FinDist.map_uniform_equiv (Equiv.ofBijective _ (bitsToResidue_bijective (q := q) width hq))
 
 /-- Re-encoding a residue sampled from one full-width block returns all original bits.
 
@@ -143,26 +132,15 @@ theorem bitsToVector_bijective {q length : ℕ} [NeZero q] (width : ℕ)
 
 /-- Uniform independent bit blocks give the exact full uniform vector law.
 
-**Proof sketch.** Count singleton fibres using `bitsToVector_bijective` and the
-public pushforward equation. Independence is retained by the function-space seed. -/
+**Proof sketch.** The pushforward of a uniform law along a bijection is uniform
+(`FinDist.map_uniform_equiv` at the equivalence of `bitsToVector_bijective`). Independence is
+retained by the function-space seed. -/
 theorem bitsToVector_uniform {q length : ℕ} [NeZero q] (width : ℕ)
     (hq : q = 2 ^ width) :
     (FinDist.uniform (Fin length → Fin width → Bool)).map
-      (bitsToVector (q := q) width) = FinDist.uniform (Fin length → ZMod q) := by
-  classical
-  have hb := bitsToVector_bijective (q := q) (length := length) width hq
-  apply FinDist.ext
-  intro y
-  rw [FinDist.map_apply, FinDist.uniform_apply, Finset.sum_filter]
-  simp only [FinDist.uniform_apply, Fintype.card_of_bijective hb]
-  calc
-    (∑ x : Fin length → Fin width → Bool,
-        if bitsToVector (q := q) width x = y then
-          (Fintype.card (Fin length → ZMod q) : ℝ)⁻¹ else 0) =
-        ∑ z : Fin length → ZMod q,
-          if z = y then (Fintype.card (Fin length → ZMod q) : ℝ)⁻¹ else 0 :=
-      Fintype.sum_bijective _ hb _ _ (fun _ => rfl)
-    _ = _ := by simp
+      (bitsToVector (q := q) width) = FinDist.uniform (Fin length → ZMod q) :=
+  FinDist.map_uniform_equiv
+    (Equiv.ofBijective _ (bitsToVector_bijective (q := q) (length := length) width hq))
 
 /-- Encoding a sampled vector concatenates the original bit blocks in coordinate order.
 
@@ -211,28 +189,16 @@ theorem bitsToMatrix_bijective {q rows columns : ℕ} [NeZero q] (width : ℕ)
 
 /-- Uniform matrix blocks induce exactly the full uniform modular matrix distribution.
 
-**Proof sketch.** Count fibres of the matrix bijection using the existing finite
-uniform pushforward equations. No entry or column is fixed to a special value. -/
+**Proof sketch.** The pushforward of a uniform law along a bijection is uniform
+(`FinDist.map_uniform_equiv` at the equivalence of `bitsToMatrix_bijective`). No entry or column
+is fixed to a special value. -/
 theorem bitsToMatrix_uniform {q rows columns : ℕ} [NeZero q] (width : ℕ)
     (hq : q = 2 ^ width) :
     (FinDist.uniform (Fin rows → Fin columns → Fin width → Bool)).map
       (bitsToMatrix (q := q) width) =
-        FinDist.uniform (Matrix (Fin rows) (Fin columns) (ZMod q)) := by
-  classical
-  have hb := bitsToMatrix_bijective (q := q) (rows := rows) (columns := columns) width hq
-  apply FinDist.ext
-  intro y
-  rw [FinDist.map_apply, FinDist.uniform_apply, Finset.sum_filter]
-  simp only [FinDist.uniform_apply, Fintype.card_of_bijective hb]
-  calc
-    (∑ x : Fin rows → Fin columns → Fin width → Bool,
-        if bitsToMatrix (q := q) width x = y then
-          (Fintype.card (Matrix (Fin rows) (Fin columns) (ZMod q)) : ℝ)⁻¹ else 0) =
-        ∑ z : Matrix (Fin rows) (Fin columns) (ZMod q),
-          if z = y then
-            (Fintype.card (Matrix (Fin rows) (Fin columns) (ZMod q)) : ℝ)⁻¹ else 0 :=
-      Fintype.sum_bijective _ hb _ _ (fun _ => rfl)
-    _ = _ := by simp
+        FinDist.uniform (Matrix (Fin rows) (Fin columns) (ZMod q)) :=
+  FinDist.map_uniform_equiv (Equiv.ofBijective _
+    (bitsToMatrix_bijective (q := q) (rows := rows) (columns := columns) width hq))
 
 /-- Canonical matrix encoding recovers every row-major input bit block.
 

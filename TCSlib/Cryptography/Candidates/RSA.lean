@@ -354,7 +354,8 @@ length of any modulus `N < 2^{2 max(n,2)}`). -/
 def rsaBlock : PolyExpr := .mul (.const 2) (.add .var (.const 2))
 
 /-- `rsaBlock` evaluates to `B(n) = 2(n + 2)`. -/
-theorem eval_rsaBlock (n : ℕ) : rsaBlock.eval n = 2 * (n + 2) := rfl
+theorem eval_rsaBlock (n : ℕ) : rsaBlock.eval n = 2 * (n + 2) := by
+  simp only [rsaBlock, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
 
 /-- The number of trials `T(n) = (4n + 8) n` of the rejection samplers: with acceptance rate
 at least `1/(2 ⌈log₂ N⌉) ≥ 1/(4n + 8)` per trial (`NumberTheory.le_totient_mul_log_succ`,
@@ -362,14 +363,15 @@ C9), the failure probability is at most `e^{-n}` (`one_sub_one_div_pow_le_exp_ne
 def rsaTrials : PolyExpr := .mul (.add (.mul (.const 4) .var) (.const 8)) .var
 
 /-- `rsaTrials` evaluates to `T(n) = (4n + 8) n`. -/
-theorem eval_rsaTrials (n : ℕ) : rsaTrials.eval n = (4 * n + 8) * n := rfl
+theorem eval_rsaTrials (n : ℕ) : rsaTrials.eval n = (4 * n + 8) * n := by
+  simp only [rsaTrials, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
 
 /-- The coins of the domain sampler: `T(n)` blocks of `B(n)` bits. -/
 def rsaSampleCoins : PolyExpr := .mul rsaTrials rsaBlock
 
 /-- `rsaSampleCoins` evaluates to `T(n) · B(n)`. -/
 theorem eval_rsaSampleCoins (n : ℕ) : rsaSampleCoins.eval n = rsaTrials.eval n * rsaBlock.eval n :=
-  rfl
+  by rw [rsaSampleCoins, PolyExpr.eval_mul]
 
 /-- The coins of the generator: two `SamplePrime` runs and one unit sampler. -/
 def rsaGenCoins : PolyExpr := .add (.mul (.const 2) samplePrimeCoins) rsaSampleCoins
