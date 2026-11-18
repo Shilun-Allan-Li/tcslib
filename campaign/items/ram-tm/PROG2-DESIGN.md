@@ -99,9 +99,23 @@ lines, elaborated then) states every new declaration over mirror types. In place
   - `Compiler/Simulation` (`sim`: four new `sim_*`, with `o` and `r` threaded through `Start`,
     `Finished` and the nine existing `sim_*`);
   - `Compiler/WholeProgram` (`compileProgram_correct` restated, plus the theorem of §3).
-- **Code type:** `List Instr` becomes `List XInstr` in `ProgramCode`, `StartUp`, `Dispatcher`,
-  `StatementCode`, `Simulation` and `WholeProgram`. The straight-line segment lemmas transport
-  through `XProgram.proj`.
+- **Code type** (round 3, after gate 167's G167-02):
+  - `compileStmt`, `bodiesCode` and `compileProgram` become `List XInstr`, as does the code field
+    of `Setting`.
+  - The straight-line code (`compileExpr`, `compileCond`, the call frames, the epilogue, the
+    dispatcher, the start-up and verdict code) stays `List Instr`. It reaches the extended code
+    through `XCodeAt.proj`; its runs lift by `XSteps.of_steps_proj` and
+    `XStepsIn.of_stepsIn_proj`.
+  - **Changed in `ProgramCode`:** the code-location lemmas (`codeAt_headCode`, `codeAt_mainStmt`,
+    `codeAt_tailCode`, `codeAt_dispatcher_dispPos`, `codeAt_startCode`) are restated over the
+    extended code.
+  - **Changed in `StartUp`:** `steps_start` is stated over `compileProgram`. It is restated over
+    the projection, and as an extended run with its footprint (`xsteps_start` in the mirror).
+    Its memory calculations stay.
+  - `Dispatcher`, `Expressions`, `Conditions`, `CallFrames` and `Cells` are untouched.
+- **The footprint** (round 3, G167-07): `Finished.run` becomes an `XStepsIn` run within the
+  setting's cells. The segment lemmas need footprint versions (`stepsIn_straight` exists).
+  `Programs/WordRAM/Extended` gains `XStepsIn.mono` and `XStepsIn.trans`.
 - **Vendored headers:** each edited file lists the change as a local modification. Rule 10 does
   not apply between vendored files (Seyoon, 2026-11-18).
 
@@ -168,3 +182,16 @@ for the argument cell holding `|x|` (`Input.arg1_le`); the mirror carries it. Th
 Seyoon, 2026-11-18: H2's compiler theorem covers **all three** of the auditor's parts: coin
 streams, a footprint independent of time, and the padding and probability interface. The
 round-2 mirror answers G167-01 to G167-06 (`gates/167-prog2-statements/resolutions.md`).
+
+### Round 3 (gate 167 round 2 HOLD: 0/1/3)
+
+The mirror adds:
+- `StartUp` to the edit set: `steps_start_proj`, `xsteps_start` and the `xcodeAt_*` lemmas
+  (G167-02);
+- complete readers for `silent`, `calls`, `xcells`, `xcellCount` and `xstoreLocal` (G167-05);
+- the footprint inside the simulation contract (`XSetting.cells`, `XFinished.run` over
+  `XStepsIn`, `xStepsIn_mono`, `xStepsIn_trans`; G167-07);
+- the two remaining N8 checks (G167-08).
+
+The H2 size estimate grows by the footprint versions of the segment lemmas, about 300–600
+lines.

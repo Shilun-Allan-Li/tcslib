@@ -15,10 +15,11 @@ set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# Light with input and output: signatures (statement mirror for the PROG-2 statement gate, round 2)
+# Light with input and output: signatures (statement mirror for the PROG-2 statement gate, round 3)
 
-**Status: a sorried, self-contained mirror, not for landing.** Round 2 answers gate 167
-(G167-01 to G167-06, and the notes N2, N4, N8). The real edit set changes the vendored
+**Status: a sorried, self-contained mirror, not for landing.** Round 2 answered gate 167
+(G167-01 to G167-06, and the notes N2, N4, N8); round 3 answers round 2's G167-02, -05, -07
+and -08. The real edit set changes the vendored
 `Light.Stmt`, `Light.Exec`, `Light.Limits` and `Light.Ends` in place (design §15c; Option A).
 Because a draft cannot change compiled modules, this file mirrors them in the namespace
 `TCSlib.Draft.PROG2` under the names `XStmt`, `XExec`, `XLimits` and `XEnds`, and states the new
@@ -47,9 +48,21 @@ conservativity over the October mirror and have no in-place counterpart (the ven
   `WordRAM.XSteps.of_steps_proj` (tier 0, proved). Base instructions leave the output and the
   coin count alone (`WordRAM.xstep_map_base`).
 * **Changed files:** `Compiler/StatementCode` (`compileStmt`, `Stmt.size`, `Stmt.width` and four
-  width readers), `Compiler/ProgramCode` (`bodiesCode`, `compileProgram`), `Compiler/Simulation`
-  (`Setting`, `Start`, `Finished`, `Simulates`, `sim` and four `sim_*`), `Compiler/WholeProgram`
-  (`compileProgram_correct` and the deliverables below).
+  width readers), `Compiler/ProgramCode` (`bodiesCode`, `compileProgram`, and the code-location
+  lemmas `codeAt_headCode` … `codeAt_startCode`, now over the extended code: `xcodeAt_*`),
+  `Compiler/StartUp` (`steps_start`, which is stated over `compileProgram`: restated over its
+  projection, `steps_start_proj`, and as an extended run, `xsteps_start`; its memory calculations
+  `startMem`, `rel_startMem`, `agreeOutside_startMem` stay over `List Instr`; round 3,
+  G167-02), `Compiler/Simulation` (`Setting`, `Start`, `Finished`, `Simulates`, `sim` and four
+  `sim_*`), `Compiler/WholeProgram` (`compileProgram_correct` and the deliverables below), and
+  `Programs/WordRAM/Extended` (`XStepsIn.mono`, `XStepsIn.trans`; round 3, G167-07).
+* **The footprint is part of the simulation** (round 3, G167-07). Endpoint agreement cannot bound
+  the cells a run reads, so `XFinished.run` is an `XStepsIn` run within the setting's cell interval
+  `XSetting.cells = [-max(2Q, 25 + 4·disp), lim.space)`, which holds every cell a compiled step
+  reads or writes: the scratch and constant cells, the pool, the stack, and memory below
+  `lim.space` (a safe address). H2 proves it per segment: `stepsIn_straight` for straight-line
+  code, footprint versions of the expression, condition and call lemmas, the new instructions'
+  `touches` (`T₀` and the read cell), and `XStepsIn.mono`/`XStepsIn.trans` to compose.
 * **Boundedness:** `Exec.bounded` needs `1 ≤ lim.word` (`inBit` and `coin` write `1`), so `sim`
   and the whole-program theorems take it as a hypothesis; `Light.Std` gives `100 ≤ word`.
 
@@ -609,6 +622,30 @@ theorem XStmt.silent_coin (x : ℕ) : (XStmt.coin x).silent = false := rfl
 theorem XStmt.calls_call (p : ℕ) (args : List Expr) (x : ℕ) :
     (XStmt.call p args x).calls = [p] := rfl
 
+/-- Reading `XStmt.silent` on the remaining leaves: all are silent (round 3, G167-05). -/
+theorem XStmt.silent_leaf (x p : ℕ) (a e : Expr) (args : List Expr) :
+    XStmt.skip.silent = true ∧ (XStmt.set x e).silent = true ∧ (XStmt.store a e).silent = true ∧
+      (XStmt.call p args x).silent = true ∧ (XStmt.inBit x e).silent = true ∧
+      (XStmt.half x e).silent = true :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- Reading `XStmt.calls` on compound statements. -/
+theorem XStmt.calls_seq (s t : XStmt) : (XStmt.seq s t).calls = s.calls ++ t.calls := rfl
+
+@[inherit_doc XStmt.calls_seq]
+theorem XStmt.calls_ite (c : Cond) (s t : XStmt) :
+    (XStmt.ite c s t).calls = s.calls ++ t.calls := rfl
+
+@[inherit_doc XStmt.calls_seq]
+theorem XStmt.calls_while (c : Cond) (s : XStmt) : (XStmt.while c s).calls = s.calls := rfl
+
+/-- Reading `XStmt.calls` on the leaves other than `call`: they call nothing. -/
+theorem XStmt.calls_leaf (x : ℕ) (a e : Expr) :
+    XStmt.skip.calls = [] ∧ (XStmt.set x e).calls = [] ∧ (XStmt.store a e).calls = [] ∧
+      (XStmt.inBit x e).calls = [] ∧ (XStmt.emit e).calls = [] ∧ (XStmt.coin x).calls = [] ∧
+      (XStmt.half x e).calls = [] :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
 /-- `S` is a **silent set** of `P`: its procedures exist, their bodies are silent, and they call
 only procedures in `S`. -/
 def XProgram.SilentSet (P : XProgram) (S : Set ℕ) : Prop :=
@@ -715,6 +752,10 @@ open Light.Compiler (CodeLayout compileExpr compileCond callCode callSize epilog
 case, after its expression). -/
 def xstoreLocal (x : ℕ) : List WordRAM.XInstr :=
   [.base (.sub cADDR cFP (cPool (2 * x))), .base (.store cADDR (cT 0))]
+
+/-- Reading `xstoreLocal` (round 3, G167-05). -/
+theorem xstoreLocal_eq (x : ℕ) :
+    xstoreLocal x = [.base (.sub cADDR cFP (cPool (2 * x))), .base (.store cADDR (cT 0))] := rfl
 
 /-- **The length of the code of a statement** (in place, `Light.Stmt.size`): the vendored seven
 cases, and `inBit`/`half` `e.size + 3`, `emit` `e.size + 1`, `coin` `3` (G167-06). -/
@@ -830,6 +871,29 @@ structure XSetting (W : ℕ) extends Sizes W where
 /-- The limits of the setting, with its input. -/
 def XSetting.xlim {W : ℕ} (S : XSetting W) : XLimits := { toLimits := S.lim, input := S.input }
 
+/-- **The cells a simulated run may touch** (round 3, G167-07): from the end of the pool and the
+stack, `-max(2Q, 25 + 4·disp)`, up to the memory limit. -/
+def XSetting.cells {W : ℕ} (S : XSetting W) : Set ℤ :=
+  {a | -(max (2 * S.Q) (25 + 4 * S.disp) : ℤ) ≤ a ∧ a < S.lim.space}
+
+/-- Reading `XSetting.cells`. -/
+theorem XSetting.cells_eq {W : ℕ} (S : XSetting W) :
+    S.cells = {a | -(max (2 * S.Q) (25 + 4 * S.disp) : ℤ) ≤ a ∧ a < S.lim.space} := rfl
+
+/-- Footprints compose (in place, `WordRAM.XStepsIn.mono`, new in `Extended`; the extended
+counterpart of the vendored `StepsIn.mono`). -/
+theorem xStepsIn_mono {W : ℕ} {P : WordRAM.XProgram} {x ρ : List Bool} {K K' : Set ℤ} {n : ℕ}
+    {c c' : WordRAM.XCfg W} (h : WordRAM.XStepsIn P x ρ K n c c') (hK : K ⊆ K') :
+    WordRAM.XStepsIn P x ρ K' n c c' := by
+  sorry
+
+/-- Runs within one footprint concatenate (in place, `WordRAM.XStepsIn.trans`, new in
+`Extended`; the extended counterpart of `StepsIn.trans`). -/
+theorem xStepsIn_trans {W : ℕ} {P : WordRAM.XProgram} {x ρ : List Bool} {K : Set ℤ} {n k : ℕ}
+    {c c₁ c₂ : WordRAM.XCfg W} (h₁ : WordRAM.XStepsIn P x ρ K n c c₁)
+    (h₂ : WordRAM.XStepsIn P x ρ K k c₁ c₂) : WordRAM.XStepsIn P x ρ K (n + k) c c₂ := by
+  sorry
+
 variable {W : ℕ} (S : XSetting W)
 
 /-- The situation before the code of `s` runs at depth `d` (in place, `Start`; unchanged apart
@@ -844,11 +908,11 @@ structure XStart (d : ℕ) (s : XStmt) (σ : State) (pos q : ℕ) (m : ℤ → B
 
 /-- The code of `s`, started with output `out` and `k` coins consumed, has matched a run that
 ends in `σ'` having emitted `o` and consumed `r` (in place, `Finished`, with the two traces):
-`n` steps on the stream `ρ` reach the end of the code with output `out ++ o` and `k + |r|`
-coins consumed. -/
+`n` steps on the stream `ρ`, every one within the setting's cells (round 3, G167-07), reach the
+end of the code with output `out ++ o` and `k + |r|` coins consumed. -/
 structure XFinished (ρ : List Bool) (s : XStmt) (σ' : State) (o r : List Bool) (c pos q : ℕ)
     (m m' : ℤ → BitVec W) (out : List Bool) (k n : ℕ) : Prop where
-  run : WordRAM.XSteps S.code S.input ρ n { pc := pos, mem := m, out := out, rd := k }
+  run : WordRAM.XStepsIn S.code S.input ρ S.cells n { pc := pos, mem := m, out := out, rd := k }
     { pc := pos + s.size S.F, mem := m', out := out ++ o, rd := k + r.length }
   le : n ≤ stepsPerStep S.disp * c
   rel : Rel S.toSizes σ' q m'
@@ -868,8 +932,11 @@ run of it, with the output appended and the coins read from the stream. New hypo
 `1 ≤ lim.word`, for `Exec.bounded` (G167-02).
 
 **Proof sketch.** Induction on the run, as the vendored `sim`, threading `out` and `k`. The base
-segments run through `XCodeAt.proj`, the vendored segment lemmas on `S.code.proj`, and
-`XSteps.of_steps_proj`; they change neither output nor coin count. The four new cases run their
+segments run through `XCodeAt.proj`, footprint versions of the vendored segment lemmas on
+`S.code.proj` (`StepsIn`, within `S.cells`: every load and store address is a frame, stack,
+pool or constant cell, or a safe memory address below `lim.space`), and
+`XStepsIn.of_stepsIn_proj`; they change neither output nor coin count. Segments compose by
+`xStepsIn_trans`. The four new cases run their
 expression code, one new instruction (`rdIn` reads `inBitWord`, equal to `inBitVal` in range;
 `emit` appends "`T₀ ≠ 0`"; `coin` reads `ρ.getD k false`, which is the consumed bit; `half` is
 `sshiftRight 1`, equal to `⌊v / 2⌋` in range), and the local store. -/
@@ -886,7 +953,7 @@ end Compiler
 section Program
 
 open Light.Compiler (CodeLayout epilogue epilogueSize dispatcher cNEG Fits Input Holds
-  stepsPerStep mainFrame mainPos tailPos tailCode headStraight startStraight)
+  stepsPerStep mainFrame mainPos tailPos tailCode headStraight startStraight startMem)
 
 /-- The frame size: the width of the text, at least 3 (in place, `frameSize`). -/
 def xframeSize (P : XProgram) : ℕ := max 3 (Light.maxOf XStmt.width P)
@@ -930,6 +997,55 @@ def xcompileProgram (P : XProgram) (p0 : ℕ) (dec : Bool) : WordRAM.XProgram :=
     (dispatcher (xdispPos P dec)).map .base ++
     (startStraight (xframeSize P) (xdispPos P dec) ++ [WordRAM.Instr.bltz cNEG mainPos]).map .base
 
+/-! ### Where the parts of a compiled program are (round 3, G167-02)
+
+In place these are `codeAt_headCode`, `codeAt_mainStmt`, `codeAt_tailCode`,
+`codeAt_dispatcher_dispPos` and `codeAt_startCode` of `Compiler/ProgramCode`, now stated over the
+extended code; and `steps_start` of `Compiler/StartUp`, whose conclusion was over
+`compileProgram` itself. -/
+
+/-- The head is at position `0`. -/
+theorem xcodeAt_headCode (P : XProgram) (p0 : ℕ) (dec : Bool) :
+    XCodeAt (xcompileProgram P p0 dec) 0
+      ((headStraight ++ [WordRAM.Instr.bltz cNEG (3 * xdispPos P dec)]).map .base) := by
+  sorry
+
+/-- The outermost call is at `mainPos`. -/
+theorem xcodeAt_mainStmt (P : XProgram) (p0 : ℕ) (dec : Bool) :
+    XCodeAt (xcompileProgram P p0 dec) mainPos
+      (xcompileStmt (xcodeLayout P dec) (xmainStmt p0) mainPos) := by
+  sorry
+
+/-- The verdict code follows the outermost call. -/
+theorem xcodeAt_tailCode (P : XProgram) (p0 : ℕ) (dec : Bool) :
+    XCodeAt (xcompileProgram P p0 dec) (tailPos (xframeSize P))
+      ((tailCode dec (tailPos (xframeSize P))).map .base) := by
+  sorry
+
+/-- The dispatcher is at `xdispPos`. -/
+theorem xcodeAt_dispatcher (P : XProgram) (p0 : ℕ) (dec : Bool) :
+    XCodeAt (xcompileProgram P p0 dec) (xdispPos P dec)
+      ((dispatcher (xdispPos P dec)).map .base) := by
+  sorry
+
+/-- The start-up code follows the dispatcher. -/
+theorem xcodeAt_startCode (P : XProgram) (p0 : ℕ) (dec : Bool) :
+    XCodeAt (xcompileProgram P p0 dec) (3 * xdispPos P dec)
+      ((startStraight (xframeSize P) (xdispPos P dec) ++
+        [WordRAM.Instr.bltz cNEG mainPos]).map .base) := by
+  sorry
+
+/-- **The start-up, over the projection** (in place, `steps_start`, restated over
+`(compileProgram P p0 dec).proj`): from the first instruction to the outermost statement.
+
+**Proof sketch.** The vendored proof, with `XCodeAt.proj` turning `xcodeAt_headCode` and
+`xcodeAt_startCode` into code locations of the projection. -/
+theorem steps_start_proj {W : ℕ} (P : XProgram) (p0 : ℕ) (dec : Bool)
+    (hneg : WordRAM.InRange W (-1)) (m : ℤ → BitVec W) :
+    WordRAM.Steps (xcompileProgram P p0 dec).proj (xdispPos P dec + xframeSize P + 9) ⟨0, m⟩
+      ⟨mainPos, startMem (xframeSize P) (xdispPos P dec) m⟩ := by
+  sorry
+
 /-- The start-up cost (in place, `startCost`). -/
 def xstartCost (P : XProgram) (dec : Bool) : ℕ := xdispPos P dec + xframeSize P + 13
 
@@ -953,6 +1069,29 @@ def xcells (P : XProgram) (dec : Bool) (lim : Limits) : Finset ℤ :=
 running time (G167-03). -/
 def xcellCount (P : XProgram) (dec : Bool) (lim : Limits) : ℕ := xlowCell P dec lim + lim.space
 
+/-- Reading `xcells` (round 3, G167-05). -/
+theorem xcells_eq (P : XProgram) (dec : Bool) (lim : Limits) :
+    xcells P dec lim = Finset.Ico (-(xlowCell P dec lim : ℤ)) lim.space := rfl
+
+/-- Reading `xcellCount` (round 3, G167-05). -/
+theorem xcellCount_eq (P : XProgram) (dec : Bool) (lim : Limits) :
+    xcellCount P dec lim = xlowCell P dec lim + lim.space := rfl
+
+/-- **The start-up as an extended run, with its footprint**: on any input and stream, from
+any coin count, the start-up reaches the outermost statement within `xcells`, emitting nothing.
+
+**Proof sketch.** `steps_start_proj` with footprints (`stepsIn_straight` for its two
+straight-line parts): it writes the constants, the pool up to `cPool (xdispPos)`, `FP` and the
+outermost frame, and reads the argument cells, all at least `-xlowCell` and negative; then
+`XStepsIn.of_stepsIn_proj`. -/
+theorem xsteps_start {W : ℕ} (P : XProgram) (p0 : ℕ) (dec : Bool) (lim : Limits)
+    (hneg : WordRAM.InRange W (-1)) (m : ℤ → BitVec W) (x ρ : List Bool) (k : ℕ) :
+    WordRAM.XStepsIn (xcompileProgram P p0 dec) x ρ ↑(xcells P dec lim)
+      (xdispPos P dec + xframeSize P + 9) { pc := 0, mem := m, out := [], rd := k }
+      { pc := mainPos, mem := startMem (xframeSize P) (xdispPos P dec) m, out := [], rd := k } := by
+  sorry
+
+
 /-- The number of cells in `xcells` is `xcellCount`. -/
 theorem card_xcells (P : XProgram) (dec : Bool) (lim : Limits) :
     (xcells P dec lim).card = xcellCount P dec lim := by
@@ -973,10 +1112,11 @@ stream `ρ` that agrees with `r` (past its end read as `false`), is matched by a
 compiled program from `⟨0, m⟩` that stays in `xcells` (G167-03: a footprint independent of
 time), reaches the verdict before `xramSteps` steps, has emitted `o`, and leaves the outcome.
 
-**Proof sketch.** As the vendored proof: `steps_start` on `code.proj`, lifted; `xsim` on the
-outermost call with `out = []`, `k = 0`; `steps_tail`, lifted. The cells: every step of each part
-reads and writes only `Writable` cells, the pool, or memory below `lim.space`, all in `xcells`
-(`Outcome.far`'s argument, read per step); `XSteps.exists_xStepsIn` and `XStepsIn.mono`. -/
+**Proof sketch.** As the vendored proof: `xsteps_start`; `xsim` on the outermost call with
+`out = []`, `k = 0`; `steps_tail` on `code.proj` with its footprint (`stepsIn_straight`), lifted.
+All three runs are within the setting's cells, which for the whole-program setting
+(`Q = xstackCells`, `disp = xdispPos`) are exactly `xcells` (round 3, G167-07); compose them with
+`xStepsIn_trans`. -/
 theorem xcompileProgram_correct {W : ℕ} {lim : XLimits} {P : XProgram} {p0 : ℕ} {dec : Bool}
     {μ : ℕ → ℤ} {i j : ℤ} {σ' : State} {o r : List Bool} {c : ℕ} {m : ℤ → BitVec W}
     {ρ : List Bool} (hw : (1 : ℤ) ≤ lim.word)
@@ -1132,6 +1272,24 @@ leaves a bounded state for an unbounded one. -/
 theorem check_bounded_needs_word :
     ∃ (lim : XLimits) (σ σ' : State), lim.word = 0 ∧ σ.Bounded lim.toLimits ∧
       XExec lim [] 0 (.coin 0) σ σ' [] [true] 1 ∧ ¬ σ'.Bounded lim.toLimits := by
+  sorry
+
+/-- Emitting a value and returning it differ on negatives (round 3, G167-08): `emit` of `-3`
+emits `true` (nonzero), while a returned `-3` rejects (`verdictOf` tests positivity). -/
+theorem check_emit_vs_verdict :
+    decide ((-3 : ℤ) ≠ 0) = true ∧ Light.verdictOf true (-3) = false := by
+  sorry
+
+/-- The outermost call does not run if its entry procedure is missing (round 3, G167-08). -/
+theorem check_missing_entry {lim : XLimits} {P : XProgram} {p0 : ℕ} {σ σ' : State}
+    {o r : List Bool} {c : ℕ} (hp : P[p0]? = none) :
+    ¬ XExec lim P 0 (xmainStmt p0) σ σ' o r c := by
+  sorry
+
+/-- The outermost call does not run at depth limit zero (round 3, G167-08). -/
+theorem check_zero_depth {lim : XLimits} {P : XProgram} {p0 : ℕ} {σ σ' : State}
+    {o r : List Bool} {c : ℕ} (hd : lim.depth = 0) :
+    ¬ XExec lim P 0 (xmainStmt p0) σ σ' o r c := by
   sorry
 
 end TCSlib.Draft.PROG2
