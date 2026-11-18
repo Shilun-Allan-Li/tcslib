@@ -1,0 +1,114 @@
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean
+index fb8a0c9b3..9c69ef4c4 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean
+@@ -189,9 +189,7 @@ theorem fheEval_eq (P : Parameters) (evk : Fin P.columns → Ciphertext P) {k :
+ /-- **Pure fully homomorphic evaluation of any fan-in-2 circuit** [BV14, Thm 2.14, p008-b003;
+ BV11, Def 3.5, p014-b001]: `fheEval` on the NAND form of `Cc` (6a's conversion
+ `DAGCircuit.toNANDForm`), `fheEvalCircuit P evk Cc hC cts = fheEval P evk (Cc.toNANDForm hC)
+-cts`. Computable. **Compactness by typing**: the result is a `Ciphertext P` whatever `Cc`.
+-While 6a's N2 (`nandGadget_correct`) is admitted, `sorryAx` reaches this definition through
+-`toNANDForm` only. -/
++cts`. Computable. **Compactness by typing**: the result is a `Ciphertext P` whatever `Cc`. -/
+ def fheEvalCircuit (P : Parameters) (evk : Fin P.columns → Ciphertext P) {k : ℕ}
+     (Cc : DAGCircuit k) (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2) (cts : Fin k → Ciphertext P) :
+     Ciphertext P :=
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean
+index 0f2ee7ab5..a4f9cb418 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean
+@@ -63,11 +63,8 @@ open Encryption.PublicKey
+ /-- The ciphertext width `N = (n+1)·ℓ` is positive: `2 ≤ q ≤ 2^ℓ` forces `ℓ ≥ 1`. The
+ decryption formula has `N` inputs, and Barrington's construction needs at least one. -/
+ instance Parameters.neZero_columns (P : Parameters) : NeZero P.columns :=
+-  ⟨Nat.mul_ne_zero (Nat.succ_ne_zero _) fun h => by
+-    have hle := P.modulus_le
+-    have hq := P.lwe.modulus_ge_two
+-    rw [h, pow_zero] at hle
+-    omega⟩
++  ⟨Nat.mul_ne_zero (Nat.succ_ne_zero _)
++    (Nat.one_lt_two_pow_iff.mp (Nat.lt_of_lt_of_le P.lwe.modulus_ge_two P.modulus_le))⟩
+ 
+ /-- The **key bits** of a secret `s`: the `N = (n+1)·ℓ` bits `G⁻¹(t)` of the key vector
+ `t = (−s, 1)`, `keyBits P s = decomposeVec P (secretVector P s)`. They are what the
+@@ -157,9 +154,8 @@ the formula layer (module docstring).
+ 
+ **Proof sketch.** Decryption is `decode` of `⟨t, c⟩` with `t = (−s, 1)`, by the owner-side
+ reader `decrypt_eq_decode_dotProduct : decrypt P s C = LWE.BitEncoding.decode P.lwe
+-(secretVector P s ⬝ᵥ decryptColumn P C)` in `GSW/Scheme.lean`. It is **MISSING** at the base
+-(the step exists only inside the private `decrypt_eq_decode_errorSum`), listed in the reader
+-census, and lands owner-side before this fill (ruling Q-C1); the fill does not re-derive it.
++(secretVector P s ⬝ᵥ decryptColumn P C)` in `GSW/Scheme.lean` (owner-side, ruling Q-C1); the
++fill does not re-derive it.
+ By G5, `⟨t, c⟩` is `∑ᵢ xᵢ·aᵢ` in `ZMod q`. Its representative is `(∑ᵢ xᵢ·aᵢ.val) mod q`
+ (`ZMod.val_natCast`, `Nat.cast_sum`, `ZMod.natCast_zmod_val`).
+ `LWE.BitEncoding.decode_iff_mem_Ico` (O2) turns `decode` into the interval test, and
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean
+index 4f32cd5c5..9ff442590 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean
+@@ -44,8 +44,10 @@ L2 and L3 are admitted; L1 is proved.
+ 
+ **Sources and reconstruction (P6-Q19 B).** The key-chain construction and the hybrid order are
+ reconstructed: no ingested passage gives them. BV11 and BV14 attribute leveled bootstrapping
+-to Gentry's work; that passage will be cited here once it is ingested. The statements cite
+-[BV11, Thm 3.1, Def 3.6], [BV14, Thm 2.14 first part, Thm 3.7] and [AP14, §5.3] only.
++to Gentry's work; that passage will be cited here once it is ingested. For the leveled scheme
++the statements cite [BV11, Thm 3.1, Def 3.6], [BV14, Thm 2.14 first part, Thm 3.7] and
++[AP14, §5.3] only; [BV14, Def 2.12, §3.3] and [Bar89, Thm 1] are cited for compactness and the
++literal inputs.
+ 
+ ## References
+ 
+@@ -171,9 +173,8 @@ theorem leveledEval_eq (P : Parameters) {L k : ℕ} (lk : Fin L → Fin P.column
+ part, p008-b003; BV11, Def 3.6, p014-b001]: `leveledEval` of the layered NAND form
+ `(Cc.toNANDForm hC).layerNAND` (6a's N3–N13) on the literal ciphertexts,
+ `leveledEvalCircuit P lk Cc hC cts = leveledEval P lk (Cc.toNANDForm hC).layerNAND
+-(literalCts P cts)`. Computable. **Compactness by typing**. While 6a's N2, N12 and N13 are
+-admitted, `sorryAx` reaches this definition through `toNANDForm` and `layerNAND` only.
+-Reconstruction disclosed (module docstring). -/
++(literalCts P cts)`. Computable. **Compactness by typing**. Reconstruction disclosed (module
++docstring). -/
+ def leveledEvalCircuit (P : Parameters) {L k : ℕ} [NeZero k]
+     (lk : Fin L → Fin P.columns → Ciphertext P) (Cc : DAGCircuit k)
+     (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2) (cts : Fin k → Ciphertext P) : Ciphertext P :=
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean
+index f35498ec7..2455962c8 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean
+@@ -36,7 +36,7 @@ Both are admitted statement-phase targets.
+ reconstructed: no ingested passage gives them. BV11 and BV14 attribute leveled bootstrapping
+ to Gentry's work; that passage will be cited here once it is ingested. The statements cite
+ [BV11, Thm 3.1, Def 3.6], [BV14, Thm 2.14 first part, Thm 3.7] and [AP14, §5.3] only, with
+-[GSW13, §3.2, Lemma 1] and [BV11, Def 3.1] for the one-key steps and the view.
++[GSW13, §3.2, Lemma 1], [BV11, Def 3.1] and [BV14, §2.5] for the one-key steps and the view.
+ 
+ ## References
+ 
+@@ -308,7 +308,7 @@ reduction's coins, r3 §H8 item 12, so the multi-ciphertext lemma is applied per
+ other seeds or its proof is followed with them in the coins). The gap at `i = j` is the gap of
+ `levelReduction P χ L μ e j b D` between a real LWE key and a uniform key, plus the gap
+ between `b = true` and `b = false` under a uniform key: `levelReduction_eq`, `reduction_eq`,
+-`hybridPlant`'s planted position, `levelAssemble_eq`, `levelHybrid_eq`, `Regev.keygen_fst`
++`hybridPlant_eq` (the planted position), `levelAssemble_eq`, `levelHybrid_eq`, `Regev.keygen_fst`
+ (the planted key is distributed as `pk_{e+1}`, whose secret is otherwise unused in `H_{e+1}`),
+ and the seed regrouping (`acceptProb_comp_equiv`, `OneWay.uprob_update`). As in phase 5's
+ `distAdv_encrypt_le`: the two DLWE gaps are the exact advantages (`real_uniformKey_advantage`,
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean
+index 1ebe41f07..334136050 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean
+@@ -45,9 +45,10 @@ is ingested.
+ * [GSW13] C. Gentry, A. Sahai, B. Waters, CRYPTO 2013; IACR ePrint 2013/340, version dated
+   8 June 2013: §3.1 (parameters).
+ 
+-**Deviations.** Worst case, with an explicit polynomial (r3 §H6: `c < 2^70`), not
+-[BV14, Thm 3.7]'s `Θ̃` noise rate. The constant `8` (r3 G16 wrote `4`) absorbs the floor in the
+-decryption condition `2·(ℓ·β) < ⌊q/2⌋`, so that `pBoot(κ)·B(κ) < q(κ)` suffices in G17.
++**Deviations.** Worst case, with an explicit polynomial (constant `2^70`; r3 §H6 drafted
++`c < 2^70` with the factor `4`), not [BV14, Thm 3.7]'s `Θ̃` noise rate. The constant `8`
++(r3 G16 wrote `4`) absorbs the floor in the decryption condition `2·(ℓ·β) < ⌊q/2⌋`, so that
++`pBoot(κ)·B(κ) < q(κ)` suffices in G17.
+ -/
+ 
+ namespace TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
