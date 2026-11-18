@@ -1,0 +1,96 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
+-/
+import TCSlib.Cryptography.Candidates.ArithmeticDischarge
+import TCSlib.Cryptography.Candidates.ExtendedEuclidMachine
+import TCSlib.Complexity.Randomized.Primality
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# `PRIMES ∈ P` as the one remaining arithmetic hypothesis
+
+Of the nine fields of the hypothesis bundle `TCSlib.Cryptography.Candidates.ArithmeticFP`,
+eight are proved from the binary-arithmetic machines (`ArithmeticDischarge.lean`,
+`ExtendedEuclidMachine.lean`). The ninth, `prime : PolyTimeComputable primeStr`, asks for a
+deterministic polynomial-time primality test. It is true (Agrawal–Kayal–Saxena; [PS10, p. 33,
+§2.6.5], [AB09, §7.2.2 and the chapter notes]), but the library has no deterministic primality
+test, so it stays a **named hypothesis**, `PrimesInP`, stated in the library's language form
+`PRIMESBin ∈ P` (Seyoon's ruling Q-H1-1 A).
+
+## Main definitions
+
+* `TCSlib.Cryptography.Candidates.PrimesInP` — the proposition `PRIMES ∈ P`.
+
+## Main results
+
+* `TCSlib.Cryptography.Candidates.primesInP_iff` — its reader.
+* `TCSlib.Cryptography.Candidates.polyTimeComputable_primeStr_iff_bitsVal` — the bundle's
+  most-significant-bit-first test `primeStr` is polynomial-time exactly when the
+  little-endian test `x ↦ [bitsVal x is prime]` is.
+
+**Scope note.** The bridge from `PRIMESBin ∈ P` to the little-endian test reads membership in
+`Randomized.PRIMESBin` (`Complexity/Randomized/Primality.lean`) and in `Randomized.PRIMES`
+(`PrimalityMath.lean`), which publish no reader; and `ArithmeticFP.ofPrimesInP` needs the
+readers of the pair functions of `Arithmetic.lean` on every word. Both are scope requests of
+this job's report, which also carries the remaining statements, compiled against the requested
+readers.
+
+## References
+
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
+  (p. 33: primality testing is polynomial-time; §2.6.5, closing remark: the deterministic
+  polynomial-time test of Agrawal, Kayal and Saxena.)
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*, Cambridge
+  University Press, 2009. (§7.2.2, opening: Agrawal, Kayal and Saxena gave a deterministic
+  polynomial-time algorithm for primality testing; chapter notes: they proved `PRIMES ∈ P`.)
+-/
+
+namespace TCSlib.Cryptography.Candidates
+
+open Complexity Turing NumberTheory TCSlib.Cryptography.Encoding.BinaryArith
+
+/-- **`PRIMES ∈ P`**: the language `Randomized.PRIMESBin` of the little-endian binary words whose
+value is prime is decided in deterministic polynomial time, `PRIMESBin ∈ P` [AB09, §7.2.2].
+
+This is the **standing exception** of ruling Q5 A of the efficiency remediation: a true
+statement (Agrawal–Kayal–Saxena, [PS10, §2.6.5], [AB09, §7.2.2 and chapter notes]) left as a
+named hypothesis because the library has no deterministic primality test. It is a `Prop`, not
+an axiom, and is never used as one: the results that need it take it as an explicit argument. -/
+def PrimesInP : Prop := Randomized.PRIMESBin ∈ Complexity.P
+
+/-- The reader of `PrimesInP`: `PrimesInP ↔ PRIMESBin ∈ P`. -/
+theorem primesInP_iff : PrimesInP ↔ Randomized.PRIMESBin ∈ Complexity.P := Iff.rfl
+
+/-- Glue. The little-endian primality bit of `x` is the bundle's test on the numeral of
+`bitsVal x` at width `|x|`: `[bitsVal x is prime] = primeStr (fromLEPoly var ⟨x, x⟩)`
+(`fromLEPoly_pairEncode`, `bitsVal x < 2^{|x|}`, `listToNat_natToList`). -/
+theorem primeBit_eq_primeStr_fromLEPoly (x : List Bool) :
+    [decide (LogProg.bitsVal x).Prime] = primeStr (fromLEPoly .var (pairEncode x x)) := by
+  rw [fromLEPoly_pairEncode, PolyExpr.eval_var, primeStr_eq]
+  beta_reduce
+  rw [listToNat_natToList (LogProg.bitsVal_lt_two_pow x)]
+
+/-- Glue. **The two primality tests are equally hard**: the bundle's test `primeStr`
+(most significant bit first, `listToNat`) is polynomial-time if and only if the little-endian
+test `x ↦ [bitsVal x is prime]` is.
+
+**Proof sketch.** One way, `primeStr = (little-endian test) ∘ toLE`, as
+`bitsVal (toLE w) = ⟦w⟧` (`bitsVal_toLE`). The other way, the little-endian test is
+`primeStr ∘ (x ↦ fromLEPoly var ⟨x, x⟩)` (`primeBit_eq_primeStr_fromLEPoly`). -/
+theorem polyTimeComputable_primeStr_iff_bitsVal :
+    PolyTimeComputable primeStr ↔
+      PolyTimeComputable fun x => [decide (LogProg.bitsVal x).Prime] := by
+  constructor
+  · intro h
+    exact (h.comp' (polyTimeComputable_fromLEPoly_var (t := id) (g := id) polyTimeComputable_id
+      polyTimeComputable_id)).congr fun x => (primeBit_eq_primeStr_fromLEPoly x).symm
+  · intro h
+    exact (h.comp' polyTimeComputable_toLE).congr fun w => by
+      rw [bitsVal_toLE, primeStr_eq]
+
+end TCSlib.Cryptography.Candidates
