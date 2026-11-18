@@ -1,0 +1,17 @@
+# Gate 167 round 2 — resolutions
+
+The round-2 mirror is `items/ram-tm/prog2/PROG2Mirror.lean.txt` (round 1 is kept as
+`PROG2Mirror-r1.lean.txt`). Each line names the mirror declarations that resolve the finding.
+
+| # | Severity | Resolution |
+|---|---|---|
+| G167-01 | major | `EndsIO.ofEnds` is withdrawn. The lifting condition is now on reachable procedures: `XStmt.silent` (no `emit`, no `coin`), `XStmt.calls`, and `XProgram.SilentSet P S` (procedures of `P`, silent bodies, closed under calls). `XExec.traces_nil` gives empty traces. `EndsIO.ofXEnds` lifts an `XEnds` fact (in place, `Light.Ends`); `MeetsIO.ofXMeets` lifts a routine's `XMeets` (in place, `Light.Meets`) specification. `SilentSet.append` and `SilentSet.behind` (with `silent_shift`, `calls_shift`) keep `Light.Std`'s routines liftable inside any program built around them. `XExec.ofExec` and `XStmt.ofStmt` stay, marked **mirror only**. |
+| G167-02 | major | The compiler is mirrored concretely: `XStmt.size`, `xcompileStmt` (the four new cases), `length_xcompileStmt`, `XStmt.width` and four width readers, `XCodeAt` and the transport `XCodeAt.proj`, `XSetting`, `XStart`, `XFinished`, `XSimulates`, `xsim`, the program layout (`xframeSize` … `xcompileProgram`), `XOutcome` and `xcompileProgram_correct`. The header lists the definitions that stay `List Instr` (the straight-line, call, epilogue, dispatcher and start-up code, with `Expressions`, `Conditions`, `CallFrames`, `Cells`, `StartUp` and `Dispatcher` untouched) and the four changed files. Boundedness: `xsim` and every whole-program theorem take `1 ≤ lim.word`. |
+| G167-03 | major | Scope (Seyoon, 2026-11-18): **all three parts**. (1) Streams: `XSimulates` and `xcompileProgram_correct` hold on every RAM stream that agrees with the consumed word (past its end read as `false`, as the RAM does); `haltsWithin_compileProgram` states it. (2) Footprint: the compiled run stays in `xcells = [-lowCell, lim.space)`, of size `xcellCount`, independent of time. (3) Padding and probabilities: `haltsWithin_of_streams` (all RAM streams halt, `mem_NSPACE_of_accepts`' first hypothesis), `acceptsND_iff_haltsWithin` (its second), `acceptProb_eq_randProb`; and `EndsIO.take_iff`, `acceptProb_eq_of_le`. |
+| G167-04 | major | `polyTimeComputable_of_runs` states the corollary with one length-dependent word size `W`, its `WordSizeComputable` witness, `TW n + W n` polynomial, polynomial Light cost, and limits `L n` admitting `n` and fitting `W n`. The design note's claim is corrected (§3). |
+| G167-05 | minor | Readers: `inBitVal_eq`, `xEnds_iff`, `endsIO_iff`, `meetsIO_iff`, `xMeets_iff`, `xmainStmt_eq`, `acceptsND_iff`, `acceptProb_eq`, `xstartState_eq`, `xCodeAt_iff`, `silentSet_iff` and the `silent_*`/`calls_*` equations. Inversions for the four new rules: `XExec.inBit_inv`, `emit_inv`, `coin_inv`, `half_inv`. Mirror-only declarations are marked. |
+| G167-06 | minor | `xcompileStmt` and `XStmt.size` state the true code: `inBit` and `half` are `e.size + 3`, `coin` is `3`, `emit` is `e.size + 1`, each with the assignment's two-instruction local store where it writes a local (header table). |
+| N2 | note | `XFits` is removed; `Fits` is unchanged and `|x| ≤ lim.word` is a separate hypothesis. The header says so. |
+| N4 | note | `check_two_coins`, `check_det_length`. |
+| N8 | note | `inBitVal_boundary`, `half_boundary`, `check_bounded_needs_word`, `acceptProb_eq_of_le`. |
+| N1, N3, N5–N7, N9 | note | No change needed; N9's shape is now `haltsWithin_compileProgram`, over concrete compiler definitions. |

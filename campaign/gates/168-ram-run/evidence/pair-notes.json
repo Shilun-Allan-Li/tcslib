@@ -1,0 +1,62 @@
+{
+ "NEW|RunSource.lean::source_step_rd|RunSource.lean::source_verdict_not_coin": [
+  "shape-match",
+  "Two different consequences of one RAM step, each by the same two-line case split (`rw [xstep_def] at h; split at h <;> cases h <;> simp_all only [...]`): the coin count after a continuing step, and that a verdict instruction is not a coin."
+ ],
+ "NEW|RunSource.lean::source_verdict_not_coin|RunSource.lean::source_step_rd": [
+  "shape-match",
+  "The reverse direction of the pair above."
+ ],
+ "NEW|RunEncoding.lean::runBank_reconstruct|RunEncoding.lean::runBank_embed": [
+  "citation-shape",
+  "The two `runBank` reconstruction equations, through the published `embedEmitCfg_mapState_eq` and `embedEmitCfg_eq` respectively, with the same five field obligations from the `runBank_*` readers."
+ ],
+ "NEW|RunEncoding.lean::runBank_embed|RunEncoding.lean::runBank_reconstruct": [
+  "citation-shape",
+  "The reverse direction of the pair above."
+ ],
+ "NEW|RunStep.lean::host_ordinary|RunStep.lean::host_verdict": [
+  "shared-prelude",
+  "DISCLOSED FOR THE AUDIT. The host's ordinary-phase and verdict-phase steps share a prelude of about 20 lines (the entry renaming `locald`, `phase_correct`, the word bookkeeping) before diverging into dispatch and halt. Raised in the pack."
+ ],
+ "NEW|WordSize.lean::logarithmic_computation|RunStartup.lean::host_initCfg": [
+  "shape-match",
+  "A pre-existing private lemma of `WordSize` matched by the new `host_initCfg`'s field obligations (`Cfg.init_*` readers); the pair is new only because `host_initCfg` is new."
+ ],
+ "NEW|RunStep.lean::phase_correct|RunStep.lean::phase_branch_prefix": [
+  "citation-shape",
+  "Both unpack the same `RunPhase` package (`exists_runPhase`, `RunPhase.correct`, `RunPhase.branch_prefix`) for one phase; one gives the phase's run, the other its prefix transfer."
+ ],
+ "NEW|RunEncoding.lean::runEntry_reconstruct|RunEncoding.lean::encodes_mapState": [
+  "citation-shape",
+  "Both cite the `Cfg.mapState_*` field readers: one rebuilds a renamed configuration through `Cfg.mapState_eq_of_fields`, the other transports `Encodes` along the renaming."
+ ],
+ "NEW|RunCosts.lean::blockTime_mono|RunCosts.lean::blockRadius_mono": [
+  "sibling-uniformity",
+  "Monotonicity of the two block cost functions in the touched-cell count: same `(m+1)(W+1)` step, different outer sums."
+ ],
+ "NEW|RunCosts.lean::blockRadius_mono|RunCosts.lean::blockTime_mono": [
+  "sibling-uniformity",
+  "The reverse direction of the pair above."
+ ],
+ "NEW|RunSpace.lean::runSpace_append_le|RunSpace.lean::runEnvelope_append": [
+  "parallel",
+  "Concatenating two runs: the visited-cell union bound and the head-envelope bound, each through `runWith_append`; different conclusions."
+ ],
+ "NEW|RunChoices.lean::runChoices_succ|RunChoices.lean::runChoices_append": [
+  "parallel",
+  "Two equations of `runChoices` (one more choice; two blocks) from `runChoices_eq` and the `List.range` equations."
+ ],
+ "NEW|RunPhase.lean::RunPhase.branch_prefix_choice|RunPhase.lean::RunPhase.branch_slice": [
+  "parallel",
+  "Prefix transfer for an arbitrary branch versus a fixed-choice slice, each through `runWith_eq_fixChoice_runFrom`."
+ ],
+ "NEW|RunSource.lean::runCoinsSatisfy_append|RunSource.lean::runCoinsAgree_append_bit": [
+  "parallel",
+  "Appending a coin to a stream property versus reading the appended coin back; shared text is the `List.getD_append_right` step."
+ ],
+ "NEW|RunStartup.lean::host_initCfg|RunEncoding.lean::runEntry_reconstruct": [
+  "citation-shape",
+  "Both now cite `Cfg.mapState_eq_of_fields` (run 2's repair) with their own field readers."
+ ]
+}

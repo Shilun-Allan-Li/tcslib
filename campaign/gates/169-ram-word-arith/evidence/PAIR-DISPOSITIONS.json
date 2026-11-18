@@ -1,0 +1,147 @@
+{
+ "base_summary": "declarations screened: 9; copy pairs (target reproduces >= half of source): 0; reproduced text: 0 chars",
+ "head_summary": "declarations screened: 88; copy pairs (target reproduces >= half of source): 13; reproduced text: 1,572 chars",
+ "population_base": [
+  "TCSlib/Complexity/TuringMachine/Build/WordArith.lean",
+  "TCSlib/Complexity/TuringMachine/StateRenaming.lean"
+ ],
+ "population_head": [
+  "TCSlib/Complexity/TuringMachine/Build/WordArith.lean",
+  "TCSlib/Complexity/TuringMachine/StateRenaming.lean"
+ ],
+ "new": 13,
+ "gone": 0,
+ "net_directed_pairs": "0 -> 13",
+ "pairs": [
+  {
+   "status": "NEW",
+   "target": "WordArith.lean::wordExtPh_fintype",
+   "source": "WordArith.lean::wordExtPh_decidableEq",
+   "chars": 72,
+   "source_chars": 72,
+   "pct": 100,
+   "class": "sibling-uniformity",
+   "note": "The Fintype and DecidableEq instances of the sign-extension rows' state family: the same three-tactic case split (`rcases`, `cases stage`, `dsimp only [wordExtPh]`, `infer_instance`) for two different classes. The multiplier's pair (wordMulPh_fintype/_decidableEq) is the same idiom."
+  },
+  {
+   "status": "NEW",
+   "target": "WordArith.lean::wordExtPh_decidableEq",
+   "source": "WordArith.lean::wordExtPh_fintype",
+   "chars": 72,
+   "source_chars": 72,
+   "pct": 100,
+   "class": "sibling-uniformity",
+   "note": "The Fintype and DecidableEq instances of the sign-extension rows' state family: the same three-tactic case split (`rcases`, `cases stage`, `dsimp only [wordExtPh]`, `infer_instance`) for two different classes. The multiplier's pair (wordMulPh_fintype/_decidableEq) is the same idiom."
+  },
+  {
+   "status": "NEW",
+   "target": "WordArith.lean::wordWrite_twice",
+   "source": "WordArith.lean::wordWrite_append",
+   "chars": 188,
+   "source_chars": 197,
+   "pct": 95,
+   "class": "parallel",
+   "note": "Two different lifts from the tape level to `wordWrite`: `wordPatch_twice` (a second same-width write overwrites the first) and `wordPatch_append` (writing u then v after it is writing u ++ v). Both proofs are the `funext`/`by_cases r = j` transport of their own `wordPatch_*` citation; the statements differ."
+  },
+  {
+   "status": "NEW",
+   "target": "WordArith.lean::wordWrite_append",
+   "source": "WordArith.lean::wordWrite_twice",
+   "chars": 188,
+   "source_chars": 197,
+   "pct": 95,
+   "class": "parallel",
+   "note": "Two different lifts from the tape level to `wordWrite`: `wordPatch_twice` (a second same-width write overwrites the first) and `wordPatch_append` (writing u then v after it is writing u ++ v). Both proofs are the `funext`/`by_cases r = j` transport of their own `wordPatch_*` citation; the statements differ."
+  },
+  {
+   "status": "NEW",
+   "target": "WordArith.lean::wordMulCfg",
+   "source": "WordArith.lean::wordMulRestCfg",
+   "chars": 83,
+   "source_chars": 101,
+   "pct": 82,
+   "class": "sibling-uniformity",
+   "note": "Two configuration records of the multiplier's invariant, during the loop (scratch tape 3 holds the shifted multiplicand) and after it (only the destination word); the shared text is the five-field record shape."
+  },
+  {
+   "status": "NEW",
+   "target": "WordArith.lean::wordMulRestCfg",
+   "source": "WordArith.lean::wordMulCfg",
+   "chars": 83,
+   "source_chars": 102,
+   "pct": 81,
+   "class": "sibling-uniformity",
+   "note": "Two configuration records of the multiplier's invariant, during the loop (scratch tape 3 holds the shifted multiplicand) and after it (only the destination word); the shared text is the five-field record shape."
+  },
+  {
+   "status": "NEW",
+   "target": "WordArith.lean::wordLockCfg_write",
+   "source": "WordArith.lean::wordLockCfg_move",
+   "chars": 122,
+   "source_chars": 178,
+   "pct": 69,
+   "class": "parallel",
+   "note": "The lockstep sweep's two step lemmas: a writing action extends the destination prefix by one bit, a non-writing action only moves the common offset. Shared text is the step-reader citation (`step_of_some`, `wordLockAction_apply`)."
+  },
+  {
+   "status": "NEW",
+   "target": "WordArith.lean::wordLockCfg_read_full",
+   "source": "WordArith.lean::wordLockCfg_read_fwd",
+   "chars": 94,
+   "source_chars": 152,
+   "pct": 62,
+   "class": "parallel",
+   "note": "Reading the source cells at the forward boundary versus after the full destination patch (aliasing case); different statements over the same `wordLockCfg` readers."
+  },
+  {
+   "status": "NEW",
+   "target": "WordArith.lean::wordMove_run",
+   "source": "WordArith.lean::wordProbe_run",
+   "chars": 97,
+   "source_chars": 157,
+   "pct": 62,
+   "class": "shape-match",
+   "note": "Two one-step leaf rows (a fixed head move, a stationary probe), each run through `runFrom_one` and `step_of_some`; different machines and conclusions."
+  },
+  {
+   "status": "NEW",
+   "target": "WordArith.lean::wordHalf_bits",
+   "source": "WordArith.lean::wordSignExtend_bits",
+   "chars": 303,
+   "source_chars": 531,
+   "pct": 57,
+   "class": "parallel",
+   "note": "The bit lists of the arithmetic shift right and of sign extension, each from core BitVec equations (`getLsbD_sshiftRight`, `getLsbD_signExtend`) through `List.ext_get`; shared text is the `bvBits` unfolding by its reader."
+  },
+  {
+   "status": "NEW",
+   "target": "WordArith.lean::wordWrite_twice",
+   "source": "WordArith.lean::wordAt_write",
+   "chars": 93,
+   "source_chars": 172,
+   "pct": 54,
+   "class": "shape-match",
+   "note": "A write lemma and a delimiting lemma over `wordWrite_apply`/`wordPatch_*`; shared text is the `funext`/`by_cases r = j` frame."
+  },
+  {
+   "status": "NEW",
+   "target": "WordArith.lean::wordLockTM",
+   "source": "WordArith.lean::wordMoveTM",
+   "chars": 66,
+   "source_chars": 123,
+   "pct": 54,
+   "class": "sibling-uniformity",
+   "note": "Two leaf machines over the same lockstep action (`wordLockAction`); shared text is the `MultiTapeTM` record with that action."
+  },
+  {
+   "status": "NEW",
+   "target": "WordArith.lean::exists_wordSubTM",
+   "source": "WordArith.lean::exists_wordAddTM",
+   "chars": 111,
+   "source_chars": 212,
+   "pct": 52,
+   "class": "parallel",
+   "note": "Add and sub are the one ripple row with `flip := false` and `flip := true` (`wordRipple_run`); each target is a three-line instance with its own BitVec identity."
+  }
+ ]
+}

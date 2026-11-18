@@ -1,0 +1,1093 @@
+{
+ "owners": [
+  "TCSlib.Complexity.RAMSimulation",
+  "TCSlib.Complexity.RAMSimulation.Sim.RunBounds",
+  "TCSlib.Complexity.RAMSimulation.Sim.RunBranch",
+  "TCSlib.Complexity.RAMSimulation.Sim.RunChoices",
+  "TCSlib.Complexity.RAMSimulation.Sim.RunCosts",
+  "TCSlib.Complexity.RAMSimulation.Sim.RunDriver",
+  "TCSlib.Complexity.RAMSimulation.Sim.RunEncoding",
+  "TCSlib.Complexity.RAMSimulation.Sim.RunHost",
+  "TCSlib.Complexity.RAMSimulation.Sim.RunInduction",
+  "TCSlib.Complexity.RAMSimulation.Sim.RunInput",
+  "TCSlib.Complexity.RAMSimulation.Sim.RunInstruction",
+  "TCSlib.Complexity.RAMSimulation.Sim.RunPhase",
+  "TCSlib.Complexity.RAMSimulation.Sim.RunPrefix",
+  "TCSlib.Complexity.RAMSimulation.Sim.RunSlices",
+  "TCSlib.Complexity.RAMSimulation.Sim.RunSource",
+  "TCSlib.Complexity.RAMSimulation.Sim.RunSpace",
+  "TCSlib.Complexity.RAMSimulation.Sim.RunStartup",
+  "TCSlib.Complexity.RAMSimulation.Sim.RunStep",
+  "TCSlib.Complexity.RAMSimulation.Simulation",
+  "TCSlib.Complexity.RAMSimulation.WordSize",
+  "TCSlib.Complexity.TuringMachine.Build.Embed",
+  "TCSlib.Complexity.TuringMachine.NondeterministicSpace"
+ ],
+ "per_owner": {
+  "TCSlib/Complexity/RAMSimulation.lean": {
+   "identifiers": 0
+  },
+  "TCSlib/Complexity/RAMSimulation/Sim/RunBounds.lean": {
+   "identifiers": 53,
+   "resolved": 18,
+   "newly_cited_foreign": [
+    [
+     "Complexity.LogProg.length_bits_le_log",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.NatBits"
+    ],
+    [
+     "Complexity.logSpace",
+     "def",
+     "TCSlib.Complexity.SpaceComplexity.Basic"
+    ],
+    [
+     "Complexity.logSpace_eq",
+     "thm",
+     "TCSlib.Complexity.SpaceComplexity.Basic"
+    ]
+   ]
+  },
+  "TCSlib/Complexity/RAMSimulation/Sim/RunBranch.lean": {
+   "identifiers": 82,
+   "resolved": 25,
+   "newly_cited_foreign": [
+    [
+     "Complexity.logSpace",
+     "def",
+     "TCSlib.Complexity.SpaceComplexity.Basic"
+    ],
+    [
+     "Turing.FinTM",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Finite"
+    ],
+    [
+     "Turing.NDTM.runWith_append",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ],
+    [
+     "Turing.NDTM.runWith_of_halt",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ],
+    [
+     "WordRAM.HaltsWithin",
+     "def",
+     "TCSlib.Programs.WordRAM.Extended"
+    ],
+    [
+     "WordRAM.XProgram",
+     "def",
+     "TCSlib.Programs.WordRAM.Extended"
+    ]
+   ]
+  },
+  "TCSlib/Complexity/RAMSimulation/Sim/RunChoices.lean": {
+   "identifiers": 63,
+   "resolved": 39,
+   "newly_cited_foreign": []
+  },
+  "TCSlib/Complexity/RAMSimulation/Sim/RunCosts.lean": {
+   "identifiers": 36,
+   "resolved": 20,
+   "newly_cited_foreign": []
+  },
+  "TCSlib/Complexity/RAMSimulation/Sim/RunDriver.lean": {
+   "identifiers": 46,
+   "resolved": 14,
+   "newly_cited_foreign": [
+    [
+     "WordRAM.XCfg",
+     "induct",
+     "TCSlib.Programs.WordRAM.Extended"
+    ]
+   ]
+  },
+  "TCSlib/Complexity/RAMSimulation/Sim/RunEncoding.lean": {
+   "identifiers": 82,
+   "resolved": 41,
+   "newly_cited_foreign": [
+    [
+     "Turing.Cfg",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "Turing.Cfg.mapState_eq_of_fields",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.CfgFacts"
+    ],
+    [
+     "Turing.Cfg.mapState_inputPos",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.StateRenaming"
+    ],
+    [
+     "Turing.Cfg.mapState_output",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.StateRenaming"
+    ],
+    [
+     "Turing.Cfg.mapState_state",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.StateRenaming"
+    ],
+    [
+     "Turing.Cfg.mapState_workTapePos",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.StateRenaming"
+    ],
+    [
+     "Turing.Cfg.mapState_workTapes",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.StateRenaming"
+    ],
+    [
+     "Turing.keyTableAt_iff",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Build.KeyTable"
+    ],
+    [
+     "Turing.tableAt_iff",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Build.RecordTable"
+    ],
+    [
+     "Turing.wordAt_iff",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Build.WordArith"
+    ],
+    [
+     "WordRAM.Sim.Encodes",
+     "def",
+     "TCSlib.Complexity.RAMSimulation.Sim.Encoding"
+    ],
+    [
+     "WordRAM.Sim.encodes_iff",
+     "thm",
+     "TCSlib.Complexity.RAMSimulation.Sim.Encoding"
+    ],
+    [
+     "WordRAM.XCfg",
+     "induct",
+     "TCSlib.Programs.WordRAM.Extended"
+    ]
+   ]
+  },
+  "TCSlib/Complexity/RAMSimulation/Sim/RunHost.lean": {
+   "identifiers": 180,
+   "resolved": 61,
+   "newly_cited_foreign": [
+    [
+     "Turing.Cfg",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "Turing.Cfg.init",
+     "def",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "Turing.FinNDTM",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ],
+    [
+     "Turing.FinTM",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Finite"
+    ],
+    [
+     "Turing.MultiTapeTM",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Deterministic"
+    ],
+    [
+     "Turing.NDTM",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ],
+    [
+     "Turing.NDTM.fixChoice_q\u2080",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ],
+    [
+     "Turing.NDTM.phaseHostND",
+     "def",
+     "TCSlib.Complexity.TuringMachine.Build.NDHost"
+    ],
+    [
+     "Turing.NDTM.phaseHostND_fixChoice",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Build.NDHost"
+    ],
+    [
+     "Turing.phaseHostTM",
+     "def",
+     "TCSlib.Complexity.TuringMachine.Build.Seam"
+    ],
+    [
+     "Turing.phaseHostTM_q\u2080",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Build.Seam"
+    ],
+    [
+     "WordRAM.Sim.Encodes",
+     "def",
+     "TCSlib.Complexity.RAMSimulation.Sim.Encoding"
+    ],
+    [
+     "WordRAM.Sim.ImmBound",
+     "def",
+     "TCSlib.Complexity.RAMSimulation.Sim.Encoding"
+    ],
+    [
+     "WordRAM.Sim.exists_startup",
+     "thm",
+     "TCSlib.Complexity.RAMSimulation.Sim.Startup"
+    ],
+    [
+     "WordRAM.Sim.immBound_iff",
+     "thm",
+     "TCSlib.Complexity.RAMSimulation.Sim.Encoding"
+    ],
+    [
+     "WordRAM.Sim.immediates",
+     "def",
+     "TCSlib.Complexity.RAMSimulation.Sim.Encoding"
+    ],
+    [
+     "WordRAM.Sim.immediates_def",
+     "thm",
+     "TCSlib.Complexity.RAMSimulation.Sim.Encoding"
+    ],
+    [
+     "WordRAM.Sim.jumpTarget",
+     "def",
+     "TCSlib.Complexity.RAMSimulation.Sim.Phases"
+    ],
+    [
+     "WordRAM.XCfg.init",
+     "def",
+     "TCSlib.Programs.WordRAM.Extended"
+    ],
+    [
+     "WordRAM.XProgram",
+     "def",
+     "TCSlib.Programs.WordRAM.Extended"
+    ],
+    [
+     "WordRAM.inRange_iff",
+     "thm",
+     "TCSlib.Programs.WordRAM.Steps"
+    ]
+   ]
+  },
+  "TCSlib/Complexity/RAMSimulation/Sim/RunInduction.lean": {
+   "identifiers": 92,
+   "resolved": 30,
+   "newly_cited_foreign": [
+    [
+     "Turing.Cfg",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "Turing.FinTM",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Finite"
+    ],
+    [
+     "WordRAM.Sim.Encodes",
+     "def",
+     "TCSlib.Complexity.RAMSimulation.Sim.Encoding"
+    ],
+    [
+     "WordRAM.Sim.isCoin",
+     "def",
+     "TCSlib.Complexity.RAMSimulation.Sim.Phases"
+    ],
+    [
+     "WordRAM.XCfg",
+     "induct",
+     "TCSlib.Programs.WordRAM.Extended"
+    ],
+    [
+     "WordRAM.XProgram",
+     "def",
+     "TCSlib.Programs.WordRAM.Extended"
+    ],
+    [
+     "WordRAM.xstep",
+     "def",
+     "TCSlib.Programs.WordRAM.Extended"
+    ]
+   ]
+  },
+  "TCSlib/Complexity/RAMSimulation/Sim/RunInput.lean": {
+   "identifiers": 138,
+   "resolved": 38,
+   "newly_cited_foreign": [
+    [
+     "Complexity.logSpace",
+     "def",
+     "TCSlib.Complexity.SpaceComplexity.Basic"
+    ],
+    [
+     "Turing.Cfg",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "Turing.FinTM",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Finite"
+    ],
+    [
+     "Turing.NDTM.runWith_append",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ],
+    [
+     "WordRAM.HaltsWithin",
+     "def",
+     "TCSlib.Programs.WordRAM.Extended"
+    ],
+    [
+     "WordRAM.XCfg.init",
+     "def",
+     "TCSlib.Programs.WordRAM.Extended"
+    ],
+    [
+     "WordRAM.XCfg.init_def",
+     "thm",
+     "TCSlib.Programs.WordRAM.Extended"
+    ],
+    [
+     "WordRAM.XProgram",
+     "def",
+     "TCSlib.Programs.WordRAM.Extended"
+    ]
+   ]
+  },
+  "TCSlib/Complexity/RAMSimulation/Sim/RunInstruction.lean": {
+   "identifiers": 96,
+   "resolved": 23,
+   "newly_cited_foreign": [
+    [
+     "Turing.Cfg",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "WordRAM.Sim.Encodes",
+     "def",
+     "TCSlib.Complexity.RAMSimulation.Sim.Encoding"
+    ],
+    [
+     "WordRAM.Sim.isCoin",
+     "def",
+     "TCSlib.Complexity.RAMSimulation.Sim.Phases"
+    ],
+    [
+     "WordRAM.XCfg",
+     "induct",
+     "TCSlib.Programs.WordRAM.Extended"
+    ],
+    [
+     "WordRAM.xstep",
+     "def",
+     "TCSlib.Programs.WordRAM.Extended"
+    ]
+   ]
+  },
+  "TCSlib/Complexity/RAMSimulation/Sim/RunPhase.lean": {
+   "identifiers": 187,
+   "resolved": 71,
+   "newly_cited_foreign": [
+    [
+     "Turing.Cfg",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "Turing.MultiTapeTM.runFrom_zero",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Deterministic"
+    ],
+    [
+     "Turing.MultiTapeTM.toNDTM_tr",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ],
+    [
+     "Turing.NDTM",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ],
+    [
+     "Turing.NDTM.runWith_eq_fixChoice_runFrom",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ],
+    [
+     "Turing.NDTM.runWith_nil",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ],
+    [
+     "Turing.reachesWithin_iff",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Build.Contract.Reach"
+    ],
+    [
+     "WordRAM.Sim.Encodes",
+     "def",
+     "TCSlib.Complexity.RAMSimulation.Sim.Encoding"
+    ],
+    [
+     "WordRAM.Sim.ImmBound",
+     "def",
+     "TCSlib.Complexity.RAMSimulation.Sim.Encoding"
+    ],
+    [
+     "WordRAM.Sim.encodes_iff",
+     "thm",
+     "TCSlib.Complexity.RAMSimulation.Sim.Encoding"
+    ],
+    [
+     "WordRAM.Sim.exists_phase",
+     "thm",
+     "TCSlib.Complexity.RAMSimulation.Sim.Phases"
+    ],
+    [
+     "WordRAM.Sim.exists_verdictPhase",
+     "thm",
+     "TCSlib.Complexity.RAMSimulation.Sim.Phases"
+    ],
+    [
+     "WordRAM.Sim.isCoin",
+     "def",
+     "TCSlib.Complexity.RAMSimulation.Sim.Phases"
+    ],
+    [
+     "WordRAM.Sim.isCoin_def",
+     "thm",
+     "TCSlib.Complexity.RAMSimulation.Sim.Phases"
+    ],
+    [
+     "WordRAM.Sim.isVerdict",
+     "def",
+     "TCSlib.Complexity.RAMSimulation.Sim.Phases"
+    ],
+    [
+     "WordRAM.Sim.isVerdict_def",
+     "thm",
+     "TCSlib.Complexity.RAMSimulation.Sim.Phases"
+    ],
+    [
+     "WordRAM.Sim.jumpTarget",
+     "def",
+     "TCSlib.Complexity.RAMSimulation.Sim.Phases"
+    ],
+    [
+     "WordRAM.XCfg",
+     "induct",
+     "TCSlib.Programs.WordRAM.Extended"
+    ],
+    [
+     "WordRAM.XInstr",
+     "induct",
+     "TCSlib.Programs.WordRAM.Extended"
+    ],
+    [
+     "WordRAM.XProgram",
+     "def",
+     "TCSlib.Programs.WordRAM.Extended"
+    ],
+    [
+     "WordRAM.xstep",
+     "def",
+     "TCSlib.Programs.WordRAM.Extended"
+    ],
+    [
+     "WordRAM.xstep_def",
+     "thm",
+     "TCSlib.Programs.WordRAM.Extended"
+    ]
+   ]
+  },
+  "TCSlib/Complexity/RAMSimulation/Sim/RunPrefix.lean": {
+   "identifiers": 223,
+   "resolved": 71,
+   "newly_cited_foreign": [
+    [
+     "Turing.Cfg",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "Turing.FinTM",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Finite"
+    ],
+    [
+     "Turing.NDTM.runWith_append",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ],
+    [
+     "Turing.NDTM.runWith_nil",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ],
+    [
+     "WordRAM.HaltsWithin",
+     "def",
+     "TCSlib.Programs.WordRAM.Extended"
+    ],
+    [
+     "WordRAM.Sim.Encodes",
+     "def",
+     "TCSlib.Complexity.RAMSimulation.Sim.Encoding"
+    ],
+    [
+     "WordRAM.XCfg",
+     "induct",
+     "TCSlib.Programs.WordRAM.Extended"
+    ],
+    [
+     "WordRAM.XCfg.init",
+     "def",
+     "TCSlib.Programs.WordRAM.Extended"
+    ],
+    [
+     "WordRAM.XProgram",
+     "def",
+     "TCSlib.Programs.WordRAM.Extended"
+    ],
+    [
+     "WordRAM.haltsWithin_iff",
+     "thm",
+     "TCSlib.Programs.WordRAM.Extended"
+    ],
+    [
+     "WordRAM.xstep",
+     "def",
+     "TCSlib.Programs.WordRAM.Extended"
+    ]
+   ]
+  },
+  "TCSlib/Complexity/RAMSimulation/Sim/RunSlices.lean": {
+   "identifiers": 93,
+   "resolved": 45,
+   "newly_cited_foreign": [
+    [
+     "Turing.Action.apply_state",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "Turing.Cfg",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "Turing.MultiTapeTM",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Deterministic"
+    ],
+    [
+     "Turing.MultiTapeTM.runFrom_one",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Deterministic"
+    ],
+    [
+     "Turing.MultiTapeTM.runFrom_succ_eq_step",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Deterministic"
+    ],
+    [
+     "Turing.MultiTapeTM.runFrom_succ_eq_step'",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Deterministic"
+    ],
+    [
+     "Turing.MultiTapeTM.runFrom_zero",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Deterministic"
+    ],
+    [
+     "Turing.MultiTapeTM.step_of_halt",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Deterministic"
+    ],
+    [
+     "Turing.MultiTapeTM.step_of_some",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Deterministic"
+    ],
+    [
+     "Turing.MultiTapeTM.toNDTM_q\u2080",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ],
+    [
+     "Turing.MultiTapeTM.toNDTM_tr",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ],
+    [
+     "Turing.NDTM",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ],
+    [
+     "Turing.NDTM.fixChoice_q\u2080",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ],
+    [
+     "Turing.NDTM.fixChoice_tr",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ],
+    [
+     "Turing.NDTM.runWith_cons",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ],
+    [
+     "Turing.NDTM.runWith_eq_fixChoice_runFrom",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ],
+    [
+     "Turing.NDTM.runWith_nil",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ],
+    [
+     "Turing.NDTM.stepWith_eq_fixChoice_step",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ]
+   ]
+  },
+  "TCSlib/Complexity/RAMSimulation/Sim/RunSource.lean": {
+   "identifiers": 140,
+   "resolved": 60,
+   "newly_cited_foreign": [
+    [
+     "WordRAM.Sim.isCoin",
+     "def",
+     "TCSlib.Complexity.RAMSimulation.Sim.Phases"
+    ],
+    [
+     "WordRAM.Sim.isCoin_def",
+     "thm",
+     "TCSlib.Complexity.RAMSimulation.Sim.Phases"
+    ],
+    [
+     "WordRAM.XCfg",
+     "induct",
+     "TCSlib.Programs.WordRAM.Extended"
+    ],
+    [
+     "WordRAM.XInstr",
+     "induct",
+     "TCSlib.Programs.WordRAM.Extended"
+    ],
+    [
+     "WordRAM.XProgram",
+     "def",
+     "TCSlib.Programs.WordRAM.Extended"
+    ],
+    [
+     "WordRAM.XStepsIn",
+     "def",
+     "TCSlib.Programs.WordRAM.Extended"
+    ],
+    [
+     "WordRAM.step",
+     "def",
+     "TCSlib.Programs.WordRAM.Steps"
+    ],
+    [
+     "WordRAM.xstep",
+     "def",
+     "TCSlib.Programs.WordRAM.Extended"
+    ],
+    [
+     "WordRAM.xstep_def",
+     "thm",
+     "TCSlib.Programs.WordRAM.Extended"
+    ]
+   ]
+  },
+  "TCSlib/Complexity/RAMSimulation/Sim/RunSpace.lean": {
+   "identifiers": 117,
+   "resolved": 40,
+   "newly_cited_foreign": [
+    [
+     "Turing.Cfg",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "Turing.MultiTapeTM",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Deterministic"
+    ],
+    [
+     "Turing.NDTM",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ],
+    [
+     "Turing.NDTM.runWith_append",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ]
+   ]
+  },
+  "TCSlib/Complexity/RAMSimulation/Sim/RunStartup.lean": {
+   "identifiers": 121,
+   "resolved": 44,
+   "newly_cited_foreign": [
+    [
+     "Turing.Cfg",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "Turing.Cfg.init",
+     "def",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "Turing.Cfg.init_inputPos",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "Turing.Cfg.init_output",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "Turing.Cfg.init_state",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "Turing.Cfg.init_workTapePos",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "Turing.Cfg.init_workTapes",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "Turing.Cfg.mapState_eq_of_fields",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.CfgFacts"
+    ],
+    [
+     "Turing.Cfg.mapState_state",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.StateRenaming"
+    ],
+    [
+     "Turing.Cfg.mapState_workTapePos",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.StateRenaming"
+    ],
+    [
+     "Turing.MultiTapeTM.toNDTM_runWith",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ],
+    [
+     "Turing.NDTM.initCfg_eq",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ],
+    [
+     "WordRAM.Sim.Encodes",
+     "def",
+     "TCSlib.Complexity.RAMSimulation.Sim.Encoding"
+    ],
+    [
+     "WordRAM.XCfg.init",
+     "def",
+     "TCSlib.Programs.WordRAM.Extended"
+    ]
+   ]
+  },
+  "TCSlib/Complexity/RAMSimulation/Sim/RunStep.lean": {
+   "identifiers": 231,
+   "resolved": 79,
+   "newly_cited_foreign": [
+    [
+     "Turing.Cfg",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "Turing.Cfg.mapState_output",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.StateRenaming"
+    ],
+    [
+     "Turing.Cfg.mapState_state",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.StateRenaming"
+    ],
+    [
+     "Turing.Cfg.mapState_workTapePos",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.StateRenaming"
+    ],
+    [
+     "Turing.NDTM.fixChoice_tr",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ],
+    [
+     "Turing.NDTM.phaseHostND_run",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Build.NDHost"
+    ],
+    [
+     "Turing.NDTM.runWith_mapState_of_agreeOn",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ],
+    [
+     "Turing.phaseHostTM_tr_of_red_none",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Build.Seam"
+    ],
+    [
+     "WordRAM.Sim.Encodes",
+     "def",
+     "TCSlib.Complexity.RAMSimulation.Sim.Encoding"
+    ],
+    [
+     "WordRAM.Sim.encodes_iff",
+     "thm",
+     "TCSlib.Complexity.RAMSimulation.Sim.Encoding"
+    ],
+    [
+     "WordRAM.Sim.isCoin",
+     "def",
+     "TCSlib.Complexity.RAMSimulation.Sim.Phases"
+    ],
+    [
+     "WordRAM.Sim.jumpTarget",
+     "def",
+     "TCSlib.Complexity.RAMSimulation.Sim.Phases"
+    ],
+    [
+     "WordRAM.XCfg",
+     "induct",
+     "TCSlib.Programs.WordRAM.Extended"
+    ],
+    [
+     "WordRAM.xstep",
+     "def",
+     "TCSlib.Programs.WordRAM.Extended"
+    ]
+   ]
+  },
+  "TCSlib/Complexity/RAMSimulation/Simulation.lean": {
+   "identifiers": 135,
+   "resolved": 41,
+   "newly_cited_foreign": [
+    [
+     "Turing.FinTM.computesInTime_iff",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Finite"
+    ],
+    [
+     "Turing.MultiTapeTM.initCfg_eq",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Deterministic"
+    ],
+    [
+     "Turing.NDTM.fixChoice_q\u2080",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ],
+    [
+     "Turing.NDTM.initCfg_eq",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ]
+   ]
+  },
+  "TCSlib/Complexity/RAMSimulation/WordSize.lean": {
+   "identifiers": 16,
+   "resolved": 6,
+   "newly_cited_foreign": [
+    [
+     "Turing.FinTM",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Finite"
+    ]
+   ]
+  },
+  "TCSlib/Complexity/TuringMachine/Build/Embed.lean": {
+   "identifiers": 11,
+   "resolved": 5,
+   "newly_cited_foreign": [
+    [
+     "Turing.MultiTapeTM",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Deterministic"
+    ]
+   ]
+  },
+  "TCSlib/Complexity/TuringMachine/NondeterministicSpace.lean": {
+   "identifiers": 23,
+   "resolved": 9,
+   "newly_cited_foreign": [
+    [
+     "Turing.Cfg",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "Turing.NDTM",
+     "induct",
+     "TCSlib.Complexity.TuringMachine.Nondeterministic"
+    ]
+   ]
+  }
+ },
+ "homes": {
+  "TCSlib/Complexity/RAMSimulation/Sim/Encoding.lean": [
+   "WordRAM.Sim.Encodes",
+   "WordRAM.Sim.ImmBound",
+   "WordRAM.Sim.encodes_iff",
+   "WordRAM.Sim.immBound_iff",
+   "WordRAM.Sim.immediates",
+   "WordRAM.Sim.immediates_def"
+  ],
+  "TCSlib/Complexity/RAMSimulation/Sim/Phases.lean": [
+   "WordRAM.Sim.exists_phase",
+   "WordRAM.Sim.exists_verdictPhase",
+   "WordRAM.Sim.isCoin",
+   "WordRAM.Sim.isCoin_def",
+   "WordRAM.Sim.isVerdict",
+   "WordRAM.Sim.isVerdict_def",
+   "WordRAM.Sim.jumpTarget"
+  ],
+  "TCSlib/Complexity/RAMSimulation/Sim/Startup.lean": [
+   "WordRAM.Sim.exists_startup"
+  ],
+  "TCSlib/Complexity/SpaceComplexity/Basic.lean": [
+   "Complexity.logSpace",
+   "Complexity.logSpace_eq"
+  ],
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Reach.lean": [
+   "Turing.reachesWithin_iff"
+  ],
+  "TCSlib/Complexity/TuringMachine/Build/KeyTable.lean": [
+   "Turing.keyTableAt_iff"
+  ],
+  "TCSlib/Complexity/TuringMachine/Build/NDHost.lean": [
+   "Turing.NDTM.phaseHostND",
+   "Turing.NDTM.phaseHostND_fixChoice",
+   "Turing.NDTM.phaseHostND_run"
+  ],
+  "TCSlib/Complexity/TuringMachine/Build/RecordTable.lean": [
+   "Turing.tableAt_iff"
+  ],
+  "TCSlib/Complexity/TuringMachine/Build/Seam.lean": [
+   "Turing.phaseHostTM",
+   "Turing.phaseHostTM_q\u2080",
+   "Turing.phaseHostTM_tr_of_red_none"
+  ],
+  "TCSlib/Complexity/TuringMachine/Build/WordArith.lean": [
+   "Turing.wordAt_iff"
+  ],
+  "TCSlib/Complexity/TuringMachine/CfgFacts.lean": [
+   "Turing.Cfg.mapState_eq_of_fields"
+  ],
+  "TCSlib/Complexity/TuringMachine/Configuration.lean": [
+   "Turing.Action.apply_state",
+   "Turing.Cfg",
+   "Turing.Cfg.init",
+   "Turing.Cfg.init_inputPos",
+   "Turing.Cfg.init_output",
+   "Turing.Cfg.init_state",
+   "Turing.Cfg.init_workTapePos",
+   "Turing.Cfg.init_workTapes"
+  ],
+  "TCSlib/Complexity/TuringMachine/Deterministic.lean": [
+   "Turing.MultiTapeTM",
+   "Turing.MultiTapeTM.initCfg_eq",
+   "Turing.MultiTapeTM.runFrom_one",
+   "Turing.MultiTapeTM.runFrom_succ_eq_step",
+   "Turing.MultiTapeTM.runFrom_succ_eq_step'",
+   "Turing.MultiTapeTM.runFrom_zero",
+   "Turing.MultiTapeTM.step_of_halt",
+   "Turing.MultiTapeTM.step_of_some"
+  ],
+  "TCSlib/Complexity/TuringMachine/Finite.lean": [
+   "Turing.FinTM",
+   "Turing.FinTM.computesInTime_iff"
+  ],
+  "TCSlib/Complexity/TuringMachine/NatBits.lean": [
+   "Complexity.LogProg.length_bits_le_log"
+  ],
+  "TCSlib/Complexity/TuringMachine/Nondeterministic.lean": [
+   "Turing.FinNDTM",
+   "Turing.MultiTapeTM.toNDTM_q\u2080",
+   "Turing.MultiTapeTM.toNDTM_runWith",
+   "Turing.MultiTapeTM.toNDTM_tr",
+   "Turing.NDTM",
+   "Turing.NDTM.fixChoice_q\u2080",
+   "Turing.NDTM.fixChoice_tr",
+   "Turing.NDTM.initCfg_eq",
+   "Turing.NDTM.runWith_append",
+   "Turing.NDTM.runWith_cons",
+   "Turing.NDTM.runWith_eq_fixChoice_runFrom",
+   "Turing.NDTM.runWith_mapState_of_agreeOn",
+   "Turing.NDTM.runWith_nil",
+   "Turing.NDTM.runWith_of_halt",
+   "Turing.NDTM.stepWith_eq_fixChoice_step"
+  ],
+  "TCSlib/Complexity/TuringMachine/StateRenaming.lean": [
+   "Turing.Cfg.mapState_inputPos",
+   "Turing.Cfg.mapState_output",
+   "Turing.Cfg.mapState_state",
+   "Turing.Cfg.mapState_workTapePos",
+   "Turing.Cfg.mapState_workTapes"
+  ],
+  "TCSlib/Programs/WordRAM/Extended.lean": [
+   "WordRAM.HaltsWithin",
+   "WordRAM.XCfg",
+   "WordRAM.XCfg.init",
+   "WordRAM.XCfg.init_def",
+   "WordRAM.XInstr",
+   "WordRAM.XProgram",
+   "WordRAM.XStepsIn",
+   "WordRAM.haltsWithin_iff",
+   "WordRAM.xstep",
+   "WordRAM.xstep_def"
+  ],
+  "TCSlib/Programs/WordRAM/Steps.lean": [
+   "WordRAM.inRange_iff",
+   "WordRAM.step"
+  ]
+ }
+}

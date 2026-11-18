@@ -1,0 +1,54 @@
+{
+ "NEW|WordArith.lean::wordExtPh_fintype|WordArith.lean::wordExtPh_decidableEq": [
+  "sibling-uniformity",
+  "The Fintype and DecidableEq instances of the sign-extension rows' state family: the same three-tactic case split (`rcases`, `cases stage`, `dsimp only [wordExtPh]`, `infer_instance`) for two different classes. The multiplier's pair (wordMulPh_fintype/_decidableEq) is the same idiom."
+ ],
+ "NEW|WordArith.lean::wordExtPh_decidableEq|WordArith.lean::wordExtPh_fintype": [
+  "sibling-uniformity",
+  "The Fintype and DecidableEq instances of the sign-extension rows' state family: the same three-tactic case split (`rcases`, `cases stage`, `dsimp only [wordExtPh]`, `infer_instance`) for two different classes. The multiplier's pair (wordMulPh_fintype/_decidableEq) is the same idiom."
+ ],
+ "NEW|WordArith.lean::wordWrite_twice|WordArith.lean::wordWrite_append": [
+  "parallel",
+  "Two different lifts from the tape level to `wordWrite`: `wordPatch_twice` (a second same-width write overwrites the first) and `wordPatch_append` (writing u then v after it is writing u ++ v). Both proofs are the `funext`/`by_cases r = j` transport of their own `wordPatch_*` citation; the statements differ."
+ ],
+ "NEW|WordArith.lean::wordWrite_append|WordArith.lean::wordWrite_twice": [
+  "parallel",
+  "Two different lifts from the tape level to `wordWrite`: `wordPatch_twice` (a second same-width write overwrites the first) and `wordPatch_append` (writing u then v after it is writing u ++ v). Both proofs are the `funext`/`by_cases r = j` transport of their own `wordPatch_*` citation; the statements differ."
+ ],
+ "NEW|WordArith.lean::wordMulCfg|WordArith.lean::wordMulRestCfg": [
+  "sibling-uniformity",
+  "Two configuration records of the multiplier's invariant, during the loop (scratch tape 3 holds the shifted multiplicand) and after it (only the destination word); the shared text is the five-field record shape."
+ ],
+ "NEW|WordArith.lean::wordMulRestCfg|WordArith.lean::wordMulCfg": [
+  "sibling-uniformity",
+  "Two configuration records of the multiplier's invariant, during the loop (scratch tape 3 holds the shifted multiplicand) and after it (only the destination word); the shared text is the five-field record shape."
+ ],
+ "NEW|WordArith.lean::wordLockCfg_write|WordArith.lean::wordLockCfg_move": [
+  "parallel",
+  "The lockstep sweep's two step lemmas: a writing action extends the destination prefix by one bit, a non-writing action only moves the common offset. Shared text is the step-reader citation (`step_of_some`, `wordLockAction_apply`)."
+ ],
+ "NEW|WordArith.lean::wordLockCfg_read_full|WordArith.lean::wordLockCfg_read_fwd": [
+  "parallel",
+  "Reading the source cells at the forward boundary versus after the full destination patch (aliasing case); different statements over the same `wordLockCfg` readers."
+ ],
+ "NEW|WordArith.lean::wordMove_run|WordArith.lean::wordProbe_run": [
+  "shape-match",
+  "Two one-step leaf rows (a fixed head move, a stationary probe), each run through `runFrom_one` and `step_of_some`; different machines and conclusions."
+ ],
+ "NEW|WordArith.lean::wordHalf_bits|WordArith.lean::wordSignExtend_bits": [
+  "parallel",
+  "The bit lists of the arithmetic shift right and of sign extension, each from core BitVec equations (`getLsbD_sshiftRight`, `getLsbD_signExtend`) through `List.ext_get`; shared text is the `bvBits` unfolding by its reader."
+ ],
+ "NEW|WordArith.lean::wordWrite_twice|WordArith.lean::wordAt_write": [
+  "shape-match",
+  "A write lemma and a delimiting lemma over `wordWrite_apply`/`wordPatch_*`; shared text is the `funext`/`by_cases r = j` frame."
+ ],
+ "NEW|WordArith.lean::wordLockTM|WordArith.lean::wordMoveTM": [
+  "sibling-uniformity",
+  "Two leaf machines over the same lockstep action (`wordLockAction`); shared text is the `MultiTapeTM` record with that action."
+ ],
+ "NEW|WordArith.lean::exists_wordSubTM|WordArith.lean::exists_wordAddTM": [
+  "parallel",
+  "Add and sub are the one ripple row with `flip := false` and `flip := true` (`wordRipple_run`); each target is a three-line instance with its own BitVec identity."
+ ]
+}
