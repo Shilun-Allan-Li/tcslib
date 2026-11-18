@@ -45,6 +45,16 @@ statement (per sampler or per experiment, how fallbacks are specified, how the f
 are summed), and a duplication check against the existing ℤ_p and noise samplers in `Pairing/`,
 `LWE/` and `Games/`.
 
+**Unified (T(λ), ε(λ)) security (Seyoon, 2026-11-18; later).** Unify the library's security
+notions under one (T(λ), ε(λ)) umbrella: adversaries bounded by running time T and required to
+have advantage at most ε, with "non-uniform PPT, negligible" and "non-uniform PPT, subexponential"
+(and later subexponential-time adversaries) as instances. Today `NUPPT` fixes polynomial time in
+its fields, and the reduction-as-machine tooling (handler machines, `PolyTimeComputable` closure,
+`iterateFind`) is polynomial-only, so a T-bounded class needs T-bounded analogues of that tooling;
+the TM layer (`FinTM.ComputesInTime`, DTIME with `Randomness.subexpBound`) already takes arbitrary
+bounds. Existing reductions that expose only `Negligible` slack (e.g. `exists_bb1_distinguisher`'s σ)
+would need their slack made explicit to transfer.
+
 ## References
 * [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
   Assumptions*, J. ACM 73(1), Article 1, February 2026 (CC BY 4.0).
@@ -62,3 +72,4 @@ are summed), and a duplication check against the existing ℤ_p and noise sample
 | 2026-11-18 | **Follow the journal pipeline (Seyoon).** Where JLS26 differs from its conference version or from GJLS21, the campaign follows JLS26: symmetric prime-order bilinear groups with DLIN (not SXDH), public-key PHFE from DLIN [Wee20] (not secret-key SXDH PHFE), and the PHFE notion JLS26 Theorem 5.1 consumes via GJLS21 Thms 10.3/10.4; GJLS21 text written for the SXDH/secret-key setting is used with JLS26's adaptation, cited to JLS26. | ruled |
 | 2026-11-18 | **Generic FE (Seyoon; a goal, not a hard rule).** Define functional encryption generically (syntax parameterized by the function class; correctness and security notions as separate predicates, parameterized where the literature varies), with degree-2 PHFE as an instantiation and the [Wee20] DLIN scheme's security stated through the generic predicate. Fidelity to the JLS26 notion wins over generality; trade-offs go to Seyoon. The existing IBE interface is not refactored (a possible later bridge). | ruled |
 | 2026-11-18 | **PHFE dispatch pack r1 filed** (`briefs/io-components/phfe/`: README, sources, design-r1, duplication-sweep, dispatch-prompt; static, no Lean). **Blocked on sources:** eprint.iacr.org answers automated fetches with a Cloudflare challenge (HTTP 403), so neither Wee20 (ePrint 2020/1420) nor GJLS21 (ePrint 2020/764) was obtained; Seyoon to upload both. Verified from JLS26 only: Thm 5.1 = GJLS21 Thms 10.3/10.4 under bilateral DLIN (implied by symmetric DLIN); §1.4 public-key PHFE (constant-degree public, degree-2 private) from DLIN via Wee20; JLS26 defines no PHFE. Proposed: generic FE (`FnClass` with leakage, `FEScheme`, `Correct`, `SelSimSecure`), PHFE as the bidegree-(d, 2) instance, Wee20 in layers; new files under `AdvancedEncryption/FunctionalEncryption/` and `Pairing/{Exponents,Linear}.lean` (avoids `Pairing/Assumptions.lean`, which S2-A A05 edits); ~8–15k lines. Questions Q1–Q14 open; Q1–Q4 and Q14 to be settled from the PDFs first. | open |
+| 2026-11-18 | **Subexponential security (Seyoon).** Finding: the library's security notions are uniformly `∀ D : NUPPT, Negligible (adv D)` with named advantage functions (72 sites), so subexponential advantage against non-uniform PPT (JLS26 Def 2.1, §1.1: polynomial-time adversaries, advantage 2^(−λ^ε)) is a drop-in predicate; subexponential-time adversaries are not expressible (`NUPPT` fixes polynomial time; the machine tooling is polynomial-only) and JLS26 does not need them. **Ruling:** (1) an in-house Foundations file first (subexponential-smallness predicate with the constant quantified before the adversary, ⇒ `Negligible`, closure under sums and polynomial factors, re-indexing by a polynomial parameter), as a small owner PR that both Codex jobs build on; (2) both jobs state their core theorems as explicit advantage inequalities between machines with explicit (not merely negligible) slack, and derive both the negligible and the subexponential corollaries. TODO recorded: a unified (T(λ), ε(λ)) umbrella (§ "Deferred library work"). | ruled |
