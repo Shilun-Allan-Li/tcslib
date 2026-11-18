@@ -1,7 +1,26 @@
-# EF-H1 `ef-h1-arith` · final r1 · phase-1 (static) maintainer review
+# EF-H1 `ef-h1-arith` · final r1 · maintainer review (phase 1 static, phase 2 replay)
 
-**Provisional verdict (phase 1 only): ACCEPT WITH LANDING EDITS for the series. The brief's headline
-is not in the series: it depends on the reader ruling EF-W1-R.** Phase 1 found no blocker and no major.
+**Verdict (with phase 2): ACCEPT WITH LANDING EDITS for the series. The brief's headline is not in the
+series: it depends on the reader ruling EF-W1-R. The overlay is technically sound and ready if that
+ruling is (A) or (B).** There is no blocker and no major.
+
+**Phase 2** (`phase2.md`, evidence `ef-h1-final-r1-evidence.zip`) replayed both heads on copies of
+snapshot #11, over scratch stacks on `bff0567b` (Lean-equal to the records tip).
+- **Run A, the series alone:**
+  - 6/6 modules rc 0, with 0 errors and 0 `sorry`, including the root `TCSlib` and
+    `audits/pass-shelat/Checks`;
+  - 62 constants with standard axioms;
+  - canonical coe-A seal 0 errors on the three owners; delivered controls exact;
+  - H1-P1 byte-identical to the delivery's;
+  - the smoke test fails only on overlay names, as expected.
+- **Run B, series plus overlay:**
+  - all 76 downstream modules of the 7 changed files rc 0, with 0 errors, including the root and both
+    `Checks`; the only `sorry` and warnings are pre-existing ones in untouched files;
+  - 75 constants plus the 9 readers, all standard;
+  - H1-P2 passes, with output identical to the delivery's;
+  - coe-A seal 0 errors; the controls show the readers pass sealed where the body reads fail.
+- **Closed by phase 2:** EFH1-F01, EFH1-F02, EFH1-I2 and EFH1-I6 (W2).
+- **Lint** is unchanged in both runs, and snapshot #11 rehashes 0/0/0 at every check.
 
 **What the series proves** (five commits, the three new files plus the facade):
 - `polyTimeComputable_sizeStr`, the field itself;
@@ -18,17 +37,20 @@ files (E-SCOPE).
   owned elsewhere.
 - **The E-SCOPE is genuine** (§ *The E-SCOPE*).
 - **The worker's overlay.** The final carries a compiled overlay, outside `patches/`, that adds the nine
-  readers and the 13 remaining declarations. I reproduced it hash-exactly. Its evidence has two gaps,
-  F01 and F02, which phase 2 closes.
+  readers and the 13 remaining declarations. I reproduced it hash-exactly. Its evidence had two gaps,
+  F01 and F02; phase 2 closed both (run B).
 
 **Whether the overlay lands is not decided here.** It is question **EF-W1-R**, framed jointly with
 EF-D1-R1 and EF-H12-W1 because all three jobs hit the same problem.
 
 **Findings:**
-- **Minors:** EFH1-F01 to EFH1-F06.
-- **Information:** EFH1-I1 to EFH1-I7.
+- **Minors:** EFH1-F01 to EFH1-F06. F01 and F02 are closed by phase 2; F03–F06 are open (disclosure,
+  wording, form, landing edits).
+- **Information:** EFH1-I1 to EFH1-I7. I2 and I6 are closed by phase 2.
 
-Phase 2 (Lean) has not run. Its plan is § *Phase 2 plan*.
+Phase 2 followed § *Phase 2 plan*, with two changes the coordinator set:
+- run A's tree was deleted before run B, so B ran on a fresh copy rather than a second one;
+- no landing branch was made.
 
 ## What was reviewed
 
@@ -345,7 +367,8 @@ I recounted from the raw files, binding them to the reproduced sources by SHA-25
 
 **Blockers: none. Majors: none.**
 
-- **EFH1-F01 (minor; the overlay's build evidence is misdescribed).**
+- **EFH1-F01 (minor; the overlay's build evidence is misdescribed). Closed by phase 2:** run B rebuilt
+  every overlay module and all 76 downstream modules from bound sources, rc 0.
   - **What REPORT says.** §7a states that the 16 affected modules were "rebuilt in order, all rc 0
     (`build-pool.log`)".
   - **What the log says.** `build-pool.log` ends `done=14 failed=1 blocked=1 total=16`:
@@ -360,7 +383,7 @@ I recounted from the raw files, binding them to the reproduced sources by SHA-25
   - **Smaller nits.** The headline table still says "State at this checkpoint", and C7's line counts
     are off by one.
   - **Fix.** None for the worker. Phase 2 rebuilds the overlay's full downstream from bound sources.
-- **EFH1-F02 (minor; the overlay's downstream check is partial).**
+- **EFH1-F02 (minor; the overlay's downstream check is partial). Closed by phase 2:** 76/76 rc 0.
   - **The real downstream.** The overlay changes three existing files. Their downstream is 66 modules
     at REC, and 71 at `bff0567b` including both `audits/*/Checks` and the root.
   - **What the worker checked.** 16 modules: the closure of the delivery's own files.
@@ -408,7 +431,7 @@ I recounted from the raw files, binding them to the reproduced sources by SHA-25
 - **EFH1-I1 (brief erratum).** The brief's edge-case list says "at `⟦b⟧ = 1` everything is `0`". In
   fact the gcd component is `natToList |b| 1`; only the inverse is `0`. The delivery follows the field's
   spec (`Nat.gcd a 1 = 1`). Record this in the brief's errata if the brief is reused.
-- **EFH1-I2 (seal coverage).**
+- **EFH1-I2 (seal coverage). Closed by phase 2:** both are `irreducible`; NEG/POS5–6 behave.
   - `extEuclidCalls` (and `extEuclid`) are defined by well-founded recursion. They are therefore
     irreducible by default and absent from B's seal list. They are read only through
     `extEuclidCalls_of_mod_ne_zero` and `extEuclidCalls_le`.
@@ -431,7 +454,7 @@ I recounted from the raw files, binding them to the reproduced sources by SHA-25
     elsewhere.
   - No remote head has changed any of the three since its merge base with REC, and none is in S2-A's
     scope. So adding the readers carries no textual conflict risk.
-- **EFH1-I6 (worker's question W2, PFR).** The root `TCSlib` was not elaborated because the PFR oleans
+- **EFH1-I6 (worker's question W2, PFR). Closed by phase 2:** the root is rc 0 in both runs. The root `TCSlib` was not elaborated because the PFR oleans
   are missing (the same as EFD1-F05). Phase 2 on snapshot #11, which has the PFR oleans, closes it. No
   exception to the `lake build` ban is needed.
 - **EFH1-I7 (trailers).** The worker's commits carry the worker's own `Claude-Session` trailer
@@ -439,7 +462,7 @@ I recounted from the raw files, binding them to the reproduced sources by SHA-25
   verbatim. The overlay commits' subjects begin "SCOPE REQUEST"; if they land, reword them as landing
   edits.
 
-## Phase 2 plan (Lean; one job, after a slot frees)
+## Phase 2 plan (Lean; run 2026-11-18, results in `phase2.md`)
 
 Run it under the snapshots recipe, exactly as `EF-D1/final-r1/phase2.md`. `$SP` is
 `/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad`.
@@ -566,8 +589,8 @@ Run it under the snapshots recipe, exactly as `EF-D1/final-r1/phase2.md`. `$SP` 
   - **(C)** Restate `PrimesInP` reader-free as `{x | (bitsVal x).Prime} ∈ Complexity.P`. This departs
     from Q-H1-1 A's literal `PRIMESBin ∈ P` and loses the link to `inCoRP_PRIMESBin`. Not recommended.
 - **EF-H1-W2 (the worker's question; PFR root gap).**
-  - **(A, recommended)** Closed by phase 2 on snapshot #11, which has the PFR oleans, as EFD1-F05 was.
-    No exception to the `lake build` ban.
+  - **(A, recommended)** Accept as closed. Phase 2 elaborated the root `TCSlib` with rc 0 in both
+    runs, on snapshot #11's PFR oleans, as EFD1-F05 was closed. No exception to the `lake build` ban.
   - (B) Authorize a narrowed PFR build for wave-1 fills.
 - **EF-H1-W3 (the worker's question; anchors).**
   - **(A, recommended)** Accept [AB09] block `p003-b004` (the §7.2 opening; the ingested draft numbers
@@ -576,5 +599,6 @@ Run it under the snapshots recipe, exactly as `EF-D1/final-r1/phase2.md`. `$SP` 
     (F04a). Records only; no Lean change.
   - (B) Keep the brief's anchors.
 
-**Not yet clear to merge.** Phase 2 has not run. EF-W1-R is open. Without it, the series lands only the
-re-paired forms, `sizeStr` and `PrimesInP`, not the `ArithmeticFP` split.
+**Not yet clear to merge — EF-W1-R open (it decides whether the overlay lands and how); no landing
+branch yet (P2-8 waits on the ruling); a Codex gate is to be staged. Phase 2 passed for both the series
+and the series plus overlay.**
