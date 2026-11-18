@@ -1,7 +1,7 @@
 # Dispatch · Gate 52 round 1 (io-sprg statements gate)
 
 **This file postdates the records pin** (lesson G48-02). The records pin is the commit that files
-this directory. At the pin, this file holds the placeholder `<RECORDS-G52>`; the next records commit
+this directory. At the pin, this file holds the placeholder `5464995aa000882f6bd41a3bb2f4f0d1a1486d67`; the next records commit
 fills it with that commit's full hash (`git rev-parse`) and changes nothing else. `SHA256SUMS` does
 not cover this file or `README.md`.
 
@@ -37,7 +37,7 @@ Expected: one line `jls26.pdf: OK`.
 git -C <exchange checkout> fetch origin exchange/pass-shelat-ch5-8 iO/phase-a-base \
   cryptography/pass-shelat-ch2-4
 for c in 15946b52d0615fda8afad9ed3c57cfaf5beaaa8d 5ed465f62e4ae0f93ded1a1ba49e807591b589eb \
-         <RECORDS-G52>; do
+         5464995aa000882f6bd41a3bb2f4f0d1a1486d67; do
   git -C <exchange checkout> cat-file -e "$c^{commit}" && echo "ok $c"; done
 ```
 Expected: three `ok` lines.
@@ -86,9 +86,9 @@ exchange checkout, the slot wrapper, the packages option and whether Gate 51 is 
   none in your findings or ZIP (cite page and item instead). PDF page k is article page 1:k.
 
 1. READ THE PACK
-- Records: cryptography/pass-shelat-ch2-4 at <RECORDS-G52>. Extract the pack and verify it:
+- Records: cryptography/pass-shelat-ch2-4 at 5464995aa000882f6bd41a3bb2f4f0d1a1486d67. Extract the pack and verify it:
     mkdir -p ../g52-pack
-    git -C <exchange checkout> archive <RECORDS-G52> \
+    git -C <exchange checkout> archive 5464995aa000882f6bd41a3bb2f4f0d1a1486d67 \
       briefs/io-components/gates/52-sprg-statements | tar -x -C ../g52-pack
     cd ../g52-pack/briefs/io-components/gates/52-sprg-statements && shasum -a 256 -c SHA256SUMS
   Read pack.md (your task, in its order A-H), intake-r1.md (the maintainer's intake; grade its
@@ -190,14 +190,14 @@ The user dispatches and merges.
 
 - Staged 2026-11-18 by the maintainer, statically (no Lean, no `lake`), on the records checkout at
   `2f9f95ffd703779faa016b92d5f687d17605905e`. The files of this directory are written and **not
-  committed**; the maintainer commits them with explicit paths, which makes `<RECORDS-G52>`.
+  committed**; the maintainer commits them with explicit paths, which makes `5464995aa000882f6bd41a3bb2f4f0d1a1486d67`.
 - Intake: `intake-r1.md` (0 blockers, 1 major, 7 minor, 9 notes); questions Q-G52-1..6 for Seyoon.
   None blocks this dispatch: no intake finding needs a repair before the gate, and Q-G52-6 is
   answered in Seyoon's paste-in sentence.
 - `SHA256SUMS` covers `pack.md`, `intake-r1.md`, `dup-sweep.md` and `source-head.json`.
 - Slots: Gate 52 shares the third slot with Gate 51; the wrapper serialises them. It may be
   dispatched while Gate 51 runs; its Lean then waits.
-- **Before dispatch:** commit this directory; fill `<RECORDS-G52>` in this file and in `README.md`
+- **Before dispatch:** commit this directory; fill `5464995aa000882f6bd41a3bb2f4f0d1a1486d67` in this file and in `README.md`
   with `git rev-parse` of that commit (a records-only follow-up commit); push the records. Nothing
   else is pending.
 
