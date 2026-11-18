@@ -1,0 +1,980 @@
+# overlap_search.sh run 2026-11-18T10:52:17Z; repo /home/user/ef-r23/repo; base 5ed465f62e4ae0f93ded1a1ba49e807591b589eb; PR377 7563734a8badba842223e0687c719b3b4692e9d2; Mathlib /home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib
+# mathlib rev: 029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e
+
+### [base/encodeVector-defs] $ git -C /home/user/ef-r23/repo grep -n -E \(def\|theorem\|lemma\)\ +\(encodeVector\|encodeMatrix\)\\b 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+# exit 0, hits 2
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/Modular.lean:51:def encodeVector {q length : ℕ} [NeZero q] (width : ℕ)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/Modular.lean:65:def encodeMatrix {q rows columns : ℕ} [NeZero q] (width : ℕ)
+
+### [base/vecAdd] $ git -C /home/user/ef-r23/repo grep -n -E \\bvecAdd\[A-Za-z_\]\* 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+# exit 1, hits 0
+
+
+### [base/subsetSum] $ git -C /home/user/ef-r23/repo grep -n -E \\bsubsetSum\[A-Za-z_\]\* 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+# exit 0, hits 26
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/HardCoreClaims.lean:137:      HardcoreBit.subsetSum L.1 s :=
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:863:vote of the round `(i, L)` is `subsetSum L b ⊕ A'(y, subsetSum L s ⊕ e_i; c i L)` by
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:882:  simp only [GLLoop.wfVote, glBlocks_apply, glPredictorOf_apply, HardcoreBit.subsetSum_eq]
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:78:    subsetSum L.1 c.2.1 + A (y, subsetSum L.1 c.1 + Pi.single i true) (c.2.2 i L)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:86:      subsetSum L.1 c.2.1 + A (y, subsetSum L.1 c.1 + Pi.single i true) (c.2.2 i L) := rfl
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:129:    ip x (subsetSum L.1 s) + A (f x, subsetSum L.1 s + Pi.single i true) (cs i L)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:140:  simp only [guessRecover, idealRecover, subsetSum_eq, ip_sum]
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:179:      (subsetSum L.1 ω.1, ω.2 i L)) :=
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:187:        H L (subsetSum L.1 ω.1, ω.2 i L) = true) := by
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:33:* `subsetSum L s`: the sum `∑_{j ∈ L} s_j`, the XOR `⊕_{j ∈ L} s_j` for bit strings.
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:287:def subsetSum (L : Finset κ) (s : κ → G) : G := ∑ j ∈ L, s j
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:290:/-- The defining equation of `subsetSum`: `S_L(s) = ∑_{j ∈ L} s_j`. -/
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:291:theorem subsetSum_eq (L : Finset κ) (s : κ → G) : subsetSum L s = ∑ j ∈ L, s j := rfl
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:294:def subsetSumHom (L : Finset κ) : (κ → G) →+ G where
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:295:  toFun := subsetSum L
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:296:  map_zero' := by simp [subsetSum]
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:297:  map_add' s t := by simp [subsetSum, sum_add_distrib]
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:306:    ∃ s : κ → G, subsetSum L s = u ∧ subsetSum L' s = 0 := by
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:309:    exact ⟨Pi.single a u, by simp [subsetSum, ha], by simp [subsetSum, ha']⟩
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:317:    · simp [subsetSum, sum_sub_distrib, ha, hb]
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:318:    · simp [subsetSum, sum_sub_distrib, h a ha, hb']
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:330:    PairwiseUniform (fun (L : {L : Finset κ // L.Nonempty}) (s : κ → G) => subsetSum L.1 s) := by
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:332:  · refine pushesUniform_of_surjective (subsetSumHom (G := G) L.1) fun u => ?_
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:334:    exact ⟨Pi.single a u, by simp [subsetSumHom, subsetSum, ha]⟩
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:336:    refine pushesUniform_of_surjective ((subsetSumHom (G := G) L.1).prod (subsetSumHom (G := G) L'.1))
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:341:    simp only [AddMonoidHom.prod_apply, map_add, Prod.mk_add_mk, subsetSumHom,
+
+### [base/addMod|modAdd] $ git -C /home/user/ef-r23/repo grep -n -E \\b\(addMod\|modAdd\|addModQ\|modAddWords\)\[A-Za-z_\]\* 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+# exit 1, hits 0
+
+
+### [base/mulVec-on-encodings] $ git -C /home/user/ef-r23/repo grep -n -E mulVec 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib/Cryptography/Encoding TCSlib/Cryptography/LWE TCSlib/Cryptography/Encryption/Symmetric/Regev TCSlib/Cryptography/Encryption/PublicKey/Regev 
+# exit 0, hits 14
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:402:      Modular.encodeVector (W.eval u.length) (A.mulVec v) := by
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:414:        pairEncode ctx (pairEncode [] (out ++ Modular.encodeVector width (rows.mulVec v))) := by
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:422:      have hresult : Modular.encodeVector width (rows.mulVec v) =
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:424:            Modular.encodeVector width (tail.mulVec v) := by
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean:70:  (pk.1.transpose.mulVec (fun i => ((r i).toNat : ZMod P.modulus)),
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean:78:      pk.1.transpose.mulVec (fun i => ((r i).toNat : ZMod P.modulus)) := rfl
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean:114:  have hlin : dotProduct s (A.transpose.mulVec v) = dotProduct (A.mulVec s) v := by
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean:115:    rw [Matrix.dotProduct_mulVec, Matrix.vecMul_transpose]
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean:117:      A.mulVec s + fun i => (e i : ZMod P.modulus) := by
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean:127:    dotProduct s (A.transpose.mulVec v) = _
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/Symmetric/Regev/Basic.lean:72:  fun i => LWE.BitEncoding.decode P (c.2 i - (c.1.mulVec s) i)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/Symmetric/Regev/Basic.lean:74:/-- Coordinate `i` is obtained by decoding `c.2 i - (c.1.mulVec s) i`. -/
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/Symmetric/Regev/Basic.lean:78:    decrypt P s c i = LWE.BitEncoding.decode P (c.2 i - (c.1.mulVec s) i) := rfl
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/LWE/Basic.lean:63:  A.mulVec s + fun i => (e i : ZMod P.modulus)
+
+### [base/percent-q] $ git -C /home/user/ef-r23/repo grep -n -E %\ \*q\\b 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib/Cryptography/Encoding TCSlib/Complexity/ClassP/BinaryArith TCSlib/Cryptography/LWE 
+# exit 1, hits 0
+
+
+### [base/BinArith.mod-defs] $ git -C /home/user/ef-r23/repo grep -n -E \(def\|theorem\|lemma\)\ +\(mod\|polyTimeComputable_mod\|mod_eq\|mod_pairEncode\)\[A-Za-z_\]\*\\b 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib/Complexity/ClassP/BinaryArith 
+# exit 0, hits 4
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/ClassP/BinaryArith/Div.lean:55:def mod (z : List Bool) : List Bool := Nat.bits (bitsVal (pairFstD z) % bitsVal (pairSndD z))
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/ClassP/BinaryArith/Div.lean:62:@[simp] theorem mod_pairEncode (a b : ℕ) :
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/ClassP/BinaryArith/Div.lean:245:theorem polyTimeComputable_mod : PolyTimeComputable mod := by
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/ClassP/BinaryArith/Jacobi.lean:66:theorem mod_four_eq_three_iff {w : List Bool} (h : bitsVal w % 2 = 1) :
+
+### [base/BinArith.mod-uses] $ git -C /home/user/ef-r23/repo grep -n -E BinArith\\.mod\\b 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+# exit 0, hits 15
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/ClassP/BinaryArith/Div.lean:23:* `Complexity.BinArith.div`, `Complexity.BinArith.mod` — quotient and remainder of the two
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/Primality.lean:81:  let A := BinArith.add (pairEncode [true] (BinArith.mod (pairEncode (pairSndD z) N₁)))
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/Primality.lean:92:      (BinArith.mod (pairEncode (pairSndD z) (BinArith.sub (pairEncode (pairFstD z) [true])))))) :=
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/Primality.lean:113:  have hA : BinArith.add (pairEncode [true] (BinArith.mod (pairEncode w (Nat.bits (N - 1))))) =
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/Primality.lean:115:    simp [BinArith.add, BinArith.mod, eulerSample, bitsVal_bits, bitsVal]
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/ZeroPEval.lean:410:def valW (D : List Bool) : List Bool := BinArith.mod (pairEncode (rawValW D) (sK D))
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/ZeroPEval.lean:443:    split_ifs <;> simp [BinArith.add, BinArith.sub, BinArith.mul, BinArith.mod, bitsVal_bits,
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/ZeroPRun.lean:238:  simp only [BinArith.mod, pairFstD_pairEncode, pairSndD_pairEncode, sK, BinArith.add, bitsVal_bits]
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean:32:`EnsembleLemmas.polyTimeComputable_zeros`, the binary arithmetic `Complexity.BinArith.mod`,
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean:218:/-- `BinArith.mod` on an encoded pair is the remainder. Reader (`rfl`). -/
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean:220:    BinArith.mod (pairEncode a b) = Nat.bits (LogProg.bitsVal a % LogProg.bitsVal b) := by
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean:221:  rw [show BinArith.mod (pairEncode a b) = Nat.bits (LogProg.bitsVal (pairFstD (pairEncode a b)) %
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean:255:          (BinArith.mod (pairEncode
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean:259:        (BinArith.mod (pairEncode (Encoding.BinaryArith.toLE (NUPPT.inCoins z))
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean:280:(`EnsembleLemmas.polyTimeComputable_zeros`, `PolyTimeComputable.append`), `BinArith.mod` and
+
+### [base/mod-of-add] $ git -C /home/user/ef-r23/repo grep -n -E BinArith\\.mod.\*BinArith\\.add\|BinArith\\.add.\*BinArith\\.mod 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+# exit 0, hits 5
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/Primality.lean:81:  let A := BinArith.add (pairEncode [true] (BinArith.mod (pairEncode (pairSndD z) N₁)))
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/Primality.lean:113:  have hA : BinArith.add (pairEncode [true] (BinArith.mod (pairEncode w (Nat.bits (N - 1))))) =
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/Primality.lean:115:    simp [BinArith.add, BinArith.mod, eulerSample, bitsVal_bits, bitsVal]
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/ZeroPEval.lean:443:    split_ifs <;> simp [BinArith.add, BinArith.sub, BinArith.mul, BinArith.mod, bitsVal_bits,
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/ZeroPRun.lean:238:  simp only [BinArith.mod, pairFstD_pairEncode, pairSndD_pairEncode, sK, BinArith.add, bitsVal_bits]
+
+### [base/mod-near-add(-A3)] $ git -C /home/user/ef-r23/repo grep -n -A3 -E BinArith\\.mod\\b 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+# exit 0, hits 63
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/ClassP/BinaryArith/Div.lean:23:* `Complexity.BinArith.div`, `Complexity.BinArith.mod` — quotient and remainder of the two
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/ClassP/BinaryArith/Div.lean-24-  components of a pair.
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/ClassP/BinaryArith/Div.lean-25-* `Complexity.BinArith.divStep` — one round of long division on `⟨b, ⟨R, ⟨r, q⟩⟩⟩`.
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/ClassP/BinaryArith/Div.lean-26-
+--
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/Primality.lean:81:  let A := BinArith.add (pairEncode [true] (BinArith.mod (pairEncode (pairSndD z) N₁)))
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/Primality.lean-82-  BinArith.beq (pairEncode (BinArith.gcd (pairEncode A N)) [true]) &&
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/Primality.lean-83-    BinArith.beq (pairEncode (BinArith.jacobiModAlg (pairEncode A N))
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/Primality.lean-84-      (BinArith.powMod (pairEncode A (pairEncode (N₁.drop 1) N))))
+--
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/Primality.lean:92:      (BinArith.mod (pairEncode (pairSndD z) (BinArith.sub (pairEncode (pairFstD z) [true])))))) :=
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/Primality.lean-93-    BinArith.polyTimeComputable_add.comp ((polyTimeComputable_const _).pairEncode
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/Primality.lean-94-      (BinArith.polyTimeComputable_mod.comp (polyTimeComputable_pairSndD.pairEncode hN₁)))
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/Primality.lean-95-  exact polyTimeComputable_and
+--
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/Primality.lean:113:  have hA : BinArith.add (pairEncode [true] (BinArith.mod (pairEncode w (Nat.bits (N - 1))))) =
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/Primality.lean-114-      Nat.bits (eulerSample N w) := by
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/Primality.lean:115:    simp [BinArith.add, BinArith.mod, eulerSample, bitsVal_bits, bitsVal]
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/Primality.lean-116-  have hpow : ∀ A : ℕ, BinArith.powMod (pairEncode (Nat.bits A)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/Primality.lean-117-      (pairEncode ((Nat.bits (N - 1)).drop 1) (Nat.bits N))) =
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/Primality.lean-118-      Nat.bits (A ^ ((N - 1) / 2) % N) := by
+--
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/ZeroPEval.lean:410:def valW (D : List Bool) : List Bool := BinArith.mod (pairEncode (rawValW D) (sK D))
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/ZeroPEval.lean-411-
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/ZeroPEval.lean-412-/-- **One gate on words**: a stopped state is fixed; a well-formed gate is consumed and its
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/ZeroPEval.lean-413-value appended; otherwise the code is replaced by `[]` (rejected). -/
+--
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/ZeroPEval.lean:443:    split_ifs <;> simp [BinArith.add, BinArith.sub, BinArith.mul, BinArith.mod, bitsVal_bits,
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/ZeroPEval.lean-444-      ptVal, bitsVal]
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/ZeroPEval.lean-445-  unfold gStep
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/ZeroPEval.lean-446-  rw [hval]
+--
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/ZeroPRun.lean:238:  simp only [BinArith.mod, pairFstD_pairEncode, pairSndD_pairEncode, sK, BinArith.add, bitsVal_bits]
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/ZeroPRun.lean-239-  refine length_bits_le_of_le (sRaw D) ?_ le_rfl
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/ZeroPRun.lean-240-  have h1 : bitsVal [true] = 1 := rfl
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/ZeroPRun.lean-241-  rw [h1]
+--
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean:32:`EnsembleLemmas.polyTimeComputable_zeros`, the binary arithmetic `Complexity.BinArith.mod`,
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean-33-`sub` and `lt`, and `polyTimeComputable_ite`. No host and no loop of its own.
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean-34-
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean-35-## Main definitions
+--
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean:218:/-- `BinArith.mod` on an encoded pair is the remainder. Reader (`rfl`). -/
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean-219-private theorem binArith_mod_pairEncode (a b : List Bool) :
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean:220:    BinArith.mod (pairEncode a b) = Nat.bits (LogProg.bitsVal a % LogProg.bitsVal b) := by
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean:221:  rw [show BinArith.mod (pairEncode a b) = Nat.bits (LogProg.bitsVal (pairFstD (pairEncode a b)) %
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean-222-    LogProg.bitsVal (pairSndD (pairEncode a b))) from rfl, pairFstD_pairEncode,
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean-223-    pairSndD_pairEncode]
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean-224-
+--
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean:255:          (BinArith.mod (pairEncode
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean-256-            (List.replicate (PolyExpr.var.eval (NUPPT.inCoins z).length) false ++ [true])
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean-257-            (Encoding.BinaryArith.toLE (NUPPT.inArg z)))))))
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean-258-      then true :: Encoding.BinaryArith.fromLEPoly .var (pairEncode (NUPPT.inArg z)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean:259:        (BinArith.mod (pairEncode (Encoding.BinaryArith.toLE (NUPPT.inCoins z))
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean-260-          (Encoding.BinaryArith.toLE (NUPPT.inArg z)))))
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean-261-      else [] := by
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean-262-  rw [binArith_mod_pairEncode, binArith_mod_pairEncode, binArith_sub_pairEncode,
+--
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean:280:(`EnsembleLemmas.polyTimeComputable_zeros`, `PolyTimeComputable.append`), `BinArith.mod` and
+# ... (3 more)
+
+### [base/dyadic-loops] $ git -C /home/user/ef-r23/repo grep -n -E \(def\|theorem\)\ +\[A-Za-z_\]\*\(dot\|Dot\|mulVecWords\|addWords\|AddWords\|forLoop\)\[A-Za-z_\]\* 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib/Cryptography/Encoding 
+# exit 0, hits 14
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:50:def dotStep (z : List Bool) : List Bool :=
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:62:theorem dotStep_eq (z : List Bool) :
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:77:theorem dotStep_fst (z : List Bool) : pairFstD (dotStep z) = pairFstD z := by
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:85:theorem dotStep_length_le (z : List Bool) :
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:100:theorem polyTimeComputable_dotStep : PolyTimeComputable dotStep := by
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:120:def dotWords (c n x y : List Bool) : List Bool :=
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:126:theorem dotWords_eq (c n x y : List Bool) :
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:137:theorem dotWords_length (c n x y : List Bool) : (dotWords c n x y).length = c.length := by
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:157:theorem polyTimeComputable_dotWords : PolyTimeComputable
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:175:def dotPoly (N W : PolyExpr) (z : List Bool) : List Bool :=
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:181:theorem dotPoly_eq (N W : PolyExpr) (z : List Bool) :
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:190:theorem dotPoly_length (N W : PolyExpr) (z : List Bool) :
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:201:theorem dotPoly_encodeVector {q : ℕ} [NeZero q] (N W : PolyExpr) (u : List Bool)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:259:theorem polyTimeComputable_dotPoly (N W : PolyExpr) : PolyTimeComputable (dotPoly N W) := by
+
+### [base/NUPPT|RealizesOn-Regev] $ git -C /home/user/ef-r23/repo grep -n -E NUPPT\|RealizesOn 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib/Cryptography/Encryption/\*/Regev/\* TCSlib/Cryptography/Encryption/\*/Regev.lean 
+# exit 1, hits 0
+
+
+### [base/modContext-like] $ git -C /home/user/ef-r23/repo grep -n -E \\b\[a-z\]\[A-Za-z\]\*\(Context\|Ctx\|ctxWord\|modulusWord\|modulusNumeral\)\\b\ \*\(\\\(\|:\) 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib/Cryptography/Encoding TCSlib/Cryptography/LWE TCSlib/Complexity/ClassP/BinaryArith 
+# exit 1, hits 0
+
+
+### [base/natToList-modulus] $ git -C /home/user/ef-r23/repo grep -n -E natToList\ \\\(\?\[a-zA-Z\]+\ \*\\+\ \*1\\\)\?\ +\[a-zA-Z.\]\*\(q\|modulus\)\\b 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+# exit 1, hits 0
+
+
+### [base/FromPRG-advice] $ git -C /home/user/ef-r23/repo grep -n -E exists_max_image\|exists_withAdvice\|withAdvice\|Finset.exists_max 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean 
+# exit 0, hits 5
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:277:message space (`Finset.exists_max_image`; the text's footnote: "`Mᵢ` is non-uniform as it has
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:285:(`NUPPT.exists_withAdvice` with the bound `var`), coins `D.coins`, and on `⟨1^n, t⟩` computes
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:307:    obtain ⟨p, -, hp⟩ := Finset.exists_max_image Finset.univ
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:321:  obtain ⟨B₀, hB₀c, hB₀⟩ := D'.exists_withAdvice (fun n => List.ofFn (μ n).1) .var (fun n => by simp)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:322:  obtain ⟨B₁, hB₁c, hB₁⟩ := D'.exists_withAdvice (fun n => List.ofFn (μ n).2) .var (fun n => by simp)
+
+### [base/exists_max_image-all] $ git -C /home/user/ef-r23/repo grep -n -E exists_max_image 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib/Cryptography 
+# exit 0, hits 26
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging.lean:117:  obtain ⟨i, _, hi⟩ := Finset.exists_max_image Finset.univ g Finset.univ_nonempty
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:94:1. At each `n` choose the pair of masks maximizing the advantage (`Finset.exists_max_image`).
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:120:    obtain ⟨p, -, hp⟩ := Finset.exists_max_image Finset.univ
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:277:message space (`Finset.exists_max_image`; the text's footnote: "`Mᵢ` is non-uniform as it has
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:307:    obtain ⟨p, -, hp⟩ := Finset.exists_max_image Finset.univ
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:390:(`Finset.exists_max_image`). By `bitwise_enc_runAtL` and the coin split
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:404:(`Finset.exists_max_image` over `j`), the total is `≤ n · ε(n)`, negligible by
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:416:    obtain ⟨p, -, hp⟩ := Finset.exists_max_image Finset.univ
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:452:(`Finset.exists_max_image`). The samples are the shared-key tuples of `distAdv_multi_le_sum`
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:477:    obtain ⟨p, -, hp⟩ := Finset.exists_max_image Finset.univ
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:270:of the planting distinguisher `hybridAdv … (j n)` (`Finset.exists_max_image`); the machine `B`
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:295:      obtain ⟨jf, -, hjf⟩ := Finset.exists_max_image Finset.univ (term n) Finset.univ_nonempty
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Pseudorandom/NextBit.lean:388:attained at some `i_n` (`Finset.exists_max_image`); then `nextBitProb ≤ 1/2 + ε n` for all
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Pseudorandom/NextBit.lean:411:    · obtain ⟨j₀, -, hj₀⟩ := Finset.exists_max_image (Finset.univ : Finset (Fin (ℓ.eval n)))
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:71:    obtain ⟨w, -, hw⟩ := exists_max_image univ q univ_nonempty
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:85:  obtain ⟨a, -, ha⟩ := Finset.exists_max_image Finset.univ (fun a => |f a - g a|)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:124:(`Finset.exists_max_image`) and give its template as advice (length at most `q(n)`). The
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:157:    obtain ⟨θs, -, h⟩ := exists_max_image univ (gap n) univ_nonempty
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:260:    obtain ⟨p, hp, hmax⟩ := Finset.exists_max_image Finset.univ (adv n) Finset.univ_nonempty
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction.lean:114:    obtain ⟨a, _, ha⟩ := Finset.exists_max_image Finset.univ (gap n) Finset.univ_nonempty
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:281:`(v, v')` (`Finset.exists_max_image`); `multiCom` is `encodeMsgs ∘ List.ofFn ∘ pairTuple` of
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:317:  obtain ⟨⟨v, v'⟩, -, hmax⟩ := Finset.exists_max_image Finset.univ
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:389:(`Finset.exists_max_image`), a coordinate `k_n` from the coordinatewise hybrid lemma
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:683:(`Finset.exists_max_image`), a bit position `k` from `exists_pairRed_ge`, and by averaging over
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:721:  obtain ⟨⟨v, v'⟩, -, hmax⟩ := Finset.exists_max_image Finset.univ
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:782:(`Finset.exists_max_image`), a bit position `k_n` from the coordinatewise hybrid lemma
+
+### [base/exists_withAdvice-all] $ git -C /home/user/ef-r23/repo grep -n -E exists_withAdvice\|withAdvice_ 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+# exit 0, hits 53
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/Closure.lean:38:| `exists_withAdvice` | advice `⟨A.advice n, β n⟩`; re-pair `y` with `β n` | pairing calculus |
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/Closure.lean:64:* `Complexity.NUPPT.exists_withAdvice` — hard-wiring an extra polynomial-length advice.
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/Closure.lean:358:theorem exists_withAdvice (A : NUPPT) (β : ℕ → List Bool) (b : PolyExpr)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/Ensembles.lean:481:(`NUPPT.exists_withAdvice`). That form is not proved, since no consumer needs copies of a
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/Ensembles.lean:491:advice (`NUPPT.exists_withAdvice`). The reduction is the `NUPPT` of
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:813:`NUPPT.exists_withAdvice (NUPPT.exists_seq M₀ (NUPPT.exists_comp D pairSndD id)) (1^{k n})`,
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:831:  obtain ⟨B, hBc, hB⟩ := C.exists_withAdvice (fun n => List.replicate (k n) true) t
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/Universal.lean:796:composed (`NUPPT.exists_comp`, `NUPPT.exists_withAdvice`) with the pre-processing
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:937:   expands the `Nat.size n`-bit best-position advice to unary; `NUPPT.exists_withAdvice`
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean:116:machine. Hard-wire the binary word using `exists_withAdvice`, bounded by `Nat.size n ≤ n`.
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean:129:  obtain ⟨B, hBcoins, hB⟩ := NUPPT.exists_withAdvice D β .var hβ
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:276:  obtain ⟨Red, hRc, hR⟩ := NUPPT.exists_withAdvice C β b hβ
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:58:calculus (`Complexity.NUPPT.exists_comp`, `NUPPT.exists_withAdvice`) is compared with the
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:708:`B` is `exists_split` (the first `(q(n)+1) n` coins are the points) of `exists_withAdvice` (advice
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:732:  obtain ⟨C₂, hC₂c, hC₂⟩ := C.exists_withAdvice
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:285:(`NUPPT.exists_withAdvice` with the bound `var`), coins `D.coins`, and on `⟨1^n, t⟩` computes
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:321:  obtain ⟨B₀, hB₀c, hB₀⟩ := D'.exists_withAdvice (fun n => List.ofFn (μ n).1) .var (fun n => by simp)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:322:  obtain ⟨B₁, hB₁c, hB₁⟩ := D'.exists_withAdvice (fun n => List.ofFn (μ n).2) .var (fun n => by simp)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:398:(`NUPPT.exists_withAdvice`), coins `var · S.enc.coins + D.coins` (`NUPPT.exists_split`), which
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:457:(`NUPPT.exists_withAdvice`, bound `2(q+1)·var + …`), coins `q · S.enc.coins + D.coins`
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/HybridMachine.lean:295:`j n < K(n)` and empty elsewhere (`NUPPT.exists_withAdvice`; length
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/HybridMachine.lean:336:  obtain ⟨D₂, hD₂c, hD₂⟩ := D₁.exists_withAdvice β _ hβ
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:394:`NUPPT.exists_withAdviceOn` hard-wires `D`'s advice into it (`B'`). `B'`'s budget is
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:402:  obtain ⟨B', hc, hB'⟩ := NUPPT.exists_withAdviceOn B D.advice D.adv D.advice_length
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:629:   `z = ⟨pk, α⟩` and hard-wired afterwards (`NUPPT.exists_withAdviceOn`, from the public
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:630:   `exists_withAdvice`/`exists_comp` closure lemmas). The two games accept with the same
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:26:(`Complexity.NUPPT.exists_withAdviceOn`, from `NUPPT.exists_comp` and `NUPPT.exists_withAdvice`).
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:755:   coins and `M`'s advice (hard-wired, `NUPPT.exists_withAdviceOn`), and answers
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean:252:`M.advice n` (`NUPPT.exists_withAdviceOn`). Reindex `B`'s coins as `(ρ ‖ ρ̃ ‖ re, rA)`
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean:263:  obtain ⟨B, hc, hB⟩ := NUPPT.exists_withAdviceOn B₀ samp.advice samp.adv samp.advice_length
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:604:`M.advice n` as the second input component (`NUPPT.exists_withAdviceOn`). Reindex `Sim`'s coins as
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:614:  obtain ⟨Sim, hc, hSim⟩ := NUPPT.exists_withAdviceOn Sim₀ samp.advice samp.adv
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Games/Efficiency.lean:76:  (`NUPPT.exists_withAdvice`, with `NUPPT.exists_comp` to re-pair the input).
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Games/Forwarding.lean:26:* **Hard-wiring a second input component** (`NUPPT.exists_withAdviceOn`): a reduction that
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Games/Forwarding.lean:38:* `Complexity.NUPPT.exists_withAdviceOn`: hard-wiring a second input component.
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Games/Forwarding.lean:190:`⟨⟨x, L⟩, β⟩ ↦ ⟨⟨x, β⟩, L⟩`, then `B' := NUPPT.exists_withAdvice B₁ β`; on `⟨x, L⟩` (the input
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Games/Forwarding.lean:192:theorem _root_.Complexity.NUPPT.exists_withAdviceOn (B : NUPPT) (β : ℕ → List Bool)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Games/Forwarding.lean:204:  obtain ⟨B', hc', hB'⟩ := NUPPT.exists_withAdvice B₁ β b hβ
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM.lean:223:**Proof sketch.** `B` has advice `⟨⟨1^{i n}, 1^{j n}⟩, D.advice n⟩` (`NUPPT.exists_withAdvice`
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/FromPermutation.lean:178:(`NUPPT.exists_withAdvice`, length `≤ D.adv + 6`), coins `1 + D.coins`
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:197:`M`: advice `⟨⟨1^{k_n}, 1^{ℓ(n) − k_n − 1}⟩, D.advice n⟩` (`NUPPT.exists_withAdvice`,
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/SecureComputation/ComposeSecurity/Reductions.lean:20:catalogue of `Complexity/Randomized/Closure.lean` (`exists_split`, `exists_withAdvice`,
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction.lean:52:  obtain ⟨B, hBc, hB⟩ := A.exists_withAdvice β b hβ
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction.lean:65:  obtain ⟨R, hRc, hR⟩ := C.exists_withAdvice β b hβ
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:397:`⟨⟨pre_n, suf_n⟩, D.advice n⟩` and calls `D` once (`NUPPT.exists_comp`, `NUPPT.exists_withAdvice`);
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:793:`NUPPT.exists_withAdvice`); by coin transport (`CommitmentLemmas.acceptProb_distinguisher_of_runAtL`)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:39:  (`Complexity.NUPPT.exists_comp`, `Complexity.NUPPT.exists_withAdvice`);
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:305:(`Complexity.NUPPT.exists_comp` with `spliceFun`, then `Complexity.NUPPT.exists_withAdvice`
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:311:  obtain ⟨B, hBc, hB⟩ := B₁.exists_withAdvice (fun n => pairEncode (pre n) (suf n)) b
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:324:  obtain ⟨B, hBc, hB⟩ := B₁.exists_withAdvice (fun n => pairEncode (pre n) (suf n)) b
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:264:`NUPPT.exists_withAdvice α` (the shape of pre-ship probe R4); the run equations compose
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:274:  obtain ⟨B, hc, h⟩ := A₂.exists_withAdvice α b hα
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1624:`pre`, `post` and `D.advice (n²)` as advice (`NUPPT.exists_withAdvice`; polynomially bounded by
+
+### [base/coin-transport] $ git -C /home/user/ef-r23/repo grep -n -E acceptProb_coins_equiv\|acceptProb_coins_fst\|acceptProb_distinguisherL_congr\|coinsCongr 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+# exit 0, hits 195
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/PPT.lean:256:def coinsCongr {A B : NUPPT} (h : A.coins = B.coins) (n : ℕ) : A.Coins n ≃ B.Coins n :=
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/PPT.lean:259:/-- The coin equivalence keeps the coin string: `List.ofFn (coinsCongr h n r) = List.ofFn r`. -/
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/PPT.lean:260:theorem coinsCongr_ofFn {A B : NUPPT} (h : A.coins = B.coins) (n : ℕ) (r : A.Coins n) :
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/PPT.lean:261:    List.ofFn (coinsCongr h n r) = List.ofFn r :=
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/PPT.lean:264:/-- Running `B` on coins carried over from `A`: `B.runAt n y (coinsCongr h n r) =
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/PPT.lean:266:theorem runAt_coinsCongr {A B : NUPPT} (h : A.coins = B.coins) (n : ℕ) (y : List Bool)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/PPT.lean:267:    (r : A.Coins n) : B.runAt n y (coinsCongr h n r) = B.runAtL n y (List.ofFn r) := by
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/PPT.lean:268:  rw [runAt_eq, coinsCongr_ofFn]
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/Collections.lean:899:          (NUPPT.coinsCongr (G.coins_collInverter L A') n ρ)).drop (G.gen.coinLen n)) := by
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/Collections.lean:900:  rw [NUPPT.runAt_eq, NUPPT.runAt_coinsCongr]
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/Collections.lean:940:          ((NUPPT.coinsCongr (G.coins_collInverter L A') n).symm ρ)) = some x' ∧
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/Collections.lean:962:      ((NUPPT.coinsCongr (G.coins_collInverter L A') n).symm ρ) =
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/Collections.lean:1005:      ((NUPPT.coinsCongr (G.coins_collInverter L A') n).symm ρ)) = some x' ∧
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/Collections.lean:1030:      (NUPPT.coinsCongr (G.coins_collInverter L A') n).symm) _)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:76:`A.withIndexParam.Coins n ≃ A.Coins n` (`NUPPT.coinsCongr` along `coins_withIndexParam`). -/
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:79:  NUPPT.coinsCongr A.coins_withIndexParam n
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:85:  NUPPT.coinsCongr_ofFn A.coins_withIndexParam n r
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:93:  rw [NUPPT.runAt_eq, NUPPT.withIndexParam_coinsEquiv, NUPPT.runAt_coinsCongr]
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/Ensembles.lean:387:`EnsembleLemmas.acceptProb_coins_fst`), and `h B` gives negligibility. -/
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/Ensembles.lean:568:      rw [← EnsembleLemmas.acceptProb_coins_equiv e, ← EnsembleLemmas.acceptProb_multicopyRed_congr
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:48:* `TCSlib.Cryptography.EnsembleLemmas.acceptProb_coins_equiv`, `acceptProb_coins_fst`,
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:85:theorem acceptProb_coins_equiv (e : κ ≃ ρ) (X : σ → γ) (D : γ → ρ → Bool) :
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:92:theorem acceptProb_coins_fst [Nonempty κ] (X : σ → γ) (D : γ → ρ → Bool) :
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:264:  rw [← acceptProb_coins_equiv e, ← acceptProb_not]
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:282:  rw [← acceptProb_coins_equiv e]
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:290:(`acceptProb_coins_fst`) after the split `coinsEquiv`. -/
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:300:  rw [← acceptProb_coins_equiv (coinsEquiv hlen)]
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:301:  conv_rhs => rw [← acceptProb_coins_fst (κ := Fin (D.coinLen (p.eval m) - D.coinLen (φ m)) → Bool)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:363:  rw [← acceptProb_coins_equiv (coinsEquiv hlen),
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:443:      have hspec := T.inv_spec n r y.1 (NUPPT.coinsCongr (NUPPT.coins_ofPolyTimeUniform _ _) n s)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:444:      rw [NUPPT.runAt_eq T.inv, NUPPT.coinsCongr_ofFn, T.inv_uniform.runAtL_eq] at hspec
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:520:`(A.precomp hpre).Coins n ≃ A.Coins n` (`coinsCongr` along `coins_precomp`). -/
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:523:  coinsCongr (A.coins_precomp hpre) n
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:530:  coinsCongr_ofFn (A.coins_precomp hpre) n c
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:244:    (HardcoreBit.guessRecover_coinsCongr _ _ _
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/HardCoreGLFamily.lean:207:    (HardcoreBit.guessRecover_coinsCongr _ _ _
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:221:theorem acceptProb_coins_equiv {σ γ ρ ρ' : Type*} [Fintype σ] [Fintype ρ] [Fintype ρ']
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:233:  rw [acceptProb_coins_equiv G D D' e h, acceptProb_coins_equiv id D D' e h]
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:329:`(A.preComp hpre).Coins n ≃ A.Coins n` (`NUPPT.coinsCongr` along `coins_preComp`). -/
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:332:  coinsCongr (coins_preComp A hpre) n
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:339:  coinsCongr_ofFn (coins_preComp A hpre) n r
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:304:        (NUPPT.coinsCongr (A := S.sign) (B := hsSign S H)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:308:  rw [NUPPT.runAt_coinsCongr, NUPPT.runAtL_ofPolyTimeUniform, S.sign_uniform.runAt_eq]
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:341:      NUPPT.coinsCongr (A := S.sign) (B := hsSign S H)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:444:    NUPPT.coinsCongr (A := S.sign) (B := hsSign S H)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:983:    φ.trans (NUPPT.coinsCongr hCcoins.symm n)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:992:      (NUPPT.coinsCongr hCcoins.symm n (φ ((c, T), r))) = List.ofFn x'
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean:136:typed activation equation through the published `coinsCongr` equivalence: if `hcoins : B.coins =
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean:138:`y`, `r`, then `B.runAt n y (NUPPT.coinsCongr hcoins.symm n r) = A.runAt n (pairEncode y
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean:144:    B.runAt n y (NUPPT.coinsCongr hcoins.symm n r) =
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean:146:  rw [NUPPT.runAt_coinsCongr hcoins.symm, hB, ← NUPPT.runAt_eq]
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/DiscreteLog.lean:533:equivalence `(expGen G).Coins n ≃ G.gen.Coins n` (`NUPPT.coinsCongr` along `expGen_coins`), the
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/DiscreteLog.lean:538:  NUPPT.coinsCongr (expGen_coins G) n
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/DiscreteLog.lean:544:  NUPPT.coinsCongr_ofFn (expGen_coins G) n r
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/Factoring.lean:362:`(oneCallFactorer A).Coins n ≃ A.Coins n` (`NUPPT.coinsCongr` along `coins_oneCallFactorer`). -/
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/Factoring.lean:365:  NUPPT.coinsCongr (coins_oneCallFactorer A) n
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/Factoring.lean:372:  NUPPT.coinsCongr_ofFn (coins_oneCallFactorer A) n r
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/Factoring.lean:1696:`(collectionFactorer A).Coins n ≃ A.Coins n` (`NUPPT.coinsCongr` along
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/Factoring.lean:1700:  NUPPT.coinsCongr (coins_collectionFactorer A) n
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/Factoring.lean:1707:  NUPPT.coinsCongr_ofFn (coins_collectionFactorer A) n r
+# ... (135 more)
+
+### [base/Fin.append-coins] $ git -C /home/user/ef-r23/repo grep -n -E Fin\\.append.\*\[Cc\]oins\|\[Cc\]oins.\*Fin\\.append 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+# exit 0, hits 17
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/Ensembles.lean:386:`EnsembleLemmas.coinsEquiv` built on `Fin.appendEquiv`, then
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/Ensembles.lean:429:`EnsembleLemmas.coinsEquiv` (`Fin.appendEquiv`), so by `acceptProb_bind`
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:120:    obtain ⟨⟨s₁, s₂⟩, hs⟩ := (Fin.appendEquiv (F.sample.coins.eval n) (m.eval n)).surjective
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/HardCoreGLFamily.lean:172:      A.predictor n (o + m) (Fin.appendEquiv o m (y, q)) (A.precomp_coinsEquiv concatPre_poly n c) := by
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:246:    ((Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).prodCongr (Equiv.refl (A.Coins n))) _).symm ?_
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:267:`(b, a)` (`Fin.appendEquiv`); split `A`'s coins as `((a, a''), (ρ, ρ''))` (`splitCoins`, with
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/RSA.lean:1800:  (Fin.appendEquiv _ _).trans ((Equiv.arrowCongr (finCongr (rsa_genCoins_len n)) (Equiv.refl Bool)).trans
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/RSA.lean:1810:      ((Fin.appendEquiv _ _) s) = fun i => (Fin.appendEquiv _ _) s (Fin.cast (rsa_genCoins_len n).symm i)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/Rabin.lean:1655:  (Fin.appendEquiv _ _).trans ((Equiv.arrowCongr (finCongr (rabin_factorerCoins_len A n))
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/Rabin.lean:1926:  (Fin.appendEquiv _ _).trans ((Equiv.arrowCongr (finCongr (rabin_genCoins_len n))
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Basic.lean:355:coins (`uprob_comp_equiv` along Mathlib's `Fin.appendEquiv`). Glue. -/
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/HybridMachine.lean:375:coin blocks of `Enc` followed by the coins of `D` (`coinBlocks`, `Fin.appendEquiv`). -/
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Games/Efficiency/Strings.lean:556:`φ` appends the seed and the coins (`Fin.appendEquiv`) and transports along that length
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:204:with `c : M.Coins n ≃ (Fin (ℓ n) → Bool) × D.Coins n` (`Fin.appendEquiv`), hence
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:230:      refine prgAdv_coins_equiv _ _ _ (Fin.appendEquiv (ℓ.eval n) (D.coinLen n)) fun T c => ?_
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Pseudorandom/NextBit.lean:223:along the coin split `e : (Fin (ℓ n) → Bool) × D.Coins n ≃ A.Coins n` (`Fin.appendEquiv`)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean:56:`appendCoins h = (Fin.appendEquiv a b).trans (Equiv.arrowCongr (finCongr h.symm) (Equiv.refl
+
+### [base/finSumFinEquiv-coins] $ git -C /home/user/ef-r23/repo grep -n -E finSumFinEquiv.\*\[Cc\]oins\|\[Cc\]oins.\*finSumFinEquiv 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+# exit 1, hits 0
+
+
+### [base/exists_realizesOn] $ git -C /home/user/ef-r23/repo grep -n -E \(theorem\|lemma\)\ +\[A-Za-z_.\]\*exists_realizesOn\[A-Za-z_\]\* 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+# exit 0, hits 3
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/Realization.lean:198:theorem _root_.Complexity.NUPPT.exists_realizesOn_reparam_pre_post (A : NUPPT) (φ : ℕ → ℕ)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/Realization.lean:220:theorem _root_.Complexity.NUPPT.exists_realizesOn_of_preTarget (A : NUPPT) (φ : ℕ → ℕ)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/Realization.lean:239:theorem _root_.Complexity.NUPPT.exists_realizesOn_of_preTarget_id (A : NUPPT) {Ω : ℕ → Type*}
+
+### [base/distinguisherL_eq-RealizesOn] $ git -C /home/user/ef-r23/repo grep -n -E \(theorem\|lemma\)\ +\[A-Za-z_.\]\*RealizesOn\\.\[A-Za-z_\]\* 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+# exit 0, hits 6
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/Realization.lean:113:theorem _root_.Complexity.NUPPT.RealizesOn.coins_eq (h : B.RealizesOn enc c R) : B.coins = c :=
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/Realization.lean:118:theorem _root_.Complexity.NUPPT.RealizesOn.runAtL_eq (h : B.RealizesOn enc c R) (m : ℕ)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/Realization.lean:124:theorem _root_.Complexity.NUPPT.RealizesOn.runAt_eq (h : B.RealizesOn enc c R) (m : ℕ) (x : X m)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/Realization.lean:132:theorem _root_.Complexity.NUPPT.RealizesOn.distinguisherL_eq (h : B.RealizesOn enc c R) (m : ℕ)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/Realization.lean:141:theorem _root_.Complexity.NUPPT.RealizesOn.runAt_coinsEquivPoly_symm (h : B.RealizesOn enc c R)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/Realization.lean:157:theorem _root_.Complexity.NUPPT.RealizesOn.congr {R' : ∀ m, X m → List Bool → List Bool}
+
+### [base/singleMessageSecure] $ git -C /home/user/ef-r23/repo grep -n -E singleMessageSecure\|SingleMessageSecure 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib/Cryptography/Encryption 
+# exit 0, hits 14
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey.lean:35:`TCSlib.Cryptography.PrivateKeyScheme.SingleMessageSecure` and
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey.lean:44:`TCSlib.Cryptography.prgScheme_singleMessageSecure` proves single-message security
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:25:* `PrivateKeyScheme.SingleMessageSecure` and `PrivateKeyScheme.MultiMessageSecure` express
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:31:* `PrivateKeyScheme.MultiMessageSecure.singleMessageSecure` reduces the single-message
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:90:def SingleMessageSecure (S : PrivateKeyScheme) : Prop :=
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:94:/-- The defining property of `SingleMessageSecure`: every distinguisher has a negligible bound
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:96:theorem singleMessageSecure_iff (S : PrivateKeyScheme) : S.SingleMessageSecure ↔
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:192:theorem MultiMessageSecure.singleMessageSecure {S : PrivateKeyScheme} (h : S.MultiMessageSecure) :
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:193:    S.SingleMessageSecure := by
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:31:* `prgScheme_singleMessageSecure` lifts the four-hybrid argument to the asymptotic
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:294:`ε := ν` witnesses `SingleMessageSecure`. -/
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:295:theorem prgScheme_singleMessageSecure (P : PRG) (hP : P.Secure) (F : List Bool → List Bool)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:297:    (prgScheme P F hF hG).SingleMessageSecure := by
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:298:  apply (PrivateKeyScheme.singleMessageSecure_iff _).2
+
+### [base/DLWEAssumption-uses] $ git -C /home/user/ef-r23/repo grep -n -E DLWEAssumption 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+# exit 0, hits 10
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/LWE/Assumption.lean:23:* `DLWEAssumption`: every non-uniform PPT machine has negligible decision advantage.
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/LWE/Assumption.lean:37:**Scope.** A family fixes one sample schedule. `DLWEAssumption` does not silently quantify
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/LWE/Assumption.lean:47:`Family` and `DLWEAssumption` assert no efficient parameter generator, residue sampler or
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/LWE/Assumption.lean:136:def DLWEAssumption (F : Family) : Prop :=
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/LWE/Assumption.lean:139:/-- `DLWEAssumption F` holds exactly when `F.advantageAt D` is negligible for every
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/LWE/Assumption.lean:142:    DLWEAssumption F ↔ ∀ D : NUPPT, Negligible fun κ => F.advantageAt D κ := Iff.rfl
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/LWE/SampleSchedules.lean:35:**Convention.** `DLWEAssumption F` retains its audited fixed-sample meaning.
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/LWE/SampleSchedules.lean:37:additional hypothesis `∀ M : PolyExpr, DLWEAssumption (F.withSamples M)` explicitly.
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Pseudorandom/Generators/LWE/Basic.lean:86:    (h : TCSlib.Cryptography.LWE.DLWEAssumption F) (D : NUPPT) :
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:39:`P.samples*w` rows under one common secret or silently strengthens `DLWEAssumption`.
+
+### [base/shift-defs] $ git -C /home/user/ef-r23/repo grep -n -E \(def\|theorem\)\ +\(shift\|shift_\[A-Za-z_\]\*\|\[a-z\]\*Shift\[A-Za-z_\]\*\)\\b 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib/Cryptography/Encryption TCSlib/Cryptography/LWE 
+# exit 0, hits 1
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/Symmetric/Regev/Basic.lean:46:def shift (P : Parameters) (μ : Fin P.samples → Bool)
+
+### [pr377/encodeVector-defs] $ git -C /home/user/ef-r23/repo grep -n -E \(def\|theorem\|lemma\)\ +\(encodeVector\|encodeMatrix\)\\b 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+# exit 0, hits 2
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encoding/Modular.lean:51:def encodeVector {q length : ℕ} [NeZero q] (width : ℕ)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encoding/Modular.lean:65:def encodeMatrix {q rows columns : ℕ} [NeZero q] (width : ℕ)
+
+### [pr377/vecAdd] $ git -C /home/user/ef-r23/repo grep -n -E \\bvecAdd\[A-Za-z_\]\* 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+# exit 1, hits 0
+
+
+### [pr377/subsetSum] $ git -C /home/user/ef-r23/repo grep -n -E \\bsubsetSum\[A-Za-z_\]\* 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+# exit 0, hits 26
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/HardCoreClaims.lean:137:      HardcoreBit.subsetSum L.1 s :=
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:863:vote of the round `(i, L)` is `subsetSum L b ⊕ A'(y, subsetSum L s ⊕ e_i; c i L)` by
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:882:  simp only [GLLoop.wfVote, glBlocks_apply, glPredictorOf_apply, HardcoreBit.subsetSum_eq]
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:78:    subsetSum L.1 c.2.1 + A (y, subsetSum L.1 c.1 + Pi.single i true) (c.2.2 i L)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:86:      subsetSum L.1 c.2.1 + A (y, subsetSum L.1 c.1 + Pi.single i true) (c.2.2 i L) := rfl
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:129:    ip x (subsetSum L.1 s) + A (f x, subsetSum L.1 s + Pi.single i true) (cs i L)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:140:  simp only [guessRecover, idealRecover, subsetSum_eq, ip_sum]
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:179:      (subsetSum L.1 ω.1, ω.2 i L)) :=
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:187:        H L (subsetSum L.1 ω.1, ω.2 i L) = true) := by
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:33:* `subsetSum L s`: the sum `∑_{j ∈ L} s_j`, the XOR `⊕_{j ∈ L} s_j` for bit strings.
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:287:def subsetSum (L : Finset κ) (s : κ → G) : G := ∑ j ∈ L, s j
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:290:/-- The defining equation of `subsetSum`: `S_L(s) = ∑_{j ∈ L} s_j`. -/
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:291:theorem subsetSum_eq (L : Finset κ) (s : κ → G) : subsetSum L s = ∑ j ∈ L, s j := rfl
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:294:def subsetSumHom (L : Finset κ) : (κ → G) →+ G where
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:295:  toFun := subsetSum L
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:296:  map_zero' := by simp [subsetSum]
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:297:  map_add' s t := by simp [subsetSum, sum_add_distrib]
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:306:    ∃ s : κ → G, subsetSum L s = u ∧ subsetSum L' s = 0 := by
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:309:    exact ⟨Pi.single a u, by simp [subsetSum, ha], by simp [subsetSum, ha']⟩
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:317:    · simp [subsetSum, sum_sub_distrib, ha, hb]
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:318:    · simp [subsetSum, sum_sub_distrib, h a ha, hb']
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:330:    PairwiseUniform (fun (L : {L : Finset κ // L.Nonempty}) (s : κ → G) => subsetSum L.1 s) := by
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:332:  · refine pushesUniform_of_surjective (subsetSumHom (G := G) L.1) fun u => ?_
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:334:    exact ⟨Pi.single a u, by simp [subsetSumHom, subsetSum, ha]⟩
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:336:    refine pushesUniform_of_surjective ((subsetSumHom (G := G) L.1).prod (subsetSumHom (G := G) L'.1))
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:341:    simp only [AddMonoidHom.prod_apply, map_add, Prod.mk_add_mk, subsetSumHom,
+
+### [pr377/addMod|modAdd] $ git -C /home/user/ef-r23/repo grep -n -E \\b\(addMod\|modAdd\|addModQ\|modAddWords\)\[A-Za-z_\]\* 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+# exit 1, hits 0
+
+
+### [pr377/mulVec-on-encodings] $ git -C /home/user/ef-r23/repo grep -n -E mulVec 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib/Cryptography/Encoding TCSlib/Cryptography/LWE TCSlib/Cryptography/Encryption/Symmetric/Regev TCSlib/Cryptography/Encryption/PublicKey/Regev 
+# exit 0, hits 14
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:402:      Modular.encodeVector (W.eval u.length) (A.mulVec v) := by
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:414:        pairEncode ctx (pairEncode [] (out ++ Modular.encodeVector width (rows.mulVec v))) := by
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:422:      have hresult : Modular.encodeVector width (rows.mulVec v) =
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:424:            Modular.encodeVector width (tail.mulVec v) := by
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean:70:  (pk.1.transpose.mulVec (fun i => ((r i).toNat : ZMod P.modulus)),
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean:78:      pk.1.transpose.mulVec (fun i => ((r i).toNat : ZMod P.modulus)) := rfl
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean:114:  have hlin : dotProduct s (A.transpose.mulVec v) = dotProduct (A.mulVec s) v := by
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean:115:    rw [Matrix.dotProduct_mulVec, Matrix.vecMul_transpose]
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean:117:      A.mulVec s + fun i => (e i : ZMod P.modulus) := by
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean:127:    dotProduct s (A.transpose.mulVec v) = _
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/Symmetric/Regev/Basic.lean:72:  fun i => LWE.BitEncoding.decode P (c.2 i - (c.1.mulVec s) i)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/Symmetric/Regev/Basic.lean:74:/-- Coordinate `i` is obtained by decoding `c.2 i - (c.1.mulVec s) i`. -/
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/Symmetric/Regev/Basic.lean:78:    decrypt P s c i = LWE.BitEncoding.decode P (c.2 i - (c.1.mulVec s) i) := rfl
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/LWE/Basic.lean:63:  A.mulVec s + fun i => (e i : ZMod P.modulus)
+
+### [pr377/percent-q] $ git -C /home/user/ef-r23/repo grep -n -E %\ \*q\\b 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib/Cryptography/Encoding TCSlib/Complexity/ClassP/BinaryArith TCSlib/Cryptography/LWE 
+# exit 1, hits 0
+
+
+### [pr377/BinArith.mod-defs] $ git -C /home/user/ef-r23/repo grep -n -E \(def\|theorem\|lemma\)\ +\(mod\|polyTimeComputable_mod\|mod_eq\|mod_pairEncode\)\[A-Za-z_\]\*\\b 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib/Complexity/ClassP/BinaryArith 
+# exit 0, hits 4
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/ClassP/BinaryArith/Div.lean:55:def mod (z : List Bool) : List Bool := Nat.bits (bitsVal (pairFstD z) % bitsVal (pairSndD z))
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/ClassP/BinaryArith/Div.lean:62:@[simp] theorem mod_pairEncode (a b : ℕ) :
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/ClassP/BinaryArith/Div.lean:245:theorem polyTimeComputable_mod : PolyTimeComputable mod := by
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/ClassP/BinaryArith/Jacobi.lean:66:theorem mod_four_eq_three_iff {w : List Bool} (h : bitsVal w % 2 = 1) :
+
+### [pr377/BinArith.mod-uses] $ git -C /home/user/ef-r23/repo grep -n -E BinArith\\.mod\\b 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+# exit 0, hits 8
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/ClassP/BinaryArith/Div.lean:23:* `Complexity.BinArith.div`, `Complexity.BinArith.mod` — quotient and remainder of the two
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/Primality.lean:81:  let A := BinArith.add (pairEncode [true] (BinArith.mod (pairEncode (pairSndD z) N₁)))
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/Primality.lean:92:      (BinArith.mod (pairEncode (pairSndD z) (BinArith.sub (pairEncode (pairFstD z) [true])))))) :=
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/Primality.lean:113:  have hA : BinArith.add (pairEncode [true] (BinArith.mod (pairEncode w (Nat.bits (N - 1))))) =
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/Primality.lean:115:    simp [BinArith.add, BinArith.mod, eulerSample, bitsVal_bits, bitsVal]
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/ZeroPEval.lean:410:def valW (D : List Bool) : List Bool := BinArith.mod (pairEncode (rawValW D) (sK D))
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/ZeroPEval.lean:443:    split_ifs <;> simp [BinArith.add, BinArith.sub, BinArith.mul, BinArith.mod, bitsVal_bits,
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/ZeroPRun.lean:238:  simp only [BinArith.mod, pairFstD_pairEncode, pairSndD_pairEncode, sK, BinArith.add, bitsVal_bits]
+
+### [pr377/mod-of-add] $ git -C /home/user/ef-r23/repo grep -n -E BinArith\\.mod.\*BinArith\\.add\|BinArith\\.add.\*BinArith\\.mod 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+# exit 0, hits 5
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/Primality.lean:81:  let A := BinArith.add (pairEncode [true] (BinArith.mod (pairEncode (pairSndD z) N₁)))
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/Primality.lean:113:  have hA : BinArith.add (pairEncode [true] (BinArith.mod (pairEncode w (Nat.bits (N - 1))))) =
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/Primality.lean:115:    simp [BinArith.add, BinArith.mod, eulerSample, bitsVal_bits, bitsVal]
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/ZeroPEval.lean:443:    split_ifs <;> simp [BinArith.add, BinArith.sub, BinArith.mul, BinArith.mod, bitsVal_bits,
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/ZeroPRun.lean:238:  simp only [BinArith.mod, pairFstD_pairEncode, pairSndD_pairEncode, sK, BinArith.add, bitsVal_bits]
+
+### [pr377/mod-near-add(-A3)] $ git -C /home/user/ef-r23/repo grep -n -A3 -E BinArith\\.mod\\b 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+# exit 0, hits 36
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/ClassP/BinaryArith/Div.lean:23:* `Complexity.BinArith.div`, `Complexity.BinArith.mod` — quotient and remainder of the two
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/ClassP/BinaryArith/Div.lean-24-  components of a pair.
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/ClassP/BinaryArith/Div.lean-25-* `Complexity.BinArith.divStep` — one round of long division on `⟨b, ⟨R, ⟨r, q⟩⟩⟩`.
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/ClassP/BinaryArith/Div.lean-26-
+--
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/Primality.lean:81:  let A := BinArith.add (pairEncode [true] (BinArith.mod (pairEncode (pairSndD z) N₁)))
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/Primality.lean-82-  BinArith.beq (pairEncode (BinArith.gcd (pairEncode A N)) [true]) &&
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/Primality.lean-83-    BinArith.beq (pairEncode (BinArith.jacobiModAlg (pairEncode A N))
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/Primality.lean-84-      (BinArith.powMod (pairEncode A (pairEncode (N₁.drop 1) N))))
+--
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/Primality.lean:92:      (BinArith.mod (pairEncode (pairSndD z) (BinArith.sub (pairEncode (pairFstD z) [true])))))) :=
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/Primality.lean-93-    BinArith.polyTimeComputable_add.comp ((polyTimeComputable_const _).pairEncode
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/Primality.lean-94-      (BinArith.polyTimeComputable_mod.comp (polyTimeComputable_pairSndD.pairEncode hN₁)))
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/Primality.lean-95-  exact polyTimeComputable_and
+--
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/Primality.lean:113:  have hA : BinArith.add (pairEncode [true] (BinArith.mod (pairEncode w (Nat.bits (N - 1))))) =
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/Primality.lean-114-      Nat.bits (eulerSample N w) := by
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/Primality.lean:115:    simp [BinArith.add, BinArith.mod, eulerSample, bitsVal_bits, bitsVal]
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/Primality.lean-116-  have hpow : ∀ A : ℕ, BinArith.powMod (pairEncode (Nat.bits A)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/Primality.lean-117-      (pairEncode ((Nat.bits (N - 1)).drop 1) (Nat.bits N))) =
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/Primality.lean-118-      Nat.bits (A ^ ((N - 1) / 2) % N) := by
+--
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/ZeroPEval.lean:410:def valW (D : List Bool) : List Bool := BinArith.mod (pairEncode (rawValW D) (sK D))
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/ZeroPEval.lean-411-
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/ZeroPEval.lean-412-/-- **One gate on words**: a stopped state is fixed; a well-formed gate is consumed and its
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/ZeroPEval.lean-413-value appended; otherwise the code is replaced by `[]` (rejected). -/
+--
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/ZeroPEval.lean:443:    split_ifs <;> simp [BinArith.add, BinArith.sub, BinArith.mul, BinArith.mod, bitsVal_bits,
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/ZeroPEval.lean-444-      ptVal, bitsVal]
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/ZeroPEval.lean-445-  unfold gStep
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/ZeroPEval.lean-446-  rw [hval]
+--
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/ZeroPRun.lean:238:  simp only [BinArith.mod, pairFstD_pairEncode, pairSndD_pairEncode, sK, BinArith.add, bitsVal_bits]
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/ZeroPRun.lean-239-  refine length_bits_le_of_le (sRaw D) ?_ le_rfl
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/ZeroPRun.lean-240-  have h1 : bitsVal [true] = 1 := rfl
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/ZeroPRun.lean-241-  rw [h1]
+
+### [pr377/dyadic-loops] $ git -C /home/user/ef-r23/repo grep -n -E \(def\|theorem\)\ +\[A-Za-z_\]\*\(dot\|Dot\|mulVecWords\|addWords\|AddWords\|forLoop\)\[A-Za-z_\]\* 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib/Cryptography/Encoding 
+# exit 0, hits 14
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:50:def dotStep (z : List Bool) : List Bool :=
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:62:theorem dotStep_eq (z : List Bool) :
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:77:theorem dotStep_fst (z : List Bool) : pairFstD (dotStep z) = pairFstD z := by
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:85:theorem dotStep_length_le (z : List Bool) :
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:100:theorem polyTimeComputable_dotStep : PolyTimeComputable dotStep := by
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:120:def dotWords (c n x y : List Bool) : List Bool :=
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:126:theorem dotWords_eq (c n x y : List Bool) :
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:137:theorem dotWords_length (c n x y : List Bool) : (dotWords c n x y).length = c.length := by
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:157:theorem polyTimeComputable_dotWords : PolyTimeComputable
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:175:def dotPoly (N W : PolyExpr) (z : List Bool) : List Bool :=
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:181:theorem dotPoly_eq (N W : PolyExpr) (z : List Bool) :
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:190:theorem dotPoly_length (N W : PolyExpr) (z : List Bool) :
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:201:theorem dotPoly_encodeVector {q : ℕ} [NeZero q] (N W : PolyExpr) (u : List Bool)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:259:theorem polyTimeComputable_dotPoly (N W : PolyExpr) : PolyTimeComputable (dotPoly N W) := by
+
+### [pr377/NUPPT|RealizesOn-Regev] $ git -C /home/user/ef-r23/repo grep -n -E NUPPT\|RealizesOn 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib/Cryptography/Encryption/\*/Regev/\* TCSlib/Cryptography/Encryption/\*/Regev.lean 
+# exit 1, hits 0
+
+
+### [pr377/modContext-like] $ git -C /home/user/ef-r23/repo grep -n -E \\b\[a-z\]\[A-Za-z\]\*\(Context\|Ctx\|ctxWord\|modulusWord\|modulusNumeral\)\\b\ \*\(\\\(\|:\) 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib/Cryptography/Encoding TCSlib/Cryptography/LWE TCSlib/Complexity/ClassP/BinaryArith 
+# exit 1, hits 0
+
+
+### [pr377/natToList-modulus] $ git -C /home/user/ef-r23/repo grep -n -E natToList\ \\\(\?\[a-zA-Z\]+\ \*\\+\ \*1\\\)\?\ +\[a-zA-Z.\]\*\(q\|modulus\)\\b 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+# exit 1, hits 0
+
+
+### [pr377/FromPRG-advice] $ git -C /home/user/ef-r23/repo grep -n -E exists_max_image\|exists_withAdvice\|withAdvice\|Finset.exists_max 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean 
+# exit 0, hits 5
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:277:message space (`Finset.exists_max_image`; the text's footnote: "`Mᵢ` is non-uniform as it has
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:285:(`NUPPT.exists_withAdvice` with the bound `var`), coins `D.coins`, and on `⟨1^n, t⟩` computes
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:307:    obtain ⟨p, -, hp⟩ := Finset.exists_max_image Finset.univ
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:321:  obtain ⟨B₀, hB₀c, hB₀⟩ := D'.exists_withAdvice (fun n => List.ofFn (μ n).1) .var (fun n => by simp)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:322:  obtain ⟨B₁, hB₁c, hB₁⟩ := D'.exists_withAdvice (fun n => List.ofFn (μ n).2) .var (fun n => by simp)
+
+### [pr377/exists_max_image-all] $ git -C /home/user/ef-r23/repo grep -n -E exists_max_image 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib/Cryptography 
+# exit 0, hits 26
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging.lean:117:  obtain ⟨i, _, hi⟩ := Finset.exists_max_image Finset.univ g Finset.univ_nonempty
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:94:1. At each `n` choose the pair of masks maximizing the advantage (`Finset.exists_max_image`).
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:120:    obtain ⟨p, -, hp⟩ := Finset.exists_max_image Finset.univ
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:277:message space (`Finset.exists_max_image`; the text's footnote: "`Mᵢ` is non-uniform as it has
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:307:    obtain ⟨p, -, hp⟩ := Finset.exists_max_image Finset.univ
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:390:(`Finset.exists_max_image`). By `bitwise_enc_runAtL` and the coin split
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:404:(`Finset.exists_max_image` over `j`), the total is `≤ n · ε(n)`, negligible by
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:416:    obtain ⟨p, -, hp⟩ := Finset.exists_max_image Finset.univ
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:452:(`Finset.exists_max_image`). The samples are the shared-key tuples of `distAdv_multi_le_sum`
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:477:    obtain ⟨p, -, hp⟩ := Finset.exists_max_image Finset.univ
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:270:of the planting distinguisher `hybridAdv … (j n)` (`Finset.exists_max_image`); the machine `B`
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:295:      obtain ⟨jf, -, hjf⟩ := Finset.exists_max_image Finset.univ (term n) Finset.univ_nonempty
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Pseudorandom/NextBit.lean:388:attained at some `i_n` (`Finset.exists_max_image`); then `nextBitProb ≤ 1/2 + ε n` for all
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Pseudorandom/NextBit.lean:411:    · obtain ⟨j₀, -, hj₀⟩ := Finset.exists_max_image (Finset.univ : Finset (Fin (ℓ.eval n)))
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:71:    obtain ⟨w, -, hw⟩ := exists_max_image univ q univ_nonempty
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:85:  obtain ⟨a, -, ha⟩ := Finset.exists_max_image Finset.univ (fun a => |f a - g a|)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:124:(`Finset.exists_max_image`) and give its template as advice (length at most `q(n)`). The
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:157:    obtain ⟨θs, -, h⟩ := exists_max_image univ (gap n) univ_nonempty
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:260:    obtain ⟨p, hp, hmax⟩ := Finset.exists_max_image Finset.univ (adv n) Finset.univ_nonempty
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction.lean:114:    obtain ⟨a, _, ha⟩ := Finset.exists_max_image Finset.univ (gap n) Finset.univ_nonempty
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:281:`(v, v')` (`Finset.exists_max_image`); `multiCom` is `encodeMsgs ∘ List.ofFn ∘ pairTuple` of
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:317:  obtain ⟨⟨v, v'⟩, -, hmax⟩ := Finset.exists_max_image Finset.univ
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:389:(`Finset.exists_max_image`), a coordinate `k_n` from the coordinatewise hybrid lemma
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:683:(`Finset.exists_max_image`), a bit position `k` from `exists_pairRed_ge`, and by averaging over
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:721:  obtain ⟨⟨v, v'⟩, -, hmax⟩ := Finset.exists_max_image Finset.univ
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:782:(`Finset.exists_max_image`), a bit position `k_n` from the coordinatewise hybrid lemma
+
+### [pr377/exists_withAdvice-all] $ git -C /home/user/ef-r23/repo grep -n -E exists_withAdvice\|withAdvice_ 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+# exit 0, hits 53
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/Closure.lean:38:| `exists_withAdvice` | advice `⟨A.advice n, β n⟩`; re-pair `y` with `β n` | pairing calculus |
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/Closure.lean:64:* `Complexity.NUPPT.exists_withAdvice` — hard-wiring an extra polynomial-length advice.
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/Closure.lean:358:theorem exists_withAdvice (A : NUPPT) (β : ℕ → List Bool) (b : PolyExpr)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/Ensembles.lean:481:(`NUPPT.exists_withAdvice`). That form is not proved, since no consumer needs copies of a
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/Ensembles.lean:491:advice (`NUPPT.exists_withAdvice`). The reduction is the `NUPPT` of
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:813:`NUPPT.exists_withAdvice (NUPPT.exists_seq M₀ (NUPPT.exists_comp D pairSndD id)) (1^{k n})`,
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:831:  obtain ⟨B, hBc, hB⟩ := C.exists_withAdvice (fun n => List.replicate (k n) true) t
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/Universal.lean:796:composed (`NUPPT.exists_comp`, `NUPPT.exists_withAdvice`) with the pre-processing
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:937:   expands the `Nat.size n`-bit best-position advice to unary; `NUPPT.exists_withAdvice`
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean:116:machine. Hard-wire the binary word using `exists_withAdvice`, bounded by `Nat.size n ≤ n`.
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean:129:  obtain ⟨B, hBcoins, hB⟩ := NUPPT.exists_withAdvice D β .var hβ
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:276:  obtain ⟨Red, hRc, hR⟩ := NUPPT.exists_withAdvice C β b hβ
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:58:calculus (`Complexity.NUPPT.exists_comp`, `NUPPT.exists_withAdvice`) is compared with the
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:708:`B` is `exists_split` (the first `(q(n)+1) n` coins are the points) of `exists_withAdvice` (advice
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:732:  obtain ⟨C₂, hC₂c, hC₂⟩ := C.exists_withAdvice
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:285:(`NUPPT.exists_withAdvice` with the bound `var`), coins `D.coins`, and on `⟨1^n, t⟩` computes
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:321:  obtain ⟨B₀, hB₀c, hB₀⟩ := D'.exists_withAdvice (fun n => List.ofFn (μ n).1) .var (fun n => by simp)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:322:  obtain ⟨B₁, hB₁c, hB₁⟩ := D'.exists_withAdvice (fun n => List.ofFn (μ n).2) .var (fun n => by simp)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:398:(`NUPPT.exists_withAdvice`), coins `var · S.enc.coins + D.coins` (`NUPPT.exists_split`), which
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:457:(`NUPPT.exists_withAdvice`, bound `2(q+1)·var + …`), coins `q · S.enc.coins + D.coins`
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/HybridMachine.lean:295:`j n < K(n)` and empty elsewhere (`NUPPT.exists_withAdvice`; length
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/HybridMachine.lean:336:  obtain ⟨D₂, hD₂c, hD₂⟩ := D₁.exists_withAdvice β _ hβ
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:394:`NUPPT.exists_withAdviceOn` hard-wires `D`'s advice into it (`B'`). `B'`'s budget is
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:402:  obtain ⟨B', hc, hB'⟩ := NUPPT.exists_withAdviceOn B D.advice D.adv D.advice_length
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:629:   `z = ⟨pk, α⟩` and hard-wired afterwards (`NUPPT.exists_withAdviceOn`, from the public
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:630:   `exists_withAdvice`/`exists_comp` closure lemmas). The two games accept with the same
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:26:(`Complexity.NUPPT.exists_withAdviceOn`, from `NUPPT.exists_comp` and `NUPPT.exists_withAdvice`).
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:755:   coins and `M`'s advice (hard-wired, `NUPPT.exists_withAdviceOn`), and answers
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean:252:`M.advice n` (`NUPPT.exists_withAdviceOn`). Reindex `B`'s coins as `(ρ ‖ ρ̃ ‖ re, rA)`
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean:263:  obtain ⟨B, hc, hB⟩ := NUPPT.exists_withAdviceOn B₀ samp.advice samp.adv samp.advice_length
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:604:`M.advice n` as the second input component (`NUPPT.exists_withAdviceOn`). Reindex `Sim`'s coins as
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:614:  obtain ⟨Sim, hc, hSim⟩ := NUPPT.exists_withAdviceOn Sim₀ samp.advice samp.adv
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Games/Efficiency.lean:76:  (`NUPPT.exists_withAdvice`, with `NUPPT.exists_comp` to re-pair the input).
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Games/Forwarding.lean:26:* **Hard-wiring a second input component** (`NUPPT.exists_withAdviceOn`): a reduction that
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Games/Forwarding.lean:38:* `Complexity.NUPPT.exists_withAdviceOn`: hard-wiring a second input component.
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Games/Forwarding.lean:190:`⟨⟨x, L⟩, β⟩ ↦ ⟨⟨x, β⟩, L⟩`, then `B' := NUPPT.exists_withAdvice B₁ β`; on `⟨x, L⟩` (the input
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Games/Forwarding.lean:192:theorem _root_.Complexity.NUPPT.exists_withAdviceOn (B : NUPPT) (β : ℕ → List Bool)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Games/Forwarding.lean:204:  obtain ⟨B', hc', hB'⟩ := NUPPT.exists_withAdvice B₁ β b hβ
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM.lean:223:**Proof sketch.** `B` has advice `⟨⟨1^{i n}, 1^{j n}⟩, D.advice n⟩` (`NUPPT.exists_withAdvice`
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/FromPermutation.lean:178:(`NUPPT.exists_withAdvice`, length `≤ D.adv + 6`), coins `1 + D.coins`
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:197:`M`: advice `⟨⟨1^{k_n}, 1^{ℓ(n) − k_n − 1}⟩, D.advice n⟩` (`NUPPT.exists_withAdvice`,
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/SecureComputation/ComposeSecurity/Reductions.lean:20:catalogue of `Complexity/Randomized/Closure.lean` (`exists_split`, `exists_withAdvice`,
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction.lean:52:  obtain ⟨B, hBc, hB⟩ := A.exists_withAdvice β b hβ
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction.lean:65:  obtain ⟨R, hRc, hR⟩ := C.exists_withAdvice β b hβ
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:397:`⟨⟨pre_n, suf_n⟩, D.advice n⟩` and calls `D` once (`NUPPT.exists_comp`, `NUPPT.exists_withAdvice`);
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:793:`NUPPT.exists_withAdvice`); by coin transport (`CommitmentLemmas.acceptProb_distinguisher_of_runAtL`)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:39:  (`Complexity.NUPPT.exists_comp`, `Complexity.NUPPT.exists_withAdvice`);
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:305:(`Complexity.NUPPT.exists_comp` with `spliceFun`, then `Complexity.NUPPT.exists_withAdvice`
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:311:  obtain ⟨B, hBc, hB⟩ := B₁.exists_withAdvice (fun n => pairEncode (pre n) (suf n)) b
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:324:  obtain ⟨B, hBc, hB⟩ := B₁.exists_withAdvice (fun n => pairEncode (pre n) (suf n)) b
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:264:`NUPPT.exists_withAdvice α` (the shape of pre-ship probe R4); the run equations compose
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:274:  obtain ⟨B, hc, h⟩ := A₂.exists_withAdvice α b hα
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1624:`pre`, `post` and `D.advice (n²)` as advice (`NUPPT.exists_withAdvice`; polynomially bounded by
+
+### [pr377/coin-transport] $ git -C /home/user/ef-r23/repo grep -n -E acceptProb_coins_equiv\|acceptProb_coins_fst\|acceptProb_distinguisherL_congr\|coinsCongr 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+# exit 0, hits 195
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/PPT.lean:256:def coinsCongr {A B : NUPPT} (h : A.coins = B.coins) (n : ℕ) : A.Coins n ≃ B.Coins n :=
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/PPT.lean:259:/-- The coin equivalence keeps the coin string: `List.ofFn (coinsCongr h n r) = List.ofFn r`. -/
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/PPT.lean:260:theorem coinsCongr_ofFn {A B : NUPPT} (h : A.coins = B.coins) (n : ℕ) (r : A.Coins n) :
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/PPT.lean:261:    List.ofFn (coinsCongr h n r) = List.ofFn r :=
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/PPT.lean:264:/-- Running `B` on coins carried over from `A`: `B.runAt n y (coinsCongr h n r) =
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/PPT.lean:266:theorem runAt_coinsCongr {A B : NUPPT} (h : A.coins = B.coins) (n : ℕ) (y : List Bool)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/PPT.lean:267:    (r : A.Coins n) : B.runAt n y (coinsCongr h n r) = B.runAtL n y (List.ofFn r) := by
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Complexity/Randomized/PPT.lean:268:  rw [runAt_eq, coinsCongr_ofFn]
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/Collections.lean:899:          (NUPPT.coinsCongr (G.coins_collInverter L A') n ρ)).drop (G.gen.coinLen n)) := by
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/Collections.lean:900:  rw [NUPPT.runAt_eq, NUPPT.runAt_coinsCongr]
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/Collections.lean:940:          ((NUPPT.coinsCongr (G.coins_collInverter L A') n).symm ρ)) = some x' ∧
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/Collections.lean:962:      ((NUPPT.coinsCongr (G.coins_collInverter L A') n).symm ρ) =
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/Collections.lean:1005:      ((NUPPT.coinsCongr (G.coins_collInverter L A') n).symm ρ)) = some x' ∧
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/Collections.lean:1030:      (NUPPT.coinsCongr (G.coins_collInverter L A') n).symm) _)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:76:`A.withIndexParam.Coins n ≃ A.Coins n` (`NUPPT.coinsCongr` along `coins_withIndexParam`). -/
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:79:  NUPPT.coinsCongr A.coins_withIndexParam n
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:85:  NUPPT.coinsCongr_ofFn A.coins_withIndexParam n r
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:93:  rw [NUPPT.runAt_eq, NUPPT.withIndexParam_coinsEquiv, NUPPT.runAt_coinsCongr]
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/Ensembles.lean:387:`EnsembleLemmas.acceptProb_coins_fst`), and `h B` gives negligibility. -/
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/Ensembles.lean:568:      rw [← EnsembleLemmas.acceptProb_coins_equiv e, ← EnsembleLemmas.acceptProb_multicopyRed_congr
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:48:* `TCSlib.Cryptography.EnsembleLemmas.acceptProb_coins_equiv`, `acceptProb_coins_fst`,
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:85:theorem acceptProb_coins_equiv (e : κ ≃ ρ) (X : σ → γ) (D : γ → ρ → Bool) :
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:92:theorem acceptProb_coins_fst [Nonempty κ] (X : σ → γ) (D : γ → ρ → Bool) :
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:264:  rw [← acceptProb_coins_equiv e, ← acceptProb_not]
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:282:  rw [← acceptProb_coins_equiv e]
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:290:(`acceptProb_coins_fst`) after the split `coinsEquiv`. -/
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:300:  rw [← acceptProb_coins_equiv (coinsEquiv hlen)]
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:301:  conv_rhs => rw [← acceptProb_coins_fst (κ := Fin (D.coinLen (p.eval m) - D.coinLen (φ m)) → Bool)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:363:  rw [← acceptProb_coins_equiv (coinsEquiv hlen),
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:443:      have hspec := T.inv_spec n r y.1 (NUPPT.coinsCongr (NUPPT.coins_ofPolyTimeUniform _ _) n s)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:444:      rw [NUPPT.runAt_eq T.inv, NUPPT.coinsCongr_ofFn, T.inv_uniform.runAtL_eq] at hspec
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:520:`(A.precomp hpre).Coins n ≃ A.Coins n` (`coinsCongr` along `coins_precomp`). -/
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:523:  coinsCongr (A.coins_precomp hpre) n
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:530:  coinsCongr_ofFn (A.coins_precomp hpre) n c
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:244:    (HardcoreBit.guessRecover_coinsCongr _ _ _
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/HardCoreGLFamily.lean:207:    (HardcoreBit.guessRecover_coinsCongr _ _ _
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:221:theorem acceptProb_coins_equiv {σ γ ρ ρ' : Type*} [Fintype σ] [Fintype ρ] [Fintype ρ']
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:233:  rw [acceptProb_coins_equiv G D D' e h, acceptProb_coins_equiv id D D' e h]
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:329:`(A.preComp hpre).Coins n ≃ A.Coins n` (`NUPPT.coinsCongr` along `coins_preComp`). -/
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:332:  coinsCongr (coins_preComp A hpre) n
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:339:  coinsCongr_ofFn (coins_preComp A hpre) n r
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:304:        (NUPPT.coinsCongr (A := S.sign) (B := hsSign S H)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:308:  rw [NUPPT.runAt_coinsCongr, NUPPT.runAtL_ofPolyTimeUniform, S.sign_uniform.runAt_eq]
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:341:      NUPPT.coinsCongr (A := S.sign) (B := hsSign S H)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:444:    NUPPT.coinsCongr (A := S.sign) (B := hsSign S H)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:983:    φ.trans (NUPPT.coinsCongr hCcoins.symm n)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:992:      (NUPPT.coinsCongr hCcoins.symm n (φ ((c, T), r))) = List.ofFn x'
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean:136:typed activation equation through the published `coinsCongr` equivalence: if `hcoins : B.coins =
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean:138:`y`, `r`, then `B.runAt n y (NUPPT.coinsCongr hcoins.symm n r) = A.runAt n (pairEncode y
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean:144:    B.runAt n y (NUPPT.coinsCongr hcoins.symm n r) =
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean:146:  rw [NUPPT.runAt_coinsCongr hcoins.symm, hB, ← NUPPT.runAt_eq]
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Candidates/DiscreteLog.lean:533:equivalence `(expGen G).Coins n ≃ G.gen.Coins n` (`NUPPT.coinsCongr` along `expGen_coins`), the
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Candidates/DiscreteLog.lean:538:  NUPPT.coinsCongr (expGen_coins G) n
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Candidates/DiscreteLog.lean:544:  NUPPT.coinsCongr_ofFn (expGen_coins G) n r
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Candidates/Factoring.lean:362:`(oneCallFactorer A).Coins n ≃ A.Coins n` (`NUPPT.coinsCongr` along `coins_oneCallFactorer`). -/
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Candidates/Factoring.lean:365:  NUPPT.coinsCongr (coins_oneCallFactorer A) n
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Candidates/Factoring.lean:372:  NUPPT.coinsCongr_ofFn (coins_oneCallFactorer A) n r
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Candidates/Factoring.lean:1696:`(collectionFactorer A).Coins n ≃ A.Coins n` (`NUPPT.coinsCongr` along
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Candidates/Factoring.lean:1700:  NUPPT.coinsCongr (coins_collectionFactorer A) n
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Candidates/Factoring.lean:1707:  NUPPT.coinsCongr_ofFn (coins_collectionFactorer A) n r
+# ... (135 more)
+
+### [pr377/Fin.append-coins] $ git -C /home/user/ef-r23/repo grep -n -E Fin\\.append.\*\[Cc\]oins\|\[Cc\]oins.\*Fin\\.append 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+# exit 0, hits 16
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/Ensembles.lean:386:`EnsembleLemmas.coinsEquiv` built on `Fin.appendEquiv`, then
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/Ensembles.lean:429:`EnsembleLemmas.coinsEquiv` (`Fin.appendEquiv`), so by `acceptProb_bind`
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:120:    obtain ⟨⟨s₁, s₂⟩, hs⟩ := (Fin.appendEquiv (F.sample.coins.eval n) (m.eval n)).surjective
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/HardCoreGLFamily.lean:172:      A.predictor n (o + m) (Fin.appendEquiv o m (y, q)) (A.precomp_coinsEquiv concatPre_poly n c) := by
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:246:    ((Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).prodCongr (Equiv.refl (A.Coins n))) _).symm ?_
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:267:`(b, a)` (`Fin.appendEquiv`); split `A`'s coins as `((a, a''), (ρ, ρ''))` (`splitCoins`, with
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Candidates/RSA.lean:1800:  (Fin.appendEquiv _ _).trans ((Equiv.arrowCongr (finCongr (rsa_genCoins_len n)) (Equiv.refl Bool)).trans
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Candidates/RSA.lean:1810:      ((Fin.appendEquiv _ _) s) = fun i => (Fin.appendEquiv _ _) s (Fin.cast (rsa_genCoins_len n).symm i)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Candidates/Rabin.lean:1655:  (Fin.appendEquiv _ _).trans ((Equiv.arrowCongr (finCongr (rabin_factorerCoins_len A n))
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Candidates/Rabin.lean:1926:  (Fin.appendEquiv _ _).trans ((Equiv.arrowCongr (finCongr (rabin_genCoins_len n))
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PublicKey/HybridMachine.lean:375:coin blocks of `Enc` followed by the coins of `D` (`coinBlocks`, `Fin.appendEquiv`). -/
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Games/Efficiency/Strings.lean:556:`φ` appends the seed and the coins (`Fin.appendEquiv`) and transports along that length
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:204:with `c : M.Coins n ≃ (Fin (ℓ n) → Bool) × D.Coins n` (`Fin.appendEquiv`), hence
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:230:      refine prgAdv_coins_equiv _ _ _ (Fin.appendEquiv (ℓ.eval n) (D.coinLen n)) fun T c => ?_
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Pseudorandom/NextBit.lean:223:along the coin split `e : (Fin (ℓ n) → Bool) × D.Coins n ≃ A.Coins n` (`Fin.appendEquiv`)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean:56:`appendCoins h = (Fin.appendEquiv a b).trans (Equiv.arrowCongr (finCongr h.symm) (Equiv.refl
+
+### [pr377/finSumFinEquiv-coins] $ git -C /home/user/ef-r23/repo grep -n -E finSumFinEquiv.\*\[Cc\]oins\|\[Cc\]oins.\*finSumFinEquiv 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+# exit 1, hits 0
+
+
+### [pr377/exists_realizesOn] $ git -C /home/user/ef-r23/repo grep -n -E \(theorem\|lemma\)\ +\[A-Za-z_.\]\*exists_realizesOn\[A-Za-z_\]\* 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+# exit 1, hits 0
+
+
+### [pr377/distinguisherL_eq-RealizesOn] $ git -C /home/user/ef-r23/repo grep -n -E \(theorem\|lemma\)\ +\[A-Za-z_.\]\*RealizesOn\\.\[A-Za-z_\]\* 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+# exit 1, hits 0
+
+
+### [pr377/singleMessageSecure] $ git -C /home/user/ef-r23/repo grep -n -E singleMessageSecure\|SingleMessageSecure 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib/Cryptography/Encryption 
+# exit 0, hits 14
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey.lean:35:`TCSlib.Cryptography.PrivateKeyScheme.SingleMessageSecure` and
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey.lean:44:`TCSlib.Cryptography.prgScheme_singleMessageSecure` proves single-message security
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:25:* `PrivateKeyScheme.SingleMessageSecure` and `PrivateKeyScheme.MultiMessageSecure` express
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:31:* `PrivateKeyScheme.MultiMessageSecure.singleMessageSecure` reduces the single-message
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:90:def SingleMessageSecure (S : PrivateKeyScheme) : Prop :=
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:94:/-- The defining property of `SingleMessageSecure`: every distinguisher has a negligible bound
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:96:theorem singleMessageSecure_iff (S : PrivateKeyScheme) : S.SingleMessageSecure ↔
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:192:theorem MultiMessageSecure.singleMessageSecure {S : PrivateKeyScheme} (h : S.MultiMessageSecure) :
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:193:    S.SingleMessageSecure := by
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:31:* `prgScheme_singleMessageSecure` lifts the four-hybrid argument to the asymptotic
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:294:`ε := ν` witnesses `SingleMessageSecure`. -/
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:295:theorem prgScheme_singleMessageSecure (P : PRG) (hP : P.Secure) (F : List Bool → List Bool)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:297:    (prgScheme P F hF hG).SingleMessageSecure := by
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:298:  apply (PrivateKeyScheme.singleMessageSecure_iff _).2
+
+### [pr377/DLWEAssumption-uses] $ git -C /home/user/ef-r23/repo grep -n -E DLWEAssumption 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+# exit 0, hits 16
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:31:  evaluation key) from `DLWEAssumption F` and (A4).
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:33:  `DLWEAssumption F` and (A4), with no circular-security assumption.
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:280:LWE family `F` with `DLWEAssumption F`, the reduction-efficiency hypothesis (A4) and the width
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:295:theorem indCPA_of_dlweAssumption (F : LWE.Family) (hF : LWE.DLWEAssumption F)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:307:`DLWEAssumption F`, a polynomial number of levels `L`, the leveled reduction-efficiency
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:327:    (hF : LWE.DLWEAssumption F) (heff : LeveledReductionEfficient F L)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/LWE/Assumption.lean:23:* `DLWEAssumption`: every non-uniform PPT machine has negligible decision advantage.
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/LWE/Assumption.lean:37:**Scope.** A family fixes one sample schedule. `DLWEAssumption` does not silently quantify
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/LWE/Assumption.lean:47:`Family` and `DLWEAssumption` assert no efficient parameter generator, residue sampler or
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/LWE/Assumption.lean:136:def DLWEAssumption (F : Family) : Prop :=
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/LWE/Assumption.lean:139:/-- `DLWEAssumption F` holds exactly when `F.advantageAt D` is negligible for every
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/LWE/Assumption.lean:142:    DLWEAssumption F ↔ ∀ D : NUPPT, Negligible fun κ => F.advantageAt D κ := Iff.rfl
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/LWE/SampleSchedules.lean:35:**Convention.** `DLWEAssumption F` retains its audited fixed-sample meaning.
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/LWE/SampleSchedules.lean:37:additional hypothesis `∀ M : PolyExpr, DLWEAssumption (F.withSamples M)` explicitly.
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Pseudorandom/Generators/LWE/Basic.lean:86:    (h : TCSlib.Cryptography.LWE.DLWEAssumption F) (D : NUPPT) :
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:39:`P.samples*w` rows under one common secret or silently strengthens `DLWEAssumption`.
+
+### [pr377/shift-defs] $ git -C /home/user/ef-r23/repo grep -n -E \(def\|theorem\)\ +\(shift\|shift_\[A-Za-z_\]\*\|\[a-z\]\*Shift\[A-Za-z_\]\*\)\\b 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib/Cryptography/Encryption TCSlib/Cryptography/LWE 
+# exit 0, hits 1
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/Encryption/Symmetric/Regev/Basic.lean:46:def shift (P : Parameters) (μ : Fin P.samples → Bool)
+
+### [base/GSW-encodeView] $ git -C /home/user/ef-r23/repo grep -n -E encodeView 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+# exit 1, hits 0
+
+
+### [base/GSW-ReductionEfficient] $ git -C /home/user/ef-r23/repo grep -n -E ReductionEfficient 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+# exit 1, hits 0
+
+
+### [base/GSW-reductionMachine] $ git -C /home/user/ef-r23/repo grep -n -E reductionMachine 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+# exit 1, hits 0
+
+
+### [base/GSW-reduction-defs] $ git -C /home/user/ef-r23/repo grep -n -E \(def\|theorem\|structure\)\ +\[A-Za-z_.\]\*\(\[Rr\]eduction\|encodeView\)\[A-Za-z_\]\* 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib/Cryptography/AdvancedEncryption/Homomorphic 
+# exit 0, hits 2
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:113:def reduction {ρ : Type*} (P : Parameters) (μ : Bool)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:122:theorem reduction_eq {ρ : Type*} (P : Parameters) (μ : Bool)
+
+### [base/GSW-files] $ git -C /home/user/ef-r23/repo ls-tree -r --name-only 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW 
+# exit 0, hits 6
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Gadget.lean
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Symmetric.lean
+
+### [pr377/GSW-encodeView] $ git -C /home/user/ef-r23/repo grep -n -E encodeView 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+# exit 0, hits 14
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:20:* `encodeCiphertext`, `encodeView`, `encodeFheView`, `encodeLeveledView`: canonical bit
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:95:`encodeView P v = LWE.encodeChallenge P.lwe P.width v.1 ++ encodeCiphertext P v.2`. -/
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:96:def encodeView (P : Parameters) (v : PublicKey P × Ciphertext P) : List Bool :=
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:99:/-- `encodeView P v` is `LWE.encodeChallenge P.lwe P.width v.1 ++ encodeCiphertext P v.2`. -/
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:100:theorem encodeView_eq (P : Parameters) (v : PublicKey P × Ciphertext P) :
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:101:    encodeView P v = LWE.encodeChallenge P.lwe P.width v.1 ++ encodeCiphertext P v.2 := rfl
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:104:theorem encodeView_length (P : Parameters) (v : PublicKey P × Ciphertext P) :
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:105:    (encodeView P v).length =
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:108:  rw [encodeView_eq, List.length_append, LWE.encodeChallenge_length, encodeCiphertext_length]
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:210:`P_κ = ofFamily F κ`, `χ_κ = F.noise κ` and `D_κ v r = D.distinguisherL κ (encodeView P_κ v) r`
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:220:          D.distinguisherL κ (encodeView (Parameters.ofFamily F κ) v) r) ≤
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:230:            D.distinguisherL κ (encodeView (Parameters.ofFamily F κ) v) r) ≤
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:284:(fun v r => D.distinguisherL κ (encodeView P_κ v) r)` [GSW13, §3.2, p009-b002; BV11, Def 3.1,
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:303:        (fun v r => D.distinguisherL κ (encodeView (Parameters.ofFamily F κ) v) r) := by
+
+### [pr377/GSW-ReductionEfficient] $ git -C /home/user/ef-r23/repo grep -n -E ReductionEfficient 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+# exit 0, hits 14
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:25:* `ReductionEfficient F`, `LeveledReductionEfficient F L`: the explicit reduction-efficiency
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:41:**Sources and reconstruction (P6-Q19 B), for the leveled statements** (`LeveledReductionEfficient`,
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:216:def ReductionEfficient (F : LWE.Family) : Prop :=
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:223:/-- `ReductionEfficient F` holds exactly when for every `D : NUPPT` and `μ` some `D' : NUPPT`
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:225:`κ` (the formula of `ReductionEfficient`'s docstring). -/
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:227:    ReductionEfficient F ↔ ∀ (D : NUPPT) (μ : Bool), ∃ D' : NUPPT, ∀ κ,
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:244:def LeveledReductionEfficient (F : LWE.Family) (L : PolyExpr) : Prop :=
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:258:/-- `LeveledReductionEfficient F L` holds exactly when for every `D : NUPPT` and `μ` some
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:260:challenge reductions (the formula of `LeveledReductionEfficient`'s docstring). -/
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:261:theorem leveledReductionEfficient_iff (F : LWE.Family) (L : PolyExpr) :
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:262:    LeveledReductionEfficient F L ↔ ∀ (D : NUPPT) (μ : Bool), ∃ D' : NUPPT, ∀ κ,
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:296:    (heff : ReductionEfficient F)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:319:(`leveledReductionEfficient_iff`) for `μ = false` and `μ = true` gives `D'₀`, `D'₁` dominating
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:327:    (hF : LWE.DLWEAssumption F) (heff : LeveledReductionEfficient F L)
+
+### [pr377/GSW-reductionMachine] $ git -C /home/user/ef-r23/repo grep -n -E reductionMachine 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+# exit 1, hits 0
+
+
+### [pr377/GSW-reduction-defs] $ git -C /home/user/ef-r23/repo grep -n -E \(def\|theorem\|structure\)\ +\[A-Za-z_.\]\*\(\[Rr\]eduction\|encodeView\)\[A-Za-z_\]\* 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib/Cryptography/AdvancedEncryption/Homomorphic 
+# exit 0, hits 11
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:96:def encodeView (P : Parameters) (v : PublicKey P × Ciphertext P) : List Bool :=
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:100:theorem encodeView_eq (P : Parameters) (v : PublicKey P × Ciphertext P) :
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:104:theorem encodeView_length (P : Parameters) (v : PublicKey P × Ciphertext P) :
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:216:def ReductionEfficient (F : LWE.Family) : Prop :=
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:226:theorem reductionEfficient_iff (F : LWE.Family) :
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:244:def LeveledReductionEfficient (F : LWE.Family) (L : PolyExpr) : Prop :=
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:261:theorem leveledReductionEfficient_iff (F : LWE.Family) (L : PolyExpr) :
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:210:def levelReduction (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ : Bool) (e : Fin L)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:225:theorem levelReduction_eq (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ : Bool) (e : Fin L)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:113:def reduction {ρ : Type*} (P : Parameters) (μ : Bool)
+7563734a8badba842223e0687c719b3b4692e9d2:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:122:theorem reduction_eq {ρ : Type*} (P : Parameters) (μ : Bool)
+
+### [pr377/GSW-files] $ git -C /home/user/ef-r23/repo ls-tree -r --name-only 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW 
+# exit 0, hits 14
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Gadget.lean
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Symmetric.lean
+
+### [diff/base..pr377-files] $ git -C /home/user/ef-r23/repo diff --name-status 5ed465f62e4ae0f93ded1a1ba49e807591b589eb 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+# exit 0, hits 26
+M	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW.lean
+A	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean
+A	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean
+A	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean
+A	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean
+A	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean
+A	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean
+A	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean
+A	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean
+M	TCSlib/Cryptography/Asymptotic.lean
+D	TCSlib/Cryptography/Asymptotic/Realization.lean
+D	TCSlib/Cryptography/CoinSampling.lean
+D	TCSlib/Cryptography/CoinSampling/Asymptotic.lean
+D	TCSlib/Cryptography/CoinSampling/Basic.lean
+D	TCSlib/Cryptography/CoinSampling/Buckets.lean
+D	TCSlib/Cryptography/CoinSampling/Contract.lean
+D	TCSlib/Cryptography/CoinSampling/Efficiency.lean
+D	TCSlib/Cryptography/CoinSampling/Instances.lean
+D	TCSlib/Cryptography/CoinSampling/Transfer.lean
+M	TCSlib/Cryptography/Foundations.lean
+D	TCSlib/Cryptography/Foundations/Subexponential.lean
+M	TCSlib/Cryptography/Games.lean
+D	TCSlib/Cryptography/Games/Closeness.lean
+M	TCSlib/Cryptography/LWE.lean
+M	TCSlib/Cryptography/LWE/BitEncoding.lean
+A	TCSlib/Cryptography/LWE/Ratio.lean
+
+### [mathlib/ZMod-mulVec] $ grep -rnE theorem\ \[A-Za-z_.\]\*mulVec\[A-Za-z_\]\*.\*ZMod\|ZMod.\*mulVec /home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib 
+# exit 1, hits 0
+
+
+### [mathlib/ZMod.val_add] $ grep -rnE \(theorem\|lemma\)\ \(ZMod\\.\)\?val_add\\b\|\(theorem\|lemma\)\ \(ZMod\\.\)\?val_add_of_lt\|\(theorem\|lemma\)\ \(ZMod\\.\)\?val_add_le /home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Data/ZMod 
+# exit 0, hits 3
+/home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Data/ZMod/Basic.lean:630:theorem val_add {n : ℕ} [NeZero n] (a b : ZMod n) : (a + b).val = (a.val + b.val) % n := by
+/home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Data/ZMod/Basic.lean:635:theorem val_add_of_lt {n : ℕ} {a b : ZMod n} (h : a.val + b.val < n) :
+/home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Data/ZMod/Basic.lean:651:theorem val_add_le {n : ℕ} (a b : ZMod n) : (a + b).val ≤ a.val + b.val := by
+
+### [mathlib/Nat.add_mod] $ grep -rnE \(theorem\|lemma\)\ \(Nat\\.\)\?add_mod\\b /home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib 
+# exit 1, hits 0
+
+
+### [lean-core/Nat.add_mod] $ grep -rnE \(theorem\|lemma\)\ \(Nat\\.\)\?add_mod\\b /root/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init 
+# exit 0, hits 1
+/root/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Nat/Lemmas.lean:838:theorem add_mod (a b n : Nat) : (a + b) % n = ((a % n) + (b % n)) % n := by
+
+### [mathlib/subset-sum-mulVec] $ grep -rnE \(theorem\|lemma\)\ \(Matrix\\.\)\?\(mulVec_single\|vecMul_single\|mulVec_sum\|sum_mulVec\|mulVec_add\|vecMul_add\)\\b /home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Data/Matrix /home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/LinearAlgebra/Matrix 
+# exit 0, hits 5
+/home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Data/Matrix/Basic.lean:884:theorem sum_mulVec (s : Finset ι) (x : ι → Matrix m n α) (y : n → α) :
+/home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Data/Matrix/Basic.lean:890:theorem mulVec_sum (x : Matrix m n α) (s : Finset ι) (y : ι → (n → α)) :
+/home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Data/Matrix/Mul.lean:735:theorem mulVec_add [Fintype n] (A : Matrix m n α) (x y : n → α) :
+/home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Data/Matrix/Mul.lean:745:theorem vecMul_add [Fintype m] (A B : Matrix m n α) (x : m → α) :
+/home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Data/Matrix/Mul.lean:782:theorem mulVec_single [Fintype n] [DecidableEq n] [NonUnitalNonAssocSemiring R] (M : Matrix m n R)
+
+### [mathlib/Finset.exists_max_image] $ grep -rnE \(theorem\|lemma\)\ \(Finset\\.\)\?exists_max_image\\b /home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib 
+# exit 0, hits 2
+/home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Data/Finset/Max.lean:533:theorem exists_max_image (s : Finset β) (f : β → α) (h : s.Nonempty) :
+/home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Data/Set/Finite/Lemmas.lean:74:theorem exists_max_image [LinearOrder β] (s : Set α) (f : α → β) (h1 : s.Finite) :
+
+### [mathlib/finSumFinEquiv] $ grep -rnE \^\(def\|theorem\|lemma\|@\\\[simp\\\]\ theorem\)\ finSumFinEquiv\[A-Za-z_\]\* /home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Logic/Equiv/Fin 
+# exit 0, hits 7
+/home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Logic/Equiv/Fin/Basic.lean:219:def finSumFinEquiv : Fin m ⊕ Fin n ≃ Fin (m + n) where
+/home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Logic/Equiv/Fin/Basic.lean:226:theorem finSumFinEquiv_apply_left (i : Fin m) :
+/home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Logic/Equiv/Fin/Basic.lean:231:theorem finSumFinEquiv_apply_right (i : Fin n) :
+/home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Logic/Equiv/Fin/Basic.lean:236:theorem finSumFinEquiv_symm_apply_castAdd (x : Fin m) :
+/home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Logic/Equiv/Fin/Basic.lean:241:theorem finSumFinEquiv_symm_apply_castSucc (x : Fin m) :
+/home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Logic/Equiv/Fin/Basic.lean:246:theorem finSumFinEquiv_symm_apply_natAdd (x : Fin n) :
+/home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Logic/Equiv/Fin/Basic.lean:251:theorem finSumFinEquiv_symm_last : finSumFinEquiv.symm (Fin.last n) = Sum.inr 0 :=
+
+### [mathlib/Fin.append-defs] $ grep -rnE \(def\|theorem\)\ \(Fin\\.\)\?append\(_left\|_right\)\?\\b /home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Data/Fin 
+# exit 0, hits 5
+/home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Data/Fin/Tuple/Basic.lean:287:def append (a : Fin m → α) (b : Fin n → α) : Fin (m + n) → α :=
+/home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Data/Fin/Tuple/Basic.lean:291:theorem append_left (u : Fin m → α) (v : Fin n → α) (i : Fin m) :
+/home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Data/Fin/Tuple/Basic.lean:297:theorem append_left' (u : Fin m → α) (v : Fin n → α) (i : Fin m) :
+/home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Data/Fin/Tuple/Basic.lean:302:theorem append_right (u : Fin m → α) (v : Fin n → α) (i : Fin n) :
+/home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Data/Fin/Tuple/Embedding.lean:77:def append {m n : ℕ} {x : Fin m ↪ α} {y : Fin n ↪ α} (h : Disjoint (range x) (range y)) :
+

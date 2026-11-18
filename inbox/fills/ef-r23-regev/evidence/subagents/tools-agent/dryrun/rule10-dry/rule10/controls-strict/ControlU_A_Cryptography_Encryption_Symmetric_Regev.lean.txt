@@ -1,0 +1,83 @@
+import Lean
+import TCSlib.Cryptography.Encryption.Symmetric.Regev
+
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace RegevControls
+
+theorem ctlAddMod (z : List Bool) :
+    type_of% (TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_eq z) :=
+  rfl
+
+theorem ctlAddModReader (z : List Bool) :
+    type_of% (TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_eq z) :=
+  TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_eq z
+
+theorem ctlVecAddStep (z : List Bool) :
+    type_of% (TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep_eq z) :=
+  rfl
+
+theorem ctlVecAddStepReader (z : List Bool) :
+    type_of% (TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep_eq z) :=
+  TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep_eq z
+
+theorem ctlVecAddModWords (ctx n x y : List Bool) :
+    type_of% (TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords_eq ctx n x y) :=
+  rfl
+
+theorem ctlVecAddModWordsReader (ctx n x y : List Bool) :
+    type_of% (TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords_eq ctx n x y) :=
+  TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords_eq ctx n x y
+
+theorem ctlSubsetSumStep (z : List Bool) :
+    type_of% (TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep_eq z) :=
+  rfl
+
+theorem ctlSubsetSumStepReader (z : List Bool) :
+    type_of% (TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep_eq z) :=
+  TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep_eq z
+
+theorem ctlSubsetSumModWords (ctx nT mT rows bits : List Bool) :
+    type_of% (TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_eq ctx nT mT rows bits) :=
+  rfl
+
+theorem ctlSubsetSumModWordsReader (ctx nT mT rows bits : List Bool) :
+    type_of% (TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_eq ctx nT mT rows bits) :=
+  TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_eq ctx nT mT rows bits
+
+theorem ctlModContext (w q : ℕ) :
+    type_of% (TCSlib.Cryptography.Encoding.ModularArithmetic.modContext_eq w q) :=
+  rfl
+
+theorem ctlModContextReader (w q : ℕ) :
+    type_of% (TCSlib.Cryptography.Encoding.ModularArithmetic.modContext_eq w q) :=
+  TCSlib.Cryptography.Encoding.ModularArithmetic.modContext_eq w q
+
+theorem ctlShiftAdvice (P : TCSlib.Cryptography.LWE.Parameters) (w : ℕ) (μ : Fin P.samples → Bool) :
+    type_of% (TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdvice_eq P w μ) :=
+  rfl
+
+theorem ctlShiftAdviceReader (P : TCSlib.Cryptography.LWE.Parameters) (w : ℕ) (μ : Fin P.samples → Bool) :
+    type_of% (TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdvice_eq P w μ) :=
+  TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdvice_eq P w μ
+
+theorem ctlShiftPre (z : List Bool) :
+    type_of% (TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftPre_eq z) :=
+  rfl
+
+theorem ctlShiftPreReader (z : List Bool) :
+    type_of% (TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftPre_eq z) :=
+  TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftPre_eq z
+
+theorem ctlShiftAdviceBound (F : TCSlib.Cryptography.LWE.Family) (κ : ℕ) :
+    type_of% (TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdviceBound_eval F κ) :=
+  rfl
+
+theorem ctlShiftAdviceBoundReader (F : TCSlib.Cryptography.LWE.Family) (κ : ℕ) :
+    type_of% (TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdviceBound_eval F κ) :=
+  TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdviceBound_eval F κ
+
+end RegevControls
+

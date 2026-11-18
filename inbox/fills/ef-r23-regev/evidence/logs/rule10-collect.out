@@ -1,0 +1,20 @@
+phase collect start 2026-11-18T10:39:20Z head 324c5de20c4b5fe1e0ee95a07612d3fa2ffd4b1a owners TCSlib.Cryptography.Encoding.ModularArithmetic TCSlib.Cryptography.Encoding TCSlib.Cryptography.Encryption.Symmetric.Regev.Asymptotic TCSlib.Cryptography.Encryption.Symmetric.Regev TCSlib.Cryptography.Encryption.PublicKey.Regev.Asymptotic TCSlib.Cryptography.Encryption.PublicKey.Regev jobs 3
+collector: /home/user/ef-r23/probes/rule10/CollectHead.lean (sha256 6dc8a2a14147de5cd2cd610d414e3bb87787516192211bbb02815970abe8f216)
+RUN EITHER (preferred, writes results.jsonl):
+  bash /home/user/ef-r23/tools/agent/rule10_regev.sh /home/user/ef-r23/evidence/rule10 324c5de20c4b5fe1e0ee95a07612d3fa2ffd4b1a /home/user/ef-r23/tools/agent/owners-s123.txt collect-run
+OR the bare command (log must land at the path below for phases pretest/seals):
+  mkdir -p /home/user/ef-r23/evidence/rule10/rule10/probe-runs/mods && cd /home/user/ef-r23/repo && env PATH=$HOME/.elan/bin:$PATH LEAN_PATH=/home/user/ef-r23/oleans:/home/user/ef-r23/repo/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/home/user/ef-r23/repo/.lake/packages/Qq/.lake/build/lib/lean:/home/user/ef-r23/repo/.lake/packages/aesop/.lake/build/lib/lean:/home/user/ef-r23/repo/.lake/packages/batteries/.lake/build/lib/lean:/home/user/ef-r23/repo/.lake/packages/importGraph/.lake/build/lib/lean:/home/user/ef-r23/repo/.lake/packages/mathlib/.lake/build/lib/lean:/home/user/ef-r23/repo/.lake/packages/plausible/.lake/build/lib/lean:/home/user/ef-r23/repo/.lake/packages/proofwidgets/.lake/build/lib/lean nice -n 10 lean -DmaxErrors=0 /home/user/ef-r23/probes/rule10/CollectHead.lean > /home/user/ef-r23/evidence/rule10/rule10/probe-runs/mods/_home_user_ef-r23_probes_rule10_CollectHead.log 2>&1
+phase collect done 2026-11-18T10:39:20Z
+phase collect-run start 2026-11-18T10:39:20Z head 324c5de20c4b5fe1e0ee95a07612d3fa2ffd4b1a owners TCSlib.Cryptography.Encoding.ModularArithmetic TCSlib.Cryptography.Encoding TCSlib.Cryptography.Encryption.Symmetric.Regev.Asymptotic TCSlib.Cryptography.Encryption.Symmetric.Regev TCSlib.Cryptography.Encryption.PublicKey.Regev.Asymptotic TCSlib.Cryptography.Encryption.PublicKey.Regev jobs 3
+collector rc=0
+phase collect-run done 2026-11-18T10:39:25Z
+phase collect-check start 2026-11-18T10:39:25Z head 324c5de20c4b5fe1e0ee95a07612d3fa2ffd4b1a owners TCSlib.Cryptography.Encoding.ModularArithmetic TCSlib.Cryptography.Encoding TCSlib.Cryptography.Encryption.Symmetric.Regev.Asymptotic TCSlib.Cryptography.Encryption.Symmetric.Regev TCSlib.Cryptography.Encryption.PublicKey.Regev.Asymptotic TCSlib.Cryptography.Encryption.PublicKey.Regev jobs 3
+owner TCSlib.Cryptography.Encoding.ModularArithmetic CLOSURE=0 MODULE=1 MODULE TCSlib.Cryptography.Encoding.ModularArithmetic: stored 48
+owner TCSlib.Cryptography.Encoding CLOSURE=0 MODULE=1 MODULE TCSlib.Cryptography.Encoding: stored 0
+owner TCSlib.Cryptography.Encryption.Symmetric.Regev.Asymptotic CLOSURE=0 MODULE=1 MODULE TCSlib.Cryptography.Encryption.Symmetric.Regev.Asymptotic: stored 14
+owner TCSlib.Cryptography.Encryption.Symmetric.Regev CLOSURE=0 MODULE=1 MODULE TCSlib.Cryptography.Encryption.Symmetric.Regev: stored 0
+owner TCSlib.Cryptography.Encryption.PublicKey.Regev.Asymptotic CLOSURE=0 MODULE=1 MODULE TCSlib.Cryptography.Encryption.PublicKey.Regev.Asymptotic: stored 18
+owner TCSlib.Cryptography.Encryption.PublicKey.Regev CLOSURE=0 MODULE=1 MODULE TCSlib.Cryptography.Encryption.PublicKey.Regev: stored 0
+CAT-COUNT 1592
+error lines: 0
+COLLECT_OK 0

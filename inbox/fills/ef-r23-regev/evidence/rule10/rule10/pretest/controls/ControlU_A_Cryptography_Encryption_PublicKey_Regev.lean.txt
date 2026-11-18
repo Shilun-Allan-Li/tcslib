@@ -1,0 +1,91 @@
+import Lean
+import TCSlib.Cryptography.Encryption.PublicKey.Regev
+
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace RegevControls
+
+theorem ctlAddMod (z : List Bool) :
+    type_of% (TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_eq z) :=
+  rfl
+
+theorem ctlAddModReader (z : List Bool) :
+    type_of% (TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_eq z) :=
+  TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_eq z
+
+theorem ctlVecAddStep (z : List Bool) :
+    type_of% (TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep_eq z) :=
+  rfl
+
+theorem ctlVecAddStepReader (z : List Bool) :
+    type_of% (TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep_eq z) :=
+  TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep_eq z
+
+theorem ctlVecAddModWords (ctx n x y : List Bool) :
+    type_of% (TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords_eq ctx n x y) :=
+  rfl
+
+theorem ctlVecAddModWordsReader (ctx n x y : List Bool) :
+    type_of% (TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords_eq ctx n x y) :=
+  TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords_eq ctx n x y
+
+theorem ctlSubsetSumStep (z : List Bool) :
+    type_of% (TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep_eq z) :=
+  rfl
+
+theorem ctlSubsetSumStepReader (z : List Bool) :
+    type_of% (TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep_eq z) :=
+  TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep_eq z
+
+theorem ctlSubsetSumModWords (ctx nT mT rows bits : List Bool) :
+    type_of% (TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_eq ctx nT mT rows bits) :=
+  rfl
+
+theorem ctlSubsetSumModWordsReader (ctx nT mT rows bits : List Bool) :
+    type_of% (TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_eq ctx nT mT rows bits) :=
+  TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_eq ctx nT mT rows bits
+
+theorem ctlModContext (w q : ℕ) :
+    type_of% (TCSlib.Cryptography.Encoding.ModularArithmetic.modContext_eq w q) :=
+  rfl
+
+theorem ctlModContextReader (w q : ℕ) :
+    type_of% (TCSlib.Cryptography.Encoding.ModularArithmetic.modContext_eq w q) :=
+  TCSlib.Cryptography.Encoding.ModularArithmetic.modContext_eq w q
+
+theorem ctlEncodeView (P : TCSlib.Cryptography.LWE.Parameters) (w : ℕ) (v : (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) × (Fin P.samples → ZMod P.modulus)) × ((Fin P.dimension → ZMod P.modulus) × ZMod P.modulus)) :
+    type_of% (TCSlib.Cryptography.Encryption.PublicKey.Regev.encodeView_eq P w v) :=
+  rfl
+
+theorem ctlEncodeViewReader (P : TCSlib.Cryptography.LWE.Parameters) (w : ℕ) (v : (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) × (Fin P.samples → ZMod P.modulus)) × ((Fin P.dimension → ZMod P.modulus) × ZMod P.modulus)) :
+    type_of% (TCSlib.Cryptography.Encryption.PublicKey.Regev.encodeView_eq P w v) :=
+  TCSlib.Cryptography.Encryption.PublicKey.Regev.encodeView_eq P w v
+
+theorem ctlEncryptAdvice (P : TCSlib.Cryptography.LWE.Parameters) (w : ℕ) (μ : Bool) :
+    type_of% (TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdvice_eq P w μ) :=
+  rfl
+
+theorem ctlEncryptAdviceReader (P : TCSlib.Cryptography.LWE.Parameters) (w : ℕ) (μ : Bool) :
+    type_of% (TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdvice_eq P w μ) :=
+  TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdvice_eq P w μ
+
+theorem ctlEncryptPre (z : List Bool) :
+    type_of% (TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptPre_eq z) :=
+  rfl
+
+theorem ctlEncryptPreReader (z : List Bool) :
+    type_of% (TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptPre_eq z) :=
+  TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptPre_eq z
+
+theorem ctlEncryptAdviceBound (F : TCSlib.Cryptography.LWE.Family) (κ : ℕ) :
+    type_of% (TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdviceBound_eval F κ) :=
+  rfl
+
+theorem ctlEncryptAdviceBoundReader (F : TCSlib.Cryptography.LWE.Family) (κ : ℕ) :
+    type_of% (TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdviceBound_eval F κ) :=
+  TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdviceBound_eval F κ
+
+end RegevControls
+

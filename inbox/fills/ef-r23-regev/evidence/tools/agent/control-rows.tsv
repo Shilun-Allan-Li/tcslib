@@ -1,0 +1,30 @@
+# control-rows.tsv -- rows for mkctl_regev.py (tools-agent, fill ef-r23-regev, 2026-11-18).
+# One row = one target definition = TWO controls: <control> (NEGATIVE: the foreign read the reader replaces; must
+# pass unsealed and fail exactly once sealed) and <control>Reader (POSITIVE: the same statement through the
+# published reader; must pass sealed and unsealed).
+# Columns (TAB-separated; "-" = empty; the two-character sequence \n inside a field is a newline):
+#   target    full name of the sealed target definition (must appear as `spelling` in a seal record's rows)
+#   owner     dotted module of the target (checked against the record's `home` for that row)
+#   control   Lean theorem name of the negative (the positive is <control>Reader); unique over the file
+#   open      `open ... in` prefix (without the trailing newline), or -
+#   binders   the theorem binders (may be -)
+#   reader    reader application; both controls state `type_of% (<reader>)`
+#   neg       proof of the negative (rfl: defeq through the target's body; `unfold`/`simp [f]` would NOT fail
+#             under a seal, because equation lemmas ignore irreducibility)
+#   pos       proof of the positive, or - for `<reader>` itself
+#   note      free text
+# Rows are grouped by series; add series-3 rows (PublicKey.Regev) at the end.
+target	owner	control	open	binders	reader	neg	pos	note
+TCSlib.Cryptography.Encoding.ModularArithmetic.addMod	TCSlib.Cryptography.Encoding.ModularArithmetic	ctlAddMod	-	(z : List Bool)	TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_eq z	rfl	-	series 1; reader addMod_eq (owner proof rfl)
+TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep	TCSlib.Cryptography.Encoding.ModularArithmetic	ctlVecAddStep	-	(z : List Bool)	TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep_eq z	rfl	-	series 1; reader vecAddStep_eq (statement has let-bindings; rfl zeta-reduces)
+TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords	TCSlib.Cryptography.Encoding.ModularArithmetic	ctlVecAddModWords	-	(ctx n x y : List Bool)	TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords_eq ctx n x y	rfl	-	series 1; reader vecAddModWords_eq
+TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep	TCSlib.Cryptography.Encoding.ModularArithmetic	ctlSubsetSumStep	-	(z : List Bool)	TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep_eq z	rfl	-	series 1; reader subsetSumStep_eq
+TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords	TCSlib.Cryptography.Encoding.ModularArithmetic	ctlSubsetSumModWords	-	(ctx nT mT rows bits : List Bool)	TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_eq ctx nT mT rows bits	rfl	-	series 1; reader subsetSumModWords_eq
+TCSlib.Cryptography.Encoding.ModularArithmetic.modContext	TCSlib.Cryptography.Encoding.ModularArithmetic	ctlModContext	-	(w q : ℕ)	TCSlib.Cryptography.Encoding.ModularArithmetic.modContext_eq w q	rfl	-	series 1; reader modContext_eq
+TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdvice	TCSlib.Cryptography.Encryption.Symmetric.Regev.Asymptotic	ctlShiftAdvice	-	(P : TCSlib.Cryptography.LWE.Parameters) (w : ℕ) (μ : Fin P.samples → Bool)	TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdvice_eq P w μ	rfl	-	series 2; reader shiftAdvice_eq
+TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftPre	TCSlib.Cryptography.Encryption.Symmetric.Regev.Asymptotic	ctlShiftPre	-	(z : List Bool)	TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftPre_eq z	rfl	-	series 2; reader shiftPre_eq
+TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdviceBound	TCSlib.Cryptography.Encryption.Symmetric.Regev.Asymptotic	ctlShiftAdviceBound	-	(F : TCSlib.Cryptography.LWE.Family) (κ : ℕ)	TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdviceBound_eval F κ	rfl	-	series 2; reader shiftAdviceBound_eval (owner proof: simp only [shiftAdviceBound, PolyExpr.eval_*]); the rfl negative also unfolds Complexity.PolyExpr.eval, sealed only in variant B (still one error there); UNVERIFIED that the unsealed rfl closes (pretest decides)
+TCSlib.Cryptography.Encryption.PublicKey.Regev.encodeView	TCSlib.Cryptography.Encryption.PublicKey.Regev.Asymptotic	ctlEncodeView	-	(P : TCSlib.Cryptography.LWE.Parameters) (w : ℕ) (v : (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) × (Fin P.samples → ZMod P.modulus)) × ((Fin P.dimension → ZMod P.modulus) × ZMod P.modulus))	TCSlib.Cryptography.Encryption.PublicKey.Regev.encodeView_eq P w v	rfl	-	series 3; reader encodeView_eq
+TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdvice	TCSlib.Cryptography.Encryption.PublicKey.Regev.Asymptotic	ctlEncryptAdvice	-	(P : TCSlib.Cryptography.LWE.Parameters) (w : ℕ) (μ : Bool)	TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdvice_eq P w μ	rfl	-	series 3; reader encryptAdvice_eq
+TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptPre	TCSlib.Cryptography.Encryption.PublicKey.Regev.Asymptotic	ctlEncryptPre	-	(z : List Bool)	TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptPre_eq z	rfl	-	series 3; reader encryptPre_eq
+TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdviceBound	TCSlib.Cryptography.Encryption.PublicKey.Regev.Asymptotic	ctlEncryptAdviceBound	-	(F : TCSlib.Cryptography.LWE.Family) (κ : ℕ)	TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdviceBound_eval F κ	rfl	-	series 3; reader encryptAdviceBound_eval

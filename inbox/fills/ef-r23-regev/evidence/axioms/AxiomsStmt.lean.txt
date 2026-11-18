@@ -1,0 +1,129 @@
+import TCSlib.Cryptography.Encoding.ModularArithmetic
+import TCSlib.Cryptography.Encryption.Symmetric.Regev.Asymptotic
+import TCSlib.Cryptography.Encryption.PublicKey.Regev.Asymptotic
+set_option pp.fullNames true
+set_option pp.proofs false
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.addMod
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.addMod
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_eq
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_eq
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_length
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_length
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_modContext
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_modContext
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_natToList
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_natToList
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_pairEncode
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_pairEncode
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.listToNat_modulusNumeral
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.listToNat_modulusNumeral
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.modContext
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.modContext
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.modContext_eq
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.modContext_eq
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.modContext_length
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.modContext_length
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.polyTimeComputable_addMod
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.polyTimeComputable_addMod
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.polyTimeComputable_subsetSumModWords
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.polyTimeComputable_subsetSumModWords
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.polyTimeComputable_subsetSumStep
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.polyTimeComputable_subsetSumStep
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.polyTimeComputable_vecAddModWords
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.polyTimeComputable_vecAddModWords
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.polyTimeComputable_vecAddStep
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.polyTimeComputable_vecAddStep
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_encodeMatrix
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_encodeMatrix
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_encodeVector
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_encodeVector
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_eq
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_eq
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_modContext
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_modContext
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_modContext_vector
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_modContext_vector
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep_eq
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep_eq
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep_fst
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep_fst
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep_iterate_length_le
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep_iterate_length_le
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep_length_le
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep_length_le
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords_encodeVector
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords_encodeVector
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords_eq
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords_eq
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords_length
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords_length
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords_modContext
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords_modContext
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep_eq
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep_eq
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep_fst
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep_fst
+#print axioms TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep_length_le
+#check @TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep_length_le
+#print axioms TCSlib.Cryptography.Encryption.Symmetric.Regev.exists_shiftMachine
+#check @TCSlib.Cryptography.Encryption.Symmetric.Regev.exists_shiftMachine
+#print axioms TCSlib.Cryptography.Encryption.Symmetric.Regev.polyTimeComputable_shiftPre
+#check @TCSlib.Cryptography.Encryption.Symmetric.Regev.polyTimeComputable_shiftPre
+#print axioms TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdvice
+#check @TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdvice
+#print axioms TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdviceBound
+#check @TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdviceBound
+#print axioms TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdviceBound_eval
+#check @TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdviceBound_eval
+#print axioms TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdvice_eq
+#check @TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdvice_eq
+#print axioms TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdvice_length
+#check @TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdvice_length
+#print axioms TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdvice_length_le
+#check @TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdvice_length_le
+#print axioms TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftPre
+#check @TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftPre
+#print axioms TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftPre_eq
+#check @TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftPre_eq
+#print axioms TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftPre_shiftAdvice
+#check @TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftPre_shiftAdvice
+#print axioms TCSlib.Cryptography.Encryption.Symmetric.Regev.singleMessageSecure_of_dlweAssumption
+#check @TCSlib.Cryptography.Encryption.Symmetric.Regev.singleMessageSecure_of_dlweAssumption
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.encodeView
+#check @TCSlib.Cryptography.Encryption.PublicKey.Regev.encodeView
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.encodeView_eq
+#check @TCSlib.Cryptography.Encryption.PublicKey.Regev.encodeView_eq
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.encodeView_length
+#check @TCSlib.Cryptography.Encryption.PublicKey.Regev.encodeView_length
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdvice
+#check @TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdvice
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdviceBound
+#check @TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdviceBound
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdviceBound_eval
+#check @TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdviceBound_eval
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdvice_eq
+#check @TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdvice_eq
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdvice_length
+#check @TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdvice_length
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdvice_length_le
+#check @TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdvice_length_le
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptPre
+#check @TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptPre
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptPre_encryptAdvice
+#check @TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptPre_encryptAdvice
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptPre_eq
+#check @TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptPre_eq
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.exists_reductionMachine
+#check @TCSlib.Cryptography.Encryption.PublicKey.Regev.exists_reductionMachine
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.polyTimeComputable_encryptPre
+#check @TCSlib.Cryptography.Encryption.PublicKey.Regev.polyTimeComputable_encryptPre
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.singleBitSecure_of_dlweAssumption
+#check @TCSlib.Cryptography.Encryption.PublicKey.Regev.singleBitSecure_of_dlweAssumption

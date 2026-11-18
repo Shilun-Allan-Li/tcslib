@@ -1,0 +1,70 @@
+base/encodeVector-defs                 2 hits  git -C /home/user/ef-r23/repo grep -n -E \(def\|theorem\|lemma\)\ +\(encodeVector\|encodeMatrix\)\\b 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSli
+base/vecAdd                            0 hits  git -C /home/user/ef-r23/repo grep -n -E \\bvecAdd\[A-Za-z_\]\* 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+base/subsetSum                        26 hits  git -C /home/user/ef-r23/repo grep -n -E \\bsubsetSum\[A-Za-z_\]\* 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+base/addMod|modAdd                     0 hits  git -C /home/user/ef-r23/repo grep -n -E \\b\(addMod\|modAdd\|addModQ\|modAddWords\)\[A-Za-z_\]\* 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+base/mulVec-on-encodings              14 hits  git -C /home/user/ef-r23/repo grep -n -E mulVec 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib/Cryptography/Encoding TCSlib/Cryptography/LWE TCSli
+base/percent-q                         0 hits  git -C /home/user/ef-r23/repo grep -n -E %\ \*q\\b 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib/Cryptography/Encoding TCSlib/Complexity/ClassP/B
+base/BinArith.mod-defs                 4 hits  git -C /home/user/ef-r23/repo grep -n -E \(def\|theorem\|lemma\)\ +\(mod\|polyTimeComputable_mod\|mod_eq\|mod_pairEncode\)\[A-Za-z_\]\*\\b 5ed465f62e4
+base/BinArith.mod-uses                15 hits  git -C /home/user/ef-r23/repo grep -n -E BinArith\\.mod\\b 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+base/mod-of-add                        5 hits  git -C /home/user/ef-r23/repo grep -n -E BinArith\\.mod.\*BinArith\\.add\|BinArith\\.add.\*BinArith\\.mod 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- 
+base/mod-near-add(-A3)                63 hits  git -C /home/user/ef-r23/repo grep -n -A3 -E BinArith\\.mod\\b 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+base/dyadic-loops                     14 hits  git -C /home/user/ef-r23/repo grep -n -E \(def\|theorem\)\ +\[A-Za-z_\]\*\(dot\|Dot\|mulVecWords\|addWords\|AddWords\|forLoop\)\[A-Za-z_\]\* 5ed465f62
+base/NUPPT|RealizesOn-Regev            0 hits  git -C /home/user/ef-r23/repo grep -n -E NUPPT\|RealizesOn 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib/Cryptography/Encryption/\*/Regev/\* TCSl
+base/modContext-like                   0 hits  git -C /home/user/ef-r23/repo grep -n -E \\b\[a-z\]\[A-Za-z\]\*\(Context\|Ctx\|ctxWord\|modulusWord\|modulusNumeral\)\\b\ \*\(\\\(\|:\) 5ed465f62e4ae0
+base/natToList-modulus                 0 hits  git -C /home/user/ef-r23/repo grep -n -E natToList\ \\\(\?\[a-zA-Z\]+\ \*\\+\ \*1\\\)\?\ +\[a-zA-Z.\]\*\(q\|modulus\)\\b 5ed465f62e4ae0f93ded1a1ba49e8
+base/FromPRG-advice                    5 hits  git -C /home/user/ef-r23/repo grep -n -E exists_max_image\|exists_withAdvice\|withAdvice\|Finset.exists_max 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -
+base/exists_max_image-all             26 hits  git -C /home/user/ef-r23/repo grep -n -E exists_max_image 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib/Cryptography 
+base/exists_withAdvice-all            53 hits  git -C /home/user/ef-r23/repo grep -n -E exists_withAdvice\|withAdvice_ 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+base/coin-transport                  195 hits  git -C /home/user/ef-r23/repo grep -n -E acceptProb_coins_equiv\|acceptProb_coins_fst\|acceptProb_distinguisherL_congr\|coinsCongr 5ed465f62e4ae0f93de
+base/Fin.append-coins                 17 hits  git -C /home/user/ef-r23/repo grep -n -E Fin\\.append.\*\[Cc\]oins\|\[Cc\]oins.\*Fin\\.append 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+base/finSumFinEquiv-coins              0 hits  git -C /home/user/ef-r23/repo grep -n -E finSumFinEquiv.\*\[Cc\]oins\|\[Cc\]oins.\*finSumFinEquiv 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+base/exists_realizesOn                 3 hits  git -C /home/user/ef-r23/repo grep -n -E \(theorem\|lemma\)\ +\[A-Za-z_.\]\*exists_realizesOn\[A-Za-z_\]\* 5ed465f62e4ae0f93ded1a1ba49e807591b589eb --
+base/distinguisherL_eq-RealizesOn      6 hits  git -C /home/user/ef-r23/repo grep -n -E \(theorem\|lemma\)\ +\[A-Za-z_.\]\*RealizesOn\\.\[A-Za-z_\]\* 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCS
+base/singleMessageSecure              14 hits  git -C /home/user/ef-r23/repo grep -n -E singleMessageSecure\|SingleMessageSecure 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib/Cryptography/Encr
+base/DLWEAssumption-uses              10 hits  git -C /home/user/ef-r23/repo grep -n -E DLWEAssumption 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+base/shift-defs                        1 hits  git -C /home/user/ef-r23/repo grep -n -E \(def\|theorem\)\ +\(shift\|shift_\[A-Za-z_\]\*\|\[a-z\]\*Shift\[A-Za-z_\]\*\)\\b 5ed465f62e4ae0f93ded1a1ba49
+pr377/encodeVector-defs                2 hits  git -C /home/user/ef-r23/repo grep -n -E \(def\|theorem\|lemma\)\ +\(encodeVector\|encodeMatrix\)\\b 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSli
+pr377/vecAdd                           0 hits  git -C /home/user/ef-r23/repo grep -n -E \\bvecAdd\[A-Za-z_\]\* 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+pr377/subsetSum                       26 hits  git -C /home/user/ef-r23/repo grep -n -E \\bsubsetSum\[A-Za-z_\]\* 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+pr377/addMod|modAdd                    0 hits  git -C /home/user/ef-r23/repo grep -n -E \\b\(addMod\|modAdd\|addModQ\|modAddWords\)\[A-Za-z_\]\* 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+pr377/mulVec-on-encodings             14 hits  git -C /home/user/ef-r23/repo grep -n -E mulVec 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib/Cryptography/Encoding TCSlib/Cryptography/LWE TCSli
+pr377/percent-q                        0 hits  git -C /home/user/ef-r23/repo grep -n -E %\ \*q\\b 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib/Cryptography/Encoding TCSlib/Complexity/ClassP/B
+pr377/BinArith.mod-defs                4 hits  git -C /home/user/ef-r23/repo grep -n -E \(def\|theorem\|lemma\)\ +\(mod\|polyTimeComputable_mod\|mod_eq\|mod_pairEncode\)\[A-Za-z_\]\*\\b 7563734a8ba
+pr377/BinArith.mod-uses                8 hits  git -C /home/user/ef-r23/repo grep -n -E BinArith\\.mod\\b 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+pr377/mod-of-add                       5 hits  git -C /home/user/ef-r23/repo grep -n -E BinArith\\.mod.\*BinArith\\.add\|BinArith\\.add.\*BinArith\\.mod 7563734a8badba842223e0687c719b3b4692e9d2 -- 
+pr377/mod-near-add(-A3)               36 hits  git -C /home/user/ef-r23/repo grep -n -A3 -E BinArith\\.mod\\b 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+pr377/dyadic-loops                    14 hits  git -C /home/user/ef-r23/repo grep -n -E \(def\|theorem\)\ +\[A-Za-z_\]\*\(dot\|Dot\|mulVecWords\|addWords\|AddWords\|forLoop\)\[A-Za-z_\]\* 7563734a8
+pr377/NUPPT|RealizesOn-Regev           0 hits  git -C /home/user/ef-r23/repo grep -n -E NUPPT\|RealizesOn 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib/Cryptography/Encryption/\*/Regev/\* TCSl
+pr377/modContext-like                  0 hits  git -C /home/user/ef-r23/repo grep -n -E \\b\[a-z\]\[A-Za-z\]\*\(Context\|Ctx\|ctxWord\|modulusWord\|modulusNumeral\)\\b\ \*\(\\\(\|:\) 7563734a8badba
+pr377/natToList-modulus                0 hits  git -C /home/user/ef-r23/repo grep -n -E natToList\ \\\(\?\[a-zA-Z\]+\ \*\\+\ \*1\\\)\?\ +\[a-zA-Z.\]\*\(q\|modulus\)\\b 7563734a8badba842223e0687c719
+pr377/FromPRG-advice                   5 hits  git -C /home/user/ef-r23/repo grep -n -E exists_max_image\|exists_withAdvice\|withAdvice\|Finset.exists_max 7563734a8badba842223e0687c719b3b4692e9d2 -
+pr377/exists_max_image-all            26 hits  git -C /home/user/ef-r23/repo grep -n -E exists_max_image 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib/Cryptography 
+pr377/exists_withAdvice-all           53 hits  git -C /home/user/ef-r23/repo grep -n -E exists_withAdvice\|withAdvice_ 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+pr377/coin-transport                 195 hits  git -C /home/user/ef-r23/repo grep -n -E acceptProb_coins_equiv\|acceptProb_coins_fst\|acceptProb_distinguisherL_congr\|coinsCongr 7563734a8badba84222
+pr377/Fin.append-coins                16 hits  git -C /home/user/ef-r23/repo grep -n -E Fin\\.append.\*\[Cc\]oins\|\[Cc\]oins.\*Fin\\.append 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+pr377/finSumFinEquiv-coins             0 hits  git -C /home/user/ef-r23/repo grep -n -E finSumFinEquiv.\*\[Cc\]oins\|\[Cc\]oins.\*finSumFinEquiv 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+pr377/exists_realizesOn                0 hits  git -C /home/user/ef-r23/repo grep -n -E \(theorem\|lemma\)\ +\[A-Za-z_.\]\*exists_realizesOn\[A-Za-z_\]\* 7563734a8badba842223e0687c719b3b4692e9d2 --
+pr377/distinguisherL_eq-RealizesOn     0 hits  git -C /home/user/ef-r23/repo grep -n -E \(theorem\|lemma\)\ +\[A-Za-z_.\]\*RealizesOn\\.\[A-Za-z_\]\* 7563734a8badba842223e0687c719b3b4692e9d2 -- TCS
+pr377/singleMessageSecure             14 hits  git -C /home/user/ef-r23/repo grep -n -E singleMessageSecure\|SingleMessageSecure 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib/Cryptography/Encr
+pr377/DLWEAssumption-uses             16 hits  git -C /home/user/ef-r23/repo grep -n -E DLWEAssumption 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+pr377/shift-defs                       1 hits  git -C /home/user/ef-r23/repo grep -n -E \(def\|theorem\)\ +\(shift\|shift_\[A-Za-z_\]\*\|\[a-z\]\*Shift\[A-Za-z_\]\*\)\\b 7563734a8badba842223e0687c7
+base/GSW-encodeView                    0 hits  git -C /home/user/ef-r23/repo grep -n -E encodeView 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+base/GSW-ReductionEfficient            0 hits  git -C /home/user/ef-r23/repo grep -n -E ReductionEfficient 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+base/GSW-reductionMachine              0 hits  git -C /home/user/ef-r23/repo grep -n -E reductionMachine 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib 
+base/GSW-reduction-defs                2 hits  git -C /home/user/ef-r23/repo grep -n -E \(def\|theorem\|structure\)\ +\[A-Za-z_.\]\*\(\[Rr\]eduction\|encodeView\)\[A-Za-z_\]\* 5ed465f62e4ae0f93ded1
+base/GSW-files                         6 hits  git -C /home/user/ef-r23/repo ls-tree -r --name-only 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GS
+pr377/GSW-encodeView                  14 hits  git -C /home/user/ef-r23/repo grep -n -E encodeView 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+pr377/GSW-ReductionEfficient          14 hits  git -C /home/user/ef-r23/repo grep -n -E ReductionEfficient 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+pr377/GSW-reductionMachine             0 hits  git -C /home/user/ef-r23/repo grep -n -E reductionMachine 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+pr377/GSW-reduction-defs              11 hits  git -C /home/user/ef-r23/repo grep -n -E \(def\|theorem\|structure\)\ +\[A-Za-z_.\]\*\(\[Rr\]eduction\|encodeView\)\[A-Za-z_\]\* 7563734a8badba842223e
+pr377/GSW-files                       14 hits  git -C /home/user/ef-r23/repo ls-tree -r --name-only 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GS
+diff/base..pr377-files                26 hits  git -C /home/user/ef-r23/repo diff --name-status 5ed465f62e4ae0f93ded1a1ba49e807591b589eb 7563734a8badba842223e0687c719b3b4692e9d2 -- TCSlib 
+mathlib/ZMod-mulVec                    0 hits  grep -rnE theorem\ \[A-Za-z_.\]\*mulVec\[A-Za-z_\]\*.\*ZMod\|ZMod.\*mulVec /home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib 
+mathlib/ZMod.val_add                   3 hits  grep -rnE \(theorem\|lemma\)\ \(ZMod\\.\)\?val_add\\b\|\(theorem\|lemma\)\ \(ZMod\\.\)\?val_add_of_lt\|\(theorem\|lemma\)\ \(ZMod\\.\)\?val_add_le /ho
+mathlib/Nat.add_mod                    0 hits  grep -rnE \(theorem\|lemma\)\ \(Nat\\.\)\?add_mod\\b /home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib 
+lean-core/Nat.add_mod                  1 hits  grep -rnE \(theorem\|lemma\)\ \(Nat\\.\)\?add_mod\\b /root/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init 
+mathlib/subset-sum-mulVec              5 hits  grep -rnE \(theorem\|lemma\)\ \(Matrix\\.\)\?\(mulVec_single\|vecMul_single\|mulVec_sum\|sum_mulVec\|mulVec_add\|vecMul_add\)\\b /home/user/ef-r23/rep
+mathlib/Finset.exists_max_image        2 hits  grep -rnE \(theorem\|lemma\)\ \(Finset\\.\)\?exists_max_image\\b /home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib 
+mathlib/finSumFinEquiv                 7 hits  grep -rnE \^\(def\|theorem\|lemma\|@\\\[simp\\\]\ theorem\)\ finSumFinEquiv\[A-Za-z_\]\* /home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Logic/E
+mathlib/Fin.append-defs                5 hits  grep -rnE \(def\|theorem\)\ \(Fin\\.\)\?append\(_left\|_right\)\?\\b /home/user/ef-r23/repo/.lake/packages/mathlib/Mathlib/Data/Fin 
+log: /home/user/ef-r23/evidence/subagents/tools-agent/overlap/search.log

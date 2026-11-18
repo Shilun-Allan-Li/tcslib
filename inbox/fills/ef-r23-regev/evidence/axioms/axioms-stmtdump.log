@@ -1,0 +1,472 @@
+'TCSlib.Cryptography.Encoding.ModularArithmetic.addMod' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encoding.ModularArithmetic.addMod : List Bool → List Bool
+'TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_eq' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_eq : ∀ (z : List Bool),
+  TCSlib.Cryptography.Encoding.ModularArithmetic.addMod z =
+    TCSlib.Cryptography.Encoding.BinaryArith.fromLEPoly Complexity.PolyExpr.var
+      (Turing.pairEncode (Complexity.pairFstD (Complexity.pairFstD z))
+        (Complexity.BinArith.mod
+          (Turing.pairEncode
+            (Complexity.BinArith.add
+              (Turing.pairEncode
+                (TCSlib.Cryptography.Encoding.BinaryArith.toLE (Complexity.pairFstD (Complexity.pairSndD z)))
+                (TCSlib.Cryptography.Encoding.BinaryArith.toLE (Complexity.pairSndD (Complexity.pairSndD z)))))
+            (TCSlib.Cryptography.Encoding.BinaryArith.toLE (Complexity.pairSndD (Complexity.pairFstD z))))))
+'TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_length' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_length : ∀ (z : List Bool),
+  (TCSlib.Cryptography.Encoding.ModularArithmetic.addMod z).length =
+    (Complexity.pairFstD (Complexity.pairFstD z)).length
+'TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_modContext' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+@TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_modContext : ∀ {q : ℕ} [NeZero q] {w : ℕ},
+  q ≤ 2 ^ w →
+    ∀ (x y : ZMod q),
+      TCSlib.Cryptography.Encoding.ModularArithmetic.addMod
+          (Turing.pairEncode (TCSlib.Cryptography.Encoding.ModularArithmetic.modContext w q)
+            (Turing.pairEncode (TCSlib.Cryptography.Candidates.natToList w x.val)
+              (TCSlib.Cryptography.Candidates.natToList w y.val))) =
+        TCSlib.Cryptography.Candidates.natToList w (x + y).val
+'TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_natToList' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+@TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_natToList : ∀ {q : ℕ} [NeZero q] (c qw : List Bool),
+  q ≤ 2 ^ c.length →
+    TCSlib.Cryptography.NumberTheory.listToNat qw = q →
+      ∀ (x y : ZMod q),
+        TCSlib.Cryptography.Encoding.ModularArithmetic.addMod
+            (Turing.pairEncode (Turing.pairEncode c qw)
+              (Turing.pairEncode (TCSlib.Cryptography.Candidates.natToList c.length x.val)
+                (TCSlib.Cryptography.Candidates.natToList c.length y.val))) =
+          TCSlib.Cryptography.Candidates.natToList c.length (x + y).val
+'TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_pairEncode' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.Encoding.ModularArithmetic.addMod_pairEncode : ∀ (c qw a b : List Bool),
+  TCSlib.Cryptography.Encoding.ModularArithmetic.addMod
+      (Turing.pairEncode (Turing.pairEncode c qw) (Turing.pairEncode a b)) =
+    TCSlib.Cryptography.Candidates.natToList c.length
+      ((TCSlib.Cryptography.NumberTheory.listToNat a + TCSlib.Cryptography.NumberTheory.listToNat b) %
+        TCSlib.Cryptography.NumberTheory.listToNat qw)
+'TCSlib.Cryptography.Encoding.ModularArithmetic.listToNat_modulusNumeral' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+@TCSlib.Cryptography.Encoding.ModularArithmetic.listToNat_modulusNumeral : ∀ {w q : ℕ},
+  q ≤ 2 ^ w → TCSlib.Cryptography.NumberTheory.listToNat (TCSlib.Cryptography.Candidates.natToList (w + 1) q) = q
+'TCSlib.Cryptography.Encoding.ModularArithmetic.modContext' depends on axioms: [propext]
+TCSlib.Cryptography.Encoding.ModularArithmetic.modContext : ℕ → ℕ → List Bool
+'TCSlib.Cryptography.Encoding.ModularArithmetic.modContext_eq' depends on axioms: [propext]
+TCSlib.Cryptography.Encoding.ModularArithmetic.modContext_eq : ∀ (w q : ℕ),
+  TCSlib.Cryptography.Encoding.ModularArithmetic.modContext w q =
+    Turing.pairEncode (List.replicate w Bool.false) (TCSlib.Cryptography.Candidates.natToList (w + 1) q)
+'TCSlib.Cryptography.Encoding.ModularArithmetic.modContext_length' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encoding.ModularArithmetic.modContext_length : ∀ (w q : ℕ),
+  (TCSlib.Cryptography.Encoding.ModularArithmetic.modContext w q).length = 3 * w + 3
+'TCSlib.Cryptography.Encoding.ModularArithmetic.polyTimeComputable_addMod' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.Encoding.ModularArithmetic.polyTimeComputable_addMod : Complexity.PolyTimeComputable
+  TCSlib.Cryptography.Encoding.ModularArithmetic.addMod
+'TCSlib.Cryptography.Encoding.ModularArithmetic.polyTimeComputable_subsetSumModWords' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.Encoding.ModularArithmetic.polyTimeComputable_subsetSumModWords : Complexity.PolyTimeComputable
+  fun z =>
+  TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords (Complexity.pairFstD z)
+    (Complexity.pairFstD (Complexity.pairSndD z)) (Complexity.pairFstD (Complexity.pairSndD (Complexity.pairSndD z)))
+    (Complexity.pairFstD (Complexity.pairSndD (Complexity.pairSndD (Complexity.pairSndD z))))
+    (Complexity.pairSndD (Complexity.pairSndD (Complexity.pairSndD (Complexity.pairSndD z))))
+'TCSlib.Cryptography.Encoding.ModularArithmetic.polyTimeComputable_subsetSumStep' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.Encoding.ModularArithmetic.polyTimeComputable_subsetSumStep : Complexity.PolyTimeComputable
+  TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep
+'TCSlib.Cryptography.Encoding.ModularArithmetic.polyTimeComputable_vecAddModWords' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.Encoding.ModularArithmetic.polyTimeComputable_vecAddModWords : Complexity.PolyTimeComputable
+  fun z =>
+  TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords (Complexity.pairFstD z)
+    (Complexity.pairFstD (Complexity.pairSndD z)) (Complexity.pairFstD (Complexity.pairSndD (Complexity.pairSndD z)))
+    (Complexity.pairSndD (Complexity.pairSndD (Complexity.pairSndD z)))
+'TCSlib.Cryptography.Encoding.ModularArithmetic.polyTimeComputable_vecAddStep' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.Encoding.ModularArithmetic.polyTimeComputable_vecAddStep : Complexity.PolyTimeComputable
+  TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep
+'TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords : List Bool →
+  List Bool → List Bool → List Bool → List Bool → List Bool
+'TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_encodeMatrix' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+@TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_encodeMatrix : ∀ {q m n : ℕ} [inst : NeZero q]
+  (c qw : List Bool),
+  q ≤ 2 ^ c.length →
+    TCSlib.Cryptography.NumberTheory.listToNat qw = q →
+      ∀ (nT mT : List Bool),
+        nT.length = n →
+          mT.length = m →
+            ∀ (A : Matrix (Fin m) (Fin n) (ZMod q)) (r : Fin m → Bool) (extra : List Bool),
+              TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords (Turing.pairEncode c qw) nT mT
+                  (TCSlib.Cryptography.Encoding.Modular.encodeMatrix c.length A) (List.ofFn r ++ extra) =
+                TCSlib.Cryptography.Encoding.Modular.encodeVector c.length (A.transpose.mulVec fun i => ↑(r i).toNat)
+'TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_encodeVector' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+@TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_encodeVector : ∀ {q m : ℕ} [inst : NeZero q]
+  (c qw : List Bool),
+  q ≤ 2 ^ c.length →
+    TCSlib.Cryptography.NumberTheory.listToNat qw = q →
+      ∀ (mT : List Bool),
+        mT.length = m →
+          ∀ (b : Fin m → ZMod q) (r : Fin m → Bool) (extra : List Bool),
+            TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords (Turing.pairEncode c qw) [Bool.true] mT
+                (TCSlib.Cryptography.Encoding.Modular.encodeVector c.length b) (List.ofFn r ++ extra) =
+              TCSlib.Cryptography.Candidates.natToList c.length (∑ i, b i * ↑(r i).toNat).val
+'TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_eq' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_eq : ∀ (ctx nT mT rows bits : List Bool),
+  TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords ctx nT mT rows bits =
+    Complexity.pairSndD
+      (Complexity.pairSndD
+        (Complexity.pairSndD
+          (Complexity.pairSndD
+            (Complexity.BinArith.forLoop TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep
+              (Turing.pairEncode mT
+                (Turing.pairEncode (Turing.pairEncode ctx nT)
+                  (Turing.pairEncode rows
+                    (Turing.pairEncode bits
+                      (List.replicate (nT.length * (Complexity.pairFstD ctx).length) Bool.false)))))))))
+'TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_modContext' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+@TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_modContext : ∀ {q m n : ℕ} [inst : NeZero q] {w : ℕ},
+  q ≤ 2 ^ w →
+    ∀ (nT mT : List Bool),
+      nT.length = n →
+        mT.length = m →
+          ∀ (A : Matrix (Fin m) (Fin n) (ZMod q)) (r : Fin m → Bool) (extra : List Bool),
+            TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords
+                (TCSlib.Cryptography.Encoding.ModularArithmetic.modContext w q) nT mT
+                (TCSlib.Cryptography.Encoding.Modular.encodeMatrix w A) (List.ofFn r ++ extra) =
+              TCSlib.Cryptography.Encoding.Modular.encodeVector w (A.transpose.mulVec fun i => ↑(r i).toNat)
+'TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_modContext_vector' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+@TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords_modContext_vector : ∀ {q m : ℕ} [inst : NeZero q]
+  {w : ℕ},
+  q ≤ 2 ^ w →
+    ∀ (mT : List Bool),
+      mT.length = m →
+        ∀ (b : Fin m → ZMod q) (r : Fin m → Bool) (extra : List Bool),
+          TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords
+              (TCSlib.Cryptography.Encoding.ModularArithmetic.modContext w q) [Bool.true] mT
+              (TCSlib.Cryptography.Encoding.Modular.encodeVector w b) (List.ofFn r ++ extra) =
+            TCSlib.Cryptography.Candidates.natToList w (∑ i, b i * ↑(r i).toNat).val
+'TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep : List Bool → List Bool
+'TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep_eq' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep_eq : ∀ (z : List Bool),
+  TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep z =
+    have ctx₂ := Complexity.pairFstD z;
+    have ctx := Complexity.pairFstD ctx₂;
+    have nT := Complexity.pairSndD ctx₂;
+    have rowLen := nT.length * (Complexity.pairFstD ctx).length;
+    have rows := Complexity.pairFstD (Complexity.pairSndD z);
+    have bits := Complexity.pairFstD (Complexity.pairSndD (Complexity.pairSndD z));
+    have acc := Complexity.pairSndD (Complexity.pairSndD (Complexity.pairSndD z));
+    Turing.pairEncode ctx₂
+      (Turing.pairEncode (List.drop rowLen rows)
+        (Turing.pairEncode (List.drop 1 bits)
+          (if bits.headD Bool.false = Bool.true then
+            TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords ctx nT acc (List.take rowLen rows)
+          else acc)))
+'TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep_fst' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep_fst : ∀ (z : List Bool),
+  Complexity.pairFstD (TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep z) = Complexity.pairFstD z
+'TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep_iterate_length_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep_iterate_length_le : ∀ (d : List Bool) (j : ℕ),
+  (TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep^[j] d).length ≤
+    d.length + j * (6 + (Complexity.pairFstD d).length * (Complexity.pairFstD d).length)
+'TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep_length_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep_length_le : ∀ (z : List Bool),
+  (TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumStep z).length ≤
+    z.length + (6 + (Complexity.pairFstD z).length * (Complexity.pairFstD z).length)
+'TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords : List Bool →
+  List Bool → List Bool → List Bool → List Bool
+'TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords_encodeVector' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+@TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords_encodeVector : ∀ {q len : ℕ} [inst : NeZero q]
+  (c qw : List Bool),
+  q ≤ 2 ^ c.length →
+    TCSlib.Cryptography.NumberTheory.listToNat qw = q →
+      ∀ (n : List Bool),
+        n.length = len →
+          ∀ (u v : Fin len → ZMod q),
+            TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords (Turing.pairEncode c qw) n
+                (TCSlib.Cryptography.Encoding.Modular.encodeVector c.length u)
+                (TCSlib.Cryptography.Encoding.Modular.encodeVector c.length v) =
+              TCSlib.Cryptography.Encoding.Modular.encodeVector c.length (u + v)
+'TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords_eq' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords_eq : ∀ (ctx n x y : List Bool),
+  TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords ctx n x y =
+    Complexity.pairSndD
+      (Complexity.pairSndD
+        (Complexity.pairSndD
+          (Complexity.pairSndD
+            (Complexity.BinArith.forLoop TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep
+              (Turing.pairEncode n (Turing.pairEncode ctx (Turing.pairEncode x (Turing.pairEncode y []))))))))
+'TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords_length' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords_length : ∀ (ctx n x y : List Bool),
+  (TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords ctx n x y).length =
+    n.length * (Complexity.pairFstD ctx).length
+'TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords_modContext' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+@TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords_modContext : ∀ {q len : ℕ} [inst : NeZero q] {w : ℕ},
+  q ≤ 2 ^ w →
+    ∀ (n : List Bool),
+      n.length = len →
+        ∀ (u v : Fin len → ZMod q),
+          TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords
+              (TCSlib.Cryptography.Encoding.ModularArithmetic.modContext w q) n
+              (TCSlib.Cryptography.Encoding.Modular.encodeVector w u)
+              (TCSlib.Cryptography.Encoding.Modular.encodeVector w v) =
+            TCSlib.Cryptography.Encoding.Modular.encodeVector w (u + v)
+'TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep : List Bool → List Bool
+'TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep_eq' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep_eq : ∀ (z : List Bool),
+  TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep z =
+    have ctx := Complexity.pairFstD z;
+    have w := (Complexity.pairFstD ctx).length;
+    have xs := Complexity.pairFstD (Complexity.pairSndD z);
+    have ys := Complexity.pairFstD (Complexity.pairSndD (Complexity.pairSndD z));
+    have out := Complexity.pairSndD (Complexity.pairSndD (Complexity.pairSndD z));
+    Turing.pairEncode ctx
+      (Turing.pairEncode (List.drop w xs)
+        (Turing.pairEncode (List.drop w ys)
+          (out ++
+            TCSlib.Cryptography.Encoding.ModularArithmetic.addMod
+              (Turing.pairEncode ctx (Turing.pairEncode (List.take w xs) (List.take w ys))))))
+'TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep_fst' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep_fst : ∀ (z : List Bool),
+  Complexity.pairFstD (TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep z) = Complexity.pairFstD z
+'TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep_length_le' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep_length_le : ∀ (z : List Bool),
+  (TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddStep z).length ≤
+    z.length + 8 * ((Complexity.pairFstD z).length + 1)
+'TCSlib.Cryptography.Encryption.Symmetric.Regev.exists_shiftMachine' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.Encryption.Symmetric.Regev.exists_shiftMachine : ∀ (F : TCSlib.Cryptography.LWE.Family)
+  (μ : (κ : ℕ) → Fin (F.parameters κ).samples → Bool) (D : Complexity.NUPPT),
+  ∃ D',
+    ∀ (κ : ℕ),
+      (TCSlib.Cryptography.LWE.decisionAdvantage (F.parameters κ) (F.noise κ) fun c r =>
+          D.distinguisherL κ
+            (TCSlib.Cryptography.LWE.encodeChallenge (F.parameters κ) (F.residueBits.eval κ)
+              (TCSlib.Cryptography.Encryption.Symmetric.Regev.shift (F.parameters κ) (μ κ) c))
+            r) =
+        F.advantageAt D' κ
+'TCSlib.Cryptography.Encryption.Symmetric.Regev.polyTimeComputable_shiftPre' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.Encryption.Symmetric.Regev.polyTimeComputable_shiftPre : Complexity.PolyTimeComputable
+  TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftPre
+'TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdvice' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdvice : (P : TCSlib.Cryptography.LWE.Parameters) →
+  ℕ → (Fin P.samples → Bool) → List Bool
+'TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdviceBound' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdviceBound : TCSlib.Cryptography.LWE.Family → Complexity.PolyExpr
+'TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdviceBound_eval' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdviceBound_eval : ∀ (F : TCSlib.Cryptography.LWE.Family) (κ : ℕ),
+  (TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdviceBound F).eval κ =
+    2 * (F.samplesBound.eval κ * F.dimensionBound.eval κ * F.residueBits.eval κ) +
+            F.samplesBound.eval κ * F.residueBits.eval κ +
+          2 * F.samplesBound.eval κ +
+        12 * F.residueBits.eval κ +
+      20
+'TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdvice_eq' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdvice_eq : ∀ (P : TCSlib.Cryptography.LWE.Parameters) (w : ℕ)
+  (μ : Fin P.samples → Bool),
+  TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdvice P w μ =
+    Turing.pairEncode
+      (Turing.pairEncode (TCSlib.Cryptography.Encoding.ModularArithmetic.modContext w P.modulus)
+        (List.replicate P.samples Bool.true))
+      (Turing.pairEncode (List.replicate (P.samples * P.dimension * w) Bool.true)
+        (TCSlib.Cryptography.Encoding.Modular.encodeVector w fun i =>
+          TCSlib.Cryptography.LWE.BitEncoding.codepoint P (μ i)))
+'TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdvice_length' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdvice_length : ∀ (P : TCSlib.Cryptography.LWE.Parameters) (w : ℕ)
+  (μ : Fin P.samples → Bool),
+  (TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdvice P w μ).length =
+    2 * (P.samples * P.dimension * w) + P.samples * w + 2 * P.samples + 12 * w + 20
+'TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdvice_length_le' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdvice_length_le : ∀ (F : TCSlib.Cryptography.LWE.Family) (κ : ℕ)
+  (μ : Fin (F.parameters κ).samples → Bool),
+  (TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdvice (F.parameters κ) (F.residueBits.eval κ) μ).length ≤
+    (TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdviceBound F).eval κ
+'TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftPre' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftPre : List Bool → List Bool
+'TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftPre_eq' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftPre_eq : ∀ (z : List Bool),
+  TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftPre z =
+    have adv := Complexity.pairFstD z;
+    have y := Complexity.pairSndD z;
+    have cut := (Complexity.pairFstD (Complexity.pairSndD adv)).length;
+    List.take cut y ++
+      TCSlib.Cryptography.Encoding.ModularArithmetic.vecAddModWords (Complexity.pairFstD (Complexity.pairFstD adv))
+        (Complexity.pairSndD (Complexity.pairFstD adv)) (List.drop cut y)
+        (Complexity.pairSndD (Complexity.pairSndD adv))
+'TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftPre_shiftAdvice' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftPre_shiftAdvice : ∀ (P : TCSlib.Cryptography.LWE.Parameters)
+  (w : ℕ),
+  P.modulus ≤ 2 ^ w →
+    ∀ (μ : Fin P.samples → Bool)
+      (x : Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) × (Fin P.samples → ZMod P.modulus)),
+      TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftPre
+          (Turing.pairEncode (TCSlib.Cryptography.Encryption.Symmetric.Regev.shiftAdvice P w μ)
+            (TCSlib.Cryptography.LWE.encodeChallenge P w x)) =
+        TCSlib.Cryptography.LWE.encodeChallenge P w (TCSlib.Cryptography.Encryption.Symmetric.Regev.shift P μ x)
+'TCSlib.Cryptography.Encryption.Symmetric.Regev.singleMessageSecure_of_dlweAssumption' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.Encryption.Symmetric.Regev.singleMessageSecure_of_dlweAssumption : ∀
+  (F : TCSlib.Cryptography.LWE.Family),
+  TCSlib.Cryptography.LWE.DLWEAssumption F →
+    ∀ (D : Complexity.NUPPT),
+      ∃ ε,
+        TCSlib.Cryptography.Negligible ε ∧
+          ∀ (κ : ℕ) (μ₀ μ₁ : Fin (F.parameters κ).samples → Bool),
+            (TCSlib.Cryptography.distAdv
+                (TCSlib.Cryptography.Encryption.Symmetric.Regev.encryptDist (F.parameters κ) (F.noise κ) μ₀)
+                (TCSlib.Cryptography.Encryption.Symmetric.Regev.encryptDist (F.parameters κ) (F.noise κ) μ₁) fun c r =>
+                D.distinguisherL κ (TCSlib.Cryptography.LWE.encodeChallenge (F.parameters κ) (F.residueBits.eval κ) c)
+                  r) ≤
+              ε κ
+'TCSlib.Cryptography.Encryption.PublicKey.Regev.encodeView' depends on axioms: [propext]
+TCSlib.Cryptography.Encryption.PublicKey.Regev.encodeView : (P : TCSlib.Cryptography.LWE.Parameters) →
+  ℕ →
+    (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) × (Fin P.samples → ZMod P.modulus)) ×
+        (Fin P.dimension → ZMod P.modulus) × ZMod P.modulus →
+      List Bool
+'TCSlib.Cryptography.Encryption.PublicKey.Regev.encodeView_eq' depends on axioms: [propext]
+TCSlib.Cryptography.Encryption.PublicKey.Regev.encodeView_eq : ∀ (P : TCSlib.Cryptography.LWE.Parameters) (w : ℕ)
+  (v :
+    (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) × (Fin P.samples → ZMod P.modulus)) ×
+      (Fin P.dimension → ZMod P.modulus) × ZMod P.modulus),
+  TCSlib.Cryptography.Encryption.PublicKey.Regev.encodeView P w v =
+    TCSlib.Cryptography.LWE.encodeChallenge P w v.1 ++
+      (TCSlib.Cryptography.Encoding.Modular.encodeVector w v.2.1 ++
+        TCSlib.Cryptography.Candidates.natToList w v.2.2.val)
+'TCSlib.Cryptography.Encryption.PublicKey.Regev.encodeView_length' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encryption.PublicKey.Regev.encodeView_length : ∀ (P : TCSlib.Cryptography.LWE.Parameters) (w : ℕ)
+  (v :
+    (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) × (Fin P.samples → ZMod P.modulus)) ×
+      (Fin P.dimension → ZMod P.modulus) × ZMod P.modulus),
+  (TCSlib.Cryptography.Encryption.PublicKey.Regev.encodeView P w v).length =
+    P.samples * (P.dimension + 1) * w + (P.dimension * w + w)
+'TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdvice' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdvice : TCSlib.Cryptography.LWE.Parameters → ℕ → Bool → List Bool
+'TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdviceBound' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdviceBound : TCSlib.Cryptography.LWE.Family → Complexity.PolyExpr
+'TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdviceBound_eval' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdviceBound_eval : ∀ (F : TCSlib.Cryptography.LWE.Family) (κ : ℕ),
+  (TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdviceBound F).eval κ =
+    2 * (F.samplesBound.eval κ * F.dimensionBound.eval κ * F.residueBits.eval κ) + 4 * F.dimensionBound.eval κ +
+          2 * F.samplesBound.eval κ +
+        13 * F.residueBits.eval κ +
+      24
+'TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdvice_eq' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdvice_eq : ∀ (P : TCSlib.Cryptography.LWE.Parameters) (w : ℕ)
+  (μ : Bool),
+  TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdvice P w μ =
+    Turing.pairEncode
+      (Turing.pairEncode (TCSlib.Cryptography.Encoding.ModularArithmetic.modContext w P.modulus)
+        (Turing.pairEncode (List.replicate P.dimension Bool.true) (List.replicate P.samples Bool.true)))
+      (Turing.pairEncode (List.replicate (P.samples * P.dimension * w) Bool.true)
+        (TCSlib.Cryptography.Candidates.natToList w (TCSlib.Cryptography.LWE.BitEncoding.codepoint P μ).val))
+'TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdvice_length' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdvice_length : ∀ (P : TCSlib.Cryptography.LWE.Parameters) (w : ℕ)
+  (μ : Bool),
+  (TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdvice P w μ).length =
+    2 * (P.samples * P.dimension * w) + 4 * P.dimension + 2 * P.samples + 13 * w + 24
+'TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdvice_length_le' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdvice_length_le : ∀ (F : TCSlib.Cryptography.LWE.Family) (κ : ℕ)
+  (μ : Bool),
+  (TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdvice (F.parameters κ) (F.residueBits.eval κ) μ).length ≤
+    (TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdviceBound F).eval κ
+'TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptPre' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptPre : List Bool → List Bool
+'TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptPre_encryptAdvice' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptPre_encryptAdvice : ∀ (P : TCSlib.Cryptography.LWE.Parameters)
+  (w : ℕ),
+  P.modulus ≤ 2 ^ w →
+    ∀ (μ : Bool) (pk : Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) × (Fin P.samples → ZMod P.modulus))
+      (r : Fin P.samples → Bool) (extra : List Bool),
+      TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptPre
+          (Turing.pairEncode (TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptAdvice P w μ)
+            (Turing.pairEncode (TCSlib.Cryptography.LWE.encodeChallenge P w pk) (List.ofFn r ++ extra))) =
+        TCSlib.Cryptography.Encryption.PublicKey.Regev.encodeView P w
+          (TCSlib.Cryptography.Encryption.PublicKey.Regev.view P μ pk r)
+'TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptPre_eq' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptPre_eq : ∀ (z : List Bool),
+  TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptPre z =
+    have adv := Complexity.pairFstD z;
+    have y := Complexity.pairFstD (Complexity.pairSndD z);
+    have s := Complexity.pairSndD (Complexity.pairSndD z);
+    have ctx := Complexity.pairFstD (Complexity.pairFstD adv);
+    have nT := Complexity.pairFstD (Complexity.pairSndD (Complexity.pairFstD adv));
+    have mT := Complexity.pairSndD (Complexity.pairSndD (Complexity.pairFstD adv));
+    have cut := (Complexity.pairFstD (Complexity.pairSndD adv)).length;
+    y ++
+      (TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords ctx nT mT (List.take cut y) s ++
+        TCSlib.Cryptography.Encoding.ModularArithmetic.addMod
+          (Turing.pairEncode ctx
+            (Turing.pairEncode
+              (TCSlib.Cryptography.Encoding.ModularArithmetic.subsetSumModWords ctx [Bool.true] mT (List.drop cut y) s)
+              (Complexity.pairSndD (Complexity.pairSndD adv)))))
+'TCSlib.Cryptography.Encryption.PublicKey.Regev.exists_reductionMachine' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.Encryption.PublicKey.Regev.exists_reductionMachine : ∀ (F : TCSlib.Cryptography.LWE.Family)
+  (μ : Bool) (D : Complexity.NUPPT),
+  ∃ D',
+    ∀ (κ : ℕ),
+      TCSlib.Cryptography.LWE.decisionAdvantage (F.parameters κ) (F.noise κ)
+          (TCSlib.Cryptography.Encryption.PublicKey.Regev.reduction (F.parameters κ) μ fun v r =>
+            D.distinguisherL κ
+              (TCSlib.Cryptography.Encryption.PublicKey.Regev.encodeView (F.parameters κ) (F.residueBits.eval κ) v) r) =
+        F.advantageAt D' κ
+'TCSlib.Cryptography.Encryption.PublicKey.Regev.polyTimeComputable_encryptPre' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.Encryption.PublicKey.Regev.polyTimeComputable_encryptPre : Complexity.PolyTimeComputable
+  TCSlib.Cryptography.Encryption.PublicKey.Regev.encryptPre
+'TCSlib.Cryptography.Encryption.PublicKey.Regev.singleBitSecure_of_dlweAssumption' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.Encryption.PublicKey.Regev.singleBitSecure_of_dlweAssumption : ∀
+  (F : TCSlib.Cryptography.LWE.Family),
+  TCSlib.Cryptography.LWE.DLWEAssumption F →
+    (∀ (κ : ℕ), ((F.parameters κ).dimension + 1) * F.residueBits.eval κ + 2 * κ ≤ (F.parameters κ).samples) →
+      ∀ (D : Complexity.NUPPT),
+        TCSlib.Cryptography.Negligible fun κ =>
+          TCSlib.Cryptography.distAdv
+            (TCSlib.Cryptography.Encryption.PublicKey.Regev.realView (F.parameters κ) (F.noise κ) Bool.false)
+            (TCSlib.Cryptography.Encryption.PublicKey.Regev.realView (F.parameters κ) (F.noise κ) Bool.true) fun v r =>
+            D.distinguisherL κ
+              (TCSlib.Cryptography.Encryption.PublicKey.Regev.encodeView (F.parameters κ) (F.residueBits.eval κ) v) r

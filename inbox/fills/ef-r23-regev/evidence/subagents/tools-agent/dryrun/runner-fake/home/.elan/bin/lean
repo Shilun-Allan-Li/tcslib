@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# FAKE lean for runner_regev.py self-test (tools-agent): records concurrency, no Lean is run.
+f=${@: -1}; echo start >> "$CONC"; n=$(grep -c start "$CONC"); e=$(grep -c end "$CONC"); echo "running=$((n-e)) args=$*"
+sleep 1; echo end >> "$CONC"
+case "$f" in *Bad*) echo "$f:3:1: error: fake"; exit 1;; esac; exit 0

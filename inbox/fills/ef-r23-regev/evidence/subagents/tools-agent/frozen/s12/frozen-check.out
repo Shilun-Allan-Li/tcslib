@@ -1,0 +1,18 @@
+frozen_check.py base 5ed465f62e4ae0f93ded1a1ba49e807591b589eb head daaf5e65f753100afc75d8180625c83b8f60e895
+git diff --stat 5ed465f62e4a daaf5e65f753:
+     TCSlib/Cryptography/Encoding.lean                              |   3 +
+     TCSlib/Cryptography/Encoding/ModularArithmetic.lean            | 730 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     TCSlib/Cryptography/Encryption/Symmetric/Regev.lean            |   3 +
+     TCSlib/Cryptography/Encryption/Symmetric/Regev/Asymptotic.lean | 310 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     4 files changed, 1046 insertions(+)
+DIFF-STAT: 4 changed path(s); outside the six allowed: 0
+  allowed TCSlib/Cryptography/Encoding/ModularArithmetic.lean: A
+  allowed TCSlib/Cryptography/Encoding.lean: M (facade)
+  allowed TCSlib/Cryptography/Encryption/Symmetric/Regev/Asymptotic.lean: A
+  allowed TCSlib/Cryptography/Encryption/Symmetric/Regev.lean: M (facade)
+  allowed TCSlib/Cryptography/Encryption/PublicKey/Regev/Asymptotic.lean: unchanged
+  allowed TCSlib/Cryptography/Encryption/PublicKey/Regev.lean: unchanged (facade)
+PASS TCSlib/Cryptography/Encoding.lean: differences 0, missing 0, insertions used ['enc-bullet', 'enc-import'], reverted==base True, declarations base/head (0, 0) equal True
+PASS TCSlib/Cryptography/Encryption/Symmetric/Regev.lean: differences 0, missing 0, insertions used ['sym-bullet', 'sym-import'], reverted==base True, declarations base/head (0, 0) equal True
+PENDING TCSlib/Cryptography/Encryption/PublicKey/Regev.lean: differences 0, missing ['pk-import', 'pk-bullet'], insertions used [], reverted==base True, declarations base/head (0, 0) equal True
+RESULT PASS

@@ -1,0 +1,41 @@
+{
+ "_comment": "Allow-list for frozen_check.py (tools-agent, fill ef-r23-regev, 2026-11-18). For each changed EXISTING file (the three facades), the only permitted changes against the base are the listed insertions. An insertion is placed directly after the base line `after` (exact text, must occur exactly once in the base), and its inserted lines are either `lines` (exact) or match `pattern` (a Python regex for the FIRST line; continuation lines must start with two spaces and not with `* `; at most `max_lines` lines in all). kind=import: every line must be an `import` line; kind=bullet: the lines must lie inside the `## Contents` section of the head file. The PublicKey facade (series 3) is given by pattern; replace it by exact `lines` once the lead has fixed the wording. `allowed_paths` are the six paths the fill may touch.",
+ "base": "5ed465f62e4ae0f93ded1a1ba49e807591b589eb",
+ "max_width": 100,
+ "allowed_paths": [
+  "TCSlib/Cryptography/Encoding/ModularArithmetic.lean",
+  "TCSlib/Cryptography/Encoding.lean",
+  "TCSlib/Cryptography/Encryption/Symmetric/Regev/Asymptotic.lean",
+  "TCSlib/Cryptography/Encryption/Symmetric/Regev.lean",
+  "TCSlib/Cryptography/Encryption/PublicKey/Regev/Asymptotic.lean",
+  "TCSlib/Cryptography/Encryption/PublicKey/Regev.lean"
+ ],
+ "facades": {
+  "TCSlib/Cryptography/Encoding.lean": [
+   {"id": "enc-import", "kind": "import",
+    "after": "import TCSlib.Cryptography.Encoding.BooleanVector",
+    "lines": ["import TCSlib.Cryptography.Encoding.ModularArithmetic"]},
+   {"id": "enc-bullet", "kind": "bullet",
+    "after": "* `BooleanVector`: false-padded binary domain words as encoded modular vectors.",
+    "lines": ["* `ModularArithmetic`: addition, vector addition and row subset sums modulo a general modulus",
+              "  read from the input, on the fixed-width encodings, with polynomial-time proofs."]}
+  ],
+  "TCSlib/Cryptography/Encryption/Symmetric/Regev.lean": [
+   {"id": "sym-import", "kind": "import",
+    "after": "import TCSlib.Cryptography.Encryption.Symmetric.Regev.Experiments",
+    "lines": ["import TCSlib.Cryptography.Encryption.Symmetric.Regev.Asymptotic"]},
+   {"id": "sym-bullet", "kind": "bullet",
+    "after": "* `Experiments`: common-secret sampling and the concrete two-reduction security bound.",
+    "lines": ["* `Asymptotic`: the shift reduction as a proved `NUPPT` and single-message security of the",
+              "  encoded encryptions from `DLWEAssumption`."]}
+  ],
+  "TCSlib/Cryptography/Encryption/PublicKey/Regev.lean": [
+   {"id": "pk-import", "kind": "import",
+    "after": "import TCSlib.Cryptography.Encryption.PublicKey.Regev.Experiments",
+    "lines": ["import TCSlib.Cryptography.Encryption.PublicKey.Regev.Asymptotic"]},
+   {"id": "pk-bullet", "kind": "bullet",
+    "after": "* `Experiments`: explicit DLWE hybrids, binary extraction and quantitative security bounds.",
+    "pattern": "^\\* `Asymptotic`: \\S", "max_lines": 2}
+  ]
+ }
+}

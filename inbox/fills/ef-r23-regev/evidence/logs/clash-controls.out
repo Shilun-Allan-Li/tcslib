@@ -1,0 +1,8 @@
+OK  K1 planted existing full name -> CLASH in base/pr377/stage2-s2a | base:1; pr377:1; stage2-s2a:1; head-minus-fill:1
+OK  K3 fresh name -> OK, no same-short INFO | OK
+OK  K4 fresh full name with existing short name -> OK + INFO lists Modular.encodeVector | base:1; pr377:1; stage2-s2a:1; head-minus-fill:1
+OK  K2 namespaced synthetic file resolves Modular.encodeVector -> CLASH, fresh -> OK | {'TCSlib.Cryptography.Encoding.Modular.encodeVector': 'CLASH', 'TCSlib.Cryptography.Encoding.Modular.fakeFresh_regev_k2': 'OK'}
+OK  K5 unqualified-use matcher: lines [3, 4] only | [3, 4]
+OK  K6 reverse import closure (commented import ignored) | ['TCSlib.lean', 'TCSlib/A.lean', 'TCSlib/B.lean', 'TCSlib/Cryptography/Encoding.lean']
+OK  K7 planted head-tree duplicate outside the fill paths -> CLASH (head-minus-fill only) | TCSlib/Cryptography/Encoding/Modular.lean:145 TCSlib.Cryptography.Encoding.ModularArithmetic.addMod
+ALL_CONTROLS_OK True

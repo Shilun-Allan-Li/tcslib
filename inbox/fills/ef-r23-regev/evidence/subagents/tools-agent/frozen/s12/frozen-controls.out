@@ -1,0 +1,47 @@
+frozen controls base 5ed465f62e4ae0f93ded1a1ba49e807591b589eb head daaf5e65f753100afc75d8180625c83b8f60e895
+== TCSlib/Cryptography/Encoding.lean [head]
+  OK  M0 unmutated: verdict PASS, differences 0, missing 0, decls_equal True (expected {'diff': 0, 'missing': 0, 'verdict': 'PASS'})
+  OK  M1 one character altered at line 24: verdict FAIL, differences 1, missing 0, decls_equal True (expected {'diff': 1, 'missing': 0})
+        replace base 23-23 -> head 24-24: -'  defining equations, and their proved length/injectivity guarantees.' | +'  Xefining equations, and their proved length/injectivity guarantees.'
+  OK  M2 one character altered in the bullet line 31: verdict FAIL, differences 1, missing 1, decls_equal True (expected {'diff': 1, 'missing': 1})
+        insert base 30-29 -> head 31-32: +'* `XodularArithmetic`: addition, vector addition and row subset sums modulo a general modulus' | +'  read from the input, on the fixed-width encodings, with polynomi
+  OK  M3 one extra line after line 24: verdict FAIL, differences 1, missing 0, decls_equal True (expected {'diff': 1, 'missing': 0})
+        insert base 24-23 -> head 25-25: +'-- extra'
+  OK  M4 the import dropped: verdict FAIL, differences 0, missing 1, decls_equal True (expected {'diff': 0, 'missing': 1})
+  OK  M5 the import moved to the start of the import block: verdict FAIL, differences 1, missing 1, decls_equal True (expected {'diff': 1, 'missing': 1})
+        insert base 5-4 -> head 5-5: +'import TCSlib.Cryptography.Encoding.ModularArithmetic'
+  OK  M6 base line 24 deleted: verdict FAIL, differences 1, missing 0, decls_equal True (expected {'diff': 1, 'missing': 0})
+        delete base 23-23 -> head 24-23: -'  defining equations, and their proved length/injectivity guarantees.'
+  OK  M7 a declaration added at the end: verdict FAIL, differences 1, missing 0, decls_equal False (expected {'diff_min': 1, 'decls_equal': False})
+        insert base 37-36 -> head 40-41: +'theorem frozenCtlExtra : True := trivial' | +''
+== TCSlib/Cryptography/Encryption/Symmetric/Regev.lean [head]
+  OK  M0 unmutated: verdict PASS, differences 0, missing 0, decls_equal True (expected {'diff': 0, 'missing': 0, 'verdict': 'PASS'})
+  OK  M1 one character altered at line 11: verdict FAIL, differences 1, missing 0, decls_equal True (expected {'diff': 1, 'missing': 0})
+        replace base 10-10 -> head 11-11: -'set_option autoImplicit false' | +'Xet_option autoImplicit false'
+  OK  M2 one character altered in the bullet line 20: verdict FAIL, differences 1, missing 1, decls_equal True (expected {'diff': 1, 'missing': 1})
+        insert base 19-18 -> head 20-21: +'* `Xsymptotic`: the shift reduction as a proved `NUPPT` and single-message security of the' | +'  encoded encryptions from `DLWEAssumption`.'
+  OK  M3 one extra line after line 11: verdict FAIL, differences 1, missing 0, decls_equal True (expected {'diff': 1, 'missing': 0})
+        insert base 11-10 -> head 12-12: +'-- extra'
+  OK  M4 the import dropped: verdict FAIL, differences 0, missing 1, decls_equal True (expected {'diff': 0, 'missing': 1})
+  OK  M5 the import moved to the start of the import block: verdict FAIL, differences 1, missing 1, decls_equal True (expected {'diff': 1, 'missing': 1})
+        insert base 5-4 -> head 5-5: +'import TCSlib.Cryptography.Encryption.Symmetric.Regev.Asymptotic'
+  OK  M6 base line 11 deleted: verdict FAIL, differences 1, missing 0, decls_equal True (expected {'diff': 1, 'missing': 0})
+        delete base 10-10 -> head 11-10: -'set_option autoImplicit false'
+  OK  M7 a declaration added at the end: verdict FAIL, differences 1, missing 0, decls_equal False (expected {'diff_min': 1, 'decls_equal': False})
+        insert base 24-23 -> head 27-28: +'theorem frozenCtlExtra : True := trivial' | +''
+== TCSlib/Cryptography/Encryption/PublicKey/Regev.lean [SYNTHETIC head (facade unchanged at head; insertions applied from the allow-list)]
+  OK  M0 unmutated: verdict PASS, differences 0, missing 0, decls_equal True (expected {'diff': 0, 'missing': 0, 'verdict': 'PASS'})
+  OK  M1 one character altered at line 14: verdict FAIL, differences 1, missing 0, decls_equal True (expected {'diff': 1, 'missing': 0})
+        replace base 13-13 -> head 14-14: -'# Regev public-key encryption' | +'# Xegev public-key encryption'
+  OK  M2 one character altered in the bullet line 20: verdict FAIL, differences 1, missing 1, decls_equal True (expected {'diff': 1, 'missing': 1})
+        insert base 19-18 -> head 20-21: +'* `Xsymptotic`: SAMPLE bullet text for the controls (synthetic),' | +'  second line.'
+  OK  M3 one extra line after line 14: verdict FAIL, differences 1, missing 0, decls_equal True (expected {'diff': 1, 'missing': 0})
+        insert base 14-13 -> head 15-15: +'-- extra'
+  OK  M4 the import dropped: verdict FAIL, differences 0, missing 1, decls_equal True (expected {'diff': 0, 'missing': 1})
+  OK  M5 the import moved to the start of the import block: verdict FAIL, differences 1, missing 1, decls_equal True (expected {'diff': 1, 'missing': 1})
+        insert base 5-4 -> head 5-5: +'import TCSlib.Cryptography.Encryption.PublicKey.Regev.Asymptotic'
+  OK  M6 base line 14 deleted: verdict FAIL, differences 1, missing 0, decls_equal True (expected {'diff': 1, 'missing': 0})
+        delete base 13-13 -> head 14-13: -'# Regev public-key encryption'
+  OK  M7 a declaration added at the end: verdict FAIL, differences 1, missing 0, decls_equal False (expected {'diff_min': 1, 'decls_equal': False})
+        insert base 26-25 -> head 29-30: +'theorem frozenCtlExtra : True := trivial' | +''
+ALL_CONTROLS_OK True

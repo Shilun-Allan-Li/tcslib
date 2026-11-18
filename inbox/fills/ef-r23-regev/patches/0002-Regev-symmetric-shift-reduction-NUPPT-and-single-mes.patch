@@ -1,0 +1,361 @@
+From daaf5e65f753100afc75d8180625c83b8f60e895 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 18 Nov 2026 10:10:03 +0000
+Subject: [PATCH 2/2] Regev symmetric: shift reduction NUPPT and single-message
+ security (EF-R3)
+
+Add Encryption/Symmetric/Regev/Asymptotic: the shift pre-processing and
+its advice, exists_shiftMachine (a proved NUPPT built with
+exists_realizesOn_of_preTarget_id whose DLWE advantage equals the shift
+reduction's) and singleMessageSecure_of_dlweAssumption (negligible
+advantage on encoded encryptions, bound before the messages, worst
+message pair as advice). Facade entry.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTk66VZE4WBTyevEPhu
+---
+ .../Encryption/Symmetric/Regev.lean           |   3 +
+ .../Symmetric/Regev/Asymptotic.lean           | 310 ++++++++++++++++++
+ 2 files changed, 313 insertions(+)
+ create mode 100644 TCSlib/Cryptography/Encryption/Symmetric/Regev/Asymptotic.lean
+
+diff --git a/TCSlib/Cryptography/Encryption/Symmetric/Regev.lean b/TCSlib/Cryptography/Encryption/Symmetric/Regev.lean
+index 7aedc1a76..0baa0a26f 100644
+--- a/TCSlib/Cryptography/Encryption/Symmetric/Regev.lean
++++ b/TCSlib/Cryptography/Encryption/Symmetric/Regev.lean
+@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.Encryption.Symmetric.Regev.Basic
+ import TCSlib.Cryptography.Encryption.Symmetric.Regev.Experiments
++import TCSlib.Cryptography.Encryption.Symmetric.Regev.Asymptotic
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -16,6 +17,8 @@ set_option autoImplicit false
+ 
+ * `Basic`: mathematical encryption/decryption and bounded-error correctness statements.
+ * `Experiments`: common-secret sampling and the concrete two-reduction security bound.
++* `Asymptotic`: the shift reduction as a proved `NUPPT` and single-message security of the
++  encoded encryptions from `DLWEAssumption`.
+ 
+ The nontrivial results are statement-phase obligations. Efficient uniform algorithms,
+ the existing `PrivateKeyScheme` bridge and adaptive CPA security remain later work.
+diff --git a/TCSlib/Cryptography/Encryption/Symmetric/Regev/Asymptotic.lean b/TCSlib/Cryptography/Encryption/Symmetric/Regev/Asymptotic.lean
+new file mode 100644
+index 000000000..10a77f693
+--- /dev/null
++++ b/TCSlib/Cryptography/Encryption/Symmetric/Regev/Asymptotic.lean
+@@ -0,0 +1,310 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Encryption.Symmetric.Regev.Experiments
++import TCSlib.Cryptography.LWE.Assumption
++import TCSlib.Cryptography.Asymptotic.Realization
++import TCSlib.Cryptography.Asymptotic.EnsemblesLemmas
++import TCSlib.Cryptography.Encoding.ModularArithmetic
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Direct Regev symmetric encryption: asymptotic single-message security
++
++## Main definitions
++
++* `shiftAdvice`: the reduction's advice at one parameter: the modulus context, the counters
++  and the encoded codepoint vector of the fixed message.
++* `shiftPre`: the polynomial-time pre-processing that adds the advice's codepoint vector to
++  the value block of an encoded LWE challenge modulo `q`.
++* `shiftAdviceBound`: a syntactic polynomial bounding the advice length.
++
++## Main results
++
++* `shiftPre_shiftAdvice`, `polyTimeComputable_shiftPre`: the pre-processing computes the
++  encoded `shift` and is polynomial-time.
++* `exists_shiftMachine`: for every `NUPPT` `D` and message schedule `μ` there is an `NUPPT` `D'`
++  whose DLWE advantage is exactly that of `D` on the shifted challenge.
++* `singleMessageSecure_of_dlweAssumption`: under `DLWEAssumption F`, every `NUPPT`
++  distinguisher of the encoded encryptions of two messages has negligible advantage, with
++  the bound chosen before the messages.
++
++## References
++
++* [Wu24] D. Wu, CS395T *Topics in Cryptography*, Spring 2024 lecture notes, compilation last
++  updated 30 April 2024, Definition 20.5 and Lecture 21 (symmetric Regev and its two-hybrid
++  bound).
++* [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, 17 February 2016,
++  Definition 4.2.3 (decisional LWE).
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, 3rd ed., January 2010,
++  Definitions 26.8 (non-uniform PPT machines) and 91.1 (single-message security: the bound
++  before the messages).
++
++**The reduction.** The reduction of `distAdv_encrypt_le` runs the distinguisher on the
++challenge with the message's codepoints added to its value vector. As a machine it is
++non-uniform: the parameters `n`, `m`, `q`, the width and the codepoint vector of the
++message are advice (`shiftAdvice`), and the addition modulo `q` is the public toolkit
++`Encoding.ModularArithmetic.vecAddModWords`. The machine is built with
++`NUPPT.exists_realizesOn_of_preTarget_id` and read through `RealizesOn.distinguisherL_eq`.
++The worst message pair is chosen at each parameter as advice, the averaging pattern of
++`PrivateKeyScheme` security from a PRG (`Encryption/PrivateKey/FromPRG.lean`,
++`prgScheme_singleMessageSecure`). The statements are over the raw `LWE.Family` and make no
++claim about the honest algorithms' efficiency.
++-/
++
++namespace TCSlib.Cryptography.Encryption.Symmetric.Regev
++
++open Complexity Turing
++open LWE (Parameters Noise)
++open Encoding.ModularArithmetic
++
++/-! ## The pre-processing and its advice -/
++
++/-- **The shift reduction's advice** at parameters `P`, width `w` and message `μ`:
++`⟨⟨modContext w q, 1^m⟩, ⟨1^{m n w}, encodeVector w (codepoint ∘ μ)⟩⟩`, with `m` samples,
++dimension `n` and modulus `q`. Glue: the non-uniform advice of the reduction in
++[Wu24, Lecture 21] ([PS10, Definition 26.8]). -/
++def shiftAdvice (P : Parameters) (w : ℕ) (μ : Fin P.samples → Bool) : List Bool :=
++  pairEncode (pairEncode (modContext w P.modulus) (List.replicate P.samples true))
++    (pairEncode (List.replicate (P.samples * P.dimension * w) true)
++      (Encoding.Modular.encodeVector w fun i => LWE.BitEncoding.codepoint P (μ i)))
++
++/-- `shiftAdvice P w μ = ⟨⟨modContext w q, 1^m⟩, ⟨1^{m n w},
++encodeVector w (codepoint ∘ μ)⟩⟩`. -/
++theorem shiftAdvice_eq (P : Parameters) (w : ℕ) (μ : Fin P.samples → Bool) :
++    shiftAdvice P w μ =
++      pairEncode (pairEncode (modContext w P.modulus) (List.replicate P.samples true))
++        (pairEncode (List.replicate (P.samples * P.dimension * w) true)
++          (Encoding.Modular.encodeVector w fun i => LWE.BitEncoding.codepoint P (μ i))) := rfl
++
++/-- The advice has `2 m n w + m w + 2 m + 12 w + 20` bits.
++
++**Proof sketch.** `length_pairEncode`, `modContext_length`, `List.length_replicate` and
++`Encoding.Modular.encodeVector_length`. -/
++theorem shiftAdvice_length (P : Parameters) (w : ℕ) (μ : Fin P.samples → Bool) :
++    (shiftAdvice P w μ).length =
++      2 * (P.samples * P.dimension * w) + P.samples * w + 2 * P.samples + 12 * w + 20 := by
++  rw [shiftAdvice_eq, length_pairEncode, length_pairEncode, length_pairEncode,
++    modContext_length, List.length_replicate, List.length_replicate,
++    Encoding.Modular.encodeVector_length]
++  ring
++
++/-- **The shift pre-processing.** On `⟨adv, y⟩` with
++`adv = ⟨⟨ctx, mT⟩, ⟨cut, cvec⟩⟩`, keep the first `|cut|` bits of `y` (the encoded matrix)
++and add `cvec` to the remaining value block modulo `q`, coordinatewise over `|mT|`
++coordinates (`vecAddModWords ctx mT`). Glue: the deterministic part of the reduction of
++[Wu24, Lecture 21]. -/
++def shiftPre (z : List Bool) : List Bool :=
++  let adv := pairFstD z
++  let y := pairSndD z
++  let cut := (pairFstD (pairSndD adv)).length
++  y.take cut ++ vecAddModWords (pairFstD (pairFstD adv)) (pairSndD (pairFstD adv)) (y.drop cut)
++    (pairSndD (pairSndD adv))
++
++/-- `shiftPre ⟨⟨⟨ctx, mT⟩, ⟨cut, cvec⟩⟩, y⟩ = y.take |cut| ++
++vecAddModWords ctx mT (y.drop |cut|) cvec`, through the total projections. -/
++theorem shiftPre_eq (z : List Bool) :
++    shiftPre z =
++      let adv := pairFstD z
++      let y := pairSndD z
++      let cut := (pairFstD (pairSndD adv)).length
++      y.take cut ++ vecAddModWords (pairFstD (pairFstD adv)) (pairSndD (pairFstD adv))
++        (y.drop cut) (pairSndD (pairSndD adv)) := rfl
++
++/-- **The pre-processing computes the encoded shift**: if `q ≤ 2^w`, then on the advice of `μ`
++and the encoded challenge `x`, `shiftPre` returns the encoded `shift P μ x`
++[Wu24, Definition 20.5, representation].
++
++**Proof sketch.** The encoded challenge is `encodeMatrix w A ++ encodeVector w b`
++(`LWE.encodeChallenge_eq`); the cut has length `m n w = |encodeMatrix w A|`
++(`encodeMatrix_length`), so take and drop split it. `vecAddModWords_modContext` adds the
++codepoint vector to `b`, which is `(shift P μ x).2` (`shift_snd`), and the matrix is kept
++(`shift_fst`). -/
++theorem shiftPre_shiftAdvice (P : Parameters) (w : ℕ) (hq : P.modulus ≤ 2 ^ w)
++    (μ : Fin P.samples → Bool)
++    (x : Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
++      (Fin P.samples → ZMod P.modulus)) :
++    shiftPre (pairEncode (shiftAdvice P w μ) (LWE.encodeChallenge P w x)) =
++      LWE.encodeChallenge P w (shift P μ x) := by
++  have hcut : (Encoding.Modular.encodeMatrix w x.1).length =
++      (List.replicate (P.samples * P.dimension * w) true).length := by
++    rw [Encoding.Modular.encodeMatrix_length, List.length_replicate]
++  rw [shiftPre_eq]
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode, shiftAdvice_eq, LWE.encodeChallenge_eq]
++  rw [List.take_left' hcut, List.drop_left' hcut,
++    vecAddModWords_modContext hq _ (List.length_replicate (n := P.samples) (a := true)),
++    shift_fst]
++  have hsnd : (x.2 + fun i => LWE.BitEncoding.codepoint P (μ i)) = (shift P μ x).2 := by
++    funext i
++    rw [shift_snd]
++  rw [hsnd]
++
++/-- **The shift pre-processing is polynomial-time** on every input.
++
++**Proof sketch.** Cut the challenge with `polyTimeComputable_pairTakePoly .var` and
++`pairDropPoly .var` on `⟨cut, y⟩`, apply `polyTimeComputable_vecAddModWords` to the packed
++arguments and append. -/
++theorem polyTimeComputable_shiftPre : PolyTimeComputable shiftPre := by
++  have hadv := polyTimeComputable_pairFstD
++  have hy := polyTimeComputable_pairSndD
++  have hcut := polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp hadv)
++  have hctx := polyTimeComputable_pairFstD.comp (polyTimeComputable_pairFstD.comp hadv)
++  have hmT := polyTimeComputable_pairSndD.comp (polyTimeComputable_pairFstD.comp hadv)
++  have hcvec := polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp hadv)
++  have htake : PolyTimeComputable (fun z => (pairSndD z).take
++      (pairFstD (pairSndD (pairFstD z))).length) := by
++    refine Eq.mp (congrArg PolyTimeComputable ?_)
++      ((polyTimeComputable_pairTakePoly .var).comp (hcut.pairEncode hy))
++    funext z
++    simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_var]
++  have hdrop : PolyTimeComputable (fun z => (pairSndD z).drop
++      (pairFstD (pairSndD (pairFstD z))).length) := by
++    refine Eq.mp (congrArg PolyTimeComputable ?_)
++      ((polyTimeComputable_pairDropPoly .var).comp (hcut.pairEncode hy))
++    funext z
++    simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_var]
++  have hsum : PolyTimeComputable (fun z => vecAddModWords (pairFstD (pairFstD (pairFstD z)))
++      (pairSndD (pairFstD (pairFstD z)))
++      ((pairSndD z).drop (pairFstD (pairSndD (pairFstD z))).length)
++      (pairSndD (pairSndD (pairFstD z)))) := by
++    refine Eq.mp (congrArg PolyTimeComputable ?_) (polyTimeComputable_vecAddModWords.comp
++      (hctx.pairEncode (hmT.pairEncode (hdrop.pairEncode hcvec))))
++    funext z
++    simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
++  exact htake.append hsum
++
++/-- **The advice bound** `2 S D R + S R + 2 S + 12 R + 20` of a family `F`, with `S`, `D`, `R`
++its sample, dimension and width polynomials. Glue. -/
++def shiftAdviceBound (F : LWE.Family) : PolyExpr :=
++  .add (.add (.add (.add (.mul (.const 2) (.mul (.mul F.samplesBound F.dimensionBound)
++    F.residueBits)) (.mul F.samplesBound F.residueBits)) (.mul (.const 2) F.samplesBound))
++    (.mul (.const 12) F.residueBits)) (.const 20)
++
++/-- `shiftAdviceBound F` evaluates to `2 S D R + S R + 2 S + 12 R + 20`.
++
++**Proof sketch.** The `PolyExpr` evaluation equations. -/
++theorem shiftAdviceBound_eval (F : LWE.Family) (κ : ℕ) :
++    (shiftAdviceBound F).eval κ =
++      2 * (F.samplesBound.eval κ * F.dimensionBound.eval κ * F.residueBits.eval κ) +
++        F.samplesBound.eval κ * F.residueBits.eval κ + 2 * F.samplesBound.eval κ +
++        12 * F.residueBits.eval κ + 20 := by
++  simp only [shiftAdviceBound, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
++
++/-- The advice of every message at parameter `κ` has at most `(shiftAdviceBound F).eval κ`
++bits.
++
++**Proof sketch.** `shiftAdvice_length`, then the family's bounds `samples_le` and
++`dimension_le`, monotonically in every summand. -/
++theorem shiftAdvice_length_le (F : LWE.Family) (κ : ℕ)
++    (μ : Fin (F.parameters κ).samples → Bool) :
++    (shiftAdvice (F.parameters κ) (F.residueBits.eval κ) μ).length ≤
++      (shiftAdviceBound F).eval κ := by
++  rw [shiftAdvice_length, shiftAdviceBound_eval]
++  have hm := F.samples_le κ
++  have hn := F.dimension_le κ
++  gcongr
++
++/-! ## The reduction machine -/
++
++/-- **The shift reduction as a proved `NUPPT`** [Wu24, Lecture 21; PS10, Definition 26.8]: for
++every family `F`, message schedule `μ` and `NUPPT` distinguisher `D`, some `NUPPT` `D'` has, at
++every parameter `κ`, exactly the DLWE advantage of `D` run on the encoded challenge with the
++codepoints of `μ κ` added to its value vector:
++`decisionAdvantage (fun c r => D(1^κ, enc (shift (μ κ) c); r)) = F.advantageAt D' κ`.
++The machine is non-uniform: `n`, `m`, `q`, the width and `μ κ` are its advice.
++
++**Proof sketch.** `NUPPT.exists_realizesOn_of_preTarget_id` with the pre-processing
++`shiftPre` (`polyTimeComputable_shiftPre`), the advice `shiftAdvice` of `μ κ`, bounded by
++`shiftAdviceBound F` (`shiftAdvice_length_le`), and the target `shiftPre_shiftAdvice` (with
++`F.modulus_le_pow`) gives `D'` with `D.coins` and the realised function
++`D.runAtL κ (enc (shift (μ κ) x)) (r.take |D's coins|)`. Its verdict on a coin string `ρ` is
++`D`'s on the coins `coinsCongr ρ` (`RealizesOn.distinguisherL_eq`, `runAt_coinsCongr`, the
++take being the whole string). Relabelling the coins (`acceptProb_coins_equiv`) in both
++acceptance probabilities of the DLWE experiment gives the equation. -/
++theorem exists_shiftMachine (F : LWE.Family)
++    (μ : ∀ κ, Fin (F.parameters κ).samples → Bool) (D : NUPPT) :
++    ∃ D' : NUPPT, ∀ κ, LWE.decisionAdvantage (F.parameters κ) (F.noise κ)
++      (fun c r => D.distinguisherL κ (LWE.encodeChallenge (F.parameters κ)
++        (F.residueBits.eval κ) (shift (F.parameters κ) (μ κ) c)) r) = F.advantageAt D' κ := by
++  obtain ⟨B, hB⟩ := NUPPT.exists_realizesOn_of_preTarget_id D
++    (X := fun κ => Matrix (Fin (F.parameters κ).samples) (Fin (F.parameters κ).dimension)
++      (ZMod (F.parameters κ).modulus) ×
++        (Fin (F.parameters κ).samples → ZMod (F.parameters κ).modulus))
++    (Ω := fun κ => Fin (F.parameters κ).samples → Bool)
++    (fun κ x => LWE.encodeChallenge (F.parameters κ) (F.residueBits.eval κ) x)
++    (fun κ ν => shiftAdvice (F.parameters κ) (F.residueBits.eval κ) ν)
++    (fun κ ν x => LWE.encodeChallenge (F.parameters κ) (F.residueBits.eval κ)
++      (shift (F.parameters κ) ν x))
++    polyTimeComputable_shiftPre
++    (fun κ ν x => shiftPre_shiftAdvice _ _ (F.modulus_le_pow κ) ν x)
++    μ (shiftAdviceBound F) (fun κ => shiftAdvice_length_le F κ (μ κ))
++  refine ⟨B, fun κ => ?_⟩
++  have hc : B.coins = D.coins := hB.coins_eq
++  have hverdict (x : Matrix (Fin (F.parameters κ).samples) (Fin (F.parameters κ).dimension)
++      (ZMod (F.parameters κ).modulus) ×
++        (Fin (F.parameters κ).samples → ZMod (F.parameters κ).modulus))
++      (ρ : B.Coins κ) :
++      B.distinguisherL κ (LWE.encodeChallenge (F.parameters κ) (F.residueBits.eval κ) x) ρ =
++        D.distinguisherL κ (LWE.encodeChallenge (F.parameters κ) (F.residueBits.eval κ)
++          (shift (F.parameters κ) (μ κ) x)) (NUPPT.coinsCongr hc κ ρ) := by
++    rw [hB.distinguisherL_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_coinsCongr,
++      List.take_of_length_le (by rw [List.length_ofFn, NUPPT.coinLen_eq, NUPPT.coinLen_eq, hc])]
++  rw [LWE.Family.advantageAt_eq, LWE.decisionAdvantage_eq, LWE.decisionAdvantage_eq,
++    distAdv_def, distAdv_def]
++  simp only [hverdict]
++  let Dμ : (Matrix (Fin (F.parameters κ).samples) (Fin (F.parameters κ).dimension)
++      (ZMod (F.parameters κ).modulus) × (Fin (F.parameters κ).samples →
++        ZMod (F.parameters κ).modulus)) → D.Coins κ → Bool := fun c r =>
++    D.distinguisherL κ (LWE.encodeChallenge (F.parameters κ) (F.residueBits.eval κ)
++      (shift (F.parameters κ) (μ κ) c)) r
++  rw [EnsembleLemmas.acceptProb_coins_equiv (NUPPT.coinsCongr hc κ) _ Dμ,
++    EnsembleLemmas.acceptProb_coins_equiv (NUPPT.coinsCongr hc κ) _ Dμ]
++
++/-! ## Single-message security -/
++
++/-- **Single-message security of symmetric Regev from decisional LWE**
++[Wu24, Definition 20.5 and Lecture 21; PS10, Definition 91.1]: if `DLWEAssumption F`, then for
++every `NUPPT` distinguisher `D` there is a negligible `ε` such that at every parameter `κ` and
++for all messages `μ₀ μ₁ ∈ {0,1}^m`,
++`distAdv (encryptDist μ₀) (encryptDist μ₁) (fun c r => D(1^κ, enc c; r)) ≤ ε κ`, on the encoded
++ciphertexts. The bound is chosen before the messages, the quantifier order of
++`PrivateKeyScheme.SingleMessageSecure`. **Deviation:** over the raw `LWE.Family` (`m` messages
++bits at `κ`, not exactly `κ`) and its encoded ciphertexts; the scheme instance and its honest
++efficiency are separate.
++
++**Proof sketch.** At each `κ` pick a message `μ* κ` maximising the shift reduction's DLWE
++advantage (a finite maximum; this choice is the reduction's advice). `exists_shiftMachine` at
++`μ*` gives `D'`, and `ε κ := 2 · F.advantageAt D' κ` is negligible (`DLWEAssumption F` and
++`Negligible.add`). For any `μ₀, μ₁`, `distAdv_encrypt_le` bounds the advantage by the two
++reductions' advantages, each at most the one at `μ* κ`. -/
++theorem singleMessageSecure_of_dlweAssumption (F : LWE.Family) (hF : LWE.DLWEAssumption F)
++    (D : NUPPT) :
++    ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ κ (μ₀ μ₁ : Fin (F.parameters κ).samples → Bool),
++      distAdv (encryptDist (F.parameters κ) (F.noise κ) μ₀)
++        (encryptDist (F.parameters κ) (F.noise κ) μ₁)
++        (fun c r => D.distinguisherL κ
++          (LWE.encodeChallenge (F.parameters κ) (F.residueBits.eval κ) c) r) ≤ ε κ := by
++  let g : ∀ κ, (Fin (F.parameters κ).samples → Bool) → ℝ := fun κ ν =>
++    LWE.decisionAdvantage (F.parameters κ) (F.noise κ)
++      (fun c r => D.distinguisherL κ (LWE.encodeChallenge (F.parameters κ)
++        (F.residueBits.eval κ) (shift (F.parameters κ) ν c)) r)
++  have hmax (κ : ℕ) : ∃ ν, ∀ ν', g κ ν' ≤ g κ ν := by
++    obtain ⟨ν, -, hν⟩ := Finset.exists_max_image Finset.univ (g κ) Finset.univ_nonempty
++    exact ⟨ν, fun ν' => hν ν' (Finset.mem_univ ν')⟩
++  choose μstar hμstar using hmax
++  obtain ⟨D', hD'⟩ := exists_shiftMachine F μstar D
++  refine ⟨fun κ => F.advantageAt D' κ + F.advantageAt D' κ, ?_, fun κ μ₀ μ₁ => ?_⟩
++  · have h := (LWE.dlweAssumption_iff F).mp hF D'
++    exact h.add h
++  · calc
++      _ ≤ g κ μ₀ + g κ μ₁ :=
++        distAdv_encrypt_le (F.parameters κ) (F.noise κ) μ₀ μ₁ (fun c r => D.distinguisherL κ
++          (LWE.encodeChallenge (F.parameters κ) (F.residueBits.eval κ) c) r)
++      _ ≤ g κ (μstar κ) + g κ (μstar κ) := add_le_add (hμstar κ μ₀) (hμstar κ μ₁)
++      _ = F.advantageAt D' κ + F.advantageAt D' κ := by rw [← hD' κ]
++
++end TCSlib.Cryptography.Encryption.Symmetric.Regev
+-- 
+2.43.0
+
