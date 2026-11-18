@@ -1,7 +1,8 @@
 # Tier 2 design note: the word RAM on Turing machines (`exists_simulation`, `exists_ndSimulation`)
 
-Draft, 2026-11-18 (maintainer, at Seyoon's request). Base: `complexity/ram-simulation` after #371
-(`adb694d2`; snapshot `oleans-cl161-cl160`). Nothing here is decided until Seyoon rules on §6.
+2026-11-18 (maintainer, at Seyoon's request). Base: `complexity/ram-simulation` after #371
+(`adb694d2`; snapshot `oleans-cl161-cl160`). **Seyoon ruled on D1–D5 the same day** (§6). The jobs
+are §5's regrouped table.
 
 ## 1. What is left, and what the statements ask
 
@@ -150,41 +151,46 @@ two-tape form goes into the shared layer rather than into a private copy.
 | S4 | The nondeterministic form: coin phase, slices, matching choice words to coin streams | `RAMSimulation/Sim/ND.lean`, then `Simulation.lean` | internal | 500–1,000 |
 
 **Total: about 6,200–11,100 lines.** This agrees with the itemized 6,100–10,500 of 2026-10-12.
-Tier 1's single fill delivered about 800 lines of machines. So this is roughly ten fills of
-600–1,200 lines each, the same size as tiers 0 and 1.
+
+**The jobs** (Seyoon, D4: Codex in the local checkout, larger jobs than tiers 0–1, run in
+parallel):
+
+| Job | Pieces | Estimate (lines) | Can start |
+|---|---|---|---|
+| A | L1 and L2: the lockstep row with its instances, and multiplication | 1,300–2,400 | after the statement gate |
+| B | L3: the keyed table host | 1,500–2,500 | after the statement gate |
+| C | L4 and S1: the input contracts, the range test and the start-up | 800–1,500 | after the statement gate |
+| D | S2: the encoding invariant, the instruction phases and the parity phase host | 1,500–2,500 | after the statement gate, against A–C's gated statements |
+| E | S3 and S4: the master induction, the bounds, both targets | 1,100–2,200 | after the statement gate, against D's gated statements |
+
+All five can run at once. Each cites the others' gated statements under the proved-modulo
+rule, and lands once what it cites is proved.
 
 **Sequence:**
 1. **Statements PR** (maintainer):
    - sorried public statements of L1–L4;
    - S1–S3's internal interfaces, especially the encoding invariant, which every phase shares;
    - a statement gate (Codex audit).
-2. **Library fills, in parallel:**
-   - L1 (one fill), then L2 (one fill);
-   - L3 (two or three fills: find and read, then overwrite and append);
-   - L4 (one fill, small).
-3. **Simulation fills** against the gated statements, under the proved-modulo rule, so they can
-   run alongside step 2:
-   - S1 (one);
-   - S2 (two or three: arithmetic phases; memory phases; input and output phases);
-   - S3 (one);
-   - S4 (one).
+2. **Jobs A–E in parallel** (table above), each against the gated statements.
 4. **Landing:** each delivery through the gate kit, as with #371. `Simulation.lean` drops its last
    two admissions only when every piece below it is proved.
 
-## 6. Decisions for Seyoon (one at a time)
+## 6. Decisions (Seyoon, 2026-11-18)
 
-- **D1. New public homes.** The four new `Build/` modules L1–L4 with public contracts, and the
+- **D1. New public homes. Approved as proposed.** The four new `Build/` modules L1–L4 with public contracts, and the
   simulation split over `RAMSimulation/Sim/*.lean` with public lemmas in an internal namespace
   (`WordRAM.Sim`), so that they can cross files. *Recommended:* yes. The alternative, one
   `Simulation.lean` of 3,000–5,000 private lines, breaks the file-size policy, and hosts-first
   forbids a private table.
-- **D2. The table layout.** Reuse `RecordTable`'s `TableAt` layout with new keyed rows in
+- **D2. The table layout. Reuse `RecordTable`'s layout.** Reuse `RecordTable`'s `TableAt` layout with new keyed rows in
   `Build/KeyTable.lean` (*recommended*: one table layout in the library), or a separate layout
   tuned to the RAM.
-- **D3. One master induction** on the nondeterministic host, with the deterministic form as its
+- **D3. One master induction. Approved.** on the nondeterministic host, with the deterministic form as its
   `fixChoice false` corollary (*recommended*: one induction instead of two), or two separate
   machines.
-- **D4. Fill routing:** Codex fills from the exchange as for tiers 0–1, one piece per fill
-  (*recommended*), or a mix with Claude fills for the large S2.
-- **D5. The statement gate** for step 1: a Codex audit, as for the 2026-10-14 statement gate
+- **D4. Fill routing.** Proposed: Codex fills, one piece per fill. **Ruled:** "codex in local
+  checkout, but 600-1200 lines per job is too little. we can bite off more than that per job (in
+  addition to running the jobs in parallel)". So the work goes as five larger jobs, A–E (§5), in
+  parallel, through the exchange (Seyoon, 2026-11-17).
+- **D5. The statement gate. A Codex statement audit.** for step 1: a Codex audit, as for the 2026-10-14 statement gate
   (*recommended*: these are new public APIs).
