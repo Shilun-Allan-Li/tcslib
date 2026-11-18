@@ -10,7 +10,7 @@ the pin, this file holds placeholders for the pin and the exchange commit, and `
 next records commit fills them in and changes nothing else. `SHA256SUMS` does not cover this file, and the exchange pack
 does not contain it.
 
-The Codex pack is staged on the exchange at `<EXCHANGE>`, folder `outbox/gates/46-gsw-6b-gate/`. Seyoon dispatches.
+The Codex pack is staged on the exchange at `8cfb07b12373974d324fb99f47fc2e035dce6aef`, folder `outbox/gates/46-gsw-6b-gate/`. Seyoon dispatches.
 
 ## Prompt for Codex
 
@@ -19,12 +19,12 @@ You are an external Codex auditor for Gate 46 of GSW phase 6 (the 6b gate:
 the owner-side PR O2 and the 6b cryptography-layer statements), round 1, in
 https://github.com/Shilun-Allan-Li/tcslib.
 
-1. Read exchange/pass-shelat-ch5-8 at <EXCHANGE>.
+1. Read exchange/pass-shelat-ch5-8 at 8cfb07b12373974d324fb99f47fc2e035dce6aef.
    Read outbox/gates/46-gsw-6b-gate/README.md, pack.md, dup-sweep.md and
    bundle.md. Verify the pack using SHA256SUMS, and verification.zip using
    the SHA256SUMS inside it.
 2. Audit two stacked draft PRs, using the pack, with campaign records
-   <RECORDS>
+   1404eff9d9d9f55f7e4687a87395dec70dbb791e
    (cryptography/pass-shelat-ch2-4; the pin files the records copy of this
    pack; its Lean equals olean snapshot #10, cf6a2266, with #366 and #368
    merged):
@@ -91,7 +91,7 @@ The user dispatches and merges.
 
 ## State at staging
 
-- **Records pin:** `<RECORDS>`, the commit that files this directory as re-staged (with `le-g46.md`, `le-g46.diff.txt`,
+- **Records pin:** `1404eff9d9d9f55f7e4687a87395dec70dbb791e`, the commit that files this directory as re-staged (with `le-g46.md`, `le-g46.diff.txt`,
   `le-g46-evidence.zip`) and DL-61 as repaid. Its parent is the records tip at re-staging,
   `9ae6b909305f868f51f5cc05787c66e4d336bf74` (`38123ccb` plus 31 records-only commits), or a records-only descendant.
   The first staging was filed at `e48a576c` (parent `dab31951`); `le-g46.diff.txt` and DL-61's update were committed

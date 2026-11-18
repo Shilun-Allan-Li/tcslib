@@ -30,7 +30,7 @@ Round 1. The auditor is Codex, under the standing ruling of 2026-11-11 (Codex fo
     - the maintainer's landing-edit commit **`680be9fa`** (LE-6b1, LE-6b2, LE-6b3);
     - the maintainer's landing-edit commit **`7563734a`** (LE-g46: S1 fixed, and the [Gen09] citations).
   - It changes 11 files, +2144/−1.
-- **Records pin: `<RECORDS>`.** This is the commit that files this directory, `briefs/lattice-gsw/gates/46-gsw-6b/`.
+- **Records pin: `1404eff9d9d9f55f7e4687a87395dec70dbb791e`.** This is the commit that files this directory, `briefs/lattice-gsw/gates/46-gsw-6b/`.
   - The records tip at re-staging is `9ae6b909305f868f51f5cc05787c66e4d336bf74`; the pin's parent is that tip or a
     records-only descendant. The pin files this directory as re-staged (with `le-g46.md`, `le-g46.diff.txt` and
     `le-g46-evidence.zip`) and ledger row DL-61 as repaid.
