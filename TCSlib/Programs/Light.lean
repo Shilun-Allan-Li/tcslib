@@ -37,6 +37,7 @@ import TCSlib.Programs.Light.Rules
 import TCSlib.Programs.Light.RunsStayInLimits
 import TCSlib.Programs.Light.Syntax
 import TCSlib.Programs.Light.Tactics
+import TCSlib.Programs.Light.TMProc
 
 /-!
 # Programs: the light language
@@ -75,6 +76,7 @@ A small imperative language with procedures and recursion; its program logic (`E
 * `TCSlib.Programs.Light.Logic`: Proof rules for the light language
 * `TCSlib.Programs.Light.Regions`: Regions of the memory, and the cells that a step leaves alone
 * `TCSlib.Programs.Light.Renumber`: Two programs in one: relocation of procedures
+* `TCSlib.Programs.Light.TMProc`: Running a Turing machine inside a Light program
 * `TCSlib.Programs.Light.Rules`: Derived rules: time that is not typed, blocks, counting loops
 * `TCSlib.Programs.Light.RunsStayInLimits`: Runs stay within their limits
 * `TCSlib.Programs.Light.Syntax`: The light language
