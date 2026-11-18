@@ -1,0 +1,183 @@
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean
+index c2d0f7693..180c8eaf5 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean
+@@ -39,9 +39,11 @@ of the hypothesis [BV11, Thm 3.2; BV14, Thm 2.14 second part]: pure-FHE security
+ **Compactness** holds by typing (`GSW/Bootstrap.lean`, `GSW/Leveled.lean`).
+ 
+ **Sources and reconstruction (P6-Q19 B), for the leveled statements** (`LeveledReductionEfficient`,
+-A3). The key-chain construction and the hybrid order are reconstructed: no ingested passage
+-gives them. BV11 and BV14 attribute leveled bootstrapping to Gentry's work; that passage will
+-be cited here once it is ingested.
++A3). The key chain is Gentry's [Gen09, §4.1, `KeyGen` of `E^(d)`, pp. 46–47, p056-b003], with
++his reverse order of the levels undone (`GSW/Leveled.lean`). The level hybrid of L4–L5 follows
++[Gen09, Thm 4.2.3 and its proof, pp. 50–51, p060-b001, p061-b001] (`GSW/LeveledSecurity.lean`),
++whose reduction loses the factor `ℓ(d + 1)` (Gentry's `ℓ` is the key length), linear in the
++depth; here the number of levels `L(κ)` is a polynomial.
+ 
+ ## References
+ 
+@@ -54,6 +56,8 @@ be cited here once it is ingested.
+   8 June 2013: §3.2.
+ * [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, author version dated
+   17 February 2016, Definition 4.2.3.
++* [Gen09] C. Gentry, *A Fully Homomorphic Encryption Scheme*, PhD thesis, Stanford University,
++  September 2009: §4.1, Thm 4.2.3.
+ 
+ **Deviations.** The asymptotic statements are over an `LWE.Family` with
+ `P_κ = Parameters.ofFamily F κ` and the canonical encodings above. Machine efficiency of GSW
+@@ -126,8 +130,10 @@ theorem encodeFheView_length (P : Parameters) (v : FheView P) :
+         P.columns * ((P.lwe.dimension + 1) * P.columns * P.width) +
+         (P.lwe.dimension + 1) * P.columns * P.width := by
+   rw [encodeFheView_eq, List.length_append, List.length_append, LWE.encodeChallenge_length,
+-    encodeCiphertext_length, List.length_flatten, ← List.ofFn_comp']
+-  simp only [encodeCiphertext_length, List.ofFn_const, List.sum_replicate_nat]
++    encodeCiphertext_length, List.ofFn_eq_map,
++    length_flatten_map_const (List.finRange P.columns) _ _
++      fun i => encodeCiphertext_length P (v.2.1 i),
++    List.length_finRange]
+ 
+ /-- The canonical encoding of a leveled view: the `L + 1` public keys, the `L` level keys of
+ `N` ciphertexts each (level by level, position by position), and the challenge,
+@@ -154,10 +160,18 @@ theorem encodeLeveledView_length (P : Parameters) (L : ℕ) (v : LeveledView P L
+       (L + 1) * (P.lwe.samples * (P.lwe.dimension + 1) * P.width) +
+         L * (P.columns * ((P.lwe.dimension + 1) * P.columns * P.width)) +
+         (P.lwe.dimension + 1) * P.columns * P.width := by
+-  rw [encodeLeveledView_eq, List.length_append, List.length_append, List.length_flatten,
+-    ← List.ofFn_comp', List.length_flatten, ← List.ofFn_comp', encodeCiphertext_length]
+-  simp only [LWE.encodeChallenge_length, List.length_flatten, ← List.ofFn_comp',
+-    encodeCiphertext_length, List.ofFn_const, List.sum_replicate_nat]
++  have hcts : ∀ (n : ℕ) (f : Fin n → Ciphertext P),
++      (List.ofFn fun j => encodeCiphertext P (f j)).flatten.length =
++        n * ((P.lwe.dimension + 1) * P.columns * P.width) := fun n f => by
++    rw [List.ofFn_eq_map, length_flatten_map_const (List.finRange n) _ _
++      fun j => encodeCiphertext_length P (f j), List.length_finRange]
++  rw [encodeLeveledView_eq, List.length_append, List.length_append, encodeCiphertext_length,
++    List.ofFn_eq_map,
++    length_flatten_map_const (List.finRange (L + 1)) _ _
++      fun d => LWE.encodeChallenge_length P.lwe P.width (v.1 d),
++    List.ofFn_eq_map,
++    length_flatten_map_const (List.finRange L) _ _ fun e => hcts P.columns (v.2.1 e),
++    List.length_finRange, List.length_finRange]
+ 
+ /-! ### The asymptotic hypotheses -/
+ 
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean
+index 9ff442590..70e29cbf3 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean
+@@ -42,12 +42,17 @@ L2 and L3 are admitted; L1 is proved.
+ `Ciphertext P` whatever the circuit [BV14, Def 2.12, p008-b001]; only the evaluation key
+ (`N·L` ciphertexts) depends on `L` [BV11, Thm 3.1, p015-b001].
+ 
+-**Sources and reconstruction (P6-Q19 B).** The key-chain construction and the hybrid order are
+-reconstructed: no ingested passage gives them. BV11 and BV14 attribute leveled bootstrapping
+-to Gentry's work; that passage will be cited here once it is ingested. For the leveled scheme
+-the statements cite [BV11, Thm 3.1, Def 3.6], [BV14, Thm 2.14 first part, Thm 3.7] and
+-[AP14, §5.3] only; [BV14, Def 2.12, §3.3] and [Bar89, Thm 1] are cited for compactness and the
+-literal inputs.
++**Sources and reconstruction (P6-Q19 B).** The key chain is Gentry's [Gen09, §4.1, `KeyGen` of
++`E^(d)`, pp. 46–47, p056-b003]: `d + 1` independent key pairs and, for `i ∈ [1, d]`, the
++encryptions under `pk_{i−1}` of the representation of `sk_i` as plaintexts. Gentry encrypts the
++keys in reverse order [Gen09, §4.1, p. 46, p056-b002], so his evaluation runs down the index
++(inputs under `pk_d`, decryption under `sk_0`); here it runs up, and his level `i` is level
++`L − i` (`levelKey`). His circuits are layered as well: every wire joins consecutive levels,
++with trivial gates added where needed [Gen09, §4.1, p. 47, p057-b001]. The hybrid order is
++[Gen09, Thm 4.2.3, pp. 50–51, p060-b001, p061-b001] (`GSW/LeveledSecurity.lean`). Besides
++[Gen09] for the chain, the statements of the leveled scheme cite [BV11, Thm 3.1, Def 3.6],
++[BV14, Thm 2.14 first part, Thm 3.7] and [AP14, §5.3]; [BV14, Def 2.12, §3.3] and
++[Bar89, Thm 1] are cited for compactness and the literal inputs.
+ 
+ ## References
+ 
+@@ -60,6 +65,8 @@ literal inputs.
+ * [Bar89] D. A. Mix Barrington, *Bounded-width polynomial-size branching programs recognize
+   exactly those languages in NC¹*, J. Comput. System Sci. 38(1) (1989), 150–164: Thm 1
+   ("inputs and negated inputs").
++* [Gen09] C. Gentry, *A Fully Homomorphic Encryption Scheme*, PhD thesis, Stanford University,
++  September 2009: §4.1 (`KeyGen` of `E^(d)`, the reverse order, layered circuits), Thm 4.2.3.
+ 
+ **Deviations.** `L + 1` independent key pairs in a consecutive chain (P6-Q14 B): `evk_{d+1}`
+ encrypts under `pk_{d+1}` the `N` key bits of `s_d`, `N·L` ciphertexts in all. Circuits are
+@@ -88,9 +95,9 @@ theorem LevelCoins_eq (P : Parameters) (L : ℕ) :
+ length of the evaluation key depends on the level L"; BV14, Thm 2.14 first part, p008-b003]:
+ for `d : Fin L`, the encryptions under `pk_{d+1}` of the `N` key bits of `s_d`, with the coins
+ `R d`, `levelKey P pks ss R d = evalKey P (pks d.succ) (ss d.castSucc) (R d)`. In all `N·L`
+-ciphertexts. The key-chain construction is reconstructed: no ingested passage gives it; BV11
+-and BV14 attribute leveled bootstrapping to Gentry's work, and that passage will be cited here
+-once it is ingested. -/
++ciphertexts. The chain is [Gen09, §4.1, `KeyGen` of `E^(d)`, pp. 46–47, p056-b003] with the
++levels renumbered: Gentry encrypts `sk_i` under `pk_{i−1}`, in reverse order [Gen09, §4.1,
++p. 46, p056-b002], and his level `i` is level `L − i` here. -/
+ def levelKey (P : Parameters) {L : ℕ} (pks : Fin (L + 1) → PublicKey P)
+     (ss : Fin (L + 1) → Secret P) (R : LevelCoins P L) (d : Fin L) :
+     Fin P.columns → Ciphertext P :=
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean
+index 2455962c8..a07967b4b 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean
+@@ -32,11 +32,20 @@ set_option autoImplicit false
+ 
+ Both are admitted statement-phase targets.
+ 
+-**Sources and reconstruction (P6-Q19 B).** The key-chain construction and the hybrid order are
+-reconstructed: no ingested passage gives them. BV11 and BV14 attribute leveled bootstrapping
+-to Gentry's work; that passage will be cited here once it is ingested. The statements cite
+-[BV11, Thm 3.1, Def 3.6], [BV14, Thm 2.14 first part, Thm 3.7] and [AP14, §5.3] only, with
+-[GSW13, §3.2, Lemma 1], [BV11, Def 3.1] and [BV14, §2.5] for the one-key steps and the view.
++**Sources and reconstruction (P6-Q19 B).** The key chain is Gentry's [Gen09, §4.1, `KeyGen` of
++`E^(d)`, pp. 46–47, p056-b003], with his reverse order of the levels undone: his level `i` is
++level `L − i` here (`GSW/Leveled.lean`). The hybrid order is his [Gen09, Thm 4.2.3 and its
++proof, pp. 50–51, p060-b001, p061-b001]: Game `k` replaces the encryptions under `pk_{i−1}` of
++`sk_i` for `i ∈ [1, k]`, and the step from Game `k` to Game `k + 1` plants the challenge key as
++`pk_k`, whose secret occurs only in encryptions already replaced. Renumbered, Game `k` is
++`H_{L−k}`, and the order is the top-down order below. The statements cite [BV11, Thm 3.1,
++Def 3.6], [BV14, Thm 2.14 first part, Thm 3.7] and [AP14, §5.3], with [GSW13, §3.2, Lemma 1],
++[BV11, Def 3.1] and [BV14, §2.5] for the one-key steps and the view; [Gen09] is cited here, for
++the construction. Deviations from [Gen09, Thm 4.2.3]: a replaced level key encrypts `0`, not
++the bits of an unrelated fresh key; each level step is a hybrid over the `N` positions, not one
++challenge of Gentry's `ℓ`-fold scheme `(E)^ℓ`; each step reduces to DLWE (phase 5), not to the
++semantic security of the base scheme; and the middle step between the two chains is phase 5's
++challenge step, not Gentry's Game `d + 1` (a random plaintext).
+ 
+ ## References
+ 
+@@ -48,6 +57,8 @@ to Gentry's work; that passage will be cited here once it is ingested. The state
+   CRYPTO 2014; IACR ePrint 2014/094: §5.3.
+ * [GSW13] C. Gentry, A. Sahai, B. Waters, CRYPTO 2013; IACR ePrint 2013/340, version dated
+   8 June 2013: §3.2, Lemma 1.
++* [Gen09] C. Gentry, *A Fully Homomorphic Encryption Scheme*, PhD thesis, Stanford University,
++  September 2009: §4.1, Thm 4.2.3 (with its proof).
+ 
+ **Deviations.** Levels are indexed from `0`: the level key `e : Fin L` encrypts the bits of
+ `s_e` under `pk_{e+1}` (r3's `evk_d`, `d = e + 1`). The hybrid runs top-down: step `e` (from
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean
+index 334136050..2995b996e 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean
+@@ -31,10 +31,12 @@ set_option autoImplicit false
+ All three are admitted statement-phase targets. With `LWE.Family.RatioBounded F B p` the
+ condition `pBoot(κ)·B(κ) < q(κ)` is the regime of a polynomial ratio `q/B` (assumption (A2)).
+ 
+-**Sources and reconstruction (P6-Q19 B), for the leveled statement.** The key-chain
+-construction and the hybrid order are reconstructed: no ingested passage gives them. BV11 and
+-BV14 attribute leveled bootstrapping to Gentry's work; that passage will be cited here once it
+-is ingested.
++**Sources and reconstruction (P6-Q19 B), for the leveled statement.** The key chain is
++Gentry's [Gen09, §4.1, `KeyGen` of `E^(d)`, pp. 46–47, p056-b003], with his reverse order of
++the levels undone (`GSW/Leveled.lean`); his correctness theorem for the leveled scheme is
++[Gen09, Thm 4.2.1, p. 49, p059-b001] (only its statement is ingested). The hybrid order,
++[Gen09, Thm 4.2.3, pp. 50–51, p060-b001, p061-b001], concerns security and is used in
++`GSW/LeveledSecurity.lean`, not here.
+ 
+ ## References
+ 
+@@ -44,6 +46,8 @@ is ingested.
+   (Standard) LWE*, FOCS 2011 full version; IACR ePrint 2011/344: Thm 3.1, Def 3.6.
+ * [GSW13] C. Gentry, A. Sahai, B. Waters, CRYPTO 2013; IACR ePrint 2013/340, version dated
+   8 June 2013: §3.1 (parameters).
++* [Gen09] C. Gentry, *A Fully Homomorphic Encryption Scheme*, PhD thesis, Stanford University,
++  September 2009: §4.1, Thm 4.2.1, Thm 4.2.3.
+ 
+ **Deviations.** Worst case, with an explicit polynomial (constant `2^70`; r3 §H6 drafted
+ `c < 2^70` with the factor `4`), not [BV14, Thm 3.7]'s `Θ̃` noise rate. The constant `8`
