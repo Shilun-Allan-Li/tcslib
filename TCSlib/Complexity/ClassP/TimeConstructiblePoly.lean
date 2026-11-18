@@ -81,7 +81,7 @@ theorem timeConstructible_poly (C c : ℕ) (hC : 0 < C) :
     refine ⟨(b + 1) * (a + 1) * (A + 1),
       Nat.mul_pos (Nat.mul_pos (Nat.succ_pos _) (Nat.succ_pos _)) (Nat.succ_pos _), N, ?_⟩
     intro x
-    have hb := hN x
+    have hb := (FinTM.computesFunInTime_iff _ _ _).mp hN x
     simp only [Function.comp_apply, List.length_replicate] at hb
     apply hb.mono
     have hmajor : A * (x.length + 1) ^ (c + 1) + 1 ≤
