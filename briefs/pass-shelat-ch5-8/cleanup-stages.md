@@ -150,3 +150,21 @@ The plan had omitted the #248 historical seal ledger and the inherited-seal repa
 **Gate 49 additions to S2-A (2026-11-17):** G49-01 (reword `Games/Relational.lean`'s module docstring: the per-call
 hypothesis preserves equality of compatible test expectations, not a relation-supported coupling; dated correction to
 bb1-sim design r1 §2.2) and G49-02 (`expect_sample_rel`: `[BGZ09, §4.1, rule R-Rand]` with an adaptation note).
+
+## S2-A rulings Q-A1 to Q-A11 (Seyoon, 2026-11-18; work plan `cleanup-stage2/s2a-workplan-r1.md` §5)
+- **As recommended:** Q-A1 (a) DL-35 #2, the `ofFn_blocks_symm` statement change, moves to **S2-D** with the
+  `Commitment.lean:852–853` fix; S2-A keeps the proof-only S2-RP-030. Q-A2 (a) the 15 definition bodies are freeze
+  exceptions of Q7's kind (casts only through `PolyExpr.eval_*`/published `*_eval` readers; each listed, with an `rfl`
+  old-body = new-body probe in the evidence). Q-A3 (a) `glPad_f`, `glBit_append` and the private
+  `invProbAt_reduction_ge` are restated (§1.3 rows 12–14), keeping `glPad_f_equiv`/`glBit_equiv` re-proved from the new
+  forms. Q-A4 (a) the Q11 reader is `CodeTM.toFinTM_computesInTime_iff` (replaces the name `toFinTM_tm`). Q-A5 (a) S2-A
+  adds `InteractiveHandler.rU_eq`/`rZ_eq`/`rW_eq`/`rS_eq` in `Games/Efficiency` (A09). Q-A8 (a) `toFunFamily_f` keeps
+  `@[simp]`, downstream `simp` calls probed in A24. Q-A9 (a) restatements keep binders at the family's own `PolyExpr`
+  type, with `Fin.cast` through published readers or equivalences (binding on S2-B/C/D too). Q-A10 (a) per-step file
+  checks, replays D1 and D2, one PR, one Codex gate. Q-A11 (a) the DL-55 move stays in S2-A (A05); S2-B's brief
+  re-locates its two `TrapdoorPredictor` rows.
+- **Q-A6 (b), not the recommendation:** `zeroBits_eq_cast` is promoted as **`Games.zeroBits_eq_cast` in
+  `Games/BitCodec.lean`** beside `zeroBits`, not into `IBEScheme`. The rest of DL-57's promotion (`sidSpec_dom_*`,
+  `sidSpec_rng_*`) still goes to `IdentityBased/Defs.lean` as `IBEScheme.*`. S2-B is pinned to the `Games` name.
+- **Q-A7 (b), not the recommendation:** S2-RP-088 is done: `DyadicUniform`'s three `bitsTo*_uniform` are re-derived
+  from `FinDist.map_uniform_equiv` in A31 (proof-only).
