@@ -1,0 +1,581 @@
+{
+ "head": "09546b899d451b693e80588bd625e6b476eb930b",
+ "base": "3d2a6960df361961479c7ce5d364d83b6320d1d5",
+ "added": [
+  "WordRAM.Sim.phase_writeBlock",
+  "WordRAM.Sim.phase_memory_allowance",
+  "WordRAM.Sim.phase_intBlock",
+  "WordRAM.Sim.phase_keyBlock",
+  "WordRAM.Sim.phase_constBlock",
+  "WordRAM.Sim.phase_lookupBlock",
+  "WordRAM.Sim.phase_assignBlock",
+  "WordRAM.Sim.PhaseBlock",
+  "WordRAM.Sim.PhaseBlock.ofRow",
+  "WordRAM.Sim.PhaseBlock.weaken",
+  "WordRAM.Sim.PhaseBlock.seq",
+  "WordRAM.Sim.PhaseState",
+  "WordRAM.Sim.phaseState_iff",
+  "WordRAM.Sim.phase_state_write",
+  "WordRAM.Sim.phase_state_inputPos",
+  "WordRAM.Sim.phaseTime",
+  "WordRAM.Sim.phaseTime_eq",
+  "WordRAM.Sim.phaseSpace",
+  "WordRAM.Sim.phaseSpace_eq",
+  "WordRAM.Sim.phase_word_memory",
+  "WordRAM.Sim.phase_units",
+  "WordRAM.Sim.phase_memory_charge",
+  "WordRAM.Sim.phase_arith_charge",
+  "WordRAM.Sim.phase_post_of_read",
+  "WordRAM.Sim.phase_testMachine",
+  "WordRAM.Sim.phase_bltzMachine",
+  "WordRAM.Sim.phase_branch_mem",
+  "WordRAM.Sim.PhaseBranch.seq",
+  "WordRAM.Sim.phase_machine_ofBranch",
+  "WordRAM.Sim.phase_encoded_heads",
+  "WordRAM.Sim.phase_choiceMachine",
+  "WordRAM.Sim.phase_coinMachine",
+  "WordRAM.Sim.phase_arithBlock",
+  "WordRAM.Sim.phase_sourceBlock",
+  "WordRAM.Sim.phase_halfBlock",
+  "WordRAM.Sim.phase_signExtendBlock",
+  "WordRAM.Sim.phase_inputBlock",
+  "WordRAM.Sim.phase_toNDTM_fixChoice",
+  "WordRAM.Sim.phase_reaches_zero",
+  "WordRAM.Sim.phase_run_avoids",
+  "WordRAM.Sim.phase_reaches_add_unused",
+  "WordRAM.Sim.PhaseMachine",
+  "WordRAM.Sim.PhaseMachine.weaken",
+  "WordRAM.Sim.phase_seam_fresh",
+  "WordRAM.Sim.phase_machine_ofBlock",
+  "WordRAM.Sim.PhaseFrame",
+  "WordRAM.Sim.PhaseFrame.ofCfg",
+  "WordRAM.Sim.PhaseFrame.ofCfg_eq",
+  "WordRAM.Sim.PhaseFrame.cfg",
+  "WordRAM.Sim.PhaseFrame.cfg_eq",
+  "WordRAM.Sim.PhaseFrame.cfg_ofCfg",
+  "WordRAM.Sim.PhaseFrame.ofCfg_cfg",
+  "WordRAM.Sim.PhaseFrame.cfg_mapState",
+  "WordRAM.Sim.PhaseRow",
+  "WordRAM.Sim.phase_reaches_seq",
+  "WordRAM.Sim.PhaseRow.seq",
+  "WordRAM.Sim.PhaseFrame.emit",
+  "WordRAM.Sim.PhaseFrame.emit_eq",
+  "WordRAM.Sim.phase_emitAction_apply",
+  "WordRAM.Sim.phase_emitBlock",
+  "WordRAM.Sim.phase_frame_emit_encodes",
+  "WordRAM.Sim.phase_emitMachine",
+  "WordRAM.Sim.PhaseForkNode",
+  "WordRAM.Sim.phase_forkMachine",
+  "WordRAM.Sim.phase_frame_bindState",
+  "WordRAM.Sim.phase_reaches_inPhase",
+  "WordRAM.Sim.phase_reaches_trans",
+  "WordRAM.Sim.phaseInputBank",
+  "WordRAM.Sim.phaseInputBank_apply",
+  "WordRAM.Sim.phase_inputRow",
+  "WordRAM.Sim.phase_encodes_mono",
+  "WordRAM.Sim.phase_encodes_wordWrite",
+  "WordRAM.Sim.phase_encodes_keyAssign",
+  "WordRAM.Sim.phase_inRange_mono",
+  "WordRAM.Sim.phase_toInt_inRange",
+  "WordRAM.Sim.phase_immediate_inRange",
+  "WordRAM.Sim.phase_computed_inRange",
+  "WordRAM.Sim.phase_keyBits_signExtend",
+  "WordRAM.Sim.phase_keyTableLength",
+  "WordRAM.Sim.phase_tableOf_layout_bound",
+  "WordRAM.Sim.phase_keyAssign_length_le",
+  "WordRAM.Sim.phase_keyAssign_layout_mono",
+  "WordRAM.Sim.phase_keyTableAt_write",
+  "WordRAM.Sim.PhaseData",
+  "WordRAM.Sim.phaseMemoryEntries",
+  "WordRAM.Sim.phaseMemoryEntries_eq",
+  "WordRAM.Sim.phase_memoryEntries_spec",
+  "WordRAM.Sim.phaseMemoryCost",
+  "WordRAM.Sim.phaseMemoryCost_eq",
+  "WordRAM.Sim.phaseMemoryBank",
+  "WordRAM.Sim.phaseMemoryBank_apply",
+  "WordRAM.Sim.phase_memory_pre",
+  "WordRAM.Sim.phase_memory_cost",
+  "WordRAM.Sim.phase_lookupRow",
+  "WordRAM.Sim.PhaseFrame.assign",
+  "WordRAM.Sim.PhaseFrame.assign_eq",
+  "WordRAM.Sim.phase_assignRow",
+  "WordRAM.Sim.phase_frame_assign_encodes",
+  "WordRAM.Sim.phase_oneMachine",
+  "WordRAM.Sim.phase_binaryMachine",
+  "WordRAM.Sim.phase_loadMachine",
+  "WordRAM.Sim.phase_storeMachine",
+  "WordRAM.Sim.phase_halfMachine",
+  "WordRAM.Sim.phase_inputMachine",
+  "WordRAM.Sim.phase_unarySchedule",
+  "WordRAM.Sim.phase_halfSchedule",
+  "WordRAM.Sim.phase_inputSchedule",
+  "WordRAM.Sim.phase_loadSchedule",
+  "WordRAM.Sim.phase_storeSchedule",
+  "WordRAM.Sim.phase_frame_scratch",
+  "WordRAM.Sim.phase_frame_ready",
+  "WordRAM.Sim.phase_frame_write_encodes",
+  "WordRAM.Sim.phase_frame_write_word",
+  "WordRAM.Sim.phase_frame_write_other",
+  "WordRAM.Sim.phase_frame_ofCfg_encodes",
+  "WordRAM.Sim.PhaseFrame.write",
+  "WordRAM.Sim.PhaseFrame.write_eq",
+  "WordRAM.Sim.phase_nativeRow",
+  "WordRAM.Sim.phase_wordRow",
+  "WordRAM.Sim.PhaseReady",
+  "WordRAM.Sim.phaseReady_iff",
+  "WordRAM.Sim.PhaseScratch",
+  "WordRAM.Sim.phaseScratch_iff",
+  "WordRAM.Sim.phaseArithBank",
+  "WordRAM.Sim.phaseArithBank_apply",
+  "WordRAM.Sim.phase_wordAt_frame",
+  "WordRAM.Sim.phase_scratch_select",
+  "WordRAM.Sim.phase_intRow",
+  "WordRAM.Sim.PhaseArith",
+  "WordRAM.Sim.PhaseArith.value",
+  "WordRAM.Sim.PhaseArith.value_eq",
+  "WordRAM.Sim.PhaseArith.steps",
+  "WordRAM.Sim.PhaseArith.steps_eq",
+  "WordRAM.Sim.PhaseArith.native",
+  "WordRAM.Sim.phase_arithRow",
+  "WordRAM.Sim.phaseKeyBank",
+  "WordRAM.Sim.phaseKeyBank_apply",
+  "WordRAM.Sim.phase_unaryRow",
+  "WordRAM.Sim.phase_halfRow",
+  "WordRAM.Sim.phase_signExtendRow",
+  "WordRAM.Sim.phase_fetchBlock",
+  "WordRAM.Sim.phase_storeImmediateBlock",
+  "WordRAM.Sim.phase_constantSchedule",
+  "WordRAM.Sim.phase_binarySchedule",
+  "WordRAM.Sim.PhasePost",
+  "WordRAM.Sim.phasePost_iff",
+  "WordRAM.Sim.phase_post_of_write",
+  "WordRAM.Sim.phase_memoryMachine",
+  "WordRAM.Sim.keyBits_eq_iff",
+  "WordRAM.Sim.tableOf_mono",
+  "WordRAM.Sim.tableOf_widths",
+  "WordRAM.Sim.tableOf_length_le",
+  "WordRAM.Sim.tableOf_keyLookup",
+  "WordRAM.Sim.phase_bvBits_zero",
+  "WordRAM.Sim.tableOf_keyLookup_default",
+  "WordRAM.Sim.tableOf_keyAssign",
+  "WordRAM.Sim.phase_wordAt_congr",
+  "WordRAM.Sim.phase_keyTableAt_congr",
+  "WordRAM.Sim.phase_encodes_congr",
+  "WordRAM.Sim.phase_reaches_embed",
+  "WordRAM.Sim.phase_wordAt_write",
+  "WordRAM.Sim.phase_embed_update",
+  "WordRAM.Sim.phase_wordWrite_as_update",
+  "WordRAM.Sim.phase_wordAt_select",
+  "WordRAM.Sim.phase_keyTableAt_select",
+  "WordRAM.Sim.phase_embed_wordWrite",
+  "WordRAM.Sim.phase_keyTableWrite_as_update",
+  "WordRAM.Sim.phase_embed_keyTableWrite",
+  "WordRAM.Sim.PhaseTestKind",
+  "WordRAM.Sim.PhaseTestKind.bit",
+  "WordRAM.Sim.PhaseTestKind.bit_eq",
+  "WordRAM.Sim.PhaseTestKind.native",
+  "WordRAM.Sim.phase_embed_state",
+  "WordRAM.Sim.PhaseBranch",
+  "WordRAM.Sim.phase_testBlock",
+  "Turing.Cfg.select_eq",
+  "Turing.NDTM.phaseHostND_tr",
+  "Turing.seamCompTM_tr_inl"
+ ],
+ "removed": [],
+ "header_changed": [],
+ "definitions_changed": [],
+ "owner_source": [
+  {
+   "path": "TCSlib/Complexity/RAMSimulation.lean",
+   "sha256": "a32b336c66c71c7678c2e874ebffb44d0156a305e7f0a8114c396ffed07f2646",
+   "total_changed_or_added_from_campaign": [],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/PhaseAtoms.lean",
+   "sha256": "68f14ee6b2550ad170a8ab9fdd8640aa674c63ab513eedb0e73e063f855f3939",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.phase_writeBlock",
+    "WordRAM.Sim.phase_memory_allowance",
+    "WordRAM.Sim.phase_intBlock",
+    "WordRAM.Sim.phase_keyBlock",
+    "WordRAM.Sim.phase_constBlock",
+    "WordRAM.Sim.phase_lookupBlock",
+    "WordRAM.Sim.phase_assignBlock"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/PhaseBlock.lean",
+   "sha256": "d0e34df4ce2c27ec782e8e1cc01baa2ed5cefd168f9dc6a89d76372f1d429e68",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.PhaseBlock",
+    "WordRAM.Sim.PhaseBlock.ofRow",
+    "WordRAM.Sim.PhaseBlock.weaken",
+    "WordRAM.Sim.PhaseBlock.seq",
+    "WordRAM.Sim.PhaseState",
+    "WordRAM.Sim.phaseState_iff",
+    "WordRAM.Sim.phase_state_write",
+    "WordRAM.Sim.phase_state_inputPos"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/PhaseBounds.lean",
+   "sha256": "f41246d7402f79ffb66c9b3f295587ab3ff12fcea7dec0f83a4e24ee44c24429",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.phaseTime",
+    "WordRAM.Sim.phaseTime_eq",
+    "WordRAM.Sim.phaseSpace",
+    "WordRAM.Sim.phaseSpace_eq",
+    "WordRAM.Sim.phase_word_memory",
+    "WordRAM.Sim.phase_units",
+    "WordRAM.Sim.phase_memory_charge",
+    "WordRAM.Sim.phase_arith_charge"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/PhaseBranchMachines.lean",
+   "sha256": "ea4dde6e11369d0f14633b9840465f63911c763c11661480b69b4fa8ca71da8e",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.phase_post_of_read",
+    "WordRAM.Sim.phase_testMachine",
+    "WordRAM.Sim.phase_bltzMachine"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/PhaseBranching.lean",
+   "sha256": "e422d869c6b7eb50772f9d368dc3ceed3bd5601fa7a9e95244750ca4f299ab31",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.phase_branch_mem",
+    "WordRAM.Sim.PhaseBranch.seq",
+    "WordRAM.Sim.phase_machine_ofBranch"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/PhaseCoin.lean",
+   "sha256": "1f697a6d6ed180425d49a928b9706953899bc130a68ad5a4c96a06bd5a640f56",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.phase_encoded_heads",
+    "WordRAM.Sim.phase_choiceMachine",
+    "WordRAM.Sim.phase_coinMachine"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/PhaseCompute.lean",
+   "sha256": "9b3cf6fc6e41c24252e212edbe2a7e6a7aaf0952d90a5f6317bb3cfb3b54da4b",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.phase_arithBlock",
+    "WordRAM.Sim.phase_sourceBlock",
+    "WordRAM.Sim.phase_halfBlock",
+    "WordRAM.Sim.phase_signExtendBlock",
+    "WordRAM.Sim.phase_inputBlock"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/PhaseControl.lean",
+   "sha256": "39234226dde7c7878238b26f535b63d3b619a9c12ed37af4c3f21e8a02edaba7",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.phase_toNDTM_fixChoice",
+    "WordRAM.Sim.phase_reaches_zero",
+    "WordRAM.Sim.phase_run_avoids",
+    "WordRAM.Sim.phase_reaches_add_unused",
+    "WordRAM.Sim.PhaseMachine",
+    "WordRAM.Sim.PhaseMachine.weaken",
+    "WordRAM.Sim.phase_seam_fresh",
+    "WordRAM.Sim.phase_machine_ofBlock"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/PhaseCore.lean",
+   "sha256": "bab431ac4bc666eabe931a438651274a1c15d9a786616a63400dd4105c67e376",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.PhaseFrame",
+    "WordRAM.Sim.PhaseFrame.ofCfg",
+    "WordRAM.Sim.PhaseFrame.ofCfg_eq",
+    "WordRAM.Sim.PhaseFrame.cfg",
+    "WordRAM.Sim.PhaseFrame.cfg_eq",
+    "WordRAM.Sim.PhaseFrame.cfg_ofCfg",
+    "WordRAM.Sim.PhaseFrame.ofCfg_cfg",
+    "WordRAM.Sim.PhaseFrame.cfg_mapState",
+    "WordRAM.Sim.PhaseRow",
+    "WordRAM.Sim.phase_reaches_seq",
+    "WordRAM.Sim.PhaseRow.seq"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/PhaseEmit.lean",
+   "sha256": "7fbc9de512cb89ccd13bacd45754a94cb3f6f8089f5ea9bf2311c1fef56bd91b",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.PhaseFrame.emit",
+    "WordRAM.Sim.PhaseFrame.emit_eq",
+    "WordRAM.Sim.phase_emitAction_apply",
+    "WordRAM.Sim.phase_emitBlock",
+    "WordRAM.Sim.phase_frame_emit_encodes",
+    "WordRAM.Sim.phase_emitMachine"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/PhaseFork.lean",
+   "sha256": "7fd9045b966705ebac57db89ac05aab2f2ef597cf1b0b3923df0684a8500940c",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.PhaseForkNode",
+    "WordRAM.Sim.phase_forkMachine"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/PhaseHost.lean",
+   "sha256": "4e8252d0dbeb34818f2a4f592b9990d0e1f344153c180f34ffff9b3dd9a86ad2",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.phase_frame_bindState",
+    "WordRAM.Sim.phase_reaches_inPhase",
+    "WordRAM.Sim.phase_reaches_trans"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/PhaseInput.lean",
+   "sha256": "fc0764d16bd3db2b1124c6e586319d7c62e7d8bc6323a64cdad7a1b2a27e1d9a",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.phaseInputBank",
+    "WordRAM.Sim.phaseInputBank_apply",
+    "WordRAM.Sim.phase_inputRow"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/PhaseInvariant.lean",
+   "sha256": "8f1d376cc31104dbfb3bf80a8fe0f141a74859369db95b6249db3295e95d82ae",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.phase_encodes_mono",
+    "WordRAM.Sim.phase_encodes_wordWrite",
+    "WordRAM.Sim.phase_encodes_keyAssign"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/PhaseLayout.lean",
+   "sha256": "570e54aae6c4347b89d8684c1994e6d75089dd48a0c4ede811c8c05d8d448760",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.phase_inRange_mono",
+    "WordRAM.Sim.phase_toInt_inRange",
+    "WordRAM.Sim.phase_immediate_inRange",
+    "WordRAM.Sim.phase_computed_inRange",
+    "WordRAM.Sim.phase_keyBits_signExtend",
+    "WordRAM.Sim.phase_keyTableLength",
+    "WordRAM.Sim.phase_tableOf_layout_bound",
+    "WordRAM.Sim.phase_keyAssign_length_le",
+    "WordRAM.Sim.phase_keyAssign_layout_mono",
+    "WordRAM.Sim.phase_keyTableAt_write"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/PhaseMemory.lean",
+   "sha256": "cd8bdca1b5ccaf39de417e6c14a23728a8197551471e1d8af69ac78f3cdf18f7",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.PhaseData",
+    "WordRAM.Sim.phaseMemoryEntries",
+    "WordRAM.Sim.phaseMemoryEntries_eq",
+    "WordRAM.Sim.phase_memoryEntries_spec",
+    "WordRAM.Sim.phaseMemoryCost",
+    "WordRAM.Sim.phaseMemoryCost_eq",
+    "WordRAM.Sim.phaseMemoryBank",
+    "WordRAM.Sim.phaseMemoryBank_apply",
+    "WordRAM.Sim.phase_memory_pre",
+    "WordRAM.Sim.phase_memory_cost",
+    "WordRAM.Sim.phase_lookupRow",
+    "WordRAM.Sim.PhaseFrame.assign",
+    "WordRAM.Sim.PhaseFrame.assign_eq",
+    "WordRAM.Sim.phase_assignRow",
+    "WordRAM.Sim.phase_frame_assign_encodes"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/PhaseMemoryMachines.lean",
+   "sha256": "5712885dec81c420db6f5d21ff3e557f448bc1f6475f251e310c2384f3bdaf05",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.phase_oneMachine",
+    "WordRAM.Sim.phase_binaryMachine",
+    "WordRAM.Sim.phase_loadMachine",
+    "WordRAM.Sim.phase_storeMachine",
+    "WordRAM.Sim.phase_halfMachine",
+    "WordRAM.Sim.phase_inputMachine"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/PhaseOperations.lean",
+   "sha256": "50340ec3bb24f0f4130e8e5525c0168af8038956349466f3b46c56243a73eee8",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.phase_unarySchedule",
+    "WordRAM.Sim.phase_halfSchedule",
+    "WordRAM.Sim.phase_inputSchedule",
+    "WordRAM.Sim.phase_loadSchedule",
+    "WordRAM.Sim.phase_storeSchedule"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/PhaseRegister.lean",
+   "sha256": "e3fc1d567a8fe9bff4244f982b6b5a4deebe9f85e12843f9022c29b781b8c47c",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.phase_frame_scratch",
+    "WordRAM.Sim.phase_frame_ready",
+    "WordRAM.Sim.phase_frame_write_encodes",
+    "WordRAM.Sim.phase_frame_write_word",
+    "WordRAM.Sim.phase_frame_write_other",
+    "WordRAM.Sim.phase_frame_ofCfg_encodes"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/PhaseRows.lean",
+   "sha256": "84ada3d78a60ad5f236bf3a54343e0d875d4148d96a711f877b599ba655d2b66",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.PhaseFrame.write",
+    "WordRAM.Sim.PhaseFrame.write_eq",
+    "WordRAM.Sim.phase_nativeRow",
+    "WordRAM.Sim.phase_wordRow",
+    "WordRAM.Sim.PhaseReady",
+    "WordRAM.Sim.phaseReady_iff",
+    "WordRAM.Sim.PhaseScratch",
+    "WordRAM.Sim.phaseScratch_iff",
+    "WordRAM.Sim.phaseArithBank",
+    "WordRAM.Sim.phaseArithBank_apply",
+    "WordRAM.Sim.phase_wordAt_frame",
+    "WordRAM.Sim.phase_scratch_select",
+    "WordRAM.Sim.phase_intRow",
+    "WordRAM.Sim.PhaseArith",
+    "WordRAM.Sim.PhaseArith.value",
+    "WordRAM.Sim.PhaseArith.value_eq",
+    "WordRAM.Sim.PhaseArith.steps",
+    "WordRAM.Sim.PhaseArith.steps_eq",
+    "WordRAM.Sim.PhaseArith.native",
+    "WordRAM.Sim.phase_arithRow",
+    "WordRAM.Sim.phaseKeyBank",
+    "WordRAM.Sim.phaseKeyBank_apply",
+    "WordRAM.Sim.phase_unaryRow",
+    "WordRAM.Sim.phase_halfRow",
+    "WordRAM.Sim.phase_signExtendRow"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/PhaseSchedules.lean",
+   "sha256": "fe952703d44e2f27d5ac4cb53e7c14f7c01a5daedc46796c896ce9679fcd50ef",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.phase_fetchBlock",
+    "WordRAM.Sim.phase_storeImmediateBlock",
+    "WordRAM.Sim.phase_constantSchedule",
+    "WordRAM.Sim.phase_binarySchedule"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/PhaseSemantics.lean",
+   "sha256": "7b29567195f3dd5d4555458ccca38ee936daee66b197e200a11a5e7f4de782ec",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.PhasePost",
+    "WordRAM.Sim.phasePost_iff",
+    "WordRAM.Sim.phase_post_of_write",
+    "WordRAM.Sim.phase_memoryMachine"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/PhaseTable.lean",
+   "sha256": "1aae6c15c211c3e9c044552d9bb604f13e7bd7139bf30e9e22ee4e080408c9ba",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.keyBits_eq_iff",
+    "WordRAM.Sim.tableOf_mono",
+    "WordRAM.Sim.tableOf_widths",
+    "WordRAM.Sim.tableOf_length_le",
+    "WordRAM.Sim.tableOf_keyLookup",
+    "WordRAM.Sim.phase_bvBits_zero",
+    "WordRAM.Sim.tableOf_keyLookup_default",
+    "WordRAM.Sim.phase_keyAssign_mem",
+    "WordRAM.Sim.phase_keyAssign_nodup",
+    "WordRAM.Sim.tableOf_keyAssign"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/PhaseTape.lean",
+   "sha256": "14a42510064b39b1e0b0e93b47058e6b0810adc2bab9e9cd7b3350d56f6bf546",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.phase_wordAt_congr",
+    "WordRAM.Sim.phase_keyTableAt_congr",
+    "WordRAM.Sim.phase_encodes_congr",
+    "WordRAM.Sim.phase_reaches_embed",
+    "WordRAM.Sim.phase_wordAt_write",
+    "WordRAM.Sim.phase_embed_update",
+    "WordRAM.Sim.phase_single_tape_update",
+    "WordRAM.Sim.phase_wordWrite_as_update",
+    "WordRAM.Sim.phase_wordAt_select",
+    "WordRAM.Sim.phase_keyTableAt_select",
+    "WordRAM.Sim.phase_embed_wordWrite",
+    "WordRAM.Sim.phase_keyTableWrite_as_update",
+    "WordRAM.Sim.phase_embed_keyTableWrite"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/PhaseTests.lean",
+   "sha256": "7a592985e831667dd9ea35c25d6d7c66b1a546625ba0cb9ebcb5a430bea5203c",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.PhaseTestKind",
+    "WordRAM.Sim.PhaseTestKind.bit",
+    "WordRAM.Sim.PhaseTestKind.bit_eq",
+    "WordRAM.Sim.PhaseTestKind.native",
+    "WordRAM.Sim.phase_embed_state",
+    "WordRAM.Sim.PhaseBranch",
+    "WordRAM.Sim.phase_testBlock"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/Phases.lean",
+   "sha256": "155ba778e37ca490bcdc29a936cfb4510b9115da2cb1fbf859b8d199a3343c6c",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.exists_phase",
+    "WordRAM.Sim.exists_verdictPhase"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/TuringMachine/Build/Embed.lean",
+   "sha256": "06967a9eacd06c4f1f8899341c84ae21311fe85fe86c4c4547e512e540f10fbf",
+   "total_changed_or_added_from_campaign": [
+    "Turing.Cfg.select_eq"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/TuringMachine/Build/NDHost.lean",
+   "sha256": "599eaf11b5f0f475418814f7520d344bd332d11f55237b8f4df2286dd2bb990b",
+   "total_changed_or_added_from_campaign": [
+    "Turing.NDTM.phaseHostND_tr"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/TuringMachine/Build/Seam.lean",
+   "sha256": "01e498e183b407ee32ed7fc7babe4eef0d2fe6da7056d02abb983bd88798a615",
+   "total_changed_or_added_from_campaign": [
+    "Turing.seamCompTM_tr_inl"
+   ],
+   "removed_from_campaign": []
+  }
+ ]
+}
