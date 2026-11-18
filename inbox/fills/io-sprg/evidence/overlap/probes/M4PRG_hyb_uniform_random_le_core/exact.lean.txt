@@ -1,0 +1,14 @@
+import TCSlib.Cryptography.Games.Hopping
+import TCSlib.Cryptography.Games.Bridges.Experiments
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography TCSlib.Cryptography.Games
+
+example {Ω : Type} (c : ProbComp Ω) (left right bad : Ω → Prop)
+    (hagree : ∀ z, ¬ bad z → (left z ↔ right z)) :
+    |ProbComp.prob c left - ProbComp.prob c right| ≤ ProbComp.prob c bad := by
+  exact?

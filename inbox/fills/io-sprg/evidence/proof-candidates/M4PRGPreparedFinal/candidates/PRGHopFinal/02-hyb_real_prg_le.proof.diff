@@ -1,0 +1,43 @@
+--- /private/tmp/io-sprg-proof-notes/PRGHopFinal/02-hyb_real_prg_le.proof
++++ /private/tmp/io-sprg-proof-notes/M4PRGPrepared/candidates/PRGHopFinal/02-hyb_real_prg_le.proof
+@@ -18,28 +18,34 @@
+       (P.publicSeed κ pp (fun k => ((x z).instances k).pub) false)
+       (fun j => P.G.eval (P.n κ) (ix z).1 z.2.1.1 (P.outputIndex κ j)))
+         z.2.2.2 = true
+-  have hr : accept (P.hyb A .real κ pp) = ProbComp.prob c er
++  have hr : accept (P.hyb A .real κ pp) = ProbComp.prob c er := ?_
++  swap
+   · simp only [accept_eq, P.hyb_eq, P.idSamp'_eq, P.sdSampFull_eq,
+       ProbComp.prob_bind, ProbComp.expect_map, ProbComp.prob_pure, c, er, ix, x]
+-  have hp : accept (P.hyb A .prg κ pp) = ProbComp.prob c ep
++  have hp : accept (P.hyb A .prg κ pp) = ProbComp.prob c ep := ?_
++  swap
+   · simp only [accept_eq, P.hyb_eq, P.idSamp'_eq, P.sdSampFull_eq,
+       ProbComp.prob_bind, ProbComp.expect_map, ProbComp.prob_pure,
+       P.sdCore_σ, c, ep, ix, x]
+-  have he : ProbComp.prob c bad = P.errProb κ pp
++  have he : ProbComp.prob c bad = P.errProb κ pp := ?_
++  swap
+   · simp only [P.errProb_eq, P.idSamp'_eq, P.sdSampFull_eq,
+       ProbComp.prob_bind, ProbComp.expect_map, ProbComp.prob_pure,
+       ProbComp.expect_const, c, bad, ix, x]
+-  have hagree : ∀ z, ¬ bad z → (er z ↔ ep z)
++  have hagree : ∀ z, ¬ bad z → (er z ↔ ep z) := ?_
++  swap
+   · intro z hz
+     have herr : (x z).err = false := Bool.eq_false_iff.mpr hz
+     have hpub : (x z).seed.1 =
+-        P.publicSeed κ pp (fun k => ((x z).instances k).pub) false
++        P.publicSeed κ pp (fun k => ((x z).instances k).pub) false := ?_
++    swap
+     · have h := P.sdCore_publicSeed κ pp (ix z) z.2.1
+       change (x z).seed.1 =
+         P.publicSeed κ pp (fun k => ((x z).instances k).pub) (x z).err at h
+       rwa [herr] at h
+     have htail : P.eval' κ pp (ix z) (x z).seed =
+-        fun j => P.G.eval (P.n κ) (ix z).1 z.2.1.1 (P.outputIndex κ j)
++        fun j => P.G.eval (P.n κ) (ix z).1 z.2.1.1 (P.outputIndex κ j) := ?_
++    swap
+     · funext j
+       rw [P.eval'_eq]
+       change decide (MvPolynomial.eval (Sum.elim (x z).seed.1 (x z).seed.2)

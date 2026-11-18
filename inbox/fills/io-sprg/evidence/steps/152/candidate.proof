@@ -1,0 +1,20 @@
+by
+  let hr : L ^ P.D = P.n (P.kappaOf L) :=
+    (congrArg (fun q : ℕ => q ^ P.D) h).trans (P.n_eq (P.kappaOf L)).symm
+  let eMat : Matrix (Fin (L ^ P.D)) (Fin L) (ZMod (π (P.kappaOf L)).p) ≃
+      Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L)))
+        (ZMod (π (P.kappaOf L)).p) :=
+    Matrix.of.symm.trans
+      ((Equiv.arrowCongr (finCongr hr)
+        (Equiv.arrowCongr (finCongr h) (Equiv.refl _))).trans Matrix.of)
+  let e := (P.lpnChalEquiv π L).trans
+    (Equiv.prodCongr eMat (Equiv.arrowCongr (finCongr hr) (Equiv.refl _)))
+  refine ⟨e, ?_⟩
+  intro x
+  constructor
+  · funext i a
+    rw [P.lpnMatrixAt_eq]
+    rfl
+  · funext i
+    rw [P.lpnValuesAt_eq]
+    rfl

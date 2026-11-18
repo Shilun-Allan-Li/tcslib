@@ -1,0 +1,45 @@
+--- current step144-repair3 body
++++ /private/tmp/io-sprg-proof-notes/PRGChainAdviceTransport/prg_chain_accept_average.proof
+@@ -2,6 +2,17 @@
+   classical
+   generalize hk : P.kappaOfN N = κ at hN ⊢
+   subst N
++  let sectionTest : P.PRGAdvice π (P.n κ) → ℝ := fun ω =>
++    accept ((P.G.idSamp (P.n κ)).bind fun I =>
++      (ProbComp.sample (Fin (P.n κ) → Bool)).bind fun σ =>
++      (ProbComp.sample (Fin (P.G.outLen (P.n κ)) → Bool)).bind fun v =>
++      (ProbComp.sample (A.Coins κ)).bind fun r =>
++        pure (A.distinguisherL κ
++          (P.prgPre π (P.n κ) ω (I, if b then P.G.eval (P.n κ) I σ else v)) r))
++  change accept (P.chainGame A b κ κ (π κ)) =
++    ProbComp.expect (ProbComp.sample (P.PRGAdvice π (P.n κ))) sectionTest
++  rw [← ProbComp.expect_sample_equiv
++    (PRGAdvice.prodEquiv P π (P.n κ)).symm sectionTest]
+   let e : (Fin (P.m κ) → Bool) ≃ (Fin (P.G.outLen (P.n κ)) → Bool) :=
+     Equiv.arrowCongr (finCongr (P.m_eq κ)) (Equiv.refl Bool)
+   have hOut : ∀ v : Fin (P.G.outLen (P.n κ)) → Bool,
+@@ -20,6 +31,11 @@
+     simp only [P.chainPublic_eq, k.isLt, if_true]
+   have havg := P.prg_nuisance_average π (P.n κ)
+   dsimp only at havg
++  conv at havg =>
++    intro f
++    rhs
++    rw [← ProbComp.expect_sample_equiv (PRGAdvice.prodEquiv P π (P.n κ)).symm]
++  simp only [PRGAdvice.prodEquiv_eq, PRGAdvice.data_eq] at havg
+   rw [P.kappaOfN_n] at havg
+   specialize havg (fun I σ buckets matrix u =>
+     ProbComp.expect (ProbComp.sample (Fin (P.G.outLen (P.n κ)) → Bool)) (fun v =>
+@@ -29,9 +45,11 @@
+             (P.publicSeed κ (π κ) u false)
+             (if b then fun j => P.G.eval (P.n κ) I σ (P.outputIndex κ j)
+               else fun j => v (P.outputIndex κ j))) r = true then 1 else 0)))
++  dsimp only [sectionTest]
++  simp only [PRGAdvice.prodEquiv_eq, PRGAdvice.data_eq, P.prgPre_eq]
+   simp only [accept_eq, P.chainGame_eq, ProbComp.prob_eq_expect,
+     ProbComp.expect_bind, OracleComp.pure_eq_pure, ProbComp.expect_pure,
+-    P.prgPre_eq, P.kappaOfN_n, dif_pos rfl, hpub]
++    P.kappaOfN_n, dif_pos rfl, hpub]
+   conv_lhs =>
+     arg 2
+     ext I

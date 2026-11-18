@@ -1,0 +1,23 @@
+COMMAND: ['rg', '-n', '^(theorem|lemma) (encodeList_injective_of_fixedWidth|encodeList_length_of_fixedWidth|encBuckets_injective|encDraw_injective|encIdx\\x27_length_le|pubLen_le_seedBound|kappaOf_le|kappaOfN_le|encodeVector_injective|encodeMatrix_injective|encodeVector_length|encodeMatrix_length|encodeChallenge_injective|pairEncode_injective|length_pairEncode|length_natToList|natToList_injOn|eval_mono)', 'TCSlib/Cryptography/Obfuscation/StructuredSeed/Basic.lean', 'TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean', 'TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean', 'TCSlib/Cryptography/Encoding/Modular.lean', 'TCSlib/Cryptography/LWE/Encoding.lean', 'TCSlib/Complexity/TuringMachine/Encoding.lean', 'TCSlib/Cryptography/Candidates/Arithmetic.lean', 'TCSlib/Complexity/Randomized/PolyExpr.lean']
+STATUS: 0
+MISSING CANDIDATE PATHS: []
+STDOUT:
+TCSlib/Complexity/Randomized/PolyExpr.lean:142:theorem eval_mono (p : PolyExpr) : Monotone p.eval := by
+TCSlib/Cryptography/LWE/Encoding.lean:72:theorem encodeChallenge_injective (P : Parameters) (width : ℕ)
+TCSlib/Complexity/TuringMachine/Encoding.lean:173:theorem pairEncode_injective :
+TCSlib/Complexity/TuringMachine/Encoding.lean:220:theorem length_pairEncode (x y : List Bool) :
+TCSlib/Cryptography/Candidates/Arithmetic.lean:161:theorem natToList_injOn {k M N : ℕ} (hM : M < 2 ^ k) (hN : N < 2 ^ k)
+TCSlib/Cryptography/Encoding/Modular.lean:79:theorem encodeVector_length {q length : ℕ} [NeZero q] (width : ℕ)
+TCSlib/Cryptography/Encoding/Modular.lean:89:theorem encodeMatrix_length {q rows columns : ℕ} [NeZero q] (width : ℕ)
+TCSlib/Cryptography/Encoding/Modular.lean:101:theorem encodeVector_injective {q length : ℕ} [NeZero q] (width : ℕ)
+TCSlib/Cryptography/Encoding/Modular.lean:126:theorem encodeMatrix_injective {q rows columns : ℕ} [NeZero q] (width : ℕ)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean:326:theorem kappaOf_le (P : Params) (L : ℕ) : P.kappaOf L ≤ L := by
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean:344:theorem kappaOfN_le (P : Params) (N : ℕ) : P.kappaOfN N ≤ N := by
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Basic.lean:49:theorem encodeList_injective_of_fixedWidth {α : Type} {f : α → List Bool}
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Basic.lean:82:theorem encodeList_length_of_fixedWidth {α : Type} (f : α → List Bool)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:524:theorem pubLen_le_seedBound (P : Params) (κ : ℕ) :
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:555:theorem encBuckets_injective (P : Params) (κ : ℕ) :
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:652:theorem encDraw_injective (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:702:theorem encIdx'_length_le (P : Params) (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' κ pp) :
+
+STDERR:

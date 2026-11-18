@@ -1,0 +1,237 @@
+2026-11-18T20:29:52.683489+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport.lean:195:59: error: Tactic `rewrite` failed: motive is not type correct:
+  fun _a => lpnNoise _a ((P.lpnFamily_raw π).noiseDen L) = lpnNoise pp.p (P.W κ)
+Error: Application type mismatch: The argument
+  LPNFamily.Raw.instNeZeroNatModulus (P.lpnFamily_raw π) L
+has type
+  NeZero ((P.lpnFamily_raw π).modulus L)
+but is expected to have type
+  NeZero _a
+in the application
+  @lpnNoise _a ((P.lpnFamily_raw π).noiseDen L) ⋯
+
+Explanation: The rewrite tactic rewrites an expression 'e' using an equality 'a = b' by the following process. First, it looks for all 'a' in 'e'. Second, it tries to abstract these occurrences of 'a' to create a function 'm := fun _a => ...', called the *motive*, with the property that 'm a' is definitionally equal to 'e'. Third, we observe that 'congrArg' implies that 'm a = m b', which can be used with lemmas such as 'Eq.mpr' to change the goal. However, if 'e' depends on specific properties of 'a', then the motive 'm' might not typecheck.
+
+Possible solutions: use rewrite's 'occs' configuration option to limit which occurrences are rewritten, or use 'simp' or 'conv' mode, which have strategies for certain kinds of dependencies (these tactics can handle proofs and 'Decidable' instances whose types depend on the rewritten term, and 'simp' can apply user-defined '@[congr]' theorems as well).
+
+case refine_2.refine_1
+P : Params
+π : PrimeSchedule
+L : ℕ
+h : L = P.ℓ (P.kappaOf L)
+κ : ℕ := P.kappaOf L
+pp : PrimeParam κ := π κ
+Q : LWE.Parameters := (P.lpnFamily_raw π).toLWE.parameters L
+χ : LWE.Noise := (P.lpnFamily_raw π).toLWE.noise L
+hd : Q.dimension = P.ℓ κ
+hr : Q.samples = P.n κ
+hp : Q.modulus = pp.p
+Q' : LWE.Parameters := { dimension := P.ℓ κ, samples := P.n κ, modulus := pp.p, modulus_ge_two := ⋯ }
+hQ : Q = Q'
+hden : (P.lpnFamily_raw π).noiseDen L = P.W κ
+hmod : (P.lpnFamily_raw π).modulus L = pp.p
+⊢ lpnNoise ((P.lpnFamily_raw π).modulus L) ((P.lpnFamily_raw π).noiseDen L) = lpnNoise pp.p (P.W κ)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport.lean:206:2: error: unsolved goals
+case refine_2.refine_2.refine_2.left.h.h
+P : Params
+π : PrimeSchedule
+L : ℕ
+h : L = P.ℓ (P.kappaOf L)
+κ : ℕ := P.kappaOf L
+pp : PrimeParam κ := π κ
+Q : LWE.Parameters := (P.lpnFamily_raw π).toLWE.parameters L
+χ : LWE.Noise := (P.lpnFamily_raw π).toLWE.noise L
+hd : Q.dimension = P.ℓ κ
+hr : Q.samples = P.n κ
+hp : Q.modulus = pp.p
+Q' : LWE.Parameters := { dimension := P.ℓ κ, samples := P.n κ, modulus := pp.p, modulus_ge_two := ⋯ }
+hQ : Q = Q'
+hden : (P.lpnFamily_raw π).noiseDen L = P.W κ
+hmod : (P.lpnFamily_raw π).modulus L = pp.p
+hχ : χ = lpnNoise pp.p (P.W κ)
+ht :
+  (Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+      (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)) =
+    (Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+      (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))
+r :
+  Matrix (Fin ((P.lpnFamily_raw π).toLWE.parameters L).samples) (Fin ((P.lpnFamily_raw π).toLWE.parameters L).dimension)
+      (ZMod ((P.lpnFamily_raw π).toLWE.parameters L).modulus) ×
+    (Fin ((P.lpnFamily_raw π).toLWE.parameters L).dimension → ZMod ((P.lpnFamily_raw π).toLWE.parameters L).modulus) ×
+      (Fin ((P.lpnFamily_raw π).toLWE.parameters L).samples → ((P.lpnFamily_raw π).toLWE.noise L).Coins)
+i : Fin (P.n (P.kappaOf L))
+a : Fin (P.ℓ (P.kappaOf L))
+⊢ ((((finCongr ⋯).arrowCongr ((finCongr ⋯).arrowCongr (Equiv.cast ⋯))).prodCongr
+            ((finCongr ⋯).arrowCongr (Equiv.cast ⋯)))
+          (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L) r)).1
+      ((finCongr ⋯).symm i) ((finCongr h).symm a) =
+    ((Equiv.cast ht) r).1 i a
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport.lean:209:2: error: unsolved goals
+case refine_2.refine_2.refine_2.right.h
+P : Params
+π : PrimeSchedule
+L : ℕ
+h : L = P.ℓ (P.kappaOf L)
+κ : ℕ := P.kappaOf L
+pp : PrimeParam κ := π κ
+Q : LWE.Parameters := (P.lpnFamily_raw π).toLWE.parameters L
+χ : LWE.Noise := (P.lpnFamily_raw π).toLWE.noise L
+hd : Q.dimension = P.ℓ κ
+hr : Q.samples = P.n κ
+hp : Q.modulus = pp.p
+Q' : LWE.Parameters := { dimension := P.ℓ κ, samples := P.n κ, modulus := pp.p, modulus_ge_two := ⋯ }
+hQ : Q = Q'
+hden : (P.lpnFamily_raw π).noiseDen L = P.W κ
+hmod : (P.lpnFamily_raw π).modulus L = pp.p
+hχ : χ = lpnNoise pp.p (P.W κ)
+ht :
+  (Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+      (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)) =
+    (Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+      (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))
+r :
+  Matrix (Fin ((P.lpnFamily_raw π).toLWE.parameters L).samples) (Fin ((P.lpnFamily_raw π).toLWE.parameters L).dimension)
+      (ZMod ((P.lpnFamily_raw π).toLWE.parameters L).modulus) ×
+    (Fin ((P.lpnFamily_raw π).toLWE.parameters L).dimension → ZMod ((P.lpnFamily_raw π).toLWE.parameters L).modulus) ×
+      (Fin ((P.lpnFamily_raw π).toLWE.parameters L).samples → ((P.lpnFamily_raw π).toLWE.noise L).Coins)
+i : Fin (P.n (P.kappaOf L))
+⊢ ((((finCongr ⋯).arrowCongr ((finCongr ⋯).arrowCongr (Equiv.cast ⋯))).prodCongr
+            ((finCongr ⋯).arrowCongr (Equiv.cast ⋯)))
+          (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L) r)).2
+      ((finCongr ⋯).symm i) =
+    ∑ a, ((Equiv.cast ht) r).1 i a * ((Equiv.cast ht) r).2.1 a +
+      ↑((lpnNoise (π (P.kappaOf L)).p (P.W (P.kappaOf L))).sample (cast ⋯ (((Equiv.cast ht) r).2.2 i)))
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport.lean:207:52: warning: This simp argument is unused:
+  LWE.sample_fst
+
+Hint: Omit it from the simp argument list.
+  simp only [P.lpnMatrixAt_eq, P.lpnChalEquiv_eq, L̵W̵E̵.̵s̵a̵m̵p̵l̵e̵_̵f̵s̵t̵,̵hQ, hχ, Equiv.cast_apply, Equiv.cast_trans,
+  ̲  ̲ ̲ ̲ ̲ ̲Fin.cast_cast]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport.lean:208:6: warning: This simp argument is unused:
+  hQ
+
+Hint: Omit it from the simp argument list.
+  simp only [P.lpnMatrixAt_eq, P.lpnChalEquiv_eq, LWE.sample_fst,
+  ̵  ̵ ̵ ̵ ̵ ̵hQ̵,̵ ̵h̵χ, Equiv.cast_apply,
+  ̲  ̲ ̲ ̲ ̲ ̲Equiv.cast_trans, Fin.cast_cast]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport.lean:208:10: warning: This simp argument is unused:
+  hχ
+
+Hint: Omit it from the simp argument list.
+  simp only [P.lpnMatrixAt_eq, P.lpnChalEquiv_eq, LWE.sample_fst,
+  ̵  ̵ ̵ ̵ ̵ ̵hQ, h̵χ̵,̵ ̵Equiv.cast_apply,
+  ̲  ̲ ̲ ̲ ̲ ̲Equiv.cast_trans, Fin.cast_cast]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport.lean:208:14: warning: This simp argument is unused:
+  Equiv.cast_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [P.lpnMatrixAt_eq, P.lpnChalEquiv_eq, LWE.sample_fst, hQ, hχ, E̵q̵u̵i̵v̵.̵c̵a̵s̵t̵_̵a̵p̵p̵l̵y̵,̵ ̵Equiv.cast_trans,
+  ̲  ̲ ̲ ̲ ̲ ̲Fin.cast_cast]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport.lean:208:32: warning: This simp argument is unused:
+  Equiv.cast_trans
+
+Hint: Omit it from the simp argument list.
+  simp only [P.lpnMatrixAt_eq, P.lpnChalEquiv_eq, LWE.sample_fst, hQ, hχ, Equiv.cast_apply,
+  ̲  ̲ ̲ ̲ ̲ ̲E̵q̵u̵i̵v̵.̵c̵a̵s̵t̵_̵t̵r̵a̵n̵s̵,̵ ̵Fin.cast_cast]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport.lean:208:50: warning: This simp argument is unused:
+  Fin.cast_cast
+
+Hint: Omit it from the simp argument list.
+  simp only [P.lpnMatrixAt_eq, P.lpnChalEquiv_eq, LWE.sample_fst, hQ, hχ, Equiv.cast_apply,
+  ̲  ̲ ̲ ̲ ̲ ̲E̵q̵u̵i̵v̵.̵c̵a̵s̵t̵_̵t̵r̵a̵n̵s̵,̵ ̵F̵i̵n̵.̵c̵a̵s̵t̵_̵c̵a̵s̵t̵]̵E̲q̲u̲i̲v̲.̲c̲a̲s̲t̲_̲t̲r̲a̲n̲s̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport.lean:210:52: warning: This simp argument is unused:
+  LWE.sample_snd
+
+Hint: Omit it from the simp argument list.
+  simp only [P.lpnValuesAt_eq, P.lpnChalEquiv_eq, L̵W̵E̵.̵s̵a̵m̵p̵l̵e̵_̵s̵n̵d̵,̵LWE.noisyValues_apply, P.noiseValue_eq, hQ, hχ,
+  ̲  ̲ ̲ ̲ ̲ ̲lpnNoise_coins, Equiv.cast_apply, Equiv.cast_trans, Fin.cast_cast]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport.lean:211:6: warning: This simp argument is unused:
+  LWE.noisyValues_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [P.lpnValuesAt_eq, P.lpnChalEquiv_eq, LWE.sample_snd, L̵W̵E̵.̵n̵o̵i̵s̵y̵V̵a̵l̵u̵e̵s̵_̵a̵p̵p̵l̵y̵,̵ ̵P.noiseValue_eq, hQ, hχ,
+  ̲  ̲ ̲ ̲ ̲ ̲lpnNoise_coins, Equiv.cast_apply, Equiv.cast_trans, Fin.cast_cast]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport.lean:211:46: warning: This simp argument is unused:
+  hQ
+
+Hint: Omit it from the simp argument list.
+  simp only [P.lpnValuesAt_eq, P.lpnChalEquiv_eq, LWE.sample_snd,
+  ̵  ̵ ̵ ̵ ̵ ̵LWE.noisyValues_apply,
+  ̲  ̲ ̲ ̲ ̲ ̲P.noiseValue_eq, hQ̵,̵ ̵h̵χ, lpnNoise_coins,
+  ̵  ̵ ̵ ̵ ̵ ̵Equiv.cast_apply, Equiv.cast_trans, Fin.cast_cast]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport.lean:211:50: warning: This simp argument is unused:
+  hχ
+
+Hint: Omit it from the simp argument list.
+  simp only [P.lpnValuesAt_eq, P.lpnChalEquiv_eq, LWE.sample_snd,
+  ̵  ̵ ̵ ̵ ̵ ̵LWE.noisyValues_apply,
+  ̲  ̲ ̲ ̲ ̲ ̲P.noiseValue_eq, hQ, h̵χ̵,̵ ̵lpnNoise_coins,
+  ̵  ̵ ̵ ̵ ̵ ̵Equiv.cast_apply, Equiv.cast_trans, Fin.cast_cast]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport.lean:212:6: warning: This simp argument is unused:
+  Equiv.cast_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [P.lpnValuesAt_eq, P.lpnChalEquiv_eq, LWE.sample_snd, LWE.noisyValues_apply,
+  ̲  ̲ ̲ ̲ ̲ ̲P.noiseValue_eq, hQ, hχ, lpnNoise_coins, E̵q̵u̵i̵v̵.̵c̵a̵s̵t̵_̵a̵p̵p̵l̵y̵,̵ ̵Equiv.cast_trans, Fin.cast_cast]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport.lean:212:24: warning: This simp argument is unused:
+  Equiv.cast_trans
+
+Hint: Omit it from the simp argument list.
+  simp only [P.lpnValuesAt_eq, P.lpnChalEquiv_eq, LWE.sample_snd, LWE.noisyValues_apply,
+  ̲  ̲ ̲ ̲ ̲ ̲P.noiseValue_eq, hQ, hχ, lpnNoise_coins, Equiv.cast_apply, E̵q̵u̵i̵v̵.̵c̵a̵s̵t̵_̵t̵r̵a̵n̵s̵,̵ ̵Fin.cast_cast]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport.lean:212:42: warning: This simp argument is unused:
+  Fin.cast_cast
+
+Hint: Omit it from the simp argument list.
+  simp only [P.lpnValuesAt_eq, P.lpnChalEquiv_eq, LWE.sample_snd,
+  ̵  ̵ ̵ ̵ ̵ ̵LWE.noisyValues_apply,
+  ̲  ̲ ̲ ̲ ̲ ̲P.noiseValue_eq, hQ, hχ, lpnNoise_coins,
+  ̵  ̵ ̵ ̵ ̵ ̵Equiv.cast_apply, Equiv.cast_trans,̵ ̵F̵i̵n̵.̵c̵a̵s̵t̵_̵c̵a̵s̵t̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport): no fresh .olean produced
+        2.61 real         1.69 user         1.11 sys
+          2348007424  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              185205  page reclaims
+                  25  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  18  voluntary context switches
+                6082  involuntary context switches
+            32083079  instructions retired
+            15048149  cycles elapsed
+             1638736  peak memory footprint
+2026-11-18T20:29:55.318385+00:00 END rc=1

@@ -1,0 +1,9 @@
+theorem lpn_hop (P : Params) (π : PrimeSchedule) (A : NUPPT)
+    (tails : ℕ → Bool) (hops : ∀ κ, Fin (κ + 1)) :
+    ∃ w : ∀ L, P.LPNAdvice π L, ∀ B : NUPPT,
+      B.RealizesOn (P.lpnEnc π) (A.coins.subst .var)
+        (fun L x r => P.lpnRed π A L (w L) x r) →
+      ∀ κ, (hops κ).val < κ →
+        Games.advantage (P.chainGame A (tails κ) (hops κ).val κ (π κ))
+          (P.chainGame A (tails κ) ((hops κ).val + 1) κ (π κ)) ≤
+            (P.lpnFamily_raw π).adv B (P.ℓ κ)

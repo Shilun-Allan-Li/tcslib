@@ -1,0 +1,11 @@
+--- /private/tmp/io-sprg-proof-notes/M4PRGPrepared/candidates/PRGHopFinal/04-prg_verdict_prob.proposed.lean
++++ /private/tmp/io-sprg-proof-notes/M4PRGPrepared/preferred-MRr3/04-prg_verdict_prob.proposed.lean
+@@ -38,7 +38,7 @@
+       _ = _ := ?_
+     congr 1
+     funext r
+-    rw [hB.distinguisherL_eq, P.prgRed_eq, NUPPT.coinsEquivPoly_symm_ofFn]
++    rw [NUPPT.distinguisherL_eq, hB.runAt_coinsEquivPoly_symm, P.prgRed_eq]
+     simp only [decide_eq_true_eq, Q]
+   · have hp :=
+       (HardcoreBit.pushesUniform_restrict (O := Bool) (Fin.castLE_injective hcut)).uprob_eq

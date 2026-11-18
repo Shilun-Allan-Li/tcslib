@@ -1,0 +1,34 @@
+TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/CoordinateVectorModel.lean:18:independent. On the hard sample space this is awkward to state directly, so this file recasts
+TCSlib/Complexity/Randomized/UniformSample.lean:156:  rw [sampleCoins, randProb_congr (B := fun s => ∀ j : Fin k,
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Draws.lean:165:**Proof sketch.** `statClose_sampleBelowL` with `m = p`, mapped into `Z_p` by the cast
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:851:      samplePerm3 N (List.ofFn fun i : Fin (N * 3) => rP (Fin.castLE (le_trans (Nat.le_add_right _ _) hsz) i)) := by
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:882:`|x| · size |E| ≤ (|x| + 1)²` bits (`ColProofs.sampleEdgeIdx_ofFn_castLE`, `|E| ≤ n² = |x|`), the
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:954:      ColProofs.sampleEdgeIdx_ofFn_castLE (by omega) blk
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:874:            (sampleEdgeIdx (edgeCount G) x.length (List.ofFn fun i => rV (Fin.castLE hle i)))
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:880:        rw [← ColProofs.sampleEdgeIdx_ofFn_castLE hle rV]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:212:block (`GIZK.pushesUniform_castLE`, `ColProofs.sampleEdgeIdx_ofFn_castLE`); `K` blocks:
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:225:    exact Fin.ext (ColProofs.sampleEdgeIdx_ofFn_castLE hb g)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:45:* `TCSlib.Cryptography.ColProofs.pushesUniform_castLE`, `ColProofs.sampleEdgeIdx_ofFn_castLE`,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:396:theorem sampleEdgeIdx_ofFn_castLE {m T c : ℕ} (h : T * Nat.size m ≤ c) (t : Fin c → Bool) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:398:      sampleEdgeIdx m T (List.ofFn fun i : Fin (T * Nat.size m) => t (Fin.castLE h i)) := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:847:theorem samplePerm_ofFn_castLE {n c : ℕ} (h : permCoinLen n ≤ c) (t : Fin c → Bool) :
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:849:      samplePerm n (List.ofFn fun i : Fin (permCoinLen n) => t (Fin.castLE h i)) := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:862:uniform permutation (`samplePerm_ofFn_castLE`, `pushesUniform_castLE`). -/
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:866:  have := (statClose_samplePerm n).comp_pushesUniform (pushesUniform_castLE h)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:870:  simpa only [samplePerm_ofFn_castLE h] using hT
+TCSlib/Cryptography/Games/Bridges/Experiments.lean:84:  simp only [expect_bind, expect_sample, expect_pure, Nat.cast_mul, mul_inv, mul_sum]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:139:theorem samplePerm_ofFn_castLE {n c : ℕ} (h : permCoinLen n ≤ c) (t : Fin c → Bool) :
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:141:      samplePerm n (List.ofFn fun i : Fin (permCoinLen n) => t (Fin.castLE h i)) := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:147:uniform permutation (`statClose_samplePerm`, `samplePerm_ofFn_castLE`, `pushesUniform_castLE`). -/
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:151:  have := (statClose_samplePerm n).comp_pushesUniform (pushesUniform_castLE h)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:154:  simpa only [samplePerm_ofFn_castLE h] using hT
+TCSlib/Cryptography/Games/Probability.lean:99:`sample T = (fun j => (equivFin T).symm (Fin.cast _ j)) <$> sampleFin (|T| − 1)`. -/
+TCSlib/Cryptography/Games/Probability.lean:306:  rw [expect_sample, expect_sample, Fintype.card_congr e, Equiv.sum_comp e g]
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:185:  (polyTimeComputable_pairFstD.comp (polyTimeComputable_pairDropPoly (sampleLen m))).congr
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:122:      ((lpnNoise p W).sample (cast (lpnNoise_coins p W).symm c) : ZMod p) = z) =
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybridSecurity.lean:100:passes through the public complete-sample congruence, pointwise on the tape. Finally feed
+TCSlib/Cryptography/CoinSampling/Instances.lean:119:  ((pi P.samples (pi P.dimension (zmod P.modulus s))).congr Matrix.of).prod
+TCSlib/Cryptography/CoinSampling/Instances.lean:125:      ((pi P.samples (pi P.dimension (zmod P.modulus s))).congr Matrix.of).prod
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:639:`List.drop_left'`), the position sampler returns `1^i` (`hPm`, `ofFn_castLE_eq_take`), the
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean:103:the selected-sample sum, and cancel that term. Integer-cast add/multiply equations
+TCSlib/Cryptography/Candidates/DDH.lean:368:/-- The DDH exponent is the rejection sampler's result, with fallback zero, cast to the

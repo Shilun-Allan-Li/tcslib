@@ -1,0 +1,21 @@
+by
+  intro a b h
+  rw [P.encPRGAdvice_eq, P.encPRGAdvice_eq] at h
+  have h0 := congrArg Prod.snd
+    (pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h)
+  have h1 := congrArg Prod.snd
+    (pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h0)
+  have h2 := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h1
+  have h3 := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _))
+    (congrArg Prod.snd h2)
+  have hb : a.buckets = b.buckets :=
+    P.encBuckets_injective (P.kappaOfN N) (congrArg Prod.fst h2)
+  have hM : a.matrix = b.matrix :=
+    Encoding.Modular.encodeMatrix_injective (P.kappaOfN N + 1)
+      (π (P.kappaOfN N)).le_two_pow (congrArg Prod.fst h3)
+  have hu : a.uniform = b.uniform :=
+    Encoding.Modular.encodeMatrix_injective (P.kappaOfN N + 1)
+      (π (P.kappaOfN N)).le_two_pow (congrArg Prod.snd h3)
+  apply (PRGAdvice.prodEquiv P π N).injective
+  simp only [PRGAdvice.prodEquiv_eq]
+  exact Prod.ext hb (Prod.ext hM hu)

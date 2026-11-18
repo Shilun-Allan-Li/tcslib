@@ -1,0 +1,216 @@
+2026-11-18T20:07:24.300623+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:204:52: warning: This simp argument is unused:
+  Params.sdCore_σ
+
+Hint: Omit it from the simp argument list.
+  simp only [accept_eq, hyb_eq, chainGame_eq, ProbComp.prob_bind,
+  ̵  ̵ ̵ ̵Params.sdSampFull_eq,
+  ̲  ̲ ̲ ̲ProbComp.expect_map,
+  ̵  ̵ ̵ ̵Params.chainPublic_eq, Params.sdCore_instances, Params.s̵d̵C̵or̵e̵_̵σ̵,̵
+  ̵ ̵ ̵ ̵ ̵P̵a̵r̵a̵m̵s̵.̵o̵neSd_pub,
+  ̲  ̲ ̲ ̲Params.lpnVector_eq, Nat.not_lt_zero,
+  ̵  ̵ ̵ ̵if_false, Bool.false_eq_true, ite_false,
+  ̲  ̲ ̲ ̲ProbComp.expect_const]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:206:34: warning: This simp argument is unused:
+  ite_false
+
+Hint: Omit it from the simp argument list.
+  simp only [accept_eq, hyb_eq, chainGame_eq, ProbComp.prob_bind,
+  ̵  ̵ ̵ ̵Params.sdSampFull_eq,
+  ̲  ̲ ̲ ̲ProbComp.expect_map,
+  ̵  ̵ ̵ ̵Params.chainPublic_eq, Params.sdCore_instances, Params.sdCore_σ,
+      Params.oneSd_pub, Params.lpnVector_eq, Nat.not_lt_zero,
+  ̵  ̵ ̵ ̵if_false, Bool.false_eq_true,
+  ̲ i̵t̵e̵_̵f̵a̵l̵s̵e̵,̵  ̲ ̲ProbComp.expect_const]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:236:2: error: unsolved goals
+case refine_1
+P : Params
+A : NUPPT
+κ : ℕ
+pp : PrimeParam κ
+Ω : Type := P.IdDraw κ pp × P.Draw κ pp × (Fin (P.m κ) → Bool) × A.Coins κ
+c : ProbComp Ω :=
+  OracleComp.bind (ProbComp.sample (P.IdDraw κ pp)) fun a =>
+    OracleComp.bind (ProbComp.sample (P.Draw κ pp)) fun d =>
+      OracleComp.bind (ProbComp.sample (Fin (P.m κ) → Bool)) fun w =>
+        OracleComp.bind (ProbComp.sample (A.Coins κ)) fun r => pure (a, d, w, r)
+ix : Ω → P.Idx' κ pp := fun z => P.idCore κ pp z.1
+x : Ω → P.SdCoreOut κ pp := fun z => P.sdCore κ pp (ix z) z.2.1
+bad : Ω → Prop := fun z => (x z).err = true
+er : Ω → Prop :=
+  fun z => A.distinguisherL κ (P.challengeStr κ pp (ix z) (x z).seed.1 (P.eval' κ pp (ix z) (x z).seed)) z.2.2.2 = true
+ep : Ω → Prop :=
+  fun z =>
+    A.distinguisherL κ
+        (P.challengeStr κ pp (ix z) (P.publicSeed κ pp (fun k => ((x z).instances k).pub) false) fun j =>
+          P.G.eval (P.n κ) (ix z).1 z.2.1.1 (P.outputIndex κ j))
+        z.2.2.2 =
+      true
+⊢ ((ProbComp.sample (P.IdDraw κ pp)).expect fun a =>
+      (ProbComp.sample (P.Draw κ pp)).expect fun a_1 =>
+        (ProbComp.sample (Fin (P.m κ) → Bool)).expect fun a_2 =>
+          (ProbComp.sample (A.Coins κ)).expect fun a_3 =>
+            ProbComp.prob
+              (pure
+                (A.distinguisherL κ
+                  (P.challengeStr κ pp (P.idCore κ pp a) (P.sdCore κ pp (P.idCore κ pp a) a_1).seed.1
+                    (P.eval' κ pp (P.idCore κ pp a) (P.sdCore κ pp (P.idCore κ pp a) a_1).seed))
+                  a_3))
+              fun x => x = true) =
+    (ProbComp.sample (P.IdDraw κ pp)).expect fun a =>
+      (ProbComp.sample (P.Draw κ pp)).expect fun a_1 =>
+        (ProbComp.sample (Fin (P.m κ) → Bool)).expect fun a_2 =>
+          (ProbComp.sample (A.Coins κ)).expect fun a_3 =>
+            ProbComp.prob (pure (a, a_1, a_2, a_3)) fun z =>
+              A.distinguisherL κ
+                  (P.challengeStr κ pp (P.idCore κ pp z.1) (P.sdCore κ pp (P.idCore κ pp z.1) z.2.1).seed.1
+                    (P.eval' κ pp (P.idCore κ pp z.1) (P.sdCore κ pp (P.idCore κ pp z.1) z.2.1).seed))
+                  z.2.2.2 =
+                true
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:240:2: error: unsolved goals
+case refine_2.refine_1
+P : Params
+A : NUPPT
+κ : ℕ
+pp : PrimeParam κ
+Ω : Type := P.IdDraw κ pp × P.Draw κ pp × (Fin (P.m κ) → Bool) × A.Coins κ
+c : ProbComp Ω :=
+  OracleComp.bind (ProbComp.sample (P.IdDraw κ pp)) fun a =>
+    OracleComp.bind (ProbComp.sample (P.Draw κ pp)) fun d =>
+      OracleComp.bind (ProbComp.sample (Fin (P.m κ) → Bool)) fun w =>
+        OracleComp.bind (ProbComp.sample (A.Coins κ)) fun r => pure (a, d, w, r)
+ix : Ω → P.Idx' κ pp := fun z => P.idCore κ pp z.1
+x : Ω → P.SdCoreOut κ pp := fun z => P.sdCore κ pp (ix z) z.2.1
+bad : Ω → Prop := fun z => (x z).err = true
+er : Ω → Prop :=
+  fun z => A.distinguisherL κ (P.challengeStr κ pp (ix z) (x z).seed.1 (P.eval' κ pp (ix z) (x z).seed)) z.2.2.2 = true
+ep : Ω → Prop :=
+  fun z =>
+    A.distinguisherL κ
+        (P.challengeStr κ pp (ix z) (P.publicSeed κ pp (fun k => ((x z).instances k).pub) false) fun j =>
+          P.G.eval (P.n κ) (ix z).1 z.2.1.1 (P.outputIndex κ j))
+        z.2.2.2 =
+      true
+hr : accept (P.hyb A HybridStage.real κ pp) = c.prob er
+⊢ ((ProbComp.sample (P.IdDraw κ pp)).expect fun a =>
+      (ProbComp.sample (P.Draw κ pp)).expect fun a_1 =>
+        (ProbComp.sample (Fin (P.m κ) → Bool)).expect fun a_2 =>
+          (ProbComp.sample (A.Coins κ)).expect fun a_3 =>
+            ProbComp.prob
+              (pure
+                (A.distinguisherL κ
+                  (P.challengeStr κ pp (P.idCore κ pp a)
+                    (P.publicSeed κ pp (fun k => ((P.sdCore κ pp (P.idCore κ pp a) a_1).instances k).pub) false)
+                    fun j => P.G.eval (P.n κ) (P.idCore κ pp a).1 a_1.1 (P.outputIndex κ j))
+                  a_3))
+              fun x => x = true) =
+    (ProbComp.sample (P.IdDraw κ pp)).expect fun a =>
+      (ProbComp.sample (P.Draw κ pp)).expect fun a_1 =>
+        (ProbComp.sample (Fin (P.m κ) → Bool)).expect fun a_2 =>
+          (ProbComp.sample (A.Coins κ)).expect fun a_3 =>
+            ProbComp.prob (pure (a, a_1, a_2, a_3)) fun z =>
+              A.distinguisherL κ
+                  (P.challengeStr κ pp (P.idCore κ pp z.1)
+                    (P.publicSeed κ pp (fun k => ((P.sdCore κ pp (P.idCore κ pp z.1) z.2.1).instances k).pub) false)
+                    fun j => P.G.eval (P.n κ) (P.idCore κ pp z.1).1 z.2.1.1 (P.outputIndex κ j))
+                  z.2.2.2 =
+                true
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:245:2: error: unsolved goals
+case refine_2.refine_2.refine_1
+P : Params
+A : NUPPT
+κ : ℕ
+pp : PrimeParam κ
+Ω : Type := P.IdDraw κ pp × P.Draw κ pp × (Fin (P.m κ) → Bool) × A.Coins κ
+c : ProbComp Ω :=
+  OracleComp.bind (ProbComp.sample (P.IdDraw κ pp)) fun a =>
+    OracleComp.bind (ProbComp.sample (P.Draw κ pp)) fun d =>
+      OracleComp.bind (ProbComp.sample (Fin (P.m κ) → Bool)) fun w =>
+        OracleComp.bind (ProbComp.sample (A.Coins κ)) fun r => pure (a, d, w, r)
+ix : Ω → P.Idx' κ pp := fun z => P.idCore κ pp z.1
+x : Ω → P.SdCoreOut κ pp := fun z => P.sdCore κ pp (ix z) z.2.1
+bad : Ω → Prop := fun z => (x z).err = true
+er : Ω → Prop :=
+  fun z => A.distinguisherL κ (P.challengeStr κ pp (ix z) (x z).seed.1 (P.eval' κ pp (ix z) (x z).seed)) z.2.2.2 = true
+ep : Ω → Prop :=
+  fun z =>
+    A.distinguisherL κ
+        (P.challengeStr κ pp (ix z) (P.publicSeed κ pp (fun k => ((x z).instances k).pub) false) fun j =>
+          P.G.eval (P.n κ) (ix z).1 z.2.1.1 (P.outputIndex κ j))
+        z.2.2.2 =
+      true
+hr : accept (P.hyb A HybridStage.real κ pp) = c.prob er
+hp : accept (P.hyb A HybridStage.prg κ pp) = c.prob ep
+⊢ ((ProbComp.sample (P.IdDraw κ pp)).expect fun a =>
+      (ProbComp.sample (P.Draw κ pp)).expect fun a_1 =>
+        (ProbComp.sample (Fin (P.m κ) → Bool)).expect fun a_2 =>
+          (ProbComp.sample (A.Coins κ)).expect fun a_3 =>
+            ProbComp.prob (pure (a, a_1, a_2, a_3)) fun z => (P.sdCore κ pp (P.idCore κ pp z.1) z.2.1).err = true) =
+    (ProbComp.sample (P.IdDraw κ pp)).expect fun a =>
+      (P.sdCore κ pp (P.idCore κ pp a) <$> ProbComp.sample (P.Draw κ pp)).prob fun x => x.err = true
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:237:47: warning: This simp argument is unused:
+  ProbComp.prob_pure
+
+Hint: Omit it from the simp argument list.
+  simp only [accept_eq, P.hyb_eq, P.idSamp'_eq, P.sdSampFull_eq, ProbComp.prob_bind,
+  ̲  ̲ ̲ ̲ProbComp.expect_map, P̵r̵o̵b̵C̵o̵m̵p̵.̵p̵r̵o̵b̵_̵p̵u̵r̵e̵,̵ ̵c, er, ix, x]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:241:47: warning: This simp argument is unused:
+  ProbComp.prob_pure
+
+Hint: Omit it from the simp argument list.
+  simp only [accept_eq, P.hyb_eq, P.idSamp'_eq, P.sdSampFull_eq, ProbComp.prob_bind,
+  ̲  ̲ ̲ ̲ProbComp.expect_map, P̵r̵o̵b̵C̵o̵m̵p̵.̵p̵r̵o̵b̵_̵p̵u̵r̵e̵,̵P.sdCore_σ, c, ep, ix, x]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:246:47: warning: This simp argument is unused:
+  ProbComp.prob_pure
+
+Hint: Omit it from the simp argument list.
+  simp only [P.errProb_eq, P.idSamp'_eq, P.sdSampFull_eq, ProbComp.prob_bind,
+  ̲  ̲ ̲ ̲ProbComp.expect_map, P̵r̵o̵b̵C̵o̵m̵p̵.̵p̵r̵o̵b̵_̵p̵u̵r̵e̵,̵ProbComp.expect_const, c, bad, ix, x]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:247:6: warning: This simp argument is unused:
+  ProbComp.expect_const
+
+Hint: Omit it from the simp argument list.
+  simp only [P.errProb_eq, P.idSamp'_eq, P.sdSampFull_eq, ProbComp.prob_bind,
+  ̲  ̲ ̲ ̲ProbComp.expect_map, ProbComp.prob_pure, P̵r̵o̵b̵C̵o̵m̵p̵.̵e̵x̵p̵e̵c̵t̵_̵c̵o̵n̵s̵t̵,̵ ̵c, bad, ix, x]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:273:81: warning: This simp argument is unused:
+  hb
+
+Hint: Omit it from the simp argument list.
+  simp ̵[̵h̵b̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:284:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids): no fresh .olean produced
+        2.74 real         2.09 user         1.04 sys
+          2358919168  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              185521  page reclaims
+                  26  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  17  voluntary context switches
+                7243  involuntary context switches
+            31893233  instructions retired
+            13911208  cycles elapsed
+             1622352  peak memory footprint
+2026-11-18T20:07:27.066146+00:00 END rc=1

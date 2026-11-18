@@ -1,0 +1,36 @@
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+
+open Complexity Turing Games
+open scoped BigOperators
+
+namespace Internal
+
+example (P : Params) (π : PrimeSchedule) (L : ℕ)
+    (h : L = P.ℓ (P.kappaOf L)) (w : P.LPNAdvice π L)
+    (k : Fin (P.kappaOf L)) (hk : k.val = w.hop.val)
+    (M : Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L)))
+      (ZMod (π (P.kappaOf L)).p))
+    (rep : (Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+      (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) ×
+        ZMod (π (P.kappaOf L)).p))
+    (x : P.LPNChal π L) (hM : P.lpnMatrixAt π L h x = M)
+    (hb : P.lpnValuesAt π L h x = fun i =>
+      (∑ a, M i a * rep.1 a) + P.noiseValue (P.kappaOf L) (π (P.kappaOf L)) (rep.2 i)) :
+    P.lpnPre π L w x =
+      P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+        (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+          (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+            (w.draw.1, Function.update w.draw.2 k rep) w.uniform w.hop.val) false)
+        w.tail
+  := __PROBE_BODY__
+
+end Internal
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed

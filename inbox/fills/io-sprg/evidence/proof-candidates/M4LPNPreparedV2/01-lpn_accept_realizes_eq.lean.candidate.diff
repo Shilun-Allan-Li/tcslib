@@ -1,0 +1,32 @@
+--- /private/tmp/io-sprg-proof-notes/LPNHopFinal/01-lpn_accept_realizes_eq.lean.candidate
++++ /private/tmp/io-sprg-proof-notes/M4LPNPrepared/01-lpn_accept_realizes_eq.lean.candidate
+@@ -1,9 +1,10 @@
+-/- NOT_RUN. Specialized RealizesOn transport, no legacy coin-reindexing lemma.
+-Search: no public specialized lpnPre/lpnRed acceptance equality exists.
+-Reuses uprob_comp_equiv and the mandatory shared verdict/coin readers plus
+-existing uniform restriction/ofFn-take APIs. No algorithm or sampler defined.
+-Exact?/apply? and elaboration pending root. -/
++/-- Every shared-contract LPN realizer has the ideal reduction's exact acceptance probability.
++Reduction glue for [JLS26, Lemma 4.2, p. 19]. Only layout-length coin words are used.
+ 
++**Proof sketch.** Read canonical acceptance, reindex B's coins by the shared coin
++bijection, and use the mandatory runAt_coinsEquivPoly_symm reader. The named reduction
++reader leaves the adversary's coin prefix. Its existing uniform restriction law and
++ofFn/take reader recover exactly the shorter adversary coin distribution. -/
+ theorem lpn_accept_realizes_eq (P : Params) (π : PrimeSchedule) (A B : NUPPT)
+     (ω : ∀ L, P.LPNAdvice π L)
+     (hB : B.RealizesOn (P.lpnEnc π) (A.coins.subst .var)
+@@ -22,9 +23,10 @@
+   rw [acceptProb_def, acceptProb_def, uprob_prod, uprob_prod]
+   apply congrArg uexp
+   funext s
+-  rw [← uprob_comp_equiv (NUPPT.coinsEquivPoly hB.coins_eq L).symm]
+-  simp only [hB.distinguisherL_eq, P.lpnRed_eq,
+-    NUPPT.coinsEquivPoly_symm_ofFn, decide_eq_true_eq]
++  rw [← uprob_comp_equiv (NUPPT.coinsEquivPoly hB.coins_eq L).symm
++    (fun r : B.Coins L => B.distinguisherL L (P.lpnEnc π L (X s)) r = true)]
++  simp only [NUPPT.distinguisherL_eq, hB.runAt_coinsEquivPoly_symm,
++    P.lpnRed_eq, decide_eq_true_eq]
+   let Q : List Bool → Prop := fun r =>
+     A.runAtL (P.kappaOf L) (P.lpnPre π L (ω L) (X s)) r = [true]
+   have hprefix :=

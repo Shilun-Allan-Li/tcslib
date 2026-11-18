@@ -1,0 +1,3 @@
+theorem encPRGAdvice_length_le (P : Params) (π : PrimeSchedule) (N : ℕ)
+    (ω : P.PRGAdvice π N) :
+    (P.encPRGAdvice π N ω).length ≤ P.prgAdviceBound.eval N

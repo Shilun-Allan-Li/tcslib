@@ -1,0 +1,314 @@
+From 3a8f1b5e4fd568cf3273d97802abddbfd5ee7dd2 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 12:17:49 -0800
+Subject: [PATCH 31/34] io-sprg: M4 hybrid endpoints and statistical coupling
+ bounds
+
+---
+ .../Obfuscation/StructuredSeed/Hybrids.lean   | 168 +++++++++++++++++-
+ .../StructuredSeed/Reductions/LPN.lean        |   2 +
+ .../StructuredSeed/Reductions/LPN/Hop.lean    |   2 +-
+ .../Reductions/LPN/Sections.lean              |  42 +++++
+ 4 files changed, 207 insertions(+), 7 deletions(-)
+ create mode 100644 TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections.lean
+
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean
+index 8a480e71678bd6d694962f3527599ad210bd149b..dcbee890d29e0c8ff2410cfb9d9a770601b7bd32 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean
+@@ -107,6 +107,20 @@ theorem chainGame_eq (P : Params) (A : NUPPT) (tailReal : Bool) (i κ : ℕ)
+             (if tailReal then fun j => P.G.eval (P.n κ) I.1 d.1
+               (P.outputIndex κ j) else w)) r) := rfl
+ 
++/-- The packed core publishes its instance vectors and its actual error bit; glue. [JLS26,
++SdSamp′, pp. 15-16]. This theorem compares the deterministic vector maps.
++
++**Proof sketch.** Read the core fields, public packing equation, and publicSeed coordinate
++equation. Both sides then have the same explicit sum-coordinate match. -/
++theorem sdCore_publicSeed (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (I : P.Idx' κ pp) (d : P.Draw κ pp) :
++    (P.sdCore κ pp I d).seed.1 =
++      P.publicSeed κ pp (fun k => ((P.sdCore κ pp I d).instances k).pub)
++        (P.sdCore κ pp I d).err := by
++  rw [P.sdCore_seed, P.publicSeed_eq, P.sdCore_instances, P.sdCore_err,
++    P.packSeed_fst]
++  rfl
++
+ /-- H0-H3 sample the actual index and seed law and alter only error flag and output
+ [JLS26, Proposition 4.1, pp. 18-19]. Dv8 includes the bucket map in all challenges. -/
+ noncomputable def hyb (P : Params) (A : NUPPT) (stage : HybridStage) (κ : ℕ)
+@@ -140,13 +154,26 @@ theorem hyb_eq (P : Params) (A : NUPPT) (stage : HybridStage) (κ : ℕ)
+ 
+ **Proof sketch.** Read the raw game, construction fields and exact sampler projection laws. -/
+ theorem hyb_real_eq_raw (P : Params) (π : PrimeSchedule) (A : NUPPT) (κ : ℕ) :
+-    P.hyb A .real κ (π κ) = (jlsSPRG_raw P π).game A true κ := sorry
++    P.hyb A .real κ (π κ) = (jlsSPRG_raw P π).game A true κ := by
++  simp only [hyb_eq, SPRG.Raw.game_eq, jlsSPRG_raw_eq,
++    SPRG.Raw.idSamp_eq, SPRG.Raw.sdSamp_eq, SPRG.Raw.instIdDrawFintype_eq,
++    SPRG.Raw.instSdDrawFintype_eq, Params.idSamp'_eq, Params.sdSampFull_eq,
++    OracleComp.map_eq_bind, OracleComp.bind_assoc, OracleComp.pure_bind,
++    SPRG.Raw.challengeStr_eq, Params.challengeStr_eq, SPRG.Raw.encPP_eq,
++    PrimeParam.enc_eq, PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const, ite_true]
+ 
+ /-- H3 equals the random raw sPRG game [JLS26, Proposition 4.1, pp. 18-19]. Dv18 uses Raw.
+ 
+ **Proof sketch.** Read the raw game and sampler projection laws; the tail is the same uniform. -/
+ theorem hyb_random_eq_raw (P : Params) (π : PrimeSchedule) (A : NUPPT) (κ : ℕ) :
+-    P.hyb A .random κ (π κ) = (jlsSPRG_raw P π).game A false κ := sorry
++    P.hyb A .random κ (π κ) = (jlsSPRG_raw P π).game A false κ := by
++  simp only [hyb_eq, SPRG.Raw.game_eq, jlsSPRG_raw_eq,
++    SPRG.Raw.idSamp_eq, SPRG.Raw.sdSamp_eq, SPRG.Raw.instIdDrawFintype_eq,
++    SPRG.Raw.instSdDrawFintype_eq, Params.idSamp'_eq, Params.sdSampFull_eq,
++    OracleComp.map_eq_bind, OracleComp.bind_assoc, OracleComp.pure_bind,
++    SPRG.Raw.challengeStr_eq, Params.challengeStr_eq, SPRG.Raw.encPP_eq,
++    PrimeParam.enc_eq, PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const,
++    Bool.false_eq_true, ite_false]
+ 
+ /-- H1 and the real-tail chain's initial game have equal acceptance probabilities
+ [JLS26, Lemma 4.2, p. 19]. Dv8 includes buckets. Pre-M0 repair SP-W2 compares
+@@ -156,7 +183,12 @@ probabilities: the free oracle programs differ by an unused uniform-vector query
+ sum out the unused uniform vectors using the existing exact uniform expectation law. -/
+ theorem hyb_prg_accept_eq_chain_zero (P : Params) (A : NUPPT) (κ : ℕ)
+     (pp : PrimeParam κ) :
+-    accept (P.hyb A .prg κ pp) = accept (P.chainGame A true 0 κ pp) := sorry
++    accept (P.hyb A .prg κ pp) = accept (P.chainGame A true 0 κ pp) := by
++  simp only [accept_eq, hyb_eq, chainGame_eq, ProbComp.prob_bind,
++    Params.sdSampFull_eq, ProbComp.expect_map,
++    Params.chainPublic_eq, Params.sdCore_instances, Params.sdCore_σ,
++    Params.oneSd_pub, Params.lpnVector_eq, Nat.not_lt_zero,
++    if_false, ite_true, ProbComp.expect_const]
+ 
+ /-- H2 and the uniform-tail chain's initial game have equal acceptance probabilities
+ [JLS26, Lemma 4.2, p. 19]. Pre-M0 repair SP-W2 compares probabilities rather than
+@@ -166,7 +198,12 @@ free oracle syntax, since the chain makes an additional unused uniform-vector qu
+ marginalize the unused draw inside acceptance probability. -/
+ theorem hyb_uniform_accept_eq_chain_zero (P : Params) (A : NUPPT) (κ : ℕ)
+     (pp : PrimeParam κ) :
+-    accept (P.hyb A .uniform κ pp) = accept (P.chainGame A false 0 κ pp) := sorry
++    accept (P.hyb A .uniform κ pp) = accept (P.chainGame A false 0 κ pp) := by
++  simp only [accept_eq, hyb_eq, chainGame_eq, ProbComp.prob_bind,
++    Params.sdSampFull_eq, ProbComp.expect_map,
++    Params.chainPublic_eq, Params.sdCore_instances,
++    Params.oneSd_pub, Params.lpnVector_eq, Nat.not_lt_zero,
++    if_false, Bool.false_eq_true, ProbComp.expect_const]
+ 
+ /-- H0 and H1 disagree only on the error event [JLS26, Proposition 4.1, pp. 18-19].
+ Dv7 retains the exact error probability at every parameter.
+@@ -174,7 +211,75 @@ Dv7 retains the exact error probability at every parameter.
+ **Proof sketch.** Couple the two games with the same draws and coins. Correctness and the
+ packing readers show agreement off err=true; use the existing agree-off-bad bound. -/
+ theorem hyb_real_prg_le (P : Params) (A : NUPPT) (κ : ℕ) (pp : PrimeParam κ) :
+-    advantage (P.hyb A .real κ pp) (P.hyb A .prg κ pp) ≤ P.errProb κ pp := sorry
++    advantage (P.hyb A .real κ pp) (P.hyb A .prg κ pp) ≤ P.errProb κ pp := by
++  classical
++  let Ω := P.IdDraw κ pp ×
++    (P.Draw κ pp × ((Fin (P.m κ) → Bool) × A.Coins κ))
++  let c : ProbComp Ω :=
++    (ProbComp.sample (P.IdDraw κ pp)).bind fun a =>
++    (ProbComp.sample (P.Draw κ pp)).bind fun d =>
++    (ProbComp.sample (Fin (P.m κ) → Bool)).bind fun w =>
++    (ProbComp.sample (A.Coins κ)).bind fun r => pure (a, d, w, r)
++  let ix : Ω → P.Idx' κ pp := fun z => P.idCore κ pp z.1
++  let x : Ω → P.SdCoreOut κ pp := fun z => P.sdCore κ pp (ix z) z.2.1
++  let bad : Ω → Prop := fun z => (x z).err = true
++  let er : Ω → Prop := fun z =>
++    A.distinguisherL κ (P.challengeStr κ pp (ix z) (x z).seed.1
++      (P.eval' κ pp (ix z) (x z).seed)) z.2.2.2 = true
++  let ep : Ω → Prop := fun z =>
++    A.distinguisherL κ (P.challengeStr κ pp (ix z)
++      (P.publicSeed κ pp (fun k => ((x z).instances k).pub) false)
++      (fun j => P.G.eval (P.n κ) (ix z).1 z.2.1.1 (P.outputIndex κ j)))
++        z.2.2.2 = true
++  have hr : accept (P.hyb A .real κ pp) = ProbComp.prob c er := ?_
++  swap
++  · simp only [accept_eq, P.hyb_eq, P.idSamp'_eq, P.sdSampFull_eq,
++      ProbComp.prob_eq_expect, ProbComp.expect_bind, ProbComp.expect_map,
++      OracleComp.pure_eq_pure, ProbComp.expect_pure, c, er, ix, x]
++  have hp : accept (P.hyb A .prg κ pp) = ProbComp.prob c ep := ?_
++  swap
++  · simp only [accept_eq, P.hyb_eq, P.idSamp'_eq, P.sdSampFull_eq,
++      ProbComp.prob_eq_expect, ProbComp.expect_bind, ProbComp.expect_map,
++      OracleComp.pure_eq_pure, ProbComp.expect_pure,
++      P.sdCore_σ, c, ep, ix, x]
++  have he : ProbComp.prob c bad = P.errProb κ pp := ?_
++  swap
++  · simp only [P.errProb_eq, P.idSamp'_eq, P.sdSampFull_eq,
++      ProbComp.prob_eq_expect, ProbComp.expect_bind, ProbComp.expect_map,
++      OracleComp.pure_eq_pure, ProbComp.expect_pure,
++      c, bad, ix, x]
++    dsimp only
++    simp only [ProbComp.expect_const]
++  have hagree : ∀ z, ¬ bad z → (er z ↔ ep z) := ?_
++  swap
++  · intro z hz
++    have herr : (x z).err = false := Bool.eq_false_iff.mpr hz
++    have hpub : (x z).seed.1 =
++        P.publicSeed κ pp (fun k => ((x z).instances k).pub) false := ?_
++    swap
++    · have h := P.sdCore_publicSeed κ pp (ix z) z.2.1
++      change (x z).seed.1 =
++        P.publicSeed κ pp (fun k => ((x z).instances k).pub) (x z).err at h
++      rwa [herr] at h
++    have htail : P.eval' κ pp (ix z) (x z).seed =
++        fun j => P.G.eval (P.n κ) (ix z).1 z.2.1.1 (P.outputIndex κ j) := ?_
++    swap
++    · funext j
++      rw [P.eval'_eq]
++      change decide (MvPolynomial.eval (Sum.elim (x z).seed.1 (x z).seed.2)
++        (P.G4 κ pp (ix z) j) = 1) = _
++      have h := P.G4_eval_sdCore κ pp (ix z) z.2.1 j
++      change MvPolynomial.eval (Sum.elim (x z).seed.1 (x z).seed.2)
++        (P.G4 κ pp (ix z) j) =
++          if (x z).err then 0 else
++            ((P.G.eval (P.n κ) (ix z).1 z.2.1.1 (P.outputIndex κ j)).toNat :
++              ZMod pp.p) at h
++      rw [h, herr]
++      cases P.G.eval (P.n κ) (ix z).1 z.2.1.1 (P.outputIndex κ j) <;> simp
++    dsimp only [er, ep]
++    rw [hpub, htail]
++  rw [advantage_eq, hr, hp]
++  exact (ProbComp.abs_prob_sub_le_of_agree c hagree).trans_eq he
+ 
+ /-- H2 and H3 disagree only on the error event [JLS26, Proposition 4.1, pp. 18-19].
+ Dv7 retains the exact error probability at every parameter.
+@@ -182,7 +287,58 @@ Dv7 retains the exact error probability at every parameter.
+ **Proof sketch.** Couple the same draws and uniform output. The public seeds agree when
+ err=false; apply the existing agree-off-bad bound. -/
+ theorem hyb_uniform_random_le (P : Params) (A : NUPPT) (κ : ℕ) (pp : PrimeParam κ) :
+-    advantage (P.hyb A .uniform κ pp) (P.hyb A .random κ pp) ≤ P.errProb κ pp := sorry
++    advantage (P.hyb A .uniform κ pp) (P.hyb A .random κ pp) ≤ P.errProb κ pp := by
++  classical
++  let Ω := P.IdDraw κ pp ×
++    (P.Draw κ pp × ((Fin (P.m κ) → Bool) × A.Coins κ))
++  let c : ProbComp Ω :=
++    (ProbComp.sample (P.IdDraw κ pp)).bind fun a =>
++    (ProbComp.sample (P.Draw κ pp)).bind fun d =>
++    (ProbComp.sample (Fin (P.m κ) → Bool)).bind fun w =>
++    (ProbComp.sample (A.Coins κ)).bind fun r => pure (a, d, w, r)
++  let ix : Ω → P.Idx' κ pp := fun z => P.idCore κ pp z.1
++  let x : Ω → P.SdCoreOut κ pp := fun z => P.sdCore κ pp (ix z) z.2.1
++  let bad : Ω → Prop := fun z => (x z).err = true
++  let eu : Ω → Prop := fun z =>
++    A.distinguisherL κ (P.challengeStr κ pp (ix z)
++      (P.publicSeed κ pp (fun k => ((x z).instances k).pub) false) z.2.2.1)
++        z.2.2.2 = true
++  let er : Ω → Prop := fun z =>
++    A.distinguisherL κ (P.challengeStr κ pp (ix z) (x z).seed.1 z.2.2.1)
++      z.2.2.2 = true
++  have hu : accept (P.hyb A .uniform κ pp) = ProbComp.prob c eu := ?_
++  swap
++  · simp only [accept_eq, P.hyb_eq, P.idSamp'_eq, P.sdSampFull_eq,
++      ProbComp.prob_eq_expect, ProbComp.expect_bind, ProbComp.expect_map,
++      OracleComp.pure_eq_pure, ProbComp.expect_pure, c, eu, ix, x]
++  have hr : accept (P.hyb A .random κ pp) = ProbComp.prob c er := ?_
++  swap
++  · simp only [accept_eq, P.hyb_eq, P.idSamp'_eq, P.sdSampFull_eq,
++      ProbComp.prob_eq_expect, ProbComp.expect_bind, ProbComp.expect_map,
++      OracleComp.pure_eq_pure, ProbComp.expect_pure, c, er, ix, x]
++  have he : ProbComp.prob c bad = P.errProb κ pp := ?_
++  swap
++  · simp only [P.errProb_eq, P.idSamp'_eq, P.sdSampFull_eq,
++      ProbComp.prob_eq_expect, ProbComp.expect_bind, ProbComp.expect_map,
++      OracleComp.pure_eq_pure, ProbComp.expect_pure,
++      c, bad, ix, x]
++    dsimp only
++    simp only [ProbComp.expect_const]
++  have hagree : ∀ z, ¬ bad z → (eu z ↔ er z) := ?_
++  swap
++  · intro z hz
++    have herr : (x z).err = false := Bool.eq_false_iff.mpr hz
++    have hpub : (x z).seed.1 =
++        P.publicSeed κ pp (fun k => ((x z).instances k).pub) false := ?_
++    swap
++    · have h := P.sdCore_publicSeed κ pp (ix z) z.2.1
++      change (x z).seed.1 =
++        P.publicSeed κ pp (fun k => ((x z).instances k).pub) (x z).err at h
++      rwa [herr] at h
++    dsimp only [eu, er]
++    rw [hpub]
++  rw [advantage_eq, hu, hr]
++  exact (ProbComp.abs_prob_sub_le_of_agree c hagree).trans_eq he
+ 
+ end Params
+ end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean
+index 466add445af3d29830e6ee6eda97944ae4688054..a5fa4c98d4ffa9f188219e71d56dd9d384c947db 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean
+@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs
+ import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Encoding
+ import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Transport
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Sections
+ import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Hop
+ 
+ set_option maxHeartbeats 0
+@@ -46,6 +47,7 @@ and coin lists of the layout length only; this strengthens every-realiser securi
+ * `LPN.Defs`: all original challenge/advice/reduction definitions, instances and exact readers.
+ * `LPN.Encoding`: the three original injectivity and polynomial advice-bound statements.
+ * `LPN.Transport`: the specialized transport helper owner, initially empty.
++* `LPN.Sections`: pointwise preprocessing and fixed-advice section identities.
+ * `LPN.Hop`: the unchanged every-realizer hop statement and future specialized proof glue.
+ 
+ Every old full name, definition, reader, theorem header and statement docstring is retained.
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Hop.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Hop.lean
+index ba8625c8250e9f6af9b67e356c8f1625acb29689..2f6e6c6200715d75e0352aec81643e09720c7967 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Hop.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Hop.lean
+@@ -2,7 +2,7 @@
+ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+-import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Transport
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Sections
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..450b26191b72cee45607f01c418ed37a013841f5
+--- /dev/null
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections.lean
+@@ -0,0 +1,42 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Transport
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Fixed-advice sections of the LPN reduction
++
++## Main definitions
++
++None. The section identities use the reduction interface in `LPN.Defs`.
++
++## Main results
++
++* Pointwise real and uniform preprocessing identities.
++* Real and uniform challenge acceptance identities for fixed advice.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026,
++  Lemma 4.2, p. 19.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, Definition 26.8.
++-/
++
++namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
++
++open Complexity Turing Games
++open scoped BigOperators
++
++namespace Internal
++
++end Internal
++
++end TCSlib.Cryptography.Obfuscation.StructuredSeed

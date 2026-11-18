@@ -1,0 +1,118 @@
+2026-11-18T20:18:41.534669+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Encoding
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Encoding.lean:151:4: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  s ≥ 0
+  r ≥ 0
+  q ≥ 0
+  p ≥ 0
+  o ≥ 0
+  l ≥ 0
+  k ≥ 0
+  j ≥ 0
+  i ≥ 0
+  i - 2*p - 2*q - r ≥ 4
+  h ≥ 0
+  g ≥ 0
+  f ≥ 0
+  e ≥ 0
+  c ≥ 0
+  c + e + f + g + h ≥ 0
+  b ≥ 0
+  a ≥ 0
+  a - b ≥ 0
+  a - b + c + e + f + g + h ≥ 0
+  a + c + e + f + g + h ≥ 0
+  a + c + e + f + g + h - i ≥ -1
+  a + c + e + f + g + h - j ≥ -1
+  a + c + e + f + g + h - k ≥ -1
+  a + c + e + f + g + h - l ≥ -1
+  a + c + e + f + g + h - o ≥ -1
+  a + c + e + f + g + h - s ≤ -2
+where
+ a := ↑L
+ b := ↑(P.kappaOf L)
+ c := ↑(P.idxBound.eval L)
+ e := ↑(P.seedBound.eval L)
+ f := ↑(P.mBound.eval L)
+ g := ↑(P.nBound.eval L)
+ h := ↑(P.ellBound.eval L)
+ i := ↑(P.idxBound.eval κ)
+ j := ↑(P.seedBound.eval κ)
+ k := ↑(P.n κ)
+ l := ↑(P.ℓ κ)
+ o := ↑(P.m κ)
+ p := ↑(P.G.encIdx (P.n κ) (w.I, w.buckets, fun x x_1 => 0).1).length
+ q := ↑(P.encBuckets κ (w.I, w.buckets, fun x x_1 => 0).2.1).length
+ r := ↑(Encoding.Modular.encodeMatrix (κ + 1) (w.I, w.buckets, fun x x_1 => 0).2.2).length
+ s := ↑(P.G.encIdx (P.n κ) w.I).length
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Encoding.lean:154:4: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  u ≥ 0
+  s ≥ 0
+  r ≥ 0
+  q ≥ 0
+  p ≥ 0
+  o ≥ 0
+  l ≥ 0
+  k ≥ 0
+  j ≥ 0
+  i ≥ 0
+  i - 2*p - 2*q - r ≥ 4
+  h ≥ 0
+  g ≥ 0
+  f ≥ 0
+  e ≥ 0
+  c ≥ 0
+  c + e + f + g + h ≥ 0
+  b ≥ 0
+  a ≥ 0
+  a - b ≥ 0
+  a - b + c + e + f + g + h ≥ 0
+  a + c + e + f + g + h ≥ 0
+  a + c + e + f + g + h - i ≥ -1
+  a + c + e + f + g + h - j ≥ -1
+  a + c + e + f + g + h - k ≥ -1
+  a + c + e + f + g + h - l ≥ -1
+  a + c + e + f + g + h - o ≥ -1
+  a + c + e + f + g + h - s ≥ -1
+  a + c + e + f + g + h - u ≤ -2
+where
+ a := ↑L
+ b := ↑(P.kappaOf L)
+ c := ↑(P.idxBound.eval L)
+ e := ↑(P.seedBound.eval L)
+ f := ↑(P.mBound.eval L)
+ g := ↑(P.nBound.eval L)
+ h := ↑(P.ellBound.eval L)
+ i := ↑(P.idxBound.eval κ)
+ j := ↑(P.seedBound.eval κ)
+ k := ↑(P.n κ)
+ l := ↑(P.ℓ κ)
+ o := ↑(P.m κ)
+ p := ↑(P.G.encIdx (P.n κ) (w.I, w.buckets, fun x x_1 => 0).1).length
+ q := ↑(P.encBuckets κ (w.I, w.buckets, fun x x_1 => 0).2.1).length
+ r := ↑(Encoding.Modular.encodeMatrix (κ + 1) (w.I, w.buckets, fun x x_1 => 0).2.2).length
+ s := ↑(P.G.encIdx (P.n κ) w.I).length
+ u := ↑(P.encBuckets κ w.buckets).length
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Encoding): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Encoding): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Encoding): no fresh .olean produced
+        3.21 real         2.80 user         1.06 sys
+          2474475520  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              193162  page reclaims
+                 232  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                  18  voluntary context switches
+                6164  involuntary context switches
+            32042448  instructions retired
+            14593745  cycles elapsed
+             1638736  peak memory footprint
+2026-11-18T20:18:44.777076+00:00 END rc=1

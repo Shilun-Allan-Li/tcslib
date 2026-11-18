@@ -1,0 +1,50 @@
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+run_cmd do
+  let env ← Lean.getEnv
+  let prefix := "TCSlib.Cryptography.Obfuscation.StructuredSeed."
+  let suffixes : List String := [
+    "Internal.lpn_accept_realizes_eq",
+    "Internal.lpn_gap_realizes_eq",
+    "Internal.lpn_uniform_challenge_reindex",
+    "Internal.lpn_real_seed_reindex",
+    "Internal.lpn_pre_real_update",
+    "Internal.lpn_pre_uniform_update",
+    "Internal.lpn_real_section",
+    "Internal.lpn_uniform_section",
+    "Internal.lpn_fix_advice",
+    "Params.lpn_hop"
+  ]
+  for suffix in suffixes do
+    let name := ((prefix ++ suffix).splitOn ".").foldl
+      (fun n p => Lean.Name.str n p) Lean.Name.anonymous
+    if env.contains name (skipRealize := false) then
+      Lean.throwError "LPN_DEFS_TARGET_PRESENT"
+  IO.println "LPN_DEFS_GUARD_OK_10"
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+
+open Complexity Turing Games
+
+namespace Internal
+
+example (P : Params) (π : PrimeSchedule) (A B : NUPPT)
+    (ω : ∀ L, P.LPNAdvice π L)
+    (hB : B.RealizesOn (P.lpnEnc π) (A.coins.subst .var)
+      (fun L x r => P.lpnRed π A L (ω L) x r))
+    (L : ℕ) {σ : Type} [Fintype σ] (X : σ → P.LPNChal π L) :
+    acceptProb X (fun x (r : B.Coins L) => B.distinguisherL L (P.lpnEnc π L x) r) =
+      acceptProb X (fun x (r : A.Coins (P.kappaOf L)) =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L (ω L) x)
+          (List.ofFn r) = [true]))
+  := by
+    apply?
+
+end Internal
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed

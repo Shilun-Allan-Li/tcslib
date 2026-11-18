@@ -1,0 +1,61 @@
+by
+  classical
+  let sec : ∀ N, P.PRGAdvice π N → Bool → ProbComp Bool := fun N ω b =>
+    (P.G.idSamp N).bind fun I =>
+    (ProbComp.sample (Fin N → Bool)).bind fun σ =>
+    (ProbComp.sample (Fin (P.G.outLen N) → Bool)).bind fun v =>
+    (ProbComp.sample (A.Coins (P.kappaOfN N))).bind fun r =>
+      pure (A.distinguisherL (P.kappaOfN N)
+        (P.prgPre π N ω (I, if b then P.G.eval N I σ else v)) r)
+  have hfixed : ∀ N, ∃ ω : P.PRGAdvice π N,
+      N = P.n (P.kappaOfN N) →
+      advantage (P.chainGame A true (P.kappaOfN N) (P.kappaOfN N)
+          (π (P.kappaOfN N)))
+        (P.chainGame A false (P.kappaOfN N) (P.kappaOfN N)
+          (π (P.kappaOfN N))) ≤ advantage (sec N ω true) (sec N ω false) := ?_
+  swap
+  · intro N
+    by_cases hi : N = P.n (P.kappaOfN N)
+    · obtain ⟨ω, hω⟩ :=
+        TCSlib.Cryptography.Authentication.LamportReduction.exists_expect_sample_le
+          (fun ω : P.PRGAdvice π N => advantage (sec N ω true) (sec N ω false))
+      refine ⟨ω, fun _ => ?_⟩
+      rw [advantage_eq, P.prg_chain_accept_average π A N hi true,
+        P.prg_chain_accept_average π A N hi false]
+      change |ProbComp.expect (ProbComp.sample (P.PRGAdvice π N))
+          (fun ω => accept (sec N ω true)) -
+        ProbComp.expect (ProbComp.sample (P.PRGAdvice π N))
+          (fun ω => accept (sec N ω false))| ≤ _
+      exact (ProbComp.abs_expect_sub_le_expect
+        (ProbComp.sample (P.PRGAdvice π N))
+        (f := fun ω => accept (sec N ω true))
+        (g := fun ω => accept (sec N ω false))
+        (h := fun ω => advantage (sec N ω true) (sec N ω false))
+        (fun ω => (advantage_eq (sec N ω true) (sec N ω false)).symm.le)).trans hω
+    · exact ⟨default, fun h => False.elim (hi h)⟩
+  choose ω hω using hfixed
+  refine ⟨ω, ?_⟩
+  intro B hB
+  have hacc : ∀ N b, accept (sec N (ω N) b) = accept (P.G.game B b N) := ?_
+  swap
+  · intro N b
+    simp only [sec, accept_eq, P.G.game_eq, ProbComp.prob_bind, ProbComp.prob_pure]
+    congr 1
+    funext I
+    congr 1
+    funext σ
+    congr 1
+    funext v
+    have hc := P.prg_verdict_prob π A ω B hB N
+      (I, if b then P.G.eval N I σ else v)
+    simpa only [P.prgEnc_eq, ProbComp.prob_eq_expect] using hc.symm
+  have hcoins : ∀ N,
+      advantage (sec N (ω N) true) (sec N (ω N) false) = P.G.adv B N := ?_
+  swap
+  · intro N
+    simp only [advantage_eq, hacc, P.G.adv_eq]
+  intro κ
+  have hi : P.n κ = P.n (P.kappaOfN (P.n κ)) :=
+    congrArg P.n (P.kappaOfN_n κ).symm
+  have h := (hω (P.n κ) hi).trans (hcoins (P.n κ)).le
+  simpa only [P.kappaOfN_n] using h

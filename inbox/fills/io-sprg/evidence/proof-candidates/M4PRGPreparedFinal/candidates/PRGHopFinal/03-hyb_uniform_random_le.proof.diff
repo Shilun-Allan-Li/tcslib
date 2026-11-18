@@ -1,0 +1,34 @@
+--- /private/tmp/io-sprg-proof-notes/PRGHopFinal/03-hyb_uniform_random_le.proof
++++ /private/tmp/io-sprg-proof-notes/M4PRGPrepared/candidates/PRGHopFinal/03-hyb_uniform_random_le.proof
+@@ -17,21 +17,26 @@
+   let er : Ω → Prop := fun z =>
+     A.distinguisherL κ (P.challengeStr κ pp (ix z) (x z).seed.1 z.2.2.1)
+       z.2.2.2 = true
+-  have hu : accept (P.hyb A .uniform κ pp) = ProbComp.prob c eu
++  have hu : accept (P.hyb A .uniform κ pp) = ProbComp.prob c eu := ?_
++  swap
+   · simp only [accept_eq, P.hyb_eq, P.idSamp'_eq, P.sdSampFull_eq,
+       ProbComp.prob_bind, ProbComp.expect_map, ProbComp.prob_pure, c, eu, ix, x]
+-  have hr : accept (P.hyb A .random κ pp) = ProbComp.prob c er
++  have hr : accept (P.hyb A .random κ pp) = ProbComp.prob c er := ?_
++  swap
+   · simp only [accept_eq, P.hyb_eq, P.idSamp'_eq, P.sdSampFull_eq,
+       ProbComp.prob_bind, ProbComp.expect_map, ProbComp.prob_pure, c, er, ix, x]
+-  have he : ProbComp.prob c bad = P.errProb κ pp
++  have he : ProbComp.prob c bad = P.errProb κ pp := ?_
++  swap
+   · simp only [P.errProb_eq, P.idSamp'_eq, P.sdSampFull_eq,
+       ProbComp.prob_bind, ProbComp.expect_map, ProbComp.prob_pure,
+       ProbComp.expect_const, c, bad, ix, x]
+-  have hagree : ∀ z, ¬ bad z → (eu z ↔ er z)
++  have hagree : ∀ z, ¬ bad z → (eu z ↔ er z) := ?_
++  swap
+   · intro z hz
+     have herr : (x z).err = false := Bool.eq_false_iff.mpr hz
+     have hpub : (x z).seed.1 =
+-        P.publicSeed κ pp (fun k => ((x z).instances k).pub) false
++        P.publicSeed κ pp (fun k => ((x z).instances k).pub) false := ?_
++    swap
+     · have h := P.sdCore_publicSeed κ pp (ix z) z.2.1
+       change (x z).seed.1 =
+         P.publicSeed κ pp (fun k => ((x z).instances k).pub) (x z).err at h

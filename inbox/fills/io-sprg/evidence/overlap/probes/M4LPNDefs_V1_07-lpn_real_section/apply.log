@@ -1,0 +1,1046 @@
+LPN_DEFS_GUARD_OK_10
+Try this:
+  [apply] refine Real.ext_cauchy ?_
+  -- Remaining subgoals:
+  -- ⊢ (acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])).cauchy =
+    ((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+        fun M =>
+        (ProbComp.sample
+              ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+                (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+          fun rep =>
+          (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+            if
+                A.runAtL (P.kappaOf L)
+                    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                          (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                        false)
+                      w.tail)
+                    (List.ofFn r) =
+                  [true] then
+              1
+            else 0).cauchy
+Try this:
+  [apply] refine Real.ext_cauchy_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])).cauchy =
+    ((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+        fun M =>
+        (ProbComp.sample
+              ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+                (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+          fun rep =>
+          (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+            if
+                A.runAtL (P.kappaOf L)
+                    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                          (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                        false)
+                      w.tail)
+                    (List.ofFn r) =
+                  [true] then
+              1
+            else 0).cauchy
+Try this:
+  [apply] refine (Real.toNNReal_eq_toNNReal_iff ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤
+    acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+      decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])
+  -- ⊢ 0 ≤
+    (ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+      fun M =>
+      (ProbComp.sample
+            ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+              (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+        fun rep =>
+        (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+          if
+              A.runAtL (P.kappaOf L)
+                  (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                    (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                      (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                        (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                      false)
+                    w.tail)
+                  (List.ofFn r) =
+                [true] then
+            1
+          else 0
+  -- ⊢ (acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])).toNNReal =
+    ((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+        fun M =>
+        (ProbComp.sample
+              ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+                (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+          fun rep =>
+          (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+            if
+                A.runAtL (P.kappaOf L)
+                    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                          (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                        false)
+                      w.tail)
+                    (List.ofFn r) =
+                  [true] then
+              1
+            else 0).toNNReal
+Try this:
+  [apply] refine Eq.symm (Real.ext_cauchy ?_)
+  -- Remaining subgoals:
+  -- ⊢ ((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+        fun M =>
+        (ProbComp.sample
+              ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+                (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+          fun rep =>
+          (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+            if
+                A.runAtL (P.kappaOf L)
+                    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                          (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                        false)
+                      w.tail)
+                    (List.ofFn r) =
+                  [true] then
+              1
+            else 0).cauchy =
+    (acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])).cauchy
+Try this:
+  [apply] refine (ENNReal.ofReal_eq_ofReal_iff ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤
+    acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+      decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])
+  -- ⊢ 0 ≤
+    (ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+      fun M =>
+      (ProbComp.sample
+            ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+              (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+        fun rep =>
+        (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+          if
+              A.runAtL (P.kappaOf L)
+                  (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                    (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                      (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                        (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                      false)
+                    w.tail)
+                  (List.ofFn r) =
+                [true] then
+            1
+          else 0
+  -- ⊢ ENNReal.ofReal
+      (acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])) =
+    ENNReal.ofReal
+      ((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+        fun M =>
+        (ProbComp.sample
+              ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+                (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+          fun rep =>
+          (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+            if
+                A.runAtL (P.kappaOf L)
+                    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                          (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                        false)
+                      w.tail)
+                    (List.ofFn r) =
+                  [true] then
+              1
+            else 0)
+Try this:
+  [apply] refine Eq.symm ((fun {x y} => Real.ext_cauchy_iff.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+        fun M =>
+        (ProbComp.sample
+              ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+                (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+          fun rep =>
+          (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+            if
+                A.runAtL (P.kappaOf L)
+                    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                          (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                        false)
+                      w.tail)
+                    (List.ofFn r) =
+                  [true] then
+              1
+            else 0).cauchy =
+    (acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])).cauchy
+Try this:
+  [apply] refine EReal.coe_eq_coe_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])) =
+    ↑((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+        fun M =>
+        (ProbComp.sample
+              ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+                (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+          fun rep =>
+          (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+            if
+                A.runAtL (P.kappaOf L)
+                    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                          (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                        false)
+                      w.tail)
+                    (List.ofFn r) =
+                  [true] then
+              1
+            else 0)
+Try this:
+  [apply] refine Eq.symm ((fun {r p} hr hp => (Real.toNNReal_eq_toNNReal_iff hr hp).mp) ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤
+    (ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+      fun M =>
+      (ProbComp.sample
+            ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+              (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+        fun rep =>
+        (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+          if
+              A.runAtL (P.kappaOf L)
+                  (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                    (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                      (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                        (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                      false)
+                    w.tail)
+                  (List.ofFn r) =
+                [true] then
+            1
+          else 0
+  -- ⊢ 0 ≤
+    acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+      decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])
+  -- ⊢ ((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+        fun M =>
+        (ProbComp.sample
+              ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+                (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+          fun rep =>
+          (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+            if
+                A.runAtL (P.kappaOf L)
+                    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                          (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                        false)
+                      w.tail)
+                    (List.ofFn r) =
+                  [true] then
+              1
+            else 0).toNNReal =
+    (acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])).toNNReal
+Try this:
+  [apply] refine Complex.ofReal_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])) =
+    ↑((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+        fun M =>
+        (ProbComp.sample
+              ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+                (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+          fun rep =>
+          (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+            if
+                A.runAtL (P.kappaOf L)
+                    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                          (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                        false)
+                      w.tail)
+                    (List.ofFn r) =
+                  [true] then
+              1
+            else 0)
+Try this:
+  [apply] refine Eq.symm ((fun {p q} hp hq => (ENNReal.ofReal_eq_ofReal_iff hp hq).mp) ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤
+    (ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+      fun M =>
+      (ProbComp.sample
+            ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+              (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+        fun rep =>
+        (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+          if
+              A.runAtL (P.kappaOf L)
+                  (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                    (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                      (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                        (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                      false)
+                    w.tail)
+                  (List.ofFn r) =
+                [true] then
+            1
+          else 0
+  -- ⊢ 0 ≤
+    acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+      decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])
+  -- ⊢ ENNReal.ofReal
+      ((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+        fun M =>
+        (ProbComp.sample
+              ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+                (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+          fun rep =>
+          (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+            if
+                A.runAtL (P.kappaOf L)
+                    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                          (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                        false)
+                      w.tail)
+                    (List.ofFn r) =
+                  [true] then
+              1
+            else 0) =
+    ENNReal.ofReal
+      (acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true]))
+Try this:
+  [apply] refine (Real.sqrt_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤
+    acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+      decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])
+  -- ⊢ 0 ≤
+    (ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+      fun M =>
+      (ProbComp.sample
+            ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+              (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+        fun rep =>
+        (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+          if
+              A.runAtL (P.kappaOf L)
+                  (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                    (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                      (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                        (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                      false)
+                    w.tail)
+                  (List.ofFn r) =
+                [true] then
+            1
+          else 0
+  -- ⊢ √(acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])) =
+    √((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+        fun M =>
+        (ProbComp.sample
+              ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+                (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+          fun rep =>
+          (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+            if
+                A.runAtL (P.kappaOf L)
+                    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                          (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                        false)
+                      w.tail)
+                    (List.ofFn r) =
+                  [true] then
+              1
+            else 0)
+Try this:
+  [apply] refine Eq.symm ((fun {x y} => EReal.coe_eq_coe_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ↑((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+        fun M =>
+        (ProbComp.sample
+              ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+                (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+          fun rep =>
+          (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+            if
+                A.runAtL (P.kappaOf L)
+                    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                          (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                        false)
+                      w.tail)
+                    (List.ofFn r) =
+                  [true] then
+              1
+            else 0) =
+    ↑(acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true]))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine RCLike.ofReal_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {z w} => Complex.ofReal_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ↑((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+        fun M =>
+        (ProbComp.sample
+              ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+                (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+          fun rep =>
+          (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+            if
+                A.runAtL (P.kappaOf L)
+                    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                          (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                        false)
+                      w.tail)
+                    (List.ofFn r) =
+                  [true] then
+              1
+            else 0) =
+    ↑(acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true]))
+Try this:
+  [apply] refine Real.exp_eq_exp.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Real.exp
+      (acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])) =
+    Real.exp
+      ((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+        fun M =>
+        (ProbComp.sample
+              ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+                (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+          fun rep =>
+          (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+            if
+                A.runAtL (P.kappaOf L)
+                    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                          (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                        false)
+                      w.tail)
+                    (List.ofFn r) =
+                  [true] then
+              1
+            else 0)
+Try this:
+  [apply] refine Eq.symm ((fun {x y} hx hy => (Real.sqrt_inj hx hy).mp) ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤
+    (ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+      fun M =>
+      (ProbComp.sample
+            ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+              (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+        fun rep =>
+        (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+          if
+              A.runAtL (P.kappaOf L)
+                  (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                    (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                      (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                        (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                      false)
+                    w.tail)
+                  (List.ofFn r) =
+                [true] then
+            1
+          else 0
+  -- ⊢ 0 ≤
+    acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+      decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])
+  -- ⊢ √((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+        fun M =>
+        (ProbComp.sample
+              ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+                (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+          fun rep =>
+          (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+            if
+                A.runAtL (P.kappaOf L)
+                    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                          (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                        false)
+                      w.tail)
+                    (List.ofFn r) =
+                  [true] then
+              1
+            else 0) =
+    √(acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true]))
+Try this:
+  [apply] refine Real.tan_inj_of_lt_of_lt_pi_div_two ?_ ?_ ?_ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ -(Real.pi / 2) <
+    acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+      decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])
+  -- ⊢ (acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+      decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])) <
+    Real.pi / 2
+  -- ⊢ -(Real.pi / 2) <
+    (ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+      fun M =>
+      (ProbComp.sample
+            ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+              (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+        fun rep =>
+        (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+          if
+              A.runAtL (P.kappaOf L)
+                  (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                    (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                      (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                        (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                      false)
+                    w.tail)
+                  (List.ofFn r) =
+                [true] then
+            1
+          else 0
+  -- ⊢ ((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+      fun M =>
+      (ProbComp.sample
+            ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+              (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+        fun rep =>
+        (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+          if
+              A.runAtL (P.kappaOf L)
+                  (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                    (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                      (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                        (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                      false)
+                    w.tail)
+                  (List.ofFn r) =
+                [true] then
+            1
+          else 0) <
+    Real.pi / 2
+  -- ⊢ Real.tan
+      (acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])) =
+    Real.tan
+      ((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+        fun M =>
+        (ProbComp.sample
+              ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+                (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+          fun rep =>
+          (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+            if
+                A.runAtL (P.kappaOf L)
+                    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                          (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                        false)
+                      w.tail)
+                    (List.ofFn r) =
+                  [true] then
+              1
+            else 0)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {K} [RCLike K] {z w} => RCLike.ofReal_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Real.arccos_inj ?_ ?_ ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ -1 ≤
+    acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+      decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])
+  -- ⊢ (acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+      decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])) ≤
+    1
+  -- ⊢ -1 ≤
+    (ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+      fun M =>
+      (ProbComp.sample
+            ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+              (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+        fun rep =>
+        (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+          if
+              A.runAtL (P.kappaOf L)
+                  (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                    (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                      (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                        (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                      false)
+                    w.tail)
+                  (List.ofFn r) =
+                [true] then
+            1
+          else 0
+  -- ⊢ ((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+      fun M =>
+      (ProbComp.sample
+            ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+              (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+        fun rep =>
+        (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+          if
+              A.runAtL (P.kappaOf L)
+                  (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                    (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                      (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                        (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                      false)
+                    w.tail)
+                  (List.ofFn r) =
+                [true] then
+            1
+          else 0) ≤
+    1
+  -- ⊢ Real.arccos
+      (acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])) =
+    Real.arccos
+      ((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+        fun M =>
+        (ProbComp.sample
+              ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+                (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+          fun rep =>
+          (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+            if
+                A.runAtL (P.kappaOf L)
+                    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                          (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                        false)
+                      w.tail)
+                    (List.ofFn r) =
+                  [true] then
+              1
+            else 0)
+Try this:
+  [apply] refine Eq.symm ((fun {x y} => Real.exp_eq_exp.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Real.exp
+      ((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+        fun M =>
+        (ProbComp.sample
+              ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+                (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+          fun rep =>
+          (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+            if
+                A.runAtL (P.kappaOf L)
+                    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                          (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                        false)
+                      w.tail)
+                    (List.ofFn r) =
+                  [true] then
+              1
+            else 0) =
+    Real.exp
+      (acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true]))
+Try this:
+  [apply] refine (Real.arcsin_inj ?_ ?_ ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ -1 ≤
+    acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+      decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])
+  -- ⊢ (acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+      decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])) ≤
+    1
+  -- ⊢ -1 ≤
+    (ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+      fun M =>
+      (ProbComp.sample
+            ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+              (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+        fun rep =>
+        (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+          if
+              A.runAtL (P.kappaOf L)
+                  (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                    (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                      (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                        (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                      false)
+                    w.tail)
+                  (List.ofFn r) =
+                [true] then
+            1
+          else 0
+  -- ⊢ ((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+      fun M =>
+      (ProbComp.sample
+            ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+              (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+        fun rep =>
+        (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+          if
+              A.runAtL (P.kappaOf L)
+                  (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                    (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                      (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                        (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                      false)
+                    w.tail)
+                  (List.ofFn r) =
+                [true] then
+            1
+          else 0) ≤
+    1
+  -- ⊢ Real.arcsin
+      (acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])) =
+    Real.arcsin
+      ((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+        fun M =>
+        (ProbComp.sample
+              ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+                (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+          fun rep =>
+          (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+            if
+                A.runAtL (P.kappaOf L)
+                    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                          (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                        false)
+                      w.tail)
+                    (List.ofFn r) =
+                  [true] then
+              1
+            else 0)
+Try this:
+  [apply] refine Eq.symm (Real.tan_inj_of_lt_of_lt_pi_div_two ?_ ?_ ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ -(Real.pi / 2) <
+    (ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+      fun M =>
+      (ProbComp.sample
+            ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+              (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+        fun rep =>
+        (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+          if
+              A.runAtL (P.kappaOf L)
+                  (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                    (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                      (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                        (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                      false)
+                    w.tail)
+                  (List.ofFn r) =
+                [true] then
+            1
+          else 0
+  -- ⊢ ((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+      fun M =>
+      (ProbComp.sample
+            ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+              (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+        fun rep =>
+        (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+          if
+              A.runAtL (P.kappaOf L)
+                  (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                    (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                      (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                        (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                      false)
+                    w.tail)
+                  (List.ofFn r) =
+                [true] then
+            1
+          else 0) <
+    Real.pi / 2
+  -- ⊢ -(Real.pi / 2) <
+    acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+      decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])
+  -- ⊢ (acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+      decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])) <
+    Real.pi / 2
+  -- ⊢ Real.tan
+      ((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+        fun M =>
+        (ProbComp.sample
+              ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+                (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+          fun rep =>
+          (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+            if
+                A.runAtL (P.kappaOf L)
+                    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                          (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                        false)
+                      w.tail)
+                    (List.ofFn r) =
+                  [true] then
+              1
+            else 0) =
+    Real.tan
+      (acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true]))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Real.rpow_right_inj ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {x y} hx₁ hx₂ hy₁ hy₂ => (Real.arccos_inj hx₁ hx₂ hy₁ hy₂).mp) ?_ ?_ ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ -1 ≤
+    (ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+      fun M =>
+      (ProbComp.sample
+            ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+              (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+        fun rep =>
+        (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+          if
+              A.runAtL (P.kappaOf L)
+                  (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                    (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                      (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                        (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                      false)
+                    w.tail)
+                  (List.ofFn r) =
+                [true] then
+            1
+          else 0
+  -- ⊢ ((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+      fun M =>
+      (ProbComp.sample
+            ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+              (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+        fun rep =>
+        (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+          if
+              A.runAtL (P.kappaOf L)
+                  (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                    (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                      (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                        (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                      false)
+                    w.tail)
+                  (List.ofFn r) =
+                [true] then
+            1
+          else 0) ≤
+    1
+  -- ⊢ -1 ≤
+    acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+      decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])
+  -- ⊢ (acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+      decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])) ≤
+    1
+  -- ⊢ Real.arccos
+      ((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+        fun M =>
+        (ProbComp.sample
+              ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+                (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+          fun rep =>
+          (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+            if
+                A.runAtL (P.kappaOf L)
+                    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                          (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                        false)
+                      w.tail)
+                    (List.ofFn r) =
+                  [true] then
+              1
+            else 0) =
+    Real.arccos
+      (acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true]))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Real.rpow_left_inj ?_ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {x y} hx₁ hx₂ hy₁ hy₂ => (Real.arcsin_inj hx₁ hx₂ hy₁ hy₂).mp) ?_ ?_ ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ -1 ≤
+    (ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+      fun M =>
+      (ProbComp.sample
+            ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+              (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+        fun rep =>
+        (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+          if
+              A.runAtL (P.kappaOf L)
+                  (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                    (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                      (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                        (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                      false)
+                    w.tail)
+                  (List.ofFn r) =
+                [true] then
+            1
+          else 0
+  -- ⊢ ((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+      fun M =>
+      (ProbComp.sample
+            ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+              (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+        fun rep =>
+        (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+          if
+              A.runAtL (P.kappaOf L)
+                  (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                    (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                      (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                        (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                      false)
+                    w.tail)
+                  (List.ofFn r) =
+                [true] then
+            1
+          else 0) ≤
+    1
+  -- ⊢ -1 ≤
+    acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+      decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])
+  -- ⊢ (acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+      decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])) ≤
+    1
+  -- ⊢ Real.arcsin
+      ((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+        fun M =>
+        (ProbComp.sample
+              ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+                (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+          fun rep =>
+          (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+            if
+                A.runAtL (P.kappaOf L)
+                    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                          (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                        false)
+                      w.tail)
+                    (List.ofFn r) =
+                  [true] then
+              1
+            else 0) =
+    Real.arcsin
+      (acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true]))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {x y z} hx₀ hx₁ => (Real.rpow_right_inj hx₀ hx₁).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Real.sinh_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Real.sinh
+      (acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])) =
+    Real.sinh
+      ((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+        fun M =>
+        (ProbComp.sample
+              ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+                (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+          fun rep =>
+          (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+            if
+                A.runAtL (P.kappaOf L)
+                    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                          (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                        false)
+                      w.tail)
+                    (List.ofFn r) =
+                  [true] then
+              1
+            else 0)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {x y z} hx hy hz => (Real.rpow_left_inj hx hy hz).mp) ?_ ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {x y} => Real.sinh_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Real.sinh
+      ((ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))).expect
+        fun M =>
+        (ProbComp.sample
+              ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+                (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p))).expect
+          fun rep =>
+          (ProbComp.sample (A.Coins (P.kappaOf L))).expect fun r =>
+            if
+                A.runAtL (P.kappaOf L)
+                    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                          (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                        false)
+                      w.tail)
+                    (List.ofFn r) =
+                  [true] then
+              1
+            else 0) =
+    Real.sinh
+      (acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) fun x r =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true]))
+/private/tmp/io-sprg-overlap/M4LPNDefs_V1_07-lpn_real_section-apply.lean:36:0: warning: declaration uses 'sorry'
+/private/tmp/io-sprg-overlap/M4LPNDefs_V1_07-lpn_real_section-apply.lean:37:5: warning: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/M4LPNDefs_V1_07-lpn_real_section-apply.lean:38:29: warning: unused variable `hk`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

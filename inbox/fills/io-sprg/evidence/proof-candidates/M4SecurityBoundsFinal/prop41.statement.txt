@@ -1,0 +1,10 @@
+theorem prop41 (P : Params) (π : PrimeSchedule) (A : NUPPT) :
+    ∃ (ωL : ∀ L, P.LPNAdvice π L) (ωG : ∀ N, P.PRGAdvice π N),
+      ∀ BL BG : NUPPT,
+        BL.RealizesOn (P.lpnEnc π) (A.coins.subst .var)
+          (fun L x r => P.lpnRed π A L (ωL L) x r) →
+        BG.RealizesOn P.prgEnc (A.coins.subst .var)
+          (fun N x r => P.prgRed π A N (ωG N) x r) →
+        ∀ κ, (jlsSPRG_raw P π).adv A κ ≤
+          2 * (κ : ℝ) * (P.lpnFamily_raw π).adv BL (P.ℓ κ) +
+            P.G.adv BG (P.n κ) + 2 * P.errProb κ (π κ) := sorry

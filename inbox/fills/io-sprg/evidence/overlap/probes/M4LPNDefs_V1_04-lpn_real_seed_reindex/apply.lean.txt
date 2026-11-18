@@ -1,0 +1,57 @@
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+run_cmd do
+  let env ← Lean.getEnv
+  let areaPrefix := "TCSlib.Cryptography.Obfuscation.StructuredSeed."
+  let suffixes : List String := [
+    "Internal.lpn_accept_realizes_eq",
+    "Internal.lpn_gap_realizes_eq",
+    "Internal.lpn_uniform_challenge_reindex",
+    "Internal.lpn_real_seed_reindex",
+    "Internal.lpn_pre_real_update",
+    "Internal.lpn_pre_uniform_update",
+    "Internal.lpn_real_section",
+    "Internal.lpn_uniform_section",
+    "Internal.lpn_fix_advice",
+    "Params.lpn_hop"
+  ]
+  for suffix in suffixes do
+    let name := ((areaPrefix ++ suffix).splitOn ".").foldl
+      (fun n p => Lean.Name.str n p) Lean.Name.anonymous
+    if env.contains name (skipRealize := false) then
+      Lean.throwError "LPN_DEFS_TARGET_PRESENT"
+  IO.println "LPN_DEFS_GUARD_OK_10"
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+
+open Complexity Turing Games
+open scoped BigOperators
+
+namespace Internal
+
+example (P : Params) (π : PrimeSchedule) (L : ℕ)
+    (h : L = P.ℓ (P.kappaOf L)) :
+    let κ := P.kappaOf L
+    let pp := π κ
+    let Q := (P.lpnFamily_raw π).toLWE.parameters L
+    let χ := (P.lpnFamily_raw π).toLWE.noise L
+    ∃ e : (Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        ((Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins))) ≃
+        (Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+          ((Fin (P.ℓ κ) → ZMod pp.p) ×
+            (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))),
+      ∀ r, P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+          (∑ a, (e r).1 i a * (e r).2.1 a) +
+            P.noiseValue κ pp ((e r).2.2 i)
+  := by
+    apply?
+
+end Internal
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed

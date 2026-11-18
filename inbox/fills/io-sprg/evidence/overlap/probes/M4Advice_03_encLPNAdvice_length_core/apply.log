@@ -1,0 +1,919 @@
+`apply?` stopped because it was running out of time.
+You may get better results using `set_option maxHeartbeats 0`.
+Try this:
+  [apply] refine let noiseCode := fun c =>
+    pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+  let oneCode := fun r =>
+    pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+  let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (noiseCode : Fin W × ZMod q → List Bool),
+    let noiseCode := fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+    ∀ (oneCode : (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q) → List Bool),
+      let oneCode := fun r =>
+        pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+      ∀ (drawCode : List Bool),
+        let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+        (pairEncode (Candidates.natToList (κ + 2) p)
+              (pairEncode (List.replicate L true)
+                (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+                  (pairEncode indexCode
+                    (pairEncode bucketCode
+                      (pairEncode drawCode
+                        (pairEncode (List.ofFn tail)
+                          (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                            (List.ofFn uniform))))))))).length ≤
+          4096 * ((L + 1) * S ^ 3)
+  -- ⊢ (L + 1) * S ^ 3 ≠ 0
+  -- ⊢ (L + 1) * S ^ 3 ∣
+    (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate L true)
+          (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+            (pairEncode indexCode
+              (pairEncode bucketCode
+                (pairEncode drawCode
+                  (pairEncode (List.ofFn tail)
+                    (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn uniform))))))))).length
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate L true)
+            (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+              (pairEncode indexCode
+                (pairEncode bucketCode
+                  (pairEncode drawCode
+                    (pairEncode (List.ofFn tail)
+                      (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn uniform))))))))).length /
+      ((L + 1) * S ^ 3) ≤
+    4096
+Try this:
+  [apply] refine let noiseCode := fun c =>
+    pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+  let oneCode := fun r =>
+    pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+  let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (noiseCode : Fin W × ZMod q → List Bool),
+    let noiseCode := fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+    ∀ (oneCode : (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q) → List Bool),
+      let oneCode := fun r =>
+        pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+      ∀ (drawCode : List Bool),
+        let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+        (pairEncode (Candidates.natToList (κ + 2) p)
+              (pairEncode (List.replicate L true)
+                (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+                  (pairEncode indexCode
+                    (pairEncode bucketCode
+                      (pairEncode drawCode
+                        (pairEncode (List.ofFn tail)
+                          (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                            (List.ofFn uniform))))))))).length ≤
+          4096 * ((L + 1) * S ^ 3)
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate L true)
+          (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+            (pairEncode indexCode
+              (pairEncode bucketCode
+                (pairEncode drawCode
+                  (pairEncode (List.ofFn tail)
+                    (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                      (List.ofFn uniform)))))))))[4096 * ((L + 1) * S ^ 3)]? =
+    none
+Try this:
+  [apply] refine let noiseCode := fun c =>
+    pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+  let oneCode := fun r =>
+    pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+  let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (noiseCode : Fin W × ZMod q → List Bool),
+    let noiseCode := fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+    ∀ (oneCode : (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q) → List Bool),
+      let oneCode := fun r =>
+        pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+      ∀ (drawCode : List Bool),
+        let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+        (pairEncode (Candidates.natToList (κ + 2) p)
+              (pairEncode (List.replicate L true)
+                (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+                  (pairEncode indexCode
+                    (pairEncode bucketCode
+                      (pairEncode drawCode
+                        (pairEncode (List.ofFn tail)
+                          (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                            (List.ofFn uniform))))))))).length ≤
+          4096 * ((L + 1) * S ^ 3)
+  -- ⊢ none =
+    (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate L true)
+          (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+            (pairEncode indexCode
+              (pairEncode bucketCode
+                (pairEncode drawCode
+                  (pairEncode (List.ofFn tail)
+                    (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                      (List.ofFn uniform)))))))))[4096 * ((L + 1) * S ^ 3)]?
+Try this:
+  [apply] refine let noiseCode := fun c =>
+    pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+  let oneCode := fun r =>
+    pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+  let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (noiseCode : Fin W × ZMod q → List Bool),
+    let noiseCode := fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+    ∀ (oneCode : (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q) → List Bool),
+      let oneCode := fun r =>
+        pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+      ∀ (drawCode : List Bool),
+        let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+        (pairEncode (Candidates.natToList (κ + 2) p)
+              (pairEncode (List.replicate L true)
+                (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+                  (pairEncode indexCode
+                    (pairEncode bucketCode
+                      (pairEncode drawCode
+                        (pairEncode (List.ofFn tail)
+                          (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                            (List.ofFn uniform))))))))).length ≤
+          4096 * ((L + 1) * S ^ 3)
+  -- ⊢ List.drop (4096 * ((L + 1) * S ^ 3))
+      (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate L true)
+          (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+            (pairEncode indexCode
+              (pairEncode bucketCode
+                (pairEncode drawCode
+                  (pairEncode (List.ofFn tail)
+                    (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn uniform))))))))) =
+    []
+Try this:
+  [apply] refine let noiseCode := fun c =>
+    pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+  let oneCode := fun r =>
+    pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+  let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (noiseCode : Fin W × ZMod q → List Bool),
+    let noiseCode := fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+    ∀ (oneCode : (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q) → List Bool),
+      let oneCode := fun r =>
+        pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+      ∀ (drawCode : List Bool),
+        let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+        (pairEncode (Candidates.natToList (κ + 2) p)
+              (pairEncode (List.replicate L true)
+                (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+                  (pairEncode indexCode
+                    (pairEncode bucketCode
+                      (pairEncode drawCode
+                        (pairEncode (List.ofFn tail)
+                          (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                            (List.ofFn uniform))))))))).length ≤
+          4096 * ((L + 1) * S ^ 3)
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate L true)
+            (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+              (pairEncode indexCode
+                (pairEncode bucketCode
+                  (pairEncode drawCode
+                    (pairEncode (List.ofFn tail)
+                      (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn uniform))))))))).eraseIdx
+      (4096 * ((L + 1) * S ^ 3)) =
+    pairEncode (Candidates.natToList (κ + 2) p)
+      (pairEncode (List.replicate L true)
+        (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+          (pairEncode indexCode
+            (pairEncode bucketCode
+              (pairEncode drawCode
+                (pairEncode (List.ofFn tail)
+                  (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn uniform))))))))
+Try this:
+  [apply] refine let noiseCode := fun c =>
+    pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+  let oneCode := fun r =>
+    pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+  let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (noiseCode : Fin W × ZMod q → List Bool),
+    let noiseCode := fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+    ∀ (oneCode : (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q) → List Bool),
+      let oneCode := fun r =>
+        pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+      ∀ (drawCode : List Bool),
+        let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+        (pairEncode (Candidates.natToList (κ + 2) p)
+              (pairEncode (List.replicate L true)
+                (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+                  (pairEncode indexCode
+                    (pairEncode bucketCode
+                      (pairEncode drawCode
+                        (pairEncode (List.ofFn tail)
+                          (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                            (List.ofFn uniform))))))))).length ≤
+          4096 * ((L + 1) * S ^ 3)
+  -- ⊢ List.take (4096 * ((L + 1) * S ^ 3))
+      (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate L true)
+          (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+            (pairEncode indexCode
+              (pairEncode bucketCode
+                (pairEncode drawCode
+                  (pairEncode (List.ofFn tail)
+                    (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn uniform))))))))) =
+    pairEncode (Candidates.natToList (κ + 2) p)
+      (pairEncode (List.replicate L true)
+        (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+          (pairEncode indexCode
+            (pairEncode bucketCode
+              (pairEncode drawCode
+                (pairEncode (List.ofFn tail)
+                  (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn uniform))))))))
+Try this:
+  [apply] refine let noiseCode := fun c =>
+    pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+  let oneCode := fun r =>
+    pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+  let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (noiseCode : Fin W × ZMod q → List Bool),
+    let noiseCode := fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+    ∀ (oneCode : (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q) → List Bool),
+      let oneCode := fun r =>
+        pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+      ∀ (drawCode : List Bool),
+        let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+        (pairEncode (Candidates.natToList (κ + 2) p)
+              (pairEncode (List.replicate L true)
+                (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+                  (pairEncode indexCode
+                    (pairEncode bucketCode
+                      (pairEncode drawCode
+                        (pairEncode (List.ofFn tail)
+                          (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                            (List.ofFn uniform))))))))).length ≤
+          4096 * ((L + 1) * S ^ 3)
+  -- ⊢ pairEncode (Candidates.natToList (κ + 2) p)
+      (pairEncode (List.replicate L true)
+        (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+          (pairEncode indexCode
+            (pairEncode bucketCode
+              (pairEncode drawCode
+                (pairEncode (List.ofFn tail)
+                  (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn uniform)))))))) =
+    List.take (4096 * ((L + 1) * S ^ 3))
+      (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate L true)
+          (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+            (pairEncode indexCode
+              (pairEncode bucketCode
+                (pairEncode drawCode
+                  (pairEncode (List.ofFn tail)
+                    (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn uniform)))))))))
+Try this:
+  [apply] refine let noiseCode := fun c =>
+    pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+  let oneCode := fun r =>
+    pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+  let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (noiseCode : Fin W × ZMod q → List Bool),
+    let noiseCode := fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+    ∀ (oneCode : (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q) → List Bool),
+      let oneCode := fun r =>
+        pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+      ∀ (drawCode : List Bool),
+        let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+        (pairEncode (Candidates.natToList (κ + 2) p)
+              (pairEncode (List.replicate L true)
+                (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+                  (pairEncode indexCode
+                    (pairEncode bucketCode
+                      (pairEncode drawCode
+                        (pairEncode (List.ofFn tail)
+                          (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                            (List.ofFn uniform))))))))).length ≤
+          4096 * ((L + 1) * S ^ 3)
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate L true)
+          (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+            (pairEncode indexCode
+              (pairEncode bucketCode
+                (pairEncode drawCode
+                  (pairEncode (List.ofFn tail)
+                    (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn uniform))))))))).length <
+    (4096 * ((L + 1) * S ^ 3)).succ
+Try this:
+  [apply] refine let noiseCode := fun c =>
+    pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+  let oneCode := fun r =>
+    pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+  let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (noiseCode : Fin W × ZMod q → List Bool),
+    let noiseCode := fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+    ∀ (oneCode : (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q) → List Bool),
+      let oneCode := fun r =>
+        pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+      ∀ (drawCode : List Bool),
+        let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+        (pairEncode (Candidates.natToList (κ + 2) p)
+              (pairEncode (List.replicate L true)
+                (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+                  (pairEncode indexCode
+                    (pairEncode bucketCode
+                      (pairEncode drawCode
+                        (pairEncode (List.ofFn tail)
+                          (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                            (List.ofFn uniform))))))))).length ≤
+          4096 * ((L + 1) * S ^ 3)
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+            (pairEncode (List.replicate L true)
+              (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+                (pairEncode indexCode
+                  (pairEncode bucketCode
+                    (pairEncode drawCode
+                      (pairEncode (List.ofFn tail)
+                        (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                          (List.ofFn uniform))))))))).length.ble
+      (4096 * ((L + 1) * S ^ 3)) =
+    true
+Try this:
+  [apply] refine let noiseCode := fun c =>
+    pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+  let oneCode := fun r =>
+    pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+  let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (noiseCode : Fin W × ZMod q → List Bool),
+    let noiseCode := fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+    ∀ (oneCode : (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q) → List Bool),
+      let oneCode := fun r =>
+        pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+      ∀ (drawCode : List Bool),
+        let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+        (pairEncode (Candidates.natToList (κ + 2) p)
+              (pairEncode (List.replicate L true)
+                (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+                  (pairEncode indexCode
+                    (pairEncode bucketCode
+                      (pairEncode drawCode
+                        (pairEncode (List.ofFn tail)
+                          (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                            (List.ofFn uniform))))))))).length ≤
+          4096 * ((L + 1) * S ^ 3)
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate L true)
+            (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+              (pairEncode indexCode
+                (pairEncode bucketCode
+                  (pairEncode drawCode
+                    (pairEncode (List.ofFn tail)
+                      (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                        (List.ofFn uniform))))))))).length.succ ≤
+    (4096 * ((L + 1) * S ^ 3)).succ
+Try this:
+  [apply] refine let noiseCode := fun c =>
+    pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+  let oneCode := fun r =>
+    pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+  let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (noiseCode : Fin W × ZMod q → List Bool),
+    let noiseCode := fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+    ∀ (oneCode : (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q) → List Bool),
+      let oneCode := fun r =>
+        pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+      ∀ (drawCode : List Bool),
+        let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+        (pairEncode (Candidates.natToList (κ + 2) p)
+              (pairEncode (List.replicate L true)
+                (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+                  (pairEncode indexCode
+                    (pairEncode bucketCode
+                      (pairEncode drawCode
+                        (pairEncode (List.ofFn tail)
+                          (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                            (List.ofFn uniform))))))))).length ≤
+          4096 * ((L + 1) * S ^ 3)
+  -- ⊢ ℕ
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate L true)
+          (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+            (pairEncode indexCode
+              (pairEncode bucketCode
+                (pairEncode drawCode
+                  (pairEncode (List.ofFn tail)
+                    (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn uniform))))))))).length ≤
+    ?_
+  -- ⊢ ?_ ≤ 4096 * ((L + 1) * S ^ 3)
+Try this:
+  [apply] refine let noiseCode := fun c =>
+    pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+  let oneCode := fun r =>
+    pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+  let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (noiseCode : Fin W × ZMod q → List Bool),
+    let noiseCode := fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+    ∀ (oneCode : (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q) → List Bool),
+      let oneCode := fun r =>
+        pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+      ∀ (drawCode : List Bool),
+        let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+        (pairEncode (Candidates.natToList (κ + 2) p)
+              (pairEncode (List.replicate L true)
+                (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+                  (pairEncode indexCode
+                    (pairEncode bucketCode
+                      (pairEncode drawCode
+                        (pairEncode (List.ofFn tail)
+                          (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                            (List.ofFn uniform))))))))).length ≤
+          4096 * ((L + 1) * S ^ 3)
+  -- ⊢ ℕ
+  -- ⊢ ?_ +
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate L true)
+            (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+              (pairEncode indexCode
+                (pairEncode bucketCode
+                  (pairEncode drawCode
+                    (pairEncode (List.ofFn tail)
+                      (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn uniform))))))))).length ≤
+    ?_ + 4096 * ((L + 1) * S ^ 3)
+Try this:
+  [apply] refine let noiseCode := fun c =>
+    pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+  let oneCode := fun r =>
+    pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+  let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (noiseCode : Fin W × ZMod q → List Bool),
+    let noiseCode := fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+    ∀ (oneCode : (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q) → List Bool),
+      let oneCode := fun r =>
+        pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+      ∀ (drawCode : List Bool),
+        let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+        (pairEncode (Candidates.natToList (κ + 2) p)
+              (pairEncode (List.replicate L true)
+                (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+                  (pairEncode indexCode
+                    (pairEncode bucketCode
+                      (pairEncode drawCode
+                        (pairEncode (List.ofFn tail)
+                          (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                            (List.ofFn uniform))))))))).length ≤
+          4096 * ((L + 1) * S ^ 3)
+  -- ⊢ ¬4096 * ((L + 1) * S ^ 3) <
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate L true)
+            (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+              (pairEncode indexCode
+                (pairEncode bucketCode
+                  (pairEncode drawCode
+                    (pairEncode (List.ofFn tail)
+                      (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn uniform))))))))).length
+Try this:
+  [apply] refine let noiseCode := fun c =>
+    pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+  let oneCode := fun r =>
+    pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+  let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (noiseCode : Fin W × ZMod q → List Bool),
+    let noiseCode := fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+    ∀ (oneCode : (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q) → List Bool),
+      let oneCode := fun r =>
+        pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+      ∀ (drawCode : List Bool),
+        let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+        (pairEncode (Candidates.natToList (κ + 2) p)
+              (pairEncode (List.replicate L true)
+                (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+                  (pairEncode indexCode
+                    (pairEncode bucketCode
+                      (pairEncode drawCode
+                        (pairEncode (List.ofFn tail)
+                          (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                            (List.ofFn uniform))))))))).length ≤
+          4096 * ((L + 1) * S ^ 3)
+  -- ⊢ ¬(pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate L true)
+            (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+              (pairEncode indexCode
+                (pairEncode bucketCode
+                  (pairEncode drawCode
+                    (pairEncode (List.ofFn tail)
+                      (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn uniform))))))))).length ≥
+      4096 * ((L + 1) * S ^ 3)
+Try this:
+  [apply] refine let noiseCode := fun c =>
+    pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+  let oneCode := fun r =>
+    pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+  let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (noiseCode : Fin W × ZMod q → List Bool),
+    let noiseCode := fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+    ∀ (oneCode : (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q) → List Bool),
+      let oneCode := fun r =>
+        pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+      ∀ (drawCode : List Bool),
+        let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+        (pairEncode (Candidates.natToList (κ + 2) p)
+              (pairEncode (List.replicate L true)
+                (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+                  (pairEncode indexCode
+                    (pairEncode bucketCode
+                      (pairEncode drawCode
+                        (pairEncode (List.ofFn tail)
+                          (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                            (List.ofFn uniform))))))))).length ≤
+          4096 * ((L + 1) * S ^ 3)
+  -- ⊢ ¬4096 * ((L + 1) * S ^ 3) <
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate L true)
+            (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+              (pairEncode indexCode
+                (pairEncode bucketCode
+                  (pairEncode drawCode
+                    (pairEncode (List.ofFn tail)
+                      (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn uniform))))))))).length
+Try this:
+  [apply] refine let noiseCode := fun c =>
+    pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+  let oneCode := fun r =>
+    pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+  let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (noiseCode : Fin W × ZMod q → List Bool),
+    let noiseCode := fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+    ∀ (oneCode : (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q) → List Bool),
+      let oneCode := fun r =>
+        pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+      ∀ (drawCode : List Bool),
+        let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+        (pairEncode (Candidates.natToList (κ + 2) p)
+              (pairEncode (List.replicate L true)
+                (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+                  (pairEncode indexCode
+                    (pairEncode bucketCode
+                      (pairEncode drawCode
+                        (pairEncode (List.ofFn tail)
+                          (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                            (List.ofFn uniform))))))))).length ≤
+          4096 * ((L + 1) * S ^ 3)
+  -- ⊢ ℕ
+  -- ⊢ ?_ *
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate L true)
+            (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+              (pairEncode indexCode
+                (pairEncode bucketCode
+                  (pairEncode drawCode
+                    (pairEncode (List.ofFn tail)
+                      (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn uniform))))))))).length ≤
+    ?_ * (4096 * ((L + 1) * S ^ 3))
+  -- ⊢ 0 < ?_
+Try this:
+  [apply] refine let noiseCode := fun c =>
+    pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+  let oneCode := fun r =>
+    pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+  let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (noiseCode : Fin W × ZMod q → List Bool),
+    let noiseCode := fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+    ∀ (oneCode : (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q) → List Bool),
+      let oneCode := fun r =>
+        pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+      ∀ (drawCode : List Bool),
+        let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+        (pairEncode (Candidates.natToList (κ + 2) p)
+              (pairEncode (List.replicate L true)
+                (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+                  (pairEncode indexCode
+                    (pairEncode bucketCode
+                      (pairEncode drawCode
+                        (pairEncode (List.ofFn tail)
+                          (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                            (List.ofFn uniform))))))))).length ≤
+          4096 * ((L + 1) * S ^ 3)
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate L true)
+            (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+              (pairEncode indexCode
+                (pairEncode bucketCode
+                  (pairEncode drawCode
+                    (pairEncode (List.ofFn tail)
+                      (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                        (List.ofFn uniform))))))))).length.succ ≤
+    (4096 * ((L + 1) * S ^ 3)).succ
+Try this:
+  [apply] refine let noiseCode := fun c =>
+    pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+  let oneCode := fun r =>
+    pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+  let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (noiseCode : Fin W × ZMod q → List Bool),
+    let noiseCode := fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+    ∀ (oneCode : (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q) → List Bool),
+      let oneCode := fun r =>
+        pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+      ∀ (drawCode : List Bool),
+        let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+        (pairEncode (Candidates.natToList (κ + 2) p)
+              (pairEncode (List.replicate L true)
+                (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+                  (pairEncode indexCode
+                    (pairEncode bucketCode
+                      (pairEncode drawCode
+                        (pairEncode (List.ofFn tail)
+                          (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                            (List.ofFn uniform))))))))).length ≤
+          4096 * ((L + 1) * S ^ 3)
+  -- ⊢ ℕ
+  -- ⊢ ?_ +
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate L true)
+            (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+              (pairEncode indexCode
+                (pairEncode bucketCode
+                  (pairEncode drawCode
+                    (pairEncode (List.ofFn tail)
+                      (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn uniform))))))))).length ≤
+    4096 * ((L + 1) * S ^ 3)
+Try this:
+  [apply] refine let noiseCode := fun c =>
+    pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+  let oneCode := fun r =>
+    pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+  let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (noiseCode : Fin W × ZMod q → List Bool),
+    let noiseCode := fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+    ∀ (oneCode : (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q) → List Bool),
+      let oneCode := fun r =>
+        pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+      ∀ (drawCode : List Bool),
+        let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+        (pairEncode (Candidates.natToList (κ + 2) p)
+              (pairEncode (List.replicate L true)
+                (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+                  (pairEncode indexCode
+                    (pairEncode bucketCode
+                      (pairEncode drawCode
+                        (pairEncode (List.ofFn tail)
+                          (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                            (List.ofFn uniform))))))))).length ≤
+          4096 * ((L + 1) * S ^ 3)
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate L true)
+            (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+              (pairEncode indexCode
+                (pairEncode bucketCode
+                  (pairEncode drawCode
+                    (pairEncode (List.ofFn tail)
+                      (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn uniform))))))))).length +
+      1 ≤
+    4096 * ((L + 1) * S ^ 3) + 1
+Try this:
+  [apply] refine let noiseCode := fun c =>
+    pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+  let oneCode := fun r =>
+    pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+  let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (noiseCode : Fin W × ZMod q → List Bool),
+    let noiseCode := fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+    ∀ (oneCode : (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q) → List Bool),
+      let oneCode := fun r =>
+        pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+      ∀ (drawCode : List Bool),
+        let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+        (pairEncode (Candidates.natToList (κ + 2) p)
+              (pairEncode (List.replicate L true)
+                (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+                  (pairEncode indexCode
+                    (pairEncode bucketCode
+                      (pairEncode drawCode
+                        (pairEncode (List.ofFn tail)
+                          (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                            (List.ofFn uniform))))))))).length ≤
+          4096 * ((L + 1) * S ^ 3)
+  -- ⊢ ℕ
+  -- ⊢ 0 < ?_
+  -- ⊢ ?_ *
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate L true)
+            (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+              (pairEncode indexCode
+                (pairEncode bucketCode
+                  (pairEncode drawCode
+                    (pairEncode (List.ofFn tail)
+                      (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn uniform))))))))).length ≤
+    ?_ * (4096 * ((L + 1) * S ^ 3))
+Try this:
+  [apply] refine let noiseCode := fun c =>
+    pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+  let oneCode := fun r =>
+    pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+  let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (noiseCode : Fin W × ZMod q → List Bool),
+    let noiseCode := fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+    ∀ (oneCode : (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q) → List Bool),
+      let oneCode := fun r =>
+        pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+      ∀ (drawCode : List Bool),
+        let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+        (pairEncode (Candidates.natToList (κ + 2) p)
+              (pairEncode (List.replicate L true)
+                (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+                  (pairEncode indexCode
+                    (pairEncode bucketCode
+                      (pairEncode drawCode
+                        (pairEncode (List.ofFn tail)
+                          (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                            (List.ofFn uniform))))))))).length ≤
+          4096 * ((L + 1) * S ^ 3)
+  -- ⊢ ℕ
+  -- ⊢ ?_ ≤ 4096 * ((L + 1) * S ^ 3)
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate L true)
+            (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+              (pairEncode indexCode
+                (pairEncode bucketCode
+                  (pairEncode drawCode
+                    (pairEncode (List.ofFn tail)
+                      (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn uniform))))))))).length -
+      ?_ ≤
+    4096 * ((L + 1) * S ^ 3) - ?_
+Try this:
+  [apply] refine let noiseCode := fun c =>
+    pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+  let oneCode := fun r =>
+    pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+  let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (noiseCode : Fin W × ZMod q → List Bool),
+    let noiseCode := fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+    ∀ (oneCode : (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q) → List Bool),
+      let oneCode := fun r =>
+        pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+      ∀ (drawCode : List Bool),
+        let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+        (pairEncode (Candidates.natToList (κ + 2) p)
+              (pairEncode (List.replicate L true)
+                (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+                  (pairEncode indexCode
+                    (pairEncode bucketCode
+                      (pairEncode drawCode
+                        (pairEncode (List.ofFn tail)
+                          (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                            (List.ofFn uniform))))))))).length ≤
+          4096 * ((L + 1) * S ^ 3)
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate L true)
+          (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+            (pairEncode indexCode
+              (pairEncode bucketCode
+                (pairEncode drawCode
+                  (pairEncode (List.ofFn tail)
+                    (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn uniform))))))))).length <
+    4096 * ((L + 1) * S ^ 3) + 1
+Try this:
+  [apply] refine let noiseCode := fun c =>
+    pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+  let oneCode := fun r =>
+    pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+  let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (noiseCode : Fin W × ZMod q → List Bool),
+    let noiseCode := fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+    ∀ (oneCode : (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q) → List Bool),
+      let oneCode := fun r =>
+        pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+      ∀ (drawCode : List Bool),
+        let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+        (pairEncode (Candidates.natToList (κ + 2) p)
+              (pairEncode (List.replicate L true)
+                (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+                  (pairEncode indexCode
+                    (pairEncode bucketCode
+                      (pairEncode drawCode
+                        (pairEncode (List.ofFn tail)
+                          (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                            (List.ofFn uniform))))))))).length ≤
+          4096 * ((L + 1) * S ^ 3)
+  -- ⊢ ¬4096 * ((L + 1) * S ^ 3) <
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate L true)
+            (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+              (pairEncode indexCode
+                (pairEncode bucketCode
+                  (pairEncode drawCode
+                    (pairEncode (List.ofFn tail)
+                      (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn uniform))))))))).length
+Try this:
+  [apply] refine let noiseCode := fun c =>
+    pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+  let oneCode := fun r =>
+    pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+  let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (noiseCode : Fin W × ZMod q → List Bool),
+    let noiseCode := fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+    ∀ (oneCode : (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q) → List Bool),
+      let oneCode := fun r =>
+        pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+      ∀ (drawCode : List Bool),
+        let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+        (pairEncode (Candidates.natToList (κ + 2) p)
+              (pairEncode (List.replicate L true)
+                (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+                  (pairEncode indexCode
+                    (pairEncode bucketCode
+                      (pairEncode drawCode
+                        (pairEncode (List.ofFn tail)
+                          (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                            (List.ofFn uniform))))))))).length ≤
+          4096 * ((L + 1) * S ^ 3)
+  -- ⊢ ℕ
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate L true)
+            (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+              (pairEncode indexCode
+                (pairEncode bucketCode
+                  (pairEncode drawCode
+                    (pairEncode (List.ofFn tail)
+                      (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn uniform))))))))).length *
+      ?_ ≤
+    4096 * ((L + 1) * S ^ 3) * ?_
+  -- ⊢ 0 < ?_
+Try this:
+  [apply] refine let noiseCode := fun c =>
+    pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+  let oneCode := fun r =>
+    pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+  let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (noiseCode : Fin W × ZMod q → List Bool),
+    let noiseCode := fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList (κ + 1) c.2.val);
+    ∀ (oneCode : (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q) → List Bool),
+      let oneCode := fun r =>
+        pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1) (BoolCircuit.encodeList noiseCode (List.ofFn r.2));
+      ∀ (drawCode : List Bool),
+        let drawCode := pairEncode (List.ofFn seed) (BoolCircuit.encodeList oneCode (List.ofFn draw));
+        (pairEncode (Candidates.natToList (κ + 2) p)
+              (pairEncode (List.replicate L true)
+                (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+                  (pairEncode indexCode
+                    (pairEncode bucketCode
+                      (pairEncode drawCode
+                        (pairEncode (List.ofFn tail)
+                          (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                            (List.ofFn uniform))))))))).length ≤
+          4096 * ((L + 1) * S ^ 3)
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate L true)
+            (pairEncode (Candidates.natToList (κ + 1) ↑hop)
+              (pairEncode indexCode
+                (pairEncode bucketCode
+                  (pairEncode drawCode
+                    (pairEncode (List.ofFn tail)
+                      (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                        (List.ofFn uniform))))))))).length.succ ≤
+    4096 * ((L + 1) * S ^ 3)
+/private/tmp/io-sprg-overlap/M4Advice_03_encLPNAdvice_length_core-apply.lean:36:24181: error: (deterministic) timeout at `isDefEq`, maximum number of heartbeats (100000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.

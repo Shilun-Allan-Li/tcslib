@@ -68,3 +68,7 @@ M3 step112 repaired: diagnostic showed hfixed and hcover completed. Adding expli
 M3 step118: exact_mod_cast did not unfold local count alias q; dsimp only [q] exposes the natural-cardinality cast. No foreign definition unfolded. Failed source/log retained.
 
 M3 step132: htransport reduced fully except `(idx g φ A).2.1 = φ` for the local tuple constructor idx. Added rfl to close this definitional projection; no foreign definition unfolded. Failed source/log retained.
+
+M4 step135: endpoint normalization left the raw true-game branch as if True; add Core.ite_true. κ+1+1 and κ+2 then coincide definitionally. Failed source/log retained.
+
+M4 step136: random raw-game condition remains false=true until Bool.false_eq_true is applied; then Core.ite_false closes the branch. Failed source/log retained.

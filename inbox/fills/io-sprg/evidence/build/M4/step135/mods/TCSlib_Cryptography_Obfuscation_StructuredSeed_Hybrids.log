@@ -1,0 +1,61 @@
+2026-11-18T19:52:07.303712+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:143:63: error: unsolved goals
+P : Params
+π : PrimeSchedule
+A : NUPPT
+κ : ℕ
+⊢ (OracleComp.bind (ProbComp.sample (P.IdDraw κ (π κ))) fun a =>
+      OracleComp.bind (ProbComp.sample (P.Draw κ (π κ))) fun a_1 =>
+        OracleComp.bind (ProbComp.sample (Fin (P.m κ) → Bool)) fun w =>
+          OracleComp.bind (ProbComp.sample (A.Coins κ)) fun r =>
+            pure
+              (A.distinguisherL κ
+                (pairEncode (Candidates.natToList (κ + 2) (π κ).p)
+                  (pairEncode (P.encIdx' κ (π κ) (P.idCore κ (π κ) a))
+                    (pairEncode
+                      (Encoding.Modular.encodeVector (κ + 1) (P.sdCore κ (π κ) (P.idCore κ (π κ) a) a_1).seed.1)
+                      (List.ofFn
+                        (P.eval' κ (π κ) (P.idCore κ (π κ) a) (P.sdCore κ (π κ) (P.idCore κ (π κ) a) a_1).seed)))))
+                r)) =
+    OracleComp.bind (ProbComp.sample (P.IdDraw κ (π κ))) fun a =>
+      OracleComp.bind (ProbComp.sample (P.Draw κ (π κ))) fun a_1 =>
+        OracleComp.bind (ProbComp.sample (Fin (P.m κ) → Bool)) fun z =>
+          OracleComp.bind (ProbComp.sample (A.Coins κ)) fun r =>
+            pure
+              (A.distinguisherL κ
+                (pairEncode (Candidates.natToList (κ + 1 + 1) (π κ).p)
+                  (pairEncode (P.encIdx' κ (π κ) (P.idCore κ (π κ) a))
+                    (pairEncode
+                      (Encoding.Modular.encodeVector (κ + 1) (P.sdCore κ (π κ) (P.idCore κ (π κ) a) a_1).seed.1)
+                      (List.ofFn
+                        (if True then
+                          P.eval' κ (π κ) (P.idCore κ (π κ) a) (P.sdCore κ (π κ) (P.idCore κ (π κ) a) a_1).seed
+                        else z)))))
+                r)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:154:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:163:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:173:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:182:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:190:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids): no fresh .olean produced
+        3.18 real         1.69 user         1.09 sys
+          2342912000  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              172685  page reclaims
+               11814  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 851  voluntary context switches
+               11693  involuntary context switches
+            32030254  instructions retired
+            14370705  cycles elapsed
+             1622352  peak memory footprint
+2026-11-18T19:52:10.515319+00:00 END rc=1

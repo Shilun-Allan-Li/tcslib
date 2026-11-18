@@ -1,0 +1,17 @@
+--- /private/tmp/io-sprg-proof-notes/LPNHopFinal/05-lpn_pre_real_update.lean.candidate
++++ /private/tmp/io-sprg-proof-notes/M4LPNPrepared/05-lpn_pre_real_update.lean.candidate
+@@ -1,8 +1,10 @@
+-/- NOT_RUN. Theorem-only word identity after the narrow canonical seed bridge.
+-This consumes concrete matrix/value equalities; it does not assume any law
+-preservation from a type equivalence. The fresh repetition updates only k.
+-No new preprocessor or sampler; all actual algorithms are read by equations. -/
++/-- A canonical real challenge replaces precisely the selected repetition in the chain word.
++Preprocessing glue for [JLS26, Lemma 4.2, p. 19].
+ 
++**Proof sketch.** Read preprocessing and its schedule guard, then substitute the supplied
++matrix and noisy-value coordinate equations. Extensionality reduces the public vectors
++to the selected and unselected coordinates; the chain and vector readers and finite
++index order identify the appropriate updated repetition in each case. -/
+ theorem lpn_pre_real_update (P : Params) (π : PrimeSchedule) (L : ℕ)
+     (h : L = P.ℓ (P.kappaOf L)) (w : P.LPNAdvice π L)
+     (k : Fin (P.kappaOf L)) (hk : k.val = w.hop.val)

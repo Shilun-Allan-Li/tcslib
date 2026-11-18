@@ -2,7 +2,7 @@
 # Preserves the existing declaration statement and docstring; archives each replacement.
 import argparse,datetime,hashlib,json,re,subprocess
 from pathlib import Path
-ap=argparse.ArgumentParser();ap.add_argument('file');ap.add_argument('name');ap.add_argument('body');a=ap.parse_args();root=Path.cwd()
+ap=argparse.ArgumentParser();ap.add_argument('file');ap.add_argument('name');ap.add_argument('body');ap.add_argument('--allow-header-let',action='store_true');a=ap.parse_args();root=Path.cwd()
 freeze=root/'evidence/freeze/M0.txt';assert freeze.exists(),'M0 must be frozen and delivered before proof filling'
 frozen=freeze.read_text().strip();subprocess.run(['git','merge-base','--is-ancestor',frozen,'HEAD'],check=True)
 p=root/a.file;assert str(p.relative_to(root)).startswith('TCSlib/Cryptography/Obfuscation/') and p.suffix=='.lean'
@@ -13,7 +13,11 @@ body=Path(a.body).read_text().strip();assert body.startswith('by\n') or not re.s
 assert len(re.findall(r'\bby\b',body))<=1,'At most one new tactic block per invocation'
 assert not re.search(r'\b(?:sorry|admit|native_decide|axiom)\b',body),'Only complete candidate bodies are inserted by this tool'
 assignment_start=start+match.start();body_start=assignment_start+2;body_end=start+match.end()
-assert ':=' not in source[start:assignment_start],'Unexpected declaration syntax; inspect manually'
+header=source[start:assignment_start]
+if ':=' in header:
+    # Explicit opt-in for a reviewed theorem type with one-line local let binders.
+    lets=list(re.finditer(r'^\s*let [^\n:]+ := [^\n]+$',header,re.M))
+    assert a.allow_header_let and len(lets)==header.count(':='), 'Unexpected declaration syntax; inspect manually'
 new=(source[:assignment_start]+':= '+body+source[body_end:] if body.startswith('by\n') else source[:body_start].rstrip()+'\n  '+body+source[body_end:])
 assert max(map(len,new.splitlines()),default=0)<=100 and len(new.splitlines())<=1000
 steps=root/'evidence/steps';steps.mkdir(exist_ok=True);n=1+max([int(x.name) for x in steps.iterdir() if x.is_dir() and x.name.isdigit()] or [0]);folder=steps/f'{n:03d}';folder.mkdir()

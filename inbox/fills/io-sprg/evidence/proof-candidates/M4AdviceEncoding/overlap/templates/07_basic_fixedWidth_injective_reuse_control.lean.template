@@ -1,0 +1,10 @@
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Basic
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+example {α : Type} {f : α → List Bool} (hf : Function.Injective f)
+    (width : ℕ) (hw : ∀ a, (f a).length = width) :
+    Function.Injective (BoolCircuit.encodeList f) := __PROBE_BODY__

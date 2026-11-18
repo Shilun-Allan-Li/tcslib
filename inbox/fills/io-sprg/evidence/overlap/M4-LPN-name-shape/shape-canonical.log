@@ -1,0 +1,135 @@
+TCSlib/Cryptography/LWE/Encoding.lean:72:theorem encodeChallenge_injective (P : Parameters) (width : ℕ)
+TCSlib/Cryptography/Authentication/MAC/FromPRF/Reduction.lean:204:seed `ω` and `A`'s coins `r` (`expect_sample_equiv`, `ChallengeSim.expect_sample_prod`,
+TCSlib/Cryptography/Authentication/MAC/FromPRF/Reduction.lean:239:  rw [← expect_sample_equiv φ₄, ← expect_sample_equiv φ₂, expect_sample_prod,
+TCSlib/Cryptography/Authentication/MAC/FromPRF/Reduction.lean:240:    expect_sample_comm, ← expect_sample_equiv φ₀]
+TCSlib/Cryptography/Authentication/MAC/FromPRF/Bound.lean:86:   (`eval_toOracleAdversary_width₂`); `key` relabels the coins (`expect_sample_equiv`).
+TCSlib/Cryptography/Authentication/MAC/FromPRF/Bound.lean:88:   widths (`padFunEquiv`, `expect_sample_equiv`) and `exists_macReduction`, the average over `A`'s
+TCSlib/Cryptography/Authentication/MAC/FromPRF/Bound.lean:130:    rw [accept_forgeGame_eq M A (q.eval n) n g hg_tag hg_acc, ← expect_sample_equiv (key n)]
+TCSlib/Cryptography/Authentication/MAC/FromPRF/Bound.lean:151:    rw [expect_sample_equiv (padFunEquiv (hℓ n) (ht n)) (fun R' =>
+TCSlib/Cryptography/LWE/Sampling.lean:129:/-- The comparison bit sampler induces exactly the independent uniform challenge law.
+TCSlib/Cryptography/CoinSampling/Contract.lean:288:/-- **Transport of an efficient sampler's draw** along encoding-preserving equivalences
+TCSlib/Cryptography/SIS/Encoding.lean:131:theorem encodeChallenge_injective (P : Parameters) (width : ℕ)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:446:  rw [← ProbComp.expect_sample_equiv e]
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:535:  rw [← ProbComp.expect_sample_equiv (EnsembleLemmas.coinsEquiv (hsGen_coinLen S H n))]
+TCSlib/Cryptography/CoinSampling/Efficiency.lean:150:`ProbComp.expect_sample_equiv`). Glue. -/
+TCSlib/Cryptography/CoinSampling/Efficiency.lean:159:  exact ProbComp.expect_sample_equiv (NUPPT.coinsEquiv_ofPolyTimeUniform U.polyTime coins κ)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean:414:  rw [← ProbComp.expect_sample_equiv φ, ← Bridge.expect_sample_pair]
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean:416:  rw [← ProbComp.expect_sample_equiv e]
+TCSlib/Cryptography/Pairing/Assumptions.lean:321:`expect_sample_equiv`). On `R_BDH`, exchange the samples of `T` and of the coins
+TCSlib/Cryptography/Pairing/Assumptions.lean:340:    rw [← ProbComp.expect_sample_equiv (NUPPT.coinsCongr hc κ)]
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionGame.lean:134:        exact ProbComp.expect_sample_equiv seed (fun ω =>
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionGame.lean:144:        exact ProbComp.expect_sample_equiv φ (payoff i)
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:859:  rw [← ProbComp.expect_sample_equiv (lamportCoinTables hE n).symm,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:619:(`sampleIdx_ofFn_eq_rejectionSample`, `StatClose.comp_equiv_left`), and `pair6Equiv` is a
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:295:(Lem-127.g): for `k` rounds with uniform challenges `e_i ∈ [m]` and, for every round, a
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:359:probability at most `(1 - 1/|E|)^k` over the uniform challenges and `w` (`|E| = edgeCount G`,
+TCSlib/Cryptography/Authentication/Signatures/Lamport/InversionProbability.lean:71:  simp_rw [← ProbComp.expect_sample_equiv e]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedLaw.lean:132:  -- Step 5: transport the actual sampler through the tape equivalence `e`.
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Reduction.lean:107:**Proof sketch.** Move `B`'s coins to `(ω, ρ)` along `φ` (`expect_sample_equiv`). For fixed coins,
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Reduction.lean:112:its blocks (`seedBlocks`, `expect_sample_equiv`). -/
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Reduction.lean:166:        (ProbComp.expect_sample_equiv φ (fun ρ => if B.distinguisherL κ
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Reduction.lean:183:    _ = _ := congrArg _ (funext fun ρ => ProbComp.expect_sample_equiv (seedBlocks G ℓ O b q H κ)
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Oracles.lean:322:(`expect_handlerMachine`). Move `A`'s coins to `A'`'s along `φ'` (`expect_sample_equiv`), and
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Oracles.lean:357:  have e := ProbComp.expect_sample_equiv φ' (fun ρ => ProbComp.expect (ProbComp.sample
+TCSlib/Cryptography/Randomness/Extraction.lean:143:/-- The canonical uniform-sampler coin equivalence is the composition of the published
+TCSlib/Cryptography/Randomness/Extraction.lean:151:/-- The uniform sampler's coin equivalence preserves the encoded word:
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean:105:* map `α ↦ a` and read `g_2` as `g^{b'}` (`pow_val_bijective_of_ne_one`, `expect_sample_equiv`);
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Random.lean:32:* `BB1Sim.expect_bb1SimImpl_random` — on a uniform `T`, the simulators with challenge bits `0`
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Coupling.lean:452:`ProbComp.expect_sample_rel` along `e ID` (`Init`, `exists_equiv_mul_pow`),
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Chain.lean:24:2. read `g_2` as `g^{b'}` (`BilinearGroup.pow_val_bijective_of_ne_one`, `expect_sample_equiv`);
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Chain.lean:65:first `Init` (`expect_sample_sidImpl`). Read `g_2 = g^{b'}` (`expect_sample_equiv` along
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Chain.lean:116:  rw [← ProbComp.expect_sample_equiv (Equiv.ofBijective _
+TCSlib/Cryptography/Pseudorandom/Generators/LWE/Bits.lean:117:    apply TCSlib.Cryptography.LWE.encodeChallenge_injective P width hq.le
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:185:after relabelling both samplers (`acceptProb_comp_equiv`) the gap is that of `(Ā, ĀR)` versus
+TCSlib/Cryptography/Pseudorandom/Generators/LWE/Flat.lean:21:* `generateFlat`: run the original DLWE sampler between those two bit equivalences.
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Symmetric.lean:166:  -- Step 2: on a uniform challenge, every batch is a uniform batch of ciphertexts.
+TCSlib/Cryptography/Games/Relational.lean:129:average over `V` along `e` (`expect_sample_equiv`) and compare the two averages pointwise. -/
+TCSlib/Cryptography/Games/Relational.lean:136:  rw [expect_bind, expect_bind, ← expect_sample_equiv e]
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer/ViewB.lean:35:  identity of Algorithm 104.3's proof for a uniform challenge `x` and a bit `B x`.
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer/ViewB.lean:64:uniform challenge `x` and a bit `B x`): drawing `c` and coins `ρ`, outputting `c` if `D(x, c; ρ)`
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean:688:     `OT.uprob_signedPredictor_false`/`_true`, for uniform coin challenges).
+TCSlib/Cryptography/Games/Probability.lean:46:* `ProbComp.expect_sample_equiv`, `expect_sample_comm`, `expect_sample_unique`,
+TCSlib/Cryptography/Games/Probability.lean:99:`sample T = (fun j => (equivFin T).symm (Fin.cast _ j)) <$> sampleFin (|T| − 1)`. -/
+TCSlib/Cryptography/Games/Probability.lean:300:/-- **Reindexing a sample by an equivalence:** `𝔼_{a ← α} g (e a) = 𝔼_{b ← β} g b`.
+TCSlib/Cryptography/Games/Probability.lean:304:theorem expect_sample_equiv [Fintype α] [Nonempty α] [Fintype β] [Nonempty β] (e : α ≃ β)
+TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:154:/-- On a uniform challenge `z` the distinguisher `tableDist G A q j` accepts exactly
+TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:157:**Proof sketch.** With `z` uniform, the challenge stream is the stream of `H_{j+1}` with
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:575:uniform pairs (`expect_sample_equiv`, `expect_sample_prod`), and the lengths are the reduction's
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:587:    ← expect_sample_equiv (ccaKeyEq F E hE hFE n).symm, ChallengeSim.expect_sample_prod]
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid.lean:153:/-- Reindexing two samplers by equivalences and supplied pointwise endpoint readers
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:395:sampler for `m` (in the Boolean group `x + x = 0`); relabel by it (`acceptProb_comp_equiv`). -/
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Encoding.lean:44:**Proof sketch.** Apply the existing `LWE.encodeChallenge_injective` with the LWE
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Encoding.lean:49:  apply LWE.encodeChallenge_injective
+TCSlib/Cryptography/Hashing/SIS/Asymptotic.lean:19:  on the actual canonical uniform matrix challenge.
+TCSlib/Cryptography/Hashing/SIS/Columns.lean:133:  -- Step 2: on a uniform challenge, the `k`-th test runs `D` on hybrid `k + 1`.
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean:227:companion and the cap, a seed `(k, W)` and `A`'s coins `r` (`expect_sample_equiv`,
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean:269:  rw [hD n (2 * n) (2 * n) (q.eval (2 * n)) g, ← expect_sample_equiv φ₄, ← expect_sample_equiv φ₂,
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean:270:    ChallengeSim.expect_sample_prod, expect_sample_comm, ← expect_sample_equiv φ₀,
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean:271:    ← expect_sample_equiv (NUPPT.coinsCongr hA₁c n)]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean:274:  rw [← expect_sample_equiv (dHSeed (q.subst tagLen) E hE b n), ChallengeSim.expect_sample_prod]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean:327:  rw [expect_sample_equiv (EnsembleLemmas.blocks ((q.subst tagLen).eval n) n) (fun T =>
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections.lean:22:* Real and uniform challenge acceptance identities for fixed advice.
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Transfer.lean:61:sample the coins of `Enc`, which are the nonce (`expect_sample_equiv ν`), and encrypt as `encW`;
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Transfer.lean:83:    rw [S.indImpl_enc_onSpec, expect_bind, ← expect_sample_equiv ν]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Transfer.lean:160:      rw [stRec_eq, S.indImpl_challenge_none_onSpec, expect_bind, ← expect_sample_equiv ν]
+TCSlib/Cryptography/Hashing/FromDiscreteLog/Sampling.lean:92:  have hs := ((statClose_sampleBelowL hm hmn).comp_equiv_right
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Machines.lean:330:  rw [← expect_sample_equiv (EnsembleLemmas.coinsEquiv hlen), ChallengeSim.expect_sample_prod]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAReduction.lean:264:the companion, T2 and the seed, the tapes `W` and `A`'s coins `r` (`expect_sample_equiv`,
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAReduction.lean:308:  rw [← expect_sample_equiv (NUPPT.coinsCongr hc.symm n)]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAReduction.lean:310:  rw [← expect_sample_equiv φ₂, ChallengeSim.expect_sample_prod,
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAReduction.lean:311:    ← expect_sample_equiv (bHSeed q n)]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAReduction.lean:313:  rw [← expect_sample_equiv φ₀]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAReduction.lean:352:  rw [expect_sample_equiv (EnsembleLemmas.blocks (q.eval n) (2 * n)) (fun T =>
+TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:676:/-- For a fixed valid well-formed index and a uniform challenge exponent, the finder's
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean:97:expect_sample_equiv, and discard only the unused repetition draw with expect_const. -/
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean:165:    ProbComp.expect_sample_equiv e targetTest
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean:186:    rw [← ProbComp.expect_sample_equiv (PRGAdvice.prodEquiv P π N) avg]
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean:250:    rw [← ProbComp.expect_sample_equiv e.symm]
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:258:    ← expect_sample_equiv (prfKeyEq F E hE hFE n)]
+TCSlib/Cryptography/Asymptotic/CollectionShift.lean:204:sampler tape along the coin equivalence, using the sampler's activation law. -/
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean:18:point gets a fresh uniform value, and a repeated point its recorded value. The challenge's point
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean:150:nonce, change the pad by `xorPerm (m₀ ⊕ m₁)` (`expect_sample_equiv`, `ctOf_xorPerm`). -/
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean:202:        refine Eq.trans ?_ (expect_sample_equiv (xorPerm (padFin n (List.zipWith xor
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:250:`ω` and `A`'s coins `r` (`expect_sample_equiv`, `expect_sample_prod`, `expect_sample_comm`). For
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:283:  rw [← expect_sample_equiv φ₄, ← expect_sample_equiv φ₂, expect_sample_prod, expect_sample_comm,
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:284:    ← expect_sample_equiv φ₀]
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:327:  rw [expect_sample_equiv (pkSeedTapes q atkBit b n) (fun T => expect (simulate
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Transfer.lean:44:sample the coins of `Enc`, which are the nonce (`expect_sample_equiv ν`), and encrypt as `ctOf`;
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Transfer.lean:68:    rw [S.indImpl_enc_onSpec, fImpl_enc, expect_bind, expect_bind, ← expect_sample_equiv ν]
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Transfer.lean:133:        ← expect_sample_equiv ν]
+TCSlib/Cryptography/Asymptotic/Realization.lean:89:The machine is a non-uniform PPT [PS10, Definition 26.8]. Only encoded challenges and coin
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/PaddedCPA.lean:118:(`chRun_toCompOn_transport`). Rearranging the samples (`expect_sample_prod`, `_comm`, `_equiv`
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/PaddedCPA.lean:188:    rw [← expect_sample_equiv (NUPPT.coinsCongr (padEnc_coins S.enc L) n),
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/PaddedCPA.lean:271:    rw [expect_sample_comm, ← expect_sample_equiv φ, expect_sample_prod, expect_sample_unique]
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Reduction.lean:237:coins `r` (`expect_sample_equiv φ`, `expect_sample_prod`). For fixed `ω` and `r` the run is the
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Reduction.lean:239:(`expect_sample_equiv (acSeedTapes …)`), so averaging over them gives the lazy hybrid
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Reduction.lean:260:  rw [prob_bind, prob_bind, ← expect_sample_equiv φ, expect_sample_prod, expect_sample_comm]
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Reduction.lean:263:  refine (expect_sample_equiv (acSeedTapes S cap ist n) (fun T => expect (simulate
+TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean:185:/-- **The encryptor runs on the coins of the sampler**: the published equivalence
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:157:  rw [← expect_sample_equiv ((S.bitwiseEncCoins n).trans
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:395:    rw [expect_sample_comm, ← expect_sample_equiv φ, expect_sample_prod, expect_sample_comm]
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:397:    rw [← expect_sample_equiv seedE]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:620:  rw [← ProbComp.expect_sample_equiv (NUPPT.coinsCongr hc n)]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:622:  rw [← ProbComp.expect_sample_equiv φ, ChallengeSim.expect_sample_prod,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:623:    ← ProbComp.expect_sample_equiv (seedEquiv (simParams_seedLen_handler S samp pl hl r sl) n),
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimINDGap.lean:86:    ProbComp.expect_sample_equiv e T₀, ProbComp.expect_sample_equiv e T₁] at hT
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimINDGap.lean:97:**Proof sketch.** Reindex `A'`'s coins by `φ` (`expect_sample_equiv`, `expect_sample_prod`), replace
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimINDGap.lean:130:  rw [← ProbComp.expect_sample_equiv φ, expect_sample_prod]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimINDGap.lean:339:  rw [← ProbComp.expect_sample_equiv (NUPPT.coinsCongr (tailDist_coins S D).symm n),
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:138:  rw [← ProbComp.expect_sample_equiv (halfCoins S n).symm, expect_sample, Fintype.sum_bool,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean:275:  rw [← ProbComp.expect_sample_equiv (NUPPT.coinsCongr hc n)]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean:277:  rw [← ProbComp.expect_sample_equiv φ, ChallengeSim.expect_sample_prod,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean:278:    ← ProbComp.expect_sample_equiv
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean:282:  rw [← ProbComp.expect_sample_equiv (seedEquiv (A := samp) (B := S.enc) rfl n),
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean:287:  rw [← ProbComp.expect_sample_equiv (NUPPT.coinsCongr (recDist_coins S pl r X).symm n)]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:304:coins (`φ`, `expect_sample_equiv`, `expect_sample_prod`, `expect_sample_comm`). For fixed coins,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:340:  conv_lhs => rw [prob_bind, ← ProbComp.expect_sample_equiv (φ.trans (NUPPT.coinsCongr hc n)),
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:344:  conv_lhs => rw [← ProbComp.expect_sample_equiv e]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:500:`expect_sample_equiv`, `expect_sample_prod`). For fixed `ω`, `r` and the distinguisher's coins,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:531:  rw [prob_bind, prob_bind, ← ProbComp.expect_sample_equiv φ, expect_sample_prod]
+TCSlib/Cryptography/Candidates/DDH.lean:310:  have h := ((statClose_sampleBelowL hm hmn).map fun v : ℕ => (v : ZMod (expOrd i))).comp_equiv_right
+TCSlib/Cryptography/Candidates/RSA.lean:1579:      (NUPPT.coinsEquivPoly (rsa_coins_sampler H) n) |>.comp_equiv_right
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:923:`statClose_sampleBelowL`, moved along the coin identification (`StatClose.comp_equiv_left`),
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:957:  have h := (((statClose_sampleBelowL hm hmn).comp_equiv_left e).map g).comp_equiv_right e2
+TCSlib/Cryptography/Candidates/Rabin.lean:1341:      (NUPPT.coinsEquivPoly (rabin_coins_sampler H) n) |>.comp_equiv_right
+TCSlib/Cryptography/Candidates/Factoring.lean:1192:  have h0 := ((statClose_samplePrime n (2 * n ^ 2) hn hd).map bitsToNat).comp_equiv_left

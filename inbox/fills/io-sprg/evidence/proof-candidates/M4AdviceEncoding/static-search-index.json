@@ -1,0 +1,92 @@
+[
+  {
+    "id": "public-encoding-names",
+    "kind": "STATIC_RG_NAME_OR_SHAPE_SEARCH_NOT_LEAN",
+    "args": [
+      "rg",
+      "-n",
+      "^(theorem|lemma) (encodeList_injective_of_fixedWidth|encodeList_length_of_fixedWidth|encBuckets_injective|encDraw_injective|encIdx\\x27_length_le|pubLen_le_seedBound|kappaOf_le|kappaOfN_le|encodeVector_injective|encodeMatrix_injective|encodeVector_length|encodeMatrix_length|encodeChallenge_injective|pairEncode_injective|length_pairEncode|length_natToList|natToList_injOn|eval_mono)",
+      "TCSlib/Cryptography/Obfuscation/StructuredSeed/Basic.lean",
+      "TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean",
+      "TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean",
+      "TCSlib/Cryptography/Encoding/Modular.lean",
+      "TCSlib/Cryptography/LWE/Encoding.lean",
+      "TCSlib/Complexity/TuringMachine/Encoding.lean",
+      "TCSlib/Cryptography/Candidates/Arithmetic.lean",
+      "TCSlib/Complexity/Randomized/PolyExpr.lean"
+    ],
+    "exit_code": 0,
+    "missing_candidate_paths": [],
+    "log": "/private/tmp/io-sprg-proof-notes/M4AdviceEncoding/searches/public-encoding-names.log",
+    "sha256": "cb41118b520619cb90d1a92745ed4a4d2b5373083c82d9e7d759b448bc1d631e",
+    "classification": "STATIC_TEXT_HITS"
+  },
+  {
+    "id": "list-public-alternatives",
+    "kind": "STATIC_RG_NAME_OR_SHAPE_SEARCH_NOT_LEAN",
+    "args": [
+      "rg",
+      "-n",
+      "(theorem|lemma).*encodeList|private.*encodeList",
+      "TCSlib/Complexity/CircuitComplexity/Uniform.lean",
+      "TCSlib/Cryptography/Obfuscation/StructuredSeed/Basic.lean"
+    ],
+    "exit_code": 0,
+    "missing_candidate_paths": [],
+    "log": "/private/tmp/io-sprg-proof-notes/M4AdviceEncoding/searches/list-public-alternatives.log",
+    "sha256": "700550a849689758cf48d96c85e4892157f02bbf86c9b25e58efa3ca89680a0d",
+    "classification": "STATIC_TEXT_HITS"
+  },
+  {
+    "id": "encoding-shapes",
+    "kind": "STATIC_RG_NAME_OR_SHAPE_SEARCH_NOT_LEAN",
+    "args": [
+      "rg",
+      "-n",
+      "(length|Injective|injective|length_of_fixedWidth|length_le).*encode(List|Challenge|Vector|Matrix)|encode(List|Challenge|Vector|Matrix).*(length|Injective|injective|length_le)",
+      "TCSlib/Cryptography/LWE/Encoding.lean",
+      "TCSlib/Cryptography/Encoding/Modular.lean",
+      "TCSlib/Cryptography/Obfuscation/StructuredSeed/Basic.lean",
+      "TCSlib/Complexity/CircuitComplexity/Uniform.lean"
+    ],
+    "exit_code": 0,
+    "missing_candidate_paths": [],
+    "log": "/private/tmp/io-sprg-proof-notes/M4AdviceEncoding/searches/encoding-shapes.log",
+    "sha256": "444422f3d0a054fbfc47c03731861c310189c88cb4411ad7153a45fb9158a024",
+    "classification": "STATIC_TEXT_HITS"
+  },
+  {
+    "id": "lwe-family-width",
+    "kind": "STATIC_RG_NAME_OR_SHAPE_SEARCH_NOT_LEAN",
+    "args": [
+      "rg",
+      "-n",
+      "modulus_le_pow|residueBits|def lpnEnc|theorem lpnEnc_eq",
+      "TCSlib/Cryptography/LWE/Basic.lean",
+      "TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean",
+      "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean"
+    ],
+    "exit_code": 0,
+    "missing_candidate_paths": [
+      "TCSlib/Cryptography/LPN/Basic.lean"
+    ],
+    "log": "/private/tmp/io-sprg-proof-notes/M4AdviceEncoding/searches/lwe-family-width.log",
+    "sha256": "77d50dbcf4341139b26183887542a565f56e6ef4e501bba5018ae15a10ecc1e6",
+    "classification": "STATIC_TEXT_HITS"
+  },
+  {
+    "id": "encoding-local-width-overlap",
+    "kind": "STATIC_RG_NAME_OR_SHAPE_SEARCH_NOT_LEAN",
+    "args": [
+      "rg",
+      "-n",
+      "hwidth|encodeList_length_of_fixedWidth|encDraw|encOneDraw",
+      "TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean"
+    ],
+    "exit_code": 0,
+    "missing_candidate_paths": [],
+    "log": "/private/tmp/io-sprg-proof-notes/M4AdviceEncoding/searches/encoding-local-width-overlap.log",
+    "sha256": "7682551efd7e08fc15131f56b8018cca0fba58060df53f33d3f6ac4eb72a2798",
+    "classification": "STATIC_TEXT_HITS"
+  }
+]

@@ -1,0 +1,23 @@
+import TCSlib.Cryptography.Games.Bridges.Experiments
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography
+
+example {Seed Table Post Mat : Type}
+    [Fintype Seed] [Nonempty Seed] [Fintype Table] [Nonempty Table]
+    [Fintype Post] [Nonempty Post] [Fintype Mat] [Nonempty Mat]
+    (F : Seed → Table → Post → Mat → ℝ) :
+    Games.ProbComp.expect (Games.ProbComp.sample Seed) (fun σ =>
+      Games.ProbComp.expect (Games.ProbComp.sample Table) (fun t =>
+        Games.ProbComp.expect (Games.ProbComp.sample Post) (fun p =>
+          Games.ProbComp.expect (Games.ProbComp.sample Mat) (fun M => F σ t p M)))) =
+      Games.ProbComp.expect (Games.ProbComp.sample Mat) (fun M =>
+        Games.ProbComp.expect (Games.ProbComp.sample Seed) (fun σ =>
+          Games.ProbComp.expect (Games.ProbComp.sample Table) (fun t =>
+            Games.ProbComp.expect (Games.ProbComp.sample Post) (fun p => F σ t p M))))
+  := by
+    apply?

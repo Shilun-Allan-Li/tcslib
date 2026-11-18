@@ -1,0 +1,14 @@
+--- V1/lpn_defs_guard.py
++++ V2/lpn_defs_guard.py
+@@ -121,9 +121,9 @@
+     rows = '\n'.join('    ' + json.dumps(x) + (',' if i + 1 < len(suffixes) else '')
+                      for i, x in enumerate(suffixes))
+     return ('run_cmd do\n  let env ← Lean.getEnv\n'
+-            '  let prefix := "' + AREA + '."\n  let suffixes : List String := [\n'
++            '  let areaPrefix := "' + AREA + '."\n  let suffixes : List String := [\n'
+             + rows + '\n  ]\n  for suffix in suffixes do\n'
+-            '    let name := ((prefix ++ suffix).splitOn ".").foldl\n'
++            '    let name := ((areaPrefix ++ suffix).splitOn ".").foldl\n'
+             '      (fun n p => Lean.Name.str n p) Lean.Name.anonymous\n'
+             '    if env.contains name (skipRealize := false) then\n'
+             '      Lean.throwError "LPN_DEFS_TARGET_PRESENT"\n'

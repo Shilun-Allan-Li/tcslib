@@ -1,0 +1,10 @@
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean:188:  have t := fun G₀ G₁ G₂ : ProbComp Bool => advantage_triangle G₀ G₁ G₂
+TCSlib/Cryptography/Games/Hopping.lean:26:The hybrid argument itself is `advantage_hybrid` (`TCSlib.Cryptography.Games.Advantage`).
+TCSlib/Cryptography/Games/Advantage.lean:36:* `advantage_triangle`, `advantage_hybrid`, `exists_advantage_hybrid_gap`: the hybrid argument;
+TCSlib/Cryptography/Games/Advantage.lean:103:theorem advantage_triangle (G₀ G₁ G₂ : ProbComp Bool) :
+TCSlib/Cryptography/Games/Advantage.lean:111:theorem advantage_hybrid (G : ℕ → ProbComp Bool) (n : ℕ) :
+TCSlib/Cryptography/Games/Advantage.lean:122:theorem exists_advantage_hybrid_gap (G : ℕ → ProbComp Bool) {n : ℕ} (hn : 0 < n) :
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:464:2. By `Games.exists_advantage_hybrid_gap`, at each `n > 0` some `j⋆(n) < n` has
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:497:    · obtain ⟨j, hj, hgj⟩ := exists_advantage_hybrid_gap (hybGame S L hL hmsg A (q.eval n) n) hn
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA.lean:68:2. By `Games.exists_advantage_hybrid_gap`, at each `n` with `cap(n) > 0` some `i⋆(n) < cap(n)`
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA.lean:101:    · obtain ⟨i, hi, hle⟩ := exists_advantage_hybrid_gap

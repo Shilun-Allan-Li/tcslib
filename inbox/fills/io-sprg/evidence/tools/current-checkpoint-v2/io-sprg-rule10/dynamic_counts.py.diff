@@ -1,0 +1,95 @@
+--- /Users/seyoonr/.codex/worktrees/io-sprg/tcslib-exchange/evidence/tools/io-sprg-rule10/dynamic_counts.py
++++ /private/tmp/io-sprg-proof-notes/tmpFinalAuditToolsV2/io-sprg-rule10/dynamic_counts.py
+@@ -5,7 +5,8 @@
+ RUN_DIR contains seals/{strict-A,strict-B,coe-A,coe-B}, controls/, seal-runs/,
+ and control-runs/.  This checks generated chunk payloads against frozen JSON
+ request rows, then exact runtime Name/component/mask/install/EOF coverage.
+-It invokes neither Lean nor subprocesses and never changes a probe or source.
++It invokes no Lean/cache; exact inventory validation uses read-only Git/source calls.
++It never changes a probe or implementation source.
+ Host root: /Users/seyoonr/.codex/worktrees/io-sprg/tcslib-exchange.
+ """
+ import argparse, hashlib, importlib.util, json, re, sys, runpy
+@@ -15,14 +16,20 @@
+ ap.add_argument('tools'); ap.add_argument('run'); ap.add_argument('output')
+ ap.add_argument('--require-complete', action='store_true')
+ ap.add_argument('--require-canonical-pass', action='store_true')
+-ap.add_argument('--environment-tree')
++ap.add_argument('--environment-tree',required=True)
++ap.add_argument('--inventory',required=True)
+ a = ap.parse_args(); run = Path(a.run).resolve()
++iv=runpy.run_path(str(Path(__file__).resolve().parents[1]/'checkpoint_inventory.py'))
++inventory=iv['load'](a.inventory)
++assert json.loads((run/'inventory.json').read_text())==inventory,'run inventory differs'
+ sp = importlib.util.spec_from_file_location('iosprg_record_adapter',
+     Path(a.tools) / 'request_payload_adapter.py')
+ ad = importlib.util.module_from_spec(sp); sp.loader.exec_module(ad)
+ sha = lambda b: hashlib.sha256(b).hexdigest()
+ bind = runpy.run_path(str(Path(__file__).with_name('environment_binding.py')))
+ environment = bind['snapshot'](a.environment_tree,run) if a.environment_tree else None
++collector=json.loads((run/'request-counts-binding.json').read_text())
++assert collector['head']==inventory['head'] and collector['inventory_sha256']==inventory['inventory_sha256'] and collector['environment_sha256']==environment,'collector/current runtime environment differs'
+ 
+ def need(ok, message):
+     if not ok: raise RuntimeError(message)
+@@ -109,6 +116,38 @@
+         need(eof[0] == f'G06-SEAL-END label={label} requested={len(rows)} verified={len(rows)}',
+             'EOF summary counts differ')
+ 
++# Complete matrix scope is independent of the files/results that happen to exist.
++expected_owners=set(inventory['owners']);variants=set(iv['VARIANTS'])
++need({p.name for p in (run/'seals').iterdir() if p.is_dir()}==variants,'seal variants differ')
++need({p.name for p in (run/'controls').iterdir() if p.is_dir()}==variants,'control variants differ')
++static=json.loads((run/'static/static-plan.json').read_text())
++need(static['inventory_sha256']==inventory['inventory_sha256'] and set(static['owners'])==expected_owners,'static inventory differs')
++expected_targets={r['name'] for r in static['controls'] if r['kind']!='abbrev' and r['reader']}
++expected_probe_keys=[]
++for variant in sorted(variants):
++ manifest=json.loads((run/'seals'/variant/'manifest.json').read_text())
++ need(manifest['rev']==inventory['head'],'seal revision differs')
++ probes=manifest['probes'];homes=[r['module'] for r in probes]
++ need(len(homes)==len(expected_owners) and set(homes)==expected_owners,'exact owner/variant coverage differs')
++ for rec in probes:
++  need(rec['source_sha256']==inventory['owner_sources'][rec['module']]['sha256'],'owner source differs')
++  expected_probe_keys.append(('seal',variant,rec['probe_module']))
++ coverage=json.loads((run/'controls'/variant/'coverage.json').read_text())
++ need(not coverage['unresolved'],'unresolved control classification')
++ cov=coverage['coverage'];targets=[r['target'] for r in cov]
++ need(len(targets)==len(set(targets)) and set(targets)==expected_targets,'eligible reader coverage differs')
++ need(all(r['status']=='PREPARED_NOT_RUN' for r in cov),'eligible definition lacks a covering owner')
++ plans=json.loads((run/'controls'/variant/'controls-plan.json').read_text())
++ seen_groups=set();actual={False:[],True:[]}
++ for plan in plans:
++  need(plan['owner'] in expected_owners and isinstance(plan['sealed'],bool),'control owner/mode differs')
++  group=(plan['owner'],plan['sealed']);need(group not in seen_groups,'duplicate control owner group');seen_groups.add(group)
++  expected_probe_keys.append(('control',variant,plan['module']))
++  for ctl in plan['controls']:actual[plan['sealed']].append((ctl['target'],ctl['reader'],ctl['negative']))
++ for owner,mode in seen_groups:need((owner,not mode) in seen_groups,'unpaired sealed/unsealed control group')
++ want={(r['name'],r['reader'],negative) for r in static['controls'] if r['name'] in expected_targets for negative in [False,True]}
++ for mode in [False,True]:need(len(actual[mode])==len(set(actual[mode])) and set(actual[mode])==want,'exact paired reader targets differ')
++need(expected_probe_keys and len(expected_probe_keys)==len(set(expected_probe_keys)),'empty/duplicate planned probes')
+ seals = {}; results = []; failures = []
+ for variant in sorted((run / 'seals').iterdir()):
+     if not variant.is_dir(): continue
+@@ -166,13 +205,20 @@
+     except Exception as error:
+         row.update(status='FAIL_RECORDS', reason=str(error)); failures.append(row)
+     report.append(row)
++actual_probe_keys=[(r['kind'],r['variant'],r['module']) for r in report]
++need(len(actual_probe_keys)==len(expected_probe_keys) and set(actual_probe_keys)==set(expected_probe_keys),'runtime plan set differs')
+ pending = [r for r in report if r['status'] == 'NOT_RUN']
+ canonical_bad = [r for r in report if r['kind'] == 'seal' and r['variant'].startswith('coe-')
+     and r['status'] == 'PASS_RECORDS' and (r['rc'] != 0 or r['errors'] != 0 or r['error_substr'] != 0)]
+-out = dict(records_all_ok=not failures, complete=not pending, canonical_pass=not canonical_bad,
++out = dict(head=inventory['head'],inventory_sha256=inventory['inventory_sha256'],
++    expected_owners=inventory['owners'],owner_count=len(expected_owners),
++    expected_seal_probes=4*len(expected_owners),
++    expected_control_probes=sum(k[0]=='control' for k in expected_probe_keys),
++    records_all_ok=not failures, complete=not pending, canonical_pass=not canonical_bad,
+     environment_sha256=environment, planned=len(report), completed=sum(r['status'] != 'NOT_RUN' for r in report),
+     failures=failures, canonical_bad=canonical_bad, probes=report,
+     qualification='Runtime record checks only; strict source diagnostics remain attributed by sealsum.')
++need(not Path(a.output).exists(), 'Choose fresh runtime-check output; preserve old summaries')
+ Path(a.output).parent.mkdir(parents=True, exist_ok=True)
+ Path(a.output).write_text(json.dumps(out, indent=1) + '\n')
+ print('probes', len(report), 'completed', out['completed'], 'record failures', len(failures),

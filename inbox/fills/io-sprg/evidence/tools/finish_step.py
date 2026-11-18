@@ -3,7 +3,10 @@ import argparse,hashlib,json,re,runpy
 from pathlib import Path
 ap=argparse.ArgumentParser();ap.add_argument('number',type=int);ap.add_argument('build');a=ap.parse_args()
 root=Path.cwd();p=root/'evidence/steps'/f'{a.number:03d}'/'step.json';record=json.loads(p.read_text())
-rows=[json.loads(l) for l in(root/a.build/'results.jsonl').read_text().splitlines()];r=rows[-1]
+rows=[json.loads(l) for l in(root/a.build/'results.jsonl').read_text().splitlines()]
+matching=[r for r in rows if r.get('module','')+'.lean'==record['file']]
+assert matching, 'No checked owner record for this proof step'
+r=matching[-1]
 assert r['rc']==r['errors']==r['error_forms']==0
 assert r['module']+'.lean'==record['file']
 candidates=[root/record['file']]+list((root/'evidence/steps').glob('*/before.lean.txt'))

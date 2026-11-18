@@ -1,0 +1,87 @@
+2026-11-18T20:14:16.171899+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean:231:6: error: Tactic `rewrite` failed: motive is not type correct:
+  fun _a =>
+    ∀
+      (f :
+        P.G.Idx (P.n _a) →
+          (Fin (P.n _a) → Bool) →
+            (Fin (P.m _a) → Fin (P.B _a)) →
+              Matrix (Fin (P.n _a)) (Fin (P.ℓ _a)) (ZMod (π _a).p) → (Fin _a → Fin (P.n _a) → ZMod (π _a).p) → ℝ),
+      ((P.idSamp' _a (π _a)).expect fun I =>
+          (ProbComp.sample (P.Draw _a (π _a))).expect fun d =>
+            (ProbComp.sample (Fin _a → Fin (P.n _a) → ZMod (π _a).p)).expect fun u => f I.1 d.1 I.2.1 I.2.2 u) =
+        (ProbComp.sample (P.PRGAdvice π (P.n κ))).expect fun ω =>
+          (P.G.idSamp (P.n _a)).expect fun I =>
+            (ProbComp.sample (Fin (P.n _a) → Bool)).expect fun σ => f I σ ω.buckets ω.matrix ω.uniform
+Error: Application type mismatch: The argument
+  ω.buckets
+has type
+  Fin (P.m (P.kappaOfN (P.n κ))) → Fin (P.B (P.kappaOfN (P.n κ)))
+but is expected to have type
+  Fin (P.m _a) → Fin (P.B _a)
+in the application
+  f I σ ω.buckets
+
+Explanation: The rewrite tactic rewrites an expression 'e' using an equality 'a = b' by the following process. First, it looks for all 'a' in 'e'. Second, it tries to abstract these occurrences of 'a' to create a function 'm := fun _a => ...', called the *motive*, with the property that 'm a' is definitionally equal to 'e'. Third, we observe that 'congrArg' implies that 'm a = m b', which can be used with lemmas such as 'Eq.mpr' to change the goal. However, if 'e' depends on specific properties of 'a', then the motive 'm' might not typecheck.
+
+Possible solutions: use rewrite's 'occs' configuration option to limit which occurrences are rewritten, or use 'simp' or 'conv' mode, which have strategies for certain kinds of dependencies (these tactics can handle proofs and 'Decidable' instances whose types depend on the rewritten term, and 'simp' can apply user-defined '@[congr]' theorems as well).
+
+case refine_2.refine_2
+P : Params
+π : PrimeSchedule
+A : NUPPT
+b : Bool
+κ : ℕ
+hk : P.kappaOfN (P.n κ) = κ
+e : (Fin (P.m κ) → Bool) ≃ (Fin (P.G.outLen (P.n κ)) → Bool) := (finCongr ⋯).arrowCongr (Equiv.refl Bool)
+hOut : ∀ (v : Fin (P.G.outLen (P.n κ)) → Bool), e.symm v = fun j => v (P.outputIndex κ j)
+hpub :
+  ∀ (I : P.Idx' κ (π κ)) (d : P.Draw κ (π κ)) (u : Fin κ → Fin (P.n κ) → ZMod (π κ).p),
+    P.chainPublic κ (π κ) I d u κ = u
+havg :
+  ∀
+    (f :
+      P.G.Idx (P.n (P.kappaOfN (P.n κ))) →
+        (Fin (P.n (P.kappaOfN (P.n κ))) → Bool) →
+          (Fin (P.m (P.kappaOfN (P.n κ))) → Fin (P.B (P.kappaOfN (P.n κ)))) →
+            Matrix (Fin (P.n (P.kappaOfN (P.n κ)))) (Fin (P.ℓ (P.kappaOfN (P.n κ)))) (ZMod (π (P.kappaOfN (P.n κ))).p) →
+              (Fin (P.kappaOfN (P.n κ)) → Fin (P.n (P.kappaOfN (P.n κ))) → ZMod (π (P.kappaOfN (P.n κ))).p) → ℝ),
+    ((P.idSamp' (P.kappaOfN (P.n κ)) (π (P.kappaOfN (P.n κ)))).expect fun I =>
+        (ProbComp.sample (P.Draw (P.kappaOfN (P.n κ)) (π (P.kappaOfN (P.n κ))))).expect fun d =>
+          (ProbComp.sample
+                (Fin (P.kappaOfN (P.n κ)) → Fin (P.n (P.kappaOfN (P.n κ))) → ZMod (π (P.kappaOfN (P.n κ))).p)).expect
+            fun u => f I.1 d.1 I.2.1 I.2.2 u) =
+      (ProbComp.sample (P.PRGAdvice π (P.n κ))).expect fun ω =>
+        (P.G.idSamp (P.n (P.kappaOfN (P.n κ)))).expect fun I =>
+          (ProbComp.sample (Fin (P.n (P.kappaOfN (P.n κ))) → Bool)).expect fun σ => f I σ ω.buckets ω.matrix ω.uniform
+⊢ accept (P.chainGame A b κ κ (π κ)) =
+    (ProbComp.sample (P.PRGAdvice π (P.n κ))).expect fun ω =>
+      accept
+        (OracleComp.bind (P.G.idSamp (P.n κ)) fun I =>
+          OracleComp.bind (ProbComp.sample (Fin (P.n κ) → Bool)) fun σ =>
+            OracleComp.bind (ProbComp.sample (Fin (P.G.outLen (P.n κ)) → Bool)) fun v =>
+              OracleComp.bind (ProbComp.sample (A.Coins κ)) fun r =>
+                pure (A.distinguisherL κ (P.prgPre π (P.n κ) ω (I, if b = true then P.G.eval (P.n κ) I σ else v)) r))
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean:268:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop): no fresh .olean produced
+        2.55 real         1.74 user         0.96 sys
+          2347745280  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              185067  page reclaims
+                  12  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  16  voluntary context switches
+                4403  involuntary context switches
+            32076129  instructions retired
+            13650364  cycles elapsed
+             1638736  peak memory footprint
+2026-11-18T20:14:18.744355+00:00 END rc=1

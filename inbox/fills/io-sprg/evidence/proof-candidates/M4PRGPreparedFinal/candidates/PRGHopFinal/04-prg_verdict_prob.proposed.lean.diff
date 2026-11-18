@@ -1,0 +1,32 @@
+--- /private/tmp/io-sprg-proof-notes/PRGHopFinal/04-prg_verdict_prob.proposed.lean
++++ /private/tmp/io-sprg-proof-notes/M4PRGPrepared/candidates/PRGHopFinal/04-prg_verdict_prob.proposed.lean
+@@ -15,12 +15,17 @@
+         (fun r => A.distinguisherL (P.kappaOfN N)
+           (P.prgPre π N (ω N) x) r = true) := by
+   classical
+-  have hcut : A.coinLen (P.kappaOfN N) ≤ (A.coins.subst .var).eval N
++  have hcut : A.coinLen (P.kappaOfN N) ≤ (A.coins.subst .var).eval N := ?_
++  swap
+   · rw [A.coinLen_eq, PolyExpr.eval_subst, PolyExpr.eval_var]
+     exact A.coins.eval_mono (P.kappaOfN_le N)
+   let Q : List Bool → Prop := fun r =>
+     A.runAtL (P.kappaOfN N) (P.prgPre π N (ω N) x) r = [true]
+-  rw [Bridge.prob_sample_eq_uprob, Bridge.prob_sample_eq_uprob]
++  rw [Bridge.prob_sample_eq_uprob
++      (fun r : B.Coins N => B.distinguisherL N (P.prgEnc N x) r = true),
++    Bridge.prob_sample_eq_uprob
++      (fun r : A.Coins (P.kappaOfN N) =>
++        A.distinguisherL (P.kappaOfN N) (P.prgPre π N (ω N) x) r = true)]
+   trans uprob (fun r : Fin ((A.coins.subst .var).eval N) → Bool =>
+     Q ((List.ofFn r).take (A.coinLen (P.kappaOfN N))))
+   · calc
+@@ -28,7 +33,8 @@
+           uprob (fun r : Fin ((A.coins.subst .var).eval N) → Bool =>
+             B.distinguisherL N (P.prgEnc N x)
+               ((NUPPT.coinsEquivPoly hB.coins_eq N).symm r) = true) :=
+-        (uprob_comp_equiv (NUPPT.coinsEquivPoly hB.coins_eq N).symm _).symm
++        (uprob_comp_equiv (NUPPT.coinsEquivPoly hB.coins_eq N).symm
++          (fun r : B.Coins N => B.distinguisherL N (P.prgEnc N x) r = true)).symm
+       _ = _ := ?_
+     congr 1
+     funext r

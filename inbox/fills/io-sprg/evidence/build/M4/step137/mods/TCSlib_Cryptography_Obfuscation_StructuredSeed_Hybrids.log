@@ -1,0 +1,72 @@
+2026-11-18T20:04:43.968967+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:172:71: error: unsolved goals
+P : Params
+A : NUPPT
+κ : ℕ
+pp : PrimeParam κ
+⊢ ((P.idSamp' κ pp).expect fun a =>
+      (ProbComp.sample (P.Draw κ pp)).expect fun a_1 =>
+        (ProbComp.sample (A.Coins κ)).expect fun a_2 =>
+          ProbComp.prob
+            (pure
+              (A.distinguisherL κ
+                (P.challengeStr κ pp a
+                  (P.publicSeed κ pp
+                    (fun k i =>
+                      ∑ a_3, a.2.2 i a_3 * (a_1.2 k).1 a_3 + P.noiseValue κ pp ((a_1.2 k).2 i) + ↑(a_1.1 i).toNat)
+                    false)
+                  fun j => P.G.eval (P.n κ) a.1 a_1.1 (P.outputIndex κ j))
+                a_2))
+            fun x => x = true) =
+    (P.idSamp' κ pp).expect fun a =>
+      (ProbComp.sample (P.Draw κ pp)).expect fun a_1 =>
+        (ProbComp.sample (Fin (P.m κ) → Bool)).expect fun a_2 =>
+          (ProbComp.sample (A.Coins κ)).expect fun a_3 =>
+            ProbComp.prob
+              (pure
+                (A.distinguisherL κ
+                  (P.challengeStr κ pp a
+                    (P.publicSeed κ pp
+                      (fun k i =>
+                        ∑ a_4, a.2.2 i a_4 * (a_1.2 k).1 a_4 + P.noiseValue κ pp ((a_1.2 k).2 i) + ↑(a_1.1 i).toNat)
+                      false)
+                    (if True then fun j => P.G.eval (P.n κ) a.1 a_1.1 (P.outputIndex κ j) else a_2))
+                  a_3))
+              fun x => x = true
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:174:4: warning: This simp argument is unused:
+  ProbComp.prob_pure
+
+Hint: Omit it from the simp argument list.
+  simp only [accept_eq, hyb_eq, chainGame_eq, ProbComp.prob_bind,
+  ̵  ̵ ̵ ̵Pr̵o̵b̵C̵o̵m̵p̵.̵p̵r̵o̵b̵_̵p̵u̵r̵e̵,̵ ̵P̵arams.sdSampFull_eq,
+  ̲  ̲ ̲ ̲ProbComp.expect_map,
+  ̵  ̵ ̵ ̵Params.chainPublic_eq, Params.sdCore_instances, Params.sdCore_σ,
+      Params.oneSd_pub, Params.lpnVector_eq, Nat.not_lt_zero,
+  ̵  ̵ ̵ ̵if_false, ProbComp.expect_const]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:185:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:194:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:202:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids): no fresh .olean produced
+        3.15 real         1.78 user         1.09 sys
+          2349613056  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              173359  page reclaims
+               11676  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 852  voluntary context switches
+               11776  involuntary context switches
+            32043333  instructions retired
+            14219239  cycles elapsed
+             1622352  peak memory footprint
+2026-11-18T20:04:47.149542+00:00 END rc=1

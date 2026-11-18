@@ -1,0 +1,137 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
+-/
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.PRG.Defs
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Actual-law Boolean PRG averaging and the final hybrid hop
+
+## Main definitions
+
+None; this module proves properties of the imported reduction interface.
+
+## Main results
+
+The four specialized sampler/verdict/averaging helper theorems and
+the original every-realizer Params.prg_hop conclusion.
+
+## References
+
+* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
+  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026,
+  Lemma 4.2, p. 19; Definition 3.4, p. 11.
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
+  3rd ed., January 2010, Definition 26.8.
+
+**Deviations.** Dv8 and Dv12 preserve the actual nuisance law and fix advice before
+every realizer. Dv16 uses only the shared layout-length realization contract.
+-/
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+
+open Complexity Turing Games
+
+-- Specialized helper theorems are added after their reuse checks.
+
+/-- A shared-contract PRG realiser has the advised reduction's exact verdict probability;
+reduction glue for [JLS26, Lemma 4.2, p. 19]. Only encoded challenges and layout-length
+coins are used. The unused suffix is removed by the existing uniform restriction law.
+
+**Proof sketch.** Reindex the realiser's coins through coinsEquivPoly, read its verdict,
+read prgRed, and apply pushesUniform_restrict along the prefix injection together with the
+existing ofFn_castLE_eq_take representation equation. -/
+theorem Params.prg_verdict_prob (P : Params) (π : PrimeSchedule) (A : NUPPT)
+    (ω : ∀ N, P.PRGAdvice π N) (B : NUPPT)
+    (hB : B.RealizesOn P.prgEnc (A.coins.subst .var)
+      (fun N x r => P.prgRed π A N (ω N) x r)) (N : ℕ) (x : P.PRGChal N) :
+    ProbComp.prob (ProbComp.sample (B.Coins N))
+        (fun r => B.distinguisherL N (P.prgEnc N x) r = true) =
+      ProbComp.prob (ProbComp.sample (A.Coins (P.kappaOfN N)))
+        (fun r => A.distinguisherL (P.kappaOfN N)
+          (P.prgPre π N (ω N) x) r = true) := by
+  classical
+  have hcut : A.coinLen (P.kappaOfN N) ≤ (A.coins.subst .var).eval N := ?_
+  swap
+  · rw [A.coinLen_eq, PolyExpr.eval_subst, PolyExpr.eval_var]
+    exact A.coins.eval_mono (P.kappaOfN_le N)
+  let Q : List Bool → Prop := fun r =>
+    A.runAtL (P.kappaOfN N) (P.prgPre π N (ω N) x) r = [true]
+  rw [Bridge.prob_sample_eq_uprob
+      (fun r : B.Coins N => B.distinguisherL N (P.prgEnc N x) r = true),
+    Bridge.prob_sample_eq_uprob
+      (fun r : A.Coins (P.kappaOfN N) =>
+        A.distinguisherL (P.kappaOfN N) (P.prgPre π N (ω N) x) r = true)]
+  trans uprob (fun r : Fin ((A.coins.subst .var).eval N) → Bool =>
+    Q ((List.ofFn r).take (A.coinLen (P.kappaOfN N))))
+  · calc
+      uprob (fun r : B.Coins N => B.distinguisherL N (P.prgEnc N x) r = true) =
+          uprob (fun r : Fin ((A.coins.subst .var).eval N) → Bool =>
+            B.distinguisherL N (P.prgEnc N x)
+              ((NUPPT.coinsEquivPoly hB.coins_eq N).symm r) = true) :=
+        (uprob_comp_equiv (NUPPT.coinsEquivPoly hB.coins_eq N).symm
+          (fun r : B.Coins N => B.distinguisherL N (P.prgEnc N x) r = true)).symm
+      _ = _ := ?_
+    congr 1
+    funext r
+    rw [NUPPT.distinguisherL_eq, hB.runAt_coinsEquivPoly_symm, P.prgRed_eq]
+    simp only [decide_eq_true_eq, Q]
+  · have hp :=
+      (HardcoreBit.pushesUniform_restrict (O := Bool) (Fin.castLE_injective hcut)).uprob_eq
+        (fun r : Fin (A.coinLen (P.kappaOfN N)) → Bool => Q (List.ofFn r))
+    simp only [OneWay.ofFn_castLE_eq_take hcut] at hp
+    simpa only [Q, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, decide_eq_true_eq] using hp
+
+/-- The actual index/seed nuisance draws average to the explicit PRG advice law; construction-
+specific averaging glue for [JLS26, Lemma 4.2, p. 19]. The Boolean index retains G.idSamp's
+exact pushforward law; no uniformity of G.Idx is assumed.
+
+**Proof sketch.** Read the concrete joint draws and idCore. Reindex the advice law through
+its supplied record/product equivalence. Split the specified actual products with
+expect_sample_pair, reindex their factors by an explicit proof-local permutation with
+expect_sample_equiv, and discard only the unused repetition draw with expect_const. -/
+theorem Params.prg_nuisance_average (P : Params) (π : PrimeSchedule) (N : ℕ) :
+    let κ := P.kappaOfN N
+    ∀ f : P.G.Idx (P.n κ) → (Fin (P.n κ) → Bool) →
+      (Fin (P.m κ) → Fin (P.B κ)) →
+      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod (π κ).p) →
+      (Fin κ → Fin (P.n κ) → ZMod (π κ).p) → ℝ,
+    ProbComp.expect (P.idSamp' κ (π κ)) (fun I =>
+      ProbComp.expect (ProbComp.sample (P.Draw κ (π κ))) (fun d =>
+        ProbComp.expect
+          (ProbComp.sample (Fin κ → Fin (P.n κ) → ZMod (π κ).p))
+          (fun u => f I.1 d.1 I.2.1 I.2.2 u))) =
+      ProbComp.expect (ProbComp.sample (P.PRGAdvice π N)) (fun ω =>
+        ProbComp.expect (P.G.idSamp (P.n κ)) (fun I =>
+          ProbComp.expect (ProbComp.sample (Fin (P.n κ) → Bool))
+            (fun σ => f I σ ω.buckets ω.matrix ω.uniform))) := sorry
+
+namespace Params
+
+/-- The Boolean PRG hop between all-uniform-public-vector chains is bounded by one Boolean
+assumption advantage, for every NUPPT realising the explicit advised function.
+[JLS26, Lemma 4.2, p. 19]. Dv8 retains the bucket map; Dv12 fixes averaged-out data in
+advice. Dv14 assumes the realiser, and Dv16 uses the shared predicate only on encoded
+challenges and layout-length coins, strengthening the every-realiser conclusion.
+
+**Proof sketch.** At each Boolean parameter, average over bucket maps, public matrices and
+uniform public vectors, and fix advice whose absolute acceptance gap dominates the average.
+At image parameters use kappaOfN_n and the preprocessing readers to identify the canonical
+Boolean challenge with the two chain endpoints. Transport the realiser's typed coins through
+RealizesOn's published readers and remove the unused coin suffix using the existing prefix
+sampling lemma. Choose arbitrary inhabited advice off the image and assemble the family. -/
+theorem prg_hop (P : Params) (π : PrimeSchedule) (A : NUPPT) :
+    ∃ ω : ∀ N, P.PRGAdvice π N, ∀ B : NUPPT,
+      B.RealizesOn P.prgEnc (A.coins.subst .var)
+        (fun N x r => P.prgRed π A N (ω N) x r) →
+      ∀ κ, Games.advantage (P.chainGame A true κ κ (π κ))
+          (P.chainGame A false κ κ (π κ)) ≤ P.G.adv B (P.n κ) := sorry
+
+end Params
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed

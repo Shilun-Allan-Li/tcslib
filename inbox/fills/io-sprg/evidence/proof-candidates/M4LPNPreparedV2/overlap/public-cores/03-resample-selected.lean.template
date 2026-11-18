@@ -1,0 +1,22 @@
+import TCSlib.Cryptography.Games.Bridges.Experiments
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography
+
+example {ι Rep Post Coins : Type} [Fintype ι] [DecidableEq ι]
+    [Fintype Rep] [Nonempty Rep] [Fintype Post] [Nonempty Post]
+    [Fintype Coins] [Nonempty Coins] (k : ι)
+    (F : (ι → Rep) → Post → Coins → ℝ) :
+    Games.ProbComp.expect (Games.ProbComp.sample (ι → Rep)) (fun t =>
+      Games.ProbComp.expect (Games.ProbComp.sample Post) (fun p =>
+        Games.ProbComp.expect (Games.ProbComp.sample Rep) (fun fresh =>
+          Games.ProbComp.expect (Games.ProbComp.sample Coins)
+            (fun r => F (Function.update t k fresh) p r)))) =
+      Games.ProbComp.expect (Games.ProbComp.sample (ι → Rep)) (fun t =>
+        Games.ProbComp.expect (Games.ProbComp.sample Post) (fun p =>
+          Games.ProbComp.expect (Games.ProbComp.sample Coins) (fun r => F t p r))) :=
+  __PROBE_BODY__

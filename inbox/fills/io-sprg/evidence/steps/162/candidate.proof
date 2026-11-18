@@ -1,0 +1,41 @@
+by
+  classical
+  have hselect : ∀ κ : ℕ, ∃ i : Fin (κ + 1),
+      0 < κ → i.val < κ ∧
+        advantage (P.chainGame A true 0 κ (π κ))
+          (P.chainGame A true κ κ (π κ)) ≤
+            (κ : ℝ) * advantage (P.chainGame A true i.val κ (π κ))
+              (P.chainGame A true (i.val + 1) κ (π κ)) := ?_
+  swap
+  · intro κ
+    by_cases hκ : 0 < κ
+    · obtain ⟨i, hi, hgap⟩ := exists_advantage_hybrid_gap
+        (fun j : ℕ => P.chainGame A true j κ (π κ)) hκ
+      refine ⟨⟨i, hi.trans_le (Nat.le_succ κ)⟩, ?_⟩
+      intro _
+      refine ⟨hi, ?_⟩
+      have hκR : 0 < (κ : ℝ) := Nat.cast_pos.mpr hκ
+      exact ((div_le_iff₀ hκR).mp hgap).trans_eq (mul_comm _ _)
+    · exact ⟨⟨0, Nat.succ_pos κ⟩, fun h => False.elim (hκ h)⟩
+  choose hops hhops using hselect
+  obtain ⟨ωL, hL⟩ := P.lpn_hop π A (fun _ => true) hops
+  obtain ⟨ωG, hG⟩ := P.prg_hop π A
+  refine ⟨ωL, ωG, ?_⟩
+  intro BL BG hBL hBG κ
+  have hreal : advantage (P.chainGame A true 0 κ (π κ))
+      (P.chainGame A true κ κ (π κ)) ≤
+        (κ : ℝ) * (P.lpnFamily_raw π).adv BL (P.ℓ κ) := ?_
+  swap
+  · by_cases hκ : 0 < κ
+    · have hs := hhops κ hκ
+      exact hs.2.trans
+        (mul_le_mul_of_nonneg_left (hL BL hBL κ hs.1) (Nat.cast_nonneg κ))
+    · have hz : κ = 0 := Nat.eq_zero_of_not_pos hκ
+      subst κ
+      simpa only [Nat.cast_zero, zero_mul, advantage_self] using
+        (le_rfl : (0 : ℝ) ≤ 0)
+  have hprg := hG BG hBG κ
+  exact (advantage_triangle
+    (P.chainGame A true 0 κ (π κ))
+    (P.chainGame A true κ κ (π κ))
+    (P.chainGame A false κ κ (π κ))).trans (add_le_add hreal hprg)

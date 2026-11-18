@@ -1,0 +1,82 @@
+by
+  classical
+  let κ := P.kappaOf L
+  let pp := π κ
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L
+  let χ := (P.lpnFamily_raw π).toLWE.noise L
+  change ∃ e : (Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+      ((Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins))) ≃
+      (Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+        ((Fin (P.ℓ κ) → ZMod pp.p) ×
+          (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))), _
+  have hd : Q.dimension = P.ℓ κ := (P.lpn_dimension_eq π L).trans h
+  have hr : Q.samples = P.n κ := (P.lpn_samples_eq π L).trans
+    ((congrArg (fun q : ℕ => q ^ P.D) h).trans (P.n_eq κ).symm)
+  have hp : Q.modulus = pp.p := P.lpn_modulus_eq π L
+  have hden : (P.lpnFamily_raw π).noiseDen L = P.W κ :=
+    (P.lpnFamily_raw_noiseDen π L).trans
+      ((congrArg P.noiseDenAt h).trans (P.W_eq_noiseDenAt κ).symm)
+  have hmod : (P.lpnFamily_raw π).modulus L = pp.p := P.lpnFamily_raw_modulus π L
+  have hχ : χ = lpnNoise pp.p (P.W κ) := ?_
+  swap
+  · dsimp only [χ]
+    simp only [LPNFamily.Raw.toLWE_noise, LPNFamily.Raw.noise_eq, hmod, hden]
+  have hseed : ∀ (Q₀ : LWE.Parameters) (χ₀ : LWE.Noise)
+      (hdim : Q₀.dimension = P.ℓ κ) (hrows : Q₀.samples = P.n κ)
+      (hprime : Q₀.modulus = pp.p), χ₀ = lpnNoise pp.p (P.W κ) →
+      ∃ e : (Matrix (Fin Q₀.samples) (Fin Q₀.dimension) (ZMod Q₀.modulus) ×
+          ((Fin Q₀.dimension → ZMod Q₀.modulus) × (Fin Q₀.samples → χ₀.Coins))) ≃
+          (Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+            ((Fin (P.ℓ κ) → ZMod pp.p) ×
+              (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))),
+        ∀ r,
+          Matrix.of ((Equiv.arrowCongr (finCongr hrows)
+            (Equiv.arrowCongr (finCongr hdim) (Equiv.cast (congrArg ZMod hprime))))
+              (Matrix.of.symm (LWE.sample Q₀ χ₀ r).1)) = (e r).1 ∧
+          (Equiv.arrowCongr (finCongr hrows) (Equiv.cast (congrArg ZMod hprime)))
+              (LWE.sample Q₀ χ₀ r).2 = fun i =>
+            (∑ a, (e r).1 i a * (e r).2.1 a) +
+              P.noiseValue κ pp ((e r).2.2 i) := ?_
+  swap
+  · intro Q₀ χ₀ hdim hrows hprime hnoise
+    rcases Q₀ with ⟨dim, rows, modulus, hge⟩
+    dsimp only at hdim hrows hprime
+    subst dim
+    subst rows
+    subst modulus
+    subst χ₀
+    let eNoise := Equiv.arrowCongr (Equiv.refl (Fin (P.n κ)))
+      (Equiv.cast (lpnNoise_coins pp.p (P.W κ)))
+    let e := Equiv.prodCongr
+      (Equiv.refl (Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p)))
+      (Equiv.prodCongr (Equiv.refl (Fin (P.ℓ κ) → ZMod pp.p)) eNoise)
+    refine ⟨e, ?_⟩
+    intro r
+    constructor
+    · apply Matrix.ext
+      intro i a
+      simp only [e, Equiv.prodCongr_apply, Equiv.refl_apply, Equiv.refl_symm,
+        finCongr_refl, Equiv.cast_refl, Equiv.arrowCongr_refl,
+        LWE.sample_fst, Matrix.of_apply, Matrix.of_symm_apply]
+    · funext i
+      have hcancel := (Equiv.cast (lpnNoise_coins pp.p (P.W κ))).symm_apply_apply (r.2.2 i)
+      simp only [Equiv.cast_symm, Equiv.cast_apply] at hcancel
+      simp only [e, eNoise, Equiv.prodCongr_apply, Equiv.arrowCongr_apply,
+        Equiv.refl_apply, Equiv.refl_symm, Function.comp_apply, finCongr_refl,
+        Equiv.cast_refl, Equiv.arrowCongr_refl, Equiv.cast_apply,
+        LWE.sample_snd, LWE.noisyValues_apply, P.noiseValue_eq, hcancel]
+  obtain ⟨e, he⟩ := hseed Q χ hd hr hp hχ
+  refine ⟨e, ?_⟩
+  intro r
+  have hx := he r
+  constructor
+  · refine Eq.trans ?_ hx.1
+    apply Matrix.ext
+    intro i a
+    simp only [P.lpnMatrixAt_eq, P.lpnChalEquiv_eq, Equiv.prodCongr_apply,
+      Equiv.arrowCongr_apply, Function.comp_apply, Equiv.cast_apply,
+      Matrix.of_apply, Matrix.of_symm_apply] <;> rfl
+  · refine Eq.trans ?_ hx.2
+    funext i
+    simp only [P.lpnValuesAt_eq, P.lpnChalEquiv_eq, Equiv.prodCongr_apply,
+      Equiv.arrowCongr_apply, Function.comp_apply, Equiv.cast_apply] <;> rfl

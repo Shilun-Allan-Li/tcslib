@@ -1,0 +1,73 @@
+by
+  classical
+  let κ := P.kappaOfN N
+  let pp := π κ
+  let S := P.idxBound.eval N + (P.seedBound.eval N +
+    (P.mBound.eval N + (P.nBound.eval N + (P.ellBound.eval N + (N + 1)))))
+  have hκ : κ ≤ N := P.kappaOfN_le N
+  have hN1 : N + 1 ≤ S := ?_
+  swap
+  · dsimp only [S]
+    omega
+  have hκ1 : κ + 1 ≤ S := (Nat.succ_le_succ hκ).trans hN1
+  have hS1 : 1 ≤ S := (Nat.succ_le_succ (Nat.zero_le N)).trans hN1
+  have hidx : P.idxBound.eval κ ≤ S := ?_
+  swap
+  · have h := PolyExpr.eval_mono P.idxBound hκ
+    dsimp only [S]
+    omega
+  have hseed : P.seedBound.eval κ ≤ S := ?_
+  swap
+  · have h := PolyExpr.eval_mono P.seedBound hκ
+    dsimp only [S]
+    omega
+  obtain ⟨I⟩ := P.G.idxNonempty (P.n κ)
+  have hindex := P.encIdx'_length_le κ pp (I, ω.buckets, ω.matrix)
+  rw [P.encIdx'_eq, length_pairEncode, length_pairEncode] at hindex
+  dsimp only at hindex
+  have hb : (P.encBuckets κ ω.buckets).length ≤ S := ?_
+  swap
+  · omega
+  have hM : (Encoding.Modular.encodeMatrix (κ + 1) ω.matrix).length ≤ S := ?_
+  swap
+  · omega
+  have hpub := P.pubLen_le_seedBound κ
+  rw [P.pubLen_eq] at hpub
+  have hbase : κ * P.n κ ≤ P.seedBound.eval κ :=
+    (Nat.le_add_right _ 1).trans hpub
+  have hu : (Encoding.Modular.encodeMatrix (κ + 1) ω.uniform).length ≤ S ^ 2 := ?_
+  swap
+  · rw [Encoding.Modular.encodeMatrix_length]
+    calc
+      κ * P.n κ * (κ + 1) ≤ P.seedBound.eval κ * (κ + 1) :=
+        Nat.mul_le_mul_right (κ + 1) hbase
+      _ ≤ S * S := Nat.mul_le_mul hseed hκ1
+      _ = S ^ 2 := (pow_two S).symm
+  have hS2 : S ≤ S ^ 2 := ?_
+  swap
+  · simpa only [pow_two, Nat.mul_one] using Nat.mul_le_mul_left S hS1
+  have hS23 : S ^ 2 ≤ S ^ 3 :=
+    calc
+      S ^ 2 = S ^ 2 * 1 := (Nat.mul_one _).symm
+      _ ≤ S ^ 2 * S := Nat.mul_le_mul_left (S ^ 2) hS1
+      _ = S ^ 3 := (pow_succ S 2).symm
+  have hS3 : S ≤ S ^ 3 := hS2.trans hS23
+  have hone : 1 ≤ S ^ 3 := hS1.trans hS3
+  have hcoarse : (P.encPRGAdvice π N ω).length ≤ 100 * S ^ 3 := ?_
+  swap
+  · rw [P.encPRGAdvice_eq]
+    simp only [length_pairEncode, PrimeParam.enc_eq, Candidates.length_natToList,
+      List.length_replicate]
+    change 2 * (κ + 2) + 2 + (2 * N + 2 +
+      (2 * (P.encBuckets κ ω.buckets).length + 2 +
+        (2 * (Encoding.Modular.encodeMatrix (κ + 1) ω.matrix).length + 2 +
+          (Encoding.Modular.encodeMatrix (κ + 1) ω.uniform).length))) ≤ 100 * S ^ 3
+    omega
+  apply hcoarse.trans
+  rw [P.prgAdviceBound_eq, P.prgAdviceDataBound_eq]
+  simp only [PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_add,
+    PolyExpr.eval_var, PolyExpr.eval_pow]
+  change 100 * S ^ 3 ≤ 100 * ((N + 1) * S ^ 3)
+  apply Nat.mul_le_mul_left
+  simpa only [Nat.one_mul] using
+    Nat.mul_le_mul_right (S ^ 3) (Nat.succ_le_succ (Nat.zero_le N))

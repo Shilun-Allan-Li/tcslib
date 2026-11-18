@@ -1,0 +1,50 @@
+TCSlib/Cryptography/Authentication/Signatures/Lamport/AveragingExtra.lean:77:  obtain ⟨i, hi⟩ := exists_expect_sample_le
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging.lean:30:* `exists_expect_sample_le`: a finite uniform average is bounded by a value it averages.
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging.lean:114:theorem exists_expect_sample_le {ι : Type} [Fintype ι] [Nonempty ι] (g : ι → ℝ) :
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean:100:(`ProbComp.abs_expect_sub_le_expect`) gives `Pr_r[p < 2^ℓ]` (`Bridge.prob_sample_eq_uprob`). On
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean:125:        ProbComp.abs_expect_sub_le_expect _ fun r => ?_
+TCSlib/Cryptography/Games/Probability.lean:47:  `expect_sample_update`, `expect_sample_coord`: reindexing, exchanging and resampling uniform
+TCSlib/Cryptography/Games/Probability.lean:49:* `ProbComp.abs_expect_sub_le_expect`: averaging a pointwise bound.
+TCSlib/Cryptography/Games/Probability.lean:355:theorem expect_sample_update {ι : Type} [Fintype ι] [DecidableEq ι] [Fintype β] [Nonempty β]
+TCSlib/Cryptography/Games/Probability.lean:381:coordinate `j` on the left (`expect_sample_update`); pointwise,
+TCSlib/Cryptography/Games/Probability.lean:387:  rw [expect_sample_comm, ← expect_sample_update j (fun T => F (T j) T)]
+TCSlib/Cryptography/Games/Probability.lean:409:theorem abs_expect_sub_le_expect (c : ProbComp α) {f g h : α → ℝ}
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:43:  `uprob_sections_congr`, `uprob_update_absorb`, `uprob_update_split`.
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:87:theorem uprob_update_absorb [Nonempty β] (i : α) (f : (α → β) → γ → Prop) :
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:100:theorem uprob_update_absorb' [Nonempty β] (i : α) (f : (α → β) → Prop) :
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:112:theorem uprob_update_split [Nonempty β] (i : α) (g : β → (α → β) → Prop)
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:116:    ← uprob_update_absorb' i (fun W => g (W i) W)]
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:322:continuation probabilities (`uprob_update_split`), which agree by induction. -/
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:373:        uprob_update_split j g (fun v W u => by simp only [g, hlen, j, combine_update]),
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:374:        uprob_update_split x h (fun v R u => by
+TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:151:  exact uprob_update_absorb _ E
+TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:201:  exact uprob_update_absorb _ E
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:184:(`OneWay.uprob_update`, `prodFun_update`), and an inverse of the whole tuple inverts every
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:192:  have h := uprob_update (α := α) (ρ := ρ) i fun xs r =>
+TCSlib/Cryptography/Asymptotic/OneWay.lean:500:(`OneWay.uprob_update`), so the planted experiment is the direct-product experiment with the
+TCSlib/Cryptography/Asymptotic/OneWay.lean:507:  have h := uprob_update (α := α) (ρ := ρ) i fun xs r => f (B (prodFun f q xs) r i) = f (xs i)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:342:`uprob_prod`/`OneWay.uprob_update` the `t`-th term is `(1 - 1/|E|)^t · Pr[∃ v, attempt = some v ∧
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:550:whose law is uniform (`OneWay.uprob_update` twice), so the acceptance probability is that of
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:463:coins, so by `uprob_prod` / `OneWay.uprob_update` the `t`-th term is
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean:210:            rw [← uprob_update i (fun xs r =>
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:33:* `uprob_update`: planting a fresh uniform value into a uniform tuple leaves it uniform.
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:131:theorem uprob_update {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty α] (i : ι)
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:220:  rw [OneWay.uprob_update k (fun cols (z : Public × ((Fin w → Values) × ρ)) =>
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:222:    OneWay.uprob_update k (fun cols (z : Public × ((Fin w → Real) × ρ)) =>
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Forgery.lean:515:private theorem abs_expect_sub_le_expect {β : Type} (c : ProbComp β) {f g h : β → ℝ}
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Forgery.lean:531:(`abs_prob_ettImpl_rej_sub_le`); average over `R` (`abs_expect_sub_le_expect`) and bound the bad
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Forgery.lean:545:  refine (abs_expect_sub_le_expect (h := fun R => prob (simulate (ettBad ins outs d n f R true b)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean:25:(`expect_lazyImpl`): at a new point, resampling `R` there (`ProbComp.expect_sample_update`) is
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean:347:resample `R` at `x` (`ProbComp.expect_sample_update`): `R(x)` becomes the lazy sample `y`, and
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean:379:        rw [← ProbComp.expect_sample_update r]
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean:410:          rw [← ProbComp.expect_sample_update (padFin n (pairFstD (List.ofFn c)))]
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean:461:          rw [← ProbComp.expect_sample_update r]
+TCSlib/Cryptography/Candidates/Concrete.lean:216:a fresh uniform `x` at position `i` leaves the tuple uniform (`OneWay.uprob_update`,
+TCSlib/Cryptography/Candidates/Concrete.lean:254:            rw [← uprob_update i (fun xs r =>
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:249:(`plantOut_init`). Resampling coin block `j` (`expect_sample_update`) turns hybrid `j` into
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:435:    rw [← expect_sample_update (⟨js n, hj⟩ : Fin n) (fun v => if F rg r (padCt (L.eval n)
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:437:      ← expect_sample_update (⟨js n, hj⟩ : Fin n) (fun v => if F rg r (padCt (L.eval n)
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:477:   planted tuples with `Enc(m₀_{j⋆})` and `Enc(m₁_{j⋆})` (`ProbComp.expect_sample_update`); and
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:143:`v` by `update v j r` (`OneWay.uprob_update`, `[Nonempty ρ]`) and regrouping the seeds
+TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:51:`D (pk, sel pk (update v j r))` and `OneWay.uprob_update` forgets the planted coordinate. -/
+TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:72:  exact OneWay.uprob_update (ρ := κ × ρ') (α := ρ) j

@@ -1,0 +1,51 @@
+TCSlib/GraphTheory/Core/Networks.lean:1076:   finite set, so a maximum is attained — `Finset.exists_max_image` over the finset
+TCSlib/GraphTheory/Core/EulerHamilton.lean:1367:   (`Finset.exists_max_image` over the nonadjacent pairs).
+.lake/packages/mathlib/Mathlib/Data/Set/Finite/Lemmas.lean:74:theorem exists_max_image [LinearOrder β] (s : Set α) (f : α → β) (h1 : s.Finite) :
+.lake/packages/mathlib/Mathlib/Data/Set/Finite/Lemmas.lean:78:      h1.toFinset.exists_max_image f ⟨x, h1.mem_toFinset.2 hx⟩
+.lake/packages/mathlib/Mathlib/Analysis/Normed/Unbundled/SpectralNorm.lean:343:        exists_max_image f hs_ne
+.lake/packages/mathlib/Mathlib/Analysis/SpecialFunctions/Log/PosLog.lean:165:  obtain ⟨t_max, ht_max⟩ := s.exists_max_image (fun t ↦ |f t|)
+.lake/packages/mathlib/Mathlib/Dynamics/Ergodic/Conservative.lean:110:    convert exists_max_image _ (·) H ⟨0, by simpa⟩ using 4
+TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL.lean:152:  obtain ⟨i, _, hmax⟩ := Finset.exists_max_image
+TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Elementary.lean:88:  obtain ⟨j, _, hj_max⟩ := Finset.exists_max_image Finset.univ (fun i => influence i f) hne
+TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp/FiniteNoiseOptimization.lean:206:      Finset.exists_max_image (Finset.univ : Finset ι) f Finset.univ_nonempty
+TCSlib/BooleanAnalysis/Hypercontractivity/Products/Norms.lean:382:  obtain ⟨i, _, hmax⟩ := Finset.exists_max_image Finset.univ a hne
+.lake/packages/mathlib/Mathlib/Analysis/Convex/EGauge.lean:250:        exists_max_image _ (‖c ·‖ₑ) hI hIne
+.lake/packages/mathlib/Mathlib/Combinatorics/Colex.lean:325:    have ⟨a, ha, hamax⟩ := exists_max_image _ id
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/Extremal/Turan.lean:117:  obtain ⟨S, Sm, Sl⟩ := exists_max_image c.toFinset (#·.edgeFinset) cn
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/Extremal/Basic.lean:48:    apply exists_max_image { G | p G } (#·.edgeFinset)
+.lake/packages/mathlib/Mathlib/Data/Fintype/Lattice.lean:55:  simpa using exists_max_image univ f univ_nonempty
+.lake/packages/mathlib/Mathlib/Data/Finset/Max.lean:533:theorem exists_max_image (s : Finset β) (f : β → α) (h : s.Nonempty) :
+.lake/packages/mathlib/Mathlib/Data/Finset/Max.lean:541:  @exists_max_image αᵒᵈ β _ s f h
+.lake/packages/mathlib/Mathlib/Data/Finset/Max.lean:569:theorem Multiset.exists_max_image {α R : Type*} [LinearOrder R] (f : α → R) {s : Multiset α}
+.lake/packages/mathlib/Mathlib/Data/Finset/Max.lean:572:  obtain ⟨y, hys, hy⟩ := Finset.exists_max_image s.toFinset f (toFinset_nonempty.mpr hs)
+.lake/packages/mathlib/Mathlib/Data/Finset/Max.lean:577:  @exists_max_image α Rᵒᵈ _ f s hs
+TCSlib/Cryptography/Pseudorandom/NextBit.lean:388:attained at some `i_n` (`Finset.exists_max_image`); then `nextBitProb ≤ 1/2 + ε n` for all
+TCSlib/Cryptography/Pseudorandom/NextBit.lean:411:    · obtain ⟨j₀, -, hj₀⟩ := Finset.exists_max_image (Finset.univ : Finset (Fin (ℓ.eval n)))
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging.lean:117:  obtain ⟨i, _, hi⟩ := Finset.exists_max_image Finset.univ g Finset.univ_nonempty
+.lake/packages/mathlib/Mathlib/RingTheory/NoetherNormalization.lean:140:  obtain ⟨v, vin, vs⟩ := Finset.exists_max_image f.support
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:281:`(v, v')` (`Finset.exists_max_image`); `multiCom` is `encodeMsgs ∘ List.ofFn ∘ pairTuple` of
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:317:  obtain ⟨⟨v, v'⟩, -, hmax⟩ := Finset.exists_max_image Finset.univ
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:389:(`Finset.exists_max_image`), a coordinate `k_n` from the coordinatewise hybrid lemma
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:683:(`Finset.exists_max_image`), a bit position `k` from `exists_pairRed_ge`, and by averaging over
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:721:  obtain ⟨⟨v, v'⟩, -, hmax⟩ := Finset.exists_max_image Finset.univ
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:782:(`Finset.exists_max_image`), a bit position `k_n` from the coordinatewise hybrid lemma
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:184:theorem hyb_prg_accept_eq_chain_zero (P : Params) (A : NUPPT) (κ : ℕ)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:199:theorem hyb_uniform_accept_eq_chain_zero (P : Params) (A : NUPPT) (κ : ℕ)
+.lake/packages/mathlib/Mathlib/Order/Filter/AtTopBot/Finite.lean:56:    exists_max_image _ u (finite_le_nat N) ⟨N, le_refl N⟩
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:94:1. At each `n` choose the pair of masks maximizing the advantage (`Finset.exists_max_image`).
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:120:    obtain ⟨p, -, hp⟩ := Finset.exists_max_image Finset.univ
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:277:message space (`Finset.exists_max_image`; the text's footnote: "`Mᵢ` is non-uniform as it has
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:307:    obtain ⟨p, -, hp⟩ := Finset.exists_max_image Finset.univ
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction.lean:114:    obtain ⟨a, _, ha⟩ := Finset.exists_max_image Finset.univ (gap n) Finset.univ_nonempty
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:390:(`Finset.exists_max_image`). By `bitwise_enc_runAtL` and the coin split
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:404:(`Finset.exists_max_image` over `j`), the total is `≤ n · ε(n)`, negligible by
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:416:    obtain ⟨p, -, hp⟩ := Finset.exists_max_image Finset.univ
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:452:(`Finset.exists_max_image`). The samples are the shared-key tuples of `distAdv_multi_le_sum`
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:477:    obtain ⟨p, -, hp⟩ := Finset.exists_max_image Finset.univ
+TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:270:of the planting distinguisher `hybridAdv … (j n)` (`Finset.exists_max_image`); the machine `B`
+TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:295:      obtain ⟨jf, -, hjf⟩ := Finset.exists_max_image Finset.univ (term n) Finset.univ_nonempty
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:260:    obtain ⟨p, hp, hmax⟩ := Finset.exists_max_image Finset.univ (adv n) Finset.univ_nonempty
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:124:(`Finset.exists_max_image`) and give its template as advice (length at most `q(n)`). The
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:157:    obtain ⟨θs, -, h⟩ := exists_max_image univ (gap n) univ_nonempty
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:71:    obtain ⟨w, -, hw⟩ := exists_max_image univ q univ_nonempty
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:85:  obtain ⟨a, -, ha⟩ := Finset.exists_max_image Finset.univ (fun a => |f a - g a|)

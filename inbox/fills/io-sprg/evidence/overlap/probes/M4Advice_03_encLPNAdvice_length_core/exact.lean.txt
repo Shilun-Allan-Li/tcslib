@@ -1,0 +1,35 @@
+import TCSlib.Cryptography.Encoding.Modular
+import TCSlib.Complexity.CircuitComplexity.Uniform
+import TCSlib.Complexity.TuringMachine.Encoding
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open Turing TCSlib.Cryptography
+
+example (κ L n ell m W q p S : ℕ) [NeZero q]
+    (hκ : κ ≤ L) (hL : L + 1 ≤ S) (hn : n ≤ S) (hell : ell ≤ S)
+    (hm : m ≤ S) (hpub : κ * n ≤ S) (indexCode bucketCode : List Bool)
+    (hindex : indexCode.length ≤ S) (hbucket : bucketCode.length ≤ S)
+    (hop : Fin (κ + 1)) (seed : Fin n → Bool)
+    (draw : Fin κ → (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q))
+    (tail : Fin m → Bool) (uniform : Fin κ → Fin n → ZMod q) :
+    let noiseCode := fun c : Fin W × ZMod q =>
+      pairEncode (Candidates.natToList (ell + 1) c.1.val)
+        (Candidates.natToList (κ + 1) c.2.val)
+    let oneCode := fun r : (Fin ell → ZMod q) × (Fin n → Fin W × ZMod q) =>
+      pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1)
+        (BoolCircuit.encodeList noiseCode (List.ofFn r.2))
+    let drawCode := pairEncode (List.ofFn seed)
+      (BoolCircuit.encodeList oneCode (List.ofFn draw))
+    (pairEncode (Candidates.natToList (κ + 2) p)
+      (pairEncode (List.replicate L true)
+        (pairEncode (Candidates.natToList (κ + 1) hop.val)
+          (pairEncode indexCode (pairEncode bucketCode (pairEncode drawCode
+            (pairEncode (List.ofFn tail)
+              (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                (List.ofFn uniform))))))))).length ≤
+      4096 * ((L + 1) * S ^ 3) := by
+  exact?

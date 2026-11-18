@@ -1,0 +1,73 @@
+2026-11-18T20:12:37.757292+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean:235:35: error: Application type mismatch: The argument
+  I
+has type
+  P.G.Idx (P.n (P.kappaOfN (P.n κ)))
+but is expected to have type
+  P.G.Idx (P.n κ)
+in the application
+  Prod.mk I
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean:235:38: error: Application type mismatch: The argument
+  buckets
+has type
+  Fin (P.m (P.kappaOfN (P.n κ))) → Fin (P.B (P.kappaOfN (P.n κ)))
+but is expected to have type
+  Fin (P.m κ) → Fin (P.B κ)
+in the application
+  Prod.mk buckets
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean:236:34: error: Application type mismatch: The argument
+  u
+has type
+  Fin (P.kappaOfN (P.n κ)) → Fin (P.n (P.kappaOfN (P.n κ))) → ZMod (π (P.kappaOfN (P.n κ))).p
+but is expected to have type
+  Fin κ → Fin (P.n κ) → ZMod (π κ).p
+in the application
+  P.publicSeed κ (π κ) u
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean:237:49: error: Application type mismatch: The argument
+  I
+has type
+  P.G.Idx (P.n (P.kappaOfN (P.n κ)))
+but is expected to have type
+  P.G.Idx (P.n κ)
+in the application
+  P.G.eval (P.n κ) I
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean:230:13: warning: This simp argument is unused:
+  P.kappaOfN_n
+
+Hint: Omit it from the simp argument list.
+  simp only [̵P̵.̵k̵a̵p̵p̵a̵O̵f̵N̵_̵n̵]̵ ̵at havg
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean:241:31: warning: This simp argument is unused:
+  dif_pos rfl
+
+Hint: Omit it from the simp argument list.
+  simp only [accept_eq, P.chainGame_eq, ProbComp.prob_eq_expect,
+  ̵  ̵ ̵ ̵ProbComp.expect_bind,
+  ̲  ̲ ̲ ̲OracleComp.pure_eq_pure, ProbComp.expect_pure,
+  ̵  ̵ ̵ ̵P.prgPre_eq, P.kappaOfN_n, d̵i̵f̵_̵p̵o̵s̵ ̵r̵f̵l̵,̵ ̵hpub]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean:267:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop): no fresh .olean produced
+        3.41 real         2.17 user         1.04 sys
+          2355216384  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              173533  page reclaims
+               11963  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 870  voluntary context switches
+                8510  involuntary context switches
+            32280083  instructions retired
+            14460488  cycles elapsed
+             1638736  peak memory footprint
+2026-11-18T20:12:41.193766+00:00 END rc=1

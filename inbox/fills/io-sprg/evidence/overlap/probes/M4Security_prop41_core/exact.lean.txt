@@ -1,0 +1,30 @@
+import TCSlib.Cryptography.Games.Advantage
+import Mathlib.Data.Finset.Max
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography TCSlib.Cryptography.Games
+
+example {LA GA BL BG : Type}
+    (C : ℕ → Bool → ℕ → ProbComp Bool)
+    (relL : LA → BL → Prop) (relG : GA → BG → Prop)
+    (aL : BL → ℕ → ℝ) (aG : BG → ℕ → ℝ)
+    (hLPN : ∀ (tails : ℕ → Bool) (hops : (κ : ℕ) → Fin (κ + 1)),
+      ∃ ω : LA, ∀ B : BL, relL ω B → ∀ κ, (hops κ).val < κ →
+        advantage (C κ (tails κ) (hops κ).val)
+          (C κ (tails κ) ((hops κ).val + 1)) ≤ aL B κ)
+    (hPRG : ∃ ω : GA, ∀ B : BG, relG ω B → ∀ κ,
+      advantage (C κ true κ) (C κ false κ) ≤ aG B κ)
+    (H0 H1 H2 H3 : ℕ → ProbComp Bool) (raw err : ℕ → ℝ)
+    (hraw : ∀ κ, raw κ = advantage (H0 κ) (H3 κ))
+    (hreal : ∀ κ, accept (H1 κ) = accept (C κ true 0))
+    (huniform : ∀ κ, accept (H2 κ) = accept (C κ false 0))
+    (hstatR : ∀ κ, advantage (H0 κ) (H1 κ) ≤ err κ)
+    (hstatU : ∀ κ, advantage (H2 κ) (H3 κ) ≤ err κ) :
+    ∃ ωL : LA, ∃ ωG : GA, ∀ L : BL, ∀ G : BG,
+      relL ωL L → relG ωG G → ∀ κ,
+        raw κ ≤ 2 * (κ : ℝ) * aL L κ + aG G κ + 2 * err κ := by
+  exact?

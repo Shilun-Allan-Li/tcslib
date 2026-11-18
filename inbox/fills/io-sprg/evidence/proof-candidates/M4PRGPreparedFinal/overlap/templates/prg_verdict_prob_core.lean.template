@@ -1,0 +1,18 @@
+import TCSlib.Cryptography.Games.Hopping
+import TCSlib.Cryptography.Games.Bridges.Experiments
+import Lean.Elab.Tactic.LibrarySearch
+import TCSlib.Cryptography.HardcoreBit.Basic
+import TCSlib.Cryptography.Asymptotic.OneWayLemmas
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography TCSlib.Cryptography.Games
+
+example {C : Type} [Fintype C] [Nonempty C] (short long : ℕ)
+    (hcut : short ≤ long) (e : C ≃ (Fin long → Bool))
+    (Q : List Bool → Prop) (verdict : C → Prop)
+    (hreader : ∀ r, verdict r ↔ Q ((List.ofFn (e r)).take short)) :
+    ProbComp.prob (ProbComp.sample C) verdict =
+      ProbComp.prob (ProbComp.sample (Fin short → Bool)) (fun r => Q (List.ofFn r)) := __PROBE_BODY__

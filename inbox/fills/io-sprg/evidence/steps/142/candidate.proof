@@ -1,0 +1,32 @@
+by
+  classical
+  have hcut : A.coinLen (P.kappaOfN N) ≤ (A.coins.subst .var).eval N := ?_
+  swap
+  · rw [A.coinLen_eq, PolyExpr.eval_subst, PolyExpr.eval_var]
+    exact A.coins.eval_mono (P.kappaOfN_le N)
+  let Q : List Bool → Prop := fun r =>
+    A.runAtL (P.kappaOfN N) (P.prgPre π N (ω N) x) r = [true]
+  rw [Bridge.prob_sample_eq_uprob
+      (fun r : B.Coins N => B.distinguisherL N (P.prgEnc N x) r = true),
+    Bridge.prob_sample_eq_uprob
+      (fun r : A.Coins (P.kappaOfN N) =>
+        A.distinguisherL (P.kappaOfN N) (P.prgPre π N (ω N) x) r = true)]
+  trans uprob (fun r : Fin ((A.coins.subst .var).eval N) → Bool =>
+    Q ((List.ofFn r).take (A.coinLen (P.kappaOfN N))))
+  · calc
+      uprob (fun r : B.Coins N => B.distinguisherL N (P.prgEnc N x) r = true) =
+          uprob (fun r : Fin ((A.coins.subst .var).eval N) → Bool =>
+            B.distinguisherL N (P.prgEnc N x)
+              ((NUPPT.coinsEquivPoly hB.coins_eq N).symm r) = true) :=
+        (uprob_comp_equiv (NUPPT.coinsEquivPoly hB.coins_eq N).symm
+          (fun r : B.Coins N => B.distinguisherL N (P.prgEnc N x) r = true)).symm
+      _ = _ := ?_
+    congr 1
+    funext r
+    rw [NUPPT.distinguisherL_eq, hB.runAt_coinsEquivPoly_symm, P.prgRed_eq]
+    simp only [decide_eq_true_eq, Q]
+  · have hp :=
+      (HardcoreBit.pushesUniform_restrict (O := Bool) (Fin.castLE_injective hcut)).uprob_eq
+        (fun r : Fin (A.coinLen (P.kappaOfN N)) → Bool => Q (List.ofFn r))
+    simp only [OneWay.ofFn_castLE_eq_take hcut] at hp
+    simpa only [Q, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, decide_eq_true_eq] using hp

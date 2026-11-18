@@ -1,0 +1,10 @@
+theorem lpn_fix_advice (P : Params) (π : PrimeSchedule) (A : NUPPT) (L : ℕ)
+    (h : L = P.ℓ (P.kappaOf L)) (tailReal : Bool)
+    (hop : Fin (P.kappaOf L + 1)) (hhop : hop.val < P.kappaOf L) :
+    ∃ w : P.LPNAdvice π L,
+      Games.advantage (P.chainGame A tailReal hop.val (P.kappaOf L) (π (P.kappaOf L)))
+        (P.chainGame A tailReal (hop.val + 1) (P.kappaOf L) (π (P.kappaOf L))) ≤
+      LWE.decisionAdvantage ((P.lpnFamily_raw π).toLWE.parameters L)
+        ((P.lpnFamily_raw π).toLWE.noise L)
+        (fun x (r : A.Coins (P.kappaOf L)) =>
+          decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true]))

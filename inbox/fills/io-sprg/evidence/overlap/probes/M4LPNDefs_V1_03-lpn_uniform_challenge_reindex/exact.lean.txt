@@ -1,0 +1,49 @@
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+run_cmd do
+  let env ← Lean.getEnv
+  let areaPrefix := "TCSlib.Cryptography.Obfuscation.StructuredSeed."
+  let suffixes : List String := [
+    "Internal.lpn_accept_realizes_eq",
+    "Internal.lpn_gap_realizes_eq",
+    "Internal.lpn_uniform_challenge_reindex",
+    "Internal.lpn_real_seed_reindex",
+    "Internal.lpn_pre_real_update",
+    "Internal.lpn_pre_uniform_update",
+    "Internal.lpn_real_section",
+    "Internal.lpn_uniform_section",
+    "Internal.lpn_fix_advice",
+    "Params.lpn_hop"
+  ]
+  for suffix in suffixes do
+    let name := ((areaPrefix ++ suffix).splitOn ".").foldl
+      (fun n p => Lean.Name.str n p) Lean.Name.anonymous
+    if env.contains name (skipRealize := false) then
+      Lean.throwError "LPN_DEFS_TARGET_PRESENT"
+  IO.println "LPN_DEFS_GUARD_OK_10"
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+
+open Complexity Turing Games
+
+namespace Internal
+
+example (P : Params) (π : PrimeSchedule) (L : ℕ)
+    (h : L = P.ℓ (P.kappaOf L)) :
+    ∃ e : P.LPNChal π L ≃
+        (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L)))
+          (ZMod (π (P.kappaOf L)).p) ×
+          (Fin (P.n (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p)),
+      ∀ x, (e x).1 = P.lpnMatrixAt π L h x ∧
+        (e x).2 = P.lpnValuesAt π L h x
+  := by
+    exact?
+
+end Internal
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed

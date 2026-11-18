@@ -1,0 +1,11 @@
+--- /private/tmp/io-sprg-proof-notes/tmpFinalAuditToolsV2/io-sprg-rule10/prepare_static.py
++++ /private/tmp/io-sprg-proof-notes/FinalAuditV2CurrentReview/candidates/io-sprg-rule10/prepare_static.py
+@@ -30,7 +30,7 @@
+ (out/'owners.txt').write_text('\n'.join(ordered)+'\n')
+ (out/'owner-paths.txt').write_text('\n'.join(m.replace('.','/') for m in ordered)+'\n')
+ (out/'files.txt').write_text('\n'.join(m.replace('.','/')+'.lean' for m in ordered)+'\n')
+-(out/'collector-order.txt').write_text('evidence/probes/io_sprg_m0/CollectHead\n')
++# Run-specific collector order is emitted only by orchestrate.py; never publish an old M0 path.
+ decls=[]
+ kw=re.compile(r'^((?:(?:private|protected|noncomputable|nonrec|partial|unsafe)\s+)*)'
+  r'(def|abbrev|theorem|lemma|instance|structure|inductive|class|opaque|axiom)\b\s*([^\s(:{\[]*)')

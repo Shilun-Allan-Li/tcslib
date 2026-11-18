@@ -1,0 +1,26 @@
+import TCSlib.Cryptography.Encoding.Modular
+import TCSlib.Complexity.CircuitComplexity.Uniform
+import TCSlib.Complexity.TuringMachine.Encoding
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open Turing TCSlib.Cryptography
+
+example {Idx Buckets Draw : Type} (κ L n m q : ℕ) [NeZero q]
+    (hq : q ≤ 2 ^ (κ + 1)) (primeCode : List Bool)
+    (eI : Idx → List Bool) (eB : Buckets → List Bool) (eD : Draw → List Bool)
+    (hI : Function.Injective eI) (hB : Function.Injective eB)
+    (hD : Function.Injective eD) :
+    Function.Injective (fun a : Fin (κ + 1) ×
+      (Idx × (Buckets × (Draw × ((Fin m → Bool) ×
+        (Fin κ → Fin n → ZMod q))))) =>
+      pairEncode primeCode (pairEncode (List.replicate L true)
+        (pairEncode (Candidates.natToList (κ + 1) a.1.val)
+          (pairEncode (eI a.2.1) (pairEncode (eB a.2.2.1)
+            (pairEncode (eD a.2.2.2.1) (pairEncode (List.ofFn a.2.2.2.2.1)
+              (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
+                (List.ofFn a.2.2.2.2.2))))))))) := by
+  apply?

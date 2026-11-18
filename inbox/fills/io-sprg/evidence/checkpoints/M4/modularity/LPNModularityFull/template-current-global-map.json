@@ -1,0 +1,380 @@
+{
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.LPNChal": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 40,
+    "kind": "abbrev",
+    "header": "abbrev LPNChal (P : Params) (π : PrimeSchedule) (L : ℕ) : Type",
+    "header_sha256": "0475a4e492707224ec3fa49e23c141576b54ae102c1cec7df17133f73efa668e",
+    "statement_prose": "The LPN challenge is exactly the canonical challenge of the construction's LWE-family view [JLS26, Lemma 4.2, p. 19]. Dv3 uses the family's independent dimension L and matrix orientation.",
+    "prose_sha256": "89c2c384d116cc97931894a0022ca452ef7ad86b649b8de8705090bab6668f55"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnChal_eq": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 48,
+    "kind": "theorem",
+    "header": "theorem lpnChal_eq (P : Params) (π : PrimeSchedule) (L : ℕ) : P.LPNChal π L = (Matrix (Fin ((P.lpnFamily_raw π).toLWE.parameters L).samples) (Fin ((P.lpnFamily_raw π).toLWE.parameters L).dimension) (ZMod ((P.lpnFamily_raw π).toLWE.parameters L).modulus) × (Fin ((P.lpnFamily_raw π).toLWE.parameters L).samples → ZMod ((P.lpnFamily_raw π).toLWE.parameters L).modulus))",
+    "header_sha256": "8dd43d223f1bc92caad4c60f84b91bd3f737ca37c31de3b351e4b9e3b3adcbc6",
+    "statement_prose": "The canonical challenge is its displayed LWE matrix/value product. Glue reader.",
+    "prose_sha256": "0f372ee294c528b9cc066920c48740e0a84b0bf7401af11841c3b7c6a8763074"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnEnc": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 57,
+    "kind": "def",
+    "header": "noncomputable def lpnEnc (P : Params) (π : PrimeSchedule) (L : ℕ) (x : P.LPNChal π L) : List Bool",
+    "header_sha256": "3a21e7110954419d4574e1ee4312a0f5470c80d94ea2de41f0ede870268f7820",
+    "statement_prose": "LPN encoding is exactly the assumption's `LWE.encodeChallenge`, with its own residue width [JLS26, Lemma 4.2, p. 19]. Dv3 changes no assumption challenge or encoding.",
+    "prose_sha256": "c2f80288f117b95b21bb2e4364e5a3366bd54f1e2a3433eab5da814e507612e3"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnEnc_eq": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 63,
+    "kind": "theorem",
+    "header": "theorem lpnEnc_eq (P : Params) (π : PrimeSchedule) (L : ℕ) (x : P.LPNChal π L) : P.lpnEnc π L x = LWE.encodeChallenge ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.residueBits.eval L) x",
+    "header_sha256": "6c37cb6d269129ac05c4f6f762d96b0a8048261454014c218cb1719f256499ea",
+    "statement_prose": "The LPN encoding is the unchanged canonical family challenge code. Glue reader.",
+    "prose_sha256": "3463071448819b24ed8b988bb345f08f129b75f55aaba006ebe6ca31a166aaeb"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpn_dimension_eq": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 68,
+    "kind": "theorem",
+    "header": "theorem lpn_dimension_eq (P : Params) (π : PrimeSchedule) (L : ℕ) : ((P.lpnFamily_raw π).toLWE.parameters L).dimension = L",
+    "header_sha256": "681091265ee1f4dfe681b16a0270f35db785922d3799b7f0a7a4991b1ea20755",
+    "statement_prose": "Canonical LPN secret dimension equals L. Glue composed from owner-side parameter readers.",
+    "prose_sha256": "ee24aa96e7ad197f8b7f7e218508c90760ed71f8e0571d1765fe941b418c30e1"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpn_samples_eq": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 75,
+    "kind": "theorem",
+    "header": "theorem lpn_samples_eq (P : Params) (π : PrimeSchedule) (L : ℕ) : ((P.lpnFamily_raw π).toLWE.parameters L).samples = L ^ P.D",
+    "header_sha256": "54116482937d8d4233c0fcb867e274f9464d918898120966af52212a72b1f097",
+    "statement_prose": "Canonical LPN sample count equals L^D. Glue composed from owner-side parameter readers.",
+    "prose_sha256": "040b8cafcbc5fb83e3c703807d12724fb625ae29b863697d1071f5e9973b0450"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpn_modulus_eq": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 83,
+    "kind": "theorem",
+    "header": "theorem lpn_modulus_eq (P : Params) (π : PrimeSchedule) (L : ℕ) : ((P.lpnFamily_raw π).toLWE.parameters L).modulus = (π (P.kappaOf L)).p",
+    "header_sha256": "abb8893095002edbb57cec46b26ec0fabc856c207b1fc3cf7476ecfaa62a088c",
+    "statement_prose": "Canonical LPN modulus is the prime at inverse dimension. Glue composed from owner readers.",
+    "prose_sha256": "172aa01af4698e155ed64cd1dbb4a1b1fbdc5d41d4491078a6011aad16f11ab5"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.LPNConcrete": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 92,
+    "kind": "abbrev",
+    "header": "abbrev LPNConcrete (P : Params) (π : PrimeSchedule) (L : ℕ) : Type",
+    "header_sha256": "e807fd6b2460cfa0a69e7c2feb150b9327e3e183c78dc7321bf46379aaed7ce6",
+    "statement_prose": "Concrete LPN coordinates expose rows L^D, columns L and the inverse-indexed prime [JLS26, Lemma 4.2, p. 19]. Dv3 and Dv15 use only explicit transport from the assumption.",
+    "prose_sha256": "817c1de5bc6fdb5a47f1bd4d82d0b3d95737ca6c8e266184c56998a44a121c20"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnConcrete_eq": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 97,
+    "kind": "theorem",
+    "header": "theorem lpnConcrete_eq (P : Params) (π : PrimeSchedule) (L : ℕ) : P.LPNConcrete π L = (Matrix (Fin (L ^ P.D)) (Fin L) (ZMod (π (P.kappaOf L)).p) × (Fin (L ^ P.D) → ZMod (π (P.kappaOf L)).p))",
+    "header_sha256": "476100053b723912a44d13a0140719206b592301fdad3ac2b6eeb4805b0b3709",
+    "statement_prose": "Concrete LPN coordinates have the displayed finite matrix/value type. Glue reader.",
+    "prose_sha256": "532ca16f1d0d2af1c39c23861a01b5d2defd26dd69abfc5cf796709b4ce786e9"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnChalEquiv": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 103,
+    "kind": "def",
+    "header": "noncomputable def lpnChalEquiv (P : Params) (π : PrimeSchedule) (L : ℕ) : P.LPNChal π L ≃ P.LPNConcrete π L",
+    "header_sha256": "50b85ab8b703df083063cc565c298ac1246cf46b5aee8108eb5f7bd866bd1a32",
+    "statement_prose": "Canonical and concrete LPN challenges are related by explicit finite and residue casts [JLS26, Lemma 4.2, p. 19]. Dv15 uses `finCongr` and `Equiv.cast`, with no chosen enumeration.",
+    "prose_sha256": "c599dcda77d72d6f221d460d01ba1cb973eef47e031675cfe8d5232a99caf913"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnChalEquiv_eq": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 113,
+    "kind": "theorem",
+    "header": "theorem lpnChalEquiv_eq (P : Params) (π : PrimeSchedule) (L : ℕ) : P.lpnChalEquiv π L = Equiv.prodCongr (Equiv.arrowCongr (finCongr (P.lpn_samples_eq π L)) (Equiv.arrowCongr (finCongr (P.lpn_dimension_eq π L)) (Equiv.cast (congrArg ZMod (P.lpn_modulus_eq π L))))) (Equiv.arrowCongr (finCongr (P.lpn_samples_eq π L)) (Equiv.cast (congrArg ZMod (P.lpn_modulus_eq π L))))",
+    "header_sha256": "d4c14ea38e90f056c0e0f7227941415d61ffad1a30ccfa5e22fde7cb64443fcc",
+    "statement_prose": "The challenge equivalence is its explicit product/arrow/finite-cast composition. Glue.",
+    "prose_sha256": "d63c0073e3d23fd0de15d3c806a10e2ebe82dd72035222cef7aaa389ebf19926"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.LPNAdvice": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 124,
+    "kind": "structure",
+    "header": "structure LPNAdvice (P : Params) (π : PrimeSchedule) (L : ℕ)",
+    "header_sha256": "08a019140e9cbb809c145bde653e284aa9a7872b067324c6120fdcd1d12b789b",
+    "statement_prose": "Advice retains the hop, Boolean index, buckets, exact draw, Boolean tail and uniform vectors [JLS26, Lemma 4.2, p. 19]. Dv12 hardwires averaged values rather than sampling; the extra hop sentinel `Fin (κ+1)` keeps the type inhabited at every independent dimension L.",
+    "prose_sha256": "c1d238c15a3bf79207c69cb262d167a4a31a9043d722f1be267b1a3f654e36f6"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.LPNAdviceProduct": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 133,
+    "kind": "abbrev",
+    "header": "abbrev LPNAdviceProduct (P : Params) (π : PrimeSchedule) (L : ℕ) : Type",
+    "header_sha256": "98ed282c09927ce3732dae2fa2fcf5389859676925d203fcc8f042032b39fde4",
+    "statement_prose": "Advice has the explicit right-associated finite product of its six components. Glue.",
+    "prose_sha256": "65524bf20f539ffa2801aff28407be2ebffc8d683acbe1e3df9accee14cf6260"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnAdviceProduct_eq": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 141,
+    "kind": "theorem",
+    "header": "theorem lpnAdviceProduct_eq (P : Params) (π : PrimeSchedule) (L : ℕ) : P.LPNAdviceProduct π L = (Fin (P.kappaOf L + 1) × (P.G.Idx (P.n (P.kappaOf L)) × ((Fin (P.m (P.kappaOf L)) → Fin (P.B (P.kappaOf L))) × (P.Draw (P.kappaOf L) (π (P.kappaOf L)) × ((Fin (P.m (P.kappaOf L)) → Bool) × (Fin (P.kappaOf L) → Fin (P.n (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p))))))",
+    "header_sha256": "1f362a152c73b171733c8e694cd2be28acd4a084d2ca4c339158b954644893ca",
+    "statement_prose": "The advice product is the displayed right-associated tuple. Glue reader.",
+    "prose_sha256": "9a0b9364a15620cc3801c3a82b56b0804fddc0af8a920c88fd073d3e8fcb4572"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnAdviceProductEquiv": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 151,
+    "kind": "def",
+    "header": "def lpnAdviceProductEquiv (P : Params) (π : PrimeSchedule) (L : ℕ) : P.LPNAdvice π L ≃ P.LPNAdviceProduct π L",
+    "header_sha256": "e2b1f45e469ce3b6e96e85fc33f2c32efdc21b120ad8002af2572a04e6144609",
+    "statement_prose": "Advice records and their explicit component products are equivalent. Glue for Dv15.",
+    "prose_sha256": "d471b44bd34b3a98ae1e5f8a59daf308139f8dedafcb4b25877386e557ebd362"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnAdviceProductEquiv_apply": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 159,
+    "kind": "theorem",
+    "header": "theorem lpnAdviceProductEquiv_apply (P : Params) (π : PrimeSchedule) (L : ℕ) (w : P.LPNAdvice π L) : P.lpnAdviceProductEquiv π L w = (w.hop, w.I, w.buckets, w.draw, w.tail, w.uniform)",
+    "header_sha256": "a6166ef4913d3c4fce27d631a43d684074ee85b510483583b9a82a5f1a78f79e",
+    "statement_prose": "Advice-product transport reads precisely the record's six fields. Glue reader.",
+    "prose_sha256": "166ebe64707bd3df2d8bcf88ee5991858d05a3d6e2e5c771f3dbb5dc93c88e25"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnAdviceProductEquiv_symm_apply": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 164,
+    "kind": "theorem",
+    "header": "theorem lpnAdviceProductEquiv_symm_apply (P : Params) (π : PrimeSchedule) (L : ℕ) (w : P.LPNAdviceProduct π L) : (P.lpnAdviceProductEquiv π L).symm w = ⟨w.1, w.2.1, w.2.2.1, w.2.2.2.1, w.2.2.2.2.1, w.2.2.2.2.2⟩",
+    "header_sha256": "39b4c3d86928bf0ebd08279bc2766e5c0982d97af224105e05a200b9d1f3527f",
+    "statement_prose": "Inverse advice-product transport constructs the record from its six coordinates. Glue reader.",
+    "prose_sha256": "2990922ef05747327df2d57ead8010d26feb52d4b198b4bbb75219b65d766c57"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnAdviceCard": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 170,
+    "kind": "def",
+    "header": "noncomputable def lpnAdviceCard (P : Params) (π : PrimeSchedule) (L : ℕ) : ℕ",
+    "header_sha256": "a3adb8ece088cdb95c3db5197a79325d2d36dffb3d6c3536506e8ae8571fb999",
+    "statement_prose": "The explicit advice coordinate count is the product of its six finite cardinalities. Glue.",
+    "prose_sha256": "adec2dc7d646e80afc53a19d5255df0eb2c891de6bc14e897be5ac2326b794d7"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnAdviceCard_eq": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 177,
+    "kind": "theorem",
+    "header": "theorem lpnAdviceCard_eq (P : Params) (π : PrimeSchedule) (L : ℕ) : P.lpnAdviceCard π L = let κ",
+    "header_sha256": "f68c6a375af4710a42e8cac798f0b7f082cdbcc8c8b0bfa1a1ce303e0ae4e29a",
+    "statement_prose": "The advice coordinate count is the stated nested product. Glue reader.",
+    "prose_sha256": "40ec0f04c0d8d0f5622f24ccb36eedb92e165f7f1034d41030dda008d2b424dc"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnAdviceEquiv": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 186,
+    "kind": "def",
+    "header": "noncomputable def lpnAdviceEquiv (P : Params) (π : PrimeSchedule) (L : ℕ) : P.LPNAdvice π L ≃ Fin (P.lpnAdviceCard π L)",
+    "header_sha256": "e3238566caa7650abb7a3eaa5e9c9d6ff3f63058484f469d7d90e1cabf5971b9",
+    "statement_prose": "Advice has explicit Fin coordinates assembled from its supplied and canonical equivalences [JLS26, Lemma 4.2, p. 19]. Dv15 uses no classical finite enumeration.",
+    "prose_sha256": "4e6f391eb6e746e40ddcb0f4075b1c248bcb7aa85f7c4aa53ed2cfe093b56e6b"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnAdviceEquiv_eq": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 201,
+    "kind": "theorem",
+    "header": "theorem lpnAdviceEquiv_eq (P : Params) (π : PrimeSchedule) (L : ℕ) : P.lpnAdviceEquiv π L = let κ",
+    "header_sha256": "22807c08c70e10a32e862b2ba096c7f98504451cbc201edce6e278e9938c150b",
+    "statement_prose": "Advice Fin coordinates use the displayed tail/draw/bucket/index product composition. Glue.",
+    "prose_sha256": "a23c78dd0e8875e1ec9abbf82742d4c462aec00bcfb0185a8af72b45eb0ac1d6"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.instLPNAdviceFintype": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 215,
+    "kind": "instance",
+    "header": "noncomputable instance instLPNAdviceFintype (P : Params) (π : PrimeSchedule) (L : ℕ) : Fintype (P.LPNAdvice π L)",
+    "header_sha256": "681b76573ecf9e36abf701736dda1671df2e18898e564f9068a58e0d4bb14b60",
+    "statement_prose": "",
+    "prose_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.instLPNAdviceFintype_eq": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 220,
+    "kind": "theorem",
+    "header": "theorem instLPNAdviceFintype_eq (P : Params) (π : PrimeSchedule) (L : ℕ) : instLPNAdviceFintype P π L = Fintype.ofEquiv (Fin (P.lpnAdviceCard π L)) (P.lpnAdviceEquiv π L).symm",
+    "header_sha256": "36dbc3a3530a94fd8e22cd91f0b9e276504f73ae35ac6d246a618c711760a569",
+    "statement_prose": "The LPN advice finiteness instance is induced by its explicit Fin equivalence; glue.",
+    "prose_sha256": "2181cc5dbb7fb65901566eb5bd6b6409f05d7b306f1e083cacfa41862aac2764"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.instLPNAdviceNonempty": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 224,
+    "kind": "instance",
+    "header": "instance instLPNAdviceNonempty (P : Params) (π : PrimeSchedule) (L : ℕ) : Nonempty (P.LPNAdvice π L)",
+    "header_sha256": "9fcb4b6c9a1d3837094e77eb30af414796ea76752e745286787c9bf78eab2431",
+    "statement_prose": "",
+    "prose_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.encLPNAdvice": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 232,
+    "kind": "def",
+    "header": "noncomputable def encLPNAdvice (P : Params) (π : PrimeSchedule) (L : ℕ) (w : P.LPNAdvice π L) : List Bool",
+    "header_sha256": "7c10b0b66cb7531b0cfe7d198b7c5ab1a75d88bb69b6722356786bce3edf462f",
+    "statement_prose": "Advice encoding begins with the prime and unary L, followed by its six explicit components [JLS26, Lemma 4.2, p. 19]. Dv9, Dv12 and Dv15 give the preprocessor all parameters as input; the hardwired tail avoids calling the PRG. No sampler or choice-based code occurs here.",
+    "prose_sha256": "9c42a6b02da63b95d4ed0851154a22ad3c22787f362ee7d64ec281af9953bb2b"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.encLPNAdvice_eq": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 246,
+    "kind": "theorem",
+    "header": "theorem encLPNAdvice_eq (P : Params) (π : PrimeSchedule) (L : ℕ) (w : P.LPNAdvice π L) : P.encLPNAdvice π L w = let κ",
+    "header_sha256": "0631032478f2f07760ce887aeb4ce413a12636a9a85b4aa6a47f6d4c9ddf4938",
+    "statement_prose": "Advice encoding is the displayed prime-first nested pair of all six fields. Glue reader.",
+    "prose_sha256": "51144a64c266ad7f2745c99d6478c54f4d1c4ac27ebd3dc05a1513336d394bd0"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnAdviceBound": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 262,
+    "kind": "def",
+    "header": "def lpnAdviceBound (P : Params) : PolyExpr",
+    "header_sha256": "daed5d5d93d3c9fd6eb5b5624f020f125a11f10f84fe9de42619a78dd7d8c0ae",
+    "statement_prose": "A syntactic bound for all encoded LPN advice is `4096*(L+1)*S(L)^3`, where S sums index, seed, output, Boolean-seed and secret bounds and L+1. Glue for Dv12 and Dv15. The generous constant bounds all nested separators without an asymptotic hidden factor.",
+    "prose_sha256": "84992fd09e388eee2b28f0484df88ae341eb3967ab19ca75adbdb238902a2418"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnAdviceBound_eq": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 268,
+    "kind": "theorem",
+    "header": "theorem lpnAdviceBound_eq (P : Params) : P.lpnAdviceBound = .mul (.const 4096) (.mul (.add .var (.const 1)) (.pow (.add P.idxBound (.add P.seedBound (.add P.mBound (.add P.nBound (.add P.ellBound (.add .var (.const 1))))))) 3))",
+    "header_sha256": "3b22a90f3c189ba770a316ca3ab4bd04c0a2cb3a8b7651d8004d39c060cae298",
+    "statement_prose": "The LPN advice bound is its displayed syntactic polynomial. Glue reader.",
+    "prose_sha256": "0c0eefbb858a2d44720cea246055c85be0889a91f74b39d62fb0c54f9e15fcb1"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnMatrixAt": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 275,
+    "kind": "def",
+    "header": "noncomputable def lpnMatrixAt (P : Params) (π : PrimeSchedule) (L : ℕ) (h : L = P.ℓ (P.kappaOf L)) (x : P.LPNChal π L) : Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p)",
+    "header_sha256": "73fff6278b0341be22d2e1a4619fe6a52e00cb728217fbc544af9843b295fcfd",
+    "statement_prose": "On a scheduled dimension, the challenged matrix is transported to the exact κ dimensions [JLS26, Lemma 4.2, p. 19]. Dv15 uses only `finCongr` and published length equations.",
+    "prose_sha256": "832290103a23575dc0f7b0b3a4929b00bbb555c47cb387dc9ce59fddec7289ad"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnMatrixAt_eq": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 284,
+    "kind": "theorem",
+    "header": "theorem lpnMatrixAt_eq (P : Params) (π : PrimeSchedule) (L : ℕ) (h : L = P.ℓ (P.kappaOf L)) (x : P.LPNChal π L) : P.lpnMatrixAt π L h x = fun i a => (P.lpnChalEquiv π L x).1 ((finCongr ((congrArg (fun q : ℕ => q ^ P.D) h).trans (P.n_eq (P.kappaOf L)).symm)).symm i) ((finCongr h).symm a)",
+    "header_sha256": "a0758ef82636177aa2c99b2cd02c30abe48c6a103c9d6b638c163cc080d5a3c7",
+    "statement_prose": "The matrix transport is the displayed explicit row/column finite cast. Glue reader.",
+    "prose_sha256": "7ccbc7ea5cad1db1c140dbdc72736d91c4de583b3f9d75464f5d66b677c22972"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnValuesAt": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 292,
+    "kind": "def",
+    "header": "noncomputable def lpnValuesAt (P : Params) (π : PrimeSchedule) (L : ℕ) (h : L = P.ℓ (P.kappaOf L)) (x : P.LPNChal π L) : Fin (P.n (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p",
+    "header_sha256": "3bf3985c2ae55bd9b1043e93dfd4151e02861ef1634ec6f05795e22b18579445",
+    "statement_prose": "On a scheduled dimension, challenged values use the corresponding explicit row transport [JLS26, Lemma 4.2, p. 19]. Dv15 changes no challenge coordinate.",
+    "prose_sha256": "920cc98f0307a2e5dc01f74e03e216d9ee874cf6dc745a9d66bb8ec0360fc11c"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnValuesAt_eq": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 300,
+    "kind": "theorem",
+    "header": "theorem lpnValuesAt_eq (P : Params) (π : PrimeSchedule) (L : ℕ) (h : L = P.ℓ (P.kappaOf L)) (x : P.LPNChal π L) : P.lpnValuesAt π L h x = fun i => (P.lpnChalEquiv π L x).2 ((finCongr ((congrArg (fun q : ℕ => q ^ P.D) h).trans (P.n_eq (P.kappaOf L)).symm)).symm i)",
+    "header_sha256": "fe4bbd6d9657cf6d4e1658cf4335ce4a3ff8bbf29a6370eb08e28da7a9941e5d",
+    "statement_prose": "Value transport is the displayed row cast of the concrete challenge. Glue reader.",
+    "prose_sha256": "f4afe858b839a2f4860eac5bbce0e04937383706a5a97813abf7efbbbfb942c0"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnPre": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 310,
+    "kind": "def",
+    "header": "noncomputable def lpnPre (P : Params) (π : PrimeSchedule) (L : ℕ) (w : P.LPNAdvice π L) (x : P.LPNChal π L) : List Bool",
+    "header_sha256": "ecbd107f3d761cacb076d8a6cd1997a36ae93efb914a9f14b00c3103309f3a72",
+    "statement_prose": "LPN preprocessing replaces the chosen instance by challenged values plus σ, leaves earlier instances uniform and later instances real, and publishes the hardwired tail with error zero [JLS26, Lemma 4.2, p. 19]. Dv12 uses only advice and the challenge; it neither samples nor calls PRG evaluation. Off the schedule image it returns the empty word.",
+    "prose_sha256": "1a4746b84e0cae7f74cf972040b9bd9191a07b1a2b1b400c929c667851c4ca8e"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnPre_eq": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 325,
+    "kind": "theorem",
+    "header": "theorem lpnPre_eq (P : Params) (π : PrimeSchedule) (L : ℕ) (w : P.LPNAdvice π L) (x : P.LPNChal π L) : P.lpnPre π L w x = let κ",
+    "header_sha256": "ecf80213b7af2a7f6808d9be7b2447012e14672fceaf8d46893c74c9fca271b5",
+    "statement_prose": "LPN preprocessing is its guarded, deterministic hybrid challenge construction. Glue reader.",
+    "prose_sha256": "2527291e4c14d8d5077a616f60f4a5a7590f6290858fff0da5678a3f3ee21608"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnRed": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 342,
+    "kind": "def",
+    "header": "noncomputable def lpnRed (P : Params) (π : PrimeSchedule) (A : NUPPT) (L : ℕ) (w : P.LPNAdvice π L) (x : P.LPNChal π L) (r : List Bool) : List Bool",
+    "header_sha256": "1186667e6e9c4ac9be6a814ac908c060c74d856ee62d9a810a8af4269cd007e5",
+    "statement_prose": "The explicit LPN reduction invokes A at κOf(L) with preprocessing and a coin prefix [JLS26, Lemma 4.2, p. 19]. Dv12 and Dv14 separate its typed function from its machine; advice is an input and no machine or sampler is constructed.",
+    "prose_sha256": "ab9943bcb7bef717fd48a04d2dbaf9afdceea6e23f6b4b1998b5f95508c73fee"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnRed_eq": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 347,
+    "kind": "theorem",
+    "header": "theorem lpnRed_eq (P : Params) (π : PrimeSchedule) (A : NUPPT) (L : ℕ) (w : P.LPNAdvice π L) (x : P.LPNChal π L) (r : List Bool) : P.lpnRed π A L w x r = A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (r.take (A.coinLen (P.kappaOf L)))",
+    "header_sha256": "3e8beeadb7bf18ccdef05e39e228c1906afc7c3276e021f575a5bade27a2cf43",
+    "statement_prose": "The reduction calls A on its preprocessed challenge and the stated prefix. Glue reader.",
+    "prose_sha256": "27ccf0d846ff362f610b341200e7b721c782beaef873532452e65c4b7d43dc8d"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.LPNRealizable": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 357,
+    "kind": "def",
+    "header": "def LPNRealizable (P : Params) (π : PrimeSchedule) : Prop",
+    "header_sha256": "6073c47001ee3dbb412d0ef585efaabf872419e2761bab141e33cb9ee73ed40a",
+    "statement_prose": "LPN realizability says every adversary and every polynomially bounded typed advice family has a machine realizing the explicit reduction. [JLS26, Lemma 4.2, p. 19]. Dv14 leaves this as the named Phase B obligation; the target link supplies it without constructing machines here. Dv16 uses shared RealizesOn on encoded challenges and layout-length coins only, which admits more realisers and makes this proposition easier than its every-string draft.",
+    "prose_sha256": "cfa2015947e47e2e4e29fd96e1b933ef1b8dcc15a0bb5a1db2872196c209a392"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.LPNRealizable_iff": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Defs.lean",
+    "line": 364,
+    "kind": "theorem",
+    "header": "theorem LPNRealizable_iff (P : Params) (π : PrimeSchedule) : P.LPNRealizable π ↔ ∀ (A : NUPPT) (w : ∀ L, P.LPNAdvice π L), ∃ B : NUPPT, B.RealizesOn (P.lpnEnc π) (A.coins.subst .var) (fun L x r => P.lpnRed π A L (w L) x r)",
+    "header_sha256": "953c3974595b687e2ed2da26bb63d94c79fd4193bf326b70e4d57cdadccf966f",
+    "statement_prose": "LPN realizability is the explicit contract for every adversary and advice family. Glue reader.",
+    "prose_sha256": "e99c6e55bf30a6bffdb551a80d806396f79850f86097ed44bba9c4fce988aa0d"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnEnc_injective": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Encoding.lean",
+    "line": 42,
+    "kind": "theorem",
+    "header": "theorem lpnEnc_injective (P : Params) (π : PrimeSchedule) (L : ℕ) : Function.Injective (P.lpnEnc π L)",
+    "header_sha256": "ba0d4789a5991ff67a599583d092eae257fa5b7601d82b2660ca7eeddc0dd593",
+    "statement_prose": "Canonical LPN challenge encoding is injective [JLS26, Lemma 4.2, p. 19]. Dv3 reuses the assumption's width and canonical encoder unchanged.",
+    "prose_sha256": "b38c4dbb250b131a72fc483ea0e309e5235b38eaa6fcd24001ad80b6b317825e"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.encLPNAdvice_injective": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Encoding.lean",
+    "line": 50,
+    "kind": "theorem",
+    "header": "theorem encLPNAdvice_injective (P : Params) (π : PrimeSchedule) (L : ℕ) : Function.Injective (P.encLPNAdvice π L)",
+    "header_sha256": "950d644459d629c4da96a760d43ecf24b25b4def7d2fe7a2237ccc4c1e5f2b3d",
+    "statement_prose": "All six hardwired advice fields are retained by the explicit code [JLS26, Lemma 4.2, p. 19]. Dv9 and Dv15 place the prime first and use fixed coordinate codes.",
+    "prose_sha256": "5d7e25dc1b2e2908916369db86b3dedce2ce213f57dbaf75e4e769145c1d405c"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.encLPNAdvice_length_le": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Encoding.lean",
+    "line": 59,
+    "kind": "theorem",
+    "header": "theorem encLPNAdvice_length_le (P : Params) (π : PrimeSchedule) (L : ℕ) (w : P.LPNAdvice π L) : (P.encLPNAdvice π L w).length ≤ P.lpnAdviceBound.eval L",
+    "header_sha256": "2a625c57cfa6a8ff7cc90782e49d45f3548485631f6cff32167a84e5f849dd97",
+    "statement_prose": "Every advice word has length at most the explicit polynomial at its independent dimension [JLS26, Lemma 4.2, p. 19]. Dv12 and Dv15 count hardwired data rather than sampler coins.",
+    "prose_sha256": "82bf9f167c702feca592428ec6a932f472e9ebc04e039dc16ece0c3a3810821e"
+  },
+  "TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpn_hop": {
+    "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Hop.lean",
+    "line": 53,
+    "kind": "theorem",
+    "header": "theorem lpn_hop (P : Params) (π : PrimeSchedule) (A : NUPPT) (tails : ℕ → Bool) (hops : ∀ κ, Fin (κ + 1)) : ∃ w : ∀ L, P.LPNAdvice π L, ∀ B : NUPPT, B.RealizesOn (P.lpnEnc π) (A.coins.subst .var) (fun L x r => P.lpnRed π A L (w L) x r) → ∀ κ, (hops κ).val < κ → Games.advantage (P.chainGame A (tails κ) (hops κ).val κ (π κ)) (P.chainGame A (tails κ) ((hops κ).val + 1) κ (π κ)) ≤ (P.lpnFamily_raw π).adv B (P.ℓ κ)",
+    "header_sha256": "43fbffc2bd181c56e0c34c8d25d74ee26a3daf8a6c58f881433e846f2febfa5f",
+    "statement_prose": "One advice family bounds any selected LPN hop for every realizing non-uniform PPT machine [JLS26, Lemma 4.2, p. 19]. Dv8 and Dv12 retain buckets and hardwire averaged values. Dv16 uses the shared, layout-length-only RealizesOn; more realisers are admitted, so this security statement is at least as strong as the every-coin-string draft. The sentinel hop makes advice inhabited at κ=0; the hop inequality is requested only below κ.",
+    "prose_sha256": "faddc418e2a0b9f4916df6db99856124a273a63055b0f119fcff54d7ac823002"
+  }
+}

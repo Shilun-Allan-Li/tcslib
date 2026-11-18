@@ -1,0 +1,98 @@
+2026-11-18T20:40:06.246511+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections.lean:142:67: error: unsolved goals
+case h.h.h
+P : Params
+π : PrimeSchedule
+A : NUPPT
+L : ℕ
+h : L = P.ℓ (P.kappaOf L)
+w : P.LPNAdvice π L
+k : Fin (P.kappaOf L)
+hk : ↑k = ↑w.hop
+κ : ℕ := P.kappaOf L
+pp : PrimeParam κ := π κ
+Mat : Type := Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p)
+Rep : Type := (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
+Q : LWE.Parameters := (P.lpnFamily_raw π).toLWE.parameters L
+χ : LWE.Noise := (P.lpnFamily_raw π).toLWE.noise L
+Seed : Type :=
+  Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+    (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)
+D : P.LPNChal π L → A.Coins κ → Bool := fun x r => decide (A.runAtL κ (P.lpnPre π L w x) (List.ofFn r) = [true])
+e :
+  Matrix (Fin ((P.lpnFamily_raw π).toLWE.parameters L).samples) (Fin ((P.lpnFamily_raw π).toLWE.parameters L).dimension)
+        (ZMod ((P.lpnFamily_raw π).toLWE.parameters L).modulus) ×
+      (Fin ((P.lpnFamily_raw π).toLWE.parameters L).dimension → ZMod ((P.lpnFamily_raw π).toLWE.parameters L).modulus) ×
+        (Fin ((P.lpnFamily_raw π).toLWE.parameters L).samples → ((P.lpnFamily_raw π).toLWE.noise L).Coins) ≃
+    Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p) ×
+      (Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+        (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p)
+he :
+  ∀
+    (r :
+      Matrix (Fin ((P.lpnFamily_raw π).toLWE.parameters L).samples)
+          (Fin ((P.lpnFamily_raw π).toLWE.parameters L).dimension)
+          (ZMod ((P.lpnFamily_raw π).toLWE.parameters L).modulus) ×
+        (Fin ((P.lpnFamily_raw π).toLWE.parameters L).dimension →
+            ZMod ((P.lpnFamily_raw π).toLWE.parameters L).modulus) ×
+          (Fin ((P.lpnFamily_raw π).toLWE.parameters L).samples → ((P.lpnFamily_raw π).toLWE.noise L).Coins)),
+    P.lpnMatrixAt π L h (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L) r) =
+        (e r).1 ∧
+      P.lpnValuesAt π L h (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L) r) =
+        fun i => ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue (P.kappaOf L) (π (P.kappaOf L)) ((e r).2.2 i)
+M : Mat
+rep : Rep
+r : A.Coins κ
+hp :
+  P.lpnMatrixAt π L h
+        (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L) (e.symm (M, rep))) =
+      M ∧
+    P.lpnValuesAt π L h
+        (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L) (e.symm (M, rep))) =
+      fun i => ∑ x, M i x * rep.1 x + P.noiseValue (P.kappaOf L) (π (P.kappaOf L)) (rep.2 i)
+⊢ (if
+        A.runAtL κ
+            (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+              (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                  (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                false)
+              w.tail)
+            (List.ofFn r) =
+          [true] then
+      1
+    else 0) =
+    if
+        A.runAtL (P.kappaOf L)
+            (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+              (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                  (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+                false)
+              w.tail)
+            (List.ofFn r) =
+          [true] then
+      1
+    else 0
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections): no fresh .olean produced
+        2.65 real         1.86 user         1.01 sys
+          2348597248  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              185091  page reclaims
+                  11  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                  18  voluntary context switches
+                5716  involuntary context switches
+            32128962  instructions retired
+            14785247  cycles elapsed
+             1638736  peak memory footprint
+2026-11-18T20:40:08.925679+00:00 END rc=1

@@ -1,0 +1,126 @@
+evidence/probes/M4_LPN_Hop_bounded160_v1.lean:210:66: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (500000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+[diag] Diagnostics
+  [reduction] unfolded declarations (max: 210396, num: 45):
+    [reduction] Finset.univ ↦ 210396
+    [reduction] Fintype.elems ↦ 210396
+    [reduction] Nat.rec ↦ 178666
+    [reduction] Multiset.ofList ↦ 166080
+    [reduction] Quot.lift ↦ 113996
+    [reduction] Nat.sub ↦ 102094
+    [reduction] NUPPT.coinLen ↦ 88368
+    [reduction] Fin.foldr ↦ 76570
+    [reduction] List.finRange ↦ 76570
+    [reduction] List.ofFn ↦ 76570
+    [reduction] Multiset.map ↦ 62953
+    [reduction] Add.add ↦ 51048
+    [reduction] HAdd.hAdd ↦ 51048
+    [reduction] Nat.add ↦ 51048
+    [reduction] Finset.card ↦ 51047
+    [reduction] Finset.map ↦ 51047
+    [reduction] Fintype.card ↦ 51047
+    [reduction] Fintype.piFinset ↦ 51047
+    [reduction] HSub.hSub ↦ 51047
+    [reduction] Multiset.card ↦ 51047
+    [reduction] Nat.pred ↦ 51047
+    [reduction] Sub.sub ↦ 51047
+    [reduction] Eq.rec ↦ 51046
+    [reduction] Finset.pi ↦ 51046
+    [reduction] Multiset.pi ↦ 51046
+    [reduction] Multiset.rec ↦ 51046
+    [reduction] Multiset.recOn ↦ 51046
+    [reduction] Games.OracleComp.rec ↦ 41556
+    [reduction] Games.ProbComp.sampleFin ↦ 33320
+    [reduction] Games.OracleComp.bind ↦ 27704
+    [reduction] Fin.foldr.loop ↦ 25524
+    [reduction] Functor.map ↦ 16660
+    [reduction] Games.ProbComp.sample ↦ 16660
+    [reduction] Games.ProbComp.expect ↦ 13852
+    [reduction] Params.m ↦ 13692
+    [reduction] Function.comp ↦ 11044
+    [reduction] HMul.hMul ↦ 8328
+    [reduction] Finset.sum ↦ 5697
+    [reduction] Multiset.sum ↦ 5697
+    [reduction] Multiset.foldr ↦ 5695
+    [reduction] Mul.mul ↦ 5579
+    [reduction] AddMonoid.toZero ↦ 132
+    [reduction] ZMod ↦ 48
+    [reduction] Matrix ↦ 32
+    [reduction] Params.kappaOf ↦ 32
+  [reduction] unfolded instances (max: 159349, num: 13):
+    [reduction] Fin.fintype ↦ 159349
+    [reduction] Pi.instFintype ↦ 51047
+    [reduction] AddZero.toZero ↦ 132
+    [reduction] MulZeroClass.toZero ↦ 132
+    [reduction] Zero.ofOfNat0 ↦ 66
+    [reduction] AddCancelCommMonoid.toAddCommMonoid ↦ 29
+    [reduction] AddCommMonoid.toAddMonoid ↦ 29
+    [reduction] AddMonoid.toAddZeroClass ↦ 29
+    [reduction] AddZeroClass.toAddZero ↦ 29
+    [reduction] Nat.instAddCancelCommMonoid ↦ 29
+    [reduction] Nat.instAddCommMonoid ↦ 29
+    [reduction] Nat.instAddMonoid ↦ 29
+    [reduction] Nat.instMulZeroClass ↦ 29
+  [reduction] unfolded reducible declarations (max: 318700, num: 28):
+    [reduction] Finset.val ↦ 318700
+    [reduction] Nat.casesOn ↦ 306363
+    [reduction] NUPPT.coins ↦ 176736
+    [reduction] Quot.indep ↦ 102092
+    [reduction] PolyExpr.casesOn ↦ 88368
+    [reduction] Quot.liftOn ↦ 68644
+    [reduction] Eq.ndrec ↦ 51046
+    [reduction] Eq.ndrecOn ↦ 51046
+    [reduction] PSigma.fst ↦ 51046
+    [reduction] PSigma.snd ↦ 51046
+    [reduction] Quot.hrecOn ↦ 51046
+    [reduction] Quot.rec ↦ 51046
+    [reduction] Quot.recOn ↦ 51046
+    [reduction] Quotient.hrecOn ↦ 51046
+    [reduction] Games.OracleComp.casesOn ↦ 41556
+    [reduction] Params.G ↦ 20641
+    [reduction] List.casesOn ↦ 19493
+    [reduction] BoolPRG.outLen ↦ 13692
+    [reduction] DecidableEq ↦ 669
+    [reduction] PrimeParam.p ↦ 276
+    [reduction] NUPPT.Coins ↦ 158
+    [reduction] Games.ProbComp ↦ 73
+    [reduction] inferInstance ↦ 58
+    [reduction] Games.unifSpec ↦ 35
+    [reduction] BoolPRG.IdDraw ↦ 34
+    [reduction] outParam ↦ 31
+    [reduction] Params.LPNChal ↦ 27
+    [reduction] BoolPRG.Idx ↦ 21
+  [type_class] used instances (max: 107, num: 12):
+    [type_class] Fin.fintype ↦ 107
+    [type_class] Pi.instFintype ↦ 80
+    [type_class] instDecidableEqFin ↦ 77
+    [type_class] Pi.instNonempty ↦ 77
+    [type_class] instNonemptyOfInhabited ↦ 53
+    [type_class] instNonemptyOfMonad ↦ 53
+    [type_class] InformationTheory.FinDist.instNonempty ↦ 53
+    [type_class] ZMod.fintype ↦ 40
+    [type_class] instFintypeProd ↦ 39
+    [type_class] Bool.fintype ↦ 38
+    [type_class] PrimeParam.instNeZero ↦ 38
+    [type_class] instNonemptyProd ↦ 36
+  [def_eq] heuristic for solving `f a =?= f b` (max: 2842, num: 14):
+    [def_eq] Games.ProbComp.expect ↦ 2842
+    [def_eq] List.map ↦ 1208
+    [def_eq] Multiset.ofList ↦ 519
+    [def_eq] Quot.liftOn ↦ 346
+    [def_eq] Multiset.map ↦ 260
+    [def_eq] ZMod ↦ 137
+    [def_eq] Finset.sum ↦ 87
+    [def_eq] Multiset.foldr ↦ 87
+    [def_eq] Multiset.sum ↦ 87
+    [def_eq] List.foldr ↦ 85
+    [def_eq] Matrix ↦ 47
+    [def_eq] PrimeParam.p ↦ 38
+    [def_eq] HMul.hMul ↦ 30
+    [def_eq] Mul.mul ↦ 29
+  use `set_option diagnostics.threshold <num>` to control threshold for reporting counters
+evidence/probes/M4_LPN_Hop_bounded160_v1.lean:44:0: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (500000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+evidence/probes/M4_LPN_Hop_bounded160_v1.lean:338:8: warning: declaration uses 'sorry'

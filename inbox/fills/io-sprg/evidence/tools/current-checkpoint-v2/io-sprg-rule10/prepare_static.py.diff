@@ -1,0 +1,53 @@
+--- /Users/seyoonr/.codex/worktrees/io-sprg/tcslib-exchange/evidence/tools/io-sprg-rule10/prepare_static.py
++++ /private/tmp/io-sprg-proof-notes/tmpFinalAuditToolsV2/io-sprg-rule10/prepare_static.py
+@@ -1,29 +1,32 @@
+-# io-sprg Rule10 preparation, 2026-11-18. No Lean or subprocess is invoked.
++# io-sprg Rule10 preparation, 2026-11-18. No Lean/cache is invoked; exact inventory validation reads Git/source.
+ # Paths adapted from the bb1-sim exchange suite to the explicitly managed Mac worktree.
+ # Owner source bytes are read only; output is restricted to --out (default this /tmp staging dir).
+-import argparse, hashlib, importlib.util, json, re, sys
++import argparse, hashlib, importlib.util, json, re, sys, runpy
+ from pathlib import Path
+ sys.dont_write_bytecode = True
+ DEFAULT_ROOT = '/Users/seyoonr/.codex/worktrees/io-sprg/tcslib-exchange'
+ ap=argparse.ArgumentParser();ap.add_argument('--root',default=DEFAULT_ROOT)
+-ap.add_argument('--out',default='/tmp/io-sprg-rule10-prep');args=ap.parse_args()
++ap.add_argument('--out',default='/tmp/io-sprg-rule10-prep')
++ap.add_argument('--inventory',required=True);args=ap.parse_args()
+ root=Path(args.root).resolve();out=Path(args.out).resolve();out.mkdir(parents=True,exist_ok=True)
+ builder=root/'evidence/tools/seal/review/archived-gate10-tools/build_seals.py'
+ spec=importlib.util.spec_from_file_location('read_only_archived_builder',builder)
+ bs=importlib.util.module_from_spec(spec);spec.loader.exec_module(bs)
+-files=sorted((root/'TCSlib/Cryptography/Obfuscation').rglob('*.lean'))
+-files.append(root/'TCSlib/Cryptography/Obfuscation.lean')
+-modules={p.relative_to(root).as_posix()[:-5].replace('/','.'):p for p in files}
+-assert len(modules)==22,(len(modules),sorted(modules))
++iv=runpy.run_path(str(Path(__file__).resolve().parents[1]/'checkpoint_inventory.py'))
++inventory=iv['load'](args.inventory,root)
++files=[root/f for f in iv['files'](inventory)]
++modules={m:root/inventory['owner_sources'][m]['file'] for m in inventory['owners']}
++assert set(modules)==set(inventory['owners']) and len(modules)==len(files)
+ ordered=[];seen=set();active=set()
+ def visit(m):
+  if m in seen:return
+  assert m not in active,('import cycle',m)
+  active.add(m)
+- for dep in re.findall(r'^import\s+(\S+)',modules[m].read_text(),re.M):
++ for dep in bs.header(modules[m].read_bytes())['imports']:
+   if dep in modules:visit(dep)
+  active.remove(m);seen.add(m);ordered.append(m)
+ for m in sorted(modules):visit(m)
++assert ordered==inventory['owners'],'independent owned topology differs from inventory'
+ (out/'owners.txt').write_text('\n'.join(ordered)+'\n')
+ (out/'owner-paths.txt').write_text('\n'.join(m.replace('.','/') for m in ordered)+'\n')
+ (out/'files.txt').write_text('\n'.join(m.replace('.','/')+'.lean' for m in ordered)+'\n')
+@@ -72,7 +75,8 @@
+  elif not cands:row['static_status']='NO_RFL_READER_AUTOMATICALLY_FOUND'
+  else:row['static_status']='DRAFT_FULL_READER_TYPE_CONTROL'
+  rows.append(row)
+-manifest=dict(root=str(root),owners=ordered,files=[dict(file=p.relative_to(root).as_posix(),
++manifest=dict(root=str(root),head=inventory['head'],base=inventory['base'],
++ inventory_sha256=inventory['inventory_sha256'],owners=ordered,files=[dict(file=p.relative_to(root).as_posix(),
+  sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in files],
+  controls=rows,limitations=['Static use inventory only; term-used subset requires collector ROOT rows.',
+  'Draft controls require root-run unsealed and sealed checks; no outcome claimed.',

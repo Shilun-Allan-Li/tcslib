@@ -1,0 +1,32 @@
+--- /private/tmp/io-sprg-proof-notes/PRGHopFinal/07-prg_hop.proof
++++ /private/tmp/io-sprg-proof-notes/M4PRGPrepared/candidates/PRGHopFinal/07-prg_hop.proof
+@@ -12,7 +12,8 @@
+       advantage (P.chainGame A true (P.kappaOfN N) (P.kappaOfN N)
+           (π (P.kappaOfN N)))
+         (P.chainGame A false (P.kappaOfN N) (P.kappaOfN N)
+-          (π (P.kappaOfN N))) ≤ advantage (sec N ω true) (sec N ω false)
++          (π (P.kappaOfN N))) ≤ advantage (sec N ω true) (sec N ω false) := ?_
++  swap
+   · intro N
+     by_cases hi : N = P.n (P.kappaOfN N)
+     · obtain ⟨ω, hω⟩ :=
+@@ -35,7 +36,8 @@
+   choose ω hω using hfixed
+   refine ⟨ω, ?_⟩
+   intro B hB
+-  have hacc : ∀ N b, accept (sec N (ω N) b) = accept (P.G.game B b N)
++  have hacc : ∀ N b, accept (sec N (ω N) b) = accept (P.G.game B b N) := ?_
++  swap
+   · intro N b
+     simp only [sec, accept_eq, P.G.game_eq, ProbComp.prob_bind, ProbComp.prob_pure]
+     congr 1
+@@ -48,7 +50,8 @@
+       (I, if b then P.G.eval N I σ else v)
+     simpa only [P.prgEnc_eq, ProbComp.prob_eq_expect] using hc.symm
+   have hcoins : ∀ N,
+-      advantage (sec N (ω N) true) (sec N (ω N) false) = P.G.adv B N
++      advantage (sec N (ω N) true) (sec N (ω N) false) = P.G.adv B N := ?_
++  swap
+   · intro N
+     simp only [advantage_eq, hacc, P.G.adv_eq]
+   intro κ

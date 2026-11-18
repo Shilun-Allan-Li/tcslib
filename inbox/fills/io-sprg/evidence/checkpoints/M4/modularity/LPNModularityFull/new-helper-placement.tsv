@@ -1,0 +1,11 @@
+packet	full_area_suffix	child	dependencies
+01	Internal.lpn_accept_realizes_eq	Transport	Defs/readers; shared verdict + uniform prefix APIs
+02	Internal.lpn_gap_realizes_eq	Transport	01
+03	Internal.lpn_uniform_challenge_reindex	Transport	Defs lpnChalEquiv/matrix/value readers
+04	Internal.lpn_real_seed_reindex	Transport	Defs and existing canonical LWE/noise readers
+05	Internal.lpn_pre_real_update	Hop	Defs lpnPre/chainPublic/publicSeed readers
+06	Internal.lpn_pre_uniform_update	Hop	Defs lpnPre/chainPublic/publicSeed readers
+07	Internal.lpn_real_section	Hop	04,05
+08	Internal.lpn_uniform_section	Hop	03,06
+09	Internal.lpn_fix_advice	Hop	07,08; existing expectation/update/finite maximum APIs
+10	Params.lpn_hop	Hop	09,02; kappaOf_pow; inhabited sentinel advice

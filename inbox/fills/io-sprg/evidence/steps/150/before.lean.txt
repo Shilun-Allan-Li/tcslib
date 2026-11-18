@@ -1,0 +1,61 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Canonical LPN coordinates and shared realizer transport
+
+## Main definitions
+
+None; this module proves properties of the imported reduction interface.
+
+## Main results
+
+* `Internal.lpn_accept_realizes_eq` and `lpn_gap_realizes_eq`.
+* Uniform challenge and real sample-seed coordinate bridges.
+
+## References
+
+* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
+  Assumptions*, J. ACM 73(1), Article 1, February 2026, Lemma 4.2, p. 19.
+* [PS10] R. Pass, A. Shelat, *A Course in Cryptography*, 2010, Definition 26.8.
+
+**Deviations.** Dv3 and Dv15 transport the existing canonical challenge and exact law.
+Dv16 uses shared layout-only verdict and coin readers; no new machine is built.
+-/
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+
+open Complexity Turing
+open scoped BigOperators
+
+namespace Internal
+
+-- Specialized existing-library transport helpers may be added here after the mechanical split.
+
+/-- Every shared-contract LPN realizer has the ideal reduction's exact acceptance probability.
+Reduction glue for [JLS26, Lemma 4.2, p. 19]. Only layout-length coin words are used.
+
+**Proof sketch.** Read canonical acceptance, reindex B's coins by the shared coin bijection,
+and use the mandatory runAt_coinsEquivPoly_symm reader. The named reduction reader leaves
+the adversary's coin prefix. Its existing uniform restriction law and ofFn/take reader
+recover exactly the shorter adversary coin distribution. -/
+theorem lpn_accept_realizes_eq (P : Params) (π : PrimeSchedule) (A B : NUPPT)
+    (ω : ∀ L, P.LPNAdvice π L)
+    (hB : B.RealizesOn (P.lpnEnc π) (A.coins.subst .var)
+      (fun L x r => P.lpnRed π A L (ω L) x r))
+    (L : ℕ) {σ : Type} [Fintype σ] (X : σ → P.LPNChal π L) :
+    acceptProb X (fun x (r : B.Coins L) => B.distinguisherL L (P.lpnEnc π L x) r) =
+      acceptProb X (fun x (r : A.Coins (P.kappaOf L)) =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L (ω L) x)
+          (List.ofFn r) = [true])) := sorry
+
+end Internal
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed

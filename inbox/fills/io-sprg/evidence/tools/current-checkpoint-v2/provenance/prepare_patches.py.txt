@@ -1,0 +1,93 @@
+from pathlib import Path
+import difflib,hashlib,json,shutil
+root=Path.cwd();out=Path('/private/tmp/io-sprg-proof-notes/tmpFinalAuditToolsV2');child=out/'io-sprg-rule10';child.mkdir(exist_ok=True);bindings=[]
+def emit(rel,text):
+ src=root/'evidence/tools'/rel;dst=out/rel;dst.parent.mkdir(parents=True,exist_ok=True);dst.write_text(text)
+ bindings.append({'source':str(src),'source_sha256':hashlib.sha256(src.read_bytes()).hexdigest(),'candidate':str(dst),'candidate_sha256':hashlib.sha256(dst.read_bytes()).hexdigest(),'status':'NOT_RUN'})
+ dst.with_name(dst.name+'.diff').write_text(''.join(difflib.unified_diff(src.read_text().splitlines(keepends=True),text.splitlines(keepends=True),fromfile=str(src),tofile=str(dst))))
+def patch(s,old,new):
+ assert old in s,old[:120]
+ return s.replace(old,new)
+# Existing header/declaration/control discovery remains intact; only input completeness changes.
+rel='io-sprg-rule10/prepare_static.py';s=(root/'evidence/tools'/rel).read_text()
+s=patch(s,'import argparse, hashlib, importlib.util, json, re, sys','import argparse, hashlib, importlib.util, json, re, sys, runpy')
+s=patch(s,"ap.add_argument('--out',default='/tmp/io-sprg-rule10-prep');args=ap.parse_args()","ap.add_argument('--out',default='/tmp/io-sprg-rule10-prep')\nap.add_argument('--inventory',required=True);args=ap.parse_args()")
+s=patch(s,"files=sorted((root/'TCSlib/Cryptography/Obfuscation').rglob('*.lean'))\nfiles.append(root/'TCSlib/Cryptography/Obfuscation.lean')\nmodules={p.relative_to(root).as_posix()[:-5].replace('/','.'):p for p in files}\nassert len(modules)==22,(len(modules),sorted(modules))", "iv=runpy.run_path(str(Path(__file__).resolve().parents[1]/'checkpoint_inventory.py'))\ninventory=iv['load'](args.inventory,root)\nfiles=[root/f for f in iv['files'](inventory)]\nmodules={m:root/inventory['owner_sources'][m]['file'] for m in inventory['owners']}\nassert set(modules)==set(inventory['owners']) and len(modules)==len(files)")
+s=patch(s,"for dep in re.findall(r'^import\\s+(\\S+)',modules[m].read_text(),re.M):", "for dep in bs.header(modules[m].read_bytes())['imports']:")
+s=patch(s,'for m in sorted(modules):visit(m)',"for m in sorted(modules):visit(m)\nassert ordered==inventory['owners'],'independent owned topology differs from inventory'")
+s=patch(s,"manifest=dict(root=str(root),owners=ordered,files=", "manifest=dict(root=str(root),head=inventory['head'],base=inventory['base'],\n inventory_sha256=inventory['inventory_sha256'],owners=ordered,files=")
+emit(rel,s)
+# Exact collector owner census, no hardcoded cardinality and no dictionary-overwrite gaps.
+rel='io-sprg-rule10/request_counts.py';s=(root/'evidence/tools'/rel).read_text();s=patch(s,'import argparse,json','import argparse,json,hashlib,runpy')
+s=patch(s,"ap=argparse.ArgumentParser();ap.add_argument('collector_log');ap.add_argument('outdir');a=ap.parse_args()", "ap=argparse.ArgumentParser();ap.add_argument('collector_log');ap.add_argument('outdir')\nap.add_argument('--inventory',required=True);a=ap.parse_args()\niv=runpy.run_path(str(Path(__file__).resolve().parents[1]/'checkpoint_inventory.py'))\ninventory=iv['load'](a.inventory);expected=set(inventory['owners'])")
+s=patch(s,"r=json.loads(line[8:]);closures[r['module']]=r['closure']", "r=json.loads(line[8:]);assert r['module'] not in closures,'duplicate CLOSURE';closures[r['module']]=r['closure']")
+s=patch(s,"m,c=line[7:].split(': stored ');stored[m]=int(c)", "m,c=line[7:].split(': stored ');assert m not in stored,'duplicate MODULE';stored[m]=int(c)")
+s=patch(s,"elif line.startswith('CAT-COUNT '):cat_count=int(line.split()[1])", "elif line.startswith('CAT-COUNT '):\n  assert cat_count is None,'duplicate CAT-COUNT';cat_count=int(line.split()[1])")
+s=patch(s,"assert len(closures)==len(stored)==22,('incomplete collector owners',len(closures),len(stored))", "assert set(closures)==set(stored)==expected,'collector owner keys differ from exact inventory'\nassert set(roots)<=expected,'ROOT outside inventory'\nfor owner,rs in roots.items():assert len({r['name']['display'] for r in rs})==len(rs),'duplicate ROOT'" )
+s=patch(s,"(out/'request-counts.json').write_text(json.dumps(rows,indent=1)+'\\n')", "(out/'request-counts.json').write_text(json.dumps(rows,indent=1)+'\\n')\n(out/'request-counts-binding.json').write_text(json.dumps(dict(head=inventory['head'],\n inventory_sha256=inventory['inventory_sha256'],owners=inventory['owners'],stored=stored,\n collector_log_sha256=hashlib.sha256(Path(a.collector_log).read_bytes()).hexdigest()),indent=2)+'\\n')")
+emit(rel,s)
+# Current controls must cover exactly the same current owners and ordinary reader candidates.
+rel='io-sprg-rule10/mkctl_iosprg.py';s=(root/'evidence/tools'/rel).read_text()
+s=patch(s,"ap.add_argument('--static-plan',default=str(Path(__file__).with_name('static-plan.json')))","ap.add_argument('--static-plan',required=True)")
+s=patch(s,"assert recs,'no completed seal records'", "assert recs,'no completed seal records'\nassert len(recs)==len(static['owners']) and {r['module'] for r in recs}==set(static['owners']),'seal/static owner set differs'\nsource_hashes={r['file']:r['sha256'] for r in static['files']}\nfor r in recs:\n assert r['rev']==static['head'] and r['source_sha256']==source_hashes[r['source']],'seal/static revision or source differs'")
+s=patch(s,"Path(__file__).with_name('reader_rfl_elaborator.lean.txt').read_bytes()", "(wt/'evidence/tools/io-sprg-rule10/reader_rfl_elaborator.lean.txt').read_bytes()")
+emit(rel,s)
+# Reload a current inventory AFTER preparing static outputs; never inherit old22 lists.
+rel='io-sprg-rule10/orchestrate.py';s=(root/'evidence/tools'/rel).read_text();s=patch(s,'import argparse,json,os,shutil,subprocess,sys','import argparse,json,os,shutil,subprocess,sys,runpy')
+s=patch(s,"ap.add_argument('--collector-log');ap.add_argument('--rev',default='HEAD');ap.add_argument('--run',default='m0')", "ap.add_argument('--collector-log');ap.add_argument('--rev',default='HEAD');ap.add_argument('--run',required=True)\nap.add_argument('--inventory',required=True)")
+s=patch(s,"mods=(home/'owners.txt').read_text().split();files=(home/'files.txt').read_text().split()", "iv=runpy.run_path(str(home.parent/'checkpoint_inventory.py'))\ninventory=iv['load'](a.inventory,wt);assert inventory['base']==BASE\nassert a.rev in ['HEAD',inventory['head']],'revision differs from committed inventory'\na.rev=inventory['head'];S=R/'static'\nmods=list(inventory['owners']);files=iv['files'](inventory)")
+s=patch(s,"python(home/'prepare_static.py','--root',wt,'--out',home)", "python(home/'prepare_static.py','--root',wt,'--out',S,'--inventory',a.inventory)\n current=iv['load'](a.inventory,wt);assert current==inventory\n assert (S/'owners.txt').read_text().split()==mods and (S/'files.txt').read_text().split()==files")
+s=patch(s,"home/'owners.txt','io-sprg '","S/'owners.txt','io-sprg '")
+s=patch(s,"python(home/'request_counts.py',COL,R)","python(home/'request_counts.py',COL,R,'--inventory',a.inventory)")
+s=patch(s,"'--static-plan',home/'static-plan.json'", "'--static-plan',S/'static-plan.json'")
+# Store a separate immutable source inventory binding for every phase's run directory.
+s=patch(s,"mods=list(inventory['owners']);files=iv['files'](inventory)", "mods=list(inventory['owners']);files=iv['files'](inventory)\nsnapshot=R/'inventory.json'\nif snapshot.exists():assert json.loads(snapshot.read_text())==inventory,'run inventory changed'\nelse:snapshot.write_text(json.dumps(inventory,indent=2)+'\\n')")
+emit(rel,s)
+# Core runtime record checks are retained verbatim; prepend independently complete plan coverage.
+rel='io-sprg-rule10/dynamic_counts.py';s=(root/'evidence/tools'/rel).read_text()
+s=patch(s,"ap.add_argument('--environment-tree')", "ap.add_argument('--environment-tree',required=True)\nap.add_argument('--inventory',required=True)")
+s=patch(s,"a = ap.parse_args(); run = Path(a.run).resolve()", "a = ap.parse_args(); run = Path(a.run).resolve()\niv=runpy.run_path(str(Path(__file__).resolve().parents[1]/'checkpoint_inventory.py'))\ninventory=iv['load'](a.inventory)\nassert json.loads((run/'inventory.json').read_text())==inventory,'run inventory differs'")
+needle='seals = {}; results = []; failures = []'
+extra='''# Complete matrix scope is independent of the files/results that happen to exist.
+expected_owners=set(inventory['owners']);variants=set(iv['VARIANTS'])
+need({p.name for p in (run/'seals').iterdir() if p.is_dir()}==variants,'seal variants differ')
+need({p.name for p in (run/'controls').iterdir() if p.is_dir()}==variants,'control variants differ')
+static=json.loads((run/'static/static-plan.json').read_text())
+need(static['inventory_sha256']==inventory['inventory_sha256'] and set(static['owners'])==expected_owners,'static inventory differs')
+expected_targets={r['name'] for r in static['controls'] if r['kind']!='abbrev' and r['reader']}
+expected_probe_keys=[]
+for variant in sorted(variants):
+ manifest=json.loads((run/'seals'/variant/'manifest.json').read_text())
+ need(manifest['rev']==inventory['head'],'seal revision differs')
+ probes=manifest['probes'];homes=[r['module'] for r in probes]
+ need(len(homes)==len(expected_owners) and set(homes)==expected_owners,'exact owner/variant coverage differs')
+ for rec in probes:
+  need(rec['source_sha256']==inventory['owner_sources'][rec['module']]['sha256'],'owner source differs')
+  expected_probe_keys.append(('seal',variant,rec['probe_module']))
+ coverage=json.loads((run/'controls'/variant/'coverage.json').read_text())
+ need(not coverage['unresolved'],'unresolved control classification')
+ cov=coverage['coverage'];targets=[r['target'] for r in cov]
+ need(len(targets)==len(set(targets)) and set(targets)==expected_targets,'eligible reader coverage differs')
+ need(all(r['status']=='PREPARED_NOT_RUN' for r in cov),'eligible definition lacks a covering owner')
+ plans=json.loads((run/'controls'/variant/'controls-plan.json').read_text())
+ seen_groups=set();actual={False:[],True:[]}
+ for plan in plans:
+  need(plan['owner'] in expected_owners and isinstance(plan['sealed'],bool),'control owner/mode differs')
+  group=(plan['owner'],plan['sealed']);need(group not in seen_groups,'duplicate control owner group');seen_groups.add(group)
+  expected_probe_keys.append(('control',variant,plan['module']))
+  for ctl in plan['controls']:actual[plan['sealed']].append((ctl['target'],ctl['reader'],ctl['negative']))
+ for owner,mode in seen_groups:need((owner,not mode) in seen_groups,'unpaired sealed/unsealed control group')
+ want={(r['name'],r['reader'],negative) for r in static['controls'] if r['name'] in expected_targets for negative in [False,True]}
+ for mode in [False,True]:need(len(actual[mode])==len(set(actual[mode])) and set(actual[mode])==want,'exact paired reader targets differ')
+need(expected_probe_keys and len(expected_probe_keys)==len(set(expected_probe_keys)),'empty/duplicate planned probes')
+seals = {}; results = []; failures = []'''
+s=patch(s,needle,extra)
+s=patch(s,"pending = [r for r in report if r['status'] == 'NOT_RUN']", "actual_probe_keys=[(r['kind'],r['variant'],r['module']) for r in report]\nneed(len(actual_probe_keys)==len(expected_probe_keys) and set(actual_probe_keys)==set(expected_probe_keys),'runtime plan set differs')\npending = [r for r in report if r['status'] == 'NOT_RUN']")
+s=patch(s,"out = dict(records_all_ok=not failures", "out = dict(head=inventory['head'],inventory_sha256=inventory['inventory_sha256'],\n    expected_owners=inventory['owners'],owner_count=len(expected_owners),\n    expected_seal_probes=4*len(expected_owners),\n    expected_control_probes=sum(k[0]=='control' for k in expected_probe_keys),\n    records_all_ok=not failures")
+emit(rel,s)
+# Runtime queue/helpers themselves already derive probe counts dynamically; retain byte-for-byte.
+for rel in ['io-sprg-rule10/environment_binding.py','io-sprg-rule10/fast_records.py',
+            'io-sprg-rule10/run_matrix.py','io-sprg-rule10/run_controls.py']:
+ emit(rel,(root/'evidence/tools'/rel).read_text())
+(out/'patch-bindings.json').write_text(json.dumps(bindings,indent=2)+'\n')
+print('Prepared',len(bindings),'candidate adapters; no candidate module or gate executed')

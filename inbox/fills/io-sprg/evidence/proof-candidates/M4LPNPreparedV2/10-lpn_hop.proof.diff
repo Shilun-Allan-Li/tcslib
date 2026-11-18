@@ -1,0 +1,12 @@
+--- /private/tmp/io-sprg-proof-notes/LPNHopFinal/10-lpn_hop.proof
++++ /private/tmp/io-sprg-proof-notes/M4LPNPrepared/10-lpn_hop.proof
+@@ -11,7 +11,8 @@
+         (P.chainGame A (tails (P.kappaOf L)) (hops (P.kappaOf L)).val
+           (P.kappaOf L) (π (P.kappaOf L)))
+         (P.chainGame A (tails (P.kappaOf L)) ((hops (P.kappaOf L)).val + 1)
+-          (P.kappaOf L) (π (P.kappaOf L))) ≤ gap L w
++          (P.kappaOf L) (π (P.kappaOf L))) ≤ gap L w := ?_
++  swap
+   · intro L
+     by_cases hi : L = P.ℓ (P.kappaOf L)
+     · by_cases hv : (hops (P.kappaOf L)).val < P.kappaOf L

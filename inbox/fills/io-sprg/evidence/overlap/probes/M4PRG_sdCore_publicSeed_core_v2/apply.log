@@ -1,0 +1,214 @@
+Try this:
+  [apply] refine List.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ List.map packed = List.map (publicMap inst flag)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α α_1} {f g} => List.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Array.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Array.map packed = Array.map (publicMap inst flag)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α α_1} {f g} => Array.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Vector.map_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α α_1} {f g} [NeZero n] => Vector.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Function.funext_iff_of_subsingleton ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Pub
+  -- ⊢ Pub
+  -- ⊢ Subsingleton Pub
+  -- ⊢ packed ?_ = publicMap inst flag ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α β} {f} [Subsingleton α] {g} x y => (Function.funext_iff_of_subsingleton x y).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Surjective.right_cancellable fun b => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β γ} {f} hf {g₁ g₂} => (Function.Surjective.right_cancellable hf).mp) (fun b => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Option.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Option.map packed = Option.map (publicMap inst flag)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α β} {f g} => Option.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.graphOn_univ_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.graphOn packed Set.univ = Set.graphOn (publicMap inst flag) Set.univ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α β} {f g} => Set.graphOn_univ_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Set.eqOn_univ packed (publicMap inst flag)).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.EqOn packed (publicMap inst flag) Set.univ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α β} f₁ f₂ => (Set.eqOn_univ f₁ f₂).mp) (publicMap inst flag) packed ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_support.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Zero F
+  -- ⊢ Function.support packed = Function.support (publicMap inst flag) ∧
+    ∀ x ∈ Function.support packed, packed x = publicMap inst flag x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι M} [Zero M] {f g} => Function.ext_iff_support.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_mulSupport.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ One F
+  -- ⊢ Function.mulSupport packed = Function.mulSupport (publicMap inst flag) ∧
+    ∀ x ∈ Function.mulSupport packed, packed x = publicMap inst flag x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι M} [One M] {f g} => Function.ext_iff_mulSupport.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (StrictAnti.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder Pub
+  -- ⊢ Preorder F
+  -- ⊢ WellFoundedGT Pub
+  -- ⊢ StrictAnti packed
+  -- ⊢ StrictAnti (publicMap inst flag)
+  -- ⊢ Set.range packed = Set.range (publicMap inst flag)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β γ} [LinearOrder β] [Preorder γ] [WellFoundedGT β] {f g} hf hg => (StrictAnti.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (StrictMono.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder Pub
+  -- ⊢ Preorder F
+  -- ⊢ WellFoundedLT Pub
+  -- ⊢ StrictMono packed
+  -- ⊢ StrictMono (publicMap inst flag)
+  -- ⊢ Set.range packed = Set.range (publicMap inst flag)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β γ} [LinearOrder β] [Preorder γ] [WellFoundedLT β] {f g} hf hg => (StrictMono.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Filter.eventuallyEq_top.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ packed =ᶠ[⊤] publicMap inst flag
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α β} {f g} => Filter.eventuallyEq_top.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Continuous.ext_on ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Continuous.ext_on ?_ ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.graph_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.graph packed = Function.graph (publicMap inst flag)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α β} {f g} => Function.graph_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine DenseRange.equalizer ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (DenseRange.equalizer ?_ ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateCol_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m α} {ι} [Nonempty ι] {v w} => Matrix.replicateCol_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateRow_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n α} {ι} [Nonempty ι] {v w} => Matrix.replicateRow_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsSeparatedMap.eq_of_comp_eq (fun x₁ => ?_) ?_ ?_ ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (IsSeparatedMap.eq_of_comp_eq (fun x₁ => ?_) ?_ ?_ ?_ ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine funext ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : Pub), packed x = publicMap inst flag x
+Try this:
+  [apply] refine Eq.symm (funext ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : Pub), publicMap inst flag x = packed x
+Try this:
+  [apply] refine funext_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : Pub), packed x = publicMap inst flag x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => funext_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+/private/tmp/io-sprg-overlap/M4PRG_sdCore_publicSeed_core_v2-apply.lean:11:0: warning: declaration uses 'sorry'
+/private/tmp/io-sprg-overlap/M4PRG_sdCore_publicSeed_core_v2-apply.lean:14:5: warning: unused variable `hpack`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/M4PRG_sdCore_publicSeed_core_v2-apply.lean:15:5: warning: unused variable `hpub`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

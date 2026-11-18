@@ -1,0 +1,281 @@
+[
+ {
+  "name": "lpn_accept_realizes_eq",
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport.lean",
+  "candidate": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/01-lpn_accept_realizes_eq.lean.candidate",
+  "probe": "M4LPNDefs_V2_01-lpn_accept_realizes_eq",
+  "doc": "Every shared-contract LPN realizer has the ideal reduction's exact acceptance probability.\nReduction glue for [JLS26, Lemma 4.2, p. 19]. Only layout-length coin words are used.\n\n**Proof sketch.** Read canonical acceptance, reindex B's coins by the shared coin\nbijection, and use the mandatory runAt_coinsEquivPoly_symm reader. The named reduction\nreader leaves the adversary's coin prefix. Its existing uniform restriction law and\nofFn/take reader recover exactly the shorter adversary coin distribution.",
+  "marker": "\nend Internal\n",
+  "original_metadata": {
+   "index": 1,
+   "name": "TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.lpn_accept_realizes_eq",
+   "original_or_new": "PROPOSED_NEW_HELPER",
+   "placement": "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Transport",
+   "candidate": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/01-lpn_accept_realizes_eq.lean.candidate",
+   "candidate_sha256": "b9f7798071b8b1d9d144a0cf9f734c1765ade94baaaac4ba58ca856c258f3f66",
+   "header_sha256": "ba83993e1729762b34f534f52787ad06cb0e0a6fdcdf35ed7e17f84da8ebc18c",
+   "header_unchanged_from_LPNHopFinal": true,
+   "template": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/overlap/exact-statements/01-lpn_accept_realizes_eq.lean.template",
+   "template_sha256": "28db31d433172a5bd114b2d62314f6459ee39d50060ec9573b9fe58596a28845",
+   "exact_status": "NOT_RUN",
+   "apply_status": "NOT_RUN",
+   "project_imports": [
+    "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs"
+   ],
+   "whole_goal_assumptions": "Exactly actual theorem premises, no added goal hypothesis.",
+   "old_candidate": "/private/tmp/io-sprg-proof-notes/LPNHopFinal/01-lpn_accept_realizes_eq.lean.candidate",
+   "old_candidate_sha256": "0603b51effd171d727e0f1f899c1688750743401992d51653af613989cd3428e",
+   "docstring_sha256": "de16b2ae1e05d6a0aa2065b47327aba1d8de71e852d0d0d6b71a9c906d16812f",
+   "status": "FULL_UNRUN_BODY",
+   "root_pretest_focus": "Mandatory shared runAt coin bridge, then pure prefix reader."
+  }
+ },
+ {
+  "name": "lpn_gap_realizes_eq",
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport.lean",
+  "candidate": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/02-lpn_gap_realizes_eq.lean.candidate",
+  "probe": "M4LPNDefs_V1_02-lpn_gap_realizes_eq",
+  "doc": "The fixed-advice ideal LPN gap equals every shared-contract realizer's raw advantage.\nCanonical experiment glue for [JLS26, Lemma 4.2, p. 19].\n\n**Proof sketch.** Read the existing raw-family and canonical LWE advantage equations.\nMatch the unchanged challenge encoder by its reader, then apply the exact shared\nrealizer acceptance equality to both the real and uniform canonical experiments.",
+  "marker": "\nend Internal\n",
+  "original_metadata": {
+   "index": 2,
+   "name": "TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.lpn_gap_realizes_eq",
+   "original_or_new": "PROPOSED_NEW_HELPER",
+   "placement": "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Transport",
+   "candidate": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/02-lpn_gap_realizes_eq.lean.candidate",
+   "candidate_sha256": "c957eb2edaec2544b683cb92ac7aff4a0d581c47cbc578e97667ae901e0236ac",
+   "header_sha256": "8fc675998ec2d9fade7e3907865957a6b79570a04c57997fe800289777fd6a40",
+   "header_unchanged_from_LPNHopFinal": true,
+   "template": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/overlap/exact-statements/02-lpn_gap_realizes_eq.lean.template",
+   "template_sha256": "2973b1f402c94e9fb24f37f00723fbbcdfb8fc559df71beb59ebd6be875e3029",
+   "exact_status": "NOT_RUN",
+   "apply_status": "NOT_RUN",
+   "project_imports": [
+    "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs"
+   ],
+   "whole_goal_assumptions": "Exactly actual theorem premises, no added goal hypothesis.",
+   "old_candidate": "/private/tmp/io-sprg-proof-notes/LPNHopFinal/02-lpn_gap_realizes_eq.lean.candidate",
+   "old_candidate_sha256": "95ab4627f111565cd5ff554b29327a5a4383e4c1f519e1e3eaf2c0b9b1cb21a7",
+   "docstring_sha256": "19192cf62a27dadadb894e3e963e5e276c65e9093c69c64045710c25c4a8abd6",
+   "status": "FULL_UNRUN_BODY",
+   "root_pretest_focus": "Canonical family advantage/encoding readers."
+  }
+ },
+ {
+  "name": "lpn_uniform_challenge_reindex",
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport.lean",
+  "candidate": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/03-lpn_uniform_challenge_reindex.lean.candidate",
+  "probe": "M4LPNDefs_V1_03-lpn_uniform_challenge_reindex",
+  "doc": "The canonical uniform challenge has explicit construction matrix/value coordinates.\nCoordinate glue for [JLS26, Lemma 4.2, p. 19]. No chosen enumeration is used.\n\n**Proof sketch.** Compose the published canonical challenge equivalence with the two\nexplicit finite-index casts. Use Matrix.of in the matrix/function equivalence, as\nrequired by Mathlib's matrix type interface. The two projections agree with the\nexisting matrix/value transport readers at every coordinate.",
+  "marker": "\nend Internal\n",
+  "original_metadata": {
+   "index": 3,
+   "name": "TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.lpn_uniform_challenge_reindex",
+   "original_or_new": "PROPOSED_NEW_HELPER",
+   "placement": "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Transport",
+   "candidate": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/03-lpn_uniform_challenge_reindex.lean.candidate",
+   "candidate_sha256": "fa5915408b64c9e66ef78ec3c61011176dbee2b6dd4b338554afe8b0a8738cee",
+   "header_sha256": "e129a0ac5eeed71a160f7756780fab21ed23fc98f7fd29e1eb5f222e1e2a6f7c",
+   "header_unchanged_from_LPNHopFinal": true,
+   "template": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/overlap/exact-statements/03-lpn_uniform_challenge_reindex.lean.template",
+   "template_sha256": "f9d79a2433a8d8d05bf74222c9aa49242db22d0bfc090e38c5f591debf959903",
+   "exact_status": "NOT_RUN",
+   "apply_status": "NOT_RUN",
+   "project_imports": [
+    "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs"
+   ],
+   "whole_goal_assumptions": "Exactly actual theorem premises, no added goal hypothesis.",
+   "old_candidate": "/private/tmp/io-sprg-proof-notes/LPNHopFinal/03-lpn_uniform_challenge_reindex.lean.candidate",
+   "old_candidate_sha256": "25ab999e51169bc32f9ed32b2af8c5fea118007df95a43439254a39e3573b572",
+   "docstring_sha256": "7f41b3940d2e80a68f8d29996fb0c385e9c907759bfd72ed793ed01966e88b01",
+   "status": "FULL_UNRUN_BODY",
+   "root_pretest_focus": "Matrix.of arrow transport; exact coordinate projections."
+  }
+ },
+ {
+  "name": "lpn_real_seed_reindex",
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport.lean",
+  "candidate": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/04-lpn_real_seed_reindex.lean.candidate",
+  "probe": "M4LPNDefs_V1_04-lpn_real_seed_reindex",
+  "doc": "Canonical real LWE sample seeds admit explicit construction coordinates preserving output.\nSample-coherence glue for [JLS26, Lemma 4.2, p. 19] and the canonical LWE sample map.\n\n**Proof sketch.** Read the exact canonical dimension, row count, modulus and rounded noise.\nIdentify the parameter/noise records and cast the resulting seed type explicitly.\nRead both sample projections and construction transport equations; the matrix entries\nand the noisy finite sums then agree in the same residue field. No law is inferred\nmerely from a seed-type bijection.",
+  "marker": "\nend Internal\n",
+  "original_metadata": {
+   "index": 4,
+   "name": "TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.lpn_real_seed_reindex",
+   "original_or_new": "PROPOSED_NEW_HELPER",
+   "placement": "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Transport",
+   "candidate": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/04-lpn_real_seed_reindex.lean.candidate",
+   "candidate_sha256": "4056df347496bfb748d1cc4f7126624de7f864e42ddc095b32f7d761291d73d8",
+   "header_sha256": "a07f9ad13bae51de8eaddac0d98b01e36a66182cc2689d62c5ceaebeb9867250",
+   "header_unchanged_from_LPNHopFinal": true,
+   "template": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/overlap/exact-statements/04-lpn_real_seed_reindex.lean.template",
+   "template_sha256": "5b2fe7ba3d90b24a11ee25bf2a5fad2e52123aa066de3001be86fbdcb28fc807",
+   "exact_status": "NOT_RUN",
+   "apply_status": "NOT_RUN",
+   "project_imports": [
+    "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs"
+   ],
+   "whole_goal_assumptions": "Exactly actual theorem premises, no added goal hypothesis.",
+   "old_candidate": "/private/tmp/io-sprg-proof-notes/LPNHopFinal/04-lpn_real_seed_reindex.lean.candidate",
+   "old_candidate_sha256": "426144f9d807dbb99a715173c0da2c418c46d4fa09c93700f5b4cd2b2324e6b2",
+   "docstring_sha256": "549a57b8df38797409589564ac129510279d3378e34e557749321514f201f5d9",
+   "status": "FULL_UNRUN_BODY",
+   "root_pretest_focus": "Canonical Q/noise equalities and the final two pointwise cast/sum simp goals."
+  }
+ },
+ {
+  "name": "lpn_pre_real_update",
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections.lean",
+  "candidate": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/05-lpn_pre_real_update.lean.candidate",
+  "probe": "M4LPNDefs_V1_05-lpn_pre_real_update",
+  "doc": "A canonical real challenge replaces precisely the selected repetition in the chain word.\nPreprocessing glue for [JLS26, Lemma 4.2, p. 19].\n\n**Proof sketch.** Read preprocessing and its schedule guard, then substitute the supplied\nmatrix and noisy-value coordinate equations. Extensionality reduces the public vectors\nto the selected and unselected coordinates; the chain and vector readers and finite\nindex order identify the appropriate updated repetition in each case.",
+  "marker": "\nend Internal\n",
+  "original_metadata": {
+   "index": 5,
+   "name": "TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.lpn_pre_real_update",
+   "original_or_new": "PROPOSED_NEW_HELPER",
+   "placement": "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Sections",
+   "candidate": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/05-lpn_pre_real_update.lean.candidate",
+   "candidate_sha256": "97fbf44cb3868b597bdc655884e163333d9016be00db1dc542f1a7d75b2a1749",
+   "header_sha256": "67ac2873bad08014ac2795c3d1a3a4da9464bffee978879c782e332b12d6290d",
+   "header_unchanged_from_LPNHopFinal": true,
+   "template": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/overlap/exact-statements/05-lpn_pre_real_update.lean.template",
+   "template_sha256": "f059263e27261004bf9555651e8ccaf017c76fc1959b0d018d4bd8c6f5be6884",
+   "exact_status": "NOT_RUN",
+   "apply_status": "NOT_RUN",
+   "project_imports": [
+    "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs"
+   ],
+   "whole_goal_assumptions": "Exactly actual theorem premises, no added goal hypothesis.",
+   "old_candidate": "/private/tmp/io-sprg-proof-notes/LPNHopFinal/05-lpn_pre_real_update.lean.candidate",
+   "old_candidate_sha256": "8b04833c8d008b9a2fa694c4c03ac27a26f43d875512f31cde274fe5cf460568",
+   "docstring_sha256": "bac7761c807d5a5ac3e8cb73c32b498c8e57d3146fef6d4f1919a18da193f12b",
+   "status": "FULL_UNRUN_BODY",
+   "root_pretest_focus": "Selected repetition and chain order split."
+  }
+ },
+ {
+  "name": "lpn_pre_uniform_update",
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections.lean",
+  "candidate": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/06-lpn_pre_uniform_update.lean.candidate",
+  "probe": "M4LPNDefs_V1_06-lpn_pre_uniform_update",
+  "doc": "A canonical uniform challenge gives the next chain word after the fixed seed translation.\nPreprocessing glue for [JLS26, Lemma 4.2, p. 19]. The Boolean seed offset is retained.\n\n**Proof sketch.** Read preprocessing and the chain, substitute the supplied canonical\nmatrix/value equations, and compare public coordinates. The selected vector is exactly\nthe challenged vector plus the fixed Boolean seed; all other coordinates retain their\nfrozen branch. Uniform translation is applied later, conditioned on this seed.",
+  "marker": "\nend Internal\n",
+  "original_metadata": {
+   "index": 6,
+   "name": "TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.lpn_pre_uniform_update",
+   "original_or_new": "PROPOSED_NEW_HELPER",
+   "placement": "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Sections",
+   "candidate": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/06-lpn_pre_uniform_update.lean.candidate",
+   "candidate_sha256": "4977e16a2137bfbcb17931701af678b0382e06cf52908f03d3e1ec1bdbd411ee",
+   "header_sha256": "a72e68af50b89bac068cce5bd1fe019b75ecc797fe599470fb59f0cb75010e16",
+   "header_unchanged_from_LPNHopFinal": true,
+   "template": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/overlap/exact-statements/06-lpn_pre_uniform_update.lean.template",
+   "template_sha256": "eb39caf64b5494b04fcc49f9bb6d84474bbe7fa07983b75b554c9314795e1a44",
+   "exact_status": "NOT_RUN",
+   "apply_status": "NOT_RUN",
+   "project_imports": [
+    "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs"
+   ],
+   "whole_goal_assumptions": "Exactly actual theorem premises, no added goal hypothesis.",
+   "old_candidate": "/private/tmp/io-sprg-proof-notes/LPNHopFinal/06-lpn_pre_uniform_update.lean.candidate",
+   "old_candidate_sha256": "9ec908d8e1a981ea0055cee8c783e7d4b5b5a746337e1d4b781fb59b2bc5f3ad",
+   "docstring_sha256": "07d9e40cc77b7e92001a50c981c82648973b45eb7b555362a2a6efab5c3bb068",
+   "status": "FULL_UNRUN_BODY",
+   "root_pretest_focus": "Fixed Boolean offset and next-chain order split."
+  }
+ },
+ {
+  "name": "lpn_real_section",
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections.lean",
+  "candidate": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/07-lpn_real_section.lean.candidate",
+  "probe": "M4LPNDefs_V1_07-lpn_real_section",
+  "doc": "A fixed-advice canonical real experiment is the selected-repetition section of the chain.\nActual-sample glue for [JLS26, Lemma 4.2, p. 19].\n\n**Proof sketch.** Reindex the canonical sample seeds using the coherent matrix/secret/noise\nequivalence and the public uprob_comp_equiv law. The public probability/expectation and\nproduct bridges expose independent matrix, repetition and adversary coins. Apply the\npointwise preprocessing identity using both seed-coordinate equations.",
+  "marker": "\nend Internal\n",
+  "original_metadata": {
+   "index": 7,
+   "name": "TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.lpn_real_section",
+   "original_or_new": "PROPOSED_NEW_HELPER",
+   "placement": "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Sections",
+   "candidate": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/07-lpn_real_section.lean.candidate",
+   "candidate_sha256": "26e5d314283b652745a88191c1b11abb30704bd1c909454d1244f2d6a925ec42",
+   "header_sha256": "5f35dcaae12bc535494db7c830c0c382883c015457f426992485f8d88cfa4a49",
+   "header_unchanged_from_LPNHopFinal": true,
+   "template": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/overlap/exact-statements/07-lpn_real_section.lean.template",
+   "template_sha256": "4020344086d0aaceb22caacbc546769bce4d359142267e3896b69186d48ca317",
+   "exact_status": "NOT_RUN",
+   "apply_status": "NOT_RUN",
+   "project_imports": [
+    "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs"
+   ],
+   "whole_goal_assumptions": "Exactly actual theorem premises, no added goal hypothesis.",
+   "old_candidate": "/private/tmp/io-sprg-proof-notes/LPNHopFinal/07-lpn_real_section.lean.candidate",
+   "old_candidate_sha256": "52c64eae7740b43970252fa46ff61479d74e9401729118983fdb79cc57c9fc41",
+   "docstring_sha256": "d8ef1957202f7cc46a3421940f5b273705995f98160549cd721b85253285fae1",
+   "status": "FULL_UNRUN_BODY",
+   "root_pretest_focus": "Typed combined seed/coin uprob equivalence and exact sample coordinates."
+  }
+ },
+ {
+  "name": "lpn_uniform_section",
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections.lean",
+  "candidate": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/08-lpn_uniform_section.lean.candidate",
+  "probe": "M4LPNDefs_V1_08-lpn_uniform_section",
+  "doc": "A fixed-advice canonical uniform challenge gives the next-chain section exactly.\nConditional-translation glue for [JLS26, Lemma 4.2, p. 19].\n\n**Proof sketch.** Relabel the canonical matrix/value coordinates with uprob_comp_equiv,\nthen expose the independent products through the existing expectation bridges.\nThe preprocessing reader gives fresh values plus the fixed Boolean seed. Conditioned\non that seed, pushesUniform_add_right removes this translation without changing the\nuniform vector law. The same fixed matrix, advice and adversary coins remain.",
+  "marker": "\nend Internal\n",
+  "original_metadata": {
+   "index": 8,
+   "name": "TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.lpn_uniform_section",
+   "original_or_new": "PROPOSED_NEW_HELPER",
+   "placement": "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Sections",
+   "candidate": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/08-lpn_uniform_section.lean.candidate",
+   "candidate_sha256": "45dbc08a0a5747ee87d30e037b576931b11804e2c5bf8e2b58f3ae2865331844",
+   "header_sha256": "197faaad03bbb6f5a5e495fa1eaaec6a49509e4dac76460d23ed42781689c76a",
+   "header_unchanged_from_LPNHopFinal": true,
+   "template": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/overlap/exact-statements/08-lpn_uniform_section.lean.template",
+   "template_sha256": "0a0118a7f4cda97b0cd43f5c647568dc090e54cc109e1c9cf91be23081b19850",
+   "exact_status": "NOT_RUN",
+   "apply_status": "NOT_RUN",
+   "project_imports": [
+    "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs"
+   ],
+   "whole_goal_assumptions": "Exactly actual theorem premises, no added goal hypothesis.",
+   "old_candidate": "/private/tmp/io-sprg-proof-notes/LPNHopFinal/08-lpn_uniform_section.lean.candidate",
+   "old_candidate_sha256": "7ae593f885a7a353fcd1c85b9fcfc8ba76e058c80670e44f1520195d6c3df3cd",
+   "docstring_sha256": "d41a55d46bb4272c2223f651dc28ae2904234d4b83d28ab1638066fa235964c7",
+   "status": "FULL_UNRUN_BODY",
+   "root_pretest_focus": "Typed combined coordinate/coin relabelling; fixed-seed translation hnorm/htranslate."
+  }
+ },
+ {
+  "name": "lpn_fix_advice",
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Hop.lean",
+  "candidate": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/09-lpn_fix_advice.lean.candidate",
+  "probe": "M4LPNDefs_V1_09-lpn_fix_advice",
+  "doc": "One advice tuple dominates the adjacent LPN chain gap under the actual nuisance law.\nAveraging glue for [JLS26, Lemma 4.2, p. 19]. No realizer occurs in this statement.\n\n**Proof sketch.** Keep the actual generator draw, buckets, seed, repetition table, uniform\npublic vectors and comparison tail in one finite nuisance product. The fixed-advice\nsection identities expose the canonical challenged matrix and fresh selected value.\nCompose the existing typed product/Fubini laws, move that matrix before the seed/table,\nand use the public coordinate-resampling law. The two acceptance probabilities are\ntherefore averages under the same actual law. Absolute-gap convexity and the existing\nfinite averaging selector fix one tuple before any machine realizer is introduced.",
+  "marker": "\nend Internal\n",
+  "original_metadata": {
+   "index": 9,
+   "name": "TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.lpn_fix_advice",
+   "original_or_new": "PROPOSED_NEW_HELPER",
+   "placement": "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Hop",
+   "candidate": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/09-lpn_fix_advice.lean.candidate",
+   "candidate_sha256": "149aa8800a439758b711cbecd8407975a235b555ea6e1b2b8334d8ecd3fb1508",
+   "header_sha256": "decc6358db1ba59ef01614f337b2f7a9371a06fc524d2db2065a9352112cfe16",
+   "header_unchanged_from_LPNHopFinal": true,
+   "template": "/private/tmp/io-sprg-proof-notes/M4LPNPrepared/overlap/exact-statements/09-lpn_fix_advice.lean.template",
+   "template_sha256": "6a508eb429f7da0f6ea6af2e08d9c481849e5e51337789a4a28f5ec08fec0ebd",
+   "exact_status": "NOT_RUN",
+   "apply_status": "NOT_RUN",
+   "project_imports": [
+    "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs"
+   ],
+   "whole_goal_assumptions": "Exactly actual theorem premises, no added goal hypothesis.",
+   "old_candidate": "/private/tmp/io-sprg-proof-notes/LPNHopFinal/09-lpn_fix_advice.lean.candidate",
+   "old_candidate_sha256": "a4b22fb495a2635a5587a4064282fec7afe5c95216d6cccf63c2d785ad72bad6",
+   "docstring_sha256": "457eefc1363c9d06f299f6acd666e0779871f45bc008e26a689e9ab3ef1f07fc",
+   "status": "FULL_UNRUN_BODY",
+   "root_pretest_focus": "Typed hsplit/hmove/resampling; actual chain normalization hchain; no broad generic simp_rw."
+  }
+ }
+]

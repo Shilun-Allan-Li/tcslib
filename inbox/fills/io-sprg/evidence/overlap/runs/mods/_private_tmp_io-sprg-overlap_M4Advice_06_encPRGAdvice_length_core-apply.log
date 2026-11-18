@@ -1,0 +1,1194 @@
+`apply?` stopped because it was running out of time.
+You may get better results using `set_option maxHeartbeats 0`.
+Try this:
+  [apply] refine (Nat.div_le_iff_le_mul_of_dvd ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (N + 1) * S ^ 3 ≠ 0
+  -- ⊢ (N + 1) * S ^ 3 ∣
+    (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length /
+      ((N + 1) * S ^ 3) ≤
+    100
+Try this:
+  [apply] refine List.getElem?_eq_none_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform)))))[100 * ((N + 1) * S ^ 3)]? =
+    none
+Try this:
+  [apply] refine List.none_eq_getElem?_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ none =
+    (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform)))))[100 * ((N + 1) * S ^ 3)]?
+Try this:
+  [apply] refine List.drop_eq_nil_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ List.drop (100 * ((N + 1) * S ^ 3))
+      (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))) =
+    []
+Try this:
+  [apply] refine List.eraseIdx_eq_self.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).eraseIdx
+      (100 * ((N + 1) * S ^ 3)) =
+    pairEncode (Candidates.natToList (κ + 2) p)
+      (pairEncode (List.replicate N true)
+        (pairEncode bucketCode
+          (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix) (Encoding.Modular.encodeMatrix (κ + 1) uniform))))
+Try this:
+  [apply] refine (List.take_eq_self_iff
+        (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform)))))).mp
+    ?_
+  -- Remaining subgoals:
+  -- ⊢ List.take (100 * ((N + 1) * S ^ 3))
+      (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))) =
+    pairEncode (Candidates.natToList (κ + 2) p)
+      (pairEncode (List.replicate N true)
+        (pairEncode bucketCode
+          (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix) (Encoding.Modular.encodeMatrix (κ + 1) uniform))))
+Try this:
+  [apply] refine (List.take_self_eq_iff
+        (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform)))))).mp
+    ?_
+  -- Remaining subgoals:
+  -- ⊢ pairEncode (Candidates.natToList (κ + 2) p)
+      (pairEncode (List.replicate N true)
+        (pairEncode bucketCode
+          (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix) (Encoding.Modular.encodeMatrix (κ + 1) uniform)))) =
+    List.take (100 * ((N + 1) * S ^ 3))
+      (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix) (Encoding.Modular.encodeMatrix (κ + 1) uniform)))))
+Try this:
+  [apply] refine Nat.le_of_lt_succ ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length <
+    (100 * ((N + 1) * S ^ 3)).succ
+Try this:
+  [apply] refine Nat.le_of_ble_eq_true ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+            (pairEncode (List.replicate N true)
+              (pairEncode bucketCode
+                (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                  (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length.ble
+      (100 * ((N + 1) * S ^ 3)) =
+    true
+Try this:
+  [apply] refine Nat.le_of_succ_le_succ ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length.succ ≤
+    (100 * ((N + 1) * S ^ 3)).succ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.le_trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_le_add_iff_left.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.le_of_not_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬100 * ((N + 1) * S ^ 3) <
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length
+Try this:
+  [apply] refine Nat.le_of_not_ge ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬(pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ≥
+      100 * ((N + 1) * S ^ 3)
+Try this:
+  [apply] refine Nat.not_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬100 * ((N + 1) * S ^ 3) <
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.le_of_mul_le_mul_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.succ_le_succ_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length.succ ≤
+    (100 * ((N + 1) * S ^ 3)).succ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.le_of_add_left_le ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.add_one_le_add_one_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length +
+      1 ≤
+    100 * ((N + 1) * S ^ 3) + 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_le_mul_left_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.sub_le_sub_iff_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.lt_add_one_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length <
+    100 * ((N + 1) * S ^ 3) + 1
+Try this:
+  [apply] refine Nat.ge_of_not_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬100 * ((N + 1) * S ^ 3) <
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.le_of_mul_le_mul_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.le_of_succ_le ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length.succ ≤
+    100 * ((N + 1) * S ^ 3)
+Try this:
+  [apply] refine Nat.le_of_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length =
+    100 * ((N + 1) * S ^ 3)
+Try this:
+  [apply] refine Nat.le_of_not_le ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬100 * ((N + 1) * S ^ 3) ≤
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length
+Try this:
+  [apply] refine Nat.le_iff_lt_or_eq.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length <
+      100 * ((N + 1) * S ^ 3) ∨
+    (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length =
+      100 * ((N + 1) * S ^ 3)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.le_of_add_right_le ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.le_of_add_le_add_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.le_of_not_gt ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬(pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length >
+      100 * ((N + 1) * S ^ 3)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_le_mul_right_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.le.intro ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.le_of_lt_add_one ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length <
+    100 * ((N + 1) * S ^ 3) + 1
+Try this:
+  [apply] refine Nat.lt_succ_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length <
+    (100 * ((N + 1) * S ^ 3)).succ
+Try this:
+  [apply] refine Nat.lt_succ.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length <
+    (100 * ((N + 1) * S ^ 3)).succ
+Try this:
+  [apply] refine Nat.le_of_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length <
+    100 * ((N + 1) * S ^ 3)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.le_of_sub_le_sub_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_le_add_iff_right.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.le_of_sub_eq_zero ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length -
+      100 * ((N + 1) * S ^ 3) =
+    0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.le_of_add_le_add_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Int.ofNat_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ≤
+    ↑(100 * ((N + 1) * S ^ 3))
+Try this:
+  [apply] refine Nat.le_of_dvd ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < 100 * ((N + 1) * S ^ 3)
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ∣
+    100 * ((N + 1) * S ^ 3)
+Try this:
+  [apply] refine Nat.le_of_pred_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length.pred <
+    100 * ((N + 1) * S ^ 3)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.le_of_sub_le_sub_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.le_iff_lt_add_one.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length <
+    100 * ((N + 1) * S ^ 3) + 1
+Try this:
+  [apply] refine Nat.mul_self_le_mul_self_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length *
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ≤
+    100 * ((N + 1) * S ^ 3) * (100 * ((N + 1) * S ^ 3))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.pow_dvd_pow_iff_le_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.pow_dvd_pow_iff_le_right'.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.lt_one_add_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length <
+    1 + 100 * ((N + 1) * S ^ 3)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.sub_le_sub_iff_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.le_of_mod_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ 100 * ((N + 1) * S ^ 3) %
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length <
+    100 * ((N + 1) * S ^ 3)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.le_of_lt_add_of_dvd ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Nat.one_le_div_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 <
+    (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length
+  -- ⊢ 1 ≤
+    100 * ((N + 1) * S ^ 3) /
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length
+Try this:
+  [apply] refine (Nat.le_iff_ne_zero_of_dvd ?_ ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ≠
+    0
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ∣
+    100 * ((N + 1) * S ^ 3)
+  -- ⊢ 100 * ((N + 1) * S ^ 3) ≠ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.pow_le_pow_iff_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.sub_eq_zero_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length -
+      100 * ((N + 1) * S ^ 3) =
+    0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.pow_le_pow_iff_left fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.le_of_testBit ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ℕ),
+    (pairEncode (Candidates.natToList (κ + 2) p)
+                (pairEncode (List.replicate N true)
+                  (pairEncode bucketCode
+                    (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                      (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length.testBit
+          i =
+        true →
+      (100 * ((N + 1) * S ^ 3)).testBit i = true
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Fin.mk_le_mk.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine BitVec.none_eq_getElem?_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine BitVec.getElem?_eq_none_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (UInt32.ofNat_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length <
+    UInt32.size
+  -- ⊢ 100 * ((N + 1) * S ^ 3) < UInt32.size
+  -- ⊢ UInt32.ofNat
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ≤
+    UInt32.ofNat (100 * ((N + 1) * S ^ 3))
+Try this:
+  [apply] refine (UInt32.ofNatLT_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length <
+    UInt32.size
+  -- ⊢ 100 * ((N + 1) * S ^ 3) < UInt32.size
+  -- ⊢ UInt32.ofNatLT
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length
+      ?_ ≤
+    UInt32.ofNatLT (100 * ((N + 1) * S ^ 3)) ?_
+Try this:
+  [apply] refine (UInt64.ofNat_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length <
+    UInt64.size
+  -- ⊢ 100 * ((N + 1) * S ^ 3) < UInt64.size
+  -- ⊢ UInt64.ofNat
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ≤
+    UInt64.ofNat (100 * ((N + 1) * S ^ 3))
+Try this:
+  [apply] refine (UInt16.ofNat_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length <
+    UInt16.size
+  -- ⊢ 100 * ((N + 1) * S ^ 3) < UInt16.size
+  -- ⊢ UInt16.ofNat
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ≤
+    UInt16.ofNat (100 * ((N + 1) * S ^ 3))
+Try this:
+  [apply] refine (UInt8.ofNatLT_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length <
+    UInt8.size
+  -- ⊢ 100 * ((N + 1) * S ^ 3) < UInt8.size
+  -- ⊢ UInt8.ofNatLT
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length
+      ?_ ≤
+    UInt8.ofNatLT (100 * ((N + 1) * S ^ 3)) ?_
+Try this:
+  [apply] refine (UInt64.ofNatLT_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length <
+    UInt64.size
+  -- ⊢ 100 * ((N + 1) * S ^ 3) < UInt64.size
+  -- ⊢ UInt64.ofNatLT
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length
+      ?_ ≤
+    UInt64.ofNatLT (100 * ((N + 1) * S ^ 3)) ?_
+Try this:
+  [apply] refine (USize.ofNatLT_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length <
+    USize.size
+  -- ⊢ 100 * ((N + 1) * S ^ 3) < USize.size
+  -- ⊢ USize.ofNatLT
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length
+      ?_ ≤
+    USize.ofNatLT (100 * ((N + 1) * S ^ 3)) ?_
+Try this:
+  [apply] refine (USize.ofNat_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length <
+    USize.size
+  -- ⊢ 100 * ((N + 1) * S ^ 3) < USize.size
+  -- ⊢ USize.ofNat
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ≤
+    USize.ofNat (100 * ((N + 1) * S ^ 3))
+Try this:
+  [apply] refine (UInt16.ofNatLT_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length <
+    UInt16.size
+  -- ⊢ 100 * ((N + 1) * S ^ 3) < UInt16.size
+  -- ⊢ UInt16.ofNatLT
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length
+      ?_ ≤
+    UInt16.ofNatLT (100 * ((N + 1) * S ^ 3)) ?_
+Try this:
+  [apply] refine (UInt8.ofNat_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length <
+    UInt8.size
+  -- ⊢ 100 * ((N + 1) * S ^ 3) < UInt8.size
+  -- ⊢ UInt8.ofNat
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ≤
+    UInt8.ofNat (100 * ((N + 1) * S ^ 3))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (List.replicate_sublist_replicate ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (List.range'_subset_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.range'_subset_right_1.mp fun ⦃a⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.range_subset.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ List.range
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ⊆
+    List.range (100 * ((N + 1) * S ^ 3))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.range'_sublist_right.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.range_sublist.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.range
+        (pairEncode (Candidates.natToList (κ + 2) p)
+            (pairEncode (List.replicate N true)
+              (pairEncode bucketCode
+                (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                  (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length).Sublist
+    (List.range (100 * ((N + 1) * S ^ 3)))
+Try this:
+  [apply] refine String.Pos.Raw.mk_le_mk.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {
+      byteIdx :=
+        (pairEncode (Candidates.natToList (κ + 2) p)
+            (pairEncode (List.replicate N true)
+              (pairEncode bucketCode
+                (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                  (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length } ≤
+    { byteIdx := 100 * ((N + 1) * S ^ 3) }
+Try this:
+  [apply] refine Nat.compare_ne_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compare (100 * ((N + 1) * S ^ 3))
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ≠
+    Ordering.lt
+Try this:
+  [apply] refine Nat.isLE_compare.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (compare
+        (pairEncode (Candidates.natToList (κ + 2) p)
+            (pairEncode (List.replicate N true)
+              (pairEncode bucketCode
+                (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                  (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length
+        (100 * ((N + 1) * S ^ 3))).isLE =
+    true
+Try this:
+  [apply] refine Nat.isGE_compare.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (compare (100 * ((N + 1) * S ^ 3))
+        (pairEncode (Candidates.natToList (κ + 2) p)
+            (pairEncode (List.replicate N true)
+              (pairEncode bucketCode
+                (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                  (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length).isGE =
+    true
+Try this:
+  [apply] refine Nat.compare_ne_gt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compare
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length
+      (100 * ((N + 1) * S ^ 3)) ≠
+    Ordering.gt
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (List.prefix_take_le_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (ISize.ofNat_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length <
+    2 ^ (System.Platform.numBits - 1)
+  -- ⊢ 100 * ((N + 1) * S ^ 3) < 2 ^ (System.Platform.numBits - 1)
+  -- ⊢ ISize.ofNat
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ≤
+    ISize.ofNat (100 * ((N + 1) * S ^ 3))
+Try this:
+  [apply] refine (Int8.ofNat_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length <
+    2 ^ 7
+  -- ⊢ 100 * ((N + 1) * S ^ 3) < 2 ^ 7
+  -- ⊢ Int8.ofNat
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ≤
+    Int8.ofNat (100 * ((N + 1) * S ^ 3))
+Try this:
+  [apply] refine (Int16.ofNat_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length <
+    2 ^ 15
+  -- ⊢ 100 * ((N + 1) * S ^ 3) < 2 ^ 15
+  -- ⊢ Int16.ofNat
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ≤
+    Int16.ofNat (100 * ((N + 1) * S ^ 3))
+Try this:
+  [apply] refine (Int64.ofNat_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length <
+    2 ^ 63
+  -- ⊢ 100 * ((N + 1) * S ^ 3) < 2 ^ 63
+  -- ⊢ Int64.ofNat
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ≤
+    Int64.ofNat (100 * ((N + 1) * S ^ 3))
+Try this:
+  [apply] refine (Int32.ofNat_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length <
+    2 ^ 31
+  -- ⊢ 100 * ((N + 1) * S ^ 3) < 2 ^ 31
+  -- ⊢ Int32.ofNat
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ≤
+    Int32.ofNat (100 * ((N + 1) * S ^ 3))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Vector.none_eq_getElem?_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Vector.getElem?_eq_none_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Rat.natCast_le_natCast.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ≤
+    ↑(100 * ((N + 1) * S ^ 3))
+Try this:
+  [apply] refine Std.Sat.CNF.Clause.of_maxLiteral_eq_some ?_ ?_
+    (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length
+    ?_
+  -- Remaining subgoals:
+  -- ⊢ Std.Sat.CNF.Clause ℕ
+  -- ⊢ Std.Sat.CNF.Clause.maxLiteral ?_ = some (100 * ((N + 1) * S ^ 3))
+  -- ⊢ Std.Sat.CNF.Clause.Mem
+    (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length
+    ?_
+Try this:
+  [apply] refine Std.Sat.CNF.of_maxLiteral_eq_some' ?_ ?_ ?_ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ Std.Sat.CNF ℕ
+  -- ⊢ Std.Sat.CNF.maxLiteral ?_ = some (100 * ((N + 1) * S ^ 3))
+  -- ⊢ Std.Sat.CNF.Clause ℕ
+  -- ⊢ ?_ ∈ ?_
+  -- ⊢ Std.Sat.CNF.Clause.maxLiteral ?_ =
+    some
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length
+Try this:
+  [apply] refine Std.Sat.CNF.of_maxLiteral_eq_some ?_ ?_
+    (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length
+    ?_
+  -- Remaining subgoals:
+  -- ⊢ Std.Sat.CNF ℕ
+  -- ⊢ Std.Sat.CNF.maxLiteral ?_ = some (100 * ((N + 1) * S ^ 3))
+  -- ⊢ Std.Sat.CNF.Mem
+    (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length
+    ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.left_le_of_mem_range' ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Int.le_of_ofNat_le_ofNat ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ≤
+    ↑(100 * ((N + 1) * S ^ 3))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Multiset.replicate_le_replicate ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Multiset.range_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Multiset.range
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ≤
+    Multiset.range (100 * ((N + 1) * S ^ 3))
+Try this:
+  [apply] refine Multiset.range_subset.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Multiset.range
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ⊆
+    Multiset.range (100 * ((N + 1) * S ^ 3))
+Try this:
+  [apply] refine Finset.mem_range_le ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ∈
+    Finset.range (100 * ((N + 1) * S ^ 3))
+Try this:
+  [apply] refine Finset.range_subset_range.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Finset.range
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ⊆
+    Finset.range (100 * ((N + 1) * S ^ 3))
+Try this:
+  [apply] refine Finset.mem_range_succ_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ∈
+    Finset.range (100 * ((N + 1) * S ^ 3)).succ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Fin.natCast_le_natCast ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Fin.nonempty_embedding_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Nonempty
+    (Fin
+        (pairEncode (Candidates.natToList (κ + 2) p)
+            (pairEncode (List.replicate N true)
+              (pairEncode bucketCode
+                (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                  (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ↪
+      Fin (100 * ((N + 1) * S ^ 3)))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (nsmul_le_nsmul_iff_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pow_le_pow_iff_right' ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.descFactorial_pos.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 <
+    (100 * ((N + 1) * S ^ 3)).descFactorial
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length
+Try this:
+  [apply] refine Nat.choose_ne_zero_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (100 * ((N + 1) * S ^ 3)).choose
+      (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ≠
+    0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pow_le_pow_iff_right₀ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pow_le_pow_iff_right_of_lt_one₀ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.cast_le.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pow_dvd_pow_iff (fun a => ?_) ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (PNat.mk_le_mk
+        (pairEncode (Candidates.natToList (κ + 2) p)
+            (pairEncode (List.replicate N true)
+              (pairEncode bucketCode
+                (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                  (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length
+        (100 * ((N + 1) * S ^ 3)) ?_ ?_).mp
+    ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 <
+    (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length
+  -- ⊢ 0 < 100 * ((N + 1) * S ^ 3)
+  -- ⊢ ⟨(pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length,
+      ?_⟩ ≤
+    ⟨100 * ((N + 1) * S ^ 3), ?_⟩
+Try this:
+  [apply] refine Nat.succPNat_le_succPNat.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length.succPNat ≤
+    (100 * ((N + 1) * S ^ 3)).succPNat
+Try this:
+  [apply] refine ENat.coe_le_coe.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ≤
+    ↑(100 * ((N + 1) * S ^ 3))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.ModEq.le_of_lt_add ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.le_of_lt_minimalPeriod_of_iterate_eq ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.le_of_mem_primeFactorsList ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ∈
+    (100 * ((N + 1) * S ^ 3)).primeFactorsList
+Try this:
+  [apply] refine Nat.le_of_mem_primeFactors ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ∈
+    (100 * ((N + 1) * S ^ 3)).primeFactors
+Try this:
+  [apply] refine Nat.divisor_le ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ∈
+    (100 * ((N + 1) * S ^ 3)).divisors
+Try this:
+  [apply] refine EReal.natCast_le_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(pairEncode (Candidates.natToList (κ + 2) p)
+          (pairEncode (List.replicate N true)
+            (pairEncode bucketCode
+              (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+                (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ≤
+    ↑(100 * ((N + 1) * S ^ 3))
+Try this:
+  [apply] refine Composition.blocks_le ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ Composition (100 * ((N + 1) * S ^ 3))
+  -- ⊢ (pairEncode (Candidates.natToList (κ + 2) p)
+        (pairEncode (List.replicate N true)
+          (pairEncode bucketCode
+            (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+              (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ∈
+    Composition.blocks ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.nth_le_nth fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.le_of_nth_le_nth_of_lt_card ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.minSqFac_le_of_dvd ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine RankCondition.le_of_fin_surjective ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine StrongRankCondition.le_of_fin_injective ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_fin_injective ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_fin_surjective ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Basis.card_le_card_of_linearIndependent_aux (100 * ((N + 1) * S ^ 3)) ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+/private/tmp/io-sprg-overlap/M4Advice_06_encPRGAdvice_length_core-apply.lean:12:0: warning: declaration uses 'sorry'
+/private/tmp/io-sprg-overlap/M4Advice_06_encPRGAdvice_length_core-apply.lean:13:5: warning: unused variable `hκ`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/M4Advice_06_encPRGAdvice_length_core-apply.lean:13:18: warning: unused variable `hN`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/M4Advice_06_encPRGAdvice_length_core-apply.lean:13:35: warning: unused variable `hpub`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/M4Advice_06_encPRGAdvice_length_core-apply.lean:14:30: warning: unused variable `hbucket`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/M4Advice_06_encPRGAdvice_length_core-apply.lean:16:5: warning: unused variable `hmatrix`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

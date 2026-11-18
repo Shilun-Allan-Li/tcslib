@@ -1,0 +1,76 @@
+2026-11-18T20:35:45.042078+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections.lean:67:2: error: Tactic `apply` failed: could not unify the conclusion of `congrArg fun bs =>
+  P.publicSeed (P.kappaOf L) (π (P.kappaOf L)) bs false`
+  P.publicSeed (P.kappaOf L) (π (P.kappaOf L)) ?m.95 false = P.publicSeed (P.kappaOf L) (π (P.kappaOf L)) ?m.96 false
+with the goal
+  (have A := M;
+    have b := fun i => ∑ a, M i a * rep.1 a + P.noiseValue (P.kappaOf L) (π (P.kappaOf L)) (rep.2 i);
+    have I := (w.I, w.buckets, A);
+    have bs := fun k =>
+      if ↑k < ↑w.hop then w.uniform k
+      else
+        if ↑k = ↑w.hop then fun i => b i + ↑(w.draw.1 i).toNat
+        else P.lpnVector (P.kappaOf L) (π (P.kappaOf L)) A w.draw.1 (w.draw.2 k).1 (w.draw.2 k).2;
+    P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) I (P.publicSeed (P.kappaOf L) (π (P.kappaOf L)) bs false) w.tail) =
+    P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M) (w.draw.1, Function.update w.draw.2 k rep)
+          w.uniform ↑w.hop)
+        false)
+      w.tail
+
+Note: The full type of `congrArg fun bs => P.publicSeed (P.kappaOf L) (π (P.kappaOf L)) bs false` is
+  ?m.95 = ?m.96 →
+    P.publicSeed (P.kappaOf L) (π (P.kappaOf L)) ?m.95 false = P.publicSeed (P.kappaOf L) (π (P.kappaOf L)) ?m.96 false
+
+P : Params
+π : PrimeSchedule
+L : ℕ
+h : L = P.ℓ (P.kappaOf L)
+w : P.LPNAdvice π L
+k : Fin (P.kappaOf L)
+hk : ↑k = ↑w.hop
+M : Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p)
+rep :
+  (Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+    (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p)
+x : P.LPNChal π L
+hM : P.lpnMatrixAt π L h x = M
+hb : P.lpnValuesAt π L h x = fun i => ∑ a, M i a * rep.1 a + P.noiseValue (P.kappaOf L) (π (P.kappaOf L)) (rep.2 i)
+⊢ (have A := M;
+    have b := fun i => ∑ a, M i a * rep.1 a + P.noiseValue (P.kappaOf L) (π (P.kappaOf L)) (rep.2 i);
+    have I := (w.I, w.buckets, A);
+    have bs := fun k =>
+      if ↑k < ↑w.hop then w.uniform k
+      else
+        if ↑k = ↑w.hop then fun i => b i + ↑(w.draw.1 i).toNat
+        else P.lpnVector (P.kappaOf L) (π (P.kappaOf L)) A w.draw.1 (w.draw.2 k).1 (w.draw.2 k).2;
+    P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) I (P.publicSeed (P.kappaOf L) (π (P.kappaOf L)) bs false) w.tail) =
+    P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M) (w.draw.1, Function.update w.draw.2 k rep)
+          w.uniform ↑w.hop)
+        false)
+      w.tail
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections): no fresh .olean produced
+        2.61 real         1.66 user         1.03 sys
+          2329133056  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              183742  page reclaims
+                  11  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  17  voluntary context switches
+                6044  involuntary context switches
+            32089146  instructions retired
+            15320078  cycles elapsed
+             1638736  peak memory footprint
+2026-11-18T20:35:47.680236+00:00 END rc=1

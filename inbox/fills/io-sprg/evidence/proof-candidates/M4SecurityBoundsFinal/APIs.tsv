@@ -1,0 +1,19 @@
+API	Current public source	Exact selected role
+Params.lpn_hop	StructuredSeed/Reductions/LPN.lean:398	For arbitrary GLOBAL tails/hops, one advice family before every realiser and every κ; invoke only when hop.val<κ
+Params.prg_hop	StructuredSeed/Reductions/PRG.lean:338	One global PRG advice family before every BG; all-κ endpoint bound
+Games.exists_advantage_hybrid_gap	TCSlib/Cryptography/Games/Advantage.lean:122	Existing single-chain worst-gap choice for lemma42; no generic telescoping proof copied
+Games.advantage_hybrid	TCSlib/Cryptography/Games/Advantage.lean:111	Existing finite telescoping bound for EACH of the two LPN chains in prop41
+Games.advantage_triangle	TCSlib/Cryptography/Games/Advantage.lean:103	Compose real-tail LPN chain, PRG hop, reverse uniform-tail chain and statistical endpoints
+Games.advantage_comm	TCSlib/Cryptography/Games/Advantage.lean:89	Reverse the uniform-tail chain bound without changing its advice
+Games.advantage_self	TCSlib/Cryptography/Games/Advantage.lean:93	κ=0 prefix endpoints coincide; no invalid Fin0 LPN index or division
+Games.advantage_eq	TCSlib/Cryptography/Games/Advantage.lean:76	Use SP-W2 acceptance endpoint readers semantically, not as free-program equalities
+Finset.exists_max_image	Mathlib/Data/Finset/Max.lean:533	One maximum over Bool×Finκ when κ>0; compares ALL2κ adjacent gaps
+Finset.sum_le_sum/sum_const/card_range	Public Mathlib finite-sum APIs	Bound each telescope term by the SAME selected realiser advantage, then count κ terms
+Params.hyb_prg_accept_eq_chain_zero	StructuredSeed/Hybrids.lean:157	Exact acceptance endpoint of true-tail chain, SP-W2
+Params.hyb_uniform_accept_eq_chain_zero	StructuredSeed/Hybrids.lean:167	Exact acceptance endpoint of false-tail chain, SP-W2
+Params.hyb_real_eq_raw	StructuredSeed/Hybrids.lean:142	Raw real game endpoint reader, same query syntax
+Params.hyb_random_eq_raw	StructuredSeed/Hybrids.lean:148	Raw comparison game endpoint reader, same query syntax
+Params.hyb_real_prg_le	StructuredSeed/Hybrids.lean:176	First statistical slack at actual errProb
+Params.hyb_uniform_random_le	StructuredSeed/Hybrids.lean:184	Second statistical slack at the SAME actual errProb
+SPRG.Raw.adv_eq	StructuredSeed/Defs.lean:255	Raw advantage reader; no foreign definition unfolding
+Nat.cast_pos/div_le_iff₀/mul_le_mul_of_nonneg_left	Existing public cast/order APIs	Clear positive κ divisor in lemma42 and multiply the selected hop bound by κ

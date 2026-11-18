@@ -1,0 +1,10 @@
+theorem lemma42 (P : Params) (π : PrimeSchedule) (A : NUPPT) :
+    ∃ (ωL : ∀ L, P.LPNAdvice π L) (ωG : ∀ N, P.PRGAdvice π N),
+      ∀ BL BG : NUPPT,
+        BL.RealizesOn (P.lpnEnc π) (A.coins.subst .var)
+          (fun L x r => P.lpnRed π A L (ωL L) x r) →
+        BG.RealizesOn P.prgEnc (A.coins.subst .var)
+          (fun N x r => P.prgRed π A N (ωG N) x r) →
+        ∀ κ, advantage (P.chainGame A true 0 κ (π κ))
+          (P.chainGame A false κ κ (π κ)) ≤
+            (κ : ℝ) * (P.lpnFamily_raw π).adv BL (P.ℓ κ) + P.G.adv BG (P.n κ) := sorry

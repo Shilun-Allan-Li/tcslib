@@ -1,0 +1,112 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Basic
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Injective and polynomially bounded LPN reduction encodings
+
+## Main definitions
+
+None; this module proves properties of the imported reduction interface.
+
+## Main results
+
+* Canonical challenge-code injectivity.
+* Advice-code injectivity and its explicit polynomial bound.
+
+## References
+
+* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
+  Assumptions*, J. ACM 73(1), Article 1, February 2026, Lemma 4.2, p. 19.
+* [PS10] R. Pass, A. Shelat, *A Course in Cryptography*, 2010, Definition 26.8.
+
+**Deviations.** Dv9, Dv12 and Dv15 retain the prime-first fixed-layout advice code;
+no encoder, algorithm, sampler or polynomial-bound definition changes.
+-/
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+
+open Complexity Turing
+open scoped BigOperators
+
+namespace Params
+
+/-- Canonical LPN challenge encoding is injective [JLS26, Lemma 4.2, p. 19].
+Dv3 reuses the assumption's width and canonical encoder unchanged.
+
+**Proof sketch.** Apply the existing `LWE.encodeChallenge_injective` with the LWE
+family's public modulus-width field. -/
+theorem lpnEnc_injective (P : Params) (π : PrimeSchedule) (L : ℕ) :
+    Function.Injective (P.lpnEnc π L) := by
+  intro x y h
+  apply LWE.encodeChallenge_injective
+    ((P.lpnFamily_raw π).toLWE.parameters L)
+    ((P.lpnFamily_raw π).toLWE.residueBits.eval L)
+    ((P.lpnFamily_raw π).toLWE.modulus_le_pow L)
+  simpa only [P.lpnEnc_eq] using h
+
+/-- All six hardwired advice fields are retained by the explicit code
+[JLS26, Lemma 4.2, p. 19]. Dv9 and Dv15 place the prime first and use fixed coordinate codes.
+
+**Proof sketch.** Split the nested pairs, recover hop/index/bucket/draw/tail coordinates,
+and use modular vector injectivity on each uniform-vector list entry. -/
+theorem encLPNAdvice_injective (P : Params) (π : PrimeSchedule) (L : ℕ) :
+    Function.Injective (P.encLPNAdvice π L) := by
+  intro a b h
+  rw [P.encLPNAdvice_eq, P.encLPNAdvice_eq] at h
+  have h0 := congrArg Prod.snd
+    (pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h)
+  have h1 := congrArg Prod.snd
+    (pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h0)
+  have h2 := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h1
+  have h3 := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _))
+    (congrArg Prod.snd h2)
+  have h4 := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _))
+    (congrArg Prod.snd h3)
+  have h5 := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _))
+    (congrArg Prod.snd h4)
+  have h6 := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _))
+    (congrArg Prod.snd h5)
+  have hh : a.hop = b.hop := Fin.ext
+    (Candidates.natToList_injOn
+      (a.hop.isLt.trans Nat.lt_two_pow_self)
+      (b.hop.isLt.trans Nat.lt_two_pow_self) (congrArg Prod.fst h2))
+  have hI : a.I = b.I := P.G.encIdx_injective (P.n (P.kappaOf L))
+    (congrArg Prod.fst h3)
+  have hb : a.buckets = b.buckets := P.encBuckets_injective (P.kappaOf L)
+    (congrArg Prod.fst h4)
+  have hd : a.draw = b.draw := P.encDraw_injective (P.kappaOf L)
+    (π (P.kappaOf L)) (congrArg Prod.fst h5)
+  have ht : a.tail = b.tail := List.ofFn_injective (congrArg Prod.fst h6)
+  have hu : a.uniform = b.uniform := List.ofFn_injective
+    (Internal.encodeList_injective_of_fixedWidth
+      (Encoding.Modular.encodeVector_injective
+        (q := (π (P.kappaOf L)).p) (length := P.n (P.kappaOf L))
+        (P.kappaOf L + 1) (π (P.kappaOf L)).le_two_pow)
+      (P.n (P.kappaOf L) * (P.kappaOf L + 1))
+      (fun row : Fin (P.n (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p =>
+        Encoding.Modular.encodeVector_length (P.kappaOf L + 1) row)
+      (congrArg Prod.snd h6))
+  apply (P.lpnAdviceProductEquiv π L).injective
+  simp only [P.lpnAdviceProductEquiv_apply]
+  exact Prod.ext hh (Prod.ext hI (Prod.ext hb (Prod.ext hd (Prod.ext ht hu))))
+
+/-- Every advice word has length at most the explicit polynomial at its independent dimension
+[JLS26, Lemma 4.2, p. 19]. Dv12 and Dv15 count hardwired data rather than sampler coins.
+
+**Proof sketch.** Use the existing pair/list/vector length equations, the exact draw
+layout, the published numeric bounds, κOf(L)≤L and PolyExpr.eval_mono; the factor4096
+covers all separators in the deliberately generous cubic majorant. -/
+theorem encLPNAdvice_length_le (P : Params) (π : PrimeSchedule) (L : ℕ)
+    (w : P.LPNAdvice π L) : (P.encLPNAdvice π L w).length ≤ P.lpnAdviceBound.eval L := sorry
+
+end Params
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed

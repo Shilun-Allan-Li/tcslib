@@ -1,0 +1,197 @@
+#!/usr/bin/env python3
+"""UNRUN candidate: validate current bound checkpoint evidence and render its summary.
+
+No Lean/cache/source mutation. Historical M0 counts/reports remain separate. This is
+not a substitute for Rule10 generation/runtime checks, kernel census, frozen guard,
+or package replay; it consumes and binds their complete current outputs.
+"""
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import runpy
+
+STANDARD = {'propext', 'Classical.choice', 'Quot.sound'}
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument('--inventory', required=True)
+    ap.add_argument('--environment-tree', required=True)
+    for name in ['static', 'statements', 'runtime', 'axioms', 'prints', 'kernel-freeze',
+                 'source-freeze', 'slot-summary', 'explicit-binding']:
+        ap.add_argument('--' + name, required=True)
+    ap.add_argument('--completed-names', help='JSON string array or whitespace list of milestone theorem FQNs; required unless final')
+    ap.add_argument('--baseline-inventory', required=True)
+    ap.add_argument('--cache-ledger')
+    ap.add_argument('--final', action='store_true')
+    ap.add_argument('--label', required=True)
+    ap.add_argument('--historical-report')
+    ap.add_argument('--report', required=True)
+    ap.add_argument('--binding', required=True)
+    args = ap.parse_args()
+    iv = runpy.run_path(str(Path(__file__).with_name('checkpoint_inventory.py')))
+    inv = iv['load'](args.inventory)
+    root = Path(inv['root'])
+    inputs = {name: Path(getattr(args, name.replace('-', '_'))) for name in
+              ['static', 'statements', 'runtime', 'axioms', 'prints', 'kernel-freeze',
+               'source-freeze', 'slot-summary', 'explicit-binding']}
+    data = {name: json.loads(path.read_text()) for name, path in inputs.items()}
+    def need(ok, message):
+        iv['need'](ok, message)
+    def bound(row, label):
+        need(row.get('head') == inv['head'] and row.get('inventory_sha256') == inv['inventory_sha256'],
+             label + ' is not bound to the exact current committed inventory')
+    for name in ['static', 'statements', 'runtime', 'axioms', 'prints', 'kernel-freeze', 'explicit-binding']:
+        bound(data[name], name)
+    static, source, runtime, ax = (data[k] for k in ['static','statements','runtime','axioms'])
+    envbind = runpy.run_path(str(Path(__file__).parent / 'io-sprg-rule10/environment_binding.py'))
+    current_environment = envbind['snapshot'](args.environment_tree, inputs['runtime'].parent)
+    need(all(data[name]['environment_sha256'] == current_environment
+             for name in ['static','runtime','axioms','prints','explicit-binding']),
+         'Evidence does not share the exact current full import environment')
+    expected_files = set(iv['files'](inv))
+    frozen = data['source-freeze']
+    need(frozen['status'] == 'FROZEN_GLOBAL_HEADERS_AND_STATEMENT_PROSE_PASS', 'Source freeze guard failed')
+    need(set(frozen['current_source_sha256']) == expected_files and all(
+        frozen['current_source_sha256'][f] == inv['source_sha256'][f] for f in expected_files),
+        'Precommit/current freeze source hashes do not match committed source inventory')
+    need(static['owners'] == len(inv['owners']) and static['freeze_source_hashes_match'], 'Static owner coverage differs')
+    need(all(row['rc'] == 0 for name,row in static['checks'].items() if name != 'campaign'), 'Static check failure')
+    need(not static['new_campaign_fail_warn'] and static['all_widths_pass'], 'New style or width failure')
+    need(runtime['complete'] and runtime['records_all_ok'] and runtime['canonical_pass'], 'Runtime matrix incomplete/failing')
+    need(runtime['expected_owners'] == inv['owners'] and runtime['owner_count'] == len(inv['owners']), 'Runtime owner set differs')
+    need(runtime['expected_seal_probes'] == 4 * len(inv['owners']), 'Seal count differs from exact owner x4 set')
+    need(runtime['completed'] == runtime['planned'] == len(runtime['probes']) ==
+         runtime['expected_seal_probes'] + runtime['expected_control_probes'], 'Complete plan totals differ')
+    run = inputs['runtime'].parent
+    for variant in sorted(iv['VARIANTS']):
+        need(json.loads((run / ('ctlcheck-' + variant + '.json')).read_text())['all_ok'],
+             'Per-control exact diagnostic checker failed: ' + variant)
+    need(not ax['root_nonstandard'] and ax['owners'] == inv['owners'], 'Axiom/root owner violation')
+    census_path = inputs['axioms'].parent / 'stored-census.json'
+    census = json.loads(census_path.read_text())
+    need(data['prints']['census_sha256'] == hashlib.sha256(census_path.read_bytes()).hexdigest(),
+         'Print comparison uses a different stored census')
+    current_types = inputs['axioms'].parent / 'StmtDump.jsonl'
+    type_inputs = data['kernel-freeze']['input_sha256']
+    need(str(current_types.resolve()) in type_inputs and
+         type_inputs[str(current_types.resolve())] == hashlib.sha256(current_types.read_bytes()).hexdigest(),
+         'Frozen comparison does not use the complete current graph full-type dump')
+    need(len(census) == ax['stored_constants'] and len({r['name'] for r in census}) == len(census),
+         'Stored census name coverage differs')
+    public = [r for r in census if r['kind']=='theorem' and not r['private'] and not r['internal']]
+    need(data['prints']['all_match_current_graph'] and data['prints']['printed_public_theorems'] == len(public),
+         'Complete public axiom-print comparison differs')
+    need(data['kernel-freeze']['all_frozen_types_preserved'] and
+         data['kernel-freeze']['current_types'] == ax['public_types'], 'Frozen full kernel types changed/incomplete')
+    explicit = data['explicit-binding']
+    need(explicit['source_sha256'] == {f:inv['source_sha256'][f] for f in iv['files'](inv)},
+         'Explicit-unfold source coverage differs')
+    need(explicit['foreign_items'] == 0 and explicit['environment_sha256'] == runtime['environment_sha256'],
+         'Foreign unfolding or explicit-scan environment mismatch')
+    slot = data['slot-summary']
+    need(slot['status'] == 'PASS_WITH_EXACT_RECORDED_HISTORICAL_VIOLATION'
+         and slot['max_concurrent_job_wrappers'] == 2
+         and slot['all_tagged_wrapper_acquisitions_serial'] is False
+         and slot['post_correction_serial'] is True and not slot['active'], 'Tagged wrapper-history guard differs')
+    known = slot['known_overlap_exception']
+    need((known['prior_pid'],known['owner_pid'],known['start'],known['end']) ==
+         ('93883','93983','2026-11-18T15:07:45Z','2026-11-18T15:07:48Z'), 'Historical exception differs')
+    slot_log = inputs['slot-summary'].parent / 'slots-io-sprg.log'
+    need(hashlib.sha256(slot_log.read_bytes()).hexdigest() == slot['extracted_log_sha256'], 'Tagged evidence hash differs')
+    # Other jobs may append their own log records; require no unrecorded NEW io-sprg event.
+    tagged = [line for line in Path(slot['source']).read_bytes().splitlines(keepends=True)
+              if len(line.rstrip(b'\r\n').split(b' ',4)) >= 4
+              and line.rstrip(b'\r\n').split(b' ',4)[3] == b'tag=io-sprg']
+    need(hashlib.sha256(b''.join(tagged)).hexdigest() == slot['extracted_log_sha256'],
+         'New tagged wrapper events occurred after the supplied slot audit')
+    baseline = iv['load'](args.baseline_inventory,root,require_current=False)
+    new_roots = sorted(set(inv['mathlib_direct_roots']) - set(baseline['mathlib_direct_roots']))
+    if new_roots:
+        need(args.cache_ledger is not None, 'New direct Mathlib roots lack narrowed cache evidence')
+        cache = json.loads(Path(args.cache_ledger).read_text());bound(cache,'cache ledger')
+        need(cache['added_direct_roots'] == new_roots, 'Cache direct-root delta differs')
+        observed = []
+        for command in cache['commands']:
+            need(command['k'] == 3 and command['rc'] == 0
+                 and command['wrapper_sha256'] == 'ff64d8d5b6baf4e7b1c15172a7faeb70246f22c6acf76134bbdb70c017f41f1a',
+                 'Narrowed cache wrapper/k/return-code violation')
+            need(hashlib.sha256(Path(command['log']).read_bytes()).hexdigest() == command['log_sha256'], 'Cache log hash differs')
+            observed.extend(command['roots'])
+        need(len(observed) == len(set(observed)) and set(observed) == set(new_roots), 'Cache requested roots are not exactly the new direct roots')
+    byname = {row['name']: row for row in census}
+    new_helpers = frozen['new_theorems_reported']
+    need(all(name in byname and byname[name]['kind']=='theorem' and
+             set(byname[name]['axioms']) <= STANDARD for name in new_helpers),
+         'A new theorem-only helper is missing or not proved standard-only')
+    completed = []
+    if args.completed_names:
+        raw_names = Path(args.completed_names).read_text()
+        completed = json.loads(raw_names) if raw_names.lstrip().startswith('[') else raw_names.split()
+        need(isinstance(completed, list) and all(isinstance(name, str) and name and
+             not any(ch.isspace() for ch in name) for name in completed),
+             'Completed names must be a JSON string array or whitespace-separated names')
+        need(completed and len(completed)==len(set(completed)), 'Empty/duplicate milestone theorem names')
+        for name in completed:
+            need(name in byname and byname[name]['kind']=='theorem'
+                 and set(byname[name]['axioms']) <= STANDARD, 'Milestone theorem has unresolved/nonstandard axioms: '+name)
+    need(args.final or completed, 'Partial checkpoint needs explicit completed theorem names')
+    if args.final:
+        need(source['named_sorry_bodies']==0 and not source['sorry_tokens']
+             and not ax['direct_sorry_constants'] and not ax['transitive_sorry_constants'],
+             'Final owned proof graph/source still contains sorryAx or source holes')
+        need(all(set(r['axioms']) <= STANDARD for r in census), 'Final stored-root graph is not standard-only')
+    report, binding = Path(args.report), Path(args.binding)
+    need(not report.exists() and not binding.exists(), 'Use fresh report/binding paths; preserve historical reports')
+    metrics = dict(head=inv['head'],inventory_sha256=inv['inventory_sha256'],label=args.label,
+                   final=args.final,owners=len(inv['owners']),named_headers=source['named_headers'],
+                   remaining_holes=source['named_sorry_bodies'],stored_constants=ax['stored_constants'],
+                   public_types=ax['public_types'],printed_public_theorems=len(public),
+                   seal_probes=runtime['expected_seal_probes'],control_probes=runtime['expected_control_probes'],
+                   direct_mathlib_roots=len(inv['mathlib_direct_roots']),new_direct_mathlib_roots=new_roots,
+                   completed_theorems=completed,new_standard_only_helpers=new_helpers,
+                   helper_overlap_admission='Separate exact/apply and name/shape evidence remains required',
+                   all_required_current_inputs_pass=True,
+                   environment_sha256=current_environment, input_sha256={name:hashlib.sha256(path.read_bytes()).hexdigest() for name,path in inputs.items()})
+    text=f'''# io-sprg — {args.label}
+
+Committed source: `{inv['head']}`. Exact inventory: `{inv['inventory_sha256']}`.
+This checkpoint has {metrics['remaining_holes']} remaining named frozen proof obligations.
+Efficiency targets remain explicit hypotheses in the assembled-generator links.
+
+| Current evidence | Result |
+| --- | --- |
+| Owners | {metrics['owners']} exact committed source/build/census owners |
+| Frozen source | All {frozen['frozen_headers']} original global headers/prose prefixes preserved; {len(frozen['moves'])} explicit relocations |
+| Source | {metrics['named_headers']} named declarations; {metrics['remaining_holes']} remaining frozen holes |
+| Kernel census | {metrics['stored_constants']} stored roots; {metrics['public_types']} public full types |
+| Axiom prints | {metrics['printed_public_theorems']} exact current public-theorem matches; zero root axioms beyond standard axioms and declared remaining sorryAx |
+| Rule 10 | {metrics['seal_probes']} seals and {metrics['control_probes']} paired controls; complete runtime/identity/mask/chunk/EOF coverage |
+| Canonical variants | coe-A/coe-B pass; strict diagnostics remain separately attributed |
+| Imports/cache | {metrics['direct_mathlib_roots']} precise direct Mathlib roots; new-root delta {new_roots} |
+| Tagged wrapper history | Historical seriality false: exact recorded three-second overlap; post-15:08:34Z tagged suffix serial and closed |
+
+Wrapper records are not a global host process-cap or complete child-process-history audit.
+Source/header preservation does not by itself establish proof completion; full kernel
+and milestone evidence above determine the stated scope. Historical snapshots retain
+their original counts and are not counted as current passes.
+'''
+    if args.final:
+        text += '\nAll owned source proof holes and stored-root sorryAx dependencies are absent.\n'
+    if completed:
+        text += '\nCompleted declarations checked standard-only:\n\n' + ''.join('- `'+name+'`\n' for name in completed)
+    if args.historical_report:
+        historical = Path(args.historical_report)
+        need(historical.read_bytes() == (root / 'evidence/checkpoints/M0/REPORT.md').read_bytes(),
+             'Retained historical report differs from the canonical M0 snapshot')
+        metrics['historical_M0_report_sha256'] = hashlib.sha256(historical.read_bytes()).hexdigest()
+        text += '\n## Historical report (preserved snapshot)\n\n' + Path(args.historical_report).read_text()
+    report.parent.mkdir(parents=True,exist_ok=True);report.write_text(text)
+    metrics['report_sha256'] = hashlib.sha256(report.read_bytes()).hexdigest()
+    binding.parent.mkdir(parents=True,exist_ok=True);binding.write_text(json.dumps(metrics,indent=2)+'\n')
+    print('CHECKPOINT_REPORT_BOUND',inv['head'],args.label,'remaining',metrics['remaining_holes'])
+
+
+if __name__ == '__main__':
+    main()

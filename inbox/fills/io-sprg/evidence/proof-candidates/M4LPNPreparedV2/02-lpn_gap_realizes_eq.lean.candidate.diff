@@ -1,0 +1,15 @@
+--- /private/tmp/io-sprg-proof-notes/LPNHopFinal/02-lpn_gap_realizes_eq.lean.candidate
++++ /private/tmp/io-sprg-proof-notes/M4LPNPrepared/02-lpn_gap_realizes_eq.lean.candidate
+@@ -1,7 +1,9 @@
+-/- NOT_RUN. The fixed-advice canonical gap equals every layout-only realiser's
+-raw LPN advantage. Dependency01, mandatory canonical experiment readers.
+-No new experiment/assumption/algorithm/efficiency statement. -/
++/-- The fixed-advice ideal LPN gap equals every shared-contract realizer's raw advantage.
++Canonical experiment glue for [JLS26, Lemma 4.2, p. 19].
+ 
++**Proof sketch.** Read the existing raw-family and canonical LWE advantage equations.
++Match the unchanged challenge encoder by its reader, then apply the exact shared
++realizer acceptance equality to both the real and uniform canonical experiments. -/
+ theorem lpn_gap_realizes_eq (P : Params) (π : PrimeSchedule) (A B : NUPPT)
+     (ω : ∀ L, P.LPNAdvice π L)
+     (hB : B.RealizesOn (P.lpnEnc π) (A.coins.subst .var)

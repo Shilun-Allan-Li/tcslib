@@ -1,0 +1,27 @@
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+
+open Complexity Turing Games
+
+namespace Params
+
+example (P : Params) (π : PrimeSchedule) (A : NUPPT)
+    (tails : ℕ → Bool) (hops : ∀ κ, Fin (κ + 1)) :
+    ∃ w : ∀ L, P.LPNAdvice π L, ∀ B : NUPPT,
+      B.RealizesOn (P.lpnEnc π) (A.coins.subst .var)
+        (fun L x r => P.lpnRed π A L (w L) x r) →
+      ∀ κ, (hops κ).val < κ →
+        Games.advantage (P.chainGame A (tails κ) (hops κ).val κ (π κ))
+          (P.chainGame A (tails κ) ((hops κ).val + 1) κ (π κ)) ≤
+            (P.lpnFamily_raw π).adv B (P.ℓ κ)
+  := __PROBE_BODY__
+
+end Params
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed

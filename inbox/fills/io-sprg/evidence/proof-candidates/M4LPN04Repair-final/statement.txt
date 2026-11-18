@@ -1,0 +1,15 @@
+theorem lpn_real_seed_reindex (P : Params) (π : PrimeSchedule) (L : ℕ)
+    (h : L = P.ℓ (P.kappaOf L)) :
+    let κ := P.kappaOf L
+    let pp := π κ
+    let Q := (P.lpnFamily_raw π).toLWE.parameters L
+    let χ := (P.lpnFamily_raw π).toLWE.noise L
+    ∃ e : (Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        ((Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins))) ≃
+        (Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+          ((Fin (P.ℓ κ) → ZMod pp.p) ×
+            (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))),
+      ∀ r, P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+          (∑ a, (e r).1 i a * (e r).2.1 a) +
+            P.noiseValue κ pp ((e r).2.2 i)

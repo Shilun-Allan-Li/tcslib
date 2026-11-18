@@ -1,0 +1,15 @@
+theorem lpn_pre_uniform_update (P : Params) (π : PrimeSchedule) (L : ℕ)
+    (h : L = P.ℓ (P.kappaOf L)) (w : P.LPNAdvice π L)
+    (k : Fin (P.kappaOf L)) (hk : k.val = w.hop.val)
+    (M : Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L)))
+      (ZMod (π (P.kappaOf L)).p))
+    (v : Fin (P.n (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p)
+    (x : P.LPNChal π L) (hM : P.lpnMatrixAt π L h x = M)
+    (hb : P.lpnValuesAt π L h x = v) :
+    P.lpnPre π L w x =
+      P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+        (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+          (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+            w.draw (Function.update w.uniform k
+              (fun i => v i + ((w.draw.1 i).toNat : ZMod (π (P.kappaOf L)).p)))
+            (w.hop.val + 1)) false) w.tail

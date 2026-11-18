@@ -285,3 +285,75 @@ M3Load_cond2_sparse_joint_le_quarter_pow_core: exact=NO_CLOSING_PROOF, apply=DIA
 M3Load_claim42_core: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: Params.Γ_le_B and le_log_n; finite sum monotonicity; completed three-event decomposition and conditional bounds; prefactor_eventually_le_two_pow; mul_pow.
 
 M3Load_lpnNoise_law_cast_core: exact=CLOSED, apply=CLOSED. Reuse: Core.cast_eq and existing uprob relabeling/congruence; normalization-only control, with actual opaque-owner statement searches recorded separately.
+
+M4PRG_hyb_real_eq_raw_core: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: SPRG.Raw.game/idSamp/sdSamp/challenge readers; jlsSPRG_raw_eq; exact OracleComp map/bind/pure laws; public parameter encoding readers.
+
+M4PRG_hyb_random_eq_raw_core: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: Raw game and exact sampler readers; jlsSPRG_raw_eq; OracleComp map/bind/pure laws; Core.ite_false.
+
+M4PRG_hyb_prg_accept_eq_chain_zero_core: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: accept_eq; hyb_eq; chainGame_eq; finite probability bind/pure and expectation map/const; sdSampFull and core-field readers.
+
+M4PRG_hyb_uniform_accept_eq_chain_zero_core: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: accept_eq; chainGame_eq; sdSampFull and core-field readers; finite expectation and unused-draw marginalization.
+
+M4PRG_sdCore_publicSeed_core: exact=INVALID_ELABORATION, apply=INVALID_ELABORATION. Reuse: sdCore_seed; sdCore_instances; sdCore_err; publicSeed_eq; packSeed_fst.
+
+M4PRG_sdCore_publicSeed_core_v2: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: sdCore_seed; sdCore_instances; sdCore_err; publicSeed_eq; packSeed_fst; v1 invalid reserved binder retained.
+
+M4PRG_hyb_real_prg_le_core: exact=CLOSED, apply=CLOSED. Reuse: ProbComp.abs_prob_sub_le_of_agree; G4_eval_sdCore; sdCore_publicSeed; actual uniform draw coupling.
+
+M4PRG_hyb_uniform_random_le_core: exact=CLOSED, apply=CLOSED. Reuse: ProbComp.abs_prob_sub_le_of_agree; sdCore_publicSeed; actual uniform draw coupling.
+
+M4PRG_prg_verdict_prob_core: exact=DIAGNOSTIC_FAILURE, apply=DIAGNOSTIC_FAILURE. Reuse: NUPPT.distinguisherL_eq; RealizesOn.runAt_coinsEquivPoly_symm; HardcoreBit.pushesUniform_restrict; OneWay.ofFn_castLE_eq_take.
+
+M4PRG_prg_nuisance_average_core: exact=DIAGNOSTIC_FAILURE, apply=DIAGNOSTIC_FAILURE. Reuse: ProbComp.expect_sample_equiv; Bridge.expect_sample_pair; expect_sample_comm; actual G.idSamp pushforward.
+
+M4PRG_prg_chain_output_reindex_core: exact=DIAGNOSTIC_FAILURE, apply=DIAGNOSTIC_FAILURE. Reuse: prg_nuisance_average; expect_sample_equiv; outputIndex_eq; chainGame_eq; prgPre_eq; kappaOfN_n.
+
+M4Advice_01_lpnEnc_core: exact=CLOSED, apply=CLOSED. Reuse: LWE.encodeChallenge_injective; lpnEnc_eq; canonical LWE family parameter readers.
+
+M4Advice_02_encLPNAdvice_core: exact=NO_CLOSING_PROOF, apply=DIAGNOSTIC_FAILURE. Reuse: pairEncode_injective; Candidates.natToList_injOn; encDraw_injective; encBuckets_injective; fixed-width list encoding helper and modular vector readers.
+
+M4Advice_03_encLPNAdvice_length_core: exact=NO_CLOSING_PROOF, apply=DIAGNOSTIC_FAILURE. Reuse: length_pairEncode; Candidates.length_natToList; fixed-width list length helper; PolyExpr.eval_mono; existing index/seed/output bounds; modular vector length.
+
+M4LPNDefs_V1_01-lpn_accept_realizes_eq: exact=IMPORT_GUARD_NOT_OBSERVED, apply=IMPORT_GUARD_NOT_OBSERVED. Root-reviewed algorithms-only LPN.Defs import; ten-name runtime guard. Reuse: RealizesOn.runAt_coinsEquivPoly_symm; pushesUniform_restrict; ofFn_castLE_eq_take.
+
+M4Advice_04_prgEnc_core: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: BoolPRG.encIdx_injective; pairEncode_injective; List.ofFn_injective; prgEnc_eq.
+
+M4Advice_05_encPRGAdvice_core: exact=NO_CLOSING_PROOF, apply=DIAGNOSTIC_FAILURE. Reuse: pairEncode_injective; encBuckets_injective; Encoding.Modular.encodeMatrix_injective; PRGAdvice.prodEquiv_eq.
+
+M4LPNDefs_V2_01-lpn_accept_realizes_eq: exact=BOUNDED_HEARTBEAT_TIMEOUT, apply=BOUNDED_HEARTBEAT_TIMEOUT. Root-reviewed algorithms-only LPN.Defs import; ten-name runtime guard. Reuse: RealizesOn.runAt_coinsEquivPoly_symm; pushesUniform_restrict; ofFn_castLE_eq_take.
+
+M4LPNDefs_V1_02-lpn_gap_realizes_eq: exact=BOUNDED_HEARTBEAT_TIMEOUT, apply=BOUNDED_HEARTBEAT_TIMEOUT. Root-reviewed algorithms-only LPN.Defs import; ten-name runtime guard. Reuse: lpn_accept_realizes_eq; canonical LPNFamily.Raw and LWE.Family advantage readers; decisionAdvantage_eq; lpnEnc_eq.
+
+M4LPNDefs_V1_03-lpn_uniform_challenge_reindex: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Root-reviewed algorithms-only LPN.Defs import; ten-name runtime guard. Reuse: lpnChalEquiv; Matrix.of; explicit finCongr arrow equivalences; lpnMatrixAt_eq; lpnValuesAt_eq.
+
+M4LPNDefs_V1_04-lpn_real_seed_reindex: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Root-reviewed algorithms-only LPN.Defs import; ten-name runtime guard. Reuse: canonical LWE parameter/noise readers; lpnMatrixAt_eq; lpnValuesAt_eq; LWE.sample_fst/sample_snd; noisyValues_apply; explicit Equiv.cast.
+
+M4PRG_prg_hop_fix_advice_core: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: Lamport.expect_gap_abs_le_exists; explicit prg_chain_accept_average; prg_verdict_prob; BoolPRG.adv_eq/game_eq; advice fixed before every realiser.
+
+M4PRG_prg_hop_fix_advice_core API metadata correction: actual averaging reader is Authentication.LamportReduction.exists_expect_sample_le; see preserved reuse-correction.json.
+
+M4Advice_06_encPRGAdvice_length_core: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: length_pairEncode; encodeMatrix_length; encIdx_length bound; PolyExpr.eval_mono; pubLen_le_seedBound; kappaOfN_le.
+
+M4LPNDefs_V1_05-lpn_pre_real_update: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Root-reviewed algorithms-only LPN.Defs import; ten-name runtime guard. Reuse: lpnPre_eq; chainPublic_eq; lpnVector_eq; Function.update_apply; finite index split.
+
+M4LPNDefs_V1_06-lpn_pre_uniform_update: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Root-reviewed algorithms-only LPN.Defs import; ten-name runtime guard. Reuse: lpnPre_eq; chainPublic_eq; lpnVector_eq; finite successor-index split; Function.update readers.
+
+M4LPNDefs_V1_07-lpn_real_section: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Root-reviewed algorithms-only LPN.Defs import; ten-name runtime guard. Reuse: lpn_real_seed_reindex; lpn_pre_real_update; uprob_comp_equiv; Bridge probability/product readers; exact canonical sample coordinates.
+
+M4LPNDefs_V1_08-lpn_uniform_section: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Root-reviewed algorithms-only LPN.Defs import; ten-name runtime guard. Reuse: lpn_uniform_challenge_reindex; lpn_pre_uniform_update; uprob_comp_equiv; uniform addition translation law; exact product expectation readers.
+
+M4LPNDefs_V1_09-lpn_fix_advice: exact=BOUNDED_HEARTBEAT_TIMEOUT, apply=BOUNDED_HEARTBEAT_TIMEOUT. Root-reviewed algorithms-only LPN.Defs import; ten-name runtime guard. Reuse: LamportReduction.exists_expect_sample_le; ProbComp.abs_expect_sub_le_expect; exact product/commutation/update expectation readers; lpn_real_section; lpn_uniform_section.
+
+M4LPNPublic_V1_01-split-product: exact=NO_CLOSING_PROOF, apply=DIAGNOSTIC_FAILURE. Reuse: Bridge.expect_sample_pair; ProbComp.expect_bind/expect_pure.
+
+M4LPNPublic_V1_02-move-matrix: exact=NO_CLOSING_PROOF, apply=DIAGNOSTIC_FAILURE. Reuse: ProbComp.expect_sample_comm composed for the specified three factors.
+
+M4LPNPublic_V1_03-resample-selected: exact=NO_CLOSING_PROOF, apply=DIAGNOSTIC_FAILURE. Reuse: ProbComp.expect_sample_update; ProbComp.expect_sample_comm.
+
+M4LPNDefs_V1_10-lpn_hop: exact=BOUNDED_HEARTBEAT_TIMEOUT, apply=BOUNDED_HEARTBEAT_TIMEOUT. Root-reviewed algorithms-only LPN.Defs import; ten-name runtime guard. Reuse: lpn_fix_advice; lpn_gap_realizes_eq; kappaOf_ell; canonical every-realiser contract; global advice choice with off-image and zero-hop sentinel branches.
+
+M4LPNDefs_V1_10-lpn_hop: inverse-parameter API metadata correction is Params.kappaOf_pow; preserved paired record has adjacent reuse-correction.json.
+
+M4Security_lemma42_core: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: exists_advantage_hybrid_gap; advantage_triangle; lpn_hop; prg_hop; exact single-chain selector.
+
+M4Security_prop41_core: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: Finset.exists_max_image; advantage_hybrid; advantage_triangle; every-realiser LPN/PRG hop bounds; endpoint acceptance readers; statistical error bounds.

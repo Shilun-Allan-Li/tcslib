@@ -1,0 +1,15 @@
+import TCSlib.Cryptography.Games.Hopping
+import TCSlib.Cryptography.Games.Bridges.Experiments
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography TCSlib.Cryptography.Games
+
+example (m n : ℕ) (h : m = n) (F : (Fin m → Bool) → ℝ) :
+    ProbComp.expect (ProbComp.sample (Fin m → Bool)) F =
+      ProbComp.expect (ProbComp.sample (Fin n → Bool))
+        (fun v => F (fun j => v ((finCongr h) j))) := by
+  apply?

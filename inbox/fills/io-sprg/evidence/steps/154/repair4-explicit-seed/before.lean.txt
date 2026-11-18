@@ -1,0 +1,245 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Canonical LPN coordinates and shared realizer transport
+
+## Main definitions
+
+None; this module proves properties of the imported reduction interface.
+
+## Main results
+
+* `Internal.lpn_accept_realizes_eq` and `lpn_gap_realizes_eq`.
+* Uniform challenge and real sample-seed coordinate bridges.
+
+## References
+
+* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
+  Assumptions*, J. ACM 73(1), Article 1, February 2026, Lemma 4.2, p. 19.
+* [PS10] R. Pass, A. Shelat, *A Course in Cryptography*, 2010, Definition 26.8.
+
+**Deviations.** Dv3 and Dv15 transport the existing canonical challenge and exact law.
+Dv16 uses shared layout-only verdict and coin readers; no new machine is built.
+-/
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+
+open Complexity Turing
+open scoped BigOperators
+
+namespace Internal
+
+-- Specialized existing-library transport helpers may be added here after the mechanical split.
+
+/-- Every shared-contract LPN realizer has the ideal reduction's exact acceptance probability.
+Reduction glue for [JLS26, Lemma 4.2, p. 19]. Only layout-length coin words are used.
+
+**Proof sketch.** Read canonical acceptance, reindex B's coins by the shared coin bijection,
+and use the mandatory runAt_coinsEquivPoly_symm reader. The named reduction reader leaves
+the adversary's coin prefix. Its existing uniform restriction law and ofFn/take reader
+recover exactly the shorter adversary coin distribution. -/
+theorem lpn_accept_realizes_eq (P : Params) (π : PrimeSchedule) (A B : NUPPT)
+    (ω : ∀ L, P.LPNAdvice π L)
+    (hB : B.RealizesOn (P.lpnEnc π) (A.coins.subst .var)
+      (fun L x r => P.lpnRed π A L (ω L) x r))
+    (L : ℕ) {σ : Type} [Fintype σ] (X : σ → P.LPNChal π L) :
+    acceptProb X (fun x (r : B.Coins L) => B.distinguisherL L (P.lpnEnc π L x) r) =
+      acceptProb X (fun x (r : A.Coins (P.kappaOf L)) =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L (ω L) x)
+          (List.ofFn r) = [true])) := by
+  classical
+  have hcut : A.coinLen (P.kappaOf L) ≤ (A.coins.subst .var).eval L :=
+    ((A.coinLen_eq (P.kappaOf L)).le.trans
+      (A.coins.eval_mono (P.kappaOf_le L))).trans_eq
+        ((PolyExpr.eval_subst A.coins .var L).trans
+          (congrArg A.coins.eval (PolyExpr.eval_var L))).symm
+  rw [acceptProb_def, acceptProb_def, uprob_prod, uprob_prod]
+  apply congrArg uexp
+  funext s
+  rw [← uprob_comp_equiv (NUPPT.coinsEquivPoly hB.coins_eq L).symm
+    (fun r : B.Coins L => B.distinguisherL L (P.lpnEnc π L (X s)) r = true)]
+  simp only [NUPPT.distinguisherL_eq, hB.runAt_coinsEquivPoly_symm,
+    P.lpnRed_eq, decide_eq_true_eq]
+  let Q : List Bool → Prop := fun r =>
+    A.runAtL (P.kappaOf L) (P.lpnPre π L (ω L) (X s)) r = [true]
+  have hprefix :=
+    (HardcoreBit.pushesUniform_restrict (O := Bool) (Fin.castLE_injective hcut)).uprob_eq
+      (fun r : Fin (A.coinLen (P.kappaOf L)) → Bool => Q (List.ofFn r))
+  simp only [OneWay.ofFn_castLE_eq_take hcut] at hprefix
+  exact hprefix
+
+/-- The fixed-advice ideal LPN gap equals every shared-contract realizer's raw advantage.
+Canonical experiment glue for [JLS26, Lemma 4.2, p. 19].
+
+**Proof sketch.** Read the existing raw-family and canonical LWE advantage equations. Match
+the unchanged challenge encoder by its reader, then apply the exact shared realizer
+acceptance equality to both the real and uniform canonical experiments. -/
+theorem lpn_gap_realizes_eq (P : Params) (π : PrimeSchedule) (A B : NUPPT)
+    (ω : ∀ L, P.LPNAdvice π L)
+    (hB : B.RealizesOn (P.lpnEnc π) (A.coins.subst .var)
+      (fun L x r => P.lpnRed π A L (ω L) x r)) (L : ℕ) :
+    LWE.decisionAdvantage ((P.lpnFamily_raw π).toLWE.parameters L)
+      ((P.lpnFamily_raw π).toLWE.noise L)
+      (fun x (r : A.Coins (P.kappaOf L)) =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L (ω L) x)
+          (List.ofFn r) = [true])) = (P.lpnFamily_raw π).adv B L := by
+  rw [LPNFamily.Raw.adv_eq, LWE.Family.advantageAt_eq,
+    LWE.decisionAdvantage_eq, LWE.decisionAdvantage_eq, distAdv_def, distAdv_def]
+  simp_rw [← P.lpnEnc_eq]
+  rw [lpn_accept_realizes_eq P π A B ω hB L
+      (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L)
+        ((P.lpnFamily_raw π).toLWE.noise L)),
+    lpn_accept_realizes_eq P π A B ω hB L id]
+
+/-- The canonical uniform challenge has explicit construction matrix/value coordinates.
+Coordinate glue for [JLS26, Lemma 4.2, p. 19]. No chosen enumeration is used.
+
+**Proof sketch.** Compose the published canonical challenge equivalence with the two
+explicit finite-index casts. Use Matrix.of in the matrix/function equivalence, as required
+by Mathlib's matrix type interface. The two projections agree with the existing matrix/value
+transport readers at every coordinate. -/
+theorem lpn_uniform_challenge_reindex (P : Params) (π : PrimeSchedule) (L : ℕ)
+    (h : L = P.ℓ (P.kappaOf L)) :
+    ∃ e : P.LPNChal π L ≃
+        (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L)))
+          (ZMod (π (P.kappaOf L)).p) ×
+          (Fin (P.n (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p)),
+      ∀ x, (e x).1 = P.lpnMatrixAt π L h x ∧
+        (e x).2 = P.lpnValuesAt π L h x := by
+  let hr : L ^ P.D = P.n (P.kappaOf L) :=
+    (congrArg (fun q : ℕ => q ^ P.D) h).trans (P.n_eq (P.kappaOf L)).symm
+  let eMat : Matrix (Fin (L ^ P.D)) (Fin L) (ZMod (π (P.kappaOf L)).p) ≃
+      Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L)))
+        (ZMod (π (P.kappaOf L)).p) :=
+    Matrix.of.symm.trans
+      ((Equiv.arrowCongr (finCongr hr)
+        (Equiv.arrowCongr (finCongr h) (Equiv.refl _))).trans Matrix.of)
+  let e := (P.lpnChalEquiv π L).trans
+    (Equiv.prodCongr eMat (Equiv.arrowCongr (finCongr hr) (Equiv.refl _)))
+  refine ⟨e, ?_⟩
+  intro x
+  constructor
+  · funext i a
+    rw [P.lpnMatrixAt_eq]
+    rfl
+  · funext i
+    rw [P.lpnValuesAt_eq]
+    rfl
+
+/-- Canonical real LWE sample seeds admit explicit construction coordinates preserving output.
+Sample-coherence glue for [JLS26, Lemma 4.2, p. 19] and the canonical LWE sample map.
+
+**Proof sketch.** Read the exact canonical dimension, row count, modulus and rounded noise.
+Identify the parameter/noise records and cast the resulting seed type explicitly. Read both
+sample projections and construction transport equations; the matrix entries and the noisy
+finite sums then agree in the same residue field. No law is inferred merely from a seed-type
+bijection. -/
+theorem lpn_real_seed_reindex (P : Params) (π : PrimeSchedule) (L : ℕ)
+    (h : L = P.ℓ (P.kappaOf L)) :
+    let κ := P.kappaOf L
+    let pp := π κ
+    let Q := (P.lpnFamily_raw π).toLWE.parameters L
+    let χ := (P.lpnFamily_raw π).toLWE.noise L
+    ∃ e : (Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        ((Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins))) ≃
+        (Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+          ((Fin (P.ℓ κ) → ZMod pp.p) ×
+            (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))),
+      ∀ r, P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+          (∑ a, (e r).1 i a * (e r).2.1 a) +
+            P.noiseValue κ pp ((e r).2.2 i) := by
+  classical
+  let κ := P.kappaOf L
+  let pp := π κ
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L
+  let χ := (P.lpnFamily_raw π).toLWE.noise L
+  change ∃ e : (Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+      ((Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins))) ≃
+      (Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+        ((Fin (P.ℓ κ) → ZMod pp.p) ×
+          (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))), _
+  have hd : Q.dimension = P.ℓ κ := (P.lpn_dimension_eq π L).trans h
+  have hr : Q.samples = P.n κ := (P.lpn_samples_eq π L).trans
+    ((congrArg (fun q : ℕ => q ^ P.D) h).trans (P.n_eq κ).symm)
+  have hp : Q.modulus = pp.p := P.lpn_modulus_eq π L
+  have hden : (P.lpnFamily_raw π).noiseDen L = P.W κ :=
+    (P.lpnFamily_raw_noiseDen π L).trans
+      ((congrArg P.noiseDenAt h).trans (P.W_eq_noiseDenAt κ).symm)
+  have hmod : (P.lpnFamily_raw π).modulus L = pp.p := P.lpnFamily_raw_modulus π L
+  have hχ : χ = lpnNoise pp.p (P.W κ) := ?_
+  swap
+  · dsimp only [χ]
+    simp only [LPNFamily.Raw.toLWE_noise, LPNFamily.Raw.noise_eq, hmod, hden]
+  have hseed : ∀ (Q₀ : LWE.Parameters) (χ₀ : LWE.Noise)
+      (hdim : Q₀.dimension = P.ℓ κ) (hrows : Q₀.samples = P.n κ)
+      (hprime : Q₀.modulus = pp.p), χ₀ = lpnNoise pp.p (P.W κ) →
+      ∃ e : (Matrix (Fin Q₀.samples) (Fin Q₀.dimension) (ZMod Q₀.modulus) ×
+          ((Fin Q₀.dimension → ZMod Q₀.modulus) × (Fin Q₀.samples → χ₀.Coins))) ≃
+          (Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+            ((Fin (P.ℓ κ) → ZMod pp.p) ×
+              (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))),
+        ∀ r,
+          Matrix.of ((Equiv.arrowCongr (finCongr hrows)
+            (Equiv.arrowCongr (finCongr hdim) (Equiv.cast (congrArg ZMod hprime))))
+              (Matrix.of.symm (LWE.sample Q₀ χ₀ r).1)) = (e r).1 ∧
+          (Equiv.arrowCongr (finCongr hrows) (Equiv.cast (congrArg ZMod hprime)))
+              (LWE.sample Q₀ χ₀ r).2 = fun i =>
+            (∑ a, (e r).1 i a * (e r).2.1 a) +
+              P.noiseValue κ pp ((e r).2.2 i) := ?_
+  swap
+  · intro Q₀ χ₀ hdim hrows hprime hnoise
+    rcases Q₀ with ⟨dim, rows, modulus, hge⟩
+    dsimp only at hdim hrows hprime
+    subst dim
+    subst rows
+    subst modulus
+    subst χ₀
+    let eNoise := Equiv.arrowCongr (Equiv.refl (Fin (P.n κ)))
+      (Equiv.cast (lpnNoise_coins pp.p (P.W κ)))
+    let e := Equiv.prodCongr
+      (Equiv.refl (Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p)))
+      (Equiv.prodCongr (Equiv.refl (Fin (P.ℓ κ) → ZMod pp.p)) eNoise)
+    refine ⟨e, ?_⟩
+    intro r
+    constructor
+    · apply Matrix.ext
+      intro i a
+      simp only [e, Equiv.prodCongr_apply, Prod.map_fst, Equiv.refl_apply, Equiv.refl_symm,
+        finCongr_refl, Equiv.cast_refl, Equiv.arrowCongr_refl,
+        LWE.sample_fst, Matrix.of_apply, Matrix.of_symm_apply]
+    · funext i
+      have hcancel := (Equiv.cast (lpnNoise_coins pp.p (P.W κ))).symm_apply_apply (r.2.2 i)
+      simp only [Equiv.cast_symm, Equiv.cast_apply] at hcancel
+      simp only [e, eNoise, Equiv.prodCongr_apply, Prod.map_fst, Prod.map_snd,
+        Equiv.arrowCongr_apply,
+        Equiv.refl_apply, Equiv.refl_symm, Function.comp_apply, finCongr_refl,
+        Equiv.cast_refl (α := ZMod pp.p), Equiv.cast_apply,
+        LWE.sample_snd, LWE.noisyValues_apply, P.noiseValue_eq, hcancel]
+  obtain ⟨e, he⟩ := hseed Q χ hd hr hp hχ
+  refine ⟨e, ?_⟩
+  intro r
+  have hx := he r
+  constructor
+  · refine Eq.trans ?_ hx.1
+    apply Matrix.ext
+    intro i a
+    simp only [P.lpnMatrixAt_eq, P.lpnChalEquiv_eq, Equiv.prodCongr_apply,
+      Equiv.arrowCongr_apply, Function.comp_apply, Equiv.cast_apply,
+      Matrix.of_apply, Matrix.of_symm_apply] <;> rfl
+  · refine Eq.trans ?_ hx.2
+    funext i
+    simp only [P.lpnValuesAt_eq, P.lpnChalEquiv_eq, Equiv.prodCongr_apply,
+      Equiv.arrowCongr_apply, Function.comp_apply, Equiv.cast_apply] <;> rfl
+
+end Internal
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed

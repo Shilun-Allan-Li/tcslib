@@ -1,0 +1,14 @@
+import TCSlib.Cryptography.Encoding.Modular
+import TCSlib.Complexity.CircuitComplexity.Uniform
+import TCSlib.Complexity.TuringMachine.Encoding
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open Turing TCSlib.Cryptography
+
+example {Idx : Type} (m : ℕ) (e : Idx → List Bool) (he : Function.Injective e) :
+    Function.Injective (fun a : Idx × (Fin m → Bool) =>
+      pairEncode (e a.1) (List.ofFn a.2)) := __PROBE_BODY__

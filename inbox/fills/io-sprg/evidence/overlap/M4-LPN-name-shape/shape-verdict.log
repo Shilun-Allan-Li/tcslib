@@ -1,0 +1,86 @@
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Reduction.lean:147:    rw [runAccept_eq, he, NUPPT.distinguisherL_eq, hrun, handler_result]
+TCSlib/Cryptography/Randomness/Derandomization/AdviceGap.lean:115:      simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, hD,
+TCSlib/Cryptography/Randomness/Derandomization/AdviceGap.lean:120:      simp only [id_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, hD,
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:268:  simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hofn, hB]
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:286:  simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hofn, hB]
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:305:  simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hA,
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:368:  simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hB,
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:562:      simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq,
+TCSlib/Cryptography/Asymptotic/HardCore/Functions.lean:136:      NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq,
+TCSlib/Cryptography/Asymptotic/HardCore/Functions.lean:195:    simp only [NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq,
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:135:  simp only [NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq]
+TCSlib/Cryptography/Asymptotic/Adversary.lean:386:theorem _root_.Complexity.NUPPT.distinguisherL_eq (A : NUPPT) (n : ℕ) (w : List Bool)
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:727:  simp only [NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq,
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:740:  simp only [NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq]
+TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:172:    pairSndD_pairEncode, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, NUPPT.precomp_coinsEquiv_ofFn]
+TCSlib/Cryptography/Asymptotic/HardCoreGLFamily.lean:174:    pairSndD_pairEncode, NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq,
+TCSlib/Cryptography/Asymptotic/Realization.lean:54:* `RealizesOn.runAt_eq`, `RealizesOn.distinguisherL_eq`,
+TCSlib/Cryptography/Asymptotic/Realization.lean:55:  `RealizesOn.runAt_coinsEquivPoly_symm` — typed coins: the realiser's output, and its verdict as
+TCSlib/Cryptography/Asymptotic/Realization.lean:131:(`NUPPT.distinguisherL_eq`, `RealizesOn.runAt_eq`). -/
+TCSlib/Cryptography/Asymptotic/Realization.lean:132:theorem _root_.Complexity.NUPPT.RealizesOn.distinguisherL_eq (h : B.RealizesOn enc c R) (m : ℕ)
+TCSlib/Cryptography/Asymptotic/Realization.lean:135:  rw [NUPPT.distinguisherL_eq, h.runAt_eq]
+TCSlib/Cryptography/Asymptotic/Realization.lean:141:theorem _root_.Complexity.NUPPT.RealizesOn.runAt_coinsEquivPoly_symm (h : B.RealizesOn enc c R)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean:47:read prgRed, and apply pushesUniform_restrict along the prefix injection together with the
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean:82:    rw [NUPPT.distinguisherL_eq, hB.runAt_coinsEquivPoly_symm, P.prgRed_eq]
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean:85:      (HardcoreBit.pushesUniform_restrict (O := Bool) (Fin.castLE_injective hcut)).uprob_eq
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean:88:    simpa only [Q, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, decide_eq_true_eq] using hp
+TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:75:    NUPPT.distinguisherL_eq, NUPPT.runAt_eq, h, hofn]
+TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:248:  rw [NUPPT.distinguisherL_eq, NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:327:restriction along the injective `r` (`HardcoreBit.pushesUniform_restrict`). -/
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:338:  · exact HardcoreBit.pushesUniform_restrict hr
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:152:      rw [hφ g x.1 x.2, eval_multiMsgAdvOut, NUPPT.distinguisherL_eq, encodeTupleOut_eq_flatten]
+TCSlib/Cryptography/Pairing/Assumptions.lean:197:  rw [NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hD, NUPPT.runAt_coinsCongr, tupleBdh_tupleStr,
+TCSlib/Cryptography/HardcoreBit/Basic.lean:40:* `pushesUniform_restrict`: restricting a uniform table along an injection gives a uniform
+TCSlib/Cryptography/HardcoreBit/Basic.lean:220:theorem pushesUniform_restrict {I J O : Type*} [Fintype I] [DecidableEq I] [Fintype J]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:285:(`EnsembleLemmas.acceptProb_coins_equiv`) and compare pointwise (`NUPPT.distinguisherL_eq`,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:300:    rw [NUPPT.distinguisherL_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, NUPPT.runAt_eq, hofn,
+TCSlib/Cryptography/Pseudorandom/NextBit.lean:190:  simp only [NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq,
+TCSlib/Cryptography/Pseudorandom/NextBit.lean:451:    rw [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hofn, hDm, hkn]
+TCSlib/Cryptography/Pseudorandom/NextBit.lean:453:    rw [NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:19:fields (`pushesUniform_offsetTable`, through `HardcoreBit.pushesUniform_restrict` of
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:73:so `HardcoreBit.pushesUniform_restrict` applies; the pair of fields is that restriction followed
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:96:  exact (HardcoreBit.pushesUniform_restrict (O := Bool) hr).comp (HardcoreBit.pushesUniform_equiv e)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:106:`HardcoreBit.pushesUniform_restrict` applies, followed by the bijection
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:138:  exact (HardcoreBit.pushesUniform_restrict (O := Bool) hr).comp (HardcoreBit.pushesUniform_equiv e)
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/StretchMachine.lean:252:  simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq]
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:307:    rw [NUPPT.distinguisher_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq,
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:308:      NUPPT.distinguisherL_eq, NUPPT.runAt_preComp]
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/PaddedCPA.lean:229:    rw [NUPPT.distinguisherL_eq, hrun, PolyHandler.result_eq, recHandler_out]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:384:tuple: the restriction along the injective `Fin.castLE h` (`HardcoreBit.pushesUniform_restrict`,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:388:  HardcoreBit.pushesUniform_restrict (Fin.castLE_injective h)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction.lean:68:  rw [NUPPT.distinguisherL_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq,
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1427:`NUPPT.distinguisherL_eq`, `he`, `dlc_challenge_eq`). The derived index `i` (`dlc_grp_runAt`) is
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1448:  rw [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.distinguisherL_eq, he, dlc_challenge_eq]
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1613:`NUPPT.distinguisherL_eq`, `he`, `ddhRandom`). The padding is lossless (`ofFn_padFin_of_length`,
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1641:  rw [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, he, decide_eq_true_iff]
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:378:    rw [NUPPT.distinguisherL_eq, hrun]
+TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:326:    simp only [singleDist, hybridAdv, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, ofFn_hybridCoins,
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Run.lean:765:    rw [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, runAt_ggmRedMachine, hraw,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:811:tuple: the restriction along the injective `Fin.castLE h` (`HardcoreBit.pushesUniform_restrict`,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:815:  HardcoreBit.pushesUniform_restrict (Fin.castLE_injective h)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:306:  rw [NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hrun, guessFun, NUPPT.advInput_eq,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:103:tuple: the restriction along the injective `Fin.castLE h` (`HardcoreBit.pushesUniform_restrict`,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:107:  HardcoreBit.pushesUniform_restrict (Fin.castLE_injective h)
+TCSlib/Cryptography/Composability/SequentialZK.lean:702:    (HardcoreBit.pushesUniform_restrict (Fin.castLE_injective hcle))
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:142:  simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hofn, hrun]
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:155:  simp only [NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hofn, hrun]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:241:  rw [NUPPT.distinguisherL_eq, NUPPT.runAt_coinsCongr, recDist, NUPPT.runAtL_ofPolyTime, recFun,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:245:  rw [← NUPPT.runAtL_eq_output_layout, ← NUPPT.runAt_eq, ← NUPPT.distinguisherL_eq]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:444:  rw [NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hrun, halfFunD, NUPPT.inArg_eq, NUPPT.inParam_eq,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:541:  rw [NUPPT.distinguisherL_eq, NUPPT.runAt_coinsCongr, tailDist, NUPPT.runAtL_ofPolyTime, tailFun,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:545:  rw [← NUPPT.runAtL_eq_output_layout, ← NUPPT.runAt_eq, ← NUPPT.distinguisherL_eq]
+TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean:104:    rw [NUPPT.distinguisherL_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:388:    ← NUPPT.runAtL_eq_output_layout, ← NUPPT.runAt_eq, ← NUPPT.distinguisherL_eq]
+TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:162:  simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.refl_apply, NUPPT.distinguisherL_eq,
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean:136:        rw [NUPPT.distinguisherL_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, NUPPT.runAt_eq, hB,
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean:180:    rw [NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hB]
+TCSlib/Cryptography/Candidates/Concrete.lean:888:      HardcoreBit.pushesUniform_restrict (O := Bool) (dla_blockPos_injective (T := T) hkB)
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction.lean:55:  rw [NUPPT.distinguisherL_eq, NUPPT.distinguisherL_eq,
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Predictor.lean:209:  rw [NUPPT.distinguisherL_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, NUPPT.runAt_eq,
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:1979:`dlb_Ai` (`NUPPT.distinguisherL_eq`, `NUPPT.runAt_eq`, `NUPPT.runAtL_eq_output_layout`); and
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2016:    rw [hzz, hfu, hfi, hfα, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, NUPPT.runAtL_eq_output_layout]
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2437:(`HardcoreBit.pushesUniform_restrict`), and it is read by `bitsEquiv`. -/
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2455:  exact (HardcoreBit.pushesUniform_restrict (Fin.castLE_injective hκ)).comp
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:66:  have h := (HardcoreBit.pushesUniform_restrict (O := Bool) hselect).comp
+TCSlib/Cryptography/SecureComputation/Garbling/Probability.lean:81:  have hrestrict := HardcoreBit.pushesUniform_restrict (O := Bool → K) hselect
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/WrongKey.lean:83:  have hprob := (HardcoreBit.pushesUniform_restrict (O := Bool) hcast).uprob_eq

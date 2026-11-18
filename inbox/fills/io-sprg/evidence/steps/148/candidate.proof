@@ -1,0 +1,6 @@
+by
+  intro x y h
+  simp only [P.prgEnc_eq, P.G.challengeStr_eq] at h
+  have hp := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h
+  exact Prod.ext (P.G.encIdx_injective N (congrArg Prod.fst hp))
+    (List.ofFn_injective (congrArg Prod.snd hp))

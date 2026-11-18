@@ -1,0 +1,8 @@
+by
+  classical
+  rw [P.lpnPre_eq, dif_pos h, hM, hb]
+  congr 1
+  apply congrArg (fun bs => P.publicSeed (P.kappaOf L) (π (P.kappaOf L)) bs false)
+  funext q i
+  simp only [P.chainPublic_eq, P.lpnVector_eq, Function.update_apply]
+  split_ifs <;> simp_all only [Fin.ext_iff, hk] <;> omega

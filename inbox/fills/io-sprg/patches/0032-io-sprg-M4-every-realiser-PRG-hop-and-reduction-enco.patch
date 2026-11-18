@@ -1,0 +1,686 @@
+From c44841d3ba8af56a407d3d30b7c4720617c0d845 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 12:32:55 -0800
+Subject: [PATCH 32/34] io-sprg: M4 every-realiser PRG hop and reduction
+ encoding bounds
+
+---
+ .../Reductions/LPN/Encoding.lean              | 198 +++++++++++-
+ .../Reductions/PRG/Encoding.lean              | 103 +++++-
+ .../StructuredSeed/Reductions/PRG/Hop.lean    | 298 +++++++++++++++++-
+ 3 files changed, 591 insertions(+), 8 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Encoding.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Encoding.lean
+index bad79d82037e2a0c3abe61297996f7fbb9e578fd..651611c2f727907a77593ff33637a2932aadf62f 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Encoding.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Encoding.lean
+@@ -44,7 +44,13 @@ Dv3 reuses the assumption's width and canonical encoder unchanged.
+ **Proof sketch.** Apply the existing `LWE.encodeChallenge_injective` with the LWE
+ family's public modulus-width field. -/
+ theorem lpnEnc_injective (P : Params) (π : PrimeSchedule) (L : ℕ) :
+-    Function.Injective (P.lpnEnc π L) := sorry
++    Function.Injective (P.lpnEnc π L) := by
++  intro x y h
++  apply LWE.encodeChallenge_injective
++    ((P.lpnFamily_raw π).toLWE.parameters L)
++    ((P.lpnFamily_raw π).toLWE.residueBits.eval L)
++    ((P.lpnFamily_raw π).toLWE.modulus_le_pow L)
++  simpa only [P.lpnEnc_eq] using h
+ 
+ /-- All six hardwired advice fields are retained by the explicit code
+ [JLS26, Lemma 4.2, p. 19]. Dv9 and Dv15 place the prime first and use fixed coordinate codes.
+@@ -52,7 +58,45 @@ theorem lpnEnc_injective (P : Params) (π : PrimeSchedule) (L : ℕ) :
+ **Proof sketch.** Split the nested pairs, recover hop/index/bucket/draw/tail coordinates,
+ and use modular vector injectivity on each uniform-vector list entry. -/
+ theorem encLPNAdvice_injective (P : Params) (π : PrimeSchedule) (L : ℕ) :
+-    Function.Injective (P.encLPNAdvice π L) := sorry
++    Function.Injective (P.encLPNAdvice π L) := by
++  intro a b h
++  rw [P.encLPNAdvice_eq, P.encLPNAdvice_eq] at h
++  have h0 := congrArg Prod.snd
++    (pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h)
++  have h1 := congrArg Prod.snd
++    (pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h0)
++  have h2 := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h1
++  have h3 := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _))
++    (congrArg Prod.snd h2)
++  have h4 := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _))
++    (congrArg Prod.snd h3)
++  have h5 := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _))
++    (congrArg Prod.snd h4)
++  have h6 := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _))
++    (congrArg Prod.snd h5)
++  have hh : a.hop = b.hop := Fin.ext
++    (Candidates.natToList_injOn
++      (a.hop.isLt.trans Nat.lt_two_pow_self)
++      (b.hop.isLt.trans Nat.lt_two_pow_self) (congrArg Prod.fst h2))
++  have hI : a.I = b.I := P.G.encIdx_injective (P.n (P.kappaOf L))
++    (congrArg Prod.fst h3)
++  have hb : a.buckets = b.buckets := P.encBuckets_injective (P.kappaOf L)
++    (congrArg Prod.fst h4)
++  have hd : a.draw = b.draw := P.encDraw_injective (P.kappaOf L)
++    (π (P.kappaOf L)) (congrArg Prod.fst h5)
++  have ht : a.tail = b.tail := List.ofFn_injective (congrArg Prod.fst h6)
++  have hu : a.uniform = b.uniform := List.ofFn_injective
++    (Internal.encodeList_injective_of_fixedWidth
++      (Encoding.Modular.encodeVector_injective
++        (q := (π (P.kappaOf L)).p) (length := P.n (P.kappaOf L))
++        (P.kappaOf L + 1) (π (P.kappaOf L)).le_two_pow)
++      (P.n (P.kappaOf L) * (P.kappaOf L + 1))
++      (fun row : Fin (P.n (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p =>
++        Encoding.Modular.encodeVector_length (P.kappaOf L + 1) row)
++      (congrArg Prod.snd h6))
++  apply (P.lpnAdviceProductEquiv π L).injective
++  simp only [P.lpnAdviceProductEquiv_apply]
++  exact Prod.ext hh (Prod.ext hI (Prod.ext hb (Prod.ext hd (Prod.ext ht hu))))
+ 
+ /-- Every advice word has length at most the explicit polynomial at its independent dimension
+ [JLS26, Lemma 4.2, p. 19]. Dv12 and Dv15 count hardwired data rather than sampler coins.
+@@ -61,7 +105,155 @@ theorem encLPNAdvice_injective (P : Params) (π : PrimeSchedule) (L : ℕ) :
+ layout, the published numeric bounds, κOf(L)≤L and PolyExpr.eval_mono; the factor4096
+ covers all separators in the deliberately generous cubic majorant. -/
+ theorem encLPNAdvice_length_le (P : Params) (π : PrimeSchedule) (L : ℕ)
+-    (w : P.LPNAdvice π L) : (P.encLPNAdvice π L w).length ≤ P.lpnAdviceBound.eval L := sorry
++    (w : P.LPNAdvice π L) : (P.encLPNAdvice π L w).length ≤ P.lpnAdviceBound.eval L := by
++  classical
++  let κ := P.kappaOf L
++  let pp := π κ
++  let S := P.idxBound.eval L + (P.seedBound.eval L +
++    (P.mBound.eval L + (P.nBound.eval L + (P.ellBound.eval L + (L + 1)))))
++  have hκ : κ ≤ L := P.kappaOf_le L
++  have hL1 : L + 1 ≤ S := ?_
++  swap
++  · dsimp only [S]
++    omega
++  have hκ1 : κ + 1 ≤ S := (Nat.succ_le_succ hκ).trans hL1
++  have hκS : κ ≤ S := (Nat.le_succ κ).trans hκ1
++  have hS1 : 1 ≤ S := (Nat.succ_le_succ (Nat.zero_le L)).trans hL1
++  have hidx : P.idxBound.eval κ ≤ S := ?_
++  swap
++  · have h := PolyExpr.eval_mono P.idxBound hκ
++    dsimp only [S]
++    omega
++  have hseed : P.seedBound.eval κ ≤ S := ?_
++  swap
++  · have h := PolyExpr.eval_mono P.seedBound hκ
++    dsimp only [S]
++    omega
++  have hn : P.n κ ≤ S := ?_
++  swap
++  · have h := (P.n_le_nBound κ).trans (PolyExpr.eval_mono P.nBound hκ)
++    dsimp only [S]
++    omega
++  have hEll : P.ℓ κ ≤ S := ?_
++  swap
++  · have h := (P.ell_le_ellBound κ).trans (PolyExpr.eval_mono P.ellBound hκ)
++    dsimp only [S]
++    omega
++  have hm : P.m κ ≤ S := ?_
++  swap
++  · have h := (P.m_le_mBound κ).trans (PolyExpr.eval_mono P.mBound hκ)
++    dsimp only [S]
++    omega
++  have hindex := P.encIdx'_length_le κ pp (w.I, w.buckets, fun _ _ => 0)
++  rw [P.encIdx'_eq, length_pairEncode, length_pairEncode] at hindex
++  dsimp only at hindex
++  have hG : (P.G.encIdx (P.n κ) w.I).length ≤ S := ?_
++  swap
++  · omega
++  have hb : (P.encBuckets κ w.buckets).length ≤ S := ?_
++  swap
++  · omega
++  have hS2 : S ≤ S ^ 2 := ?_
++  swap
++  · simpa only [pow_two, Nat.mul_one] using Nat.mul_le_mul_left S hS1
++  have hone2 : 1 ≤ S ^ 2 := hS1.trans hS2
++  have hS23 : S ^ 2 ≤ S ^ 3 :=
++    calc
++      S ^ 2 = S ^ 2 * 1 := (Nat.mul_one _).symm
++      _ ≤ S ^ 2 * S := Nat.mul_le_mul_left (S ^ 2) hS1
++      _ = S ^ 3 := (pow_succ S 2).symm
++  have hS3 : S ≤ S ^ 3 := hS2.trans hS23
++  have hone3 : 1 ≤ S ^ 3 := hS1.trans hS3
++  let noiseCode : Fin (P.W κ) × ZMod pp.p → List Bool := fun c =>
++    pairEncode (Candidates.natToList (P.ℓ κ + 1) c.1.val)
++      (Candidates.natToList (κ + 1) c.2.val)
++  let payload := 2 * (P.ℓ κ + 1) + 2 + (κ + 1)
++  let oneWidth := 2 * (P.ℓ κ * (κ + 1)) + 2 + (P.n κ * (payload + 1) + 1)
++  have hnoise : ∀ c, (noiseCode c).length = payload := ?_
++  swap
++  · intro c
++    change (pairEncode _ _).length = payload
++    rw [length_pairEncode, Candidates.length_natToList, Candidates.length_natToList]
++  have hone : ∀ r, (P.encOneDraw κ pp r).length = oneWidth := ?_
++  swap
++  · intro r
++    rw [P.encOneDraw_eq, length_pairEncode, Encoding.Modular.encodeVector_length]
++    rw [Internal.encodeList_length_of_fixedWidth noiseCode payload hnoise,
++      List.length_ofFn]
++  have hdraw : (P.encDraw κ pp w.draw).length =
++      2 * P.n κ + 2 + (κ * (oneWidth + 1) + 1) := ?_
++  swap
++  · rw [P.encDraw_eq, length_pairEncode, List.length_ofFn,
++      Internal.encodeList_length_of_fixedWidth (P.encOneDraw κ pp) oneWidth hone,
++      List.length_ofFn]
++  have hsecret : P.ℓ κ * (κ + 1) ≤ S ^ 2 :=
++    (Nat.mul_le_mul hEll hκ1).trans_eq (pow_two S).symm
++  have hpayload : payload + 1 ≤ 9 * S := ?_
++  swap
++  · dsimp only [payload]
++    omega
++  have hnoisePart : P.n κ * (payload + 1) ≤ 9 * S ^ 2 := ?_
++  swap
++  · calc
++      P.n κ * (payload + 1) ≤ S * (9 * S) := Nat.mul_le_mul hn hpayload
++      _ = 9 * S ^ 2 := ?_
++    ring
++  have honeBound : oneWidth + 1 ≤ 15 * S ^ 2 := ?_
++  swap
++  · dsimp only [oneWidth]
++    omega
++  have htable : κ * (oneWidth + 1) ≤ 15 * S ^ 3 := ?_
++  swap
++  · calc
++      κ * (oneWidth + 1) ≤ S * (15 * S ^ 2) := Nat.mul_le_mul hκS honeBound
++      _ = 15 * S ^ 3 := ?_
++    ring
++  have hdrawBound : (P.encDraw κ pp w.draw).length ≤ 32 * S ^ 3 := ?_
++  swap
++  · rw [hdraw]
++    omega
++  have hpub := P.pubLen_le_seedBound κ
++  rw [P.pubLen_eq] at hpub
++  have hbase : κ * P.n κ ≤ P.seedBound.eval κ :=
++    (Nat.le_add_right _ 1).trans hpub
++  have huPayload : κ * P.n κ * (κ + 1) ≤ S ^ 2 :=
++    ((Nat.mul_le_mul_right (κ + 1) hbase).trans
++      (Nat.mul_le_mul hseed hκ1)).trans_eq (pow_two S).symm
++  let rows := BoolCircuit.encodeList
++    (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn w.uniform)
++  have hrows : rows.length ≤ S ^ 2 + S := ?_
++  swap
++  · dsimp only [rows]
++    rw [Internal.encodeList_length_of_fixedWidth
++      (Encoding.Modular.encodeVector (q := pp.p) (length := P.n κ) (κ + 1))
++      (P.n κ * (κ + 1))
++      (fun row => Encoding.Modular.encodeVector_length (κ + 1) row), List.length_ofFn]
++    calc
++      κ * (P.n κ * (κ + 1) + 1) + 1 =
++        κ * P.n κ * (κ + 1) + (κ + 1) := ?_
++      _ ≤ S ^ 2 + S := Nat.add_le_add huPayload hκ1
++    ring
++  have hcoarse : (P.encLPNAdvice π L w).length ≤ 128 * S ^ 3 := ?_
++  swap
++  · rw [P.encLPNAdvice_eq]
++    simp only [length_pairEncode, PrimeParam.enc_eq, Candidates.length_natToList,
++      List.length_replicate, List.length_ofFn]
++    change 2 * (κ + 2) + 2 + (2 * L + 2 + (2 * (κ + 1) + 2 +
++      (2 * (P.G.encIdx (P.n κ) w.I).length + 2 +
++        (2 * (P.encBuckets κ w.buckets).length + 2 +
++          (2 * (P.encDraw κ pp w.draw).length + 2 +
++            (2 * P.m κ + 2 + rows.length)))))) ≤ 128 * S ^ 3
++    omega
++  apply hcoarse.trans
++  rw [P.lpnAdviceBound_eq]
++  simp only [PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_add,
++    PolyExpr.eval_var, PolyExpr.eval_pow]
++  change 128 * S ^ 3 ≤ 4096 * ((L + 1) * S ^ 3)
++  have hscale : S ^ 3 ≤ (L + 1) * S ^ 3 := ?_
++  swap
++  · simpa only [Nat.one_mul] using
++      Nat.mul_le_mul_right (S ^ 3) (Nat.succ_le_succ (Nat.zero_le L))
++  omega
+ 
+ end Params
+ 
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Encoding.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Encoding.lean
+index 039fb2252e44d1e647a53f3f650f90fd1b230432..35418f739f5feac2134721c5cf9e7269631d7564 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Encoding.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Encoding.lean
+@@ -43,7 +43,12 @@ namespace Params
+ 
+ **Proof sketch.** Read the canonical challenge pair through prgEnc_eq and challengeStr_eq,
+ then apply the primitive's index-code injectivity and List.ofFn injectivity. -/
+-theorem prgEnc_injective (P : Params) (N : ℕ) : Function.Injective (P.prgEnc N) := sorry
++theorem prgEnc_injective (P : Params) (N : ℕ) : Function.Injective (P.prgEnc N) := by
++  intro x y h
++  simp only [P.prgEnc_eq, P.G.challengeStr_eq] at h
++  have hp := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h
++  exact Prod.ext (P.G.encIdx_injective N (congrArg Prod.fst hp))
++    (List.ofFn_injective (congrArg Prod.snd hp))
+ 
+ /-- The explicit PRG-hop advice code retains every fixed bucket, matrix and public vector.
+ [JLS26, Lemma 4.2, p. 19]. Dv9, Dv12 and Dv15 retain the prime prefix and all hardwired data.
+@@ -51,7 +56,27 @@ theorem prgEnc_injective (P : Params) (N : ℕ) : Function.Injective (P.prgEnc N
+ **Proof sketch.** Split the nested pairs, apply the bucket-code and canonical matrix-code
+ injectivity readers at the public prime's residue width, then use record extensionality. -/
+ theorem encPRGAdvice_injective (P : Params) (π : PrimeSchedule) (N : ℕ) :
+-    Function.Injective (P.encPRGAdvice π N) := sorry
++    Function.Injective (P.encPRGAdvice π N) := by
++  intro a b h
++  rw [P.encPRGAdvice_eq, P.encPRGAdvice_eq] at h
++  have h0 := congrArg Prod.snd
++    (pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h)
++  have h1 := congrArg Prod.snd
++    (pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h0)
++  have h2 := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h1
++  have h3 := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _))
++    (congrArg Prod.snd h2)
++  have hb : a.buckets = b.buckets :=
++    P.encBuckets_injective (P.kappaOfN N) (congrArg Prod.fst h2)
++  have hM : a.matrix = b.matrix :=
++    Encoding.Modular.encodeMatrix_injective (P.kappaOfN N + 1)
++      (π (P.kappaOfN N)).le_two_pow (congrArg Prod.fst h3)
++  have hu : a.uniform = b.uniform :=
++    Encoding.Modular.encodeMatrix_injective (P.kappaOfN N + 1)
++      (π (P.kappaOfN N)).le_two_pow (congrArg Prod.snd h3)
++  apply (PRGAdvice.prodEquiv P π N).injective
++  simp only [PRGAdvice.prodEquiv_eq]
++  exact Prod.ext hb (Prod.ext hM hu)
+ 
+ /-- Every advice encoding fits the explicit syntactic polynomial at N.
+ [JLS26, Lemma 4.2, p. 19]. Dv12 bounds the full hardwired data instead of using fresh
+@@ -63,7 +88,79 @@ with residue width kappa+1. Apply kappaOfN_le and polynomial evaluation monotoni
+ absorb all constant and linear factors into the stated cubic majorant. -/
+ theorem encPRGAdvice_length_le (P : Params) (π : PrimeSchedule) (N : ℕ)
+     (ω : P.PRGAdvice π N) :
+-    (P.encPRGAdvice π N ω).length ≤ P.prgAdviceBound.eval N := sorry
++    (P.encPRGAdvice π N ω).length ≤ P.prgAdviceBound.eval N := by
++  classical
++  let κ := P.kappaOfN N
++  let pp := π κ
++  let S := P.idxBound.eval N + (P.seedBound.eval N +
++    (P.mBound.eval N + (P.nBound.eval N + (P.ellBound.eval N + (N + 1)))))
++  have hκ : κ ≤ N := P.kappaOfN_le N
++  have hN1 : N + 1 ≤ S := ?_
++  swap
++  · dsimp only [S]
++    omega
++  have hκ1 : κ + 1 ≤ S := (Nat.succ_le_succ hκ).trans hN1
++  have hS1 : 1 ≤ S := (Nat.succ_le_succ (Nat.zero_le N)).trans hN1
++  have hidx : P.idxBound.eval κ ≤ S := ?_
++  swap
++  · have h := PolyExpr.eval_mono P.idxBound hκ
++    dsimp only [S]
++    omega
++  have hseed : P.seedBound.eval κ ≤ S := ?_
++  swap
++  · have h := PolyExpr.eval_mono P.seedBound hκ
++    dsimp only [S]
++    omega
++  obtain ⟨I⟩ := P.G.idxNonempty (P.n κ)
++  have hindex := P.encIdx'_length_le κ pp (I, ω.buckets, ω.matrix)
++  rw [P.encIdx'_eq, length_pairEncode, length_pairEncode] at hindex
++  dsimp only at hindex
++  have hb : (P.encBuckets κ ω.buckets).length ≤ S := ?_
++  swap
++  · omega
++  have hM : (Encoding.Modular.encodeMatrix (κ + 1) ω.matrix).length ≤ S := ?_
++  swap
++  · omega
++  have hpub := P.pubLen_le_seedBound κ
++  rw [P.pubLen_eq] at hpub
++  have hbase : κ * P.n κ ≤ P.seedBound.eval κ :=
++    (Nat.le_add_right _ 1).trans hpub
++  have hu : (Encoding.Modular.encodeMatrix (κ + 1) ω.uniform).length ≤ S ^ 2 := ?_
++  swap
++  · rw [Encoding.Modular.encodeMatrix_length]
++    calc
++      κ * P.n κ * (κ + 1) ≤ P.seedBound.eval κ * (κ + 1) :=
++        Nat.mul_le_mul_right (κ + 1) hbase
++      _ ≤ S * S := Nat.mul_le_mul hseed hκ1
++      _ = S ^ 2 := (pow_two S).symm
++  have hS2 : S ≤ S ^ 2 := ?_
++  swap
++  · simpa only [pow_two, Nat.mul_one] using Nat.mul_le_mul_left S hS1
++  have hS23 : S ^ 2 ≤ S ^ 3 :=
++    calc
++      S ^ 2 = S ^ 2 * 1 := (Nat.mul_one _).symm
++      _ ≤ S ^ 2 * S := Nat.mul_le_mul_left (S ^ 2) hS1
++      _ = S ^ 3 := (pow_succ S 2).symm
++  have hS3 : S ≤ S ^ 3 := hS2.trans hS23
++  have hone : 1 ≤ S ^ 3 := hS1.trans hS3
++  have hcoarse : (P.encPRGAdvice π N ω).length ≤ 100 * S ^ 3 := ?_
++  swap
++  · rw [P.encPRGAdvice_eq]
++    simp only [length_pairEncode, PrimeParam.enc_eq, Candidates.length_natToList,
++      List.length_replicate]
++    change 2 * (κ + 2) + 2 + (2 * N + 2 +
++      (2 * (P.encBuckets κ ω.buckets).length + 2 +
++        (2 * (Encoding.Modular.encodeMatrix (κ + 1) ω.matrix).length + 2 +
++          (Encoding.Modular.encodeMatrix (κ + 1) ω.uniform).length))) ≤ 100 * S ^ 3
++    omega
++  apply hcoarse.trans
++  rw [P.prgAdviceBound_eq, P.prgAdviceDataBound_eq]
++  simp only [PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_add,
++    PolyExpr.eval_var, PolyExpr.eval_pow]
++  change 100 * S ^ 3 ≤ 100 * ((N + 1) * S ^ 3)
++  apply Nat.mul_le_mul_left
++  simpa only [Nat.one_mul] using
++    Nat.mul_le_mul_right (S ^ 3) (Nat.succ_le_succ (Nat.zero_le N))
+ 
+ end Params
+ 
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean
+index 55fc9a8aab3802b5c40a2e1313c4db9cf743095e..3425ae98b0ec8c217521f59c7524293a7553603c 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean
+@@ -18,7 +18,7 @@ None; this module proves properties of the imported reduction interface.
+ 
+ ## Main results
+ 
+-The four specialized sampler/verdict/averaging helper theorems and
++The three specialized verdict/averaging helper theorems and
+ the original every-realizer Params.prg_hop conclusion.
+ 
+ ## References
+@@ -39,6 +39,238 @@ open Complexity Turing Games
+ 
+ -- Specialized helper theorems are added after their reuse checks.
+ 
++/-- A shared-contract PRG realiser has the advised reduction's exact verdict probability;
++reduction glue for [JLS26, Lemma 4.2, p. 19]. Only encoded challenges and layout-length
++coins are used. The unused suffix is removed by the existing uniform restriction law.
++
++**Proof sketch.** Reindex the realiser's coins through coinsEquivPoly, read its verdict,
++read prgRed, and apply pushesUniform_restrict along the prefix injection together with the
++existing ofFn_castLE_eq_take representation equation. -/
++theorem Params.prg_verdict_prob (P : Params) (π : PrimeSchedule) (A : NUPPT)
++    (ω : ∀ N, P.PRGAdvice π N) (B : NUPPT)
++    (hB : B.RealizesOn P.prgEnc (A.coins.subst .var)
++      (fun N x r => P.prgRed π A N (ω N) x r)) (N : ℕ) (x : P.PRGChal N) :
++    ProbComp.prob (ProbComp.sample (B.Coins N))
++        (fun r => B.distinguisherL N (P.prgEnc N x) r = true) =
++      ProbComp.prob (ProbComp.sample (A.Coins (P.kappaOfN N)))
++        (fun r => A.distinguisherL (P.kappaOfN N)
++          (P.prgPre π N (ω N) x) r = true) := by
++  classical
++  have hcut : A.coinLen (P.kappaOfN N) ≤ (A.coins.subst .var).eval N := ?_
++  swap
++  · rw [A.coinLen_eq, PolyExpr.eval_subst, PolyExpr.eval_var]
++    exact A.coins.eval_mono (P.kappaOfN_le N)
++  let Q : List Bool → Prop := fun r =>
++    A.runAtL (P.kappaOfN N) (P.prgPre π N (ω N) x) r = [true]
++  rw [Bridge.prob_sample_eq_uprob
++      (fun r : B.Coins N => B.distinguisherL N (P.prgEnc N x) r = true),
++    Bridge.prob_sample_eq_uprob
++      (fun r : A.Coins (P.kappaOfN N) =>
++        A.distinguisherL (P.kappaOfN N) (P.prgPre π N (ω N) x) r = true)]
++  trans uprob (fun r : Fin ((A.coins.subst .var).eval N) → Bool =>
++    Q ((List.ofFn r).take (A.coinLen (P.kappaOfN N))))
++  · calc
++      uprob (fun r : B.Coins N => B.distinguisherL N (P.prgEnc N x) r = true) =
++          uprob (fun r : Fin ((A.coins.subst .var).eval N) → Bool =>
++            B.distinguisherL N (P.prgEnc N x)
++              ((NUPPT.coinsEquivPoly hB.coins_eq N).symm r) = true) :=
++        (uprob_comp_equiv (NUPPT.coinsEquivPoly hB.coins_eq N).symm
++          (fun r : B.Coins N => B.distinguisherL N (P.prgEnc N x) r = true)).symm
++      _ = _ := ?_
++    congr 1
++    funext r
++    rw [NUPPT.distinguisherL_eq, hB.runAt_coinsEquivPoly_symm, P.prgRed_eq]
++    simp only [decide_eq_true_eq, Q]
++  · have hp :=
++      (HardcoreBit.pushesUniform_restrict (O := Bool) (Fin.castLE_injective hcut)).uprob_eq
++        (fun r : Fin (A.coinLen (P.kappaOfN N)) → Bool => Q (List.ofFn r))
++    simp only [OneWay.ofFn_castLE_eq_take hcut] at hp
++    simpa only [Q, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, decide_eq_true_eq] using hp
++
++/-- The actual index/seed nuisance draws average to the explicit PRG advice law; construction-
++specific averaging glue for [JLS26, Lemma 4.2, p. 19]. The Boolean index retains G.idSamp's
++exact pushforward law; no uniformity of G.Idx is assumed.
++
++**Proof sketch.** Read the concrete joint draws and idCore. Reindex the advice law through
++its supplied record/product equivalence. Split the specified actual products with
++expect_sample_pair, reindex their factors by an explicit proof-local permutation with
++expect_sample_equiv, and discard only the unused repetition draw with expect_const. -/
++theorem Params.prg_nuisance_average (P : Params) (π : PrimeSchedule) (N : ℕ) :
++    let κ := P.kappaOfN N
++    ∀ f : P.G.Idx (P.n κ) → (Fin (P.n κ) → Bool) →
++      (Fin (P.m κ) → Fin (P.B κ)) →
++      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod (π κ).p) →
++      (Fin κ → Fin (P.n κ) → ZMod (π κ).p) → ℝ,
++    ProbComp.expect (P.idSamp' κ (π κ)) (fun I =>
++      ProbComp.expect (ProbComp.sample (P.Draw κ (π κ))) (fun d =>
++        ProbComp.expect
++          (ProbComp.sample (Fin κ → Fin (P.n κ) → ZMod (π κ).p))
++          (fun u => f I.1 d.1 I.2.1 I.2.2 u))) =
++      ProbComp.expect (ProbComp.sample (P.PRGAdvice π N)) (fun ω =>
++        ProbComp.expect (P.G.idSamp (P.n κ)) (fun I =>
++          ProbComp.expect (ProbComp.sample (Fin (P.n κ) → Bool))
++            (fun σ => f I σ ω.buckets ω.matrix ω.uniform))) := by
++  dsimp only
++  intro f
++  let κ := P.kappaOfN N
++  let pp := π κ
++  let GDraw := P.G.IdDraw (P.n κ)
++  let Buck := Fin (P.m κ) → Fin (P.B κ)
++  let Mat := Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p)
++  let Seed := Fin (P.n κ) → Bool
++  let Rep := Fin κ → (Fin (P.ℓ κ) → ZMod pp.p) ×
++    (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
++  let U := Fin κ → Fin (P.n κ) → ZMod pp.p
++  let Raw := (GDraw × (Buck × Mat)) × ((Seed × Rep) × U)
++  let Nuisance := Buck × (Mat × U)
++  let Target := Nuisance × (GDraw × (Seed × Rep))
++  let rawTest : Raw → ℝ := fun z =>
++    f (P.G.idCore (P.n κ) z.1.1) z.2.1.1 z.1.2.1 z.1.2.2 z.2.2
++  let targetTest : Target → ℝ := fun z =>
++    f (P.G.idCore (P.n κ) z.2.1) z.2.2.1 z.1.1 z.1.2.1 z.1.2.2
++  let avg : Nuisance → ℝ := fun ν =>
++    ProbComp.expect (ProbComp.sample GDraw) (fun g =>
++      ProbComp.expect (ProbComp.sample Seed) (fun σ =>
++        f (P.G.idCore (P.n κ) g) σ ν.1 ν.2.1 ν.2.2))
++  let left : ℝ := ProbComp.expect (P.idSamp' κ pp) (fun I =>
++    ProbComp.expect (ProbComp.sample (P.Draw κ pp)) (fun d =>
++      ProbComp.expect (ProbComp.sample U) (fun u => f I.1 d.1 I.2.1 I.2.2 u)))
++  let right : ℝ := ProbComp.expect (ProbComp.sample (P.PRGAdvice π N)) (fun ω =>
++    ProbComp.expect (P.G.idSamp (P.n κ)) (fun I =>
++      ProbComp.expect (ProbComp.sample Seed) (fun σ =>
++        f I σ ω.buckets ω.matrix ω.uniform)))
++  change left = right
++  have hleft : left = ProbComp.expect (ProbComp.sample Raw) rawTest := ?_
++  swap
++  · dsimp only [left]
++    rw [P.idSamp'_eq, ProbComp.expect_map]
++    simp only [P.idCore_eq]
++    rw [← Bridge.expect_sample_pair (α := GDraw × (Buck × Mat))
++      (β := (Seed × Rep) × U) rawTest]
++    simp only [ProbComp.expect_bind, ProbComp.expect_pure, rawTest]
++    apply congrArg (ProbComp.expect (ProbComp.sample (GDraw × (Buck × Mat))))
++    funext a
++    rw [← Bridge.expect_sample_pair (α := Seed × Rep) (β := U)
++      (fun z : (Seed × Rep) × U =>
++        f (P.G.idCore (P.n κ) a.1) z.1.1 a.2.1 a.2.2 z.2)]
++    simp only [ProbComp.expect_bind, ProbComp.expect_pure]
++    rfl
++  let e : Raw ≃ Target :=
++    { toFun := fun z => ((z.1.2.1, z.1.2.2, z.2.2), (z.1.1, z.2.1))
++      invFun := fun z => ((z.2.1, z.1.1, z.1.2.1), (z.2.2, z.1.2.2))
++      left_inv := fun _ => rfl
++      right_inv := fun _ => rfl }
++  have hperm : ProbComp.expect (ProbComp.sample Raw) rawTest =
++      ProbComp.expect (ProbComp.sample Target) targetTest :=
++    ProbComp.expect_sample_equiv e targetTest
++  have htarget : ProbComp.expect (ProbComp.sample Target) targetTest =
++      ProbComp.expect (ProbComp.sample Nuisance) avg := ?_
++  swap
++  · rw [← Bridge.expect_sample_pair (α := Nuisance) (β := GDraw × (Seed × Rep))
++      targetTest]
++    simp only [ProbComp.expect_bind, ProbComp.expect_pure, targetTest]
++    apply congrArg (ProbComp.expect (ProbComp.sample Nuisance))
++    funext ν
++    rw [← Bridge.expect_sample_pair (α := GDraw) (β := Seed × Rep)
++      (fun z : GDraw × (Seed × Rep) =>
++        f (P.G.idCore (P.n κ) z.1) z.2.1 ν.1 ν.2.1 ν.2.2)]
++    simp only [ProbComp.expect_bind, ProbComp.expect_pure]
++    apply congrArg (ProbComp.expect (ProbComp.sample GDraw))
++    funext g
++    rw [← Bridge.expect_sample_pair (α := Seed) (β := Rep)
++      (fun z : Seed × Rep => f (P.G.idCore (P.n κ) g) z.1 ν.1 ν.2.1 ν.2.2)]
++    simp only [ProbComp.expect_bind, ProbComp.expect_pure, ProbComp.expect_const]
++  have hright : right = ProbComp.expect (ProbComp.sample Nuisance) avg := ?_
++  swap
++  · dsimp only [right]
++    rw [← ProbComp.expect_sample_equiv (PRGAdvice.prodEquiv P π N) avg]
++    simp only [P.G.idSamp_eq, ProbComp.expect_bind, ProbComp.expect_pure,
++      PRGAdvice.prodEquiv_eq, avg]
++    rfl
++  exact hleft.trans (hperm.trans (htarget.trans hright.symm))
++
++/-- An all-uniform-public chain is the average of its fixed-advice PRG sections; construction-
++specific semantic glue for [JLS26, Lemma 4.2, p. 19]. The equality is of acceptance
++probabilities; unused queries are marginalized only in expectation.
++
++**Proof sketch.** Transport both actual advice laws through the published record/product
++equivalence and its inverse reader before rewriting the inverse parameter. Read the chain
++endpoint and preprocessing. Reindex the comparison vector by the explicit output Fin
++equivalence, then apply prg_nuisance_average to the actual adversarial verdict test. -/
++theorem Params.prg_chain_accept_average (P : Params) (π : PrimeSchedule) (A : NUPPT)
++    (N : ℕ) (hN : N = P.n (P.kappaOfN N)) (b : Bool) :
++    accept (P.chainGame A b (P.kappaOfN N) (P.kappaOfN N)
++        (π (P.kappaOfN N))) =
++      ProbComp.expect (ProbComp.sample (P.PRGAdvice π N)) (fun ω =>
++        accept ((P.G.idSamp N).bind fun I =>
++          (ProbComp.sample (Fin N → Bool)).bind fun σ =>
++          (ProbComp.sample (Fin (P.G.outLen N) → Bool)).bind fun v =>
++          (ProbComp.sample (A.Coins (P.kappaOfN N))).bind fun r =>
++            pure (A.distinguisherL (P.kappaOfN N)
++              (P.prgPre π N ω (I, if b then P.G.eval N I σ else v)) r))) := by
++  classical
++  generalize hk : P.kappaOfN N = κ at hN ⊢
++  subst N
++  let sectionTest : P.PRGAdvice π (P.n κ) → ℝ := fun ω =>
++    accept ((P.G.idSamp (P.n κ)).bind fun I =>
++      (ProbComp.sample (Fin (P.n κ) → Bool)).bind fun σ =>
++      (ProbComp.sample (Fin (P.G.outLen (P.n κ)) → Bool)).bind fun v =>
++      (ProbComp.sample (A.Coins κ)).bind fun r =>
++        pure (A.distinguisherL κ
++          (P.prgPre π (P.n κ) ω (I, if b then P.G.eval (P.n κ) I σ else v)) r))
++  change accept (P.chainGame A b κ κ (π κ)) =
++    ProbComp.expect (ProbComp.sample (P.PRGAdvice π (P.n κ))) sectionTest
++  rw [← ProbComp.expect_sample_equiv
++    (PRGAdvice.prodEquiv P π (P.n κ)).symm sectionTest]
++  let e : (Fin (P.m κ) → Bool) ≃ (Fin (P.G.outLen (P.n κ)) → Bool) :=
++    Equiv.arrowCongr (finCongr (P.m_eq κ)) (Equiv.refl Bool)
++  have hOut : ∀ v : Fin (P.G.outLen (P.n κ)) → Bool,
++      e.symm v = fun j => v (P.outputIndex κ j) := ?_
++  swap
++  · intro v
++    funext j
++    rw [P.outputIndex_eq]
++    rfl
++  have hpub : ∀ (I : P.Idx' κ (π κ)) (d : P.Draw κ (π κ))
++      (u : Fin κ → Fin (P.n κ) → ZMod (π κ).p),
++      P.chainPublic κ (π κ) I d u κ = u := ?_
++  swap
++  · intro I d u
++    funext k
++    simp only [P.chainPublic_eq, k.isLt, if_true]
++  have havg := P.prg_nuisance_average π (P.n κ)
++  dsimp only at havg
++  conv at havg =>
++    intro f
++    rhs
++    rw [← ProbComp.expect_sample_equiv (PRGAdvice.prodEquiv P π (P.n κ)).symm]
++  simp only [PRGAdvice.prodEquiv_eq, Equiv.coe_fn_symm_mk, PRGAdvice.data_eq] at havg
++  rw [P.kappaOfN_n] at havg
++  specialize havg (fun I σ buckets matrix u =>
++    ProbComp.expect (ProbComp.sample (Fin (P.G.outLen (P.n κ)) → Bool)) (fun v =>
++      ProbComp.expect (ProbComp.sample (A.Coins κ)) (fun r =>
++        if A.distinguisherL κ
++          (P.challengeStr κ (π κ) (I, buckets, matrix)
++            (P.publicSeed κ (π κ) u false)
++            (if b then fun j => P.G.eval (P.n κ) I σ (P.outputIndex κ j)
++              else fun j => v (P.outputIndex κ j))) r = true then 1 else 0)))
++  dsimp only [sectionTest]
++  simp only [PRGAdvice.prodEquiv_eq, Equiv.coe_fn_symm_mk, PRGAdvice.data_eq, P.prgPre_eq]
++  rw [P.kappaOfN_n]
++  simp only [accept_eq, P.chainGame_eq, ProbComp.prob_eq_expect,
++    ProbComp.expect_bind, OracleComp.pure_eq_pure, ProbComp.expect_pure,
++    cast_eq, hpub]
++  conv_lhs =>
++    arg 2
++    ext I
++    arg 2
++    ext d
++    arg 2
++    ext u
++    rw [← ProbComp.expect_sample_equiv e.symm]
++  simp only [hOut]
++  cases b <;> simpa using havg
++
+ namespace Params
+ 
+ /-- The Boolean PRG hop between all-uniform-public-vector chains is bounded by one Boolean
+@@ -58,7 +290,69 @@ theorem prg_hop (P : Params) (π : PrimeSchedule) (A : NUPPT) :
+       B.RealizesOn P.prgEnc (A.coins.subst .var)
+         (fun N x r => P.prgRed π A N (ω N) x r) →
+       ∀ κ, Games.advantage (P.chainGame A true κ κ (π κ))
+-          (P.chainGame A false κ κ (π κ)) ≤ P.G.adv B (P.n κ) := sorry
++          (P.chainGame A false κ κ (π κ)) ≤ P.G.adv B (P.n κ) := by
++  classical
++  let sec : ∀ N, P.PRGAdvice π N → Bool → ProbComp Bool := fun N ω b =>
++    (P.G.idSamp N).bind fun I =>
++    (ProbComp.sample (Fin N → Bool)).bind fun σ =>
++    (ProbComp.sample (Fin (P.G.outLen N) → Bool)).bind fun v =>
++    (ProbComp.sample (A.Coins (P.kappaOfN N))).bind fun r =>
++      pure (A.distinguisherL (P.kappaOfN N)
++        (P.prgPre π N ω (I, if b then P.G.eval N I σ else v)) r)
++  have hfixed : ∀ N, ∃ ω : P.PRGAdvice π N,
++      N = P.n (P.kappaOfN N) →
++      advantage (P.chainGame A true (P.kappaOfN N) (P.kappaOfN N)
++          (π (P.kappaOfN N)))
++        (P.chainGame A false (P.kappaOfN N) (P.kappaOfN N)
++          (π (P.kappaOfN N))) ≤ advantage (sec N ω true) (sec N ω false) := ?_
++  swap
++  · intro N
++    by_cases hi : N = P.n (P.kappaOfN N)
++    · obtain ⟨ω, hω⟩ :=
++        TCSlib.Cryptography.Authentication.LamportReduction.exists_expect_sample_le
++          (fun ω : P.PRGAdvice π N => advantage (sec N ω true) (sec N ω false))
++      refine ⟨ω, fun _ => ?_⟩
++      rw [advantage_eq, P.prg_chain_accept_average π A N hi true,
++        P.prg_chain_accept_average π A N hi false]
++      change |ProbComp.expect (ProbComp.sample (P.PRGAdvice π N))
++          (fun ω => accept (sec N ω true)) -
++        ProbComp.expect (ProbComp.sample (P.PRGAdvice π N))
++          (fun ω => accept (sec N ω false))| ≤ _
++      exact (ProbComp.abs_expect_sub_le_expect
++        (ProbComp.sample (P.PRGAdvice π N))
++        (f := fun ω => accept (sec N ω true))
++        (g := fun ω => accept (sec N ω false))
++        (h := fun ω => advantage (sec N ω true) (sec N ω false))
++        (fun ω => (advantage_eq (sec N ω true) (sec N ω false)).symm.le)).trans hω
++    · exact ⟨default, fun h => False.elim (hi h)⟩
++  choose ω hω using hfixed
++  refine ⟨ω, ?_⟩
++  intro B hB
++  have hacc : ∀ N b, accept (sec N (ω N) b) = accept (P.G.game B b N) := ?_
++  swap
++  · intro N b
++    simp only [sec, accept_eq, P.G.game_eq, ProbComp.prob_bind,
++      OracleComp.pure_eq_pure, ProbComp.prob_pure]
++    congr 1
++    funext I
++    congr 1
++    funext σ
++    congr 1
++    funext v
++    have hc := P.prg_verdict_prob π A ω B hB N
++      (I, if b then P.G.eval N I σ else v)
++    simpa only [P.prgEnc_eq, ProbComp.prob_eq_expect] using hc.symm
++  have hcoins : ∀ N,
++      advantage (sec N (ω N) true) (sec N (ω N) false) = P.G.adv B N := ?_
++  swap
++  · intro N
++    simp only [advantage_eq, hacc, P.G.adv_eq]
++  intro κ
++  have hi : P.n κ = P.n (P.kappaOfN (P.n κ)) :=
++    congrArg P.n (P.kappaOfN_n κ).symm
++  have h := (hω (P.n κ) hi).trans (hcoins (P.n κ)).le
++  rw [P.kappaOfN_n] at h
++  exact h
+ 
+ end Params
+ 

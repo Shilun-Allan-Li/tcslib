@@ -1,0 +1,71 @@
+--- /private/tmp/io-sprg-proof-notes/LPNHopFinal/08-lpn_uniform_section.lean.candidate
++++ /private/tmp/io-sprg-proof-notes/M4LPNPrepared/08-lpn_uniform_section.lean.candidate
+@@ -1,7 +1,11 @@
+-/- NOT_RUN. Fixed-advice uniform canonical acceptance, dependencies03/06.
+-Translate the challenged vector CONDITIONALLY on the fixed Boolean seed,
+-then retain its exact uniform law by the existing additive-group API. -/
++/-- A fixed-advice canonical uniform challenge gives the next-chain section exactly.
++Conditional-translation glue for [JLS26, Lemma 4.2, p. 19].
+ 
++**Proof sketch.** Relabel the canonical matrix/value coordinates with uprob_comp_equiv,
++then expose the independent products through the existing expectation bridges.
++The preprocessing reader gives fresh values plus the fixed Boolean seed. Conditioned
++on that seed, pushesUniform_add_right removes this translation without changing the
++uniform vector law. The same fixed matrix, advice and adversary coins remain. -/
+ theorem lpn_uniform_section (P : Params) (π : PrimeSchedule) (A : NUPPT) (L : ℕ)
+     (h : L = P.ℓ (P.kappaOf L)) (w : P.LPNAdvice π L)
+     (k : Fin (P.kappaOf L)) (hk : k.val = w.hop.val) :
+@@ -25,14 +29,23 @@
+   let pp := π κ
+   let Mat := Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p)
+   let V := Fin (P.n κ) → ZMod pp.p
+-  let D := fun x (r : A.Coins κ) =>
++  let D : P.LPNChal π L → A.Coins κ → Bool := fun x r =>
+     decide (A.runAtL κ (P.lpnPre π L w x) (List.ofFn r) = [true])
+   obtain ⟨e, he⟩ := lpn_uniform_challenge_reindex P π L h
+-  rw [← acceptProb_comp_equiv e.symm (id : P.LPNChal π L → _) D, acceptProb_def,
+-    ← Games.Bridge.prob_sample_eq_uprob, Games.ProbComp.prob_eq_expect]
+-  simp only [← Games.Bridge.expect_sample_pair (α := Mat × V) (β := A.Coins κ),
+-    ← Games.Bridge.expect_sample_pair (α := Mat) (β := V),
+-    Games.ProbComp.expect_bind, Games.ProbComp.expect_pure]
++  rw [acceptProb_def]
++  change uprob (fun z : P.LPNChal π L × A.Coins κ => D z.1 z.2 = true) = _
++  rw [← uprob_comp_equiv (Equiv.prodCongr e.symm (Equiv.refl (A.Coins κ)))
++    (fun z : P.LPNChal π L × A.Coins κ => D z.1 z.2 = true)]
++  rw [← Games.Bridge.prob_sample_eq_uprob, Games.ProbComp.prob_eq_expect]
++  change Games.ProbComp.expect (Games.ProbComp.sample ((Mat × V) × A.Coins κ))
++    (fun z => if D (e.symm z.1) z.2 = true then 1 else 0) = _
++  rw [← Games.Bridge.expect_sample_pair (α := Mat × V) (β := A.Coins κ)
++    (fun z : (Mat × V) × A.Coins κ => if D (e.symm z.1) z.2 = true then 1 else 0)]
++  simp only [Games.ProbComp.expect_bind, Games.ProbComp.expect_pure]
++  rw [← Games.Bridge.expect_sample_pair (α := Mat) (β := V)
++    (fun z : Mat × V => Games.ProbComp.expect (Games.ProbComp.sample (A.Coins κ))
++      (fun r => if D (e.symm z) r = true then 1 else 0))]
++  simp only [Games.ProbComp.expect_bind, Games.ProbComp.expect_pure]
+   apply congrArg (Games.ProbComp.expect (Games.ProbComp.sample Mat))
+   funext M
+   let F : V → ℝ := fun v => Games.ProbComp.expect
+@@ -47,7 +60,8 @@
+   have hnorm : Games.ProbComp.expect (Games.ProbComp.sample V)
+       (fun v => Games.ProbComp.expect (Games.ProbComp.sample (A.Coins κ))
+         (fun r => if D (e.symm (M, v)) r = true then 1 else 0)) =
+-      Games.ProbComp.expect (Games.ProbComp.sample V) (fun v => F (v + offset))
++      Games.ProbComp.expect (Games.ProbComp.sample V) (fun v => F (v + offset)) := ?_
++  swap
+   · apply congrArg (Games.ProbComp.expect (Games.ProbComp.sample V))
+     funext v
+     apply congrArg (Games.ProbComp.expect (Games.ProbComp.sample (A.Coins κ)))
+@@ -56,10 +70,11 @@
+     simp only [Equiv.apply_symm_apply] at hp
+     dsimp only [D]
+     rw [lpn_pre_uniform_update P π L h w k hk M v _ hp.1 hp.2]
+-    simp only [decide_eq_true_eq, F, offset]
++    simp only [decide_eq_true_eq, F, offset, Pi.add_apply]
+   have htranslate := (HardcoreBit.pushesUniform_iff _).mp
+     (HardcoreBit.pushesUniform_add_right offset) F
+   have htranslate' : Games.ProbComp.expect (Games.ProbComp.sample V)
+-      (fun v => F (v + offset)) = Games.ProbComp.expect (Games.ProbComp.sample V) F
++      (fun v => F (v + offset)) = Games.ProbComp.expect (Games.ProbComp.sample V) F := ?_
++  swap
+   · simpa only [Games.Bridge.expect_sample_eq_uexp] using htranslate
+   exact hnorm.trans htranslate'

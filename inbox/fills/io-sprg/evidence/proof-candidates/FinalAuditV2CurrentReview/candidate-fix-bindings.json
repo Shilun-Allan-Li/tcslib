@@ -1,0 +1,23 @@
+[
+  {
+    "file": "checkpoint_report.py",
+    "original_sha256": "50cddf75558b5a8ea313005077950e93d25a4fe9a2135e394a9d966159744089",
+    "candidate_sha256": "6ec4c5f4f23f0be2b95c9b6f2777e5bc25a21a507c73c84b9ed7231cfe7eb7e3",
+    "reason": "Current checkpoint completed-theorem-names*.json is a JSON array; old whitespace split would produce invalid quoted/bracketed census keys. Existing exact name/axiom checks remain.",
+    "status": "AST_PARSED_UNRUN"
+  },
+  {
+    "file": "io-sprg-rule10/prepare_static.py",
+    "original_sha256": "4152da9d46c5d4b93e797c9225a348ed66b59c9771ef7fb7ad3d2a55455ed343",
+    "candidate_sha256": "1ab97bc27433523696373bf5a6e0ab777e933864d98a34a8cf678c056273158e",
+    "reason": "Remove unused misleading collector-order.txt artifact hardcoded to io_sprg_m0. Orchestrator already writes its own current orders/collector.txt; matrix/closure guards unchanged.",
+    "status": "AST_PARSED_UNRUN"
+  },
+  {
+    "file": "checkpoint_inventory.py",
+    "original_sha256": "69daf4aad61a52b4dcedf3a98ab284276b0167a64312683c5747362824f4a848",
+    "candidate_sha256": "11913709c1f8bfd2fa44fd991dd3b0baa0f50d1820a25eb4b389d2e1d6bec45b",
+    "reason": "Tighten existing Counter guard to preserve ordered original root commands. Reject an accidental root-import reorder while permitting the single authorized export insertion.",
+    "status": "AST_PARSED_UNRUN"
+  }
+]

@@ -1,0 +1,52 @@
+by
+  classical
+  let Ω := P.IdDraw κ pp ×
+    (P.Draw κ pp × ((Fin (P.m κ) → Bool) × A.Coins κ))
+  let c : ProbComp Ω :=
+    (ProbComp.sample (P.IdDraw κ pp)).bind fun a =>
+    (ProbComp.sample (P.Draw κ pp)).bind fun d =>
+    (ProbComp.sample (Fin (P.m κ) → Bool)).bind fun w =>
+    (ProbComp.sample (A.Coins κ)).bind fun r => pure (a, d, w, r)
+  let ix : Ω → P.Idx' κ pp := fun z => P.idCore κ pp z.1
+  let x : Ω → P.SdCoreOut κ pp := fun z => P.sdCore κ pp (ix z) z.2.1
+  let bad : Ω → Prop := fun z => (x z).err = true
+  let eu : Ω → Prop := fun z =>
+    A.distinguisherL κ (P.challengeStr κ pp (ix z)
+      (P.publicSeed κ pp (fun k => ((x z).instances k).pub) false) z.2.2.1)
+        z.2.2.2 = true
+  let er : Ω → Prop := fun z =>
+    A.distinguisherL κ (P.challengeStr κ pp (ix z) (x z).seed.1 z.2.2.1)
+      z.2.2.2 = true
+  have hu : accept (P.hyb A .uniform κ pp) = ProbComp.prob c eu := ?_
+  swap
+  · simp only [accept_eq, P.hyb_eq, P.idSamp'_eq, P.sdSampFull_eq,
+      ProbComp.prob_eq_expect, ProbComp.expect_bind, ProbComp.expect_map,
+      OracleComp.pure_eq_pure, ProbComp.expect_pure, c, eu, ix, x]
+  have hr : accept (P.hyb A .random κ pp) = ProbComp.prob c er := ?_
+  swap
+  · simp only [accept_eq, P.hyb_eq, P.idSamp'_eq, P.sdSampFull_eq,
+      ProbComp.prob_eq_expect, ProbComp.expect_bind, ProbComp.expect_map,
+      OracleComp.pure_eq_pure, ProbComp.expect_pure, c, er, ix, x]
+  have he : ProbComp.prob c bad = P.errProb κ pp := ?_
+  swap
+  · simp only [P.errProb_eq, P.idSamp'_eq, P.sdSampFull_eq,
+      ProbComp.prob_eq_expect, ProbComp.expect_bind, ProbComp.expect_map,
+      OracleComp.pure_eq_pure, ProbComp.expect_pure,
+      c, bad, ix, x]
+    dsimp only
+    simp only [ProbComp.expect_const]
+  have hagree : ∀ z, ¬ bad z → (eu z ↔ er z) := ?_
+  swap
+  · intro z hz
+    have herr : (x z).err = false := Bool.eq_false_iff.mpr hz
+    have hpub : (x z).seed.1 =
+        P.publicSeed κ pp (fun k => ((x z).instances k).pub) false := ?_
+    swap
+    · have h := P.sdCore_publicSeed κ pp (ix z) z.2.1
+      change (x z).seed.1 =
+        P.publicSeed κ pp (fun k => ((x z).instances k).pub) (x z).err at h
+      rwa [herr] at h
+    dsimp only [eu, er]
+    rw [hpub]
+  rw [advantage_eq, hu, hr]
+  exact (ProbComp.abs_prob_sub_le_of_agree c hagree).trans_eq he

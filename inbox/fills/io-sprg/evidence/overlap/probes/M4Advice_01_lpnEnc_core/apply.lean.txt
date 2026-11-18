@@ -1,0 +1,12 @@
+import TCSlib.Cryptography.LWE.Encoding
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography
+
+example (Q : LWE.Parameters) (width : ℕ) (hwidth : Q.modulus ≤ 2 ^ width) :
+    Function.Injective (LWE.encodeChallenge Q width) := by
+  apply?

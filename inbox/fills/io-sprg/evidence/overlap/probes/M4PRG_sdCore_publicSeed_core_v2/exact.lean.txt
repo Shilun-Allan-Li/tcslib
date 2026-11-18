@@ -1,0 +1,18 @@
+import TCSlib.Cryptography.Games.Hopping
+import TCSlib.Cryptography.Games.Bridges.Experiments
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography TCSlib.Cryptography.Games
+
+example {Pub Block F : Type} (e : Block ⊕ Unit ≃ Pub)
+    (inst : Block → F) (flag : F) (packed : Pub → F)
+    (publicMap : (Block → F) → F → Pub → F)
+    (hpack : ∀ p, packed p = match e.symm p with | .inl k => inst k | .inr _ => flag)
+    (hpub : ∀ blocks err p,
+      publicMap blocks err p = match e.symm p with | .inl k => blocks k | .inr _ => err) :
+    packed = publicMap inst flag := by
+  exact?

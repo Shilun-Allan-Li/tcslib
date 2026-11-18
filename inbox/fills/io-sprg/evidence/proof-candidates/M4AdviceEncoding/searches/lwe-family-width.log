@@ -1,0 +1,43 @@
+COMMAND: ['rg', '-n', 'modulus_le_pow|residueBits|def lpnEnc|theorem lpnEnc_eq', 'TCSlib/Cryptography/LWE/Basic.lean', 'TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean', 'TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean']
+STATUS: 0
+MISSING CANDIDATE PATHS: ['TCSlib/Cryptography/LPN/Basic.lean']
+STDOUT:
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean:68:noncomputable def lpnEnc (P : Params) (π : PrimeSchedule) (L : ℕ)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean:71:    ((P.lpnFamily_raw π).toLWE.residueBits.eval L) x
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean:74:theorem lpnEnc_eq (P : Params) (π : PrimeSchedule) (L : ℕ) (x : P.LPNChal π L) :
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean:76:      ((P.lpnFamily_raw π).toLWE.residueBits.eval L) x := rfl
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:147:  residueBits : PolyExpr
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:151:  modulus_le_pow : ∀ ℓ, modulus ℓ ≤ 2 ^ residueBits.eval ℓ
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:195:  residueBits := F.residueBits
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:199:  modulus_le_pow := F.modulus_le_pow
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:214:theorem toLWE_residueBits (F : Raw) : F.toLWE.residueBits = F.residueBits := rfl
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:383:  pairEncode (Candidates.natToList (F.residueBits.eval ℓ + 1) (F.modulus ℓ))
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:389:      pairEncode (Candidates.natToList (F.residueBits.eval ℓ + 1) (F.modulus ℓ))
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:396:  pairEncode (Encoding.Modular.encodeMatrix (F.residueBits.eval ℓ) r.1)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:397:    (pairEncode (Encoding.Modular.encodeVector (F.residueBits.eval ℓ) r.2.1)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:400:          (Candidates.natToList (F.residueBits.eval ℓ) c.2.val)) []) (List.ofFn r.2.2)))
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:405:      pairEncode (Encoding.Modular.encodeMatrix (F.residueBits.eval ℓ) r.1)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:406:        (pairEncode (Encoding.Modular.encodeVector (F.residueBits.eval ℓ) r.2.1)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:409:              (Candidates.natToList (F.residueBits.eval ℓ) c.2.val)) [])
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:421:    pairEncode (Nat.bits c.1.val) (Candidates.natToList (F.residueBits.eval ℓ) c.2.val)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:433:        ((ZMod.val_lt a.2).trans_le (F.modulus_le_pow ℓ))
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:434:        ((ZMod.val_lt b.2).trans_le (F.modulus_le_pow ℓ))
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:471:  · exact Encoding.Modular.encodeMatrix_injective (F.residueBits.eval ℓ)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:472:      (F.modulus_le_pow ℓ) (congrArg Prod.fst houter)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:474:    · exact Encoding.Modular.encodeVector_injective (F.residueBits.eval ℓ)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:475:        (F.modulus_le_pow ℓ) (congrArg Prod.fst hinner)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:485:  pairEncode (Encoding.Modular.encodeMatrix (F.residueBits.eval ℓ) s.1)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:486:    (pairEncode (Encoding.Modular.encodeVector (F.residueBits.eval ℓ) s.2.1)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:487:      (Encoding.Modular.encodeVector (F.residueBits.eval ℓ) s.2.2))
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:492:      pairEncode (Encoding.Modular.encodeMatrix (F.residueBits.eval ℓ) s.1)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:493:        (pairEncode (Encoding.Modular.encodeVector (F.residueBits.eval ℓ) s.2.1)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:494:          (Encoding.Modular.encodeVector (F.residueBits.eval ℓ) s.2.2)) := rfl
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:502:`F.modulus_le_pow ℓ`. Combine the recovered components by product extensionality. -/
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:510:  · exact Encoding.Modular.encodeMatrix_injective (F.residueBits.eval ℓ)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:511:      (F.modulus_le_pow ℓ) (congrArg Prod.fst houter)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:513:    · exact Encoding.Modular.encodeVector_injective (F.residueBits.eval ℓ)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:514:        (F.modulus_le_pow ℓ) (congrArg Prod.fst hinner)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:515:    · exact Encoding.Modular.encodeVector_injective (F.residueBits.eval ℓ)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:516:        (F.modulus_le_pow ℓ) (congrArg Prod.snd hinner)
+
+STDERR:

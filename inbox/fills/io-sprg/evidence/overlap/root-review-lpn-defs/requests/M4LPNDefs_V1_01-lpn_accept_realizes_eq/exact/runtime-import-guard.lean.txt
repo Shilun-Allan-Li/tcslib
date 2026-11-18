@@ -1,0 +1,22 @@
+run_cmd do
+  let env ← Lean.getEnv
+  let prefix := "TCSlib.Cryptography.Obfuscation.StructuredSeed."
+  let suffixes : List String := [
+    "Internal.lpn_accept_realizes_eq",
+    "Internal.lpn_gap_realizes_eq",
+    "Internal.lpn_uniform_challenge_reindex",
+    "Internal.lpn_real_seed_reindex",
+    "Internal.lpn_pre_real_update",
+    "Internal.lpn_pre_uniform_update",
+    "Internal.lpn_real_section",
+    "Internal.lpn_uniform_section",
+    "Internal.lpn_fix_advice",
+    "Params.lpn_hop"
+  ]
+  for suffix in suffixes do
+    let name := ((prefix ++ suffix).splitOn ".").foldl
+      (fun n p => Lean.Name.str n p) Lean.Name.anonymous
+    if env.contains name (skipRealize := false) then
+      Lean.throwError "LPN_DEFS_TARGET_PRESENT"
+  IO.println "LPN_DEFS_GUARD_OK_10"
+

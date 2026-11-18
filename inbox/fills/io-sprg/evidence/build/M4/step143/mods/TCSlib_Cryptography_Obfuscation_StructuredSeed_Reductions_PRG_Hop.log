@@ -1,0 +1,129 @@
+2026-11-18T20:11:40.760788+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean:145:2: error: unsolved goals
+case refine_1.h
+P : Params
+π : PrimeSchedule
+N : ℕ
+f :
+  P.G.Idx (P.n (P.kappaOfN N)) →
+    (Fin (P.n (P.kappaOfN N)) → Bool) →
+      (Fin (P.m (P.kappaOfN N)) → Fin (P.B (P.kappaOfN N))) →
+        Matrix (Fin (P.n (P.kappaOfN N))) (Fin (P.ℓ (P.kappaOfN N))) (ZMod (π (P.kappaOfN N)).p) →
+          (Fin (P.kappaOfN N) → Fin (P.n (P.kappaOfN N)) → ZMod (π (P.kappaOfN N)).p) → ℝ
+κ : ℕ := P.kappaOfN N
+pp : PrimeParam κ := π κ
+GDraw : Type := P.G.IdDraw (P.n κ)
+Buck : Type := Fin (P.m κ) → Fin (P.B κ)
+Mat : Type := Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p)
+Seed : Type := Fin (P.n κ) → Bool
+Rep : Type := Fin κ → (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
+U : Type := Fin κ → Fin (P.n κ) → ZMod pp.p
+Raw : Type := (GDraw × Buck × Mat) × (Seed × Rep) × U
+Nuisance : Type := Buck × Mat × U
+Target : Type := Nuisance × GDraw × Seed × Rep
+rawTest : Raw → ℝ := fun z => f (P.G.idCore (P.n κ) z.1.1) z.2.1.1 z.1.2.1 z.1.2.2 z.2.2
+targetTest : Target → ℝ := fun z => f (P.G.idCore (P.n κ) z.2.1) z.2.2.1 z.1.1 z.1.2.1 z.1.2.2
+avg : Nuisance → ℝ :=
+  fun ν =>
+    (ProbComp.sample GDraw).expect fun g =>
+      (ProbComp.sample Seed).expect fun σ => f (P.G.idCore (P.n κ) g) σ ν.1 ν.2.1 ν.2.2
+left : ℝ :=
+  (P.idSamp' κ pp).expect fun I =>
+    (ProbComp.sample (P.Draw κ pp)).expect fun d => (ProbComp.sample U).expect fun u => f I.1 d.1 I.2.1 I.2.2 u
+right : ℝ :=
+  (ProbComp.sample (P.PRGAdvice π N)).expect fun ω =>
+    (P.G.idSamp (P.n κ)).expect fun I => (ProbComp.sample Seed).expect fun σ => f I σ ω.buckets ω.matrix ω.uniform
+a : P.IdDraw κ pp
+⊢ ((ProbComp.sample (P.Draw κ pp)).expect fun d =>
+      (ProbComp.sample U).expect fun u => f (P.G.idCore (P.n κ) a.1) d.1 a.2.1 a.2.2 u) =
+    (ProbComp.sample (Seed × Rep)).expect fun a_1 =>
+      (ProbComp.sample U).expect fun a_2 => f (P.G.idCore (P.n κ) a.1) a_1.1 a.2.1 a.2.2 a_2
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean:184:2: error: unsolved goals
+case refine_2.refine_2.refine_1
+P : Params
+π : PrimeSchedule
+N : ℕ
+f :
+  P.G.Idx (P.n (P.kappaOfN N)) →
+    (Fin (P.n (P.kappaOfN N)) → Bool) →
+      (Fin (P.m (P.kappaOfN N)) → Fin (P.B (P.kappaOfN N))) →
+        Matrix (Fin (P.n (P.kappaOfN N))) (Fin (P.ℓ (P.kappaOfN N))) (ZMod (π (P.kappaOfN N)).p) →
+          (Fin (P.kappaOfN N) → Fin (P.n (P.kappaOfN N)) → ZMod (π (P.kappaOfN N)).p) → ℝ
+κ : ℕ := P.kappaOfN N
+pp : PrimeParam κ := π κ
+GDraw : Type := P.G.IdDraw (P.n κ)
+Buck : Type := Fin (P.m κ) → Fin (P.B κ)
+Mat : Type := Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p)
+Seed : Type := Fin (P.n κ) → Bool
+Rep : Type := Fin κ → (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
+U : Type := Fin κ → Fin (P.n κ) → ZMod pp.p
+Raw : Type := (GDraw × Buck × Mat) × (Seed × Rep) × U
+Nuisance : Type := Buck × Mat × U
+Target : Type := Nuisance × GDraw × Seed × Rep
+rawTest : Raw → ℝ := fun z => f (P.G.idCore (P.n κ) z.1.1) z.2.1.1 z.1.2.1 z.1.2.2 z.2.2
+targetTest : Target → ℝ := fun z => f (P.G.idCore (P.n κ) z.2.1) z.2.2.1 z.1.1 z.1.2.1 z.1.2.2
+avg : Nuisance → ℝ :=
+  fun ν =>
+    (ProbComp.sample GDraw).expect fun g =>
+      (ProbComp.sample Seed).expect fun σ => f (P.G.idCore (P.n κ) g) σ ν.1 ν.2.1 ν.2.2
+left : ℝ :=
+  (P.idSamp' κ pp).expect fun I =>
+    (ProbComp.sample (P.Draw κ pp)).expect fun d => (ProbComp.sample U).expect fun u => f I.1 d.1 I.2.1 I.2.2 u
+right : ℝ :=
+  (ProbComp.sample (P.PRGAdvice π N)).expect fun ω =>
+    (P.G.idSamp (P.n κ)).expect fun I => (ProbComp.sample Seed).expect fun σ => f I σ ω.buckets ω.matrix ω.uniform
+hleft : left = (ProbComp.sample Raw).expect rawTest
+e : Raw ≃ Target :=
+  { toFun := fun z => ((z.1.2.1, z.1.2.2, z.2.2), z.1.1, z.2.1),
+    invFun := fun z => ((z.2.1, z.1.1, z.1.2.1), z.2.2, z.1.2.2), left_inv := ⋯, right_inv := ⋯ }
+hperm : (ProbComp.sample Raw).expect rawTest = (ProbComp.sample Target).expect targetTest
+htarget : (ProbComp.sample Target).expect targetTest = (ProbComp.sample Nuisance).expect avg
+⊢ ((ProbComp.sample (P.PRGAdvice π N)).expect fun ω =>
+      (ProbComp.sample (P.G.IdDraw (P.n κ))).expect fun a =>
+        (ProbComp.sample Seed).expect fun σ => f (P.G.idCore (P.n κ) a) σ ω.buckets ω.matrix ω.uniform) =
+    (ProbComp.sample (P.PRGAdvice π N)).expect fun a =>
+      (ProbComp.sample GDraw).expect fun g =>
+        (ProbComp.sample Seed).expect fun σ =>
+          f (P.G.idCore (P.n κ) g) σ
+            ({ toFun := fun ω => (ω.buckets, ω.matrix, ω.uniform),
+                  invFun := fun x => { buckets := x.1, matrix := x.2.1, uniform := x.2.2 }, left_inv := ⋯,
+                  right_inv := ⋯ }
+                a).1
+            ({ toFun := fun ω => (ω.buckets, ω.matrix, ω.uniform),
+                    invFun := fun x => { buckets := x.1, matrix := x.2.1, uniform := x.2.2 }, left_inv := ⋯,
+                    right_inv := ⋯ }
+                  a).2.1
+            ({ toFun := fun ω => (ω.buckets, ω.matrix, ω.uniform),
+                    invFun := fun x => { buckets := x.1, matrix := x.2.1, uniform := x.2.2 }, left_inv := ⋯,
+                    right_inv := ⋯ }
+                  a).2.2
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean:181:82: warning: This simp argument is unused:
+  avg
+
+Hint: Omit it from the simp argument list.
+  simp only [ProbComp.expect_bind, ProbComp.expect_pure, ProbComp.expect_const,̵ ̵a̵v̵g̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean:204:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop): no fresh .olean produced
+        2.70 real         1.86 user         0.98 sys
+          2344091648  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              184816  page reclaims
+                  18  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  15  voluntary context switches
+                6426  involuntary context switches
+            32066321  instructions retired
+            14460092  cycles elapsed
+             1638736  peak memory footprint
+2026-11-18T20:11:43.490888+00:00 END rc=1

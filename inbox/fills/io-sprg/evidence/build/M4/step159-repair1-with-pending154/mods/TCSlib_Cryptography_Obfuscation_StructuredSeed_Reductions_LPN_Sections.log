@@ -1,0 +1,99 @@
+2026-11-18T20:42:14.014543+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections.lean:248:2: error: unsolved goals
+case h.refine_1.h.h
+P : Params
+π : PrimeSchedule
+A : NUPPT
+L : ℕ
+h : L = P.ℓ (P.kappaOf L)
+w : P.LPNAdvice π L
+k : Fin (P.kappaOf L)
+hk : ↑k = ↑w.hop
+κ : ℕ := P.kappaOf L
+pp : PrimeParam κ := π κ
+Mat : Type := Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p)
+V : Type := Fin (P.n κ) → ZMod pp.p
+D : P.LPNChal π L → A.Coins κ → Bool := fun x r => decide (A.runAtL κ (P.lpnPre π L w x) (List.ofFn r) = [true])
+e :
+  P.LPNChal π L ≃
+    Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p) ×
+      (Fin (P.n (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p)
+he : ∀ (x : P.LPNChal π L), (e x).1 = P.lpnMatrixAt π L h x ∧ (e x).2 = P.lpnValuesAt π L h x
+M : Mat
+F : V → ℝ :=
+  fun v =>
+    (ProbComp.sample (A.Coins κ)).expect fun r =>
+      if
+          A.runAtL κ
+              (P.challengeStr κ pp (w.I, w.buckets, M)
+                (P.publicSeed κ pp
+                  (P.chainPublic κ pp (w.I, w.buckets, M) w.draw (Function.update w.uniform k v) (↑w.hop + 1)) false)
+                w.tail)
+              (List.ofFn r) =
+            [true] then
+        1
+      else 0
+offset : V := fun i => ↑(w.draw.1 i).toNat
+v : V
+r : A.Coins κ
+hp : M = P.lpnMatrixAt π L h (e.symm (M, v)) ∧ v = P.lpnValuesAt π L h (e.symm (M, v))
+⊢ (if
+        A.runAtL κ
+            (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+              (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M) w.draw
+                  (Function.update w.uniform k fun i => v i + ↑(w.draw.1 i).toNat) (↑w.hop + 1))
+                false)
+              w.tail)
+            (List.ofFn r) =
+          [true] then
+      1
+    else 0) =
+    if
+        A.runAtL κ
+            (P.challengeStr κ pp (w.I, w.buckets, M)
+              (P.publicSeed κ pp
+                (P.chainPublic κ pp (w.I, w.buckets, M) w.draw
+                  (Function.update w.uniform k (v + fun i => ↑(w.draw.1 i).toNat)) (↑w.hop + 1))
+                false)
+              w.tail)
+            (List.ofFn r) =
+          [true] then
+      1
+    else 0
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections.lean:256:34: warning: This simp argument is unused:
+  F
+
+Hint: Omit it from the simp argument list.
+  simp only [decide_eq_true_eq, F̵,̵ ̵offset, Pi.add_apply]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections.lean:256:45: warning: This simp argument is unused:
+  Pi.add_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [decide_eq_true_eq, F, offset,̵ ̵P̵i̵.̵a̵d̵d̵_̵a̵p̵p̵l̵y̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections): no fresh .olean produced
+        2.34 real         1.84 user         0.89 sys
+          2352939008  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              185338  page reclaims
+                  11  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  17  voluntary context switches
+                6060  involuntary context switches
+            33042592  instructions retired
+            15352337  cycles elapsed
+             1638736  peak memory footprint
+2026-11-18T20:42:16.385819+00:00 END rc=1

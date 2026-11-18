@@ -20,7 +20,16 @@ assert len(matches) == 1
 r = matches[0]
 search = json.loads(Path('evidence/overlap/probes', r['probe'], 'search.json').read_text())
 assert {s['mode'] for s in search['searches']} == {'exact', 'apply'}
-assert all(s['status'] != 'INVALID_ELABORATION' for s in search['searches'])
+allowed_statuses = {'CLOSED', 'PARTIAL_NOT_PROOF', 'NO_CLOSING_PROOF',
+    'DIAGNOSTIC_FAILURE', 'BOUNDED_HEARTBEAT_TIMEOUT', 'CLEAN_APPLY_NO_HIT',
+    'PARTIAL_SUGGESTION_NOT_PROOF'}
+assert all(s['status'] in allowed_statuses for s in search['searches'])
+if any('audited_owned_import' in s for s in search['searches']):
+    assert all(s.get('runtime_target_absence_observed') is True and
+        s.get('global_overlap_guard_unchanged') is True and
+        s.get('audited_owned_import') ==
+            'TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs'
+        for s in search['searches'])
 candidate = Path(r['candidate']).read_text()
 start = re.search(r'^theorem ' + re.escape(a.name) + r'(?=\s|\(|\{|:)', candidate, re.M)
 assert start
@@ -43,4 +52,6 @@ proof.parent.mkdir(parents=True, exist_ok=True)
 assert not proof.exists()
 proof.write_text(body)
 subprocess.run(['python3', '-I', 'evidence/tools/proof_step.py', str(owner),
-                a.name, str(proof)], check=True)
+                a.name, str(proof)] +
+               (['--allow-header-let'] if r.get('allow_header_let', False) else []),
+               check=True)

@@ -1,0 +1,23 @@
+import TCSlib.Cryptography.Games.Hopping
+import TCSlib.Cryptography.Games.Bridges.Experiments
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography TCSlib.Cryptography.Games
+
+example {D S I X Seed Tail Coins : Type}
+    (idDraw : ProbComp D) (sdDraw : ProbComp S) (tails : ProbComp Tail)
+    (coins : ProbComp Coins) (idCore : D → I) (fullCore : I → S → X)
+    (seed : X → Seed) (verdict : I → Seed → Tail → Coins → Bool)
+    (output : I → Seed → Tail) :
+    ((idCore <$> idDraw).bind fun i =>
+      (fullCore i <$> sdDraw).bind fun x =>
+      tails.bind fun _w => coins.bind fun r =>
+        pure (verdict i (seed x) (output i (seed x)) r)) =
+      ((idCore <$> idDraw).bind fun i =>
+        ((fun s => seed (fullCore i s)) <$> sdDraw).bind fun z =>
+        tails.bind fun _w => coins.bind fun r => pure (verdict i z (output i z) r)) := by
+  apply?

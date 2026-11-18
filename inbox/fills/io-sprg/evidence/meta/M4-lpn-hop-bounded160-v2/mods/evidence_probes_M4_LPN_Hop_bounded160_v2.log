@@ -1,0 +1,219 @@
+[simp] Diagnostics
+  [simp] tried theorems (max: 25, num: 1):
+    [simp] eq_self ↦ 25 ❌️
+  use `set_option diagnostics.threshold <num>` to control threshold for reporting counters
+[simp] Diagnostics
+  [simp] tried theorems (max: 26, num: 1):
+    [simp] eq_self ↦ 26 ❌️
+  [simp] tried congruence theorems (max: 22, num: 1):
+    [simp] ite_congr ↦ 22
+  use `set_option diagnostics.threshold <num>` to control threshold for reporting counters
+[simp] Diagnostics
+  [simp] tried theorems (max: 29, num: 1):
+    [simp] eq_self ↦ 29 ❌️
+  [simp] tried congruence theorems (max: 34, num: 2):
+    [simp] ite_congr ↦ 34
+    [simp] List.ofFn_congr ↦ 22
+  use `set_option diagnostics.threshold <num>` to control threshold for reporting counters
+evidence/probes/M4_LPN_Hop_bounded160_v2.lean:304:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (Games.ProbComp.sample (Seed × Table)).expect fun d =>
+    avg U fun u => avg Tail fun t => avg Coins fun r => F i g b d.1 M d.2 (u, t) r
+in the target expression
+  (avg (Seed × Table) fun d => avg U fun u => avg Tail fun t => avg Coins fun r => F i g b d.1 M d.2 (u, t) r) =
+    (Games.ProbComp.sample Seed).expect fun σ =>
+      (Games.ProbComp.sample Table).expect fun t =>
+        (Games.ProbComp.sample Post).expect fun post =>
+          (Games.ProbComp.sample Coins).expect fun r => F i g b σ M t post r
+
+case refine_2.refine_2.refine_2.refine_2.refine_2.refine_2.refine_2.refine_2.refine_2.refine_2.refine_1.h.h.h
+P : Params
+π : PrimeSchedule
+A : NUPPT
+L : ℕ
+h : L = P.ℓ (P.kappaOf L)
+tailReal : Bool
+hop : Fin (P.kappaOf L + 1)
+hhop : ↑hop < P.kappaOf L
+κ : ℕ := P.kappaOf L
+pp : PrimeParam κ := π κ
+GDraw : Type := P.G.IdDraw (P.n κ)
+Buck : Type := Fin (P.m κ) → Fin (P.B κ)
+Seed : Type := Fin (P.n κ) → Bool
+Rep : Type := (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
+Table : Type := Fin κ → Rep
+V : Type := Fin (P.n κ) → ZMod pp.p
+U : Type := Fin κ → V
+Tail : Type := Fin (P.m κ) → Bool
+Post : Type := U × Tail
+Mat : Type := Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p)
+Coins : Type := A.Coins κ
+Ω : Type := GDraw × Buck × Seed × Table × Post
+avg : (α : Type) → [Fintype α] → [Nonempty α] → (α → ℝ) → ℝ :=
+  fun α [Fintype α] [Nonempty α] f => (Games.ProbComp.sample α).expect f
+k : Fin κ := ⟨↑hop, hhop⟩
+mk : Ω → P.LPNAdvice π L :=
+  fun ν =>
+    { hop := hop, I := P.G.idCore (P.n κ) ν.1, buckets := ν.2.1, draw := (ν.2.2.1, ν.2.2.2.1),
+      tail :=
+        if tailReal = true then fun j => P.G.eval (P.n κ) (P.G.idCore (P.n κ) ν.1) ν.2.2.1 (P.outputIndex κ j)
+        else ν.2.2.2.2.2,
+      uniform := ν.2.2.2.2.1 }
+disc : Ω → P.LPNChal π L → Coins → Bool :=
+  fun ν x r => decide (A.runAtL κ (P.lpnPre π L (mk ν) x) (List.ofFn r) = [true])
+R : Ω → ℝ :=
+  fun ν => acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L) ((P.lpnFamily_raw π).toLWE.noise L)) (disc ν)
+Uacc : Ω → ℝ := fun ν => acceptProb id (disc ν)
+F : ℕ → GDraw → Buck → Seed → Mat → Table → Post → Coins → ℝ :=
+  fun i g b σ M table post r =>
+    if
+        A.runAtL κ
+            (P.challengeStr κ pp (P.G.idCore (P.n κ) g, b, M)
+              (P.publicSeed κ pp (P.chainPublic κ pp (P.G.idCore (P.n κ) g, b, M) (σ, table) post.1 i) false)
+              (if tailReal = true then fun j => P.G.eval (P.n κ) (P.G.idCore (P.n κ) g) σ (P.outputIndex κ j)
+              else post.2))
+            (List.ofFn r) =
+          [true] then
+      1
+    else 0
+C : ℕ → ℝ :=
+  fun i =>
+    avg GDraw fun g =>
+      avg Buck fun b =>
+        avg Mat fun M =>
+          avg Seed fun σ => avg Table fun t => avg Post fun post => avg Coins fun r => F i g b σ M t post r
+hpairPost : ∀ (f : Post → ℝ), avg Post f = avg U fun u => avg Tail fun t => f (u, t)
+hsplit :
+  ∀ (f : Ω → ℝ),
+    avg Ω f =
+      avg GDraw fun g =>
+        avg Buck fun b => avg Seed fun σ => avg Table fun t => avg Post fun post => f (g, b, σ, t, post)
+hmove :
+  ∀ (G : Seed → Table → Post → Mat → ℝ),
+    (avg Seed fun σ => avg Table fun t => avg Post fun post => avg Mat fun M => G σ t post M) =
+      avg Mat fun M => avg Seed fun σ => avg Table fun t => avg Post fun post => G σ t post M
+hupdateTable :
+  ∀ (G : Table → Post → Coins → ℝ),
+    (avg Table fun t =>
+        avg Post fun post => avg Rep fun fresh => avg Coins fun r => G (Function.update t k fresh) post r) =
+      avg Table fun t => avg Post fun post => avg Coins fun r => G t post r
+hupdateUniform :
+  ∀ (G : U → Tail → Coins → ℝ),
+    (avg U fun u => avg Tail fun t => avg V fun fresh => avg Coins fun r => G (Function.update u k fresh) t r) =
+      avg U fun u => avg Tail fun t => avg Coins fun r => G u t r
+hupdatePost :
+  ∀ (G : Post → Coins → ℝ),
+    (avg Post fun post => avg V fun fresh => avg Coins fun r => G (Function.update post.1 k fresh, post.2) r) =
+      avg Post fun post => avg Coins fun r => G post r
+hsecR :
+  ∀ (ν : Ω),
+    R ν =
+      avg Mat fun M =>
+        avg Rep fun fresh =>
+          avg Coins fun r => F (↑hop) ν.1 ν.2.1 ν.2.2.1 M (Function.update ν.2.2.2.1 k fresh) ν.2.2.2.2 r
+hsecU :
+  ∀ (ν : Ω),
+    Uacc ν =
+      avg Mat fun M =>
+        avg V fun fresh =>
+          avg Coins fun r =>
+            F (↑hop + 1) ν.1 ν.2.1 ν.2.2.1 M ν.2.2.2.1 (Function.update ν.2.2.2.2.1 k fresh, ν.2.2.2.2.2) r
+hrealAvg : avg Ω R = C ↑hop
+huniformAvg : avg Ω Uacc = C (↑hop + 1)
+i : ℕ
+g : GDraw
+b : Buck
+M : Mat
+⊢ (avg (Seed × Table) fun d => avg U fun u => avg Tail fun t => avg Coins fun r => F i g b d.1 M d.2 (u, t) r) =
+    (Games.ProbComp.sample Seed).expect fun σ =>
+      (Games.ProbComp.sample Table).expect fun t =>
+        (Games.ProbComp.sample Post).expect fun post =>
+          (Games.ProbComp.sample Coins).expect fun r => F i g b σ M t post r
+evidence/probes/M4_LPN_Hop_bounded160_v2.lean:321:20: error(lean.unknownIdentifier): Unknown identifier `LamportReduction.exists_expect_sample_le`
+evidence/probes/M4_LPN_Hop_bounded160_v2.lean:321:9: error: Tactic `rcases` failed: `x✝ : ?m.1704` is not an inductive datatype
+[diag] Diagnostics
+  [reduction] unfolded declarations (max: 292, num: 5):
+    [reduction] AddMonoid.toZero ↦ 292
+    [reduction] Bool.decEq ↦ 128
+    [reduction] ZMod ↦ 91
+    [reduction] Matrix ↦ 72
+    [reduction] ite ↦ 28
+  [reduction] unfolded instances (max: 292, num: 12):
+    [reduction] AddZero.toZero ↦ 292
+    [reduction] MulZeroClass.toZero ↦ 292
+    [reduction] Zero.ofOfNat0 ↦ 146
+    [reduction] instDecidableEqBool ↦ 128
+    [reduction] AddCancelCommMonoid.toAddCommMonoid ↦ 54
+    [reduction] AddCommMonoid.toAddMonoid ↦ 54
+    [reduction] AddMonoid.toAddZeroClass ↦ 54
+    [reduction] AddZeroClass.toAddZero ↦ 54
+    [reduction] Nat.instAddCancelCommMonoid ↦ 54
+    [reduction] Nat.instAddCommMonoid ↦ 54
+    [reduction] Nat.instAddMonoid ↦ 54
+    [reduction] Nat.instMulZeroClass ↦ 54
+  [reduction] unfolded reducible declarations (max: 1492, num: 31):
+    [reduction] Prod.snd ↦ 1492
+    [reduction] DecidableEq ↦ 1487
+    [reduction] Prod.fst ↦ 868
+    [reduction] PrimeParam.p ↦ 634
+    [reduction] Params.G ↦ 567
+    [reduction] NUPPT.Coins ↦ 484
+    [reduction] BoolPRG.eval ↦ 224
+    [reduction] BoolPRG.idCore ↦ 196
+    [reduction] outParam ↦ 147
+    [reduction] Bool.casesOn ↦ 138
+    [reduction] Games.ProbComp ↦ 136
+    [reduction] Fin.val ↦ 134
+    [reduction] BoolPRG.IdDraw ↦ 118
+    [reduction] inferInstance ↦ 110
+    [reduction] Nat.casesOn ↦ 101
+    [reduction] BoolPRG.Idx ↦ 79
+    [reduction] Params.LPNChal ↦ 77
+    [reduction] LWE.Family.parameters ↦ 68
+    [reduction] Params.Draw ↦ 61
+    [reduction] Games.unifSpec ↦ 59
+    [reduction] Params.LPNAdvice.hop ↦ 56
+    [reduction] LWE.Parameters.modulus ↦ 46
+    [reduction] LWE.Parameters.dimension ↦ 44
+    [reduction] LWE.Parameters.samples ↦ 44
+    [reduction] Params.Idx' ↦ 44
+    [reduction] Decidable.casesOn ↦ 40
+    [reduction] Params.IdDraw ↦ 35
+    [reduction] LWE.Family.noise ↦ 26
+    [reduction] Params.LPNAdvice.draw ↦ 26
+    [reduction] LWE.Noise.fintype ↦ 22
+    [reduction] LWE.Noise.Coins ↦ 21
+  [type_class] used instances (max: 241, num: 16):
+    [type_class] Fin.fintype ↦ 241
+    [type_class] instDecidableEqFin ↦ 176
+    [type_class] Pi.instFintype ↦ 163
+    [type_class] Pi.instNonempty ↦ 160
+    [type_class] instNonemptyOfInhabited ↦ 119
+    [type_class] instNonemptyOfMonad ↦ 119
+    [type_class] InformationTheory.FinDist.instNonempty ↦ 119
+    [type_class] ZMod.fintype ↦ 90
+    [type_class] PrimeParam.instNeZero ↦ 88
+    [type_class] instFintypeProd ↦ 82
+    [type_class] Bool.fintype ↦ 82
+    [type_class] instNonemptyProd ↦ 79
+    [type_class] ZMod.inhabited ↦ 44
+    [type_class] instInhabitedBool ↦ 41
+    [type_class] Fin.instInhabited ↦ 34
+    [type_class] instOfNatPNatOfNeZeroNat ↦ 22
+  [def_eq] heuristic for solving `f a =?= f b` (max: 248, num: 15):
+    [def_eq] ZMod ↦ 248
+    [def_eq] Matrix ↦ 141
+    [def_eq] Games.ProbComp.expect ↦ 137
+    [def_eq] PrimeParam.p ↦ 88
+    [def_eq] Not ↦ 76
+    [def_eq] Params.m ↦ 60
+    [def_eq] NUPPT.runAtL ↦ 46
+    [def_eq] Params.chainPublic ↦ 38
+    [def_eq] Params.challengeStr ↦ 38
+    [def_eq] Params.publicSeed ↦ 38
+    [def_eq] ite ↦ 30
+    [def_eq] Games.ProbComp.sample ↦ 28
+    [def_eq] instDecidableEqList ↦ 26
+    [def_eq] Function.update ↦ 26
+    [def_eq] BoolPRG.IdDraw ↦ 26
+  use `set_option diagnostics.threshold <num>` to control threshold for reporting counters
+evidence/probes/M4_LPN_Hop_bounded160_v2.lean:341:8: warning: declaration uses 'sorry'

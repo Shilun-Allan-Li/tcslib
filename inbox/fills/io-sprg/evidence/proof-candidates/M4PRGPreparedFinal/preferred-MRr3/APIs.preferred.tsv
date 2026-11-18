@@ -1,0 +1,28 @@
+API	pinned source	purpose
+HardcoreBit.pushesUniform_restrict	TCSlib/Cryptography/HardcoreBit/Basic.lean:220	uniform restriction along any injection
+HardcoreBit.PushesUniform.uprob_eq	TCSlib/Cryptography/HardcoreBit/Basic.lean:184	read the restriction's probability law
+OneWay.ofFn_castLE_eq_take	TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:95	typed tuple restriction equals list prefix
+NUPPT.coinsEquivPoly	TCSlib/Complexity/Randomized/PPT.lean:274	B typed coins to known layout
+NUPPT.coinsEquivPoly_symm_ofFn	TCSlib/Complexity/Randomized/PPT.lean:286	transport preserves coin list
+NUPPT.coinLen_eq	TCSlib/Complexity/Randomized/PPT.lean:171	coinLen reads coins.eval
+NUPPT.RealizesOn.coins_eq	TCSlib/Cryptography/Asymptotic/Realization.lean:113	shared layout polynomial
+NUPPT.RealizesOn.distinguisherL_eq	TCSlib/Cryptography/Asymptotic/Realization.lean:132	canonical encoded-challenge verdict
+NUPPT.RealizesOn.runAt_coinsEquivPoly_symm	TCSlib/Cryptography/Asymptotic/Realization.lean:141	MRr3 REQUIRED after coinsEquivPoly reindex: typed-bitvector activation; compose generic machine verdict reader
+NUPPT.distinguisherL_eq	TCSlib/Cryptography/Asymptotic/Adversary.lean:386	verdict is runAt output=[true]
+PolyExpr.eval_mono	TCSlib/Complexity/Randomized/PolyExpr.lean:142	short parameter gives no more coins
+PolyExpr.eval_subst	TCSlib/Complexity/Randomized/PolyExpr.lean:134	substituted-layout evaluation
+ProbComp.expect_sample_equiv	TCSlib/Cryptography/Games/Probability.lean:304	reindex actual exact uniform coin/advice laws
+ProbComp.expect_sample_comm	TCSlib/Cryptography/Games/Probability.lean:313	exchange independent samples
+ProbComp.expect_expect_sample	TCSlib/Cryptography/Games/Probability.lean:326	move advice sample across another game
+ProbComp.expect_const	TCSlib/Cryptography/Games/Probability.lean:174	semantic marginalization of unused queries
+ProbComp.abs_expect_sub_le_expect	TCSlib/Cryptography/Games/Probability.lean:409	absolute acceptance gap at most average section gaps
+LamportReduction.exists_expect_sample_le	TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging.lean:114	one finite advice attains at least its average
+ProbComp.abs_prob_sub_le_of_agree	TCSlib/Cryptography/Games/Hopping.lean:127	both statistical hops, no generic reproof
+Games.Bridge.prob_sample_eq_uprob	TCSlib/Cryptography/Games/Bridges/Experiments.lean:66	connect Games probability to uniform restriction law
+Games.advantage_eq	TCSlib/Cryptography/Games/Advantage.lean:76	semantic endpoint rewrites
+OracleComp.map_eq_bind/pure_bind/bind_assoc	TCSlib/Cryptography/Games/OracleComp.lean:111	genuine program-tree reassociation
+Games.Bridge.expect_sample_pair	TCSlib/Cryptography/Games/Bridges/Experiments.lean:80	existing generic product splitting; zero new import
+PRGAdvice.prodEquiv_eq	TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG.lean:131	explicit record/product projections
+Params.outputIndex_eq	TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:101	explicit comparison-vector transport
+Params.m_eq	TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean:86	exact output dimension
+Complexity.NUPPT.distinguisherL_eq	TCSlib/Cryptography/Asymptotic/Adversary.lean:386	generic machine verdict; precedes required bitvector RealizesOn.runAt_coinsEquivPoly_symm

@@ -1,0 +1,55 @@
+--- /Users/seyoonr/.codex/worktrees/io-sprg/tcslib-exchange/evidence/tools/package_checkpoint.py
++++ /private/tmp/io-sprg-proof-notes/tmpFinalAuditToolsV2/package_checkpoint.py
+@@ -1,19 +1,26 @@
+ # io-sprg checkpoint packager,2026-11-18. Root only; invokes no Lean.
+ # Writes only an explicit io-sprg payload destination and private temporary directories.
+ # Format-patch --always and am --empty=keep preserve the verified empty M0 marker.
+-import argparse,hashlib,json,os,pathlib,shutil,subprocess,tempfile,zipfile
++import argparse,hashlib,json,os,pathlib,shutil,subprocess,tempfile,zipfile,runpy
+ P=pathlib.Path
+ ap=argparse.ArgumentParser();ap.add_argument('--source',required=True)
+ ap.add_argument('--dest',required=True);ap.add_argument('--report',required=True)
+-ap.add_argument('--head',default='HEAD');ap.add_argument('--zip');a=ap.parse_args()
++ap.add_argument('--head',default='HEAD');ap.add_argument('--zip')
++ap.add_argument('--inventory',required=True);ap.add_argument('--report-binding',required=True);a=ap.parse_args()
+ root=P(a.source).resolve();dest=P(a.dest).resolve();base='5ed465f62e4ae0f93ded1a1ba49e807591b589eb'
+ assert dest.name=='io-sprg' and dest.parent.name=='fills' and dest.parent.parent.name=='inbox'
+ def git(*args,cwd=root,env=None):
+  r=subprocess.run(['git',*args],cwd=cwd,env=env,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+  if r.returncode:raise RuntimeError(r.stdout)
+  return r.stdout
+-head=git('rev-parse',a.head).strip();assert head==git('rev-parse','fill/io-sprg').strip();changed=git('diff','--name-only',base,head).splitlines()
+-assert all(f=='TCSlib.lean' or f.startswith('TCSlib/Cryptography/Obfuscation') for f in changed)
++iv=runpy.run_path(str(P(__file__).with_name('checkpoint_inventory.py')))
++inventory=iv['load'](a.inventory,root)
++head=git('rev-parse',a.head).strip();assert head==inventory['head']==git('rev-parse','fill/io-sprg').strip()
++changed=git('diff','--name-only',base,head).splitlines();assert set(changed)==set(inventory['changed_paths'])
++report_binding=json.loads(P(a.report_binding).read_text())
++assert report_binding['head']==head and report_binding['inventory_sha256']==inventory['inventory_sha256']
++assert report_binding['all_required_current_inputs_pass'] and report_binding['report_sha256']==hashlib.sha256(P(a.report).read_bytes()).hexdigest()
++assert all(f=='TCSlib.lean' or iv['owner_path'](f) for f in changed)
+ assert all(f.endswith('.lean') for f in changed)
+ tree_checks=[]
+ for rev in [base]+git('rev-list','--reverse',base+'..'+head).splitlines():
+@@ -34,7 +41,9 @@
+  (stage/'evidence/pdf-commit-trees.json').write_text(json.dumps(tree_checks,indent=2)+'\n')
+  for f in changed:
+   p=stage/'src'/f;p.parent.mkdir(parents=True,exist_ok=True)
+-  p.write_bytes(subprocess.check_output(['git','show',head+':'+f],cwd=root))
++  raw=subprocess.check_output(['git','show',head+':'+f],cwd=root)
++  assert hashlib.sha256(raw).hexdigest()==inventory['source_sha256'][f]
++  p.write_bytes(raw)
+  fmt='%H%x09%an%x09%ae%x09%aI%x09%cn%x09%ce%x09%cI%x09%G?'
+  metadata=git('log','--reverse','--format='+fmt,base+'..'+head)
+  (stage/'patches/COMMITS.tsv').write_text('hash\tauthor_name\tauthor_email\tauthor_date\tcommitter_name\tcommitter_email\tcommitter_date\tsigning\n'+metadata)
+@@ -53,7 +62,9 @@
+   checks.append(dict(commit=expected,replayed=actual,patch=patch.name,output=output))
+  assert git('rev-parse','HEAD',cwd=replay).strip()==head
+  (stage/'evidence/replay.json').write_text(json.dumps(dict(base=base,head=head,all_hashes_match=True,commits=checks),indent=2)+'\n')
+- (stage/'evidence/payload-source-binding.json').write_text(json.dumps(dict(base=base,head=head,files=changed),indent=2)+'\n')
++ (stage/'evidence/payload-source-binding.json').write_text(json.dumps(dict(base=base,head=head,files=changed,
++  inventory_sha256=inventory['inventory_sha256'],source_sha256=inventory['source_sha256'],
++  report_binding_sha256=hashlib.sha256(P(a.report_binding).read_bytes()).hexdigest()),indent=2)+'\n')
+  manifest(stage/'evidence','SHA256SUMS');manifest(stage,'SHA256SUMS')
+  # Verify both path sets exactly, and every digest, after generating the manifests.
+  for folder in [stage,stage/'evidence']:

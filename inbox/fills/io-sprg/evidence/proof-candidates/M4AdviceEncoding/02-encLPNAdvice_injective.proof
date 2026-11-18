@@ -1,0 +1,39 @@
+by
+  intro a b h
+  rw [P.encLPNAdvice_eq, P.encLPNAdvice_eq] at h
+  have h0 := congrArg Prod.snd
+    (pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h)
+  have h1 := congrArg Prod.snd
+    (pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h0)
+  have h2 := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h1
+  have h3 := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _))
+    (congrArg Prod.snd h2)
+  have h4 := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _))
+    (congrArg Prod.snd h3)
+  have h5 := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _))
+    (congrArg Prod.snd h4)
+  have h6 := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _))
+    (congrArg Prod.snd h5)
+  have hh : a.hop = b.hop := Fin.ext
+    (Candidates.natToList_injOn
+      (a.hop.isLt.trans Nat.lt_two_pow_self)
+      (b.hop.isLt.trans Nat.lt_two_pow_self) (congrArg Prod.fst h2))
+  have hI : a.I = b.I := P.G.encIdx_injective (P.n (P.kappaOf L))
+    (congrArg Prod.fst h3)
+  have hb : a.buckets = b.buckets := P.encBuckets_injective (P.kappaOf L)
+    (congrArg Prod.fst h4)
+  have hd : a.draw = b.draw := P.encDraw_injective (P.kappaOf L)
+    (π (P.kappaOf L)) (congrArg Prod.fst h5)
+  have ht : a.tail = b.tail := List.ofFn_injective (congrArg Prod.fst h6)
+  have hu : a.uniform = b.uniform := List.ofFn_injective
+    (Internal.encodeList_injective_of_fixedWidth
+      (Encoding.Modular.encodeVector_injective
+        (q := (π (P.kappaOf L)).p) (length := P.n (P.kappaOf L))
+        (P.kappaOf L + 1) (π (P.kappaOf L)).le_two_pow)
+      (P.n (P.kappaOf L) * (P.kappaOf L + 1))
+      (fun row : Fin (P.n (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p =>
+        Encoding.Modular.encodeVector_length (P.kappaOf L + 1) row)
+      (congrArg Prod.snd h6))
+  apply (P.lpnAdviceProductEquiv π L).injective
+  simp only [P.lpnAdviceProductEquiv_apply]
+  exact Prod.ext hh (Prod.ext hI (Prod.ext hb (Prod.ext hd (Prod.ext ht hu))))

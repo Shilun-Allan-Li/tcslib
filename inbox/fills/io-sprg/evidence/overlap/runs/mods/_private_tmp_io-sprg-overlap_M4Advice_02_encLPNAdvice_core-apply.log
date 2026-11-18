@@ -1,0 +1,62 @@
+Try this:
+  [apply] refine Function.HasLeftInverse.injective ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.HasLeftInverse fun a =>
+    pairEncode primeCode
+      (pairEncode (List.replicate L true)
+        (pairEncode (Candidates.natToList (κ + 1) ↑a.1)
+          (pairEncode (eI a.2.1)
+            (pairEncode (eB a.2.2.1)
+              (pairEncode (eD a.2.2.2.1)
+                (pairEncode (List.ofFn a.2.2.2.2.1)
+                  (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn a.2.2.2.2.2))))))))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.LeftInverse.injective fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.surjective_comp_right_iff_injective.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.injective_iff_hasLeftInverse.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Nonempty (Fin (κ + 1) × Idx × Buckets × Draw × (Fin m → Bool) × (Fin κ → Fin n → ZMod q))
+  -- ⊢ Function.HasLeftInverse fun a =>
+    pairEncode primeCode
+      (pairEncode (List.replicate L true)
+        (pairEncode (Candidates.natToList (κ + 1) ↑a.1)
+          (pairEncode (eI a.2.1)
+            (pairEncode (eB a.2.2.1)
+              (pairEncode (eD a.2.2.2.1)
+                (pairEncode (List.ofFn a.2.2.2.2.1)
+                  (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn a.2.2.2.2.2))))))))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.injective_of_isPartialInv fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.Injective.of_comp_right (fun ⦃a₁⦄ => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.Bijective.injective ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Bijective fun a =>
+    pairEncode primeCode
+      (pairEncode (List.replicate L true)
+        (pairEncode (Candidates.natToList (κ + 1) ↑a.1)
+          (pairEncode (eI a.2.1)
+            (pairEncode (eB a.2.2.1)
+              (pairEncode (eD a.2.2.2.1)
+                (pairEncode (List.ofFn a.2.2.2.2.1)
+                  (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1)) (List.ofFn a.2.2.2.2.2))))))))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.RightInverse.injective fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+/private/tmp/io-sprg-overlap/M4Advice_02_encLPNAdvice_core-apply.lean:1:1: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (100000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.

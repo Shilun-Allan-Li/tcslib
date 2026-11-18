@@ -1,0 +1,65 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Transport
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Actual-law LPN averaging and the selected hybrid hop
+
+## Main definitions and results
+
+* Pointwise preprocessing identities and fixed-advice section acceptances.
+* Actual-nuisance-law advice fixing before every realizer.
+* `Params.lpn_hop` with its unchanged full statement.
+
+## References
+
+* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
+  Assumptions*, J. ACM 73(1), Article 1, February 2026, Lemma 4.2, p. 19.
+* [PS10] R. Pass, A. Shelat, *A Course in Cryptography*, 2010, Definition 26.8.
+
+**Deviations.** Dv8 and Dv12 retain the actual independent nuisance law and global advice family.
+Dv16 quantifies every realizer of the same layout-only explicit reduction.
+-/
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+
+open Complexity Turing
+open scoped BigOperators
+
+namespace Internal
+
+-- Specialized pointwise/section/averaging helpers may be added here after the split.
+
+end Internal
+
+namespace Params
+
+/-- One advice family bounds any selected LPN hop for every realizing non-uniform PPT machine
+[JLS26, Lemma 4.2, p. 19]. Dv8 and Dv12 retain buckets and hardwire averaged values.
+Dv16 uses the shared, layout-length-only RealizesOn; more realisers are admitted, so this
+security statement is at least as strong as the every-coin-string draft. The sentinel
+hop makes advice inhabited at κ=0; the hop inequality is requested only below κ.
+
+**Proof sketch.** For each scheduled dimension, average over every nonchallenge value
+and fix a maximizing advice tuple. Reindex at ℓ(κ), transport the canonical challenge
+by its explicit equivalence, and use the shared realiser verdict/coin readers. Uniform
+coin prefixes recover A's coins; the resulting gap is bounded by the LPN advantage. -/
+theorem lpn_hop (P : Params) (π : PrimeSchedule) (A : NUPPT)
+    (tails : ℕ → Bool) (hops : ∀ κ, Fin (κ + 1)) :
+    ∃ w : ∀ L, P.LPNAdvice π L, ∀ B : NUPPT,
+      B.RealizesOn (P.lpnEnc π) (A.coins.subst .var)
+        (fun L x r => P.lpnRed π A L (w L) x r) →
+      ∀ κ, (hops κ).val < κ →
+        Games.advantage (P.chainGame A (tails κ) (hops κ).val κ (π κ))
+          (P.chainGame A (tails κ) ((hops κ).val + 1) κ (π κ)) ≤
+            (P.lpnFamily_raw π).adv B (P.ℓ κ) := sorry
+
+end Params
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed

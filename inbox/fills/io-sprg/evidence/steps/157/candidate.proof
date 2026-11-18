@@ -1,0 +1,16 @@
+by
+  classical
+  rw [P.lpnPre_eq, dif_pos h, hM, hb]
+  dsimp only
+  congr 1
+  apply congrArg (fun bs => P.publicSeed (P.kappaOf L) (π (P.kappaOf L)) bs false)
+  funext q i
+  by_cases hq : q = k
+  · subst q
+    simp only [P.chainPublic_eq, Function.update_self, hk,
+      Nat.lt_succ_self, lt_self_iff_false, if_false, ite_true]
+  · have hval : q.val ≠ w.hop.val := fun heq => hq (Fin.ext (heq.trans hk.symm))
+    have hlt : q.val < w.hop.val + 1 ↔ q.val < w.hop.val := ?_
+    swap
+    · omega
+    simp only [P.chainPublic_eq, Function.update_of_ne hq, if_neg hval, hlt]

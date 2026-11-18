@@ -1,0 +1,24 @@
+import TCSlib.Cryptography.Encoding.Modular
+import TCSlib.Complexity.CircuitComplexity.Uniform
+import TCSlib.Complexity.TuringMachine.Encoding
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open Turing TCSlib.Cryptography
+
+example (κ N n ell q p S : ℕ) [NeZero q]
+    (hκ : κ ≤ N) (hN : N + 1 ≤ S) (hpub : κ * n ≤ S)
+    (bucketCode : List Bool) (hbucket : bucketCode.length ≤ S)
+    (matrix : Matrix (Fin n) (Fin ell) (ZMod q))
+    (hmatrix : (Encoding.Modular.encodeMatrix (κ + 1) matrix).length ≤ S)
+    (uniform : Matrix (Fin κ) (Fin n) (ZMod q)) :
+    (pairEncode (Candidates.natToList (κ + 2) p)
+      (pairEncode (List.replicate N true)
+        (pairEncode bucketCode
+          (pairEncode (Encoding.Modular.encodeMatrix (κ + 1) matrix)
+            (Encoding.Modular.encodeMatrix (κ + 1) uniform))))).length ≤
+      100 * ((N + 1) * S ^ 3) := by
+  apply?

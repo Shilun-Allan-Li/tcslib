@@ -1,0 +1,45 @@
+2026-11-18T20:37:16.265208+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections.lean:72:49: error(lean.unknownIdentifier): Unknown identifier `Function.update_same`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections.lean:71:2: error: unsolved goals
+case pos
+P : Params
+π : PrimeSchedule
+L : ℕ
+h : L = P.ℓ (P.kappaOf L)
+w : P.LPNAdvice π L
+k : Fin (P.kappaOf L)
+hk : ↑k = ↑w.hop
+M : Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p)
+rep :
+  (Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+    (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) × ZMod (π (P.kappaOf L)).p)
+x : P.LPNChal π L
+hM : P.lpnMatrixAt π L h x = M
+hb : P.lpnValuesAt π L h x = fun i => ∑ a, M i a * rep.1 a + P.noiseValue (P.kappaOf L) (π (P.kappaOf L)) (rep.2 i)
+i : Fin (P.n (P.kappaOf L))
+⊢ ∑ a, M i a * rep.1 a + P.noiseValue (P.kappaOf L) (π (P.kappaOf L)) (rep.2 i) + ↑(w.draw.1 i).toNat =
+    ∑ a, M i a * (Function.update w.draw.2 k rep k).1 a +
+        P.noiseValue (P.kappaOf L) (π (P.kappaOf L)) ((Function.update w.draw.2 k rep k).2 i) +
+      ↑(w.draw.1 i).toNat
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections): no fresh .olean produced
+        2.21 real         1.36 user         0.91 sys
+          2331574272  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              183888  page reclaims
+                  11  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  17  voluntary context switches
+                5304  involuntary context switches
+            32093022  instructions retired
+            15363822  cycles elapsed
+             1638736  peak memory footprint
+2026-11-18T20:37:18.508036+00:00 END rc=1

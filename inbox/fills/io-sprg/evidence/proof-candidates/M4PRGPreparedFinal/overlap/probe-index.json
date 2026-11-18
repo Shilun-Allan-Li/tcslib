@@ -1,0 +1,170 @@
+[
+  {
+    "name": "sdCore_publicSeed_core",
+    "template": "templates/sdCore_publicSeed_core.lean.template",
+    "actual_declaration": "Params.sdCore_publicSeed",
+    "kind": "NEW_HELPER",
+    "actual_reader_mapping": "sdCore_seed/instances/err + packSeed_fst + publicSeed_eq, e=pubEquiv; flag=err.toNat field value",
+    "imports": [
+      "TCSlib.Cryptography.Games.Hopping",
+      "TCSlib.Cryptography.Games.Bridges.Experiments",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "status": "UNRUN",
+    "scope": "COMPONENT_CORE_ACTUAL_READERS_ABSTRACTED",
+    "template_sha256": "662ec3edf661816b34e08f419c8e48087ab1d1e5d0991dbd2ae476073e80530c"
+  },
+  {
+    "name": "hyb_real_prg_le_core",
+    "template": "templates/hyb_real_prg_le_core.lean.template",
+    "actual_declaration": "Params.hyb_real_prg_le",
+    "kind": "FROZEN_M4_ORIGINAL",
+    "actual_reader_mapping": "Actual retained IdDraw/Draw/Tail/coins coupling; sdCore_publicSeed; real/prg additionally G4_eval_sdCore + eval_eq; abs_prob_sub_le_of_agree",
+    "imports": [
+      "TCSlib.Cryptography.Games.Hopping",
+      "TCSlib.Cryptography.Games.Bridges.Experiments",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "status": "UNRUN",
+    "scope": "EXACT_PUBLIC_AGREE_OFF_BAD_BOUND; actual law and deterministic reader normalization remain explicit source obligations",
+    "template_sha256": "26fe9371fbdc8fc4f4adaae6f12a88aa9e4f0253ca167ed822b598fbd2f70342"
+  },
+  {
+    "name": "hyb_uniform_random_le_core",
+    "template": "templates/hyb_uniform_random_le_core.lean.template",
+    "actual_declaration": "Params.hyb_uniform_random_le",
+    "kind": "FROZEN_M4_ORIGINAL",
+    "actual_reader_mapping": "Actual retained IdDraw/Draw/Tail/coins coupling; sdCore_publicSeed; real/prg additionally G4_eval_sdCore + eval_eq; abs_prob_sub_le_of_agree",
+    "imports": [
+      "TCSlib.Cryptography.Games.Hopping",
+      "TCSlib.Cryptography.Games.Bridges.Experiments",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "status": "UNRUN",
+    "scope": "EXACT_PUBLIC_AGREE_OFF_BAD_BOUND; actual law and deterministic reader normalization remain explicit source obligations",
+    "template_sha256": "26fe9371fbdc8fc4f4adaae6f12a88aa9e4f0253ca167ed822b598fbd2f70342"
+  },
+  {
+    "name": "prg_verdict_prob_core",
+    "template": "templates/prg_verdict_prob_core.lean.template",
+    "actual_declaration": "Params.prg_verdict_prob",
+    "kind": "NEW_HELPER",
+    "actual_reader_mapping": "RealizesOn.coins_eq/distinguisherL_eq + coinsEquivPoly_symm_ofFn + prgRed_eq; short\u2264long from kappaOfN_le/PolyExpr.eval_mono; restriction and list-prefix readers",
+    "imports": [
+      "TCSlib.Cryptography.Games.Hopping",
+      "TCSlib.Cryptography.Games.Bridges.Experiments",
+      "Lean.Elab.Tactic.LibrarySearch",
+      "TCSlib.Cryptography.HardcoreBit.Basic",
+      "TCSlib.Cryptography.Asymptotic.OneWayLemmas"
+    ],
+    "status": "UNRUN",
+    "scope": "COMPONENT_CORE_ACTUAL_READERS_ABSTRACTED",
+    "template_sha256": "dd5e7b6b844b1fb95c0bf06a11176ae6fff8c3e965d7959945ed8173eecd0f5e"
+  },
+  {
+    "name": "prg_nuisance_average_core",
+    "template": "templates/prg_nuisance_average_core.lean.template",
+    "actual_declaration": "Params.prg_nuisance_average",
+    "kind": "NEW_HELPER",
+    "actual_reader_mapping": "idSamp_eq/idCore_eq and G.idSamp_eq; Draw=Seed\u00d7Rep; PRGAdvice.prodEquiv; no Fintype I or sample I is assumed",
+    "imports": [
+      "TCSlib.Cryptography.Games.Hopping",
+      "TCSlib.Cryptography.Games.Bridges.Experiments",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "status": "UNRUN",
+    "scope": "FULL_FINITE_LAW_CORE_AFTER_PUBLIC_TYPE_AND_MAP_READERS",
+    "template_sha256": "606ec9842ed8e854ac967d892443bf0658b45079f3a83d884bc09ab745bea6fe"
+  },
+  {
+    "name": "prg_chain_output_reindex_core",
+    "template": "templates/prg_chain_output_reindex_core.lean.template",
+    "actual_declaration": "Params.prg_chain_accept_average",
+    "kind": "NEW_HELPER",
+    "actual_reader_mapping": "m_eq/outputIndex_eq yield explicit comparison-vector arrow equivalence; predecessor nuisance helper handles remaining law, prgPre_eq/kappaOfN_n handles image guard",
+    "imports": [
+      "TCSlib.Cryptography.Games.Hopping",
+      "TCSlib.Cryptography.Games.Bridges.Experiments",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "status": "UNRUN",
+    "scope": "OUTPUT_VECTOR_CORE; actual nuisance specialization, image guard and read-only challenge normalization remain explicit source obligations",
+    "template_sha256": "e9fcfa67a768e1c25beea5fccc4689d92c5f89b347d194173b2f359f7b96f894"
+  },
+  {
+    "name": "prg_hop_fix_advice_core",
+    "template": "templates/prg_hop_fix_advice_core.lean.template",
+    "actual_declaration": "Params.prg_hop",
+    "kind": "FROZEN_M4_ORIGINAL",
+    "actual_reader_mapping": "prg_chain_accept_average supplies hreal/huniform; abs_expect_sub_le_expect + exists_expect_sample_le; select full family before B, then prg_verdict_prob and kappaOfN_n",
+    "imports": [
+      "TCSlib.Cryptography.Games.Hopping",
+      "TCSlib.Cryptography.Games.Bridges.Experiments",
+      "Lean.Elab.Tactic.LibrarySearch",
+      "TCSlib.Cryptography.Authentication.Signatures.Lamport.Averaging"
+    ],
+    "status": "UNRUN",
+    "scope": "COMPONENT_CORE_ACTUAL_READERS_ABSTRACTED",
+    "template_sha256": "f0957f02aa0cad35ab2747f0519608e07c6e719c22385032e717c17749e193fc"
+  },
+  {
+    "name": "hyb_real_eq_raw_core",
+    "template": "templates/hyb_real_eq_raw_core.lean.template",
+    "actual_declaration": "Params.hyb_real_eq_raw",
+    "kind": "FROZEN_M4_ORIGINAL",
+    "actual_reader_mapping": "hyb_eq + Raw.game_eq + jlsSPRG_raw readers + derived id/sd sampler readers + challenge encoding readers; all four exact queries retained",
+    "imports": [
+      "TCSlib.Cryptography.Games.Hopping",
+      "TCSlib.Cryptography.Games.Bridges.Experiments",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "status": "UNRUN",
+    "scope": "FULL_MONADIC_MAP_FUSION_CORE_AFTER_FROZEN_FIELD_AND_ENCODING_READERS",
+    "template_sha256": "a31cecde1bca83fec25f20b15614b8f1b78b6d0181fe56b879dafac920e62519"
+  },
+  {
+    "name": "hyb_random_eq_raw_core",
+    "template": "templates/hyb_random_eq_raw_core.lean.template",
+    "actual_declaration": "Params.hyb_random_eq_raw",
+    "kind": "FROZEN_M4_ORIGINAL",
+    "actual_reader_mapping": "Same full map-fusion core, comparison output is literal shared tail; no unused query removed",
+    "imports": [
+      "TCSlib.Cryptography.Games.Hopping",
+      "TCSlib.Cryptography.Games.Bridges.Experiments",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "status": "UNRUN",
+    "scope": "FULL_MONADIC_MAP_FUSION_CORE_AFTER_FROZEN_FIELD_AND_ENCODING_READERS",
+    "template_sha256": "b0e1b09fa3297c926b660ff6915c3340243daf813f4c6e3ce97d476ee8cebc8c"
+  },
+  {
+    "name": "hyb_prg_accept_eq_chain_zero_core",
+    "template": "templates/hyb_prg_accept_eq_chain_zero_core.lean.template",
+    "actual_declaration": "Params.hyb_prg_accept_eq_chain_zero",
+    "kind": "FROZEN_M4_ORIGINAL",
+    "actual_reader_mapping": "hyb_eq/chainGame_eq/sdSampFull_eq/sdCore_instances/\u03c3/oneSd_pub/lpnVector_eq; chainPublic0 ignores U; semantic expect_const only",
+    "imports": [
+      "TCSlib.Cryptography.Games.Hopping",
+      "TCSlib.Cryptography.Games.Bridges.Experiments",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "status": "UNRUN",
+    "scope": "FULL_UNUSED_QUERY_ACCEPTANCE_CORE_AFTER_LITERAL_DRAW_AND_VECTOR_READERS",
+    "template_sha256": "d2d2919b9bf342075bf9d62d08383e58d74ba42921bc7f943749f56b5b2ca72c"
+  },
+  {
+    "name": "hyb_uniform_accept_eq_chain_zero_core",
+    "template": "templates/hyb_uniform_accept_eq_chain_zero_core.lean.template",
+    "actual_declaration": "Params.hyb_uniform_accept_eq_chain_zero",
+    "kind": "FROZEN_M4_ORIGINAL",
+    "actual_reader_mapping": "hyb_eq/chainGame_eq/sdSampFull_eq/sdCore_instances/\u03c3/oneSd_pub/lpnVector_eq; chainPublic0 ignores U; semantic expect_const only",
+    "imports": [
+      "TCSlib.Cryptography.Games.Hopping",
+      "TCSlib.Cryptography.Games.Bridges.Experiments",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "status": "UNRUN",
+    "scope": "FULL_UNUSED_QUERY_ACCEPTANCE_CORE_AFTER_LITERAL_DRAW_AND_VECTOR_READERS",
+    "template_sha256": "d2d2919b9bf342075bf9d62d08383e58d74ba42921bc7f943749f56b5b2ca72c"
+  }
+]

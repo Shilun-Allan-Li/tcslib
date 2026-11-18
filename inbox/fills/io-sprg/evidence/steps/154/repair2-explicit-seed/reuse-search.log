@@ -1,0 +1,6 @@
+49:--  See `map_apply`, `map_fst`, and `map_snd` for slightly weaker lemmas in the `simp` set.
+53:theorem map_fst' (f : α → γ) (g : β → δ) : Prod.fst ∘ map f g = f ∘ Prod.fst :=
+54:  funext <| map_fst f g
+56:theorem map_snd' (f : α → γ) (g : β → δ) : Prod.snd ∘ map f g = g ∘ Prod.snd :=
+57:  funext <| map_snd f g
+75:  funext fun p ↦ Prod.ext (map_fst f g p) (map_snd f g p)

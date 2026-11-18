@@ -1,0 +1,21 @@
+by
+  classical
+  have hcut : A.coinLen (P.kappaOf L) ≤ (A.coins.subst .var).eval L :=
+    ((A.coinLen_eq (P.kappaOf L)).le.trans
+      (A.coins.eval_mono (P.kappaOf_le L))).trans_eq
+        ((PolyExpr.eval_subst A.coins .var L).trans
+          (congrArg A.coins.eval (PolyExpr.eval_var L))).symm
+  rw [acceptProb_def, acceptProb_def, uprob_prod, uprob_prod]
+  apply congrArg uexp
+  funext s
+  rw [← uprob_comp_equiv (NUPPT.coinsEquivPoly hB.coins_eq L).symm
+    (fun r : B.Coins L => B.distinguisherL L (P.lpnEnc π L (X s)) r = true)]
+  simp only [NUPPT.distinguisherL_eq, hB.runAt_coinsEquivPoly_symm,
+    P.lpnRed_eq, decide_eq_true_eq]
+  let Q : List Bool → Prop := fun r =>
+    A.runAtL (P.kappaOf L) (P.lpnPre π L (ω L) (X s)) r = [true]
+  have hprefix :=
+    (HardcoreBit.pushesUniform_restrict (O := Bool) (Fin.castLE_injective hcut)).uprob_eq
+      (fun r : Fin (A.coinLen (P.kappaOf L)) → Bool => Q (List.ofFn r))
+  simp only [OneWay.ofFn_castLE_eq_take hcut] at hprefix
+  exact hprefix

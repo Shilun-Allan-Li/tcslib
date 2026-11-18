@@ -1,0 +1,18 @@
+theorem lpn_uniform_section (P : Params) (π : PrimeSchedule) (A : NUPPT) (L : ℕ)
+    (h : L = P.ℓ (P.kappaOf L)) (w : P.LPNAdvice π L)
+    (k : Fin (P.kappaOf L)) (hk : k.val = w.hop.val) :
+    acceptProb (id : P.LPNChal π L → _)
+      (fun x (r : A.Coins (P.kappaOf L)) =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])) =
+    Games.ProbComp.expect
+      (Games.ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L)))
+        (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))) (fun M =>
+      Games.ProbComp.expect
+        (Games.ProbComp.sample (Fin (P.n (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p))
+        (fun v => Games.ProbComp.expect (Games.ProbComp.sample (A.Coins (P.kappaOf L)))
+          (fun r => if A.runAtL (P.kappaOf L)
+            (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+              (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                  w.draw (Function.update w.uniform k v) (w.hop.val + 1)) false) w.tail)
+            (List.ofFn r) = [true] then 1 else 0)))

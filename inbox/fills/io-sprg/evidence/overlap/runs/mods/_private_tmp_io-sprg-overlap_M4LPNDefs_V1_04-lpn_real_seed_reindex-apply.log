@@ -1,0 +1,1557 @@
+LPN_DEFS_GUARD_OK_10
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ (⋂ i, fun x =>
+      P.lpnMatrixAt π L h (LWE.sample Q χ i) = (x i).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ i) = fun i_1 =>
+          ∑ a, (x i).1 i_1 a * (x i).2.1 a + P.noiseValue κ pp ((x i).2.2 i_1)).Nonempty
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ { x //
+    ∀
+      (r :
+        Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+      P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+          ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i) }
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ { x //
+    ∀
+      (r :
+        Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+      P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+          ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i) }
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+      (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+    Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) × (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
+  -- ⊢ ∀
+    (r :
+      Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+    P.lpnMatrixAt π L h (LWE.sample Q χ r) = (?_ r).1 ∧
+      P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+        ∑ a, (?_ r).1 i a * (?_ r).2.1 a + P.noiseValue κ pp ((?_ r).2.2 i)
+  -- ⊢ P.lpnMatrixAt π L h (LWE.sample Q χ _fvar.64740) = (?_ _fvar.64740).1 ∧
+    P.lpnValuesAt π L h (LWE.sample Q χ _fvar.64740) = fun i =>
+      ∑ a, (?_ _fvar.64740).1 i a * (?_ _fvar.64740).2.1 a + P.noiseValue κ pp ((?_ _fvar.64740).2.2 i)
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ (x :
+    Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+        (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)) ×'
+    ∀
+      (r :
+        Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+      P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i => ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i)
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+        (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p) →
+    Prop
+  -- ⊢ ∀
+    (a :
+      Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+        Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+          (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)),
+    ?_ a →
+      ∀
+        (r :
+          Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+            (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+        P.lpnMatrixAt π L h (LWE.sample Q χ r) = (a r).1 ∧
+          P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+            ∑ a_2, (a r).1 i a_2 * (a r).2.1 a_2 + P.noiseValue κ pp ((a r).2.2 i)
+  -- ⊢ ∃ a, ?_ a
+  -- ⊢ ?_ _fvar.65025 →
+    ∀
+      (r :
+        Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+      P.lpnMatrixAt π L h (LWE.sample Q χ r) = (_fvar.65025 r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+          ∑ a, (_fvar.65025 r).1 i a * (_fvar.65025 r).2.1 a + P.noiseValue κ pp ((_fvar.65025 r).2.2 i)
+  -- ⊢ ∀
+    (r :
+      Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+    P.lpnMatrixAt π L h (LWE.sample Q χ r) = (_fvar.65025 r).1 ∧
+      P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+        ∑ a, (_fvar.65025 r).1 i a * (_fvar.65025 r).2.1 a + P.noiseValue κ pp ((_fvar.65025 r).2.2 i)
+  -- ⊢ P.lpnMatrixAt π L h (LWE.sample Q χ _fvar.65239) = (_fvar.65025 _fvar.65239).1 ∧
+    P.lpnValuesAt π L h (LWE.sample Q χ _fvar.65239) = fun i =>
+      ∑ a, (_fvar.65025 _fvar.65239).1 i a * (_fvar.65025 _fvar.65239).2.1 a +
+        P.noiseValue κ pp ((_fvar.65025 _fvar.65239).2.2 i)
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+        (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p) →
+    Prop
+  -- ⊢ ∀
+    (a :
+      Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+        Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+          (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)),
+    ?_ a ↔
+      ∀
+        (r :
+          Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+            (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+        P.lpnMatrixAt π L h (LWE.sample Q χ r) = (a r).1 ∧
+          P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+            ∑ a_1, (a r).1 i a_1 * (a r).2.1 a_1 + P.noiseValue κ pp ((a r).2.2 i)
+  -- ⊢ ∃ a, ?_ a
+  -- ⊢ ?_ _fvar.65376 ↔
+    ∀
+      (r :
+        Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+      P.lpnMatrixAt π L h (LWE.sample Q χ r) = (_fvar.65376 r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+          ∑ a, (_fvar.65376 r).1 i a * (_fvar.65376 r).2.1 a + P.noiseValue κ pp ((_fvar.65376 r).2.2 i)
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+        (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p) →
+    Prop
+  -- ⊢ ∀
+    (a :
+      Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+        Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+          (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)),
+    (∀
+        (r :
+          Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+            (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+        P.lpnMatrixAt π L h (LWE.sample Q χ r) = (a r).1 ∧
+          P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+            ∑ a_1, (a r).1 i a_1 * (a r).2.1 a_1 + P.noiseValue κ pp ((a r).2.2 i)) ↔
+      ?_ a
+  -- ⊢ ∃ a, ?_ a
+  -- ⊢ (∀
+      (r :
+        Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+      P.lpnMatrixAt π L h (LWE.sample Q χ r) = (_fvar.65513 r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+          ∑ a, (_fvar.65513 r).1 i a * (_fvar.65513 r).2.1 a + P.noiseValue κ pp ((_fvar.65513 r).2.2 i)) ↔
+    ?_ _fvar.65513
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ Sort _
+  -- ⊢ ?_ → Prop
+  -- ⊢ ?_ →
+    Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) × (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
+  -- ⊢ ∀ (a : ?_),
+    ?_ a →
+      ∀
+        (r :
+          Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+            (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+        P.lpnMatrixAt π L h (LWE.sample Q χ r) = ((?_ a) r).1 ∧
+          P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+            ∑ a_2, ((?_ a) r).1 i a_2 * ((?_ a) r).2.1 a_2 + P.noiseValue κ pp (((?_ a) r).2.2 i)
+  -- ⊢ ∃ a, ?_ a
+  -- ⊢ ?_ _fvar.65690 →
+    ∀
+      (r :
+        Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+      P.lpnMatrixAt π L h (LWE.sample Q χ r) = ((?_ _fvar.65690) r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+          ∑ a, ((?_ _fvar.65690) r).1 i a * ((?_ _fvar.65690) r).2.1 a + P.noiseValue κ pp (((?_ _fvar.65690) r).2.2 i)
+  -- ⊢ ∀
+    (r :
+      Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+    P.lpnMatrixAt π L h (LWE.sample Q χ r) = ((?_ _fvar.65690) r).1 ∧
+      P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+        ∑ a, ((?_ _fvar.65690) r).1 i a * ((?_ _fvar.65690) r).2.1 a + P.noiseValue κ pp (((?_ _fvar.65690) r).2.2 i)
+  -- ⊢ P.lpnMatrixAt π L h (LWE.sample Q χ _fvar.65985) = ((?_ _fvar.65690) _fvar.65985).1 ∧
+    P.lpnValuesAt π L h (LWE.sample Q χ _fvar.65985) = fun i =>
+      ∑ a, ((?_ _fvar.65690) _fvar.65985).1 i a * ((?_ _fvar.65690) _fvar.65985).2.1 a +
+        P.noiseValue κ pp (((?_ _fvar.65690) _fvar.65985).2.2 i)
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ Decidable
+    (∃ x,
+      ∀
+        (r :
+          Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+            (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+        P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+          P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+            ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i))
+  -- ⊢ ¬∀
+      (x :
+        Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+            (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+          Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+            (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)),
+      ¬∀
+          (r :
+            Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+              (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+          P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+            P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+              ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i)
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ ¬∀
+      (x :
+        Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+            (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+          Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+            (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)),
+      ¬∀
+          (r :
+            Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+              (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+          P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+            P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+              ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i)
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ ¬∀
+      (x :
+        Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+            (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+          Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+            (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)),
+      ¬∀
+          (r :
+            Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+              (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+          P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+            P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+              ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i)
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+        (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p) →
+    Prop
+  -- ⊢ ∃ x,
+    ∃ (_ : ?_ x),
+      ∀
+        (r :
+          Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+            (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+        P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+          P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+            ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i)
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ Subsingleton
+    (Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+        (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))
+  -- ⊢ ∃! x,
+    ∀
+      (r :
+        Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+      P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i => ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i)
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ ∃! x,
+    ∀
+      (r :
+        Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+      P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i => ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i)
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ Nonempty
+    { a //
+      ∀
+        (r :
+          Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+            (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+        P.lpnMatrixAt π L h (LWE.sample Q χ r) = (a r).1 ∧
+          P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+            ∑ a_1, (a r).1 i a_1 * (a r).2.1 a_1 + P.noiseValue κ pp ((a r).2.2 i) }
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ Sort _
+  -- ⊢ ?_ →
+    Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) × (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
+  -- ⊢ ∀
+    (b :
+      Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+        Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+          (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)),
+    ∃ a, ?_ a = b
+  -- ⊢ ∃ x,
+    ∀
+      (r :
+        Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+      P.lpnMatrixAt π L h (LWE.sample Q χ r) = ((?_ x) r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+          ∑ a, ((?_ x) r).1 i a * ((?_ x) r).2.1 a + P.noiseValue κ pp (((?_ x) r).2.2 i)
+  -- ⊢ ∃ a, ?_ a = _fvar.68794
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ IsEmpty
+    (Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+        (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))
+  -- ⊢ False
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ Unique
+    (Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+        (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))
+  -- ⊢ ∀
+    (r :
+      Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+    P.lpnMatrixAt π L h (LWE.sample Q χ r) = (default r).1 ∧
+      P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+        ∑ a, (default r).1 i a * (default r).2.1 a + P.noiseValue κ pp ((default r).2.2 i)
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ Sort _
+  -- ⊢ Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+        (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p) ≃
+    ?_
+  -- ⊢ ∃ b,
+    ∀
+      (r :
+        Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+      P.lpnMatrixAt π L h (LWE.sample Q χ r) = (((Equiv.symm ?_) b) r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+          ∑ a, (((Equiv.symm ?_) b) r).1 i a * (((Equiv.symm ?_) b) r).2.1 a +
+            P.noiseValue κ pp ((((Equiv.symm ?_) b) r).2.2 i)
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ Sort _
+  -- ⊢ ?_ ≃
+    (Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+        (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))
+  -- ⊢ ∃ a,
+    ∀
+      (r :
+        Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+      P.lpnMatrixAt π L h (LWE.sample Q χ r) = ((?_ a) r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+          ∑ a_1, ((?_ a) r).1 i a_1 * ((?_ a) r).2.1 a_1 + P.noiseValue κ pp (((?_ a) r).2.2 i)
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ Sort _
+  -- ⊢ ?_ → Prop
+  -- ⊢ ?_ ≃
+    (Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+        (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))
+  -- ⊢ ∀ (a : ?_),
+    ?_ a ↔
+      ∀
+        (r :
+          Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+            (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+        P.lpnMatrixAt π L h (LWE.sample Q χ r) = ((?_ a) r).1 ∧
+          P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+            ∑ a_1, ((?_ a) r).1 i a_1 * ((?_ a) r).2.1 a_1 + P.noiseValue κ pp (((?_ a) r).2.2 i)
+  -- ⊢ ∃ a, ?_ a
+  -- ⊢ ?_ _fvar.69290 ↔
+    ∀
+      (r :
+        Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+      P.lpnMatrixAt π L h (LWE.sample Q χ r) = ((?_ _fvar.69290) r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+          ∑ a, ((?_ _fvar.69290) r).1 i a * ((?_ _fvar.69290) r).2.1 a + P.noiseValue κ pp (((?_ _fvar.69290) r).2.2 i)
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ Sort _
+  -- ⊢ ?_ → Prop
+  -- ⊢ Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+        (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p) ≃
+    ?_
+  -- ⊢ ∀
+    (a :
+      Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+        Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+          (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)),
+    (∀
+        (r :
+          Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+            (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+        P.lpnMatrixAt π L h (LWE.sample Q χ r) = (a r).1 ∧
+          P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+            ∑ a_1, (a r).1 i a_1 * (a r).2.1 a_1 + P.noiseValue κ pp ((a r).2.2 i)) ↔
+      ?_ (?_ a)
+  -- ⊢ ∃ b, ?_ b
+  -- ⊢ (∀
+      (r :
+        Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+      P.lpnMatrixAt π L h (LWE.sample Q χ r) = (_fvar.69440 r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+          ∑ a, (_fvar.69440 r).1 i a * (_fvar.69440 r).2.1 a + P.noiseValue κ pp ((_fvar.69440 r).2.2 i)) ↔
+    ?_ (?_ _fvar.69440)
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ Sort _
+  -- ⊢ ?_ → Prop
+  -- ⊢ ?_ ≃
+    (Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+        (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))
+  -- ⊢ ∀
+    (b :
+      Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+        Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+          (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)),
+    ?_ ((Equiv.symm ?_) b) ↔
+      ∀
+        (r :
+          Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+            (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+        P.lpnMatrixAt π L h (LWE.sample Q χ r) = (b r).1 ∧
+          P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+            ∑ a, (b r).1 i a * (b r).2.1 a + P.noiseValue κ pp ((b r).2.2 i)
+  -- ⊢ ∃ a, ?_ a
+  -- ⊢ ?_ ((Equiv.symm ?_) _fvar.69594) ↔
+    ∀
+      (r :
+        Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+      P.lpnMatrixAt π L h (LWE.sample Q χ r) = (_fvar.69594 r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+          ∑ a, (_fvar.69594 r).1 i a * (_fvar.69594 r).2.1 a + P.noiseValue κ pp ((_fvar.69594 r).2.2 i)
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ Sort _
+  -- ⊢ ?_ → Prop
+  -- ⊢ Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+        (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p) ≃
+    ?_
+  -- ⊢ ∀ (b : ?_),
+    (∀
+        (r :
+          Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+            (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+        P.lpnMatrixAt π L h (LWE.sample Q χ r) = (((Equiv.symm ?_) b) r).1 ∧
+          P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+            ∑ a, (((Equiv.symm ?_) b) r).1 i a * (((Equiv.symm ?_) b) r).2.1 a +
+              P.noiseValue κ pp ((((Equiv.symm ?_) b) r).2.2 i)) ↔
+      ?_ b
+  -- ⊢ ∃ b, ?_ b
+  -- ⊢ (∀
+      (r :
+        Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+      P.lpnMatrixAt π L h (LWE.sample Q χ r) = (((Equiv.symm ?_) _fvar.69748) r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+          ∑ a, (((Equiv.symm ?_) _fvar.69748) r).1 i a * (((Equiv.symm ?_) _fvar.69748) r).2.1 a +
+            P.noiseValue κ pp ((((Equiv.symm ?_) _fvar.69748) r).2.2 i)) ↔
+    ?_ _fvar.69748
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ Sort _
+  -- ⊢ ?_ → Prop
+  -- ⊢ { a // ?_ a } ≃
+    { b //
+      ∀
+        (r :
+          Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+            (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+        P.lpnMatrixAt π L h (LWE.sample Q χ r) = (b r).1 ∧
+          P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+            ∑ a, (b r).1 i a * (b r).2.1 a + P.noiseValue κ pp ((b r).2.2 i) }
+  -- ⊢ ∃ a, ?_ a
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ Sort _
+  -- ⊢ ?_ → Prop
+  -- ⊢ { a //
+      ∀
+        (r :
+          Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+            (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+        P.lpnMatrixAt π L h (LWE.sample Q χ r) = (a r).1 ∧
+          P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+            ∑ a_1, (a r).1 i a_1 * (a r).2.1 a_1 + P.noiseValue κ pp ((a r).2.2 i) } ≃
+    { b // ?_ b }
+  -- ⊢ ∃ b, ?_ b
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ SemilatticeInf
+    (Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+        (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))
+  -- ⊢ Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+      (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+    Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) × (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
+  -- ⊢ ∀
+    ⦃a b :
+      Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+        Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+          (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)⦄,
+    a ≤ b →
+      (fun x =>
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i))
+          b ≤
+        (fun x =>
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i))
+          a
+  -- ⊢ ∃ x ≤ ?_,
+    ∀
+      (r :
+        Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+      P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i => ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i)
+  -- ⊢ ∀
+    ⦃b :
+      Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+        Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+          (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)⦄,
+    _fvar.70281 ≤ b →
+      (fun x =>
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i))
+          b ≤
+        (fun x =>
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i))
+          _fvar.70281
+  -- ⊢ _fvar.70281 ≤ _fvar.70413 →
+    (fun x =>
+          ∀
+            (r :
+              Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+            P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+              P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i))
+        _fvar.70413 ≤
+      (fun x =>
+          ∀
+            (r :
+              Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+            P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+              P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i))
+        _fvar.70281
+  -- ⊢ (∀
+      (r :
+        Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+      P.lpnMatrixAt π L h (LWE.sample Q χ r) = (_fvar.70413 r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+          ∑ a, (_fvar.70413 r).1 i a * (_fvar.70413 r).2.1 a + P.noiseValue κ pp ((_fvar.70413 r).2.2 i)) →
+    ∀
+      (r :
+        Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+      P.lpnMatrixAt π L h (LWE.sample Q χ r) = (_fvar.70281 r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+          ∑ a, (_fvar.70281 r).1 i a * (_fvar.70281 r).2.1 a + P.noiseValue κ pp ((_fvar.70281 r).2.2 i)
+  -- ⊢ ∀
+    (r :
+      Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+    P.lpnMatrixAt π L h (LWE.sample Q χ r) = (_fvar.70281 r).1 ∧
+      P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+        ∑ a, (_fvar.70281 r).1 i a * (_fvar.70281 r).2.1 a + P.noiseValue κ pp ((_fvar.70281 r).2.2 i)
+  -- ⊢ P.lpnMatrixAt π L h (LWE.sample Q χ _fvar.70900) = (_fvar.70281 _fvar.70900).1 ∧
+    P.lpnValuesAt π L h (LWE.sample Q χ _fvar.70900) = fun i =>
+      ∑ a, (_fvar.70281 _fvar.70900).1 i a * (_fvar.70281 _fvar.70900).2.1 a +
+        P.noiseValue κ pp ((_fvar.70281 _fvar.70900).2.2 i)
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ SemilatticeSup
+    (Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+        (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))
+  -- ⊢ Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+      (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+    Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) × (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
+  -- ⊢ ∀
+    ⦃a b :
+      Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+        Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+          (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)⦄,
+    a ≤ b →
+      (fun x =>
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i))
+          a ≤
+        (fun x =>
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i))
+          b
+  -- ⊢ ∃ x,
+    ?_ ≤ x ∧
+      ∀
+        (r :
+          Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+            (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+        P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+          P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+            ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i)
+  -- ⊢ ∀
+    ⦃b :
+      Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+        Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+          (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)⦄,
+    _fvar.71293 ≤ b →
+      (fun x =>
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i))
+          _fvar.71293 ≤
+        (fun x =>
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i))
+          b
+  -- ⊢ _fvar.71293 ≤ _fvar.71425 →
+    (fun x =>
+          ∀
+            (r :
+              Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+            P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+              P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i))
+        _fvar.71293 ≤
+      (fun x =>
+          ∀
+            (r :
+              Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+            P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+              P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i))
+        _fvar.71425
+  -- ⊢ (∀
+      (r :
+        Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+      P.lpnMatrixAt π L h (LWE.sample Q χ r) = (_fvar.71293 r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+          ∑ a, (_fvar.71293 r).1 i a * (_fvar.71293 r).2.1 a + P.noiseValue κ pp ((_fvar.71293 r).2.2 i)) →
+    ∀
+      (r :
+        Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+      P.lpnMatrixAt π L h (LWE.sample Q χ r) = (_fvar.71425 r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+          ∑ a, (_fvar.71425 r).1 i a * (_fvar.71425 r).2.1 a + P.noiseValue κ pp ((_fvar.71425 r).2.2 i)
+  -- ⊢ ∀
+    (r :
+      Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+    P.lpnMatrixAt π L h (LWE.sample Q χ r) = (_fvar.71425 r).1 ∧
+      P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+        ∑ a, (_fvar.71425 r).1 i a * (_fvar.71425 r).2.1 a + P.noiseValue κ pp ((_fvar.71425 r).2.2 i)
+  -- ⊢ P.lpnMatrixAt π L h (LWE.sample Q χ _fvar.71921) = (_fvar.71425 _fvar.71921).1 ∧
+    P.lpnValuesAt π L h (LWE.sample Q χ _fvar.71921) = fun i =>
+      ∑ a, (_fvar.71425 _fvar.71921).1 i a * (_fvar.71425 _fvar.71921).2.1 a +
+        P.noiseValue κ pp ((_fvar.71425 _fvar.71921).2.2 i)
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ Filter
+    (Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+        (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))
+  -- ⊢ (∀ᶠ (x :
+      Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+        Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+          (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)) in
+      ?_,
+      ¬(fun x =>
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i))
+          x) →
+    False
+  -- ⊢ False
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ Filter
+    (Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+        (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))
+  -- ⊢ Filter.NeBot ?_
+  -- ⊢ ∀ᶠ (x :
+    Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+        (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)) in
+    ?_,
+    ∀
+      (r :
+        Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+      P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i => ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i)
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ ∃ᶠ (x :
+    Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+        (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)) in
+    ⊤,
+    ∀
+      (r :
+        Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+          (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+      P.lpnMatrixAt π L h (LWE.sample Q χ r) = (x r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i => ∑ a, (x r).1 i a * (x r).2.1 a + P.noiseValue κ pp ((x r).2.2 i)
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ Type _
+  -- ⊢ Filter ?_
+  -- ⊢ Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+        (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p) →
+    Set ?_
+  -- ⊢ Filter.HasBasis ?_
+    (fun i =>
+      ∀
+        (r :
+          Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+            (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+        P.lpnMatrixAt π L h (LWE.sample Q χ r) = (i r).1 ∧
+          P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i_1 =>
+            ∑ a, (i r).1 i_1 a * (i r).2.1 a + P.noiseValue κ pp ((i r).2.2 i_1))
+    ?_
+Try this:
+  [apply] refine let κ := P.kappaOf L;
+  let pp := π κ;
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+  let χ := (P.lpnFamily_raw π).toLWE.noise L;
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ),
+    let κ := P.kappaOf L;
+    ∀ (pp : PrimeParam κ),
+      let pp := π κ;
+      ∀ (Q : LWE.Parameters),
+        let Q := (P.lpnFamily_raw π).toLWE.parameters L;
+        ∀ (χ : LWE.Noise),
+          let χ := (P.lpnFamily_raw π).toLWE.noise L;
+          ∃ e,
+            ∀
+              (r :
+                Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+                  (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+              P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+                P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+                  ∑ a, (e r).1 i a * (e r).2.1 a + P.noiseValue κ pp ((e r).2.2 i)
+  -- ⊢ Type _
+  -- ⊢ Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins) ≃
+      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+        (Fin (P.ℓ κ) → ZMod pp.p) × (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p) →
+    Set ?_
+  -- ⊢ Filter.IsBasis
+    (fun i =>
+      ∀
+        (r :
+          Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+            (Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins)),
+        P.lpnMatrixAt π L h (LWE.sample Q χ r) = (i r).1 ∧
+          P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i_1 =>
+            ∑ a, (i r).1 i_1 a * (i r).2.1 a + P.noiseValue κ pp ((i r).2.2 i_1))
+    ?_
+/private/tmp/io-sprg-overlap/M4LPNDefs_V1_04-lpn_real_seed_reindex-apply.lean:37:0: warning: declaration uses 'sorry'

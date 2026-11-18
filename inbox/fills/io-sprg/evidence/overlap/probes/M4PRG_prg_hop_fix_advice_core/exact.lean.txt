@@ -1,0 +1,18 @@
+import TCSlib.Cryptography.Games.Hopping
+import TCSlib.Cryptography.Games.Bridges.Experiments
+import Lean.Elab.Tactic.LibrarySearch
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.Averaging
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography TCSlib.Cryptography.Games
+
+example (Advice : ℕ → Type) [∀ n, Fintype (Advice n)]
+    [∀ n, Nonempty (Advice n)] (image : ℕ → Prop)
+    (a b : ℕ → ℝ) (f g : (n : ℕ) → Advice n → ℝ)
+    (hreal : ∀ n, image n → a n = ProbComp.expect (ProbComp.sample (Advice n)) (f n))
+    (huniform : ∀ n, image n → b n = ProbComp.expect (ProbComp.sample (Advice n)) (g n)) :
+    ∃ ω : (n : ℕ) → Advice n, ∀ n, image n → |a n - b n| ≤ |f n (ω n) - g n (ω n)| := by
+  exact?

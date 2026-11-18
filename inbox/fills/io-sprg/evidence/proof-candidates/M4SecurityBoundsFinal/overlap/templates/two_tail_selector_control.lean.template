@@ -1,0 +1,15 @@
+import TCSlib.Cryptography.Games.Advantage
+import Mathlib.Data.Finset.Max
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography TCSlib.Cryptography.Games
+
+example (C : ℕ → Bool → ℕ → ProbComp Bool) :
+    ∀ κ : ℕ, ∃ b : Bool, ∃ i : Fin (κ + 1), 0 < κ → i.val < κ ∧
+      ∀ (tail : Bool) (j : ℕ), j < κ →
+        advantage (C κ tail j) (C κ tail (j + 1)) ≤
+          advantage (C κ b i.val) (C κ b (i.val + 1)) := __PROBE_BODY__

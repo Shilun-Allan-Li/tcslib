@@ -68,7 +68,47 @@ theorem lemma42 (P : Params) (π : PrimeSchedule) (A : NUPPT) :
           (fun N x r => P.prgRed π A N (ωG N) x r) →
         ∀ κ, advantage (P.chainGame A true 0 κ (π κ))
           (P.chainGame A false κ κ (π κ)) ≤
-            (κ : ℝ) * (P.lpnFamily_raw π).adv BL (P.ℓ κ) + P.G.adv BG (P.n κ) := sorry
+            (κ : ℝ) * (P.lpnFamily_raw π).adv BL (P.ℓ κ) + P.G.adv BG (P.n κ) := by
+  classical
+  have hselect : ∀ κ : ℕ, ∃ i : Fin (κ + 1),
+      0 < κ → i.val < κ ∧
+        advantage (P.chainGame A true 0 κ (π κ))
+          (P.chainGame A true κ κ (π κ)) ≤
+            (κ : ℝ) * advantage (P.chainGame A true i.val κ (π κ))
+              (P.chainGame A true (i.val + 1) κ (π κ)) := ?_
+  swap
+  · intro κ
+    by_cases hκ : 0 < κ
+    · obtain ⟨i, hi, hgap⟩ := exists_advantage_hybrid_gap
+        (fun j : ℕ => P.chainGame A true j κ (π κ)) hκ
+      refine ⟨⟨i, hi.trans_le (Nat.le_succ κ)⟩, ?_⟩
+      intro _
+      refine ⟨hi, ?_⟩
+      have hκR : 0 < (κ : ℝ) := Nat.cast_pos.mpr hκ
+      exact ((div_le_iff₀ hκR).mp hgap).trans_eq (mul_comm _ _)
+    · exact ⟨⟨0, Nat.succ_pos κ⟩, fun h => False.elim (hκ h)⟩
+  choose hops hhops using hselect
+  obtain ⟨ωL, hL⟩ := P.lpn_hop π A (fun _ => true) hops
+  obtain ⟨ωG, hG⟩ := P.prg_hop π A
+  refine ⟨ωL, ωG, ?_⟩
+  intro BL BG hBL hBG κ
+  have hreal : advantage (P.chainGame A true 0 κ (π κ))
+      (P.chainGame A true κ κ (π κ)) ≤
+        (κ : ℝ) * (P.lpnFamily_raw π).adv BL (P.ℓ κ) := ?_
+  swap
+  · by_cases hκ : 0 < κ
+    · have hs := hhops κ hκ
+      exact hs.2.trans
+        (mul_le_mul_of_nonneg_left (hL BL hBL κ hs.1) (Nat.cast_nonneg κ))
+    · have hz : κ = 0 := Nat.eq_zero_of_not_pos hκ
+      subst κ
+      simpa only [Nat.cast_zero, zero_mul, advantage_self] using
+        (le_rfl : (0 : ℝ) ≤ 0)
+  have hprg := hG BG hBG κ
+  exact (advantage_triangle
+    (P.chainGame A true 0 κ (π κ))
+    (P.chainGame A true κ κ (π κ))
+    (P.chainGame A false κ κ (π κ))).trans (add_le_add hreal hprg)
 
 /-- The raw sPRG advantage is at most 2κ LPN advantages, one PRG advantage and twice
 the exact error probability [JLS26, Proposition 4.1, pp. 18-19]. Dv1 fixes the schedule;
@@ -90,7 +130,115 @@ theorem prop41 (P : Params) (π : PrimeSchedule) (A : NUPPT) :
           (fun N x r => P.prgRed π A N (ωG N) x r) →
         ∀ κ, (jlsSPRG_raw P π).adv A κ ≤
           2 * (κ : ℝ) * (P.lpnFamily_raw π).adv BL (P.ℓ κ) +
-            P.G.adv BG (P.n κ) + 2 * P.errProb κ (π κ) := sorry
+            P.G.adv BG (P.n κ) + 2 * P.errProb κ (π κ) := by
+  classical
+  let gap : ℕ → Bool → ℕ → ℝ := fun κ b i =>
+    advantage (P.chainGame A b i κ (π κ))
+      (P.chainGame A b (i + 1) κ (π κ))
+  have hselect : ∀ κ : ℕ, ∃ b : Bool, ∃ i : Fin (κ + 1),
+      0 < κ → i.val < κ ∧
+        ∀ (tail : Bool) (j : ℕ), j < κ → gap κ tail j ≤ gap κ b i.val := ?_
+  swap
+  · intro κ
+    by_cases hκ : 0 < κ
+    · have hne : (Finset.univ : Finset (Bool × Fin κ)).Nonempty :=
+        ⟨(true, ⟨0, hκ⟩), Finset.mem_univ _⟩
+      obtain ⟨q, _, hmax⟩ := Finset.exists_max_image
+        (Finset.univ : Finset (Bool × Fin κ))
+        (fun q : Bool × Fin κ => gap κ q.1 q.2.val) hne
+      refine ⟨q.1, ⟨q.2.val, q.2.isLt.trans_le (Nat.le_succ κ)⟩, ?_⟩
+      intro _
+      refine ⟨q.2.isLt, ?_⟩
+      intro tail j hj
+      exact hmax (tail, ⟨j, hj⟩) (Finset.mem_univ _)
+    · exact ⟨true, ⟨0, Nat.succ_pos κ⟩, fun h => False.elim (hκ h)⟩
+  choose tails hops hmax using hselect
+  obtain ⟨ωL, hL⟩ := P.lpn_hop π A tails hops
+  obtain ⟨ωG, hG⟩ := P.prg_hop π A
+  refine ⟨ωL, ωG, ?_⟩
+  intro BL BG hBL hBG κ
+  let aL : ℝ := (P.lpnFamily_raw π).adv BL (P.ℓ κ)
+  let aG : ℝ := P.G.adv BG (P.n κ)
+  have hstep : 0 < κ → ∀ (b : Bool) (j : ℕ), j < κ → gap κ b j ≤ aL := ?_
+  swap
+  · intro hκ b j hj
+    have hs := hmax κ hκ
+    exact (hs.2 b j hj).trans (hL BL hBL κ hs.1)
+  have hchain : ∀ b : Bool,
+      advantage (P.chainGame A b 0 κ (π κ))
+        (P.chainGame A b κ κ (π κ)) ≤ (κ : ℝ) * aL := ?_
+  swap
+  · intro b
+    by_cases hκ : 0 < κ
+    · calc
+        advantage (P.chainGame A b 0 κ (π κ))
+            (P.chainGame A b κ κ (π κ)) ≤
+          Finset.sum (Finset.range κ) (fun j => gap κ b j) :=
+            advantage_hybrid (fun j : ℕ => P.chainGame A b j κ (π κ)) κ
+        _ ≤ Finset.sum (Finset.range κ) (fun _j => aL) :=
+          Finset.sum_le_sum (fun j hj => hstep hκ b j (Finset.mem_range.mp hj))
+        _ = (κ : ℝ) * aL := ?_
+      rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
+    · have hz : κ = 0 := Nat.eq_zero_of_not_pos hκ
+      subst κ
+      simpa only [Nat.cast_zero, zero_mul, advantage_self] using
+        (le_rfl : (0 : ℝ) ≤ 0)
+  have hreverse : advantage (P.chainGame A false κ κ (π κ))
+      (P.chainGame A false 0 κ (π κ)) ≤ (κ : ℝ) * aL :=
+    (advantage_comm (P.chainGame A false κ κ (π κ))
+      (P.chainGame A false 0 κ (π κ))).le.trans (hchain false)
+  have hprg : advantage (P.chainGame A true κ κ (π κ))
+      (P.chainGame A false κ κ (π κ)) ≤ aG := hG BG hBG κ
+  have hlink : advantage (P.hyb A .prg κ (π κ)) (P.hyb A .uniform κ (π κ)) =
+      advantage (P.chainGame A true 0 κ (π κ))
+        (P.chainGame A false 0 κ (π κ)) := ?_
+  swap
+  · simp only [advantage_eq, P.hyb_prg_accept_eq_chain_zero,
+      P.hyb_uniform_accept_eq_chain_zero]
+  have hmiddle : advantage (P.hyb A .prg κ (π κ))
+      (P.hyb A .uniform κ (π κ)) ≤ 2 * (κ : ℝ) * aL + aG := ?_
+  swap
+  · calc
+      advantage (P.hyb A .prg κ (π κ)) (P.hyb A .uniform κ (π κ)) =
+        advantage (P.chainGame A true 0 κ (π κ))
+          (P.chainGame A false 0 κ (π κ)) := hlink
+      _ ≤ advantage (P.chainGame A true 0 κ (π κ))
+          (P.chainGame A true κ κ (π κ)) +
+          advantage (P.chainGame A true κ κ (π κ))
+            (P.chainGame A false 0 κ (π κ)) :=
+        advantage_triangle _ _ _
+      _ ≤ advantage (P.chainGame A true 0 κ (π κ))
+          (P.chainGame A true κ κ (π κ)) +
+          (advantage (P.chainGame A true κ κ (π κ))
+            (P.chainGame A false κ κ (π κ)) +
+            advantage (P.chainGame A false κ κ (π κ))
+              (P.chainGame A false 0 κ (π κ))) :=
+        add_le_add_left (advantage_triangle _ _ _) _
+      _ ≤ (κ : ℝ) * aL + (aG + (κ : ℝ) * aL) :=
+        add_le_add (hchain true) (add_le_add hprg hreverse)
+      _ = 2 * (κ : ℝ) * aL + aG := ?_
+    ring
+  have hraw : (jlsSPRG_raw P π).adv A κ =
+      advantage (P.hyb A .real κ (π κ)) (P.hyb A .random κ (π κ)) := ?_
+  swap
+  · rw [SPRG.Raw.adv_eq, ← P.hyb_real_eq_raw π A κ, ← P.hyb_random_eq_raw π A κ]
+  change (jlsSPRG_raw P π).adv A κ ≤
+    2 * (κ : ℝ) * aL + aG + 2 * P.errProb κ (π κ)
+  calc
+    (jlsSPRG_raw P π).adv A κ =
+      advantage (P.hyb A .real κ (π κ)) (P.hyb A .random κ (π κ)) := hraw
+    _ ≤ advantage (P.hyb A .real κ (π κ)) (P.hyb A .prg κ (π κ)) +
+        advantage (P.hyb A .prg κ (π κ)) (P.hyb A .random κ (π κ)) :=
+      advantage_triangle _ _ _
+    _ ≤ P.errProb κ (π κ) +
+        (advantage (P.hyb A .prg κ (π κ)) (P.hyb A .uniform κ (π κ)) +
+          advantage (P.hyb A .uniform κ (π κ)) (P.hyb A .random κ (π κ))) :=
+      add_le_add (P.hyb_real_prg_le A κ (π κ)) (advantage_triangle _ _ _)
+    _ ≤ P.errProb κ (π κ) +
+        ((2 * (κ : ℝ) * aL + aG) + P.errProb κ (π κ)) :=
+      add_le_add_left (add_le_add hmiddle (P.hyb_uniform_random_le A κ (π κ))) _
+    _ = 2 * (κ : ℝ) * aL + aG + 2 * P.errProb κ (π κ) := ?_
+  ring
 
 /-- Under realisability and the two assumptions, the raw construction is secure
 [JLS26, Theorem 4.1, p. 11]. Dv3 uses the construction's own LPN family; Dv13 uses

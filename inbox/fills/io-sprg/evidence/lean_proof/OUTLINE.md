@@ -286,3 +286,61 @@ Step 132: cond2_sparse_joint_le_quarter_pow owner check passed. Current sorry to
 Step 133: claim42 owner check passed. Current sorry tokens: 32.
 
 Step 134: Internal.lpnNoise_law_cast owner check passed. Current sorry tokens: 32.
+
+Step 135: hyb_real_eq_raw owner check passed. Current sorry tokens: 31.
+
+Step 136: hyb_random_eq_raw owner check passed. Current sorry tokens: 30.
+
+Step 137: hyb_prg_accept_eq_chain_zero owner check passed. Current sorry tokens: 29.
+
+Step 138: hyb_uniform_accept_eq_chain_zero owner check passed. Current sorry tokens: 28.
+
+Step 139: sdCore_publicSeed owner check passed. Current sorry tokens: 28.
+
+Step 140: hyb_real_prg_le owner check passed. Current sorry tokens: 27.
+
+Step 141: hyb_uniform_random_le owner check passed. Current sorry tokens: 26.
+
+Step 142: Params.prg_verdict_prob owner check passed. Current sorry tokens: 26.
+
+Step 143: Params.prg_nuisance_average owner check passed. Current sorry tokens: 26.
+
+Step 145: lpnEnc_injective owner check passed. Current sorry tokens: 25.
+
+Step 146: encLPNAdvice_injective owner check passed. Current sorry tokens: 24.
+
+Step 147: encLPNAdvice_length_le owner check passed. Current sorry tokens: 23.
+
+Step 148: prgEnc_injective owner check passed. Current sorry tokens: 22.
+
+Step 149: encPRGAdvice_injective owner check passed. Current sorry tokens: 21.
+
+Step 150: lpn_accept_realizes_eq owner check passed. Current sorry tokens: 21.
+
+Step 151: lpn_gap_realizes_eq owner check passed. Current sorry tokens: 21.
+
+Step 152: lpn_uniform_challenge_reindex owner check passed. Current sorry tokens: 21.
+
+Step 144: Params.prg_chain_accept_average owner check passed. Current sorry tokens: 21.
+
+Step 153: prg_hop owner check passed. Current sorry tokens: 20.
+
+Step 155: encPRGAdvice_length_le owner check passed. Current sorry tokens: 19.
+
+Step 156: lpn_pre_real_update owner check passed. Current sorry tokens: 20.
+
+Step 157: lpn_pre_uniform_update owner check passed. Current sorry tokens: 20.
+
+Step 158: lpn_real_section owner check passed. Current sorry tokens: 20.
+
+Step 159: lpn_uniform_section owner check passed. Current sorry tokens: 20.
+
+Step 154: lpn_real_seed_reindex owner check passed. Current sorry tokens: 19.
+
+Step 160: lpn_fix_advice owner check passed. Current sorry tokens: 19.
+
+Step 161: lpn_hop owner check passed. Current sorry tokens: 18.
+
+Step 162: lemma42 owner check passed. Current sorry tokens: 17.
+
+Step 163: prop41 owner check passed. Current sorry tokens: 16.

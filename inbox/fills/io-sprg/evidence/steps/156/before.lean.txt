@@ -1,0 +1,67 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
+-/
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Transport
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Fixed-advice sections of the LPN reduction
+
+## Main definitions
+
+None. The section identities use the reduction interface in `LPN.Defs`.
+
+## Main results
+
+* Pointwise real and uniform preprocessing identities.
+* Real and uniform challenge acceptance identities for fixed advice.
+
+## References
+
+* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
+  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026,
+  Lemma 4.2, p. 19.
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
+  3rd ed., January 2010, Definition 26.8.
+-/
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+
+open Complexity Turing Games
+open scoped BigOperators
+
+namespace Internal
+
+/-- A canonical real challenge replaces precisely the selected repetition in the chain word.
+Preprocessing glue for [JLS26, Lemma 4.2, p. 19].
+
+**Proof sketch.** Read preprocessing and its schedule guard, then substitute the supplied
+matrix and noisy-value coordinate equations. Extensionality reduces the public vectors to
+the selected and unselected coordinates; the chain and vector readers and finite index order
+identify the appropriate updated repetition in each case. -/
+theorem lpn_pre_real_update (P : Params) (π : PrimeSchedule) (L : ℕ)
+    (h : L = P.ℓ (P.kappaOf L)) (w : P.LPNAdvice π L)
+    (k : Fin (P.kappaOf L)) (hk : k.val = w.hop.val)
+    (M : Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L)))
+      (ZMod (π (P.kappaOf L)).p))
+    (rep : (Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+      (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) ×
+        ZMod (π (P.kappaOf L)).p))
+    (x : P.LPNChal π L) (hM : P.lpnMatrixAt π L h x = M)
+    (hb : P.lpnValuesAt π L h x = fun i =>
+      (∑ a, M i a * rep.1 a) + P.noiseValue (P.kappaOf L) (π (P.kappaOf L)) (rep.2 i)) :
+    P.lpnPre π L w x =
+      P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+        (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+          (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+            (w.draw.1, Function.update w.draw.2 k rep) w.uniform w.hop.val) false)
+        w.tail := sorry
+
+end Internal
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed

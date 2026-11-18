@@ -1,0 +1,13 @@
+--- /private/tmp/io-sprg-proof-notes/tmpFinalAuditToolsV2/checkpoint_inventory.py
++++ /private/tmp/io-sprg-proof-notes/FinalAuditV2CurrentReview/candidates/checkpoint_inventory.py
+@@ -98,6 +98,10 @@
+         need(not Counter(before) - Counter(after), 'Root export removes/changes a command')
+         need(Counter(after) - Counter(before) == Counter({'import TCSlib.Cryptography.Obfuscation': 1}),
+              'Root export is not the exact approved single import')
++        added_import = 'import TCSlib.Cryptography.Obfuscation'
++        need(any(command == added_import and after[:index] + after[index + 1:] == before
++                 for index, command in enumerate(after)),
++             'Root export reorders existing commands instead of only inserting the approved import')
+     owners = {path[:-5].replace('/', '.'): path for path in changes if owner_path(path)}
+     need(owners and len(owners) == sum(owner_path(path) for path in changes), 'Owner collision/empty')
+     imports, closure_sources, mathlib = {}, {}, set()

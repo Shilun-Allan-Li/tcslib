@@ -1,0 +1,68 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Basic
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Injective and polynomially bounded LPN reduction encodings
+
+## Main definitions
+
+None; this module proves properties of the imported reduction interface.
+
+## Main results
+
+* Canonical challenge-code injectivity.
+* Advice-code injectivity and its explicit polynomial bound.
+
+## References
+
+* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
+  Assumptions*, J. ACM 73(1), Article 1, February 2026, Lemma 4.2, p. 19.
+* [PS10] R. Pass, A. Shelat, *A Course in Cryptography*, 2010, Definition 26.8.
+
+**Deviations.** Dv9, Dv12 and Dv15 retain the prime-first fixed-layout advice code;
+no encoder, algorithm, sampler or polynomial-bound definition changes.
+-/
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+
+open Complexity Turing
+open scoped BigOperators
+
+namespace Params
+
+/-- Canonical LPN challenge encoding is injective [JLS26, Lemma 4.2, p. 19].
+Dv3 reuses the assumption's width and canonical encoder unchanged.
+
+**Proof sketch.** Apply the existing `LWE.encodeChallenge_injective` with the LWE
+family's public modulus-width field. -/
+theorem lpnEnc_injective (P : Params) (π : PrimeSchedule) (L : ℕ) :
+    Function.Injective (P.lpnEnc π L) := sorry
+
+/-- All six hardwired advice fields are retained by the explicit code
+[JLS26, Lemma 4.2, p. 19]. Dv9 and Dv15 place the prime first and use fixed coordinate codes.
+
+**Proof sketch.** Split the nested pairs, recover hop/index/bucket/draw/tail coordinates,
+and use modular vector injectivity on each uniform-vector list entry. -/
+theorem encLPNAdvice_injective (P : Params) (π : PrimeSchedule) (L : ℕ) :
+    Function.Injective (P.encLPNAdvice π L) := sorry
+
+/-- Every advice word has length at most the explicit polynomial at its independent dimension
+[JLS26, Lemma 4.2, p. 19]. Dv12 and Dv15 count hardwired data rather than sampler coins.
+
+**Proof sketch.** Use the existing pair/list/vector length equations, the exact draw
+layout, the published numeric bounds, κOf(L)≤L and PolyExpr.eval_mono; the factor4096
+covers all separators in the deliberately generous cubic majorant. -/
+theorem encLPNAdvice_length_le (P : Params) (π : PrimeSchedule) (L : ℕ)
+    (w : P.LPNAdvice π L) : (P.encLPNAdvice π L w).length ≤ P.lpnAdviceBound.eval L := sorry
+
+end Params
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed

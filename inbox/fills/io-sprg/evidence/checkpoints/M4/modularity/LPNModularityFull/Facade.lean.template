@@ -1,0 +1,53 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Encoding
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Transport
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Hop
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# The explicit advice-based LPN reduction
+
+## Main definitions
+
+* `Params.LPNChal` and `lpnEnc` are exactly the canonical LWE-family challenge and encoding.
+* `Params.LPNAdvice` retains an inhabited sentinel hop and the values fixed by averaging.
+* `Params.lpnPre` prepares the hybrid challenge without sampling or evaluating the PRG.
+* `Params.lpnRed` invokes the adversary on that preprocessing and a prefix of its coins.
+
+## Main results
+
+* `encLPNAdvice_length_le` gives an explicit polynomial advice bound.
+* `lpn_hop` bounds any chosen hybrid hop for every machine realizing the explicit reduction.
+
+## References
+
+* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
+  Assumptions*, J. ACM 73(1), Article 1, February 2026, Lemma 4.2, p. 19.
+* [PS10] R. Pass, A. Shelat, *A Course in Cryptography*, 2010, Definition 26.8.
+
+**Deviations.** Dv3 uses the transposed LPN family at its own dimension. Dv8 retains
+independent bucket placements. Dv9 puts the schedule's public prime first in advice.
+Dv12 fixes all averaged values and the hop in non-uniform advice; the reduction neither
+samples nor evaluates a Boolean PRG. Dv14 proves function-level reductions, with named
+preprocessing targets supplying their machines later. Dv15 uses explicit finite-coordinate
+casts and equivalences. Dv16 reuses shared `RealizesOn`, which constrains encoded challenges
+and coin lists of the layout length only; this strengthens every-realiser security.
+-/
+
+/-!
+## Contents
+
+* `LPN.Defs`: all original challenge/advice/reduction definitions, instances and exact readers.
+* `LPN.Encoding`: the three original injectivity and polynomial advice-bound statements.
+* `LPN.Transport`: the specialized transport helper owner, initially empty.
+* `LPN.Hop`: the unchanged every-realizer hop statement and future specialized proof glue.
+
+Every old full name, definition, reader, theorem header and statement docstring is retained.
+-/

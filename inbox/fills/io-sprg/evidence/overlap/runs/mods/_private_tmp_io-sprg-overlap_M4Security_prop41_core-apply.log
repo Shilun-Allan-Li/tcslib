@@ -1,0 +1,248 @@
+Try this:
+  [apply] refine exists_comm.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ a b, ∀ (L : BL) (G : BG), relL b L → relG a G → ∀ (κ : ℕ), raw κ ≤ 2 * ↑κ * aL L κ + aG G κ + 2 * err κ
+Try this:
+  [apply] refine exists_comm.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ b a, ∀ (L : BL) (G : BG), relL a L → relG b G → ∀ (κ : ℕ), raw κ ≤ 2 * ↑κ * aL L κ + aG G κ + 2 * err κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists₂_congr fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists₂_congr fun a => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine exists_exists_eq_and.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ b,
+    (∃ a,
+        (fun ωG => ∀ (L : BL) (G : BG), relL a L → relG ωG G → ∀ (κ : ℕ), raw κ ≤ 2 * ↑κ * aL L κ + aG G κ + 2 * err κ) =
+          b) ∧
+      Exists b
+Try this:
+  [apply] refine exists_swap.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ x y, ∀ (L : BL) (G : BG), relL y L → relG x G → ∀ (κ : ℕ), raw κ ≤ 2 * ↑κ * aL L κ + aG G κ + 2 * err κ
+Try this:
+  [apply] refine exists_swap.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ y x, ∀ (L : BL) (G : BG), relL x L → relG y G → ∀ (κ : ℕ), raw κ ≤ 2 * ↑κ * aL L κ + aG G κ + 2 * err κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Exists₂.imp (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine ExistsUnique.exists₂ ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃! x, ∃! hx, ∀ (L : BL) (G : BG), relL x L → relG hx G → ∀ (κ : ℕ), raw κ ≤ 2 * ↑κ * aL L κ + aG G κ + 2 * err κ
+Try this:
+  [apply] refine (Function.Surjective.exists ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Surjective fun x ωG =>
+    ∀ (L : BL) (G : BG), relL x L → relG ωG G → ∀ (κ : ℕ), raw κ ≤ 2 * ↑κ * aL L κ + aG G κ + 2 * err κ
+  -- ⊢ ∃ y, Exists y
+Try this:
+  [apply] refine Prod.exists'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ x, ∀ (L : BL) (G : BG), relL x.1 L → relG x.2 G → ∀ (κ : ℕ), raw κ ≤ 2 * ↑κ * aL L κ + aG G κ + 2 * err κ
+Try this:
+  [apply] refine Sigma.exists'.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ x, ∀ (L : BL) (G : BG), relL x.fst L → relG x.snd G → ∀ (κ : ℕ), raw κ ≤ 2 * ↑κ * aL L κ + aG G κ + 2 * err κ
+Try this:
+  [apply] refine PProd.exists'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ x, ∀ (L : BL) (G : BG), relL x.fst L → relG x.snd G → ∀ (κ : ℕ), raw κ ≤ 2 * ↑κ * aL L κ + aG G κ + 2 * err κ
+Try this:
+  [apply] refine Set.exists_range_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃
+    a ∈
+      Set.range fun i ωG =>
+        ∀ (L : BL) (G : BG), relL i L → relG ωG G → ∀ (κ : ℕ), raw κ ≤ 2 * ↑κ * aL L κ + aG G κ + 2 * err κ,
+    Exists a
+Try this:
+  [apply] refine Set.nonempty_iUnion.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (⋃ i, fun x =>
+      ∀ (L : BL) (G : BG), relL i L → relG x G → ∀ (κ : ℕ), raw κ ≤ 2 * ↑κ * aL L κ + aG G κ + 2 * err κ).Nonempty
+Try this:
+  [apply] refine DenseRange.exists_mem_open ?_ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ DenseRange fun a ωG =>
+    ∀ (L : BL) (G : BG), relL a L → relG ωG G → ∀ (κ : ℕ), raw κ ≤ 2 * ↑κ * aL L κ + aG G κ + 2 * err κ
+  -- ⊢ IsOpen Exists
+  -- ⊢ Set.Nonempty Exists
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine DenseRange.mem_nhds ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Subtype.existsOfSubtype ?_
+  -- Remaining subgoals:
+  -- ⊢ { x // ∃ ωG, ∀ (L : BL) (G : BG), relL x L → relG ωG G → ∀ (κ : ℕ), raw κ ≤ 2 * ↑κ * aL L κ + aG G κ + 2 * err κ }
+Try this:
+  [apply] refine Subtype.exists_of_subtype ?_
+  -- Remaining subgoals:
+  -- ⊢ { x // ∃ ωG, ∀ (L : BL) (G : BG), relL x L → relG ωG G → ∀ (κ : ℕ), raw κ ≤ 2 * ↑κ * aL L κ + aG G κ + 2 * err κ }
+Try this:
+  [apply] refine Exists.intro ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ LA
+  -- ⊢ ∃ ωG, ∀ (L : BL) (G : BG), relL ?_ L → relG ωG G → ∀ (κ : ℕ), raw κ ≤ 2 * ↑κ * aL L κ + aG G κ + 2 * err κ
+Try this:
+  [apply] refine Exists.of_psigma_prop ?_
+  -- Remaining subgoals:
+  -- ⊢ (x : LA) ×'
+    ∃ ωG, ∀ (L : BL) (G : BG), relL x L → relG ωG G → ∀ (κ : ℕ), raw κ ≤ 2 * ↑κ * aL L κ + aG G κ + 2 * err κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Exists.imp (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists_congr fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists_congr fun a => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Exists.imp' ?_ (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Decidable.not_forall_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Decidable
+    (∃ x ωG, ∀ (L : BL) (G : BG), relL x L → relG ωG G → ∀ (κ : ℕ), raw κ ≤ 2 * ↑κ * aL L κ + aG G κ + 2 * err κ)
+  -- ⊢ ¬∀ (x : LA),
+      ¬∃ ωG, ∀ (L : BL) (G : BG), relL x L → relG ωG G → ∀ (κ : ℕ), raw κ ≤ 2 * ↑κ * aL L κ + aG G κ + 2 * err κ
+Try this:
+  [apply] refine Classical.not_forall_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬∀ (x : LA),
+      ¬∃ ωG, ∀ (L : BL) (G : BG), relL x L → relG ωG G → ∀ (κ : ℕ), raw κ ≤ 2 * ↑κ * aL L κ + aG G κ + 2 * err κ
+Try this:
+  [apply] refine not_forall_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬∀ (x : LA),
+      ¬∃ ωG, ∀ (L : BL) (G : BG), relL x L → relG ωG G → ∀ (κ : ℕ), raw κ ≤ 2 * ↑κ * aL L κ + aG G κ + 2 * err κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine exists_of_exists_mem ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine existsUnique_iff_exists.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Subsingleton LA
+  -- ⊢ ∃! x, ∃ ωG, ∀ (L : BL) (G : BG), relL x L → relG ωG G → ∀ (κ : ℕ), raw κ ≤ 2 * ↑κ * aL L κ + aG G κ + 2 * err κ
+Try this:
+  [apply] refine ExistsUnique.exists ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃! x, ∃ ωG, ∀ (L : BL) (G : BG), relL x L → relG ωG G → ∀ (κ : ℕ), raw κ ≤ 2 * ↑κ * aL L κ + aG G κ + 2 * err κ
+Try this:
+  [apply] refine nonempty_subtype.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Nonempty
+    { a // ∃ ωG, ∀ (L : BL) (G : BG), relL a L → relG ωG G → ∀ (κ : ℕ), raw κ ≤ 2 * ↑κ * aL L κ + aG G κ + 2 * err κ }
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Surjective.exists fun b => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine IsEmpty.exists_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ IsEmpty LA
+  -- ⊢ False
+Try this:
+  [apply] refine Unique.exists_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Unique LA
+  -- ⊢ ∃ ωG, ∀ (L : BL) (G : BG), relL default L → relG ωG G → ∀ (κ : ℕ), raw κ ≤ 2 * ↑κ * aL L κ + aG G κ + 2 * err κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr_left ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr ?_ fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr ?_ fun a => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr' ?_ fun b => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr' ?_ fun b => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_subtype_congr ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_subtype_congr ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists_le_and_iff_exists fun ⦃a⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists_ge_and_iff_exists fun ⦃a⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Filter.Frequently.exists fun a => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Filter.Eventually.exists ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Filter.frequently_top.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ᶠ (x : LA) in ⊤,
+    ∃ ωG, ∀ (L : BL) (G : BG), relL x L → relG ωG G → ∀ (κ : ℕ), raw κ ≤ 2 * ↑κ * aL L κ + aG G κ + 2 * err κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Filter.HasBasis.ex_mem ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Filter.IsBasis.nonempty ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+/private/tmp/io-sprg-overlap/M4Security_prop41_core-apply.lean:11:0: warning: declaration uses 'sorry'
+/private/tmp/io-sprg-overlap/M4Security_prop41_core-apply.lean:15:5: warning: unused variable `hLPN`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/M4Security_prop41_core-apply.lean:19:5: warning: unused variable `hPRG`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/M4Security_prop41_core-apply.lean:22:5: warning: unused variable `hraw`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/M4Security_prop41_core-apply.lean:23:5: warning: unused variable `hreal`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/M4Security_prop41_core-apply.lean:24:5: warning: unused variable `huniform`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/M4Security_prop41_core-apply.lean:25:5: warning: unused variable `hstatR`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/M4Security_prop41_core-apply.lean:26:5: warning: unused variable `hstatU`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

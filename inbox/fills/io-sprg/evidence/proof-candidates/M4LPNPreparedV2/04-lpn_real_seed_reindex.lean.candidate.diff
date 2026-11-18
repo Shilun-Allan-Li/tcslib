@@ -1,0 +1,49 @@
+--- /private/tmp/io-sprg-proof-notes/LPNHopFinal/04-lpn_real_seed_reindex.lean.candidate
++++ /private/tmp/io-sprg-proof-notes/M4LPNPrepared/04-lpn_real_seed_reindex.lean.candidate
+@@ -1,10 +1,11 @@
+-/- NOT_RUN. Narrow canonical LWE sample/coercion compatibility candidate.
+-This is the type/sample coherence obligation, not a new sampler definition.
+-Every numeric/noise equality is obtained from public family/parameter readers.
+-The final two simp blocks are explicit ROOT PRETEST points: if they leave cast
+-or finite-sum goals, retain those exact goals as the remaining obligation;
+-do not infer sample-law preservation merely from a type equivalence. -/
++/-- Canonical real LWE sample seeds admit explicit construction coordinates preserving output.
++Sample-coherence glue for [JLS26, Lemma 4.2, p. 19] and the canonical LWE sample map.
+ 
++**Proof sketch.** Read the exact canonical dimension, row count, modulus and rounded noise.
++Identify the parameter/noise records and cast the resulting seed type explicitly.
++Read both sample projections and construction transport equations; the matrix entries
++and the noisy finite sums then agree in the same residue field. No law is inferred
++merely from a seed-type bijection. -/
+ theorem lpn_real_seed_reindex (P : Params) (π : PrimeSchedule) (L : ℕ)
+     (h : L = P.ℓ (P.kappaOf L)) :
+     let κ := P.kappaOf L
+@@ -35,7 +36,8 @@
+     ((congrArg (fun q : ℕ => q ^ P.D) h).trans (P.n_eq κ).symm)
+   have hp : Q.modulus = pp.p := P.lpn_modulus_eq π L
+   let Q' : LWE.Parameters := ⟨P.ℓ κ, P.n κ, pp.p, pp.prime.two_le⟩
+-  have hQ : Q = Q'
++  have hQ : Q = Q' := ?_
++  swap
+   · cases hQQ : Q with
+     | mk dim rows modulus hge =>
+       have hd' := hd
+@@ -51,14 +53,16 @@
+     (P.lpnFamily_raw_noiseDen π L).trans
+       ((congrArg P.noiseDenAt h).trans (P.W_eq_noiseDenAt κ).symm)
+   have hmod : (P.lpnFamily_raw π).modulus L = pp.p := P.lpnFamily_raw_modulus π L
+-  have hχ : χ = lpnNoise pp.p (P.W κ)
++  have hχ : χ = lpnNoise pp.p (P.W κ) := ?_
++  swap
+   · dsimp only [χ]
+     rw [LPNFamily.Raw.toLWE_noise, LPNFamily.Raw.noise_eq, hmod, hden]
+   have ht : (Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+       ((Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins))) =
+       (Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+         ((Fin (P.ℓ κ) → ZMod pp.p) ×
+-          (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)))
++          (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))) := ?_
++  swap
+   · rw [hQ, hχ, lpnNoise_coins]
+   refine ⟨Equiv.cast ht, ?_⟩
+   intro r

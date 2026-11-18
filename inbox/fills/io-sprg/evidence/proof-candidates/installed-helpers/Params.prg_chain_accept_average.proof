@@ -1,0 +1,43 @@
+by
+  classical
+  generalize hk : P.kappaOfN N = κ at hN ⊢
+  subst N
+  let e : (Fin (P.m κ) → Bool) ≃ (Fin (P.G.outLen (P.n κ)) → Bool) :=
+    Equiv.arrowCongr (finCongr (P.m_eq κ)) (Equiv.refl Bool)
+  have hOut : ∀ v : Fin (P.G.outLen (P.n κ)) → Bool,
+      e.symm v = fun j => v (P.outputIndex κ j) := ?_
+  swap
+  · intro v
+    funext j
+    rw [P.outputIndex_eq]
+    rfl
+  have hpub : ∀ (I : P.Idx' κ (π κ)) (d : P.Draw κ (π κ))
+      (u : Fin κ → Fin (P.n κ) → ZMod (π κ).p),
+      P.chainPublic κ (π κ) I d u κ = u := ?_
+  swap
+  · intro I d u
+    funext k
+    simp only [P.chainPublic_eq, k.isLt, if_true]
+  have havg := P.prg_nuisance_average π (P.n κ)
+  simp only [P.kappaOfN_n] at havg
+  specialize havg (fun I σ buckets matrix u =>
+    ProbComp.expect (ProbComp.sample (Fin (P.G.outLen (P.n κ)) → Bool)) (fun v =>
+      ProbComp.expect (ProbComp.sample (A.Coins κ)) (fun r =>
+        if A.distinguisherL κ
+          (P.challengeStr κ (π κ) (I, buckets, matrix)
+            (P.publicSeed κ (π κ) u false)
+            (if b then fun j => P.G.eval (P.n κ) I σ (P.outputIndex κ j)
+              else fun j => v (P.outputIndex κ j))) r = true then 1 else 0)))
+  simp only [accept_eq, P.chainGame_eq, ProbComp.prob_eq_expect,
+    ProbComp.expect_bind, OracleComp.pure_eq_pure, ProbComp.expect_pure,
+    P.prgPre_eq, P.kappaOfN_n, dif_pos rfl, hpub]
+  conv_lhs =>
+    arg 2
+    ext I
+    arg 2
+    ext d
+    arg 2
+    ext u
+    rw [← ProbComp.expect_sample_equiv e.symm]
+  simp only [hOut]
+  cases b <;> simpa using havg

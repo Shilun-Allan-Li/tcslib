@@ -1,0 +1,30 @@
+COMMAND: ['rg', '-n', 'hwidth|encodeList_length_of_fixedWidth|encDraw|encOneDraw', 'TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean']
+STATUS: 0
+MISSING CANDIDATE PATHS: []
+STDOUT:
+22:* `Params.encIdx'`, `Params.encIdDraw`, `Params.encDraw`, `Params.encSeed'`: faithful codes.
+289:noncomputable def encOneDraw (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+298:theorem encOneDraw_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+301:    P.encOneDraw κ pp r = pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1)
+309:noncomputable def encDraw (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+312:    (BoolCircuit.encodeList (P.encOneDraw κ pp) (List.ofFn r.2))
+315:theorem encDraw_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ) (r : P.Draw κ pp) :
+316:    P.encDraw κ pp r = pairEncode (List.ofFn r.1)
+317:      (BoolCircuit.encodeList (P.encOneDraw κ pp) (List.ofFn r.2)) := rfl
+612:theorem encOneDraw_injective (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
+613:    Function.Injective (P.encOneDraw κ pp) := by
+632:  have hwidth : ∀ c, (f c).length = 2 * (P.ℓ κ + 1) + 2 + (κ + 1) := ?_
+638:    (2 * (P.ℓ κ + 1) + 2 + (κ + 1)) hwidth
+640:  rw [P.encOneDraw_eq, P.encOneDraw_eq] at h
+651:and recover each fixed-length repetition block using encOneDraw injectivity. -/
+652:theorem encDraw_injective (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
+653:    Function.Injective (P.encDraw κ pp) := by
+662:  have hwidth : ∀ r, (P.encOneDraw κ pp r).length =
+667:    rw [P.encOneDraw_eq, length_pairEncode, Encoding.Modular.encodeVector_length]
+668:    rw [Internal.encodeList_length_of_fixedWidth f
+671:    (P.encOneDraw_injective κ pp)
+673:      (P.n κ * ((2 * (P.ℓ κ + 1) + 2 + (κ + 1)) + 1) + 1)) hwidth
+675:  rw [P.encDraw_eq, P.encDraw_eq] at h
+706:  · rw [P.encBuckets_eq, Internal.encodeList_length_of_fixedWidth
+
+STDERR:

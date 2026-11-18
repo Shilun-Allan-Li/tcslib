@@ -1,0 +1,73 @@
+2026-11-18T19:56:25.740770+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:155:66: error: unsolved goals
+P : Params
+π : PrimeSchedule
+A : NUPPT
+κ : ℕ
+⊢ (OracleComp.bind (ProbComp.sample (P.IdDraw κ (π κ))) fun a =>
+      OracleComp.bind (ProbComp.sample (P.Draw κ (π κ))) fun a_1 =>
+        OracleComp.bind (ProbComp.sample (Fin (P.m κ) → Bool)) fun w =>
+          OracleComp.bind (ProbComp.sample (A.Coins κ)) fun r =>
+            pure
+              (A.distinguisherL κ
+                (pairEncode (Candidates.natToList (κ + 2) (π κ).p)
+                  (pairEncode (P.encIdx' κ (π κ) (P.idCore κ (π κ) a))
+                    (pairEncode
+                      (Encoding.Modular.encodeVector (κ + 1) (P.sdCore κ (π κ) (P.idCore κ (π κ) a) a_1).seed.1)
+                      (List.ofFn w))))
+                r)) =
+    OracleComp.bind (ProbComp.sample (P.IdDraw κ (π κ))) fun a =>
+      OracleComp.bind (ProbComp.sample (P.Draw κ (π κ))) fun a_1 =>
+        OracleComp.bind (ProbComp.sample (Fin (P.m κ) → Bool)) fun z =>
+          OracleComp.bind (ProbComp.sample (A.Coins κ)) fun r =>
+            pure
+              (A.distinguisherL κ
+                (pairEncode (Candidates.natToList (κ + 1 + 1) (π κ).p)
+                  (pairEncode (P.encIdx' κ (π κ) (P.idCore κ (π κ) a))
+                    (pairEncode
+                      (Encoding.Modular.encodeVector (κ + 1) (P.sdCore κ (π κ) (P.idCore κ (π κ) a) a_1).seed.1)
+                      (List.ofFn
+                        (if false = true then
+                          P.eval' κ (π κ) (P.idCore κ (π κ) a) (P.sdCore κ (π κ) (P.idCore κ (π κ) a) a_1).seed
+                        else z)))))
+                r)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:161:82: warning: This simp argument is unused:
+  ite_false
+
+Hint: Omit it from the simp argument list.
+  simp only [hyb_eq, SPRG.Raw.game_eq, jlsSPRG_raw_eq,
+  ̵  ̵ ̵ ̵SPRG.Raw.idSamp_eq, SPRG.Raw.sdSamp_eq,
+  ̲  ̲ ̲ ̲SPRG.Raw.instIdDrawFintype_eq,
+  ̵  ̵ ̵ ̵SPRG.Raw.instSdDrawFintype_eq, Params.idSamp'_eq,
+  ̲  ̲ ̲ ̲Params.sdSampFull_eq,
+  ̵  ̵ ̵ ̵OracleComp.map_eq_bind, OracleComp.bind_assoc, OracleComp.pure_bind,
+      SPRG.Raw.challengeStr_eq, Params.challengeStr_eq, SPRG.Raw.encPP_eq, ̲P̲r̲i̲m̲e̲P̲a̲r̲a̲m̲.̲e̲n̲c̲_̲e̲q̲,̲
+      Pr̵i̵m̵e̵P̵a̵r̵a̵m̵.̵e̵n̵c̵_̵e̵q̵,̵ ̵P̵olyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const,̵ ̵i̵t̵e̵_̵f̵a̵l̵s̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:169:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:179:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:188:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:196:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids): no fresh .olean produced
+        3.18 real         1.76 user         1.09 sys
+          2346598400  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              173100  page reclaims
+               11665  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 853  voluntary context switches
+               11300  involuntary context switches
+            31990931  instructions retired
+            14576992  cycles elapsed
+             1622352  peak memory footprint
+2026-11-18T19:56:28.953670+00:00 END rc=1

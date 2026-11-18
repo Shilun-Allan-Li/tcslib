@@ -1,0 +1,158 @@
+2026-11-18T20:26:43.325700+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean:270:14: error: Type mismatch: After simplification, term
+  havg
+ has type
+  ((P.idSamp' κ (π κ)).expect fun I =>
+      (ProbComp.sample (P.Draw κ (π κ))).expect fun d =>
+        (ProbComp.sample (Fin κ → Fin (P.n κ) → ZMod (π κ).p)).expect fun u =>
+          (ProbComp.sample (Fin (P.G.outLen (P.n κ)) → Bool)).expect fun v =>
+            (ProbComp.sample (A.Coins κ)).expect fun r =>
+              if
+                  A.distinguisherL κ
+                      (P.challengeStr κ (π κ) I (P.publicSeed κ (π κ) u false) fun j => v (P.outputIndex κ j)) r =
+                    true then
+                1
+              else 0) =
+    (ProbComp.sample
+          ((Fin (P.m κ) → Fin (P.B κ)) ×
+            Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod (π κ).p) × (Fin κ → Fin (P.n κ) → ZMod (π κ).p))).expect
+      fun a =>
+      (P.G.idSamp (P.n κ)).expect fun I =>
+        (ProbComp.sample (Fin (P.n κ) → Bool)).expect fun σ =>
+          (ProbComp.sample (Fin (P.G.outLen (P.n κ)) → Bool)).expect fun v =>
+            (ProbComp.sample (A.Coins κ)).expect fun r =>
+              if
+                  A.distinguisherL κ
+                      (P.challengeStr κ (π κ) (I, a.1, a.2.1) (P.publicSeed κ (π κ) a.2.2 false) fun j =>
+                        v (P.outputIndex κ j))
+                      r =
+                    true then
+                1
+              else 0
+but is expected to have type
+  ((P.idSamp' κ (π κ)).expect fun I =>
+      (ProbComp.sample (P.Draw κ (π κ))).expect fun d =>
+        (ProbComp.sample (Fin κ → Fin (P.n κ) → ZMod (π κ).p)).expect fun u =>
+          (ProbComp.sample (Fin (P.G.outLen (P.n κ)) → Bool)).expect fun a =>
+            (ProbComp.sample (A.Coins κ)).expect fun a_1 =>
+              if
+                  A.distinguisherL κ
+                      (P.challengeStr κ (π κ) I (P.publicSeed κ (π κ) u false) fun j => a (P.outputIndex κ j)) a_1 =
+                    true then
+                1
+              else 0) =
+    (ProbComp.sample
+          ((Fin (P.m (P.kappaOfN (P.n κ))) → Fin (P.B (P.kappaOfN (P.n κ)))) ×
+            Matrix (Fin (P.n (P.kappaOfN (P.n κ)))) (Fin (P.ℓ (P.kappaOfN (P.n κ)))) (ZMod (π (P.kappaOfN (P.n κ))).p) ×
+              (Fin (P.kappaOfN (P.n κ)) → Fin (P.n (P.kappaOfN (P.n κ))) → ZMod (π (P.kappaOfN (P.n κ))).p))).expect
+      fun a =>
+      (P.G.idSamp (P.n κ)).expect fun a_1 =>
+        (ProbComp.sample (Fin (P.n κ) → Bool)).expect fun a_2 =>
+          (ProbComp.sample (Fin (P.G.outLen (P.n κ)) → Bool)).expect fun a_3 =>
+            (ProbComp.sample (A.Coins κ)).expect fun a_4 =>
+              if
+                  A.distinguisherL κ
+                      (P.challengeStr (P.kappaOfN (P.n κ)) (π (P.kappaOfN (P.n κ))) (cast ⋯ a_1, a.1, a.2.1)
+                        (P.publicSeed (P.kappaOfN (P.n κ)) (π (P.kappaOfN (P.n κ))) a.2.2 false) fun j =>
+                        a_3 (Fin.cast ⋯ (P.outputIndex (P.kappaOfN (P.n κ)) j)))
+                      a_4 =
+                    true then
+                1
+              else 0
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean:270:14: error: Type mismatch: After simplification, term
+  havg
+ has type
+  ((P.idSamp' κ (π κ)).expect fun I =>
+      (ProbComp.sample (P.Draw κ (π κ))).expect fun d =>
+        (ProbComp.sample (Fin κ → Fin (P.n κ) → ZMod (π κ).p)).expect fun u =>
+          (ProbComp.sample (Fin (P.G.outLen (P.n κ)) → Bool)).expect fun v =>
+            (ProbComp.sample (A.Coins κ)).expect fun r =>
+              if
+                  A.distinguisherL κ
+                      (P.challengeStr κ (π κ) I (P.publicSeed κ (π κ) u false) fun j =>
+                        P.G.eval (P.n κ) I.1 d.1 (P.outputIndex κ j))
+                      r =
+                    true then
+                1
+              else 0) =
+    (ProbComp.sample
+          ((Fin (P.m κ) → Fin (P.B κ)) ×
+            Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod (π κ).p) × (Fin κ → Fin (P.n κ) → ZMod (π κ).p))).expect
+      fun a =>
+      (P.G.idSamp (P.n κ)).expect fun I =>
+        (ProbComp.sample (Fin (P.n κ) → Bool)).expect fun σ =>
+          (ProbComp.sample (Fin (P.G.outLen (P.n κ)) → Bool)).expect fun v =>
+            (ProbComp.sample (A.Coins κ)).expect fun r =>
+              if
+                  A.distinguisherL κ
+                      (P.challengeStr κ (π κ) (I, a.1, a.2.1) (P.publicSeed κ (π κ) a.2.2 false) fun j =>
+                        P.G.eval (P.n κ) I σ (P.outputIndex κ j))
+                      r =
+                    true then
+                1
+              else 0
+but is expected to have type
+  ((P.idSamp' κ (π κ)).expect fun I =>
+      (ProbComp.sample (P.Draw κ (π κ))).expect fun d =>
+        (ProbComp.sample (Fin κ → Fin (P.n κ) → ZMod (π κ).p)).expect fun u =>
+          (ProbComp.sample (Fin (P.G.outLen (P.n κ)) → Bool)).expect fun a =>
+            (ProbComp.sample (A.Coins κ)).expect fun a =>
+              if
+                  A.distinguisherL κ
+                      (P.challengeStr κ (π κ) I (P.publicSeed κ (π κ) u false) fun j =>
+                        P.G.eval (P.n κ) I.1 d.1 (P.outputIndex κ j))
+                      a =
+                    true then
+                1
+              else 0) =
+    (ProbComp.sample
+          ((Fin (P.m (P.kappaOfN (P.n κ))) → Fin (P.B (P.kappaOfN (P.n κ)))) ×
+            Matrix (Fin (P.n (P.kappaOfN (P.n κ)))) (Fin (P.ℓ (P.kappaOfN (P.n κ)))) (ZMod (π (P.kappaOfN (P.n κ))).p) ×
+              (Fin (P.kappaOfN (P.n κ)) → Fin (P.n (P.kappaOfN (P.n κ))) → ZMod (π (P.kappaOfN (P.n κ))).p))).expect
+      fun a =>
+      (P.G.idSamp (P.n κ)).expect fun a_1 =>
+        (ProbComp.sample (Fin (P.n κ) → Bool)).expect fun a_2 =>
+          (ProbComp.sample (Fin (P.G.outLen (P.n κ)) → Bool)).expect fun a_3 =>
+            (ProbComp.sample (A.Coins κ)).expect fun a_4 =>
+              if
+                  A.distinguisherL κ
+                      (P.challengeStr (P.kappaOfN (P.n κ)) (π (P.kappaOfN (P.n κ))) (cast ⋯ a_1, a.1, a.2.1)
+                        (P.publicSeed (P.kappaOfN (P.n κ)) (π (P.kappaOfN (P.n κ))) a.2.2 false) fun j =>
+                        P.G.eval (P.n κ) a_1 a_2 (Fin.cast ⋯ (P.outputIndex (P.kappaOfN (P.n κ)) j)))
+                      a_4 =
+                    true then
+                1
+              else 0
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean:260:18: warning: This simp argument is unused:
+  dif_pos rfl
+
+Hint: Omit it from the simp argument list.
+  simp only [accept_eq, P.chainGame_eq, ProbComp.prob_eq_expect,
+  ̵  ̵ ̵ ̵ProbComp.expect_bind,
+  ̲  ̲ ̲ ̲OracleComp.pure_eq_pure, ProbComp.expect_pure,
+  ̵  ̵ ̵ ̵P.kappaOfN_n, d̵i̵f̵_̵p̵o̵s̵ ̵r̵f̵l̵,̵ ̵hpub]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop.lean:286:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG/Hop): no fresh .olean produced
+        3.47 real         2.87 user         0.98 sys
+          2357493760  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              185664  page reclaims
+                  12  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  18  voluntary context switches
+                3782  involuntary context switches
+            31883957  instructions retired
+            13996849  cycles elapsed
+             1622352  peak memory footprint
+2026-11-18T20:26:46.824367+00:00 END rc=1

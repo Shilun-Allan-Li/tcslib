@@ -1,0 +1,36 @@
+/-- Every shared-contract LPN realizer has the ideal reduction's exact acceptance probability.
+Reduction glue for [JLS26, Lemma 4.2, p. 19]. Only layout-length coin words are used.
+
+**Proof sketch.** Read canonical acceptance, reindex B's coins by the shared coin
+bijection, and use the mandatory runAt_coinsEquivPoly_symm reader. The named reduction
+reader leaves the adversary's coin prefix. Its existing uniform restriction law and
+ofFn/take reader recover exactly the shorter adversary coin distribution. -/
+theorem lpn_accept_realizes_eq (P : Params) (π : PrimeSchedule) (A B : NUPPT)
+    (ω : ∀ L, P.LPNAdvice π L)
+    (hB : B.RealizesOn (P.lpnEnc π) (A.coins.subst .var)
+      (fun L x r => P.lpnRed π A L (ω L) x r))
+    (L : ℕ) {σ : Type} [Fintype σ] (X : σ → P.LPNChal π L) :
+    acceptProb X (fun x (r : B.Coins L) => B.distinguisherL L (P.lpnEnc π L x) r) =
+      acceptProb X (fun x (r : A.Coins (P.kappaOf L)) =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L (ω L) x)
+          (List.ofFn r) = [true])) := by
+  classical
+  have hcut : A.coinLen (P.kappaOf L) ≤ (A.coins.subst .var).eval L :=
+    ((A.coinLen_eq (P.kappaOf L)).le.trans
+      (A.coins.eval_mono (P.kappaOf_le L))).trans_eq
+        ((PolyExpr.eval_subst A.coins .var L).trans
+          (congrArg A.coins.eval (PolyExpr.eval_var L))).symm
+  rw [acceptProb_def, acceptProb_def, uprob_prod, uprob_prod]
+  apply congrArg uexp
+  funext s
+  rw [← uprob_comp_equiv (NUPPT.coinsEquivPoly hB.coins_eq L).symm
+    (fun r : B.Coins L => B.distinguisherL L (P.lpnEnc π L (X s)) r = true)]
+  simp only [NUPPT.distinguisherL_eq, hB.runAt_coinsEquivPoly_symm,
+    P.lpnRed_eq, decide_eq_true_eq]
+  let Q : List Bool → Prop := fun r =>
+    A.runAtL (P.kappaOf L) (P.lpnPre π L (ω L) (X s)) r = [true]
+  have hprefix :=
+    (HardcoreBit.pushesUniform_restrict (O := Bool) (Fin.castLE_injective hcut)).uprob_eq
+      (fun r : Fin (A.coinLen (P.kappaOf L)) → Bool => Q (List.ofFn r))
+  simp only [OneWay.ofFn_castLE_eq_take hcut] at hprefix
+  exact hprefix

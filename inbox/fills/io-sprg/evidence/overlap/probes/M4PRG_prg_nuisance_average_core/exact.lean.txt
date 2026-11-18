@@ -1,0 +1,24 @@
+import TCSlib.Cryptography.Games.Hopping
+import TCSlib.Cryptography.Games.Bridges.Experiments
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography TCSlib.Cryptography.Games
+
+example {G I Seed Rep Buck Mat U Advice : Type}
+    [Fintype G] [Nonempty G] [Fintype Seed] [Nonempty Seed]
+    [Fintype Rep] [Nonempty Rep] [Fintype Buck] [Nonempty Buck]
+    [Fintype Mat] [Nonempty Mat] [Fintype U] [Nonempty U]
+    [Fintype Advice] [Nonempty Advice] (idCore : G → I)
+    (e : Advice ≃ Buck × (Mat × U)) (f : I → Seed → Buck → Mat → U → ℝ) :
+    ProbComp.expect (ProbComp.sample (G × (Buck × Mat))) (fun a =>
+      ProbComp.expect (ProbComp.sample (Seed × Rep)) (fun d =>
+        ProbComp.expect (ProbComp.sample U) (fun u => f (idCore a.1) d.1 a.2.1 a.2.2 u))) =
+      ProbComp.expect (ProbComp.sample Advice) (fun ω =>
+        ProbComp.expect (ProbComp.sample G) (fun g =>
+          ProbComp.expect (ProbComp.sample Seed) (fun σ =>
+            f (idCore g) σ (e ω).1 (e ω).2.1 (e ω).2.2))) := by
+  exact?

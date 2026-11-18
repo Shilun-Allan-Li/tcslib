@@ -1,0 +1,24 @@
+--- /private/tmp/io-sprg-proof-notes/tmpFinalAuditToolsV2/checkpoint_report.py
++++ /private/tmp/io-sprg-proof-notes/FinalAuditV2CurrentReview/candidates/checkpoint_report.py
+@@ -21,7 +21,7 @@
+     for name in ['static', 'statements', 'runtime', 'axioms', 'prints', 'kernel-freeze',
+                  'source-freeze', 'slot-summary', 'explicit-binding']:
+         ap.add_argument('--' + name, required=True)
+-    ap.add_argument('--completed-names', help='Explicit current milestone theorem FQNs; required unless final')
++    ap.add_argument('--completed-names', help='JSON string array or whitespace list of milestone theorem FQNs; required unless final')
+     ap.add_argument('--baseline-inventory', required=True)
+     ap.add_argument('--cache-ledger')
+     ap.add_argument('--final', action='store_true')
+@@ -127,7 +127,11 @@
+          'A new theorem-only helper is missing or not proved standard-only')
+     completed = []
+     if args.completed_names:
+-        completed = Path(args.completed_names).read_text().split()
++        raw_names = Path(args.completed_names).read_text()
++        completed = json.loads(raw_names) if raw_names.lstrip().startswith('[') else raw_names.split()
++        need(isinstance(completed, list) and all(isinstance(name, str) and name and
++             not any(ch.isspace() for ch in name) for name in completed),
++             'Completed names must be a JSON string array or whitespace-separated names')
+         need(completed and len(completed)==len(set(completed)), 'Empty/duplicate milestone theorem names')
+         for name in completed:
+             need(name in byname and byname[name]['kind']=='theorem'

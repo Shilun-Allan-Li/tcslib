@@ -1,0 +1,804 @@
+From 72b3b975e376a2d0ac72d787fe1ac4117b84bb54 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 13:12:44 -0800
+Subject: [PATCH 33/34] io-sprg: M4 canonical LPN transport and every-realiser
+ hop
+
+---
+ .../StructuredSeed/Reductions/LPN/Hop.lean    | 323 +++++++++++++++++-
+ .../Reductions/LPN/Sections.lean              | 226 ++++++++++++
+ .../Reductions/LPN/Transport.lean             | 203 +++++++++++
+ 3 files changed, 751 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Hop.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Hop.lean
+index 2f6e6c6200715d75e0352aec81643e09720c7967..3fe8b5de173e2ce21f8ba349ef70b06eeb8787f3 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Hop.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Hop.lean
+@@ -40,6 +40,291 @@ namespace Internal
+ 
+ -- Specialized pointwise/section/averaging helpers may be added here after the split.
+ 
++/-- One advice tuple dominates the adjacent LPN chain gap under the actual nuisance law.
++Averaging glue for [JLS26, Lemma 4.2, p. 19]. No realizer occurs in this statement.
++
++**Proof sketch.** Keep the actual generator draw, buckets, seed, repetition table, uniform
++public vectors and comparison tail in one finite nuisance product. The fixed-advice section
++identities expose the canonical challenged matrix and fresh selected value. Compose the
++existing typed product/Fubini laws, move that matrix before the seed/table, and use the
++public coordinate-resampling law. The two acceptance probabilities are therefore averages
++under the same actual law. Absolute-gap convexity and the existing finite averaging selector
++fix one tuple before any machine realizer is introduced. -/
++theorem lpn_fix_advice (P : Params) (π : PrimeSchedule) (A : NUPPT) (L : ℕ)
++    (h : L = P.ℓ (P.kappaOf L)) (tailReal : Bool)
++    (hop : Fin (P.kappaOf L + 1)) (hhop : hop.val < P.kappaOf L) :
++    ∃ w : P.LPNAdvice π L,
++      Games.advantage (P.chainGame A tailReal hop.val (P.kappaOf L) (π (P.kappaOf L)))
++        (P.chainGame A tailReal (hop.val + 1) (P.kappaOf L) (π (P.kappaOf L))) ≤
++      LWE.decisionAdvantage ((P.lpnFamily_raw π).toLWE.parameters L)
++        ((P.lpnFamily_raw π).toLWE.noise L)
++        (fun x (r : A.Coins (P.kappaOf L)) =>
++          decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])) := by
++  classical
++  let κ := P.kappaOf L
++  let pp := π κ
++  let GDraw := P.G.IdDraw (P.n κ)
++  let Buck := Fin (P.m κ) → Fin (P.B κ)
++  let Seed := Fin (P.n κ) → Bool
++  let Rep := (Fin (P.ℓ κ) → ZMod pp.p) ×
++    (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
++  let Table := Fin κ → Rep
++  let V := Fin (P.n κ) → ZMod pp.p
++  let U := Fin κ → V
++  let Tail := Fin (P.m κ) → Bool
++  let Post := U × Tail
++  let Mat := Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p)
++  let Coins := A.Coins κ
++  let Ω := GDraw × (Buck × (Seed × (Table × Post)))
++  let avg (α : Type) [Fintype α] [Nonempty α] (f : α → ℝ) : ℝ :=
++    Games.ProbComp.expect (Games.ProbComp.sample α) f
++  let k : Fin κ := ⟨hop.val, hhop⟩
++  let mk : Ω → P.LPNAdvice π L := fun ν =>
++    { hop := hop
++      I := P.G.idCore (P.n κ) ν.1
++      buckets := ν.2.1
++      draw := (ν.2.2.1, ν.2.2.2.1)
++      uniform := ν.2.2.2.2.1
++      tail := if tailReal then
++        fun j => P.G.eval (P.n κ) (P.G.idCore (P.n κ) ν.1) ν.2.2.1 (P.outputIndex κ j)
++        else ν.2.2.2.2.2 }
++  let disc : Ω → P.LPNChal π L → Coins → Bool := fun ν x r =>
++    decide (A.runAtL κ (P.lpnPre π L (mk ν) x) (List.ofFn r) = [true])
++  let R : Ω → ℝ := fun ν => acceptProb
++    (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L)
++      ((P.lpnFamily_raw π).toLWE.noise L)) (disc ν)
++  let Uacc : Ω → ℝ := fun ν => acceptProb (id : P.LPNChal π L → _) (disc ν)
++  let F : ℕ → GDraw → Buck → Seed → Mat → Table → Post → Coins → ℝ :=
++    fun i g b σ M table post r =>
++      if A.runAtL κ
++        (P.challengeStr κ pp (P.G.idCore (P.n κ) g, b, M)
++          (P.publicSeed κ pp
++            (P.chainPublic κ pp (P.G.idCore (P.n κ) g, b, M) (σ, table) post.1 i) false)
++          (if tailReal then
++            fun j => P.G.eval (P.n κ) (P.G.idCore (P.n κ) g) σ (P.outputIndex κ j)
++            else post.2)) (List.ofFn r) = [true] then 1 else 0
++  let C : ℕ → ℝ := fun i => avg GDraw (fun g => avg Buck (fun b => avg Mat (fun M =>
++    avg Seed (fun σ => avg Table (fun t => avg Post (fun post =>
++      avg Coins (fun r => F i g b σ M t post r)))))))
++  have hpairPost (f : Post → ℝ) :
++      avg Post f = avg U (fun u => avg Tail (fun t => f (u, t))) := ?_
++  swap
++  · simpa only [avg, Games.ProbComp.expect_bind, Games.ProbComp.expect_pure] using
++      (Games.Bridge.expect_sample_pair (α := U) (β := Tail) f).symm
++  have hsplit (f : Ω → ℝ) : avg Ω f =
++      avg GDraw (fun g => avg Buck (fun b => avg Seed (fun σ =>
++        avg Table (fun t => avg Post (fun post => f (g, b, σ, t, post)))))) := ?_
++  swap
++  · dsimp only [avg]
++    rw [← Games.Bridge.expect_sample_pair (α := GDraw)
++      (β := Buck × (Seed × (Table × Post))) f]
++    simp only [Games.ProbComp.expect_bind, Games.ProbComp.expect_pure]
++    apply congrArg (Games.ProbComp.expect (Games.ProbComp.sample GDraw))
++    funext g
++    rw [← Games.Bridge.expect_sample_pair (α := Buck) (β := Seed × (Table × Post))
++      (fun z : Buck × (Seed × (Table × Post)) => f (g, z))]
++    simp only [Games.ProbComp.expect_bind, Games.ProbComp.expect_pure]
++    apply congrArg (Games.ProbComp.expect (Games.ProbComp.sample Buck))
++    funext b
++    rw [← Games.Bridge.expect_sample_pair (α := Seed) (β := Table × Post)
++      (fun z : Seed × (Table × Post) => f (g, b, z))]
++    simp only [Games.ProbComp.expect_bind, Games.ProbComp.expect_pure]
++    apply congrArg (Games.ProbComp.expect (Games.ProbComp.sample Seed))
++    funext σ
++    rw [← Games.Bridge.expect_sample_pair (α := Table) (β := Post)
++      (fun z : Table × Post => f (g, b, σ, z))]
++    simp only [Games.ProbComp.expect_bind, Games.ProbComp.expect_pure]
++  have hmove (G : Seed → Table → Post → Mat → ℝ) :
++      avg Seed (fun σ => avg Table (fun t => avg Post (fun post =>
++        avg Mat (fun M => G σ t post M)))) =
++      avg Mat (fun M => avg Seed (fun σ => avg Table (fun t =>
++        avg Post (fun post => G σ t post M)))) := ?_
++  swap
++  · have hp (σ : Seed) (t : Table) :
++        avg Post (fun post => avg Mat (fun M => G σ t post M)) =
++          avg Mat (fun M => avg Post (fun post => G σ t post M)) :=
++      Games.ProbComp.expect_sample_comm (α := Post) (β := Mat)
++        (fun (post : Post) (M : Mat) => G σ t post M)
++    have ht (σ : Seed) :
++        avg Table (fun t => avg Mat (fun M => avg Post (fun post => G σ t post M))) =
++          avg Mat (fun M => avg Table (fun t => avg Post (fun post => G σ t post M))) :=
++      Games.ProbComp.expect_sample_comm (α := Table) (β := Mat)
++        (fun (t : Table) (M : Mat) => avg Post (fun post => G σ t post M))
++    calc
++      avg Seed (fun σ => avg Table (fun t => avg Post (fun post =>
++          avg Mat (fun M => G σ t post M)))) =
++        avg Seed (fun σ => avg Table (fun t => avg Mat (fun M =>
++          avg Post (fun post => G σ t post M)))) :=
++        congrArg (avg Seed) (funext fun σ => congrArg (avg Table) (funext fun t => hp σ t))
++      _ = avg Seed (fun σ => avg Mat (fun M => avg Table (fun t =>
++          avg Post (fun post => G σ t post M)))) := congrArg (avg Seed) (funext ht)
++      _ = avg Mat (fun M => avg Seed (fun σ => avg Table (fun t =>
++          avg Post (fun post => G σ t post M)))) :=
++        Games.ProbComp.expect_sample_comm (α := Seed) (β := Mat)
++          (fun (σ : Seed) (M : Mat) => avg Table (fun t => avg Post (fun p => G σ t p M)))
++  have hupdateTable (G : Table → Post → Coins → ℝ) :
++      avg Table (fun t => avg Post (fun post => avg Rep (fun fresh =>
++        avg Coins (fun r => G (Function.update t k fresh) post r)))) =
++      avg Table (fun t => avg Post (fun post => avg Coins (fun r => G t post r))) := ?_
++  swap
++  · have hs (t : Table) :
++        avg Post (fun post => avg Rep (fun fresh =>
++          avg Coins (fun r => G (Function.update t k fresh) post r))) =
++        avg Rep (fun fresh => avg Post (fun post =>
++          avg Coins (fun r => G (Function.update t k fresh) post r))) :=
++      Games.ProbComp.expect_sample_comm (α := Post) (β := Rep)
++        (fun (post : Post) (fresh : Rep) =>
++          avg Coins (fun r => G (Function.update t k fresh) post r))
++    exact (congrArg (avg Table) (funext hs)).trans
++      (Games.ProbComp.expect_sample_update k
++        (fun t : Table => avg Post (fun post => avg Coins (fun r => G t post r))))
++  have hupdateUniform (G : U → Tail → Coins → ℝ) :
++      avg U (fun u => avg Tail (fun t => avg V (fun fresh =>
++        avg Coins (fun r => G (Function.update u k fresh) t r)))) =
++      avg U (fun u => avg Tail (fun t => avg Coins (fun r => G u t r))) := ?_
++  swap
++  · have hs (u : U) :
++        avg Tail (fun t => avg V (fun fresh =>
++          avg Coins (fun r => G (Function.update u k fresh) t r))) =
++        avg V (fun fresh => avg Tail (fun t =>
++          avg Coins (fun r => G (Function.update u k fresh) t r))) :=
++      Games.ProbComp.expect_sample_comm (α := Tail) (β := V)
++        (fun (t : Tail) (fresh : V) =>
++          avg Coins (fun r => G (Function.update u k fresh) t r))
++    exact (congrArg (avg U) (funext hs)).trans
++      (Games.ProbComp.expect_sample_update k
++        (fun u : U => avg Tail (fun t => avg Coins (fun r => G u t r))))
++  have hupdatePost (G : Post → Coins → ℝ) :
++      avg Post (fun post => avg V (fun fresh =>
++        avg Coins (fun r => G (Function.update post.1 k fresh, post.2) r))) =
++      avg Post (fun post => avg Coins (fun r => G post r)) := ?_
++  swap
++  · calc
++      avg Post (fun post => avg V (fun fresh =>
++          avg Coins (fun r => G (Function.update post.1 k fresh, post.2) r))) =
++        avg U (fun u => avg Tail (fun t => avg V (fun fresh =>
++          avg Coins (fun r => G (Function.update u k fresh, t) r)))) :=
++        hpairPost (fun post : Post => avg V (fun fresh =>
++          avg Coins (fun r => G (Function.update post.1 k fresh, post.2) r)))
++      _ = avg U (fun u => avg Tail (fun t => avg Coins (fun r => G (u, t) r))) :=
++        hupdateUniform (fun (u : U) (t : Tail) (r : Coins) => G (u, t) r)
++      _ = avg Post (fun post => avg Coins (fun r => G post r)) :=
++        (hpairPost (fun post : Post => avg Coins (fun r => G post r))).symm
++  have hsecR (ν : Ω) : R ν = avg Mat (fun M => avg Rep (fun fresh =>
++      avg Coins (fun r => F hop.val ν.1 ν.2.1 ν.2.2.1 M
++        (Function.update ν.2.2.2.1 k fresh) ν.2.2.2.2 r))) := ?_
++  swap
++  · simpa only [R, disc, mk, F, avg] using lpn_real_section P π A L h (mk ν) k rfl
++  have hsecU (ν : Ω) : Uacc ν = avg Mat (fun M => avg V (fun fresh =>
++      avg Coins (fun r => F (hop.val + 1) ν.1 ν.2.1 ν.2.2.1 M ν.2.2.2.1
++        (Function.update ν.2.2.2.2.1 k fresh, ν.2.2.2.2.2) r))) := ?_
++  swap
++  · simpa only [Uacc, disc, mk, F, avg] using
++      lpn_uniform_section P π A L h (mk ν) k rfl
++  have hrealAvg : avg Ω R = C hop.val := ?_
++  swap
++  · rw [hsplit R]
++    dsimp only [C]
++    apply congrArg (avg GDraw)
++    funext g
++    apply congrArg (avg Buck)
++    funext b
++    calc
++      avg Seed (fun σ => avg Table (fun t => avg Post (fun post => R (g, b, σ, t, post)))) =
++        avg Seed (fun σ => avg Table (fun t => avg Post (fun post => avg Mat (fun M =>
++          avg Rep (fun fresh => avg Coins (fun r =>
++            F hop.val g b σ M (Function.update t k fresh) post r)))))) :=
++        congrArg (avg Seed) (funext fun σ => congrArg (avg Table) (funext fun t =>
++          congrArg (avg Post) (funext fun post => hsecR (g, b, σ, t, post))))
++      _ = avg Mat (fun M => avg Seed (fun σ => avg Table (fun t => avg Post (fun post =>
++          avg Rep (fun fresh => avg Coins (fun r =>
++            F hop.val g b σ M (Function.update t k fresh) post r)))))) :=
++        hmove (fun (σ : Seed) (t : Table) (post : Post) (M : Mat) =>
++          avg Rep (fun fresh => avg Coins (fun r =>
++            F hop.val g b σ M (Function.update t k fresh) post r)))
++      _ = avg Mat (fun M => avg Seed (fun σ => avg Table (fun t => avg Post (fun post =>
++          avg Coins (fun r => F hop.val g b σ M t post r))))) :=
++        congrArg (avg Mat) (funext fun M => congrArg (avg Seed) (funext fun σ =>
++          hupdateTable (fun (t : Table) (post : Post) (r : Coins) => F hop.val g b σ M t post r)))
++  have huniformAvg : avg Ω Uacc = C (hop.val + 1) := ?_
++  swap
++  · rw [hsplit Uacc]
++    dsimp only [C]
++    apply congrArg (avg GDraw)
++    funext g
++    apply congrArg (avg Buck)
++    funext b
++    calc
++      avg Seed (fun σ => avg Table (fun t => avg Post (fun post =>
++          Uacc (g, b, σ, t, post)))) =
++        avg Seed (fun σ => avg Table (fun t => avg Post (fun post => avg Mat (fun M =>
++          avg V (fun fresh => avg Coins (fun r =>
++            F (hop.val + 1) g b σ M t (Function.update post.1 k fresh, post.2) r)))))) :=
++        congrArg (avg Seed) (funext fun σ => congrArg (avg Table) (funext fun t =>
++          congrArg (avg Post) (funext fun post => hsecU (g, b, σ, t, post))))
++      _ = avg Mat (fun M => avg Seed (fun σ => avg Table (fun t => avg Post (fun post =>
++          avg V (fun fresh => avg Coins (fun r =>
++            F (hop.val + 1) g b σ M t (Function.update post.1 k fresh, post.2) r)))))) :=
++        hmove (fun (σ : Seed) (t : Table) (post : Post) (M : Mat) =>
++          avg V (fun fresh => avg Coins (fun r =>
++            F (hop.val + 1) g b σ M t (Function.update post.1 k fresh, post.2) r)))
++      _ = avg Mat (fun M => avg Seed (fun σ => avg Table (fun t => avg Post (fun post =>
++          avg Coins (fun r => F (hop.val + 1) g b σ M t post r))))) :=
++        congrArg (avg Mat) (funext fun M => congrArg (avg Seed) (funext fun σ =>
++          congrArg (avg Table) (funext fun t => hupdatePost
++            (fun (post : Post) (r : Coins) => F (hop.val + 1) g b σ M t post r))))
++  have hchain (i : ℕ) : Games.accept (P.chainGame A tailReal i κ pp) = C i := ?_
++  swap
++  · rw [P.chainGame_eq, Games.accept_eq, Games.ProbComp.prob_eq_expect]
++    simp only [P.idSamp'_eq, Games.ProbComp.expect_bind, Games.ProbComp.expect_map,
++      Games.OracleComp.pure_eq_pure, Games.ProbComp.expect_pure, P.idCore_eq,
++      NUPPT.distinguisherL_eq,
++      NUPPT.runAt_eq, decide_eq_true_eq]
++    change avg (GDraw × (Buck × Mat)) (fun ix => avg (Seed × Table) (fun d =>
++      avg U (fun u => avg Tail (fun t => avg Coins (fun r =>
++        F i ix.1 ix.2.1 d.1 ix.2.2 d.2 (u, t) r))))) = C i
++    dsimp only [C, avg]
++    rw [← Games.Bridge.expect_sample_pair (α := GDraw) (β := Buck × Mat)
++      (fun ix : GDraw × (Buck × Mat) => avg (Seed × Table) (fun d =>
++        avg U (fun u => avg Tail (fun t => avg Coins (fun r =>
++          F i ix.1 ix.2.1 d.1 ix.2.2 d.2 (u, t) r)))))]
++    simp only [Games.ProbComp.expect_bind, Games.ProbComp.expect_pure]
++    apply congrArg (avg GDraw)
++    funext g
++    rw [← Games.Bridge.expect_sample_pair (α := Buck) (β := Mat)
++      (fun z : Buck × Mat => avg (Seed × Table) (fun d =>
++        avg U (fun u => avg Tail (fun t => avg Coins (fun r =>
++          F i g z.1 d.1 z.2 d.2 (u, t) r)))))]
++    simp only [Games.ProbComp.expect_bind, Games.ProbComp.expect_pure]
++    apply congrArg (avg Buck)
++    funext b
++    apply congrArg (avg Mat)
++    funext M
++    dsimp only [avg]
++    rw [← Games.Bridge.expect_sample_pair (α := Seed) (β := Table)
++      (fun d : Seed × Table => avg U (fun u => avg Tail (fun t =>
++        avg Coins (fun r => F i g b d.1 M d.2 (u, t) r))))]
++    simp only [Games.ProbComp.expect_bind, Games.ProbComp.expect_pure]
++    apply congrArg (avg Seed)
++    funext σ
++    apply congrArg (avg Table)
++    funext table
++    exact (hpairPost (fun post : Post =>
++      avg Coins (fun r => F i g b σ M table post r))).symm
++  have hreal : Games.accept (P.chainGame A tailReal hop.val κ pp) = avg Ω R :=
++    (hchain hop.val).trans hrealAvg.symm
++  have huniform : Games.accept (P.chainGame A tailReal (hop.val + 1) κ pp) = avg Ω Uacc :=
++    (hchain (hop.val + 1)).trans huniformAvg.symm
++  have havg := Games.ProbComp.abs_expect_sub_le_expect
++    (Games.ProbComp.sample Ω) (f := R) (g := Uacc)
++    (h := fun ν => |R ν - Uacc ν|) (fun _ => le_rfl)
++  obtain ⟨ν, hν⟩ :=
++    TCSlib.Cryptography.Authentication.LamportReduction.exists_expect_sample_le
++    (fun ν : Ω => |R ν - Uacc ν|)
++  refine ⟨mk ν, ?_⟩
++  rw [Games.advantage_eq, hreal, huniform, LWE.decisionAdvantage_eq, distAdv_def]
++  exact havg.trans hν
++
+ end Internal
+ 
+ namespace Params
+@@ -62,7 +347,43 @@ theorem lpn_hop (P : Params) (π : PrimeSchedule) (A : NUPPT)
+       ∀ κ, (hops κ).val < κ →
+         Games.advantage (P.chainGame A (tails κ) (hops κ).val κ (π κ))
+           (P.chainGame A (tails κ) ((hops κ).val + 1) κ (π κ)) ≤
+-            (P.lpnFamily_raw π).adv B (P.ℓ κ) := sorry
++            (P.lpnFamily_raw π).adv B (P.ℓ κ) := by
++  classical
++  let gap : ∀ L, P.LPNAdvice π L → ℝ := fun L w =>
++    LWE.decisionAdvantage ((P.lpnFamily_raw π).toLWE.parameters L)
++      ((P.lpnFamily_raw π).toLWE.noise L)
++      (fun x (r : A.Coins (P.kappaOf L)) =>
++        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true]))
++  have hfixed : ∀ L, ∃ w : P.LPNAdvice π L,
++      L = P.ℓ (P.kappaOf L) → (hops (P.kappaOf L)).val < P.kappaOf L →
++      Games.advantage
++        (P.chainGame A (tails (P.kappaOf L)) (hops (P.kappaOf L)).val
++          (P.kappaOf L) (π (P.kappaOf L)))
++        (P.chainGame A (tails (P.kappaOf L)) ((hops (P.kappaOf L)).val + 1)
++          (P.kappaOf L) (π (P.kappaOf L))) ≤ gap L w := ?_
++  swap
++  · intro L
++    by_cases hi : L = P.ℓ (P.kappaOf L)
++    · by_cases hv : (hops (P.kappaOf L)).val < P.kappaOf L
++      · obtain ⟨w, hw⟩ := Internal.lpn_fix_advice P π A L hi
++          (tails (P.kappaOf L)) (hops (P.kappaOf L)) hv
++        exact ⟨w, fun _ _ => hw⟩
++      · refine ⟨Classical.choice (inferInstance : Nonempty (P.LPNAdvice π L)), ?_⟩
++        intro _ hvalid
++        exact False.elim (hv hvalid)
++    · refine ⟨Classical.choice (inferInstance : Nonempty (P.LPNAdvice π L)), ?_⟩
++      intro himage _
++      exact False.elim (hi himage)
++  choose ω hω using hfixed
++  refine ⟨ω, ?_⟩
++  intro B hB κ hhop
++  have hi : P.ℓ κ = P.ℓ (P.kappaOf (P.ℓ κ)) :=
++    congrArg P.ℓ (P.kappaOf_pow κ).symm
++  have hselected := hω (P.ℓ κ) hi
++  rw [P.kappaOf_pow] at hselected
++  have heq : gap (P.ℓ κ) (ω (P.ℓ κ)) = (P.lpnFamily_raw π).adv B (P.ℓ κ) :=
++    Internal.lpn_gap_realizes_eq P π A B ω hB (P.ℓ κ)
++  exact (hselected hhop).trans heq.le
+ 
+ end Params
+ 
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections.lean
+index 450b26191b72cee45607f01c418ed37a013841f5..2a5db1ca60c910bf9e34695bb923eb8c6793a7dd 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Sections.lean
+@@ -37,6 +37,232 @@ open scoped BigOperators
+ 
+ namespace Internal
+ 
++/-- A canonical real challenge replaces precisely the selected repetition in the chain word.
++Preprocessing glue for [JLS26, Lemma 4.2, p. 19].
++
++**Proof sketch.** Read preprocessing and its schedule guard, then substitute the supplied
++matrix and noisy-value coordinate equations. Extensionality reduces the public vectors to
++the selected and unselected coordinates; the chain and vector readers and finite index order
++identify the appropriate updated repetition in each case. -/
++theorem lpn_pre_real_update (P : Params) (π : PrimeSchedule) (L : ℕ)
++    (h : L = P.ℓ (P.kappaOf L)) (w : P.LPNAdvice π L)
++    (k : Fin (P.kappaOf L)) (hk : k.val = w.hop.val)
++    (M : Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L)))
++      (ZMod (π (P.kappaOf L)).p))
++    (rep : (Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
++      (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) ×
++        ZMod (π (P.kappaOf L)).p))
++    (x : P.LPNChal π L) (hM : P.lpnMatrixAt π L h x = M)
++    (hb : P.lpnValuesAt π L h x = fun i =>
++      (∑ a, M i a * rep.1 a) + P.noiseValue (P.kappaOf L) (π (P.kappaOf L)) (rep.2 i)) :
++    P.lpnPre π L w x =
++      P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
++        (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
++          (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
++            (w.draw.1, Function.update w.draw.2 k rep) w.uniform w.hop.val) false)
++        w.tail := by
++  classical
++  rw [P.lpnPre_eq, dif_pos h, hM, hb]
++  dsimp only
++  congr 1
++  apply congrArg (fun bs => P.publicSeed (P.kappaOf L) (π (P.kappaOf L)) bs false)
++  funext q i
++  by_cases hq : q = k
++  · subst q
++    simp only [P.chainPublic_eq, P.lpnVector_eq, Function.update_self, hk,
++      lt_self_iff_false, if_false, ite_true]
++  · have hval : q.val ≠ w.hop.val := fun heq => hq (Fin.ext (heq.trans hk.symm))
++    simp only [P.chainPublic_eq, P.lpnVector_eq, Function.update_of_ne hq, if_neg hval]
++
++/-- A canonical uniform challenge gives the next chain word after the fixed seed translation.
++Preprocessing glue for [JLS26, Lemma 4.2, p. 19]. The Boolean seed offset is retained.
++
++**Proof sketch.** Read preprocessing and the chain, substitute the supplied canonical
++matrix/value equations, and compare public coordinates. The selected vector is exactly the
++challenged vector plus the fixed Boolean seed; all other coordinates retain their frozen
++branch. Uniform translation is applied later, conditioned on this seed. -/
++theorem lpn_pre_uniform_update (P : Params) (π : PrimeSchedule) (L : ℕ)
++    (h : L = P.ℓ (P.kappaOf L)) (w : P.LPNAdvice π L)
++    (k : Fin (P.kappaOf L)) (hk : k.val = w.hop.val)
++    (M : Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L)))
++      (ZMod (π (P.kappaOf L)).p))
++    (v : Fin (P.n (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p)
++    (x : P.LPNChal π L) (hM : P.lpnMatrixAt π L h x = M)
++    (hb : P.lpnValuesAt π L h x = v) :
++    P.lpnPre π L w x =
++      P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
++        (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
++          (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
++            w.draw (Function.update w.uniform k
++              (fun i => v i + ((w.draw.1 i).toNat : ZMod (π (P.kappaOf L)).p)))
++            (w.hop.val + 1)) false) w.tail := by
++  classical
++  rw [P.lpnPre_eq, dif_pos h, hM, hb]
++  dsimp only
++  congr 1
++  apply congrArg (fun bs => P.publicSeed (P.kappaOf L) (π (P.kappaOf L)) bs false)
++  funext q i
++  by_cases hq : q = k
++  · subst q
++    simp only [P.chainPublic_eq, Function.update_self, hk,
++      Nat.lt_succ_self, lt_self_iff_false, if_false, ite_true]
++  · have hval : q.val ≠ w.hop.val := fun heq => hq (Fin.ext (heq.trans hk.symm))
++    have hlt : q.val < w.hop.val + 1 ↔ q.val < w.hop.val := ?_
++    swap
++    · omega
++    simp only [P.chainPublic_eq, Function.update_of_ne hq, if_neg hval, hlt]
++
++/-- A fixed-advice canonical real experiment is the selected-repetition section of the chain.
++Actual-sample glue for [JLS26, Lemma 4.2, p. 19].
++
++**Proof sketch.** Reindex the canonical sample seeds using the coherent matrix/secret/noise
++equivalence and the public uprob_comp_equiv law. The public probability/expectation and
++product bridges expose independent matrix, repetition and adversary coins. Apply the
++pointwise preprocessing identity using both seed-coordinate equations. -/
++theorem lpn_real_section (P : Params) (π : PrimeSchedule) (A : NUPPT) (L : ℕ)
++    (h : L = P.ℓ (P.kappaOf L)) (w : P.LPNAdvice π L)
++    (k : Fin (P.kappaOf L)) (hk : k.val = w.hop.val) :
++    acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L)
++      ((P.lpnFamily_raw π).toLWE.noise L))
++      (fun x (r : A.Coins (P.kappaOf L)) =>
++        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])) =
++    Games.ProbComp.expect
++      (Games.ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L)))
++        (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))) (fun M =>
++      Games.ProbComp.expect
++        (Games.ProbComp.sample ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
++          (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) ×
++            ZMod (π (P.kappaOf L)).p))) (fun rep =>
++          Games.ProbComp.expect (Games.ProbComp.sample (A.Coins (P.kappaOf L))) (fun r =>
++            if A.runAtL (P.kappaOf L)
++              (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
++                (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
++                  (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
++                    (w.draw.1, Function.update w.draw.2 k rep) w.uniform w.hop.val) false)
++                w.tail) (List.ofFn r) = [true] then 1 else 0))) := by
++  classical
++  let κ := P.kappaOf L
++  let pp := π κ
++  let Mat := Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p)
++  let Rep := (Fin (P.ℓ κ) → ZMod pp.p) ×
++    (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
++  let Q := (P.lpnFamily_raw π).toLWE.parameters L
++  let χ := (P.lpnFamily_raw π).toLWE.noise L
++  let Seed := Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
++    ((Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins))
++  let D : P.LPNChal π L → A.Coins κ → Bool := fun x r =>
++    decide (A.runAtL κ (P.lpnPre π L w x) (List.ofFn r) = [true])
++  obtain ⟨e, he⟩ := lpn_real_seed_reindex P π L h
++  rw [acceptProb_def]
++  change uprob (fun z : Seed × A.Coins κ => D (LWE.sample Q χ z.1) z.2 = true) = _
++  rw [← uprob_comp_equiv (Equiv.prodCongr e.symm (Equiv.refl (A.Coins κ)))
++    (fun z : Seed × A.Coins κ => D (LWE.sample Q χ z.1) z.2 = true)]
++  rw [← Games.Bridge.prob_sample_eq_uprob, Games.ProbComp.prob_eq_expect]
++  change Games.ProbComp.expect (Games.ProbComp.sample ((Mat × Rep) × A.Coins κ))
++    (fun z => if D (LWE.sample Q χ (e.symm z.1)) z.2 = true then 1 else 0) = _
++  rw [← Games.Bridge.expect_sample_pair (α := Mat × Rep) (β := A.Coins κ)
++    (fun z : (Mat × Rep) × A.Coins κ =>
++      if D (LWE.sample Q χ (e.symm z.1)) z.2 = true then 1 else 0)]
++  simp only [Games.ProbComp.expect_bind, Games.ProbComp.expect_pure]
++  rw [← Games.Bridge.expect_sample_pair (α := Mat) (β := Rep)
++    (fun z : Mat × Rep => Games.ProbComp.expect (Games.ProbComp.sample (A.Coins κ))
++      (fun r => if D (LWE.sample Q χ (e.symm z)) r = true then 1 else 0))]
++  simp only [Games.ProbComp.expect_bind, Games.ProbComp.expect_pure]
++  apply congrArg (Games.ProbComp.expect (Games.ProbComp.sample Mat))
++  funext M
++  apply congrArg (Games.ProbComp.expect (Games.ProbComp.sample Rep))
++  funext rep
++  apply congrArg (Games.ProbComp.expect (Games.ProbComp.sample (A.Coins κ)))
++  funext r
++  have hp := he (e.symm (M, rep))
++  simp only [Equiv.apply_symm_apply] at hp
++  dsimp only [D]
++  rw [lpn_pre_real_update P π L h w k hk M rep _ hp.1 hp.2]
++  simp only [decide_eq_true_eq]
++  rfl
++
++/-- A fixed-advice canonical uniform challenge gives the next-chain section exactly.
++Conditional-translation glue for [JLS26, Lemma 4.2, p. 19].
++
++**Proof sketch.** Relabel the canonical matrix/value coordinates with uprob_comp_equiv, then
++expose the independent products through the existing expectation bridges. The preprocessing
++reader gives fresh values plus the fixed Boolean seed. Conditioned on that seed,
++pushesUniform_add_right removes this translation without changing the uniform vector law.
++The same fixed matrix, advice and adversary coins remain. -/
++theorem lpn_uniform_section (P : Params) (π : PrimeSchedule) (A : NUPPT) (L : ℕ)
++    (h : L = P.ℓ (P.kappaOf L)) (w : P.LPNAdvice π L)
++    (k : Fin (P.kappaOf L)) (hk : k.val = w.hop.val) :
++    acceptProb (id : P.LPNChal π L → _)
++      (fun x (r : A.Coins (P.kappaOf L)) =>
++        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])) =
++    Games.ProbComp.expect
++      (Games.ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L)))
++        (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))) (fun M =>
++      Games.ProbComp.expect
++        (Games.ProbComp.sample (Fin (P.n (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p))
++        (fun v => Games.ProbComp.expect (Games.ProbComp.sample (A.Coins (P.kappaOf L)))
++          (fun r => if A.runAtL (P.kappaOf L)
++            (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
++              (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
++                (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
++                  w.draw (Function.update w.uniform k v) (w.hop.val + 1)) false) w.tail)
++            (List.ofFn r) = [true] then 1 else 0))) := by
++  classical
++  let κ := P.kappaOf L
++  let pp := π κ
++  let Mat := Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p)
++  let V := Fin (P.n κ) → ZMod pp.p
++  let D : P.LPNChal π L → A.Coins κ → Bool := fun x r =>
++    decide (A.runAtL κ (P.lpnPre π L w x) (List.ofFn r) = [true])
++  obtain ⟨e, he⟩ := lpn_uniform_challenge_reindex P π L h
++  rw [acceptProb_def]
++  change uprob (fun z : P.LPNChal π L × A.Coins κ => D z.1 z.2 = true) = _
++  rw [← uprob_comp_equiv (Equiv.prodCongr e.symm (Equiv.refl (A.Coins κ)))
++    (fun z : P.LPNChal π L × A.Coins κ => D z.1 z.2 = true)]
++  rw [← Games.Bridge.prob_sample_eq_uprob, Games.ProbComp.prob_eq_expect]
++  change Games.ProbComp.expect (Games.ProbComp.sample ((Mat × V) × A.Coins κ))
++    (fun z => if D (e.symm z.1) z.2 = true then 1 else 0) = _
++  rw [← Games.Bridge.expect_sample_pair (α := Mat × V) (β := A.Coins κ)
++    (fun z : (Mat × V) × A.Coins κ => if D (e.symm z.1) z.2 = true then 1 else 0)]
++  simp only [Games.ProbComp.expect_bind, Games.ProbComp.expect_pure]
++  rw [← Games.Bridge.expect_sample_pair (α := Mat) (β := V)
++    (fun z : Mat × V => Games.ProbComp.expect (Games.ProbComp.sample (A.Coins κ))
++      (fun r => if D (e.symm z) r = true then 1 else 0))]
++  simp only [Games.ProbComp.expect_bind, Games.ProbComp.expect_pure]
++  apply congrArg (Games.ProbComp.expect (Games.ProbComp.sample Mat))
++  funext M
++  let F : V → ℝ := fun v => Games.ProbComp.expect
++    (Games.ProbComp.sample (A.Coins κ)) (fun r =>
++      if A.runAtL κ
++        (P.challengeStr κ pp (w.I, w.buckets, M)
++          (P.publicSeed κ pp
++            (P.chainPublic κ pp (w.I, w.buckets, M) w.draw
++              (Function.update w.uniform k v) (w.hop.val + 1)) false) w.tail)
++        (List.ofFn r) = [true] then 1 else 0)
++  let offset : V := fun i => ((w.draw.1 i).toNat : ZMod pp.p)
++  have hnorm : Games.ProbComp.expect (Games.ProbComp.sample V)
++      (fun v => Games.ProbComp.expect (Games.ProbComp.sample (A.Coins κ))
++        (fun r => if D (e.symm (M, v)) r = true then 1 else 0)) =
++      Games.ProbComp.expect (Games.ProbComp.sample V) (fun v => F (v + offset)) := ?_
++  swap
++  · apply congrArg (Games.ProbComp.expect (Games.ProbComp.sample V))
++    funext v
++    apply congrArg (Games.ProbComp.expect (Games.ProbComp.sample (A.Coins κ)))
++    funext r
++    have hp := he (e.symm (M, v))
++    simp only [Equiv.apply_symm_apply] at hp
++    dsimp only [D]
++    rw [lpn_pre_uniform_update P π L h w k hk M v _ hp.1.symm hp.2.symm]
++    simp only [decide_eq_true_eq, offset]
++    rfl
++  have htranslate := (HardcoreBit.pushesUniform_iff _).mp
++    (HardcoreBit.pushesUniform_add_right offset) F
++  have htranslate' : Games.ProbComp.expect (Games.ProbComp.sample V)
++      (fun v => F (v + offset)) = Games.ProbComp.expect (Games.ProbComp.sample V) F := ?_
++  swap
++  · simpa only [Games.Bridge.expect_sample_eq_uexp] using htranslate
++  exact hnorm.trans htranslate'
++
+ end Internal
+ 
+ end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport.lean
+index 8edeccb77fc8a20447561c63b1d39a1aa44a3e66..9eb91fcb8da1b238a84d7739f98af8e78dd9b329 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN/Transport.lean
+@@ -39,6 +39,209 @@ namespace Internal
+ 
+ -- Specialized existing-library transport helpers may be added here after the mechanical split.
+ 
++/-- Every shared-contract LPN realizer has the ideal reduction's exact acceptance probability.
++Reduction glue for [JLS26, Lemma 4.2, p. 19]. Only layout-length coin words are used.
++
++**Proof sketch.** Read canonical acceptance, reindex B's coins by the shared coin bijection,
++and use the mandatory runAt_coinsEquivPoly_symm reader. The named reduction reader leaves
++the adversary's coin prefix. Its existing uniform restriction law and ofFn/take reader
++recover exactly the shorter adversary coin distribution. -/
++theorem lpn_accept_realizes_eq (P : Params) (π : PrimeSchedule) (A B : NUPPT)
++    (ω : ∀ L, P.LPNAdvice π L)
++    (hB : B.RealizesOn (P.lpnEnc π) (A.coins.subst .var)
++      (fun L x r => P.lpnRed π A L (ω L) x r))
++    (L : ℕ) {σ : Type} [Fintype σ] (X : σ → P.LPNChal π L) :
++    acceptProb X (fun x (r : B.Coins L) => B.distinguisherL L (P.lpnEnc π L x) r) =
++      acceptProb X (fun x (r : A.Coins (P.kappaOf L)) =>
++        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L (ω L) x)
++          (List.ofFn r) = [true])) := by
++  classical
++  have hcut : A.coinLen (P.kappaOf L) ≤ (A.coins.subst .var).eval L :=
++    ((A.coinLen_eq (P.kappaOf L)).le.trans
++      (A.coins.eval_mono (P.kappaOf_le L))).trans_eq
++        ((PolyExpr.eval_subst A.coins .var L).trans
++          (congrArg A.coins.eval (PolyExpr.eval_var L))).symm
++  rw [acceptProb_def, acceptProb_def, uprob_prod, uprob_prod]
++  apply congrArg uexp
++  funext s
++  rw [← uprob_comp_equiv (NUPPT.coinsEquivPoly hB.coins_eq L).symm
++    (fun r : B.Coins L => B.distinguisherL L (P.lpnEnc π L (X s)) r = true)]
++  simp only [NUPPT.distinguisherL_eq, hB.runAt_coinsEquivPoly_symm,
++    P.lpnRed_eq, decide_eq_true_eq]
++  let Q : List Bool → Prop := fun r =>
++    A.runAtL (P.kappaOf L) (P.lpnPre π L (ω L) (X s)) r = [true]
++  have hprefix :=
++    (HardcoreBit.pushesUniform_restrict (O := Bool) (Fin.castLE_injective hcut)).uprob_eq
++      (fun r : Fin (A.coinLen (P.kappaOf L)) → Bool => Q (List.ofFn r))
++  simp only [OneWay.ofFn_castLE_eq_take hcut] at hprefix
++  exact hprefix
++
++/-- The fixed-advice ideal LPN gap equals every shared-contract realizer's raw advantage.
++Canonical experiment glue for [JLS26, Lemma 4.2, p. 19].
++
++**Proof sketch.** Read the existing raw-family and canonical LWE advantage equations. Match
++the unchanged challenge encoder by its reader, then apply the exact shared realizer
++acceptance equality to both the real and uniform canonical experiments. -/
++theorem lpn_gap_realizes_eq (P : Params) (π : PrimeSchedule) (A B : NUPPT)
++    (ω : ∀ L, P.LPNAdvice π L)
++    (hB : B.RealizesOn (P.lpnEnc π) (A.coins.subst .var)
++      (fun L x r => P.lpnRed π A L (ω L) x r)) (L : ℕ) :
++    LWE.decisionAdvantage ((P.lpnFamily_raw π).toLWE.parameters L)
++      ((P.lpnFamily_raw π).toLWE.noise L)
++      (fun x (r : A.Coins (P.kappaOf L)) =>
++        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L (ω L) x)
++          (List.ofFn r) = [true])) = (P.lpnFamily_raw π).adv B L := by
++  rw [LPNFamily.Raw.adv_eq, LWE.Family.advantageAt_eq,
++    LWE.decisionAdvantage_eq, LWE.decisionAdvantage_eq, distAdv_def, distAdv_def]
++  simp_rw [← P.lpnEnc_eq]
++  rw [lpn_accept_realizes_eq P π A B ω hB L
++      (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L)
++        ((P.lpnFamily_raw π).toLWE.noise L)),
++    lpn_accept_realizes_eq P π A B ω hB L id]
++
++/-- The canonical uniform challenge has explicit construction matrix/value coordinates.
++Coordinate glue for [JLS26, Lemma 4.2, p. 19]. No chosen enumeration is used.
++
++**Proof sketch.** Compose the published canonical challenge equivalence with the two
++explicit finite-index casts. Use Matrix.of in the matrix/function equivalence, as required
++by Mathlib's matrix type interface. The two projections agree with the existing matrix/value
++transport readers at every coordinate. -/
++theorem lpn_uniform_challenge_reindex (P : Params) (π : PrimeSchedule) (L : ℕ)
++    (h : L = P.ℓ (P.kappaOf L)) :
++    ∃ e : P.LPNChal π L ≃
++        (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L)))
++          (ZMod (π (P.kappaOf L)).p) ×
++          (Fin (P.n (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p)),
++      ∀ x, (e x).1 = P.lpnMatrixAt π L h x ∧
++        (e x).2 = P.lpnValuesAt π L h x := by
++  let hr : L ^ P.D = P.n (P.kappaOf L) :=
++    (congrArg (fun q : ℕ => q ^ P.D) h).trans (P.n_eq (P.kappaOf L)).symm
++  let eMat : Matrix (Fin (L ^ P.D)) (Fin L) (ZMod (π (P.kappaOf L)).p) ≃
++      Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L)))
++        (ZMod (π (P.kappaOf L)).p) :=
++    Matrix.of.symm.trans
++      ((Equiv.arrowCongr (finCongr hr)
++        (Equiv.arrowCongr (finCongr h) (Equiv.refl _))).trans Matrix.of)
++  let e := (P.lpnChalEquiv π L).trans
++    (Equiv.prodCongr eMat (Equiv.arrowCongr (finCongr hr) (Equiv.refl _)))
++  refine ⟨e, ?_⟩
++  intro x
++  constructor
++  · funext i a
++    rw [P.lpnMatrixAt_eq]
++    rfl
++  · funext i
++    rw [P.lpnValuesAt_eq]
++    rfl
++
++/-- Canonical real LWE sample seeds admit explicit construction coordinates preserving output.
++Sample-coherence glue for [JLS26, Lemma 4.2, p. 19] and the canonical LWE sample map.
++
++**Proof sketch.** Read the exact canonical dimension, row count, modulus and rounded noise.
++Identify the parameter/noise records and cast the resulting seed type explicitly. Read both
++sample projections and construction transport equations; the matrix entries and the noisy
++finite sums then agree in the same residue field. No law is inferred merely from a seed-type
++bijection. -/
++theorem lpn_real_seed_reindex (P : Params) (π : PrimeSchedule) (L : ℕ)
++    (h : L = P.ℓ (P.kappaOf L)) :
++    let κ := P.kappaOf L
++    let pp := π κ
++    let Q := (P.lpnFamily_raw π).toLWE.parameters L
++    let χ := (P.lpnFamily_raw π).toLWE.noise L
++    ∃ e : (Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
++        ((Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins))) ≃
++        (Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
++          ((Fin (P.ℓ κ) → ZMod pp.p) ×
++            (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))),
++      ∀ r, P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
++        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
++          (∑ a, (e r).1 i a * (e r).2.1 a) +
++            P.noiseValue κ pp ((e r).2.2 i) := by
++  classical
++  let κ := P.kappaOf L
++  let pp := π κ
++  let Q := (P.lpnFamily_raw π).toLWE.parameters L
++  let χ := (P.lpnFamily_raw π).toLWE.noise L
++  change ∃ e : (Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
++      ((Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins))) ≃
++      (Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
++        ((Fin (P.ℓ κ) → ZMod pp.p) ×
++          (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))), _
++  have hd : Q.dimension = P.ℓ κ := (P.lpn_dimension_eq π L).trans h
++  have hr : Q.samples = P.n κ := (P.lpn_samples_eq π L).trans
++    ((congrArg (fun q : ℕ => q ^ P.D) h).trans (P.n_eq κ).symm)
++  have hp : Q.modulus = pp.p := P.lpn_modulus_eq π L
++  have hden : (P.lpnFamily_raw π).noiseDen L = P.W κ :=
++    (P.lpnFamily_raw_noiseDen π L).trans
++      ((congrArg P.noiseDenAt h).trans (P.W_eq_noiseDenAt κ).symm)
++  have hmod : (P.lpnFamily_raw π).modulus L = pp.p := P.lpnFamily_raw_modulus π L
++  have hχ : χ = lpnNoise pp.p (P.W κ) := ?_
++  swap
++  · dsimp only [χ]
++    simp only [LPNFamily.Raw.toLWE_noise, LPNFamily.Raw.noise_eq, hmod, hden]
++  have hseed : ∀ (Q₀ : LWE.Parameters) (χ₀ : LWE.Noise)
++      (hdim : Q₀.dimension = P.ℓ κ) (hrows : Q₀.samples = P.n κ)
++      (hprime : Q₀.modulus = pp.p), χ₀ = lpnNoise pp.p (P.W κ) →
++      ∃ e : (Matrix (Fin Q₀.samples) (Fin Q₀.dimension) (ZMod Q₀.modulus) ×
++          ((Fin Q₀.dimension → ZMod Q₀.modulus) × (Fin Q₀.samples → χ₀.Coins))) ≃
++          (Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
++            ((Fin (P.ℓ κ) → ZMod pp.p) ×
++              (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))),
++        ∀ r,
++          Matrix.of ((Equiv.arrowCongr (finCongr hrows)
++            (Equiv.arrowCongr (finCongr hdim) (Equiv.cast (congrArg ZMod hprime))))
++              (Matrix.of.symm (LWE.sample Q₀ χ₀ r).1)) = (e r).1 ∧
++          (Equiv.arrowCongr (finCongr hrows) (Equiv.cast (congrArg ZMod hprime)))
++              (LWE.sample Q₀ χ₀ r).2 = fun i =>
++            (∑ a, (e r).1 i a * (e r).2.1 a) +
++              P.noiseValue κ pp ((e r).2.2 i) := ?_
++  swap
++  · intro Q₀ χ₀ hdim hrows hprime hnoise
++    rcases Q₀ with ⟨dim, rows, modulus, hge⟩
++    dsimp only at hdim hrows hprime
++    subst dim
++    subst rows
++    subst modulus
++    subst χ₀
++    let eNoise := Equiv.arrowCongr (Equiv.refl (Fin (P.n κ)))
++      (Equiv.cast (lpnNoise_coins pp.p (P.W κ)))
++    let e := Equiv.prodCongr
++      (Equiv.refl (Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p)))
++      (Equiv.prodCongr (Equiv.refl (Fin (P.ℓ κ) → ZMod pp.p)) eNoise)
++    refine ⟨e, ?_⟩
++    intro r
++    constructor
++    · apply Matrix.ext
++      intro i a
++      simp only [e, Equiv.prodCongr_apply, Prod.map_fst, Equiv.refl_apply,
++        finCongr_refl, Equiv.cast_refl, Equiv.arrowCongr_refl,
++        LWE.sample_fst, Matrix.of_apply, Matrix.of_symm_apply]
++    · funext i
++      have hcancel := (Equiv.cast (lpnNoise_coins pp.p (P.W κ))).symm_apply_apply (r.2.2 i)
++      simp only [Equiv.cast_symm, Equiv.cast_apply] at hcancel
++      simp only [e, eNoise, Equiv.prodCongr_apply, Prod.map_fst, Prod.map_snd,
++        Equiv.arrowCongr_apply,
++        Equiv.refl_apply, Equiv.refl_symm, Function.comp_apply, finCongr_refl,
++        Equiv.cast_refl (α := ZMod pp.p), Equiv.cast_apply,
++        LWE.sample_snd, LWE.noisyValues_apply, P.noiseValue_eq, hcancel]
++  obtain ⟨e, he⟩ := hseed Q χ hd hr hp hχ
++  refine ⟨e, ?_⟩
++  intro r
++  have hx := he r
++  constructor
++  · refine Eq.trans ?_ hx.1
++    apply Matrix.ext
++    intro i a
++    simp only [P.lpnMatrixAt_eq, P.lpnChalEquiv_eq,
++      Equiv.arrowCongr_apply, Function.comp_apply, Equiv.cast_apply,
++      Matrix.of_apply, Matrix.of_symm_apply]
++    rfl
++  · refine Eq.trans ?_ hx.2
++    funext i
++    simp only [P.lpnValuesAt_eq, P.lpnChalEquiv_eq,
++      Equiv.arrowCongr_apply, Function.comp_apply, Equiv.cast_apply]
++    rfl
++
+ end Internal
+ 
+ end TCSlib.Cryptography.Obfuscation.StructuredSeed

@@ -1,0 +1,64 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
+-/
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.PRG.Defs
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Injective and bounded Boolean PRG reduction encodings
+
+## Main definitions and results
+
+The three original canonical/advice injectivity and advice-length theorems.
+
+## References
+
+* [JLS26] Jain, Lin, Sahai, J. ACM 73(1), Article 1, February 2026,
+  Lemma 4.2, p. 19; Definition 3.4, p. 11.
+* [PS10] Pass, Shelat, A Course in Cryptography, 2010, Definition 26.8.
+
+**Deviations.** Dv9, Dv12 and Dv15 count the unchanged prime-first advice layout and
+all explicit hardwired fields, with no new encoder or sampler.
+-/
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+
+open Complexity Turing Games
+
+namespace Params
+
+/-- The canonical Boolean challenge encoding is injective.
+[JLS26, Definition 3.4, p. 11; Lemma 4.2, p. 19]. Dv15 retains the complete typed challenge.
+
+**Proof sketch.** Read the canonical challenge pair through prgEnc_eq and challengeStr_eq,
+then apply the primitive's index-code injectivity and List.ofFn injectivity. -/
+theorem prgEnc_injective (P : Params) (N : ℕ) : Function.Injective (P.prgEnc N) := sorry
+
+/-- The explicit PRG-hop advice code retains every fixed bucket, matrix and public vector.
+[JLS26, Lemma 4.2, p. 19]. Dv9, Dv12 and Dv15 retain the prime prefix and all hardwired data.
+
+**Proof sketch.** Split the nested pairs, apply the bucket-code and canonical matrix-code
+injectivity readers at the public prime's residue width, then use record extensionality. -/
+theorem encPRGAdvice_injective (P : Params) (π : PrimeSchedule) (N : ℕ) :
+    Function.Injective (P.encPRGAdvice π N) := sorry
+
+/-- Every advice encoding fits the explicit syntactic polynomial at N.
+[JLS26, Lemma 4.2, p. 19]. Dv12 bounds the full hardwired data instead of using fresh
+sampling; Dv15 accounts for its concrete finite-coordinate string.
+
+**Proof sketch.** Read the nested pair lengths and canonical matrix lengths. Bound buckets
+and the LPN matrix by idxBound, and the repeated uniform vectors by the public seed bound
+with residue width kappa+1. Apply kappaOfN_le and polynomial evaluation monotonicity, then
+absorb all constant and linear factors into the stated cubic majorant. -/
+theorem encPRGAdvice_length_le (P : Params) (π : PrimeSchedule) (N : ℕ)
+    (ω : P.PRGAdvice π N) :
+    (P.encPRGAdvice π N ω).length ≤ P.prgAdviceBound.eval N := sorry
+
+end Params
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed

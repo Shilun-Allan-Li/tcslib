@@ -1,0 +1,34 @@
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+
+open Complexity Turing Games
+open scoped BigOperators
+
+namespace Internal
+
+example (P : Params) (π : PrimeSchedule) (L : ℕ)
+    (h : L = P.ℓ (P.kappaOf L)) :
+    let κ := P.kappaOf L
+    let pp := π κ
+    let Q := (P.lpnFamily_raw π).toLWE.parameters L
+    let χ := (P.lpnFamily_raw π).toLWE.noise L
+    ∃ e : (Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        ((Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins))) ≃
+        (Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+          ((Fin (P.ℓ κ) → ZMod pp.p) ×
+            (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))),
+      ∀ r, P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+          (∑ a, (e r).1 i a * (e r).2.1 a) +
+            P.noiseValue κ pp ((e r).2.2 i)
+  := __PROBE_BODY__
+
+end Internal
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed

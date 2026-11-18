@@ -1,0 +1,35 @@
+--- /private/tmp/io-sprg-proof-notes/LPNHopFinal/03-lpn_uniform_challenge_reindex.lean.candidate
++++ /private/tmp/io-sprg-proof-notes/M4LPNPrepared/03-lpn_uniform_challenge_reindex.lean.candidate
+@@ -1,7 +1,10 @@
+-/- NOT_RUN. Theorem-only explicit canonical/construction coordinate bridge.
+-Reuses the existing lpnChalEquiv, arrow/product equivalences and finite casts.
+-No new algorithm, encoder, sampler or choice enumeration. exact?/apply? pending. -/
++/-- The canonical uniform challenge has explicit construction matrix/value coordinates.
++Coordinate glue for [JLS26, Lemma 4.2, p. 19]. No chosen enumeration is used.
+ 
++**Proof sketch.** Compose the published canonical challenge equivalence with the two
++explicit finite-index casts. Use Matrix.of in the matrix/function equivalence, as
++required by Mathlib's matrix type interface. The two projections agree with the
++existing matrix/value transport readers at every coordinate. -/
+ theorem lpn_uniform_challenge_reindex (P : Params) (π : PrimeSchedule) (L : ℕ)
+     (h : L = P.ℓ (P.kappaOf L)) :
+     ∃ e : P.LPNChal π L ≃
+@@ -12,11 +15,14 @@
+         (e x).2 = P.lpnValuesAt π L h x := by
+   let hr : L ^ P.D = P.n (P.kappaOf L) :=
+     (congrArg (fun q : ℕ => q ^ P.D) h).trans (P.n_eq (P.kappaOf L)).symm
++  let eMat : Matrix (Fin (L ^ P.D)) (Fin L) (ZMod (π (P.kappaOf L)).p) ≃
++      Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L)))
++        (ZMod (π (P.kappaOf L)).p) :=
++    Matrix.of.symm.trans
++      ((Equiv.arrowCongr (finCongr hr)
++        (Equiv.arrowCongr (finCongr h) (Equiv.refl _))).trans Matrix.of)
+   let e := (P.lpnChalEquiv π L).trans
+-    (Equiv.prodCongr
+-      (Equiv.arrowCongr (finCongr hr)
+-        (Equiv.arrowCongr (finCongr h) (Equiv.refl _)))
+-      (Equiv.arrowCongr (finCongr hr) (Equiv.refl _)))
++    (Equiv.prodCongr eMat (Equiv.arrowCongr (finCongr hr) (Equiv.refl _)))
+   refine ⟨e, ?_⟩
+   intro x
+   constructor

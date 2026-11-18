@@ -1,0 +1,345 @@
+LPN_DEFS_GUARD_OK_10
+`apply?` stopped because it was running out of time.
+You may get better results using `set_option maxHeartbeats 0`.
+Try this:
+  [apply] refine LogProg.eq_of_bitsVal_eq ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ (P.lpnPre π L w x).length =
+    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+        (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+          (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M) (w.draw.1, Function.update w.draw.2 k rep)
+            w.uniform ↑w.hop)
+          false)
+        w.tail).length
+  -- ⊢ LogProg.bitsVal (P.lpnPre π L w x) =
+    LogProg.bitsVal
+      (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+        (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+          (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M) (w.draw.1, Function.update w.draw.2 k rep)
+            w.uniform ↑w.hop)
+          false)
+        w.tail)
+Try this:
+  [apply] refine Eq.symm (LogProg.eq_of_bitsVal_eq ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+        (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+          (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M) (w.draw.1, Function.update w.draw.2 k rep)
+            w.uniform ↑w.hop)
+          false)
+        w.tail).length =
+    (P.lpnPre π L w x).length
+  -- ⊢ LogProg.bitsVal
+      (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+        (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+          (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M) (w.draw.1, Function.update w.draw.2 k rep)
+            w.uniform ↑w.hop)
+          false)
+        w.tail) =
+    LogProg.bitsVal (P.lpnPre π L w x)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Collection.padFin_append_true_injective ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Collection.padFin_append_true_injective ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.append_cancel_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (List.append_cancel_left ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.append_cancel_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (List.append_cancel_right ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.not_lex_antisymm ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (List.not_lex_antisymm ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.le_antisymm ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ P.lpnPre π L w x ≤
+    P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M) (w.draw.1, Function.update w.draw.2 k rep)
+          w.uniform ↑w.hop)
+        false)
+      w.tail
+  -- ⊢ P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M) (w.draw.1, Function.update w.draw.2 k rep)
+          w.uniform ↑w.hop)
+        false)
+      w.tail ≤
+    P.lpnPre π L w x
+Try this:
+  [apply] refine Eq.symm (List.le_antisymm ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M) (w.draw.1, Function.update w.draw.2 k rep)
+          w.uniform ↑w.hop)
+        false)
+      w.tail ≤
+    P.lpnPre π L w x
+  -- ⊢ P.lpnPre π L w x ≤
+    P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+      (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+        (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M) (w.draw.1, Function.update w.draw.2 k rep)
+          w.uniform ↑w.hop)
+        false)
+      w.tail
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.init_eq_of_concat_eq ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (List.init_eq_of_concat_eq ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.ext_getElem ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ (P.lpnPre π L w x).length =
+    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+        (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+          (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M) (w.draw.1, Function.update w.draw.2 k rep)
+            w.uniform ↑w.hop)
+          false)
+        w.tail).length
+  -- ⊢ ∀ (i : ℕ) (h₁ : i < (P.lpnPre π L w x).length)
+    (h₂ :
+      i <
+        (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+            (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+              (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+              false)
+            w.tail).length),
+    (P.lpnPre π L w x)[i] =
+      (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+          (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+            (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M) (w.draw.1, Function.update w.draw.2 k rep)
+              w.uniform ↑w.hop)
+            false)
+          w.tail)[i]
+Try this:
+  [apply] refine Eq.symm (List.ext_getElem ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+        (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+          (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M) (w.draw.1, Function.update w.draw.2 k rep)
+            w.uniform ↑w.hop)
+          false)
+        w.tail).length =
+    (P.lpnPre π L w x).length
+  -- ⊢ ∀ (i : ℕ)
+    (h₁ :
+      i <
+        (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+            (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+              (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+              false)
+            w.tail).length)
+    (h₂ : i < (P.lpnPre π L w x).length),
+    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+          (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+            (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M) (w.draw.1, Function.update w.draw.2 k rep)
+              w.uniform ↑w.hop)
+            false)
+          w.tail)[i] =
+      (P.lpnPre π L w x)[i]
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.append_inj_left' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (List.append_inj_left' ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.ext_get ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ (P.lpnPre π L w x).length =
+    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+        (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+          (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M) (w.draw.1, Function.update w.draw.2 k rep)
+            w.uniform ↑w.hop)
+          false)
+        w.tail).length
+  -- ⊢ ∀ (n : ℕ) (h₁ : n < (P.lpnPre π L w x).length)
+    (h₂ :
+      n <
+        (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+            (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+              (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+              false)
+            w.tail).length),
+    (P.lpnPre π L w x).get ⟨n, h₁⟩ =
+      (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+            (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+              (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+              false)
+            w.tail).get
+        ⟨n, h₂⟩
+Try this:
+  [apply] refine Eq.symm (List.ext_get ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+        (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+          (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M) (w.draw.1, Function.update w.draw.2 k rep)
+            w.uniform ↑w.hop)
+          false)
+        w.tail).length =
+    (P.lpnPre π L w x).length
+  -- ⊢ ∀ (n : ℕ)
+    (h₁ :
+      n <
+        (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+            (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+              (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+              false)
+            w.tail).length)
+    (h₂ : n < (P.lpnPre π L w x).length),
+    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+            (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+              (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                (w.draw.1, Function.update w.draw.2 k rep) w.uniform ↑w.hop)
+              false)
+            w.tail).get
+        ⟨n, h₁⟩ =
+      (P.lpnPre π L w x).get ⟨n, h₂⟩
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.append_inj_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (List.append_inj_right ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (List.cons_inj_right ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Bool
+  -- ⊢ ?_ :: P.lpnPre π L w x =
+    ?_ ::
+      P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+        (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+          (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M) (w.draw.1, Function.update w.draw.2 k rep)
+            w.uniform ↑w.hop)
+          false)
+        w.tail
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} a {l l'} => (List.cons_inj_right a).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.reverse_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (P.lpnPre π L w x).reverse =
+    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+        (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+          (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M) (w.draw.1, Function.update w.draw.2 k rep)
+            w.uniform ↑w.hop)
+          false)
+        w.tail).reverse
+Try this:
+  [apply] refine Eq.symm ((fun {α} {xs ys} => List.reverse_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+        (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+          (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M) (w.draw.1, Function.update w.draw.2 k rep)
+            w.uniform ↑w.hop)
+          false)
+        w.tail).reverse =
+    (P.lpnPre π L w x).reverse
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (List.map_inj_right fun x => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {l l'} {f} w => (List.map_inj_right w).mp) (fun x => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (List.append_right_inj ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ List Bool
+  -- ⊢ ?_ ++ P.lpnPre π L w x =
+    ?_ ++
+      P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+        (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+          (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M) (w.draw.1, Function.update w.draw.2 k rep)
+            w.uniform ↑w.hop)
+          false)
+        w.tail
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {t₁ t₂} s => (List.append_right_inj s).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (List.concat_inj_left ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Bool
+  -- ⊢ (P.lpnPre π L w x).concat ?_ =
+    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+          (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+            (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M) (w.draw.1, Function.update w.draw.2 k rep)
+              w.uniform ↑w.hop)
+            false)
+          w.tail).concat
+      ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {l l'} a => (List.concat_inj_left a).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.ext_getElem?_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ℕ),
+    (P.lpnPre π L w x)[i]? =
+      (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+          (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+            (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M) (w.draw.1, Function.update w.draw.2 k rep)
+              w.uniform ↑w.hop)
+            false)
+          w.tail)[i]?
+Try this:
+  [apply] refine Eq.symm ((fun {α} {l₁ l₂} => List.ext_getElem?_iff.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ℕ),
+    (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+          (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+            (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M) (w.draw.1, Function.update w.draw.2 k rep)
+              w.uniform ↑w.hop)
+            false)
+          w.tail)[i]? =
+      (P.lpnPre π L w x)[i]?
+/private/tmp/io-sprg-overlap/M4LPNDefs_V1_05-lpn_pre_real_update-apply.lean:37:0: warning: declaration uses 'sorry'
+/private/tmp/io-sprg-overlap/M4LPNDefs_V1_05-lpn_pre_real_update-apply.lean:39:29: warning: unused variable `hk`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/M4LPNDefs_V1_05-lpn_pre_real_update-apply.lean:45:25: warning: unused variable `hM`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/M4LPNDefs_V1_05-lpn_pre_real_update-apply.lean:46:5: warning: unused variable `hb`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

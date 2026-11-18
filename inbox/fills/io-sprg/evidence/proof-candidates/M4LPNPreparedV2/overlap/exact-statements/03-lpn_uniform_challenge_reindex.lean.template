@@ -1,0 +1,26 @@
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+
+open Complexity Turing Games
+
+namespace Internal
+
+example (P : Params) (π : PrimeSchedule) (L : ℕ)
+    (h : L = P.ℓ (P.kappaOf L)) :
+    ∃ e : P.LPNChal π L ≃
+        (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L)))
+          (ZMod (π (P.kappaOf L)).p) ×
+          (Fin (P.n (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p)),
+      ∀ x, (e x).1 = P.lpnMatrixAt π L h x ∧
+        (e x).2 = P.lpnValuesAt π L h x
+  := __PROBE_BODY__
+
+end Internal
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed

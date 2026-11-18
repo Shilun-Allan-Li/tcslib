@@ -1,0 +1,8 @@
+theorem lpn_uniform_challenge_reindex (P : Params) (π : PrimeSchedule) (L : ℕ)
+    (h : L = P.ℓ (P.kappaOf L)) :
+    ∃ e : P.LPNChal π L ≃
+        (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L)))
+          (ZMod (π (P.kappaOf L)).p) ×
+          (Fin (P.n (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p)),
+      ∀ x, (e x).1 = P.lpnMatrixAt π L h x ∧
+        (e x).2 = P.lpnValuesAt π L h x

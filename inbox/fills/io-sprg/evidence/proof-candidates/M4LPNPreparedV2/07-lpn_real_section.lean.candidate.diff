@@ -1,0 +1,49 @@
+--- /private/tmp/io-sprg-proof-notes/LPNHopFinal/07-lpn_real_section.lean.candidate
++++ /private/tmp/io-sprg-proof-notes/M4LPNPrepared/07-lpn_real_section.lean.candidate
+@@ -1,7 +1,10 @@
+-/- NOT_RUN. Fixed-advice real canonical acceptance, dependency04/05.
+-Read canonical sample seeds through the coherent equivalence, then the exact
+-word identity. No independent fresh sampler is introduced as a definition. -/
++/-- A fixed-advice canonical real experiment is the selected-repetition section of the chain.
++Actual-sample glue for [JLS26, Lemma 4.2, p. 19].
+ 
++**Proof sketch.** Reindex the canonical sample seeds using the coherent matrix/secret/noise
++equivalence and the public uprob_comp_equiv law. The public probability/expectation and
++product bridges expose independent matrix, repetition and adversary coins. Apply the
++pointwise preprocessing identity using both seed-coordinate equations. -/
+ theorem lpn_real_section (P : Params) (π : PrimeSchedule) (A : NUPPT) (L : ℕ)
+     (h : L = P.ℓ (P.kappaOf L)) (w : P.LPNAdvice π L)
+     (k : Fin (P.kappaOf L)) (hk : k.val = w.hop.val) :
+@@ -31,14 +34,26 @@
+     (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
+   let Q := (P.lpnFamily_raw π).toLWE.parameters L
+   let χ := (P.lpnFamily_raw π).toLWE.noise L
+-  let D := fun x (r : A.Coins κ) =>
++  let Seed := Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
++    ((Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins))
++  let D : P.LPNChal π L → A.Coins κ → Bool := fun x r =>
+     decide (A.runAtL κ (P.lpnPre π L w x) (List.ofFn r) = [true])
+   obtain ⟨e, he⟩ := lpn_real_seed_reindex P π L h
+-  rw [← acceptProb_comp_equiv e.symm (LWE.sample Q χ) D, acceptProb_def,
+-    ← Games.Bridge.prob_sample_eq_uprob, Games.ProbComp.prob_eq_expect]
+-  simp only [← Games.Bridge.expect_sample_pair (α := Mat × Rep) (β := A.Coins κ),
+-    ← Games.Bridge.expect_sample_pair (α := Mat) (β := Rep),
+-    Games.ProbComp.expect_bind, Games.ProbComp.expect_pure]
++  rw [acceptProb_def]
++  change uprob (fun z : Seed × A.Coins κ => D (LWE.sample Q χ z.1) z.2 = true) = _
++  rw [← uprob_comp_equiv (Equiv.prodCongr e.symm (Equiv.refl (A.Coins κ)))
++    (fun z : Seed × A.Coins κ => D (LWE.sample Q χ z.1) z.2 = true)]
++  rw [← Games.Bridge.prob_sample_eq_uprob, Games.ProbComp.prob_eq_expect]
++  change Games.ProbComp.expect (Games.ProbComp.sample ((Mat × Rep) × A.Coins κ))
++    (fun z => if D (LWE.sample Q χ (e.symm z.1)) z.2 = true then 1 else 0) = _
++  rw [← Games.Bridge.expect_sample_pair (α := Mat × Rep) (β := A.Coins κ)
++    (fun z : (Mat × Rep) × A.Coins κ =>
++      if D (LWE.sample Q χ (e.symm z.1)) z.2 = true then 1 else 0)]
++  simp only [Games.ProbComp.expect_bind, Games.ProbComp.expect_pure]
++  rw [← Games.Bridge.expect_sample_pair (α := Mat) (β := Rep)
++    (fun z : Mat × Rep => Games.ProbComp.expect (Games.ProbComp.sample (A.Coins κ))
++      (fun r => if D (LWE.sample Q χ (e.symm z)) r = true then 1 else 0))]
++  simp only [Games.ProbComp.expect_bind, Games.ProbComp.expect_pure]
+   apply congrArg (Games.ProbComp.expect (Games.ProbComp.sample Mat))
+   funext M
+   apply congrArg (Games.ProbComp.expect (Games.ProbComp.sample Rep))
