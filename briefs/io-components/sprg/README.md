@@ -28,9 +28,10 @@ supersedes the r2 and r1 prompts.
 
 | File | What it is |
 |---|---|
-| `design-r3.md` | **current** delta design note: what changed; **rule 15** (§1: raw bundles vs primitives, efficiency fields, `SamplesEfficiently`, targets T5–T6, assembly, renamed results); the shared realisation API (§2, must-reuse); Phase B outlook with #378's real names (§3); layout and size (§4); statements-gate order (§5); Dv16–Dv18 (§6); questions (§7: Q-E1 open) |
-| `duplication-sweep-r3.md` | **current** delta sweep: amended r2 rows; the shared realisation API (§R, MR); the sampler bridge at `<BASE>` (§S: `UniformSampler` type MR for the efficiency fields; the rest X/B) |
-| `dispatch-prompt-r3.md` | **current** prompt Seyoon pastes into Codex, Phase A only, with placeholders `<BASE>`, `<RECORDS>`, `<EXCHANGE>` only; one item marked `[Q-E1]` |
+| `rulings.md` | **every ruling in force** for this job (decision-log rows of 2026-11-18, rule 15, Q-E1 (A), the source rule, the base); it takes precedence over every other file here |
+| `design-r3.md` | **current** delta design note: what changed; **rule 15** (§1: raw bundles vs primitives, efficiency fields, `SamplesEfficiently`, targets T5–T6, assembly, renamed results); the shared realisation API (§2, must-reuse); Phase B outlook with #378's real names (§3); layout and size (§4); statements-gate order (§5); Dv16–Dv18 (§6); questions (§7: Q-E1, since ruled (A), `rulings.md`) |
+| `duplication-sweep-r3.md` | **current** delta sweep: amended r2 rows; the shared realisation API (§R, MR); the sampler bridge at the base (§S: `UniformSampler` type MR for the efficiency fields; the rest X/B; `SamplesEfficiently` MR from `CoinSampling/Contract.lean`, present) |
+| `dispatch-prompt-r3.md` | **current** prompt Seyoon pastes into Codex, Phase A only; base filled (`iO/phase-a-base` at `5ed465f62e4ae0f93ded1a1ba49e807591b589eb`); one placeholder left, `<RECORDS>`; the `[Q-E1]` items take the must-reuse arm |
 | `design-r2.md`, `duplication-sweep-r2.md` | r2; **binding** wherever r3 does not amend them |
 | `dispatch-prompt-r2.md` | r2 prompt (superseded; kept for the record) |
 | `design-r1.md` | r1 design (binding only where design-r2 says "unchanged from r1") |
@@ -70,42 +71,35 @@ supersedes the r2 and r1 prompts.
 - Q-S3 and Q-S6 are superseded by the two-phase and uniformity rulings; Q-S7 was withdrawn
   in r1.
 
-**Open question** (design-r3 §7.2; the same as the PHFE pack's Q-E1; rule them together):
-- **Q-E1**, where `SamplesEfficiently` (the sampler-efficiency predicate both jobs use) lives:
-  - **(A) a shared in-house file `CoinSampling/Contract.lean`, stacked into `<BASE>` before
-    dispatch** (recommended);
-  - (B) one per job, unified later;
-  - (C) inline fields.
+**Q-E1 ruled (A)** (with the PHFE pack's Q-E1): `SamplesEfficiently` lives in the shared
+in-house `TCSlib/Cryptography/CoinSampling/Contract.lean` (`foundations/coin-contract`
+`8e01b720`), which is at the base; must-reuse, with `DrawSamplable`, `CoreComputable`, their
+readers and closure (`../contract/REPORT.md`). Disclosed limits: no product-of-draws sampler
+(Phase B), and the unused `Fintype` binder of design-r3 §1.2 was dropped.
+
+**Base.** `iO/phase-a-base` at `5ed465f62e4ae0f93ded1a1ba49e807591b589eb`: #374
+`foundations/subexp` (`cbce64d1`), #378 `foundations/coin-sampling` (`51dc7672`),
+`foundations/coin-contract` (`8e01b720`) and #380 `foundations/realization` (`cdc0934f`);
+shared with the PHFE pack.
+
+**Sources.** No PDF is committed or pushed anywhere (pairing ruling Q12 (A); the ePrint PDFs are
+not ours to redistribute). Seyoon gives Codex a local folder with `jls26.pdf` (SHA-256
+`bb357e8d01cc0932899453f3d877b67b58f33253eabf2564854f8f38721e2f3d`) when he dispatches; nothing
+is staged on the exchange. Delivery is unchanged: `inbox/fills/io-sprg/` on the exchange.
 
 **Maintainer, before dispatch.**
-1. Get Seyoon's answer to Q-E1. Write `rulings.md` here: Q-S1–Q-S12, rule 15 and Q-E1 with
-   the decision-log rows (design-r2 §10.1, design-r3 §7), and the `<BASE>` branch name. If Q-E1
-   is (A), write `TCSlib/Cryptography/CoinSampling/Contract.lean` in house (design-r3 §1.2's
-   `SamplesEfficiently` with readers, ≈ 60–120 lines, on #378) and stack it into `<BASE>`.
-2. Build `<BASE>`: one branch stacking #374 (`cbce64d1`), `foundations/realization` (`cdc0934f`)
-   and #378 (`foundations/coin-sampling`, `51dc7672`). Both of the latter sit directly on
-   `cbce64d1` and touch disjoint files except the root facade lines (realization edits
-   `Asymptotic.lean`; coin-sampling edits `TCSlib.lean` and `Games.lean`). A ref-free
-   `git merge-tree --write-tree` of the two heads merges with no conflict (rc 0, tree
-   `20460248…`).
-   - Check that it elaborates (`Asymptotic/Realization`, `CoinSampling` facade) with one Lean
-     process.
-   - Push it, and share it with the PHFE pack (same `<BASE>`).
-   - If its tree is not "#374 + the two branches' files", re-check `duplication-sweep-r3.md`'s
-     lines there.
-3. Stage the source on the exchange at `outbox/io-components/sources/jls26.pdf` (SHA-256
-   `bb357e8d01cc0932899453f3d877b67b58f33253eabf2564854f8f38721e2f3d`), with a `SHA256SUMS`.
-   - The folder is shared with io-phfe (its PDFs and `agw20.pdf`, `iw14.pdf` go in the same
-     folder).
-   - Push the exchange, and put that commit in `<EXCHANGE>`.
-4. Commit this folder (with `rulings.md`) and a decision-log row in `IOComponentsPlan.md`; put
-   that commit in `<RECORDS>`.
-5. Put the base in `<BASE>` (`git rev-parse`).
-6. Check that `outbox/fills/codex-host-2026-11-15/host-addendum.md` and `lean-slot.sh` at
-   `<EXCHANGE>` still hash to `02a6af16…` and `ff64d8d5…` (they did at the exchange tip on
-   2026-11-18), and that the bb1-sim tools at exchange `2467bc3b…` are reachable (they were).
-7. Tell Seyoon the two Codex jobs share the Mac with one Lean slot each (`io-sprg`, `io-phfe`;
+1. Done: Q-E1 (A); `CoinSampling/Contract.lean` written and stacked; the base built and pushed
+   (`iO/phase-a-base`, `../contract/REPORT.md`); `rulings.md` written; the base filled in the
+   prompt; the source rule applied (no staging).
+2. Commit this folder (with `rulings.md`) and a decision-log row in `IOComponentsPlan.md`; put
+   that commit in `<RECORDS>` (`git rev-parse`) and push the records.
+3. Check that `outbox/fills/codex-host-2026-11-15/host-addendum.md` and `lean-slot.sh` at the
+   exchange commit the prompt pins (`bc9d982b83cb35ea351e2fb373752e8688945b1c`) hash to
+   `02a6af16…` and `ff64d8d5…` (they did on 2026-11-18), and that the bb1-sim tools at exchange
+   `2467bc3b…` are reachable (they were).
+4. Seyoon prepares the local source folder (here: `jls26.pdf`; with the PHFE PDFs if he uses one
+   folder for both jobs) and names it when he dispatches.
+5. Tell Seyoon the two Codex jobs share the Mac with one Lean slot each (`io-sprg`, `io-phfe`;
    cap 3 in all).
 
-**Not yet ready to dispatch.** Pending: Q-E1 (and its file if (A)), the stacked `<BASE>`,
-`rulings.md`, the staged source, the placeholders, and the records and exchange pushes.
+**Not yet ready to dispatch.** Pending: the records commit and push, then `<RECORDS>`.
