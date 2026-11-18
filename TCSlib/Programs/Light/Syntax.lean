@@ -177,5 +177,91 @@ inductive Exec (lim : Limits) (P : Program) : ℕ → Stmt → State → State �
 def State.Bounded (lim : Limits) (σ : State) : Prop :=
   (∀ x, |σ.loc x| ≤ lim.word) ∧ ∀ a, |σ.mem a| ≤ lim.word
 
+/-! ## Equations for reading expressions and tests -/
+
+/-- The add operation evaluates its two integer operands. -/
+theorem Op.eval_add (a b : ℤ) :
+    Op.eval .add a b = a + b := rfl
+
+/-- The sub operation evaluates its two integer operands. -/
+theorem Op.eval_sub (a b : ℤ) :
+    Op.eval .sub a b = a - b := rfl
+
+/-- The mul operation evaluates its two integer operands. -/
+theorem Op.eval_mul (a b : ℤ) :
+    Op.eval .mul a b = a * b := rfl
+
+/-- Expression evaluation reads the const constructor. -/
+theorem Expr.val_const (σ : State) (n : ℕ) :
+    Expr.val σ (.const n) = (n : ℤ) := rfl
+
+/-- Expression evaluation reads the var constructor. -/
+theorem Expr.val_var (σ : State) (x : ℕ) :
+    Expr.val σ (.var x) = σ.loc x := rfl
+
+/-- Expression evaluation reads the op constructor. -/
+theorem Expr.val_op (σ : State) (o : Op) (a b : Expr) :
+    Expr.val σ (.op o a b) = o.eval (a.val σ) (b.val σ) := rfl
+
+/-- Expression evaluation reads the load constructor. -/
+theorem Expr.val_load (σ : State) (a : Expr) :
+    Expr.val σ (.load a) = σ.mem (a.val σ).toNat := rfl
+
+/-- The cost of the const expression constructor. -/
+theorem Expr.cost_const (n : ℕ) :
+    Expr.cost (.const n) = 1 := rfl
+
+/-- The cost of the var expression constructor. -/
+theorem Expr.cost_var (x : ℕ) :
+    Expr.cost (.var x) = 1 := rfl
+
+/-- The cost of the op expression constructor. -/
+theorem Expr.cost_op (o : Op) (a b : Expr) :
+    Expr.cost (.op o a b) = a.cost + b.cost + 1 := rfl
+
+/-- Address safety means nonnegativity and strict containment in the memory. -/
+theorem Limits.addr_iff (lim : Limits) (a : ℤ) :
+    lim.Addr a ↔ 0 ≤ a ∧ a < lim.space := Iff.rfl
+
+/-- Safety of the const expression constructor. -/
+theorem Expr.safe_const_iff (lim : Limits) (σ : State) (n : ℕ) :
+    Expr.Safe lim σ (.const n) ↔ (n : ℤ) ≤ lim.word := Iff.rfl
+
+/-- Safety of the var expression constructor. -/
+theorem Expr.safe_var_iff (lim : Limits) (σ : State) (x : ℕ) :
+    Expr.Safe lim σ (.var x) ↔ True := Iff.rfl
+
+/-- Safety of the op expression constructor. -/
+theorem Expr.safe_op_iff (lim : Limits) (σ : State) (o : Op) (a b : Expr) :
+    Expr.Safe lim σ (.op o a b) ↔ a.Safe lim σ ∧ b.Safe lim σ ∧ |o.eval (a.val σ) (b.val σ)| ≤ lim.word := Iff.rfl
+
+/-- Safety of the load expression constructor. -/
+theorem Expr.safe_load_iff (lim : Limits) (σ : State) (a : Expr) :
+    Expr.Safe lim σ (.load a) ↔ a.Safe lim σ ∧ lim.Addr (a.val σ) := Iff.rfl
+
+/-- The lt test holds when its evaluated operands satisfy the comparison. -/
+theorem Cond.holds_lt_iff (σ : State) (a b : Expr) :
+    Cond.Holds σ (.lt a b) ↔ a.val σ < b.val σ := Iff.rfl
+
+/-- The lt test costs its two operands and one comparison. -/
+theorem Cond.cost_lt (a b : Expr) :
+    Cond.cost (.lt a b) = a.cost + b.cost + 1 := rfl
+
+/-- The lt test is safe exactly when both operands are safe. -/
+theorem Cond.safe_lt_iff (lim : Limits) (σ : State) (a b : Expr) :
+    Cond.Safe lim σ (.lt a b) ↔ a.Safe lim σ ∧ b.Safe lim σ := Iff.rfl
+
+/-- The eq test holds when its evaluated operands satisfy the comparison. -/
+theorem Cond.holds_eq_iff (σ : State) (a b : Expr) :
+    Cond.Holds σ (.eq a b) ↔ a.val σ = b.val σ := Iff.rfl
+
+/-- The eq test is safe exactly when both operands are safe. -/
+theorem Cond.safe_eq_iff (lim : Limits) (σ : State) (a b : Expr) :
+    Cond.Safe lim σ (.eq a b) ↔ a.Safe lim σ ∧ b.Safe lim σ := Iff.rfl
+
+/-- A called procedure's local is the corresponding argument, or zero if absent. -/
+theorem frame_apply (args : List ℤ) (i : ℕ) :
+    frame args i = args.getD i 0 := rfl
+
 end Light
 end

@@ -378,5 +378,31 @@ theorem Ends.forMem {loc : ℕ → ℤ} {μ : ℕ → ℤ} {i : ℕ} {hi : Expr}
   · rintro j ⟨_, μ'⟩ hj - ⟨rfl, hI⟩
     exact bound j μ' hj hI
 
+/-! ## Equations for reading blocks -/
+
+/-- The resulting state of the skip block. -/
+theorem Stmt.after_skip (σ : State)  :
+    Stmt.after .skip σ = σ := rfl
+
+/-- The safety condition of the skip block. -/
+theorem Stmt.blockSafe_skip_iff (lim : Limits) (σ : State)  :
+    Stmt.BlockSafe lim .skip σ ↔ True := Iff.rfl
+
+/-- The resulting state of the set block. -/
+theorem Stmt.after_set (σ : State) (x : ℕ) (e : Expr) :
+    Stmt.after (.set x e) σ = { σ with loc := Function.update σ.loc x (e.val σ) } := rfl
+
+/-- The safety condition of the set block. -/
+theorem Stmt.blockSafe_set_iff (lim : Limits) (σ : State) (x : ℕ) (e : Expr) :
+    Stmt.BlockSafe lim (.set x e) σ ↔ e.Safe lim σ := Iff.rfl
+
+/-- The resulting state of the store block. -/
+theorem Stmt.after_store (σ : State) (a e : Expr) :
+    Stmt.after (.store a e) σ = { σ with mem := Function.update σ.mem (a.val σ).toNat (e.val σ) } := rfl
+
+/-- The safety condition of the store block. -/
+theorem Stmt.blockSafe_store_iff (lim : Limits) (σ : State) (a e : Expr) :
+    Stmt.BlockSafe lim (.store a e) σ ↔ a.Safe lim σ ∧ e.Safe lim σ ∧ lim.Addr (a.val σ) := Iff.rfl
+
 end Light
 end
