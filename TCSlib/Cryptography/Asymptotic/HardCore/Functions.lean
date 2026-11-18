@@ -191,6 +191,7 @@ theorem not_hardCore_const (𝓕 : FunFamily) (b : Bool) : ¬ HardCore 𝓕 (fun
     haveI : Nonempty ((Fin (𝓕.inLen.eval n) → Bool) ×
       (NUPPT.ofPolyTimeUniform (polyTimeComputable_const [b]) (.const 0)).Coins n) :=
       ⟨(fun _ => false, fun _ => false)⟩
+    rw [predProb_def]
     refine HardcoreBit.uprob_eq_one_of_forall fun z => ?_
     simp only [NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq,
         NUPPT.runAtL_eq, NUPPT.output_ofPolyTimeUniform]
@@ -319,7 +320,8 @@ theorem predProb_glPad {ρ : Type*} [Fintype ρ] (n : ℕ)
           (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y)) r) := by
   rw [predProb_def, predProb_def]
   exact uprob_eq_of_equiv
-    ((Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).symm.prodCongr (Equiv.refl ρ))
+    (((𝓕.glPad_inEquiv n).trans (Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).symm).prodCongr
+      (Equiv.refl ρ))
     fun _ => Iff.rfl
 
 /-- **Bridge to the concrete setting (inversion)**: the inversion probability of the family
@@ -353,12 +355,15 @@ theorem glPad_f_bijective (n : ℕ) (hf : Function.Bijective (𝓕.f n)) :
     Function.Bijective (𝓕.glPad.f n) := by
   have e : HardcoreBit.glPad (𝓕.f n) =
       ⇑((Equiv.ofBijective _ hf).prodCongr (Equiv.refl (Fin (𝓕.inLen.eval n) → Bool))) := by
-    funext z; rfl
-  show Function.Bijective fun z => Fin.appendEquiv _ _ (HardcoreBit.glPad (𝓕.f n)
-    ((Fin.appendEquiv _ _).symm z))
-  rw [e]
-  exact (Fin.appendEquiv _ _).bijective.comp
-    (((Equiv.ofBijective _ hf).prodCongr _).bijective.comp (Fin.appendEquiv _ _).symm.bijective)
+    funext z
+    rw [HardcoreBit.glPad_apply]
+    rfl
+  have hg : 𝓕.glPad.f n = (𝓕.glPad_outEquiv n).symm ∘ Fin.appendEquiv _ _ ∘
+      HardcoreBit.glPad (𝓕.f n) ∘ (Fin.appendEquiv _ _).symm ∘ 𝓕.glPad_inEquiv n := rfl
+  rw [hg, e]
+  exact (𝓕.glPad_outEquiv n).symm.bijective.comp ((Fin.appendEquiv _ _).bijective.comp
+    (((Equiv.ofBijective _ hf).prodCongr _).bijective.comp
+      ((Fin.appendEquiv _ _).symm.bijective.comp (𝓕.glPad_inEquiv n).bijective)))
 
 /-- **`g` is one-way** ([PS10, Theorem 87.3], first clause; inventory Thm-87.3.a): if `f` is a
 strong one-way function then so is `g(x, r) = (f(x), r)`.
