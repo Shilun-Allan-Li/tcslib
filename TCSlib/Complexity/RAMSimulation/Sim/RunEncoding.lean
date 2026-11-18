@@ -131,13 +131,13 @@ whole configuration. The published state-renaming field equations preserve all o
 theorem runEntry_reconstruct {K : ℕ} {S H : Type} {x : List Bool}
     (q : S) (f : S → H) (d : Turing.Cfg K Bool H x) (hd : d.state = some (f q)) :
     (d.mapState (fun _ => q)).mapState f = d := by
-  apply Turing.Cfg.ext
-  · rw [Cfg.mapState_state, Cfg.mapState_state, hd, Option.map_some, Option.map_some]
-  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+  apply Cfg.mapState_eq_of_fields
+  · rw [Cfg.mapState_state, hd, Option.map_some, Option.map_some]
+  · rw [Cfg.mapState_inputPos]
   · funext j p
-    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+    rw [Cfg.mapState_workTapes]
   · funext j
-    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
-  · rw [Cfg.mapState_output, Cfg.mapState_output]
+    rw [Cfg.mapState_workTapePos]
+  · rw [Cfg.mapState_output]
 
 end WordRAM.Sim

@@ -44,14 +44,14 @@ theorem host_initCfg (x : List Bool) :
     (Turing.Cfg.init A.startEntry x).mapState (fun q => (⟨none, q⟩ : A.State)) =
       A.host.initCfg x := by
   rw [NDTM.initCfg_eq, host_q₀]
-  apply Turing.Cfg.ext
-  · rw [Cfg.mapState_state, Cfg.init_state, Cfg.init_state, Option.map_some]
-  · rw [Cfg.mapState_inputPos, Cfg.init_inputPos, Cfg.init_inputPos]
+  apply Cfg.mapState_eq_of_fields
+  · rw [Cfg.init_state, Cfg.init_state, Option.map_some]
+  · rw [Cfg.init_inputPos, Cfg.init_inputPos]
   · funext j p
-    rw [Cfg.mapState_workTapes, Cfg.init_workTapes, Cfg.init_workTapes]
+    rw [Cfg.init_workTapes, Cfg.init_workTapes]
   · funext j
-    rw [Cfg.mapState_workTapePos, Cfg.init_workTapePos, Cfg.init_workTapePos]
-  · rw [Cfg.mapState_output, Cfg.init_output, Cfg.init_output]
+    rw [Cfg.init_workTapePos, Cfg.init_workTapePos]
+  · rw [Cfg.init_output, Cfg.init_output]
 
 /-- Any choice word for the start-up, followed by one arbitrary dispatch bit, reaches the
 first instruction with the initial RAM encoding. The host's prefix heads are exactly the
