@@ -29,9 +29,10 @@ load-bearing lemma of the Pass–shelat campaign, foundation decision D11 of
 * **The host.** Five modules (copier, startup install, verdict install, step install, payload
   emit) run in the clean-module host with three control states (`hostTM`): the loop **anchor**
   `inl 0` (never a module-internal state, the panel repair J2-16/J3-6), which dispatches into the
-  verdict module (`host_dispatch`); the **branch** `inl 1`, which reads the first cell of tape 0
-  and dispatches into the payload or the step module (`host_branch`); and the **halt** state
-  `inl 2` (`host_halt`). Each module's halt passes control to its fixed return state (`hostRet`).
+  verdict module (`host_dispatch_view`); the **branch** `inl 1`, which reads the first cell of
+  tape 0 and dispatches into the payload or the step module (`host_branch_view`); and the **halt**
+  state `inl 2` (`host_halt_view`). Each module's halt passes control to its fixed return state
+  (`hostRet`).
   Module calls inside the host are `Turing.ModuleHost.host_call` and `host_clean`.
 
 ## Main definitions
@@ -45,9 +46,8 @@ load-bearing lemma of the Pass–shelat campaign, foundation decision D11 of
 
 * `Complexity.IterateFind.copy_clean` — the copier's contract; `copy_clean_view`, the same for
   `copyTMView`.
-* `Complexity.IterateFind.host_dispatch`, `host_branch`, `host_halt` — the host's control steps.
-* `Complexity.IterateFind.host_dispatch_view`, `host_branch_view`, `host_halt_view` — the same
-  control steps for the typed view `Turing.ModuleHost.hostTMView`.
+* `Complexity.IterateFind.host_dispatch_view`, `host_branch_view`, `host_halt_view` — the host's
+  control steps, for the typed view `Turing.ModuleHost.hostTMView`.
 
 ## References
 
@@ -187,22 +187,22 @@ private lemma copy_rewind (x : List Bool) (p : ℕ) (hp : p ≤ x.length) (z : �
 private lemma copy_finish (x : List Bool) (z : ℤ) :
     copyTM.tm.step (copyCfg x (some 1) 0 (by omega) x z) =
       copyCfg x none 1 (by omega) x (z + 1) := by
-  have hsym : (copyCfg x (some 1) 0 (by omega) x z).inputSymbol = none := by
-    simp [Cfg.inputSymbol, copyCfg]
+  have hsym : (copyCfg x (some 1) 0 (by omega) x z).inputSymbol = none :=
+    Cfg.inputSymbol_of_zero rfl
   have hs : (copyCfg x (some 1) 0 (by omega) x z).state = some 1 := rfl
-  unfold MultiTapeTM.step
-  rw [hs]
-  dsimp only
-  rw [hsym]
+  rw [MultiTapeTM.step_of_some hs, hsym]
   show (⟨.pos, fun _ => (none, .pos), none, none⟩ : Action 1 Bool (Fin 2)).apply _ = _
-  refine Cfg.ext rfl ?_ ?_ ?_ rfl
-  · apply Fin.ext
-    simp only [Action.apply, copyCfg]
+  refine Cfg.ext ?_ ?_ (funext fun i => ?_) (funext fun i => ?_) ?_
+  · rw [Action.apply_state]
+    rfl
+  · rw [Action.apply_inputPos]
+    apply Fin.ext
+    simp only [copyCfg]
     rw [moveInputPos_pos_of_ne_right _ (by simp)]
-  · funext i
-    simp [Action.apply, copyCfg]
-  · funext i
-    simp [Action.apply, copyCfg]
+  · simp [Action.apply_workTapes, copyCfg, Cfg.workTapeSymbols_eq]
+  · simp [Action.apply_workTapePos, copyCfg]
+  · rw [Action.apply_output]
+    rfl
 
 /-- **The copier's contract.** From the empty seam over native input `x`, the copier halts
 after exactly `2|x| + 2` steps at the seam holding `x` on tape 0, never halting earlier.
@@ -218,9 +218,10 @@ lemma copy_clean (x : List Bool) :
       {Cfg.ofWords (input := x) (0 : Fin 2) (stateWord 1 x) with state := none} := by
   have hi : Cfg.ofWords (input := x) (0 : Fin 2) (stateWord 1 []) =
       copyCfg x (some 0) 1 (by omega) [] 0 := by
+    rw [Cfg.ofWords_def]
     refine Cfg.ext rfl rfl ?_ rfl rfl
     funext i
-    simp [Cfg.ofWords, copyCfg, stateWord]
+    simp [copyCfg, stateWord_eq]
   have hcopy : ∀ j (hj : j ≤ x.length),
       copyTM.tm.runFrom (copyCfg x (some 0) 1 (by omega) [] 0) j =
         copyCfg x (some 0) (j + 1) (by omega) (x.take j) j := by
@@ -246,12 +247,13 @@ lemma copy_clean (x : List Bool) :
     exact ModuleHost.live_prefix copyTM.tm _ (2 * x.length + 1) (by rw [hmid]; simp [copyCfg]) v
       (by omega)
   · rw [hi, MultiTapeTM.runFrom_succ_eq_step', hmid, copy_finish]
-    refine Cfg.ext rfl ?_ ?_ ?_ rfl
-    · apply Fin.ext; simp [copyCfg, Cfg.ofWords]
+    refine Cfg.ext rfl ?_ ?_ ?_ ?_
+    · apply Fin.ext; simp [copyCfg, Cfg.ofWords_def]
     · funext i
-      simp [copyCfg, Cfg.ofWords, stateWord]
+      simp [copyCfg, Cfg.ofWords_def, stateWord_eq]
     · funext i
-      simp [copyCfg, Cfg.ofWords]
+      simp [copyCfg, Cfg.ofWords_def]
+    · simp [copyCfg, Cfg.ofWords_def]
 
 /-- **The typed view of the input copier**: the finite machine with one work tape, state type
 `Fin 2`, start state `0` and the copier's transition function,
@@ -349,48 +351,8 @@ theorem hostTM_eq (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ 
       ModuleHost.hostTM M (K + 1) hk (hostCtrl M K) (hostRet M) (ModuleHost.entry M 0) :=
   rfl
 
-/-- The anchor dispatches into the verdict module in one stationary step: from the seam at
-`inl 0` holding `w`, one step reaches the seam at the verdict module's entry holding `w`. -/
-theorem host_dispatch (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K + 1)
-    (x w : List Bool) :
-    (hostTM M K hk).tm.step (Cfg.ofWords (input := x) (.inl 0) (stateWord (K + 1) w)) =
-      Cfg.ofWords (ModuleHost.entry M 2) (stateWord (K + 1) w) := by
-  rw [ModuleHost.hostTM_step_inl _ _ _ _ _ _ _ 0 rfl]
-  change (FinTM.controlAction 0 (some (ModuleHost.entry M 2))).apply _ = _
-  rw [FinTM.controlAction_apply, moveInputPos_zero]
-  rfl
-
-/-- The branch state reads the first cell of tape 0 — the verdict `b` of a verdict word `w`
-with `w[0]? = some b` — and dispatches, in one stationary step, into the payload module (`b`
-true) or the step module (`b` false), at the seam holding `w`. -/
-theorem host_branch (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K + 1)
-    (x : List Bool) (b : Bool) (w : List Bool) (hw : w[0]? = some b) :
-    (hostTM M K hk).tm.step (Cfg.ofWords (input := x) (.inl 1) (stateWord (K + 1) w)) =
-      Cfg.ofWords (ModuleHost.entry M (if b then 4 else 3)) (stateWord (K + 1) w) := by
-  have hread : (Cfg.ofWords (input := x) (.inl 1 : ModuleHost.State (Fin 3) M)
-      (stateWord (K + 1) w)).workTapeSymbols 0 = some b := by
-    simp [Cfg.ofWords, Cfg.workTapeSymbols, stateWord, FinTM.bufferTape, hw]
-  rw [ModuleHost.hostTM_step_inl _ _ _ _ _ _ _ 1 rfl]
-  show (FinTM.controlAction 0 (some (if (Cfg.ofWords (input := x)
-    (.inl 1 : ModuleHost.State (Fin 3) M) (stateWord (K + 1) w)).workTapeSymbols 0 = some true
-      then ModuleHost.entry M 4 else ModuleHost.entry M 3))).apply _ = _
-  rw [hread, FinTM.controlAction_apply, moveInputPos_zero]
-  cases b <;> rfl
-
-/-- The halt state halts without emitting: from the seam at `inl 2` holding `w` with output `o`,
-one step reaches the same seam with control `none` and output `o`. -/
-theorem host_halt (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K + 1)
-    (x w o : List Bool) :
-    (hostTM M K hk).tm.step
-        {Cfg.ofWords (input := x) (.inl 2) (stateWord (K + 1) w) with output := o} =
-      {Cfg.ofWords (input := x) (.inl 2 : ModuleHost.State (Fin 3) M) (stateWord (K + 1) w)
-        with state := none, output := o} := by
-  rw [ModuleHost.hostTM_step_inl _ _ _ _ _ _ _ 2 rfl]
-  change (FinTM.controlAction 0 none).apply _ = _
-  rw [FinTM.controlAction_apply, moveInputPos_zero]
-
-/-- **The anchor's dispatch, for the typed view** (`host_dispatch` for
-`Turing.ModuleHost.hostTMView`): from the seam at `inl 0` holding `w`, one step of the typed view
+/-- **The anchor's dispatch, for the typed view** (for `Turing.ModuleHost.hostTMView`): from
+the seam at `inl 0` holding `w`, one step of the typed view
 `H = hostTMView M (K + 1) hk (hostCtrl M K) (hostRet M) (entry M 0)` reaches the seam at the
 verdict module's entry holding `w`,
 `H.tm.step (Cfg.ofWords (inl 0) (stateWord (K + 1) w)) =
@@ -404,7 +366,7 @@ theorem host_dispatch_view (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M 
   rw [ModuleHost.hostTMView_step_inl _ _ _ _ _ _ _ 0 (Cfg.ofWords_state _ _), hostCtrl_eq,
     if_pos rfl, FinTM.controlAction_apply, moveInputPos_zero, Cfg.ofWords_def, Cfg.ofWords_def]
 
-/-- **The branch, for the typed view** (`host_branch` for `Turing.ModuleHost.hostTMView`): the
+/-- **The branch, for the typed view** (for `Turing.ModuleHost.hostTMView`): the
 branch state reads the first cell of tape 0, the verdict `b` of a word `w` with `w[0]? = some b`,
 and one step of the typed view
 `H = hostTMView M (K + 1) hk (hostCtrl M K) (hostRet M) (entry M 0)` dispatches into the payload
@@ -427,7 +389,7 @@ theorem host_branch_view (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i)
     Cfg.ofWords_def, Cfg.ofWords_def]
   cases b <;> rfl
 
-/-- **The halt, for the typed view** (`host_halt` for `Turing.ModuleHost.hostTMView`): from the
+/-- **The halt, for the typed view** (for `Turing.ModuleHost.hostTMView`): from the
 seam at `inl 2` holding `w` with output `o`, one step of the typed view
 `H = hostTMView M (K + 1) hk (hostCtrl M K) (hostRet M) (entry M 0)` reaches the same seam with
 control `none` and output `o`,
