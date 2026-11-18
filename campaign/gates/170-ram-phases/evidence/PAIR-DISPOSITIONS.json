@@ -1,0 +1,978 @@
+{
+ "base_summary": "declarations screened: 112; copy pairs (target reproduces >= half of source): 50; reproduced text: 7,770 chars",
+ "head_summary": "declarations screened: 252; copy pairs (target reproduces >= half of source): 143; reproduced text: 27,561 chars",
+ "population_base": [
+  "TCSlib/Complexity/RAMSimulation.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/Phases.lean",
+  "TCSlib/Complexity/TuringMachine/Build/Embed.lean",
+  "TCSlib/Complexity/TuringMachine/Build/NDHost.lean",
+  "TCSlib/Complexity/TuringMachine/Build/Seam.lean"
+ ],
+ "population_head": [
+  "TCSlib/Complexity/RAMSimulation.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/PhaseAtoms.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/PhaseBlock.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/PhaseBounds.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/PhaseBranchMachines.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/PhaseBranching.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/PhaseCoin.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/PhaseCompute.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/PhaseControl.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/PhaseCore.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/PhaseEmit.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/PhaseFork.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/PhaseHost.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/PhaseInput.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/PhaseInvariant.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/PhaseLayout.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/PhaseMemory.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/PhaseMemoryMachines.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/PhaseOperations.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/PhaseRegister.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/PhaseRows.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/PhaseSchedules.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/PhaseSemantics.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/PhaseTable.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/PhaseTape.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/PhaseTests.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/Phases.lean",
+  "TCSlib/Complexity/TuringMachine/Build/Embed.lean",
+  "TCSlib/Complexity/TuringMachine/Build/NDHost.lean",
+  "TCSlib/Complexity/TuringMachine/Build/Seam.lean"
+ ],
+ "new": 93,
+ "gone": 0,
+ "net_directed_pairs": "50 -> 143",
+ "pairs": [
+  {
+   "status": "NEW",
+   "target": "PhaseRows.lean::phase_unaryRow",
+   "source": "PhaseRows.lean::phase_intRow",
+   "chars": 385,
+   "source_chars": 420,
+   "pct": 92,
+   "class": "citation-shape",
+   "note": "Instances of the shared row placement `phase_wordRow` (or `phase_nativeRow`), each with its own native row from jobs A/C; the shared text is the placement obligations (`Cfg.select_eq`, `phase_wordAt_select`, `phase_wordAt_frame`, `phase_scratch_select`)."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseSchedules.lean::phase_storeImmediateBlock",
+   "source": "PhaseSchedules.lean::phase_fetchBlock",
+   "chars": 202,
+   "source_chars": 222,
+   "pct": 91,
+   "class": "citation-shape",
+   "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseBranching.lean::PhaseBranch.seq",
+   "source": "PhaseBlock.lean::PhaseBlock.seq",
+   "chars": 661,
+   "source_chars": 747,
+   "pct": 88,
+   "class": "parallel",
+   "note": "DISCLOSED FOR THE AUDIT. One-exit and two-exit composition: the structures `PhaseBlock` (one exit), `PhaseBranch` (two exits) and `PhaseRow`, their `seq` compositions, and their `phase_machine_of*` packagings share their text and differ in the exit set and the cut. One structure over a finite exit family would merge them; the fill kept two because the two-exit form adds `distinct` and the flag-selected endpoint. Raised in the pack for the auditor's judgment."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseRows.lean::phase_arithRow",
+   "source": "PhaseRows.lean::phase_unaryRow",
+   "chars": 415,
+   "source_chars": 493,
+   "pct": 84,
+   "class": "citation-shape",
+   "note": "Instances of the shared row placement `phase_wordRow` (or `phase_nativeRow`), each with its own native row from jobs A/C; the shared text is the placement obligations (`Cfg.select_eq`, `phase_wordAt_select`, `phase_wordAt_frame`, `phase_scratch_select`)."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseLayout.lean::phase_keyAssign_layout_mono",
+   "source": "PhaseLayout.lean::phase_tableOf_layout_bound",
+   "chars": 98,
+   "source_chars": 119,
+   "pct": 82,
+   "class": "parallel",
+   "note": "Two table-length facts over `keyTableLength`: monotonicity under assignment and the footprint bound; shared text is the length equation."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseCompute.lean::phase_arithBlock",
+   "source": "PhaseCompute.lean::phase_sourceBlock",
+   "chars": 276,
+   "source_chars": 343,
+   "pct": 80,
+   "class": "citation-shape",
+   "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseEmit.lean::phase_frame_emit_encodes",
+   "source": "PhaseTape.lean::phase_encodes_congr",
+   "chars": 61,
+   "source_chars": 76,
+   "pct": 80,
+   "class": "citation-shape",
+   "note": "A one-line congruence: the emitted frame's encoding through `phase_encodes_congr` (76 characters)."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseCompute.lean::phase_inputBlock",
+   "source": "PhaseCompute.lean::phase_sourceBlock",
+   "chars": 270,
+   "source_chars": 343,
+   "pct": 79,
+   "class": "citation-shape",
+   "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseRows.lean::phase_intRow",
+   "source": "PhaseRows.lean::phase_unaryRow",
+   "chars": 385,
+   "source_chars": 493,
+   "pct": 78,
+   "class": "citation-shape",
+   "note": "Instances of the shared row placement `phase_wordRow` (or `phase_nativeRow`), each with its own native row from jobs A/C; the shared text is the placement obligations (`Cfg.select_eq`, `phase_wordAt_select`, `phase_wordAt_frame`, `phase_scratch_select`)."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseControl.lean::phase_machine_ofBlock",
+   "source": "PhaseBranching.lean::phase_machine_ofBranch",
+   "chars": 806,
+   "source_chars": 1035,
+   "pct": 78,
+   "class": "parallel",
+   "note": "DISCLOSED FOR THE AUDIT. One-exit and two-exit composition: the structures `PhaseBlock` (one exit), `PhaseBranch` (two exits) and `PhaseRow`, their `seq` compositions, and their `phase_machine_of*` packagings share their text and differ in the exit set and the cut. One structure over a finite exit family would merge them; the fill kept two because the two-exit form adds `distinct` and the flag-selected endpoint. Raised in the pack for the auditor's judgment."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseRows.lean::phase_arithRow",
+   "source": "PhaseRows.lean::phase_intRow",
+   "chars": 327,
+   "source_chars": 420,
+   "pct": 78,
+   "class": "citation-shape",
+   "note": "Instances of the shared row placement `phase_wordRow` (or `phase_nativeRow`), each with its own native row from jobs A/C; the shared text is the placement obligations (`Cfg.select_eq`, `phase_wordAt_select`, `phase_wordAt_frame`, `phase_scratch_select`)."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseBlock.lean::PhaseBlock.seq",
+   "source": "PhaseBranching.lean::PhaseBranch.seq",
+   "chars": 661,
+   "source_chars": 858,
+   "pct": 77,
+   "class": "parallel",
+   "note": "DISCLOSED FOR THE AUDIT. One-exit and two-exit composition: the structures `PhaseBlock` (one exit), `PhaseBranch` (two exits) and `PhaseRow`, their `seq` compositions, and their `phase_machine_of*` packagings share their text and differ in the exit set and the cut. One structure over a finite exit family would merge them; the fill kept two because the two-exit form adds `distinct` and the flag-selected endpoint. Raised in the pack for the auditor's judgment."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseTests.lean::PhaseBranch",
+   "source": "PhaseBlock.lean::PhaseBlock",
+   "chars": 239,
+   "source_chars": 313,
+   "pct": 76,
+   "class": "parallel",
+   "note": "DISCLOSED FOR THE AUDIT. One-exit and two-exit composition: the structures `PhaseBlock` (one exit), `PhaseBranch` (two exits) and `PhaseRow`, their `seq` compositions, and their `phase_machine_of*` packagings share their text and differ in the exit set and the cut. One structure over a finite exit family would merge them; the fill kept two because the two-exit form adds `distinct` and the flag-selected endpoint. Raised in the pack for the auditor's judgment."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseAtoms.lean::phase_intBlock",
+   "source": "PhaseCompute.lean::phase_sourceBlock",
+   "chars": 259,
+   "source_chars": 343,
+   "pct": 76,
+   "class": "citation-shape",
+   "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseOperations.lean::phase_inputSchedule",
+   "source": "PhaseOperations.lean::phase_halfSchedule",
+   "chars": 288,
+   "source_chars": 383,
+   "pct": 75,
+   "class": "citation-shape",
+   "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseBlock.lean::PhaseBlock",
+   "source": "PhaseTests.lean::PhaseBranch",
+   "chars": 239,
+   "source_chars": 323,
+   "pct": 74,
+   "class": "parallel",
+   "note": "DISCLOSED FOR THE AUDIT. One-exit and two-exit composition: the structures `PhaseBlock` (one exit), `PhaseBranch` (two exits) and `PhaseRow`, their `seq` compositions, and their `phase_machine_of*` packagings share their text and differ in the exit set and the cut. One structure over a finite exit family would merge them; the fill kept two because the two-exit form adds `distinct` and the flag-selected endpoint. Raised in the pack for the auditor's judgment."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseOperations.lean::phase_loadSchedule",
+   "source": "PhaseOperations.lean::phase_inputSchedule",
+   "chars": 297,
+   "source_chars": 404,
+   "pct": 74,
+   "class": "citation-shape",
+   "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseMemoryMachines.lean::phase_loadMachine",
+   "source": "PhaseMemoryMachines.lean::phase_inputMachine",
+   "chars": 259,
+   "source_chars": 356,
+   "pct": 73,
+   "class": "sibling-uniformity",
+   "note": "Per-instruction phase certificates: each packages its own schedule through `phase_machine_ofBlock` (or the branch/fork form) and `PhasePost`; the shared text is the certificate packaging, the schedules differ."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseCompute.lean::phase_signExtendBlock",
+   "source": "PhaseCompute.lean::phase_halfBlock",
+   "chars": 157,
+   "source_chars": 216,
+   "pct": 73,
+   "class": "citation-shape",
+   "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseMemoryMachines.lean::phase_inputMachine",
+   "source": "PhaseMemoryMachines.lean::phase_loadMachine",
+   "chars": 259,
+   "source_chars": 359,
+   "pct": 72,
+   "class": "sibling-uniformity",
+   "note": "Per-instruction phase certificates: each packages its own schedule through `phase_machine_ofBlock` (or the branch/fork form) and `PhasePost`; the shared text is the certificate packaging, the schedules differ."
+  },
+  {
+   "status": "NEW",
+   "target": "Phases.lean::exists_phase",
+   "source": "PhaseControl.lean::PhaseMachine.weaken",
+   "chars": 125,
+   "source_chars": 175,
+   "pct": 71,
+   "class": "citation-shape",
+   "note": "The target `exists_phase` applies `PhaseMachine.weaken` per instruction; the shared text is that call's argument list."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseOperations.lean::phase_halfSchedule",
+   "source": "PhaseOperations.lean::phase_inputSchedule",
+   "chars": 288,
+   "source_chars": 404,
+   "pct": 71,
+   "class": "citation-shape",
+   "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseSchedules.lean::phase_binarySchedule",
+   "source": "PhaseOperations.lean::phase_unarySchedule",
+   "chars": 115,
+   "source_chars": 163,
+   "pct": 71,
+   "class": "citation-shape",
+   "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseOperations.lean::phase_loadSchedule",
+   "source": "PhaseOperations.lean::phase_halfSchedule",
+   "chars": 269,
+   "source_chars": 383,
+   "pct": 70,
+   "class": "citation-shape",
+   "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseMemoryMachines.lean::phase_inputMachine",
+   "source": "PhaseMemoryMachines.lean::phase_halfMachine",
+   "chars": 223,
+   "source_chars": 321,
+   "pct": 69,
+   "class": "sibling-uniformity",
+   "note": "Per-instruction phase certificates: each packages its own schedule through `phase_machine_ofBlock` (or the branch/fork form) and `PhasePost`; the shared text is the certificate packaging, the schedules differ."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseSemantics.lean::phase_post_of_write",
+   "source": "PhaseBranchMachines.lean::phase_post_of_read",
+   "chars": 251,
+   "source_chars": 362,
+   "pct": 69,
+   "class": "parallel",
+   "note": "The exact `xstep` endpoint for a memory-writing and a reading instruction, each through `xstep_def` and its own `effect` case."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseMemoryMachines.lean::phase_loadMachine",
+   "source": "PhaseMemoryMachines.lean::phase_halfMachine",
+   "chars": 222,
+   "source_chars": 321,
+   "pct": 69,
+   "class": "sibling-uniformity",
+   "note": "Per-instruction phase certificates: each packages its own schedule through `phase_machine_ofBlock` (or the branch/fork form) and `PhasePost`; the shared text is the certificate packaging, the schedules differ."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseSchedules.lean::phase_fetchBlock",
+   "source": "PhaseSchedules.lean::phase_storeImmediateBlock",
+   "chars": 202,
+   "source_chars": 294,
+   "pct": 69,
+   "class": "citation-shape",
+   "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseCore.lean::PhaseFrame.cfg",
+   "source": "PhaseCore.lean::PhaseFrame.ofCfg",
+   "chars": 94,
+   "source_chars": 138,
+   "pct": 68,
+   "class": "sibling-uniformity",
+   "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseInput.lean::phase_inputRow",
+   "source": "PhaseRows.lean::phase_wordRow",
+   "chars": 151,
+   "source_chars": 223,
+   "pct": 68,
+   "class": "citation-shape",
+   "note": "Instances of the shared row placement `phase_wordRow` (or `phase_nativeRow`), each with its own native row from jobs A/C; the shared text is the placement obligations (`Cfg.select_eq`, `phase_wordAt_select`, `phase_wordAt_frame`, `phase_scratch_select`)."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseMemory.lean::PhaseFrame.assign",
+   "source": "PhaseRows.lean::PhaseFrame.write",
+   "chars": 87,
+   "source_chars": 129,
+   "pct": 67,
+   "class": "sibling-uniformity",
+   "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseEmit.lean::PhaseFrame.emit",
+   "source": "PhaseRows.lean::PhaseFrame.write",
+   "chars": 87,
+   "source_chars": 129,
+   "pct": 67,
+   "class": "sibling-uniformity",
+   "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseInput.lean::phase_inputRow",
+   "source": "PhaseRows.lean::phase_arithRow",
+   "chars": 445,
+   "source_chars": 664,
+   "pct": 67,
+   "class": "citation-shape",
+   "note": "Instances of the shared row placement `phase_wordRow` (or `phase_nativeRow`), each with its own native row from jobs A/C; the shared text is the placement obligations (`Cfg.select_eq`, `phase_wordAt_select`, `phase_wordAt_frame`, `phase_scratch_select`)."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseCore.lean::PhaseFrame.ofCfg",
+   "source": "PhaseRows.lean::PhaseFrame.write",
+   "chars": 86,
+   "source_chars": 129,
+   "pct": 67,
+   "class": "sibling-uniformity",
+   "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseCore.lean::PhaseFrame.cfg",
+   "source": "PhaseRows.lean::PhaseFrame.write",
+   "chars": 86,
+   "source_chars": 129,
+   "pct": 67,
+   "class": "sibling-uniformity",
+   "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseMemoryMachines.lean::phase_loadMachine",
+   "source": "PhaseMemoryMachines.lean::phase_oneMachine",
+   "chars": 228,
+   "source_chars": 343,
+   "pct": 66,
+   "class": "sibling-uniformity",
+   "note": "Per-instruction phase certificates: each packages its own schedule through `phase_machine_ofBlock` (or the branch/fork form) and `PhasePost`; the shared text is the certificate packaging, the schedules differ."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseEmit.lean::phase_emitBlock",
+   "source": "PhaseControl.lean::phase_reaches_zero",
+   "chars": 124,
+   "source_chars": 190,
+   "pct": 65,
+   "class": "citation-shape",
+   "note": "The emission block composes the zero-time prefix `phase_reaches_zero`; shared text is that citation."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseRows.lean::PhaseFrame.write",
+   "source": "PhaseEmit.lean::PhaseFrame.emit",
+   "chars": 87,
+   "source_chars": 134,
+   "pct": 65,
+   "class": "sibling-uniformity",
+   "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseMemory.lean::PhaseFrame.assign",
+   "source": "PhaseEmit.lean::PhaseFrame.emit",
+   "chars": 87,
+   "source_chars": 134,
+   "pct": 65,
+   "class": "sibling-uniformity",
+   "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseMemory.lean::phaseMemoryEntries",
+   "source": "PhaseBlock.lean::PhaseState",
+   "chars": 66,
+   "source_chars": 102,
+   "pct": 65,
+   "class": "shape-match",
+   "note": "Two small definitions over the register specification `regs`; shared text is the binder list."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseCore.lean::PhaseFrame.ofCfg",
+   "source": "PhaseEmit.lean::PhaseFrame.emit",
+   "chars": 86,
+   "source_chars": 134,
+   "pct": 64,
+   "class": "sibling-uniformity",
+   "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseCore.lean::PhaseFrame.cfg",
+   "source": "PhaseEmit.lean::PhaseFrame.emit",
+   "chars": 86,
+   "source_chars": 134,
+   "pct": 64,
+   "class": "sibling-uniformity",
+   "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseCore.lean::PhaseFrame.ofCfg",
+   "source": "PhaseCore.lean::PhaseFrame.cfg",
+   "chars": 94,
+   "source_chars": 147,
+   "pct": 64,
+   "class": "sibling-uniformity",
+   "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseMemoryMachines.lean::phase_oneMachine",
+   "source": "PhaseMemoryMachines.lean::phase_loadMachine",
+   "chars": 228,
+   "source_chars": 359,
+   "pct": 64,
+   "class": "sibling-uniformity",
+   "note": "Per-instruction phase certificates: each packages its own schedule through `phase_machine_ofBlock` (or the branch/fork form) and `PhasePost`; the shared text is the certificate packaging, the schedules differ."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseMemoryMachines.lean::phase_halfMachine",
+   "source": "PhaseMemoryMachines.lean::phase_inputMachine",
+   "chars": 223,
+   "source_chars": 356,
+   "pct": 63,
+   "class": "sibling-uniformity",
+   "note": "Per-instruction phase certificates: each packages its own schedule through `phase_machine_ofBlock` (or the branch/fork form) and `PhasePost`; the shared text is the certificate packaging, the schedules differ."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseRows.lean::phase_unaryRow",
+   "source": "PhaseRows.lean::phase_arithRow",
+   "chars": 415,
+   "source_chars": 664,
+   "pct": 62,
+   "class": "citation-shape",
+   "note": "Instances of the shared row placement `phase_wordRow` (or `phase_nativeRow`), each with its own native row from jobs A/C; the shared text is the placement obligations (`Cfg.select_eq`, `phase_wordAt_select`, `phase_wordAt_frame`, `phase_scratch_select`)."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseBranching.lean::phase_machine_ofBranch",
+   "source": "PhaseControl.lean::phase_machine_ofBlock",
+   "chars": 806,
+   "source_chars": 1290,
+   "pct": 62,
+   "class": "parallel",
+   "note": "DISCLOSED FOR THE AUDIT. One-exit and two-exit composition: the structures `PhaseBlock` (one exit), `PhaseBranch` (two exits) and `PhaseRow`, their `seq` compositions, and their `phase_machine_of*` packagings share their text and differ in the exit set and the cut. One structure over a finite exit family would merge them; the fill kept two because the two-exit form adds `distinct` and the flag-selected endpoint. Raised in the pack for the auditor's judgment."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseRows.lean::PhaseFrame.write",
+   "source": "PhaseCore.lean::PhaseFrame.ofCfg",
+   "chars": 86,
+   "source_chars": 138,
+   "pct": 62,
+   "class": "sibling-uniformity",
+   "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseMemory.lean::PhaseFrame.assign",
+   "source": "PhaseCore.lean::PhaseFrame.ofCfg",
+   "chars": 86,
+   "source_chars": 138,
+   "pct": 62,
+   "class": "sibling-uniformity",
+   "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseEmit.lean::PhaseFrame.emit",
+   "source": "PhaseCore.lean::PhaseFrame.ofCfg",
+   "chars": 86,
+   "source_chars": 138,
+   "pct": 62,
+   "class": "sibling-uniformity",
+   "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseMemoryMachines.lean::phase_halfMachine",
+   "source": "PhaseMemoryMachines.lean::phase_loadMachine",
+   "chars": 222,
+   "source_chars": 359,
+   "pct": 62,
+   "class": "sibling-uniformity",
+   "note": "Per-instruction phase certificates: each packages its own schedule through `phase_machine_ofBlock` (or the branch/fork form) and `PhasePost`; the shared text is the certificate packaging, the schedules differ."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseOperations.lean::phase_storeSchedule",
+   "source": "PhaseOperations.lean::phase_loadSchedule",
+   "chars": 391,
+   "source_chars": 641,
+   "pct": 61,
+   "class": "citation-shape",
+   "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseCompute.lean::phase_inputBlock",
+   "source": "PhaseAtoms.lean::phase_intBlock",
+   "chars": 269,
+   "source_chars": 441,
+   "pct": 61,
+   "class": "citation-shape",
+   "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseMemoryMachines.lean::phase_storeMachine",
+   "source": "PhaseMemoryMachines.lean::phase_loadMachine",
+   "chars": 217,
+   "source_chars": 359,
+   "pct": 60,
+   "class": "sibling-uniformity",
+   "note": "Per-instruction phase certificates: each packages its own schedule through `phase_machine_ofBlock` (or the branch/fork form) and `PhasePost`; the shared text is the certificate packaging, the schedules differ."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseCompute.lean::phase_halfBlock",
+   "source": "PhaseCompute.lean::phase_signExtendBlock",
+   "chars": 157,
+   "source_chars": 260,
+   "pct": 60,
+   "class": "citation-shape",
+   "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
+  },
+  {
+   "status": "NEW",
+   "target": "NDHost.lean::guessRunCfg",
+   "source": "PhaseCore.lean::PhaseFrame.ofCfg",
+   "chars": 83,
+   "source_chars": 138,
+   "pct": 60,
+   "class": "sibling-uniformity",
+   "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  },
+  {
+   "status": "NEW",
+   "target": "NDHost.lean::guessRunCfg",
+   "source": "PhaseCore.lean::PhaseFrame.cfg",
+   "chars": 88,
+   "source_chars": 147,
+   "pct": 60,
+   "class": "sibling-uniformity",
+   "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseCoin.lean::phase_encoded_heads",
+   "source": "PhaseRegister.lean::phase_frame_scratch",
+   "chars": 95,
+   "source_chars": 159,
+   "pct": 60,
+   "class": "shape-match",
+   "note": "Two head/scratch facts from `encodes_iff`; shared text is the reader citation."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseCompute.lean::phase_sourceBlock",
+   "source": "PhaseAtoms.lean::phase_intBlock",
+   "chars": 259,
+   "source_chars": 441,
+   "pct": 59,
+   "class": "citation-shape",
+   "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseOperations.lean::phase_storeSchedule",
+   "source": "PhaseSchedules.lean::phase_binarySchedule",
+   "chars": 447,
+   "source_chars": 763,
+   "pct": 59,
+   "class": "citation-shape",
+   "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseRows.lean::PhaseFrame.write",
+   "source": "PhaseCore.lean::PhaseFrame.cfg",
+   "chars": 86,
+   "source_chars": 147,
+   "pct": 59,
+   "class": "sibling-uniformity",
+   "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseMemory.lean::PhaseFrame.assign",
+   "source": "PhaseCore.lean::PhaseFrame.cfg",
+   "chars": 86,
+   "source_chars": 147,
+   "pct": 59,
+   "class": "sibling-uniformity",
+   "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseEmit.lean::PhaseFrame.emit",
+   "source": "PhaseCore.lean::PhaseFrame.cfg",
+   "chars": 86,
+   "source_chars": 147,
+   "pct": 59,
+   "class": "sibling-uniformity",
+   "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseBlock.lean::PhaseBlock",
+   "source": "PhaseCore.lean::PhaseRow",
+   "chars": 175,
+   "source_chars": 300,
+   "pct": 58,
+   "class": "parallel",
+   "note": "DISCLOSED FOR THE AUDIT. One-exit and two-exit composition: the structures `PhaseBlock` (one exit), `PhaseBranch` (two exits) and `PhaseRow`, their `seq` compositions, and their `phase_machine_of*` packagings share their text and differ in the exit set and the cut. One structure over a finite exit family would merge them; the fill kept two because the two-exit form adds `distinct` and the flag-selected endpoint. Raised in the pack for the auditor's judgment."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseMemoryMachines.lean::phase_storeMachine",
+   "source": "PhaseMemoryMachines.lean::phase_oneMachine",
+   "chars": 200,
+   "source_chars": 343,
+   "pct": 58,
+   "class": "sibling-uniformity",
+   "note": "Per-instruction phase certificates: each packages its own schedule through `phase_machine_ofBlock` (or the branch/fork form) and `PhasePost`; the shared text is the certificate packaging, the schedules differ."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseCompute.lean::phase_arithBlock",
+   "source": "PhaseAtoms.lean::phase_intBlock",
+   "chars": 257,
+   "source_chars": 441,
+   "pct": 58,
+   "class": "citation-shape",
+   "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
+  },
+  {
+   "status": "NEW",
+   "target": "NDHost.lean::streamStartCfg",
+   "source": "PhaseRows.lean::PhaseFrame.write",
+   "chars": 75,
+   "source_chars": 129,
+   "pct": 58,
+   "class": "sibling-uniformity",
+   "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  },
+  {
+   "status": "NEW",
+   "target": "NDHost.lean::guessRunCfg",
+   "source": "PhaseRows.lean::PhaseFrame.write",
+   "chars": 75,
+   "source_chars": 129,
+   "pct": 58,
+   "class": "sibling-uniformity",
+   "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseAtoms.lean::phase_constBlock",
+   "source": "PhaseAtoms.lean::phase_keyBlock",
+   "chars": 137,
+   "source_chars": 237,
+   "pct": 58,
+   "class": "citation-shape",
+   "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseMemoryMachines.lean::phase_oneMachine",
+   "source": "PhaseMemoryMachines.lean::phase_halfMachine",
+   "chars": 185,
+   "source_chars": 321,
+   "pct": 58,
+   "class": "sibling-uniformity",
+   "note": "Per-instruction phase certificates: each packages its own schedule through `phase_machine_ofBlock` (or the branch/fork form) and `PhasePost`; the shared text is the certificate packaging, the schedules differ."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseSchedules.lean::phase_binarySchedule",
+   "source": "PhaseOperations.lean::phase_storeSchedule",
+   "chars": 447,
+   "source_chars": 777,
+   "pct": 58,
+   "class": "citation-shape",
+   "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseMemoryMachines.lean::phase_binaryMachine",
+   "source": "PhaseMemoryMachines.lean::phase_loadMachine",
+   "chars": 203,
+   "source_chars": 359,
+   "pct": 57,
+   "class": "sibling-uniformity",
+   "note": "Per-instruction phase certificates: each packages its own schedule through `phase_machine_ofBlock` (or the branch/fork form) and `PhasePost`; the shared text is the certificate packaging, the schedules differ."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseMemoryMachines.lean::phase_binaryMachine",
+   "source": "PhaseMemoryMachines.lean::phase_oneMachine",
+   "chars": 192,
+   "source_chars": 343,
+   "pct": 56,
+   "class": "sibling-uniformity",
+   "note": "Per-instruction phase certificates: each packages its own schedule through `phase_machine_ofBlock` (or the branch/fork form) and `PhasePost`; the shared text is the certificate packaging, the schedules differ."
+  },
+  {
+   "status": "NEW",
+   "target": "NDHost.lean::streamStartCfg",
+   "source": "PhaseEmit.lean::PhaseFrame.emit",
+   "chars": 75,
+   "source_chars": 134,
+   "pct": 56,
+   "class": "sibling-uniformity",
+   "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  },
+  {
+   "status": "NEW",
+   "target": "NDHost.lean::guessRunCfg",
+   "source": "PhaseEmit.lean::PhaseFrame.emit",
+   "chars": 75,
+   "source_chars": 134,
+   "pct": 56,
+   "class": "sibling-uniformity",
+   "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseCore.lean::PhaseRow",
+   "source": "PhaseBlock.lean::PhaseBlock",
+   "chars": 175,
+   "source_chars": 313,
+   "pct": 56,
+   "class": "parallel",
+   "note": "DISCLOSED FOR THE AUDIT. One-exit and two-exit composition: the structures `PhaseBlock` (one exit), `PhaseBranch` (two exits) and `PhaseRow`, their `seq` compositions, and their `phase_machine_of*` packagings share their text and differ in the exit set and the cut. One structure over a finite exit family would merge them; the fill kept two because the two-exit form adds `distinct` and the flag-selected endpoint. Raised in the pack for the auditor's judgment."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseCompute.lean::phase_inputBlock",
+   "source": "PhaseCompute.lean::phase_arithBlock",
+   "chars": 322,
+   "source_chars": 579,
+   "pct": 56,
+   "class": "citation-shape",
+   "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
+  },
+  {
+   "status": "NEW",
+   "target": "NDHost.lean::streamStartCfg",
+   "source": "PhaseCore.lean::PhaseFrame.cfg",
+   "chars": 81,
+   "source_chars": 147,
+   "pct": 55,
+   "class": "sibling-uniformity",
+   "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  },
+  {
+   "status": "NEW",
+   "target": "NDHost.lean::streamStartCfg",
+   "source": "PhaseCore.lean::PhaseFrame.ofCfg",
+   "chars": 76,
+   "source_chars": 138,
+   "pct": 55,
+   "class": "sibling-uniformity",
+   "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseTests.lean::phase_testBlock",
+   "source": "PhaseCompute.lean::phase_sourceBlock",
+   "chars": 188,
+   "source_chars": 343,
+   "pct": 55,
+   "class": "citation-shape",
+   "note": "Both compose the operand fetch atoms before their native row; the test then uses the two-exit sign/nonzero row."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseAtoms.lean::phase_keyBlock",
+   "source": "PhaseAtoms.lean::phase_constBlock",
+   "chars": 137,
+   "source_chars": 250,
+   "pct": 55,
+   "class": "citation-shape",
+   "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseMemoryMachines.lean::phase_halfMachine",
+   "source": "PhaseMemoryMachines.lean::phase_oneMachine",
+   "chars": 185,
+   "source_chars": 343,
+   "pct": 54,
+   "class": "sibling-uniformity",
+   "note": "Per-instruction phase certificates: each packages its own schedule through `phase_machine_ofBlock` (or the branch/fork form) and `PhasePost`; the shared text is the certificate packaging, the schedules differ."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseEmit.lean::phase_emitMachine",
+   "source": "PhaseBranchMachines.lean::phase_bltzMachine",
+   "chars": 283,
+   "source_chars": 529,
+   "pct": 53,
+   "class": "sibling-uniformity",
+   "note": "Per-instruction phase certificates: each packages its own schedule through `phase_machine_ofBlock` (or the branch/fork form) and `PhasePost`; the shared text is the certificate packaging, the schedules differ."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseMemoryMachines.lean::phase_inputMachine",
+   "source": "PhaseMemoryMachines.lean::phase_oneMachine",
+   "chars": 183,
+   "source_chars": 343,
+   "pct": 53,
+   "class": "sibling-uniformity",
+   "note": "Per-instruction phase certificates: each packages its own schedule through `phase_machine_ofBlock` (or the branch/fork form) and `PhasePost`; the shared text is the certificate packaging, the schedules differ."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseTests.lean::PhaseBranch",
+   "source": "PhaseCore.lean::PhaseRow",
+   "chars": 159,
+   "source_chars": 300,
+   "pct": 53,
+   "class": "parallel",
+   "note": "DISCLOSED FOR THE AUDIT. One-exit and two-exit composition: the structures `PhaseBlock` (one exit), `PhaseBranch` (two exits) and `PhaseRow`, their `seq` compositions, and their `phase_machine_of*` packagings share their text and differ in the exit set and the cut. One structure over a finite exit family would merge them; the fill kept two because the two-exit form adds `distinct` and the flag-selected endpoint. Raised in the pack for the auditor's judgment."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseOperations.lean::phase_storeSchedule",
+   "source": "PhaseOperations.lean::phase_halfSchedule",
+   "chars": 198,
+   "source_chars": 383,
+   "pct": 52,
+   "class": "citation-shape",
+   "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseMemoryMachines.lean::phase_oneMachine",
+   "source": "PhaseMemoryMachines.lean::phase_inputMachine",
+   "chars": 183,
+   "source_chars": 356,
+   "pct": 51,
+   "class": "sibling-uniformity",
+   "note": "Per-instruction phase certificates: each packages its own schedule through `phase_machine_ofBlock` (or the branch/fork form) and `PhasePost`; the shared text is the certificate packaging, the schedules differ."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseTests.lean::phase_testBlock",
+   "source": "PhaseRows.lean::phase_nativeRow",
+   "chars": 103,
+   "source_chars": 203,
+   "pct": 51,
+   "class": "citation-shape",
+   "note": "The test block places its native test through `phase_nativeRow`'s obligations."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseMemory.lean::phase_assignRow",
+   "source": "PhaseMemory.lean::phase_frame_assign_encodes",
+   "chars": 103,
+   "source_chars": 203,
+   "pct": 51,
+   "class": "citation-shape",
+   "note": "The assignment row cites the encoding lemma for its endpoint."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseMemoryMachines.lean::phase_loadMachine",
+   "source": "PhaseMemoryMachines.lean::phase_binaryMachine",
+   "chars": 203,
+   "source_chars": 401,
+   "pct": 51,
+   "class": "sibling-uniformity",
+   "note": "Per-instruction phase certificates: each packages its own schedule through `phase_machine_ofBlock` (or the branch/fork form) and `PhasePost`; the shared text is the certificate packaging, the schedules differ."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseOperations.lean::phase_loadSchedule",
+   "source": "PhaseOperations.lean::phase_storeSchedule",
+   "chars": 391,
+   "source_chars": 777,
+   "pct": 50,
+   "class": "citation-shape",
+   "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseCore.lean::PhaseFrame.cfg",
+   "source": "NDHost.lean::streamStartCfg",
+   "chars": 81,
+   "source_chars": 161,
+   "pct": 50,
+   "class": "sibling-uniformity",
+   "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseCoin.lean::phase_choiceMachine",
+   "source": "PhaseControl.lean::phase_reaches_zero",
+   "chars": 95,
+   "source_chars": 190,
+   "pct": 50,
+   "class": "citation-shape",
+   "note": "The coin's choice machine composes the zero-time prefix `phase_reaches_zero`; shared text is that citation."
+  }
+ ]
+}

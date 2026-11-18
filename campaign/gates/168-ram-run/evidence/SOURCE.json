@@ -1,0 +1,438 @@
+{
+ "head": "a6199066dcefcc0ab5cbf6d424693bba0cc4cae0",
+ "base": "3d2a6960df361961479c7ce5d364d83b6320d1d5",
+ "added": [
+  "WordRAM.Sim.RunSetup.boundCost",
+  "WordRAM.Sim.RunSetup.boundCost_eq",
+  "WordRAM.Sim.RunSetup.time_total_le",
+  "WordRAM.Sim.RunSetup.space_total_le",
+  "WordRAM.Sim.RunSetup.branch_run",
+  "WordRAM.Sim.runChoices",
+  "WordRAM.Sim.runChoices_eq",
+  "WordRAM.Sim.runChoices_zero",
+  "WordRAM.Sim.runChoices_length",
+  "WordRAM.Sim.runChoices_append",
+  "WordRAM.Sim.runChoices_succ",
+  "WordRAM.Sim.runChoices_head",
+  "WordRAM.Sim.runChoices_const",
+  "WordRAM.Sim.runChoices_getD",
+  "WordRAM.Sim.runChoices_one",
+  "WordRAM.Sim.runChoices_take",
+  "WordRAM.Sim.RunSetup.phaseCost",
+  "WordRAM.Sim.RunSetup.phaseCost_eq",
+  "WordRAM.Sim.RunSetup.phase_cost_le",
+  "WordRAM.Sim.RunSetup.blockTime",
+  "WordRAM.Sim.RunSetup.blockTime_eq",
+  "WordRAM.Sim.RunSetup.blockRadius",
+  "WordRAM.Sim.RunSetup.blockRadius_eq",
+  "WordRAM.Sim.RunSetup.phase_time_le",
+  "WordRAM.Sim.RunSetup.phase_radius_le",
+  "WordRAM.Sim.RunSetup.blockTime_mono",
+  "WordRAM.Sim.RunSetup.blockRadius_mono",
+  "WordRAM.Sim.RunDriver",
+  "WordRAM.Sim.RunDriver.Follows",
+  "WordRAM.Sim.RunDriver.follows_iff",
+  "WordRAM.Sim.RunDriver.Respects",
+  "WordRAM.Sim.RunDriver.respects_iff",
+  "WordRAM.Sim.RunDriver.ofSchedule",
+  "WordRAM.Sim.RunDriver.ofSchedule_follows",
+  "WordRAM.Sim.RunDriver.ofCoins",
+  "WordRAM.Sim.RunDriver.ofCoins_respects",
+  "WordRAM.Sim.encodes_congr",
+  "WordRAM.Sim.runBank",
+  "WordRAM.Sim.runBank_encodes",
+  "WordRAM.Sim.encodes_mapState",
+  "WordRAM.Sim.encodes_embed",
+  "WordRAM.Sim.runBank_reconstruct",
+  "WordRAM.Sim.runBank_embed",
+  "WordRAM.Sim.runEntry_reconstruct",
+  "WordRAM.Sim.runProgram_immBound",
+  "WordRAM.Sim.RunSetup",
+  "WordRAM.Sim.exists_runSetup",
+  "WordRAM.Sim.runPosition",
+  "WordRAM.Sim.runPosition_fetch",
+  "WordRAM.Sim.RunSetup.Index",
+  "WordRAM.Sim.RunSetup.index_eq",
+  "WordRAM.Sim.RunSetup.PhaseState",
+  "WordRAM.Sim.RunSetup.phaseState_none",
+  "WordRAM.Sim.RunSetup.phaseState_some",
+  "WordRAM.Sim.RunSetup.phaseFintype",
+  "WordRAM.Sim.RunSetup.phaseDecidableEq",
+  "WordRAM.Sim.RunSetup.phase",
+  "WordRAM.Sim.RunSetup.phase_none",
+  "WordRAM.Sim.RunSetup.phase_some",
+  "WordRAM.Sim.RunSetup.State",
+  "WordRAM.Sim.RunSetup.state_eq",
+  "WordRAM.Sim.RunSetup.resumeTag",
+  "WordRAM.Sim.RunSetup.resumeTag_eq",
+  "WordRAM.Sim.RunSetup.redirect",
+  "WordRAM.Sim.RunSetup.redirect_none",
+  "WordRAM.Sim.RunSetup.redirect_some",
+  "WordRAM.Sim.RunSetup.host",
+  "WordRAM.Sim.RunSetup.host_fixChoice",
+  "WordRAM.Sim.RunSetup.host_q₀",
+  "WordRAM.Sim.RunSetup.host_runWith",
+  "WordRAM.Sim.RunSetup.finHost",
+  "WordRAM.Sim.RunSetup.run_execution",
+  "WordRAM.Sim.RunSetup.input_run",
+  "WordRAM.Sim.RunSetup.instruction_run",
+  "WordRAM.Sim.RunPhase",
+  "WordRAM.Sim.runPhase_of_instruction",
+  "WordRAM.Sim.runPhase_of_verdict",
+  "WordRAM.Sim.runVerdict_cases",
+  "WordRAM.Sim.exists_runPhase",
+  "WordRAM.Sim.RunPhase.branch_slice",
+  "WordRAM.Sim.RunPhase.branch_prefix",
+  "WordRAM.Sim.RunPhase.branch_prefix_choice",
+  "WordRAM.Sim.RunExecution",
+  "WordRAM.Sim.RunExecution.zero",
+  "WordRAM.Sim.RunExecution.of_verdict",
+  "WordRAM.Sim.RunExecution.prepend",
+  "WordRAM.Sim.RunExecution.completed",
+  "WordRAM.Sim.runEmbedND",
+  "WordRAM.Sim.runEmbedND_fixChoice",
+  "WordRAM.Sim.runSlice_avoids_entry",
+  "WordRAM.Sim.runWith_entry_slice",
+  "WordRAM.Sim.runDet_fixChoice",
+  "WordRAM.Sim.runEmbedND_runWith",
+  "WordRAM.Sim.runWith_replicate",
+  "WordRAM.Sim.source_pc_lt",
+  "WordRAM.Sim.source_step_coin_congr",
+  "WordRAM.Sim.RunCoinsAgree",
+  "WordRAM.Sim.runCoinsAgree_iff",
+  "WordRAM.Sim.runCoinsAgree_refl",
+  "WordRAM.Sim.runCoinsAgree_append_left",
+  "WordRAM.Sim.RunSourceTrace",
+  "WordRAM.Sim.RunSourceTrace.to_stepsIn",
+  "WordRAM.Sim.RunSourceTrace.bounded_by_halt",
+  "WordRAM.Sim.runCoinsAgree_append_bit",
+  "WordRAM.Sim.source_step_rd",
+  "WordRAM.Sim.source_verdict_not_coin",
+  "WordRAM.Sim.source_verdict_stream",
+  "WordRAM.Sim.RunCoinsSatisfy",
+  "WordRAM.Sim.runCoinsSatisfy_iff",
+  "WordRAM.Sim.runCoinsSatisfy_nil",
+  "WordRAM.Sim.runCoinsSatisfy_append",
+  "WordRAM.Sim.runNextCoins",
+  "WordRAM.Sim.runNextCoins_eq",
+  "WordRAM.Sim.runNextCoins_length",
+  "WordRAM.Sim.runNextCoins_prefix",
+  "WordRAM.Sim.runNextCoins_read",
+  "WordRAM.Sim.runNextCoins_satisfy",
+  "WordRAM.Sim.runSpace_eq_of_clamped_heads",
+  "WordRAM.Sim.runSpace_replicate",
+  "WordRAM.Sim.runEnvelope_append",
+  "WordRAM.Sim.runSpace_append_le",
+  "WordRAM.Sim.RunSetup.host_initCfg",
+  "WordRAM.Sim.RunSetup.startup_trajectory",
+  "WordRAM.Sim.RunSetup.startup_run",
+  "WordRAM.Sim.RunSetup.host_phase_run",
+  "WordRAM.Sim.RunSetup.host_phase_dispatch",
+  "WordRAM.Sim.RunSetup.resumeTag_of_step",
+  "WordRAM.Sim.RunSetup.phase_correct",
+  "WordRAM.Sim.RunSetup.phase_branch_prefix",
+  "WordRAM.Sim.RunSetup.host_slice_prefix",
+  "WordRAM.Sim.RunSetup.host_ordinary",
+  "WordRAM.Sim.RunSetup.host_verdict",
+  "WordRAM.wordSizeComputable_iff",
+  "Turing.embedEmitTM_q₀",
+  "Turing.NDTM.visitedWith_eq",
+  "Turing.NDTM.spaceUsedWith_eq"
+ ],
+ "removed": [],
+ "header_changed": [],
+ "definitions_changed": [],
+ "owner_source": [
+  {
+   "path": "TCSlib/Complexity/RAMSimulation.lean",
+   "sha256": "49e040ba524676a3ce9c8c1192c41027fbc825ac9c994864b23136986f064d59",
+   "total_changed_or_added_from_campaign": [],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/RunBounds.lean",
+   "sha256": "e6dab497ad57d011cb54b173faf8c58c070d9e47140d8143c863522b4578e72e",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.RunSetup.boundCost",
+    "WordRAM.Sim.RunSetup.boundCost_eq",
+    "WordRAM.Sim.RunSetup.time_total_le",
+    "WordRAM.Sim.RunSetup.space_total_le"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/RunBranch.lean",
+   "sha256": "419a7b32e68d96a67ae0318cc623fca4bae441a755649f79291bf3df2a8e78d5",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.RunSetup.branch_run"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/RunChoices.lean",
+   "sha256": "55e566aabcbc0d0d22eac455e818f607486ee6302396c51ab09cb7fe887add5b",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.runChoices",
+    "WordRAM.Sim.runChoices_eq",
+    "WordRAM.Sim.runChoices_zero",
+    "WordRAM.Sim.runChoices_length",
+    "WordRAM.Sim.runChoices_append",
+    "WordRAM.Sim.runChoices_succ",
+    "WordRAM.Sim.runChoices_head",
+    "WordRAM.Sim.runChoices_const",
+    "WordRAM.Sim.runChoices_getD",
+    "WordRAM.Sim.runChoices_one",
+    "WordRAM.Sim.runChoices_take"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/RunCosts.lean",
+   "sha256": "d6a947edf4b8992acf22d204a08b3ce78aad6ac32ed79835cbcf21195738b903",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.RunSetup.phaseCost",
+    "WordRAM.Sim.RunSetup.phaseCost_eq",
+    "WordRAM.Sim.RunSetup.phase_cost_le",
+    "WordRAM.Sim.RunSetup.blockTime",
+    "WordRAM.Sim.RunSetup.blockTime_eq",
+    "WordRAM.Sim.RunSetup.blockRadius",
+    "WordRAM.Sim.RunSetup.blockRadius_eq",
+    "WordRAM.Sim.RunSetup.phase_time_le",
+    "WordRAM.Sim.RunSetup.phase_radius_le",
+    "WordRAM.Sim.RunSetup.blockTime_mono",
+    "WordRAM.Sim.RunSetup.blockRadius_mono"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/RunDriver.lean",
+   "sha256": "995e81da9298b8b60cc1852c95b4c25a529792fc9432ae24d230c7f688df8ae7",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.RunDriver",
+    "WordRAM.Sim.RunDriver.Follows",
+    "WordRAM.Sim.RunDriver.follows_iff",
+    "WordRAM.Sim.RunDriver.Respects",
+    "WordRAM.Sim.RunDriver.respects_iff",
+    "WordRAM.Sim.RunDriver.ofSchedule",
+    "WordRAM.Sim.RunDriver.ofSchedule_follows",
+    "WordRAM.Sim.RunDriver.ofCoins",
+    "WordRAM.Sim.RunDriver.ofCoins_respects"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/RunEncoding.lean",
+   "sha256": "c76c796bb948571863497ef0d565e749fc090cfe1d224b67d4ee454a54e59ed3",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.encodes_congr",
+    "WordRAM.Sim.runBank",
+    "WordRAM.Sim.runBank_encodes",
+    "WordRAM.Sim.encodes_mapState",
+    "WordRAM.Sim.encodes_embed",
+    "WordRAM.Sim.runBank_reconstruct",
+    "WordRAM.Sim.runBank_embed",
+    "WordRAM.Sim.runEntry_reconstruct"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/RunHost.lean",
+   "sha256": "d2bcb2bb401594d42de2fb81b6a246487be93e0a860e248941d6d8a6b913bc6c",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.runProgram_immBound",
+    "WordRAM.Sim.RunSetup",
+    "WordRAM.Sim.exists_runSetup",
+    "WordRAM.Sim.runPosition",
+    "WordRAM.Sim.runPosition_fetch",
+    "WordRAM.Sim.RunSetup.Index",
+    "WordRAM.Sim.RunSetup.index_eq",
+    "WordRAM.Sim.RunSetup.PhaseState",
+    "WordRAM.Sim.RunSetup.phaseState_none",
+    "WordRAM.Sim.RunSetup.phaseState_some",
+    "WordRAM.Sim.RunSetup.phaseFintype",
+    "WordRAM.Sim.RunSetup.phaseDecidableEq",
+    "WordRAM.Sim.RunSetup.phase",
+    "WordRAM.Sim.RunSetup.phase_none",
+    "WordRAM.Sim.RunSetup.phase_some",
+    "WordRAM.Sim.RunSetup.State",
+    "WordRAM.Sim.RunSetup.state_eq",
+    "WordRAM.Sim.RunSetup.resumeTag",
+    "WordRAM.Sim.RunSetup.resumeTag_eq",
+    "WordRAM.Sim.RunSetup.redirect",
+    "WordRAM.Sim.RunSetup.redirect_none",
+    "WordRAM.Sim.RunSetup.redirect_some",
+    "WordRAM.Sim.RunSetup.host",
+    "WordRAM.Sim.RunSetup.host_fixChoice",
+    "WordRAM.Sim.RunSetup.host_q₀",
+    "WordRAM.Sim.RunSetup.host_runWith",
+    "WordRAM.Sim.RunSetup.finHost"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/RunInduction.lean",
+   "sha256": "ca9e563efe0b680be80f7906bc090b2f0d641b6f001a6af680dfb55e59d7f483",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.RunSetup.run_execution"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/RunInput.lean",
+   "sha256": "bfbd0ca90ef992febb12f20e8fe963d4637d0598eb6e1a43ad8e04fcaacaae68",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.RunSetup.input_run"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/RunInstruction.lean",
+   "sha256": "d8cd11ee9d63344ed1b7f0526364df607a1e8fe356a285e3d3d7d2f9ed080afc",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.RunSetup.instruction_run"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/RunPhase.lean",
+   "sha256": "cb7f2d1009de9fb6137b077afe29d2150d8fae8d0dd0f9c6862c8609501b23b9",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.RunPhase",
+    "WordRAM.Sim.runPhase_of_instruction",
+    "WordRAM.Sim.runPhase_of_verdict",
+    "WordRAM.Sim.runVerdict_cases",
+    "WordRAM.Sim.exists_runPhase",
+    "WordRAM.Sim.RunPhase.branch_slice",
+    "WordRAM.Sim.RunPhase.branch_prefix",
+    "WordRAM.Sim.RunPhase.branch_prefix_choice"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/RunPrefix.lean",
+   "sha256": "b9d7db0efc890ddc6f2b62a2f69459fba37990e8a3af7909939f445c02b4f26b",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.RunExecution",
+    "WordRAM.Sim.RunExecution.zero",
+    "WordRAM.Sim.RunExecution.of_verdict",
+    "WordRAM.Sim.RunExecution.prepend",
+    "WordRAM.Sim.RunExecution.completed"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/RunSlices.lean",
+   "sha256": "dc24444460d0b1ef53c243e3353400e4d5b951ca4d21556948082fd34ae5836f",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.runEmbedND",
+    "WordRAM.Sim.runEmbedND_fixChoice",
+    "WordRAM.Sim.runSlice_avoids_entry",
+    "WordRAM.Sim.runWith_entry_slice",
+    "WordRAM.Sim.runDet_fixChoice",
+    "WordRAM.Sim.runEmbedND_runWith",
+    "WordRAM.Sim.runWith_replicate"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/RunSource.lean",
+   "sha256": "751b789b80fdfa6f7c081480cd05e37885bcfbb6e5f698131bd2864d31fadff3",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.source_pc_lt",
+    "WordRAM.Sim.source_step_coin_congr",
+    "WordRAM.Sim.RunCoinsAgree",
+    "WordRAM.Sim.runCoinsAgree_iff",
+    "WordRAM.Sim.runCoinsAgree_refl",
+    "WordRAM.Sim.runCoinsAgree_append_left",
+    "WordRAM.Sim.RunSourceTrace",
+    "WordRAM.Sim.RunSourceTrace.to_stepsIn",
+    "WordRAM.Sim.RunSourceTrace.bounded_by_halt",
+    "WordRAM.Sim.runCoinsAgree_append_bit",
+    "WordRAM.Sim.source_step_rd",
+    "WordRAM.Sim.source_verdict_not_coin",
+    "WordRAM.Sim.source_verdict_stream",
+    "WordRAM.Sim.RunCoinsSatisfy",
+    "WordRAM.Sim.runCoinsSatisfy_iff",
+    "WordRAM.Sim.runCoinsSatisfy_nil",
+    "WordRAM.Sim.runCoinsSatisfy_append",
+    "WordRAM.Sim.runNextCoins",
+    "WordRAM.Sim.runNextCoins_eq",
+    "WordRAM.Sim.runNextCoins_length",
+    "WordRAM.Sim.runNextCoins_prefix",
+    "WordRAM.Sim.runNextCoins_read",
+    "WordRAM.Sim.runNextCoins_satisfy"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/RunSpace.lean",
+   "sha256": "85a1b075c4dff157c6c6562e2a6a24e143a3f00538cf829e942dc6e8b2025251",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.runSpace_eq_of_clamped_heads",
+    "WordRAM.Sim.runSpace_replicate",
+    "WordRAM.Sim.runEnvelope_append",
+    "WordRAM.Sim.runSpace_append_le"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/RunStartup.lean",
+   "sha256": "c530f913853d152a68a55eaffca6b163a6182a673358e7aa99c59bb13f404ac3",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.RunSetup.host_initCfg",
+    "WordRAM.Sim.RunSetup.startup_trajectory",
+    "WordRAM.Sim.RunSetup.startup_run"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Sim/RunStep.lean",
+   "sha256": "ac145d5c0e2998a015471b4dbe6b85269d18288278835c8a48b024e83789798c",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.Sim.RunSetup.host_phase_run",
+    "WordRAM.Sim.RunSetup.host_phase_dispatch",
+    "WordRAM.Sim.RunSetup.resumeTag_of_step",
+    "WordRAM.Sim.RunSetup.phase_correct",
+    "WordRAM.Sim.RunSetup.phase_branch_prefix",
+    "WordRAM.Sim.RunSetup.host_slice_prefix",
+    "WordRAM.Sim.RunSetup.host_ordinary",
+    "WordRAM.Sim.RunSetup.host_verdict"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/Simulation.lean",
+   "sha256": "2aab1624e840580c5e5ef0fd6088e2db5e097264340f6c7b79256b544f80cff7",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.exists_simulation",
+    "WordRAM.exists_ndSimulation"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/RAMSimulation/WordSize.lean",
+   "sha256": "ea33991bb00f0b0da7b695ee43824843836f3e2b070ce3ff60b18a74e879877e",
+   "total_changed_or_added_from_campaign": [
+    "WordRAM.wordSizeComputable_iff"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/TuringMachine/Build/Embed.lean",
+   "sha256": "c1d7a4cfdc9563981398b1cf177f5022245f5fb56d7c0d43416afca78cbd95d3",
+   "total_changed_or_added_from_campaign": [
+    "Turing.embedEmitTM_q₀"
+   ],
+   "removed_from_campaign": []
+  },
+  {
+   "path": "TCSlib/Complexity/TuringMachine/NondeterministicSpace.lean",
+   "sha256": "34acd5967b7bf749166b2a314b76d511aae8c87eac12983cc8e23eab76dbd0ba",
+   "total_changed_or_added_from_campaign": [
+    "Turing.NDTM.visitedWith_eq",
+    "Turing.NDTM.spaceUsedWith_eq"
+   ],
+   "removed_from_campaign": []
+  }
+ ]
+}

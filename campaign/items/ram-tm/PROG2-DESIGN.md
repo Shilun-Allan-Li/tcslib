@@ -16,8 +16,10 @@ itself, as designed in October (design §15c, §15d):
 - `x := coin`: the next coin, for nondeterministic and randomized programs.
 - `x := half e`: `⌊e / 2⌋`.
 
-These match the extended RAM's `rdIn`, `emit`, `coin` and `half` one for one, so each compiles to
-one instruction after its expression.
+These match the extended RAM's `rdIn`, `emit`, `coin` and `half` one for one. Each compiles to its
+expression, the one new instruction on `T₀`, and, when it writes a local, the assignment's
+two-instruction store: `inBit` and `half` take `e.size + 3` instructions, `coin` 3, `emit`
+`e.size + 1` (G167-06).
 
 ## 2. What was decided in October (Seyoon, 2026-10-12, "all four as recommended"), still binding
 
@@ -41,10 +43,12 @@ lines, elaborated then) states every new declaration over mirror types. In place
 | `XLimits extends Limits` with `input` | `Light.Limits` gains the field `input : List Bool` |
 | `XExec … σ σ' o r c` | `Light.Exec` gains the indices `o r`, and four rules |
 | `XEnds` | `Light.Ends`, same type, with `∃ σ' o r c` |
+| `XStmt.silent`, `XProgram.SilentSet`, `EndsIO.ofXEnds`, `MeetsIO.ofXMeets` | new, in `Light/IO.lean` (round 2, G167-01) |
 | `EndsIO`, `MeetsIO`, the 13 `EndsIO.*` rules, `EndsIO.callLast` | new, in a new vendored-adjacent file `Light/IO.lean` |
 | `XExec.det`, `coins_length_le`, `output_length_le` | new, in `Light/IO.lean` |
 | `AcceptsND`, `acceptProb` | new, in a Complexity-side file (gate 10's auditor preferred that home) |
-| `XFits` | not needed: `Input.arg1_le` already bounds `|x|` |
+| `XFits` | removed (round 2, N2): `Fits` is unchanged; `|x| ≤ lim.word` is a separate hypothesis |
+| `xcompileStmt` … `xcompileProgram_correct`, the deliverables | the in-place compiler (round 2, G167-02) |
 
 **New since October:**
 - **`Light/Renumber` (#381):** `Stmt.shift` gains four arms; `Exec.shift` gains four cases and
@@ -52,31 +56,26 @@ lines, elaborated then) states every new declaration over mirror types. In place
 - **`Light/TMProc` (#382, job G in flight):** its statement uses only `Meets`, whose type is
   unchanged. Its proof is safe provided it reasons through `Ends` rules and does not invert `Exec`
   directly (§6, risk 1).
-- **The deliverable for the bridge**, which October did not state:
-
-```lean
-/-- (proposed) A Light program run on the input `x` (the input is `lim.input`, `|x|` is argument
-1, argument 2 is `0`, memory `0`) that ends with output `o`, emits it from its compiled
-extended-RAM program, which halts within `ramSteps P true c + 1` steps: a constant plus a constant times the Light run's cost.
-`K₀` and `K₁` depend on the program text only, as `startCost` and `stepsPerStep` do. -/
-theorem Light.Compiler.haltsWithin_compileProgram {W : ℕ} {lim : Limits} {P : Program} {p0 : ℕ}
-    {x o : List Bool} {σ' : State} {c : ℕ}
-    (hx : lim.input = x) (hxw : (x.length : ℤ) ≤ lim.word)
-    (h : Exec lim P 0 (mainStmt p0) ⟨frame [0, x.length, 0], fun _ => 0⟩ σ' o [] c)
-    (hfit : Fits W lim (dispPos P true) (stackCells P lim)) :
-    ∃ t, t ≤ ramSteps P true c + 1 ∧
-      WordRAM.HaltsWithin (compileProgram P p0 true) x [] W t (decide (0 < σ'.loc 0)) o (3 * t)
-```
-
-With `progOut_eq` this gives `WordRAM.progOut (compileProgram P p0 true) (fun _ => W) x = o`.
-With `polyTimeComputable_progOut`, a Light program that halts within a polynomial cost on every
-input computes a `PolyTimeComputable` function.
-
-- **Why `HaltsWithin` directly.** The compiler's proof (`compileProgram_correct`) already
-  composes `Steps` runs (`steps_start`, `sim`, `steps_tail`) before converting to `exec`. Stated
-  at the `XSteps`/`HaltsWithin` level, it needs no converse from `exec` back to `Steps`.
-- **The footprint** `3·t` is `HaltsWithin.touches_le` (tier 0). The word size `W` is the
-  caller's, and `Fits` constrains it.
+- **The deliverables** (round 2, after gate 167; Seyoon, 2026-11-18: "all three now"). The
+  mirror `prog2/PROG2Mirror.lean.txt` states them over concrete compiler definitions:
+  - `haltsWithin_compileProgram`: a Light run of the outermost call on `x` that emits `o` and
+    consumes `r` makes the compiled program halt on `x`, on **every RAM stream that agrees with
+    `r`** (past its end read as `false`), within `ramSteps P true c` steps, with the verdict
+    "the result is positive", the output `o`, and the footprint `lowCell + lim.space`, which
+    **does not grow with time**. Coin-free runs qualify for every stream.
+  - `haltsWithin_of_streams`, `acceptsND_iff_haltsWithin`: Light halting on all streams of length
+    `T` gives RAM halting on every stream, and nondeterministic acceptance transfers: the two
+    hypotheses of `WordRAM.mem_NSPACE_of_accepts` (so `mem_NL_of_accepts`, with the constant
+    footprint).
+  - `acceptProb_eq_randProb`: acceptance probabilities transfer, for BPP consumers.
+  - `polyTimeComputable_of_runs`: a Light program whose coin-free runs emit `g x` within
+    polynomial Light cost computes a `PolyTimeComputable` `g`, **given** a length-dependent word
+    size `W` with a `WordSizeComputable` witness and `TW n + W n` polynomial. Round 1 claimed this
+    followed from polynomial cost alone, which is false: `Fits` gives only lower bounds on a
+    sufficient word size, and a loop of `n` squarings forces `W` exponential (G167-04).
+- **Lifting library routines** (G167-01): an `Ends` fact lifts to `EndsIO` for code that emits and
+  consumes nothing and calls only into a **silent set** of procedures, a condition stable under
+  appending and relocation, so `Light.Std`'s routines stay usable inside I/O programs.
 
 ## 4. The edit set (from October's `NOTES.md` §5, rechecked against today's tree)
 
@@ -124,14 +123,15 @@ proof must be extended in the same change. Instead:
    Its PR builds with the compiler's files still on `List Instr` and their four new
    `Stmt`/`Exec` cases left as `sorry`. That is a disclosed, temporary admission in vendored
    proofs, removed by H2.
-2. **Job H2, the compiler** (Codex, about 1,200–2,000 lines): the code type moves to
-   `List XInstr`, with the four new `compileStmt` and `sim_*` cases, `compileProgram_correct` with
-   the indices, and the deliverable of §3. Its gate checks that the vendored compiler is back to 0
-   admissions.
+2. **Job H2, the compiler** (Codex, about 1,800–3,000 lines with round 2's scope): the code type
+   moves to `List XInstr`, with the four new `compileStmt` and `sim_*` cases, `sim` with streams,
+   `compileProgram_correct` with the footprint, and the deliverables of §3, padding and
+   probabilities included. Its gate checks that the vendored compiler is back to 0 admissions.
 3. **(a4) and (b2) follow:** generic views and codecs as Light routines with `MeetsIO` specs, and
    `PolyTimeComputable g ⇒` a word-RAM program, from (b1) and this.
 
-**Size:** about 2.2k–3.6k lines, close to October's 1.4k–2.3k plus the compiler cases.
+**Size:** about 2.8k–4.6k lines after round 2's scope (October's 1.4k–2.3k, the compiler cases,
+streams, the footprint, and the padding and probability transfers).
 
 ## 6. Risks
 
@@ -162,3 +162,9 @@ for the argument cell holding `|x|` (`Input.arg1_le`); the mirror carries it. Th
    inversions.
 3. **`AcceptsND` and `acceptProb`:** state them in this round, as October did (*recommended*: they
    cost little and serve NL and BPP consumers), or defer them.
+
+### Round 2 (gate 167 HOLD: 0/4/2)
+
+Seyoon, 2026-11-18: H2's compiler theorem covers **all three** of the auditor's parts: coin
+streams, a footprint independent of time, and the padding and probability interface. The
+round-2 mirror answers G167-01 to G167-06 (`gates/167-prog2-statements/resolutions.md`).
