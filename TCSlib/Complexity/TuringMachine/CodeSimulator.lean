@@ -6051,22 +6051,6 @@ private def canonStageHaltTM (M : ℕ) : MultiTapeTM M Bool Bool where
   q₀ := true
   tr := fun _ _ _ => ⟨0, fun _ => (none, 0), none, none⟩
 
-/-- The fixed-width increment adds one to the binary value. -/
-private lemma canonStageInc_value : ∀ (w v : List Bool), incFixed w = some v →
-    Nat.ofDigits 2 (v.map Bool.toNat) = Nat.ofDigits 2 (w.map Bool.toNat) + 1
-  | [], v, h => Option.noConfusion (incFixed_nil.symm.trans h)
-  | false :: w, v, h => by
-    obtain rfl : true :: w = v := Option.some.inj ((incFixed_false_cons w).symm.trans h)
-    simp only [List.map_cons, Nat.ofDigits_cons]
-    simp only [Bool.toNat_true, Bool.toNat_false]
-    omega
-  | true :: w, v, h => by
-    obtain ⟨z, hz, rfl⟩ :=
-      Option.map_eq_some_iff.mp ((incFixed_true_cons w).symm.trans h)
-    simp only [List.map_cons, Nat.ofDigits_cons, canonStageInc_value w z hz]
-    simp only [Bool.toNat_true, Bool.toNat_false]
-    ring
-
 /-- A trailing `false` pad keeps the binary value. -/
 private lemma canonStagePad_value (w : List Bool) :
     Nat.ofDigits 2 ((w ++ [false]).map Bool.toNat) = Nat.ofDigits 2 (w.map Bool.toNat) := by
@@ -6797,7 +6781,7 @@ private lemma canonStageFrontSpec {M mU : ℕ} {SU : Type} [Fintype SU] [Decidab
     rw [hlapp] at h1
     exact h1
   have hvval : Nat.ofDigits 2 (v.map Bool.toNat) = counterValue w + 1 := by
-    rw [canonStageInc_value _ v hv, canonStagePad_value, ← counterValue_eq]
+    rw [incFixed_value _ v hv, canonStagePad_value, ← counterValue_eq]
   obtain ⟨hB0h, hB0hp, hB0c, hB0cp, hB0o⟩ :=
     canonStageBank_fields M header ctrOuter hhc (x := x)
       (some SweepPhase.sweep) d.inputPos (FinTM.bufferTape []) 0 w

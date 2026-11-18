@@ -5,6 +5,7 @@ Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.TuringMachine.Simulation
 import TCSlib.Complexity.TuringMachine.StateRenaming
+import Mathlib.Data.Nat.Digits.Defs
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -199,6 +200,25 @@ theorem incFixed_length {w v : List Bool} (h : incFixed w = some v) : v.length =
         rw [he, Option.map_some, Option.some.injEq] at h
         subst v
         rw [List.length_cons, List.length_cons, ih he]
+
+/-- **The increment adds one:** if `incFixed w = some v`, the little-endian value of `v` is that
+of `w` plus one.
+
+**Proof sketch.** Induct on `w` through the three case equations. The empty word overflows, so
+there is nothing to show. A low `false` becomes `true`, adding one. A low `true` becomes `false`
+over the incremented tail, whose value grows by one, so the value grows by `2 - 1 = 1`. -/
+theorem incFixed_value : ∀ (w v : List Bool), incFixed w = some v →
+    Nat.ofDigits 2 (v.map Bool.toNat) = Nat.ofDigits 2 (w.map Bool.toNat) + 1
+  | [], v, h => Option.noConfusion (incFixed_nil.symm.trans h)
+  | false :: w, v, h => by
+    obtain rfl : true :: w = v := Option.some.inj ((incFixed_false_cons w).symm.trans h)
+    simp only [List.map_cons, Nat.ofDigits_cons, Bool.toNat_true, Bool.toNat_false]
+    omega
+  | true :: w, v, h => by
+    obtain ⟨z, hz, rfl⟩ := Option.map_eq_some_iff.mp ((incFixed_true_cons w).symm.trans h)
+    simp only [List.map_cons, Nat.ofDigits_cons, incFixed_value w z hz, Bool.toNat_true,
+      Bool.toNat_false]
+    omega
 
 /-- `Turing.incFixed` carries through a prefix of `true` bits: the prefix
 `1ⁿ` becomes `0ⁿ` and the remainder `w` is incremented, the width is kept,
