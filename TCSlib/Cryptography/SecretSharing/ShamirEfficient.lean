@@ -135,6 +135,10 @@ def partyEmb (π : ShamirParams) : Fin π.n ↪ Party (ZMod π.p) :=
         at this
       exact Fin.ext (by omega)⟩
 
+/-- `partyEmb π i = ⟨i + 1, _⟩`. -/
+theorem partyEmb_apply (π : ShamirParams) (i : Fin π.n) :
+    ((partyEmb π i : Party (ZMod π.p)) : ZMod π.p) = (((i : ℕ) + 1 : ℕ) : ZMod π.p) := rfl
+
 /-- `label (partyEmb π i) = i + 1`. -/
 theorem label_partyEmb (π : ShamirParams) (i : Fin π.n) :
     label (partyEmb π i) = (((i : ℕ) + 1 : ℕ) : ZMod π.p) := rfl
@@ -831,6 +835,10 @@ theorem shamirAdm_iff (b : PolyExpr) (κ : ℕ) (π : ShamirParams) :
 def coinModulus (b : PolyExpr) (κ : ℕ) (π : {π // shamirAdm b κ π}) :
     Cryptography.CoinSampling.BoundedModulus b κ :=
   ⟨⟨π.1.p ^ (π.1.k - 1), pow_pos π.1.prime.pos _⟩, π.2⟩
+
+/-- `coinModulus b κ π = ⟨p^{k−1}, _⟩`. -/
+theorem coinModulus_eq (b : PolyExpr) (κ : ℕ) (π : {π // shamirAdm b κ π}) :
+    coinModulus b κ π = ⟨⟨π.1.p ^ (π.1.k - 1), pow_pos π.1.prime.pos _⟩, π.2⟩ := rfl
 
 /-- `coinModulus b κ π = p^{k−1}`. -/
 theorem coe_coinModulus (b : PolyExpr) (κ : ℕ) (π : {π // shamirAdm b κ π}) :
