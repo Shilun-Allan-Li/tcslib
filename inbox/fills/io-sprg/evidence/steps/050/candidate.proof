@@ -1,0 +1,9 @@
+by
+  have hs := P.sLen_le_sVarBound κ
+  have hsum : 1 + (P.sLen κ + P.sLen κ) ≤ 1 + 2 * P.sVarBound.eval κ := ?_
+  swap
+  · rw [two_mul]
+    exact Nat.add_le_add_left (Nat.add_le_add hs hs) 1
+  simp only [P.privLen_eq, P.seedBound_eq, PolyExpr.eval_add,
+    PolyExpr.eval_mul, PolyExpr.eval_var, PolyExpr.eval_const]
+  exact Nat.le_add_left_of_le (Nat.mul_le_mul_left κ hsum)

@@ -1,0 +1,221 @@
+[
+  {
+    "name": "encodeList_injective_of_fixedWidth",
+    "family": "encoding-basic",
+    "template": "templates/encodeList_injective_of_fixedWidth.lean.template",
+    "imports": [
+      "TCSlib.Complexity.CircuitComplexity.Uniform"
+    ],
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "encodeList_length_of_fixedWidth",
+    "family": "encoding-basic",
+    "template": "templates/encodeList_length_of_fixedWidth.lean.template",
+    "imports": [
+      "TCSlib.Complexity.CircuitComplexity.Uniform"
+    ],
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "ell_le_ellBound",
+    "family": "encoding-existing",
+    "template": "templates/ell_le_ellBound.lean.template",
+    "imports": [
+      "TCSlib.Complexity.Randomized.PolyExpr"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:408",
+    "abstraction": "E,kappa; literal ell and ellBound",
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "n_le_nBound",
+    "family": "encoding-existing",
+    "template": "templates/n_le_nBound.lean.template",
+    "imports": [
+      "Mathlib.Algebra.Order.Ring.Nat"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:413",
+    "abstraction": "ellBound is evaluated ellBound; hell is the actual preceding dimension bound",
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "m_le_mBound",
+    "family": "encoding-existing",
+    "template": "templates/m_le_mBound.lean.template",
+    "imports": [
+      "TCSlib.Complexity.Randomized.PolyExpr"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:418",
+    "abstraction": "outLen/outBound are supplied primitive fields; hn is the actual preceding seed bound",
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "W_le_ell_add_one",
+    "family": "encoding-existing",
+    "template": "templates/W_le_ell_add_one.lean.template",
+    "imports": [
+      "Mathlib.Analysis.SpecialFunctions.Pow.Real"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:425",
+    "abstraction": "arbitrary ell instantiates to the scheduled dimension; same literal W",
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "W_le_two_pow_ell_add_one",
+    "family": "encoding-existing",
+    "template": "templates/W_le_two_pow_ell_add_one.lean.template",
+    "imports": [
+      "Mathlib.Analysis.SpecialFunctions.Pow.Real"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:431",
+    "abstraction": "same full noise expression; no owned W-bound hypothesis inserted",
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "B_le_bucketBound",
+    "family": "encoding-existing",
+    "template": "templates/B_le_bucketBound.lean.template",
+    "imports": [
+      "Mathlib.Algebra.Order.Ring.Nat"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:437",
+    "abstraction": "positive W and output majorant are the actual proved input bounds; RHS is evaluated bucketBound",
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "rc_le_rcBound",
+    "family": "encoding-existing",
+    "template": "templates/rc_le_rcBound.lean.template",
+    "imports": [
+      "Mathlib.Algebra.Order.Ring.Nat"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:442",
+    "abstraction": "hw is preceding W_le_ell_add_one through W=w^2; not a hypothesis of the desired rc bound",
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "sLen_le_sVarBound",
+    "family": "encoding-existing",
+    "template": "templates/sLen_le_sVarBound.lean.template",
+    "imports": [
+      "Mathlib.Algebra.Order.Ring.Nat"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:447",
+    "abstraction": "componentwise preceding bounds; full tensor/two-factor formula and evaluated polynomial RHS",
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "pubLen_le_seedBound",
+    "family": "encoding-existing",
+    "template": "templates/pubLen_le_seedBound.lean.template",
+    "imports": [
+      "Mathlib.Algebra.Order.Ring.Nat"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:453",
+    "abstraction": "full public count; evaluated pubBound plus private majorant; no hypothesis of desired bound",
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "privLen_le_seedBound",
+    "family": "encoding-existing",
+    "template": "templates/privLen_le_seedBound.lean.template",
+    "imports": [
+      "Mathlib.Algebra.Order.Ring.Nat"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:461",
+    "abstraction": "preceding private-instance bound; full private flag/two-copy count and same evaluated seedBound",
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "encBuckets_injective",
+    "family": "encoding-existing",
+    "template": "templates/encBuckets_injective.lean.template",
+    "imports": [
+      "TCSlib.Complexity.CircuitComplexity.Uniform",
+      "TCSlib.Cryptography.Encoding.Modular",
+      "TCSlib.Complexity.TuringMachine.Encoding"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:469",
+    "abstraction": "abstract finite bucket dimensions; complete existing code, no helper assumption",
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "encIdx'_injective",
+    "family": "encoding-existing",
+    "template": "templates/encIdx'_injective.lean.template",
+    "imports": [
+      "TCSlib.Complexity.CircuitComplexity.Uniform",
+      "TCSlib.Cryptography.Encoding.Modular",
+      "TCSlib.Complexity.TuringMachine.Encoding"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:477",
+    "abstraction": "enc/henc are actual G.encIdx field and injectivity; hp is prime width; complete pair/bucket/matrix code",
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "encIdDraw_injective",
+    "family": "encoding-existing",
+    "template": "templates/encIdDraw_injective.lean.template",
+    "imports": [
+      "TCSlib.Complexity.CircuitComplexity.Uniform",
+      "TCSlib.Cryptography.Encoding.Modular",
+      "TCSlib.Complexity.TuringMachine.Encoding"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:485",
+    "abstraction": "same mathematical primitive product as index; enc/henc instantiate G.encIdDraw and its supplied injectivity",
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "encOneDraw_injective",
+    "family": "encoding-existing",
+    "template": "templates/encOneDraw_injective.lean.template",
+    "imports": [
+      "TCSlib.Complexity.CircuitComplexity.Uniform",
+      "TCSlib.Cryptography.Encoding.Modular",
+      "TCSlib.Complexity.TuringMachine.Encoding"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:493",
+    "abstraction": "actual selector fit and prime-width facts; all secret/noise fields retained",
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "encDraw_injective",
+    "family": "encoding-existing",
+    "template": "templates/encDraw_injective.lean.template",
+    "imports": [
+      "TCSlib.Complexity.CircuitComplexity.Uniform",
+      "TCSlib.Cryptography.Encoding.Modular",
+      "TCSlib.Complexity.TuringMachine.Encoding"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:501",
+    "abstraction": "entire actual nested code; no assumption encOneDraw or new Basic theorem is injective",
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "encSeed'_injective",
+    "family": "encoding-existing",
+    "template": "templates/encSeed'_injective.lean.template",
+    "imports": [
+      "TCSlib.Complexity.CircuitComplexity.Uniform",
+      "TCSlib.Cryptography.Encoding.Modular",
+      "TCSlib.Complexity.TuringMachine.Encoding"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:509",
+    "abstraction": "abstract vector dimensions; actual prime-fit condition; unchanged pair of modular vectors",
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "encIdx'_length_le",
+    "family": "encoding-existing",
+    "template": "templates/encIdx'_length_le.lean.template",
+    "imports": [
+      "TCSlib.Complexity.CircuitComplexity.Uniform",
+      "TCSlib.Cryptography.Encoding.Modular",
+      "TCSlib.Complexity.TuringMachine.Encoding"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:517",
+    "abstraction": "g/M/B/N/L are exact evaluated source majorants and their preceding bounds; constant6 and complete code unchanged",
+    "status": "NOT_RUN"
+  }
+]

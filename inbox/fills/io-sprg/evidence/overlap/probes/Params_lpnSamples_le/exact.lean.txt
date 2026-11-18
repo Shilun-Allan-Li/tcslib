@@ -1,0 +1,15 @@
+import TCSlib.Complexity.Randomized.PolyExpr
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace IoSprgParamsOverlap
+
+example (d L : ℕ) (hd : 1 ≤ d) :
+    L ^ ((d + 1) / 2) ≤
+      (Complexity.PolyExpr.pow .var ((d + 1) / 2)).eval L := by
+  exact?
+
+end IoSprgParamsOverlap

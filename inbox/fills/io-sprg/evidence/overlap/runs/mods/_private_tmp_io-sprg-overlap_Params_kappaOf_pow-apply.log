@@ -1,0 +1,426 @@
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_beq_eq_true ?_)
+  -- Remaining subgoals:
+  -- ⊢ κ.beq (Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)) = true
+Try this:
+  [apply] refine Nat.findGreatest_eq_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ κ ≤ κ ^ E ∧ (κ ≠ 0 → κ ^ E ≤ κ ^ E) ∧ ∀ ⦃n : ℕ⦄, κ < n → n ≤ κ ^ E → ¬n ^ E ≤ κ ^ E
+Try this:
+  [apply] refine Eq.symm (Nat.le_antisymm ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ κ ≤ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)
+  -- ⊢ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) ≤ κ
+Try this:
+  [apply] refine Nat.eq_of_beq_eq_true ?_
+  -- Remaining subgoals:
+  -- ⊢ (Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)).beq κ = true
+Try this:
+  [apply] refine Nat.le_antisymm ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) ≤ κ
+  -- ⊢ κ ≤ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.succ_inj'.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ κ.succ = (Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)).succ
+Try this:
+  [apply] refine Nat.succ_inj'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)).succ = κ.succ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.add_right_cancel ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_right_cancel ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.succ_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ κ.succ = (Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)).succ
+Try this:
+  [apply] refine Nat.succ_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)).succ = κ.succ
+Try this:
+  [apply] refine Eq.symm (Nat.sub_one_cancel ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 < κ
+  -- ⊢ 0 < Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)
+  -- ⊢ κ - 1 = Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) - 1
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.add_one_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ κ + 1 = Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) + 1
+Try this:
+  [apply] refine Nat.sub_one_cancel ?_ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)
+  -- ⊢ 0 < κ
+  -- ⊢ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) - 1 = κ - 1
+Try this:
+  [apply] refine Nat.add_one_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) + 1 = κ + 1
+Try this:
+  [apply] refine Eq.symm (Nat.pred_inj ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 < κ
+  -- ⊢ 0 < Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)
+  -- ⊢ κ.pred = (Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)).pred
+Try this:
+  [apply] refine Nat.pred_inj ?_ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)
+  -- ⊢ 0 < κ
+  -- ⊢ (Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)).pred = κ.pred
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.eq_of_mul_eq_mul_left ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.eq_iff_le_and_ge.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ κ ≤ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) ∧ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) ≤ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.eq_of_mul_eq_mul_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.add_left_cancel ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.eq_iff_le_and_ge.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) ≤ κ ∧ κ ≤ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.eq_of_mul_eq_mul_right ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_left_cancel ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_lt_succ_of_not_lt ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ κ < Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) + 1
+  -- ⊢ ¬κ < Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.eq_of_mul_eq_mul_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_le_of_lt_succ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) ≤ κ
+  -- ⊢ κ < Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) + 1
+Try this:
+  [apply] refine Nat.eq_of_lt_succ_of_not_lt ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) < κ + 1
+  -- ⊢ ¬Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) < κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a b n} hn => (Nat.pow_left_inj hn).mp) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.eq_of_le_of_lt_succ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ κ ≤ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)
+  -- ⊢ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) < κ + 1
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.le_antisymm_iff.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ κ ≤ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) ∧ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) ≤ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.pow_left_inj fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.le_antisymm_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) ≤ κ ∧ κ ≤ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Int.neg_ofNat_eq_negSucc_add_one_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ -↑κ = Int.negSucc (Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)) + 1
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Int.negSucc_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Int.negSucc κ = Int.negSucc (Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E))
+Try this:
+  [apply] refine Int.neg_ofNat_eq_negSucc_add_one_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ -↑(Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)) = Int.negSucc κ + 1
+Try this:
+  [apply] refine Int.negSucc_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Int.negSucc (Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)) = Int.negSucc κ
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Int.subNat_eq_zero_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Int.subNatNat κ (Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)) = 0
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Int.ofNat_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ↑κ = ↑(Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E))
+Try this:
+  [apply] refine Int.subNat_eq_zero_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Int.subNatNat (Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)) κ = 0
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Int.negSucc_add_one_eq_neg_ofNat_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Int.negSucc κ + 1 = -↑(Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E))
+Try this:
+  [apply] refine Int.ofNat_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)) = ↑κ
+Try this:
+  [apply] refine Eq.symm (Nat.dvd_antisymm ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ κ ∣ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)
+  -- ⊢ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) ∣ κ
+Try this:
+  [apply] refine Int.negSucc_add_one_eq_neg_ofNat_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Int.negSucc (Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)) + 1 = -↑κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a m n} ha => (Nat.pow_right_inj ha).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.dvd_antisymm ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) ∣ κ
+  -- ⊢ κ ∣ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m k n} => Nat.add_left_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.pow_right_inj ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a b c} ha => (Nat.mul_left_inj ha).mp) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_left_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {n a b} hn ha hb => (Nat.div_eq_iff_eq_of_dvd_dvd hn ha hb).mp) (fun a => ?_) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_left_inj fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Nat.mul_self_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ κ * κ = Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) * Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.div_eq_iff_eq_of_dvd_dvd (fun a => ?_) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a b c} ha => (Nat.mul_right_inj ha).mp) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.mul_self_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) * Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) = κ * κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.mul_left_cancel ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_right_inj fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m k n} => Nat.add_right_cancel_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.mul_left_cancel ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_dvd_of_lt_two_mul ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ κ ≠ 0
+  -- ⊢ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) ∣ κ
+  -- ⊢ κ < 2 * Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_right_cancel_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m k n} => Nat.add_left_cancel_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.eq_of_dvd_of_lt_two_mul ?_ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) ≠ 0
+  -- ⊢ κ ∣ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)
+  -- ⊢ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) < 2 * κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m k n} => Nat.add_right_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_left_cancel_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a b d} hda hdb => (Nat.div_left_inj hda hdb).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_right_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} p {n k} => (Nat.mul_right_cancel_iff p).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.div_left_inj ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.mul_right_cancel ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_right_cancel_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.mul_right_cancel ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} p {m k} => (Nat.mul_left_cancel_iff p).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_dvd_of_div_eq_one ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ κ ∣ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)
+  -- ⊢ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) / κ = 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_left_cancel_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_testBit_eq ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ℕ), κ.testBit i = (Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)).testBit i
+Try this:
+  [apply] refine Nat.eq_of_dvd_of_div_eq_one ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) ∣ κ
+  -- ⊢ κ / Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) = 1
+Try this:
+  [apply] refine Nat.eq_of_testBit_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ℕ), (Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)).testBit i = κ.testBit i
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n a b} {ha} {hb} => Fin.mk.inj_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Int.natCast_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ↑κ = ↑(Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Fin.mk.inj_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (List.getElem?_inj ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Int.natCast_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)) = ↑κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.getElem?_inj ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.compare_eq_eq.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ compare κ (Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)) = Ordering.eq
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Rat.natCast_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ↑κ = ↑(Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E))
+Try this:
+  [apply] refine Nat.compare_eq_eq.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compare (Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)) κ = Ordering.eq
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Rat.ofNat_eq_ofNat.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ OfNat.ofNat κ = OfNat.ofNat (Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E))
+Try this:
+  [apply] refine Rat.natCast_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)) = ↑κ
+Try this:
+  [apply] refine Rat.ofNat_eq_ofNat.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ OfNat.ofNat (Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)) = OfNat.ofNat κ
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Nat.dvd_right_iff_eq.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : ℕ), κ ∣ a ↔ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) ∣ a
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Nat.dvd_left_iff_eq.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : ℕ), a ∣ κ ↔ a ∣ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E)
+Try this:
+  [apply] refine Nat.dvd_right_iff_eq.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : ℕ), Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) ∣ a ↔ κ ∣ a
+Try this:
+  [apply] refine Nat.dvd_left_iff_eq.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : ℕ), a ∣ Nat.findGreatest (fun q => q ^ E ≤ κ ^ E) (κ ^ E) ↔ a ∣ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {R} [AddMonoidWithOne R] [CharZero R] {m n} => Nat.cast_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {M₀} [MonoidWithZero M₀] [LinearOrder M₀] [PosMulStrictMono M₀] {a} {m n} [ZeroLEOneClass M₀] ha₀ ha₁ =>
+        (pow_right_inj₀ ha₀ ha₁).mp)
+      ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.cast_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pow_right_inj₀ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+/private/tmp/io-sprg-overlap/Params_kappaOf_pow-apply.lean:10:0: warning: declaration uses 'sorry'
+/private/tmp/io-sprg-overlap/Params_kappaOf_pow-apply.lean:10:19: warning: unused variable `hE`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

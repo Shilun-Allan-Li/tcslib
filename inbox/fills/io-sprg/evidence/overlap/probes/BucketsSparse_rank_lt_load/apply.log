@@ -1,0 +1,1790 @@
+Try this:
+  [apply] refine Finset.card_lt_card ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j} ⊂ {q | φ q = φ j}
+Try this:
+  [apply] refine Finset.card_sdiff_lt_card_sdiff_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ({q | q < j ∧ φ q = φ j} \ {q | φ q = φ j}).card < ({q | φ q = φ j} \ {q | q < j ∧ φ q = φ j}).card
+Try this:
+  [apply] refine Finset.powersetCard_eq_empty.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Finset.powersetCard {q | φ q = φ j}.card {q | q < j ∧ φ q = φ j} = ∅
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_le_of_lt ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_lt_of_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.lt_of_le_of_ne ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card
+  -- ⊢ ¬{q | q < j ∧ φ q = φ j}.card = {q | φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.lt_of_not_le ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬{q | φ q = φ j}.card ≤ {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine Nat.sub_ne_zero_iff_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | φ q = φ j}.card - {q | q < j ∧ φ q = φ j}.card ≠ 0
+Try this:
+  [apply] refine Nat.gt_of_not_le ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬{q | φ q = φ j}.card ≤ {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine Nat.lt_of_succ_le ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card.succ ≤ {q | φ q = φ j}.card
+Try this:
+  [apply] refine Nat.lt_of_le_pred ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < {q | φ q = φ j}.card
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card.pred
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_sub_eq_succ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_add_left_lt ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.add_one_le_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card + 1 ≤ {q | φ q = φ j}.card
+Try this:
+  [apply] refine (Nat.le_sub_one_iff_lt ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < {q | φ q = φ j}.card
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card - 1
+Try this:
+  [apply] refine Nat.succ_lt_succ_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card.succ < {q | φ q = φ j}.card.succ
+Try this:
+  [apply] refine Nat.lt_of_not_ge ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬{q | q < j ∧ φ q = φ j}.card ≥ {q | φ q = φ j}.card
+Try this:
+  [apply] refine Nat.lt_of_add_one_le ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card + 1 ≤ {q | φ q = φ j}.card
+Try this:
+  [apply] refine Nat.lt_iff_le_not_le.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card ∧ ¬{q | φ q = φ j}.card ≤ {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine Nat.lt_of_le_sub_one ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < {q | φ q = φ j}.card
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card - 1
+Try this:
+  [apply] refine Nat.lt_of_succ_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card.succ < {q | φ q = φ j}.card
+Try this:
+  [apply] refine Nat.lt_of_succ_lt_succ ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card.succ < {q | φ q = φ j}.card.succ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_add_right_lt ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_sub_eq_sub_one ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.succ_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card.succ ≤ {q | φ q = φ j}.card
+Try this:
+  [apply] refine (Nat.le_pred_iff_lt ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < {q | φ q = φ j}.card
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card.pred
+Try this:
+  [apply] refine Nat.lt_of_sub_ne_zero ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | φ q = φ j}.card - {q | q < j ∧ φ q = φ j}.card ≠ 0
+Try this:
+  [apply] refine Nat.not_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬{q | φ q = φ j}.card ≤ {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine Nat.add_one_lt_add_one_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card + 1 < {q | φ q = φ j}.card + 1
+Try this:
+  [apply] refine Nat.lt_iff_le_and_not_ge.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card ∧ ¬{q | φ q = φ j}.card ≤ {q | q < j ∧ φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_lt_of_eq ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.lt_of_sub_pos ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < {q | φ q = φ j}.card - {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine Nat.lt_iff_le_and_ne.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card ∧ {q | q < j ∧ φ q = φ j}.card ≠ {q | φ q = φ j}.card
+Try this:
+  [apply] refine Int.ofNat_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑{q | q < j ∧ φ q = φ j}.card < ↑{q | φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_lt_mul_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_mul_lt_mul_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_lt_mul_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_mul_lt_mul_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Nat.lt_iff_le_pred ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < {q | φ q = φ j}.card
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card - 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_lt_add_iff_right.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_pow_dvd_right ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.pow_lt_pow_iff_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_div_lt_div ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Nat.mod_eq_iff_lt ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | φ q = φ j}.card ≠ 0
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card % {q | φ q = φ j}.card = {q | q < j ∧ φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_add_lt_add_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.lt_of_lt_pred ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card < {q | φ q = φ j}.card - 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.div_lt_div_left (fun a => ?_) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_add_lt_add_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.succ_le_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card.succ ≤ {q | φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.div_lt_div_right (fun a => ?_) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.pow_lt_pow_iff_left fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.lt_iff_lt_of_mul_eq_mul (fun a => ?_) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.lt_iff_lt_of_mul_eq_mul (fun a => ?_) ?_ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_lt_add_iff_left.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.sub_pos_iff_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < {q | φ q = φ j}.card - {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine (Nat.div_lt_one_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < {q | φ q = φ j}.card
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card / {q | φ q = φ j}.card < 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.sub_lt_sub_iff_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.lt_iff_add_one_le.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card + 1 ≤ {q | φ q = φ j}.card
+Try this:
+  [apply] refine Nat.mul_self_lt_mul_self_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card * {q | q < j ∧ φ q = φ j}.card < {q | φ q = φ j}.card * {q | φ q = φ j}.card
+Try this:
+  [apply] refine Nat.one_add_le_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 1 + {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_shiftLeft_lt ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Fin.mk_lt_mk.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.lt_of_div_eq_zero ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < {q | φ q = φ j}.card
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card / {q | φ q = φ j}.card = 0
+Try this:
+  [apply] refine (Nat.div_eq_zero_iff_lt ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < {q | φ q = φ j}.card
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card / {q | φ q = φ j}.card = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine BitVec.lt_of_getLsb?_isSome ?_ {q | q < j ∧ φ q = φ j}.card ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine BitVec.lt_of_getMsbD ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine BitVec.lt_of_getMsb?_eq_some ?_ {q | q < j ∧ φ q = φ j}.card ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine BitVec.lt_of_getLsbD ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine BitVec.lt_of_getMsb?_isSome ?_ {q | q < j ∧ φ q = φ j}.card ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine BitVec.lt_of_isSome_getMsb? ?_ {q | q < j ∧ φ q = φ j}.card ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine BitVec.lt_of_getElem?_eq_some ?_ {q | q < j ∧ φ q = φ j}.card ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine BitVec.lt_of_isSome_getElem? ?_ {q | q < j ∧ φ q = φ j}.card ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine BitVec.lt_of_getLsb?_eq_some ?_ {q | q < j ∧ φ q = φ j}.card ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (UInt16.ofNat_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card < UInt16.size
+  -- ⊢ {q | φ q = φ j}.card < UInt16.size
+  -- ⊢ UInt16.ofNat {q | q < j ∧ φ q = φ j}.card < UInt16.ofNat {q | φ q = φ j}.card
+Try this:
+  [apply] refine (UInt32.ofNatLT_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card < UInt32.size
+  -- ⊢ {q | φ q = φ j}.card < UInt32.size
+  -- ⊢ UInt32.ofNatLT {q | q < j ∧ φ q = φ j}.card ?_ < UInt32.ofNatLT {q | φ q = φ j}.card ?_
+Try this:
+  [apply] refine (USize.ofNat_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card < USize.size
+  -- ⊢ {q | φ q = φ j}.card < USize.size
+  -- ⊢ USize.ofNat {q | q < j ∧ φ q = φ j}.card < USize.ofNat {q | φ q = φ j}.card
+Try this:
+  [apply] refine (UInt8.ofNatLT_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card < UInt8.size
+  -- ⊢ {q | φ q = φ j}.card < UInt8.size
+  -- ⊢ UInt8.ofNatLT {q | q < j ∧ φ q = φ j}.card ?_ < UInt8.ofNatLT {q | φ q = φ j}.card ?_
+Try this:
+  [apply] refine (UInt64.ofNat_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card < UInt64.size
+  -- ⊢ {q | φ q = φ j}.card < UInt64.size
+  -- ⊢ UInt64.ofNat {q | q < j ∧ φ q = φ j}.card < UInt64.ofNat {q | φ q = φ j}.card
+Try this:
+  [apply] refine (UInt8.ofNat_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card < UInt8.size
+  -- ⊢ {q | φ q = φ j}.card < UInt8.size
+  -- ⊢ UInt8.ofNat {q | q < j ∧ φ q = φ j}.card < UInt8.ofNat {q | φ q = φ j}.card
+Try this:
+  [apply] refine (UInt16.ofNatLT_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card < UInt16.size
+  -- ⊢ {q | φ q = φ j}.card < UInt16.size
+  -- ⊢ UInt16.ofNatLT {q | q < j ∧ φ q = φ j}.card ?_ < UInt16.ofNatLT {q | φ q = φ j}.card ?_
+Try this:
+  [apply] refine (UInt32.ofNat_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card < UInt32.size
+  -- ⊢ {q | φ q = φ j}.card < UInt32.size
+  -- ⊢ UInt32.ofNat {q | q < j ∧ φ q = φ j}.card < UInt32.ofNat {q | φ q = φ j}.card
+Try this:
+  [apply] refine (USize.ofNatLT_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card < USize.size
+  -- ⊢ {q | φ q = φ j}.card < USize.size
+  -- ⊢ USize.ofNatLT {q | q < j ∧ φ q = φ j}.card ?_ < USize.ofNatLT {q | φ q = φ j}.card ?_
+Try this:
+  [apply] refine (UInt64.ofNatLT_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card < UInt64.size
+  -- ⊢ {q | φ q = φ j}.card < UInt64.size
+  -- ⊢ UInt64.ofNatLT {q | q < j ∧ φ q = φ j}.card ?_ < UInt64.ofNatLT {q | φ q = φ j}.card ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Membership.get_elem_helper ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine String.Pos.Raw.mk_lt_mk.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ { byteIdx := {q | q < j ∧ φ q = φ j}.card } < { byteIdx := {q | φ q = φ j}.card }
+Try this:
+  [apply] refine Nat.compare_eq_gt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compare {q | φ q = φ j}.card {q | q < j ∧ φ q = φ j}.card = Ordering.gt
+Try this:
+  [apply] refine Nat.compare_eq_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compare {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card = Ordering.lt
+Try this:
+  [apply] refine List.mem_range.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ∈ List.range {q | φ q = φ j}.card
+Try this:
+  [apply] refine Array.mem_range.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ∈ Array.range {q | φ q = φ j}.card
+Try this:
+  [apply] refine (Int8.ofNat_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card < 2 ^ 7
+  -- ⊢ {q | φ q = φ j}.card < 2 ^ 7
+  -- ⊢ Int8.ofNat {q | q < j ∧ φ q = φ j}.card < Int8.ofNat {q | φ q = φ j}.card
+Try this:
+  [apply] refine (ISize.ofNat_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card < 2 ^ (System.Platform.numBits - 1)
+  -- ⊢ {q | φ q = φ j}.card < 2 ^ (System.Platform.numBits - 1)
+  -- ⊢ ISize.ofNat {q | q < j ∧ φ q = φ j}.card < ISize.ofNat {q | φ q = φ j}.card
+Try this:
+  [apply] refine (Int64.ofNat_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card < 2 ^ 63
+  -- ⊢ {q | φ q = φ j}.card < 2 ^ 63
+  -- ⊢ Int64.ofNat {q | q < j ∧ φ q = φ j}.card < Int64.ofNat {q | φ q = φ j}.card
+Try this:
+  [apply] refine (Int16.ofNat_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card < 2 ^ 15
+  -- ⊢ {q | φ q = φ j}.card < 2 ^ 15
+  -- ⊢ Int16.ofNat {q | q < j ∧ φ q = φ j}.card < Int16.ofNat {q | φ q = φ j}.card
+Try this:
+  [apply] refine (Int32.ofNat_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card < 2 ^ 31
+  -- ⊢ {q | φ q = φ j}.card < 2 ^ 31
+  -- ⊢ Int32.ofNat {q | q < j ∧ φ q = φ j}.card < Int32.ofNat {q | φ q = φ j}.card
+Try this:
+  [apply] refine Vector.mem_range.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ∈ Vector.range {q | φ q = φ j}.card
+Try this:
+  [apply] refine Rat.natCast_lt_natCast.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑{q | q < j ∧ φ q = φ j}.card < ↑{q | φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.lt_of_range'_eq_append_cons ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.gt_of_range'_eq_append_cons ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.Sat.AIG.RelabelNat.State.Inv1.lt_of_get?_eq_some ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Int.lt_of_ofNat_lt_ofNat ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑{q | q < j ∧ φ q = φ j}.card < ↑{q | φ q = φ j}.card
+Try this:
+  [apply] refine Multiset.mem_range.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ∈ Multiset.range {q | φ q = φ j}.card
+Try this:
+  [apply] refine Finset.mem_range.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ∈ Finset.range {q | φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Fin.natCast_lt_natCast ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pow_lt_pow_iff_right' ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (nsmul_lt_nsmul_iff_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.cast_lt.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.descFactorial_eq_zero_iff_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card.descFactorial {q | φ q = φ j}.card = 0
+Try this:
+  [apply] refine (Nat.factorial_lt ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < {q | q < j ∧ φ q = φ j}.card
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card.factorial < {q | φ q = φ j}.card.factorial
+Try this:
+  [apply] refine Nat.choose_eq_zero_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card.choose {q | φ q = φ j}.card = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pow_lt_pow_iff_right_of_lt_one₀ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pow_lt_pow_iff_right₀ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (PNat.mk_lt_mk {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine gt_iff_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | φ q = φ j}.card > {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine gt_iff_lt.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card < {q | φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_eq_of_lt ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_lt_of_eq ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Std.LawfulOrderLT.lt_iff {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.lt_of_le_of_lt ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.lt_of_lt_of_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.lt_trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Std.lt_iff_le_and_not_ge.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card ∧ ¬{q | φ q = φ j}.card ≤ {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine Std.lt_of_le_of_ne ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≠ {q | φ q = φ j}.card
+Try this:
+  [apply] refine Option.some_lt_some.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ some {q | q < j ∧ φ q = φ j}.card < some {q | φ q = φ j}.card
+Try this:
+  [apply] refine (compareOfLessAndEq_eq_gt_of_lt_iff_not_gt_and_ne ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x y : ℕ), x < y ↔ ¬y < x ∧ x ≠ y
+  -- ⊢ compareOfLessAndEq {q | φ q = φ j}.card {q | q < j ∧ φ q = φ j}.card = Ordering.gt
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (compareOfLessAndEq_eq_gt ?_ ?_ ?_ {q | φ q = φ j}.card {q | q < j ∧ φ q = φ j}.card).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (lt_iff_not_gt_and_ne_of_antisymm_of_total_of_not_le ?_ ?_ ?_ {q | q < j ∧ φ q = φ j}.card
+        {q | φ q = φ j}.card).mpr
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine compareOfLessAndEq_eq_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compareOfLessAndEq {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card = Ordering.lt
+Try this:
+  [apply] refine Std.PRange.UpwardEnumerable.lt_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Std.PRange.UpwardEnumerable.LT {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Std.PRange.LawfulUpwardEnumerableLT.lt_iff {q | q < j ∧ φ q = φ j}.card
+        {q | φ q = φ j}.card).mpr
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.Rco.Internal.get_elem_helper_upper_open ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.Rio.Internal.get_elem_helper_upper_open ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.Roo.Internal.get_elem_helper_upper_open ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Std.Rxo.size_pos_iff_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < Std.Rxo.HasSize.size {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card
+Try this:
+  [apply] refine Std.compare_eq_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Std.LawfulOrderOrd ℕ
+  -- ⊢ compare {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card = Ordering.lt
+Try this:
+  [apply] refine Std.compare_eq_gt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Std.LawfulOrderOrd ℕ
+  -- ⊢ compare {q | φ q = φ j}.card {q | q < j ∧ φ q = φ j}.card = Ordering.gt
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.LawfulLTCmp.eq_gt_iff_gt.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Batteries.compareOfLessAndEq_eq_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compareOfLessAndEq {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card = Ordering.lt
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.LawfulCmp.eq_lt_iff_lt.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.LawfulLTCmp.eq_lt_iff_lt.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.LawfulBCmp.eq_lt_iff_lt.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_lt_of_eq'' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_eq_of_lt'' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine lt_of_le_of_ne' ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card
+  -- ⊢ {q | φ q = φ j}.card ≠ {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine lt_of_le_not_le ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card
+  -- ⊢ ¬{q | φ q = φ j}.card ≤ {q | q < j ∧ φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine gt_of_ge_of_gt ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_le_of_lt ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_lt_of_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_le_of_lt' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine gt_of_gt_of_ge ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine lt_iff_le_not_ge.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card ∧ ¬{q | φ q = φ j}.card ≤ {q | q < j ∧ φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine gt_trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine lt_of_le_not_ge ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card
+  -- ⊢ ¬{q | φ q = φ j}.card ≤ {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine lt_iff_le_not_le.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card ∧ ¬{q | φ q = φ j}.card ≤ {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine lt_of_le_of_ne ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≠ {q | φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_lt_of_le' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Preorder.lt_iff_le_not_ge {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Preorder.lt_iff_le_not_le {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine compare_gt_iff_gt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compare {q | φ q = φ j}.card {q | q < j ∧ φ q = φ j}.card = Ordering.gt
+Try this:
+  [apply] refine lt_of_not_ge ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬{q | φ q = φ j}.card ≤ {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine not_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬{q | φ q = φ j}.card ≤ {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine lt_iff_not_ge.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬{q | φ q = φ j}.card ≤ {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine compare_lt_iff_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compare {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card = Ordering.lt
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.trans_gt ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LT.lt.trans_eq ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_imp_lt_of_le_imp_le (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.const_lt_const.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.trans_lt ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (LE.le.lt_iff_ne ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≠ {q | φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (lt_iff_lt_of_le_iff_le' ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (lt_iff_lt_of_le_iff_le' ?_ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LT.lt.trans_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LT.lt.trans_eq' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_imp_lt_of_le_of_le ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LE.le.trans_lt' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LT.lt.trans' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LE.le.trans_lt ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine GT.gt.lt ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | φ q = φ j}.card > {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine Ne.lt_of_le ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≠ {q | φ q = φ j}.card
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LT.lt.trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (LE.le.gt_iff_ne ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card
+  -- ⊢ {q | φ q = φ j}.card ≠ {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine LE.le.lt_of_ne' ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card
+  -- ⊢ {q | φ q = φ j}.card ≠ {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine LE.le.lt_of_not_ge ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card
+  -- ⊢ ¬{q | φ q = φ j}.card ≤ {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine Ne.lt_of_le' ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | φ q = φ j}.card ≠ {q | q < j ∧ φ q = φ j}.card
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card
+Try this:
+  [apply] refine LE.le.lt_of_ne ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≠ {q | φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LT.lt.trans_le' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine LE.le.lt_of_not_le ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card
+  -- ⊢ ¬{q | φ q = φ j}.card ≤ {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine lt_iff_not_le.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬{q | φ q = φ j}.card ≤ {q | q < j ∧ φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_eq_of_lt' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Prod.mk_lt_mk_iff_left.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Prod.mk_lt_mk_iff_right.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Subtype.mk_lt_mk.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine LT.lt.gt ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card < {q | φ q = φ j}.card
+Try this:
+  [apply] refine lt_of_not_le ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬{q | φ q = φ j}.card ≤ {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine (LE.le.lt_iff_ne' ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card
+  -- ⊢ {q | φ q = φ j}.card ≠ {q | q < j ∧ φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (lt_iff_lt_of_le_iff_le ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (lt_iff_lt_of_le_iff_le ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_trans' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_lt_of_eq' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Ne.le_iff_lt ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≠ {q | φ q = φ j}.card
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card
+Try this:
+  [apply] refine lt_iff_le_and_ne.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card ∧ {q | q < j ∧ φ q = φ j}.card ≠ {q | φ q = φ j}.card
+Try this:
+  [apply] refine lt_update_self_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Finset.card < Function.update Finset.card {q | q < j ∧ φ q = φ j} {q | φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Monotone.reflect_lt (fun ⦃a⦄ => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine StrictAnti.imp ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ StrictAnti Finset.card
+  -- ⊢ {q | φ q = φ j} < {q | q < j ∧ φ q = φ j}
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Antitone.reflect_lt (fun ⦃a⦄ => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine StrictMono.imp ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ StrictMono Finset.card
+  -- ⊢ {q | q < j ∧ φ q = φ j} < {q | φ q = φ j}
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AntitoneOn.reflect_lt (fun ⦃a⦄ => ?_) ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine MonotoneOn.reflect_lt (fun ⦃a⦄ => ?_) ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine OrderDual.toDual_lt_toDual.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ OrderDual.toDual {q | φ q = φ j}.card < OrderDual.toDual {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine IsTop.lt_of_ne ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ IsTop {q | φ q = φ j}.card
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≠ {q | φ q = φ j}.card
+Try this:
+  [apply] refine IsBot.lt_of_ne ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ IsBot {q | q < j ∧ φ q = φ j}.card
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≠ {q | φ q = φ j}.card
+Try this:
+  [apply] refine ULift.up_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ { down := {q | q < j ∧ φ q = φ j}.card } < { down := {q | φ q = φ j}.card }
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Ordering.Compares.eq_gt ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (cmp_eq_gt_iff {q | φ q = φ j}.card {q | q < j ∧ φ q = φ j}.card).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Ordering.Compares.eq_lt ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (cmp_eq_lt_iff {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (lt_iff_lt_of_cmp_eq_cmp ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (lt_iff_lt_of_cmp_eq_cmp ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictAnti.lt_iff_lt fun ⦃a⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (StrictAnti.lt_iff_lt fun ⦃a⦄ => ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder (Finset (Fin m))
+  -- ⊢ ∀ ⦃a b : Finset (Fin m)⦄, a < b → b.card < a.card
+  -- ⊢ {q | φ q = φ j} < {q | q < j ∧ φ q = φ j}
+  -- ⊢ ∀ ⦃b : Finset (Fin m)⦄, _fvar.46521 < b → b.card < Finset.card _fvar.46521
+  -- ⊢ _fvar.46521 < _fvar.46581 → Finset.card _fvar.46581 < Finset.card _fvar.46521
+  -- ⊢ Finset.card _fvar.46581 < Finset.card _fvar.46521
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictAntiOn.lt_iff_lt (fun ⦃a⦄ => ?_) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictAntiOn.lt_iff_lt (fun ⦃a⦄ => ?_) ?_ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictMonoOn.lt_iff_lt (fun ⦃a⦄ => ?_) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictMonoOn.lt_iff_lt (fun ⦃a⦄ => ?_) ?_ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictAnti.lt_iff_gt fun ⦃a⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (StrictAnti.lt_iff_gt fun ⦃a⦄ => ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder (Finset (Fin m))
+  -- ⊢ ∀ ⦃a b : Finset (Fin m)⦄, a < b → b.card < a.card
+  -- ⊢ {q | φ q = φ j} < {q | q < j ∧ φ q = φ j}
+  -- ⊢ ∀ ⦃b : Finset (Fin m)⦄, _fvar.50655 < b → b.card < Finset.card _fvar.50655
+  -- ⊢ _fvar.50655 < _fvar.50715 → Finset.card _fvar.50715 < Finset.card _fvar.50655
+  -- ⊢ Finset.card _fvar.50715 < Finset.card _fvar.50655
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictMono.lt_iff_lt fun ⦃a⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (StrictMono.lt_iff_lt fun ⦃a⦄ => ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder (Finset (Fin m))
+  -- ⊢ ∀ ⦃a b : Finset (Fin m)⦄, a < b → a.card < b.card
+  -- ⊢ {q | q < j ∧ φ q = φ j} < {q | φ q = φ j}
+  -- ⊢ ∀ ⦃b : Finset (Fin m)⦄, _fvar.51710 < b → Finset.card _fvar.51710 < b.card
+  -- ⊢ _fvar.51710 < _fvar.51770 → Finset.card _fvar.51710 < Finset.card _fvar.51770
+  -- ⊢ Finset.card _fvar.51710 < Finset.card _fvar.51770
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictAntiOn.lt_iff_gt (fun ⦃a⦄ => ?_) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictAntiOn.lt_iff_gt (fun ⦃a⦄ => ?_) ?_ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (GaloisConnection.lt_iff_lt fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (GaloisConnection.lt_iff_lt fun a => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (map_inv_lt_map_inv_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (OrderEmbedding.lt_iff_lt ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (OrderIso.lt_iff_lt ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (map_lt_map_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.mem_Ioi.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | φ q = φ j}.card ∈ Set.Ioi {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine Set.mem_Iio.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ∈ Set.Iio {q | φ q = φ j}.card
+Try this:
+  [apply] refine (add_lt_add_iff_right ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℕ
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card + ?_ < {q | φ q = φ j}.card + ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_add_lt_of_nonneg_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_add_lt_add_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_lt_mul_of_le_one_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_lt_add_of_nonpos_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_add_lt_add_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_lt_add_of_nonpos_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_mul_lt_mul_right' ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_lt_mul_of_le_one_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (mul_lt_mul_iff_right ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℕ
+  -- ⊢ MulRightStrictMono ℕ
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card * ?_ < {q | φ q = φ j}.card * ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_mul_lt_mul_left' ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_mul_lt_of_one_le_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (add_lt_add_iff_left ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℕ
+  -- ⊢ ?_ + {q | q < j ∧ φ q = φ j}.card < ?_ + {q | φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_add_lt_of_nonneg_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_mul_lt_of_one_le_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (mul_lt_mul_iff_left ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℕ
+  -- ⊢ MulLeftStrictMono ℕ
+  -- ⊢ ?_ * {q | q < j ∧ φ q = φ j}.card < ?_ * {q | φ q = φ j}.card
+Try this:
+  [apply] refine lt_iff_exists_one_lt_mul.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ExistsMulOfLE ℕ
+  -- ⊢ MulLeftStrictMono ℕ
+  -- ⊢ ∃ c, 1 < c ∧ {q | q < j ∧ φ q = φ j}.card * c = {q | φ q = φ j}.card
+Try this:
+  [apply] refine lt_iff_exists_pos_add.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ c, 0 < c ∧ {q | q < j ∧ φ q = φ j}.card + c = {q | φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_tsub_lt_tsub_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_tsub_lt_tsub_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_tsub_lt_tsub_right_of_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (tsub_lt_tsub_iff_left_of_le_of_le ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AddLECancellable.lt_of_tsub_lt_tsub_left_of_le ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AddLECancellable.tsub_lt_tsub_iff_left_of_le_of_le ?_ ?_ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_tsub_lt_tsub_left_of_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Set.Icc_subset_Ioi_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Set.Icc_subset_Iio_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.nonempty_Ioo.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ DenselyOrdered ℕ
+  -- ⊢ (Set.Ioo {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card).Nonempty
+Try this:
+  [apply] refine Set.nonempty_Ioc.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Set.Ioc {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card).Nonempty
+Try this:
+  [apply] refine Set.Ici_ssubset_Ici.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.Ici {q | φ q = φ j}.card ⊂ Set.Ici {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine Set.Iic_subset_Iio.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.Iic {q | q < j ∧ φ q = φ j}.card ⊆ Set.Iio {q | φ q = φ j}.card
+Try this:
+  [apply] refine Set.right_mem_Ioc.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | φ q = φ j}.card ∈ Set.Ioc {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card
+Try this:
+  [apply] refine Set.nonempty_Ico.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Set.Ico {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card).Nonempty
+Try this:
+  [apply] refine Set.left_mem_Ico.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ∈ Set.Ico {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card
+Try this:
+  [apply] refine Set.Iic_ssubset_Iic.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.Iic {q | q < j ∧ φ q = φ j}.card ⊂ Set.Iic {q | φ q = φ j}.card
+Try this:
+  [apply] refine Set.Ici_subset_Ioi.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.Ici {q | φ q = φ j}.card ⊆ Set.Ioi {q | q < j ∧ φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (isLUB_lt_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsLeast.lt_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (lt_isGLB_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsGreatest.lt_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (isGLB_lt_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine isGLB_lt_isLUB_of_ne ?_ ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (lt_isLUB_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine WithBot.coe_lt_coe.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑{q | q < j ∧ φ q = φ j}.card < ↑{q | φ q = φ j}.card
+Try this:
+  [apply] refine WithTop.coe_lt_coe.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑{q | q < j ∧ φ q = φ j}.card < ↑{q | φ q = φ j}.card
+Try this:
+  [apply] refine lt_of_nsmul_lt_nsmul_right ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ ℕ
+  -- ⊢ ?_ • {q | q < j ∧ φ q = φ j}.card < ?_ • {q | φ q = φ j}.card
+Try this:
+  [apply] refine lt_of_pow_lt_pow_left' ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ ℕ
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ^ ?_ < {q | φ q = φ j}.card ^ ?_
+Try this:
+  [apply] refine Nat.ofNat_lt.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.filter (fun b => decide ((fun q => q < j ∧ φ q = φ j) b)) (List.finRange m)).length.AtLeastTwo
+  -- ⊢ (List.filter (fun b => decide ((fun q => φ q = φ j) b)) (List.finRange m)).length.AtLeastTwo
+  -- ⊢ OfNat.ofNat (List.filter (fun b => decide ((fun q => q < j ∧ φ q = φ j) b)) (List.finRange m)).length <
+    OfNat.ofNat (List.filter (fun b => decide ((fun q => φ q = φ j) b)) (List.finRange m)).length
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_iff_exists_mul.mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine lt_iff_exists_add.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ c > 0, {q | φ q = φ j}.card = {q | q < j ∧ φ q = φ j}.card + c
+Try this:
+  [apply] refine one_lt_div'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℕ
+  -- ⊢ MulRightStrictMono ℕ
+  -- ⊢ 1 < {q | φ q = φ j}.card / {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine sub_neg.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ AddGroup ℕ
+  -- ⊢ AddRightStrictMono ℕ
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card - {q | φ q = φ j}.card < 0
+Try this:
+  [apply] refine (div_lt_div_iff_right ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℕ
+  -- ⊢ ℕ
+  -- ⊢ MulRightStrictMono ℕ
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card / ?_ < {q | φ q = φ j}.card / ?_
+Try this:
+  [apply] refine (div_lt_div_iff_left ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℕ
+  -- ⊢ ℕ
+  -- ⊢ MulLeftStrictMono ℕ
+  -- ⊢ MulRightStrictMono ℕ
+  -- ⊢ ?_ / {q | φ q = φ j}.card < ?_ / {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine lt_add_neg_iff_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ AddGroup ℕ
+  -- ⊢ AddRightStrictMono ℕ
+  -- ⊢ 0 < {q | φ q = φ j}.card + -{q | q < j ∧ φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_inv_lt_inv ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_neg_lt_neg ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine sub_pos.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ AddGroup ℕ
+  -- ⊢ AddRightStrictMono ℕ
+  -- ⊢ 0 < {q | φ q = φ j}.card - {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine inv_lt_inv_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℕ
+  -- ⊢ MulLeftStrictMono ℕ
+  -- ⊢ MulRightStrictMono ℕ
+  -- ⊢ {q | φ q = φ j}.card⁻¹ < {q | q < j ∧ φ q = φ j}.card⁻¹
+Try this:
+  [apply] refine lt_mul_inv_iff_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℕ
+  -- ⊢ MulRightStrictMono ℕ
+  -- ⊢ 1 < {q | φ q = φ j}.card * {q | q < j ∧ φ q = φ j}.card⁻¹
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_sub_neg ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine add_neg_neg_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ AddGroup ℕ
+  -- ⊢ AddRightStrictMono ℕ
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card + -{q | φ q = φ j}.card < 0
+Try this:
+  [apply] refine (sub_lt_sub_iff_left ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ AddGroup ℕ
+  -- ⊢ ℕ
+  -- ⊢ AddLeftStrictMono ℕ
+  -- ⊢ AddRightStrictMono ℕ
+  -- ⊢ ?_ - {q | φ q = φ j}.card < ?_ - {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine lt_neg_add_iff_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ AddGroup ℕ
+  -- ⊢ AddLeftStrictMono ℕ
+  -- ⊢ 0 < -{q | q < j ∧ φ q = φ j}.card + {q | φ q = φ j}.card
+Try this:
+  [apply] refine inv_mul_lt_one_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℕ
+  -- ⊢ MulLeftStrictMono ℕ
+  -- ⊢ {q | φ q = φ j}.card⁻¹ * {q | q < j ∧ φ q = φ j}.card < 1
+Try this:
+  [apply] refine inv_mul_lt_one_iff_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℕ
+  -- ⊢ MulRightStrictMono ℕ
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card * {q | φ q = φ j}.card⁻¹ < 1
+Try this:
+  [apply] refine neg_add_neg_iff_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ AddGroup ℕ
+  -- ⊢ AddRightStrictMono ℕ
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card + -{q | φ q = φ j}.card < 0
+Try this:
+  [apply] refine div_lt_one'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℕ
+  -- ⊢ MulRightStrictMono ℕ
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card / {q | φ q = φ j}.card < 1
+Try this:
+  [apply] refine neg_lt_neg_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ AddGroup ℕ
+  -- ⊢ AddLeftStrictMono ℕ
+  -- ⊢ AddRightStrictMono ℕ
+  -- ⊢ -{q | φ q = φ j}.card < -{q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine sub_lt_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ AddGroup ℕ
+  -- ⊢ AddRightStrictMono ℕ
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card - {q | φ q = φ j}.card < 0
+Try this:
+  [apply] refine (sub_lt_sub_iff_right ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ AddGroup ℕ
+  -- ⊢ ℕ
+  -- ⊢ AddRightStrictMono ℕ
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card - ?_ < {q | φ q = φ j}.card - ?_
+Try this:
+  [apply] refine mul_inv_lt_one_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℕ
+  -- ⊢ MulRightStrictMono ℕ
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card * {q | φ q = φ j}.card⁻¹ < 1
+Try this:
+  [apply] refine lt_inv_mul_iff_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℕ
+  -- ⊢ MulLeftStrictMono ℕ
+  -- ⊢ 1 < {q | q < j ∧ φ q = φ j}.card⁻¹ * {q | φ q = φ j}.card
+Try this:
+  [apply] refine neg_add_neg_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ AddGroup ℕ
+  -- ⊢ AddLeftStrictMono ℕ
+  -- ⊢ -{q | φ q = φ j}.card + {q | q < j ∧ φ q = φ j}.card < 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_sub_pos ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_abs_lt ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_mabs_lt ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_mul_lt_mul_of_nonneg_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_lt_mul_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_lt_mul_iff_of_pos_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_mul_lt_mul_of_nonneg_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_lt_mul_iff_of_pos_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_lt_mul_iff_left₀ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_mul_lt_mul_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_lt_mul_iff_right₀ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_lt_mul_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_mul_lt_mul_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (sq_lt_sq₀ ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ PosMulStrictMono ℕ
+  -- ⊢ 0 ≤ {q | q < j ∧ φ q = φ j}.card
+  -- ⊢ 0 ≤ {q | φ q = φ j}.card
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ^ 2 < {q | φ q = φ j}.card ^ 2
+Try this:
+  [apply] refine (one_lt_div₀ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ GroupWithZero ℕ
+  -- ⊢ MulPosReflectLT ℕ
+  -- ⊢ 0 < {q | q < j ∧ φ q = φ j}.card
+  -- ⊢ 1 < {q | φ q = φ j}.card / {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine (inv_lt_inv₀ ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ GroupWithZero ℕ
+  -- ⊢ PosMulReflectLT ℕ
+  -- ⊢ MulPosReflectLT ℕ
+  -- ⊢ 0 < {q | φ q = φ j}.card
+  -- ⊢ 0 < {q | q < j ∧ φ q = φ j}.card
+  -- ⊢ {q | φ q = φ j}.card⁻¹ < {q | q < j ∧ φ q = φ j}.card⁻¹
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_mul_self_lt_mul_self₀ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (one_lt_inv_mul₀ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ GroupWithZero ℕ
+  -- ⊢ PosMulReflectLT ℕ
+  -- ⊢ 0 < {q | q < j ∧ φ q = φ j}.card
+  -- ⊢ 1 < {q | q < j ∧ φ q = φ j}.card⁻¹ * {q | φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (div_lt_div_iff_of_pos_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pow_lt_pow_iff_left₀ ?_ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_pow_lt_pow_left₀ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (div_lt_div_iff_of_pos_left ?_ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (div_lt_one₀ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ GroupWithZero ℕ
+  -- ⊢ MulPosReflectLT ℕ
+  -- ⊢ 0 < {q | φ q = φ j}.card
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card / {q | φ q = φ j}.card < 1
+Try this:
+  [apply] refine (inv_mul_lt_one₀ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ GroupWithZero ℕ
+  -- ⊢ PosMulReflectLT ℕ
+  -- ⊢ 0 < {q | φ q = φ j}.card
+  -- ⊢ {q | φ q = φ j}.card⁻¹ * {q | q < j ∧ φ q = φ j}.card < 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_lt_mul_right_of_neg ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_mul_lt_mul_of_nonpos_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_mul_lt_mul_of_nonpos_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_lt_mul_left_of_neg ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (mul_self_lt_mul_self_iff ?_ ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ PosMulStrictMono ℕ
+  -- ⊢ 0 ≤ {q | q < j ∧ φ q = φ j}.card
+  -- ⊢ 0 ≤ {q | φ q = φ j}.card
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card * {q | q < j ∧ φ q = φ j}.card < {q | φ q = φ j}.card * {q | φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine OrderedCommGroup.lt_of_mul_lt_mul_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine OrderedCommGroup.lt_of_add_lt_add_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AntisymmRel.trans_lt ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_lt_of_antisymmRel ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_antisymmRel_of_lt ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AntisymmRel.lt_congr_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AntisymmRel.lt_congr_left ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AntisymmRel.lt_congr_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AntisymmRel.lt_congr_right ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LT.lt.trans_antisymmRel ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine toAntisymmetrization_lt_toAntisymmetrization_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ toAntisymmetrization (fun x1 x2 => x1 ≤ x2) {q | q < j ∧ φ q = φ j}.card <
+    toAntisymmetrization (fun x1 x2 => x1 ≤ x2) {q | φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AntisymmRel.lt_congr ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AntisymmRel.lt_congr ?_ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.Iio_ssubset_Iio_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.Iio {q | q < j ∧ φ q = φ j}.card ⊂ Set.Iio {q | φ q = φ j}.card
+Try this:
+  [apply] refine Set.notMem_Ici.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ∉ Set.Ici {q | φ q = φ j}.card
+Try this:
+  [apply] refine Set.not_mem_Ici.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ∉ Set.Ici {q | φ q = φ j}.card
+Try this:
+  [apply] refine Set.Ioi_ssubset_Ioi_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.Ioi {q | φ q = φ j}.card ⊂ Set.Ioi {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine Set.not_mem_Iic.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | φ q = φ j}.card ∉ Set.Iic {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine Set.notMem_Iic.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | φ q = φ j}.card ∉ Set.Iic {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine Set.right_mem_uIoc.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | φ q = φ j}.card ∈ Set.uIoc {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card
+Try this:
+  [apply] refine Set.left_mem_uIoc.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | φ q = φ j}.card ∈ Set.uIoc {q | φ q = φ j}.card {q | q < j ∧ φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsChain.not_le ?_ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsChain.lt_of_not_le ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsChain.lt_of_not_ge ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (CovBy.le_iff_lt_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (CovBy.lt_iff_le_right ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (CovBy.le_iff_lt_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine CovBy.lt ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ⋖ {q | φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (CovBy.lt_iff_le_left ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Order.pred_lt_pred_iff_of_not_isMin ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ PredOrder ℕ
+  -- ⊢ ¬IsMin {q | q < j ∧ φ q = φ j}.card
+  -- ⊢ ¬IsMin {q | φ q = φ j}.card
+  -- ⊢ Order.pred {q | q < j ∧ φ q = φ j}.card < Order.pred {q | φ q = φ j}.card
+Try this:
+  [apply] refine Order.le_pred_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ PredOrder ℕ
+  -- ⊢ NoMinOrder ℕ
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ Order.pred {q | φ q = φ j}.card
+Try this:
+  [apply] refine (Order.succ_lt_succ_iff_of_not_isMax ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ SuccOrder ℕ
+  -- ⊢ ¬IsMax {q | q < j ∧ φ q = φ j}.card
+  -- ⊢ ¬IsMax {q | φ q = φ j}.card
+  -- ⊢ Order.succ {q | q < j ∧ φ q = φ j}.card < Order.succ {q | φ q = φ j}.card
+Try this:
+  [apply] refine (Order.succ_le_iff_of_not_isMax ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ SuccOrder ℕ
+  -- ⊢ ¬IsMax {q | q < j ∧ φ q = φ j}.card
+  -- ⊢ Order.succ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card
+Try this:
+  [apply] refine Order.pred_lt_pred_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ PredOrder ℕ
+  -- ⊢ NoMinOrder ℕ
+  -- ⊢ Order.pred {q | q < j ∧ φ q = φ j}.card < Order.pred {q | φ q = φ j}.card
+Try this:
+  [apply] refine Order.succ_lt_succ_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ SuccOrder ℕ
+  -- ⊢ Order.succ {q | q < j ∧ φ q = φ j}.card < Order.succ {q | φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Order.lt_of_succ_lt_succ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Order.succ_le_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ SuccOrder ℕ
+  -- ⊢ Order.succ {q | q < j ∧ φ q = φ j}.card ≤ {q | φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Order.lt_of_pred_lt_pred ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Order.le_pred_iff_of_not_isMin ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ PredOrder ℕ
+  -- ⊢ ¬IsMin {q | φ q = φ j}.card
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ≤ Order.pred {q | φ q = φ j}.card
+Try this:
+  [apply] refine (IsCoatom.lt_iff ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ OrderTop ℕ
+  -- ⊢ IsCoatom {q | q < j ∧ φ q = φ j}.card
+  -- ⊢ {q | φ q = φ j}.card = ⊤
+Try this:
+  [apply] refine (IsAtom.lt_iff ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ IsAtom {q | φ q = φ j}.card
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card = ⊥
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (LocallyFiniteOrderBot.finset_mem_Iio {q | φ q = φ j}.card {q | q < j ∧ φ q = φ j}.card).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Finset.mem_Ioi.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LocallyFiniteOrderTop ℕ
+  -- ⊢ {q | φ q = φ j}.card ∈ Finset.Ioi {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine Finset.mem_Iio.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ∈ Finset.Iio {q | φ q = φ j}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (LocallyFiniteOrderTop.finset_mem_Ioi {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Finset.Iic_ssubset_Iic.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Finset.Iic {q | q < j ∧ φ q = φ j}.card ⊂ Finset.Iic {q | φ q = φ j}.card
+Try this:
+  [apply] refine Finset.nonempty_Ioc.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Finset.Ioc {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card).Nonempty
+Try this:
+  [apply] refine Finset.Ici_ssubset_Ici.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LocallyFiniteOrderTop ℕ
+  -- ⊢ Finset.Ici {q | φ q = φ j}.card ⊂ Finset.Ici {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine Finset.nonempty_Ioo.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ DenselyOrdered ℕ
+  -- ⊢ (Finset.Ioo {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card).Nonempty
+Try this:
+  [apply] refine Finset.left_mem_Ico.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ∈ Finset.Ico {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card
+Try this:
+  [apply] refine Finset.nonempty_Ico.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Finset.Ico {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card).Nonempty
+Try this:
+  [apply] refine Finset.right_mem_Ioc.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | φ q = φ j}.card ∈ Finset.Ioc {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card
+Try this:
+  [apply] refine lt_iff_transGen_covBy.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Relation.TransGen (fun x1 x2 => x1 ⋖ x2) {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card
+Try this:
+  [apply] refine Multiset.mem_Ioi.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LocallyFiniteOrderTop ℕ
+  -- ⊢ {q | φ q = φ j}.card ∈ Multiset.Ioi {q | q < j ∧ φ q = φ j}.card
+Try this:
+  [apply] refine Multiset.mem_Iio.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ∈ Multiset.Iio {q | φ q = φ j}.card
+Try this:
+  [apply] refine Multiset.left_mem_Ico.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | q < j ∧ φ q = φ j}.card ∈ Multiset.Ico {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card
+Try this:
+  [apply] refine Multiset.right_mem_Ioc.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {q | φ q = φ j}.card ∈ Multiset.Ioc {q | q < j ∧ φ q = φ j}.card {q | φ q = φ j}.card
+/private/tmp/io-sprg-overlap/BucketsSparse_rank_lt_load-apply.lean:15:0: warning: declaration uses 'sorry'

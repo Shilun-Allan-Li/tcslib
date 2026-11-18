@@ -1,0 +1,60 @@
+2026-11-18T16:19:18.297819+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:96:22: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (Equiv.symm ?e) (?e ?x)
+in the target expression
+  (fun i =>
+        match (P.pubEquiv κ).symm i with
+        | Sum.inl (k, q) => (instances k).pub q
+        | Sum.inr val => ↑first.isNone.toNat)
+      ((P.pubEquiv κ) (Sum.inl (k, i))) =
+    (instances k).pub i
+
+P : Params
+κ : ℕ
+pp : PrimeParam κ
+instances : Fin κ → P.OneSdOut κ pp
+first : Option (Fin κ)
+k : Fin κ
+i : Fin (P.n κ)
+⊢ (fun i =>
+        match (P.pubEquiv κ).symm i with
+        | Sum.inl (k, q) => (instances k).pub q
+        | Sum.inr val => ↑first.isNone.toNat)
+      ((P.pubEquiv κ) (Sum.inl (k, i))) =
+    (instances k).pub i
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:102:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:111:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:120:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:130:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:142:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:157:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:167:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:184:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:199:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:214:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:232:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:245:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:257:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:272:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness): no fresh .olean produced
+        2.52 real         1.69 user         1.04 sys
+          2329837568  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              183693  page reclaims
+                  15  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  18  voluntary context switches
+                7478  involuntary context switches
+            32194543  instructions retired
+            14888315  cycles elapsed
+             1638736  peak memory footprint
+2026-11-18T16:19:20.844801+00:00 END rc=1

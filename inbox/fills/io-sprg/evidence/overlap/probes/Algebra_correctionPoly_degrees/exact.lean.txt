@@ -1,0 +1,28 @@
+import Mathlib.RingTheory.MvPolynomial.Homogeneous
+import Mathlib.Data.Finset.Sort
+import Mathlib.Algebra.MvPolynomial.Eval
+import Mathlib.Algebra.BigOperators.Ring.Finset
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open scoped BigOperators
+
+namespace IoSprgAlgebraOverlap
+
+example {σ τ R : Type*} [CommRing R] {rc t : ℕ}
+    (position : Option (Fin rc × Fin rc))
+    (U : Bool → Fin rc → Fin t → τ) (V : Fin t → Fin rc → τ) (copy : Bool) :
+    let q : MvPolynomial (σ ⊕ τ) R := match position with
+      | none => 0
+      | some c => ∑ r : Fin t,
+          MvPolynomial.X (.inr (U copy c.1 r)) * MvPolynomial.X (.inr (V r c.2))
+    q.weightedTotalDegree (Sum.elim
+      (fun _ : σ => (1 : ℕ)) (fun _ : τ => (0 : ℕ))) = 0 ∧
+      q.weightedTotalDegree (Sum.elim
+      (fun _ : σ => (0 : ℕ)) (fun _ : τ => (1 : ℕ))) ≤ 2 := by
+  exact?
+
+end IoSprgAlgebraOverlap

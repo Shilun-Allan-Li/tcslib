@@ -1,0 +1,68 @@
+2026-11-18T16:33:27.414800+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:305:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (?m.87 * ?m.88) ?m.89 ?m.90
+in the target expression
+  (fun M => M c.1 c.2)
+      ((Matrix.of fun row a => (P.oneSd κ pp I σ s r).priv (P.uCoord κ (I.2.1 j) row a)) *
+        Matrix.of fun a col => (P.oneSd κ pp I σ s r).priv (P.vCoord κ (I.2.1 j) a col)) =
+    (fun M => M c.1 c.2)
+      (Buckets.bucketMatrix I.2.1 (P.rc κ) (P.corr κ pp I σ fun i => P.noiseValue κ pp (r i)) (I.2.1 j))
+
+case refine_2
+P : Params
+κ : ℕ
+pp : PrimeParam κ
+I : P.Idx' κ pp
+σ : Fin (P.n κ) → Bool
+s : Fin (P.ℓ κ) → ZMod pp.p
+r : Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p
+k : Fin κ
+j : Fin (P.m κ)
+z : P.Var κ → ZMod pp.p
+hpriv : ∀ (v : P.SVar κ), z (P.sVar κ k false v) = (P.oneSd κ pp I σ s r).priv v
+hflag : (P.oneSd κ pp I σ s r).flag = true
+hf : (P.oneFlag κ pp I fun i => P.noiseValue κ pp (r i)) = true
+hno : ¬Buckets.overfull I.2.1 (P.rc κ * P.rc κ)
+c : Fin (P.rc κ) × Fin (P.rc κ)
+hc : Buckets.indexMap I.2.1 (P.rc κ) j = some c
+hfactor :
+  ((Matrix.of fun row a => (P.oneSd κ pp I σ s r).priv (P.uCoord κ (I.2.1 j) row a)) *
+      Matrix.of fun a col => (P.oneSd κ pp I σ s r).priv (P.vCoord κ (I.2.1 j) a col)) =
+    Buckets.bucketMatrix I.2.1 (P.rc κ) (P.corr κ pp I σ fun i => P.noiseValue κ pp (r i)) (I.2.1 j)
+hentry :
+  (fun M => M c.1 c.2)
+      ((Matrix.of fun row a => (P.oneSd κ pp I σ s r).priv (P.uCoord κ (I.2.1 j) row a)) *
+        Matrix.of fun a col => (P.oneSd κ pp I σ s r).priv (P.vCoord κ (I.2.1 j) a col)) =
+    (fun M => M c.1 c.2)
+      (Buckets.bucketMatrix I.2.1 (P.rc κ) (P.corr κ pp I σ fun i => P.noiseValue κ pp (r i)) (I.2.1 j))
+⊢ ∑ x,
+      (P.oneSd κ pp I σ s r).priv (P.uCoord κ (I.2.1 j) c.1 x) *
+        (P.oneSd κ pp I σ s r).priv (P.vCoord κ (I.2.1 j) x c.2) =
+    P.corr κ pp I σ (fun i => P.noiseValue κ pp (r i)) j
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:316:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:334:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:347:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:359:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:374:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness): no fresh .olean produced
+        3.16 real         2.44 user         1.09 sys
+          2356412416  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              184367  page reclaims
+                1829  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 707  voluntary context switches
+                9752  involuntary context switches
+            32056959  instructions retired
+            14195107  cycles elapsed
+             1638736  peak memory footprint
+2026-11-18T16:33:30.601238+00:00 END rc=1

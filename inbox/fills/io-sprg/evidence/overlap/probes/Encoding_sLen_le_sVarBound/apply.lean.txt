@@ -1,0 +1,16 @@
+import Mathlib.Algebra.Order.Ring.Nat
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace IoSprgEncodingOverlap
+
+example (κ D ell ellBound B bucketBound rc rcBound : ℕ)
+    (hell : ell ≤ ellBound) (hB : B ≤ bucketBound) (hrc : rc ≤ rcBound) :
+    (ell + 1) ^ D + B * (rc * κ + κ * rc) ≤
+      (ellBound + 1) ^ D + bucketBound * (rcBound * κ + κ * rcBound) := by
+  apply?
+
+end IoSprgEncodingOverlap

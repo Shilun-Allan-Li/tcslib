@@ -1,0 +1,144 @@
+From 778397fd929839cc82f6cd70d400770b52796b4a Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 07:23:01 -0800
+Subject: [PATCH 18/24] io-sprg: M1 shared fixed-width encoding lemmas
+
+---
+ .../Obfuscation/StructuredSeed.lean           |  2 +
+ .../Obfuscation/StructuredSeed/Basic.lean     | 94 +++++++++++++++++++
+ .../Obfuscation/StructuredSeed/Encoding.lean  |  1 +
+ 3 files changed, 97 insertions(+)
+ create mode 100644 TCSlib/Cryptography/Obfuscation/StructuredSeed/Basic.lean
+
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed.lean
+index 89468646187c04ab787f262c040698fdb330c1a5..043162f7dba0ee12941efa9147f5e20ab2fd6271 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed.lean
+@@ -2,6 +2,7 @@
+ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Basic
+ import TCSlib.Cryptography.Obfuscation.StructuredSeed.LPN
+ import TCSlib.Cryptography.Obfuscation.StructuredSeed.BoolPRG
+ import TCSlib.Cryptography.Obfuscation.StructuredSeed.Degree
+@@ -32,6 +33,7 @@ set_option autoImplicit false
+ 
+ ## Contents
+ 
++* `Basic`: reusable fixed-width tagged-list encoding lemmas.
+ * `LPN`: the lpn component.
+ * `BoolPRG`: the boolprg component.
+ * `Degree`: the degree component.
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Basic.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Basic.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..35f430ca803e418b2e3942d4e1d20029adad90cb
+--- /dev/null
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Basic.lean
+@@ -0,0 +1,94 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Complexity.CircuitComplexity.Uniform
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Encoding helpers for structured-seed generators
++
++## Main definitions
++
++This module adds no definitions; it supplies fixed-width encoding glue.
++
++## Main results
++
++* `Internal.encodeList_injective_of_fixedWidth` recovers a list from injective
++  element codes of one common width.
++* `Internal.encodeList_length_of_fixedWidth` counts every element tag and the
++  final false marker in the existing Boolean-circuit list code.
++
++These are area-local encoding glue for the finite coordinates used by the
++construction. They consume the published `BoolCircuit.encodeList_nil` and
++`BoolCircuit.encodeList_cons` equations and existing Core list lemmas.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026,
++  Section 4, construction and seed encodings, pp. 15-17.
++* The existing tagged-list code is specified by `BoolCircuit.encodeList_nil`
++  and `BoolCircuit.encodeList_cons` in `CircuitComplexity/Uniform.lean`.
++-/
++
++namespace TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal
++
++/-- Constant-width injective element codes give an injective tagged-list code:
++`Injective f` and `length (f a) = width` imply `Injective (encodeList f)`.
++Encoding glue; no positivity or inhabitedness assumption is needed.
++The private generic prefix-free-list result in `BoolCircuit` is not accessed.
++
++**Proof sketch.** Compare the leading false/true markers. For two nonempty
++lists, use the supplied equal head widths with existing `List.append_inj`.
++Apply element injectivity and the induction hypothesis to the two equalities. -/
++theorem encodeList_injective_of_fixedWidth {α : Type} {f : α → List Bool}
++    (hf : Function.Injective f) (width : ℕ) (hwidth : ∀ a, (f a).length = width) :
++    Function.Injective (BoolCircuit.encodeList f) := by
++  intro xs
++  induction xs with
++  | nil =>
++    intro ys h
++    cases ys with
++    | nil => rfl
++    | cons y ys =>
++      rw [BoolCircuit.encodeList_nil, BoolCircuit.encodeList_cons] at h
++      cases (List.cons.inj h).1
++  | cons x xs ih =>
++    intro ys h
++    cases ys with
++    | nil =>
++      rw [BoolCircuit.encodeList_cons, BoolCircuit.encodeList_nil] at h
++      cases (List.cons.inj h).1
++    | cons y ys =>
++      rw [BoolCircuit.encodeList_cons, BoolCircuit.encodeList_cons] at h
++      have hcodes := (List.cons.inj h).2
++      have hparts := List.append_inj hcodes ((hwidth x).trans (hwidth y).symm)
++      exact congrArg₂ List.cons (hf hparts.1) (ih hparts.2)
++
++/-- Equal-width element codes have exact tagged-list length:
++`length (encodeList f xs) = length xs * (width + 1) + 1`.
++Encoding glue; the formula includes all true tags and the final false marker,
++including the empty list and width zero. It is an equality for constant blocks,
++rather than a restatement of the private variable-block-size upper bound.
++
++**Proof sketch.** Use the existing nil/cons equations and Core length lemmas.
++The nil case contributes one marker. The cons case contributes width plus one;
++substitute the induction hypothesis and normalize the successor product. -/
++theorem encodeList_length_of_fixedWidth {α : Type} (f : α → List Bool)
++    (width : ℕ) (hwidth : ∀ a, (f a).length = width) (xs : List α) :
++    (BoolCircuit.encodeList f xs).length = xs.length * (width + 1) + 1 := by
++  induction xs with
++  | nil =>
++    simp only [BoolCircuit.encodeList_nil, List.length_singleton, List.length_nil,
++      Nat.zero_mul, Nat.zero_add]
++  | cons x xs ih =>
++    simp only [BoolCircuit.encodeList_cons, List.length_cons, List.length_append,
++      hwidth, ih, Nat.succ_mul]
++    omega
++
++end TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean
+index f60820fd5cbfd913ae67771c218bca7a6dffea92..84294607e6a8bbf40b593fab0f73e14066c2edb8 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean
+@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: TCSlib contributors
+ -/
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Basic
+ import TCSlib.Cryptography.Obfuscation.StructuredSeed.Params
+ import Mathlib.Logic.Equiv.Fin.Basic
+ import Mathlib.Algebra.BigOperators.Fin

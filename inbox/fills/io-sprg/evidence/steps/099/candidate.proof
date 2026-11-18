@@ -1,0 +1,8 @@
+by
+  apply OracleComp.AllOutputs.mono _ (P.G4_eval_eq κ pp I)
+  intro x hx j
+  rw [P.eval'_eq]
+  change decide (MvPolynomial.eval (Sum.elim x.seed.1 x.seed.2) (P.G4 κ pp I j) = 1) = _
+  rw [hx j]
+  cases he : x.err <;>
+    cases hb : P.G.eval (P.n κ) I.1 x.σ (P.outputIndex κ j) <;> simp [he, hb]

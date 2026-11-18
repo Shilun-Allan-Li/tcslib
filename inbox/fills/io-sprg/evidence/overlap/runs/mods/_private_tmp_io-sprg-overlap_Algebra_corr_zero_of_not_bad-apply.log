@@ -1,0 +1,358 @@
+Try this:
+  [apply] refine sub_eq_zero_of_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑out.toNat = MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p
+Try this:
+  [apply] refine Eq.symm (eq_sub_of_add_eq' ?_)
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p + 0 = ↑out.toNat
+Try this:
+  [apply] refine sub_eq_zero.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑out.toNat = MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p
+Try this:
+  [apply] refine Eq.symm (eq_sub_of_add_eq ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 + MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p = ↑out.toNat
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [AddCommGroup G] {a b c} => eq_sub_iff_add_eq'.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (IsAddUnit.sub_eq_zero_iff_eq ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ IsAddUnit (MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p)
+  -- ⊢ ↑out.toNat = MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [AddGroup G] {a b c} => eq_sub_iff_add_eq.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine tsub_eq_zero_of_le ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [SubtractionMonoid α] {a b c} h => (IsAddUnit.eq_sub_iff h).mpr) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (IsAddUnit.eq_sub_of_add_eq ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ IsAddUnit (MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p)
+  -- ⊢ 0 + MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p = ↑out.toNat
+Try this:
+  [apply] refine tsub_eq_zero_iff_le.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ PartialOrder R
+  -- ⊢ CanonicallyOrderedAdd R
+  -- ⊢ OrderedSub R
+  -- ⊢ ↑out.toNat ≤ MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (eq_tsub_of_add_eq ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (AddLECancellable.eq_tsub_of_add_eq ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine sub_eq_iff_eq_add.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑out.toNat = 0 + MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (AddLECancellable.eq_tsub_of_add_eq' ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine sub_eq_of_eq_add' ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑out.toNat = MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p + 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} [AddCommSemigroup α] [PartialOrder α] [ExistsAddOfLE α] [AddLeftMono α] [Sub α] [OrderedSub α] {a b c}
+          [AddLeftReflectLE α] h =>
+        (eq_tsub_iff_add_eq_of_le h).mpr)
+      ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine sub_eq_of_eq_add ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑out.toNat = 0 + MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} [AddCommSemigroup α] [PartialOrder α] [ExistsAddOfLE α] [AddLeftMono α] [Sub α] [OrderedSub α] {a b c} hc
+          h =>
+        (AddLECancellable.eq_tsub_iff_add_eq_of_le hc h).mpr)
+      ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine sub_eq_iff_eq_add'.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑out.toNat = MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p + 0
+Try this:
+  [apply] refine IsAddUnit.sub_eq_of_eq_add ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ IsAddUnit (MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p)
+  -- ⊢ ↑out.toNat = 0 + MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p
+Try this:
+  [apply] refine (IsAddUnit.sub_eq_iff ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ IsAddUnit (MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p)
+  -- ⊢ ↑out.toNat = 0 + MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AddLECancellable.tsub_eq_of_eq_add' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine tsub_eq_of_eq_add ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine tsub_eq_of_eq_add_rev ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AddLECancellable.tsub_eq_of_eq_add_rev ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AddLECancellable.tsub_eq_of_eq_add ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AddLECancellable.tsub_eq_of_eq_add_rev' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (tsub_eq_iff_eq_add_of_le ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ PartialOrder R
+  -- ⊢ AddLeftMono R
+  -- ⊢ OrderedSub R
+  -- ⊢ AddLeftReflectLE R
+  -- ⊢ MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p ≤ ↑out.toNat
+  -- ⊢ ↑out.toNat = 0 + MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p
+Try this:
+  [apply] refine (AddLECancellable.tsub_eq_iff_eq_add_of_le ?_ ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ PartialOrder R
+  -- ⊢ AddLeftMono R
+  -- ⊢ OrderedSub R
+  -- ⊢ AddLECancellable (MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p)
+  -- ⊢ MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p ≤ ↑out.toNat
+  -- ⊢ ↑out.toNat = 0 + MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p
+Try this:
+  [apply] refine not_neZero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬NeZero (↑out.toNat - MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Subsingleton.eq_zero
+    (↑out.toNat - MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine sub_eq_self.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine conj_eq_zero_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine neg_eq_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ -(↑out.toNat - MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p) = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine left_eq_add.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine add_eq_left.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine sub_eq_neg_self.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine zero_eq_neg.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 = -(↑out.toNat - MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine add_eq_right.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine right_eq_add.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (eq_zero_iff_eq_zero_of_add_eq_zero ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (eq_zero_iff_eq_zero_of_add_eq_zero ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine isAddUnit_iff_eq_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Subsingleton (AddUnits R)
+  -- ⊢ IsAddUnit (↑out.toNat - MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine eq_zero_of_add_left' ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine eq_zero_of_add_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AddRightCancelMonoid.eq_zero_of_add_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AddLeftCancelMonoid.eq_zero_of_add_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AddRightCancelMonoid.eq_zero_of_add_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AddLeftCancelMonoid.eq_zero_of_add_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsAddUnit.add_eq_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine eq_zero_of_add_right' ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsAddUnit.add_eq_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine eq_zero_of_add_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine eq_zero_of_add_nonneg_right ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine eq_zero_of_add_nonpos_left ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine eq_zero_of_add_nonpos_right ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine eq_zero_of_add_nonneg_left ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine nonpos_iff_eq_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ PartialOrder R
+  -- ⊢ CanonicallyOrderedAdd R
+  -- ⊢ ↑out.toNat - MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p ≤ 0
+Try this:
+  [apply] refine toColex_eq_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ toColex (↑out.toNat - MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p) = 0
+Try this:
+  [apply] refine toLex_eq_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ toLex (↑out.toNat - MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p) = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (map_eq_zero_iff ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.all_zero_of_le_zero_le_of_sum_eq_zero ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AddEquiv.map_eq_zero_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AddEquivClass.map_eq_zero_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine EmbeddingLike.map_eq_zero_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsAddTorsionFree.zsmul_eq_zero_iff_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine self_eq_neg.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ IsAddTorsionFree R
+  -- ⊢ ↑out.toNat - MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p =
+    -(↑out.toNat - MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p)
+Try this:
+  [apply] refine two_nsmul_eq_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ IsAddTorsionFree R
+  -- ⊢ 2 • (↑out.toNat - MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p) = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsAddTorsionFree.nsmul_eq_zero_iff_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine neg_eq_self.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ IsAddTorsionFree R
+  -- ⊢ -(↑out.toNat - MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p) =
+    ↑out.toNat - MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p
+Try this:
+  [apply] refine (AddOpposite.op_eq_zero_iff
+        (↑out.toNat - MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p)).mp
+    ?_
+  -- Remaining subgoals:
+  -- ⊢ AddOpposite.op (↑out.toNat - MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p) = 0
+Try this:
+  [apply] refine (MulOpposite.op_eq_zero_iff
+        (↑out.toNat - MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p)).mp
+    ?_
+  -- Remaining subgoals:
+  -- ⊢ MulOpposite.op (↑out.toNat - MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p) = 0
+Try this:
+  [apply] refine ofAdd_eq_one.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Multiplicative.ofAdd (↑out.toNat - MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p) = 1
+Try this:
+  [apply] refine abs_nonpos_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder R
+  -- ⊢ AddLeftMono R
+  -- ⊢ AddRightMono R
+  -- ⊢ |↑out.toNat - MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p| ≤ 0
+Try this:
+  [apply] refine abs_eq_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder R
+  -- ⊢ AddLeftMono R
+  -- ⊢ AddRightMono R
+  -- ⊢ |↑out.toNat - MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p| = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Multiset.all_zero_of_le_zero_le_of_sum_eq_zero ?_ ?_
+    (↑out.toNat - MvPolynomial.eval₂ (Int.castRingHom R) (fun i => ↑(σ i).toNat + e i) p) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+/private/tmp/io-sprg-overlap/Algebra_corr_zero_of_not_bad-apply.lean:1:1: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (100000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.

@@ -1,0 +1,46 @@
+by
+  classical
+  rw [P.prgPoly_eq]
+  constructor
+  · apply pubDegree_finset_sum_le
+    intro h hh
+    have hcard : h.support.card ≤ P.d := ?_
+    swap
+    · refine le_trans ?_ ((MvPolynomial.le_totalDegree hh).trans
+        (P.R.totalDegree_poly_le (P.n κ) I'.1 (P.outputIndex κ j)))
+      change h.support.card ≤ ∑ i ∈ h.support, h i
+      simpa only [Nat.nsmul_eq_mul, Nat.mul_one] using
+        (Finset.card_nsmul_le_sum h.support (fun i => h i) 1
+          (fun i hi => Nat.one_le_iff_ne_zero.mpr (Finsupp.mem_support_iff.mp hi)))
+    have hc := pubDegree_C (σ := P.Pub κ) (τ := P.Priv κ)
+      ((MvPolynomial.coeff h (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j)) : ℤ) : ZMod pp.p)
+    have hl := P.halfForm_pubDegree_le κ pp I' k h 0 copy
+    have hr := P.halfForm_pubDegree_le κ pp I' k h P.D false
+    simp only [Nat.zero_add] at hl
+    have hslots := Internal.monomialSlot_two_halves_card_le h P.D
+    have hmul₁ := pubDegree_mul_le
+      (MvPolynomial.C
+        ((MvPolynomial.coeff h (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j)) : ℤ) : ZMod pp.p))
+      (P.halfForm κ pp I' k h 0 copy)
+    have hmul₂ := pubDegree_mul_le
+      (MvPolynomial.C
+        ((MvPolynomial.coeff h (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j)) : ℤ) : ZMod pp.p) *
+          P.halfForm κ pp I' k h 0 copy)
+      (P.halfForm κ pp I' k h P.D false)
+    omega
+  · apply privDegree_finset_sum_le
+    intro h hh
+    have hc := privDegree_C (σ := P.Pub κ) (τ := P.Priv κ)
+      ((MvPolynomial.coeff h (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j)) : ℤ) : ZMod pp.p)
+    have hl := P.halfForm_privDegree_le κ pp I' k h 0 copy
+    have hr := P.halfForm_privDegree_le κ pp I' k h P.D false
+    have hmul₁ := privDegree_mul_le
+      (MvPolynomial.C
+        ((MvPolynomial.coeff h (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j)) : ℤ) : ZMod pp.p))
+      (P.halfForm κ pp I' k h 0 copy)
+    have hmul₂ := privDegree_mul_le
+      (MvPolynomial.C
+        ((MvPolynomial.coeff h (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j)) : ℤ) : ZMod pp.p) *
+          P.halfForm κ pp I' k h 0 copy)
+      (P.halfForm κ pp I' k h P.D false)
+    omega

@@ -1,0 +1,79 @@
+{
+ "head": "19dde91afc384656e7e47cb018057e088d4ded0a",
+ "forbidden_imports": [],
+ "coin_imports": [
+  [
+   "TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean",
+   6,
+   "import TCSlib.Cryptography.CoinSampling.Contract"
+  ],
+  [
+   "TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean",
+   8,
+   "import TCSlib.Cryptography.CoinSampling.Contract"
+  ],
+  [
+   "TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean",
+   6,
+   "import TCSlib.Cryptography.CoinSampling.Contract"
+  ],
+  [
+   "TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean",
+   6,
+   "import TCSlib.Cryptography.CoinSampling.Contract"
+  ]
+ ],
+ "choice_occurrences": [
+  [
+   "TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean",
+   86,
+   "  refine \u27e8fun \u03ba => \u27e8Classical.choose (h \u03ba), (Classical.choose_spec (h \u03ba)).1,"
+  ],
+  [
+   "TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean",
+   87,
+   "    (Classical.choose_spec (h \u03ba)).2.1.le, ?_\u27e9\u27e9"
+  ],
+  [
+   "TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean",
+   88,
+   "  simpa only [pow_succ, Nat.mul_comm] using (Classical.choose_spec (h \u03ba)).2.2"
+  ]
+ ],
+ "new_realization_variants": [],
+ "new_contract_variants": [],
+ "sampler_mentions": [
+  [
+   "TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean",
+   368,
+   "The dimension is explicit because `UniformSampler.\u03a9` is indexed by the parameter word. -/"
+  ]
+ ],
+ "changed": [
+  "TCSlib.lean",
+  "TCSlib/Cryptography/Obfuscation.lean",
+  "TCSlib/Cryptography/Obfuscation/StructuredSeed.lean",
+  "TCSlib/Cryptography/Obfuscation/StructuredSeed/Basic.lean",
+  "TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean",
+  "TCSlib/Cryptography/Obfuscation/StructuredSeed/Buckets.lean",
+  "TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42.lean",
+  "TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean",
+  "TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean",
+  "TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean",
+  "TCSlib/Cryptography/Obfuscation/StructuredSeed/Degree.lean",
+  "TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean",
+  "TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean",
+  "TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean",
+  "TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean",
+  "TCSlib/Cryptography/Obfuscation/StructuredSeed/PolyTerms.lean",
+  "TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean",
+  "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean",
+  "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG.lean",
+  "TCSlib/Cryptography/Obfuscation/StructuredSeed/Samplers.lean",
+  "TCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean",
+  "TCSlib/Cryptography/Obfuscation/StructuredSeed/SparseFactor.lean",
+  "TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean",
+  "TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean"
+ ],
+ "pdf_paths": []
+}

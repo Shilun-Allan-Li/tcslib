@@ -1,0 +1,20 @@
+--- /private/tmp/io-sprg-proof-notes/OverlapAlgebra/templates/G4_eval_eq.lean.template
++++ /private/tmp/io-sprg-proof-notes/OverlapAlgebraSupportV2/templates/G4_eval_eq.lean.template
+@@ -6,15 +6,14 @@
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+-open scoped BigOperators
+ open TCSlib.Cryptography.Games
+ 
+ namespace IoSprgAlgebraOverlap
+ 
+-example {ι X σ τ R J : Type*} [CommRing R] (spec : OracleSpec ι)
++example {ι X σ τ R J : Type} [CommRing R] (spec : OracleSpec ι)
+     (seed : X → (σ → R) × (τ → R)) (err : X → Bool) (out : X → J → Bool)
+     (Q : J → MvPolynomial (σ ⊕ τ) R)
+-    {D : Type*} (draw : OracleComp spec D) (core : D → X)
++    {D : Type} (draw : OracleComp spec D) (core : D → X)
+     (hcore : ∀ d j,
+       MvPolynomial.eval (Sum.elim (seed (core d)).1 (seed (core d)).2) (Q j) =
+         if err (core d) then 0 else ((out (core d) j).toNat : R)) :

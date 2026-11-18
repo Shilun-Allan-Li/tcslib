@@ -1,0 +1,40 @@
+by
+  classical
+  have hhalf : ∀ (h : Fin (P.n κ) →₀ ℕ) (offset : ℕ),
+      MvPolynomial.eval z (P.halfForm κ pp I' k h offset true) =
+        flag * MvPolynomial.eval z (P.halfForm κ pp I' k h offset false) := ?_
+  swap
+  · intro h offset
+    simp only [P.halfForm_eq, MvPolynomial.eval_sum, MvPolynomial.eval_mul,
+      MvPolynomial.eval_prod, MvPolynomial.eval_X]
+    rw [Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro α hα
+    rw [hcopy]
+    ring
+  have hprg : MvPolynomial.eval z (P.prgPoly κ pp I' k j true) =
+      flag * MvPolynomial.eval z (P.prgPoly κ pp I' k j false) := ?_
+  swap
+  · simp only [P.prgPoly_eq, MvPolynomial.eval_sum, MvPolynomial.eval_mul,
+      MvPolynomial.eval_C]
+    rw [Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro h hh
+    rw [hhalf]
+    ring
+  have hcorr : MvPolynomial.eval z (P.correctionPoly κ pp I' k j true) =
+      flag * MvPolynomial.eval z (P.correctionPoly κ pp I' k j false) := ?_
+  swap
+  · rw [P.correctionPoly_eq, P.correctionPoly_eq]
+    cases hpos : Buckets.indexMap I'.2.1 (P.rc κ) j with
+    | none => simp
+    | some c =>
+      simp only [MvPolynomial.eval_sum, MvPolynomial.eval_mul, MvPolynomial.eval_X]
+      rw [Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro r hr
+      rw [hcopy]
+      ring
+  rw [P.G3_eq, P.G2_eq, P.G1_eq, MvPolynomial.eval_add, MvPolynomial.eval_add,
+    hprg, hcorr]
+  ring

@@ -1,0 +1,23 @@
+import Mathlib.Data.Finset.Card
+import Mathlib.Data.Fintype.Basic
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open scoped BigOperators
+
+namespace IoSprgAlgebraOverlap
+
+example {m B : ℕ} (φ : Fin m → Fin B) (bad : Finset (Fin m)) (Γ rc t : ℕ)
+    (h : decide (bad.card ≤ Γ ∧
+      ¬ (∃ b : Fin B, rc ^ 2 < (Finset.univ.filter (fun j => φ j = b)).card) ∧
+      ∀ b : Fin B,
+        ((Finset.univ.filter (fun j => φ j = b)) ∩ bad).card ≤ t) = true) :
+    bad.card ≤ Γ ∧
+      ¬ (∃ b : Fin B, rc * rc < (Finset.univ.filter (fun j => φ j = b)).card) ∧
+      ∀ b : Fin B,
+        ((Finset.univ.filter (fun j => φ j = b)) ∩ bad).card ≤ t := __PROBE_BODY__
+
+end IoSprgAlgebraOverlap

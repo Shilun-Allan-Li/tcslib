@@ -1,0 +1,20 @@
+[
+  {
+    "name": "oneSd_factors_mul",
+    "family": "Correctness",
+    "template": "templates/oneSd_factors_mul.lean.template",
+    "imports": [
+      "Mathlib.Data.List.FinRange",
+      "Mathlib.Data.Matrix.Mul",
+      "Mathlib.Data.Finset.Card",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:154",
+    "kind": "STRUCTURAL_CORE_REUSED",
+    "abstraction": "Existing sparse_reconstruct probe verbatim: arbitrary matrix with its actual Nodup nonzero-entry list and capacity bound, explicit padded factors. Concrete bucket support and successful oneSd reader transport are not included. No sparseFactor or bucket owner is imported.",
+    "public_apis": "List.getElem?/Nodup; Matrix.mul_apply; Finset.sum_eq_single; existing OverlapProbes/sparse_reconstruct",
+    "status": "V2_NOT_RUN",
+    "sha256": "0cff9e506202fe25fa4647059937b554e8aa585a29426d2891fe17d6a71bcb7d",
+    "V2_change": "Matrix.of both factor lambdas; remove unused BigOperators scope"
+  }
+]

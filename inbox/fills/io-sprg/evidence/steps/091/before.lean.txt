@@ -1,0 +1,279 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Samplers
+import Mathlib.Algebra.MvPolynomial.Variables
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Algebraic correctness of the JLS construction
+
+## Main definitions
+
+This module introduces no algorithms; it relates the explicit polynomial maps to the
+exact deterministic seed cores and their uniform-draw laws.
+
+## Main results
+
+* `Params.G2_eval_of_flag` reconstructs every output when an instance succeeds.
+* `Params.G4_eval_eq` proves `G4 = (1-err) Eval` on every sampled full output.
+* `Params.eval'_correct` identifies the Boolean output, including the error case.
+* `jls_hasComplexity` gives public degree `d` and private degree two on the raw bundle.
+
+## References
+
+* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
+  Assumptions*, J. ACM 73(1), Article 1, February 2026, sampling algorithm 1SdSamp,
+  Equation (2), p. 16, and Equations (3)-(4), p. 17.
+* [PS10] R. Pass, A. Shelat, *A Course in Cryptography*, 2010, Definition 26.8.
+
+**Deviations.** Dv3 stores the LPN matrix transposed. Dv4 reads dependencies on the
+supplied multilinear representation. Dv6 uses one composite polynomial. Dv10 uses
+public degree `d`, as in the formal construction on p. 17, rather than the overview's
+`d + 1` on p. 14; flag*S is precomputed in private coordinates. Dv15 transports the
+structured coordinates by explicit equivalences. Dv17 uses exact finite-draw laws,
+and Dv18 states complexity on the raw algorithm bundle. These are algebraic results
+for every public prime and every parameter, including an empty repetition set.
+-/
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+
+open scoped BigOperators
+open TCSlib.Cryptography.Games
+
+namespace Params
+
+/-- An absent first success means every flag is false,
+`firstGood flags = none ↔ ∀ k, flags k = false` [JLS26, SdSamp', p. 15].
+The increasing finite search remains meaningful when there are no repetitions.
+
+**Proof sketch.** Use the published firstGood reader, `List.find?_eq_none`,
+and membership of every index in `List.finRange`. -/
+theorem firstGood_none_iff {κ : ℕ} (flags : Fin κ → Bool) :
+    firstGood flags = none ↔ ∀ k, flags k = false := by
+  rw [firstGood_eq, List.find?_eq_none]
+  constructor
+  · intro h k
+    exact Bool.eq_false_iff.mpr (h k (List.mem_finRange k))
+  · intro h k _
+    exact Bool.eq_false_iff.mp (h k)
+
+/-- A selected first repetition has a true flag,
+`firstGood flags = some k → flags k = true` [JLS26, SdSamp', p. 15].
+This is mathematical glue for deterministic flag selection.
+
+**Proof sketch.** Apply `List.find?_some` through the published firstGood equation. -/
+theorem firstGood_some_flag {κ : ℕ} (flags : Fin κ → Bool) (k : Fin κ)
+    (h : firstGood flags = some k) : flags k = true := by
+  rw [firstGood_eq] at h
+  exact List.find?_some h
+
+/-- Every index earlier than the selected first success has a false flag
+[JLS26, SdSamp', p. 15]. This is mathematical glue for the deterministic minimum.
+
+**Proof sketch.** Use `List.find?_eq_some_iff_append` and the increasing order of
+`List.finRange` to place every earlier index in the unsuccessful prefix. -/
+theorem firstGood_some_minimal {κ : ℕ} (flags : Fin κ → Bool) (k : Fin κ)
+    (h : firstGood flags = some k) (q : Fin κ) (hq : q < k) : flags q = false := by
+  rw [firstGood_eq, ← List.ofFn_id κ] at h
+  have hmin := (List.find?_ofFn_eq_some_of_injective
+    (f := fun i : Fin κ => i) (p := flags) (i := k) Function.injective_id).mp h
+  exact Bool.eq_false_iff.mpr (hmin.2 q hq)
+
+/-- Packing preserves each instance's public vector at its explicit block coordinate
+[JLS26, SdSamp', p. 16]. Dv15 uses the public Fin equivalence; this is coordinate glue.
+
+**Proof sketch.** Read the public packing equation and cancel the equivalence with its inverse. -/
+theorem packSeed_public_block (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+    (instances : Fin κ → P.OneSdOut κ pp) (first : Option (Fin κ))
+    (k : Fin κ) (i : Fin (P.n κ)) :
+    (P.packSeed κ pp instances first).1 (P.pubEquiv κ (.inl (k, i))) =
+      (instances k).pub i := by
+  simp only [P.packSeed_fst, Equiv.symm_apply_apply]
+
+/-- Packing publishes one exactly when no first success exists
+[JLS26, SdSamp', p. 16]. Dv15 gives the error flag its explicit public coordinate.
+
+**Proof sketch.** Read the public packing equation at the final unit coordinate. -/
+theorem packSeed_error (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+    (instances : Fin κ → P.OneSdOut κ pp) (first : Option (Fin κ)) :
+    (P.packSeed κ pp instances first).1 (P.pubEquiv κ (.inr ())) =
+      (first.isNone.toNat : ZMod pp.p) := by
+  simp only [P.packSeed_fst, Equiv.symm_apply_apply]
+
+/-- Packing gives flag one only to the selected repetition
+[JLS26, SdSamp', pp. 15-16]. Dv15 uses the explicit private-coordinate equivalence.
+
+**Proof sketch.** Read the private packing equation at the flag coordinate. -/
+theorem packSeed_flag (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+    (instances : Fin κ → P.OneSdOut κ pp) (first : Option (Fin κ)) (k : Fin κ) :
+    (P.packSeed κ pp instances first).2 (P.privEquiv κ (k, .inl ())) =
+      if first = some k then 1 else 0 := by
+  simp only [P.packSeed_snd, Equiv.symm_apply_apply]
+
+/-- Packing preserves all original private seed coordinates
+[JLS26, SdSamp', p. 16]. Dv15 fixes the original-copy positions.
+
+**Proof sketch.** Read the private packing equation at an unscaled seed coordinate. -/
+theorem packSeed_unscaled (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+    (instances : Fin κ → P.OneSdOut κ pp) (first : Option (Fin κ))
+    (k : Fin κ) (v : P.SVar κ) :
+    (P.packSeed κ pp instances first).2 (P.privEquiv κ (k, .inr (.inl v))) =
+      (instances k).priv v := by
+  simp only [P.packSeed_snd, Equiv.symm_apply_apply]
+
+/-- Packing precomputes the selected flag times every private seed coordinate
+[JLS26, SdSamp', p. 16]. Dv10 and Dv15 put flag*S in a separate private copy.
+
+**Proof sketch.** Read the private packing equation at a scaled seed coordinate. -/
+theorem packSeed_scaled (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+    (instances : Fin κ → P.OneSdOut κ pp) (first : Option (Fin κ))
+    (k : Fin κ) (v : P.SVar κ) :
+    (P.packSeed κ pp instances first).2 (P.privEquiv κ (k, .inr (.inr v))) =
+      (if first = some k then (1 : ZMod pp.p) else 0) * (instances k).priv v := by
+  simp only [P.packSeed_snd, Equiv.symm_apply_apply]
+
+/-- Success bounds the bad count, rules out overfull grids, and bounds every bucket's bad count
+[JLS26, sampling algorithm 1SdSamp, p. 16]. Dv3 uses the stated integer rounding;
+the squared grid capacity is read through its published equation.
+
+**Proof sketch.** Convert the Boolean success test to its conjunction, then rewrite
+capacity as `rc*rc` and use the bucket overfull characterization. -/
+theorem oneFlag_bounds (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+    (I : P.Idx' κ pp) (e : Fin (P.n κ) → ZMod pp.p)
+    (h : P.oneFlag κ pp I e = true) :
+    (P.badSet κ pp I e).card ≤ P.Γ κ ∧
+      ¬ Buckets.overfull I.2.1 (P.rc κ * P.rc κ) ∧
+      ∀ b : Fin (P.B κ), (Buckets.bucket I.2.1 b ∩ P.badSet κ pp I e).card ≤ P.t κ :=
+  sorry
+
+/-- A good output has zero correction, `j ∉ BAD → Corr_j = 0`
+[JLS26, sampling algorithm 1SdSamp, p. 16; Equation (3), p. 17]. Dv4 uses the
+representation's variable set, so the erroneous and correct assignments agree there.
+
+**Proof sketch.** Use `MvPolynomial.eval₂Hom_congr'` to remove noise outside the
+polynomial's variables. Apply the supplied Boolean evaluation equation and cast it
+into the public prime field, then subtract equal values. -/
+theorem corr_zero_of_not_bad (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+    (I : P.Idx' κ pp) (σ : Fin (P.n κ) → Bool) (e : Fin (P.n κ) → ZMod pp.p)
+    (j : Fin (P.m κ)) (h : j ∉ P.badSet κ pp I e) : P.corr κ pp I σ e j = 0 := sorry
+
+/-- Successful one-instance factors reconstruct every bucket correction matrix
+[JLS26, sampling algorithm 1SdSamp, p. 16]. The deterministic sparse factorization
+replaces the paper's rank-existence justification while keeping the same dimensions.
+
+**Proof sketch.** Bound the matrix support by the bad outputs in its bucket, use the
+success count bound, and apply `sparseFactor_mul_of_card_le` through the oneSd readers. -/
+theorem oneSd_factors_mul (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+    (I : P.Idx' κ pp) (σ : Fin (P.n κ) → Bool) (s : Fin (P.ℓ κ) → ZMod pp.p)
+    (r : Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
+    (h : (P.oneSd κ pp I σ s r).flag = true) (b : Fin (P.B κ)) :
+    (Matrix.of (fun row a => (P.oneSd κ pp I σ s r).priv (P.uCoord κ b row a)) :
+        Matrix (Fin (P.rc κ)) (Fin (P.t κ)) (ZMod pp.p)) *
+      (Matrix.of (fun a col => (P.oneSd κ pp I σ s r).priv (P.vCoord κ b a col)) :
+        Matrix (Fin (P.t κ)) (Fin (P.rc κ)) (ZMod pp.p)) =
+      Buckets.bucketMatrix I.2.1 (P.rc κ)
+        (P.corr κ pp I σ (fun i => P.noiseValue κ pp (r i))) b := sorry
+
+/-- The first map already agrees with the correct Boolean output at every good coordinate
+[JLS26, Equation (3), p. 17]. Dv3 transposes the matrix and Dv4 identifies good outputs
+using the supplied multilinear representation.
+
+**Proof sketch.** Apply `G1_eval` with the one-instance public and tensor readers,
+then use `corr_zero_of_not_bad` to identify erroneous and correct polynomial outputs. -/
+theorem G1_eval_of_good (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+    (I : P.Idx' κ pp) (σ : Fin (P.n κ) → Bool) (s : Fin (P.ℓ κ) → ZMod pp.p)
+    (r : Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
+    (k : Fin κ) (j : Fin (P.m κ)) (z : P.Var κ → ZMod pp.p)
+    (hpub : ∀ i, z (P.bVar κ k i) = (P.oneSd κ pp I σ s r).pub i)
+    (hpriv : ∀ v, z (P.sVar κ k false v) = (P.oneSd κ pp I σ s r).priv v)
+    (hgood : j ∉ P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))) :
+    MvPolynomial.eval z (P.G1 κ pp I k j) =
+      ((P.G.eval (P.n κ) I.1 σ (P.outputIndex κ j)).toNat : ZMod pp.p) := sorry
+
+/-- A successful instance's quadratic correction evaluates to the original correction entry
+[JLS26, Equation (3), p. 17]. The good-case optional grid position exists and is injective.
+
+**Proof sketch.** Use the successful factor product, `Matrix.mul_apply`, and the
+bucket matrix entry theorem at the output's assigned position. -/
+theorem correctionPoly_eval_oneSd (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+    (I : P.Idx' κ pp) (σ : Fin (P.n κ) → Bool) (s : Fin (P.ℓ κ) → ZMod pp.p)
+    (r : Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
+    (k : Fin κ) (j : Fin (P.m κ)) (z : P.Var κ → ZMod pp.p)
+    (hpriv : ∀ v, z (P.sVar κ k false v) = (P.oneSd κ pp I σ s r).priv v)
+    (hflag : (P.oneSd κ pp I σ s r).flag = true) :
+    MvPolynomial.eval z (P.correctionPoly κ pp I k j false) =
+      P.corr κ pp I σ (fun i => P.noiseValue κ pp (r i)) j := sorry
+
+/-- The second map equals the correct Boolean output whenever its instance flag is true
+[JLS26, Equation (3), p. 17]. Dv3 uses the transposed public vector, and the private
+coordinates use the explicit deterministic factors rather than an unspecified witness.
+
+**Proof sketch.** Evaluate the first map at σ+e, evaluate the correction by the factor
+reconstruction, and use the defining difference in Corr to cancel the erroneous value. -/
+theorem G2_eval_of_flag (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+    (I : P.Idx' κ pp) (σ : Fin (P.n κ) → Bool) (s : Fin (P.ℓ κ) → ZMod pp.p)
+    (r : Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
+    (k : Fin κ) (j : Fin (P.m κ)) (z : P.Var κ → ZMod pp.p)
+    (hpub : ∀ i, z (P.bVar κ k i) = (P.oneSd κ pp I σ s r).pub i)
+    (hpriv : ∀ v, z (P.sVar κ k false v) = (P.oneSd κ pp I σ s r).priv v)
+    (hflag : (P.oneSd κ pp I σ s r).flag = true) :
+    MvPolynomial.eval z (P.G2 κ pp I k j) =
+      ((P.G.eval (P.n κ) I.1 σ (P.outputIndex κ j)).toNat : ZMod pp.p) := sorry
+
+/-- The fourth map at every exact core draw equals zero on error and the PRG output otherwise
+[JLS26, Eval', pp. 16-17]. Dv10 uses the precomputed scaled copy, and Dv15 transports
+structured assignments by the explicit public/private equivalences. No positive-κ
+premise is needed: an empty repetition set evaluates to zero and has its error flag set.
+
+**Proof sketch.** Apply Mathlib's `eval_rename`, read packed coordinates, and apply
+`G3_eval_of_scaled` to each summand. Unselected flags give zero. The selected first
+success satisfies `G2_eval_of_flag`; the empty-selection case has an empty active sum. -/
+theorem G4_eval_sdCore (P : Params) (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' κ pp)
+    (d : P.Draw κ pp) (j : Fin (P.m κ)) :
+    MvPolynomial.eval
+      (Sum.elim (P.sdCore κ pp I d).seed.1 (P.sdCore κ pp I d).seed.2) (P.G4 κ pp I j) =
+      if (P.sdCore κ pp I d).err then 0 else
+        ((P.G.eval (P.n κ) I.1 d.1 (P.outputIndex κ j)).toNat : ZMod pp.p) := sorry
+
+/-- Every full sampled output satisfies `G4 = (1-err) Eval`
+[JLS26, Eval', pp. 16-17]. Dv10 and Dv15 retain the formal degree and explicit renaming;
+Dv17 states exact support correctness, uniformly for every κ and input prime.
+
+**Proof sketch.** Read sdSampFull as the pushforward of its exact uniform draw and
+apply `G4_eval_sdCore` to every possible draw using the OracleComp support API. -/
+theorem G4_eval_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' κ pp) :
+    (P.sdSampFull κ pp I).AllOutputs (fun x => ∀ j,
+      MvPolynomial.eval (Sum.elim x.seed.1 x.seed.2) (P.G4 κ pp I j) =
+        if x.err then 0 else
+          ((P.G.eval (P.n κ) I.1 x.σ (P.outputIndex κ j)).toNat : ZMod pp.p)) := sorry
+
+/-- Every full sampled output has Boolean evaluation zero on error and the correct PRG
+output otherwise [JLS26, Eval', pp. 16-17]. Dv17 uses exact support correctness;
+primality gives distinct field encodings of zero and one, including p=2.
+
+**Proof sketch.** Apply `G4_eval_eq`, read Eval' as the test for field value one,
+and split the error flag and the original output bit. -/
+theorem eval'_correct (P : Params) (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' κ pp) :
+    (P.sdSampFull κ pp I).AllOutputs (fun x => ∀ j,
+      P.eval' κ pp I x.seed j =
+        if x.err then false else P.G.eval (P.n κ) I.1 x.σ (P.outputIndex κ j)) := sorry
+
+end Params
+
+/-- The raw JLS generator has public degree d and private degree two
+[JLS26, Definition 3.3, p. 10; Eval', pp. 16-17]. Dv6 uses the composite polynomial
+form; Dv10 uses degree d from the formal construction. Dv15 uses Fin seed coordinates,
+and Dv18 keeps efficiency separate in the raw bundle until assembly from targets.
+
+**Proof sketch.** Choose the explicit G4 output polynomials. Use `G4_degrees` for
+their bidegrees and `G4_eval_eq` with `eval'_correct` for the exact seed support.
+Transfer the construction's laws through the raw-bundle field readers. -/
+theorem jls_hasComplexity (P : Params) (π : PrimeSchedule) :
+    (jlsSPRG_raw P π).HasComplexity P.d 2 := sorry
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed

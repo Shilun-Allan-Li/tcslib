@@ -1,0 +1,13 @@
+import Mathlib.Algebra.Order.Ring.Nat
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace IoSprgEncodingOverlap
+
+example (κ m mBound W : ℕ) (hW : 0 < W) (hm : m ≤ mBound) :
+    max 1 ((m * κ + W - 1) / W) ≤ mBound * κ + 1 := __PROBE_BODY__
+
+end IoSprgEncodingOverlap

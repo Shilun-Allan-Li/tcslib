@@ -1,0 +1,50 @@
+2026-11-18T16:07:52.326812+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:546:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  pubDegree ((MvPolynomial.rename (Sum.map ⇑?e ⇑?f)) ?q)
+in the target expression
+  pubDegree ((MvPolynomial.rename ⇑((P.pubEquiv κ).sumCongr (P.privEquiv κ))) (P.G4struct κ pp I' j)) ≤ P.d
+
+case left
+P : Params
+κ : ℕ
+pp : PrimeParam κ
+I' : P.Idx' κ pp
+j : Fin (P.m κ)
+⊢ pubDegree ((MvPolynomial.rename ⇑((P.pubEquiv κ).sumCongr (P.privEquiv κ))) (P.G4struct κ pp I' j)) ≤ P.d
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:550:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  privDegree ((MvPolynomial.rename (Sum.map ⇑?e ⇑?f)) ?q)
+in the target expression
+  privDegree ((MvPolynomial.rename ⇑((P.pubEquiv κ).sumCongr (P.privEquiv κ))) (P.G4struct κ pp I' j)) ≤ 2
+
+case right
+P : Params
+κ : ℕ
+pp : PrimeParam κ
+I' : P.Idx' κ pp
+j : Fin (P.m κ)
+⊢ privDegree ((MvPolynomial.rename ⇑((P.pubEquiv κ).sumCongr (P.privEquiv κ))) (P.G4struct κ pp I' j)) ≤ 2
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:560:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:579:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:597:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys): no fresh .olean produced
+        3.28 real         3.01 user         1.02 sys
+          2372796416  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              186673  page reclaims
+                  17  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  17  voluntary context switches
+                8722  involuntary context switches
+            31986451  instructions retired
+            14225496  cycles elapsed
+             1622352  peak memory footprint
+2026-11-18T16:07:55.639228+00:00 END rc=1

@@ -1,0 +1,43 @@
+import TCSlib.Cryptography.Games.OracleComp
+import Mathlib.Algebra.MvPolynomial.Eval
+import Mathlib.RingTheory.MvPolynomial.Homogeneous
+import Mathlib.Data.ZMod.Basic
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography.Games
+
+namespace IoSprgAlgebraOverlap
+
+example {ι : Type} (spec : OracleSpec ι) (Idx : ℕ → Type)
+    (p pub priv out : ℕ → ℕ) (d : ℕ)
+    (G : ∀ κ, Idx κ → Fin (out κ) →
+      MvPolynomial (Fin (pub κ) ⊕ Fin (priv κ)) (ZMod (p κ)))
+    (S : ∀ κ, Idx κ → OracleComp spec
+      ((Fin (pub κ) → ZMod (p κ)) × (Fin (priv κ) → ZMod (p κ))))
+    (E : ∀ κ, Idx κ →
+      ((Fin (pub κ) → ZMod (p κ)) × (Fin (priv κ) → ZMod (p κ))) →
+      Fin (out κ) → Bool)
+    (hdeg : ∀ κ i j,
+      (G κ i j).weightedTotalDegree
+        (Sum.elim (fun _ : Fin (pub κ) => 1) (fun _ : Fin (priv κ) => 0)) ≤ d ∧
+      (G κ i j).weightedTotalDegree
+        (Sum.elim (fun _ : Fin (pub κ) => 0) (fun _ : Fin (priv κ) => 1)) ≤ 2)
+    (hsupp : ∀ κ i, (S κ i).AllOutputs (fun sd => ∀ j,
+      ((E κ i sd j).toNat : ZMod (p κ)) =
+        MvPolynomial.eval (Sum.elim sd.1 sd.2) (G κ i j)))
+    (κ : ℕ) (i : Idx κ) :
+    ∃ Q : Fin (out κ) →
+      MvPolynomial (Fin (pub κ) ⊕ Fin (priv κ)) (ZMod (p κ)),
+      (∀ j, (Q j).weightedTotalDegree
+        (Sum.elim (fun _ : Fin (pub κ) => 1) (fun _ : Fin (priv κ) => 0)) ≤ d ∧
+        (Q j).weightedTotalDegree
+          (Sum.elim (fun _ : Fin (pub κ) => 0) (fun _ : Fin (priv κ) => 1)) ≤ 2) ∧
+      (S κ i).AllOutputs (fun sd => ∀ j,
+        ((E κ i sd j).toNat : ZMod (p κ)) =
+          MvPolynomial.eval (Sum.elim sd.1 sd.2) (Q j)) := __PROBE_BODY__
+
+end IoSprgAlgebraOverlap

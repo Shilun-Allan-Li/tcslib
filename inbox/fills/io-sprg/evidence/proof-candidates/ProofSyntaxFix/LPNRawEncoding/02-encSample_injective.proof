@@ -1,0 +1,14 @@
+by
+  intro r s h
+  rw [F.encSample_eq, F.encSample_eq] at h
+  have houter := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h
+  have hinner := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _))
+    (congrArg Prod.snd houter)
+  apply Prod.ext
+  · exact Encoding.Modular.encodeMatrix_injective (F.residueBits.eval ℓ)
+      (F.modulus_le_pow ℓ) (congrArg Prod.fst houter)
+  · apply Prod.ext
+    · exact Encoding.Modular.encodeVector_injective (F.residueBits.eval ℓ)
+        (F.modulus_le_pow ℓ) (congrArg Prod.fst hinner)
+    · exact Encoding.Modular.encodeVector_injective (F.residueBits.eval ℓ)
+        (F.modulus_le_pow ℓ) (congrArg Prod.snd hinner)

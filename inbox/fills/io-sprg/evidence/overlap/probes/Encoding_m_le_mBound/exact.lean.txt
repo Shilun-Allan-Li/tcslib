@@ -1,0 +1,17 @@
+import TCSlib.Complexity.Randomized.PolyExpr
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open Complexity
+
+namespace IoSprgEncodingOverlap
+
+example (outLen : ℕ → ℕ) (outBound nBound : PolyExpr) (κ n : ℕ)
+    (hout : ∀ n, outLen n ≤ outBound.eval n) (hn : n ≤ nBound.eval κ) :
+    outLen n ≤ (outBound.subst nBound).eval κ := by
+  exact?
+
+end IoSprgEncodingOverlap

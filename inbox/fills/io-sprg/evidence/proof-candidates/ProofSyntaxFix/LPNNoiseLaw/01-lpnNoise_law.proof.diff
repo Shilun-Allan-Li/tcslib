@@ -1,0 +1,42 @@
+--- /private/tmp/io-sprg-proof-notes/LPNNoiseLaw/01-lpnNoise_law.proof
++++ /private/tmp/io-sprg-proof-notes/ProofSyntaxFix/LPNNoiseLaw/01-lpnNoise_law.proof
+@@ -2,13 +2,16 @@
+   classical
+   letI : Nonempty (Fin W) := ⟨0⟩
+   letI : Nonempty (ZMod p) := ⟨0⟩
+-  have hW : uprob (fun a : Fin W => a = 0) = 1 / (W : ℝ)
++  have hW : uprob (fun a : Fin W => a = 0) = 1 / (W : ℝ) := ?_
++  swap
+   · simpa only [Fintype.card_fin] using OneWay.uprob_eq_one_div_card (0 : Fin W)
+-  have hp : ∀ a : ZMod p, uprob (fun x : ZMod p => x = a) = 1 / (p : ℝ)
++  have hp : ∀ a : ZMod p, uprob (fun x : ZMod p => x = a) = 1 / (p : ℝ) := ?_
++  swap
+   · intro a
+     simpa only [ZMod.card] using OneWay.uprob_eq_one_div_card a
+   have hs : ∀ c : Fin W × ZMod p,
+-      ((lpnNoise p W).sample c : ZMod p) = if c.1 = 0 then c.2 else 0
++      ((lpnNoise p W).sample c : ZMod p) = if c.1 = 0 then c.2 else 0 := ?_
++  swap
+   · intro c
+     rw [lpnNoise_sample]
+     split_ifs <;> simp only [Int.cast_natCast, ZMod.natCast_zmod_val, Int.cast_zero]
+@@ -16,7 +19,8 @@
+   · subst z
+     rw [if_pos rfl]
+     have hevent : ∀ c : Fin W × ZMod p,
+-        ((lpnNoise p W).sample c : ZMod p) = 0 ↔ ¬ (c.1 = 0 ∧ c.2 ≠ 0)
++        ((lpnNoise p W).sample c : ZMod p) = 0 ↔ ¬ (c.1 = 0 ∧ c.2 ≠ 0) := ?_
++    swap
+     · intro c
+       rw [hs c]
+       by_cases ha : c.1 = 0 <;> simp [ha]
+@@ -26,7 +30,8 @@
+     ring
+   · rw [if_neg hz]
+     have hevent : ∀ c : Fin W × ZMod p,
+-        ((lpnNoise p W).sample c : ZMod p) = z ↔ c.1 = 0 ∧ c.2 = z
++        ((lpnNoise p W).sample c : ZMod p) = z ↔ c.1 = 0 ∧ c.2 = z := ?_
++    swap
+     · intro c
+       rw [hs c]
+       by_cases ha : c.1 = 0 <;> simp [ha, hz, Ne.symm hz]

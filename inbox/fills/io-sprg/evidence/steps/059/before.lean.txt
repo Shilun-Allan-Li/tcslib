@@ -1,0 +1,472 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
+-/
+import TCSlib.Cryptography.CoinSampling.Contract
+import TCSlib.Cryptography.LWE.Assumption
+import TCSlib.Cryptography.Foundations.Subexponential
+import TCSlib.Complexity.CircuitComplexity.Uniform
+import Mathlib.Data.Fintype.Pi
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Logic.Equiv.Fin.Basic
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Learning parity with noise over prime fields
+
+## Main definitions
+
+* `lpnNoise`: the exact finite law with error rate `1/W`.
+* `LPNFamily.Raw`: laws, schedules, canonical LWE view and advantage.
+* `LPNFamily.Raw.Draw`, `.sampleCore`, `.sampleLaw`: one exact joint honest sampler.
+* `LPNFamily`: the raw family with uniform sampler efficiency as a structure field.
+
+## Main results
+
+* `lpnNoise_law`: the exact scalar-noise probabilities (M0 statement).
+* Owner-side readers expose every definition and explicit finite-coordinate equivalence.
+
+## References
+
+* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
+  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, Sections 2-4.
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
+  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
+-/
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+
+open Complexity Turing Games
+
+/-- LPN noise is zero except when the uniform selector is zero, when it is uniform modulo `p`:
+`sample (a,x) = if a = 0 then x.val else 0`. [JLS26, before Definition 2.3, p. 9].
+Deviation Dv3: the exact finite rate is `1/W`; residues are represented by integer lifts to
+reuse `LWE.Noise`, and the construction supplies the rounded denominator. -/
+noncomputable def lpnNoise (p W : ℕ) [NeZero p] [NeZero W] : LWE.Noise where
+  Coins := Fin W × ZMod p
+  sample c := if c.1 = 0 then (c.2.val : ℤ) else 0
+
+/-- The noise seed type is `Fin W × ZMod p`; glue. -/
+theorem lpnNoise_coins (p W : ℕ) [NeZero p] [NeZero W] :
+    (lpnNoise p W).Coins = (Fin W × ZMod p) := rfl
+
+/-- A seed yields its residue lift exactly when the selector is zero; glue. -/
+theorem lpnNoise_sample (p W : ℕ) [NeZero p] [NeZero W] (c : Fin W × ZMod p) :
+    (lpnNoise p W).sample c = if c.1 = 0 then (c.2.val : ℤ) else 0 := rfl
+
+/-- The scalar law is `Pr[e=0]=1-1/W+1/(Wp)` and `Pr[e=z]=1/(Wp)` for nonzero `z`.
+[JLS26, before Definition 2.3, p. 9]. Deviation Dv3: the rate is the exact rational `1/W`.
+
+**Proof sketch.** Split the selector into zero and nonzero cases. Independence of the two
+uniform coordinates gives mass `1/(Wp)` to each residue in the zero-selector case; the
+remaining selector mass contributes only to zero. Use the published finite-product readers. -/
+theorem lpnNoise_law (p W : ℕ) [NeZero p] [NeZero W] (z : ZMod p) :
+    uprob (fun c : Fin W × ZMod p => ((lpnNoise p W).sample c : ZMod p) = z) =
+      if z = 0 then 1 - 1 / (W : ℝ) + 1 / ((W : ℝ) * p)
+      else 1 / ((W : ℝ) * p) := by
+  classical
+  letI : Nonempty (Fin W) := ⟨0⟩
+  letI : Nonempty (ZMod p) := ⟨0⟩
+  have hW : uprob (fun a : Fin W => a = 0) = 1 / (W : ℝ) := ?_
+  swap
+  · simpa only [Fintype.card_fin] using OneWay.uprob_eq_one_div_card (0 : Fin W)
+  have hp : ∀ a : ZMod p, uprob (fun x : ZMod p => x = a) = 1 / (p : ℝ) := ?_
+  swap
+  · intro a
+    simpa only [ZMod.card] using OneWay.uprob_eq_one_div_card a
+  have hs : ∀ c : Fin W × ZMod p,
+      ((lpnNoise p W).sample c : ZMod p) = if c.1 = 0 then c.2 else 0 := ?_
+  swap
+  · intro c
+    rw [lpnNoise_sample]
+    split_ifs <;> simp only [Int.cast_natCast, ZMod.natCast_zmod_val, Int.cast_zero]
+  by_cases hz : z = 0
+  · subst z
+    rw [if_pos rfl]
+    have hevent : ∀ c : Fin W × ZMod p,
+        ((lpnNoise p W).sample c : ZMod p) = 0 ↔ ¬ (c.1 = 0 ∧ c.2 ≠ 0) := ?_
+    swap
+    · intro c
+      rw [hs c]
+      by_cases ha : c.1 = 0 <;> simp [ha]
+    rw [OneWay.uprob_congr hevent, uprob_not,
+      HardcoreBit.uprob_prod_and (fun a : Fin W => a = 0) (fun x : ZMod p => x ≠ 0),
+      hW, uprob_not, hp]
+    simp only [one_div, mul_inv_rev]
+    ring
+  · rw [if_neg hz]
+    have hevent : ∀ c : Fin W × ZMod p,
+        ((lpnNoise p W).sample c : ZMod p) = z ↔ c.1 = 0 ∧ c.2 = z := ?_
+    swap
+    · intro c
+      rw [hs c]
+      by_cases ha : c.1 = 0 <;> simp [ha, hz, Ne.symm hz]
+    rw [OneWay.uprob_congr hevent,
+      HardcoreBit.uprob_prod_and (fun a : Fin W => a = 0) (fun x : ZMod p => x = z),
+      hW, hp]
+    simp only [one_div, mul_inv_rev]
+    ring
+
+namespace LPNFamily
+
+/-- A raw LPN family fixes sample count, prime modulus and exact noise denominator at every
+secret dimension `ℓ`. [JLS26, Definition 2.3, pp. 9-10]. Deviation Dv3: the construction's
+one sample/modulus schedule replaces the paper's outer schedule quantifiers; rows are samples,
+and the noise rate is `1/W`. Dv18: the primitive adds sampler efficiency separately. -/
+structure Raw where
+  /-- The sample count at secret dimension `ℓ`. -/
+  samples : ℕ → ℕ
+  /-- The public prime modulus. -/
+  modulus : ℕ → ℕ
+  /-- The positive exact denominator of the scalar noise rate. -/
+  noiseDen : ℕ → ℕ
+  /-- The modulus is prime. -/
+  modulus_prime : ∀ ℓ, (modulus ℓ).Prime
+  /-- The denominator is positive. -/
+  noiseDen_pos : ∀ ℓ, 0 < noiseDen ℓ
+  /-- A polynomial upper bound on the sample count. -/
+  samplesBound : PolyExpr
+  /-- The fixed residue width. -/
+  residueBits : PolyExpr
+  /-- The sample schedule satisfies its bound. -/
+  samples_le : ∀ ℓ, samples ℓ ≤ samplesBound.eval ℓ
+  /-- Residues fit in the selected width. -/
+  modulus_le_pow : ∀ ℓ, modulus ℓ ≤ 2 ^ residueBits.eval ℓ
+
+namespace Raw
+
+instance (F : Raw) (ℓ : ℕ) : NeZero (F.modulus ℓ) := ⟨(F.modulus_prime ℓ).ne_zero⟩
+instance (F : Raw) (ℓ : ℕ) : NeZero (F.noiseDen ℓ) := ⟨Nat.ne_of_gt (F.noiseDen_pos ℓ)⟩
+
+/-- The canonical LWE parameters have secret dimension `ℓ`, `F.samples ℓ` rows, and modulus
+`F.modulus ℓ`. [JLS26, Definition 2.3, pp. 9-10]. Deviation Dv3: the matrix is transposed
+relative to the paper so that rows are samples, matching the shared LWE interface. -/
+def parameters (F : Raw) (ℓ : ℕ) : LWE.Parameters where
+  dimension := ℓ
+  samples := F.samples ℓ
+  modulus := F.modulus ℓ
+  modulus_ge_two := (F.modulus_prime ℓ).two_le
+
+/-- The LWE parameter dimension is `ℓ`; glue. -/
+theorem parameters_dimension (F : Raw) (ℓ : ℕ) : (F.parameters ℓ).dimension = ℓ := rfl
+
+/-- The LWE parameter sample count is `F.samples ℓ`; glue. -/
+theorem parameters_samples (F : Raw) (ℓ : ℕ) :
+    (F.parameters ℓ).samples = F.samples ℓ := rfl
+
+/-- The LWE parameter modulus is `F.modulus ℓ`; glue. -/
+theorem parameters_modulus (F : Raw) (ℓ : ℕ) :
+    (F.parameters ℓ).modulus = F.modulus ℓ := rfl
+
+/-- The canonical scalar noise is `lpnNoise (F.modulus ℓ) (F.noiseDen ℓ)`.
+[JLS26, before Definition 2.3, p. 9]. Deviation Dv3: the rate is the exact `1/W`. -/
+noncomputable def noise (F : Raw) (ℓ : ℕ) : LWE.Noise :=
+  lpnNoise (F.modulus ℓ) (F.noiseDen ℓ)
+
+/-- The scalar noise is the specified LPN finite-seed noise; glue. -/
+theorem noise_eq (F : Raw) (ℓ : ℕ) :
+    F.noise ℓ = lpnNoise (F.modulus ℓ) (F.noiseDen ℓ) := rfl
+
+/-- The raw LPN family is viewed as the canonical LWE family with dimension `ℓ` and the
+specified scalar noise. [JLS26, Definition 2.3, pp. 9-10]. Deviation Dv3 fixes the exact
+rate, transposed matrix convention, and one schedule; no new decision experiment is invented. -/
+noncomputable def toLWE (F : Raw) : LWE.Family where
+  parameters := F.parameters
+  noise := F.noise
+  dimensionBound := .var
+  samplesBound := F.samplesBound
+  residueBits := F.residueBits
+  dimension_le ℓ := by
+    simpa only [parameters_dimension, PolyExpr.eval_var] using Nat.le_refl ℓ
+  samples_le := F.samples_le
+  modulus_le_pow := F.modulus_le_pow
+
+/-- The LWE view reads the canonical numeric parameters; glue. -/
+theorem toLWE_parameters (F : Raw) : F.toLWE.parameters = F.parameters := rfl
+
+/-- The LWE view reads the canonical scalar noise; glue. -/
+theorem toLWE_noise (F : Raw) : F.toLWE.noise = F.noise := rfl
+
+/-- The LWE dimension bound is the identity polynomial; glue. -/
+theorem toLWE_dimensionBound (F : Raw) : F.toLWE.dimensionBound = .var := rfl
+
+/-- The LWE sample bound is the raw sample bound; glue. -/
+theorem toLWE_samplesBound (F : Raw) : F.toLWE.samplesBound = F.samplesBound := rfl
+
+/-- The LWE residue width is the raw residue width; glue. -/
+theorem toLWE_residueBits (F : Raw) : F.toLWE.residueBits = F.residueBits := rfl
+
+/-- The LPN decision advantage is the shared LWE advantage at the secret dimension.
+[JLS26, Definition 2.3, pp. 9-10]. Deviation Dv3 fixes one rounded family. The canonical
+assumption challenge is exactly `LWE.encodeChallenge`; the construction publishes the prime
+in its own challenge and carries it first in reduction advice, rather than changing this API. -/
+noncomputable def adv (F : Raw) (A : NUPPT) (ℓ : ℕ) : ℝ := F.toLWE.advantageAt A ℓ
+
+/-- The advantage is the canonical LWE family advantage; glue. -/
+theorem adv_eq (F : Raw) (A : NUPPT) (ℓ : ℕ) :
+    F.adv A ℓ = F.toLWE.advantageAt A ℓ := rfl
+
+/-- The LPN assumption is the shared decisional LWE assumption for this exact family.
+[JLS26, Definition 2.3, pp. 9-10]. Deviation Dv3 retains one sample/modulus schedule
+with rational finite noise; adversaries are non-uniform PPT machines. -/
+def Assumption (F : Raw) : Prop := LWE.DLWEAssumption F.toLWE
+
+/-- The LPN assumption is exactly the shared LWE assumption; glue. -/
+theorem assumption_toLWE_iff (F : Raw) :
+    F.Assumption ↔ LWE.DLWEAssumption F.toLWE := Iff.rfl
+
+/-- The assumption says every non-uniform PPT machine has negligible advantage; glue. -/
+theorem assumption_iff (F : Raw) :
+    F.Assumption ↔ ∀ A : NUPPT, Negligible (F.adv A) :=
+  LWE.dlweAssumption_iff F.toLWE
+
+/-- The single exact draw consists of a matrix, one common secret, and one selector/residue
+noise seed per sample. [JLS26, Definition 2.3, pp. 9-10]. Deviation Dv17: the efficiency
+contract samples this entire product as one type; no product coin sampler is constructed. -/
+abbrev Draw (F : Raw) (ℓ : ℕ) : Type :=
+  Matrix (Fin (F.samples ℓ)) (Fin ℓ) (ZMod (F.modulus ℓ)) ×
+    ((Fin ℓ → ZMod (F.modulus ℓ)) ×
+      (Fin (F.samples ℓ) → Fin (F.noiseDen ℓ) × ZMod (F.modulus ℓ)))
+
+/-- The joint draw has the displayed matrix/secret/noise-seed product type; glue. -/
+theorem draw_eq (F : Raw) (ℓ : ℕ) : F.Draw ℓ =
+    (Matrix (Fin (F.samples ℓ)) (Fin ℓ) (ZMod (F.modulus ℓ)) ×
+      ((Fin ℓ → ZMod (F.modulus ℓ)) ×
+        (Fin (F.samples ℓ) → Fin (F.noiseDen ℓ) × ZMod (F.modulus ℓ)))) := rfl
+
+/-- The explicit joint draw size is
+`(p^ℓ)^samples * (p^ℓ * (W*p)^samples)`; glue.
+The association follows the matrix/secret/noise-seed product, so no arithmetic cast is needed. -/
+def drawCard (F : Raw) (ℓ : ℕ) : ℕ :=
+  ((F.modulus ℓ ^ ℓ) ^ F.samples ℓ) *
+    (F.modulus ℓ ^ ℓ * ((F.noiseDen ℓ * F.modulus ℓ) ^ F.samples ℓ))
+
+/-- The draw size is the displayed product of coordinate sizes; glue. -/
+theorem drawCard_eq (F : Raw) (ℓ : ℕ) :
+    F.drawCard ℓ = ((F.modulus ℓ ^ ℓ) ^ F.samples ℓ) *
+      (F.modulus ℓ ^ ℓ * ((F.noiseDen ℓ * F.modulus ℓ) ^ F.samples ℓ)) := rfl
+
+/-- A residue is identified explicitly with its canonical finite coordinate via
+`(ZMod.finEquiv p).toEquiv.symm`; glue. -/
+def residueEquiv (F : Raw) (ℓ : ℕ) : ZMod (F.modulus ℓ) ≃ Fin (F.modulus ℓ) :=
+  (ZMod.finEquiv (F.modulus ℓ)).toEquiv.symm
+
+/-- The residue equivalence is Mathlib's canonical finite-residue equivalence; glue. -/
+theorem residueEquiv_eq (F : Raw) (ℓ : ℕ) :
+    F.residueEquiv ℓ = (ZMod.finEquiv (F.modulus ℓ)).toEquiv.symm := rfl
+
+/-- A finite residue vector is enumerated by canonical residue coordinates followed by
+`finFunctionFinEquiv`; glue. -/
+def vectorEquiv (F : Raw) (ℓ n : ℕ) :
+    (Fin n → ZMod (F.modulus ℓ)) ≃ Fin (F.modulus ℓ ^ n) :=
+  (Equiv.arrowCongr (Equiv.refl (Fin n)) (F.residueEquiv ℓ)).trans finFunctionFinEquiv
+
+/-- The vector equivalence is the explicit arrow-equivalence composition; glue. -/
+theorem vectorEquiv_eq (F : Raw) (ℓ n : ℕ) :
+    F.vectorEquiv ℓ n =
+      (Equiv.arrowCongr (Equiv.refl (Fin n)) (F.residueEquiv ℓ)).trans
+        finFunctionFinEquiv := rfl
+
+/-- A matrix is a finite vector of finite residue vectors, explicitly enumerated row by row;
+glue. -/
+def matrixEquiv (F : Raw) (ℓ : ℕ) :
+    Matrix (Fin (F.samples ℓ)) (Fin ℓ) (ZMod (F.modulus ℓ)) ≃
+      Fin ((F.modulus ℓ ^ ℓ) ^ F.samples ℓ) :=
+  (Equiv.arrowCongr (Equiv.refl (Fin (F.samples ℓ))) (F.vectorEquiv ℓ ℓ)).trans
+    finFunctionFinEquiv
+
+/-- The matrix equivalence is the explicit finite-vector composition; glue. -/
+theorem matrixEquiv_eq (F : Raw) (ℓ : ℕ) :
+    F.matrixEquiv ℓ =
+      (Equiv.arrowCongr (Equiv.refl (Fin (F.samples ℓ))) (F.vectorEquiv ℓ ℓ)).trans
+        finFunctionFinEquiv := rfl
+
+/-- A selector/residue noise seed is enumerated by `finProdFinEquiv` after the canonical
+residue equivalence; glue. -/
+def noiseSeedEquiv (F : Raw) (ℓ : ℕ) :
+    (Fin (F.noiseDen ℓ) × ZMod (F.modulus ℓ)) ≃
+      Fin (F.noiseDen ℓ * F.modulus ℓ) :=
+  (Equiv.prodCongr (Equiv.refl (Fin (F.noiseDen ℓ))) (F.residueEquiv ℓ)).trans
+    finProdFinEquiv
+
+/-- The noise-seed equivalence is the explicit finite-product composition; glue. -/
+theorem noiseSeedEquiv_eq (F : Raw) (ℓ : ℕ) :
+    F.noiseSeedEquiv ℓ =
+      (Equiv.prodCongr (Equiv.refl (Fin (F.noiseDen ℓ))) (F.residueEquiv ℓ)).trans
+        finProdFinEquiv := rfl
+
+/-- The independent noise-seed vector is enumerated by its explicit coordinate equivalence
+and `finFunctionFinEquiv`; glue. -/
+def noiseVectorEquiv (F : Raw) (ℓ : ℕ) :
+    (Fin (F.samples ℓ) → Fin (F.noiseDen ℓ) × ZMod (F.modulus ℓ)) ≃
+      Fin ((F.noiseDen ℓ * F.modulus ℓ) ^ F.samples ℓ) :=
+  (Equiv.arrowCongr (Equiv.refl (Fin (F.samples ℓ))) (F.noiseSeedEquiv ℓ)).trans
+    finFunctionFinEquiv
+
+/-- The noise-vector equivalence is the explicit arrow-equivalence composition; glue. -/
+theorem noiseVectorEquiv_eq (F : Raw) (ℓ : ℕ) :
+    F.noiseVectorEquiv ℓ =
+      (Equiv.arrowCongr (Equiv.refl (Fin (F.samples ℓ))) (F.noiseSeedEquiv ℓ)).trans
+        finFunctionFinEquiv := rfl
+
+/-- The entire joint draw has an explicit equivalence to `Fin (drawCard ℓ)` composed only
+from canonical residue, vector and product equivalences; glue. No classical enumeration
+or product coin sampler is used. -/
+def drawEquiv (F : Raw) (ℓ : ℕ) : F.Draw ℓ ≃ Fin (F.drawCard ℓ) :=
+  (Equiv.prodCongr (F.matrixEquiv ℓ)
+    ((Equiv.prodCongr (F.vectorEquiv ℓ ℓ) (F.noiseVectorEquiv ℓ)).trans
+      finProdFinEquiv)).trans finProdFinEquiv
+
+/-- The draw equivalence is the explicit product-equivalence composition; glue. -/
+theorem drawEquiv_eq (F : Raw) (ℓ : ℕ) :
+    F.drawEquiv ℓ =
+      (Equiv.prodCongr (F.matrixEquiv ℓ)
+        ((Equiv.prodCongr (F.vectorEquiv ℓ ℓ) (F.noiseVectorEquiv ℓ)).trans
+          finProdFinEquiv)).trans finProdFinEquiv := rfl
+
+/-- The sampler output retains the matrix and common secret and replaces scalar noise seeds
+by their errors modulo the prime. [JLS26, Definition 2.3, pp. 9-10]. Deviation Dv17:
+this is the honest joint sampler of matrix, secret, and noises, before publishing `A s+e`. -/
+abbrev Sample (F : Raw) (ℓ : ℕ) : Type :=
+  Matrix (Fin (F.samples ℓ)) (Fin ℓ) (ZMod (F.modulus ℓ)) ×
+    ((Fin ℓ → ZMod (F.modulus ℓ)) × (Fin (F.samples ℓ) → ZMod (F.modulus ℓ)))
+
+/-- The joint sample has the displayed matrix/secret/noise-vector product type; glue. -/
+theorem sample_eq (F : Raw) (ℓ : ℕ) : F.Sample ℓ =
+    (Matrix (Fin (F.samples ℓ)) (Fin ℓ) (ZMod (F.modulus ℓ)) ×
+      ((Fin ℓ → ZMod (F.modulus ℓ)) ×
+        (Fin (F.samples ℓ) → ZMod (F.modulus ℓ)))) := rfl
+
+/-- The joint sampler's core keeps matrix and secret and applies the scalar LPN selector:
+`sampleCore r = (r.1,r.2.1, fun i => if a_i=0 then x_i else 0)`.
+[JLS26, Definition 2.3, pp. 9-10]. Deviation Dv17: one deterministic core acts on one draw. -/
+def sampleCore (F : Raw) (ℓ : ℕ) (r : F.Draw ℓ) : F.Sample ℓ :=
+  (r.1, r.2.1, fun i => if (r.2.2 i).1 = 0 then (r.2.2 i).2 else 0)
+
+/-- The joint core is its explicit matrix/secret/noise-vector formula; glue. -/
+theorem sampleCore_eq (F : Raw) (ℓ : ℕ) (r : F.Draw ℓ) :
+    F.sampleCore ℓ r =
+      (r.1, r.2.1, fun i => if (r.2.2 i).1 = 0 then (r.2.2 i).2 else 0) := rfl
+
+/-- The exact joint law is `sample (Draw ℓ)` pushed through `sampleCore`.
+[JLS26, Definition 2.3, pp. 9-10]. Deviation Dv17: the law remains exact; the separate
+sampler-efficiency field supplies its fair-coin implementation contract. -/
+noncomputable def sampleLaw (F : Raw) (ℓ : ℕ) : ProbComp (F.Sample ℓ) :=
+  (ProbComp.sample (F.Draw ℓ)).bind fun r => .pure (F.sampleCore ℓ r)
+
+/-- The joint law is the uniform-draw pushforward by the core; glue. -/
+theorem sampleLaw_eq (F : Raw) (ℓ : ℕ) :
+    F.sampleLaw ℓ = (ProbComp.sample (F.Draw ℓ)).bind fun r =>
+      .pure (F.sampleCore ℓ r) := rfl
+
+/-- The sampler parameter word contains the prime numeral followed by unary dimension:
+`sampleWord ℓ = ⟨natToList (width+1) p,1^ℓ⟩`; glue.
+The dimension is explicit because `UniformSampler.Ω` is indexed by the parameter word. -/
+def sampleWord (F : Raw) (ℓ : ℕ) : List Bool :=
+  pairEncode (Candidates.natToList (F.residueBits.eval ℓ + 1) (F.modulus ℓ))
+    (List.replicate ℓ true)
+
+/-- The parameter word is the modulus numeral paired with unary dimension; glue. -/
+theorem sampleWord_eq (F : Raw) (ℓ : ℕ) :
+    F.sampleWord ℓ =
+      pairEncode (Candidates.natToList (F.residueBits.eval ℓ + 1) (F.modulus ℓ))
+        (List.replicate ℓ true) := rfl
+
+/-- The joint draw encoding uses canonical fixed-width matrix/secret residues and explicit
+selector/residue pairs for each noise seed. [JLS26, Definition 2.3, pp. 9-10]. Deviation Dv17:
+finite `Fin` coordinates and the existing list code replace arbitrary finite enumerations. -/
+def encDraw (F : Raw) (ℓ : ℕ) (r : F.Draw ℓ) : List Bool :=
+  pairEncode (Encoding.Modular.encodeMatrix (F.residueBits.eval ℓ) r.1)
+    (pairEncode (Encoding.Modular.encodeVector (F.residueBits.eval ℓ) r.2.1)
+      (BoolCircuit.encodeList (fun c : Fin (F.noiseDen ℓ) × ZMod (F.modulus ℓ) =>
+        pairEncode (pairEncode (Nat.bits c.1.val)
+          (Candidates.natToList (F.residueBits.eval ℓ) c.2.val)) []) (List.ofFn r.2.2)))
+
+/-- The joint draw encoding is its explicit matrix/secret/noise-seed code; glue. -/
+theorem encDraw_eq (F : Raw) (ℓ : ℕ) (r : F.Draw ℓ) :
+    F.encDraw ℓ r =
+      pairEncode (Encoding.Modular.encodeMatrix (F.residueBits.eval ℓ) r.1)
+        (pairEncode (Encoding.Modular.encodeVector (F.residueBits.eval ℓ) r.2.1)
+          (BoolCircuit.encodeList (fun c : Fin (F.noiseDen ℓ) × ZMod (F.modulus ℓ) =>
+            pairEncode (pairEncode (Nat.bits c.1.val)
+              (Candidates.natToList (F.residueBits.eval ℓ) c.2.val)) [])
+            (List.ofFn r.2.2))) := rfl
+
+/-- The exact joint draw encoding is injective, so every matrix, secret, selector and residue
+is retained. [JLS26, Definition 2.3, pp. 9-10]. Disclosed pre-M0 refinement: faithfulness
+is explicit for the concrete finite-coordinate encoding.
+
+**Proof sketch.** Split the nested pairs, apply the existing modular matrix/vector
+injectivity readers with the raw width bound, and recover every selector/residue pair
+from its delimited block in the existing finite-list code. No sampler is constructed. -/
+theorem encDraw_injective (F : Raw) (ℓ : ℕ) : Function.Injective (F.encDraw ℓ) := by
+  sorry
+
+/-- The joint sampler output uses the canonical matrix and vector residue encodings.
+[JLS26, Definition 2.3, pp. 9-10]. Deviation Dv17: the secret is retained in this internal
+honest sampler output, while the canonical LWE challenge publishes only the noisy values. -/
+def encSample (F : Raw) (ℓ : ℕ) (s : F.Sample ℓ) : List Bool :=
+  pairEncode (Encoding.Modular.encodeMatrix (F.residueBits.eval ℓ) s.1)
+    (pairEncode (Encoding.Modular.encodeVector (F.residueBits.eval ℓ) s.2.1)
+      (Encoding.Modular.encodeVector (F.residueBits.eval ℓ) s.2.2))
+
+/-- The joint output encoding is its explicit matrix/secret/noise-vector code; glue. -/
+theorem encSample_eq (F : Raw) (ℓ : ℕ) (s : F.Sample ℓ) :
+    F.encSample ℓ s =
+      pairEncode (Encoding.Modular.encodeMatrix (F.residueBits.eval ℓ) s.1)
+        (pairEncode (Encoding.Modular.encodeVector (F.residueBits.eval ℓ) s.2.1)
+          (Encoding.Modular.encodeVector (F.residueBits.eval ℓ) s.2.2)) := rfl
+
+/-- The exact joint sampler-output encoding is injective, retaining the matrix, secret and
+noise vector. [JLS26, Definition 2.3, pp. 9-10]. Disclosed pre-M0 refinement: faithfulness
+is explicit for the concrete finite-coordinate encoding.
+
+**Proof sketch.** Split the two nested pairs using the existing pair-encoding reader,
+then apply the canonical modular matrix and vector injectivity theorems with
+`F.modulus_le_pow ℓ`. Combine the recovered components by product extensionality. -/
+theorem encSample_injective (F : Raw) (ℓ : ℕ) : Function.Injective (F.encSample ℓ) := by
+  sorry
+
+end Raw
+
+end LPNFamily
+
+/-- An LPN primitive is its exact raw family together with uniform efficiency of the joint
+matrix/secret/noise sampler. [JLS26, Definition 2.3, pp. 9-10]. Deviation Dv3 fixes the
+construction's rounded schedule; Dv17-Dv18 place efficiency in the primitive structure. -/
+structure LPNFamily extends LPNFamily.Raw where
+  /-- One draw and its deterministic core implement all matrix, secret and noise sampling. -/
+  sample_eff : CoinSampling.SamplesEfficiently
+    (fun ℓ (_ : Unit) => toRaw.sampleWord ℓ)
+    (fun ℓ _ r => toRaw.encDraw ℓ r)
+    (fun ℓ _ s => toRaw.encSample ℓ s)
+    (fun ℓ _ r => toRaw.sampleCore ℓ r)
+
+namespace LPNFamily
+
+/-- A primitive's LWE view reads its raw bundle: `toLWE F = F.toRaw.toLWE`; glue. -/
+noncomputable def toLWE (F : LPNFamily) : LWE.Family := F.toRaw.toLWE
+
+/-- The LWE view is the raw bundle's canonical LWE view; glue. -/
+theorem toLWE_eq (F : LPNFamily) : F.toLWE = F.toRaw.toLWE := rfl
+
+/-- A primitive's advantage is its raw advantage, `adv F A ℓ = F.toRaw.adv A ℓ`; glue. -/
+noncomputable def adv (F : LPNFamily) (A : NUPPT) (ℓ : ℕ) : ℝ := F.toRaw.adv A ℓ
+
+/-- The primitive advantage is the raw advantage; glue. -/
+theorem adv_eq (F : LPNFamily) (A : NUPPT) (ℓ : ℕ) :
+    F.adv A ℓ = F.toRaw.adv A ℓ := rfl
+
+/-- A primitive's assumption is its raw assumption, `Assumption F = F.toRaw.Assumption`; glue. -/
+def Assumption (F : LPNFamily) : Prop := F.toRaw.Assumption
+
+/-- The primitive assumption reads its raw assumption; glue. -/
+theorem assumption_iff (F : LPNFamily) : F.Assumption ↔ F.toRaw.Assumption := Iff.rfl
+
+end LPNFamily
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed

@@ -1,0 +1,82 @@
+2026-11-18T16:42:02.235513+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:399:18: warning: This simp argument is unused:
+  hf
+
+Hint: Omit it from the simp argument list.
+  simp ̵[̵h̵f̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:441:70: warning: This simp argument is unused:
+  he
+
+Hint: Omit it from the simp argument list.
+  simp [he̵,̵ ̵h̵b]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:441:74: warning: This simp argument is unused:
+  hb
+
+Hint: Omit it from the simp argument list.
+  simp [he,̵ ̵h̵b̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:465:4: error: Unnecessary `generalizing` argument: Variable `hfield` is generalized automatically
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:465:4: error: Unnecessary `generalizing` argument: Variable `hbit` is generalized automatically
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:470:22: error: Tactic `rfl` failed: The left-hand side
+  ↑(if true = true then false else P.G.eval (P.n κ) I.1 x.σ (P.outputIndex κ j)).toNat
+is not definitionally equal to the right-hand side
+  if true = true then 0 else ↑(P.G.eval (P.n κ) I.1 x.σ (P.outputIndex κ j)).toNat
+
+case refine_1.pure.true
+P : Params
+κ : ℕ
+pp : PrimeParam κ
+I : P.Idx' κ pp
+x : P.SdCoreOut κ pp
+hc : P.sdSampFull κ pp I = OracleComp.pure x
+hfield :
+  ∀ (j : Fin (P.m κ)),
+    (MvPolynomial.eval (Sum.elim x.seed.1 x.seed.2)) (P.G4 κ pp I j) =
+      if x.err = true then 0 else ↑(P.G.eval (P.n κ) I.1 x.σ (P.outputIndex κ j)).toNat
+hbit :
+  ∀ (j : Fin (P.m κ)),
+    P.eval' κ pp I x.seed j = if x.err = true then false else P.G.eval (P.n κ) I.1 x.σ (P.outputIndex κ j)
+j : Fin (P.m κ)
+⊢ ↑(if true = true then false else P.G.eval (P.n κ) I.1 x.σ (P.outputIndex κ j)).toNat =
+    if true = true then 0 else ↑(P.G.eval (P.n κ) I.1 x.σ (P.outputIndex κ j)).toNat
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:474:17: error: Application type mismatch: The argument
+  hfield y
+has type
+  OracleComp.AllOutputs
+    (fun x =>
+      ∀ (j : Fin (P.m κ)),
+        (MvPolynomial.eval (Sum.elim x.seed.1 x.seed.2)) (P.G4 κ pp I j) =
+          if x.err = true then 0 else ↑(P.G.eval (P.n κ) I.1 x.σ (P.outputIndex κ j)).toNat)
+    (k y)
+but is expected to have type
+  P.sdSampFull κ pp I = k y
+in the application
+  ih y (hfield y)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:488:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness): no fresh .olean produced
+        5.37 real         3.28 user         1.48 sys
+          2377613312  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              149922  page reclaims
+               37964  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                4205  voluntary context switches
+               24245  involuntary context switches
+            32863894  instructions retired
+            14950594  cycles elapsed
+             1638736  peak memory footprint
+2026-11-18T16:42:07.636360+00:00 END rc=1

@@ -1,0 +1,40 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Canonical LPN coordinates and shared realizer transport
+
+## Main definitions and results
+
+* `Internal.lpn_accept_realizes_eq` and `lpn_gap_realizes_eq`.
+* Uniform challenge and real sample-seed coordinate bridges.
+
+## References
+
+* [JLS26] Jain, Lin, Sahai, J. ACM 73(1), Article 1, February 2026,
+  Lemma 4.2, p. 19.
+* [PS10] Pass, Shelat, *A Course in Cryptography*, 2010, Definition 26.8.
+
+**Deviations.** Dv3 and Dv15 transport the existing canonical challenge and exact law.
+Dv16 uses shared layout-only verdict and coin readers; no new machine is built.
+-/
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+
+open Complexity Turing
+open scoped BigOperators
+
+namespace Internal
+
+-- MOVE THE RECORDED COMMAND BLOCKS HERE; NO NEW DEFINITIONS.
+
+end Internal
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed

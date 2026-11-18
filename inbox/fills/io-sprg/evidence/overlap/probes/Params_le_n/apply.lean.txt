@@ -1,0 +1,14 @@
+import Mathlib.Algebra.Order.Ring.Nat
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace IoSprgParamsOverlap
+
+example (d E κ : ℕ) (hd : 1 ≤ d) (hE : 1 ≤ E) :
+    κ ≤ (κ ^ E) ^ ((d + 1) / 2) := by
+  apply?
+
+end IoSprgParamsOverlap

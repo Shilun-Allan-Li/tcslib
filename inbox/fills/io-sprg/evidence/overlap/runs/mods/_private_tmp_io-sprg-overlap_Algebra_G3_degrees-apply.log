@@ -1,0 +1,414 @@
+Try this:
+  [apply] refine Prod.mk_le_mk.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r),
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r)) ≤
+    (d, 2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {α β} [LE α] [LE β] {a₁ a₂} {b₁ b₂} => Prod.mk_le_mk.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Set.Icc_subset_Icc_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ d ≤ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r)
+  -- ⊢ Set.Icc d (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r)) ⊆
+    Set.Icc (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r)) 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {α} [Preorder α] {a₁ a₂ b₁ b₂} h₁ => (Set.Icc_subset_Icc_iff h₁).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Set.Ioc_subset_Ioc_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 2 < MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r)
+  -- ⊢ Set.Ioc 2 (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r)) ⊆
+    Set.Ioc (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r)) d
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {α} [LinearOrder α] {a₁ a₂ b₁ b₂} h₁ => (Set.Ioc_subset_Ioc_iff h₁).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Set.Ioo_subset_Ioo_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ DenselyOrdered ℕ
+  -- ⊢ d < MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r)
+  -- ⊢ Set.Ioo d (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r)) ⊆
+    Set.Ioo (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r)) 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm
+    ((fun {α} [LinearOrder α] {a₁ a₂ b₁ b₂} [DenselyOrdered α] h₁ => (Set.Ioo_subset_Ioo_iff h₁).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Set.Ico_subset_Ico_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ d < MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r)
+  -- ⊢ Set.Ico d (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r)) ⊆
+    Set.Ico (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r)) 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {α} [LinearOrder α] {a₁ a₂ b₁ b₂} h₁ => (Set.Ico_subset_Ico_iff h₁).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Finset.Icc_subset_Icc_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ d ≤ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r)
+  -- ⊢ Finset.Icc d (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r)) ⊆
+    Finset.Icc (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r)) 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm
+    ((fun {α} {a₁ a₂ b₁ b₂} [Preorder α] [LocallyFiniteOrder α] h₁ => (Finset.Icc_subset_Icc_iff h₁).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Finset.Ico_subset_Ico_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ d < MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r)
+  -- ⊢ Finset.Ico d (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r)) ⊆
+    Finset.Ico (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r)) 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm
+    ((fun {α} [LinearOrder α] [LocallyFiniteOrder α] {a₁ b₁ a₂ b₂} h => (Finset.Ico_subset_Ico_iff h).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Multiset.Ico_subset_Ico_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ d < MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r)
+  -- ⊢ Multiset.Ico d (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r)) ⊆
+    Multiset.Ico (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r)) 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm
+    ((fun {α} [LinearOrder α] [LocallyFiniteOrder α] {a₁ b₁ a₂ b₂} h => (Multiset.Ico_subset_Ico_iff h).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine ⟨?_, ?_⟩
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2
+Try this:
+  [apply] refine And.symm ⟨?_, ?_⟩
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d
+Try this:
+  [apply] refine And.comm.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2 ∧
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d
+Try this:
+  [apply] refine And.symm ((fun {a b} => And.comm.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d ∧
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2
+Try this:
+  [apply] refine And.comm.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2 ∧
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d
+Try this:
+  [apply] refine And.symm ((fun {a b} => And.comm.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d ∧
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2
+Try this:
+  [apply] refine and_comm.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2 ∧
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d
+Try this:
+  [apply] refine And.symm ((fun {a b} => and_comm.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d ∧
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2
+Try this:
+  [apply] refine and_comm.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2 ∧
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d
+Try this:
+  [apply] refine And.symm ((fun {a b} => and_comm.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d ∧
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2
+Try this:
+  [apply] refine And.symm ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2 ∧
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d
+Try this:
+  [apply] refine And.symm (And.symm ?_)
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d ∧
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2
+Try this:
+  [apply] refine (and_iff_left_of_imp ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d →
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d
+Try this:
+  [apply] refine And.symm ((fun {a b} h => (and_iff_left_of_imp h).mpr) ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2 →
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr_right fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a b c} h => (and_congr_right h).mp) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr_right fun a => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a b c} h => (and_congr_right h).mpr) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr_left fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {c a b} h => (and_congr_left h).mp) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr_left fun a => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {c a b} h => (and_congr_left h).mpr) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (and_iff_right_of_imp ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2 →
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2
+Try this:
+  [apply] refine And.symm ((fun {b a} h => (and_iff_right_of_imp h).mpr) ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d →
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d
+Try this:
+  [apply] refine and_self_left.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d ∧
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2
+Try this:
+  [apply] refine And.symm ((fun {a b} => and_self_left.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2 ∧
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2 ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d
+Try this:
+  [apply] refine and_self_right.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2) ∧
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2
+Try this:
+  [apply] refine And.symm ((fun {a b} => and_self_right.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2 ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d) ∧
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d
+Try this:
+  [apply] refine Decidable.and_iff_not_not_or_not.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬(¬MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d ∨
+      ¬MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a b} [Decidable a] [Decidable b] => Decidable.and_iff_not_not_or_not.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine exists_eq_right_right'.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr_left' ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a b c} h => (and_congr_left' h).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr_left' ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a b c} h => (and_congr_left' h).mpr) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine exists_prop.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ (_ : MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d),
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2
+Try this:
+  [apply] refine And.symm ((fun {b a} => exists_prop.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∃ (_ : MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2),
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine exists_eq_right_right.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.imp_left (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm (And.imp_left (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (and_iff_right ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2
+Try this:
+  [apply] refine And.symm ((fun {a b} ha => (and_iff_right ha).mpr) ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr_right' ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {b c a} h => (and_congr_right' h).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr_right' ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {b c a} h => (and_congr_right' h).mpr) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.imp_right (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm (And.imp_right (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine if_false_right.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ if MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d then
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2
+  else False
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {p q} [Decidable p] => if_false_right.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine ite_else_self.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ if MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d then
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2
+  else MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {p q} [Decidable p] => ite_else_self.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (and_iff_left ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d
+Try this:
+  [apply] refine And.symm ((fun {b a} hb => (and_iff_left hb).mpr) ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.imp (fun a => ?_) ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm (And.imp (fun a => ?_) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a c b d} h₁ h₂ => (and_congr h₁ h₂).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr ?_ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a c b d} h₁ h₂ => (and_congr h₁ h₂).mpr) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Decidable.and_iff_not_or_not.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬(¬MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d ∨
+      ¬MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a b} [Decidable a] [Decidable b] => Decidable.and_iff_not_or_not.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine and_iff_not_or_not.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬(¬MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d ∨
+      ¬MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2)
+Try this:
+  [apply] refine And.symm ((fun {a b} => and_iff_not_or_not.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ¬(¬MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2 ∨
+      ¬MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Iff.and ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a c b d} h₁ h₂ => (Iff.and h₁ h₂).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Iff.and ?_ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a c b d} h₁ h₂ => (Iff.and h₁ h₂).mpr) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine existsUnique_prop.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃! x, MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) (q + r) ≤ 2
+Try this:
+  [apply] refine And.symm ((fun {p q} => existsUnique_prop.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∃! x, MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) (q + r) ≤ d
+/private/tmp/io-sprg-overlap/Algebra_G3_degrees-apply.lean:15:0: warning: declaration uses 'sorry'
+/private/tmp/io-sprg-overlap/Algebra_G3_degrees-apply.lean:16:5: warning: unused variable `hq`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/Algebra_G3_degrees-apply.lean:20:5: warning: unused variable `hr`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

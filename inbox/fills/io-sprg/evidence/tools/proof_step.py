@@ -8,13 +8,13 @@ frozen=freeze.read_text().strip();subprocess.run(['git','merge-base','--is-ances
 p=root/a.file;assert str(p.relative_to(root)).startswith('TCSlib/Cryptography/Obfuscation/') and p.suffix=='.lean'
 source=p.read_text();name=re.escape(a.name)
 starts=list(re.finditer(r'^(?:private |protected )?(?:theorem|lemma) '+name+r'(?=\s|\{|\(|:)',source,re.M));assert len(starts)==1,(a.name,len(starts))
-start=starts[0].start();tail=source[start:];match=re.search(r':= (?:sorry\b|by\s*\n\s*sorry\b)',tail);assert match,'The existing body must be one M0 sorry stub'
+start=starts[0].start();tail=source[start:];match=re.search(r':=\s+(?:sorry\b|by\s*\n\s*sorry\b)',tail);assert match,'The existing body must be one M0 sorry stub'
 body=Path(a.body).read_text().strip();assert body.startswith('by\n') or not re.search(r'\bby\b',body)
 assert len(re.findall(r'\bby\b',body))<=1,'At most one new tactic block per invocation'
 assert not re.search(r'\b(?:sorry|admit|native_decide|axiom)\b',body),'Only complete candidate bodies are inserted by this tool'
-body_start=start+match.start()+3;body_end=start+match.end()
-assert ':=' not in source[start:body_start-3],'Unexpected declaration syntax; inspect manually'
-new=source[:body_start]+body+source[body_end:]
+assignment_start=start+match.start();body_start=assignment_start+2;body_end=start+match.end()
+assert ':=' not in source[start:assignment_start],'Unexpected declaration syntax; inspect manually'
+new=(source[:assignment_start]+':= '+body+source[body_end:] if body.startswith('by\n') else source[:body_start].rstrip()+'\n  '+body+source[body_end:])
 assert max(map(len,new.splitlines()),default=0)<=100 and len(new.splitlines())<=1000
 steps=root/'evidence/steps';steps.mkdir(exist_ok=True);n=1+max([int(x.name) for x in steps.iterdir() if x.is_dir() and x.name.isdigit()] or [0]);folder=steps/f'{n:03d}';folder.mkdir()
 (folder/'before.lean.txt').write_text(source);(folder/'candidate.proof').write_text(body+'\n')

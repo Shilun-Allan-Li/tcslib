@@ -1,0 +1,191 @@
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.Nodup.filter (fun c => decide (M c.1 c.2 ≠ 0)) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.Sublist.nodup ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.Nodup.sublist ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.nodup_iff_count.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : Fin rows × Fin cols),
+    List.count a
+        (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))) ≤
+      1
+Try this:
+  [apply] refine List.nodup_iff_pairwise_ne.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ List.Pairwise (fun x1 x2 => x1 ≠ x2)
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+      (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.Perm.nodup ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (List.Perm.nodup_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (List.Perm.nodup_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.Nodup.perm ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.nodup_iff_injective_getElem.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective fun i =>
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))[↑i]
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.Pairwise.nodup ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.Nodup.of_append_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.nodup_iff_injective_get.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).get
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.nodup_mergeSort.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.Nodup.of_attach ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).attach.Nodup
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.Nodup.of_cons ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.Nodup.of_map ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.nodup_iff_sublist.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : Fin rows × Fin cols),
+    ¬[a, a].Sublist
+        (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (List.nodup_map_iff fun ⦃a₁⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.nodup_reverse.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).reverse.Nodup
+Try this:
+  [apply] refine List.nodup_attach.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).attach.Nodup
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.Nodup.of_append_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.nodup_iff_count_eq_one.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀
+    a ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)),
+    List.count a
+        (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))) =
+      1
+Try this:
+  [apply] refine List.nodup_iff_getElem?_ne_getElem?.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i j : ℕ),
+    i < j →
+      j <
+          (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+              (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length →
+        (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+              (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))[i]? ≠
+          (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+              (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))[j]?
+Try this:
+  [apply] refine List.nodup_iff_count_le_one.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : Fin rows × Fin cols),
+    List.count a
+        (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))) ≤
+      1
+Try this:
+  [apply] refine Multiset.coe_nodup.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (↑(List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))).Nodup
+Try this:
+  [apply] refine List.dedup_eq_self.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).dedup =
+    List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+      (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (List.IsRotated.nodup_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (List.IsRotated.nodup_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.nodup_rotate.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.nodup_iff_forall_not_duplicate.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : Fin rows × Fin cols),
+    ¬List.Duplicate x
+        (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.Sorted.nodup ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.nodup_sublists.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).sublists.Nodup
+Try this:
+  [apply] refine List.nodup_sublists'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).sublists'.Nodup
+Try this:
+  [apply] refine List.Nodup.of_sublists' ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).sublists'.Nodup
+Try this:
+  [apply] refine List.Nodup.of_sublists ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).sublists.Nodup
+/private/tmp/io-sprg-overlap/BucketsSparse_sparseEntries_nodup-apply.lean:14:0: warning: declaration uses 'sorry'

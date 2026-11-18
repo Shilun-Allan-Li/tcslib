@@ -1,0 +1,22 @@
+Try this:
+  [apply] refine eq_ite_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.find? flags (List.finRange κ)).isNone = true ∧
+      (MvPolynomial.eval z) ((MvPolynomial.rename ⇑e) (∑ k, q k)) = 0 ∨
+    ¬(List.find? flags (List.finRange κ)).isNone = true ∧
+      (MvPolynomial.eval z) ((MvPolynomial.rename ⇑e) (∑ k, q k)) = out
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {P} [Decidable P] {a b c} => ite_eq_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {P} [Decidable P] {a b c} => ite_eq_iff'.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+/private/tmp/io-sprg-overlap/Algebra_G4_eval_sdCore-apply.lean:14:0: warning: declaration uses 'sorry'
+/private/tmp/io-sprg-overlap/Algebra_G4_eval_sdCore-apply.lean:17:5: warning: unused variable `hq`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/Algebra_G4_eval_sdCore-apply.lean:19:5: warning: unused variable `hgood`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

@@ -1,0 +1,10 @@
+by
+  rw [rank_eq, load_eq, bucket_eq]
+  apply Finset.card_lt_card
+  refine (Finset.ssubset_iff_of_subset ?_).2 ?_
+  · intro i hi
+    exact Finset.mem_filter.mpr
+      ⟨Finset.mem_univ i, (Finset.mem_filter.mp hi).2.2⟩
+  · refine ⟨j, Finset.mem_filter.mpr ⟨Finset.mem_univ j, rfl⟩, ?_⟩
+    intro hj
+    exact (lt_irrefl j) (Finset.mem_filter.mp hj).2.1

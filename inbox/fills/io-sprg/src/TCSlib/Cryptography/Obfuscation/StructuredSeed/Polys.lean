@@ -69,7 +69,39 @@ entries and bound the result by `Finset.length_sort`. -/
 theorem monomialSlot_two_halves_card_le {n : ℕ} (h : Fin n →₀ ℕ) (D : ℕ) :
     (Finset.univ.filter (fun r : Fin D => (monomialSlot h r.val).isSome)).card +
       (Finset.univ.filter (fun r : Fin D => (monomialSlot h (D + r.val)).isSome)).card ≤
-        h.support.card := sorry
+        h.support.card := by
+  classical
+  let len := (h.support.sort (· ≤ ·)).length
+  let A := Finset.univ.filter (fun r : Fin D => r.val < len)
+  let C := Finset.univ.filter (fun r : Fin D => D + r.val < len)
+  have hCinj : Function.Injective (fun r : Fin D => D + r.val) := ?_
+  swap
+  · intro r s hrs
+    exact Fin.ext (Nat.add_left_cancel hrs)
+  have hdisj : Disjoint (A.image (fun r => r.val)) (C.image (fun r => D + r.val)) := ?_
+  swap
+  · apply Finset.disjoint_left.mpr
+    intro q hqA hqC
+    obtain ⟨r, hr, hrq⟩ := Finset.mem_image.mp hqA
+    obtain ⟨s, hs, hsq⟩ := Finset.mem_image.mp hqC
+    have hrD := r.isLt
+    omega
+  have hsubset : A.image (fun r => r.val) ∪ C.image (fun r => D + r.val) ⊆
+      Finset.range len := ?_
+  swap
+  · intro q hq
+    rcases Finset.mem_union.mp hq with hq | hq
+    · obtain ⟨r, hr, rfl⟩ := Finset.mem_image.mp hq
+      exact Finset.mem_range.mpr (Finset.mem_filter.mp hr).2
+    · obtain ⟨r, hr, rfl⟩ := Finset.mem_image.mp hq
+      exact Finset.mem_range.mpr (Finset.mem_filter.mp hr).2
+  have hbound := Finset.card_le_card hsubset
+  rw [Finset.card_union_of_disjoint hdisj,
+    Finset.card_image_of_injective A Fin.val_injective,
+    Finset.card_image_of_injective C hCinj, Finset.card_range] at hbound
+  simp only [Internal.monomialSlot_eq, isSome_getElem?]
+  change A.card + C.card ≤ h.support.card
+  simpa only [len, Finset.length_sort] using hbound
 
 end Internal
 
@@ -297,7 +329,52 @@ theorem halfForm_pubDegree_le (P : Params) (κ : ℕ) (pp : PrimeParam κ)
     (offset : ℕ) (copy : Bool) :
     pubDegree (P.halfForm κ pp I' k h offset copy) ≤
       (Finset.univ.filter (fun r : Fin P.D =>
-        (Internal.monomialSlot h (offset + r.val)).isSome)).card := sorry
+        (Internal.monomialSlot h (offset + r.val)).isSome)).card := by
+  classical
+  have hcoeff : ∀ (slot : Option (Fin (P.n κ))) (a : Fin (P.ℓ κ + 1)),
+      pubDegree (P.linearCoeff κ pp I' k slot a) ≤ if slot.isSome then 1 else 0 := ?_
+  swap
+  · intro slot a
+    cases slot with
+    | none =>
+      change pubDegree (P.linearCoeff κ pp I' k none a) ≤ 0
+      rw [P.linearCoeff_eq]
+      dsimp only
+      split_ifs
+      · have hc : pubDegree (1 : P.StructPoly κ pp) = 0 := ?_
+        swap
+        · simpa only [map_one] using
+            (pubDegree_C (σ := P.Pub κ) (τ := P.Priv κ) (1 : ZMod pp.p))
+        exact hc.le
+      · exact pubDegree_zero.le
+    | some i =>
+      change pubDegree (P.linearCoeff κ pp I' k (some i) a) ≤ 1
+      rw [P.linearCoeff_eq]
+      dsimp only
+      split_ifs
+      · exact (pubDegree_C _).le.trans (Nat.zero_le 1)
+      · rw [P.bVar_eq]
+        exact pubDegree_X_inl _
+  rw [P.halfForm_eq]
+  apply pubDegree_finset_sum_le
+  intro α hα
+  have hprod := pubDegree_finset_prod_le (Finset.univ : Finset (Fin P.D))
+    (fun r => P.linearCoeff κ pp I' k
+      (Internal.monomialSlot h (offset + r.val)) (α r))
+  have hnum := Finset.sum_le_sum (s := (Finset.univ : Finset (Fin P.D)))
+    (fun r _ => hcoeff (Internal.monomialSlot h (offset + r.val)) (α r))
+  rw [Finset.sum_boole] at hnum
+  have hX : pubDegree
+      (MvPolynomial.X (P.sVar κ k copy (.inl α)) : P.StructPoly κ pp) = 0 := ?_
+  swap
+  · rw [P.sVar_eq]
+    exact pubDegree_X_inr _
+  have hmul := pubDegree_mul_le
+    (∏ r : Fin P.D,
+      P.linearCoeff κ pp I' k (Internal.monomialSlot h (offset + r.val)) (α r))
+    (MvPolynomial.X (P.sVar κ k copy (.inl α)))
+  simpa only [hX, Nat.add_zero] using
+    hmul.trans (Nat.add_le_add_right (hprod.trans hnum) _)
 
 /-- A half form is linear in private coordinates, `privDegree halfForm ≤ 1`
 [JLS26, Equation (3), p. 17]. Dv6 reads the degree on the composite polynomial.
@@ -306,7 +383,43 @@ theorem halfForm_pubDegree_le (P : Params) (κ : ℕ) (pp : PrimeParam κ)
 contains exactly one private variable. Apply the degree sum and product bounds. -/
 theorem halfForm_privDegree_le (P : Params) (κ : ℕ) (pp : PrimeParam κ)
     (I' : P.Idx' κ pp) (k : Fin κ) (h : Fin (P.n κ) →₀ ℕ)
-    (offset : ℕ) (copy : Bool) : privDegree (P.halfForm κ pp I' k h offset copy) ≤ 1 := sorry
+    (offset : ℕ) (copy : Bool) : privDegree (P.halfForm κ pp I' k h offset copy) ≤ 1 := by
+  classical
+  have hcoeff : ∀ (slot : Option (Fin (P.n κ))) (a : Fin (P.ℓ κ + 1)),
+      privDegree (P.linearCoeff κ pp I' k slot a) = 0 := ?_
+  swap
+  · intro slot a
+    cases slot with
+    | none =>
+      rw [P.linearCoeff_eq]
+      dsimp only
+      split_ifs
+      · simpa only [map_one] using
+          (privDegree_C (σ := P.Pub κ) (τ := P.Priv κ) (1 : ZMod pp.p))
+      · exact privDegree_zero
+    | some i =>
+      rw [P.linearCoeff_eq]
+      dsimp only
+      split_ifs
+      · exact privDegree_C _
+      · rw [P.bVar_eq]
+        exact privDegree_X_inl _
+  rw [P.halfForm_eq]
+  apply privDegree_finset_sum_le
+  intro α hα
+  have hprod : privDegree (∏ r : Fin P.D,
+      P.linearCoeff κ pp I' k (Internal.monomialSlot h (offset + r.val)) (α r)) ≤ 0 := ?_
+  swap
+  · have hp := privDegree_finset_prod_le (Finset.univ : Finset (Fin P.D))
+      (fun r => P.linearCoeff κ pp I' k
+        (Internal.monomialSlot h (offset + r.val)) (α r))
+    simpa only [hcoeff, Finset.sum_const_zero] using hp
+  have hX : privDegree
+      (MvPolynomial.X (P.sVar κ k copy (.inl α)) : P.StructPoly κ pp) ≤ 1 := ?_
+  swap
+  · rw [P.sVar_eq]
+    exact privDegree_X_inr _
+  exact (privDegree_mul_le _ _).trans (Nat.add_le_add hprod hX)
 
 /-- Either lifted PRG copy has public degree at most d and private degree at most two
 [JLS26, Equation (3), p. 17]. The two half forms carry all variables of each monomial.
@@ -316,7 +429,52 @@ multilinearity and the supplied total-degree bound, and sum the monomial bounds.
 theorem prgPoly_degrees (P : Params) (κ : ℕ) (pp : PrimeParam κ)
     (I' : P.Idx' κ pp) (k : Fin κ) (j : Fin (P.m κ)) (copy : Bool) :
     pubDegree (P.prgPoly κ pp I' k j copy) ≤ P.d ∧
-      privDegree (P.prgPoly κ pp I' k j copy) ≤ 2 := sorry
+      privDegree (P.prgPoly κ pp I' k j copy) ≤ 2 := by
+  classical
+  rw [P.prgPoly_eq]
+  constructor
+  · apply pubDegree_finset_sum_le
+    intro h hh
+    have hcard : h.support.card ≤ P.d := ?_
+    swap
+    · refine le_trans ?_ ((MvPolynomial.le_totalDegree hh).trans
+        (P.R.totalDegree_poly_le (P.n κ) I'.1 (P.outputIndex κ j)))
+      change h.support.card ≤ ∑ i ∈ h.support, h i
+      simpa only [Nat.nsmul_eq_mul, Nat.mul_one] using
+        (Finset.card_nsmul_le_sum h.support (fun i => h i) 1
+          (fun i hi => Nat.one_le_iff_ne_zero.mpr (Finsupp.mem_support_iff.mp hi)))
+    have hc := pubDegree_C (σ := P.Pub κ) (τ := P.Priv κ)
+      ((MvPolynomial.coeff h (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j)) : ℤ) : ZMod pp.p)
+    have hl := P.halfForm_pubDegree_le κ pp I' k h 0 copy
+    have hr := P.halfForm_pubDegree_le κ pp I' k h P.D false
+    simp only [Nat.zero_add] at hl
+    have hslots := Internal.monomialSlot_two_halves_card_le h P.D
+    have hmul₁ := pubDegree_mul_le
+      (MvPolynomial.C
+        ((MvPolynomial.coeff h (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j)) : ℤ) : ZMod pp.p))
+      (P.halfForm κ pp I' k h 0 copy)
+    have hmul₂ := pubDegree_mul_le
+      (MvPolynomial.C
+        ((MvPolynomial.coeff h (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j)) : ℤ) : ZMod pp.p) *
+          P.halfForm κ pp I' k h 0 copy)
+      (P.halfForm κ pp I' k h P.D false)
+    omega
+  · apply privDegree_finset_sum_le
+    intro h hh
+    have hc := privDegree_C (σ := P.Pub κ) (τ := P.Priv κ)
+      ((MvPolynomial.coeff h (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j)) : ℤ) : ZMod pp.p)
+    have hl := P.halfForm_privDegree_le κ pp I' k h 0 copy
+    have hr := P.halfForm_privDegree_le κ pp I' k h P.D false
+    have hmul₁ := privDegree_mul_le
+      (MvPolynomial.C
+        ((MvPolynomial.coeff h (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j)) : ℤ) : ZMod pp.p))
+      (P.halfForm κ pp I' k h 0 copy)
+    have hmul₂ := privDegree_mul_le
+      (MvPolynomial.C
+        ((MvPolynomial.coeff h (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j)) : ℤ) : ZMod pp.p) *
+          P.halfForm κ pp I' k h 0 copy)
+      (P.halfForm κ pp I' k h P.D false)
+    omega
 
 /-- Quadratic corrections use no public variables and have private degree at most two
 [JLS26, Equation (3), p. 17]. The scaled copy still represents just one private variable.
@@ -325,7 +483,40 @@ theorem prgPoly_degrees (P : Params) (κ : ℕ) (pp : PrimeParam κ)
 theorem correctionPoly_degrees (P : Params) (κ : ℕ) (pp : PrimeParam κ)
     (I' : P.Idx' κ pp) (k : Fin κ) (j : Fin (P.m κ)) (copy : Bool) :
     pubDegree (P.correctionPoly κ pp I' k j copy) = 0 ∧
-      privDegree (P.correctionPoly κ pp I' k j copy) ≤ 2 := sorry
+      privDegree (P.correctionPoly κ pp I' k j copy) ≤ 2 := by
+  classical
+  have hpX : ∀ (c : Bool) (v : P.SVar κ),
+      pubDegree (MvPolynomial.X (P.sVar κ k c v) : P.StructPoly κ pp) = 0 := ?_
+  swap
+  · intro c v
+    rw [P.sVar_eq]
+    exact pubDegree_X_inr _
+  have hsX : ∀ (c : Bool) (v : P.SVar κ),
+      privDegree (MvPolynomial.X (P.sVar κ k c v) : P.StructPoly κ pp) ≤ 1 := ?_
+  swap
+  · intro c v
+    rw [P.sVar_eq]
+    exact privDegree_X_inr _
+  rw [P.correctionPoly_eq]
+  cases hpos : Buckets.indexMap I'.2.1 (P.rc κ) j with
+  | none =>
+    constructor
+    · exact pubDegree_zero
+    · rw [privDegree_zero]
+      omega
+  | some c =>
+    constructor
+    · apply Nat.eq_zero_of_le_zero
+      apply pubDegree_finset_sum_le
+      intro r hr
+      simpa only [hpX, Nat.zero_add] using
+        (pubDegree_mul_le (R := ZMod pp.p)
+          (MvPolynomial.X (P.sVar κ k copy (P.uCoord κ (I'.2.1 j) c.1 r)))
+          (MvPolynomial.X (P.sVar κ k false (P.vCoord κ (I'.2.1 j) r c.2))))
+    · apply privDegree_finset_sum_le
+      intro r hr
+      exact (privDegree_mul_le _ _).trans
+        (Nat.add_le_add (hsX copy _) (hsX false _))
 
 /-- The third map has public degree at most d and private degree at most two
 [JLS26, Equation (4), p. 17]. Dv10 uses the formal construction's degree d.
@@ -333,7 +524,14 @@ theorem correctionPoly_degrees (P : Params) (κ : ℕ) (pp : PrimeParam κ)
 **Proof sketch.** Apply the lifted PRG and correction bounds and the sum bound. -/
 theorem G3_degrees (P : Params) (κ : ℕ) (pp : PrimeParam κ)
     (I' : P.Idx' κ pp) (k : Fin κ) (j : Fin (P.m κ)) :
-    pubDegree (P.G3 κ pp I' k j) ≤ P.d ∧ privDegree (P.G3 κ pp I' k j) ≤ 2 := sorry
+    pubDegree (P.G3 κ pp I' k j) ≤ P.d ∧ privDegree (P.G3 κ pp I' k j) ≤ 2 := by
+  have hp := P.prgPoly_degrees κ pp I' k j true
+  have hc := P.correctionPoly_degrees κ pp I' k j true
+  rw [P.G3_eq]
+  constructor
+  · exact (pubDegree_add_le _ _).trans
+      (max_le hp.1 (hc.1.le.trans (Nat.zero_le P.d)))
+  · exact (privDegree_add_le _ _).trans (max_le hp.2 hc.2)
 
 /-- The final renamed map has public degree at most d and private degree at most two
 [JLS26, Eval', pp. 16-17]. Dv10 and Dv15 preserve the formal degree through explicit renaming.
@@ -342,7 +540,21 @@ theorem G3_degrees (P : Params) (κ : ℕ) (pp : PrimeParam κ)
 lemmas backed by Mathlib's injective weighted-degree renaming theorem. -/
 theorem G4_degrees (P : Params) (κ : ℕ) (pp : PrimeParam κ)
     (I' : P.Idx' κ pp) (j : Fin (P.m κ)) :
-    pubDegree (P.G4 κ pp I' j) ≤ P.d ∧ privDegree (P.G4 κ pp I' j) ≤ 2 := sorry
+    pubDegree (P.G4 κ pp I' j) ≤ P.d ∧ privDegree (P.G4 κ pp I' j) ≤ 2 := by
+  rw [P.G4_eq]
+  constructor
+  · change pubDegree (MvPolynomial.rename
+        (Sum.map (P.pubEquiv κ) (P.privEquiv κ)) (P.G4struct κ pp I' j)) ≤ P.d
+    rw [pubDegree_rename, P.G4struct_eq]
+    apply pubDegree_finset_sum_le Finset.univ _ P.d
+    intro k _
+    exact (P.G3_degrees κ pp I' k j).1
+  · change privDegree (MvPolynomial.rename
+        (Sum.map (P.pubEquiv κ) (P.privEquiv κ)) (P.G4struct κ pp I' j)) ≤ 2
+    rw [privDegree_rename, P.G4struct_eq]
+    apply privDegree_finset_sum_le Finset.univ _ 2
+    intro k _
+    exact (P.G3_degrees κ pp I' k j).2
 
 /-- A tensor half form evaluates to the product of its encoded coordinates
 [JLS26, Equation (3), p. 17]. Padding evaluates to one; the matrix is stored transposed.
@@ -360,7 +572,73 @@ theorem halfForm_eval (P : Params) (κ : ℕ) (pp : PrimeParam κ)
     MvPolynomial.eval z (P.halfForm κ pp I' k h offset false) =
       ∏ r : Fin P.D, match Internal.monomialSlot h (offset + r.val) with
         | none => 1
-        | some i => x i := sorry
+        | some i => x i := by
+  classical
+  let aug : Fin (P.ℓ κ + 1) → ZMod pp.p := fun a =>
+    if ha : a.val < P.ℓ κ then s ⟨a.val, ha⟩ else 1
+  have hT : ∀ α : Fin P.D → Fin (P.ℓ κ + 1),
+      z (P.sVar κ k false (.inl α)) = ∏ r : Fin P.D, aug (α r) := htensor
+  have hlin : ∀ slot : Option (Fin (P.n κ)),
+      (∑ a : Fin (P.ℓ κ + 1),
+        MvPolynomial.eval z (P.linearCoeff κ pp I' k slot a) * aug a) =
+        match slot with
+        | none => 1
+        | some i => x i := ?_
+  swap
+  · intro slot
+    cases slot with
+    | none =>
+      rw [Fin.sum_univ_castSucc]
+      have hzero : ∀ a : Fin (P.ℓ κ),
+          MvPolynomial.eval z (P.linearCoeff κ pp I' k none a.castSucc) *
+            aug a.castSucc = 0 := ?_
+      swap
+      · intro a
+        simp [P.linearCoeff_eq, aug, Nat.ne_of_lt a.isLt]
+      simp_rw [hzero]
+      simp [P.linearCoeff_eq, aug]
+    | some i =>
+      rw [Fin.sum_univ_castSucc]
+      have hlow : ∀ a : Fin (P.ℓ κ),
+          MvPolynomial.eval z (P.linearCoeff κ pp I' k (some i) a.castSucc) *
+            aug a.castSucc = -(I'.2.2 i a * s a) := ?_
+      swap
+      · intro a
+        simp [P.linearCoeff_eq, aug, a.isLt]
+      have hlast :
+          MvPolynomial.eval z (P.linearCoeff κ pp I' k (some i) (Fin.last (P.ℓ κ))) *
+            aug (Fin.last (P.ℓ κ)) = z (P.bVar κ k i) := ?_
+      swap
+      · simp [P.linearCoeff_eq, aug]
+      simp_rw [hlow]
+      rw [hlast, Finset.sum_neg_distrib, hpub i]
+      ring
+  calc
+    MvPolynomial.eval z (P.halfForm κ pp I' k h offset false) =
+        ∑ α : Fin P.D → Fin (P.ℓ κ + 1),
+          ∏ r : Fin P.D,
+            MvPolynomial.eval z
+                (P.linearCoeff κ pp I' k (Internal.monomialSlot h (offset + r.val))
+                  (α r)) * aug (α r) := ?_
+    _ = ∏ r : Fin P.D, ∑ a : Fin (P.ℓ κ + 1),
+        MvPolynomial.eval z
+            (P.linearCoeff κ pp I' k (Internal.monomialSlot h (offset + r.val)) a) *
+          aug a :=
+            (Fintype.prod_sum (fun (r : Fin P.D) (a : Fin (P.ℓ κ + 1)) =>
+              MvPolynomial.eval z
+                (P.linearCoeff κ pp I' k (Internal.monomialSlot h (offset + r.val)) a) *
+                  aug a)).symm
+    _ = ∏ r : Fin P.D, match Internal.monomialSlot h (offset + r.val) with
+        | none => 1
+        | some i => x i := ?_
+  · rw [P.halfForm_eq, MvPolynomial.eval_sum]
+    apply Finset.sum_congr rfl
+    intro α hα
+    rw [MvPolynomial.eval_mul, MvPolynomial.eval_prod, MvPolynomial.eval_X, hT α,
+      ← Finset.prod_mul_distrib]
+  · apply Finset.prod_congr rfl
+    intro r hr
+    exact hlin _
 
 /-- The first map evaluates the original integer PRG polynomial at the encoded vector
 [JLS26, Equation (3), p. 17]. Dv3 uses the transposed matrix; the coefficients are cast
@@ -378,7 +656,93 @@ theorem G1_eval (P : Params) (κ : ℕ) (pp : PrimeParam κ)
         ∏ r : Fin P.D, if ha : (α r).val < P.ℓ κ then s ⟨(α r).val, ha⟩ else 1) :
     MvPolynomial.eval z (P.G1 κ pp I' k j) =
       MvPolynomial.eval₂ (Int.castRingHom (ZMod pp.p)) x
-        (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j)) := sorry
+        (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j)) := by
+  classical
+  have hml := (MvPolynomial.mem_restrictDegree (Fin (P.n κ))
+    (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j)) 1).mp
+      (P.R.poly_mem_restrictDegree (P.n κ) I'.1 (P.outputIndex κ j))
+  have hmon : ∀ h ∈ (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j)).support,
+      (∏ r : Fin P.D, match Internal.monomialSlot h r.val with
+        | none => 1
+        | some i => x i) *
+      (∏ r : Fin P.D, match Internal.monomialSlot h (P.D + r.val) with
+        | none => 1
+        | some i => x i) = ∏ i ∈ h.support, x i ^ h i := ?_
+  swap
+  · intro h hh
+    have hexp : ∀ i ∈ h.support, h i = 1 := ?_
+    swap
+    · intro i hi
+      have hle := hml h hh i
+      have hne := Finsupp.mem_support_iff.mp hi
+      omega
+    have hsum : h.sum (fun _ e => e) = h.support.card := ?_
+    swap
+    · change Finset.sum h.support (fun i => h i) = h.support.card
+      trans Finset.sum h.support (fun _ => 1)
+      · exact Finset.sum_congr rfl hexp
+      · simp
+    have hcard : h.support.card ≤ P.d := ?_
+    swap
+    · have hd := (MvPolynomial.le_totalDegree hh).trans
+        (P.R.totalDegree_poly_le (P.n κ) I'.1 (P.outputIndex κ j))
+      rwa [hsum] at hd
+    have hdouble : P.d ≤ P.D + P.D := ?_
+    swap
+    · rw [P.D_eq]
+      omega
+    let L := h.support.sort (· ≤ ·)
+    let f : ℕ → ZMod pp.p := fun r => match L[r]? with
+      | none => 1
+      | some i => x i
+    have hlen : L.length ≤ P.D + P.D := ?_
+    swap
+    · simpa only [L, Finset.length_sort] using hcard.trans hdouble
+    have hjoin : (∏ r : Fin P.D, f r.val) *
+        (∏ r : Fin P.D, f (P.D + r.val)) =
+          ∏ r : Fin (P.D + P.D), f r.val := ?_
+    swap
+    · simpa only [Fin.coe_castAdd, Fin.coe_natAdd] using
+        (Fin.prod_univ_add (fun r : Fin (P.D + P.D) => f r.val)).symm
+    have hpadding : (∏ r : Fin (P.D + P.D), f r.val) =
+        ∏ r : Fin L.length, f r.val := ?_
+    swap
+    · simp only [Fin.prod_univ_eq_prod_range]
+      symm
+      apply Finset.prod_subset (Finset.range_mono hlen)
+      intro r hr hnot
+      have hge : L.length ≤ r :=
+        Nat.le_of_not_lt (fun hlt => hnot (Finset.mem_range.mpr hlt))
+      simp only [f, List.getElem?_eq_none hge]
+    have hlist : (∏ r : Fin L.length, f r.val) = Finset.prod h.support x := ?_
+    swap
+    · calc
+        (∏ r : Fin L.length, f r.val) =
+            ∏ r : Fin L.length, x L[r.val] := ?_
+        _ = (L.map x).prod := Fin.prod_univ_fun_getElem L x
+        _ = Finset.prod h.support x := ?_
+      · apply Finset.prod_congr rfl
+        intro r hr
+        simp only [f, List.getElem?_eq_getElem r.isLt]
+      · simpa only [L, Finset.sort_toFinset] using
+          (List.prod_toFinset x (h.support.sort_nodup (· ≤ ·))).symm
+    have hpow : (∏ i ∈ h.support, x i ^ h i) = Finset.prod h.support x := ?_
+    swap
+    · apply Finset.prod_congr rfl
+      intro i hi
+      rw [hexp i hi, pow_one]
+    simp only [Internal.monomialSlot_eq]
+    change (∏ r : Fin P.D, f r.val) * (∏ r : Fin P.D, f (P.D + r.val)) = _
+    exact hjoin.trans (hpadding.trans (hlist.trans hpow.symm))
+  rw [P.G1_eq, P.prgPoly_eq, MvPolynomial.eval_sum, MvPolynomial.eval₂_eq]
+  apply Finset.sum_congr rfl
+  intro h hh
+  rw [MvPolynomial.eval_mul, MvPolynomial.eval_mul, MvPolynomial.eval_C,
+    P.halfForm_eval κ pp I' k h 0 s x z hpub htensor,
+    P.halfForm_eval κ pp I' k h P.D s x z hpub htensor]
+  simp only [Nat.zero_add]
+  rw [mul_assoc, hmon h hh]
+  rfl
 
 /-- Precomputed private scaling makes the third map flag times the second map
 [JLS26, Equation (4), p. 17]. Dv10 moves the scaling into one factor of every quadratic
@@ -391,7 +755,46 @@ theorem G3_eval_of_scaled (P : Params) (κ : ℕ) (pp : PrimeParam κ)
     (z : P.Var κ → ZMod pp.p) (flag : ZMod pp.p)
     (hcopy : ∀ v : P.SVar κ, z (P.sVar κ k true v) = flag * z (P.sVar κ k false v)) :
     MvPolynomial.eval z (P.G3 κ pp I' k j) =
-      flag * MvPolynomial.eval z (P.G2 κ pp I' k j) := sorry
+      flag * MvPolynomial.eval z (P.G2 κ pp I' k j) := by
+  classical
+  have hhalf : ∀ (h : Fin (P.n κ) →₀ ℕ) (offset : ℕ),
+      MvPolynomial.eval z (P.halfForm κ pp I' k h offset true) =
+        flag * MvPolynomial.eval z (P.halfForm κ pp I' k h offset false) := ?_
+  swap
+  · intro h offset
+    simp only [P.halfForm_eq, MvPolynomial.eval_sum, MvPolynomial.eval_mul,
+      MvPolynomial.eval_prod, MvPolynomial.eval_X]
+    rw [Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro α hα
+    rw [hcopy]
+    ring
+  have hprg : MvPolynomial.eval z (P.prgPoly κ pp I' k j true) =
+      flag * MvPolynomial.eval z (P.prgPoly κ pp I' k j false) := ?_
+  swap
+  · simp only [P.prgPoly_eq, MvPolynomial.eval_sum, MvPolynomial.eval_mul,
+      MvPolynomial.eval_C]
+    rw [Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro h hh
+    rw [hhalf]
+    ring
+  have hcorr : MvPolynomial.eval z (P.correctionPoly κ pp I' k j true) =
+      flag * MvPolynomial.eval z (P.correctionPoly κ pp I' k j false) := ?_
+  swap
+  · rw [P.correctionPoly_eq, P.correctionPoly_eq]
+    cases hpos : Buckets.indexMap I'.2.1 (P.rc κ) j with
+    | none => simp
+    | some c =>
+      simp only [MvPolynomial.eval_sum, MvPolynomial.eval_mul, MvPolynomial.eval_X]
+      rw [Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro r hr
+      rw [hcopy]
+      ring
+  rw [P.G3_eq, P.G2_eq, P.G1_eq, MvPolynomial.eval_add, MvPolynomial.eval_add,
+    hprg, hcorr]
+  ring
 
 end Params
 

@@ -1,0 +1,473 @@
+[
+  {
+    "name": "Internal.monomialSlot_two_halves_card_le",
+    "family": "Polys",
+    "template": "templates/Internal.monomialSlot_two_halves_card_le.lean.template",
+    "imports": [
+      "Mathlib.RingTheory.MvPolynomial.Homogeneous",
+      "Mathlib.Data.Finset.Sort",
+      "Mathlib.Algebra.MvPolynomial.Eval",
+      "Mathlib.Algebra.BigOperators.Ring.Finset"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:69",
+    "kind": "FULL_EXPANSION",
+    "abstraction": "Literal sorted support getElem? in both half blocks; no slot wrapper.",
+    "public_apis": "isSome_getElem?; Finset.length_sort; card_image_of_injective; card_union_of_disjoint; card_le_card",
+    "status": "NOT_RUN",
+    "sha256": "82b9897308cd198a436f8fc3a7d1f326ee56c0c1e16d3c457e4fca7aaaecde65"
+  },
+  {
+    "name": "halfForm_pubDegree_le",
+    "family": "Polys",
+    "template": "templates/halfForm_pubDegree_le.lean.template",
+    "imports": [
+      "Mathlib.RingTheory.MvPolynomial.Homogeneous",
+      "Mathlib.Data.Finset.Sort",
+      "Mathlib.Algebra.MvPolynomial.Eval",
+      "Mathlib.Algebra.BigOperators.Ring.Finset"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:295",
+    "kind": "FULL_EXPANSION",
+    "abstraction": "A,b,T abstract actual matrix/public/tensor coordinates; actual padded coefficient and tensor sum are literal.",
+    "public_apis": "AddMonoidAlgebra.supDegree_sum_le; supDegree_prod_le; weightedTotalDegree_X; isWeightedHomogeneous_C; Finset.sum_boole",
+    "status": "NOT_RUN",
+    "sha256": "5c95ab3589cfbb952924bff8d95eee60edfe789e4d0a189ecfe5dbf49fe50b5e"
+  },
+  {
+    "name": "halfForm_privDegree_le",
+    "family": "Polys",
+    "template": "templates/halfForm_privDegree_le.lean.template",
+    "imports": [
+      "Mathlib.RingTheory.MvPolynomial.Homogeneous",
+      "Mathlib.Data.Finset.Sort",
+      "Mathlib.Algebra.MvPolynomial.Eval",
+      "Mathlib.Algebra.BigOperators.Ring.Finset"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:307",
+    "kind": "FULL_EXPANSION",
+    "abstraction": "Same literal half form; arbitrary coordinate maps preserve the actual shape.",
+    "public_apis": "AddMonoidAlgebra.supDegree_sum_le; supDegree_prod_le; isWeightedHomogeneous_X; isWeightedHomogeneous_C",
+    "status": "NOT_RUN",
+    "sha256": "ab49743bf0eac1eab2945d1a58a8a2e97c0e34d61f62b06066ca2f9168be72b0"
+  },
+  {
+    "name": "prgPoly_degrees",
+    "family": "Polys",
+    "template": "templates/prgPoly_degrees.lean.template",
+    "imports": [
+      "Mathlib.RingTheory.MvPolynomial.Homogeneous",
+      "Mathlib.Data.Finset.Sort",
+      "Mathlib.Algebra.MvPolynomial.Eval",
+      "Mathlib.Algebra.BigOperators.Ring.Finset",
+      "Mathlib.RingTheory.MvPolynomial.Basic",
+      "Mathlib.Algebra.MvPolynomial.Variables",
+      "Mathlib.Algebra.BigOperators.Fin"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:316",
+    "kind": "FULL_EXPANSION_STRONGER",
+    "abstraction": "Literal coefficient-weighted pair of half forms. Only total degree is needed for degree bounds; unused multilinearity omitted.",
+    "public_apis": "Finset.card_nsmul_le_sum; MvPolynomial.le_totalDegree; weighted degree sum/product bounds",
+    "status": "NOT_RUN",
+    "sha256": "974de5b466cfd6110e5f990fe9ae026c2a5d0780b9c475d367bbc39d55be80e3"
+  },
+  {
+    "name": "correctionPoly_degrees",
+    "family": "Polys",
+    "template": "templates/correctionPoly_degrees.lean.template",
+    "imports": [
+      "Mathlib.RingTheory.MvPolynomial.Homogeneous",
+      "Mathlib.Data.Finset.Sort",
+      "Mathlib.Algebra.MvPolynomial.Eval",
+      "Mathlib.Algebra.BigOperators.Ring.Finset"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:325",
+    "kind": "FULL_EXPANSION",
+    "abstraction": "Optional grid position and private U/V coordinate maps abstract the actual selected bucket; both branches are retained.",
+    "public_apis": "weightedTotalDegree_zero; AddMonoidAlgebra.supDegree_sum_le; supDegree_mul_le; isWeightedHomogeneous_X",
+    "status": "NOT_RUN",
+    "sha256": "80bd44098cfda09d2248027fc9f8277f36868fd752616086107a4cab71bc1bab"
+  },
+  {
+    "name": "G3_degrees",
+    "family": "Polys",
+    "template": "templates/G3_degrees.lean.template",
+    "imports": [
+      "Mathlib.RingTheory.MvPolynomial.Homogeneous",
+      "Mathlib.Data.Finset.Sort",
+      "Mathlib.Algebra.MvPolynomial.Eval",
+      "Mathlib.Algebra.BigOperators.Ring.Finset"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:334",
+    "kind": "ACTUAL_PREMISE_COMPOSITION",
+    "abstraction": "q/r are the lifted PRG/correction; hq/hr are exactly their upstream bidegree facts. No G3 conclusion is assumed.",
+    "public_apis": "AddMonoidAlgebra.supDegree_add_le; max_le; Nat.zero_le",
+    "status": "NOT_RUN",
+    "sha256": "8e446c45dfb4c1147f4d00ff28a479cd84b25ab35ab8f7f20d3096366ba7f47b"
+  },
+  {
+    "name": "G4_degrees",
+    "family": "Polys",
+    "template": "templates/G4_degrees.lean.template",
+    "imports": [
+      "Mathlib.RingTheory.MvPolynomial.Homogeneous",
+      "Mathlib.Data.Finset.Sort",
+      "Mathlib.Algebra.MvPolynomial.Eval",
+      "Mathlib.Algebra.BigOperators.Ring.Finset",
+      "Mathlib.Algebra.MvPolynomial.Rename"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:343",
+    "kind": "ACTUAL_PREMISE_COMPOSITION",
+    "abstraction": "Literal renamed sum; hq is exactly the per-instance G3 degree fact. Arbitrary groupwise equivalences cover the concrete public/private maps.",
+    "public_apis": "MvPolynomial.weightedTotalDegree_rename_of_injective; AddMonoidAlgebra.supDegree_sum_le",
+    "status": "NOT_RUN",
+    "sha256": "0c0f0d4d7d515683e3dcba485dc0dfc4a817d3822d92afb4ab099078c88dd30f"
+  },
+  {
+    "name": "halfForm_eval",
+    "family": "Polys",
+    "template": "templates/halfForm_eval.lean.template",
+    "imports": [
+      "Mathlib.RingTheory.MvPolynomial.Homogeneous",
+      "Mathlib.Data.Finset.Sort",
+      "Mathlib.Algebra.MvPolynomial.Eval",
+      "Mathlib.Algebra.BigOperators.Ring.Finset",
+      "Mathlib.RingTheory.MvPolynomial.Basic",
+      "Mathlib.Algebra.MvPolynomial.Variables",
+      "Mathlib.Algebra.BigOperators.Fin"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:352",
+    "kind": "FULL_EXPANSION",
+    "abstraction": "Matrix/secret/public/tensor assignment and coefficient/padding expressions are all explicit; dimensions including zero are arbitrary.",
+    "public_apis": "Fintype.prod_sum; Fin.sum_univ_castSucc; MvPolynomial.eval_sum/prod/C/X; sum_neg_distrib",
+    "status": "NOT_RUN",
+    "sha256": "30a5f556af4447daf49b2861688e17b9dcc451917e508f44e9b989e3876e19cc"
+  },
+  {
+    "name": "G1_eval",
+    "family": "Polys",
+    "template": "templates/G1_eval.lean.template",
+    "imports": [
+      "Mathlib.RingTheory.MvPolynomial.Homogeneous",
+      "Mathlib.Data.Finset.Sort",
+      "Mathlib.Algebra.MvPolynomial.Eval",
+      "Mathlib.Algebra.BigOperators.Ring.Finset",
+      "Mathlib.RingTheory.MvPolynomial.Basic",
+      "Mathlib.Algebra.MvPolynomial.Variables",
+      "Mathlib.Algebra.BigOperators.Fin"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:371",
+    "kind": "FULL_EXPANSION",
+    "abstraction": "Actual integer representation becomes arbitrary p with the supplied multilinearity/degree premises; hcut is the existing ceil-half-degree arithmetic consequence.",
+    "public_apis": "MvPolynomial.mem_restrictDegree; le_totalDegree; eval\u2082_eq; Fin.prod_univ_add; prod_univ_eq_prod_range; List.prod_toFinset",
+    "status": "NOT_RUN",
+    "sha256": "b45ad52f3658113b0c013bf061c31bd048032466da687906bc0708c8d8a4e9d5"
+  },
+  {
+    "name": "G3_eval_of_scaled",
+    "family": "Polys",
+    "template": "templates/G3_eval_of_scaled.lean.template",
+    "imports": [
+      "Mathlib.RingTheory.MvPolynomial.Homogeneous",
+      "Mathlib.Data.Finset.Sort",
+      "Mathlib.Algebra.MvPolynomial.Eval",
+      "Mathlib.Algebra.BigOperators.Ring.Finset",
+      "Mathlib.RingTheory.MvPolynomial.Basic",
+      "Mathlib.Algebra.MvPolynomial.Variables",
+      "Mathlib.Algebra.BigOperators.Fin"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:389",
+    "kind": "STRUCTURAL_CORE",
+    "abstraction": "Flatten supported monomial/first-half tensor indices to finite i; a i is the unchanged coefficient product times second half. Optional-none corrections use empty rho. Actual hcopy restricts to hT/hU. Full nested expression deliberately replaced by its exact linear-scaling core.",
+    "public_apis": "MvPolynomial.eval_sum/mul/add/X; Finset.mul_sum; Finset.sum_congr; ring identities",
+    "status": "NOT_RUN",
+    "sha256": "dfd3d4484c4c760ef1c626586d490953af1c9c56d7a2f08f8059f0cb9df71722"
+  },
+  {
+    "name": "firstGood_none_iff",
+    "family": "Correctness",
+    "template": "templates/firstGood_none_iff.lean.template",
+    "imports": [
+      "Mathlib.Data.List.FinRange",
+      "Mathlib.Data.List.OfFn"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:56",
+    "kind": "FULL_EXPANSION",
+    "abstraction": "Literal increasing finite find?; no firstGood wrapper.",
+    "public_apis": "List.find?_eq_none; List.mem_finRange; Bool.eq_false_iff",
+    "status": "NOT_RUN",
+    "sha256": "e88801541c89a31fcce419c42c7fd250828ba2aeb1fa451521ae39654a29f9bd"
+  },
+  {
+    "name": "firstGood_some_flag",
+    "family": "Correctness",
+    "template": "templates/firstGood_some_flag.lean.template",
+    "imports": [
+      "Mathlib.Data.List.FinRange",
+      "Mathlib.Data.List.OfFn"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:64",
+    "kind": "FULL_EXPANSION",
+    "abstraction": "Literal first-success search.",
+    "public_apis": "List.find?_some",
+    "status": "NOT_RUN",
+    "sha256": "e9b310716003665713b152ef88a9fb6a32b14e58de67ef2088033b762813dc43"
+  },
+  {
+    "name": "firstGood_some_minimal",
+    "family": "Correctness",
+    "template": "templates/firstGood_some_minimal.lean.template",
+    "imports": [
+      "Mathlib.Data.List.FinRange",
+      "Mathlib.Data.List.OfFn"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:72",
+    "kind": "FULL_EXPANSION",
+    "abstraction": "Literal first-success search and exact earlier-index order.",
+    "public_apis": "List.ofFn_id; List.find?_ofFn_eq_some_of_injective; Bool.eq_false_iff",
+    "status": "NOT_RUN",
+    "sha256": "d2a37db8fdcc4b7868f4f17822cbdf95713a0c80f39cc42d952bb94a7f58ee7b"
+  },
+  {
+    "name": "packSeed_public_block",
+    "family": "Correctness",
+    "template": "templates/packSeed_public_block.lean.template",
+    "imports": [
+      "Mathlib.Logic.Equiv.Basic",
+      "Mathlib.Algebra.Ring.Basic"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:79",
+    "kind": "FULL_EXPANSION",
+    "abstraction": "Literal public packing function and arbitrary explicit equivalence.",
+    "public_apis": "Equiv.symm_apply_apply; Sum.elim_inl",
+    "status": "NOT_RUN",
+    "sha256": "374814d675a66646f847c0cbead59e81dbfc651492da2bfac4a3b4381a461feb"
+  },
+  {
+    "name": "packSeed_error",
+    "family": "Correctness",
+    "template": "templates/packSeed_error.lean.template",
+    "imports": [
+      "Mathlib.Logic.Equiv.Basic",
+      "Mathlib.Algebra.Ring.Basic"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:89",
+    "kind": "FULL_EXPANSION",
+    "abstraction": "Literal public packing at its final Unit coordinate.",
+    "public_apis": "Equiv.symm_apply_apply",
+    "status": "NOT_RUN",
+    "sha256": "f0481e40170d6008dd1712bbf99f30daf955c13ca92d7a5a7a9c854357703f8e"
+  },
+  {
+    "name": "packSeed_flag",
+    "family": "Correctness",
+    "template": "templates/packSeed_flag.lean.template",
+    "imports": [
+      "Mathlib.Logic.Equiv.Basic",
+      "Mathlib.Algebra.Ring.Basic"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:98",
+    "kind": "FULL_EXPANSION",
+    "abstraction": "Literal private packing including both seed copies; select the flag branch.",
+    "public_apis": "Equiv.symm_apply_apply",
+    "status": "NOT_RUN",
+    "sha256": "ed7efab3bdbfc98a706eb9d0bd4cac8db90ca4f118def932c562eb20d94de2e4"
+  },
+  {
+    "name": "packSeed_unscaled",
+    "family": "Correctness",
+    "template": "templates/packSeed_unscaled.lean.template",
+    "imports": [
+      "Mathlib.Logic.Equiv.Basic",
+      "Mathlib.Algebra.Ring.Basic"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:107",
+    "kind": "FULL_EXPANSION",
+    "abstraction": "Literal private packing; select the original seed copy.",
+    "public_apis": "Equiv.symm_apply_apply",
+    "status": "NOT_RUN",
+    "sha256": "d78cdddf914730cb3819e3c490fde9d455747d659f698cdb210b03e159a96b37"
+  },
+  {
+    "name": "packSeed_scaled",
+    "family": "Correctness",
+    "template": "templates/packSeed_scaled.lean.template",
+    "imports": [
+      "Mathlib.Logic.Equiv.Basic",
+      "Mathlib.Algebra.Ring.Basic"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:117",
+    "kind": "FULL_EXPANSION",
+    "abstraction": "Literal private packing; select the flag-times-seed copy.",
+    "public_apis": "Equiv.symm_apply_apply",
+    "status": "NOT_RUN",
+    "sha256": "47e0319926429d3f95a68b24f2ead604d7c1964cb3fb4f43ab0852ee0f90dfa0"
+  },
+  {
+    "name": "oneFlag_bounds",
+    "family": "Correctness",
+    "template": "templates/oneFlag_bounds.lean.template",
+    "imports": [
+      "Mathlib.Data.Finset.Card",
+      "Mathlib.Data.Fintype.Basic"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:129",
+    "kind": "FULL_EXPANSION",
+    "abstraction": "Literal decide conjunction, bucket filters, load cardinalities and squared capacity; BAD may be arbitrary because its construction is unused here.",
+    "public_apis": "of_decide_eq_true; pow_two; And.left; And.right",
+    "status": "NOT_RUN",
+    "sha256": "7170d604b9842e5005ab6255bcf10ddee3e4e448a2a8c9afa8a8640f18fb4e25"
+  },
+  {
+    "name": "corr_zero_of_not_bad",
+    "family": "Correctness",
+    "template": "templates/corr_zero_of_not_bad.lean.template",
+    "imports": [
+      "Mathlib.Algebra.MvPolynomial.Variables",
+      "Mathlib.Data.Fintype.BigOperators"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:144",
+    "kind": "FULL_EXPANSION",
+    "abstraction": "Actual no-error-in-variable-set premise, integer Boolean representation equation, and correction difference; noise draw mechanism is irrelevant once e is fixed.",
+    "public_apis": "MvPolynomial.eval\u2082Hom_congr'; eval\u2082_comp; map_natCast; sub_self",
+    "status": "NOT_RUN",
+    "sha256": "165462d08a862a3a3a5fca4e44b15d94a0fb13cc66c76554b689f583560e7588"
+  },
+  {
+    "name": "oneSd_factors_mul",
+    "family": "Correctness",
+    "template": "templates/oneSd_factors_mul.lean.template",
+    "imports": [
+      "Mathlib.Data.List.FinRange",
+      "Mathlib.Data.Matrix.Mul",
+      "Mathlib.Data.Finset.Card"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:154",
+    "kind": "STRUCTURAL_CORE_REUSED",
+    "abstraction": "Existing sparse_reconstruct probe verbatim: arbitrary matrix with its actual Nodup nonzero-entry list and capacity bound, explicit padded factors. Concrete bucket support and successful oneSd reader transport are not included. No sparseFactor or bucket owner is imported.",
+    "public_apis": "List.getElem?/Nodup; Matrix.mul_apply; Finset.sum_eq_single; existing OverlapProbes/sparse_reconstruct",
+    "status": "NOT_RUN",
+    "sha256": "0cff9e506202fe25fa4647059937b554e8aa585a29426d2891fe17d6a71bcb7d"
+  },
+  {
+    "name": "G1_eval_of_good",
+    "family": "Correctness",
+    "template": "templates/G1_eval_of_good.lean.template",
+    "imports": [
+      "Mathlib.Algebra.MvPolynomial.Variables",
+      "Mathlib.Data.Fintype.BigOperators"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:171",
+    "kind": "ACTUAL_PREMISE_COMPOSITION",
+    "abstraction": "hq is the upstream G1 tensor evaluation. The no-BAD and supplied integer representation premises are retained explicitly, rather than assuming zero correction or the target.",
+    "public_apis": "MvPolynomial.eval\u2082Hom_congr'; eval\u2082_comp; Eq.trans",
+    "status": "NOT_RUN",
+    "sha256": "caf0e5b470dc4da3022af674060d724181d9522ce981988b4db58f6fbc11e251"
+  },
+  {
+    "name": "correctionPoly_eval_oneSd",
+    "family": "Correctness",
+    "template": "templates/correctionPoly_eval_oneSd.lean.template",
+    "imports": [
+      "Mathlib.Data.Matrix.Mul",
+      "Mathlib.Data.Fintype.BigOperators"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:186",
+    "kind": "ACTUAL_PREMISE_COMPOSITION",
+    "abstraction": "Actual successful factor product, existing/injective optional position, and literal bucket matrix are retained. The polynomial evaluation itself is a direct eval_sum/mul/X reader step omitted from this core.",
+    "public_apis": "Matrix.mul_apply; Finset.sum_eq_single; Option.some.inj; Prod.ext",
+    "status": "NOT_RUN",
+    "sha256": "725fab99df6eca5d1d0d955285edcac42a5ae4204d4ac7d2a26d307e3a1a87d8"
+  },
+  {
+    "name": "G2_eval_of_flag",
+    "family": "Correctness",
+    "template": "templates/G2_eval_of_flag.lean.template",
+    "imports": [
+      "Mathlib.Algebra.MvPolynomial.Eval"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:201",
+    "kind": "ACTUAL_PREMISE_COMPOSITION",
+    "abstraction": "a is erroneous evaluation, b is correct field bit. hq/hc are the actual upstream G1 and successful correction evaluations; the success flag is used only to obtain hc.",
+    "public_apis": "MvPolynomial.eval_add; add_sub_cancel_left; sub_add_cancel; ring identities",
+    "status": "NOT_RUN",
+    "sha256": "2fce25efaac9b0ffe385d746fe7f620d3c6da6ae03abec1ab041e54d52d5deaa"
+  },
+  {
+    "name": "G4_eval_sdCore",
+    "family": "Correctness",
+    "template": "templates/G4_eval_sdCore.lean.template",
+    "imports": [
+      "Mathlib.Algebra.MvPolynomial.Rename",
+      "Mathlib.Algebra.BigOperators.Fin",
+      "Mathlib.Data.List.FinRange"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:219",
+    "kind": "ACTUAL_PREMISE_COMPOSITION",
+    "abstraction": "Literal renamed sum, finite first-success selection, and selected-output value. hq is scaled G3 after the separately probed packing coordinates; hgood is successful G2. No positive kappa is added.",
+    "public_apis": "MvPolynomial.eval_rename; eval_sum; List.find?_some; Finset.sum_ite_eq; sum_eq_single",
+    "status": "NOT_RUN",
+    "sha256": "8b9ce7dc39913e9bb962b6afeb417d8a6d84dccf71aeeed9f65f8f51d1d4c5db"
+  },
+  {
+    "name": "G4_eval_eq",
+    "family": "Correctness",
+    "template": "templates/G4_eval_eq.lean.template",
+    "imports": [
+      "TCSlib.Cryptography.Games.OracleComp",
+      "Mathlib.Algebra.MvPolynomial.Eval"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:232",
+    "kind": "ACTUAL_PREMISE_COMPOSITION",
+    "abstraction": "Uniform law is abstracted to arbitrary draw because support pushforward uses no uniformity. hcore is the actual deterministic G4 core equality. No sampler is constructed.",
+    "public_apis": "OracleComp.map_eq_bind; allOutputs_true; AllOutputs.bind; allOutputs_pure",
+    "status": "NOT_RUN",
+    "sha256": "0c205d7322ff3527333bb12eb6d3bb4c27ff571ff3ed9304adb7888636d6e6c7"
+  },
+  {
+    "name": "eval'_correct",
+    "family": "Correctness",
+    "template": "templates/eval'_correct.lean.template",
+    "imports": [
+      "TCSlib.Cryptography.Games.OracleComp",
+      "Mathlib.Algebra.MvPolynomial.Eval"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:244",
+    "kind": "FULL_EXPANSION_WITH_ACTUAL_PREMISE",
+    "abstraction": "Eval prime-field equality test is literal; hfield is G4_eval_eq. Arbitrary nontrivial commutative ring is stronger than the actual prime field. Decidability supplied by classical in materialization.",
+    "public_apis": "OracleComp.AllOutputs.mono; Bool.toNat_true; Bool.toNat_false; zero_ne_one; decide_eq_true_eq",
+    "status": "NOT_RUN",
+    "sha256": "3ede26c0507baff1f6e54f2767331c82cf4bc6a4e5219e103bc9e4e4b6046557"
+  },
+  {
+    "name": "Params.G4_seed_allOutputs",
+    "family": "Correctness",
+    "template": "templates/Params.G4_seed_allOutputs.lean.template",
+    "imports": [
+      "TCSlib.Cryptography.Games.OracleComp",
+      "Mathlib.Algebra.MvPolynomial.Eval"
+    ],
+    "source": "proposed Params.G4_seed_allOutputs helper",
+    "kind": "ACTUAL_PREMISE_COMPOSITION",
+    "abstraction": "Two actual full-law support facts, same c, and literal projection-map conclusion. No generic AllOutputs conjunction result is assumed or imported.",
+    "public_apis": "OracleComp.allOutputs_pure/query; AllOutputs.mono/bind; map_eq_bind",
+    "status": "NOT_RUN",
+    "sha256": "ad738cc8b321e99bc6b76084ee5adcd73aa1f0a9244e97c8533939b9423d3fd7"
+  },
+  {
+    "name": "jls_hasComplexity",
+    "family": "Correctness",
+    "template": "templates/jls_hasComplexity.lean.template",
+    "imports": [
+      "TCSlib.Cryptography.Games.OracleComp",
+      "Mathlib.Algebra.MvPolynomial.Eval",
+      "Mathlib.RingTheory.MvPolynomial.Homogeneous",
+      "Mathlib.Data.ZMod.Basic"
+    ],
+    "source": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:259",
+    "kind": "FULL_CONTRACT_EXPANSION_WITH_ACTUAL_PREMISES",
+    "abstraction": "Raw.HasComplexity expanded completely after record readers: G is literal G4, hdeg and hsupp are existing degree and proposed seed-support facts. Every kappa/index remains quantified; no sampler or machine is supplied by the probe.",
+    "public_apis": "Exists.intro; And.intro; public existential witness composition",
+    "status": "NOT_RUN",
+    "sha256": "3f731e0c0c683e2800b49b6e65f9626949c6b53b60a0607d879784374aad2ae4"
+  }
+]

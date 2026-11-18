@@ -1,0 +1,30 @@
+Try this:
+  [apply] refine eq_ite_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ first = some k ∧
+      (fun j =>
+            let q := e.symm j;
+            match q.2 with
+            | Sum.inl val => if first = some q.1 then 1 else 0
+            | Sum.inr (Sum.inl v) => instances q.1 v
+            | Sum.inr (Sum.inr v) => (if first = some q.1 then 1 else 0) * instances q.1 v)
+          (e (k, Sum.inl ())) =
+        1 ∨
+    ¬first = some k ∧
+      (fun j =>
+            let q := e.symm j;
+            match q.2 with
+            | Sum.inl val => if first = some q.1 then 1 else 0
+            | Sum.inr (Sum.inl v) => instances q.1 v
+            | Sum.inr (Sum.inr v) => (if first = some q.1 then 1 else 0) * instances q.1 v)
+          (e (k, Sum.inl ())) =
+        0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {P} [Decidable P] {a b c} => ite_eq_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {P} [Decidable P] {a b c} => ite_eq_iff'.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+/private/tmp/io-sprg-overlap/Algebra_packSeed_flag-apply.lean:12:0: warning: declaration uses 'sorry'

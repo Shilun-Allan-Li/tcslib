@@ -1,0 +1,152 @@
+From cd837aee4db19fa47362316e8b3ac8a5dda09e7b Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 07:47:13 -0800
+Subject: [PATCH 20/24] io-sprg: M1 exact LPN law and faithful encodings
+
+---
+ .../Obfuscation/StructuredSeed/LPN.lean       | 118 +++++++++++++++++-
+ 1 file changed, 115 insertions(+), 3 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean
+index b81bd215d59b1e57f2f320d78585d69eac1b480c..eeef312b444b97ab566c1e3c9ef234efa8b974f7 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean
+@@ -68,7 +68,48 @@ theorem lpnNoise_law (p W : ℕ) [NeZero p] [NeZero W] (z : ZMod p) :
+     uprob (fun c : Fin W × ZMod p => ((lpnNoise p W).sample c : ZMod p) = z) =
+       if z = 0 then 1 - 1 / (W : ℝ) + 1 / ((W : ℝ) * p)
+       else 1 / ((W : ℝ) * p) := by
+-  sorry
++  classical
++  letI : Nonempty (Fin W) := ⟨0⟩
++  letI : Nonempty (ZMod p) := ⟨0⟩
++  have hW : uprob (fun a : Fin W => a = 0) = 1 / (W : ℝ) := ?_
++  swap
++  · simpa only [Fintype.card_fin] using OneWay.uprob_eq_one_div_card (0 : Fin W)
++  have hp : ∀ a : ZMod p, uprob (fun x : ZMod p => x = a) = 1 / (p : ℝ) := ?_
++  swap
++  · intro a
++    simpa only [ZMod.card] using OneWay.uprob_eq_one_div_card a
++  have hs : ∀ c : Fin W × ZMod p,
++      ((lpnNoise p W).sample c : ZMod p) = if c.1 = 0 then c.2 else 0 := ?_
++  swap
++  · intro c
++    rw [lpnNoise_sample]
++    split_ifs <;> simp only [Int.cast_natCast, ZMod.natCast_zmod_val, Int.cast_zero]
++  by_cases hz : z = 0
++  · subst z
++    rw [if_pos rfl]
++    have hevent : ∀ c : Fin W × ZMod p,
++        ((lpnNoise p W).sample c : ZMod p) = 0 ↔ ¬ (c.1 = 0 ∧ c.2 ≠ 0) := ?_
++    swap
++    · intro c
++      rw [hs c]
++      by_cases ha : c.1 = 0 <;> simp [ha]
++    rw [OneWay.uprob_congr hevent, uprob_not,
++      HardcoreBit.uprob_prod_and (fun a : Fin W => a = 0) (fun x : ZMod p => x ≠ 0),
++      hW, uprob_not, hp]
++    simp only [one_div, mul_inv_rev]
++    ring
++  · rw [if_neg hz]
++    have hevent : ∀ c : Fin W × ZMod p,
++        ((lpnNoise p W).sample c : ZMod p) = z ↔ c.1 = 0 ∧ c.2 = z := ?_
++    swap
++    · intro c
++      rw [hs c]
++      by_cases ha : c.1 = 0 <;> simp [ha, hz, Ne.symm hz]
++    rw [OneWay.uprob_congr hevent,
++      HardcoreBit.uprob_prod_and (fun a : Fin W => a = 0) (fun x : ZMod p => x = z),
++      hW, hp]
++    simp only [one_div, mul_inv_rev]
++    ring
+ 
+ namespace LPNFamily
+ 
+@@ -363,7 +404,66 @@ is explicit for the concrete finite-coordinate encoding.
+ injectivity readers with the raw width bound, and recover every selector/residue pair
+ from its delimited block in the existing finite-list code. No sampler is constructed. -/
+ theorem encDraw_injective (F : Raw) (ℓ : ℕ) : Function.Injective (F.encDraw ℓ) := by
+-  sorry
++  let payload : Fin (F.noiseDen ℓ) × ZMod (F.modulus ℓ) → List Bool := fun c =>
++    pairEncode (Nat.bits c.1.val) (Candidates.natToList (F.residueBits.eval ℓ) c.2.val)
++  let block : Fin (F.noiseDen ℓ) × ZMod (F.modulus ℓ) → List Bool := fun c =>
++    pairEncode (payload c) []
++  have hpayload : Function.Injective payload := ?_
++  swap
++  · intro a b h
++    change pairEncode _ _ = pairEncode _ _ at h
++    have hp := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h
++    apply Prod.ext
++    · exact Fin.ext (Complexity.LogProg.bits_injective (congrArg Prod.fst hp))
++    · apply ZMod.val_injective (F.modulus ℓ)
++      exact Candidates.natToList_injOn
++        ((ZMod.val_lt a.2).trans_le (F.modulus_le_pow ℓ))
++        ((ZMod.val_lt b.2).trans_le (F.modulus_le_pow ℓ))
++        (congrArg Prod.snd hp)
++  have hlist : Function.Injective (BoolCircuit.encodeList block) := ?_
++  swap
++  · intro xs
++    induction xs with
++    | nil =>
++      intro ys h
++      cases ys with
++      | nil => rfl
++      | cons y ys =>
++        rw [BoolCircuit.encodeList_nil, BoolCircuit.encodeList_cons] at h
++        cases (List.cons.inj h).1
++    | cons x xs ih =>
++      intro ys h
++      cases ys with
++      | nil =>
++        rw [BoolCircuit.encodeList_cons, BoolCircuit.encodeList_nil] at h
++        cases (List.cons.inj h).1
++      | cons y ys =>
++        rw [BoolCircuit.encodeList_cons, BoolCircuit.encodeList_cons] at h
++        have hcodes := (List.cons.inj h).2
++        change pairEncode (payload x) [] ++ BoolCircuit.encodeList block xs =
++          pairEncode (payload y) [] ++ BoolCircuit.encodeList block ys at hcodes
++        have hp : (payload x, BoolCircuit.encodeList block xs) =
++            (payload y, BoolCircuit.encodeList block ys) := ?_
++        swap
++        · apply pairEncode_injective
++          simpa only [pairEncode_eq_dbl, List.append_nil, List.append_assoc] using hcodes
++        exact congrArg₂ List.cons (hpayload (congrArg Prod.fst hp))
++          (ih (congrArg Prod.snd hp))
++  intro r s h
++  rw [F.encDraw_eq, F.encDraw_eq] at h
++  have houter := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h
++  have hinner := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _))
++    (congrArg Prod.snd houter)
++  apply Prod.ext
++  · exact Encoding.Modular.encodeMatrix_injective (F.residueBits.eval ℓ)
++      (F.modulus_le_pow ℓ) (congrArg Prod.fst houter)
++  · apply Prod.ext
++    · exact Encoding.Modular.encodeVector_injective (F.residueBits.eval ℓ)
++        (F.modulus_le_pow ℓ) (congrArg Prod.fst hinner)
++    · have hn := congrArg Prod.snd hinner
++      change BoolCircuit.encodeList block (List.ofFn r.2.2) =
++        BoolCircuit.encodeList block (List.ofFn s.2.2) at hn
++      exact List.ofFn_injective (hlist hn)
+ 
+ /-- The joint sampler output uses the canonical matrix and vector residue encodings.
+ [JLS26, Definition 2.3, pp. 9-10]. Deviation Dv17: the secret is retained in this internal
+@@ -388,7 +488,19 @@ is explicit for the concrete finite-coordinate encoding.
+ then apply the canonical modular matrix and vector injectivity theorems with
+ `F.modulus_le_pow ℓ`. Combine the recovered components by product extensionality. -/
+ theorem encSample_injective (F : Raw) (ℓ : ℕ) : Function.Injective (F.encSample ℓ) := by
+-  sorry
++  intro r s h
++  rw [F.encSample_eq, F.encSample_eq] at h
++  have houter := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h
++  have hinner := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _))
++    (congrArg Prod.snd houter)
++  apply Prod.ext
++  · exact Encoding.Modular.encodeMatrix_injective (F.residueBits.eval ℓ)
++      (F.modulus_le_pow ℓ) (congrArg Prod.fst houter)
++  · apply Prod.ext
++    · exact Encoding.Modular.encodeVector_injective (F.residueBits.eval ℓ)
++        (F.modulus_le_pow ℓ) (congrArg Prod.fst hinner)
++    · exact Encoding.Modular.encodeVector_injective (F.residueBits.eval ℓ)
++        (F.modulus_le_pow ℓ) (congrArg Prod.snd hinner)
+ 
+ end Raw
+ 

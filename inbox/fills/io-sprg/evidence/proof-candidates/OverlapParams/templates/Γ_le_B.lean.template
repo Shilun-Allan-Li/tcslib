@@ -1,0 +1,21 @@
+import Mathlib.Analysis.SpecialFunctions.Log.Base
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Data.Nat.Log
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace IoSprgParamsOverlap
+
+example (d E : ℕ) (hd : 1 ≤ d) (hE : 1 ≤ E)
+    (δ : ℚ) (hδ : 0 < δ) (hδ1 : δ < 1) (m : ℕ → ℕ) :
+    ∃ κ₀, ∀ κ ≥ κ₀,
+      m κ * Nat.log 2 ((κ ^ E) ^ ((d + 1) / 2)) /
+        ((max 1 ⌊((κ ^ E : ℕ) : ℝ) ^ ((δ : ℝ) / 2)⌋₊) ^ 2) ≤
+      max 1 ((m κ * κ +
+        (max 1 ⌊((κ ^ E : ℕ) : ℝ) ^ ((δ : ℝ) / 2)⌋₊) ^ 2 - 1) /
+          ((max 1 ⌊((κ ^ E : ℕ) : ℝ) ^ ((δ : ℝ) / 2)⌋₊) ^ 2)) := __PROBE_BODY__
+
+end IoSprgParamsOverlap

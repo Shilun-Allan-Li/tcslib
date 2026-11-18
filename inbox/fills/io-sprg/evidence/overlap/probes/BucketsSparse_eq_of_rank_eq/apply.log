@@ -1,0 +1,155 @@
+Try this:
+  [apply] refine Fin.eq_of_val_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑i = ↑j
+Try this:
+  [apply] refine Eq.symm (Fin.eq_of_val_eq ?_)
+  -- Remaining subgoals:
+  -- ⊢ ↑j = ↑i
+Try this:
+  [apply] refine Fin.val_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑i = ↑j
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {a b} => Fin.val_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Fin.rev_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ i.rev = j.rev
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {i j} => Fin.rev_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Fin.ext_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑i = ↑j
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {a b} => Fin.ext_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Fin.succ_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ i.succ = j.succ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {a b} => Fin.succ_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Fin.ext ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑i = ↑j
+Try this:
+  [apply] refine Eq.symm (Fin.ext ?_)
+  -- Remaining subgoals:
+  -- ⊢ ↑j = ↑i
+Try this:
+  [apply] refine Fin.castSucc_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ i.castSucc = j.castSucc
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {a b} => Fin.castSucc_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Fin.le_antisymm ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ i ≤ j
+  -- ⊢ j ≤ i
+Try this:
+  [apply] refine Eq.symm (Fin.le_antisymm ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ j ≤ i
+  -- ⊢ i ≤ j
+Try this:
+  [apply] refine Fin.le_antisymm_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ i ≤ j ∧ j ≤ i
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {x y} => Fin.le_antisymm_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Fin.val_eq_val i j).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑i = ↑j
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} a b => (Fin.val_eq_val a b).mp) j i ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Fin.castAdd_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n m} {a b} => Fin.castAdd_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Fin.cast_inj ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n m} eq {a b} => (Fin.cast_inj eq).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Fin.succAbove_right_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {p} {i j} => Fin.succAbove_right_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Fin.castLE_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n m} {hmn} {a b} => Fin.castLE_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Fin.succAbove_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {p} {i j} => Fin.succAbove_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Fin.predAbove_left_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ i.predAbove = j.predAbove
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {x y} => Fin.predAbove_left_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Fin.addNat_inj ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℕ
+  -- ⊢ i.addNat ?_ = j.addNat ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} m {i j} => (Fin.addNat_inj m).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Fin.natAdd_inj ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℕ
+  -- ⊢ Fin.natAdd ?_ i = Fin.natAdd ?_ j
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} m {i j} => (Fin.natAdd_inj m).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+/private/tmp/io-sprg-overlap/BucketsSparse_eq_of_rank_eq-apply.lean:15:0: warning: declaration uses 'sorry'
+/private/tmp/io-sprg-overlap/BucketsSparse_eq_of_rank_eq-apply.lean:16:5: warning: unused variable `hφ`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/BucketsSparse_eq_of_rank_eq-apply.lean:16:22: warning: unused variable `hr`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

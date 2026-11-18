@@ -1,0 +1,7 @@
+by
+  have hn : ¬ ∃ b : Fin B, rc * rc < load φ b :=
+    fun hb => h ((overfull_iff φ (rc * rc)).mpr hb)
+  have hr : rank φ j < rc * rc :=
+    (rank_lt_load φ j).trans_le (le_of_not_gt fun hj => hn ⟨φ j, hj⟩)
+  refine ⟨finProdFinEquiv.symm ⟨rank φ j, hr⟩, ?_⟩
+  rw [indexMap_eq, dif_pos ⟨hn, hr⟩]

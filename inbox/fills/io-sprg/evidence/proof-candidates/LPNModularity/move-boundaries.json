@@ -1,0 +1,85 @@
+{
+  "source": "/Users/seyoonr/.codex/worktrees/io-sprg/tcslib-exchange/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean",
+  "source_sha256": "e7c468cbe10b2744e507a63c48da4029a2f51fcf13ce34fb8a8793b89a7e08bd",
+  "source_lines": 428,
+  "facade": "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN",
+  "blocks": [
+    {
+      "target": "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs",
+      "ranges": [
+        [
+          49,
+          361
+        ],
+        [
+          408,
+          424
+        ]
+      ],
+      "new_candidates": [],
+      "role": "Every existing definition/abbrev/instance plus adjacent readers; LPNRealizable moves with its reader."
+    },
+    {
+      "target": "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Encoding",
+      "ranges": [
+        [
+          363,
+          386
+        ]
+      ],
+      "new_candidates": [],
+      "role": "Existing lpnEnc_injective, encLPNAdvice_injective, encLPNAdvice_length_le with frozen headers."
+    },
+    {
+      "target": "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Transport",
+      "ranges": [],
+      "new_candidates": [
+        "01",
+        "02",
+        "03",
+        "04"
+      ],
+      "role": "Specialized coin/verdict and canonical challenge-coordinate transports, all in area Internal."
+    },
+    {
+      "target": "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Hop",
+      "ranges": [
+        [
+          388,
+          406
+        ]
+      ],
+      "new_candidates": [
+        "05",
+        "06",
+        "07",
+        "08",
+        "09",
+        "10"
+      ],
+      "role": "Pointwise preprocessing, fixed-advice sections, actual-law averaging, then unchanged public Params.lpn_hop header."
+    }
+  ],
+  "proposed_imports": {
+    "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN": [
+      "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs",
+      "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Encoding",
+      "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Transport",
+      "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Hop"
+    ],
+    "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs": [
+      "TCSlib.Cryptography.Obfuscation.StructuredSeed.Hybrids",
+      "TCSlib.Cryptography.Asymptotic.Realization"
+    ],
+    "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Encoding": [
+      "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs",
+      "TCSlib.Cryptography.Obfuscation.StructuredSeed.Basic"
+    ],
+    "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Transport": [
+      "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs"
+    ],
+    "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Hop": [
+      "TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Transport"
+    ]
+  }
+}

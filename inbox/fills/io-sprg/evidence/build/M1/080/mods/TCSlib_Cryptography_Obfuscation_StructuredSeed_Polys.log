@@ -1,0 +1,32 @@
+2026-11-18T16:09:38.084222+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:626:19: error: Type mismatch
+  Eq.symm (Fintype.prod_sum ?m.367)
+has type
+  ∑ x, ∏ i, ?m.367 i (x i) = ∏ i, ∑ j, ?m.367 i j
+but is expected to have type
+  ∑ α, ∏ r, (MvPolynomial.eval z) (P.linearCoeff κ pp I' k (Internal.monomialSlot h (offset + ↑r)) (α r)) * aug (α r) =
+    ∏ r, ∑ a, (MvPolynomial.eval z) (P.linearCoeff κ pp I' k (Internal.monomialSlot h (offset + ↑r)) a) * aug a
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:645:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:663:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys): no fresh .olean produced
+       44.06 real        43.87 user         1.13 sys
+          2472624128  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              193592  page reclaims
+                  29  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  42  voluntary context switches
+                9157  involuntary context switches
+            32157270  instructions retired
+            15594037  cycles elapsed
+             1622352  peak memory footprint
+2026-11-18T16:10:22.174589+00:00 END rc=1

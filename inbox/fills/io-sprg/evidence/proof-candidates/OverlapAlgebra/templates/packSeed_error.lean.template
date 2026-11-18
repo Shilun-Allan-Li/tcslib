@@ -1,0 +1,21 @@
+import Mathlib.Logic.Equiv.Basic
+import Mathlib.Algebra.Ring.Basic
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open scoped BigOperators
+
+namespace IoSprgAlgebraOverlap
+
+example {κ n pubLen : ℕ} {R : Type*} [CommRing R]
+    (e : ((Fin κ × Fin n) ⊕ Unit) ≃ Fin pubLen)
+    (instances : Fin κ → Fin n → R) (first : Option (Fin κ)) :
+    (fun j => match e.symm j with
+      | .inl q => instances q.1 q.2
+      | .inr _ => (first.isNone.toNat : R)) (e (.inr ())) =
+        (first.isNone.toNat : R) := __PROBE_BODY__
+
+end IoSprgAlgebraOverlap

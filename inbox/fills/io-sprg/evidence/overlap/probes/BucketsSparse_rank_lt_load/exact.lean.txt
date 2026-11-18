@@ -1,0 +1,20 @@
+import Mathlib.Data.Finset.Card
+import Mathlib.Data.Fintype.BigOperators
+import Mathlib.Logic.Equiv.Fin.Basic
+import Mathlib.Data.Matrix.Basic
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open scoped BigOperators
+
+namespace IoSprgBucketsSparseOverlap
+
+example {m B : ℕ} (φ : Fin m → Fin B) (j : Fin m) :
+    (Finset.univ.filter (fun q : Fin m => q < j ∧ φ q = φ j)).card <
+      (Finset.univ.filter (fun q : Fin m => φ q = (φ j))).card := by
+  exact?
+
+end IoSprgBucketsSparseOverlap

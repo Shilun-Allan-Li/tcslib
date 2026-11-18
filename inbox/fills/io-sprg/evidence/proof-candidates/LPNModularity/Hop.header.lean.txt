@@ -1,0 +1,41 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Transport
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Actual-law LPN averaging and the selected hybrid hop
+
+## Main definitions and results
+
+* Pointwise preprocessing identities and fixed-advice section acceptances.
+* Actual-nuisance-law advice fixing before every realizer.
+* `Params.lpn_hop` with its unchanged full statement.
+
+## References
+
+* [JLS26] Jain, Lin, Sahai, J. ACM 73(1), Article 1, February 2026,
+  Lemma 4.2, p. 19.
+* [PS10] Pass, Shelat, *A Course in Cryptography*, 2010, Definition 26.8.
+
+**Deviations.** Dv8 and Dv12 retain the actual independent nuisance law and global advice family.
+Dv16 quantifies every realizer of the same layout-only explicit reduction.
+-/
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+
+open Complexity Turing
+open scoped BigOperators
+
+namespace Internal
+
+-- MOVE THE RECORDED COMMAND BLOCKS HERE; NO NEW DEFINITIONS.
+
+end Internal
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed

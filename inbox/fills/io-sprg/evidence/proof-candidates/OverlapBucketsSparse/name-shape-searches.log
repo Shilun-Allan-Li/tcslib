@@ -1,0 +1,24 @@
+READ_ONLY source name/shape searches; NO tactic/Lean results.
+Whole TCSlib/Mathlib exact names: only the12 owned declarations relevant.
+Mathlib Matrix sparseFactor/sparseEntries/sparse_factor/sparse-factor shapes:
+no generic deterministic list-slot factorization counterpart found.
+
+Public selected APIs (current source positions):
+Finset.card_lt_card (Card:296); ssubset_iff_of_subset (Defs:306);
+card_image_le (Card:214); card_image_of_injective (Card:238).
+List.toFinset_card_of_nodup (Finset/Card:201); List.mem_toFinset (Dedup:116).
+List.mem_finRange (FinRange:29); nodup_finRange:36;
+List.Nodup.filter (Nodup:227); Nodup.product:284; mem_product (ProdSigma:39).
+Matrix.mul_apply (Matrix/Mul:293).
+List.mem_iff_getElem (Core List/Lemmas:465), getElem?_eq_some_iff:221;
+List.getElem?_inj (Core List/Pairwise:302).
+Finset.sum_eq_single and exists_ne_zero_of_sum_ne_zero are generated additive
+counterparts of prod_eq_single / exists_ne_one_of_prod_ne_one in
+Algebra/BigOperators/Group/Finset/Basic (:348/:514).
+Option.some.inj and Equiv.injective recover the same actual finite rank; no
+new division/modulo coordinate proof or selected enumeration is needed.
+
+Original sparse_basis_sum_control is only a generic existing Matrix.single
+sum control, NOT the actual deterministic padded-factor theorem. No new Basis
+import is proposed. Detailed earlier name/shape searches remain in
+../Buckets/rank-notes.md and ../SparseFactor/search-log.md.

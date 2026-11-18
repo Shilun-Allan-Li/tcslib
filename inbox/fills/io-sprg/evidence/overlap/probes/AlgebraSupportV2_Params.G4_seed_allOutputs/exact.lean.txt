@@ -1,0 +1,27 @@
+import TCSlib.Cryptography.Games.OracleComp
+import Mathlib.Algebra.MvPolynomial.Eval
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography.Games
+
+namespace IoSprgAlgebraOverlap
+
+example {ι X σ τ R J : Type} [CommRing R] (spec : OracleSpec ι)
+    (seed : X → (σ → R) × (τ → R)) (err : X → Bool) (out : X → J → Bool)
+    (Q : J → MvPolynomial (σ ⊕ τ) R)
+    (c : OracleComp spec X)
+    (E : ((σ → R) × (τ → R)) → J → Bool)
+    (hfield : c.AllOutputs (fun x => ∀ j,
+      MvPolynomial.eval (Sum.elim (seed x).1 (seed x).2) (Q j) =
+        if err x then 0 else ((out x j).toNat : R)))
+    (hbit : c.AllOutputs (fun x => ∀ j,
+      E (seed x) j = if err x then false else out x j)) :
+    (seed <$> c).AllOutputs (fun sd => ∀ j,
+      ((E sd j).toNat : R) = MvPolynomial.eval (Sum.elim sd.1 sd.2) (Q j)) := by
+  exact?
+
+end IoSprgAlgebraOverlap

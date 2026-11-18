@@ -1,0 +1,344 @@
+Try this:
+  [apply] refine and_assoc.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (bad.card ≤ Γ ∧ ¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+Try this:
+  [apply] refine And.symm ((fun {a b c} => and_assoc.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ (∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t) ∧ bad.card ≤ Γ
+Try this:
+  [apply] refine and_left_comm.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ bad.card ≤ Γ ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+Try this:
+  [apply] refine And.symm ((fun {a b c} => and_right_comm.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ((¬∃ b, rc * rc < {j | φ j = b}.card) ∧ bad.card ≤ Γ) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+Try this:
+  [apply] refine and_left_comm.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ bad.card ≤ Γ ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+Try this:
+  [apply] refine And.symm ((fun {a b c} => and_right_comm.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ((¬∃ b, rc * rc < {j | φ j = b}.card) ∧ bad.card ≤ Γ) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+Try this:
+  [apply] refine and_rotate.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t) ∧ bad.card ≤ Γ ∧ ¬∃ b, rc * rc < {j | φ j = b}.card
+Try this:
+  [apply] refine And.symm ((fun {a b c} => and_and_right.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ((¬∃ b, rc * rc < {j | φ j = b}.card) ∧ bad.card ≤ Γ) ∧
+    (∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t) ∧ bad.card ≤ Γ
+Try this:
+  [apply] refine and_rotate.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ (∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t) ∧ bad.card ≤ Γ
+Try this:
+  [apply] refine And.symm ⟨?_, ?_⟩
+  -- Remaining subgoals:
+  -- ⊢ (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+  -- ⊢ bad.card ≤ Γ
+Try this:
+  [apply] refine and_and_left.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (bad.card ≤ Γ ∧ ¬∃ b, rc * rc < {j | φ j = b}.card) ∧ bad.card ≤ Γ ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+Try this:
+  [apply] refine And.symm ((fun {a b} => And.comm.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ bad.card ≤ Γ ∧ (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+Try this:
+  [apply] refine And.symm ((fun {a b} => And.comm.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ bad.card ≤ Γ ∧ (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+Try this:
+  [apply] refine And.rotate ?_
+  -- Remaining subgoals:
+  -- ⊢ (∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t) ∧ bad.card ≤ Γ ∧ ¬∃ b, rc * rc < {j | φ j = b}.card
+Try this:
+  [apply] refine And.symm ((fun {a b} => and_comm.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ bad.card ≤ Γ ∧ (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+Try this:
+  [apply] refine ⟨?_, ?_⟩
+  -- Remaining subgoals:
+  -- ⊢ bad.card ≤ Γ
+  -- ⊢ (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+Try this:
+  [apply] refine And.symm ((fun {a b} => and_comm.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ bad.card ≤ Γ ∧ (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+Try this:
+  [apply] refine And.comm.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ((¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t) ∧ bad.card ≤ Γ
+Try this:
+  [apply] refine And.symm (And.symm ?_)
+  -- Remaining subgoals:
+  -- ⊢ bad.card ≤ Γ ∧ (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+Try this:
+  [apply] refine And.comm.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ((¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t) ∧ bad.card ≤ Γ
+Try this:
+  [apply] refine And.symm ((fun {a b} h => (and_iff_left_of_imp h).mpr) ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ ((¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t) → bad.card ≤ Γ
+  -- ⊢ (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+Try this:
+  [apply] refine and_comm.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ((¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t) ∧ bad.card ≤ Γ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a b c} h => (and_congr_right h).mp) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine and_comm.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ((¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t) ∧ bad.card ≤ Γ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a b c} h => (and_congr_right h).mpr) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine And.symm ?_
+  -- Remaining subgoals:
+  -- ⊢ ((¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t) ∧ bad.card ≤ Γ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {c a b} h => (and_congr_left h).mp) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (and_iff_left_of_imp ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ bad.card ≤ Γ → (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+  -- ⊢ bad.card ≤ Γ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {c a b} h => (and_congr_left h).mpr) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr_right fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine And.symm ((fun {b a} h => (and_iff_right_of_imp h).mpr) ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ bad.card ≤ Γ → (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+  -- ⊢ bad.card ≤ Γ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr_right fun a => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine And.symm ((fun {a b} => and_self_left.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ((¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t) ∧
+    ((¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t) ∧ bad.card ≤ Γ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr_left fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine And.symm ((fun {a b} => and_self_right.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (((¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t) ∧ bad.card ≤ Γ) ∧
+    bad.card ≤ Γ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr_left fun a => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a b} [Decidable a] [Decidable b] => Decidable.and_iff_not_not_or_not.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (and_iff_right_of_imp ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ((¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t) → bad.card ≤ Γ
+  -- ⊢ (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+Try this:
+  [apply] refine and_self_left.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ bad.card ≤ Γ ∧ bad.card ≤ Γ ∧ (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a b c} h => (and_congr_left' h).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine and_self_right.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (bad.card ≤ Γ ∧ (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t) ∧
+    (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a b c} h => (and_congr_left' h).mpr) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Decidable.and_iff_not_not_or_not.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬(¬bad.card ≤ Γ ∨ ¬((¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t))
+Try this:
+  [apply] refine And.symm ((fun {b a} => exists_prop.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∃ (_ : (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t), bad.card ≤ Γ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine exists_eq_right_right'.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr_left' ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm (And.imp_left (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr_left' ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine exists_prop.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ (_ : bad.card ≤ Γ), (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+Try this:
+  [apply] refine And.symm ((fun {a b} ha => (and_iff_right ha).mpr) ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+  -- ⊢ bad.card ≤ Γ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine exists_eq_right_right.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {b c a} h => (and_congr_right' h).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.imp_left (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {b c a} h => (and_congr_right' h).mpr) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm (And.imp_right (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (and_iff_right ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ bad.card ≤ Γ
+  -- ⊢ (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {p q} [Decidable p] => if_false_right.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr_right' ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {p q} [Decidable p] => ite_else_self.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr_right' ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine And.symm ((fun {b a} hb => (and_iff_left hb).mpr) ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ bad.card ≤ Γ
+  -- ⊢ (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.imp_right (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm (And.imp (fun a => ?_) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine if_false_right.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ if bad.card ≤ Γ then (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+  else False
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a c b d} h₁ h₂ => (and_congr h₁ h₂).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine ite_else_self.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ if bad.card ≤ Γ then (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+  else bad.card ≤ Γ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a c b d} h₁ h₂ => (and_congr h₁ h₂).mpr) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (and_iff_left ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+  -- ⊢ bad.card ≤ Γ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a b} [Decidable a] [Decidable b] => Decidable.and_iff_not_or_not.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.imp (fun a => ?_) ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr ?_ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Decidable.and_iff_not_or_not.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬(¬bad.card ≤ Γ ∨ ¬((¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t))
+Try this:
+  [apply] refine And.symm ((fun {a b} => and_iff_not_or_not.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ¬(¬((¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t) ∨ ¬bad.card ≤ Γ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a c b d} h₁ h₂ => (Iff.and h₁ h₂).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a c b d} h₁ h₂ => (Iff.and h₁ h₂).mpr) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine and_iff_not_or_not.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬(¬bad.card ≤ Γ ∨ ¬((¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t))
+Try this:
+  [apply] refine And.symm ((fun {p q} => existsUnique_prop.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∃! x, bad.card ≤ Γ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Iff.and ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Iff.and ?_ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine existsUnique_prop.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃! x, (¬∃ b, rc * rc < {j | φ j = b}.card) ∧ ∀ (b : Fin B), ({j | φ j = b} ∩ bad).card ≤ t
+/private/tmp/io-sprg-overlap/Algebra_oneFlag_bounds-apply.lean:12:0: warning: declaration uses 'sorry'
+/private/tmp/io-sprg-overlap/Algebra_oneFlag_bounds-apply.lean:13:5: warning: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

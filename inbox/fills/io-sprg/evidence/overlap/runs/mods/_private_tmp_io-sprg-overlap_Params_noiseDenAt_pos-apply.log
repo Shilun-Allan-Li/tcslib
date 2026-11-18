@@ -1,0 +1,2565 @@
+Try this:
+  [apply] refine Nat.pow_pos ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊
+Try this:
+  [apply] refine Nat.pow_pos_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ∨ 2 = 0
+Try this:
+  [apply] refine Nat.pos_pow_of_pos ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine expChar_pow_pos ?_ (max 1 ⌊↑L ^ (↑δ / 2)⌋₊) 2)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.sqrt_lt'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.sqrt 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊
+Try this:
+  [apply] refine (Nat.log_lt_iff_lt_pow ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 1 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊
+  -- ⊢ 0 ≠ 0
+  -- ⊢ Nat.log (max 1 ⌊↑L ^ (↑δ / 2)⌋₊) 0 < 2
+Try this:
+  [apply] refine (Nat.lt_pow_iff_log_lt ?_ ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 1 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊
+  -- ⊢ 0 ≠ 0
+  -- ⊢ Nat.log (max 1 ⌊↑L ^ (↑δ / 2)⌋₊) 0 < 2
+Try this:
+  [apply] refine Nat.lt_pow_of_log_lt ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 1 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊
+  -- ⊢ Nat.log (max 1 ⌊↑L ^ (↑δ / 2)⌋₊) 0 < 2
+Try this:
+  [apply] refine (Nat.digits_length_le_iff ?_ 0).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 1 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊
+  -- ⊢ ((max 1 ⌊↑L ^ (↑δ / 2)⌋₊).digits 0).length ≤ 2
+Try this:
+  [apply] refine sq_pos_of_pos ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊
+Try this:
+  [apply] refine pow_two_pos_of_ne_zero ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ≠ 0
+Try this:
+  [apply] refine sq_pos_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ≠ 0
+Try this:
+  [apply] refine sq_pos_of_ne_zero ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ≠ 0
+Try this:
+  [apply] refine pow_pos ?_ 2
+  -- Remaining subgoals:
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊
+Try this:
+  [apply] refine pow_succ_pos ?_ 1
+  -- Remaining subgoals:
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊
+Try this:
+  [apply] refine Even.pow_pos ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ Even 2
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ≠ 0
+Try this:
+  [apply] refine (Odd.pow_pos_iff ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Odd 2
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊
+Try this:
+  [apply] refine (Even.pow_pos_iff ?_ ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Even 2
+  -- ⊢ 2 ≠ 0
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ≠ 0
+Try this:
+  [apply] refine (pow_pos_iff ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 2 ≠ 0
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊
+Try this:
+  [apply] refine CanonicallyOrderedAdd.pow_pos ?_ 2
+  -- Remaining subgoals:
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊
+Try this:
+  [apply] refine Nat.zero_lt_of_ne_zero ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≠ 0
+Try this:
+  [apply] refine Nat.pos_of_ne_zero ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≠ 0
+Try this:
+  [apply] refine Nat.ne_zero_iff_zero_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≠ 0
+Try this:
+  [apply] refine Nat.pos_iff_ne_zero.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≠ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.pos_of_neZero (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.zero_lt_of_lt ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.pos_of_div_pos ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Fin.pos ?_
+  -- Remaining subgoals:
+  -- ⊢ Fin (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Nat.pos_of_isPowerOfTwo ?_
+  -- Remaining subgoals:
+  -- ⊢ (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2).isPowerOfTwo
+Try this:
+  [apply] refine Int.ofNat_pos.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑(max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Int.natCast_pos.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑(max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.pos_of_dvd_of_pos ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.two_pow_mod_two_eq_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 2 ^ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 % 2 = 0
+Try this:
+  [apply] refine Nat.exists_add_one_eq.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ n, n + 1 = max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine Nat.one_mod_two_pow_eq_one.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 1 % 2 ^ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 = 1
+Try this:
+  [apply] refine Nat.exists_eq_add_one.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ n, max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 = n + 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.pos_of_mul_pos_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.pos_of_mul_pos_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_add_right_iff_pos.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_pos_iff_of_pos_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.pos_of_lt_add_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.pos_of_lt_mul_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_pos_iff_of_pos_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.pos_of_lt_mul_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_add_left_iff_pos.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.pos_of_lt_add_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Fin.pos')
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Fin.pos_iff_nonempty.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Nonempty (Fin (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2))
+Try this:
+  [apply] refine Int.natCast_ne_zero_iff_pos.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) ≠ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine BitVec.length_pos_of_ne fun a => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine BitVec.length_pos_of_lt ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine BitVec.DivModState.Lawful.hw)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Rat.natCast_pos.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑(max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Nat.sqrt_pos.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2).sqrt
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine NeZero.pos_of_neZero_natCast ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.cast_pos'.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.cast_pos.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.Prime.pos ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.Prime (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine expChar_pos ?_ (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Fin.size_positive ?_
+  -- Remaining subgoals:
+  -- ⊢ Fin (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Fin.size_positive')
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mem_range_succ (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine PNat.pos_of_div_pos ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine IsPrimePow.pos ?_
+  -- Remaining subgoals:
+  -- ⊢ IsPrimePow (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.pos_of_mem_primeFactorsList ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.pos_of_mem_primeFactors ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.pos_of_mem_divisors ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.pos_of_mem_properDivisors ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine pos_of_invertible_cast (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.totient_pos.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2).totient
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_le_of_lt ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_lt_of_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.lt_of_le_of_ne ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ ¬0 = max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.lt_of_not_le ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≤ 0
+Try this:
+  [apply] refine Nat.sub_ne_zero_iff_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 - 0 ≠ 0
+Try this:
+  [apply] refine Nat.gt_of_not_le ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≤ 0
+Try this:
+  [apply] refine Nat.lt_of_succ_le ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.succ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine Nat.lt_of_le_pred ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ 0 ≤ (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2).pred
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_sub_eq_succ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_add_left_lt ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.add_one_le_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 + 1 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine (Nat.le_sub_one_iff_lt ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 - 1
+Try this:
+  [apply] refine Nat.succ_lt_succ_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.succ 0 < (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2).succ
+Try this:
+  [apply] refine Nat.lt_of_not_ge ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬0 ≥ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine Nat.lt_of_add_one_le ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 + 1 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine Nat.lt_iff_le_not_le.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ∧ ¬max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≤ 0
+Try this:
+  [apply] refine Nat.lt_of_le_sub_one ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 - 1
+Try this:
+  [apply] refine Nat.lt_of_succ_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.succ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine Nat.lt_of_succ_lt_succ ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.succ 0 < (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2).succ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_add_right_lt ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_sub_eq_sub_one ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.succ_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.succ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine (Nat.le_pred_iff_lt ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ 0 ≤ (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2).pred
+Try this:
+  [apply] refine Nat.lt_of_sub_ne_zero ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 - 0 ≠ 0
+Try this:
+  [apply] refine Nat.not_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≤ 0
+Try this:
+  [apply] refine Nat.add_one_lt_add_one_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 + 1 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 + 1
+Try this:
+  [apply] refine Nat.lt_iff_le_and_not_ge.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ∧ ¬max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≤ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_lt_of_eq ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.lt_of_sub_pos ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 - 0
+Try this:
+  [apply] refine Nat.lt_iff_le_and_ne.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ∧ 0 ≠ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine Int.ofNat_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑0 < ↑(max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_lt_mul_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_mul_lt_mul_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_lt_mul_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_mul_lt_mul_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Nat.lt_iff_le_pred ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 - 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_lt_add_iff_right.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_pow_dvd_right ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.pow_lt_pow_iff_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_div_lt_div ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Nat.mod_eq_iff_lt ?_).mp rfl
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≠ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_add_lt_add_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.lt_of_lt_pred ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 - 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.div_lt_div_left (fun a => ?_) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_add_lt_add_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.succ_le_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.succ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.div_lt_div_right (fun a => ?_) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.pow_lt_pow_iff_left fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.lt_iff_lt_of_mul_eq_mul (fun a => ?_) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.lt_iff_lt_of_mul_eq_mul (fun a => ?_) ?_ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_lt_add_iff_left.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.sub_pos_iff_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 - 0
+Try this:
+  [apply] refine (Nat.div_lt_one_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ 0 / max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.sub_lt_sub_iff_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.lt_iff_add_one_le.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 + 1 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine Nat.mul_self_lt_mul_self_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 * 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 * max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine Nat.one_add_le_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 1 + 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_shiftLeft_lt ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Fin.mk_lt_mk.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.lt_of_div_eq_zero ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ 0 / max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 = 0
+Try this:
+  [apply] refine (Nat.div_eq_zero_iff_lt ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ 0 / max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 = 0
+Try this:
+  [apply] refine BitVec.lt_of_getLsb?_isSome ?_ 0 ?_
+  -- Remaining subgoals:
+  -- ⊢ BitVec (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+  -- ⊢ ?_[0]?.isSome = true
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine BitVec.lt_of_getMsbD ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine BitVec.lt_of_getMsb?_eq_some ?_ 0 ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine BitVec.lt_of_getLsbD ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine BitVec.lt_of_getMsb?_isSome ?_ 0 ?_
+  -- Remaining subgoals:
+  -- ⊢ BitVec (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+  -- ⊢ (BitVec.getMsb? ?_ 0).isSome = true
+Try this:
+  [apply] refine BitVec.lt_of_isSome_getMsb? ?_ 0 ?_
+  -- Remaining subgoals:
+  -- ⊢ BitVec (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+  -- ⊢ (BitVec.getMsb? ?_ 0).isSome = true
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine BitVec.lt_of_getElem?_eq_some ?_ 0 ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine BitVec.lt_of_isSome_getElem? ?_ 0 ?_
+  -- Remaining subgoals:
+  -- ⊢ BitVec (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+  -- ⊢ ?_[0]?.isSome = true
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine BitVec.lt_of_getLsb?_eq_some ?_ 0 ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (UInt16.ofNat_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < UInt16.size
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < UInt16.size
+  -- ⊢ UInt16.ofNat 0 < UInt16.ofNat (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine (UInt32.ofNatLT_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < UInt32.size
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < UInt32.size
+  -- ⊢ UInt32.ofNatLT 0 ?_ < UInt32.ofNatLT (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) ?_
+Try this:
+  [apply] refine (USize.ofNat_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < USize.size
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < USize.size
+  -- ⊢ USize.ofNat 0 < USize.ofNat (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine (UInt8.ofNatLT_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < UInt8.size
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < UInt8.size
+  -- ⊢ UInt8.ofNatLT 0 ?_ < UInt8.ofNatLT (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) ?_
+Try this:
+  [apply] refine (UInt64.ofNat_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < UInt64.size
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < UInt64.size
+  -- ⊢ UInt64.ofNat 0 < UInt64.ofNat (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine (UInt8.ofNat_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < UInt8.size
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < UInt8.size
+  -- ⊢ UInt8.ofNat 0 < UInt8.ofNat (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine (UInt16.ofNatLT_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < UInt16.size
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < UInt16.size
+  -- ⊢ UInt16.ofNatLT 0 ?_ < UInt16.ofNatLT (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) ?_
+Try this:
+  [apply] refine (UInt32.ofNat_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < UInt32.size
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < UInt32.size
+  -- ⊢ UInt32.ofNat 0 < UInt32.ofNat (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine (USize.ofNatLT_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < USize.size
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < USize.size
+  -- ⊢ USize.ofNatLT 0 ?_ < USize.ofNatLT (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) ?_
+Try this:
+  [apply] refine (UInt64.ofNatLT_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < UInt64.size
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < UInt64.size
+  -- ⊢ UInt64.ofNatLT 0 ?_ < UInt64.ofNatLT (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Membership.get_elem_helper ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine String.Pos.Raw.mk_lt_mk.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ { } < { byteIdx := max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 }
+Try this:
+  [apply] refine Nat.compare_eq_gt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compare (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) 0 = Ordering.gt
+Try this:
+  [apply] refine Nat.compare_eq_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compare 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) = Ordering.lt
+Try this:
+  [apply] refine List.mem_range.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ∈ List.range (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Array.mem_range.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ∈ Array.range (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine (Int8.ofNat_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < 2 ^ 7
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < 2 ^ 7
+  -- ⊢ Int8.ofNat 0 < Int8.ofNat (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine (ISize.ofNat_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < 2 ^ (System.Platform.numBits - 1)
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < 2 ^ (System.Platform.numBits - 1)
+  -- ⊢ ISize.ofNat 0 < ISize.ofNat (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine (Int64.ofNat_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < 2 ^ 63
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < 2 ^ 63
+  -- ⊢ Int64.ofNat 0 < Int64.ofNat (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine (Int16.ofNat_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < 2 ^ 15
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < 2 ^ 15
+  -- ⊢ Int16.ofNat 0 < Int16.ofNat (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine (Int32.ofNat_lt_iff_lt ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < 2 ^ 31
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < 2 ^ 31
+  -- ⊢ Int32.ofNat 0 < Int32.ofNat (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Vector.mem_range.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ∈ Vector.range (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Rat.natCast_lt_natCast.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑0 < ↑(max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.lt_of_range'_eq_append_cons ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.gt_of_range'_eq_append_cons ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.Sat.AIG.RelabelNat.State.Inv1.lt_of_get?_eq_some ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Int.lt_of_ofNat_lt_ofNat ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑0 < ↑(max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pow_lt_pow_iff_right' ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (nsmul_lt_nsmul_iff_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pow_lt_pow_iff_right_of_lt_one₀ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pow_lt_pow_iff_right₀ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.cast_lt.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Fin.natCast_lt_natCast ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Multiset.mem_range.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ∈ Multiset.range (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Finset.mem_range.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ∈ Finset.range (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine ENat.coe_lt_coe.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑0 < ↑(max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Nat.descFactorial_eq_zero_iff_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.descFactorial 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) = 0
+Try this:
+  [apply] refine (Nat.factorial_lt ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < 0
+  -- ⊢ Nat.factorial 0 < (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2).factorial
+Try this:
+  [apply] refine Nat.choose_eq_zero_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.choose 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (PNat.mk_lt_mk 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.succPNat_lt_succPNat.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.succPNat 0 < (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2).succPNat
+Try this:
+  [apply] refine Mathlib.Meta.NormNum.ble_eq_false.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2).ble 0 = false
+Try this:
+  [apply] refine EReal.natCast_lt_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑0 < ↑(max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.digits_lt_base ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.lt_of_count_lt_count ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (lt_add_iff_pos_right ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℕ
+  -- ⊢ ?_ < ?_ + max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine (lt_add_iff_pos_left ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℕ
+  -- ⊢ ?_ < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 + ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine pos_of_lt_add_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine pos_of_lt_add_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine pos_add_self_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 + max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (nsmul_pos_iff fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pos_iff_pos_of_mul_pos ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pos_iff_pos_of_mul_pos ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine pos_of_mul_pos_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine pos_of_mul_pos_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_pos_iff_of_pos_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_pos_iff_of_pos_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (neg_iff_pos_of_mul_neg ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine pos_of_mul_neg_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine pos_of_mul_neg_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pos_iff_neg_of_mul_neg ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Odd.pow_pos_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine NeZero.pos (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine pos_of_ne_zero ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≠ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine pos_of_gt ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine pos_iff_ne_zero.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≠ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LT.lt.pos ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine NE.ne.pos ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≠ 0
+Try this:
+  [apply] refine WithTop.coe_pos.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑(max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine WithBot.coe_pos.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑(max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine zero_lt_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≠ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pow_pos_iff fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.ofNat_pos')
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.ofNat_pos)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Odd.pos ?_
+  -- Remaining subgoals:
+  -- ⊢ Odd (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Order.one_le_iff_pos.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 1 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine invOf_pos.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Invertible (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+  -- ⊢ 0 < ⅟(max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Mathlib.Meta.Positivity.pos_of_isNat' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Mathlib.Meta.Positivity.pos_of_isNNRat ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Mathlib.Meta.Positivity.pos_of_isNat ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.ceil_pos.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < ⌈max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2⌉₊
+Try this:
+  [apply] refine Nat.one_le_ceil_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 1 ≤ ⌈max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2⌉₊
+Try this:
+  [apply] refine Nat.pos_of_floor_pos ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < ⌊max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2⌋₊
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pos_iff_pos_of_smul_pos ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pos_iff_pos_of_smul_pos ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (smul_pos_iff_of_pos_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine pos_of_smul_pos_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (smul_pos_iff_of_pos_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine pos_of_smul_pos_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsAbsoluteValue.abv_pos (HPow.hPow (max 1 ⌊↑L ^ (↑δ / 2)⌋₊))).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine StarOrderedRing.pos_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≠ 0 ∧ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ∈ AddSubmonoid.closure (Set.range fun s => star s * s)
+Try this:
+  [apply] refine star_pos_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < star (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine sign_eq_one_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ SignType.sign (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) = 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.const_pos.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine gt_iff_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 > 0
+Try this:
+  [apply] refine gt_iff_lt.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_eq_of_lt ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_lt_of_eq ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Std.LawfulOrderLT.lt_iff 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.lt_of_le_of_lt ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.lt_of_lt_of_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.lt_trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Std.lt_iff_le_and_not_ge.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ∧ ¬max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≤ 0
+Try this:
+  [apply] refine Std.lt_of_le_of_ne ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ 0 ≠ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine Option.some_lt_some.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ some 0 < some (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine (compareOfLessAndEq_eq_gt_of_lt_iff_not_gt_and_ne ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x y : ℕ), x < y ↔ ¬y < x ∧ x ≠ y
+  -- ⊢ compareOfLessAndEq (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) 0 = Ordering.gt
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (compareOfLessAndEq_eq_gt ?_ ?_ ?_ (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) 0).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (lt_iff_not_gt_and_ne_of_antisymm_of_total_of_not_le ?_ ?_ ?_ 0
+        (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)).mpr
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine compareOfLessAndEq_eq_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compareOfLessAndEq 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) = Ordering.lt
+Try this:
+  [apply] refine Std.PRange.UpwardEnumerable.lt_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Std.PRange.UpwardEnumerable.LT 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Std.PRange.LawfulUpwardEnumerableLT.lt_iff 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.Rco.Internal.get_elem_helper_upper_open ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.Rio.Internal.get_elem_helper_upper_open ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.Roo.Internal.get_elem_helper_upper_open ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Std.Rxo.size_pos_iff_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < Std.Rxo.HasSize.size 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Std.compare_eq_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Std.LawfulOrderOrd ℕ
+  -- ⊢ compare 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) = Ordering.lt
+Try this:
+  [apply] refine Std.compare_eq_gt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Std.LawfulOrderOrd ℕ
+  -- ⊢ compare (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) 0 = Ordering.gt
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.LawfulLTCmp.eq_gt_iff_gt.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Batteries.compareOfLessAndEq_eq_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compareOfLessAndEq 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) = Ordering.lt
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.LawfulCmp.eq_lt_iff_lt.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.LawfulLTCmp.eq_lt_iff_lt.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.LawfulBCmp.eq_lt_iff_lt.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_lt_of_eq'' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_eq_of_lt'' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine lt_of_le_of_ne' ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≠ 0
+Try this:
+  [apply] refine lt_of_le_not_le ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ ¬max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≤ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine gt_of_ge_of_gt ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_le_of_lt ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_lt_of_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_le_of_lt' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine gt_of_gt_of_ge ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine lt_iff_le_not_ge.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ∧ ¬max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≤ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine gt_trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine lt_of_le_not_ge ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ ¬max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≤ 0
+Try this:
+  [apply] refine lt_iff_le_not_le.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ∧ ¬max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≤ 0
+Try this:
+  [apply] refine lt_of_le_of_ne ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ 0 ≠ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_lt_of_le' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Preorder.lt_iff_le_not_ge 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Preorder.lt_iff_le_not_le 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine compare_gt_iff_gt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compare (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) 0 = Ordering.gt
+Try this:
+  [apply] refine lt_of_not_ge ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≤ 0
+Try this:
+  [apply] refine not_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≤ 0
+Try this:
+  [apply] refine lt_iff_not_ge.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≤ 0
+Try this:
+  [apply] refine compare_lt_iff_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compare 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) = Ordering.lt
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.trans_gt ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LT.lt.trans_eq ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_imp_lt_of_le_imp_le (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.const_lt_const.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.trans_lt ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (LE.le.lt_iff_ne ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ 0 ≠ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (lt_iff_lt_of_le_iff_le' ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (lt_iff_lt_of_le_iff_le' ?_ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LT.lt.trans_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LT.lt.trans_eq' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_imp_lt_of_le_of_le ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LE.le.trans_lt' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LT.lt.trans' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LE.le.trans_lt ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine GT.gt.lt ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 > 0
+Try this:
+  [apply] refine Ne.lt_of_le ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≠ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LT.lt.trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (LE.le.gt_iff_ne ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≠ 0
+Try this:
+  [apply] refine LE.le.lt_of_ne' ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≠ 0
+Try this:
+  [apply] refine LE.le.lt_of_not_ge ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ ¬max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≤ 0
+Try this:
+  [apply] refine Ne.lt_of_le' ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≠ 0
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine LE.le.lt_of_ne ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ 0 ≠ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LT.lt.trans_le' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine LE.le.lt_of_not_le ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ ¬max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≤ 0
+Try this:
+  [apply] refine lt_iff_not_le.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≤ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_eq_of_lt' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Prod.mk_lt_mk_iff_left.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Prod.mk_lt_mk_iff_right.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Subtype.mk_lt_mk.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine LT.lt.gt ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine lt_of_not_le ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≤ 0
+Try this:
+  [apply] refine (LE.le.lt_iff_ne' ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ≠ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (lt_iff_lt_of_le_iff_le ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (lt_iff_lt_of_le_iff_le ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_trans' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_lt_of_eq' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Ne.le_iff_lt ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≠ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine lt_iff_le_and_ne.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ∧ 0 ≠ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine lt_update_self_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ @OfNat.ofNat ℕ 0 < Function.update (@OfNat.ofNat ℕ 0) (instOfNatNat 0) (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Monotone.reflect_lt (fun ⦃a⦄ => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Antitone.reflect_lt (fun ⦃a⦄ => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AntitoneOn.reflect_lt (fun ⦃a⦄ => ?_) ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine MonotoneOn.reflect_lt (fun ⦃a⦄ => ?_) ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine OrderDual.toDual_lt_toDual.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ OrderDual.toDual (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) < OrderDual.toDual 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Ordering.Compares.eq_gt ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (cmp_eq_gt_iff (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) 0).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Ordering.Compares.eq_lt ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (cmp_eq_lt_iff 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (lt_iff_lt_of_cmp_eq_cmp ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (lt_iff_lt_of_cmp_eq_cmp ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine IsTop.lt_of_ne ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ IsTop (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+  -- ⊢ 0 ≠ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine IsBot.lt_of_ne ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ IsBot 0
+  -- ⊢ 0 ≠ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictAnti.lt_iff_lt fun ⦃a⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictAntiOn.lt_iff_lt (fun ⦃a⦄ => ?_) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictMonoOn.lt_iff_lt (fun ⦃a⦄ => ?_) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictAnti.lt_iff_gt fun ⦃a⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictMono.lt_iff_lt fun ⦃a⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictAntiOn.lt_iff_gt (fun ⦃a⦄ => ?_) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine ULift.up_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ { down := 0 } < { down := max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 }
+Try this:
+  [apply] refine (add_lt_add_iff_right ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℕ
+  -- ⊢ 0 + ?_ < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 + ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_add_lt_of_nonneg_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_add_lt_add_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_lt_mul_of_le_one_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_lt_add_of_nonpos_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_add_lt_add_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_lt_add_of_nonpos_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_mul_lt_mul_right' ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_lt_mul_of_le_one_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (mul_lt_mul_iff_right ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℕ
+  -- ⊢ MulRightStrictMono ℕ
+  -- ⊢ 0 * ?_ < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 * ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_mul_lt_mul_left' ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_mul_lt_of_one_le_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (add_lt_add_iff_left ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℕ
+  -- ⊢ ?_ + 0 < ?_ + max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_add_lt_of_nonneg_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_mul_lt_of_one_le_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (mul_lt_mul_iff_left ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℕ
+  -- ⊢ MulLeftStrictMono ℕ
+  -- ⊢ ?_ * 0 < ?_ * max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_tsub_lt_tsub_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_tsub_lt_tsub_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine one_lt_div'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℕ
+  -- ⊢ MulRightStrictMono ℕ
+  -- ⊢ 1 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 / 0
+Try this:
+  [apply] refine sub_neg.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ AddGroup ℕ
+  -- ⊢ AddRightStrictMono ℕ
+  -- ⊢ 0 - max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < 0
+Try this:
+  [apply] refine (div_lt_div_iff_right ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℕ
+  -- ⊢ ℕ
+  -- ⊢ MulRightStrictMono ℕ
+  -- ⊢ 0 / ?_ < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 / ?_
+Try this:
+  [apply] refine (div_lt_div_iff_left ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℕ
+  -- ⊢ ℕ
+  -- ⊢ MulLeftStrictMono ℕ
+  -- ⊢ MulRightStrictMono ℕ
+  -- ⊢ ?_ / max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < ?_ / 0
+Try this:
+  [apply] refine lt_add_neg_iff_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ AddGroup ℕ
+  -- ⊢ AddRightStrictMono ℕ
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 + -0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_inv_lt_inv ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_neg_lt_neg ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine sub_pos.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ AddGroup ℕ
+  -- ⊢ AddRightStrictMono ℕ
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 - 0
+Try this:
+  [apply] refine inv_lt_inv_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℕ
+  -- ⊢ MulLeftStrictMono ℕ
+  -- ⊢ MulRightStrictMono ℕ
+  -- ⊢ (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)⁻¹ < 0⁻¹
+Try this:
+  [apply] refine lt_mul_inv_iff_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℕ
+  -- ⊢ MulRightStrictMono ℕ
+  -- ⊢ 1 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 * 0⁻¹
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_sub_neg ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine add_neg_neg_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ AddGroup ℕ
+  -- ⊢ AddRightStrictMono ℕ
+  -- ⊢ 0 + -max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < 0
+Try this:
+  [apply] refine (sub_lt_sub_iff_left ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ AddGroup ℕ
+  -- ⊢ ℕ
+  -- ⊢ AddLeftStrictMono ℕ
+  -- ⊢ AddRightStrictMono ℕ
+  -- ⊢ ?_ - max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < ?_ - 0
+Try this:
+  [apply] refine lt_neg_add_iff_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ AddGroup ℕ
+  -- ⊢ AddLeftStrictMono ℕ
+  -- ⊢ 0 < -0 + max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine inv_mul_lt_one_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℕ
+  -- ⊢ MulLeftStrictMono ℕ
+  -- ⊢ (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)⁻¹ * 0 < 1
+Try this:
+  [apply] refine inv_mul_lt_one_iff_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℕ
+  -- ⊢ MulRightStrictMono ℕ
+  -- ⊢ 0 * (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)⁻¹ < 1
+Try this:
+  [apply] refine neg_add_neg_iff_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ AddGroup ℕ
+  -- ⊢ AddRightStrictMono ℕ
+  -- ⊢ 0 + -max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < 0
+Try this:
+  [apply] refine div_lt_one'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℕ
+  -- ⊢ MulRightStrictMono ℕ
+  -- ⊢ 0 / max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < 1
+Try this:
+  [apply] refine neg_lt_neg_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ AddGroup ℕ
+  -- ⊢ AddLeftStrictMono ℕ
+  -- ⊢ AddRightStrictMono ℕ
+  -- ⊢ -max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < -0
+Try this:
+  [apply] refine sub_lt_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ AddGroup ℕ
+  -- ⊢ AddRightStrictMono ℕ
+  -- ⊢ 0 - max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < 0
+Try this:
+  [apply] refine (sub_lt_sub_iff_right ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ AddGroup ℕ
+  -- ⊢ ℕ
+  -- ⊢ AddRightStrictMono ℕ
+  -- ⊢ 0 - ?_ < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 - ?_
+Try this:
+  [apply] refine mul_inv_lt_one_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℕ
+  -- ⊢ MulRightStrictMono ℕ
+  -- ⊢ 0 * (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)⁻¹ < 1
+Try this:
+  [apply] refine lt_inv_mul_iff_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℕ
+  -- ⊢ MulLeftStrictMono ℕ
+  -- ⊢ 1 < 0⁻¹ * max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine neg_add_neg_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ AddGroup ℕ
+  -- ⊢ AddLeftStrictMono ℕ
+  -- ⊢ -max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 + 0 < 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_sub_pos ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine OrderedCommGroup.lt_of_mul_lt_mul_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine OrderedCommGroup.lt_of_add_lt_add_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (map_inv_lt_map_inv_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (OrderEmbedding.lt_iff_lt ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (OrderIso.lt_iff_lt ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (map_lt_map_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_abs_lt ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_mabs_lt ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine lt_of_nsmul_lt_nsmul_right ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ ℕ
+  -- ⊢ ?_ • 0 < ?_ • max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine lt_of_pow_lt_pow_left' ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ ℕ
+  -- ⊢ 0 ^ ?_ < (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) ^ ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_mul_lt_mul_of_nonneg_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_lt_mul_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_lt_mul_iff_of_pos_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_mul_lt_mul_of_nonneg_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_lt_mul_iff_of_pos_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_lt_mul_iff_left₀ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_mul_lt_mul_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_lt_mul_iff_right₀ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_lt_mul_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_mul_lt_mul_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (sq_lt_sq₀ ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ 0
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ 0 ^ 2 < (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) ^ 2
+Try this:
+  [apply] refine (one_lt_div₀ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ GroupWithZero ℕ
+  -- ⊢ MulPosReflectLT ℕ
+  -- ⊢ 0 < 0
+  -- ⊢ 1 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 / 0
+Try this:
+  [apply] refine (inv_lt_inv₀ ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ GroupWithZero ℕ
+  -- ⊢ PosMulReflectLT ℕ
+  -- ⊢ MulPosReflectLT ℕ
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ 0 < 0
+  -- ⊢ (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)⁻¹ < 0⁻¹
+Try this:
+  [apply] refine lt_of_mul_self_lt_mul_self₀ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ 0 * 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 * max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine (one_lt_inv_mul₀ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ GroupWithZero ℕ
+  -- ⊢ PosMulReflectLT ℕ
+  -- ⊢ 0 < 0
+  -- ⊢ 1 < 0⁻¹ * max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (div_lt_div_iff_of_pos_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pow_lt_pow_iff_left₀ ?_ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine lt_of_pow_lt_pow_left₀ ?_ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ ℕ
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ 0 ^ ?_ < (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) ^ ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (div_lt_div_iff_of_pos_left ?_ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (div_lt_one₀ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ GroupWithZero ℕ
+  -- ⊢ MulPosReflectLT ℕ
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ 0 / max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < 1
+Try this:
+  [apply] refine (inv_mul_lt_one₀ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ GroupWithZero ℕ
+  -- ⊢ PosMulReflectLT ℕ
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)⁻¹ * 0 < 1
+Try this:
+  [apply] refine lt_iff_exists_one_lt_mul.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ExistsMulOfLE ℕ
+  -- ⊢ MulLeftStrictMono ℕ
+  -- ⊢ ∃ c, 1 < c ∧ 0 * c = max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine lt_iff_exists_pos_add.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ c, 0 < c ∧ 0 + c = max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_lt_mul_right_of_neg ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_mul_lt_mul_of_nonpos_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_mul_lt_mul_of_nonpos_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_lt_mul_left_of_neg ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (mul_self_lt_mul_self_iff ?_ ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ 0
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ 0 * 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 * max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Odd.pow_lt_pow ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.ofNat_lt.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.AtLeastTwo 0
+  -- ⊢ (Monoid.npow 2 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊)).AtLeastTwo
+  -- ⊢ 0 < OfNat.ofNat (Monoid.npow 2 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (GaloisConnection.lt_iff_lt fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (GaloisConnection.lt_iff_lt fun a => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine lt_iff_exists_mul.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ CanonicallyOrderedMul ℕ
+  -- ⊢ MulLeftStrictMono ℕ
+  -- ⊢ ∃ c > 1, max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 = 0 * c
+Try this:
+  [apply] refine lt_iff_exists_add.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ c > 0, max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 = 0 + c
+Try this:
+  [apply] refine WithBot.coe_lt_coe.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑0 < ↑(max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine WithTop.coe_lt_coe.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑0 < ↑(max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Additive.ofMul_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Additive.ofMul 0 < Additive.ofMul (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Multiplicative.ofAdd_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Multiplicative.ofAdd 0 < Multiplicative.ofAdd (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine WithZero.coe_lt_coe.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑0 < ↑(max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine WithZero.exp_lt_exp.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ WithZero.exp 0 < WithZero.exp (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_tsub_lt_tsub_right_of_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (tsub_lt_tsub_iff_left_of_le_of_le ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AddLECancellable.lt_of_tsub_lt_tsub_left_of_le ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AddLECancellable.tsub_lt_tsub_iff_left_of_le_of_le ?_ ?_ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_tsub_lt_tsub_left_of_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AddLECancellable.tsub_lt_tsub_iff_right (fun ⦃b⦄ => ?_) ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine tsub_pos_iff_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 - 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AddLECancellable.tsub_lt_tsub_iff_left_of_le ?_ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (tsub_lt_tsub_iff_left_of_le ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (tsub_lt_tsub_iff_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.mem_Ioi.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ∈ Set.Ioi 0
+Try this:
+  [apply] refine Set.mem_Iio.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ∈ Set.Iio (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Set.Icc_subset_Ioi_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Set.Icc_subset_Iio_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.nonempty_Ioo.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ DenselyOrdered ℕ
+  -- ⊢ (Set.Ioo 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)).Nonempty
+Try this:
+  [apply] refine Set.nonempty_Ioc.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Set.Ioc 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)).Nonempty
+Try this:
+  [apply] refine Set.Ici_ssubset_Ici.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.Ici (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) ⊂ Set.Ici 0
+Try this:
+  [apply] refine Set.Iic_subset_Iio.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.Iic 0 ⊆ Set.Iio (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Set.right_mem_Ioc.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ∈ Set.Ioc 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Set.nonempty_Ico.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Set.Ico 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)).Nonempty
+Try this:
+  [apply] refine Set.left_mem_Ico.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ∈ Set.Ico 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Set.Iic_ssubset_Iic.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.Iic 0 ⊂ Set.Iic (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Set.Ici_subset_Ioi.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.Ici (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) ⊆ Set.Ioi 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (isLUB_lt_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsLeast.lt_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (lt_isGLB_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsGreatest.lt_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (isGLB_lt_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine isGLB_lt_isLUB_of_ne ?_ ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (lt_isLUB_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AntisymmRel.trans_lt ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_lt_of_antisymmRel ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_antisymmRel_of_lt ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AntisymmRel.lt_congr_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AntisymmRel.lt_congr_left ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AntisymmRel.lt_congr_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AntisymmRel.lt_congr_right ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LT.lt.trans_antisymmRel ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine toAntisymmetrization_lt_toAntisymmetrization_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ toAntisymmetrization (fun x1 x2 => x1 ≤ x2) 0 <
+    toAntisymmetrization (fun x1 x2 => x1 ≤ x2) (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AntisymmRel.lt_congr ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AntisymmRel.lt_congr ?_ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.Iio_ssubset_Iio_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.Iio 0 ⊂ Set.Iio (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Set.notMem_Ici.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ∉ Set.Ici (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Set.not_mem_Ici.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ∉ Set.Ici (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Set.Ioi_ssubset_Ioi_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.Ioi (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) ⊂ Set.Ioi 0
+Try this:
+  [apply] refine Set.not_mem_Iic.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ∉ Set.Iic 0
+Try this:
+  [apply] refine Set.notMem_Iic.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ∉ Set.Iic 0
+Try this:
+  [apply] refine Set.right_mem_uIoc.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ∈ Set.uIoc 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Set.left_mem_uIoc.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ∈ Set.uIoc (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsChain.not_le ?_ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsChain.lt_of_not_le ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsChain.lt_of_not_ge ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (CovBy.le_iff_lt_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (CovBy.lt_iff_le_right ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (CovBy.le_iff_lt_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine CovBy.lt ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ⋖ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (CovBy.lt_iff_le_left ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Order.pred_lt_pred_iff_of_not_isMin ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬IsMin 0
+  -- ⊢ ¬IsMin (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+  -- ⊢ Order.pred 0 < Order.pred (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Order.le_pred_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ NoMinOrder ℕ
+  -- ⊢ 0 ≤ Order.pred (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine (Order.succ_lt_succ_iff_of_not_isMax ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬IsMax 0
+  -- ⊢ ¬IsMax (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+  -- ⊢ Order.succ 0 < Order.succ (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine (Order.succ_le_iff_of_not_isMax ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬IsMax 0
+  -- ⊢ Order.succ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine Order.pred_lt_pred_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ NoMinOrder ℕ
+  -- ⊢ Order.pred 0 < Order.pred (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Order.succ_lt_succ_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Order.succ 0 < Order.succ (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Order.lt_of_succ_lt_succ ?_
+  -- Remaining subgoals:
+  -- ⊢ Order.succ 0 < Order.succ (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Order.succ_le_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Order.succ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Order.lt_of_pred_lt_pred ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Order.le_pred_iff_of_not_isMin ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬IsMin (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+  -- ⊢ 0 ≤ Order.pred (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine (Order.IsPredPrelimit.lt_pred_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Order.IsPredPrelimit 0
+  -- ⊢ 0 < Order.pred (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine (Order.IsSuccLimit.succ_lt_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Order.IsSuccLimit (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+  -- ⊢ Order.succ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine (Order.IsPredPrelimit.lt_iff_exists_lt ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Order.IsPredPrelimit 0
+  -- ⊢ ∃ c, 0 < c ∧ c < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine (Order.IsSuccLimit.lt_iff_exists_lt ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Order.IsSuccLimit (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+  -- ⊢ ∃ c < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2, 0 < c
+Try this:
+  [apply] refine (Order.IsSuccPrelimit.succ_lt_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Order.IsSuccPrelimit (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+  -- ⊢ Order.succ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine (Order.IsPredLimit.lt_iff_exists_lt ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Order.IsPredLimit 0
+  -- ⊢ ∃ c, 0 < c ∧ c < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine (Order.IsPredLimit.lt_pred_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Order.IsPredLimit 0
+  -- ⊢ 0 < Order.pred (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine (Order.IsSuccPrelimit.lt_iff_exists_lt ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Order.IsSuccPrelimit (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+  -- ⊢ ∃ c < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2, 0 < c
+Try this:
+  [apply] refine (Order.add_one_le_iff_of_not_isMax ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬IsMax 0
+  -- ⊢ 0 + 1 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine Order.add_one_le_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 + 1 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine (Order.le_sub_one_iff_of_not_isMin ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬IsMin (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 - 1
+Try this:
+  [apply] refine Order.le_sub_one_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ NoMinOrder ℕ
+  -- ⊢ 0 ≤ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 - 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Sum.inl_lt_inl_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Sum.inr_lt_inr_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Sum.Lex.inr_lt_inr_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Sum.Lex.inl_lt_inl_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (InitialSeg.lt_iff_lt ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (PrincipalSeg.lt_iff_lt ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (LocallyFiniteOrderBot.finset_mem_Iio (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) 0).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Finset.mem_Ioi.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LocallyFiniteOrderTop ℕ
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ∈ Finset.Ioi 0
+Try this:
+  [apply] refine Finset.mem_Iio.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ∈ Finset.Iio (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (LocallyFiniteOrderTop.finset_mem_Ioi 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Finset.Iic_ssubset_Iic.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Finset.Iic 0 ⊂ Finset.Iic (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Finset.nonempty_Ioc.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Finset.Ioc 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)).Nonempty
+Try this:
+  [apply] refine Finset.Ici_ssubset_Ici.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LocallyFiniteOrderTop ℕ
+  -- ⊢ Finset.Ici (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) ⊂ Finset.Ici 0
+Try this:
+  [apply] refine Finset.nonempty_Ioo.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ DenselyOrdered ℕ
+  -- ⊢ (Finset.Ioo 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)).Nonempty
+Try this:
+  [apply] refine Finset.left_mem_Ico.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ∈ Finset.Ico 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Finset.nonempty_Ico.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Finset.Ico 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)).Nonempty
+Try this:
+  [apply] refine Finset.right_mem_Ioc.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ∈ Finset.Ioc 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine lt_iff_transGen_covBy.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Relation.TransGen (fun x1 x2 => x1 ⋖ x2) 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Multiset.mem_Ioi.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LocallyFiniteOrderTop ℕ
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ∈ Multiset.Ioi 0
+Try this:
+  [apply] refine Multiset.mem_Iio.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ∈ Multiset.Iio (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Multiset.left_mem_Ico.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ∈ Multiset.Ico 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine Multiset.right_mem_Ioc.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ∈ Multiset.Ioc 0 (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Mathlib.Meta.NormNum.isRat_lt_true ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Mathlib.Meta.NormNum.isInt_lt_true ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Mathlib.Meta.NormNum.isNNRat_lt_true ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Mathlib.Meta.NormNum.isNat_lt_true ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_neg_of_one_div_lt_one_div ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (inv_lt_inv_of_neg ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Field ℕ
+  -- ⊢ IsStrictOrderedRing ℕ
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < 0
+  -- ⊢ 0 < 0
+  -- ⊢ (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)⁻¹ < 0⁻¹
+Try this:
+  [apply] refine (one_lt_div ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Semifield ℕ
+  -- ⊢ IsStrictOrderedRing ℕ
+  -- ⊢ 0 < 0
+  -- ⊢ 1 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 / 0
+Try this:
+  [apply] refine (one_lt_div_of_neg ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Field ℕ
+  -- ⊢ IsStrictOrderedRing ℕ
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < 0
+  -- ⊢ 1 < 0 / max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine (one_div_lt_one_div ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Semifield ℕ
+  -- ⊢ IsStrictOrderedRing ℕ
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ 0 < 0
+  -- ⊢ 1 / max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < 1 / 0
+Try this:
+  [apply] refine (one_div_lt_one_div_of_neg ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Field ℕ
+  -- ⊢ IsStrictOrderedRing ℕ
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < 0
+  -- ⊢ 0 < 0
+  -- ⊢ 1 / max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < 1 / 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (div_lt_div_right_of_neg ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine left_lt_add_div_two.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Semifield ℕ
+  -- ⊢ IsStrictOrderedRing ℕ
+  -- ⊢ 0 < (0 + max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) / 2
+Try this:
+  [apply] refine (div_lt_one ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Semifield ℕ
+  -- ⊢ IsStrictOrderedRing ℕ
+  -- ⊢ 0 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ 0 / max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 < 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_one_div_lt_one_div ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (div_lt_one_of_neg ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Field ℕ
+  -- ⊢ IsStrictOrderedRing ℕ
+  -- ⊢ 0 < 0
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 / 0 < 1
+Try this:
+  [apply] refine add_div_two_lt_right.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Semifield ℕ
+  -- ⊢ IsStrictOrderedRing ℕ
+  -- ⊢ (0 + max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2) / 2 < max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (zsmul_lt_zsmul_iff_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (zpow_lt_zpow_iff_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_smul_lt_smul_of_nonpos ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_smul_lt_smul_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_smul_lt_smul_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (smul_lt_smul_iff_of_pos_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (smul_lt_smul_iff_of_neg_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_smul_lt_smul_of_nonneg_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine PosSMulReflectLT.lt_of_smul_lt_smul_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (smul_lt_smul_iff_of_pos_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine SMulPosReflectLT.lt_of_smul_lt_smul_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_of_smul_lt_smul_of_nonneg_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine CauSeq.const_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Field ℕ
+  -- ⊢ IsStrictOrderedRing ℕ
+  -- ⊢ CauSeq.const abs 0 < CauSeq.const abs (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine (Real.add_lt_add_iff_left ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℕ
+  -- ⊢ ?_ + 0 < ?_ + max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine (IsCoatom.lt_iff ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ OrderTop ℕ
+  -- ⊢ IsCoatom 0
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 = ⊤
+Try this:
+  [apply] refine (IsAtom.lt_iff ?_).mpr rfl
+  -- Remaining subgoals:
+  -- ⊢ IsAtom (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine LowerSet.mem_Iio_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ∈ LowerSet.Iio (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+Try this:
+  [apply] refine UpperSet.mem_Ioi_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 ∈ UpperSet.Ioi 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (RightOrdContinuous.lt_iff (fun ⦃s⦄ => ?_) ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (LeftOrdContinuous.lt_iff (fun ⦃s⦄ => ?_) ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_hasProd ?_ (instOfNatNat 0) ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine hasProd_strict_mono ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine hasProd_lt ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lt_hasSum ?_ (instOfNatNat 0) ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine hasSum_strict_mono ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine hasSum_lt ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine StarOrderedRing.lt_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ p, p ≠ 0 ∧ p ∈ AddSubmonoid.closure (Set.range fun s => star s * s) ∧ max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2 = 0 + p
+Try this:
+  [apply] refine star_lt_star_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ star 0 < star (max 1 ⌊↑L ^ (↑δ / 2)⌋₊ ^ 2)
+/private/tmp/io-sprg-overlap/Params_noiseDenAt_pos-apply.lean:10:0: warning: declaration uses 'sorry'
+/private/tmp/io-sprg-overlap/Params_noiseDenAt_pos-apply.lean:10:17: warning: unused variable `hδ`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/Params_noiseDenAt_pos-apply.lean:10:30: warning: unused variable `hδ1`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

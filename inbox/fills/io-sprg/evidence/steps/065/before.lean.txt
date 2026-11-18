@@ -1,0 +1,214 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import Mathlib.Data.Finset.Card
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Matrix.Basic
+import Mathlib.Logic.Equiv.Fin.Basic
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Bucket placement and correction matrices
+
+## Main definitions
+
+* `Buckets.indexMap` assigns distinct grid positions within a non-overfull bucket.
+* `Buckets.bucketMatrix` places a correction vector at its assigned grid positions.
+
+## Main results
+
+* Non-overfull buckets have defined, injective grid positions.
+* A correction matrix has at most as many nonzero entries as bad outputs in its bucket.
+
+## References
+
+* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
+  Assumptions*, J. ACM 73(1), Article 1, February 2026, construction on pp. 15-16.
+* [PS10] R. Pass, A. Shelat, *A Course in Cryptography*, 2010, Definition 26.8.
+
+**Deviation.** The paper chooses arbitrary injective positions and an overfull constant.
+We use increasing ranks and an explicit `finProdFinEquiv`. Positions are optional, with
+`none` in the overfull case. This preserves the capacity convention when the grid is
+empty at security parameter zero; a total point of an empty grid cannot be supplied.
+Every good bucket still uses exactly the required grid, without padding its capacity.
+-/
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets
+
+open scoped BigOperators
+
+variable {R : Type*}
+
+section Positions
+
+variable {m B : ℕ}
+
+/-- A bucket is the finite fiber `bucket φ b = {j | φ j = b}`
+[JLS26, construction of IdSamp', p. 15]. Indices start at zero. -/
+def bucket (φ : Fin m → Fin B) (b : Fin B) : Finset (Fin m) :=
+  Finset.univ.filter (fun j => φ j = b)
+
+/-- A bucket equals the finite fiber of its label. Glue reader. -/
+theorem bucket_eq (φ : Fin m → Fin B) (b : Fin B) :
+    bucket φ b = Finset.univ.filter (fun j => φ j = b) := rfl
+
+/-- A bucket's load is its cardinality, `load φ b = (bucket φ b).card`
+[JLS26, construction of IdSamp', p. 15]. -/
+def load (φ : Fin m → Fin B) (b : Fin B) : ℕ := (bucket φ b).card
+
+/-- A bucket's load equals its cardinality. Glue reader. -/
+theorem load_eq (φ : Fin m → Fin B) (b : Fin B) : load φ b = (bucket φ b).card := rfl
+
+/-- A placement is overfull if some load exceeds capacity,
+`overfull φ cap ↔ ∃ b, cap < load φ b` [JLS26, construction of IdSamp', p. 15]. -/
+def overfull (φ : Fin m → Fin B) (cap : ℕ) : Prop := ∃ b, cap < load φ b
+
+/-- A placement is overfull exactly when some bucket exceeds capacity. Glue reader. -/
+theorem overfull_iff (φ : Fin m → Fin B) (cap : ℕ) :
+    overfull φ cap ↔ ∃ b, cap < load φ b := Iff.rfl
+
+/-- An output's bucket rank counts earlier outputs with the same label,
+`rank φ j = #{i | i < j ∧ φ i = φ j}` [JLS26, construction of IdSamp', p. 15].
+Increasing ranks make the paper's permitted injection deterministic. -/
+def rank (φ : Fin m → Fin B) (j : Fin m) : ℕ :=
+  (Finset.univ.filter (fun i => i < j ∧ φ i = φ j)).card
+
+/-- The bucket rank counts preceding elements in the same fiber. Glue reader. -/
+theorem rank_eq (φ : Fin m → Fin B) (j : Fin m) :
+    rank φ j = (Finset.univ.filter (fun i => i < j ∧ φ i = φ j)).card := rfl
+
+/-- Grid positions split increasing bucket ranks using `finProdFinEquiv.symm`
+[JLS26, construction of IdSamp', p. 15]. The overfull case returns `none`, including
+empty grids, instead of the paper's constant point; no successful case is changed. -/
+def indexMap (φ : Fin m → Fin B) (rc : ℕ) (j : Fin m) : Option (Fin rc × Fin rc) :=
+  if h : ¬ (∃ b : Fin B, rc * rc < load φ b) ∧ rank φ j < rc * rc then
+    some (finProdFinEquiv.symm ⟨rank φ j, h.2⟩)
+  else none
+
+/-- Grid positions are optional split ranks, with `none` on overfull placements. Glue reader. -/
+theorem indexMap_eq (φ : Fin m → Fin B) (rc : ℕ) (j : Fin m) :
+    indexMap φ rc j =
+      if h : ¬ (∃ b : Fin B, rc * rc < load φ b) ∧ rank φ j < rc * rc then
+        some (finProdFinEquiv.symm ⟨rank φ j, h.2⟩)
+      else none := rfl
+
+/-- Each element's rank is strictly below its bucket's load [JLS26, construction, p. 15].
+This is mathematical glue for the deterministic placement.
+
+**Proof sketch.** Earlier elements form a strict subset of the fiber because it contains `j`. -/
+theorem rank_lt_load (φ : Fin m → Fin B) (j : Fin m) : rank φ j < load φ (φ j) := by
+  rw [rank_eq, load_eq, bucket_eq]
+  apply Finset.card_lt_card
+  refine (Finset.ssubset_iff_of_subset ?_).2 ?_
+  · intro i hi
+    exact Finset.mem_filter.mpr
+      ⟨Finset.mem_univ i, (Finset.mem_filter.mp hi).2.2⟩
+  · refine ⟨j, Finset.mem_filter.mpr ⟨Finset.mem_univ j, rfl⟩, ?_⟩
+    intro hj
+    exact (lt_irrefl j) (Finset.mem_filter.mp hj).2.1
+
+/-- Equal ranks in the same bucket identify an output [JLS26, construction, p. 15].
+This is mathematical glue for the deterministic placement.
+
+**Proof sketch.** If one index precedes the other, inclusion of the earlier index makes
+its rank strictly smaller; rule out both strict inequalities. -/
+theorem eq_of_rank_eq (φ : Fin m → Fin B) {i j : Fin m}
+    (hφ : φ i = φ j) (hr : rank φ i = rank φ j) : i = j := by
+  have hstrict : ∀ {a b : Fin m}, φ a = φ b → a < b → rank φ a < rank φ b := ?_
+  swap
+  · intro a b hab hablt
+    rw [rank_eq, rank_eq]
+    apply Finset.card_lt_card
+    refine (Finset.ssubset_iff_of_subset ?_).2 ?_
+    · intro x hx
+      rcases Finset.mem_filter.mp hx with ⟨_, hxa, hxφ⟩
+      exact Finset.mem_filter.mpr
+        ⟨Finset.mem_univ x, lt_trans hxa hablt, hxφ.trans hab⟩
+    · refine ⟨a, Finset.mem_filter.mpr ⟨Finset.mem_univ a, hablt, hab⟩, ?_⟩
+      intro ha
+      exact (lt_irrefl a) (Finset.mem_filter.mp ha).2.1
+  rcases lt_trichotomy i j with hij | hij | hji
+  · exact False.elim ((ne_of_lt (hstrict hφ hij)) hr)
+  · exact hij
+  · exact False.elim ((ne_of_lt (hstrict hφ.symm hji)) hr.symm)
+
+/-- Non-overfull placements assign a grid point to every output [JLS26, construction, p. 15].
+The optional representation changes no good-case position.
+
+**Proof sketch.** Use `rank_lt_load` and the capacity bound to prove the dependent test. -/
+theorem indexMap_some_of_not_overfull (φ : Fin m → Fin B) (rc : ℕ)
+    (h : ¬ overfull φ (rc * rc)) (j : Fin m) :
+    ∃ c : Fin rc × Fin rc, indexMap φ rc j = some c := by
+  have hn : ¬ ∃ b : Fin B, rc * rc < load φ b :=
+    fun hb => h ((overfull_iff φ (rc * rc)).mpr hb)
+  have hr : rank φ j < rc * rc :=
+    (rank_lt_load φ j).trans_le (le_of_not_gt fun hj => hn ⟨φ j, hj⟩)
+  refine ⟨finProdFinEquiv.symm ⟨rank φ j, hr⟩, ?_⟩
+  rw [indexMap_eq, dif_pos ⟨hn, hr⟩]
+
+/-- Overfull placements have no grid positions [JLS26, construction, p. 15].
+This replaces the paper's unused overfull default by `none` to allow empty grids.
+
+**Proof sketch.** The defining test has a false first conjunct. -/
+theorem indexMap_none_of_overfull (φ : Fin m → Fin B) (rc : ℕ)
+    (h : overfull φ (rc * rc)) (j : Fin m) : indexMap φ rc j = none := by
+  rw [indexMap_eq]
+  exact dif_neg (fun ht => ht.1 ((overfull_iff φ (rc * rc)).mp h))
+
+/-- Non-overfull bucket positions are injective within each bucket
+[JLS26, construction of IdSamp', p. 15]. Increasing ranks fix the permitted injection.
+
+**Proof sketch.** Both positions are `some`; apply the explicit product equivalence,
+then use `eq_of_rank_eq` in the common bucket. -/
+theorem indexMap_injective_on_bucket (φ : Fin m → Fin B) (rc : ℕ)
+    (h : ¬ overfull φ (rc * rc)) {i j : Fin m} (hφ : φ i = φ j)
+    (hc : indexMap φ rc i = indexMap φ rc j) : i = j := sorry
+
+end Positions
+
+section Matrices
+
+variable {m B : ℕ} [AddCommMonoid R]
+
+/-- A bucket correction matrix sums corrections at matching grid positions,
+`M_b(u,v) = ∑ j, [φ j = b ∧ indexMap j = some (u,v)] corr j`
+[JLS26, sampling algorithm 1SdSamp, p. 16]. Increasing ranks fix the paper's positions;
+`none` contributes nothing, so the empty-grid boundary is total. -/
+def bucketMatrix (φ : Fin m → Fin B) (rc : ℕ) (corr : Fin m → R) (b : Fin B) :
+    Matrix (Fin rc) (Fin rc) R :=
+  fun u v => ∑ j : Fin m,
+    if φ j = b ∧ indexMap φ rc j = some (u, v) then corr j else 0
+
+/-- Bucket matrix entries equal the finite sum of corrections assigned to them. Glue reader. -/
+theorem bucketMatrix_eq (φ : Fin m → Fin B) (rc : ℕ) (corr : Fin m → R) (b : Fin B) :
+    bucketMatrix φ rc corr b = fun u v => ∑ j : Fin m,
+      if φ j = b ∧ indexMap φ rc j = some (u, v) then corr j else 0 := rfl
+
+/-- A non-overfull bucket matrix contains each correction at its assigned position
+[JLS26, sampling algorithm 1SdSamp, p. 16]. The deterministic positions are injective.
+
+**Proof sketch.** Expand the entry through its reader, retain the summand `j`, and
+remove every other summand by injectivity within the bucket. -/
+theorem bucketMatrix_apply_indexMap (φ : Fin m → Fin B) (rc : ℕ)
+    (corr : Fin m → R) (h : ¬ overfull φ (rc * rc)) (j : Fin m)
+    (c : Fin rc × Fin rc) (hc : indexMap φ rc j = some c) :
+    bucketMatrix φ rc corr (φ j) c.1 c.2 = corr j := sorry
+
+/-- A correction matrix has at most as many nonzero entries as supported outputs in its bucket
+[JLS26, sampling algorithm 1SdSamp, p. 16]. The finite cardinal bound avoids rank theory.
+
+**Proof sketch.** Every nonzero matrix entry receives a nonzero supported correction;
+the image of those supported outputs contains the matrix support. -/
+theorem bucketMatrix_nonzero_card_le [DecidableEq R] (φ : Fin m → Fin B) (rc : ℕ)
+    (corr : Fin m → R) (bad : Finset (Fin m)) (hcorr : ∀ j, j ∉ bad → corr j = 0)
+    (b : Fin B) :
+    (Finset.univ.filter (fun c : Fin rc × Fin rc =>
+      bucketMatrix φ rc corr b c.1 c.2 ≠ 0)).card ≤ (bucket φ b ∩ bad).card := sorry
+
+end Matrices
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets

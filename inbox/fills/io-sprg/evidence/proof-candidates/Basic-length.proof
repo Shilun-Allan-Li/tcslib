@@ -1,0 +1,9 @@
+by
+  induction xs with
+  | nil =>
+    simp only [BoolCircuit.encodeList_nil, List.length_singleton, List.length_nil,
+      Nat.zero_mul, Nat.zero_add]
+  | cons x xs ih =>
+    simp only [BoolCircuit.encodeList_cons, List.length_cons, List.length_append,
+      hwidth, ih, Nat.succ_mul]
+    omega

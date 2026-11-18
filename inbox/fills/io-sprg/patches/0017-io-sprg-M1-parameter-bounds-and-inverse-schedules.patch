@@ -1,0 +1,175 @@
+From 5f3ea1c5e6c28f34fa0493cd49528d2489a7ad3e Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 07:19:51 -0800
+Subject: [PATCH 17/24] io-sprg: M1 parameter bounds and inverse schedules
+
+---
+ .../Obfuscation/StructuredSeed/Params.lean    | 91 ++++++++++++++++---
+ 1 file changed, 77 insertions(+), 14 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean
+index 6fb0266ac1ee65f75e4a667c7165103ad92585c0..6ed2bd68b8e1f30cece292f5f8398e4d0a00c277 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean
+@@ -273,27 +273,38 @@ theorem idx'_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ) : P.Idx' κ pp =
+ /-- Half-degree is positive [JLS26, §4, p. 15]. Dv11 assumes d≥1.
+ 
+ **Proof sketch.** Divide the inequality d+1≥2 by two. -/
+-theorem D_pos (P : Params) : 0 < P.D := sorry
++theorem D_pos (P : Params) : 0 < P.D := by
++  rw [P.D_eq]
++  exact Nat.div_pos_iff.mpr
++    ⟨Nat.succ_pos 1, Nat.succ_le_succ P.one_le_d⟩
+ 
+ /-- Noise width is positive at every dimension [JLS26, §4, p. 15]. Dv3 uses max 1.
+ 
+ **Proof sketch.** The maximum dominates one. -/
+-theorem noiseWidth_pos (P : Params) (L : ℕ) : 0 < P.noiseWidth L := sorry
++theorem noiseWidth_pos (P : Params) (L : ℕ) : 0 < P.noiseWidth L := by
++  rw [P.noiseWidth_eq]
++  exact lt_of_lt_of_le Nat.zero_lt_one (le_max_left _ _)
+ 
+ /-- The scalar denominator is positive [JLS26, §4, p. 15]. Dv3 squares a positive width.
+ 
+ **Proof sketch.** Use noiseWidth positivity and positivity of its square. -/
+-theorem noiseDenAt_pos (P : Params) (L : ℕ) : 0 < P.noiseDenAt L := sorry
++theorem noiseDenAt_pos (P : Params) (L : ℕ) : 0 < P.noiseDenAt L := by
++  rw [P.noiseDenAt_eq]
++  exact pow_pos (P.noiseWidth_pos L) 2
+ 
+ /-- W is positive at every κ [JLS26, §4, p. 15]. Dv3 keeps noise seeds nonempty.
+ 
+ **Proof sketch.** Use the width lower bound and the square formula. -/
+-theorem W_pos (P : Params) (κ : ℕ) : 0 < P.W κ := sorry
++theorem W_pos (P : Params) (κ : ℕ) : 0 < P.W κ := by
++  rw [P.W_eq_noiseDenAt]
++  exact P.noiseDenAt_pos _
+ 
+ /-- Bucket count is positive at every κ [JLS26, §4, p. 15]. Dv3 uses max 1.
+ 
+ **Proof sketch.** The maximum dominates one. -/
+-theorem B_pos (P : Params) (κ : ℕ) : 0 < P.B κ := sorry
++theorem B_pos (P : Params) (κ : ℕ) : 0 < P.B κ := by
++  rw [P.B_eq]
++  exact lt_of_lt_of_le Nat.zero_lt_one (le_max_left _ _)
+ 
+ instance instWNeZero (P : Params) (κ : ℕ) : NeZero (P.W κ) := ⟨Nat.ne_of_gt (P.W_pos κ)⟩
+ instance instBNeZero (P : Params) (κ : ℕ) : NeZero (P.B κ) := ⟨Nat.ne_of_gt (P.B_pos κ)⟩
+@@ -302,35 +313,52 @@ instance instBNeZero (P : Params) (κ : ℕ) : NeZero (P.B κ) := ⟨Nat.ne_of_g
+ 
+ **Proof sketch.** Strict monotonicity of positive natural powers characterizes the greatest
+ candidate in the bounded search. -/
+-theorem kappaOf_pow (P : Params) (κ : ℕ) : P.kappaOf (P.ℓ κ) = κ := sorry
++theorem kappaOf_pow (P : Params) (κ : ℕ) : P.kappaOf (P.ℓ κ) = κ := by
++  simp only [P.kappaOf_eq, P.ℓ_eq, ← PadQuad.nu_eq]
++  apply le_antisymm
++  · exact (Nat.pow_le_pow_iff_left (Nat.one_le_iff_ne_zero.mp P.one_le_E)).1
++      (PadQuad.nu_pow_le P.one_le_E (κ ^ P.E))
++  · exact PadQuad.le_nu P.one_le_E le_rfl
+ 
+ /-- The inverse LPN parameter never exceeds its input [JLS26, Remark 2.1, p. 9].
+ 
+ **Proof sketch.** Apply the bounded-greatest-search upper bound. -/
+-theorem kappaOf_le (P : Params) (L : ℕ) : P.kappaOf L ≤ L := sorry
++theorem kappaOf_le (P : Params) (L : ℕ) : P.kappaOf L ≤ L := by
++  simpa only [P.kappaOf_eq, PadQuad.nu_eq] using PadQuad.nu_le P.E L
+ 
+ /-- The Boolean inverse returns κ on n(κ) [JLS26, Remark 2.1, p. 9]. Dv1 uses exact powers.
+ 
+ **Proof sketch.** Rewrite n as κ^(E*D), then apply strict monotonicity of positive powers. -/
+-theorem kappaOfN_n (P : Params) (κ : ℕ) : P.kappaOfN (P.n κ) = κ := sorry
++theorem kappaOfN_n (P : Params) (κ : ℕ) : P.kappaOfN (P.n κ) = κ := by
++  have hED : 1 ≤ P.E * P.D :=
++    Nat.mul_le_mul P.one_le_E (Nat.succ_le_of_lt P.D_pos)
++  simp only [P.kappaOfN_eq, P.n_eq, P.ℓ_eq, ← Nat.pow_mul, ← PadQuad.nu_eq]
++  apply le_antisymm
++  · exact (Nat.pow_le_pow_iff_left (Nat.one_le_iff_ne_zero.mp hED)).1
++      (PadQuad.nu_pow_le hED (κ ^ (P.E * P.D)))
++  · exact PadQuad.le_nu hED le_rfl
+ 
+ /-- The inverse Boolean parameter never exceeds its input [JLS26, Remark 2.1, p. 9].
+ 
+ **Proof sketch.** Apply the bounded-greatest-search upper bound. -/
+-theorem kappaOfN_le (P : Params) (N : ℕ) : P.kappaOfN N ≤ N := sorry
++theorem kappaOfN_le (P : Params) (N : ℕ) : P.kappaOfN N ≤ N := by
++  simpa only [P.kappaOfN_eq, PadQuad.nu_eq] using PadQuad.nu_le (P.E * P.D) N
+ 
+ /-- The prime chosen at inverse dimension L fits L+1 residue bits
+ [JLS26, Definition 2.3, pp. 9-10]. Dv3 uses the family's own input dimension.
+ 
+ **Proof sketch.** The schedule's width bound and kappaOf_le give the result. -/
+ theorem lpnModulus_le_pow (P : Params) (π : PrimeSchedule) (L : ℕ) :
+-    (π (P.kappaOf L)).p ≤ 2 ^ (L + 1) := sorry
++    (π (P.kappaOf L)).p ≤ 2 ^ (L + 1) :=
++  (π (P.kappaOf L)).le_two_pow.trans
++  (Nat.pow_le_pow_right Nat.zero_lt_two (Nat.add_le_add_right (P.kappaOf_le L) 1))
+ 
+ /-- The sample count L^D is bounded by its syntactic polynomial; glue.
+ 
+ **Proof sketch.** Read the power and variable equations of PolyExpr. -/
+ theorem lpnSamples_le (P : Params) (L : ℕ) :
+-    L ^ P.D ≤ (PolyExpr.pow .var P.D).eval L := sorry
++    L ^ P.D ≤ (PolyExpr.pow .var P.D).eval L := by
++  rw [PolyExpr.eval_pow, PolyExpr.eval_var]
+ 
+ /-- The construction's raw LPN family is indexed by its own secret dimension
+ [JLS26, Definition 2.3, pp. 9-10]. Dv3 fixes its sample schedule, transpose,
+@@ -372,20 +400,55 @@ theorem lpnFamily_raw_residueBits (P : Params) (π : PrimeSchedule) :
+ /-- The Boolean seed length dominates κ [JLS26, Remark 2.1, p. 9]. Dv1 uses E,D≥1.
+ 
+ **Proof sketch.** Natural powers with positive exponents dominate their bases. -/
+-theorem le_n (P : Params) (κ : ℕ) : κ ≤ P.n κ := sorry
++theorem le_n (P : Params) (κ : ℕ) : κ ≤ P.n κ := by
++  rw [P.n_eq, P.ℓ_eq]
++  exact (Nat.le_pow (lt_of_lt_of_le Nat.zero_lt_one P.one_le_E)).trans
++    (Nat.le_pow P.D_pos)
+ 
+ /-- Eventually Γ≤B [JLS26, Claim 4.2, pp. 19-21]. Dv7 makes the threshold explicit.
+ 
+ **Proof sketch.** The logarithm of a fixed polynomial is eventually below κ; compare the
+ rounded quotients using W>0. -/
+-theorem Γ_le_B (P : Params) : ∃ κ₀, ∀ κ ≥ κ₀, P.Γ κ ≤ P.B κ := sorry
++theorem Γ_le_B (P : Params) : ∃ κ₀, ∀ κ ≥ κ₀, P.Γ κ ≤ P.B κ := by
++  have hsmall : Asymptotics.IsLittleO Filter.atTop
++      (fun κ : ℕ => ((P.D : ℝ) * (P.E : ℝ)) * Real.logb 2 (κ : ℝ))
++      (fun κ : ℕ => (κ : ℝ)) :=
++    ((Real.isLittleO_logb_id_atTop (b := 2)).const_mul_left
++      ((P.D : ℝ) * (P.E : ℝ))).comp_tendsto tendsto_natCast_atTop_atTop
++  obtain ⟨κ₀, hκ₀⟩ := Filter.eventually_atTop.mp hsmall.eventuallyLE
++  refine ⟨κ₀, ?_⟩
++  intro κ hκ
++  have hnorm := hκ₀ κ hκ
++  change ‖((P.D : ℝ) * (P.E : ℝ)) * Real.logb 2 (κ : ℝ)‖ ≤ ‖(κ : ℝ)‖ at hnorm
++  simp only [Real.norm_eq_abs, Nat.abs_cast] at hnorm
++  have hlogn : Real.logb 2 (P.n κ : ℝ) =
++      ((P.D : ℝ) * (P.E : ℝ)) * Real.logb 2 (κ : ℝ) := ?_
++  swap
++  · rw [P.n_eq, P.ℓ_eq, Nat.cast_pow, Nat.cast_pow, Real.logb_pow,
++      Real.logb_pow, mul_assoc]
++  have hlog : Nat.log 2 (P.n κ) ≤ κ := ?_
++  swap
++  · have hcast : (Nat.log 2 (P.n κ) : ℝ) ≤ (κ : ℝ) :=
++      (Real.natLog_le_logb (P.n κ) 2).trans
++        (hlogn.le.trans ((le_abs_self _).trans hnorm))
++    exact_mod_cast hcast
++  have hround : P.m κ * κ ≤ P.m κ * κ + P.W κ - 1 := ?_
++  swap
++  · have hW := P.W_pos κ
++    omega
++  rw [P.Γ_eq, P.B_eq, P.t_eq]
++  exact (Nat.div_le_div_right (Nat.mul_le_mul_left _ hlog)).trans
++    ((Nat.div_le_div_right hround).trans (le_max_right _ _))
+ 
+ /-- The logarithm of n eventually exceeds every constant [JLS26, Claim 4.2, p. 20].
+ Dv7 uses an eventual threshold.
+ 
+ **Proof sketch.** The positive power schedule tends to infinity and Nat.log is unbounded. -/
+ theorem le_log_n (P : Params) (c : ℕ) :
+-    ∃ κ₀, ∀ κ ≥ κ₀, c ≤ Nat.log 2 (P.n κ) := sorry
++    ∃ κ₀, ∀ κ ≥ κ₀, c ≤ Nat.log 2 (P.n κ) := by
++  refine ⟨2 ^ c, ?_⟩
++  intro κ hκ
++  exact Nat.le_log_of_pow_le Nat.one_lt_two (hκ.trans (P.le_n κ))
+ 
+ 
+ end Params

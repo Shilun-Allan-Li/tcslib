@@ -1,0 +1,22 @@
+import Mathlib.RingTheory.MvPolynomial.Homogeneous
+import Mathlib.Data.Finset.Sort
+import Mathlib.Algebra.MvPolynomial.Eval
+import Mathlib.Algebra.BigOperators.Ring.Finset
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open scoped BigOperators
+
+namespace IoSprgAlgebraOverlap
+
+example {n : ℕ} (h : Fin n →₀ ℕ) (D : ℕ) :
+    (Finset.univ.filter (fun r : Fin D =>
+      ((h.support.sort (· ≤ ·))[r.val]?).isSome)).card +
+    (Finset.univ.filter (fun r : Fin D =>
+      ((h.support.sort (· ≤ ·))[D + r.val]?).isSome)).card ≤ h.support.card := by
+  apply?
+
+end IoSprgAlgebraOverlap

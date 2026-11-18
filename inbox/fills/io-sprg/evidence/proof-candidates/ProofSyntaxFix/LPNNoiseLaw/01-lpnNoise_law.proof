@@ -1,0 +1,40 @@
+by
+  classical
+  letI : Nonempty (Fin W) := ⟨0⟩
+  letI : Nonempty (ZMod p) := ⟨0⟩
+  have hW : uprob (fun a : Fin W => a = 0) = 1 / (W : ℝ) := ?_
+  swap
+  · simpa only [Fintype.card_fin] using OneWay.uprob_eq_one_div_card (0 : Fin W)
+  have hp : ∀ a : ZMod p, uprob (fun x : ZMod p => x = a) = 1 / (p : ℝ) := ?_
+  swap
+  · intro a
+    simpa only [ZMod.card] using OneWay.uprob_eq_one_div_card a
+  have hs : ∀ c : Fin W × ZMod p,
+      ((lpnNoise p W).sample c : ZMod p) = if c.1 = 0 then c.2 else 0 := ?_
+  swap
+  · intro c
+    rw [lpnNoise_sample]
+    split_ifs <;> simp only [Int.cast_natCast, ZMod.natCast_zmod_val, Int.cast_zero]
+  by_cases hz : z = 0
+  · subst z
+    rw [if_pos rfl]
+    have hevent : ∀ c : Fin W × ZMod p,
+        ((lpnNoise p W).sample c : ZMod p) = 0 ↔ ¬ (c.1 = 0 ∧ c.2 ≠ 0) := ?_
+    swap
+    · intro c
+      rw [hs c]
+      by_cases ha : c.1 = 0 <;> simp [ha]
+    rw [OneWay.uprob_congr hevent, uprob_not, HardcoreBit.uprob_prod_and,
+      hW, uprob_not, hp]
+    simp only [one_div, mul_inv_rev]
+    ring
+  · rw [if_neg hz]
+    have hevent : ∀ c : Fin W × ZMod p,
+        ((lpnNoise p W).sample c : ZMod p) = z ↔ c.1 = 0 ∧ c.2 = z := ?_
+    swap
+    · intro c
+      rw [hs c]
+      by_cases ha : c.1 = 0 <;> simp [ha, hz, Ne.symm hz]
+    rw [OneWay.uprob_congr hevent, HardcoreBit.uprob_prod_and, hW, hp]
+    simp only [one_div, mul_inv_rev]
+    ring

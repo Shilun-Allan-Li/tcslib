@@ -1,0 +1,13 @@
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace IoSprgParamsOverlap
+
+example (δ : ℚ) (hδ : 0 < δ) (hδ1 : δ < 1) (L : ℕ) :
+    0 < (max 1 ⌊(L : ℝ) ^ ((δ : ℝ) / 2)⌋₊) ^ 2 := __PROBE_BODY__
+
+end IoSprgParamsOverlap

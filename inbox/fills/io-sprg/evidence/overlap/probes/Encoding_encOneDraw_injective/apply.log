@@ -1,0 +1,47 @@
+Try this:
+  [apply] refine Function.HasLeftInverse.injective ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.HasLeftInverse fun r =>
+    pairEncode (Encoding.Modular.encodeVector width r.1)
+      (BoolCircuit.encodeList
+        (fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList width c.2.val)) (List.ofFn r.2))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.LeftInverse.injective fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.surjective_comp_right_iff_injective.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.injective_iff_hasLeftInverse.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Nonempty ((Fin ell → ZMod p) × (Fin n → Fin W × ZMod p))
+  -- ⊢ Function.HasLeftInverse fun r =>
+    pairEncode (Encoding.Modular.encodeVector width r.1)
+      (BoolCircuit.encodeList
+        (fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList width c.2.val)) (List.ofFn r.2))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.injective_of_isPartialInv fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.Injective.of_comp_right (fun ⦃a₁⦄ => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.Bijective.injective ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Bijective fun r =>
+    pairEncode (Encoding.Modular.encodeVector width r.1)
+      (BoolCircuit.encodeList
+        (fun c => pairEncode (Candidates.natToList (ell + 1) ↑c.1) (Candidates.natToList width c.2.val)) (List.ofFn r.2))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.RightInverse.injective fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+/private/tmp/io-sprg-overlap/Encoding_encOneDraw_injective-apply.lean:1:1: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (100000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.

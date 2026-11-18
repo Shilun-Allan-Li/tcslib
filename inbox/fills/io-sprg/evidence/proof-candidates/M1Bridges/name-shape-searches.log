@@ -1,0 +1,21 @@
+READ-ONLY TEXT SEARCHES; no exact?/apply?/Lean executed.
+
+external named counterparts
+PATTERN (?:theorem|lemma)\s+(?:HasComplexityEff\.hasComplexity|primeWidthBound|hasComplexityEff_iff|hasComplexity_iff)(?:\s|\{)
+(no literal declaration-name hit)
+
+public logical witness forgetting
+PATTERN theorem Exists\.imp|theorem.*exists_and_exists_comm
+/Users/seyoonr/.codex/worktrees/io-sprg/tcslib-exchange/.lake/packages/mathlib/Mathlib/Logic/Basic.lean:498:theorem exists_and_exists_comm {P : α → Prop} {Q : β → Prop} :
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/PropLemmas.lean:221:theorem Exists.imp (h : ∀ a, p a → q a) : (∃ a, p a) → ∃ a, q a
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/PropLemmas.lean:224:theorem Exists.imp' {β} {q : β → Prop} (f : α → β) (hpq : ∀ a, p a → q (f a)) :
+
+PolyExpr readers
+PATTERN theorem eval_(add|var|const)\b
+116:@[simp] theorem eval_const (c n : ℕ) : (const c).eval n = c := rfl
+119:@[simp] theorem eval_var (n : ℕ) : var.eval n = n := rfl
+122:@[simp] theorem eval_add (p q : PolyExpr) (n : ℕ) : (add p q).eval n = p.eval n + q.eval n := rfl
+
+Own readers inspected directly at Defs:307,367 and PrimeParam.le_two_pow field. They are not imported by the probes.
+The abstract logical goal uses the exact existential/forall/conjunction structure of both reader conclusions; it introduces no new helper theorem or algorithm.
+OracleSpec and OracleComp source API is Type0 (OracleComp.lean:74,84). Neither bridge search goal needs that API, and every data family is explicitly Type.

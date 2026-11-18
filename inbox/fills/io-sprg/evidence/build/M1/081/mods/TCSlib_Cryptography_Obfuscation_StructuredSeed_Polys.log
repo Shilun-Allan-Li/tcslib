@@ -1,0 +1,48 @@
+2026-11-18T16:11:54.264757+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:662:4: error: Application type mismatch: The argument
+  P.R.poly (P.n κ) I'.1 (P.outputIndex κ j)
+has type
+  MvPolynomial (Fin (P.n κ)) ℤ
+of sort `Type` but is expected to have type
+  Type ?u.38486
+of sort `Type (?u.38486 + 1)` in the application
+  @MvPolynomial.mem_restrictDegree (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j))
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:659:55: error: unsolved goals
+P : Params
+κ : ℕ
+pp : PrimeParam κ
+I' : P.Idx' κ pp
+k : Fin κ
+j : Fin (P.m κ)
+s : Fin (P.ℓ κ) → ZMod pp.p
+x : Fin (P.n κ) → ZMod pp.p
+z : P.Var κ → ZMod pp.p
+hpub : ∀ (i : Fin (P.n κ)), z (P.bVar κ k i) = ∑ a, I'.2.2 i a * s a + x i
+htensor :
+  ∀ (α : Fin P.D → Fin (P.ℓ κ + 1)),
+    z (P.sVar κ k false (Sum.inl α)) = ∏ r, if ha : ↑(α r) < P.ℓ κ then s ⟨↑(α r), ha⟩ else 1
+⊢ (MvPolynomial.eval z) (P.G1 κ pp I' k j) =
+    MvPolynomial.eval₂ (Int.castRingHom (ZMod pp.p)) x (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j))
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:753:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys): no fresh .olean produced
+        4.10 real         3.61 user         1.10 sys
+          2391212032  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              180671  page reclaims
+                8090  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 594  voluntary context switches
+               11732  involuntary context switches
+            32082849  instructions retired
+            14853157  cycles elapsed
+             1622352  peak memory footprint
+2026-11-18T16:11:58.395968+00:00 END rc=1

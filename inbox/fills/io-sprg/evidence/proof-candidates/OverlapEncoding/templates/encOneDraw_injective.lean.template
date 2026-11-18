@@ -1,0 +1,24 @@
+import TCSlib.Complexity.CircuitComplexity.Uniform
+import TCSlib.Cryptography.Encoding.Modular
+import TCSlib.Complexity.TuringMachine.Encoding
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open Turing
+open TCSlib.Cryptography
+
+namespace IoSprgEncodingOverlap
+
+example (ell n W p width : ℕ) [NeZero p]
+    (hW : W ≤ 2 ^ (ell + 1)) (hp : p ≤ 2 ^ width) :
+    Function.Injective (fun r : (Fin ell → ZMod p) ×
+        (Fin n → Fin W × ZMod p) =>
+      pairEncode (Encoding.Modular.encodeVector width r.1)
+        (BoolCircuit.encodeList (fun c : Fin W × ZMod p =>
+          pairEncode (Candidates.natToList (ell + 1) c.1.val)
+            (Candidates.natToList width c.2.val)) (List.ofFn r.2))) := __PROBE_BODY__
+
+end IoSprgEncodingOverlap

@@ -1,0 +1,38 @@
+READ-ONLY SEARCHES; no Lean/exact?/apply?/materializer executed.
+
+1. Exact names outside owned area:
+rg -n 'seedBitsAt_le|theorem w_lower|theorem stretch_gaps|eventually_seed_relative_gap|jls_hasPolyStretch' TCSlib --glob '!**/Obfuscation/**'
+Result: no matches (exit1). Own constants cannot satisfy the isolated goals.
+
+2. Nearby construction shapes outside owned area:
+rg -n 'seedBitsAt|seedBits.*rpow|seedBits.*stretch|stretch.*relative|seed.*relative.*gap' TCSlib --glob '!**/Obfuscation/**'
+Result: no matches (exit1). This is a scoped negative name/shape search, not a proof of absence.
+
+3. Precise public components inspected:
+PolyExpr.eval_le in TCSlib/Complexity/Randomized/PolyExpr.lean:159
+  supplies C,c with p.eval n<=C*(n+1)^c. Used directly; no polynomial induction.
+Nat.div_two_lt_floor in Mathlib/Algebra/Order/Floor/Semifield.lean:92
+  1<=a -> a/2 < floor a. Used directly after rpow_natCast_mul.
+Nat.lt_floor_add_one in Mathlib/Algebra/Order/Floor/Semiring.lean:61
+  a < floor a+1. Used directly to read E0.
+tendsto_rpow_atTop in Mathlib/Analysis/SpecialFunctions/Pow/Asymptotics.lean:32
+  positive exponent gives a real-power limit. Used twice to absorb constants.
+Real.rpow_le_one_of_one_le_of_nonpos in Pow/Real.lean:654
+  1<=x, z<=0 -> x^z<=1. Used for final exponent comparison.
+Other exact APIs and signatures are copied from preferred packet APIs.tsv; current
+read-only inspection confirmed rpow_natCast_mul, rpow_mul, mul_rpow, rpow_neg,
+rpow_le_rpow, rpow_le_rpow_of_exponent_le, Nat.cast_div_le, quotient bounds and
+Filter.eventually_atTop/Tendsto.eventually_ge_atTop.
+
+4. Rejected public overlap explicitly recorded:
+PadQuad.exists_pow_dominates in TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:75
+  proves eventual generic PolyExpr domination by a monic natural power.
+Old02 and old06 are excluded. Preferred07 retains D=max1(C*2^c) and bounds
+D^eta by kappa^(epsilon/2) with existing positive-power growth. It proves no
+new eventual monic polynomial-normalization lemma and adds no such helper.
+
+All five goal-only templates contain exactly one marker, zero tactic blocks,
+no declaration/definition, no owned import and no previously sorried local
+lemma premise. Irrelevant BoolPRG sampler/index/representation data are omitted;
+outLen and its actual polynomial/stretch fields are arbitrary scalar inputs.
+The main result expands both SP-W3 conjuncts, including eventual kappa<=seed.

@@ -100,7 +100,16 @@ theorem indexMap_eq (φ : Fin m → Fin B) (rc : ℕ) (j : Fin m) :
 This is mathematical glue for the deterministic placement.
 
 **Proof sketch.** Earlier elements form a strict subset of the fiber because it contains `j`. -/
-theorem rank_lt_load (φ : Fin m → Fin B) (j : Fin m) : rank φ j < load φ (φ j) := sorry
+theorem rank_lt_load (φ : Fin m → Fin B) (j : Fin m) : rank φ j < load φ (φ j) := by
+  rw [rank_eq, load_eq, bucket_eq]
+  apply Finset.card_lt_card
+  refine (Finset.ssubset_iff_of_subset ?_).2 ?_
+  · intro i hi
+    exact Finset.mem_filter.mpr
+      ⟨Finset.mem_univ i, (Finset.mem_filter.mp hi).2.2⟩
+  · refine ⟨j, Finset.mem_filter.mpr ⟨Finset.mem_univ j, rfl⟩, ?_⟩
+    intro hj
+    exact (lt_irrefl j) (Finset.mem_filter.mp hj).2.1
 
 /-- Equal ranks in the same bucket identify an output [JLS26, construction, p. 15].
 This is mathematical glue for the deterministic placement.
@@ -108,7 +117,24 @@ This is mathematical glue for the deterministic placement.
 **Proof sketch.** If one index precedes the other, inclusion of the earlier index makes
 its rank strictly smaller; rule out both strict inequalities. -/
 theorem eq_of_rank_eq (φ : Fin m → Fin B) {i j : Fin m}
-    (hφ : φ i = φ j) (hr : rank φ i = rank φ j) : i = j := sorry
+    (hφ : φ i = φ j) (hr : rank φ i = rank φ j) : i = j := by
+  have hstrict : ∀ {a b : Fin m}, φ a = φ b → a < b → rank φ a < rank φ b := ?_
+  swap
+  · intro a b hab hablt
+    rw [rank_eq, rank_eq]
+    apply Finset.card_lt_card
+    refine (Finset.ssubset_iff_of_subset ?_).2 ?_
+    · intro x hx
+      rcases Finset.mem_filter.mp hx with ⟨_, hxa, hxφ⟩
+      exact Finset.mem_filter.mpr
+        ⟨Finset.mem_univ x, lt_trans hxa hablt, hxφ.trans hab⟩
+    · refine ⟨a, Finset.mem_filter.mpr ⟨Finset.mem_univ a, hablt, hab⟩, ?_⟩
+      intro ha
+      exact (lt_irrefl a) (Finset.mem_filter.mp ha).2.1
+  rcases lt_trichotomy i j with hij | hij | hji
+  · exact False.elim ((ne_of_lt (hstrict hφ hij)) hr)
+  · exact hij
+  · exact False.elim ((ne_of_lt (hstrict hφ.symm hji)) hr.symm)
 
 /-- Non-overfull placements assign a grid point to every output [JLS26, construction, p. 15].
 The optional representation changes no good-case position.
@@ -116,14 +142,22 @@ The optional representation changes no good-case position.
 **Proof sketch.** Use `rank_lt_load` and the capacity bound to prove the dependent test. -/
 theorem indexMap_some_of_not_overfull (φ : Fin m → Fin B) (rc : ℕ)
     (h : ¬ overfull φ (rc * rc)) (j : Fin m) :
-    ∃ c : Fin rc × Fin rc, indexMap φ rc j = some c := sorry
+    ∃ c : Fin rc × Fin rc, indexMap φ rc j = some c := by
+  have hn : ¬ ∃ b : Fin B, rc * rc < load φ b :=
+    fun hb => h ((overfull_iff φ (rc * rc)).mpr hb)
+  have hr : rank φ j < rc * rc :=
+    (rank_lt_load φ j).trans_le (le_of_not_gt fun hj => hn ⟨φ j, hj⟩)
+  refine ⟨finProdFinEquiv.symm ⟨rank φ j, hr⟩, ?_⟩
+  rw [indexMap_eq, dif_pos ⟨hn, hr⟩]
 
 /-- Overfull placements have no grid positions [JLS26, construction, p. 15].
 This replaces the paper's unused overfull default by `none` to allow empty grids.
 
 **Proof sketch.** The defining test has a false first conjunct. -/
 theorem indexMap_none_of_overfull (φ : Fin m → Fin B) (rc : ℕ)
-    (h : overfull φ (rc * rc)) (j : Fin m) : indexMap φ rc j = none := sorry
+    (h : overfull φ (rc * rc)) (j : Fin m) : indexMap φ rc j = none := by
+  rw [indexMap_eq]
+  exact dif_neg (fun ht => ht.1 ((overfull_iff φ (rc * rc)).mp h))
 
 /-- Non-overfull bucket positions are injective within each bucket
 [JLS26, construction of IdSamp', p. 15]. Increasing ranks fix the permitted injection.
@@ -132,7 +166,18 @@ theorem indexMap_none_of_overfull (φ : Fin m → Fin B) (rc : ℕ)
 then use `eq_of_rank_eq` in the common bucket. -/
 theorem indexMap_injective_on_bucket (φ : Fin m → Fin B) (rc : ℕ)
     (h : ¬ overfull φ (rc * rc)) {i j : Fin m} (hφ : φ i = φ j)
-    (hc : indexMap φ rc i = indexMap φ rc j) : i = j := sorry
+    (hc : indexMap φ rc i = indexMap φ rc j) : i = j := by
+  have hn : ¬ ∃ b : Fin B, rc * rc < load φ b :=
+    fun hb => h ((overfull_iff φ (rc * rc)).mpr hb)
+  have hi : rank φ i < rc * rc :=
+    (rank_lt_load φ i).trans_le (le_of_not_gt fun hi => hn ⟨φ i, hi⟩)
+  have hj : rank φ j < rc * rc :=
+    (rank_lt_load φ j).trans_le (le_of_not_gt fun hj => hn ⟨φ j, hj⟩)
+  rw [indexMap_eq φ rc i, indexMap_eq φ rc j,
+    dif_pos ⟨hn, hi⟩, dif_pos ⟨hn, hj⟩] at hc
+  have hr : (⟨rank φ i, hi⟩ : Fin (rc * rc)) = ⟨rank φ j, hj⟩ :=
+    finProdFinEquiv.symm.injective (Option.some.inj hc)
+  exact eq_of_rank_eq φ hφ (congrArg Fin.val hr)
 
 end Positions
 
@@ -162,7 +207,19 @@ remove every other summand by injectivity within the bucket. -/
 theorem bucketMatrix_apply_indexMap (φ : Fin m → Fin B) (rc : ℕ)
     (corr : Fin m → R) (h : ¬ overfull φ (rc * rc)) (j : Fin m)
     (c : Fin rc × Fin rc) (hc : indexMap φ rc j = some c) :
-    bucketMatrix φ rc corr (φ j) c.1 c.2 = corr j := sorry
+    bucketMatrix φ rc corr (φ j) c.1 c.2 = corr j := by
+  rw [bucketMatrix_eq]
+  change (∑ k : Fin m,
+    if φ k = φ j ∧ indexMap φ rc k = some c then corr k else 0) = corr j
+  rw [Finset.sum_eq_single j]
+  · exact if_pos ⟨rfl, hc⟩
+  · intro k _ hkj
+    apply if_neg
+    intro hk
+    apply hkj
+    exact indexMap_injective_on_bucket φ rc h hk.1 (hk.2.trans hc.symm)
+  · intro hj
+    exact False.elim (hj (Finset.mem_univ j))
 
 /-- A correction matrix has at most as many nonzero entries as supported outputs in its bucket
 [JLS26, sampling algorithm 1SdSamp, p. 16]. The finite cardinal bound avoids rank theory.
@@ -173,7 +230,30 @@ theorem bucketMatrix_nonzero_card_le [DecidableEq R] (φ : Fin m → Fin B) (rc 
     (corr : Fin m → R) (bad : Finset (Fin m)) (hcorr : ∀ j, j ∉ bad → corr j = 0)
     (b : Fin B) :
     (Finset.univ.filter (fun c : Fin rc × Fin rc =>
-      bucketMatrix φ rc corr b c.1 c.2 ≠ 0)).card ≤ (bucket φ b ∩ bad).card := sorry
+      bucketMatrix φ rc corr b c.1 c.2 ≠ 0)).card ≤ (bucket φ b ∩ bad).card := by
+  classical
+  let S := bucket φ b ∩ bad
+  let T := Finset.univ.filter (fun c : Fin rc × Fin rc =>
+    bucketMatrix φ rc corr b c.1 c.2 ≠ 0)
+  change T.card ≤ S.card
+  calc
+    T.card = (T.image (fun c => some c)).card :=
+      (Finset.card_image_of_injective T (fun _ _ he => Option.some.inj he)).symm
+    _ ≤ (S.image (indexMap φ rc)).card := Finset.card_le_card ?_
+    _ ≤ S.card := Finset.card_image_le
+  intro oc hoc
+  rcases Finset.mem_image.mp hoc with ⟨c, hc, rfl⟩
+  have hM := (Finset.mem_filter.mp hc).2
+  rw [bucketMatrix_eq] at hM
+  rcases Finset.exists_ne_zero_of_sum_ne_zero hM with ⟨j, _, hj⟩
+  by_cases hgood : φ j = b ∧ indexMap φ rc j = some (c.1, c.2)
+  · rw [if_pos hgood] at hj
+    refine Finset.mem_image.mpr ⟨j, Finset.mem_inter.mpr ⟨?_, ?_⟩, hgood.2⟩
+    · rw [bucket_eq]
+      exact Finset.mem_filter.mpr ⟨Finset.mem_univ j, hgood.1⟩
+    · by_contra hbad
+      exact hj (hcorr j hbad)
+  · exact False.elim (hj (if_neg hgood))
 
 end Matrices
 

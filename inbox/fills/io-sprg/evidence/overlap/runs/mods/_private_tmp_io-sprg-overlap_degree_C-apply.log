@@ -1,0 +1,1326 @@
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.eq_zero_of_add_eq_zero_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_beq_eq_true ?_)
+  -- Remaining subgoals:
+  -- ⊢ Nat.beq 0 (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = true
+Try this:
+  [apply] refine Nat.eq_self_sub_one.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) = MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) - 1
+Try this:
+  [apply] refine Eq.symm (Nat.le_antisymm ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ≤ 0
+Try this:
+  [apply] refine Nat.eq_zero_of_le_zero ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ≤ 0
+Try this:
+  [apply] refine Nat.le_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ≤ 0
+Try this:
+  [apply] refine Nat.sub_one_eq_self.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) - 1 = MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.succ_inj'.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Nat.succ 0 = (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)).succ
+Try this:
+  [apply] refine Nat.lt_one_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) < 1
+Try this:
+  [apply] refine Nat.eq_zero_of_not_pos ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬0 < MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.add_right_cancel ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Int.ofNat_eq_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = 0
+Try this:
+  [apply] refine Nat.eq_zero_of_zero_dvd ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ∣ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+Try this:
+  [apply] refine Nat.zero_dvd.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ∣ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.succ_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Nat.succ 0 = (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)).succ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.eq_zero_of_gcd_eq_zero_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.eq_zero_of_gcd_eq_zero_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.sub_one_cancel ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 < 0
+  -- ⊢ 0 < MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+  -- ⊢ 0 - 1 = MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) - 1
+Try this:
+  [apply] refine Nat.two_pow_mod_two_eq_one.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 2 ^ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) % 2 = 1
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.add_one_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 + 1 = MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) + 1
+Try this:
+  [apply] refine Nat.eq_zero_of_two_mul_le ?_
+  -- Remaining subgoals:
+  -- ⊢ 2 * MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ≤ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.eq_zero_of_dvd_of_div_eq_zero ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.self_eq_add_right.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.self_eq_add_left.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.pred_inj ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 < 0
+  -- ⊢ 0 < MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+  -- ⊢ Nat.pred 0 = (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)).pred
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.left_eq_add.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.eq_zero_of_le_div ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.eq_of_mul_eq_mul_left ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.eq_zero_of_mul_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.eq_iff_le_and_ge.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ∧
+    MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ≤ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.eq_zero_of_dvd_of_lt ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.add_left_cancel ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_eq_left.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.eq_of_mul_eq_mul_right ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.eq_zero_of_add_eq_zero_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_lt_succ_of_not_lt ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 < MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) + 1
+  -- ⊢ ¬0 < MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+Try this:
+  [apply] refine Nat.eq_zero_of_le_div_two ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ≤ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) / 2
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_le_of_lt_succ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ≤ 0
+  -- ⊢ 0 < MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) + 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_eq_right.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a b n} hn => (Nat.pow_left_inj hn).mp) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_left_eq_self.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.le_antisymm_iff.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ∧
+    MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ≤ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_right_eq_self.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.right_eq_add.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.pred_eq_self_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)).pred =
+    MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Int.neg_ofNat_eq_negSucc_add_one_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ -↑0 = Int.negSucc (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) + 1
+Try this:
+  [apply] refine Nat.testBit_one_eq_true_iff_self_eq_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.testBit 1 (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = true
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Int.negSucc_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Int.negSucc 0 = Int.negSucc (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.shiftLeft_eq_zero_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Fin.last_eq_zero_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Fin.last (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = 0
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Int.subNat_eq_zero_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Int.subNatNat 0 (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Fin.zero_eq_mk.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Int.ofNat_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ↑0 = ↑(MvPolynomial.weightedTotalDegree w (MvPolynomial.C a))
+Try this:
+  [apply] refine Fin.zero_eq_last_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 = Fin.last (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a))
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Int.negSucc_add_one_eq_neg_ofNat_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Int.negSucc 0 + 1 = -↑(MvPolynomial.weightedTotalDegree w (MvPolynomial.C a))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Fin.mk_eq_zero.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.dvd_antisymm ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 ∣ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ∣ 0
+Try this:
+  [apply] refine Int.natCast_eq_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a m n} ha => (Nat.pow_right_inj ha).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Int.natCast_nonpos_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) ≤ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m k n} => Nat.add_left_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Int.natCast_le_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) ≤ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a b c} ha => (Nat.mul_left_inj ha).mp) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (List.replicate_eq_nil_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {n a b} hn ha hb => (Nat.div_eq_iff_eq_of_dvd_dvd hn ha hb).mp) (fun a => ?_) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (BitVec.zero_eq_one_iff (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a))).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0#(MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) =
+    1#(MvPolynomial.weightedTotalDegree w (MvPolynomial.C a))
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Nat.mul_self_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 * 0 =
+    MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) * MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+Try this:
+  [apply] refine BitVec.one_eq_zero_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 1#(MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) =
+    0#(MvPolynomial.weightedTotalDegree w (MvPolynomial.C a))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a b c} ha => (Nat.mul_right_inj ha).mp) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine BitVec.intMin_eq_zero_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ BitVec.intMin (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) =
+    0#(MvPolynomial.weightedTotalDegree w (MvPolynomial.C a))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.mul_left_cancel ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.range'_eq_nil_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m k n} => Nat.add_right_cancel_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.range_eq_nil.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ List.range (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = []
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_dvd_of_lt_two_mul ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 ≠ 0
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ∣ 0
+  -- ⊢ 0 < 2 * MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.ofFn_eq_nil_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m k n} => Nat.add_left_cancel_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Array.replicate_eq_empty_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m k n} => Nat.add_right_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Array.mkArray_eq_empty_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a b d} hda hdb => (Nat.div_left_inj hda hdb).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine UInt8.isUTF8FirstByte_getElem_utf8EncodeChar.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} p {n k} => (Nat.mul_right_cancel_iff p).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.isUTF8FirstByte_getElem_utf8Encode_singleton.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.mul_right_cancel ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Array.ofFn_eq_empty_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Array.range'_eq_empty_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} p {m k} => (Nat.mul_left_cancel_iff p).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Array.range_eq_empty_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Array.range (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = #[]
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_dvd_of_div_eq_one ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 ∣ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) / 0 = 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Vector.size_zero_iff_forall_not_mem.mpr fun a => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_testBit_eq ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ℕ), Nat.testBit 0 i = (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)).testBit i
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Vector.toArray_eq_empty_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Vector.toList_eq_nil_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n a b} {ha} {hb} => Fin.mk.inj_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Vector.toList_eq_empty_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Int.natCast_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ↑0 = ↑(MvPolynomial.weightedTotalDegree w (MvPolynomial.C a))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Vector.back?_eq_none_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (List.getElem?_inj ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Rat.natCast_eq_zero_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsMulTorsionFree.pow_eq_one_iff_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.compare_eq_eq.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ compare 0 (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = Ordering.eq
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsAddTorsionFree.nsmul_eq_zero_iff_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Rat.natCast_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ↑0 = ↑(MvPolynomial.weightedTotalDegree w (MvPolynomial.C a))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsAddTorsionFree.nsmul_eq_zero_iff' ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Rat.ofNat_eq_ofNat.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ OfNat.ofNat 0 = OfNat.ofNat (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsMulTorsionFree.pow_eq_one_iff' ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.eq_zero_of_double_le ?_
+  -- Remaining subgoals:
+  -- ⊢ 2 * MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ≤ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {a} {n m} => List.replicate_left_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.eq_zero_of_le_half ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ≤ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) / 2
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Nat.dvd_right_iff_eq.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a_1 : ℕ), 0 ∣ a_1 ↔ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ∣ a_1
+Try this:
+  [apply] refine Finset.range_eq_empty_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Finset.range (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = ∅
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Nat.dvd_left_iff_eq.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a_1 : ℕ), a_1 ∣ 0 ↔ a_1 ∣ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+Try this:
+  [apply] refine Nat.isAddUnit_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ IsAddUnit (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {l} h {i} {hi} {j} {hj} => (List.Nodup.getElem_inj_iff h).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine zero_pow_eq_one₀.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.finRange_eq_nil.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ List.finRange (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = []
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n a} {h} {a'} {h'} => Fin.mk_eq_mk.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.cast_eq_zero.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {n m} => Fin.equiv_iff_eq.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Nonempty (Fin 0 ≃ Fin (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)))
+Try this:
+  [apply] refine Nat.sqrt_eq_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)).sqrt = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {R} [AddMonoidWithOne R] [CharZero R] {m n} => Nat.cast_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (isUnit_pow_iff_of_not_isUnit fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.cast_nonpos.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.cast_lt_one.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {m n} h => (Nat.factorial_inj' h).mp) ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 1 < 0 ∨ 1 < MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+  -- ⊢ Nat.factorial 0 = (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)).factorial
+Try this:
+  [apply] refine Rat.natCast_eq_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = 0
+Try this:
+  [apply] refine Eq.symm ((fun {m n} hn => (Nat.factorial_inj hn).mp) ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 1 < 0
+  -- ⊢ Nat.factorial 0 = (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)).factorial
+Try this:
+  [apply] refine (MvPolynomial.weightedTotalDegree_eq_zero_iff ?_ (MvPolynomial.C a)).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.NonTorsionWeight w
+  -- ⊢ ∀ m ∈ (MvPolynomial.C a).support, ∀ (x : σ), m x = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {M₀} [MonoidWithZero M₀] [LinearOrder M₀] [PosMulStrictMono M₀] {a} {m n} [ZeroLEOneClass M₀] ha₀ ha₁ =>
+        (pow_right_inj₀ ha₀ ha₁).mp)
+      ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine MvPolynomial.isWeightedHomogeneous_zero_iff_weightedTotalDegree_eq_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.IsWeightedHomogeneous w (MvPolynomial.C a) 0
+Try this:
+  [apply] refine Nat.eq_of_beq_eq_true ?_
+  -- Remaining subgoals:
+  -- ⊢ (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)).beq 0 = true
+Try this:
+  [apply] refine Eq.symm ((fun {n m} => Nat.succPNat_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Nat.succPNat 0 = (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)).succPNat
+Try this:
+  [apply] refine Nat.le_antisymm ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ≤ 0
+  -- ⊢ 0 ≤ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {M} [CancelCommMonoidWithZero M] {q} hq hq' {m n} => (pow_inj_of_not_isUnit hq hq').mp) (fun a => ?_) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {M} [CancelMonoidWithZero M] [IsMulTorsionFree M] {x} hx hx' {n m} =>
+        (IsMulTorsionFree.pow_right_inj₀ hx hx').mp)
+      ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {M} [CancelMonoid M] [IsMulTorsionFree M] {x} hx {n m} => (IsMulTorsionFree.pow_right_inj hx).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.succ_inj'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)).succ = Nat.succ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_right_cancel ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.succ_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)).succ = Nat.succ 0
+Try this:
+  [apply] refine Nat.sub_one_cancel ?_ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+  -- ⊢ 0 < 0
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) - 1 = 0 - 1
+Try this:
+  [apply] refine Nat.add_one_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) + 1 = 0 + 1
+Try this:
+  [apply] refine Nat.pred_inj ?_ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+  -- ⊢ 0 < 0
+  -- ⊢ (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)).pred = Nat.pred 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.eq_of_mul_eq_mul_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.eq_iff_le_and_ge.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ≤ 0 ∧
+    0 ≤ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_left_cancel ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.eq_of_mul_eq_mul_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.eq_of_lt_succ_of_not_lt ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) < 0 + 1
+  -- ⊢ ¬MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) < 0
+Try this:
+  [apply] refine Nat.eq_of_le_of_lt_succ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) < 0 + 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.pow_left_inj fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.le_antisymm_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ≤ 0 ∧
+    0 ≤ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+Try this:
+  [apply] refine Int.neg_ofNat_eq_negSucc_add_one_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ -↑(MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = Int.negSucc 0 + 1
+Try this:
+  [apply] refine Int.negSucc_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Int.negSucc (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = Int.negSucc 0
+Try this:
+  [apply] refine Int.subNat_eq_zero_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Int.subNatNat (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) 0 = 0
+Try this:
+  [apply] refine Int.ofNat_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = ↑0
+Try this:
+  [apply] refine Int.negSucc_add_one_eq_neg_ofNat_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Int.negSucc (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) + 1 = -↑0
+Try this:
+  [apply] refine Nat.dvd_antisymm ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ∣ 0
+  -- ⊢ 0 ∣ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.pow_right_inj ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_left_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_left_inj fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.div_eq_iff_eq_of_dvd_dvd (fun a => ?_) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.mul_self_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) * MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) =
+    0 * 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_right_inj fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.mul_left_cancel ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_right_cancel_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.eq_of_dvd_of_lt_two_mul ?_ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ≠ 0
+  -- ⊢ 0 ∣ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) < 2 * 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_left_cancel_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_right_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.div_left_inj ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_right_cancel_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.mul_right_cancel ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_left_cancel_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.eq_of_dvd_of_div_eq_one ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ∣ 0
+  -- ⊢ 0 / MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) = 1
+Try this:
+  [apply] refine Nat.eq_of_testBit_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ℕ), (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)).testBit i = Nat.testBit 0 i
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Fin.mk.inj_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Int.natCast_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = ↑0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.getElem?_inj ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.compare_eq_eq.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compare (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) 0 = Ordering.eq
+Try this:
+  [apply] refine Rat.natCast_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = ↑0
+Try this:
+  [apply] refine Rat.ofNat_eq_ofNat.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ OfNat.ofNat (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = OfNat.ofNat 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.replicate_left_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.dvd_right_iff_eq.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a_1 : ℕ), MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ∣ a_1 ↔ 0 ∣ a_1
+Try this:
+  [apply] refine Nat.dvd_left_iff_eq.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a_1 : ℕ), a_1 ∣ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ↔ a_1 ∣ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (List.Nodup.getElem_inj_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Fin.mk_eq_mk.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Fin.equiv_iff_eq.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Nonempty (Fin (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) ≃ Fin 0)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.cast_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Nat.factorial_inj' ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 1 < MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ∨ 1 < 0
+  -- ⊢ (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)).factorial = Nat.factorial 0
+Try this:
+  [apply] refine (Nat.factorial_inj ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 1 < MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+  -- ⊢ (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)).factorial = Nat.factorial 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pow_right_inj₀ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.succPNat_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)).succPNat = Nat.succPNat 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pow_inj_of_not_isUnit (fun a => ?_) ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsMulTorsionFree.pow_right_inj₀ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsMulTorsionFree.pow_right_inj ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Subsingleton.eq_zero (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (map_eq_zero_iff ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AddEquiv.map_eq_zero_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AddEquivClass.map_eq_zero_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine EmbeddingLike.map_eq_zero_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine left_eq_add.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine add_eq_left.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine add_eq_right.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine right_eq_add.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (eq_zero_iff_eq_zero_of_add_eq_zero ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (eq_zero_iff_eq_zero_of_add_eq_zero ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine two_nsmul_eq_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 2 • MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsAddTorsionFree.nsmul_eq_zero_iff_right fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (AddOpposite.op_eq_zero_iff (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a))).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ AddOpposite.op (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = 0
+Try this:
+  [apply] refine (MulOpposite.op_eq_zero_iff (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a))).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ MulOpposite.op (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = 0
+Try this:
+  [apply] refine ofAdd_eq_one.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Multiplicative.ofAdd (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = 1
+Try this:
+  [apply] refine not_neZero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬NeZero (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a))
+Try this:
+  [apply] refine isAddUnit_iff_eq_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ IsAddUnit (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine eq_zero_of_add_left' ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine eq_zero_of_add_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AddRightCancelMonoid.eq_zero_of_add_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AddLeftCancelMonoid.eq_zero_of_add_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AddRightCancelMonoid.eq_zero_of_add_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AddLeftCancelMonoid.eq_zero_of_add_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsAddUnit.add_eq_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine eq_zero_of_add_right' ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsAddUnit.add_eq_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine eq_zero_of_add_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine eq_zero_of_add_nonneg_right ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine eq_zero_of_add_nonpos_left ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine eq_zero_of_add_nonpos_right ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine eq_zero_of_add_nonneg_left ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Finset.eq_zero_of_sum_eq_zero ?_ ?_ (MvPolynomial.C a) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.const_eq_zero.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.notMem_support.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.C a ∉ Function.support (MvPolynomial.weightedTotalDegree w)
+Try this:
+  [apply] refine Function.nmem_support.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.C a ∉ Function.support (MvPolynomial.weightedTotalDegree w)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_eq_zero_iff_right fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_eq_zero_iff_left fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine zero_eq_mul_self.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 = MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) * MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+Try this:
+  [apply] refine mul_self_eq_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) * MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine pow_eq_zero ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pow_eq_zero_iff fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine eq_zero_of_pow_eq_zero ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine eq_zero_of_mul_self_eq_zero ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) * MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) = 0
+Try this:
+  [apply] refine sq_eq_zero_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ^ 2 = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine eq_zero_of_mul_eq_self_left (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine eq_zero_of_mul_eq_self_right (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine eq_zero_of_zero_eq_one ?_ (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a))
+  -- Remaining subgoals:
+  -- ⊢ 0 = 1
+Try this:
+  [apply] refine (Units.mul_right_eq_zero ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℕˣ
+  -- ⊢ ↑?_ * MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) = 0
+Try this:
+  [apply] refine (Units.mul_left_eq_zero ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℕˣ
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) * ↑?_ = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsUnit.mul_right_eq_zero ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsUnit.mul_left_eq_zero ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsCancelVAdd.eq_zero_of_vadd ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine MonoidWithZeroHom.one_apply_eq_zero_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (RingEquiv.map_eq_zero_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (smul_eq_zero_iff_eq ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsUnit.smul_eq_zero ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Module.eq_zero_of_zero_eq_one (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (smul_eq_zero_iff_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (smul_eq_zero_iff_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine nonpos_iff_eq_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ≤ 0
+Try this:
+  [apply] refine toColex_eq_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ toColex (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = 0
+Try this:
+  [apply] refine toLex_eq_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ toLex (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.all_zero_of_le_zero_le_of_sum_eq_zero (fun x => ?_) ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Multiset.all_zero_of_le_zero_le_of_sum_eq_zero (fun x => ?_) ?_
+    (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (nsmul_eq_zero_iff fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (sq_nonpos_iff (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a))).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ^ 2 ≤ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine eq_zero_of_mul_self_add_mul_self_eq_zero ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine AddSubmonoid.mem_bot.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ∈ ⊥
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AddSubmonoid.mk_eq_zero ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsSMulRegular.eq_zero_of_smul_eq_zero (fun ⦃a₁⦄ => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsSMulRegular.right_eq_zero_of_smul (fun ⦃a₁⦄ => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (LinearMap.map_eq_zero_iff ?_ fun ⦃a₁⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (LinearEquiv.map_eq_zero_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine eq_zero_of_zero_dvd ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ∣ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+Try this:
+  [apply] refine zero_dvd_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ∣ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Finsupp.single_eq_zero.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Nonneg.mk_eq_zero ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)
+  -- ⊢ ⟨MvPolynomial.weightedTotalDegree w (MvPolynomial.C a), ?_⟩ = 0
+Try this:
+  [apply] refine Set.mem_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ∈ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Submodule.mk_eq_zero ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Submodule.mem_bot ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine WithZero.exp_eq_one.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ WithZero.exp (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Submodule.span_singleton_eq_bot.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LinearIndependent.eq_zero_of_smul_mem_span (fun ⦃a₁⦄ => ?_) ?_
+    (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LinearIndepOn.eq_zero_of_smul_mem_span (fun ⦃a₁⦄ => ?_) ?_
+    (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LinearIndependent.not_smul_mem_span (fun ⦃a₁⦄ => ?_) ?_
+    (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine add_self_eq_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) + MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) = 0
+Try this:
+  [apply] refine NonUnitalSubsemiring.mem_bot.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ∈ ⊥
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (algebraMap.lift_map_eq_zero_iff ℕ ?_
+        (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a))).mp
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (FaithfulSMul.algebraMap_eq_zero_iff ℕ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (algebraMap.coe_eq_zero_iff ℕ ?_ (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a))).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (LinearMap.toSpanSingleton_eq_zero_iff ?_ ℕ).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine WithTop.coe_eq_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = 0
+Try this:
+  [apply] refine WithBot.zero_eq_coe.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 = ↑(MvPolynomial.weightedTotalDegree w (MvPolynomial.C a))
+Try this:
+  [apply] refine WithTop.zero_eq_coe.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 = ↑(MvPolynomial.weightedTotalDegree w (MvPolynomial.C a))
+Try this:
+  [apply] refine WithBot.coe_eq_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = 0
+Try this:
+  [apply] refine le_zero_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ≤ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Module.Basis.forall_coord_eq_zero_iff ?_).mp fun i => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (LinearMap.mulRight_eq_zero_iff ?_ ℕ (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a))).mp
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (LinearMap.mulLeft_eq_zero_iff ?_ ℕ (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a))).mp
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Finset.mem_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ MvPolynomial.weightedTotalDegree w (MvPolynomial.C a) ∈ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Associated.eq_zero_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Associated.eq_zero_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (associated_zero_iff_eq_zero (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a))).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Associated (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) 0
+Try this:
+  [apply] refine Associates.mk_eq_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Associates.mk (MvPolynomial.weightedTotalDegree w (MvPolynomial.C a)) = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsRightRegular.mul_right_eq_zero_iff fun ⦃a₁⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsLeftRegular.mul_left_eq_zero_iff fun ⦃a₁⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_right_mem_nonZeroDivisorsRight_eq_zero_iff fun y => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine eq_zero_of_ne_zero_of_mul_left_eq_zero (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine mul_left_coe_nonZeroDivisors_eq_zero_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine eq_zero_of_ne_zero_of_mul_right_eq_zero (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_left_mem_nonZeroDivisorsLeft_eq_zero_iff fun y => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine mul_right_coe_nonZeroDivisors_eq_zero_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_left_mem_nonZeroDivisors_eq_zero_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_right_mem_nonZeroDivisors_eq_zero_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsAddRightRegular.add_right_eq_self_iff fun ⦃a₁⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsAddLeftRegular.add_left_eq_self_iff fun ⦃a₁⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine NonUnitalAlgebra.mem_bot.mp fun t => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine MonoidAlgebra.single_eq_zero.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AddMonoidAlgebra.single_eq_zero.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine MvPolynomial.C_eq_zero.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine MvPolynomial.monomial_eq_zero.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Finsupp.NonTorsionWeight.eq_zero_of_smul_eq_zero ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+/private/tmp/io-sprg-overlap/degree_C-apply.lean:13:0: warning: declaration uses 'sorry'

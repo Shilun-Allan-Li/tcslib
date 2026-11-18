@@ -1,0 +1,14 @@
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace IoSprgEncodingOverlap
+
+example (ell : ℕ) (δ : ℚ) (hδ : 0 < δ) (hδ1 : δ < 1) :
+    (max 1 ⌊(ell : ℝ) ^ ((δ : ℝ) / 2)⌋₊) ^ 2 ≤ 2 ^ (ell + 1) := by
+  apply?
+
+end IoSprgEncodingOverlap

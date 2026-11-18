@@ -1,0 +1,14 @@
+import TCSlib.Cryptography.Asymptotic.UniversalPadding.Parameter
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace IoSprgParamsOverlap
+
+example (E L : ℕ) (hE : 1 ≤ E) :
+    Nat.findGreatest (fun κ => κ ^ E ≤ L) L ≤ L := by
+  apply?
+
+end IoSprgParamsOverlap

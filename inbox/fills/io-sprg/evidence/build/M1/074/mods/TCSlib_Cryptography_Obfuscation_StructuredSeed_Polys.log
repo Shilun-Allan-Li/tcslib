@@ -1,0 +1,153 @@
+2026-11-18T16:01:56.702885+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:348:14: error: typeclass instance problem is stuck, it is often due to metavariables
+  CommSemiring ?m.153
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:339:11: error: unsolved goals
+case pos
+P : Params
+κ : ℕ
+pp : PrimeParam κ
+I' : P.Idx' κ pp
+k : Fin κ
+h : Fin (P.n κ) →₀ ℕ
+offset : ℕ
+copy : Bool
+a : Fin (P.ℓ κ + 1)
+h✝¹ : ¬↑a = P.ℓ κ
+h✝ : ↑a < P.ℓ κ
+⊢ pubDegree
+      (match none with
+      | none => 0
+      | some i => MvPolynomial.C (-I'.2.2 i ⟨↑a, h✝⟩)) ≤
+    0
+
+case neg
+P : Params
+κ : ℕ
+pp : PrimeParam κ
+I' : P.Idx' κ pp
+k : Fin κ
+h : Fin (P.n κ) →₀ ℕ
+offset : ℕ
+copy : Bool
+a : Fin (P.ℓ κ + 1)
+h✝¹ : ¬↑a = P.ℓ κ
+h✝ : ¬↑a < P.ℓ κ
+⊢ pubDegree
+      (match none with
+      | none => 0
+      | some i => MvPolynomial.X (P.bVar κ k i)) ≤
+    0
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:354:12: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  P.bVar ?κ ?k ?i
+in the target expression
+  pubDegree
+      (match some i with
+      | none => 1
+      | some i => MvPolynomial.X (P.bVar κ k i)) ≤
+    1
+
+case neg
+P : Params
+κ : ℕ
+pp : PrimeParam κ
+I' : P.Idx' κ pp
+k : Fin κ
+h : Fin (P.n κ) →₀ ℕ
+offset : ℕ
+copy : Bool
+a : Fin (P.ℓ κ + 1)
+i : Fin (P.n κ)
+h✝¹ : ↑a = P.ℓ κ
+h✝ : ¬↑a < P.ℓ κ
+⊢ pubDegree
+      (match some i with
+      | none => 1
+      | some i => MvPolynomial.X (P.bVar κ k i)) ≤
+    1
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:349:13: error: unsolved goals
+case pos
+P : Params
+κ : ℕ
+pp : PrimeParam κ
+I' : P.Idx' κ pp
+k : Fin κ
+h : Fin (P.n κ) →₀ ℕ
+offset : ℕ
+copy : Bool
+a : Fin (P.ℓ κ + 1)
+i : Fin (P.n κ)
+h✝¹ : ¬↑a = P.ℓ κ
+h✝ : ↑a < P.ℓ κ
+⊢ pubDegree
+      (match some i with
+      | none => 0
+      | some i => MvPolynomial.C (-I'.2.2 i ⟨↑a, h✝⟩)) ≤
+    1
+
+case neg
+P : Params
+κ : ℕ
+pp : PrimeParam κ
+I' : P.Idx' κ pp
+k : Fin κ
+h : Fin (P.n κ) →₀ ℕ
+offset : ℕ
+copy : Bool
+a : Fin (P.ℓ κ + 1)
+i : Fin (P.n κ)
+h✝¹ : ¬↑a = P.ℓ κ
+h✝ : ¬↑a < P.ℓ κ
+⊢ pubDegree
+      (match some i with
+      | none => 0
+      | some i => MvPolynomial.X (P.bVar κ k i)) ≤
+    1
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:374:2: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  f ≥ 0
+  e ≥ 0
+  e - f ≥ 1
+  c ≥ 0
+  b ≥ 0
+  b - e ≥ 0
+  a ≥ 0
+  a - b ≥ 0
+  a - c ≤ 0
+where
+ a := ↑(∑ i, pubDegree (P.linearCoeff κ pp I' k (Internal.monomialSlot h (offset + ↑i)) (α i)))
+ b := ↑(pubDegree (∏ i, P.linearCoeff κ pp I' k (Internal.monomialSlot h (offset + ↑i)) (α i)))
+ c := ↑↑{x | (Internal.monomialSlot h (offset + ↑x)).isSome = true}.card
+ e := ↑(pubDegree
+    ((∏ r, P.linearCoeff κ pp I' k (Internal.monomialSlot h (offset + ↑r)) (α r)) *
+      MvPolynomial.X (P.sVar κ k copy (Sum.inl α))))
+ f := ↑{r | (Internal.monomialSlot h (offset + ↑r)).isSome = true}.card
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:381:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:390:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:399:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:408:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:417:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:426:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:445:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:463:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys): no fresh .olean produced
+        3.33 real         2.71 user         1.03 sys
+          2353790976  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              185681  page reclaims
+                  13  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  18  voluntary context switches
+                7814  involuntary context switches
+            31956122  instructions retired
+            14439962  cycles elapsed
+             1622352  peak memory footprint
+2026-11-18T16:02:00.058506+00:00 END rc=1

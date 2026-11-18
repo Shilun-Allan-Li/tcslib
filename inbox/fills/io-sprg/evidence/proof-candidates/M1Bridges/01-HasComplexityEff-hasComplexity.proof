@@ -1,0 +1,6 @@
+by
+  obtain ⟨_f, _hf, hQ⟩ := (hasComplexityEff_iff S dPub dPriv).mp h
+  apply (hasComplexity_iff S dPub dPriv).mpr
+  intro κ I
+  obtain ⟨Q, _hgen, hdeg, heval⟩ := hQ κ I
+  exact ⟨Q, hdeg, heval⟩

@@ -1,0 +1,37 @@
+--- /private/tmp/io-sprg-proof-notes/LPNRawEncoding/01-encDraw_injective.proof
++++ /private/tmp/io-sprg-proof-notes/ProofSyntaxFix/LPNRawEncoding/01-encDraw_injective.proof
+@@ -3,7 +3,8 @@
+     pairEncode (Nat.bits c.1.val) (Candidates.natToList (F.residueBits.eval ℓ) c.2.val)
+   let block : Fin (F.noiseDen ℓ) × ZMod (F.modulus ℓ) → List Bool := fun c =>
+     pairEncode (payload c) []
+-  have hpayload : Function.Injective payload
++  have hpayload : Function.Injective payload := ?_
++  swap
+   · intro a b h
+     change pairEncode _ _ = pairEncode _ _ at h
+     have hp := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h
+@@ -14,7 +15,8 @@
+         ((ZMod.val_lt a.2).trans_le (F.modulus_le_pow ℓ))
+         ((ZMod.val_lt b.2).trans_le (F.modulus_le_pow ℓ))
+         (congrArg Prod.snd hp)
+-  have hlist : Function.Injective (BoolCircuit.encodeList block)
++  have hlist : Function.Injective (BoolCircuit.encodeList block) := ?_
++  swap
+   · intro xs
+     induction xs with
+     | nil =>
+@@ -36,11 +38,12 @@
+         change pairEncode (payload x) [] ++ BoolCircuit.encodeList block xs =
+           pairEncode (payload y) [] ++ BoolCircuit.encodeList block ys at hcodes
+         have hp : (payload x, BoolCircuit.encodeList block xs) =
+-            (payload y, BoolCircuit.encodeList block ys)
++            (payload y, BoolCircuit.encodeList block ys) := ?_
++        swap
+         · apply pairEncode_injective
+           simpa only [pairEncode_eq_dbl, List.append_nil, List.append_assoc] using hcodes
+         exact congrArg₂ List.cons (hpayload (congrArg Prod.fst hp))
+-          (ih ys (congrArg Prod.snd hp))
++          (ih (congrArg Prod.snd hp))
+   intro r s h
+   rw [F.encDraw_eq, F.encDraw_eq] at h
+   have houter := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h

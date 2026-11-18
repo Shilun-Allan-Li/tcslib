@@ -1,0 +1,21 @@
+import Mathlib.Data.List.FinRange
+import Mathlib.Data.Matrix.Mul
+import Mathlib.Data.Finset.Card
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open scoped BigOperators
+
+namespace IoSprgBucketsSparseOverlap
+
+example {rows cols : ℕ} {R : Type*} [Semiring R] [DecidableEq R]
+    (M : Matrix (Fin rows) (Fin cols) R) :
+    (((List.finRange rows).flatMap (fun i =>
+        (List.finRange cols).map (fun j => (i, j)))).filter
+          (fun c => decide (M c.1 c.2 ≠ 0))).Nodup := by
+  apply?
+
+end IoSprgBucketsSparseOverlap

@@ -1,0 +1,4 @@
+show (MvPolynomial.X i : MvPolynomial σ R).support.sup (Finsupp.weight w) ≤ w i from
+    Finset.sup_le fun d hd =>
+      ((MvPolynomial.isWeightedHomogeneous_X w i)
+        (MvPolynomial.mem_support_iff.mp hd)).le

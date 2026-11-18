@@ -1,0 +1,456 @@
+Try this:
+  [apply] refine Function.HasLeftInverse.injective ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.HasLeftInverse fun I =>
+    pairEncode (enc I.1)
+      (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+        (Encoding.Modular.encodeMatrix width I.2.2))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.LeftInverse.injective fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.surjective_comp_right_iff_injective.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.injective_iff_hasLeftInverse.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Nonempty (α × (Fin m → Fin B) × Matrix (Fin n) (Fin ell) (ZMod p))
+  -- ⊢ Function.HasLeftInverse fun I =>
+    pairEncode (enc I.1)
+      (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+        (Encoding.Modular.encodeMatrix width I.2.2))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.injective_of_isPartialInv fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.Injective.of_comp_right (fun ⦃a₁⦄ => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.Bijective.injective ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Bijective fun I =>
+    pairEncode (enc I.1)
+      (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+        (Encoding.Modular.encodeMatrix width I.2.2))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.RightInverse.injective fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Injective.of_comp_iff (fun ⦃a₁⦄ => ?_) fun I =>
+        pairEncode (enc I.1)
+          (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+            (Encoding.Modular.encodeMatrix width I.2.2))).mp
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.injective_of_subsingleton fun I =>
+    pairEncode (enc I.1)
+      (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+        (Encoding.Modular.encodeMatrix width I.2.2)))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.injective_comp_left_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Injective.of_comp_iff'
+        (fun I =>
+          pairEncode (enc I.1)
+            (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+              (Encoding.Modular.encodeMatrix width I.2.2)))
+        ?_).mp
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.Injective.of_comp fun ⦃a₁⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.rangeFactorization_bijective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Bijective
+    (Set.rangeFactorization fun I =>
+      pairEncode (enc I.1)
+        (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+          (Encoding.Modular.encodeMatrix width I.2.2)))
+Try this:
+  [apply] refine Set.rangeFactorization_injective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective
+    (Set.rangeFactorization fun I =>
+      pairEncode (enc I.1)
+        (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+          (Encoding.Modular.encodeMatrix width I.2.2)))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine injective_of_lt_imp_ne fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine injective_of_le_imp_le
+    (fun I =>
+      pairEncode (enc I.1)
+        (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+          (Encoding.Modular.encodeMatrix width I.2.2)))
+    fun {x} => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (EmbeddingLike.comp_injective
+        (fun I =>
+          pairEncode (enc I.1)
+            (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+              (Encoding.Modular.encodeMatrix width I.2.2)))
+        ?_).mp
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (EquivLike.injective_comp ?_ fun I =>
+        pairEncode (enc I.1)
+          (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+            (Encoding.Modular.encodeMatrix width I.2.2))).mp
+    fun ⦃a₁⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (EquivLike.comp_injective
+        (fun I =>
+          pairEncode (enc I.1)
+            (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+              (Encoding.Modular.encodeMatrix width I.2.2)))
+        ?_).mp
+    fun ⦃a₁⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.comp_injective
+        (fun I =>
+          pairEncode (enc I.1)
+            (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+              (Encoding.Modular.encodeMatrix width I.2.2)))
+        ?_).mp
+    fun ⦃a₁⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.injective_comp ?_ fun I =>
+        pairEncode (enc I.1)
+          (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+            (Encoding.Modular.encodeMatrix width I.2.2))).mp
+    fun ⦃a₁⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine StrictAnti.injective fun ⦃a⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Antitone.strictAnti_iff_injective fun ⦃a⦄ => ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder (α × (Fin m → Fin B) × Matrix (Fin n) (Fin ell) (ZMod p))
+  -- ⊢ ∀ ⦃a b : α × (Fin m → Fin B) × Matrix (Fin n) (Fin ell) (ZMod p)⦄,
+    a ≤ b →
+      (fun I =>
+            pairEncode (enc I.1)
+              (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+                (Encoding.Modular.encodeMatrix width I.2.2)))
+          b ≤
+        (fun I =>
+            pairEncode (enc I.1)
+              (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+                (Encoding.Modular.encodeMatrix width I.2.2)))
+          a
+  -- ⊢ StrictAnti fun I =>
+    pairEncode (enc I.1)
+      (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+        (Encoding.Modular.encodeMatrix width I.2.2))
+  -- ⊢ ∀ ⦃b : α × (Fin m → Fin B) × Matrix (Fin n) (Fin ell) (ZMod p)⦄,
+    _fvar.42554 ≤ b →
+      (fun I =>
+            pairEncode (enc I.1)
+              (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+                (Encoding.Modular.encodeMatrix width I.2.2)))
+          b ≤
+        (fun I =>
+            pairEncode (enc I.1)
+              (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+                (Encoding.Modular.encodeMatrix width I.2.2)))
+          _fvar.42554
+  -- ⊢ _fvar.42554 ≤ _fvar.42641 →
+    (fun I =>
+          pairEncode (enc I.1)
+            (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+              (Encoding.Modular.encodeMatrix width I.2.2)))
+        _fvar.42641 ≤
+      (fun I =>
+          pairEncode (enc I.1)
+            (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+              (Encoding.Modular.encodeMatrix width I.2.2)))
+        _fvar.42554
+  -- ⊢ (fun I =>
+        pairEncode (enc I.1)
+          (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+            (Encoding.Modular.encodeMatrix width I.2.2)))
+      _fvar.42641 ≤
+    (fun I =>
+        pairEncode (enc I.1)
+          (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+            (Encoding.Modular.encodeMatrix width I.2.2)))
+      _fvar.42554
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine StrictMono.injective fun ⦃a⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Monotone.strictMono_iff_injective fun ⦃a⦄ => ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder (α × (Fin m → Fin B) × Matrix (Fin n) (Fin ell) (ZMod p))
+  -- ⊢ ∀ ⦃a b : α × (Fin m → Fin B) × Matrix (Fin n) (Fin ell) (ZMod p)⦄,
+    a ≤ b →
+      (fun I =>
+            pairEncode (enc I.1)
+              (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+                (Encoding.Modular.encodeMatrix width I.2.2)))
+          a ≤
+        (fun I =>
+            pairEncode (enc I.1)
+              (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+                (Encoding.Modular.encodeMatrix width I.2.2)))
+          b
+  -- ⊢ StrictMono fun I =>
+    pairEncode (enc I.1)
+      (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+        (Encoding.Modular.encodeMatrix width I.2.2))
+  -- ⊢ ∀ ⦃b : α × (Fin m → Fin B) × Matrix (Fin n) (Fin ell) (ZMod p)⦄,
+    _fvar.43280 ≤ b →
+      (fun I =>
+            pairEncode (enc I.1)
+              (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+                (Encoding.Modular.encodeMatrix width I.2.2)))
+          _fvar.43280 ≤
+        (fun I =>
+            pairEncode (enc I.1)
+              (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+                (Encoding.Modular.encodeMatrix width I.2.2)))
+          b
+  -- ⊢ _fvar.43280 ≤ _fvar.43367 →
+    (fun I =>
+          pairEncode (enc I.1)
+            (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+              (Encoding.Modular.encodeMatrix width I.2.2)))
+        _fvar.43280 ≤
+      (fun I =>
+          pairEncode (enc I.1)
+            (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+              (Encoding.Modular.encodeMatrix width I.2.2)))
+        _fvar.43367
+  -- ⊢ (fun I =>
+        pairEncode (enc I.1)
+          (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+            (Encoding.Modular.encodeMatrix width I.2.2)))
+      _fvar.43280 ≤
+    (fun I =>
+        pairEncode (enc I.1)
+          (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+            (Encoding.Modular.encodeMatrix width I.2.2)))
+      _fvar.43367
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine injective_of_increasing ?_ ?_
+    (fun I =>
+      pairEncode (enc I.1)
+        (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+          (Encoding.Modular.encodeMatrix width I.2.2)))
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine GaloisCoinsertion.l_injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine GaloisInsertion.u_injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.injective_iff_pairwise_ne.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Pairwise
+    (Function.onFun (fun x1 x2 => x1 ≠ x2) fun I =>
+      pairEncode (enc I.1)
+        (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+          (Encoding.Modular.encodeMatrix width I.2.2)))
+Try this:
+  [apply] refine Set.image_injective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective
+    (Set.image fun I =>
+      pairEncode (enc I.1)
+        (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+          (Encoding.Modular.encodeMatrix width I.2.2)))
+Try this:
+  [apply] refine Set.preimage_surjective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Surjective
+    (Set.preimage fun I =>
+      pairEncode (enc I.1)
+        (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+          (Encoding.Modular.encodeMatrix width I.2.2)))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Set.injective_codRestrict ?_).mp fun ⦃a₁⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.injective_iff_injOn_univ.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.InjOn
+    (fun I =>
+      pairEncode (enc I.1)
+        (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+          (Encoding.Modular.encodeMatrix width I.2.2)))
+    Set.univ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Set.InjOn.injective_iff ?_ (fun ⦃x₁⦄ => ?_) ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.injOn_univ.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.InjOn
+    (fun I =>
+      pairEncode (enc I.1)
+        (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+          (Encoding.Modular.encodeMatrix width I.2.2)))
+    Set.univ
+Try this:
+  [apply] refine PLift.map_injective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective
+    (PLift.map fun I =>
+      pairEncode (enc I.1)
+        (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+          (Encoding.Modular.encodeMatrix width I.2.2)))
+Try this:
+  [apply] refine ULift.map_injective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective
+    (ULift.map fun I =>
+      pairEncode (enc I.1)
+        (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+          (Encoding.Modular.encodeMatrix width I.2.2)))
+Try this:
+  [apply] refine List.map_injective_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective
+    (List.map fun I =>
+      pairEncode (enc I.1)
+        (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+          (Encoding.Modular.encodeMatrix width I.2.2)))
+Try this:
+  [apply] refine Fintype.nodup_map_univ_iff_injective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Fintype (α × (Fin m → Fin B) × Matrix (Fin n) (Fin ell) (ZMod p))
+  -- ⊢ (Multiset.map
+      (fun I =>
+        pairEncode (enc I.1)
+          (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+            (Encoding.Modular.encodeMatrix width I.2.2)))
+      Finset.univ.val).Nodup
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.Surjective.injective_of_fintype ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Finite.injective_iff_surjective_of_equiv ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Finite (α × (Fin m → Fin B) × Matrix (Fin n) (Fin ell) (ZMod p))
+  -- ⊢ α × (Fin m → Fin B) × Matrix (Fin n) (Fin ell) (ZMod p) ≃ List Bool
+  -- ⊢ Function.Surjective fun I =>
+    pairEncode (enc I.1)
+      (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+        (Encoding.Modular.encodeMatrix width I.2.2))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Set.injective_iff_injective_of_iUnion_eq_univ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Setoid.injective_iff_ker_bot fun I =>
+        pairEncode (enc I.1)
+          (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn I.2.1))
+            (Encoding.Modular.encodeMatrix width I.2.2))).mpr
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Topology.IsEmbedding.injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsHomeomorph.injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Topology.IsInducing.injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsDenseEmbedding.injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsUniformEmbedding.injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsUniformInducing.injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine iSupIndep.injective (fun i => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AntilipschitzWith.injective fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Isometry.injective fun x1 => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LinearIndependent.injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AffineIndependent.injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Polynomial.Separable.injective_of_prod_X_sub_C ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Polynomial.separable_prod_X_sub_C_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Field (List Bool)
+  -- ⊢ Fintype (α × (Fin m → Fin B) × Matrix (Fin n) (Fin ell) (ZMod p))
+  -- ⊢ (∏ i,
+      (Polynomial.X -
+        Polynomial.C
+          (pairEncode (enc i.1)
+            (pairEncode (BoolCircuit.encodeList (fun b => Candidates.natToList B ↑b) (List.ofFn i.2.1))
+              (Encoding.Modular.encodeMatrix width i.2.2))))).Separable
+/private/tmp/io-sprg-overlap/Encoding_encIdx'_injective-apply.lean:15:0: warning: declaration uses 'sorry'
+/private/tmp/io-sprg-overlap/Encoding_encIdx'_injective-apply.lean:16:5: warning: unused variable `hp`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/Encoding_encIdx'_injective-apply.lean:16:48: warning: unused variable `henc`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

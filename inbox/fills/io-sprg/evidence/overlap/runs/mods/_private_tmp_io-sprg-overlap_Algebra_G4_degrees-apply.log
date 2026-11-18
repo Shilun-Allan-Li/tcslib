@@ -1,0 +1,431 @@
+`apply?` stopped because it was running out of time.
+You may get better results using `set_option maxHeartbeats 0`.
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q,
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q) ≤
+    (d, 2)
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q,
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q) ≤
+    (2, d)
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ d ≤ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q
+  -- ⊢ Set.Icc d (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q) ⊆
+    Set.Icc (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q) 2
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ 2 ≤ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q
+  -- ⊢ Set.Icc 2 (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q) ⊆
+    Set.Icc (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q) d
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ 2 < MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q
+  -- ⊢ Set.Ioc 2 (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q) ⊆
+    Set.Ioc (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q) d
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ d < MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q
+  -- ⊢ Set.Ioc d (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q) ⊆
+    Set.Ioc (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q) 2
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ DenselyOrdered ℕ
+  -- ⊢ d < MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q
+  -- ⊢ Set.Ioo d (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q) ⊆
+    Set.Ioo (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q) 2
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ DenselyOrdered ℕ
+  -- ⊢ 2 < MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q
+  -- ⊢ Set.Ioo 2 (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q) ⊆
+    Set.Ioo (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q) d
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ d < MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q
+  -- ⊢ Set.Ico d (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q) ⊆
+    Set.Ico (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q) 2
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ 2 < MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q
+  -- ⊢ Set.Ico 2 (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q) ⊆
+    Set.Ico (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q) d
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ d ≤ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q
+  -- ⊢ Finset.Icc d (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q) ⊆
+    Finset.Icc (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q) 2
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ 2 ≤ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q
+  -- ⊢ Finset.Icc 2 (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q) ⊆
+    Finset.Icc (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q) d
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ d < MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q
+  -- ⊢ Finset.Ico d (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q) ⊆
+    Finset.Ico (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q) 2
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ 2 < MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q
+  -- ⊢ Finset.Ico 2 (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q) ⊆
+    Finset.Ico (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q) d
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ d < MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q
+  -- ⊢ Multiset.Ico d (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q) ⊆
+    Multiset.Ico (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q) 2
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ 2 < MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q
+  -- ⊢ Multiset.Ico 2 (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q) ⊆
+    Multiset.Ico (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q) d
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2 ∧
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2 ∧
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2 ∧
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2 ∧
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2 ∧
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d →
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2 →
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ Prop
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d →
+    (?_ ↔ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2)
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧ ?_
+  -- ⊢ ?_ ↔ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ Prop
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2 →
+    (?_ ↔ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d)
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2 ∧ ?_
+  -- ⊢ ?_ ↔ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ Prop
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d →
+    (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2 ↔ ?_)
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧ ?_
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2 ↔ ?_
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ Prop
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2 →
+    (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ↔ ?_)
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2 ∧ ?_
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ↔ ?_
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ Prop
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2 →
+    (?_ ↔ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d)
+  -- ⊢ ?_ ∧ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ ?_ ↔ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ Prop
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d →
+    (?_ ↔ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2)
+  -- ⊢ ?_ ∧ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d
+  -- ⊢ ?_ ↔ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ Prop
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2 →
+    (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ↔ ?_)
+  -- ⊢ ?_ ∧ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ↔ ?_
+Try this:
+  [apply] refine let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+  ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (Q : MvPolynomial (σ' ⊕ τ') R),
+    let Q := (MvPolynomial.rename (Sum.map ⇑e ⇑f)) (∑ k, q k);
+    MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d ∧
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2
+  -- ⊢ Prop
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d →
+    (MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2 ↔ ?_)
+  -- ⊢ ?_ ∧ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) Q ≤ d
+  -- ⊢ MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) Q ≤ 2 ↔ ?_
+/private/tmp/io-sprg-overlap/Algebra_G4_degrees-apply.lean:26:72: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (100000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.

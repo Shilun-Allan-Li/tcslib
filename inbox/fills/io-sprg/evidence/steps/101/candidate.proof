@@ -1,0 +1,9 @@
+by
+  rw [SPRG.Raw.hasComplexity_iff, jlsSPRG_raw_eq]
+  intro κ I
+  refine ⟨P.G4 κ (π κ) I, ?_, ?_⟩
+  · exact fun j => P.G4_degrees κ (π κ) I j
+  · have hsampler := jlsSPRG_raw_sdSamp P π κ I
+    rw [jlsSPRG_raw_eq] at hsampler
+    rw [hsampler]
+    exact P.G4_seed_allOutputs κ (π κ) I

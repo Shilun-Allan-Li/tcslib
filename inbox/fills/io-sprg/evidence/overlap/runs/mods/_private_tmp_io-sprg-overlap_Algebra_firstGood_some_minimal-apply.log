@@ -1,0 +1,202 @@
+Try this:
+  [apply] refine eq_false_of_ne_true ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬flags q = true
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a b} => Bool.not_eq_not.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Bool.of_not_eq_true ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬flags q = true
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a b} => Bool.not_not_eq.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Bool.eq_false_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ flags q ≠ true
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Bool.and_or_inj_right ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Bool.eq_false_of_le_false ?_
+  -- Remaining subgoals:
+  -- ⊢ flags q ≤ false
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a b} => Bool.coe_iff_coe.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Bool.eq_true_imp_eq_false.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ flags q = true → flags q = false
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m x y} => Bool.and_or_inj_right_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Bool.toNat_eq_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (flags q).toNat = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {x y z} => Bool.bne_right_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Option.guard_lt_some ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : Fin κ), ¬x < x
+  -- ⊢ Option.guard flags q < some q
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a b} => Bool.eq_iff_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Option.guard_eq_none_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Option.guard flags q = none
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {x y z} => Bool.xor_left_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Bool.le_antisymm ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ false ≤ flags q
+  -- ⊢ flags q ≤ false
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Bool.and_or_inj_left ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.false_of_mem_take_findIdx ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {x y} => Bool.not_inj_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Array.false_of_mem_extract_findIdx ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Bool.not_inj ?_)
+  -- Remaining subgoals:
+  -- ⊢ (!false) = !flags q
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m x y} => Bool.and_or_inj_left_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Bool.bool_iff_false.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬flags q = true
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {x y z} => Bool.xor_right_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Bool.eq_false_of_not_eq_true' ?_
+  -- Remaining subgoals:
+  -- ⊢ (!decide (flags q = true)) = true
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {x y z} => Bool.bne_left_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Bool.eq_false_of_not_eq_true ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬flags q = true
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {b b'} => BitVec.ofBool_eq_iff_eq.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Bool.bool_eq_false ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬flags q = true
+Try this:
+  [apply] refine Bool.not_eq_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬flags q = !false
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a b} => Bool.ne_not.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Bool.not_not_eq.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬(!flags q) = false
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Bool.and_or_inj_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Bool.coe_iff_coe.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ flags q = true ↔ false = true
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Bool.and_or_inj_right_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Bool.bne_right_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Bool.eq_iff_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ flags q = true ↔ false = true
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Bool.xor_left_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Bool.le_antisymm ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ flags q ≤ false
+  -- ⊢ false ≤ flags q
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Bool.and_or_inj_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Bool.not_inj_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (!flags q) = !false
+Try this:
+  [apply] refine Bool.not_inj ?_
+  -- Remaining subgoals:
+  -- ⊢ (!flags q) = !false
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Bool.and_or_inj_left_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Bool.xor_right_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Bool.bne_left_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine BitVec.ofBool_eq_iff_eq.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ BitVec.ofBool (flags q) = BitVec.ofBool false
+Try this:
+  [apply] refine Bool.ne_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ flags q ≠ !false
+/private/tmp/io-sprg-overlap/Algebra_firstGood_some_minimal-apply.lean:12:0: warning: declaration uses 'sorry'
+/private/tmp/io-sprg-overlap/Algebra_firstGood_some_minimal-apply.lean:13:5: warning: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/Algebra_firstGood_some_minimal-apply.lean:13:62: warning: unused variable `hq`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

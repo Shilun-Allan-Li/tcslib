@@ -1,0 +1,40 @@
+2026-11-18T15:51:40.205892+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Buckets
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Buckets.lean:212:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  ∑ x ∈ ?m.33, ?m.34 x
+in the target expression
+  (fun u v => ∑ j_1, if φ j_1 = φ j ∧ indexMap φ rc j_1 = some (u, v) then corr j_1 else 0) c.1 c.2 = corr j
+
+R : Type u_1
+m B : ℕ
+inst✝ : AddCommMonoid R
+φ : Fin m → Fin B
+rc : ℕ
+corr : Fin m → R
+h : ¬overfull φ (rc * rc)
+j : Fin m
+c : Fin rc × Fin rc
+hc : indexMap φ rc j = some c
+⊢ (fun u v => ∑ j_1, if φ j_1 = φ j ∧ indexMap φ rc j_1 = some (u, v) then corr j_1 else 0) c.1 c.2 = corr j
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Buckets.lean:227:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Buckets): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Buckets): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Buckets): no fresh .olean produced
+        1.78 real         1.23 user         0.82 sys
+          1553186816  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              125976  page reclaims
+                  11  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  17  voluntary context switches
+                7879  involuntary context switches
+            31829344  instructions retired
+            14162721  cycles elapsed
+             1622352  peak memory footprint
+2026-11-18T15:51:42.010383+00:00 END rc=1

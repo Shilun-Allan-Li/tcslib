@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Basic
 import TCSlib.Cryptography.Obfuscation.StructuredSeed.Params
 import Mathlib.Logic.Equiv.Fin.Basic
 import Mathlib.Algebra.BigOperators.Fin
@@ -405,53 +406,130 @@ theorem idxBound_eq (P : Params) : P.idxBound =
 /-- The scheduled LPN dimension is bounded by `ellBound`; glue.
 
 **Proof sketch.** Read the dimension equation and the power/variable equations of PolyExpr. -/
-theorem ell_le_ellBound (P : Params) (κ : ℕ) : P.ℓ κ ≤ P.ellBound.eval κ := sorry
+theorem ell_le_ellBound (P : Params) (κ : ℕ) : P.ℓ κ ≤ P.ellBound.eval κ := by
+  rw [P.ℓ_eq, P.ellBound_eq, PolyExpr.eval_pow, PolyExpr.eval_var]
 
 /-- The scheduled Boolean seed length is bounded by `nBound`; glue.
 
 **Proof sketch.** Read the seed-length equation and substitute the dimension-bound equality. -/
-theorem n_le_nBound (P : Params) (κ : ℕ) : P.n κ ≤ P.nBound.eval κ := sorry
+theorem n_le_nBound (P : Params) (κ : ℕ) : P.n κ ≤ P.nBound.eval κ := by
+  rw [P.n_eq, P.nBound_eq, PolyExpr.eval_pow]
+  exact Nat.pow_le_pow_left (P.ell_le_ellBound κ) P.D
 
 /-- The scheduled output length is bounded by `mBound`; glue.
 
 **Proof sketch.** Read PolyExpr substitution and apply the Boolean primitive's output bound. -/
-theorem m_le_mBound (P : Params) (κ : ℕ) : P.m κ ≤ P.mBound.eval κ := sorry
+theorem m_le_mBound (P : Params) (κ : ℕ) : P.m κ ≤ P.mBound.eval κ := by
+  rw [P.m_eq, P.mBound_eq, PolyExpr.eval_subst]
+  exact (P.G.outLen_le _).trans (PolyExpr.eval_mono _ (P.n_le_nBound κ))
 
 /-- The rounded noise denominator satisfies `W ≤ ell+1` at every parameter.
 [JLS26, Section 4, p. 15]. Dv3 rounds the noise rate upward; SP-W1 supplies `0<delta<1`.
 
 **Proof sketch.** At dimension zero, max-one rounding gives W=1. At positive dimension,
 compare the squared floor with the real power `ell^delta`, then use delta<1 and ell≥1. -/
-theorem W_le_ell_add_one (P : Params) (κ : ℕ) : P.W κ ≤ P.ℓ κ + 1 := sorry
+theorem W_le_ell_add_one (P : Params) (κ : ℕ) : P.W κ ≤ P.ℓ κ + 1 := by
+  have hδ : 0 < (P.δ : ℝ) := Rat.cast_pos.mpr P.δ_pos
+  by_cases hL : P.ℓ κ = 0
+  · rw [P.W_eq, P.w_eq, P.noiseWidth_eq, hL]
+    norm_num [Real.zero_rpow (div_pos hδ zero_lt_two).ne']
+  · have hL1 : 1 ≤ P.ℓ κ := Nat.one_le_iff_ne_zero.mpr hL
+    have hL1r : 1 ≤ (P.ℓ κ : ℝ) := Nat.one_le_cast.mpr hL1
+    have hx : 1 ≤ (P.ℓ κ : ℝ) ^ ((P.δ : ℝ) / 2) :=
+      Real.one_le_rpow hL1r (div_nonneg hδ.le zero_le_two)
+    have hf : 1 ≤ ⌊(P.ℓ κ : ℝ) ^ ((P.δ : ℝ) / 2)⌋₊ :=
+      (Nat.one_le_floor_iff _).mpr hx
+    have hw : (P.w κ : ℝ) ≤ (P.ℓ κ : ℝ) ^ ((P.δ : ℝ) / 2) := ?_
+    swap
+    · rw [P.w_eq, P.noiseWidth_eq, max_eq_right hf]
+      exact Nat.floor_le (zero_le_one.trans hx)
+    have hδ1 : (P.δ : ℝ) ≤ 1 := ?_
+    swap
+    · exact_mod_cast P.δ_lt_one.le
+    have hp : (P.ℓ κ : ℝ) ^ (P.δ : ℝ) ≤ (P.ℓ κ : ℝ) :=
+      (Real.rpow_le_rpow_of_exponent_le hL1r hδ1).trans_eq (Real.rpow_one _)
+    have hsq : (P.w κ : ℝ) ^ 2 ≤ (P.ℓ κ : ℝ) := ?_
+    swap
+    · calc
+        (P.w κ : ℝ) ^ 2 ≤ ((P.ℓ κ : ℝ) ^ ((P.δ : ℝ) / 2)) ^ 2 :=
+          pow_le_pow_left₀ (Nat.cast_nonneg _) hw 2
+        _ = (P.ℓ κ : ℝ) ^ (P.δ : ℝ) := ?_
+        _ ≤ (P.ℓ κ : ℝ) := hp
+      rw [← Real.rpow_mul_natCast (Nat.cast_nonneg (P.ℓ κ)), Nat.cast_ofNat,
+        div_mul_cancel₀ _ (two_ne_zero : (2 : ℝ) ≠ 0)]
+    have hW : (P.W κ : ℝ) ≤ (P.ℓ κ : ℝ) := ?_
+    swap
+    · rw [P.W_eq, Nat.cast_pow]
+      exact hsq
+    exact (Nat.cast_le.mp hW).trans (Nat.le_succ _)
 
 /-- Every noise selector fits in `ell+1` bits. [JLS26, Section 4, p. 15]. Dv15 fixes the
 finite selector code used by the exact draw.
 
 **Proof sketch.** Combine W≤ell+1 with the existing natural bound `ell+1 ≤ 2^(ell+1)`. -/
 theorem W_le_two_pow_ell_add_one (P : Params) (κ : ℕ) :
-    P.W κ ≤ 2 ^ (P.ℓ κ + 1) := sorry
+    P.W κ ≤ 2 ^ (P.ℓ κ + 1) :=
+  (P.W_le_ell_add_one κ).trans Nat.lt_two_pow_self.le
 
 /-- The rounded bucket count is bounded by `bucketBound`; glue.
 
 **Proof sketch.** W≥1 bounds the rounded quotient by m*kappa+1; substitute mBound. -/
-theorem B_le_bucketBound (P : Params) (κ : ℕ) : P.B κ ≤ P.bucketBound.eval κ := sorry
+theorem B_le_bucketBound (P : Params) (κ : ℕ) : P.B κ ≤ P.bucketBound.eval κ := by
+  have hW := P.W_pos κ
+  have hmul := Nat.le_mul_of_pos_right (P.m κ * κ) hW
+  have hnum : P.m κ * κ + P.W κ - 1 < (P.m κ * κ + 1) * P.W κ := ?_
+  swap
+  · rw [Nat.add_mul, Nat.one_mul]
+    omega
+  have hquot : (P.m κ * κ + P.W κ - 1) / P.W κ ≤ P.m κ * κ :=
+    Nat.le_of_lt_succ ((Nat.div_lt_iff_lt_mul hW).2 hnum)
+  simp only [P.B_eq, P.t_eq, P.bucketBound_eq, PolyExpr.eval_add,
+    PolyExpr.eval_mul, PolyExpr.eval_var, PolyExpr.eval_const]
+  apply max_le
+  · exact Nat.succ_le_succ (Nat.zero_le _)
+  · exact Nat.le_add_right_of_le
+      (hquot.trans (Nat.mul_le_mul_right κ (P.m_le_mBound κ)))
 
 /-- The grid side is bounded by `rcBound`; glue.
 
 **Proof sketch.** The rounded width is at most ell+1; multiply by t=kappa and read ellBound. -/
-theorem rc_le_rcBound (P : Params) (κ : ℕ) : P.rc κ ≤ P.rcBound.eval κ := sorry
+theorem rc_le_rcBound (P : Params) (κ : ℕ) : P.rc κ ≤ P.rcBound.eval κ := by
+  have hwW : P.w κ ≤ P.W κ := ?_
+  swap
+  · rw [P.W_eq]
+    exact Nat.le_pow (Nat.succ_pos 1)
+  have hw := hwW.trans (P.W_le_ell_add_one κ)
+  simp only [P.rc_eq, P.t_eq, P.rcBound_eq, PolyExpr.eval_mul,
+    PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const]
+  exact Nat.mul_le_mul_left κ
+    (hw.trans (Nat.add_le_add_right (P.ell_le_ellBound κ) 1))
 
 /-- The one-instance private length is bounded by `sVarBound`; glue.
 
 **Proof sketch.** Apply monotonicity to the tensor power, bucket count and two factor products. -/
-theorem sLen_le_sVarBound (P : Params) (κ : ℕ) : P.sLen κ ≤ P.sVarBound.eval κ := sorry
+theorem sLen_le_sVarBound (P : Params) (κ : ℕ) : P.sLen κ ≤ P.sVarBound.eval κ := by
+  simp only [P.sLen_eq, P.t_eq, P.sVarBound_eq, PolyExpr.eval_add,
+    PolyExpr.eval_mul, PolyExpr.eval_pow, PolyExpr.eval_const, PolyExpr.eval_var]
+  exact Nat.add_le_add
+    (Nat.pow_le_pow_left (Nat.add_le_add_right (P.ell_le_ellBound κ) 1) P.D)
+    (Nat.mul_le_mul (P.B_le_bucketBound κ)
+      (Nat.add_le_add
+        (Nat.mul_le_mul (P.rc_le_rcBound κ) le_rfl)
+        (Nat.mul_le_mul le_rfl (P.rc_le_rcBound κ))))
 
 /-- The public residue count is bounded by the common seed polynomial.
 [JLS26, SdSamp', p. 16]. Dv2 counts the field-vector coordinates.
 
 **Proof sketch.** The public count equals pubBound; discard the nonnegative private summand. -/
 theorem pubLen_le_seedBound (P : Params) (κ : ℕ) :
-    P.pubLen κ ≤ P.seedBound.eval κ := sorry
+    P.pubLen κ ≤ P.seedBound.eval κ := by
+  have hpub : P.pubLen κ ≤ P.pubBound.eval κ := ?_
+  swap
+  · simp only [P.pubLen_eq, P.pubBound_eq, PolyExpr.eval_add,
+      PolyExpr.eval_mul, PolyExpr.eval_var, PolyExpr.eval_const]
+    exact Nat.add_le_add_right (Nat.mul_le_mul_left κ (P.n_le_nBound κ)) 1
+  rw [P.seedBound_eq, PolyExpr.eval_add]
+  exact Nat.le_add_right_of_le hpub
 
 /-- The private residue count is bounded by the common seed polynomial.
 [JLS26, SdSamp', p. 16]. Dv2 counts flag and both private-vector copies.
@@ -459,7 +537,15 @@ theorem pubLen_le_seedBound (P : Params) (κ : ℕ) :
 **Proof sketch.** Bound sLen by sVarBound, multiply the flag/two-copy expression by kappa,
 then add the nonnegative public summand. -/
 theorem privLen_le_seedBound (P : Params) (κ : ℕ) :
-    P.privLen κ ≤ P.seedBound.eval κ := sorry
+    P.privLen κ ≤ P.seedBound.eval κ := by
+  have hs := P.sLen_le_sVarBound κ
+  have hsum : 1 + (P.sLen κ + P.sLen κ) ≤ 1 + 2 * P.sVarBound.eval κ := ?_
+  swap
+  · rw [two_mul]
+    exact Nat.add_le_add_left (Nat.add_le_add hs hs) 1
+  simp only [P.privLen_eq, P.seedBound_eq, PolyExpr.eval_add,
+    PolyExpr.eval_mul, PolyExpr.eval_var, PolyExpr.eval_const]
+  exact Nat.le_add_left_of_le (Nat.mul_le_mul_left κ hsum)
 
 /-- The bucket-placement code retains every finite coordinate.
 [JLS26, IdSamp', p. 15]. Dv15 makes faithfulness explicit.
@@ -467,7 +553,18 @@ theorem privLen_le_seedBound (P : Params) (κ : ℕ) :
 **Proof sketch.** Recover the fixed-width blocks from the existing list code, use the
 numeral round-trip bound B≤2^B, and apply function extensionality. -/
 theorem encBuckets_injective (P : Params) (κ : ℕ) :
-    Function.Injective (P.encBuckets κ) := sorry
+    Function.Injective (P.encBuckets κ) := by
+  have helem : Function.Injective
+      (fun b : Fin (P.B κ) => Candidates.natToList (P.B κ) b.val) := ?_
+  swap
+  · intro a b hab
+    exact Fin.ext (Candidates.natToList_injOn
+      (a.isLt.trans Nat.lt_two_pow_self) (b.isLt.trans Nat.lt_two_pow_self) hab)
+  have hlist := Internal.encodeList_injective_of_fixedWidth helem (P.B κ)
+    (fun b => Candidates.length_natToList (P.B κ) b.val)
+  intro φ ψ h
+  rw [P.encBuckets_eq, P.encBuckets_eq] at h
+  exact List.ofFn_injective (hlist h)
 
 /-- The construction index code retains the complete Boolean index, bucket placement and
 matrix. [JLS26, IdSamp', p. 15]. Dv15 makes faithfulness explicit.
@@ -475,7 +572,18 @@ matrix. [JLS26, IdSamp', p. 15]. Dv15 makes faithfulness explicit.
 **Proof sketch.** Split both nested pairs, apply the input primitive's index injectivity,
 the bucket-code injectivity, and the shared modular matrix injectivity with pp's width. -/
 theorem encIdx'_injective (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
-    Function.Injective (P.encIdx' κ pp) := sorry
+    Function.Injective (P.encIdx' κ pp) := by
+  intro x y h
+  rw [P.encIdx'_eq, P.encIdx'_eq] at h
+  have houter := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h
+  have hinner := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _))
+    (congrArg Prod.snd houter)
+  apply Prod.ext
+  · exact P.G.encIdx_injective (P.n κ) (congrArg Prod.fst houter)
+  · apply Prod.ext
+    · exact P.encBuckets_injective κ (congrArg Prod.fst hinner)
+    · exact Encoding.Modular.encodeMatrix_injective (κ + 1) pp.le_two_pow
+        (congrArg Prod.snd hinner)
 
 /-- The exact index-draw code retains every draw component.
 [JLS26, IdSamp', p. 15]. Dv15 and Dv17 make the exact-draw encoding faithful.
@@ -483,7 +591,18 @@ theorem encIdx'_injective (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
 **Proof sketch.** Split both pairs and apply the input primitive's draw injectivity,
 the bucket-code injectivity, and the shared modular matrix injectivity. -/
 theorem encIdDraw_injective (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
-    Function.Injective (P.encIdDraw κ pp) := sorry
+    Function.Injective (P.encIdDraw κ pp) := by
+  intro x y h
+  rw [P.encIdDraw_eq, P.encIdDraw_eq] at h
+  have houter := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h
+  have hinner := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _))
+    (congrArg Prod.snd houter)
+  apply Prod.ext
+  · exact P.G.encIdDraw_injective (P.n κ) (congrArg Prod.fst houter)
+  · apply Prod.ext
+    · exact P.encBuckets_injective κ (congrArg Prod.fst hinner)
+    · exact Encoding.Modular.encodeMatrix_injective (κ + 1) pp.le_two_pow
+        (congrArg Prod.snd hinner)
 
 /-- One repetition's code retains its common secret and every selector/residue pair.
 [JLS26, 1SdSamp, p. 16]. Dv3 and Dv15 fix the exact noise draw and its widths.
@@ -491,7 +610,39 @@ theorem encIdDraw_injective (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
 **Proof sketch.** Split the pair, recover the fixed-length list blocks, use the two numeral
 round trips and modular vector injectivity, and combine the recovered coordinates. -/
 theorem encOneDraw_injective (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
-    Function.Injective (P.encOneDraw κ pp) := sorry
+    Function.Injective (P.encOneDraw κ pp) := by
+  let f : Fin (P.W κ) × ZMod pp.p → List Bool := fun c =>
+    pairEncode (Candidates.natToList (P.ℓ κ + 1) c.1.val)
+      (Candidates.natToList (κ + 1) c.2.val)
+  have helem : Function.Injective f := ?_
+  swap
+  · intro x y h
+    change pairEncode _ _ = pairEncode _ _ at h
+    have hp := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h
+    apply Prod.ext
+    · exact Fin.ext (Candidates.natToList_injOn
+        (x.1.isLt.trans_le (P.W_le_two_pow_ell_add_one κ))
+        (y.1.isLt.trans_le (P.W_le_two_pow_ell_add_one κ))
+        (congrArg Prod.fst hp))
+    · apply ZMod.val_injective pp.p
+      exact Candidates.natToList_injOn
+        ((ZMod.val_lt x.2).trans_le pp.le_two_pow)
+        ((ZMod.val_lt y.2).trans_le pp.le_two_pow)
+        (congrArg Prod.snd hp)
+  have hwidth : ∀ c, (f c).length = 2 * (P.ℓ κ + 1) + 2 + (κ + 1) := ?_
+  swap
+  · intro c
+    change (pairEncode _ _).length = _
+    rw [length_pairEncode, Candidates.length_natToList, Candidates.length_natToList]
+  have hlist := Internal.encodeList_injective_of_fixedWidth helem
+    (2 * (P.ℓ κ + 1) + 2 + (κ + 1)) hwidth
+  intro x y h
+  rw [P.encOneDraw_eq, P.encOneDraw_eq] at h
+  have hp := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h
+  apply Prod.ext
+  · exact Encoding.Modular.encodeVector_injective (κ + 1) pp.le_two_pow
+      (congrArg Prod.fst hp)
+  · exact List.ofFn_injective (hlist (congrArg Prod.snd hp))
 
 /-- The complete seed-draw code retains the Boolean seed and every exact repetition draw.
 [JLS26, SdSamp', pp. 15-16]. Dv15 and Dv17 make the exact-draw code faithful.
@@ -499,7 +650,33 @@ theorem encOneDraw_injective (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
 **Proof sketch.** Split the outer pair, recover the Boolean vector by List.ofFn injectivity,
 and recover each fixed-length repetition block using encOneDraw injectivity. -/
 theorem encDraw_injective (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
-    Function.Injective (P.encDraw κ pp) := sorry
+    Function.Injective (P.encDraw κ pp) := by
+  let f : Fin (P.W κ) × ZMod pp.p → List Bool := fun c =>
+    pairEncode (Candidates.natToList (P.ℓ κ + 1) c.1.val)
+      (Candidates.natToList (κ + 1) c.2.val)
+  have hnoise : ∀ c, (f c).length = 2 * (P.ℓ κ + 1) + 2 + (κ + 1) := ?_
+  swap
+  · intro c
+    change (pairEncode _ _).length = _
+    rw [length_pairEncode, Candidates.length_natToList, Candidates.length_natToList]
+  have hwidth : ∀ r, (P.encOneDraw κ pp r).length =
+      2 * (P.ℓ κ * (κ + 1)) + 2 +
+        (P.n κ * ((2 * (P.ℓ κ + 1) + 2 + (κ + 1)) + 1) + 1) := ?_
+  swap
+  · intro r
+    rw [P.encOneDraw_eq, length_pairEncode, Encoding.Modular.encodeVector_length]
+    rw [Internal.encodeList_length_of_fixedWidth f
+      (2 * (P.ℓ κ + 1) + 2 + (κ + 1)) hnoise, List.length_ofFn]
+  have hlist := Internal.encodeList_injective_of_fixedWidth
+    (P.encOneDraw_injective κ pp)
+    (2 * (P.ℓ κ * (κ + 1)) + 2 +
+      (P.n κ * ((2 * (P.ℓ κ + 1) + 2 + (κ + 1)) + 1) + 1)) hwidth
+  intro x y h
+  rw [P.encDraw_eq, P.encDraw_eq] at h
+  have hp := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h
+  apply Prod.ext
+  · exact List.ofFn_injective (congrArg Prod.fst hp)
+  · exact List.ofFn_injective (hlist (congrArg Prod.snd hp))
 
 /-- The published seed code retains both field-vector components.
 [JLS26, SdSamp', p. 16]. Dv2 and Dv15 use canonical residue codes.
@@ -507,7 +684,15 @@ theorem encDraw_injective (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
 **Proof sketch.** Split the pair and apply the existing modular vector injectivity to
 both components at the public prime's residue width. -/
 theorem encSeed'_injective (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
-    Function.Injective (P.encSeed' κ pp) := sorry
+    Function.Injective (P.encSeed' κ pp) := by
+  intro x y h
+  rw [P.encSeed'_eq, P.encSeed'_eq] at h
+  have hp := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h
+  exact Prod.ext
+    (Encoding.Modular.encodeVector_injective (κ + 1) pp.le_two_pow
+      (congrArg Prod.fst hp))
+    (Encoding.Modular.encodeVector_injective (κ + 1) pp.le_two_pow
+      (congrArg Prod.snd hp))
 
 /-- Every encoded construction index fits the syntactic polynomial `idxBound`.
 [JLS26, IdSamp', p. 15]. Dv15 accounts for every pair, list tag and residue bit.
@@ -515,7 +700,24 @@ theorem encSeed'_injective (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
 **Proof sketch.** Apply the existing pair-length and modular matrix-length readers, count
 the fixed-width bucket list, and substitute the primitive index bound and numeric bounds. -/
 theorem encIdx'_length_le (P : Params) (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' κ pp) :
-    (P.encIdx' κ pp I).length ≤ P.idxBound.eval κ := sorry
+    (P.encIdx' κ pp I).length ≤ P.idxBound.eval κ := by
+  have hbucket : (P.encBuckets κ I.2.1).length = P.m κ * (P.B κ + 1) + 1 := ?_
+  swap
+  · rw [P.encBuckets_eq, Internal.encodeList_length_of_fixedWidth
+      (fun b : Fin (P.B κ) => Candidates.natToList (P.B κ) b.val) (P.B κ)
+      (fun b => Candidates.length_natToList (P.B κ) b.val), List.length_ofFn]
+  have hG := (P.G.encIdx_length_le (P.n κ) I.1).trans
+    (PolyExpr.eval_mono P.G.idxBits (P.n_le_nBound κ))
+  have hBM : P.m κ * (P.B κ + 1) ≤
+      P.mBound.eval κ * (P.bucketBound.eval κ + 1) :=
+    Nat.mul_le_mul (P.m_le_mBound κ) (Nat.add_le_add_right (P.B_le_bucketBound κ) 1)
+  have hNL : P.n κ * P.ℓ κ * (κ + 1) ≤
+      P.nBound.eval κ * P.ellBound.eval κ * (κ + 1) :=
+    Nat.mul_le_mul_right (κ + 1) (Nat.mul_le_mul (P.n_le_nBound κ) (P.ell_le_ellBound κ))
+  simp only [P.encIdx'_eq, length_pairEncode, hbucket,
+    Encoding.Modular.encodeMatrix_length, P.idxBound_eq, PolyExpr.eval_add,
+    PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_subst, PolyExpr.eval_var]
+  omega
 
 end Params
 

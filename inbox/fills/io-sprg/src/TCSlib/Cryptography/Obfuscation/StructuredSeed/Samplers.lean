@@ -341,7 +341,9 @@ theorem challengeStr_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ)
 **Proof sketch.** Read the variable, constant and addition equations of PolyExpr, then
 use the public parameter's upper width field. -/
 theorem primeWidthBound (κ : ℕ) (pp : PrimeParam κ) :
-    pp.p ≤ 2 ^ (PolyExpr.add .var (.const 1)).eval κ := sorry
+    pp.p ≤ 2 ^ (PolyExpr.add .var (.const 1)).eval κ := by
+  simpa only [PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const]
+    using pp.le_two_pow
 
 end Params
 

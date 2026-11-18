@@ -1,0 +1,79 @@
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {M₀} [MonoidWithZero M₀] x y z h => (Ring.eq_mul_inverse_iff_mul_eq x y z h).mp) flag
+      ((MvPolynomial.eval z)
+        (∑ i, a i * MvPolynomial.X (Sum.inr (T true i)) +
+          ∑ r, MvPolynomial.X (Sum.inr (U true r)) * MvPolynomial.X (Sum.inr (V r))))
+      ((MvPolynomial.eval z)
+        (∑ i, a i * MvPolynomial.X (Sum.inr (T false i)) +
+          ∑ r, MvPolynomial.X (Sum.inr (U false r)) * MvPolynomial.X (Sum.inr (V r))))
+      ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Ring.inverse_mul_eq_iff_eq_mul flag
+        ((MvPolynomial.eval z)
+          (∑ i, a i * MvPolynomial.X (Sum.inr (T true i)) +
+            ∑ r, MvPolynomial.X (Sum.inr (U true r)) * MvPolynomial.X (Sum.inr (V r))))
+        ((MvPolynomial.eval z)
+          (∑ i, a i * MvPolynomial.X (Sum.inr (T false i)) +
+            ∑ r, MvPolynomial.X (Sum.inr (U false r)) * MvPolynomial.X (Sum.inr (V r))))
+        ?_).mp
+    ?_
+  -- Remaining subgoals:
+  -- ⊢ IsUnit flag
+  -- ⊢ Ring.inverse flag *
+      (MvPolynomial.eval z)
+        (∑ i, a i * MvPolynomial.X (Sum.inr (T true i)) +
+          ∑ r, MvPolynomial.X (Sum.inr (U true r)) * MvPolynomial.X (Sum.inr (V r))) =
+    (MvPolynomial.eval z)
+      (∑ i, a i * MvPolynomial.X (Sum.inr (T false i)) +
+        ∑ r, MvPolynomial.X (Sum.inr (U false r)) * MvPolynomial.X (Sum.inr (V r)))
+Try this:
+  [apply] refine invOf_mul_eq_iff_eq_mul_left.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Invertible flag
+  -- ⊢ ⅟flag *
+      (MvPolynomial.eval z)
+        (∑ i, a i * MvPolynomial.X (Sum.inr (T true i)) +
+          ∑ r, MvPolynomial.X (Sum.inr (U true r)) * MvPolynomial.X (Sum.inr (V r))) =
+    (MvPolynomial.eval z)
+      (∑ i, a i * MvPolynomial.X (Sum.inr (T false i)) +
+        ∑ r, MvPolynomial.X (Sum.inr (U false r)) * MvPolynomial.X (Sum.inr (V r)))
+Try this:
+  [apply] refine mul_invOf_eq_iff_eq_mul_right.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Invertible
+    ((MvPolynomial.eval z)
+      (∑ i, a i * MvPolynomial.X (Sum.inr (T false i)) +
+        ∑ r, MvPolynomial.X (Sum.inr (U false r)) * MvPolynomial.X (Sum.inr (V r))))
+  -- ⊢ (MvPolynomial.eval z)
+        (∑ i, a i * MvPolynomial.X (Sum.inr (T true i)) +
+          ∑ r, MvPolynomial.X (Sum.inr (U true r)) * MvPolynomial.X (Sum.inr (V r))) *
+      ⅟((MvPolynomial.eval z)
+          (∑ i, a i * MvPolynomial.X (Sum.inr (T false i)) +
+            ∑ r, MvPolynomial.X (Sum.inr (U false r)) * MvPolynomial.X (Sum.inr (V r)))) =
+    flag
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [Monoid α] {a b c} [Invertible c] => mul_right_eq_iff_eq_mul_invOf.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [Monoid α] {a b c} [Invertible c] => mul_left_eq_iff_eq_invOf_mul.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (CancelDenoms.derive_trans₂ ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (CancelDenoms.derive_trans ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+/private/tmp/io-sprg-overlap/Algebra_G3_eval_of_scaled-apply.lean:18:0: warning: declaration uses 'sorry'
+/private/tmp/io-sprg-overlap/Algebra_G3_eval_of_scaled-apply.lean:21:5: warning: unused variable `hT`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/Algebra_G3_eval_of_scaled-apply.lean:22:5: warning: unused variable `hU`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

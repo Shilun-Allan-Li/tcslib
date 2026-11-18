@@ -2,6 +2,7 @@
 Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Basic
 import TCSlib.Cryptography.Obfuscation.StructuredSeed.LPN
 import TCSlib.Cryptography.Obfuscation.StructuredSeed.BoolPRG
 import TCSlib.Cryptography.Obfuscation.StructuredSeed.Degree
@@ -32,6 +33,7 @@ set_option autoImplicit false
 
 ## Contents
 
+* `Basic`: reusable fixed-width tagged-list encoding lemmas.
 * `LPN`: the lpn component.
 * `BoolPRG`: the boolprg component.
 * `Degree`: the degree component.

@@ -1,0 +1,334 @@
+Try this:
+  [apply] refine Eq.to_iff ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.find? flags (List.finRange κ) = none) = ∀ (k : Fin κ), flags k = false
+Try this:
+  [apply] refine iff_iff_implies_and_implies.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.find? flags (List.finRange κ) = none → ∀ (k : Fin κ), flags k = false) ∧
+    ((∀ (k : Fin κ), flags k = false) → List.find? flags (List.finRange κ) = none)
+Try this:
+  [apply] refine (iff_false_right ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬∀ (k : Fin κ), flags k = false
+  -- ⊢ ¬List.find? flags (List.finRange κ) = none
+Try this:
+  [apply] refine (iff_true_right ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (k : Fin κ), flags k = false
+  -- ⊢ List.find? flags (List.finRange κ) = none
+Try this:
+  [apply] refine iff_comm.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (∀ (k : Fin κ), flags k = false) ↔ List.find? flags (List.finRange κ) = none
+Try this:
+  [apply] refine Iff.symm (Eq.to_iff ?_)
+  -- Remaining subgoals:
+  -- ⊢ (∀ (k : Fin κ), flags k = false) = (List.find? flags (List.finRange κ) = none)
+Try this:
+  [apply] refine iff_comm.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (∀ (k : Fin κ), flags k = false) ↔ List.find? flags (List.finRange κ) = none
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} => iff_iff_implies_and_implies.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine iff_of_true ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ List.find? flags (List.finRange κ) = none
+  -- ⊢ ∀ (k : Fin κ), flags k = false
+Try this:
+  [apply] refine (iff_false_left ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬List.find? flags (List.finRange κ) = none
+  -- ⊢ ¬∀ (k : Fin κ), flags k = false
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} ha => (iff_false_right ha).mpr) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Iff.of_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.find? flags (List.finRange κ) = none) = ∀ (k : Fin κ), flags k = false
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} ha => (iff_true_right ha).mpr) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine { mp := ?_, mpr := ?_ }
+  -- Remaining subgoals:
+  -- ⊢ List.find? flags (List.finRange κ) = none → ∀ (k : Fin κ), flags k = false
+  -- ⊢ (∀ (k : Fin κ), flags k = false) → List.find? flags (List.finRange κ) = none
+Try this:
+  [apply] refine Iff.symm ?_
+  -- Remaining subgoals:
+  -- ⊢ (∀ (k : Fin κ), flags k = false) ↔ List.find? flags (List.finRange κ) = none
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} => iff_comm.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine iff_iff_eq.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.find? flags (List.finRange κ) = none) = ∀ (k : Fin κ), flags k = false
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} => iff_comm.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Iff.symm (iff_of_true ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (k : Fin κ), flags k = false
+  -- ⊢ List.find? flags (List.finRange κ) = none
+Try this:
+  [apply] refine iff_of_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.find? flags (List.finRange κ) = none) = ∀ (k : Fin κ), flags k = false
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} ha => (iff_false_left ha).mpr) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine iff_of_false ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬List.find? flags (List.finRange κ) = none
+  -- ⊢ ¬∀ (k : Fin κ), flags k = false
+Try this:
+  [apply] refine Iff.symm (Iff.of_eq ?_)
+  -- Remaining subgoals:
+  -- ⊢ (∀ (k : Fin κ), flags k = false) = (List.find? flags (List.finRange κ) = none)
+Try this:
+  [apply] refine Iff.comm.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (∀ (k : Fin κ), flags k = false) ↔ List.find? flags (List.finRange κ) = none
+Try this:
+  [apply] refine Iff.symm { mp := ?_, mpr := ?_ }
+  -- Remaining subgoals:
+  -- ⊢ (∀ (k : Fin κ), flags k = false) → List.find? flags (List.finRange κ) = none
+  -- ⊢ List.find? flags (List.finRange κ) = none → ∀ (k : Fin κ), flags k = false
+Try this:
+  [apply] refine Iff.comm.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (∀ (k : Fin κ), flags k = false) ↔ List.find? flags (List.finRange κ) = none
+Try this:
+  [apply] refine Iff.symm (Iff.symm ?_)
+  -- Remaining subgoals:
+  -- ⊢ List.find? flags (List.finRange κ) = none ↔ ∀ (k : Fin κ), flags k = false
+Try this:
+  [apply] refine iff_def.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.find? flags (List.finRange κ) = none → ∀ (k : Fin κ), flags k = false) ∧
+    ((∀ (k : Fin κ), flags k = false) → List.find? flags (List.finRange κ) = none)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} => iff_iff_eq.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine iff_def'.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ((∀ (k : Fin κ), flags k = false) → List.find? flags (List.finRange κ) = none) ∧
+    (List.find? flags (List.finRange κ) = none → ∀ (k : Fin κ), flags k = false)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm (Iff.trans ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine eq_iff_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.find? flags (List.finRange κ) = none) = ∀ (k : Fin κ), flags k = false
+Try this:
+  [apply] refine Iff.symm (iff_of_eq ?_)
+  -- Remaining subgoals:
+  -- ⊢ (∀ (k : Fin κ), flags k = false) = (List.find? flags (List.finRange κ) = none)
+Try this:
+  [apply] refine (iff_true_left ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ List.find? flags (List.finRange κ) = none
+  -- ⊢ ∀ (k : Fin κ), flags k = false
+Try this:
+  [apply] refine Iff.symm (iff_of_false ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ ¬∀ (k : Fin κ), flags k = false
+  -- ⊢ ¬List.find? flags (List.finRange κ) = none
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (iff_congr ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} => Iff.comm.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (iff_congr ?_ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} => Iff.comm.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Decidable.not_iff_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬List.find? flags (List.finRange κ) = none ↔ ¬∀ (k : Fin κ), flags k = false
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} => iff_def.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Decidable.iff_iff_not_or_and_or_not.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (¬List.find? flags (List.finRange κ) = none ∨ ∀ (k : Fin κ), flags k = false) ∧
+    (List.find? flags (List.finRange κ) = none ∨ ¬∀ (k : Fin κ), flags k = false)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} => iff_def'.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Decidable.iff_congr_right.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} => eq_iff_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Decidable.iff_iff_and_or_not_and_not.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.find? flags (List.finRange κ) = none ∧ ∀ (k : Fin κ), flags k = false) ∨
+    ¬List.find? flags (List.finRange κ) = none ∧ ¬∀ (k : Fin κ), flags k = false
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} ha => (iff_true_left ha).mpr) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine decide_eq_decide.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {p₁ p₂ q₁ q₂} h₁ h₂ => (iff_congr h₁ h₂).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Decidable.iff_congr_left.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {p₁ p₂ q₁ q₂} h₁ h₂ => (iff_congr h₁ h₂).mpr) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine propext_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.find? flags (List.finRange κ) = none) = ∀ (k : Fin κ), flags k = false
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} [Decidable a] [Decidable b] => Decidable.not_iff_not.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine iff_iff_and_or_not_and_not.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.find? flags (List.finRange κ) = none ∧ ∀ (k : Fin κ), flags k = false) ∨
+    ¬List.find? flags (List.finRange κ) = none ∧ ¬∀ (k : Fin κ), flags k = false
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm
+    ((fun {a b} [Decidable a] [Decidable b] => Decidable.iff_iff_not_or_and_or_not.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (not_xor (List.find? flags (List.finRange κ) = none) (∀ (k : Fin κ), flags k = false)).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬Xor' (List.find? flags (List.finRange κ) = none) (∀ (k : Fin κ), flags k = false)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm
+    ((fun {P Q R} [Decidable P] [Decidable Q] [Decidable R] => Decidable.iff_congr_right.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine xor_not_right.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Xor' (List.find? flags (List.finRange κ) = none) ¬∀ (k : Fin κ), flags k = false
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} [Decidable b] => Decidable.iff_iff_and_or_not_and_not.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine iff_iff_not_or_and_or_not.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (¬List.find? flags (List.finRange κ) = none ∨ ∀ (k : Fin κ), flags k = false) ∧
+    (List.find? flags (List.finRange κ) = none ∨ ¬∀ (k : Fin κ), flags k = false)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {p q} {x} {x_1} => decide_eq_decide.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine not_iff_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬List.find? flags (List.finRange κ) = none ↔ ¬∀ (k : Fin κ), flags k = false
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm
+    ((fun {P Q R} [Decidable P] [Decidable Q] [Decidable R] => Decidable.iff_congr_left.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Iff.iff ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} => propext_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Iff.iff ?_ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} => iff_iff_and_or_not_and_not.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine xor_not_left.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Xor' (¬List.find? flags (List.finRange κ) = none) (∀ (k : Fin κ), flags k = false)
+Try this:
+  [apply] refine Iff.symm
+    ((fun P Q => (not_xor P Q).mp) (∀ (k : Fin κ), flags k = false) (List.find? flags (List.finRange κ) = none) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ¬Xor' (∀ (k : Fin κ), flags k = false) (List.find? flags (List.finRange κ) = none)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} => xor_not_right.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} => iff_iff_not_or_and_or_not.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} => not_iff_not.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {p₁ p₂ q₁ q₂} h₁ h₂ => (Iff.iff h₁ h₂).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {p₁ p₂ q₁ q₂} h₁ h₂ => (Iff.iff h₁ h₂).mpr) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} => xor_not_left.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine bihimp_iff_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ bihimp (List.find? flags (List.finRange κ) = none) (∀ (k : Fin κ), flags k = false)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {p q} => bihimp_iff_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+/private/tmp/io-sprg-overlap/AlgebraV2_firstGood_none_iff-apply.lean:12:0: warning: declaration uses 'sorry'

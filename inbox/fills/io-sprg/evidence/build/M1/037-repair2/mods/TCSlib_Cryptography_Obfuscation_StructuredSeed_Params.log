@@ -1,0 +1,74 @@
+2026-11-18T15:16:57.634148+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Params
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean:426:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  P.n ?κ
+in the target expression
+  P.Γ κ ≤ P.B κ
+
+case refine_2
+P : Params
+hsmall : (fun κ => ↑P.D * ↑P.E * Real.logb 2 ↑κ) =o[Filter.atTop] fun κ => ↑κ
+κ₀ : ℕ
+hκ₀ : ∀ b ≥ κ₀, ‖↑P.D * ↑P.E * Real.logb 2 ↑b‖ ≤ ‖↑b‖
+κ : ℕ
+hκ : κ ≥ κ₀
+hnorm : |↑P.D * ↑P.E * Real.logb 2 ↑κ| ≤ ↑κ
+hlogn : Real.logb 2 ↑(P.n κ) = ↑P.D * ↑P.E * Real.logb 2 ↑κ
+⊢ P.Γ κ ≤ P.B κ
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean:431:9: error(lean.unknownIdentifier): Unknown identifier `hlogn.le.trans`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean:432:4: error: mod_cast has type
+  Nat.log 2 (P.n κ) ≤ κ
+but is expected to have type
+  Real.logb 2 ↑(P.n κ) = ↑(P.D * P.E) * Real.logb 2 ↑κ
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean:435:4: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  f ≥ 0
+  e ≥ 1
+  c ≥ 0
+  c + e ≥ 1
+  b ≥ 0
+  a ≥ 0
+  a - b ≥ 0
+  a - f ≤ -1
+where
+ a := ↑κ
+ b := ↑κ₀
+ c := ↑(P.m κ) * ↑κ
+ e := ↑(P.W κ)
+ f := ↑(Nat.log 2 (P.n κ))
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean:436:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  P.Γ ?κ
+in the target expression
+  P.m κ * κ ≤ P.m κ * κ + P.W κ - 1
+
+case refine_1.refine_1.refine_1
+P : Params
+hsmall : (fun κ => ↑P.D * ↑P.E * Real.logb 2 ↑κ) =o[Filter.atTop] fun κ => ↑κ
+κ₀ : ℕ
+hκ₀ : ∀ b ≥ κ₀, ‖↑P.D * ↑P.E * Real.logb 2 ↑b‖ ≤ ‖↑b‖
+κ : ℕ
+hκ : κ ≥ κ₀
+hnorm : |↑P.D * ↑P.E * Real.logb 2 ↑κ| ≤ ↑κ
+⊢ P.m κ * κ ≤ P.m κ * κ + P.W κ - 1
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean:444:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Params): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Params): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Params): no fresh .olean produced
+        2.65 real         1.96 user         1.01 sys
+          2343976960  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              184756  page reclaims
+                  29  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  16  voluntary context switches
+                6086  involuntary context switches
+            31936509  instructions retired
+            15016169  cycles elapsed
+             1622352  peak memory footprint
+2026-11-18T15:17:00.314049+00:00 END rc=1

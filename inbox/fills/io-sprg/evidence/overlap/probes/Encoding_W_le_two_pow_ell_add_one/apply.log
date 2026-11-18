@@ -1,0 +1,433 @@
+Try this:
+  [apply] refine Nat.le_sqrt'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ≤ (2 ^ (ell + 1)).sqrt
+Try this:
+  [apply] refine Nat.pow_le_of_le_log ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 2 ^ (ell + 1) ≠ 0
+  -- ⊢ 2 ≤ Nat.log (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊) (2 ^ (ell + 1))
+Try this:
+  [apply] refine (Nat.pow_le_iff_le_log ?_ ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 1 < max 1 ⌊↑ell ^ (↑δ / 2)⌋₊
+  -- ⊢ 2 ^ (ell + 1) ≠ 0
+  -- ⊢ 2 ≤ Nat.log (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊) (2 ^ (ell + 1))
+Try this:
+  [apply] refine (Nat.le_log_iff_pow_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 1 < max 1 ⌊↑ell ^ (↑δ / 2)⌋₊
+  -- ⊢ 2 ^ (ell + 1) ≠ 0
+  -- ⊢ 2 ≤ Nat.log (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊) (2 ^ (ell + 1))
+Try this:
+  [apply] refine (Nat.lt_digits_length_iff ?_ (2 ^ (ell + 1))).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 1 < max 1 ⌊↑ell ^ (↑δ / 2)⌋₊
+  -- ⊢ 2 < ((max 1 ⌊↑ell ^ (↑δ / 2)⌋₊).digits (2 ^ (ell + 1))).length
+Try this:
+  [apply] refine (Nat.clog_le_iff_le_pow ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 1 < 2
+  -- ⊢ Nat.clog 2 (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2) ≤ ell + 1
+Try this:
+  [apply] refine (Nat.le_pow_iff_clog_le ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 1 < 2
+  -- ⊢ Nat.clog 2 (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2) ≤ ell + 1
+Try this:
+  [apply] refine pow_le_pow ?_ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ≤ 2
+  -- ⊢ 1 ≤ 2
+  -- ⊢ 2 ≤ ell + 1
+Try this:
+  [apply] refine Nat.le_of_lt_succ ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 < (2 ^ (ell + 1)).succ
+Try this:
+  [apply] refine Nat.le_of_ble_eq_true ?_
+  -- Remaining subgoals:
+  -- ⊢ (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2).ble (2 ^ (ell + 1)) = true
+Try this:
+  [apply] refine Nat.le_of_succ_le_succ ?_
+  -- Remaining subgoals:
+  -- ⊢ (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2).succ ≤ (2 ^ (ell + 1)).succ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.le_trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_le_add_iff_left.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.le_of_not_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬2 ^ (ell + 1) < max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine Nat.le_of_not_ge ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 ≥ 2 ^ (ell + 1)
+Try this:
+  [apply] refine Nat.not_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬2 ^ (ell + 1) < max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.le_of_mul_le_mul_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.succ_le_succ_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2).succ ≤ (2 ^ (ell + 1)).succ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.le_of_add_left_le ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.add_one_le_add_one_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 + 1 ≤ 2 ^ (ell + 1) + 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_le_mul_left_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.sub_le_sub_iff_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.lt_add_one_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 < 2 ^ (ell + 1) + 1
+Try this:
+  [apply] refine Nat.ge_of_not_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬2 ^ (ell + 1) < max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.le_of_mul_le_mul_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.le_of_succ_le ?_
+  -- Remaining subgoals:
+  -- ⊢ (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2).succ ≤ 2 ^ (ell + 1)
+Try this:
+  [apply] refine Nat.le_of_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 = 2 ^ (ell + 1)
+Try this:
+  [apply] refine Nat.le_of_not_le ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬2 ^ (ell + 1) ≤ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine Nat.le_iff_lt_or_eq.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 < 2 ^ (ell + 1) ∨ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 = 2 ^ (ell + 1)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.le_of_add_right_le ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.le_of_add_le_add_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.le_of_not_gt ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 > 2 ^ (ell + 1)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_le_mul_right_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.le.intro ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.le_of_lt_add_one ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 < 2 ^ (ell + 1) + 1
+Try this:
+  [apply] refine Nat.lt_succ_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 < (2 ^ (ell + 1)).succ
+Try this:
+  [apply] refine Nat.lt_succ.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 < (2 ^ (ell + 1)).succ
+Try this:
+  [apply] refine Nat.le_of_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 < 2 ^ (ell + 1)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.le_of_sub_le_sub_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_le_add_iff_right.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.le_of_sub_eq_zero ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 - 2 ^ (ell + 1) = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.le_of_add_le_add_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Int.ofNat_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2) ≤ ↑(2 ^ (ell + 1))
+Try this:
+  [apply] refine Nat.le_of_dvd ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < 2 ^ (ell + 1)
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 ∣ 2 ^ (ell + 1)
+Try this:
+  [apply] refine Nat.le_of_pred_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2).pred < 2 ^ (ell + 1)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.le_of_sub_le_sub_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.le_iff_lt_add_one.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 < 2 ^ (ell + 1) + 1
+Try this:
+  [apply] refine Nat.mul_self_le_mul_self_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 * max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 ≤ 2 ^ (ell + 1) * 2 ^ (ell + 1)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.pow_dvd_pow_iff_le_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.pow_dvd_pow_iff_le_right'.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.lt_one_add_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 < 1 + 2 ^ (ell + 1)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.sub_le_sub_iff_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.le_of_mod_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ 2 ^ (ell + 1) % max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 < 2 ^ (ell + 1)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.le_of_lt_add_of_dvd ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Nat.one_le_div_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2
+  -- ⊢ 1 ≤ 2 ^ (ell + 1) / max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2
+Try this:
+  [apply] refine (Nat.le_iff_ne_zero_of_dvd ?_ ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 ≠ 0
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 ∣ 2 ^ (ell + 1)
+  -- ⊢ 2 ^ (ell + 1) ≠ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.pow_le_pow_iff_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.sub_eq_zero_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 - 2 ^ (ell + 1) = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.pow_le_pow_iff_left fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.le_of_testBit ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ℕ), (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2).testBit i = true → (2 ^ (ell + 1)).testBit i = true
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Fin.mk_le_mk.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine BitVec.none_eq_getElem?_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine BitVec.getElem?_eq_none_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (UInt32.ofNat_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 < UInt32.size
+  -- ⊢ 2 ^ (ell + 1) < UInt32.size
+  -- ⊢ UInt32.ofNat (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2) ≤ UInt32.ofNat (2 ^ (ell + 1))
+Try this:
+  [apply] refine (UInt32.ofNatLT_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 < UInt32.size
+  -- ⊢ 2 ^ (ell + 1) < UInt32.size
+  -- ⊢ UInt32.ofNatLT (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2) ?_ ≤ UInt32.ofNatLT (2 ^ (ell + 1)) ?_
+Try this:
+  [apply] refine (UInt64.ofNat_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 < UInt64.size
+  -- ⊢ 2 ^ (ell + 1) < UInt64.size
+  -- ⊢ UInt64.ofNat (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2) ≤ UInt64.ofNat (2 ^ (ell + 1))
+Try this:
+  [apply] refine (UInt16.ofNat_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 < UInt16.size
+  -- ⊢ 2 ^ (ell + 1) < UInt16.size
+  -- ⊢ UInt16.ofNat (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2) ≤ UInt16.ofNat (2 ^ (ell + 1))
+Try this:
+  [apply] refine (UInt8.ofNatLT_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 < UInt8.size
+  -- ⊢ 2 ^ (ell + 1) < UInt8.size
+  -- ⊢ UInt8.ofNatLT (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2) ?_ ≤ UInt8.ofNatLT (2 ^ (ell + 1)) ?_
+Try this:
+  [apply] refine (UInt64.ofNatLT_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 < UInt64.size
+  -- ⊢ 2 ^ (ell + 1) < UInt64.size
+  -- ⊢ UInt64.ofNatLT (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2) ?_ ≤ UInt64.ofNatLT (2 ^ (ell + 1)) ?_
+Try this:
+  [apply] refine (USize.ofNatLT_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 < USize.size
+  -- ⊢ 2 ^ (ell + 1) < USize.size
+  -- ⊢ USize.ofNatLT (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2) ?_ ≤ USize.ofNatLT (2 ^ (ell + 1)) ?_
+Try this:
+  [apply] refine (USize.ofNat_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 < USize.size
+  -- ⊢ 2 ^ (ell + 1) < USize.size
+  -- ⊢ USize.ofNat (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2) ≤ USize.ofNat (2 ^ (ell + 1))
+Try this:
+  [apply] refine (UInt16.ofNatLT_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 < UInt16.size
+  -- ⊢ 2 ^ (ell + 1) < UInt16.size
+  -- ⊢ UInt16.ofNatLT (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2) ?_ ≤ UInt16.ofNatLT (2 ^ (ell + 1)) ?_
+Try this:
+  [apply] refine (UInt8.ofNat_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 < UInt8.size
+  -- ⊢ 2 ^ (ell + 1) < UInt8.size
+  -- ⊢ UInt8.ofNat (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2) ≤ UInt8.ofNat (2 ^ (ell + 1))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (List.replicate_sublist_replicate ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (List.range'_subset_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.range'_subset_right_1.mp fun ⦃a⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.range_subset.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ List.range (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2) ⊆ List.range (2 ^ (ell + 1))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.range'_sublist_right.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.range_sublist.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.range (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2)).Sublist (List.range (2 ^ (ell + 1)))
+Try this:
+  [apply] refine String.Pos.Raw.mk_le_mk.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ { byteIdx := max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 } ≤ { byteIdx := 2 ^ (ell + 1) }
+Try this:
+  [apply] refine Nat.compare_ne_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compare (2 ^ (ell + 1)) (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2) ≠ Ordering.lt
+Try this:
+  [apply] refine Nat.isLE_compare.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (compare (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2) (2 ^ (ell + 1))).isLE = true
+Try this:
+  [apply] refine Nat.isGE_compare.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (compare (2 ^ (ell + 1)) (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2)).isGE = true
+Try this:
+  [apply] refine Nat.compare_ne_gt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compare (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2) (2 ^ (ell + 1)) ≠ Ordering.gt
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (List.prefix_take_le_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (ISize.ofNat_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 < 2 ^ (System.Platform.numBits - 1)
+  -- ⊢ 2 ^ (ell + 1) < 2 ^ (System.Platform.numBits - 1)
+  -- ⊢ ISize.ofNat (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2) ≤ ISize.ofNat (2 ^ (ell + 1))
+Try this:
+  [apply] refine (Int8.ofNat_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 < 2 ^ 7
+  -- ⊢ 2 ^ (ell + 1) < 2 ^ 7
+  -- ⊢ Int8.ofNat (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2) ≤ Int8.ofNat (2 ^ (ell + 1))
+Try this:
+  [apply] refine (Int16.ofNat_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 < 2 ^ 15
+  -- ⊢ 2 ^ (ell + 1) < 2 ^ 15
+  -- ⊢ Int16.ofNat (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2) ≤ Int16.ofNat (2 ^ (ell + 1))
+Try this:
+  [apply] refine (Int64.ofNat_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 < 2 ^ 63
+  -- ⊢ 2 ^ (ell + 1) < 2 ^ 63
+  -- ⊢ Int64.ofNat (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2) ≤ Int64.ofNat (2 ^ (ell + 1))
+Try this:
+  [apply] refine (Int32.ofNat_le_iff_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2 < 2 ^ 31
+  -- ⊢ 2 ^ (ell + 1) < 2 ^ 31
+  -- ⊢ Int32.ofNat (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2) ≤ Int32.ofNat (2 ^ (ell + 1))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Vector.none_eq_getElem?_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Vector.getElem?_eq_none_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Rat.natCast_le_natCast.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2) ≤ ↑(2 ^ (ell + 1))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.Sat.CNF.Clause.of_maxLiteral_eq_some ?_ ?_ (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Std.Sat.CNF.of_maxLiteral_eq_some' ?_ ?_ ?_ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ Std.Sat.CNF ℕ
+  -- ⊢ Std.Sat.CNF.maxLiteral ?_ = some (2 ^ (ell + 1))
+  -- ⊢ Std.Sat.CNF.Clause ℕ
+  -- ⊢ ?_ ∈ ?_
+  -- ⊢ Std.Sat.CNF.Clause.maxLiteral ?_ = some (max 1 ⌊↑ell ^ (↑δ / 2)⌋₊ ^ 2)
+/private/tmp/io-sprg-overlap/Encoding_W_le_two_pow_ell_add_one-apply.lean:12:2: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (100000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.

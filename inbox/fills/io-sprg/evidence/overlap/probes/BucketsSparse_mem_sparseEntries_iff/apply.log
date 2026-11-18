@@ -1,0 +1,662 @@
+Try this:
+  [apply] refine Decidable.iff_not_comm.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ M c.1 c.2 = 0 ↔
+    c ∉
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} [Decidable a] [Decidable b] => Decidable.not_iff_comm.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Decidable.iff_not_comm.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ M c.1 c.2 = 0 ↔
+    c ∉
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} [Decidable a] [Decidable b] => Decidable.not_iff_comm.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine iff_not_comm.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ M c.1 c.2 = 0 ↔
+    c ∉
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {b a} [Decidable b] => Decidable.not_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine iff_not_comm.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ M c.1 c.2 = 0 ↔
+    c ∉
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => Classical.not_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ¬(M c.1 c.2 = 0 ↔
+      c ∈
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+Try this:
+  [apply] refine xor_iff_iff_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Xor'
+    (c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+    (M c.1 c.2 = 0)
+Try this:
+  [apply] refine Iff.symm (Iff.not_left ?_)
+  -- Remaining subgoals:
+  -- ⊢ M c.1 c.2 = 0 ↔
+    c ∉
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))
+Try this:
+  [apply] refine Iff.not_right ?_
+  -- Remaining subgoals:
+  -- ⊢ c ∉
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) ↔
+    M c.1 c.2 = 0
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => xor_iff_not_iff'.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Xor' (M c.1 c.2 = 0)
+    (c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+Try this:
+  [apply] refine Eq.to_iff ?_
+  -- Remaining subgoals:
+  -- ⊢ (c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))) =
+    (M c.1 c.2 ≠ 0)
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => not_iff_comm.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ c ∉
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) ↔
+    M c.1 c.2 = 0
+Try this:
+  [apply] refine iff_iff_implies_and_implies.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (c ∈
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) →
+      M c.1 c.2 ≠ 0) ∧
+    (M c.1 c.2 ≠ 0 →
+      c ∈
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => not_iff_comm.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ c ∉
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) ↔
+    M c.1 c.2 = 0
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => not_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ¬(M c.1 c.2 = 0 ↔
+      c ∈
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+Try this:
+  [apply] refine (iff_false_right ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬M c.1 c.2 ≠ 0
+  -- ⊢ c ∉
+    List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+      (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))
+Try this:
+  [apply] refine Iff.symm (Eq.to_iff ?_)
+  -- Remaining subgoals:
+  -- ⊢ (M c.1 c.2 ≠ 0) =
+    (c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+Try this:
+  [apply] refine (iff_true_right ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ M c.1 c.2 ≠ 0
+  -- ⊢ c ∈
+    List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+      (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => iff_iff_implies_and_implies.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (M c.1 c.2 ≠ 0 →
+      c ∈
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))) ∧
+    (c ∈
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) →
+      M c.1 c.2 ≠ 0)
+Try this:
+  [apply] refine iff_comm.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ M c.1 c.2 ≠ 0 ↔
+    c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} ha => (iff_false_right ha).mpr) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine iff_comm.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ M c.1 c.2 ≠ 0 ↔
+    c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} ha => (iff_true_right ha).mpr) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine iff_of_true ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ c ∈
+    List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+      (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))
+  -- ⊢ M c.1 c.2 ≠ 0
+Try this:
+  [apply] refine (iff_false_left ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ c ∉
+    List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+      (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))
+  -- ⊢ ¬M c.1 c.2 ≠ 0
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => iff_comm.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) ↔
+    M c.1 c.2 ≠ 0
+Try this:
+  [apply] refine Iff.of_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ (c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))) =
+    (M c.1 c.2 ≠ 0)
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => iff_comm.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) ↔
+    M c.1 c.2 ≠ 0
+Try this:
+  [apply] refine { mp := ?_, mpr := ?_ }
+  -- Remaining subgoals:
+  -- ⊢ c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) →
+    M c.1 c.2 ≠ 0
+  -- ⊢ M c.1 c.2 ≠ 0 →
+    c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))
+Try this:
+  [apply] refine Iff.symm (iff_of_true ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ M c.1 c.2 ≠ 0
+  -- ⊢ c ∈
+    List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+      (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))
+Try this:
+  [apply] refine Iff.symm ?_
+  -- Remaining subgoals:
+  -- ⊢ M c.1 c.2 ≠ 0 ↔
+    c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))
+Try this:
+  [apply] refine Iff.symm ((fun {a b} ha => (iff_false_left ha).mpr) ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ ¬M c.1 c.2 ≠ 0
+  -- ⊢ c ∉
+    List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+      (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))
+Try this:
+  [apply] refine iff_iff_eq.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))) =
+    (M c.1 c.2 ≠ 0)
+Try this:
+  [apply] refine Iff.symm (Iff.of_eq ?_)
+  -- Remaining subgoals:
+  -- ⊢ (M c.1 c.2 ≠ 0) =
+    (c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Iff.symm { mp := ?_, mpr := ?_ }
+  -- Remaining subgoals:
+  -- ⊢ M c.1 c.2 ≠ 0 →
+    c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))
+  -- ⊢ c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) →
+    M c.1 c.2 ≠ 0
+Try this:
+  [apply] refine iff_of_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ (c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))) =
+    (M c.1 c.2 ≠ 0)
+Try this:
+  [apply] refine Iff.symm (Iff.symm ?_)
+  -- Remaining subgoals:
+  -- ⊢ c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) ↔
+    M c.1 c.2 ≠ 0
+Try this:
+  [apply] refine iff_of_false ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ c ∉
+    List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+      (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))
+  -- ⊢ ¬M c.1 c.2 ≠ 0
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => iff_iff_eq.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (M c.1 c.2 ≠ 0) =
+    (c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+Try this:
+  [apply] refine Iff.comm.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ M c.1 c.2 ≠ 0 ↔
+    c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm (Iff.trans ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Iff.comm.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ M c.1 c.2 ≠ 0 ↔
+    c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))
+Try this:
+  [apply] refine Iff.symm (iff_of_eq ?_)
+  -- Remaining subgoals:
+  -- ⊢ (M c.1 c.2 ≠ 0) =
+    (c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+Try this:
+  [apply] refine iff_def.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (c ∈
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) →
+      M c.1 c.2 ≠ 0) ∧
+    (M c.1 c.2 ≠ 0 →
+      c ∈
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+Try this:
+  [apply] refine Iff.symm (iff_of_false ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ ¬M c.1 c.2 ≠ 0
+  -- ⊢ c ∉
+    List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+      (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))
+Try this:
+  [apply] refine iff_def'.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (M c.1 c.2 ≠ 0 →
+      c ∈
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))) ∧
+    (c ∈
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) →
+      M c.1 c.2 ≠ 0)
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => Iff.comm.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) ↔
+    M c.1 c.2 ≠ 0
+Try this:
+  [apply] refine eq_iff_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))) =
+    (M c.1 c.2 ≠ 0)
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => Iff.comm.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) ↔
+    M c.1 c.2 ≠ 0
+Try this:
+  [apply] refine (iff_true_left ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ c ∈
+    List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+      (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))
+  -- ⊢ M c.1 c.2 ≠ 0
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => iff_def.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (M c.1 c.2 ≠ 0 →
+      c ∈
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))) ∧
+    (c ∈
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) →
+      M c.1 c.2 ≠ 0)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (iff_congr ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => iff_def'.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (c ∈
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) →
+      M c.1 c.2 ≠ 0) ∧
+    (M c.1 c.2 ≠ 0 →
+      c ∈
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (iff_congr ?_ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => eq_iff_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (M c.1 c.2 ≠ 0) =
+    (c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+Try this:
+  [apply] refine Decidable.not_iff_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ c ∉
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) ↔
+    ¬M c.1 c.2 ≠ 0
+Try this:
+  [apply] refine Iff.symm ((fun {a b} ha => (iff_true_left ha).mpr) ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ M c.1 c.2 ≠ 0
+  -- ⊢ c ∈
+    List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+      (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))
+Try this:
+  [apply] refine Decidable.iff_iff_not_or_and_or_not.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (c ∉
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) ∨
+      M c.1 c.2 ≠ 0) ∧
+    (c ∈
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) ∨
+      ¬M c.1 c.2 ≠ 0)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {p₁ p₂ q₁ q₂} h₁ h₂ => (iff_congr h₁ h₂).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Decidable.iff_congr_right.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {p₁ p₂ q₁ q₂} h₁ h₂ => (iff_congr h₁ h₂).mpr) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Decidable.iff_iff_and_or_not_and_not.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ c ∈
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) ∧
+      M c.1 c.2 ≠ 0 ∨
+    c ∉
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) ∧
+      ¬M c.1 c.2 ≠ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} [Decidable a] [Decidable b] => Decidable.not_iff_not.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine decide_eq_decide.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm
+    ((fun {a b} [Decidable a] [Decidable b] => Decidable.iff_iff_not_or_and_or_not.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Decidable.iff_congr_left.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm
+    ((fun {P Q R} [Decidable P] [Decidable Q] [Decidable R] => Decidable.iff_congr_right.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine propext_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))) =
+    (M c.1 c.2 ≠ 0)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} [Decidable b] => Decidable.iff_iff_and_or_not_and_not.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine iff_iff_and_or_not_and_not.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ c ∈
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) ∧
+      M c.1 c.2 ≠ 0 ∨
+    c ∉
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) ∧
+      ¬M c.1 c.2 ≠ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {p q} {x} {x_1} => decide_eq_decide.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (not_xor
+        (c ∈
+          List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+            (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+        (M c.1 c.2 ≠ 0)).mp
+    ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬Xor'
+      (c ∈
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+      (M c.1 c.2 ≠ 0)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm
+    ((fun {P Q R} [Decidable P] [Decidable Q] [Decidable R] => Decidable.iff_congr_left.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine xor_not_right.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Xor'
+    (c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+    ¬M c.1 c.2 ≠ 0
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => propext_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (M c.1 c.2 ≠ 0) =
+    (c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+Try this:
+  [apply] refine iff_iff_not_or_and_or_not.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (c ∉
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) ∨
+      M c.1 c.2 ≠ 0) ∧
+    (c ∈
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) ∨
+      ¬M c.1 c.2 ≠ 0)
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => iff_iff_and_or_not_and_not.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ M c.1 c.2 ≠ 0 ∧
+      c ∈
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) ∨
+    ¬M c.1 c.2 ≠ 0 ∧
+      c ∉
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))
+Try this:
+  [apply] refine not_iff_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ c ∉
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)) ↔
+    ¬M c.1 c.2 ≠ 0
+Try this:
+  [apply] refine Iff.symm
+    ((fun P Q => (not_xor P Q).mp) (M c.1 c.2 ≠ 0)
+      (c ∈
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+      ?_)
+  -- Remaining subgoals:
+  -- ⊢ ¬Xor' (M c.1 c.2 ≠ 0)
+      (c ∈
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Iff.iff ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => xor_not_right.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Xor' (M c.1 c.2 ≠ 0)
+    (c ∉
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Iff.iff ?_ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => iff_iff_not_or_and_or_not.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (¬M c.1 c.2 ≠ 0 ∨
+      c ∈
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))) ∧
+    (M c.1 c.2 ≠ 0 ∨
+      c ∉
+        List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+Try this:
+  [apply] refine xor_not_left.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Xor'
+    (c ∉
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+    (M c.1 c.2 ≠ 0)
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => not_iff_not.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ¬M c.1 c.2 ≠ 0 ↔
+    c ∉
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {p₁ p₂ q₁ q₂} h₁ h₂ => (Iff.iff h₁ h₂).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {p₁ p₂ q₁ q₂} h₁ h₂ => (Iff.iff h₁ h₂).mpr) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => xor_not_left.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Xor' (¬M c.1 c.2 ≠ 0)
+    (c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+Try this:
+  [apply] refine bihimp_iff_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ bihimp
+    (c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+    (M c.1 c.2 ≠ 0)
+Try this:
+  [apply] refine Iff.symm ((fun {p q} => bihimp_iff_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ bihimp (M c.1 c.2 ≠ 0)
+    (c ∈
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows)))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.TFAE.out (fun x => ?_) ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm (List.TFAE.out (fun x => ?_) ?_ ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+/private/tmp/io-sprg-overlap/BucketsSparse_mem_sparseEntries_iff-apply.lean:14:0: warning: declaration uses 'sorry'

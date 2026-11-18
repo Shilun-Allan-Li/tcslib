@@ -1,0 +1,24 @@
+import Mathlib.Logic.Equiv.Basic
+import Mathlib.Algebra.Ring.Basic
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+
+namespace IoSprgAlgebraOverlap
+
+example {κ privLen : ℕ} {R S : Type*} [CommRing R]
+    (e : (Fin κ × (Unit ⊕ (S ⊕ S))) ≃ Fin privLen)
+    (instances : Fin κ → S → R) (first : Option (Fin κ)) (k : Fin κ)
+    (v : S) :
+    (fun j => let q := e.symm j
+      match q.2 with
+      | .inl _ => if first = some q.1 then 1 else 0
+      | .inr (.inl v) => instances q.1 v
+      | .inr (.inr v) => (if first = some q.1 then 1 else 0) * instances q.1 v)
+      (e (k, .inr (.inl v))) = instances k v := by
+  exact?
+
+end IoSprgAlgebraOverlap

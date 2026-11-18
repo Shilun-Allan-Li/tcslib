@@ -1,0 +1,57 @@
+2026-11-18T15:56:03.078100+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/SparseFactor
+TCSlib/Cryptography/Obfuscation/StructuredSeed/SparseFactor.lean:122:71: error: unsolved goals
+rows cols : ℕ
+R : Type u_1
+inst✝¹ : Semiring R
+inst✝ : DecidableEq R
+M : Matrix (Fin rows) (Fin cols) R
+i : Fin rows
+j : Fin cols
+⊢ (i, j) ∈ (List.finRange rows).product (List.finRange cols) ∧ M i j ≠ 0 ↔ M i j ≠ 0
+TCSlib/Cryptography/Obfuscation/StructuredSeed/SparseFactor.lean:127:30: warning: This simp argument is unused:
+  List.mem_product
+
+Hint: Omit it from the simp argument list.
+  simp only [List.mem_filter, L̵i̵s̵t̵.̵m̵e̵m̵_̵p̵r̵o̵d̵u̵c̵t̵,̵ ̵List.mem_finRange, true_and, decide_eq_true_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/SparseFactor.lean:127:48: warning: This simp argument is unused:
+  List.mem_finRange
+
+Hint: Omit it from the simp argument list.
+  simp only [List.mem_filter, List.mem_product, L̵i̵s̵t̵.̵m̵e̵m̵_̵f̵i̵n̵R̵a̵n̵g̵e̵,̵ ̵true_and, decide_eq_true_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/SparseFactor.lean:127:67: warning: This simp argument is unused:
+  true_and
+
+Hint: Omit it from the simp argument list.
+  simp only [List.mem_filter, List.mem_product, List.mem_finRange, t̵r̵u̵e̵_̵a̵n̵d,̵
+  ̵ ̵ ̵ ̵ ̵d̵ecide_eq_true_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/SparseFactor.lean:134:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/SparseFactor.lean:146:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/SparseFactor.lean:154:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/SparseFactor): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/SparseFactor): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/SparseFactor): no fresh .olean produced
+        1.66 real         1.08 user         0.71 sys
+          1437630464  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              117618  page reclaims
+                  11  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  18  voluntary context switches
+                3642  involuntary context switches
+            31993772  instructions retired
+            14407496  cycles elapsed
+             1605968  peak memory footprint
+2026-11-18T15:56:04.765130+00:00 END rc=1

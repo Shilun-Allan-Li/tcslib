@@ -1,0 +1,17 @@
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace IoSprgParamsOverlap
+
+example (E κ m : ℕ) (hE : 1 ≤ E) (δ : ℚ) (hδ : 0 < δ) (hδ1 : δ < 1) :
+    0 < max 1 ((m * κ +
+      (max 1 ⌊((κ ^ E : ℕ) : ℝ) ^ ((δ : ℝ) / 2)⌋₊) ^ 2 - 1) /
+        ((max 1 ⌊((κ ^ E : ℕ) : ℝ) ^ ((δ : ℝ) / 2)⌋₊) ^ 2)) := by
+  classical
+  exact?
+
+end IoSprgParamsOverlap

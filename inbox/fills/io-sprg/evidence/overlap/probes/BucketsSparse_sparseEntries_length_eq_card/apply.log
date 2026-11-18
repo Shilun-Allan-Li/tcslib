@@ -1,0 +1,753 @@
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.length_of_sublistsLen ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Finset.card_eq_of_bijective ?_ (fun a => ?_) ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ (i : ℕ) →
+    i <
+        (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+            (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length →
+      Fin rows × Fin cols
+  -- ⊢ ∀ a ∈ {c | M c.1 c.2 ≠ 0},
+    ∃ i,
+      ∃ (h :
+        i <
+          (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+              (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length),
+        ?_ i h = a
+  -- ⊢ ∀ (i : ℕ)
+    (h :
+      i <
+        (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+            (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length),
+    ?_ i h ∈ {c | M c.1 c.2 ≠ 0}
+  -- ⊢ ∀ (i j : ℕ)
+    (hi :
+      i <
+        (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+            (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length)
+    (hj :
+      j <
+        (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+            (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length),
+    ?_ i hi = ?_ j hj → i = j
+  -- ⊢ _fvar.2454 ∈ {c | M c.1 c.2 ≠ 0} →
+    ∃ i,
+      ∃ (h :
+        i <
+          (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+              (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length),
+        ?_ i h = _fvar.2454
+  -- ⊢ ∃ i,
+    ∃ (h :
+      i <
+        (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+            (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length),
+      ?_ i h = _fvar.2454
+Try this:
+  [apply] refine Nat.eq_of_beq_eq_true ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+            (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length.beq
+      {c | M c.1 c.2 ≠ 0}.card =
+    true
+Try this:
+  [apply] refine Nat.le_antisymm ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length ≤
+    {c | M c.1 c.2 ≠ 0}.card
+  -- ⊢ {c | M c.1 c.2 ≠ 0}.card ≤
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+Try this:
+  [apply] refine Eq.symm (Finset.card_eq_of_equiv_fin ?_)
+  -- Remaining subgoals:
+  -- ⊢ ↥{c | M c.1 c.2 ≠ 0} ≃
+    Fin
+      (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [Fintype α] {s} {k} => Finset.mem_powersetCard_univ.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.succ_inj'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length.succ =
+    {c | M c.1 c.2 ≠ 0}.card.succ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_right_cancel ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_beq_eq_true ?_)
+  -- Remaining subgoals:
+  -- ⊢ {c | M c.1 c.2 ≠ 0}.card.beq
+      (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length =
+    true
+Try this:
+  [apply] refine Eq.symm (Nat.le_antisymm ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ {c | M c.1 c.2 ≠ 0}.card ≤
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length ≤
+    {c | M c.1 c.2 ≠ 0}.card
+Try this:
+  [apply] refine Nat.succ_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length.succ =
+    {c | M c.1 c.2 ≠ 0}.card.succ
+Try this:
+  [apply] refine Nat.sub_one_cancel ?_ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 <
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+  -- ⊢ 0 < {c | M c.1 c.2 ≠ 0}.card
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length -
+      1 =
+    {c | M c.1 c.2 ≠ 0}.card - 1
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.succ_inj'.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ {c | M c.1 c.2 ≠ 0}.card.succ =
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length.succ
+Try this:
+  [apply] refine Nat.add_one_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length +
+      1 =
+    {c | M c.1 c.2 ≠ 0}.card + 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.add_right_cancel ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.pred_inj ?_ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 <
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+  -- ⊢ 0 < {c | M c.1 c.2 ≠ 0}.card
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length.pred =
+    {c | M c.1 c.2 ≠ 0}.card.pred
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.succ_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ {c | M c.1 c.2 ≠ 0}.card.succ =
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length.succ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.eq_of_mul_eq_mul_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.sub_one_cancel ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 < {c | M c.1 c.2 ≠ 0}.card
+  -- ⊢ 0 <
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+  -- ⊢ {c | M c.1 c.2 ≠ 0}.card - 1 =
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length -
+      1
+Try this:
+  [apply] refine Nat.eq_iff_le_and_ge.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length ≤
+      {c | M c.1 c.2 ≠ 0}.card ∧
+    {c | M c.1 c.2 ≠ 0}.card ≤
+      (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.add_one_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ {c | M c.1 c.2 ≠ 0}.card + 1 =
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length +
+      1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_left_cancel ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.eq_of_mul_eq_mul_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.eq_of_lt_succ_of_not_lt ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length <
+    {c | M c.1 c.2 ≠ 0}.card + 1
+  -- ⊢ ¬(List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length <
+      {c | M c.1 c.2 ≠ 0}.card
+Try this:
+  [apply] refine Nat.eq_of_le_of_lt_succ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ {c | M c.1 c.2 ≠ 0}.card ≤
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length <
+    {c | M c.1 c.2 ≠ 0}.card + 1
+Try this:
+  [apply] refine Eq.symm (Nat.pred_inj ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 < {c | M c.1 c.2 ≠ 0}.card
+  -- ⊢ 0 <
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+  -- ⊢ {c | M c.1 c.2 ≠ 0}.card.pred =
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length.pred
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.pow_left_inj fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.le_antisymm_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length ≤
+      {c | M c.1 c.2 ≠ 0}.card ∧
+    {c | M c.1 c.2 ≠ 0}.card ≤
+      (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.eq_of_mul_eq_mul_left ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.eq_iff_le_and_ge.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ {c | M c.1 c.2 ≠ 0}.card ≤
+      (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length ∧
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length ≤
+      {c | M c.1 c.2 ≠ 0}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.add_left_cancel ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Int.neg_ofNat_eq_negSucc_add_one_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ -↑(List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+            (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length =
+    Int.negSucc {c | M c.1 c.2 ≠ 0}.card + 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.eq_of_mul_eq_mul_right ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Int.negSucc_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Int.negSucc
+      (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length =
+    Int.negSucc {c | M c.1 c.2 ≠ 0}.card
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_lt_succ_of_not_lt ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ {c | M c.1 c.2 ≠ 0}.card <
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length +
+      1
+  -- ⊢ ¬{c | M c.1 c.2 ≠ 0}.card <
+      (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_le_of_lt_succ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length ≤
+    {c | M c.1 c.2 ≠ 0}.card
+  -- ⊢ {c | M c.1 c.2 ≠ 0}.card <
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length +
+      1
+Try this:
+  [apply] refine Int.subNat_eq_zero_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Int.subNatNat
+      (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+      {c | M c.1 c.2 ≠ 0}.card =
+    0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a b n} hn => (Nat.pow_left_inj hn).mp) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Int.ofNat_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length =
+    ↑{c | M c.1 c.2 ≠ 0}.card
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.le_antisymm_iff.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ {c | M c.1 c.2 ≠ 0}.card ≤
+      (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length ∧
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length ≤
+      {c | M c.1 c.2 ≠ 0}.card
+Try this:
+  [apply] refine Int.negSucc_add_one_eq_neg_ofNat_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Int.negSucc
+        (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+            (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length +
+      1 =
+    -↑{c | M c.1 c.2 ≠ 0}.card
+Try this:
+  [apply] refine Nat.dvd_antisymm ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length ∣
+    {c | M c.1 c.2 ≠ 0}.card
+  -- ⊢ {c | M c.1 c.2 ≠ 0}.card ∣
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.pow_right_inj ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Int.neg_ofNat_eq_negSucc_add_one_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ -↑{c | M c.1 c.2 ≠ 0}.card =
+    Int.negSucc
+        (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+            (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length +
+      1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_left_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Int.negSucc_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Int.negSucc {c | M c.1 c.2 ≠ 0}.card =
+    Int.negSucc
+      (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_left_inj fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.div_eq_iff_eq_of_dvd_dvd (fun a => ?_) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Int.subNat_eq_zero_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Int.subNatNat {c | M c.1 c.2 ≠ 0}.card
+      (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length =
+    0
+Try this:
+  [apply] refine Nat.mul_self_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length *
+      (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length =
+    {c | M c.1 c.2 ≠ 0}.card * {c | M c.1 c.2 ≠ 0}.card
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Int.ofNat_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ↑{c | M c.1 c.2 ≠ 0}.card =
+    ↑(List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_right_inj fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Int.negSucc_add_one_eq_neg_ofNat_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Int.negSucc {c | M c.1 c.2 ≠ 0}.card + 1 =
+    -↑(List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+            (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.mul_left_cancel ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.dvd_antisymm ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ {c | M c.1 c.2 ≠ 0}.card ∣
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length ∣
+    {c | M c.1 c.2 ≠ 0}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_right_cancel_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a m n} ha => (Nat.pow_right_inj ha).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.eq_of_dvd_of_lt_two_mul ?_ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length ≠
+    0
+  -- ⊢ {c | M c.1 c.2 ≠ 0}.card ∣
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length <
+    2 * {c | M c.1 c.2 ≠ 0}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m k n} => Nat.add_left_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_left_cancel_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a b c} ha => (Nat.mul_left_inj ha).mp) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_right_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {n a b} hn ha hb => (Nat.div_eq_iff_eq_of_dvd_dvd hn ha hb).mp) (fun a => ?_) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.div_left_inj ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Nat.mul_self_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ {c | M c.1 c.2 ≠ 0}.card * {c | M c.1 c.2 ≠ 0}.card =
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length *
+      (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_right_cancel_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a b c} ha => (Nat.mul_right_inj ha).mp) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.mul_right_cancel ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.mul_left_cancel ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m k n} => Nat.add_right_cancel_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_left_cancel_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_dvd_of_lt_two_mul ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ {c | M c.1 c.2 ≠ 0}.card ≠ 0
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length ∣
+    {c | M c.1 c.2 ≠ 0}.card
+  -- ⊢ {c | M c.1 c.2 ≠ 0}.card <
+    2 *
+      (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+Try this:
+  [apply] refine Nat.eq_of_dvd_of_div_eq_one ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length ∣
+    {c | M c.1 c.2 ≠ 0}.card
+  -- ⊢ {c | M c.1 c.2 ≠ 0}.card /
+      (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length =
+    1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m k n} => Nat.add_left_cancel_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.eq_of_testBit_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ℕ),
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+              (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols))
+                (List.finRange rows))).length.testBit
+        i =
+      {c | M c.1 c.2 ≠ 0}.card.testBit i
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m k n} => Nat.add_right_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a b d} hda hdb => (Nat.div_left_inj hda hdb).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Fin.mk.inj_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} p {n k} => (Nat.mul_right_cancel_iff p).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Int.natCast_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length =
+    ↑{c | M c.1 c.2 ≠ 0}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.mul_right_cancel ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.getElem?_inj ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} p {m k} => (Nat.mul_left_cancel_iff p).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.compare_eq_eq.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compare
+      (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+      {c | M c.1 c.2 ≠ 0}.card =
+    Ordering.eq
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_dvd_of_div_eq_one ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ {c | M c.1 c.2 ≠ 0}.card ∣
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length /
+      {c | M c.1 c.2 ≠ 0}.card =
+    1
+Try this:
+  [apply] refine Rat.natCast_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length =
+    ↑{c | M c.1 c.2 ≠ 0}.card
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_testBit_eq ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ℕ),
+    {c | M c.1 c.2 ≠ 0}.card.testBit i =
+      (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+              (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols))
+                (List.finRange rows))).length.testBit
+        i
+Try this:
+  [apply] refine Rat.ofNat_eq_ofNat.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ OfNat.ofNat
+      (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length =
+    OfNat.ofNat {c | M c.1 c.2 ≠ 0}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n a b} {ha} {hb} => Fin.mk.inj_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.dvd_right_iff_eq.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : ℕ),
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+            (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length ∣
+        a ↔
+      {c | M c.1 c.2 ≠ 0}.card ∣ a
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Int.natCast_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ↑{c | M c.1 c.2 ≠ 0}.card =
+    ↑(List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+Try this:
+  [apply] refine Nat.dvd_left_iff_eq.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : ℕ),
+    a ∣
+        (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+            (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length ↔
+      a ∣ {c | M c.1 c.2 ≠ 0}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (List.getElem?_inj ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Fin.mk_eq_mk.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.compare_eq_eq.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ compare {c | M c.1 c.2 ≠ 0}.card
+      (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length =
+    Ordering.eq
+Try this:
+  [apply] refine Fin.equiv_iff_eq.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Nonempty
+    (Fin
+        (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+            (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length ≃
+      Fin {c | M c.1 c.2 ≠ 0}.card)
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Rat.natCast_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ↑{c | M c.1 c.2 ≠ 0}.card =
+    ↑(List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.replicate_left_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Rat.ofNat_eq_ofNat.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ OfNat.ofNat {c | M c.1 c.2 ≠ 0}.card =
+    OfNat.ofNat
+      (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (List.Nodup.getElem_inj_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.cast_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Nat.dvd_right_iff_eq.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : ℕ),
+    {c | M c.1 c.2 ≠ 0}.card ∣ a ↔
+      (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+            (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length ∣
+        a
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Nat.dvd_left_iff_eq.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : ℕ),
+    a ∣ {c | M c.1 c.2 ≠ 0}.card ↔
+      a ∣
+        (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+            (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+Try this:
+  [apply] refine (Nat.factorial_inj' ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 1 <
+      (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length ∨
+    1 < {c | M c.1 c.2 ≠ 0}.card
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols))
+            (List.finRange rows))).length.factorial =
+    {c | M c.1 c.2 ≠ 0}.card.factorial
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n a} {h} {a'} {h'} => Fin.mk_eq_mk.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Nat.factorial_inj ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 1 <
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+  -- ⊢ (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols))
+            (List.finRange rows))).length.factorial =
+    {c | M c.1 c.2 ≠ 0}.card.factorial
+Try this:
+  [apply] refine Eq.symm ((fun {n m} => Fin.equiv_iff_eq.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Nonempty
+    (Fin {c | M c.1 c.2 ≠ 0}.card ≃
+      Fin
+        (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+            (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pow_right_inj₀ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {a} {n m} => List.replicate_left_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {l} h {i} {hi} {j} {hj} => (List.Nodup.getElem_inj_iff h).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {R} [AddMonoidWithOne R] [CharZero R] {m n} => Nat.cast_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {m n} h => (Nat.factorial_inj' h).mp) ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 1 < {c | M c.1 c.2 ≠ 0}.card ∨
+    1 <
+      (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length
+  -- ⊢ {c | M c.1 c.2 ≠ 0}.card.factorial =
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length.factorial
+Try this:
+  [apply] refine Eq.symm ((fun {m n} hn => (Nat.factorial_inj hn).mp) ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 1 < {c | M c.1 c.2 ≠ 0}.card
+  -- ⊢ {c | M c.1 c.2 ≠ 0}.card.factorial =
+    (List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+          (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols)) (List.finRange rows))).length.factorial
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {M₀} [MonoidWithZero M₀] [LinearOrder M₀] [PosMulStrictMono M₀] {a} {m n} [ZeroLEOneClass M₀] ha₀ ha₁ =>
+        (pow_right_inj₀ ha₀ ha₁).mp)
+      ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+/private/tmp/io-sprg-overlap/BucketsSparse_sparseEntries_length_eq_card-apply.lean:14:0: warning: declaration uses 'sorry'

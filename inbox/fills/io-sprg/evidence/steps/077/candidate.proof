@@ -1,0 +1,34 @@
+by
+  classical
+  have hpX : ∀ (c : Bool) (v : P.SVar κ),
+      pubDegree (MvPolynomial.X (P.sVar κ k c v) : P.StructPoly κ pp) = 0 := ?_
+  swap
+  · intro c v
+    rw [P.sVar_eq]
+    exact pubDegree_X_inr _
+  have hsX : ∀ (c : Bool) (v : P.SVar κ),
+      privDegree (MvPolynomial.X (P.sVar κ k c v) : P.StructPoly κ pp) ≤ 1 := ?_
+  swap
+  · intro c v
+    rw [P.sVar_eq]
+    exact privDegree_X_inr _
+  rw [P.correctionPoly_eq]
+  cases hpos : Buckets.indexMap I'.2.1 (P.rc κ) j with
+  | none =>
+    constructor
+    · exact pubDegree_zero
+    · rw [privDegree_zero]
+      omega
+  | some c =>
+    constructor
+    · apply Nat.eq_zero_of_le_zero
+      apply pubDegree_finset_sum_le
+      intro r hr
+      simpa only [hpX, Nat.zero_add] using
+        (pubDegree_mul_le
+          (MvPolynomial.X (P.sVar κ k copy (P.uCoord κ (I'.2.1 j) c.1 r)))
+          (MvPolynomial.X (P.sVar κ k false (P.vCoord κ (I'.2.1 j) r c.2))))
+    · apply privDegree_finset_sum_le
+      intro r hr
+      exact (privDegree_mul_le _ _).trans
+        (Nat.add_le_add (hsX copy _) (hsX false _))

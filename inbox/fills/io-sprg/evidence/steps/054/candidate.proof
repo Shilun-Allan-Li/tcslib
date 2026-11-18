@@ -1,0 +1,33 @@
+by
+  let f : Fin (P.W κ) × ZMod pp.p → List Bool := fun c =>
+    pairEncode (Candidates.natToList (P.ℓ κ + 1) c.1.val)
+      (Candidates.natToList (κ + 1) c.2.val)
+  have helem : Function.Injective f := ?_
+  swap
+  · intro x y h
+    change pairEncode _ _ = pairEncode _ _ at h
+    have hp := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h
+    apply Prod.ext
+    · exact Fin.ext (Candidates.natToList_injOn
+        (x.1.isLt.trans_le (P.W_le_two_pow_ell_add_one κ))
+        (y.1.isLt.trans_le (P.W_le_two_pow_ell_add_one κ))
+        (congrArg Prod.fst hp))
+    · apply ZMod.val_injective pp.p
+      exact Candidates.natToList_injOn
+        ((ZMod.val_lt x.2).trans_le pp.le_two_pow)
+        ((ZMod.val_lt y.2).trans_le pp.le_two_pow)
+        (congrArg Prod.snd hp)
+  have hwidth : ∀ c, (f c).length = 2 * (P.ℓ κ + 1) + 2 + (κ + 1) := ?_
+  swap
+  · intro c
+    change (pairEncode _ _).length = _
+    rw [length_pairEncode, Candidates.length_natToList, Candidates.length_natToList]
+  have hlist := Internal.encodeList_injective_of_fixedWidth helem
+    (2 * (P.ℓ κ + 1) + 2 + (κ + 1)) hwidth
+  intro x y h
+  rw [P.encOneDraw_eq, P.encOneDraw_eq] at h
+  have hp := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h
+  apply Prod.ext
+  · exact Encoding.Modular.encodeVector_injective (κ + 1) pp.le_two_pow
+      (congrArg Prod.fst hp)
+  · exact List.ofFn_injective (hlist (congrArg Prod.snd hp))

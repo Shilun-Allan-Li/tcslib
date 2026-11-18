@@ -1,0 +1,528 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
+-/
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Basic
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Params
+import Mathlib.Logic.Equiv.Fin.Basic
+import Mathlib.Algebra.BigOperators.Fin
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Explicit finite coordinates and encodings for the JLS construction
+
+## Main definitions
+
+* `Params.IdDraw`, `Params.Draw`, `Params.Seed`: exact index and seed draw domains.
+* `Params.idxEquiv`, `Params.idDrawEquiv`, `Params.drawEquiv`: explicit finite coordinates.
+* `Params.encIdx'`, `Params.encIdDraw`, `Params.encDraw`, `Params.encSeed'`: faithful codes.
+* `Params.seedBound`, `Params.idxBound`: syntactic polynomial bounds.
+
+## Main results
+
+Named injectivity and length statements accompany the explicit codes. Every definition
+has an owner-side reader. These are the encoding part of the Phase A M0 checkpoint.
+
+## References
+
+* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
+  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, Section 4,
+  construction on pp. 15-17.
+
+Disclosed modular refinement: the encoding portion of `Samplers` has its own module.
+Dv1 and Dv3 fix the single-parameter dimensions and exact rational noise schedule;
+Dv15 and Dv17 use explicit finite coordinates and one exact product draw. SP-W1 keeps
+rational delta as data. No core, sampler construction, or efficiency proof is defined here.
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
+  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
+-/
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+
+open Complexity Turing
+
+namespace ConstructionEncoding
+
+/-- A residue uses its canonical finite coordinate, `(ZMod.finEquiv p).toEquiv.symm`; glue. -/
+def residueEquiv {κ : ℕ} (pp : PrimeParam κ) : ZMod pp.p ≃ Fin pp.p :=
+  (ZMod.finEquiv pp.p).toEquiv.symm
+
+/-- The residue equivalence is the symmetric Mathlib finite-residue equivalence; glue. -/
+theorem residueEquiv_eq {κ : ℕ} (pp : PrimeParam κ) :
+    residueEquiv pp = (ZMod.finEquiv pp.p).toEquiv.symm := rfl
+
+/-- A residue vector has explicit finite coordinates via canonical residues and
+`finFunctionFinEquiv`; glue. -/
+def vectorEquiv {κ : ℕ} (pp : PrimeParam κ) (N : ℕ) :
+    (Fin N → ZMod pp.p) ≃ Fin (pp.p ^ N) :=
+  (Equiv.arrowCongr (Equiv.refl (Fin N)) (residueEquiv pp)).trans finFunctionFinEquiv
+
+/-- The vector equivalence is its explicit arrow/function composition; glue. -/
+theorem vectorEquiv_eq {κ : ℕ} (pp : PrimeParam κ) (N : ℕ) :
+    vectorEquiv pp N =
+      (Equiv.arrowCongr (Equiv.refl (Fin N)) (residueEquiv pp)).trans
+        finFunctionFinEquiv := rfl
+
+/-- A matrix is explicitly enumerated as a finite vector of finite residue vectors; glue. -/
+def matrixEquiv {κ : ℕ} (pp : PrimeParam κ) (rows columns : ℕ) :
+    Matrix (Fin rows) (Fin columns) (ZMod pp.p) ≃ Fin ((pp.p ^ columns) ^ rows) :=
+  (Equiv.arrowCongr (Equiv.refl (Fin rows)) (vectorEquiv pp columns)).trans
+    finFunctionFinEquiv
+
+/-- The matrix equivalence is its explicit vector/function composition; glue. -/
+theorem matrixEquiv_eq {κ : ℕ} (pp : PrimeParam κ) (rows columns : ℕ) :
+    matrixEquiv pp rows columns =
+      (Equiv.arrowCongr (Equiv.refl (Fin rows)) (vectorEquiv pp columns)).trans
+        finFunctionFinEquiv := rfl
+
+/-- A Boolean vector has explicit coordinates in `Fin (2^N)` through `finTwoEquiv.symm`;
+glue. -/
+def boolVectorEquiv (N : ℕ) : (Fin N → Bool) ≃ Fin (2 ^ N) :=
+  (Equiv.arrowCongr (Equiv.refl (Fin N)) finTwoEquiv.symm).trans finFunctionFinEquiv
+
+/-- The Boolean-vector equivalence is the explicit Boolean/function composition; glue. -/
+theorem boolVectorEquiv_eq (N : ℕ) :
+    boolVectorEquiv N =
+      (Equiv.arrowCongr (Equiv.refl (Fin N)) finTwoEquiv.symm).trans
+        finFunctionFinEquiv := rfl
+
+/-- A scalar selector/residue draw has explicit coordinates in `Fin (W*p)`; glue. -/
+def noiseSeedEquiv {κ : ℕ} (pp : PrimeParam κ) (W : ℕ) :
+    (Fin W × ZMod pp.p) ≃ Fin (W * pp.p) :=
+  (Equiv.prodCongr (Equiv.refl (Fin W)) (residueEquiv pp)).trans finProdFinEquiv
+
+/-- The scalar-noise equivalence is the explicit residue/product composition; glue. -/
+theorem noiseSeedEquiv_eq {κ : ℕ} (pp : PrimeParam κ) (W : ℕ) :
+    noiseSeedEquiv pp W =
+      (Equiv.prodCongr (Equiv.refl (Fin W)) (residueEquiv pp)).trans
+        finProdFinEquiv := rfl
+
+/-- A noise-seed vector has explicit coordinates in `Fin ((W*p)^N)`; glue. -/
+def noiseVectorEquiv {κ : ℕ} (pp : PrimeParam κ) (W N : ℕ) :
+    (Fin N → Fin W × ZMod pp.p) ≃ Fin ((W * pp.p) ^ N) :=
+  (Equiv.arrowCongr (Equiv.refl (Fin N)) (noiseSeedEquiv pp W)).trans
+    finFunctionFinEquiv
+
+/-- The noise-vector equivalence is the explicit scalar/function composition; glue. -/
+theorem noiseVectorEquiv_eq {κ : ℕ} (pp : PrimeParam κ) (W N : ℕ) :
+    noiseVectorEquiv pp W N =
+      (Equiv.arrowCongr (Equiv.refl (Fin N)) (noiseSeedEquiv pp W)).trans
+        finFunctionFinEquiv := rfl
+
+/-- One repetition's common secret and noise-seed vector have explicit finite coordinates;
+glue. -/
+def oneDrawEquiv {κ : ℕ} (pp : PrimeParam κ) (L W N : ℕ) :
+    ((Fin L → ZMod pp.p) × (Fin N → Fin W × ZMod pp.p)) ≃
+      Fin (pp.p ^ L * (W * pp.p) ^ N) :=
+  (Equiv.prodCongr (vectorEquiv pp L) (noiseVectorEquiv pp W N)).trans finProdFinEquiv
+
+/-- The one-repetition equivalence is the explicit vector/product composition; glue. -/
+theorem oneDrawEquiv_eq {κ : ℕ} (pp : PrimeParam κ) (L W N : ℕ) :
+    oneDrawEquiv pp L W N =
+      (Equiv.prodCongr (vectorEquiv pp L) (noiseVectorEquiv pp W N)).trans
+        finProdFinEquiv := rfl
+
+end ConstructionEncoding
+
+namespace Params
+
+/-- The exact IdSamp' draw consists of a Boolean-generator index draw, bucket placements,
+and the public LPN matrix. [JLS26, IdSamp', p. 15]. Dv3 transposes the matrix; Dv17 applies
+one deterministic core to this entire exact product draw. -/
+abbrev IdDraw (P : Params) (κ : ℕ) (pp : PrimeParam κ) : Type :=
+  P.G.IdDraw (P.n κ) × ((Fin (P.m κ) → Fin (P.B κ)) ×
+    Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p))
+
+/-- The index draw is the stated generator/bucket/matrix product; glue. -/
+theorem idDraw_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ) : P.IdDraw κ pp =
+    (P.G.IdDraw (P.n κ) × ((Fin (P.m κ) → Fin (P.B κ)) ×
+      Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p))) := rfl
+
+/-- The exact SdSamp' draw consists of a Boolean seed and kappa independent common-secret /
+noise-seed repetitions. [JLS26, SdSamp' and 1SdSamp, pp. 15-16]. Dv3 uses rate `1/W`;
+Dv17 specifies one exact finite product draw rather than a constructed coin sampler. -/
+abbrev Draw (P : Params) (κ : ℕ) (pp : PrimeParam κ) : Type :=
+  (Fin (P.n κ) → Bool) ×
+    (Fin κ → (Fin (P.ℓ κ) → ZMod pp.p) ×
+      (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))
+
+/-- The seed draw is the displayed seed/repetition product; glue. -/
+theorem draw_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ) : P.Draw κ pp =
+    ((Fin (P.n κ) → Bool) ×
+      (Fin κ → (Fin (P.ℓ κ) → ZMod pp.p) ×
+        (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))) := rfl
+
+/-- The published seed is a pair of Fin-indexed field vectors of public and private lengths.
+[JLS26, SdSamp', p. 16]. Dv2 and Dv15 transport the structured coordinates explicitly. -/
+abbrev Seed (P : Params) (κ : ℕ) (pp : PrimeParam κ) : Type :=
+  (Fin (P.pubLen κ) → ZMod pp.p) × (Fin (P.privLen κ) → ZMod pp.p)
+
+/-- The seed type is the stated public/private field-vector pair; glue. -/
+theorem seed_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ) : P.Seed κ pp =
+    ((Fin (P.pubLen κ) → ZMod pp.p) × (Fin (P.privLen κ) → ZMod pp.p)) := rfl
+
+/-- The construction index has explicit size `G.idxCard(n) * (B^m * (p^ell)^n)`; glue. -/
+noncomputable def idxCard (P : Params) (κ : ℕ) (pp : PrimeParam κ) : ℕ :=
+  P.G.idxCard (P.n κ) * (P.B κ ^ P.m κ * ((pp.p ^ P.ℓ κ) ^ P.n κ))
+
+/-- The index size is the displayed product; glue. -/
+theorem idxCard_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
+    P.idxCard κ pp =
+      P.G.idxCard (P.n κ) * (P.B κ ^ P.m κ * ((pp.p ^ P.ℓ κ) ^ P.n κ)) := rfl
+
+/-- The index draw has explicit size `G.idDrawCard(n) * (B^m * (p^ell)^n)`; glue. -/
+noncomputable def idDrawCard (P : Params) (κ : ℕ) (pp : PrimeParam κ) : ℕ :=
+  P.G.idDrawCard (P.n κ) * (P.B κ ^ P.m κ * ((pp.p ^ P.ℓ κ) ^ P.n κ))
+
+/-- The index-draw size is the displayed product; glue. -/
+theorem idDrawCard_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
+    P.idDrawCard κ pp =
+      P.G.idDrawCard (P.n κ) * (P.B κ ^ P.m κ * ((pp.p ^ P.ℓ κ) ^ P.n κ)) := rfl
+
+/-- The seed draw has explicit size `2^n * (p^ell * (W*p)^n)^kappa`; glue. -/
+noncomputable def drawCard (P : Params) (κ : ℕ) (pp : PrimeParam κ) : ℕ :=
+  2 ^ P.n κ * ((pp.p ^ P.ℓ κ * (P.W κ * pp.p) ^ P.n κ) ^ κ)
+
+/-- The seed-draw size is the displayed product; glue. -/
+theorem drawCard_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
+    P.drawCard κ pp = 2 ^ P.n κ * ((pp.p ^ P.ℓ κ * (P.W κ * pp.p) ^ P.n κ) ^ κ) := rfl
+
+/-- The construction index is identified with its finite coordinate by supplied Boolean-index
+coordinates and canonical Fin function/product/matrix equivalences.
+[JLS26, IdSamp', p. 15]. Dv15 makes this equivalence explicit without choosing an enumeration. -/
+noncomputable def idxEquiv (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
+    P.Idx' κ pp ≃ Fin (P.idxCard κ pp) :=
+  (Equiv.prodCongr (P.G.idxEquiv (P.n κ))
+    ((Equiv.prodCongr finFunctionFinEquiv
+      (ConstructionEncoding.matrixEquiv pp (P.n κ) (P.ℓ κ))).trans
+        finProdFinEquiv)).trans finProdFinEquiv
+
+/-- The index equivalence is the explicit supplied/function/product composition; glue. -/
+theorem idxEquiv_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
+    P.idxEquiv κ pp =
+      (Equiv.prodCongr (P.G.idxEquiv (P.n κ))
+        ((Equiv.prodCongr finFunctionFinEquiv
+          (ConstructionEncoding.matrixEquiv pp (P.n κ) (P.ℓ κ))).trans
+            finProdFinEquiv)).trans finProdFinEquiv := rfl
+
+/-- The construction index draw uses supplied generator-draw coordinates and canonical finite
+function/product/matrix equivalences. [JLS26, IdSamp', p. 15]. Dv15 and Dv17 supply explicit
+coordinates for the entire one-draw type. -/
+noncomputable def idDrawEquiv (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
+    P.IdDraw κ pp ≃ Fin (P.idDrawCard κ pp) :=
+  (Equiv.prodCongr (P.G.idDrawEquiv (P.n κ))
+    ((Equiv.prodCongr finFunctionFinEquiv
+      (ConstructionEncoding.matrixEquiv pp (P.n κ) (P.ℓ κ))).trans
+        finProdFinEquiv)).trans finProdFinEquiv
+
+/-- The index-draw equivalence is its explicit supplied/function/product composition; glue. -/
+theorem idDrawEquiv_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
+    P.idDrawEquiv κ pp =
+      (Equiv.prodCongr (P.G.idDrawEquiv (P.n κ))
+        ((Equiv.prodCongr finFunctionFinEquiv
+          (ConstructionEncoding.matrixEquiv pp (P.n κ) (P.ℓ κ))).trans
+            finProdFinEquiv)).trans finProdFinEquiv := rfl
+
+/-- The entire seed draw uses the Boolean-vector equivalence and kappa explicit repetitions
+of the secret/noise-draw equivalence. [JLS26, SdSamp' and 1SdSamp, pp. 15-16]. Dv15 and
+Dv17 use only canonical finite equivalences; no product coin sampler is constructed. -/
+noncomputable def drawEquiv (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
+    P.Draw κ pp ≃ Fin (P.drawCard κ pp) :=
+  (Equiv.prodCongr (ConstructionEncoding.boolVectorEquiv (P.n κ))
+    ((Equiv.arrowCongr (Equiv.refl (Fin κ))
+      (ConstructionEncoding.oneDrawEquiv pp (P.ℓ κ) (P.W κ) (P.n κ))).trans
+        finFunctionFinEquiv)).trans finProdFinEquiv
+
+/-- The seed-draw equivalence is its explicit Boolean/repetition/product composition; glue. -/
+theorem drawEquiv_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
+    P.drawEquiv κ pp =
+      (Equiv.prodCongr (ConstructionEncoding.boolVectorEquiv (P.n κ))
+        ((Equiv.arrowCongr (Equiv.refl (Fin κ))
+          (ConstructionEncoding.oneDrawEquiv pp (P.ℓ κ) (P.W κ) (P.n κ))).trans
+            finFunctionFinEquiv)).trans finProdFinEquiv := rfl
+
+/-- Bucket placements are listed in increasing Fin order, each in `B` bits, using the existing
+one-prefixed, zero-terminated list code. [JLS26, IdSamp', p. 15]. Dv15 fixes a computable
+coordinate order and a polynomially bounded, deliberately generous fixed numeral width. -/
+noncomputable def encBuckets (P : Params) (κ : ℕ)
+    (φ : Fin (P.m κ) → Fin (P.B κ)) : List Bool :=
+  BoolCircuit.encodeList (fun b : Fin (P.B κ) => Candidates.natToList (P.B κ) b.val)
+    (List.ofFn φ)
+
+/-- Bucket placements have the stated existing finite-list encoding; glue. -/
+theorem encBuckets_eq (P : Params) (κ : ℕ) (φ : Fin (P.m κ) → Fin (P.B κ)) :
+    P.encBuckets κ φ = BoolCircuit.encodeList
+      (fun b : Fin (P.B κ) => Candidates.natToList (P.B κ) b.val) (List.ofFn φ) := rfl
+
+/-- The construction index is `pair I (pair bucket-placement matrix)`, with the matrix using
+`kappa+1` residue bits. [JLS26, IdSamp', p. 15]. Dv3 transposes the matrix; Dv15 gives
+canonical finite-coordinate codes. The public prime is passed separately as an input. -/
+noncomputable def encIdx' (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+    (I : P.Idx' κ pp) : List Bool :=
+  pairEncode (P.G.encIdx (P.n κ) I.1)
+    (pairEncode (P.encBuckets κ I.2.1) (Encoding.Modular.encodeMatrix (κ + 1) I.2.2))
+
+/-- The construction index encoding is the displayed nested pair; glue. -/
+theorem encIdx'_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' κ pp) :
+    P.encIdx' κ pp I = pairEncode (P.G.encIdx (P.n κ) I.1)
+      (pairEncode (P.encBuckets κ I.2.1) (Encoding.Modular.encodeMatrix (κ + 1) I.2.2)) := rfl
+
+/-- The index draw has the same bucket/matrix code with `G.encIdDraw` for the generator draw.
+[JLS26, IdSamp', p. 15]. Dv17 retains the complete exact draw for the shared contract. -/
+noncomputable def encIdDraw (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+    (r : P.IdDraw κ pp) : List Bool :=
+  pairEncode (P.G.encIdDraw (P.n κ) r.1)
+    (pairEncode (P.encBuckets κ r.2.1) (Encoding.Modular.encodeMatrix (κ + 1) r.2.2))
+
+/-- The index-draw encoding is the displayed nested pair; glue. -/
+theorem encIdDraw_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ) (r : P.IdDraw κ pp) :
+    P.encIdDraw κ pp r = pairEncode (P.G.encIdDraw (P.n κ) r.1)
+      (pairEncode (P.encBuckets κ r.2.1) (Encoding.Modular.encodeMatrix (κ + 1) r.2.2)) := rfl
+
+/-- One secret/noise repetition is encoded as the secret vector paired with the finite list of
+selector/residue pairs. [JLS26, 1SdSamp, p. 16]. Dv3 uses the exact `Fin W` selector;
+Dv15 gives selectors `ell+1` bits and residues `kappa+1` bits. -/
+noncomputable def encOneDraw (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+    (r : (Fin (P.ℓ κ) → ZMod pp.p) ×
+      (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)) : List Bool :=
+  pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1)
+    (BoolCircuit.encodeList (fun c : Fin (P.W κ) × ZMod pp.p =>
+      pairEncode (Candidates.natToList (P.ℓ κ + 1) c.1.val)
+        (Candidates.natToList (κ + 1) c.2.val)) (List.ofFn r.2))
+
+/-- One repetition has the displayed vector-and-noise-list code; glue. -/
+theorem encOneDraw_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+    (r : (Fin (P.ℓ κ) → ZMod pp.p) ×
+      (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)) :
+    P.encOneDraw κ pp r = pairEncode (Encoding.Modular.encodeVector (κ + 1) r.1)
+      (BoolCircuit.encodeList (fun c : Fin (P.W κ) × ZMod pp.p =>
+        pairEncode (Candidates.natToList (P.ℓ κ + 1) c.1.val)
+          (Candidates.natToList (κ + 1) c.2.val)) (List.ofFn r.2)) := rfl
+
+/-- The entire seed draw pairs the actual Boolean seed word with the finite list of kappa
+secret/noise repetitions. [JLS26, SdSamp', pp. 15-16]. Dv15 and Dv17 retain all exact draw
+data with explicit coordinates and no classical enumeration. -/
+noncomputable def encDraw (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+    (r : P.Draw κ pp) : List Bool :=
+  pairEncode (List.ofFn r.1)
+    (BoolCircuit.encodeList (P.encOneDraw κ pp) (List.ofFn r.2))
+
+/-- The entire seed-draw code is the displayed Boolean/repetition pair; glue. -/
+theorem encDraw_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ) (r : P.Draw κ pp) :
+    P.encDraw κ pp r = pairEncode (List.ofFn r.1)
+      (BoolCircuit.encodeList (P.encOneDraw κ pp) (List.ofFn r.2)) := rfl
+
+/-- The published seed is the pair of canonical modular vector codes at residue width
+`kappa+1`. [JLS26, SdSamp', p. 16]. Dv2 and Dv15 use explicit public/private Fin coordinates. -/
+noncomputable def encSeed' (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+    (sd : P.Seed κ pp) : List Bool :=
+  pairEncode (Encoding.Modular.encodeVector (κ + 1) sd.1)
+    (Encoding.Modular.encodeVector (κ + 1) sd.2)
+
+/-- The seed code is the stated pair of fixed-width vector codes; glue. -/
+theorem encSeed'_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ) (sd : P.Seed κ pp) :
+    P.encSeed' κ pp sd = pairEncode (Encoding.Modular.encodeVector (κ + 1) sd.1)
+      (Encoding.Modular.encodeVector (κ + 1) sd.2) := rfl
+
+/-- The LPN dimension bound is the syntactic polynomial `var^E`; glue. -/
+def ellBound (P : Params) : PolyExpr := .pow .var P.E
+
+/-- The dimension bound is `var^E`; glue. -/
+theorem ellBound_eq (P : Params) : P.ellBound = .pow .var P.E := rfl
+
+/-- The Boolean seed bound is the syntactic polynomial `(var^E)^D`; glue. -/
+def nBound (P : Params) : PolyExpr := .pow P.ellBound P.D
+
+/-- The Boolean seed bound is `ellBound^D`; glue. -/
+theorem nBound_eq (P : Params) : P.nBound = .pow P.ellBound P.D := rfl
+
+/-- The output bound substitutes the seed polynomial into the Boolean output bound; glue. -/
+def mBound (P : Params) : PolyExpr := P.G.outBound.subst P.nBound
+
+/-- The output bound is `G.outBound.subst nBound`; glue. -/
+theorem mBound_eq (P : Params) : P.mBound = P.G.outBound.subst P.nBound := rfl
+
+/-- The bucket bound is the syntactic polynomial `mBound*var+1`; glue. -/
+def bucketBound (P : Params) : PolyExpr := .add (.mul P.mBound .var) (.const 1)
+
+/-- The bucket bound is `mBound*var+1`; glue. -/
+theorem bucketBound_eq (P : Params) :
+    P.bucketBound = .add (.mul P.mBound .var) (.const 1) := rfl
+
+/-- The grid-side bound is the syntactic polynomial `var*(ellBound+1)`; glue. -/
+def rcBound (P : Params) : PolyExpr := .mul .var (.add P.ellBound (.const 1))
+
+/-- The grid-side bound is `var*(ellBound+1)`; glue. -/
+theorem rcBound_eq (P : Params) :
+    P.rcBound = .mul .var (.add P.ellBound (.const 1)) := rfl
+
+/-- The public-length bound is the syntactic polynomial `var*nBound+1`; glue. -/
+def pubBound (P : Params) : PolyExpr := .add (.mul .var P.nBound) (.const 1)
+
+/-- The public-length bound is `var*nBound+1`; glue. -/
+theorem pubBound_eq (P : Params) :
+    P.pubBound = .add (.mul .var P.nBound) (.const 1) := rfl
+
+/-- The one-instance private bound is `(ellBound+1)^D` plus the two factor-array bounds;
+glue. -/
+def sVarBound (P : Params) : PolyExpr :=
+  .add (.pow (.add P.ellBound (.const 1)) P.D)
+    (.mul P.bucketBound (.add (.mul P.rcBound .var) (.mul .var P.rcBound)))
+
+/-- The one-instance private bound is the displayed tensor/factor polynomial; glue. -/
+theorem sVarBound_eq (P : Params) : P.sVarBound =
+    .add (.pow (.add P.ellBound (.const 1)) P.D)
+      (.mul P.bucketBound (.add (.mul P.rcBound .var) (.mul .var P.rcBound))) := rfl
+
+/-- The common seed bound is `pubBound + var*(1+2*sVarBound)`; glue.
+Both public and private residue counts are bounded by this one syntactic polynomial. -/
+def seedBound (P : Params) : PolyExpr :=
+  .add P.pubBound (.mul .var (.add (.const 1) (.mul (.const 2) P.sVarBound)))
+
+/-- The common seed bound is the displayed public/private sum; glue. -/
+theorem seedBound_eq (P : Params) : P.seedBound =
+    .add P.pubBound (.mul .var (.add (.const 1) (.mul (.const 2) P.sVarBound))) := rfl
+
+/-- The index bit bound includes the Boolean index, both pair separators, the bucket list,
+and the matrix residues. [JLS26, IdSamp', p. 15]. Dv15 counts the fixed concrete code;
+the exact pair cost is `2|x|+2+|y|` and bucket-list cost is `m*(B+1)+1`. -/
+def idxBound (P : Params) : PolyExpr :=
+  .add (.mul (.const 2) (P.G.idxBits.subst P.nBound))
+    (.add (.const 6)
+      (.add (.mul (.const 2) (.mul P.mBound (.add P.bucketBound (.const 1))))
+        (.mul (.mul P.nBound P.ellBound) (.add .var (.const 1)))))
+
+/-- The index bound is the explicit pair/list/matrix polynomial; glue. -/
+theorem idxBound_eq (P : Params) : P.idxBound =
+    .add (.mul (.const 2) (P.G.idxBits.subst P.nBound))
+      (.add (.const 6)
+        (.add (.mul (.const 2) (.mul P.mBound (.add P.bucketBound (.const 1))))
+          (.mul (.mul P.nBound P.ellBound) (.add .var (.const 1))))) := rfl
+
+/-- The scheduled LPN dimension is bounded by `ellBound`; glue.
+
+**Proof sketch.** Read the dimension equation and the power/variable equations of PolyExpr. -/
+theorem ell_le_ellBound (P : Params) (κ : ℕ) : P.ℓ κ ≤ P.ellBound.eval κ := by
+  rw [P.ℓ_eq, P.ellBound_eq, PolyExpr.eval_pow, PolyExpr.eval_var]
+
+/-- The scheduled Boolean seed length is bounded by `nBound`; glue.
+
+**Proof sketch.** Read the seed-length equation and substitute the dimension-bound equality. -/
+theorem n_le_nBound (P : Params) (κ : ℕ) : P.n κ ≤ P.nBound.eval κ := by
+  rw [P.n_eq, P.nBound_eq, PolyExpr.eval_pow]
+  exact Nat.pow_le_pow_left (P.ell_le_ellBound κ) P.D
+
+/-- The scheduled output length is bounded by `mBound`; glue.
+
+**Proof sketch.** Read PolyExpr substitution and apply the Boolean primitive's output bound. -/
+theorem m_le_mBound (P : Params) (κ : ℕ) : P.m κ ≤ P.mBound.eval κ := by
+  rw [P.m_eq, P.mBound_eq, PolyExpr.eval_subst]
+  exact (P.G.outLen_le _).trans (PolyExpr.eval_mono _ (P.n_le_nBound κ))
+
+/-- The rounded noise denominator satisfies `W ≤ ell+1` at every parameter.
+[JLS26, Section 4, p. 15]. Dv3 rounds the noise rate upward; SP-W1 supplies `0<delta<1`.
+
+**Proof sketch.** At dimension zero, max-one rounding gives W=1. At positive dimension,
+compare the squared floor with the real power `ell^delta`, then use delta<1 and ell≥1. -/
+theorem W_le_ell_add_one (P : Params) (κ : ℕ) : P.W κ ≤ P.ℓ κ + 1 := sorry
+
+/-- Every noise selector fits in `ell+1` bits. [JLS26, Section 4, p. 15]. Dv15 fixes the
+finite selector code used by the exact draw.
+
+**Proof sketch.** Combine W≤ell+1 with the existing natural bound `ell+1 ≤ 2^(ell+1)`. -/
+theorem W_le_two_pow_ell_add_one (P : Params) (κ : ℕ) :
+    P.W κ ≤ 2 ^ (P.ℓ κ + 1) := sorry
+
+/-- The rounded bucket count is bounded by `bucketBound`; glue.
+
+**Proof sketch.** W≥1 bounds the rounded quotient by m*kappa+1; substitute mBound. -/
+theorem B_le_bucketBound (P : Params) (κ : ℕ) : P.B κ ≤ P.bucketBound.eval κ := sorry
+
+/-- The grid side is bounded by `rcBound`; glue.
+
+**Proof sketch.** The rounded width is at most ell+1; multiply by t=kappa and read ellBound. -/
+theorem rc_le_rcBound (P : Params) (κ : ℕ) : P.rc κ ≤ P.rcBound.eval κ := sorry
+
+/-- The one-instance private length is bounded by `sVarBound`; glue.
+
+**Proof sketch.** Apply monotonicity to the tensor power, bucket count and two factor products. -/
+theorem sLen_le_sVarBound (P : Params) (κ : ℕ) : P.sLen κ ≤ P.sVarBound.eval κ := sorry
+
+/-- The public residue count is bounded by the common seed polynomial.
+[JLS26, SdSamp', p. 16]. Dv2 counts the field-vector coordinates.
+
+**Proof sketch.** The public count equals pubBound; discard the nonnegative private summand. -/
+theorem pubLen_le_seedBound (P : Params) (κ : ℕ) :
+    P.pubLen κ ≤ P.seedBound.eval κ := sorry
+
+/-- The private residue count is bounded by the common seed polynomial.
+[JLS26, SdSamp', p. 16]. Dv2 counts flag and both private-vector copies.
+
+**Proof sketch.** Bound sLen by sVarBound, multiply the flag/two-copy expression by kappa,
+then add the nonnegative public summand. -/
+theorem privLen_le_seedBound (P : Params) (κ : ℕ) :
+    P.privLen κ ≤ P.seedBound.eval κ := sorry
+
+/-- The bucket-placement code retains every finite coordinate.
+[JLS26, IdSamp', p. 15]. Dv15 makes faithfulness explicit.
+
+**Proof sketch.** Recover the fixed-width blocks from the existing list code, use the
+numeral round-trip bound B≤2^B, and apply function extensionality. -/
+theorem encBuckets_injective (P : Params) (κ : ℕ) :
+    Function.Injective (P.encBuckets κ) := sorry
+
+/-- The construction index code retains the complete Boolean index, bucket placement and
+matrix. [JLS26, IdSamp', p. 15]. Dv15 makes faithfulness explicit.
+
+**Proof sketch.** Split both nested pairs, apply the input primitive's index injectivity,
+the bucket-code injectivity, and the shared modular matrix injectivity with pp's width. -/
+theorem encIdx'_injective (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
+    Function.Injective (P.encIdx' κ pp) := sorry
+
+/-- The exact index-draw code retains every draw component.
+[JLS26, IdSamp', p. 15]. Dv15 and Dv17 make the exact-draw encoding faithful.
+
+**Proof sketch.** Split both pairs and apply the input primitive's draw injectivity,
+the bucket-code injectivity, and the shared modular matrix injectivity. -/
+theorem encIdDraw_injective (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
+    Function.Injective (P.encIdDraw κ pp) := sorry
+
+/-- One repetition's code retains its common secret and every selector/residue pair.
+[JLS26, 1SdSamp, p. 16]. Dv3 and Dv15 fix the exact noise draw and its widths.
+
+**Proof sketch.** Split the pair, recover the fixed-length list blocks, use the two numeral
+round trips and modular vector injectivity, and combine the recovered coordinates. -/
+theorem encOneDraw_injective (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
+    Function.Injective (P.encOneDraw κ pp) := sorry
+
+/-- The complete seed-draw code retains the Boolean seed and every exact repetition draw.
+[JLS26, SdSamp', pp. 15-16]. Dv15 and Dv17 make the exact-draw code faithful.
+
+**Proof sketch.** Split the outer pair, recover the Boolean vector by List.ofFn injectivity,
+and recover each fixed-length repetition block using encOneDraw injectivity. -/
+theorem encDraw_injective (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
+    Function.Injective (P.encDraw κ pp) := sorry
+
+/-- The published seed code retains both field-vector components.
+[JLS26, SdSamp', p. 16]. Dv2 and Dv15 use canonical residue codes.
+
+**Proof sketch.** Split the pair and apply the existing modular vector injectivity to
+both components at the public prime's residue width. -/
+theorem encSeed'_injective (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
+    Function.Injective (P.encSeed' κ pp) := sorry
+
+/-- Every encoded construction index fits the syntactic polynomial `idxBound`.
+[JLS26, IdSamp', p. 15]. Dv15 accounts for every pair, list tag and residue bit.
+
+**Proof sketch.** Apply the existing pair-length and modular matrix-length readers, count
+the fixed-width bucket list, and substitute the primitive index bound and numeric bounds. -/
+theorem encIdx'_length_le (P : Params) (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' κ pp) :
+    (P.encIdx' κ pp I).length ≤ P.idxBound.eval κ := sorry
+
+end Params
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed

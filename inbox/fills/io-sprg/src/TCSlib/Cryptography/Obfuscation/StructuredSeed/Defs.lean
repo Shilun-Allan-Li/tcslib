@@ -386,7 +386,12 @@ p. 10]. This is glue forgetting the generation algorithm.
 **Proof sketch.** Retain the polynomial, degree, and evaluation witnesses
 and discard the uniform generator and its term-list equations. -/
 theorem HasComplexityEff.hasComplexity {S : Raw} {dPub dPriv : ℕ}
-    (h : S.HasComplexityEff dPub dPriv) : S.HasComplexity dPub dPriv := sorry
+    (h : S.HasComplexityEff dPub dPriv) : S.HasComplexity dPub dPriv := by
+  obtain ⟨_f, _hf, hQ⟩ := (hasComplexityEff_iff S dPub dPriv).mp h
+  apply (hasComplexity_iff S dPub dPriv).mpr
+  intro κ I
+  obtain ⟨Q, _hgen, hdeg, heval⟩ := hQ κ I
+  exact ⟨Q, hdeg, heval⟩
 
 end Raw
 end SPRG

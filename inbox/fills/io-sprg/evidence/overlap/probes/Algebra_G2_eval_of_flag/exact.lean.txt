@@ -1,0 +1,16 @@
+import Mathlib.Algebra.MvPolynomial.Eval
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+
+namespace IoSprgAlgebraOverlap
+
+example {V R : Type*} [CommRing R] (q c : MvPolynomial V R) (z : V → R) (a b : R)
+    (hq : MvPolynomial.eval z q = a) (hc : MvPolynomial.eval z c = b - a) :
+    MvPolynomial.eval z (q + c) = b := by
+  exact?
+
+end IoSprgAlgebraOverlap

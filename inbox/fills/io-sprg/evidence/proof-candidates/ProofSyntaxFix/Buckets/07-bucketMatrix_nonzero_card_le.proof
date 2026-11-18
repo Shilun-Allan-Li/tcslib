@@ -1,0 +1,24 @@
+by
+  classical
+  let S := bucket φ b ∩ bad
+  let T := Finset.univ.filter (fun c : Fin rc × Fin rc =>
+    bucketMatrix φ rc corr b c.1 c.2 ≠ 0)
+  change T.card ≤ S.card
+  calc
+    T.card = (T.image (fun c => some c)).card :=
+      (Finset.card_image_of_injective T (fun _ _ he => Option.some.inj he)).symm
+    _ ≤ (S.image (indexMap φ rc)).card := Finset.card_le_card ?_
+    _ ≤ S.card := Finset.card_image_le
+  intro oc hoc
+  rcases Finset.mem_image.mp hoc with ⟨c, hc, rfl⟩
+  have hM := (Finset.mem_filter.mp hc).2
+  rw [bucketMatrix_eq] at hM
+  rcases Finset.exists_ne_zero_of_sum_ne_zero hM with ⟨j, _, hj⟩
+  by_cases hgood : φ j = b ∧ indexMap φ rc j = some (c.1, c.2)
+  · rw [if_pos hgood] at hj
+    refine Finset.mem_image.mpr ⟨j, Finset.mem_inter.mpr ⟨?_, ?_⟩, hgood.2⟩
+    · rw [bucket_eq]
+      exact Finset.mem_filter.mpr ⟨Finset.mem_univ j, hgood.1⟩
+    · by_contra hbad
+      exact hj (hcorr j hbad)
+  · exact False.elim (hj (if_neg hgood))

@@ -1,0 +1,13 @@
+import Mathlib.Algebra.Order.Ring.Nat
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace IoSprgEncodingOverlap
+
+example (ell ellBound D : ℕ) (hell : ell ≤ ellBound) :
+    ell ^ D ≤ ellBound ^ D := __PROBE_BODY__
+
+end IoSprgEncodingOverlap

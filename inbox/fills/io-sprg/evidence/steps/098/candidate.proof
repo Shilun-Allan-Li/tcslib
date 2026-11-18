@@ -1,0 +1,7 @@
+by
+  rw [P.sdSampFull_eq, OracleComp.map_eq_bind]
+  apply OracleComp.AllOutputs.bind (OracleComp.allOutputs_true _)
+  intro d hd
+  apply OracleComp.allOutputs_pure.mpr
+  intro j
+  simpa only [P.sdCore_σ] using P.G4_eval_sdCore κ pp I d j

@@ -1,0 +1,130 @@
+Try this:
+  [apply] refine Nat.or_exists_add_one.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (∀ κ ≥ 0, c ≤ Nat.log 2 ((κ ^ E) ^ ((d + 1) / 2))) ∨ ∃ n, ∀ κ ≥ n + 1, c ≤ Nat.log 2 ((κ ^ E) ^ ((d + 1) / 2))
+Try this:
+  [apply] refine Subtype.existsOfSubtype ?_
+  -- Remaining subgoals:
+  -- ⊢ { x // ∀ κ ≥ x, c ≤ Nat.log 2 ((κ ^ E) ^ ((d + 1) / 2)) }
+Try this:
+  [apply] refine Subtype.exists_of_subtype ?_
+  -- Remaining subgoals:
+  -- ⊢ { x // ∀ κ ≥ x, c ≤ Nat.log 2 ((κ ^ E) ^ ((d + 1) / 2)) }
+Try this:
+  [apply] refine Exists.intro ?_ fun κ => ?_
+  -- Remaining subgoals:
+  -- ⊢ ℕ
+  -- ⊢ ∀ κ ≥ ?_, c ≤ Nat.log 2 ((κ ^ E) ^ ((d + 1) / 2))
+  -- ⊢ _fvar.19862 ≥ ?_ → c ≤ Nat.log 2 ((_fvar.19862 ^ E) ^ ((d + 1) / 2))
+  -- ⊢ c ≤ Nat.log 2 ((_fvar.19862 ^ E) ^ ((d + 1) / 2))
+Try this:
+  [apply] refine Exists.of_psigma_prop ?_
+  -- Remaining subgoals:
+  -- ⊢ (x : ℕ) ×' ∀ κ ≥ x, c ≤ Nat.log 2 ((κ ^ E) ^ ((d + 1) / 2))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Exists.imp (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists_congr fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists_congr fun a => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Exists.imp' ?_ (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Decidable.not_forall_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Decidable (∃ x, ∀ κ ≥ x, c ≤ Nat.log 2 ((κ ^ E) ^ ((d + 1) / 2)))
+  -- ⊢ ¬∀ (x : ℕ), ¬∀ κ ≥ x, c ≤ Nat.log 2 ((κ ^ E) ^ ((d + 1) / 2))
+Try this:
+  [apply] refine Classical.not_forall_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬∀ (x : ℕ), ¬∀ κ ≥ x, c ≤ Nat.log 2 ((κ ^ E) ^ ((d + 1) / 2))
+Try this:
+  [apply] refine not_forall_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬∀ (x : ℕ), ¬∀ κ ≥ x, c ≤ Nat.log 2 ((κ ^ E) ^ ((d + 1) / 2))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine exists_of_exists_mem ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine existsUnique_iff_exists.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Subsingleton ℕ
+  -- ⊢ ∃! x, ∀ κ ≥ x, c ≤ Nat.log 2 ((κ ^ E) ^ ((d + 1) / 2))
+Try this:
+  [apply] refine ExistsUnique.exists ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃! x, ∀ κ ≥ x, c ≤ Nat.log 2 ((κ ^ E) ^ ((d + 1) / 2))
+Try this:
+  [apply] refine nonempty_subtype.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Nonempty { a // ∀ κ ≥ a, c ≤ Nat.log 2 ((κ ^ E) ^ ((d + 1) / 2)) }
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Surjective.exists fun b => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine IsEmpty.exists_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ IsEmpty ℕ
+  -- ⊢ False
+Try this:
+  [apply] refine Unique.exists_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Unique ℕ
+  -- ⊢ ∀ κ ≥ default, c ≤ Nat.log 2 ((κ ^ E) ^ ((d + 1) / 2))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr_left ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr ?_ fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr ?_ fun a => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr' ?_ fun b => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr' ?_ fun b => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_subtype_congr ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_subtype_congr ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists_le_and_iff_exists ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists_ge_and_iff_exists ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+/private/tmp/io-sprg-overlap/Params_le_log_n-apply.lean:11:0: warning: declaration uses 'sorry'
+/private/tmp/io-sprg-overlap/Params_le_log_n-apply.lean:11:21: warning: unused variable `hd`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/Params_le_log_n-apply.lean:11:34: warning: unused variable `hE`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

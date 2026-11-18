@@ -1,0 +1,14 @@
+import TCSlib.Complexity.CircuitComplexity.Uniform
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace IoSprgEncodingOverlap
+
+example {α : Type} (f : α → List Bool)
+    (width : ℕ) (hwidth : ∀ a, (f a).length = width) (xs : List α) :
+    (BoolCircuit.encodeList f xs).length = xs.length * (width + 1) + 1 := __PROBE_BODY__
+
+end IoSprgEncodingOverlap

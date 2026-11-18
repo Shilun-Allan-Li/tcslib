@@ -1,0 +1,13 @@
+import Mathlib.Algebra.Order.Ring.Nat
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace IoSprgParamsOverlap
+
+example (d : ℕ) (hd : 1 ≤ d) :
+    0 < (d + 1) / 2 := __PROBE_BODY__
+
+end IoSprgParamsOverlap

@@ -1,0 +1,123 @@
+"""UNRUN pure candidate helpers. No subprocess, file write, Lean or import side effects.
+
+Caller supplies NUL output of the full pinned BASE..resolved HEAD name-status diff
+with --no-renames, and committed/current bytes. Existing reviewed builder.header
+is passed as header_reader. This file is staged only; it has not been executed.
+"""
+import hashlib
+from collections import Counter
+
+VARIANTS = frozenset({'strict-A', 'strict-B', 'coe-A', 'coe-B'})
+AREA_FACADE = 'TCSlib/Cryptography/Obfuscation.lean'
+AREA_PREFIX = 'TCSlib/Cryptography/Obfuscation/'
+EXPORT = 'TCSlib.lean'
+
+
+def require(condition, message):
+    if not condition:
+        raise ValueError(message)
+
+
+def area_path(path):
+    return path == AREA_FACADE or path.startswith(AREA_PREFIX)
+
+
+def derive_inventory(base, head, diff_bytes, committed, current, header_reader):
+    """No Git invocation: caller must bind these inputs to one resolved commit."""
+    tokens = diff_bytes.split(b'\0')
+    require(tokens[-1] == b'', 'diff must be complete NUL-terminated output')
+    tokens.pop()
+    require(len(tokens) % 2 == 0, 'unexpected name-status diff layout/rename')
+    changed = {}
+    for index in range(0, len(tokens), 2):
+        status = tokens[index].decode('ascii')
+        path = tokens[index + 1].decode('utf-8')
+        require(status in {'A', 'M'}, 'deleted/renamed/type-changed source needs explicit review')
+        require(path not in changed, 'duplicate changed path')
+        require(path.endswith('.lean'), 'non-Lean committed path is outside scope')
+        require(area_path(path) or path == EXPORT, 'changed path is outside exact area/export')
+        changed[path] = status
+    require(changed, 'empty changed source inventory')
+    require(set(changed) == set(committed) == set(current), 'source payload key set differs')
+    require(all(current[p] == committed[p] for p in changed), 'uncommitted source difference')
+    sources = {}
+    for path, status in changed.items():
+        if path == EXPORT:
+            continue
+        module = path[:-5].replace('/', '.')
+        require(module not in sources, 'module/path collision')
+        sources[module] = {'path': path, 'status': status,
+                           'sha256': hashlib.sha256(committed[path]).hexdigest()}
+    require(sources, 'no owned module discovered')
+    ordered, done, visiting = [], set(), set()
+
+    def visit(module):
+        if module in done:
+            return
+        require(module not in visiting, 'owned import cycle')
+        visiting.add(module)
+        parsed = header_reader(committed[sources[module]['path']])
+        for imported in parsed['imports']:
+            if imported in sources:
+                visit(imported)
+        visiting.remove(module)
+        done.add(module)
+        ordered.append(module)
+
+    for module in sorted(sources):
+        visit(module)
+    require(set(ordered) == set(sources), 'topological order omitted an owner')
+    return {'base': base, 'head': head, 'owners': ordered, 'sources': sources,
+            'changed': changed, 'exports': [p for p in changed if p == EXPORT]}
+
+
+def validate_collector(inventory, closures, stored, roots):
+    owners = set(inventory['owners'])
+    require(set(closures) == set(stored) == owners, 'collector owner set differs')
+    require(set(roots) <= owners, 'ROOT row outside owner inventory')
+    for owner in owners:
+        rows = roots.get(owner, [])
+        require(len(rows) == stored[owner], 'all-stored ROOT count differs')
+        names = [row['name']['display'] for row in rows]
+        require(len(names) == len(set(names)), 'duplicate stored ROOT name')
+    # Parsing must separately reject duplicate MODULE/CLOSURE/CAT records before maps form.
+    # Existing exact CAT count, source closure checks and term-subset rules remain mandatory.
+
+
+def validate_matrix_plan(inventory, seal_manifests, control_plans):
+    owners = set(inventory['owners'])
+    require(set(seal_manifests) == set(control_plans) == VARIANTS,
+            'exact four seal/control variants required')
+    probe_keys = []
+    control_count = unsealed_count = 0
+    for variant in sorted(VARIANTS):
+        probes = seal_manifests[variant]['probes']
+        homes = [probe['module'] for probe in probes]
+        require(len(homes) == len(owners) and set(homes) == owners,
+                'missing/duplicate/extra owner in variant manifest')
+        for probe in probes:
+            owner = probe['module']
+            require(owner.replace('.', '/') + '.lean' == inventory['sources'][owner]['path'],
+                    'manifest owner path differs')
+            require(probe['source_sha256'] == inventory['sources'][owner]['sha256'],
+                    'manifest owner source bytes differ')
+            probe_keys.append(('seal', variant, probe['probe_module']))
+        pairs = Counter()
+        for plan in control_plans[variant]:
+            require(isinstance(plan['sealed'], bool), 'control sealed mode must be Boolean')
+            require(plan['owner'] in owners, 'control owner outside inventory')
+            pairs[plan['owner'], plan['sealed']] += 1
+            probe_keys.append(('control', variant, plan['module']))
+            control_count += 1
+            unsealed_count += not plan['sealed']
+        active = {owner for owner, sealed in pairs}
+        for owner in active:
+            require(pairs[owner, False] == pairs[owner, True] == 1,
+                    'unsealed/sealed control pair missing or duplicated')
+        # Additionally require coverage.json unresolved=[] and exact current eligible
+        # target/reader coverage, with only reviewed exclusions; a reduced plan is not enough.
+    require(len(probe_keys) == len(set(probe_keys)), 'duplicate planned probe key')
+    require(probe_keys, 'empty matrix plan')
+    return {'expected_probe_keys': probe_keys, 'seal_probes': len(VARIANTS) * len(owners),
+            'control_probes': control_count, 'unsealed_control_probes': unsealed_count,
+            'planned': len(probe_keys)}

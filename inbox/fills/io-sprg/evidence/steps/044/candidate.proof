@@ -1,0 +1,32 @@
+by
+  have hδ : 0 < (P.δ : ℝ) := Rat.cast_pos.mpr P.δ_pos
+  by_cases hL : P.ℓ κ = 0
+  · rw [P.W_eq, P.w_eq, P.noiseWidth_eq, hL]
+    norm_num [Real.zero_rpow (div_pos hδ zero_lt_two).ne']
+  · have hL1 : 1 ≤ P.ℓ κ := Nat.one_le_iff_ne_zero.mpr hL
+    have hL1r : 1 ≤ (P.ℓ κ : ℝ) := Nat.one_le_cast.mpr hL1
+    have hx : 1 ≤ (P.ℓ κ : ℝ) ^ ((P.δ : ℝ) / 2) :=
+      Real.one_le_rpow hL1r (div_nonneg hδ.le zero_le_two)
+    have hf : 1 ≤ ⌊(P.ℓ κ : ℝ) ^ ((P.δ : ℝ) / 2)⌋₊ :=
+      (Nat.one_le_floor_iff _).mpr hx
+    have hw : (P.w κ : ℝ) ≤ (P.ℓ κ : ℝ) ^ ((P.δ : ℝ) / 2) := ?_
+    swap
+    · rw [P.w_eq, P.noiseWidth_eq, max_eq_right hf]
+      exact Nat.floor_le (zero_le_one.trans hx)
+    have hp : (P.ℓ κ : ℝ) ^ (P.δ : ℝ) ≤ (P.ℓ κ : ℝ) :=
+      (Real.rpow_le_rpow_of_exponent_le hL1r
+        (Rat.cast_le.mpr P.δ_lt_one.le)).trans_eq (Real.rpow_one _)
+    have hsq : (P.w κ : ℝ) ^ 2 ≤ (P.ℓ κ : ℝ) := ?_
+    swap
+    · calc
+        (P.w κ : ℝ) ^ 2 ≤ ((P.ℓ κ : ℝ) ^ ((P.δ : ℝ) / 2)) ^ 2 :=
+          pow_le_pow_left₀ (Nat.cast_nonneg _) hw 2
+        _ = (P.ℓ κ : ℝ) ^ (P.δ : ℝ) := ?_
+        _ ≤ (P.ℓ κ : ℝ) := hp
+      rw [← Real.rpow_mul_natCast (Nat.cast_nonneg (P.ℓ κ)),
+        div_mul_cancel₀ _ two_ne_zero]
+    have hW : (P.W κ : ℝ) ≤ (P.ℓ κ : ℝ) := ?_
+    swap
+    · rw [P.W_eq, Nat.cast_pow]
+      exact hsq
+    exact (Nat.cast_le.mp hW).trans (Nat.le_succ _)

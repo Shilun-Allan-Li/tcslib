@@ -1,0 +1,27 @@
+import TCSlib.Complexity.CircuitComplexity.Uniform
+import TCSlib.Cryptography.Encoding.Modular
+import TCSlib.Complexity.TuringMachine.Encoding
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open Turing
+open TCSlib.Cryptography
+
+namespace IoSprgEncodingOverlap
+
+example {α : Type} (m B n ell p width g mBound bucketBound nBound ellBound : ℕ)
+    [NeZero p] (enc : α → List Bool) (henc : ∀ a, (enc a).length ≤ g)
+    (hm : m ≤ mBound) (hB : B ≤ bucketBound) (hn : n ≤ nBound)
+    (hell : ell ≤ ellBound)
+    (I : α × ((Fin m → Fin B) × Matrix (Fin n) (Fin ell) (ZMod p))) :
+    (pairEncode (enc I.1)
+      (pairEncode
+        (BoolCircuit.encodeList (fun b : Fin B => Candidates.natToList B b.val)
+          (List.ofFn I.2.1))
+        (Encoding.Modular.encodeMatrix width I.2.2))).length ≤
+      2 * g + (6 + (2 * (mBound * (bucketBound + 1)) + nBound * ellBound * width)) := __PROBE_BODY__
+
+end IoSprgEncodingOverlap

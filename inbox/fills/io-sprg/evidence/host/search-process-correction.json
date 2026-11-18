@@ -1,0 +1,21 @@
+{
+ "observed_live_child": 93887,
+ "observed_wrapper": 93883,
+ "observed_runner": 93880,
+ "action": "SIGTERM recorded child only; waiting for runner record",
+ "cause": "root printed only exec_command.output and discarded an ongoing session_id, then launched owner check before apply search completed",
+ "affected": "Params_B_pos-apply and M1 step029 owner check",
+ "policy": "one-Lean-at-a-time violated during these two processes; no broader process-history claim",
+ "correction": "preserve full exec_command metadata; poll every running session; bounded diagnostic searches; no additional Lean until runner exit",
+ "confirmed_overlap_utc": [
+  "2026-11-18T15:07:45Z",
+  "2026-11-18T15:07:48Z"
+ ],
+ "owner_wrapper": 93983,
+ "slot_lines": [
+  "2026-11-18T15:07:27Z ACQUIRE pid=93883 tag=io-sprg k=1 cmd=nice -n 10 lean -DmaxErrors=0 /private/tmp/io-sprg-overlap/Params_B_pos-apply.lean",
+  "2026-11-18T15:07:45Z ACQUIRE pid=93983 tag=io-sprg k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Obfuscation/StructuredSeed/Params",
+  "2026-11-18T15:07:48Z RELEASE pid=93983 tag=io-sprg slots=[slot2 ]",
+  "2026-11-18T15:08:34Z RELEASE pid=93883 tag=io-sprg slots=[slot1 ]"
+ ]
+}

@@ -1,0 +1,21 @@
+import Mathlib.Logic.Basic
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace IoSprgM1BridgeOverlap
+
+example (Idx QTy : ℕ → Type)
+    (Eff : (List Bool → List Bool) → Prop)
+    (Gen : (List Bool → List Bool) → (κ : ℕ) → Idx κ → QTy κ → Prop)
+    (Bound : (κ : ℕ) → QTy κ → Prop)
+    (Correct : (κ : ℕ) → Idx κ → QTy κ → Prop)
+    (h : ∃ f : List Bool → List Bool, Eff f ∧
+      ∀ κ (i : Idx κ), ∃ Q : QTy κ,
+        Gen f κ i Q ∧ Bound κ Q ∧ Correct κ i Q) :
+    ∀ κ (i : Idx κ), ∃ Q : QTy κ, Bound κ Q ∧ Correct κ i Q := by
+  apply?
+
+end IoSprgM1BridgeOverlap

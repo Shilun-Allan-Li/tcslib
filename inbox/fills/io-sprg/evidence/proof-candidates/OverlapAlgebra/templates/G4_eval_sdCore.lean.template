@@ -1,0 +1,23 @@
+import Mathlib.Algebra.MvPolynomial.Rename
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Data.List.FinRange
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open scoped BigOperators
+
+namespace IoSprgAlgebraOverlap
+
+example {κ : ℕ} {V W R : Type*} [CommRing R]
+    (e : V ≃ W) (z : W → R) (q : Fin κ → MvPolynomial V R)
+    (flags : Fin κ → Bool) (value : Fin κ → R) (out : R)
+    (hq : ∀ k, MvPolynomial.eval (z ∘ e) (q k) =
+      (if (List.finRange κ).find? flags = some k then 1 else 0) * value k)
+    (hgood : ∀ k, flags k = true → value k = out) :
+    MvPolynomial.eval z (MvPolynomial.rename e (∑ k : Fin κ, q k)) =
+      if ((List.finRange κ).find? flags).isNone then 0 else out := __PROBE_BODY__
+
+end IoSprgAlgebraOverlap

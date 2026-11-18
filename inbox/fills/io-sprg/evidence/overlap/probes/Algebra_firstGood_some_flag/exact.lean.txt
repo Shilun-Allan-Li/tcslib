@@ -1,0 +1,17 @@
+import Mathlib.Data.List.FinRange
+import Mathlib.Data.List.OfFn
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open scoped BigOperators
+
+namespace IoSprgAlgebraOverlap
+
+example {κ : ℕ} (flags : Fin κ → Bool) (k : Fin κ)
+    (h : (List.finRange κ).find? flags = some k) : flags k = true := by
+  exact?
+
+end IoSprgAlgebraOverlap

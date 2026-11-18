@@ -1,0 +1,103 @@
+2026-11-18T16:28:54.171213+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:233:2: error: unsolved goals
+case refine_2.refine_1.a
+P : Params
+κ : ℕ
+pp : PrimeParam κ
+I : P.Idx' κ pp
+σ : Fin (P.n κ) → Bool
+s : Fin (P.ℓ κ) → ZMod pp.p
+r : Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p
+h : (P.oneSd κ pp I σ s r).flag = true
+b : Fin (P.B κ)
+e : Fin (P.n κ) → ZMod pp.p := fun i => P.noiseValue κ pp (r i)
+M : Matrix (Fin (P.rc κ)) (Fin (P.rc κ)) (ZMod pp.p) := Buckets.bucketMatrix I.2.1 (P.rc κ) (P.corr κ pp I σ e) b
+hflag : P.oneFlag κ pp I e = true
+hb :
+  (P.badSet κ pp I e).card ≤ P.Γ κ ∧
+    ¬Buckets.overfull I.2.1 (P.rc κ * P.rc κ) ∧
+      ∀ (b : Fin (P.B κ)), (Buckets.bucket I.2.1 b ∩ P.badSet κ pp I e).card ≤ P.t κ
+hcorr : ∀ j ∉ P.badSet κ pp I e, P.corr κ pp I σ e j = 0
+hcard : {c | Buckets.bucketMatrix I.2.1 (P.rc κ) (P.corr κ pp I σ e) b c.1 c.2 ≠ 0}.card ≤ P.t κ
+hfactor : (sparseFactor M (P.t κ)).1 * (sparseFactor M (P.t κ)).2 = M
+row : Fin (P.rc κ)
+a : Fin (P.t κ)
+⊢ (if (P.oneFlag κ pp I fun i => P.noiseValue κ pp (r i)) = true then
+          sparseFactor (Buckets.bucketMatrix I.2.1 (P.rc κ) (P.corr κ pp I σ fun i => P.noiseValue κ pp (r i)) b)
+            (P.t κ)
+        else (0, 0)).1
+      row a =
+    (sparseFactor M (P.t κ)).1 row a
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:240:2: error: unsolved goals
+case refine_2.refine_2.refine_1.a
+P : Params
+κ : ℕ
+pp : PrimeParam κ
+I : P.Idx' κ pp
+σ : Fin (P.n κ) → Bool
+s : Fin (P.ℓ κ) → ZMod pp.p
+r : Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p
+h : (P.oneSd κ pp I σ s r).flag = true
+b : Fin (P.B κ)
+e : Fin (P.n κ) → ZMod pp.p := fun i => P.noiseValue κ pp (r i)
+M : Matrix (Fin (P.rc κ)) (Fin (P.rc κ)) (ZMod pp.p) := Buckets.bucketMatrix I.2.1 (P.rc κ) (P.corr κ pp I σ e) b
+hflag : P.oneFlag κ pp I e = true
+hb :
+  (P.badSet κ pp I e).card ≤ P.Γ κ ∧
+    ¬Buckets.overfull I.2.1 (P.rc κ * P.rc κ) ∧
+      ∀ (b : Fin (P.B κ)), (Buckets.bucket I.2.1 b ∩ P.badSet κ pp I e).card ≤ P.t κ
+hcorr : ∀ j ∉ P.badSet κ pp I e, P.corr κ pp I σ e j = 0
+hcard : {c | Buckets.bucketMatrix I.2.1 (P.rc κ) (P.corr κ pp I σ e) b c.1 c.2 ≠ 0}.card ≤ P.t κ
+hfactor : (sparseFactor M (P.t κ)).1 * (sparseFactor M (P.t κ)).2 = M
+hu : (Matrix.of fun row a => (P.oneSd κ pp I σ s r).priv (P.uCoord κ b row a)) = (sparseFactor M (P.t κ)).1
+a : Fin (P.t κ)
+col : Fin (P.rc κ)
+⊢ (if (P.oneFlag κ pp I fun i => P.noiseValue κ pp (r i)) = true then
+          sparseFactor (Buckets.bucketMatrix I.2.1 (P.rc κ) (P.corr κ pp I σ fun i => P.noiseValue κ pp (r i)) b)
+            (P.t κ)
+        else (0, 0)).2
+      a col =
+    (sparseFactor M (P.t κ)).2 a col
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:234:37: warning: This simp argument is unused:
+  hflag
+
+Hint: Omit it from the simp argument list.
+  simp [P.oneSd_priv, P.uCoord_eq,̵ ̵h̵f̵l̵a̵g̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:241:37: warning: This simp argument is unused:
+  hflag
+
+Hint: Omit it from the simp argument list.
+  simp [P.oneSd_priv, P.vCoord_eq,̵ ̵h̵f̵l̵a̵g̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:251:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:266:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:281:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:299:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:312:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:324:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:339:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness): no fresh .olean produced
+        5.15 real         2.03 user         1.32 sys
+          2349383680  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              142052  page reclaims
+               43256  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                3006  voluntary context switches
+               35345  involuntary context switches
+            31916724  instructions retired
+            14214861  cycles elapsed
+             1638736  peak memory footprint
+2026-11-18T16:28:59.348025+00:00 END rc=1

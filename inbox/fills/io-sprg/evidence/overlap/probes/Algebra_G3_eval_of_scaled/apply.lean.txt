@@ -1,0 +1,31 @@
+import Mathlib.RingTheory.MvPolynomial.Homogeneous
+import Mathlib.Data.Finset.Sort
+import Mathlib.Algebra.MvPolynomial.Eval
+import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.RingTheory.MvPolynomial.Basic
+import Mathlib.Algebra.MvPolynomial.Variables
+import Mathlib.Algebra.BigOperators.Fin
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open scoped BigOperators
+
+namespace IoSprgAlgebraOverlap
+
+example {σ τ R ι ρ : Type*} [CommRing R] [Fintype ι] [Fintype ρ]
+    (a : ι → MvPolynomial (σ ⊕ τ) R) (T : Bool → ι → τ)
+    (U : Bool → ρ → τ) (V : ρ → τ) (z : σ ⊕ τ → R) (flag : R)
+    (hT : ∀ i, z (.inr (T true i)) = flag * z (.inr (T false i)))
+    (hU : ∀ r, z (.inr (U true r)) = flag * z (.inr (U false r))) :
+    MvPolynomial.eval z
+      ((∑ i, a i * MvPolynomial.X (.inr (T true i))) +
+        ∑ r, MvPolynomial.X (.inr (U true r)) * MvPolynomial.X (.inr (V r))) =
+      flag * MvPolynomial.eval z
+        ((∑ i, a i * MvPolynomial.X (.inr (T false i))) +
+          ∑ r, MvPolynomial.X (.inr (U false r)) * MvPolynomial.X (.inr (V r))) := by
+  apply?
+
+end IoSprgAlgebraOverlap

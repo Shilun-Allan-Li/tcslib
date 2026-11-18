@@ -1,0 +1,56 @@
+2026-11-18T15:57:57.475046+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/SparseFactor
+TCSlib/Cryptography/Obfuscation/StructuredSeed/SparseFactor.lean:179:4: error: unsolved goals
+case neg
+rows cols : ℕ
+R : Type u_1
+inst✝¹ : Semiring R
+inst✝ : DecidableEq R
+M : Matrix (Fin rows) (Fin cols) R
+t : ℕ
+h : (sparseEntries M).length ≤ t
+i : Fin rows
+j : Fin cols
+hij : ¬M i j = 0
+q : ℕ
+hqlen : q < (sparseEntries M).length
+hq : (sparseEntries M)[q] = (i, j)
+hqopt : (sparseEntries M)[q]? = some (i, j)
+q' : Fin t := ⟨q, ⋯⟩
+⊢ ((if True then M i j else 0) * if True then 1 else 0) = M i j
+TCSlib/Cryptography/Obfuscation/StructuredSeed/SparseFactor.lean:180:28: warning: This simp argument is unused:
+  if_pos rfl
+
+Hint: Omit it from the simp argument list.
+  simp only [q', hqopt, i̵f̵_̵p̵o̵s̵ ̵r̵f̵l̵,̵ ̵mul_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/SparseFactor.lean:180:40: warning: This simp argument is unused:
+  mul_one
+
+Hint: Omit it from the simp argument list.
+  simp only [q', hqopt, if_pos rfl,̵ ̵m̵u̵l̵_̵o̵n̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/SparseFactor.lean:202:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/SparseFactor): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/SparseFactor): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/SparseFactor): no fresh .olean produced
+        1.58 real         1.08 user         0.66 sys
+          1445167104  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              118100  page reclaims
+                  13  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  21  voluntary context switches
+                4855  involuntary context switches
+            32624162  instructions retired
+            16406146  cycles elapsed
+             1622352  peak memory footprint
+2026-11-18T15:57:59.093147+00:00 END rc=1

@@ -1,0 +1,66 @@
+2026-11-18T15:44:01.343269+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:96:46: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  uprob fun z => ?p z.1 ∧ ?q z.2
+in the target expression
+  (1 - uprob fun a => a.1 = 0 ∧ a.2 ≠ 0) = 1 - 1 / ↑W + 1 / (↑W * ↑p)
+
+case pos.refine_2
+p W : ℕ
+inst✝¹ : NeZero p
+inst✝ : NeZero W
+this✝ : Nonempty (Fin W) := Nonempty.intro 0
+this : Nonempty (ZMod p) := Nonempty.intro 0
+hW : (uprob fun a => a = 0) = 1 / ↑W
+hp : ∀ (a : ZMod p), (uprob fun x => x = a) = 1 / ↑p
+hs : ∀ (c : Fin W × ZMod p), ↑((lpnNoise p W).sample c) = if c.1 = 0 then c.2 else 0
+hevent : ∀ (c : Fin W × ZMod p), ↑((lpnNoise p W).sample c) = 0 ↔ ¬(c.1 = 0 ∧ c.2 ≠ 0)
+⊢ (1 - uprob fun a => a.1 = 0 ∧ a.2 ≠ 0) = 1 - 1 / ↑W + 1 / (↑W * ↑p)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:107:35: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  uprob fun z => ?p z.1 ∧ ?q z.2
+in the target expression
+  (uprob fun a => a.1 = 0 ∧ a.2 = z) = 1 / (↑W * ↑p)
+
+case neg.refine_2
+p W : ℕ
+inst✝¹ : NeZero p
+inst✝ : NeZero W
+z : ZMod p
+this✝ : Nonempty (Fin W) := Nonempty.intro 0
+this : Nonempty (ZMod p) := Nonempty.intro 0
+hW : (uprob fun a => a = 0) = 1 / ↑W
+hp : ∀ (a : ZMod p), (uprob fun x => x = a) = 1 / ↑p
+hs : ∀ (c : Fin W × ZMod p), ↑((lpnNoise p W).sample c) = if c.1 = 0 then c.2 else 0
+hz : ¬z = 0
+hevent : ∀ (c : Fin W × ZMod p), ↑((lpnNoise p W).sample c) = z ↔ c.1 = 0 ∧ c.2 = z
+⊢ (uprob fun a => a.1 = 0 ∧ a.2 = z) = 1 / (↑W * ↑p)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:106:42: warning: This simp argument is unused:
+  hz
+
+Hint: Omit it from the simp argument list.
+  simp [ha, h̵z̵,̵ ̵Ne.symm hz]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:403:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:428:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN): no fresh .olean produced
+        2.65 real         1.86 user         1.02 sys
+          2333229056  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              184030  page reclaims
+                  68  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  24  voluntary context switches
+                5693  involuntary context switches
+            32245362  instructions retired
+            15691875  cycles elapsed
+             1622352  peak memory footprint
+2026-11-18T15:44:04.018011+00:00 END rc=1

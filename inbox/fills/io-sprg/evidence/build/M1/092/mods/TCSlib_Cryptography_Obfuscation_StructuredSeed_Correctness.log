@@ -1,0 +1,40 @@
+2026-11-18T16:24:38.246115+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:195:4: error: Type mismatch: After simplification, term
+  hc
+ has type
+  MvPolynomial.eval₂ (Int.castRingHom (ZMod pp.p)) (⇑(Int.castRingHom (ZMod pp.p)) ∘ fun i => ↑(σ i).toNat)
+      (P.R.poly (P.n κ) I.1 (P.outputIndex κ j)) =
+    ↑(P.G.eval (P.n κ) I.1 σ (P.outputIndex κ j)).toNat
+but is expected to have type
+  MvPolynomial.eval₂ (Int.castRingHom (ZMod pp.p)) (fun i => ↑(σ i).toNat) f =
+    ↑(P.G.eval (P.n κ) I.1 σ (P.outputIndex κ j)).toNat
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:204:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:221:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:236:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:251:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:269:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:282:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:294:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:309:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness): no fresh .olean produced
+        2.59 real         1.91 user         1.06 sys
+          2338635776  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              184395  page reclaims
+                  16  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  18  voluntary context switches
+                8109  involuntary context switches
+            31889025  instructions retired
+            14292084  cycles elapsed
+             1638736  peak memory footprint
+2026-11-18T16:24:40.864733+00:00 END rc=1

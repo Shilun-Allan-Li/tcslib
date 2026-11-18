@@ -1,0 +1,4 @@
+show (q * r).support.sup (Finsupp.weight w) ≤
+      q.support.sup (Finsupp.weight w) + r.support.sup (Finsupp.weight w) from
+    AddMonoidAlgebra.sup_support_mul_le
+      (fun a b => (map_add (Finsupp.weight w) a b).le) q r

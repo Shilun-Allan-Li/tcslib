@@ -1,0 +1,93 @@
+Try this:
+  [apply] refine fun κ i => ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ) (i : Idx κ), ∃ Q, Bound κ Q ∧ Correct κ i Q
+  -- ⊢ ∃ b, (∃ a, Bound κ a ∧ a = b) ∧ Correct κ i b
+Try this:
+  [apply] refine fun κ i => ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ) (i : Idx κ), ∃ Q, Bound κ Q ∧ Correct κ i Q
+  -- ⊢ ∃ x x_1, Correct κ i x
+Try this:
+  [apply] refine fun κ i => ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ) (i : Idx κ), ∃ Q, Bound κ Q ∧ Correct κ i Q
+  -- ⊢ { x // Bound κ x ∧ Correct κ i x }
+Try this:
+  [apply] refine fun κ i => ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ) (i : Idx κ), ∃ Q, Bound κ Q ∧ Correct κ i Q
+  -- ⊢ { x // Bound κ x ∧ Correct κ i x }
+Try this:
+  [apply] refine fun κ i => ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ) (i : Idx κ), ∃ Q, Bound κ Q ∧ Correct κ i Q
+  -- ⊢ QTy κ
+  -- ⊢ Bound κ ?_ ∧ Correct κ i ?_
+Try this:
+  [apply] refine fun κ i => ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ) (i : Idx κ), ∃ Q, Bound κ Q ∧ Correct κ i Q
+  -- ⊢ (x : QTy κ) ×' Bound κ x ∧ Correct κ i x
+Try this:
+  [apply] refine fun κ i => ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ) (i : Idx κ), ∃ Q, Bound κ Q ∧ Correct κ i Q
+  -- ⊢ QTy κ → Prop
+  -- ⊢ ∀ (a : QTy κ), ?_ a → Bound κ a ∧ Correct κ i a
+  -- ⊢ ∃ a, ?_ a
+  -- ⊢ ?_ _fvar.11416 → Bound κ _fvar.11416 ∧ Correct κ i _fvar.11416
+  -- ⊢ Bound κ _fvar.11416 ∧ Correct κ i _fvar.11416
+Try this:
+  [apply] refine fun κ i => ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ) (i : Idx κ), ∃ Q, Bound κ Q ∧ Correct κ i Q
+  -- ⊢ QTy κ → Prop
+  -- ⊢ ∀ (a : QTy κ), ?_ a ↔ Bound κ a ∧ Correct κ i a
+  -- ⊢ ∃ a, ?_ a
+  -- ⊢ ?_ _fvar.11781 ↔ Bound κ _fvar.11781 ∧ Correct κ i _fvar.11781
+Try this:
+  [apply] refine fun κ i => ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ) (i : Idx κ), ∃ Q, Bound κ Q ∧ Correct κ i Q
+  -- ⊢ QTy κ → Prop
+  -- ⊢ ∀ (a : QTy κ), Bound κ a ∧ Correct κ i a ↔ ?_ a
+  -- ⊢ ∃ a, ?_ a
+  -- ⊢ Bound κ _fvar.11967 ∧ Correct κ i _fvar.11967 ↔ ?_ _fvar.11967
+Try this:
+  [apply] refine fun κ i => ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ) (i : Idx κ), ∃ Q, Bound κ Q ∧ Correct κ i Q
+  -- ⊢ Sort _
+  -- ⊢ ?_ → Prop
+  -- ⊢ ?_ → QTy κ
+  -- ⊢ ∀ (a : ?_), ?_ a → Bound κ (?_ a) ∧ Correct κ i (?_ a)
+  -- ⊢ ∃ a, ?_ a
+  -- ⊢ ?_ _fvar.12184 → Bound κ (?_ _fvar.12184) ∧ Correct κ i (?_ _fvar.12184)
+  -- ⊢ Bound κ (?_ _fvar.12184) ∧ Correct κ i (?_ _fvar.12184)
+Try this:
+  [apply] refine fun κ i => ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ) (i : Idx κ), ∃ Q, Bound κ Q ∧ Correct κ i Q
+  -- ⊢ Decidable (∃ x, Bound κ x ∧ Correct κ i x)
+  -- ⊢ ¬∀ (x : QTy κ), ¬(Bound κ x ∧ Correct κ i x)
+Try this:
+  [apply] refine fun κ i => ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ) (i : Idx κ), ∃ Q, Bound κ Q ∧ Correct κ i Q
+  -- ⊢ ¬∀ (x : QTy κ), ¬(Bound κ x ∧ Correct κ i x)
+Try this:
+  [apply] refine fun κ i => ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ) (i : Idx κ), ∃ Q, Bound κ Q ∧ Correct κ i Q
+  -- ⊢ ¬∀ (x : QTy κ), ¬(Bound κ x ∧ Correct κ i x)
+Try this:
+  [apply] refine fun κ i => ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (κ : ℕ) (i : Idx κ), ∃ Q, Bound κ Q ∧ Correct κ i Q
+  -- ⊢ QTy κ → Prop
+  -- ⊢ ∃ x x_1, Bound κ x ∧ Correct κ i x
+/private/tmp/io-sprg-overlap/Bridges_HasComplexityEff.hasComplexity-apply.lean:10:0: warning: declaration uses 'sorry'
+/private/tmp/io-sprg-overlap/Bridges_HasComplexityEff.hasComplexity-apply.lean:15:5: warning: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

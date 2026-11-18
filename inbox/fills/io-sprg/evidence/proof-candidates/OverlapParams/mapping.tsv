@@ -1,0 +1,15 @@
+source_theorem	template	existing_candidate	public_reuse
+D_pos	templates/D_pos.lean.template	../Params/basic/01-D_pos.proof	Nat.div_pos_iff
+noiseWidth_pos	templates/noiseWidth_pos.lean.template	../Params/basic/02-noiseWidth_pos.proof	Nat.zero_lt_one; le_max_left; lt_of_lt_of_le
+noiseDenAt_pos	templates/noiseDenAt_pos.lean.template	../Params/basic/03-noiseDenAt_pos.proof	pow_pos; own proved noiseWidth_pos through reader
+W_pos	templates/W_pos.lean.template	../Params/basic/04-W_pos.proof	own proved noiseDenAt_pos through W_eq_noiseDenAt
+B_pos	templates/B_pos.lean.template	../Params/basic/05-B_pos.proof	Nat.zero_lt_one; le_max_left; lt_of_lt_of_le
+kappaOf_pow	templates/kappaOf_pow.lean.template	../Params/inverse/01-kappaOf_pow.proof	PadQuad.nu_eq/nu_pow_le/le_nu; Nat.pow_le_pow_iff_left
+kappaOf_le	templates/kappaOf_le.lean.template	../Params/inverse/02-kappaOf_le.proof	PadQuad.nu_le; Nat.findGreatest_le
+kappaOfN_n	templates/kappaOfN_n.lean.template	../Params/inverse/03-kappaOfN_n.proof	PadQuad.nu_eq/nu_pow_le/le_nu; Nat.pow_mul; Nat.pow_le_pow_iff_left
+kappaOfN_le	templates/kappaOfN_le.lean.template	../Params/inverse/04-kappaOfN_le.proof	PadQuad.nu_le; Nat.findGreatest_le
+lpnModulus_le_pow	templates/lpnModulus_le_pow.lean.template	../Params/basic/08-lpnModulus_le_pow.proof	prime upper width; Nat.pow_le_pow_right; own inverse upper bound
+lpnSamples_le	templates/lpnSamples_le.lean.template	../Params/basic/07-lpnSamples_le.proof	Complexity.PolyExpr.eval_pow/eval_var
+le_n	templates/le_n.lean.template	../Params/basic/06-le_n.proof	Nat.le_pow twice; own D_pos
+Γ_le_B	templates/Γ_le_B.lean.template	../Params/eventual/02-Gamma_le_B.proof	Real.isLittleO_logb_id_atTop/logb_pow/natLog_le_logb; existing asymptotic closure; Nat.div_le_div_right
+le_log_n	templates/le_log_n.lean.template	../Params/eventual/01-le_log_n.proof	Nat.le_log_of_pow_le at cutoff2^c; own proved le_n

@@ -1,0 +1,21 @@
+import TCSlib.Cryptography.HardcoreBit.Basic
+import TCSlib.Cryptography.OneWayFunctions.Basic
+import Mathlib.Data.ZMod.Basic
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography
+
+namespace IoSprgLPNOverlap
+
+example (p W : ℕ) [NeZero p] [NeZero W] (z : ZMod p) :
+    uprob (fun c : Fin W × ZMod p =>
+      (((if c.1 = 0 then (c.2.val : ℤ) else 0) : ℤ) : ZMod p) = z) =
+      if z = 0 then 1 - 1 / (W : ℝ) + 1 / ((W : ℝ) * p)
+      else 1 / ((W : ℝ) * p) := by
+  apply?
+
+end IoSprgLPNOverlap

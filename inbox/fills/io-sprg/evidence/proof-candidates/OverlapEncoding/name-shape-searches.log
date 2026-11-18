@@ -1,0 +1,53 @@
+READ_ONLY TEXT SEARCHES; NO exact?/apply?/Lean RUN BY SUBAGENT.
+
+Whole TCSlib+Mathlib name/shape searches:
+ encodeList_(injective|length), fixedWidth/encodeList, length_encodeList,
+ encodeList_prefixFree; flatten injection/length; Function.Injective.prodMap;
+ owned Encoding17 exact theorem names; floor/rpow upper estimates;
+ natToList roundtrip/width; pair/vector/matrix injection/length APIs.
+
+Exact selected public hits:
+ BoolCircuit.encodeList_nil Uniform:96; encodeList_cons:100.
+ Candidates.length_natToList Arithmetic:107; natToList_injOn:161.
+ Turing.pairEncode_injective Encoding:173; length_pairEncode:220.
+ Modular.encodeVector_length:79; encodeMatrix_length:89;
+ encodeVector_injective:101; encodeMatrix_injective:126.
+ Function.Injective.prodMap Mathlib/Data/Prod/Basic:209.
+ List.ofFn_injective Mathlib/Data/List/OfFn:192.
+ List.append_inj Core Init/Data/List/Lemmas:1612.
+ List.eq_iff_flatten_eq same Core owner:2023 (already used by Modular; do not reprove).
+ Nat.floor_le Floor/Semiring:43; one_le_floor_iff:102.
+ Real.rpow_mul_natCast Pow/Real:498; rpow_le_rpow_of_exponent_le:595;
+ one_le_rpow:662. Nat.div_lt_iff_lt_mul Core Nat/Div/Basic:304;
+ le_mul_of_pos_right Nat/Lemmas:616; lt_two_pow_self:1227; le_pow:1239.
+
+Nearby public alternatives, NOT hidden:
+ BoolCircuit.AdjScan.length_encodeList_cons LogspaceUniformScan:309:
+   length(code f (a::as))=1+length(f a)+length(code f as).
+ BoolCircuit.AdjWalk.length_encodeList_le' LogspaceUniformAdj:181:
+   per-element <=b implies list code length<=len*(b+1)+1.
+ BoolCircuit.encodeList_eq_flatMap UniformTableauEmitter:256:
+   code f l=l.flatMap(fun a=>true::f a)++[false].
+ BoolCircuit.decodeList_encodeList DAGCircuitSatLang:120:
+   provided suffix-preserving element decoder+enough fuel reconstructs list+rest.
+ These are public nearby steps, not the full Basic fixed-width injection/exact
+ constant-width equality. They are absent from the current minimal probe closure;
+ the import audit records each absence. No broad import is proposed or executed.
+ Their prior detailed disposition is in ../FixedWidthList/README.md.
+
+Private overlap disclosed:
+ Uniform:158 encodeList_prefixFree; :234 length_encodeList_le.
+ Neither private name is referenced through generated _private spelling. The new
+ constant-width statements specialize consequences of those private results;
+ they are not a new generic prefix-free predicate or variable-width upper bound.
+
+Different encoding excluded:
+ LamportReduction.encodeList_injective / PrivateKeyScheme.encodeList use nested
+ pair encodings with empty nil, rather than BoolCircuit true tags/final false.
+ SliceReduction.length_encodeList_le concerns that different nested-pair code.
+ They cannot replace the actual code in these goals.
+
+Owned whole Encoding17 names occur only in this unit (plus Raw LPN's DIFFERENT
+ variable-width encDraw_injective). Those constants are excluded by all imports.
+ No exact public full BoolCircuit constant-width counterpart was located by text.
+ Any exact?/apply? outcome must be recorded by root, not inferred from this log.

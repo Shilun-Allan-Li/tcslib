@@ -1,0 +1,124 @@
+--- /private/tmp/io-sprg-proof-notes/StretchFinal/07-jls_hasPolyStretch_direct_coefficient.proof
++++ /private/tmp/io-sprg-proof-notes/ProofSyntaxFix/StretchFinal/07-jls_hasPolyStretch_direct_coefficient.proof
+@@ -4,11 +4,13 @@
+   let b : ℝ := (P.E : ℝ) * ((P.δ : ℝ) / 2)
+   let ε : ℝ := min (a * (τ - 1) - 5) (b - 5) / 2
+   have hε : 0 < ε := div_pos (lt_min hg1 hg2) zero_lt_two
+-  have hpublic : 5 + a + 2 * ε ≤ a * τ
++  have hpublic : 5 + a + 2 * ε ≤ a * τ := ?_
++  swap
+   · have hmin := min_le_left (a * (τ - 1) - 5) (b - 5)
+     dsimp only [ε]
+     linarith
+-  have hnoise : 5 - b ≤ -2 * ε
++  have hnoise : 5 - b ≤ -2 * ε := ?_
++  swap
+   · have hmin := min_le_right (a * (τ - 1) - 5) (b - 5)
+     dsimp only [ε]
+     linarith
+@@ -21,18 +23,23 @@
+   let τ' : ℝ := 1 + η
+   have hN : (0 : ℝ) < ((c + 1 : ℕ) : ℝ) := Nat.cast_pos.mpr (Nat.succ_pos c)
+   have hη : 0 < η := div_pos hε (mul_pos zero_lt_two hN)
+-  have hτ' : 1 < τ'
++  have hτ' : 1 < τ' := ?_
++  swap
+   · dsimp only [τ']
+     linarith
+-  have hNη : (((c + 1 : ℕ) : ℝ)) * η = ε / 2
++  have hNη : (((c + 1 : ℕ) : ℝ)) * η = ε / 2 := ?_
++  swap
+   · dsimp only [η]
+     field_simp [hN.ne'] <;> ring
+-  have hcη : (c : ℝ) * η ≤ ε / 2
++  have hcη : (c : ℝ) * η ≤ ε / 2 := ?_
++  swap
+   · push_cast at hNη
+     nlinarith
+-  have hετ : ε ≤ ε * τ'
++  have hετ : ε ≤ ε * τ' := ?_
++  swap
+   · simpa only [mul_one] using mul_le_mul_of_nonneg_left hτ'.le hε.le
+-  have hexp : ε / 2 + (c : ℝ) * η + (-ε) * τ' ≤ 0
++  have hexp : ε / 2 + (c : ℝ) * η + (-ε) * τ' ≤ 0 := ?_
++  swap
+   · nlinarith
+   have hD1 : 1 ≤ D := le_max_left _ _
+   have hD0 : 0 ≤ D := zero_le_one.trans hD1
+@@ -44,7 +51,8 @@
+   rw [SPRG.Raw.hasPolyStretch_iff]
+   refine ⟨τ', hτ', max 1 (max κs κD), ?_⟩
+   intro κ hκ
+-  have hcuts : 1 ≤ κ ∧ κs ≤ κ ∧ κD ≤ κ
++  have hcuts : 1 ≤ κ ∧ κs ≤ κ ∧ κD ≤ κ := ?_
++  swap
+   · omega
+   rcases hcuts with ⟨hκ1, hκs', hκD'⟩
+   rw [jls_seedBits_eq, jlsSPRG_raw_outLen]
+@@ -60,25 +68,30 @@
+     have hxpos : 0 < x := zero_lt_one.trans_le hx1
+     have hx0 : 0 ≤ x := hxpos.le
+     have hm0 : 0 ≤ m := Nat.cast_nonneg _
+-    have hm1 : 1 ≤ m
++    have hm1 : 1 ≤ m := ?_
++    swap
+     · have hn1 : 1 ≤ (P.n κ : ℝ) :=
+         Nat.one_le_cast.mpr (hκ1.trans (P.le_n κ))
+       have h := (P.G.hasStretch_iff τ).mp hs (P.n κ)
+       rw [← P.m_eq] at h
+       exact (Real.one_le_rpow hn1 (zero_le_one.trans hτ.le)).trans h
+     have hmpos : 0 < m := zero_lt_one.trans_le hm1
+-    have hn : (Complexity.PolyExpr.pow .var (P.E * P.D)).eval κ = P.n κ
++    have hn : (Complexity.PolyExpr.pow .var (P.E * P.D)).eval κ = P.n κ := ?_
++    swap
+     · rw [Complexity.PolyExpr.eval_pow, Complexity.PolyExpr.eval_var,
+         P.n_eq, P.ℓ_eq, pow_mul]
+-    have hmNat : P.m κ ≤ C * (κ + 1) ^ c
++    have hmNat : P.m κ ≤ C * (κ + 1) ^ c := ?_
++    swap
+     · have heq : q.eval κ = P.G.outBound.eval (P.n κ)
+       · rw [Complexity.PolyExpr.eval_subst, hn]
+       have h := P.G.outLen_le (P.n κ)
+       rw [← P.m_eq] at h
+       exact (h.trans_eq heq.symm).trans (hq κ)
+-    have hmajor : m ≤ (C : ℝ) * (((κ + 1 : ℕ) : ℝ) ^ c)
++    have hmajor : m ≤ (C : ℝ) * (((κ + 1 : ℕ) : ℝ) ^ c) := ?_
++    swap
+     · exact_mod_cast hmNat
+-    have hκ2 : ((κ + 1 : ℕ) : ℝ) ≤ 2 * x
++    have hκ2 : ((κ + 1 : ℕ) : ℝ) ≤ 2 * x := ?_
++    swap
+     · push_cast
+       change x + 1 ≤ 2 * x
+       linarith
+@@ -87,14 +100,17 @@
+     rw [mul_pow] at hp
+     have hDmul := mul_le_mul_of_nonneg_right
+       (le_max_right 1 ((C : ℝ) * (2 : ℝ) ^ c)) (pow_nonneg hx0 c)
+-    have hmupper : m ≤ D * x ^ c
++    have hmupper : m ≤ D * x ^ c := ?_
++    swap
+     · dsimp only [D] at hDmul ⊢
+       nlinarith
+-    have hmη : m ^ η ≤ D ^ η * x ^ ((c : ℝ) * η)
++    have hmη : m ^ η ≤ D ^ η * x ^ ((c : ℝ) * η) := ?_
++    swap
+     · refine (Real.rpow_le_rpow hm0 hmupper hη.le).trans_eq ?_
+       rw [Real.mul_rpow hD0 (pow_nonneg hx0 c),
+         ← Real.rpow_natCast_mul hx0 c η]
+-    have hmp : m ^ τ' = m * m ^ η
++    have hmp : m ^ τ' = m * m ^ η := ?_
++    swap
+     · change m ^ (1 + η) = m * m ^ η
+       rw [Real.rpow_add hmpos, Real.rpow_one]
+     have hsrel : (P.seedBitsAt κ : ℝ) ≤ m * x ^ (-ε) := hκs κ hκs'
+@@ -105,7 +121,8 @@
+     have hηbound := mul_le_mul_of_nonneg_right
+       (mul_le_mul_of_nonneg_left hmη hm0) (Real.rpow_nonneg hx0 ((-ε) * τ'))
+     have hDstep : (m * (D ^ η * x ^ ((c : ℝ) * η))) * x ^ ((-ε) * τ') ≤
+-        (m * (x ^ (ε / 2) * x ^ ((c : ℝ) * η))) * x ^ ((-ε) * τ')
++        (m * (x ^ (ε / 2) * x ^ ((c : ℝ) * η))) * x ^ ((-ε) * τ') := ?_
++    swap
+     · have hcoef := mul_le_mul_of_nonneg_right (hκD κ hκD')
+         (Real.rpow_nonneg hx0 ((c : ℝ) * η))
+       exact mul_le_mul_of_nonneg_right

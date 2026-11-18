@@ -1,0 +1,13 @@
+source_name	candidate_from_proof_notes	original_probe	coverage	reuse
+rank_lt_load	Buckets/01-rank_lt_load.proof	bucket_rank_lt	EXACT_GOAL	Finset.card_lt_card; ssubset_iff_of_subset
+eq_of_rank_eq	Buckets/02-eq_of_rank_eq.proof	bucket_rank_injective	EXACT_GOAL	Finset.card_lt_card; linear-order trichotomy
+indexMap_some_of_not_overfull	Buckets/03-indexMap_some_of_not_overfull.proof	bucket_option_some	CORE_ONLY	rank/load comparison then explicit Fin product equivalence; original core assumes rank bound
+indexMap_none_of_overfull	Buckets/04-indexMap_none_of_overfull.proof	bucket_option_none	GENERIC_CORE_INSTANCE	existing dif_neg; arbitrary P/r core specializes to overfull/rank
+indexMap_injective_on_bucket	Buckets/05-indexMap_injective_on_bucket.proof	NONE	MISSING_ORIGINAL	Option.some.inj; Equiv.injective; Fin.ext; proved same-bucket rank injection
+bucketMatrix_apply_indexMap	Buckets/06-bucketMatrix_apply_indexMap.proof	bucket_single_correction	CORE_ONLY	Finset.sum_eq_single; original core assumes derived positional uniqueness
+bucketMatrix_nonzero_card_le	Buckets/07-bucketMatrix_nonzero_card_le.proof	bucket_nonzero_support	GENERIC_CORE_INSTANCE	exists_ne_zero_of_sum_ne_zero; card_image/card_le_card; arbitrary-pos original core
+sparseEntries_nodup	SparseFactor/01-sparseEntries_nodup.lean.txt	sparse_rowmajor_nodup	EXACT_GOAL	List.nodup_finRange; Nodup.product; Nodup.filter
+mem_sparseEntries_iff	SparseFactor/02-mem_sparseEntries_iff.lean.txt	sparse_rowmajor_mem	EXACT_GOAL	List.mem_filter/mem_product/mem_finRange; decide_eq_true_eq
+sparseEntries_length_eq_card	SparseFactor/03-sparseEntries_length_eq_card.lean.txt	NONE	MISSING_ORIGINAL	List.toFinset_card_of_nodup; mem_toFinset; Finset.ext
+sparseFactor_mul	SparseFactor/04-sparseFactor_mul.lean.txt	sparse_reconstruct	CORE_ONLY	Matrix.mul_apply; finite single sum; public List slot/Nodup APIs; old core assumes list properties
+sparseFactor_mul_of_card_le	SparseFactor/05-sparseFactor_mul_of_card_le.term.txt	sparse_reconstruct_entry	MISSING_EXACT_CARD_GOAL	actual proof composes proved length/card and reconstruction; old entry core is not this cardinal statement

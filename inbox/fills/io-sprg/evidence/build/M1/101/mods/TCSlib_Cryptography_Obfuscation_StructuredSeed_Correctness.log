@@ -1,0 +1,150 @@
+2026-11-18T16:44:08.739704+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:399:18: warning: This simp argument is unused:
+  hf
+
+Hint: Omit it from the simp argument list.
+  simp ̵[̵h̵f̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:441:70: warning: This simp argument is unused:
+  he
+
+Hint: Omit it from the simp argument list.
+  simp [he̵,̵ ̵h̵b]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:441:74: warning: This simp argument is unused:
+  hb
+
+Hint: Omit it from the simp argument list.
+  simp [he,̵ ̵h̵b̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:471:33: warning: This simp argument is unused:
+  he
+
+Hint: Omit it from the simp argument list.
+  simp ̵[̵h̵e̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:496:8: error: Tactic `rewrite` failed: motive is not type correct:
+  fun _a => _a.sdSamp κ I = P.sdSamp' κ (π κ) I
+Error: Application type mismatch: The argument
+  I
+has type
+  { modulus := fun κ => (π κ).p, modulus_prime := ⋯,
+        residueBits := Complexity.PolyExpr.var.add (Complexity.PolyExpr.const 1), modulus_le_pow := ⋯,
+        Idx := fun κ => P.Idx' κ (π κ), idxFintype := fun _κ => inferInstance, idxNonempty := ⋯,
+        idxCard := fun κ => P.idxCard κ (π κ), idxEquiv := fun κ => P.idxEquiv κ (π κ),
+        IdDraw := fun κ => P.IdDraw κ (π κ), idDrawFintype := fun _κ => inferInstance, idDrawNonempty := ⋯,
+        idDrawCard := fun κ => P.idDrawCard κ (π κ), idDrawEquiv := fun κ => P.idDrawEquiv κ (π κ),
+        idCore := fun κ => P.idCore κ (π κ), encIdDraw := fun κ => P.encIdDraw κ (π κ), encIdDraw_injective := ⋯,
+        encIdx := fun κ => P.encIdx' κ (π κ), encIdx_injective := ⋯, idxBits := P.idxBound, encIdx_length_le := ⋯,
+        pubLen := P.pubLen, privLen := P.privLen, outLen := P.m, seedBound := P.seedBound, outBound := P.mBound,
+        pubLen_le := ⋯, privLen_le := ⋯, outLen_le := ⋯, SdDraw := fun κ x => P.Draw κ (π κ),
+        sdDrawFintype := fun _κ x => inferInstance, sdDrawNonempty := ⋯, sdDrawCard := fun κ x => P.drawCard κ (π κ),
+        sdDrawEquiv := fun κ x => P.drawEquiv κ (π κ), sdCore := fun κ I d => (P.sdCore κ (π κ) I d).seed,
+        encSdDraw := fun κ x => P.encDraw κ (π κ), encSdDraw_injective := ⋯, eval := fun κ => P.eval' κ (π κ) }.Idx
+    κ
+but is expected to have type
+  _a.Idx κ
+in the application
+  _a.sdSamp κ I
+
+Explanation: The rewrite tactic rewrites an expression 'e' using an equality 'a = b' by the following process. First, it looks for all 'a' in 'e'. Second, it tries to abstract these occurrences of 'a' to create a function 'm := fun _a => ...', called the *motive*, with the property that 'm a' is definitionally equal to 'e'. Third, we observe that 'congrArg' implies that 'm a = m b', which can be used with lemmas such as 'Eq.mpr' to change the goal. However, if 'e' depends on specific properties of 'a', then the motive 'm' might not typecheck.
+
+Possible solutions: use rewrite's 'occs' configuration option to limit which occurrences are rewritten, or use 'simp' or 'conv' mode, which have strategies for certain kinds of dependencies (these tactics can handle proofs and 'Decidable' instances whose types depend on the rewritten term, and 'simp' can apply user-defined '@[congr]' theorems as well).
+
+case refine_2
+P : Params
+π : PrimeSchedule
+κ : ℕ
+I :
+  { modulus := fun κ => (π κ).p, modulus_prime := ⋯,
+        residueBits := Complexity.PolyExpr.var.add (Complexity.PolyExpr.const 1), modulus_le_pow := ⋯,
+        Idx := fun κ => P.Idx' κ (π κ), idxFintype := fun _κ => inferInstance, idxNonempty := ⋯,
+        idxCard := fun κ => P.idxCard κ (π κ), idxEquiv := fun κ => P.idxEquiv κ (π κ),
+        IdDraw := fun κ => P.IdDraw κ (π κ), idDrawFintype := fun _κ => inferInstance, idDrawNonempty := ⋯,
+        idDrawCard := fun κ => P.idDrawCard κ (π κ), idDrawEquiv := fun κ => P.idDrawEquiv κ (π κ),
+        idCore := fun κ => P.idCore κ (π κ), encIdDraw := fun κ => P.encIdDraw κ (π κ), encIdDraw_injective := ⋯,
+        encIdx := fun κ => P.encIdx' κ (π κ), encIdx_injective := ⋯, idxBits := P.idxBound, encIdx_length_le := ⋯,
+        pubLen := P.pubLen, privLen := P.privLen, outLen := P.m, seedBound := P.seedBound, outBound := P.mBound,
+        pubLen_le := ⋯, privLen_le := ⋯, outLen_le := ⋯, SdDraw := fun κ x => P.Draw κ (π κ),
+        sdDrawFintype := fun _κ x => inferInstance, sdDrawNonempty := ⋯, sdDrawCard := fun κ x => P.drawCard κ (π κ),
+        sdDrawEquiv := fun κ x => P.drawEquiv κ (π κ), sdCore := fun κ I d => (P.sdCore κ (π κ) I d).seed,
+        encSdDraw := fun κ x => P.encDraw κ (π κ), encSdDraw_injective := ⋯, eval := fun κ => P.eval' κ (π κ) }.Idx
+    κ
+hsampler : (jlsSPRG_raw P π).sdSamp κ I = P.sdSamp' κ (π κ) I
+⊢ OracleComp.AllOutputs
+    (fun sd =>
+      ∀
+        (j :
+          Fin
+            ({ modulus := fun κ => (π κ).p, modulus_prime := ⋯,
+                  residueBits := Complexity.PolyExpr.var.add (Complexity.PolyExpr.const 1), modulus_le_pow := ⋯,
+                  Idx := fun κ => P.Idx' κ (π κ), idxFintype := fun _κ => inferInstance, idxNonempty := ⋯,
+                  idxCard := fun κ => P.idxCard κ (π κ), idxEquiv := fun κ => P.idxEquiv κ (π κ),
+                  IdDraw := fun κ => P.IdDraw κ (π κ), idDrawFintype := fun _κ => inferInstance, idDrawNonempty := ⋯,
+                  idDrawCard := fun κ => P.idDrawCard κ (π κ), idDrawEquiv := fun κ => P.idDrawEquiv κ (π κ),
+                  idCore := fun κ => P.idCore κ (π κ), encIdDraw := fun κ => P.encIdDraw κ (π κ),
+                  encIdDraw_injective := ⋯, encIdx := fun κ => P.encIdx' κ (π κ), encIdx_injective := ⋯,
+                  idxBits := P.idxBound, encIdx_length_le := ⋯, pubLen := P.pubLen, privLen := P.privLen, outLen := P.m,
+                  seedBound := P.seedBound, outBound := P.mBound, pubLen_le := ⋯, privLen_le := ⋯, outLen_le := ⋯,
+                  SdDraw := fun κ x => P.Draw κ (π κ), sdDrawFintype := fun _κ x => inferInstance, sdDrawNonempty := ⋯,
+                  sdDrawCard := fun κ x => P.drawCard κ (π κ), sdDrawEquiv := fun κ x => P.drawEquiv κ (π κ),
+                  sdCore := fun κ I d => (P.sdCore κ (π κ) I d).seed, encSdDraw := fun κ x => P.encDraw κ (π κ),
+                  encSdDraw_injective := ⋯, eval := fun κ => P.eval' κ (π κ) }.outLen
+              κ)),
+        ↑({ modulus := fun κ => (π κ).p, modulus_prime := ⋯,
+                    residueBits := Complexity.PolyExpr.var.add (Complexity.PolyExpr.const 1), modulus_le_pow := ⋯,
+                    Idx := fun κ => P.Idx' κ (π κ), idxFintype := fun _κ => inferInstance, idxNonempty := ⋯,
+                    idxCard := fun κ => P.idxCard κ (π κ), idxEquiv := fun κ => P.idxEquiv κ (π κ),
+                    IdDraw := fun κ => P.IdDraw κ (π κ), idDrawFintype := fun _κ => inferInstance, idDrawNonempty := ⋯,
+                    idDrawCard := fun κ => P.idDrawCard κ (π κ), idDrawEquiv := fun κ => P.idDrawEquiv κ (π κ),
+                    idCore := fun κ => P.idCore κ (π κ), encIdDraw := fun κ => P.encIdDraw κ (π κ),
+                    encIdDraw_injective := ⋯, encIdx := fun κ => P.encIdx' κ (π κ), encIdx_injective := ⋯,
+                    idxBits := P.idxBound, encIdx_length_le := ⋯, pubLen := P.pubLen, privLen := P.privLen,
+                    outLen := P.m, seedBound := P.seedBound, outBound := P.mBound, pubLen_le := ⋯, privLen_le := ⋯,
+                    outLen_le := ⋯, SdDraw := fun κ x => P.Draw κ (π κ), sdDrawFintype := fun _κ x => inferInstance,
+                    sdDrawNonempty := ⋯, sdDrawCard := fun κ x => P.drawCard κ (π κ),
+                    sdDrawEquiv := fun κ x => P.drawEquiv κ (π κ), sdCore := fun κ I d => (P.sdCore κ (π κ) I d).seed,
+                    encSdDraw := fun κ x => P.encDraw κ (π κ), encSdDraw_injective := ⋯,
+                    eval := fun κ => P.eval' κ (π κ) }.eval
+                κ I sd j).toNat =
+          (MvPolynomial.eval (Sum.elim sd.1 sd.2)) (P.G4 κ (π κ) I j))
+    ({ modulus := fun κ => (π κ).p, modulus_prime := ⋯,
+          residueBits := Complexity.PolyExpr.var.add (Complexity.PolyExpr.const 1), modulus_le_pow := ⋯,
+          Idx := fun κ => P.Idx' κ (π κ), idxFintype := fun _κ => inferInstance, idxNonempty := ⋯,
+          idxCard := fun κ => P.idxCard κ (π κ), idxEquiv := fun κ => P.idxEquiv κ (π κ),
+          IdDraw := fun κ => P.IdDraw κ (π κ), idDrawFintype := fun _κ => inferInstance, idDrawNonempty := ⋯,
+          idDrawCard := fun κ => P.idDrawCard κ (π κ), idDrawEquiv := fun κ => P.idDrawEquiv κ (π κ),
+          idCore := fun κ => P.idCore κ (π κ), encIdDraw := fun κ => P.encIdDraw κ (π κ), encIdDraw_injective := ⋯,
+          encIdx := fun κ => P.encIdx' κ (π κ), encIdx_injective := ⋯, idxBits := P.idxBound, encIdx_length_le := ⋯,
+          pubLen := P.pubLen, privLen := P.privLen, outLen := P.m, seedBound := P.seedBound, outBound := P.mBound,
+          pubLen_le := ⋯, privLen_le := ⋯, outLen_le := ⋯, SdDraw := fun κ x => P.Draw κ (π κ),
+          sdDrawFintype := fun _κ x => inferInstance, sdDrawNonempty := ⋯, sdDrawCard := fun κ x => P.drawCard κ (π κ),
+          sdDrawEquiv := fun κ x => P.drawEquiv κ (π κ), sdCore := fun κ I d => (P.sdCore κ (π κ) I d).seed,
+          encSdDraw := fun κ x => P.encDraw κ (π κ), encSdDraw_injective := ⋯, eval := fun κ => P.eval' κ (π κ) }.sdSamp
+      κ I)
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness): no fresh .olean produced
+        2.93 real         3.22 user         1.01 sys
+          2380152832  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              187997  page reclaims
+                  16  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 122  voluntary context switches
+                9233  involuntary context switches
+            32111669  instructions retired
+            14577734  cycles elapsed
+             1638736  peak memory footprint
+2026-11-18T16:44:11.694796+00:00 END rc=1

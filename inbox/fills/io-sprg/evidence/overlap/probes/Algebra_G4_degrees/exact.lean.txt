@@ -1,0 +1,29 @@
+import Mathlib.RingTheory.MvPolynomial.Homogeneous
+import Mathlib.Data.Finset.Sort
+import Mathlib.Algebra.MvPolynomial.Eval
+import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Algebra.MvPolynomial.Rename
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open scoped BigOperators
+
+namespace IoSprgAlgebraOverlap
+
+example {σ τ σ' τ' R : Type*} [CommSemiring R] {κ d : ℕ}
+    (e : σ ≃ σ') (f : τ ≃ τ') (q : Fin κ → MvPolynomial (σ ⊕ τ) R)
+    (hq : ∀ k, (q k).weightedTotalDegree (Sum.elim
+      (fun _ : σ => (1 : ℕ)) (fun _ : τ => (0 : ℕ))) ≤ d ∧
+      (q k).weightedTotalDegree (Sum.elim
+      (fun _ : σ => (0 : ℕ)) (fun _ : τ => (1 : ℕ))) ≤ 2) :
+    let Q := MvPolynomial.rename (Sum.map e f) (∑ k : Fin κ, q k)
+    Q.weightedTotalDegree
+      (Sum.elim (fun _ : σ' => (1 : ℕ)) (fun _ : τ' => (0 : ℕ))) ≤ d ∧
+    Q.weightedTotalDegree
+      (Sum.elim (fun _ : σ' => (0 : ℕ)) (fun _ : τ' => (1 : ℕ))) ≤ 2 := by
+  exact?
+
+end IoSprgAlgebraOverlap

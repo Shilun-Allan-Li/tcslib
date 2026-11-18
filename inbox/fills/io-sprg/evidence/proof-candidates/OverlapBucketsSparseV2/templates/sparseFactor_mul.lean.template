@@ -1,0 +1,28 @@
+import Mathlib.Data.List.FinRange
+import Mathlib.Data.Matrix.Mul
+import Mathlib.Data.Finset.Card
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace IoSprgBucketsSparseOverlap
+
+example {rows cols : ℕ} {R : Type*} [Semiring R] [DecidableEq R]
+    (M : Matrix (Fin rows) (Fin cols) R) (t : ℕ)
+    (h : (((List.finRange rows).flatMap (fun i =>
+        (List.finRange cols).map (fun j => (i, j)))).filter
+          (fun c => decide (M c.1 c.2 ≠ 0))).length ≤ t) :
+    (Matrix.of (fun (i : Fin rows) (k : Fin t) => match ((((List.finRange rows).flatMap (fun i =>
+        (List.finRange cols).map (fun j => (i, j)))).filter
+          (fun c => decide (M c.1 c.2 ≠ 0))))[k.val]? with
+      | none => 0
+      | some c => if i = c.1 then M c.1 c.2 else 0) : Matrix (Fin rows) (Fin t) R) *
+    (Matrix.of (fun (k : Fin t) (j : Fin cols) => match ((((List.finRange rows).flatMap (fun i =>
+        (List.finRange cols).map (fun j => (i, j)))).filter
+          (fun c => decide (M c.1 c.2 ≠ 0))))[k.val]? with
+      | none => 0
+      | some c => if j = c.2 then 1 else 0) : Matrix (Fin t) (Fin cols) R) = M := __PROBE_BODY__
+
+end IoSprgBucketsSparseOverlap

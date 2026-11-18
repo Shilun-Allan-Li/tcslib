@@ -1,0 +1,21 @@
+by
+  intro xs
+  induction xs with
+  | nil =>
+    intro ys h
+    cases ys with
+    | nil => rfl
+    | cons y ys =>
+      rw [BoolCircuit.encodeList_nil, BoolCircuit.encodeList_cons] at h
+      cases (List.cons.inj h).1
+  | cons x xs ih =>
+    intro ys h
+    cases ys with
+    | nil =>
+      rw [BoolCircuit.encodeList_cons, BoolCircuit.encodeList_nil] at h
+      cases (List.cons.inj h).1
+    | cons y ys =>
+      rw [BoolCircuit.encodeList_cons, BoolCircuit.encodeList_cons] at h
+      have hcodes := (List.cons.inj h).2
+      have hparts := List.append_inj hcodes ((hwidth x).trans (hwidth y).symm)
+      exact congrArg₂ List.cons (hf hparts.1) (ih ys hparts.2)

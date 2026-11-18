@@ -1,0 +1,42 @@
+by
+  classical
+  have hcoeff : ∀ (slot : Option (Fin (P.n κ))) (a : Fin (P.ℓ κ + 1)),
+      pubDegree (P.linearCoeff κ pp I' k slot a) ≤ if slot.isSome then 1 else 0 := ?_
+  swap
+  · intro slot a
+    cases slot with
+    | none =>
+      change pubDegree (P.linearCoeff κ pp I' k none a) ≤ 0
+      rw [P.linearCoeff_eq]
+      split_ifs
+      · have hc : pubDegree (1 : P.StructPoly κ pp) = 0
+        · simpa only [map_one] using
+            (pubDegree_C (σ := P.Pub κ) (τ := P.Priv κ) (1 : ZMod pp.p))
+        exact hc.le
+      · exact pubDegree_zero.le
+    | some i =>
+      change pubDegree (P.linearCoeff κ pp I' k (some i) a) ≤ 1
+      rw [P.linearCoeff_eq]
+      split_ifs
+      · exact (pubDegree_C _).le.trans (Nat.zero_le 1)
+      · rw [P.bVar_eq]
+        exact pubDegree_X_inl _
+  rw [P.halfForm_eq]
+  apply pubDegree_finset_sum_le
+  intro α hα
+  have hprod := pubDegree_finset_prod_le (Finset.univ : Finset (Fin P.D))
+    (fun r => P.linearCoeff κ pp I' k
+      (Internal.monomialSlot h (offset + r.val)) (α r))
+  have hnum := Finset.sum_le_sum (s := (Finset.univ : Finset (Fin P.D)))
+    (fun r _ => hcoeff (Internal.monomialSlot h (offset + r.val)) (α r))
+  rw [Finset.sum_boole] at hnum
+  have hX : pubDegree
+      (MvPolynomial.X (P.sVar κ k copy (.inl α)) : P.StructPoly κ pp) = 0 := ?_
+  swap
+  · rw [P.sVar_eq]
+    exact pubDegree_X_inr _
+  have hmul := pubDegree_mul_le
+    (∏ r : Fin P.D,
+      P.linearCoeff κ pp I' k (Internal.monomialSlot h (offset + r.val)) (α r))
+    (MvPolynomial.X (P.sVar κ k copy (.inl α)))
+  omega

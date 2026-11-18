@@ -1,0 +1,16 @@
+import TCSlib.Complexity.Randomized.PolyExpr
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open Complexity
+
+namespace IoSprgM1BridgeOverlap
+
+example (κ p : ℕ) (hupper : p ≤ 2 ^ (κ + 1)) :
+    p ≤ 2 ^ (PolyExpr.add .var (.const 1)).eval κ := by
+  apply?
+
+end IoSprgM1BridgeOverlap

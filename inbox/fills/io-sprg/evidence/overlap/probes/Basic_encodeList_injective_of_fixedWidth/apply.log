@@ -1,0 +1,200 @@
+Try this:
+  [apply] refine Function.HasLeftInverse.injective ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.HasLeftInverse (BoolCircuit.encodeList f)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.LeftInverse.injective fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.surjective_comp_right_iff_injective.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.injective_iff_hasLeftInverse.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.HasLeftInverse (BoolCircuit.encodeList f)
+Try this:
+  [apply] refine Function.Injective2.right ?_ f
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective2 BoolCircuit.encodeList
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.injective_of_isPartialInv fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.Injective.of_comp_right (fun ⦃a₁⦄ => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.Bijective.injective ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Bijective (BoolCircuit.encodeList f)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.RightInverse.injective fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Injective.of_comp_iff (fun ⦃a₁⦄ => ?_) (BoolCircuit.encodeList f)).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.injective_of_subsingleton (BoolCircuit.encodeList f))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.injective_comp_left_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Injective.of_comp_iff' (BoolCircuit.encodeList f) ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.Injective.of_comp fun ⦃a₁⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.rangeFactorization_bijective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Bijective (Set.rangeFactorization (BoolCircuit.encodeList f))
+Try this:
+  [apply] refine Set.rangeFactorization_injective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective (Set.rangeFactorization (BoolCircuit.encodeList f))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine injective_of_lt_imp_ne fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine injective_of_le_imp_le (BoolCircuit.encodeList f) fun {x} => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (EmbeddingLike.comp_injective (BoolCircuit.encodeList f) ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (EquivLike.injective_comp ?_ (BoolCircuit.encodeList f)).mp fun ⦃a₁⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (EquivLike.comp_injective (BoolCircuit.encodeList f) ?_).mp fun ⦃a₁⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.comp_injective (BoolCircuit.encodeList f) ?_).mp fun ⦃a₁⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.injective_comp ?_ (BoolCircuit.encodeList f)).mp fun ⦃a₁⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine StrictAnti.injective fun ⦃a⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Antitone.strictAnti_iff_injective fun ⦃a⦄ => ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder (List α)
+  -- ⊢ ∀ ⦃a b : List α⦄, a ≤ b → BoolCircuit.encodeList f b ≤ BoolCircuit.encodeList f a
+  -- ⊢ StrictAnti (BoolCircuit.encodeList f)
+  -- ⊢ ∀ ⦃b : List α⦄, _fvar.11889 ≤ b → BoolCircuit.encodeList f b ≤ BoolCircuit.encodeList f _fvar.11889
+  -- ⊢ _fvar.11889 ≤ _fvar.11967 → BoolCircuit.encodeList f _fvar.11967 ≤ BoolCircuit.encodeList f _fvar.11889
+  -- ⊢ BoolCircuit.encodeList f _fvar.11967 ≤ BoolCircuit.encodeList f _fvar.11889
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine StrictMono.injective fun ⦃a⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Monotone.strictMono_iff_injective fun ⦃a⦄ => ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder (List α)
+  -- ⊢ ∀ ⦃a b : List α⦄, a ≤ b → BoolCircuit.encodeList f a ≤ BoolCircuit.encodeList f b
+  -- ⊢ StrictMono (BoolCircuit.encodeList f)
+  -- ⊢ ∀ ⦃b : List α⦄, _fvar.12511 ≤ b → BoolCircuit.encodeList f _fvar.12511 ≤ BoolCircuit.encodeList f b
+  -- ⊢ _fvar.12511 ≤ _fvar.12589 → BoolCircuit.encodeList f _fvar.12511 ≤ BoolCircuit.encodeList f _fvar.12589
+  -- ⊢ BoolCircuit.encodeList f _fvar.12511 ≤ BoolCircuit.encodeList f _fvar.12589
+Try this:
+  [apply] refine Function.Injective.of_sigma_map ?_ f
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective (Sigma.map (fun a => Bool) BoolCircuit.encodeList)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine injective_of_increasing ?_ ?_ (BoolCircuit.encodeList f) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine GaloisCoinsertion.l_injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine GaloisInsertion.u_injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.injective_iff_pairwise_ne.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Pairwise (Function.onFun (fun x1 x2 => x1 ≠ x2) (BoolCircuit.encodeList f))
+Try this:
+  [apply] refine Set.image_injective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective (Set.image (BoolCircuit.encodeList f))
+Try this:
+  [apply] refine Set.preimage_surjective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Surjective (Set.preimage (BoolCircuit.encodeList f))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Set.injective_codRestrict ?_).mp fun ⦃a₁⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.injective_iff_injOn_univ.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.InjOn (BoolCircuit.encodeList f) Set.univ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Set.InjOn.injective_iff ?_ (fun ⦃x₁⦄ => ?_) ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.injOn_univ.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.InjOn (BoolCircuit.encodeList f) Set.univ
+Try this:
+  [apply] refine PLift.map_injective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective (PLift.map (BoolCircuit.encodeList f))
+Try this:
+  [apply] refine ULift.map_injective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective (ULift.map (BoolCircuit.encodeList f))
+Try this:
+  [apply] refine List.map_injective_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective (List.map (BoolCircuit.encodeList f))
+Try this:
+  [apply] refine Fintype.nodup_map_univ_iff_injective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Fintype (List α)
+  -- ⊢ (Multiset.map (BoolCircuit.encodeList f) Finset.univ.val).Nodup
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.Surjective.injective_of_fintype ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Finite.injective_iff_surjective_of_equiv ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Finite (List α)
+  -- ⊢ List α ≃ List Bool
+  -- ⊢ Function.Surjective (BoolCircuit.encodeList f)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Set.injective_iff_injective_of_iUnion_eq_univ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+/private/tmp/io-sprg-overlap/Basic_encodeList_injective_of_fixedWidth-apply.lean:10:0: warning: declaration uses 'sorry'
+/private/tmp/io-sprg-overlap/Basic_encodeList_injective_of_fixedWidth-apply.lean:11:5: warning: unused variable `hf`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/Basic_encodeList_injective_of_fixedWidth-apply.lean:11:45: warning: unused variable `hwidth`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

@@ -1,0 +1,263 @@
+Try this:
+  [apply] refine Prod.exists.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ a b,
+    (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+        some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+      else none) =
+      some (a, b)
+Try this:
+  [apply] refine Option.isSome_iff_exists.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+        some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+      else none).isSome =
+    true
+Try this:
+  [apply] refine Option.ne_none_iff_exists'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+      some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+    else none) ≠
+    none
+Try this:
+  [apply] refine Option.bex_ne_none.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ x,
+    ∃ (_ : x ≠ none),
+      (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+          some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+        else none) =
+        x
+Try this:
+  [apply] refine Option.exists_ne_none.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ x,
+    x ≠ none ∧
+      (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+          some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+        else none) =
+        x
+Try this:
+  [apply] refine exists_exists_eq_and.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ b,
+    (∃ a, some a = b) ∧
+      (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+          some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+        else none) =
+        b
+Try this:
+  [apply] refine (Function.Surjective.exists ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Surjective some
+  -- ⊢ ∃ y,
+    (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+        some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+      else none) =
+      y
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (GaloisConnection.exists_eq_l (fun a => ?_)
+        (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+          some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, h.right⟩)
+        else none)).mpr
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (GaloisConnection.exists_eq_u (fun a => ?_)
+        (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+          some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, h.right⟩)
+        else none)).mpr
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.exists_range_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ a ∈ Set.range some,
+    (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+        some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+      else none) =
+      a
+Try this:
+  [apply] refine WithTop.exists_ne_top.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ x,
+    x ≠ ⊤ ∧
+      (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+          some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+        else none) =
+        x
+Try this:
+  [apply] refine WithBot.exists_ne_bot.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ x,
+    x ≠ ⊥ ∧
+      (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+          some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+        else none) =
+        x
+Try this:
+  [apply] refine Subtype.existsOfSubtype ?_
+  -- Remaining subgoals:
+  -- ⊢ { x //
+    (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+        some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+      else none) =
+      some x }
+Try this:
+  [apply] refine Subtype.exists_of_subtype ?_
+  -- Remaining subgoals:
+  -- ⊢ { x //
+    (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+        some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+      else none) =
+      some x }
+Try this:
+  [apply] refine Exists.intro ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ Fin rc × Fin rc
+  -- ⊢ (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+      some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+    else none) =
+    some ?_
+Try this:
+  [apply] refine Exists.of_psigma_prop ?_
+  -- Remaining subgoals:
+  -- ⊢ (x : Fin rc × Fin rc) ×'
+    (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+        some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+      else none) =
+      some x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Exists.imp (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists_congr fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists_congr fun a => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Exists.imp' ?_ (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Decidable.not_forall_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬∀ (x : Fin rc × Fin rc),
+      ¬(if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+            some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+          else none) =
+          some x
+Try this:
+  [apply] refine Classical.not_forall_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬∀ (x : Fin rc × Fin rc),
+      ¬(if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+            some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+          else none) =
+          some x
+Try this:
+  [apply] refine not_forall_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬∀ (x : Fin rc × Fin rc),
+      ¬(if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+            some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+          else none) =
+          some x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine exists_of_exists_mem ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine existsUnique_iff_exists.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Subsingleton (Fin rc × Fin rc)
+  -- ⊢ ∃! x,
+    (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+        some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+      else none) =
+      some x
+Try this:
+  [apply] refine ExistsUnique.exists ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃! x,
+    (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+        some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+      else none) =
+      some x
+Try this:
+  [apply] refine nonempty_subtype.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Nonempty
+    { a //
+      (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+          some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+        else none) =
+        some a }
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Surjective.exists fun b => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine IsEmpty.exists_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ IsEmpty (Fin rc × Fin rc)
+  -- ⊢ False
+Try this:
+  [apply] refine Unique.exists_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Unique (Fin rc × Fin rc)
+  -- ⊢ (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+      some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+    else none) =
+    some default
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr_left ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr ?_ fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr ?_ fun a => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr' ?_ fun b => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr' ?_ fun b => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_subtype_congr ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_subtype_congr ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists_le_and_iff_exists ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists_ge_and_iff_exists ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+/private/tmp/io-sprg-overlap/BucketsSparse_indexMap_some_of_not_overfull-apply.lean:15:0: warning: declaration uses 'sorry'
+/private/tmp/io-sprg-overlap/BucketsSparse_indexMap_some_of_not_overfull-apply.lean:16:5: warning: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

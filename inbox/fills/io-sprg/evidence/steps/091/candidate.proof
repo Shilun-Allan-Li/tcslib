@@ -1,0 +1,5 @@
+by
+  rw [P.oneFlag_eq] at h
+  have hh := of_decide_eq_true h
+  rw [P.cap_eq, pow_two] at hh
+  exact ⟨hh.1, fun hb => hh.2.1 ((Buckets.overfull_iff _ _).mp hb), hh.2.2⟩

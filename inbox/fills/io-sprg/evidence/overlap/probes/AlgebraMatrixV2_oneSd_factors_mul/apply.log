@@ -1,0 +1,258 @@
+Try this:
+  [apply] refine Matrix.ext ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : Fin rows) (j : Fin cols),
+    ((Matrix.of fun i k =>
+            match L[↑k]? with
+            | none => 0
+            | some c => if i = c.1 then M c.1 c.2 else 0) *
+          Matrix.of fun k j =>
+            match L[↑k]? with
+            | none => 0
+            | some c => if j = c.2 then 1 else 0)
+        i j =
+      M i j
+Try this:
+  [apply] refine Eq.symm (Matrix.ext ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : Fin rows) (j : Fin cols),
+    M i j =
+      ((Matrix.of fun i k =>
+            match L[↑k]? with
+            | none => 0
+            | some c => if i = c.1 then M c.1 c.2 else 0) *
+          Matrix.of fun k j =>
+            match L[↑k]? with
+            | none => 0
+            | some c => if j = c.2 then 1 else 0)
+        i j
+Try this:
+  [apply] refine Matrix.ext_col_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (j : Fin cols),
+    ((Matrix.of fun i k =>
+              match L[↑k]? with
+              | none => 0
+              | some c => if i = c.1 then M c.1 c.2 else 0) *
+            Matrix.of fun k j =>
+              match L[↑k]? with
+              | none => 0
+              | some c => if j = c.2 then 1 else 0).col
+        j =
+      M.col j
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m n} {α} {A B} => Matrix.ext_col_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_row_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : Fin rows),
+    ((Matrix.of fun i k =>
+              match L[↑k]? with
+              | none => 0
+              | some c => if i = c.1 then M c.1 c.2 else 0) *
+            Matrix.of fun k j =>
+              match L[↑k]? with
+              | none => 0
+              | some c => if j = c.2 then 1 else 0).row
+        i =
+      M.row i
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m n} {α} {A B} => Matrix.ext_row_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_col ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (j : Fin cols),
+    ((Matrix.of fun i k =>
+              match L[↑k]? with
+              | none => 0
+              | some c => if i = c.1 then M c.1 c.2 else 0) *
+            Matrix.of fun k j =>
+              match L[↑k]? with
+              | none => 0
+              | some c => if j = c.2 then 1 else 0).col
+        j =
+      M.col j
+Try this:
+  [apply] refine Eq.symm (Matrix.ext_col ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (j : Fin cols),
+    M.col j =
+      ((Matrix.of fun i k =>
+              match L[↑k]? with
+              | none => 0
+              | some c => if i = c.1 then M c.1 c.2 else 0) *
+            Matrix.of fun k j =>
+              match L[↑k]? with
+              | none => 0
+              | some c => if j = c.2 then 1 else 0).col
+        j
+Try this:
+  [apply] refine Matrix.ext_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : Fin rows) (j : Fin cols),
+    ((Matrix.of fun i k =>
+            match L[↑k]? with
+            | none => 0
+            | some c => if i = c.1 then M c.1 c.2 else 0) *
+          Matrix.of fun k j =>
+            match L[↑k]? with
+            | none => 0
+            | some c => if j = c.2 then 1 else 0)
+        i j =
+      M i j
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m n} {α} {M N} => Matrix.ext_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.transpose_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Matrix.of fun i k =>
+          match L[↑k]? with
+          | none => 0
+          | some c => if i = c.1 then M c.1 c.2 else 0) *
+        Matrix.of fun k j =>
+          match L[↑k]? with
+          | none => 0
+          | some c => if j = c.2 then 1 else 0).transpose =
+    M.transpose
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m n} {α} {A B} => Matrix.transpose_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_row ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : Fin rows),
+    ((Matrix.of fun i k =>
+              match L[↑k]? with
+              | none => 0
+              | some c => if i = c.1 then M c.1 c.2 else 0) *
+            Matrix.of fun k j =>
+              match L[↑k]? with
+              | none => 0
+              | some c => if j = c.2 then 1 else 0).row
+        i =
+      M.row i
+Try this:
+  [apply] refine Eq.symm (Matrix.ext_row ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : Fin rows),
+    M.row i =
+      ((Matrix.of fun i k =>
+              match L[↑k]? with
+              | none => 0
+              | some c => if i = c.1 then M c.1 c.2 else 0) *
+            Matrix.of fun k j =>
+              match L[↑k]? with
+              | none => 0
+              | some c => if j = c.2 then 1 else 0).row
+        i
+Try this:
+  [apply] refine Matrix.ext_of_single_vecMul ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : Fin rows),
+    Matrix.vecMul (Pi.single i 1)
+        ((Matrix.of fun i k =>
+            match L[↑k]? with
+            | none => 0
+            | some c => if i = c.1 then M c.1 c.2 else 0) *
+          Matrix.of fun k j =>
+            match L[↑k]? with
+            | none => 0
+            | some c => if j = c.2 then 1 else 0) =
+      Matrix.vecMul (Pi.single i 1) M
+Try this:
+  [apply] refine Eq.symm (Matrix.ext_of_single_vecMul ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : Fin rows),
+    Matrix.vecMul (Pi.single i 1) M =
+      Matrix.vecMul (Pi.single i 1)
+        ((Matrix.of fun i k =>
+            match L[↑k]? with
+            | none => 0
+            | some c => if i = c.1 then M c.1 c.2 else 0) *
+          Matrix.of fun k j =>
+            match L[↑k]? with
+            | none => 0
+            | some c => if j = c.2 then 1 else 0)
+Try this:
+  [apply] refine Matrix.ext_iff_mulVec.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (v : Fin cols → R),
+    ((Matrix.of fun i k =>
+              match L[↑k]? with
+              | none => 0
+              | some c => if i = c.1 then M c.1 c.2 else 0) *
+            Matrix.of fun k j =>
+              match L[↑k]? with
+              | none => 0
+              | some c => if j = c.2 then 1 else 0).mulVec
+        v =
+      M.mulVec v
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {m n} {α} [NonAssocSemiring α] [Fintype n] {A B} => Matrix.ext_iff_mulVec.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_of_mulVec_single ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : Fin cols),
+    ((Matrix.of fun i k =>
+              match L[↑k]? with
+              | none => 0
+              | some c => if i = c.1 then M c.1 c.2 else 0) *
+            Matrix.of fun k j =>
+              match L[↑k]? with
+              | none => 0
+              | some c => if j = c.2 then 1 else 0).mulVec
+        (Pi.single i 1) =
+      M.mulVec (Pi.single i 1)
+Try this:
+  [apply] refine Eq.symm (Matrix.ext_of_mulVec_single ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : Fin cols),
+    M.mulVec (Pi.single i 1) =
+      ((Matrix.of fun i k =>
+              match L[↑k]? with
+              | none => 0
+              | some c => if i = c.1 then M c.1 c.2 else 0) *
+            Matrix.of fun k j =>
+              match L[↑k]? with
+              | none => 0
+              | some c => if j = c.2 then 1 else 0).mulVec
+        (Pi.single i 1)
+Try this:
+  [apply] refine Matrix.ext_iff_vecMul.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (v : Fin rows → R),
+    Matrix.vecMul v
+        ((Matrix.of fun i k =>
+            match L[↑k]? with
+            | none => 0
+            | some c => if i = c.1 then M c.1 c.2 else 0) *
+          Matrix.of fun k j =>
+            match L[↑k]? with
+            | none => 0
+            | some c => if j = c.2 then 1 else 0) =
+      Matrix.vecMul v M
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {m n} {α} [NonAssocSemiring α] [Fintype m] {A B} => Matrix.ext_iff_vecMul.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+/private/tmp/io-sprg-overlap/AlgebraMatrixV2_oneSd_factors_mul-apply.lean:12:0: warning: declaration uses 'sorry'
+/private/tmp/io-sprg-overlap/AlgebraMatrixV2_oneSd_factors_mul-apply.lean:14:5: warning: unused variable `hL`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/AlgebraMatrixV2_oneSd_factors_mul-apply.lean:14:20: warning: unused variable `hlen`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/AlgebraMatrixV2_oneSd_factors_mul-apply.lean:14:42: warning: unused variable `hmem`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

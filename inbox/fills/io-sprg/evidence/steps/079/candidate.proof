@@ -1,0 +1,11 @@
+by
+  rw [P.G4_eq]
+  constructor
+  · rw [pubDegree_rename, P.G4struct_eq]
+    apply pubDegree_finset_sum_le Finset.univ _ P.d
+    intro k _
+    exact (P.G3_degrees κ pp I' k j).1
+  · rw [privDegree_rename, P.G4struct_eq]
+    apply privDegree_finset_sum_le Finset.univ _ 2
+    intro k _
+    exact (P.G3_degrees κ pp I' k j).2

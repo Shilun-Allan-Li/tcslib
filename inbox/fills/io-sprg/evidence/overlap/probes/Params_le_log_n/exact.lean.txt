@@ -1,0 +1,15 @@
+import Mathlib.Data.Nat.Log
+import Mathlib.Algebra.Order.Ring.Nat
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace IoSprgParamsOverlap
+
+example (d E c : ℕ) (hd : 1 ≤ d) (hE : 1 ≤ E) :
+    ∃ κ₀, ∀ κ ≥ κ₀, c ≤ Nat.log 2 ((κ ^ E) ^ ((d + 1) / 2)) := by
+  exact?
+
+end IoSprgParamsOverlap

@@ -1,0 +1,20 @@
+source_name	template	public_reuse	abstraction
+encodeList_injective_of_fixedWidth	templates/encodeList_injective_of_fixedWidth.lean.template	BoolCircuit.encodeList_nil/cons; List.append_inj; supplied block injectivity	EXACT Basic draft statement
+encodeList_length_of_fixedWidth	templates/encodeList_length_of_fixedWidth.lean.template	BoolCircuit.encodeList_nil/cons; List.length_cons/append; Nat.succ_mul	EXACT Basic draft statement
+ell_le_ellBound	templates/ell_le_ellBound.lean.template	Complexity.PolyExpr.eval_pow/eval_var	E,kappa; literal ell and ellBound
+n_le_nBound	templates/n_le_nBound.lean.template	Nat.pow_le_pow_left	ellBound is evaluated ellBound; hell is the actual preceding dimension bound
+m_le_mBound	templates/m_le_mBound.lean.template	Complexity.PolyExpr.eval_subst/eval_mono; primitive output bound	outLen/outBound are supplied primitive fields; hn is the actual preceding seed bound
+W_le_ell_add_one	templates/W_le_ell_add_one.lean.template	Nat.floor_le/one_le_floor_iff; Real.rpow_mul_natCast/rpow_le_rpow_of_exponent_le/one_le_rpow	arbitrary ell instantiates to the scheduled dimension; same literal W
+W_le_two_pow_ell_add_one	templates/W_le_two_pow_ell_add_one.lean.template	same full analytic expression; Nat.lt_two_pow_self after owner numeric bound in actual proof	same full noise expression; no owned W-bound hypothesis inserted
+B_le_bucketBound	templates/B_le_bucketBound.lean.template	Nat.div_lt_iff_lt_mul; Nat.le_mul_of_pos_right; max_le	positive W and output majorant are the actual proved input bounds; RHS is evaluated bucketBound
+rc_le_rcBound	templates/rc_le_rcBound.lean.template	Nat.le_pow; Nat.mul_le_mul_left	hw is preceding W_le_ell_add_one through W=w^2; not a hypothesis of the desired rc bound
+sLen_le_sVarBound	templates/sLen_le_sVarBound.lean.template	Nat.add_le_add/mul_le_mul/pow_le_pow_left	componentwise preceding bounds; full tensor/two-factor formula and evaluated polynomial RHS
+pubLen_le_seedBound	templates/pubLen_le_seedBound.lean.template	Nat.mul_le_mul_left; Nat.le_add_right_of_le	full public count; evaluated pubBound plus private majorant; no hypothesis of desired bound
+privLen_le_seedBound	templates/privLen_le_seedBound.lean.template	Nat.add_le_add/mul_le_mul_left; Nat.le_add_left_of_le; two_mul	preceding private-instance bound; full private flag/two-copy count and same evaluated seedBound
+encBuckets_injective	templates/encBuckets_injective.lean.template	Candidates.natToList_injOn; List.ofFn_injective; existing list-code readers	abstract finite bucket dimensions; complete existing code, no helper assumption
+encIdx'_injective	templates/encIdx'_injective.lean.template	Turing.pairEncode_injective; Function.Injective.prodMap; Modular.encodeMatrix_injective	enc/henc are actual G.encIdx field and injectivity; hp is prime width; complete pair/bucket/matrix code
+encIdDraw_injective	templates/encIdDraw_injective.lean.template	same generic product-encoding shape; supplied primitive draw-code injection	same mathematical primitive product as index; enc/henc instantiate G.encIdDraw and its supplied injectivity
+encOneDraw_injective	templates/encOneDraw_injective.lean.template	pairEncode_injective; Modular.encodeVector_injective; numeral injection and existing list readers	actual selector fit and prime-width facts; all secret/noise fields retained
+encDraw_injective	templates/encDraw_injective.lean.template	entire nested code exposed; List.ofFn_injective, existing list readers, modular/pair injection	entire actual nested code; no assumption encOneDraw or new Basic theorem is injective
+encSeed'_injective	templates/encSeed'_injective.lean.template	pairEncode_injective; Modular.encodeVector_injective; Function.Injective.prodMap	abstract vector dimensions; actual prime-fit condition; unchanged pair of modular vectors
+encIdx'_length_le	templates/encIdx'_length_le.lean.template	Turing.length_pairEncode; Modular.encodeMatrix_length; Candidates.length_natToList; existing list readers	g/M/B/N/L are exact evaluated source majorants and their preceding bounds; constant6 and complete code unchanged

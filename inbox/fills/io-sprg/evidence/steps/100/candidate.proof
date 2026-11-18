@@ -1,0 +1,22 @@
+by
+  have hfull : (P.sdSampFull κ pp I).AllOutputs (fun x => ∀ j,
+      ((P.eval' κ pp I x.seed j).toNat : ZMod pp.p) =
+        MvPolynomial.eval (Sum.elim x.seed.1 x.seed.2) (P.G4 κ pp I j)) := ?_
+  swap
+  · have hfield := P.G4_eval_eq κ pp I
+    have hbit := P.eval'_correct κ pp I
+    generalize hc : P.sdSampFull κ pp I = c at hfield hbit ⊢
+    induction c generalizing hfield hbit with
+    | pure x =>
+      rw [OracleComp.allOutputs_pure] at hfield hbit ⊢
+      intro j
+      rw [hbit j, hfield j]
+      cases x.err <;> rfl
+    | query i a k ih =>
+      rw [OracleComp.allOutputs_query] at hfield hbit ⊢
+      intro y
+      exact ih y (hfield y) (hbit y)
+  rw [P.sdSamp'_eq, OracleComp.map_eq_bind]
+  apply OracleComp.AllOutputs.bind hfull
+  intro x hx
+  exact OracleComp.allOutputs_pure.mpr hx

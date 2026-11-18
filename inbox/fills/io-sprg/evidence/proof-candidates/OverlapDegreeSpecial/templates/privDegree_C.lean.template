@@ -1,0 +1,17 @@
+import Mathlib.RingTheory.MvPolynomial.Homogeneous
+import Mathlib.Algebra.MvPolynomial.Degrees
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open scoped BigOperators
+
+namespace IoSprgDegreeSpecialOverlap
+
+example {σ τ R : Type*} [CommSemiring R] (a : R) :
+    (MvPolynomial.C a : MvPolynomial (σ ⊕ τ) R).weightedTotalDegree
+      (Sum.elim (fun _ : σ => (0 : ℕ)) (fun _ : τ => (1 : ℕ))) = 0 := __PROBE_BODY__
+
+end IoSprgDegreeSpecialOverlap

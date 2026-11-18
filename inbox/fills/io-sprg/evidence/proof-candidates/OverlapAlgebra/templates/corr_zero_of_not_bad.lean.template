@@ -1,0 +1,21 @@
+import Mathlib.Algebra.MvPolynomial.Variables
+import Mathlib.Data.Fintype.BigOperators
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open scoped BigOperators
+
+namespace IoSprgAlgebraOverlap
+
+example {n : ℕ} {R : Type*} [CommRing R] [DecidableEq R]
+    (p : MvPolynomial (Fin n) ℤ) (σ : Fin n → Bool) (e : Fin n → R) (out : Bool)
+    (hgood : ¬ (p.vars ∩ (Finset.univ.filter (fun i => e i ≠ 0))).Nonempty)
+    (hrep : MvPolynomial.eval (fun i => ((σ i).toNat : ℤ)) p = (out.toNat : ℤ))
+    :
+    (out.toNat : R) - MvPolynomial.eval₂ (Int.castRingHom R)
+      (fun i => ((σ i).toNat : R) + e i) p = 0 := __PROBE_BODY__
+
+end IoSprgAlgebraOverlap

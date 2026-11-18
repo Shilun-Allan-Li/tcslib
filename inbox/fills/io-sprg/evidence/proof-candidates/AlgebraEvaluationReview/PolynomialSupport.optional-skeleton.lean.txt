@@ -1,0 +1,65 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+-- OPTIONAL theorem-only lower layer, NOT_RUN; no landing is required at current size.
+-- Proposed owned path: TCSlib/Cryptography/Obfuscation/StructuredSeed/PolynomialSupport.lean
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Algebra.MvPolynomial.Degrees
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Data.Finset.Sort
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Support products for lifted JLS monomials
+
+## Main results
+
+* `Internal.support_card_le_totalDegree` bounds a supported monomial's variable count.
+* `Internal.paddedSortedSupport_prod_mul` recovers its two padded half products.
+
+## References
+
+* [JLS26] Jain, Lin, Sahai, J. ACM 73(1), Article 1, February 2026,
+  Equation (3), p. 17. These theorem-only lemmas justify the deterministic support split.
+
+This optional module imports no construction owner and introduces no algorithm or encoding.
+All four Mathlib import roots already occur in the current Polys closure.
+-/
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal
+
+open scoped BigOperators
+
+/-- Every supported monomial uses at most totalDegree distinct variables;
+mathematical glue for [JLS26, Equation (3), p. 17]. Multilinearity is unnecessary.
+
+**Proof sketch.** Each nonzero natural exponent contributes at least one. Apply
+`Finset.card_nsmul_le_sum` at one, then `MvPolynomial.le_totalDegree`.
+This is optional packaging of existing public APIs, not a missing generic theorem. -/
+theorem support_card_le_totalDegree {σ R : Type*} [CommSemiring R]
+    (p : MvPolynomial σ R) (h : σ →₀ ℕ) (hh : h ∈ p.support) :
+    h.support.card ≤ p.totalDegree := sorry
+
+/-- The two padded sorted support halves multiply to the original multilinear monomial;
+mathematical glue for [JLS26, Equation (3), p. 17]. A missing list entry contributes one.
+
+**Proof sketch.** Join halves with `Fin.prod_univ_add`, remove padding with
+`Fin.prod_univ_eq_prod_range` and `Finset.prod_subset`, read the sorted list with
+`Fin.prod_univ_fun_getElem` and `List.prod_toFinset`, then use exponent one.
+The existing Polys monomialSlot is consumed through its reader by the caller;
+this lower layer cannot import Polys without an import cycle. -/
+theorem paddedSortedSupport_prod_mul {n : ℕ} {R : Type*} [CommMonoid R]
+    (h : Fin n →₀ ℕ) (D : ℕ) (x : Fin n → R)
+    (hcard : h.support.card ≤ D + D) (hexp : ∀ i ∈ h.support, h i = 1) :
+    (∏ r : Fin D, match (h.support.sort (· ≤ ·))[r.val]? with
+      | none => 1
+      | some i => x i) *
+      (∏ r : Fin D, match (h.support.sort (· ≤ ·))[D + r.val]? with
+        | none => 1
+        | some i => x i) = ∏ i ∈ h.support, x i ^ h i := sorry
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal

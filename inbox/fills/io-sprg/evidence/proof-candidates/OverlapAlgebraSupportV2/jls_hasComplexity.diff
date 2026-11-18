@@ -1,0 +1,16 @@
+--- /private/tmp/io-sprg-proof-notes/OverlapAlgebra/templates/jls_hasComplexity.lean.template
++++ /private/tmp/io-sprg-proof-notes/OverlapAlgebraSupportV2/templates/jls_hasComplexity.lean.template
+@@ -8,12 +8,11 @@
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+-open scoped BigOperators
+ open TCSlib.Cryptography.Games
+ 
+ namespace IoSprgAlgebraOverlap
+ 
+-example {ι : Type*} (spec : OracleSpec ι) (Idx : ℕ → Type)
++example {ι : Type} (spec : OracleSpec ι) (Idx : ℕ → Type)
+     (p pub priv out : ℕ → ℕ) (d : ℕ)
+     (G : ∀ κ, Idx κ → Fin (out κ) →
+       MvPolynomial (Fin (pub κ) ⊕ Fin (priv κ)) (ZMod (p κ)))

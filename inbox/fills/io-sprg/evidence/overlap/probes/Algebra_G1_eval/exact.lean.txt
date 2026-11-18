@@ -1,0 +1,44 @@
+import Mathlib.RingTheory.MvPolynomial.Homogeneous
+import Mathlib.Data.Finset.Sort
+import Mathlib.Algebra.MvPolynomial.Eval
+import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.RingTheory.MvPolynomial.Basic
+import Mathlib.Algebra.MvPolynomial.Variables
+import Mathlib.Algebra.BigOperators.Fin
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open scoped BigOperators
+
+namespace IoSprgAlgebraOverlap
+
+example {σ τ R : Type*} [CommRing R] {n ell D : ℕ}
+    (A : Fin n → Fin ell → R) (b : Fin n → σ)
+    (T : Bool → (Fin D → Fin (ell + 1)) → τ)
+    (s : Fin ell → R) (x : Fin n → R) (z : σ ⊕ τ → R)
+    (hpub : ∀ i, z (.inl (b i)) = (∑ a, A i a * s a) + x i)
+    (htensor : ∀ α : Fin D → Fin (ell + 1),
+      z (.inr (T false α)) =
+        ∏ r : Fin D, if ha : (α r).val < ell then s ⟨(α r).val, ha⟩ else 1)
+    (p : MvPolynomial (Fin n) ℤ) (d : ℕ)
+    (hml : p ∈ MvPolynomial.restrictDegree (Fin n) ℤ 1)
+    (hdeg : p.totalDegree ≤ d) (hcut : d ≤ D + D) :
+    let c : Option (Fin n) → Fin (ell + 1) → MvPolynomial (σ ⊕ τ) R :=
+      fun slot a => match slot with
+      | none => if a.val = ell then 1 else 0
+      | some i => if ha : a.val < ell then
+          MvPolynomial.C (-A i ⟨a.val, ha⟩) else MvPolynomial.X (.inl (b i))
+    let H : (Fin n →₀ ℕ) → ℕ → Bool → MvPolynomial (σ ⊕ τ) R :=
+      fun h offset copy => ∑ α : Fin D → Fin (ell + 1),
+        (∏ r : Fin D, c ((h.support.sort (· ≤ ·))[offset + r.val]?) (α r)) *
+          MvPolynomial.X (.inr (T copy α))
+    MvPolynomial.eval z
+      (∑ h ∈ p.support,
+        MvPolynomial.C ((p.coeff h : ℤ) : R) * H h 0 false * H h D false) =
+      MvPolynomial.eval₂ (Int.castRingHom R) x p := by
+  exact?
+
+end IoSprgAlgebraOverlap

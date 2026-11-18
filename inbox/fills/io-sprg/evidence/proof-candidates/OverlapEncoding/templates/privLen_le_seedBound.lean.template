@@ -1,0 +1,13 @@
+import Mathlib.Algebra.Order.Ring.Nat
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace IoSprgEncodingOverlap
+
+example (κ sLen sVarBound nBound : ℕ) (hs : sLen ≤ sVarBound) :
+    κ * (1 + (sLen + sLen)) ≤ κ * nBound + 1 + κ * (1 + 2 * sVarBound) := __PROBE_BODY__
+
+end IoSprgEncodingOverlap

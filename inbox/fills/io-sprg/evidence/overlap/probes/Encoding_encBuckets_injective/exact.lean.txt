@@ -1,0 +1,21 @@
+import TCSlib.Complexity.CircuitComplexity.Uniform
+import TCSlib.Cryptography.Encoding.Modular
+import TCSlib.Complexity.TuringMachine.Encoding
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open Turing
+open TCSlib.Cryptography
+
+namespace IoSprgEncodingOverlap
+
+example (m B : ℕ) :
+    Function.Injective (fun φ : Fin m → Fin B =>
+      BoolCircuit.encodeList (fun b : Fin B => Candidates.natToList B b.val)
+        (List.ofFn φ)) := by
+  exact?
+
+end IoSprgEncodingOverlap

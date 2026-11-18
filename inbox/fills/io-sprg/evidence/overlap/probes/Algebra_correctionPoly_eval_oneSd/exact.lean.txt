@@ -1,0 +1,24 @@
+import Mathlib.Data.Matrix.Mul
+import Mathlib.Data.Fintype.BigOperators
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open scoped BigOperators
+
+namespace IoSprgAlgebraOverlap
+
+example {m B rc t : ℕ} {R : Type*} [Semiring R]
+    (φ : Fin m → Fin B) (pos : Fin m → Option (Fin rc × Fin rc))
+    (corr : Fin m → R) (j : Fin m) (c : Fin rc × Fin rc)
+    (hpos : pos j = some c)
+    (hinj : ∀ i, φ i = φ j → pos i = pos j → i = j)
+    (U : Matrix (Fin rc) (Fin t) R) (V : Matrix (Fin t) (Fin rc) R)
+    (hfactor : U * V = fun u v => ∑ i : Fin m,
+      if φ i = φ j ∧ pos i = some (u, v) then corr i else 0) :
+    (∑ r : Fin t, U c.1 r * V r c.2) = corr j := by
+  exact?
+
+end IoSprgAlgebraOverlap

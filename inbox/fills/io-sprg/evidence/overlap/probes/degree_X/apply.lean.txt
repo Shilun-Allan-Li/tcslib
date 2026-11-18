@@ -1,0 +1,18 @@
+import Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous
+import Mathlib.Algebra.MonoidAlgebra.Degree
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open scoped BigOperators
+
+namespace IoSprgOverlapProbe
+
+example {σ R : Type*} [CommSemiring R] (w : σ → ℕ) (i : σ) :
+    (MvPolynomial.X i : MvPolynomial σ R).weightedTotalDegree w ≤ w i := by
+  classical
+  apply?
+
+end IoSprgOverlapProbe

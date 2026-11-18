@@ -1,0 +1,41 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN.Defs
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Basic
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Injective and polynomially bounded LPN reduction encodings
+
+## Main definitions and results
+
+* Canonical challenge-code injectivity.
+* Advice-code injectivity and its explicit polynomial bound.
+
+## References
+
+* [JLS26] Jain, Lin, Sahai, J. ACM 73(1), Article 1, February 2026,
+  Lemma 4.2, p. 19.
+* [PS10] Pass, Shelat, *A Course in Cryptography*, 2010, Definition 26.8.
+
+**Deviations.** Dv9, Dv12 and Dv15 retain the prime-first fixed-layout advice code;
+no encoder, algorithm, sampler or polynomial-bound definition changes.
+-/
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+
+open Complexity Turing
+open scoped BigOperators
+
+namespace Params
+
+-- MOVE THE RECORDED COMMAND BLOCKS HERE; NO NEW DEFINITIONS.
+
+end Params
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed

@@ -1,0 +1,24 @@
+--- /private/tmp/io-sprg-proof-notes/OverlapBucketsSparse/templates/sparseFactor_mul_of_card_le.lean.template
++++ /private/tmp/io-sprg-proof-notes/OverlapBucketsSparseV2/templates/sparseFactor_mul_of_card_le.lean.template
+@@ -7,19 +7,17 @@
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+-open scoped BigOperators
+-
+ namespace IoSprgBucketsSparseOverlap
+ 
+ example {rows cols : ℕ} {R : Type*} [Semiring R] [DecidableEq R]
+     (M : Matrix (Fin rows) (Fin cols) R) (t : ℕ)
+     (h : (Finset.univ.filter (fun c : Fin rows × Fin cols => M c.1 c.2 ≠ 0)).card ≤ t) :
+-    ((fun (i : Fin rows) (k : Fin t) => match ((((List.finRange rows).flatMap (fun i =>
++    (Matrix.of (fun (i : Fin rows) (k : Fin t) => match ((((List.finRange rows).flatMap (fun i =>
+         (List.finRange cols).map (fun j => (i, j)))).filter
+           (fun c => decide (M c.1 c.2 ≠ 0))))[k.val]? with
+       | none => 0
+       | some c => if i = c.1 then M c.1 c.2 else 0) : Matrix (Fin rows) (Fin t) R) *
+-    ((fun (k : Fin t) (j : Fin cols) => match ((((List.finRange rows).flatMap (fun i =>
++    (Matrix.of (fun (k : Fin t) (j : Fin cols) => match ((((List.finRange rows).flatMap (fun i =>
+         (List.finRange cols).map (fun j => (i, j)))).filter
+           (fun c => decide (M c.1 c.2 ≠ 0))))[k.val]? with
+       | none => 0

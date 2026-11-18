@@ -1,0 +1,22 @@
+import TCSlib.Complexity.CircuitComplexity.Uniform
+import TCSlib.Cryptography.Encoding.Modular
+import TCSlib.Complexity.TuringMachine.Encoding
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open Turing
+open TCSlib.Cryptography
+
+namespace IoSprgLPNOverlap
+
+example (samples ell p width : ℕ) [NeZero p] (hp : p ≤ 2 ^ width) :
+    Function.Injective (fun s : Matrix (Fin samples) (Fin ell) (ZMod p) ×
+        ((Fin ell → ZMod p) × (Fin samples → ZMod p)) =>
+      pairEncode (Encoding.Modular.encodeMatrix width s.1)
+        (pairEncode (Encoding.Modular.encodeVector width s.2.1)
+          (Encoding.Modular.encodeVector width s.2.2))) := __PROBE_BODY__
+
+end IoSprgLPNOverlap

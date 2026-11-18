@@ -1,0 +1,16 @@
+--- /private/tmp/io-sprg-proof-notes/OverlapAlgebra/templates/eval'_correct.lean.template
++++ /private/tmp/io-sprg-proof-notes/OverlapAlgebraSupportV2/templates/eval'_correct.lean.template
+@@ -6,12 +6,11 @@
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+-open scoped BigOperators
+ open TCSlib.Cryptography.Games
+ 
+ namespace IoSprgAlgebraOverlap
+ 
+-example {ι X σ τ R J : Type*} [CommRing R] [Nontrivial R] [DecidableEq R] (spec : OracleSpec ι)
++example {ι X σ τ R J : Type} [CommRing R] [Nontrivial R] [DecidableEq R] (spec : OracleSpec ι)
+     (seed : X → (σ → R) × (τ → R)) (err : X → Bool) (out : X → J → Bool)
+     (Q : J → MvPolynomial (σ ⊕ τ) R)
+     (c : OracleComp spec X)

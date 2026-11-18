@@ -1,0 +1,4 @@
+-- Replacement proof candidate only. NOT_RUN: root must elaborate and seal-check.
+by
+  rw [sparseEntries_eq]
+  exact ((List.nodup_finRange rows).product (List.nodup_finRange cols)).filter _

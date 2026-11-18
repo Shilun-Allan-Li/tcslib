@@ -1,0 +1,250 @@
+Try this:
+  [apply] refine Option.eq_none_of_isNone ?_
+  -- Remaining subgoals:
+  -- ⊢ (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+        some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+      else none).isNone =
+    true
+Try this:
+  [apply] refine Option.isNone_iff_eq_none.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+        some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+      else none).isNone =
+    true
+Try this:
+  [apply] refine Option.eq_none_iff_forall_ne_some.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : Fin rc × Fin rc),
+    (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+        some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+      else none) ≠
+      some a
+Try this:
+  [apply] refine Option.eq_none_iff_forall_some_ne.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : Fin rc × Fin rc),
+    some a ≠
+      if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+        some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+      else none
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {p} [Decidable p] {x} {y} => right_eq_dite_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Option.le_none.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+      some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+    else none) ≤
+    none
+Try this:
+  [apply] refine Eq.symm (Option.eq_of_eq_some ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (z : Fin rc × Fin rc),
+    none = some z ↔
+      (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+          some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+        else none) =
+        some z
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Option.pmap_eq_none_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {o1 o2} {h1} {h2} => Option.get_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Option.eq_none_iff_forall_not_mem.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : Fin rc × Fin rc),
+    a ∉
+      if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+        some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+      else none
+Try this:
+  [apply] refine Eq.symm ((fun {α} {o₁ o₂} => Option.ext_iff.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : Fin rc × Fin rc),
+    none = some a ↔
+      (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+          some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+        else none) =
+        some a
+Try this:
+  [apply] refine Option.not_isSome_iff_eq_none.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬(if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+          some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+        else none).isSome =
+      true
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f} {o o'} w => (Option.map_inj_right w).mp) (fun x => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Option.map_eq_none.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Option.ext ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : Fin rc × Fin rc),
+    none = some a ↔
+      (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+          some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+        else none) =
+        some a
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Option.map_eq_none_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Option.eq_of_mem_of_mem ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Option.map_eq_none'.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {α} {o₁ o₂} => List.perm_option_toList.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ none.toList.Perm
+    (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+        some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+      else none).toList
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.forall_none_of_filterMap_eq_nil ?_ (fun h => none) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Array.forall_none_of_filterMap_eq_empty ?_ (fun h => none) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Option.toList_eq_nil_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+        some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+      else none).toList =
+    []
+Try this:
+  [apply] refine Option.length_toList_eq_zero_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+          some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+        else none).toList.length =
+    0
+Try this:
+  [apply] refine Option.size_toArray_eq_zero_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+          some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+        else none).toArray.size =
+    0
+Try this:
+  [apply] refine Option.toArray_eq_empty_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+        some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+      else none).toArray =
+    #[]
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Option.attachWith_eq_none_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Option.attach_eq_none_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+        some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+      else none).attach =
+    none
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Option.pbind_eq_none fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine dite_eq_right_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc),
+    some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩) = none
+Try this:
+  [apply] refine (Ne.dite_eq_right_iff ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc),
+    some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩) ≠ none
+  -- ⊢ ¬((¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc)
+Try this:
+  [apply] refine Option.eq_of_eq_some ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (z : Fin rc × Fin rc),
+    (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+          some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+        else none) =
+        some z ↔
+      none = some z
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Option.get_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Option.ext_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : Fin rc × Fin rc),
+    (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+          some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+        else none) =
+        some a ↔
+      none = some a
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Option.map_inj_right fun x => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Option.ext ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : Fin rc × Fin rc),
+    (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+          some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+        else none) =
+        some a ↔
+      none = some a
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Option.eq_of_mem_of_mem ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.perm_option_toList.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (if h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc then
+          some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩)
+        else none).toList.Perm
+    none.toList
+Try this:
+  [apply] refine dif_neg ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬((¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc)
+Try this:
+  [apply] refine dite_cond_eq_false ?_
+  -- Remaining subgoals:
+  -- ⊢ ((¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc) = False
+Try this:
+  [apply] refine dite_eq_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (∃ (h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc),
+      some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩) = none) ∨
+    ∃ (_ : ¬((¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc)), none = none
+Try this:
+  [apply] refine dite_eq_iff'.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (∀ (h : (¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc),
+      some (finProdFinEquiv.symm ⟨{q | q < j ∧ φ q = φ j}.card, ⋯⟩) = none) ∧
+    (¬((¬∃ b, rc * rc < {q | φ q = b}.card) ∧ {q | q < j ∧ φ q = φ j}.card < rc * rc) → none = none)
+/private/tmp/io-sprg-overlap/BucketsSparse_indexMap_none_of_overfull-apply.lean:15:0: warning: declaration uses 'sorry'
+/private/tmp/io-sprg-overlap/BucketsSparse_indexMap_none_of_overfull-apply.lean:16:5: warning: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

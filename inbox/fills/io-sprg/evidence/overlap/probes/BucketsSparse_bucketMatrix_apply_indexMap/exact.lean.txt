@@ -1,0 +1,34 @@
+import Mathlib.Data.Finset.Card
+import Mathlib.Data.Fintype.BigOperators
+import Mathlib.Logic.Equiv.Fin.Basic
+import Mathlib.Data.Matrix.Basic
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open scoped BigOperators
+
+namespace IoSprgBucketsSparseOverlap
+
+example {m B : ℕ} {R : Type*} [AddCommMonoid R]
+    (φ : Fin m → Fin B) (rc : ℕ) (corr : Fin m → R)
+    (h : ¬ (∃ b : Fin B, rc * rc < (Finset.univ.filter (fun q : Fin m => φ q = b)).card)) (j :
+        Fin m)
+    (c : Fin rc × Fin rc) (hc : (if h : ¬ (∃ b : Fin B, rc * rc < (Finset.univ.filter (fun q :
+        Fin m => φ q = b)).card) ∧
+          (Finset.univ.filter (fun q : Fin m => q < j ∧ φ q = φ j)).card < rc * rc then
+        some ((finProdFinEquiv : (Fin rc × Fin rc) ≃ Fin (rc * rc)).symm
+          ⟨(Finset.univ.filter (fun q : Fin m => q < j ∧ φ q = φ j)).card, h.2⟩)
+      else none) = some c) :
+    (∑ i : Fin m, if φ i = φ j ∧ (if h : ¬ (∃ b : Fin B, rc * rc < (Finset.univ.filter (fun q :
+        Fin m => φ q = b)).card) ∧
+          (Finset.univ.filter (fun q : Fin m => q < i ∧ φ q = φ i)).card < rc * rc then
+        some ((finProdFinEquiv : (Fin rc × Fin rc) ≃ Fin (rc * rc)).symm
+          ⟨(Finset.univ.filter (fun q : Fin m => q < i ∧ φ q = φ i)).card, h.2⟩)
+      else none) = some (c.1, c.2)
+      then corr i else 0) = corr j := by
+  exact?
+
+end IoSprgBucketsSparseOverlap

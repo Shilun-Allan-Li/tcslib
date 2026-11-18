@@ -1,0 +1,20 @@
+by
+  classical
+  let e : Fin (P.n κ) → ZMod pp.p := fun i => P.noiseValue κ pp (r i)
+  have hp : ∀ i, z (P.bVar κ k i) =
+      (∑ a, I.2.2 i a * s a) + (((σ i).toNat : ZMod pp.p) + e i) := ?_
+  swap
+  · intro i
+    rw [hpub i, P.oneSd_pub]
+    ring
+  have ht : ∀ α : Fin P.D → Fin (P.ℓ κ + 1),
+      z (P.sVar κ k false (.inl α)) =
+        ∏ a : Fin P.D, if ha : (α a).val < P.ℓ κ then s ⟨(α a).val, ha⟩ else 1 := ?_
+  swap
+  · intro α
+    simpa only [P.oneSd_priv] using hpriv (.inl α)
+  have hG := P.G1_eval κ pp I k j s
+    (fun i => ((σ i).toNat : ZMod pp.p) + e i) z hp ht
+  have hc := P.corr_zero_of_not_bad κ pp I σ e j hgood
+  rw [P.corr_eq] at hc
+  exact hG.trans (sub_eq_zero.mp hc).symm

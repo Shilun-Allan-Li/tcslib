@@ -1,0 +1,10 @@
+--- /private/tmp/io-sprg-proof-notes/Buckets/02-eq_of_rank_eq.proof
++++ /private/tmp/io-sprg-proof-notes/ProofSyntaxFix/Buckets/02-eq_of_rank_eq.proof
+@@ -1,5 +1,6 @@
+ by
+-  have hstrict : ∀ {a b : Fin m}, φ a = φ b → a < b → rank φ a < rank φ b
++  have hstrict : ∀ {a b : Fin m}, φ a = φ b → a < b → rank φ a < rank φ b := ?_
++  swap
+   · intro a b hab hablt
+     rw [rank_eq, rank_eq]
+     apply Finset.card_lt_card

@@ -1,0 +1,10 @@
+by
+  have hwW : P.w κ ≤ P.W κ := ?_
+  swap
+  · rw [P.W_eq]
+    exact Nat.le_pow (Nat.succ_pos 1)
+  have hw := hwW.trans (P.W_le_ell_add_one κ)
+  simp only [P.rc_eq, P.t_eq, P.rcBound_eq, PolyExpr.eval_mul,
+    PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const]
+  exact Nat.mul_le_mul_left κ
+    (hw.trans (Nat.add_le_add_right (P.ell_le_ellBound κ) 1))

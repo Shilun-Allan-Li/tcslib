@@ -1,0 +1,12 @@
+by
+  intro x y h
+  rw [P.encIdDraw_eq, P.encIdDraw_eq] at h
+  have houter := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h
+  have hinner := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _))
+    (congrArg Prod.snd houter)
+  apply Prod.ext
+  · exact P.G.encIdDraw_injective (P.n κ) (congrArg Prod.fst houter)
+  · apply Prod.ext
+    · exact P.encBuckets_injective κ (congrArg Prod.fst hinner)
+    · exact Encoding.Modular.encodeMatrix_injective (κ + 1) pp.le_two_pow
+        (congrArg Prod.snd hinner)
