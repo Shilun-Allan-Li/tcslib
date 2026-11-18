@@ -105,6 +105,8 @@ handler, the reduction's output. This bounds every history, which the guarded st
   `q(n) · perCall(n) + finCall(n)`, whose computation is exactly the simulation followed by the
   finalization. The reductions that forward or answer queries with their own oracle need it (the
   PRF MAC's distinguisher, hash-and-sign's forger, the CPA and CCA reductions).
+* `Games.InteractiveHandler.rU_eq`, `rZ_eq`, `rW_eq`, `rS_eq`, `rAns_eq`: the field readers as
+  equations.
 * `Games.InteractiveHandler.rU_input`, …, `rCnt_input`, `rAns_input`: the readers of a round
   input on `InteractiveHandler.input`; `rU_finInput`, `rZ_finInput`, `rW_finInput`, `rS_finInput`,
   `rL_finInput`, `finA_finInput`: the readers of a finalization input on `finInput`;
@@ -482,6 +484,18 @@ def rCnt (w : List Bool) : List Bool := pairFstD (rS w)
 /-- The outer answer `y` of the first entry `⟨1^j, ⟨x', y⟩⟩` of the outer log of a round input:
 `rAns w = pairSndD (pairSndD (pairFstD (rL w)))`. -/
 def rAns (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD (rL w)))
+
+/-- The parameter field of a round input: `rU w = pairFstD (pairFstD w)`. -/
+theorem rU_eq (w : List Bool) : rU w = pairFstD (pairFstD w) := rfl
+
+/-- The reduction-input field of a round input: `rZ w = pairFstD (pairSndD (pairFstD w))`. -/
+theorem rZ_eq (w : List Bool) : rZ w = pairFstD (pairSndD (pairFstD w)) := rfl
+
+/-- The seed field of a round input: `rW w = pairSndD (pairSndD (pairFstD w))`. -/
+theorem rW_eq (w : List Bool) : rW w = pairSndD (pairSndD (pairFstD w)) := rfl
+
+/-- The state field of a round input: `rS w = pairFstD (pairSndD w)`. -/
+theorem rS_eq (w : List Bool) : rS w = pairFstD (pairSndD w) := rfl
 
 /-- `rAns w = pairSndD (pairSndD (pairFstD (rL w)))`. -/
 theorem rAns_eq (w : List Bool) : rAns w = pairSndD (pairSndD (pairFstD (rL w))) := rfl
