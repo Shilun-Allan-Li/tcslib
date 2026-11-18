@@ -228,9 +228,10 @@ private theorem halfVector_eq_zero_of_ne_last (P : Parameters) (j : Fin (P.lwe.d
 `codepoint b` plus the integer error sum of `e` against the decomposition of `halfVector P`.
 Technical glue shared by the two decryption theorems.
 
-**Proof sketch.** The Regev residual of the split column `v = C x` is `⟨t, v⟩`, by splitting
-off the last coordinate. Then `⟨t, C x⟩ = ⟨tᵗ C, x⟩`, the invariant gives
-`b·⟨tᵗ G, x⟩ + ⟨e, x⟩ = b·⟨t, G x⟩ + ⟨e, x⟩`, `G x = w` and `⟨t, w⟩ = codepoint true`. -/
+**Proof sketch.** By `decrypt_eq_decode_dotProduct`, decryption decodes `⟨t, v⟩`, the Regev
+residual of the split column `v = C x` (splitting off the last coordinate). Then
+`⟨t, C x⟩ = ⟨tᵗ C, x⟩`, the invariant gives `b·⟨tᵗ G, x⟩ + ⟨e, x⟩ = b·⟨t, G x⟩ + ⟨e, x⟩`,
+`G x = w` and `⟨t, w⟩ = codepoint true`. -/
 private theorem decrypt_eq_decode_errorSum (P : Parameters)
     (s : Fin P.lwe.dimension → ZMod P.lwe.modulus) (b : Bool) (β : ℕ) (C : Ciphertext P)
     (h : Encrypts P (secretVector P s) (b.toNat : ℤ) β C) :
@@ -272,7 +273,8 @@ noise `β` and `2·(ℓ·β) < ⌊q/2⌋`, then `decrypt P s C = b` [GSW13, Sect
 value"; AP14, Claim 3.4; BV14, Lemma 3.2].
 
 **Proof sketch.** The private glue lemma `decrypt_eq_decode_errorSum` does the algebra:
-`Regev.decrypt_eq` reads `c.2 − ⟨s, c.1⟩`, which for the split column `v` is `⟨t, v⟩`
+`decrypt_eq_decode_dotProduct` reads decryption as `decode ⟨t, v⟩`: the Regev residual
+`c.2 − ⟨s, c.1⟩` (`Regev.decrypt_eq`) of the split column `v` is `⟨t, v⟩`
 (`Fin.sum_univ_castSucc`, `secretVector_eq`). `Matrix.dotProduct_mulVec` turns `⟨t, C x⟩` into
 `⟨tᵗC, x⟩` with `x = G⁻¹(w)` lifted; substituting the invariant gives
 `b·⟨t, G x⟩ + ⟨e, x⟩ = b·⟨t, w⟩ + ⟨e, x⟩` by `gadget_mulVec_decomposeVec`, and `⟨t, w⟩ = ⌊q/2⌋`

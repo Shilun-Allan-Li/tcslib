@@ -115,7 +115,9 @@ def hybridPlant {π μ γ ρ ρ' : Type*} {q : ℕ} (E : π → μ → ρ → γ
 
 /-- On the sample `⟨pk, c⟩ = pc` and the coins `r`, the `j`-th hybrid distinguisher runs `D`
 with coins `r.2` on `pk` and the tuple with `E pk m'_i (r.1 i)` below `j`, `c` at `j` and
-`E pk m_i (r.1 i)` above `j`. -/
+`E pk m_i (r.1 i)` above `j`:
+`hybridPlant E m m' j D pc r = D (pc.1, fun i => if i < j then E pc.1 (m' i) (r.1 i)
+else if i = j then pc.2 else E pc.1 (m i) (r.1 i)) r.2`.  Glue (the reader of `hybridPlant`). -/
 theorem hybridPlant_eq {π μ γ ρ ρ' : Type*} {q : ℕ} (E : π → μ → ρ → γ)
     (m m' : Fin (q + 1) → μ) (j : Fin (q + 1)) (D : π × (Fin (q + 1) → γ) → ρ' → Bool)
     (pc : π × γ) (r : (Fin (q + 1) → ρ) × ρ') :
