@@ -1,0 +1,63 @@
+Try this:
+  [apply] refine Nat.or_exists_add_one.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (∀ (κ : ℕ), raw κ ≤ 0 * (κ + 1) ^ 5 * (n κ + m κ / w κ + 1)) ∨
+    ∃ n_1, ∀ (κ : ℕ), raw κ ≤ (n_1 + 1) * (κ + 1) ^ 5 * (n κ + m κ / w κ + 1)
+Try this:
+  [apply] refine Subtype.existsOfSubtype ?_
+  -- Remaining subgoals:
+  -- ⊢ { x // ∀ (κ : ℕ), raw κ ≤ x * (κ + 1) ^ 5 * (n κ + m κ / w κ + 1) }
+Try this:
+  [apply] refine Subtype.exists_of_subtype ?_
+  -- Remaining subgoals:
+  -- ⊢ { x // ∀ (κ : ℕ), raw κ ≤ x * (κ + 1) ^ 5 * (n κ + m κ / w κ + 1) }
+Try this:
+  [apply] refine Exists.intro ?_ fun κ => ?_
+  -- Remaining subgoals:
+  -- ⊢ ℕ
+  -- ⊢ ∀ (κ : ℕ), raw κ ≤ ?_ * (κ + 1) ^ 5 * (n κ + m κ / w κ + 1)
+  -- ⊢ raw _fvar.14730 ≤ ?_ * (_fvar.14730 + 1) ^ 5 * (n _fvar.14730 + m _fvar.14730 / w _fvar.14730 + 1)
+Try this:
+  [apply] refine Exists.of_psigma_prop ?_
+  -- Remaining subgoals:
+  -- ⊢ (x : ℕ) ×' ∀ (κ : ℕ), raw κ ≤ x * (κ + 1) ^ 5 * (n κ + m κ / w κ + 1)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Exists.imp (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists_congr fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists_congr fun a => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Exists.imp' ?_ (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Decidable.not_forall_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Decidable (∃ x, ∀ (κ : ℕ), raw κ ≤ x * (κ + 1) ^ 5 * (n κ + m κ / w κ + 1))
+  -- ⊢ ¬∀ (x : ℕ), ¬∀ (κ : ℕ), raw κ ≤ x * (κ + 1) ^ 5 * (n κ + m κ / w κ + 1)
+Try this:
+  [apply] refine Classical.not_forall_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬∀ (x : ℕ), ¬∀ (κ : ℕ), raw κ ≤ x * (κ + 1) ^ 5 * (n κ + m κ / w κ + 1)
+Try this:
+  [apply] refine not_forall_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬∀ (x : ℕ), ¬∀ (κ : ℕ), raw κ ≤ x * (κ + 1) ^ 5 * (n κ + m κ / w κ + 1)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine exists_of_exists_mem ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+/private/tmp/io-sprg-overlap/M2Bridges_jls_seedBits_le_core-apply.lean:8:0: warning: declaration uses 'sorry'
+/private/tmp/io-sprg-overlap/M2Bridges_jls_seedBits_le_core-apply.lean:9:5: warning: unused variable `heq`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/M2Bridges_jls_seedBits_le_core-apply.lean:10:5: warning: unused variable `hpayload`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

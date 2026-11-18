@@ -222,3 +222,19 @@ Step 101: jls_hasComplexity owner check passed. Current sorry tokens: 48.
 Step 102: HasComplexityEff.hasComplexity owner check passed. Current sorry tokens: 47.
 
 Step 103: primeWidthBound owner check passed. Current sorry tokens: 46.
+
+M1 complete and published. Source 19dde91afc384656e7e47cb018057e088d4ded0a; exchange 10da7fdefd9a44023cc117a672f19e8a3617b81d. All103 steps passed, 100 original holes filled plus3 new helper theorems. Current remaining original direct sorry tokens46. Next M2 includes seedBitsAt_le, jls_seedBits_eq, jls_seedBits_le and jls_hasPolyStretch. Full final kernel census/seals remain required.
+
+Step 104: seedBitsAt_le owner check passed. Current sorry tokens: 45.
+
+Step 105: jls_seedBits_eq owner check passed. Current sorry tokens: 44.
+
+Step 106: jls_seedBits_le owner check passed. Current sorry tokens: 43.
+
+Step 107: w_lower owner check passed. Current sorry tokens: 43.
+
+Step 108: stretch_gaps owner check passed. Current sorry tokens: 43.
+
+Step 109: eventually_seed_relative_gap owner check passed. Current sorry tokens: 43.
+
+Step 110: jls_hasPolyStretch owner check passed. Current sorry tokens: 42.

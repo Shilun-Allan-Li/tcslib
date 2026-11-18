@@ -223,3 +223,19 @@ AlgebraSupportV2_jls_hasComplexity: exact=CLOSED, apply=CLOSED. Reuse: SPRG.Raw.
 Bridges_HasComplexityEff.hasComplexity: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: hasComplexityEff_iff and hasComplexity_iff; retain polynomial/degrees/support witnesses.
 
 Bridges_primeWidthBound: exact=CLOSED, apply=CLOSED. Reuse: PolyExpr.eval_add/eval_var/eval_const; PrimeParam.le_two_pow.
+
+Stretch_seedBitsAt_le: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: add_pow_le; Nat.div_div_eq_div_mul/div_mul_le_self/lt_mul_div_succ; parameter readers and M1 dimension bounds; explicit rounded coordinate count.
+
+M2Bridges_jls_seedBits_eq_core: exact=CLOSED, apply=CLOSED. Reuse: Core goal explicitly labeled; actual theorem uses SPRG.Raw.seedBits_eq, raw pubLen/privLen/residueBits readers, Params.seedBitsAt_eq and Complexity.PolyExpr evaluation readers.
+
+M2Bridges_jls_seedBits_le_core: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: Logical transport core; actual theorem reuses seedBitsAt_le and jls_seedBits_eq.
+
+Stretch_w_lower: exact=NO_CLOSING_PROOF, apply=DIAGNOSTIC_FAILURE. Reuse: Nat.div_two_lt_floor and one_le_floor_iff; Real.rpow_natCast_mul/one_le_rpow; noise-width readers.
+
+Stretch_stretch_gaps: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: E0_eq; Nat.lt_floor_add_one; div_lt_iff₀; positive D and multiplication monotonicity.
+
+Stretch_eventually_seed_relative_gap: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: seedBitsAt_le and w_lower; HasStretch reader; Nat.cast_div_le; Real rpow product/monotonicity; tendsto_rpow_atTop for constant absorption.
+
+M2Bridges_jls_hasPolyStretch_namespace_v2: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: Corrected root Complexity.PolyExpr namespace; actual theorem uses stretch_gaps, eventual relative gap, PolyExpr.eval_le with retained coefficient, and tendsto_rpow_atTop.
+
+M3Load_binomial_bound: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: Nat.choose_le_pow_div; Real.pow_div_factorial_le_exp; Real.exp_nat_mul; ordered-field division and power identities.

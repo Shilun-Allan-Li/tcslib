@@ -1,0 +1,1 @@
+Theorem-only Internal helpers w_lower, stretch_gaps and eventually_seed_relative_gap implement the disclosed rounded-noise/exponent-gap proof route. Retain the actual output polynomial coefficient in the final stretch proof; no generic monic power-normalization theorem is copied or imported. No algorithm, target or frozen statement is changed.

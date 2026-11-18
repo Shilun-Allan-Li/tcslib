@@ -1,0 +1,122 @@
+TCSlib/ErrorCorrectingCodes/ListDecoding.lean:59:    have h_bad_codes : ∀ y : Codeword n α, (Finset.filter (fun C => (Finset.filter (fun c => c ∈ C) (hamming_ball ⌊p * n⌋₊ y)).card ≥ L + 1) (Finset.powersetCard M (Finset.univ : Finset (Codeword n α)))).card ≤ Nat.choose V (L + 1) * Nat.choose ((Fintype.card α) ^ n - (L + 1)) (M - (L + 1)) := by
+TCSlib/ErrorCorrectingCodes/ListDecoding.lean:61:      have h_bad_codes_y : (Finset.filter (fun C => (Finset.filter (fun c => c ∈ C) (hamming_ball ⌊p * n⌋₊ y)).card ≥ L + 1) (Finset.powersetCard M (Finset.univ : Finset (Codeword n α)))).card ≤ (Finset.powersetCard (L + 1) (hamming_ball ⌊p * n⌋₊ y)).card * Nat.choose ((Fintype.card α) ^ n - (L + 1)) (M - (L + 1)) := by
+TCSlib/ErrorCorrectingCodes/ListDecoding.lean:74:          · simp +decide [ Finset.card_powersetCard ];
+TCSlib/ErrorCorrectingCodes/ListDecoding.lean:77:      exact Nat.mul_le_mul_right _ ( by rw [ Finset.card_powersetCard ] ; exact Nat.choose_le_choose _ ( hV y ) );
+TCSlib/ErrorCorrectingCodes/ListDecoding.lean:78:    have h_bad_codes_count : (Finset.filter (fun C => ∃ y : Codeword n α, (Finset.filter (fun c => c ∈ C) (hamming_ball ⌊p * n⌋₊ y)).card ≥ L + 1) (Finset.powersetCard M (Finset.univ : Finset (Codeword n α)))).card ≤ (Fintype.card α) ^ n * Nat.choose V (L + 1) * Nat.choose ((Fintype.card α) ^ n - (L + 1)) (M - (L + 1)) := by
+TCSlib/ErrorCorrectingCodes/ListDecoding.lean:79:      have h_bad_codes_count : (Finset.filter (fun C => ∃ y : Codeword n α, (Finset.filter (fun c => c ∈ C) (hamming_ball ⌊p * n⌋₊ y)).card ≥ L + 1) (Finset.powersetCard M (Finset.univ : Finset (Codeword n α)))).card ≤ (∑ y : Codeword n α, (Finset.filter (fun C => (Finset.filter (fun c => c ∈ C) (hamming_ball ⌊p * n⌋₊ y)).card ≥ L + 1) (Finset.powersetCard M (Finset.univ : Finset (Codeword n α)))).card) := by
+TCSlib/ErrorCorrectingCodes/ListDecoding.lean:80:        have h_bad_codes_count : (Finset.filter (fun C => ∃ y : Codeword n α, (Finset.filter (fun c => c ∈ C) (hamming_ball ⌊p * n⌋₊ y)).card ≥ L + 1) (Finset.powersetCard M (Finset.univ : Finset (Codeword n α)))).card ≤ (Finset.biUnion (Finset.univ : Finset (Codeword n α)) (fun y => Finset.filter (fun C => (Finset.filter (fun c => c ∈ C) (hamming_ball ⌊p * n⌋₊ y)).card ≥ L + 1) (Finset.powersetCard M (Finset.univ : Finset (Codeword n α))))).card := by
+TCSlib/ErrorCorrectingCodes/QuantumHamming.lean:183:  - count supports: `card (powersetCard j univ) = n.choose j`
+TCSlib/ErrorCorrectingCodes/Elias_Bassalygo_bound.lean:122:        have h_sphere : Finset.card (Finset.filter (fun x => hammingDist c x = w) (Finset.univ : Finset (Codeword n α))) = Finset.card (Finset.biUnion (Finset.powersetCard w (Finset.univ : Finset (Fin n))) (fun s => Finset.image (fun f : s → α => fun i => if h : i ∈ s then f ⟨i, h⟩ else c i) (Finset.univ.filter (fun f : s → α => ∀ i : s, f i ≠ c i)))) := by
+TCSlib/ErrorCorrectingCodes/Elias_Bassalygo_bound.lean:146:            rw [ Finset.sum_congr rfl fun s hs => h_card_functions s <| Finset.mem_powersetCard.mp hs |>.2 ] ; simp +decide [ Finset.card_univ ];
+TCSlib/CommunicationComplexity/DeterministicCC/Hamming.lean:296:    rw [card_supportFiber, (Finset.mem_powersetCard.mp hS).2])]
+TCSlib/CommunicationComplexity/DeterministicCC/Hamming.lean:297:  simp [Finset.card_powersetCard, Finset.card_univ, Fintype.card_fin]
+TCSlib/KikuchiLDC/LDC/Decomposition.lean:46:      intro C hC; rw [ show Finset.filter ( fun x => x ⊆ C ∧ Finset.card x = 2 ) Finset.univ = Finset.powersetCard 2 C by ext; aesop ] ; simp +decide [ Finset.card_powersetCard ] ;
+.lake/packages/mathlib/Mathlib/Data/Multiset/Powerset.lean:232:theorem card_powersetCard (n : ℕ) (s : Multiset α) :
+.lake/packages/mathlib/Mathlib/Data/Multiset/Powerset.lean:233:    card (powersetCard n s) = Nat.choose (card s) n :=
+.lake/packages/mathlib/Mathlib/Data/Multiset/Powerset.lean:250:  card_eq_zero.mp (Nat.choose_eq_zero_of_lt h ▸ card_powersetCard _ _)
+.lake/packages/mathlib/Mathlib/Data/Multiset/Powerset.lean:268:    (bind (Multiset.range (card S + 1)) fun k => S.powersetCard k) = S.powerset := by
+TCSlib/BooleanAnalysis/Switching.lean:748:  · -- Each fiber has size 2^(n - S.card), and |S| = k in powersetCard.
+TCSlib/BooleanAnalysis/Switching.lean:757:    rw [Finset.sum_const, smul_eq_mul, Finset.card_powersetCard]
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Powerset.lean:59:  rw [prod_eq_pow_card, card_powersetCard]; rintro a ha; rw [(mem_powersetCard.1 ha).2]
+TCSlib/BooleanAnalysis/LMN/SwitchingBernoulli.lean:55:    have h_count : (Finset.univ.filter (fun ρ : Fin n → Option Bool => (Finset.univ.filter (fun i => ρ i = none)).card = k)).card = Finset.sum (Finset.powersetCard k (Finset.univ : Finset (Fin n))) (fun s => 2 ^ (n - s.card)) := by
+TCSlib/BooleanAnalysis/LMN/SwitchingBernoulli.lean:56:      have h_count : Finset.univ.filter (fun ρ : Fin n → Option Bool => (Finset.univ.filter (fun i => ρ i = none)).card = k) = Finset.biUnion (Finset.powersetCard k (Finset.univ : Finset (Fin n))) (fun s => Finset.image (fun f : { i : Fin n // i ∉ s } → Bool => fun i => if h : i ∈ s then none else some (f ⟨i, h⟩)) (Finset.univ : Finset ({ i : Fin n // i ∉ s } → Bool))) := by
+TCSlib/BooleanAnalysis/LMN/BernoulliCost.lean:105:    have h_bij : (fixedSizeRestrs n k).card = (Finset.powersetCard k (Finset.univ : Finset (Fin n))).card * 2 ^ (n - k) := by
+TCSlib/BooleanAnalysis/LMN/BernoulliCost.lean:124:      have h_bij : (fixedSizeRestrs n k).card = ∑ s ∈ Finset.powersetCard k (Finset.univ : Finset (Fin n)), (Finset.filter (fun ρ : Restriction n => ρ.freeVars = s) (Finset.univ : Finset (Restriction n))).card := by
+TCSlib/BooleanAnalysis/LMN/BernoulliCost.lean:128:      rw [ h_bij, Finset.sum_congr rfl fun s hs => ‹∀ s : Finset ( Fin n ), s.card = k → Finset.card { ρ : Restriction n | ρ.freeVars = s } = 2 ^ ( n - k ) › s <| Finset.mem_powersetCard.mp hs |>.2, Finset.sum_const, smul_eq_mul, mul_comm ];
+TCSlib/BooleanAnalysis/LMN/BernoulliCost.lean:129:    rw [ h_bij, Finset.card_powersetCard, Finset.card_fin ];
+.lake/packages/mathlib/Mathlib/Data/Finset/Slice.lean:100:  rw [Fintype.card, ← card_powersetCard]
+.lake/packages/mathlib/Mathlib/Data/Finset/Slice.lean:101:  exact card_le_card (subset_powersetCard_univ_iff.mpr h𝒜)
+.lake/packages/mathlib/Mathlib/Analysis/Calculus/FDeriv/Analytic.lean:791:  · rw [← card, card_subtype, ← Finset.powerset_univ, ← Finset.powersetCard_eq_filter,
+.lake/packages/mathlib/Mathlib/Analysis/Calculus/FDeriv/Analytic.lean:792:      Finset.card_powersetCard, ← card, card_fin, eq_comm, add_comm, Nat.choose_succ_self_right]
+.lake/packages/mathlib/Mathlib/Data/Finset/Powerset.lean:186:theorem card_powersetCard (n : ℕ) (s : Finset α) :
+.lake/packages/mathlib/Mathlib/Data/Finset/Powerset.lean:187:    card (powersetCard n s) = Nat.choose (card s) n :=
+.lake/packages/mathlib/Mathlib/Data/Finset/Powerset.lean:188:  (card_pmap _ _ _).trans (Multiset.card_powersetCard n s.1)
+.lake/packages/mathlib/Mathlib/Data/Finset/Powerset.lean:209:  refine ⟨?_, fun h ↦ card_eq_zero.1 <| by rw [card_powersetCard, Nat.choose_eq_zero_of_lt h]⟩
+.lake/packages/mathlib/Mathlib/Data/Finset/Powerset.lean:250:      (range (s.card + 1)).disjiUnion (fun i => powersetCard i s)
+.lake/packages/mathlib/Mathlib/Data/Finset/Powerset.lean:261:    Finset.powerset s = (range (s.card + 1)).biUnion fun i => powersetCard i s := by
+TCSlib/BooleanAnalysis/ThresholdFunctions/Majority.lean:242:    rw [hfilter, Finset.card_powersetCard]
+TCSlib/BooleanAnalysis/ThresholdFunctions/DegreeOne.lean:148:    simp [Finset.card_powersetCard, Nat.choose_one_right, div_eq_mul_inv]
+TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Basic.lean:539:      simp only [Finset.card_powersetCard]
+.lake/packages/mathlib/Mathlib/Combinatorics/SetFamily/Shatter.lean:195:  simp_rw [← card_univ, ← card_powersetCard]
+.lake/packages/mathlib/Mathlib/Combinatorics/SetFamily/Shatter.lean:197:  exact ⟨mem_Iic.2 (mem_shatterer.1 hs).card_le_vcDim, mem_powersetCard_univ.2 rfl⟩
+.lake/packages/mathlib/Mathlib/Combinatorics/SetFamily/AhlswedeZhang.lean:83:  simp_rw [sum_congr rfl this, sum_const, card_powersetCard, card_univ, nsmul_eq_mul, mul_div,
+.lake/packages/mathlib/Mathlib/Combinatorics/SetFamily/KruskalKatona.lean:303:    _ = #(powersetCard (r - i) range'k) := by rw [card_powersetCard, card_attachFin, card_range]
+.lake/packages/mathlib/Mathlib/Combinatorics/SetFamily/KruskalKatona.lean:322:      · rwa [card_powersetCard, card_attachFin, card_range]
+.lake/packages/mathlib/Mathlib/Data/Nat/Choose/Basic.lean:15:see `Fintype.card_powersetCard` in `Mathlib/Data/Finset/Powerset.lean`.
+.lake/packages/mathlib/Mathlib/Data/Nat/Choose/Basic.lean:44:set, see `Fintype.card_powersetCard`. -/
+.lake/packages/mathlib/Mathlib/Data/Nat/Choose/Sum.lean:175:    rw [← card_powersetCard, ← sum_const]
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/Clique.lean:749:  rw [← card_univ, ← card_powersetCard]
+.lake/packages/mathlib/Mathlib/Algebra/Order/Ring/IsNonarchimedean.lean:164:      (card_powersetCard (s.card - m) s ▸ Nat.choose_pos ((card s).sub_le m)))
+.lake/packages/mathlib/Mathlib/Algebra/Order/BigOperators/Group/Finset.lean:639:    (Finset.sup (Finset.range (card x + 1)) fun k => x.powersetCard k) = x.powerset := by
+TCSlib/Cryptography/Foundations/Probability.lean:120:theorem uprob_mono {p q : α → Prop} (h : ∀ a, p a → q a) : uprob p ≤ uprob q := by
+TCSlib/Cryptography/Foundations/Probability.lean:138:    uprob (fun a => ∃ i ∈ s, p i a) ≤ ∑ i ∈ s, uprob (p i) := by
+TCSlib/Cryptography/Asymptotic/OneWay.lean:357:  exact (uprob_fst fun r : B.Coins n => ∃ x',
+TCSlib/Cryptography/Asymptotic/Collections.lean:999:    uprob (fun z : G.D (G.index n r₁) × (G.collInverter L A').Coins n => ∃ x', G.decD (G.index n r₁)
+TCSlib/Cryptography/Asymptotic/Collections.lean:1025:      uprob (fun z : G.D (G.index n r₁) × (G.collInverter L A').Coins n => ∃ x',
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:298:      uprob (fun r : Fin (q + 1) → Fin n → Bool => ∃ p ∈ S, r p.1 = r p.2) := by
+TCSlib/Cryptography/Asymptotic/Adversary.lean:427:  uprob fun z : α × ρ => ∃ x', A (f z.1) z.2 = some x' ∧ f x' = f z.1
+TCSlib/Cryptography/Asymptotic/Adversary.lean:434:    invProbOpt f A = uprob fun z : α × ρ => ∃ x', A (f z.1) z.2 = some x' ∧ f x' = f z.1 := rfl
+TCSlib/Cryptography/CoinSampling/Basic.lean:327:      uprob_block (fun b => ∀ j, S.dec (b j) = some (f j)),
+TCSlib/Cryptography/CoinSampling/Basic.lean:328:      uprob_block (fun b => ∀ j, S.dec (b j) = some (f' j)),
+TCSlib/Cryptography/Asymptotic/Sampling.lean:320:  have hpi : ∀ c, uprob (Q c) = uprob (fun ω : (∀ c', Aux c') => Q c (ω c)) := by
+TCSlib/Cryptography/Asymptotic/Sampling.lean:325:  have hh := h.abs_uprob_sub_le_prod (fun c (ω : ∀ c', Aux c') => Q c (ω c))
+TCSlib/Cryptography/Asymptotic/Sampling.lean:326:  have e1 : uprob (fun w : σ × (∀ c', Aux c') => Q (X w.1) (w.2 (X w.1))) =
+TCSlib/Cryptography/Asymptotic/Sampling.lean:332:  have e2 : uprob (fun w : τ × (∀ c', Aux c') => Q (Y w.1) (w.2 (Y w.1))) =
+TCSlib/Cryptography/Asymptotic/Permutations.lean:289:    uprob (fun xs : ι → α => ∀ i, P i (xs i)) = ∏ i, uprob (P i) := by
+TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean:168:    uprob (fun w => ¬ (Good M Cc (s w) ∧ ∀ j,
+TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean:190:  have hcoll : uprob (fun w => ∃ j ∈ Finset.univ, collision j w) ≤
+TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean:207:    _ ≤ uprob (fun w => ¬ Good M Cc (s w) ∨ ∃ j ∈ Finset.univ, collision j w) :=
+TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean:210:        uprob (fun w => ∃ j ∈ Finset.univ, collision j w) := uprob_or_le _ _
+TCSlib/Cryptography/SecureComputation/Garbling.lean:611:    _ ≤ uprob (fun w => ∃ i ∈ Finset.univ, gateBad i w) := uprob_mono hbad
+TCSlib/Cryptography/OneWayFunctions/Robustness.lean:93:      invProb f A + uprob S + uprob (fun x => ∃ x', S x' ∧ k x' = f x) := by
+TCSlib/Cryptography/OneWayFunctions/Robustness.lean:111:        · rw [uprob_fst (fun x => ∃ x', S x' ∧ k x' = f x)]
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean:184:      ≤ uprob (fun z : (Fin q → α) × ρ => (∀ i, ¬ S (z.1 i)) ∨
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean:195:    _ ≤ uprob (fun z : (Fin q → α) × ρ => ∀ i, ¬ S (z.1 i)) +
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean:202:          rw [uprob_fst (fun xs : Fin q → α => ∀ i, ¬ S (xs i)),
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:50:theorem uprob_congr {p q : α → Prop} (h : ∀ a, p a ↔ q a) : uprob p = uprob q := by
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:119:    uprob (fun xs : ι → α => ∀ i, p (xs i)) = uprob p ^ Fintype.card ι := by
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:79:    uprob (fun φ : Fin m → Fin B => ∃ b : Fin B, t < (Buckets.bucket φ b ∩ S).card) ≤
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:99:    uprob (fun φ : Fin m → Fin B => ∃ b : Fin B, t < Buckets.load φ b) ≤
+TCSlib/Cryptography/Candidates/Concrete.lean:229:      ≤ uprob (fun z : (Fin m → α) × ρ => (∀ i, ¬ G (z.1 i)) ∨
+TCSlib/Cryptography/Candidates/Concrete.lean:241:    _ ≤ uprob (fun z : (Fin m → α) × ρ => ∀ i, ¬ G (z.1 i)) +
+TCSlib/Cryptography/Candidates/Concrete.lean:247:        · rw [uprob_fst (fun xs : Fin m → α => ∀ i, ¬ G (xs i)),
+TCSlib/Cryptography/Candidates/Rabin.lean:418:    uprob (fun w : (ZMod (p * q))ˣ × ρ => ∃ z, Z (w.1 ^ 2) w.2 = some z ∧ z ^ 2 = w.1 ^ 2) ≤
+TCSlib/Cryptography/Candidates/Rabin.lean:452:  calc uprob (fun w : (ZMod (p * q))ˣ × ρ => ∃ z, Z (w.1 ^ 2) w.2 = some z ∧ z ^ 2 = w.1 ^ 2)
+TCSlib/Cryptography/Candidates/Rabin.lean:1672:  uprob fun c : A.Coins n => ∃ x : Fin n → Bool, A.inverter n n (2 * n) (modulusBits n z) c = some x ∧
+TCSlib/Cryptography/Candidates/Rabin.lean:1691:    uprob (fun w : (ZMod (z.p * z.q))ˣ × A.Coins n => ∃ x', dec (A.runAt n
+TCSlib/Cryptography/Candidates/Rabin.lean:1749:  have hmono : uprob (fun w : (ZMod (z.p * z.q))ˣ × A.Coins n => ∃ z', dec (A.runAt n
+TCSlib/Cryptography/Candidates/Rabin.lean:3094:      uprob (fun w : QR (blumMod i) × A.Coins n => ∃ x' : QR (blumMod i),
+TCSlib/Cryptography/Candidates/Rabin.lean:3452:    calc rabin_F A n z = uprob (fun c : A.Coins n => ∃ x : Fin n → Bool,
+TCSlib/Cryptography/Candidates/Rabin.lean:3455:      _ = uprob (fun c : (rabinBlumInverter H A).Coins n => ∃ x : Fin n → Bool,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:290:    uprob (fun w => ∃ v, colSimAttemptH Com ℓn G c V w = some v ∧ T v) =
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:342:`uprob_prod`/`OneWay.uprob_update` the `t`-th term is `(1 - 1/|E|)^t · Pr[∃ v, attempt = some v ∧
+TCSlib/Cryptography/Candidates/Factoring.lean:1731:    uprob (fun z : DistinctPrimes m × A.Coins n => ∃ w : DistinctPrimes m,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:310:    uprob (fun z : (Fin k → Fin m) × W => ∀ i, z.1 i ∉ Bad i (challengesBefore z.1 i) z.2) ≤
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:321:    have hmono : uprob (fun y : ((Fin k → Fin m) × W) × Fin m => ∀ i,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:375:    uprob (fun z : (Fin k → Fin (edgeCount G)) × W => ∀ i,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:338:    (hsome : ∀ T : α → Prop, uprob (fun w => ∃ v, att w = some v ∧ T v) =
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:361:      ← uprob_fst (β := Fin N → W) (fun a : W => ∃ v, att a = some v ∧ T (some v))]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:381:    (hsome : ∀ T : α → Prop, uprob (fun w => ∃ v, att w = some v ∧ T v) =
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:414:    (hsome : ∀ T : α → Prop, uprob (fun w => ∃ v, att w = some v ∧ T v) =
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:687:    uprob (fun z : (Fin m → Bool) × W => ∀ i, z.1 i = g i (prefixLT z.1 i) z.2) =
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:746:    uprob (fun z : (Fin m → Bool) × ρ => ∀ i,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:750:  · have h0 : uprob (fun z : (Fin m → Bool) × ρ => ∀ i,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:828:    uprob (fun z : ((Fin m → Bool) × (Fin m → Equiv.Perm (Fin n))) × ρ => ∀ i,
+TCSlib/Cryptography/HardcoreBit/Basic.lean:123:theorem uprob_eq_one_of_forall [Nonempty Ω] {p : Ω → Prop} (h : ∀ ω, p ω) : uprob p = 1 := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:142:theorem uprob_mul_le_uexp {G : Ω → Prop} {q : Ω → ℝ} {b : ℝ} (hq : ∀ ω, 0 ≤ q ω)
+TCSlib/Cryptography/HardcoreBit/Basic.lean:158:theorem half_le_uprob_threshold [Nonempty α] (q : α → ℝ) (hq : ∀ a, q a ≤ 1) {c ε : ℝ}
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:265:    uprob (fun c : (Equiv.Perm (Fin n) × Bool) × ρ => ∃ v, giSimAttempt G₀ G₁ V c = some v ∧ T v) =
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:47:theorem abs_uprob_sub_le {A B C : υ → Prop} (h : ∀ u, ¬ C u → (A u ↔ B u)) :
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:161:    uprob (fun z : (Fin m → Bool) × W => ∀ i, z.1 i = g i (prefixLT z.1 i) z.2) =
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:192:    uprob (fun z : (Fin m → Bool) × ρ => ∀ i,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:196:  · have h0 : uprob (fun z : (Fin m → Bool) × ρ => ∀ i,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:274:    uprob (fun z : ((Fin m → Bool) × (Fin m → Equiv.Perm (Fin n))) × ρ => ∀ i,
+TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean:145:  rw [uprob_bool_prod, show ∀ a b : ℝ, 1 / 2 + (a - b) / 2 = (a + (1 - b)) / 2 by
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:60:theorem uprob_congr {p p' : α → Prop} (h : ∀ a, p a ↔ p' a) : uprob p = uprob p' :=
+TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean:100:    uprob (fun coins : Fin q → α => ∀ i : Fin q,
+TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean:117:        uprob (fun a : (Fin q → α) × α => ∀ i : Fin (q + 1),
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer/ViewB.lean:366:theorem uprob_predictor_false (h : ∀ i, T.D i → Bool) (hH : PolyTimeComputable H) (D : NUPPT)
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer/ViewB.lean:388:theorem uprob_predictor_true (h : ∀ i, T.D i → Bool) (hH : PolyTimeComputable H) (D : NUPPT)
+TCSlib/Cryptography/Composability/SequentialZK/RepeatedSoundness.lean:171:        uprob (fun F : Fin q → π.V.Coins x.length => ∀ i : Fin q,
+TCSlib/Cryptography/Composability/SequentialZK/RepeatedSoundness.lean:183:        uprob (fun F : Fin q → π.V.Coins x.length => ∀ i : Fin q,
+.lake/packages/mathlib/Mathlib/Topology/Algebra/Polynomial.lean:167:  · rw [Multiset.map_map, card_map, card_powersetCard, ← natDegree_eq_card_roots' h2,

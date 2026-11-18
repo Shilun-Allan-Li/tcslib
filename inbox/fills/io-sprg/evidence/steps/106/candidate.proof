@@ -1,0 +1,6 @@
+by
+  obtain ⟨C, hC⟩ := P.seedBitsAt_le
+  refine ⟨C, ?_⟩
+  intro κ
+  rw [jls_seedBits_eq]
+  exact hC κ

@@ -1,0 +1,12 @@
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Buckets.lean:64:theorem load_eq (φ : Fin m → Fin B) (b : Fin B) : load φ b = (bucket φ b).card := rfl
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Buckets.lean:104:  rw [rank_eq, load_eq, bucket_eq]
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:29:* `Internal.full_bucket_tail` and `Internal.some_full_bucket_tail` cover full loads.
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:87:load_eq, and use the existing intersection and finite-universe cardinality lemmas. -/
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:88:theorem full_bucket_tail {m B : ℕ} [NeZero B] (b : Fin B) (t : ℕ) :
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:98:theorem some_full_bucket_tail {m B : ℕ} [NeZero B] (t : ℕ) :
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:59:theorem phaseViewPayload_eq (x z raw : List Bool) :
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:80:  simp only [phaseViewPayload_eq, View.encode_mk, pairSndD_pairEncode,
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:88:  rw [phaseViewPayload_eq, if_neg hraw]
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:153:  simp only [phaseViewPayload_eq, BinArith.eqW_pairEncode,
+TCSlib/Complexity/Randomized/SeedMajority/State.lean:190:theorem payload_eq (w : ℕ → ℕ) (z : List Bool) :
+TCSlib/Complexity/Randomized/SeedMajority/State.lean:209:  simp only [payload_eq, state_eq, pairFstD_pairEncode, pairSndD_pairEncode,

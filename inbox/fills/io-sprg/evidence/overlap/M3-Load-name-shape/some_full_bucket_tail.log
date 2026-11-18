@@ -1,0 +1,28 @@
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:29:* `Internal.full_bucket_tail` and `Internal.some_full_bucket_tail` cover full loads.
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:63:Apply the existing uprob_exists_le to these subsets. For each fixed subset, split its
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:76:**Proof sketch.** Apply the published uprob_exists_le over all finite bucket labels,
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:98:theorem some_full_bucket_tail {m B : ℕ} [NeZero B] (t : ℕ) :
+TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:205:    refine (uprob_mono fun c hc => ?_).trans (uprob_exists_le univ fun i c => R c i ≠ x i)
+TCSlib/Cryptography/Foundations/Probability.lean:35:  `uprob_exists_le`: basic laws and the union bound.
+TCSlib/Cryptography/Foundations/Probability.lean:137:theorem uprob_exists_le {ι : Type*} (s : Finset ι) (p : ι → α → Prop) :
+TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean:192:    refine (uprob_exists_le Finset.univ collision).trans ?_
+TCSlib/Cryptography/SecureComputation/Garbling.lean:597:    refine (uprob_exists_le (Finset.univ : Finset A)
+TCSlib/Cryptography/SecureComputation/Garbling.lean:603:        refine (uprob_exists_le (Finset.univ.erase a) (fun a' w => event i a a' w)).trans ?_
+TCSlib/Cryptography/SecureComputation/Garbling.lean:612:    _ ≤ ∑ i ∈ Finset.univ, uprob (gateBad i) := uprob_exists_le _ _
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:934:prover's coins, condition on all `|x|` samplers succeeding (union bound `uprob_exists_le`
+TCSlib/Cryptography/Asymptotic/Permutations.lean:376:**Proof sketch.** `permFromCoins_eq_none_iff`, the union bound `uprob_exists_le`, projection
+TCSlib/Cryptography/Asymptotic/Permutations.lean:388:  refine (uprob_exists_le univ fun (i : Fin n) (b : Fin n → Fin T → Fin k → Bool) =>
+TCSlib/Cryptography/Randomness/Learning/Random.lean:24:`Pr[x ∈ s] ≤ Σ_j Pr[x = s_j] = m · 2^{-n}` (`uprob_exists_le`, `uprob_eq_point`).
+TCSlib/Cryptography/Randomness/Learning/Random.lean:143:`|gameProb − ½| ≤ Pr[∃ j, s_j = x]`, which the union bound (`uprob_exists_le`) bounds by
+TCSlib/Cryptography/Randomness/Learning/Random.lean:177:  have hunion := uprob_exists_le (Finset.univ : Finset (Fin m))
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:152:outputs are wrong (`goodRuns_iff`; `uprob_exists_le`). For fixed `main`-tapes `m` that event
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:198:        uprob_exists_le _ _
+TCSlib/Cryptography/CoinSampling/Basic.lean:338:**Proof sketch.** `piDec_eq_none_iff` and the union bound `uprob_exists_le`; each block event
+TCSlib/Cryptography/CoinSampling/Basic.lean:345:  refine (uprob_exists_le univ fun j c => S.dec (block c j) = none).trans (le_of_eq ?_)
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean:198:        (uprob_or_le _ _).trans (add_le_add_left (uprob_exists_le _ _) _)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:286:`uprob_exists_le` over the `C(q+1, 2)` pairs `i < j` (`Finset.card_filter` of `univ.filter (i < j)`
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:316:  have h2 := uprob_exists_le S (fun p (r : Fin (q + 1) → Fin n → Bool) => r p.1 = r p.2)
+TCSlib/Cryptography/Candidates/Concrete.lean:214:(`uprob_mono`, `uprob_or_le`, `uprob_exists_le`). The first event has probability
+TCSlib/Cryptography/Candidates/Concrete.lean:244:        (uprob_or_le _ _).trans (add_le_add_left (uprob_exists_le _ _) _)
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:723:its query (`uprob_exists_le` over the `k` rounds, `Fin.cons` bookkeeping). Along the correct
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:771:  have hunion := (uprob_mono hfail).trans ((uprob_exists_le univ _).trans

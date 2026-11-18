@@ -1,0 +1,129 @@
+TCSlib/ErrorCorrectingCodes/ListDecoding.lean:65:          obtain ⟨ S, hS ⟩ := Finset.exists_subset_card_eq hC.2;
+TCSlib/ErrorCorrectingCodes/ListDecoding.lean:74:          · simp +decide [ Finset.card_powersetCard ];
+TCSlib/ErrorCorrectingCodes/ListDecoding.lean:77:      exact Nat.mul_le_mul_right _ ( by rw [ Finset.card_powersetCard ] ; exact Nat.choose_le_choose _ ( hV y ) );
+TCSlib/ErrorCorrectingCodes/ListDecoding.lean:204:      Finset.exists_subset_card_eq hM (s := (Finset.univ : Finset (Codeword n α)))
+TCSlib/ErrorCorrectingCodes/QuantumSingleton.lean:1228:  obtain ⟨A, hA_sub, hA_card⟩ := Finset.exists_subset_card_eq htU
+TCSlib/ErrorCorrectingCodes/QuantumSingleton.lean:1240:  obtain ⟨B, hB_sub, hB_card⟩ := Finset.exists_subset_card_eq htUdiff
+TCSlib/ErrorCorrectingCodes/QuantumSingleton.lean:1284:        obtain ⟨A, hA_sub, hA_card⟩ := Finset.exists_subset_card_eq hdU
+TCSlib/BooleanAnalysis/Switching.lean:757:    rw [Finset.sum_const, smul_eq_mul, Finset.card_powersetCard]
+TCSlib/CommunicationComplexity/DeterministicCC/Hamming.lean:297:  simp [Finset.card_powersetCard, Finset.card_univ, Fintype.card_fin]
+.lake/packages/mathlib/Mathlib/Data/Multiset/Powerset.lean:232:theorem card_powersetCard (n : ℕ) (s : Multiset α) :
+.lake/packages/mathlib/Mathlib/Data/Multiset/Powerset.lean:250:  card_eq_zero.mp (Nat.choose_eq_zero_of_lt h ▸ card_powersetCard _ _)
+TCSlib/KikuchiLDC/LDC/Decomposition.lean:46:      intro C hC; rw [ show Finset.filter ( fun x => x ⊆ C ∧ Finset.card x = 2 ) Finset.univ = Finset.powersetCard 2 C by ext; aesop ] ; simp +decide [ Finset.card_powersetCard ] ;
+.lake/packages/mathlib/Mathlib/Data/Set/Finite/Basic.lean:844:theorem Infinite.exists_subset_card_eq {s : Set α} (hs : s.Infinite) (n : ℕ) :
+.lake/packages/mathlib/Mathlib/Algebra/Order/Ring/IsNonarchimedean.lean:164:      (card_powersetCard (s.card - m) s ▸ Nat.choose_pos ((card s).sub_le m)))
+.lake/packages/mathlib/Mathlib/Data/Set/Card/Arithmetic.lean:31:  let ⟨t, ht, ht'⟩ := exists_subset_card_eq (show n ≤ #s by cutsat)
+.lake/packages/mathlib/Mathlib/Data/Set/Card.lean:1074:lemma exists_subset_card_eq {n : ℕ} (hns : n ≤ s.ncard) : ∃ t ⊆ s, t.ncard = n := by
+.lake/packages/mathlib/Mathlib/Data/Set/Card.lean:1080:  obtain ⟨t', -, rfl⟩ := @Infinite.exists_subset_card_eq s univ infinite_univ k
+.lake/packages/mathlib/Mathlib/Algebra/Ring/Equiv.lean:546:`Equiv.piEquivPiSubtypeProd` as a `RingEquiv`. -/
+.lake/packages/mathlib/Mathlib/Algebra/Ring/Equiv.lean:548:def piEquivPiSubtypeProd {ι : Type*} (p : ι → Prop) [DecidablePred p] (Y : ι → Type*)
+.lake/packages/mathlib/Mathlib/Algebra/Ring/Equiv.lean:551:  toEquiv := Equiv.piEquivPiSubtypeProd p Y
+TCSlib/BooleanAnalysis/LMN/BernoulliCost.lean:129:    rw [ h_bij, Finset.card_powersetCard, Finset.card_fin ];
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Powerset.lean:59:  rw [prod_eq_pow_card, card_powersetCard]; rintro a ha; rw [(mem_powersetCard.1 ha).2]
+TCSlib/BooleanAnalysis/ThresholdFunctions/Majority.lean:242:    rw [hfilter, Finset.card_powersetCard]
+TCSlib/BooleanAnalysis/ThresholdFunctions/DegreeOne.lean:148:    simp [Finset.card_powersetCard, Nat.choose_one_right, div_eq_mul_inv]
+.lake/packages/mathlib/Mathlib/Logic/Equiv/Set.lean:579:theorem preimage_piEquivPiSubtypeProd_symm_pi {α : Type*} {β : α → Type*} (p : α → Prop)
+.lake/packages/mathlib/Mathlib/Logic/Equiv/Set.lean:581:    (piEquivPiSubtypeProd p β).symm ⁻¹' pi univ s =
+.lake/packages/mathlib/Mathlib/Logic/Equiv/Prod.lean:463:def piEquivPiSubtypeProd {α : Type*} (p : α → Prop) (β : α → Type*) [DecidablePred p] :
+TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Basic.lean:539:      simp only [Finset.card_powersetCard]
+.lake/packages/mathlib/Mathlib/NumberTheory/NumberField/AdeleRing.lean:84:    (RingEquiv.piEquivPiSubtypeProd (fun (v : InfinitePlace K) => IsReal v)
+.lake/packages/mathlib/Mathlib/NumberTheory/NumberField/CanonicalEmbedding/PolarCoord.lean:243:          (prodCongr (piEquivPiSubtypeProd (fun _ ↦ ℝ) _).symm (refl _))
+.lake/packages/mathlib/Mathlib/NumberTheory/NumberField/CanonicalEmbedding/PolarCoord.lean:292:            ((volume_preserving_piEquivPiSubtypeProd
+.lake/packages/mathlib/Mathlib/GroupTheory/GroupAction/MultipleTransitivity.lean:665:    Set.exists_subset_card_eq (s := (Set.univ : Set α)) (n := Nat.card α - 2)
+.lake/packages/mathlib/Mathlib/Algebra/Order/Archimedean/IndicatorCard.lean:50:    obtain ⟨t, t_s, t_card⟩ := hs.exists_subset_card_eq n'
+.lake/packages/mathlib/Mathlib/Combinatorics/SetFamily/Shatter.lean:195:  simp_rw [← card_univ, ← card_powersetCard]
+.lake/packages/mathlib/Mathlib/Combinatorics/SetFamily/AhlswedeZhang.lean:83:  simp_rw [sum_congr rfl this, sum_const, card_powersetCard, card_univ, nsmul_eq_mul, mul_div,
+.lake/packages/mathlib/Mathlib/Combinatorics/SetFamily/KruskalKatona.lean:266:  obtain ⟨𝒜', h𝒜, h𝒜𝒞⟩ := exists_subset_card_eq h𝒞𝒜
+.lake/packages/mathlib/Mathlib/Combinatorics/SetFamily/KruskalKatona.lean:303:    _ = #(powersetCard (r - i) range'k) := by rw [card_powersetCard, card_attachFin, card_range]
+.lake/packages/mathlib/Mathlib/Combinatorics/SetFamily/KruskalKatona.lean:322:      · rwa [card_powersetCard, card_attachFin, card_range]
+.lake/packages/mathlib/Mathlib/Combinatorics/Additive/ErdosGinzburgZiv.lean:115:  | one => simpa using exists_subset_card_eq hs
+.lake/packages/mathlib/Mathlib/Combinatorics/Additive/ErdosGinzburgZiv.lean:119:    obtain ⟨t, hts, ht⟩ := exists_subset_card_eq hs
+.lake/packages/mathlib/Mathlib/Combinatorics/Additive/AP/Three/Defs.lean:325:  obtain ⟨u, hut, rfl⟩ := exists_subset_card_eq hn
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/Clique.lean:394:  obtain ⟨t, hts, ht⟩ := exists_subset_card_eq (h.trans hs.card_eq.ge)
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/Clique.lean:541:  obtain ⟨u, hut, hu⟩ := exists_subset_card_eq (hmn.trans ht.card_eq.ge)
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/Clique.lean:749:  rw [← card_univ, ← card_powersetCard]
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/Extremal/Turan.lean:103:  obtain ⟨K, _, rfl⟩ := exists_subset_card_eq hn
+.lake/packages/mathlib/Mathlib/Data/Nat/Choose/Basic.lean:15:see `Fintype.card_powersetCard` in `Mathlib/Data/Finset/Powerset.lean`.
+.lake/packages/mathlib/Mathlib/Data/Nat/Choose/Basic.lean:44:set, see `Fintype.card_powersetCard`. -/
+.lake/packages/mathlib/Mathlib/Data/Nat/Choose/Sum.lean:175:    rw [← card_powersetCard, ← sum_const]
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/Regularity/Equitabilise.lean:84:  · obtain ⟨t, hts, htn⟩ := exists_subset_card_eq (hn₂.trans_eq hs)
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/Regularity/Equitabilise.lean:102:  obtain ⟨t, htu, htn⟩ := exists_subset_card_eq (hn₁.trans hu₂)
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/UniversalVerts.lean:47:  obtain ⟨t, ht⟩ := Set.exists_subset_card_eq hc
+.lake/packages/mathlib/Mathlib/SetTheory/Cardinal/Basic.lean:297:  · obtain ⟨s, hs⟩ := Infinite.exists_subset_card_eq α n
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:27:* `Internal.bucket_tail` bounds a fixed bucket's intersection with any fixed bad set.
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:28:* `Internal.some_bucket_tail` applies the existing finite union bound over buckets.
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:29:* `Internal.full_bucket_tail` and `Internal.some_full_bucket_tail` cover full loads.
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:65:OneWay.uprob_pi_forall; every selected coordinate equals the bucket label with probability
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:67:theorem bucket_tail {m B : ℕ} [NeZero B] (S : Finset (Fin m)) (b : Fin B) (t : ℕ) :
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:77:substitute bucket_tail for each label, and read the cardinality of Fin B. -/
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:78:theorem some_bucket_tail {m B : ℕ} [NeZero B] (S : Finset (Fin m)) (t : ℕ) :
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:86:**Proof sketch.** Specialize bucket_tail to the full set, read Buckets.load through
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:88:theorem full_bucket_tail {m B : ℕ} [NeZero B] (b : Fin B) (t : ℕ) :
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:96:**Proof sketch.** Specialize some_bucket_tail to the full set and read the load,
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:98:theorem some_full_bucket_tail {m B : ℕ} [NeZero B] (t : ℕ) :
+TCSlib/Cryptography/Asymptotic/Sampling.lean:596:    OneWay.uprob_pi_forall fun a => ¬ E a, Fintype.card_fin, uprob_not]
+TCSlib/Cryptography/Asymptotic/Sampling.lean:802:    OneWay.uprob_pi_forall fun c : Fin k → Bool => uniformFromBits m k c = none,
+TCSlib/Cryptography/Asymptotic/Permutations.lean:71:* `TCSlib.Cryptography.uprob_pi_forall_dep` — independent coordinates with position-dependent
+TCSlib/Cryptography/Asymptotic/Permutations.lean:72:  events multiply (the dependent form of `OneWay.uprob_pi_forall`).
+TCSlib/Cryptography/Asymptotic/Permutations.lean:285:probabilities (the position-dependent form of `OneWay.uprob_pi_forall`: `Nat.card` of the
+TCSlib/Cryptography/Asymptotic/Permutations.lean:287:theorem uprob_pi_forall_dep {ι α : Type*} [Fintype ι] [DecidableEq ι] [Fintype α]
+TCSlib/Cryptography/Asymptotic/Permutations.lean:337:of `OneWay.uprob_pi_forall` for position-dependent predicates: `Nat.card` of a dependent
+TCSlib/Cryptography/Asymptotic/Permutations.lean:351:`exists_fyOffsets`, `permFromCoins_eq_some_iff` and `uprob_pi_forall_dep` of the preceding
+TCSlib/Cryptography/Asymptotic/Permutations.lean:358:  have hL := uprob_pi_forall_dep (ι := Fin n) (α := Fin T → Fin k → Bool)
+TCSlib/Cryptography/Asymptotic/Permutations.lean:360:  have hR := uprob_pi_forall_dep (ι := Fin n) (α := Fin T → Fin k → Bool)
+.lake/packages/mathlib/Mathlib/Data/Fintype/EquivFin.lean:535:theorem exists_subset_card_eq (α : Type*) [Infinite α] (n : ℕ) : ∃ s : Finset α, #s = n :=
+.lake/packages/mathlib/Mathlib/Data/Fintype/EquivFin.lean:538:/-- See `Infinite.exists_subset_card_eq` for a version that provides an arbitrary
+.lake/packages/mathlib/Mathlib/Data/Fintype/EquivFin.lean:559:  obtain ⟨s, c⟩ := Infinite.exists_subset_card_eq ι (n + 1)
+.lake/packages/mathlib/Mathlib/Data/Finset/Slice.lean:100:  rw [Fintype.card, ← card_powersetCard]
+TCSlib/Cryptography/CoinSampling/Basic.lean:321:exact on success (`uprob_pi_forall_dep`). Glue. -/
+TCSlib/Cryptography/CoinSampling/Basic.lean:329:      uprob_pi_forall_dep (fun j x => S.dec x = some (f j)),
+TCSlib/Cryptography/CoinSampling/Basic.lean:330:      uprob_pi_forall_dep (fun j x => S.dec x = some (f' j))]
+.lake/packages/mathlib/Mathlib/Data/Finset/Powerset.lean:186:theorem card_powersetCard (n : ℕ) (s : Finset α) :
+.lake/packages/mathlib/Mathlib/Data/Finset/Powerset.lean:188:  (card_pmap _ _ _).trans (Multiset.card_powersetCard n s.1)
+.lake/packages/mathlib/Mathlib/Data/Finset/Powerset.lean:209:  refine ⟨?_, fun h ↦ card_eq_zero.1 <| by rw [card_powersetCard, Nat.choose_eq_zero_of_lt h]⟩
+.lake/packages/mathlib/Mathlib/Data/Finset/Powerset.lean:211:  exact fun h ↦ nonempty_iff_ne_empty.1 <| (exists_subset_card_eq h).imp <| by simp
+.lake/packages/mathlib/Mathlib/Data/Finset/Powerset.lean:229:  aesop (add simp [Finset.Nonempty, exists_subset_card_eq, card_le_card])
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean:203:            uprob_pi_forall (ι := Fin q) (fun x => ¬ S x), uprob_not, Fintype.card_fin]
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean:257:        rw [uprob_pi_forall (fun c => ¬ f (yaoTry f B (f x) c) = f x), uprob_not,
+.lake/packages/mathlib/Mathlib/Data/Finset/Sort.lean:349:  obtain ⟨s, hs⟩ := Infinite.exists_subset_card_eq β (Fintype.card α)
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:32:* `uprob_pi_forall`: independent coordinates multiply.
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:118:theorem uprob_pi_forall {ι : Type*} [Fintype ι] [DecidableEq ι] (p : α → Prop) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:325:attempts use disjoint coins (`OneWay.uprob_pi_forall`) and each fails with probability
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:332:    OneWay.uprob_pi_forall (ι := Fin N) (fun w => colSimAttemptH Com ℓn G c V w = none),
+TCSlib/Cryptography/NumberTheory/Primality.lean:491:iff all `t` bases are liars; the bases are independent (`uprob_pi_forall`), so the
+TCSlib/Cryptography/NumberTheory/Primality.lean:516:    OneWay.uprob_pi_forall (fun i : Fin (N - 1) => MRLiar N (((i : ℕ) + 1 : ℕ) : ZMod N)),
+.lake/packages/mathlib/Mathlib/Data/Finset/Card.lean:647:lemma exists_subset_card_eq (hns : n ≤ #s) : ∃ t ⊆ s, #t = n := by
+.lake/packages/mathlib/Mathlib/Data/Finset/Card.lean:652:  exact exists_subset_card_eq h
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:324:(`OneWay.uprob_pi_forall`) and each fails with probability `1/2`
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:331:    OneWay.uprob_pi_forall (ι := Fin N) (fun c => giSimAttempt G₀ G₁ V c = none),
+.lake/packages/mathlib/Mathlib/Analysis/Calculus/FDeriv/Analytic.lean:792:      Finset.card_powersetCard, ← card, card_fin, eq_comm, add_comm, Nat.choose_succ_self_right]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean:47:  (Equiv.piEquivPiSubtypeProd (fun x => x ∈ Set.range e) (fun _ => V)).trans
+.lake/packages/mathlib/Mathlib/MeasureTheory/Measure/Count.lean:61:  rcases hs.exists_subset_card_eq n with ⟨t, ht, rfl⟩
+TCSlib/Cryptography/Candidates/Concrete.lean:215:`(1 - Pr[G])^m` (`uprob_fst`, `OneWay.uprob_pi_forall`, `uprob_not`). For fixed `i`, planting
+TCSlib/Cryptography/Candidates/Concrete.lean:248:            uprob_pi_forall (ι := Fin m) (fun x => ¬ G x), uprob_not, Fintype.card_fin]
+.lake/packages/mathlib/Mathlib/MeasureTheory/MeasurableSpace/Embedding.lean:573:`{i // p i}` and `{i // ¬p i}`. See also `Equiv.piEquivPiSubtypeProd`. -/
+.lake/packages/mathlib/Mathlib/MeasureTheory/MeasurableSpace/Embedding.lean:575:def piEquivPiSubtypeProd (p : δ' → Prop) [DecidablePred p] :
+.lake/packages/mathlib/Mathlib/MeasureTheory/MeasurableSpace/Embedding.lean:577:  toEquiv := .piEquivPiSubtypeProd p π
+.lake/packages/mathlib/Mathlib/MeasureTheory/MeasurableSpace/Embedding.lean:578:  measurable_toFun := measurable_piEquivPiSubtypeProd π p
+.lake/packages/mathlib/Mathlib/MeasureTheory/MeasurableSpace/Embedding.lean:579:  measurable_invFun := measurable_piEquivPiSubtypeProd_symm π p
+.lake/packages/mathlib/Mathlib/MeasureTheory/MeasurableSpace/Embedding.lean:582:This is similar to `MeasurableEquiv.piEquivPiSubtypeProd`. -/
+.lake/packages/mathlib/Mathlib/MeasureTheory/MeasurableSpace/Constructions.lean:717:theorem measurable_piEquivPiSubtypeProd_symm (p : δ → Prop) [DecidablePred p] :
+.lake/packages/mathlib/Mathlib/MeasureTheory/MeasurableSpace/Constructions.lean:718:    Measurable (Equiv.piEquivPiSubtypeProd p X).symm := by
+.lake/packages/mathlib/Mathlib/MeasureTheory/MeasurableSpace/Constructions.lean:721:  · simp only [hj, dif_pos, Equiv.piEquivPiSubtypeProd_symm_apply]
+.lake/packages/mathlib/Mathlib/MeasureTheory/MeasurableSpace/Constructions.lean:725:  · simp only [hj, Equiv.piEquivPiSubtypeProd_symm_apply, dif_neg, not_false_iff]
+.lake/packages/mathlib/Mathlib/MeasureTheory/MeasurableSpace/Constructions.lean:731:theorem measurable_piEquivPiSubtypeProd (p : δ → Prop) [DecidablePred p] :
+.lake/packages/mathlib/Mathlib/MeasureTheory/MeasurableSpace/Constructions.lean:732:    Measurable (Equiv.piEquivPiSubtypeProd p X) :=
+.lake/packages/mathlib/Mathlib/RingTheory/Length.lean:217:  obtain ⟨s, hs⟩ := Infinite.exists_subset_card_eq ι m
+.lake/packages/mathlib/Mathlib/MeasureTheory/Constructions/Pi.lean:699:theorem measurePreserving_piEquivPiSubtypeProd (p : ι → Prop) [DecidablePred p] :
+.lake/packages/mathlib/Mathlib/MeasureTheory/Constructions/Pi.lean:700:    MeasurePreserving (MeasurableEquiv.piEquivPiSubtypeProd α p) (Measure.pi μ)
+.lake/packages/mathlib/Mathlib/MeasureTheory/Constructions/Pi.lean:702:  set e := (MeasurableEquiv.piEquivPiSubtypeProd α p).symm
+.lake/packages/mathlib/Mathlib/MeasureTheory/Constructions/Pi.lean:707:    Equiv.preimage_piEquivPiSubtypeProd_symm_pi p s
+.lake/packages/mathlib/Mathlib/MeasureTheory/Constructions/Pi.lean:711:theorem volume_preserving_piEquivPiSubtypeProd (α : ι → Type*)
+.lake/packages/mathlib/Mathlib/MeasureTheory/Constructions/Pi.lean:713:    [DecidablePred p] : MeasurePreserving (MeasurableEquiv.piEquivPiSubtypeProd α p) :=
+.lake/packages/mathlib/Mathlib/MeasureTheory/Constructions/Pi.lean:714:  measurePreserving_piEquivPiSubtypeProd (fun _ => volume) p
+.lake/packages/mathlib/Mathlib/Topology/Algebra/Polynomial.lean:167:  · rw [Multiset.map_map, card_map, card_powersetCard, ← natDegree_eq_card_roots' h2,
+.lake/packages/mathlib/Mathlib/Topology/Instances/ENNReal/Lemmas.lean:670:    rcases Infinite.exists_subset_card_eq α n with ⟨s, hs⟩
+.lake/packages/mathlib/Mathlib/Topology/IsClosedRestrict.lean:134:  have : S.restrict (π := α) = Prod.fst ∘ (Homeomorph.piEquivPiSubtypeProd S α) := rfl
+.lake/packages/mathlib/Mathlib/Topology/Homeomorph/Lemmas.lean:380:def piEquivPiSubtypeProd (p : ι → Prop) (Y : ι → Type*) [∀ i, TopologicalSpace (Y i)]
+.lake/packages/mathlib/Mathlib/Topology/Homeomorph/Lemmas.lean:382:  toEquiv := Equiv.piEquivPiSubtypeProd p Y
+.lake/packages/mathlib/Mathlib/Topology/Homeomorph/Lemmas.lean:387:      dsimp only [Equiv.piEquivPiSubtypeProd]; split_ifs

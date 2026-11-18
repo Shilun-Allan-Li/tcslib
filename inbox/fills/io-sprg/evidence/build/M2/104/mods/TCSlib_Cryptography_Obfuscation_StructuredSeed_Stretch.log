@@ -1,0 +1,56 @@
+2026-11-18T17:20:34.639390+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean:95:4: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  e ≤ -1
+  c ≥ 0
+  b ≥ 0
+where
+ b := ↑κ
+ c := ↑(P.n κ)
+ e := ↑(P.m κ) / ↑(P.w κ)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean:128:8: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  j ≤ -1
+  i ≥ 1
+  h ≥ 1
+  g ≥ 0
+  f ≥ 0
+  f - g ≥ 0
+  e ≥ 0
+  c ≥ 0
+  c + e - h ≥ -1
+  b ≥ 0
+where
+ b := ↑κ
+ c := ↑(P.n κ)
+ e := ↑(P.m κ) / ↑(P.w κ)
+ f := ↑a * ↑X
+ g := ↑((P.ℓ κ + 1) ^ P.D)
+ h := ↑(P.w κ)
+ i := ↑(P.W κ)
+ j := ↑(P.m κ * κ) / ↑(P.W κ)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean:202:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean:212:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean:231:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch): no fresh .olean produced
+       11.11 real         8.96 user         1.20 sys
+          2388770816  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              172828  page reclaims
+               18426  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                1255  voluntary context switches
+               14637  involuntary context switches
+            33315555  instructions retired
+            19220522  cycles elapsed
+             1622352  peak memory footprint
+2026-11-18T17:20:45.784746+00:00 END rc=1

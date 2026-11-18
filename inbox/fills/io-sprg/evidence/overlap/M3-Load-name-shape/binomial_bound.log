@@ -1,0 +1,77 @@
+TCSlib/ErrorCorrectingCodes/Entropy.lean:390:    rw [div_pow, ← Real.exp_nat_mul, mul_one]
+TCSlib/ErrorCorrectingCodes/Entropy.lean:392:    rw [div_pow, ← Real.exp_nat_mul, mul_one]
+TCSlib/ErrorCorrectingCodes/Entropy.lean:394:    rw [div_pow, ← Real.exp_nat_mul, mul_one]
+TCSlib/ErrorCorrectingCodes/ListDecoding.lean:136:      exact Nat.choose_le_pow_div (L + 1) V;
+TCSlib/GraphTheory/KargerMinCut.lean:903:    rw [← Real.exp_nat_mul]
+TCSlib/BooleanAnalysis/BLR/ZkBLR.lean:221:  unfold rootOfUnity; norm_num [ ← Complex.exp_nat_mul, Complex.exp_re ] ; ring_nf;
+TCSlib/BooleanAnalysis/BLR/ZkFourier.lean:152:      rw [ h_neg, ← Complex.exp_nat_mul, ← Complex.exp_nat_mul ];
+TCSlib/BooleanAnalysis/ThresholdFunctions/LowDegreeNorm.lean:314:  simpa [Real.exp_nat_mul] using hlim
+TCSlib/BooleanAnalysis/ThresholdFunctions/SparseSampling.lean:136:    rw [← Real.exp_nat_mul] at hsq
+TCSlib/BooleanAnalysis/ThresholdFunctions/SparseSampling.lean:151:      _ = Real.exp (2 * (n : ℝ)) := by rw [← Real.exp_nat_mul]; congr 1; ring
+TCSlib/BooleanAnalysis/LMN/BernoulliCost.lean:175:          exact Finset.sum_congr rfl fun x hx => by rw [ mul_pow, ← Real.exp_nat_mul ] ; ring;
+TCSlib/BooleanAnalysis/GaussianSpace/InvarianceTruncation.lean:159:        rw [← Real.exp_nat_mul]
+TCSlib/KikuchiLDC/LDC/BackgroundFacts.lean:117:            rw [ ← Real.exp_nat_mul, mul_comm, Real.exp_eq_exp_ℝ ];
+TCSlib/KikuchiLDC/LDC/BackgroundFacts.lean:137:            rw [ ← Real.exp_nat_mul, mul_comm, Real.exp_eq_exp_ℝ ];
+TCSlib/KikuchiLDC/LDC/BackgroundFacts.lean:181:      norm_num [ pow_mul', ← Real.exp_nat_mul ] ; ring_nf ; norm_num [ hq.ne' ];
+TCSlib/KikuchiLDC/LDC/BackgroundFacts.lean:191:    rw [ ← Real.exp_nat_mul ] ; ring_nf;
+TCSlib/KikuchiLDC/LDC/BackgroundFacts.lean:255:            exact fun k n a a_1 => choose_le_pow_div k n;
+TCSlib/BooleanAnalysis/Hypercontractivity/Applications/Influence.lean:292:      rw [← mul_assoc, ← mul_pow, hprod, ← Real.exp_nat_mul, mul_one]
+TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL.lean:338:        (Real.exp_nat_mul _ k).symm
+TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Junta.lean:206:      _ = Real.exp (3 * t) := (Real.exp_nat_mul t 3).symm
+TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Junta.lean:210:        rw [Real.exp_nat_mul, Real.exp_log (by norm_num)]
+TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/DNF.lean:133:          rw [← Real.exp_nat_mul]
+TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/DNF.lean:340:      rw [← hhalf, ← Real.exp_nat_mul]
+TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/DNF.lean:345:        simpa using (Real.exp_nat_mul L 3)
+TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/DNF.lean:378:        rw [← Real.exp_nat_mul]
+TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/DNF.lean:415:        simpa using (Real.exp_nat_mul ell 2)
+TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/DNF.lean:416:      rw [Real.exp_add, Real.exp_add, htwo, Real.exp_nat_mul M K]
+TCSlib/CommunicationComplexity/DeterministicCC/FuncIndexing/LowerBound.lean:555:      (Nat.choose_le_pow_div (r := k) (n := n) :
+TCSlib/BooleanAnalysis/Hypercontractivity/Products/Comparison.lean:571:      simpa only [Nat.cast_ofNat] using Real.exp_nat_mul (-Real.log t) 2
+TCSlib/BooleanAnalysis/Hypercontractivity/Products/Comparison.lean:799:        simpa only [Nat.cast_ofNat] using (Real.exp_nat_mul t 3).symm
+TCSlib/BooleanAnalysis/GaussianSpace/Hermite/Generator.lean:80:  simp only [← Real.exp_nat_mul]
+TCSlib/BooleanAnalysis/Hypercontractivity/Products/Applications/LowDegree.lean:173:      Real.exp_nat_mul, Real.exp_neg, Real.exp_log hr.1]
+TCSlib/BooleanAnalysis/Hypercontractivity/Products/Applications/LowDegree.lean:190:    rw [← Real.exp_nat_mul]
+TCSlib/BooleanAnalysis/Hypercontractivity/Products/Applications/LowDegree.lean:291:      ← Real.exp_nat_mul]
+TCSlib/Cryptography/Asymptotic/OneWay.lean:542:    rw [← Real.exp_nat_mul]; congr 1; ring
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean:342:      _ = Real.exp (q * -(α' / 2)) := (Real.exp_nat_mul _ _).symm
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean:348:      _ = Real.exp (T * -θ) := (Real.exp_nat_mul _ _).symm
+TCSlib/Cryptography/NumberTheory/Chebyshev.lean:210:              rw [← Real.exp_nat_mul]
+TCSlib/Cryptography/NumberTheory/Primality.lean:631:        rw [← Real.exp_nat_mul]
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:26:* `Internal.binomial_bound` gives the explicit exponential binomial estimate.
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:51:**Proof sketch.** Reuse Nat.choose_le_pow_div. Apply the exponential-series term bound
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:52:Real.pow_div_factorial_le_exp at x=k to bound the reciprocal factorial by (exp(1)/k)^k,
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:54:theorem binomial_bound (n k : ℕ) (hk : 0 < k) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean:283:  rw [Real.exp_neg, show (n : ℝ) = n * 1 by ring, Real.exp_nat_mul, ← inv_pow]
+.lake/packages/mathlib/Mathlib/NumberTheory/Niven.lean:47:    rw [← Complex.exp_nat_mul, Complex.exp_eq_one_iff]
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:739:  rw [Real.exp_neg, inv_pow, ← Real.exp_nat_mul, mul_one]
+.lake/packages/mathlib/Mathlib/NumberTheory/LSeries/Nonvanishing.lean:293:  simp only [← exp_nat_mul, Nat.cast_ofNat, ← exp_add, norm_exp, add_re, mul_re,
+.lake/packages/mathlib/Mathlib/NumberTheory/ModularForms/JacobiTheta/Bounds.lean:118:  rw [← Real.exp_nat_mul, ← Real.exp_add]
+.lake/packages/mathlib/Mathlib/NumberTheory/ModularForms/JacobiTheta/Bounds.lean:168:      rw [mul_comm (exp _), ← Real.exp_nat_mul, mul_assoc (n : ℝ), ← Real.exp_add]
+.lake/packages/mathlib/Mathlib/NumberTheory/ModularForms/JacobiTheta/Bounds.lean:173:    rw [← Real.exp_nat_mul, mul_assoc _ (exp _), ← Real.exp_add]
+.lake/packages/mathlib/Mathlib/Analysis/SpecialFunctions/Complex/CircleMap.lean:83:  simp [circleMap_zero, mul_pow, ← Complex.exp_nat_mul, ← mul_assoc]
+.lake/packages/mathlib/Mathlib/Analysis/SpecialFunctions/Trigonometric/Basic.lean:1213:theorem exp_nat_mul_two_pi_mul_I (n : ℕ) : exp (n * (2 * π * I)) = 1 :=
+.lake/packages/mathlib/Mathlib/Analysis/SpecialFunctions/Exp.lean:247:  simp only [← exp_nat_mul, mul_one, div_lt_iff₀, exp_pos, ← div_eq_inv_mul] at hN
+.lake/packages/mathlib/Mathlib/Analysis/SpecialFunctions/Exp.lean:410:lemma summable_exp_nat_mul_iff {a : ℝ} :
+.lake/packages/mathlib/Mathlib/Analysis/SpecialFunctions/Exp.lean:412:  simp only [exp_nat_mul, summable_geometric_iff_norm_lt_one, norm_of_nonneg (exp_nonneg _),
+.lake/packages/mathlib/Mathlib/Analysis/SpecialFunctions/Exp.lean:416:  simpa only [mul_neg_one] using summable_exp_nat_mul_iff.mpr neg_one_lt_zero
+.lake/packages/mathlib/Mathlib/Analysis/SpecialFunctions/Exp.lean:418:lemma summable_exp_nat_mul_of_ge {c : ℝ} (hc : c < 0) {f : ℕ → ℝ} (hf : ∀ i, i ≤ f i) :
+.lake/packages/mathlib/Mathlib/Analysis/SpecialFunctions/Exp.lean:420:  refine (Real.summable_exp_nat_mul_iff.mpr hc).of_nonneg_of_le (fun _ ↦ by positivity) fun i ↦ ?_
+.lake/packages/mathlib/Mathlib/Analysis/SpecialFunctions/Exp.lean:427:  simp_rw [mul_comm (-r), exp_nat_mul]
+.lake/packages/mathlib/Mathlib/Probability/Distributions/Fernique.lean:535:    Real.summable_exp_nat_mul_of_ge ?_ (fun i ↦ mod_cast (Nat.lt_pow_self (by simp)).le)
+.lake/packages/mathlib/Mathlib/Analysis/Complex/PhragmenLindelof.lean:784:    simp only [← Real.exp_nat_mul, ← Real.exp_add, Real.norm_eq_abs, Real.abs_exp, add_mul]
+.lake/packages/mathlib/Mathlib/Analysis/Complex/Trigonometric.lean:524:  rw [← exp_mul_I, ← exp_mul_I, ← exp_nat_mul, mul_assoc]
+.lake/packages/mathlib/Mathlib/Analysis/Complex/Exponential.lean:149:theorem exp_nat_mul (x : ℂ) : ∀ n : ℕ, exp (n * x) = exp x ^ n
+.lake/packages/mathlib/Mathlib/Analysis/Complex/Exponential.lean:151:  | Nat.succ n => by rw [pow_succ, Nat.cast_add_one, add_mul, exp_add, ← exp_nat_mul _ n, one_mul]
+.lake/packages/mathlib/Mathlib/Analysis/Complex/Exponential.lean:165:  · simp [exp_nat_mul]
+.lake/packages/mathlib/Mathlib/Analysis/Complex/Exponential.lean:166:  · simp [exp_add, add_mul, pow_add, exp_neg, exp_nat_mul]
+.lake/packages/mathlib/Mathlib/Analysis/Complex/Exponential.lean:225:nonrec theorem exp_nat_mul (x : ℝ) (n : ℕ) : exp (n * x) = exp x ^ n :=
+.lake/packages/mathlib/Mathlib/Analysis/Complex/Exponential.lean:226:  ofReal_injective (by simp [exp_nat_mul])
+.lake/packages/mathlib/Mathlib/Analysis/Complex/Exponential.lean:250:lemma pow_div_factorial_le_exp (hx : 0 ≤ x) (n : ℕ) : x ^ n / n ! ≤ exp x :=
+.lake/packages/mathlib/Mathlib/Analysis/Complex/Exponential.lean:655:    _ = rexp (-t) := by rw [← Real.exp_nat_mul, mul_neg, mul_comm, div_mul_cancel₀]; positivity
+TCSlib/Cryptography/Candidates/Concrete.lean:304:    rw [← Real.exp_nat_mul]; congr 1; ring
+.lake/packages/mathlib/Mathlib/Data/Nat/Choose/Bounds.lean:19:* `Nat.choose_le_pow_div`: `n.choose r ≤ n^r / r!`
+.lake/packages/mathlib/Mathlib/Data/Nat/Choose/Bounds.lean:30:theorem choose_le_pow_div (r n : ℕ) : (n.choose r : α) ≤ (n ^ r : α) / r ! := by
+.lake/packages/mathlib/Mathlib/RingTheory/RootsOfUnity/Complex.lean:35:  simp only [← exp_nat_mul, exp_eq_one_iff]
+.lake/packages/mathlib/Mathlib/RingTheory/RootsOfUnity/Complex.lean:61:  rw [← exp_nat_mul]
+.lake/packages/mathlib/Mathlib/RingTheory/RootsOfUnity/Complex.lean:76:    rw [← H, ← exp_nat_mul]
+.lake/packages/mathlib/Mathlib/RingTheory/RootsOfUnity/Complex.lean:80:    rw [← H, ← exp_nat_mul, exp_eq_one_iff]

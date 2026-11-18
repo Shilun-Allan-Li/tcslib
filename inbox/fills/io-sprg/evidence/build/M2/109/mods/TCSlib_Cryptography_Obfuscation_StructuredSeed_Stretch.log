@@ -1,0 +1,133 @@
+2026-11-18T17:29:31.379483+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean:192:24: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean:192:49: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean:304:2: error: unsolved goals
+case h.refine_2.refine_2.refine_2.refine_2.refine_2.refine_1
+P : Params
+τ ε : ℝ
+hs : P.G.HasStretch τ
+hε : 0 < ε
+C : ℕ
+hseedNat : ∀ (κ : ℕ), P.seedBitsAt κ ≤ C * (κ + 1) ^ 5 * (P.n κ + P.m κ / P.w κ + 1)
+a : ℝ := ↑(P.E * P.D)
+b : ℝ := ↑P.E * (↑P.δ / 2)
+hpublic : 5 + a + 2 * ε ≤ a * τ
+hnoise : 5 - b ≤ -2 * ε
+hgrow : ∀ᶠ (κ : ℕ) in Filter.atTop, 128 * ↑C ≤ ↑κ ^ ε
+κ : ℕ
+hκ : 1 ≤ κ
+hC : 128 * ↑C ≤ ↑κ ^ ε
+x : ℝ := ↑κ
+hx1 : 1 ≤ x
+hxpos : 0 < x
+hx0 : 0 ≤ x
+hn : ↑(P.n κ) = x ^ a
+hm : x ^ (a * τ) ≤ ↑(P.m κ)
+hw : x ^ b / 2 ≤ ↑(P.w κ)
+hwpos : 0 < ↑(P.w κ)
+hdiv : ↑(P.m κ / P.w κ) ≤ 2 * ↑(P.m κ) * x ^ (-b)
+hexp : 5 + a ≤ a * τ + -2 * ε
+⊢ x ^ (↑5 + a) = x ^ (5 + a)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean:316:4: error: linarith failed to find a contradiction
+case h.refine_2.refine_2.refine_2.refine_2.refine_2.refine_2.refine_1.h
+P : Params
+τ ε : ℝ
+hs : P.G.HasStretch τ
+hε : 0 < ε
+C : ℕ
+hseedNat : ∀ (κ : ℕ), P.seedBitsAt κ ≤ C * (κ + 1) ^ 5 * (P.n κ + P.m κ / P.w κ + 1)
+a : ℝ := ↑(P.E * P.D)
+b : ℝ := ↑P.E * (↑P.δ / 2)
+hpublic : 5 + a + 2 * ε ≤ a * τ
+hnoise : 5 - b ≤ -2 * ε
+hgrow : ∀ᶠ (κ : ℕ) in Filter.atTop, 128 * ↑C ≤ ↑κ ^ ε
+κ : ℕ
+hκ : 1 ≤ κ
+hC : 128 * ↑C ≤ ↑κ ^ ε
+x : ℝ := ↑κ
+hx1 : 1 ≤ x
+hxpos : 0 < x
+hx0 : 0 ≤ x
+hn : ↑(P.n κ) = x ^ a
+hm : x ^ (a * τ) ≤ ↑(P.m κ)
+hw : x ^ b / 2 ≤ ↑(P.w κ)
+hwpos : 0 < ↑(P.w κ)
+hdiv : ↑(P.m κ / P.w κ) ≤ 2 * ↑(P.m κ) * x ^ (-b)
+hexp : 5 + a ≤ a * τ + -2 * ε
+hnterm : x ^ 5 * ↑(P.n κ) ≤ ↑(P.m κ) * x ^ (-2 * ε)
+a✝ : -2 * ε < ↑5 + -b
+⊢ False
+failed
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean:365:4: error: linarith failed to find a contradiction
+case h.refine_2.refine_2.refine_2.refine_2.refine_2.refine_2.refine_2.refine_2.refine_2.refine_2.refine_2.refine_2.refine_2.refine_2.refine_2.refine_1.h
+P : Params
+τ ε : ℝ
+hs : P.G.HasStretch τ
+hε : 0 < ε
+C : ℕ
+hseedNat : ∀ (κ : ℕ), P.seedBitsAt κ ≤ C * (κ + 1) ^ 5 * (P.n κ + P.m κ / P.w κ + 1)
+a : ℝ := ↑(P.E * P.D)
+b : ℝ := ↑P.E * (↑P.δ / 2)
+hpublic : 5 + a + 2 * ε ≤ a * τ
+hnoise : 5 - b ≤ -2 * ε
+hgrow : ∀ᶠ (κ : ℕ) in Filter.atTop, 128 * ↑C ≤ ↑κ ^ ε
+κ : ℕ
+hκ : 1 ≤ κ
+hC : 128 * ↑C ≤ ↑κ ^ ε
+x : ℝ := ↑κ
+hx1 : 1 ≤ x
+hxpos : 0 < x
+hx0 : 0 ≤ x
+hn : ↑(P.n κ) = x ^ a
+hm : x ^ (a * τ) ≤ ↑(P.m κ)
+hw : x ^ b / 2 ≤ ↑(P.w κ)
+hwpos : 0 < ↑(P.w κ)
+hdiv : ↑(P.m κ / P.w κ) ≤ 2 * ↑(P.m κ) * x ^ (-b)
+hexp : 5 + a ≤ a * τ + -2 * ε
+hnterm : x ^ 5 * ↑(P.n κ) ≤ ↑(P.m κ) * x ^ (-2 * ε)
+hnoisePow : x ^ 5 * x ^ (-b) ≤ x ^ (-2 * ε)
+hnoiseTerm : ↑(P.m κ) * (x ^ 5 * x ^ (-b)) ≤ ↑(P.m κ) * x ^ (-2 * ε)
+hn1 : 1 ≤ ↑(P.n κ)
+hconst : x ^ 5 ≤ ↑(P.m κ) * x ^ (-2 * ε)
+hcombined : x ^ 5 * (↑(P.n κ) + 2 * ↑(P.m κ) * x ^ (-b) + 1) ≤ 4 * ↑(P.m κ) * x ^ (-2 * ε)
+hκ2 : ↑(κ + 1) ≤ 2 * x
+hK5 : (↑κ + 1) ^ 5 ≤ 32 * x ^ 5
+hseed : ↑(P.seedBitsAt κ) ≤ ↑C * ↑(κ + 1) ^ 5 * (↑(P.n κ) + ↑(P.m κ / P.w κ) + 1)
+hsum : ↑(P.n κ) + ↑(P.m κ / P.w κ) + 1 ≤ ↑(P.n κ) + 2 * ↑(P.m κ) * x ^ (-b) + 1
+hpre : ↑C * (↑κ + 1) ^ 5 ≤ ↑C * (32 * x ^ 5)
+hsum0 : 0 ≤ ↑(P.n κ) + ↑(P.m κ / P.w κ) + 1
+hpre0 : 0 ≤ ↑C * (32 * x ^ 5)
+hfirst :
+  ↑C * (↑κ + 1) ^ 5 * (↑(P.n κ) + ↑(P.m κ / P.w κ) + 1) ≤ ↑C * (32 * x ^ 5) * (↑(P.n κ) + 2 * ↑(P.m κ) * x ^ (-b) + 1)
+hC32 : 0 ≤ 32 * ↑C
+hmult : 32 * ↑C * (x ^ 5 * (↑(P.n κ) + 2 * ↑(P.m κ) * x ^ (-b) + 1)) ≤ 32 * ↑C * (4 * ↑(P.m κ) * x ^ (-2 * ε))
+a✝ : 128 * ↑C * ↑(P.m κ) * x ^ (-2 * ε) < ↑(P.seedBitsAt κ)
+⊢ False
+failed
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean:427:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch): no fresh .olean produced
+       13.26 real        19.93 user         1.16 sys
+          2438856704  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              179587  page reclaims
+               18010  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                1178  voluntary context switches
+               15303  involuntary context switches
+            32323603  instructions retired
+            18646396  cycles elapsed
+             1622352  peak memory footprint
+2026-11-18T17:29:44.680332+00:00 END rc=1

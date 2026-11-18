@@ -1,0 +1,121 @@
+by
+  obtain ⟨C, hseedNat⟩ := P.seedBitsAt_le
+  let a : ℝ := ((P.E * P.D : ℕ) : ℝ)
+  let b : ℝ := (P.E : ℝ) * ((P.δ : ℝ) / 2)
+  change 5 + a + 2 * ε ≤ a * τ at hpublic
+  change 5 - b ≤ -2 * ε at hnoise
+  have hgrow : ∀ᶠ κ : ℕ in Filter.atTop,
+      128 * (C : ℝ) ≤ (κ : ℝ) ^ ε :=
+    ((tendsto_rpow_atTop hε).comp tendsto_natCast_atTop_atTop).eventually_ge_atTop _
+  filter_upwards [Filter.eventually_ge_atTop (1 : ℕ), hgrow] with κ hκ hC
+  let x : ℝ := κ
+  have hx1 : 1 ≤ x := Nat.one_le_cast.mpr hκ
+  have hxpos : 0 < x := zero_lt_one.trans_le hx1
+  have hx0 : 0 ≤ x := hxpos.le
+  have hn : (P.n κ : ℝ) = x ^ a := ?_
+  swap
+  · dsimp only [a, x]
+    rw [Real.rpow_natCast, P.n_eq, P.ℓ_eq, Nat.cast_pow, Nat.cast_pow, pow_mul]
+  have hm : x ^ (a * τ) ≤ (P.m κ : ℝ) := ?_
+  swap
+  · have h := (P.G.hasStretch_iff τ).mp hs (P.n κ)
+    rw [hn, ← Real.rpow_mul hx0, ← P.m_eq] at h
+    exact h
+  have hw : x ^ b / 2 ≤ (P.w κ : ℝ) := w_lower P κ hκ
+  have hwpos : (0 : ℝ) < P.w κ := ?_
+  swap
+  · rw [P.w_eq]
+    exact Nat.cast_pos.mpr (P.noiseWidth_pos _)
+  have hdiv : ((P.m κ / P.w κ : ℕ) : ℝ) ≤
+      2 * (P.m κ : ℝ) * x ^ (-b) := ?_
+  swap
+  · calc
+      _ ≤ (P.m κ : ℝ) / (P.w κ : ℝ) := Nat.cast_div_le
+      _ ≤ (P.m κ : ℝ) / (x ^ b / 2) :=
+        div_le_div_of_nonneg_left (Nat.cast_nonneg _)
+          (half_pos (Real.rpow_pos_of_pos hxpos b)) hw
+      _ = 2 * (P.m κ : ℝ) * x ^ (-b) := ?_
+    rw [Real.rpow_neg hx0]
+    field_simp [(Real.rpow_pos_of_pos hxpos b).ne'] <;> ring
+  have hexp : 5 + a ≤ a * τ + (-2 * ε) := ?_
+  swap
+  · linarith
+  have hnterm : x ^ 5 * (P.n κ : ℝ) ≤ (P.m κ : ℝ) * x ^ (-2 * ε) := ?_
+  swap
+  · calc
+      _ = x ^ ((5 : ℝ) + a) := ?_
+      _ ≤ x ^ (a * τ + (-2 * ε)) :=
+        Real.rpow_le_rpow_of_exponent_le hx1 hexp
+      _ = x ^ (a * τ) * x ^ (-2 * ε) := Real.rpow_add hxpos _ _
+      _ ≤ (P.m κ : ℝ) * x ^ (-2 * ε) :=
+        mul_le_mul_of_nonneg_right hm (Real.rpow_nonneg hx0 _)
+    rw [hn, ← Real.rpow_natCast x 5, ← Real.rpow_add hxpos]
+  have hnoisePow : x ^ 5 * x ^ (-b) ≤ x ^ (-2 * ε) := ?_
+  swap
+  · rw [← Real.rpow_natCast x 5, ← Real.rpow_add hxpos]
+    apply Real.rpow_le_rpow_of_exponent_le hx1
+    linarith
+  have hnoiseTerm := mul_le_mul_of_nonneg_left hnoisePow (Nat.cast_nonneg (P.m κ))
+  have hn1 : 1 ≤ (P.n κ : ℝ) := ?_
+  swap
+  · rw [hn]
+    exact Real.one_le_rpow hx1 (Nat.cast_nonneg (P.E * P.D))
+  have hconst : x ^ 5 ≤ (P.m κ : ℝ) * x ^ (-2 * ε) := ?_
+  swap
+  · calc
+      x ^ 5 = x ^ 5 * 1 := (mul_one _).symm
+      _ ≤ x ^ 5 * (P.n κ : ℝ) :=
+        mul_le_mul_of_nonneg_left hn1 (pow_nonneg hx0 5)
+      _ ≤ (P.m κ : ℝ) * x ^ (-2 * ε) := hnterm
+  have hcombined : x ^ 5 * ((P.n κ : ℝ) +
+      2 * (P.m κ : ℝ) * x ^ (-b) + 1) ≤
+      4 * (P.m κ : ℝ) * x ^ (-2 * ε) := ?_
+  swap
+  · nlinarith
+  have hκ2 : ((κ + 1 : ℕ) : ℝ) ≤ 2 * x := ?_
+  swap
+  · push_cast
+    change x + 1 ≤ 2 * x
+    linarith
+  have hK5 := pow_le_pow_left₀ (Nat.cast_nonneg (κ + 1)) hκ2 5
+  norm_num [mul_pow] at hK5
+  have hseed : (P.seedBitsAt κ : ℝ) ≤
+      (C : ℝ) * ((κ + 1 : ℕ) : ℝ) ^ 5 *
+        ((P.n κ : ℝ) + ((P.m κ / P.w κ : ℕ) : ℝ) + 1) := ?_
+  swap
+  · exact_mod_cast (hseedNat κ)
+  have hsum : (P.n κ : ℝ) + ((P.m κ / P.w κ : ℕ) : ℝ) + 1 ≤
+      (P.n κ : ℝ) + 2 * (P.m κ : ℝ) * x ^ (-b) + 1 :=
+    add_le_add_right (add_le_add_left hdiv _) 1
+  have hpre := mul_le_mul_of_nonneg_left hK5 (Nat.cast_nonneg C)
+  have hsum0 : (0 : ℝ) ≤
+      (P.n κ : ℝ) + ((P.m κ / P.w κ : ℕ) : ℝ) + 1 := ?_
+  swap
+  · positivity
+  have hpre0 : (0 : ℝ) ≤ (C : ℝ) * (32 * x ^ 5) := ?_
+  swap
+  · positivity
+  have hfirst := mul_le_mul hpre hsum hsum0 hpre0
+  have hC32 : (0 : ℝ) ≤ 32 * (C : ℝ) := ?_
+  swap
+  · positivity
+  have hmult := mul_le_mul_of_nonneg_left hcombined hC32
+  have hcoarse : (P.seedBitsAt κ : ℝ) ≤
+      128 * (C : ℝ) * (P.m κ : ℝ) * x ^ (-2 * ε) := ?_
+  swap
+  · nlinarith [hseed]
+  have hnonneg : (0 : ℝ) ≤ (P.m κ : ℝ) * x ^ (-2 * ε) := ?_
+  swap
+  · positivity
+  have habsorb := mul_le_mul_of_nonneg_right hC hnonneg
+  have hpow : x ^ ε * x ^ (-2 * ε) = x ^ (-ε) := ?_
+  swap
+  · rw [← Real.rpow_add hxpos]
+    congr 1
+    ring
+  change 128 * (C : ℝ) * ((P.m κ : ℝ) * x ^ (-2 * ε)) ≤
+    x ^ ε * ((P.m κ : ℝ) * x ^ (-2 * ε)) at habsorb
+  rw [← mul_assoc (x ^ ε) (P.m κ : ℝ) (x ^ (-2 * ε)),
+    mul_comm (x ^ ε) (P.m κ : ℝ),
+    mul_assoc (P.m κ : ℝ) (x ^ ε) (x ^ (-2 * ε)), hpow] at habsorb
+  nlinarith

@@ -1,0 +1,14 @@
+import Mathlib.Data.Nat.Basic
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+example (raw count n m w : ℕ → ℕ)
+    (heq : ∀ κ, raw κ = count κ)
+    (hpayload : ∃ C : ℕ, ∀ κ,
+      count κ ≤ C * (κ + 1) ^ 5 * (n κ + m κ / w κ + 1)) :
+    ∃ C : ℕ, ∀ κ,
+      raw κ ≤ C * (κ + 1) ^ 5 * (n κ + m κ / w κ + 1) := by
+  exact?

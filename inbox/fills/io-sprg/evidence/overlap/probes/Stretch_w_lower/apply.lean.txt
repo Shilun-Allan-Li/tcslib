@@ -1,0 +1,16 @@
+import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.Algebra.Order.Ring.Nat
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 100000
+
+open Filter
+
+example (d E : ℕ) (δ : ℚ) (hd : 1 ≤ d) (hEpos : 1 ≤ E)
+    (hδpos : 0 < δ) (hδone : δ < 1) (κ : ℕ) (hκ : 1 ≤ κ) :
+    (κ : ℝ) ^ ((E : ℝ) * ((δ : ℝ) / 2)) / 2 ≤
+      (max 1 ⌊((κ ^ E : ℕ) : ℝ) ^ ((δ : ℝ) / 2)⌋₊ : ℝ) := by
+  apply?

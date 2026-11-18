@@ -1,0 +1,391 @@
+Try this:
+  [apply] refine tsub_lt_self_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ CanonicallyOrderedAdd ℝ
+  -- ⊢ ↑(E * ((d + 1) / 2)) * (τ - 1) - 5 - (↑E * (↑δ / 2) - 5) < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm
+    ((fun {α} [AddCommMonoid α] [LinearOrder α] [CanonicallyOrderedAdd α] [Sub α] [OrderedSub α] {a b}
+          [AddLeftReflectLE α] =>
+        tsub_lt_self_iff.mp)
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (AddLECancellable.tsub_lt_self_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ CanonicallyOrderedAdd ℝ
+  -- ⊢ AddLECancellable (↑(E * ((d + 1) / 2)) * (τ - 1) - 5)
+  -- ⊢ ↑(E * ((d + 1) / 2)) * (τ - 1) - 5 - (↑E * (↑δ / 2) - 5) < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm
+    ((fun {α} [AddCommMonoid α] [LinearOrder α] [CanonicallyOrderedAdd α] [Sub α] [OrderedSub α] {a b} ha =>
+        (AddLECancellable.tsub_lt_self_iff ha).mp)
+      ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine CanonicallyOrderedAdd.mul_pos.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ CanonicallyOrderedAdd ℝ
+  -- ⊢ 0 < (↑(E * ((d + 1) / 2)) * (τ - 1) - 5) * (↑E * (↑δ / 2) - 5)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm
+    ((fun {R} [CommSemiring R] [PartialOrder R] [CanonicallyOrderedAdd R] [NoZeroDivisors R] {a b} =>
+        CanonicallyOrderedAdd.mul_pos.mp)
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine lt_inf_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < min (↑(E * ((d + 1) / 2)) * (τ - 1) - 5) (↑E * (↑δ / 2) - 5)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {α} [LinearOrder α] {a b c} => lt_inf_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine min_lt_min_left_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ min 0 (↑E * (↑δ / 2) - 5) < min (↑(E * ((d + 1) / 2)) * (τ - 1) - 5) (↑E * (↑δ / 2) - 5)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {α} [LinearOrder α] {a b c} => min_lt_min_left_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine min_lt_min_right_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ min (↑E * (↑δ / 2) - 5) 0 < min (↑E * (↑δ / 2) - 5) (↑(E * ((d + 1) / 2)) * (τ - 1) - 5)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {α} [LinearOrder α] {a b c} => min_lt_min_right_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine lt_min_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < min (↑(E * ((d + 1) / 2)) * (τ - 1) - 5) (↑E * (↑δ / 2) - 5)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {α} [LinearOrder α] {a b c} => lt_min_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Set.Icc_subset_Ioo_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(E * ((d + 1) / 2)) * (τ - 1) - 5 ≤ 0
+  -- ⊢ Set.Icc (↑(E * ((d + 1) / 2)) * (τ - 1) - 5) 0 ⊆ Set.Ioo 0 (↑E * (↑δ / 2) - 5)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {α} [Preorder α] {a₁ a₂ b₁ b₂} h₁ => (Set.Icc_subset_Ioo_iff h₁).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Finset.Icc_subset_Ioo_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LocallyFiniteOrder ℝ
+  -- ⊢ ↑(E * ((d + 1) / 2)) * (τ - 1) - 5 ≤ 0
+  -- ⊢ Finset.Icc (↑(E * ((d + 1) / 2)) * (τ - 1) - 5) 0 ⊆ Finset.Ioo 0 (↑E * (↑δ / 2) - 5)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm
+    ((fun {α} {a₁ a₂ b₁ b₂} [Preorder α] [LocallyFiniteOrder α] h₁ => (Finset.Icc_subset_Ioo_iff h₁).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine ⟨?_, ?_⟩
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5
+  -- ⊢ 0 < ↑E * (↑δ / 2) - 5
+Try this:
+  [apply] refine And.symm ⟨?_, ?_⟩
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑E * (↑δ / 2) - 5
+  -- ⊢ 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5
+Try this:
+  [apply] refine And.comm.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑E * (↑δ / 2) - 5 ∧ 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5
+Try this:
+  [apply] refine And.symm ((fun {a b} => And.comm.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5 ∧ 0 < ↑E * (↑δ / 2) - 5
+Try this:
+  [apply] refine And.comm.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑E * (↑δ / 2) - 5 ∧ 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5
+Try this:
+  [apply] refine And.symm ((fun {a b} => And.comm.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5 ∧ 0 < ↑E * (↑δ / 2) - 5
+Try this:
+  [apply] refine and_comm.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑E * (↑δ / 2) - 5 ∧ 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5
+Try this:
+  [apply] refine And.symm ((fun {a b} => and_comm.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5 ∧ 0 < ↑E * (↑δ / 2) - 5
+Try this:
+  [apply] refine and_comm.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑E * (↑δ / 2) - 5 ∧ 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5
+Try this:
+  [apply] refine And.symm ((fun {a b} => and_comm.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5 ∧ 0 < ↑E * (↑δ / 2) - 5
+Try this:
+  [apply] refine And.symm ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑E * (↑δ / 2) - 5 ∧ 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5
+Try this:
+  [apply] refine And.symm (And.symm ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5 ∧ 0 < ↑E * (↑δ / 2) - 5
+Try this:
+  [apply] refine (and_iff_left_of_imp ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5 → 0 < ↑E * (↑δ / 2) - 5
+  -- ⊢ 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5
+Try this:
+  [apply] refine And.symm ((fun {a b} h => (and_iff_left_of_imp h).mpr) ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑E * (↑δ / 2) - 5 → 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5
+  -- ⊢ 0 < ↑E * (↑δ / 2) - 5
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr_right fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a b c} h => (and_congr_right h).mp) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr_right fun a => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a b c} h => (and_congr_right h).mpr) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr_left fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {c a b} h => (and_congr_left h).mp) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr_left fun a => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {c a b} h => (and_congr_left h).mpr) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (and_iff_right_of_imp ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑E * (↑δ / 2) - 5 → 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5
+  -- ⊢ 0 < ↑E * (↑δ / 2) - 5
+Try this:
+  [apply] refine And.symm ((fun {b a} h => (and_iff_right_of_imp h).mpr) ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5 → 0 < ↑E * (↑δ / 2) - 5
+  -- ⊢ 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5
+Try this:
+  [apply] refine and_self_left.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5 ∧ 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5 ∧ 0 < ↑E * (↑δ / 2) - 5
+Try this:
+  [apply] refine And.symm ((fun {a b} => and_self_left.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑E * (↑δ / 2) - 5 ∧ 0 < ↑E * (↑δ / 2) - 5 ∧ 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5
+Try this:
+  [apply] refine and_self_right.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5 ∧ 0 < ↑E * (↑δ / 2) - 5) ∧ 0 < ↑E * (↑δ / 2) - 5
+Try this:
+  [apply] refine And.symm ((fun {a b} => and_self_right.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (0 < ↑E * (↑δ / 2) - 5 ∧ 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5) ∧ 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5
+Try this:
+  [apply] refine Decidable.and_iff_not_not_or_not.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬(¬0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5 ∨ ¬0 < ↑E * (↑δ / 2) - 5)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a b} [Decidable a] [Decidable b] => Decidable.and_iff_not_not_or_not.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr_left' ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a b c} h => (and_congr_left' h).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr_left' ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a b c} h => (and_congr_left' h).mpr) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine exists_prop.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ (_ : 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5), 0 < ↑E * (↑δ / 2) - 5
+Try this:
+  [apply] refine And.symm ((fun {b a} => exists_prop.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∃ (_ : 0 < ↑E * (↑δ / 2) - 5), 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.imp_left (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm (And.imp_left (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (and_iff_right ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5
+  -- ⊢ 0 < ↑E * (↑δ / 2) - 5
+Try this:
+  [apply] refine And.symm ((fun {a b} ha => (and_iff_right ha).mpr) ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑E * (↑δ / 2) - 5
+  -- ⊢ 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr_right' ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {b c a} h => (and_congr_right' h).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr_right' ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {b c a} h => (and_congr_right' h).mpr) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.imp_right (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm (And.imp_right (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine if_false_right.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ if 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5 then 0 < ↑E * (↑δ / 2) - 5 else False
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {p q} [Decidable p] => if_false_right.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine ite_else_self.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ if 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5 then 0 < ↑E * (↑δ / 2) - 5 else 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {p q} [Decidable p] => ite_else_self.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (and_iff_left ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑E * (↑δ / 2) - 5
+  -- ⊢ 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5
+Try this:
+  [apply] refine And.symm ((fun {b a} hb => (and_iff_left hb).mpr) ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5
+  -- ⊢ 0 < ↑E * (↑δ / 2) - 5
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.imp (fun a => ?_) ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm (And.imp (fun a => ?_) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a c b d} h₁ h₂ => (and_congr h₁ h₂).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (and_congr ?_ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a c b d} h₁ h₂ => (and_congr h₁ h₂).mpr) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Decidable.and_iff_not_or_not.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬(¬0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5 ∨ ¬0 < ↑E * (↑δ / 2) - 5)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a b} [Decidable a] [Decidable b] => Decidable.and_iff_not_or_not.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine and_iff_not_or_not.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬(¬0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5 ∨ ¬0 < ↑E * (↑δ / 2) - 5)
+Try this:
+  [apply] refine And.symm ((fun {a b} => and_iff_not_or_not.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ¬(¬0 < ↑E * (↑δ / 2) - 5 ∨ ¬0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Iff.and ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a c b d} h₁ h₂ => (Iff.and h₁ h₂).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Iff.and ?_ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine And.symm ((fun {a c b d} h₁ h₂ => (Iff.and h₁ h₂).mpr) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine existsUnique_prop.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃! x, 0 < ↑E * (↑δ / 2) - 5
+Try this:
+  [apply] refine And.symm ((fun {p q} => existsUnique_prop.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∃! x, 0 < ↑(E * ((d + 1) / 2)) * (τ - 1) - 5
+/private/tmp/io-sprg-overlap/Stretch_stretch_gaps-apply.lean:12:0: warning: declaration uses 'sorry'
+/private/tmp/io-sprg-overlap/Stretch_stretch_gaps-apply.lean:12:27: warning: unused variable `hd`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/Stretch_stretch_gaps-apply.lean:12:40: warning: unused variable `hEpos`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/Stretch_stretch_gaps-apply.lean:13:5: warning: unused variable `hδpos`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/Stretch_stretch_gaps-apply.lean:13:21: warning: unused variable `hδone`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/Stretch_stretch_gaps-apply.lean:13:45: warning: unused variable `hτ`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/Stretch_stretch_gaps-apply.lean:14:5: warning: unused variable `hE`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

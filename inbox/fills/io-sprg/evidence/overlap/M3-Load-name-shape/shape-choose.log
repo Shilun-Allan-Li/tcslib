@@ -1,0 +1,42 @@
+TCSlib/ErrorCorrectingCodes/Entropy.lean:464:  have h_stirling_np : (fun (n : ℕ) => ↑(Nat.factorial (Nat.floor (n*p)))) ~[atTop] fun n => Real.sqrt (2 * (Nat.floor (n*p)) * Real.pi) * ((Nat.floor (n*p)) / Real.exp 1) ^ (Nat.floor (n*p)) := by
+TCSlib/ErrorCorrectingCodes/Entropy.lean:493:  have h_stirling_n1p : (fun (n : ℕ) => ↑(Nat.factorial (n - (Nat.floor (n*p))))) ~[atTop] fun n => Real.sqrt (2 * ((n - (Nat.floor (n*p))) : ℕ) * Real.pi) * (((n - (Nat.floor (n*p))) : ℕ) / Real.exp 1) ^ ((n - (Nat.floor (n*p))) : ℕ) := by
+TCSlib/CommunicationComplexity/DeterministicCC/FuncIndexing/LowerBound.lean:582:      (Nat.choose n k : ℝ) ≤ (n ^ k : ℝ) / (((k : ℝ) / Real.exp 1) ^ k) :=
+TCSlib/LearningTheory/Hedge/Episode.lean:87:chooses the whole loss vector for this round.  Deviation: it does not see a sampled expert
+TCSlib/LearningTheory/Hedge/Basic.lean:123:choose an expert attaining it when lower-bounding the final potential. -/
+TCSlib/KikuchiLDC/LDC/BackgroundFacts.lean:103:    have h_bounds : chooseR (n - ell) q ≤ (Real.exp 1 * (n - ell) / q) ^ q ∧ chooseR ell q ≤ (Real.exp 1 * ell / q) ^ q ∧ chooseR (2 * q) q ≥ (2 * q / q) ^ q ∧ chooseR n (2 * q) ≥ (n / (2 * q)) ^ (2 * q) := by
+TCSlib/KikuchiLDC/LDC/BackgroundFacts.lean:106:        have h_num_bound : ∀ m r : ℕ, 0 < r → r ≤ m → chooseR m r ≤ (Real.exp 1 * m / r) ^ r := by
+TCSlib/KikuchiLDC/LDC/BackgroundFacts.lean:126:        have h_bound_num : ∀ m r : ℕ, 0 < r → r ≤ m → chooseR m r ≤ (Real.exp 1 * m / r) ^ r := by
+TCSlib/KikuchiLDC/LDC/BackgroundFacts.lean:171:    have h_subst : chooseR (n - 2 * q) (ell - q) / chooseR n ell ≤ ((Real.exp 1 * (n - ell) / q) ^ q * (Real.exp 1 * ell / q) ^ q) / ((2 * q / q) ^ q * (n / (2 * q)) ^ (2 * q)) := by
+TCSlib/KikuchiLDC/LDC/BackgroundFacts.lean:209:  have h_bounds : (Nat.choose (n - ell) q * Nat.choose ell q : ℝ) / (Nat.choose (2 * q) q * Nat.choose n (2 * q)) ≥ Real.exp (-3 * q) * (ell / n : ℝ) ^ q := by
+TCSlib/KikuchiLDC/LDC/BackgroundFacts.lean:211:    have h_bounds : (Nat.choose (n - ell) q : ℝ) ≥ ((n - ell) / q : ℝ) ^ q ∧ (Nat.choose ell q : ℝ) ≥ (ell / q : ℝ) ^ q ∧ (Nat.choose (2 * q) q : ℝ) ≤ (2 * Real.exp 1) ^ q ∧ (Nat.choose n (2 * q) : ℝ) ≤ (Real.exp 1 * n / (2 * q)) ^ (2 * q) := by
+TCSlib/KikuchiLDC/LDC/BackgroundFacts.lean:252:        have h_binom : ∀ k n : ℕ, 0 < k → k ≤ n → (Nat.choose n k : ℝ) ≤ (Real.exp 1 * n / k) ^ k := by
+TCSlib/KikuchiLDC/LDC/BackgroundFacts.lean:257:          have h_factorial : ∀ k : ℕ, 0 < k → (Nat.factorial k : ℝ) ≥ (k / Real.exp 1) ^ k := by
+TCSlib/KikuchiLDC/LDC/BackgroundFacts.lean:265:    have h_combined : ((Nat.choose (n - ell) q : ℝ) * (Nat.choose ell q : ℝ)) / ((Nat.choose (2 * q) q : ℝ) * (Nat.choose n (2 * q) : ℝ)) ≥ ((n - ell) / q : ℝ) ^ q * (ell / q : ℝ) ^ q / ((2 * Real.exp 1) ^ q * (Real.exp 1 * n / (2 * q)) ^ (2 * q)) := by
+TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:1896:theorem ramseyTriangle_le_factorial_exp {n : ℕ} (hn : 2 ≤ n) :
+TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:1897:    ramseyTriangle n ≤ ⌊(Nat.factorial n : ℝ) * Real.exp 1⌋₊ + 1 := by
+.lake/packages/mathlib/Mathlib/NumberTheory/Transcendental/Lindemann/AnalyticalPart.lean:160:  choose c' c'0 Pp'_le using exp_polynomial_approx_aux f
+TCSlib/BooleanAnalysis/GaussianSpace/Hermite/GeneratingFunction.lean:85:      t ^ j / (j.factorial : ℝ)) (Real.exp (t * x - t ^ 2 / 2)) := by
+TCSlib/BooleanAnalysis/GaussianSpace/Hermite/GeneratingFunction.lean:122:      t ^ j / Real.sqrt (j.factorial : ℝ)) (Real.exp (t * x - t ^ 2 / 2)) := by
+TCSlib/BooleanAnalysis/LMN/BernoulliCost.lean:171:    have h_chernoff : (∑ k ∈ Finset.range (nn + 1), (nn.choose k) * p^k * (1 - p)^(nn - k) * Real.exp ((k - 2 * nn * p) * Real.log 2)) ≤ Real.exp (nn * p * (Real.exp (Real.log 2) - 1) - 2 * nn * p * Real.log 2) := by
+TCSlib/BooleanAnalysis/LMN/BernoulliCost.lean:172:      have h_chernoff : (∑ k ∈ Finset.range (nn + 1), (nn.choose k) * p^k * (1 - p)^(nn - k) * Real.exp (k * Real.log 2)) ≤ Real.exp (nn * p * (Real.exp (Real.log 2) - 1)) := by
+TCSlib/BooleanAnalysis/LMN/BernoulliCost.lean:173:        have h_chernoff : (∑ k ∈ Finset.range (nn + 1), (nn.choose k) * p^k * (1 - p)^(nn - k) * Real.exp (k * Real.log 2)) = (p * Real.exp (Real.log 2) + (1 - p)) ^ nn := by
+TCSlib/BooleanAnalysis/LMN/BernoulliCost.lean:186:    have h_sum_bound : (∑ k ∈ Finset.range (nn + 1), (if k > 2 * nn * p then (nn.choose k) * p^k * (1 - p)^(nn - k) else 0)) ≤ Real.exp (-nn * p / 3) := by
+.lake/packages/mathlib/Mathlib/Tactic/Choose.lean:15:TODO: switch to `rcases` syntax: `choose ⟨i, j, h₁ -⟩ := expr`.
+.lake/packages/mathlib/Mathlib/Tactic/Choose.lean:49:`choose!` means we are expected to succeed at least once
+.lake/packages/mathlib/Mathlib/Topology/UniformSpace/Equicontinuity.lean:54:We choose to express equicontinuity as a properties of indexed families of functions rather
+TCSlib/BooleanAnalysis/Hypercontractivity/Cube/EvenMoments.lean:205:    have h_decomp : expect (fun x => (noiseOp ρ f x) ^ (2 * k)) = ∑ j ∈ Finset.range (k + 1), Nat.choose (2 * k) (2 * j) * ρ ^ (2 * j) * expect (fun x' => (noiseOp ρ (avgLast f) x') ^ (2 * k - 2 * j) * (noiseOp ρ (diffLast f) x') ^ (2 * j)) := by
+TCSlib/BooleanAnalysis/Hypercontractivity/Cube/EvenMoments.lean:281:    have h_combined : expect (fun x => (noiseOp ρ f x) ^ (2 * k)) ≤ ∑ j ∈ Finset.range (k + 1), Nat.choose k j * (ρ ^ 2 * (2 * k - 1)) ^ j * (expect (fun x' => (avgLast f x') ^ 2)) ^ (k - j) * (expect (fun x' => (diffLast f x') ^ 2)) ^ j := by
+TCSlib/BooleanAnalysis/Hypercontractivity/Cube/EvenMoments.lean:288:    have h_binom_theorem : ∑ j ∈ Finset.range (k + 1), Nat.choose k j * (ρ ^ 2 * (2 * k - 1)) ^ j * (expect (fun x' => (avgLast f x') ^ 2)) ^ (k - j) * (expect (fun x' => (diffLast f x') ^ 2)) ^ j = (expect (fun x' => (avgLast f x') ^ 2) + ρ ^ 2 * (2 * k - 1) * expect (fun x' => (diffLast f x') ^ 2)) ^ k := by
+.lake/packages/mathlib/Mathlib/Tactic/Order/CollectFacts.lean:148:      processExpr q(Exists.choose_spec $expr)
+.lake/packages/mathlib/Mathlib/Analysis/SpecialFunctions/Stirling.lean:262:theorem le_factorial_stirling (n : ℕ) : √(2 * π * n) * (n / exp 1) ^ n ≤ n ! := by
+.lake/packages/mathlib/Mathlib/Data/Nat/Factorization/Defs.lean:29:  and (where appropriate) choose a uniform canonical way of expressing these ideas.
+.lake/packages/mathlib/Mathlib/Analysis/Complex/Exponential.lean:52:  ⟨fun n => ∑ m ∈ range n, z ^ m / m.factorial, isCauSeq_exp z⟩
+.lake/packages/mathlib/Mathlib/Analysis/Complex/Exponential.lean:250:lemma pow_div_factorial_le_exp (hx : 0 ≤ x) (n : ℕ) : x ^ n / n ! ≤ exp x :=
+.lake/packages/mathlib/Mathlib/Analysis/Complex/Exponential.lean:473:    ‖exp x - ∑ m ∈ range n, x ^ m / m.factorial‖ ≤ ‖x‖ ^ n * Real.exp ‖x‖ := by
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:47:/-- For positive k, `choose(n,k) ≤ (exp(1)*n/k)^k`.
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:51:**Proof sketch.** Reuse Nat.choose_le_pow_div. Apply the exponential-series term bound
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:52:Real.pow_div_factorial_le_exp at x=k to bound the reciprocal factorial by (exp(1)/k)^k,
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:55:    (Nat.choose n k : ℝ) ≤ (Real.exp 1 * (n : ℝ) / k) ^ k := sorry
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean:424:factor. Use the polynomial output upper bound to choose one fixed stretch exponent
+.lake/packages/mathlib/Mathlib/Combinatorics/Derangements/Exponential.lean:24:    Tendsto (fun n => (numDerangements n : ℝ) / n.factorial) atTop (𝓝 (Real.exp (-1))) := by
+.lake/packages/mathlib/Mathlib/Combinatorics/SetFamily/AhlswedeZhang.lean:21:`Finset.lubell_yamamoto_meshalkin_inequality_sum_card_div_choose`, by making explicit the correction

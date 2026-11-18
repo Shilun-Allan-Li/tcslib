@@ -1,0 +1,28 @@
+import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.Algebra.Order.Ring.Nat
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 100000
+
+open Filter
+
+example (d E : ℕ) (δ : ℚ) (hd : 1 ≤ d) (hEpos : 1 ≤ E)
+    (hδpos : 0 < δ) (hδone : δ < 1) (outLen : ℕ → ℕ) :
+    let D : ℕ := (d + 1) / 2;
+    let ell : ℕ → ℕ := fun κ => κ ^ E;
+    let n : ℕ → ℕ := fun κ => ell κ ^ D;
+    let m : ℕ → ℕ := fun κ => outLen (n κ);
+    let w : ℕ → ℕ := fun κ => max 1 ⌊(ell κ : ℝ) ^ ((δ : ℝ) / 2)⌋₊;
+    let W : ℕ → ℕ := fun κ => w κ ^ 2;
+    let B : ℕ → ℕ := fun κ => max 1 ((m κ * κ + W κ - 1) / W κ);
+    let rc : ℕ → ℕ := fun κ => κ * w κ;
+    let sLen : ℕ → ℕ := fun κ =>
+      (ell κ + 1) ^ D + B κ * (rc κ * κ + κ * rc κ);
+    let seed : ℕ → ℕ := fun κ =>
+      (κ * n κ + 1 + κ * (1 + (sLen κ + sLen κ))) * (κ + 1);
+    ∃ C : ℕ, ∀ κ,
+      seed κ ≤ C * (κ + 1) ^ 5 * (n κ + m κ / w κ + 1) := by
+  apply?

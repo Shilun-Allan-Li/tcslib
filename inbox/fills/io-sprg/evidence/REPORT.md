@@ -1,79 +1,134 @@
-# io-sprg Phase A — checkpoint 1 (M1)
+# io-sprg Phase A — checkpoint 2 (M2)
 
-M1 algebraic correctness is proved and locally checked at `19dde91afc384656e7e47cb018057e088d4ded0a`. M0 remains
-frozen at `d10a560b34d58919bc1a5206ce66a444613f94c7` and was delivered by exchange commit
-`15946b52d0615fda8afad9ed3c57cfaf5beaaa8d`. This is an intermediate proof checkpoint:
-M2–M6 remain unfinished, with **46 original direct proof holes**. T1–T6 are still
-unproved Phase B targets. The whole end-to-end goal and final proofs gate are open.
+M2 polynomial stretch is proved and locally checked at
+`4ecc40c04a001bc87349b7ec368ece309774c28a`. M1 was published at exchange commit
+`10da7fdefd9a44023cc117a672f19e8a3617b81d`, from source
+`19dde91afc384656e7e47cb018057e088d4ded0a`. M0 remains frozen at
+`d10a560b34d58919bc1a5206ce66a444613f94c7`, delivered at
+`15946b52d0615fda8afad9ed3c57cfaf5beaaa8d`.
+
+This is an intermediate proof checkpoint. M2 proof work and local gates are
+complete; its packaging and publication remain pending. M3–M6 remain unfinished,
+with **42 original direct proof holes**. T1–T6 remain unproved Phase B targets.
+The whole end-to-end goal and final proof gates remain open.
 
 ## Bases, heads and milestone scope
 
-The source branch is local `fill/io-sprg`, based on `5ed465f62e4ae0f93ded1a1ba49e807591b589eb`
-(`iO/phase-a-base`), without rebasing. The delivery branch writes only
-`inbox/fills/io-sprg/` on `exchange/pass-shelat-ch5-8`.
+The source branch is local `fill/io-sprg`, based on
+`5ed465f62e4ae0f93ded1a1ba49e807591b589eb` (`iO/phase-a-base`), without rebasing.
+The delivery branch writes only `inbox/fills/io-sprg/` on
+`exchange/pass-shelat-ch5-8`.
 
 | Milestone | Status | Source commit |
 | --- | --- | --- |
 | M0 | Frozen and published | `d10a560b34d58919bc1a5206ce66a444613f94c7` |
-| M1 | All proof bodies and local milestone checks complete | `19dde91afc384656e7e47cb018057e088d4ded0a` |
-| M2 | Stretch: four original obligations remain | Pending |
-| M3 | Claim 4.2/load bounds: ten original obligations remain | Pending |
+| M1 | Complete and published at exchange10da7fdefd9a44023cc117a672f19e8a3617b81d | `19dde91afc384656e7e47cb018057e088d4ded0a` |
+| M2 | All four original bodies, three new helpers and local gates complete; delivery pending | `4ecc40c04a001bc87349b7ec368ece309774c28a` |
+| M3 | Claim4.2/load bounds: all ten original obligations next | Pending |
 | M4 | Hybrids/reductions, including shared M4/M6 support | Pending |
 | M5 | Raw security and existence | Pending |
-| M6 | Targets links/conditional assemblies | Pending |
+| M6 | Target links/conditional assemblies | Pending |
 
-M1 fills **100 original bodies** (83 foundational/M1 plus 17 encoding support
-obligations) and adds **three theorem-only helpers**. All103 saved step records are
-CHECKED_PASS; failed attempts and their repairs remain in evidence. The scope is
-Degree24, Params14, Encoding17, LPN3, Buckets7, SparseFactor5, Polys10,
-Correctness18, the Defs efficiency-forgetting bridge, the Samplers prime-width
-bridge, Basic2, and the G4 seed-support helper. Supporting encodings done early do
-not complete M6. `evidence/proof-candidates/M1CheckpointDraft/source-obligations.tsv`
-lists the original obligations by current declaration location and source status.
+M1 filled100 original bodies (83 foundational/M1 plus17 encoding support obligations)
+and added three theorem-only helpers. Its103 checked steps cover Degree24,
+Params14, Encoding17, LPN3, Buckets7, SparseFactor5, Polys10, Correctness18,
+the Defs efficiency-forgetting bridge, the Samplers prime-width bridge, Basic2,
+and the G4 seed-support helper. Supporting encodings done early do not complete M6.
+
+M2 fills four more original bodies and adds three theorem-only helpers. The
+cumulative record is **104 original bodies + six helpers =110 CHECKED_PASS steps**.
+Failed attempts and their repaired records remain in evidence; only final checked
+states are counted. No transitive sorryAx-dependent count is inferred from the
+42 remaining direct holes.
+
+## M2 stretch proof route
+
+| Declaration (area prefix omitted) | Current source anchor | Role |
+| --- | --- | --- |
+| `E0` | `Stretch.lean:51` | Unchanged definition/reader |
+| `E0_eq` | `Stretch.lean:55` | Unchanged definition/reader |
+| `Params.seedBitsAt` | `Stretch.lean:64` | Unchanged definition/reader |
+| `Params.seedBitsAt_eq` | `Stretch.lean:68` | Unchanged definition/reader |
+| `Params.seedBitsAt_le` | `Stretch.lean:82` | Original M2 obligation; CHECKED_PASS step 104 |
+| `Internal.w_lower` | `Stretch.lean:204` | New theorem-only helper; CHECKED_PASS step 107 |
+| `Internal.stretch_gaps` | `Stretch.lean:223` | New theorem-only helper; CHECKED_PASS step 108 |
+| `Internal.eventually_seed_relative_gap` | `Stretch.lean:254` | New theorem-only helper; CHECKED_PASS step 109 |
+| `jls_seedBits_eq` | `Stretch.lean:390` | Original M2 obligation; CHECKED_PASS step 105 |
+| `jls_seedBits_le` | `Stretch.lean:404` | Original M2 obligation; CHECKED_PASS step 106 |
+| `jls_hasPolyStretch` | `Stretch.lean:428` | Original M2 obligation; CHECKED_PASS step 110 |
+
+The four original M2 obligations are Params.seedBitsAt_le, jls_seedBits_eq,
+jls_seedBits_le and jls_hasPolyStretch (steps104,105,106,110). The new Internal
+helpers w_lower, stretch_gaps and eventually_seed_relative_gap are steps107–109.
+All nine public Stretch theorem prints, including the two existing readers,
+are standard-only at the current source hash.
+
+The seed estimate uses `C = 2*(2^P.D)+12`, covers integral rounding and κ=0,
+and is independent of the prime schedule. The noise-width lower bound and E0
+threshold supply positive exponent gaps. The relative-gap helper yields
+`seedBitsAt κ ≤ m κ * κ^(-ε)` eventually.
+
+The final proof keeps the actual coefficient from public
+`Complexity.PolyExpr.eval_le`, sets `D = max 1 ((C:ℝ)*2^c)` and
+`η = ε/(2*(c+1))`, then absorbs `D^η` through the existing real-power growth API.
+The old generic monic-normalization candidates02/06 were rejected and are not the
+implemented proof route. The public API is composed rather than rederived as a
+new generic monic-normalization theorem. No new algorithm, machine, sampler,
+efficiency claim, or frozen statement is introduced by these helpers.
+`evidence/checkpoints/M2/helper-plan.md` records the route.
+
+SP-W1 keeps δ rational in construction data, coerced to real for these analytic
+bounds. SP-W3's growth conjunct is proved as well as the power bound: the actual
+construction has `κ+1 ≤ seedBits κ` for every κ, hence `κ ≤ seedBits κ` beyond the
+common cutoff. No positive-κ premise is added to the frozen stretch theorem.
 
 ## Current local checks and their limits
 
-| Check | Current result and evidence |
+| Check | Current M2 result and evidence |
 | --- | --- |
-| Owner compilation | Exact set of23 owners, including both facades: rc0, zero errors in both forms. `evidence/build/M1/all-owners/`; source/log/object hashes bind to HEAD through `evidence/build/summary.txt`. |
-| M1 theorem axioms | All297 public theorem prints in the11 affected modules use only propext, Classical.choice, Quot.sound (or subsets). `evidence/checkpoints/M1/axiom-summary.json`. |
-| Headline axioms | G4_eval_eq, jls_hasComplexity, lpnNoise_law and PrimeSchedule.nonempty are standard-only. The later headlines retain sorryAx, printed below. |
-| Source declarations | Base-to-head:673 ADDED, zero CHANGED/REMOVED. No clashes. All670 frozen M0 headers remain unchanged; exactly3 new helper headers. `evidence/checks/m1-final/`. |
-| Style/campaign | Style: zero findings. No new individual campaign FAIL/WARN against the pinned base. The one sk15 lexical flag is the unchanged15-line hasComplexityEff_iff statement with Iff.rfl proof; triage retained. |
-| Size/width | 23 owned files,7244 lines; maximum file801 lines, maximum width100. |
-| Phase A boundary | No forbidden new import, sampler/realiser-contract variant, forbidden enumeration, machine or sampler construction. Only the two existing target-conditioned primitive assemblies. `evidence/checks/m1-final/boundary.json`. |
-| Focused opacity diagnostic | Correctness compiled with the foreign jlsSPRG_raw definition opaque: zero errors. `evidence/meta/M1-focused-raw-opacity/`. This is NOT a full canonical seal. |
+| Owner compilation | Exact set of23 owners, including both facades: rc0, zero errors in both forms. `evidence/build/M2/all-owners/results.jsonl`; all23 actual source/log/object hashes match, and every record names source4ecc40c. |
+| Completed theorem axioms | All306 public theorem prints in12 completed owners use only propext, Classical.choice, Quot.sound (or subsets). Fresh `evidence/checkpoints/M2/axiom-summary.json`. |
+| Headline axioms | Fresh19 prints: exactly five standard-only (G4_eval_eq, jls_hasComplexity, jls_hasPolyStretch, lpnNoise_law, PrimeSchedule.nonempty);14 later headlines retain sorryAx, listed below. |
+| Source declarations | Base-to-head676 ADDED, zero CHANGED/REMOVED; zero clashes. All670 frozen M0 headers unchanged, exactly six cumulative new helpers. `evidence/checks/m2-final/`. |
+| Style/campaign | Style and widths pass; sk15 returns rc0 with the retained lexical flag described below. No new individual campaign FAIL/WARN against the pinned base; campaign rc1 is baseline-only. The unchanged15-line hasComplexityEff_iff lexical statement flag and triage remain retained. |
+| Size/width | 23 owned files,7694 lines; maximum file801 lines, maximum width100. Stretch576 lines, maximum width90. |
+| Phase A boundary | No forbidden new import, realization/contract variant, forbidden enumeration, machine or sampler construction. Only the existing target-conditioned primitive assemblies. `evidence/checks/m2-final/boundary.json`. |
+| Saved proof steps | All110 `evidence/steps/*/step.json` records are CHECKED_PASS. Original completed104, new helpers6, original holes42. |
+| Focused opacity history | The M1 Correctness foreign-jlsSPRG_raw opacity diagnostic passed in `evidence/meta/M1-focused-raw-opacity/`. It remains historical M1 evidence, not a fresh M2 canonical seal. |
 
-The **full stored-constant census, typed StmtDump, sorryAx dependency graph,
-full four-variant canonical seals and paired controls have not been rerun at M1**.
+The full stored-constant census, typed StmtDump, sorryAx dependency graph, full
+four-variant canonical seals and paired controls **have not been rerun at M2**.
 Their delivered M0 artifacts are historical evidence for M0 only:22 owners,
-88 seals plus96 control probes, all184 passed;1036 stored constants,948 public
-kernel types and511 theorem prints were checked there. They are not current M1
-counts or proof passes. The final gate must regenerate an exact dynamic owner
-inventory (including Basic and any later split modules), all stored roots, controls,
+88 seals plus96 controls, all184 passed;1036 stored constants,948 public kernel
+types and511 theorem prints were checked there. They are not current M2 counts
+or proof passes. The final gate must regenerate an exact dynamic owner inventory
+(including Basic and any later split modules), all stored roots, controls,
 request masks/environment bindings and all four variants. The detailed tooling
-coverage audit is in `evidence/proof-candidates/tmpFinalAuditTools/`.
+coverage audit remains in `evidence/proof-candidates/tmpFinalAuditTools/`.
 
-This checkpoint deliberately carries partial final-gate evidence, as allowed for
-milestone checkpoints. It makes no claim that the46 remaining direct holes account
-for an inferred number of transitive sorry dependents. Actual final transitive
-counts must come from the fresh kernel graph, not subtraction from M0.
+This checkpoint carries partial final-gate evidence, as allowed for intermediate
+milestones. Neither306 selected theorem prints nor676 explicit source commands
+are a full kernel census; actual final transitive counts must come from the
+fresh kernel graph, not subtraction from M0.
 
 ## Statement changes and judgment calls
 
 There is **no post-M0 change to an existing definition, theorem header or statement
 prose**. Proof sketches were synchronized where the implementation strategy changed.
-The three new helpers are:
+The six cumulative theorem-only helpers are:
 
 | Helper | Purpose |
 | --- | --- |
 | Internal.encodeList_injective_of_fixedWidth | A narrow fixed-width specialization using existing BoolCircuit nil/cons readers and List.append_inj. |
 | Internal.encodeList_length_of_fixedWidth | Exact tagged-list length, counting every true tag and the final false marker. |
 | Params.G4_seed_allOutputs | Retains the literal G4 polynomial witness on the exact seed law for both complexity links. |
+| Internal.w_lower | Lower-bounds rounded noise width by half its real-power schedule at κ≥1. |
+| Internal.stretch_gaps | Extracts positive public/noise exponent gaps from the explicit E0 threshold. |
+| Internal.eventually_seed_relative_gap | Combines the rounded payload estimate and exponent gaps into a prime-independent relative seed bound. |
 
 Basic is a new theorem-only module importing the already-required Uniform owner.
-It adds no external module or Mathlib cache root; the refreshed closure has128
-modules and the same83 direct Mathlib roots. A later LPN reduction split into
+At M1 it added no external module or Mathlib cache root; the refreshed M1 closure
+had128 modules and the same83 direct Mathlib roots. M2 adds no import root. A later LPN reduction split into
 Defs/Encoding/Transport/Hop is planned for modularity but **has not landed** in this
 checkpoint. See `evidence/proof-candidates/LPNModularity/`.
 
@@ -86,7 +141,7 @@ Optional empty-grid positions, deterministic row-major sparse factors, explicit
 finite coordinates, faithful encodings and prime-before-input quantifiers remain
 frozen. No efficiency target, machine or sampler construction was added.
 
-Current size is7244 lines. The remaining analytic/security proofs can exceed the
+Current size is7694 lines. The remaining analytic/security proofs can exceed the
 original4950–8450 estimate; plan roughly10000–13000 final lines, subject to actual
 proofs. Keep each file below1000 lines and split coherent helpers rather than
 compressing proofs or weakening statements. The user authorized routine judgment
@@ -110,7 +165,7 @@ variable Nat.bits selector was retained and recovered through its existing pair
 delimiter; it was not given a false fixed-width premise. The G4 support helper
 uses published pure/query/bind readers once for the two complexity consumers.
 
-The current immutable-log review covers218 search runs, all saved source/log hashes
+The archived M1 immutable-log review covers218 search runs, all saved source/log hashes
 matching:20 closed,68 partial suggestions,92 exact searches without a closing proof,
 9 clean apply no-hits,17 bounded timeouts,8 statement-elaboration failures and4
 scope failures. Timeouts and finite no-hits do not prove global absence. Partial
@@ -122,6 +177,15 @@ errors. `evidence/proof-candidates/M1CheckpointDraft/overlap-log-review.json` an
 Other preparation mistakes, including a missing filename and an unquoted question
 mark, are retained separately in the search/error notes and
 `evidence/overlap/reproduced-missing/`; they are not counted as search outcomes.
+
+The delivered evidence also includes early M3 load reuse probes, explicitly pending source proofs.
+They do not change M2 source or its completed proof counts.
+
+The M2 stretch route uses public PolyExpr coefficient bounds, floor bounds and
+real-power growth/composition APIs. Retaining the actual output coefficient avoids
+the discarded generic monic-normalization overlap. Current M2 source uses the three
+owned theorem-only helpers inventoried above; source status and fresh check logs
+are the authority, rather than untested preparation packets.
 
 ## Source and host provenance; process-limit disclosures
 
@@ -149,9 +213,10 @@ then launched the next owner check while the Params_B_pos apply search remained
 active. Tagged wrappers93883 and93983 overlapped at15:07:45–15:07:48UTC. The recorded
 search child alone was terminated; its wrapper release is15:08:34UTC. Evidence is
 `evidence/host/search-process-correction.json`. This violated this job's one-process
-rule. The checker in `evidence/host/M1-final/` preserves the exact incident and REAP
-provenance:1068 tagged acquisitions, maximum two wrappers, historical seriality false,
-post-correction tagged seriality true, zero active wrappers at its snapshot. Every
+rule. The fresh checker in `evidence/host/M2-final/` preserves the exact incident and REAP
+provenance:1118 tagged acquisitions, maximum two wrappers, historical seriality false,
+349 post-correction acquisitions with maximum one wrapper, post-correction tagged
+seriality true, and zero active wrappers at its 17:45:27UTC snapshot. Every
 other overlap would fail the exact-exception checker. This is a tagged wrapper audit,
 not a global host/child-process history proof. No unqualified whole-job seriality or
 independent all-jobs-cap claim is made.
@@ -159,7 +224,7 @@ independent all-jobs-cap claim is made.
 ## Frozen fidelity, Rule15 and non-vacuity tables
 
 The following mathematical tables are preserved byte-for-byte from the frozen M0
-report. **Their line references are historical M0 anchors.** The current M1 anchor
+report. **Their line references are historical M0 anchors.** The current M2 anchor
 appendix follows by declaration identity; its TSV includes structure fields. The
 contracts/formulas are unchanged. Current proof status is given above, not inferred
 from these historical location labels. Full M0 deviation details remain in
@@ -240,14 +305,19 @@ from these historical location labels. Full M0 deviation details remain in
 | LPN exact joint draw | `LPNFamily.Raw.Draw` (`LPN.lean:189`) is the concrete matrix/secret/noise-seed product. `drawEquiv` (`:278`) gives explicit `Fin (drawCard ell)` coordinates; nonzero modulus and noise denominator instances are at `:101`/`:102`. | It remains nonempty when the secret dimension or sample count is zero. It is one product draw, not an illicit product fair-coin sampler construction. |
 | Shared realiser predicate | Existing `Complexity.NUPPT.realizesOn_self` and `realizesOn_self_take` (`TCSlib/Cryptography/Asymptotic/Realization.lean:167`, `:179`) establish generic satisfiability, including the required coin-prefix shape. | These do **not** by themselves realize the actual LPN/PRG preprocessing. Actual reduction realisers are obtained conditionally from T4 by the existing `exists_realizesOn_of_preTarget` (`:220`) through the M0 `realizable_of_targets` obligation. |
 
-## Current declaration anchors for the archived tables
-The tables above preserve M0 bytes and therefore retain HISTORICAL line references.
-This appendix gives current M1 anchors by declaration identity. The adjacent TSV
-contains every explicit owned declaration and structure field; generated constructors,
-recursors and inherited fields remain represented by their owning structure. This is
-a source anchor index, not a replacement for the final typed kernel census.
+## Current M2 declaration anchors for the archived tables
 
-| Current full name (area prefix omitted) | M1 source anchor |
+The fidelity, Rule15, target-selection and non-vacuity tables in
+`evidence/checkpoints/M1/REPORT.md` are exact frozen M0 tables. Their original
+line references remain historical M0 anchors. This appendix updates declaration
+locations to M2 source `4ecc40c04a001bc87349b7ec368ece309774c28a`.
+Only Stretch changed from the published M1 source; hashes of the other 22 owned
+files match the saved M1 snapshot. The accompanying complete TSV has 785 explicit
+named declarations and structure-field anchors. Generated constructors, recursors
+and inherited fields remain represented by their owning structure. This source
+index is not a new typed kernel census or a proof-status table.
+
+| Current full name (area prefix omitted) | M2 source anchor |
 | --- | --- |
 | `BoolPRG` | `BoolPRG.lean:50` |
 | `BoolPRG.HasStretch` | `BoolPRG.lean:207` |
@@ -296,9 +366,12 @@ a source anchor index, not a replacement for the final typed kernel census.
 | `Internal.bucket_tail` | `Claim42/Load.lean:67` |
 | `Internal.encodeList_injective_of_fixedWidth` | `Basic.lean:49` |
 | `Internal.encodeList_length_of_fixedWidth` | `Basic.lean:82` |
+| `Internal.eventually_seed_relative_gap` | `Stretch.lean:254` |
 | `Internal.full_bucket_tail` | `Claim42/Load.lean:88` |
 | `Internal.some_bucket_tail` | `Claim42/Load.lean:78` |
 | `Internal.some_full_bucket_tail` | `Claim42/Load.lean:98` |
+| `Internal.stretch_gaps` | `Stretch.lean:223` |
+| `Internal.w_lower` | `Stretch.lean:204` |
 | `LPNFamily` | `LPN.lean:512` |
 | `LPNFamily.Raw` | `LPN.lean:120` |
 | `LPNFamily.Raw.Assumption` | `LPN.lean:216` |
@@ -541,9 +614,9 @@ a source anchor index, not a replacement for the final typed kernel census.
 | `jlsSPRG_raw` | `Samplers.lean:355` |
 | `jlsSPRG_toRaw` | `Targets.lean:308` |
 | `jls_hasComplexity` | `Correctness.lean:489` |
-| `jls_hasPolyStretch` | `Stretch.lean:122` |
+| `jls_hasPolyStretch` | `Stretch.lean:428` |
 | `jls_secure` | `Security.lean:102` |
-| `jls_seedBits_le` | `Stretch.lean:103` |
+| `jls_seedBits_le` | `Stretch.lean:404` |
 | `jls_subexpSecure` | `Security.lean:129` |
 | `jls_subexpSmall` | `Security.lean:115` |
 | `lemma42` | `Security.lean:62` |
@@ -649,84 +722,42 @@ def Targets (P : Params) : Prop :=
     P.drawSamplerTarget ∧ P.lpnSamplerTarget
 ```
 
-## Current headline axiom prints
+## Current M2 headline axiom prints
 
-```text
-'TCSlib.Cryptography.Obfuscation.StructuredSeed.prop41' depends on axioms: [propext,
- sorryAx,
- Classical.choice,
- Quot.sound]
-'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.claim42' depends on axioms: [propext,
- sorryAx,
- Classical.choice,
- Quot.sound]
-'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.G4_eval_eq' depends on axioms: [propext,
- Classical.choice,
- Quot.sound]
-'TCSlib.Cryptography.Obfuscation.StructuredSeed.jls_hasComplexity' depends on axioms: [propext,
- Classical.choice,
- Quot.sound]
-'TCSlib.Cryptography.Obfuscation.StructuredSeed.jls_hasPolyStretch' depends on axioms: [propext,
- sorryAx,
- Classical.choice,
- Quot.sound]
-'TCSlib.Cryptography.Obfuscation.StructuredSeed.lpnNoise_law' depends on axioms: [propext, Classical.choice, Quot.sound]
-'TCSlib.Cryptography.Obfuscation.StructuredSeed.jls_secure' depends on axioms: [propext,
- sorryAx,
- Classical.choice,
- Quot.sound]
-'TCSlib.Cryptography.Obfuscation.StructuredSeed.jls_subexpSmall' depends on axioms: [propext,
- sorryAx,
- Classical.choice,
- Quot.sound]
-'TCSlib.Cryptography.Obfuscation.StructuredSeed.jls_subexpSecure' depends on axioms: [propext,
- sorryAx,
- Classical.choice,
- Quot.sound]
-'TCSlib.Cryptography.Obfuscation.StructuredSeed.theorem41' depends on axioms: [propext,
- sorryAx,
- Classical.choice,
- Quot.sound]
-'TCSlib.Cryptography.Obfuscation.StructuredSeed.theorem41_subexp' depends on axioms: [propext,
- sorryAx,
- Classical.choice,
- Quot.sound]
-'TCSlib.Cryptography.Obfuscation.StructuredSeed.exists_sprg_raw' depends on axioms: [propext,
- sorryAx,
- Classical.choice,
- Quot.sound]
-'TCSlib.Cryptography.Obfuscation.StructuredSeed.exists_sprg_raw_subexp' depends on axioms: [propext,
- sorryAx,
- Classical.choice,
- Quot.sound]
-'TCSlib.Cryptography.Obfuscation.StructuredSeed.PrimeSchedule.nonempty' depends on axioms: [propext,
- Classical.choice,
- Quot.sound]
-'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.realizable_of_targets' depends on axioms: [propext,
- sorryAx,
- Classical.choice,
- Quot.sound]
-'TCSlib.Cryptography.Obfuscation.StructuredSeed.jlsSPRG' depends on axioms: [propext,
- sorryAx,
- Classical.choice,
- Quot.sound]
-'TCSlib.Cryptography.Obfuscation.StructuredSeed.theorem41_of_targets' depends on axioms: [propext,
- sorryAx,
- Classical.choice,
- Quot.sound]
-'TCSlib.Cryptography.Obfuscation.StructuredSeed.exists_sprg_of_targets' depends on axioms: [propext,
- sorryAx,
- Classical.choice,
- Quot.sound]
-'TCSlib.Cryptography.Obfuscation.StructuredSeed.exists_sprg_of_targets_subexp' depends on axioms: [propext,
- sorryAx,
- Classical.choice,
- Quot.sound]
-```
+Fresh19-headline probe at source4ecc40c; exactly five standard-only and14 retaining
+sorryAx. All names below have the area prefix
+`TCSlib.Cryptography.Obfuscation.StructuredSeed.`. Exact printed dependencies and
+log hashes are recorded in `evidence/checkpoints/M2/axiom-summary.json`.
+
+| Headline | Current printed axioms |
+| --- | --- |
+| `prop41` | `Classical.choice, Quot.sound, propext, sorryAx` |
+| `Params.claim42` | `Classical.choice, Quot.sound, propext, sorryAx` |
+| `Params.G4_eval_eq` | `Classical.choice, Quot.sound, propext` |
+| `jls_hasComplexity` | `Classical.choice, Quot.sound, propext` |
+| `jls_hasPolyStretch` | `Classical.choice, Quot.sound, propext` |
+| `lpnNoise_law` | `Classical.choice, Quot.sound, propext` |
+| `jls_secure` | `Classical.choice, Quot.sound, propext, sorryAx` |
+| `jls_subexpSmall` | `Classical.choice, Quot.sound, propext, sorryAx` |
+| `jls_subexpSecure` | `Classical.choice, Quot.sound, propext, sorryAx` |
+| `theorem41` | `Classical.choice, Quot.sound, propext, sorryAx` |
+| `theorem41_subexp` | `Classical.choice, Quot.sound, propext, sorryAx` |
+| `exists_sprg_raw` | `Classical.choice, Quot.sound, propext, sorryAx` |
+| `exists_sprg_raw_subexp` | `Classical.choice, Quot.sound, propext, sorryAx` |
+| `PrimeSchedule.nonempty` | `Classical.choice, Quot.sound, propext` |
+| `Params.realizable_of_targets` | `Classical.choice, Quot.sound, propext, sorryAx` |
+| `jlsSPRG` | `Classical.choice, Quot.sound, propext, sorryAx` |
+| `theorem41_of_targets` | `Classical.choice, Quot.sound, propext, sorryAx` |
+| `exists_sprg_of_targets` | `Classical.choice, Quot.sound, propext, sorryAx` |
+| `exists_sprg_of_targets_subexp` | `Classical.choice, Quot.sound, propext, sorryAx` |
 
 ## Source commits
 
-Every source commit from the pinned base is listed below. Exact author/committer metadata and signing status are in `patches/COMMITS.tsv`.
+The table below preserves the M0/M1 source-commit history from the published M1
+report. M2 adds source checkpoint `4ecc40c04a001bc87349b7ec368ece309774c28a`. Exact
+final source-commit subjects, author/committer metadata and signing status must be
+bound by the M2 package's `patches/COMMITS.tsv`; no delivery hash is inferred from a
+source hash.
 
 | Commit | Subject |
 | --- | --- |
@@ -757,15 +788,47 @@ Every source commit from the pinned base is listed below. Exact author/committer
 
 ## Delivery verification and continuation
 
-The packager stages only this unit's payload, replays every patch at the pinned base
-with exact hash equality (including the empty M0 marker), verifies the bundle, checks
-all intermediate commit trees for PDFs, and checks exact manifest path sets and hashes.
-It copies the committed source, not unstaged files. The delivered `evidence/replay.json`,
-`bundle-verify.txt`, `pdf-commit-trees.json` and `payload-source-binding.json` are the
-packaging authority. Packaging aborts before delivery if any assertion fails.
+M1 is published at exchange commit
+`10da7fdefd9a44023cc117a672f19e8a3617b81d`; the source head is
+`19dde91afc384656e7e47cb018057e088d4ded0a`.
+`evidence/delivery/M1.json` records5040 payload files, exact committed path-set
+verification, zero committed SHA-256 mismatches and successful non-force push.
+The Unicode-path verifier correction is retained in that record.
 
-M1 is checkpoint1; its delivery commit/push record is saved after publication and
-reported in chat, because a commit cannot contain its own hash. No final ZIP is
-claimed at this intermediate milestone. Continue with all four M2 stretch obligations,
-then M3–M6 and the full final gates. No user question is pending. SP-W1 is resolved;
-SP-W2/SP-W3 and the disclosed organization/process decisions require downstream review.
+M2 source is committed at `4ecc40c04a001bc87349b7ec368ece309774c28a`, with proof and
+local gates complete. **M2 packaging and publication are pending.** The packager
+must stage only this unit's payload, replay every patch at the pinned base with
+exact hash equality (including the empty M0 marker), verify the bundle, check all
+intermediate commit trees for PDFs, and check exact manifest path sets and hashes.
+It must copy committed source, not unstaged files. M2's fresh `evidence/replay.json`,
+`bundle-verify.txt`, `pdf-commit-trees.json` and `payload-source-binding.json` will be
+the packaging authority. No M2 delivery hash, successful push or final ZIP is
+claimed before those records exist.
+
+Continue with **all ten original M3 obligations**, listed in the table below from
+the frozen proof-obligation TSV, then M4–M6 and the full final gates. The M3 final
+Claim42 cutoff must be independent of the public prime parameter.
+
+| Original full name (area prefix omitted) | Current source anchor |
+| --- | --- |
+| `Internal.binomial_bound` | `Claim42/Load.lean:54` |
+| `Internal.bucket_tail` | `Claim42/Load.lean:67` |
+| `Internal.some_bucket_tail` | `Claim42/Load.lean:78` |
+| `Internal.full_bucket_tail` | `Claim42/Load.lean:88` |
+| `Internal.some_full_bucket_tail` | `Claim42/Load.lean:98` |
+| `Params.errProb_nonneg` | `Claim42.lean:105` |
+| `Params.badSet_expect_le` | `Claim42.lean:114` |
+| `Params.cond1_prob_le` | `Claim42.lean:126` |
+| `Params.errProb_le_decomposition` | `Claim42.lean:139` |
+| `Params.claim42` | `Claim42.lean:155` |
+
+The final Claim42 cutoff must be independent of the public prime parameter.
+Complete the existing probability and bucket-load obligations, not only the final
+`claim42` body. Additional specialized theorem-only helpers, if needed, require
+explicit inventories and later seal coverage; they do not reduce this original
+obligation count by renaming it.
+
+No user question is pending. SP-W1 is resolved; SP-W2/SP-W3 and the disclosed
+organization/process decisions remain recorded for downstream review. The report
+preparation itself performed static reads and temporary writes only; it did not
+run Lean, Git, cache tooling, source edits or agents.

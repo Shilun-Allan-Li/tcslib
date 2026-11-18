@@ -1,0 +1,18 @@
+by
+  rw [E0_eq] at hE
+  have hc : (⌊max (10 / (P.δ : ℝ)) (5 / (τ - 1))⌋₊ : ℝ) + 1 ≤ (P.E : ℝ) := ?_
+  swap
+  · exact_mod_cast hE
+  have hm : max (10 / (P.δ : ℝ)) (5 / (τ - 1)) < (P.E : ℝ) :=
+    (Nat.lt_floor_add_one _).trans_le hc
+  have hδ : 0 < (P.δ : ℝ) := Rat.cast_pos.mpr P.δ_pos
+  have hτ' : 0 < τ - 1 := sub_pos.mpr hτ
+  have h10 : 10 < (P.E : ℝ) * (P.δ : ℝ) :=
+    (div_lt_iff₀ hδ).mp ((le_max_left _ _).trans_lt hm)
+  have h5 : 5 < (P.E : ℝ) * (τ - 1) :=
+    (div_lt_iff₀ hτ').mp ((le_max_right _ _).trans_lt hm)
+  have ha : (P.E : ℝ) ≤ ((P.E * P.D : ℕ) : ℝ) := ?_
+  swap
+  · exact_mod_cast (Nat.le_mul_of_pos_right P.E P.D_pos)
+  have hmul := mul_le_mul_of_nonneg_right ha hτ'.le
+  constructor <;> nlinarith
