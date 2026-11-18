@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 SPDX-License-Identifier: Apache-2.0
 
 Vendored from [AFM26] anthropics/formal-math (https://github.com/anthropics/formal-math), folder
-`3sum-apsp`, file `ThreeSumApsp/Lang/Renumber.lean` (UPSTREAM-COMMIT).
+`3sum-apsp`, file `ThreeSumApsp/Lang/Renumber.lean`, at commit e1a4e6508154ea59f030480661590a9fe3018011 (2026-10-05).
 Local modifications (see policy.md §2, vendored code, and the repository NOTICE):
 * removed the Lean module-system syntax (`module`, `public import`, `@[expose] public section`)
   for compatibility with our v4.25.0 toolchain;
