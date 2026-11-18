@@ -1,0 +1,19 @@
+# Reader census (gsw-6b-u12, C6): every definition of another file that the proofs of Branching.lean
+# (G1-G3 and the private glue encrypts_select_ite) read, with the published lemma or reader used.
+# No definition is unfolded (explicit-unfold scan: 0 foreign); none is MISSING.
+# definition (home)	read through (path:line)
+GSW.Encrypts (GSW/Noise.lean:97)	encrypts_gadget Noise.lean:118, encrypts_zero :128, Encrypts.mono :138, Encrypts.add :149, Encrypts.sub :177, Encrypts.mul :216, Encrypts.mul_bit :247 (as closure lemmas; never unfolded)
+GSW.gadget, GSW.mul (GSW/Gadget.lean, GSW/Noise.lean:64)	only as arguments of the closure lemmas above and of select_eq
+BranchingProgram.evalWith (BranchingPrograms/Eval.lean)	evalWith_rel Eval.lean:157 (C7), evalWith_single Eval.lean:211 (C8); homEvalPBP_eq (own reader)
+BranchingProgram.Instr.stepWith (BranchingPrograms/Eval.lean)	Instr.stepWith_of_isPermutation Eval.lean:127 (C6)
+BranchingProgram.IsPermutation (BranchingPrograms/Defs.lean:162)	isPermutation_iff Defs.lean:323 (C4)
+BranchingProgram.Instr.IsPermutation (BranchingPrograms/Defs.lean:99)	Instr.isPermutation_iff Defs.lean:104
+BranchingProgram.length (BranchingPrograms/Defs.lean:126)	length_eq Defs.lean:130 (inside the index proof of evalWith_rel's hypothesis, as that statement writes it)
+BranchingProgram.yield (BranchingPrograms/Defs.lean:152)	evalWith_single Eval.lean:211, barrington_yield_zero Barrington.lean:886 (C16)
+BranchingProgram.barrington (BranchingPrograms/Barrington.lean)	isPermutation_barrington Barrington.lean:850 (C15), barrington_yield_zero :886 (C16), barrington_length_le :789 (C14); homEvalFormula_eq (own reader)
+BranchingProgram.sigma1 (BranchingPrograms/Barrington.lean:114)	sigma1_eq Barrington.lean:118 (then kernel decide on Mathlib's List.formPerm), isFiveCycle_sigma1 :332 (C9)
+BranchingProgram.IsFiveCycle (BranchingPrograms/Barrington.lean:84)	isFiveCycle_sigma1 Barrington.lean:332 (as the argument of barrington_yield_zero)
+# Core and Mathlib definitions (Bool.toNat, decide, Pi.single, List.formPerm) reduce only in rfl/decide
+# steps or are read through Mathlib/core lemmas (Pi.single_eq_same, Pi.single_eq_of_ne, decide_eq_true,
+# decide_eq_false, Bool.toNat_true/false via simp's default set).
+RESULT missing=0

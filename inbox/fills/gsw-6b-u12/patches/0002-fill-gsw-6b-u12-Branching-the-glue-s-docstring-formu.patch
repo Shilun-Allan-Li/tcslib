@@ -1,0 +1,26 @@
+From afdaa9e2f29604052537652bf01165e61c52fb32 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 18 Nov 2026 22:10:29 +0000
+Subject: [PATCH 2/2] fill gsw-6b-u12: Branching, the glue's docstring formula
+ with its cast
+
+---
+ .../AdvancedEncryption/Homomorphic/GSW/Branching.lean           | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean
+index 269989a5..65834343 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean
+@@ -142,7 +142,7 @@ theorem Encrypts.select (P : Parameters) {t : Fin (P.lwe.dimension + 1) → ZMod
+ /-- The selector step with a Boolean selector and natural-number messages: if `C` encrypts
+ `b.toNat` with noise at most `β` and `U`, `V` encrypt `u`, `v` with noise at most `βV`, then
+ `select P C U V` encrypts `if b then v else u` with noise at most `βV + 2·(N·β)`:
+-`Encrypts P t (if b then v else u : ℕ) (βV + 2 * (P.columns * β)) (select P C U V)`.
++`Encrypts P t ((if b then v else u : ℕ) : ℤ) (βV + 2 * (P.columns * β)) (select P C U V)`.
+ Glue: `Encrypts.select` (G1) at `b.toNat`, read through `Bool.toNat`. -/
+ private theorem encrypts_select_ite (P : Parameters)
+     {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus} {b : Bool} {u v : ℕ} {β βV : ℕ}
+-- 
+2.43.0
+

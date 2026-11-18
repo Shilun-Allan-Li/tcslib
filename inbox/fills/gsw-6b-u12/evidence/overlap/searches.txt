@@ -1,0 +1,107 @@
+=== selector lemmas (name) :: rg -n 'Encrypts\.select|encrypts_select|select_eq|theorem .*select' TCSlib/Cryptography
+hits: 29
+TCSlib/Cryptography/Composability/SequentialZK/Advice.lean:43:theorem exists_uniform_bound_selector {A W : Type*} [Finite A] [Nonempty A]
+TCSlib/Cryptography/Hashing/FromDiscreteLog/Algebra.lean:78:theorem unitCollision_selector_ne {i : List Bool} (hi : ExpValid i)
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Games.lean:124:theorem ofFn_select (n : ℕ) (x : Fin ((acDin S 1).eval n) → Bool) (b : Bool) :
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedFields.lean:274:theorem selectedPosition_none_bit (g : DAGGate) (a : Fin g.args.length → Bool)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedFields.lean:288:theorem selectedPosition_none_getD (g : DAGGate) (a : Fin g.args.length → Bool)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedFields.lean:300:theorem stage_first_unselected {inputs : ℕ} (C : DAGCircuit inputs) (v : ℕ → Bool)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedFields.lean:326:theorem stage_second_unselected {inputs : ℕ} (C : DAGCircuit inputs) (v : ℕ → Bool)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean:231:theorem fill_key_selected {m : ℕ} {K ρ : Type} (C : DAGCircuit m)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:28:* `Encrypts.select` (G1): one selector step costs an additive `2·N·β`.
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:67:theorem select_eq (P : Parameters) (C U V : Ciphertext P) :
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:116:noise `0 + β`; `select_eq` exposes the two products `(G − C) ⊡ U` and `C ⊡ V`. Case on
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:121:theorem Encrypts.select (P : Parameters) {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus}
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:125:  rw [select_eq]
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:146:Glue: `Encrypts.select` (G1) at `b.toNat`, read through `Bool.toNat`. -/
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:147:private theorem encrypts_select_ite (P : Parameters)
+
+=== Boolean selector shape :: rg -n 'then v else u|if b then v else u' TCSlib
+hits: 13
+TCSlib/Complexity/BranchingPrograms/Eval.lean:184:`sel b u v = if b then v else u`, `ι.stepWith sel x (Pi.single s 1) = Pi.single (ι.eval x s) 1`.
+TCSlib/Complexity/BranchingPrograms/Eval.lean:187:    ι.stepWith (fun b (u v : ℕ) => if b then v else u) x (Pi.single s 1) =
+TCSlib/Complexity/BranchingPrograms/Eval.lean:198:`sel b u v = if b then v else u`, the host started at the one-hot vector of `s` ends at the
+TCSlib/Complexity/BranchingPrograms/Eval.lean:200:`B.evalWith (fun b u v => if b then v else u) x (Pi.single s 1) = Pi.single (B.yield x s) 1`
+TCSlib/Complexity/BranchingPrograms/Eval.lean:212:    B.evalWith (fun b (u v : ℕ) => if b then v else u) x (Pi.single s 1) =
+TCSlib/Complexity/BranchingPrograms/Eval.lean:219:    (g₂ := fun U ι => ι.stepWith (fun b (u v : ℕ) => if b then v else u) x U)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:144:`select P C U V` encrypts `if b then v else u` with noise at most `βV + 2·(N·β)`:
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:145:`Encrypts P t (if b then v else u : ℕ) (βV + 2 * (P.columns * β)) (select P C U V)`.
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:151:    Encrypts P t ((if b then v else u : ℕ) : ℤ) (βV + 2 * (P.columns * β)) (select P C U V) := by
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:165:homomorphic run and to the Boolean run `evalWith (fun b u v => if b then v else u) x
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:174:Boolean branch `if x var then v else u` (the private glue `encrypts_select_ite`). At
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:201:          (fun b (u v : ℕ) => if b then v else u) x U') := by
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:210:  have hrel := BranchingProgram.evalWith_rel (select P) (fun b (u v : ℕ) => if b then v else u)
+
+=== Encrypts with an if-message :: rg -n 'Encrypts P t \(\(?if' TCSlib
+hits: 2
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:145:`Encrypts P t (if b then v else u : ℕ) (βV + 2 * (P.columns * β)) (select P C U V)`.
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:151:    Encrypts P t ((if b then v else u : ℕ) : ℤ) (βV + 2 * (P.columns * β)) (select P C U V) := by
+
+=== host relation uses :: rg -n 'evalWith_rel|evalWith_single|stepWith_of_isPermutation' TCSlib
+hits: 17
+TCSlib/Complexity/BranchingPrograms.lean:25:- `BranchingPrograms.Eval`: the push-form host `evalWith`, `evalWith_rel`, the Boolean semantics.
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:75:(V (σ₁⁻¹ i))` (`Instr.stepWith_of_isPermutation`). Computable. -/
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:164:**Proof sketch.** Apply the host lemma `BranchingProgram.evalWith_rel` (C7) to the
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:166:(Pi.single s₀ 1)` (whose result is `Pi.single (B.yield x s₀) 1` by `evalWith_single`, C8),
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:171:(`Instr.stepWith_of_isPermutation`, C6); coordinate `i` is `select (cts var) U V` with `U`, `V`
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:175:`τ = B.length` read `evalWith_single` and `Pi.single_eq_same`, `Pi.single_eq_of_ne`. Uses the
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:206:    rw [BranchingProgram.Instr.stepWith_of_isPermutation _ _ hι,
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:207:      BranchingProgram.Instr.stepWith_of_isPermutation _ _ hι]
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:210:  have hrel := BranchingProgram.evalWith_rel (select P) (fun b (u v : ℕ) => if b then v else u)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:212:  -- read coordinate `i` of the Boolean result `Pi.single (B.yield x s₀) 1` (`evalWith_single`)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:214:  rw [BranchingProgram.evalWith_single] at hi
+TCSlib/Complexity/BranchingPrograms/Eval.lean:39:* `BranchingProgram.Instr.stepWith_of_isPermutation` — BV14's pull form for a permutation
+TCSlib/Complexity/BranchingPrograms/Eval.lean:41:* `BranchingProgram.evalWith_rel` — the step-indexed relational host lemma (C7).
+TCSlib/Complexity/BranchingPrograms/Eval.lean:42:* `BranchingProgram.evalWith_single` — Boolean semantics for general maps (C8).
+TCSlib/Complexity/BranchingPrograms/Eval.lean:127:theorem Instr.stepWith_of_isPermutation [AddCommMonoid α] (sel : β → α → α → α)
+
+=== bit-gate analogues :: rg -n 'theorem Encrypts\.(nand|mul_le|mul_bit|mul)\b|theorem encrypts_chain' TCSlib/Cryptography
+hits: 5
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean:216:theorem Encrypts.mul {x₁ x₂ : ℤ} {β₁ β₂ : ℕ} {C₁ C₂ : Ciphertext P}
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean:247:theorem Encrypts.mul_bit {b : Bool} {x₂ : ℤ} {β₁ β₂ : ℕ} {C₁ C₂ : Ciphertext P}
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean:259:theorem Encrypts.mul_le {b₁ b₂ : Bool} {β : ℕ} {C₁ C₂ : Ciphertext P}
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean:274:theorem Encrypts.nand {b₁ b₂ : Bool} {β₁ β₂ : ℕ} {C₁ C₂ : Ciphertext P}
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean:296:theorem encrypts_chain {bs : List Bool} {Cs : List (Ciphertext P)} {β β₀ : ℕ} {x : ℤ}
+
+=== one-hot to indicator (TCSlib) :: rg -n 'Pi\.single.*toNat|toNat.*Pi\.single|single_apply.*decide' TCSlib
+hits: 0
+
+=== one-hot to indicator (Mathlib) :: rg -n 'Pi\.single.*toNat|Bool\.toNat_decide|toNat_decide|decide.*\.toNat =' .lake/packages/mathlib/Mathlib
+hits: 0
+
+=== fixed points of a five-cycle :: rg -n 'apply_ne|sigma1 0|σ 0 ≠ 0|IsFiveCycle\.' TCSlib/Complexity/BranchingPrograms
+hits: 8
+TCSlib/Complexity/BranchingPrograms/Barrington.lean:371:private theorem IsFiveCycle.isCycle {σ : Perm (Fin 5)} (h : IsFiveCycle σ) : σ.IsCycle := by
+TCSlib/Complexity/BranchingPrograms/Barrington.lean:377:private theorem IsFiveCycle.orderOf_eq {σ : Perm (Fin 5)} (h : IsFiveCycle σ) :
+TCSlib/Complexity/BranchingPrograms/Barrington.lean:384:private theorem IsFiveCycle.apply_ne {σ : Perm (Fin 5)} (h : IsFiveCycle σ) (i : Fin 5) :
+TCSlib/Complexity/BranchingPrograms/Barrington.lean:396:(`Equiv.Perm.IsCycle.isCycleOn`), which is all of `Fin 5` (`IsFiveCycle.apply_ne`).  Glue for C10
+TCSlib/Complexity/BranchingPrograms/Barrington.lean:398:private theorem IsFiveCycle.pow_apply_eq_iff {σ : Perm (Fin 5)} (h : IsFiveCycle σ) {a b : ℕ} :
+TCSlib/Complexity/BranchingPrograms/Barrington.lean:401:    ext i; simp [h.apply_ne i]
+TCSlib/Complexity/BranchingPrograms/Barrington.lean:413:  obtain ⟨k, hk, hki⟩ := (h.isCycle.sameCycle (h.apply_ne 0) (h.apply_ne i)).exists_pow_eq'
+TCSlib/Complexity/BranchingPrograms/Barrington.lean:883:accepted input ends at `σ 0 ≠ 0` (r3 §H3.7).
+
+=== Fin 5 five-cycle readers :: rg -n 'theorem sigma1|theorem isFiveCycle' TCSlib
+hits: 7
+TCSlib/Complexity/BranchingPrograms/Barrington.lean:88:theorem isFiveCycle_iff (σ : Perm (Fin 5)) : IsFiveCycle σ ↔ σ.cycleType = {5} := Iff.rfl
+TCSlib/Complexity/BranchingPrograms/Barrington.lean:118:theorem sigma1_eq : sigma1 = List.formPerm [0, 1, 2, 3, 4] := rfl
+TCSlib/Complexity/BranchingPrograms/Barrington.lean:332:theorem isFiveCycle_sigma1 : IsFiveCycle sigma1 := by
+TCSlib/Complexity/BranchingPrograms/Barrington.lean:339:theorem isFiveCycle_sigma2 : IsFiveCycle sigma2 := by
+TCSlib/Complexity/BranchingPrograms/Barrington.lean:353:theorem isFiveCycle_commutator : IsFiveCycle (sigma2⁻¹ * sigma1⁻¹ * sigma2 * sigma1) := by
+TCSlib/Complexity/BranchingPrograms/Barrington.lean:358:private theorem isFiveCycle_inv {σ : Perm (Fin 5)} (h : IsFiveCycle σ) : IsFiveCycle σ⁻¹ := by
+TCSlib/Complexity/BranchingPrograms/Barrington.lean:364:private theorem isFiveCycle_conj {σ : Perm (Fin 5)} (h : IsFiveCycle σ) (θ : Perm (Fin 5)) :
+
+=== noise sum le forms :: rg -n '2 \* \(P\.columns \* β\)' TCSlib
+hits: 12
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:118:  4 ^ (decDepth P + 1) * (2 * (P.columns * β))
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:120:/-- `bootNoise P β` is `4 ^ (decDepth P + 1) * (2 * (P.columns * β))`. -/
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:122:    bootNoise P β = 4 ^ (decDepth P + 1) * (2 * (P.columns * β)) := rfl
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:111:`Encrypts P t ((1 - b) * u + b * v) (βV + 2 * (P.columns * β)) (select P C U V)`
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:124:    Encrypts P t ((1 - b) * u + b * v) (βV + 2 * (P.columns * β)) (select P C U V) := by
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:145:`Encrypts P t (if b then v else u : ℕ) (βV + 2 * (P.columns * β)) (select P C U V)`.
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:151:    Encrypts P t ((if b then v else u : ℕ) : ℤ) (βV + 2 * (P.columns * β)) (select P C U V) := by
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:159:`Encrypts P t (decide (B.yield x s₀ = i)).toNat (B.length * (2 * (P.columns * β)))
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:181:    Encrypts P t ((decide (B.yield x s₀ = i)).toNat : ℤ) (B.length * (2 * (P.columns * β)))
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:186:    ∀ i, Encrypts P t ((U' i : ℕ) : ℤ) (τ * (2 * (P.columns * β))) (U i)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:230:`Encrypts P t (c.eval x).toNat (4 ^ c.depth * (2 * (P.columns * β))) (homEvalFormula P c cts)`
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:246:    Encrypts P t ((c.eval x).toNat : ℤ) (4 ^ c.depth * (2 * (P.columns * β)))
+

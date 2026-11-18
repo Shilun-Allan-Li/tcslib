@@ -1,0 +1,11 @@
+SEAL-INSTALL live-cp1/Cryptography_AdvancedEncryption_Homomorphic_GSW_Branching/coe-A part 1: 200
+/workspace/gsw/repo/scratch/seal/live-cp1/Seal_Cryptography_AdvancedEncryption_Homomorphic_GSW_Branching_coeA.lean:301:2: error: Type mismatch
+  rfl
+has type
+  ?m.35 = ?m.35
+but is expected to have type
+  BranchingProgram.evalWith (fun b u v => if b = true then v else u) x B V =
+    List.foldl (fun U ι => BranchingProgram.Instr.stepWith (fun b u v => if b = true then v else u) x ι U) V B.instrs
+SEAL-VERIFY live-cp1/Cryptography_AdvancedEncryption_Homomorphic_GSW_Branching/coe-A part 1: 200
+
+EXIT 1

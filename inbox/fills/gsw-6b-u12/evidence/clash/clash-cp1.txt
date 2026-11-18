@@ -1,0 +1,8 @@
+# C10 clash scan (gsw-6b-u12), head afdaa9e2f29604052537652bf01165e61c52fb32. New declarations at the head: one, private: encrypts_select_ite
+# full name: _private.TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Branching.0.TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.encrypts_select_ite
+(a/b) git grep -n -w encrypts_select_ite bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d (bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d) -- TCSlib audits: 0 hits
+(a/b) git grep -n -w encrypts_select_ite origin/iO/phase-a-base (5ed465f62e4ae0f93ded1a1ba49e807591b589eb) -- TCSlib audits: 0 hits
+(a/b) git grep -n -w encrypts_select_ite origin/cleanup/stage2-s2a (dff281b53746377cd72e57c3aeeadf3d1f59a332) -- TCSlib audits: 0 hits
+(a/b) git grep -n -w encrypts_select_ite 978fd46c18662882b5831b6b1c6049975d52086d (978fd46c18662882b5831b6b1c6049975d52086d) -- TCSlib audits: 0 hits
+(c) the name is private: it is invisible outside Branching.lean, so no unqualified use in a UNIT-DOWN module (Bootstrap, Circular, Leveled, LeveledSecurity, PolyRatio, Asymptotic, the facades) can resolve to it; the head sweep of the 10 UNIT-DOWN modules is rc 0, 0 errors (build/summary).
+RESULT new_names=1 existing_elsewhere=0

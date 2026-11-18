@@ -1,0 +1,33 @@
+warning: declaration uses 'sorry'
+warning: declaration uses 'sorry'
+warning: declaration uses 'sorry'
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Encrypts.select : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters)
+  {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus} {b u v : ℤ} {β βV : ℕ}
+  {C U V : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P},
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Encrypts P t b β C →
+    TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Encrypts P t u βV U →
+      TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Encrypts P t v βV V →
+        b = 0 ∨ b = 1 →
+          TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Encrypts P t ((1 - b) * u + b * v)
+            (βV + 2 * (P.columns * β)) (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.select P C U V)
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.encrypts_homEvalPBP : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters)
+  {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus} {w k : ℕ} (B : BranchingProgram w k),
+  B.IsPermutation →
+    ∀ (x : Fin k → Bool) (cts : Fin k → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P) (β : ℕ),
+      (∀ (j : Fin k), TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Encrypts P t (↑(x j).toNat) β (cts j)) →
+        ∀ (s₀ i : Fin w),
+          TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Encrypts P t
+            (↑(Decidable.decide (B.yield x s₀ = i)).toNat) (B.length * (2 * (P.columns * β)))
+            (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.homEvalPBP P B cts
+              (Pi.single s₀ (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.gadget P)) i)
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.encrypts_homEvalFormula : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters)
+  {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus} {k : ℕ} [inst : NeZero k] (c : BoolCircuit.TreeCircuit k),
+  c.maxFanin ≤ 2 →
+    ∀ (x : Fin k → Bool) (cts : Fin k → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P) (β : ℕ),
+      (∀ (j : Fin k), TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Encrypts P t (↑(x j).toNat) β (cts j)) →
+        TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Encrypts P t (↑(c.eval x).toNat)
+          (4 ^ c.depth * (2 * (P.columns * β)))
+          (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.homEvalFormula P c cts)
