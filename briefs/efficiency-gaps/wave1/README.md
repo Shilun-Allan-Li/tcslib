@@ -65,3 +65,5 @@ adds `import TCSlib.Cryptography.LWE.Efficient` at landing.
 **Not yet ready to dispatch — the records commit that files this folder (`<RECORDS>`) is pending, and the
 questions above need answers or acceptance of the recommended options (Q-D4-1 A also needs the ingestion;
 EF-H4 also waits for EF-D1).**
+
+**Update (2026-11-18, overnight):** [PW10] §3.1–§3.2 (pp. 14–15) are ingested (`EF-D4/ingest-report.md`); EF-D4 is ready to dispatch once its `<RECORDS>` pin is filled. One morning question for Seyoon on EF-D4: PW10's lattice constructions meet only an *almost-always* correctness/lossiness, while the brief's interface is exact (see the ingest report, item 1).

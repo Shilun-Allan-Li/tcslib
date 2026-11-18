@@ -3,7 +3,7 @@
 **Unit** `ef-d4-ltdf-interfaces` · **Route** Claude statement job (definitions, readers and small proved
 sanity theorems; no admitted targets), then a Codex gate before EF-H9/EF-R4/EF-R5 build on it ·
 **Base** REC `cf6a2266e9556ca8ad61e56f7232266ccc6d4e62` · **Size** 300–500 new Lean lines (±40%) ·
-**Rulings** Q9 A, Q1 A, Q11 A.
+**Rulings** Q9 A, Q1 A, Q11 A, Q-D4-1 A (the [PW10] §3.1–§3.2 ingest is done; anchors under Sources).
 
 Read `../COMMON.md` first; it is part of this brief.
 
@@ -25,7 +25,8 @@ conventions of `Collection`/`TrapdoorCollection` (`Asymptotic/Collections.lean:1
 `pairFstD`/`pairSndD` outputs, evaluators are `PolyTimeComputable` string maps on `⟨1^n, …⟩`
 (`atParam`), domains are `Fin (inLen.eval n) → Bool`.
 
-1. `structure LossyTDF` — an `(n, k)`-lossy trapdoor function [PW10, §3.1]:
+1. `structure LossyTDF` — an `(n, k)`-lossy trapdoor function [PW10, §3.1, p. 14]
+   (`pdf-74f48b0eff6f-p014-b001` parameters, `pdf-74f48b0eff6f-p014-b002` definition):
    - `inLen lossBits : PolyExpr` (input length `n(κ)`, lossiness `k(κ)`);
    - `genInj genLoss : NUPPT` (injective-mode generator outputs `⟨s, t⟩`; lossy-mode generator outputs a
      function index `s`), `genInj_uniform : genInj.Uniform`, `genLoss_uniform : genLoss.Uniform`;
@@ -40,7 +41,8 @@ conventions of `Collection`/`TrapdoorCollection` (`Asymptotic/Collections.lean:1
    - `LossyTDF.ModesIndist`: every `NUPPT` `D` has negligible advantage between the function indices of
      the two modes (`Negligible fun n => distAdv … (D.distinguisherL n)`);
    - `LossyTDF.Secure := Correct ∧ Lossy ∧ ModesIndist`, with `_iff` readers for each.
-2. `structure ABOTDF` — an all-but-one trapdoor function with branch set `{0,1}^{b(κ)}` [PW10, §3.2]:
+2. `structure ABOTDF` — an all-but-one trapdoor function with branch set `{0,1}^{b(κ)}` [PW10, §3.2,
+   p. 15] (`pdf-74f48b0eff6f-p015-b003` definition; `pdf-74f48b0eff6f-p015-b002` overview):
    - `inLen lossBits branchLen : PolyExpr`; `gen : NUPPT` run on the lossy branch `b*`
      (`gen.runAt n (List.ofFn b*) r = ⟨s, t⟩`), `gen_uniform`; `eval inv` on `⟨1^n, ⟨s, ⟨b, x⟩⟩⟩` and
      `⟨1^n, ⟨t, ⟨b, y⟩⟩⟩` with `eval_poly`, `inv_poly`.
@@ -52,16 +54,35 @@ conventions of `Collection`/`TrapdoorCollection` (`Asymptotic/Collections.lean:1
 3. **Sanity theorems (proved)**: `LossyTDF.fn_injective_of_correct` (correctness makes every
    injective-mode function injective), the analogue for ABO branches `b ≠ b*`, and
    `LossyTDF.lossy_card_lt` (for `k ≥ 1` the lossy image is strictly smaller than the domain), so the
-   predicates are visibly non-trivial. Optional, only if the ingested source supports it after Q-D4-1:
-   an ABO with a one-bit branch set gives a `LossyTDF` (the lossy branch `b* = 1`) — skip it otherwise.
+   predicates are visibly non-trivial. **Skip** the formerly optional "an ABO with a one-bit branch set
+   gives a `LossyTDF`": that is [PW10, Lemma 3.1] in §3.3 (pp. 15–16), outside the ingest (§3.1–§3.2
+   only), so it has no anchor to cite.
 
 ## Sources
 
 - [PW10] C. Peikert, B. Waters, *Lossy Trapdoor Functions and Their Applications*, author version dated
-  4 June 2010: §3.1 (lossy TDFs) and §3.2 (all-but-one TDFs) for the definitions. **The ingested reference
-  `peikert-waters-2010-lossy-tdf` covers printed pages 33–39 only (§6.2–§6.4)**; §3 is not ingested (see
-  Q-D4-1). Cite §6.2–§6.4 anchors (`pdf-74f48b0eff6f-p033-b001` …) only for remarks about the lattice
-  instances.
+  4 June 2010: §3.1 (lossy TDFs) and §3.2 (all-but-one TDFs) for the definitions, ingested in
+  `blueprint/src/references/peikert-waters-2010-lossy-tdf.md` (EF-D4 extension, PDF pages 14–15, printed
+  page = PDF page; status: awaiting Codex source review). Cite these anchors:
+
+  | Anchor | Page | Passage |
+  |---|---|---|
+  | `pdf-74f48b0eff6f-p014-b001` | 14 | §3.1 parameters: `n(λ) = poly(λ)` input length, lossiness `k(λ) ≤ n(λ)`, residual leakage `r(λ) = n(λ) − k(λ)` |
+  | `pdf-74f48b0eff6f-p014-b002` | 14 | §3.1 definition of an `(n, k)`-lossy TDF `(S_inj, S_loss, F_ltdf, F_ltdf⁻¹)`, properties 1–3 |
+  | `pdf-74f48b0eff6f-p014-b003` | 14 | §3.1 remark: hardness of inversion is not required (implied, Lemma 3.3) |
+  | `pdf-74f48b0eff6f-p014-b004`, `pdf-74f48b0eff6f-p015-b001` | 14–15 | §3.1 almost-always lossy TDFs (one paragraph across the page break) |
+  | `pdf-74f48b0eff6f-p015-b002` | 15 | §3.2 overview of ABO trapdoor functions |
+  | `pdf-74f48b0eff6f-p015-b003` | 15 | §3.2 definition of an `(n, k)`-ABO collection `(S_abo, G_abo, G_abo⁻¹)` with branch collection `𝓑 = {B_λ}`, properties 1–2 |
+  | `pdf-74f48b0eff6f-p015-b004` | 15 | §3.2 almost-always ABOs |
+
+  Points where the targets above specialise [PW10], for the gate preparation list: [PW10] states
+  correctness and lossiness exactly (every index), with an almost-always relaxation over the generator's
+  coins (p014-b004, p015-b001, p015-b004); the brief's `Correct`/`Lossy` are the exact form. [PW10]
+  allows any branch collection `{B_λ}` (p015-b003); the brief fixes `{0,1}^{b(κ)}`. [PW10]'s hidden lossy
+  branch lets the adversary output `(b₀*, b₁*)` and keeps them in its view (p015-b003, property 2); the
+  brief's `HiddenBranch` quantifies over all pairs with one negligible bound and a `NUPPT` distinguisher.
+  [PW10] requires `k ≤ n` (p014-b001); the brief's fields leave it implicit. The remaining
+  §6.2–§6.4 anchors (`pdf-74f48b0eff6f-p033-b001` …) are for remarks about the lattice instances only.
 - [PS10] Definitions 26.8 (`NUPPT`) and 23.4 (uniform PPT); the `Collection` and `TrapdoorCollection`
   conventions ([PS10] Definitions 55.1, 56.1) as `Asymptotic/Collections.lean` cites them.
 
@@ -105,7 +126,8 @@ declarations used here, except `Ensemble.copies_X`, which this job does not use)
 - **D4-P2**: the same for `ABOTDF` with `branchLen = 1`.
 - **Gate preparation**: `REPORT.md` lists every definition with its readers and every design choice made
   against the [PW10] definitions (perfect versus negligible correctness error, the key/trapdoor layout, the
-  form of indistinguishability), each marked as a question if it departs from [PW10].
+  form of indistinguishability, and the specialisations listed under Sources), each marked as a question
+  if it departs from [PW10], with the §3.1/§3.2 anchor it departs from.
 
 ## Size
 
@@ -113,7 +135,8 @@ declarations used here, except `Ensemble.copies_X`, which this job does not use)
 
 ## Questions for Seyoon
 
-**Q-D4-1. Source for the definitions.**
+**Q-D4-1. Source for the definitions.** *Ruled A (`../rulings.md`); done: [PW10] §3.1–§3.2 are
+ingested (PDF pages 14–15; anchors under Sources).*
 - **A (recommended).** Before dispatch, the maintainer extends the [PW10] ingestion to §3.1–§3.2 (the
   definitions), and the worker cites those anchors.
 - **B.** Dispatch now; the worker cites [PW10, §3.1, §3.2] by section only, with no excerpt anchors and a
