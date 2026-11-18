@@ -1,12 +1,12 @@
-# Fill gsw-6b-u13 — checkpoint 1 (GSW 6b unit U13, the decryption formula, G5–G8)
+# Fill gsw-6b-u13 — final (GSW 6b unit U13, the decryption formula, G5–G8)
 
 **Unit** `gsw-6b-u13` · **Worker** Claude (lead, alone; no sub-agents) · **Base** B6
 `bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d` (tree `845bdc982fd8f79aba755796bb13188922c4655d`) · **Head**
 `74fb355a17a47076d7de44a0f691ea03572cb170` (local branch `fill/gsw-6b-u13`, one commit) · **Records pin**
 `bbc930b3853adb29ba96324568e984d521abd257` · **Lean** 4.25.0, Mathlib `029db123ddaa`.
 
-**Status at checkpoint 1: all six targets G5–G8 proved** (the brief's checkpoint 1 asks for G5, G7, G8). This
-checkpoint is a full payload for that head; the final follows with the same head and the complete report.
+**Status: final. All six targets G5–G8 proved**; no `sorry` in the owned file. The head is the one delivered at
+checkpoint 1 (exchange commit `ab9d1ec3a…`); no Lean change since.
 
 | Row | Target (`TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.`) | Base line → head line | Status |
 |---|---|---|---|
@@ -227,8 +227,10 @@ None. No frozen file was touched; no reader was missing.
 
 ## 8. Checkpoints
 
-- **Checkpoint 1** (this delivery): head `74fb355a…`, all six targets proved, C1–C13 run.
-- **Final:** follows at the same head.
+- **Checkpoint 1** (exchange commit `ab9d1ec3a`): head `74fb355a…`, all six targets proved, C1–C13 run (a full
+  payload, as COMMON §8 requires; the brief asked for G5, G7, G8).
+- **Final** (this delivery): the same head and evidence, with this report as the final one. The records tip was
+  re-read at delivery (unchanged, `978fd46c…`; merge-tree tree unchanged).
 
 ## 9. Probes and attribution
 
