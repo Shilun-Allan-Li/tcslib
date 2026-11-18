@@ -1,0 +1,204 @@
+From f5e67909ff8a61f67f254217e8de90782a0eb4f6 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 18 Nov 2026 10:09:29 +0000
+Subject: [PATCH 2/2] SCOPE REQUEST (EF-H1-W1): the ArithmeticFP fields,
+ ofPrimesInP and the equivalence
+
+With the readers of the previous commit: polyTimeComputable_{mul,add,sub,divMod,
+modExp,le,xgcd}Str, the PRIMESBin bridge (primesInP_iff_polyTimeComputable_primeBit,
+polyTimeComputable_primeStr_of_primesInP and its converse),
+ArithmeticFP.ofPrimesInP and arithmeticFP_iff_primesInP.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTmt1X8tSZsuU89aou6
+---
+ .../Candidates/ArithmeticDischarge.lean       | 47 +++++++++++--
+ .../Candidates/ExtendedEuclidMachine.lean     | 12 +++-
+ TCSlib/Cryptography/Candidates/PrimesInP.lean | 68 +++++++++++++++++--
+ 3 files changed, 111 insertions(+), 16 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/ArithmeticDischarge.lean b/TCSlib/Cryptography/Candidates/ArithmeticDischarge.lean
+index b7503a6d8..f52172f13 100644
+--- a/TCSlib/Cryptography/Candidates/ArithmeticDischarge.lean
++++ b/TCSlib/Cryptography/Candidates/ArithmeticDischarge.lean
+@@ -32,12 +32,9 @@ whose first component carries the width as its length (`|a| + |b|`, `|a|`, `|b|`
+ `0`, so the machine runs it at the modulus `2^{|N|}` instead (`natToList_mod_two_pow`), never
+ materializing `a^x`.
+ 
+-**Readers (scope note).** `Arithmetic.lean` publishes readers of the string functions only on
+-encoded pairs (`mulStr_pairEncode`, …), and `sizeStr_eq` on every word. So the six pair
+-functions are proved here in the form `z ↦ f ⟨pairFstD z, pairSndD z⟩` (a re-paired input), and
+-`sizeStr` in the bundle's own form. The step from the re-paired form to `PolyTimeComputable f`
+-reads `f` on a malformed word and needs an every-input equation lemma `f_eq` in
+-`Arithmetic.lean`, which is frozen for this job; it is a scope request of the job's report.
++**Readers.** `Arithmetic.lean` reads the string functions on encoded pairs (`mulStr_pairEncode`,
++…) and on every word (`mulStr_eq`, …). The machines are first proved on re-paired inputs
++`z ↦ f ⟨pairFstD z, pairSndD z⟩`, then on every word through `f_eq`.
+ 
+ ## Main definitions
+ 
+@@ -54,6 +51,9 @@ reads `f` on a malformed word and needs an every-input equation lemma `f_eq` in
+   exponentiation [PS10, Algorithm 45.5, Theorem 45.6] on re-paired triples.
+ * `TCSlib.Cryptography.Candidates.polyTimeComputable_sizeStr` — the bit length in unary
+   (the field `ArithmeticFP.size`).
++* `TCSlib.Cryptography.Candidates.polyTimeComputable_mulStr`, `polyTimeComputable_addStr`,
++  `polyTimeComputable_subStr`, `polyTimeComputable_divModStr`, `polyTimeComputable_modExpStr`,
++  `polyTimeComputable_leStr` — the fields `mul`, `add`, `sub`, `divMod`, `modExp`, `le`.
+ 
+ ## References
+ 
+@@ -233,4 +233,39 @@ theorem polyTimeComputable_sizeStr : PolyTimeComputable sizeStr :=
+   ((polyTimeComputable_unaryPoly .var).comp' polyTimeComputable_toLE).congr fun w => by
+     rw [PolyExpr.eval_var, toLE_eq_natBits, Nat.size_eq_bits_len, sizeStr_eq]
+ 
++
++/-! ### The fields (with the every-input equations of `Arithmetic.lean`) -/
++
++/-- **Binary multiplication is polynomial-time** (the field `ArithmeticFP.mul`):
++`PolyTimeComputable mulStr`, from `polyTimeComputable_mulStr_pairEncode` and `mulStr_eq`. -/
++theorem polyTimeComputable_mulStr : PolyTimeComputable mulStr :=
++  polyTimeComputable_mulStr_pairEncode.congr fun z => by rw [mulStr_pairEncode, mulStr_eq]
++
++/-- **Binary addition is polynomial-time** (the field `ArithmeticFP.add`):
++`PolyTimeComputable addStr`. -/
++theorem polyTimeComputable_addStr : PolyTimeComputable addStr :=
++  polyTimeComputable_addStr_pairEncode.congr fun z => by rw [addStr_pairEncode, addStr_eq]
++
++/-- **Truncated subtraction is polynomial-time** (the field `ArithmeticFP.sub`):
++`PolyTimeComputable subStr`. -/
++theorem polyTimeComputable_subStr : PolyTimeComputable subStr :=
++  polyTimeComputable_subStr_pairEncode.congr fun z => by rw [subStr_pairEncode, subStr_eq]
++
++/-- **Division with remainder is polynomial-time** (the field `ArithmeticFP.divMod`):
++`PolyTimeComputable divModStr`. -/
++theorem polyTimeComputable_divModStr : PolyTimeComputable divModStr :=
++  polyTimeComputable_divModStr_pairEncode.congr fun z => by
++    rw [divModStr_pairEncode, divModStr_eq]
++
++/-- **Modular exponentiation is polynomial-time** (the field `ArithmeticFP.modExp`)
++[PS10, Algorithm 45.5, Theorem 45.6]: `PolyTimeComputable modExpStr`. -/
++theorem polyTimeComputable_modExpStr : PolyTimeComputable modExpStr :=
++  polyTimeComputable_modExpStr_pairEncode.congr fun z => by
++    rw [modExpStr_pairEncode, modExpStr_eq]
++
++/-- **Comparison is polynomial-time** (the field `ArithmeticFP.le`):
++`PolyTimeComputable leStr`. -/
++theorem polyTimeComputable_leStr : PolyTimeComputable leStr :=
++  polyTimeComputable_leStr_pairEncode.congr fun z => by rw [leStr_pairEncode, leStr_eq]
++
+ end TCSlib.Cryptography.Candidates
+diff --git a/TCSlib/Cryptography/Candidates/ExtendedEuclidMachine.lean b/TCSlib/Cryptography/Candidates/ExtendedEuclidMachine.lean
+index f30c83762..169e3e8a8 100644
+--- a/TCSlib/Cryptography/Candidates/ExtendedEuclidMachine.lean
++++ b/TCSlib/Cryptography/Candidates/ExtendedEuclidMachine.lean
+@@ -45,9 +45,8 @@ The potential is the number of recursive calls of the textbook algorithm on `(r'
+   `Nat.gcdA (a mod b) b`.
+ * `TCSlib.Cryptography.Candidates.xgcdInvWord_spec` — the word is `bits ((a : Z_b)⁻¹).val`.
+ * `TCSlib.Cryptography.Candidates.polyTimeComputable_xgcdStr_pairEncode` — the extended
+-  Euclidean algorithm is polynomial-time ([PS10, Algorithm 43.2, Claim 43.3]), on re-paired
+-  inputs (the step to `PolyTimeComputable xgcdStr` needs a reader of `xgcdStr` on every word,
+-  a scope request; see `ArithmeticDischarge.lean`).
++  Euclidean algorithm is polynomial-time ([PS10, Algorithm 43.2, Claim 43.3]) on re-paired
++  inputs, and `polyTimeComputable_xgcdStr` (the field `ArithmeticFP.xgcd`) on every word.
+ 
+ ## References
+ 
+@@ -493,4 +492,11 @@ theorem polyTimeComputable_xgcdStr_pairEncode :
+     rw [toLE_pair_eq, BinArith.gcd_pairEncode, xgcdInvWord_spec, fromLEPoly_var_bits,
+       fromLEPoly_var_bits, xgcdStr_pairEncode]
+ 
++
++/-- **The extended Euclidean algorithm is polynomial-time** (the field `ArithmeticFP.xgcd`)
++[PS10, Algorithm 43.2, Claim 43.3]: `PolyTimeComputable xgcdStr`, from
++`polyTimeComputable_xgcdStr_pairEncode` and `xgcdStr_eq`. -/
++theorem polyTimeComputable_xgcdStr : PolyTimeComputable xgcdStr :=
++  polyTimeComputable_xgcdStr_pairEncode.congr fun z => by rw [xgcdStr_pairEncode, xgcdStr_eq]
++
+ end TCSlib.Cryptography.Candidates
+diff --git a/TCSlib/Cryptography/Candidates/PrimesInP.lean b/TCSlib/Cryptography/Candidates/PrimesInP.lean
+index ba66fa85f..c49e4b2f8 100644
+--- a/TCSlib/Cryptography/Candidates/PrimesInP.lean
++++ b/TCSlib/Cryptography/Candidates/PrimesInP.lean
+@@ -32,13 +32,11 @@ test, so it stays a **named hypothesis**, `PrimesInP`, stated in the library's l
+ * `TCSlib.Cryptography.Candidates.polyTimeComputable_primeStr_iff_bitsVal` — the bundle's
+   most-significant-bit-first test `primeStr` is polynomial-time exactly when the
+   little-endian test `x ↦ [bitsVal x is prime]` is.
+-
+-**Scope note.** The bridge from `PRIMESBin ∈ P` to the little-endian test reads membership in
+-`Randomized.PRIMESBin` (`Complexity/Randomized/Primality.lean`) and in `Randomized.PRIMES`
+-(`PrimalityMath.lean`), which publish no reader; and `ArithmeticFP.ofPrimesInP` needs the
+-readers of the pair functions of `Arithmetic.lean` on every word. Both are scope requests of
+-this job's report, which also carries the remaining statements, compiled against the requested
+-readers.
++* `TCSlib.Cryptography.Candidates.polyTimeComputable_primeStr_of_primesInP`,
++  `primesInP_of_polyTimeComputable_primeStr` — `PrimesInP` is the bundle's primality field.
++* `TCSlib.Cryptography.Candidates.ArithmeticFP.ofPrimesInP`,
++  `TCSlib.Cryptography.Candidates.arithmeticFP_iff_primesInP` — the bundle from `PRIMES ∈ P`,
++  and `ArithmeticFP ↔ PrimesInP`.
+ 
+ ## References
+ 
+@@ -93,4 +91,60 @@ theorem polyTimeComputable_primeStr_iff_bitsVal :
+     exact (h.comp' polyTimeComputable_toLE).congr fun w => by
+       rw [bitsVal_toLE, primeStr_eq]
+ 
++
++/-! ### The bridge and the bundle (with the readers of `PRIMESBin` and `PRIMES`) -/
++
++/-- Glue. The little-endian primality test is the indicator of `PRIMESBin`:
++`[bitsVal x is prime] = [x ∈ PRIMESBin]` (`Randomized.mem_PRIMESBin`, `Randomized.mem_PRIMES`,
++`Randomized.indicator_eq_true_iff`). -/
++theorem primeBit_eq_indicator (x : List Bool) :
++    decide (LogProg.bitsVal x).Prime = MultiTapeTM.indicator Randomized.PRIMESBin x := by
++  rw [Bool.eq_iff_iff, decide_eq_true_iff, Randomized.indicator_eq_true_iff,
++    Randomized.mem_PRIMESBin, Randomized.mem_PRIMES]
++
++/-- **`PRIMES ∈ P` is the polynomial-time little-endian test**: `PrimesInP` holds if and only if
++`x ↦ [bitsVal x is prime]` is polynomial-time (`test_of_mem_P`, `mem_P_of_test`). -/
++theorem primesInP_iff_polyTimeComputable_primeBit :
++    PrimesInP ↔ PolyTimeComputable fun x => [decide (LogProg.bitsVal x).Prime] := by
++  rw [primesInP_iff]
++  constructor
++  · intro h
++    exact (test_of_mem_P h).congr fun x => by rw [primeBit_eq_indicator]
++  · intro h
++    have hP := mem_P_of_test h
++    have hset : {z : List Bool | decide (LogProg.bitsVal z).Prime = true} =
++        Randomized.PRIMESBin := by
++      ext x
++      rw [Set.mem_setOf_eq, decide_eq_true_iff, Randomized.mem_PRIMESBin, Randomized.mem_PRIMES]
++    rwa [hset] at hP
++
++/-- **`PRIMES ∈ P` gives the bundle's primality field**: `PrimesInP → PolyTimeComputable primeStr`
++[PS10, §2.6.5] (glue through `toLE`, `test_of_mem_P`). -/
++theorem polyTimeComputable_primeStr_of_primesInP (h : PrimesInP) : PolyTimeComputable primeStr :=
++  polyTimeComputable_primeStr_iff_bitsVal.2 (primesInP_iff_polyTimeComputable_primeBit.1 h)
++
++/-- **The bundle's primality field gives `PRIMES ∈ P`**:
++`PolyTimeComputable primeStr → PrimesInP` (glue through `fromLEPoly`, `mem_P_of_test`). -/
++theorem primesInP_of_polyTimeComputable_primeStr (h : PolyTimeComputable primeStr) :
++    PrimesInP :=
++  primesInP_iff_polyTimeComputable_primeBit.2 (polyTimeComputable_primeStr_iff_bitsVal.1 h)
++
++/-- **The arithmetic bundle from `PRIMES ∈ P`**: `PrimesInP → ArithmeticFP`. The eight
++arithmetic fields are proved unconditionally (`ArithmeticDischarge.lean`,
++`ExtendedEuclidMachine.lean`); only primality uses the hypothesis. -/
++theorem ArithmeticFP.ofPrimesInP (h : PrimesInP) : ArithmeticFP where
++  mul := polyTimeComputable_mulStr
++  add := polyTimeComputable_addStr
++  sub := polyTimeComputable_subStr
++  divMod := polyTimeComputable_divModStr
++  xgcd := polyTimeComputable_xgcdStr
++  modExp := polyTimeComputable_modExpStr
++  le := polyTimeComputable_leStr
++  size := polyTimeComputable_sizeStr
++  prime := polyTimeComputable_primeStr_of_primesInP h
++
++/-- **The arithmetic bundle is exactly `PRIMES ∈ P`**: `ArithmeticFP ↔ PrimesInP`. -/
++theorem arithmeticFP_iff_primesInP : ArithmeticFP ↔ PrimesInP :=
++  ⟨fun H => primesInP_of_polyTimeComputable_primeStr H.prime, ArithmeticFP.ofPrimesInP⟩
++
+ end TCSlib.Cryptography.Candidates
+-- 
+2.43.0
+

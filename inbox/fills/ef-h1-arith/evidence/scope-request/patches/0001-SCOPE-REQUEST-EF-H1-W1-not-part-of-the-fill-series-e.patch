@@ -1,0 +1,106 @@
+From b3eba3914d1b3532b01b8fe2fbcfaeb068d2f3b2 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 18 Nov 2026 10:09:29 +0000
+Subject: [PATCH 1/2] SCOPE REQUEST (EF-H1-W1, not part of the fill series):
+ every-input readers
+
+Arithmetic.lean: mulStr_eq, addStr_eq, subStr_eq, divModStr_eq, xgcdStr_eq,
+modExpStr_eq, leStr_eq (rfl). PrimalityMath.lean: Randomized.mem_PRIMES;
+Primality.lean: Randomized.mem_PRIMESBin (Iff.rfl). These files are frozen for
+wave 1; this commit is a proposal for Seyoon's ruling.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTmt1X8tSZsuU89aou6
+---
+ TCSlib/Complexity/Randomized/Primality.lean   |  4 ++
+ .../Complexity/Randomized/PrimalityMath.lean  |  3 ++
+ .../Cryptography/Candidates/Arithmetic.lean   | 44 +++++++++++++++++++
+ 3 files changed, 51 insertions(+)
+
+diff --git a/TCSlib/Complexity/Randomized/Primality.lean b/TCSlib/Complexity/Randomized/Primality.lean
+index bba5ef53c..4333c23d7 100644
+--- a/TCSlib/Complexity/Randomized/Primality.lean
++++ b/TCSlib/Complexity/Randomized/Primality.lean
+@@ -62,6 +62,10 @@ open Complexity.LogProg (bitsVal bitsVal_bits)
+ [AB09, §7.2.2, p.128] -/
+ def PRIMESBin : Language Bool := {x | bitsVal x ∈ PRIMES}
+ 
++/-- Membership in `PRIMESBin`: `x ∈ PRIMESBin ↔ bitsVal x ∈ PRIMES` (scope request EF-H1,
++S9). -/
++theorem mem_PRIMESBin (x : List Bool) : x ∈ PRIMESBin ↔ bitsVal x ∈ PRIMES := Iff.rfl
++
+ /-- The Solovay–Strassen verifier for the non-primes: accept (`N` is not prime) when `N < 2`,
+ when `N > 2` is even, or when one of two rounds on `|x| + 3`-bit blocks of `r` finds a
+ witness. [AB09, §7.2.2, p.128] -/
+diff --git a/TCSlib/Complexity/Randomized/PrimalityMath.lean b/TCSlib/Complexity/Randomized/PrimalityMath.lean
+index 1bcd4ac1d..642447872 100644
+--- a/TCSlib/Complexity/Randomized/PrimalityMath.lean
++++ b/TCSlib/Complexity/Randomized/PrimalityMath.lean
+@@ -76,6 +76,9 @@ open Finset NumberTheorySymbols
+ [AB09, §7.2.2, p.128] -/
+ def PRIMES : Set ℕ := {N | N.Prime}
+ 
++/-- Membership in `PRIMES`: `N ∈ PRIMES ↔ N.Prime` (scope request EF-H1, S8). -/
++theorem mem_PRIMES (N : ℕ) : N ∈ PRIMES ↔ N.Prime := Iff.rfl
++
+ open Classical in
+ /-- The book's `QR_N(A)`: `0` if `gcd(A, N) ≠ 1`, `+1` if `A` is a square modulo `N`, and `−1`
+ otherwise. [AB09, §7.2.2, p.128] -/
+diff --git a/TCSlib/Cryptography/Candidates/Arithmetic.lean b/TCSlib/Cryptography/Candidates/Arithmetic.lean
+index bf6e09f2c..5e6dbd632 100644
+--- a/TCSlib/Cryptography/Candidates/Arithmetic.lean
++++ b/TCSlib/Cryptography/Candidates/Arithmetic.lean
+@@ -454,6 +454,50 @@ theorem val_inv_natCast_zmod_zero_le (e : ℕ) : ((e : ZMod 0)⁻¹).val ≤ 1 :
+ /-- `primeStr` is the primality test of `exists_samplePrime_nuppt`. -/
+ theorem primeStr_eq : primeStr = fun w : List Bool => [decide (listToNat w).Prime] := rfl
+ 
++/-! ### Every-input equations (scope request EF-H1, `ef-h1-arith`) -/
++
++/-- The defining equation of `mulStr` on every word: `mulStr z = ⟦⟦a⟧ · ⟦b⟧⟧_{|a| + |b|}` for
++`a = pairFstD z`, `b = pairSndD z`. -/
++theorem mulStr_eq (z : List Bool) :
++    mulStr z = natToList ((pairFstD z).length + (pairSndD z).length)
++      (listToNat (pairFstD z) * listToNat (pairSndD z)) := rfl
++
++/-- The defining equation of `addStr` on every word: `addStr z = ⟦⟦a⟧ + ⟦b⟧⟧_{|a| + |b|}`. -/
++theorem addStr_eq (z : List Bool) :
++    addStr z = natToList ((pairFstD z).length + (pairSndD z).length)
++      (listToNat (pairFstD z) + listToNat (pairSndD z)) := rfl
++
++/-- The defining equation of `subStr` on every word: `subStr z = ⟦⟦a⟧ ∸ ⟦b⟧⟧_{|a|}`. -/
++theorem subStr_eq (z : List Bool) :
++    subStr z = natToList (pairFstD z).length (listToNat (pairFstD z) - listToNat (pairSndD z)) :=
++  rfl
++
++/-- The defining equation of `divModStr` on every word:
++`divModStr z = ⟨⟦⟦a⟧ / ⟦b⟧⟧_{|a|}, ⟦⟦a⟧ mod ⟦b⟧⟧_{|b|}⟩`. -/
++theorem divModStr_eq (z : List Bool) :
++    divModStr z = pairEncode
++      (natToList (pairFstD z).length (listToNat (pairFstD z) / listToNat (pairSndD z)))
++      (natToList (pairSndD z).length (listToNat (pairFstD z) % listToNat (pairSndD z))) := rfl
++
++/-- The defining equation of `xgcdStr` on every word:
++`xgcdStr z = ⟨⟦gcd(⟦a⟧, ⟦b⟧)⟧_{|b|}, ⟦(⟦a⟧ : Z_{⟦b⟧})⁻¹⟧_{|b|}⟩`. -/
++theorem xgcdStr_eq (z : List Bool) :
++    xgcdStr z = pairEncode
++      (natToList (pairSndD z).length (Nat.gcd (listToNat (pairFstD z)) (listToNat (pairSndD z))))
++      (natToList (pairSndD z).length
++        ((listToNat (pairFstD z) : ZMod (listToNat (pairSndD z)))⁻¹).val) := rfl
++
++/-- The defining equation of `modExpStr` on every word:
++`modExpStr z = ⟦⟦a⟧^{⟦x⟧} mod ⟦N⟧⟧_{|N|}` for `z = ⟨a, ⟨x, N⟩⟩` read by the total projections. -/
++theorem modExpStr_eq (z : List Bool) :
++    modExpStr z = natToList (pairSndD (pairSndD z)).length
++      (listToNat (pairFstD z) ^ listToNat (pairFstD (pairSndD z)) %
++        listToNat (pairSndD (pairSndD z))) := rfl
++
++/-- The defining equation of `leStr` on every word: `leStr z = [⟦a⟧ ≤ ⟦b⟧]`. -/
++theorem leStr_eq (z : List Bool) :
++    leStr z = [decide (listToNat (pairFstD z) ≤ listToNat (pairSndD z))] := rfl
++
+ /-- **Comparisons are polynomial-time tests**: for polynomial-time words `a`, `b`, the bit
+ `[⟦a x⟧ ≤ ⟦b x⟧]` is polynomial-time (`H.le`, read through `leStr_pairEncode`). -/
+ theorem ArithmeticFP.le_poly (H : ArithmeticFP) {a b : List Bool → List Bool}
+-- 
+2.43.0
+

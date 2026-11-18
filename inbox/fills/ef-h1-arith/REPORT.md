@@ -1,6 +1,7 @@
-# EF-H1 · `ef-h1-arith` · checkpoint 1
+# EF-H1 · `ef-h1-arith` · final
 
-**Head `0a73fc9c1a743954e30676982ed721ba7e573679`** on local branch `fill/ef-h1-arith`, base REC
+**Final head `0a73fc9c1a743954e30676982ed721ba7e573679`** on local branch `fill/ef-h1-arith`
+(unchanged since checkpoint 1, exchange commit `9a5cc15ac5078c4d8700acee75fd1bb414ff75bc`), base REC
 `cf6a2266e9556ca8ad61e56f7232266ccc6d4e62` (tree `d52cf05bb20c08b6547468d1bd489f1cf0d2e442`).
 Worker: Claude (cloud), lead only; no sub-agents were used.
 
@@ -29,10 +30,13 @@ cannot be related to any primality test without unfolding them; both are in
 `TCSlib/Complexity/**`, read-only for wave 1.
 
 **What I deliver for it.** The nine requested readers are one-line `rfl`/`Iff.rfl` lemmas
-(§6). With them, every remaining target is a one-liner over the theorems of this series. The
-final delivery will carry a separate, compiled **scope-request overlay** (readers + the
-completed targets + H1-P2), outside `patches/`, so that the maintainer can land it as soon as
-Seyoon rules (question EF-H1-W1). Nothing in the series reads a foreign body.
+(§6). With them, every remaining target is a one-liner over the theorems of this series. This
+delivery carries a separate, **compiled scope-request overlay** under
+`evidence/scope-request/` (two commits on a local branch `scope/ef-h1-readers` on top of the
+fill head; **not** part of `patches/`): the nine readers, the seven missing field theorems,
+the `PRIMESBin` bridge, `ArithmeticFP.ofPrimesInP` and `arithmeticFP_iff_primesInP`, with H1-P2
+passing and standard axioms (§7a). It can land as soon as Seyoon rules (question EF-H1-W1).
+Nothing in the fill series reads a foreign body.
 
 ## 1. Base and inputs
 
@@ -65,6 +69,9 @@ Seyoon rules (question EF-H1-W1). Nothing in the series reads a foreign body.
   3.29 GB (the facade). One ENOSPC (a `git clone`, no Lean running): the full exchange
   checkout took 7.7 GB; I removed my two extra worktrees and re-created the exchange checkout
   sparse (my inbox path only); 14.2 GB free afterwards.
+- Final sweep: pool 4; peak RSS of one process 3.77 GB (`audits/pass-shelat/Checks`),
+  MemAvailable never under 11.5 GB. I stopped my pool driver (PID 15320) once every
+  checkable module had finished (it waited on modules downstream of the PFR failures).
 - `lake build` never run; no unfiltered cache get; every module through
   `scripts/lean_check_tree.sh`; Python as `python3 -I`.
 
@@ -131,7 +138,8 @@ Nat.gcdA (a mod b) b` (`Nat.xgcd_zero_left`, `Nat.xgcdAux_val`, `Nat.xgcd_val`),
 | S8 | `Complexity/Randomized/PrimalityMath.lean` | `Randomized.mem_PRIMES (N : ℕ) : N ∈ PRIMES ↔ N.Prime := Iff.rfl` |
 | S9 | `Complexity/Randomized/Primality.lean` | `Randomized.mem_PRIMESBin (x : List Bool) : x ∈ PRIMESBin ↔ bitsVal x ∈ PRIMES := Iff.rfl` |
 
-Exact texts: `evidence/scope-request/arith_readers.lean` (S1–S7). None of the nine names exists
+Exact texts: `evidence/scope-request/patches/0001-*.patch` (S1–S9), files at the overlay head in
+`evidence/scope-request/src/`. None of the nine names exists
 anywhere at the base, IO, #377's head or S2-A's branch (C10).
 
 ## 7. Checks
@@ -139,8 +147,20 @@ anywhere at the base, IO, #377's head or S2-A's branch (C10).
 - **C1** (`evidence/build/summary.txt`): the four modules at the head: rc 0, 0 errors (both
   forms), 0 `sorry` warnings, source SHA-256 = `git show HEAD:<path>`.
 - **C2** downstream sweep: the facade is imported by `TCSlib.lean` and
-  `audits/pass-shelat/Checks.lean` (1,449-module closure, 282 more Mathlib roots). **Not yet
-  run**; scheduled for the final.
+  `audits/pass-shelat/Checks.lean`.
+  Full sweep of their 1,449-module closure at the head (`build/order-root.txt`, pool 4, after a
+  second narrowed cache fetch for the 380 Mathlib roots of the closure: 731 files, rc 0,
+  `logs/cache-get-root.log`; packages re-checked, `cache-check-root.log`):
+  **1,428 OK**, among them the three new files, the facade and **`audits/pass-shelat/Checks`
+  rc 0** (the facade's importers other than the root); **3 FAIL, all `unknown module prefix 'PFR'`**
+  (`CommunicationComplexity/NewmanTheorem/{Newman, Entropy/Basic, FuncDisjointnessLowerBound/
+  HardSample}` import the `PFR` package, whose oleans no Mathlib cache provides and which only
+  a `lake build` of the package could produce — banned); **18 not run** because they import
+  those (the rest of `NewmanTheorem` and the root **`TCSlib`**). Per the addendum (item 8) no
+  check ran against a missing prerequisite. So **the root module `TCSlib` is unchecked here**;
+  the facade itself and `Checks` (which imports it) pass. 0 errors in every OK log; the 192
+  `sorry` warnings of the sweep are all in untouched modules
+  (`build/C2-rootsweep-summary.txt`, `logs/rootsweep/`, `logs/rootsweep-pool.log`).
 - **C3** `decls2.py`: 50 ADDED, nothing else (`checks/C3-decls2.txt`); StmtDump: 61 public
   constants (50 declarations + 11 `_proof_N` auxiliaries).
 - **C4** no `sorry`/`admit`/`native_decide`/`axiom`/`opaque` (one hit: the word "axiom" in
@@ -193,9 +213,34 @@ anywhere at the base, IO, #377's head or S2-A's branch (C10).
   `8⁻¹ mod 12 → 11` (Mathlib's `gcdA` residue for a non-unit), `7⁻¹ mod 12 → 7`, `b = 0 → sign`.
   Kernel `decide`: `mulStr` and `leStr` instances pass; `xgcdStr` does not reduce in the kernel
   (well-founded recursion), so it is `#eval` only.
-- **H1-P2** consumer smoke test: needs `ofPrimesInP` (E-SCOPE); it will be in the overlay.
+- **H1-P2** consumer smoke test: needs `ofPrimesInP` (E-SCOPE); it passes on the overlay (§7a).
 - **C13** `git am` of `patches/` at the base with `COMMITS.tsv`'s committer data: 5/5 hashes
   reproduced; `src/` equals the head byte for byte (`checks/C13-reproduction.txt`).
+
+## 7a. The scope-request overlay (`evidence/scope-request/`)
+
+Local branch `scope/ef-h1-readers` from the fill head `0a73fc9c…`:
+
+| # | Commit | Content |
+|---|---|---|
+| R1 | `b3eba3914d1b3532b01b8fe2fbcfaeb068d2f3b2` | S1–S9: `Arithmetic.lean` +44 lines (7 `_eq` readers), `PrimalityMath.lean` +3 (`mem_PRIMES`), `Primality.lean` +4 (`mem_PRIMESBin`) |
+| R2 | `f5e67909ff8a61f67f254217e8de90782a0eb4f6` | the targets: `polyTimeComputable_{mul,add,sub,divMod,modExp,le}Str` (A), `polyTimeComputable_xgcdStr` (B), `primeBit_eq_indicator`, `primesInP_iff_polyTimeComputable_primeBit`, `polyTimeComputable_primeStr_of_primesInP`, `primesInP_of_polyTimeComputable_primeStr`, `ArithmeticFP.ofPrimesInP`, `arithmeticFP_iff_primesInP` (C); module docstrings updated |
+
+- Patches: `scope-request/patches/` (`git format-patch 0a73fc9c..f5e67909`).
+- Build (own olean tree; 170 unaffected modules seeded from the lead tree, sources and
+  upstreams byte-identical, list `seed-list.txt`): the 16 affected modules rebuilt in order,
+  all rc 0 (`build-pool.log`), i.e. every existing consumer of `Arithmetic.lean` and
+  `Primality.lean` in the closure (`Concrete`, `Factoring`, `RSA`, `Rabin`, `DiscreteLog`,
+  `DiscreteLogHardcore`, `DDH`, `ElGamal`, `Encoding/BinaryArith`) is unaffected; summary at
+  the overlay head `build/summary.txt` (7 changed modules rc 0, 0 errors, 0 `sorry`).
+- `decls2.py` against the fill head: 22 ADDED, nothing else.
+- Reproduction: `git am` of the two patches at the fill head with `COMMITS.tsv`'s committer data
+  gives both hashes; `src/` equals the overlay head (`C13-reproduction.txt`).
+- Seals coe-A and strict-B on the three new files at the overlay head: PASS.
+- **H1-P2** (`H1P2.lean`, `H1P2.log`): `ArithmeticFP.ofPrimesInP h` elaborates where
+  `factoringCollection_oneWay`, `rsaCollection_oneWay`, `dlCollection_oneWay` and
+  `polyTimeComputable_expEval` expect `H : ArithmeticFP`; `#print axioms` of the 13 new targets:
+  all exactly `[propext, Classical.choice, Quot.sound]`.
 
 ## 8. Overlap and reuse
 
@@ -259,7 +304,14 @@ Definition 7.4); the ingested draft numbers that subsection **7.2.1**, while TCS
   `ofPrimesInP` stated from `PolyTimeComputable primeStr` (ruling Q-H1-1 B's form) meanwhile.
 - **C.** Grant a Rule-10 exception for these `rfl` reads in the new files (not recommended).
 
-**EF-H1-W2. Anchor corrections** (§9): accept [PS10, p. 33, §2.6.5] and [AB09, §7.2.2]
+**EF-H1-W2. The root sweep's PFR gap.** `TCSlib.lean` cannot be elaborated on a fill host
+without `PFR` oleans.
+- **A (recommended).** The maintainer's landing replay (which has PFR built) checks `TCSlib`;
+  this delivery's C2 stands for the 1,428 other modules.
+- **B.** Authorize a narrowed build of the `PFR` package for wave-1 fills (an exception to the
+  `lake build` ban).
+
+**EF-H1-W3. Anchor corrections** (§9): accept [PS10, p. 33, §2.6.5] and [AB09, §7.2.2]
 (block `p003-b004`).
 
 ## 11. Evidence manifest
@@ -269,4 +321,4 @@ delivered file. Main items: `logs/` (preflight, cache, pool, bootstrap per modul
 `build/` (order, summary, per-module logs), `checks/` (C3, C4, C7, C9, C10, C11, C13,
 merge-tree), `probes/` (H1P1, StmtDump, Axioms, C5 summary), `seals/` (results, candidate
 lists per variant, controls, unfold scan, tools used), `lint/`, `tools/` (my scripts),
-`scope-request/`.
+`scope-request/` (the overlay: patches, COMMITS.tsv, src, build, seals, H1-P2, reproduction).
