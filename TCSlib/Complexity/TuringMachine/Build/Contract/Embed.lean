@@ -96,6 +96,25 @@ noncomputable def embed {m : ℕ} (σ : Fin m ↪ Fin k) {S : Type} {M : MultiTa
       rw [hf.2, Function.extend_apply' _ _ _ hne, Function.extend_apply' _ _ _ hne]
       exact Finset.mem_Icc.mpr ⟨le_rfl, le_rfl⟩
 
+/-- The embedded contract's precondition is the source precondition on the selected bank. -/
+theorem embed_pre {m : ℕ} (σ : Fin m ↪ Fin k) {S : Type} {M : MultiTapeTM m Γ S}
+    {entry : S} {X : Set (Option S)} {ι : Type} {x : List Γ}
+    (C : Contract M entry X ι x) (i : ι) (d : Cfg k Γ S x) :
+    (embed σ C).pre i d = C.pre i (d.select σ) := rfl
+
+/-- The embedded contract's time is the source time on the selected bank. -/
+theorem embed_time {m : ℕ} (σ : Fin m ↪ Fin k) {S : Type} {M : MultiTapeTM m Γ S}
+    {entry : S} {X : Set (Option S)} {ι : Type} {x : List Γ}
+    (C : Contract M entry X ι x) (i : ι) (d : Cfg k Γ S x) :
+    (embed σ C).time i d = C.time i (d.select σ) := rfl
+
+/-- The embedded contract's endpoint is the source endpoint embedded in the original frame. -/
+theorem embed_post {m : ℕ} (σ : Fin m ↪ Fin k) {S : Type} {M : MultiTapeTM m Γ S}
+    {entry : S} {X : Set (Option S)} {ι : Type} {x : List Γ}
+    (C : Contract M entry X ι x) (i : ι) (d : Cfg k Γ S x) :
+    (embed σ C).post i d =
+      embedEmitCfg σ d.workTapes d.workTapePos d.output (C.post i (d.select σ)) := rfl
+
 /-- **`embed` preserves joint trajectories**: the source relation holds of the selected heads,
 at the selection, and every unselected head stays at its start.
 
