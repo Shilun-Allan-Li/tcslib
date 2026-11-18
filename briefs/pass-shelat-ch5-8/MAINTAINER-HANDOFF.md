@@ -73,6 +73,11 @@ in this folder (identical).
     machine, so that security theorems connect to the NUPPT-stated assumptions. Existing gaps
     (inventory `briefs/efficiency-gaps/`) are holes to plug, not accepted debt. New statement
     briefs, fills and gates check this; a missing efficiency proof is at least a major.
+    **Efficiency is baked into the definitions** (Seyoon, same day): every cryptographic primitive's
+    definition (scheme interfaces, families, generators) carries its honest algorithms' efficiency
+    as part of the structure, so no instance exists without the proof. A construction may first be
+    built as a "raw" algorithm bundle with its correctness/security, but the primitive itself is
+    only inhabited once efficiency is proved.
 
 ## 3. Rulings in force (full list: the decision log, `../../PassShelatChapter5-8Plan.md`)
 
