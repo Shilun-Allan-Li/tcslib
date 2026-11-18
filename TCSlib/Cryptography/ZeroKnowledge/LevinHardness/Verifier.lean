@@ -1,0 +1,328 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
+-/
+import TCSlib.Cryptography.ZeroKnowledge.LevinHardness.Relations
+import TCSlib.Cryptography.ZeroKnowledge.InteractiveProofs
+import TCSlib.Complexity.CircuitComplexity.CircuitSatNPHard
+import TCSlib.Complexity.CircuitComplexity.CircuitEvalCorrect
+import TCSlib.Complexity.PolyHierarchy.Padding
+import TCSlib.Complexity.ClassP.BinaryArith.Loops
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Step 1 of the circuit route: from a witness relation to CKT-SAT, with the witness
+
+The first step of the Levin reduction `(L, R) → (CKT-SAT, R_CKT)` [AB09, Lemma 6.10]: for a
+witness relation `R` of `L` (`WitnessRelation`, [PS10, Definition 191.11]) with length bound `q`
+and polynomial-time decider `b` on `⟨x, y⟩`,
+
+* the **certificate** of a witness `y` of `x` is `certOf q x y = y ++ 1 0^{q(|x|) - |y|}`, of
+  length exactly `q(|x|) + 1`, from which `y` is recovered by stripping at the last `1`
+  (`Turing.splitAtLastTrue`, `Complexity.PolyHierarchy.splitAtLastTrue_marker`);
+* the **verifier test** `verTest b ⟨x, u⟩` strips the certificate `u` with the catalog's marker
+  strip (`Turing.FinTM.computesFunInTime_stripLast`) and runs `b` on `⟨x, y⟩`, rejecting a
+  certificate without marker; it is polynomial-time;
+* the **instance map** prints, with the polynomial-time emitter of [AB09, Remark 6.7]
+  (`Complexity.UTab.tabEmit`), the uniform configuration tableau of a machine `M` computing the
+  test, run for `t(|x|)` steps on the virtual input `⟨x, []⟩ ++ u = ⟨x, u⟩`
+  (`Complexity.BinArith.pairEncode_nil_append`): `⟨x, []⟩` is hard-wired and the certificate `u`
+  is the circuit's input (`Complexity.cfgTab`);
+* the **witness map** is the certificate itself: the tableau circuit outputs `1` on
+  `certOf q x y` whenever `R x y`.
+
+The circuit outputs `1` on a certificate `u` iff `u` strips to a witness, so it is satisfiable
+iff `x ∈ L`.
+
+**Overlap (disclosed, brief EF-H12 item (a)).** The instance map re-instantiates the core of the
+proof of `BoolCircuit.dagCktSatLang_NPHard` (`CircuitSatNPHard.lean:93-127`, [AB09, Lemma 6.10])
+for this explicit verifier: that theorem is existential and provides no witness map. The
+difference: the hard-wired prefix is `⟨x, []⟩` (so the verifier reads a pair and needs no
+length-split search) and the time bound is an explicit `PolyExpr`.
+
+## Main definitions
+
+* `TCSlib.Cryptography.LevinHardness.certOf` — the certificate of a witness.
+* `TCSlib.Cryptography.LevinHardness.stripCert` — the catalog marker strip on a pair.
+* `TCSlib.Cryptography.LevinHardness.verTest` — the verifier test.
+* `TCSlib.Cryptography.LevinHardness.verTime` — the tableau's time bound.
+* `TCSlib.Cryptography.LevinHardness.tabCkt`, `TCSlib.Cryptography.LevinHardness.tabInst` — the
+  tableau circuit of `x` and its description (the instance map).
+
+## Main results
+
+* `TCSlib.Cryptography.LevinHardness.splitAtLastTrue_certOf`, `length_certOf` — the certificate.
+* `TCSlib.Cryptography.LevinHardness.verTest_pairEncode`, `polyTimeComputable_verTest`,
+  `verLang_mem_P` — the verifier and its language in `P`.
+* `TCSlib.Cryptography.LevinHardness.tabInst_eq`, `polyTimeComputable_tabInst`,
+  `tabCkt_isFaninTwo`, `tabCkt_eval` — the instance map prints a fan-in-two circuit computing
+  the verifier on `⟨x, u⟩`.
+* `TCSlib.Cryptography.LevinHardness.exists_tabReduction` — step 1 for a witness relation: a
+  polynomial-time instance map to tableau circuits with `x ∈ L ↔` (the circuit is satisfiable)
+  and `R x y → R_CKT (f₁ x) (certOf q x y)`.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*, Cambridge
+  University Press, 2009. (§6.1.2, Remark 6.7, Lemma 6.10, p. 111.)
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
+  (§4.7, Theorem 124.1, step 2; Appendix B, Definition 191.11.)
+-/
+
+namespace TCSlib.Cryptography.LevinHardness
+
+open Complexity Turing BoolCircuit
+
+/-! ### The certificate -/
+
+/-- **The certificate of a witness** `y` of `x` for the length bound `q`: the witness followed
+by the marker `1` and `q(|x|) - |y|` zeros, `certOf q x y = y ++ 1 0^{q(|x|) - |y|}`
+[PS10, §4.7, Theorem 124.1, step 2]. Glue. -/
+def certOf (q : PolyExpr) (x y : List Bool) : List Bool :=
+  y ++ true :: List.replicate (q.eval x.length - y.length) false
+
+/-- The defining equation of `certOf`: `certOf q x y = y ++ 1 0^{q(|x|) - |y|}`. -/
+theorem certOf_eq (q : PolyExpr) (x y : List Bool) :
+    certOf q x y = y ++ true :: List.replicate (q.eval x.length - y.length) false := rfl
+
+/-- A certificate of a witness within the bound has length exactly `q(|x|) + 1`:
+`|y| ≤ q(|x|) → |certOf q x y| = q(|x|) + 1`. -/
+theorem length_certOf (q : PolyExpr) (x y : List Bool) (hy : y.length ≤ q.eval x.length) :
+    (certOf q x y).length = q.eval x.length + 1 := by
+  rw [certOf_eq]
+  simp only [List.length_append, List.length_cons, List.length_replicate]
+  omega
+
+/-- Stripping a certificate at its last `1` recovers the witness:
+`splitAtLastTrue (certOf q x y) = some y` (`splitAtLastTrue_marker`). -/
+theorem splitAtLastTrue_certOf (q : PolyExpr) (x y : List Bool) :
+    splitAtLastTrue (certOf q x y) = some y := by
+  rw [certOf_eq]
+  exact PolyHierarchy.splitAtLastTrue_marker y _
+
+/-! ### The verifier -/
+
+/-- **The catalog's marker strip on a pair** (the function of
+`Turing.FinTM.computesFunInTime_stripLast`): `⟨a, v⟩ ↦ ⟨a, u⟩` when `v` strips to `u` at its last
+`1`, and `[]` when `v` has no `1` or the input is not a pair. -/
+def stripCert (z : List Bool) : List Bool :=
+  match pairDecode z with
+  | some (a, v) =>
+    match splitAtLastTrue v with
+    | some u => pairEncode a u
+    | none => []
+  | none => []
+
+/-- The defining equation of `stripCert` (the catalog function of
+`Turing.FinTM.computesFunInTime_stripLast`). -/
+theorem stripCert_eq (z : List Bool) :
+    stripCert z = match pairDecode z with
+      | some (a, v) =>
+        match splitAtLastTrue v with
+        | some u => pairEncode a u
+        | none => []
+      | none => [] := rfl
+
+/-- **The marker strip is polynomial-time** (`Turing.FinTM.computesFunInTime_stripLast`). -/
+theorem polyTimeComputable_stripCert : PolyTimeComputable stripCert := by
+  obtain ⟨M, c, hM⟩ := FinTM.computesFunInTime_stripLast
+  exact (polyTimeComputable_iff _).2 ⟨M, c, 2, hM⟩
+
+/-- **The verifier test** for the decider `b` of a witness relation: strip the certificate of
+`⟨x, u⟩` and run `b` on the resulting pair `⟨x, y⟩`; reject when the strip fails,
+`verTest b z = (pairDecode (stripCert z)).isSome && b (stripCert z)`. Glue. -/
+def verTest (b : List Bool → Bool) (z : List Bool) : Bool :=
+  (pairDecode (stripCert z)).isSome && b (stripCert z)
+
+/-- The defining equation of `verTest`. -/
+theorem verTest_eq (b : List Bool → Bool) (z : List Bool) :
+    verTest b z = ((pairDecode (stripCert z)).isSome && b (stripCert z)) := rfl
+
+/-- **The verifier on a pair**: `verTest b ⟨x, u⟩` runs `b` on `⟨x, y⟩` when `u` strips to `y`
+at its last `1`, and rejects when `u` has no `1`. -/
+theorem verTest_pairEncode (b : List Bool → Bool) (x u : List Bool) :
+    verTest b (pairEncode x u) =
+      match splitAtLastTrue u with
+      | some y => b (pairEncode x y)
+      | none => false := by
+  rw [verTest_eq, stripCert_eq, pairDecode_pairEncode]
+  cases hs : splitAtLastTrue u with
+  | none => simp only [hs, pairDecode_nil, Option.isSome_none, Bool.false_and]
+  | some y => simp only [hs, pairDecode_pairEncode, Option.isSome_some, Bool.true_and]
+
+/-- The verifier accepts the pair of `x` and a certificate of `y` iff `b` accepts `⟨x, y⟩`:
+`verTest b ⟨x, certOf q x y⟩ = b ⟨x, y⟩`. -/
+theorem verTest_certOf (b : List Bool → Bool) (q : PolyExpr) (x y : List Bool) :
+    verTest b (pairEncode x (certOf q x y)) = b (pairEncode x y) := by
+  rw [verTest_pairEncode, splitAtLastTrue_certOf]
+
+/-- An accepted pair `⟨x, u⟩` has a stripped witness accepted by `b`:
+`verTest b ⟨x, u⟩ = true → ∃ y, b ⟨x, y⟩ = true`. -/
+theorem exists_of_verTest (b : List Bool → Bool) (x u : List Bool)
+    (h : verTest b (pairEncode x u) = true) : ∃ y, b (pairEncode x y) = true := by
+  rw [verTest_pairEncode] at h
+  cases hs : splitAtLastTrue u with
+  | none => rw [hs] at h; exact absurd h Bool.false_ne_true
+  | some y => rw [hs] at h; exact ⟨y, h⟩
+
+/-- **The verifier test is polynomial-time** when the decider `b` is:
+`PolyTimeComputable (fun z => [b z]) → PolyTimeComputable (fun z => [verTest b z])`
+(`polyTimeComputable_and` of the pair-validity row and `b`, both after the marker strip). -/
+theorem polyTimeComputable_verTest {b : List Bool → Bool}
+    (hb : PolyTimeComputable fun z => [b z]) :
+    PolyTimeComputable fun z => [verTest b z] := by
+  have hvalid : PolyTimeComputable fun z => [(pairDecode z).isSome] :=
+    polyTimeComputable_of_linear FinTM.computesFunInTime_pairValid
+  exact polyTimeComputable_and
+    (BinArith.polyTimeComputable_test_app hvalid polyTimeComputable_stripCert)
+    (BinArith.polyTimeComputable_test_app hb polyTimeComputable_stripCert)
+
+/-- **The verifier language is in `P`** [AB09, Lemma 6.10, the verifier of `L ∈ NP`]:
+`{z | verTest b z = true} ∈ P` for a polynomial-time decider `b`. -/
+theorem verLang_mem_P {b : List Bool → Bool} (hb : PolyTimeComputable fun z => [b z]) :
+    {z | verTest b z = true} ∈ P :=
+  mem_P_of_test (polyTimeComputable_verTest hb)
+
+/-! ### The tableau instance map -/
+
+/-- **The tableau's time bound** for a test machine running within `C (N + 1)^c` steps and
+certificates of length `m(n)`: `verTime C c m n = C (2n + 3 + m(n))^c + 1`, which bounds the
+machine's time on `⟨x, u⟩` (length `2|x| + 2 + m(|x|)`) and is at least `1`. Glue. -/
+def verTime (C c : ℕ) (m : PolyExpr) : PolyExpr :=
+  .add (.mul (.const C) (.pow (.add (.add (.mul (.const 2) .var) (.const 3)) m) c)) (.const 1)
+
+/-- The value of `verTime`: `verTime C c m` at `n` is `C (2n + 3 + m(n))^c + 1`. -/
+theorem eval_verTime (C c : ℕ) (m : PolyExpr) (n : ℕ) :
+    (verTime C c m).eval n = C * (2 * n + 3 + m.eval n) ^ c + 1 := by
+  simp [verTime]
+
+/-- **The tableau circuit of `x`** for a machine `M`, certificate length `m` and time `t`: the
+uniform configuration tableau (`Complexity.cfgTab`, [AB09, Remark 6.7]) of `M` on the virtual
+input `⟨x, []⟩ ++ u` for `t(|x|)` steps, with `m(|x|)` inputs `u`. -/
+noncomputable def tabCkt (M : FinTM Bool) (m t : PolyExpr) (x : List Bool) :
+    DAGCircuit (m.eval x.length) :=
+  cfgTab M (m.eval x.length) (pairEncode x []) (t.eval x.length)
+
+/-- The defining equation of `tabCkt`: `tabCkt M m t x = cfgTab M m(|x|) ⟨x, []⟩ t(|x|)`. -/
+theorem tabCkt_eq (M : FinTM Bool) (m t : PolyExpr) (x : List Bool) :
+    tabCkt M m t x = cfgTab M (m.eval x.length) (pairEncode x []) (t.eval x.length) := rfl
+
+/-- The tableau circuit has fan-in two (`Complexity.cfgTab_isFaninTwo`). -/
+theorem tabCkt_isFaninTwo (M : FinTM Bool) (m t : PolyExpr) (x : List Bool) :
+    (tabCkt M m t x).IsFaninTwo := by
+  rw [tabCkt_eq]
+  exact cfgTab_isFaninTwo M _ _ _
+
+/-- **The instance map** [AB09, Lemma 6.10]: the emitter of [AB09, Remark 6.7] on
+`1^{m(|x|)} 0 1^{t(|x|)} 0 ⟨x, []⟩`, as in the proof of `BoolCircuit.dagCktSatLang_NPHard`. -/
+noncomputable def tabInst (M : FinTM Bool) (m t : PolyExpr) (x : List Bool) : List Bool :=
+  UTab.tabEmit M (List.replicate (m.eval x.length) true ++ false ::
+    (List.replicate (t.eval x.length) true ++ false :: pairEncode x []))
+
+/-- The defining equation of `tabInst`. -/
+theorem tabInst_def (M : FinTM Bool) (m t : PolyExpr) (x : List Bool) :
+    tabInst M m t x = UTab.tabEmit M (List.replicate (m.eval x.length) true ++ false ::
+      (List.replicate (t.eval x.length) true ++ false :: pairEncode x [])) := rfl
+
+/-- **The instance map prints the tableau circuit**: for `t(|x|) ≥ 1`,
+`tabInst M m t x = (tabCkt M m t x).encode` (`Complexity.UTab.tabEmit_eq`). -/
+theorem tabInst_eq (M : FinTM Bool) (m t : PolyExpr) (x : List Bool)
+    (ht : 1 ≤ t.eval x.length) : tabInst M m t x = (tabCkt M m t x).encode := by
+  rw [tabInst_def, tabCkt_eq]
+  exact UTab.tabEmit_eq M _ _ _ ht
+
+/-- **The instance map is polynomial-time** (`Complexity.UTab.polyTimeComputable_tabEmit` after
+the front end `Complexity.polyTimeComputable_tabInput`). -/
+theorem polyTimeComputable_tabInst (M : FinTM Bool) (m t : PolyExpr) :
+    PolyTimeComputable (tabInst M m t) := by
+  have hpair : PolyTimeComputable fun x : List Bool => pairEncode x [] :=
+    polyTimeComputable_id.pairEncode (polyTimeComputable_const [])
+  exact (UTab.polyTimeComputable_tabEmit M).comp (polyTimeComputable_tabInput
+    (polyTimeComputable_unaryPoly m) (polyTimeComputable_unaryPoly t) hpair)
+
+/-- **The tableau circuit computes the test on `⟨x, u⟩`**: if `M` computes `z ↦ [β z]` within
+`C (N + 1)^c` steps, then on every input `v` the circuit `tabCkt M m (verTime C c m) x` outputs
+`β ⟨x, v⟩` (`Complexity.cfgTab_eval`, `Complexity.decide_emits_eq_of_computesInTime`).
+
+**Proof sketch.** The tableau outputs `1` iff some step before `t(|x|)` of `M` on
+`⟨x, []⟩ ++ v = ⟨x, v⟩` emits `1`; the input has length `2|x| + 2 + m(|x|)`, so `M` halts
+with output `[β ⟨x, v⟩]` within `C(2|x| + 3 + m(|x|))^c ≤ t(|x|)` steps, and the emissions are
+exactly that output. -/
+theorem tabCkt_eval {M : FinTM Bool} {β : List Bool → Bool} {C c : ℕ}
+    (hM : M.ComputesFunInTime (fun z => [β z]) fun n => C * (n + 1) ^ c) (m : PolyExpr)
+    (x : List Bool) (v : Fin (m.eval x.length) → Bool) :
+    (tabCkt M m (verTime C c m) x).eval v = β (pairEncode x (List.ofFn v)) := by
+  rw [tabCkt_eq, cfgTab_eval, BinArith.pairEncode_nil_append]
+  apply decide_emits_eq_of_computesInTime
+  refine ((FinTM.computesFunInTime_iff M _ _).1 hM _).mono ?_
+  rw [eval_verTime, length_pairEncode, List.length_ofFn]
+  have h : 2 * x.length + 2 + m.eval x.length + 1 = 2 * x.length + 3 + m.eval x.length := by
+    omega
+  rw [h]
+  exact Nat.le_succ _
+
+/-! ### Step 1 for a witness relation -/
+
+/-- **Step 1 of the Levin reduction to `3COL`** [AB09, Lemma 6.10] with the witness map of
+[PS10, §4.7, Theorem 124.1, step 2]: for a witness relation `R` of `L` there are a length bound
+`q`, a machine `M` and constants `C, c` such that, for `m = q + 1` and `t = verTime C c m`,
+the polynomial-time instance map `f₁ = tabInst M m t` prints the fan-in-two tableau circuit
+`tabCkt M m t x`,
+* `x ∈ L ↔ ∃ v, (tabCkt M m t x).eval v = true`, and
+* `R x y → R_CKT (f₁ x) (certOf q x y)` (the certificate is the witness of `R_CKT`).
+
+**Proof sketch.** Take `q` from `WitnessRelation.bounded` and the decider `b` from
+`WitnessRelation.decidable`; `M` computes the verifier test `verTest b`
+(`polyTimeComputable_verTest`) within `C (N + 1)^c`. By `tabCkt_eval` the circuit outputs
+`verTest b ⟨x, v⟩` on `v`. If `R x y`, then `|y| ≤ q(|x|)`, the certificate has the circuit's
+input length (`length_certOf`) and `verTest b ⟨x, certOf q x y⟩ = b ⟨x, y⟩ = true`
+(`verTest_certOf`), which is the witness of `R_CKT` (`ofFn_getD_eq_take` reads the input back).
+Conversely an accepting input strips to some `y` with `b ⟨x, y⟩ = true`, i.e. `R x y`
+(`exists_of_verTest`), so `x ∈ L`. -/
+theorem exists_tabReduction {L : Language Bool} {R : List Bool → List Bool → Prop}
+    (hR : WitnessRelation L R) :
+    ∃ (q : PolyExpr) (M : FinTM Bool) (C c : ℕ),
+      PolyTimeComputable (tabInst M (q.add (.const 1)) (verTime C c (q.add (.const 1)))) ∧
+      (∀ x, tabInst M (q.add (.const 1)) (verTime C c (q.add (.const 1))) x =
+        (tabCkt M (q.add (.const 1)) (verTime C c (q.add (.const 1))) x).encode) ∧
+      (∀ x, (tabCkt M (q.add (.const 1)) (verTime C c (q.add (.const 1))) x).IsFaninTwo) ∧
+      (∀ x, x ∈ L ↔
+        ∃ v, (tabCkt M (q.add (.const 1)) (verTime C c (q.add (.const 1))) x).eval v = true) ∧
+      ∀ x y, R x y →
+        R_CKT (tabInst M (q.add (.const 1)) (verTime C c (q.add (.const 1))) x)
+          (certOf q x y) := by
+  obtain ⟨q, hq⟩ := hR.bounded
+  obtain ⟨b, hb, hbR⟩ := hR.decidable
+  obtain ⟨M, C, c, hM⟩ := (polyTimeComputable_iff _).1 (polyTimeComputable_verTest hb)
+  set m : PolyExpr := q.add (.const 1) with hm
+  set t : PolyExpr := verTime C c m with ht
+  have ht1 : ∀ x : List Bool, 1 ≤ t.eval x.length := fun x => by
+    rw [ht, eval_verTime]; exact Nat.le_add_left _ _
+  have heval := tabCkt_eval hM m
+  -- the certificate of a witness is accepted
+  have hcert : ∀ x y, R x y →
+      (tabCkt M m t x).eval (fun i => (certOf q x y).getD i false) = true := by
+    intro x y hxy
+    have hlen : (certOf q x y).length = m.eval x.length := by
+      rw [length_certOf q x y (hq x y hxy), hm, PolyExpr.eval_add, PolyExpr.eval_const]
+    rw [heval, CircuitEval.ofFn_getD_eq_take _ _ hlen.ge, List.take_of_length_le hlen.le,
+      verTest_certOf]
+    exact (hbR x y).2 hxy
+  refine ⟨q, M, C, c, polyTimeComputable_tabInst M m t,
+    fun x => tabInst_eq M m t x (ht1 x), fun x => tabCkt_isFaninTwo M m t x,
+    fun x => ⟨?_, ?_⟩, fun x y hxy => ?_⟩
+  · intro hx
+    obtain ⟨y, hxy⟩ := (hR.mem_iff x).1 hx
+    exact ⟨_, hcert x y hxy⟩
+  · rintro ⟨v, hv⟩
+    rw [heval] at hv
+    obtain ⟨y, hy⟩ := exists_of_verTest b x _ hv
+    exact (hR.mem_iff x).2 ⟨y, (hbR x y).1 hy⟩
+  · exact (R_CKT_iff _ _).2 ⟨_, tabCkt M m t x, tabCkt_isFaninTwo M m t x,
+      (tabInst_eq M m t x (ht1 x)).symm, hcert x y hxy⟩
+
+end TCSlib.Cryptography.LevinHardness
