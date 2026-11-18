@@ -1,0 +1,8 @@
+by
+  have hED : 1 ≤ P.E * P.D :=
+    Nat.mul_le_mul P.one_le_E (Nat.succ_le_of_lt P.D_pos)
+  simp only [P.kappaOfN_eq, P.n_eq, P.ℓ_eq, ← Nat.pow_mul, ← PadQuad.nu_eq]
+  apply le_antisymm
+  · exact (Nat.pow_le_pow_iff_left (Nat.one_le_iff_ne_zero.mp hED)).1
+      (PadQuad.nu_pow_le hED (κ ^ (P.E * P.D)))
+  · exact PadQuad.le_nu hED le_rfl

@@ -1,0 +1,21 @@
+From cd916ad868f1b921d1716d618f2fa1f9f8bbfdcf Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 03:18:42 -0800
+Subject: [PATCH 11/15] io-sprg: reuse existing bounded power inverse API
+
+---
+ TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean
+index 94db557c891347130ec66bcb23407a6de3f5651b..62699279cb1d037db36a99697bec8500ea7ca716 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean
+@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.Obfuscation.StructuredSeed.Defs
+ import TCSlib.Cryptography.Obfuscation.StructuredSeed.LPN
++import TCSlib.Cryptography.Asymptotic.UniversalPadding.Parameter
+ import Mathlib.Data.Nat.Find
+ import Mathlib.Data.Nat.Log
+ import Mathlib.Algebra.Order.Floor.Ring

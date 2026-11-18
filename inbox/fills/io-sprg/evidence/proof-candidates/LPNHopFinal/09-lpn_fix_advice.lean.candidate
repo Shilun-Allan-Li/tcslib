@@ -1,0 +1,110 @@
+/- NOT_RUN. Actual-nuisance-law averaging, dependencies07/08 and their bridges.
+No B occurs: advice is fixed from the IDEAL raw gap before any realiser.
+Typed Fubini/update rewrites are isolated in hreal/huniform for root pretests.
+No generic averaging/resampling theorem, sampler, machine or algorithm defined. -/
+
+theorem lpn_fix_advice (P : Params) (π : PrimeSchedule) (A : NUPPT) (L : ℕ)
+    (h : L = P.ℓ (P.kappaOf L)) (tailReal : Bool)
+    (hop : Fin (P.kappaOf L + 1)) (hhop : hop.val < P.kappaOf L) :
+    ∃ w : P.LPNAdvice π L,
+      Games.advantage (P.chainGame A tailReal hop.val (P.kappaOf L) (π (P.kappaOf L)))
+        (P.chainGame A tailReal (hop.val + 1) (P.kappaOf L) (π (P.kappaOf L))) ≤
+      LWE.decisionAdvantage ((P.lpnFamily_raw π).toLWE.parameters L)
+        ((P.lpnFamily_raw π).toLWE.noise L)
+        (fun x (r : A.Coins (P.kappaOf L)) =>
+          decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])) := by
+  classical
+  let κ := P.kappaOf L
+  let pp := π κ
+  let GDraw := P.G.IdDraw (P.n κ)
+  let Buck := Fin (P.m κ) → Fin (P.B κ)
+  let Σ := Fin (P.n κ) → Bool
+  let Rep := (Fin (P.ℓ κ) → ZMod pp.p) ×
+    (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
+  let Table := Fin κ → Rep
+  let V := Fin (P.n κ) → ZMod pp.p
+  let U := Fin κ → V
+  let Tail := Fin (P.m κ) → Bool
+  let Mat := Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p)
+  let Ω := GDraw × (Buck × (Σ × (Table × (U × Tail))))
+  let k : Fin κ := ⟨hop.val, hhop⟩
+  let mk : Ω → P.LPNAdvice π L := fun ν =>
+    { hop := hop
+      I := P.G.idCore (P.n κ) ν.1
+      buckets := ν.2.1
+      draw := (ν.2.2.1, ν.2.2.2.1)
+      uniform := ν.2.2.2.2.1
+      tail := if tailReal then
+        fun j => P.G.eval (P.n κ) (P.G.idCore (P.n κ) ν.1) ν.2.2.1 (P.outputIndex κ j)
+        else ν.2.2.2.2.2 }
+  let disc := fun (ν : Ω) x (r : A.Coins κ) =>
+    decide (A.runAtL κ (P.lpnPre π L (mk ν) x) (List.ofFn r) = [true])
+  let R : Ω → ℝ := fun ν => acceptProb
+    (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L)
+      ((P.lpnFamily_raw π).toLWE.noise L)) (disc ν)
+  let Uacc : Ω → ℝ := fun ν => acceptProb (id : P.LPNChal π L → _) (disc ν)
+  have hsecR (ν : Ω) := lpn_real_section P π A L h (mk ν) k rfl
+  have hsecU (ν : Ω) := lpn_uniform_section P π A L h (mk ν) k rfl
+  have hreal : Games.accept (P.chainGame A tailReal hop.val κ pp) =
+      Games.ProbComp.expect (Games.ProbComp.sample Ω) R
+  · symm
+    simp_rw [R, disc, hsecR]
+    dsimp only [mk]
+    simp only [← Games.Bridge.expect_sample_pair
+        (α := GDraw) (β := Buck × (Σ × (Table × (U × Tail)))),
+      ← Games.Bridge.expect_sample_pair (α := Buck) (β := Σ × (Table × (U × Tail))),
+      ← Games.Bridge.expect_sample_pair (α := Σ) (β := Table × (U × Tail)),
+      ← Games.Bridge.expect_sample_pair (α := Table) (β := U × Tail),
+      ← Games.Bridge.expect_sample_pair (α := U) (β := Tail),
+      Games.ProbComp.expect_bind, Games.ProbComp.expect_pure]
+    simp_rw [Games.ProbComp.expect_sample_comm (α := Tail) (β := Mat),
+      Games.ProbComp.expect_sample_comm (α := U) (β := Mat),
+      Games.ProbComp.expect_sample_comm (α := Table) (β := Mat),
+      Games.ProbComp.expect_sample_comm (α := Σ) (β := Mat),
+      Games.ProbComp.expect_sample_comm (α := Tail) (β := Rep),
+      Games.ProbComp.expect_sample_comm (α := U) (β := Rep)]
+    simp_rw [Games.ProbComp.expect_sample_update k]
+    rw [P.chainGame_eq, Games.accept_eq, Games.ProbComp.prob_eq_expect]
+    simp only [P.idSamp'_eq, Games.ProbComp.expect_bind, Games.ProbComp.expect_map,
+      Games.ProbComp.expect_pure, P.idCore_eq, NUPPT.distinguisherL_eq,
+      NUPPT.runAt_eq, decide_eq_true_eq]
+    simp only [← Games.Bridge.expect_sample_pair (α := GDraw) (β := Buck × Mat),
+      ← Games.Bridge.expect_sample_pair (α := Buck) (β := Mat),
+      ← Games.Bridge.expect_sample_pair (α := Σ) (β := Table),
+      Games.ProbComp.expect_bind, Games.ProbComp.expect_pure]
+    all_goals rfl
+  have huniform : Games.accept (P.chainGame A tailReal (hop.val + 1) κ pp) =
+      Games.ProbComp.expect (Games.ProbComp.sample Ω) Uacc
+  · symm
+    simp_rw [Uacc, disc, hsecU]
+    dsimp only [mk]
+    simp only [← Games.Bridge.expect_sample_pair
+        (α := GDraw) (β := Buck × (Σ × (Table × (U × Tail)))),
+      ← Games.Bridge.expect_sample_pair (α := Buck) (β := Σ × (Table × (U × Tail))),
+      ← Games.Bridge.expect_sample_pair (α := Σ) (β := Table × (U × Tail)),
+      ← Games.Bridge.expect_sample_pair (α := Table) (β := U × Tail),
+      ← Games.Bridge.expect_sample_pair (α := U) (β := Tail),
+      Games.ProbComp.expect_bind, Games.ProbComp.expect_pure]
+    simp_rw [Games.ProbComp.expect_sample_comm (α := Tail) (β := Mat),
+      Games.ProbComp.expect_sample_comm (α := U) (β := Mat),
+      Games.ProbComp.expect_sample_comm (α := Table) (β := Mat),
+      Games.ProbComp.expect_sample_comm (α := Σ) (β := Mat),
+      Games.ProbComp.expect_sample_comm (α := Tail) (β := V)]
+    simp_rw [Games.ProbComp.expect_sample_update k]
+    rw [P.chainGame_eq, Games.accept_eq, Games.ProbComp.prob_eq_expect]
+    simp only [P.idSamp'_eq, Games.ProbComp.expect_bind, Games.ProbComp.expect_map,
+      Games.ProbComp.expect_pure, P.idCore_eq, NUPPT.distinguisherL_eq,
+      NUPPT.runAt_eq, decide_eq_true_eq]
+    simp only [← Games.Bridge.expect_sample_pair (α := GDraw) (β := Buck × Mat),
+      ← Games.Bridge.expect_sample_pair (α := Buck) (β := Mat),
+      ← Games.Bridge.expect_sample_pair (α := Σ) (β := Table),
+      Games.ProbComp.expect_bind, Games.ProbComp.expect_pure]
+    all_goals rfl
+  have havg := Games.ProbComp.abs_expect_sub_le_expect
+    (Games.ProbComp.sample Ω) (f := R) (g := Uacc)
+    (h := fun ν => |R ν - Uacc ν|) (fun _ => le_rfl)
+  obtain ⟨ν, hν⟩ := LamportReduction.exists_expect_sample_le
+    (fun ν : Ω => |R ν - Uacc ν|)
+  refine ⟨mk ν, ?_⟩
+  rw [Games.advantage_eq, hreal, huniform, LWE.decisionAdvantage_eq, distAdv_def]
+  exact havg.trans hν

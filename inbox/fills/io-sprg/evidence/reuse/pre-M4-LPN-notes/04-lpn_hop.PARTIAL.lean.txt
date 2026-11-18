@@ -1,0 +1,30 @@
+-- PARTIAL existing theorem body. NOT_RUN; two specialized M4 obligations, no new imports.
+by
+  classical
+  -- Canonical fixed-advice LWE gap with A's SHORT coins, not a replacement assumption.
+  let gap : ∀ L, P.LPNAdvice π L → ℝ := fun L w =>
+    LWE.decisionAdvantage ((P.lpnFamily_raw π).toLWE.parameters L)
+      ((P.lpnFamily_raw π).toLWE.noise L)
+      (fun x (r : A.Coins (P.kappaOf L)) =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true]))
+  -- M4-LPN-AVG: average ACTUAL nuisance draws, with fixed selected hop and correlated tail.
+  -- G.Idx follows G.idSamp, never a uniform choice of all LPNAdvice records.
+  have hfixed : ∀ L, ∃ w : P.LPNAdvice π L,
+      L = P.ℓ (P.kappaOf L) → (hops (P.kappaOf L)).val < P.kappaOf L →
+      Games.advantage
+        (P.chainGame A (tails (P.kappaOf L)) (hops (P.kappaOf L)).val
+          (P.kappaOf L) (π (P.kappaOf L)))
+        (P.chainGame A (tails (P.kappaOf L)) ((hops (P.kappaOf L)).val + 1)
+          (P.kappaOf L) (π (P.kappaOf L))) ≤ gap L w := sorry
+  choose w hw using hfixed
+  refine ⟨w, ?_⟩
+  intro B hB
+  -- M4-LPN-COINS: canonical advantage readers + shared realiser verdict/layout readers.
+  -- Reuse pushesUniform_restrict.uprob_eq and OneWay.ofFn_castLE_eq_take.
+  have hcoins : ∀ L, gap L (w L) = (P.lpnFamily_raw π).adv B L := sorry
+  intro κ hhop
+  have hi : P.ℓ κ = P.ℓ (P.kappaOf (P.ℓ κ)) :=
+    congrArg P.ℓ (P.kappaOf_ell κ).symm
+  have hfix := hw (P.ℓ κ) hi
+  rw [P.kappaOf_ell κ] at hfix
+  exact (hfix hhop).trans (hcoins (P.ℓ κ)).le

@@ -1,0 +1,23 @@
+by
+  have hw : 0 < P.w κ
+  · rw [P.w_eq]
+    exact P.noiseWidth_pos _
+  have hW : 0 < P.W κ := P.W_pos κ
+  have hB : P.B κ ≤ P.m κ * κ / P.W κ + 1
+  · rw [P.B_eq, P.t_eq]
+    apply max_le
+    · omega
+    · exact (Nat.div_le_div_right (Nat.sub_le _ _)).trans_eq
+        (Nat.add_div_right _ hW)
+  have hBw : P.B κ * P.w κ ≤
+      (P.m κ * κ / P.w κ) / P.w κ * P.w κ + P.w κ
+  · convert Nat.mul_le_mul_right (P.w κ) hB using 1
+    rw [P.W_eq, pow_two, ← Nat.div_div_eq_div_mul, add_mul, one_mul]
+  have hm : P.m κ * κ ≤ (κ * (P.m κ / P.w κ + 1)) * P.w κ
+  · have hm' := Nat.mul_le_mul_right κ (Nat.lt_mul_div_succ (P.m κ) hw).le
+    nlinarith
+  have hq : P.m κ * κ / P.w κ ≤ κ * (P.m κ / P.w κ + 1) :=
+    (Nat.div_le_div_right hm).trans_eq (Nat.mul_div_left _ hw)
+  exact hBw.trans ((Nat.add_le_add_right
+    (Nat.div_mul_le_self (P.m κ * κ / P.w κ) (P.w κ)) (P.w κ)).trans
+      (Nat.add_le_add_right hq (P.w κ)))

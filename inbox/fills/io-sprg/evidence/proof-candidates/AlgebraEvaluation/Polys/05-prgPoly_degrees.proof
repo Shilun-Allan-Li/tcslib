@@ -1,0 +1,55 @@
+by
+  classical
+  have hml := (MvPolynomial.mem_restrictDegree
+    (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j)) 1).mp
+      (P.R.poly_mem_restrictDegree (P.n κ) I'.1 (P.outputIndex κ j))
+  rw [P.prgPoly_eq]
+  constructor
+  · apply pubDegree_finset_sum_le
+    intro h hh
+    have hexp : ∀ i ∈ h.support, h i = 1
+    · intro i hi
+      have hle := hml h hh i
+      have hne := Finsupp.mem_support_iff.mp hi
+      omega
+    have hsum : h.sum (fun _ e => e) = h.support.card
+    · change Finset.sum h.support (fun i => h i) = h.support.card
+      trans Finset.sum h.support (fun _ => 1)
+      · exact Finset.sum_congr rfl hexp
+      · simp
+    have hcard : h.support.card ≤ P.d
+    · have hd := (MvPolynomial.le_totalDegree hh).trans
+        (P.R.totalDegree_poly_le (P.n κ) I'.1 (P.outputIndex κ j))
+      rwa [hsum] at hd
+    have hc := pubDegree_C (σ := P.Pub κ) (τ := P.Priv κ)
+      ((MvPolynomial.coeff h (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j)) : ℤ) : ZMod pp.p)
+    have hl := P.halfForm_pubDegree_le κ pp I' k h 0 copy
+    have hr := P.halfForm_pubDegree_le κ pp I' k h P.D false
+    simp only [Nat.zero_add] at hl
+    have hslots := Internal.monomialSlot_two_halves_card_le h P.D
+    have hmul₁ := pubDegree_mul_le
+      (MvPolynomial.C
+        ((MvPolynomial.coeff h (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j)) : ℤ) : ZMod pp.p))
+      (P.halfForm κ pp I' k h 0 copy)
+    have hmul₂ := pubDegree_mul_le
+      (MvPolynomial.C
+        ((MvPolynomial.coeff h (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j)) : ℤ) : ZMod pp.p) *
+          P.halfForm κ pp I' k h 0 copy)
+      (P.halfForm κ pp I' k h P.D false)
+    omega
+  · apply privDegree_finset_sum_le
+    intro h hh
+    have hc := privDegree_C (σ := P.Pub κ) (τ := P.Priv κ)
+      ((MvPolynomial.coeff h (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j)) : ℤ) : ZMod pp.p)
+    have hl := P.halfForm_privDegree_le κ pp I' k h 0 copy
+    have hr := P.halfForm_privDegree_le κ pp I' k h P.D false
+    have hmul₁ := privDegree_mul_le
+      (MvPolynomial.C
+        ((MvPolynomial.coeff h (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j)) : ℤ) : ZMod pp.p))
+      (P.halfForm κ pp I' k h 0 copy)
+    have hmul₂ := privDegree_mul_le
+      (MvPolynomial.C
+        ((MvPolynomial.coeff h (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j)) : ℤ) : ZMod pp.p) *
+          P.halfForm κ pp I' k h 0 copy)
+      (P.halfForm κ pp I' k h P.D false)
+    omega

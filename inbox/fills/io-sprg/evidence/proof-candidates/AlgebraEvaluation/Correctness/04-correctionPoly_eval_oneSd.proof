@@ -1,0 +1,14 @@
+by
+  classical
+  have hf : P.oneFlag κ pp I (fun i => P.noiseValue κ pp (r i)) = true
+  · simpa only [P.oneSd_flag] using hflag
+  have hno := (P.oneFlag_bounds κ pp I (fun i => P.noiseValue κ pp (r i)) hf).2.1
+  obtain ⟨c, hc⟩ := Buckets.indexMap_some_of_not_overfull I.2.1 (P.rc κ) hno j
+  rw [P.correctionPoly_eq, hc, MvPolynomial.eval_sum]
+  simp only [MvPolynomial.eval_mul, MvPolynomial.eval_X, hpriv]
+  have hfactor := P.oneSd_factors_mul κ pp I σ s r hflag (I.2.1 j)
+  have hentry := congrArg (fun M => M c.1 c.2) hfactor
+  rw [Matrix.mul_apply] at hentry
+  simp only [Matrix.of_apply] at hentry
+  exact hentry.trans (Buckets.bucketMatrix_apply_indexMap I.2.1 (P.rc κ)
+    (P.corr κ pp I σ (fun i => P.noiseValue κ pp (r i))) hno j c hc)

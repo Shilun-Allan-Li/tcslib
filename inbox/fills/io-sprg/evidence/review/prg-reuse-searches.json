@@ -1,0 +1,115 @@
+[
+  {
+    "command": [
+      "rg",
+      "-n",
+      "PRGAdvice|PRGChal|prgAdviceEquiv|encPRGAdvice|prgPre|prgRed|PRGRealizable|prg_hop",
+      "TCSlib",
+      "--glob",
+      "!**/StructuredSeed/Reductions/PRG.lean"
+    ],
+    "rc": 0,
+    "stdout": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean:45:  P.LPNRealizable \u03c0 \u2227 P.PRGRealizable \u03c0\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean:49:    P.Realizable \u03c0 \u2194 P.LPNRealizable \u03c0 \u2227 P.PRGRealizable \u03c0 := Iff.rfl\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean:62:    \u2203 (\u03c9L : \u2200 L, P.LPNAdvice \u03c0 L) (\u03c9G : \u2200 N, P.PRGAdvice \u03c0 N),\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean:67:          (fun N x r => P.prgRed \u03c0 A N (\u03c9G N) x r) \u2192\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean:84:    \u2203 (\u03c9L : \u2200 L, P.LPNAdvice \u03c0 L) (\u03c9G : \u2200 N, P.PRGAdvice \u03c0 N),\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean:89:          (fun N x r => P.prgRed \u03c0 A N (\u03c9G N) x r) \u2192\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "def challengeStr|theorem challengeStr_eq|def outputIndex|theorem outputIndex_eq|def publicSeed|theorem publicSeed_eq|def chainGame|theorem chainGame_eq",
+      "TCSlib/Cryptography/Obfuscation/StructuredSeed"
+    ],
+    "rc": 0,
+    "stdout": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:50:noncomputable def publicSeed (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba)\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:58:theorem publicSeed_eq (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba)\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:83:noncomputable def chainGame (P : Params) (A : NUPPT) (tailReal : Bool) (i \u03ba : \u2115)\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean:95:theorem chainGame_eq (P : Params) (A : NUPPT) (tailReal : Bool) (i \u03ba : \u2115)\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean:203:def challengeStr (S : Raw) (\u03ba : \u2115) (I : S.Idx \u03ba)\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean:210:theorem challengeStr_eq (S : Raw) (\u03ba : \u2115) (I : S.Idx \u03ba)\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Samplers.lean:324:noncomputable def challengeStr (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba)\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Samplers.lean:331:theorem challengeStr_eq (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba)\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:97:def outputIndex (P : Params) (\u03ba : \u2115) (j : Fin (P.m \u03ba)) : Fin (P.G.outLen (P.n \u03ba)) :=\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:101:theorem outputIndex_eq (P : Params) (\u03ba : \u2115) (j : Fin (P.m \u03ba)) :\nTCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean:139:def challengeStr (G : BoolPRG) (n : \u2115) (I : G.Idx n) (z : Fin (G.outLen n) \u2192 Bool) :\nTCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean:143:theorem challengeStr_eq (G : BoolPRG) (n : \u2115) (I : G.Idx n)\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "def _root_.Complexity.NUPPT.RealizesOn|realizesOn_iff|RealizesOn.coins_eq|RealizesOn.runAtL_eq|RealizesOn.distinguisherL_eq|runAt_coinsEquivPoly_symm|exists_realizesOn_of_preTarget",
+      "TCSlib/Cryptography/Asymptotic/Realization.lean"
+    ],
+    "rc": 0,
+    "stdout": "39:(`Complexity.NUPPT.exists_realizesOn_of_preTarget`).\n53:* `Complexity.NUPPT.realizesOn_iff`, `RealizesOn.coins_eq`, `RealizesOn.runAtL_eq` \u2014 the reader.\n54:* `RealizesOn.runAt_eq`, `RealizesOn.distinguisherL_eq`,\n55:  `RealizesOn.runAt_coinsEquivPoly_symm` \u2014 typed coins: the realiser's output, and its verdict as\n59:* `exists_realizesOn_reparam_pre_post`, `exists_realizesOn_of_preTarget`,\n60:  `exists_realizesOn_of_preTarget_id` \u2014 the link \"polynomial-time pre-processing target \u21d2\n96:def _root_.Complexity.NUPPT.RealizesOn (B : NUPPT) {X : \u2115 \u2192 Type*} (enc : \u2200 m, X m \u2192 List Bool)\n103:theorem _root_.Complexity.NUPPT.realizesOn_iff (B : NUPPT) {X : \u2115 \u2192 Type*}\n113:theorem _root_.Complexity.NUPPT.RealizesOn.coins_eq (h : B.RealizesOn enc c R) : B.coins = c :=\n118:theorem _root_.Complexity.NUPPT.RealizesOn.runAtL_eq (h : B.RealizesOn enc c R) (m : \u2115)\n132:theorem _root_.Complexity.NUPPT.RealizesOn.distinguisherL_eq (h : B.RealizesOn enc c R) (m : \u2115)\n141:theorem _root_.Complexity.NUPPT.RealizesOn.runAt_coinsEquivPoly_symm (h : B.RealizesOn enc c R)\n220:theorem _root_.Complexity.NUPPT.exists_realizesOn_of_preTarget (A : NUPPT) (\u03c6 : \u2115 \u2192 \u2115)\n232:reduction shape): under the hypotheses of `exists_realizesOn_of_preTarget`, some `NUPPT`\n235:`exists_realizesOn_of_preTarget`.\n239:theorem _root_.Complexity.NUPPT.exists_realizesOn_of_preTarget_id (A : NUPPT) {\u03a9 : \u2115 \u2192 Type*}\n246:  have h := NUPPT.exists_realizesOn_of_preTarget A id .var (fun m => (PolyExpr.eval_var m).ge)\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "def (boolVectorEquiv|matrixEquiv)|theorem.*Equiv_eq",
+      "TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean"
+    ],
+    "rc": 0,
+    "stdout": "52:theorem residueEquiv_eq {\u03ba : \u2115} (pp : PrimeParam \u03ba) :\n62:theorem vectorEquiv_eq {\u03ba : \u2115} (pp : PrimeParam \u03ba) (N : \u2115) :\n68:def matrixEquiv {\u03ba : \u2115} (pp : PrimeParam \u03ba) (rows columns : \u2115) :\n74:theorem matrixEquiv_eq {\u03ba : \u2115} (pp : PrimeParam \u03ba) (rows columns : \u2115) :\n81:def boolVectorEquiv (N : \u2115) : (Fin N \u2192 Bool) \u2243 Fin (2 ^ N) :=\n85:theorem boolVectorEquiv_eq (N : \u2115) :\n96:theorem noiseSeedEquiv_eq {\u03ba : \u2115} (pp : PrimeParam \u03ba) (W : \u2115) :\n108:theorem noiseVectorEquiv_eq {\u03ba : \u2115} (pp : PrimeParam \u03ba) (W N : \u2115) :\n121:theorem oneDrawEquiv_eq {\u03ba : \u2115} (pp : PrimeParam \u03ba) (L W N : \u2115) :\n202:theorem idxEquiv_eq (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba) :\n220:theorem idDrawEquiv_eq (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba) :\n238:theorem drawEquiv_eq (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba) :\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem length_pairEncode|pairEncode_inj",
+      "TCSlib/Complexity/TuringMachine/Encoding.lean"
+    ],
+    "rc": 0,
+    "stdout": "71:* `Turing.pairEncode_injective` \u2014 the pairing is injective (aligned-pair parsing).\n173:theorem pairEncode_injective :\n220:theorem length_pairEncode (x y : List Bool) :\n294:  have := pairEncode_injective (a\u2081 := (List.replicate n true, u))\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "encodeMatrix_length|encodeMatrix_injective",
+      "TCSlib/Cryptography/Encoding/Modular.lean"
+    ],
+    "rc": 0,
+    "stdout": "89:theorem encodeMatrix_length {q rows columns : \u2115} [NeZero q] (width : \u2115)\n126:theorem encodeMatrix_injective {q rows columns : \u2115} [NeZero q] (width : \u2115)\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "kappaOfN_le|kappaOfN_n|B_pos",
+      "TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean"
+    ],
+    "rc": 0,
+    "stdout": "292:theorem B_pos (P : Params) (\u03ba : \u2115) : 0 < P.B \u03ba := sorry\n295:instance instBNeZero (P : Params) (\u03ba : \u2115) : NeZero (P.B \u03ba) := \u27e8Nat.ne_of_gt (P.B_pos \u03ba)\u27e9\n311:theorem kappaOfN_n (P : Params) (\u03ba : \u2115) : P.kappaOfN (P.n \u03ba) = \u03ba := sorry\n316:theorem kappaOfN_le (P : Params) (N : \u2115) : P.kappaOfN N \u2264 N := sorry\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "abs_expect_sub_le_expect|expect_sample_equiv|expect_sample.*take|sample.*prefix",
+      "TCSlib/Cryptography/Games/Probability.lean",
+      "TCSlib/Cryptography/Asymptotic/Sampling.lean"
+    ],
+    "rc": 0,
+    "stdout": "TCSlib/Cryptography/Games/Probability.lean:46:* `ProbComp.expect_sample_equiv`, `expect_sample_comm`, `expect_sample_unique`,\nTCSlib/Cryptography/Games/Probability.lean:49:* `ProbComp.abs_expect_sub_le_expect`: averaging a pointwise bound.\nTCSlib/Cryptography/Games/Probability.lean:304:theorem expect_sample_equiv [Fintype \u03b1] [Nonempty \u03b1] [Fintype \u03b2] [Nonempty \u03b2] (e : \u03b1 \u2243 \u03b2)\nTCSlib/Cryptography/Games/Probability.lean:409:theorem abs_expect_sub_le_expect (c : ProbComp \u03b1) {f g h : \u03b1 \u2192 \u211d}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "exists_expect_sample_le",
+      "TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging.lean"
+    ],
+    "rc": 0,
+    "stdout": "30:* `exists_expect_sample_le`: a finite uniform average is bounded by a value it averages.\n114:theorem exists_expect_sample_le {\u03b9 : Type} [Fintype \u03b9] [Nonempty \u03b9] (g : \u03b9 \u2192 \u211d) :\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem (mono|eval_subst|subst_var)|eval.*mono",
+      "TCSlib/Complexity/Randomized/PolyExpr.lean"
+    ],
+    "rc": 0,
+    "stdout": "44:* `Complexity.PolyExpr.eval_mono` \u2014 evaluation is monotone in the parameter.\n134:theorem eval_subst (p q : PolyExpr) (n : \u2115) : (p.subst q).eval n = p.eval (q.eval n) := by\n138:theorem subst_var (p : PolyExpr) : p.subst var = p := by\n142:theorem eval_mono (p : PolyExpr) : Monotone p.eval := by\n",
+    "stderr": ""
+  }
+]

@@ -1,0 +1,6 @@
+by
+  simp only [P.kappaOf_eq, P.ℓ_eq, ← PadQuad.nu_eq]
+  apply le_antisymm
+  · exact (Nat.pow_le_pow_iff_left (Nat.one_le_iff_ne_zero.mp P.one_le_E)).1
+      (PadQuad.nu_pow_le P.one_le_E (κ ^ P.E))
+  · exact PadQuad.le_nu P.one_le_E le_rfl

@@ -1,0 +1,68 @@
+Correctness.lean M0 notes (design_audit owner)
+Staged /tmp/io-sprg-math-primitives/Correctness.lean; root copies to owned worktree.
+262 lines, all<=100 characters.18 named theorem statements, all with term sorry
+and explicit Proof sketches. No new definitions or algorithms, no tactic blocks.
+No Lean/lake/build/cache/git commands run by this subagent.
+
+Source and fidelity
+Verified source was previously read in place, pages15-21, with rendered pages16/17
+visually inspected. Page16 defines the three success conditions, the UV correction
+matrix factorization, first-success flag selection, and packed flag/S/flag*S seed.
+Page17 Equation(3) proves G1 correct on good outputs and G2 correct on all outputs
+when flag=true. Equation(4) supplies flag*G2 through the precomputed copy. Page16
+Eval' sums G3 to obtain (1-err)*Eval. These are exactly the theorem subjects.
+Every theorem quantifies arbitrary pp:PrimeParam kappa; none assumes kappa>0.
+In particular G4_eval_sdCore/G4_eval_eq allow empty Fin kappa: zero sum,err=true.
+Dv3 transposition,Dv4 representation variables,Dv6 composite polynomial,Dv10
+formal public degree d and flag precomputation,Dv15 explicit coordinate renaming,
+Dv17 exact finite law,Dv18 raw construction are disclosed in docs where applicable.
+
+Helper plan
+firstGood_none_iff/some_flag/some_minimal read the ordered finite search. They must
+use existing List.find? API, not reprove a generic finite search theorem.
+packSeed_public_block/error/flag/unscaled/scaled are specialized coordinate glue
+through packSeed_fst/snd and the explicit equivalence cancellation lemmas.
+oneFlag_bounds reads oneFlag_eq, converts decide=true, rewrites cap via cap_eq
+and pow_two, then uses Buckets.overfull_iff. It returns exactly the geometric
+non-overfull statement needed by the bucket API.
+corr_zero_of_not_bad uses equality of assignments on the polynomial variables,
+BoolPRG.MultilinearRep.eval_poly and Int.castRingHom into ZMod.
+oneSd_factors_mul uses the bucket-matrix support bound, corr_zero_of_not_bad,
+oneFlag_bounds, sparseFactor_mul_of_card_le, and oneSd_priv/flag readers.
+G1_eval_of_good reuses Polys.G1_eval and corr_zero_of_not_bad.
+correctionPoly_eval_oneSd reuses Matrix.mul_apply and bucketMatrix_apply_indexMap.
+G2_eval_of_flag adds erroneous output and its defining correction difference.
+G4_eval_sdCore uses existing eval_rename, the packed coordinate lemmas,
+G3_eval_of_scaled, firstGood_some_flag and G2_eval_of_flag. Unselected flags=0.
+G4_eval_eq lifts pointwise deterministic core correctness through the exact draw.
+eval'_correct uses G4_eval_eq and eval'_eq with Boolean and error case splits.
+jls_hasComplexity chooses G4, applies G4_degrees, and reads raw bundle fields/laws.
+
+Searches (read-only)
+TCSlib pinned worktree plus Mathlib source at
+/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/.lake/packages/mathlib
+(root verified exact manifest HEAD029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e;
+no build artifact reuse).
+rg corr_zero_of_not_bad|G1_eval_of_good|G2_eval_of_flag|oneSd_factors_mul|
+firstGood_|packSeed_.*(block|entry|scaled): no existing relevant statements except
+owner Samplers.firstGood_eq reader.
+Read MvPolynomial.Variables eval2Hom_congr' (line253) for assignment equality on vars;
+do not expand generic polynomial evaluation or prove a new congruence lemma.
+Read OracleComp.AllOutputs.mono/bind and allOutputs_pure/query, plus map_eq_bind.
+Read ProbComp.sample_eq for the uniform draw's support. No local AllOutputs-map
+variant is added; use these existing readers/combinators directly.
+Read pinned Lean4.25.0 Init/Data/List/Find.lean find?_eq_none (line227),
+find?_eq_some_iff_append (230), find?_some (280), mem_of_find?_eq_some (287).
+Use Mathlib List.mem_finRange/nodup_finRange/pairwise_lt_finRange as needed.
+The finite indicator sum in G4's proof should use Finset.sum_eq_single or the
+existing sum_ite APIs rather than introduce/reprove a generic selection-sum lemma.
+All specialized helpers are glue for new definitions; no generic counterpart copied.
+
+exact?/apply? status
+ROOT ONLY and pending: subagent is forbidden from running Lean. The search notes
+make no claim those scratch probes ran.
+
+Imports
+TCSlib.Cryptography.Obfuscation.StructuredSeed.Samplers
+Mathlib.Algebra.MvPolynomial.Variables (already a Boolean representation root)
+No direct CoinSampling or PhaseB dependency.

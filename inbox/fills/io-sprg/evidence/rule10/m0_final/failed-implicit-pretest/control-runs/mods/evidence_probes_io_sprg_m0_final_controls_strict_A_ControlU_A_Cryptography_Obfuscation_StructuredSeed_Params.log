@@ -1,0 +1,10 @@
+evidence/probes/io_sprg_m0_final/controls_strict_A/ControlU_A_Cryptography_Obfuscation_StructuredSeed_Params.lean:156:2: error: Type mismatch
+  fun {κ} pp => Eq.refl pp.enc
+has type
+  ∀ {κ : ℕ} (pp : TCSlib.Cryptography.Obfuscation.StructuredSeed.PrimeParam κ), pp.enc = pp.enc
+but is expected to have type
+  ∀ (pp : TCSlib.Cryptography.Obfuscation.StructuredSeed.PrimeParam κ✝),
+    pp.enc = TCSlib.Cryptography.Candidates.natToList (κ✝ + 2) pp.p
+the following variables have been introduced by the implicit lambda feature
+  κ✝ : ℕ
+you can disable implicit lambdas using `@` or writing a lambda expression with `{}` or `[]` binder annotations.

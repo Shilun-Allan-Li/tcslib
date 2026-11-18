@@ -1,0 +1,50 @@
+2026-11-18T09:35:27.052180+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:53:4: error: Application type mismatch: The argument
+  (lpnNoise p W).Coins = Fin W
+has type
+  Prop
+of sort `Type` but is expected to have type
+  Type ?u.985
+of sort `Type (?u.985 + 1)` in the application
+  Prod ((lpnNoise p W).Coins = Fin W)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:65:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:192:36: error: Application type mismatch: The argument
+  F.Draw ℓ = Matrix (Fin (F.samples ℓ)) (Fin ℓ) (ZMod (F.modulus ℓ))
+has type
+  Prop
+of sort `Type` but is expected to have type
+  Type ?u.6436
+of sort `Type (?u.6436 + 1)` in the application
+  Prod (F.Draw ℓ = Matrix (Fin (F.samples ℓ)) (Fin ℓ) (ZMod (F.modulus ℓ)))
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:295:38: error: Application type mismatch: The argument
+  F.Sample ℓ = Matrix (Fin (F.samples ℓ)) (Fin ℓ) (ZMod (F.modulus ℓ))
+has type
+  Prop
+of sort `Type` but is expected to have type
+  Type ?u.9268
+of sort `Type (?u.9268 + 1)` in the application
+  Prod (F.Sample ℓ = Matrix (Fin (F.samples ℓ)) (Fin ℓ) (ZMod (F.modulus ℓ)))
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:362:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:387:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN): no fresh .olean produced
+        3.50 real         1.80 user         1.08 sys
+          2329395200  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              173505  page reclaims
+               10142  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                2606  voluntary context switches
+               15913  involuntary context switches
+            32375598  instructions retired
+            14238221  cycles elapsed
+             1605968  peak memory footprint
+2026-11-18T09:35:30.584376+00:00 END rc=1

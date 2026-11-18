@@ -1,0 +1,89 @@
+io-sprg interface-agent implementation notes (pre-M0)
+
+Owned files: LPN.lean, BoolPRG.lean, PolyTerms.lean. Child sandbox denied writes in the
+managed worktree; complete source files are staged in /private/tmp/io-sprg-interfaces
+for root to copy. No Lean/Lake/build/cache/Git mutation was performed by this agent.
+
+Source: root verified jls26.pdf at the user-supplied sources directory against
+bb357e8d01cc0932899453f3d877b67b58f33253eabf2564854f8f38721e2f3d before this agent
+read pp. 8-11 in place using pdftotext -f 8 -l 11 -layout. PDF was not copied.
+The relevant content is scalar noise and Definition 2.3 (pp. 9-10), Boolean PRG /
+multilinearity / locality in Definition 3.4 (p. 11), efficient polynomial syntax in
+Definition 3.3 (p. 10), and the multilinear representation paragraph (p. 8).
+
+Rule 15:
+- BoolPRG includes eval_eff (one PolyTimeComputable string map before n) and
+  idSamp_eff (the shared SamplesEfficiently contract for its actual IdDraw/idCore).
+  idSamp is derived from the exact uniform IdDraw law; no disconnected sampler field.
+- LPNFamily.Raw carries the canonical family and its raw honest sampler; LPNFamily
+  extends it with sample_eff for the single product draw of matrix, common secret,
+  and all independent scalar noise seeds. The deterministic core returns the matrix,
+  secret, and actual modular noise vector. The matrix/secret are internal honest data;
+  the public challenge still uses canonical LWE.sample and LWE.encodeChallenge.
+- LPN primitive assembly is not performed here; no SPRG/LPNFamily instance was made.
+- The efficiency predicates are reused from CoinSampling.Contract without a local
+  variant. No UniformSampler or product coin sampler was constructed.
+- BoolPRG's sampling parameter word is unary n. LPN's sampleWord is the modulus
+  numeral first, paired with unary secret dimension. Explicit unary dimensions avoid
+  wrongly forcing the same UniformSampler.Ω type at different dimensions.
+
+Canonical challenge interpretation (root decision):
+The binding reuse/reduction rule requires LPN.Raw.adv = toLWE.advantageAt and lpnEnc
+exactly LWE.encodeChallenge. Thus the existing LPN assumption retains its canonical
+matrix/vector challenge, while the construction challenge and reduction advice start
+with the public modulus. BoolPRG likewise has its canonical index/output challenge,
+with no modulus in that primitive. This is disclosed in the corresponding docstrings.
+
+C13 and encodings:
+BoolPRG carries supplied idxCard/idxEquiv and idDrawCard/idDrawEquiv data. No finite
+coordinate enumeration is chosen. LPN.Raw.drawEquiv explicitly composes the symmetric
+ZMod.finEquiv with Equiv.arrowCongr, Equiv.prodCongr, finFunctionFinEquiv and
+finProdFinEquiv. Its cardinal is associated as ((p^ell)^samples) *
+(p^ell * ((W*p)^samples)); this matches the product without any arithmetic cast.
+All encoding functions avoid Classical.choose, Fintype.equivFin, Finset.toList.
+Authorized pre-M0 refinement: BoolPRG now requires encIdx_injective and
+encIdDraw_injective. The supplied coordinate equivalences remain explicit data; the
+injectivity fields ensure the string representations retain the entire index and draw.
+This strengthens the input primitive's representation contract rather than weakening a
+conclusion. Root selected this under the user's authorization to use best judgment.
+Canonical LPN draw/output encoding injectivity is stated as named M0 proof obligations.
+
+Disclosed term-list refinement:
+PolyTerms sigma R is List (R × List sigma). Repeated variables represent exponents.
+Its denotation sums C(coefficient) times the product of variable occurrences. This
+avoids choosing a Finsupp support order and is adequate for the Phase B qGen target.
+encTerms reuses BoolCircuit.encodeList (the recommended sweep row), with pairEncode
+blocks around each variable and each complete term so variable-length words cannot
+merge. PolyTerms.encInt is a sign bit followed by Nat.bits of natAbs; encFin is
+Nat.bits of the finite coordinate. TermsEfficient is only a named Prop, with its
+_iff reader and exact uniform input layout; no efficiency proof is attempted.
+
+Reuse and overlap:
+- Reuse searches and outputs are in reuse-searches.json. No preexisting LPNFamily,
+  lpnNoise, BoolPRG, PolyTerms or TermsEfficient definition occurred outside the new
+  Obfuscation area. These definitions are new source/domain interfaces, not copies.
+- LPN toLWE/adv/Assumption reuse LWE.Parameters, LWE.Noise, LWE.Family,
+  Family.advantageAt, DLWEAssumption, dlweAssumption_iff; no new LWE game is defined.
+- The scalar-law and two encoding-injectivity theorems are the non-reader
+  theorems, sorried under their Proof sketches for M0. Its proof should reuse the existing finite product and uniform
+  point-mass readers; no inline derivation of a public elementary lemma was added.
+- Every proved theorem is either an equation/iff reader, or assumption_iff using the
+  existing LWE.dlweAssumption_iff. The finite-equivalence helpers are explicit
+  compositions of approved equivalences, each with its reader; no new equivalence
+  theorem was reproved.
+- exact? / apply? probes were not run because the assigned task expressly forbids
+  Lean/Lake and resource setup is owned by root. They remain part of root's helper
+  workflow before filling these three non-reader theorems; no nontrivial helper proof
+  exists in this delivery to claim such probes passed.
+- Read-only Mathlib name searches used the existing package sources in the
+  tcslib-pass-shelat-ch2-4 checkout. That package HEAD is
+  029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e, exactly this worktree's manifest pin.
+  No dependency tree was copied or used as a build/olean input.
+
+Static checks:
+static-checks.json records sizes/widths and zero style_lint.lint() findings on the
+staged files. The checker ROOT was adjusted only in Python memory to the staging
+folder, because the source script rejects files outside its repository root.
+The pinned sk15.py run printed nothing. These are not elaboration or seal results.
+No global attribute, simp registration, axiom, native_decide, admit, or machine
+construction was added. The M0 sorries are lpnNoise_law, Raw.encDraw_injective, and Raw.encSample_injective.

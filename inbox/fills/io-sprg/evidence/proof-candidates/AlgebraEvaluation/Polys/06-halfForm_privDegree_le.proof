@@ -1,0 +1,32 @@
+by
+  classical
+  have hcoeff : ∀ (slot : Option (Fin (P.n κ))) (a : Fin (P.ℓ κ + 1)),
+      privDegree (P.linearCoeff κ pp I' k slot a) = 0
+  · intro slot a
+    cases slot with
+    | none =>
+      rw [P.linearCoeff_eq]
+      split_ifs
+      · simpa only [map_one] using
+          (privDegree_C (σ := P.Pub κ) (τ := P.Priv κ) (1 : ZMod pp.p))
+      · exact privDegree_zero
+    | some i =>
+      rw [P.linearCoeff_eq]
+      split_ifs
+      · exact privDegree_C _
+      · rw [P.bVar_eq]
+        exact privDegree_X_inl _
+  rw [P.halfForm_eq]
+  apply privDegree_finset_sum_le
+  intro α hα
+  have hprod : privDegree (∏ r : Fin P.D,
+      P.linearCoeff κ pp I' k (Internal.monomialSlot h (offset + r.val)) (α r)) ≤ 0
+  · have hp := privDegree_finset_prod_le (Finset.univ : Finset (Fin P.D))
+      (fun r => P.linearCoeff κ pp I' k
+        (Internal.monomialSlot h (offset + r.val)) (α r))
+    simpa only [hcoeff, Finset.sum_const_zero] using hp
+  have hX : privDegree
+      (MvPolynomial.X (P.sVar κ k copy (.inl α)) : P.StructPoly κ pp) ≤ 1
+  · rw [P.sVar_eq]
+    exact privDegree_X_inr _
+  exact (privDegree_mul_le _ _).trans (Nat.add_le_add hprod hX)

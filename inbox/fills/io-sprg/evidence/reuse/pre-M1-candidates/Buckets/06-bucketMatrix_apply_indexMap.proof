@@ -1,0 +1,11 @@
+by
+  rw [bucketMatrix_eq]
+  rw [Finset.sum_eq_single j]
+  · exact if_pos ⟨rfl, hc⟩
+  · intro k _ hkj
+    apply if_neg
+    intro hk
+    apply hkj
+    exact indexMap_injective_on_bucket φ rc h hk.1 (hk.2.trans hc.symm)
+  · intro hj
+    exact False.elim (hj (Finset.mem_univ j))

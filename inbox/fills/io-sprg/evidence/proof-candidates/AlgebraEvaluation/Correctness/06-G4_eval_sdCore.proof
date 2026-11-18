@@ -1,0 +1,46 @@
+by
+  classical
+  let inst : Fin κ → P.OneSdOut κ pp := fun k =>
+    P.oneSd κ pp I d.1 (d.2 k).1 (d.2 k).2
+  let first : Option (Fin κ) := firstGood (fun k => (inst k).flag)
+  let sd := P.packSeed κ pp inst first
+  let z : P.Var κ → ZMod pp.p :=
+    (Sum.elim sd.1 sd.2) ∘ Equiv.sumCongr (P.pubEquiv κ) (P.privEquiv κ)
+  have hp : ∀ k i, z (P.bVar κ k i) = (inst k).pub i
+  · intro k i
+    rw [P.bVar_eq]
+    change sd.1 (P.pubEquiv κ (.inl (k, i))) = (inst k).pub i
+    exact P.packSeed_public_block κ pp inst first k i
+  have hu : ∀ k v, z (P.sVar κ k false v) = (inst k).priv v
+  · intro k v
+    rw [P.sVar_eq]
+    change sd.2 (P.privEquiv κ (k, .inr (.inl v))) = (inst k).priv v
+    exact P.packSeed_unscaled κ pp inst first k v
+  have hcopy : ∀ k v, z (P.sVar κ k true v) =
+      (if first = some k then (1 : ZMod pp.p) else 0) * z (P.sVar κ k false v)
+  · intro k v
+    rw [P.sVar_eq, P.sVar_eq]
+    change sd.2 (P.privEquiv κ (k, .inr (.inr v))) =
+      (if first = some k then (1 : ZMod pp.p) else 0) *
+        sd.2 (P.privEquiv κ (k, .inr (.inl v)))
+    rw [P.packSeed_scaled, P.packSeed_unscaled]
+  have hG : ∀ k, MvPolynomial.eval z (P.G3 κ pp I k j) =
+      (if first = some k then (1 : ZMod pp.p) else 0) *
+        MvPolynomial.eval z (P.G2 κ pp I k j)
+  · intro k
+    exact P.G3_eval_of_scaled κ pp I k j z
+      (if first = some k then 1 else 0) (hcopy k)
+  rw [P.G4_eq, MvPolynomial.eval_rename, P.sdCore_seed, P.sdCore_err]
+  change MvPolynomial.eval z (P.G4struct κ pp I j) =
+    if first.isNone then 0 else
+      ((P.G.eval (P.n κ) I.1 d.1 (P.outputIndex κ j)).toNat : ZMod pp.p)
+  rw [P.G4struct_eq, MvPolynomial.eval_sum]
+  simp_rw [hG]
+  cases hf : first with
+  | none => simp [hf]
+  | some q =>
+    have hflag : (inst q).flag = true :=
+      firstGood_some_flag (fun k => (inst k).flag) q hf
+    have hq := P.G2_eval_of_flag κ pp I d.1 (d.2 q).1 (d.2 q).2
+      q j z (hp q) (hu q) hflag
+    simpa [hf, ite_mul] using hq

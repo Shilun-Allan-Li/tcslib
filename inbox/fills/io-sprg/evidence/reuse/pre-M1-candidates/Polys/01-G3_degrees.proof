@@ -1,0 +1,8 @@
+by
+  have hp := P.prgPoly_degrees κ pp I' k j true
+  have hc := P.correctionPoly_degrees κ pp I' k j true
+  rw [P.G3_eq]
+  constructor
+  · exact (pubDegree_add_le _ _).trans
+      (max_le hp.1 (hc.1.le.trans (Nat.zero_le P.d)))
+  · exact (privDegree_add_le _ _).trans (max_le hp.2 hc.2)

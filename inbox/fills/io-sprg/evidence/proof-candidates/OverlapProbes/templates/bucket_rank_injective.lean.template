@@ -1,0 +1,18 @@
+import Mathlib.Data.Finset.Card
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Logic.Equiv.Fin.Basic
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open scoped BigOperators
+
+namespace IoSprgOverlapProbe
+
+example {m B : ℕ} (φ : Fin m → Fin B) {i j : Fin m} (hφ : φ i = φ j)
+    (hr : (Finset.univ.filter (fun k : Fin m => k < i ∧ φ k = φ i)).card =
+      (Finset.univ.filter (fun k : Fin m => k < j ∧ φ k = φ j)).card) : i = j := __PROBE_BODY__
+
+end IoSprgOverlapProbe

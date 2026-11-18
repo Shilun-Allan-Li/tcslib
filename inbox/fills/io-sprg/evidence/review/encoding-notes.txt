@@ -1,0 +1,50 @@
+Encoding.lean modular-split notes (pre-M0)
+
+Source was read in place from the previously hash-verified user-supplied jls26.pdf,
+PDF pages 15-17, using pdftotext -f 15 -l 17 -layout. No PDF was copied.
+Latest root-owned Params.lean and Defs.lean were read before implementation.
+No root-owned module was edited. The new source is staged for root copying.
+
+This module splits only the encoding portion of the planned Samplers module:
+- Params.IdDraw uses the Boolean primitive's actual index draw, bucket function,
+  and transposed LPN matrix. Params.Draw is the Boolean seed plus kappa independent
+  common-secret/noise-seed repetitions. Params.Seed is the published field-vector pair.
+- idxCard/idDrawCard/drawCard have the direct association used by their explicitly
+  composed Fin equivalences; no arithmetic cast or chosen enumeration is hidden.
+- Generic helpers live in inner namespace ConstructionEncoding. They are compositions
+  of the approved Mathlib residue, Boolean, arrow, function and product equivalences,
+  with rfl readers; no new inverse-law proof is rederived. Raw LPN's analogous
+  family-indexed coordinate definitions remain separate type-specific wrappers of the
+  same Mathlib maps; no proved public theorem is copied or reproved.
+- encIdx' and encIdDraw pair the primitive's faithful code with a pair containing
+  the bucket code and canonical matrix code. The bucket width is the numeric B
+  itself (deliberately generous but polynomial), with the existing BoolCircuit list
+  tags. Matrix residues use kappa+1 bits.
+- encOneDraw pairs a secret-vector code with a list of noise selector/residue pairs.
+  Selectors use ell+1 bits; residues use kappa+1. encDraw pairs the actual Boolean
+  seed word with the finite list of repetitions. encSeed' pairs the two canonical
+  vector codes. Every component/top-level code has a named injectivity obligation.
+- ellBound/nBound/mBound/bucketBound/rcBound/pubBound/sVarBound/seedBound/idxBound
+  are syntactic PolyExpr values with readers, not arbitrary polynomial-growth props.
+  idxBound uses the actual pair cost 2|x|+2+|y| and bucket-list cost m*(B+1)+1:
+  2*G.idxBits(n)+6+2*m*(B+1)+n*ell*(kappa+1), with every numeric term bounded by
+  its corresponding syntactic polynomial.
+- W_le_ell_add_one and W_le_two_pow_ell_add_one justify the selector width at all
+  parameters, including kappa=0; the other bounds likewise quantify every kappa.
+- All 17 non-reader obligations are named M0 := sorry statements under Proof sketches.
+  All definition/abbreviation readers are rfl. There is no tactic block in this file.
+  No sampler/core implementation, UniformSampler value, RealizesOn predicate,
+  efficiency proof, machine construction or primitive assembly is added.
+
+Reuse searches are captured in encoding-reuse-searches.json. The existing pair,
+modular vector/matrix, numeral, finite-list, and explicit equivalence interfaces are
+reused. exact?/apply? probes remain deferred under root's explicit no-Lean task order;
+no nontrivial helper proof was filled, so this log does not claim those probes passed.
+The private BoolCircuit list length/prefix-free helpers are not cited as public API;
+the M0 code-bound/injectivity proofs will need the existing public list/numeral readers
+and any genuinely missing composition glue, with overlap searches before filling.
+
+encoding-static-checks.json records 520 lines, max width 98, zero overwidth lines,
+zero static style findings and sk15 rc 0 with no output. The style checker ROOT was
+adjusted only in Python memory to the staging directory. No Lean/Lake/cache/build,
+Git commit/push or worktree mutation was performed by this subtask.

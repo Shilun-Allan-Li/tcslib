@@ -1,0 +1,184 @@
+evidence/probes/io_sprg_m0_final/controls_coe_A/ControlU_A_Cryptography_Obfuscation_StructuredSeed_Samplers.lean:30:2: error: Type mismatch
+  fun {κ} pp => Eq.refl (TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.residueEquiv pp)
+has type
+  ∀ {κ : ℕ} (pp : TCSlib.Cryptography.Obfuscation.StructuredSeed.PrimeParam κ),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.residueEquiv pp =
+      TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.residueEquiv pp
+but is expected to have type
+  ∀ (pp : TCSlib.Cryptography.Obfuscation.StructuredSeed.PrimeParam κ✝),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.residueEquiv pp = (ZMod.finEquiv pp.p).symm
+the following variables have been introduced by the implicit lambda feature
+  κ✝ : ℕ
+you can disable implicit lambdas using `@` or writing a lambda expression with `{}` or `[]` binder annotations.
+evidence/probes/io_sprg_m0_final/controls_coe_A/ControlU_A_Cryptography_Obfuscation_StructuredSeed_Samplers.lean:36:2: error: Type mismatch
+  fun {κ} pp N => Eq.refl (TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.vectorEquiv pp N)
+has type
+  ∀ {κ : ℕ} (pp : TCSlib.Cryptography.Obfuscation.StructuredSeed.PrimeParam κ) (N : ℕ),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.vectorEquiv pp N =
+      TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.vectorEquiv pp N
+but is expected to have type
+  ∀ (pp : TCSlib.Cryptography.Obfuscation.StructuredSeed.PrimeParam κ✝) (N : ℕ),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.vectorEquiv pp N =
+      ((Equiv.refl (Fin N)).arrowCongr
+            (TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.residueEquiv pp)).trans
+        finFunctionFinEquiv
+the following variables have been introduced by the implicit lambda feature
+  κ✝ : ℕ
+you can disable implicit lambdas using `@` or writing a lambda expression with `{}` or `[]` binder annotations.
+evidence/probes/io_sprg_m0_final/controls_coe_A/ControlU_A_Cryptography_Obfuscation_StructuredSeed_Samplers.lean:42:2: error: Type mismatch
+  fun {κ} pp rows columns =>
+    Eq.refl (TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.matrixEquiv pp rows columns)
+has type
+  ∀ {κ : ℕ} (pp : TCSlib.Cryptography.Obfuscation.StructuredSeed.PrimeParam κ) (rows columns : ℕ),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.matrixEquiv pp rows columns =
+      TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.matrixEquiv pp rows columns
+but is expected to have type
+  ∀ (pp : TCSlib.Cryptography.Obfuscation.StructuredSeed.PrimeParam κ✝) (rows columns : ℕ),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.matrixEquiv pp rows columns =
+      ((Equiv.refl (Fin rows)).arrowCongr
+            (TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.vectorEquiv pp columns)).trans
+        finFunctionFinEquiv
+the following variables have been introduced by the implicit lambda feature
+  κ✝ : ℕ
+you can disable implicit lambdas using `@` or writing a lambda expression with `{}` or `[]` binder annotations.
+evidence/probes/io_sprg_m0_final/controls_coe_A/ControlU_A_Cryptography_Obfuscation_StructuredSeed_Samplers.lean:54:2: error: Type mismatch
+  fun {κ} pp W => Eq.refl (TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.noiseSeedEquiv pp W)
+has type
+  ∀ {κ : ℕ} (pp : TCSlib.Cryptography.Obfuscation.StructuredSeed.PrimeParam κ) (W : ℕ),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.noiseSeedEquiv pp W =
+      TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.noiseSeedEquiv pp W
+but is expected to have type
+  ∀ (pp : TCSlib.Cryptography.Obfuscation.StructuredSeed.PrimeParam κ✝) (W : ℕ),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.noiseSeedEquiv pp W =
+      ((Equiv.refl (Fin W)).prodCongr
+            (TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.residueEquiv pp)).trans
+        finProdFinEquiv
+the following variables have been introduced by the implicit lambda feature
+  κ✝ : ℕ
+you can disable implicit lambdas using `@` or writing a lambda expression with `{}` or `[]` binder annotations.
+evidence/probes/io_sprg_m0_final/controls_coe_A/ControlU_A_Cryptography_Obfuscation_StructuredSeed_Samplers.lean:60:2: error: Type mismatch
+  fun {κ} pp W N =>
+    Eq.refl (TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.noiseVectorEquiv pp W N)
+has type
+  ∀ {κ : ℕ} (pp : TCSlib.Cryptography.Obfuscation.StructuredSeed.PrimeParam κ) (W N : ℕ),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.noiseVectorEquiv pp W N =
+      TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.noiseVectorEquiv pp W N
+but is expected to have type
+  ∀ (pp : TCSlib.Cryptography.Obfuscation.StructuredSeed.PrimeParam κ✝) (W N : ℕ),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.noiseVectorEquiv pp W N =
+      ((Equiv.refl (Fin N)).arrowCongr
+            (TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.noiseSeedEquiv pp W)).trans
+        finFunctionFinEquiv
+the following variables have been introduced by the implicit lambda feature
+  κ✝ : ℕ
+you can disable implicit lambdas using `@` or writing a lambda expression with `{}` or `[]` binder annotations.
+evidence/probes/io_sprg_m0_final/controls_coe_A/ControlU_A_Cryptography_Obfuscation_StructuredSeed_Samplers.lean:66:2: error: Type mismatch
+  fun {κ} pp L W N =>
+    Eq.refl (TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.oneDrawEquiv pp L W N)
+has type
+  ∀ {κ : ℕ} (pp : TCSlib.Cryptography.Obfuscation.StructuredSeed.PrimeParam κ) (L W N : ℕ),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.oneDrawEquiv pp L W N =
+      TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.oneDrawEquiv pp L W N
+but is expected to have type
+  ∀ (pp : TCSlib.Cryptography.Obfuscation.StructuredSeed.PrimeParam κ✝) (L W N : ℕ),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.oneDrawEquiv pp L W N =
+      ((TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.vectorEquiv pp L).prodCongr
+            (TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.noiseVectorEquiv pp W N)).trans
+        finProdFinEquiv
+the following variables have been introduced by the implicit lambda feature
+  κ✝ : ℕ
+you can disable implicit lambdas using `@` or writing a lambda expression with `{}` or `[]` binder annotations.
+evidence/probes/io_sprg_m0_final/controls_coe_A/ControlU_A_Cryptography_Obfuscation_StructuredSeed_Samplers.lean:198:2: error: Type mismatch
+  fun {rows cols} {R} [Semiring R] [DecidableEq R] M =>
+    Eq.refl (TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseEntries M)
+has type
+  ∀ {rows cols : ℕ} {R : Type ?u.1692} [inst : Semiring R] [inst_1 : DecidableEq R]
+    (M : Matrix (Fin rows) (Fin cols) R),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseEntries M =
+      TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseEntries M
+but is expected to have type
+  ∀ (M : Matrix (Fin rows✝) (Fin cols✝) R✝),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseEntries M =
+      List.filter (fun c => decide (M c.1 c.2 ≠ 0))
+        (List.flatMap (fun i => List.map (fun j => (i, j)) (List.finRange cols✝)) (List.finRange rows✝))
+the following variables have been introduced by the implicit lambda feature
+  rows✝ : ℕ
+  cols✝ : ℕ
+  R✝ : Type u_1
+  inst✝¹ : Semiring R✝
+  inst✝ : DecidableEq R✝
+you can disable implicit lambdas using `@` or writing a lambda expression with `{}` or `[]` binder annotations.
+evidence/probes/io_sprg_m0_final/controls_coe_A/ControlU_A_Cryptography_Obfuscation_StructuredSeed_Samplers.lean:204:2: error: Type mismatch
+  fun {rows cols} {R} [Semiring R] [DecidableEq R] M t =>
+    Eq.refl (TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseLeft M t)
+has type
+  ∀ {rows cols : ℕ} {R : Type ?u.1698} [inst : Semiring R] [inst_1 : DecidableEq R] (M : Matrix (Fin rows) (Fin cols) R)
+    (t : ℕ),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseLeft M t =
+      TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseLeft M t
+but is expected to have type
+  ∀ (M : Matrix (Fin rows✝) (Fin cols✝) R✝) (t : ℕ),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseLeft M t = fun i k =>
+      match (TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseEntries M)[↑k]? with
+      | none => 0
+      | some c => if i = c.1 then M c.1 c.2 else 0
+the following variables have been introduced by the implicit lambda feature
+  rows✝ : ℕ
+  cols✝ : ℕ
+  R✝ : Type u_1
+  inst✝¹ : Semiring R✝
+  inst✝ : DecidableEq R✝
+you can disable implicit lambdas using `@` or writing a lambda expression with `{}` or `[]` binder annotations.
+evidence/probes/io_sprg_m0_final/controls_coe_A/ControlU_A_Cryptography_Obfuscation_StructuredSeed_Samplers.lean:210:2: error: Type mismatch
+  fun {rows cols} {R} [Semiring R] [DecidableEq R] M t =>
+    Eq.refl (TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseRight M t)
+has type
+  ∀ {rows cols : ℕ} {R : Type ?u.1704} [inst : Semiring R] [inst_1 : DecidableEq R] (M : Matrix (Fin rows) (Fin cols) R)
+    (t : ℕ),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseRight M t =
+      TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseRight M t
+but is expected to have type
+  ∀ (M : Matrix (Fin rows✝) (Fin cols✝) R✝) (t : ℕ),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseRight M t = fun k j =>
+      match (TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseEntries M)[↑k]? with
+      | none => 0
+      | some c => if j = c.2 then 1 else 0
+the following variables have been introduced by the implicit lambda feature
+  rows✝ : ℕ
+  cols✝ : ℕ
+  R✝ : Type u_1
+  inst✝¹ : Semiring R✝
+  inst✝ : DecidableEq R✝
+you can disable implicit lambdas using `@` or writing a lambda expression with `{}` or `[]` binder annotations.
+evidence/probes/io_sprg_m0_final/controls_coe_A/ControlU_A_Cryptography_Obfuscation_StructuredSeed_Samplers.lean:216:2: error: Type mismatch
+  fun {rows cols} {R} [Semiring R] [DecidableEq R] M t =>
+    Eq.refl (TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseFactor M t)
+has type
+  ∀ {rows cols : ℕ} {R : Type ?u.1710} [inst : Semiring R] [inst_1 : DecidableEq R] (M : Matrix (Fin rows) (Fin cols) R)
+    (t : ℕ),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseFactor M t =
+      TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseFactor M t
+but is expected to have type
+  ∀ (M : Matrix (Fin rows✝) (Fin cols✝) R✝) (t : ℕ),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseFactor M t =
+      (TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseLeft M t,
+        TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseRight M t)
+the following variables have been introduced by the implicit lambda feature
+  rows✝ : ℕ
+  cols✝ : ℕ
+  R✝ : Type u_1
+  inst✝¹ : Semiring R✝
+  inst✝ : DecidableEq R✝
+you can disable implicit lambdas using `@` or writing a lambda expression with `{}` or `[]` binder annotations.
+evidence/probes/io_sprg_m0_final/controls_coe_A/ControlU_A_Cryptography_Obfuscation_StructuredSeed_Samplers.lean:222:2: error: Type mismatch
+  fun {n} h r => Eq.refl (TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.monomialSlot h r)
+has type
+  ∀ {n : ℕ} (h : Fin n →₀ ℕ) (r : ℕ),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.monomialSlot h r =
+      TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.monomialSlot h r
+but is expected to have type
+  ∀ (h : Fin n✝ →₀ ℕ) (r : ℕ),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.monomialSlot h r = (h.support.sort fun x1 x2 => x1 ≤ x2)[r]?
+the following variables have been introduced by the implicit lambda feature
+  n✝ : ℕ
+you can disable implicit lambdas using `@` or writing a lambda expression with `{}` or `[]` binder annotations.

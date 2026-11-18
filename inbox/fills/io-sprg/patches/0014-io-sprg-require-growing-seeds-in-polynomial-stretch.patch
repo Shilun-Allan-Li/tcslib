@@ -1,0 +1,57 @@
+From d286bafc4b1754e26ecae89c7f7f9c2a7cb7d7d3 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 04:17:56 -0800
+Subject: [PATCH 14/15] io-sprg: require growing seeds in polynomial stretch
+
+---
+ .../Obfuscation/StructuredSeed/Defs.lean             | 12 ++++++++----
+ .../Obfuscation/StructuredSeed/Stretch.lean          |  5 ++++-
+ 2 files changed, 12 insertions(+), 5 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean
+index 60cb9752aa89bdb763ceac328cb3359f60613b5c..ee0a33a6b170dc4957590a3edea6b3def02bf2ef 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean
+@@ -279,13 +279,17 @@ theorem seedBits_eq (S : Raw) (κ : ℕ) :
+     S.seedBits κ = (S.pubLen κ + S.privLen κ) * S.residueBits.eval κ := rfl
+ 
+ /-- Polynomial stretch expands seed bits by some exponent greater than one
+-[JLS26, Remark 3.1, p. 10]. Dv1 is the fixed polynomial schedule form. -/
++[JLS26, Remark 3.1, p. 10]. Dv1 is the fixed polynomial schedule form.
++SP-W3 also requires seed bits to be at least κ eventually, excluding constant-length
++vacuity in the single-parameter existence statements. -/
+ def HasPolyStretch (S : Raw) : Prop :=
+-  ∃ τ : ℝ, 1 < τ ∧ ∃ κ₀, ∀ κ ≥ κ₀, (S.seedBits κ : ℝ) ^ τ ≤ S.outLen κ
++  ∃ τ : ℝ, 1 < τ ∧ ∃ κ₀, ∀ κ ≥ κ₀,
++    κ ≤ S.seedBits κ ∧ (S.seedBits κ : ℝ) ^ τ ≤ S.outLen κ
+ 
+-/-- Polynomial stretch has an eventual real-power lower bound; glue. -/
++/-- Polynomial stretch has eventual seed growth and a real-power output bound; glue. -/
+ theorem hasPolyStretch_iff (S : Raw) : S.HasPolyStretch ↔
+-    ∃ τ : ℝ, 1 < τ ∧ ∃ κ₀, ∀ κ ≥ κ₀, (S.seedBits κ : ℝ) ^ τ ≤ S.outLen κ := Iff.rfl
++    ∃ τ : ℝ, 1 < τ ∧ ∃ κ₀, ∀ κ ≥ κ₀,
++      κ ≤ S.seedBits κ ∧ (S.seedBits κ : ℝ) ^ τ ≤ S.outLen κ := Iff.rfl
+ 
+ /-- Complexity is a bidegree-bounded polynomial on every sampled seed
+ [JLS26, Definition 3.3, p. 10]. Dv6 restricts the public class to degree
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean
+index c0b4c60047188afbdf3c09f14b961f40007b27a0..5e6415319a6142ed5da3f6b1dcf4090b5080e2ec 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean
+@@ -110,12 +110,15 @@ theorem jls_seedBits_le (P : Params) (π : PrimeSchedule) :
+ `E0 d delta tau ≤ E`; Dv3 uses rounded noise and Dv5 uses the input stretch lower bound.
+ SP-W1 supplies rational delta, coerced to real for the threshold. Dv18 keeps this
+ stretch theorem on the raw bundle; honest efficiency is supplied by the later assembly.
++SP-W3 requires eventual seed growth as well as the power bound.
+ 
+ **Proof sketch.** Read the sufficient exponent to obtain E*delta/2>5 and E*(tau-1)>5.
+ Apply the fifth-power payload bound. The rounded noise width eventually grows like
+ ell^(delta/2), so both n and m/w leave a positive power gap below m after the kappa^5
+ factor. Use the polynomial output upper bound to choose one fixed stretch exponent
+-strictly above one, and absorb the fixed constant beyond a common threshold. -/
++strictly above one, and absorb the fixed constant beyond a common threshold.
++The public length is at least one, so its κ+1-bit residue width also gives
++κ+1 ≤ seedBits at every κ and supplies the seed-growth conjunct. -/
+ theorem jls_hasPolyStretch (P : Params) (π : PrimeSchedule) {τ : ℝ} (hτ : 1 < τ)
+     (hs : P.G.HasStretch τ) (hE : E0 P.d (P.δ : ℝ) τ ≤ P.E) :
+     (jlsSPRG_raw P π).HasPolyStretch := sorry

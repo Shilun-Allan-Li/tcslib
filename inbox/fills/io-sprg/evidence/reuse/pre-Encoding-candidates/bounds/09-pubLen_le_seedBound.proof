@@ -1,0 +1,7 @@
+by
+  have hpub : P.pubLen κ ≤ P.pubBound.eval κ
+  · simp only [P.pubLen_eq, P.pubBound_eq, PolyExpr.eval_add,
+      PolyExpr.eval_mul, PolyExpr.eval_var, PolyExpr.eval_const]
+    exact Nat.add_le_add_right (Nat.mul_le_mul_left κ (P.n_le_nBound κ)) 1
+  rw [P.seedBound_eq, PolyExpr.eval_add]
+  exact Nat.le_add_right_of_le hpub

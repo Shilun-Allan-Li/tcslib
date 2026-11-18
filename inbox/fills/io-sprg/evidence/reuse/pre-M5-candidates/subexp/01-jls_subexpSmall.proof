@@ -1,0 +1,69 @@
+by
+  obtain ⟨ωL, ωG, hprop⟩ := prop41 P π A
+  rcases (P.realizable_iff π).mp hR with ⟨hRL, hRG⟩
+  obtain ⟨BL, hBL⟩ := ((P.LPNRealizable_iff π).mp hRL) A ωL
+  obtain ⟨BG, hBG⟩ := ((P.PRGRealizable_iff π).mp hRG) A ωG
+  have hbound := hprop BL BG hBL hBG
+  have hEpos : 0 < (P.E : ℝ) :=
+    Nat.cast_pos.mpr (lt_of_lt_of_le Nat.zero_lt_one P.one_le_E)
+  have hDpos : 0 < (P.D : ℝ) := Nat.cast_pos.mpr P.D_pos
+  have hℓ : ∃ κ₀ : ℕ, ∀ κ ≥ κ₀, (κ : ℝ) ^ (P.E : ℝ) ≤ (P.ℓ κ : ℝ)
+  · refine ⟨0, ?_⟩
+    intro κ _
+    rw [P.ℓ_eq, Nat.cast_pow, Real.rpow_natCast]
+  have hn : ∃ κ₀ : ℕ, ∀ κ ≥ κ₀,
+      (κ : ℝ) ^ ((P.E : ℝ) * P.D) ≤ (P.n κ : ℝ)
+  · refine ⟨0, ?_⟩
+    intro κ _
+    rw [P.n_eq, P.ℓ_eq, Nat.cast_pow, Nat.cast_pow,
+      Real.rpow_mul (Nat.cast_nonneg κ), Real.rpow_natCast, Real.rpow_natCast]
+  have hL0 := (hLPN BL).comp_of_rpow_le hcL.le hEpos hℓ
+  have hG0 := (hG BG).comp_of_rpow_le hcG.le (mul_pos hEpos hDpos) hn
+  let M : ℝ := min ((P.E : ℝ) * cL) (min ((P.E : ℝ) * P.D * cG) 1)
+  have hML : M ≤ (P.E : ℝ) * cL := min_le_left _ _
+  have hMG : M ≤ (P.E : ℝ) * P.D * cG :=
+    (min_le_right _ _).trans (min_le_left _ _)
+  have hM1 : M ≤ 1 := (min_le_right _ _).trans (min_le_right _ _)
+  have hM : 0 < M := lt_min_iff.mpr
+    ⟨mul_pos hEpos hcL, lt_min_iff.mpr ⟨mul_pos (mul_pos hEpos hDpos) hcG, zero_lt_one⟩⟩
+  have h78pos : 0 < 7 * M / 8
+  · linarith
+  have h34pos : 0 < 3 * M / 4
+  · linarith
+  have h58pos : 0 < 5 * M / 8
+  · linarith
+  have h78lt : 7 * M / 8 < M
+  · linarith
+  have h34lt78 : 3 * M / 4 < 7 * M / 8
+  · linarith
+  have h34leM : 3 * M / 4 ≤ M
+  · linarith
+  have h34lt1 : 3 * M / 4 < 1
+  · linarith
+  have h58lt34 : 5 * M / 8 < 3 * M / 4
+  · linarith
+  have h12lt58 : M / 2 < 5 * M / 8
+  · linarith
+  have hLp := (hL0.mono_exponent hML).mul_pow hM h78lt 1
+  have hLc := hLp.const_mul h78pos h34lt78 2
+  have hGc := hG0.mono_exponent (h34leM.trans hMG)
+  have hEc := subexpSmall_two_pow_neg.const_mul zero_lt_one h34lt1 2
+  have hLG := hLc.add hGc h34pos h58lt34
+  have hEw := hEc.mono_exponent h58lt34.le
+  have hsum := hLG.add hEw h58pos h12lt58
+  change SubexpSmall (M / 2) ((jlsSPRG_raw P π).adv A)
+  apply hsum.mono
+  obtain ⟨κ₀, hκ₀⟩ := P.claim42 hLoc
+  refine ⟨κ₀, ?_⟩
+  intro κ hκ
+  have hb := (hbound κ).trans (add_le_add_left
+    (mul_le_mul_of_nonneg_left (hκ₀ κ hκ (π κ)) zero_le_two) _)
+  have hb' : (jlsSPRG_raw P π).adv A κ ≤
+      (2 * ((κ : ℝ) ^ (1 : ℕ) * (P.lpnFamily_raw π).adv BL (P.ℓ κ)) +
+        P.G.adv BG (P.n κ)) + 2 * (2 : ℝ)⁻¹ ^ κ
+  · simpa only [pow_one, mul_assoc] using hb
+  have ha : 0 ≤ (jlsSPRG_raw P π).adv A κ
+  · rw [SPRG.Raw.adv_eq]
+    exact advantage_nonneg _ _
+  rw [abs_of_nonneg ha, abs_of_nonneg (ha.trans hb')]
+  exact hb'

@@ -1,0 +1,8 @@
+-- Existing theorem body candidate. NOT_RUN; reuse the EXACT canonical assumption encoder.
+by
+  intro x y h
+  apply LWE.encodeChallenge_injective
+    ((P.lpnFamily_raw π).toLWE.parameters L)
+    ((P.lpnFamily_raw π).toLWE.residueBits.eval L)
+    ((P.lpnFamily_raw π).toLWE.modulus_le_pow L)
+  simpa only [P.lpnEnc_eq] using h

@@ -1,0 +1,205 @@
+[
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean",
+  "line": 128,
+  "name": "idSamp_eq",
+  "header": "theorem idSamp_eq (G : BoolPRG) (n : \u2115) :\n    G.idSamp n = (ProbComp.sample (G.IdDraw n)).bind fun d => .pure (G.idCore n d)",
+  "pending": false
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean",
+  "line": 170,
+  "name": "game_eq",
+  "header": "theorem game_eq (G : BoolPRG) (A : NUPPT) (real : Bool) (n : \u2115) :\n    G.game A real n =\n      (G.idSamp n).bind fun I =>\n      (ProbComp.sample (Fin n \u2192 Bool)).bind fun \u03c3 =>\n      (ProbComp.sample (Fin (G.outLen n) \u2192 Bool)).bind fun u =>\n      (ProbComp.sample (A.Coins n)).bind fun r =>\n        .pure (A.distinguisherL n\n          (G.challengeStr n I (if real then G.eval n I \u03c3 else u)) r)",
+  "pending": false
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean",
+  "line": 186,
+  "name": "adv_eq",
+  "header": "theorem adv_eq (G : BoolPRG) (A : NUPPT) (n : \u2115) :\n    G.adv A n = Games.advantage (G.game A true n) (G.game A false n)",
+  "pending": false
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42.lean",
+  "line": 87,
+  "name": "jointLaw_eq",
+  "header": "theorem jointLaw_eq (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba) :\n    P.jointLaw \u03ba pp = (P.idSamp' \u03ba pp).bind fun I =>\n      (fun x => (I, x)) <$> P.sdSampFull \u03ba pp I",
+  "pending": false
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42.lean",
+  "line": 98,
+  "name": "errProb_eq",
+  "header": "theorem errProb_eq (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba) :\n    P.errProb \u03ba pp = ProbComp.prob\n      ((P.idSamp' \u03ba pp).bind fun I => P.sdSampFull \u03ba pp I) (fun x => x.err = true)",
+  "pending": false
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42.lean",
+  "line": 139,
+  "name": "errProb_le_decomposition",
+  "header": "theorem errProb_le_decomposition (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba) :\n    P.errProb \u03ba pp \u2264\n      ProbComp.prob (P.jointLaw \u03ba pp) (fun x => P.Cond3 \u03ba pp x.1) +\n      (\u2211 k : Fin \u03ba, ProbComp.prob (P.jointLaw \u03ba pp)\n        (fun x => P.Cond2 \u03ba pp x.1 x.2.draw k \u2227 \u00ac P.Cond1 \u03ba pp x.1 x.2.draw k)) +\n      ProbComp.prob (P.jointLaw \u03ba pp) (fun x => \u2200 k, P.Cond1 \u03ba pp x.1 x.2.draw k)",
+  "pending": true
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean",
+  "line": 232,
+  "name": "G4_eval_eq",
+  "header": "theorem G4_eval_eq (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba) (I : P.Idx' \u03ba pp) :\n    (P.sdSampFull \u03ba pp I).AllOutputs (fun x => \u2200 j,\n      MvPolynomial.eval (Sum.elim x.seed.1 x.seed.2) (P.G4 \u03ba pp I j) =\n        if x.err then 0 else\n          ((P.G.eval (P.n \u03ba) I.1 x.\u03c3 (P.outputIndex \u03ba j)).toNat : ZMod pp.p))",
+  "pending": true
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean",
+  "line": 244,
+  "name": "eval'_correct",
+  "header": "theorem eval'_correct (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba) (I : P.Idx' \u03ba pp) :\n    (P.sdSampFull \u03ba pp I).AllOutputs (fun x => \u2200 j,\n      P.eval' \u03ba pp I x.seed j =\n        if x.err then false else P.G.eval (P.n \u03ba) I.1 x.\u03c3 (P.outputIndex \u03ba j))",
+  "pending": true
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean",
+  "line": 183,
+  "name": "idSamp_eq",
+  "header": "theorem idSamp_eq (S : Raw) (\u03ba : \u2115) :\n    S.idSamp \u03ba = S.idCore \u03ba <$> ProbComp.sample (S.IdDraw \u03ba)",
+  "pending": false
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean",
+  "line": 192,
+  "name": "sdSamp_eq",
+  "header": "theorem sdSamp_eq (S : Raw) (\u03ba : \u2115) (I : S.Idx \u03ba) :\n    S.sdSamp \u03ba I = S.sdCore \u03ba I <$> ProbComp.sample (S.SdDraw \u03ba I)",
+  "pending": false
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean",
+  "line": 242,
+  "name": "game_eq",
+  "header": "theorem game_eq (S : Raw) (A : NUPPT) (real : Bool) (\u03ba : \u2115) :\n    S.game A real \u03ba = (S.idSamp \u03ba).bind fun I => (S.sdSamp \u03ba I).bind fun sd =>\n      (ProbComp.sample (Fin (S.outLen \u03ba) \u2192 Bool)).bind fun z =>\n      (ProbComp.sample (A.Coins \u03ba)).bind fun r =>\n      pure (A.distinguisherL \u03ba (S.challengeStr \u03ba I sd.1\n        (if real then S.eval \u03ba I sd else z)) r)",
+  "pending": false
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean",
+  "line": 255,
+  "name": "adv_eq",
+  "header": "theorem adv_eq (S : Raw) (A : NUPPT) (\u03ba : \u2115) :\n    S.adv A \u03ba = advantage (S.game A true \u03ba) (S.game A false \u03ba)",
+  "pending": false
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean",
+  "line": 303,
+  "name": "hasComplexity_iff",
+  "header": "theorem hasComplexity_iff (S : Raw) (dPub dPriv : \u2115) :\n    S.HasComplexity dPub dPriv \u2194 \u2200 \u03ba (I : S.Idx \u03ba), \u2203 Q :\n      Fin (S.outLen \u03ba) \u2192 MvPolynomial (Fin (S.pubLen \u03ba) \u2295 Fin (S.privLen \u03ba))\n        (ZMod (S.modulus \u03ba)),\n      (\u2200 j, pubDegree (Q j) \u2264 dPub \u2227 privDegree (Q j) \u2264 dPriv) \u2227\n      (S.sdSamp \u03ba I).AllOutputs fun sd => \u2200 j,\n        ((S.eval \u03ba I sd j).toNat : ZMod (S.modulus \u03ba)) =\n          MvPolynomial.eval (Sum.elim sd.1 sd.2) (Q j)",
+  "pending": false
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean",
+  "line": 363,
+  "name": "hasComplexityEff_iff",
+  "header": "theorem hasComplexityEff_iff (S : Raw) (dPub dPriv : \u2115) :\n    S.HasComplexityEff dPub dPriv \u2194\n    \u2203 f : List Bool \u2192 List Bool, PolyTimeComputable f \u2227 \u2200 \u03ba (I : S.Idx \u03ba),\n      \u2203 Q : Fin (S.outLen \u03ba) \u2192\n        MvPolynomial (Fin (S.pubLen \u03ba) \u2295 Fin (S.privLen \u03ba)) (ZMod (S.modulus \u03ba)),\n      (\u2200 j, \u2203 ts : PolyTerms (Fin (S.pubLen \u03ba) \u2295 Fin (S.privLen \u03ba))\n          (ZMod (S.modulus \u03ba)),\n        f (NUPPT.advInput \u03ba (pairEncode (S.encPP \u03ba)\n          (pairEncode (S.encIdx \u03ba I) (PolyTerms.encFin j)))) =\n          PolyTerms.encTerms (fun z => Candidates.natToList (S.residueBits.eval \u03ba) z.val)\n            (fun v => PolyTerms.encFin (finSumFinEquiv v)) ts \u2227 PolyTerms.denote ts = Q j) \u2227\n      (\u2200 j, pubDegree (Q j) \u2264 dPub \u2227 privDegree (Q j) \u2264 dPriv) \u2227\n      (S.sdSamp \u03ba I).AllOutputs fun sd => \u2200 j,\n        ((S.eval \u03ba I sd j).toNat : ZMod (S.modulus \u03ba)) =\n          MvPolynomial.eval (Sum.elim sd.1 sd.2) (Q j)",
+  "pending": false
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean",
+  "line": 98,
+  "name": "chainGame_eq",
+  "header": "theorem chainGame_eq (P : Params) (A : NUPPT) (tailReal : Bool) (i \u03ba : \u2115)\n    (pp : PrimeParam \u03ba) : P.chainGame A tailReal i \u03ba pp =\n      (P.idSamp' \u03ba pp).bind fun I =>\n      (ProbComp.sample (P.Draw \u03ba pp)).bind fun d =>\n      (ProbComp.sample (Fin \u03ba \u2192 Fin (P.n \u03ba) \u2192 ZMod pp.p)).bind fun u =>\n      (ProbComp.sample (Fin (P.m \u03ba) \u2192 Bool)).bind fun w =>\n      (ProbComp.sample (A.Coins \u03ba)).bind fun r =>\n        pure (A.distinguisherL \u03ba\n          (P.challengeStr \u03ba pp I (P.publicSeed \u03ba pp (P.chainPublic \u03ba pp I d u i) false)\n            (if tailReal then fun j => P.G.eval (P.n \u03ba) I.1 d.1\n              (P.outputIndex \u03ba j) else w)) r)",
+  "pending": false
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean",
+  "line": 126,
+  "name": "hyb_eq",
+  "header": "theorem hyb_eq (P : Params) (A : NUPPT) (stage : HybridStage) (\u03ba : \u2115)\n    (pp : PrimeParam \u03ba) : P.hyb A stage \u03ba pp =\n      (P.idSamp' \u03ba pp).bind fun I => (P.sdSampFull \u03ba pp I).bind fun x =>\n      (ProbComp.sample (Fin (P.m \u03ba) \u2192 Bool)).bind fun w =>\n      (ProbComp.sample (A.Coins \u03ba)).bind fun r =>\n        let clean",
+  "pending": false
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean",
+  "line": 142,
+  "name": "hyb_real_eq_raw",
+  "header": "theorem hyb_real_eq_raw (P : Params) (\u03c0 : PrimeSchedule) (A : NUPPT) (\u03ba : \u2115) :\n    P.hyb A .real \u03ba (\u03c0 \u03ba) = (jlsSPRG_raw P \u03c0).game A true \u03ba",
+  "pending": true
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean",
+  "line": 148,
+  "name": "hyb_random_eq_raw",
+  "header": "theorem hyb_random_eq_raw (P : Params) (\u03c0 : PrimeSchedule) (A : NUPPT) (\u03ba : \u2115) :\n    P.hyb A .random \u03ba (\u03c0 \u03ba) = (jlsSPRG_raw P \u03c0).game A false \u03ba",
+  "pending": true
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean",
+  "line": 157,
+  "name": "hyb_prg_accept_eq_chain_zero",
+  "header": "theorem hyb_prg_accept_eq_chain_zero (P : Params) (A : NUPPT) (\u03ba : \u2115)\n    (pp : PrimeParam \u03ba) :\n    accept (P.hyb A .prg \u03ba pp) = accept (P.chainGame A true 0 \u03ba pp)",
+  "pending": true
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean",
+  "line": 167,
+  "name": "hyb_uniform_accept_eq_chain_zero",
+  "header": "theorem hyb_uniform_accept_eq_chain_zero (P : Params) (A : NUPPT) (\u03ba : \u2115)\n    (pp : PrimeParam \u03ba) :\n    accept (P.hyb A .uniform \u03ba pp) = accept (P.chainGame A false 0 \u03ba pp)",
+  "pending": true
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean",
+  "line": 320,
+  "name": "sampleLaw_eq",
+  "header": "theorem sampleLaw_eq (F : Raw) (\u2113 : \u2115) :\n    F.sampleLaw \u2113 = (ProbComp.sample (F.Draw \u2113)).bind fun r =>\n      .pure (F.sampleCore \u2113 r)",
+  "pending": false
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean",
+  "line": 398,
+  "name": "lpn_hop",
+  "header": "theorem lpn_hop (P : Params) (\u03c0 : PrimeSchedule) (A : NUPPT)\n    (tails : \u2115 \u2192 Bool) (hops : \u2200 \u03ba, Fin (\u03ba + 1)) :\n    \u2203 w : \u2200 L, P.LPNAdvice \u03c0 L, \u2200 B : NUPPT,\n      B.RealizesOn (P.lpnEnc \u03c0) (A.coins.subst .var)\n        (fun L x r => P.lpnRed \u03c0 A L (w L) x r) \u2192\n      \u2200 \u03ba, (hops \u03ba).val < \u03ba \u2192\n        Games.advantage (P.chainGame A (tails \u03ba) (hops \u03ba).val \u03ba (\u03c0 \u03ba))\n          (P.chainGame A (tails \u03ba) ((hops \u03ba).val + 1) \u03ba (\u03c0 \u03ba)) \u2264\n            (P.lpnFamily_raw \u03c0).adv B (P.\u2113 \u03ba)",
+  "pending": true
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG.lean",
+  "line": 338,
+  "name": "prg_hop",
+  "header": "theorem prg_hop (P : Params) (\u03c0 : PrimeSchedule) (A : NUPPT) :\n    \u2203 \u03c9 : \u2200 N, P.PRGAdvice \u03c0 N, \u2200 B : NUPPT,\n      B.RealizesOn P.prgEnc (A.coins.subst .var)\n        (fun N x r => P.prgRed \u03c0 A N (\u03c9 N) x r) \u2192\n      \u2200 \u03ba, Games.advantage (P.chainGame A true \u03ba \u03ba (\u03c0 \u03ba))\n          (P.chainGame A false \u03ba \u03ba (\u03c0 \u03ba)) \u2264 P.G.adv B (P.n \u03ba)",
+  "pending": true
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Samplers.lean",
+  "line": 287,
+  "name": "idSamp'_eq",
+  "header": "theorem idSamp'_eq (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba) :\n    P.idSamp' \u03ba pp = P.idCore \u03ba pp <$> ProbComp.sample (P.IdDraw \u03ba pp)",
+  "pending": false
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Samplers.lean",
+  "line": 297,
+  "name": "sdSampFull_eq",
+  "header": "theorem sdSampFull_eq (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba) (I : P.Idx' \u03ba pp) :\n    P.sdSampFull \u03ba pp I = P.sdCore \u03ba pp I <$> ProbComp.sample (P.Draw \u03ba pp)",
+  "pending": false
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Samplers.lean",
+  "line": 307,
+  "name": "sdSamp'_eq",
+  "header": "theorem sdSamp'_eq (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba) (I : P.Idx' \u03ba pp) :\n    P.sdSamp' \u03ba pp I = (fun x => x.seed) <$> P.sdSampFull \u03ba pp I",
+  "pending": false
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Samplers.lean",
+  "line": 503,
+  "name": "jlsSPRG_raw_idSamp",
+  "header": "theorem jlsSPRG_raw_idSamp (P : Params) (\u03c0 : PrimeSchedule) (\u03ba : \u2115) :\n    (jlsSPRG_raw P \u03c0).idSamp \u03ba = P.idSamp' \u03ba (\u03c0 \u03ba)",
+  "pending": false
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Samplers.lean",
+  "line": 512,
+  "name": "jlsSPRG_raw_sdSamp",
+  "header": "theorem jlsSPRG_raw_sdSamp (P : Params) (\u03c0 : PrimeSchedule) (\u03ba : \u2115)\n    (I : P.Idx' \u03ba (\u03c0 \u03ba)) :\n    (jlsSPRG_raw P \u03c0).sdSamp \u03ba I = P.sdSamp' \u03ba (\u03c0 \u03ba) I",
+  "pending": false
+ },
+ {
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean",
+  "line": 62,
+  "name": "lemma42",
+  "header": "theorem lemma42 (P : Params) (\u03c0 : PrimeSchedule) (A : NUPPT) :\n    \u2203 (\u03c9L : \u2200 L, P.LPNAdvice \u03c0 L) (\u03c9G : \u2200 N, P.PRGAdvice \u03c0 N),\n      \u2200 BL BG : NUPPT,\n        BL.RealizesOn (P.lpnEnc \u03c0) (A.coins.subst .var)\n          (fun L x r => P.lpnRed \u03c0 A L (\u03c9L L) x r) \u2192\n        BG.RealizesOn P.prgEnc (A.coins.subst .var)\n          (fun N x r => P.prgRed \u03c0 A N (\u03c9G N) x r) \u2192\n        \u2200 \u03ba, advantage (P.chainGame A true 0 \u03ba (\u03c0 \u03ba))\n          (P.chainGame A false \u03ba \u03ba (\u03c0 \u03ba)) \u2264\n            (\u03ba : \u211d) * (P.lpnFamily_raw \u03c0).adv BL (P.\u2113 \u03ba) + P.G.adv BG (P.n \u03ba)",
+  "pending": true
+ }
+]

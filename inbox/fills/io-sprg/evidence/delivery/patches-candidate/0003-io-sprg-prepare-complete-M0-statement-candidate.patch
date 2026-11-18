@@ -1,0 +1,2605 @@
+From 83dda868993a846d278ffc0df7a1185f36f81490 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 02:12:21 -0800
+Subject: [PATCH 3/7] io-sprg: prepare complete M0 statement candidate
+
+---
+ .../Obfuscation/StructuredSeed/BoolPRG.lean   |   4 +-
+ .../Obfuscation/StructuredSeed/Claim42.lean   | 131 +++++-
+ .../StructuredSeed/Claim42/Load.lean          |  79 +++-
+ .../StructuredSeed/Correctness.lean           | 244 ++++++++++-
+ .../Obfuscation/StructuredSeed/Defs.lean      |  27 +-
+ .../Obfuscation/StructuredSeed/Hybrids.lean   | 150 ++++++-
+ .../Obfuscation/StructuredSeed/LPN.lean       |  10 +-
+ .../Obfuscation/StructuredSeed/Params.lean    |  13 +-
+ .../Obfuscation/StructuredSeed/PolyTerms.lean |   1 +
+ .../Obfuscation/StructuredSeed/Polys.lean     |   2 +-
+ .../StructuredSeed/Reductions/LPN.lean        | 404 +++++++++++++++++-
+ .../StructuredSeed/Reductions/PRG.lean        | 309 +++++++++++++-
+ .../Obfuscation/StructuredSeed/Samplers.lean  | 227 +++++++++-
+ .../Obfuscation/StructuredSeed/Security.lean  | 165 ++++++-
+ .../Obfuscation/StructuredSeed/Stretch.lean   |  96 ++++-
+ .../Obfuscation/StructuredSeed/Targets.lean   | 330 +++++++++++++-
+ 16 files changed, 2130 insertions(+), 62 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean
+index ffd0792feafadfbe2ecbdbc4ae27a14d1b75d73b..a6ce9566f824c09ee4fe768f9c905352abee2ae9 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean
+@@ -192,11 +192,11 @@ theorem subexpSecure_iff (G : BoolPRG) : G.SubexpSecure ↔ SubexpHard G.adv :=
+ /-- Stretch at least `τ` means `n^τ ≤ outLen n` at every seed length.
+ [JLS26, Definition 3.4 and Theorem 4.1, p. 11]. Deviation Dv5: an inequality replaces
+ `m = n^τ`, avoiding truncation of the supplied generator. -/
+-def HasStretch (G : BoolPRG) (τ : ℝ) : Prop := ∀ n, (n : ℝ) ^ τ ≤ G.outLen n
++def HasStretch (G : BoolPRG) (τ : ℝ) : Prop := ∀ n : ℕ, (n : ℝ) ^ τ ≤ G.outLen n
+ 
+ /-- Stretch is the pointwise lower bound `n^τ ≤ outLen n`; glue. -/
+ theorem hasStretch_iff (G : BoolPRG) (τ : ℝ) :
+-    G.HasStretch τ ↔ ∀ n, (n : ℝ) ^ τ ≤ G.outLen n := Iff.rfl
++    G.HasStretch τ ↔ ∀ n : ℕ, (n : ℝ) ^ τ ≤ G.outLen n := Iff.rfl
+ 
+ /-- A degree-`d` multilinear representation supplies integer polynomials whose Boolean-cube
+ values equal the output bits. [JLS26, Definition 3.4, p. 11]. Deviation Dv4: the representation
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42.lean
+index 95a978e77b3567035b7ebecb49e43b3e8968d4bb..d0dc2fa099d5904786908f7d512a11d4ba500f25 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42.lean
+@@ -14,11 +14,16 @@ set_option autoImplicit false
+ 
+ ## Main definitions
+ 
+-The definitions of this module are part of the Phase A statement checkpoint.
++* The three failure events, the exact joint law, and `Params.errProb`.
++
++## Contents
++
++* `Claim42.Load`: finite binomial and bucket-tail bounds.
+ 
+ ## Main results
+ 
+-The source-derived statements are fixed at checkpoint M0.
++* `Params.claim42`: eventual error at most 2^(-κ), uniformly in the public prime.
++* Locality/Markov and event-decomposition statements support the error analysis.
+ 
+ ## References
+ 
+@@ -30,4 +35,126 @@ The source-derived statements are fixed at checkpoint M0.
+ 
+ namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+ 
++open TCSlib.Cryptography.Games
++open scoped BigOperators
++
++namespace Params
++
++/-- The first failure condition is too many bad outputs in repetition k
++[JLS26, proof of Claim 4.2, pp. 19-20]. Dv3 uses the rounded threshold Γ. -/
++noncomputable def Cond1 (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (I : P.Idx' κ pp) (d : P.Draw κ pp) (k : Fin κ) : Prop :=
++  P.Γ κ < (P.badSet κ pp I (fun i => P.noiseValue κ pp ((d.2 k).2 i))).card
++
++/-- The first condition compares the bad-output count with Γ; glue. -/
++theorem cond1_iff (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (I : P.Idx' κ pp) (d : P.Draw κ pp) (k : Fin κ) :
++    P.Cond1 κ pp I d k ↔
++      P.Γ κ < (P.badSet κ pp I (fun i => P.noiseValue κ pp ((d.2 k).2 i))).card :=
++  Iff.rfl
++
++/-- The second failure condition is more than t bad outputs in some bucket
++[JLS26, proof of Claim 4.2, pp. 19-20]. Dv3 uses an integer threshold. -/
++noncomputable def Cond2 (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (I : P.Idx' κ pp) (d : P.Draw κ pp) (k : Fin κ) : Prop :=
++  ∃ b : Fin (P.B κ), P.t κ <
++    (Buckets.bucket I.2.1 b ∩
++      P.badSet κ pp I (fun i => P.noiseValue κ pp ((d.2 k).2 i))).card
++
++/-- The second condition is the finite bucket-overload event for bad outputs; glue. -/
++theorem cond2_iff (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (I : P.Idx' κ pp) (d : P.Draw κ pp) (k : Fin κ) :
++    P.Cond2 κ pp I d k ↔ ∃ b : Fin (P.B κ), P.t κ <
++      (Buckets.bucket I.2.1 b ∩
++        P.badSet κ pp I (fun i => P.noiseValue κ pp ((d.2 k).2 i))).card := Iff.rfl
++
++/-- The third failure condition is a bucket beyond capacity
++[JLS26, proof of Claim 4.2, pp. 19-20]. This event is shared by all repetitions. -/
++noncomputable def Cond3 (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (I : P.Idx' κ pp) : Prop := Buckets.overfull I.2.1 (P.cap κ)
++
++/-- The third condition is the overfull-placement predicate; glue. -/
++theorem cond3_iff (P : Params) (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' κ pp) :
++    P.Cond3 κ pp I ↔ Buckets.overfull I.2.1 (P.cap κ) := Iff.rfl
++
++/-- The proof-facing joint law retains index and full seed-core output
++[JLS26, Claim 4.2, p. 19]. Dv17 uses exact finite draws, without a coin sampler. -/
++noncomputable def jointLaw (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
++    ProbComp (P.Idx' κ pp × P.SdCoreOut κ pp) :=
++  (P.idSamp' κ pp).bind fun I => (fun x => (I, x)) <$> P.sdSampFull κ pp I
++
++/-- The joint law samples index and the corresponding core output; glue. -/
++theorem jointLaw_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
++    P.jointLaw κ pp = (P.idSamp' κ pp).bind fun I =>
++      (fun x => (I, x)) <$> P.sdSampFull κ pp I := rfl
++
++/-- Error probability is the exact chance that SdSamp' finds no successful repetition
++[JLS26, Claim 4.2, p. 19]. Dv7 leaves its value explicit at every κ and pp. -/
++noncomputable def errProb (P : Params) (κ : ℕ) (pp : PrimeParam κ) : ℝ :=
++  ProbComp.prob ((P.idSamp' κ pp).bind fun I => P.sdSampFull κ pp I)
++    (fun x => x.err = true)
++
++/-- Error probability is the stated exact-law event; glue. -/
++theorem errProb_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
++    P.errProb κ pp = ProbComp.prob
++      ((P.idSamp' κ pp).bind fun I => P.sdSampFull κ pp I) (fun x => x.err = true) := rfl
++
++/-- Error probabilities are nonnegative; glue.
++
++**Proof sketch.** Use the existing nonnegativity of ProbComp.prob. -/
++theorem errProb_nonneg (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
++    0 ≤ P.errProb κ pp := sorry
++
++/-- Locality bounds the expected number of bad output coordinates by cLoc*m/W
++[JLS26, proof of Claim 4.2, p. 20]. Dv3 uses exact rounded noise, and the bound
++is uniform in every public prime and index.
++
++**Proof sketch.** Union-bound the error events in each output's at most cLoc variables,
++then sum their indicator expectations using the existing probability readers. -/
++theorem badSet_expect_le (P : Params) {cLoc : ℕ} (hLoc : P.R.HasLocality cLoc)
++    (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' κ pp) :
++    ProbComp.expect (ProbComp.sample (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))
++      (fun r => ((P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))).card : ℝ)) ≤
++        (cLoc : ℝ) * P.m κ / P.W κ := sorry
++
++/-- Markov's inequality bounds the too-many-bad event using Γ+1
++[JLS26, proof of Claim 4.2, p. 20]. Dv3 makes the strict integer threshold
++explicit, avoiding any division by Γ=0.
++
++**Proof sketch.** On the event, the integer bad count is at least Γ+1. Apply the published
++Markov inequality and the locality expectation estimate, using W>0. -/
++theorem cond1_prob_le (P : Params) {cLoc : ℕ} (hLoc : P.R.HasLocality cLoc)
++    (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' κ pp) :
++    ProbComp.prob (ProbComp.sample (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))
++      (fun r => P.Γ κ < (P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))).card) ≤
++        (cLoc : ℝ) * P.m κ / ((P.W κ : ℝ) * (P.Γ κ + 1)) := sorry
++
++/-- The error event is bounded by common capacity failure, the sparse-but-overloaded
++repetitions, and simultaneous bad-count failure [JLS26, proof of Claim 4.2, p. 21].
++Dv7 keeps every probability explicit before taking eventual estimates.
++
++**Proof sketch.** Read firstGood's failure condition. If no repetition succeeds, either the
++common capacity event holds, some repetition has Cond2 without Cond1, or all have Cond1.
++Apply the existing finite-event union bound through the uniform-draw bridge. -/
++theorem errProb_le_decomposition (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
++    P.errProb κ pp ≤
++      ProbComp.prob (P.jointLaw κ pp) (fun x => P.Cond3 κ pp x.1) +
++      (∑ k : Fin κ, ProbComp.prob (P.jointLaw κ pp)
++        (fun x => P.Cond2 κ pp x.1 x.2.draw k ∧ ¬ P.Cond1 κ pp x.1 x.2.draw k)) +
++      ProbComp.prob (P.jointLaw κ pp) (fun x => ∀ k, P.Cond1 κ pp x.1 x.2.draw k) := sorry
++
++/-- For all sufficiently large κ the error event has probability at most 2^(-κ),
++uniformly in every public prime [JLS26, Claim 4.2, pp. 19-21]. Dv3 uses the rounded
++rational noise schedule (SP-W1); Dv7 makes the common eventual threshold explicit.
++
++**Proof sketch.** Use the three-event decomposition. Locality and Markov bound Cond1,
++conditionally on each fixed generator index. Independent noise repetitions then bound
++simultaneous Cond1. Bucket-tail bounds control Cond2 outside Cond1 and the common Cond3.
++The bucket count is polynomial; logarithmic growth and the resulting exponential bounds
++make their sum at most 2^(-κ), with no dependence on pp. -/
++theorem claim42 (P : Params) {cLoc : ℕ} (hLoc : P.R.HasLocality cLoc) :
++    ∃ κ₀, ∀ κ ≥ κ₀, ∀ pp : PrimeParam κ,
++      P.errProb κ pp ≤ (2 : ℝ)⁻¹ ^ κ := sorry
++
++end Params
+ end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean
+index c8b6ca5580bd87fb00c0e8b57587c5473fa2ba6c..548827773d403d2859beef3fbde07bd5b58d63c2 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean
+@@ -1,9 +1,12 @@
+ /-
+ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
+ -/
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets
+ import TCSlib.Cryptography.Games.Bridges.Experiments
+ import TCSlib.Cryptography.Authentication.Signatures.Lamport.Averaging
++import TCSlib.Cryptography.OneWayFunctions.Basic
+ import Mathlib.Data.Nat.Choose.Bounds
+ import Mathlib.Analysis.Complex.Exponential
+ 
+@@ -16,20 +19,82 @@ set_option autoImplicit false
+ 
+ ## Main definitions
+ 
+-The definitions of this module are part of the Phase A statement checkpoint.
++None. Bucket fibers are read through the existing `Buckets` interface.
+ 
+ ## Main results
+ 
+-The source-derived statements are fixed at checkpoint M0.
++* `Internal.binomial_bound` gives the explicit exponential binomial estimate.
++* `Internal.bucket_tail` bounds a fixed bucket's intersection with any fixed bad set.
++* `Internal.some_bucket_tail` applies the existing finite union bound over buckets.
++* `Internal.full_bucket_tail` and `Internal.some_full_bucket_tail` cover full loads.
+ 
+ ## References
+ 
+ * [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
+-  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, §§2-4.
+-* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
+-  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
++  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026,
++  proof of Claim 4.2, p. 20.
++
++Disclosed integral refinement: a load strictly above t contains t+1 distinct elements,
++so the exact finite bounds use t+1 rather than the paper's weaker t-element bound.
++The bounds include t=0 and oversized thresholds. Dv7's eventual construction-level
++estimates are derived later; these finite combinatorial bounds hold at every size.
+ -/
+ 
+-namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
++namespace TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal
++
++/-- For positive k, `choose(n,k) ≤ (exp(1)*n/k)^k`.
++[JLS26, proof of Claim 4.2, p. 20]. The estimate holds even when k>n; unlike the paper's
++presentation, it need not assume a nonzero binomial coefficient.
++
++**Proof sketch.** Reuse Nat.choose_le_pow_div. Apply the exponential-series term bound
++Real.pow_div_factorial_le_exp at x=k to bound the reciprocal factorial by (exp(1)/k)^k,
++then multiply by n^k and combine the powers. No separate Stirling result is rederived. -/
++theorem binomial_bound (n k : ℕ) (hk : 0 < k) :
++    (Nat.choose n k : ℝ) ≤ (Real.exp 1 * (n : ℝ) / k) ^ k := sorry
++
++/-- For uniform bucket placement, a fixed bucket contains more than t elements of a fixed
++set S with probability at most `choose(|S|,t+1)/B^(t+1)`.
++[JLS26, proof of Claim 4.2, p. 20]. Disclosed refinement: the strict load threshold
++uses t+1 distinct witnesses, including t=0 and thresholds at least |S|.
++
++**Proof sketch.** Any overflowing intersection contains a (t+1)-element subset of S.
++Apply the existing uprob_exists_le to these subsets. For each fixed subset, split its
++coordinates from the unused coordinates with an explicit product equivalence and use
++OneWay.uprob_pi_forall; every selected coordinate equals the bucket label with probability
++1/B. Count the subsets with the existing powerset-cardinality theorem. -/
++theorem bucket_tail {m B : ℕ} [NeZero B] (S : Finset (Fin m)) (b : Fin B) (t : ℕ) :
++    uprob (fun φ : Fin m → Fin B => t < (Buckets.bucket φ b ∩ S).card) ≤
++      (Nat.choose S.card (t + 1) : ℝ) / (B : ℝ) ^ (t + 1) := sorry
++
++/-- For uniform placement, some bucket contains more than t elements of S with probability
++at most `B*choose(|S|,t+1)/B^(t+1)`.
++[JLS26, proof of Claim 4.2, p. 20]. Disclosed refinement: the finite strict-threshold
++estimate uses t+1, and counts all B buckets explicitly.
++
++**Proof sketch.** Apply the published uprob_exists_le over all finite bucket labels,
++substitute bucket_tail for each label, and read the cardinality of Fin B. -/
++theorem some_bucket_tail {m B : ℕ} [NeZero B] (S : Finset (Fin m)) (t : ℕ) :
++    uprob (fun φ : Fin m → Fin B => ∃ b : Fin B, t < (Buckets.bucket φ b ∩ S).card) ≤
++      (B : ℝ) * ((Nat.choose S.card (t + 1) : ℝ) / (B : ℝ) ^ (t + 1)) := sorry
++
++/-- A fixed bucket's full load exceeds t with probability at most
++`choose(m,t+1)/B^(t+1)`. [JLS26, proof of Claim 4.2, p. 20]. Disclosed refinement:
++this uses the t+1-element witness for a strictly overflowing load.
++
++**Proof sketch.** Specialize bucket_tail to the full set, read Buckets.load through
++load_eq, and use the existing intersection and finite-universe cardinality lemmas. -/
++theorem full_bucket_tail {m B : ℕ} [NeZero B] (b : Fin B) (t : ℕ) :
++    uprob (fun φ : Fin m → Fin B => t < Buckets.load φ b) ≤
++      (Nat.choose m (t + 1) : ℝ) / (B : ℝ) ^ (t + 1) := sorry
++
++/-- Some bucket's full load exceeds t with probability at most
++`B*choose(m,t+1)/B^(t+1)`. [JLS26, proof of Claim 4.2, p. 20]. Disclosed refinement:
++the finite bound keeps the exact strict-threshold witness and explicit bucket factor.
++
++**Proof sketch.** Specialize some_bucket_tail to the full set and read the load,
++intersection and universe-cardinality equations through their published readers. -/
++theorem some_full_bucket_tail {m B : ℕ} [NeZero B] (t : ℕ) :
++    uprob (fun φ : Fin m → Fin B => ∃ b : Fin B, t < Buckets.load φ b) ≤
++      (B : ℝ) * ((Nat.choose m (t + 1) : ℝ) / (B : ℝ) ^ (t + 1)) := sorry
+ 
+-end TCSlib.Cryptography.Obfuscation.StructuredSeed
++end TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean
+index 01f81314099b7e381acfabd34071d83165b32647..ca5ed3c83b7ebbd5ab682e7f67fa054b80056674 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean
+@@ -3,30 +3,260 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.Obfuscation.StructuredSeed.Samplers
++import Mathlib.Algebra.MvPolynomial.Variables
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+ /-!
+-# Algebraic correctness of the JLS evaluation
++# Algebraic correctness of the JLS construction
+ 
+ ## Main definitions
+ 
+-The definitions of this module are part of the Phase A statement checkpoint.
++This module introduces no algorithms; it relates the explicit polynomial maps to the
++exact deterministic seed cores and their uniform-draw laws.
+ 
+ ## Main results
+ 
+-The source-derived statements are fixed at checkpoint M0.
++* `Params.G2_eval_of_flag` reconstructs every output when an instance succeeds.
++* `Params.G4_eval_eq` proves `G4 = (1-err) Eval` on every sampled full output.
++* `Params.eval'_correct` identifies the Boolean output, including the error case.
++* `jls_hasComplexity` gives public degree `d` and private degree two on the raw bundle.
+ 
+ ## References
+ 
+-* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
+-  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, §§2-4.
+-* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
+-  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
++  Assumptions*, J. ACM 73(1), Article 1, February 2026, sampling algorithm 1SdSamp,
++  Equation (2), p. 16, and Equations (3)-(4), p. 17.
++* [PS10] R. Pass, A. Shelat, *A Course in Cryptography*, 2010, Definition 26.8.
++
++**Deviations.** Dv3 stores the LPN matrix transposed. Dv4 reads dependencies on the
++supplied multilinear representation. Dv6 uses one composite polynomial. Dv10 uses
++public degree `d`, as in the formal construction on p. 17, rather than the overview's
++`d + 1` on p. 14; flag*S is precomputed in private coordinates. Dv15 transports the
++structured coordinates by explicit equivalences. Dv17 uses exact finite-draw laws,
++and Dv18 states complexity on the raw algorithm bundle. These are algebraic results
++for every public prime and every parameter, including an empty repetition set.
+ -/
+ 
+ namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+ 
++open scoped BigOperators
++open TCSlib.Cryptography.Games
++
++namespace Params
++
++/-- An absent first success means every flag is false,
++`firstGood flags = none ↔ ∀ k, flags k = false` [JLS26, SdSamp', p. 15].
++The increasing finite search remains meaningful when there are no repetitions.
++
++**Proof sketch.** Use the published firstGood reader, `List.find?_eq_none`,
++and membership of every index in `List.finRange`. -/
++theorem firstGood_none_iff {κ : ℕ} (flags : Fin κ → Bool) :
++    firstGood flags = none ↔ ∀ k, flags k = false := sorry
++
++/-- A selected first repetition has a true flag,
++`firstGood flags = some k → flags k = true` [JLS26, SdSamp', p. 15].
++This is mathematical glue for deterministic flag selection.
++
++**Proof sketch.** Apply `List.find?_some` through the published firstGood equation. -/
++theorem firstGood_some_flag {κ : ℕ} (flags : Fin κ → Bool) (k : Fin κ)
++    (h : firstGood flags = some k) : flags k = true := sorry
++
++/-- Every index earlier than the selected first success has a false flag
++[JLS26, SdSamp', p. 15]. This is mathematical glue for the deterministic minimum.
++
++**Proof sketch.** Use `List.find?_eq_some_iff_append` and the increasing order of
++`List.finRange` to place every earlier index in the unsuccessful prefix. -/
++theorem firstGood_some_minimal {κ : ℕ} (flags : Fin κ → Bool) (k : Fin κ)
++    (h : firstGood flags = some k) (q : Fin κ) (hq : q < k) : flags q = false := sorry
++
++/-- Packing preserves each instance's public vector at its explicit block coordinate
++[JLS26, SdSamp', p. 16]. Dv15 uses the public Fin equivalence; this is coordinate glue.
++
++**Proof sketch.** Read the public packing equation and cancel the equivalence with its inverse. -/
++theorem packSeed_public_block (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (instances : Fin κ → P.OneSdOut κ pp) (first : Option (Fin κ))
++    (k : Fin κ) (i : Fin (P.n κ)) :
++    (P.packSeed κ pp instances first).1 (P.pubEquiv κ (.inl (k, i))) =
++      (instances k).pub i := sorry
++
++/-- Packing publishes one exactly when no first success exists
++[JLS26, SdSamp', p. 16]. Dv15 gives the error flag its explicit public coordinate.
++
++**Proof sketch.** Read the public packing equation at the final unit coordinate. -/
++theorem packSeed_error (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (instances : Fin κ → P.OneSdOut κ pp) (first : Option (Fin κ)) :
++    (P.packSeed κ pp instances first).1 (P.pubEquiv κ (.inr ())) =
++      (first.isNone.toNat : ZMod pp.p) := sorry
++
++/-- Packing gives flag one only to the selected repetition
++[JLS26, SdSamp', pp. 15-16]. Dv15 uses the explicit private-coordinate equivalence.
++
++**Proof sketch.** Read the private packing equation at the flag coordinate. -/
++theorem packSeed_flag (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (instances : Fin κ → P.OneSdOut κ pp) (first : Option (Fin κ)) (k : Fin κ) :
++    (P.packSeed κ pp instances first).2 (P.privEquiv κ (k, .inl ())) =
++      if first = some k then 1 else 0 := sorry
++
++/-- Packing preserves all original private seed coordinates
++[JLS26, SdSamp', p. 16]. Dv15 fixes the original-copy positions.
++
++**Proof sketch.** Read the private packing equation at an unscaled seed coordinate. -/
++theorem packSeed_unscaled (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (instances : Fin κ → P.OneSdOut κ pp) (first : Option (Fin κ))
++    (k : Fin κ) (v : P.SVar κ) :
++    (P.packSeed κ pp instances first).2 (P.privEquiv κ (k, .inr (.inl v))) =
++      (instances k).priv v := sorry
++
++/-- Packing precomputes the selected flag times every private seed coordinate
++[JLS26, SdSamp', p. 16]. Dv10 and Dv15 put flag*S in a separate private copy.
++
++**Proof sketch.** Read the private packing equation at a scaled seed coordinate. -/
++theorem packSeed_scaled (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (instances : Fin κ → P.OneSdOut κ pp) (first : Option (Fin κ))
++    (k : Fin κ) (v : P.SVar κ) :
++    (P.packSeed κ pp instances first).2 (P.privEquiv κ (k, .inr (.inr v))) =
++      (if first = some k then (1 : ZMod pp.p) else 0) * (instances k).priv v := sorry
++
++/-- Success bounds the bad count, rules out overfull grids, and bounds every bucket's bad count
++[JLS26, sampling algorithm 1SdSamp, p. 16]. Dv3 uses the stated integer rounding;
++the squared grid capacity is read through its published equation.
++
++**Proof sketch.** Convert the Boolean success test to its conjunction, then rewrite
++capacity as `rc*rc` and use the bucket overfull characterization. -/
++theorem oneFlag_bounds (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (I : P.Idx' κ pp) (e : Fin (P.n κ) → ZMod pp.p)
++    (h : P.oneFlag κ pp I e = true) :
++    (P.badSet κ pp I e).card ≤ P.Γ κ ∧
++      ¬ Buckets.overfull I.2.1 (P.rc κ * P.rc κ) ∧
++      ∀ b : Fin (P.B κ), (Buckets.bucket I.2.1 b ∩ P.badSet κ pp I e).card ≤ P.t κ :=
++  sorry
++
++/-- A good output has zero correction, `j ∉ BAD → Corr_j = 0`
++[JLS26, sampling algorithm 1SdSamp, p. 16; Equation (3), p. 17]. Dv4 uses the
++representation's variable set, so the erroneous and correct assignments agree there.
++
++**Proof sketch.** Use `MvPolynomial.eval₂Hom_congr'` to remove noise outside the
++polynomial's variables. Apply the supplied Boolean evaluation equation and cast it
++into the public prime field, then subtract equal values. -/
++theorem corr_zero_of_not_bad (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (I : P.Idx' κ pp) (σ : Fin (P.n κ) → Bool) (e : Fin (P.n κ) → ZMod pp.p)
++    (j : Fin (P.m κ)) (h : j ∉ P.badSet κ pp I e) : P.corr κ pp I σ e j = 0 := sorry
++
++/-- Successful one-instance factors reconstruct every bucket correction matrix
++[JLS26, sampling algorithm 1SdSamp, p. 16]. The deterministic sparse factorization
++replaces the paper's rank-existence justification while keeping the same dimensions.
++
++**Proof sketch.** Bound the matrix support by the bad outputs in its bucket, use the
++success count bound, and apply `sparseFactor_mul_of_card_le` through the oneSd readers. -/
++theorem oneSd_factors_mul (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (I : P.Idx' κ pp) (σ : Fin (P.n κ) → Bool) (s : Fin (P.ℓ κ) → ZMod pp.p)
++    (r : Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
++    (h : (P.oneSd κ pp I σ s r).flag = true) (b : Fin (P.B κ)) :
++    (Matrix.of (fun row a => (P.oneSd κ pp I σ s r).priv (P.uCoord κ b row a)) :
++        Matrix (Fin (P.rc κ)) (Fin (P.t κ)) (ZMod pp.p)) *
++      (Matrix.of (fun a col => (P.oneSd κ pp I σ s r).priv (P.vCoord κ b a col)) :
++        Matrix (Fin (P.t κ)) (Fin (P.rc κ)) (ZMod pp.p)) =
++      Buckets.bucketMatrix I.2.1 (P.rc κ)
++        (P.corr κ pp I σ (fun i => P.noiseValue κ pp (r i))) b := sorry
++
++/-- The first map already agrees with the correct Boolean output at every good coordinate
++[JLS26, Equation (3), p. 17]. Dv3 transposes the matrix and Dv4 identifies good outputs
++using the supplied multilinear representation.
++
++**Proof sketch.** Apply `G1_eval` with the one-instance public and tensor readers,
++then use `corr_zero_of_not_bad` to identify erroneous and correct polynomial outputs. -/
++theorem G1_eval_of_good (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (I : P.Idx' κ pp) (σ : Fin (P.n κ) → Bool) (s : Fin (P.ℓ κ) → ZMod pp.p)
++    (r : Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
++    (k : Fin κ) (j : Fin (P.m κ)) (z : P.Var κ → ZMod pp.p)
++    (hpub : ∀ i, z (P.bVar κ k i) = (P.oneSd κ pp I σ s r).pub i)
++    (hpriv : ∀ v, z (P.sVar κ k false v) = (P.oneSd κ pp I σ s r).priv v)
++    (hgood : j ∉ P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))) :
++    MvPolynomial.eval z (P.G1 κ pp I k j) =
++      ((P.G.eval (P.n κ) I.1 σ (P.outputIndex κ j)).toNat : ZMod pp.p) := sorry
++
++/-- A successful instance's quadratic correction evaluates to the original correction entry
++[JLS26, Equation (3), p. 17]. The good-case optional grid position exists and is injective.
++
++**Proof sketch.** Use the successful factor product, `Matrix.mul_apply`, and the
++bucket matrix entry theorem at the output's assigned position. -/
++theorem correctionPoly_eval_oneSd (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (I : P.Idx' κ pp) (σ : Fin (P.n κ) → Bool) (s : Fin (P.ℓ κ) → ZMod pp.p)
++    (r : Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
++    (k : Fin κ) (j : Fin (P.m κ)) (z : P.Var κ → ZMod pp.p)
++    (hpriv : ∀ v, z (P.sVar κ k false v) = (P.oneSd κ pp I σ s r).priv v)
++    (hflag : (P.oneSd κ pp I σ s r).flag = true) :
++    MvPolynomial.eval z (P.correctionPoly κ pp I k j false) =
++      P.corr κ pp I σ (fun i => P.noiseValue κ pp (r i)) j := sorry
++
++/-- The second map equals the correct Boolean output whenever its instance flag is true
++[JLS26, Equation (3), p. 17]. Dv3 uses the transposed public vector, and the private
++coordinates use the explicit deterministic factors rather than an unspecified witness.
++
++**Proof sketch.** Evaluate the first map at σ+e, evaluate the correction by the factor
++reconstruction, and use the defining difference in Corr to cancel the erroneous value. -/
++theorem G2_eval_of_flag (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (I : P.Idx' κ pp) (σ : Fin (P.n κ) → Bool) (s : Fin (P.ℓ κ) → ZMod pp.p)
++    (r : Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
++    (k : Fin κ) (j : Fin (P.m κ)) (z : P.Var κ → ZMod pp.p)
++    (hpub : ∀ i, z (P.bVar κ k i) = (P.oneSd κ pp I σ s r).pub i)
++    (hpriv : ∀ v, z (P.sVar κ k false v) = (P.oneSd κ pp I σ s r).priv v)
++    (hflag : (P.oneSd κ pp I σ s r).flag = true) :
++    MvPolynomial.eval z (P.G2 κ pp I k j) =
++      ((P.G.eval (P.n κ) I.1 σ (P.outputIndex κ j)).toNat : ZMod pp.p) := sorry
++
++/-- The fourth map at every exact core draw equals zero on error and the PRG output otherwise
++[JLS26, Eval', pp. 16-17]. Dv10 uses the precomputed scaled copy, and Dv15 transports
++structured assignments by the explicit public/private equivalences. No positive-κ
++premise is needed: an empty repetition set evaluates to zero and has its error flag set.
++
++**Proof sketch.** Apply Mathlib's `eval_rename`, read packed coordinates, and apply
++`G3_eval_of_scaled` to each summand. Unselected flags give zero. The selected first
++success satisfies `G2_eval_of_flag`; the empty-selection case has an empty active sum. -/
++theorem G4_eval_sdCore (P : Params) (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' κ pp)
++    (d : P.Draw κ pp) (j : Fin (P.m κ)) :
++    MvPolynomial.eval
++      (Sum.elim (P.sdCore κ pp I d).seed.1 (P.sdCore κ pp I d).seed.2) (P.G4 κ pp I j) =
++      if (P.sdCore κ pp I d).err then 0 else
++        ((P.G.eval (P.n κ) I.1 d.1 (P.outputIndex κ j)).toNat : ZMod pp.p) := sorry
++
++/-- Every full sampled output satisfies `G4 = (1-err) Eval`
++[JLS26, Eval', pp. 16-17]. Dv10 and Dv15 retain the formal degree and explicit renaming;
++Dv17 states exact support correctness, uniformly for every κ and input prime.
++
++**Proof sketch.** Read sdSampFull as the pushforward of its exact uniform draw and
++apply `G4_eval_sdCore` to every possible draw using the OracleComp support API. -/
++theorem G4_eval_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' κ pp) :
++    (P.sdSampFull κ pp I).AllOutputs (fun x => ∀ j,
++      MvPolynomial.eval (Sum.elim x.seed.1 x.seed.2) (P.G4 κ pp I j) =
++        if x.err then 0 else
++          ((P.G.eval (P.n κ) I.1 x.σ (P.outputIndex κ j)).toNat : ZMod pp.p)) := sorry
++
++/-- Every full sampled output has Boolean evaluation zero on error and the correct PRG
++output otherwise [JLS26, Eval', pp. 16-17]. Dv17 uses exact support correctness;
++primality gives distinct field encodings of zero and one, including p=2.
++
++**Proof sketch.** Apply `G4_eval_eq`, read Eval' as the test for field value one,
++and split the error flag and the original output bit. -/
++theorem eval'_correct (P : Params) (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' κ pp) :
++    (P.sdSampFull κ pp I).AllOutputs (fun x => ∀ j,
++      P.eval' κ pp I x.seed j =
++        if x.err then false else P.G.eval (P.n κ) I.1 x.σ (P.outputIndex κ j)) := sorry
++
++end Params
++
++/-- The raw JLS generator has public degree d and private degree two
++[JLS26, Definition 3.3, p. 10; Eval', pp. 16-17]. Dv6 uses the composite polynomial
++form; Dv10 uses degree d from the formal construction. Dv15 uses Fin seed coordinates,
++and Dv18 keeps efficiency separate in the raw bundle until assembly from targets.
++
++**Proof sketch.** Choose the explicit G4 output polynomials. Use `G4_degrees` for
++their bidegrees and `G4_eval_eq` with `eval'_correct` for the exact seed support.
++Transfer the construction's laws through the raw-bundle field readers. -/
++theorem jls_hasComplexity (P : Params) (π : PrimeSchedule) :
++    (jlsSPRG_raw P π).HasComplexity P.d 2 := sorry
++
+ end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean
+index f51fb30813aa03c7095fb2e39782222eb529c7a8..60cb9752aa89bdb763ceac328cb3359f60613b5c 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean
+@@ -19,11 +19,14 @@ set_option autoImplicit false
+ 
+ ## Main definitions
+ 
+-The definitions of this module are part of the Phase A statement checkpoint.
++* `PrimeParam`, `PrimeSchedule`: public prime inputs and non-vacuous schedules.
++* `SPRG.Raw`: exact algorithms and their correctness/security predicates.
++* `SPRG`: the primitive with mandatory uniform evaluator and sampler efficiency.
+ 
+ ## Main results
+ 
+-The source-derived statements are fixed at checkpoint M0.
++* `PrimeSchedule.nonempty` proves schedule non-vacuity.
++* The owner readers expose games, encodings, stretch, and complexity contracts.
+ 
+ ## References
+ 
+@@ -78,11 +81,11 @@ theorem primeSchedule_eq : PrimeSchedule = ((κ : ℕ) → PrimeParam κ) := rfl
+ required weak bound, and rewrite twice 2^κ as 2^(κ+1). -/
+ theorem PrimeSchedule.nonempty : Nonempty PrimeSchedule := by
+   classical
+-  refine ⟨fun κ => ?_⟩
+-  obtain ⟨p, hp, hlo, hhi⟩ :=
++  let h := fun κ : ℕ =>
+     Nat.exists_prime_lt_and_le_two_mul (2 ^ κ) (pow_ne_zero κ (Nat.succ_ne_zero 1))
+-  refine ⟨p, hp, hlo.le, ?_⟩
+-  simpa only [pow_succ, Nat.mul_comm] using hhi
++  refine ⟨fun κ => ⟨Classical.choose (h κ), (Classical.choose_spec (h κ)).1,
++    (Classical.choose_spec (h κ)).2.1.le, ?_⟩⟩
++  simpa only [pow_succ, Nat.mul_comm] using (Classical.choose_spec (h κ)).2.2
+ 
+ namespace SPRG
+ 
+@@ -148,6 +151,18 @@ instance instSdDrawNonempty (S : Raw) (κ : ℕ) (I : S.Idx κ) : Nonempty (S.Sd
+ instance instModulusNeZero (S : Raw) (κ : ℕ) : NeZero (S.modulus κ) :=
+   ⟨(S.modulus_prime κ).ne_zero⟩
+ 
++/-- The index finiteness instance is its stored raw field; glue. -/
++theorem instIdxFintype_eq (S : Raw) (κ : ℕ) :
++    instIdxFintype S κ = S.idxFintype κ := rfl
++
++/-- The index-draw finiteness instance is its stored raw field; glue. -/
++theorem instIdDrawFintype_eq (S : Raw) (κ : ℕ) :
++    instIdDrawFintype S κ = S.idDrawFintype κ := rfl
++
++/-- The seed-draw finiteness instance is its stored raw field; glue. -/
++theorem instSdDrawFintype_eq (S : Raw) (κ : ℕ) (I : S.Idx κ) :
++    instSdDrawFintype S κ I = S.sdDrawFintype κ I := rfl
++
+ /-- The seed is a public/private vector pair [JLS26, Definition 3.1,
+ p. 10]. Dv2 and Dv15 use fixed-width field vectors, indexed by Fin. -/
+ abbrev Seed (S : Raw) (κ : ℕ) : Type :=
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean
+index e32a69d5492771b45a5a185a25b4ff1af9c58f9e..66ba36a9b9d3f0b13654184360c15eaf9b651101 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean
+@@ -15,11 +15,14 @@ set_option autoImplicit false
+ 
+ ## Main definitions
+ 
+-The definitions of this module are part of the Phase A statement checkpoint.
++* `HybridStage`: the four main security distributions.
++* `Params.hyb`, `Params.chainGame`: exact main and LPN-chain games.
++* `Params.publicSeed`: public-vector and error-flag packing.
+ 
+ ## Main results
+ 
+-The source-derived statements are fixed at checkpoint M0.
++* The endpoint readers identify the raw games and initial chains.
++* Statistical hops are bounded by the exact error probability.
+ 
+ ## References
+ 
+@@ -31,4 +34,147 @@ The source-derived statements are fixed at checkpoint M0.
+ 
+ namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+ 
++open Complexity Turing
++open TCSlib.Cryptography.Games
++
++/-- The four distributions are real output, PRG output with zero error flag,
++uniform output with zero error flag, and the random comparison game
++[JLS26, Proposition 4.1, pp. 18-19]. Dv8 also publishes the independent bucket map. -/
++inductive HybridStage where
++  | real
++  | prg
++  | uniform
++  | random
++
++namespace Params
++
++/-- A public seed packs κ vectors and one Boolean error flag
++[JLS26, Proposition 4.1, pp. 18-19]. Dv15 uses the fixed public-coordinate equivalence. -/
++noncomputable def publicSeed (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (bs : Fin κ → Fin (P.n κ) → ZMod pp.p) (err : Bool) :
++    Fin (P.pubLen κ) → ZMod pp.p :=
++  fun i => match (P.pubEquiv κ).symm i with
++    | .inl (k, q) => bs k q
++    | .inr _ => (err.toNat : ZMod pp.p)
++
++/-- Public seed packing follows the explicit vector/flag coordinate split; glue. -/
++theorem publicSeed_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (bs : Fin κ → Fin (P.n κ) → ZMod pp.p) (err : Bool) :
++    P.publicSeed κ pp bs err = fun i => match (P.pubEquiv κ).symm i with
++      | .inl (k, q) => bs k q
++      | .inr _ => (err.toNat : ZMod pp.p) := rfl
++
++/-- The ith chain public component replaces exactly the first i LPN vectors by uniforms
++[JLS26, Lemma 4.2, p. 19]. Dv8 retains the bucket map; no core computes a Boolean tail. -/
++noncomputable def chainPublic (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (I : P.Idx' κ pp) (d : P.Draw κ pp)
++    (u : Fin κ → Fin (P.n κ) → ZMod pp.p) (i : ℕ) :
++    Fin κ → Fin (P.n κ) → ZMod pp.p :=
++  fun k => if k.val < i then u k else
++    P.lpnVector κ pp I.2.2 d.1 (d.2 k).1 (d.2 k).2
++
++/-- Chain public vectors follow the first-i replacement rule; glue. -/
++theorem chainPublic_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (I : P.Idx' κ pp) (d : P.Draw κ pp)
++    (u : Fin κ → Fin (P.n κ) → ZMod pp.p) (i : ℕ) :
++    P.chainPublic κ pp I d u i = fun k => if k.val < i then u k else
++      P.lpnVector κ pp I.2.2 d.1 (d.2 k).1 (d.2 k).2 := rfl
++
++/-- A chain game chooses either the PRG tail or a uniform Boolean tail, and publishes
++zero as its error flag [JLS26, Lemma 4.2, p. 19]. Dv8 retains independent buckets;
++Dv12 prepares the two advice-based hybrid chains used by the reductions. -/
++noncomputable def chainGame (P : Params) (A : NUPPT) (tailReal : Bool) (i κ : ℕ)
++    (pp : PrimeParam κ) : ProbComp Bool :=
++  (P.idSamp' κ pp).bind fun I =>
++  (ProbComp.sample (P.Draw κ pp)).bind fun d =>
++  (ProbComp.sample (Fin κ → Fin (P.n κ) → ZMod pp.p)).bind fun u =>
++  (ProbComp.sample (Fin (P.m κ) → Bool)).bind fun w =>
++  (ProbComp.sample (A.Coins κ)).bind fun r =>
++    pure (A.distinguisherL κ
++      (P.challengeStr κ pp I (P.publicSeed κ pp (P.chainPublic κ pp I d u i) false)
++        (if tailReal then fun j => P.G.eval (P.n κ) I.1 d.1 (P.outputIndex κ j) else w)) r)
++
++/-- The chain game is its explicit sequence of exact finite laws; glue. -/
++theorem chainGame_eq (P : Params) (A : NUPPT) (tailReal : Bool) (i κ : ℕ)
++    (pp : PrimeParam κ) : P.chainGame A tailReal i κ pp =
++      (P.idSamp' κ pp).bind fun I =>
++      (ProbComp.sample (P.Draw κ pp)).bind fun d =>
++      (ProbComp.sample (Fin κ → Fin (P.n κ) → ZMod pp.p)).bind fun u =>
++      (ProbComp.sample (Fin (P.m κ) → Bool)).bind fun w =>
++      (ProbComp.sample (A.Coins κ)).bind fun r =>
++        pure (A.distinguisherL κ
++          (P.challengeStr κ pp I (P.publicSeed κ pp (P.chainPublic κ pp I d u i) false)
++            (if tailReal then fun j => P.G.eval (P.n κ) I.1 d.1
++              (P.outputIndex κ j) else w)) r) := rfl
++
++/-- H0-H3 sample the actual index and seed law and alter only error flag and output
++[JLS26, Proposition 4.1, pp. 18-19]. Dv8 includes the bucket map in all challenges. -/
++noncomputable def hyb (P : Params) (A : NUPPT) (stage : HybridStage) (κ : ℕ)
++    (pp : PrimeParam κ) : ProbComp Bool :=
++  (P.idSamp' κ pp).bind fun I => (P.sdSampFull κ pp I).bind fun x =>
++  (ProbComp.sample (Fin (P.m κ) → Bool)).bind fun w =>
++  (ProbComp.sample (A.Coins κ)).bind fun r =>
++    let clean := P.publicSeed κ pp (fun k => (x.instances k).pub) false
++    let out := match stage with
++      | .real => (x.seed.1, P.eval' κ pp I x.seed)
++      | .prg => (clean, fun j => P.G.eval (P.n κ) I.1 x.σ (P.outputIndex κ j))
++      | .uniform => (clean, w)
++      | .random => (x.seed.1, w)
++    pure (A.distinguisherL κ (P.challengeStr κ pp I out.1 out.2) r)
++
++/-- The four hybrids have their displayed error-flag/output substitutions; glue. -/
++theorem hyb_eq (P : Params) (A : NUPPT) (stage : HybridStage) (κ : ℕ)
++    (pp : PrimeParam κ) : P.hyb A stage κ pp =
++      (P.idSamp' κ pp).bind fun I => (P.sdSampFull κ pp I).bind fun x =>
++      (ProbComp.sample (Fin (P.m κ) → Bool)).bind fun w =>
++      (ProbComp.sample (A.Coins κ)).bind fun r =>
++        let clean := P.publicSeed κ pp (fun k => (x.instances k).pub) false
++        let out := match stage with
++          | .real => (x.seed.1, P.eval' κ pp I x.seed)
++          | .prg => (clean, fun j => P.G.eval (P.n κ) I.1 x.σ (P.outputIndex κ j))
++          | .uniform => (clean, w)
++          | .random => (x.seed.1, w)
++        pure (A.distinguisherL κ (P.challengeStr κ pp I out.1 out.2) r) := rfl
++
++/-- H0 equals the real raw sPRG game [JLS26, Proposition 4.1, pp. 18-19]. Dv18 uses Raw.
++
++**Proof sketch.** Read the raw game, construction fields and exact sampler projection laws. -/
++theorem hyb_real_eq_raw (P : Params) (π : PrimeSchedule) (A : NUPPT) (κ : ℕ) :
++    P.hyb A .real κ (π κ) = (jlsSPRG_raw P π).game A true κ := sorry
++
++/-- H3 equals the random raw sPRG game [JLS26, Proposition 4.1, pp. 18-19]. Dv18 uses Raw.
++
++**Proof sketch.** Read the raw game and sampler projection laws; the tail is the same uniform. -/
++theorem hyb_random_eq_raw (P : Params) (π : PrimeSchedule) (A : NUPPT) (κ : ℕ) :
++    P.hyb A .random κ (π κ) = (jlsSPRG_raw P π).game A false κ := sorry
++
++/-- H1 is the real-tail chain's initial game [JLS26, Lemma 4.2, p. 19]. Dv8 includes buckets.
++
++**Proof sketch.** Use the core's public-vector readers and erase the unused uniform vectors. -/
++theorem hyb_prg_eq_chain_zero (P : Params) (A : NUPPT) (κ : ℕ) (pp : PrimeParam κ) :
++    P.hyb A .prg κ pp = P.chainGame A true 0 κ pp := sorry
++
++/-- H2 is the uniform-tail chain's initial game [JLS26, Lemma 4.2, p. 19].
++
++**Proof sketch.** Use the public-vector readers and erase the unused uniform vectors. -/
++theorem hyb_uniform_eq_chain_zero (P : Params) (A : NUPPT) (κ : ℕ)
++    (pp : PrimeParam κ) : P.hyb A .uniform κ pp = P.chainGame A false 0 κ pp := sorry
++
++/-- H0 and H1 disagree only on the error event [JLS26, Proposition 4.1, pp. 18-19].
++Dv7 retains the exact error probability at every parameter.
++
++**Proof sketch.** Couple the two games with the same draws and coins. Correctness and the
++packing readers show agreement off err=true; use the existing agree-off-bad bound. -/
++theorem hyb_real_prg_le (P : Params) (A : NUPPT) (κ : ℕ) (pp : PrimeParam κ) :
++    advantage (P.hyb A .real κ pp) (P.hyb A .prg κ pp) ≤ P.errProb κ pp := sorry
++
++/-- H2 and H3 disagree only on the error event [JLS26, Proposition 4.1, pp. 18-19].
++Dv7 retains the exact error probability at every parameter.
++
++**Proof sketch.** Couple the same draws and uniform output. The public seeds agree when
++err=false; apply the existing agree-off-bad bound. -/
++theorem hyb_uniform_random_le (P : Params) (A : NUPPT) (κ : ℕ) (pp : PrimeParam κ) :
++    advantage (P.hyb A .uniform κ pp) (P.hyb A .random κ pp) ≤ P.errProb κ pp := sorry
++
++end Params
+ end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean
+index a6cd596a2301ebc743146b3e70f661a298e1b109..c94d3254e14e4395804b0e95b140afe1bd95b724 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean
+@@ -50,7 +50,7 @@ noncomputable def lpnNoise (p W : ℕ) [NeZero p] [NeZero W] : LWE.Noise where
+ 
+ /-- The noise seed type is `Fin W × ZMod p`; glue. -/
+ theorem lpnNoise_coins (p W : ℕ) [NeZero p] [NeZero W] :
+-    (lpnNoise p W).Coins = Fin W × ZMod p := rfl
++    (lpnNoise p W).Coins = (Fin W × ZMod p) := rfl
+ 
+ /-- A seed yields its residue lift exactly when the selector is zero; glue. -/
+ theorem lpnNoise_sample (p W : ℕ) [NeZero p] [NeZero W] (c : Fin W × ZMod p) :
+@@ -190,9 +190,9 @@ abbrev Draw (F : Raw) (ℓ : ℕ) : Type :=
+ 
+ /-- The joint draw has the displayed matrix/secret/noise-seed product type; glue. -/
+ theorem draw_eq (F : Raw) (ℓ : ℕ) : F.Draw ℓ =
+-    Matrix (Fin (F.samples ℓ)) (Fin ℓ) (ZMod (F.modulus ℓ)) ×
++    (Matrix (Fin (F.samples ℓ)) (Fin ℓ) (ZMod (F.modulus ℓ)) ×
+       ((Fin ℓ → ZMod (F.modulus ℓ)) ×
+-        (Fin (F.samples ℓ) → Fin (F.noiseDen ℓ) × ZMod (F.modulus ℓ))) := rfl
++        (Fin (F.samples ℓ) → Fin (F.noiseDen ℓ) × ZMod (F.modulus ℓ)))) := rfl
+ 
+ /-- The explicit joint draw size is
+ `(p^ℓ)^samples * (p^ℓ * (W*p)^samples)`; glue.
+@@ -293,9 +293,9 @@ abbrev Sample (F : Raw) (ℓ : ℕ) : Type :=
+ 
+ /-- The joint sample has the displayed matrix/secret/noise-vector product type; glue. -/
+ theorem sample_eq (F : Raw) (ℓ : ℕ) : F.Sample ℓ =
+-    Matrix (Fin (F.samples ℓ)) (Fin ℓ) (ZMod (F.modulus ℓ)) ×
++    (Matrix (Fin (F.samples ℓ)) (Fin ℓ) (ZMod (F.modulus ℓ)) ×
+       ((Fin ℓ → ZMod (F.modulus ℓ)) ×
+-        (Fin (F.samples ℓ) → ZMod (F.modulus ℓ))) := rfl
++        (Fin (F.samples ℓ) → ZMod (F.modulus ℓ)))) := rfl
+ 
+ /-- The joint sampler's core keeps matrix and secret and applies the scalar LPN selector:
+ `sampleCore r = (r.1,r.2.1, fun i => if a_i=0 then x_i else 0)`.
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean
+index 4edadd4c90926ae12dac0bdb4d39520ced3c4ded..94db557c891347130ec66bcb23407a6de3f5651b 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean
+@@ -20,11 +20,14 @@ set_option autoImplicit false
+ 
+ ## Main definitions
+ 
+-The definitions of this module are part of the Phase A statement checkpoint.
++* `Params`: rational noise exponent, fixed degree/schedule, and efficient Boolean PRG.
++* Rounded dimensions, inverse parameter maps, and explicit public/private coordinates.
++* `Params.lpnFamily_raw`: the construction's dimension-indexed exact LPN family.
+ 
+ ## Main results
+ 
+-The source-derived statements are fixed at checkpoint M0.
++* Inverse-schedule identities and eventual parameter side conditions.
++* Every algorithm takes a public prime; Params contains no prime schedule.
+ 
+ ## References
+ 
+@@ -178,7 +181,7 @@ abbrev SVar (P : Params) (κ : ℕ) : Type :=
+     (Fin (P.B κ) × ((Fin (P.rc κ) × Fin (P.t κ)) ⊕ (Fin (P.t κ) × Fin (P.rc κ))))
+ 
+ /-- The private-coordinate type is the tensor/factor sum; glue. -/
+-theorem sVar_eq (P : Params) (κ : ℕ) : P.SVar κ =
++theorem SVar_eq (P : Params) (κ : ℕ) : P.SVar κ =
+     ((Fin P.D → Fin (P.ℓ κ + 1)) ⊕
+       (Fin (P.B κ) × ((Fin (P.rc κ) × Fin (P.t κ)) ⊕
+         (Fin (P.t κ) × Fin (P.rc κ))))) := rfl
+@@ -199,7 +202,7 @@ abbrev Priv (P : Params) (κ : ℕ) : Type :=
+ 
+ /-- The structured-private type has three components per repetition; glue. -/
+ theorem priv_eq (P : Params) (κ : ℕ) :
+-    P.Priv κ = Fin κ × (Unit ⊕ (P.SVar κ ⊕ P.SVar κ)) := rfl
++    P.Priv κ = (Fin κ × (Unit ⊕ (P.SVar κ ⊕ P.SVar κ))) := rfl
+ 
+ /-- Private length is κ*(1+2*sLen) [JLS26, SdSamp', p. 16]. Dv2 counts residues. -/
+ noncomputable def privLen (P : Params) (κ : ℕ) : ℕ := κ * (1 + (P.sLen κ + P.sLen κ))
+@@ -244,7 +247,7 @@ abbrev Pub (P : Params) (κ : ℕ) : Type := (Fin κ × Fin (P.n κ)) ⊕ Unit
+ 
+ /-- The structured public type is a vector-block sum with one flag; glue. -/
+ theorem pub_eq (P : Params) (κ : ℕ) :
+-    P.Pub κ = (Fin κ × Fin (P.n κ)) ⊕ Unit := rfl
++    P.Pub κ = ((Fin κ × Fin (P.n κ)) ⊕ Unit) := rfl
+ 
+ /-- The public-variable enumeration splits repeated blocks from the flag
+ [JLS26, SdSamp', p. 16]. Dv15 uses explicit Fin equivalences. -/
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/PolyTerms.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/PolyTerms.lean
+index 9dca495e08cc0e0dc6188ccc84f775b0c6e7738d..3ddcd53bac5323cab299a53e2b9578061dd30d4b 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/PolyTerms.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/PolyTerms.lean
+@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: TCSlib contributors
+ -/
+ import TCSlib.Complexity.CircuitComplexity.Uniform
++import TCSlib.Complexity.TuringMachine.Encoding
+ import Mathlib.Algebra.MvPolynomial.Basic
+ 
+ set_option maxHeartbeats 0
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean
+index 16d7e64c873d3adcdd584a3453d6ed2efdbc60e2..15a5eae55d3e9c1cf229553e455c38a399558005 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean
+@@ -80,7 +80,7 @@ namespace Params
+ abbrev Var (P : Params) (κ : ℕ) : Type := P.Pub κ ⊕ P.Priv κ
+ 
+ /-- Structured variables are the public/private sum. Glue reader. -/
+-theorem var_eq (P : Params) (κ : ℕ) : P.Var κ = P.Pub κ ⊕ P.Priv κ := rfl
++theorem var_eq (P : Params) (κ : ℕ) : P.Var κ = (P.Pub κ ⊕ P.Priv κ) := rfl
+ 
+ /-- Structured polynomials have coefficients in the input prime field,
+ `StructPoly κ pp = MvPolynomial (Var κ) (ZMod pp.p)`
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean
+index 377f18b9e380db488094d8c45cd5d49bbc6d6a63..e94e7772a1eddb4e7f304ff6528dea6afe8485a5 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean
+@@ -10,24 +10,414 @@ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+ /-!
+-# The explicit advice-taking JLS LPN reduction
++# The explicit advice-based LPN reduction
+ 
+ ## Main definitions
+ 
+-The definitions of this module are part of the Phase A statement checkpoint.
++* `Params.LPNChal` and `lpnEnc` are exactly the canonical LWE-family challenge and encoding.
++* `Params.LPNAdvice` retains an inhabited sentinel hop and the values fixed by averaging.
++* `Params.lpnPre` prepares the hybrid challenge without sampling or evaluating the PRG.
++* `Params.lpnRed` invokes the adversary on that preprocessing and a prefix of its coins.
+ 
+ ## Main results
+ 
+-The source-derived statements are fixed at checkpoint M0.
++* `encLPNAdvice_length_le` gives an explicit polynomial advice bound.
++* `lpn_hop` bounds any chosen hybrid hop for every machine realizing the explicit reduction.
+ 
+ ## References
+ 
+-* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
+-  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, §§2-4.
+-* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
+-  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
++  Assumptions*, J. ACM 73(1), Article 1, February 2026, Lemma 4.2, p. 19.
++* [PS10] R. Pass, A. Shelat, *A Course in Cryptography*, 2010, Definition 26.8.
++
++**Deviations.** Dv3 uses the transposed LPN family at its own dimension. Dv8 retains
++independent bucket placements. Dv9 puts the schedule's public prime first in advice.
++Dv12 fixes all averaged values and the hop in non-uniform advice; the reduction neither
++samples nor evaluates a Boolean PRG. Dv14 proves function-level reductions, with named
++preprocessing targets supplying their machines later. Dv15 uses explicit finite-coordinate
++casts and equivalences. Dv16 reuses shared `RealizesOn`, which constrains encoded challenges
++and coin lists of the layout length only; this strengthens every-realiser security.
+ -/
+ 
+ namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+ 
++open Complexity Turing
++open scoped BigOperators
++
++namespace Params
++
++/-- The LPN challenge is exactly the canonical challenge of the construction's LWE-family view
++[JLS26, Lemma 4.2, p. 19]. Dv3 uses the family's independent dimension L and matrix orientation. -/
++abbrev LPNChal (P : Params) (π : PrimeSchedule) (L : ℕ) : Type :=
++  Matrix (Fin ((P.lpnFamily_raw π).toLWE.parameters L).samples)
++      (Fin ((P.lpnFamily_raw π).toLWE.parameters L).dimension)
++      (ZMod ((P.lpnFamily_raw π).toLWE.parameters L).modulus) ×
++    (Fin ((P.lpnFamily_raw π).toLWE.parameters L).samples →
++      ZMod ((P.lpnFamily_raw π).toLWE.parameters L).modulus)
++
++/-- The canonical challenge is its displayed LWE matrix/value product. Glue reader. -/
++theorem lpnChal_eq (P : Params) (π : PrimeSchedule) (L : ℕ) : P.LPNChal π L =
++    (Matrix (Fin ((P.lpnFamily_raw π).toLWE.parameters L).samples)
++      (Fin ((P.lpnFamily_raw π).toLWE.parameters L).dimension)
++      (ZMod ((P.lpnFamily_raw π).toLWE.parameters L).modulus) ×
++    (Fin ((P.lpnFamily_raw π).toLWE.parameters L).samples →
++      ZMod ((P.lpnFamily_raw π).toLWE.parameters L).modulus)) := rfl
++
++/-- LPN encoding is exactly the assumption's `LWE.encodeChallenge`, with its own residue width
++[JLS26, Lemma 4.2, p. 19]. Dv3 changes no assumption challenge or encoding. -/
++noncomputable def lpnEnc (P : Params) (π : PrimeSchedule) (L : ℕ)
++    (x : P.LPNChal π L) : List Bool :=
++  LWE.encodeChallenge ((P.lpnFamily_raw π).toLWE.parameters L)
++    ((P.lpnFamily_raw π).toLWE.residueBits.eval L) x
++
++/-- The LPN encoding is the unchanged canonical family challenge code. Glue reader. -/
++theorem lpnEnc_eq (P : Params) (π : PrimeSchedule) (L : ℕ) (x : P.LPNChal π L) :
++    P.lpnEnc π L x = LWE.encodeChallenge ((P.lpnFamily_raw π).toLWE.parameters L)
++      ((P.lpnFamily_raw π).toLWE.residueBits.eval L) x := rfl
++
++/-- Canonical LPN secret dimension equals L. Glue composed from owner-side parameter readers. -/
++theorem lpn_dimension_eq (P : Params) (π : PrimeSchedule) (L : ℕ) :
++    ((P.lpnFamily_raw π).toLWE.parameters L).dimension = L :=
++  (congrArg (fun Q : ℕ → LWE.Parameters => (Q L).dimension)
++    (LPNFamily.Raw.toLWE_parameters (P.lpnFamily_raw π))).trans
++      (LPNFamily.Raw.parameters_dimension (P.lpnFamily_raw π) L)
++
++/-- Canonical LPN sample count equals L^D. Glue composed from owner-side parameter readers. -/
++theorem lpn_samples_eq (P : Params) (π : PrimeSchedule) (L : ℕ) :
++    ((P.lpnFamily_raw π).toLWE.parameters L).samples = L ^ P.D :=
++  (congrArg (fun Q : ℕ → LWE.Parameters => (Q L).samples)
++    (LPNFamily.Raw.toLWE_parameters (P.lpnFamily_raw π))).trans
++      ((LPNFamily.Raw.parameters_samples (P.lpnFamily_raw π) L).trans
++        (P.lpnFamily_raw_samples π L))
++
++/-- Canonical LPN modulus is the prime at inverse dimension. Glue composed from owner readers. -/
++theorem lpn_modulus_eq (P : Params) (π : PrimeSchedule) (L : ℕ) :
++    ((P.lpnFamily_raw π).toLWE.parameters L).modulus = (π (P.kappaOf L)).p :=
++  (congrArg (fun Q : ℕ → LWE.Parameters => (Q L).modulus)
++    (LPNFamily.Raw.toLWE_parameters (P.lpnFamily_raw π))).trans
++      ((LPNFamily.Raw.parameters_modulus (P.lpnFamily_raw π) L).trans
++        (P.lpnFamily_raw_modulus π L))
++
++/-- Concrete LPN coordinates expose rows L^D, columns L and the inverse-indexed prime
++[JLS26, Lemma 4.2, p. 19]. Dv3 and Dv15 use only explicit transport from the assumption. -/
++abbrev LPNConcrete (P : Params) (π : PrimeSchedule) (L : ℕ) : Type :=
++  Matrix (Fin (L ^ P.D)) (Fin L) (ZMod (π (P.kappaOf L)).p) ×
++    (Fin (L ^ P.D) → ZMod (π (P.kappaOf L)).p)
++
++/-- Concrete LPN coordinates have the displayed finite matrix/value type. Glue reader. -/
++theorem lpnConcrete_eq (P : Params) (π : PrimeSchedule) (L : ℕ) : P.LPNConcrete π L =
++    (Matrix (Fin (L ^ P.D)) (Fin L) (ZMod (π (P.kappaOf L)).p) ×
++      (Fin (L ^ P.D) → ZMod (π (P.kappaOf L)).p)) := rfl
++
++/-- Canonical and concrete LPN challenges are related by explicit finite and residue casts
++[JLS26, Lemma 4.2, p. 19]. Dv15 uses `finCongr` and `Equiv.cast`, with no chosen enumeration. -/
++noncomputable def lpnChalEquiv (P : Params) (π : PrimeSchedule) (L : ℕ) :
++    P.LPNChal π L ≃ P.LPNConcrete π L :=
++  Equiv.prodCongr
++    (Equiv.arrowCongr (finCongr (P.lpn_samples_eq π L))
++      (Equiv.arrowCongr (finCongr (P.lpn_dimension_eq π L))
++        (Equiv.cast (congrArg ZMod (P.lpn_modulus_eq π L)))))
++    (Equiv.arrowCongr (finCongr (P.lpn_samples_eq π L))
++      (Equiv.cast (congrArg ZMod (P.lpn_modulus_eq π L))))
++
++/-- The challenge equivalence is its explicit product/arrow/finite-cast composition. Glue. -/
++theorem lpnChalEquiv_eq (P : Params) (π : PrimeSchedule) (L : ℕ) :
++    P.lpnChalEquiv π L = Equiv.prodCongr
++      (Equiv.arrowCongr (finCongr (P.lpn_samples_eq π L))
++        (Equiv.arrowCongr (finCongr (P.lpn_dimension_eq π L))
++          (Equiv.cast (congrArg ZMod (P.lpn_modulus_eq π L)))))
++      (Equiv.arrowCongr (finCongr (P.lpn_samples_eq π L))
++        (Equiv.cast (congrArg ZMod (P.lpn_modulus_eq π L)))) := rfl
++
++/-- Advice retains the hop, Boolean index, buckets, exact draw, Boolean tail and uniform vectors
++[JLS26, Lemma 4.2, p. 19]. Dv12 hardwires averaged values rather than sampling; the extra
++hop sentinel `Fin (κ+1)` keeps the type inhabited at every independent dimension L. -/
++structure LPNAdvice (P : Params) (π : PrimeSchedule) (L : ℕ) where
++  hop : Fin (P.kappaOf L + 1)
++  I : P.G.Idx (P.n (P.kappaOf L))
++  buckets : Fin (P.m (P.kappaOf L)) → Fin (P.B (P.kappaOf L))
++  draw : P.Draw (P.kappaOf L) (π (P.kappaOf L))
++  tail : Fin (P.m (P.kappaOf L)) → Bool
++  uniform : Fin (P.kappaOf L) → Fin (P.n (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p
++
++/-- Advice has the explicit right-associated finite product of its six components. Glue. -/
++abbrev LPNAdviceProduct (P : Params) (π : PrimeSchedule) (L : ℕ) : Type :=
++  Fin (P.kappaOf L + 1) × (P.G.Idx (P.n (P.kappaOf L)) ×
++    ((Fin (P.m (P.kappaOf L)) → Fin (P.B (P.kappaOf L))) ×
++      (P.Draw (P.kappaOf L) (π (P.kappaOf L)) ×
++        ((Fin (P.m (P.kappaOf L)) → Bool) ×
++          (Fin (P.kappaOf L) → Fin (P.n (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p)))))
++
++/-- The advice product is the displayed right-associated tuple. Glue reader. -/
++theorem lpnAdviceProduct_eq (P : Params) (π : PrimeSchedule) (L : ℕ) :
++    P.LPNAdviceProduct π L =
++      (Fin (P.kappaOf L + 1) × (P.G.Idx (P.n (P.kappaOf L)) ×
++        ((Fin (P.m (P.kappaOf L)) → Fin (P.B (P.kappaOf L))) ×
++          (P.Draw (P.kappaOf L) (π (P.kappaOf L)) ×
++            ((Fin (P.m (P.kappaOf L)) → Bool) ×
++              (Fin (P.kappaOf L) → Fin (P.n (P.kappaOf L)) →
++                ZMod (π (P.kappaOf L)).p)))))) := rfl
++
++/-- Advice records and their explicit component products are equivalent. Glue for Dv15. -/
++def lpnAdviceProductEquiv (P : Params) (π : PrimeSchedule) (L : ℕ) :
++    P.LPNAdvice π L ≃ P.LPNAdviceProduct π L where
++  toFun w := (w.hop, w.I, w.buckets, w.draw, w.tail, w.uniform)
++  invFun w := ⟨w.1, w.2.1, w.2.2.1, w.2.2.2.1, w.2.2.2.2.1, w.2.2.2.2.2⟩
++  left_inv _ := rfl
++  right_inv _ := rfl
++
++/-- Advice-product transport reads precisely the record's six fields. Glue reader. -/
++theorem lpnAdviceProductEquiv_apply (P : Params) (π : PrimeSchedule) (L : ℕ)
++    (w : P.LPNAdvice π L) :
++    P.lpnAdviceProductEquiv π L w = (w.hop, w.I, w.buckets, w.draw, w.tail, w.uniform) := rfl
++
++/-- Inverse advice-product transport constructs the record from its six coordinates. Glue reader. -/
++theorem lpnAdviceProductEquiv_symm_apply (P : Params) (π : PrimeSchedule) (L : ℕ)
++    (w : P.LPNAdviceProduct π L) :
++    (P.lpnAdviceProductEquiv π L).symm w =
++      ⟨w.1, w.2.1, w.2.2.1, w.2.2.2.1, w.2.2.2.2.1, w.2.2.2.2.2⟩ := rfl
++
++/-- The explicit advice coordinate count is the product of its six finite cardinalities. Glue. -/
++noncomputable def lpnAdviceCard (P : Params) (π : PrimeSchedule) (L : ℕ) : ℕ :=
++  let κ := P.kappaOf L
++  let pp := π κ
++  (κ + 1) * (P.G.idxCard (P.n κ) * (P.B κ ^ P.m κ *
++    (P.drawCard κ pp * (2 ^ P.m κ * ((pp.p ^ P.n κ) ^ κ)))))
++
++/-- The advice coordinate count is the stated nested product. Glue reader. -/
++theorem lpnAdviceCard_eq (P : Params) (π : PrimeSchedule) (L : ℕ) :
++    P.lpnAdviceCard π L =
++      let κ := P.kappaOf L
++      let pp := π κ
++      (κ + 1) * (P.G.idxCard (P.n κ) * (P.B κ ^ P.m κ *
++        (P.drawCard κ pp * (2 ^ P.m κ * ((pp.p ^ P.n κ) ^ κ))))) := rfl
++
++/-- Advice has explicit Fin coordinates assembled from its supplied and canonical equivalences
++[JLS26, Lemma 4.2, p. 19]. Dv15 uses no classical finite enumeration. -/
++noncomputable def lpnAdviceEquiv (P : Params) (π : PrimeSchedule) (L : ℕ) :
++    P.LPNAdvice π L ≃ Fin (P.lpnAdviceCard π L) :=
++  let κ := P.kappaOf L
++  let pp := π κ
++  let eTail := (Equiv.prodCongr (ConstructionEncoding.boolVectorEquiv (P.m κ))
++    ((Equiv.arrowCongr (Equiv.refl (Fin κ))
++      (ConstructionEncoding.vectorEquiv pp (P.n κ))).trans finFunctionFinEquiv)).trans
++        finProdFinEquiv
++  let eDraw := (Equiv.prodCongr (P.drawEquiv κ pp) eTail).trans finProdFinEquiv
++  let eBuckets := (Equiv.prodCongr finFunctionFinEquiv eDraw).trans finProdFinEquiv
++  let eIndex := (Equiv.prodCongr (P.G.idxEquiv (P.n κ)) eBuckets).trans finProdFinEquiv
++  (P.lpnAdviceProductEquiv π L).trans
++    ((Equiv.prodCongr (Equiv.refl (Fin (κ + 1))) eIndex).trans finProdFinEquiv)
++
++/-- Advice Fin coordinates use the displayed tail/draw/bucket/index product composition. Glue. -/
++theorem lpnAdviceEquiv_eq (P : Params) (π : PrimeSchedule) (L : ℕ) :
++    P.lpnAdviceEquiv π L =
++      let κ := P.kappaOf L
++      let pp := π κ
++      let eTail := (Equiv.prodCongr (ConstructionEncoding.boolVectorEquiv (P.m κ))
++        ((Equiv.arrowCongr (Equiv.refl (Fin κ))
++          (ConstructionEncoding.vectorEquiv pp (P.n κ))).trans finFunctionFinEquiv)).trans
++            finProdFinEquiv
++      let eDraw := (Equiv.prodCongr (P.drawEquiv κ pp) eTail).trans finProdFinEquiv
++      let eBuckets := (Equiv.prodCongr finFunctionFinEquiv eDraw).trans finProdFinEquiv
++      let eIndex := (Equiv.prodCongr (P.G.idxEquiv (P.n κ)) eBuckets).trans finProdFinEquiv
++      (P.lpnAdviceProductEquiv π L).trans
++        ((Equiv.prodCongr (Equiv.refl (Fin (κ + 1))) eIndex).trans finProdFinEquiv) := rfl
++
++noncomputable instance instLPNAdviceFintype (P : Params) (π : PrimeSchedule) (L : ℕ) :
++    Fintype (P.LPNAdvice π L) :=
++  Fintype.ofEquiv (Fin (P.lpnAdviceCard π L)) (P.lpnAdviceEquiv π L).symm
++
++instance instLPNAdviceNonempty (P : Params) (π : PrimeSchedule) (L : ℕ) :
++    Nonempty (P.LPNAdvice π L) :=
++  Nonempty.map (P.lpnAdviceProductEquiv π L).symm
++    (inferInstanceAs (Nonempty (P.LPNAdviceProduct π L)))
++
++/-- Advice encoding begins with the prime and unary L, followed by its six explicit components
++[JLS26, Lemma 4.2, p. 19]. Dv9, Dv12 and Dv15 give the preprocessor all parameters as input;
++the hardwired tail avoids calling the PRG. No sampler or choice-based code occurs here. -/
++noncomputable def encLPNAdvice (P : Params) (π : PrimeSchedule) (L : ℕ)
++    (w : P.LPNAdvice π L) : List Bool :=
++  let κ := P.kappaOf L
++  let pp := π κ
++  pairEncode pp.enc (pairEncode (List.replicate L true)
++    (pairEncode (Candidates.natToList (κ + 1) w.hop.val)
++      (pairEncode (P.G.encIdx (P.n κ) w.I)
++        (pairEncode (P.encBuckets κ w.buckets)
++          (pairEncode (P.encDraw κ pp w.draw)
++            (pairEncode (List.ofFn w.tail)
++              (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
++                (List.ofFn w.uniform))))))))
++
++/-- Advice encoding is the displayed prime-first nested pair of all six fields. Glue reader. -/
++theorem encLPNAdvice_eq (P : Params) (π : PrimeSchedule) (L : ℕ)
++    (w : P.LPNAdvice π L) : P.encLPNAdvice π L w =
++      let κ := P.kappaOf L
++      let pp := π κ
++      pairEncode pp.enc (pairEncode (List.replicate L true)
++        (pairEncode (Candidates.natToList (κ + 1) w.hop.val)
++          (pairEncode (P.G.encIdx (P.n κ) w.I)
++            (pairEncode (P.encBuckets κ w.buckets)
++              (pairEncode (P.encDraw κ pp w.draw)
++                (pairEncode (List.ofFn w.tail)
++                  (BoolCircuit.encodeList (Encoding.Modular.encodeVector (κ + 1))
++                    (List.ofFn w.uniform)))))))) := rfl
++
++/-- A syntactic bound for all encoded LPN advice is `4096*(L+1)*S(L)^3`, where S sums
++index, seed, output, Boolean-seed and secret bounds and L+1. Glue for Dv12 and Dv15.
++The generous constant bounds all nested separators without an asymptotic hidden factor. -/
++def lpnAdviceBound (P : Params) : PolyExpr :=
++  .mul (.const 4096) (.mul (.add .var (.const 1))
++    (.pow (.add P.idxBound (.add P.seedBound (.add P.mBound
++      (.add P.nBound (.add P.ellBound (.add .var (.const 1))))))) 3))
++
++/-- The LPN advice bound is its displayed syntactic polynomial. Glue reader. -/
++theorem lpnAdviceBound_eq (P : Params) : P.lpnAdviceBound =
++    .mul (.const 4096) (.mul (.add .var (.const 1))
++      (.pow (.add P.idxBound (.add P.seedBound (.add P.mBound
++        (.add P.nBound (.add P.ellBound (.add .var (.const 1))))))) 3)) := rfl
++
++/-- On a scheduled dimension, the challenged matrix is transported to the exact κ dimensions
++[JLS26, Lemma 4.2, p. 19]. Dv15 uses only `finCongr` and published length equations. -/
++noncomputable def lpnMatrixAt (P : Params) (π : PrimeSchedule) (L : ℕ)
++    (h : L = P.ℓ (P.kappaOf L)) (x : P.LPNChal π L) :
++    Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L)))
++      (ZMod (π (P.kappaOf L)).p) :=
++  fun i a => (P.lpnChalEquiv π L x).1
++    ((finCongr ((congrArg (fun q : ℕ => q ^ P.D) h).trans
++      (P.n_eq (P.kappaOf L)).symm)).symm i) ((finCongr h).symm a)
++
++/-- The matrix transport is the displayed explicit row/column finite cast. Glue reader. -/
++theorem lpnMatrixAt_eq (P : Params) (π : PrimeSchedule) (L : ℕ)
++    (h : L = P.ℓ (P.kappaOf L)) (x : P.LPNChal π L) :
++    P.lpnMatrixAt π L h x = fun i a => (P.lpnChalEquiv π L x).1
++      ((finCongr ((congrArg (fun q : ℕ => q ^ P.D) h).trans
++        (P.n_eq (P.kappaOf L)).symm)).symm i) ((finCongr h).symm a) := rfl
++
++/-- On a scheduled dimension, challenged values use the corresponding explicit row transport
++[JLS26, Lemma 4.2, p. 19]. Dv15 changes no challenge coordinate. -/
++noncomputable def lpnValuesAt (P : Params) (π : PrimeSchedule) (L : ℕ)
++    (h : L = P.ℓ (P.kappaOf L)) (x : P.LPNChal π L) :
++    Fin (P.n (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p :=
++  fun i => (P.lpnChalEquiv π L x).2
++    ((finCongr ((congrArg (fun q : ℕ => q ^ P.D) h).trans
++      (P.n_eq (P.kappaOf L)).symm)).symm i)
++
++/-- Value transport is the displayed row cast of the concrete challenge. Glue reader. -/
++theorem lpnValuesAt_eq (P : Params) (π : PrimeSchedule) (L : ℕ)
++    (h : L = P.ℓ (P.kappaOf L)) (x : P.LPNChal π L) :
++    P.lpnValuesAt π L h x = fun i => (P.lpnChalEquiv π L x).2
++      ((finCongr ((congrArg (fun q : ℕ => q ^ P.D) h).trans
++        (P.n_eq (P.kappaOf L)).symm)).symm i) := rfl
++
++/-- LPN preprocessing replaces the chosen instance by challenged values plus σ, leaves earlier
++instances uniform and later instances real, and publishes the hardwired tail with error zero
++[JLS26, Lemma 4.2, p. 19]. Dv12 uses only advice and the challenge; it neither samples nor
++calls PRG evaluation. Off the schedule image it returns the empty word. -/
++noncomputable def lpnPre (P : Params) (π : PrimeSchedule) (L : ℕ)
++    (w : P.LPNAdvice π L) (x : P.LPNChal π L) : List Bool :=
++  let κ := P.kappaOf L
++  let pp := π κ
++  if h : L = P.ℓ κ then
++    let A := P.lpnMatrixAt π L h x
++    let b := P.lpnValuesAt π L h x
++    let I : P.Idx' κ pp := (w.I, w.buckets, A)
++    let bs := fun k : Fin κ => if k.val < w.hop.val then w.uniform k else
++      if k.val = w.hop.val then fun i => b i + ((w.draw.1 i).toNat : ZMod pp.p)
++      else P.lpnVector κ pp A w.draw.1 (w.draw.2 k).1 (w.draw.2 k).2
++    P.challengeStr κ pp I (P.publicSeed κ pp bs false) w.tail
++  else []
++
++/-- LPN preprocessing is its guarded, deterministic hybrid challenge construction. Glue reader. -/
++theorem lpnPre_eq (P : Params) (π : PrimeSchedule) (L : ℕ)
++    (w : P.LPNAdvice π L) (x : P.LPNChal π L) : P.lpnPre π L w x =
++      let κ := P.kappaOf L
++      let pp := π κ
++      if h : L = P.ℓ κ then
++        let A := P.lpnMatrixAt π L h x
++        let b := P.lpnValuesAt π L h x
++        let I : P.Idx' κ pp := (w.I, w.buckets, A)
++        let bs := fun k : Fin κ => if k.val < w.hop.val then w.uniform k else
++          if k.val = w.hop.val then fun i => b i + ((w.draw.1 i).toNat : ZMod pp.p)
++          else P.lpnVector κ pp A w.draw.1 (w.draw.2 k).1 (w.draw.2 k).2
++        P.challengeStr κ pp I (P.publicSeed κ pp bs false) w.tail
++      else [] := rfl
++
++/-- The explicit LPN reduction invokes A at κOf(L) with preprocessing and a coin prefix
++[JLS26, Lemma 4.2, p. 19]. Dv12 and Dv14 separate its typed function from its machine;
++advice is an input and no machine or sampler is constructed. -/
++noncomputable def lpnRed (P : Params) (π : PrimeSchedule) (A : NUPPT) (L : ℕ)
++    (w : P.LPNAdvice π L) (x : P.LPNChal π L) (r : List Bool) : List Bool :=
++  A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (r.take (A.coinLen (P.kappaOf L)))
++
++/-- The reduction calls A on its preprocessed challenge and the stated prefix. Glue reader. -/
++theorem lpnRed_eq (P : Params) (π : PrimeSchedule) (A : NUPPT) (L : ℕ)
++    (w : P.LPNAdvice π L) (x : P.LPNChal π L) (r : List Bool) :
++    P.lpnRed π A L w x r =
++      A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (r.take (A.coinLen (P.kappaOf L))) := rfl
++
++/-- Canonical LPN challenge encoding is injective [JLS26, Lemma 4.2, p. 19].
++Dv3 reuses the assumption's width and canonical encoder unchanged.
++
++**Proof sketch.** Apply the existing `LWE.encodeChallenge_injective` with the LWE
++family's public modulus-width field. -/
++theorem lpnEnc_injective (P : Params) (π : PrimeSchedule) (L : ℕ) :
++    Function.Injective (P.lpnEnc π L) := sorry
++
++/-- All six hardwired advice fields are retained by the explicit code
++[JLS26, Lemma 4.2, p. 19]. Dv9 and Dv15 place the prime first and use fixed coordinate codes.
++
++**Proof sketch.** Split the nested pairs, recover hop/index/bucket/draw/tail coordinates,
++and use modular vector injectivity on each uniform-vector list entry. -/
++theorem encLPNAdvice_injective (P : Params) (π : PrimeSchedule) (L : ℕ) :
++    Function.Injective (P.encLPNAdvice π L) := sorry
++
++/-- Every advice word has length at most the explicit polynomial at its independent dimension
++[JLS26, Lemma 4.2, p. 19]. Dv12 and Dv15 count hardwired data rather than sampler coins.
++
++**Proof sketch.** Use the existing pair/list/vector length equations, the exact draw
++layout, the published numeric bounds, κOf(L)≤L and PolyExpr.eval_mono; the factor4096
++covers all separators in the deliberately generous cubic majorant. -/
++theorem encLPNAdvice_length_le (P : Params) (π : PrimeSchedule) (L : ℕ)
++    (w : P.LPNAdvice π L) : (P.encLPNAdvice π L w).length ≤ P.lpnAdviceBound.eval L := sorry
++
++/-- One advice family bounds any selected LPN hop for every realizing non-uniform PPT machine
++[JLS26, Lemma 4.2, p. 19]. Dv8 and Dv12 retain buckets and hardwire averaged values.
++Dv16 uses the shared, layout-length-only RealizesOn; more realisers are admitted, so this
++security statement is at least as strong as the every-coin-string draft. The sentinel
++hop makes advice inhabited at κ=0; the hop inequality is requested only below κ.
++
++**Proof sketch.** For each scheduled dimension, average over every nonchallenge value
++and fix a maximizing advice tuple. Reindex at ℓ(κ), transport the canonical challenge
++by its explicit equivalence, and use the shared realiser verdict/coin readers. Uniform
++coin prefixes recover A's coins; the resulting gap is bounded by the LPN advantage. -/
++theorem lpn_hop (P : Params) (π : PrimeSchedule) (A : NUPPT)
++    (tails : ℕ → Bool) (hops : ∀ κ, Fin (κ + 1)) :
++    ∃ w : ∀ L, P.LPNAdvice π L, ∀ B : NUPPT,
++      B.RealizesOn (P.lpnEnc π) (A.coins.subst .var)
++        (fun L x r => P.lpnRed π A L (w L) x r) →
++      ∀ κ, (hops κ).val < κ →
++        Games.advantage (P.chainGame A (tails κ) (hops κ).val κ (π κ))
++          (P.chainGame A (tails κ) ((hops κ).val + 1) κ (π κ)) ≤
++            (P.lpnFamily_raw π).adv B (P.ℓ κ) := sorry
++
++/-- LPN realizability says every adversary and every polynomially bounded typed advice family
++has a machine realizing the explicit reduction. [JLS26, Lemma 4.2, p. 19]. Dv14 leaves this
++as the named Phase B obligation; the target link supplies it without constructing machines
++here. Dv16 uses shared RealizesOn on encoded challenges and layout-length coins only,
++which admits more realisers and makes this proposition easier than its every-string draft. -/
++def LPNRealizable (P : Params) (π : PrimeSchedule) : Prop :=
++  ∀ (A : NUPPT) (w : ∀ L, P.LPNAdvice π L), ∃ B : NUPPT,
++    B.RealizesOn (P.lpnEnc π) (A.coins.subst .var)
++      (fun L x r => P.lpnRed π A L (w L) x r)
++
++/-- LPN realizability is the explicit contract for every adversary and advice family.
++Glue reader. -/
++theorem lpnRealizable_iff (P : Params) (π : PrimeSchedule) :
++    P.LPNRealizable π ↔
++      ∀ (A : NUPPT) (w : ∀ L, P.LPNAdvice π L), ∃ B : NUPPT,
++        B.RealizesOn (P.lpnEnc π) (A.coins.subst .var)
++          (fun L x r => P.lpnRed π A L (w L) x r) := Iff.rfl
++
++end Params
++
+ end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG.lean
+index af9a176e8ab5d3c77f071bbe67b2adbd8580f349..cc9f7aafec70ea5e20438fcdbc7a044537c30ba2 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG.lean
+@@ -1,6 +1,7 @@
+ /-
+ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
+ -/
+ import TCSlib.Cryptography.Obfuscation.StructuredSeed.Hybrids
+ import TCSlib.Cryptography.Asymptotic.Realization
+@@ -14,20 +15,318 @@ set_option autoImplicit false
+ 
+ ## Main definitions
+ 
+-The definitions of this module are part of the Phase A statement checkpoint.
++* `Params.PRGChal`, `Params.prgEnc`: the canonical Boolean assumption challenge.
++* `Params.PRGAdvice`, `Params.prgAdviceEquiv`: inhabited explicit finite advice.
++* `Params.encPRGAdvice`, `Params.prgAdviceBound`: the faithful public-prime-first advice code.
++* `Params.prgPre`, `Params.prgRed`: deterministic preprocessing and the explicit reduction.
++* `Params.PRGRealizable`: the shared encoded-challenge realisation obligation.
+ 
+ ## Main results
+ 
+-The source-derived statements are fixed at checkpoint M0.
++* `Params.encPRGAdvice_length_le` is the explicit polynomial advice bound.
++* `Params.prg_hop` bounds the all-uniform-public-vector hop for every realiser.
++* Every definition has a proved owner-side reader.
+ 
+ ## References
+ 
+ * [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
+-  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, §§2-4.
+-* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
+-  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
++  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026,
++  Lemma 4.2 and its proof, p. 19.
++
++Dv8 retains the independent bucket map in the challenge. Dv9 reads the public prime
++from advice. Dv12 hardwires averaged-out values instead of sampling them in the
++reduction. Dv14 separates the function from its Phase B machine realisability target;
++Dv15 fixes explicit finite coordinates, and Dv16 uses the shared layout-length
++RealizesOn contract. This module constructs neither a machine nor a sampler.
+ -/
+ 
+ namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+ 
++open Complexity Turing Games
++
++namespace Params
++
++/-- The Boolean assumption challenge is an index and a Boolean output vector:
++`PRGChal N = G.Idx N × (Fin (G.outLen N) → Bool)`.
++[JLS26, Lemma 4.2, p. 19]. Dv4 indexes the Boolean assumption by its own seed length. -/
++abbrev PRGChal (P : Params) (N : ℕ) : Type :=
++  P.G.Idx N × (Fin (P.G.outLen N) → Bool)
++
++/-- The Boolean challenge type is the stated index/output pair; glue. -/
++theorem prgChal_eq (P : Params) (N : ℕ) :
++    P.PRGChal N = (P.G.Idx N × (Fin (P.G.outLen N) → Bool)) := rfl
++
++/-- The explicit Boolean challenge size is `G.idxCard N * 2^(G.outLen N)`; glue. -/
++def prgChalCard (P : Params) (N : ℕ) : ℕ := P.G.idxCard N * 2 ^ P.G.outLen N
++
++/-- The challenge size is the displayed index/vector product; glue. -/
++theorem prgChalCard_eq (P : Params) (N : ℕ) :
++    P.prgChalCard N = P.G.idxCard N * 2 ^ P.G.outLen N := rfl
++
++/-- The Boolean challenge has explicit finite coordinates from the supplied index
++coordinates and canonical Boolean vector equivalence; glue. -/
++def prgChalEquiv (P : Params) (N : ℕ) : P.PRGChal N ≃ Fin (P.prgChalCard N) :=
++  (Equiv.prodCongr (P.G.idxEquiv N)
++    (ConstructionEncoding.boolVectorEquiv (P.G.outLen N))).trans finProdFinEquiv
++
++/-- The challenge equivalence is the displayed index/vector/product composition; glue. -/
++theorem prgChalEquiv_eq (P : Params) (N : ℕ) :
++    P.prgChalEquiv N =
++      (Equiv.prodCongr (P.G.idxEquiv N)
++        (ConstructionEncoding.boolVectorEquiv (P.G.outLen N))).trans finProdFinEquiv := rfl
++
++/-- The encoded assumption challenge is exactly the Boolean primitive's canonical challenge,
++`prgEnc N x = G.challengeStr N x.1 x.2`. [JLS26, Lemma 4.2, p. 19]. The Boolean
++assumption has no modulus field; the construction prime is carried in reduction advice. -/
++def prgEnc (P : Params) (N : ℕ) (x : P.PRGChal N) : List Bool :=
++  P.G.challengeStr N x.1 x.2
++
++/-- The assumption encoding is the canonical index/output challenge; glue. -/
++theorem prgEnc_eq (P : Params) (N : ℕ) (x : P.PRGChal N) :
++    P.prgEnc N x = P.G.challengeStr N x.1 x.2 := rfl
++
++/-- PRG-hop advice fixes the bucket map, LPN matrix and all uniform public vectors at
++`kappa = kappaOfN N`. [JLS26, Lemma 4.2, p. 19]. Dv12 hardwires exactly the values
++averaged out by the paper's final Boolean PRG hop; Dv9 supplies any prime schedule. -/
++structure PRGAdvice (P : Params) (π : PrimeSchedule) (N : ℕ) where
++  /-- The fixed bucket placement. -/
++  buckets : Fin (P.m (P.kappaOfN N)) → Fin (P.B (P.kappaOfN N))
++  /-- The fixed public LPN matrix. -/
++  matrix : Matrix (Fin (P.n (P.kappaOfN N))) (Fin (P.ℓ (P.kappaOfN N)))
++    (ZMod (π (P.kappaOfN N)).p)
++  /-- The fixed independent uniform public vectors. -/
++  uniform : Fin (P.kappaOfN N) → Fin (P.n (P.kappaOfN N)) →
++    ZMod (π (P.kappaOfN N)).p
++
++namespace PRGAdvice
++
++/-- The advice data is the bucket/matrix/uniform-vector product; glue. -/
++abbrev Data (P : Params) (π : PrimeSchedule) (N : ℕ) : Type :=
++  (Fin (P.m (P.kappaOfN N)) → Fin (P.B (P.kappaOfN N))) ×
++    (Matrix (Fin (P.n (P.kappaOfN N))) (Fin (P.ℓ (P.kappaOfN N)))
++        (ZMod (π (P.kappaOfN N)).p) ×
++      (Fin (P.kappaOfN N) → Fin (P.n (P.kappaOfN N)) →
++        ZMod (π (P.kappaOfN N)).p))
++
++/-- The advice-data type is the displayed product; glue. -/
++theorem data_eq (P : Params) (π : PrimeSchedule) (N : ℕ) : Data P π N =
++    ((Fin (P.m (P.kappaOfN N)) → Fin (P.B (P.kappaOfN N))) ×
++      (Matrix (Fin (P.n (P.kappaOfN N))) (Fin (P.ℓ (P.kappaOfN N)))
++          (ZMod (π (P.kappaOfN N)).p) ×
++        (Fin (P.kappaOfN N) → Fin (P.n (P.kappaOfN N)) →
++          ZMod (π (P.kappaOfN N)).p))) := rfl
++
++/-- The advice record is identified explicitly with its product of fields; glue.
++The inverse is the record constructor, with both inverse laws given by record reduction. -/
++def prodEquiv (P : Params) (π : PrimeSchedule) (N : ℕ) :
++    P.PRGAdvice π N ≃ Data P π N where
++  toFun ω := (ω.buckets, ω.matrix, ω.uniform)
++  invFun x := ⟨x.1, x.2.1, x.2.2⟩
++  left_inv := fun ⟨_, _, _⟩ => rfl
++  right_inv := fun ⟨_, _, _⟩ => rfl
++
++/-- The record/product equivalence has the stated projections and constructor; glue. -/
++theorem prodEquiv_eq (P : Params) (π : PrimeSchedule) (N : ℕ) :
++    prodEquiv P π N =
++      { toFun := fun ω => (ω.buckets, ω.matrix, ω.uniform)
++        invFun := fun x => ⟨x.1, x.2.1, x.2.2⟩
++        left_inv := fun ⟨_, _, _⟩ => rfl
++        right_inv := fun ⟨_, _, _⟩ => rfl } := rfl
++
++end PRGAdvice
++
++/-- The explicit advice size is `B^m * ((p^ell)^n * (p^n)^kappa)`; glue.
++Every parameter is read at kappaOfN N and no enumeration is chosen. -/
++noncomputable def prgAdviceCard (P : Params) (π : PrimeSchedule) (N : ℕ) : ℕ :=
++  P.B (P.kappaOfN N) ^ P.m (P.kappaOfN N) *
++    (((π (P.kappaOfN N)).p ^ P.ℓ (P.kappaOfN N)) ^ P.n (P.kappaOfN N) *
++      (((π (P.kappaOfN N)).p ^ P.n (P.kappaOfN N)) ^ P.kappaOfN N))
++
++/-- The advice size is the displayed bucket/matrix/uniform-vector product; glue. -/
++theorem prgAdviceCard_eq (P : Params) (π : PrimeSchedule) (N : ℕ) :
++    P.prgAdviceCard π N = P.B (P.kappaOfN N) ^ P.m (P.kappaOfN N) *
++      (((π (P.kappaOfN N)).p ^ P.ℓ (P.kappaOfN N)) ^ P.n (P.kappaOfN N) *
++        (((π (P.kappaOfN N)).p ^ P.n (P.kappaOfN N)) ^ P.kappaOfN N)) := rfl
++
++/-- Advice has explicit Fin coordinates from the record/product equivalence and canonical
++function/matrix/product coordinates. [JLS26, Lemma 4.2, p. 19]. Dv15 forbids any chosen
++finite enumeration; Dv12's averaged-out data is represented in full. -/
++noncomputable def prgAdviceEquiv (P : Params) (π : PrimeSchedule) (N : ℕ) :
++    P.PRGAdvice π N ≃ Fin (P.prgAdviceCard π N) :=
++  (PRGAdvice.prodEquiv P π N).trans
++    ((Equiv.prodCongr finFunctionFinEquiv
++      ((Equiv.prodCongr
++        (ConstructionEncoding.matrixEquiv (π (P.kappaOfN N))
++          (P.n (P.kappaOfN N)) (P.ℓ (P.kappaOfN N)))
++        (ConstructionEncoding.matrixEquiv (π (P.kappaOfN N))
++          (P.kappaOfN N) (P.n (P.kappaOfN N)))).trans finProdFinEquiv)).trans
++      finProdFinEquiv)
++
++/-- The advice equivalence is the displayed record/function/matrix/product composition; glue. -/
++theorem prgAdviceEquiv_eq (P : Params) (π : PrimeSchedule) (N : ℕ) :
++    P.prgAdviceEquiv π N = (PRGAdvice.prodEquiv P π N).trans
++      ((Equiv.prodCongr finFunctionFinEquiv
++        ((Equiv.prodCongr
++          (ConstructionEncoding.matrixEquiv (π (P.kappaOfN N))
++            (P.n (P.kappaOfN N)) (P.ℓ (P.kappaOfN N)))
++          (ConstructionEncoding.matrixEquiv (π (P.kappaOfN N))
++            (P.kappaOfN N) (P.n (P.kappaOfN N)))).trans finProdFinEquiv)).trans
++        finProdFinEquiv) := rfl
++
++noncomputable instance instPRGAdviceFintype (P : Params) (π : PrimeSchedule) (N : ℕ) :
++    Fintype (P.PRGAdvice π N) :=
++  Fintype.ofEquiv (Fin (P.prgAdviceCard π N)) (P.prgAdviceEquiv π N).symm
++
++noncomputable instance instPRGAdviceInhabited (P : Params) (π : PrimeSchedule) (N : ℕ) :
++    Inhabited (P.PRGAdvice π N) where
++  default :=
++    { buckets := fun _ => ⟨0, P.B_pos (P.kappaOfN N)⟩
++      matrix := fun _ _ => 0
++      uniform := fun _ _ => 0 }
++
++/-- The advice word starts with the public prime, followed by unary N, bucket placement,
++the LPN matrix, and the uniform vectors encoded as a kappa-by-n matrix.
++[JLS26, Lemma 4.2, p. 19]. Dv9 publishes the prime as input; Dv12 and Dv15 encode every
++hardwired value in explicit finite coordinates. The code never computes a prime. -/
++noncomputable def encPRGAdvice (P : Params) (π : PrimeSchedule) (N : ℕ)
++    (ω : P.PRGAdvice π N) : List Bool :=
++  pairEncode (π (P.kappaOfN N)).enc
++    (pairEncode (List.replicate N true)
++      (pairEncode (P.encBuckets (P.kappaOfN N) ω.buckets)
++        (pairEncode (Encoding.Modular.encodeMatrix (P.kappaOfN N + 1) ω.matrix)
++          (Encoding.Modular.encodeMatrix (P.kappaOfN N + 1) ω.uniform))))
++
++/-- The advice code is the stated public-prime-first nested pair; glue. -/
++theorem encPRGAdvice_eq (P : Params) (π : PrimeSchedule) (N : ℕ)
++    (ω : P.PRGAdvice π N) :
++    P.encPRGAdvice π N ω = pairEncode (π (P.kappaOfN N)).enc
++      (pairEncode (List.replicate N true)
++        (pairEncode (P.encBuckets (P.kappaOfN N) ω.buckets)
++          (pairEncode (Encoding.Modular.encodeMatrix (P.kappaOfN N + 1) ω.matrix)
++            (Encoding.Modular.encodeMatrix (P.kappaOfN N + 1) ω.uniform)))) := rfl
++
++/-- The advice-data majorant is the sum of the index, seed, output, Boolean-seed, LPN-dimension,
++and unary-parameter bounds, plus one; glue. -/
++def prgAdviceDataBound (P : Params) : PolyExpr :=
++  .add P.idxBound (.add P.seedBound (.add P.mBound
++    (.add P.nBound (.add P.ellBound (.add .var (.const 1))))))
++
++/-- The advice-data majorant is its explicit polynomial sum; glue. -/
++theorem prgAdviceDataBound_eq (P : Params) : P.prgAdviceDataBound =
++    .add P.idxBound (.add P.seedBound (.add P.mBound
++      (.add P.nBound (.add P.ellBound (.add .var (.const 1)))))) := rfl
++
++/-- The explicit advice bound is `100*(N+1)*(dataBound(N))^3`; glue.
++The coarse majorant covers every pairing separator, public-prime bit and fixed-width entry. -/
++def prgAdviceBound (P : Params) : PolyExpr :=
++  .mul (.const 100) (.mul (.add .var (.const 1)) (.pow P.prgAdviceDataBound 3))
++
++/-- The advice bound is the displayed cubic polynomial; glue. -/
++theorem prgAdviceBound_eq (P : Params) : P.prgAdviceBound =
++    .mul (.const 100) (.mul (.add .var (.const 1)) (.pow P.prgAdviceDataBound 3)) := rfl
++
++/-- Preprocessing checks the Boolean schedule image, casts the supplied assumption index
++and output, and publishes the fixed uniform public vectors with error flag false.
++[JLS26, Lemma 4.2, p. 19]. Dv9 and Dv12 read the prime and all fixed data from advice;
++Dv14 and Dv15 leave machine implementation to its named target. Off-image inputs return
++an empty word. Neither the generator evaluator nor any sampling operation is called. -/
++noncomputable def prgPre (P : Params) (π : PrimeSchedule) (N : ℕ)
++    (ω : P.PRGAdvice π N) (x : P.PRGChal N) : List Bool :=
++  let κ := P.kappaOfN N
++  if h : N = P.n κ then
++    P.challengeStr κ (π κ) (cast (congrArg P.G.Idx h) x.1, ω.buckets, ω.matrix)
++      (P.publicSeed κ (π κ) ω.uniform false)
++      (fun j => x.2 ((finCongr (congrArg P.G.outLen h)).symm (P.outputIndex κ j)))
++  else []
++
++/-- The preprocessing map has the stated schedule guard, explicit transports and layout; glue. -/
++theorem prgPre_eq (P : Params) (π : PrimeSchedule) (N : ℕ)
++    (ω : P.PRGAdvice π N) (x : P.PRGChal N) :
++    P.prgPre π N ω x =
++      let κ := P.kappaOfN N
++      if h : N = P.n κ then
++        P.challengeStr κ (π κ) (cast (congrArg P.G.Idx h) x.1, ω.buckets, ω.matrix)
++          (P.publicSeed κ (π κ) ω.uniform false)
++          (fun j => x.2 ((finCongr (congrArg P.G.outLen h)).symm (P.outputIndex κ j)))
++      else [] := rfl
++
++/-- The explicit reduction runs A at kappaOfN N on the deterministic preprocessing and the
++required coin prefix. [JLS26, Lemma 4.2, p. 19]. Dv12 hardwires the averaged data;
++Dv14 supplies no machine and assumes no uniform sampling of extra reduction coins. -/
++noncomputable def prgRed (P : Params) (π : PrimeSchedule) (A : NUPPT) (N : ℕ)
++    (ω : P.PRGAdvice π N) (x : P.PRGChal N) (r : List Bool) : List Bool :=
++  A.runAtL (P.kappaOfN N) (P.prgPre π N ω x)
++    (r.take (A.coinLen (P.kappaOfN N)))
++
++/-- The reduction is exactly runAtL at the inverse parameter with the stated prefix; glue. -/
++theorem prgRed_eq (P : Params) (π : PrimeSchedule) (A : NUPPT) (N : ℕ)
++    (ω : P.PRGAdvice π N) (x : P.PRGChal N) (r : List Bool) :
++    P.prgRed π A N ω x r = A.runAtL (P.kappaOfN N) (P.prgPre π N ω x)
++      (r.take (A.coinLen (P.kappaOfN N))) := rfl
++
++/-- Boolean reduction realisability requires a shared-contract realiser for every adversary
++and every advice family. [JLS26, Lemma 4.2, p. 19]. Dv14 leaves this as a Phase B
++obligation, linked to preprocessing targets later. Dv16: the shared RealizesOn constrains
++only encoded challenges and coin strings of layout length; consequently every-realiser
++security is at least as strong as with the earlier all-coin-strings form.
++Phase B obligation; not proved in this development. -/
++def PRGRealizable (P : Params) (π : PrimeSchedule) : Prop :=
++  ∀ (A : NUPPT) (ω : ∀ N, P.PRGAdvice π N), ∃ B : NUPPT,
++    B.RealizesOn P.prgEnc (A.coins.subst .var)
++      (fun N x r => P.prgRed π A N (ω N) x r)
++
++/-- Boolean realisability is the explicit shared encoded-challenge contract; glue. -/
++theorem prgRealizable_iff (P : Params) (π : PrimeSchedule) :
++    P.PRGRealizable π ↔ ∀ (A : NUPPT) (ω : ∀ N, P.PRGAdvice π N), ∃ B : NUPPT,
++      B.RealizesOn P.prgEnc (A.coins.subst .var)
++        (fun N x r => P.prgRed π A N (ω N) x r) := Iff.rfl
++
++/-- The canonical Boolean challenge encoding is injective.
++[JLS26, Definition 3.4, p. 11; Lemma 4.2, p. 19]. Dv15 retains the complete typed challenge.
++
++**Proof sketch.** Read the canonical challenge pair through prgEnc_eq and challengeStr_eq,
++then apply the primitive's index-code injectivity and List.ofFn injectivity. -/
++theorem prgEnc_injective (P : Params) (N : ℕ) : Function.Injective (P.prgEnc N) := sorry
++
++/-- The explicit PRG-hop advice code retains every fixed bucket, matrix and public vector.
++[JLS26, Lemma 4.2, p. 19]. Dv9, Dv12 and Dv15 retain the prime prefix and all hardwired data.
++
++**Proof sketch.** Split the nested pairs, apply the bucket-code and canonical matrix-code
++injectivity readers at the public prime's residue width, then use record extensionality. -/
++theorem encPRGAdvice_injective (P : Params) (π : PrimeSchedule) (N : ℕ) :
++    Function.Injective (P.encPRGAdvice π N) := sorry
++
++/-- Every advice encoding fits the explicit syntactic polynomial at N.
++[JLS26, Lemma 4.2, p. 19]. Dv12 bounds the full hardwired data instead of using fresh
++sampling; Dv15 accounts for its concrete finite-coordinate string.
++
++**Proof sketch.** Read the nested pair lengths and canonical matrix lengths. Bound buckets
++and the LPN matrix by idxBound, and the repeated uniform vectors by the public seed bound
++with residue width kappa+1. Apply kappaOfN_le and polynomial evaluation monotonicity, then
++absorb all constant and linear factors into the stated cubic majorant. -/
++theorem encPRGAdvice_length_le (P : Params) (π : PrimeSchedule) (N : ℕ)
++    (ω : P.PRGAdvice π N) :
++    (P.encPRGAdvice π N ω).length ≤ P.prgAdviceBound.eval N := sorry
++
++/-- The Boolean PRG hop between all-uniform-public-vector chains is bounded by one Boolean
++assumption advantage, for every NUPPT realising the explicit advised function.
++[JLS26, Lemma 4.2, p. 19]. Dv8 retains the bucket map; Dv12 fixes averaged-out data in
++advice. Dv14 assumes the realiser, and Dv16 uses the shared predicate only on encoded
++challenges and layout-length coins, strengthening the every-realiser conclusion.
++
++**Proof sketch.** At each Boolean parameter, average over bucket maps, public matrices and
++uniform public vectors, and fix advice whose absolute acceptance gap dominates the average.
++At image parameters use kappaOfN_n and the preprocessing readers to identify the canonical
++Boolean challenge with the two chain endpoints. Transport the realiser's typed coins through
++RealizesOn's published readers and remove the unused coin suffix using the existing prefix
++sampling lemma. Choose arbitrary inhabited advice off the image and assemble the family. -/
++theorem prg_hop (P : Params) (π : PrimeSchedule) (A : NUPPT) :
++    ∃ ω : ∀ N, P.PRGAdvice π N, ∀ B : NUPPT,
++      B.RealizesOn P.prgEnc (A.coins.subst .var)
++        (fun N x r => P.prgRed π A N (ω N) x r) →
++      ∀ κ, Games.advantage (P.chainGame A true κ κ (π κ))
++          (P.chainGame A false κ κ (π κ)) ≤ P.G.adv B (P.n κ) := sorry
++
++end Params
++
+ end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Samplers.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Samplers.lean
+index 7c5b765c9ca9d3955713b9bf0a7451c98df10dd9..d3cfbfc2bcf8b5d1e5dd1454f84e94c9ce768f76 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Samplers.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Samplers.lean
+@@ -15,11 +15,13 @@ set_option autoImplicit false
+ 
+ ## Main definitions
+ 
+-The definitions of this module are part of the Phase A statement checkpoint.
++* `Params.oneSd`, `Params.sdCore`: deterministic honest seed cores.
++* Exact index and joint seed laws, and the concrete `Params.eval'` evaluator.
++* `jlsSPRG_raw`: raw assembly with explicit finite coordinates and encodings.
+ 
+ ## Main results
+ 
+-The source-derived statements are fixed at checkpoint M0.
++* Owner readers expose every algorithm, core field, and raw construction component.
+ 
+ ## References
+ 
+@@ -109,6 +111,22 @@ theorem corr_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' κ pp)
+           (fun i => ((σ i).toNat : ZMod pp.p) + e i)
+           (P.R.poly (P.n κ) I.1 (P.outputIndex κ j)) := rfl
+ 
++/-- A public LPN vector is A*s+e+σ [JLS26, 1SdSamp, p. 16].
++Dv3 uses rows as samples and the canonical scalar-noise core. -/
++noncomputable def lpnVector (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (A : Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p))
++    (σ : Fin (P.n κ) → Bool) (s : Fin (P.ℓ κ) → ZMod pp.p)
++    (r : Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p) : Fin (P.n κ) → ZMod pp.p :=
++  fun i => (∑ a, A i a * s a) + P.noiseValue κ pp (r i) + ((σ i).toNat : ZMod pp.p)
++
++/-- The LPN vector is its matrix-vector, error and Boolean-offset formula; glue. -/
++theorem lpnVector_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (A : Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p))
++    (σ : Fin (P.n κ) → Bool) (s : Fin (P.ℓ κ) → ZMod pp.p)
++    (r : Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p) :
++    P.lpnVector κ pp A σ s r = fun i =>
++      (∑ a, A i a * s a) + P.noiseValue κ pp (r i) + ((σ i).toNat : ZMod pp.p) := rfl
++
+ /-- A one-instance seed records its success flag, LPN public vector, and compressed
+ private data [JLS26, 1SdSamp, p. 16]. Dv15 retains structured private coordinates. -/
+ structure OneSdOut (P : Params) (κ : ℕ) (pp : PrimeParam κ) where
+@@ -128,7 +146,7 @@ noncomputable def oneSd (P : Params) (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx'
+     sparseFactor (Buckets.bucketMatrix I.2.1 (P.rc κ) (P.corr κ pp I σ e) b) (P.t κ)
+     else (0, 0)
+   { flag := flag
+-    pub := fun i => (∑ a, I.2.2 i a * s a) + e i + ((σ i).toNat : ZMod pp.p)
++    pub := P.lpnVector κ pp I.2.2 σ s r
+     priv := fun v => match v with
+       | .inl α => ∏ a, if h : (α a).val < P.ℓ κ then s ⟨(α a).val, h⟩ else 1
+       | .inr (b, .inl (i, a)) => (factors b).1 i a
+@@ -207,6 +225,7 @@ error flag and packed seed [JLS26, SdSamp', pp. 15-16]. These extra proof-facing
+ are not published to the adversary; Dv17 keeps the exact draw visible for coupling. -/
+ structure SdCoreOut (P : Params) (κ : ℕ) (pp : PrimeParam κ) where
+   σ : Fin (P.n κ) → Bool
++  draw : P.Draw κ pp
+   instances : Fin κ → P.OneSdOut κ pp
+   first : Option (Fin κ)
+   err : Bool
+@@ -218,13 +237,17 @@ noncomputable def sdCore (P : Params) (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx
+     (d : P.Draw κ pp) : P.SdCoreOut κ pp :=
+   let instances := fun k => P.oneSd κ pp I d.1 (d.2 k).1 (d.2 k).2
+   let first := firstGood (fun k => (instances k).flag)
+-  { σ := d.1, instances := instances, first := first, err := first.isNone
++  { σ := d.1, draw := d, instances := instances, first := first, err := first.isNone
+     seed := P.packSeed κ pp instances first }
+ 
+ /-- The original Boolean seed is retained by sdCore; glue. -/
+ theorem sdCore_σ (P : Params) (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' κ pp)
+     (d : P.Draw κ pp) : (P.sdCore κ pp I d).σ = d.1 := rfl
+ 
++/-- The full exact draw is retained by sdCore for coupling arguments; glue. -/
++theorem sdCore_draw (P : Params) (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' κ pp)
++    (d : P.Draw κ pp) : (P.sdCore κ pp I d).draw = d := rfl
++
+ /-- The repetition outputs are exactly the oneSd cores; glue. -/
+ theorem sdCore_instances (P : Params) (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' κ pp)
+     (d : P.Draw κ pp) : (P.sdCore κ pp I d).instances =
+@@ -297,5 +320,201 @@ theorem eval'_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' κ pp)
+     P.eval' κ pp I sd = fun j =>
+       decide (MvPolynomial.eval (Sum.elim sd.1 sd.2) (P.G4 κ pp I j) = 1) := rfl
+ 
++/-- The construction challenge publishes pp, index, public seed and Boolean output
++[JLS26, Definition 3.2, p. 10; Proposition 4.1, pp. 18-19]. Dv9 prepends pp;
++Dv15 uses the fixed public-vector encoding. -/
++noncomputable def challengeStr (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (I : P.Idx' κ pp) (pub : Fin (P.pubLen κ) → ZMod pp.p)
++    (z : Fin (P.m κ) → Bool) : List Bool :=
++  pairEncode pp.enc (pairEncode (P.encIdx' κ pp I)
++    (pairEncode (Encoding.Modular.encodeVector (κ + 1) pub) (List.ofFn z)))
++
++/-- Construction challenges have the stated nested public layout; glue. -/
++theorem challengeStr_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (I : P.Idx' κ pp) (pub : Fin (P.pubLen κ) → ZMod pp.p)
++    (z : Fin (P.m κ) → Bool) :
++    P.challengeStr κ pp I pub z = pairEncode pp.enc (pairEncode (P.encIdx' κ pp I)
++      (pairEncode (Encoding.Modular.encodeVector (κ + 1) pub) (List.ofFn z))) := rfl
++
++/-- A public prime fits the syntactic residue width κ+1; glue for the raw assembly.
++
++**Proof sketch.** Read the variable, constant and addition equations of PolyExpr, then
++use the public parameter's upper width field. -/
++theorem primeWidthBound (κ : ℕ) (pp : PrimeParam κ) :
++    pp.p ≤ 2 ^ (PolyExpr.add .var (.const 1)).eval κ := sorry
++
+ end Params
++
++/-- The JLS construction is a raw algorithm bundle [JLS26, construction,
++pp. 15-17]. Dv1-Dv3 fix the polynomial schedule, field vectors and rounded
++exact laws; Dv9 supplies an arbitrary prime schedule; Dv15 uses explicit
++finite coordinates; Dv17-Dv18 add no sampler or efficiency proof here.
++SP-W1 uses rational δ throughout. The primitive is assembled only from targets. -/
++noncomputable def jlsSPRG_raw (P : Params) (π : PrimeSchedule) : SPRG.Raw where
++  modulus κ := (π κ).p
++  modulus_prime κ := (π κ).prime
++  residueBits := .add .var (.const 1)
++  modulus_le_pow κ := Params.primeWidthBound κ (π κ)
++  Idx κ := P.Idx' κ (π κ)
++  idxFintype κ := inferInstance
++  idxNonempty κ := inferInstance
++  idxCard κ := P.idxCard κ (π κ)
++  idxEquiv κ := P.idxEquiv κ (π κ)
++  IdDraw κ := P.IdDraw κ (π κ)
++  idDrawFintype κ := inferInstance
++  idDrawNonempty κ := inferInstance
++  idDrawCard κ := P.idDrawCard κ (π κ)
++  idDrawEquiv κ := P.idDrawEquiv κ (π κ)
++  idCore κ := P.idCore κ (π κ)
++  encIdDraw κ := P.encIdDraw κ (π κ)
++  encIdDraw_injective κ := P.encIdDraw_injective κ (π κ)
++  encIdx κ := P.encIdx' κ (π κ)
++  encIdx_injective κ := P.encIdx'_injective κ (π κ)
++  idxBits := P.idxBound
++  encIdx_length_le κ := P.encIdx'_length_le κ (π κ)
++  pubLen := P.pubLen
++  privLen := P.privLen
++  outLen := P.m
++  seedBound := P.seedBound
++  outBound := P.mBound
++  pubLen_le := P.pubLen_le_seedBound
++  privLen_le := P.privLen_le_seedBound
++  outLen_le := P.m_le_mBound
++  SdDraw κ _ := P.Draw κ (π κ)
++  sdDrawFintype κ _ := inferInstance
++  sdDrawNonempty κ _ := inferInstance
++  sdDrawCard κ _ := P.drawCard κ (π κ)
++  sdDrawEquiv κ _ := P.drawEquiv κ (π κ)
++  sdCore κ I d := (P.sdCore κ (π κ) I d).seed
++  encSdDraw κ _ := P.encDraw κ (π κ)
++  encSdDraw_injective κ _ := P.encDraw_injective κ (π κ)
++  eval κ := P.eval' κ (π κ)
++
++/-- The raw construction is exactly the displayed record of algorithms, encodings,
++finite coordinates and proved numeric field obligations; glue reader.
++
++**Proof sketch.** The owner definition is the same record, so every field agrees
++definitionally; reflexivity closes the equation. -/
++theorem jlsSPRG_raw_eq (P : Params) (π : PrimeSchedule) :
++    jlsSPRG_raw P π = {
++  modulus κ := (π κ).p
++  modulus_prime κ := (π κ).prime
++  residueBits := .add .var (.const 1)
++  modulus_le_pow κ := Params.primeWidthBound κ (π κ)
++  Idx κ := P.Idx' κ (π κ)
++  idxFintype κ := inferInstance
++  idxNonempty κ := inferInstance
++  idxCard κ := P.idxCard κ (π κ)
++  idxEquiv κ := P.idxEquiv κ (π κ)
++  IdDraw κ := P.IdDraw κ (π κ)
++  idDrawFintype κ := inferInstance
++  idDrawNonempty κ := inferInstance
++  idDrawCard κ := P.idDrawCard κ (π κ)
++  idDrawEquiv κ := P.idDrawEquiv κ (π κ)
++  idCore κ := P.idCore κ (π κ)
++  encIdDraw κ := P.encIdDraw κ (π κ)
++  encIdDraw_injective κ := P.encIdDraw_injective κ (π κ)
++  encIdx κ := P.encIdx' κ (π κ)
++  encIdx_injective κ := P.encIdx'_injective κ (π κ)
++  idxBits := P.idxBound
++  encIdx_length_le κ := P.encIdx'_length_le κ (π κ)
++  pubLen := P.pubLen
++  privLen := P.privLen
++  outLen := P.m
++  seedBound := P.seedBound
++  outBound := P.mBound
++  pubLen_le := P.pubLen_le_seedBound
++  privLen_le := P.privLen_le_seedBound
++  outLen_le := P.m_le_mBound
++  SdDraw κ _ := P.Draw κ (π κ)
++  sdDrawFintype κ _ := inferInstance
++  sdDrawNonempty κ _ := inferInstance
++  sdDrawCard κ _ := P.drawCard κ (π κ)
++  sdDrawEquiv κ _ := P.drawEquiv κ (π κ)
++  sdCore κ I d := (P.sdCore κ (π κ) I d).seed
++  encSdDraw κ _ := P.encDraw κ (π κ)
++  encSdDraw_injective κ _ := P.encDraw_injective κ (π κ)
++  eval κ := P.eval' κ (π κ) } := rfl
++
++/-- The raw construction's modulus is the supplied schedule; glue. -/
++theorem jlsSPRG_raw_modulus (P : Params) (π : PrimeSchedule) (κ : ℕ) :
++    (jlsSPRG_raw P π).modulus κ = (π κ).p := rfl
++
++/-- The raw residue-width polynomial is κ+1; glue. -/
++theorem jlsSPRG_raw_residueBits (P : Params) (π : PrimeSchedule) :
++    (jlsSPRG_raw P π).residueBits = .add .var (.const 1) := rfl
++
++/-- The raw construction's index type is the concrete JLS triple; glue. -/
++theorem jlsSPRG_raw_Idx (P : Params) (π : PrimeSchedule) (κ : ℕ) :
++    (jlsSPRG_raw P π).Idx κ = P.Idx' κ (π κ) := rfl
++
++/-- The raw construction's index draw is the concrete joint draw; glue. -/
++theorem jlsSPRG_raw_IdDraw (P : Params) (π : PrimeSchedule) (κ : ℕ) :
++    (jlsSPRG_raw P π).IdDraw κ = P.IdDraw κ (π κ) := rfl
++
++/-- The raw construction's public length is the explicit packed length; glue. -/
++theorem jlsSPRG_raw_pubLen (P : Params) (π : PrimeSchedule) (κ : ℕ) :
++    (jlsSPRG_raw P π).pubLen κ = P.pubLen κ := rfl
++
++/-- The raw construction's private length is the explicit packed length; glue. -/
++theorem jlsSPRG_raw_privLen (P : Params) (π : PrimeSchedule) (κ : ℕ) :
++    (jlsSPRG_raw P π).privLen κ = P.privLen κ := rfl
++
++/-- The raw construction's output length is the Boolean generator's schedule; glue. -/
++theorem jlsSPRG_raw_outLen (P : Params) (π : PrimeSchedule) (κ : ℕ) :
++    (jlsSPRG_raw P π).outLen κ = P.m κ := rfl
++
++/-- The raw index encoding is the explicit concrete encoding; glue. -/
++theorem jlsSPRG_raw_encIdx (P : Params) (π : PrimeSchedule) (κ : ℕ)
++    (I : P.Idx' κ (π κ)) : (jlsSPRG_raw P π).encIdx κ I = P.encIdx' κ (π κ) I := rfl
++
++/-- The raw index core is the concrete core; glue. -/
++theorem jlsSPRG_raw_idCore (P : Params) (π : PrimeSchedule) (κ : ℕ)
++    (d : P.IdDraw κ (π κ)) : (jlsSPRG_raw P π).idCore κ d = P.idCore κ (π κ) d := rfl
++
++/-- The raw index-draw encoding is the concrete joint-draw code; glue. -/
++theorem jlsSPRG_raw_encIdDraw (P : Params) (π : PrimeSchedule) (κ : ℕ)
++    (d : P.IdDraw κ (π κ)) :
++    (jlsSPRG_raw P π).encIdDraw κ d = P.encIdDraw κ (π κ) d := rfl
++
++/-- The raw seed draw is the concrete joint draw, independent of index; glue. -/
++theorem jlsSPRG_raw_SdDraw (P : Params) (π : PrimeSchedule) (κ : ℕ)
++    (I : P.Idx' κ (π κ)) : (jlsSPRG_raw P π).SdDraw κ I = P.Draw κ (π κ) := rfl
++
++/-- The raw seed core returns the concrete packed seed; glue. -/
++theorem jlsSPRG_raw_sdCore (P : Params) (π : PrimeSchedule) (κ : ℕ)
++    (I : P.Idx' κ (π κ)) (d : P.Draw κ (π κ)) :
++    (jlsSPRG_raw P π).sdCore κ I d = (P.sdCore κ (π κ) I d).seed := rfl
++
++/-- The raw seed-draw encoding is the concrete joint-draw code; glue. -/
++theorem jlsSPRG_raw_encSdDraw (P : Params) (π : PrimeSchedule) (κ : ℕ)
++    (I : P.Idx' κ (π κ)) (d : P.Draw κ (π κ)) :
++    (jlsSPRG_raw P π).encSdDraw κ I d = P.encDraw κ (π κ) d := rfl
++
++/-- The raw evaluation algorithm is the concrete G4 evaluator; glue. -/
++theorem jlsSPRG_raw_eval (P : Params) (π : PrimeSchedule) (κ : ℕ)
++    (I : P.Idx' κ (π κ)) (sd : P.Seed κ (π κ)) :
++    (jlsSPRG_raw P π).eval κ I sd = P.eval' κ (π κ) I sd := rfl
++
++/-- The raw index sampler equals IdSamp'; glue.
++
++**Proof sketch.** Read the raw sampler and concrete sampler equations, then use the
++raw construction's index-draw and core fields. -/
++theorem jlsSPRG_raw_idSamp (P : Params) (π : PrimeSchedule) (κ : ℕ) :
++    (jlsSPRG_raw P π).idSamp κ = P.idSamp' κ (π κ) := sorry
++
++/-- The raw seed sampler equals SdSamp'; glue.
++
++**Proof sketch.** Read both pushforward laws and compose the full core with its seed projection. -/
++theorem jlsSPRG_raw_sdSamp (P : Params) (π : PrimeSchedule) (κ : ℕ)
++    (I : P.Idx' κ (π κ)) :
++    (jlsSPRG_raw P π).sdSamp κ I = P.sdSamp' κ (π κ) I := sorry
++
++/-- The raw challenge's modulus prefix equals the input prime encoding; glue.
++
++**Proof sketch.** Read encPP and the construction's residue-width and modulus fields,
++then the variable/addition equations of PolyExpr and PrimeParam.enc_eq. -/
++theorem jlsSPRG_raw_encPP (P : Params) (π : PrimeSchedule) (κ : ℕ) :
++    (jlsSPRG_raw P π).encPP κ = (π κ).enc := sorry
++
+ end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean
+index 0b0828672a4d0324a363773b2217c9219ee924dd..2f76f8df65b5fd849764e36f46640ba1d5fc862f 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean
+@@ -15,11 +15,12 @@ set_option autoImplicit false
+ 
+ ## Main definitions
+ 
+-The definitions of this module are part of the Phase A statement checkpoint.
++* `Params.Realizable`: the conjunction of the shared realiser obligations.
+ 
+ ## Main results
+ 
+-The source-derived statements are fixed at checkpoint M0.
++* `lemma42`, `prop41`: explicit every-realiser advantage bounds.
++* `theorem41` and its negligible/subexponential existence corollaries on Raw.
+ 
+ ## References
+ 
+@@ -31,4 +32,164 @@ The source-derived statements are fixed at checkpoint M0.
+ 
+ namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+ 
++open Complexity
++open TCSlib.Cryptography.Games
++
++namespace Params
++
++/-- Realisability supplies a NUPPT for each explicit reduction and advice family
++[JLS26, Proposition 4.1, pp. 18-19]. Dv14 leaves this Phase B obligation as a
++hypothesis; targets discharge it through the shared preTarget theorem. Dv16:
++the shared RealizesOn constrains only encoded challenges and layout-length coins,
++which weakens the predicate and strengthens every-realiser security inequalities. -/
++def Realizable (P : Params) (π : PrimeSchedule) : Prop :=
++  P.LPNRealizable π ∧ P.PRGRealizable π
++
++/-- Realisability is the conjunction of the two shared-realiser propositions; glue. -/
++theorem realizable_iff (P : Params) (π : PrimeSchedule) :
++    P.Realizable π ↔ P.LPNRealizable π ∧ P.PRGRealizable π := Iff.rfl
++
++end Params
++
++/-- The initial real-tail distribution and final uniform-tail distribution differ by at
++most κ LPN advantages plus one Boolean PRG advantage [JLS26, Lemma 4.2, p. 19].
++Dv8 includes independent buckets; Dv12 hardwires averaging choices; Dv14 states the
++bound for every realising NUPPT, with no machine construction.
++
++**Proof sketch.** Choose the largest gap in the real-tail chain, hardwire its other draws
++in LPN advice at every inverse-indexed dimension, and apply the every-realiser hop lemma.
++Use the PRG hop on the all-uniform public vectors, then the existing hybrid inequality. -/
++theorem lemma42 (P : Params) (π : PrimeSchedule) (A : NUPPT) :
++    ∃ (ωL : ∀ L, P.LPNAdvice π L) (ωG : ∀ N, P.PRGAdvice π N),
++      ∀ BL BG : NUPPT,
++        BL.RealizesOn (P.lpnEnc π) (A.coins.subst .var)
++          (fun L x r => P.lpnRed π A L (ωL L) x r) →
++        BG.RealizesOn P.prgEnc (A.coins.subst .var)
++          (fun N x r => P.prgRed π A N (ωG N) x r) →
++        ∀ κ, advantage (P.chainGame A true 0 κ (π κ))
++          (P.chainGame A false κ κ (π κ)) ≤
++            (κ : ℝ) * (P.lpnFamily_raw π).adv BL (P.ℓ κ) + P.G.adv BG (P.n κ) := sorry
++
++/-- The raw sPRG advantage is at most 2κ LPN advantages, one PRG advantage and twice
++the exact error probability [JLS26, Proposition 4.1, pp. 18-19]. Dv1 fixes the schedule;
++Dv9 quantifies every prime schedule; Dv12 hardwires averaging choices; Dv18 uses Raw.
++Dv16: RealizesOn constrains only encoded challenges and layout-length coins, so its
++weaker predicate makes this every-realiser inequality stronger.
++
++**Proof sketch.** Bound H0-H1 and H2-H3 by the error event. Connect H1 to H2 by the
++real-tail LPN chain, the PRG hop, and the reversed uniform-tail LPN chain. At each κ
++choose the largest of the 2κ LPN gaps and hardwire the remaining draws. The shared
++realiser readers identify every realiser's verdict, and the existing hybrid inequalities
++sum the gaps. At κ=0 only the PRG hop and the explicit error slack remain. -/
++theorem prop41 (P : Params) (π : PrimeSchedule) (A : NUPPT) :
++    ∃ (ωL : ∀ L, P.LPNAdvice π L) (ωG : ∀ N, P.PRGAdvice π N),
++      ∀ BL BG : NUPPT,
++        BL.RealizesOn (P.lpnEnc π) (A.coins.subst .var)
++          (fun L x r => P.lpnRed π A L (ωL L) x r) →
++        BG.RealizesOn P.prgEnc (A.coins.subst .var)
++          (fun N x r => P.prgRed π A N (ωG N) x r) →
++        ∀ κ, (jlsSPRG_raw P π).adv A κ ≤
++          2 * (κ : ℝ) * (P.lpnFamily_raw π).adv BL (P.ℓ κ) +
++            P.G.adv BG (P.n κ) + 2 * P.errProb κ (π κ) := sorry
++
++/-- Under realisability and the two assumptions, the raw construction is secure
++[JLS26, Theorem 4.1, p. 11]. Dv3 uses the construction's own LPN family; Dv13 uses
++NUPPT adversaries; Dv14 retains realisability as the Phase B obligation, and Dv18 uses Raw.
++
++**Proof sketch.** Instantiate the advice from prop41 and the realisers from Realizable.
++Reindex negligible LPN and PRG advantages along ℓ≥κ and n≥κ. Multiply by the polynomial
++2κ, add the Claim 4.2 slack, and use the shared negligibility closure lemmas. -/
++theorem jls_secure (P : Params) (π : PrimeSchedule) {cLoc : ℕ}
++    (hLoc : P.R.HasLocality cLoc) (hR : P.Realizable π)
++    (hG : P.G.Secure) (hLPN : (P.lpnFamily_raw π).Assumption) :
++    (jlsSPRG_raw P π).Secure := sorry
++
++/-- The raw advantage has explicit subexponential exponent
++min(E*cL,min(E*D*cG,1))/2 [JLS26, Theorem 4.1, p. 11]. Dv13 uses the shared
++SubexpSmall API against NUPPT; Dv14 assumes realisability; Dv18 uses Raw.
++
++**Proof sketch.** Reindex the LPN term by κ^E and PRG term by κ^(E*D). Use the shared
++polynomial-factor and constant-factor closure lemmas at an intermediate exponent below
++the common minimum. Claim 4.2 controls the error term by 2^(-κ). Two applications of
++sum closure yield half the minimum, then prop41 gives domination of the advantage. -/
++theorem jls_subexpSmall (P : Params) (π : PrimeSchedule) {cLoc : ℕ}
++    (hLoc : P.R.HasLocality cLoc) (hR : P.Realizable π) {cL cG : ℝ}
++    (hcL : 0 < cL) (hcG : 0 < cG)
++    (hG : ∀ B : NUPPT, SubexpSmall cG (P.G.adv B))
++    (hLPN : ∀ B : NUPPT, SubexpSmall cL ((P.lpnFamily_raw π).adv B)) (A : NUPPT) :
++    SubexpSmall (min ((P.E : ℝ) * cL) (min ((P.E : ℝ) * P.D * cG) 1) / 2)
++      ((jlsSPRG_raw P π).adv A) := sorry
++
++/-- Subexponential hardness of both assumptions gives subexponential raw sPRG security
++[JLS26, Theorem 4.1, p. 11]. Dv13 quantifies a common exponent before every adversary;
++Dv14 assumes the Phase B realisability obligation; Dv18 uses Raw.
++
++**Proof sketch.** Read the two shared SubexpHard witnesses, use jls_subexpSmall, and
++observe that its positive exponent depends only on the assumption exponents and P. -/
++theorem jls_subexpSecure (P : Params) (π : PrimeSchedule) {cLoc : ℕ}
++    (hLoc : P.R.HasLocality cLoc) (hR : P.Realizable π)
++    (hG : SubexpHard P.G.adv) (hLPN : SubexpHard (P.lpnFamily_raw π).adv) :
++    SubexpHard (jlsSPRG_raw P π).adv := sorry
++
++/-- The raw construction is secure, has public degree d and private degree two, and
++polynomial stretch [JLS26, Theorem 4.1, p. 11]. Dv1 fixes a sufficiently large schedule;
++Dv3 uses its own LPN family; Dv6 uses composite bidegree; Dv9 allows every prime schedule;
++Dv10 follows p. 17's degree d; Dv14 assumes realisability; Dv18 uses Raw.
++SP-W1 restricts δ to rational data, coerced to real values in the stretch threshold.
++
++**Proof sketch.** Combine raw security, the G4 correctness/degree theorem, and Claim 4.1. -/
++theorem theorem41 (P : Params) (π : PrimeSchedule) {cLoc : ℕ} {τ : ℝ}
++    (hLoc : P.R.HasLocality cLoc) (hτ : 1 < τ) (hs : P.G.HasStretch τ)
++    (hE : E₀ P.d (P.δ : ℝ) τ ≤ P.E) (hR : P.Realizable π)
++    (hG : P.G.Secure) (hLPN : (P.lpnFamily_raw π).Assumption) :
++    (jlsSPRG_raw P π).Secure ∧ (jlsSPRG_raw P π).HasComplexity P.d 2 ∧
++      (jlsSPRG_raw P π).HasPolyStretch := sorry
++
++/-- The raw construction has the same complexity/stretch and subexponential security
++[JLS26, Theorem 4.1, p. 11]. Dv13 means advantage against NUPPT, Dv14 assumes
++realisability, and Dv18 leaves the primitive assembly to the targets.
++
++**Proof sketch.** Combine jls_subexpSecure, G4 correctness/degree, and Claim 4.1. -/
++theorem theorem41_subexp (P : Params) (π : PrimeSchedule) {cLoc : ℕ} {τ : ℝ}
++    (hLoc : P.R.HasLocality cLoc) (hτ : 1 < τ) (hs : P.G.HasStretch τ)
++    (hE : E₀ P.d (P.δ : ℝ) τ ≤ P.E) (hR : P.Realizable π)
++    (hG : SubexpHard P.G.adv) (hLPN : SubexpHard (P.lpnFamily_raw π).adv) :
++    SubexpHard (jlsSPRG_raw P π).adv ∧ (jlsSPRG_raw P π).HasComplexity P.d 2 ∧
++      (jlsSPRG_raw P π).HasPolyStretch := sorry
++
++/-- A secure raw structured-seed generator exists for every prime schedule
++[JLS26, Theorem 4.1, p. 11]. Dv1 chooses a polynomial schedule; Dv3 assumes LPN
++only for the construction's own families; Dv14 assumes realisability; Dv18 returns Raw.
++SP-W1 uses rational δ; this statement does not claim a literal Definition 2.3 bridge.
++
++**Proof sketch.** Choose E=max 1 E₀, build Params from the given G and representation,
++and apply theorem41 with the supplied family assumption and realisability. -/
++theorem exists_sprg_raw {d cLoc : ℕ} (hd : 1 ≤ d) {δ : ℚ} {τ : ℝ}
++    (hδ : 0 < δ) (hδ1 : δ < 1) (hτ : 1 < τ) (G : BoolPRG)
++    (R : G.MultilinearRep d) (hLoc : R.HasLocality cLoc) (hs : G.HasStretch τ)
++    (hG : G.Secure) (π : PrimeSchedule)
++    (hLPN : ∀ (E : ℕ) (hE : 1 ≤ E),
++      (Params.lpnFamily_raw ⟨d, hd, δ, hδ, hδ1, E, hE, G, R⟩ π).Assumption)
++    (hR : ∀ (E : ℕ) (hE : 1 ≤ E),
++      (Params.Realizable ⟨d, hd, δ, hδ, hδ1, E, hE, G, R⟩ π)) :
++    ∃ S : SPRG.Raw, (∀ κ, S.modulus κ = (π κ).p) ∧ S.Secure ∧
++      S.HasComplexity d 2 ∧ S.HasPolyStretch := sorry
++
++/-- A subexponentially secure raw generator exists for every prime schedule
++[JLS26, Theorem 4.1, p. 11]. Dv13 uses a common subexponential advantage exponent;
++Dv14 assumes realisability; Dv18 returns the raw bundle. SP-W1 uses rational δ.
++
++**Proof sketch.** Choose the same sufficiently large schedule exponent and apply
++ theorem41_subexp to the supplied family hardness and realisability. -/
++theorem exists_sprg_raw_subexp {d cLoc : ℕ} (hd : 1 ≤ d) {δ : ℚ} {τ : ℝ}
++    (hδ : 0 < δ) (hδ1 : δ < 1) (hτ : 1 < τ) (G : BoolPRG)
++    (R : G.MultilinearRep d) (hLoc : R.HasLocality cLoc) (hs : G.HasStretch τ)
++    (hG : SubexpHard G.adv) (π : PrimeSchedule)
++    (hLPN : ∀ (E : ℕ) (hE : 1 ≤ E),
++      SubexpHard (Params.lpnFamily_raw ⟨d, hd, δ, hδ, hδ1, E, hE, G, R⟩ π).adv)
++    (hR : ∀ (E : ℕ) (hE : 1 ≤ E),
++      (Params.Realizable ⟨d, hd, δ, hδ, hδ1, E, hE, G, R⟩ π)) :
++    ∃ S : SPRG.Raw, (∀ κ, S.modulus κ = (π κ).p) ∧ SubexpHard S.adv ∧
++      S.HasComplexity d 2 ∧ S.HasPolyStretch := sorry
++
+ end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean
+index bdae8da29010fee9fd7220f3d3e7220a6900ff1a..c5c2394492b7a06d2605e61f6d810edef79e7970 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean
+@@ -1,6 +1,7 @@
+ /-
+ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
+ -/
+ import TCSlib.Cryptography.Obfuscation.StructuredSeed.Correctness
+ import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+@@ -14,20 +15,105 @@ set_option autoImplicit false
+ 
+ ## Main definitions
+ 
+-The definitions of this module are part of the Phase A statement checkpoint.
++* `E₀` gives the explicit sufficient polynomial schedule exponent.
++* `Params.seedBitsAt` is the public/private field-vector payload bit count.
+ 
+ ## Main results
+ 
+-The source-derived statements are fixed at checkpoint M0.
++* `Params.seedBitsAt_le` bounds the payload uniformly in every public prime.
++* `jls_seedBits_le` reads the same bound on the raw construction.
++* `jls_hasPolyStretch` states Claim 4.1 for the fixed polynomial schedule.
+ 
+ ## References
+ 
+ * [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
+-  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, §§2-4.
+-* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
+-  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
++  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026,
++  Claim 4.1 and its proof, p. 18.
++
++Dv1 fixes one security parameter and a polynomial input-length schedule. Dv2 counts
++field-vector payload bits; Dv3 fixes exact integral rounding; Dv5 uses the Boolean
++stretch lower bound. The explicit threshold below is convention C10. SP-W1 uses
++rational delta as construction data, coerced to real values in these analytic bounds.
+ -/
+ 
+ namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+ 
++/-- A sufficient schedule exponent is
++`E₀ d delta tau = floor(max(10/delta,5/(tau-1)))+1`.
++[JLS26, Claim 4.1, p. 18]. Dv1 makes sufficiently large polynomial seed length an
++explicit condition on E. Convention C10 uses a deliberately generous fifth-power
++seed bound; d is retained in the interface although this sufficient threshold is
++independent of it when d≥1. SP-W1 coerces the construction's rational delta to real. -/
++noncomputable def E₀ (_d : ℕ) (δ τ : ℝ) : ℕ :=
++  ⌊max (10 / δ) (5 / (τ - 1))⌋₊ + 1
++
++/-- The sufficient exponent is its stated real-power comparison threshold; glue. -/
++theorem E₀_eq (d : ℕ) (δ τ : ℝ) :
++    E₀ d δ τ = ⌊max (10 / δ) (5 / (τ - 1))⌋₊ + 1 := rfl
++
++namespace Params
++
++/-- The construction's seed payload has
++`seedBitsAt kappa = (pubLen kappa + privLen kappa)*(kappa+1)` bits.
++[JLS26, proof of Claim 4.1, p. 18]. Dv2 uses fixed-width field vectors. Dv9's
++arbitrary public prime changes no width, so this count is uniform in that prime. -/
++noncomputable def seedBitsAt (P : Params) (κ : ℕ) : ℕ :=
++  (P.pubLen κ + P.privLen κ) * (κ + 1)
++
++/-- The payload count is the total coordinate count times kappa+1; glue. -/
++theorem seedBitsAt_eq (P : Params) (κ : ℕ) :
++    P.seedBitsAt κ = (P.pubLen κ + P.privLen κ) * (κ + 1) := rfl
++
++/-- The seed payload is at most `C*(kappa+1)^5*(n+m/w+1)` for a fixed natural C,
++uniformly over every kappa and every public prime. [JLS26, proof of Claim 4.1, p. 18].
++Dv1 fixes the polynomial schedule; Dv2-Dv3 replace the asymptotic expression by this
++explicit integral upper bound. Natural division and the final one cover rounding
++and the zero-parameter boundary. SP-W1 uses rational delta.
++
++**Proof sketch.** Count the repeated public vectors, flags, tensor coordinates and two
++factor arrays. Bound the rounded bucket count by its quotient plus one, and cancel
++one noise-width factor against W=w^2 in the factor-array term. Bound the tensor
++term by a degree-dependent constant times n, absorb rounding terms using w≤ell+1,
++and enlarge the fixed constant to cover the finitely many boundary cases. -/
++theorem seedBitsAt_le (P : Params) :
++    ∃ C : ℕ, ∀ κ,
++      P.seedBitsAt κ ≤ C * (κ + 1) ^ 5 * (P.n κ + P.m κ / P.w κ + 1) := sorry
++
++end Params
++
++/-- The raw construction's seed-bit function equals the prime-independent payload count.
++[JLS26, proof of Claim 4.1, p. 18]. Dv1-Dv2 and Dv9 fix the family and residue width.
++
++**Proof sketch.** Read SPRG.Raw.seedBits through its published equation, then use the
++construction's public/private length and residue-width field readers. -/
++theorem jls_seedBits_eq (P : Params) (π : PrimeSchedule) (κ : ℕ) :
++    (jlsSPRG_raw P π).seedBits κ = P.seedBitsAt κ := sorry
++
++/-- The raw construction has seed length at most
++`C*(kappa+1)^5*(n+m/w+1)` at every parameter. [JLS26, proof of Claim 4.1, p. 18].
++Dv1-Dv3 make the schedule, field widths and exact rounding explicit; the constant can
++be chosen independently of the public prime schedule.
++
++**Proof sketch.** Apply the prime-independent payload estimate and read the raw
++construction's bit count through jls_seedBits_eq. -/
++theorem jls_seedBits_le (P : Params) (π : PrimeSchedule) :
++    ∃ C : ℕ, ∀ κ,
++      (jlsSPRG_raw P π).seedBits κ ≤
++        C * (κ + 1) ^ 5 * (P.n κ + P.m κ / P.w κ + 1) := sorry
++
++/-- The raw construction has polynomial stretch when its schedule exponent is at least E₀.
++[JLS26, Claim 4.1, p. 18]. Dv1 replaces sufficiently large polynomial seed length by
++`E₀ d delta tau ≤ E`; Dv3 uses rounded noise and Dv5 uses the input stretch lower bound.
++SP-W1 supplies rational delta, coerced to real for the threshold. Dv18 keeps this
++stretch theorem on the raw bundle; honest efficiency is supplied by the later assembly.
++
++**Proof sketch.** Read the sufficient exponent to obtain E*delta/2>5 and E*(tau-1)>5.
++Apply the fifth-power payload bound. The rounded noise width eventually grows like
++ell^(delta/2), so both n and m/w leave a positive power gap below m after the kappa^5
++factor. Use the polynomial output upper bound to choose one fixed stretch exponent
++strictly above one, and absorb the fixed constant beyond a common threshold. -/
++theorem jls_hasPolyStretch (P : Params) (π : PrimeSchedule) {τ : ℝ} (hτ : 1 < τ)
++    (hs : P.G.HasStretch τ) (hE : E₀ P.d (P.δ : ℝ) τ ≤ P.E) :
++    (jlsSPRG_raw P π).HasPolyStretch := sorry
++
+ end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean
+index 3b80720d8c8451f7130233503c47a999995a76d1..1791852275e9b37466219f1793bd569222f29c68 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean
+@@ -14,11 +14,14 @@ set_option autoImplicit false
+ 
+ ## Main definitions
+ 
+-The definitions of this module are part of the Phase A statement checkpoint.
++* `Params.evalTarget` through `Params.lpnSamplerTarget`: obligations T1-T6.
++* `Params.Targets`: their conjunction, with uniform algorithms chosen before inputs.
++* `jlsSPRG`, `Params.lpnFamily`: the only primitive assemblies, from target witnesses.
+ 
+ ## Main results
+ 
+-The source-derived statements are fixed at checkpoint M0.
++* `Params.realizable_of_targets`: target-to-realiser link via the shared API.
++* `theorem41_of_targets` and efficient primitive existence corollaries.
+ 
+ ## References
+ 
+@@ -30,4 +33,327 @@ The source-derived statements are fixed at checkpoint M0.
+ 
+ namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+ 
++open Complexity Turing
++open TCSlib.Cryptography.CoinSampling
++
++namespace Params
++
++/-- A seed-sampler input consists of its public prime and function index
++[JLS26, Definition 3.1, p. 10]. Dv9 and Dv17 expose these as the shared contract's
++parameter rather than asking an algorithm to compute the prime. -/
++abbrev SdParam (P : Params) (κ : ℕ) : Type := Σ pp : PrimeParam κ, P.Idx' κ pp
++
++/-- The seed-sampler parameter is its prime/index dependent pair; glue. -/
++theorem sdParam_eq (P : Params) (κ : ℕ) :
++    P.SdParam κ = (Σ pp : PrimeParam κ, P.Idx' κ pp) := rfl
++
++/-- The index-sampler parameter word starts with pp and includes unary κ
++[JLS26, Definition 3.1, p. 10]. Dv9 and Dv17 keep public inputs explicit. -/
++def idWord (_P : Params) (κ : ℕ) (pp : PrimeParam κ) : List Bool :=
++  pairEncode pp.enc (List.replicate κ true)
++
++/-- The index word is pp paired with unary κ; glue. -/
++theorem idWord_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
++    P.idWord κ pp = pairEncode pp.enc (List.replicate κ true) := rfl
++
++/-- The seed-sampler word starts with pp, then unary κ and index
++[JLS26, Definition 3.1, p. 10]. Dv17 indexes one exact joint draw by this public word. -/
++noncomputable def sdWord (P : Params) (κ : ℕ) (q : P.SdParam κ) : List Bool :=
++  pairEncode q.1.enc (pairEncode (List.replicate κ true) (P.encIdx' κ q.1 q.2))
++
++/-- The seed word carries pp, unary κ and the concrete index code; glue. -/
++theorem sdWord_eq (P : Params) (κ : ℕ) (q : P.SdParam κ) :
++    P.sdWord κ q = pairEncode q.1.enc
++      (pairEncode (List.replicate κ true) (P.encIdx' κ q.1 q.2)) := rfl
++
++/-- T1 requires one uniform map for Eval' on every κ and input prime
++[JLS26, Definition 3.1, p. 10; Eval', pp. 16-17]. Dv9 and Dv18 defer efficiency.
++Phase B obligation; not proved in this development. -/
++def evalTarget (P : Params) : Prop :=
++  ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
++    ∀ κ (pp : PrimeParam κ) (I : P.Idx' κ pp) (sd : P.Seed κ pp),
++      f (NUPPT.advInput κ (pairEncode pp.enc
++        (pairEncode (P.encIdx' κ pp I) (P.encSeed' κ pp sd)))) =
++          List.ofFn (P.eval' κ pp I sd)
++
++/-- The target is its stated uniform contract; glue. -/
++theorem evalTarget_iff (P : Params) : P.evalTarget ↔
++  ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
++    ∀ κ (pp : PrimeParam κ) (I : P.Idx' κ pp) (sd : P.Seed κ pp),
++      f (NUPPT.advInput κ (pairEncode pp.enc
++        (pairEncode (P.encIdx' κ pp I) (P.encSeed' κ pp sd)))) =
++          List.ofFn (P.eval' κ pp I sd) := Iff.rfl
++
++/-- T2 requires uniform generation of a term list denoting each G4 output polynomial
++[JLS26, Definition 3.3, p. 10; Equation (4), p. 17]. Dv6 uses composite polynomials,
++Dv15 uses explicit Fin coordinates, and Dv18 defers generation efficiency.
++Phase B obligation; not proved in this development. -/
++def qGenTarget (P : Params) : Prop :=
++  ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
++    ∀ κ (pp : PrimeParam κ) (I : P.Idx' κ pp) (j : Fin (P.m κ)),
++      ∃ ts : PolyTerms (Fin (P.pubLen κ) ⊕ Fin (P.privLen κ)) (ZMod pp.p),
++        f (NUPPT.advInput κ (pairEncode pp.enc
++          (pairEncode (P.encIdx' κ pp I) (PolyTerms.encFin j)))) =
++            PolyTerms.encTerms (fun z => Candidates.natToList (κ + 1) z.val)
++              (fun v => PolyTerms.encFin (finSumFinEquiv v)) ts ∧
++        PolyTerms.denote ts = P.G4 κ pp I j
++
++/-- The target is its stated uniform contract; glue. -/
++theorem qGenTarget_iff (P : Params) : P.qGenTarget ↔
++  ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
++    ∀ κ (pp : PrimeParam κ) (I : P.Idx' κ pp) (j : Fin (P.m κ)),
++      ∃ ts : PolyTerms (Fin (P.pubLen κ) ⊕ Fin (P.privLen κ)) (ZMod pp.p),
++        f (NUPPT.advInput κ (pairEncode pp.enc
++          (pairEncode (P.encIdx' κ pp I) (PolyTerms.encFin j)))) =
++            PolyTerms.encTerms (fun z => Candidates.natToList (κ + 1) z.val)
++              (fun v => PolyTerms.encFin (finSumFinEquiv v)) ts ∧
++        PolyTerms.denote ts = P.G4 κ pp I j := Iff.rfl
++
++/-- T3 requires uniform computability of the actual index and seed cores
++[JLS26, IdSamp' and SdSamp', pp. 15-16]. Dv17-Dv18 use the shared CoreComputable
++halves on the same joint draws as T5, without constructing any sampler.
++Phase B obligation; not proved in this development. -/
++def coreTarget (P : Params) : Prop :=
++  CoreComputable (P := PrimeParam)
++      (fun κ pp => P.idWord κ pp) (fun κ pp => P.encIdDraw κ pp)
++      (fun κ pp => P.encIdx' κ pp) (fun κ pp => P.idCore κ pp) ∧
++    CoreComputable (P := P.SdParam)
++      (fun κ q => P.sdWord κ q) (fun κ q => P.encDraw κ q.1)
++      (fun κ q => P.encSeed' κ q.1)
++      (fun κ q d => (P.sdCore κ q.1 q.2 d).seed)
++
++/-- The target is its stated uniform contract; glue. -/
++theorem coreTarget_iff (P : Params) : P.coreTarget ↔
++  CoreComputable (P := PrimeParam)
++      (fun κ pp => P.idWord κ pp) (fun κ pp => P.encIdDraw κ pp)
++      (fun κ pp => P.encIdx' κ pp) (fun κ pp => P.idCore κ pp) ∧
++    CoreComputable (P := P.SdParam)
++      (fun κ q => P.sdWord κ q) (fun κ q => P.encDraw κ q.1)
++      (fun κ q => P.encSeed' κ q.1)
++      (fun κ q d => (P.sdCore κ q.1 q.2 d).seed) := Iff.rfl
++
++/-- T4 requires one uniform preprocessing map for every LPN schedule and advice
++[JLS26, Lemma 4.2, p. 19]. Dv12 puts all averaging choices and pp in the advice input;
++Dv14 defers efficiency and never samples inside the reduction.
++Phase B obligation; not proved in this development. -/
++def lpnPreTarget (P : Params) : Prop :=
++  ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
++    ∀ (π : PrimeSchedule) L (ω : P.LPNAdvice π L) (x : P.LPNChal π L),
++      f (pairEncode (P.encLPNAdvice π L ω) (P.lpnEnc π L x)) = P.lpnPre π L ω x
++
++/-- The target is its stated uniform contract; glue. -/
++theorem lpnPreTarget_iff (P : Params) : P.lpnPreTarget ↔
++  ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
++    ∀ (π : PrimeSchedule) L (ω : P.LPNAdvice π L) (x : P.LPNChal π L),
++      f (pairEncode (P.encLPNAdvice π L ω) (P.lpnEnc π L x)) = P.lpnPre π L ω x := Iff.rfl
++
++/-- T4 requires one uniform preprocessing map for every PRG schedule and advice
++[JLS26, Lemma 4.2, p. 19]. Dv12 carries pp and the averaging choices on the advice input;
++Dv14 defers efficiency and constructs no machine.
++Phase B obligation; not proved in this development. -/
++def prgPreTarget (P : Params) : Prop :=
++  ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
++    ∀ (π : PrimeSchedule) N (ω : P.PRGAdvice π N) (x : P.PRGChal N),
++      f (pairEncode (P.encPRGAdvice π N ω) (P.prgEnc N x)) = P.prgPre π N ω x
++
++/-- The target is its stated uniform contract; glue. -/
++theorem prgPreTarget_iff (P : Params) : P.prgPreTarget ↔
++  ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
++    ∀ (π : PrimeSchedule) N (ω : P.PRGAdvice π N) (x : P.PRGChal N),
++      f (pairEncode (P.encPRGAdvice π N ω) (P.prgEnc N x)) = P.prgPre π N ω x := Iff.rfl
++
++/-- The reduction targets are the two uniform preprocessing obligations
++[JLS26, Lemma 4.2, p. 19]. Dv14 separates these from the security inequality.
++Phase B obligation; not proved in this development. -/
++def ReductionTargets (P : Params) : Prop :=
++  P.lpnPreTarget ∧ P.prgPreTarget
++
++/-- The target is its stated uniform contract; glue. -/
++theorem reductionTargets_iff (P : Params) : P.ReductionTargets ↔
++  P.lpnPreTarget ∧ P.prgPreTarget := Iff.rfl
++
++/-- T5 requires fair-coin samplability of each complete exact draw
++[JLS26, IdSamp' and SdSamp', pp. 15-16]. Dv17-Dv18 use the shared DrawSamplable halves.
++Each target concerns one draw type, even when that type is a product.
++Phase B obligation; not proved in this development. -/
++def drawSamplerTarget (P : Params) : Prop :=
++  DrawSamplable (P := PrimeParam)
++      (fun κ pp => P.idWord κ pp) (fun κ pp => P.encIdDraw κ pp) ∧
++    DrawSamplable (P := P.SdParam)
++      (fun κ q => P.sdWord κ q) (fun κ q => P.encDraw κ q.1)
++
++/-- The target is its stated uniform contract; glue. -/
++theorem drawSamplerTarget_iff (P : Params) : P.drawSamplerTarget ↔
++  DrawSamplable (P := PrimeParam)
++      (fun κ pp => P.idWord κ pp) (fun κ pp => P.encIdDraw κ pp) ∧
++    DrawSamplable (P := P.SdParam)
++      (fun κ q => P.sdWord κ q) (fun κ q => P.encDraw κ q.1) := Iff.rfl
++
++/-- T6 requires uniform efficient sampling of the construction's joint LPN draw and core
++[JLS26, Definition 2.3, pp. 9-10]. Dv3 uses its own rounded family; Dv9 passes the prime
++on the parameter word. The sampler and map are quantified before the schedule, which
++is the shared contract's parameter, and do not compute it. Dv17-Dv18 keep the exact law.
++Phase B obligation; not proved in this development. -/
++def lpnSamplerTarget (P : Params) : Prop :=
++  SamplesEfficiently (P := fun _ => PrimeSchedule)
++    (fun L π => (P.lpnFamily_raw π).sampleWord L)
++    (fun L π => (P.lpnFamily_raw π).encDraw L)
++    (fun L π => (P.lpnFamily_raw π).encSample L)
++    (fun L π => (P.lpnFamily_raw π).sampleCore L)
++
++/-- The target is its stated uniform contract; glue. -/
++theorem lpnSamplerTarget_iff (P : Params) : P.lpnSamplerTarget ↔
++  SamplesEfficiently (P := fun _ => PrimeSchedule)
++    (fun L π => (P.lpnFamily_raw π).sampleWord L)
++    (fun L π => (P.lpnFamily_raw π).encDraw L)
++    (fun L π => (P.lpnFamily_raw π).encSample L)
++    (fun L π => (P.lpnFamily_raw π).sampleCore L) := Iff.rfl
++
++/-- The six efficiency obligations jointly inhabit the raw construction as a primitive
++[JLS26, Definitions 3.1-3.3, p. 10; construction, pp. 15-17]. Dv18 keeps all efficiency
++proofs in these targets, while every inhabited primitive carries their consequences.
++Phase B obligation; not proved in this development. -/
++def Targets (P : Params) : Prop :=
++  P.evalTarget ∧ P.qGenTarget ∧ P.coreTarget ∧ P.ReductionTargets ∧
++    P.drawSamplerTarget ∧ P.lpnSamplerTarget
++
++/-- The target is its stated uniform contract; glue. -/
++theorem targets_iff (P : Params) : P.Targets ↔
++  P.evalTarget ∧ P.qGenTarget ∧ P.coreTarget ∧ P.ReductionTargets ∧
++    P.drawSamplerTarget ∧ P.lpnSamplerTarget := Iff.rfl
++
++/-- The preprocessing targets give realisers for every schedule and advice family
++[JLS26, Lemma 4.2, p. 19]. Dv14 discharges realisability from target hypotheses;
++Dv16 uses the shared layout-coin RealizesOn predicate and its public link theorem.
++
++**Proof sketch.** For each reduction, specialize its single preprocessing map at π.
++Apply exists_realizesOn_of_preTarget with the inverse parameter map, polynomial var,
++the explicit advice encoding and length bound. Match the named reduction by its reader. -/
++theorem realizable_of_targets (P : Params) (hT : P.ReductionTargets) :
++    ∀ π : PrimeSchedule, P.Realizable π := sorry
++
++/-- T1 gives the raw evaluator's uniform efficiency; glue.
++
++**Proof sketch.** Specialize the target at pp=π κ and read the raw construction's encodings. -/
++theorem evalEfficient_of_target (P : Params) (π : PrimeSchedule) (hT : P.evalTarget) :
++    (jlsSPRG_raw P π).EvalEfficient := sorry
++
++/-- T3 and T5 give the exact index sampler's efficiency through the shared contract; glue.
++
++**Proof sketch.** Read the draw and core witnesses, restrict public parameters to π κ,
++and join them with SamplesEfficiently.intro, using the raw field readers. -/
++theorem idSampEfficient_of_targets (P : Params) (π : PrimeSchedule)
++    (hC : P.coreTarget) (hD : P.drawSamplerTarget) :
++    SamplesEfficiently (P := fun _ => Unit)
++      (fun κ _ => (jlsSPRG_raw P π).idWord κ)
++      (fun κ _ => (jlsSPRG_raw P π).encIdDraw κ)
++      (fun κ _ => (jlsSPRG_raw P π).encIdx κ)
++      (fun κ _ => (jlsSPRG_raw P π).idCore κ) := sorry
++
++/-- T3 and T5 give the exact seed sampler's efficiency through the shared contract; glue.
++
++**Proof sketch.** Restrict the universal pp/index parameter to the supplied schedule.
++Read the unchanged core and encoding witnesses and join the two shared contract halves. -/
++theorem sdSampEfficient_of_targets (P : Params) (π : PrimeSchedule)
++    (hC : P.coreTarget) (hD : P.drawSamplerTarget) :
++    SamplesEfficiently (P := (jlsSPRG_raw P π).Idx)
++      (fun κ I => (jlsSPRG_raw P π).sdWord κ I)
++      (fun κ I => (jlsSPRG_raw P π).encSdDraw κ I)
++      (fun κ _ => (jlsSPRG_raw P π).encSeed κ)
++      (fun κ I => (jlsSPRG_raw P π).sdCore κ I) := sorry
++
++/-- T6 specializes to the sampler field of each raw LPN family; glue.
++
++**Proof sketch.** Read the universal schedule-parametrized witness and specialize its
++equivalence and equations at π. Retain the same uniform sampler, polynomial and map. -/
++theorem lpnSamplerEfficient_of_target (P : Params) (π : PrimeSchedule)
++    (hT : P.lpnSamplerTarget) :
++    SamplesEfficiently (P := fun _ => Unit)
++      (fun L _ => (P.lpnFamily_raw π).sampleWord L)
++      (fun L _ => (P.lpnFamily_raw π).encDraw L)
++      (fun L _ => (P.lpnFamily_raw π).encSample L)
++      (fun L _ => (P.lpnFamily_raw π).sampleCore L) := sorry
++
++/-- The construction's LPN primitive is assembled from its raw family and T6
++[JLS26, Definition 2.3, pp. 9-10]. Dv18 requires this efficiency witness for any instance. -/
++noncomputable def lpnFamily (P : Params) (π : PrimeSchedule) (hT : P.Targets) :
++    LPNFamily where
++  toRaw := P.lpnFamily_raw π
++  sample_eff := P.lpnSamplerEfficient_of_target π hT.2.2.2.2.2
++
++/-- The assembled LPN primitive has exactly the specified raw family; glue. -/
++theorem lpnFamily_toRaw (P : Params) (π : PrimeSchedule) (hT : P.Targets) :
++    (P.lpnFamily π hT).toRaw = P.lpnFamily_raw π := rfl
++
++/-- T2 generates the bidegree-bounded G4 output polynomials
++[JLS26, Definition 3.3, p. 10; Equation (4), p. 17]. Dv6 uses the composite form.
++
++**Proof sketch.** Use G4 as the polynomial witness, the target's term-list equations,
++its degree theorem, and exact sampled-seed correctness. -/
++theorem hasComplexityEff_of_target (P : Params) (π : PrimeSchedule)
++    (hT : P.qGenTarget) : (jlsSPRG_raw P π).HasComplexityEff P.d 2 := sorry
++
++end Params
++
++/-- The efficient JLS sPRG is assembled from the raw algorithms and targets
++[JLS26, construction, pp. 15-17]. Dv18 makes efficiency mandatory: no primitive
++value is supplied without its evaluator and two sampler witnesses. -/
++noncomputable def jlsSPRG (P : Params) (π : PrimeSchedule) (hT : P.Targets) : SPRG where
++  toRaw := jlsSPRG_raw P π
++  eval_eff := P.evalEfficient_of_target π hT.1
++  idSamp_eff := P.idSampEfficient_of_targets π hT.2.2.1 hT.2.2.2.2.1
++  sdSamp_eff := P.sdSampEfficient_of_targets π hT.2.2.1 hT.2.2.2.2.1
++
++/-- The assembled primitive's raw bundle is exactly jlsSPRG_raw; glue. -/
++theorem jlsSPRG_toRaw (P : Params) (π : PrimeSchedule) (hT : P.Targets) :
++    (jlsSPRG P π hT).toRaw = jlsSPRG_raw P π := rfl
++
++/-- The targets give a secure primitive with efficient (d,2) complexity and stretch
++[JLS26, Theorem 4.1, p. 11]. Dv3 assumes the construction's own LPN family;
++Dv6 uses composite bidegree; Dv9 allows every prime schedule; Dv18 assembles efficiency.
++SP-W1 uses rational δ, coerced to real values in the schedule threshold.
++
++**Proof sketch.** Targets provide realisability and the primitive's honest efficiency.
++Apply the raw theorem, transport its properties through jlsSPRG_toRaw, and use T2 for
++efficient polynomial generation. -/
++theorem theorem41_of_targets (P : Params) (π : PrimeSchedule) {cLoc : ℕ} {τ : ℝ}
++    (hLoc : P.R.HasLocality cLoc) (hτ : 1 < τ) (hs : P.G.HasStretch τ)
++    (hE : E₀ P.d (P.δ : ℝ) τ ≤ P.E) (hT : P.Targets)
++    (hG : P.G.Secure) (hLPN : (P.lpnFamily_raw π).Assumption) :
++    (jlsSPRG P π hT).Secure ∧ (jlsSPRG P π hT).HasComplexityEff P.d 2 ∧
++      (jlsSPRG P π hT).HasPolyStretch := sorry
++
++/-- Under the efficiency targets an efficient secure sPRG exists
++[JLS26, Theorem 4.1, p. 11]. Dv3 uses the construction's own LPN families; Dv18
++inhabits the primitive from targets rather than asserting unproved efficiency.
++SP-W1 restricts δ to rational data.
++
++**Proof sketch.** Choose E=max 1 E₀, specialize the targets to those parameters, and apply
++ theorem41_of_targets to the given Boolean PRG and construction-family assumption. -/
++theorem exists_sprg_of_targets {d cLoc : ℕ} (hd : 1 ≤ d) {δ : ℚ} {τ : ℝ}
++    (hδ : 0 < δ) (hδ1 : δ < 1) (hτ : 1 < τ) (G : BoolPRG)
++    (R : G.MultilinearRep d) (hLoc : R.HasLocality cLoc) (hs : G.HasStretch τ)
++    (hG : G.Secure) (π : PrimeSchedule)
++    (hLPN : ∀ (E : ℕ) (hE : 1 ≤ E),
++      (Params.lpnFamily_raw ⟨d, hd, δ, hδ, hδ1, E, hE, G, R⟩ π).Assumption)
++    (hT : ∀ P : Params, P.Targets) :
++    ∃ S : SPRG, (∀ κ, S.modulus κ = (π κ).p) ∧ S.Secure ∧
++      S.HasComplexityEff d 2 ∧ S.HasPolyStretch := sorry
++
++/-- Under the targets and subexponential assumptions an efficient subexponentially secure
++sPRG exists [JLS26, Theorem 4.1, p. 11]. Dv13 bounds advantage against NUPPT;
++Dv18 requires the honest efficiency fields. SP-W1 uses rational δ.
++
++**Proof sketch.** Choose a sufficiently large E, use the raw subexponential theorem and
++T2, then assemble the primitive from the specialized target witnesses. -/
++theorem exists_sprg_of_targets_subexp {d cLoc : ℕ} (hd : 1 ≤ d) {δ : ℚ} {τ : ℝ}
++    (hδ : 0 < δ) (hδ1 : δ < 1) (hτ : 1 < τ) (G : BoolPRG)
++    (R : G.MultilinearRep d) (hLoc : R.HasLocality cLoc) (hs : G.HasStretch τ)
++    (hG : SubexpHard G.adv) (π : PrimeSchedule)
++    (hLPN : ∀ (E : ℕ) (hE : 1 ≤ E),
++      SubexpHard (Params.lpnFamily_raw ⟨d, hd, δ, hδ, hδ1, E, hE, G, R⟩ π).adv)
++    (hT : ∀ P : Params, P.Targets) :
++    ∃ S : SPRG, (∀ κ, S.modulus κ = (π κ).p) ∧ SubexpHard S.adv ∧
++      S.HasComplexityEff d 2 ∧ S.HasPolyStretch := sorry
++
+ end TCSlib.Cryptography.Obfuscation.StructuredSeed

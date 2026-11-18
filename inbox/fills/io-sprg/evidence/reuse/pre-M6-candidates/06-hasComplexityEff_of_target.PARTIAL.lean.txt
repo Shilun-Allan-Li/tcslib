@@ -1,0 +1,17 @@
+-- PARTIAL existing theorem replacement candidate. NOT_RUN; one explicit M1 support gap.
+by
+  obtain ⟨f, hf, hgen⟩ := (P.qGenTarget_iff).mp hT
+  rw [SPRG.Raw.hasComplexityEff_iff, jlsSPRG_raw_eq]
+  refine ⟨f, hf, ?_⟩
+  intro κ I
+  refine ⟨P.G4 κ (π κ) I, ?_, ?_, ?_⟩
+  · intro j
+    simpa only [SPRG.Raw.encPP_eq, PrimeParam.enc_eq,
+      PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const]
+      using hgen κ (π κ) I j
+  · exact fun j => P.G4_degrees κ (π κ) I j
+  · -- M1 dependency: the SPECIFIC G4 witness agrees with eval' on sdSamp support.
+    -- G4_eval_eq and eval'_correct must be joined on the full SdCoreOut law, then
+    -- pushed through sdSamp'_eq and jlsSPRG_raw_sdSamp using AllOutputs readers.
+    -- jls_hasComplexity alone hides its Q witness, so cannot identify it with G4.
+    sorry

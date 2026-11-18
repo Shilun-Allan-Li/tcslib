@@ -1,0 +1,91 @@
+[
+  {
+    "command": [
+      "rg",
+      "-n",
+      "jls_seedBits_le|jls_hasPolyStretch|seedBitsAt|def E\u2080|binomial_bound|bucket_tail",
+      "TCSlib"
+    ],
+    "rc": 1,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "choose.*(exp|div|pow)|choose_le",
+      ".lake/packages/mathlib/Mathlib/Data/Nat/Choose/Bounds.lean"
+    ],
+    "rc": 0,
+    "stdout": "19:* `Nat.choose_le_pow_div`: `n.choose r \u2264 n^r / r!`\n30:theorem choose_le_pow_div (r n : \u2115) : (n.choose r : \u03b1) \u2264 (n ^ r : \u03b1) / r ! := by\n37:lemma choose_lt_pow_div (hn : n \u2260 0) (hk : 2 \u2264 k) : (n.choose k : \u03b1) < (n ^ k : \u03b1) / k ! := by\n43:lemma choose_le_descFactorial (n k : \u2115) : n.choose k \u2264 n.descFactorial k := by\n44:  rw [choose_eq_descFactorial_div_factorial]\n48:  rw [choose_eq_descFactorial_div_factorial]; exact Nat.div_lt_self (by simpa) (by simpa)\n50:lemma choose_le_pow (n k : \u2115) : n.choose k \u2264 n ^ k :=\n51:  (choose_le_descFactorial n k).trans (descFactorial_le_pow n k)\n53:lemma choose_lt_pow (hn : n \u2260 0) (hk : 2 \u2264 k) : n.choose k < n ^ k :=\n54:  (choose_le_descFactorial n k).trans_lt (descFactorial_lt_pow hn hk)\n64:theorem choose_succ_le_two_pow (n k : \u2115) : (n + 1).choose k \u2264 2 ^ n := by\n73:      \u00b7 rw [choose_succ_succ', two_pow_succ]\n74:        exact Nat.add_le_add (choose_succ_le_two_pow n k) (choose_succ_le_two_pow n (k + 1))\n76:theorem choose_lt_two_pow (n k : \u2115) (p : 0 < n) : n.choose k < 2 ^ n := by\n79:  exact choose_succ_le_two_pow (n - 1) k\n81:theorem choose_le_two_pow (n k : \u2115) : n.choose k \u2264 2 ^ n := by\n84:  \u00b7 exact (Nat.choose_lt_two_pow _ _ hn).le\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "pow_div_factorial_le_exp",
+      ".lake/packages/mathlib/Mathlib/Analysis/Complex/Exponential.lean"
+    ],
+    "rc": 0,
+    "stdout": "250:lemma pow_div_factorial_le_exp (hx : 0 \u2264 x) (n : \u2115) : x ^ n / n ! \u2264 exp x :=\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem .*choose|^lemma .*choose|^theorem .*binom|^lemma .*binom",
+      "TCSlib/KikuchiLDC/LDC/BackgroundFacts.lean",
+      "TCSlib/CommunicationComplexity/DeterministicCC/FuncIndexing/LowerBound.lean"
+    ],
+    "rc": 0,
+    "stdout": "TCSlib/KikuchiLDC/LDC/BackgroundFacts.lean:85:theorem binomial_ratio_upper (n ell q : \u2115)\nTCSlib/KikuchiLDC/LDC/BackgroundFacts.lean:202:theorem binomial_ratio_lower (n ell q : \u2115)\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "bucket.*tail|balls.*bins|load.*prob|uprob.*choose",
+      "TCSlib/Cryptography"
+    ],
+    "rc": 0,
+    "stdout": "TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:580:experiments correspond under `(s, c) \u21a6 ((s, ()), c)` (`uprob_eq_of_equiv`); choose `flip`\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "uprob_exists_le|uprob_comp_equiv|uprob_fst|uprob_eq_card_filter",
+      "TCSlib/Cryptography/Foundations/Probability.lean"
+    ],
+    "rc": 0,
+    "stdout": "35:  `uprob_exists_le`: basic laws and the union bound.\n38:* `uprob_comp_equiv`: probability is invariant under relabelling by a bijection.\n75:theorem uprob_eq_card_filter (p : \u03b1 \u2192 Prop) [DecidablePred p] :\n82:  rw [uprob_eq_card_filter, uexp, Finset.sum_boole]\n91:  rw [uprob_eq_card_filter]\n97:  rw [uprob_eq_card_filter, filter_true, card_univ]\n103:  rw [uprob_eq_card_filter, filter_false, card_empty, Nat.cast_zero, zero_div]\n114:  rw [uprob_eq_card_filter, uprob_eq_card_filter, eq_sub_iff_add_eq, \u2190 add_div,\n122:  rw [uprob_eq_card_filter, uprob_eq_card_filter]\n129:  rw [uprob_eq_card_filter, uprob_eq_card_filter, uprob_eq_card_filter, \u2190 add_div, filter_or]\n137:theorem uprob_exists_le {\u03b9 : Type*} (s : Finset \u03b9) (p : \u03b9 \u2192 \u03b1 \u2192 Prop) :\n140:  rw [uprob_eq_card_filter]\n141:  simp_rw [uprob_eq_card_filter, \u2190 sum_div]\n156:  simp_rw [uexp, uprob_eq_card_filter, \u2190 sum_div, div_div, Fintype.card_prod, Nat.cast_mul,\n165:theorem uprob_comp_equiv (e : \u03b1 \u2243 \u03b2) (p : \u03b2 \u2192 Prop) : uprob (fun a => p (e a)) = uprob p := by\n175:theorem uprob_fst [Nonempty \u03b2] (p : \u03b1 \u2192 Prop) : uprob (fun z : \u03b1 \u00d7 \u03b2 => p z.1) = uprob p := by\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "uprob_pi_forall",
+      "TCSlib/Cryptography/OneWayFunctions/Basic.lean"
+    ],
+    "rc": 0,
+    "stdout": "32:* `uprob_pi_forall`: independent coordinates multiply.\n118:theorem uprob_pi_forall {\u03b9 : Type*} [Fintype \u03b9] [DecidableEq \u03b9] (p : \u03b1 \u2192 Prop) :\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "tendsto_rpow_atTop|isLittleO.*rpow|IsLittleO.rpow",
+      ".lake/packages/mathlib/Mathlib/Analysis/SpecialFunctions/Pow/Asymptotics.lean"
+    ],
+    "rc": 0,
+    "stdout": "32:theorem tendsto_rpow_atTop {y : \u211d} (hy : 0 < y) : Tendsto (fun x : \u211d => x ^ y) atTop atTop := by\n41:    (tendsto_rpow_atTop hy).inv_tendsto_atTop\n44:lemma tendsto_rpow_atTop_of_base_lt_one (b : \u211d) (hb\u2080 : -1 < b) (hb\u2081 : b < 1) :\n82:alias tendsto_rpow_atTop_of_base_gt_one := tendsto_rpow_atBot_of_base_gt_one\n123:  refine ((tendsto_rpow_atTop hb).comp (tendsto_exp_div_rpow_atTop (s / b))).congr' ?_\n134:nonrec theorem NNReal.tendsto_rpow_atTop {y : \u211d} (hy : 0 < y) :\n138:  obtain \u27e8c, hc\u27e9 := tendsto_atTop_atTop.mp (tendsto_rpow_atTop hy) b\n148:    (atTop_basis_Ioi.tendsto_iff atTop_basis_Ioi).mp (NNReal.tendsto_rpow_atTop hy) x trivial\n238:theorem IsLittleO.rpow (hr : 0 < r) (hg : 0 \u2264\u1da0[l] g) (h : f =o[l] g) :\n292:theorem isLittleO_rpow_exp_pos_mul_atTop (s : \u211d) {b : \u211d} (hb : 0 < b) :\n301:  simpa only [Real.rpow_intCast] using isLittleO_rpow_exp_pos_mul_atTop k hb\n309:theorem isLittleO_rpow_exp_atTop (s : \u211d) : (fun x : \u211d => x ^ s) =o[atTop] exp := by\n310:  simpa only [one_mul] using isLittleO_rpow_exp_pos_mul_atTop s one_pos\n313:theorem isLittleO_exp_neg_mul_rpow_atTop {a : \u211d} (ha : 0 < a) (b : \u211d) :\n323:theorem isLittleO_log_rpow_atTop {r : \u211d} (hr : 0 < r) : log =o[atTop] fun x => x ^ r :=\n328:    _ =o[atTop] fun x => x ^ r := isLittleO_log_id_atTop.comp_tendsto (tendsto_rpow_atTop hr)\n330:theorem isLittleO_log_rpow_rpow_atTop {s : \u211d} (r : \u211d) (hs : 0 < s) :\n343:      ((isLittleO_log_rpow_atTop H).rpow hr <|\n344:        (_root_.tendsto_rpow_atTop H).eventually <| eventually_ge_atTop 0)\n348:theorem isLittleO_abs_log_rpow_rpow_nhdsGT_zero {s : \u211d} (r : \u211d) (hs : s < 0) :\n350:  ((isLittleO_log_rpow_rpow_atTop r (neg_pos.2 hs)).comp_tendsto tendsto_inv_nhdsGT_zero).congr'\n356:theorem isLittleO_log_rpow_nhdsGT_zero {r : \u211d} (hr : r < 0) : log =o[\ud835\udcdd[>] 0] fun x => x ^ r :=\n357:  (isLittleO_abs_log_rpow_rpow_nhdsGT_zero 1 hr).neg_left.congr'\n364:  (isLittleO_log_rpow_nhdsGT_zero hr).tendsto_div_nhds_zero\n",
+    "stderr": ""
+  }
+]

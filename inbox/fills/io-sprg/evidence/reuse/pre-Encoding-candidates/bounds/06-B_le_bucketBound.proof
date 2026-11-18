@@ -1,0 +1,14 @@
+by
+  have hW := P.W_pos κ
+  have hmul := Nat.le_mul_of_pos_right (P.m κ * κ) hW
+  have hnum : P.m κ * κ + P.W κ - 1 < (P.m κ * κ + 1) * P.W κ
+  · rw [Nat.add_mul, Nat.one_mul]
+    omega
+  have hquot : (P.m κ * κ + P.W κ - 1) / P.W κ ≤ P.m κ * κ :=
+    Nat.le_of_lt_succ ((Nat.div_lt_iff_lt_mul hW).2 hnum)
+  simp only [P.B_eq, P.t_eq, P.bucketBound_eq, PolyExpr.eval_add,
+    PolyExpr.eval_mul, PolyExpr.eval_var, PolyExpr.eval_const]
+  apply max_le
+  · exact Nat.succ_le_succ (Nat.zero_le _)
+  · exact Nat.le_add_right_of_le
+      (hquot.trans (Nat.mul_le_mul_right κ (P.m_le_mBound κ)))

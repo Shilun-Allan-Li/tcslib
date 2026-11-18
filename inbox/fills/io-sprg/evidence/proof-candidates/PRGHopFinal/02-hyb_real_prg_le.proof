@@ -1,0 +1,58 @@
+by
+  classical
+  let Ω := P.IdDraw κ pp ×
+    (P.Draw κ pp × ((Fin (P.m κ) → Bool) × A.Coins κ))
+  let c : ProbComp Ω :=
+    (ProbComp.sample (P.IdDraw κ pp)).bind fun a =>
+    (ProbComp.sample (P.Draw κ pp)).bind fun d =>
+    (ProbComp.sample (Fin (P.m κ) → Bool)).bind fun w =>
+    (ProbComp.sample (A.Coins κ)).bind fun r => pure (a, d, w, r)
+  let ix : Ω → P.Idx' κ pp := fun z => P.idCore κ pp z.1
+  let x : Ω → P.SdCoreOut κ pp := fun z => P.sdCore κ pp (ix z) z.2.1
+  let bad : Ω → Prop := fun z => (x z).err = true
+  let er : Ω → Prop := fun z =>
+    A.distinguisherL κ (P.challengeStr κ pp (ix z) (x z).seed.1
+      (P.eval' κ pp (ix z) (x z).seed)) z.2.2.2 = true
+  let ep : Ω → Prop := fun z =>
+    A.distinguisherL κ (P.challengeStr κ pp (ix z)
+      (P.publicSeed κ pp (fun k => ((x z).instances k).pub) false)
+      (fun j => P.G.eval (P.n κ) (ix z).1 z.2.1.1 (P.outputIndex κ j)))
+        z.2.2.2 = true
+  have hr : accept (P.hyb A .real κ pp) = ProbComp.prob c er
+  · simp only [accept_eq, P.hyb_eq, P.idSamp'_eq, P.sdSampFull_eq,
+      ProbComp.prob_bind, ProbComp.expect_map, ProbComp.prob_pure, c, er, ix, x]
+  have hp : accept (P.hyb A .prg κ pp) = ProbComp.prob c ep
+  · simp only [accept_eq, P.hyb_eq, P.idSamp'_eq, P.sdSampFull_eq,
+      ProbComp.prob_bind, ProbComp.expect_map, ProbComp.prob_pure,
+      P.sdCore_σ, c, ep, ix, x]
+  have he : ProbComp.prob c bad = P.errProb κ pp
+  · simp only [P.errProb_eq, P.idSamp'_eq, P.sdSampFull_eq,
+      ProbComp.prob_bind, ProbComp.expect_map, ProbComp.prob_pure,
+      ProbComp.expect_const, c, bad, ix, x]
+  have hagree : ∀ z, ¬ bad z → (er z ↔ ep z)
+  · intro z hz
+    have herr : (x z).err = false := Bool.eq_false_iff.mpr hz
+    have hpub : (x z).seed.1 =
+        P.publicSeed κ pp (fun k => ((x z).instances k).pub) false
+    · have h := P.sdCore_publicSeed κ pp (ix z) z.2.1
+      change (x z).seed.1 =
+        P.publicSeed κ pp (fun k => ((x z).instances k).pub) (x z).err at h
+      rwa [herr] at h
+    have htail : P.eval' κ pp (ix z) (x z).seed =
+        fun j => P.G.eval (P.n κ) (ix z).1 z.2.1.1 (P.outputIndex κ j)
+    · funext j
+      rw [P.eval'_eq]
+      change decide (MvPolynomial.eval (Sum.elim (x z).seed.1 (x z).seed.2)
+        (P.G4 κ pp (ix z) j) = 1) = _
+      have h := P.G4_eval_sdCore κ pp (ix z) z.2.1 j
+      change MvPolynomial.eval (Sum.elim (x z).seed.1 (x z).seed.2)
+        (P.G4 κ pp (ix z) j) =
+          if (x z).err then 0 else
+            ((P.G.eval (P.n κ) (ix z).1 z.2.1.1 (P.outputIndex κ j)).toNat :
+              ZMod pp.p) at h
+      rw [h, herr]
+      cases hb : P.G.eval (P.n κ) (ix z).1 z.2.1.1 (P.outputIndex κ j) <;> simp [hb]
+    dsimp only [er, ep]
+    rw [hpub, htail]
+  rw [advantage_eq, hr, hp]
+  exact (ProbComp.abs_prob_sub_le_of_agree c hagree).trans_eq he

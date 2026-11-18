@@ -1,0 +1,124 @@
+[
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem (encodeVector_length|encodeMatrix_length|encodeVector_injective|encodeMatrix_injective)",
+      "TCSlib/Cryptography/Encoding/Modular.lean"
+    ],
+    "returncode": 0,
+    "stdout": "79:theorem encodeVector_length {q length : \u2115} [NeZero q] (width : \u2115)\n89:theorem encodeMatrix_length {q rows columns : \u2115} [NeZero q] (width : \u2115)\n101:theorem encodeVector_injective {q length : \u2115} [NeZero q] (width : \u2115)\n126:theorem encodeMatrix_injective {q rows columns : \u2115} [NeZero q] (width : \u2115)\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem (length_natToList|natToList_injOn|listToNat_natToList)",
+      "TCSlib/Cryptography/Candidates/Arithmetic.lean"
+    ],
+    "returncode": 0,
+    "stdout": "107:@[simp] theorem length_natToList (k N : \u2115) : (natToList k N).length = k := by\n127:theorem listToNat_natToList_eq_mod (k N : \u2115) : listToNat (natToList k N) = N % 2 ^ k := by\n143:theorem listToNat_natToList {k N : \u2115} (h : N < 2 ^ k) : listToNat (natToList k N) = N := by\n161:theorem natToList_injOn {k M N : \u2115} (hM : M < 2 ^ k) (hN : N < 2 ^ k)\n191:theorem listToNat_natToList_zero_append (k : \u2115) (w : List Bool) :\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem pairEncode_injective|^theorem length_pairEncode",
+      "TCSlib/Complexity/TuringMachine/Encoding.lean"
+    ],
+    "returncode": 0,
+    "stdout": "173:theorem pairEncode_injective :\n220:theorem length_pairEncode (x y : List Bool) :\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem encodeList_(nil|cons)|private lemma (encodeList_prefixFree|length_encodeList_le)",
+      "TCSlib/Complexity/CircuitComplexity/Uniform.lean"
+    ],
+    "returncode": 0,
+    "stdout": "96:theorem encodeList_nil {\u03b1 : Type} (f : \u03b1 \u2192 List Bool) :\n100:theorem encodeList_cons {\u03b1 : Type} (f : \u03b1 \u2192 List Bool) (a : \u03b1) (as : List \u03b1) :\n158:private lemma encodeList_prefixFree {\u03b1 : Type} {f : \u03b1 \u2192 List Bool} (hf : PrefixFree f) :\n234:private lemma length_encodeList_le {\u03b1 : Type} (f : \u03b1 \u2192 List Bool) (B : \u2115) (as : List \u03b1)\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem ofFn_injective|^theorem ofFn_inj ",
+      ".lake/packages/mathlib/Mathlib/Data/List/OfFn.lean"
+    ],
+    "returncode": 0,
+    "stdout": "192:theorem ofFn_injective {n : \u2115} : Function.Injective (ofFn : (Fin n \u2192 \u03b1) \u2192 List \u03b1) := fun f g h =>\n197:theorem ofFn_inj {n : \u2115} {f g : Fin n \u2192 \u03b1} : ofFn f = ofFn g \u2194 f = g :=\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem eval_(const|var|add|mul|pow|subst|mono)",
+      "TCSlib/Complexity/Randomized/PolyExpr.lean"
+    ],
+    "returncode": 0,
+    "stdout": "116:@[simp] theorem eval_const (c n : \u2115) : (const c).eval n = c := rfl\n119:@[simp] theorem eval_var (n : \u2115) : var.eval n = n := rfl\n122:@[simp] theorem eval_add (p q : PolyExpr) (n : \u2115) : (add p q).eval n = p.eval n + q.eval n := rfl\n125:@[simp] theorem eval_mul (p q : PolyExpr) (n : \u2115) : (mul p q).eval n = p.eval n * q.eval n := rfl\n128:@[simp] theorem eval_pow (p : PolyExpr) (c n : \u2115) : (pow p c).eval n = (p.eval n) ^ c := rfl\n134:theorem eval_subst (p q : PolyExpr) (n : \u2115) : (p.subst q).eval n = p.eval (q.eval n) := by\n142:theorem eval_mono (p : PolyExpr) : Monotone p.eval := by\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem (zero_rpow|rpow_one|rpow_le_rpow_of_exponent_le|one_le_rpow)|lemma rpow_mul_natCast",
+      ".lake/packages/mathlib/Mathlib/Analysis/SpecialFunctions/Pow/Real.lean"
+    ],
+    "returncode": 0,
+    "stdout": "119:theorem zero_rpow {x : \u211d} (h : x \u2260 0) : (0 : \u211d) ^ x = 0 := by simp [rpow_def, *]\n121:theorem zero_rpow_eq_iff {x : \u211d} {a : \u211d} : 0 ^ x = a \u2194 x \u2260 0 \u2227 a = 0 \u2228 x = 0 \u2227 a = 1 := by\n139:theorem rpow_one (x : \u211d) : x ^ (1 : \u211d) = x := by simp [rpow_def]\n144:theorem zero_rpow_le_one (x : \u211d) : (0 : \u211d) ^ x \u2264 1 := by\n147:theorem zero_rpow_nonneg (x : \u211d) : 0 \u2264 (0 : \u211d) ^ x := by\n498:lemma rpow_mul_natCast (hx : 0 \u2264 x) (y : \u211d) (n : \u2115) : x ^ (y * n) = (x ^ y) ^ n := by\n595:theorem rpow_le_rpow_of_exponent_le (hx : 1 \u2264 x) (hyz : y \u2264 z) : x ^ y \u2264 x ^ z := by\n662:theorem one_le_rpow {x z : \u211d} (hx : 1 \u2264 x) (hz : 0 \u2264 z) : 1 \u2264 x ^ z := by\n671:theorem one_le_rpow_of_pos_of_le_one_of_nonpos (hx1 : 0 < x) (hx2 : x \u2264 1) (hz : z \u2264 0) :\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem (floor_le |one_le_floor_iff|floor_le_of_le)",
+      ".lake/packages/mathlib/Mathlib/Algebra/Order/Floor/Semiring.lean"
+    ],
+    "returncode": 0,
+    "stdout": "43:theorem floor_le (ha : 0 \u2264 a) : (\u230aa\u230b\u208a : R) \u2264 a :=\n102:theorem one_le_floor_iff (x : R) : 1 \u2264 \u230ax\u230b\u208a \u2194 1 \u2264 x :=\n117:theorem floor_le_of_le (h : a \u2264 n) : \u230aa\u230b\u208a \u2264 n :=\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem (le_mul_of_pos_right|lt_two_pow_self|le_pow)|theorem div_lt_iff_lt_mul",
+      "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Nat/Lemmas.lean",
+      "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Nat/Div/Basic.lean"
+    ],
+    "returncode": 0,
+    "stdout": "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Nat/Div/Basic.lean:304:theorem div_lt_iff_lt_mul (Hk : 0 < k) : x / k < y \u2194 x < y * k := by\n/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Nat/Lemmas.lean:616:protected theorem le_mul_of_pos_right (n) (h : 0 < m) : n \u2264 n * m :=\n/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Nat/Lemmas.lean:1227:protected theorem lt_two_pow_self : n < 2 ^ n :=\n/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Nat/Lemmas.lean:1239:theorem le_pow {a b : Nat} (h : 0 < b) : a \u2264 a ^ b := by\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem pow_le_pow_left\u2080",
+      ".lake/packages/mathlib/Mathlib/Algebra/Order/GroupWithZero/Unbundled/Basic.lean"
+    ],
+    "returncode": 0,
+    "stdout": "451:theorem pow_le_pow_left\u2080 [PosMulMono M\u2080] [MulPosMono M\u2080]\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "idxBits|encIdx_length_le|outLen_le|outBound",
+      "TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean"
+    ],
+    "returncode": 0,
+    "stdout": "82:  idxBits : PolyExpr\n84:  encIdx_length_le : \u2200 n I, (encIdx n I).length \u2264 idxBits.eval n\n88:  outBound : PolyExpr\n90:  outLen_le : \u2200 n, outLen n \u2264 outBound.eval n\n",
+    "stderr": ""
+  }
+]

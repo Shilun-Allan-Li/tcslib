@@ -1,0 +1,84 @@
+by
+  obtain ⟨hg1, hg2⟩ := Internal.stretch_gaps P hτ hE
+  let a : ℝ := ((P.E * P.D : ℕ) : ℝ)
+  let b : ℝ := (P.E : ℝ) * ((P.δ : ℝ) / 2)
+  let ε : ℝ := min (a * (τ - 1) - 5) (b - 5) / 2
+  have hε : 0 < ε := div_pos (lt_min hg1 hg2) zero_lt_two
+  have hpublic : 5 + a + 2 * ε ≤ a * τ
+  · have hmin := min_le_left (a * (τ - 1) - 5) (b - 5)
+    dsimp only [ε]
+    linarith
+  have hnoise : 5 - b ≤ -2 * ε
+  · have hmin := min_le_right (a * (τ - 1) - 5) (b - 5)
+    dsimp only [ε]
+    linarith
+  obtain ⟨κs, hκs⟩ := Filter.eventually_atTop.mp
+    (Internal.eventually_seed_relative_gap P hs hε hpublic hnoise)
+  obtain ⟨K, hK, κm, hκm⟩ := Internal.output_power_bound P
+  let η : ℝ := ε / (2 * (K : ℝ))
+  let τ' : ℝ := 1 + η
+  have hη : 0 < η :=
+    div_pos hε (mul_pos zero_lt_two (Nat.cast_pos.mpr hK))
+  have hτ' : 1 < τ'
+  · dsimp only [τ']
+    linarith
+  have hKR : (K : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr (Nat.ne_of_gt hK)
+  have hKη : (K : ℝ) * η = ε / 2
+  · dsimp only [η]
+    field_simp [hKR] <;> ring
+  have hετ : ε ≤ ε * τ'
+  · simpa only [mul_one] using mul_le_mul_of_nonneg_left hτ'.le hε.le
+  have hexp : (K : ℝ) * η + (-ε) * τ' ≤ 0
+  · nlinarith
+  rw [SPRG.Raw.hasPolyStretch_iff]
+  refine ⟨τ', hτ', max 1 (max κs κm), ?_⟩
+  intro κ hκ
+  have hcuts : 1 ≤ κ ∧ κs ≤ κ ∧ κm ≤ κ
+  · omega
+  rcases hcuts with ⟨hκ1, hκs', hκm'⟩
+  rw [jls_seedBits_eq, jlsSPRG_raw_outLen]
+  constructor
+  · rw [P.seedBitsAt_eq, P.pubLen_eq]
+    exact (Nat.le_add_right κ 1).trans
+      (Nat.le_mul_of_pos_left (κ + 1)
+        (Nat.lt_of_lt_of_le (Nat.zero_lt_succ (κ * P.n κ))
+          (Nat.le_add_right (κ * P.n κ + 1) (P.privLen κ))))
+  · let x : ℝ := κ
+    let m : ℝ := P.m κ
+    have hx1 : 1 ≤ x := Nat.one_le_cast.mpr hκ1
+    have hxpos : 0 < x := zero_lt_one.trans_le hx1
+    have hx0 : 0 ≤ x := hxpos.le
+    have hm0 : 0 ≤ m := Nat.cast_nonneg _
+    have hm1 : 1 ≤ m
+    · have hn1 : 1 ≤ (P.n κ : ℝ) :=
+        Nat.one_le_cast.mpr (hκ1.trans (P.le_n κ))
+      have h := (P.G.hasStretch_iff τ).mp hs (P.n κ)
+      rw [← P.m_eq] at h
+      exact (Real.one_le_rpow hn1 (zero_le_one.trans hτ.le)).trans h
+    have hmpos : 0 < m := zero_lt_one.trans_le hm1
+    have hmupper : m ≤ x ^ (K : ℝ)
+    · rw [Real.rpow_natCast]
+      exact_mod_cast (hκm κ hκm')
+    have hmη : m ^ η ≤ x ^ ((K : ℝ) * η)
+    · exact (Real.rpow_le_rpow hm0 hmupper hη.le).trans_eq
+        (Real.rpow_mul hx0 (K : ℝ) η).symm
+    have hmp : m ^ τ' = m * m ^ η
+    · change m ^ (1 + η) = m * m ^ η
+      rw [Real.rpow_add hmpos, Real.rpow_one]
+    have hsrel : (P.seedBitsAt κ : ℝ) ≤ m * x ^ (-ε) := hκs κ hκs'
+    have hspow := Real.rpow_le_rpow (Nat.cast_nonneg (P.seedBitsAt κ)) hsrel
+      (zero_le_one.trans hτ'.le)
+    rw [Real.mul_rpow hm0 (Real.rpow_nonneg hx0 _),
+      ← Real.rpow_mul hx0, hmp] at hspow
+    have hηbound := mul_le_mul_of_nonneg_right
+      (mul_le_mul_of_nonneg_left hmη hm0) (Real.rpow_nonneg hx0 ((-ε) * τ'))
+    calc
+      (P.seedBitsAt κ : ℝ) ^ τ' ≤
+          (m * m ^ η) * x ^ ((-ε) * τ') := hspow
+      _ ≤ (m * x ^ ((K : ℝ) * η)) * x ^ ((-ε) * τ') := hηbound
+      _ = m * x ^ ((K : ℝ) * η + (-ε) * τ') := ?_
+      _ ≤ m * 1 := mul_le_mul_of_nonneg_left
+        (Real.rpow_le_one_of_one_le_of_nonpos hx1 hexp) hm0
+      _ = m := mul_one _
+    rw [Real.rpow_add hxpos ((K : ℝ) * η) ((-ε) * τ')]
+    ring

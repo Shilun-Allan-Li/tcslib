@@ -1,0 +1,5 @@
+by
+  rw [firstGood_eq, ← List.ofFn_id κ] at h
+  have hmin := (List.find?_ofFn_eq_some_of_injective
+    (f := fun i : Fin κ => i) (p := flags) (i := k) Function.injective_id).mp h
+  exact Bool.eq_false_iff.mpr (hmin.2 q hq)

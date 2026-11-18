@@ -1,0 +1,22 @@
+-- Existing theorem replacement candidate. NOT_RUN; pending exact?/apply?/seal probes.
+by
+  obtain ⟨hL, hG⟩ := (P.reductionTargets_iff).mp hT
+  obtain ⟨fL, hfL, hpreL⟩ := (P.lpnPreTarget_iff).mp hL
+  obtain ⟨fG, hfG, hpreG⟩ := (P.prgPreTarget_iff).mp hG
+  intro π
+  apply (P.realizable_iff π).mpr
+  constructor
+  · apply (P.LPNRealizable_iff π).mpr
+    intro A ω
+    obtain ⟨B, hB⟩ := NUPPT.exists_realizesOn_of_preTarget A P.kappaOf .var
+      (fun L => (P.kappaOf_le L).trans (PolyExpr.eval_var L).ge)
+      (P.lpnEnc π) (P.encLPNAdvice π) (P.lpnPre π) hfL
+      (hpreL π) ω P.lpnAdviceBound (fun L => P.encLPNAdvice_length_le π L (ω L))
+    exact ⟨B, hB.congr (fun L x r _ => (P.lpnRed_eq π A L (ω L) x r).symm)⟩
+  · apply (P.PRGRealizable_iff π).mpr
+    intro A ω
+    obtain ⟨B, hB⟩ := NUPPT.exists_realizesOn_of_preTarget A P.kappaOfN .var
+      (fun N => (P.kappaOfN_le N).trans (PolyExpr.eval_var N).ge)
+      P.prgEnc (P.encPRGAdvice π) (P.prgPre π) hfG
+      (hpreG π) ω P.prgAdviceBound (fun N => P.encPRGAdvice_length_le π N (ω N))
+    exact ⟨B, hB.congr (fun N x r _ => (P.prgRed_eq π A N (ω N) x r).symm)⟩

@@ -1,0 +1,58 @@
+by
+  let payload : Fin (F.noiseDen ℓ) × ZMod (F.modulus ℓ) → List Bool := fun c =>
+    pairEncode (Nat.bits c.1.val) (Candidates.natToList (F.residueBits.eval ℓ) c.2.val)
+  let block : Fin (F.noiseDen ℓ) × ZMod (F.modulus ℓ) → List Bool := fun c =>
+    pairEncode (payload c) []
+  have hpayload : Function.Injective payload
+  · intro a b h
+    change pairEncode _ _ = pairEncode _ _ at h
+    have hp := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h
+    apply Prod.ext
+    · exact Fin.ext (Complexity.LogProg.bits_injective (congrArg Prod.fst hp))
+    · apply ZMod.val_injective (F.modulus ℓ)
+      exact Candidates.natToList_injOn
+        ((ZMod.val_lt a.2).trans_le (F.modulus_le_pow ℓ))
+        ((ZMod.val_lt b.2).trans_le (F.modulus_le_pow ℓ))
+        (congrArg Prod.snd hp)
+  have hlist : Function.Injective (BoolCircuit.encodeList block)
+  · intro xs
+    induction xs with
+    | nil =>
+      intro ys h
+      cases ys with
+      | nil => rfl
+      | cons y ys =>
+        rw [BoolCircuit.encodeList_nil, BoolCircuit.encodeList_cons] at h
+        cases (List.cons.inj h).1
+    | cons x xs ih =>
+      intro ys h
+      cases ys with
+      | nil =>
+        rw [BoolCircuit.encodeList_cons, BoolCircuit.encodeList_nil] at h
+        cases (List.cons.inj h).1
+      | cons y ys =>
+        rw [BoolCircuit.encodeList_cons, BoolCircuit.encodeList_cons] at h
+        have hcodes := (List.cons.inj h).2
+        change pairEncode (payload x) [] ++ BoolCircuit.encodeList block xs =
+          pairEncode (payload y) [] ++ BoolCircuit.encodeList block ys at hcodes
+        have hp : (payload x, BoolCircuit.encodeList block xs) =
+            (payload y, BoolCircuit.encodeList block ys)
+        · apply pairEncode_injective
+          simpa only [pairEncode_eq_dbl, List.append_nil, List.append_assoc] using hcodes
+        exact congrArg₂ List.cons (hpayload (congrArg Prod.fst hp))
+          (ih ys (congrArg Prod.snd hp))
+  intro r s h
+  rw [F.encDraw_eq, F.encDraw_eq] at h
+  have houter := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h
+  have hinner := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _))
+    (congrArg Prod.snd houter)
+  apply Prod.ext
+  · exact Encoding.Modular.encodeMatrix_injective (F.residueBits.eval ℓ)
+      (F.modulus_le_pow ℓ) (congrArg Prod.fst houter)
+  · apply Prod.ext
+    · exact Encoding.Modular.encodeVector_injective (F.residueBits.eval ℓ)
+        (F.modulus_le_pow ℓ) (congrArg Prod.fst hinner)
+    · have hn := congrArg Prod.snd hinner
+      change BoolCircuit.encodeList block (List.ofFn r.2.2) =
+        BoolCircuit.encodeList block (List.ofFn s.2.2) at hn
+      exact List.ofFn_injective (hlist hn)

@@ -1,0 +1,38 @@
+[
+  {
+    "priority": 1,
+    "file": "evidence/tools/finalize_m0_report.py",
+    "line": 85,
+    "issue": "Target extraction searches def reductionTargets, but source defines ReductionTargets.",
+    "evidence": "Targets.lean:168 is def ReductionTargets; lowercase reductionTargets_iff is a theorem at172. The regex lookup for reductionTargets is absent.",
+    "effect": "Deterministic AssertionError at finalizer line88 after its prerequisite scripts ran.",
+    "fix": "Use ReductionTargets in the T4 names list; preserve lowercase reader name elsewhere."
+  },
+  {
+    "priority": 2,
+    "file": "evidence/tools/finalize_m0_report.py",
+    "line": 17,
+    "issue": "The retained body states no freeze exists yet while the replacement header declares M0 frozen.",
+    "evidence": "report_current.py body has: There is no post-M0 statement change because no freeze exists yet. Finalizer retains all text from Source and host onward.",
+    "effect": "Contradictory delivered status; end-of-report historical supersession does not make this own current prose accurate.",
+    "fix": "Replace with a precise statement that SP-W1/2/3 refinements occurred before the M0 freeze and no post-M0 change occurred."
+  },
+  {
+    "priority": 2,
+    "file": "evidence/tools/finalize_m0_report.py",
+    "line": 56,
+    "issue": "Header says build/summary.txt binds every source to HEAD, but no called script rebinds that file.",
+    "evidence": "Current summary begins HEAD d286bafc4b1754e26ecae89c7f7f9c2a7cb7d7d3. source_inventory and report_current write other artifacts only.",
+    "effect": "After the planned empty marker the literal HEAD claim in the summary is stale, despite identical source bytes.",
+    "fix": "Explicitly rebind summary after verifying identical committed source hashes, recording original checked revision; or qualify report and cite new source/payload binding."
+  },
+  {
+    "priority": 3,
+    "file": "evidence/tools/package_checkpoint.py",
+    "line": 18,
+    "issue": "PDF tree check examines only base and head, while final report claims no PDF in any committed path.",
+    "evidence": "Loop is for rev in [base,head]. Available pdf-tree-base and boundary head evidence also cover endpoints.",
+    "effect": "No detected PDF violation; the automated coverage does not establish every intermediate commit tree.",
+    "fix": "Before making the all-committed-path claim, audit every commit tree in base..head or cite equivalent existing full-history evidence."
+  }
+]

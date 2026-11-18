@@ -1,0 +1,7 @@
+by
+  rw [P.n_eq]
+  have h := add_pow_le (Nat.zero_le (P.ℓ κ)) (Nat.zero_le 1) P.D
+  have hf : 2 ^ (P.D - 1) ≤ (2 : ℕ) ^ P.D :=
+    Nat.pow_le_pow_right (Nat.succ_pos 1) (Nat.sub_le P.D 1)
+  exact (h.trans (Nat.mul_le_mul_right ((P.ℓ κ) ^ P.D + 1 ^ P.D) hf)).trans_eq
+    (congrArg (fun x : ℕ => 2 ^ P.D * ((P.ℓ κ) ^ P.D + x)) (one_pow P.D))

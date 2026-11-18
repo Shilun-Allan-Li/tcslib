@@ -1,0 +1,62 @@
+2026-11-18T08:58:49.482324+00:00
+
+$ sysctl -n hw.ncpu hw.memsize
+12
+19327352832
+exit=0
+
+$ vm_stat
+Mach Virtual Memory Statistics: (page size of 16384 bytes)
+Pages free:                                     4158.
+Pages active:                                 272574.
+Pages inactive:                               264491.
+Pages speculative:                              6874.
+Pages throttled:                                   0.
+Pages wired down:                             216827.
+Pages purgeable:                               10759.
+"Translation faults":                    24914200989.
+Pages copy-on-write:                       612997293.
+Pages zero filled:                       16525134846.
+Pages reactivated:                        1355681231.
+Pages purged:                              139209138.
+File-backed pages:                            179415.
+Anonymous pages:                              364524.
+Pages stored in compressor:                  1387425.
+Pages occupied by compressor:                 359082.
+Decompressions:                            743165217.
+Compressions:                             1013374430.
+Pageins:                                   846093612.
+Pageouts:                                    3509884.
+Swapins:                                     1387495.
+Swapouts:                                    2345668.
+exit=0
+HEADROOM {'Pages free': 4158, 'Pages inactive': 264491, 'Pages speculative': 6874, 'Pages purgeable': 10759}; page_size=16384; bytes=4690444288; GiB=4.368317; floor=4294967296; PASS=True
+
+$ memory_pressure -Q
+The system has 19327352832 (1179648 pages with a page size of 16384).
+System-wide memory free percentage: 48%
+exit=0
+
+$ df -k /Users/seyoonr/.codex/worktrees/io-sprg/tcslib-exchange/evidence /private/tmp /private/var/folders/gc/93nsn68n4g9fgyjj6sjjmy180000gn/T
+Filesystem   1024-blocks      Used Available Capacity iused     ifree %iused  Mounted on
+/dev/disk3s5   971350180 847205844  95421344    90% 8686931 954213440    1%   /System/Volumes/Data
+/dev/disk3s5   971350180 847205844  95421344    90% 8686931 954213440    1%   /System/Volumes/Data
+/dev/disk3s5   971350180 847205844  95421344    90% 8686931 954213440    1%   /System/Volumes/Data
+exit=0
+
+$ mount
+/dev/disk3s1s1 on / (apfs, sealed, local, read-only, journaled)
+devfs on /dev (devfs, local, nobrowse)
+/dev/disk3s6 on /System/Volumes/VM (apfs, local, noexec, journaled, noatime, nobrowse)
+/dev/disk3s2 on /System/Volumes/Preboot (apfs, local, journaled, nobrowse)
+/dev/disk3s4 on /System/Volumes/Update (apfs, local, journaled, nobrowse)
+/dev/disk1s2 on /System/Volumes/xarts (apfs, local, noexec, journaled, noatime, nobrowse)
+/dev/disk1s1 on /System/Volumes/iSCPreboot (apfs, local, journaled, nobrowse)
+/dev/disk1s3 on /System/Volumes/Hardware (apfs, local, journaled, nobrowse)
+/dev/disk3s5 on /System/Volumes/Data (apfs, local, journaled, nobrowse, protect, root data)
+map auto_home on /System/Volumes/Data/home (autofs, automounted, nobrowse)
+exit=0
+
+$ ps -Ao pid,ppid,etime,comm
+No matching Lean/Lake process.
+exit=0

@@ -1,0 +1,25 @@
+-- Existing theorem replacement candidate. NOT_RUN; reuse SubexpHard without a new notion.
+by
+  let E := max 1 (E0 d (δ : ℝ) τ)
+  have hE1 : 1 ≤ E := le_max_left _ _
+  let P : Params := ⟨d, hd, δ, hδ, hδ1, E, hE1, G, R⟩
+  let hTP : P.Targets := hT P
+  have hEb : E0 P.d (P.δ : ℝ) τ ≤ P.E := le_max_right _ _
+  have hR := P.realizable_of_targets hTP.2.2.2.1 π
+  have hraw := theorem41_subexp P π hLoc hτ hs hEb hR hG (hLPN E hE1)
+  refine ⟨jlsSPRG P π hTP, ?_, ?_, ?_, ?_⟩
+  · intro κ
+    exact (congrArg (fun S : SPRG.Raw => S.modulus κ) (jlsSPRG_toRaw P π hTP)).trans
+      (jlsSPRG_raw_modulus P π κ)
+  · have hadv : (jlsSPRG P π hTP).adv = (jlsSPRG_raw P π).adv :=
+      funext (fun A => funext (fun κ =>
+        (SPRG.adv_eq (jlsSPRG P π hTP) A κ).trans
+          (congrArg (fun S : SPRG.Raw => S.adv A κ) (jlsSPRG_toRaw P π hTP))))
+    rw [hadv]
+    exact hraw.1
+  · apply (SPRG.hasComplexityEff_iff (jlsSPRG P π hTP) d 2).mpr
+    rw [jlsSPRG_toRaw]
+    exact P.hasComplexityEff_of_target π hTP.2.1
+  · apply (SPRG.hasPolyStretch_iff (jlsSPRG P π hTP)).mpr
+    rw [jlsSPRG_toRaw]
+    exact hraw.2.2

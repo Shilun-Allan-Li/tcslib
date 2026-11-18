@@ -1,0 +1,23 @@
+From bb3455c5015031a9b03a4013fbe8d372fc09791d Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 02:44:54 -0800
+Subject: [PATCH 08/15] io-sprg: import shared floor bound for rounded stretch
+ proofs
+
+---
+ TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean
+index c9750c0339257b6a147ac1fe8b3728867bf9a3a5..c0b4c60047188afbdf3c09f14b961f40007b27a0 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean
+@@ -6,6 +6,8 @@ Authors: TCSlib contributors
+ import TCSlib.Cryptography.Obfuscation.StructuredSeed.Correctness
+ import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+ 
++import Mathlib.Algebra.Order.Floor.Semifield
++
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false

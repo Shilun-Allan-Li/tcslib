@@ -1,0 +1,9 @@
+-- TERM CANDIDATE for LPNHop/02's single hu gap, after the new helper is proved.
+-- Context: a b : P.LPNAdvice π L, and huCode is equality of their tagged uniform-row codes.
+-- NOT_RUN. This uses the actual PrimeParam field name le_two_pow.
+List.ofFn_injective
+  (Internal.encodeList_injective_of_fixedWidth
+    (Encoding.Modular.encodeVector_injective (P.kappaOf L + 1)
+      (π (P.kappaOf L)).le_two_pow)
+    (P.n (P.kappaOf L) * (P.kappaOf L + 1))
+    (fun row => Encoding.Modular.encodeVector_length (P.kappaOf L + 1) row) huCode)

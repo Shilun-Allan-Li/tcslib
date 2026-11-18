@@ -1,0 +1,17 @@
+by
+  have hstrict : ∀ {a b : Fin m}, φ a = φ b → a < b → rank φ a < rank φ b
+  · intro a b hab hablt
+    rw [rank_eq, rank_eq]
+    apply Finset.card_lt_card
+    refine (Finset.ssubset_iff_of_subset ?_).2 ?_
+    · intro x hx
+      rcases Finset.mem_filter.mp hx with ⟨_, hxa, hxφ⟩
+      exact Finset.mem_filter.mpr
+        ⟨Finset.mem_univ x, lt_trans hxa hablt, hxφ.trans hab⟩
+    · refine ⟨a, Finset.mem_filter.mpr ⟨Finset.mem_univ a, hablt, hab⟩, ?_⟩
+      intro ha
+      exact (lt_irrefl a) (Finset.mem_filter.mp ha).2.1
+  rcases lt_trichotomy i j with hij | hij | hji
+  · exact False.elim ((ne_of_lt (hstrict hφ hij)) hr)
+  · exact hij
+  · exact False.elim ((ne_of_lt (hstrict hφ.symm hji)) hr.symm)

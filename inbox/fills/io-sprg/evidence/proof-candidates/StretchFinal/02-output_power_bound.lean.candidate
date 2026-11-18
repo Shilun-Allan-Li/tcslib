@@ -1,0 +1,31 @@
+/- NOT_RUN. Proposed area-local Internal helper. No new imports.
+Search: reuse public PolyExpr.eval_le rather than structural induction.
+The cutoff is explicitly max1(C*2^c), so no output-growth limit is rederived.
+Exact?/apply? and elaboration pending root. -/
+
+theorem output_power_bound (P : Params) :
+    ∃ K : ℕ, 0 < K ∧ ∃ κ₀, ∀ κ ≥ κ₀, P.m κ ≤ κ ^ K := by
+  let q := P.G.outBound.subst (Complexity.PolyExpr.pow .var (P.E * P.D))
+  obtain ⟨C, c, hq⟩ := Complexity.PolyExpr.eval_le q
+  refine ⟨c + 1, Nat.succ_pos c, max 1 (C * 2 ^ c), ?_⟩
+  intro κ hκ
+  have hκ1 : 1 ≤ κ := (le_max_left _ _).trans hκ
+  have hC : C * 2 ^ c ≤ κ := (le_max_right _ _).trans hκ
+  have hn : (Complexity.PolyExpr.pow .var (P.E * P.D)).eval κ = P.n κ
+  · rw [Complexity.PolyExpr.eval_pow, Complexity.PolyExpr.eval_var,
+      P.n_eq, P.ℓ_eq, pow_mul]
+  have hm : P.m κ ≤ C * (κ + 1) ^ c
+  · have h := P.G.outLen_le (P.n κ)
+    rw [← P.m_eq] at h
+    have heq : q.eval κ = P.G.outBound.eval (P.n κ)
+    · rw [Complexity.PolyExpr.eval_subst, hn]
+    exact (h.trans_eq heq.symm).trans (hq κ)
+  have hκ2 : κ + 1 ≤ 2 * κ
+  · omega
+  have hpoly := Nat.mul_le_mul_left C (Nat.pow_le_pow_left hκ2 c)
+  rw [mul_pow] at hpoly
+  have hlast : C * (2 ^ c * κ ^ c) ≤ κ ^ (c + 1)
+  · have h := Nat.mul_le_mul_right (κ ^ c) hC
+    rw [pow_succ]
+    nlinarith
+  exact hm.trans (hpoly.trans hlast)

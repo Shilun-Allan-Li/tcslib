@@ -1,0 +1,39 @@
+From 18bfd824aa27796148a76a211ba7e75f65d225b4 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 04:04:19 -0800
+Subject: [PATCH 13/15] io-sprg: make raw bound transports robust to eval seals
+
+---
+ TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean    | 3 ++-
+ TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean | 4 +++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean
+index 6a08e15d9575930f2705f8904c2603b50a8583a1..b81bd215d59b1e57f2f320d78585d69eac1b480c 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean
+@@ -139,7 +139,8 @@ noncomputable def toLWE (F : Raw) : LWE.Family where
+   dimensionBound := .var
+   samplesBound := F.samplesBound
+   residueBits := F.residueBits
+-  dimension_le ℓ := Nat.le_refl ℓ
++  dimension_le ℓ := by
++    simpa only [parameters_dimension, PolyExpr.eval_var] using Nat.le_refl ℓ
+   samples_le := F.samples_le
+   modulus_le_pow := F.modulus_le_pow
+ 
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean
+index 318aa589d832981e6016b83256c24b29446daa24..6fb0266ac1ee65f75e4a667c7165103ad92585c0 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean
+@@ -345,7 +345,9 @@ noncomputable def lpnFamily_raw (P : Params) (π : PrimeSchedule) : LPNFamily.Ra
+   samplesBound := .pow .var P.D
+   residueBits := .add .var (.const 1)
+   samples_le := P.lpnSamples_le
+-  modulus_le_pow := P.lpnModulus_le_pow π
++  modulus_le_pow L := by
++    simpa only [PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const] using
++      P.lpnModulus_le_pow π L
+ 
+ /-- The LPN family's sample schedule is L^D; glue. -/
+ theorem lpnFamily_raw_samples (P : Params) (π : PrimeSchedule) (L : ℕ) :

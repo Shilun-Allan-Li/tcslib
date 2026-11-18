@@ -1,0 +1,8 @@
+by
+  have hw : P.w κ ≤ P.W κ
+  · rw [P.W_eq]
+    exact Nat.le_pow (Nat.succ_pos 1)
+  have he : P.ℓ κ ≤ P.n κ
+  · rw [P.n_eq]
+    exact Nat.le_pow P.D_pos
+  exact hw.trans ((P.W_le_ell_add_one κ).trans (Nat.add_le_add_right he 1))

@@ -1,0 +1,101 @@
+[
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem (nu_eq|nu_pow_le|nu_le|le_nu)",
+      "TCSlib/Cryptography/Asymptotic/UniversalPadding/Parameter.lean"
+    ],
+    "returncode": 0,
+    "stdout": "40:theorem nu_eq (d m : \u2115) : nu d m = Nat.findGreatest (fun n => n ^ d \u2264 m) m := rfl\n43:theorem nu_pow_le {d : \u2115} (hd : 1 \u2264 d) (m : \u2115) : nu d m ^ d \u2264 m :=\n48:theorem nu_le (d m : \u2115) : nu d m \u2264 m := Nat.findGreatest_le m\n61:theorem le_nu {d : \u2115} (hd : 1 \u2264 d) {n m : \u2115} (h : n ^ d \u2264 m) : n \u2264 nu d m :=\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "lemma (findGreatest_spec|findGreatest_le|le_findGreatest)",
+      ".lake/packages/mathlib/Mathlib/Data/Nat/Find.lean"
+    ],
+    "returncode": 0,
+    "stdout": "205:lemma findGreatest_spec (hmb : m \u2264 n) (hm : P m) : P (Nat.findGreatest P n) := by\n212:lemma findGreatest_le (n : \u2115) : Nat.findGreatest P n \u2264 n :=\n215:lemma le_findGreatest (hmb : m \u2264 n) (hm : P m) : m \u2264 Nat.findGreatest P n :=\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem one_le_iff_ne_zero|theorem div_pos_iff|theorem le_pow|theorem pow_le_pow_iff_left|theorem div_le_div_right",
+      "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Nat/Lemmas.lean"
+    ],
+    "returncode": 0,
+    "stdout": "145:theorem one_le_iff_ne_zero : 1 \u2264 n \u2194 n \u2260 0 := Nat.pos_iff_ne_zero\n888:@[simp] protected theorem div_pos_iff : 0 < a / b \u2194 0 < b \u2227 b \u2264 a := by\n928:protected theorem div_le_div_right {a b c : Nat} (h : a \u2264 b) : a / c \u2264 b / c :=\n1239:theorem le_pow {a b : Nat} (h : 0 < b) : a \u2264 a ^ b := by\n1247:protected theorem pow_le_pow_iff_left {a b n : Nat} (hn : n \u2260 0) : a ^ n \u2264 b ^ n \u2194 a \u2264 b where\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem pow_le_pow_right",
+      "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Nat/Basic.lean"
+    ],
+    "returncode": 0,
+    "stdout": "782:protected theorem pow_le_pow_right {n : Nat} (hx : n > 0) {i : Nat} : \u2200 {j}, i \u2264 j \u2192 n^i \u2264 n^j\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem le_log_of_pow_le",
+      ".lake/packages/mathlib/Mathlib/Data/Nat/Log.lean"
+    ],
+    "returncode": 0,
+    "stdout": "112:theorem le_log_of_pow_le {b x y : \u2115} (hb : 1 < b) (h : b ^ x \u2264 y) : x \u2264 log b y := by\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem logb_pow|lemma natLog_le_logb|theorem isLittleO_logb_id_atTop",
+      ".lake/packages/mathlib/Mathlib/Analysis/SpecialFunctions/Log/Base.lean"
+    ],
+    "returncode": 0,
+    "stdout": "120:theorem logb_pow (b x : \u211d) (k : \u2115) : logb b (x ^ k) = k * logb b x := by\n417:lemma natLog_le_logb (a b : \u2115) : Nat.log b a \u2264 Real.logb b a := by\n513:theorem isLittleO_logb_id_atTop : logb b =o[atTop] id :=\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem IsLittleO.eventuallyLE|theorem IsLittleO.comp_tendsto|theorem IsLittleO.const_mul_left",
+      ".lake/packages/mathlib/Mathlib/Analysis/Asymptotics/Defs.lean"
+    ],
+    "returncode": 0,
+    "stdout": "182:theorem IsLittleO.eventuallyLE (h : f =o[l] g) : \u2200\u1da0 x in l, \u2016f x\u2016 \u2264 \u2016g x\u2016 := by\n401:theorem IsLittleO.comp_tendsto (hfg : f =o[l] g) {k : \u03b2 \u2192 \u03b1} {l' : Filter \u03b2} (hk : Tendsto k l' l) :\n1180:theorem IsLittleO.const_mul_left {f : \u03b1 \u2192 R} (h : f =o[l] g) (c : R) : (fun x => c * f x) =o[l] g :=\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem tendsto_natCast_atTop_atTop",
+      ".lake/packages/mathlib/Mathlib/Order/Filter/AtTopBot/Archimedean.lean"
+    ],
+    "returncode": 0,
+    "stdout": "35:theorem tendsto_natCast_atTop_atTop [Semiring R] [PartialOrder R] [IsOrderedRing R]\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem eval_(var|pow|subst|mono|le)",
+      "TCSlib/Complexity/Randomized/PolyExpr.lean"
+    ],
+    "returncode": 0,
+    "stdout": "119:@[simp] theorem eval_var (n : \u2115) : var.eval n = n := rfl\n128:@[simp] theorem eval_pow (p : PolyExpr) (c n : \u2115) : (pow p c).eval n = (p.eval n) ^ c := rfl\n134:theorem eval_subst (p q : PolyExpr) (n : \u2115) : (p.subst q).eval n = p.eval (q.eval n) := by\n142:theorem eval_mono (p : PolyExpr) : Monotone p.eval := by\n159:theorem eval_le (p : PolyExpr) : \u2203 C c : \u2115, \u2200 n, p.eval n \u2264 C * (n + 1) ^ c := by\n",
+    "stderr": ""
+  }
+]

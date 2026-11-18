@@ -1,0 +1,16 @@
+-- Existing theorem replacement candidate. NOT_RUN; same U,c,e,f, with pp restricted to π.
+by
+  have hc := ((P.coreTarget_iff).mp hC).1
+  have hd := ((P.drawSamplerTarget_iff).mp hD).1
+  simp only [Params.idWord_eq, PrimeParam.enc_eq] at hc hd
+  obtain ⟨U, c, e, he, hfail⟩ := (drawSamplable_iff _ _).mp hd
+  obtain ⟨f, hf, hcore⟩ := (coreComputable_iff _ _ _ _).mp hc
+  rw [jlsSPRG_raw_eq]
+  simp only [SPRG.Raw.idWord_eq, SPRG.Raw.encPP_eq,
+    PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const]
+  apply SamplesEfficiently.intro
+  · exact (drawSamplable_iff _ _).mpr
+      ⟨U, c, fun κ _ => e κ (π κ), fun κ _ w => he κ (π κ) w,
+        fun κ _ => hfail κ (π κ)⟩
+  · exact (coreComputable_iff _ _ _ _).mpr
+      ⟨f, hf, fun κ _ d => hcore κ (π κ) d⟩

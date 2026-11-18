@@ -1,0 +1,203 @@
+# Read-only source fidelity review before M0
+
+This is a mathematical statement/code comparison, not a kernel proof check or an
+external statements-gate result. The reviewer authored several candidate modules;
+this fresh comparison against the source is an internal review, not an independent
+human audit. No Lean/lake/build/cache commands ran in this review. No code edited.
+
+Source: verified jls26.pdf read in place, SHA-256
+bb357e8d01cc0932899453f3d877b67b58f33253eabf2564854f8f38721e2f3d.
+Read extracted complete pages8-21 and visually inspected pages16 and17. No PDF copied.
+Pins/rulings: dispatch attachment; records dbea2807532392781304e004715f3b0190025f5e
+rulings/designr3 and retained r2/r1 sections. SP-W1 user ruling:
+"Use rational δ throughout, coercing it to real values for analysis".
+
+Scope: all current primitive/parameter/construction/hybrid statements, with detailed
+line-item review of the six modules below. Security.lean and Targets.lean were still
+under construction and deliberately not audited. PRG reduction is owned by another
+agent and is not a detailed subject of this review. Files can change during root's
+compilation fixes; hashes below identify the exact reviewed snapshots.
+
+Verdict: NO KNOWN MATHEMATICAL FIDELITY DEFECT in these reviewed statements after
+SP-W1 and the disclosed optional-grid refinement. The required Phase-A conditionality,
+rounding, public-parameter input and raw/primitive split are explicit. This verdict
+does not certify elaboration, seals, axioms, bounds' proofs, final scope or target links.
+
+## Snapshot bindings (paths relative to StructuredSeed)
+
+6ca18a71519143815dfef25f6c38b7558a7a23dfc1e04f8e0def12bf9e7da10c  Degree.lean
+02849ec3ce375221bf1255d484944fb72a65d3c660cee70f054d3dea6a74a086  Buckets.lean
+cfb59c6c60e5723259f64c5e5f55cb001bdd52014bc7b82a36b36d8bdc75d058  SparseFactor.lean
+8387947431fde6b39a1bc95b38a4d5845a08352cd61b1f4e242061c144917024  Polys.lean
+823825ab66b8d2bafc621f58a6373c4c2128dd9f924419dbbdcfd300ff77b8a6  Correctness.lean
+38033bf2492eb39da7419df69bb906e93da6a99ada537a90c61bb3d7ea3317be  Reductions/LPN.lean
+c5d925e8605a59245a448ab86dd94c85d8c29b66bd0e48695de5cdbf77ff01bb  Defs.lean
+ad6c1a134b04990d1fb38d71133a42a7c2937c6fd2cc417f84ed449c5d7a7281  BoolPRG.lean
+08017e29ae32256913a3c905db95e7178ff8f3b4851c8d511c8065de9c5a3cae  LPN.lean
+2de91d476e19d9e687eafe762797b19376baed1daae5eb77a486d49d1b32b5fc  Params.lean
+7d29b1ab983b6c3bc65e1a83b33df11c526c959ad195a014ea310f59a67ccb61  Samplers.lean
+2aebeb5ac72d958fed2e5bb96cbaf0803195537f809e455ff1596969d9e32da9  Encoding.lean
+b84c57ad0e9031b850d427621246878a44d74d3d56de6fd6a5f06b50b218260d  Hybrids.lean
+5386824ffb25f82529754415f7f68336cb7ddc52f931cf6bbbd2121e16b7ed13  Claim42.lean
+cf924ba262d5c879b8eb2f2e151747afc1227903db7dbf83b45b1e1ccde27643  Stretch.lean
+
+## Detailed LPN reduction table
+
+All locations below refer to Reductions/LPN.lean. Owner-side rfl/equation readers
+immediately follow the definitions and preserve the same statements.
+
+| Line / Lean item | Source item/page | Statement and fidelity result |
+|---|---|---|
+|51 LPNChal;68 lpnEnc|Lemma4.2 p19;Def2.3 pp9-10|EXACT canonical F.toLWE parameter matrix/value challenge and encoder. No assumption-law replacement. Dv3 fixes own-dimension family.|
+|79 lpn_dimension_eq;86 lpn_samples_eq;94 lpn_modulus_eq|Def2.3 pp9-10,construction p15|GLUE: owner readers establish L, L^D, pi(kappaOf L). No reduction by foreign definitions needed.|
+|103 LPNConcrete;114 lpnChalEquiv|Lemma4.2 p19|GLUE: explicit finCongr/Equiv.cast transport is bijective, preserving coordinates and exact uniform laws.|
+|135 LPNAdvice|Lemma4.2 p19|Dv12 fixes nonchallenge index,buckets,sigma,other secret/noise seeds,tail,uniforms. The challenged matrix is NOT fixed in advice. Fin(kappa+1) includes a sentinel.|
+|144 LPNAdviceProduct;162 product equivalence|Lemma4.2 p19|GLUE: literal record-to-tuple equivalence, no choice.|
+|181 lpnAdviceCard;197 lpnAdviceEquiv|Lemma4.2 p19|Dv15 explicit supplied/canonical finite coordinates. Cardinal counts reflect all six advice fields.|
+|Fintype/Nonempty instances following212|Non-vacuity requirement|Finite coordinates explicit; Nonempty is mapped from component product. No empty advice at L0 or kappa0.|
+|238 encLPNAdvice|Lemma4.2 p19|Dv9/Dv12: prime first, unary independent L, all six data components. Hardwired tail is data, not evaluated by preprocessing.|
+|268 lpnAdviceBound;380 length theorem|Lemma4.2 p19|GLUE explicit4096*(L+1)*S^3 polynomial; disclosed generous constant4096 replaces suggested example100, no asymptotic hidden bound.|
+|281 lpnMatrixAt;298 lpnValuesAt|Lemma4.2 p19|Dv15 casts only rows and columns through L=ell(kappaOf L). Prime already matches the inverse-indexed schedule.|
+|316 lpnPre|Lemma4.2 p19|At selected hop uses b+sigma; earlier copies uniform; later copies use the SAME challenged A and independent hardwired secret/noise inputs. Calls existing lpnVector. Error0 and hardwired tail match chain games. Off-image[] totalizes without affecting scheduled statements.|
+|348 lpnRed|Lemma4.2 p19|EXACT required A.runAtL(kappaOf L)(pre)(r.take(A.coinLen...)) shape, with advice as input. No sampling or G.eval.|
+|363/371 encoding injectivity|Faithful-code refinement|GLUE only, stronger explicit coding contract; does not alter distributions.|
+|393 lpn_hop|Lemma4.2 p19|One global advice family for arbitrary global tail/hop selectors; then EVERY shared-RealizesOn realiser and EVERY kappa. Condition hop<kappa excludes the sentinel, not a security-parameter range. Adv bound at ell(kappa), as required.|
+|408 LPNRealizable;415 iff|PhaseA/Dv14/Dv16|EXACT every A/every advice family exists a realiser, shared predicate and A.coins.subst.var. Only layout-length coin strings constrained. Not asserted unconditionally.|
+
+Why the advice averaging is sound as a route: I, buckets, sigma and nonchallenge
+noise/secret/uniform data are independent of the assumption's free uniform matrix.
+For real tails, the chosen tail equals G(sigma) in the chosen averaging tuple but
+is simply copied by the reduction. Extra unused noise/secret seeds at the challenged
+copy do not affect its output. At scheduled L=ell(kappa), noiseDenAt L=W(kappa).
+Coin layout and every-realiser quantification use the pinned shared RealizesOn API.
+
+## Detailed polynomial table
+
+Locations: Polys.lean. Every listed definition has its final equation reader.
+
+| Line / Lean item | Source item/page | Statement and fidelity result |
+|---|---|---|
+|57 monomialSlot;69 two-halves count|Eq(3) p17|Increasing support order and none padding specify an ordering the paper leaves arbitrary. Multilinearity ensures support is exactly the monomial variable set.|
+|80 Var;88 StructPoly|Eq(2) p16,Eq(3) p17|Public/private structured variable sum with input-prime coefficients. Dv9/Dv15.|
+|97 outputIndex|Construction p15|GLUE cast m=G.outLen(n), preserves the output index exactly.|
+|106 bVar;115 sVar|SdSamp' p16|Correct public block and original/scaled private-copy coordinates. No dependency on private values in variable selection.|
+|125 uCoord;135 vCoord|Eq(2) p16|Correct U(row,slot) and V(slot,col) factor coordinates and dimensions.|
+|146 linearCoeff|Eq(3) p17|Secret coefficient -A_i,a; final coefficient b_i; padding final-coordinate indicator. This implements c_i=-A_i||b_i for transposed A.|
+|169 halfForm|Eq(3) p17|Explicit sum over all tensor indices of coefficient products times ONE tensor coordinate. Padding forces augmented-secret coordinate1.|
+|189 prgPoly|Eq(3)/Eq(4) p17|Integer coefficients cast to Zmod; first/second halves multiply. Scaled variant alters ONLY the first private factor.|
+|208 correctionPoly|Eq(3) p17|Sum_r U_r V_r at bucket position. Scaled variant alters ONLY U. None fallback contributes0 only for failed placement.|
+|229 G1|Eq(3) p17|Unscaled two-half multilinear lift computes erroneous-seed polynomial.|
+|241 G2|Eq(3) p17|Adds the full quadratic correction, agreeing with y when flag1.|
+|253 G3|Eq(4) p17|Scaled first tensor/U factors implement flag*G2 WITHOUT multiplying by another private variable; private degree remains2.|
+|265 G4struct|Eval' p16|Sum over repetitions, exactly the formal source construction.|
+|277 G4|Eval' pp16-17|Bijective Fin renaming of public and private groups. Public error variable is NOT multiplied into the polynomial.|
+|295/307 half-degree bounds|Eq(3) p17|Public degree charges actual nonpadding slots, private degree<=1. Avoids erroneous2D bound for odd d.|
+|316 prgPoly_degrees;325 correction degrees|Eq(3) p17|Combined monomial support<=d and two private factors. Correction public degree0/private<=2.|
+|334 G3_degrees;343 G4_degrees|Eq(4)/Eval' pp16-17|Public degree<=d/private<=2, including odd d and explicit renaming. Matches formal source rather than p14 overview's d+1.|
+|352 halfForm_eval|Eq(3) p17|Tensor assignment and b=A*s+x suffice; evaluates to product of actual x slots. No Boolean assumption on x required.|
+|371 G1_eval|Eq(3) p17|Output is eval2 of the original integer PRG polynomial at x with coefficient reduction mod p. Uses provided multilinearity.|
+|389 G3_eval_of_scaled|Eq(4) p17|Any field flag satisfying the scaled-copy equations factors out once; no flag booleanity assumption needed for this algebraic identity.|
+
+Sanity check of half split: support cardinality<=d<=2D. Slots[0,D) and[D,2D)
+contain each monomial variable once, padding the rest with1. Each half expands
+(-A_i,b_i) against s||1; their product therefore recovers that monomial of x.
+Constant monomials use the two tensor-one coordinates and still evaluate to1;
+in G3 the first one is scaled by flag. No constant-term scaling is omitted.
+
+## Detailed correctness table
+
+Locations: Correctness.lean. These are M0 theorem statements, not proved results yet.
+
+| Line / Lean item | Source item/page | Statement and fidelity result |
+|---|---|---|
+|56 firstGood_none_iff;64 some_flag;72 minimal|SdSamp' p15|Exactly no-success, selected-success and increasing minimum properties. Fin0 case is meaningful.|
+|79 public block;89 error;98 flag packing|SdSamp' pp15-16|Packed b blocks retained; public err=1 iff no selection; exactly the selected private flag equals1.|
+|107 unscaled;117 scaled packing|SdSamp' p16|Every S is retained, flag*S precomputed separately. Earlier failures/later successes have packed flag0, matching overwrite of later flags.|
+|129 oneFlag_bounds|1SdSamp p16|All three success conditions, with squared-grid capacity read as rc*rc.|
+|144 corr_zero_of_not_bad|Eq(3) p17|Good outputs' dependency variables have zero noise, so correct and erroneous polynomial evaluations agree.|
+|154 oneSd_factors_mul|1SdSamp p16|At most t nonzero correction entries imply explicit UV=M with prescribed rc-by-t/t-by-rc dimensions.|
+|171 G1_eval_of_good|Eq(3) p17|On good outputs, the lifted polynomial gives y before correction. Arbitrary z is constrained only on the instance coordinates read by G1.|
+|186 correctionPoly_eval_oneSd|Eq(3) p17|Successful factors return the original Corr entry; no bad-output-location leakage enters the polynomial.|
+|201 G2_eval_of_flag|Eq(3) p17|Exactly y_j if instance flag1, for arbitrary z matching public/unscaled private core coordinates.|
+|219 G4_eval_sdCore|Eval' p16|Deterministic pointwise equality zero on err, otherwise original Boolean PRG output embedded into field. ALL kappa,pp,draws.|
+|232 G4_eval_eq|Eval' pp16-17|Exact AllOutputs law, uniformly all kappa/all pp. Retained metadata sigma/err belongs to internal full output, not adversary challenge.|
+|244 eval'_correct|Eval' pp16-17|Boolean output equals false on err, otherwise G(sigma). Primality ensures0 and1 remain distinct, including p2.|
+|259 jls_hasComplexity|Def3.3 p10;Eval' pp16-17|Raw bundle has composite public degree d/private2 on every sampled seed, with explicit G4 witness. Efficiency added only by targets.|
+
+## Support modules table
+
+| File:line / Lean item | Source item/page | Statement and fidelity result |
+|---|---|---|
+|Degree:45 pubDegree;56 privDegree|Def3.3 p10|Indicator-weighted degree gives exactly separate public/private total degrees in composite polynomial. Dv6.|
+|Degree:70-110 Internal closure;118-208 specialized closure|Mathematical glue for p17|Semiring-valid upper bounds including zero ring; X uses<= rather than false exact equality in trivial ring. No additional crypto assumption.|
+|Degree:215/222 renaming|Mathematical glue for Dv15|Groupwise bijections preserve indicator degrees; reuses Mathlib weighted rename theorem.|
+|Buckets:52 bucket;61 load;68 overfull|IdSamp' p15|Exactly finite fibers, cardinalities and strict-overcapacity test. Fin indices replace paper's1-based labels.|
+|Buckets:77 rank;87 indexMap|IdSamp' p15|Deterministic increasing injection via explicit finProdFinEquiv. Optional failure fixes rc0 empty type while leaving capacity unchanged.|
+|Buckets:103/110/117/125/133 position properties|IdSamp' p15|Rank below load; same-fiber ranks injective; good positions exist/inject; overfull yieldsnone. Sound including m0/rc0.|
+|Buckets:147 matrix;162 entry;172 support bound|1SdSamp p16|Places Corr at assigned positions; support no larger than supported bad outputs in the bucket. Additive cancellation can only reduce support.|
+|SparseFactor:48 entries;61 left;76 right;91 factors|1SdSamp p16|Deterministic row-major list assigns one nonzero entry to each slot. No rank theorem or chosen factor witness.|
+|SparseFactor:112/119/126 list properties|Mathematical glue|Every nonzero entry exactly once; length equals finite support cardinality.|
+|SparseFactor:138/146 reconstruction|1SdSamp p16|At most t nonzero entries gives UV=M over any semiring, including zero ring/empty dimensions. Same factor sizes as source.|
+
+## Rule15 and generic definition review
+
+| Primitive | Actual mandatory fields | Law tie and status |
+|---|---|---|
+|SPRG,Defs378|eval_eff379,idSamp_eff380,sdSamp_eff383|Extends Raw. Eval field refers to actual Raw.eval. Sampler fields use the SAME Raw.IdDraw/idCore and SdDraw/sdCore defining exact laws. Public modulus/unary kappa are in parameter words. PASS as definition.|
+|BoolPRG,BoolPRG48|eval_eff92,idSamp_eff97|Uniform map quantified before n and all inputs. Index sampling is derived from IdDraw/idCore112 and SamplesEfficiently references those exact fields. PASS.|
+|LPNFamily,LPN397|sample_eff399|Raw joint Draw/sampleCore/sampleLaw are the matrix,secret,noise sampler; efficiency references those exact encodings/core, not a disconnected distribution. PASS.|
+
+All sampler fields reuse shared CoinSampling.Contract.SamplesEfficiently; no local
+variant and no product UniformSampler construction was seen. Parameters are on the
+machine's input and the existential string map is quantified before kappa. Advice is
+used only in reductions. LWE.Family itself lacks efficiency fields but is an existing
+foreign interface; the raw/primitive split deliberately adds the mandatory field here.
+Target conjunction/assembly is intentionally outside this review until root finishes it.
+
+## Other audited statements and boundary checks
+
+- PrimeParam:2^kappa<=p<=2^(kappa+1), p prime, p encoded with kappa+2 bits. Residues
+use kappa+1. At kappa0,p2 is valid. PrimeSchedule.nonempty is an existence theorem only.
+No construction computes a prime. Generic SPRG publishes modulus first; all construction
+algorithms take arbitrary pp and security statements later quantify arbitrary pi.
+- Params.delta is rational with0<delta<1, per SP-W1; analysis coerces to real. This
+resolves the earlier arbitrary-noncomputable-real target obstruction. D,E positive.
+- Derived l,n,w,W,t,rc,cap,B,Gamma match C1-C14 exactly after SP-W1. B>=1 and W>=1.
+At kappa0,rc0 but Option positions remain total; no hidden positive-kappa hypothesis.
+- noise law is D_(1/W)(p), with Pr0=1-1/W+1/(Wp), others1/(Wp), correct even p2/W1.
+Literal Def2.3 outer quantifiers and exact real-rate bridge remain outside scope per Q-S1.
+- BoolPRG multilinearity/degree over integers matches Def3.4 p11. Representation and
+locality for every type index strengthen support-only statements as disclosed Dv4.
+Stretch is m>=n^tau rather than exact equality, disclosed Dv5. Security is in seed n.
+- SPRG game uses jointly sampled public/private seed and independent uniform comparison
+output, and publishes pp/I/public/output only. It does not leak private seed or metadata.
+HasComplexity uses sampled-seed AllOutputs and every index, as disclosed strengthened form.
+- Claim42 uses exact err event,0<=errProb, uniform-in-pp eventual kappa threshold.
+Cond3 is shared across repetitions; Cond1 independence is used after conditioning on I.
+The Gamma+1 Markov denominator is correct even Gamma0. Bucket-tail t+1 witness is
+stronger integral bookkeeping than the source's t witness, not a weakening.
+- Stretch C*(kappa+1)^5*(n+m/w+1) counts full packed seed coordinates. E0=floor
+max(10/delta,5/(tau-1))+1 gives strict inequalities E*delta/2>5 and E*(tau-1)>5;
+D>=1 suffices for the n term. Polynomial output upper bound permits fixed tau'>1.
+- Hybrids H0/H1/H2/H3 alter exactly err/output as in Prop4.1 pp18-19. chainGame
+replaces first i vectors by independent uniforms, retaining one common free A and
+sigma. Adding independent bucket placements is Dv8. Agree-off-error costs errProb each.
+- All reviewed subexponential wrappers reuse SubexpHard; no new smallness notion.
+
+## Disclosures to carry into REPORT before freeze
+
+1 SP-W1 rational exponent ruling, verbatim.
+2 Optional indexMap and zero correction for overfull placements, required by rc0.
+3 Deterministic increasing bucket ranks/monomial support order and sparse factors.
+4 Encoding.lean split from the Samplers layout plan and explicit faithful-code fields.
+5 Advice constant4096 and its explicit polynomial expression.
+6 Source-deviation ledger Dv1-Dv18 at applicable declarations/table rows; the generic
+raw/primitive definitions and sampler fields are deliberate Phase-A refinements.
+
+## Remaining checks (not claimed complete)
+
+Kernel elaboration, exact?/apply? overlap probes, paired controls, seals, axiom census,
+source-freeze dump, lint and final evidence are root's work. No claim of proof completion.
+Security/Targets/PRG reduction/assembly statements must receive their own review once
+present; specifically check prop41 every-realiser quantifier order and exact2*kappa,
+explicit min(E*cL,E*D*cG,1)/2 exponent, target uniformity, and assembly field coverage.

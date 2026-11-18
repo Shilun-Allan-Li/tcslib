@@ -1,0 +1,78 @@
+Mathematical primitives: M0 design/search notes
+Owner: design_audit subagent. No Lean/lake/cache/build/git mutations performed.
+Source read in place after root verified jls26.pdf SHA-256:
+bb357e8d01cc0932899453f3d877b67b58f33253eabf2564854f8f38721e2f3d.
+Relevant pages: 15 (bucket injection), 16 (correction matrices and sparse
+factor dimensions), 17 (degree d public / degree2 private), 18-21 (analysis).
+The page16 image was inspected; source PDF was never copied.
+
+Text-search provenance
+TCSlib at pinned base 5ed465f62e4ae0f93ded1a1ba49e807591b589eb in root's
+implementation worktree. Mathlib source (read only, no build reuse):
+/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/.lake/packages/mathlib
+Root verified its HEAD 029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e equals manifest.
+
+Searches before definitions/helpers
+1 rg -n 'def weightedTotalDegree|theorem weightedTotalDegree|lemma
+weightedTotalDegree' in WeightedHomogeneous.lean and Homogeneous.lean.
+Read weightedTotalDegree, le_weightedTotalDegree, weightedTotalDegree_zero,
+weightedTotalDegree_one, weightedTotalDegree_rename_of_injective.
+2 rg -n 'sparseFactor|indexMap|bucketRank|weightedTotalDegree_(add|mul|sum|prod|C|X)'
+over TCSlib and Mathlib: no relevant existing public construction/closure lemma.
+3 rg -n 'nonzero.*[Ff]actor|sparse.*[Ff]actor|rank.*[Bb]ucket|[Bb]ucket.*[Ii]nject|
+weightedTotalDegree.*\+|weightedTotalDegree.*\*': no relevant public match.
+4 rg exact proposed weighted closure names and sparseEntries/sparseFactor/indexMap/
+eq_of_rank_eq: no relevant match (only unrelated Module.finrank_eq_of_rank_eq).
+5 Read List/FinRange.lean mem_finRange, nodup_finRange, pairwise_lt_finRange,
+length_finRange. Reuse these for the finite lexicographic enumeration, not
+Fintype.equivFin or Finset.toList.
+6 Read Matrix/Basic.lean and Matrix/Mul.lean imports and Matrix.mul_apply route.
+7 Read finProdFinEquiv's explicit construction and related Fin equivalence API.
+No alternate enumeration or product-grid splitting algorithm was introduced.
+
+exact?/apply? probes
+Pending ROOT ONLY: subagents are explicitly forbidden from running Lean.
+The root should record scratch probes for the six weighted closure statements
+before proving them. No claim that these checks already ran is made here.
+
+Degree.lean choices
+Public pubDegree/privDegree are one-line wrappers of Mathlib's weighted degree,
+with rfl readers. Internal weighted add/mul/finite-sum/finite-product/C/X facts
+are missing at the pin and mathematical glue. Specialized public/private bounds
+reuse those helpers, not independent support arguments. The two rename statements
+must reuse Mathlib weightedTotalDegree_rename_of_injective.
+Dv6 composite polynomial complexity; Dv10 public degree d; Dv15 explicit groupwise
+renaming. No adversary or sampler notion is redefined.
+
+Buckets.lean choices
+The increasing rank counts smaller Fin indices in the same bucket. The grid map
+is Option(Fin rc x Fin rc), using finProdFinEquiv.symm for ranks below rc*rc,
+and none globally when overfull. The defining test spells out the finite exists
+so its Decidable instance is constructive without global/local instances.
+The overfull predicate still has its own iff reader.
+Reason for Option: rc(0)=0 while m(0) may be nonzero. The proposed paper-style
+total default point would inhabit an empty grid. This pre-M0 refinement preserves
+rc, cap and all successful positions. Matrix entries are sums over outputs whose
+label and optional position match; no collision-dependent selection is needed.
+The support bound works for every placement: every nonzero matrix entry must
+receive at least one nonzero correction from the supplied bad set.
+Generic AddCommMonoid coefficients suffice; the support count adds DecidableEq.
+
+SparseFactor.lean choices
+sparseEntries uses List.finRange rows, flatMap the List.finRange columns, then
+filters nonzero entries with decide. Each slot's left column has the stored entry
+at its row; the right row has one at its column. Slots beyond list length are zero.
+Semiring plus DecidableEq suffices. The factor function is total even when sparsity
+fails, but reconstruction assumes at most t entries. A finite-cardinality variant
+translates through sparseEntries_length_eq_card.
+No rank theory, Classical.choose, Fintype.equivFin, Finset.toList, machines, sampler
+instances, efficiency proof, or foreign TCSlib unfolding occurs in these files.
+
+M0 status
+Degree:225 lines,2 definitions,2 proved readers,24 sorry theorem statements.
+Buckets:180 lines,6 definitions,6 proved readers,7 sorry theorem statements.
+SparseFactor:150 lines,4 definitions,6 proved readers,5 sorry theorem statements.
+All lines <=100 characters. All sorry statements have Proof sketches.
+All files have required options/headers/module contents/references.
+No tactic block written (rfl and sorry are terms).
+Compilation, seals, controls, axiom census and lint are root's pending work.

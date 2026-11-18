@@ -1,0 +1,9 @@
+-- Existing theorem replacement candidate. NOT_RUN; retain the target's SAME uniform witnesses.
+by
+  have hs := (P.lpnSamplerTarget_iff).mp hT
+  obtain ⟨U, c, e, he, hfail⟩ := (drawSamplable_iff _ _).mp hs.drawSamplable
+  obtain ⟨f, hf, hcore⟩ := (coreComputable_iff _ _ _ _).mp hs.coreComputable
+  apply SamplesEfficiently.intro
+  · exact (drawSamplable_iff _ _).mpr
+      ⟨U, c, fun L _ => e L π, fun L _ w => he L π w, fun L _ => hfail L π⟩
+  · exact (coreComputable_iff _ _ _ _).mpr ⟨f, hf, fun L _ d => hcore L π d⟩

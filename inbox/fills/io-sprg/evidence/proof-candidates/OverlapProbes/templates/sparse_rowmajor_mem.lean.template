@@ -1,0 +1,20 @@
+import Mathlib.Data.List.FinRange
+import Mathlib.Data.Matrix.Mul
+import Mathlib.Data.Finset.Card
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open scoped BigOperators
+
+namespace IoSprgOverlapProbe
+
+example {rows cols : ℕ} {R : Type*} [Semiring R] [DecidableEq R]
+    (M : Matrix (Fin rows) (Fin cols) R) (c : Fin rows × Fin cols) :
+    c ∈ (((List.finRange rows).flatMap (fun i =>
+      (List.finRange cols).map (fun j => (i, j)))).filter
+        (fun q => decide (M q.1 q.2 ≠ 0))) ↔ M c.1 c.2 ≠ 0 := __PROBE_BODY__
+
+end IoSprgOverlapProbe

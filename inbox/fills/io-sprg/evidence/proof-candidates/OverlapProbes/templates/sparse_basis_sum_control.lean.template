@@ -1,0 +1,16 @@
+import Mathlib.Data.Matrix.Basis
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open scoped BigOperators
+
+namespace IoSprgOverlapProbe
+
+example {rows cols : ℕ} {R : Type*} [AddCommMonoid R]
+    (M : Matrix (Fin rows) (Fin cols) R) :
+    M = ∑ i : Fin rows, ∑ j : Fin cols, Matrix.single i j (M i j) := __PROBE_BODY__
+
+end IoSprgOverlapProbe

@@ -1,0 +1,79 @@
+[
+  {
+    "command": [
+      "rg",
+      "-n",
+      "idxCard|idDrawCard|drawCard|idxEquiv|idDrawEquiv|drawEquiv|encBuckets|encOneDraw|W_le_ell_add_one|idxBound|sVarBound",
+      "TCSlib/Cryptography/Obfuscation/StructuredSeed"
+    ],
+    "rc": 0,
+    "stdout": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean:102:  idxCard : \u2115 \u2192 \u2115\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean:103:  idxEquiv : \u2200 \u03ba, Idx \u03ba \u2243 Fin (idxCard \u03ba)\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean:107:  idDrawCard : \u2115 \u2192 \u2115\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean:108:  idDrawEquiv : \u2200 \u03ba, IdDraw \u03ba \u2243 Fin (idDrawCard \u03ba)\nTCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean:52:  idxCard : \u2115 \u2192 \u2115\nTCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean:54:  idxEquiv : (n : \u2115) \u2192 Idx n \u2243 Fin (idxCard n)\nTCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean:62:  idDrawCard : \u2115 \u2192 \u2115\nTCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean:64:  idDrawEquiv : (n : \u2115) \u2192 IdDraw n \u2243 Fin (idDrawCard n)\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:20:* `Params.idxEquiv`, `Params.idDrawEquiv`, `Params.drawEquiv`: explicit finite coordinates.\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:22:* `Params.seedBound`, `Params.idxBound`: syntactic polynomial bounds.\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:165:/-- The construction index has explicit size `G.idxCard(n) * (B^m * (p^ell)^n)`; glue. -/\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:166:noncomputable def idxCard (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba) : \u2115 :=\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:167:  P.G.idxCard (P.n \u03ba) * (P.B \u03ba ^ P.m \u03ba * ((pp.p ^ P.\u2113 \u03ba) ^ P.n \u03ba))\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:170:theorem idxCard_eq (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba) :\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:171:    P.idxCard \u03ba pp =\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:172:      P.G.idxCard (P.n \u03ba) * (P.B \u03ba ^ P.m \u03ba * ((pp.p ^ P.\u2113 \u03ba) ^ P.n \u03ba)) := rfl\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:174:/-- The index draw has explicit size `G.idDrawCard(n) * (B^m * (p^ell)^n)`; glue. -/\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:175:noncomputable def idDrawCard (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba) : \u2115 :=\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:176:  P.G.idDrawCard (P.n \u03ba) * (P.B \u03ba ^ P.m \u03ba * ((pp.p ^ P.\u2113 \u03ba) ^ P.n \u03ba))\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:179:theorem idDrawCard_eq (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba) :\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:180:    P.idDrawCard \u03ba pp =\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:181:      P.G.idDrawCard (P.n \u03ba) * (P.B \u03ba ^ P.m \u03ba * ((pp.p ^ P.\u2113 \u03ba) ^ P.n \u03ba)) := rfl\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:184:noncomputable def drawCard (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba) : \u2115 :=\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:188:theorem drawCard_eq (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba) :\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:189:    P.drawCard \u03ba pp = 2 ^ P.n \u03ba * ((pp.p ^ P.\u2113 \u03ba * (P.W \u03ba * pp.p) ^ P.n \u03ba) ^ \u03ba) := rfl\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:194:noncomputable def idxEquiv (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba) :\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:195:    P.Idx' \u03ba pp \u2243 Fin (P.idxCard \u03ba pp) :=\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:196:  (Equiv.prodCongr (P.G.idxEquiv (P.n \u03ba))\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:202:theorem idxEquiv_eq (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba) :\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:203:    P.idxEquiv \u03ba pp =\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:204:      (Equiv.prodCongr (P.G.idxEquiv (P.n \u03ba))\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:212:noncomputable def idDrawEquiv (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba) :\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:213:    P.IdDraw \u03ba pp \u2243 Fin (P.idDrawCard \u03ba pp) :=\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:214:  (Equiv.prodCongr (P.G.idDrawEquiv (P.n \u03ba))\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:220:theorem idDrawEquiv_eq (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba) :\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:221:    P.idDrawEquiv \u03ba pp =\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:222:      (Equiv.prodCongr (P.G.idDrawEquiv (P.n \u03ba))\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:230:noncomputable def drawEquiv (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba) :\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:231:    P.Draw \u03ba pp \u2243 Fin (P.drawCard \u03ba pp) :=\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:238:theorem drawEquiv_eq (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba) :\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:239:    P.drawEquiv \u03ba pp =\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:248:noncomputable def encBuckets (P : Params) (\u03ba : \u2115)\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:254:theorem encBuckets_eq (P : Params) (\u03ba : \u2115) (\u03c6 : Fin (P.m \u03ba) \u2192 Fin (P.B \u03ba)) :\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:255:    P.encBuckets \u03ba \u03c6 = BoolCircuit.encodeList\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:264:    (pairEncode (P.encBuckets \u03ba I.2.1) (Encoding.Modular.encodeMatrix (\u03ba + 1) I.2.2))\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:269:      (pairEncode (P.encBuckets \u03ba I.2.1) (Encoding.Modular.encodeMatrix (\u03ba + 1) I.2.2)) := rfl\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:276:    (pairEncode (P.encBuckets \u03ba r.2.1) (Encoding.Modular.encodeMatrix (\u03ba + 1) r.2.2))\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:281:      (pairEncode (P.encBuckets \u03ba r.2.1) (Encoding.Modular.encodeMatrix (\u03ba + 1) r.2.2)) := rfl\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:286:noncomputable def encOneDraw (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba)\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:295:theorem encOneDraw_eq (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba)\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:298:    P.encOneDraw \u03ba pp r = pairEncode (Encoding.Modular.encodeVector (\u03ba + 1) r.1)\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:309:    (BoolCircuit.encodeList (P.encOneDraw \u03ba pp) (List.ofFn r.2))\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:314:      (BoolCircuit.encodeList (P.encOneDraw \u03ba pp) (List.ofFn r.2)) := rfl\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:369:def sVarBound (P : Params) : PolyExpr :=\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:374:theorem sVarBound_eq (P : Params) : P.sVarBound =\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:378:/-- The common seed bound is `pubBound + var*(1+2*sVarBound)`; glue.\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:381:  .add P.pubBound (.mul .var (.add (.const 1) (.mul (.const 2) P.sVarBound)))\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:385:    .add P.pubBound (.mul .var (.add (.const 1) (.mul (.const 2) P.sVarBound))) := rfl\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:390:def idxBound (P : Params) : PolyExpr :=\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:397:theorem idxBound_eq (P : Params) : P.idxBound =\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:423:theorem W_le_ell_add_one (P : Params) (\u03ba : \u2115) : P.W \u03ba \u2264 P.\u2113 \u03ba + 1 := sorry\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:442:/-- The one-instance private length is bounded by `sVarBound`; glue.\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:445:theorem sLen_le_sVarBound (P : Params) (\u03ba : \u2115) : P.sLen \u03ba \u2264 P.sVarBound.eval \u03ba := sorry\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:457:**Proof sketch.** Bound sLen by sVarBound, multiply the flag/two-copy expression by kappa,\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:467:theorem encBuckets_injective (P : Params) (\u03ba : \u2115) :\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:468:    Function.Injective (P.encBuckets \u03ba) := sorry\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:491:theorem encOneDraw_injective (P : Params) (\u03ba : \u2115) (pp : PrimeParam \u03ba) :\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:492:    Function.Injective (P.encOneDraw \u03ba pp) := sorry\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:498:and recover each fixed-length repetition block using encOneDraw injectivity. -/\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:510:/-- Every encoded construction index fits the syntactic polynomial `idxBound`.\nTCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean:516:    (P.encIdx' \u03ba pp I).length \u2264 P.idxBound.eval \u03ba := sorry\nTCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:200:def drawCard (F : Raw) (\u2113 : \u2115) : \u2115 :=\nTCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:205:theorem drawCard_eq (F : Raw) (\u2113 : \u2115) :\nTCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:206:    F.drawCard \u2113 = ((F.modulus \u2113 ^ \u2113) ^ F.samples \u2113) *\nTCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:272:/-- The entire joint draw has an explicit equivalence to `Fin (drawCard \u2113)` composed only\nTCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:275:def drawEquiv (F : Raw) (\u2113 : \u2115) : F.Draw \u2113 \u2243 Fin (F.drawCard \u2113) :=\nTCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:281:theorem drawEquiv_eq (F : Raw) (\u2113 : \u2115) :\nTCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:282:    F.drawEquiv \u2113 =\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "def finTwoEquiv|def arrowCongr|def prodCongr",
+      ".lake/packages/mathlib/Mathlib/Logic/Equiv/Defs.lean"
+    ],
+    "rc": 0,
+    "stdout": "450:def arrowCongr {\u03b1\u2081 \u03b2\u2081 \u03b1\u2082 \u03b2\u2082 : Sort*} (e\u2081 : \u03b1\u2081 \u2243 \u03b1\u2082) (e\u2082 : \u03b2\u2081 \u2243 \u03b2\u2082) : (\u03b1\u2081 \u2192 \u03b2\u2081) \u2243 (\u03b1\u2082 \u2192 \u03b2\u2082) where\n476:def arrowCongr' {\u03b1\u2081 \u03b2\u2081 \u03b1\u2082 \u03b2\u2082 : Type*} (h\u03b1 : \u03b1\u2081 \u2243 \u03b1\u2082) (h\u03b2 : \u03b2\u2081 \u2243 \u03b2\u2082) : (\u03b1\u2081 \u2192 \u03b2\u2081) \u2243 (\u03b1\u2082 \u2192 \u03b2\u2082) :=\n893:def finTwoEquiv : Fin 2 \u2243 Bool where\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "def finFunctionFinEquiv",
+      ".lake/packages/mathlib/Mathlib/Algebra/BigOperators/Fin.lean"
+    ],
+    "rc": 0,
+    "stdout": "555:def finFunctionFinEquiv {m n : \u2115} : (Fin n \u2192 Fin m) \u2243 Fin (m ^ n) :=\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "def finProdFinEquiv",
+      ".lake/packages/mathlib/Mathlib/Logic/Equiv/Fin/Basic.lean"
+    ],
+    "rc": 0,
+    "stdout": "325:def finProdFinEquiv : Fin m \u00d7 Fin n \u2243 Fin (m * n) where\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "def finEquiv",
+      ".lake/packages/mathlib/Mathlib/Data/ZMod/Basic.lean"
+    ],
+    "rc": 0,
+    "stdout": "41:def finEquiv : \u2200 (n : \u2115) [NeZero n], Fin n \u2243+* ZMod n\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem length_pairEncode|lemma pairEncode_eq|theorem pairEncode_inj",
+      "TCSlib/Complexity/TuringMachine/Encoding.lean"
+    ],
+    "rc": 0,
+    "stdout": "173:theorem pairEncode_injective :\n216:lemma pairEncode_eq_dbl (x y : List Bool) : pairEncode x y = dbl x ++ [false, true] ++ y :=\n220:theorem length_pairEncode (x y : List Bool) :\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "def encodeList|theorem encodeList_(nil|cons)|length_encodeList_le",
+      "TCSlib/Complexity/CircuitComplexity/Uniform.lean"
+    ],
+    "rc": 0,
+    "stdout": "91:def encodeList {\u03b1 : Type} (f : \u03b1 \u2192 List Bool) : List \u03b1 \u2192 List Bool\n96:theorem encodeList_nil {\u03b1 : Type} (f : \u03b1 \u2192 List Bool) :\n100:theorem encodeList_cons {\u03b1 : Type} (f : \u03b1 \u2192 List Bool) (a : \u03b1) (as : List \u03b1) :\n234:private lemma length_encodeList_le {\u03b1 : Type} (f : \u03b1 \u2192 List Bool) (B : \u2115) (as : List \u03b1)\n268:    have hl := length_encodeList_le encodeNat C.size _ hargs\n273:  have hlist := length_encodeList_le DAGGate.encode _ C.gates hgate\n",
+    "stderr": ""
+  }
+]

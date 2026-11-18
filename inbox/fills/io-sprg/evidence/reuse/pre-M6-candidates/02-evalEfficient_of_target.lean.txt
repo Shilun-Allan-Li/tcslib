@@ -1,0 +1,9 @@
+-- Existing theorem replacement candidate. NOT_RUN; dependent readers may need elaboration tuning.
+by
+  obtain ⟨f, hf, heval⟩ := (P.evalTarget_iff).mp hT
+  rw [SPRG.Raw.evalEfficient_iff, jlsSPRG_raw_eq]
+  refine ⟨f, hf, ?_⟩
+  intro κ I sd
+  simpa only [SPRG.Raw.encPP_eq, SPRG.Raw.encSeed_eq, Params.encSeed'_eq,
+    PrimeParam.enc_eq, PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const]
+    using heval κ (π κ) I sd

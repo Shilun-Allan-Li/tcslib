@@ -1,0 +1,61 @@
+Stretch / Claim42.Load M0 notes
+
+Only Stretch.lean and Claim42/Load.lean are newly owned in this subtask. Staged source
+paths are /private/tmp/io-sprg-interfaces/Stretch.lean and Load.lean respectively;
+root should copy the latter to the Claim42 subdirectory. No other module was edited.
+
+The previously hash-verified user-supplied PDF was read in place: page 18 (Claim 4.1),
+and pages 19-21 with page 20 read separately (Claim 4.2's three-condition analysis).
+No PDF was copied. Root's current Params, Defs, Buckets and the Samplers import stub
+were read. Stretch's jlsSPRG_raw reference depends on root's announced definition in
+Samplers; no claim of elaboration is made while that implementation is being appended.
+
+Stretch surface:
+E0 is exactly convention C10's floor(max(10/delta,5/(tau-1)))+1. It retains d as an
+interface argument, although the sufficient threshold is independent of d when d>=1.
+Params.seedBitsAt is the field-vector payload count (pubLen+privLen)*(kappa+1), so
+its estimate has no prime/schedule dependency. Params.seedBitsAt_le is the all-kappa,
+prime-uniform fifth-power bound, including natural m/w division and a final +1 for
+rounding/boundaries. jls_seedBits_eq and jls_seedBits_le read that count on the raw
+bundle. jls_hasPolyStretch has precisely the required h_tau, input stretch and E0
+hypotheses, with rational delta coerced to Real. All four non-reader statements are
+M0 := sorry with Proof sketches. E0 and seedBitsAt have proved rfl readers.
+
+Load surface:
+Internal.binomial_bound is the universal positive-k estimate choose(n,k)<= (e*n/k)^k,
+including k>n. Internal.bucket_tail, some_bucket_tail, full_bucket_tail and
+some_full_bucket_tail use exact threshold t+1 and assume NeZero B; t=0 and oversized
+thresholds are included. S is fixed independently of the uniform placement, making
+these directly suitable after conditioning on a fixed noise-induced bad set.
+The full-load variants read Buckets.load; the intersection variants read Buckets.bucket.
+All five statements are named M0 := sorry with Proof sketches; no new definition or
+probability notion is introduced. The explicit t+1 bound is stronger than the paper's
+t-element union bound for a load strictly above t, and is disclosed in docstrings.
+
+Reuse / overlap:
+Search commands and outputs are recorded in stretch-load-reuse-searches.json.
+Mathlib Nat.choose_le_pow_div is a must-use component; Real.pow_div_factorial_le_exp
+in the already imported Complex.Exponential module supplies the factorial estimate
+by evaluating a single exponential-series term at x=k. The latter route avoids a
+new factorial/Stirling lemma or a Stirling import. Mathlib's Choose.Bounds itself
+notes the e^k*n^k/k^k estimate as future work. TCSlib BackgroundFacts contains local
+inline binomial estimates inside public ratio theorems, and LowerBound has private
+choose estimates; none provides this public standalone statement to reuse. No proof
+from those files has been transcribed or rederived in this M0 statement delivery.
+For probabilities, filling must reuse uprob_exists_le (not copy a union bound),
+uprob_comp_equiv/uprob_fst and OneWay.uprob_pi_forall for selected-coordinate
+independence. OneWayFunctions.Basic is added as a direct TCSlib import, with no new
+Mathlib root. Bridge.prob_sample_eq_uprob remains the bridge to the exact games;
+LamportReduction.expect_favourable_of_success is available for root's Markov step.
+No probabilistic computation union bound, independence lemma, generic Markov lemma,
+or alternate subexponential API is reproved here.
+exact?/apply? probes were not run under the explicit no-Lean/Lake instruction; no
+nontrivial helper proof has been filled, and no such probe is claimed as passing.
+
+Static checks in stretch-load-static-checks.json: Stretch 119 lines, Load 100 lines,
+both max width 90, no overwidth lines, zero style_lint findings, sk15 rc0/no output,
+and zero tactic blocks. The style check used the repository lint() function with
+ROOT changed only in Python memory to the staging directory. These checks establish
+source formatting only; elaboration, seals, axioms and full gate evidence remain root's.
+No Lean/Lake/cache/build, Git commit/push, sampler/machine construction or efficiency
+proof was performed in this subtask.

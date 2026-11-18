@@ -1,0 +1,83 @@
+[
+  {
+    "command": [
+      "rg",
+      "-n",
+      "lpnNoise|LPNFamily|BoolPRG|PolyTerms|TermsEfficient",
+      "TCSlib",
+      "--glob",
+      "!**/Obfuscation/**"
+    ],
+    "rc": 1,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "def encodeList|theorem encodeList_(nil|cons)",
+      "TCSlib/Complexity/CircuitComplexity/Uniform.lean"
+    ],
+    "rc": 0,
+    "stdout": "91:def encodeList {\u03b1 : Type} (f : \u03b1 \u2192 List Bool) : List \u03b1 \u2192 List Bool\n96:theorem encodeList_nil {\u03b1 : Type} (f : \u03b1 \u2192 List Bool) :\n100:theorem encodeList_cons {\u03b1 : Type} (f : \u03b1 \u2192 List Bool) (a : \u03b1) (as : List \u03b1) :\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "uprob_prod|uprob_fst|uprob_snd|uprob_eq_card_filter",
+      "TCSlib/Cryptography/Foundations/Probability.lean"
+    ],
+    "rc": 0,
+    "stdout": "36:* `uprob_prod`: probability over a product is the average of the probabilities of\n75:theorem uprob_eq_card_filter (p : \u03b1 \u2192 Prop) [DecidablePred p] :\n82:  rw [uprob_eq_card_filter, uexp, Finset.sum_boole]\n91:  rw [uprob_eq_card_filter]\n97:  rw [uprob_eq_card_filter, filter_true, card_univ]\n103:  rw [uprob_eq_card_filter, filter_false, card_empty, Nat.cast_zero, zero_div]\n114:  rw [uprob_eq_card_filter, uprob_eq_card_filter, eq_sub_iff_add_eq, \u2190 add_div,\n122:  rw [uprob_eq_card_filter, uprob_eq_card_filter]\n129:  rw [uprob_eq_card_filter, uprob_eq_card_filter, uprob_eq_card_filter, \u2190 add_div, filter_or]\n140:  rw [uprob_eq_card_filter]\n141:  simp_rw [uprob_eq_card_filter, \u2190 sum_div]\n153:theorem uprob_prod (p : \u03b1 \u00d7 \u03b2 \u2192 Prop) :\n156:  simp_rw [uexp, uprob_eq_card_filter, \u2190 sum_div, div_div, Fintype.card_prod, Nat.cast_mul,\n172:**Proof sketch.** By `uprob_prod`, the section at `a` is the certain or the impossible\n175:theorem uprob_fst [Nonempty \u03b2] (p : \u03b1 \u2192 Prop) : uprob (fun z : \u03b1 \u00d7 \u03b2 => p z.1) = uprob p := by\n177:  rw [uprob_prod, uprob_eq_uexp]\n189:(`uprob_prod`) gives `\u03b5 \u2264 uprob p \u2264 Pr[good] + \u03b5 / 2`. -/\n200:  rw [uprob_prod, uexp] at h\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "def finFunctionFinEquiv",
+      "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Fin.lean"
+    ],
+    "rc": 0,
+    "stdout": "555:def finFunctionFinEquiv {m n : \u2115} : (Fin n \u2192 Fin m) \u2243 Fin (m ^ n) :=\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "def finProdFinEquiv",
+      "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/.lake/packages/mathlib/Mathlib/Logic/Equiv/Fin/Basic.lean"
+    ],
+    "rc": 0,
+    "stdout": "325:def finProdFinEquiv : Fin m \u00d7 Fin n \u2243 Fin (m * n) where\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "def restrictDegree|theorem mem_restrictDegree",
+      "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/.lake/packages/mathlib/Mathlib/RingTheory/MvPolynomial/Basic.lean"
+    ],
+    "rc": 0,
+    "stdout": "101:def restrictDegree (m : \u2115) : Submodule R (MvPolynomial \u03c3 R) :=\n111:theorem mem_restrictDegree (p : MvPolynomial \u03c3 R) (n : \u2115) :\n116:theorem mem_restrictDegree_iff_sup [DecidableEq \u03c3] (p : MvPolynomial \u03c3 R) (n : \u2115) :\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "python3",
+      "-I",
+      "/private/tmp/io-sprg-rule10-tools/dev/sk15.py",
+      "/private/tmp/io-sprg-interfaces/BoolPRG.lean",
+      "/private/tmp/io-sprg-interfaces/LPN.lean",
+      "/private/tmp/io-sprg-interfaces/PolyTerms.lean"
+    ],
+    "rc": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

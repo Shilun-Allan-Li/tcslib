@@ -1,0 +1,124 @@
+[
+  {
+    "command": [
+      "rg",
+      "-n",
+      "weightedTotalDegree_(zero|rename)|le_weightedTotalDegree",
+      ".lake/packages/mathlib/Mathlib/RingTheory/MvPolynomial/Homogeneous.lean",
+      ".lake/packages/mathlib/Mathlib/RingTheory/MvPolynomial/WeightedHomogeneous.lean"
+    ],
+    "returncode": 0,
+    "stdout": ".lake/packages/mathlib/Mathlib/RingTheory/MvPolynomial/Homogeneous.lean:56:theorem weightedTotalDegree_rename_of_injective {\u03c3 \u03c4 : Type*} {e : \u03c3 \u2192 \u03c4}\n.lake/packages/mathlib/Mathlib/RingTheory/MvPolynomial/WeightedHomogeneous.lean:108:theorem weightedTotalDegree_zero (w : \u03c3 \u2192 M) :\n.lake/packages/mathlib/Mathlib/RingTheory/MvPolynomial/WeightedHomogeneous.lean:112:theorem le_weightedTotalDegree (w : \u03c3 \u2192 M) {\u03c6 : MvPolynomial \u03c3 R} {d : \u03c3 \u2192\u2080 \u2115}\n.lake/packages/mathlib/Mathlib/RingTheory/MvPolynomial/WeightedHomogeneous.lean:358:  exact lt_of_le_of_lt (le_weightedTotalDegree w hd.1) h\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "supDegree_add_le|supDegree_mul_le|supDegree_prod_le",
+      ".lake/packages/mathlib/Mathlib/Algebra/MonoidAlgebra/Degree.lean"
+    ],
+    "returncode": 0,
+    "stdout": "42:* `AddMonoidAlgebra.supDegree_mul_le`:\n46:* `AddMonoidAlgebra.supDegree_add_le`:\n228:theorem supDegree_add_le {f g : R[A]} :\n239:  rw [sub_eq_add_neg, \u2190 supDegree_neg (f := g)]; apply supDegree_add_le\n285:theorem supDegree_mul_le (hadd : \u2200 a1 a2, D (a1 + a2) = D a1 + D a2)\n290:theorem supDegree_prod_le {R A B : Type*} [CommSemiring R] [AddCommMonoid A] [AddCommMonoid B]\n302:    exact (supDegree_mul_le hadd).trans (by gcongr)\n381:  apply (supDegree_add_le.trans <| sup_le le_rfl h.le).antisymm\n489:    exact fun a ha => (Finset.le_sup ha).trans (supDegree_mul_le hadd)\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "card_lt_card|card_image_le|card_le_card_of_injOn",
+      ".lake/packages/mathlib/Mathlib/Data/Finset/Card.lean"
+    ],
+    "returncode": 0,
+    "stdout": "214:theorem card_image_le [DecidableEq \u03b2] : #(s.image f) \u2264 #s := by\n217:grind_pattern card_image_le => #(s.image f)\n218:grind_pattern card_image_le => s.image f, #s\n296:nonrec lemma card_lt_card (h : s \u2282 t) : #s < #t := card_lt_card <| val_lt_iff.2 h\n298:lemma card_strictMono : StrictMono (card : Finset \u03b1 \u2192 \u2115) := fun _ _ \u21a6 card_lt_card\n411:lemma card_le_card_of_injOn (f : \u03b1 \u2192 \u03b2) (hf : Set.MapsTo f s t) (f_inj : (s : Set \u03b1).InjOn f) :\n423:    apply card_le_card_of_injOn f'\n434:  classical unfold Set.SurjOn at hf; exact (card_le_card (mod_cast hf)).trans card_image_le\n444:  refine hc.not_ge (card_le_card_of_injOn f hf ?_)\n460:See also `Finset.card_le_card_of_injOn`, which is a more general version of this lemma.\n461:TODO: consider deprecating, since this is just a special case of `Finset.card_le_card_of_injOn`.\n467:    _ \u2264 #s := card_le_card_of_injOn f (by simpa [Set.MapsTo, mem_range] using hf) (by simpa)\n506:  have : #(s.image f) \u2264 #s := card_image_le\n589:theorem sdiff_nonempty_of_card_lt_card (h : #s < #t) : (t \\ s).Nonempty := by\n594:theorem exists_mem_notMem_of_card_lt_card (h : #s < #t) : \u2203 e, e \u2208 t \u2227 e \u2209 s := by\n595:  classical simpa [Finset.Nonempty] using sdiff_nonempty_of_card_lt_card h\n598:alias exists_mem_not_mem_of_card_lt_card := exists_mem_notMem_of_card_lt_card\n621:theorem inter_nonempty_of_card_lt_card_add_card (hts : t \u2286 s) (hus : u \u2286 s)\n813:      have : #t < #s := card_lt_card h\n855:      have := card_lt_card hts\n868:      have := Finset.card_lt_card h\n894:    card_lt_card hxy\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "Nodup.filter|nodup_flatMap",
+      ".lake/packages/mathlib/Mathlib/Data/List/Nodup.lean"
+    ],
+    "returncode": 0,
+    "stdout": "227:theorem Nodup.filter (p : \u03b1 \u2192 Bool) {l} : Nodup l \u2192 Nodup (filter p l) := by\n276:theorem nodup_flatMap {l\u2081 : List \u03b1} {f : \u03b1 \u2192 List \u03b2} :\n286:  nodup_flatMap.2\n295:  nodup_flatMap.2\n302:protected theorem Nodup.filterMap {f : \u03b1 \u2192 Option \u03b2} (h : \u2200 a a' b, b \u2208 f a \u2192 b \u2208 f a' \u2192 a = a') :\n319:  Nodup.filter _\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "nodup_finRange|mem_finRange|finRange_map_get",
+      ".lake/packages/mathlib/Mathlib/Data/List/FinRange.lean"
+    ],
+    "returncode": 0,
+    "stdout": "29:theorem mem_finRange {n : \u2115} (a : Fin n) : a \u2208 finRange n := by\n36:theorem nodup_finRange (n : \u2115) : (finRange n).Nodup := by\n54:  simp [List.Nodup.count (nodup_finRange n)]\n61:theorem finRange_map_get (l : List \u03b1) : (finRange l.length).map l.get = l :=\n65:theorem finRange_map_getElem (l : List \u03b1) : (finRange l.length).map (l[\u00b7.1]) = l :=\n66:  finRange_map_get l\n69:  simpa using idxOf_getElem (nodup_finRange k) i\n111:  rw [perm_ext_iff_of_nodup ((nodup_finRange n).map \u03c3.injective) <| nodup_finRange n]\n112:  simpa [mem_map, mem_finRange] using \u03c3.surjective\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "matrix_eq_sum_single|single_mul_single_same",
+      ".lake/packages/mathlib/Mathlib/Data/Matrix/Basis.lean"
+    ],
+    "returncode": 0,
+    "stdout": "111:theorem matrix_eq_sum_single [AddCommMonoid \u03b1] [Fintype m] [Fintype n] (x : Matrix m n \u03b1) :\n117:@[deprecated (since := \"2025-05-05\")] alias matrix_eq_sum_stdBasisMatrix := matrix_eq_sum_single\n133:  rw [matrix_eq_sum_single M, \u2190 Finset.sum_product']\n182:  rw [matrix_eq_sum_single x]\n323:theorem single_mul_single_same (i : l) (j : m) (k : n) (d : \u03b1) :\n329:@[deprecated (since := \"2025-05-05\")] alias StdBasisMatrix.mul_same := single_mul_single_same\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "uprob_pi_forall|uprob_eq_one_div_card",
+      "TCSlib/Cryptography/OneWayFunctions/Basic.lean"
+    ],
+    "returncode": 0,
+    "stdout": "32:* `uprob_pi_forall`: independent coordinates multiply.\n34:* `uprob_eq_one_div_card`: a uniform element hits a fixed point with probability\n118:theorem uprob_pi_forall {\u03b9 : Type*} [Fintype \u03b9] [DecidableEq \u03b9] (p : \u03b1 \u2192 Prop) :\n144:theorem uprob_eq_one_div_card (a : \u03b1) : uprob (fun x : \u03b1 => x = a) = 1 / Fintype.card \u03b1 := by\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "uprob_exists_le|uprob_comp_equiv|uprob_fst",
+      "TCSlib/Cryptography/Foundations/Probability.lean"
+    ],
+    "returncode": 0,
+    "stdout": "35:  `uprob_exists_le`: basic laws and the union bound.\n38:* `uprob_comp_equiv`: probability is invariant under relabelling by a bijection.\n137:theorem uprob_exists_le {\u03b9 : Type*} (s : Finset \u03b9) (p : \u03b9 \u2192 \u03b1 \u2192 Prop) :\n165:theorem uprob_comp_equiv (e : \u03b1 \u2243 \u03b2) (p : \u03b2 \u2192 Prop) : uprob (fun a => p (e a)) = uprob p := by\n175:theorem uprob_fst [Nonempty \u03b2] (p : \u03b1 \u2192 Prop) : uprob (fun z : \u03b1 \u00d7 \u03b2 => p z.1) = uprob p := by\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "choose_le_pow_div",
+      ".lake/packages/mathlib/Mathlib/Data/Nat/Choose/Bounds.lean"
+    ],
+    "returncode": 0,
+    "stdout": "19:* `Nat.choose_le_pow_div`: `n.choose r \u2264 n^r / r!`\n30:theorem choose_le_pow_div (r n : \u2115) : (n.choose r : \u03b1) \u2264 (n ^ r : \u03b1) / r ! := by\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "pow_div_factorial_le_exp|exp_nat_mul",
+      ".lake/packages/mathlib/Mathlib/Analysis/Complex/Exponential.lean"
+    ],
+    "returncode": 0,
+    "stdout": "149:theorem exp_nat_mul (x : \u2102) : \u2200 n : \u2115, exp (n * x) = exp x ^ n\n151:  | Nat.succ n => by rw [pow_succ, Nat.cast_add_one, add_mul, exp_add, \u2190 exp_nat_mul _ n, one_mul]\n165:  \u00b7 simp [exp_nat_mul]\n166:  \u00b7 simp [exp_add, add_mul, pow_add, exp_neg, exp_nat_mul]\n225:nonrec theorem exp_nat_mul (x : \u211d) (n : \u2115) : exp (n * x) = exp x ^ n :=\n226:  ofReal_injective (by simp [exp_nat_mul])\n250:lemma pow_div_factorial_le_exp (hx : 0 \u2264 x) (n : \u2115) : x ^ n / n ! \u2264 exp x :=\n655:    _ = rexp (-t) := by rw [\u2190 Real.exp_nat_mul, mul_neg, mul_comm, div_mul_cancel\u2080]; positivity\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "requireClose|builtin_tactic|partial suggestions",
+      "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean/Elab/Tactic/LibrarySearch.lean"
+    ],
+    "returncode": 0,
+    "stdout": "25:* `requireClose` indicates if the goal must be closed.\n28:def exact? (ref : Syntax) (required : Option (Array (TSyntax `term))) (requireClose : Bool) :\n46:      if requireClose then\n47:        let hint := if suggestions.isEmpty then \"\" else \" Try `apply?` to see partial suggestions.\"\n57:@[builtin_tactic Lean.Parser.Tactic.exact?]\n64:@[builtin_tactic Lean.Parser.Tactic.apply?]\n79:        else logError \"`exact?%` could not close the goal. Try `by apply?` to see partial suggestions.\"\n",
+    "stderr": ""
+  }
+]

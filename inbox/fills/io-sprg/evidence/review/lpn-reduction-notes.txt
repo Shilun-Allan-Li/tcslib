@@ -1,0 +1,64 @@
+LPN reduction M0 notes (design_audit owner)
+Candidate: /tmp/io-sprg-math-primitives/ReductionsLPN.lean -> Reductions/LPN.lean.
+423 lines, all<=100 characters. Four nonreader theorem holes: two encoding
+injections, advice length bound, and global-family hop theorem. Numeric transport
+readers are proved by composing existing owner equations as terms. No tactic block.
+
+Canonical challenge
+LPNChal is literally the matrix/value product from F.toLWE.parameters L,
+F=P.lpnFamily_raw pi. lpnEnc is literally LWE.encodeChallenge for those parameters
+and F.toLWE.residueBits.eval L, exactly as Family.advantageAt expects. The raw width
+agrees by LPNFamily.Raw.toLWE_residueBits, so no alternate assumption is introduced.
+Canonical-to-concrete transport uses only published parameter field readers,
+finCongr, Equiv.arrowCongr and Equiv.cast; it is an explicit equivalence, not choice.
+At L=ell(kappaOf L), explicit row and column casts give the construction dimensions.
+
+Advice and totality
+LPNAdvice stores hop:Fin(kappa+1), Boolean index, bucket placement, the entire Draw,
+hardwired Boolean tail, and uniform public vectors. No matrix is fixed in advice;
+the challenge matrix remains free and is used in every later real instance.
+Product equivalence is a literal record/tuple isomorphism. Explicit Fin equivalence
+uses G.idxEquiv, canonical function/product coordinates, P.drawEquiv, and canonical
+Boolean/modular vector equivalences. Fintype comes from this explicit equivalence.
+Nonempty comes from the component product via Nonempty.map: no Classical.choose.
+At kappa0, hop Fin1 remains nonempty; uniform vectors and repetitions are empty,
+B and W are positive by the construction's stated bounds, and generator indices
+are nonempty by the input primitive. No hop inequality is required at kappa0.
+
+Encoding/bound
+encLPNAdvice starts with the prime then unary L, hop numeral, G index, bucket map,
+exact draw, Boolean tail and uniform-vector list. No copied PDF, machine, sampler,
+G.eval or choice operation. Bound4096*(L+1)*S^3 uses
+S=idxBound+seedBound+mBound+nBound+ellBound+L+1. This discloses the generous constant
+4096 instead of the dispatch's suggested example100. It covers nested pair overhead,
+all vector/list tags, and products in the Draw encoding. All bounds are monotone
+syntactic polynomials evaluated at independent L using kappaOf_le.
+
+Reduction
+lpnPre guards L=ell(kappaOf L), returning[] off image. On image it uses transported
+challenge A,b; earlier instance vectors are the advice uniforms, the challenged
+instance is b+sigma, later instances call the existing lpnVector(A,secret,noise,sigma).
+It calls existing publicSeed with false error and challengeStr with hardwired tail.
+It does not call oneSd, compute flags/PRG outputs, or sample.
+lpnRed calls A.runAtL(kappaOf L) on that pre and r.take(A.coinLen(kappaOf L)).
+LPNRealizable is the shared RealizesOn for every A and every typed advice family,
+with coins A.coins.subst.var, and a proved iff reader. No variant predicate defined.
+lpn_hop chooses one global advice family for arbitrary global tail/hop selectors,
+then quantifies every realiser and every kappa, with the meaningful-hop condition
+hop(kappa).val<kappa. It bounds exactly consecutive chainGame distributions by
+F.adv B (ell kappa). Advice averaging fixes all nonchallenge values; A remains free.
+
+Sources/searches
+Verified paper Lemma4.2 p19 read in place; Dv3/8/9/12/14/15/16 disclosed. Shared
+Realization.lean read; only its predicate/readers and future verdict/coin API used.
+Read LWE.Basic/Encoding/Assumption and LPN.Raw parameter/toLWE readers, Params
+family readers, Encoding explicit equivalences/codes/bounds, Hybrids publicSeed/
+chainGame and Samplers lpnVector/challengeStr. Reuse those functions rather than
+recreate them. No existing LPNAdvice/lpnRed/lpnPre/lpn_hop variant found in base.
+Read Mathlib Equiv.cast (Logic/Equiv/Defs:227) and arrowCongr(:450), finCongr and
+existing function/product equivalences. Bounds must use shared encode lengths,
+PolyExpr.eval_mono, and uniformity readers; no new generic probability claim.
+The proof must reuse abs_expect_sub_le_expect and exists_expect_sample_le for
+averaging, shared RealizesOn.distinguisherL_eq/coin readers, and the existing
+uniform coin-prefix law. No public equivalent is rederived inline.
+exact?/apply? remain pending ROOT ONLY, since subagents may not run Lean.

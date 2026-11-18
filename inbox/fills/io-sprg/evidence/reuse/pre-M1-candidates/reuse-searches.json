@@ -1,0 +1,70 @@
+[
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem (sup_support_add_le|sup_support_mul_le|supDegree_sum_le|supDegree_prod_le|sup_support_finset_prod_le)",
+      ".lake/packages/mathlib/Mathlib/Algebra/MonoidAlgebra/Degree.lean"
+    ],
+    "returncode": 0,
+    "stdout": "85:theorem sup_support_add_le :\n100:theorem sup_support_mul_le {degb : A \u2192 B} (degbm : \u2200 a b, degb (a + b) \u2264 degb a + degb b)\n181:theorem sup_support_finset_prod_le (degb0 : degb 0 \u2264 0)\n241:theorem supDegree_sum_le {\u03b9} {s : Finset \u03b9} {f : \u03b9 \u2192 R[A]} :\n290:theorem supDegree_prod_le {R A B : Type*} [CommSemiring R] [AddCommMonoid A] [AddCommMonoid B]\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem (isWeightedHomogeneous_C|isWeightedHomogeneous_X|isWeightedHomogeneous_zero_iff_weightedTotalDegree_eq_zero|weightedTotalDegree_zero)",
+      ".lake/packages/mathlib/Mathlib/RingTheory/MvPolynomial/WeightedHomogeneous.lean"
+    ],
+    "returncode": 0,
+    "stdout": "108:theorem weightedTotalDegree_zero (w : \u03c3 \u2192 M) :\n198:theorem isWeightedHomogeneous_C (w : \u03c3 \u2192 M) (r : R) :\n214:theorem isWeightedHomogeneous_X (w : \u03c3 \u2192 M) (i : \u03c3) :\n543:theorem isWeightedHomogeneous_zero_iff_weightedTotalDegree_eq_zero {p : MvPolynomial \u03c3 R} :\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem weightedTotalDegree_rename_of_injective",
+      ".lake/packages/mathlib/Mathlib/RingTheory/MvPolynomial/Homogeneous.lean"
+    ],
+    "returncode": 0,
+    "stdout": "56:theorem weightedTotalDegree_rename_of_injective {\u03c3 \u03c4 : Type*} {e : \u03c3 \u2192 \u03c4}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "weightedTotalDegree_(add|mul|finset_sum|finset_prod|C|X_le)",
+      "TCSlib",
+      "--glob",
+      "!TCSlib/Cryptography/Obfuscation/**"
+    ],
+    "returncode": 1,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem encodeList_(nil|cons)|private lemma encodeList_prefixFree|private lemma length_encodeList_le",
+      "TCSlib/Complexity/CircuitComplexity/Uniform.lean"
+    ],
+    "returncode": 0,
+    "stdout": "96:theorem encodeList_nil {\u03b1 : Type} (f : \u03b1 \u2192 List Bool) :\n100:theorem encodeList_cons {\u03b1 : Type} (f : \u03b1 \u2192 List Bool) (a : \u03b1) (as : List \u03b1) :\n158:private lemma encodeList_prefixFree {\u03b1 : Type} {f : \u03b1 \u2192 List Bool} (hf : PrefixFree f) :\n234:private lemma length_encodeList_le {\u03b1 : Type} (f : \u03b1 \u2192 List Bool) (B : \u2115) (as : List \u03b1)\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem pairEncode_injective|lemma pairDecode_pairEncode|theorem pairEncode_eq",
+      "TCSlib/Complexity/TuringMachine/Encoding.lean"
+    ],
+    "returncode": 0,
+    "stdout": "141:theorem pairEncode_eq (x \u03b1 : List Bool) :\n157:lemma pairDecode_pairEncode (x \u03b1 : List Bool) :\n173:theorem pairEncode_injective :\n",
+    "stderr": ""
+  }
+]

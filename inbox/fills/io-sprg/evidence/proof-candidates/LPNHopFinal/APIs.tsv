@@ -1,0 +1,25 @@
+API	Source	Use
+RealizesOn.distinguisherL_eq/coins_eq	Cryptography/Asymptotic/Realization.lean:132,113	mandatory layout-only realiser read
+NUPPT.coinsEquivPoly/coinsEquivPoly_symm_ofFn	Complexity/Randomized/PPT.lean:274,286	actual B coins to known polynomial layout
+HardcoreBit.pushesUniform_restrict/PushesUniform.uprob_eq	Cryptography/HardcoreBit/Basic.lean:220,184	short uniform coin prefix
+OneWay.ofFn_castLE_eq_take	Cryptography/Asymptotic/OneWayLemmas.lean:95	typed prefix equals take
+uprob_comp_equiv/uprob_prod	Cryptography/Foundations/Probability.lean:165,153	coin reindexing and conditional acceptance
+LPNFamily.Raw.adv_eq/toLWE_noise/noise_eq	StructuredSeed/LPN.lean:168,150,130	canonical advantage/noise readers
+LWE.Family.advantageAt_eq/LWE.decisionAdvantage_eq	Cryptography/LWE/Assumption.lean:124;Experiments.lean:53	canonical family game
+acceptProb_def/distAdv_def/acceptProb_comp_equiv	Cryptography/Foundations/Experiments.lean:99,105,108	canonical experiment and seed reindexing
+LWE.sample_fst/sample_snd/noisyValues_apply	Cryptography/LWE/Basic.lean:109,117,67	actual real sample coordinate laws
+Params.lpn_dimension_eq/lpn_samples_eq/lpn_modulus_eq	StructuredSeed/Reductions/LPN.lean:79,87,96	canonical numeric type data
+Params.lpnChalEquiv_eq/lpnMatrixAt_eq/lpnValuesAt_eq	StructuredSeed/Reductions/LPN.lean	explicit challenge cast readers
+Params.lpnPre_eq/lpnRed_eq	StructuredSeed/Reductions/LPN.lean	unchanged preprocessing/reduction
+Params.kappaOf_pow/kappaOf_le	StructuredSeed/Params.lean:305,311	global scheduled dimension reindexing, short<=long
+Params.W_eq_noiseDenAt/lpnFamily_raw_noiseDen	StructuredSeed/Params.lean:117,361	exact construction noise at L=ell(kappa)
+Equiv.cast_apply/cast_trans/Fin.cast_cast	Mathlib/Logic/Equiv/Defs.lean:282,288;Lean Init/Data/Fin/Lemmas.lean:498	canonical seed coherence
+HardcoreBit.pushesUniform_add_right/pushesUniform_iff	Cryptography/HardcoreBit/Basic.lean:202,177	uniform b+sigma at fixed sigma
+Games.Bridge.expect_sample_pair/prob_sample_eq_uprob	Cryptography/Games/Bridges/Experiments.lean:80,66	product expectation and exact uniform laws
+ProbComp.expect_bind/expect_map/expect_pure	Cryptography/Games/Probability.lean	actual game laws, no syntax equality shortcut
+ProbComp.expect_sample_comm	Cryptography/Games/Probability.lean:313	typed independent reorder
+ProbComp.expect_sample_update	Cryptography/Games/Probability.lean:355	resample selected repetition/public vector
+ProbComp.expect_sample_coord	Cryptography/Games/Probability.lean:382	found public alternative; not needed
+ProbComp.abs_expect_sub_le_expect	Cryptography/Games/Probability.lean:409	absolute mixture gap bound
+LamportReduction.exists_expect_sample_le	Cryptography/Authentication/Signatures/Lamport/Averaging.lean:114	fix ideal nuisance tuple before B
+EnsembleLemmas.acceptProb_coins_equiv	Cryptography/Asymptotic/EnsemblesLemmas.lean:85	FOUND but NOT adopted; use underlying allowed probability equivalence

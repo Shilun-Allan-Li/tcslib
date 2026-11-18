@@ -1,0 +1,16 @@
+-- PARTIAL existing theorem body. NOT_RUN; one explicit fixed-layout accounting obligation.
+by
+  let S := P.idxBound.eval L + (P.seedBound.eval L +
+    (P.mBound.eval L + (P.nBound.eval L + (P.ellBound.eval L + (L + 1)))))
+  -- M4-LPN-SIZE: exact pair/list/vector lengths + published numeric owner bounds.
+  -- A coarse128*S^3 suffices. README gives exact draw/advice layout polynomials.
+  -- No generic encodeList bound is silently rederived or imported.
+  have hrough : (P.encLPNAdvice π L w).length ≤ 128 * S ^ 3 := sorry
+  apply hrough.trans
+  rw [P.lpnAdviceBound_eq]
+  simp only [PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_add,
+    PolyExpr.eval_var, PolyExpr.eval_pow]
+  change 128 * S ^ 3 ≤ 4096 * ((L + 1) * S ^ 3)
+  rw [← Nat.mul_assoc]
+  apply Nat.mul_le_mul_right
+  omega

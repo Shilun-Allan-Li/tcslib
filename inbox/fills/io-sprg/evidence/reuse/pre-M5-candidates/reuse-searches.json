@@ -1,0 +1,70 @@
+[
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem SubexpSmall\\.(mono|mono_exponent|add|const_mul|mul_pow|comp_of_rpow_le)|theorem subexpSmall_two_pow_neg|theorem subexpHard_iff|theorem SubexpHard.negligible",
+      "TCSlib/Cryptography/Foundations/Subexponential.lean"
+    ],
+    "returncode": 0,
+    "stdout": "152:theorem SubexpSmall.mono (h\u03bc : SubexpSmall c \u03bc) (h : \u2203 n\u2080, \u2200 n \u2265 n\u2080, |\u03bd n| \u2264 |\u03bc n|) :\n163:theorem SubexpSmall.mono_exponent (h\u03bc : SubexpSmall c \u03bc) (h : c' \u2264 c) : SubexpSmall c' \u03bc := by\n176:theorem SubexpSmall.add (h\u03bc : SubexpSmall c \u03bc) (h\u03bd : SubexpSmall c \u03bd) (hc : 0 < c)\n190:theorem SubexpSmall.const_mul (h\u03bc : SubexpSmall c \u03bc) (hc : 0 < c) (h : c' < c) (a : \u211d) :\n204:theorem SubexpSmall.mul_pow (h\u03bc : SubexpSmall c \u03bc) (hc : 0 < c) (h : c' < c) (k : \u2115) :\n238:theorem SubexpSmall.comp_of_rpow_le (h\u03bc : SubexpSmall c \u03bc) (hc : 0 \u2264 c) {a : \u211d} (ha : 0 < a)\n258:theorem subexpSmall_two_pow_neg : SubexpSmall 1 fun n => (2 : \u211d)\u207b\u00b9 ^ n := by\n279:theorem subexpHard_iff (adv : \u03b1 \u2192 \u2115 \u2192 \u211d) :\n286:theorem SubexpHard.negligible (h : SubexpHard adv) (D : \u03b1) : Negligible (adv D) := by\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem Negligible\\.(mono|add|const_mul|mul_pow|comp_of_le)|theorem negligible_two_pow_neg",
+      "TCSlib/Cryptography/Foundations/Negligible.lean"
+    ],
+    "returncode": 0,
+    "stdout": "74:theorem Negligible.mono (h\u03bc : Negligible \u03bc) (h : \u2203 n\u2080, \u2200 n \u2265 n\u2080, |\u03bd n| \u2264 |\u03bc n|) :\n86:theorem Negligible.add (h\u03bc : Negligible \u03bc) (h\u03bd : Negligible \u03bd) :\n126:theorem Negligible.mul_pow (h\u03bc : Negligible \u03bc) (d : \u2115) :\n143:theorem Negligible.const_mul (h\u03bc : Negligible \u03bc) (a : \u211d) :\n153:theorem negligible_two_pow_neg : Negligible (fun n => (2 : \u211d)\u207b\u00b9 ^ n) := by\n237:theorem Negligible.comp_of_le {\u03bc : \u2115 \u2192 \u211d} (h\u03bc : Negligible \u03bc) (\u03c6 : \u2115 \u2192 \u2115) (h\u03c6 : \u2200 N, N \u2264 \u03c6 N) :\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem advantage_nonneg",
+      "TCSlib/Cryptography/Games/Advantage.lean"
+    ],
+    "returncode": 0,
+    "stdout": "86:theorem advantage_nonneg (G\u2080 G\u2081 : ProbComp Bool) : 0 \u2264 advantage G\u2080 G\u2081 := abs_nonneg _\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem le_pow",
+      "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Nat/Lemmas.lean"
+    ],
+    "returncode": 0,
+    "stdout": "1239:theorem le_pow {a b : Nat} (h : 0 < b) : a \u2264 a ^ b := by\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem rpow_natCast |theorem rpow_mul ",
+      ".lake/packages/mathlib/Mathlib/Analysis/SpecialFunctions/Pow/Real.lean"
+    ],
+    "returncode": 0,
+    "stdout": "58:theorem rpow_natCast (x : \u211d) (n : \u2115) : x ^ (n : \u211d) = x ^ n := by simpa using rpow_intCast x n\n399:theorem rpow_mul {x : \u211d} (hx : 0 \u2264 x) (y z : \u211d) : x ^ (y * z) = (x ^ y) ^ z := by\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "min \\(.*cL.*cG|jls_subexpSmall|exists_sprg_raw",
+      "TCSlib",
+      "--glob",
+      "!TCSlib/Cryptography/Obfuscation/**"
+    ],
+    "returncode": 1,
+    "stdout": "",
+    "stderr": ""
+  }
+]

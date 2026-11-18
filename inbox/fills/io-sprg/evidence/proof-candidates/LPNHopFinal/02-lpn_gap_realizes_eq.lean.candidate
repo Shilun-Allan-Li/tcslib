@@ -1,0 +1,20 @@
+/- NOT_RUN. The fixed-advice canonical gap equals every layout-only realiser's
+raw LPN advantage. Dependency01, mandatory canonical experiment readers.
+No new experiment/assumption/algorithm/efficiency statement. -/
+
+theorem lpn_gap_realizes_eq (P : Params) (π : PrimeSchedule) (A B : NUPPT)
+    (ω : ∀ L, P.LPNAdvice π L)
+    (hB : B.RealizesOn (P.lpnEnc π) (A.coins.subst .var)
+      (fun L x r => P.lpnRed π A L (ω L) x r)) (L : ℕ) :
+    LWE.decisionAdvantage ((P.lpnFamily_raw π).toLWE.parameters L)
+      ((P.lpnFamily_raw π).toLWE.noise L)
+      (fun x (r : A.Coins (P.kappaOf L)) =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L (ω L) x)
+          (List.ofFn r) = [true])) = (P.lpnFamily_raw π).adv B L := by
+  rw [LPNFamily.Raw.adv_eq, LWE.Family.advantageAt_eq,
+    LWE.decisionAdvantage_eq, LWE.decisionAdvantage_eq, distAdv_def, distAdv_def]
+  simp_rw [← P.lpnEnc_eq]
+  rw [lpn_accept_realizes_eq P π A B ω hB L
+      (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L)
+        ((P.lpnFamily_raw π).toLWE.noise L)),
+    lpn_accept_realizes_eq P π A B ω hB L id]

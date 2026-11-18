@@ -1,0 +1,4 @@
+  show (∑ i ∈ s, q i).support.sup (Finsupp.weight w) ≤ d from
+    (AddMonoidAlgebra.supDegree_sum_le
+      (D := Finsupp.weight w) (s := s) (f := q)).trans
+        (Finset.sup_le h)

@@ -1,0 +1,16 @@
+import Mathlib.Data.Nat.Choose.Bounds
+import Mathlib.Analysis.Complex.Exponential
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open scoped BigOperators
+
+namespace IoSprgOverlapProbe
+
+example (k : ℕ) (hk : 0 < k) :
+    1 / (k.factorial : ℝ) ≤ (Real.exp 1 / (k : ℝ)) ^ k := __PROBE_BODY__
+
+end IoSprgOverlapProbe

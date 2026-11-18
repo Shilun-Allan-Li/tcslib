@@ -1,0 +1,11 @@
+by
+  have helem : Function.Injective
+      (fun b : Fin (P.B κ) => Candidates.natToList (P.B κ) b.val)
+  · intro a b hab
+    exact Fin.ext (Candidates.natToList_injOn
+      (a.isLt.trans Nat.lt_two_pow_self) (b.isLt.trans Nat.lt_two_pow_self) hab)
+  have hlist := Internal.encodeList_injective_of_fixedWidth helem (P.B κ)
+    (fun b => Candidates.length_natToList (P.B κ) b.val)
+  intro φ ψ h
+  rw [P.encBuckets_eq, P.encBuckets_eq] at h
+  exact List.ofFn_injective (hlist h)

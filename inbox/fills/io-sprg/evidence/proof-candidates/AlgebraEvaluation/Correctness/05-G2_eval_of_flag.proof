@@ -1,0 +1,17 @@
+by
+  classical
+  have hp : ∀ i, z (P.bVar κ k i) = (∑ a, I.2.2 i a * s a) +
+      (((σ i).toNat : ZMod pp.p) + P.noiseValue κ pp (r i))
+  · intro i
+    rw [hpub i, P.oneSd_pub]
+    ring
+  have ht : ∀ α : Fin P.D → Fin (P.ℓ κ + 1),
+      z (P.sVar κ k false (.inl α)) =
+        ∏ a : Fin P.D, if ha : (α a).val < P.ℓ κ then s ⟨(α a).val, ha⟩ else 1
+  · intro α
+    simpa only [P.oneSd_priv] using hpriv (.inl α)
+  have hG := P.G1_eval κ pp I k j s
+    (fun i => ((σ i).toNat : ZMod pp.p) + P.noiseValue κ pp (r i)) z hp ht
+  have hC := P.correctionPoly_eval_oneSd κ pp I σ s r k j z hpriv hflag
+  rw [P.G2_eq, MvPolynomial.eval_add, hG, hC, P.corr_eq]
+  ring

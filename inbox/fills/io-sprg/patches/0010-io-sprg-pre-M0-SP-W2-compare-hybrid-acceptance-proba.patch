@@ -1,0 +1,51 @@
+From 1a941e8ffc8f6ca5b104990f21e4bbbabecebcb0 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 03:03:16 -0800
+Subject: [PATCH 10/15] io-sprg: pre-M0 SP-W2 compare hybrid acceptance
+ probabilities
+
+---
+ .../Obfuscation/StructuredSeed/Hybrids.lean   | 30 ++++++++++++-------
+ 1 file changed, 19 insertions(+), 11 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean
+index 66ba36a9b9d3f0b13654184360c15eaf9b651101..8a480e71678bd6d694962f3527599ad210bd149b 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean
+@@ -148,17 +148,25 @@ theorem hyb_real_eq_raw (P : Params) (π : PrimeSchedule) (A : NUPPT) (κ : ℕ)
+ theorem hyb_random_eq_raw (P : Params) (π : PrimeSchedule) (A : NUPPT) (κ : ℕ) :
+     P.hyb A .random κ (π κ) = (jlsSPRG_raw P π).game A false κ := sorry
+ 
+-/-- H1 is the real-tail chain's initial game [JLS26, Lemma 4.2, p. 19]. Dv8 includes buckets.
+-
+-**Proof sketch.** Use the core's public-vector readers and erase the unused uniform vectors. -/
+-theorem hyb_prg_eq_chain_zero (P : Params) (A : NUPPT) (κ : ℕ) (pp : PrimeParam κ) :
+-    P.hyb A .prg κ pp = P.chainGame A true 0 κ pp := sorry
+-
+-/-- H2 is the uniform-tail chain's initial game [JLS26, Lemma 4.2, p. 19].
+-
+-**Proof sketch.** Use the public-vector readers and erase the unused uniform vectors. -/
+-theorem hyb_uniform_eq_chain_zero (P : Params) (A : NUPPT) (κ : ℕ)
+-    (pp : PrimeParam κ) : P.hyb A .uniform κ pp = P.chainGame A false 0 κ pp := sorry
++/-- H1 and the real-tail chain's initial game have equal acceptance probabilities
++[JLS26, Lemma 4.2, p. 19]. Dv8 includes buckets. Pre-M0 repair SP-W2 compares
++probabilities: the free oracle programs differ by an unused uniform-vector query.
++
++**Proof sketch.** Read the core's public vectors, pass to acceptance expectations, and
++sum out the unused uniform vectors using the existing exact uniform expectation law. -/
++theorem hyb_prg_accept_eq_chain_zero (P : Params) (A : NUPPT) (κ : ℕ)
++    (pp : PrimeParam κ) :
++    accept (P.hyb A .prg κ pp) = accept (P.chainGame A true 0 κ pp) := sorry
++
++/-- H2 and the uniform-tail chain's initial game have equal acceptance probabilities
++[JLS26, Lemma 4.2, p. 19]. Pre-M0 repair SP-W2 compares probabilities rather than
++free oracle syntax, since the chain makes an additional unused uniform-vector query.
++
++**Proof sketch.** Read the public vectors and use the uniform expectation law to
++marginalize the unused draw inside acceptance probability. -/
++theorem hyb_uniform_accept_eq_chain_zero (P : Params) (A : NUPPT) (κ : ℕ)
++    (pp : PrimeParam κ) :
++    accept (P.hyb A .uniform κ pp) = accept (P.chainGame A false 0 κ pp) := sorry
+ 
+ /-- H0 and H1 disagree only on the error event [JLS26, Proposition 4.1, pp. 18-19].
+ Dv7 retains the exact error probability at every parameter.

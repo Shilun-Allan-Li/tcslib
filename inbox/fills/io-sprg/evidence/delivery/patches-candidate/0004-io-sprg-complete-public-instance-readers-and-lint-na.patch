@@ -1,0 +1,187 @@
+From b3712d241bf30130e9424b85c60c8223701be4cd Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 02:16:54 -0800
+Subject: [PATCH 4/7] io-sprg: complete public instance readers and lint names
+
+---
+ .../StructuredSeed/Reductions/LPN.lean           |  7 ++++++-
+ .../StructuredSeed/Reductions/PRG.lean           | 15 ++++++++++++++-
+ .../Obfuscation/StructuredSeed/Security.lean     |  6 +++---
+ .../Obfuscation/StructuredSeed/Stretch.lean      | 16 ++++++++--------
+ .../Obfuscation/StructuredSeed/Targets.lean      |  4 ++--
+ 5 files changed, 33 insertions(+), 15 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean
+index e94e7772a1eddb4e7f304ff6528dea6afe8485a5..951805abc31f8a4ab1fd473692f891e7ba30529b 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean
+@@ -227,6 +227,11 @@ noncomputable instance instLPNAdviceFintype (P : Params) (π : PrimeSchedule) (L
+     Fintype (P.LPNAdvice π L) :=
+   Fintype.ofEquiv (Fin (P.lpnAdviceCard π L)) (P.lpnAdviceEquiv π L).symm
+ 
++/-- The LPN advice finiteness instance is induced by its explicit Fin equivalence; glue. -/
++theorem instLPNAdviceFintype_eq (P : Params) (π : PrimeSchedule) (L : ℕ) :
++    instLPNAdviceFintype P π L =
++      Fintype.ofEquiv (Fin (P.lpnAdviceCard π L)) (P.lpnAdviceEquiv π L).symm := rfl
++
+ instance instLPNAdviceNonempty (P : Params) (π : PrimeSchedule) (L : ℕ) :
+     Nonempty (P.LPNAdvice π L) :=
+   Nonempty.map (P.lpnAdviceProductEquiv π L).symm
+@@ -412,7 +417,7 @@ def LPNRealizable (P : Params) (π : PrimeSchedule) : Prop :=
+ 
+ /-- LPN realizability is the explicit contract for every adversary and advice family.
+ Glue reader. -/
+-theorem lpnRealizable_iff (P : Params) (π : PrimeSchedule) :
++theorem LPNRealizable_iff (P : Params) (π : PrimeSchedule) :
+     P.LPNRealizable π ↔
+       ∀ (A : NUPPT) (w : ∀ L, P.LPNAdvice π L), ∃ B : NUPPT,
+         B.RealizesOn (P.lpnEnc π) (A.coins.subst .var)
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG.lean
+index cc9f7aafec70ea5e20438fcdbc7a044537c30ba2..0d8f6e3202996a5cd825e2fb77cee59f48e79673 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG.lean
+@@ -177,6 +177,11 @@ noncomputable instance instPRGAdviceFintype (P : Params) (π : PrimeSchedule) (N
+     Fintype (P.PRGAdvice π N) :=
+   Fintype.ofEquiv (Fin (P.prgAdviceCard π N)) (P.prgAdviceEquiv π N).symm
+ 
++/-- The PRG advice finiteness instance is induced by its explicit Fin equivalence; glue. -/
++theorem instPRGAdviceFintype_eq (P : Params) (π : PrimeSchedule) (N : ℕ) :
++    instPRGAdviceFintype P π N =
++      Fintype.ofEquiv (Fin (P.prgAdviceCard π N)) (P.prgAdviceEquiv π N).symm := rfl
++
+ noncomputable instance instPRGAdviceInhabited (P : Params) (π : PrimeSchedule) (N : ℕ) :
+     Inhabited (P.PRGAdvice π N) where
+   default :=
+@@ -184,6 +189,14 @@ noncomputable instance instPRGAdviceInhabited (P : Params) (π : PrimeSchedule)
+       matrix := fun _ _ => 0
+       uniform := fun _ _ => 0 }
+ 
++/-- The PRG advice default is the explicit zero bucket placement, matrix and vectors; glue. -/
++theorem instPRGAdviceInhabited_eq (P : Params) (π : PrimeSchedule) (N : ℕ) :
++    instPRGAdviceInhabited P π N =
++      { default :=
++          { buckets := fun _ => ⟨0, P.B_pos (P.kappaOfN N)⟩
++            matrix := fun _ _ => 0
++            uniform := fun _ _ => 0 } } := rfl
++
+ /-- The advice word starts with the public prime, followed by unary N, bucket placement,
+ the LPN matrix, and the uniform vectors encoded as a kappa-by-n matrix.
+ [JLS26, Lemma 4.2, p. 19]. Dv9 publishes the prime as input; Dv12 and Dv15 encode every
+@@ -276,7 +289,7 @@ def PRGRealizable (P : Params) (π : PrimeSchedule) : Prop :=
+       (fun N x r => P.prgRed π A N (ω N) x r)
+ 
+ /-- Boolean realisability is the explicit shared encoded-challenge contract; glue. -/
+-theorem prgRealizable_iff (P : Params) (π : PrimeSchedule) :
++theorem PRGRealizable_iff (P : Params) (π : PrimeSchedule) :
+     P.PRGRealizable π ↔ ∀ (A : NUPPT) (ω : ∀ N, P.PRGAdvice π N), ∃ B : NUPPT,
+       B.RealizesOn P.prgEnc (A.coins.subst .var)
+         (fun N x r => P.prgRed π A N (ω N) x r) := Iff.rfl
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean
+index 2f76f8df65b5fd849764e36f46640ba1d5fc862f..974f94ad4ccd5e85ea3b6a756bc07da347358f28 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean
+@@ -140,7 +140,7 @@ SP-W1 restricts δ to rational data, coerced to real values in the stretch thres
+ **Proof sketch.** Combine raw security, the G4 correctness/degree theorem, and Claim 4.1. -/
+ theorem theorem41 (P : Params) (π : PrimeSchedule) {cLoc : ℕ} {τ : ℝ}
+     (hLoc : P.R.HasLocality cLoc) (hτ : 1 < τ) (hs : P.G.HasStretch τ)
+-    (hE : E₀ P.d (P.δ : ℝ) τ ≤ P.E) (hR : P.Realizable π)
++    (hE : E0 P.d (P.δ : ℝ) τ ≤ P.E) (hR : P.Realizable π)
+     (hG : P.G.Secure) (hLPN : (P.lpnFamily_raw π).Assumption) :
+     (jlsSPRG_raw P π).Secure ∧ (jlsSPRG_raw P π).HasComplexity P.d 2 ∧
+       (jlsSPRG_raw P π).HasPolyStretch := sorry
+@@ -152,7 +152,7 @@ realisability, and Dv18 leaves the primitive assembly to the targets.
+ **Proof sketch.** Combine jls_subexpSecure, G4 correctness/degree, and Claim 4.1. -/
+ theorem theorem41_subexp (P : Params) (π : PrimeSchedule) {cLoc : ℕ} {τ : ℝ}
+     (hLoc : P.R.HasLocality cLoc) (hτ : 1 < τ) (hs : P.G.HasStretch τ)
+-    (hE : E₀ P.d (P.δ : ℝ) τ ≤ P.E) (hR : P.Realizable π)
++    (hE : E0 P.d (P.δ : ℝ) τ ≤ P.E) (hR : P.Realizable π)
+     (hG : SubexpHard P.G.adv) (hLPN : SubexpHard (P.lpnFamily_raw π).adv) :
+     SubexpHard (jlsSPRG_raw P π).adv ∧ (jlsSPRG_raw P π).HasComplexity P.d 2 ∧
+       (jlsSPRG_raw P π).HasPolyStretch := sorry
+@@ -162,7 +162,7 @@ theorem theorem41_subexp (P : Params) (π : PrimeSchedule) {cLoc : ℕ} {τ : 
+ only for the construction's own families; Dv14 assumes realisability; Dv18 returns Raw.
+ SP-W1 uses rational δ; this statement does not claim a literal Definition 2.3 bridge.
+ 
+-**Proof sketch.** Choose E=max 1 E₀, build Params from the given G and representation,
++**Proof sketch.** Choose E=max 1 E0, build Params from the given G and representation,
+ and apply theorem41 with the supplied family assumption and realisability. -/
+ theorem exists_sprg_raw {d cLoc : ℕ} (hd : 1 ≤ d) {δ : ℚ} {τ : ℝ}
+     (hδ : 0 < δ) (hδ1 : δ < 1) (hτ : 1 < τ) (G : BoolPRG)
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean
+index c5c2394492b7a06d2605e61f6d810edef79e7970..6571282156bcb7da5da05ee2e325d9f24e4647c6 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean
+@@ -15,7 +15,7 @@ set_option autoImplicit false
+ 
+ ## Main definitions
+ 
+-* `E₀` gives the explicit sufficient polynomial schedule exponent.
++* `E0` gives the explicit sufficient polynomial schedule exponent.
+ * `Params.seedBitsAt` is the public/private field-vector payload bit count.
+ 
+ ## Main results
+@@ -39,17 +39,17 @@ rational delta as construction data, coerced to real values in these analytic bo
+ namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+ 
+ /-- A sufficient schedule exponent is
+-`E₀ d delta tau = floor(max(10/delta,5/(tau-1)))+1`.
++`E0 d delta tau = floor(max(10/delta,5/(tau-1)))+1`.
+ [JLS26, Claim 4.1, p. 18]. Dv1 makes sufficiently large polynomial seed length an
+ explicit condition on E. Convention C10 uses a deliberately generous fifth-power
+ seed bound; d is retained in the interface although this sufficient threshold is
+ independent of it when d≥1. SP-W1 coerces the construction's rational delta to real. -/
+-noncomputable def E₀ (_d : ℕ) (δ τ : ℝ) : ℕ :=
++noncomputable def E0 (_d : ℕ) (δ τ : ℝ) : ℕ :=
+   ⌊max (10 / δ) (5 / (τ - 1))⌋₊ + 1
+ 
+ /-- The sufficient exponent is its stated real-power comparison threshold; glue. -/
+-theorem E₀_eq (d : ℕ) (δ τ : ℝ) :
+-    E₀ d δ τ = ⌊max (10 / δ) (5 / (τ - 1))⌋₊ + 1 := rfl
++theorem E0_eq (d : ℕ) (δ τ : ℝ) :
++    E0 d δ τ = ⌊max (10 / δ) (5 / (τ - 1))⌋₊ + 1 := rfl
+ 
+ namespace Params
+ 
+@@ -101,9 +101,9 @@ theorem jls_seedBits_le (P : Params) (π : PrimeSchedule) :
+       (jlsSPRG_raw P π).seedBits κ ≤
+         C * (κ + 1) ^ 5 * (P.n κ + P.m κ / P.w κ + 1) := sorry
+ 
+-/-- The raw construction has polynomial stretch when its schedule exponent is at least E₀.
++/-- The raw construction has polynomial stretch when its schedule exponent is at least E0.
+ [JLS26, Claim 4.1, p. 18]. Dv1 replaces sufficiently large polynomial seed length by
+-`E₀ d delta tau ≤ E`; Dv3 uses rounded noise and Dv5 uses the input stretch lower bound.
++`E0 d delta tau ≤ E`; Dv3 uses rounded noise and Dv5 uses the input stretch lower bound.
+ SP-W1 supplies rational delta, coerced to real for the threshold. Dv18 keeps this
+ stretch theorem on the raw bundle; honest efficiency is supplied by the later assembly.
+ 
+@@ -113,7 +113,7 @@ ell^(delta/2), so both n and m/w leave a positive power gap below m after the ka
+ factor. Use the polynomial output upper bound to choose one fixed stretch exponent
+ strictly above one, and absorb the fixed constant beyond a common threshold. -/
+ theorem jls_hasPolyStretch (P : Params) (π : PrimeSchedule) {τ : ℝ} (hτ : 1 < τ)
+-    (hs : P.G.HasStretch τ) (hE : E₀ P.d (P.δ : ℝ) τ ≤ P.E) :
++    (hs : P.G.HasStretch τ) (hE : E0 P.d (P.δ : ℝ) τ ≤ P.E) :
+     (jlsSPRG_raw P π).HasPolyStretch := sorry
+ 
+ end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean
+index 1791852275e9b37466219f1793bd569222f29c68..4a20ab09283c91fa65f479d672ea5a9aebdf09fa 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean
+@@ -318,7 +318,7 @@ Apply the raw theorem, transport its properties through jlsSPRG_toRaw, and use T
+ efficient polynomial generation. -/
+ theorem theorem41_of_targets (P : Params) (π : PrimeSchedule) {cLoc : ℕ} {τ : ℝ}
+     (hLoc : P.R.HasLocality cLoc) (hτ : 1 < τ) (hs : P.G.HasStretch τ)
+-    (hE : E₀ P.d (P.δ : ℝ) τ ≤ P.E) (hT : P.Targets)
++    (hE : E0 P.d (P.δ : ℝ) τ ≤ P.E) (hT : P.Targets)
+     (hG : P.G.Secure) (hLPN : (P.lpnFamily_raw π).Assumption) :
+     (jlsSPRG P π hT).Secure ∧ (jlsSPRG P π hT).HasComplexityEff P.d 2 ∧
+       (jlsSPRG P π hT).HasPolyStretch := sorry
+@@ -328,7 +328,7 @@ theorem theorem41_of_targets (P : Params) (π : PrimeSchedule) {cLoc : ℕ} {τ
+ inhabits the primitive from targets rather than asserting unproved efficiency.
+ SP-W1 restricts δ to rational data.
+ 
+-**Proof sketch.** Choose E=max 1 E₀, specialize the targets to those parameters, and apply
++**Proof sketch.** Choose E=max 1 E0, specialize the targets to those parameters, and apply
+  theorem41_of_targets to the given Boolean PRG and construction-family assumption. -/
+ theorem exists_sprg_of_targets {d cLoc : ℕ} (hd : 1 ≤ d) {δ : ℚ} {τ : ℝ}
+     (hδ : 0 < δ) (hδ1 : δ < 1) (hτ : 1 < τ) (G : BoolPRG)

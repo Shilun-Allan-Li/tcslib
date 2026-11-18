@@ -1,0 +1,12 @@
+by
+  have hn : ¬ ∃ b : Fin B, rc * rc < load φ b :=
+    fun hb => h ((overfull_iff φ (rc * rc)).mpr hb)
+  have hi : rank φ i < rc * rc :=
+    (rank_lt_load φ i).trans_le (le_of_not_gt fun hi => hn ⟨φ i, hi⟩)
+  have hj : rank φ j < rc * rc :=
+    (rank_lt_load φ j).trans_le (le_of_not_gt fun hj => hn ⟨φ j, hj⟩)
+  rw [indexMap_eq φ rc i, indexMap_eq φ rc j,
+    dif_pos ⟨hn, hi⟩, dif_pos ⟨hn, hj⟩] at hc
+  have hr : (⟨rank φ i, hi⟩ : Fin (rc * rc)) = ⟨rank φ j, hj⟩ :=
+    finProdFinEquiv.symm.injective (Option.some.inj hc)
+  exact eq_of_rank_eq φ hφ (congrArg Fin.val hr)

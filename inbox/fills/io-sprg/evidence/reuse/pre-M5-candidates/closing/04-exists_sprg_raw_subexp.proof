@@ -1,0 +1,9 @@
+by
+  let E := max 1 (E0 d (δ : ℝ) τ)
+  have hE1 : 1 ≤ E := le_max_left _ _
+  let P : Params := ⟨d, hd, δ, hδ, hδ1, E, hE1, G, R⟩
+  refine ⟨jlsSPRG_raw P π, ?_, ?_⟩
+  · intro κ
+    exact jlsSPRG_raw_modulus P π κ
+  · exact theorem41_subexp P π hLoc hτ hs (le_max_right _ _)
+      (hR E hE1) hG (hLPN E hE1)

@@ -1,0 +1,8 @@
+-- Replacement proof candidate only. NOT_RUN: root must elaborate and seal-check.
+by
+  rw [sparseEntries_eq]
+  change c ∈ ((List.finRange rows).product (List.finRange cols)).filter
+    (fun p => decide (M p.1 p.2 ≠ 0)) ↔ M c.1 c.2 ≠ 0
+  rcases c with ⟨i, j⟩
+  simp only [List.mem_filter, List.mem_product, List.mem_finRange, true_and,
+    decide_eq_true_eq]

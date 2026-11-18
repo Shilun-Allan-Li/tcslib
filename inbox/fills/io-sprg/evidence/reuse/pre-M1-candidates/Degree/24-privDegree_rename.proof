@@ -1,0 +1,6 @@
+by
+  rw [privDegree_eq, privDegree_eq,
+    MvPolynomial.weightedTotalDegree_rename_of_injective
+      (Sum.map_injective.mpr ⟨e.injective, f.injective⟩)]
+  exact congrArg (fun w : σ ⊕ τ → ℕ => q.weightedTotalDegree w)
+    (funext fun v => Sum.casesOn v (fun _ => rfl) (fun _ => rfl))

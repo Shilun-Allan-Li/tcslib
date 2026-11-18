@@ -1,0 +1,32 @@
+by
+  apply (SPRG.Raw.secure_iff _).2
+  intro A
+  obtain ⟨ωL, ωG, hprop⟩ := prop41 P π A
+  have hreal := (Params.realizable_iff P π).1 hR
+  obtain ⟨BL, hBL⟩ := (P.LPNRealizable_iff π).1 hreal.1 A ωL
+  obtain ⟨BG, hBG⟩ := (P.PRGRealizable_iff π).1 hreal.2 A ωG
+  have hL := ((LPNFamily.Raw.assumption_iff _).1 hLPN) BL
+  have hG' := ((BoolPRG.secure_iff _).1 hG) BG
+  have hℓ : ∀ κ, κ ≤ P.ℓ κ
+  · intro κ
+    rw [P.ℓ_eq]
+    exact Nat.le_pow (lt_of_lt_of_le (Nat.zero_lt_succ 0) P.one_le_E)
+  have hn : ∀ κ, κ ≤ P.n κ := P.le_n
+  have hLcomp := hL.comp_of_le P.ℓ hℓ
+  have hGcomp := hG'.comp_of_le P.n hn
+  have hLfactor : Negligible
+      (fun κ => 2 * (κ : ℝ) * (P.lpnFamily_raw π).adv BL (P.ℓ κ))
+  · simpa only [pow_one, mul_assoc] using (hLcomp.mul_pow 1).const_mul 2
+  have hsum := (hLfactor.add hGcomp).add (negligible_two_pow_neg.const_mul 2)
+  apply hsum.mono
+  obtain ⟨κ₀, herr⟩ := P.claim42 hLoc
+  refine ⟨κ₀, ?_⟩
+  intro κ hκ
+  have hbd := (hprop BL BG hBL hBG κ).trans
+    (add_le_add_left
+      (mul_le_mul_of_nonneg_left (herr κ hκ (π κ)) zero_le_two) _)
+  have hnonneg : 0 ≤ (jlsSPRG_raw P π).adv A κ
+  · rw [SPRG.Raw.adv_eq]
+    exact Games.advantage_nonneg _ _
+  rw [abs_of_nonneg hnonneg, abs_of_nonneg (hnonneg.trans hbd)]
+  exact hbd

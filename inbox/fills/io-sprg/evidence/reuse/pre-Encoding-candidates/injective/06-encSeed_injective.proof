@@ -1,0 +1,9 @@
+by
+  intro x y h
+  rw [P.encSeed'_eq, P.encSeed'_eq] at h
+  have hp := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h
+  exact Prod.ext
+    (Encoding.Modular.encodeVector_injective (κ + 1) pp.le_two_pow
+      (congrArg Prod.fst hp))
+    (Encoding.Modular.encodeVector_injective (κ + 1) pp.le_two_pow
+      (congrArg Prod.snd hp))

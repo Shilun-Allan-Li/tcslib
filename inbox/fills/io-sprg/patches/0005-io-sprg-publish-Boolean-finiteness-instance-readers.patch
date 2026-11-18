@@ -1,0 +1,37 @@
+From 2af7d5111f63dcb24a498dbddcf76b1d26c591ef Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 02:17:46 -0800
+Subject: [PATCH 05/15] io-sprg: publish Boolean finiteness instance readers
+
+---
+ .../Obfuscation/StructuredSeed/BoolPRG.lean        | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean
+index a6ce9566f824c09ee4fe768f9c905352abee2ae9..46124d7dff1a53305f2f5a852f8d6a53c6c241f8 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean
+@@ -98,11 +98,21 @@ structure BoolPRG where
+     (fun n (_ : Unit) => List.replicate n true)
+     (fun n _ d => encIdDraw n d) (fun n _ I => encIdx n I) (fun n _ d => idCore n d)
+ 
+-instance (G : BoolPRG) (n : ℕ) : Fintype (G.Idx n) := G.idxFintype n
++instance instBoolPRGIdxFintype (G : BoolPRG) (n : ℕ) : Fintype (G.Idx n) :=
++  G.idxFintype n
+ instance (G : BoolPRG) (n : ℕ) : Nonempty (G.Idx n) := G.idxNonempty n
+-instance (G : BoolPRG) (n : ℕ) : Fintype (G.IdDraw n) := G.idDrawFintype n
++instance instBoolPRGIdDrawFintype (G : BoolPRG) (n : ℕ) : Fintype (G.IdDraw n) :=
++  G.idDrawFintype n
+ instance (G : BoolPRG) (n : ℕ) : Nonempty (G.IdDraw n) := G.idDrawNonempty n
+ 
++/-- The Boolean index finiteness instance is its supplied primitive field; glue. -/
++theorem instBoolPRGIdxFintype_eq (G : BoolPRG) (n : ℕ) :
++    instBoolPRGIdxFintype G n = G.idxFintype n := rfl
++
++/-- The Boolean index-draw finiteness instance is its supplied primitive field; glue. -/
++theorem instBoolPRGIdDrawFintype_eq (G : BoolPRG) (n : ℕ) :
++    instBoolPRGIdDrawFintype G n = G.idDrawFintype n := rfl
++
+ namespace BoolPRG
+ 
+ /-- The index sampler is the core applied to one uniform draw:

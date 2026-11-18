@@ -1,0 +1,19 @@
+/- NOT_RUN. Proposed area-local Internal helper. Exact ceil quotient glue.
+Search used ceiling/quotient and exact-reader shapes; the proof delegates the
+floor division estimate to Core Nat.lt_mul_div_succ rather than inventing a
+new ceiling operator. No new imports; exact?/apply? and compile pending root. -/
+
+theorem bucket_count_lower (P : Params) (κ : ℕ) :
+    P.m κ * κ ≤ P.B κ * P.W κ := by
+  have hW := P.W_pos κ
+  have hround := Nat.lt_mul_div_succ
+    (P.m κ * κ + P.W κ - 1) hW
+  rw [Nat.mul_add, Nat.mul_one] at hround
+  have hceil : P.m κ * κ ≤
+      P.W κ * ((P.m κ * κ + P.W κ - 1) / P.W κ)
+  · omega
+  have hB : (P.m κ * κ + P.W κ - 1) / P.W κ ≤ P.B κ
+  · rw [P.B_eq, P.t_eq]
+    exact le_max_right _ _
+  exact hceil.trans ((Nat.mul_le_mul_left (P.W κ) hB).trans_eq
+    (Nat.mul_comm (P.W κ) (P.B κ)))

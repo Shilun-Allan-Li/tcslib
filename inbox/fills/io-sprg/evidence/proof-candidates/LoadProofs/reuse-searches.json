@@ -1,0 +1,112 @@
+[
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem bucket_tail|^theorem some_bucket_tail|^theorem full_bucket_tail|^theorem some_full_bucket_tail|^theorem binomial_bound",
+      "TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean"
+    ],
+    "returncode": 0,
+    "stdout": "54:theorem binomial_bound (n k : \u2115) (hk : 0 < k) :\n67:theorem bucket_tail {m B : \u2115} [NeZero B] (S : Finset (Fin m)) (b : Fin B) (t : \u2115) :\n78:theorem some_bucket_tail {m B : \u2115} [NeZero B] (S : Finset (Fin m)) (t : \u2115) :\n88:theorem full_bucket_tail {m B : \u2115} [NeZero B] (b : Fin B) (t : \u2115) :\n98:theorem some_full_bucket_tail {m B : \u2115} [NeZero B] (t : \u2115) :\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem uprob_comp_equiv|^theorem uprob_fst|^theorem uprob_exists_le|^theorem uprob_mono",
+      "TCSlib/Cryptography/Foundations/Probability.lean"
+    ],
+    "returncode": 0,
+    "stdout": "120:theorem uprob_mono {p q : \u03b1 \u2192 Prop} (h : \u2200 a, p a \u2192 q a) : uprob p \u2264 uprob q := by\n137:theorem uprob_exists_le {\u03b9 : Type*} (s : Finset \u03b9) (p : \u03b9 \u2192 \u03b1 \u2192 Prop) :\n165:theorem uprob_comp_equiv (e : \u03b1 \u2243 \u03b2) (p : \u03b2 \u2192 Prop) : uprob (fun a => p (e a)) = uprob p := by\n175:theorem uprob_fst [Nonempty \u03b2] (p : \u03b1 \u2192 Prop) : uprob (fun z : \u03b1 \u00d7 \u03b2 => p z.1) = uprob p := by\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem uprob_congr|^theorem uprob_pi_forall|^theorem uprob_eq_one_div_card",
+      "TCSlib/Cryptography/OneWayFunctions/Basic.lean"
+    ],
+    "returncode": 0,
+    "stdout": "50:theorem uprob_congr {p q : \u03b1 \u2192 Prop} (h : \u2200 a, p a \u2194 q a) : uprob p = uprob q := by\n118:theorem uprob_pi_forall {\u03b9 : Type*} [Fintype \u03b9] [DecidableEq \u03b9] (p : \u03b1 \u2192 Prop) :\n144:theorem uprob_eq_one_div_card (a : \u03b1) : uprob (fun x : \u03b1 => x = a) = 1 / Fintype.card \u03b1 := by\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "def piEquivPiSubtypeProd",
+      ".lake/packages/mathlib/Mathlib/Logic/Equiv/Prod.lean"
+    ],
+    "returncode": 0,
+    "stdout": "463:def piEquivPiSubtypeProd {\u03b1 : Type*} (p : \u03b1 \u2192 Prop) (\u03b2 : \u03b1 \u2192 Type*) [DecidablePred p] :\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "lemma exists_subset_card_eq",
+      ".lake/packages/mathlib/Mathlib/Data/Finset/Card.lean"
+    ],
+    "returncode": 0,
+    "stdout": "647:lemma exists_subset_card_eq (hns : n \u2264 #s) : \u2203 t \u2286 s, #t = n := by\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "lemma mem_powersetCard|theorem card_powersetCard",
+      ".lake/packages/mathlib/Mathlib/Data/Finset/Powerset.lean"
+    ],
+    "returncode": 0,
+    "stdout": "176:@[simp, grind =] lemma mem_powersetCard : s \u2208 powersetCard n t \u2194 s \u2286 t \u2227 card s = n := by\n186:theorem card_powersetCard (n : \u2115) (s : Finset \u03b1) :\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem Fintype.card_coe",
+      ".lake/packages/mathlib/Mathlib/Data/Fintype/Card.lean"
+    ],
+    "returncode": 0,
+    "stdout": "345:theorem Fintype.card_coe (s : Finset \u03b1) [Fintype s] : Fintype.card s = #s :=\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem choose_le_pow_div",
+      ".lake/packages/mathlib/Mathlib/Data/Nat/Choose/Bounds.lean"
+    ],
+    "returncode": 0,
+    "stdout": "30:theorem choose_le_pow_div (r n : \u2115) : (n.choose r : \u03b1) \u2264 (n ^ r : \u03b1) / r ! := by\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem exp_nat_mul|lemma pow_div_factorial_le_exp",
+      ".lake/packages/mathlib/Mathlib/Analysis/Complex/Exponential.lean"
+    ],
+    "returncode": 0,
+    "stdout": "149:theorem exp_nat_mul (x : \u2102) : \u2200 n : \u2115, exp (n * x) = exp x ^ n\n225:nonrec theorem exp_nat_mul (x : \u211d) (n : \u2115) : exp (n * x) = exp x ^ n :=\n250:lemma pow_div_factorial_le_exp (hx : 0 \u2264 x) (n : \u2115) : x ^ n / n ! \u2264 exp x :=\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem bucket_eq|^theorem load_eq",
+      "TCSlib/Cryptography/Obfuscation/StructuredSeed/Buckets.lean"
+    ],
+    "returncode": 0,
+    "stdout": "56:theorem bucket_eq (\u03c6 : Fin m \u2192 Fin B) (b : Fin B) :\n64:theorem load_eq (\u03c6 : Fin m \u2192 Fin B) (b : Fin B) : load \u03c6 b = (bucket \u03c6 b).card := rfl\n",
+    "stderr": ""
+  }
+]

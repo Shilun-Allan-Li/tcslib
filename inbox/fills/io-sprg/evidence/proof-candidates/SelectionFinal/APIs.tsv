@@ -1,0 +1,18 @@
+API	Exact signature/use	Source
+Params.firstGood_eq	firstGood flags=(List.finRange kappa).find? flags	StructuredSeed/Samplers.lean:190
+List.ofFn_id	List.ofFn id=List.finRange n	Mathlib/Data/List/FinRange.lean:84
+List.find?_ofFn_eq_some_of_injective	injective f -> find?=some(f i) iff p(f i)=true and all j<i fail	Mathlib/Data/List/OfFn.lean:151
+Function.injective_id	Function.Injective (@id alpha)	Lean Init/Data/Function.lean:109
+Bool.eq_false_iff	b=false iff b!=true	Lean Init/Data/Bool.lean:61
+List.find?_eq_none	find? p l=none iff forall x in l, not p x	Lean Init/Data/List/Find.lean:227
+List.find?_some	find? p l=some a -> p a	Lean Init/Data/List/Find.lean:280
+List.mem_finRange	forall a:Fin n, a in List.finRange n	Mathlib/Data/List/FinRange.lean:29
+List.find?_ofFn_eq_some	general finite tuple success-and-earlier-failure characterization	Mathlib/Data/List/OfFn.lean:142
+List.find?_eq_some_iff_getElem	success and all preceding positions fail	Lean Init/Data/List/Nat/Find.lean:29
+List.find?_eq_some_iff_append	success after unsuccessful prefix	Lean Init/Data/List/Find.lean:230
+List.pairwise_lt_finRange	Pairwise(<)(finRange n), NOT NEEDED	Mathlib/Data/List/FinRange.lean:44
+Option.isNone_iff_eq_none	o.isNone iff o=none	Lean Init/Data/Option/Instances.lean:33
+Option.isNone_none/isNone_some	isNone none=true;isNone(some a)=false	Lean Init/Data/Option/Basic.lean:56,57
+Params.sdCore_err	err=(firstGood oneSdFlags).isNone	StructuredSeed/Samplers.lean:263
+Params.sdCore_first	first=firstGood oneSdFlags	StructuredSeed/Samplers.lean:257
+Params.sdCore_instances	instances=fun k=>oneSd at exact draw coordinates	StructuredSeed/Samplers.lean:251

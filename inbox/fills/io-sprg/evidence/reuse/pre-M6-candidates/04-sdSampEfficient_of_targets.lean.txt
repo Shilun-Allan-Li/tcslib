@@ -1,0 +1,16 @@
+-- Existing theorem replacement candidate. NOT_RUN; no draw/product sampler is constructed.
+by
+  have hc := ((P.coreTarget_iff).mp hC).2
+  have hd := ((P.drawSamplerTarget_iff).mp hD).2
+  simp only [Params.sdWord_eq, Params.encSeed'_eq, PrimeParam.enc_eq] at hc hd
+  obtain ⟨U, c, e, he, hfail⟩ := (drawSamplable_iff _ _).mp hd
+  obtain ⟨f, hf, hcore⟩ := (coreComputable_iff _ _ _ _).mp hc
+  rw [jlsSPRG_raw_eq]
+  simp only [SPRG.Raw.sdWord_eq, SPRG.Raw.encPP_eq, SPRG.Raw.encSeed_eq,
+    PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const]
+  apply SamplesEfficiently.intro
+  · exact (drawSamplable_iff _ _).mpr
+      ⟨U, c, fun κ I => e κ ⟨π κ, I⟩, fun κ I w => he κ ⟨π κ, I⟩ w,
+        fun κ I => hfail κ ⟨π κ, I⟩⟩
+  · exact (coreComputable_iff _ _ _ _).mpr
+      ⟨f, hf, fun κ I d => hcore κ ⟨π κ, I⟩ d⟩

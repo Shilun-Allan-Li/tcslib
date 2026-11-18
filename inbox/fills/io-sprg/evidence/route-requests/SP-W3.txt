@@ -1,0 +1,33 @@
+SP-W3: pre-M0 polynomial-stretch non-vacuity repair
+
+Inherited draft obligation: Raw.HasPolyStretch S was only
+  exists tau > 1, exists kappa0, forall kappa >= kappa0,
+    (S.seedBits kappa : Real)^tau <= S.outLen kappa.
+Binding r1 section 4.3 supplied that body; r2 retains it and r3 moves it to Raw.
+No ruling expressly licenses bounded-length witnesses.
+
+Counterexample: choose modulus (pi kappa).p and its growing residue width, but
+pubLen=privLen=outLen=0, Unit indices and draws, the unique empty seed and output,
+and explicit Unit-to-Fin-1 equivalences/encodings. All Raw width upper bounds and
+nonempty fields can be met. seedBits=0 and tau=2 make the draft stretch inequality
+0<=0. Real and random output laws coincide. HasComplexity is vacuous because its
+output index is Fin 0. The raw existential conclusions would admit that witness
+without using their cryptographic assumptions. Positivity alone is insufficient:
+one-bit seed/output lengths with constant prime2 still satisfy 1^tau<=1.
+
+Minimal robust repair selected before M0:
+  exists tau > 1, exists kappa0, forall kappa >= kappa0,
+    kappa <= S.seedBits kappa /\
+      (S.seedBits kappa : Real)^tau <= S.outLen kappa.
+The definition and its iff reader change together. The primitive wrapper and four
+existential conclusions inherit the stronger meaning. No existential header,
+algorithm, efficiency target, security assumption, or prime schedule changes.
+Actual construction: pubLen=kappa*n+1>=1 and residueBits=kappa+1 imply the stronger
+all-parameter bound kappa+1<=seedBits; add its weak form to the M2 proof.
+The existing asymptotic exponent/threshold calculation is unchanged.
+
+Authority: the user authorized best judgment while asleep, subject to modular,
+adaptable code and downstream disclosure. E-ROUTE requires the exact obligation,
+counterexample and minimal disclosed change; no E-SCOPE trigger applies. Both
+original research agents independently confirmed the gap and repair. This is a
+pre-freeze strengthening of an inherited design gap, not a silent weakening.

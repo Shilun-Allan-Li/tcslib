@@ -1,0 +1,30 @@
+by
+  classical
+  let len := (h.support.sort (· ≤ ·)).length
+  let A := Finset.univ.filter (fun r : Fin D => r.val < len)
+  let C := Finset.univ.filter (fun r : Fin D => D + r.val < len)
+  have hCinj : Function.Injective (fun r : Fin D => D + r.val)
+  · intro r s hrs
+    exact Fin.ext (Nat.add_left_cancel hrs)
+  have hdisj : Disjoint (A.image (fun r => r.val)) (C.image (fun r => D + r.val))
+  · apply Finset.disjoint_left.mpr
+    intro q hqA hqC
+    obtain ⟨r, hr, hrq⟩ := Finset.mem_image.mp hqA
+    obtain ⟨s, hs, hsq⟩ := Finset.mem_image.mp hqC
+    have hrD := r.isLt
+    omega
+  have hsubset : A.image (fun r => r.val) ∪ C.image (fun r => D + r.val) ⊆
+      Finset.range len
+  · intro q hq
+    rcases Finset.mem_union.mp hq with hq | hq
+    · obtain ⟨r, hr, rfl⟩ := Finset.mem_image.mp hq
+      exact Finset.mem_range.mpr (Finset.mem_filter.mp hr).2
+    · obtain ⟨r, hr, rfl⟩ := Finset.mem_image.mp hq
+      exact Finset.mem_range.mpr (Finset.mem_filter.mp hr).2
+  have hbound := Finset.card_le_card hsubset
+  rw [Finset.card_union_of_disjoint hdisj,
+    Finset.card_image_of_injective A Fin.val_injective,
+    Finset.card_image_of_injective C hCinj, Finset.card_range] at hbound
+  simp only [Internal.monomialSlot_eq, isSome_getElem?]
+  change A.card + C.card ≤ h.support.card
+  simpa only [len, Finset.length_sort] using hbound

@@ -1,0 +1,91 @@
+evidence/probes/io_sprg_m0_final/controls_coe_A/ControlU_A_Cryptography_Obfuscation_StructuredSeed_Claim42_Load.lean:30:2: error: Type mismatch
+  fun {m B} φ b => Eq.refl (TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.bucket φ b)
+has type
+  ∀ {m B : ℕ} (φ : Fin m → Fin B) (b : Fin B),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.bucket φ b =
+      TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.bucket φ b
+but is expected to have type
+  ∀ (φ : Fin m✝ → Fin B✝) (b : Fin B✝),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.bucket φ b = {j | φ j = b}
+the following variables have been introduced by the implicit lambda feature
+  m✝ : ℕ
+  B✝ : ℕ
+you can disable implicit lambdas using `@` or writing a lambda expression with `{}` or `[]` binder annotations.
+evidence/probes/io_sprg_m0_final/controls_coe_A/ControlU_A_Cryptography_Obfuscation_StructuredSeed_Claim42_Load.lean:36:2: error: Type mismatch
+  fun {m B} φ b => Eq.refl (TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.load φ b)
+has type
+  ∀ {m B : ℕ} (φ : Fin m → Fin B) (b : Fin B),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.load φ b =
+      TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.load φ b
+but is expected to have type
+  ∀ (φ : Fin m✝ → Fin B✝) (b : Fin B✝),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.load φ b =
+      (TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.bucket φ b).card
+the following variables have been introduced by the implicit lambda feature
+  m✝ : ℕ
+  B✝ : ℕ
+you can disable implicit lambdas using `@` or writing a lambda expression with `{}` or `[]` binder annotations.
+evidence/probes/io_sprg_m0_final/controls_coe_A/ControlU_A_Cryptography_Obfuscation_StructuredSeed_Claim42_Load.lean:42:2: error: Type mismatch
+  fun {m B} φ cap => Iff.refl (TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.overfull φ cap)
+has type
+  ∀ {m B : ℕ} (φ : Fin m → Fin B) (cap : ℕ),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.overfull φ cap ↔
+      TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.overfull φ cap
+but is expected to have type
+  ∀ (φ : Fin m✝ → Fin B✝) (cap : ℕ),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.overfull φ cap ↔
+      ∃ b, cap < TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.load φ b
+the following variables have been introduced by the implicit lambda feature
+  m✝ : ℕ
+  B✝ : ℕ
+you can disable implicit lambdas using `@` or writing a lambda expression with `{}` or `[]` binder annotations.
+evidence/probes/io_sprg_m0_final/controls_coe_A/ControlU_A_Cryptography_Obfuscation_StructuredSeed_Claim42_Load.lean:48:2: error: Type mismatch
+  fun {m B} φ j => Eq.refl (TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.rank φ j)
+has type
+  ∀ {m B : ℕ} (φ : Fin m → Fin B) (j : Fin m),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.rank φ j =
+      TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.rank φ j
+but is expected to have type
+  ∀ (φ : Fin m✝ → Fin B✝) (j : Fin m✝),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.rank φ j = {i | i < j ∧ φ i = φ j}.card
+the following variables have been introduced by the implicit lambda feature
+  m✝ : ℕ
+  B✝ : ℕ
+you can disable implicit lambdas using `@` or writing a lambda expression with `{}` or `[]` binder annotations.
+evidence/probes/io_sprg_m0_final/controls_coe_A/ControlU_A_Cryptography_Obfuscation_StructuredSeed_Claim42_Load.lean:54:2: error: Type mismatch
+  fun {m B} φ rc j => Eq.refl (TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.indexMap φ rc j)
+has type
+  ∀ {m B : ℕ} (φ : Fin m → Fin B) (rc : ℕ) (j : Fin m),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.indexMap φ rc j =
+      TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.indexMap φ rc j
+but is expected to have type
+  ∀ (φ : Fin m✝ → Fin B✝) (rc : ℕ) (j : Fin m✝),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.indexMap φ rc j =
+      if h :
+          (¬∃ b, rc * rc < TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.load φ b) ∧
+            TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.rank φ j < rc * rc then
+        some (finProdFinEquiv.symm ⟨TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.rank φ j, ⋯⟩)
+      else none
+the following variables have been introduced by the implicit lambda feature
+  m✝ : ℕ
+  B✝ : ℕ
+you can disable implicit lambdas using `@` or writing a lambda expression with `{}` or `[]` binder annotations.
+evidence/probes/io_sprg_m0_final/controls_coe_A/ControlU_A_Cryptography_Obfuscation_StructuredSeed_Claim42_Load.lean:60:2: error: Type mismatch
+  fun {R} {m B} [AddCommMonoid R] φ rc corr b =>
+    Eq.refl (TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.bucketMatrix φ rc corr b)
+has type
+  ∀ {R : Type ?u.1597} {m B : ℕ} [inst : AddCommMonoid R] (φ : Fin m → Fin B) (rc : ℕ) (corr : Fin m → R) (b : Fin B),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.bucketMatrix φ rc corr b =
+      TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.bucketMatrix φ rc corr b
+but is expected to have type
+  ∀ (φ : Fin m✝ → Fin B✝) (rc : ℕ) (corr : Fin m✝ → R✝) (b : Fin B✝),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.bucketMatrix φ rc corr b = fun u v =>
+      ∑ j,
+        if φ j = b ∧ TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.indexMap φ rc j = some (u, v) then corr j
+        else 0
+the following variables have been introduced by the implicit lambda feature
+  R✝ : Type u_1
+  m✝ : ℕ
+  B✝ : ℕ
+  inst✝ : AddCommMonoid R✝
+you can disable implicit lambdas using `@` or writing a lambda expression with `{}` or `[]` binder annotations.

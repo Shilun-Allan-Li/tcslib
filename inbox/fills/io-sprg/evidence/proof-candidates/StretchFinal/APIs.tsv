@@ -1,0 +1,28 @@
+API	Source	Use
+add_pow_le	Mathlib/Algebra/Order/Ring/Basic.lean:130	tensor count
+Nat.le_pow/Nat.le_self_pow	Lean Init/Data/Nat/Lemmas.lean:1239,1258	positive natural exponent growth
+Nat.pow_le_pow_left/Nat.pow_le_pow_right	Lean Init/Data/Nat/Lemmas.lean	natural base/exponent monotonicity
+Nat.div_div_eq_div_mul/Nat.div_mul_le_self/Nat.add_div_right/Nat.mul_div_left	Lean Init/Data/Nat/Div/Basic.lean:280,300,315,438	rounded bucket width cancellation
+Nat.lt_mul_div_succ	Lean Init/Data/Nat/Lemmas.lean:1555	natural quotient upper remainder
+Params.W_le_ell_add_one	StructuredSeed/Encoding.lean:425	all-kappa noise-width upper bound
+Nat.div_two_lt_floor	Mathlib/Algebra/Order/Floor/Semifield.lean:92	exact multiplicative floor lower
+Nat.one_le_floor_iff	Mathlib/Algebra/Order/Floor/Semiring.lean:102	remove maximum at positive base
+Nat.lt_floor_add_one	Mathlib/Algebra/Order/Floor/Semiring.lean:61	strict E0 gap
+Nat.cast_div_le	Mathlib/Data/Nat/Cast/Order/Field.lean:30	natural quotient bounded by real quotient
+Real.rpow_natCast	Mathlib/Analysis/SpecialFunctions/Pow/Real.lean:58	convert natural powers
+Real.rpow_add/rpow_neg/rpow_sub	Mathlib/Analysis/SpecialFunctions/Pow/Real.lean:195,244,248	collect real-power exponents
+Real.rpow_mul/Real.rpow_natCast_mul	Mathlib/Analysis/SpecialFunctions/Pow/Real.lean:399,495	schedule/nested power identities
+Real.mul_rpow	Mathlib/Analysis/SpecialFunctions/Pow/Real.lean:461	raise seed product
+Real.rpow_le_rpow	Mathlib/Analysis/SpecialFunctions/Pow/Real.lean:528	positive-exponent monotonicity
+Real.rpow_le_rpow_of_exponent_le	Mathlib/Analysis/SpecialFunctions/Pow/Real.lean:595	compare fixed exponents
+Real.rpow_le_one_of_one_le_of_nonpos	Mathlib/Analysis/SpecialFunctions/Pow/Real.lean:654	final negative exponent
+Real.one_le_rpow/rpow_pos_of_pos	Mathlib/Analysis/SpecialFunctions/Pow/Real.lean:662,110	justify positive bases/denominators
+Complexity.PolyExpr.eval_le/eval_subst	Complexity/Randomized/PolyExpr.lean:159,134	composed output polynomial bound
+PadQuad.exists_pow_dominates	Cryptography/Asymptotic/UniversalPadding.lean:75	REJECTED02/06 overlap; preferred07 avoids monic normalization entirely
+BoolPRG.hasStretch_iff	StructuredSeed/BoolPRG.lean:210	exact input stretch
+SPRG.Raw.hasPolyStretch_iff	StructuredSeed/Defs.lean:290	SP-W3 growth and power conjuncts
+tendsto_rpow_atTop	Mathlib/Analysis/SpecialFunctions/Pow/Asymptotics.lean:32	absorb128*C by kappa^epsilon
+tendsto_natCast_atTop_atTop	Mathlib/Order/Filter/AtTopBot/Archimedean.lean:35	transport growth to natural parameter
+Filter.Tendsto.eventually_ge_atTop	Mathlib/Order/Filter/AtTopBot/Tendsto.lean:36	constant absorption cutoff
+Filter.eventually_atTop	Mathlib/Order/Filter/AtTopBot/Basic.lean:68	extract common natural cutoff
+jls_seedBits_eq/jlsSPRG_raw_outLen	StructuredSeed/Stretch.lean:93;Samplers.lean:464	actual raw bundle transfer

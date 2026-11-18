@@ -1,0 +1,12 @@
+-- Existing theorem replacement candidate. NOT_RUN; choose exactly the prescribed E.
+by
+  let E := max 1 (E0 d (δ : ℝ) τ)
+  have hE1 : 1 ≤ E := le_max_left _ _
+  let P : Params := ⟨d, hd, δ, hδ, hδ1, E, hE1, G, R⟩
+  let hTP : P.Targets := hT P
+  have hEb : E0 P.d (P.δ : ℝ) τ ≤ P.E := le_max_right _ _
+  have hall := theorem41_of_targets P π hLoc hτ hs hEb hTP hG (hLPN E hE1)
+  refine ⟨jlsSPRG P π hTP, ?_, hall⟩
+  intro κ
+  exact (congrArg (fun S : SPRG.Raw => S.modulus κ) (jlsSPRG_toRaw P π hTP)).trans
+    (jlsSPRG_raw_modulus P π κ)

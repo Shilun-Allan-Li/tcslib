@@ -1,0 +1,33 @@
+/- NOT_RUN. Specialized closed-pair list glue, not a generic PrefixFree theorem.
+Proposed area-local Internal helper only after root exact?/apply? and compile.
+Searches: public TCSlib encodeList+pair+injective names/shape; nearest Lamport
+encoding is a different nested-pair list. Uniform's generic prefix-free helper
+is private and is not accessed. This variant needs Words already in the HOST closure (true downstream, false
+in the current LPN owner). Do not add its forbidden direct import. For the LPN
+owner use candidate02, with the inline overlap explicitly disclosed. -/
+
+theorem encodeList_closedPair_injective {α : Type} (f : α → List Bool)
+    (hf : Function.Injective f) :
+    Function.Injective (BoolCircuit.encodeList (fun a => pairEncode (f a) [])) := by
+  intro xs ys h
+  induction xs generalizing ys with
+  | nil =>
+    cases ys with
+    | nil => rfl
+    | cons b bs =>
+      rw [BoolCircuit.encodeList_nil, BoolCircuit.encodeList_cons] at h
+      cases h
+  | cons a as ih =>
+    cases ys with
+    | nil =>
+      rw [BoolCircuit.encodeList_cons, BoolCircuit.encodeList_nil] at h
+      cases h
+    | cons b bs =>
+      rw [BoolCircuit.encodeList_cons, BoolCircuit.encodeList_cons] at h
+      have hbody := (List.cons.inj h).2
+      rw [Complexity.BinArith.pairEncode_nil_append,
+        Complexity.BinArith.pairEncode_nil_append] at hbody
+      have hparts := Turing.pairEncode_injective hbody
+      have hab : a = b := hf (congrArg Prod.fst hparts)
+      have htail : as = bs := ih (congrArg Prod.snd hparts)
+      exact congrArg₂ List.cons hab htail

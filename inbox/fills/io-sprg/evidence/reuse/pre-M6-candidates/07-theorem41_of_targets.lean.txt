@@ -1,0 +1,14 @@
+-- Existing theorem replacement candidate. NOT_RUN; depends on M5 and earlier M6 results.
+by
+  have hR := P.realizable_of_targets hT.2.2.2.1 π
+  have hraw := theorem41 P π hLoc hτ hs hE hR hG hLPN
+  refine ⟨?_, ?_, ?_⟩
+  · apply (SPRG.secure_iff (jlsSPRG P π hT)).mpr
+    rw [jlsSPRG_toRaw]
+    exact hraw.1
+  · apply (SPRG.hasComplexityEff_iff (jlsSPRG P π hT) P.d 2).mpr
+    rw [jlsSPRG_toRaw]
+    exact P.hasComplexityEff_of_target π hT.2.1
+  · apply (SPRG.hasPolyStretch_iff (jlsSPRG P π hT)).mpr
+    rw [jlsSPRG_toRaw]
+    exact hraw.2.2

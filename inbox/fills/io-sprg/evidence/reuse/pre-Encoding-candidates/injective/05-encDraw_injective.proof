@@ -1,0 +1,25 @@
+by
+  let f : Fin (P.W κ) × ZMod pp.p → List Bool := fun c =>
+    pairEncode (Candidates.natToList (P.ℓ κ + 1) c.1.val)
+      (Candidates.natToList (κ + 1) c.2.val)
+  have hnoise : ∀ c, (f c).length = 2 * (P.ℓ κ + 1) + 2 + (κ + 1)
+  · intro c
+    change (pairEncode _ _).length = _
+    rw [length_pairEncode, Candidates.length_natToList, Candidates.length_natToList]
+  have hwidth : ∀ r, (P.encOneDraw κ pp r).length =
+      2 * (P.ℓ κ * (κ + 1)) + 2 +
+        (P.n κ * ((2 * (P.ℓ κ + 1) + 2 + (κ + 1)) + 1) + 1)
+  · intro r
+    rw [P.encOneDraw_eq, length_pairEncode, Encoding.Modular.encodeVector_length]
+    rw [Internal.encodeList_length_of_fixedWidth f
+      (2 * (P.ℓ κ + 1) + 2 + (κ + 1)) hnoise, List.length_ofFn]
+  have hlist := Internal.encodeList_injective_of_fixedWidth
+    (P.encOneDraw_injective κ pp)
+    (2 * (P.ℓ κ * (κ + 1)) + 2 +
+      (P.n κ * ((2 * (P.ℓ κ + 1) + 2 + (κ + 1)) + 1) + 1)) hwidth
+  intro x y h
+  rw [P.encDraw_eq, P.encDraw_eq] at h
+  have hp := pairEncode_injective (a₁ := (_, _)) (a₂ := (_, _)) h
+  apply Prod.ext
+  · exact List.ofFn_injective (congrArg Prod.fst hp)
+  · exact List.ofFn_injective (hlist (congrArg Prod.snd hp))

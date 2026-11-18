@@ -1,0 +1,2017 @@
+From 03b157e974aed1021f920d3a954cc2dc43e7a5b4 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 01:10:17 -0800
+Subject: [PATCH 1/7] io-sprg: prepare Phase A module imports
+
+---
+ TCSlib.lean                                   |   1 +
+ TCSlib/Cryptography/Obfuscation.lean          |  24 +
+ .../Obfuscation/StructuredSeed.lean           |  60 +++
+ .../Obfuscation/StructuredSeed/BoolPRG.lean   | 235 ++++++++++
+ .../Obfuscation/StructuredSeed/Buckets.lean   | 180 ++++++++
+ .../Obfuscation/StructuredSeed/Claim42.lean   |  33 ++
+ .../StructuredSeed/Claim42/Load.lean          |  35 ++
+ .../StructuredSeed/Correctness.lean           |  32 ++
+ .../Obfuscation/StructuredSeed/Defs.lean      | 419 ++++++++++++++++++
+ .../Obfuscation/StructuredSeed/Degree.lean    | 225 ++++++++++
+ .../Obfuscation/StructuredSeed/Hybrids.lean   |  34 ++
+ .../Obfuscation/StructuredSeed/LPN.lean       |  35 ++
+ .../Obfuscation/StructuredSeed/Params.lean    |  39 ++
+ .../Obfuscation/StructuredSeed/PolyTerms.lean |  93 ++++
+ .../Obfuscation/StructuredSeed/Polys.lean     |  35 ++
+ .../StructuredSeed/Reductions/LPN.lean        |  33 ++
+ .../StructuredSeed/Reductions/PRG.lean        |  33 ++
+ .../Obfuscation/StructuredSeed/Samplers.lean  |  33 ++
+ .../Obfuscation/StructuredSeed/Security.lean  |  34 ++
+ .../StructuredSeed/SparseFactor.lean          | 150 +++++++
+ .../Obfuscation/StructuredSeed/Stretch.lean   |  33 ++
+ .../Obfuscation/StructuredSeed/Targets.lean   |  33 ++
+ 22 files changed, 1829 insertions(+)
+ create mode 100644 TCSlib/Cryptography/Obfuscation.lean
+ create mode 100644 TCSlib/Cryptography/Obfuscation/StructuredSeed.lean
+ create mode 100644 TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean
+ create mode 100644 TCSlib/Cryptography/Obfuscation/StructuredSeed/Buckets.lean
+ create mode 100644 TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42.lean
+ create mode 100644 TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean
+ create mode 100644 TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean
+ create mode 100644 TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean
+ create mode 100644 TCSlib/Cryptography/Obfuscation/StructuredSeed/Degree.lean
+ create mode 100644 TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean
+ create mode 100644 TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean
+ create mode 100644 TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean
+ create mode 100644 TCSlib/Cryptography/Obfuscation/StructuredSeed/PolyTerms.lean
+ create mode 100644 TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean
+ create mode 100644 TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean
+ create mode 100644 TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG.lean
+ create mode 100644 TCSlib/Cryptography/Obfuscation/StructuredSeed/Samplers.lean
+ create mode 100644 TCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean
+ create mode 100644 TCSlib/Cryptography/Obfuscation/StructuredSeed/SparseFactor.lean
+ create mode 100644 TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean
+ create mode 100644 TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean
+
+diff --git a/TCSlib.lean b/TCSlib.lean
+index 2fd3a3db15a40eaa6c012d286aa4b8750a00a574..529fe01c78b4f2cd63346e11f64bed61b211e53f 100644
+--- a/TCSlib.lean
++++ b/TCSlib.lean
+@@ -77,6 +77,7 @@ import TCSlib.Cryptography.Implications
+ import TCSlib.Cryptography.Pairing
+ import TCSlib.Cryptography.KeyExchange
+ import TCSlib.Cryptography.AdvancedEncryption
++import TCSlib.Cryptography.Obfuscation
+ 
+ import TCSlib.InformationTheory
+ 
+diff --git a/TCSlib/Cryptography/Obfuscation.lean b/TCSlib/Cryptography/Obfuscation.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..2d244a57abd67187549558e4ced97300bd798f31
+--- /dev/null
++++ b/TCSlib/Cryptography/Obfuscation.lean
+@@ -0,0 +1,24 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Obfuscation.StructuredSeed
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Obfuscation components
++
++## Contents
++
++* `StructuredSeed`: the JLS structured-seed PRG construction and security.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, §§2-4.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
++-/
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..98dd094eac68da6ca44c3f25098cd7732fba90d8
+--- /dev/null
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed.lean
+@@ -0,0 +1,60 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.LPN
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.BoolPRG
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Degree
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.PolyTerms
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Defs
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Params
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.SparseFactor
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Polys
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Samplers
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Correctness
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Stretch
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Claim42.Load
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Claim42
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Hybrids
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.PRG
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Security
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Targets
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Structured-seed pseudorandom generators
++
++## Contents
++
++* `LPN`: the lpn component.
++* `BoolPRG`: the boolprg component.
++* `Degree`: the degree component.
++* `PolyTerms`: the polyterms component.
++* `Defs`: the defs component.
++* `Params`: the params component.
++* `Buckets`: the buckets component.
++* `SparseFactor`: the sparsefactor component.
++* `Polys`: the polys component.
++* `Samplers`: the samplers component.
++* `Correctness`: the correctness component.
++* `Stretch`: the stretch component.
++* `Claim42.Load`: the claim42 load component.
++* `Claim42`: the claim42 component.
++* `Hybrids`: the hybrids component.
++* `Reductions.LPN`: the reductions lpn component.
++* `Reductions.PRG`: the reductions prg component.
++* `Security`: the security component.
++* `Targets`: the targets component.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, §§2-4.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
++-/
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..32c34ded473f339508977391817121cf5b9a64bd
+--- /dev/null
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean
+@@ -0,0 +1,235 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.CoinSampling.Contract
++import TCSlib.Cryptography.Games.Advantage
++import TCSlib.Cryptography.Foundations.Subexponential
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.PolyTerms
++import Mathlib.RingTheory.MvPolynomial.Basic
++import Mathlib.Algebra.MvPolynomial.Variables
++import Mathlib.Algebra.MvPolynomial.Eval
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Boolean pseudorandom generators
++
++## Main definitions
++
++The definitions below give the corresponding structured-seed PRG interfaces.
++
++## Main results
++
++Owner-side readers expose every new definition.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, Sections 2-4.
++-/
++
++namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
++
++open Complexity Turing Games
++
++/-- A Boolean generator has an exactly uniform Boolean seed and a sampled function index,
++with uniformly efficient index sampling and evaluation. [JLS26, Definition 3.4, p. 11].
++Deviations Dv1 and Dv17: the family is indexed by seed length, and index sampling is a
++core applied to one exact finite draw; efficiency uses the shared sampler contract. -/
++structure BoolPRG where
++  /-- The function-index type at seed length `n`. -/
++  Idx : ℕ → Type
++  /-- The index type is finite. -/
++  idxFintype : ∀ n, Fintype (Idx n)
++  /-- The index type is nonempty. -/
++  idxNonempty : ∀ n, Nonempty (Idx n)
++  /-- The one exact draw used by index sampling. -/
++  IdDraw : ℕ → Type
++  /-- Every index draw type is finite. -/
++  idDrawFintype : ∀ n, Fintype (IdDraw n)
++  /-- Every index draw type is nonempty. -/
++  idDrawNonempty : ∀ n, Nonempty (IdDraw n)
++  /-- The deterministic index-sampling core. -/
++  idCore : (n : ℕ) → IdDraw n → Idx n
++  /-- The explicit encoding of an index draw. -/
++  encIdDraw : (n : ℕ) → IdDraw n → List Bool
++  /-- The string representation of a function index. -/
++  encIdx : (n : ℕ) → Idx n → List Bool
++  /-- A polynomial bound on the index encoding. -/
++  idxBits : PolyExpr
++  /-- Every encoded index satisfies the stated bound. -/
++  encIdx_length_le : ∀ n I, (encIdx n I).length ≤ idxBits.eval n
++  /-- The generator's output length. -/
++  outLen : ℕ → ℕ
++  /-- A polynomial bound on output length. -/
++  outBound : PolyExpr
++  /-- The output length satisfies its bound. -/
++  outLen_le : ∀ n, outLen n ≤ outBound.eval n
++  /-- Evaluation on a Boolean seed. -/
++  eval : (n : ℕ) → Idx n → (Fin n → Bool) → Fin (outLen n) → Bool
++  /-- One uniform polynomial-time map computes every evaluation. -/
++  eval_eff : ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
++    ∀ n I σ, f (NUPPT.advInput n (pairEncode (encIdx n I) (List.ofFn σ))) =
++      List.ofFn (eval n I σ)
++  /-- Index sampling is efficient on its actual exact draw and deterministic core.
++  The parameter word includes unary `n`, since the draw type can depend on `n`. -/
++  idSamp_eff : CoinSampling.SamplesEfficiently
++    (fun n (_ : Unit) => List.replicate n true)
++    (fun n _ d => encIdDraw n d) (fun n _ I => encIdx n I) (fun n _ d => idCore n d)
++
++instance (G : BoolPRG) (n : ℕ) : Fintype (G.Idx n) := G.idxFintype n
++instance (G : BoolPRG) (n : ℕ) : Nonempty (G.Idx n) := G.idxNonempty n
++instance (G : BoolPRG) (n : ℕ) : Fintype (G.IdDraw n) := G.idDrawFintype n
++instance (G : BoolPRG) (n : ℕ) : Nonempty (G.IdDraw n) := G.idDrawNonempty n
++
++namespace BoolPRG
++
++/-- The index sampler is the core applied to one uniform draw:
++`idSamp n = sample (IdDraw n) >>= fun d => pure (idCore n d)`.
++[JLS26, Definition 3.4, p. 11]. Deviation Dv17: the exact-law core-and-draw interface
++makes the efficiency field refer to this actual law. -/
++noncomputable def idSamp (G : BoolPRG) (n : ℕ) : ProbComp (G.Idx n) :=
++  (ProbComp.sample (G.IdDraw n)).bind fun d => .pure (G.idCore n d)
++
++/-- The index law is the pushforward of its uniform draw by `idCore`; glue. -/
++theorem idSamp_eq (G : BoolPRG) (n : ℕ) :
++    G.idSamp n = (ProbComp.sample (G.IdDraw n)).bind fun d => .pure (G.idCore n d) := rfl
++
++/-- Uniform evaluation efficiency is one map computing all indexed evaluations:
++`∃ f, PolyTimeComputable f ∧ ∀ n I σ, f ⟨1^n,⟨I,σ⟩⟩ = Eval(I,σ)`.
++[JLS26, Definition 3.4, p. 11]. The unary parameter is explicit; no advice is supplied. -/
++def EvalEfficient (G : BoolPRG) : Prop :=
++  ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
++    ∀ n I σ, f (NUPPT.advInput n (pairEncode (G.encIdx n I) (List.ofFn σ))) =
++      List.ofFn (G.eval n I σ)
++
++/-- Evaluation efficiency is exactly the single-map input/output contract; glue. -/
++theorem evalEfficient_iff (G : BoolPRG) :
++    G.EvalEfficient ↔ ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
++      ∀ n I σ, f (NUPPT.advInput n (pairEncode (G.encIdx n I) (List.ofFn σ))) =
++        List.ofFn (G.eval n I σ) := Iff.rfl
++
++/-- Every Boolean primitive carries its evaluation-efficiency witness; glue. -/
++theorem evalEfficient (G : BoolPRG) : G.EvalEfficient := G.eval_eff
++
++/-- The challenge is `⟨encIdx I, List.ofFn z⟩` for an index and Boolean output vector.
++[JLS26, Definitions 3.2 and 3.4, pp. 10-11]. The Boolean assumption has no field modulus;
++its canonical challenge therefore contains only the index and output. -/
++def challengeStr (G : BoolPRG) (n : ℕ) (I : G.Idx n) (z : Fin (G.outLen n) → Bool) :
++    List Bool := pairEncode (G.encIdx n I) (List.ofFn z)
++
++/-- The Boolean challenge is the pair of encoded index and output; glue. -/
++theorem challengeStr_eq (G : BoolPRG) (n : ℕ) (I : G.Idx n)
++    (z : Fin (G.outLen n) → Bool) :
++    G.challengeStr n I z = pairEncode (G.encIdx n I) (List.ofFn z) := rfl
++
++/-- The real/random game gives the adversary a sampled index and either the generator output
++on a uniform seed or an independent uniform output. [JLS26, Definitions 3.2 and 3.4,
++pp. 10-11]. Deviation Dv1: the security parameter is the Boolean seed length `n`. -/
++noncomputable def game (G : BoolPRG) (A : NUPPT) (real : Bool) (n : ℕ) : ProbComp Bool :=
++  (G.idSamp n).bind fun I =>
++  (ProbComp.sample (Fin n → Bool)).bind fun σ =>
++  (ProbComp.sample (Fin (G.outLen n) → Bool)).bind fun u =>
++  (ProbComp.sample (A.Coins n)).bind fun r =>
++    .pure (A.distinguisherL n (G.challengeStr n I (if real then G.eval n I σ else u)) r)
++
++/-- The game samples the actual index law, seed, comparison output, and adversary coins; glue. -/
++theorem game_eq (G : BoolPRG) (A : NUPPT) (real : Bool) (n : ℕ) :
++    G.game A real n =
++      (G.idSamp n).bind fun I =>
++      (ProbComp.sample (Fin n → Bool)).bind fun σ =>
++      (ProbComp.sample (Fin (G.outLen n) → Bool)).bind fun u =>
++      (ProbComp.sample (A.Coins n)).bind fun r =>
++        .pure (A.distinguisherL n
++          (G.challengeStr n I (if real then G.eval n I σ else u)) r) := rfl
++
++/-- The Boolean PRG advantage is the absolute real/random acceptance gap.
++[JLS26, Definitions 2.1 and 3.4, pp. 8-11]. Deviation Dv1: absolute advantage against
++non-uniform PPT machines is the library convention. -/
++noncomputable def adv (G : BoolPRG) (A : NUPPT) (n : ℕ) : ℝ :=
++  Games.advantage (G.game A true n) (G.game A false n)
++
++/-- The advantage is `Games.advantage` of the two games; glue. -/
++theorem adv_eq (G : BoolPRG) (A : NUPPT) (n : ℕ) :
++    G.adv A n = Games.advantage (G.game A true n) (G.game A false n) := rfl
++
++/-- Boolean PRG security means negligible advantage for every non-uniform PPT machine:
++`Secure G ↔ ∀ A, Negligible (G.adv A)`. [JLS26, Definitions 2.1 and 3.4, pp. 8-11]. -/
++def Secure (G : BoolPRG) : Prop := ∀ A : NUPPT, Negligible (G.adv A)
++
++/-- Security is negligible advantage for every non-uniform PPT machine; glue. -/
++theorem secure_iff (G : BoolPRG) : G.Secure ↔ ∀ A : NUPPT, Negligible (G.adv A) := Iff.rfl
++
++/-- Subexponential Boolean security is exactly `SubexpHard G.adv`.
++[JLS26, Remark 2.1 and Theorem 4.1, pp. 9 and 11]. The adversaries remain NUPPT machines. -/
++def SubexpSecure (G : BoolPRG) : Prop := SubexpHard G.adv
++
++/-- Subexponential Boolean security uses the shared `SubexpHard` predicate; glue. -/
++theorem subexpSecure_iff (G : BoolPRG) : G.SubexpSecure ↔ SubexpHard G.adv := Iff.rfl
++
++/-- Stretch at least `τ` means `n^τ ≤ outLen n` at every seed length.
++[JLS26, Definition 3.4 and Theorem 4.1, p. 11]. Deviation Dv8: an inequality replaces
++`m = n^τ`, avoiding truncation of the supplied generator. -/
++def HasStretch (G : BoolPRG) (τ : ℝ) : Prop := ∀ n, (n : ℝ) ^ τ ≤ G.outLen n
++
++/-- Stretch is the pointwise lower bound `n^τ ≤ outLen n`; glue. -/
++theorem hasStretch_iff (G : BoolPRG) (τ : ℝ) :
++    G.HasStretch τ ↔ ∀ n, (n : ℝ) ^ τ ≤ G.outLen n := Iff.rfl
++
++/-- A degree-`d` multilinear representation supplies integer polynomials whose Boolean-cube
++values equal the output bits. [JLS26, Definition 3.4, p. 11]. Deviation Dv7: the representation
++is data for every index, and locality is measured on its variables; semantic uniqueness is
++not an additional theorem of this development. -/
++structure MultilinearRep (G : BoolPRG) (d : ℕ) where
++  /-- An integer polynomial for every output coordinate. -/
++  poly : (n : ℕ) → G.Idx n → Fin (G.outLen n) → MvPolynomial (Fin n) ℤ
++  /-- Every polynomial is multilinear. -/
++  poly_mem_restrictDegree : ∀ n I j, poly n I j ∈ MvPolynomial.restrictDegree (Fin n) ℤ 1
++  /-- Every polynomial has total degree at most `d`. -/
++  totalDegree_poly_le : ∀ n I j, (poly n I j).totalDegree ≤ d
++  /-- On Boolean assignments, the polynomial returns the output bit as an integer. -/
++  eval_poly : ∀ n I σ j,
++    MvPolynomial.eval (fun i => ((σ i).toNat : ℤ)) (poly n I j) =
++      ((G.eval n I σ j).toNat : ℤ)
++
++namespace MultilinearRep
++
++/-- Locality at most `cLoc` means every output polynomial uses at most `cLoc` variables.
++[JLS26, Definition 3.4, p. 11]. Deviation Dv7: locality is read on the supplied multilinear
++representation, for every index rather than only those in the sampling support. -/
++def HasLocality {G : BoolPRG} {d : ℕ} (R : G.MultilinearRep d) (cLoc : ℕ) : Prop :=
++  ∀ n I j, (R.poly n I j).vars.card ≤ cLoc
++
++/-- Locality is the variable-cardinality bound for every output coordinate; glue. -/
++theorem hasLocality_iff {G : BoolPRG} {d : ℕ} (R : G.MultilinearRep d) (cLoc : ℕ) :
++    R.HasLocality cLoc ↔ ∀ n I j, (R.poly n I j).vars.card ≤ cLoc := Iff.rfl
++
++/-- Efficient representation generation uses one polynomial-time map to output an explicit
++term list for every polynomial. [JLS26, Section 2, p. 8]. Deviation Dv15: signed integer
++coefficients and finite variable coordinates use the explicit `PolyTerms` code.
++Phase B obligation; not proved in this development. -/
++def TermsEfficient {G : BoolPRG} {d : ℕ} (R : G.MultilinearRep d) : Prop :=
++  ∃ f : List Bool → List Bool, PolyTimeComputable f ∧ ∀ n I j,
++    ∃ ts : PolyTerms (Fin n) ℤ,
++      f (NUPPT.advInput n (pairEncode (G.encIdx n I) (PolyTerms.encFin j))) =
++        PolyTerms.encTerms PolyTerms.encInt PolyTerms.encFin ts ∧
++      PolyTerms.denote ts = R.poly n I j
++
++/-- Efficient representation generation is exactly the uniform term-list contract; glue. -/
++theorem termsEfficient_iff {G : BoolPRG} {d : ℕ} (R : G.MultilinearRep d) :
++    R.TermsEfficient ↔
++      ∃ f : List Bool → List Bool, PolyTimeComputable f ∧ ∀ n I j,
++        ∃ ts : PolyTerms (Fin n) ℤ,
++          f (NUPPT.advInput n (pairEncode (G.encIdx n I) (PolyTerms.encFin j))) =
++            PolyTerms.encTerms PolyTerms.encInt PolyTerms.encFin ts ∧
++          PolyTerms.denote ts = R.poly n I j := Iff.rfl
++
++end MultilinearRep
++
++end BoolPRG
++
++end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Buckets.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Buckets.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..90471f67c9fad503ab055d0871d3f897b87d551a
+--- /dev/null
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Buckets.lean
+@@ -0,0 +1,180 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import Mathlib.Data.Finset.Card
++import Mathlib.Data.Fintype.Basic
++import Mathlib.Data.Matrix.Basic
++import Mathlib.Logic.Equiv.Fin.Basic
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Bucket placement and correction matrices
++
++## Main definitions
++
++* `Buckets.indexMap` assigns distinct grid positions within a non-overfull bucket.
++* `Buckets.bucketMatrix` places a correction vector at its assigned grid positions.
++
++## Main results
++
++* Non-overfull buckets have defined, injective grid positions.
++* A correction matrix has at most as many nonzero entries as bad outputs in its bucket.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
++  Assumptions*, J. ACM 73(1), Article 1, February 2026, construction on pp. 15-16.
++* [PS10] R. Pass, A. Shelat, *A Course in Cryptography*, 2010, Definition 26.8.
++
++**Deviation.** The paper chooses arbitrary injective positions and an overfull constant.
++We use increasing ranks and an explicit `finProdFinEquiv`. Positions are optional, with
++`none` in the overfull case. This preserves the capacity convention when the grid is
++empty at security parameter zero; a total point of an empty grid cannot be supplied.
++Every good bucket still uses exactly the required grid, without padding its capacity.
++-/
++
++namespace TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets
++
++open scoped BigOperators
++
++variable {R : Type*}
++
++section Positions
++
++variable {m B : ℕ}
++
++/-- A bucket is the finite fiber `bucket φ b = {j | φ j = b}`
++[JLS26, construction of IdSamp', p. 15]. Indices start at zero. -/
++def bucket (φ : Fin m → Fin B) (b : Fin B) : Finset (Fin m) :=
++  Finset.univ.filter (fun j => φ j = b)
++
++/-- A bucket equals the finite fiber of its label. Glue reader. -/
++theorem bucket_eq (φ : Fin m → Fin B) (b : Fin B) :
++    bucket φ b = Finset.univ.filter (fun j => φ j = b) := rfl
++
++/-- A bucket's load is its cardinality, `load φ b = (bucket φ b).card`
++[JLS26, construction of IdSamp', p. 15]. -/
++def load (φ : Fin m → Fin B) (b : Fin B) : ℕ := (bucket φ b).card
++
++/-- A bucket's load equals its cardinality. Glue reader. -/
++theorem load_eq (φ : Fin m → Fin B) (b : Fin B) : load φ b = (bucket φ b).card := rfl
++
++/-- A placement is overfull if some load exceeds capacity,
++`overfull φ cap ↔ ∃ b, cap < load φ b` [JLS26, construction of IdSamp', p. 15]. -/
++def overfull (φ : Fin m → Fin B) (cap : ℕ) : Prop := ∃ b, cap < load φ b
++
++/-- A placement is overfull exactly when some bucket exceeds capacity. Glue reader. -/
++theorem overfull_iff (φ : Fin m → Fin B) (cap : ℕ) :
++    overfull φ cap ↔ ∃ b, cap < load φ b := Iff.rfl
++
++/-- An output's bucket rank counts earlier outputs with the same label,
++`rank φ j = #{i | i < j ∧ φ i = φ j}` [JLS26, construction of IdSamp', p. 15].
++Increasing ranks make the paper's permitted injection deterministic. -/
++def rank (φ : Fin m → Fin B) (j : Fin m) : ℕ :=
++  (Finset.univ.filter (fun i => i < j ∧ φ i = φ j)).card
++
++/-- The bucket rank counts preceding elements in the same fiber. Glue reader. -/
++theorem rank_eq (φ : Fin m → Fin B) (j : Fin m) :
++    rank φ j = (Finset.univ.filter (fun i => i < j ∧ φ i = φ j)).card := rfl
++
++/-- Grid positions split increasing bucket ranks using `finProdFinEquiv.symm`
++[JLS26, construction of IdSamp', p. 15]. The overfull case returns `none`, including
++empty grids, instead of the paper's constant point; no successful case is changed. -/
++def indexMap (φ : Fin m → Fin B) (rc : ℕ) (j : Fin m) : Option (Fin rc × Fin rc) :=
++  if h : ¬ (∃ b : Fin B, rc * rc < load φ b) ∧ rank φ j < rc * rc then
++    some (finProdFinEquiv.symm ⟨rank φ j, h.2⟩)
++  else none
++
++/-- Grid positions are optional split ranks, with `none` on overfull placements. Glue reader. -/
++theorem indexMap_eq (φ : Fin m → Fin B) (rc : ℕ) (j : Fin m) :
++    indexMap φ rc j =
++      if h : ¬ (∃ b : Fin B, rc * rc < load φ b) ∧ rank φ j < rc * rc then
++        some (finProdFinEquiv.symm ⟨rank φ j, h.2⟩)
++      else none := rfl
++
++/-- Each element's rank is strictly below its bucket's load [JLS26, construction, p. 15].
++This is mathematical glue for the deterministic placement.
++
++**Proof sketch.** Earlier elements form a strict subset of the fiber because it contains `j`. -/
++theorem rank_lt_load (φ : Fin m → Fin B) (j : Fin m) : rank φ j < load φ (φ j) := sorry
++
++/-- Equal ranks in the same bucket identify an output [JLS26, construction, p. 15].
++This is mathematical glue for the deterministic placement.
++
++**Proof sketch.** If one index precedes the other, inclusion of the earlier index makes
++its rank strictly smaller; rule out both strict inequalities. -/
++theorem eq_of_rank_eq (φ : Fin m → Fin B) {i j : Fin m}
++    (hφ : φ i = φ j) (hr : rank φ i = rank φ j) : i = j := sorry
++
++/-- Non-overfull placements assign a grid point to every output [JLS26, construction, p. 15].
++The optional representation changes no good-case position.
++
++**Proof sketch.** Use `rank_lt_load` and the capacity bound to prove the dependent test. -/
++theorem indexMap_some_of_not_overfull (φ : Fin m → Fin B) (rc : ℕ)
++    (h : ¬ overfull φ (rc * rc)) (j : Fin m) :
++    ∃ c : Fin rc × Fin rc, indexMap φ rc j = some c := sorry
++
++/-- Overfull placements have no grid positions [JLS26, construction, p. 15].
++This replaces the paper's unused overfull default by `none` to allow empty grids.
++
++**Proof sketch.** The defining test has a false first conjunct. -/
++theorem indexMap_none_of_overfull (φ : Fin m → Fin B) (rc : ℕ)
++    (h : overfull φ (rc * rc)) (j : Fin m) : indexMap φ rc j = none := sorry
++
++/-- Non-overfull bucket positions are injective within each bucket
++[JLS26, construction of IdSamp', p. 15]. Increasing ranks fix the permitted injection.
++
++**Proof sketch.** Both positions are `some`; apply the explicit product equivalence,
++then use `eq_of_rank_eq` in the common bucket. -/
++theorem indexMap_injective_on_bucket (φ : Fin m → Fin B) (rc : ℕ)
++    (h : ¬ overfull φ (rc * rc)) {i j : Fin m} (hφ : φ i = φ j)
++    (hc : indexMap φ rc i = indexMap φ rc j) : i = j := sorry
++
++end Positions
++
++section Matrices
++
++variable {m B : ℕ} [AddCommMonoid R]
++
++/-- A bucket correction matrix sums corrections at matching grid positions,
++`M_b(u,v) = ∑ j, [φ j = b ∧ indexMap j = some (u,v)] corr j`
++[JLS26, sampling algorithm 1SdSamp, p. 16]. Increasing ranks fix the paper's positions;
++`none` contributes nothing, so the empty-grid boundary is total. -/
++def bucketMatrix (φ : Fin m → Fin B) (rc : ℕ) (corr : Fin m → R) (b : Fin B) :
++    Matrix (Fin rc) (Fin rc) R :=
++  fun u v => ∑ j : Fin m,
++    if φ j = b ∧ indexMap φ rc j = some (u, v) then corr j else 0
++
++/-- Bucket matrix entries equal the finite sum of corrections assigned to them. Glue reader. -/
++theorem bucketMatrix_eq (φ : Fin m → Fin B) (rc : ℕ) (corr : Fin m → R) (b : Fin B) :
++    bucketMatrix φ rc corr b = fun u v => ∑ j : Fin m,
++      if φ j = b ∧ indexMap φ rc j = some (u, v) then corr j else 0 := rfl
++
++/-- A non-overfull bucket matrix contains each correction at its assigned position
++[JLS26, sampling algorithm 1SdSamp, p. 16]. The deterministic positions are injective.
++
++**Proof sketch.** Expand the entry through its reader, retain the summand `j`, and
++remove every other summand by injectivity within the bucket. -/
++theorem bucketMatrix_apply_indexMap (φ : Fin m → Fin B) (rc : ℕ)
++    (corr : Fin m → R) (h : ¬ overfull φ (rc * rc)) (j : Fin m)
++    (c : Fin rc × Fin rc) (hc : indexMap φ rc j = some c) :
++    bucketMatrix φ rc corr (φ j) c.1 c.2 = corr j := sorry
++
++/-- A correction matrix has at most as many nonzero entries as supported outputs in its bucket
++[JLS26, sampling algorithm 1SdSamp, p. 16]. The finite cardinal bound avoids rank theory.
++
++**Proof sketch.** Every nonzero matrix entry receives a nonzero supported correction;
++the image of those supported outputs contains the matrix support. -/
++theorem bucketMatrix_nonzero_card_le [DecidableEq R] (φ : Fin m → Fin B) (rc : ℕ)
++    (corr : Fin m → R) (bad : Finset (Fin m)) (hcorr : ∀ j, j ∉ bad → corr j = 0)
++    (b : Fin B) :
++    (Finset.univ.filter (fun c : Fin rc × Fin rc =>
++      bucketMatrix φ rc corr b c.1 c.2 ≠ 0)).card ≤ (bucket φ b ∩ bad).card := sorry
++
++end Matrices
++
++end TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..95a978e77b3567035b7ebecb49e43b3e8968d4bb
+--- /dev/null
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42.lean
+@@ -0,0 +1,33 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Samplers
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Claim42.Load
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The uniformly small JLS error event
++
++## Main definitions
++
++The definitions of this module are part of the Phase A statement checkpoint.
++
++## Main results
++
++The source-derived statements are fixed at checkpoint M0.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, §§2-4.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
++-/
++
++namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
++
++end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..c8b6ca5580bd87fb00c0e8b57587c5473fa2ba6c
+--- /dev/null
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean
+@@ -0,0 +1,35 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Games.Bridges.Experiments
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Averaging
++import Mathlib.Data.Nat.Choose.Bounds
++import Mathlib.Analysis.Complex.Exponential
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Finite bucket-load bounds for the JLS error analysis
++
++## Main definitions
++
++The definitions of this module are part of the Phase A statement checkpoint.
++
++## Main results
++
++The source-derived statements are fixed at checkpoint M0.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, §§2-4.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
++-/
++
++namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
++
++end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..01f81314099b7e381acfabd34071d83165b32647
+--- /dev/null
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean
+@@ -0,0 +1,32 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Samplers
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Algebraic correctness of the JLS evaluation
++
++## Main definitions
++
++The definitions of this module are part of the Phase A statement checkpoint.
++
++## Main results
++
++The source-derived statements are fixed at checkpoint M0.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, §§2-4.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
++-/
++
++namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
++
++end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..7801cb3e7dffd0e8e44037a57c4af70825f608ee
+--- /dev/null
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean
+@@ -0,0 +1,419 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.BoolPRG
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Degree
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.PolyTerms
++import TCSlib.Cryptography.CoinSampling.Contract
++import TCSlib.Cryptography.Encoding.Modular
++import TCSlib.Cryptography.Foundations.Subexponential
++import Mathlib.NumberTheory.Bertrand
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Structured-seed PRG syntax, security, complexity, and efficiency
++
++## Main definitions
++
++The definitions of this module are part of the Phase A statement checkpoint.
++
++## Main results
++
++The source-derived statements are fixed at checkpoint M0.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, §§2-4.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
++-/
++
++namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
++
++open Complexity Turing
++open TCSlib.Cryptography.Games
++open TCSlib.Cryptography.CoinSampling
++
++/-- A public prime has `2^κ ≤ p ≤ 2^(κ+1)` [JLS26, Definition 3.3, p. 10;
++§4, p. 15]. Dv9: the prime is an input, rather than a computed schedule; the
++boundary κ = 0 admits p = 2. No algorithm chooses a prime. -/
++structure PrimeParam (κ : ℕ) where
++  p : ℕ
++  prime : p.Prime
++  two_pow_le : 2 ^ κ ≤ p
++  le_two_pow : p ≤ 2 ^ (κ + 1)
++
++instance PrimeParam.instNeZero {κ : ℕ} (pp : PrimeParam κ) : NeZero pp.p :=
++  ⟨pp.prime.ne_zero⟩
++
++instance PrimeParam.instFact {κ : ℕ} (pp : PrimeParam κ) : Fact pp.p.Prime :=
++  ⟨pp.prime⟩
++
++/-- The public numeral is p in κ+2 bits [JLS26, §4, p. 15]. Dv9: the extra
++bit includes the κ=0 boundary and makes the parameter public on the wire. -/
++def PrimeParam.enc {κ : ℕ} (pp : PrimeParam κ) : List Bool :=
++  Candidates.natToList (κ + 2) pp.p
++
++/-- The encoding is `natToList (κ+2) p`; glue. -/
++theorem PrimeParam.enc_eq {κ : ℕ} (pp : PrimeParam κ) :
++    pp.enc = Candidates.natToList (κ + 2) pp.p := rfl
++
++/-- A prime schedule assigns one public prime to every κ [JLS26,
++Definition 3.3, p. 10]. Dv9: no computability is assumed; results quantify
++all schedules and honest algorithms receive each prime as input. -/
++abbrev PrimeSchedule : Type := (κ : ℕ) → PrimeParam κ
++
++/-- A schedule is a function selecting a PrimeParam at every κ; glue. -/
++theorem primeSchedule_eq : PrimeSchedule = ((κ : ℕ) → PrimeParam κ) := rfl
++
++/-- A schedule exists by Bertrand's postulate; glue for non-vacuity of
++[JLS26, Definition 3.3, p. 10]. This existence is never a prime algorithm.
++
++**Proof sketch.** Apply Bertrand to 2^κ, use its strict lower bound as the
++required weak bound, and rewrite twice 2^κ as 2^(κ+1). -/
++theorem PrimeSchedule.nonempty : Nonempty PrimeSchedule := by
++  classical
++  refine ⟨fun κ => ?_⟩
++  obtain ⟨p, hp, hlo, hhi⟩ :=
++    Nat.exists_prime_lt_and_le_two_mul (2 ^ κ) (pow_ne_zero κ (Nat.succ_ne_zero 1))
++  refine ⟨p, hp, hlo.le, ?_⟩
++  simpa only [pow_succ, Nat.mul_comm] using hhi
++
++namespace SPRG
++
++/-- An exact-law structured-seed algorithm bundle over a public prime
++[JLS26, Definitions 3.1-3.3, p. 10]. Dv1-Dv2 and Dv15: one parameter and
++Fin-indexed field-vector seeds. Dv17-Dv18: draws and deterministic cores
++specify exact laws; efficiency is added by SPRG, never asserted by Raw.
++The public modulus is carried on every sPRG challenge (Dv9). -/
++structure Raw where
++  modulus : ℕ → ℕ
++  modulus_prime : ∀ κ, (modulus κ).Prime
++  residueBits : PolyExpr
++  modulus_le_pow : ∀ κ, modulus κ ≤ 2 ^ residueBits.eval κ
++  Idx : ℕ → Type
++  idxFintype : ∀ κ, Fintype (Idx κ)
++  idxNonempty : ∀ κ, Nonempty (Idx κ)
++  IdDraw : ℕ → Type
++  idDrawFintype : ∀ κ, Fintype (IdDraw κ)
++  idDrawNonempty : ∀ κ, Nonempty (IdDraw κ)
++  idCore : (κ : ℕ) → IdDraw κ → Idx κ
++  encIdDraw : (κ : ℕ) → IdDraw κ → List Bool
++  encIdx : (κ : ℕ) → Idx κ → List Bool
++  idxBits : PolyExpr
++  encIdx_length_le : ∀ κ I, (encIdx κ I).length ≤ idxBits.eval κ
++  pubLen : ℕ → ℕ
++  privLen : ℕ → ℕ
++  outLen : ℕ → ℕ
++  seedBound : PolyExpr
++  outBound : PolyExpr
++  pubLen_le : ∀ κ, pubLen κ ≤ seedBound.eval κ
++  privLen_le : ∀ κ, privLen κ ≤ seedBound.eval κ
++  outLen_le : ∀ κ, outLen κ ≤ outBound.eval κ
++  SdDraw : (κ : ℕ) → Idx κ → Type
++  sdDrawFintype : ∀ κ I, Fintype (SdDraw κ I)
++  sdDrawNonempty : ∀ κ I, Nonempty (SdDraw κ I)
++  sdCore : (κ : ℕ) → (I : Idx κ) → SdDraw κ I →
++    (Fin (pubLen κ) → ZMod (modulus κ)) × (Fin (privLen κ) → ZMod (modulus κ))
++  encSdDraw : (κ : ℕ) → (I : Idx κ) → SdDraw κ I → List Bool
++  eval : (κ : ℕ) → Idx κ →
++    ((Fin (pubLen κ) → ZMod (modulus κ)) ×
++      (Fin (privLen κ) → ZMod (modulus κ))) → Fin (outLen κ) → Bool
++
++namespace Raw
++
++instance instIdxFintype (S : Raw) (κ : ℕ) : Fintype (S.Idx κ) := S.idxFintype κ
++instance instIdxNonempty (S : Raw) (κ : ℕ) : Nonempty (S.Idx κ) := S.idxNonempty κ
++instance instIdDrawFintype (S : Raw) (κ : ℕ) : Fintype (S.IdDraw κ) := S.idDrawFintype κ
++instance instIdDrawNonempty (S : Raw) (κ : ℕ) : Nonempty (S.IdDraw κ) :=
++  S.idDrawNonempty κ
++instance instSdDrawFintype (S : Raw) (κ : ℕ) (I : S.Idx κ) : Fintype (S.SdDraw κ I) :=
++  S.sdDrawFintype κ I
++instance instSdDrawNonempty (S : Raw) (κ : ℕ) (I : S.Idx κ) : Nonempty (S.SdDraw κ I) :=
++  S.sdDrawNonempty κ I
++instance instModulusNeZero (S : Raw) (κ : ℕ) : NeZero (S.modulus κ) :=
++  ⟨(S.modulus_prime κ).ne_zero⟩
++
++/-- The seed is a public/private vector pair [JLS26, Definition 3.1,
++p. 10]. Dv2 and Dv15 use fixed-width field vectors, indexed by Fin. -/
++abbrev Seed (S : Raw) (κ : ℕ) : Type :=
++  (Fin (S.pubLen κ) → ZMod (S.modulus κ)) ×
++    (Fin (S.privLen κ) → ZMod (S.modulus κ))
++
++/-- The seed type is the public/private pair; glue. -/
++theorem seed_eq (S : Raw) (κ : ℕ) : S.Seed κ =
++    ((Fin (S.pubLen κ) → ZMod (S.modulus κ)) ×
++      (Fin (S.privLen κ) → ZMod (S.modulus κ))) := rfl
++
++/-- IdSamp is the exact pushforward of the index draw [JLS26,
++Definition 3.1, p. 10]. Dv17-Dv18: the sampler contract is separate. -/
++noncomputable def idSamp (S : Raw) (κ : ℕ) : ProbComp (S.Idx κ) :=
++  S.idCore κ <$> ProbComp.sample (S.IdDraw κ)
++
++/-- IdSamp maps idCore over the uniform draw; glue. -/
++theorem idSamp_eq (S : Raw) (κ : ℕ) :
++    S.idSamp κ = S.idCore κ <$> ProbComp.sample (S.IdDraw κ) := rfl
++
++/-- SdSamp is the exact pushforward of the joint seed draw [JLS26,
++Definition 3.1, p. 10]. Dv17-Dv18: no coin sampler is constructed. -/
++noncomputable def sdSamp (S : Raw) (κ : ℕ) (I : S.Idx κ) : ProbComp (S.Seed κ) :=
++  S.sdCore κ I <$> ProbComp.sample (S.SdDraw κ I)
++
++/-- SdSamp maps sdCore over its one exact draw; glue. -/
++theorem sdSamp_eq (S : Raw) (κ : ℕ) (I : S.Idx κ) :
++    S.sdSamp κ I = S.sdCore κ I <$> ProbComp.sample (S.SdDraw κ I) := rfl
++
++/-- The modulus is encoded in residueBits+1 bits [JLS26, Definition 3.3,
++p. 10]. Dv9 makes the modulus public rather than computing it. -/
++def encPP (S : Raw) (κ : ℕ) : List Bool :=
++  Candidates.natToList (S.residueBits.eval κ + 1) (S.modulus κ)
++
++/-- The public parameter is the fixed-width numeral; glue. -/
++theorem encPP_eq (S : Raw) (κ : ℕ) :
++    S.encPP κ = Candidates.natToList (S.residueBits.eval κ + 1) (S.modulus κ) := rfl
++
++/-- Encode both field-vector seeds [JLS26, Definition 3.1, p. 10].
++Dv2 and Dv15 fix increasing Fin-coordinate order. -/
++def encSeed (S : Raw) (κ : ℕ) (sd : S.Seed κ) : List Bool :=
++  pairEncode (Encoding.Modular.encodeVector (S.residueBits.eval κ) sd.1)
++    (Encoding.Modular.encodeVector (S.residueBits.eval κ) sd.2)
++
++/-- The seed encoding pairs the two vector encodings; glue. -/
++theorem encSeed_eq (S : Raw) (κ : ℕ) (sd : S.Seed κ) :
++    S.encSeed κ sd = pairEncode
++      (Encoding.Modular.encodeVector (S.residueBits.eval κ) sd.1)
++      (Encoding.Modular.encodeVector (S.residueBits.eval κ) sd.2) := rfl
++
++/-- An sPRG challenge is pp, index, public seed, output [JLS26,
++Definition 3.2, p. 10]. Dv9 prepends the public modulus. -/
++def challengeStr (S : Raw) (κ : ℕ) (I : S.Idx κ)
++    (pub : Fin (S.pubLen κ) → ZMod (S.modulus κ))
++    (z : Fin (S.outLen κ) → Bool) : List Bool :=
++  pairEncode (S.encPP κ) (pairEncode (S.encIdx κ I)
++    (pairEncode (Encoding.Modular.encodeVector (S.residueBits.eval κ) pub) (List.ofFn z)))
++
++/-- The challenge has pp as its first field; glue. -/
++theorem challengeStr_eq (S : Raw) (κ : ℕ) (I : S.Idx κ)
++    (pub : Fin (S.pubLen κ) → ZMod (S.modulus κ))
++    (z : Fin (S.outLen κ) → Bool) :
++    S.challengeStr κ I pub z = pairEncode (S.encPP κ) (pairEncode (S.encIdx κ I)
++      (pairEncode (Encoding.Modular.encodeVector (S.residueBits.eval κ) pub)
++        (List.ofFn z))) := rfl
++
++/-- The real or random game samples index, joint seed and adversary coins
++[JLS26, Definition 3.2, p. 10]. Dv1 uses κ alone; Dv9 publishes p. -/
++noncomputable def game (S : Raw) (A : NUPPT) (real : Bool) (κ : ℕ) : ProbComp Bool :=
++  (S.idSamp κ).bind fun I => (S.sdSamp κ I).bind fun sd =>
++    (ProbComp.sample (Fin (S.outLen κ) → Bool)).bind fun z =>
++    (ProbComp.sample (A.Coins κ)).bind fun r =>
++    pure (A.distinguisherL κ (S.challengeStr κ I sd.1
++      (if real then S.eval κ I sd else z)) r)
++
++/-- The game is the stated sequence of exact laws; glue. -/
++theorem game_eq (S : Raw) (A : NUPPT) (real : Bool) (κ : ℕ) :
++    S.game A real κ = (S.idSamp κ).bind fun I => (S.sdSamp κ I).bind fun sd =>
++      (ProbComp.sample (Fin (S.outLen κ) → Bool)).bind fun z =>
++      (ProbComp.sample (A.Coins κ)).bind fun r =>
++      pure (A.distinguisherL κ (S.challengeStr κ I sd.1
++        (if real then S.eval κ I sd else z)) r) := rfl
++
++/-- Advantage is the absolute real/random acceptance gap [JLS26,
++Definition 3.2, p. 10; Definition 2.1, p. 9]. Dv13 uses NUPPT adversaries. -/
++noncomputable def adv (S : Raw) (A : NUPPT) (κ : ℕ) : ℝ :=
++  advantage (S.game A true κ) (S.game A false κ)
++
++/-- Advantage is the game advantage; glue. -/
++theorem adv_eq (S : Raw) (A : NUPPT) (κ : ℕ) :
++    S.adv A κ = advantage (S.game A true κ) (S.game A false κ) := rfl
++
++/-- Security means negligible advantage for every NUPPT [JLS26,
++Definition 3.2, p. 10]. Dv13 fixes this adversary class. -/
++def Secure (S : Raw) : Prop := ∀ A : NUPPT, Negligible (S.adv A)
++
++/-- Security quantifies all NUPPT adversaries; glue. -/
++theorem secure_iff (S : Raw) : S.Secure ↔ ∀ A : NUPPT, Negligible (S.adv A) := Iff.rfl
++
++/-- Subexponential security is the shared SubexpHard predicate [JLS26,
++Definition 2.1, p. 9]. Dv13 bounds advantage, not adversary running time. -/
++def SubexpSecure (S : Raw) : Prop := SubexpHard S.adv
++
++/-- Subexponential security is exactly SubexpHard; glue. -/
++theorem subexpSecure_iff (S : Raw) : S.SubexpSecure ↔ SubexpHard S.adv := Iff.rfl
++
++/-- Seed bit length is the total residue count times its width [JLS26,
++Remark 3.2, p. 10]. Dv1-Dv2 count the single-index vector encoding. -/
++def seedBits (S : Raw) (κ : ℕ) : ℕ :=
++  (S.pubLen κ + S.privLen κ) * S.residueBits.eval κ
++
++/-- Seed bits are (public+private length) times residueBits; glue. -/
++theorem seedBits_eq (S : Raw) (κ : ℕ) :
++    S.seedBits κ = (S.pubLen κ + S.privLen κ) * S.residueBits.eval κ := rfl
++
++/-- Polynomial stretch expands seed bits by some exponent greater than one
++[JLS26, Remark 3.1, p. 10]. Dv1 is the fixed polynomial schedule form. -/
++def HasPolyStretch (S : Raw) : Prop :=
++  ∃ τ : ℝ, 1 < τ ∧ ∃ κ₀, ∀ κ ≥ κ₀, (S.seedBits κ : ℝ) ^ τ ≤ S.outLen κ
++
++/-- Polynomial stretch has an eventual real-power lower bound; glue. -/
++theorem hasPolyStretch_iff (S : Raw) : S.HasPolyStretch ↔
++    ∃ τ : ℝ, 1 < τ ∧ ∃ κ₀, ∀ κ ≥ κ₀, (S.seedBits κ : ℝ) ^ τ ≤ S.outLen κ := Iff.rfl
++
++/-- Complexity is a bidegree-bounded polynomial on every sampled seed
++[JLS26, Definition 3.3, p. 10]. Dv6 restricts the public class to degree
++and uses one composite polynomial; Dv15 uses Fin variables. -/
++def HasComplexity (S : Raw) (dPub dPriv : ℕ) : Prop :=
++  ∀ κ (I : S.Idx κ), ∃ Q : Fin (S.outLen κ) →
++    MvPolynomial (Fin (S.pubLen κ) ⊕ Fin (S.privLen κ)) (ZMod (S.modulus κ)),
++    (∀ j, pubDegree (Q j) ≤ dPub ∧ privDegree (Q j) ≤ dPriv) ∧
++    (S.sdSamp κ I).AllOutputs fun sd => ∀ j,
++      ((S.eval κ I sd j).toNat : ZMod (S.modulus κ)) =
++        MvPolynomial.eval (Sum.elim sd.1 sd.2) (Q j)
++
++/-- Complexity supplies the stated degree and evaluation witnesses; glue. -/
++theorem hasComplexity_iff (S : Raw) (dPub dPriv : ℕ) :
++    S.HasComplexity dPub dPriv ↔ ∀ κ (I : S.Idx κ), ∃ Q :
++      Fin (S.outLen κ) → MvPolynomial (Fin (S.pubLen κ) ⊕ Fin (S.privLen κ))
++        (ZMod (S.modulus κ)),
++      (∀ j, pubDegree (Q j) ≤ dPub ∧ privDegree (Q j) ≤ dPriv) ∧
++      (S.sdSamp κ I).AllOutputs fun sd => ∀ j,
++        ((S.eval κ I sd j).toNat : ZMod (S.modulus κ)) =
++          MvPolynomial.eval (Sum.elim sd.1 sd.2) (Q j) := Iff.rfl
++
++/-- Eval efficiency is one uniform map with p on its input [JLS26,
++Definition 3.1, p. 10]. Dv9 and Dv18 supply the modulus and defer proof. -/
++def EvalEfficient (S : Raw) : Prop :=
++  ∃ f : List Bool → List Bool, PolyTimeComputable f ∧ ∀ κ I sd,
++    f (NUPPT.advInput κ (pairEncode (S.encPP κ)
++      (pairEncode (S.encIdx κ I) (S.encSeed κ sd)))) = List.ofFn (S.eval κ I sd)
++
++/-- Eval efficiency has its one-map characterization; glue. -/
++theorem evalEfficient_iff (S : Raw) : S.EvalEfficient ↔
++    ∃ f : List Bool → List Bool, PolyTimeComputable f ∧ ∀ κ I sd,
++      f (NUPPT.advInput κ (pairEncode (S.encPP κ)
++        (pairEncode (S.encIdx κ I) (S.encSeed κ sd)))) = List.ofFn (S.eval κ I sd) :=
++  Iff.rfl
++
++/-- The sampler word contains unary κ and pp [JLS26, Definition 3.1,
++p. 10]. Dv17: the shared sampler contract indexes draw types by this word. -/
++def idWord (S : Raw) (κ : ℕ) : List Bool :=
++  pairEncode (S.encPP κ) (List.replicate κ true)
++
++/-- The index-draw word pairs pp and unary κ; glue. -/
++theorem idWord_eq (S : Raw) (κ : ℕ) :
++    S.idWord κ = pairEncode (S.encPP κ) (List.replicate κ true) := rfl
++
++/-- The seed-sampler word contains pp, unary κ and index [JLS26,
++Definition 3.1, p. 10]. Dv17 uses one jointly sampled draw. -/
++def sdWord (S : Raw) (κ : ℕ) (I : S.Idx κ) : List Bool :=
++  pairEncode (S.encPP κ) (pairEncode (List.replicate κ true) (S.encIdx κ I))
++
++/-- The seed-draw word contains its public inputs; glue. -/
++theorem sdWord_eq (S : Raw) (κ : ℕ) (I : S.Idx κ) :
++    S.sdWord κ I = pairEncode (S.encPP κ)
++      (pairEncode (List.replicate κ true) (S.encIdx κ I)) := rfl
++
++/-- Efficient complexity generates the actual degree-bounded output
++polynomials from pp and index [JLS26, Definition 3.3, p. 10]. Dv6 uses
++finite term lists for the composite polynomial; Dv18 defers efficiency. -/
++def HasComplexityEff (S : Raw) (dPub dPriv : ℕ) : Prop :=
++  ∃ f : List Bool → List Bool, PolyTimeComputable f ∧ ∀ κ (I : S.Idx κ),
++    ∃ Q : Fin (S.outLen κ) →
++      MvPolynomial (Fin (S.pubLen κ) ⊕ Fin (S.privLen κ)) (ZMod (S.modulus κ)),
++    (∀ j, ∃ ts : PolyTerms (Fin (S.pubLen κ) ⊕ Fin (S.privLen κ)) (ZMod (S.modulus κ)),
++      f (NUPPT.advInput κ (pairEncode (S.encPP κ)
++        (pairEncode (S.encIdx κ I) (PolyTerms.encFin j)))) =
++        PolyTerms.encTerms (fun z => Candidates.natToList (S.residueBits.eval κ) z.val)
++          (fun v => PolyTerms.encFin (finSumFinEquiv v)) ts ∧ PolyTerms.denote ts = Q j) ∧
++    (∀ j, pubDegree (Q j) ≤ dPub ∧ privDegree (Q j) ≤ dPriv) ∧
++    (S.sdSamp κ I).AllOutputs fun sd => ∀ j,
++      ((S.eval κ I sd j).toNat : ZMod (S.modulus κ)) =
++        MvPolynomial.eval (Sum.elim sd.1 sd.2) (Q j)
++
++/-- Efficient complexity is exactly the term-list generation contract; glue. -/
++theorem hasComplexityEff_iff (S : Raw) (dPub dPriv : ℕ) :
++    S.HasComplexityEff dPub dPriv ↔
++    ∃ f : List Bool → List Bool, PolyTimeComputable f ∧ ∀ κ (I : S.Idx κ),
++      ∃ Q : Fin (S.outLen κ) →
++        MvPolynomial (Fin (S.pubLen κ) ⊕ Fin (S.privLen κ)) (ZMod (S.modulus κ)),
++      (∀ j, ∃ ts : PolyTerms (Fin (S.pubLen κ) ⊕ Fin (S.privLen κ))
++          (ZMod (S.modulus κ)),
++        f (NUPPT.advInput κ (pairEncode (S.encPP κ)
++          (pairEncode (S.encIdx κ I) (PolyTerms.encFin j)))) =
++          PolyTerms.encTerms (fun z => Candidates.natToList (S.residueBits.eval κ) z.val)
++            (fun v => PolyTerms.encFin (finSumFinEquiv v)) ts ∧ PolyTerms.denote ts = Q j) ∧
++      (∀ j, pubDegree (Q j) ≤ dPub ∧ privDegree (Q j) ≤ dPriv) ∧
++      (S.sdSamp κ I).AllOutputs fun sd => ∀ j,
++        ((S.eval κ I sd j).toNat : ZMod (S.modulus κ)) =
++          MvPolynomial.eval (Sum.elim sd.1 sd.2) (Q j) := Iff.rfl
++
++/-- Efficient complexity implies complexity [JLS26, Definition 3.3,
++p. 10]. This is glue forgetting the generation algorithm.
++
++**Proof sketch.** Retain the polynomial, degree, and evaluation witnesses
++and discard the uniform generator and its term-list equations. -/
++theorem HasComplexityEff.hasComplexity {S : Raw} {dPub dPriv : ℕ}
++    (h : S.HasComplexityEff dPub dPriv) : S.HasComplexity dPub dPriv := sorry
++
++end Raw
++end SPRG
++
++/-- A structured-seed primitive carries all honest efficiency fields
++[JLS26, Definition 3.1, p. 10]. Dv17-Dv18 add uniform exact-on-success
++sampler contracts to the raw exact laws. No instance omits efficiency. -/
++structure SPRG extends SPRG.Raw where
++  eval_eff : toRaw.EvalEfficient
++  idSamp_eff : SamplesEfficiently (P := fun _ => Unit)
++    (fun κ _ => toRaw.idWord κ) (fun κ _ => encIdDraw κ)
++    (fun κ _ => encIdx κ) (fun κ _ => idCore κ)
++  sdSamp_eff : SamplesEfficiently (P := toRaw.Idx)
++    (fun κ I => toRaw.sdWord κ I) (fun κ I => encSdDraw κ I)
++    (fun κ _ => toRaw.encSeed κ) (fun κ I => sdCore κ I)
++
++namespace SPRG
++
++/-- Primitive security reads security of its raw bundle [JLS26,
++Definition 3.2, p. 10]. Dv18 keeps algorithm and efficiency layers distinct. -/
++def Secure (S : SPRG) : Prop := S.toRaw.Secure
++
++/-- Primitive security is raw security; glue. -/
++theorem secure_iff (S : SPRG) : S.Secure ↔ S.toRaw.Secure := Iff.rfl
++
++/-- Primitive complexity reads raw complexity [JLS26, Definition 3.3,
++p. 10]. Dv18 adds the honest efficiency fields separately. -/
++def HasComplexity (S : SPRG) (dPub dPriv : ℕ) : Prop :=
++  S.toRaw.HasComplexity dPub dPriv
++
++/-- Primitive complexity is raw complexity; glue. -/
++theorem hasComplexity_iff (S : SPRG) (dPub dPriv : ℕ) :
++    S.HasComplexity dPub dPriv ↔ S.toRaw.HasComplexity dPub dPriv := Iff.rfl
++
++/-- Primitive efficient complexity generates its output polynomials
++[JLS26, Definition 3.3, p. 10]. Dv18 reads the raw predicate. -/
++def HasComplexityEff (S : SPRG) (dPub dPriv : ℕ) : Prop :=
++  S.toRaw.HasComplexityEff dPub dPriv
++
++/-- Primitive efficient complexity is raw efficient complexity; glue. -/
++theorem hasComplexityEff_iff (S : SPRG) (dPub dPriv : ℕ) :
++    S.HasComplexityEff dPub dPriv ↔ S.toRaw.HasComplexityEff dPub dPriv := Iff.rfl
++
++/-- Primitive stretch reads its raw seed-bit count [JLS26, Remark 3.1,
++p. 10]. Dv18 adds efficiency without changing the lengths. -/
++def HasPolyStretch (S : SPRG) : Prop := S.toRaw.HasPolyStretch
++
++/-- Primitive stretch is raw stretch; glue. -/
++theorem hasPolyStretch_iff (S : SPRG) : S.HasPolyStretch ↔ S.toRaw.HasPolyStretch := Iff.rfl
++
++/-- Primitive advantage reads its raw game advantage [JLS26,
++Definition 3.2, p. 10]. Dv18 changes no experiment. -/
++noncomputable def adv (S : SPRG) (A : NUPPT) (κ : ℕ) : ℝ := S.toRaw.adv A κ
++
++/-- Primitive advantage equals raw advantage; glue. -/
++theorem adv_eq (S : SPRG) (A : NUPPT) (κ : ℕ) : S.adv A κ = S.toRaw.adv A κ := rfl
++
++end SPRG
++end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Degree.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Degree.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..89552367388a36ec195717492b5fd60ce9b674d4
+--- /dev/null
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Degree.lean
+@@ -0,0 +1,225 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import Mathlib.RingTheory.MvPolynomial.Homogeneous
++import Mathlib.Algebra.MvPolynomial.Degrees
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Public and private polynomial degrees
++
++## Main definitions
++
++* `pubDegree` counts only public variables in a polynomial on a sum of variable types.
++* `privDegree` counts only private variables.
++
++## Main results
++
++* The degrees satisfy sum and product bounds and are preserved by groupwise renaming.
++* `Internal` supplies the missing weighted-degree closure lemmas.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
++  Assumptions*, J. ACM 73(1), Article 1, February 2026, Definition 3.3 and pp. 16-17.
++* [PS10] R. Pass, A. Shelat, *A Course in Cryptography*, 2010, Definition 26.8.
++
++**Deviations.** Dv6 specializes Definition 3.3 to one polynomial with separately bounded
++public and private degrees. Dv10 uses public degree `d`, as on p. 17, rather than the
++motivating overview's `d + 1` on p. 14. The closure facts are mathematical glue.
++-/
++
++namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
++
++open scoped BigOperators
++
++variable {σ τ σ' τ' R ι : Type*} [CommSemiring R]
++
++/-- Public degree weights public variables by one and private variables by zero,
++`pubDegree q = q.weightedTotalDegree (Sum.elim 1 0)`
++[JLS26, Definition 3.3, p. 10]. Dv6 uses the composite polynomial form. -/
++noncomputable def pubDegree (q : MvPolynomial (σ ⊕ τ) R) : ℕ :=
++  q.weightedTotalDegree (Sum.elim (fun _ : σ => 1) (fun _ : τ => 0))
++
++/-- Public degree equals weighted degree for the public indicator. Glue reader. -/
++theorem pubDegree_eq (q : MvPolynomial (σ ⊕ τ) R) :
++    pubDegree q =
++      q.weightedTotalDegree (Sum.elim (fun _ : σ => 1) (fun _ : τ => 0)) := rfl
++
++/-- Private degree weights public variables by zero and private variables by one,
++`privDegree q = q.weightedTotalDegree (Sum.elim 0 1)`
++[JLS26, Definition 3.3, p. 10]. Dv6 uses the composite polynomial form. -/
++noncomputable def privDegree (q : MvPolynomial (σ ⊕ τ) R) : ℕ :=
++  q.weightedTotalDegree (Sum.elim (fun _ : σ => 0) (fun _ : τ => 1))
++
++/-- Private degree equals weighted degree for the private indicator. Glue reader. -/
++theorem privDegree_eq (q : MvPolynomial (σ ⊕ τ) R) :
++    privDegree q =
++      q.weightedTotalDegree (Sum.elim (fun _ : σ => 0) (fun _ : τ => 1)) := rfl
++
++namespace Internal
++
++/-- Weighted degree of a sum is at most the maximum of the summands' degrees.
++Mathematical glue for [JLS26, §4, p. 17].
++
++**Proof sketch.** Bound the support by the union and use `le_weightedTotalDegree`. -/
++theorem weightedTotalDegree_add_le (w : σ → ℕ) (q r : MvPolynomial σ R) :
++    (q + r).weightedTotalDegree w ≤ max (q.weightedTotalDegree w)
++      (r.weightedTotalDegree w) := sorry
++
++/-- Weighted degree of a product is at most the sum of the factors' degrees.
++Mathematical glue for [JLS26, §4, p. 17].
++
++**Proof sketch.** Split monomials by `support_mul` and add their `Finsupp.weight`s. -/
++theorem weightedTotalDegree_mul_le (w : σ → ℕ) (q r : MvPolynomial σ R) :
++    (q * r).weightedTotalDegree w ≤ q.weightedTotalDegree w +
++      r.weightedTotalDegree w := sorry
++
++/-- A finite sum of polynomials of weighted degree at most `d` has degree at most `d`.
++Mathematical glue for [JLS26, §4, p. 17].
++
++**Proof sketch.** Induct on the finite set using the zero and addition bounds. -/
++theorem weightedTotalDegree_finset_sum_le (w : σ → ℕ) (s : Finset ι)
++    (q : ι → MvPolynomial σ R) (d : ℕ)
++    (h : ∀ i ∈ s, (q i).weightedTotalDegree w ≤ d) :
++    (∑ i ∈ s, q i).weightedTotalDegree w ≤ d := sorry
++
++/-- A finite product has weighted degree at most the sum of the factors' degrees.
++Mathematical glue for [JLS26, §4, p. 17].
++
++**Proof sketch.** Induct on the finite set using the multiplication bound. -/
++theorem weightedTotalDegree_finset_prod_le (w : σ → ℕ) (s : Finset ι)
++    (q : ι → MvPolynomial σ R) :
++    (∏ i ∈ s, q i).weightedTotalDegree w ≤ ∑ i ∈ s, (q i).weightedTotalDegree w := sorry
++
++/-- Constants have weighted degree zero, `weightedTotalDegree w (C a) = 0`.
++Mathematical glue for [JLS26, §4, p. 17].
++
++**Proof sketch.** Only the zero monomial can occur in the support. -/
++theorem weightedTotalDegree_C (w : σ → ℕ) (a : R) :
++    (MvPolynomial.C a : MvPolynomial σ R).weightedTotalDegree w = 0 := sorry
++
++/-- A variable's weighted degree is at most its weight, also over the zero ring.
++Mathematical glue for [JLS26, §4, p. 17].
++
++**Proof sketch.** Bound its singleton support and evaluate the monomial weight. -/
++theorem weightedTotalDegree_X_le (w : σ → ℕ) (i : σ) :
++    (MvPolynomial.X i : MvPolynomial σ R).weightedTotalDegree w ≤ w i := sorry
++
++end Internal
++
++/-- The zero polynomial has public degree zero, `pubDegree 0 = 0`. Mathematical glue.
++
++**Proof sketch.** Use Mathlib's weighted-degree zero lemma and `pubDegree_eq`. -/
++theorem pubDegree_zero : pubDegree (0 : MvPolynomial (σ ⊕ τ) R) = 0 := sorry
++
++/-- The zero polynomial has private degree zero, `privDegree 0 = 0`. Mathematical glue.
++
++**Proof sketch.** Use Mathlib's weighted-degree zero lemma and `privDegree_eq`. -/
++theorem privDegree_zero : privDegree (0 : MvPolynomial (σ ⊕ τ) R) = 0 := sorry
++
++/-- Constants have public degree zero, `pubDegree (C a) = 0`. Mathematical glue.
++
++**Proof sketch.** Specialize `Internal.weightedTotalDegree_C`. -/
++theorem pubDegree_C (a : R) :
++    pubDegree (MvPolynomial.C a : MvPolynomial (σ ⊕ τ) R) = 0 := sorry
++
++/-- Constants have private degree zero, `privDegree (C a) = 0`. Mathematical glue.
++
++**Proof sketch.** Specialize `Internal.weightedTotalDegree_C`. -/
++theorem privDegree_C (a : R) :
++    privDegree (MvPolynomial.C a : MvPolynomial (σ ⊕ τ) R) = 0 := sorry
++
++/-- Public variables have public degree at most one. Mathematical glue.
++
++**Proof sketch.** Specialize the variable bound at the public indicator. -/
++theorem pubDegree_X_inl (i : σ) :
++    pubDegree (MvPolynomial.X (Sum.inl i) : MvPolynomial (σ ⊕ τ) R) ≤ 1 := sorry
++
++/-- Private variables have public degree zero. Mathematical glue.
++
++**Proof sketch.** The public indicator is zero on private variables. -/
++theorem pubDegree_X_inr (i : τ) :
++    pubDegree (MvPolynomial.X (Sum.inr i) : MvPolynomial (σ ⊕ τ) R) = 0 := sorry
++
++/-- Public variables have private degree zero. Mathematical glue.
++
++**Proof sketch.** The private indicator is zero on public variables. -/
++theorem privDegree_X_inl (i : σ) :
++    privDegree (MvPolynomial.X (Sum.inl i) : MvPolynomial (σ ⊕ τ) R) = 0 := sorry
++
++/-- Private variables have private degree at most one. Mathematical glue.
++
++**Proof sketch.** Specialize the variable bound at the private indicator. -/
++theorem privDegree_X_inr (i : τ) :
++    privDegree (MvPolynomial.X (Sum.inr i) : MvPolynomial (σ ⊕ τ) R) ≤ 1 := sorry
++
++/-- Public degree of a sum is at most the maximum of the public degrees. Mathematical glue.
++
++**Proof sketch.** Specialize `Internal.weightedTotalDegree_add_le`. -/
++theorem pubDegree_add_le (q r : MvPolynomial (σ ⊕ τ) R) :
++    pubDegree (q + r) ≤ max (pubDegree q) (pubDegree r) := sorry
++
++/-- Private degree of a sum is at most the maximum of the private degrees. Mathematical glue.
++
++**Proof sketch.** Specialize `Internal.weightedTotalDegree_add_le`. -/
++theorem privDegree_add_le (q r : MvPolynomial (σ ⊕ τ) R) :
++    privDegree (q + r) ≤ max (privDegree q) (privDegree r) := sorry
++
++/-- Public degree of a product is at most the sum of the public degrees. Mathematical glue.
++
++**Proof sketch.** Specialize `Internal.weightedTotalDegree_mul_le`. -/
++theorem pubDegree_mul_le (q r : MvPolynomial (σ ⊕ τ) R) :
++    pubDegree (q * r) ≤ pubDegree q + pubDegree r := sorry
++
++/-- Private degree of a product is at most the sum of the private degrees. Mathematical glue.
++
++**Proof sketch.** Specialize `Internal.weightedTotalDegree_mul_le`. -/
++theorem privDegree_mul_le (q r : MvPolynomial (σ ⊕ τ) R) :
++    privDegree (q * r) ≤ privDegree q + privDegree r := sorry
++
++/-- Finite sums preserve a uniform public-degree bound. Mathematical glue.
++
++**Proof sketch.** Specialize the weighted finite-sum bound. -/
++theorem pubDegree_finset_sum_le (s : Finset ι) (q : ι → MvPolynomial (σ ⊕ τ) R)
++    (d : ℕ) (h : ∀ i ∈ s, pubDegree (q i) ≤ d) :
++    pubDegree (∑ i ∈ s, q i) ≤ d := sorry
++
++/-- Finite sums preserve a uniform private-degree bound. Mathematical glue.
++
++**Proof sketch.** Specialize the weighted finite-sum bound. -/
++theorem privDegree_finset_sum_le (s : Finset ι) (q : ι → MvPolynomial (σ ⊕ τ) R)
++    (d : ℕ) (h : ∀ i ∈ s, privDegree (q i) ≤ d) :
++    privDegree (∑ i ∈ s, q i) ≤ d := sorry
++
++/-- Finite products have public degree at most the sum of the public degrees. Mathematical glue.
++
++**Proof sketch.** Specialize the weighted finite-product bound. -/
++theorem pubDegree_finset_prod_le (s : Finset ι) (q : ι → MvPolynomial (σ ⊕ τ) R) :
++    pubDegree (∏ i ∈ s, q i) ≤ ∑ i ∈ s, pubDegree (q i) := sorry
++
++/-- Finite products have private degree at most the sum of the private degrees. Mathematical glue.
++
++**Proof sketch.** Specialize the weighted finite-product bound. -/
++theorem privDegree_finset_prod_le (s : Finset ι) (q : ι → MvPolynomial (σ ⊕ τ) R) :
++    privDegree (∏ i ∈ s, q i) ≤ ∑ i ∈ s, privDegree (q i) := sorry
++
++/-- Groupwise bijective renaming preserves public degree [JLS26, §4, p. 17].
++Dv15 uses explicit equivalences to transport structured seed indices; mathematical glue.
++
++**Proof sketch.** Use `weightedTotalDegree_rename_of_injective` and the indicators. -/
++theorem pubDegree_rename (e : σ ≃ σ') (f : τ ≃ τ') (q : MvPolynomial (σ ⊕ τ) R) :
++    pubDegree (MvPolynomial.rename (Sum.map e f) q) = pubDegree q := sorry
++
++/-- Groupwise bijective renaming preserves private degree [JLS26, §4, p. 17].
++Dv15 uses explicit equivalences to transport structured seed indices; mathematical glue.
++
++**Proof sketch.** Use `weightedTotalDegree_rename_of_injective` and the indicators. -/
++theorem privDegree_rename (e : σ ≃ σ') (f : τ ≃ τ') (q : MvPolynomial (σ ⊕ τ) R) :
++    privDegree (MvPolynomial.rename (Sum.map e f) q) = privDegree q := sorry
++
++end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..e32a69d5492771b45a5a185a25b4ff1af9c58f9e
+--- /dev/null
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Hybrids.lean
+@@ -0,0 +1,34 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Correctness
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Claim42
++import TCSlib.Cryptography.Games.Hopping
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The JLS security hybrid distributions
++
++## Main definitions
++
++The definitions of this module are part of the Phase A statement checkpoint.
++
++## Main results
++
++The source-derived statements are fixed at checkpoint M0.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, §§2-4.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
++-/
++
++namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
++
++end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..a3b2fbad5f17a7f2448c5f2edffa9666ccc75834
+--- /dev/null
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean
+@@ -0,0 +1,35 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.CoinSampling.Contract
++import TCSlib.Cryptography.LWE.Assumption
++import TCSlib.Cryptography.Foundations.Subexponential
++import TCSlib.Complexity.CircuitComplexity.Uniform
++import Mathlib.Data.Fintype.Pi
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Learning parity with noise over prime fields
++
++## Main definitions
++
++The definitions below give the corresponding structured-seed PRG interfaces.
++
++## Main results
++
++Owner-side readers expose every new definition.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, Sections 2-4.
++-/
++
++namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
++
++end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..efc798b0cf41395dfc607bcbe3c30207417d8147
+--- /dev/null
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean
+@@ -0,0 +1,39 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Defs
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.LPN
++import Mathlib.Data.Nat.Find
++import Mathlib.Data.Nat.Log
++import Mathlib.Algebra.Order.Floor.Ring
++import Mathlib.Analysis.SpecialFunctions.Pow.Real
++import Mathlib.Logic.Equiv.Fin.Basic
++import Mathlib.Algebra.BigOperators.Fin
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Rational parameters and dimensions of the JLS construction
++
++## Main definitions
++
++The definitions of this module are part of the Phase A statement checkpoint.
++
++## Main results
++
++The source-derived statements are fixed at checkpoint M0.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, §§2-4.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
++-/
++
++namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
++
++end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/PolyTerms.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/PolyTerms.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..9398554a8c97f4d3999ba4d018d65c0ecfda7078
+--- /dev/null
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/PolyTerms.lean
+@@ -0,0 +1,93 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Complexity.CircuitComplexity.Uniform
++import Mathlib.Algebra.MvPolynomial.Basic
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Finite lists of polynomial terms
++
++## Main definitions
++
++The definitions below give the corresponding structured-seed PRG interfaces.
++
++## Main results
++
++Owner-side readers expose every new definition.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, Sections 2-4.
++-/
++
++namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
++
++open Turing
++
++/-- A polynomial term list records a coefficient and a finite variable word for each monomial:
++`PolyTerms σ R = List (R × List σ)`. [JLS26, Definition 3.3, p. 10].
++Deviation Dv15: variable words, with repetitions for powers, replace abstract polynomial syntax
++so Phase B can generate an explicit finite string without choosing a support enumeration. -/
++abbrev PolyTerms (σ R : Type) := List (R × List σ)
++
++/-- The term-list type is `List (R × List σ)`; glue. -/
++theorem polyTerms_eq (σ R : Type) : PolyTerms σ R = List (R × List σ) := rfl
++
++namespace PolyTerms
++
++/-- The denotation is the sum of coefficient times variable-word product:
++`denote ts = ∑ t in ts, C t.1 * ∏ i in t.2, X i`.
++[JLS26, Definition 3.3, p. 10]. Deviation Dv15: a finite term list is the generated syntax. -/
++noncomputable def denote {σ R : Type} [CommSemiring R] (ts : PolyTerms σ R) :
++    MvPolynomial σ R :=
++  (ts.map fun t => MvPolynomial.C t.1 *
++    (t.2.map fun i => (MvPolynomial.X i : MvPolynomial σ R)).prod).sum
++
++/-- The denotation is the list sum of the encoded monomials; glue. -/
++theorem denote_eq {σ R : Type} [CommSemiring R] (ts : PolyTerms σ R) :
++    denote ts = (ts.map fun t => MvPolynomial.C t.1 *
++      (t.2.map fun i => (MvPolynomial.X i : MvPolynomial σ R)).prod).sum := rfl
++
++/-- An integer is its sign bit followed by the little-endian bits of its absolute value:
++`encInt z = decide (z < 0) :: Nat.bits z.natAbs`; glue. -/
++def encInt (z : ℤ) : List Bool := decide (z < 0) :: Nat.bits z.natAbs
++
++/-- The signed coefficient encoding is its sign and absolute-value bits; glue. -/
++theorem encInt_eq (z : ℤ) : encInt z = decide (z < 0) :: Nat.bits z.natAbs := rfl
++
++/-- A finite coordinate is encoded by its actual natural value, `encFin i = Nat.bits i.val`;
++glue. No enumeration or choice is used. -/
++def encFin {n : ℕ} (i : Fin n) : List Bool := Nat.bits i.val
++
++/-- The coordinate encoding is `Nat.bits i.val`; glue. -/
++theorem encFin_eq {n : ℕ} (i : Fin n) : encFin i = Nat.bits i.val := rfl
++
++/-- A term list is encoded by the existing one-prefixed, zero-terminated list code, with
++self-delimiting pairs around every coefficient/variable-word term and every variable code.
++[JLS26, Definition 3.3, p. 10]. Deviation Dv15: this fixes the output syntax of efficient
++polynomial generation; it uses `BoolCircuit.encodeList` and no classical enumeration. -/
++def encTerms {σ R : Type} (encR : R → List Bool) (encVar : σ → List Bool)
++    (ts : PolyTerms σ R) : List Bool :=
++  BoolCircuit.encodeList
++    (fun t => pairEncode
++      (pairEncode (encR t.1)
++        (BoolCircuit.encodeList (fun i => pairEncode (encVar i) []) t.2)) []) ts
++
++/-- The term encoding is the explicit nested list-and-pair code; glue. -/
++theorem encTerms_eq {σ R : Type} (encR : R → List Bool) (encVar : σ → List Bool)
++    (ts : PolyTerms σ R) :
++    encTerms encR encVar ts = BoolCircuit.encodeList
++      (fun t => pairEncode
++        (pairEncode (encR t.1)
++          (BoolCircuit.encodeList (fun i => pairEncode (encVar i) []) t.2)) []) ts := rfl
++
++end PolyTerms
++
++end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..9ff6357448253d8221726617523f8c31aee27c90
+--- /dev/null
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean
+@@ -0,0 +1,35 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Params
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets
++import Mathlib.Algebra.MvPolynomial.Rename
++import Mathlib.Algebra.BigOperators.Ring.Finset
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The four JLS evaluation polynomials
++
++## Main definitions
++
++The definitions of this module are part of the Phase A statement checkpoint.
++
++## Main results
++
++The source-derived statements are fixed at checkpoint M0.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, §§2-4.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
++-/
++
++namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
++
++end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..377f18b9e380db488094d8c45cd5d49bbc6d6a63
+--- /dev/null
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean
+@@ -0,0 +1,33 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Hybrids
++import TCSlib.Cryptography.Asymptotic.Realization
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The explicit advice-taking JLS LPN reduction
++
++## Main definitions
++
++The definitions of this module are part of the Phase A statement checkpoint.
++
++## Main results
++
++The source-derived statements are fixed at checkpoint M0.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, §§2-4.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
++-/
++
++namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
++
++end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..af9a176e8ab5d3c77f071bbe67b2adbd8580f349
+--- /dev/null
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG.lean
+@@ -0,0 +1,33 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Hybrids
++import TCSlib.Cryptography.Asymptotic.Realization
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The explicit advice-taking JLS Boolean PRG reduction
++
++## Main definitions
++
++The definitions of this module are part of the Phase A statement checkpoint.
++
++## Main results
++
++The source-derived statements are fixed at checkpoint M0.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, §§2-4.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
++-/
++
++namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
++
++end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Samplers.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Samplers.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..2330215df0bd86ba4364d712e92245834d717d3d
+--- /dev/null
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Samplers.lean
+@@ -0,0 +1,33 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Polys
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.SparseFactor
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Exact-law draws and deterministic JLS seed cores
++
++## Main definitions
++
++The definitions of this module are part of the Phase A statement checkpoint.
++
++## Main results
++
++The source-derived statements are fixed at checkpoint M0.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, §§2-4.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
++-/
++
++namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
++
++end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..0b0828672a4d0324a363773b2217c9219ee924dd
+--- /dev/null
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean
+@@ -0,0 +1,34 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.LPN
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Reductions.PRG
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Stretch
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Explicit JLS security inequalities and their corollaries
++
++## Main definitions
++
++The definitions of this module are part of the Phase A statement checkpoint.
++
++## Main results
++
++The source-derived statements are fixed at checkpoint M0.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, §§2-4.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
++-/
++
++namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
++
++end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/SparseFactor.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/SparseFactor.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..6cb07a022d924692c3884074ad0caf48fd4b0d0e
+--- /dev/null
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/SparseFactor.lean
+@@ -0,0 +1,150 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import Mathlib.Data.List.FinRange
++import Mathlib.Data.Matrix.Mul
++import Mathlib.Data.Finset.Card
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Deterministic sparse matrix factorization
++
++## Main definitions
++
++* `sparseEntries` lists nonzero matrix positions in row-major order.
++* `sparseFactor` places one nonzero entry in each factor slot, padding unused slots by zero.
++
++## Main results
++
++* `sparseFactor_mul` reconstructs a matrix with at most `t` nonzero entries.
++* `sparseFactor_mul_of_card_le` reads the sparsity hypothesis as a finite cardinal bound.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
++  Assumptions*, J. ACM 73(1), Article 1, February 2026, sampling algorithm 1SdSamp, p. 16.
++* [PS10] R. Pass, A. Shelat, *A Course in Cryptography*, 2010, Definition 26.8.
++
++**Deviation.** The paper uses the existence of factors for a matrix with at most `t`
++nonzero entries. We specify the factors deterministically: list positions in row-major
++order, put the entry value in its row in a left column, and put one in its column in the
++corresponding right row. This works over any semiring and uses no rank theory or
++choice-based enumeration. These are raw deterministic functions; efficiency is a later
++core-target obligation, not a theorem of this module.
++-/
++
++namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
++
++variable {rows cols : ℕ} {R : Type*} [Semiring R] [DecidableEq R]
++
++/-- Nonzero positions are listed in row-major order,
++`sparseEntries M = [(i,j) in Fin rows × Fin cols | M i j ≠ 0]`
++[JLS26, sampling algorithm 1SdSamp, p. 16]. The order fixes the paper's unspecified factors;
++`List.finRange` avoids a choice-based finite enumeration. -/
++def sparseEntries (M : Matrix (Fin rows) (Fin cols) R) : List (Fin rows × Fin cols) :=
++  ((List.finRange rows).flatMap (fun i => (List.finRange cols).map (fun j => (i, j)))).filter
++    (fun c => decide (M c.1 c.2 ≠ 0))
++
++/-- Sparse positions are the row-major list filtered by nonzero entries. Glue reader. -/
++theorem sparseEntries_eq (M : Matrix (Fin rows) (Fin cols) R) :
++    sparseEntries M =
++      ((List.finRange rows).flatMap (fun i => (List.finRange cols).map (fun j => (i, j)))).filter
++        (fun c => decide (M c.1 c.2 ≠ 0)) := rfl
++
++/-- The left factor puts the `k`th nonzero entry in its row in column `k`,
++with zero for missing slots [JLS26, sampling algorithm 1SdSamp, p. 16].
++The row-major order makes the paper's factor choice deterministic. -/
++def sparseLeft (M : Matrix (Fin rows) (Fin cols) R) (t : ℕ) :
++    Matrix (Fin rows) (Fin t) R :=
++  fun i k => match (sparseEntries M)[k.val]? with
++    | none => 0
++    | some c => if i = c.1 then M c.1 c.2 else 0
++
++/-- The left factor reads a nonzero position by its slot and writes its entry value. Glue reader. -/
++theorem sparseLeft_eq (M : Matrix (Fin rows) (Fin cols) R) (t : ℕ) :
++    sparseLeft M t = fun i k => match (sparseEntries M)[k.val]? with
++      | none => 0
++      | some c => if i = c.1 then M c.1 c.2 else 0 := rfl
++
++/-- The right factor puts one at the column of the `k`th nonzero entry in row `k`,
++with zero for missing slots [JLS26, sampling algorithm 1SdSamp, p. 16].
++The row-major order makes the paper's factor choice deterministic. -/
++def sparseRight (M : Matrix (Fin rows) (Fin cols) R) (t : ℕ) :
++    Matrix (Fin t) (Fin cols) R :=
++  fun k j => match (sparseEntries M)[k.val]? with
++    | none => 0
++    | some c => if j = c.2 then 1 else 0
++
++/-- The right factor reads a nonzero position by its slot and selects its column. Glue reader. -/
++theorem sparseRight_eq (M : Matrix (Fin rows) (Fin cols) R) (t : ℕ) :
++    sparseRight M t = fun k j => match (sparseEntries M)[k.val]? with
++      | none => 0
++      | some c => if j = c.2 then 1 else 0 := rfl
++
++/-- Sparse factors are the deterministic pair `(sparseLeft M t, sparseRight M t)`
++[JLS26, sampling algorithm 1SdSamp, p. 16]. No existence witness or rank decomposition
++is selected; the raw functions are defined even when the sparsity bound fails. -/
++def sparseFactor (M : Matrix (Fin rows) (Fin cols) R) (t : ℕ) :
++    Matrix (Fin rows) (Fin t) R × Matrix (Fin t) (Fin cols) R :=
++  (sparseLeft M t, sparseRight M t)
++
++/-- The sparse-factor pair consists of its explicit left and right factors. Glue reader. -/
++theorem sparseFactor_eq (M : Matrix (Fin rows) (Fin cols) R) (t : ℕ) :
++    sparseFactor M t = (sparseLeft M t, sparseRight M t) := rfl
++
++/-- The first sparse factor is the explicit left matrix. Glue projection reader. -/
++theorem sparseFactor_fst (M : Matrix (Fin rows) (Fin cols) R) (t : ℕ) :
++    (sparseFactor M t).1 = sparseLeft M t := rfl
++
++/-- The second sparse factor is the explicit right matrix. Glue projection reader. -/
++theorem sparseFactor_snd (M : Matrix (Fin rows) (Fin cols) R) (t : ℕ) :
++    (sparseFactor M t).2 = sparseRight M t := rfl
++
++/-- Nonzero positions occur exactly once in the sparse list
++[JLS26, sampling algorithm 1SdSamp, p. 16]. This is mathematical glue for the chosen factors.
++
++**Proof sketch.** The row-major list is a product of duplicate-free finite ranges;
++filtering preserves duplicate-freeness. -/
++theorem sparseEntries_nodup (M : Matrix (Fin rows) (Fin cols) R) :
++    (sparseEntries M).Nodup := sorry
++
++/-- A position belongs to the sparse list exactly when its entry is nonzero
++[JLS26, sampling algorithm 1SdSamp, p. 16]. This is mathematical glue.
++
++**Proof sketch.** Every finite row and column occurs in `List.finRange`; use the filter test. -/
++theorem mem_sparseEntries_iff (M : Matrix (Fin rows) (Fin cols) R)
++    (c : Fin rows × Fin cols) : c ∈ sparseEntries M ↔ M c.1 c.2 ≠ 0 := sorry
++
++/-- The sparse list's length equals the number of nonzero matrix positions
++[JLS26, sampling algorithm 1SdSamp, p. 16]. This is mathematical glue.
++
++**Proof sketch.** Use duplicate-freeness and `mem_sparseEntries_iff` to identify the finite set. -/
++theorem sparseEntries_length_eq_card (M : Matrix (Fin rows) (Fin cols) R) :
++    (sparseEntries M).length =
++      (Finset.univ.filter (fun c : Fin rows × Fin cols => M c.1 c.2 ≠ 0)).card := sorry
++
++/-- At most `t` nonzero entries suffice for the explicit factors to multiply to the matrix,
++`(sparseFactor M t).1 * (sparseFactor M t).2 = M`
++[JLS26, sampling algorithm 1SdSamp, p. 16]. This constructive factorization replaces the
++paper's rank-existence justification without changing its factors' dimensions.
++
++**Proof sketch.** Expand matrix multiplication. For each slot, the two factors produce
++one entry at its unique row and column. Each nonzero entry has exactly one slot by
++`sparseEntries_nodup`, and every slot beyond the list length contributes zero. -/
++theorem sparseFactor_mul (M : Matrix (Fin rows) (Fin cols) R) (t : ℕ)
++    (h : (sparseEntries M).length ≤ t) :
++    (sparseFactor M t).1 * (sparseFactor M t).2 = M := sorry
++
++/-- A finite cardinal bound on nonzero entries implies reconstruction by the sparse factors
++[JLS26, sampling algorithm 1SdSamp, p. 16]. This is mathematical glue for bucket matrices.
++
++**Proof sketch.** Translate cardinality to sparse-list length, then use `sparseFactor_mul`. -/
++theorem sparseFactor_mul_of_card_le (M : Matrix (Fin rows) (Fin cols) R) (t : ℕ)
++    (h : (Finset.univ.filter (fun c : Fin rows × Fin cols => M c.1 c.2 ≠ 0)).card ≤ t) :
++    (sparseFactor M t).1 * (sparseFactor M t).2 = M := sorry
++
++end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..bdae8da29010fee9fd7220f3d3e7220a6900ff1a
+--- /dev/null
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean
+@@ -0,0 +1,33 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Correctness
++import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Polynomial stretch of the JLS construction
++
++## Main definitions
++
++The definitions of this module are part of the Phase A statement checkpoint.
++
++## Main results
++
++The source-derived statements are fixed at checkpoint M0.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, §§2-4.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
++-/
++
++namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
++
++end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..3b80720d8c8451f7130233503c47a999995a76d1
+--- /dev/null
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean
+@@ -0,0 +1,33 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Security
++import TCSlib.Cryptography.CoinSampling.Contract
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Phase B targets, realisability links, and primitive assembly
++
++## Main definitions
++
++The definitions of this module are part of the Phase A statement checkpoint.
++
++## Main results
++
++The source-derived statements are fixed at checkpoint M0.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, §§2-4.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
++-/
++
++namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
++
++end TCSlib.Cryptography.Obfuscation.StructuredSeed

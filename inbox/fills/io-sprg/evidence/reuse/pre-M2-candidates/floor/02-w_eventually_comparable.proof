@@ -1,0 +1,13 @@
+by
+  filter_upwards [Filter.eventually_ge_atTop (1 : ℕ)] with κ hκ
+  rw [P.w_eq, P.noiseWidth_eq, P.ℓ_eq, Nat.cast_pow,
+    ← Real.rpow_natCast_mul (Nat.cast_nonneg κ) P.E ((P.δ : ℝ) / 2)]
+  have ha : 0 ≤ (P.E : ℝ) * ((P.δ : ℝ) / 2) :=
+    mul_nonneg (Nat.cast_nonneg P.E)
+      (div_nonneg (Rat.cast_nonneg.mpr P.δ_pos.le) zero_le_two)
+  have hx : 1 ≤ (κ : ℝ) ^ ((P.E : ℝ) * ((P.δ : ℝ) / 2)) :=
+    Real.one_le_rpow (Nat.one_le_cast.mpr hκ) ha
+  have hf : 1 ≤ ⌊(κ : ℝ) ^ ((P.E : ℝ) * ((P.δ : ℝ) / 2))⌋₊ :=
+    (Nat.one_le_floor_iff _).2 hx
+  rw [max_eq_right hf]
+  exact ⟨(Nat.div_two_lt_floor hx).le, Nat.floor_le (zero_le_one.trans hx)⟩

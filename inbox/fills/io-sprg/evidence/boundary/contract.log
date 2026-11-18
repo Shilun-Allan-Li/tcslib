@@ -1,0 +1,39 @@
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean:113:[JLS26, IdSamp' and SdSamp', pp. 15-16]. Dv17-Dv18 use the shared CoreComputable
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean:117:  CoreComputable (P := PrimeParam)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean:120:    CoreComputable (P := P.SdParam)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean:127:  CoreComputable (P := PrimeParam)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean:130:    CoreComputable (P := P.SdParam)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean:176:[JLS26, IdSamp' and SdSamp', pp. 15-16]. Dv17-Dv18 use the shared DrawSamplable halves.
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean:180:  DrawSamplable (P := PrimeParam)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean:182:    DrawSamplable (P := P.SdParam)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean:187:  DrawSamplable (P := PrimeParam)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean:189:    DrawSamplable (P := P.SdParam)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean:198:  SamplesEfficiently (P := fun _ => PrimeSchedule)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean:206:  SamplesEfficiently (P := fun _ => PrimeSchedule)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean:227:Dv16 uses the shared layout-coin RealizesOn predicate and its public link theorem.
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean:244:and join them with SamplesEfficiently.intro, using the raw field readers. -/
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean:247:    SamplesEfficiently (P := fun _ => Unit)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean:259:    SamplesEfficiently (P := (jlsSPRG_raw P π).Idx)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Targets.lean:271:    SamplesEfficiently (P := fun _ => Unit)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean:43:the shared RealizesOn constrains only encoded challenges and layout-length coins,
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean:65:        BL.RealizesOn (P.lpnEnc π) (A.coins.subst .var)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean:67:        BG.RealizesOn P.prgEnc (A.coins.subst .var)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean:76:Dv16: RealizesOn constrains only encoded challenges and layout-length coins, so its
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean:87:        BL.RealizesOn (P.lpnEnc π) (A.coins.subst .var)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Security.lean:89:        BG.RealizesOn P.prgEnc (A.coins.subst .var)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG.lean:40:RealizesOn contract. This module constructs neither a machine nor a sampler.
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG.lean:282:obligation, linked to preprocessing targets later. Dv16: the shared RealizesOn constrains
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG.lean:288:    B.RealizesOn P.prgEnc (A.coins.subst .var)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG.lean:294:      B.RealizesOn P.prgEnc (A.coins.subst .var)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG.lean:334:RealizesOn's published readers and remove the unused coin suffix using the existing prefix
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG.lean:338:      B.RealizesOn P.prgEnc (A.coins.subst .var)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean:38:casts and equivalences. Dv16 reuses shared `RealizesOn`, which constrains encoded challenges
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean:390:Dv16 uses the shared, layout-length-only RealizesOn; more realisers are admitted, so this
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean:401:      B.RealizesOn (P.lpnEnc π) (A.coins.subst .var)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean:411:here. Dv16 uses shared RealizesOn on encoded challenges and layout-length coins only,
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean:415:    B.RealizesOn (P.lpnEnc π) (A.coins.subst .var)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/LPN.lean:423:        B.RealizesOn (P.lpnEnc π) (A.coins.subst .var)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean:395:  idSamp_eff : SamplesEfficiently (P := fun _ => Unit)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean:398:  sdSamp_eff : SamplesEfficiently (P := toRaw.Idx)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean:97:  idSamp_eff : CoinSampling.SamplesEfficiently
+TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:399:  sample_eff : CoinSampling.SamplesEfficiently

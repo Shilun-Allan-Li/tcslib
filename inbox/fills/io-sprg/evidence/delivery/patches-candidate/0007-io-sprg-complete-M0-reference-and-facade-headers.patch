@@ -1,0 +1,146 @@
+From b80bfb9011f7bf39ec1548467c27dda102e2d0e9 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 02:30:55 -0800
+Subject: [PATCH 7/7] io-sprg: complete M0 reference and facade headers
+
+---
+ TCSlib/Cryptography/Obfuscation.lean                      | 8 ++++++++
+ TCSlib/Cryptography/Obfuscation/StructuredSeed.lean       | 8 ++++++++
+ .../Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean  | 2 ++
+ .../Obfuscation/StructuredSeed/Claim42/Load.lean          | 2 ++
+ .../Cryptography/Obfuscation/StructuredSeed/Encoding.lean | 2 ++
+ TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean   | 2 ++
+ .../Obfuscation/StructuredSeed/PolyTerms.lean             | 2 ++
+ .../Obfuscation/StructuredSeed/Reductions/PRG.lean        | 2 ++
+ .../Cryptography/Obfuscation/StructuredSeed/Stretch.lean  | 2 ++
+ 9 files changed, 30 insertions(+)
+
+diff --git a/TCSlib/Cryptography/Obfuscation.lean b/TCSlib/Cryptography/Obfuscation.lean
+index 2d244a57abd67187549558e4ced97300bd798f31..33bb61ea44143a5c920a961b8dba96ffa115489b 100644
+--- a/TCSlib/Cryptography/Obfuscation.lean
++++ b/TCSlib/Cryptography/Obfuscation.lean
+@@ -15,6 +15,14 @@ set_option autoImplicit false
+ 
+ * `StructuredSeed`: the JLS structured-seed PRG construction and security.
+ 
++## Main definitions
++
++The imported modules provide the raw algorithm bundles, efficient primitives and Phase B targets.
++
++## Main results
++
++The imported modules state correctness, stretch and security for the structured-seed construction.
++
+ ## References
+ 
+ * [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed.lean
+index 58232df56ccb200186f819bf5a2278571c22d67e..89468646187c04ab787f262c040698fdb330c1a5 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed.lean
+@@ -53,6 +53,14 @@ set_option autoImplicit false
+ * `Security`: the security component.
+ * `Targets`: the targets component.
+ 
++## Main definitions
++
++The imported modules provide the raw algorithm bundles, efficient primitives and Phase B targets.
++
++## Main results
++
++The imported modules state correctness, stretch and security for the structured-seed construction.
++
+ ## References
+ 
+ * [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean
+index 46124d7dff1a53305f2f5a852f8d6a53c6c241f8..96732802f08830bef1a98bbec6c3b96966134dfb 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/BoolPRG.lean
+@@ -33,6 +33,8 @@ Owner-side readers expose every new definition.
+ 
+ * [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
+   Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, Sections 2-4.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
+ -/
+ 
+ namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean
+index 548827773d403d2859beef3fbde07bd5b58d63c2..1566fa312c7a805ddad6e44fcf3d15425b88ab26 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean
+@@ -38,6 +38,8 @@ Disclosed integral refinement: a load strictly above t contains t+1 distinct ele
+ so the exact finite bounds use t+1 rather than the paper's weaker t-element bound.
+ The bounds include t=0 and oversized thresholds. Dv7's eventual construction-level
+ estimates are derived later; these finite combinatorial bounds hold at every size.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
+ -/
+ 
+ namespace TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean
+index b1d0b63bc4697649f89d723db7a225ba0332af67..f60820fd5cbfd913ae67771c218bca7a6dffea92 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Encoding.lean
+@@ -36,6 +36,8 @@ Disclosed modular refinement: the encoding portion of `Samplers` has its own mod
+ Dv1 and Dv3 fix the single-parameter dimensions and exact rational noise schedule;
+ Dv15 and Dv17 use explicit finite coordinates and one exact product draw. SP-W1 keeps
+ rational delta as data. No core, sampler construction, or efficiency proof is defined here.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
+ -/
+ 
+ namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean
+index c94d3254e14e4395804b0e95b140afe1bd95b724..6a08e15d9575930f2705f8904c2603b50a8583a1 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean
+@@ -34,6 +34,8 @@ set_option autoImplicit false
+ 
+ * [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
+   Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, Sections 2-4.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
+ -/
+ 
+ namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/PolyTerms.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/PolyTerms.lean
+index 3ddcd53bac5323cab299a53e2b9578061dd30d4b..836343291c99be44561ec4e63fc5c174a2018d7d 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/PolyTerms.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/PolyTerms.lean
+@@ -29,6 +29,8 @@ Owner-side readers expose every new definition.
+ 
+ * [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
+   Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, Sections 2-4.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
+ -/
+ 
+ namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG.lean
+index 0d8f6e3202996a5cd825e2fb77cee59f48e79673..d6ab15820c4a18b9f64943114dade1c26f806a67 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Reductions/PRG.lean
+@@ -38,6 +38,8 @@ from advice. Dv12 hardwires averaged-out values instead of sampling them in the
+ reduction. Dv14 separates the function from its Phase B machine realisability target;
+ Dv15 fixes explicit finite coordinates, and Dv16 uses the shared layout-length
+ RealizesOn contract. This module constructs neither a machine nor a sampler.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
+ -/
+ 
+ namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean
+index 6571282156bcb7da5da05ee2e325d9f24e4647c6..c9750c0339257b6a147ac1fe8b3728867bf9a3a5 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean
+@@ -34,6 +34,8 @@ Dv1 fixes one security parameter and a polynomial input-length schedule. Dv2 cou
+ field-vector payload bits; Dv3 fixes exact integral rounding; Dv5 uses the Boolean
+ stretch lower bound. The explicit threshold below is convention C10. SP-W1 uses
+ rational delta as construction data, coerced to real values in these analytic bounds.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
+ -/
+ 
+ namespace TCSlib.Cryptography.Obfuscation.StructuredSeed

@@ -1,0 +1,68 @@
+evidence/probes/io_sprg_m0_final/controls_coe_B/ControlU_B_Cryptography_Obfuscation_StructuredSeed_Defs.lean:90:2: error: Type mismatch
+  fun {G} {d} R cLoc => Iff.refl (R.HasLocality cLoc)
+has type
+  ∀ {G : TCSlib.Cryptography.Obfuscation.StructuredSeed.BoolPRG} {d : ℕ} (R : G.MultilinearRep d) (cLoc : ℕ),
+    R.HasLocality cLoc ↔ R.HasLocality cLoc
+but is expected to have type
+  ∀ (R : G✝.MultilinearRep d✝) (cLoc : ℕ),
+    R.HasLocality cLoc ↔ ∀ (n : ℕ) (I : G✝.Idx n) (j : Fin (G✝.outLen n)), (R.poly n I j).vars.card ≤ cLoc
+the following variables have been introduced by the implicit lambda feature
+  G✝ : TCSlib.Cryptography.Obfuscation.StructuredSeed.BoolPRG
+  d✝ : ℕ
+you can disable implicit lambdas using `@` or writing a lambda expression with `{}` or `[]` binder annotations.
+evidence/probes/io_sprg_m0_final/controls_coe_B/ControlU_B_Cryptography_Obfuscation_StructuredSeed_Defs.lean:96:2: error: Type mismatch
+  fun {G} {d} R => Iff.refl R.TermsEfficient
+has type
+  ∀ {G : TCSlib.Cryptography.Obfuscation.StructuredSeed.BoolPRG} {d : ℕ} (R : G.MultilinearRep d),
+    R.TermsEfficient ↔ R.TermsEfficient
+but is expected to have type
+  ∀ (R : G✝.MultilinearRep d✝),
+    R.TermsEfficient ↔
+      ∃ f,
+        Complexity.PolyTimeComputable f ∧
+          ∀ (n : ℕ) (I : G✝.Idx n) (j : Fin (G✝.outLen n)),
+            ∃ ts,
+              f
+                    (Complexity.NUPPT.advInput n
+                      (Turing.pairEncode (G✝.encIdx n I)
+                        (TCSlib.Cryptography.Obfuscation.StructuredSeed.PolyTerms.encFin j))) =
+                  TCSlib.Cryptography.Obfuscation.StructuredSeed.PolyTerms.encTerms
+                    TCSlib.Cryptography.Obfuscation.StructuredSeed.PolyTerms.encInt
+                    TCSlib.Cryptography.Obfuscation.StructuredSeed.PolyTerms.encFin ts ∧
+                ts.denote = R.poly n I j
+the following variables have been introduced by the implicit lambda feature
+  G✝ : TCSlib.Cryptography.Obfuscation.StructuredSeed.BoolPRG
+  d✝ : ℕ
+you can disable implicit lambdas using `@` or writing a lambda expression with `{}` or `[]` binder annotations.
+evidence/probes/io_sprg_m0_final/controls_coe_B/ControlU_B_Cryptography_Obfuscation_StructuredSeed_Defs.lean:102:2: error: Type mismatch
+  fun {σ} {τ} {R} [CommSemiring R] q => Eq.refl (TCSlib.Cryptography.Obfuscation.StructuredSeed.pubDegree q)
+has type
+  ∀ {σ : Type ?u.1629} {τ : Type ?u.1628} {R : Type ?u.1627} [inst : CommSemiring R] (q : MvPolynomial (σ ⊕ τ) R),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.pubDegree q =
+      TCSlib.Cryptography.Obfuscation.StructuredSeed.pubDegree q
+but is expected to have type
+  ∀ (q : MvPolynomial (σ✝ ⊕ τ✝) R✝),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.pubDegree q =
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 1) fun x => 0) q
+the following variables have been introduced by the implicit lambda feature
+  σ✝ : Type u_1
+  τ✝ : Type u_2
+  R✝ : Type u_3
+  inst✝ : CommSemiring R✝
+you can disable implicit lambdas using `@` or writing a lambda expression with `{}` or `[]` binder annotations.
+evidence/probes/io_sprg_m0_final/controls_coe_B/ControlU_B_Cryptography_Obfuscation_StructuredSeed_Defs.lean:108:2: error: Type mismatch
+  fun {σ} {τ} {R} [CommSemiring R] q => Eq.refl (TCSlib.Cryptography.Obfuscation.StructuredSeed.privDegree q)
+has type
+  ∀ {σ : Type ?u.1639} {τ : Type ?u.1638} {R : Type ?u.1637} [inst : CommSemiring R] (q : MvPolynomial (σ ⊕ τ) R),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.privDegree q =
+      TCSlib.Cryptography.Obfuscation.StructuredSeed.privDegree q
+but is expected to have type
+  ∀ (q : MvPolynomial (σ✝ ⊕ τ✝) R✝),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.privDegree q =
+      MvPolynomial.weightedTotalDegree (Sum.elim (fun x => 0) fun x => 1) q
+the following variables have been introduced by the implicit lambda feature
+  σ✝ : Type u_1
+  τ✝ : Type u_2
+  R✝ : Type u_3
+  inst✝ : CommSemiring R✝
+you can disable implicit lambdas using `@` or writing a lambda expression with `{}` or `[]` binder annotations.

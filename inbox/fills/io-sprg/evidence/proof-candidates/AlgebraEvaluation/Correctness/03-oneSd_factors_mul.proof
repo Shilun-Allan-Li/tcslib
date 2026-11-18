@@ -1,0 +1,26 @@
+by
+  classical
+  let e : Fin (P.n κ) → ZMod pp.p := fun i => P.noiseValue κ pp (r i)
+  let M := Buckets.bucketMatrix I.2.1 (P.rc κ) (P.corr κ pp I σ e) b
+  have hflag : P.oneFlag κ pp I e = true
+  · simpa only [P.oneSd_flag] using h
+  have hb := P.oneFlag_bounds κ pp I e hflag
+  have hcorr : ∀ j, j ∉ P.badSet κ pp I e → P.corr κ pp I σ e j = 0 :=
+    fun j hj => P.corr_zero_of_not_bad κ pp I σ e j hj
+  have hcard := (Buckets.bucketMatrix_nonzero_card_le I.2.1 (P.rc κ)
+    (P.corr κ pp I σ e) (P.badSet κ pp I e) hcorr b).trans (hb.2.2 b)
+  have hfactor := sparseFactor_mul_of_card_le M (P.t κ) hcard
+  have hu : (Matrix.of (fun row a =>
+      (P.oneSd κ pp I σ s r).priv (P.uCoord κ b row a)) :
+        Matrix (Fin (P.rc κ)) (Fin (P.t κ)) (ZMod pp.p)) =
+      (sparseFactor M (P.t κ)).1
+  · ext row a
+    simp [P.oneSd_priv, P.uCoord_eq, hflag]
+  have hv : (Matrix.of (fun a col =>
+      (P.oneSd κ pp I σ s r).priv (P.vCoord κ b a col)) :
+        Matrix (Fin (P.t κ)) (Fin (P.rc κ)) (ZMod pp.p)) =
+      (sparseFactor M (P.t κ)).2
+  · ext a col
+    simp [P.oneSd_priv, P.vCoord_eq, hflag]
+  rw [hu, hv]
+  exact hfactor

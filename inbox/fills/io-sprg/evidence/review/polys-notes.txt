@@ -1,0 +1,76 @@
+Polys.lean M0 notes (design_audit owner)
+File staged at /tmp/io-sprg-math-primitives/Polys.lean, for root to copy.
+398 lines, maximum width100,17 definitions/abbreviations and17 rfl readers,
+10 theorem statements with term sorry and Proof sketches. No tactic blocks.
+No Lean/lake/cache/build/git commit/push run by this subagent.
+
+Source fidelity
+Read verified source PDF p17 in place, and inspected root's rendered page17 image.
+The image/text shows Equation(3): tensor lifting to G1, quadratic UV correction to
+G2, then Equation(4) flag multiplication using precomputed flag*S coordinates.
+Page16 defines G4 as the sum of G3 over instances, and stores (flag,S,flag*S).
+Our first tensor half and U are read from the scaled copy in G3; the second half
+and V remain unscaled. Thus each summand stays quadratic in private variables.
+G4 never multiplies by the public error flag. Public degree d follows p17,
+not the motivating p14 degree d+1 wording.
+
+Deviations disclosed in module/docs
+Dv3 transposed A (we use A i a, then b_i=sum_a A i a*s_a+x_i).
+Dv6 composite public/private polynomial degree.
+Dv10 public degree d, private degree2.
+Dv15 explicit Fin renaming via Equiv.sumCongr pubEquiv privEquiv.
+Monomial support is increasingly sorted, padded with none (constant1), and split
+at D. No Finset.toList, Fintype.equivFin, or Classical.choose.
+Optional bucket placement correction is zero if indexMap is none, including the
+empty-grid boundary. Successful bucket placements are unchanged.
+The root's SP-W1 rational-delta Params is used without computing real parameters.
+
+Names and architecture
+Internal.monomialSlot reads sorted support; its two_halves_card_le helper bounds
+actual public degree by support cardinality rather than2D (which could exceed d).
+Params.Var/StructPoly are reducible coordinate/type notation with readers.
+outputIndex uses Fin.cast (P.m_eq kappa), essential for canonical Rule10 seals:
+using j:Fin(P.m kappa) directly as a PRG output index would reduce a foreign def.
+bVar/sVar and uCoord/vCoord expose the structured variable layout.
+linearCoeff computes constants -A(i,a), the public variable b_i, or padding.
+halfForm explicitly sums over Fin D -> Fin(ell+1), using product tensor expansion.
+prgPoly copy selects scaled first half/unscaled second half; G1=prgPoly false.
+correctionPoly copy selects scaled U/unscaled V; G2=G1+correctionPoly false.
+G3=prgPoly true+correctionPoly true.
+G4struct=sum_k G3; G4 explicitly renames by pubEquiv/privEquiv.
+
+Correctness API
+halfForm_eval assumes public b=A*s+x and matching unscaled tensor coordinates,
+and concludes the product of x coordinates at its nonpadding slots.
+G1_eval under those hypotheses concludes eval2 of the original integer PRG
+representation with Int.castRingHom into the input prime field.
+G3_eval_of_scaled assumes the private true copy equals flag times false copy
+at every SVar, and concludes eval G3=flag*eval G2 for any field flag.
+The root-owned Correctness module must relate actual seed assignments to these
+hypotheses, prove correction matrix reconstruction when flag=true, and sum flags.
+For packed/structured evaluations, reuse Mathlib.eval_rename directly with G4_eq;
+no redundant specialized reproof was introduced here.
+
+Searches and reuse
+Text searches in pinned worktree TCSlib and Mathlib source at
+/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/.lake/packages/mathlib
+(the exact pinned Mathlib HEAD029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e,
+verified by root; no reuse of its build artifacts).
+Searched names monomialSlot,halfForm,linearCoeff,G4struct,def G1-G4: no existing
+relevant declaration. Searched support.sort/Finset.sort construction examples.
+Read Finset.Sort: sort,sort_nodup,mem_sort,length_sort (reuse in slot proofs).
+Read prod_univ_sum (MR) for halfForm_eval's tensor expansion.
+Read MvPolynomial.eval_rename (MR),eval_map,eval2_eq_eval_map,eval2Hom_congr.
+Read totalDegree support bounds; use Params.R multilinearity and totalDegree
+fields, then Internal.monomialSlot_two_halves_card_le for the public degree.
+All public/private degree sum/product/renaming facts must be reused from Degree.
+No generic polynomial evaluation, renaming, degree, tensor-library, or probabilistic
+lemma is re-created by this file.
+exact?/apply? scratch probes remain ROOT ONLY and pending; subagents may not run Lean.
+
+New direct Mathlib roots needing order/mathlib-roots recomputation
+Mathlib.Data.Finset.Sort
+Mathlib.Algebra.MvPolynomial.Eval
+Mathlib.Algebra.MvPolynomial.Rename
+Mathlib.Algebra.BigOperators.Ring.Finset
+TCSlib imports Params,Buckets,Degree only; no sampling/efficiency module direct import.

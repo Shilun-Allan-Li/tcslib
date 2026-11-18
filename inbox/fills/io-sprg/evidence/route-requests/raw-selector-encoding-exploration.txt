@@ -1,0 +1,33 @@
+Pre-M0 encoding exploration (no source change selected)
+
+The fixed-width BoolCircuit list helper covers the construction and advice lists,
+but Raw LPN.encDraw uses variable Nat.bits selector blocks. We considered padding
+selectors to Nat.log2(noiseDen)+1 bits; this would fit every selector and preserve
+logarithmic worst-case width. Root retained the existing mathematically sound
+Nat.bits encoding, avoiding a representation change solely to simplify a proof.
+Its outer closed-pair delimiter supports separate variable-width recovery.
+
+Scope/reuse distinction: the dispatch forbids importing BinaryArith.* and the
+sweep marks arithmetic/loop/machine APIs Phase B. A pure existing pairing identity
+in an already-loaded module must be assessed against the exact restriction before
+use; it is not silently treated as permission to build/import Phase B programs.
+No forbidden import or excluded API has been used in implementation source.
+The proof route/overlap search remains explicitly documented for later M1 work.
+
+Final scope interpretation: the binding prohibition is on importing the Phase B
+BinaryArith modules and the sweep names modular arithmetic/add/mul/forLoop as X.
+It does not prohibit a pure list identity already transitively in the base. The
+existing Complexity.BinArith.pairEncode_nil_append may be cited for list injectivity,
+without a direct Phase B import or any machine/efficiency proof. Both original
+research-agent review and root textual review support this interpretation.
+
+Owner-closure correction after a fresh comment-aware import walk: Words is loaded
+by the downstream reductions, but not by the earlier LPN owner. Thus the pure
+identity cannot currently be cited in LPN. No import change is selected. The
+staged corrected candidate instead normalizes the concrete equality passed to
+pairEncode_injective using the already available Turing.pairEncode_eq_dbl reader
+and Core List.append_nil/append_assoc. This proves this encoder injectivity, not
+a new general closed-pair or prefix-code helper. Its representational step has
+the same content as the existing inaccessible identity; that overlap is disclosed
+here. The earlier downstream-only candidate is explicitly superseded for LPN.
+No candidate has been run or installed in source.

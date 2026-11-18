@@ -1,0 +1,29 @@
+-- PARTIAL existing theorem body. NOT_RUN; one fixed-width uniform-row list obligation.
+by
+  intro a b h
+  simp only [P.encLPNAdvice_eq] at h
+  have h0 := congrArg Prod.snd (pairEncode_injective h)
+  have h1 := congrArg Prod.snd (pairEncode_injective h0)
+  obtain ⟨hhCode, h2⟩ := Prod.mk.inj (pairEncode_injective h1)
+  obtain ⟨hIcode, h3⟩ := Prod.mk.inj (pairEncode_injective h2)
+  obtain ⟨hbCode, h4⟩ := Prod.mk.inj (pairEncode_injective h3)
+  obtain ⟨hdCode, h5⟩ := Prod.mk.inj (pairEncode_injective h4)
+  obtain ⟨htCode, huCode⟩ := Prod.mk.inj (pairEncode_injective h5)
+  have haFit : a.hop.val < 2 ^ (P.kappaOf L + 1) :=
+    a.hop.isLt.trans (Nat.lt_two_pow_self (n := P.kappaOf L + 1))
+  have hbFit : b.hop.val < 2 ^ (P.kappaOf L + 1) :=
+    b.hop.isLt.trans (Nat.lt_two_pow_self (n := P.kappaOf L + 1))
+  have hhVal := congrArg TCSlib.Cryptography.NumberTheory.listToNat hhCode
+  rw [Candidates.listToNat_natToList haFit, Candidates.listToNat_natToList hbFit] at hhVal
+  have hh : a.hop = b.hop := Fin.ext hhVal
+  have hI : a.I = b.I := P.G.encIdx_injective (P.n (P.kappaOf L)) hIcode
+  have hb : a.buckets = b.buckets := P.encBuckets_injective (P.kappaOf L) hbCode
+  have hd : a.draw = b.draw := P.encDraw_injective (P.kappaOf L) (π (P.kappaOf L)) hdCode
+  have ht : a.tail = b.tail := List.ofFn_injective htCode
+  -- M4-LPN-ROWS: huCode codes a FIXED number of equal-length modular vector blocks.
+  -- Use encodeList_nil/cons, List.append_inj with encodeVector_length, then
+  -- encodeVector_injective at prime.width and List.ofFn_injective. See README.
+  have hu : a.uniform = b.uniform := sorry
+  apply (P.lpnAdviceProductEquiv π L).injective
+  simp only [P.lpnAdviceProductEquiv_apply]
+  exact Prod.ext hh (Prod.ext hI (Prod.ext hb (Prod.ext hd (Prod.ext ht hu))))

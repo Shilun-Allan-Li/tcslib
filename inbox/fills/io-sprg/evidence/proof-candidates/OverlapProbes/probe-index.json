@@ -1,0 +1,385 @@
+[
+  {
+    "name": "degree_add",
+    "family": "degree",
+    "imports": [
+      "Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous",
+      "Mathlib.Algebra.MonoidAlgebra.Degree"
+    ],
+    "template": "templates/degree_add.lean.template",
+    "role": "Internal.weightedTotalDegree_add_le with original mathematical primitive",
+    "priority": "P0",
+    "expected_public_positive_control": false,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "degree_mul",
+    "family": "degree",
+    "imports": [
+      "Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous",
+      "Mathlib.Algebra.MonoidAlgebra.Degree"
+    ],
+    "template": "templates/degree_mul.lean.template",
+    "role": "Internal.weightedTotalDegree_mul_le; generic public support/degree theorem search",
+    "priority": "P0",
+    "expected_public_positive_control": false,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "degree_sum",
+    "family": "degree",
+    "imports": [
+      "Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous",
+      "Mathlib.Algebra.MonoidAlgebra.Degree"
+    ],
+    "template": "templates/degree_sum.lean.template",
+    "role": "Weighted finite sum closure; no hypothesis is the target itself",
+    "priority": "P0",
+    "expected_public_positive_control": false,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "degree_prod",
+    "family": "degree",
+    "imports": [
+      "Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous",
+      "Mathlib.Algebra.MonoidAlgebra.Degree"
+    ],
+    "template": "templates/degree_prod.lean.template",
+    "role": "Weighted finite product closure",
+    "priority": "P0",
+    "expected_public_positive_control": false,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "degree_C",
+    "family": "degree",
+    "imports": [
+      "Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous",
+      "Mathlib.Algebra.MonoidAlgebra.Degree"
+    ],
+    "template": "templates/degree_C.lean.template",
+    "role": "Constant weighted degree; zero semiring retained",
+    "priority": "P0",
+    "expected_public_positive_control": false,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "degree_X",
+    "family": "degree",
+    "imports": [
+      "Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous",
+      "Mathlib.Algebra.MonoidAlgebra.Degree"
+    ],
+    "template": "templates/degree_X.lean.template",
+    "role": "Variable weighted degree bound; zero semiring retained",
+    "priority": "P0",
+    "expected_public_positive_control": false,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "degree_zero_control",
+    "family": "degree",
+    "imports": [
+      "Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous",
+      "Mathlib.Algebra.MonoidAlgebra.Degree"
+    ],
+    "template": "templates/degree_zero_control.lean.template",
+    "role": "Existing Mathlib weightedTotalDegree_zero control",
+    "priority": "P1",
+    "expected_public_positive_control": true,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "degree_rename_control",
+    "family": "degree",
+    "imports": [
+      "Mathlib.RingTheory.MvPolynomial.Homogeneous"
+    ],
+    "template": "templates/degree_rename_control.lean.template",
+    "role": "Existing weightedTotalDegree_rename_of_injective; proves public counterpart available",
+    "priority": "P1",
+    "expected_public_positive_control": true,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "degree_public_rename",
+    "family": "degree",
+    "imports": [
+      "Mathlib.RingTheory.MvPolynomial.Homogeneous"
+    ],
+    "template": "templates/degree_public_rename.lean.template",
+    "role": "pubDegree_rename with both wrapper definitions replaced by literal weights",
+    "priority": "P1",
+    "expected_public_positive_control": false,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "degree_private_rename",
+    "family": "degree",
+    "imports": [
+      "Mathlib.RingTheory.MvPolynomial.Homogeneous"
+    ],
+    "template": "templates/degree_private_rename.lean.template",
+    "role": "privDegree_rename with both wrapper definitions replaced by literal weights",
+    "priority": "P1",
+    "expected_public_positive_control": false,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "bucket_rank_lt",
+    "family": "bucket",
+    "imports": [
+      "Mathlib.Data.Finset.Card",
+      "Mathlib.Data.Fintype.Basic",
+      "Mathlib.Logic.Equiv.Fin.Basic"
+    ],
+    "template": "templates/bucket_rank_lt.lean.template",
+    "role": "rank_lt_load with rank/load/bucket fully expanded",
+    "priority": "P0",
+    "expected_public_positive_control": false,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "bucket_rank_injective",
+    "family": "bucket",
+    "imports": [
+      "Mathlib.Data.Finset.Card",
+      "Mathlib.Data.Fintype.Basic",
+      "Mathlib.Logic.Equiv.Fin.Basic"
+    ],
+    "template": "templates/bucket_rank_injective.lean.template",
+    "role": "eq_of_rank_eq with only raw finite-filter cardinalities",
+    "priority": "P0",
+    "expected_public_positive_control": false,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "bucket_option_some",
+    "family": "bucket",
+    "imports": [
+      "Mathlib.Data.Finset.Card",
+      "Mathlib.Data.Fintype.Basic",
+      "Mathlib.Logic.Equiv.Fin.Basic"
+    ],
+    "template": "templates/bucket_option_some.lean.template",
+    "role": "Abstract good branch of indexMap; rank bound premise is independent of option equality",
+    "priority": "P1",
+    "expected_public_positive_control": false,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "bucket_option_none",
+    "family": "bucket",
+    "imports": [
+      "Mathlib.Data.Finset.Card",
+      "Mathlib.Data.Fintype.Basic",
+      "Mathlib.Logic.Equiv.Fin.Basic"
+    ],
+    "template": "templates/bucket_option_none.lean.template",
+    "role": "Abstract overfull branch of indexMap, preserving dependent Fin witness",
+    "priority": "P1",
+    "expected_public_positive_control": false,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "bucket_single_correction",
+    "family": "bucket",
+    "imports": [
+      "Mathlib.Data.Finset.Card",
+      "Mathlib.Data.Fintype.BigOperators",
+      "Mathlib.Data.Matrix.Basic"
+    ],
+    "template": "templates/bucket_single_correction.lean.template",
+    "role": "bucketMatrix_apply_indexMap abstracted to arbitrary optional positions, with independent uniqueness premise",
+    "priority": "P1",
+    "expected_public_positive_control": false,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "bucket_nonzero_support",
+    "family": "bucket",
+    "imports": [
+      "Mathlib.Data.Finset.Card",
+      "Mathlib.Data.Fintype.BigOperators",
+      "Mathlib.Data.Matrix.Basic"
+    ],
+    "template": "templates/bucket_nonzero_support.lean.template",
+    "role": "bucketMatrix_nonzero_card_le with bucket/matrix expanded and arbitrary positions",
+    "priority": "P0",
+    "expected_public_positive_control": false,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "sparse_rowmajor_nodup",
+    "family": "sparse",
+    "imports": [
+      "Mathlib.Data.List.FinRange",
+      "Mathlib.Data.Matrix.Mul",
+      "Mathlib.Data.Finset.Card"
+    ],
+    "template": "templates/sparse_rowmajor_nodup.lean.template",
+    "role": "sparseEntries_nodup with no sparseEntries constant",
+    "priority": "P0",
+    "expected_public_positive_control": false,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "sparse_rowmajor_mem",
+    "family": "sparse",
+    "imports": [
+      "Mathlib.Data.List.FinRange",
+      "Mathlib.Data.Matrix.Mul",
+      "Mathlib.Data.Finset.Card"
+    ],
+    "template": "templates/sparse_rowmajor_mem.lean.template",
+    "role": "mem_sparseEntries_iff fully expanded",
+    "priority": "P1",
+    "expected_public_positive_control": false,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "sparse_reconstruct",
+    "family": "sparse",
+    "imports": [
+      "Mathlib.Data.List.FinRange",
+      "Mathlib.Data.Matrix.Mul",
+      "Mathlib.Data.Finset.Card"
+    ],
+    "template": "templates/sparse_reconstruct.lean.template",
+    "role": "sparseFactor_mul generalized from row-major list to any duplicate-free exhaustive nonzero list",
+    "priority": "P0",
+    "expected_public_positive_control": false,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "sparse_reconstruct_entry",
+    "family": "sparse",
+    "imports": [
+      "Mathlib.Data.List.FinRange",
+      "Mathlib.Data.Matrix.Mul",
+      "Mathlib.Data.Finset.Card"
+    ],
+    "template": "templates/sparse_reconstruct_entry.lean.template",
+    "role": "Pointwise expansion of matrix reconstruction; avoids an apply? result consisting only of Matrix.ext",
+    "priority": "P1",
+    "expected_public_positive_control": false,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "sparse_basis_sum_control",
+    "family": "sparse",
+    "imports": [
+      "Mathlib.Data.Matrix.Basis"
+    ],
+    "template": "templates/sparse_basis_sum_control.lean.template",
+    "role": "Existing public Matrix.matrix_eq_sum_single; optional precise library comparison root, not proposed owner import",
+    "priority": "P2",
+    "expected_public_positive_control": true,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "load_fixed_subset",
+    "family": "load",
+    "imports": [
+      "TCSlib.Cryptography.OneWayFunctions.Basic",
+      "Mathlib.Data.Finset.Powerset"
+    ],
+    "template": "templates/load_fixed_subset.lean.template",
+    "role": "Local fixed-witness probability needed by bucket_tail; no sorried load/helper imported",
+    "priority": "P0",
+    "expected_public_positive_control": false,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "load_tail",
+    "family": "load",
+    "imports": [
+      "TCSlib.Cryptography.OneWayFunctions.Basic",
+      "Mathlib.Data.Finset.Powerset"
+    ],
+    "template": "templates/load_tail.lean.template",
+    "role": "bucket_tail with its bucket definition expanded",
+    "priority": "P0",
+    "expected_public_positive_control": false,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "load_some_tail",
+    "family": "load",
+    "imports": [
+      "TCSlib.Cryptography.OneWayFunctions.Basic",
+      "Mathlib.Data.Finset.Powerset"
+    ],
+    "template": "templates/load_some_tail.lean.template",
+    "role": "some_bucket_tail expanded to raw events",
+    "priority": "P1",
+    "expected_public_positive_control": false,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "binomial_bound",
+    "family": "load",
+    "imports": [
+      "Mathlib.Data.Nat.Choose.Bounds",
+      "Mathlib.Analysis.Complex.Exponential"
+    ],
+    "template": "templates/binomial_bound.lean.template",
+    "role": "Exact existing M0 binomial goal under existing-library imports only",
+    "priority": "P0",
+    "expected_public_positive_control": false,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "binomial_factorial_step",
+    "family": "load",
+    "imports": [
+      "Mathlib.Data.Nat.Choose.Bounds",
+      "Mathlib.Analysis.Complex.Exponential"
+    ],
+    "template": "templates/binomial_factorial_step.lean.template",
+    "role": "Reciprocal-factorial intermediate; seek direct existing counterpart before ordered-division application",
+    "priority": "P1",
+    "expected_public_positive_control": false,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "binomial_choose_control",
+    "family": "load",
+    "imports": [
+      "Mathlib.Data.Nat.Choose.Bounds",
+      "Mathlib.Analysis.Complex.Exponential"
+    ],
+    "template": "templates/binomial_choose_control.lean.template",
+    "role": "Existing Nat.choose_le_pow_div control",
+    "priority": "P1",
+    "expected_public_positive_control": true,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "binomial_series_control",
+    "family": "load",
+    "imports": [
+      "Mathlib.Data.Nat.Choose.Bounds",
+      "Mathlib.Analysis.Complex.Exponential"
+    ],
+    "template": "templates/binomial_series_control.lean.template",
+    "role": "Existing Real.pow_div_factorial_le_exp control",
+    "priority": "P1",
+    "expected_public_positive_control": true,
+    "status": "NOT_RUN"
+  },
+  {
+    "name": "uniform_pi_control",
+    "family": "load",
+    "imports": [
+      "TCSlib.Cryptography.OneWayFunctions.Basic",
+      "Mathlib.Data.Finset.Powerset"
+    ],
+    "template": "templates/uniform_pi_control.lean.template",
+    "role": "Existing OneWay.uprob_pi_forall control",
+    "priority": "P1",
+    "expected_public_positive_control": true,
+    "status": "NOT_RUN"
+  }
+]

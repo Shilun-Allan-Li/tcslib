@@ -1,0 +1,36 @@
+From 55cb1147ff84f750a6b94f48103f6cc72d4fa036 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 03:20:47 -0800
+Subject: [PATCH 12/15] io-sprg: order parameter bounds for direct reuse
+
+---
+ .../Cryptography/Obfuscation/StructuredSeed/Params.lean  | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean
+index 62699279cb1d037db36a99697bec8500ea7ca716..318aa589d832981e6016b83256c24b29446daa24 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Params.lean
+@@ -367,6 +367,11 @@ theorem lpnFamily_raw_samplesBound (P : Params) (π : PrimeSchedule) :
+ theorem lpnFamily_raw_residueBits (P : Params) (π : PrimeSchedule) :
+     (P.lpnFamily_raw π).residueBits = .add .var (.const 1) := rfl
+ 
++/-- The Boolean seed length dominates κ [JLS26, Remark 2.1, p. 9]. Dv1 uses E,D≥1.
++
++**Proof sketch.** Natural powers with positive exponents dominate their bases. -/
++theorem le_n (P : Params) (κ : ℕ) : κ ≤ P.n κ := sorry
++
+ /-- Eventually Γ≤B [JLS26, Claim 4.2, pp. 19-21]. Dv7 makes the threshold explicit.
+ 
+ **Proof sketch.** The logarithm of a fixed polynomial is eventually below κ; compare the
+@@ -380,10 +385,6 @@ Dv7 uses an eventual threshold.
+ theorem le_log_n (P : Params) (c : ℕ) :
+     ∃ κ₀, ∀ κ ≥ κ₀, c ≤ Nat.log 2 (P.n κ) := sorry
+ 
+-/-- The Boolean seed length dominates κ [JLS26, Remark 2.1, p. 9]. Dv1 uses E,D≥1.
+-
+-**Proof sketch.** Natural powers with positive exponents dominate their bases. -/
+-theorem le_n (P : Params) (κ : ℕ) : κ ≤ P.n κ := sorry
+ 
+ end Params
+ end TCSlib.Cryptography.Obfuscation.StructuredSeed

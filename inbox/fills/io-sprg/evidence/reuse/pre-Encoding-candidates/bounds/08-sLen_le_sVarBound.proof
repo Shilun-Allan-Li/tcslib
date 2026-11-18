@@ -1,0 +1,9 @@
+by
+  simp only [P.sLen_eq, P.t_eq, P.sVarBound_eq, PolyExpr.eval_add,
+    PolyExpr.eval_mul, PolyExpr.eval_pow, PolyExpr.eval_const, PolyExpr.eval_var]
+  exact Nat.add_le_add
+    (Nat.pow_le_pow_left (Nat.add_le_add_right (P.ell_le_ellBound κ) 1) P.D)
+    (Nat.mul_le_mul (P.B_le_bucketBound κ)
+      (Nat.add_le_add
+        (Nat.mul_le_mul (P.rc_le_rcBound κ) le_rfl)
+        (Nat.mul_le_mul le_rfl (P.rc_le_rcBound κ))))

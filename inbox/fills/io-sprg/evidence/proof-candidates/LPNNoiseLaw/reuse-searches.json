@@ -1,0 +1,79 @@
+[
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem lpnNoise_sample|^theorem lpnNoise_law",
+      "TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean"
+    ],
+    "returncode": 0,
+    "stdout": "58:theorem lpnNoise_sample (p W : \u2115) [NeZero p] [NeZero W] (c : Fin W \u00d7 ZMod p) :\n67:theorem lpnNoise_law (p W : \u2115) [NeZero p] [NeZero W] (z : ZMod p) :\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem uprob_(not|prod|fst)|^theorem uprob_def",
+      "TCSlib/Cryptography/Foundations/Probability.lean"
+    ],
+    "returncode": 0,
+    "stdout": "64:theorem uprob_def (p : \u03b1 \u2192 Prop) : uprob p = (Nat.card {a // p a} : \u211d) / Fintype.card \u03b1 := rfl\n109:theorem uprob_not [Nonempty \u03b1] (p : \u03b1 \u2192 Prop) : uprob (fun a => \u00ac p a) = 1 - uprob p := by\n153:theorem uprob_prod (p : \u03b1 \u00d7 \u03b2 \u2192 Prop) :\n175:theorem uprob_fst [Nonempty \u03b2] (p : \u03b1 \u2192 Prop) : uprob (fun z : \u03b1 \u00d7 \u03b2 => p z.1) = uprob p := by\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem uprob_congr|^theorem uprob_eq_one_div_card|^theorem uexp_(add|indicator)",
+      "TCSlib/Cryptography/OneWayFunctions/Basic.lean"
+    ],
+    "returncode": 0,
+    "stdout": "50:theorem uprob_congr {p q : \u03b1 \u2192 Prop} (h : \u2200 a, p a \u2194 q a) : uprob p = uprob q := by\n59:theorem uexp_add (f g : \u03b1 \u2192 \u211d) : uexp (fun a => f a + g a) = uexp f + uexp g := by\n76:theorem uexp_indicator (p : \u03b1 \u2192 Prop) [DecidablePred p] (c : \u211d) :\n144:theorem uprob_eq_one_div_card (a : \u03b1) : uprob (fun x : \u03b1 => x = a) = 1 / Fintype.card \u03b1 := by\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem uprob_prod_and",
+      "TCSlib/Cryptography/HardcoreBit/Basic.lean"
+    ],
+    "returncode": 0,
+    "stdout": "129:theorem uprob_prod_and (p : \u03b1 \u2192 Prop) (q : \u03b2 \u2192 Prop) :\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem natCast_zmod_val",
+      ".lake/packages/mathlib/Mathlib/Data/ZMod/Basic.lean"
+    ],
+    "returncode": 0,
+    "stdout": "197:theorem natCast_zmod_val {n : \u2115} [NeZero n] (a : ZMod n) : (a.val : ZMod n) = a := by\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem card",
+      ".lake/packages/mathlib/Mathlib/Data/ZMod/Defs.lean"
+    ],
+    "returncode": 0,
+    "stdout": "164:theorem card (n : \u2115) [Fintype (ZMod n)] : Fintype.card (ZMod n) = n := by\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem cast_natCast|^theorem cast_zero",
+      ".lake/packages/mathlib/Mathlib/Data/Int/Cast/Basic.lean"
+    ],
+    "returncode": 0,
+    "stdout": "55:theorem cast_zero : ((0 : \u2124) : R) = 0 :=\n60:theorem cast_natCast (n : \u2115) : ((n : \u2124) : R) = n :=\n",
+    "stderr": ""
+  }
+]

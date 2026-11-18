@@ -1,0 +1,26 @@
+SP-W2: pre-M0 free oracle syntax versus acceptance probability
+
+Exact false draft obligations:
+  P.hyb A .prg κ pp = P.chainGame A true 0 κ pp
+  P.hyb A .uniform κ pp = P.chainGame A false 0 κ pp
+
+Counterexample/invariant: Games.OracleComp is the inductive free oracle monad
+(Games/OracleComp.lean:84); sample is one uniform query even for singleton types
+(Games/Probability.lean:85,93). After bind/map normalization, hyb has four
+queries (index draw,seed draw,uniform tail,adversary coins). chainGame has five,
+with the extra independent uniform public-vector u unused at i=0. Following
+the first answer at every query distinguishes their tree depths4 and5. This
+holds also at κ=0, when the vector draw is a singleton but still a query.
+
+Minimal disclosed repair selected before M0:
+  accept (P.hyb A .prg κ pp) = accept (P.chainGame A true 0 κ pp)
+  accept (P.hyb A .uniform κ pp) = accept (P.chainGame A false 0 κ pp)
+Names gain _accept_ to make the probability-level statement explicit.
+These are the paper's semantic equality and suffice for advantage_eq rewrites.
+No algorithm, hybrid, target, headline inequality, assumption, or sampler changes.
+
+Authorization: the user asked us to use best judgment while they sleep, subject
+to good modular/adaptable code and downstream disclosure. E-ROUTE requires the
+exact obligation, counterexample, and minimal disclosed change, but does not
+require new user approval (unlike E-SCOPE). This repair remains within owned
+new source files and occurred before the M0 freeze; it is not a silent weakening.

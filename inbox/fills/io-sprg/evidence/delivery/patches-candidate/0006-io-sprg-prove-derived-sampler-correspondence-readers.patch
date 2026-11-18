@@ -1,0 +1,43 @@
+From 23f22a93d8ea100132baedeb04014d291e287be6 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 02:29:23 -0800
+Subject: [PATCH 6/7] io-sprg: prove derived sampler correspondence readers
+
+---
+ .../Obfuscation/StructuredSeed/Samplers.lean         | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Samplers.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Samplers.lean
+index d3cfbfc2bcf8b5d1e5dd1454f84e94c9ce768f76..863f548912a0a1cd3629a8983773b034f24a71be 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Samplers.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Samplers.lean
+@@ -501,20 +501,26 @@ theorem jlsSPRG_raw_eval (P : Params) (π : PrimeSchedule) (κ : ℕ)
+ **Proof sketch.** Read the raw sampler and concrete sampler equations, then use the
+ raw construction's index-draw and core fields. -/
+ theorem jlsSPRG_raw_idSamp (P : Params) (π : PrimeSchedule) (κ : ℕ) :
+-    (jlsSPRG_raw P π).idSamp κ = P.idSamp' κ (π κ) := sorry
++    (jlsSPRG_raw P π).idSamp κ = P.idSamp' κ (π κ) :=
++  (SPRG.Raw.idSamp_eq (jlsSPRG_raw P π) κ).trans rfl
+ 
+ /-- The raw seed sampler equals SdSamp'; glue.
+ 
+ **Proof sketch.** Read both pushforward laws and compose the full core with its seed projection. -/
+ theorem jlsSPRG_raw_sdSamp (P : Params) (π : PrimeSchedule) (κ : ℕ)
+     (I : P.Idx' κ (π κ)) :
+-    (jlsSPRG_raw P π).sdSamp κ I = P.sdSamp' κ (π κ) I := sorry
++    (jlsSPRG_raw P π).sdSamp κ I = P.sdSamp' κ (π κ) I := by
++  rw [SPRG.Raw.sdSamp_eq, Params.sdSamp'_eq, Params.sdSampFull_eq, ← comp_map]
++  rfl
+ 
+ /-- The raw challenge's modulus prefix equals the input prime encoding; glue.
+ 
+ **Proof sketch.** Read encPP and the construction's residue-width and modulus fields,
+ then the variable/addition equations of PolyExpr and PrimeParam.enc_eq. -/
+ theorem jlsSPRG_raw_encPP (P : Params) (π : PrimeSchedule) (κ : ℕ) :
+-    (jlsSPRG_raw P π).encPP κ = (π κ).enc := sorry
++    (jlsSPRG_raw P π).encPP κ = (π κ).enc := by
++  rw [SPRG.Raw.encPP_eq, jlsSPRG_raw_residueBits, jlsSPRG_raw_modulus,
++    PrimeParam.enc_eq]
++  simp only [PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const]
+ 
+ end TCSlib.Cryptography.Obfuscation.StructuredSeed

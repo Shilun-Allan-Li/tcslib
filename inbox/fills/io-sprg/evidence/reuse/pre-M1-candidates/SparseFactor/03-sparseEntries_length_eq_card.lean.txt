@@ -1,0 +1,7 @@
+-- Replacement proof candidate only. NOT_RUN: root must elaborate and seal-check.
+by
+  rw [← List.toFinset_card_of_nodup (sparseEntries_nodup M)]
+  apply congrArg Finset.card
+  ext c
+  simp only [List.mem_toFinset, mem_sparseEntries_iff, Finset.mem_filter,
+    Finset.mem_univ, true_and]

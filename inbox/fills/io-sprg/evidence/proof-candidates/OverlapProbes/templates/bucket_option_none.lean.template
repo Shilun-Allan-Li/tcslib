@@ -1,0 +1,19 @@
+import Mathlib.Data.Finset.Card
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Logic.Equiv.Fin.Basic
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open scoped BigOperators
+
+namespace IoSprgOverlapProbe
+
+example (rc r : ℕ) (P : Prop) [Decidable P] (hP : P) :
+    (if h : ¬ P ∧ r < rc * rc then
+      some (finProdFinEquiv.symm ⟨r, h.2⟩) else none) =
+        (none : Option (Fin rc × Fin rc)) := __PROBE_BODY__
+
+end IoSprgOverlapProbe

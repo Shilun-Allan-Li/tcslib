@@ -1,0 +1,104 @@
+[
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem encDraw_eq|^theorem encDraw_injective|^def encDraw",
+      "TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean"
+    ],
+    "returncode": 0,
+    "stdout": "341:def encDraw (F : Raw) (\u2113 : \u2115) (r : F.Draw \u2113) : List Bool :=\n349:theorem encDraw_eq (F : Raw) (\u2113 : \u2115) (r : F.Draw \u2113) :\n365:theorem encDraw_injective (F : Raw) (\u2113 : \u2115) : Function.Injective (F.encDraw \u2113) := by\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem pairEncode_eq|^lemma pairEncode_eq_dbl|^theorem pairEncode_injective",
+      "TCSlib/Complexity/TuringMachine/Encoding.lean"
+    ],
+    "returncode": 0,
+    "stdout": "141:theorem pairEncode_eq (x \u03b1 : List Bool) :\n173:theorem pairEncode_injective :\n216:lemma pairEncode_eq_dbl (x y : List Bool) : pairEncode x y = dbl x ++ [false, true] ++ y :=\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^lemma bitsVal_bits|^lemma bits_injective",
+      "TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean"
+    ],
+    "returncode": 0,
+    "stdout": "67:lemma bitsVal_bits (n : \u2115) : bitsVal (Nat.bits n) = n := by\n82:lemma bits_injective : Function.Injective Nat.bits := fun a b h => by\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem natToList_injOn|theorem listToNat_natToList",
+      "TCSlib/Cryptography/Candidates/Arithmetic.lean"
+    ],
+    "returncode": 0,
+    "stdout": "127:theorem listToNat_natToList_eq_mod (k N : \u2115) : listToNat (natToList k N) = N % 2 ^ k := by\n143:theorem listToNat_natToList {k N : \u2115} (h : N < 2 ^ k) : listToNat (natToList k N) = N := by\n161:theorem natToList_injOn {k M N : \u2115} (hM : M < 2 ^ k) (hN : N < 2 ^ k)\n191:theorem listToNat_natToList_zero_append (k : \u2115) (w : List Bool) :\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem encodeMatrix_injective|^theorem encodeVector_injective",
+      "TCSlib/Cryptography/Encoding/Modular.lean"
+    ],
+    "returncode": 0,
+    "stdout": "101:theorem encodeVector_injective {q length : \u2115} [NeZero q] (width : \u2115)\n126:theorem encodeMatrix_injective {q rows columns : \u2115} [NeZero q] (width : \u2115)\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem ofFn_injective",
+      ".lake/packages/mathlib/Mathlib/Data/List/OfFn.lean"
+    ],
+    "returncode": 0,
+    "stdout": "192:theorem ofFn_injective {n : \u2115} : Function.Injective (ofFn : (Fin n \u2192 \u03b1) \u2192 List \u03b1) := fun f g h =>\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem encodeList_(nil|cons)|private lemma encodeList_prefixFree",
+      "TCSlib/Complexity/CircuitComplexity/Uniform.lean"
+    ],
+    "returncode": 0,
+    "stdout": "96:theorem encodeList_nil {\u03b1 : Type} (f : \u03b1 \u2192 List Bool) :\n100:theorem encodeList_cons {\u03b1 : Type} (f : \u03b1 \u2192 List Bool) (a : \u03b1) (as : List \u03b1) :\n158:private lemma encodeList_prefixFree {\u03b1 : Type} {f : \u03b1 \u2192 List Bool} (hf : PrefixFree f) :\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "ofBits_bits|bits_injective|bits.*foldr|foldr.*bits",
+      ".lake/packages/mathlib/Mathlib/Data/Nat/Bits.lean",
+      ".lake/packages/mathlib/Mathlib/Data/Nat/BinaryRec.lean",
+      "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Nat/Bitwise.lean"
+    ],
+    "returncode": 1,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "^theorem pairEncode_nil_append",
+      "TCSlib/Complexity/ClassP/BinaryArith/Words.lean",
+      "TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean"
+    ],
+    "returncode": 0,
+    "stdout": "TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:160:theorem pairEncode_nil_append (c w : List Bool) :\nTCSlib/Complexity/ClassP/BinaryArith/Words.lean:57:theorem pairEncode_nil_append (a b : List Bool) : pairEncode a [] ++ b = pairEncode a b := by\n",
+    "stderr": ""
+  }
+]

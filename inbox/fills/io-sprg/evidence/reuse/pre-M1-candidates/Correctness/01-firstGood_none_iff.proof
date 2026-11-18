@@ -1,0 +1,7 @@
+by
+  rw [firstGood_eq, List.find?_eq_none]
+  constructor
+  · intro h k
+    exact Bool.eq_false_iff.mpr (h k (List.mem_finRange k))
+  · intro h k _
+    exact Bool.eq_false_iff.mp (h k)

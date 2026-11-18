@@ -1,0 +1,67 @@
+io-sprg Rule10 transport adaptation, 2026-11-18 (PREPARATION; ROOT RUNS LEAN)
+
+Copy fast_records.py beside the root-owned io_sprg_rule10 generator scripts.
+Do not edit legacy_request_payload_adapter.py or its pinned SHA.
+After request_payload_adapter.configure_builders and any CHUNK wrapping, load:
+
+  fast = load(Path(PREP_DIR) / 'fast_records.py', 'iosprg_fast_records')
+  fast.configure_builders(bs, controls)
+
+In mkctl_iosprg.py, the variables are bs and ct, and the helper takes (path,name):
+
+  fast=load(Path(__file__).with_name('fast_records.py'),'iosprg_fast_records')
+  fast.configure_builders(bs,ct)
+
+In mkseals_ab.py/mkseals_coe.py, either use the fixed explicit managed path to
+this new file or copy it into tools-dir and use Path(tools)/'fast_records.py'.
+Record that path change in each edited generator's header. Load and configure
+AFTER all original adapter/chunk configuration, BEFORE bs.instrument is called.
+Set SEAL_CHUNK=2048. Also update orchestrate.py's explicit env default (currently
+256) and mkctl_iosprg.py default, or pass it consistently through the environment.
+CHUNK2048 produces one complete install command plus one EOF command per owner
+(max current request count1529), reducing repeated catalog scans and exact whole
+lookup-state snapshots. The prior observed overflow counts were2921 and5459;
+2048 is a candidate pretest configuration, not a measured guarantee.
+
+The generated command header gets a same-line transport note. Each exact line:
+  Lean.logInfo m!"G06-..."
+becomes:
+  IO.println (← (m!"G06-...").toString)
+All other source bytes remain identical. The adapter asserts this by reversing
+the transport substitution and comparing exact UTF-8 bytes. It preserves line
+counts, so existing source-to-probe maps remain valid. It changes no errors,
+guards, requests, Name/component identity checks, local irreducible attributes,
+unfolding masks, full lookup-state comparisons, counters, or EOF validation.
+MessageData.toString preserves the original interpolation/rendering classes.
+All record fields are String/Nat/Bool/Name/Format, with no context-sensitive
+Expr/Goal. Info diagnostics cease retaining per-name MessageData environments;
+the same success records go directly to stdout. Probes/tool hashes change.
+
+Regenerate all probe copies/records/manifests after applying transport and after
+source edits + collector refresh. Never reuse a prior probe hash for a changed
+transport. Keep the slow pilot log/results as pilot evidence; new run/log dirs
+avoid overwriting those. Check one root-owned Lean pilot before the full suite.
+
+Exact runtime record checker (requires complete regenerated runs for final):
+  python3 -I /tmp/io-sprg-rule10-prep/dynamic_counts.py \
+    /Users/seyoonr/.codex/worktrees/io-sprg/tcslib-exchange/evidence/tools/seal/review/archived-gate10-tools \
+    /Users/seyoonr/.codex/worktrees/io-sprg/tcslib-exchange/evidence/rule10/m0 \
+    /Users/seyoonr/.codex/worktrees/io-sprg/tcslib-exchange/evidence/rule10/m0/dynamic-counts.json \
+    --require-complete --require-canonical-pass
+
+The checker derives each chunk from the generated serialized component/count
+payload, checks its full exact ordered rows against frozen JSON, verifies both
+phases through the reviewed adapter's component/mask validators, verifies every
+installed Name/home/status and every summary, and checks source/log hashes bind
+the runner results. It separately checks per-control diagnostic ranges, exactly
+one negative sealed error, zero positive errors, zero unsealed errors and return
+codes. Existing sealsum/ctlcheck2 remain required. Strict-only source failures
+are reported but remain for attribution. No missing run is called a pass.
+
+STATIC CHECKS PERFORMED BY PREPARING SUBAGENT (NO LEAN):
+- Both Python modules AST parse.
+- fast_records rewrite+exact reversible-byte and newline check on all88 old
+  generated full-file probe copies succeeds.
+- dynamic_counts on the existing slow LPN pilot checks1154 exact rows in5chunks,
+  both install+EOF, hashes+rc/errors:PASS_RECORDS; other183 planned probes NOT_RUN.
+  This is parser/runtime-evidence validation, not a fresh seal execution.

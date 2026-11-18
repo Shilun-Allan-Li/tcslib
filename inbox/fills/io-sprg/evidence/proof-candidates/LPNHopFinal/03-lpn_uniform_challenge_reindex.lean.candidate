@@ -1,0 +1,28 @@
+/- NOT_RUN. Theorem-only explicit canonical/construction coordinate bridge.
+Reuses the existing lpnChalEquiv, arrow/product equivalences and finite casts.
+No new algorithm, encoder, sampler or choice enumeration. exact?/apply? pending. -/
+
+theorem lpn_uniform_challenge_reindex (P : Params) (π : PrimeSchedule) (L : ℕ)
+    (h : L = P.ℓ (P.kappaOf L)) :
+    ∃ e : P.LPNChal π L ≃
+        (Matrix (Fin (P.n (P.kappaOf L))) (Fin (P.ℓ (P.kappaOf L)))
+          (ZMod (π (P.kappaOf L)).p) ×
+          (Fin (P.n (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p)),
+      ∀ x, (e x).1 = P.lpnMatrixAt π L h x ∧
+        (e x).2 = P.lpnValuesAt π L h x := by
+  let hr : L ^ P.D = P.n (P.kappaOf L) :=
+    (congrArg (fun q : ℕ => q ^ P.D) h).trans (P.n_eq (P.kappaOf L)).symm
+  let e := (P.lpnChalEquiv π L).trans
+    (Equiv.prodCongr
+      (Equiv.arrowCongr (finCongr hr)
+        (Equiv.arrowCongr (finCongr h) (Equiv.refl _)))
+      (Equiv.arrowCongr (finCongr hr) (Equiv.refl _)))
+  refine ⟨e, ?_⟩
+  intro x
+  constructor
+  · funext i a
+    rw [P.lpnMatrixAt_eq]
+    rfl
+  · funext i
+    rw [P.lpnValuesAt_eq]
+    rfl

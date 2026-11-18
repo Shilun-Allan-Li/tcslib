@@ -1,0 +1,48 @@
+[
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem (card_image_le|card_image_of_injective)|lemma card_lt_card|card_le_card_of_injOn",
+      ".lake/packages/mathlib/Mathlib/Data/Finset/Card.lean"
+    ],
+    "returncode": 0,
+    "stdout": "214:theorem card_image_le [DecidableEq \u03b2] : #(s.image f) \u2264 #s := by\n238:theorem card_image_of_injective [DecidableEq \u03b2] (s : Finset \u03b1) (H : Injective f) :\n296:nonrec lemma card_lt_card (h : s \u2282 t) : #s < #t := card_lt_card <| val_lt_iff.2 h\n411:lemma card_le_card_of_injOn (f : \u03b1 \u2192 \u03b2) (hf : Set.MapsTo f s t) (f_inj : (s : Set \u03b1).InjOn f) :\n423:    apply card_le_card_of_injOn f'\n444:  refine hc.not_ge (card_le_card_of_injOn f hf ?_)\n460:See also `Finset.card_le_card_of_injOn`, which is a more general version of this lemma.\n461:TODO: consider deprecating, since this is just a special case of `Finset.card_le_card_of_injOn`.\n467:    _ \u2264 #s := card_le_card_of_injOn f (by simpa [Set.MapsTo, mem_range] using hf) (by simpa)\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem (prod_eq_single|exists_ne_one_of_prod_ne_one)",
+      ".lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean"
+    ],
+    "returncode": 0,
+    "stdout": "337:theorem prod_eq_single_of_mem {s : Finset \u03b9} {f : \u03b9 \u2192 M} (a : \u03b9) (h : a \u2208 s)\n348:theorem prod_eq_single {s : Finset \u03b9} {f : \u03b9 \u2192 M} (a : \u03b9) (h\u2080 : \u2200 b \u2208 s, b \u2260 a \u2192 f b = 1)\n514:theorem exists_ne_one_of_prod_ne_one (h : \u220f x \u2208 s, f x \u2260 1) : \u2203 a \u2208 s, f a \u2260 1 := by\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "def finProdFinEquiv",
+      ".lake/packages/mathlib/Mathlib/Logic/Equiv/Fin/Basic.lean"
+    ],
+    "returncode": 0,
+    "stdout": "325:def finProdFinEquiv : Fin m \u00d7 Fin n \u2243 Fin (m * n) where\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "bucketMatrix|indexMap_injective_on_bucket|eq_of_rank_eq|rank_lt_load",
+      "TCSlib",
+      "--glob",
+      "!TCSlib/Cryptography/Obfuscation/**"
+    ],
+    "returncode": 1,
+    "stdout": "",
+    "stderr": ""
+  }
+]

@@ -1,0 +1,27 @@
+by
+  have hsmall : Asymptotics.IsLittleO Filter.atTop
+      (fun κ : ℕ => ((P.D : ℝ) * (P.E : ℝ)) * Real.logb 2 (κ : ℝ))
+      (fun κ : ℕ => (κ : ℝ)) :=
+    ((Real.isLittleO_logb_id_atTop (b := 2)).const_mul_left
+      ((P.D : ℝ) * (P.E : ℝ))).comp_tendsto tendsto_natCast_atTop_atTop
+  obtain ⟨κ₀, hκ₀⟩ := Filter.eventually_atTop.mp hsmall.eventuallyLE
+  refine ⟨κ₀, ?_⟩
+  intro κ hκ
+  have hnorm := hκ₀ κ hκ
+  change ‖((P.D : ℝ) * (P.E : ℝ)) * Real.logb 2 (κ : ℝ)‖ ≤ ‖(κ : ℝ)‖ at hnorm
+  rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg (Nat.cast_nonneg κ)] at hnorm
+  have hlogn : Real.logb 2 (P.n κ : ℝ) =
+      ((P.D : ℝ) * (P.E : ℝ)) * Real.logb 2 (κ : ℝ)
+  · rw [P.n_eq, P.ℓ_eq, Nat.cast_pow, Nat.cast_pow, Real.logb_pow,
+      Real.logb_pow, mul_assoc]
+  have hlog : Nat.log 2 (P.n κ) ≤ κ
+  · have hcast : (Nat.log 2 (P.n κ) : ℝ) ≤ (κ : ℝ) :=
+      (Real.natLog_le_logb (P.n κ) 2).trans
+        (hlogn.le.trans ((le_abs_self _).trans hnorm))
+    exact_mod_cast hcast
+  have hround : P.m κ * κ ≤ P.m κ * κ + P.W κ - 1
+  · have hW := P.W_pos κ
+    omega
+  rw [P.Γ_eq, P.B_eq, P.t_eq]
+  exact (Nat.div_le_div_right (Nat.mul_le_mul_left _ hlog)).trans
+    ((Nat.div_le_div_right hround).trans (le_max_right _ _))

@@ -1,0 +1,72 @@
+/- NOT_RUN. Narrow canonical LWE sample/coercion compatibility candidate.
+This is the type/sample coherence obligation, not a new sampler definition.
+Every numeric/noise equality is obtained from public family/parameter readers.
+The final two simp blocks are explicit ROOT PRETEST points: if they leave cast
+or finite-sum goals, retain those exact goals as the remaining obligation;
+do not infer sample-law preservation merely from a type equivalence. -/
+
+theorem lpn_real_seed_reindex (P : Params) (π : PrimeSchedule) (L : ℕ)
+    (h : L = P.ℓ (P.kappaOf L)) :
+    let κ := P.kappaOf L
+    let pp := π κ
+    let Q := (P.lpnFamily_raw π).toLWE.parameters L
+    let χ := (P.lpnFamily_raw π).toLWE.noise L
+    ∃ e : (Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+        ((Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins))) ≃
+        (Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+          ((Fin (P.ℓ κ) → ZMod pp.p) ×
+            (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))),
+      ∀ r, P.lpnMatrixAt π L h (LWE.sample Q χ r) = (e r).1 ∧
+        P.lpnValuesAt π L h (LWE.sample Q χ r) = fun i =>
+          (∑ a, (e r).1 i a * (e r).2.1 a) +
+            P.noiseValue κ pp ((e r).2.2 i) := by
+  classical
+  let κ := P.kappaOf L
+  let pp := π κ
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L
+  let χ := (P.lpnFamily_raw π).toLWE.noise L
+  change ∃ e : (Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+      ((Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins))) ≃
+      (Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+        ((Fin (P.ℓ κ) → ZMod pp.p) ×
+          (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))), _
+  have hd : Q.dimension = P.ℓ κ := (P.lpn_dimension_eq π L).trans h
+  have hr : Q.samples = P.n κ := (P.lpn_samples_eq π L).trans
+    ((congrArg (fun q : ℕ => q ^ P.D) h).trans (P.n_eq κ).symm)
+  have hp : Q.modulus = pp.p := P.lpn_modulus_eq π L
+  let Q' : LWE.Parameters := ⟨P.ℓ κ, P.n κ, pp.p, pp.prime.two_le⟩
+  have hQ : Q = Q'
+  · cases hQQ : Q with
+    | mk dim rows modulus hge =>
+      have hd' := hd
+      have hr' := hr
+      have hp' := hp
+      rw [hQQ] at hd' hr' hp'
+      dsimp only at hd' hr' hp'
+      subst dim
+      subst rows
+      subst modulus
+      rfl
+  have hden : (P.lpnFamily_raw π).noiseDen L = P.W κ :=
+    (P.lpnFamily_raw_noiseDen π L).trans
+      ((congrArg P.noiseDenAt h).trans (P.W_eq_noiseDenAt κ).symm)
+  have hmod : (P.lpnFamily_raw π).modulus L = pp.p := P.lpnFamily_raw_modulus π L
+  have hχ : χ = lpnNoise pp.p (P.W κ)
+  · dsimp only [χ]
+    rw [LPNFamily.Raw.toLWE_noise, LPNFamily.Raw.noise_eq, hmod, hden]
+  have ht : (Matrix (Fin Q.samples) (Fin Q.dimension) (ZMod Q.modulus) ×
+      ((Fin Q.dimension → ZMod Q.modulus) × (Fin Q.samples → χ.Coins))) =
+      (Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p) ×
+        ((Fin (P.ℓ κ) → ZMod pp.p) ×
+          (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)))
+  · rw [hQ, hχ, lpnNoise_coins]
+  refine ⟨Equiv.cast ht, ?_⟩
+  intro r
+  constructor
+  · funext i a
+    simp only [P.lpnMatrixAt_eq, P.lpnChalEquiv_eq, LWE.sample_fst,
+      hQ, hχ, Equiv.cast_apply, Equiv.cast_trans, Fin.cast_cast]
+  · funext i
+    simp only [P.lpnValuesAt_eq, P.lpnChalEquiv_eq, LWE.sample_snd,
+      LWE.noisyValues_apply, P.noiseValue_eq, hQ, hχ, lpnNoise_coins,
+      Equiv.cast_apply, Equiv.cast_trans, Fin.cast_cast]

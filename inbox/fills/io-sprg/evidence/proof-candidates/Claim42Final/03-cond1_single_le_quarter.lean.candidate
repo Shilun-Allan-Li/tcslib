@@ -1,0 +1,29 @@
+/- NOT_RUN. Proposed area-local Internal helper. No new imports.
+Search: cond1_prob_le is the existing exact fixed-index estimate. Do not
+reprove Markov. The only new arithmetic step is its threshold comparison,
+using Core Nat.lt_mul_div_succ. exact?/apply? and elaboration pending root. -/
+
+theorem cond1_single_le_quarter (P : Params) {cLoc : ℕ}
+    (hLoc : P.R.HasLocality cLoc) (κ : ℕ) (pp : PrimeParam κ)
+    (I : P.Idx' κ pp) (hlog : 4 * cLoc ≤ Nat.log 2 (P.n κ)) :
+    Games.ProbComp.prob
+      (Games.ProbComp.sample (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))
+      (fun r => P.Γ κ <
+        (P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))).card) ≤ (4 : ℝ)⁻¹ := by
+  refine (P.cond1_prob_le hLoc κ pp I).trans ?_
+  have hround := Nat.lt_mul_div_succ
+    (P.m κ * Nat.log 2 (P.n κ)) (P.W_pos κ)
+  rw [← P.Γ_eq] at hround
+  have hnat : 4 * cLoc * P.m κ ≤ P.W κ * (P.Γ κ + 1)
+  · calc
+      4 * cLoc * P.m κ = P.m κ * (4 * cLoc) := Nat.mul_comm _ _
+      _ ≤ P.m κ * Nat.log 2 (P.n κ) := Nat.mul_le_mul_left _ hlog
+      _ ≤ P.W κ * (P.Γ κ + 1) := hround.le
+  have hreal : (4 : ℝ) * cLoc * P.m κ ≤
+      (P.W κ : ℝ) * ((P.Γ κ : ℝ) + 1)
+  · exact_mod_cast hnat
+  have hW : (0 : ℝ) < P.W κ := Nat.cast_pos.mpr (P.W_pos κ)
+  have hden : (0 : ℝ) < (P.W κ : ℝ) * ((P.Γ κ : ℝ) + 1) :=
+    mul_pos hW (add_pos_of_nonneg_of_pos (Nat.cast_nonneg _) zero_lt_one)
+  apply (div_le_iff₀ hden).2
+  nlinarith

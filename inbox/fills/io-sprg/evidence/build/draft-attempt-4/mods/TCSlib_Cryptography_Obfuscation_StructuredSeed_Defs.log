@@ -1,0 +1,30 @@
+2026-11-18T09:47:33.717516+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean:82:9: error(nested.lean.propRecLargeElim): Tactic `cases` failed with a nested error:
+Tactic `induction` failed: recursor `Exists.casesOn` can only eliminate into `Prop`
+
+κ : ℕ
+x✝ : ∃ p, Nat.Prime p ∧ 2 ^ κ < p ∧ p ≤ 2 * 2 ^ κ
+⊢ PrimeParam κ
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs.lean:369:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Defs): no fresh .olean produced
+        2.68 real         2.07 user         1.02 sys
+          2355101696  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              184953  page reclaims
+                 300  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  62  voluntary context switches
+               11509  involuntary context switches
+            31960238  instructions retired
+            15537203  cycles elapsed
+             1622352  peak memory footprint
+2026-11-18T09:47:36.433074+00:00 END rc=1

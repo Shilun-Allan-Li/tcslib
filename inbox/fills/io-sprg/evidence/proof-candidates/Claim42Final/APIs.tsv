@@ -1,0 +1,28 @@
+API	Source	Use
+Params.cond1_prob_le	StructuredSeed/Claim42.lean:126	fixed-index Markov
+Params.errProb_le_decomposition	StructuredSeed/Claim42.lean:141	three event components
+Params.le_log_n	StructuredSeed/Params.lean:389	pp-independent log lower cutoff
+Params.Γ_le_B	StructuredSeed/Params.lean:382	pp-independent sparse cutoff
+Nat.lt_mul_div_succ	Lean Init/Data/Nat/Lemmas.lean:1555	Markov threshold and exact ceiling lower
+Nat.div_le_iff_le_mul_add_pred	Lean Init/Data/Nat/Lemmas.lean:918	ceiling upper
+Nat.le_log_of_pow_le	Mathlib/Data/Nat/Log.lean:112	explicit cutoff2^(4*cLoc) via le_n
+Nat.log_lt_of_lt_pow	Mathlib/Data/Nat/Log.lean:119	optional log upper route
+PolyExpr.eval_le	Complexity/Randomized/PolyExpr.lean:159	existing polynomial normal majorant
+PolyExpr.eval_subst	Complexity/Randomized/PolyExpr.lean:134	exact scheduled output polynomial
+PolyExpr.eval_add/eval_mul/eval_pow/eval_var/eval_const	Complexity/Randomized/PolyExpr.lean:113-128	expression readers
+OneWay.uprob_pi_forall	Cryptography/OneWayFunctions/Basic.lean:118	conditional independent repetitions
+OneWay.uexp_mono/uexp_const	Cryptography/OneWayFunctions/Basic.lean:54,69	average uniform bounds
+uprob_prod/uprob_comp_equiv/uprob_fst	Cryptography/Foundations/Probability.lean:153,165,175	fix independent coordinates
+Games.Bridge.prob_sample_eq_uprob	Cryptography/Games/Bridges/Experiments.lean:66	exact uniform bridge
+Games.Bridge.expect_sample_pair	Cryptography/Games/Bridges/Experiments.lean:80	joint uniform product transport
+Games.ProbComp.prob_eq_expect/expect_bind/expect_map/expect_const	Cryptography/Games/Probability.lean:207,128,135,177	retain exact original laws
+Games.ProbComp.prob_bind/expect_mono	Cryptography/Games/Probability.lean:224,193	actual-index averaging
+Equiv.prodAssoc/prodCongr/prodComm	Mathlib/Logic/Equiv/Prod.lean:98,54,83	bucket-last permutation
+Internal.some_bucket_tail/some_full_bucket_tail/binomial_bound	StructuredSeed/Claim42/Load.lean:81,101,53	existing finite placement and binomial bounds
+Real.exp_one_lt_d9	Mathlib/Analysis/Complex/ExponentialBounds.lean:33	exp1<3, fixed kappa12 cutoff
+pow_le_pow_left₀/pow_le_pow_of_le_one	Mathlib/Algebra/Order/GroupWithZero/Unbundled/Basic.lean:451,374	base/exponent monotonicity
+tendsto_pow_const_div_const_pow_of_one_lt	Mathlib/Analysis/SpecificLimits/Normed.lean:177	polynomial factor absorbed by2^k
+Filter.tendsto_add_atTop_nat	Mathlib/Order/Filter/AtTopBot/Basic.lean:428	shifted (k+1)^c normal form
+Filter.Tendsto.const_mul	Mathlib/Topology/Algebra/Monoid.lean:81	scale limit by2C
+Filter.Tendsto.eventually_le_const	Mathlib/Topology/Order/OrderClosed.lean:450	extract <=1 eventual estimate
+Filter.eventually_atTop	Mathlib/Order/Filter/AtTopBot/Basic.lean:68	turn filter event into common natural cutoff

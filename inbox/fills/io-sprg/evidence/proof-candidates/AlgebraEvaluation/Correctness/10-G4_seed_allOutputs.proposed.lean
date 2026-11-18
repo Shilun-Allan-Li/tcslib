@@ -1,0 +1,33 @@
+/-- Every sampled seed evaluates G4 to the field encoding of Eval′; algebraic glue.
+[JLS26, Definition 3.3, p. 10; Equation (4), p. 17].
+This theorem-only helper preserves the specific G4 witness for both complexity links.
+
+**Proof sketch.** Join the published full-law polynomial and Boolean correctness facts
+using the AllOutputs constructor readers. Their common error/output value identifies
+the two sides. Push the resulting fact through the published seed-law map reader.
+No general AllOutputs conjunction lemma is available in the imported public API. -/
+theorem Params.G4_seed_allOutputs (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+    (I : P.Idx' κ pp) :
+    (P.sdSamp' κ pp I).AllOutputs (fun sd => ∀ j,
+      ((P.eval' κ pp I sd j).toNat : ZMod pp.p) =
+        MvPolynomial.eval (Sum.elim sd.1 sd.2) (P.G4 κ pp I j)) := by
+  have hfull : (P.sdSampFull κ pp I).AllOutputs (fun x => ∀ j,
+      ((P.eval' κ pp I x.seed j).toNat : ZMod pp.p) =
+        MvPolynomial.eval (Sum.elim x.seed.1 x.seed.2) (P.G4 κ pp I j))
+  · have hfield := P.G4_eval_eq κ pp I
+    have hbit := P.eval'_correct κ pp I
+    generalize hc : P.sdSampFull κ pp I = c at hfield hbit ⊢
+    induction c generalizing hfield hbit with
+    | pure x =>
+      rw [OracleComp.allOutputs_pure] at hfield hbit ⊢
+      intro j
+      rw [hbit j, hfield j]
+      cases x.err <;> rfl
+    | query i a k ih =>
+      rw [OracleComp.allOutputs_query] at hfield hbit ⊢
+      intro y
+      exact ih y (hfield y) (hbit y)
+  rw [P.sdSamp'_eq, OracleComp.map_eq_bind]
+  apply OracleComp.AllOutputs.bind hfull
+  intro x hx
+  exact OracleComp.allOutputs_pure.mpr hx

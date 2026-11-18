@@ -1,0 +1,24 @@
+{
+  "time": "2026-11-18T12:17:07.896487+00:00",
+  "reason": "SP-W3 pre-M0 stretch non-vacuity repair; stop serial queue, let current owned probe finish",
+  "recorded_wrapper_pid": 57702,
+  "chain": [
+    {
+      "pid": 57702,
+      "ppid": 57700,
+      "command": "bash /private/tmp/io-sprg-tools/lean-slot.sh nice -n 10 lean -DmaxErrors=0 evidence/probes/io_sprg_m0_final/seals_coe_A/SealA_Cryptography_Obfuscation_StructuredSeed_Params.lean"
+    },
+    {
+      "pid": 57700,
+      "ppid": 57168,
+      "command": "/Library/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python -I /Users/seyoonr/.codex/worktrees/io-sprg/tcslib-exchange/evidence/tools/seal/runner_full.py /Users/seyoonr/.codex/worktrees/io-sprg/tcslib-exchange /Users/seyoonr/.codex/worktrees/io-sprg/tcslib-exchange/evidence/rule10/m0_final/orders/current-seal.txt /Users/seyoonr/.codex/worktrees/io-sprg/tcslib-exchange/.lake/io-sprg-oleans /Users/seyoonr/.codex/worktrees/io-sprg/tcslib-exchange/evidence/rule10/m0_final/seal-runs"
+    },
+    {
+      "pid": 57168,
+      "ppid": 3557,
+      "command": "/Library/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python -I evidence/tools/io-sprg-rule10/run_matrix.py /Users/seyoonr/.codex/worktrees/io-sprg/tcslib-exchange /Users/seyoonr/.codex/worktrees/io-sprg/tcslib-exchange/.lake/io-sprg-oleans evidence/rule10/m0_final"
+    }
+  ],
+  "signal_target": 57168,
+  "signal": "SIGTERM"
+}

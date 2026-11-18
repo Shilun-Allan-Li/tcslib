@@ -1,0 +1,34 @@
+/- NOT_RUN. Specialized RealizesOn transport, no legacy coin-reindexing lemma.
+Search: no public specialized lpnPre/lpnRed acceptance equality exists.
+Reuses uprob_comp_equiv and the mandatory shared verdict/coin readers plus
+existing uniform restriction/ofFn-take APIs. No algorithm or sampler defined.
+Exact?/apply? and elaboration pending root. -/
+
+theorem lpn_accept_realizes_eq (P : Params) (π : PrimeSchedule) (A B : NUPPT)
+    (ω : ∀ L, P.LPNAdvice π L)
+    (hB : B.RealizesOn (P.lpnEnc π) (A.coins.subst .var)
+      (fun L x r => P.lpnRed π A L (ω L) x r))
+    (L : ℕ) {σ : Type} [Fintype σ] (X : σ → P.LPNChal π L) :
+    acceptProb X (fun x (r : B.Coins L) => B.distinguisherL L (P.lpnEnc π L x) r) =
+      acceptProb X (fun x (r : A.Coins (P.kappaOf L)) =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L (ω L) x)
+          (List.ofFn r) = [true])) := by
+  classical
+  have hcut : A.coinLen (P.kappaOf L) ≤ (A.coins.subst .var).eval L :=
+    ((A.coinLen_eq (P.kappaOf L)).le.trans
+      (A.coins.eval_mono (P.kappaOf_le L))).trans_eq
+        ((PolyExpr.eval_subst A.coins .var L).trans
+          (congrArg A.coins.eval (PolyExpr.eval_var L))).symm
+  rw [acceptProb_def, acceptProb_def, uprob_prod, uprob_prod]
+  apply congrArg uexp
+  funext s
+  rw [← uprob_comp_equiv (NUPPT.coinsEquivPoly hB.coins_eq L).symm]
+  simp only [hB.distinguisherL_eq, P.lpnRed_eq,
+    NUPPT.coinsEquivPoly_symm_ofFn, decide_eq_true_eq]
+  let Q : List Bool → Prop := fun r =>
+    A.runAtL (P.kappaOf L) (P.lpnPre π L (ω L) (X s)) r = [true]
+  have hprefix :=
+    (HardcoreBit.pushesUniform_restrict (O := Bool) (Fin.castLE_injective hcut)).uprob_eq
+      (fun r : Fin (A.coinLen (P.kappaOf L)) → Bool => Q (List.ofFn r))
+  simp only [OneWay.ofFn_castLE_eq_take hcut] at hprefix
+  exact hprefix

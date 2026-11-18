@@ -1,0 +1,24 @@
+API	pinned source	use
+LWE.encodeChallenge_injective	TCSlib/Cryptography/LWE/Encoding.lean:72	canonical challenge injection
+LWE.Family.modulus_le_pow	TCSlib/Cryptography/LWE/Assumption.lean:81	use family's own width
+LWE.Family.advantageAt_eq	TCSlib/Cryptography/LWE/Assumption.lean:124	canonical machine experiment
+LWE.decisionAdvantage_eq	TCSlib/Cryptography/LWE/Experiments.lean:53	canonical typed challenge/coins advantage
+LWE.sample_fst/sample_snd	TCSlib/Cryptography/LWE/Basic.lean:109	matrix and noisy-value laws
+LWE.noisyValues_apply	TCSlib/Cryptography/LWE/Basic.lean:67	matrix-vector plus scalar noise
+LPNFamily.Raw.adv_eq	TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:168	canonical raw family advantage
+LPNFamily.Raw.toLWE_noise	TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean:150	canonical scalar-noise law
+Turing.pairEncode_injective	TCSlib/Complexity/TuringMachine/Encoding.lean:173	recover nested components
+Turing.length_pairEncode	TCSlib/Complexity/TuringMachine/Encoding.lean:220	exact 2*left+2+right length
+Candidates.listToNat_natToList	TCSlib/Cryptography/Candidates/Arithmetic.lean:143	recover fitted sentinel-hop numeral
+Nat.lt_two_pow_self	Lean Init/Data/Nat/Lemmas.lean:1227	fixed hop fits width
+Encoding.Modular.encodeVector_injective	TCSlib/Cryptography/Encoding/Modular.lean:101	fixed-width uniform row recovery
+Encoding.Modular.encodeVector_length	TCSlib/Cryptography/Encoding/Modular.lean:79	fixed vector block sizes
+BoolCircuit.encodeList_nil/cons	TCSlib/Complexity/CircuitComplexity/Uniform.lean:96	tag/concatenation list readers, not pair-list code
+HardcoreBit.pushesUniform_add_right	TCSlib/Cryptography/HardcoreBit/Basic.lean:202	uniform challenge plus fixed sigma is uniform
+HardcoreBit.pushesUniform_restrict	TCSlib/Cryptography/HardcoreBit/Basic.lean:220	short coin prefix is uniform
+HardcoreBit.PushesUniform.uprob_eq	TCSlib/Cryptography/HardcoreBit/Basic.lean:184	read translation/restriction law
+OneWay.ofFn_castLE_eq_take	TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:95	list prefix equals typed restriction
+LamportReduction.exists_expect_sample_le	TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging.lean:114	fix actual nuisance seed, not uniform advice
+ProbComp.abs_expect_sub_le_expect	TCSlib/Cryptography/Games/Probability.lean:409	average absolute section gaps
+RealizesOn.distinguisherL_eq	TCSlib/Cryptography/Asymptotic/Realization.lean:132	shared exact typed-challenge verdict
+NUPPT.coinsEquivPoly_symm_ofFn	TCSlib/Complexity/Randomized/PPT.lean:286	actual B coin type to known layout

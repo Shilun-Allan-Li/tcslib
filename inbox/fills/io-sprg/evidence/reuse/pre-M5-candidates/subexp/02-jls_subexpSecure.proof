@@ -1,0 +1,14 @@
+by
+  obtain ⟨cG, hcG, hGs⟩ := (subexpHard_iff _).mp hG
+  obtain ⟨cL, hcL, hLs⟩ := (subexpHard_iff _).mp hLPN
+  have hEpos : 0 < (P.E : ℝ) :=
+    Nat.cast_pos.mpr (lt_of_lt_of_le Nat.zero_lt_one P.one_le_E)
+  have hDpos : 0 < (P.D : ℝ) := Nat.cast_pos.mpr P.D_pos
+  have hm : 0 < min ((P.E : ℝ) * cL) (min ((P.E : ℝ) * P.D * cG) 1) :=
+    lt_min_iff.mpr ⟨mul_pos hEpos hcL,
+      lt_min_iff.mpr ⟨mul_pos (mul_pos hEpos hDpos) hcG, zero_lt_one⟩⟩
+  apply (subexpHard_iff _).mpr
+  refine ⟨min ((P.E : ℝ) * cL) (min ((P.E : ℝ) * P.D * cG) 1) / 2,
+    div_pos hm zero_lt_two, ?_⟩
+  intro A
+  exact jls_subexpSmall P π hLoc hR hcL hcG hGs hLs A

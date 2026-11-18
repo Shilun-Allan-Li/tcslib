@@ -1,0 +1,17 @@
+import TCSlib.Cryptography.OneWayFunctions.Basic
+import Mathlib.Data.Finset.Powerset
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open scoped BigOperators
+
+namespace IoSprgOverlapProbe
+
+example {m B : ℕ} [NeZero B] (T : Finset (Fin m)) (b : Fin B) :
+    TCSlib.Cryptography.uprob (fun φ : Fin m → Fin B => ∀ j ∈ T, φ j = b) =
+      1 / (B : ℝ) ^ T.card := __PROBE_BODY__
+
+end IoSprgOverlapProbe

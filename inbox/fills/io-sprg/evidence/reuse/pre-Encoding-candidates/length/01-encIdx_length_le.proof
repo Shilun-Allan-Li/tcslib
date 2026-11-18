@@ -1,0 +1,17 @@
+by
+  have hbucket : (P.encBuckets κ I.2.1).length = P.m κ * (P.B κ + 1) + 1
+  · rw [P.encBuckets_eq, Internal.encodeList_length_of_fixedWidth
+      (fun b : Fin (P.B κ) => Candidates.natToList (P.B κ) b.val) (P.B κ)
+      (fun b => Candidates.length_natToList (P.B κ) b.val), List.length_ofFn]
+  have hG := (P.G.encIdx_length_le (P.n κ) I.1).trans
+    (PolyExpr.eval_mono P.G.idxBits (P.n_le_nBound κ))
+  have hBM : P.m κ * (P.B κ + 1) ≤
+      P.mBound.eval κ * (P.bucketBound.eval κ + 1) :=
+    Nat.mul_le_mul (P.m_le_mBound κ) (Nat.add_le_add_right (P.B_le_bucketBound κ) 1)
+  have hNL : P.n κ * P.ℓ κ * (κ + 1) ≤
+      P.nBound.eval κ * P.ellBound.eval κ * (κ + 1) :=
+    Nat.mul_le_mul_right (κ + 1) (Nat.mul_le_mul (P.n_le_nBound κ) (P.ell_le_ellBound κ))
+  simp only [P.encIdx'_eq, length_pairEncode, hbucket,
+    Encoding.Modular.encodeMatrix_length, P.idxBound_eq, PolyExpr.eval_add,
+    PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_subst, PolyExpr.eval_var]
+  omega

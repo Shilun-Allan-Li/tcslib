@@ -1,0 +1,44 @@
+evidence/probes/io_sprg_m0_final/controls_strict_A/ControlU_A_Cryptography_Obfuscation_StructuredSeed_BoolPRG.lean:30:2: error: Type mismatch
+  fun {σ R} [CommSemiring R] ts => Eq.refl ts.denote
+has type
+  ∀ {σ R : Type} [inst : CommSemiring R] (ts : TCSlib.Cryptography.Obfuscation.StructuredSeed.PolyTerms σ R),
+    ts.denote = ts.denote
+but is expected to have type
+  ∀ (ts : TCSlib.Cryptography.Obfuscation.StructuredSeed.PolyTerms σ✝ R✝),
+    ts.denote = (List.map (fun t => MvPolynomial.C t.1 * (List.map (fun i => MvPolynomial.X i) t.2).prod) ts).sum
+the following variables have been introduced by the implicit lambda feature
+  σ✝ : Type
+  R✝ : Type
+  inst✝ : CommSemiring R✝
+you can disable implicit lambdas using `@` or writing a lambda expression with `{}` or `[]` binder annotations.
+evidence/probes/io_sprg_m0_final/controls_strict_A/ControlU_A_Cryptography_Obfuscation_StructuredSeed_BoolPRG.lean:42:2: error: Type mismatch
+  fun {n} i => Eq.refl (TCSlib.Cryptography.Obfuscation.StructuredSeed.PolyTerms.encFin i)
+has type
+  ∀ {n : ℕ} (i : Fin n),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.PolyTerms.encFin i =
+      TCSlib.Cryptography.Obfuscation.StructuredSeed.PolyTerms.encFin i
+but is expected to have type
+  ∀ (i : Fin n✝), TCSlib.Cryptography.Obfuscation.StructuredSeed.PolyTerms.encFin i = (↑i).bits
+the following variables have been introduced by the implicit lambda feature
+  n✝ : ℕ
+you can disable implicit lambdas using `@` or writing a lambda expression with `{}` or `[]` binder annotations.
+evidence/probes/io_sprg_m0_final/controls_strict_A/ControlU_A_Cryptography_Obfuscation_StructuredSeed_BoolPRG.lean:48:2: error: Type mismatch
+  fun {σ R} encR encVar ts => Eq.refl (TCSlib.Cryptography.Obfuscation.StructuredSeed.PolyTerms.encTerms encR encVar ts)
+has type
+  ∀ {σ R : Type} (encR : R → List Bool) (encVar : σ → List Bool)
+    (ts : TCSlib.Cryptography.Obfuscation.StructuredSeed.PolyTerms σ R),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.PolyTerms.encTerms encR encVar ts =
+      TCSlib.Cryptography.Obfuscation.StructuredSeed.PolyTerms.encTerms encR encVar ts
+but is expected to have type
+  ∀ (encR : R✝ → List Bool) (encVar : σ✝ → List Bool)
+    (ts : TCSlib.Cryptography.Obfuscation.StructuredSeed.PolyTerms σ✝ R✝),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.PolyTerms.encTerms encR encVar ts =
+      BoolCircuit.encodeList
+        (fun t =>
+          Turing.pairEncode
+            (Turing.pairEncode (encR t.1) (BoolCircuit.encodeList (fun i => Turing.pairEncode (encVar i) []) t.2)) [])
+        ts
+the following variables have been introduced by the implicit lambda feature
+  σ✝ : Type
+  R✝ : Type
+you can disable implicit lambdas using `@` or writing a lambda expression with `{}` or `[]` binder annotations.

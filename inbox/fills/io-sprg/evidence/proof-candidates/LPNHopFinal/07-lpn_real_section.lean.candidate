@@ -1,0 +1,52 @@
+/- NOT_RUN. Fixed-advice real canonical acceptance, dependency04/05.
+Read canonical sample seeds through the coherent equivalence, then the exact
+word identity. No independent fresh sampler is introduced as a definition. -/
+
+theorem lpn_real_section (P : Params) (π : PrimeSchedule) (A : NUPPT) (L : ℕ)
+    (h : L = P.ℓ (P.kappaOf L)) (w : P.LPNAdvice π L)
+    (k : Fin (P.kappaOf L)) (hk : k.val = w.hop.val) :
+    acceptProb (LWE.sample ((P.lpnFamily_raw π).toLWE.parameters L)
+      ((P.lpnFamily_raw π).toLWE.noise L))
+      (fun x (r : A.Coins (P.kappaOf L)) =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true])) =
+    Games.ProbComp.expect
+      (Games.ProbComp.sample (Matrix (Fin (P.n (P.kappaOf L)))
+        (Fin (P.ℓ (P.kappaOf L))) (ZMod (π (P.kappaOf L)).p))) (fun M =>
+      Games.ProbComp.expect
+        (Games.ProbComp.sample ((Fin (P.ℓ (P.kappaOf L)) → ZMod (π (P.kappaOf L)).p) ×
+          (Fin (P.n (P.kappaOf L)) → Fin (P.W (P.kappaOf L)) ×
+            ZMod (π (P.kappaOf L)).p))) (fun rep =>
+          Games.ProbComp.expect (Games.ProbComp.sample (A.Coins (P.kappaOf L))) (fun r =>
+            if A.runAtL (P.kappaOf L)
+              (P.challengeStr (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                (P.publicSeed (P.kappaOf L) (π (P.kappaOf L))
+                  (P.chainPublic (P.kappaOf L) (π (P.kappaOf L)) (w.I, w.buckets, M)
+                    (w.draw.1, Function.update w.draw.2 k rep) w.uniform w.hop.val) false)
+                w.tail) (List.ofFn r) = [true] then 1 else 0))) := by
+  classical
+  let κ := P.kappaOf L
+  let pp := π κ
+  let Mat := Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p)
+  let Rep := (Fin (P.ℓ κ) → ZMod pp.p) ×
+    (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
+  let Q := (P.lpnFamily_raw π).toLWE.parameters L
+  let χ := (P.lpnFamily_raw π).toLWE.noise L
+  let D := fun x (r : A.Coins κ) =>
+    decide (A.runAtL κ (P.lpnPre π L w x) (List.ofFn r) = [true])
+  obtain ⟨e, he⟩ := lpn_real_seed_reindex P π L h
+  rw [← acceptProb_comp_equiv e.symm (LWE.sample Q χ) D, acceptProb_def,
+    ← Games.Bridge.prob_sample_eq_uprob, Games.ProbComp.prob_eq_expect]
+  simp only [← Games.Bridge.expect_sample_pair (α := Mat × Rep) (β := A.Coins κ),
+    ← Games.Bridge.expect_sample_pair (α := Mat) (β := Rep),
+    Games.ProbComp.expect_bind, Games.ProbComp.expect_pure]
+  apply congrArg (Games.ProbComp.expect (Games.ProbComp.sample Mat))
+  funext M
+  apply congrArg (Games.ProbComp.expect (Games.ProbComp.sample Rep))
+  funext rep
+  apply congrArg (Games.ProbComp.expect (Games.ProbComp.sample (A.Coins κ)))
+  funext r
+  have hp := he (e.symm (M, rep))
+  simp only [Equiv.apply_symm_apply] at hp
+  dsimp only [D]
+  rw [lpn_pre_real_update P π L h w k hk M rep _ hp.1 hp.2]
+  simp only [decide_eq_true_eq]

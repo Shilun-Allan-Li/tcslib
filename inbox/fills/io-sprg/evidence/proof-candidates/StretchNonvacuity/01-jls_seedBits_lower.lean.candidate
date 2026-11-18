@@ -1,0 +1,14 @@
+/- NOT_RUN. Read-only proof candidate; root must elaborate after the M0 repair.
+No source changes, no new imports. Public arithmetic API searched in Lean 4.25
+Init/Data/Nat/Lemmas.lean:613 and Init/Data/Nat/Basic.lean:369.
+Add only if a named lower-bound helper is desired; otherwise inline this body
+inside the existing jls_hasPolyStretch proof. Existing jls_seedBits_eq is an
+upstream M2 obligation, so this file is not claimed self-contained or checked. -/
+
+/-- The JLS payload contains at least one (kappa+1)-bit public residue. -/
+theorem jls_seedBits_lower (P : Params) (π : PrimeSchedule) (κ : ℕ) :
+    κ + 1 ≤ (jlsSPRG_raw P π).seedBits κ := by
+  rw [jls_seedBits_eq, Params.seedBitsAt_eq, Params.pubLen_eq]
+  exact Nat.le_mul_of_pos_left (κ + 1)
+    (Nat.lt_of_lt_of_le (Nat.zero_lt_succ (κ * P.n κ))
+      (Nat.le_add_right (κ * P.n κ + 1) (P.privLen κ)))

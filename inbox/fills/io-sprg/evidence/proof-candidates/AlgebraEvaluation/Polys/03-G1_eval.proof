@@ -1,0 +1,77 @@
+by
+  classical
+  have hml := (MvPolynomial.mem_restrictDegree
+    (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j)) 1).mp
+      (P.R.poly_mem_restrictDegree (P.n κ) I'.1 (P.outputIndex κ j))
+  have hmon : ∀ h ∈ (P.R.poly (P.n κ) I'.1 (P.outputIndex κ j)).support,
+      (∏ r : Fin P.D, match Internal.monomialSlot h r.val with
+        | none => 1
+        | some i => x i) *
+      (∏ r : Fin P.D, match Internal.monomialSlot h (P.D + r.val) with
+        | none => 1
+        | some i => x i) = ∏ i ∈ h.support, x i ^ h i
+  · intro h hh
+    have hexp : ∀ i ∈ h.support, h i = 1
+    · intro i hi
+      have hle := hml h hh i
+      have hne := Finsupp.mem_support_iff.mp hi
+      omega
+    have hsum : h.sum (fun _ e => e) = h.support.card
+    · change Finset.sum h.support (fun i => h i) = h.support.card
+      trans Finset.sum h.support (fun _ => 1)
+      · exact Finset.sum_congr rfl hexp
+      · simp
+    have hcard : h.support.card ≤ P.d
+    · have hd := (MvPolynomial.le_totalDegree hh).trans
+        (P.R.totalDegree_poly_le (P.n κ) I'.1 (P.outputIndex κ j))
+      rwa [hsum] at hd
+    have hdouble : P.d ≤ P.D + P.D
+    · rw [P.D_eq]
+      omega
+    let L := h.support.sort (· ≤ ·)
+    let f : ℕ → ZMod pp.p := fun r => match L[r]? with
+      | none => 1
+      | some i => x i
+    have hlen : L.length ≤ P.D + P.D
+    · simpa only [L, Finset.length_sort] using hcard.trans hdouble
+    have hjoin : (∏ r : Fin P.D, f r.val) *
+        (∏ r : Fin P.D, f (P.D + r.val)) =
+          ∏ r : Fin (P.D + P.D), f r.val
+    · simpa only [Fin.coe_castAdd, Fin.coe_natAdd] using
+        (Fin.prod_univ_add (fun r : Fin (P.D + P.D) => f r.val)).symm
+    have hpadding : (∏ r : Fin (P.D + P.D), f r.val) =
+        ∏ r : Fin L.length, f r.val
+    · simp only [Fin.prod_univ_eq_prod_range]
+      symm
+      apply Finset.prod_subset (Finset.range_mono hlen)
+      intro r hr hnot
+      have hge : L.length ≤ r :=
+        Nat.le_of_not_lt (fun hlt => hnot (Finset.mem_range.mpr hlt))
+      simp only [f, List.getElem?_eq_none hge]
+    have hlist : (∏ r : Fin L.length, f r.val) = Finset.prod h.support x
+    · calc
+        (∏ r : Fin L.length, f r.val) =
+            ∏ r : Fin L.length, x L[r.val] := ?_
+        _ = (L.map x).prod := Fin.prod_univ_fun_getElem L x
+        _ = Finset.prod h.support x := ?_
+      · apply Finset.prod_congr rfl
+        intro r hr
+        simp only [f, List.getElem?_eq_getElem r.isLt]
+      · simpa only [L, Finset.sort_toFinset] using
+          (List.prod_toFinset x (h.support.sort_nodup (· ≤ ·))).symm
+    have hpow : (∏ i ∈ h.support, x i ^ h i) = Finset.prod h.support x
+    · apply Finset.prod_congr rfl
+      intro i hi
+      rw [hexp i hi, pow_one]
+    simp only [Internal.monomialSlot_eq]
+    change (∏ r : Fin P.D, f r.val) * (∏ r : Fin P.D, f (P.D + r.val)) = _
+    exact hjoin.trans (hpadding.trans (hlist.trans hpow.symm))
+  rw [P.G1_eq, P.prgPoly_eq, MvPolynomial.eval_sum, MvPolynomial.eval₂_eq]
+  apply Finset.sum_congr rfl
+  intro h hh
+  rw [MvPolynomial.eval_mul, MvPolynomial.eval_mul, MvPolynomial.eval_C,
+    P.halfForm_eval κ pp I' k h 0 s x z hpub htensor,
+    P.halfForm_eval κ pp I' k h P.D s x z hpub htensor]
+  simp only [Nat.zero_add]
+  rw [mul_assoc, hmon h hh]
+  rfl

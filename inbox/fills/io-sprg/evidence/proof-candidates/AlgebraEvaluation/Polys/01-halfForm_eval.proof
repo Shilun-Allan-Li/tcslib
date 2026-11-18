@@ -1,0 +1,59 @@
+by
+  classical
+  let aug : Fin (P.ℓ κ + 1) → ZMod pp.p := fun a =>
+    if ha : a.val < P.ℓ κ then s ⟨a.val, ha⟩ else 1
+  have hT : ∀ α : Fin P.D → Fin (P.ℓ κ + 1),
+      z (P.sVar κ k false (.inl α)) = ∏ r : Fin P.D, aug (α r) := htensor
+  have hlin : ∀ slot : Option (Fin (P.n κ)),
+      (∑ a : Fin (P.ℓ κ + 1),
+        MvPolynomial.eval z (P.linearCoeff κ pp I' k slot a) * aug a) =
+        match slot with
+        | none => 1
+        | some i => x i
+  · intro slot
+    cases slot with
+    | none =>
+      rw [Fin.sum_univ_castSucc]
+      have hzero : ∀ a : Fin (P.ℓ κ),
+          MvPolynomial.eval z (P.linearCoeff κ pp I' k none a.castSucc) *
+            aug a.castSucc = 0
+      · intro a
+        simp [P.linearCoeff_eq, aug, Nat.ne_of_lt a.isLt]
+      simp_rw [hzero]
+      simp [P.linearCoeff_eq, aug]
+    | some i =>
+      rw [Fin.sum_univ_castSucc]
+      have hlow : ∀ a : Fin (P.ℓ κ),
+          MvPolynomial.eval z (P.linearCoeff κ pp I' k (some i) a.castSucc) *
+            aug a.castSucc = -(I'.2.2 i a * s a)
+      · intro a
+        simp [P.linearCoeff_eq, aug, a.isLt]
+      have hlast :
+          MvPolynomial.eval z (P.linearCoeff κ pp I' k (some i) (Fin.last (P.ℓ κ))) *
+            aug (Fin.last (P.ℓ κ)) = z (P.bVar κ k i)
+      · simp [P.linearCoeff_eq, aug]
+      simp_rw [hlow]
+      rw [hlast, Finset.sum_neg_distrib, hpub i]
+      ring
+  calc
+    MvPolynomial.eval z (P.halfForm κ pp I' k h offset false) =
+        ∑ α : Fin P.D → Fin (P.ℓ κ + 1),
+          ∏ r : Fin P.D,
+            MvPolynomial.eval z
+                (P.linearCoeff κ pp I' k (Internal.monomialSlot h (offset + r.val))
+                  (α r)) * aug (α r) := ?_
+    _ = ∏ r : Fin P.D, ∑ a : Fin (P.ℓ κ + 1),
+        MvPolynomial.eval z
+            (P.linearCoeff κ pp I' k (Internal.monomialSlot h (offset + r.val)) a) *
+          aug a := (Fintype.prod_sum _).symm
+    _ = ∏ r : Fin P.D, match Internal.monomialSlot h (offset + r.val) with
+        | none => 1
+        | some i => x i := ?_
+  · rw [P.halfForm_eq, MvPolynomial.eval_sum]
+    apply Finset.sum_congr rfl
+    intro α hα
+    rw [MvPolynomial.eval_mul, MvPolynomial.eval_prod, MvPolynomial.eval_X, hT α,
+      ← Finset.prod_mul_distrib]
+  · apply Finset.prod_congr rfl
+    intro r hr
+    exact hlin _

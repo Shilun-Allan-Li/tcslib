@@ -1,0 +1,219 @@
+io-sprg pinned design audit
+Records: dbea2807532392781304e004715f3b0190025f5e
+Lean base: 5ed465f62e4ae0f93ded1a1ba49e807591b589eb
+Read: sprg README, rulings, r1/r2/r3 designs, r2/r3 sweeps, contract REPORT,
+realization REPORT, IOComponentsPlan (scope, deferred work, all 2026-11-18 rows).
+No source PDF read. No Lean/lake/cache/git mutations run.
+
+Immediate issue to resolve before finalizing definitions
+The proposed total bucket indexMap has codomain Fin(rc) x Fin(rc), with
+rc(kappa)=kappa*w(kappa). At kappa=0, rc=0, but outLen(n(0)) may be positive.
+Then indexMap takes an existing j into an empty type, even in its overfull
+fallback. This is an impossible proposed type. Minimal refinements:
+(A) preserve rc/cap rounding, use Option(Fin rc x Fin rc), none for overfull;
+express correction polynomial by a sum over grid coordinates instead of total
+projections, and prove the usual good-case map agrees. (B) use a padded max 1 rc
+grid and disclose its finite-boundary difference. Rounding/proposed shapes may
+be refined with disclosure, but the final M0 statements must resolve this.
+
+Interface detail not fully specified in old design
+BoolPRG originally carries arbitrary idSamp : ProbComp Idx; r3 adds idSamp_eff
+as SamplesEfficiently. The final primitive must expose one finite IdDraw and
+deterministic idCore with idSamp derived from it (or an equality field).
+Otherwise the efficiency contract could describe an unrelated sampler.
+The SPRG.Raw index draw is the product of that BoolPRG draw, bucket-map draw,
+and matrix draw. T5 must target the whole one draw; no product sampler may be
+constructed, and two DrawSamplable facts cannot be combined by a local lemma.
+
+Module inventory (19 implementation modules, 2 facades)
+StructuredSeed/LPN.lean
+StructuredSeed/BoolPRG.lean
+StructuredSeed/Degree.lean
+StructuredSeed/PolyTerms.lean
+StructuredSeed/Defs.lean
+StructuredSeed/Params.lean
+StructuredSeed/Buckets.lean
+StructuredSeed/SparseFactor.lean
+StructuredSeed/Polys.lean
+StructuredSeed/Samplers.lean
+StructuredSeed/Correctness.lean
+StructuredSeed/Stretch.lean
+StructuredSeed/Claim42/Load.lean
+StructuredSeed/Claim42.lean
+StructuredSeed/Hybrids.lean
+StructuredSeed/Reductions/LPN.lean
+StructuredSeed/Reductions/PRG.lean
+StructuredSeed/Security.lean
+StructuredSeed/Targets.lean
+Obfuscation/StructuredSeed.lean
+Cryptography/Obfuscation.lean
+No local Realization.lean or SamplerEfficiency.lean. One root TCSlib.lean import.
+
+Natural implementation layering
+1 Degree, PolyTerms, LPN, BoolPRG, generic Buckets/SparseFactor.
+2 Defs (PrimeParam, PrimeSchedule nonempty, SPRG.Raw and SPRG predicates).
+3 Params (all derived lengths, Idx and structured variable types needed by Polys).
+4 Polys (G1-G4); Samplers (cores, exact laws, encodings, jlsSPRG_raw).
+5 Correctness, Stretch, Claim42/Load and Claim42 (independent M1-M3).
+6 Hybrids and explicit Reductions/LPN and PRG; Security raw theorems.
+7 Targets (T1-T6, links via shared preTarget lemma, assembly, primitive theorems).
+Avoid circular dependency: define construction index/variable types before
+Polys; G1-G4 do not depend on oneSd, only explicit public index/coordinates.
+
+Binding settled changes over old text
+Shared RealizesOn and all readers must be reused. Body constrains only layout
+coin lengths. Reuse exists_realizesOn_of_preTarget for M6 (not direct machine
+construction). Shared CoinSampling.Contract predicates/readers/closure must be
+reused. CoinSampling.Contract/Efficiency direct imports only Defs/BoolPRG/LPN/
+Targets. New no-sampler-construction rule supersedes old r1 machine routes.
+Raw bundles carry security/correctness/complexity/stretch. SPRG, BoolPRG,
+LPNFamily carry uniform honest efficiency fields. P.G is already efficient;
+construction LPN raw family needs T6 only at assembly. Targets remain named
+Props, no sorries, no attempted proofs. qGen uses PolyTerms and TermsEfficient
+stays a Phase B hypothesis. Public prime first in every challenge, and on
+input of each target; forall schedule in security, arbitrary pp in honest
+algorithms/correctness/Claim42, uniform eventual threshold in pp.
+
+Deviation ledger
+Dv1 one security parameter with fixed n(kappa) polynomial schedule.
+Dv2 seeds are ZMod vectors; fixed residue width counts seedBits.
+Dv3 LPN through LWE: transposed matrix, construction family only, rounded
+noise 1/W >= ell^-delta, residue width ell+1.
+Dv4 Boolean PRG indexed by n, representation/locality for every index,
+locality read on representation variables.
+Dv5 stretch lower bound m >= n^tau instead of exact equality.
+Dv6 Def3.3 only bidegree public d/private2, composite polynomial form;
+old no-efficiency wording is superseded by r3 raw/primitive split.
+Dv7 Claim42 eventual threshold explicit.
+Dv8 Lemma42 hybrids include bucket map phi, quantitative realiser forms.
+Dv9 public prime parameter 2^kappa <=p<=2^(kappa+1), including p=2 at 0,
+not a computed prime; every schedule, prime published in challenge.
+Dv10 public degree d (not p14 d+1), flag*S precomputed privately.
+Dv11 d>=1.
+Dv12 hardwire averaging values and hop choice in nonuniform advice;
+reductions never sample.
+Dv13 subexponential advantage against NUPPT, through shared Subexponential API;
+not subexponential-time adversaries.
+Dv14 Phase A functions/security for every realiser; efficiency targets;
+primitive inhabited only under targets.
+Dv15 Fin-indexed seeds via explicit equivalences and polynomial renaming.
+Dv16 RealizesOn constrains only encoded challenges and layout coin lengths;
+weaker predicate strengthens every-realiser security and eases realizability.
+Dv17 exact-law core plus uniform finite draw and exact-on-success sampler
+contract with <=2^-kappa failure; not literal machine output law.
+Dv18 construction is raw bundle; primitive assembled under Phase B targets.
+
+Core raw inequality
+For each pi and A choose advice omegaL/omegaG, then for EVERY realizing BL/BG
+and EVERY kappa:
+adv_sprg A k <= 2*k*adv_lpn BL (ell k)+adv_prg BG(n k)+2*errProb k (pi k).
+No positive-kappa premise. At k=0 errProb=1 may make this trivially hold,
+but all algorithm and advice types still must be inhabited/total.
+
+M0 constraints
+All definitions final, readers proved; every non-reader theorem sorry with
+Proof sketch, except PrimeSchedule.nonempty proved. Named assembly field
+proofs may be sorried at M0, not inline arbitrary sorries. After M0 freeze,
+statement changes have dedicated commits. Coe-A and coe-B seals 0 failing
+declarations and paired controls on each public definition used downstream.
+Axioms census and statement dump needed at M0 and final.
+
+Reuse priorities
+Probability laws and expectation/equivalence readers; advantage_hybrid and
+exists_advantage_hybrid_gap; agree-off-bad Hopping bound; Lamport Markov and
+averaging unless newer public Probability lemma at base. LWE.Noise and Family
+for exact LPN; Modular encodeVector/Matrix and LWE encodeChallenge. Shared
+RealizesOn verdict/coin readers. Explicit finSum/finProd/finFunction/finCongr
+equivalences. Existing weightedDegree base and rename theorem; only missing
+closure lemmas may be added after searches. Nat.choose_le_pow_div and
+Real.pow_div_factorial_le_exp for binomial helper; existing analytic limits.
+Shared SubexpSmall reindex/closure exclusively for exponent min(E*cL,
+E*D*cG,1)/2. No shortcut via CoinSampling.Asymptotic.
+
+No additional external blocker was established by this read-only audit.
+Source and host resource preflights are owned by lead/other subagent.
+
+Follow-up requested by lead: binding vs proposed issues
+1. Empty grid at kappa=0 is a proposed helper-shape issue, not a false stated
+Claim42/prop41. Exact rc/cap rounding can be preserved by indexMap returning
+Option(Fin rc x Fin rc), with none on overfull grids; G2/G3 correction terms
+become sums over coordinates weighted by the index equality. For rc>0 and
+non-overfull buckets it is the original map. No mathematical theorem weakening
+is needed, so this is a disclosed pre-M0 implementation refinement. Padding rc
+with max1 instead would alter a settled formula and should be explicitly
+listed as a boundary-rounding refinement (or escalated if treated as fixed).
+
+2. Claim42 appears analytically sound as stated, for every P with locality,
+without output stretch. For Cond1 use threshold Gamma+1: bad>Gamma implies
+bad>=Gamma+1, and Gamma+1 > m log(n)/W handles the floor even for tiny m.
+Condition on I for independent noise-instance bounds; shared sigma is harmless
+because BAD depends only on noise and Vars. The common bucket-overflow event
+is split off once. Polynomial B times exp(-kappa) is eventually o(2^-kappa),
+and Cond3 is superexponential from cap>=kappa^2. kappa=0 is harmless for the
+statement because it is eventual.
+
+3. Target uniformity has a substantive potential E-ROUTE issue, independent of
+source: Params.delta ranges over arbitrary real constants. For a
+noncomputable delta in (0,1), w(k)=floor(k^(E*delta/2)) is not a computable
+sequence (eventually max1 is redundant): from w one can compute delta to
+arbitrary accuracy via log(w(k))/log(k), with effective error O(1/log(k)).
+The proposed fixed-width seed encoding exposes w through output length.
+Concrete test family: E=d=D=1, BoolPRG output length m(n)=0, unit index/draw,
+constant empty output and vacuous multilinear representation. This is allowed
+in Params (no HasStretch field). Then B(k)=1, Gamma(k)=0; the index and exact
+seed draw inputs are independent of delta because the noise vector has
+length n=k (CAUTION: n is the seed length, not output length; see below).
+
+Correction to the quick counterexample: the seed draw noise vector has length
+n, not m. Thus its Fin W coordinates' encodings can reveal some information
+about W through their fixed widths. The simple input-independence claim needs
+an exact draw encoding before it is a complete counterexample. If each Fin W
+is encoded in W bits (permitted though exponential for arbitrary W?), inputs
+would reveal W; if in ceil(log W) bits, a zero draw reveals only that width,
+and w remains generally noncomputable relative to that coarse schedule, but a
+countability argument or a fixed-width subsequence is needed. Therefore do
+NOT label this a proved E-ROUTE counterexample yet. The concern is real:
+Phase B cannot in general calculate arbitrary-real rpow floors from unary k
+alone, unless the parameter word/draw encoding deliberately supplies all
+needed dimensions. Final target shapes and their inputs must resolve it.
+A rational exponent or rational minorant schedule is a standard remedy but
+would be a disclosed change to the settled rounding convention.
+
+Refined uniformity obstruction (supersedes tentative correction above)
+Under the intended injective fixed-width encDraw and parameter word y carrying
+only encoded pp/index, T5 DrawSamplable entails computability of card(Draw).
+For k>=1 its failure is <=2^-k<1. Exact-on-success makes every draw reachable.
+Enumerate all c.eval(k) coin strings and run the computable UniformSampler.raw;
+count distinct nonfailure words. Encoding compatibility and injectivity make
+this exactly card(Draw k pp). This argument needs no independent computation
+of encDraw itself, so dimensions leaking into its words do not evade it.
+
+Take E=d=D=1 and a permitted BoolPRG with m(n)=0 and unit index/draw. B=1,
+Gamma=0, so the fixed zero index/matrix's encoded parameter word y is
+independent of delta. Choose a computable prime schedule by unbounded prime
+enumeration (only as a meta computability argument, not an honest algorithm).
+Draw cardinality is 2^k * W(k)^(k^2) * p^(2*k^2). Division and integer roots
+recover W and w effectively for every k>=1. For k=2^N,
+0 <= delta - 2*log(w(k))/log(k) <= 2/N, since
+w<=k^(delta/2)<w+1<=2*w. Thus w computes delta with an effective convergence
+rate. Pick any noncomputable real delta in (0,1): no such T5 witness exists.
+
+Consequences/classification:
+- Not a false conditional security theorem. P.Targets is allowed as a
+hypothesis, so raw/conditional statements can be logically sound.
+- The proposed existence hypothesis forall P:Params,P.Targets cannot hold
+for the full arbitrary-real Params type with those intended inputs/encodings.
+This is exactly a concern about an efficiency target with no possible
+algorithm for allowed data, covered by the dispatch E-ROUTE criterion.
+- It is not source fidelity evidence; PDF still pending.
+- Minimal viable fix: make exponent data rational (coerced to reals for
+analysis), or use a rational minorant in the rounded schedule, with theorems
+quantifying arbitrary analytical delta through that minorant. This changes a
+settled rounding/parameter convention and should be disclosed to user as
+E-ROUTE if implementing it.
+- Alternative of putting w/W in y means external noncomputable scheduling,
+which changes the intended honest algorithm input contract and should not be
+silently used to make the targets look satisfiable.
+- Actual M0 encodings/parameter words have not been authored; until fixed, state
+this as a precise obstruction to the intended proposed shape, not a theorem
+about already-existing Lean declarations.

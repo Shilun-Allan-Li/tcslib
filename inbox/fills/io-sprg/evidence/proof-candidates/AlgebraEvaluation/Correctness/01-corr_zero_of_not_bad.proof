@@ -1,0 +1,28 @@
+by
+  classical
+  let f := P.R.poly (P.n κ) I.1 (P.outputIndex κ j)
+  have he : ∀ i, i ∈ f.vars → e i = 0
+  · intro i hi
+    by_contra hei
+    apply h
+    rw [P.badSet_eq]
+    apply Finset.mem_filter.mpr
+    refine ⟨Finset.mem_univ _, ?_⟩
+    refine ⟨i, Finset.mem_inter.mpr ⟨hi, ?_⟩⟩
+    rw [P.errSet_eq]
+    exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, hei⟩
+  have herr : MvPolynomial.eval₂ (Int.castRingHom (ZMod pp.p))
+      (fun i => ((σ i).toNat : ZMod pp.p) + e i) f =
+        MvPolynomial.eval₂ (Int.castRingHom (ZMod pp.p))
+          (fun i => ((σ i).toNat : ZMod pp.p)) f
+  · apply MvPolynomial.eval₂Hom_congr' rfl ?_ rfl
+    intro i hi hi'
+    rw [he i hi, add_zero]
+  have hbool : MvPolynomial.eval₂ (Int.castRingHom (ZMod pp.p))
+      (fun i => ((σ i).toNat : ZMod pp.p)) f =
+        ((P.G.eval (P.n κ) I.1 σ (P.outputIndex κ j)).toNat : ZMod pp.p)
+  · have hc := congrArg (Int.castRingHom (ZMod pp.p))
+      (P.R.eval_poly (P.n κ) I.1 σ (P.outputIndex κ j))
+    rw [MvPolynomial.eval₂_comp] at hc
+    simpa only [Function.comp_apply, map_natCast] using hc
+  rw [P.corr_eq, herr, hbool, sub_self]

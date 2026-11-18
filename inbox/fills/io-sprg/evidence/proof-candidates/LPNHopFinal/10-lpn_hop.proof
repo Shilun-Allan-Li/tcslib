@@ -1,0 +1,36 @@
+by
+  classical
+  let gap : ∀ L, P.LPNAdvice π L → ℝ := fun L w =>
+    LWE.decisionAdvantage ((P.lpnFamily_raw π).toLWE.parameters L)
+      ((P.lpnFamily_raw π).toLWE.noise L)
+      (fun x (r : A.Coins (P.kappaOf L)) =>
+        decide (A.runAtL (P.kappaOf L) (P.lpnPre π L w x) (List.ofFn r) = [true]))
+  have hfixed : ∀ L, ∃ w : P.LPNAdvice π L,
+      L = P.ℓ (P.kappaOf L) → (hops (P.kappaOf L)).val < P.kappaOf L →
+      Games.advantage
+        (P.chainGame A (tails (P.kappaOf L)) (hops (P.kappaOf L)).val
+          (P.kappaOf L) (π (P.kappaOf L)))
+        (P.chainGame A (tails (P.kappaOf L)) ((hops (P.kappaOf L)).val + 1)
+          (P.kappaOf L) (π (P.kappaOf L))) ≤ gap L w
+  · intro L
+    by_cases hi : L = P.ℓ (P.kappaOf L)
+    · by_cases hv : (hops (P.kappaOf L)).val < P.kappaOf L
+      · obtain ⟨w, hw⟩ := Internal.lpn_fix_advice P π A L hi
+          (tails (P.kappaOf L)) (hops (P.kappaOf L)) hv
+        exact ⟨w, fun _ _ => hw⟩
+      · refine ⟨Classical.choice (inferInstance : Nonempty (P.LPNAdvice π L)), ?_⟩
+        intro _ hvalid
+        exact False.elim (hv hvalid)
+    · refine ⟨Classical.choice (inferInstance : Nonempty (P.LPNAdvice π L)), ?_⟩
+      intro himage _
+      exact False.elim (hi himage)
+  choose ω hω using hfixed
+  refine ⟨ω, ?_⟩
+  intro B hB κ hhop
+  have hi : P.ℓ κ = P.ℓ (P.kappaOf (P.ℓ κ)) :=
+    congrArg P.ℓ (P.kappaOf_pow κ).symm
+  have hselected := hω (P.ℓ κ) hi
+  rw [P.kappaOf_pow] at hselected
+  have heq : gap (P.ℓ κ) (ω (P.ℓ κ)) = (P.lpnFamily_raw π).adv B (P.ℓ κ) :=
+    Internal.lpn_gap_realizes_eq P π A B ω hB (P.ℓ κ)
+  exact (hselected hhop).trans heq.le

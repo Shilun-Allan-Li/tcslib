@@ -1,0 +1,18 @@
+NOT_RUN: assembly fragment for the EXISTING jls_hasPolyStretch body.
+Upstream analytic obligations are exactly the old ones:
+  tauPrime : Real
+  hTauPrime : 1 < tauPrime
+  kappa0 : Nat
+  hPower : forall kappa >= kappa0,
+    ((jlsSPRG_raw P pi).seedBits kappa : Real) ^ tauPrime <=
+      (jlsSPRG_raw P pi).outLen kappa
+Use the same witnesses and threshold after the repaired definition reader:
+
+  exact ⟨tauPrime, hTauPrime, kappa0, fun kappa hkappa =>
+    ⟨(Nat.le_add_right kappa 1).trans (jls_seedBits_lower P pi kappa),
+      hPower kappa hkappa⟩⟩
+
+No extra eventual threshold is needed: the stronger kappa+1 lower bound
+holds for every kappa, including zero. No new imports, machine, sampler,
+computability claim or cryptographic assumption. All analytic proof work
+in the existing sorry remains; this fragment does not claim to solve it.

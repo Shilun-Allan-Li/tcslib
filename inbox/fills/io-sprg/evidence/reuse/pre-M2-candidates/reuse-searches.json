@@ -1,0 +1,81 @@
+[
+  {
+    "command": [
+      "rg",
+      "-n",
+      "lemma add_pow_le",
+      ".lake/packages/mathlib/Mathlib/Algebra/Order/Ring/Basic.lean"
+    ],
+    "returncode": 0,
+    "stdout": "130:lemma add_pow_le (ha : 0 \u2264 a) (hb : 0 \u2264 b) : \u2200 n, (a + b) ^ n \u2264 2 ^ (n - 1) * (a ^ n + b ^ n)\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem cast_div_le",
+      ".lake/packages/mathlib/Mathlib/Data/Nat/Cast/Order/Field.lean"
+    ],
+    "returncode": 0,
+    "stdout": "30:theorem cast_div_le {m n : \u2115} : ((m / n : \u2115) : \u03b1) \u2264 m / n := by\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem eval_le|theorem eval_subst|theorem eval_mono",
+      "TCSlib/Complexity/Randomized/PolyExpr.lean"
+    ],
+    "returncode": 0,
+    "stdout": "134:theorem eval_subst (p q : PolyExpr) (n : \u2115) : (p.subst q).eval n = p.eval (q.eval n) := by\n142:theorem eval_mono (p : PolyExpr) : Monotone p.eval := by\n159:theorem eval_le (p : PolyExpr) : \u2203 C c : \u2115, \u2200 n, p.eval n \u2264 C * (n + 1) ^ c := by\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "theorem lt_div_mul_add|theorem lt_mul_div_succ|theorem le_pow|theorem div_le_iff_le_mul_add_pred",
+      "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Nat/Lemmas.lean"
+    ],
+    "returncode": 0,
+    "stdout": "909:theorem lt_div_mul_add {a b : Nat} (hb : 0 < b) : a < a / b * b + b := by\n918:theorem div_le_iff_le_mul_add_pred (hb : 0 < b) : a / b \u2264 c \u2194 a \u2264 b * c + (b - 1) := by\n1239:theorem le_pow {a b : Nat} (h : 0 < b) : a \u2264 a ^ b := by\n1555:theorem lt_mul_div_succ (a : Nat) (hb : 0 < b) : a < b * (a / b + 1) := by\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "div_div_eq_div_mul|theorem div_mul_le_self|theorem add_div_right|theorem mul_div_left",
+      "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Nat/Div/Basic.lean"
+    ],
+    "returncode": 0,
+    "stdout": "280:protected theorem div_div_eq_div_mul (m n k : Nat) : m / n / k = m / (n * k) := by\n300:theorem div_mul_le_self : \u2200 (m n : Nat), m / n * n \u2264 m\n315:@[simp] theorem add_div_right (x : Nat) {z : Nat} (H : 0 < z) : (x + z) / z = (x / z) + 1 := by\n438:@[simp] theorem mul_div_left (m : Nat) {n : Nat} (H : 0 < n) : m * n / n = m := by\n452:    m * n / (m * k) = n / k := by rw [\u2190 Nat.div_div_eq_div_mul, Nat.mul_div_cancel_left _ H]\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "rpow_mul_natCast|rpow_le_rpow_of_exponent_le|rpow_le_one_of_one_le_of_nonpos|theorem mul_rpow|theorem rpow_mul",
+      ".lake/packages/mathlib/Mathlib/Analysis/SpecialFunctions/Pow/Real.lean"
+    ],
+    "returncode": 0,
+    "stdout": "399:theorem rpow_mul {x : \u211d} (hx : 0 \u2264 x) (y z : \u211d) : x ^ (y * z) = (x ^ y) ^ z := by\n461:theorem mul_rpow (hx : 0 \u2264 x) (hy : 0 \u2264 y) : (x * y) ^ z = x ^ z * y ^ z := by\n498:lemma rpow_mul_natCast (hx : 0 \u2264 x) (y : \u211d) (n : \u2115) : x ^ (y * n) = (x ^ y) ^ n := by\n595:theorem rpow_le_rpow_of_exponent_le (hx : 1 \u2264 x) (hyz : y \u2264 z) : x ^ y \u2264 x ^ z := by\n654:theorem rpow_le_one_of_one_le_of_nonpos {x z : \u211d} (hx : 1 \u2264 x) (hz : z \u2264 0) : x ^ z \u2264 1 := by\n655:  convert rpow_le_rpow_of_exponent_le hx hz\n726:  simpa only [rpow_one] using rpow_le_rpow_of_exponent_le h\u2081 h\u2082\n733:  simpa only [rpow_one] using rpow_le_rpow_of_exponent_le h\u2081 h\u2082\n912:@[bound] lemma rpow_le_rpow_of_exponent_le_or_ge {x y z : \u211d}\n915:  \u00b7 exact Real.rpow_le_rpow_of_exponent_le x1 yz\n928:  exact Real.rpow_le_rpow_of_exponent_le one_le_two <| (neg_lt_neg hs).le\n942:  exact Real.rpow_le_rpow_of_exponent_le (by exact_mod_cast hn) h\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "seedBitsAt_le|jls_hasPolyStretch|bucket_width_product|tensor_len_le",
+      "TCSlib",
+      "--glob",
+      "!TCSlib/Cryptography/Obfuscation/**"
+    ],
+    "returncode": 1,
+    "stdout": "",
+    "stderr": ""
+  }
+]

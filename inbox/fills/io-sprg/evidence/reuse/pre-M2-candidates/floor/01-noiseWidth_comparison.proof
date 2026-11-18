@@ -1,0 +1,9 @@
+by
+  have ha : 0 ≤ (P.δ : ℝ) / 2 :=
+    div_nonneg (Rat.cast_nonneg.mpr P.δ_pos.le) zero_le_two
+  have hx : 1 ≤ (L : ℝ) ^ ((P.δ : ℝ) / 2) :=
+    Real.one_le_rpow (Nat.one_le_cast.mpr hL) ha
+  have hf : 1 ≤ ⌊(L : ℝ) ^ ((P.δ : ℝ) / 2)⌋₊ :=
+    (Nat.one_le_floor_iff _).2 hx
+  rw [P.noiseWidth_eq, max_eq_right hf]
+  exact ⟨(Nat.div_two_lt_floor hx).le, Nat.floor_le (zero_le_one.trans hx)⟩

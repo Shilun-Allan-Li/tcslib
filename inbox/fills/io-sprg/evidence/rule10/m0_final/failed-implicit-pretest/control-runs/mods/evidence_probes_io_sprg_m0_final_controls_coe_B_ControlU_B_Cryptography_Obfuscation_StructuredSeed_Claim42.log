@@ -1,0 +1,12 @@
+evidence/probes/io_sprg_m0_final/controls_coe_B/ControlU_B_Cryptography_Obfuscation_StructuredSeed_Claim42.lean:72:2: error: Type mismatch
+  fun {κ} flags => Eq.refl (TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.firstGood flags)
+has type
+  ∀ {κ : ℕ} (flags : Fin κ → Bool),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.firstGood flags =
+      TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.firstGood flags
+but is expected to have type
+  ∀ (flags : Fin κ✝ → Bool),
+    TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.firstGood flags = List.find? flags (List.finRange κ✝)
+the following variables have been introduced by the implicit lambda feature
+  κ✝ : ℕ
+you can disable implicit lambdas using `@` or writing a lambda expression with `{}` or `[]` binder annotations.

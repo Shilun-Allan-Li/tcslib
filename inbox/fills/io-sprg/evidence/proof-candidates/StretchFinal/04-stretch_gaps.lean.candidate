@@ -1,0 +1,23 @@
+/- NOT_RUN. Proposed area-local Internal helper. Reuses E0_eq and the
+public Nat.lt_floor_add_one; does not rederive a generic floor estimate.
+No new imports, exact?/apply? and elaboration pending root. -/
+
+theorem stretch_gaps (P : Params) {τ : ℝ} (hτ : 1 < τ)
+    (hE : E0 P.d (P.δ : ℝ) τ ≤ P.E) :
+    0 < (((P.E * P.D : ℕ) : ℝ) * (τ - 1) - 5) ∧
+      0 < (P.E : ℝ) * ((P.δ : ℝ) / 2) - 5 := by
+  rw [E0_eq] at hE
+  have hc : (⌊max (10 / (P.δ : ℝ)) (5 / (τ - 1))⌋₊ : ℝ) + 1 ≤ (P.E : ℝ)
+  · exact_mod_cast hE
+  have hm : max (10 / (P.δ : ℝ)) (5 / (τ - 1)) < (P.E : ℝ) :=
+    (Nat.lt_floor_add_one _).trans_le hc
+  have hδ : 0 < (P.δ : ℝ) := Rat.cast_pos.mpr P.δ_pos
+  have hτ' : 0 < τ - 1 := sub_pos.mpr hτ
+  have h10 : 10 < (P.E : ℝ) * (P.δ : ℝ) :=
+    (div_lt_iff₀ hδ).mp ((le_max_left _ _).trans_lt hm)
+  have h5 : 5 < (P.E : ℝ) * (τ - 1) :=
+    (div_lt_iff₀ hτ').mp ((le_max_right _ _).trans_lt hm)
+  have ha : (P.E : ℝ) ≤ ((P.E * P.D : ℕ) : ℝ)
+  · exact_mod_cast (Nat.le_mul_of_pos_right P.E P.D_pos)
+  have hmul := mul_le_mul_of_nonneg_right ha hτ'.le
+  constructor <;> nlinarith

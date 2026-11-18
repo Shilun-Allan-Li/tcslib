@@ -1,0 +1,21 @@
+-- NEW SPECIALIZED HELPER CANDIDATE, NOT_RUN. Exact equality, not a generic variable-size bound.
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal
+
+/-- A tagged list of equal-width blocks has length len*(width+1)+1; encoding glue.
+This exact fixed-width identity overlaps the private generic upper bound only by implication.
+
+**Proof sketch.** The empty list contributes its final false marker. A cons contributes one
+true marker, exactly width payload bits, and the induction formula for its tail. -/
+theorem encodeList_length_of_fixedWidth {α : Type} (f : α → List Bool)
+    (width : ℕ) (hwidth : ∀ a, (f a).length = width) (xs : List α) :
+    (BoolCircuit.encodeList f xs).length = xs.length * (width + 1) + 1 := by
+  induction xs with
+  | nil =>
+    simp only [BoolCircuit.encodeList_nil, List.length_singleton, List.length_nil,
+      Nat.zero_mul, Nat.zero_add]
+  | cons x xs ih =>
+    simp only [BoolCircuit.encodeList_cons, List.length_cons, List.length_append,
+      hwidth, ih, Nat.succ_mul]
+    omega
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal
