@@ -1,0 +1,20 @@
+Proposed addition to TCSlib/Cryptography/LWE/BitNoise.lean (EF-D1-SR1; NOT applied: frozen file).
+Insert after `bitNoise_sample` (line 51) and after `centeredNoise_sample` (line 91) respectively:
+
+/-- A sample of `bitNoise t f` at a seed of type `Coins` is `f` of the seed read through
+`bitNoise_Coins`: `(bitNoise t f).sample c = f (cast (bitNoise_Coins t f) c)`. -/
+theorem bitNoise_sample_cast (t : ℕ) (f : (Fin t → Bool) → ℤ) (c : (bitNoise t f).Coins) :
+    (bitNoise t f).sample c = f (cast (bitNoise_Coins t f) c) := rfl
+
+/-- A sample of `centeredNoise t` at a seed of type `Coins` is `centeredValue t` of the seed
+read through `centeredNoise_Coins`:
+`(centeredNoise t).sample c = centeredValue t (cast (centeredNoise_Coins t) c)`. -/
+theorem centeredNoise_sample_cast (t : ℕ) (c : (centeredNoise t).Coins) :
+    (centeredNoise t).sample c = centeredValue t (cast (centeredNoise_Coins t) c) := rfl
+
+Landing edits in TCSlib/Cryptography/LWE/Efficient.lean once these exist (one line each):
+* noise_efficient_of_bitNoise: drop `hs`, use `bitNoise_sample_cast` in the final `rw`.
+* add `theorem centeredSampleEq (T) : CenteredSampleEq T := (centeredSampleEq_iff T).2 fun κ c =>
+  centeredNoise_sample_cast _ c` (then the `hs` arguments of noise_efficient_centeredNoise and
+  EfficientFamily.ofDyadic can be dropped or filled with it);
+* dyadicExample may switch `(.const 0)` to `(.const 1)` (χ = centeredNoise 1), see SR1-probe.lean.

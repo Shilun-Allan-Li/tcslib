@@ -296,6 +296,13 @@ theorem dyadicExample_parameters (κ : ℕ) :
     (dyadicExample.parameters κ).dimension = κ + 1 ∧
       (dyadicExample.parameters κ).columns = 2 * (κ + 1) ^ 2 ∧
       (dyadicExample.parameters κ).modulus = 2 ^ (κ + 1) ∧
-      (dyadicExample.parameters κ).sqNormBound = κ + 1 := ⟨rfl, rfl, rfl, rfl⟩
+      (dyadicExample.parameters κ).sqNormBound = κ + 1 := by
+  have h : (PolyExpr.add .var (.const 1)).eval κ = κ + 1 := by
+    rw [PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const]
+  refine ⟨h, ?_, ?_, h⟩
+  · show (PolyExpr.mul (.const 2) (.pow (.add .var (.const 1)) 2)).eval κ = 2 * (κ + 1) ^ 2
+    rw [PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_pow, h]
+  · show 2 ^ (PolyExpr.add .var (.const 1)).eval κ = 2 ^ (κ + 1)
+    rw [h]
 
 end TCSlib.Cryptography.SIS

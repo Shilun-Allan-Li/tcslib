@@ -1,0 +1,81 @@
+TCSlib/Cryptography/LWE/Efficient.lean:403:49: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (finCongr ?eq) ?i
+in the target expression
+  ↑w = ↑((finCongr ⋯) w)
+
+case refine_1.e_N
+t : PolyExpr
+n : ℕ → ℕ
+hn : ∀ (κ : ℕ), n κ = t.eval κ
+χ : ℕ → Noise
+hc : ∀ (κ : ℕ), (χ κ).Coins = (Fin (n κ) → Bool)
+κ : ℕ
+x✝ : Unit
+w : CoinSampling.bucketSampler.Ω (seedModulusWord (n κ))
+⊢ ↑w = ↑((finCongr ⋯) w)
+TCSlib/Cryptography/LWE/Efficient.lean:404:44: error: Tactic `rewrite` failed: motive is not type correct:
+  fun _a => (CoinSampling.bucket _a (t.eval κ)).fail ≤ 2⁻¹ ^ κ
+Error: Application type mismatch: The argument
+  CoinSampling.bucket _a (t.eval κ)
+has type
+  CoinSampling.CoinSampler (Fin _a) (t.eval κ)
+but is expected to have type
+  CoinSampling.CoinSampler (CoinSampling.bucketSampler.Ω (seedModulusWord (n κ))) (t.eval κ)
+in the application
+  (CoinSampling.bucket _a (t.eval κ)).fail
+
+Explanation: The rewrite tactic rewrites an expression 'e' using an equality 'a = b' by the following process. First, it looks for all 'a' in 'e'. Second, it tries to abstract these occurrences of 'a' to create a function 'm := fun _a => ...', called the *motive*, with the property that 'm a' is definitionally equal to 'e'. Third, we observe that 'congrArg' implies that 'm a = m b', which can be used with lemmas such as 'Eq.mpr' to change the goal. However, if 'e' depends on specific properties of 'a', then the motive 'm' might not typecheck.
+
+Possible solutions: use rewrite's 'occs' configuration option to limit which occurrences are rewritten, or use 'simp' or 'conv' mode, which have strategies for certain kinds of dependencies (these tactics can handle proofs and 'Decidable' instances whose types depend on the rewritten term, and 'simp' can apply user-defined '@[congr]' theorems as well).
+
+case refine_2
+t : PolyExpr
+n : ℕ → ℕ
+hn : ∀ (κ : ℕ), n κ = t.eval κ
+χ : ℕ → Noise
+hc : ∀ (κ : ℕ), (χ κ).Coins = (Fin (n κ) → Bool)
+κ : ℕ
+x✝ : Unit
+⊢ (CoinSampling.bucket (listToNat (seedModulusWord (n κ))) (t.eval κ)).fail ≤ 2⁻¹ ^ κ
+TCSlib/Cryptography/LWE/Efficient.lean:573:12: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  List.take (T.eval κ) ((List.ofFn fun i => r (Fin.castAdd (T.eval κ) i)) ++ ?m.43)
+in the target expression
+  signedDiff
+      (pairEncode
+        (onesCount
+          (List.take (T.eval κ)
+            ((List.ofFn fun i => r (Fin.castLE ⋯ i)) ++ List.ofFn fun i => r (Fin.natAdd (T.eval κ) i))))
+        (onesCount
+          (List.drop (T.eval κ)
+            ((List.ofFn fun i => r (Fin.castLE ⋯ i)) ++ List.ofFn fun i => r (Fin.natAdd (T.eval κ) i))))) =
+    noiseWord (centeredValue (T.eval κ) r)
+
+T : PolyExpr
+κ : ℕ
+r : Fin (T.eval κ + T.eval κ) → Bool
+hsplit : List.ofFn r = (List.ofFn fun i => r (Fin.castLE ⋯ i)) ++ List.ofFn fun i => r (Fin.natAdd (T.eval κ) i)
+hl : (List.ofFn fun i => r (Fin.castAdd (T.eval κ) i)).length = T.eval κ
+⊢ signedDiff
+      (pairEncode
+        (onesCount
+          (List.take (T.eval κ)
+            ((List.ofFn fun i => r (Fin.castLE ⋯ i)) ++ List.ofFn fun i => r (Fin.natAdd (T.eval κ) i))))
+        (onesCount
+          (List.drop (T.eval κ)
+            ((List.ofFn fun i => r (Fin.castLE ⋯ i)) ++ List.ofFn fun i => r (Fin.natAdd (T.eval κ) i))))) =
+    noiseWord (centeredValue (T.eval κ) r)
+TCSlib/Cryptography/LWE/Efficient.lean:666:41: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (centeredNoise ?t).sample ?c
+in the target expression
+  noiseWord (centeredValue (T.eval κ) (cast ⋯ c)) =
+    noiseWord (((dyadicFamily N M W hW fun κ => centeredNoise (T.eval κ)).noise κ).sample c)
+
+N M W T : PolyExpr
+hW : ∀ (κ : ℕ), 1 ≤ W.eval κ
+κ : ℕ
+c : ((dyadicFamily N M W hW fun κ => centeredNoise (T.eval κ)).noise κ).Coins
+⊢ noiseWord (centeredValue (T.eval κ) (cast ⋯ c)) =
+    noiseWord (((dyadicFamily N M W hW fun κ => centeredNoise (T.eval κ)).noise κ).sample c)
+FAIL(TCSlib/Cryptography/LWE/Efficient): lean exited with status 1
+FAIL(TCSlib/Cryptography/LWE/Efficient): error diagnostics reported
+FAIL(TCSlib/Cryptography/LWE/Efficient): no fresh .olean produced

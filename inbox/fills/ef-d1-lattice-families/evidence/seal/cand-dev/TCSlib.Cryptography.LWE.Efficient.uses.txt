@@ -1,0 +1,78 @@
+TCSlib.Cryptography.LWE.CenteredSampleEq: Complexity.PolyExpr.eval TCSlib.Cryptography.LWE.centeredNoise TCSlib.Cryptography.LWE.centeredValue
+TCSlib.Cryptography.LWE.EfficientFamily: Complexity.PolyTimeComputable Complexity.PolyExpr.eval TCSlib.Cryptography.CoinSampling.SamplesEfficiently
+TCSlib.Cryptography.LWE.centeredCore: Complexity.pairFstD Complexity.pairSndD Turing.pairEncode Complexity.PolyExpr.eval
+TCSlib.Cryptography.LWE.centeredCore_eq: Complexity.pairFstD Complexity.pairSndD Turing.pairEncode Complexity.PolyExpr.eval
+TCSlib.Cryptography.LWE.centeredCore_ofFn: Complexity.pairFstD Complexity.pairSndD Turing.pairEncode Complexity.PolyExpr.eval TCSlib.Cryptography.LWE.centeredValue
+TCSlib.Cryptography.LWE.centeredSampleEq_iff: Complexity.PolyExpr.eval TCSlib.Cryptography.LWE.centeredNoise TCSlib.Cryptography.LWE.centeredValue
+TCSlib.Cryptography.LWE.centeredSampleEq_zero: Complexity.PolyExpr.eval TCSlib.Cryptography.LWE.centeredNoise TCSlib.Cryptography.LWE.centeredValue TCSlib.Cryptography.LWE.Noise.Bounded
+TCSlib.Cryptography.LWE.drawSamplable_bitSeeds: Complexity.PolyExpr.eval TCSlib.Cryptography.bitsEquiv TCSlib.Cryptography.bitsToNat TCSlib.Cryptography.Candidates.natToList TCSlib.Cryptography.CoinSampling.DrawSamplable TCSlib.Cryptography.CoinSampling.modulusWord TCSlib.Cryptography.CoinSampling.residueEnc
+TCSlib.Cryptography.LWE.drawSamplable_restrict: Complexity.PolyExpr.eval TCSlib.Cryptography.CoinSampling.DrawSamplable TCSlib.Cryptography.CoinSampling.CoinSampler.fail
+TCSlib.Cryptography.LWE.dyadicExample: Complexity.PolyExpr.eval
+TCSlib.Cryptography.LWE.dyadicExample_noise: TCSlib.Cryptography.LWE.centeredNoise
+TCSlib.Cryptography.LWE.dyadicFamily: Complexity.PolyExpr.eval
+TCSlib.Cryptography.LWE.dyadicFamily_dimensionBound: Complexity.PolyExpr.eval
+TCSlib.Cryptography.LWE.dyadicFamily_noise: Complexity.PolyExpr.eval
+TCSlib.Cryptography.LWE.dyadicFamily_parameters: Complexity.PolyExpr.eval
+TCSlib.Cryptography.LWE.dyadicFamily_params_uniform: Complexity.PolyTimeComputable Complexity.PolyExpr.eval
+TCSlib.Cryptography.LWE.dyadicFamily_residueBits: Complexity.PolyExpr.eval
+TCSlib.Cryptography.LWE.dyadicFamily_samplesBound: Complexity.PolyExpr.eval
+TCSlib.Cryptography.LWE.dyadicParameters: Complexity.PolyExpr.eval
+TCSlib.Cryptography.LWE.dyadicParameters_dimension: Complexity.PolyExpr.eval
+TCSlib.Cryptography.LWE.dyadicParameters_modulus: Complexity.PolyExpr.eval
+TCSlib.Cryptography.LWE.dyadicParameters_samples: Complexity.PolyExpr.eval
+TCSlib.Cryptography.LWE.length_seedModulusWord: TCSlib.Cryptography.Candidates.natToList
+TCSlib.Cryptography.LWE.listToNat_seedModulusWord: TCSlib.Cryptography.Candidates.natToList TCSlib.Cryptography.NumberTheory.listToNat
+TCSlib.Cryptography.LWE.modulusWord_seedModulus: Complexity.PolyExpr.eval TCSlib.Cryptography.Candidates.natToList TCSlib.Cryptography.CoinSampling.modulusWord
+TCSlib.Cryptography.LWE.natToList_bitsToNat: TCSlib.Cryptography.bitsToNat TCSlib.Cryptography.Candidates.natToList TCSlib.Cryptography.NumberTheory.listToNat
+TCSlib.Cryptography.LWE.natToList_two_pow: TCSlib.Cryptography.Candidates.natToList TCSlib.Cryptography.NumberTheory.listToNat
+TCSlib.Cryptography.LWE.noise_efficient_centeredNoise: Turing.pairEncode Complexity.PolyExpr.eval TCSlib.Cryptography.CoinSampling.SamplesEfficiently TCSlib.Cryptography.LWE.centeredNoise TCSlib.Cryptography.LWE.centeredValue
+TCSlib.Cryptography.LWE.noise_efficient_of_bitNoise: Complexity.PolyTimeComputable Turing.pairEncode Complexity.PolyExpr.eval TCSlib.Cryptography.CoinSampling.SamplesEfficiently TCSlib.Cryptography.LWE.bitNoise
+TCSlib.Cryptography.LWE.noise_efficient_of_bitSeeds: Complexity.PolyTimeComputable Complexity.pairFstD Complexity.pairSndD Turing.pairEncode Complexity.NUPPT.advInput Complexity.PolyExpr.eval TCSlib.Cryptography.CoinSampling.CoreComputable TCSlib.Cryptography.CoinSampling.DrawSamplable TCSlib.Cryptography.CoinSampling.SamplesEfficiently
+TCSlib.Cryptography.LWE.onesCount: Complexity.pairFstD Complexity.BinArith.countLoop
+TCSlib.Cryptography.LWE.onesCount_eq: Complexity.pairFstD Turing.pairEncode Complexity.BinArith.countLoop
+TCSlib.Cryptography.LWE.onesW: Complexity.transduce
+TCSlib.Cryptography.LWE.onesW_eq: Complexity.transduce
+TCSlib.Cryptography.LWE.params_uniform_of_schedule: Complexity.PolyTimeComputable Turing.pairEncode Complexity.PolyExpr.eval TCSlib.Cryptography.Candidates.natToList
+TCSlib.Cryptography.LWE.polyTimeComputable_centeredCore: Complexity.PolyTimeComputable Complexity.pairFstD Complexity.pairSndD Turing.pairEncode Complexity.PolyExpr.eval
+TCSlib.Cryptography.LWE.polyTimeComputable_onesCount: Complexity.PolyTimeComputable Complexity.pairFstD Complexity.BinArith.countLoop
+TCSlib.Cryptography.LWE.polyTimeComputable_onesW: Complexity.PolyTimeComputable Complexity.transduce
+TCSlib.Cryptography.LWE.polyTimeComputable_signedDiff: Complexity.PolyTimeComputable Complexity.pairFstD Complexity.pairSndD Turing.pairEncode Complexity.BinArith.le Complexity.BinArith.sub
+TCSlib.Cryptography.LWE.polyTimeComputable_twoPowWord: Complexity.PolyTimeComputable Complexity.PolyExpr.eval
+TCSlib.Cryptography.LWE.seedModulus: Complexity.PolyExpr.eval
+TCSlib.Cryptography.LWE.seedModulusWord: TCSlib.Cryptography.Candidates.natToList
+TCSlib.Cryptography.LWE.seedModulusWord_eq: TCSlib.Cryptography.Candidates.natToList
+TCSlib.Cryptography.LWE.seedModulusWord_eq_cons: TCSlib.Cryptography.Candidates.natToList
+TCSlib.Cryptography.LWE.seedModulusWord_uniform: Complexity.PolyTimeComputable Complexity.PolyExpr.eval
+TCSlib.Cryptography.LWE.seedModulus_val: Complexity.PolyExpr.eval
+TCSlib.Cryptography.LWE.signedDiff: Complexity.pairFstD Complexity.pairSndD Turing.pairEncode Complexity.BinArith.le Complexity.BinArith.sub
+TCSlib.Cryptography.LWE.signedDiff_bits: Complexity.pairFstD Complexity.pairSndD Turing.pairEncode Complexity.BinArith.le Complexity.BinArith.sub
+TCSlib.Cryptography.LWE.signedDiff_eq: Complexity.pairFstD Complexity.pairSndD Turing.pairEncode Complexity.BinArith.le Complexity.BinArith.sub
+TCSlib.Cryptography.LWE.EfficientFamily.casesOn: Complexity.PolyTimeComputable Complexity.PolyExpr.eval TCSlib.Cryptography.CoinSampling.SamplesEfficiently
+TCSlib.Cryptography.LWE.EfficientFamily.mk: Complexity.PolyTimeComputable Complexity.PolyExpr.eval TCSlib.Cryptography.CoinSampling.SamplesEfficiently
+TCSlib.Cryptography.LWE.EfficientFamily.noConfusion: Complexity.PolyTimeComputable Complexity.PolyExpr.eval TCSlib.Cryptography.CoinSampling.SamplesEfficiently
+TCSlib.Cryptography.LWE.EfficientFamily.noConfusionType: Complexity.PolyTimeComputable Complexity.PolyExpr.eval TCSlib.Cryptography.CoinSampling.SamplesEfficiently
+TCSlib.Cryptography.LWE.EfficientFamily.noiseInput_uniform: Complexity.PolyTimeComputable
+TCSlib.Cryptography.LWE.EfficientFamily.noise_efficient: TCSlib.Cryptography.CoinSampling.SamplesEfficiently
+TCSlib.Cryptography.LWE.EfficientFamily.ofBitSeeds: Complexity.PolyTimeComputable Turing.pairEncode Complexity.PolyExpr.eval TCSlib.Cryptography.CoinSampling.SamplesEfficiently
+TCSlib.Cryptography.LWE.EfficientFamily.ofBitSeeds_encodeSeed: Complexity.PolyTimeComputable Turing.pairEncode Complexity.PolyExpr.eval
+TCSlib.Cryptography.LWE.EfficientFamily.ofBitSeeds_noiseInput: Complexity.PolyTimeComputable Turing.pairEncode Complexity.PolyExpr.eval
+TCSlib.Cryptography.LWE.EfficientFamily.ofBitSeeds_toFamily: Complexity.PolyTimeComputable Turing.pairEncode Complexity.PolyExpr.eval
+TCSlib.Cryptography.LWE.EfficientFamily.ofDyadic: Complexity.PolyTimeComputable Turing.pairEncode Complexity.PolyExpr.eval TCSlib.Cryptography.LWE.centeredNoise TCSlib.Cryptography.LWE.centeredValue
+TCSlib.Cryptography.LWE.EfficientFamily.ofDyadic_noiseInput: Complexity.PolyExpr.eval
+TCSlib.Cryptography.LWE.EfficientFamily.ofDyadic_toFamily: Complexity.PolyExpr.eval TCSlib.Cryptography.LWE.centeredNoise
+TCSlib.Cryptography.LWE.EfficientFamily.params_uniform: Complexity.PolyTimeComputable Complexity.PolyExpr.eval
+TCSlib.Cryptography.LWE.EfficientFamily.rec: Complexity.PolyTimeComputable Complexity.PolyExpr.eval TCSlib.Cryptography.CoinSampling.SamplesEfficiently
+TCSlib.Cryptography.LWE.EfficientFamily.recOn: Complexity.PolyTimeComputable Complexity.PolyExpr.eval TCSlib.Cryptography.CoinSampling.SamplesEfficiently
+TCSlib.Cryptography.LWE.Family.boundedModulus: Complexity.PolyExpr.eval
+TCSlib.Cryptography.LWE.Family.boundedModulus_val: Complexity.PolyExpr.eval
+TCSlib.Cryptography.LWE.Family.pairSndD_pairSndD_encode: Complexity.pairSndD Complexity.PolyExpr.eval TCSlib.Cryptography.Candidates.natToList TCSlib.Cryptography.CoinSampling.modulusWord
+TCSlib.Cryptography.LWE.Parameters.encode: Turing.pairEncode TCSlib.Cryptography.Candidates.natToList
+TCSlib.Cryptography.LWE.Parameters.encode_eq: Turing.pairEncode TCSlib.Cryptography.Candidates.natToList
+TCSlib.Cryptography.LWE.Parameters.encode_injective: Complexity.pairFstD Complexity.pairSndD Turing.pairEncode TCSlib.Cryptography.Candidates.natToList
+TCSlib.Cryptography.LWE.Parameters.pairFstD_encode: Complexity.pairFstD Turing.pairEncode TCSlib.Cryptography.Candidates.natToList
+TCSlib.Cryptography.LWE.Parameters.pairFstD_pairSndD_encode: Complexity.pairFstD Complexity.pairSndD Turing.pairEncode TCSlib.Cryptography.Candidates.natToList
+TCSlib.Cryptography.LWE.Parameters.pairSndD_pairSndD_encode: Complexity.pairSndD Turing.pairEncode TCSlib.Cryptography.Candidates.natToList
+TCSlib.Cryptography.LWE.EfficientFamily.mk.inj: Complexity.PolyTimeComputable Complexity.PolyExpr.eval TCSlib.Cryptography.CoinSampling.SamplesEfficiently
+TCSlib.Cryptography.LWE.EfficientFamily.mk.injEq: Complexity.PolyTimeComputable Complexity.PolyExpr.eval TCSlib.Cryptography.CoinSampling.SamplesEfficiently
+TCSlib.Cryptography.LWE.EfficientFamily.mk.noConfusion: Complexity.PolyTimeComputable Complexity.PolyExpr.eval TCSlib.Cryptography.CoinSampling.SamplesEfficiently
+TCSlib.Cryptography.LWE.EfficientFamily.mk.sizeOf_spec: Complexity.PolyTimeComputable Complexity.PolyExpr.eval TCSlib.Cryptography.CoinSampling.SamplesEfficiently

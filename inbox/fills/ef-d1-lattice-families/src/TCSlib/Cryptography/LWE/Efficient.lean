@@ -8,8 +8,9 @@ import TCSlib.Cryptography.CoinSampling.Contract
 import TCSlib.Cryptography.Asymptotic.Sampling
 import TCSlib.Cryptography.Asymptotic.EnsemblesLemmas
 import TCSlib.Complexity.ClassP.BinaryArith.PrimeFind
-import TCSlib.Complexity.ClassNP.Transducer
+import TCSlib.Complexity.Randomized.BiasedCoinHalting
 import TCSlib.Complexity.Randomized.Primitives
+import TCSlib.Programs.Util.List
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -39,7 +40,8 @@ requires an `EfficientFamily`: an `LWE.Family` together with
   `encodeSeed` and `noise_efficient`.
 * `seedModulusWord n`, `seedWord r`: the bucket parameter word `⦃2^n⦄_{n+1}` of an `n`-bit seed
   draw and the numeral `0 :: r` of a seed.
-* `onesCount`, `signedDiff`, `centeredCore T`: the polynomial-time core of `centeredNoise`.
+* `onesCount`, `signedDiff`, `centeredCore T`: the polynomial-time core of `centeredNoise`
+  (the unary ones are `Randomized.onesW`).
 * `dyadicParameters`, `dyadicFamily`, `EfficientFamily.ofBitSeeds`, `EfficientFamily.ofDyadic`:
   the polynomially scheduled dyadic families with bit-seed noise.
 * `dyadicExample`: one non-vacuity instance (no hardness claimed).
@@ -498,39 +500,25 @@ theorem noise_efficient_of_bitNoise (t : PolyExpr) (n : ℕ → ℕ) (hn : ∀ �
 
 /-! ### The core of the centered noise -/
 
-/-- **The ones of a word, in unary**: the one-pass transducer (one state) that copies each `1`
-and drops each `0`. Glue: a `Complexity.transduce` instance. -/
-def onesW (w : List Bool) : List Bool :=
-  transduce (σ := Unit) (fun _ _ => ()) (fun _ b => if b then some true else none) () w
+/-- **The number of ones of a word, in binary**: `bits (#1 w)`, by the counting loop
+`BinArith.countLoop` on the unary ones `Randomized.onesW w` (`Complexity/Randomized/
+BiasedCoinHalting.lean`). Glue. -/
+def onesCount (w : List Bool) : List Bool := pairFstD (BinArith.countLoop (Randomized.onesW w))
 
-/-- **`onesW` counts the ones**: `onesW w = 1^{Σ [w_i]}` (`transduce_nil`, `transduce_cons`). -/
-theorem onesW_eq (w : List Bool) : onesW w = List.replicate (w.map Bool.toNat).sum true := by
-  induction w with
-  | nil => rw [onesW, transduce_nil, List.map_nil, List.sum_nil, List.replicate_zero]
-  | cons b w ih =>
-    rw [onesW, transduce_cons, ← onesW, ih, List.map_cons, List.sum_cons]
-    cases b
-    · rw [if_neg Bool.false_ne_true, Option.toList_none, List.nil_append, Bool.toNat_false,
-        zero_add]
-    · rw [if_pos rfl, Option.toList_some, Bool.toNat_true, Nat.add_comm, List.replicate_succ,
-        List.singleton_append]
+/-- `onesCount w = Nat.bits (#1 w)` (`BinArith.countLoop_eq`, `Randomized.length_onesW`). -/
+theorem onesCount_eq (w : List Bool) : onesCount w = Nat.bits (w.count true) := by
+  rw [onesCount, BinArith.countLoop_eq, pairFstD_pairEncode, Randomized.length_onesW]
 
-/-- `onesW` is polynomial-time (`polyTimeComputable_transduce`). -/
-theorem polyTimeComputable_onesW : PolyTimeComputable onesW :=
-  polyTimeComputable_transduce _ _ ()
-
-/-- **The number of ones of a word, in binary**: `bits (Σ [w_i])`, by the counting loop
-`BinArith.countLoop` on `onesW w`. Glue. -/
-def onesCount (w : List Bool) : List Bool := pairFstD (BinArith.countLoop (onesW w))
-
-/-- `onesCount w = Nat.bits (Σ [w_i])` (`BinArith.countLoop_eq`, `onesW_eq`). -/
-theorem onesCount_eq (w : List Bool) : onesCount w = Nat.bits (w.map Bool.toNat).sum := by
-  rw [onesCount, BinArith.countLoop_eq, pairFstD_pairEncode, onesW_eq, List.length_replicate]
-
-/-- `onesCount` is polynomial-time (`BinArith.polyTimeComputable_countLoop`). -/
-theorem polyTimeComputable_onesCount : PolyTimeComputable onesCount :=
-  polyTimeComputable_pairFstD.comp' (BinArith.polyTimeComputable_countLoop.comp'
-    polyTimeComputable_onesW)
+/-- `onesCount` is polynomial-time (`Randomized.polyTimeComputable_onesW_snd` on `⟨[], w⟩`,
+`BinArith.polyTimeComputable_countLoop`). -/
+theorem polyTimeComputable_onesCount : PolyTimeComputable onesCount := by
+  have h : PolyTimeComputable fun w => Randomized.onesW (pairSndD (pairEncode [] w)) :=
+    Randomized.polyTimeComputable_onesW_snd.comp'
+      ((polyTimeComputable_const []).pairEncode polyTimeComputable_id)
+  refine (polyTimeComputable_pairFstD.comp' (BinArith.polyTimeComputable_countLoop.comp' h)).congr
+    fun w => ?_
+  dsimp only
+  rw [pairSndD_pairEncode, onesCount]
 
 /-- **The signed difference of two binary numbers**: on `⟨A, B⟩`, `0 :: (A ∸ B)` if `B ≤ A` and
 `1 :: (B ∸ A)` otherwise (`BinArith.le`, `BinArith.sub`). Glue. -/
@@ -591,18 +579,19 @@ theorem polyTimeComputable_centeredCore (T : PolyExpr) : PolyTimeComputable (cen
     ((polyTimeComputable_onesCount.comp' (polyTimeComputable_pairTakePoly T)).pairEncode
       (polyTimeComputable_onesCount.comp' (polyTimeComputable_pairDropPoly T)))
 
-/-- The number of ones of `List.ofFn g` is `Σ_i [g i]` (`List.map_ofFn`, `List.sum_ofFn`). -/
-theorem sum_map_toNat_ofFn {k : ℕ} (g : Fin k → Bool) :
-    ((List.ofFn g).map Bool.toNat).sum = ∑ i, (g i).toNat := by
-  rw [List.map_ofFn, List.sum_ofFn]
-  rfl
+/-- The number of ones of `List.ofFn g` is `Σ_i [g i]`, from `List.count_ofFn`
+(`Programs/Util/List.lean`) and `Finset.card_filter`. Glue. -/
+theorem count_true_ofFn_eq_sum {k : ℕ} (g : Fin k → Bool) :
+    (List.ofFn g).count true = ∑ i, (g i).toNat := by
+  rw [List.count_ofFn, Finset.card_filter]
+  exact Finset.sum_congr rfl fun i _ => by cases g i <;> rfl
 
 /-- **`centeredCore` computes the centered value**: on `⟨1^κ, r⟩` with `r` of `T(κ) + T(κ)`
 bits, `centeredCore T` writes `noiseWord (centeredValue (T κ) r)`. Glue.
 
 **Proof sketch.** `List.ofFn r` is the first block followed by the second (`List.ofFn_add`), so
 taking and dropping `T(κ)` bits gives the two blocks; their numbers of ones are the two sums of
-`centeredValue_eq` (`onesCount_eq`, `sum_map_toNat_ofFn`), and `signedDiff_bits` writes their
+`centeredValue_eq` (`onesCount_eq`, `count_true_ofFn_eq_sum`), and `signedDiff_bits` writes their
 difference. -/
 theorem centeredCore_ofFn (T : PolyExpr) (κ : ℕ) (r : Fin (T.eval κ + T.eval κ) → Bool) :
     centeredCore T (pairEncode (List.replicate κ true) (List.ofFn r)) =
@@ -612,7 +601,7 @@ theorem centeredCore_ofFn (T : PolyExpr) (κ : ℕ) (r : Fin (T.eval κ + T.eval
     List.length_ofFn
   rw [centeredCore_eq, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate,
     hsplit, List.take_left' (hl _), List.drop_left' (hl _), onesCount_eq, onesCount_eq,
-    sum_map_toNat_ofFn, sum_map_toNat_ofFn, signedDiff_bits, centeredValue_eq]
+    count_true_ofFn_eq_sum, count_true_ofFn_eq_sum, signedDiff_bits, centeredValue_eq]
   push_cast
   rfl
 
@@ -637,9 +626,11 @@ theorem centeredSampleEq_zero : CenteredSampleEq (.const 0) := by
   rw [centeredSampleEq_iff]
   intro κ c
   have hb := Int.natAbs_eq_zero.1 (Nat.le_zero.1
-    ((Noise.bounded_iff _ _).1 (centeredNoise_bounded ((PolyExpr.const 0).eval κ)) c))
+    (((Noise.bounded_iff _ _).1 (centeredNoise_bounded ((PolyExpr.const 0).eval κ)) c).trans
+      (PolyExpr.eval_const 0 κ).le))
   have h0 : ∀ g : Fin ((PolyExpr.const 0).eval κ) → Bool, ∑ i, ((g i).toNat : ℤ) = 0 :=
-    fun g => Finset.sum_eq_zero fun i _ => absurd i.2 (Nat.not_lt_zero _)
+    fun g => Finset.sum_eq_zero fun i _ =>
+      absurd (i.2.trans_eq (PolyExpr.eval_const 0 κ)) (Nat.not_lt_zero _)
   rw [hb, centeredValue_eq, h0, h0, sub_self]
 
 /-- **The centered noise is efficient**: `centeredNoise (T κ)` (`LWE/BitNoise.lean`), with
@@ -762,9 +753,19 @@ modulus `2^{κ+1}`. -/
 theorem dyadicExample_parameters (κ : ℕ) :
     (dyadicExample.parameters κ).dimension = κ + 1 ∧
       (dyadicExample.parameters κ).samples = 2 * (κ + 1) ^ 2 ∧
-      (dyadicExample.parameters κ).modulus = 2 ^ (κ + 1) := ⟨rfl, rfl, rfl⟩
+      (dyadicExample.parameters κ).modulus = 2 ^ (κ + 1) := by
+  refine ⟨?_, ?_, ?_⟩
+  · show (PolyExpr.add .var (.const 1)).eval κ = κ + 1
+    rw [PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const]
+  · show (PolyExpr.mul (.const 2) (.pow (.add .var (.const 1)) 2)).eval κ = 2 * (κ + 1) ^ 2
+    rw [PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_pow, PolyExpr.eval_add,
+      PolyExpr.eval_var, PolyExpr.eval_const]
+  · show 2 ^ (PolyExpr.add .var (.const 1)).eval κ = 2 ^ (κ + 1)
+    rw [PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const]
 
 /-- The noise of `dyadicExample` is `centeredNoise 0` at every `κ`. -/
-theorem dyadicExample_noise (κ : ℕ) : dyadicExample.noise κ = centeredNoise 0 := rfl
+theorem dyadicExample_noise (κ : ℕ) : dyadicExample.noise κ = centeredNoise 0 := by
+  show centeredNoise ((PolyExpr.const 0).eval κ) = centeredNoise 0
+  rw [PolyExpr.eval_const]
 
 end TCSlib.Cryptography.LWE

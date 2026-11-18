@@ -2,3 +2,8 @@ Wed Nov 18 09:25:11 UTC 2026 nproc=4 MemTotal: 16473760 kB MemAvailable: 1579098
 Wed Nov 18 09:25:29 UTC 2026 restart bootstrap pool=3 (first attempt aborted: /usr/bin/time absent, no Lean ran)
 Wed Nov 18 09:26:05 UTC 2026 restart bootstrap pool=3 with corrected closure (158 modules); attempt1 stopped at a missing import (closure-parser bug), logs kept in bootstrap-attempt1
 Wed Nov 18 09:42:09 UTC 2026 bootstrap done: 158/158 rc 0; peak per-process maxrss 2925068 KB (NumberTheory/Primality); pool kept at 3; MemAvailable now 15709556 kB
+Wed Nov 18 09:45:46 UTC 2026 root build (minus PFR-blocked subtree) pool=3, MemAvailable 15754400 kB, disk free 10833276928 B
+Wed Nov 18 09:46:26 UTC 2026 seal probe run: 1 extra process alongside root-build pool of 3 (total 4 = nproc)
+Wed Nov 18 09:49:26 UTC 2026 root build finished: 
+Wed Nov 18 09:49:33 UTC 2026 root build stopped by me after 65 modules (all rc 0 so far: 0 failures): the root TCSlib and 20 other modules need PFR package oleans not supplied by the Mathlib cache (root-blocked-pfr.txt), so the C2 root check cannot run here (addendum item 8). Killed my pool PID 7806 and its lean children 9119 9481 9499.
+Wed Nov 18 09:51:48 UTC 2026 closure build for BiasedCoinHalting import: 35 modules, pool=3, MemAvailable 15730580 kB

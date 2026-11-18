@@ -1,0 +1,93 @@
+/home/user/work/evidence/seal/controls/Ctl_lwe_sealed.lean:9:93: error: Type mismatch
+  rfl
+has type
+  ?m.18 = ?m.18
+but is expected to have type
+  Parameters.encode w P =
+    pairEncode (List.replicate P.dimension true)
+      (pairEncode (List.replicate P.samples true) (Candidates.natToList (w + 1) P.modulus))
+/home/user/work/evidence/seal/controls/Ctl_lwe_sealed.lean:14:63: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  noiseWord e = decide (e < 0) :: e.natAbs.bits
+/home/user/work/evidence/seal/controls/Ctl_lwe_sealed.lean:17:70: error: Type mismatch
+  rfl
+has type
+  ?m.22 = ?m.22
+but is expected to have type
+  seedModulusWord n = Candidates.natToList (n + 1) (2 ^ n)
+/home/user/work/evidence/seal/controls/Ctl_lwe_sealed.lean:20:47: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  seedWord r = false :: List.ofFn r
+/home/user/work/evidence/seal/controls/Ctl_lwe_sealed.lean:23:78: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  onesCount l = pairFstD (BinArith.countLoop (Randomized.onesW l))
+/home/user/work/evidence/seal/controls/Ctl_lwe_sealed.lean:27:96: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  signedDiff l =
+    if BinArith.le (pairEncode (pairSndD l) (pairFstD l)) = true then false :: BinArith.sub l
+    else true :: BinArith.sub (pairEncode (pairSndD l) (pairFstD l))
+/home/user/work/evidence/seal/controls/Ctl_lwe_sealed.lean:34:69: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  centeredCore T l =
+    signedDiff
+      (pairEncode (onesCount (List.take (T.eval (pairFstD l).length) (pairSndD l)))
+        (onesCount (List.drop (T.eval (pairFstD l).length) (pairSndD l))))
+/home/user/work/evidence/seal/controls/Ctl_lwe_sealed.lean:39:64: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  (dyadicParameters N M W hW κ).dimension = N.eval κ
+/home/user/work/evidence/seal/controls/Ctl_lwe_sealed.lean:42:49: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  (dyadicFamily N M W hW χ).noise = χ
+/home/user/work/evidence/seal/controls/Ctl_lwe_sealed.lean:45:69: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  ↑↑(F.boundedModulus κ) = (F.parameters κ).modulus
+/home/user/work/evidence/seal/controls/Ctl_lwe_sealed.lean:48:56: error: Type mismatch
+  rfl
+has type
+  ?m.18 = ?m.18
+but is expected to have type
+  ↑↑(seedModulus t nn hn κ) = 2 ^ nn κ
+/home/user/work/evidence/seal/controls/Ctl_lwe_sealed.lean:53:76: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.12 ↔ ?m.12
+but is expected to have type
+  CenteredSampleEq T ↔
+    ∀ (κ : ℕ) (c : (centeredNoise (T.eval κ)).Coins),
+      (centeredNoise (T.eval κ)).sample c = centeredValue (T.eval κ) (cast ⋯ c)
+/home/user/work/evidence/seal/controls/Ctl_lwe_sealed.lean:59:63: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  (EfficientFamily.ofDyadic N M W T hW hs).toFamily = dyadicFamily N M W hW fun κ => centeredNoise (T.eval κ)
+/home/user/work/evidence/seal/controls/Ctl_lwe_sealed.lean:63:53: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  dyadicExample.noise κ = centeredNoise 0

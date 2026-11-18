@@ -1,0 +1,20 @@
+TCSlib/Cryptography/LWE/Efficient.lean:437:27: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  ?e ((Equiv.symm ?e) ?x)
+in the target expression
+  ↑((bitsEquiv (n κ)) ((bitsEquiv (n κ)).symm ((ZMod.finEquiv ↑↑(seedModulus t n hn κ)).symm.toEquiv d))) =
+    ↑((ZMod.finEquiv ↑↑(seedModulus t n hn κ)).symm d)
+
+case e_N
+t : PolyExpr
+n : ℕ → ℕ
+hn : ∀ (κ : ℕ), n κ = t.eval κ
+χ : ℕ → Noise
+hc : ∀ (κ : ℕ), (χ κ).Coins = (Fin (n κ) → Bool)
+κ : ℕ
+x✝ : Unit
+d : ZMod ↑↑(seedModulus t n hn κ)
+⊢ ↑((bitsEquiv (n κ)) ((bitsEquiv (n κ)).symm ((ZMod.finEquiv ↑↑(seedModulus t n hn κ)).symm.toEquiv d))) =
+    ↑((ZMod.finEquiv ↑↑(seedModulus t n hn κ)).symm d)
+FAIL(TCSlib/Cryptography/LWE/Efficient): lean exited with status 1
+FAIL(TCSlib/Cryptography/LWE/Efficient): error diagnostics reported
+FAIL(TCSlib/Cryptography/LWE/Efficient): no fresh .olean produced

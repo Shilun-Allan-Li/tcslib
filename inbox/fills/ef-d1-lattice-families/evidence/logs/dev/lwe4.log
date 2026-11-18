@@ -1,0 +1,49 @@
+TCSlib/Cryptography/LWE/Efficient.lean:434:36: error: Tactic `rewrite` failed: motive is not type correct:
+  fun _a =>
+    seedWord ((bitsEquiv (n κ)).symm ((ZMod.finEquiv ↑↑(seedModulus t n hn κ)).symm.toEquiv d)) =
+      Candidates.natToList (_a + 1) ↑((ZMod.finEquiv ↑↑(seedModulus t n hn κ)).symm d)
+Error: Application type mismatch: The argument
+  seedModulus t n hn κ
+has type
+  CoinSampling.BoundedModulus t κ
+but is expected to have type
+  { q // ↑q ≤ 2 ^ _a }
+in the application
+  ↑(seedModulus t n hn κ)
+
+Explanation: The rewrite tactic rewrites an expression 'e' using an equality 'a = b' by the following process. First, it looks for all 'a' in 'e'. Second, it tries to abstract these occurrences of 'a' to create a function 'm := fun _a => ...', called the *motive*, with the property that 'm a' is definitionally equal to 'e'. Third, we observe that 'congrArg' implies that 'm a = m b', which can be used with lemmas such as 'Eq.mpr' to change the goal. However, if 'e' depends on specific properties of 'a', then the motive 'm' might not typecheck.
+
+Possible solutions: use rewrite's 'occs' configuration option to limit which occurrences are rewritten, or use 'simp' or 'conv' mode, which have strategies for certain kinds of dependencies (these tactics can handle proofs and 'Decidable' instances whose types depend on the rewritten term, and 'simp' can apply user-defined '@[congr]' theorems as well).
+
+t : PolyExpr
+n : ℕ → ℕ
+hn : ∀ (κ : ℕ), n κ = t.eval κ
+χ : ℕ → Noise
+hc : ∀ (κ : ℕ), (χ κ).Coins = (Fin (n κ) → Bool)
+κ : ℕ
+x✝ : Unit
+d : ZMod ↑↑(seedModulus t n hn κ)
+⊢ seedWord ((bitsEquiv (n κ)).symm ((ZMod.finEquiv ↑↑(seedModulus t n hn κ)).symm.toEquiv d)) =
+    Candidates.natToList (t.eval κ + 1) ↑((ZMod.finEquiv ↑↑(seedModulus t n hn κ)).symm d)
+TCSlib/Cryptography/LWE/Efficient.lean:639:6: error: Tactic `rewrite` failed: motive is not type correct:
+  fun _a => ((centeredNoise _a).sample c).natAbs ≤ _a
+Error: Application type mismatch: The argument
+  c
+has type
+  (centeredNoise ((PolyExpr.const 0).eval κ)).Coins
+but is expected to have type
+  (centeredNoise _a).Coins
+in the application
+  (centeredNoise _a).sample c
+
+Explanation: The rewrite tactic rewrites an expression 'e' using an equality 'a = b' by the following process. First, it looks for all 'a' in 'e'. Second, it tries to abstract these occurrences of 'a' to create a function 'm := fun _a => ...', called the *motive*, with the property that 'm a' is definitionally equal to 'e'. Third, we observe that 'congrArg' implies that 'm a = m b', which can be used with lemmas such as 'Eq.mpr' to change the goal. However, if 'e' depends on specific properties of 'a', then the motive 'm' might not typecheck.
+
+Possible solutions: use rewrite's 'occs' configuration option to limit which occurrences are rewritten, or use 'simp' or 'conv' mode, which have strategies for certain kinds of dependencies (these tactics can handle proofs and 'Decidable' instances whose types depend on the rewritten term, and 'simp' can apply user-defined '@[congr]' theorems as well).
+
+κ : ℕ
+c : (centeredNoise ((PolyExpr.const 0).eval κ)).Coins
+hb : ((centeredNoise ((PolyExpr.const 0).eval κ)).sample c).natAbs ≤ (PolyExpr.const 0).eval κ
+⊢ (centeredNoise ((PolyExpr.const 0).eval κ)).sample c = centeredValue ((PolyExpr.const 0).eval κ) (cast ⋯ c)
+FAIL(TCSlib/Cryptography/LWE/Efficient): lean exited with status 1
+FAIL(TCSlib/Cryptography/LWE/Efficient): error diagnostics reported
+FAIL(TCSlib/Cryptography/LWE/Efficient): no fresh .olean produced

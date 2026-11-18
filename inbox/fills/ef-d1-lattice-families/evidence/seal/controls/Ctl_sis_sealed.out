@@ -1,0 +1,33 @@
+/home/user/work/evidence/seal/controls/Ctl_sis_sealed.lean:9:50: error: Type mismatch
+  rfl
+has type
+  ?m.25 = ?m.25
+but is expected to have type
+  Parameters.encode w b P =
+    pairEncode (List.replicate P.dimension true)
+      (pairEncode (List.replicate P.columns true)
+        (pairEncode (Candidates.natToList (w + 1) P.modulus) (Candidates.natToList b P.sqNormBound)))
+/home/user/work/evidence/seal/controls/Ctl_sis_sealed.lean:14:76: error: Type mismatch
+  rfl
+has type
+  ?m.17 = ?m.17
+but is expected to have type
+  (dyadicScheduleParameters N M W S hW κ).sqNormBound = S.eval κ
+/home/user/work/evidence/seal/controls/Ctl_sis_sealed.lean:18:71: error: Type mismatch
+  rfl
+has type
+  ?m.17 = ?m.17
+but is expected to have type
+  (dyadicScheduleFamily N M W S B hW hSB).magnitudeBits = B
+/home/user/work/evidence/seal/controls/Ctl_sis_sealed.lean:22:106: error: Type mismatch
+  rfl
+has type
+  ?m.17 = ?m.17
+but is expected to have type
+  (EfficientFamily.ofDyadic N M W S B hW hSB).toFamily = dyadicScheduleFamily N M W S B hW hSB
+/home/user/work/evidence/seal/controls/Ctl_sis_sealed.lean:26:62: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  (dyadicExample.parameters κ).sqNormBound = κ + 1

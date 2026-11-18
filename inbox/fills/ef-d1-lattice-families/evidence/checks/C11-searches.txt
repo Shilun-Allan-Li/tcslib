@@ -1,0 +1,75 @@
+git grep -nE 'EfficientFamily' <IO base> -- TCSlib : 0 hits
+git grep -nE 'Parameters\.encode|def encode .*Parameters' <IO base> -- TCSlib : 0 hits
+git grep -nE 'noiseWord' <IO base> -- TCSlib : 0 hits
+git grep -nE 'def onesW|onesCount|popcount|countTrue' <IO base> -- TCSlib : 59 hits
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/ClassP/TimeConstructible.lean:346:/-- The counting invariant carries a nonnegative potential of twice the popcount.
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/BiasedCoinHalting.lean:448:def onesW (w : List Bool) : List Bool :=
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/TimeHierarchy/ClockMachine.lean:59:* `Complexity.TimeHierarchy.ctrVal`, `ctrPop` — value and popcount of a counter word.
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/TimeHierarchy/ClockMachine.lean:132:/-- The popcount is at most the width. -/
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:3966:/-- The counting invariant carries a nonnegative potential of twice the popcount.
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4079:**Proof sketch.** Reuse the exact `2*carry+2` increment ledger and popcount
+git grep -nE 'count_ofFn|count_true_ofFn' <IO base> -- TCSlib : 6 hits
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:76:theorem count_true_ofFn {M : ℕ} (v : Fin M → Bool) :
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:78:  List.count_ofFn v true
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:477:  rw [take_drop_blocksStr W ⟨j, by simpa using hj₂⟩, List.length_ofFn, count_true_ofFn,
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2083:votes, whose count of `true`s is the cardinality of the agreeing trials (`List.count_ofFn`); with
+git grep -nE 'signedDiff|sign-magnitude|decide \(.* < 0\) ::' <IO base> -- TCSlib : 5 hits
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Hashing/SIS/CollisionOutput.lean:245:  have hsign (x y : Bool) : block x y = decide ((x.toNat : ℤ) - y.toNat < 0) ::
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/SIS/Encoding.lean:110:  (List.ofFn fun i => decide (z i < 0) ::
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/SIS/Encoding.lean:117:      (List.ofFn fun i => decide (z i < 0) ::
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/SIS/Encoding.lean:159:    decide (z i < 0) :: Candidates.natToList magnitudeBits (z i).natAbs
+git grep -nE 'natToList \(. \+ 1\) \(2 \^|true :: List.replicate' <IO base> -- TCSlib : 39 hits
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/CircuitComplexity/PPolyAdvice.lean:79:    splitAtLastTrue (u ++ true :: List.replicate m false) = some u := by
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/CircuitComplexity/PPolyAdvice.lean:94:  (C.circuit n).encode ++ true :: List.replicate (A n - (C.circuit n).encode.length - 1) false
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/ClassNP/NP.lean:118:    stripCertificate (u ++ true :: List.replicate k false) = some u := by
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/ClassNP/NP.lean:132:      ∃ k, v = u ++ true :: List.replicate k false) := by
+git grep -nE 'replicate [a-z]+ false \+\+ \[true\]' <IO base> -- TCSlib : 14 hits
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:211:    bitsVal (List.replicate j false ++ [true]) = 2 ^ j := by
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:225:  ∃ j, S = pairEncode (List.replicate j false ++ [true]) (false :: Nat.bits n) ∧
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:242:  have hlt : lt (pairEncode (List.replicate j false ++ [true]) (false :: Nat.bits n)) =
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:248:  · have he : dblStep (pairEncode (List.replicate j false ++ [true]) (false :: Nat.bits n)) =
+git grep -nE 'DrawSamplable|SamplesEfficiently' <IO base> -- TCSlib : 45 hits
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling.lean:57:* `TCSlib.Cryptography.CoinSampling.Contract`: `SamplesEfficiently`, the efficiency contract of
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Contract.lean:19:parameters, an index). `SamplesEfficiently y encDraw encOut core` says that this sampler is
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Contract.lean:23:* `DrawSamplable y encDraw`, **the draw half**: a `UniformSampler` `U` (one polynomial-time string
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Contract.lean:42:* `CoinSampling.DrawSamplable y encDraw`: the uniform coin sampler of the draws.
+git grep -nE 'def .*restrict|restrict.*DrawSamplable' <IO base> -- TCSlib : 5 hits
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Decomposition.lean:45:noncomputable def restrictLast {n : ℕ} (f : BooleanFunc (n + 1)) (b : Bool) : BooleanFun
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/BooleanAnalysis/LMN/RestrictionFourier.lean:56:def restrictBF (f : BooleanFunc n) (ρ : Restriction n) : BooleanFunc n :=
+git grep -nE 'bitNoise|centeredNoise' <IO base> -- TCSlib : 37 hits
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/LWE/BitNoise.lean:18:* `bitNoise`: the existing finite-noise bundle with an explicit fixed-length bit seed.
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/LWE/BitNoise.lean:19:* `centeredValue`, `centeredNoise`: difference of two independent bit counts.
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/LWE/BitNoise.lean:40:def bitNoise (t : ℕ) (f : (Fin t → Bool) → ℤ) : Noise where
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/LWE/BitNoise.lean:44:/-- The seed type of `bitNoise t f` is the full type of `t`-bit words. -/
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/LWE/BitNoise.lean:45:theorem bitNoise_Coins (t : ℕ) (f : (Fin t → Bool) → ℤ) :
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/LWE/BitNoise.lean:46:    (bitNoise t f).Coins = (Fin t → Bool) := rfl
+git grep -nE 'noiseSeeds|lweSeeds' <IO base> -- TCSlib : 24 hits
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Instances.lean:28:* `CoinSampling.CoinSampler.noiseSeeds χ s`: seeds of a finite noise law (laws only).
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Instances.lean:29:* `CoinSampling.CoinSampler.LWESeed`, `.lweSeeds`: the LWE seed and its coin sampler.
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Instances.lean:34:* `CoinSampling.CoinSampler.fail_lweSeeds_le`: union bound over the seed's draws.
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Instances.lean:95:noncomputable def noiseSeeds (χ : LWE.Noise) (s : ℕ) : CoinSampler χ.Coins s :=
+git grep -nE 'polyTimeComputable_unaryPoly|polyTimeComputable_polyUnary|polyTimeComputable_zerosPoly|polyTimeComputable_zeros' <IO base> -- TCSlib : 172 hits
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/CircuitComplexity/CircuitSatNPHard.lean:101:      (polyTimeComputable_polyUnary C c) (polyTimeComputable_polyUnary _ _)
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/CircuitComplexity/UniformTableau.lean:101:      (polyTimeComputable_polyUnary (C + 1) d) (polyTimeComputable_const [])), fun n => ?_⟩
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean:90:`Complexity.polyTimeComputable_polyUnary`; pair it with the second component and
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean:98:    (polyTimeComputable_polyUnary a k).comp polyTimeComputable_pairFstD
+git grep -nE 'fromLEPoly_pairEncode' <IO base> -- TCSlib : 12 hits
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean:248:at the argument's width (`fromLEPoly_pairEncode`). The two branches then agree case by case on
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Efficiency.lean:264:    Encoding.BinaryArith.fromLEPoly_pairEncode, LogProg.bitsVal_bits,
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encoding/BinaryArith.lean:216:theorem fromLEPoly_pairEncode (p : PolyExpr) (u w : List Bool) :
+git grep -nE 'dyadicFamily|dyadicParameters|dyadicExample' <IO base> -- TCSlib : 41 hits
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Hashing/SIS/Asymptotic.lean:117:    (hSIS : TCSlib.Cryptography.SIS.SISAssumption dyadicFamily) (D : NUPPT) :
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Hashing/SIS/Asymptotic.lean:118:    Negligible (fun κ => collisionAt dyadicFamily D κ) := by
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Hashing/SIS/Asymptotic.lean:119:  refine negligible_collisions_of_SIS dyadicFamily dyadicFamily.columnsBound
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Hashing/SIS/Asymptotic.lean:122:    rw [dyadicFamily_parameters, dyadicParameters_columns, dyadicFamily_columnsBound,
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Hashing/SIS/Asymptotic.lean:126:    rw [dyadicFamily_parameters, dyadicParameters_columns, dyadicParameters_sqNormBound]
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Hashing/SIS/Asymptotic.lean:128:    rw [dyadicFamily_magnitudeBits, PolyExpr.eval_add, PolyExpr.eval_const]
+git grep -nE 'bitsEquiv' <IO base> -- TCSlib : 83 hits
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/RandomBits.lean:27:* `Randomized.bitsEquiv`, `Randomized.blocksEquiv` — bits as numbers, as bijections.
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/RandomBits.lean:224:def bitsEquiv (L : ℕ) : (Fin L → Bool) ≃ Fin (2 ^ L) :=
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/RandomBits.lean:227:/-- `bitsEquiv` is `bitsVal`. -/
+git grep -nE 'modulusWord|residueEnc|BoundedModulus' <IO base> -- TCSlib : 26 hits
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Contract.lean:45:* `CoinSampling.BoundedModulus b κ`, `modulusWord b`, `residueEnc b`: moduli `0 < q ≤ 2^{b(κ)}`,
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Contract.lean:305:abbrev BoundedModulus (b : PolyExpr) (κ : ℕ) : Type := {q : ℕ+ // (q : ℕ) ≤ 2 ^ b.eval κ}
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Contract.lean:307:/-- `BoundedModulus b κ = {q : ℕ+ // q ≤ 2^{b(κ)}}`. -/
+    5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Contract.lean:309:    BoundedModulus b κ = {q : ℕ+ // (q : ℕ) ≤ 2 ^ b.eval κ} := rfl

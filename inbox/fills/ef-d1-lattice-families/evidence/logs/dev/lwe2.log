@@ -1,0 +1,15 @@
+TCSlib/Cryptography/LWE/Efficient.lean:667:41: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (centeredNoise ?t).sample ?c
+in the target expression
+  noiseWord (centeredValue (T.eval κ) (cast ⋯ c)) =
+    noiseWord (((dyadicFamily N M W hW fun κ => centeredNoise (T.eval κ)).noise κ).sample c)
+
+N M W T : PolyExpr
+hW : ∀ (κ : ℕ), 1 ≤ W.eval κ
+κ : ℕ
+c : ((dyadicFamily N M W hW fun κ => centeredNoise (T.eval κ)).noise κ).Coins
+⊢ noiseWord (centeredValue (T.eval κ) (cast ⋯ c)) =
+    noiseWord (((dyadicFamily N M W hW fun κ => centeredNoise (T.eval κ)).noise κ).sample c)
+FAIL(TCSlib/Cryptography/LWE/Efficient): lean exited with status 1
+FAIL(TCSlib/Cryptography/LWE/Efficient): error diagnostics reported
+FAIL(TCSlib/Cryptography/LWE/Efficient): no fresh .olean produced
