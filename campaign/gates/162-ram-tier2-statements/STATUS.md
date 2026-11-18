@@ -1,1 +1,1 @@
-**Gate 162 staged** (2026-11-18), not yet dispatched: PR #372 (tier 2 statements, a statement gate) at `e1325c96`.
+**Gate 162 CLEAR** (2026-11-18; 0/0/3, 22 notes): the three minors are repaired in docstrings at `80e762e9`; PR #372 is clear to merge there (`resolutions.md`).
