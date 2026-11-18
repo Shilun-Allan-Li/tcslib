@@ -91,7 +91,7 @@ theorem collision_hashPair_le {f : S → α → β} (hf : IsUniversal f) (X : Fi
   -- Step 1: expand the collision probability over seeds and fibres.
   have hexpand : collision (hashPair f X)
       = N⁻¹ ^ 2 * ∑ s : S, ∑ y : β, (∑ x ∈ univ.filter (fun x => f s x = y), X x) ^ 2 := by
-    simp only [collision, Fintype.sum_prod_type, Finset.mul_sum]
+    simp only [collision_def, Fintype.sum_prod_type, Finset.mul_sum]
     refine Finset.sum_congr rfl fun s _ => Finset.sum_congr rfl fun y _ => ?_
     rw [hashPair_apply, mul_pow]
   -- Step 2: rewrite the fibre sums as sums over colliding pairs, then count seeds.
@@ -108,7 +108,7 @@ theorem collision_hashPair_le {f : S → α → β} (hf : IsUniversal f) (X : Fi
   have hdiag : ∀ x : α, c x x = N := by
     intro x
     simp [hc_def, hN_def]
-  have hoff : ∀ x x' : α, x ≠ x' → c x x' ≤ N / M := fun x x' h => hf x x' h
+  have hoff : ∀ x x' : α, x ≠ x' → c x x' ≤ N / M := fun x x' h => (isUniversal_iff f).1 hf x x' h
   have hkey : ∑ x, ∑ x', c x x' * (X x * X x') ≤ N * collision X + N / M := by
     have hsplit : ∀ x : α, ∑ x', c x x' * (X x * X x')
         = c x x * (X x * X x) + ∑ x' ∈ univ.erase x, c x x' * (X x * X x') :=
@@ -131,7 +131,7 @@ theorem collision_hashPair_le {f : S → α → β} (hf : IsUniversal f) (X : Fi
           Finset.sum_le_sum fun x _ => hstep x
       _ = N * collision X + (N / M) * ((∑ x, X x) * (∑ x', X x')) := by
           rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum, Finset.sum_mul_sum]
-          simp only [collision, sq]
+          simp only [collision_def, sq]
       _ = N * collision X + N / M := by rw [X.sum_prob]; ring
   -- Combine.
   rw [hexpand]

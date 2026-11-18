@@ -276,8 +276,10 @@ as a uniform number below `2^n`: the bridge between the sampler of [PS10, Algori
 (`x ← {0,1}^n`) and `Π_n`. -/
 theorem uprob_prime_bits (n : ℕ) :
     uprob (fun b : Fin n → Bool => (bitsToNat b).Prime) =
-      uprob (fun x : Fin (2 ^ n) => (x : ℕ).Prime) :=
-  uprob_comp_equiv (bitsEquiv n) (fun x : Fin (2 ^ n) => (x : ℕ).Prime)
+      uprob (fun x : Fin (2 ^ n) => (x : ℕ).Prime) := by
+  have h := uprob_comp_equiv (bitsEquiv n) (fun x : Fin (2 ^ n) => (x : ℕ).Prime)
+  simp only [bitsEquiv_val] at h
+  exact h
 
 /-- **Prime density as a probability** [PS10, §2.3.2, Claim-33.1]: for `n ≥ 2`, a uniform
 number below `2^n` is prime with probability at least `1/(2n)`. -/
