@@ -1,0 +1,38 @@
+TCSlib/Cryptography/Candidates/ExtendedEuclidMachine.lean:143:58: error(lean.unknownIdentifier): Unknown constant `Int.zero_emod.symm`
+TCSlib/Cryptography/Candidates/ExtendedEuclidMachine.lean:271:13: error(lean.unknownIdentifier): Unknown identifier `iterate_measure_eq_zero`
+TCSlib/Cryptography/Candidates/ExtendedEuclidMachine.lean:267:73: error: unsolved goals
+z : List Bool
+a : ℕ := listToNat (pairFstD z)
+b : ℕ := listToNat (pairSndD z)
+hb : 0 < b
+hI : ∀ (S : List Bool), XgcdLoopInv a b S → XgcdLoopInv a b (xgcdLoopStep S)
+⊢ xgcdLoopOut z = ((a % b).gcdA b % ↑b).toNat.bits
+TCSlib/Cryptography/Candidates/ExtendedEuclidMachine.lean:319:34: error(lean.unknownIdentifier): Unknown constant `Nat.bits_zero`
+TCSlib/Cryptography/Candidates/ExtendedEuclidMachine.lean:320:4: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  c ≥ 0
+  b ≥ 0
+  2*b + c ≥ -2
+  a ≥ 0
+  a - b ≥ 0
+  11*a - 6*b - 4*c ≤ -1
+where
+ a := ↑z.length
+ b := ↑(toLE (pairSndD z)).length
+ c := ↑(Nat.bits 0).length
+TCSlib/Cryptography/Candidates/ExtendedEuclidMachine.lean:321:54: error(lean.unknownIdentifier): Unknown identifier `iterate_invariant`
+TCSlib/Cryptography/Candidates/ExtendedEuclidMachine.lean:321:11: error: Tactic `rcases` failed: `x✝ : ?m.127` is not an inductive datatype
+TCSlib/Cryptography/Candidates/ExtendedEuclidMachine.lean:319:49: warning: This simp argument is unused:
+  List.length_nil
+
+Hint: Omit it from the simp argument list.
+  simp only [length_pairEncode, Nat.bits_zero, L̵i̵s̵t̵.̵l̵e̵n̵g̵t̵h̵_̵n̵i̵l̵,̵ ̵hb1]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Candidates/ExtendedEuclidMachine.lean:413:4: error: No goals to be solved
+FAIL(TCSlib/Cryptography/Candidates/ExtendedEuclidMachine): lean exited with status 1
+FAIL(TCSlib/Cryptography/Candidates/ExtendedEuclidMachine): error diagnostics reported
+FAIL(TCSlib/Cryptography/Candidates/ExtendedEuclidMachine): no fresh .olean produced
+	Elapsed (wall clock) time (s): 2.9
+	Maximum resident set size (kbytes): 2827960
+	Exit status: 1

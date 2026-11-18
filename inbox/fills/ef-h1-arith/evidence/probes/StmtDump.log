@@ -1,0 +1,318 @@
+STMT TCSlib.Cryptography.Candidates.ArithmeticDischarge theorem TCSlib.Cryptography.Candidates.polyTimeComputable_sizeStr : Complexity.PolyTimeComputable
+  TCSlib.Cryptography.Candidates.sizeStr
+STMT TCSlib.Cryptography.Candidates.ArithmeticDischarge theorem TCSlib.Cryptography.Candidates.polyTimeComputable_divModStr_pairEncode : Complexity.PolyTimeComputable
+  fun z => TCSlib.Cryptography.Candidates.divModStr (Turing.pairEncode (Complexity.pairFstD z) (Complexity.pairSndD z))
+STMT TCSlib.Cryptography.Candidates.ArithmeticDischarge theorem TCSlib.Cryptography.Candidates.polyTimeComputable_toLE_pair : Complexity.PolyTimeComputable
+  fun z =>
+  Turing.pairEncode (TCSlib.Cryptography.Encoding.BinaryArith.toLE (Complexity.pairFstD z))
+    (TCSlib.Cryptography.Encoding.BinaryArith.toLE (Complexity.pairSndD z))
+STMT TCSlib.Cryptography.Candidates.ArithmeticDischarge theorem TCSlib.Cryptography.Candidates.polyTimeComputable_toLE_pairSndD : Complexity.PolyTimeComputable
+  fun z => TCSlib.Cryptography.Encoding.BinaryArith.toLE (Complexity.pairSndD z)
+STMT TCSlib.Cryptography.Candidates.ArithmeticDischarge theorem TCSlib.Cryptography.Candidates.polyTimeComputable_modExpModulus : Complexity.PolyTimeComputable
+  TCSlib.Cryptography.Candidates.modExpModulus
+STMT TCSlib.Cryptography.Candidates.ArithmeticDischarge theorem TCSlib.Cryptography.Candidates.polyTimeComputable_subStr_pairEncode : Complexity.PolyTimeComputable
+  fun z => TCSlib.Cryptography.Candidates.subStr (Turing.pairEncode (Complexity.pairFstD z) (Complexity.pairSndD z))
+STMT TCSlib.Cryptography.Candidates.ArithmeticDischarge theorem TCSlib.Cryptography.Candidates.modExpModulus_spec : ∀
+  (N : List Bool),
+  ∃ M,
+    M ≠ 0 ∧
+      TCSlib.Cryptography.Candidates.modExpModulus N = M.bits ∧
+        ∀ (a x : ℕ),
+          TCSlib.Cryptography.Candidates.natToList N.length (a ^ x % M) =
+            TCSlib.Cryptography.Candidates.natToList N.length (a ^ x % TCSlib.Cryptography.NumberTheory.listToNat N)
+STMT TCSlib.Cryptography.Candidates.ArithmeticDischarge theorem TCSlib.Cryptography.Candidates.polyTimeComputable_leStr_pairEncode : Complexity.PolyTimeComputable
+  fun z => TCSlib.Cryptography.Candidates.leStr (Turing.pairEncode (Complexity.pairFstD z) (Complexity.pairSndD z))
+STMT TCSlib.Cryptography.Candidates.ArithmeticDischarge theorem TCSlib.Cryptography.Candidates.polyTimeComputable_mulStr_pairEncode : Complexity.PolyTimeComputable
+  fun z => TCSlib.Cryptography.Candidates.mulStr (Turing.pairEncode (Complexity.pairFstD z) (Complexity.pairSndD z))
+STMT TCSlib.Cryptography.Candidates.ArithmeticDischarge theorem TCSlib.Cryptography.Candidates.polyTimeComputable_fromLEPoly_var : ∀
+  {t g : List Bool → List Bool},
+  Complexity.PolyTimeComputable t →
+    Complexity.PolyTimeComputable g →
+      Complexity.PolyTimeComputable fun z =>
+        TCSlib.Cryptography.Encoding.BinaryArith.fromLEPoly Complexity.PolyExpr.var (Turing.pairEncode (t z) (g z))
+STMT TCSlib.Cryptography.Candidates.ArithmeticDischarge def TCSlib.Cryptography.Candidates.modExpModulus : List Bool →
+  List Bool
+STMT TCSlib.Cryptography.Candidates.ArithmeticDischarge theorem TCSlib.Cryptography.Candidates.polyTimeComputable_toLE_pairFstD : Complexity.PolyTimeComputable
+  fun z => TCSlib.Cryptography.Encoding.BinaryArith.toLE (Complexity.pairFstD z)
+STMT TCSlib.Cryptography.Candidates.ArithmeticDischarge theorem TCSlib.Cryptography.Candidates.modExpModulus_eq : ∀
+  (N : List Bool),
+  TCSlib.Cryptography.Candidates.modExpModulus N =
+    if decide (Complexity.LogProg.bitsVal (TCSlib.Cryptography.Encoding.BinaryArith.toLE N) = 0) = true then
+      (2 ^ N.length).bits
+    else TCSlib.Cryptography.Encoding.BinaryArith.toLE N
+STMT TCSlib.Cryptography.Candidates.ArithmeticDischarge theorem TCSlib.Cryptography.Candidates.toLE_pair_eq : ∀
+  (a b : List Bool),
+  Turing.pairEncode (TCSlib.Cryptography.Encoding.BinaryArith.toLE a)
+      (TCSlib.Cryptography.Encoding.BinaryArith.toLE b) =
+    Turing.pairEncode (TCSlib.Cryptography.NumberTheory.listToNat a).bits
+      (TCSlib.Cryptography.NumberTheory.listToNat b).bits
+STMT TCSlib.Cryptography.Candidates.ArithmeticDischarge theorem TCSlib.Cryptography.Candidates.fromLEPoly_var_bits : ∀
+  (u : List Bool) (n : ℕ),
+  TCSlib.Cryptography.Encoding.BinaryArith.fromLEPoly Complexity.PolyExpr.var (Turing.pairEncode u n.bits) =
+    TCSlib.Cryptography.Candidates.natToList u.length n
+STMT TCSlib.Cryptography.Candidates.ArithmeticDischarge theorem TCSlib.Cryptography.Candidates.polyTimeComputable_modExpStr_pairEncode : Complexity.PolyTimeComputable
+  fun z =>
+  TCSlib.Cryptography.Candidates.modExpStr
+    (Turing.pairEncode (Complexity.pairFstD z)
+      (Turing.pairEncode (Complexity.pairFstD (Complexity.pairSndD z)) (Complexity.pairSndD (Complexity.pairSndD z))))
+STMT TCSlib.Cryptography.Candidates.ArithmeticDischarge theorem TCSlib.Cryptography.Candidates.polyTimeComputable_addStr_pairEncode : Complexity.PolyTimeComputable
+  fun z => TCSlib.Cryptography.Candidates.addStr (Turing.pairEncode (Complexity.pairFstD z) (Complexity.pairSndD z))
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.xgcdInvWord_spec : ∀
+  (z : List Bool),
+  TCSlib.Cryptography.Candidates.xgcdInvWord z =
+    (↑(TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairFstD z)))⁻¹.val.bits
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.length_xgcdState_le : ∀
+  {b r' r s' s : ℕ},
+  r' ≤ b →
+    r ≤ b → s' ≤ b → s ≤ b → (TCSlib.Cryptography.Candidates.xgcdState b r' r s' s).length ≤ 11 * (b.bits.length + 1)
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.length_xgcdState_le._proof_1_1 : ∀
+  {b r' r s' s : ℕ},
+  r'.bits.length ≤ b.bits.length →
+    r.bits.length ≤ b.bits.length →
+      s'.bits.length ≤ b.bits.length →
+        s.bits.length ≤ b.bits.length →
+          ¬2 * b.bits.length + 2 +
+                  (2 * (2 * r'.bits.length + 2 + r.bits.length) + 2 + (2 * s'.bits.length + 2 + s.bits.length)) ≤
+                11 * (b.bits.length + 1) →
+            False
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine def TCSlib.Cryptography.Candidates.xgcdLoopInit : List Bool →
+  List Bool
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.xgcd_coef_residue : ∀
+  {b : ℕ}, 0 < b → ∀ (q : ℕ) (s' s : ℤ), ((s' % ↑b).toNat + b - q * (s % ↑b).toNat % b) % b = ((s' - ↑q * s) % ↑b).toNat
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.xgcdLoopInv_init : ∀
+  (z : List Bool),
+  0 < TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairSndD z) →
+    TCSlib.Cryptography.Candidates.XgcdLoopInv (TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairFstD z))
+      (TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairSndD z))
+      (TCSlib.Cryptography.Candidates.xgcdLoopInit z)
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.xgcdLoopOut_spec._proof_1_1 : ∀
+  (z : List Bool),
+  TCSlib.Cryptography.NumberTheory.extEuclidCalls (TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairSndD z))
+        (TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairFstD z) %
+          TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairSndD z)) ≤
+      2 * (Complexity.pairSndD z).length →
+    (Complexity.pairSndD z).length ≤ z.length →
+      ¬TCSlib.Cryptography.NumberTheory.extEuclidCalls
+                (TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairSndD z))
+                (TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairFstD z) %
+                  TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairSndD z)) +
+              1 ≤
+            2 * (z.length + 1) →
+        False
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.xgcdLoopOut_spec : ∀
+  (z : List Bool),
+  0 < TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairSndD z) →
+    TCSlib.Cryptography.Candidates.xgcdLoopOut z =
+      ((TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairFstD z) %
+                  TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairSndD z)).gcdA
+              (TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairSndD z)) %
+            ↑(TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairSndD z))).toNat.bits
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.length_xgcdLoop_le : ∀
+  (z : List Bool) (i : ℕ),
+  (TCSlib.Cryptography.Candidates.xgcdLoopStep^[i] (TCSlib.Cryptography.Candidates.xgcdLoopInit z)).length ≤
+    11 * (z.length + 1) ^ 1
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.xgcdInvWord_spec._proof_1_2 : ∀
+  (z : List Bool) (n : ℕ),
+  TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairSndD z) = n + 1 →
+    ¬0 < TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairSndD z) → False
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.xgcdLoopInv_iff : ∀
+  (a b : ℕ) (S : List Bool),
+  TCSlib.Cryptography.Candidates.XgcdLoopInv a b S ↔
+    ∃ r r' s t s' t',
+      r ≤ b ∧
+        r' ≤ b ∧
+          S = TCSlib.Cryptography.Candidates.xgcdState b r' r (s' % ↑b).toNat (s % ↑b).toNat ∧
+            r.xgcdAux s t r' s' t' = (a % b).xgcdAux 1 0 b 0 1
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.xgcdLoopInv_step._proof_1_1 : ∀
+  {b : ℕ} (r r' : ℕ) (s s' : ℤ), ¬0 < TCSlib.Cryptography.NumberTheory.extEuclidCalls r' r + 1 → False
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine def TCSlib.Cryptography.Candidates.xgcdLoopStep : List Bool →
+  List Bool
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine def TCSlib.Cryptography.Candidates.xgcdLoopOut : List Bool →
+  List Bool
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine def TCSlib.Cryptography.Candidates.xgcdState : ℕ →
+  ℕ → ℕ → ℕ → ℕ → List Bool
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine def TCSlib.Cryptography.Candidates.xgcdLoopMeasure : List
+    Bool →
+  ℕ
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.xgcdLoopInv_step._proof_1_2 : ∀
+  {b : ℕ} (r r' : ℕ) (s s' : ℤ),
+  ¬TCSlib.Cryptography.NumberTheory.extEuclidCalls r (r' % r) + 1 <
+        TCSlib.Cryptography.NumberTheory.extEuclidCalls r (r' % r) + 1 + 1 →
+    False
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.xgcdLoopInv_step._proof_1_3 : ∀
+  {b : ℕ} (r r' : ℕ), TCSlib.Cryptography.NumberTheory.extEuclidCalls r' r + 1 = 0 → False
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.xgcdLoopStep_eq : ∀
+  (S : List Bool),
+  TCSlib.Cryptography.Candidates.xgcdLoopStep S =
+    if
+        decide (Complexity.LogProg.bitsVal (Complexity.pairSndD (Complexity.pairFstD (Complexity.pairSndD S))) = 0) =
+          true then
+      S
+    else
+      Turing.pairEncode (Complexity.pairFstD S)
+        (Turing.pairEncode
+          (Turing.pairEncode (Complexity.pairSndD (Complexity.pairFstD (Complexity.pairSndD S)))
+            (Complexity.BinArith.mod
+              (Turing.pairEncode (Complexity.pairFstD (Complexity.pairFstD (Complexity.pairSndD S)))
+                (Complexity.pairSndD (Complexity.pairFstD (Complexity.pairSndD S))))))
+          (Turing.pairEncode (Complexity.pairSndD (Complexity.pairSndD (Complexity.pairSndD S)))
+            (TCSlib.Cryptography.Candidates.xgcdCoefStep S)))
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.xgcdLoopInv_step : ∀
+  {a b : ℕ},
+  0 < b →
+    ∀ {S : List Bool},
+      TCSlib.Cryptography.Candidates.XgcdLoopInv a b S →
+        TCSlib.Cryptography.Candidates.XgcdLoopInv a b (TCSlib.Cryptography.Candidates.xgcdLoopStep S) ∧
+          (0 < TCSlib.Cryptography.Candidates.xgcdLoopMeasure S →
+              TCSlib.Cryptography.Candidates.xgcdLoopMeasure (TCSlib.Cryptography.Candidates.xgcdLoopStep S) <
+                TCSlib.Cryptography.Candidates.xgcdLoopMeasure S) ∧
+            (TCSlib.Cryptography.Candidates.xgcdLoopMeasure S = 0 → TCSlib.Cryptography.Candidates.xgcdLoopStep S = S)
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.xgcdLoopInit_eq : ∀
+  (z : List Bool),
+  TCSlib.Cryptography.Candidates.xgcdLoopInit z =
+    Turing.pairEncode (TCSlib.Cryptography.Encoding.BinaryArith.toLE (Complexity.pairSndD z))
+      (Turing.pairEncode
+        (Turing.pairEncode (TCSlib.Cryptography.Encoding.BinaryArith.toLE (Complexity.pairSndD z))
+          (if
+              decide
+                  (Complexity.LogProg.bitsVal (TCSlib.Cryptography.Encoding.BinaryArith.toLE (Complexity.pairSndD z)) =
+                    0) =
+                true then
+            Nat.bits 0
+          else
+            Complexity.BinArith.mod
+              (Turing.pairEncode (TCSlib.Cryptography.Encoding.BinaryArith.toLE (Complexity.pairFstD z))
+                (TCSlib.Cryptography.Encoding.BinaryArith.toLE (Complexity.pairSndD z)))))
+        (Turing.pairEncode (Nat.bits 0)
+          (Complexity.BinArith.mod
+            (Turing.pairEncode (Nat.bits 1) (TCSlib.Cryptography.Encoding.BinaryArith.toLE (Complexity.pairSndD z))))))
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.xgcdLoopStep_of_zero : ∀
+  (S : List Bool),
+  Complexity.LogProg.bitsVal (Complexity.pairSndD (Complexity.pairFstD (Complexity.pairSndD S))) = 0 →
+    TCSlib.Cryptography.Candidates.xgcdLoopStep S = S
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine def TCSlib.Cryptography.Candidates.XgcdLoopInv : ℕ →
+  ℕ → List Bool → Prop
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.xgcdLoopOut_spec._proof_1_2 : ∀
+  (z : List Bool) (r r' : ℕ), TCSlib.Cryptography.NumberTheory.extEuclidCalls r' r + 1 = 0 → False
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.polyTimeComputable_xgcdLoopStep : Complexity.PolyTimeComputable
+  TCSlib.Cryptography.Candidates.xgcdLoopStep
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.xgcdLoopOut_eq : ∀
+  (z : List Bool),
+  TCSlib.Cryptography.Candidates.xgcdLoopOut z =
+    Complexity.pairFstD
+      (Complexity.pairSndD
+        (Complexity.pairSndD
+          (TCSlib.Cryptography.Candidates.xgcdLoopStep^[2 * (z.length + 1) ^ 1]
+            (TCSlib.Cryptography.Candidates.xgcdLoopInit z))))
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.polyTimeComputable_xgcdLoopOut : Complexity.PolyTimeComputable
+  TCSlib.Cryptography.Candidates.xgcdLoopOut
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.xgcdLoopMeasure.eq_1 : ∀
+  (S : List Bool),
+  TCSlib.Cryptography.Candidates.xgcdLoopMeasure S =
+    if Complexity.LogProg.bitsVal (Complexity.pairSndD (Complexity.pairFstD (Complexity.pairSndD S))) = 0 then 0
+    else
+      TCSlib.Cryptography.NumberTheory.extEuclidCalls
+          (Complexity.LogProg.bitsVal (Complexity.pairFstD (Complexity.pairFstD (Complexity.pairSndD S))))
+          (Complexity.LogProg.bitsVal (Complexity.pairSndD (Complexity.pairFstD (Complexity.pairSndD S)))) +
+        1
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine def TCSlib.Cryptography.Candidates.xgcdInvWord : List Bool →
+  List Bool
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.polyTimeComputable_xgcdStr_pairEncode : Complexity.PolyTimeComputable
+  fun z => TCSlib.Cryptography.Candidates.xgcdStr (Turing.pairEncode (Complexity.pairFstD z) (Complexity.pairSndD z))
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.polyTimeComputable_xgcdInvWord : Complexity.PolyTimeComputable
+  TCSlib.Cryptography.Candidates.xgcdInvWord
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.xgcdLoopStep_state : ∀
+  {b r' r : ℕ},
+  0 < b →
+    r ≠ 0 →
+      ∀ (s' s : ℤ),
+        TCSlib.Cryptography.Candidates.xgcdLoopStep
+            (TCSlib.Cryptography.Candidates.xgcdState b r' r (s' % ↑b).toNat (s % ↑b).toNat) =
+          TCSlib.Cryptography.Candidates.xgcdState b r (r' % r) (s % ↑b).toNat ((s' - ↑(r' / r) * s) % ↑b).toNat
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine def TCSlib.Cryptography.Candidates.xgcdCoefStep : List Bool →
+  List Bool
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.xgcdLoopMeasure_state : ∀
+  (b r' r s' s : ℕ),
+  TCSlib.Cryptography.Candidates.xgcdLoopMeasure (TCSlib.Cryptography.Candidates.xgcdState b r' r s' s) =
+    if r = 0 then 0 else TCSlib.Cryptography.NumberTheory.extEuclidCalls r' r + 1
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.polyTimeComputable_xgcdLoopInit : Complexity.PolyTimeComputable
+  TCSlib.Cryptography.Candidates.xgcdLoopInit
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.xgcdCoefStep_eq : ∀
+  (S : List Bool),
+  TCSlib.Cryptography.Candidates.xgcdCoefStep S =
+    Complexity.BinArith.mod
+      (Turing.pairEncode
+        (Complexity.BinArith.sub
+          (Turing.pairEncode
+            (Complexity.BinArith.add
+              (Turing.pairEncode (Complexity.pairFstD (Complexity.pairSndD (Complexity.pairSndD S)))
+                (Complexity.pairFstD S)))
+            (Complexity.BinArith.mod
+              (Turing.pairEncode
+                (Complexity.BinArith.mul
+                  (Turing.pairEncode
+                    (Complexity.BinArith.div
+                      (Turing.pairEncode (Complexity.pairFstD (Complexity.pairFstD (Complexity.pairSndD S)))
+                        (Complexity.pairSndD (Complexity.pairFstD (Complexity.pairSndD S)))))
+                    (Complexity.pairSndD (Complexity.pairSndD (Complexity.pairSndD S)))))
+                (Complexity.pairFstD S)))))
+        (Complexity.pairFstD S))
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.length_xgcdLoop_le._proof_1_2 : ∀
+  (z : List Bool) (r r' : ℕ),
+  r ≤ TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairSndD z) →
+    ∀ (x : ℤ),
+      x % ↑(TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairSndD z)) <
+          ↑(TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairSndD z)) →
+        ¬(x % ↑(TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairSndD z))).toNat ≤
+              TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairSndD z) →
+          False
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.length_xgcdLoop_le._proof_1_3 : ∀
+  (z : List Bool),
+  (TCSlib.Cryptography.Encoding.BinaryArith.toLE (Complexity.pairSndD z)).length ≤ z.length →
+    ∀ (r r' : ℕ) (s s' : ℤ),
+      (TCSlib.Cryptography.Candidates.xgcdState (TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairSndD z)) r'
+              r (s' % ↑(TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairSndD z))).toNat
+              (s % ↑(TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairSndD z))).toNat).length ≤
+          11 * ((TCSlib.Cryptography.Encoding.BinaryArith.toLE (Complexity.pairSndD z)).length + 1) →
+        ¬(TCSlib.Cryptography.Candidates.xgcdState (TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairSndD z))
+                  r' r (s' % ↑(TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairSndD z))).toNat
+                  (s % ↑(TCSlib.Cryptography.NumberTheory.listToNat (Complexity.pairSndD z))).toNat).length ≤
+              11 * (z.length + 1) →
+          False
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.length_xgcdLoop_le._proof_1_1 : ∀
+  (z : List Bool),
+  (TCSlib.Cryptography.Encoding.BinaryArith.toLE (Complexity.pairSndD z)).length ≤ z.length →
+    ¬2 * (TCSlib.Cryptography.Encoding.BinaryArith.toLE (Complexity.pairSndD z)).length + 2 +
+            (2 * (2 * (TCSlib.Cryptography.Encoding.BinaryArith.toLE (Complexity.pairSndD z)).length + 2 + 0) + 2 +
+              (2 * 0 + 2 + 1)) ≤
+          11 * (z.length + 1) →
+      False
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.xgcdInvWord.eq_1 : ∀
+  (z : List Bool),
+  TCSlib.Cryptography.Candidates.xgcdInvWord z =
+    if
+        decide
+            (Complexity.LogProg.bitsVal (TCSlib.Cryptography.Encoding.BinaryArith.toLE (Complexity.pairSndD z)) = 0) =
+          true then
+      if
+          decide
+              (Complexity.LogProg.bitsVal (TCSlib.Cryptography.Encoding.BinaryArith.toLE (Complexity.pairFstD z)) = 0) =
+            true then
+        Nat.bits 0
+      else Nat.bits 1
+    else TCSlib.Cryptography.Candidates.xgcdLoopOut z
+STMT TCSlib.Cryptography.Candidates.ExtendedEuclidMachine theorem TCSlib.Cryptography.Candidates.xgcdState_eq : ∀
+  (b r' r s' s : ℕ),
+  TCSlib.Cryptography.Candidates.xgcdState b r' r s' s =
+    Turing.pairEncode b.bits (Turing.pairEncode (Turing.pairEncode r'.bits r.bits) (Turing.pairEncode s'.bits s.bits))
+STMT TCSlib.Cryptography.Candidates.PrimesInP def TCSlib.Cryptography.Candidates.PrimesInP : Prop
+STMT TCSlib.Cryptography.Candidates.PrimesInP theorem TCSlib.Cryptography.Candidates.primesInP_iff : TCSlib.Cryptography.Candidates.PrimesInP ↔
+  Randomized.PRIMESBin ∈ Complexity.P
+STMT TCSlib.Cryptography.Candidates.PrimesInP theorem TCSlib.Cryptography.Candidates.primeBit_eq_primeStr_fromLEPoly : ∀
+  (x : List Bool),
+  [decide (Nat.Prime (Complexity.LogProg.bitsVal x))] =
+    TCSlib.Cryptography.Candidates.primeStr
+      (TCSlib.Cryptography.Encoding.BinaryArith.fromLEPoly Complexity.PolyExpr.var (Turing.pairEncode x x))
+STMT TCSlib.Cryptography.Candidates.PrimesInP theorem TCSlib.Cryptography.Candidates.polyTimeComputable_primeStr_iff_bitsVal : Complexity.PolyTimeComputable
+    TCSlib.Cryptography.Candidates.primeStr ↔
+  Complexity.PolyTimeComputable fun x => [decide (Nat.Prime (Complexity.LogProg.bitsVal x))]

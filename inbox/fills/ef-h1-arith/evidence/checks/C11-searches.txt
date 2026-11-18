@@ -1,0 +1,124 @@
+=== cf6a2266e9556ca8ad61e56f7232266ccc6d4e62
+--- /toLE \(pairFstD/ : 12 hits
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:66:          (toLE (pairFstD (pairSndD z)))
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:77:              (toLE (pairFstD (pairSndD z)))
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:124:      (fun z => toLE (pairFstD (pairSndD z))) :=
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:136:              (toLE (pairFstD (pairSndD z)))
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:151:          (toLE (pairFstD (pairSndD z)))
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:162:              (toLE (pairFstD (pairSndD z)))
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:207:      (fun z => toLE (pairFstD (pairSndD z))) :=
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:219:              (toLE (pairFstD (pairSndD z)))
+--- /toLE \(pairSndD/ : 8 hits
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:67:          (toLE (pairSndD (pairSndD z))))))
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:78:              (toLE (pairSndD (pairSndD z)))))) := rfl
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:128:      (fun z => toLE (pairSndD (pairSndD z))) :=
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:137:              (toLE (pairSndD (pairSndD z))))))) :=
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:152:          (toLE (pairSndD (pairSndD z))))))
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:163:              (toLE (pairSndD (pairSndD z)))))) := rfl
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:211:      (fun z => toLE (pairSndD (pairSndD z))) :=
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:220:              (toLE (pairSndD (pairSndD z))))))) :=
+--- /fromLEPoly \.var/ : 0 hits
+--- /fromLEPoly PolyExpr.var/ : 0 hits
+--- /gcdA|xgcdAux|Nat\.xgcd/ : 1 hits
+TCSlib/Cryptography/NumberTheory/Euclid.lean:28:Mathlib's own extended Euclid (`Nat.xgcd`, `Nat.gcdA`, `Nat.gcdB`, `Nat.gcd_eq_gcd_ab`) is
+--- /PolyTimeComputable (mulStr|addStr|subStr|divModStr|xgcdStr|modExpStr|leStr|sizeStr|primeStr)/ : 11 hits
+TCSlib/Cryptography/Candidates/Arithmetic.lean:316:  mul : PolyTimeComputable mulStr
+TCSlib/Cryptography/Candidates/Arithmetic.lean:318:  add : PolyTimeComputable addStr
+TCSlib/Cryptography/Candidates/Arithmetic.lean:320:  sub : PolyTimeComputable subStr
+TCSlib/Cryptography/Candidates/Arithmetic.lean:322:  divMod : PolyTimeComputable divModStr
+TCSlib/Cryptography/Candidates/Arithmetic.lean:325:  xgcd : PolyTimeComputable xgcdStr
+TCSlib/Cryptography/Candidates/Arithmetic.lean:327:  modExp : PolyTimeComputable modExpStr
+TCSlib/Cryptography/Candidates/Arithmetic.lean:329:  le : PolyTimeComputable leStr
+TCSlib/Cryptography/Candidates/Arithmetic.lean:331:  size : PolyTimeComputable sizeStr
+--- /PRIMESBin ∈|∈ Complexity\.P|PrimesInP/ : 12 hits
+TCSlib/Complexity/CircuitComplexity/CircuitEval.lean:170:theorem CVAL_mem_P : CVAL ∈ Complexity.P :=
+TCSlib/Complexity/CircuitComplexity/CircuitEval.lean:174:theorem CVALPrefix_mem_P : CVALPrefix ∈ Complexity.P :=
+TCSlib/Complexity/CircuitComplexity/LogspaceTableau.lean:142:theorem Language.exists_isLogspaceUniform_of_mem_P {L : Language Bool} (hL : L ∈ Complexity.P) :
+TCSlib/Complexity/CircuitComplexity/LogspaceTableau.lean:161:    L ∈ Complexity.P ↔ ∃ C : BoolCircuit.DAGCircuitFamily,
+TCSlib/Complexity/CircuitComplexity/PUniformP.lean:111:    (hF : C.HasFaninTwo) : C.language ∈ Complexity.P :=
+TCSlib/Complexity/CircuitComplexity/PUniformP.lean:133:    (hU : C.IsPUniform) (hF : C.HasFaninTwo) (hL : C.language = L) : L ∈ Complexity.P :=
+TCSlib/Complexity/CircuitComplexity/UniformTableau.lean:135:theorem Language.exists_isPUniform_of_mem_P {L : Language Bool} (hL : L ∈ Complexity.P) :
+TCSlib/Complexity/CircuitComplexity/UniformTableau.lean:148:    L ∈ Complexity.P ↔
+--- /extEuclidCalls/ : 19 hits
+TCSlib/Cryptography/NumberTheory/Euclid.lean:23:  calls (`extEuclidCalls_le`), by the text's induction on `n` with the two cases `b < 2^n`
+TCSlib/Cryptography/NumberTheory/Euclid.lean:44:* `TCSlib.Cryptography.NumberTheory.extEuclidCalls` — its number of recursive calls.
+TCSlib/Cryptography/NumberTheory/Euclid.lean:50:* `TCSlib.Cryptography.NumberTheory.extEuclidCalls_le` — at most `2n` recursive calls for
+TCSlib/Cryptography/NumberTheory/Euclid.lean:81:def extEuclidCalls (a b : ℕ) : ℕ :=
+TCSlib/Cryptography/NumberTheory/Euclid.lean:84:  else extEuclidCalls b (a % b) + 1
+TCSlib/Cryptography/NumberTheory/Euclid.lean:106:theorem extEuclidCalls_zero_right (a : ℕ) : extEuclidCalls a 0 = 0 := by
+TCSlib/Cryptography/NumberTheory/Euclid.lean:107:  rw [extEuclidCalls]
+TCSlib/Cryptography/NumberTheory/Euclid.lean:111:theorem extEuclidCalls_of_mod_eq_zero {a b : ℕ} (hb : b ≠ 0) (h : a % b = 0) :
+--- /powMod.*2 \^|two_pow.*powMod/ : 1 hits
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:1053:private theorem dlb_powMod_natToList (k : ℕ) (ha : a < 2 ^ n) (hb : b < 2 ^ k) (hPn : P < 2 ^ n) :
+--- /Nat\.size_eq_bits_len/ : 44 hits
+TCSlib/Complexity/CircuitComplexity/Meyer.lean:189:    rw [Nat.size_eq_bits_len]; exact Nat.size_le.mpr hjW
+TCSlib/Complexity/CircuitComplexity/MeyerTableau.lean:437:    rw [Nat.size_eq_bits_len]; exact Nat.size_le.mpr hj
+TCSlib/Complexity/ClassP/BinaryArith/Unary.lean:58:  rw [Nat.size_eq_bits_len]
+TCSlib/Complexity/Randomized/BPLInP.lean:400:        rw [show m = n.size from Nat.size_eq_bits_len n]
+TCSlib/Complexity/Randomized/BPLInP.lean:406:    · have hm : m = n.size := Nat.size_eq_bits_len n
+TCSlib/Complexity/Randomized/BPLInP.lean:450:          rw [Nat.size_eq_bits_len]
+TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:60:  rw [Nat.size_eq_bits_len]
+TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:244:  rw [Nat.size_eq_bits_len]
+=== 5ed465f62e4ae0f93ded1a1ba49e807591b589eb
+--- /toLE \(pairFstD/ : 12 hits
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:66:          (toLE (pairFstD (pairSndD z)))
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:77:              (toLE (pairFstD (pairSndD z)))
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:124:      (fun z => toLE (pairFstD (pairSndD z))) :=
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:136:              (toLE (pairFstD (pairSndD z)))
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:151:          (toLE (pairFstD (pairSndD z)))
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:162:              (toLE (pairFstD (pairSndD z)))
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:207:      (fun z => toLE (pairFstD (pairSndD z))) :=
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:219:              (toLE (pairFstD (pairSndD z)))
+--- /toLE \(pairSndD/ : 8 hits
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:67:          (toLE (pairSndD (pairSndD z))))))
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:78:              (toLE (pairSndD (pairSndD z)))))) := rfl
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:128:      (fun z => toLE (pairSndD (pairSndD z))) :=
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:137:              (toLE (pairSndD (pairSndD z))))))) :=
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:152:          (toLE (pairSndD (pairSndD z))))))
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:163:              (toLE (pairSndD (pairSndD z)))))) := rfl
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:211:      (fun z => toLE (pairSndD (pairSndD z))) :=
+TCSlib/Cryptography/Encoding/DyadicArithmetic.lean:220:              (toLE (pairSndD (pairSndD z))))))) :=
+--- /fromLEPoly \.var/ : 2 hits
+TCSlib/Cryptography/CoinSampling/Efficiency.lean:258:      then true :: Encoding.BinaryArith.fromLEPoly .var (pairEncode (NUPPT.inArg z)
+TCSlib/Cryptography/CoinSampling/Efficiency.lean:299:    ((Encoding.BinaryArith.polyTimeComputable_fromLEPoly .var).comp
+--- /fromLEPoly PolyExpr.var/ : 0 hits
+--- /gcdA|xgcdAux|Nat\.xgcd/ : 1 hits
+TCSlib/Cryptography/NumberTheory/Euclid.lean:28:Mathlib's own extended Euclid (`Nat.xgcd`, `Nat.gcdA`, `Nat.gcdB`, `Nat.gcd_eq_gcd_ab`) is
+--- /PolyTimeComputable (mulStr|addStr|subStr|divModStr|xgcdStr|modExpStr|leStr|sizeStr|primeStr)/ : 11 hits
+TCSlib/Cryptography/Candidates/Arithmetic.lean:316:  mul : PolyTimeComputable mulStr
+TCSlib/Cryptography/Candidates/Arithmetic.lean:318:  add : PolyTimeComputable addStr
+TCSlib/Cryptography/Candidates/Arithmetic.lean:320:  sub : PolyTimeComputable subStr
+TCSlib/Cryptography/Candidates/Arithmetic.lean:322:  divMod : PolyTimeComputable divModStr
+TCSlib/Cryptography/Candidates/Arithmetic.lean:325:  xgcd : PolyTimeComputable xgcdStr
+TCSlib/Cryptography/Candidates/Arithmetic.lean:327:  modExp : PolyTimeComputable modExpStr
+TCSlib/Cryptography/Candidates/Arithmetic.lean:329:  le : PolyTimeComputable leStr
+TCSlib/Cryptography/Candidates/Arithmetic.lean:331:  size : PolyTimeComputable sizeStr
+--- /PRIMESBin ∈|∈ Complexity\.P|PrimesInP/ : 12 hits
+TCSlib/Complexity/CircuitComplexity/CircuitEval.lean:170:theorem CVAL_mem_P : CVAL ∈ Complexity.P :=
+TCSlib/Complexity/CircuitComplexity/CircuitEval.lean:174:theorem CVALPrefix_mem_P : CVALPrefix ∈ Complexity.P :=
+TCSlib/Complexity/CircuitComplexity/LogspaceTableau.lean:142:theorem Language.exists_isLogspaceUniform_of_mem_P {L : Language Bool} (hL : L ∈ Complexity.P) :
+TCSlib/Complexity/CircuitComplexity/LogspaceTableau.lean:161:    L ∈ Complexity.P ↔ ∃ C : BoolCircuit.DAGCircuitFamily,
+TCSlib/Complexity/CircuitComplexity/PUniformP.lean:111:    (hF : C.HasFaninTwo) : C.language ∈ Complexity.P :=
+TCSlib/Complexity/CircuitComplexity/PUniformP.lean:133:    (hU : C.IsPUniform) (hF : C.HasFaninTwo) (hL : C.language = L) : L ∈ Complexity.P :=
+TCSlib/Complexity/CircuitComplexity/UniformTableau.lean:135:theorem Language.exists_isPUniform_of_mem_P {L : Language Bool} (hL : L ∈ Complexity.P) :
+TCSlib/Complexity/CircuitComplexity/UniformTableau.lean:148:    L ∈ Complexity.P ↔
+--- /extEuclidCalls/ : 19 hits
+TCSlib/Cryptography/NumberTheory/Euclid.lean:23:  calls (`extEuclidCalls_le`), by the text's induction on `n` with the two cases `b < 2^n`
+TCSlib/Cryptography/NumberTheory/Euclid.lean:44:* `TCSlib.Cryptography.NumberTheory.extEuclidCalls` — its number of recursive calls.
+TCSlib/Cryptography/NumberTheory/Euclid.lean:50:* `TCSlib.Cryptography.NumberTheory.extEuclidCalls_le` — at most `2n` recursive calls for
+TCSlib/Cryptography/NumberTheory/Euclid.lean:81:def extEuclidCalls (a b : ℕ) : ℕ :=
+TCSlib/Cryptography/NumberTheory/Euclid.lean:84:  else extEuclidCalls b (a % b) + 1
+TCSlib/Cryptography/NumberTheory/Euclid.lean:106:theorem extEuclidCalls_zero_right (a : ℕ) : extEuclidCalls a 0 = 0 := by
+TCSlib/Cryptography/NumberTheory/Euclid.lean:107:  rw [extEuclidCalls]
+TCSlib/Cryptography/NumberTheory/Euclid.lean:111:theorem extEuclidCalls_of_mod_eq_zero {a b : ℕ} (hb : b ≠ 0) (h : a % b = 0) :
+--- /powMod.*2 \^|two_pow.*powMod/ : 1 hits
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:1053:private theorem dlb_powMod_natToList (k : ℕ) (ha : a < 2 ^ n) (hb : b < 2 ^ k) (hPn : P < 2 ^ n) :
+--- /Nat\.size_eq_bits_len/ : 44 hits
+TCSlib/Complexity/CircuitComplexity/Meyer.lean:189:    rw [Nat.size_eq_bits_len]; exact Nat.size_le.mpr hjW
+TCSlib/Complexity/CircuitComplexity/MeyerTableau.lean:437:    rw [Nat.size_eq_bits_len]; exact Nat.size_le.mpr hj
+TCSlib/Complexity/ClassP/BinaryArith/Unary.lean:58:  rw [Nat.size_eq_bits_len]
+TCSlib/Complexity/Randomized/BPLInP.lean:400:        rw [show m = n.size from Nat.size_eq_bits_len n]
+TCSlib/Complexity/Randomized/BPLInP.lean:406:    · have hm : m = n.size := Nat.size_eq_bits_len n
+TCSlib/Complexity/Randomized/BPLInP.lean:450:          rw [Nat.size_eq_bits_len]
+TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:60:  rw [Nat.size_eq_bits_len]
+TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:244:  rw [Nat.size_eq_bits_len]

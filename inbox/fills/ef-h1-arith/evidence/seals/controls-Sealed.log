@@ -1,0 +1,27 @@
+probes/ctl/Sealed.lean:8:89: error: Type mismatch
+  rfl
+has type
+  ?m.17 = ?m.17
+but is expected to have type
+  modExpModulus N = if decide (LogProg.bitsVal (toLE N) = 0) = true then (2 ^ N.length).bits else toLE N
+probes/ctl/Sealed.lean:15:2: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  xgcdState b r' r s' s = pairEncode b.bits (pairEncode (pairEncode r'.bits r.bits) (pairEncode s'.bits s.bits))
+probes/ctl/Sealed.lean:20:61: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.4 ↔ ?m.4
+but is expected to have type
+  PrimesInP ↔ Randomized.PRIMESBin ∈ P
+probes/ctl/Sealed.lean:24:57: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  mulStr z = natToList ((pairFstD z).length + (pairSndD z).length) (listToNat (pairFstD z) * listToNat (pairSndD z))
+FAIL(probes/ctl/Sealed): lean exited with status 1
+FAIL(probes/ctl/Sealed): error diagnostics reported
+FAIL(probes/ctl/Sealed): no fresh .olean produced

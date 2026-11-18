@@ -1,0 +1,23 @@
+TCSlib/Cryptography/Candidates/ExtendedEuclidMachine.lean:284:8: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  i ≥ 1
+  h ≥ 0
+  g ≥ 0
+  2*g - h ≤ -2
+  f ≥ 0
+  e ≥ 0
+  e - g ≤ 0
+  2*e - f ≥ 0
+  c ≥ 1
+  c - d ≤ -1
+where
+ c := ↑(listToNat (pairSndD z))
+ d := ↑2 ^ (pairSndD z).length
+ e := ↑(pairSndD z).length
+ f := ↑(extEuclidCalls b (a % b))
+ g := ↑z.length
+ h := ↑(extEuclidCalls (listToNat (pairSndD z)) (listToNat (pairFstD z) % listToNat (pairSndD z)))
+ i := ↑(listToNat (pairFstD z)) % ↑(listToNat (pairSndD z))
+FAIL(TCSlib/Cryptography/Candidates/ExtendedEuclidMachine): lean exited with status 1
+FAIL(TCSlib/Cryptography/Candidates/ExtendedEuclidMachine): error diagnostics reported
+FAIL(TCSlib/Cryptography/Candidates/ExtendedEuclidMachine): no fresh .olean produced

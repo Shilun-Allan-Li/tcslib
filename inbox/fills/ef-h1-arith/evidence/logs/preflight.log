@@ -1,0 +1,25 @@
+Wed Nov 18 09:22:56 UTC 2026
+host: cloud worker container
+nproc: 4
+cgroup memory.max: cat: /sys/fs/cgroup/memory.max: No such file or directory
+--- memory.current
+cat: /sys/fs/cgroup/memory.current: No such file or directory
+--- memory.events
+cat: /sys/fs/cgroup/memory.events: No such file or directory
+--- memory.stat
+--- /proc/meminfo
+MemTotal:       16473760 kB
+MemFree:         4797808 kB
+MemAvailable:   15802576 kB
+SwapTotal:             0 kB
+--- df -B1 / df -T
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 20217016320 21452341248  49% /
+/dev/vda       270553174016 20217016320 21452341248  49% /
+/dev/vda       270553174016 20217016320 21452341248  49% /
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 19743180  20949552  49% /
+/dev/vda       ext4 264212084 19743180  20949552  49% /
+headroom: no cgroup limit (cgroup v2 files absent) -> MemAvailable = 15802576 kB = 15.07 GiB >= 4 GiB: PASS
+disk: 21452341248 B = 19.98 GiB free on ext4 /dev/vda >= 12 GiB: PASS
+pool: min(nproc=4, 15.07/4=3) = 3
