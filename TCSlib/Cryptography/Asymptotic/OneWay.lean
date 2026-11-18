@@ -222,8 +222,13 @@ def ofString (f : List Bool → List Bool) (p : PolyExpr) : FunFamily where
   outLen := p
   f _ x i := (f (List.ofFn x)).getD i false
 
+/-- The input length of `ofString f p` is the variable: `(ofString f p).inLen = var`. -/
+theorem ofString_inLen (f : List Bool → List Bool) (p : PolyExpr) : (ofString f p).inLen = .var :=
+  rfl
+
 /-- The input length of `ofString f p` at `n` is `n` (the parameter is the input length). -/
-theorem ofString_inLen_eval (f p) (n : ℕ) : (ofString f p).inLen.eval n = n := rfl
+theorem ofString_inLen_eval (f p) (n : ℕ) : (ofString f p).inLen.eval n = n := by
+  rw [ofString_inLen, PolyExpr.eval_var]
 
 /-- The output length of `ofString f p` at `n` is `p(n)`. -/
 theorem ofString_outLen_eval (f p) (n : ℕ) : (ofString f p).outLen.eval n = p.eval n := rfl
@@ -237,6 +242,10 @@ theorem ofString_f_apply (f : List Bool → List Bool) (p : PolyExpr) (n : ℕ)
 def LengthRegular (f : List Bool → List Bool) (p : PolyExpr) : Prop :=
   ∀ x, (f x).length = p.eval x.length
 
+/-- The defining condition of `LengthRegular`: `LengthRegular f p ↔ ∀ x, |f x| = p(|x|)`. -/
+theorem lengthRegular_iff (f : List Bool → List Bool) (p : PolyExpr) :
+    LengthRegular f p ↔ ∀ x, (f x).length = p.eval x.length := Iff.rfl
+
 /-- The direct product `f'_n = (f_n)^{q n}` of [PS10, Theorem 35.1]:
 `f'(x₁, …, x_{q(n)}) = (f(x₁), …, f(x_{q(n)}))` on blocks, encoded as concatenations;
 `OneWay.prodFun` [Gar26, Theorem 2.1] blockwise. -/
@@ -244,7 +253,9 @@ def prod (𝓕 : FunFamily) (q : PolyExpr) : FunFamily where
   inLen := .mul q 𝓕.inLen
   outLen := .mul q 𝓕.outLen
   f n x := (blocks (q.eval n) (𝓕.outLen.eval n)).symm
-    (TCSlib.Cryptography.OneWay.prodFun (𝓕.f n) (q.eval n) (blocks (q.eval n) (𝓕.inLen.eval n) x))
+    (TCSlib.Cryptography.OneWay.prodFun (𝓕.f n) (q.eval n)
+      (blocks (q.eval n) (𝓕.inLen.eval n) (x ∘ Fin.cast (PolyExpr.eval_mul q 𝓕.inLen n).symm))) ∘
+    Fin.cast (PolyExpr.eval_mul q 𝓕.outLen n)
 
 /-! ### Unfolding lemmas -/
 
@@ -403,6 +414,16 @@ theorem ofFn_blocks_symm (q ℓ : ℕ) (t : Fin q → Fin ℓ → Bool) :
 @[simp] theorem prod_outLen (𝓕 : FunFamily) (q : PolyExpr) :
     (𝓕.prod q).outLen = .mul q 𝓕.outLen := rfl
 
+/-- The input length of the direct product at `n` is `q(n) · inLen(n)`. -/
+theorem prod_inLen_eval (𝓕 : FunFamily) (q : PolyExpr) (n : ℕ) :
+    (𝓕.prod q).inLen.eval n = q.eval n * 𝓕.inLen.eval n := by
+  rw [prod_inLen, PolyExpr.eval_mul]
+
+/-- The output length of the direct product at `n` is `q(n) · outLen(n)`. -/
+theorem prod_outLen_eval (𝓕 : FunFamily) (q : PolyExpr) (n : ℕ) :
+    (𝓕.prod q).outLen.eval n = q.eval n * 𝓕.outLen.eval n := by
+  rw [prod_outLen, PolyExpr.eval_mul]
+
 /-- The direct product unfolded: `prodFun` between the block bijections. -/
 theorem prod_f (𝓕 : FunFamily) (q : PolyExpr) (n : ℕ) (x : Fin (q.eval n * 𝓕.inLen.eval n) → Bool) :
     (𝓕.prod q).f n x = (blocks (q.eval n) (𝓕.outLen.eval n)).symm
@@ -474,12 +495,15 @@ def yaoRounds (q : PolyExpr) (c : ℕ) : PolyExpr :=
   .mul (.const 2) (.mul .var (.mul (yaoBlocks q) (.pow .var c)))
 
 /-- `m(n) = 2 n q(n)`. -/
-@[simp] theorem eval_yaoBlocks (q : PolyExpr) (n : ℕ) : (yaoBlocks q).eval n = 2 * (n * q.eval n) :=
-  rfl
+@[simp] theorem eval_yaoBlocks (q : PolyExpr) (n : ℕ) :
+    (yaoBlocks q).eval n = 2 * (n * q.eval n) := by
+  simp only [yaoBlocks, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
 
 /-- `T(n) = 2 n m(n) n^c`. -/
 @[simp] theorem eval_yaoRounds (q : PolyExpr) (c : ℕ) (n : ℕ) :
-    (yaoRounds q c).eval n = 2 * (n * ((yaoBlocks q).eval n * n ^ c)) := rfl
+    (yaoRounds q c).eval n = 2 * (n * ((yaoBlocks q).eval n * n ^ c)) := by
+  simp only [yaoRounds, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var,
+    PolyExpr.eval_pow]
 
 /-- `m(n)` is positive for `n ≥ 1` and positive `q`. -/
 theorem yaoBlocks_pos (q : PolyExpr) (hq : ∀ n, 0 < q.eval n) {n : ℕ} (hn : 0 < n) :
@@ -937,7 +961,7 @@ structure PermFamily where
 def PermFamily.toFunFamily (P : PermFamily) : FunFamily where
   inLen := .var
   outLen := .var
-  f n := P.f n
+  f n x := P.f n (x ∘ Fin.cast (PolyExpr.eval_var n).symm) ∘ Fin.cast (PolyExpr.eval_var n)
 
 /-- `P` is a *one-way permutation* when its underlying family is strongly one-way
 [PS10, §2.10, Definition 55.1, single-function form, as used in Theorems 79.4 and 126.4]. -/
@@ -959,19 +983,23 @@ theorem OneWayPermutation.evaluator {P : PermFamily} (hP : OneWayPermutation P) 
 
 /-- The input length of `P.toFunFamily` at `n` is `n`. -/
 theorem PermFamily.toFunFamily_inLen_eval (P : PermFamily) (n : ℕ) :
-    P.toFunFamily.inLen.eval n = n := rfl
+    P.toFunFamily.inLen.eval n = n := PolyExpr.eval_var n
 
 /-- The output length of `P.toFunFamily` at `n` is `n`. -/
 theorem PermFamily.toFunFamily_outLen_eval (P : PermFamily) (n : ℕ) :
-    P.toFunFamily.outLen.eval n = n := rfl
+    P.toFunFamily.outLen.eval n = n := PolyExpr.eval_var n
 
-/-- **The domain of `P.toFunFamily` is `{0,1}^n`**: `{0,1}^{inLen(n)} ≃ {0,1}^n` (identity). -/
+/-- **The domain of `P.toFunFamily` is `{0,1}^n`**: `{0,1}^{inLen(n)} ≃ {0,1}^n` (reindexing along
+`toFunFamily_inLen_eval`). -/
 def PermFamily.toFunFamily_domEquiv (P : PermFamily) (n : ℕ) :
-    (Fin (P.toFunFamily.inLen.eval n) → Bool) ≃ (Fin n → Bool) := Equiv.refl _
+    (Fin (P.toFunFamily.inLen.eval n) → Bool) ≃ (Fin n → Bool) :=
+  Equiv.arrowCongr (finCongr (P.toFunFamily_inLen_eval n)) (Equiv.refl Bool)
 
-/-- **The range of `P.toFunFamily` is `{0,1}^n`**: `{0,1}^{outLen(n)} ≃ {0,1}^n` (identity). -/
+/-- **The range of `P.toFunFamily` is `{0,1}^n`**: `{0,1}^{outLen(n)} ≃ {0,1}^n` (reindexing along
+`toFunFamily_outLen_eval`). -/
 def PermFamily.toFunFamily_codEquiv (P : PermFamily) (n : ℕ) :
-    (Fin (P.toFunFamily.outLen.eval n) → Bool) ≃ (Fin n → Bool) := Equiv.refl _
+    (Fin (P.toFunFamily.outLen.eval n) → Bool) ≃ (Fin n → Bool) :=
+  Equiv.arrowCongr (finCongr (P.toFunFamily_outLen_eval n)) (Equiv.refl Bool)
 
 /-- The domain equivalence keeps the string. -/
 theorem PermFamily.toFunFamily_domEquiv_ofFn (P : PermFamily) (n : ℕ)
