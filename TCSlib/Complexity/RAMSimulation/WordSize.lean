@@ -833,6 +833,14 @@ def WordSizeComputable (W TW SW : ℕ → ℕ) : Prop :=
   ∃ M : Turing.FinTM Bool, ∀ x : List Bool, ∃ t ≤ TW x.length,
     M.ComputesInTime x (W x.length).bits t ∧ M.tm.spaceUsed (M.tm.initCfg x) t ≤ SW x.length
 
+/-- Word-size computability means one finite machine with the stated time and space
+witness on every input. This equivalence reads `WordSizeComputable`. -/
+theorem wordSizeComputable_iff (W TW SW : ℕ → ℕ) :
+    WordSizeComputable W TW SW ↔
+      ∃ M : Turing.FinTM Bool, ∀ x : List Bool, ∃ t ≤ TW x.length,
+        M.ComputesInTime x (W x.length).bits t ∧
+          M.tm.spaceUsed (M.tm.initCfg x) t ≤ SW x.length := Iff.rfl
+
 /-- A word size computable within `TW` and `SW` is computable within any larger bounds.
 
 **Proof sketch.** The same machine and halting times; `t ≤ TW n ≤ TW' n`, and the space bound

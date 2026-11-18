@@ -7,6 +7,23 @@ import TCSlib.Complexity.RAMSimulation.WordSize
 import TCSlib.Complexity.RAMSimulation.Sim.Encoding
 import TCSlib.Complexity.RAMSimulation.Sim.Startup
 import TCSlib.Complexity.RAMSimulation.Sim.Phases
+import TCSlib.Complexity.RAMSimulation.Sim.RunEncoding
+import TCSlib.Complexity.RAMSimulation.Sim.RunSlices
+import TCSlib.Complexity.RAMSimulation.Sim.RunPhase
+import TCSlib.Complexity.RAMSimulation.Sim.RunHost
+import TCSlib.Complexity.RAMSimulation.Sim.RunSource
+import TCSlib.Complexity.RAMSimulation.Sim.RunChoices
+import TCSlib.Complexity.RAMSimulation.Sim.RunDriver
+import TCSlib.Complexity.RAMSimulation.Sim.RunStep
+import TCSlib.Complexity.RAMSimulation.Sim.RunSpace
+import TCSlib.Complexity.RAMSimulation.Sim.RunStartup
+import TCSlib.Complexity.RAMSimulation.Sim.RunCosts
+import TCSlib.Complexity.RAMSimulation.Sim.RunInstruction
+import TCSlib.Complexity.RAMSimulation.Sim.RunPrefix
+import TCSlib.Complexity.RAMSimulation.Sim.RunInduction
+import TCSlib.Complexity.RAMSimulation.Sim.RunBounds
+import TCSlib.Complexity.RAMSimulation.Sim.RunInput
+import TCSlib.Complexity.RAMSimulation.Sim.RunBranch
 import TCSlib.Complexity.RAMSimulation.Simulation
 import TCSlib.Complexity.RAMSimulation.Classes
 
@@ -26,6 +43,18 @@ their gate on 2026-10-14 (`audits/stage2-statements-findings.md`); their proofs 
 - `RAMSimulation.Sim.Encoding`, `RAMSimulation.Sim.Startup`, `RAMSimulation.Sim.Phases`: the
   simulation's internal interfaces (namespace `WordRAM.Sim`): how eight tapes encode a
   configuration, the start-up, and one phase per instruction
+- `RAMSimulation.Sim.RunEncoding`, `RAMSimulation.Sim.RunSlices`,
+  `RAMSimulation.Sim.RunPhase`: encoding transport and the two fixed choice slices
+- `RAMSimulation.Sim.RunHost`, `RAMSimulation.Sim.RunStep`,
+  `RAMSimulation.Sim.RunStartup`: the finite position/parity host and its phase executions
+- `RAMSimulation.Sim.RunChoices`, `RAMSimulation.Sim.RunSource`,
+  `RAMSimulation.Sim.RunDriver`: timed branch words and consumed source coins
+- `RAMSimulation.Sim.RunSpace`, `RAMSimulation.Sim.RunCosts`,
+  `RAMSimulation.Sim.RunBounds`: common head intervals and the final resource coefficients
+- `RAMSimulation.Sim.RunInstruction`, `RAMSimulation.Sim.RunPrefix`,
+  `RAMSimulation.Sim.RunInduction`: the shared instruction execution certificate and induction
+- `RAMSimulation.Sim.RunInput`, `RAMSimulation.Sim.RunBranch`: completed runs from the input
+  and uniform bounds for arbitrary branches
 - `RAMSimulation.Simulation`: stage 2, `WordRAM.exists_simulation` and
   `WordRAM.exists_ndSimulation`, with their time and space bounds
 - `RAMSimulation.Classes`: the nine corollaries (DTIME, P, SPACE, L, log-space transducers,
