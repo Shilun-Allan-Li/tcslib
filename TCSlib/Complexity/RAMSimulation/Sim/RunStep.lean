@@ -216,6 +216,42 @@ theorem host_slice_prefix (p : Fin (P.length + 1)) (par b : Bool) {x : List Bool
   rw [host_phase_run A (some (p, par)) d (w.take u) hguard,
     phase_branch_prefix A p par b d hd w hb u hu]
 
+/-- **The local entry of a live host start.** A host configuration at the entry of the phase for
+the instruction at `c.pc` is the local phase configuration at that entry, retagged; the local
+configuration carries the same encoding. Shared by `host_ordinary` and `host_verdict`.
+
+**Proof sketch.** Rename every state to the phase's entry: the state reader and `hd` give the
+local entry, `encodes_mapState` transports the encoding, and `runEntry_reconstruct` retags it
+back to `d`; renaming keeps the heads. -/
+theorem host_local {x : List Bool} {W : ℕ} (par : Bool) (T : Finset ℤ) (c : XCfg W)
+    (o : Fin 8 → ℤ) (d : Turing.Cfg (8 + A.extraTapes) Bool A.State x)
+    (hd : d.state = some ⟨some (runPosition P c.pc, par),
+      (A.phases (runPosition P c.pc)).entry⟩)
+    (he : Encodes A.width fn T c (Fin.castAddEmb A.extraTapes) o d) :
+    ∃ locald : Turing.Cfg (8 + A.extraTapes) Bool (A.phases (runPosition P c.pc)).State x,
+      locald.state = some (A.phases (runPosition P c.pc)).entry ∧
+      Encodes A.width fn T c (Fin.castAddEmb A.extraTapes) o locald ∧
+      locald.mapState (Sigma.mk (some (runPosition P c.pc, par))) = d ∧
+      locald.workTapePos = d.workTapePos := by
+  let R := A.phases (runPosition P c.pc)
+  refine ⟨d.mapState (fun _ => R.entry), ?_, ?_, ?_, ?_⟩
+  · rw [Cfg.mapState_state, hd]; rfl
+  · exact (encodes_mapState A.width fn T c (Fin.castAddEmb A.extraTapes) o d
+      (fun _ => R.entry)).mp he
+  · exact runEntry_reconstruct R.entry
+      (fun q : R.State => (⟨some (runPosition P c.pc, par), q⟩ : A.State)) d hd
+  · funext j
+    rw [Cfg.mapState_workTapePos]
+
+/-- A word of each positive length headed by `b`: its nonempty values start with `b`. Shared
+by `host_ordinary` and `host_verdict`. -/
+theorem words_headD {b : Bool} (words : ℕ → List Bool) (hlen : ∀ n, (words n).length = n)
+    (hhead : ∀ n, 0 < n → (words n).headD false = b) (t : ℕ) (hne : words t ≠ []) :
+    (words t).headD false = b := by
+  apply hhead t
+  rw [← hlen t]
+  exact List.length_pos_iff.mpr hne
+
 /-- A continuing RAM instruction is simulated by one phase word and one dispatch choice.
 The endpoint encodes its successor at the opposite parity, every head is restored, and every
 prefix stays within the instruction's envelope around its starting heads.
@@ -255,12 +291,7 @@ theorem host_ordinary {x ρ : List Bool} {W : ℕ} (par b : Bool)
   let R := A.phases p
   have hfetch : P.getD p.val (.base .reject) = P.getD c.pc (.base .reject) :=
     runPosition_fetch P c.pc
-  let locald := d.mapState (fun _ => R.entry)
-  have hd₀ : locald.state = some R.entry := by rw [Cfg.mapState_state, hd]; rfl
-  have he₀ : Encodes A.width fn T c σ o locald :=
-    (encodes_mapState A.width fn T c σ o d (fun _ => R.entry)).mp he
-  have hstart : locald.mapState (Sigma.mk i) = d :=
-    runEntry_reconstruct R.entry (fun q : R.State => (⟨i, q⟩ : A.State)) d hd
+  obtain ⟨locald, hd₀, he₀, hstart, hpos⟩ := A.host_local par T c o d hd he
   have hc : isCoin (P.getD p.val (.base .reject)) = true → ρ.getD c.rd false = b := by
     rw [hfetch]
     exact hcoin
@@ -270,11 +301,8 @@ theorem host_ordinary {x ρ : List Bool} {W : ℕ} (par b : Bool)
   obtain ⟨he', q, jump, hq, hred, hpc⟩ := hpost
   let w := words t
   have hw : w.length = t := hlen t
-  have hb : isCoin (P.getD p.val (.base .reject)) = true → w ≠ [] → w.headD false = b := by
-    intro _ hne
-    apply hhead t
-    rw [← hw]
-    exact List.length_pos_iff.mpr hne
+  have hb : isCoin (P.getD p.val (.base .reject)) = true → w ≠ [] → w.headD false = b :=
+    fun _ => words_headD words hlen hhead t
   have hrw := A.phase_branch_prefix p par b locald hd₀ w hb w.length le_rfl
   rw [List.take_length, hw, hrun] at hrw
   have hg : ∀ u < w.length, ∀ q,
@@ -296,7 +324,7 @@ theorem host_ordinary {x ρ : List Bool} {W : ℕ} (par b : Bool)
       rw [Cfg.mapState_workTapePos, heh, hdh]
     · have hf := hframe t le_rfl j hj
       rw [hrun] at hf
-      rw [Cfg.mapState_workTapePos, hf, Cfg.mapState_workTapePos]
+      rw [Cfg.mapState_workTapePos, hf, hpos]
   refine ⟨t, post, ht, hfinal, ?_, ?_, hheads, ?_⟩
   · rw [Cfg.mapState_state, hq, Option.map_some, hdest]
   · simpa only [hfetch] using
@@ -311,7 +339,7 @@ theorem host_ordinary {x ρ : List Bool} {W : ℕ} (par b : Bool)
         have hdh := ((encodes_iff A.width fn T c σ o d).mp he).1 r
         rw [hdh]
         exact henv u hut r
-      · rw [hframe u hut j hj, Cfg.mapState_workTapePos, sub_self, abs_zero]
+      · rw [hframe u hut j hj, hpos, sub_self, abs_zero]
         exact Nat.cast_nonneg _
     · have hue : u = t + 1 := by omega
       have hwle : (w ++ [dispatch t]).length ≤ u := by
@@ -351,12 +379,7 @@ theorem host_verdict {x ρ : List Bool} {W : ℕ} (par b : Bool)
   let R := A.phases p
   have hfetch : P.getD p.val (.base .reject) = P.getD c.pc (.base .reject) :=
     runPosition_fetch P c.pc
-  let locald := d.mapState (fun _ => R.entry)
-  have hd₀ : locald.state = some R.entry := by rw [Cfg.mapState_state, hd]; rfl
-  have he₀ : Encodes A.width fn T c σ o locald :=
-    (encodes_mapState A.width fn T c σ o d (fun _ => R.entry)).mp he
-  have hstart : locald.mapState (Sigma.mk i) = d :=
-    runEntry_reconstruct R.entry (fun q : R.State => (⟨i, q⟩ : A.State)) d hd
+  obtain ⟨locald, hd₀, he₀, hstart, hpos⟩ := A.host_local par T c o d hd he
   have hc : isCoin (P.getD p.val (.base .reject)) = true → ρ.getD c.rd false = b := by
     intro h
     rw [hfetch, source_verdict_not_coin hstep] at h
@@ -366,11 +389,8 @@ theorem host_verdict {x ρ : List Bool} {W : ℕ} (par b : Bool)
   rw [hstep] at hpost
   let w := words t
   have hw : w.length = t := hlen t
-  have hb : isCoin (P.getD p.val (.base .reject)) = true → w ≠ [] → w.headD false = b := by
-    intro _ hne
-    apply hhead t
-    rw [← hw]
-    exact List.length_pos_iff.mpr hne
+  have hb : isCoin (P.getD p.val (.base .reject)) = true → w ≠ [] → w.headD false = b :=
+    fun _ => words_headD words hlen hhead t
   have hc' : ∀ u < w.length, ∀ q,
       (((A.phase (some (p, par))).fixChoice b).runFrom locald u).state = some q →
         A.redirect (some (p, par)) q = none := by
@@ -392,7 +412,7 @@ theorem host_verdict {x ρ : List Bool} {W : ℕ} (par b : Bool)
       have hdh := ((encodes_iff A.width fn T c σ o d).mp he).1 r
       rw [hdh]
       exact henv u hu r
-    · rw [hframe u hu j hj, Cfg.mapState_workTapePos, sub_self, abs_zero]
+    · rw [hframe u hu j hj, hpos, sub_self, abs_zero]
       exact Nat.cast_nonneg _
 
 end WordRAM.Sim.RunSetup
