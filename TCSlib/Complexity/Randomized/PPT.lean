@@ -438,7 +438,8 @@ theorem runAtL_ofPolyTimeUniform {f : List Bool → List Bool} (hf : PolyTimeCom
     (coins : PolyExpr) (n : ℕ) (y r : List Bool) :
     (ofPolyTimeUniform hf coins).runAtL n y r =
       f (pairEncode (pairEncode (advInput n y) []) r) := by
-  simp [runAtL, ofPolyTimeUniform, output_ofPolyTime]
+  simp only [runAtL, output_ofPolyTimeUniform]
+  rfl
 
 /-- **Non-vacuity of [PS10, Definition 24.6].** Every polynomial-time computable function
 `f` is computed with probability one by a PPT (a uniform `NUPPT`): the machine for
