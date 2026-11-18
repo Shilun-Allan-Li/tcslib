@@ -6,6 +6,7 @@ Authors: TCSlib contributors
 import TCSlib.Cryptography.ZeroKnowledge.LevinHardness.Gadget
 import TCSlib.Cryptography.ZeroKnowledge.LevinHardness.Relations
 import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Machines
+import TCSlib.Cryptography.ZeroKnowledge.LevinHardness.UnaryArith
 import TCSlib.Complexity.NPReductions.ThreeSATToColoring
 
 set_option maxHeartbeats 0
@@ -44,7 +45,7 @@ is not 3-colourable.
 * `memS_iff`, `goodS_iff` — the specifications of the two tests.
 * `clauseLit_code`, `clauseLit_clauseCode`, `clauseSat_clauseCode` — clause codes decode to the
   widened clause, and a code is satisfied iff the clause is.
-* `clauseSat_of_memS` — a satisfying assignment of `CNF.decode s` satisfies every member code.
+* `clauseSat_of_memS_of_lt` — a satisfying assignment of `CNF.decode s` satisfies every member code.
 * `not_threeColorable_k4` — `k4` is not 3-colourable.
 * `encGraph_gadgetGraph` — the gadget adjacency matrix as a tabulation over `i < N²`.
 * `polyTimeComputable_gadgetAdj`, `polyTimeComputable_colorInst_of` — the instance map is
@@ -161,15 +162,19 @@ theorem clauseLit_clauseCode {K : ℕ} {C : CNF.Clause ℕ} (hK : ∀ ℓ ∈ C,
   rw [clauseCode_eq, clauseLit_code (h 0) (h 1) (h 2)]
   fin_cases j <;> rfl
 
-/-- Glue: a clause evaluates to `true` iff one of its literals `(v, b)` has `val v = b`. -/
-private theorem clause_eval_eq_true_iff (val : ℕ → Bool) (C : CNF.Clause ℕ) :
+/-- **A clause is true iff one of its literals is**: a clause evaluates to `true` under `val`
+iff one of its literals `(v, b)` has `val v = b`,
+`C.eval val = true ↔ ∃ ℓ ∈ C, (val ℓ.1 == ℓ.2) = true` (Std `CNF.Clause.eval_cons`). Glue. -/
+theorem clause_eval_eq_true_iff (val : ℕ → Bool) (C : CNF.Clause ℕ) :
     C.eval val = true ↔ ∃ ℓ ∈ C, (val ℓ.1 == ℓ.2) = true := by
   induction C with
   | nil => simp [CNF.Clause.eval_nil]
   | cons ℓ C ih => simp [CNF.Clause.eval_cons, ih]
 
-/-- Glue: a formula evaluates to `true` iff every clause does. -/
-private theorem cnf_eval_eq_true_iff (val : ℕ → Bool) (φ : CNF ℕ) :
+/-- **A formula is true iff all its clauses are**: a CNF evaluates to `true` under `val` iff
+every clause does, `φ.eval val = true ↔ ∀ C ∈ φ, C.eval val = true` (Std `CNF.eval_cons`).
+Glue. -/
+theorem cnf_eval_eq_true_iff (val : ℕ → Bool) (φ : CNF ℕ) :
     φ.eval val = true ↔ ∀ C ∈ φ, C.eval val = true := by
   induction φ with
   | nil => simp [CNF.eval_nil]
@@ -229,7 +234,7 @@ theorem goodS_iff (s : List Bool) :
 /-- **A satisfying assignment satisfies every member code**: if every variable of
 `CNF.decode s` is `< |s|` and `(CNF.decode s).eval val = true`, then `memS s c = true` implies
 `clauseSat |s| val c = true` (the bridge from 3SAT witnesses to the gadget colouring). Glue. -/
-theorem clauseSat_of_memS {s : List Bool} {val : ℕ → Bool} {c : ℕ}
+theorem clauseSat_of_memS_of_lt {s : List Bool} {val : ℕ → Bool} {c : ℕ}
     (hK : ∀ C ∈ CNF.decode s, ∀ ℓ ∈ C, ℓ.1 < s.length)
     (heval : (CNF.decode s).eval val = true) (hm : memS s c = true) :
     clauseSat s.length val c = true := by
@@ -297,40 +302,6 @@ theorem encGraph_gadgetGraph (K : ℕ) (mem : ℕ → Bool) :
 
 /-! ### Polynomial time -/
 
-/-- Glue: unary quotient (`EncodingMachines.divNum_poly` read through `divNum_eq`). -/
-private theorem unaryDiv {f g : List Bool → ℕ}
-    (hf : PolyTimeComputable fun x => List.replicate (f x) true)
-    (hg : PolyTimeComputable fun x => List.replicate (g x) true) :
-    PolyTimeComputable fun x => List.replicate (f x / g x) true :=
-  (EncodingMachines.divNum_poly hf hg).congr fun x => by rw [EncodingMachines.divNum_eq]
-
-/-- Glue: unary remainder (`EncodingMachines.modNum_poly` read through `modNum_eq`). -/
-private theorem unaryMod {f g : List Bool → ℕ}
-    (hf : PolyTimeComputable fun x => List.replicate (f x) true)
-    (hg : PolyTimeComputable fun x => List.replicate (g x) true) :
-    PolyTimeComputable fun x => List.replicate (f x % g x) true :=
-  (EncodingMachines.modNum_poly hf hg).congr fun x => by rw [EncodingMachines.modNum_eq]
-
-/-- Glue: unary constant power (`EncodingMachines.unaryMul_poly`, `pow_succ`). -/
-private theorem unaryPow {f : List Bool → ℕ}
-    (hf : PolyTimeComputable fun x => List.replicate (f x) true) (n : ℕ) :
-    PolyTimeComputable fun x => List.replicate (f x ^ n) true := by
-  induction n with
-  | zero => simpa using EncodingMachines.unaryConst_poly 1
-  | succ n ih => simpa only [pow_succ] using EncodingMachines.unaryMul_poly ih hf
-
-/-- Glue: the literal codes of a clause code are unary functions (`clauseLit_eq`). -/
-private theorem unaryClauseLit {K c : List Bool → ℕ}
-    (hK : PolyTimeComputable fun x => List.replicate (K x) true)
-    (hc : PolyTimeComputable fun x => List.replicate (c x) true) (j : Fin 3) :
-    PolyTimeComputable fun x => List.replicate (clauseLit (K x) (c x) j) true := by
-  have h2K := EncodingMachines.unaryMul_poly (EncodingMachines.unaryConst_poly 2) hK
-  simp only [clauseLit_eq]
-  fin_cases j
-  · simpa using unaryMod hc h2K
-  · simpa using unaryMod (unaryDiv hc h2K) h2K
-  · simpa using unaryDiv hc (unaryPow h2K 2)
-
 /-- Glue: the in-gadget index-pair test of `gadgetEdge` as a Boolean combination of equalities. -/
 private theorem decide_mem_gadgetPairs (a b : ℕ) :
     decide ((a, b) ∈ [(0, 1), (0, 2), (1, 2), (2, 3), (3, 4), (3, 5), (4, 5)]) =
@@ -362,7 +333,7 @@ theorem polyTimeComputable_gadgetAdj {K t t' : List Bool → ℕ} {mem : List Bo
   have hN : PolyTimeComputable fun x => List.replicate (gadgetN (K x)) true := by
     simp only [gadgetN_eq]
     exact unaryAdd_poly (unaryAdd_poly (unaryConst_poly 3) (unaryMul_poly (unaryConst_poly 2) hK))
-      (unaryMul_poly (unaryConst_poly 6) (unaryPow (unaryMul_poly (unaryConst_poly 2) hK) 3))
+      (unaryMul_poly (unaryConst_poly 6) (unaryPow_poly (unaryMul_poly (unaryConst_poly 2) hK) 3))
   have hpairs : ∀ a b : List Bool → ℕ, (PolyTimeComputable fun x => List.replicate (a x) true) →
       (PolyTimeComputable fun x => List.replicate (b x) true) →
       PolyTimeComputable fun x =>
@@ -389,10 +360,10 @@ theorem polyTimeComputable_gadgetAdj {K t t' : List Bool → ℕ} {mem : List Bo
       | apply unaryConst_poly
       | apply polyTimeComputable_or | apply polyTimeComputable_and
       | apply hpairs | apply h02 | apply hmem
-      | apply unaryClauseLit
+      | apply clauseLit_poly
       | apply ltTest_poly | apply leTest_poly | apply eqTest_poly
       | apply unaryAdd_poly | apply unarySub_poly | apply unaryMul_poly
-      | apply unaryDiv | apply unaryMod
+      | apply unaryDiv_poly | apply unaryMod_poly
   simp only [gadgetAdj_eq, decide_not]
   exact polyTimeComputable_and (polyTimeComputable_not (eqTest_poly ht ht'))
     (polyTimeComputable_or (hE t t' ht ht') (hE t' t ht' ht))
@@ -419,12 +390,13 @@ theorem polyTimeComputable_colorInst_of
     intro K hK
     simp only [gadgetN_eq]
     exact unaryAdd_poly (unaryAdd_poly (unaryConst_poly 3) (unaryMul_poly (unaryConst_poly 2) hK))
-      (unaryMul_poly (unaryConst_poly 6) (unaryPow (unaryMul_poly (unaryConst_poly 2) hK) 3))
+      (unaryMul_poly (unaryConst_poly 6) (unaryPow_poly (unaryMul_poly (unaryConst_poly 2) hK) 3))
   have hchunk : PolyTimeComputable fun w =>
       [gadgetAdj (pairSndD w).length (memS (pairSndD w))
         ((pairFstD w).length / gadgetN (pairSndD w).length)
         ((pairFstD w).length % gadgetN (pairSndD w).length)] := by
-    refine polyTimeComputable_gadgetAdj hs (unaryDiv hi (hNu hs)) (unaryMod hi (hNu hs)) ?_
+    refine polyTimeComputable_gadgetAdj hs (unaryDiv_poly hi (hNu hs))
+      (unaryMod_poly hi (hNu hs)) ?_
     intro c hc
     refine (hmem.comp' (hc.pairEncode polyTimeComputable_pairSndD)).congr fun w => ?_
     simp only [pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
@@ -512,9 +484,9 @@ private theorem clauseLit_vals (K c : ℕ) :
       clauseLit K c 2 = c / (2 * K) ^ 2 := by
   refine ⟨?_, ?_, ?_⟩ <;> rw [clauseLit_eq] <;> simp
 
-/-- Glue: every natural number is the three-digit code of its `clauseLit` digits,
-`clauseLit K c 0 + 2K clauseLit K c 1 + (2K)² clauseLit K c 2 = c`. -/
-private theorem clauseLit_decomp (K c : ℕ) :
+/-- **Every natural number is the three-digit code of its `clauseLit` digits**:
+`clauseLit K c 0 + 2K clauseLit K c 1 + (2K)² clauseLit K c 2 = c`. Glue. -/
+theorem clauseLit_decomp (K c : ℕ) :
     clauseLit K c 0 + 2 * K * clauseLit K c 1 + (2 * K) ^ 2 * clauseLit K c 2 = c := by
   obtain ⟨e0, e1, e2⟩ := clauseLit_vals K c
   rw [e0, e1, e2]
@@ -542,8 +514,8 @@ theorem clauseLit_lt {K c : ℕ} (hc : c < (2 * K) ^ 3) (j : Fin 3) : clauseLit 
     calc c < (2 * K) ^ 3 := hc
       _ = 2 * K * (2 * K) ^ 2 := by ring
 
-/-- Glue: a three-digit code with digits `< m` is `< m³`. -/
-private theorem code_lt {m a b d : ℕ} (ha : a < m) (hb : b < m) (hd : d < m) :
+/-- **A three-digit code with digits `< m` is `< m³`**: `a + m b + m² d < m³`. Glue. -/
+theorem code_lt {m a b d : ℕ} (ha : a < m) (hb : b < m) (hd : d < m) :
     a + m * b + m ^ 2 * d < m ^ 3 := by
   have h1 : a + m * b < m ^ 2 := by nlinarith
   have h2 : m ^ 2 * d + m ^ 2 ≤ m ^ 3 := by
@@ -551,6 +523,14 @@ private theorem code_lt {m a b d : ℕ} (ha : a < m) (hb : b < m) (hd : d < m) :
       _ ≤ m ^ 2 * m := Nat.mul_le_mul_left _ hd
       _ = m ^ 3 := by ring
   omega
+
+/-- **Clause codes are below `(2K)³`**: if every variable of the nonempty clause `C` is `< K`,
+then `clauseCode K C < (2K)³` (`code_lt` on the three literal codes `< 2K`). Glue. -/
+theorem clauseCode_lt {K : ℕ} {C : CNF.Clause ℕ} (hK : ∀ ℓ ∈ C, ℓ.1 < K) (hC : 1 ≤ C.length) :
+    clauseCode K C < (2 * K) ^ 3 := by
+  have h : ∀ i, litCode (wideLit C i) < 2 * K := fun i => litCode_lt (hK _ (wideLit_mem hC i))
+  rw [clauseCode_eq]
+  exact code_lt (h 0) (h 1) (h 2)
 
 /-- **Clause codes are the clauses of the course reduction** over `Fin K`: the code
 `c < (2K)³` is the clause whose literals are `litEquiv` of `clauseLit K c 0, 1, 2`; inversely
