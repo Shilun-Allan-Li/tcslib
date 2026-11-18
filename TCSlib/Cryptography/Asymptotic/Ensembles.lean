@@ -311,7 +311,9 @@ theorem Ensemble.indist_iff_exists_negligible {ℓ : PolyExpr} (X Y : Ensemble �
   · intro h D
     obtain ⟨ε, hε, hlt⟩ := h D
     refine hε.mono ⟨0, fun n _ => ?_⟩
-    have h0 : 0 ≤ distAdv (X.X n) (Y.X n) (D.distinguisher n (ℓ.eval n)) := abs_nonneg _
+    have h0 : 0 ≤ distAdv (X.X n) (Y.X n) (D.distinguisher n (ℓ.eval n)) := by
+      rw [distAdv_def]
+      exact abs_nonneg _
     rw [abs_of_nonneg h0]
     exact (hlt n).le.trans (le_abs_self _)
 
@@ -372,7 +374,7 @@ theorem Ensemble.Indist.symm {ℓ : PolyExpr} {X Y : Ensemble ℓ} (h : X.Indist
   intro D
   have e : (fun n => distAdv (Y.X n) (X.X n) (D.distinguisher n (ℓ.eval n))) =
       fun n => distAdv (X.X n) (Y.X n) (D.distinguisher n (ℓ.eval n)) :=
-    funext fun n => abs_sub_comm _ _
+    funext fun n => by rw [distAdv_def, distAdv_def]; exact abs_sub_comm _ _
   rw [e]
   exact h D
 
@@ -440,7 +442,7 @@ theorem Ensemble.IndistLit.toIndist {ℓ : PolyExpr} {X Y : Ensemble ℓ}
   refine (h A).mono ⟨0, fun n _ => le_of_eq ?_⟩
   congr 1
   have hle' : D.coinLen (φ (ℓ.eval n)) ≤ D.coinLen (PolyExpr.var.eval (ℓ.eval n)) := by
-    rw [hφn, PolyExpr.eval_var]
+    rw [hφn, PolyExpr.eval_var, NUPPT.coinLen_eq, NUPPT.coinLen_eq]
     exact D.coins.eval_mono (hle n)
   simp only [distAdv_def]
   rw [EnsembleLemmas.acceptProb_reparam_advice hAc hA (ℓ.eval n) hle',
@@ -485,7 +487,9 @@ theorem hybrid_lemma {σ γ ρ : Type*} [Fintype σ] [Fintype ρ] {m : ℕ} (hm 
     (X : ℕ → σ → γ) (D : γ → ρ → Bool) :
     ∃ i < m, distAdv (X 0) (X m) D / m ≤ distAdv (X i) (X (i + 1)) D := by
   obtain ⟨i, hi, h⟩ := exists_hybrid_gap (fun i => acceptProb (X i) D) hm
-  exact ⟨i, hi, h⟩
+  refine ⟨i, hi, ?_⟩
+  rw [distAdv_def, distAdv_def]
+  exact h
 
 /-- **Transitivity of `≈`** [PS10, §3.1.1, "Transitivity – The Hybrid Lemma"]: the two-step
 case of the hybrid lemma. The advantage between `X` and `Z` is at most the sum of the
@@ -496,8 +500,9 @@ theorem Ensemble.Indist.trans {ℓ : PolyExpr} {X Y Z : Ensemble ℓ} (h₁ : X.
   intro D
   refine ((h₁ D).add (h₂ D)).mono ⟨0, fun n _ => ?_⟩
   have h0 : 0 ≤ distAdv (X.X n) (Y.X n) (D.distinguisher n (ℓ.eval n)) +
-      distAdv (Y.X n) (Z.X n) (D.distinguisher n (ℓ.eval n)) :=
-    add_nonneg (abs_nonneg _) (abs_nonneg _)
+      distAdv (Y.X n) (Z.X n) (D.distinguisher n (ℓ.eval n)) := by
+    rw [distAdv_def, distAdv_def]
+    exact add_nonneg (abs_nonneg _) (abs_nonneg _)
   rw [abs_of_nonneg h0]
   simp only [distAdv_def]
   rw [abs_abs]
@@ -555,6 +560,7 @@ theorem Ensemble.Indist.copies {ℓ : PolyExpr} {X Y : Ensemble ℓ} (h : X.Indi
         (D.distinguisher n ((PolyExpr.mul t ℓ).eval n)) =
         acceptProb (TCSlib.Cryptography.copies (t.eval n) (Z.X n)) (D' n) := by
       intro Z
+      rw [acceptProb_def, acceptProb_def]
       refine OneWay.uprob_congr fun z => ?_
       rw [hD']
       exact Iff.rfl
@@ -596,9 +602,10 @@ theorem Ensemble.Indist.copies {ℓ : PolyExpr} {X Y : Ensemble ℓ} (h : X.Indi
           List.ofFn (w ∘ Fin.cast (PolyExpr.eval_mul t ℓ n)) = List.ofFn w :=
         fun w => (List.ofFn_congr (PolyExpr.eval_mul t ℓ n).symm w).symm
       rw [he]
-      simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq,
-          EnsembleLemmas.ofFn_coinsEquiv, hB,
-        multicopyRed_def, hD', hcast]
+      refine Bool.eq_iff_iff.mpr ?_
+      simp only [multicopyRed_def, hD', NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq,
+        decide_eq_true_eq]
+      simp only [NUPPT.runAt_eq, EnsembleLemmas.ofFn_coinsEquiv, hB, hcast]
     have hdist : ∀ Z : Ensemble ℓ, acceptProb (Z.X n) (B.distinguisher n (ℓ.eval n)) =
         acceptProb (Z.X n) (multicopyRed (X.X n) (Y.X n) (t.eval n) (k n) (D' n)) := by
       intro Z
@@ -625,11 +632,15 @@ theorem Ensemble.Indist.copies {ℓ : PolyExpr} {X Y : Ensemble ℓ} (h : X.Indi
         rw [ht0]
         infer_instance
       rw [EnsembleLemmas.distAdv_eq_zero_of_subsingleton]
-      exact mul_nonneg (Nat.cast_nonneg _) (abs_nonneg _)
+      exact mul_nonneg (Nat.cast_nonneg _) (by rw [distAdv_def]; exact abs_nonneg _)
   refine (EnsembleLemmas.negligible_polyExpr_mul t (h B)).mono ⟨0, fun n _ => ?_⟩
   have h₁ : (0 : ℝ) ≤ distAdv ((X.copies t).X n) ((Y.copies t).X n)
-      (D.distinguisher n ((PolyExpr.mul t ℓ).eval n)) := abs_nonneg _
-  have h₂ : (0 : ℝ) ≤ distAdv (X.X n) (Y.X n) (B.distinguisher n (ℓ.eval n)) := abs_nonneg _
+      (D.distinguisher n ((PolyExpr.mul t ℓ).eval n)) := by
+    rw [distAdv_def]
+    exact abs_nonneg _
+  have h₂ : (0 : ℝ) ≤ distAdv (X.X n) (Y.X n) (B.distinguisher n (ℓ.eval n)) := by
+    rw [distAdv_def]
+    exact abs_nonneg _
   rw [abs_of_nonneg h₁, abs_of_nonneg (mul_nonneg (Nat.cast_nonneg _) h₂)]
   exact hbound n
 
@@ -671,8 +682,7 @@ theorem predict_eq {ℓ : ℕ} {σ₀ σ₁ ρ : Type*} [Fintype σ₀] [Fintype
     funext c
     simp
   have hB : uprob (fun c : (σ₀ × σ₁) × ρ => D (X₁ c.1.2) c.2 = true) = acceptProb X₁ D := by
-    rw [← acceptProb_snd (τ := σ₀) X₁ D]
-    rfl
+    rw [← acceptProb_snd (τ := σ₀) X₁ D, acceptProb_def]
   simp only [Equiv.prodAssoc_symm_apply, Bool.false_eq_true, if_false, if_true]
   rw [hA, hB]
   ring
@@ -704,14 +714,15 @@ theorem prediction_lemma {ℓ : PolyExpr} (X₀ X₁ : Ensemble ℓ) (D : NUPPT)
   obtain ⟨δ, hδ⟩ : ∃ δ : ℕ → ℝ, ∀ n, δ n = acceptProb (X₁.X n) (D.distinguisher n (ℓ.eval n)) -
       acceptProb (X₀.X n) (D.distinguisher n (ℓ.eval n)) := ⟨_, fun _ => rfl⟩
   have hkey : ∀ n, distAdv (X₀.X n) (X₁.X n) (D.distinguisher n (ℓ.eval n)) = |δ n| := fun n => by
-    rw [hδ]
+    rw [hδ, distAdv_def]
     exact abs_sub_comm _ _
   -- predicting is distinguishing, for any machine `A`
   have hpred : ∀ (A : NUPPT) n, (uprob fun z : (Bool × (X₀.σ n × X₁.σ n)) × A.Coins n =>
       A.predictor n (ℓ.eval n) (mixEnsemble X₀ X₁ n z.1).2 z.2 = (mixEnsemble X₀ X₁ n z.1).1) =
       1 / 2 + (acceptProb (X₁.X n) (A.distinguisher n (ℓ.eval n)) -
-        acceptProb (X₀.X n) (A.distinguisher n (ℓ.eval n))) / 2 := fun A n =>
-    predict_eq (X₀.X n) (X₁.X n) (A.distinguisher n (ℓ.eval n))
+        acceptProb (X₀.X n) (A.distinguisher n (ℓ.eval n))) / 2 := fun A n => by
+    rw [NUPPT.predictor_eq]
+    exact predict_eq (X₀.X n) (X₁.X n) (A.distinguisher n (ℓ.eval n))
   by_cases hpos : ∀ n₀, ∃ n ≥ n₀, μ n < δ n
   · -- the difference is positive infinitely often: `D` itself predicts
     refine ⟨D, fun n₀ => ?_⟩
