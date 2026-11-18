@@ -14,7 +14,8 @@ Local modifications (see policy.md §2, vendored code, and the repository NOTICE
 * added the repository-standard `set_option` header;
 * added four TCSlib readers, so that other files can read `step`, `effect` and `Steps` without
   unfolding them (policy rule 10; Seyoon, 2026-11-17): `step_def`, `effect_def`,
-  `Steps.zero_iff` and `Steps.succ_iff`. Each restates its definition and is proved by `rfl`.
+  `Steps.zero_iff` and `Steps.succ_iff`. Each restates its definition and is proved by `rfl`;
+* added the TCSlib reader `inRange_iff` for `InRange`, proved by `Iff.rfl`.
 The remaining content is unchanged.
 -/
 import TCSlib.Programs.WordRAM.Basic
@@ -71,6 +72,10 @@ variable {W : ℕ} {P : List Instr}
 
 /-- The integer v is the signed value of a W-bit word. -/
 def InRange (W : ℕ) (v : ℤ) : Prop := -(2 : ℤ) ^ W ≤ 2 * v ∧ 2 * v < (2 : ℤ) ^ W
+
+/-- (TCSlib reader.) The range of signed words, as an equivalence with its definition. -/
+theorem inRange_iff (W : ℕ) (v : ℤ) : InRange W v ↔ -(2 : ℤ) ^ W ≤ 2 * v ∧ 2 * v < (2 : ℤ) ^ W :=
+  Iff.rfl
 
 /-- The word of an integer. -/
 abbrev wd (W : ℕ) (v : ℤ) : BitVec W := BitVec.ofInt W v

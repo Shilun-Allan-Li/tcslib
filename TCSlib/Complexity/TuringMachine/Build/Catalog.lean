@@ -401,6 +401,13 @@ def catalogTrace {Symbol : Type*} {x : List Symbol} {S : Type*} (F R : ℕ → C
     (D : Cfg k Symbol S x) (L t : ℕ) : Cfg k Symbol S x :=
   if t ≤ L then F t else if t ≤ 2 * L + 1 then R (2 * L + 1 - t) else D
 
+/-- The sweep trace, as an equation: the forward family up to `L`, the return family counted down
+up to `2L + 1`, and the exit configuration afterwards. -/
+theorem catalogTrace_eq {Symbol : Type*} {x : List Symbol} {S : Type*} (F R : ℕ → Cfg k Symbol S x)
+    (D : Cfg k Symbol S x) (L t : ℕ) :
+    catalogTrace F R D L t =
+      if t ≤ L then F t else if t ≤ 2 * L + 1 then R (2 * L + 1 - t) else D := rfl
+
 /-- **Local transition equations determine the sweep trace** (design §12.6; public
 since the §12.8 fill). If one step takes each forward configuration to the next for
 `L` steps, turns the last into the return family's start, takes each return
@@ -3849,8 +3856,17 @@ def mealyRun {A Γ : Type*} (δ : A → Γ → A × Γ) : A → List Γ → A ×
     let s := mealyRun δ r.1 w
     (s.1, r.2 :: s.2)
 
+/-- A Mealy run over the empty word stays in its state and writes nothing. -/
+theorem mealyRun_nil {A Γ : Type*} (δ : A → Γ → A × Γ) (a : A) : mealyRun δ a [] = (a, []) := rfl
+
+/-- A Mealy run over `γ :: w`: one transducer step on `γ`, then the run over `w` from the new
+state, its output prefixed by the step's output. -/
+theorem mealyRun_cons {A Γ : Type*} (δ : A → Γ → A × Γ) (a : A) (γ : Γ) (w : List Γ) :
+    mealyRun δ a (γ :: w) =
+      ((mealyRun δ (δ a γ).1 w).1, (δ a γ).2 :: (mealyRun δ (δ a γ).1 w).2) := rfl
+
 /-- Mealy runs split over an append (the per-cell step of both passes of the trace). -/
-private theorem mealyRun_append {A Γ : Type*} (δ : A → Γ → A × Γ) (a : A) (l₁ l₂ : List Γ) :
+theorem mealyRun_append {A Γ : Type*} (δ : A → Γ → A × Γ) (a : A) (l₁ l₂ : List Γ) :
     mealyRun δ a (l₁ ++ l₂) =
       ((mealyRun δ (mealyRun δ a l₁).1 l₂).1,
         (mealyRun δ a l₁).2 ++ (mealyRun δ (mealyRun δ a l₁).1 l₂).2) := by
@@ -3860,7 +3876,7 @@ private theorem mealyRun_append {A Γ : Type*} (δ : A → Γ → A × Γ) (a : 
 
 /-- The structural induction used for Mealy invariants. Proof sketch: expose one
 transducer step and pass its recursive result to the cons case. -/
-private theorem mealyRun_induction {A Γ : Type*} (δ : A → Γ → A × Γ)
+theorem mealyRun_induction {A Γ : Type*} (δ : A → Γ → A × Γ)
     (P : A → List Γ → A × List Γ → Prop)
     (hnil : ∀ a, P a [] (a, []))
     (hcons : ∀ a γ l r, P (δ a γ).1 l r → P a (γ :: l) (r.1, (δ a γ).2 :: r.2))
@@ -3870,7 +3886,7 @@ private theorem mealyRun_induction {A Γ : Type*} (δ : A → Γ → A × Γ)
   | cons γ l ih => exact hcons a γ l _ (ih (δ a γ).1)
 
 /-- Mealy runs preserve length (the scan's rewritten interval is the word interval). -/
-private theorem mealyRun_length {A Γ : Type*} (δ : A → Γ → A × Γ) (a : A) (l : List Γ) :
+theorem mealyRun_length {A Γ : Type*} (δ : A → Γ → A × Γ) (a : A) (l : List Γ) :
     (mealyRun δ a l).2.length = l.length := by
   refine mealyRun_induction δ (fun _ w r => r.2.length = w.length)
     (fun _ => rfl) ?_ a l
@@ -3879,7 +3895,7 @@ private theorem mealyRun_length {A Γ : Type*} (δ : A → Γ → A × Γ) (a : 
 
 /-- Extending a Mealy prefix reads the next input cell and emits the corresponding
 cell of the full output. Proof sketch: split the input at that cell and use append. -/
-private theorem mealyRun_next {A Γ : Type*} (δ : A → Γ → A × Γ) (a : A)
+theorem mealyRun_next {A Γ : Type*} (δ : A → Γ → A × Γ) (a : A)
     (w : List Γ) (r : ℕ) (hr : r < w.length) :
     (mealyRun δ a (w.take (r + 1))).1 = (δ (mealyRun δ a (w.take r)).1 w[r]).1 ∧
       (mealyRun δ a w).2[r]'(by rw [mealyRun_length]; exact hr) =
@@ -3910,6 +3926,13 @@ def scanResult {A Γ : Type*} (δf δb : A → Γ → A × Γ) (a₀ : A) (w : L
   let f := mealyRun δf a₀ w
   let b := mealyRun δb f.1 f.2.reverse
   (b.1, b.2.reverse)
+
+/-- The two-pass scan result, as an equation: the backward run, from the forward run's final
+state, over the forward output reversed; its output reversed back. -/
+theorem scanResult_eq {A Γ : Type*} (δf δb : A → Γ → A × Γ) (a₀ : A) (w : List Γ) :
+    scanResult δf δb a₀ w =
+      ((mealyRun δb (mealyRun δf a₀ w).1 (mealyRun δf a₀ w).2.reverse).1,
+        (mealyRun δb (mealyRun δf a₀ w).1 (mealyRun δf a₀ w).2.reverse).2.reverse) := rfl
 
 /-- **Phase alphabet of the scan** (design §12.8a, R8.2), each phase carrying
 the transducer state: the forward pass, the backward pass, and the live exit
