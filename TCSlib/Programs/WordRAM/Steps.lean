@@ -11,7 +11,10 @@ Local modifications (see policy.md §2, vendored code, and the repository NOTICE
 * moved to `TCSlib/Programs/WordRAM/Steps.lean`, with imports remapped;
 * namespaces `EndStatement` and `ThreeSumApsp.WordRam` renamed to `WordRAM`, and `ThreeSumApsp` to `Light`, with module names and paths in comments updated;
 * added a `## References` section citing [AFM26];
-* added the repository-standard `set_option` header.
+* added the repository-standard `set_option` header;
+* added four TCSlib readers, so that other files can read `step`, `effect` and `Steps` without
+  unfolding them (policy rule 10; Seyoon, 2026-11-17): `step_def`, `effect_def`,
+  `Steps.zero_iff` and `Steps.succ_iff`. Each restates its definition and is proved by `rfl`.
 The remaining content is unchanged.
 -/
 import TCSlib.Programs.WordRAM.Basic
@@ -128,6 +131,24 @@ def step (P : List Instr) (c : Cfg W) : Cfg W ⊕ Bool :=
   | .accept => .inr true
   | .reject => .inr false
 
+/-- (TCSlib reader.) **One step, as an equation**: `step P c` reads the instruction at `c.pc`
+(`reject` past the end of `P`). The six memory instructions write one cell and advance, `bltz`
+jumps to `l` on a negative cell and otherwise advances, and `accept` and `reject` give the
+verdicts. -/
+theorem step_def (P : List Instr) (c : Cfg W) :
+    step P c =
+      match P.getD c.pc .reject with
+      | .one i => .inl ⟨c.pc + 1, fun x => if x = i then 1 else c.mem x⟩
+      | .add i j k => .inl ⟨c.pc + 1, fun x => if x = i then c.mem j + c.mem k else c.mem x⟩
+      | .sub i j k => .inl ⟨c.pc + 1, fun x => if x = i then c.mem j - c.mem k else c.mem x⟩
+      | .mul i j k => .inl ⟨c.pc + 1, fun x => if x = i then c.mem j * c.mem k else c.mem x⟩
+      | .load i j => .inl ⟨c.pc + 1, fun x => if x = i then c.mem (c.mem j).toInt else c.mem x⟩
+      | .store i j =>
+        .inl ⟨c.pc + 1, fun x => if x = (c.mem i).toInt then c.mem j else c.mem x⟩
+      | .bltz i l => .inl ⟨if (c.mem i).toInt < 0 then l else c.pc + 1, c.mem⟩
+      | .accept => .inr true
+      | .reject => .inr false := rfl
+
 /-! ## Runs -/
 
 /-- n steps of the machine, none of which gives a verdict, lead from c to c'. -/
@@ -136,6 +157,14 @@ def Steps (P : List Instr) : ℕ → Cfg W → Cfg W → Prop
   | n + 1, c, c' => ∃ c₁, step P c = .inl c₁ ∧ Steps P n c₁ c'
 
 theorem Steps.refl (c : Cfg W) : Steps P 0 c c := rfl
+
+/-- (TCSlib reader.) A run of no steps leads from `c` exactly to itself. -/
+theorem Steps.zero_iff {c c' : Cfg W} : Steps P 0 c c' ↔ c = c' := Iff.rfl
+
+/-- (TCSlib reader.) A run of `n + 1` steps is a first step to some `c₁`, giving no verdict,
+followed by a run of `n` steps from `c₁`. -/
+theorem Steps.succ_iff {n : ℕ} {c c' : Cfg W} :
+    Steps P (n + 1) c c' ↔ ∃ c₁, step P c = .inl c₁ ∧ Steps P n c₁ c' := Iff.rfl
 
 private theorem Steps.one {c c' : Cfg W} (h : step P c = .inl c') : Steps P 1 c c' := ⟨c', h, rfl⟩
 
@@ -255,6 +284,19 @@ def effect (i : Instr) (m : ℤ → BitVec W) : ℤ → BitVec W :=
   | .load i j => Function.update m i (m (m j).toInt)
   | .store i j => Function.update m (m i).toInt (m j)
   | _ => m
+
+/-- (TCSlib reader.) **The memory effect, as an equation**: each of the six memory instructions
+updates one cell, and `bltz`, `accept` and `reject` leave the memory unchanged. -/
+theorem effect_def (i : Instr) (m : ℤ → BitVec W) :
+    effect i m =
+      match i with
+      | .one i => Function.update m i (wd W 1)
+      | .add i j k => Function.update m i (m j + m k)
+      | .sub i j k => Function.update m i (m j - m k)
+      | .mul i j k => Function.update m i (m j * m k)
+      | .load i j => Function.update m i (m (m j).toInt)
+      | .store i j => Function.update m (m i).toInt (m j)
+      | _ => m := rfl
 
 /-- What a list of instructions that only change the memory does to it. -/
 def effects (l : List Instr) (m : ℤ → BitVec W) : ℤ → BitVec W := l.foldl (fun m i => effect i m) m

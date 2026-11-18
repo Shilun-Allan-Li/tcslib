@@ -57,6 +57,7 @@ constant `c`. [AB09, §1.6, Definition 1.12]
 
 ## Main results
 
+* `Complexity.mem_DTIME_iff` — membership in `DTIME`, unfolded.
 * `Complexity.DTIME.mono` — `DTIME` is monotone in the time bound.
 * `Complexity.DTIME_eq_empty_of_exists_zero` — a time bound that vanishes at some
   length has an empty class (every machine needs at least one step to halt).
@@ -94,6 +95,12 @@ open Turing
 `c · T n` steps on inputs of length `n`. [AB09, Definition 1.12] -/
 def DTIME (T : ℕ → ℕ) : Set (Language Bool) :=
   {L | ∃ (c : ℕ) (M : FinTM Bool), M.DecidesInTime L fun n => c * T n}
+
+/-- **Membership in `DTIME`, unfolded**: `L ∈ DTIME T` exactly when some machine decides `L`
+within `c · T` steps for some constant `c`. -/
+theorem mem_DTIME_iff {T : ℕ → ℕ} {L : Language Bool} :
+    L ∈ DTIME T ↔ ∃ (c : ℕ) (M : FinTM Bool), M.DecidesInTime L fun n => c * T n :=
+  Iff.rfl
 
 /-- `DTIME` is monotone in the time bound.
 

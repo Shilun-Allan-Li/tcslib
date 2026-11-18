@@ -55,6 +55,8 @@ branch-space measure (`Turing.NDTM.spaceUsedWith`).
 
 ## Main results (proved; phase-P4.1 statements)
 
+* `Turing.FinNDTM.decidesInSpace_iff`, `Complexity.mem_NSPACE_iff` — the definitions,
+  unfolded.
 * `Complexity.NSPACE.mono` — monotone in the space bound.
 * `Complexity.SPACE_subset_NSPACE` — [AB09, Theorem 4.2, second inclusion].
 
@@ -82,6 +84,18 @@ def DecidesInSpace (N : FinNDTM Bool) (L : Language Bool) (s : ℕ → ℕ) : Pr
       N.tm.spaceUsedWith w (N.tm.initCfg x) ≤ s x.length) ∧
     (x ∈ L ↔ N.AcceptsWithin x T)
 
+/-- **Deciding in nondeterministic space, unfolded**: `N` decides `L` in space `s` exactly when
+for every input `x` there is a budget `T` such that every branch of length `T` has halted,
+every choice word of length exactly `T` visits at most `s |x|` work-tape cells, and `x ∈ L`
+holds exactly when some branch accepts within `T`. -/
+theorem decidesInSpace_iff (N : FinNDTM Bool) (L : Language Bool) (s : ℕ → ℕ) :
+    N.DecidesInSpace L s ↔ ∀ x : List Bool, ∃ T : ℕ,
+      N.tm.HaltsWithin x T ∧
+      (∀ w : List Bool, w.length = T →
+        N.tm.spaceUsedWith w (N.tm.initCfg x) ≤ s x.length) ∧
+      (x ∈ L ↔ N.AcceptsWithin x T) :=
+  Iff.rfl
+
 end Turing.FinNDTM
 
 namespace Complexity
@@ -94,6 +108,12 @@ it within `c · s n` visited work-tape cells on inputs of length `n`, in the
 sense of `Turing.FinNDTM.DecidesInSpace`. [AB09, Definition 4.1] -/
 def NSPACE (s : ℕ → ℕ) : Set (Language Bool) :=
   {L | ∃ (c : ℕ) (N : FinNDTM Bool), N.DecidesInSpace L fun n => c * s n}
+
+/-- **Membership in `NSPACE`, unfolded**: `L ∈ NSPACE s` exactly when some NDTM decides `L` in
+space `c · s` for some constant `c`. -/
+theorem mem_NSPACE_iff {s : ℕ → ℕ} {L : Language Bool} :
+    L ∈ NSPACE s ↔ ∃ (c : ℕ) (N : FinNDTM Bool), N.DecidesInSpace L fun n => c * s n :=
+  Iff.rfl
 
 /-- `NSPACE` is monotone in the space bound.
 
