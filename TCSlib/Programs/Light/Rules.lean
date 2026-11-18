@@ -10,7 +10,9 @@ Local modifications (see policy.md §2, vendored code, and the repository NOTICE
   for compatibility with our v4.25.0 toolchain;
 * moved to `TCSlib/Programs/Light/Rules.lean`, with imports remapped;
 * added a `## References` section citing [AFM26];
-* added the repository-standard `set_option` header.
+* added the repository-standard `set_option` header;
+* appended reading lemmas (`rfl`/`Iff.rfl` restatements of definitions) for TCSlib's own
+  proofs, which do not unfold vendored definitions.
 The remaining content is unchanged.
 -/
 import TCSlib.Programs.Light.Logic
