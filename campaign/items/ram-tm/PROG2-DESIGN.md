@@ -106,16 +106,30 @@ lines, elaborated then) states every new declaration over mirror types. In place
     dispatcher, the start-up and verdict code) stays `List Instr`. It reaches the extended code
     through `XCodeAt.proj`; its runs lift by `XSteps.of_steps_proj` and
     `XStepsIn.of_stepsIn_proj`.
-  - **Changed in `ProgramCode`:** the code-location lemmas (`codeAt_headCode`, `codeAt_mainStmt`,
-    `codeAt_tailCode`, `codeAt_dispatcher_dispPos`, `codeAt_startCode`) are restated over the
-    extended code.
+  - **Changed in `ProgramCode`** (round 4, after gate 167 round 3):
+    - `mainCode` (the outermost statement's `compileStmt`, then `tailCode`) becomes
+      `List XInstr`, with `tailCode` under `.base`;
+    - the code-location lemmas (`codeAt_headCode`, `codeAt_mainStmt`, `codeAt_tailCode`,
+      `codeAt_dispatcher_dispPos`, `codeAt_startCode`) are restated over the extended code;
+    - so are `codeAt_bodiesCode` and `codeAt_bodies`: its `code` becomes an `XProgram`, with
+      `XCodeAt` throughout. Its one caller is `WholeProgram`'s `bodyAt`.
+  - **Unchanged in `ProgramCode`:** the layout definitions (`frameSize`, `mainPos`, `tailPos`,
+    `firstBody`, `entries`, `endPos`, `dispPos`, `codeLayout`) and the `List Instr` parts
+    (`headStraight`, `headCode`, `tailCode`, `poolCode`, `zeroCode`, `frameCode`,
+    `startStraight`, `startCode`).
   - **Changed in `StartUp`:** `steps_start` is stated over `compileProgram`. It is restated over
     the projection, and as an extended run with its footprint (`xsteps_start` in the mirror).
     Its memory calculations stay.
   - `Dispatcher`, `Expressions`, `Conditions`, `CallFrames` and `Cells` are untouched.
 - **The footprint** (round 3, G167-07): `Finished.run` becomes an `XStepsIn` run within the
-  setting's cells. The segment lemmas need footprint versions (`stepsIn_straight` exists).
-  `Programs/WordRAM/Extended` gains `XStepsIn.mono` and `XStepsIn.trans`.
+  setting's cells.
+  - The base-instruction lemmas keep their statements. H2 **adds** footprint companions beside
+    them for the expression, condition, call-frame and dispatcher runs, with state-dependent
+    address bounds for indirect loads and stores. `stepsIn_straight` exists; the start-up's is
+    `xsteps_start`.
+  - `Programs/WordRAM/Extended` gains `XStepsIn.mono` and `XStepsIn.trans`.
+- **Mirror only:** `XStmt.ofStmt`, `XExec.ofExec` and `XSetting.xlim`. In place `Light.Limits`
+  carries the input, so `xlim` is the setting's limits themselves (round 4, G167-05).
 - **Vendored headers:** each edited file lists the change as a local modification. Rule 10 does
   not apply between vendored files (Seyoon, 2026-11-18).
 

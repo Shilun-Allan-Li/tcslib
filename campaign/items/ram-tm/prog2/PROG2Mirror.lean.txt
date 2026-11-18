@@ -30,16 +30,21 @@ the input length is a separate hypothesis `|x| ≤ lim.word` (N2).
 
 Every declaration lands under its in-place name (`XStmt` ↦ `Light.Stmt`, `XExec` ↦ `Light.Exec`,
 `xcompileStmt` ↦ `Light.Compiler.compileStmt`, `xsim` ↦ `Light.Compiler.sim`, and so on), except
-those marked **mirror only** in their docstrings: `XStmt.ofStmt` and `XExec.ofExec`, which audit
-conservativity over the October mirror and have no in-place counterpart (the vendored syntax
-*is* the extended syntax after the edit). (G167-05.)
+those marked **mirror only** in their docstrings:
+
+* `XStmt.ofStmt` and `XExec.ofExec`, which audit conservativity over the October mirror and have
+  no in-place counterpart (the vendored syntax *is* the extended syntax after the edit);
+* `XSetting.xlim`, plumbing between the mirror's two records: in place `Light.Limits` carries
+  `input` itself (`XLimits` ↦ `Light.Limits`), the setting's `input` field is `lim.input`, and
+  `S.xlim` is `S.lim`. (G167-05; round 4.)
 
 ## The compiler's type boundary (G167-02)
 
 * **Stay `List Instr`, unchanged:** `compileExpr`, `compileCond`, `argsCode`, `frameInit`,
   `newFrame`, `callCode`, `epilogue`, `dispatcher`, `headStraight`, `tailCode`, `startStraight`
-  and their lemmas. So `Compiler/Expressions`, `Conditions`, `CallFrames`, `Cells`, `StartUp`
-  and `Dispatcher` are untouched.
+  and their lemmas. So `Compiler/Expressions`, `Conditions`, `CallFrames`, `Cells` and
+  `Dispatcher` are untouched. `Compiler/StartUp` keeps its straight-line code and memory
+  calculations, but `steps_start` changes (below).
 * **Become `List XInstr`:** `compileStmt` (old constructs as `(…).map .base`, the four new ones
   below), `bodiesCode`, `compileProgram`, and the code field of `Setting`.
 * **The transport:** a segment `l.map .base` placed in `code` (`XCodeAt`) is a segment `l` of
@@ -48,8 +53,14 @@ conservativity over the October mirror and have no in-place counterpart (the ven
   `WordRAM.XSteps.of_steps_proj` (tier 0, proved). Base instructions leave the output and the
   coin count alone (`WordRAM.xstep_map_base`).
 * **Changed files:** `Compiler/StatementCode` (`compileStmt`, `Stmt.size`, `Stmt.width` and four
-  width readers), `Compiler/ProgramCode` (`bodiesCode`, `compileProgram`, and the code-location
-  lemmas `codeAt_headCode` … `codeAt_startCode`, now over the extended code: `xcodeAt_*`),
+  width readers), `Compiler/ProgramCode` (round 4: `bodiesCode`, `compileProgram` and
+  `mainCode`, the outermost statement's code followed by `tailCode` under `.base`, become
+  `List XInstr`; the code-location lemmas `codeAt_headCode` … `codeAt_startCode` move to the
+  extended code as `xcodeAt_*`, and so do `codeAt_bodiesCode` and `codeAt_bodies`, whose `code`
+  becomes an `XProgram` with `XCodeAt` throughout, for its one caller, `WholeProgram`'s
+  `bodyAt`; the layout definitions `frameSize`, `mainPos`, `tailPos`, `firstBody`, `entries`,
+  `endPos`, `dispPos`, `codeLayout` and the `List Instr` parts `headStraight`, `headCode`,
+  `tailCode`, `poolCode`, `zeroCode`, `frameCode`, `startStraight`, `startCode` keep their types),
   `Compiler/StartUp` (`steps_start`, which is stated over `compileProgram`: restated over its
   projection, `steps_start_proj`, and as an extended run, `xsteps_start`; its memory calculations
   `startMem`, `rel_startMem`, `agreeOutside_startMem` stay over `List Instr`; round 3,
@@ -63,6 +74,10 @@ conservativity over the October mirror and have no in-place counterpart (the ven
   `lim.space` (a safe address). H2 proves it per segment: `stepsIn_straight` for straight-line
   code, footprint versions of the expression, condition and call lemmas, the new instructions'
   `touches` (`T₀` and the read cell), and `XStepsIn.mono`/`XStepsIn.trans` to compose.
+  These are the **footprint companions H2 adds** beside the unchanged base-instruction lemmas,
+  which keep their statements: footprint versions of the expression, condition, call-frame
+  and dispatcher runs (the start-up's is `xsteps_start`), with state-dependent address bounds
+  for indirect loads and stores. (Round 4.)
 * **Boundedness:** `Exec.bounded` needs `1 ≤ lim.word` (`inBit` and `coin` write `1`), so `sim`
   and the whole-program theorems take it as a hypothesis; `Light.Std` gives `100 ≤ word`.
 
@@ -868,7 +883,8 @@ structure XSetting (W : ℕ) extends Sizes W where
   /-- Every body has width at most `F`. -/
   width : ∀ b ∈ P, b.width ≤ F
 
-/-- The limits of the setting, with its input. -/
+/-- The limits of the setting, with its input (**mirror only**: in place `Light.Limits` carries
+the input and this is the setting's `lim` itself). -/
 def XSetting.xlim {W : ℕ} (S : XSetting W) : XLimits := { toLimits := S.lim, input := S.input }
 
 /-- **The cells a simulated run may touch** (round 3, G167-07): from the end of the pool and the
