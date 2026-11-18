@@ -367,7 +367,8 @@ theorem orbit_eq (t : ℕ) (ht : t ≤ m * (2 ^ k - 1)) :
         take_drop_coins A n m k cs ex t ht']
       have hin : pairEncode (pairEncode (List.replicate m true)
           (List.ofFn (betaOf (Fin.modNat ⟨t, ht'⟩)))) (blocksStr s) =
-          SelXor.input m (betaOf (Fin.modNat ⟨t, ht'⟩)) s := rfl
+          SelXor.input m (betaOf (Fin.modNat ⟨t, ht'⟩)) s :=
+        (SelXor.input_eq m _ s).symm
       rw [hin, selXorFun_input, zipWith_xor_ofFn_add, ← NUPPT.runAtL_eq_output_layout]
       rfl
     unfold step
@@ -457,8 +458,10 @@ def glMajFun (z : List Bool) : List Bool :=
       2 * (((pairSndD z).drop (i * (pairFstD z).length)).take (pairFstD z).length).count true)]
 
 /-- The blockwise majority is polynomial-time. -/
-theorem glMajFun_poly : PolyTimeComputable glMajFun :=
-  polyTimeComputable_blockMap .var polyTimeComputable_majority
+theorem glMajFun_poly : PolyTimeComputable glMajFun := by
+  have h := polyTimeComputable_blockMap .var polyTimeComputable_majority
+  rw [show PolyExpr.eval PolyExpr.var = fun x => x from funext PolyExpr.eval_var] at h
+  exact h
 
 /-- **The blockwise majority of the votes** `W : Fin m → Fin M → Bool`, with block length `M`
 (given in unary), is the string of the majorities `majority (W i)`, provided `M > 0` or `m = 0`. -/
@@ -487,7 +490,14 @@ def unaryMulFun (z : List Bool) : List Bool :=
 /-- Unary multiplication is polynomial-time. -/
 theorem unaryMulFun_poly : PolyTimeComputable unaryMulFun := by
   obtain ⟨M, c, hM⟩ := Turing.FinTM.computesFunInTime_unaryMul
-  exact ⟨M, c, 2, hM⟩
+  refine (polyTimeComputable_iff _).2 ⟨M, c, 2, ?_⟩
+  -- the evaluator's function and `unaryMulFun` agree at each value of `pairDecode z`
+  refine cast (congrArg (fun f => M.ComputesFunInTime f fun n => c * (n + 1) ^ 2)
+    (funext fun z => ?_)) hM
+  unfold unaryMulFun
+  cases pairDecode z with
+  | none => simp only
+  | some p => obtain ⟨u, v⟩ := p; simp only
 
 /-- Unary multiplication on a pair of unary strings. -/
 theorem unaryMulFun_pairEncode (a b : ℕ) :
@@ -737,14 +747,14 @@ theorem glMachine_runAt (A : NUPPT) (mP K : PolyExpr) (k : ℕ → ℕ) (hk : �
     (glMachine A mP K k hk).runAt n Y r =
       List.ofFn fun i : Fin (mP.eval n) => HardcoreBit.majority fun j : Fin (2 ^ k n - 1) =>
         GLLoop.wfVote A n (mP.eval n) (k n) Y s b cs (finProdFinEquiv (i, j)) := by
-  rw [NUPPT.runAt_eq]
+  rw [NUPPT.runAt_eq, hr]
   unfold glMachine
   rw [NUPPT.runAtL_ofPolyTime]
   unfold glRawFun
   simp only [GLRaw.uM, GLRaw.adv, GLRaw.α, GLRaw.uk, GLRaw.tbl, GLRaw.um, GLRaw.ur, GLRaw.ukm,
     GLRaw.cs₁, GLRaw.r₁, GLRaw.cb, GLRaw.cs₂, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inAdvice_eq,
     NUPPT.inCoins_eq, NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode, glAdvice,
-    List.length_replicate, unaryMulFun_pairEncode, hr]
+    List.length_replicate, unaryMulFun_pairEncode]
   have h1 : (blocksStr s ++ List.ofFn b ++ blocksStr cs ++ ex).take (k n * mP.eval n) = blocksStr s := by
     simp only [List.append_assoc]
     exact List.take_left' (length_blocksStr s)
@@ -757,7 +767,9 @@ theorem glMachine_runAt (A : NUPPT) (mP K : PolyExpr) (k : ℕ → ℕ) (hk : �
       (List.replicate (mP.eval n) true) (List.replicate (k n) true)
       (List.replicate (A.coins.eval n) true) (blocksStr s) (List.ofFn b))
       (GLLoop.glTable (mP.eval n) (k n)) (blocksStr cs ++ ex) =
-      GLLoop.wfInput A n (mP.eval n) (k n) Y s b cs ex := rfl
+      GLLoop.wfInput A n (mP.eval n) (k n) Y s b cs ex := by
+    rw [← NUPPT.coinLen_eq]
+    rfl
   rw [hin, glVotesFun_wfInput]
   have hW : List.ofFn (GLLoop.wfVote A n (mP.eval n) (k n) Y s b cs) =
       blocksStr fun i j => GLLoop.wfVote A n (mP.eval n) (k n) Y s b cs (finProdFinEquiv (i, j)) := by
@@ -839,6 +851,7 @@ theorem ofFn_glCoinsEquiv (A : NUPPT) (n m k Q : ℕ)
     id_eq]
   rw [ofFn_finCastEquiv, ofFn_appendEquiv, ofFn_appendEquiv, ofFn_appendEquiv]
   simp only [List.append_assoc]
+  rw [blocksStr_def, blocksStr_def]
   rfl
 
 

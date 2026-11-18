@@ -205,7 +205,8 @@ theorem glCollMachine_runAt (A : NUPPT) (mP K : PolyExpr) (k : ℕ → ℕ) (hk 
       pairEncode ((glMachine (A.precomp collPre_poly) mP K k hk).runAt n (pairEncode i y) c) rs := by
   unfold glCollMachine
   rw [NUPPT.runAt_wrap (glMachine (A.precomp collPre_poly) mP K k hk) glCollPre_poly glCollPost_poly
-    _ _ _ (.const 0) n _ rfl (fun _ : Fin 0 => false) c r' (by rw [hr']; rfl)]
+    (fun _ => []) (.const 0) (fun _ => by simp) (.const 0) n _ (PolyExpr.eval_const 0 n).symm
+    (fun _ : Fin 0 => false) c r' (by rw [hr']; rfl)]
   simp [glCollPre, glCollPost]
 
 /-! ## The per-index transfer -/
@@ -246,8 +247,10 @@ theorem glColl_uprob_le (F : Collection) (mP K : PolyExpr) (k : ℕ → ℕ)
   rw [← uprob_comp_equiv ((Equiv.refl (F.D i × (Fin (mP.eval n) → Bool))).prodCongr
     (HardcoreBit.guessCoinsCongr (k n) (A.precomp_coinsEquiv collPre_poly n)))]
   have hcoins : (glCollMachine A mP K k hk).coinLen n = (glCoins mP K (A.precomp collPre_poly)).eval n := by
-    rw [NUPPT.coinLen_eq, glCollMachine, NUPPT.coins_wrap, coins_glMachine, PolyExpr.eval_add,
-      PolyExpr.eval_const, zero_add]
+    rw [NUPPT.coinLen_eq, glCollMachine,
+      NUPPT.coins_wrap (glMachine (A.precomp collPre_poly) mP K k hk) glCollPre_poly glCollPost_poly
+        (fun _ => []) (.const 0) (fun _ => by simp) (.const 0),
+      coins_glMachine, PolyExpr.eval_add, PolyExpr.eval_const, zero_add]
   let eC : HardcoreBit.GuessCoins (mP.eval n) (k n) ((A.precomp collPre_poly).Coins n) ×
       (Fin ((glCoins mP K (A.precomp collPre_poly)).eval n - glNeed (A.precomp collPre_poly) mP k n) → Bool) ≃
       (glCollMachine A mP K k hk).Coins n :=
