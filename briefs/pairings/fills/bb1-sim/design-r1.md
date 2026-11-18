@@ -337,6 +337,15 @@ Packaging both parts as one expectation condition is what makes the induction a 
 composes. Requiring an explicit coupling instead would add a new kind of object to `Games`
 (Q3 in §5).
 
+**Correction (2026-11-18; Gate 49, G49-01; Cleanup Stage 2, S2-A step A38).** The second bullet
+overstates the hypothesis. The per-call condition preserves *equality of compatible test
+expectations*: tests that agree at equal answers and related states have equal expectations. It is
+not a coupling of the two calls supported on `R`, and for an arbitrary relation it does not make
+the successor states coupled inside `R` (Codex counterexample, Gate 49 `findings-r1.md`). A coupling
+of each call's outcomes supported on equal answers and related states does give the hypothesis
+(`ProbComp.expect_sample_rel` for one uniform sample). The lemma's statement is unchanged; the
+module docstring of `Games/Relational.lean` is reworded to match (S2A-N01).
+
 ### 2.3 How the proofs would go, and which existing lemmas they use
 
 * **L1 `expect_simulate_rel`.** The proof has the same shape as `ProbComp.expect_simulate_congr`
