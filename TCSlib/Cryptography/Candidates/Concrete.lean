@@ -696,21 +696,17 @@ private theorem rbl_length_step_iterate_le (x : List Bool) (i : ℕ) :
       rw [Function.iterate_succ_apply']
       exact (rbl_length_step_step_le _).trans ih
 
-/-- The loop is polynomial-time: an instance of the repetition host
-`polyTimeComputable_iterateFind` (`R = var`, orbit bound `2|x| + 4`), its `match` read by
-`split` (its equation lemmas), never by unfolding the matcher. -/
+/-- The loop is polynomial-time: an instance of the repetition host in its `Option.elim` form
+`polyTimeComputable_iterateFind_elim` (`R = var`, orbit bound `2|x| + 4`). -/
 private theorem rbl_loop_poly {acc : List Bool → Bool}
     (hacc : PolyTimeComputable fun x => [acc x]) : PolyTimeComputable (rbl_loop acc) := by
-  have hF := polyTimeComputable_iterateFind rbl_step_poly (rbl_acc_poly hacc) rbl_out_poly
+  have hF := polyTimeComputable_iterateFind_elim rbl_step_poly (rbl_acc_poly hacc) rbl_out_poly
     PolyExpr.var (PolyExpr.add (.mul (.const 2) .var) (.const 4)) (fun x i _ => by
       rw [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var,
         PolyExpr.eval_const]
       exact rbl_length_step_iterate_le x i)
   refine hF.congr fun x => ?_
   rw [rbl_loop, PolyExpr.eval_var]
-  split
-  · next i h => rw [h, Option.elim_some]
-  · next h => rw [h, Option.elim_none]
 
 /-- **The loop computes `rejectBlocksL`**: on the start state `⟨⟨⟨bw, kw⟩, par⟩, ⟨tw, c⟩⟩`, the
 loop is `[]` when `rejectBlocksL (E ⟦par⟧) |kw| |bw| |tw| c` is `none`, and otherwise a nonempty
