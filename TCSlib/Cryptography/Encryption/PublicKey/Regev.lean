@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Encryption.PublicKey.Regev.Basic
 import TCSlib.Cryptography.Encryption.PublicKey.Regev.Experiments
+import TCSlib.Cryptography.Encryption.PublicKey.Regev.Asymptotic
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -16,6 +17,8 @@ set_option autoImplicit false
 
 * `Basic`: mathematical keygen/encryption/decryption and strict bounded-error correctness.
 * `Experiments`: explicit DLWE hybrids, binary extraction and quantitative security bounds.
+* `Asymptotic`: the encryption reduction as a proved `NUPPT` and single-bit security of the
+  encoded views from `DLWEAssumption` and the width condition.
 
 All nontrivial new statements are admitted for the combined statement audit.
 The child modules distinguish actual laws and deterministic mathematics from
