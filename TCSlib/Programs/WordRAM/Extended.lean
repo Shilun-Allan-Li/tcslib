@@ -47,6 +47,10 @@ within given bounds on steps and cells. All run, footprint, and halting results 
   touches at most `3 * n` cells, giving a cell bound from a time bound.
 * `WordRAM.HaltsWithin.mono`, `WordRAM.HaltsWithin.unique`, `WordRAM.HaltsWithin.coin_irrel`:
   monotonicity, determinism, and independence of the coin stream for coin-free programs.
+* Readers (equations of the definitions, for other files): `WordRAM.inBitWord_def`,
+  `WordRAM.coinWord_def`, `WordRAM.xstep_def`, `WordRAM.XSteps.zero_iff`, `.succ_iff`,
+  `WordRAM.baseTouches_def`, `WordRAM.XInstr.touches_def`, `WordRAM.XStepsIn.zero_iff`,
+  `.succ_iff`, `WordRAM.initMem_def`, `WordRAM.XCfg.init_def`, `WordRAM.haltsWithin_iff`.
 
 ## References
 
@@ -694,5 +698,107 @@ theorem HaltsWithin.coin_irrel (hP : CoinFree P) (ρ' : List Bool) :
   exact ⟨transport ρ ρ', transport ρ' ρ⟩
 
 end Halting
+
+/-! ## Readers
+
+Equations for the definitions above, so that other files read them without unfolding them. Each
+restates its definition and is proved by `rfl` or `Iff.rfl`. -/
+
+section Readers
+
+variable {W : ℕ}
+
+/-- The word of an input bit, as an equation: `1` if `0 ≤ p` and the bit of `x` at `p` is
+`true`, and `0` otherwise. -/
+theorem inBitWord_def (x : List Bool) (p : ℤ) :
+    inBitWord W x p = if 0 ≤ p ∧ x.getD p.toNat false = true then 1 else 0 := rfl
+
+/-- The word of a coin, as an equation: `1` for `true`, `0` for `false`. -/
+theorem coinWord_def (b : Bool) : coinWord W b = if b then 1 else 0 := rfl
+
+/-- **One step of the extended RAM, as an equation**: the match on the instruction at `c.pc`
+(`WordRAM.reject` past the end). -/
+theorem xstep_def (P : XProgram) (x ρ : List Bool) (c : XCfg W) :
+    xstep P x ρ c =
+      match P.getD c.pc (.base .reject) with
+      | .base .accept => .inr true
+      | .base .reject => .inr false
+      | .base (.bltz i l) =>
+        .inl { c with pc := if (c.mem i).toInt < 0 then l else c.pc + 1 }
+      | .base ins => .inl { c with pc := c.pc + 1, mem := effect ins c.mem }
+      | .rdIn i j =>
+        .inl { c with pc := c.pc + 1,
+                      mem := Function.update c.mem i (inBitWord W x (c.mem j).toInt) }
+      | .emit i => .inl { c with pc := c.pc + 1, out := c.out ++ [decide (c.mem i ≠ 0)] }
+      | .coin i =>
+        .inl { c with pc := c.pc + 1,
+                      mem := Function.update c.mem i (coinWord W (ρ.getD c.rd false)),
+                      rd := c.rd + 1 }
+      | .half i j =>
+        .inl { c with pc := c.pc + 1, mem := Function.update c.mem i ((c.mem j).sshiftRight 1) }
+    := rfl
+
+/-- A run of no steps stays where it is. -/
+theorem XSteps.zero_iff {P : XProgram} {x ρ : List Bool} {c c' : XCfg W} :
+    XSteps P x ρ 0 c c' ↔ c = c' := Iff.rfl
+
+/-- A run of `n + 1` steps is a first step to some `c₁`, giving no verdict, followed by a run of
+`n` steps from `c₁`. -/
+theorem XSteps.succ_iff {P : XProgram} {x ρ : List Bool} {n : ℕ} {c c' : XCfg W} :
+    XSteps P x ρ (n + 1) c c' ↔ ∃ c₁, xstep P x ρ c = .inl c₁ ∧ XSteps P x ρ n c₁ c' := Iff.rfl
+
+/-- The cells a vendored instruction touches, as an equation. -/
+theorem baseTouches_def (ins : Instr) (m : ℤ → BitVec W) :
+    baseTouches ins m =
+      match ins with
+      | .one i => {i}
+      | .add i j k => {i, j, k}
+      | .sub i j k => {i, j, k}
+      | .mul i j k => {i, j, k}
+      | .load i j => {i, j, (m j).toInt}
+      | .store i j => {i, j, (m i).toInt}
+      | .bltz i _ => {i}
+      | .accept => ∅
+      | .reject => ∅ := rfl
+
+/-- The cells an instruction of the extended RAM touches, as an equation. -/
+theorem XInstr.touches_def (ins : XInstr) (m : ℤ → BitVec W) :
+    ins.touches m =
+      match ins with
+      | .base ins => baseTouches ins m
+      | .rdIn i j => {i, j}
+      | .emit i => {i}
+      | .coin i => {i}
+      | .half i j => {i, j} := by
+  cases ins <;> rfl
+
+/-- A run within `K` of no steps stays where it is. -/
+theorem XStepsIn.zero_iff {P : XProgram} {x ρ : List Bool} {K : Set ℤ} {c c' : XCfg W} :
+    XStepsIn P x ρ K 0 c c' ↔ c = c' := Iff.rfl
+
+/-- A run within `K` of `n + 1` steps is a first step to some `c₁`, giving no verdict and
+touching only cells of `K`, followed by a run within `K` of `n` steps from `c₁`. -/
+theorem XStepsIn.succ_iff {P : XProgram} {x ρ : List Bool} {K : Set ℤ} {n : ℕ}
+    {c c' : XCfg W} :
+    XStepsIn P x ρ K (n + 1) c c' ↔ ∃ c₁, xstep P x ρ c = .inl c₁ ∧
+      ↑((P.getD c.pc (.base .reject)).touches c.mem) ⊆ K ∧ XStepsIn P x ρ K n c₁ c' := Iff.rfl
+
+/-- The memory in which a run starts, as an equation: `n` (as a word) at the cell `-1` and `0`
+everywhere else. -/
+theorem initMem_def (n : ℕ) : initMem W n = Function.update (fun _ => 0) (-1) (wd W n) := rfl
+
+/-- The start configuration, as an equation. -/
+theorem XCfg.init_def (n : ℕ) :
+    XCfg.init W n = { pc := 0, mem := initMem W n, out := [], rd := 0 } := rfl
+
+/-- Halting within steps and cells, as an equivalence with its definition. -/
+theorem haltsWithin_iff (P : XProgram) (x ρ : List Bool) (t : ℕ) (v : Bool) (o : List Bool)
+    (f : ℕ) :
+    HaltsWithin P x ρ W t v o f ↔
+      ∃ (n : ℕ) (c : XCfg W) (K : Finset ℤ), n < t ∧ K.card ≤ f ∧
+        XStepsIn P x ρ (↑K) n (XCfg.init W x.length) c ∧ xstep P x ρ c = .inr v ∧ c.out = o :=
+  Iff.rfl
+
+end Readers
 
 end WordRAM

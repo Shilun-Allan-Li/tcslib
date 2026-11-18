@@ -58,6 +58,9 @@ import TCSlib.Complexity.TuringMachine.Build.NDClockHost
 import TCSlib.Complexity.TuringMachine.Build.NDClockHostRun
 import TCSlib.Complexity.TuringMachine.Build.StepClock
 import TCSlib.Complexity.TuringMachine.Build.WindowRun
+import TCSlib.Complexity.TuringMachine.Build.WordArith
+import TCSlib.Complexity.TuringMachine.Build.KeyTable
+import TCSlib.Complexity.TuringMachine.Build.InputBit
 import TCSlib.Complexity.TuringMachine.Build.InputDevice
 import TCSlib.Complexity.TuringMachine.Build.StepBlock
 import TCSlib.Complexity.TuringMachine.Build.StepBlockLoop
@@ -255,6 +258,10 @@ for the local modifications.
   step-clocked runner, shared with the nondeterministic time hierarchy; the semantic windowed
   run `windowRun`; the windowed round loop and the step-clocked windowed runner. Statement gate
   passed 2026-10-14; the specification is proved, the machine contracts are sorried.
+* `Build/WordArith`, `Build/KeyTable`, `Build/InputBit` — the word-RAM rows: arithmetic and tests
+  on fixed-width words (`Turing.bvBits`, `Turing.WordAt`); the keyed table host, with lookup and
+  assignment by a key on another tape; the input bit at a word's position, read in place.
+  Statements; the proofs are pending.
 * `Build/InputDevice` — host H5: the input-device interface, the native device, and the
   bounded-prefix ruler device with its boundary test, call rows and host. Proved.
 * `Build/Convention`, `Build/Wrappers`, `Build/Loop`, `Build/Primitives` — the
