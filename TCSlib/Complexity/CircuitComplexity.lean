@@ -11,6 +11,8 @@ import TCSlib.Complexity.CircuitComplexity.NCAC
 import TCSlib.Complexity.CircuitComplexity.TreeDAG
 import TCSlib.Complexity.CircuitComplexity.DAGTransform
 import TCSlib.Complexity.CircuitComplexity.DAGFanin
+import TCSlib.Complexity.CircuitComplexity.NANDForm
+import TCSlib.Complexity.CircuitComplexity.NANDLayering
 import TCSlib.Complexity.CircuitComplexity.LayeredCircuit
 import TCSlib.Complexity.CircuitComplexity.LayeredPPoly
 import TCSlib.Complexity.CircuitComplexity.LayeredDAG
@@ -18,6 +20,7 @@ import TCSlib.Complexity.CircuitComplexity.CircuitSat
 import TCSlib.Complexity.CircuitComplexity.Encoding
 import TCSlib.Complexity.CircuitComplexity.Universal
 import TCSlib.Complexity.CircuitComplexity.HardFunctions
+import TCSlib.Complexity.CircuitComplexity.FormulaArith
 import TCSlib.Complexity.CircuitComplexity.TreeNCAC
 import TCSlib.Complexity.CircuitComplexity.Parity
 import TCSlib.Complexity.CircuitComplexity.Hierarchy
@@ -157,6 +160,12 @@ both ways, so the two `P/poly`s coincide).
 - `CircuitComplexity.TreeDAG`: tree ↔ DAG conversions.
 - `CircuitComplexity.DAGTransform` / `DAGFanin`: a generic gate-rewriting pass on DAGs, and
   its instances binarization (fan-in two, [AB09, p. 118]) and De Morgan normalization.
+- `CircuitComplexity.NANDForm`: NAND gates (`¬` gates of fan-in `≤ 2`, the model's negated
+  conjunction) and NAND form, with the conversion `DAGCircuit.toNANDForm`, a third instance of
+  the gate-rewriting pass (depth at most doubled).
+- `CircuitComplexity.NANDLayering`: layered circuits (`DAGCircuit.IsLayered`), the literal input
+  `litInput`, and the layering `DAGCircuit.layerNAND` of NAND-form circuits onto the `2n`
+  literals, depth preserved exactly (double-NAND chains and a parity twin for odd gaps).
 - `CircuitComplexity.LayeredCircuit`: the layered model and its gate set `stdGateOps`.
 - `CircuitComplexity.LayeredPPoly`: `SIZE` and `P/poly` over the layered model.
 - `CircuitComplexity.LayeredDAG`: layered ↔ DAG conversions, and
@@ -182,6 +191,9 @@ both ways, so the two `P/poly`s coincide).
 - `CircuitComplexity.HardFunctions`: the tree-circuit analogue of [AB09, Thm 6.21]
   — some Boolean function on `n` bits is computed by no **tree** circuit of size
   `2 ^ n / (n + 5)`, by counting over the tree encoding.
+- `CircuitComplexity.FormulaArith`: the formula-arithmetic layer over
+  `BoolCircuit.TreeCircuit`, the first rows of the circuit and formula gadget registry; its
+  combinators start with the balanced binary gate `BoolCircuit.TreeCircuit.balanced`.
 - `CircuitComplexity.TreeNCAC`: the formula versions of [AB09, Defs 6.24–6.25] —
   `NC^d` / `AC^d` over `BoolCircuit.TreeCircuit` — with `NC^i ⊆ AC^i ⊆ NC^{i+1}` and
   `TreeNC = TreeAC`.

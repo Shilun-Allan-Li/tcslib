@@ -110,6 +110,10 @@ deriving DecidableEq, Repr, Hashable
 def Lit.eval (l : Lit n) (x : Fin n → Bool) : Bool :=
   if l.sign then x l.idx else !x l.idx
 
+/-- Reader of `Lit.eval`: `l.eval x = if l.sign then x l.idx else !x l.idx`.  Glue. -/
+theorem Lit.eval_eq (l : Lit n) (x : Fin n → Bool) :
+    l.eval x = if l.sign then x l.idx else !x l.idx := rfl
+
 -- ----------------------------------------------------------------
 -- Section 2: General (unconstrained) circuit
 -- ----------------------------------------------------------------
@@ -209,6 +213,18 @@ theorem TreeCircuit.one_le_size (c : TreeCircuit n) : 1 ≤ c.size := by
 def TreeCircuit.maxFaninL (cs : List (TreeCircuit n)) : ℕ :=
   cs.foldr (fun c acc => max c.maxFanin acc) 0
 
+/-- Reader of `TreeCircuit.depth` on a leaf: `(lit l).depth = 0`.  Glue. -/
+theorem TreeCircuit.depth_lit (l : Lit n) : (TreeCircuit.lit l).depth = 0 := by
+  simp [TreeCircuit.depth]
+
+/-- Reader of `TreeCircuit.size` on a leaf: `(lit l).size = 1`.  Glue. -/
+theorem TreeCircuit.size_lit (l : Lit n) : (TreeCircuit.lit l).size = 1 := by
+  simp [TreeCircuit.size]
+
+/-- Reader of `TreeCircuit.maxFanin` on a leaf: `(lit l).maxFanin = 0`.  Glue. -/
+theorem TreeCircuit.maxFanin_lit (l : Lit n) : (TreeCircuit.lit l).maxFanin = 0 := by
+  simp [TreeCircuit.maxFanin]
+
 /-- A gate's depth is one more than its children's. -/
 theorem TreeCircuit.depth_node (b : Bool) (cs : List (TreeCircuit n)) :
     (TreeCircuit.node b cs).depth = 1 + TreeCircuit.maxDepth cs := by
@@ -260,6 +276,26 @@ theorem TreeCircuit.maxFanin_le_maxFaninL {c : TreeCircuit n} :
       rcases List.mem_cons.mp h with rfl | h
       · exact le_max_left _ _
       · exact (TreeCircuit.maxFanin_le_maxFaninL h).trans (le_max_right _ _)
+
+/-- A common depth bound of the members bounds the maximum depth of a list:
+`(∀ c ∈ cs, c.depth ≤ d) → TreeCircuit.maxDepth cs ≤ d`.  Glue. -/
+theorem TreeCircuit.maxDepth_le_of_forall {cs : List (TreeCircuit n)} {d : ℕ}
+    (h : ∀ c ∈ cs, c.depth ≤ d) : TreeCircuit.maxDepth cs ≤ d := by
+  induction cs with
+  | nil => rw [TreeCircuit.maxDepth_nil]; exact Nat.zero_le d
+  | cons c cs ih =>
+      rw [TreeCircuit.maxDepth_cons]
+      exact max_le (h c List.mem_cons_self) (ih fun c' hc' => h c' (List.mem_cons_of_mem c hc'))
+
+/-- A common fan-in bound of the members bounds the maximum fan-in of a list:
+`(∀ c ∈ cs, c.maxFanin ≤ d) → TreeCircuit.maxFaninL cs ≤ d`.  Glue. -/
+theorem TreeCircuit.maxFaninL_le_of_forall {cs : List (TreeCircuit n)} {d : ℕ}
+    (h : ∀ c ∈ cs, c.maxFanin ≤ d) : TreeCircuit.maxFaninL cs ≤ d := by
+  induction cs with
+  | nil => rw [TreeCircuit.maxFaninL_nil]; exact Nat.zero_le d
+  | cons c cs ih =>
+      rw [TreeCircuit.maxFaninL_cons]
+      exact max_le (h c List.mem_cons_self) (ih fun c' hc' => h c' (List.mem_cons_of_mem c hc'))
 
 /-- A circuit has at least one node, so a child list is no longer than its total size. -/
 theorem TreeCircuit.length_le_sumSize : ∀ cs : List (TreeCircuit n), cs.length ≤ TreeCircuit.sumSize cs

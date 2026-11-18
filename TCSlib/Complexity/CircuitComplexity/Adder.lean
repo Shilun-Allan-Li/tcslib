@@ -132,6 +132,22 @@ theorem prefixVal_inj {f g : ℕ → Bool} {i : ℕ} (h : prefixVal f i = prefix
     · exact hlow j hj
     · exact htop
 
+/-- Bits that are `false` from position `i` on add nothing: for `i ≤ m`,
+`(∀ j, i ≤ j → f j = false) → prefixVal f m = prefixVal f i`.  Glue. -/
+theorem prefixVal_eq_of_false {f : ℕ → Bool} {i m : ℕ} (hle : i ≤ m)
+    (h : ∀ j, i ≤ j → f j = false) : prefixVal f m = prefixVal f i := by
+  induction m, hle using Nat.le_induction with
+  | base => rfl
+  | succ m him ih =>
+      rw [prefixVal_succ, ih, h m him, Bool.toNat_false, Nat.zero_mul, Nat.add_zero]
+
+/-- The low `p` bits of `c` have the value `c mod 2 ^ p`: `prefixVal c.testBit p = c % 2 ^ p`
+(the `prefixVal` form of Batteries' `Nat.ofBits_testBit`).  Glue. -/
+theorem prefixVal_testBit (c p : ℕ) : prefixVal c.testBit p = c % 2 ^ p := by
+  induction p with
+  | zero => rw [prefixVal_zero, Nat.pow_zero, Nat.mod_one]
+  | succ p ih => rw [prefixVal_succ, ih, Nat.mod_pow_succ, Nat.toNat_testBit, Nat.mul_comm]
+
 /-- `bitsVal l` is the value of the `|l|` bits of `l`. -/
 theorem bitsVal_eq_prefixVal (l : List Bool) :
     bitsVal l = prefixVal (fun j => l.getD j false) l.length := by
@@ -377,6 +393,14 @@ theorem adderCircuit_size_three_mul (k : ℕ) : (adderCircuit (3 * k)).size = 18
 def carryBit (A B : ℕ → Bool) : ℕ → Bool
   | 0 => false
   | i + 1 => (A i && B i) || ((A i ^^ B i) && carryBit A B i)
+
+/-- Reader of `carryBit` at position `0`: `carryBit A B 0 = false`.  Glue. -/
+theorem carryBit_zero (A B : ℕ → Bool) : carryBit A B 0 = false := rfl
+
+/-- Reader of `carryBit` at position `i + 1`:
+`carryBit A B (i + 1) = ((A i && B i) || ((A i ^^ B i) && carryBit A B i))`.  Glue. -/
+theorem carryBit_succ (A B : ℕ → Bool) (i : ℕ) :
+    carryBit A B (i + 1) = ((A i && B i) || ((A i ^^ B i) && carryBit A B i)) := rfl
 
 /-- Bit `i` of the sum of `A` and `B`: `A_i ⊕ B_i ⊕ carry i`. -/
 def sumBit (A B : ℕ → Bool) (i : ℕ) : Bool :=
