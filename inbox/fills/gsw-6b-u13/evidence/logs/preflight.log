@@ -1,0 +1,34 @@
+# Preflight (addendum v1, Part 1 item 1), 2026-11-18T21:38:19Z
+host: vm; uptime:  21:38:19 up 5 min,  0 user,  load average: 0.81, 0.82, 0.38
+nproc: 4
+## cgroup
+cgroup v1
+limit_in_bytes: 9223372036854771712
+usage_in_bytes: 5201559552
+cache 40771584
+rss 8781824
+shmem 13058048
+total_cache 5185654784
+total_rss 16023552
+total_shmem 13058048
+## /proc/meminfo
+MemTotal:       16473760 kB
+MemFree:        11089940 kB
+MemAvailable:   16023048 kB
+SwapFree:              0 kB
+Shmem:             12752 kB
+## df -B1 / df -T (clone /workspace/u13, scratch /workspace/u13-work, /tmp)
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 29076230144 14796038144  67% /
+/dev/vda       270553174016 29076230144 14796038144  67% /
+/dev/vda       270553174016 29076230144 14796038144  67% /
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 28394756  14449256  67% /
+/dev/vda       ext4 264212084 28394756  14449256  67% /
+/dev/vda       ext4 264212084 28394756  14449256  67% /
+## space made before the preflight
+Removed: git worktree /workspace/scot (fill/sc-ot, delivered final at exchange a8972fa06; branch kept). No dependency tree was copied or moved.
+## computation
+disk free 14796038144 B = 13.78 GiB (floor 12 GiB)
+cgroup limit: 9223372036854771712 -> headroom = MemAvailable = 16411054080 B = 15.28 GiB (floor 4 GiB)
+PREFLIGHT PASS

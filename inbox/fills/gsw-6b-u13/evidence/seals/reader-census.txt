@@ -1,0 +1,23 @@
+# C6 reader census (gsw-6b-u13): every foreign definition the delivered proofs of
+# GSW/DecryptFormula.lean read, with the published reader (path:line at the base) through which it is
+# read. "notation" = never sealed (COMMON §5.1). No reader is MISSING.
+foreign definition (path:line)                                   read through (path:line)
+GSW.decrypt (GSW/Scheme.lean:141)                                 decrypt_eq_decode_dotProduct (GSW/Scheme.lean:162; owner-side, ruling Q-C1)
+GSW.secretVector (GSW/Scheme.lean:66)                             gadget_mulVec_decomposeVec (GSW/Gadget.lean:164), via keyBits_eq (own)
+GSW.decryptColumn (GSW/Scheme.lean:129)                           not unfolded (appears only as an argument)
+GSW.gadget (GSW/Gadget.lean:90)                                   gadget_mulVec_decomposeVec (GSW/Gadget.lean:164); Matrix.dotProduct_mulVec (Mathlib, generic)
+GSW.decomposeVec (GSW/Gadget.lean:112)                            gadget_mulVec_decomposeVec (GSW/Gadget.lean:164), via keyBits_eq (own)
+LWE.BitEncoding.decode (LWE/BitEncoding.lean:111)                 decode_iff_mem_Ico (LWE/BitEncoding.lean:151; O2)
+LWE.BitEncoding.decodeLo (LWE/BitEncoding.lean:121)               decodeLo_eq (LWE/BitEncoding.lean:125)
+LWE.BitEncoding.decodeHi (LWE/BitEncoding.lean:130)               decodeHi_eq (LWE/BitEncoding.lean:134)
+FormulaArith.modSumInterval (FormulaArith/ModSum.lean:84)         modSumInterval_eval (:193), depth_modSumInterval_le (:303), maxFanin_modSumInterval_le (:380), via decryptFormula_eq (own)
+FormulaArith.modSumDepth (FormulaArith/ModSum.lean:281)           modSumDepth_le (:365), via decDepth_eq (own)
+BoolCircuit.TreeCircuit.neg (FormulaArith/Combinators.lean:272)  neg_eval (:308), depth_neg (:332), maxFanin_neg (:352), via nandFormula_eq (own)
+BoolCircuit.TreeCircuit.and2 (FormulaArith/Combinators.lean:536) and2_eval (:591), depth_and2_le (:601), maxFanin_and2_le (:612)
+TreeCircuit.eval/depth/maxFanin (BoolCircuit, CircuitComplexity) only through the F1/F3/F9/F10 lemmas above
+GSW.Parameters.modulus_le (GSW/Gadget.lean:65)                    structure field (projection)
+LWE.Parameters.modulus_ge_two (LWE/Basic.lean:52)                 structure field (projection)
+GSW.Parameters.columns (GSW/Gadget.lean:70), GSW.Ciphertext (:78) notation (reducible abbreviations)
+own definitions keyBits, decConstants, decryptFormula, nandFormula, decDepth   read through their own readers keyBits_eq, decConstants_eq, decryptFormula_eq, nandFormula_eq, decDepth_eq
+Mathlib/core definitions (dotProduct in the final `rfl` of G5; ZMod.val, Nat.clog, decide) reduce only in `rfl`; none is passed to simp/rw/unfold
+MISSING: none

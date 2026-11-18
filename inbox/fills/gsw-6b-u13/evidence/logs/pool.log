@@ -1,0 +1,13 @@
+# Lean process pool (COMMON §3; addendum, Lean parallelism)
+nproc: 4
+MemTotal:       16473760 kB
+MemAvailable:   16007348 kB
+start size = min(nproc, MemAvailable / 4 GB) = min(4, 4) = 4; chosen size 3, the local-host cap of 3 Lean processes per machine (COMMON §3), which satisfies both readings of this container (local host or cloud worker). No other job runs Lean on this machine (ps checked at 2026-11-18T21:42:17Z: 0 lean processes).
+pool size: 3
+2026-11-18T21:42:17Z start list=/workspace/exchange/inbox/fills/gsw-6b-u13/evidence/logs/order.txt modules=224 already-done=0 pool=3 nproc=4 MemAvailable=16381095936
+2026-11-18T21:49:28Z end done=224/224 failed=None peak-concurrency=3 MemAvailable=16350654464
+2026-11-18T21:52:02Z start list=/workspace/u13-work/unit-down.txt modules=10 already-done=0 pool=3 nproc=4 MemAvailable=16373940224
+2026-11-18T21:52:32Z end done=10/10 failed=None peak-concurrency=2 MemAvailable=16332836864
+2026-11-18T21:56:29Z NOTE: at 2026-11-18T21:56:18Z five control probes (lean_proof/u13/ctl/*, each a few seconds) were started at once by a scripting slip, above the pool size of 3, for about 2 s; MemAvailable stayed above 14 GB (16.4 GB total). No other job ran Lean on this machine. All later runs keep the pool of 3.
+2026-11-18T22:06:14Z probe ProbeU13P1 (pid 14072, started 22:01) stopped by the worker with kill <pid> after about 5 min of CPU: the #eval over 27 ciphertexts x q secrets did not finish; see logs/probe-u13-p1.log
+2026-11-18T22:12:25Z summary: bootstrap (224 modules) and head sweep (10 modules) by pool_build.py with pool 3 (peak concurrency 3); seals (24 runs) by seal_jobs.sh with xargs -P 3; probes, controls, scans at most 3 at once (except the 2-second slip noted above). Peak max RSS of any Lean process: 2959360 KiB (bootstrap). MemAvailable was sampled at the pool start and end only (16.38 GB, 16.35 GB); by the max RSS figures, three processes of at most 3 GB leave about 7 GB of 16.4 GB. No oom event and no exit 137 was seen.

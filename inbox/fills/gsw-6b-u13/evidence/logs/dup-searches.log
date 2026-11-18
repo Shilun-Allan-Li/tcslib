@@ -1,0 +1,152 @@
+# Duplication searches for U13 (COMMON §5.2, C11), 2026-11-18T21:44:19Z
+# git grep over TCSlib/ and audits/ at the base bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d (worktree), at origin/iO/phase-a-base 5ed465f62e4ae0f93ded1a1ba49e807591b589eb, at origin/cleanup/stage2-s2a dff281b53746377cd72e57c3aeeadf3d1f59a332; grep over .lake/packages (Mathlib, Batteries) and the Lean core sources
+## git grep -nE 'vecMul_secretVector_eq_sum|decryptFormula_eval|nandFormula_eval|depth_nandFormula_le|maxFanin_nandFormula_le|decDepth_le' bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d -- TCSlib audits
+hits: 13
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:230:two (`maxFanin_nandFormula_le`, G8) and inputs `evk i` encrypting `keyBits P s i` (`hk`). Its
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:232:`!(decrypt P s C₁ && decrypt P s C₂)` by G7 (`nandFormula_eval`). Its noise
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:233:`4^depth·(2·(N·βk))` is at most `bootNoise P βk` by `depth_nandFormula_le` (G8),
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:337:**Proof sketch.** `bootNoise_eq`. If `N = 0` both sides are `0`. Otherwise `decDepth_le` (G8)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean:29:* `vecMul_secretVector_eq_sum` (G5): `⟨t, c⟩ = ∑ᵢ xᵢ·(Gᵀc)ᵢ` with `x = keyBits`.
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean:30:* `decryptFormula_eval` (G6), `nandFormula_eval` (G7): the formulas compute decryption and its
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean:32:* `depth_nandFormula_le`, `maxFanin_nandFormula_le`, `decDepth_le` (G8): depth `decDepth + 1`,
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean:143:theorem vecMul_secretVector_eq_sum (P : Parameters)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean:165:theorem decryptFormula_eval (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean:176:theorem nandFormula_eval (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean:188:theorem depth_nandFormula_le (P : Parameters) (C₁ C₂ : Ciphertext P) :
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean:198:theorem maxFanin_nandFormula_le (P : Parameters) (C₁ C₂ : Ciphertext P) :
+## git grep -nE 'gadget_mulVec_decomposeVec' bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d -- TCSlib audits
+hits: 7
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean:139:**Proof sketch.** `keyBits_eq` and `gadget_mulVec_decomposeVec` give `t = G·x` with `x` the
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Gadget.lean:29:* `gadget_mulVec_decomposeVec`, `gadget_mul_decompose`: `G · G⁻¹(M) = M` [Pei16, (5.4.1)].
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Gadget.lean:164:theorem gadget_mulVec_decomposeVec (P : Parameters)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Gadget.lean:184:which is `M i c` by `gadget_mulVec_decomposeVec`. -/
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Gadget.lean:189:  have h := congrFun (gadget_mulVec_decomposeVec P (fun j => M j c)) i
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:268:    ← Matrix.dotProduct_mulVec, gadget_mulVec_decomposeVec, hw, herr, smul_eq_mul, hb]
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:280:`b·⟨t, G x⟩ + ⟨e, x⟩ = b·⟨t, w⟩ + ⟨e, x⟩` by `gadget_mulVec_decomposeVec`, and `⟨t, w⟩ = ⌊q/2⌋`
+## git grep -nE 'dotProduct_mulVec' bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d -- TCSlib audits
+hits: 5
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean:140:lifted key bits, so `⟨t, c⟩ = ⟨G x, c⟩`. By `Matrix.dotProduct_mulVec` this is
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:267:  rw [Matrix.dotProduct_mulVec, hC, add_dotProduct, smul_dotProduct,
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:268:    ← Matrix.dotProduct_mulVec, gadget_mulVec_decomposeVec, hw, herr, smul_eq_mul, hb]
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:278:(`Fin.sum_univ_castSucc`, `secretVector_eq`). `Matrix.dotProduct_mulVec` turns `⟨t, C x⟩` into
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean:115:    rw [Matrix.dotProduct_mulVec, Matrix.vecMul_transpose]
+## git grep -nE 'decrypt_eq_decode_dotProduct' bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d -- TCSlib audits
+hits: 5
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean:156:reader `decrypt_eq_decode_dotProduct : decrypt P s C = LWE.BitEncoding.decode P.lwe
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:162:theorem decrypt_eq_decode_dotProduct (P : Parameters)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:231:**Proof sketch.** By `decrypt_eq_decode_dotProduct`, decryption decodes `⟨t, v⟩`, the Regev
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:245:  rw [decrypt_eq_decode_dotProduct, decryptColumn_eq]
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:276:`decrypt_eq_decode_dotProduct` reads decryption as `decode ⟨t, v⟩`: the Regev residual
+## git grep -nE 'decode_iff_mem_Ico' bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d -- TCSlib audits
+hits: 4
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean:51:decoded by `LWE.BitEncoding.decode`, which is the interval test `decode_iff_mem_Ico` (O2). The
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean:161:`LWE.BitEncoding.decode_iff_mem_Ico` (O2) turns `decode` into the interval test, and
+TCSlib/Cryptography/LWE/BitEncoding.lean:25:`decode_iff_mem_Ico` reads decoding as the interval test
+TCSlib/Cryptography/LWE/BitEncoding.lean:151:theorem decode_iff_mem_Ico (P : Parameters) (v : ZMod P.modulus) :
+## git grep -nE 'modSumInterval_eval|depth_modSumInterval_le|maxFanin_modSumInterval_le|modSumDepth_le' bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d -- TCSlib audits
+hits: 13
+TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:37:* `BoolCircuit.FormulaArith.modSumInterval_eval` — F9: the formula tests
+TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:39:* `BoolCircuit.FormulaArith.depth_modSumInterval_le`, `modSumDepth_le`,
+TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:40:  `maxFanin_modSumInterval_le` — F10: depth at most
+TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:82:`lo ≤ (∑ i, x_i a_i) % q < hi` (`modSumInterval_eval`).  [BV11, Lemma 4.5, p029-b001;
+TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:83:BV14, Prop 3.4, p011-b001]; deviations in `modSumInterval_eval`. -/
+TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:193:theorem modSumInterval_eval {M : ℕ} {a : Fin M → ℕ} {q lo hi : ℕ} (ha : ∀ i, a i < q)
+TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:303:theorem depth_modSumInterval_le {M : ℕ} (a : Fin M → ℕ) (q lo hi : ℕ) :
+TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:365:theorem modSumDepth_le (M q : ℕ) :
+TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:380:theorem maxFanin_modSumInterval_le {M : ℕ} (a : Fin M → ℕ) (q lo hi : ℕ) :
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean:162:`FormulaArith.modSumInterval_eval` (F9) evaluates the formula to the same test, with
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean:186:`TreeCircuit.depth_and2_le` (F3), and `FormulaArith.depth_modSumInterval_le` (F10) for both
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean:196:`TreeCircuit.maxFanin_and2_le` (F3) and `FormulaArith.maxFanin_modSumInterval_le` (F10) for
+## git grep -nE 'neg_eval|and2_eval|depth_and2_le|maxFanin_and2_le|depth_neg|maxFanin_neg' bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d -- TCSlib audits
+hits: 64
+TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean:221:`and2_eval`, `hF`, `hG` the pair `j` is true iff `f x i = j ∧ g x j = k`, and exactly `j = f x i`
+TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean:235:    rw [TreeCircuit.and2_eval, hF, hG, Bool.and_eq_true, decide_eq_true_iff,
+TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean:242:    rw [TreeCircuit.and2_eval, hF, hG, Bool.and_eq_true, decide_eq_true_iff, decide_eq_true_iff]
+TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean:249:`node true [F i j, G j k] = and2 (F i j) (G j k)` has depth `≤ d + 1` (`depth_and2_le`), so the list
+TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean:263:    have h2 := TreeCircuit.depth_and2_le (F i j) (G j k)
+TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean:279:  have h2 := TreeCircuit.maxFanin_and2_le (F i j) (G j k)
+TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean:440:(`wireComp_eq`, `TreeCircuit.maxFanin_balanced_le` and `maxFanin_and2_le` on the binary `∧`
+TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean:41:* `BoolCircuit.TreeCircuit.neg_eval`, `depth_neg`, `maxFanin_neg` — negation (F1; targets).
+TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean:270:(`TreeCircuit.neg_eval`, `depth_neg`, `maxFanin_neg`).  Structural recursion over the nested
+TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean:308:theorem TreeCircuit.neg_eval (c : TreeCircuit n) (x : Fin n → Bool) :
+TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean:332:theorem TreeCircuit.depth_neg (c : TreeCircuit n) : c.neg.depth = c.depth := by
+TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean:349:**Proof sketch.** As for `depth_neg`: induction on `c`; a gate keeps its arity
+## git grep -nE 'clog_le_iff_le_pow|clog_mono_right' bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d -- TCSlib audits
+hits: 33
+TCSlib/CommunicationComplexity/DeterministicCC/DetRectangle.lean:561:    exact_mod_cast (Nat.clog_le_iff_le_pow (by norm_num)).mpr
+TCSlib/CommunicationComplexity/DeterministicCC/Rank.lean:208:    exact_mod_cast (Nat.clog_le_iff_le_pow (by norm_num)).mpr
+TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean:346:`Nat.clog_mono_right` their wires have depth `≤ (⌈log₂ w⌉ + 2)·⌈log₂ ⌈L/2⌉⌉ + 1`; (Step 3)
+TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean:369:        (Nat.mul_le_mul_left _ (Nat.clog_mono_right 2 ?_)) 1)
+TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean:376:        (Nat.mul_le_mul_left _ (Nat.clog_mono_right 2 ?_)) 1)
+TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean:400:`List.length_drop`), `Nat.clog_mono_right` and `Nat.clog_of_two_le`
+TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean:483:(`Nat.clog_le_iff_le_pow` with `|F| ≤ w^w ≤ (2^⌈log₂ w⌉)^w`, `Fintype.card_fin`,
+TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean:507:    rw [Nat.clog_le_iff_le_pow (by norm_num)]
+TCSlib/Complexity/BranchingPrograms/NC1.lean:189:`b = (⌈log₂ w⌉ + 2)(a + k) + topDepth w` (`depth_toFormula_le`, `Nat.clog_mono_right`,
+TCSlib/Complexity/BranchingPrograms/NC1.lean:203:      (Nat.clog_mono_right 2 (ha n)).trans (BoolCircuit.clog_poly_le a k n)
+TCSlib/Complexity/CircuitComplexity/DAGFanin.lean:215:        Nat.clog_mono_right _ (by rw [htake_len]; omega)
+TCSlib/Complexity/CircuitComplexity/DAGFanin.lean:217:        Nat.clog_mono_right _ (by rw [hdrop_len]; omega)
+## git grep -nE 'ZMod.val_natCast|natCast_zmod_val' bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d -- TCSlib audits
+hits: 76
+TCSlib/BooleanAnalysis/BLR/ZkFourier.lean:193:        · exact fun a₁ a₂ h => by simpa [ ZMod.natCast_zmod_val ] using congr_arg ( fun x : ℕ => x : ℕ → ZMod k ) h;
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:695:  rw [← h7, ZMod.val_natCast_of_lt h4]
+TCSlib/Complexity/Randomized/PrimalityMath.lean:182:  rw [ZMod.val_natCast, jacobiSym.mod_left' (a₂ := (A : ℤ))]
+TCSlib/Complexity/Randomized/PrimalityMath.lean:317:    rw [(ZMod.natCast_eq_natCast_iff _ _ _).2 a.2.1, ZMod.natCast_zmod_val]
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean:160:(`ZMod.val_natCast`, `Nat.cast_sum`, `ZMod.natCast_zmod_val`).
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Gadget.lean:161:`u j` as the residue of `(u j).val` (`ZMod.natCast_zmod_val`), hence as the residue of that
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Gadget.lean:174:  rw [← ZMod.natCast_zmod_val (u j), ← Int.cast_natCast (R := ZMod P.lwe.modulus) (u j).val,
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:334:        ZMod.val_natCast, Nat.mod_eq_of_lt hlt, hhalf,
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Draws.lean:167:along the bijection `x ↦ x.val` (`StatClose.comp_equiv_right`, `ZMod.natCast_zmod_val`). -/
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Draws.lean:180:      left_inv := fun t => ZMod.natCast_zmod_val t
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Draws.lean:183:        rw [ZMod.val_natCast, Nat.mod_eq_of_lt x.2]) }
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Draws.lean:191:    funext fun t => ZMod.natCast_zmod_val t
+## git grep -nE '\.val = .*∑|\(∑ .*\)\.val' bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d -- TCSlib audits
+hits: 5
+TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:207:      Candidates.natToList (W.eval u.length) (∑ i, a i * b i).val := by
+TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:409:        Candidates.natToList width (∑ i, row i * v i).val := by
+TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean:423:          Candidates.natToList width (∑ i, rows 0 i * v i).val ++
+TCSlib/Cryptography/TrapdoorFunctions/AllButOne/AntiCyclic.lean:203:  change (∑ i, C i j * ((x i).val : ℤ)).natAbs ≤ _
+TCSlib/Cryptography/TrapdoorFunctions/AllButOne/AntiCyclic.lean:222:  have hcast : ((∑ i, C i j * ((x i).val : ℤ)).natAbs : ℤ) ≤
+## git grep -nE 'decodeLo .* ≤ .*decodeHi|decodeHi .* ≤ ' bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d -- TCSlib audits
+hits: 4
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean:163:`aᵢ.val < q` (`ZMod.val_lt`) and `decodeLo ≤ decodeHi ≤ q` (`decodeLo_eq`, `decodeHi_eq`,
+TCSlib/Cryptography/LWE/BitEncoding.lean:26:`decodeLo P ≤ v.val < decodeHi P`.
+TCSlib/Cryptography/LWE/BitEncoding.lean:138:`decode P v = true ↔ decodeLo P ≤ v.val ∧ v.val < decodeHi P`. With `h = ⌊q/2⌋` the interval
+TCSlib/Cryptography/LWE/BitEncoding.lean:152:    decode P v = true ↔ decodeLo P ≤ v.val ∧ v.val < decodeHi P := by
+## git grep -nE 'toNat .*\* .*\.val' bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d -- TCSlib audits
+hits: 8
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:119:        change b.toNat * S + x.val = c.toNat * S + y.val at hxy
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybridSecurity.lean:66:    (seed n q).1 w b t = q.getD ((b.toNat * S.eval n + w.val) * n + t.val) false)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybridSecurity.lean:70:      (List.ofFn a).foldr (fun b k => b.toNat + 2 * k) 0) * (2 * n) + t.val) false)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybridSecurity.lean:74:      (List.ofFn a).foldr (fun b k => b.toNat + 2 * k) 0) * (2 * n) + n + t.val) false)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepSecurity.lean:160:    (seed n q).1 w b t = q.getD ((b.toNat * S.eval n + w.val) * n + t.val) false)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepSecurity.lean:164:      (List.ofFn a).foldr (fun b k => b.toNat + 2 * k) 0) * (2 * n) + t.val) false)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepSecurity.lean:168:      (List.ofFn a).foldr (fun b k => b.toNat + 2 * k) 0) * (2 * n) + n + t.val) false)
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Gadget.lean:196:      ∑ k : Fin slice.length, (slice[k.val]'k.isLt).toNat * 2 ^ k.val := by
+## git grep -nE 'vecMul_secretVector_eq_sum|decryptFormula_eval|nandFormula_eval|decode_iff_mem_Ico|modSumInterval_eval' origin/iO/phase-a-base -- TCSlib audits
+hits: 4
+origin/iO/phase-a-base:TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:37:* `BoolCircuit.FormulaArith.modSumInterval_eval` — F9: the formula tests
+origin/iO/phase-a-base:TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:82:`lo ≤ (∑ i, x_i a_i) % q < hi` (`modSumInterval_eval`).  [BV11, Lemma 4.5, p029-b001;
+origin/iO/phase-a-base:TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:83:BV14, Prop 3.4, p011-b001]; deviations in `modSumInterval_eval`. -/
+origin/iO/phase-a-base:TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:193:theorem modSumInterval_eval {M : ℕ} {a : Fin M → ℕ} {q lo hi : ℕ} (ha : ∀ i, a i < q)
+## git grep -nE 'vecMul_secretVector_eq_sum|decryptFormula_eval|nandFormula_eval|decode_iff_mem_Ico|modSumInterval_eval' origin/cleanup/stage2-s2a -- TCSlib audits
+hits: 4
+origin/cleanup/stage2-s2a:TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:37:* `BoolCircuit.FormulaArith.modSumInterval_eval` — F9: the formula tests
+origin/cleanup/stage2-s2a:TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:82:`lo ≤ (∑ i, x_i a_i) % q < hi` (`modSumInterval_eval`).  [BV11, Lemma 4.5, p029-b001;
+origin/cleanup/stage2-s2a:TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:83:BV14, Prop 3.4, p011-b001]; deviations in `modSumInterval_eval`. -/
+origin/cleanup/stage2-s2a:TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:193:theorem modSumInterval_eval {M : ℕ} {a : Fin M → ℕ} {q lo hi : ℕ} (ha : ∀ i, a i < q)
+## grep -rnE 'theorem val_sum|theorem val_add_of|natCast_sum' Mathlib Batteries
+hits: 2
+mathlib/Mathlib/Data/ZMod/Basic.lean:635:theorem val_add_of_lt {n : ℕ} {a b : ZMod n} (h : a.val + b.val < n) :
+mathlib/Mathlib/Data/ZMod/Basic.lean:646:theorem val_add_of_le {n : ℕ} [NeZero n] {a b : ZMod n} (h : n ≤ a.val + b.val) :
+## grep -rnE 'theorem dotProduct_mulVec|theorem dotProduct_comm' Mathlib Batteries
+hits: 5
+mathlib/Mathlib/Combinatorics/SimpleGraph/AdjMatrix.lean:253:theorem dotProduct_mulVec_adjMatrix [NonAssocSemiring α] (x y : V → α) :
+mathlib/Mathlib/Combinatorics/SimpleGraph/LapMatrix.lean:69:theorem dotProduct_mulVec_degMatrix [CommSemiring R] (x : V → R) :
+mathlib/Mathlib/Analysis/Matrix/Order.lean:156:theorem dotProduct_mulVec_zero_iff {A : Matrix n n 𝕜} (hA : PosSemidef A) (x : n → 𝕜) :
+mathlib/Mathlib/Data/Matrix/Mul.lean:79:theorem dotProduct_comm [AddCommMonoid α] [CommMagma α] (v w : m → α) : v ⬝ᵥ w = w ⬝ᵥ v := by
+mathlib/Mathlib/Data/Matrix/Mul.lean:710:theorem dotProduct_mulVec [Fintype n] [Fintype m] [NonUnitalSemiring R] (v : m → R)
+## grep -rnE 'theorem clog_le_iff_le_pow|theorem clog_mono_right|theorem clog_le_of_le_pow' Mathlib Batteries
+hits: 3
+mathlib/Mathlib/Data/Nat/Log.lean:301:theorem clog_le_iff_le_pow {b : ℕ} (hb : 1 < b) {x y : ℕ} : clog b x ≤ y ↔ x ≤ b ^ y := by
+mathlib/Mathlib/Data/Nat/Log.lean:341:theorem clog_mono_right (b : ℕ) {n m : ℕ} (h : n ≤ m) : clog b n ≤ clog b m := by
+mathlib/Mathlib/Data/Int/Log.lean:271:theorem clog_mono_right {b : ℕ} {r₁ r₂ : R} (h₀ : 0 < r₁) (h : r₁ ≤ r₂) :

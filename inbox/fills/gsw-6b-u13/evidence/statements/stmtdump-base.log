@@ -1,0 +1,85 @@
+=== lean_proof/u13/probes/StmtDumpBase
+start 2026-11-18T21:52:53Z
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.vecMul_secretVector_eq_sum : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus)
+  (C : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P),
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.secretVector P s ⬝ᵥ
+      TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decryptColumn P C =
+    ∑ i : Fin P.columns,
+      ↑(TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.keyBits P s i).toNat *
+        TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decConstants P C i
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decryptFormula_eval : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus)
+  (C : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P),
+  (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decryptFormula P C).eval
+      (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.keyBits P s) =
+    TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decrypt P s C
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.nandFormula_eval : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus)
+  (C₁ C₂ : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P),
+  (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.nandFormula P C₁ C₂).eval
+      (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.keyBits P s) =
+    !(TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decrypt P s C₁ &&
+        TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decrypt P s C₂)
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.depth_nandFormula_le : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters)
+  (C₁ C₂ : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P),
+  (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.nandFormula P C₁ C₂).depth ≤
+    TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decDepth P + 1
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.maxFanin_nandFormula_le : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters)
+  (C₁ C₂ : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P),
+  (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.nandFormula P C₁ C₂).maxFanin ≤ 2
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decDepth_le : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters),
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decDepth P ≤
+    9 * Nat.clog 2 P.columns + 2 * Nat.clog 2 (P.width + Nat.clog 2 P.columns + 3) + 21
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.neZero_columns : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters), NeZero P.columns
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.keyBits : (P :
+    TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters) →
+  (Fin P.lwe.dimension → ZMod P.lwe.modulus) → Fin P.columns → Bool
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.keyBits_eq : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters)
+  (s : Fin P.lwe.dimension → ZMod P.lwe.modulus),
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.keyBits P s =
+    TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decomposeVec P
+      (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.secretVector P s)
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decConstants : (P :
+    TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters) →
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P → Fin P.columns → ZMod P.lwe.modulus
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decConstants_eq : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters)
+  (C : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P),
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decConstants P C =
+    Matrix.vecMul (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decryptColumn P C)
+      (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.gadget P)
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decryptFormula : (P :
+    TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters) →
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P → BoolCircuit.TreeCircuit P.columns
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decryptFormula_eq : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters)
+  (C : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P),
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decryptFormula P C =
+    BoolCircuit.FormulaArith.modSumInterval
+      (fun (i : Fin P.columns) => (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decConstants P C i).val)
+      P.lwe.modulus (TCSlib.Cryptography.LWE.BitEncoding.decodeLo P.lwe)
+      (TCSlib.Cryptography.LWE.BitEncoding.decodeHi P.lwe)
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.nandFormula : (P :
+    TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters) →
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P →
+    TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P → BoolCircuit.TreeCircuit P.columns
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.nandFormula_eq : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters)
+  (C₁ C₂ : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P),
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.nandFormula P C₁ C₂ =
+    ((TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decryptFormula P C₁).and2
+        (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decryptFormula P C₂)).neg
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decDepth : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters →
+  ℕ
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decDepth_eq : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters),
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decDepth P =
+    BoolCircuit.FormulaArith.modSumDepth P.columns P.lwe.modulus
+time: elapsed=1.93 s, maxrss=2561012 KiB, exit=0
+end 2026-11-18T21:52:55Z status=0
