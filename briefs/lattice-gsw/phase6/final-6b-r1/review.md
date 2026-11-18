@@ -264,3 +264,38 @@ the change.
 - anchors;
 - campaign-lint line sets;
 - merge-tree.
+
+## Phase 2 (2026-11-18): landing and Lean replays on snapshot #10
+
+**Final verdict: ACCEPT WITH LANDING EDITS, applied. PASS. Both PRs are open as drafts for Gate 46 (Codex).** The full
+record is in `phase2.md`, with evidence in `gsw-6b-final-r1-phase2-evidence.zip` (`60cfe326…`, in `evidence-SHA256SUMS`).
+
+**Rulings applied (2026-11-18):** W1–W3 accepted as delivered; F1 A, so LE-6b1, LE-6b2 and LE-6b3 are all applied (LE-6b3
+compiles, so nothing is dropped); F2 A, so `decDepth_le` stays admitted.
+
+**The PRs**
+- **PR O2 #376**: `land/gsw-6b-o2` = `04ba2446f541c39dd02aefaa97a9eb31dbbda748`, a signed pick of `5bd5ada5` onto the
+  records tip `38123ccb`. The tip is Lean-equal to snapshot #10's T. Range-diff 1/1 `=`. Only `BitEncoding.lean` changes.
+- **Statement PR #377**: `land/gsw-6b-statements` = `680be9fa45a9cf5deeb7a59820e8e86aaaa4f068`, stacked on O2.
+  - It holds five signed picks (range-diff 5/5 `=`) and one signed landing-edit commit.
+  - The edits are byte-identical to `landing-edits-proposed.diff`.
+  - LE-6b1 corrects the four stale passages: G6's "MISSING" `decrypt_eq_decode_dotProduct`, the
+    `fheEvalCircuit`/`leveledEvalCircuit` "while N2/N12/N13 are admitted" sentences, and L4's `hybridPlant_eq`. No other
+    stale passage remains.
+
+**Replays**
+- **R1** (tip × O2): 19 modules rebuilt; rc 0, 0 errors, 0 `sorry`; state 1447/1447 OK; admissions 192 (+0); decls2
+  5/0/0; standard axioms.
+- **R2** (R1 × statements): 14 modules rebuilt; rc 0, 0 errors; the `sorry` warnings are exactly the 24 targets; state
+  1456/1456 OK; admissions **216**, EXACT against `targets.txt` with G17 split.
+  - decls2 136/0/0, and the landing-edit commit gives 0/0/0.
+  - `sorryAx` is in exactly the 24 targets. **`fheEvalCircuit`, `leveledEvalCircuit` and their `_eq` lemmas are now
+    standard.**
+- **Rule 10:** strict and coe A/B seals of the 12 owners give 0 errors.
+  - The paired controls (the delivery's 10 rows) are ALL_OK in both harnesses.
+  - The delivery's own 50 controls give 34 OK unchanged, and 16 OK after pruning 4 names absent at the tip.
+  - 0 foreign unfolds.
+- **Lint and snapshot:** lint FAIL/WARN is identical to the tip's. Snapshot #10 rehashed 0/0/0 throughout.
+
+**New infos:** G6B-F10 (LE-6b3's axiom-log effect), G6B-F11 (the delivery's baked control payloads are stale at the tip)
+and G6B-F12 (root coe-A not re-run). There are no new blockers, majors or minors.
