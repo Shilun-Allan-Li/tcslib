@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.MPC.BGW.Protocol
 import TCSlib.Cryptography.MPC.BGW.Privacy
+import TCSlib.Cryptography.MPC.BGW.Efficient
 
 /-!
 # The BGW protocol
@@ -16,6 +17,8 @@ Semi-honest secure multiparty computation of an arithmetic circuit from Shamir s
   and correctness.
 * `TCSlib.Cryptography.MPC.BGW.Privacy`: locality of multiplication-free circuits and the
   resulting perfect privacy against `k - 1` parties.
+* `TCSlib.Cryptography.MPC.BGW.Efficient`: over `ℤ_p`, Shamir re-sharing with explicit coins and
+  every party's gate step as a polynomial-time word map.
 
 ## References
 
