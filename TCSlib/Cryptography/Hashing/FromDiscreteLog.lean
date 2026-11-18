@@ -94,8 +94,7 @@ theorem dlHashIdx_layout (G : ExpGroupGen V) (n : ℕ) (r : G.gen.Coins n)
     (s : List Bool) :
     dlHashIdx G (NUPPT.layout (List.replicate n true) [] [] (List.ofFn r ++ s)) =
       if G.n₀ ≤ n then G.gen.runAt n [] r else dlDefaultIndex := by
-  have hr : (List.ofFn r).length = G.gen.coins.eval n := by
-    rw [List.length_ofFn, NUPPT.coinLen_eq]
+  have hr : (List.ofFn r).length = G.gen.coins.eval n := NUPPT.length_ofFn_coins G.gen n r
   simp only [dlHashIdx_eq, NUPPT.inParam_layout, NUPPT.inCoins_layout,
     List.length_replicate, List.take_left' hr, expGenFun_eq]
   split_ifs with hn
@@ -131,8 +130,7 @@ theorem dlHashGenFun_layout (G : ExpGroupGen V) (n : ℕ) (r : G.gen.Coins n)
           (natToList (dlW (G.gen.runAt n [] r))
             ((sampleBelowL (dlM (G.gen.runAt n [] r))
               (Nat.size (dlM (G.gen.runAt n [] r))) n n s).getD 0)))) := by
-  have hr : (List.ofFn r).length = G.gen.coins.eval n := by
-    rw [List.length_ofFn, NUPPT.coinLen_eq]
+  have hr : (List.ofFn r).length = G.gen.coins.eval n := NUPPT.length_ofFn_coins G.gen n r
   simp only [dlHashGenFun_eq, dlHashIdx_layout, if_pos hn, NUPPT.inParam_layout,
     NUPPT.inCoins_layout, List.length_replicate, List.drop_left' hr, expSampleRaw_eq]
   simp only [NUPPT.inArg_layout]
@@ -706,7 +704,8 @@ theorem dlHash_ideal_collision_le (H : ArithmeticFP) (A : NUPPT) (n : ℕ)
 /-- Above the generator threshold, collision acceptance is at most the concrete
 reduction's discrete-log success probability plus `(1/2)^n`: for `G.n₀ ≤ n`,
 `accept ((dlHash H G).collisionGame A n) ≤ G.dlProb (collisionReduction H A) n + (1/2)^n`
-[PS10, probability bound in Theorem 142.3].
+[PS10, Theorem 142.3; the additive `(1/2)^n` is a repository term from the bounded sampler, see
+the proof sketch of the main theorem].
 
 **Proof sketch.** Read the honest key distribution as the average over instance coins
 and independent sampler/finder tapes. The bounded sampler is within `(1/2)^n` of a

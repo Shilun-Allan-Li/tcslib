@@ -98,14 +98,16 @@ theorem invProb_guessInverter_enc {α β ρ : Type*} [Fintype α] [Fintype ρ] [
   have hexp : uprob (fun z : (α × (Fin m → Bool)) × ρ =>
       A (f z.1.1, z.1.2) z.2 = ip (enc z.1.1) z.1.2) = uexp q := by
     rw [← uprob_comp_equiv (Equiv.prodAssoc α (Fin m → Bool) ρ).symm, uprob_prod]
-    rfl
+    exact congrArg uexp (funext fun x => (secProb_def (fun _ => f x) A (enc x)).symm)
   haveI : Nonempty α := by
     by_contra hne
     rw [not_nonempty_iff] at hne
-    have h0 : uexp q = 0 := by simp [uexp]
+    have h0 : uexp q = 0 := by simp [uexp_def]
     rw [hexp, h0] at h
     linarith
-  have hG := half_le_uprob_threshold q (fun x => uprob_le_one _) (by norm_num) hε.le (hexp ▸ h)
+  have hG := half_le_uprob_threshold q
+    (fun x => (secProb_def (fun _ => f x) A (enc x)).le.trans (uprob_le_one _)) (by norm_num) hε.le
+    (hexp ▸ h)
   have hgood : ∀ x, 1 / 2 + ε / 2 ≤ q x →
       1 / 2 ^ k * (1 / 2) ≤ uprob fun c : GuessCoins m k ρ =>
         guessRecover A k (f x) c = enc x := by

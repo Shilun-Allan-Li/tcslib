@@ -113,6 +113,9 @@ theorem glPad_apply (f : (Fin n → Bool) → β) (z : (Fin n → Bool) × (Fin 
 /-- The candidate hard-concentrate bit `B(x, r) = ⟨x, r⟩ mod 2` of [Gar26, Theorem 2.3]. -/
 def glBit (z : (Fin n → Bool) × (Fin n → Bool)) : Bool := ip z.1 z.2
 
+/-- The defining equation of `glBit`: `glBit (x, r) = ⟨x, r⟩ mod 2 = ip x r`. -/
+theorem glBit_eq (x r : Fin n → Bool) : glBit (x, r) = ip x r := rfl
+
 /-- The inverter of `g` built from a recovery procedure `R`: on `f(x) ‖ r` with coins `c`
 it outputs `R(f(x), c) ‖ r`. All three inverters of [Gar26, §2.5.1] have this form. -/
 def glInverter (R : β → γ → Fin n → Bool) (y : β × (Fin n → Bool)) (c : γ) :
@@ -174,7 +177,7 @@ theorem uprob_recover_le_invProb (f : (Fin n → Bool) → β) (R : β → γ �
   have h := uprob_comp_equiv e
     (fun z : ((Fin n → Bool) × γ) × (Fin n → Bool) => R (f z.1.1) z.1.2 = z.1.1)
   rw [uprob_fst (fun z : (Fin n → Bool) × γ => R (f z.1) z.2 = z.1)] at h
-  rw [← h]
+  rw [← h, invProb_def]
   refine uprob_mono fun w hw => ?_
   simp only [glPad, glInverter]
   simp only [e, Equiv.coe_fn_mk] at hw
@@ -239,6 +242,7 @@ every coin string, in particular on `f(x) ‖ eᵢ`, where the right answer is
 `⟨x, eᵢ⟩ = xᵢ`. So the inverter recovers `x` exactly, always. -/
 theorem invProb_perfectInverter (f : (Fin n → Bool) → β) (A : β × (Fin n → Bool) → ρ → Bool)
     (h : predProb (glPad f) glBit A = 1) : invProb (glPad f) (perfectInverter A) = 1 := by
+  rw [predProb_def] at h
   have hA := forall_of_uprob_eq_one h
   have hρ : Nonempty ρ := by
     by_contra hρ
@@ -247,10 +251,9 @@ theorem invProb_perfectInverter (f : (Fin n → Bool) → β) (A : β × (Fin n 
         A (glPad f z.1) z.2 = glBit z.1) = 0 := by
       classical
       rw [uprob_eq_card_filter]; simp
-    simp only [predProb_def] at h
     rw [this] at h
     exact zero_ne_one h
-  refine le_antisymm (uprob_le_one _) ?_
+  refine le_antisymm ((invProb_def _ _).le.trans (uprob_le_one _)) ?_
   refine le_of_eq_of_le ?_ (uprob_recover_le_invProb f (perfectRecover A))
   refine (uprob_eq_one_of_forall fun z => funext fun i => ?_).symm
   have := hA ((z.1, Pi.single i true), z.2 i)

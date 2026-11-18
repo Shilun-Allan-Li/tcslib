@@ -50,9 +50,10 @@ construction is proved to have: compression `|R_i| < |D_i|` (`CRH.Compresses`) a
 resistance (`CRH.CollisionResistant`).
 
 **Deviation:** domains and ranges are sets of fixed-length strings, given by membership tests,
-for the source's index-dependent `h_i : D_i → R_i`. The tests are needed: in Construction 142.2
-the exponents range over `Z_{p−1}`, and an `n`-bit exponent domain would contain the trivial
-collisions `x`, `x + (p − 1)`. -/
+for the source's index-dependent `h_i : D_i → R_i`. The tests are needed: in protocol 142.2 the
+input `x` is an `n`-bit string (the proof of Theorem 142.3 treats it as an element of `Z*_p`);
+the repository restricts it to `x < p − 1`, since an `n`-bit exponent domain would contain the
+trivial collisions `x`, `x + (p − 1)`. -/
 structure CRH where
   /-- The domain length `d(n)`. -/
   domLen : PolyExpr

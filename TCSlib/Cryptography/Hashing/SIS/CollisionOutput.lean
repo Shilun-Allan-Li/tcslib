@@ -234,12 +234,14 @@ theorem collisionOutputPoly_pairEncode (P : TCSlib.Cryptography.SIS.Parameters)
       ((raw.take m).drop i.val).headD false = (rawCollisionInputs m raw).1 i ∧
       ((raw.drop m).drop i.val).headD false = (rawCollisionInputs m raw).2 i := by
     constructor
-    · have h := congrArg (fun w : List Bool => (w[i.val]?).getD false) hleft
-      simp only [List.getElem?_ofFn, dif_pos i.isLt, Option.getD_some,
-        List.getElem?_take_of_lt i.isLt, hread i.val (by omega)] at h
+    · have h := congrArg (fun w : List Bool => w.getD i.val false) hleft
+      dsimp only at h
+      rw [getD_ofFn _ i.isLt, List.getD_eq_getElem?_getD, List.getElem?_take_of_lt i.isLt,
+        hread i.val (by omega)] at h
       rw [hhead, List.getElem?_take_of_lt i.isLt, ← h]
-    · have h := congrArg (fun w : List Bool => (w[i.val]?).getD false) hright
-      simp only [List.getElem?_ofFn, dif_pos i.isLt, Option.getD_some, List.getElem?_drop,
+    · have h := congrArg (fun w : List Bool => w.getD i.val false) hright
+      dsimp only at h
+      rw [getD_ofFn _ i.isLt, List.getD_eq_getElem?_getD, List.getElem?_drop,
         hread (m + i.val) (Nat.add_lt_add_left i.isLt m)] at h
       rw [hhead, List.getElem?_drop, ← h]
   have hsign (x y : Bool) : block x y = decide ((x.toNat : ℤ) - y.toNat < 0) ::

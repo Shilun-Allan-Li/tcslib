@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Hashing.CollisionResistant
+import TCSlib.Cryptography.Games.Bridges.Experiments
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -38,8 +39,8 @@ open Complexity TCSlib.Cryptography TCSlib.Cryptography.Games
 average `uexp f`: `ProbComp.expect (ProbComp.sample α) f = uexp f`. Both expressions
 are the sum of `f` divided by the type's size. -/
 theorem expect_sample_eq_uexp {α : Type} [Fintype α] [Nonempty α] (f : α → ℝ) :
-    ProbComp.expect (ProbComp.sample α) f = uexp f := by
-  rw [ProbComp.expect_sample, uexp_def, inv_mul_eq_div]
+    ProbComp.expect (ProbComp.sample α) f = uexp f :=
+  Games.Bridge.expect_sample_eq_uexp f
 
 /-- Collision-game acceptance is the average over generator coins of the probability,
 over finder coins, that the two padded output halves are distinct domain elements
