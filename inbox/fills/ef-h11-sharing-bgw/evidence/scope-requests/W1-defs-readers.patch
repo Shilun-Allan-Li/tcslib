@@ -1,0 +1,26 @@
+diff --git a/TCSlib/Cryptography/SecretSharing/Defs.lean b/TCSlib/Cryptography/SecretSharing/Defs.lean
+index 39425c584..73a2f88f0 100644
+--- a/TCSlib/Cryptography/SecretSharing/Defs.lean
++++ b/TCSlib/Cryptography/SecretSharing/Defs.lean
+@@ -122,6 +122,21 @@ def PerfectPrivacy (Γ : AccessStructure P) : Prop :=
+   ∀ B : Finset P, ¬ Γ.Auth B → ∀ sec sec' : Secret,
+     ∃ e : Rand ≃ Rand, ∀ (r : Rand), ∀ i ∈ B, S.share sec' (e r) i = S.share sec r i
+ 
++/-- The defining equation of `Correct`. -/
++theorem correct_iff (Γ : AccessStructure P) : S.Correct Γ ↔
++    ∀ A : Finset P, Γ.Auth A → ∀ (sec : Secret) (r : Rand), S.reconstruct A (S.share sec r) = sec :=
++  Iff.rfl
++
++/-- The defining equation of `LocalReconstruct`. -/
++theorem localReconstruct_iff : S.LocalReconstruct ↔
++    ∀ (A : Finset P) (f g : P → Share), (∀ i ∈ A, f i = g i) →
++      S.reconstruct A f = S.reconstruct A g := Iff.rfl
++
++/-- The defining equation of `PerfectPrivacy`. -/
++theorem perfectPrivacy_iff (Γ : AccessStructure P) : S.PerfectPrivacy Γ ↔
++    ∀ B : Finset P, ¬ Γ.Auth B → ∀ sec sec' : Secret,
++      ∃ e : Rand ≃ Rand, ∀ (r : Rand), ∀ i ∈ B, S.share sec' (e r) i = S.share sec r i := Iff.rfl
++
+ variable {S}
+ 
+ /-- The counting form of perfect privacy: for an unauthorized set `B` and any candidate view

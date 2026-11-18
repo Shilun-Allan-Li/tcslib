@@ -1,0 +1,13 @@
+TCSlib.MPC.BGW.addModW_bgwEval: Turing.pairEncode TCSlib.SecretSharing.addModW TCSlib.SecretSharing.resWord TCSlib.MPC.BGW.bgwEval
+TCSlib.MPC.BGW.mulModW_bgwEval_mul: Turing.pairEncode TCSlib.SecretSharing.mulModW TCSlib.SecretSharing.resWord TCSlib.MPC.BGW.bgwEval
+TCSlib.MPC.BGW.mulModW_bgwEval_smul: Turing.pairEncode TCSlib.SecretSharing.mulModW TCSlib.SecretSharing.resWord TCSlib.MPC.BGW.bgwEval
+TCSlib.MPC.BGW.polyTimeComputable_reshare: Complexity.PolyTimeComputable Turing.pairEncode TCSlib.SecretSharing.resWord TCSlib.Shamir.shareRaw TCSlib.SecretSharing.ShamirParams.encode
+TCSlib.MPC.BGW.recombineRaw_bgwEval_mul: Turing.pairEncode Complexity.BinArith.encWords TCSlib.SecretSharing.resWord TCSlib.Shamir.recombine TCSlib.Shamir.recombineCoeff TCSlib.Shamir.recombineRaw TCSlib.MPC.BGW.bgwEval TCSlib.MPC.BGW.degreeReduce
+TCSlib.MPC.BGW.recombineRaw_reshare: Turing.pairEncode Complexity.BinArith.encWords TCSlib.SecretSharing.resWord TCSlib.Shamir.recombine TCSlib.Shamir.recombineRaw
+TCSlib.MPC.BGW.recombineRaw_shareRaw: Turing.pairEncode Complexity.BinArith.encWords TCSlib.SecretSharing.resWord TCSlib.Shamir.recombine TCSlib.Shamir.recombineRaw TCSlib.Shamir.shareRaw TCSlib.SecretSharing.ShamirParams.encode
+TCSlib.MPC.BGW.resWord_bgwEval_const: TCSlib.SecretSharing.resWord TCSlib.MPC.BGW.bgwEval
+TCSlib.MPC.BGW.resWord_bgwEval_input: TCSlib.SecretSharing.resWord TCSlib.MPC.BGW.bgwEval
+TCSlib.MPC.BGW.reshare_dealerSamples: Complexity.PolyTimeComputable Turing.pairEncode TCSlib.SecretSharing.DealerSamples TCSlib.SecretSharing.resWord TCSlib.Shamir.shamirAdm TCSlib.SecretSharing.ShamirParams.encode
+TCSlib.MPC.BGW.shamirResharer: TCSlib.Shamir.IsSharing TCSlib.Shamir.coinEquiv TCSlib.Shamir.scheme
+TCSlib.MPC.BGW.shamirResharer_reshare: TCSlib.Shamir.coinEquiv TCSlib.Shamir.scheme
+TCSlib.MPC.BGW.shareRaw_shamirResharer: Turing.pairEncode TCSlib.SecretSharing.resWord TCSlib.Shamir.coinEquiv TCSlib.Shamir.poly TCSlib.Shamir.scheme TCSlib.Shamir.shareRaw TCSlib.SecretSharing.ShamirParams.encode

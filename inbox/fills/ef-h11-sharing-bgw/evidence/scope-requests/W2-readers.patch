@@ -1,0 +1,30 @@
+diff --git a/TCSlib/Cryptography/MPC/BGW/Protocol.lean b/TCSlib/Cryptography/MPC/BGW/Protocol.lean
+index a05c5f371..171bf06ae 100644
+--- a/TCSlib/Cryptography/MPC/BGW/Protocol.lean
++++ b/TCSlib/Cryptography/MPC/BGW/Protocol.lean
+@@ -77,6 +77,10 @@ the Lagrange combination of those re-sharings with the coefficients of `A`. [BGW
+ noncomputable def degreeReduce (u : Party F → F) : Party F → F :=
+   fun j => ∑ i ∈ A, recombineCoeff A i * R.reshare i (u i) j
+ 
++/-- The defining equation of `degreeReduce`. -/
++theorem degreeReduce_apply (u : Party F → F) (j : Party F) :
++    degreeReduce R A u j = ∑ i ∈ A, recombineCoeff A i * R.reshare i (u i) j := rfl
++
+ /-- **Degree reduction.** If `u` is a degree-`2d` sharing of `z` and at least `2d + 1` parties
+ take part, then the reduced vector is a degree-`d` sharing of the *same* value `z`. [BGW88, §3],
+ [AL17, §3.3]
+diff --git a/TCSlib/Cryptography/SecretSharing/Sharing.lean b/TCSlib/Cryptography/SecretSharing/Sharing.lean
+index 978455bbf..a3cc46287 100644
+--- a/TCSlib/Cryptography/SecretSharing/Sharing.lean
++++ b/TCSlib/Cryptography/SecretSharing/Sharing.lean
+@@ -138,6 +138,10 @@ manifest; BGW's degree reduction is exactly an application of that linearity. [B
+ noncomputable def recombine (A : Finset (Party F)) (f : Party F → F) : F :=
+   ∑ i ∈ A, recombineCoeff A i * f i
+ 
++/-- The defining equation of `recombine`. -/
++theorem recombine_eq (A : Finset (Party F)) (f : Party F → F) :
++    recombine A f = ∑ i ∈ A, recombineCoeff A i * f i := rfl
++
+ theorem recombine_eq_eval_interpolate (A : Finset (Party F)) (f : Party F → F) :
+     recombine A f = (Lagrange.interpolate A label f).eval 0 := by
+   simp [recombine, recombineCoeff, Lagrange.interpolate_apply, eval_finset_sum, mul_comm]

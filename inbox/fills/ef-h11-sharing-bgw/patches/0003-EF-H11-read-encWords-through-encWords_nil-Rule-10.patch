@@ -1,0 +1,42 @@
+From dbf9319f3aebd0a4db90bd86567f4df905e848e7 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 18 Nov 2026 09:55:04 +0000
+Subject: [PATCH 3/6] EF-H11: read encWords [] through encWords_nil (Rule 10)
+
+The base cases of iterate_lagStep and iterate_recStep closed by rfl through
+the body of BinArith.encWords; they now rewrite with the published reader.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTmRxcZAFJ8Rgjvrhhc
+---
+ TCSlib/Cryptography/SecretSharing/ShamirEfficient.lean | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/TCSlib/Cryptography/SecretSharing/ShamirEfficient.lean b/TCSlib/Cryptography/SecretSharing/ShamirEfficient.lean
+index 342f93386..d395929d4 100644
+--- a/TCSlib/Cryptography/SecretSharing/ShamirEfficient.lean
++++ b/TCSlib/Cryptography/SecretSharing/ShamirEfficient.lean
+@@ -519,7 +519,8 @@ theorem iterate_lagStep (f : Party (ZMod q) → ZMod q) (a : Party (ZMod q)) :
+         pairEncode (pairEncode (Nat.bits q) (resWord (label a))) (pairEncode []
+           (pairEncode (resWord (n * lagNum l a)) (resWord (d * lagDen l a))))
+   | [], n, d => by
+-    simp only [lagNum_eq, lagDen_eq, List.map_nil, List.prod_nil, mul_one]; rfl
++    rw [List.length_nil, Function.iterate_zero, id_eq, List.map_nil, BinArith.encWords_nil]
++    simp only [lagNum_eq, lagDen_eq, List.map_nil, List.prod_nil, mul_one]
+   | b :: l, n, d => by
+     rw [List.length_cons, Function.iterate_succ_apply, List.map_cons, BinArith.encWords_cons,
+       lagStep_eq]
+@@ -621,7 +622,9 @@ theorem iterate_recStep (l : List (Party (ZMod q))) (f : Party (ZMod q) → ZMod
+         pairEncode (pairEncode (Nat.bits q) (BinArith.encWords (l.map (entryWord f))))
+           (pairEncode [] (resWord (acc +
+             (l'.map fun a => lagNum l a * (lagDen l a)⁻¹ * f a).sum)))
+-  | [], acc => by simp only [List.map_nil, List.sum_nil, add_zero]; rfl
++  | [], acc => by
++    rw [List.length_nil, Function.iterate_zero, id_eq, List.map_nil, BinArith.encWords_nil,
++      List.map_nil, List.sum_nil, add_zero]
+   | a :: l', acc => by
+     rw [List.length_cons, Function.iterate_succ_apply, List.map_cons, BinArith.encWords_cons,
+       recStep_eq]
+-- 
+2.43.0
+

@@ -1,0 +1,68 @@
+## PolyTimeComputable in SecretSharing/ and MPC/ at base
+$ git grep -n PolyTimeComputable 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib/Cryptography/SecretSharing TCSlib/Cryptography/MPC
+# hits: 0
+## powMod consumers at base
+$ git grep -nl 'powMod' 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/Primality.lean
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean
+# hits: 5
+## modular inverse definitions
+$ git grep -nE '(def|theorem) [a-zA-Z_]*[iI]nv[a-zA-Z_]*Mod|modInv|invMod' 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:1011:private def dlb_invMod (a p : List Bool) : List Bool := pairSndD (xgcdStr (pairEncode a p))
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:1030:private theorem dlb_invMod_poly (H : ArithmeticFP) (ha : PolyTimeComputable fa) (hb : PolyTimeComputable fb) :
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:1031:    PolyTimeComputable fun z => dlb_invMod (fa z) (fb z) :=
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:1059:private theorem dlb_invMod_natToList (ha : a < 2 ^ n) (hPn : P < 2 ^ n) :
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:1060:    dlb_invMod (natToList n a) (natToList n P) = natToList n ((a : ZMod P)⁻¹).val := by
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:1061:  unfold dlb_invMod
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:1423:  dlb_mulMod (dlb_zy z) (dlb_invMod (dlb_powMod (dlb_zg z) (dlb_zts z) (dlb_zp z)) (dlb_zp z)) (dlb_zp z)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:1426:  dlb_fix (NUPPT.inParam z) (dlb_zi z) (dlb_zα z) (dlb_invMod (dlb_zg z) (dlb_zp z))
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:1466:  dlb_mulMod_poly H dlb_zy_poly (dlb_invMod_poly H (dlb_powMod_poly H dlb_zg_poly (dlb_zts_poly H)
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:1475:    (((dlb_invMod_poly H dlb_zg_poly dlb_zp_poly).pairEncode
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2194:`dlb_powMod_natToList`, `dlb_invMod_natToList`, `dlb_mulMod_natToList`): `s = ⌊(p − 1)/D⌋`,
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2258:  have hinv : ∀ u : (ZMod p)ˣ, dlb_invMod (natToList n (u : ZMod p).val) (natToList n p) =
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2261:    rw [dlb_invMod_natToList (dlb_val_lt hpn u) hpn, ZMod.natCast_zmod_val, Units.val_inv_eq_inv_val]
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2268:  have hfix := dlb_fix_proj (NUPPT.inParam z) (dlb_zi z) (dlb_zα z) (dlb_invMod (dlb_zg z) (dlb_zp z))
+# hits: 14
+## Lagrange / interpolation at the machine level
+$ git grep -nilE 'lagrange|interpolat' 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib/Complexity TCSlib/Cryptography/Encoding TCSlib/Cryptography/CoinSampling
+# hits: 0
+## polynomial evaluation machines (Horner)
+$ git grep -niE 'horner|polyEval|evalPoly' 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/BooleanAnalysis/GaussianSpace/Hermite/Degree.lean:70:**Proof sketch.** Use Horner induction. Constants have degree zero, adding a
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/BooleanAnalysis/GaussianSpace/Hermite/Degree.lean:80:  refine Polynomial.recOnHorner p ?_ ?_ ?_
+# hits: 2
+## residues as words (ZMod .val to bits)
+$ git grep -nE 'Nat\.bits \(?[a-zA-Z]*\.val' 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib
+# hits: 0
+## product samplers / CoinSampler.pi consumers
+$ git grep -nE 'CoinSampler\.pi|piSampler|prodSampler' 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Basic.lean:37:* `CoinSampler.pi`, `.prod`: independent draws.
+# hits: 1
+## Scheme restriction / pullback of a scheme
+$ git grep -nE 'restrict|comap' 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib/Cryptography/SecretSharing TCSlib/Cryptography/MPC
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/SecretSharing/Defs.lean:131:**Proof sketch.** The privacy bijection `e` sending `sec`-coins to `sec'`-coins restricts to a
+# hits: 1
+## SamplesEfficiently reindexing (comap) in CoinSampling
+$ git grep -nE 'comap|reindex' 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib/Cryptography/CoinSampling/Contract.lean
+# hits: 0
+## Fin p ≃ ZMod p with explicit formulas
+$ git grep -nE 'Fin [a-z]+ ≃ ZMod|ZMod [a-z]+ ≃ Fin' 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Draws.lean:177:  let e : ZMod p ≃ Fin p :=
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/CoinSampling/Contract.lean:341:`b(κ) + κ` coins, through `Fin ⟦y⟧ = Fin q ≃ ZMod q` (`ZMod.finEquiv`).
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Cryptography/Hashing/FromDiscreteLog/Sampling.lean:47:def residueFinEquiv {m k : ℕ} [NeZero m] (h : m = k) : ZMod m ≃ Fin k :=
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/GraphTheory/Core/Matchings.lean:1717:   along `Fin n ≃ ZMod n` or use `Fin.add` directly — the latter is fine since
+# hits: 4
+## base-p digit decoding (finFunctionFinEquiv)
+$ git grep -n finFunctionFinEquiv 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/RandomBits.lean:225:  (Equiv.arrowCongr (Equiv.refl _) finTwoEquiv.symm).trans finFunctionFinEquiv
+5ed465f62e4ae0f93ded1a1ba49e807591b589eb:TCSlib/Complexity/Randomized/RandomBits.lean:230:  rw [bitsVal_ofFn, bitsEquiv, Equiv.trans_apply, finFunctionFinEquiv_apply]
+# hits: 2
+## Fermat inverse a^(p-2) lemmas
+$ git grep -nE 'pow_card_sub_two|\^ \(.*- 2\) = .*⁻¹' 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib
+# hits: 0
+## names EfficientScheme ShamirParams shamirEfficient shamirResharer at base
+$ git grep -nwE 'EfficientScheme|ShamirParams|shamirEfficient|shamirResharer' 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib audits
+# hits: 0

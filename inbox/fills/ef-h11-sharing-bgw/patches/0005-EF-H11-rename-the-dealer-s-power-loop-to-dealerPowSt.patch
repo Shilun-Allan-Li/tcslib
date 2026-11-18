@@ -1,0 +1,128 @@
+From 9fefdd3cc99064ec2bcecd93af9f4deda83484bb Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 18 Nov 2026 10:02:27 +0000
+Subject: [PATCH 5/6] EF-H11: rename the dealer's power loop to dealerPowStep
+
+Avoids shadowing Complexity.BinArith.powStep for consumers that open both
+namespaces (C10).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTmRxcZAFJ8Rgjvrhhc
+---
+ .../SecretSharing/ShamirEfficient.lean        | 39 ++++++++++---------
+ 1 file changed, 21 insertions(+), 18 deletions(-)
+
+diff --git a/TCSlib/Cryptography/SecretSharing/ShamirEfficient.lean b/TCSlib/Cryptography/SecretSharing/ShamirEfficient.lean
+index 5f38a92bd..ba1bd2b4e 100644
+--- a/TCSlib/Cryptography/SecretSharing/ShamirEfficient.lean
++++ b/TCSlib/Cryptography/SecretSharing/ShamirEfficient.lean
+@@ -752,19 +752,20 @@ theorem polyTimeComputable_recombineRaw : PolyTimeComputable recombineRaw := by
+ 
+ /-- **One round of the power loop** on `⟨p, acc⟩`: `acc := acc · p`, cut to `|acc| + |p|`
+ letters (which a product never exceeds). The body of a counted loop. -/
+-def powStep (d : List Bool) : List Bool :=
++def dealerPowStep (d : List Bool) : List Bool :=
+   pairEncode (pairFstD d) (PrefixByLength.take (pairEncode (pairSndD d ++ pairFstD d)
+     (BinArith.mul (pairEncode (pairSndD d) (pairFstD d)))))
+ 
+-/-- The defining equation of `powStep`. -/
+-theorem powStep_eq (d : List Bool) :
+-    powStep d = pairEncode (pairFstD d) (PrefixByLength.take (pairEncode (pairSndD d ++ pairFstD d)
++/-- The defining equation of `dealerPowStep`. -/
++theorem dealerPowStep_eq (d : List Bool) :
++    dealerPowStep d = pairEncode (pairFstD d) (PrefixByLength.take
++      (pairEncode (pairSndD d ++ pairFstD d)
+       (BinArith.mul (pairEncode (pairSndD d) (pairFstD d))))) := rfl
+ 
+ /-- `j` rounds of the power loop from `⟨p, 1⟩` give `⟨p, p^j⟩` (`BinArith.mul_pairEncode`;
+ the numeral of a product is at most as long as the two numerals together). -/
+-theorem iterate_powStep (p j : ℕ) :
+-    powStep^[j] (pairEncode (Nat.bits p) (Nat.bits 1)) =
++theorem iterate_dealerPowStep (p j : ℕ) :
++    dealerPowStep^[j] (pairEncode (Nat.bits p) (Nat.bits 1)) =
+       pairEncode (Nat.bits p) (Nat.bits (p ^ j)) := by
+   induction j with
+   | zero => rfl
+@@ -773,49 +774,50 @@ theorem iterate_powStep (p j : ℕ) :
+       rw [List.length_append, Nat.size_eq_bits_len, Nat.size_eq_bits_len, Nat.size_eq_bits_len,
+         Nat.size_le, pow_add]
+       exact Nat.mul_lt_mul'' (Nat.lt_size_self _) (Nat.lt_size_self _)
+-    rw [Function.iterate_succ_apply', ih, powStep_eq, pairFstD_pairEncode, pairSndD_pairEncode,
++    rw [Function.iterate_succ_apply', ih, dealerPowStep_eq, pairFstD_pairEncode,
++      pairSndD_pairEncode,
+       BinArith.mul_pairEncode, PrefixByLength.take_def, pairFstD_pairEncode, pairSndD_pairEncode,
+       List.take_of_length_le hlen, pow_succ]
+ 
+ /-- **The dealer's parameter word machine** on `⟨1^κ, π⟩`: `p^{k−1}` by the counted loop
+-`powStep` (host H16) over `1^{k−1}`, written as a numeral of width `b(κ) + 1`
++`dealerPowStep` (host H16) over `1^{k−1}`, written as a numeral of width `b(κ) + 1`
+ (`Encoding.BinaryArith.fromLEPoly`). Its output is the bucket sampler's parameter word
+ `Cryptography.CoinSampling.modulusWord b κ (p^{k−1})`. -/
+ def dealerWord (b : PolyExpr) (z : List Bool) : List Bool :=
+   Cryptography.Encoding.BinaryArith.fromLEPoly (b.add (.const 1)) (pairEncode (pairFstD z)
+-    (pairSndD (pairSndD (BinArith.forLoop powStep (pairEncode
++    (pairSndD (pairSndD (BinArith.forLoop dealerPowStep (pairEncode
+       ((pairFstD (pairSndD (pairSndD z))).drop 1)
+       (pairEncode (pairFstD (pairSndD z)) [true]))))))
+ 
+ /-- The defining equation of `dealerWord`. -/
+ theorem dealerWord_eq (b : PolyExpr) (z : List Bool) :
+     dealerWord b z = Cryptography.Encoding.BinaryArith.fromLEPoly (b.add (.const 1))
+-      (pairEncode (pairFstD z) (pairSndD (pairSndD (BinArith.forLoop powStep (pairEncode
++      (pairEncode (pairFstD z) (pairSndD (pairSndD (BinArith.forLoop dealerPowStep (pairEncode
+         ((pairFstD (pairSndD (pairSndD z))).drop 1)
+         (pairEncode (pairFstD (pairSndD z)) [true])))))) := rfl
+ 
+ /-- **The dealer's parameter word machine is polynomial-time**.
+ 
+-**Proof sketch.** `powStep` is a pairing of projections with `BinArith.mul` cut to a length
++**Proof sketch.** `dealerPowStep` is a pairing of projections with `BinArith.mul` cut to a length
+ (`polyTimeComputable_takePrefixByLength`); it keeps `p` and grows by at most `|p| + 2` per round,
+ so the counted loop is polynomial-time (`BinArith.polyTimeComputable_forLoop`,
+ `BinArith.forLoop_bound_of_ctx`); the counter is a projection and a `drop`, and the result is
+ written at width `b(κ) + 1` by `Encoding.BinaryArith.polyTimeComputable_fromLEPoly`. -/
+ theorem polyTimeComputable_dealerWord (b : PolyExpr) : PolyTimeComputable (dealerWord b) := by
+-  have hstep : PolyTimeComputable powStep :=
++  have hstep : PolyTimeComputable dealerPowStep :=
+     (polyTimeComputable_pairFstD.pairEncode (PolyTimeComputable.takeTo
+       (polyTimeComputable_pairSndD.append polyTimeComputable_pairFstD)
+       (BinArith.polyTimeComputable_mul.comp' (polyTimeComputable_pairSndD.pairEncode
+-        polyTimeComputable_pairFstD)))).congr fun d => (powStep_eq d).symm
+-  have hlen : ∀ d, (powStep d).length ≤ d.length + 2 * ((pairFstD d).length + 1) := by
++        polyTimeComputable_pairFstD)))).congr fun d => (dealerPowStep_eq d).symm
++  have hlen : ∀ d, (dealerPowStep d).length ≤ d.length + 2 * ((pairFstD d).length + 1) := by
+     intro d
+     have h1 := length_pair_components_le d
+     have h2 := length_take_pairEncode_le (pairSndD d ++ pairFstD d)
+       (BinArith.mul (pairEncode (pairSndD d) (pairFstD d)))
+     rw [List.length_append] at h2
+-    rw [powStep_eq, length_pairEncode]; omega
++    rw [dealerPowStep_eq, length_pairEncode]; omega
+   have hloop := BinArith.polyTimeComputable_forLoop hstep _ _
+-    (BinArith.forLoop_bound_of_ctx 2 (fun d => by rw [powStep_eq, pairFstD_pairEncode]) hlen)
++    (BinArith.forLoop_bound_of_ctx 2 (fun d => by rw [dealerPowStep_eq, pairFstD_pairEncode]) hlen)
+   exact ((Cryptography.Encoding.BinaryArith.polyTimeComputable_fromLEPoly _).comp'
+     (polyTimeComputable_pairFstD.pairEncode (polyTimeComputable_pairSndD.comp'
+       (polyTimeComputable_pairSndD.comp' (hloop.comp'
+@@ -850,7 +852,8 @@ theorem coe_coinModulus (b : PolyExpr) (κ : ℕ) (π : {π // shamirAdm b κ π
+ `Encoding.BinaryArith.toLE`), with the parameter word `p^{k−1}` computed by `dealerWord b`.
+ [PS10, Def 152.1] (`Share` is probabilistic polynomial-time)
+ 
+-**Proof sketch.** The parameter word: the power loop gives `p^{k−1}` (`iterate_powStep`), written
++**Proof sketch.** The parameter word: the power loop gives `p^{k−1}`
++(`iterate_dealerPowStep`), written
+ at width `b(κ) + 1`, which is `modulusWord b κ (p^{k−1})`. The draw: the residue sampler at the
+ modulus `p^{k−1}` (admissible: at most `2^{b(κ)}`) outputs `residueEnc`, the numeral of
+ `(finEquiv q).symm a` at width `b(κ) + 1`; `toLE` turns it into `Nat.bits` of the same value
+@@ -887,7 +890,7 @@ theorem dealerSamples_shamir (b : PolyExpr) :
+   simp only [pairFstD_pairEncode, pairSndD_pairEncode, ShamirParams.pairFstD_encode,
+     ShamirParams.pairFstD_pairSndD_encode]
+   rw [List.drop_one, List.tail_replicate, ← Nat.one_bits, BinArith.forLoop_pairEncode,
+-    List.length_replicate, iterate_powStep, pairSndD_pairEncode, pairSndD_pairEncode,
++    List.length_replicate, iterate_dealerPowStep, pairSndD_pairEncode, pairSndD_pairEncode,
+     Cryptography.Encoding.BinaryArith.fromLEPoly_pairEncode, bitsVal_bits,
+     Cryptography.CoinSampling.modulusWord_eq, List.length_replicate, PolyExpr.eval_add,
+     PolyExpr.eval_const,
+-- 
+2.43.0
+

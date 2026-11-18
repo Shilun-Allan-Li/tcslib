@@ -1,0 +1,22 @@
+115c115
+<   refine hL _ _ _ fun j hj => ?_
+---
+>   refine (Scheme.localReconstruct_iff S).1 hL _ _ _ fun j hj => ?_
+122c122
+<   intro A f g hfg
+---
+>   refine (Scheme.localReconstruct_iff _).2 fun A f g hfg => ?_
+132c132
+<   intro A hA sec r
+---
+>   refine (Scheme.correct_iff _ Γ').2 fun A hA sec r => ?_
+135c135
+<   exact hS _ (hΓ A hA) sec (ε r)
+---
+>   exact (Scheme.correct_iff S Γ).1 hS _ (hΓ A hA) sec (ε r)
+143,144c143,144
+<   intro B hB sec sec'
+<   obtain ⟨σ, hσ⟩ := hS _ (hΓ B hB) sec sec'
+---
+>   refine (Scheme.perfectPrivacy_iff _ Γ').2 fun B hB sec sec' => ?_
+>   obtain ⟨σ, hσ⟩ := (Scheme.perfectPrivacy_iff S Γ).1 hS _ (hΓ B hB) sec sec'

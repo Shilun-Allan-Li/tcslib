@@ -1,0 +1,42 @@
+From 3045b0a06362803b3e1231462da011acc165c95d Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 18 Nov 2026 09:58:01 +0000
+Subject: [PATCH 4/6] EF-H11: readers partyEmb_apply and coinModulus_eq
+
+Definitions land with their lemmas (style lint check 8).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTmRxcZAFJ8Rgjvrhhc
+---
+ TCSlib/Cryptography/SecretSharing/ShamirEfficient.lean | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/TCSlib/Cryptography/SecretSharing/ShamirEfficient.lean b/TCSlib/Cryptography/SecretSharing/ShamirEfficient.lean
+index d395929d4..5f38a92bd 100644
+--- a/TCSlib/Cryptography/SecretSharing/ShamirEfficient.lean
++++ b/TCSlib/Cryptography/SecretSharing/ShamirEfficient.lean
+@@ -135,6 +135,10 @@ def partyEmb (π : ShamirParams) : Fin π.n ↪ Party (ZMod π.p) :=
+         at this
+       exact Fin.ext (by omega)⟩
+ 
++/-- `partyEmb π i = ⟨i + 1, _⟩`. -/
++theorem partyEmb_apply (π : ShamirParams) (i : Fin π.n) :
++    ((partyEmb π i : Party (ZMod π.p)) : ZMod π.p) = (((i : ℕ) + 1 : ℕ) : ZMod π.p) := rfl
++
+ /-- `label (partyEmb π i) = i + 1`. -/
+ theorem label_partyEmb (π : ShamirParams) (i : Fin π.n) :
+     label (partyEmb π i) = (((i : ℕ) + 1 : ℕ) : ZMod π.p) := rfl
+@@ -832,6 +836,10 @@ def coinModulus (b : PolyExpr) (κ : ℕ) (π : {π // shamirAdm b κ π}) :
+     Cryptography.CoinSampling.BoundedModulus b κ :=
+   ⟨⟨π.1.p ^ (π.1.k - 1), pow_pos π.1.prime.pos _⟩, π.2⟩
+ 
++/-- `coinModulus b κ π = ⟨p^{k−1}, _⟩`. -/
++theorem coinModulus_eq (b : PolyExpr) (κ : ℕ) (π : {π // shamirAdm b κ π}) :
++    coinModulus b κ π = ⟨⟨π.1.p ^ (π.1.k - 1), pow_pos π.1.prime.pos _⟩, π.2⟩ := rfl
++
+ /-- `coinModulus b κ π = p^{k−1}`. -/
+ theorem coe_coinModulus (b : PolyExpr) (κ : ℕ) (π : {π // shamirAdm b κ π}) :
+     ((coinModulus b κ π).1 : ℕ) = π.1.p ^ (π.1.k - 1) := rfl
+-- 
+2.43.0
+

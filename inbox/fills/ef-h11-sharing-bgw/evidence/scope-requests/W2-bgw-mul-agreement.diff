@@ -1,0 +1,10 @@
+213a214,222
+> /-- (Scope-request probe) The multiplication gate's full agreement with `bgwEval_mul`. -/
+> theorem recombineRaw_bgwEval_mul (a b : Circuit (ZMod p) ι) (l : List (Party (ZMod p)))
+>     (hl : l.Nodup) (hlA : ∀ i, i ∈ l ↔ i ∈ A) :
+>     recombineRaw (pairEncode (Nat.bits p) (BinArith.encWords (l.map fun i =>
+>       pairEncode (resWord (label i))
+>         (resWord (R.reshare i ((bgwEval R A inp a * bgwEval R A inp b) i) j))))) =
+>       resWord (bgwEval R A inp (a.mul b) j) := by
+>   rw [recombineRaw_reshare R A j _ l hl hlA, bgwEval_mul, degreeReduce_apply, recombine_eq]
+> 
