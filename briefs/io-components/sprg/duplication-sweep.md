@@ -60,10 +60,12 @@ sparse matrix factorization; a mod-p (non-dyadic) matrix-vector machine.
 | `StatClose`, `distAdv_le_of_statClose`, `rejectionSample`, `statClose_getD_of_uniform_of_some`, `one_sub_inv_pow_le_half` | `Asymptotic/Sampling.lean:126, 278, 732, 913, 828` | **X** for sampling (S2: no approximate samplers); `one_sub_inv_pow_le_half` R |
 | `InformationTheory.statDist`, `statDist_triangle`, `FinDist`, `FinDist.map`, `distAdv_le_statDist`, `abs_sum_sub_le_statDist` | `InformationTheory/StatisticalDistance.lean:46, 60`; `InformationTheory/FinDist.lean:52, 105`; `Foundations/Experiments.lean:173, 152` | R (not needed on the agree-lemma route; never re-derive) |
 
-## C. Negligibility
+## C. Negligibility and subexponential smallness
 
 | Name | File:line | Use |
 |---|---|---|
+| **The Foundations/Subexponential API** (Seyoon's ruling, records `a2bf4bac`): the smallness predicate (working name `SubexpSmall c μ`, eventually \|μ n\| ≤ 2^(−n^c)), the predicate-level helper with the constant before the adversary (working name `SubexpHard`), ⇒ `Negligible`, closure under sums, polynomial factors and constant multiples, re-indexing by a polynomial parameter | `TCSlib/Cryptography/Foundations/Subexponential.lean` on branch `foundations/subexp` (= `<BASE>`); names fixed by that PR | **MR**: every subexponential statement and step of the job goes through it; **the job defines no subexponential notion of its own** |
+| `Randomness.subexpBound` (⌈2^(n^ε)⌉ as a time bound) | `Randomness/Derandomization.lean:74` | **X** (a running-time bound for derandomization; subexponential-time adversaries are out of scope) |
 | `Negligible`, `negligible_iff`, `.mono`, `.add`, `.mul`, `.mul_pow`, `.const_mul`, `negligible_two_pow_neg`, `negligible_zero`, `.comp_of_le` | `Foundations/Negligible.lean:57, 62, 74, 86, 110, 126, 143, 153, 169, 237` | **MR** (`comp_of_le` moves the PRG term along n κ ≥ κ) |
 | `Negligible.polyExpr_mul` | `Asymptotic/ReductionSupport.lean:267` | **MR** (the κ · ε_LPN term) |
 
@@ -122,6 +124,7 @@ sparse matrix factorization; a mod-p (non-dyadic) matrix-vector machine.
 | `Real.add_one_le_exp`, `Real.one_sub_div_pow_le_exp_neg`, `Real.exp_one_lt_d9`, `Real.exp_one_gt_d9` | `Exponential.lean:635, 646`; `Mathlib/Analysis/Complex/ExponentialBounds.lean:33, 30` | **MR** |
 | `Real.tendsto_pow_mul_exp_neg_atTop_nhds_zero`, `Real.isLittleO_pow_exp_atTop`, `isLittleO_pow_exp_pos_mul_atTop` | `Mathlib/Analysis/SpecialFunctions/Exp.lean:259, 363`; `…/Pow/Asymptotics.lean:304` | **MR** ("poly(κ)·e^{−κ} ≤ 2^{−κ}/4 eventually") |
 | `Real.rpow_natCast`, `Nat.floor` / `Nat.log` API | Mathlib `Analysis/SpecialFunctions/Pow/Real.lean:58`, `Data/Nat/Log.lean` | **MR** (C6, C8) |
+| `Nat.findGreatest` (+ `Nat.findGreatest_eq_iff`, `Nat.findGreatest_spec`) | Mathlib `Data/Nat/Find.lean` | **MR** for `κOf` (C11), with a reader `κOf (κ ^ E) = κ` |
 | Bertrand: `Nat.exists_prime_lt_and_le_two_mul` (alias `Nat.bertrand`) | `Mathlib/NumberTheory/Bertrand.lean:217, 235` | **MR** (the prime schedule of `exists_sprg`) |
 | `CharP.natCast_injOn_Iio` | `Mathlib/Algebra/CharP/Basic.lean:55` | R (casting 0/1 and small naturals into ℤ_p) |
 

@@ -8,8 +8,8 @@ are binding.
 
 | Pin | Value |
 |---|---|
-| Campaign plan | `IOComponentsPlan.md` at records `0fec25892d5aea3acde4908d94451f24b3c23b79` (rulings on rounding, sampling, degree) |
-| Lean base | `<BASE>` (maintainer fills: tip of `cryptography/pass-shelat-ch2-4` at dispatch) |
+| Campaign plan | `IOComponentsPlan.md` at records `0fec25892d5aea3acde4908d94451f24b3c23b79` (rulings on rounding, sampling, degree) and `a2bf4bac0d545fce1fcb4014ef12b44f9651a658` (subexponential security) |
+| Lean base | `<BASE>` (maintainer fills: the head of branch `foundations/subexp`, the owner PR adding `TCSlib/Cryptography/Foundations/Subexponential.lean`; or the records tip once it has merged) |
 | Source | [JLS26] PDF, 30 pages, SHA-256 `bb357e8d01cc0932899453f3d877b67b58f33253eabf2564854f8f38721e2f3d`, CC BY 4.0; PDF page *k* is article page 1:*k* (checked on pp. 8–21) |
 | Content read | §2 (pp. 8–10: Def 2.1, 2.3, the law 𝒟_r(p)), §3 (pp. 10–11: Defs 3.1–3.4, Remarks 3.1–3.2), §4 (pp. 11–21: overview, Construction, Claim 4.1, Prop 4.1, Claim 4.2, Lemma 4.2), §5 (p. 21: Theorem 5.1, the consumer) |
 
@@ -38,6 +38,27 @@ are binding.
 - **S6 Out of scope** (plan): FE ⇒ iO, bilateral DLIN/LWE, NC⁰ PRG candidates, OWF ⇒ PRG, and the
   link "an ordinary PRG is an sPRG" to `Pseudorandom/Generators/Asymptotic/Defs` (S2-B owns that
   file; after Stage 2). The overview's warm-up cases (pp. 12–14) are motivation only.
+- **S7 Subexponential security** (Seyoon, 2026-11-18, records `a2bf4bac`). An in-house file
+  `TCSlib/Cryptography/Foundations/Subexponential.lean` (branch `foundations/subexp`, the job's
+  base) provides **the Foundations/Subexponential API**: a smallness predicate (working name
+  `SubexpSmall c μ`: eventually `|μ n| ≤ 2^(−n^c)`), a predicate-level helper with the constant
+  quantified **before** the adversary (working name `SubexpHard adv := ∃ c > 0, ∀ D, SubexpSmall c
+  (adv D)`), the implication to `Negligible`, closure under sums, polynomial factors and constant
+  multiples, and re-indexing by a polynomial parameter. Exact names are fixed by that PR; read them
+  at `<BASE>`. **The job must reuse this API and must not define its own subexponential notion**
+  (a named wrapper such as `SPRG.SubexpSecure` is allowed only as a one-line definition whose body
+  is the API predicate applied to the job's advantage function, with its `_iff` reader).
+- **S8 Explicit slack** (same ruling). The core theorems are **explicit advantage inequalities
+  between NUPPT machines with explicit slack terms**, not "∃ σ, Negligible σ": for every sPRG
+  adversary A there are machines B, B′ and κ₀ with, for all κ ≥ κ₀,
+  `adv_sPRG A κ ≤ 2κ·adv_LPN B (ℓ κ) + adv_PRG B′ (n κ) + 2·2^(−κ)`. The LPN advantage is
+  taken in LPN's own parameter, its dimension ℓ = κ^E (C11), and the PRG's in its seed length n.
+  Two corollaries follow: the negligible version (Theorem 4.1, polynomial security) and the
+  subexponential version (Theorem 4.1's "if both assumptions are subexponentially secure, the sPRG
+  is subexponentially secure"), the latter through the API's re-indexing lemma along ℓ(κ) and n(κ).
+  The random-hybrid-index trick is allowed (§4.8).
+- **S9 Adversaries**: non-uniform PPT only. Subexponential-*time* adversaries are out of scope;
+  "subexponential" means advantage 2^(−κ^c) against NUPPT (JLS26 Def 2.1), as the API states it.
 
 ## 1. Source map (paper → Lean, proposed names)
 
@@ -46,14 +67,14 @@ Namespace root `TCSlib.Cryptography.Obfuscation.StructuredSeed` (below `SS.`). T
 
 | Paper | Page | Lean (proposed) | File | M |
 |---|---|---|---|---|
-| Def 2.1 (ε-indistinguishability), Remark 2.1 | 8–9 | the library's `Games.advantage` + `Negligible` (no new definition) | — | — |
+| Def 2.1 (ε-indistinguishability), Remark 2.1 | 8–9 | the library's `Games.advantage` + `Negligible`, and the Foundations/Subexponential API for the subexponential case (no new definition) | — | — |
 | 𝒟_r(p) (0 w.p. 1 − r, else uniform ℤ_p) | 9 | `SS.lpnNoise p W : LWE.Noise` (r = 1/W) and its law theorem `lpnNoise_law` | `LPN` | 0/1 |
-| Def 2.3 (δ-LPN_𝔽) | 9–10 | `SS.LPNFamily`, `LPNFamily.toLWE`, `LPNFamily.Assumption` (Q-S1) | `LPN` | 0 |
+| Def 2.3 (δ-LPN_𝔽) | 9–10 | `SS.LPNFamily` (indexed by the secret dimension ℓ, Def 2.3's index), `LPNFamily.toLWE`, `LPNFamily.adv`, `LPNFamily.Assumption`; subexponential hardness = the API predicate on `adv` (S7, Q-S1) | `LPN` | 0 |
 | Def 3.1 (sPRG syntax) | 10 | `SS.SPRG` | `Defs` | 0 |
 | Remark 3.1 (polynomial stretch), Remark 3.2 | 10 | `SPRG.seedBits`, `SPRG.HasPolyStretch` | `Defs` | 0 |
-| Def 3.2 (security) | 10 | `SPRG.game`, `SPRG.Secure` | `Defs` | 0 |
+| Def 3.2 (security), Def 2.1 | 8–10 | `SPRG.game`, `SPRG.adv`, `SPRG.Secure` (negligible); subexponential = the API predicate on `SPRG.adv` (S7) | `Defs` | 0 |
 | Def 3.3 (complexity (ℂ, deg d)) | 10 | `SPRG.HasComplexity dPub dPriv` (ℂ = degree-dPub polynomials; Q-S4), `pubDegree`, `privDegree` | `Defs`, `Degree` | 0 |
-| Def 3.4 (Boolean PRG, multilinear degree, locality) | 11 | `SS.BoolPRG`, `BoolPRG.Secure`, `BoolPRG.MultilinearRep`, `MultilinearRep.HasLocality`, `BoolPRG.HasStretch` | `BoolPRG` | 0 |
+| Def 3.4 (Boolean PRG, multilinear degree, locality) | 11 | `SS.BoolPRG`, `BoolPRG.adv`, `BoolPRG.Secure`, `BoolPRG.MultilinearRep`, `MultilinearRep.HasLocality`, `BoolPRG.HasStretch` | `BoolPRG` | 0 |
 | Construction: parameters | 15 | `SS.Params` and its derived quantities (§3) | `Params` | 0 |
 | IdSamp′ (φ_bkt, φ_ind, A) | 15 | `Params.idSamp'`, `Buckets.indexMap` | `Samplers`, `Buckets` | 0/1 |
 | 1SdSamp (box) | 16 | `Params.oneSd` (deterministic core), `badSet`, `errSet`, `corr`, `bucketMatrix` | `Samplers` | 0 |
@@ -65,8 +86,8 @@ Namespace root `TCSlib.Cryptography.Obfuscation.StructuredSeed` (below `SS.`). T
 | Claim 4.1 (stretch) | 18 | `jls_seedBits_le`, `jls_hasPolyStretch` | `Stretch` | 2 |
 | Claim 4.2 (Pr[err = 1] ≤ 2^−λ) | 19–21 | `claim42` | `Claim42`, `Claim42/Load` | 3 |
 | Lemma 4.2 (D₀ ≈ D_{λ+1}) | 19 | `lemma42` (quantitative, with machines) | `Hybrids`, `Reductions/*` | 4 |
-| Prop 4.1 (H₀ ≈ H₃, γ = O(λε)) | 18–19 | `prop41` (quantitative, with machines) | `Hybrids` | 4 |
-| Theorem 4.1 | 11 | `theorem41`, `exists_sprg` (+ `exists_sprg_subexp` if Q-S7 A) | `Security` | 5 |
+| Prop 4.1 (H₀ ≈ H₃, γ = O(λε)) | 18–19 | `prop41`: the core explicit-slack inequality (S8) | `Hybrids` | 4 |
+| Theorem 4.1 (both clauses) | 11 | `theorem41` (negligible), `theorem41_subexp` (subexponential), `exists_sprg`, `exists_sprg_subexp` | `Security` | 5 |
 
 ## 2. Module layout
 
@@ -95,10 +116,10 @@ Namespace root `TCSlib.Cryptography.Obfuscation.StructuredSeed` (below `SS.`). T
 
 | File (under `Obfuscation/StructuredSeed/`) | Content | Lines |
 |---|---|---|
-| `LPN.lean` | `lpnNoise`, `lpnNoise_law`, `LPNFamily`, `toLWE`, `Assumption` + readers | 150–250 |
-| `BoolPRG.lean` | `BoolPRG`, `game`, `Secure`, `HasStretch`, `MultilinearRep`, `HasLocality` + readers | 200–320 |
+| `LPN.lean` | `lpnNoise`, `lpnNoise_law`, `LPNFamily`, `toLWE`, `adv`, `Assumption` + readers | 150–250 |
+| `BoolPRG.lean` | `BoolPRG`, `game`, `adv`, `Secure`, `HasStretch`, `MultilinearRep`, `HasLocality` + readers | 200–320 |
 | `Degree.lean` | `pubDegree`, `privDegree`; `weightedTotalDegree` closure lemmas (§4.4) | 150–280 |
-| `Defs.lean` | `SPRG`, `challengeStr`, `game`, `Secure`, `HasComplexity`, `seedBits`, `HasPolyStretch` (+ `SubexpSecure` if Q-S7 A) | 250–400 |
+| `Defs.lean` | `SPRG`, `challengeStr`, `game`, `adv`, `Secure`, `HasComplexity`, `seedBits`, `HasPolyStretch` (subexponential: the API predicate, S7) | 250–400 |
 | `Params.lean` | `Params`, ℓ, D, n, m, w, W, t, √c, c, B, Γ (§3); side-condition lemmas | 200–350 |
 | `Buckets.lean` | `indexMap` (φ_ind from φ_bkt), overfull test, injectivity within buckets | 200–320 |
 | `SparseFactor.lean` | `sparseFactor`, `sparseFactor_mul` | 150–260 |
@@ -110,18 +131,19 @@ Namespace root `TCSlib.Cryptography.Obfuscation.StructuredSeed` (below `SS.`). T
 | `Claim42.lean` | Cond₁, Cond₂, Cond₃, independence over k, `claim42` | 300–500 |
 | `Hybrids.lean` | games H₀–H₃ and D_i, statistical hops, `lemma42`, `prop41` | 350–550 |
 | `Reductions/Encode.lean` | challenge strings, mod-p mat-vec on encodings (§4.8), `PolyTimeComputable` | 300–550 |
-| `Reductions/LPNHybrid.lean` | the LPN hybrid machine, run lemma, hardwired advice | 300–500 |
-| `Reductions/PRG.lean` | the PRG machine (reparametrized), run lemma | 200–350 |
-| `Security.lean` | `theorem41`, `exists_sprg` (+ subexponential corollary) | 200–400 |
+| `Reductions/LPNHybrid.lean` | the LPN hybrid machine (reparametrized ℓ ↦ κ), run lemma, hardwired advice, residue re-encoding | 300–550 |
+| `Reductions/PRG.lean` | the PRG machine (reparametrized n ↦ κ), run lemma | 200–350 |
+| `Security.lean` | `jls_secure`, `jls_subexpSecure`, `theorem41`, `theorem41_subexp`, `exists_sprg`, `exists_sprg_subexp` (both corollaries through the Foundations/Subexponential API) | 200–400 |
 | `../StructuredSeed.lean`, `../../Obfuscation.lean` | facades | 70–100 |
-| **Total** | | **≈ 4,700–7,800** (central ≈ 6,000) |
+| **Total** | | **≈ 4,700–7,900** (central ≈ 6,000) |
 
 The plan's estimate was 4–7k. Split a file before it passes ~900 lines; never merge files to save
 headers.
 
 ### 2.3 Imports (precise, no `import Mathlib`)
 
-Expected TCSlib imports: `Games.Probability`, `Games.Advantage`, `Games.Hopping`,
+Expected TCSlib imports: `Foundations.Subexponential` (the API, S7; on `<BASE>`),
+`Games.Probability`, `Games.Advantage`, `Games.Hopping`,
 `Games.OracleComp` (for `AllOutputs`), `Games.Bridges.Experiments`, `Foundations.Probability`,
 `Foundations.Negligible`, `Foundations.Experiments`, `Asymptotic.Adversary`,
 `Asymptotic.ReductionSupport`, `Asymptotic.UniversalLemmas` (for `exists_reparam_pre_post_adv`),
@@ -142,6 +164,7 @@ Expected TCSlib imports: `Games.Probability`, `Games.Advantage`, `Games.Hopping`
 
 | Module the job imports | Stage 2 rows | Kind of touch |
 |---|---|---|
+| `Foundations/Subexponential.lean` (new, branch `foundations/subexp`) | none (not in `scope.tsv`; an owner PR outside Stage 2) | — (names fixed by that PR; read at `<BASE>`) |
 | `Games/Probability.lean` | S2-DL-16 (J0): adds `ProbComp.mul_prob_le_expect` | **additive** (new declaration, CS1-Q9) |
 | `Authentication/Signatures/Lamport/Averaging.lean` | S2-RP-102: `expect_favourable_of_success` re-proved from `mul_prob_le_expect` | proof-level; statement and name kept |
 | `Asymptotic/UniversalLemmas.lean` | S2-SL-231/232: seal fixes in `exists_reparam_pre_post(_adv)` | proof-level; statements unchanged |
@@ -168,13 +191,15 @@ Paper symbols → Lean (all ℕ unless stated), for a fixed `P : Params` at secu
 | C1 | indexing | **One security parameter κ.** The sPRG of Defs 3.1–3.3 is a family indexed by κ alone; the paper's input-length index n becomes the schedule n(κ) below, fixed by the construction's exponent `E`. | Def 3.1's (λ, n) family with a fixed poly(λ) slack (Remark 3.2) needs n to be rounded to a D-th power and ℓ^{δ/2} to an integer for *every* n; a κ-indexed family with a polynomial schedule avoids every such rounding. "n a sufficiently large polynomial in λ" becomes "E ≥ E₀(d, δ, τ)" (C10) for the stretch, while security holds for every E ≥ 1 (C9), so a consumer still picks n as large a polynomial as it wants. |
 | C2 | p | `p κ` prime with `2 ^ κ < p κ ≤ 2 ^ (κ + 1)`: a (κ + 1)-bit prime; residue width `κ + 1` | the paper's "λ-bit prime" with λ = κ + 1 (no λ-bit prime exists for λ ≤ 1); `Nat.exists_prime_lt_and_le_two_mul` gives one for the existential corollary. Security never uses the lower bound; Claim 4.1 uses the width. |
 | C3 | D | `D := (d + 1) / 2` (= ⌈d/2⌉); assume `1 ≤ d` | d = 0 makes the PRG constant (vacuous) and n = 1. |
-| C4 | ℓ, n | `ℓ κ := κ ^ E` (`1 ≤ E`), `n κ := ℓ κ ^ D` | ℓ = n^{1/⌈d/2⌉} exactly; n ≥ κ; λ ↦ ℓ polynomially related (the LPN family is indexed by κ, Q-S1). |
+| C4 | ℓ, n | `ℓ κ := κ ^ E` (`1 ≤ E`), `n κ := ℓ κ ^ D` | ℓ = n^{1/⌈d/2⌉} exactly; n ≥ κ; ℓ and n are polynomial in κ and ≥ κ, which is what the API's re-indexing needs (S8). |
 | C5 | m | `m κ := G.outLen (n κ)` (the PRG's own length; `HasStretch τ` gives m ≥ n^τ) | no truncation lemma needed. |
 | C6 | ℓ^{δ/2}, ℓ^δ, r | `w κ := max 1 ⌊(ℓ κ : ℝ) ^ (δ / 2)⌋₊`, `W κ := w κ ^ 2`; noise rate `r := 1 / W` | one integer carries ℓ^{δ/2} and ℓ^δ, so √c is an integer by construction; `W ≤ ℓ^δ` gives `r ≥ ℓ^{−δ}`: the assumed LPN problem is **at least as noisy** as Def 2.3's (rounding in the safe direction); `W ≥ ℓ^δ/4` once ℓ^{δ/2} ≥ 2, so E|BAD| ≤ c_loc·m/W stays O(m ℓ^{−δ}). The noise law is the finite law `lpnNoise p W` (S2). |
 | C7 | t, √c, c | `t κ := κ`, `rc κ := t κ * w κ` (√c), `cap κ := rc κ ^ 2` (c = t²W) | c is a perfect square by construction; the paper's capacity c is renamed `cap` (Def 3.4's locality is `cLoc`), removing the paper's double use of "c". |
 | C8 | B, Γ | `B κ := max 1 ((m κ * t κ + W κ - 1) / W κ)` (⌈mt/W⌉, at least 1); `Γ κ := m κ * Nat.log 2 (n κ) / W κ` (⌊m log₂ n / W⌋) | B ≥ 1 keeps `Fin m → Fin B` inhabited; Γ ≤ B ⇔ log₂ n ≤ t (side condition). |
 | C9 | side conditions | stated as **theorems**, eventually in κ: `Γ ≤ B`, `4 * cLoc ≤ Nat.log 2 (n κ)`, `κ ≤ n κ` (C4), B ≤ poly(κ); `claim42` is "∃ κ₀, ∀ κ ≥ κ₀" | log₂ n = E·D·log₂ κ grows, and is ≤ κ eventually; the paper's "for sufficiently large λ" made explicit. |
 | C10 | stretch exponent | `E₀ d δ τ := ⌊max (10 / δ) (5 / (τ - 1))⌋₊ + 1` (proposed; confirm in M2) | Claim 4.1's bound seedBits ≤ C·κ⁵·(n + m/w) (the paper's λ⁵ factor); κ⁵m/w ≤ m^{1/τ'} for some τ' > 1 iff Eδ/2 > 5 (m ≤ poly(n)), and κ⁵n ≤ m^{1/τ'} for some τ' > 1 iff E·D·(τ − 1) > 5 (m ≥ n^τ). A finer count (κ²n for the public part) allows a smaller E₀; any change is disclosed (E is a free schedule parameter). |
+
+| C11 | the LPN family | **Indexed by its own dimension ℓ** (Def 2.3's index; S8). At every ℓ: `κOf ℓ := Nat.findGreatest (· ^ E ≤ ℓ) ℓ` (so `κOf (κ ^ E) = κ`, a reader), `samples ℓ := ℓ ^ D`, `modulus ℓ := p (κOf ℓ)`, `noiseDen ℓ := (max 1 ⌊ℓ^{δ/2}⌋₊) ^ 2`, residue width `ℓ + 1` | The construction only meets ℓ = κ^E, where every value equals the sPRG's (same prime, same W). `LWE.Family` needs a `PolyExpr` width; ℓ + 1 ≥ κOf ℓ + 1 is one, so the LWE challenge carries (ℓ+1)-bit residues and the hop machine re-encodes them at the sPRG's κ + 1 bits (one `PolyTimeComputable` map). This is Def 2.3 with η_n = D, η_p = 1/E through the prime schedule, and rate 1/W (C6). |
 
 **Disclosed alternative (not adopted).** Def 3.1 literally: a two-parameter family (λ, n) with
 `seedBits λ n ≤ n · q(λ)` for a fixed polynomial q and `outLen λ n ≥ n^{τ'}`, with the construction
@@ -203,29 +228,29 @@ theorem lpnNoise_law (p W : ℕ) [NeZero p] [NeZero W] (z : ZMod p) :
     uprob (fun c => ((lpnNoise p W).sample c : ZMod p) = z) =
       if z = 0 then 1 - 1 / W + 1 / (W * p) else 1 / (W * p)
 
-/-- A κ-indexed LPN-over-𝔽_p family [JLS26, Definition 2.3]: secret length ℓ(κ), n(κ) samples,
-a prime modulus p(κ), noise 𝒟_{1/W(κ)}(p(κ)). -/
+/-- An LPN-over-𝔽_p family [JLS26, Definition 2.3], indexed by the secret dimension ℓ (the
+definition's own parameter): n(ℓ) samples, a prime modulus p(ℓ), noise 𝒟_{1/W(ℓ)}(p(ℓ)). -/
 structure LPNFamily where
-  dimension samples modulus noiseDen : ℕ → ℕ
-  modulus_prime : ∀ κ, (modulus κ).Prime
-  noiseDen_pos : ∀ κ, 0 < noiseDen κ
-  dimensionBound samplesBound residueBits : PolyExpr
-  dimension_le : ∀ κ, dimension κ ≤ dimensionBound.eval κ
-  samples_le : ∀ κ, samples κ ≤ samplesBound.eval κ
-  modulus_le_pow : ∀ κ, modulus κ ≤ 2 ^ residueBits.eval κ
+  samples modulus noiseDen : ℕ → ℕ
+  modulus_prime : ∀ ℓ, (modulus ℓ).Prime
+  noiseDen_pos : ∀ ℓ, 0 < noiseDen ℓ
+  samplesBound residueBits : PolyExpr
+  samples_le : ∀ ℓ, samples ℓ ≤ samplesBound.eval ℓ
+  modulus_le_pow : ∀ ℓ, modulus ℓ ≤ 2 ^ residueBits.eval ℓ
 
-def LPNFamily.toLWE (F : LPNFamily) : LWE.Family          -- noise κ := lpnNoise …
-def LPNFamily.Assumption (F : LPNFamily) : Prop := LWE.DLWEAssumption F.toLWE
+def LPNFamily.toLWE (F : LPNFamily) : LWE.Family   -- dimension ℓ := ℓ; noise ℓ := lpnNoise …
+noncomputable def LPNFamily.adv (F : LPNFamily) (D : NUPPT) (ℓ : ℕ) : ℝ := F.toLWE.advantageAt D ℓ
+def LPNFamily.Assumption (F : LPNFamily) : Prop := ∀ D : NUPPT, Negligible (F.adv D)
 theorem LPNFamily.assumption_iff (F : LPNFamily) :
-    F.Assumption ↔ ∀ D : NUPPT, Negligible fun κ => F.toLWE.advantageAt D κ
+    F.Assumption ↔ LWE.DLWEAssumption F.toLWE
+-- subexponential hardness in the dimension: the API predicate applied to `F.adv` (S7)
 ```
 
 Docstring deviations: (i) `LWE`'s orientation `(A, A s + e)` with `A ∈ ℤ_p^{n×ℓ}` is the transpose
 of the paper's `(A, s A + e)`, `A ∈ ℤ_p^{ℓ×n}` (a bijection of the uniform matrix; the
-construction stores the n × ℓ matrix); (ii) one κ-indexed schedule instead of Def 2.3's
-"∀ η_p, ∀ p(ℓ), ∀ η_n" (Q-S1); (iii) rate 1/W (C6). The construction's family is
-`P.lpnFamily : LPNFamily` with `dimension := ℓ`, `samples := n`, `modulus := p`,
-`noiseDen := W`, `residueBits := .var + 1`.
+construction stores the n × ℓ matrix); (ii) one schedule instead of Def 2.3's
+"∀ η_p, ∀ p(ℓ), ∀ η_n" (Q-S1); (iii) rate 1/W (C6); (iv) residue width ℓ + 1 (C11). The
+construction's family `P.lpnFamily` is C11's (`lpnFamilyOf d δ E p` for `exists_sprg`).
 
 ### 4.2 Boolean PRG with locality and multilinear degree (Def 3.4)
 
@@ -248,8 +273,10 @@ noncomputable def BoolPRG.game (G : BoolPRG) (D : NUPPT) (real : Bool) (n : ℕ)
   (sample (Fin (G.outLen n) → Bool)).bind fun w => (sample (D.Coins n)).bind fun ρ =>
   .pure (D.distinguisherL n
     (pairEncode (G.encIdx n I) (List.ofFn (if real then G.eval n I σ else w))) ρ)
-def BoolPRG.Secure (G : BoolPRG) : Prop :=
-  ∀ D : NUPPT, Negligible fun n => advantage (G.game D true n) (G.game D false n)
+noncomputable def BoolPRG.adv (G : BoolPRG) (D : NUPPT) (n : ℕ) : ℝ :=
+  advantage (G.game D true n) (G.game D false n)
+def BoolPRG.Secure (G : BoolPRG) : Prop := ∀ D : NUPPT, Negligible (G.adv D)
+-- subexponential security in the seed length: the API predicate applied to `G.adv` (S7)
 def BoolPRG.HasStretch (G : BoolPRG) (τ : ℝ) : Prop := ∀ n, (n : ℝ) ^ τ ≤ G.outLen n
 
 /-- Multilinear degree-d representation over ℤ, carried as data (no uniqueness theorem). -/
@@ -303,8 +330,10 @@ noncomputable def SPRG.game (S : SPRG) (D : NUPPT) (real : Bool) (κ : ℕ) : Pr
   (S.idSamp κ).bind fun I => (S.sdSamp κ I).bind fun sd =>
   (sample (Fin (S.outLen κ) → Bool)).bind fun r => (sample (D.Coins κ)).bind fun ρ =>
   .pure (D.distinguisherL κ (S.challengeStr κ I sd.1 (if real then S.eval κ I sd else r)) ρ)
-def SPRG.Secure (S : SPRG) : Prop :=
-  ∀ D : NUPPT, Negligible fun κ => advantage (S.game D true κ) (S.game D false κ)
+noncomputable def SPRG.adv (S : SPRG) (D : NUPPT) (κ : ℕ) : ℝ :=
+  advantage (S.game D true κ) (S.game D false κ)
+def SPRG.Secure (S : SPRG) : Prop := ∀ D : NUPPT, Negligible (S.adv D)
+-- subexponential security (JLS26 Def 2.1, NUPPT adversaries): the API predicate on `S.adv` (S7)
 
 /-- Definition 3.3 for ℂ = degree-dPub polynomials, composite form: for every index there are
 output polynomials over (public ⊕ private) variables, of public degree ≤ dPub and private degree
@@ -431,33 +460,49 @@ theorem jls_hasPolyStretch (P) {τ} (hτ : 1 < τ) (hs : P.G.HasStretch τ)
 -- M3 (Claim 4.2)
 theorem claim42 (P : Params) {cLoc} (hLoc : P.R.HasLocality cLoc) : ∃ κ₀, ∀ κ ≥ κ₀,
     prob ((P.idSamp' κ).bind fun I' => P.sdSampFull κ I') (·.err = true) ≤ (2 : ℝ)⁻¹ ^ κ
--- M4 (Lemma 4.2, quantitative, machines; hybrids D_i of p. 19 with φ included, tail y or r)
-theorem lemma42 (P) (D : NUPPT) : ∃ R₁ R₂ : NUPPT, ∀ κ,
-    advantage (P.hyb D .prg 0 κ) (P.hyb D .prg (κ + 1) κ) ≤
-      κ * P.lpnFamily.toLWE.advantageAt R₁ κ +
-        advantage (P.G.game R₂ true (P.n κ)) (P.G.game R₂ false (P.n κ))
-theorem prop41 (P) {cLoc} (hLoc) (D : NUPPT) : ∃ R₁ R₂ : NUPPT, ∃ κ₀, ∀ κ ≥ κ₀,
-    advantage ((jlsSPRG P).game D true κ) ((jlsSPRG P).game D false κ) ≤
-      2 * (2 : ℝ)⁻¹ ^ κ + 2 * κ * P.lpnFamily.toLWE.advantageAt R₁ κ +
-        advantage (P.G.game R₂ true (P.n κ)) (P.G.game R₂ false (P.n κ))
--- M5 (Theorem 4.1)
+-- M4 (Lemma 4.2, explicit slack, machines; hybrids D_i of p. 19 with φ included, tail y or r)
+theorem lemma42 (P) (A : NUPPT) : ∃ B B' : NUPPT, ∀ κ,
+    advantage (P.hyb A .prg 0 κ) (P.hyb A .prg (κ + 1) κ) ≤
+      κ * P.lpnFamily.adv B (P.ℓ κ) + P.G.adv B' (P.n κ)
+-- the CORE inequality (S8): Proposition 4.1 with explicit slack
+theorem prop41 (P) {cLoc} (hLoc : P.R.HasLocality cLoc) (A : NUPPT) :
+    ∃ B B' : NUPPT, ∃ κ₀, ∀ κ ≥ κ₀,
+      (jlsSPRG P).adv A κ ≤
+        2 * κ * P.lpnFamily.adv B (P.ℓ κ) + P.G.adv B' (P.n κ) + 2 * (2 : ℝ)⁻¹ ^ κ
+-- M5 (Theorem 4.1: both clauses, as corollaries of `prop41`)
 theorem jls_secure (P) {cLoc} (hLoc) (hG : P.G.Secure) (hLPN : P.lpnFamily.Assumption) :
     (jlsSPRG P).Secure
+theorem jls_subexpSecure (P) {cLoc} (hLoc)
+    (hG : SubexpHard P.G.adv) (hLPN : SubexpHard P.lpnFamily.adv) :   -- API names TBD (S7)
+    SubexpHard (jlsSPRG P).adv
 theorem theorem41 (P) {cLoc τ} (hLoc) (hτ : 1 < τ) (hs : P.G.HasStretch τ)
     (hE : E₀ P.d P.δ τ ≤ P.E) (hG : P.G.Secure) (hLPN : P.lpnFamily.Assumption) :
     (jlsSPRG P).Secure ∧ (jlsSPRG P).HasComplexity P.d 2 ∧ (jlsSPRG P).HasPolyStretch
+theorem theorem41_subexp (P) {cLoc τ} (hLoc) (hτ) (hs) (hE)
+    (hG : SubexpHard P.G.adv) (hLPN : SubexpHard P.lpnFamily.adv) :
+    SubexpHard (jlsSPRG P).adv ∧ (jlsSPRG P).HasComplexity P.d 2 ∧ (jlsSPRG P).HasPolyStretch
 theorem exists_sprg {d cLoc : ℕ} (hd : 1 ≤ d) {δ τ : ℝ} (hδ : 0 < δ) (hδ1 : δ < 1) (hτ : 1 < τ)
     (G : BoolPRG) (R : G.MultilinearRep d) (hLoc : R.HasLocality cLoc) (hs : G.HasStretch τ)
     (hG : G.Secure) (p : ℕ → ℕ) (hp : ∀ κ, (p κ).Prime ∧ 2 ^ κ < p κ ∧ p κ ≤ 2 ^ (κ + 1))
     (hLPN : ∀ E, 1 ≤ E → (lpnFamilyOf d δ E p hp).Assumption) :
     ∃ S : SPRG, S.modulus = p ∧ S.Secure ∧ S.HasComplexity d 2 ∧ S.HasPolyStretch
+theorem exists_sprg_subexp … (hG : SubexpHard G.adv)
+    (hLPN : ∀ E, 1 ≤ E → SubexpHard (lpnFamilyOf d δ E p hp).adv) :
+    ∃ S : SPRG, S.modulus = p ∧ SubexpHard S.adv ∧ S.HasComplexity d 2 ∧ S.HasPolyStretch
 ```
 
-Notes. `prop41`'s bound is the paper's γ = O(λε) with explicit constants: H₀ ≈ H₁ and H₂ ≈ H₃ cost
-Pr[err = 1] each (`Hopping.abs_prob_sub_le_of_agree`), H₁ ≈ H₂ is two chains of κ LPN hops
-(tails y and r) plus one PRG hop. `R₁` is one machine for all 2κ hops (its advice picks the hop).
-The paper's D_i omit φ; including φ (independent, Prop 4.1's remark (i)) is a docstring deviation.
+Notes. `prop41` is the paper's γ = O(λε) with explicit constants (S8): H₀ ≈ H₁ and H₂ ≈ H₃ cost
+Pr[err = 1] ≤ 2^{−κ} each (`Hopping.abs_prob_sub_le_of_agree`, `claim42`); H₁ ≈ H₂ is two chains
+of κ LPN hops (tails y and r) plus one PRG hop. `B` is one machine for all 2κ hops. The paper's
+D_i omit φ; including φ (independent, Prop 4.1's remark (i)) is a docstring deviation.
 `claim42` and `prop41` hold for every E ≥ 1; only `HasPolyStretch` needs E ≥ E₀.
+**Corollaries.** Negligible: `Negligible.comp_of_le` (or the API's re-indexing) moves
+`adv_LPN B` along ℓ κ ≥ κ and `adv_PRG B'` along n κ ≥ κ, then `Negligible.polyExpr_mul` (the 2κ
+factor), `.add`, `negligible_two_pow_neg`. Subexponential: the API's re-indexing by the polynomial
+parameters ℓ κ = κ^E and n κ = κ^{ED}, its closure under polynomial factors, constant multiples and
+sums, and 2^{−κ} small; the constant of the conclusion depends only on the two hypotheses' constants
+and E, D, so it precedes the adversary, as the API's predicate requires. `SubexpHard` stands for
+the API's predicate; use the names fixed at `<BASE>`.
 
 ### 4.8 Reductions as machines (route)
 
@@ -466,14 +511,22 @@ The paper's D_i omit φ; including φ (independent, Prop 4.1's remark (i)) is a 
   `|E_ω f ω − E_ω g ω| ≤ E_ω |f ω − g ω| ≤ |f ω* − g ω*|`
   (`ProbComp.abs_expect_sub_le_expect`, `LamportReduction.exists_expect_sample_le`), and ω* is
   written into the reduction's **advice**. The machines therefore never sample ℤ_p, the noise or a
-  random function: no sampler is needed, consistent with S2. The hop index is chosen the same way
-  (`Games.exists_advantage_hybrid_gap`). The paper's reductions sample; this is a proof-route
-  deviation, recorded in the sketches.
-- **LPN hop machine** (`Reductions/LPNHybrid.lean`): `NUPPT.wrap`
-  (`Asymptotic/ReductionSupport.lean:148`, run lemma `runAt_wrap` :200) with advice ω* and no extra
-  coins; pre-processing parses `LWE.encodeChallenge (A, b)` and writes the sPRG challenge string of
-  the hop: `b⁽ᵏ⁾ = A s⁽ᵏ⁾ + e⁽ᵏ⁾ + σ` for k after the hop, `b + σ` at the hop, hardwired `u⁽ᵏ⁾`
-  before, then err = 0 and the tail.
+  random function: no sampler is needed, consistent with S2. The paper's reductions sample; this
+  is a proof-route deviation, recorded in the sketches.
+- **The hop index.** Either way is allowed (Seyoon: "the random-hybrid-index trick is fine"):
+  (a) chosen by advice (`Games.exists_advantage_hybrid_gap`; exact factor κ per chain), or
+  (b) drawn from the machine's coins. A uniform index is exactly samplable from fair coins only on a
+  power-of-two range, so (b) pads each chain to 2^⌈log₂ κ⌉ hops with zero-gap hops and pays a factor
+  ≤ 2κ; the statement's constant then changes accordingly (disclose). (a) is recommended.
+- **LPN hop machine** (`Reductions/LPNHybrid.lean`): `NUPPT.exists_reparam_pre_post_adv`
+  (`Asymptotic/UniversalLemmas.lean:125`) from the LPN parameter L to κ(L) = `κOf L` (C11;
+  κOf L ≤ L), advice ω* and the hop choice; pre-processing parses `LWE.encodeChallenge (A, b)`
+  (residues of L + 1 bits), re-encodes the residues at κ + 1 bits, and writes the sPRG challenge
+  string of the hop: `b⁽ᵏ⁾ = A s⁽ᵏ⁾ + e⁽ᵏ⁾ + σ` for k after the hop, `b + σ` at the hop, hardwired
+  `u⁽ᵏ⁾` before, then err = 0 and the tail. For L not of the form κ^E the advice is empty and the
+  machine outputs a constant (no claim is made there). `NUPPT.wrap`
+  (`Asymptotic/ReductionSupport.lean:148`, `runAt_wrap` :200) is the same-parameter form, for any
+  hop that needs no re-indexing.
 - **Mod-p arithmetic on encodings** (Q-S6 A): `A s mod p` by
   `Encoding.DyadicLinearAlgebra.matVecPoly` (`:342`, `matVecPoly_encodeMatrix` :395,
   `polyTimeComputable_matVecPoly` :445) at a width with no wrap-around
@@ -483,8 +536,9 @@ The paper's D_i omit φ; including φ (independent, Prop 4.1's remark (i)) is a 
   used is H16 (`Complexity.BinArith.forLoop`, via `matVecPoly`); any other host need is E-SCOPE.
 - **PRG hop machine** (`Reductions/PRG.lean`): `NUPPT.exists_reparam_pre_post_adv`
   (`Asymptotic/UniversalLemmas.lean:125`) from the PRG parameter N to κ(N) (the κ with
-  n κ = N, or 0; κ(N) ≤ N), advice ω* (A, φ, the u⁽ᵏ⁾); negligibility moves along n κ ≥ κ by
-  `Negligible.comp_of_le` (`Foundations/Negligible.lean:237`).
+  n κ = N, or 0; κ(N) ≤ N), advice ω* (A, φ, the u⁽ᵏ⁾); in the corollaries, negligibility moves
+  along n κ ≥ κ by `Negligible.comp_of_le` (`Foundations/Negligible.lean:237`) and subexponential
+  smallness by the API's re-indexing.
 - **LPN in a ProbComp proof**: `Bridge.distAdv_eq` (`Games/Bridges/Experiments.lean:139`) turns
   `LWE.decisionAdvantage` into `advantage` of `acceptGame`s; `Family.encodeChallenge_length_le`
   bounds the input.
@@ -505,8 +559,8 @@ independent and may be reordered; M4 needs M1 and M3; M5 needs all.
 | **M2** stretch | `jls_seedBits_le`, `jls_hasPolyStretch` (confirm C10) | same | +250–450 |
 | **M3** Claim 4.2 | Markov step, balls-in-bins, binomial bound, independence over k, side conditions, `claim42` | same | +600–1,000 |
 | **M4** hybrids | games, statistical hops, encodings, mod-p machines, LPN and PRG machines with run lemmas and efficiency, `lemma42`, `prop41` | same | +1,100–2,000 |
-| **M5** Theorem 4.1 | `jls_secure`, `theorem41`, `exists_sprg` (+ subexponential corollary if Q-S7 A) | **0 `sorry`** in the job; full evidence | +150–350 |
-| **Total** | | | **4,700–7,800** |
+| **M5** Theorem 4.1 | `jls_secure`, `jls_subexpSecure`, `theorem41`, `theorem41_subexp`, `exists_sprg`, `exists_sprg_subexp`, through the Foundations/Subexponential API | **0 `sorry`** in the job; full evidence | +200–400 |
+| **Total** | | | **4,750–7,900** |
 
 ## 6. Proof sketches the statements must carry (M0)
 
@@ -516,7 +570,8 @@ independent and may be reordered; M4 needs M1 and M3; M5 needs all.
   ≤ C(Γ, t+1)/B^{t+1} ≤ (e/(t+1))^{t+1} ≤ e^{−κ}, union over B; Cond₃: ≤ C(m, cap+1)/B^{cap+1}
   ≤ (e/t³)^{cap+1} ≤ κ^{−2κ²}; Pr[err] ≤ Pr[Cond₃] + Σ_k Pr[Cond₂⁽ᵏ⁾ ∧ ¬Cond₁⁽ᵏ⁾] +
   Π_k Pr[Cond₁⁽ᵏ⁾] (the instances' noises are independent), then ≤ 2^{−κ} for κ ≥ κ₀ (C9).
-- `lemma42`/`prop41`: §4.8; `jls_hasComplexity`: G⁽⁴⁾ with `G4_eval_eq` and the degree lemmas;
+- `lemma42`/`prop41`: §4.8; the corollaries: §4.7 *Corollaries*; `jls_hasComplexity`: G⁽⁴⁾ with
+  `G4_eval_eq` and the degree lemmas;
   `jls_seedBits_le`: count of §4.6 (κ·n + 1 public, κ·(1 + 2((ℓ+1)^D + 2·B·t·rc)) private
   residues of κ + 1 bits, B·t·rc ≤ (m t/W + 1)·t²·w).
 
@@ -535,27 +590,31 @@ independent and may be reordered; M4 needs M1 and M3; M5 needs all.
 ## 8. Disclosed deviations (docstrings must say each where it applies)
 
 Dv1 single security parameter (C1). Dv2 seeds as ℤ_p vectors; bit length `seedBits`. Dv3 LPN via
-`LWE.Family`: transposed orientation; κ-indexed schedule; rate 1/W ≥ ℓ^{−δ} (C6). Dv4 PRG security
+`LWE.Family`, indexed by its dimension ℓ: transposed orientation; one schedule (η_n = D,
+η_p = 1/E); rate 1/W ≥ ℓ^{−δ} (C6); residue width ℓ + 1 (C11). Dv4 PRG security
 in its seed length; representation and locality for every index of the index type; locality on
 the representation. Dv5 `HasStretch` as m ≥ n^τ. Dv6 Def 3.3 for ℂ = degree-d polynomials,
 composite form; no efficiency contracts (S2, Q-S3). Dv7 Claim 4.2 for κ ≥ κ₀. Dv8 Lemma 4.2 with
 φ included; quantitative forms with machines. Dv9 p a (κ+1)-bit prime (C2). Dv10 degree d, not
 p. 14's d + 1 (S3). Dv11 d ≥ 1. Dv12 reductions hardwire averaged values in their advice (§4.8).
+Dv13 subexponential security is advantage 2^{−κ^c} against non-uniform PPT (Def 2.1; S7, S9),
+through the Foundations/Subexponential API; subexponential-time adversaries are not covered.
 
 ## 9. Open questions for Seyoon (multiple choice, recommended option first)
 
 ★ = where Seyoon's high-level vision matters most: these fix what the later FE ⇒ iO bootstrapping
 ([JLS26, Theorem 5.1]) can consume.
 
-- **★ Q-S1. The LPN hypothesis of Theorem 4.1.**
-  (A) LPN for the construction's own κ-indexed family (ℓ = κ^E, n = κ^{ED} samples, the given
-  prime schedule, rate 1/W), defined as `LWE.DLWEAssumption` of an LPN-shaped `LWE.Family`
-  (§4.1): the weakest hypothesis, maximal reuse; `exists_sprg` assumes it for every E. A literal
-  Def 2.3 predicate (indexed by ℓ, ∀ η_p, η_n, rate ℓ^{−δ}) with the bridge "Def 2.3 ⇒ family form"
-  (reindexing, raising the rate by hardwired extra noise, transposition) is a later small job.
-  (B) The same, with the literal Def 2.3 predicate and its bridge inside this job (+400–700 lines,
-  after M5). (C) A native LPN game in the paper's orientation, not through `LWE` (duplicates the
-  LWE experiment shape; needs Seyoon's approval as debt).
+- **★ Q-S1. The LPN hypothesis of Theorem 4.1.** (The family is indexed by its dimension ℓ either
+  way, per S8.)
+  (A) LPN (negligible, or subexponential through the API) for the construction's own family C11
+  (n = ℓ^D samples, p(ℓ) from the prime schedule, rate 1/W), defined through an LPN-shaped
+  `LWE.Family` (§4.1): the weakest hypothesis, maximal reuse; `exists_sprg(_subexp)` assume it
+  for every E. A literal Def 2.3 predicate (∀ η_p, ∀ p(ℓ), ∀ η_n, rate exactly ℓ^{−δ}) with the
+  bridge "Def 2.3 ⇒ family form" (raising the rate by hardwired extra noise, transposition) is a
+  later small job. (B) The same, with the literal Def 2.3 predicate and its bridge inside this job
+  (+400–700 lines, after M5). (C) A native LPN game in the paper's orientation, not through `LWE`
+  (duplicates the LWE experiment shape; needs Seyoon's approval as debt).
 - **★ Q-S2. The modulus.** (A) A deterministic prime schedule p(κ), as Def 3.3 says ("p = p(λ) …
   an efficiently computable function in λ"); the bootstrapping then needs a group generator of that
   same order. (B) p sampled with the index (part of `Idx`), so the sPRG can follow a group
@@ -579,9 +638,8 @@ p. 14's d + 1 (S3). Dv11 d ≥ 1. Dv12 reductions hardwire averaged values in th
   (`DyadicLinearAlgebra.matVecPoly` at a non-wrapping width, then `Complexity.BinArith.mod`); no new
   hypothesis on Theorem 4.1. (B) Take `Candidates.ArithmeticFP` as a hypothesis (the
   `bb1_sidSecure` precedent); shorter M4.
-- **Q-S7. The subexponential clause of Theorem 4.1.** (A) Include it as a corollary of the
-  quantitative `prop41` (local predicates "advantage ≤ 2^{−κ^c} eventually" for the sPRG, the LPN
-  family and the PRG; +150–250 lines). (B) Defer.
+- *(Q-S7, the subexponential clause, is withdrawn: settled by Seyoon's ruling of records
+  `a2bf4bac`, S7–S9.)*
 - **Q-S8. Statements-gate repairs while the job runs.** (A) Codex continues after checkpoint 0;
   if the statements gate finds majors, Seyoon pastes the repair list into the running chat and
   Codex applies it as disclosed statement-change commits. (B) Codex pauses after M0 until the gate

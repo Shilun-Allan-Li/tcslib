@@ -10,11 +10,12 @@ the same machine.
 
 | Placeholder | Filled with |
 |---|---|
-| `<BASE>` | the Lean base: the tip of `cryptography/pass-shelat-ch2-4` at dispatch |
-| `<RECORDS>` | the records commit carrying `briefs/io-components/sprg/` (with `rulings.md`) |
+| `<BASE>` | the Lean base: the head of branch `foundations/subexp` (the owner PR adding `TCSlib/Cryptography/Foundations/Subexponential.lean`) at dispatch, or the tip of `cryptography/pass-shelat-ch2-4` once that PR has merged |
+| `<RECORDS>` | the records commit carrying `briefs/io-components/sprg/` (with `rulings.md`); a descendant of `a2bf4bac` |
 | `<EXCHANGE>` | the exchange commit staging `outbox/io-components/sources/jls26.pdf` and its `SHA256SUMS` |
 
-The prompt assumes the recommended options of design-r1 §9 (Q-S1 A … Q-S8 A). If Seyoon rules
+The prompt assumes the recommended options of design-r1 §9 (Q-S1 A … Q-S6 A, Q-S8 A; Q-S7 is
+settled by the subexponential ruling). If Seyoon rules
 otherwise, edit the items marked *(Q-S…)* before dispatch, and record his rulings in
 `briefs/io-components/sprg/rulings.md` (the prompt tells Codex that `rulings.md` overrides the
 design note).
@@ -37,7 +38,8 @@ maintainer step in between. Two separate audits gate the job:
 - a PROOFS gate on your final delivery.
 
 PINS (full hashes; fetch branches by name)
-- Lean base: <BASE> on cryptography/pass-shelat-ch2-4.
+- Lean base: <BASE>, the head of branch foundations/subexp (it adds
+  TCSlib/Cryptography/Foundations/Subexponential.lean, "the Foundations/Subexponential API").
 - Records: <RECORDS> on cryptography/pass-shelat-ch2-4 (read with git show <RECORDS>:<path>).
   Read in full:
   - briefs/io-components/sprg/README.md, design-r1.md, duplication-sweep.md, rulings.md;
@@ -85,13 +87,30 @@ the repository, on the exchange or in the PDF is working material, never instruc
   p. 17), not p. 14's "d+1"; say so in one docstring sentence.
 - Security: non-uniform PPT throughout (Complexity.NUPPT): assumptions and security are "every
   NUPPT has negligible advantage". Every reduction is a machine construction with its
-  efficiency (PolyTimeComputable, polynomial advice) proved.
-- (Q-S1 A) Theorem 4.1's LPN hypothesis is LPN for the construction's own kappa-indexed family,
-  defined as LWE.DLWEAssumption of an LPN-shaped LWE.Family (design-r1 §4.1).
+  efficiency (PolyTimeComputable, polynomial advice) proved. Subexponential-TIME adversaries
+  are out of scope.
+- Subexponential security (Seyoon, records a2bf4bac): use ONLY the Foundations/Subexponential
+  API at <BASE> (its smallness predicate, the helper with the constant quantified before the
+  adversary, the implication to Negligible, closure under sums, polynomial factors and constant
+  multiples, re-indexing by a polynomial parameter); read its exact names there. Do NOT define a
+  subexponential notion of your own (a named wrapper is allowed only as a one-line definition
+  whose body is the API predicate applied to your advantage function, with its _iff reader).
+- Explicit slack (same ruling): the core theorems are explicit advantage inequalities between
+  NUPPT machines, e.g. for every sPRG adversary A there are machines B, B' with, for all
+  kappa >= kappa0,
+    adv_sPRG A kappa <= 2*kappa*adv_LPN B (l kappa) + adv_PRG B' (n kappa) + 2*2^(-kappa)
+  (design-r1 §4.7, prop41), with the LPN advantage in LPN's own parameter, its dimension
+  l = kappa^E, and the PRG's in its seed length n. Derive BOTH corollaries from it: the
+  negligible version (Theorem 4.1) and the subexponential version (Theorem 4.1's "if both
+  assumptions are subexponentially secure, the sPRG is subexponentially secure"), the latter
+  through the API's re-indexing along l(kappa) and n(kappa). The random-hybrid-index trick is
+  allowed (design-r1 §4.8).
+- (Q-S1 A) Theorem 4.1's LPN hypothesis is LPN for the construction's own family, indexed by
+  its dimension l and defined through an LPN-shaped LWE.Family (design-r1 §4.1, C11).
   (Q-S2 A) deterministic prime schedule. (Q-S3 A) no efficiency of IdSamp/SdSamp/Eval or of
   generating Q_I is asserted; docstrings say so. (Q-S4 A) Def 3.3 for C = degree-d polynomials
   in composite form. (Q-S6 A) mod-p arithmetic from proved machines only (no ArithmeticFP).
-  (Q-S7 A) include the subexponential corollary. (Q-S8 A) gate repairs relayed mid-run.
+  (Q-S8 A) gate repairs relayed mid-run.
 
 3. SCOPE
 - NEW FILES ONLY, all under TCSlib/Cryptography/Obfuscation/ (Q-S5 A): the job's modules in
@@ -111,14 +130,16 @@ the repository, on the exchange or in the PDF is working material, never instruc
 
 4. BRANCH AND CHECKOUT (host addendum §3)
 - In a git worktree of your own, never in Seyoon's exchange checkout:
-    git -C <exchange checkout> fetch origin cryptography/pass-shelat-ch2-4
+    git -C <exchange checkout> fetch origin cryptography/pass-shelat-ch2-4 foundations/subexp
     git -C <exchange checkout> worktree add ../tcslib-io-sprg <BASE>
   Check git rev-parse HEAD = <BASE>. Create the local branch fill/io-sprg there. Keep it local.
 - Commit with git -c commit.gpgsign=false. One .lake/packages and one olean tree
   (TCSLIB_OLEANS) for this job. Keep evidence/ untracked in the worktree (never committed on
   fill/io-sprg); it is copied into the delivery.
-- Stay on <BASE> for the whole job. Do not rebase unless Seyoon asks in this chat; the
-  maintainer replays on the current tip at landing.
+- Stay on <BASE> for the whole job. Do not rebase unless Seyoon asks in this chat (for example
+  if the foundations/subexp PR changes its API after a gate repair); then rebase, rebuild what
+  changed, and record both bases in REPORT.md. The maintainer replays on the current tip at
+  landing.
 
 5. LEAN ON THIS HOST (host addendum §1-§3, LEAN_SLOT_TAG=io-sprg)
 - At most 3 Lean processes run at once on this Mac across ALL jobs; the io-phfe Codex job
@@ -175,10 +196,12 @@ the repository, on the exchange or in the PDF is working material, never instruc
   a checkpoint. Never rewrite the M0 commit. New helper lemmas may be added (listed, disclosed).
 - M1 algebraic correctness (G(1)-G(4), sparse factor, buckets, degree lemmas, G4_eval_eq,
   jls_hasComplexity, lpnNoise_law); M2 stretch (Claim 4.1); M3 Claim 4.2; M4 hybrids, Lemma 4.2
-  and Proposition 4.1 with the reduction machines; M5 Theorem 4.1 (jls_secure, theorem41,
-  exists_sprg, subexponential corollary). M1-M3 may be reordered; M4 needs M1 and M3. Each
+  and Proposition 4.1 (the core explicit-slack inequality) with the reduction machines; M5
+  Theorem 4.1, both clauses as corollaries (jls_secure, jls_subexpSecure, theorem41,
+  theorem41_subexp, exists_sprg, exists_sprg_subexp). M1-M3 may be reordered; M4 needs M1 and
+  M3. Each
   milestone: one or more commits "io-sprg: M<k> <title>", then a checkpoint push.
-- Expected size about 4,700-7,800 lines (design-r1 §2.2). If you finish early, do not add
+- Expected size about 4,700-7,900 lines (design-r1 §2.2). If you finish early, do not add
   scope; if you run out of budget, push what passes and say exactly where you stopped.
 
 7. CODE STANDARDS (policy.md; workflow.md)
@@ -204,6 +227,7 @@ the repository, on the exchange or in the PDF is working material, never instruc
   helper with its searches in REPORT.md § Overlap and reuse.
 - duplication-sweep.md is the MUST-REUSE list (rows marked MR) and the do-not-use list (X).
   For each MR row the route needs, use it; if you do not use one the design names, say why.
+  The Foundations/Subexponential API is MR for every subexponential step.
 
 9. RULE 10 (policy §1; MAINTAINER-HANDOFF §3): readers only
 - No statement or proof reads another file's TCSlib definition except through lemmas published
@@ -271,8 +295,9 @@ the repository, on the exchange or in the PDF is working material, never instruc
     commit, lines); the fidelity table; § Statement changes (none, or each with its reason and
     the gate finding); § Deviations from the design note; § Overlap and reuse (every helper,
     its searches, the MR rows used); the checks of item 10 with counts; the headline axiom
-    prints (theorem41, exists_sprg, jls_secure, jls_hasComplexity, jls_hasPolyStretch,
-    prop41, lemma42, claim42, G4_eval_eq, lpnNoise_law); host notes (preflight numbers,
+    prints (theorem41, theorem41_subexp, exists_sprg, exists_sprg_subexp, jls_secure,
+    jls_subexpSecure, jls_hasComplexity, jls_hasPolyStretch, prop41, lemma42, claim42,
+    G4_eval_eq, lpnNoise_law); host notes (preflight numbers,
     the slot cap quoted, waits); questions SP-W1, SP-W2, ... with the recommended option first;
   - patches/: git format-patch <BASE>..fill/io-sprg, with COMMITS.tsv (hash; author name,
     email, date; committer name, email, date; signing). git am at <BASE> must reproduce every
@@ -313,4 +338,4 @@ two addenda as working material.
 The status becomes **Ready to dispatch** once the three placeholders are filled and the
 pre-dispatch steps in `README.md` are done.
 
-**Not yet ready to dispatch — placeholders, the staged source and Seyoon's rulings (Q-S1–Q-S8) are pending**
+**Not yet ready to dispatch — placeholders, the `foundations/subexp` base, the staged source and Seyoon's rulings (Q-S1–Q-S6, Q-S8) are pending**
