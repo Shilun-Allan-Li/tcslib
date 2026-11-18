@@ -183,22 +183,16 @@ theorem bucketRaw_eq (z : List Bool) :
           (listToNat (NUPPT.inCoins z) % listToNat (NUPPT.inArg z))
       else [] := rfl
 
-/-- The number read from a coin string is the number read from its list: `bitsToNat c =
-listToNat (List.ofFn c)` (both are the MSB-first fold). Glue. -/
-theorem bitsToNat_eq_listToNat {s : ℕ} (c : Fin s → Bool) :
-    bitsToNat c = listToNat (List.ofFn c) := by
-  rw [bitsToNat_def, NumberTheory.listToNat_eq]
-
 /-- **The raw decoder computes the bucket sampler**: on the layout with argument `y` and coins
 `c`, `bucketRaw` writes `encodeOption` of `(bucket ⟦y⟧ s).dec c`, elements written as numerals of
-width `|y|` (`NUPPT.inArg_layout`, `NUPPT.inCoins_layout`, `bitsToNat_eq_listToNat`,
+width `|y|` (`NUPPT.inArg_layout`, `NUPPT.inCoins_layout`, `NumberTheory.bitsToNat_eq_listToNat`,
 `bucketDec_eq_some_iff`, `bucketDec_eq_none_iff`). Glue. -/
 theorem bucketRaw_layout (κ : ℕ) (y α : List Bool) (s : ℕ) (c : Fin s → Bool) :
     bucketRaw (NUPPT.layout (List.replicate κ true) y α (List.ofFn c)) =
       encodeOption (fun a : Fin (listToNat y) => Candidates.natToList y.length a)
         ((bucket (listToNat y) s).dec c) := by
   rw [bucketRaw_eq, NUPPT.inArg_layout, NUPPT.inCoins_layout, List.length_ofFn,
-    ← bitsToNat_eq_listToNat, bucket_dec]
+    ← NumberTheory.bitsToNat_eq_listToNat, bucket_dec]
   by_cases h : bitsToNat c < 2 ^ s / listToNat y * listToNat y
   · have hN : 0 < listToNat y := Nat.pos_of_ne_zero fun h0 => by
       rw [h0, Nat.mul_zero] at h
