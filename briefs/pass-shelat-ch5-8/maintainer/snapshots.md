@@ -26,7 +26,8 @@ This is the register for `olean-snapshot-procedure.md`, the procedure beside thi
 | 6 | `8060f6b767da9e43d1c1f6d32c55b97758b80bd8` (merge of #357) | `0858dccbee016da1da450f2b2ca0d1f5094ee42646b9496d5278f2b45cb07caf` | 1432 (1463) | 2026-11-17 | superseded; oleans deleted at adoption of #7; map and manifest kept; evidence `olean-snapshot-6-adopt/` |
 | 7 | `a1fa7b652f0c235b54fc067e09b669e983daaf71` (merge of #355, with #347; Lean = TS2 `13fc8060`) | `5105c5149901c5c4375083c1f6ad998b70c909905e4fbf430c9e96117a0f7300` | 1434 (1465) | 2026-11-17 | superseded; oleans deleted at adoption of #8; map and manifest kept; evidence `olean-snapshot-7-adopt/` |
 | 8 | `2dd2e60ed0cdd4681a7bd12fe4a86825e98db664` (merge of #365; Lean = `9710ac7d`, #7's T × `5eaddd17`) | `286777672d4e61f1be0ba98fca72b01d8cd9aa281eb811d100d7fe499679c49c` | 1434 (1465) | 2026-11-17 | superseded; oleans deleted at adoption of #9; map and manifest kept; evidence `olean-snapshot-8-adopt/` |
-| 9 | `523a00a62b8ab5a6b4310f670d55ab99d4d8c5fb` (merge of #366; Lean = head tree `fbba5d38`) | `9bb4a0d093a772f4fd809289ea14e576b445d206016dc1aab26c55065996e838` | 1447 (1478) | 2026-11-18 | **current**; evidence `olean-snapshot-9-adopt/` |
+| 9 | `523a00a62b8ab5a6b4310f670d55ab99d4d8c5fb` (merge of #366; Lean = head tree `fbba5d38`) | `9bb4a0d093a772f4fd809289ea14e576b445d206016dc1aab26c55065996e838` | 1447 (1478) | 2026-11-18 | superseded; oleans deleted at adoption of #10; map and manifest kept; evidence `olean-snapshot-9-adopt/` |
+| 10 | `cf6a2266e9556ca8ad61e56f7232266ccc6d4e62` (merge of #368; Lean = `d52cf05b`, #9's T × `052e2b05`; replayed on #9) | `84d88738ab015961eb01b4442da851c24862f46f855f9e25da63f92117e72771` | 1447 (1478) | 2026-11-18 | **current**; evidence `olean-snapshot-10-adopt/` |
 
 - **#1** was built from #0 by closure keys (`dl-oleans-2`): 715 modules built, 638 reused.
   - Every module had rc 0, with 0 `error:` and 0 `error(`.

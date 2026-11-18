@@ -1,0 +1,30 @@
+import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Scheme
+import TCSlib.Cryptography.Encryption.PublicKey.EnsembleSecurity
+
+/-! gsw-6b owner prerequisites: axiom probe (head 1953898b). Prints `AX <name> <axioms>` for the two new
+declarations, the private `decrypt_eq_decode_errorSum` (found by suffix among the constants of `GSW.Scheme`,
+which must give exactly one match) and the downstream users; then the two readers are applied once. -/
+
+open Lean Elab Command in
+#eval show CommandElabM Unit from do
+  let env ← getEnv
+  let gsw := `TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
+  let priv := env.constants.map₁.toList.filterMap fun (n, _) =>
+    if n.isInternal && (n.toString.endsWith ".decrypt_eq_decode_errorSum") then some n else none
+  logInfo m!"PRIVATE_MATCHES\t{priv.length}\t{priv}"
+  let names := [gsw ++ `decrypt_eq_decode_dotProduct, `TCSlib.Cryptography.hybridPlant_eq,
+    gsw ++ `decrypt_of_encrypts, gsw ++ `decrypt_of_encrypts_dyadic, gsw ++ `decrypt_keygen_encrypt,
+    `TCSlib.Cryptography.distAdv_multi_le_sum] ++ priv
+  for n in names do
+    unless env.contains n do logError m!"MISSING {n}"
+    let axs ← liftCoreM (collectAxioms n)
+    logInfo m!"AX\t{n}\t{axs.toList}"
+
+open TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW in
+example (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus) (C : Ciphertext P) :
+    decrypt P s C = TCSlib.Cryptography.LWE.BitEncoding.decode P.lwe (secretVector P s ⬝ᵥ decryptColumn P C) :=
+  decrypt_eq_decode_dotProduct P s C
+
+example : TCSlib.Cryptography.hybridPlant (q := 1) (fun (pk : Bool) (m : Bool) (r : Bool) => xor pk (m && r))
+    (fun _ => true) (fun _ => false) 1 (fun x _ => x.2 0 && x.2 1) (true, false) (fun _ => true, ()) = false := by
+  rw [TCSlib.Cryptography.hybridPlant_eq]; decide
