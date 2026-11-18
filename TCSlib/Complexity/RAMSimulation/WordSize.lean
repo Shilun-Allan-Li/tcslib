@@ -924,11 +924,24 @@ value.** [AB09, §1.3]
 
 **Proof sketch.** `Complexity.timeConstructible_iff` gives a machine writing `Nat.bits (T |x|)`
 within `c·(T |x| + 1)` steps. Its visited work cells are at most its number of tapes times the
-time plus one (`Turing.MultiTapeTM.spaceUsed_le_mul_succ`), which is linear in `T |x| + 1`. -/
+time plus one (`Turing.MultiTapeTM.spaceUsed_le_mul_succ`). The coefficient
+`(M.k + 1)·(c + 1)` bounds both the deadline and these visited cells by a constant times
+`T |x| + 1`. -/
 theorem wordSizeComputable_of_timeConstructible {T : ℕ → ℕ}
     (hT : Complexity.TimeConstructible T) :
     ∃ a : ℕ, WordSizeComputable T (fun n => a * (T n + 1)) (fun n => a * (T n + 1)) := by
-  sorry
+  obtain ⟨_, c, _, M, hM⟩ := (Complexity.timeConstructible_iff T).mp hT
+  refine ⟨(M.k + 1) * (c + 1), M, fun x => ?_⟩
+  refine ⟨c * (T x.length + 1), ?_, hM x, ?_⟩
+  · exact Nat.mul_le_mul_right _ (by nlinarith)
+  · calc
+      _ ≤ M.k * (c * (T x.length + 1) + 1) :=
+        MultiTapeTM.spaceUsed_le_mul_succ _ _ _
+      _ ≤ M.k * ((c + 1) * (T x.length + 1)) :=
+        Nat.mul_le_mul_left _ (by nlinarith)
+      _ ≤ (M.k + 1) * ((c + 1) * (T x.length + 1)) :=
+        Nat.mul_le_mul_right _ (Nat.le_succ _)
+      _ = _ := by ring
 
 /-- **Polynomial word sizes**: `n ↦ C·(n+1)^(c+1)`, for `C > 0`, is a word size computable within
 time and space `a·(n+1)^(c+1)`. Words this wide hold, for instance, residues modulo a prime of
@@ -936,10 +949,20 @@ polynomially many bits. [AB09, §1.3]
 
 **Proof sketch.** `wordSizeComputable_of_timeConstructible` applied to
 `Complexity.timeConstructible_poly C c hC`, then `WordSizeComputable.mono` with
-`C·(n+1)^(c+1) + 1 ≤ (C + 1)·(n+1)^(c+1)`. -/
+`C·(n+1)^(c+1) + 1 ≤ (C + 1)·(n+1)^(c+1)`. Multiplying the witness's coefficient by
+`C + 1` gives the same polynomial bound for time and space. -/
 theorem wordSizeComputable_poly (C c : ℕ) (hC : 0 < C) :
     ∃ a : ℕ, WordSizeComputable (fun n => C * (n + 1) ^ (c + 1))
       (fun n => a * (n + 1) ^ (c + 1)) (fun n => a * (n + 1) ^ (c + 1)) := by
-  sorry
+  obtain ⟨a, hW⟩ := wordSizeComputable_of_timeConstructible
+    (Complexity.timeConstructible_poly C c hC)
+  have bound (n : ℕ) : a * (C * (n + 1) ^ (c + 1) + 1) ≤
+      (a * (C + 1)) * (n + 1) ^ (c + 1) := by
+    have hp : 1 ≤ (n + 1) ^ (c + 1) := Nat.one_le_pow _ _ (by omega)
+    calc
+      _ ≤ a * ((C + 1) * (n + 1) ^ (c + 1)) :=
+        Nat.mul_le_mul_left _ (by nlinarith)
+      _ = _ := by ring
+  exact ⟨a * (C + 1), hW.mono bound bound⟩
 
 end WordRAM

@@ -208,15 +208,41 @@ computable in polynomial time, emits `g x` on every input `x` within polynomiall
 machine and a constant `A`; `outputOf_true` reads its output as `g x`. `HaltsWithin.touches_le`
 and `HaltsWithin.mono` give the bounds `C·(n + 1)^d` steps and `3·C·(n + 1)^d` cells, and
 `polynomial_time_bound` bounds the simulation's deadline by `(A + 1)·a·(n + 1)^(3d + 1)`.
+`simulation_constant_bound` absorbs the simulation constant into that coefficient.
 `Turing.FinTM.ComputesInTime.mono` enlarges each run's deadline to it, and
-`Complexity.polyTimeComputable_iff` packages the machine. -/
+`Turing.FinTM.computesFunInTime_iff` and `Complexity.polyTimeComputable_iff` package the machine. -/
 theorem polyTimeComputable_of_computes (P : XProgram) (g : List Bool → List Bool)
     {W TW SW : ℕ → ℕ} (hW : WordSizeComputable W TW SW) (C d : ℕ)
     (hWpoly : ∀ n, TW n + W n ≤ C * (n + 1) ^ d)
     (hcomp : ∀ x : List Bool, ∃ (t f : ℕ) (v : Bool), t ≤ C * (x.length + 1) ^ d ∧
       HaltsWithin P x [] (W x.length) t v (g x) f) :
     Complexity.PolyTimeComputable g := by
-  sorry
+  obtain ⟨M, A, hM⟩ := exists_simulation P true hW
+  let a := C + (C + 1) * (4 * C ^ 2 + 3 * C + 1)
+  apply (Complexity.polyTimeComputable_iff g).mpr
+  refine ⟨M, (A + 1) * a, 3 * d + 1,
+    (Turing.FinTM.computesFunInTime_iff _ _ _).mpr ?_⟩
+  intro x
+  obtain ⟨t, f, v, ht, ho⟩ := hcomp x
+  have hrun : HaltsWithin P x [] (W x.length) (C * (x.length + 1) ^ d) v (g x)
+      (3 * C * (x.length + 1) ^ d) :=
+    ho.touches_le.mono ht (by
+      simpa only [Nat.mul_assoc] using Nat.mul_le_mul_left 3 ht)
+  have hm := (hM x _ _ v (g x) hrun).1
+  rw [outputOf_true] at hm
+  apply hm.mono
+  rw [simTime_eq, Nat.mul_assoc]
+  calc
+    _ ≤ (A + 1) * (TW x.length + (C * (x.length + 1) ^ d + 1) *
+        (3 * C * (x.length + 1) ^ d * (W x.length + 1) +
+          W x.length ^ 2 + x.length + 1)) :=
+      simulation_constant_bound _ _ _
+    _ ≤ (A + 1) * (a * (x.length + 1) ^ (3 * d + 1)) := by
+      apply Nat.mul_le_mul_left
+      have h := polynomial_time_bound C ((x.length + 1) ^ d) (x.length + 1)
+        (TW x.length) (W x.length) (Nat.one_le_pow _ _ (by omega)) (by omega) (hWpoly _)
+      simpa only [a, ← pow_mul, Nat.mul_comm d 3, ← pow_succ, Nat.add_assoc] using h
+    _ = _ := by ring
 
 /-- **The output of a program halting in polynomial time is computable in polynomial time.** If
 `P` halts on every input within polynomially many steps, with a word size of polynomial value
@@ -231,7 +257,12 @@ theorem polyTimeComputable_progOut (P : XProgram) {W TW SW : ℕ → ℕ}
     (hhalt : ∀ x : List Bool, ∃ (t f : ℕ) (v : Bool) (o : List Bool),
       t ≤ C * (x.length + 1) ^ d ∧ HaltsWithin P x [] (W x.length) t v o f) :
     Complexity.PolyTimeComputable (progOut P W) := by
-  sorry
+  apply polyTimeComputable_of_computes P (progOut P W) hW C d hWpoly
+  intro x
+  obtain ⟨t, f, v, o, ht, ho⟩ := hhalt x
+  refine ⟨t, f, v, ht, ?_⟩
+  rw [progOut_eq ho]
+  exact ho
 
 /-! ## The space grades: L, log-space transducers, Savitch's shape -/
 
