@@ -1,0 +1,162 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
+-/
+import TCSlib.Complexity.CircuitComplexity.DAGCircuitSat
+import TCSlib.Complexity.NPReductions.ThreeSATToColoring
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Reader bridge for frozen definitions without published readers (quarantined)
+
+**Disclosed Rule-10 exception (user ruling on EF-H12's E-SCOPE, 2026-11-18: "readers in our
+files").** The definitions below live in read-only files (`Complexity/**`, Arora–Barak and course
+material) and publish no reader, so no consumer can read them without unfolding. This file states
+each missing reader, with the content its owner would publish, proved by `rfl`/`Iff.rfl`; it is the
+**only** place of `ZeroKnowledge/LevinHardness/` that sees through these definitions. Every
+statement is a one-line reader to be moved, unchanged, into the owner file by an owner PR, after
+which this file is deleted and its consumers re-pointed one-for-one (scope requests in the
+delivery's `REPORT.md`).
+
+| Reader | Definition | Owner file |
+|---|---|---|
+| `toCNF_eq` | `BoolCircuit.DAGCircuit.toCNF` | `CircuitComplexity/DAGCircuitSat.lean:267` |
+| `widthAtMost_iff` | `Std.Sat.CNF.WidthAtMost` | `Formulas/CNF.lean:102` |
+| `satisfiesLiteral_pos`, `satisfiesLiteral_neg` | `SATtoColor.SatisfiesLiteral` | `NPReductions/ThreeSATToColoring.lean` |
+| `satisfiesClause_eq` | `SATtoColor.SatisfiesClause` | same |
+| `satisfiesSat3_eq` | `SATtoColor.SatisfiesSat3` | same |
+| `isSatisfiable_iff` | `SATtoColor.IsSatisfiable` | same |
+| `is3Colorable_iff` | `SATtoColor.Is3Colorable` | same |
+| `reductionGraph_adj` | `SATtoColor.ReductionGraph` | same |
+| `edgeRelation_*` (case lemmas) | `SATtoColor.EdgeRelation` | same |
+
+## Main results
+
+The readers listed above (no new mathematics).
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*, Cambridge
+  University Press, 2009. (§6.1.2, Lemma 6.11.)
+* CS 294-268 course material (UC Berkeley, Spring 2026, V. Guruswami), the 3SAT → 3-colouring
+  reduction of `Complexity/NPReductions/ThreeSATToColoring.lean`.
+-/
+
+namespace TCSlib.Cryptography.LevinHardness.Bridge
+
+open BoolCircuit SATtoColor
+open Std.Sat (CNF)
+
+/-! ### Circuits and formulas -/
+
+/-- Reader for `DAGCircuit.toCNF` (missing in `DAGCircuitSat.lean`): the Tseitin formula is the
+output clause followed by the gate clauses,
+`C.toCNF = [(C.output, true)] :: tseitinGates n C.gates`. -/
+theorem toCNF_eq {n : ℕ} (C : DAGCircuit n) :
+    C.toCNF = [(C.output, true)] :: tseitinGates n C.gates := rfl
+
+/-- Reader for `CNF.WidthAtMost` (missing in `Formulas/CNF.lean`):
+`φ.WidthAtMost k ↔ ∀ C ∈ φ, C.length ≤ k`. -/
+theorem widthAtMost_iff {α : Type} (φ : CNF α) (k : ℕ) :
+    φ.WidthAtMost k ↔ ∀ C ∈ φ, C.length ≤ k := Iff.rfl
+
+/-! ### The course reduction 3SAT → 3COL -/
+
+/-- Reader for `SatisfiesLiteral` on a positive literal: `SatisfiesLiteral a (pos v) = a v`. -/
+theorem satisfiesLiteral_pos {V : Type} (a : V → Bool) (v : V) :
+    SatisfiesLiteral a (SATtoColor.Literal.pos v) = a v := rfl
+
+/-- Reader for `SatisfiesLiteral` on a negative literal: `SatisfiesLiteral a (neg v) = !a v`. -/
+theorem satisfiesLiteral_neg {V : Type} (a : V → Bool) (v : V) :
+    SatisfiesLiteral a (SATtoColor.Literal.neg v) = !a v := rfl
+
+/-- Reader for `SatisfiesClause`: a clause is satisfied iff one of its three literals is,
+`SatisfiesClause a c = (SatisfiesLiteral a c.l1 || SatisfiesLiteral a c.l2 ||
+SatisfiesLiteral a c.l3)`. -/
+theorem satisfiesClause_eq {V : Type} (a : V → Bool) (c : SATtoColor.Clause V) :
+    SatisfiesClause a c =
+      (SatisfiesLiteral a c.l1 || SatisfiesLiteral a c.l2 || SatisfiesLiteral a c.l3) := rfl
+
+/-- Reader for `SatisfiesSat3`: `SatisfiesSat3 a f = f.all (SatisfiesClause a)`. -/
+theorem satisfiesSat3_eq {V : Type} (a : V → Bool) (f : Sat3 V) :
+    SatisfiesSat3 a f = f.all (SatisfiesClause a) := rfl
+
+/-- Reader for `IsSatisfiable`: `IsSatisfiable f ↔ ∃ a, SatisfiesSat3 a f = true`. -/
+theorem isSatisfiable_iff {V : Type} (f : Sat3 V) :
+    IsSatisfiable f ↔ ∃ a : V → Bool, SatisfiesSat3 a f = true := Iff.rfl
+
+/-- Reader for `Is3Colorable`: `Is3Colorable G ↔ Nonempty (G.Coloring (Fin 3))`. -/
+theorem is3Colorable_iff {V' : Type} (G : SimpleGraph V') :
+    Is3Colorable G ↔ Nonempty (G.Coloring (Fin 3)) := Iff.rfl
+
+/-- Reader for `ReductionGraph`: `u` and `v` are adjacent iff `u ≠ v` and the edge relation
+holds in one of the two orientations. -/
+theorem reductionGraph_adj {V : Type} (f : Sat3 V) (u v : OutputVertex V) :
+    (ReductionGraph f).Adj u v ↔ u ≠ v ∧ (EdgeRelation f u v ∨ EdgeRelation f v u) := Iff.rfl
+
+/-- `EdgeRelation`, palette–palette: `EdgeRelation f (palette i) (palette j) ↔ i ≠ j`. -/
+theorem edgeRelation_palette_palette {V : Type} (f : Sat3 V) (i j : Fin 3) :
+    EdgeRelation f (.palette i) (.palette j) ↔ i ≠ j := by
+  fin_cases i <;> fin_cases j <;> simp [EdgeRelation]
+
+/-- `EdgeRelation`, palette–literal: holds iff the palette vertex is the base `0`. -/
+theorem edgeRelation_palette_literal {V : Type} (f : Sat3 V) (i : Fin 3) (l : SATtoColor.Literal V) :
+    EdgeRelation f (.palette i) (.literalNode l) ↔ i = 0 := by
+  fin_cases i <;> simp [EdgeRelation]
+
+/-- `EdgeRelation`, literal–palette: holds iff the palette vertex is the base `0`. -/
+theorem edgeRelation_literal_palette {V : Type} (f : Sat3 V) (l : SATtoColor.Literal V) (i : Fin 3) :
+    EdgeRelation f (.literalNode l) (.palette i) ↔ i = 0 := by
+  fin_cases i <;> cases l <;> simp [EdgeRelation]
+
+/-- `EdgeRelation`, literal–literal: holds iff the two literals are a variable and its negation,
+in either order. -/
+theorem edgeRelation_literal_literal {V : Type} (f : Sat3 V) (l l' : SATtoColor.Literal V) :
+    EdgeRelation f (.literalNode l) (.literalNode l') ↔
+      ∃ x, (l = .pos x ∧ l' = .neg x) ∨ (l = .neg x ∧ l' = .pos x) := by
+  cases l <;> cases l' <;> simp [EdgeRelation, eq_comm]
+
+/-- `EdgeRelation`, gadget–gadget: holds iff both nodes belong to the gadget of the same clause
+of `f` and their indices are one of the fourteen ordered pairs of the gadget's edges. -/
+theorem edgeRelation_gadget_gadget {V : Type} (f : Sat3 V) (c c' : SATtoColor.Clause V) (i j : Fin 6) :
+    EdgeRelation f (.clauseGadget c i) (.clauseGadget c' j) ↔
+      c = c' ∧ c ∈ f ∧ ((i = 0 ∧ j = 1) ∨ (i = 0 ∧ j = 2) ∨ (i = 1 ∧ j = 2) ∨
+        (i = 2 ∧ j = 3) ∨ (i = 3 ∧ j = 4) ∨ (i = 3 ∧ j = 5) ∨ (i = 4 ∧ j = 5) ∨
+        (i = 1 ∧ j = 0) ∨ (i = 2 ∧ j = 0) ∨ (i = 2 ∧ j = 1) ∨ (i = 3 ∧ j = 2) ∨
+        (i = 4 ∧ j = 3) ∨ (i = 5 ∧ j = 3) ∨ (i = 5 ∧ j = 4)) := by
+  simp only [EdgeRelation]
+
+/-- `EdgeRelation`, literal–gadget: the literal is the clause's first, second or third literal
+and the gadget index is `0`, `1` or `4` respectively. -/
+theorem edgeRelation_literal_gadget {V : Type} (f : Sat3 V) (z : SATtoColor.Literal V) (c : SATtoColor.Clause V)
+    (i : Fin 6) :
+    EdgeRelation f (.literalNode z) (.clauseGadget c i) ↔
+      (z = c.l1 ∧ i = 0) ∨ (z = c.l2 ∧ i = 1) ∨ (z = c.l3 ∧ i = 4) := by
+  cases z <;> rfl
+
+/-- `EdgeRelation`, gadget–literal: as `edgeRelation_literal_gadget`, in the other orientation. -/
+theorem edgeRelation_gadget_literal {V : Type} (f : Sat3 V) (c : SATtoColor.Clause V) (i : Fin 6)
+    (z : SATtoColor.Literal V) :
+    EdgeRelation f (.clauseGadget c i) (.literalNode z) ↔
+      (z = c.l1 ∧ i = 0) ∨ (z = c.l2 ∧ i = 1) ∨ (z = c.l3 ∧ i = 4) := by
+  cases z <;> fin_cases i <;> rfl
+
+/-- `EdgeRelation`, gadget–palette: holds iff the gadget index is `5` and the palette vertex is
+`0` or `2`. -/
+theorem edgeRelation_gadget_palette {V : Type} (f : Sat3 V) (c : SATtoColor.Clause V) (i : Fin 6)
+    (p : Fin 3) :
+    EdgeRelation f (.clauseGadget c i) (.palette p) ↔ i = 5 ∧ (p = 0 ∨ p = 2) := by
+  fin_cases i <;> fin_cases p <;> simp [EdgeRelation]
+
+/-- `EdgeRelation`, palette–gadget: holds iff the gadget index is `5` and the palette vertex is
+`0` or `2`. -/
+theorem edgeRelation_palette_gadget {V : Type} (f : Sat3 V) (p : Fin 3) (c : SATtoColor.Clause V)
+    (i : Fin 6) :
+    EdgeRelation f (.palette p) (.clauseGadget c i) ↔ i = 5 ∧ (p = 0 ∨ p = 2) := by
+  fin_cases i <;> fin_cases p <;> simp [EdgeRelation]
+
+end TCSlib.Cryptography.LevinHardness.Bridge
