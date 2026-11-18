@@ -83,6 +83,14 @@ in this folder (identical).
     folder, credentials, a registered host), the dispatch message says so explicitly, before the
     prompt: what to prepare, the exact file names, their SHA-256 values, ready-to-run commands to set it
     up, and the sentence to paste into the worker's chat. Never leave it implicit in the prompt text.
+17. **Where Codex runs (Seyoon, 2026-11-18).** "Codex AUDITS run in the cloud and Codex FILLS run in local."
+    An audit or gate prompt therefore assumes no local folder, no `lean-slot.sh`, no Mac Lean-slot budget and
+    no local worktree: every input it needs must be reachable from the repository or the exchange (or
+    attached to the cloud task, stated up front per rule 16), and its Lean setup is a narrowed
+    `lake exe cache get` of the imports it needs (never unfiltered, never `lake build`). Source PDFs are
+    still never committed (pairing Q12 A); for cloud audits the cited source items are ingested as
+    `blueprint/src/references/*.md` (policy §2) or attached by Seyoon. Local-machine sections (rule 16)
+    apply to Codex fills and Claude jobs that run on Seyoon's machine.
 
 ## 3. Rulings in force (full list: the decision log, `../../PassShelatChapter5-8Plan.md`)
 
