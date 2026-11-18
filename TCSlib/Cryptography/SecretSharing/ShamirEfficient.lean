@@ -519,7 +519,8 @@ theorem iterate_lagStep (f : Party (ZMod q) → ZMod q) (a : Party (ZMod q)) :
         pairEncode (pairEncode (Nat.bits q) (resWord (label a))) (pairEncode []
           (pairEncode (resWord (n * lagNum l a)) (resWord (d * lagDen l a))))
   | [], n, d => by
-    simp only [lagNum_eq, lagDen_eq, List.map_nil, List.prod_nil, mul_one]; rfl
+    rw [List.length_nil, Function.iterate_zero, id_eq, List.map_nil, BinArith.encWords_nil]
+    simp only [lagNum_eq, lagDen_eq, List.map_nil, List.prod_nil, mul_one]
   | b :: l, n, d => by
     rw [List.length_cons, Function.iterate_succ_apply, List.map_cons, BinArith.encWords_cons,
       lagStep_eq]
@@ -621,7 +622,9 @@ theorem iterate_recStep (l : List (Party (ZMod q))) (f : Party (ZMod q) → ZMod
         pairEncode (pairEncode (Nat.bits q) (BinArith.encWords (l.map (entryWord f))))
           (pairEncode [] (resWord (acc +
             (l'.map fun a => lagNum l a * (lagDen l a)⁻¹ * f a).sum)))
-  | [], acc => by simp only [List.map_nil, List.sum_nil, add_zero]; rfl
+  | [], acc => by
+    rw [List.length_nil, Function.iterate_zero, id_eq, List.map_nil, BinArith.encWords_nil,
+      List.map_nil, List.sum_nil, add_zero]
   | a :: l', acc => by
     rw [List.length_cons, Function.iterate_succ_apply, List.map_cons, BinArith.encWords_cons,
       recStep_eq]
