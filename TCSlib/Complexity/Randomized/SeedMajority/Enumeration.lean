@@ -28,7 +28,7 @@ prefix of at most `2^w` rounds. The terminal rank is included in the search.
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
   Cambridge University Press, 2009, §7.1, p. 126.
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
-  3rd ed., January 2010, §8.2, Theorem 180.1, step 4.
+  3rd ed., January 2010, §8.2, Theorem 180.1, final paragraph of the proof.
 -/
 
 namespace Complexity.SeedMajority

@@ -38,7 +38,7 @@ so no fixed state bound is claimed after termination.
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
   Cambridge University Press, 2009, §7.1, p. 126.
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
-  3rd ed., January 2010, §8.2, Theorem 180.1, step 4.
+  3rd ed., January 2010, §8.2, Theorem 180.1, final paragraph of the proof.
 -/
 
 namespace Complexity.SeedMajority
