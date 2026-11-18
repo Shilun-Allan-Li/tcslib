@@ -29,3 +29,23 @@ Note: Use `set_option allowUnsafeReducibility true` to override reducibility sta
 FAIL(scratch/SealC): lean exited with status 1
 FAIL(scratch/SealC): error diagnostics reported
 FAIL(scratch/SealC): no fresh .olean produced
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Padding.lean:143:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  padGraph G B ⟨m / B, hu⟩ ⟨m % B, ⋯⟩
+in the target expression
+  (padWord (encGraph G) B)[m] = (encGraph (padGraph G B))[m]
+
+n : ℕ
+G : Graph n
+B : ℕ
+hn : (encGraph G).length.sqrt = n
+m : ℕ
+h1 : m < (padWord (encGraph G) B).length
+h2 : m < (encGraph (padGraph G B)).length
+hm : m < B * B
+hB : 0 < B
+hu : m / B < B
+hkey : (encGraph (padGraph G B))[m] = padGraph G B ⟨m / B, hu⟩ ⟨m % B, ⋯⟩
+⊢ (padWord (encGraph G) B)[m] = (encGraph (padGraph G B))[m]
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Padding): lean exited with status 1
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Padding): error diagnostics reported
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Padding): no fresh .olean produced

@@ -1,0 +1,95 @@
+From 0c95b0b994b91b214c5feac92a95096cee45375f Mon Sep 17 00:00:00 2001
+From: Claude-EF-H12 <noreply@anthropic.com>
+Date: Wed, 18 Nov 2026 10:06:41 +0000
+Subject: [PATCH 12/19] LevinHardness: bridge reader for LevinNPHard; soundness
+ exposes the assignment's support
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiM56gUi2Nwh8ya4ah
+---
+ .../ZeroKnowledge/LevinHardness/Bridge.lean        | 14 +++++++++++++-
+ .../ZeroKnowledge/LevinHardness/Soundness.lean     | 12 ++++++++----
+ 2 files changed, 21 insertions(+), 5 deletions(-)
+
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Bridge.lean b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Bridge.lean
+index 499fb947f..5c6fb9f71 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Bridge.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Bridge.lean
+@@ -6,6 +6,7 @@ Authors: TCSlib contributors
+ import TCSlib.Complexity.CircuitComplexity.DAGCircuitSat
+ import TCSlib.Complexity.NPReductions.ThreeSATToColoring
+ import TCSlib.Complexity.Formulas.CNFEncoding
++import TCSlib.Cryptography.ZeroKnowledge.NP
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -25,6 +26,7 @@ delivery's `REPORT.md`).
+ 
+ | Reader | Definition | Owner file |
+ |---|---|---|
++| `levinNPHard_iff` | `TCSlib.Cryptography.LevinNPHard` | `ZeroKnowledge/NP.lean:654` |
+ | `toCNF_eq` | `BoolCircuit.DAGCircuit.toCNF` | `CircuitComplexity/DAGCircuitSat.lean:267` |
+ | `widthAtMost_iff` | `Std.Sat.CNF.WidthAtMost` | `Formulas/CNF.lean:102` |
+ | `numVars_eq` | `CNF.numVars` | `Formulas/CNF.lean:96` |
+@@ -53,9 +55,19 @@ The readers listed above (no new mathematics).
+ 
+ namespace TCSlib.Cryptography.LevinHardness.Bridge
+ 
+-open BoolCircuit SATtoColor
++open BoolCircuit SATtoColor Complexity
+ open Std.Sat (CNF)
+ 
++/-! ### Levin NP-hardness -/
++
++/-- Reader for `LevinNPHard` (missing in `ZeroKnowledge/NP.lean`): `(L', R')` is NP-hard with
++Levin reductions iff every language with a witness relation has a Levin reduction to it,
++`LevinNPHard L' R' ↔ ∀ L R, WitnessRelation L R → ∃ f w p, LevinReduction L L' R R' f w p`. -/
++theorem levinNPHard_iff (L' : Language Bool) (R' : List Bool → List Bool → Prop) :
++    LevinNPHard L' R' ↔ ∀ (L : Language Bool) (R : List Bool → List Bool → Prop),
++      WitnessRelation L R → ∃ (f : List Bool → List Bool) (w : List Bool → List Bool → List Bool)
++        (p : PolyExpr), LevinReduction L L' R R' f w p := Iff.rfl
++
+ /-! ### Circuits and formulas -/
+ 
+ /-- Reader for `DAGCircuit.toCNF` (missing in `DAGCircuitSat.lean`): the Tseitin formula is the
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Soundness.lean b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Soundness.lean
+index d5180c913..5c672276a 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Soundness.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Soundness.lean
+@@ -37,7 +37,8 @@ completeness, is the explicit colouring of `ColoringWitness.lean`), so only that
+ * `TCSlib.Cryptography.LevinHardness.isSatisfiable_of_colorable` — soundness through
+   `SATtoColorReduction`.
+ * `TCSlib.Cryptography.LevinHardness.exists_clauseSat_of_colorable` — a 3-colourable gadget
+-  graph has an assignment satisfying every clause code accepted by `mem`.
++  graph has an assignment, `false` beyond the `K` variables, satisfying every clause code accepted
++  by `mem`.
+ 
+ ## References
+ 
+@@ -229,7 +230,8 @@ theorem satisfiesLiteral_litEquiv {K : ℕ} (a : Fin K → Bool) (ℓ : Fin (2 *
+   · rw [if_neg h, if_neg h, Bridge.satisfiesLiteral_neg, dif_pos hK]
+ 
+ /-- **A 3-colourable gadget graph has a satisfying assignment of its clause codes**: there is
+-`val : ℕ → Bool` with `clauseSat K val c = true` for every code `c < (2K)³` with `mem c = true`.
++`val : ℕ → Bool`, `false` on `v ≥ K`, with `clauseSat K val c = true` for every code `c < (2K)³`
++with `mem c = true`.
+ 
+ **Proof sketch.** By `isSatisfiable_of_colorable` some `a : Fin K → Bool` satisfies every clause
+ of `gadgetFormula K mem`; for a code `c` with `mem c`, the clause `clauseEquiv K c` is in the
+@@ -238,9 +240,11 @@ formula, its three literals are `litEquiv K` of the codes `clauseLit K c j`
+ (`satisfiesLiteral_litEquiv`), which is `clauseSat K val c` (`clauseSat_eq`). -/
+ theorem exists_clauseSat_of_colorable {K : ℕ} {mem : ℕ → Bool}
+     (h : (gadgetSimpleGraph K mem).Colorable 3) :
+-    ∃ val : ℕ → Bool, ∀ c, c < (2 * K) ^ 3 → mem c = true → clauseSat K val c = true := by
++    ∃ val : ℕ → Bool, (∀ v, K ≤ v → val v = false) ∧
++      ∀ c, c < (2 * K) ^ 3 → mem c = true → clauseSat K val c = true := by
+   obtain ⟨a, ha⟩ := (Bridge.isSatisfiable_iff _).1 (isSatisfiable_of_colorable h)
+-  refine ⟨fun v => if h : v < K then a ⟨v, h⟩ else false, fun c hc hm => ?_⟩
++  refine ⟨fun v => if h : v < K then a ⟨v, h⟩ else false,
++    fun v hv => dif_neg (Nat.not_lt.2 hv), fun c hc hm => ?_⟩
+   rw [Bridge.satisfiesSat3_eq, List.all_eq_true] at ha
+   have hmem : clauseEquiv K ⟨c, hc⟩ ∈ gadgetFormula K mem := by
+     rw [gadgetFormula_eq]
+-- 
+2.43.0
+

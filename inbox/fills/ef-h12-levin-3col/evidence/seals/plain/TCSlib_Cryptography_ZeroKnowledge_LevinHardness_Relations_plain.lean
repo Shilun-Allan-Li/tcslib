@@ -1,0 +1,78 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
+-/
+import TCSlib.Complexity.CircuitComplexity.Uniform
+import TCSlib.Complexity.Formulas.CNFEncoding
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+attribute [local irreducible] BoolCircuit.DAGCircuit.IsFaninTwo BoolCircuit.DAGCircuit.encode BoolCircuit.DAGCircuit.eval Std.Sat.CNF.WidthAtMost Std.Sat.CNF.decode
+
+/-!
+# The witness relations of the circuit route to `3COL`
+
+The two intermediate witness relations of the Levin reduction
+`(L, R) → (CKT-SAT, R_CKT) → (3SAT, R_3SAT) → (3COL, R_3COL)` ([AB09, §6.1.2, Lemmas 6.10 and
+6.11, p. 111]; [PS10, §4.7, Theorem 124.1, step 2]), stated once and publicly so that the four
+files of `ZeroKnowledge/LevinHardness/` read them through their readers.
+
+* `R_CKT d u`: the string `d` describes (`BoolCircuit.DAGCircuit.encode`) a fan-in-two circuit
+  that outputs `1` on the input read from `u` with default `false` (the certificate convention
+  of `BoolCircuit.CVALPrefix`, [AB09, Def 6.9]).
+* `R_3SAT s a`: the formula `CNF.decode s` is a 3-CNF satisfied by the assignment read from the
+  word `a` with default `false`.
+
+**Overlap (disclosed, brief EF-H12 item (c)):** `R_3SAT` states publicly the assignment
+convention `a.getD v false` of the private `satAssignment` of `Complexity/ClassNP/SAT.lean`.
+
+## Main definitions
+
+* `TCSlib.Cryptography.LevinHardness.R_CKT` — the witness relation of CKT-SAT.
+* `TCSlib.Cryptography.LevinHardness.R_3SAT` — the witness relation of 3SAT.
+
+## Main results
+
+* `TCSlib.Cryptography.LevinHardness.R_CKT_iff`,
+  `TCSlib.Cryptography.LevinHardness.R_3SAT_iff` — their readers.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*, Cambridge
+  University Press, 2009. (§6.1.2, Definition 6.9, Lemmas 6.10 and 6.11, p. 111.)
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
+  (§4.7, Theorem 124.1, step 2.)
+-/
+
+namespace TCSlib.Cryptography.LevinHardness
+
+open BoolCircuit Std.Sat
+
+/-- **The witness relation of CKT-SAT** [AB09, Def 6.9]: `R_CKT d u` holds when `d` is the
+description `C.encode` of a fan-in-two circuit `C : DAGCircuit n` with
+`C.eval (fun i => u.getD i false) = true`. -/
+def R_CKT (d u : List Bool) : Prop :=
+  ∃ (n : ℕ) (C : DAGCircuit n), C.IsFaninTwo ∧ C.encode = d ∧
+    C.eval (fun i => u.getD i false) = true
+
+/-- The defining property of `R_CKT`: `R_CKT d u` iff `d = C.encode` for a fan-in-two circuit
+`C` with `C.eval (fun i => u.getD i false) = true`. -/
+theorem R_CKT_iff (d u : List Bool) :
+    R_CKT d u ↔ ∃ (n : ℕ) (C : DAGCircuit n), C.IsFaninTwo ∧ C.encode = d ∧
+      C.eval (fun i => u.getD i false) = true := Iff.rfl
+
+/-- **The witness relation of 3SAT** [AB09, §2.3.1]: `R_3SAT s a` holds when the formula
+`CNF.decode s` has at most three literals per clause and
+`(CNF.decode s).eval (fun v => a.getD v false) = true`. -/
+def R_3SAT (s a : List Bool) : Prop :=
+  (CNF.decode s).WidthAtMost 3 ∧ (CNF.decode s).eval (fun v => a.getD v false) = true
+
+/-- The defining property of `R_3SAT`: `R_3SAT s a` iff `(CNF.decode s).WidthAtMost 3` and
+`(CNF.decode s).eval (fun v => a.getD v false) = true`. -/
+theorem R_3SAT_iff (s a : List Bool) :
+    R_3SAT s a ↔ (CNF.decode s).WidthAtMost 3 ∧
+      (CNF.decode s).eval (fun v => a.getD v false) = true := Iff.rfl
+
+end TCSlib.Cryptography.LevinHardness

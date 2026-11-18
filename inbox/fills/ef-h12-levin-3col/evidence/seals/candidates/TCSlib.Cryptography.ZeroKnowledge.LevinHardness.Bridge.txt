@@ -1,0 +1,23 @@
+# seal candidates for TCSlib.Cryptography.ZeroKnowledge.LevinHardness.Bridge (42 constants walked)
+# format: <candidate>	<defining module>	<direct | inst:<transparent instance/abbrev> | stmt:<used lemma, statement> | src:<lemma named in a simp/rw list, statement> | aux:<unsealable helper, body>>	<declarations of the file using it>
+# 20 candidates sealed by the seal line; 0 already `[irreducible]` globally (sealed by construction, listed as `# already-irreducible:`)
+BoolCircuit.tseitinGates	TCSlib.Complexity.CircuitComplexity.DAGCircuitSat	direct	TCSlib.Cryptography.LevinHardness.Bridge.toCNF_eq
+SATtoColor.EdgeRelation	TCSlib.Complexity.NPReductions.ThreeSATToColoring	direct	TCSlib.Cryptography.LevinHardness.Bridge.edgeRelation_gadget_gadget, TCSlib.Cryptography.LevinHardness.Bridge.edgeRelation_gadget_literal, TCSlib.Cryptography.LevinHardness.Bridge.edgeRelation_gadget_palette, TCSlib.Cryptography.LevinHardness.Bridge.edgeRelation_literal_gadget, TCSlib.Cryptography.LevinHardness.Bridge.edgeRelation_literal_literal, TCSlib.Cryptography.LevinHardness.Bridge.edgeRelation_literal_palette, TCSlib.Cryptography.LevinHardness.Bridge.edgeRelation_palette_gadget, TCSlib.Cryptography.LevinHardness.Bridge.edgeRelation_palette_literal, TCSlib.Cryptography.LevinHardness.Bridge.edgeRelation_palette_palette, TCSlib.Cryptography.LevinHardness.Bridge.reductionGraph_adj
+SATtoColor.Is3Colorable	TCSlib.Complexity.NPReductions.ThreeSATToColoring	direct	TCSlib.Cryptography.LevinHardness.Bridge.is3Colorable_iff
+SATtoColor.IsSatisfiable	TCSlib.Complexity.NPReductions.ThreeSATToColoring	direct	TCSlib.Cryptography.LevinHardness.Bridge.isSatisfiable_iff
+SATtoColor.ReductionGraph	TCSlib.Complexity.NPReductions.ThreeSATToColoring	direct	TCSlib.Cryptography.LevinHardness.Bridge.reductionGraph_adj
+SATtoColor.SatisfiesClause	TCSlib.Complexity.NPReductions.ThreeSATToColoring	direct	TCSlib.Cryptography.LevinHardness.Bridge.satisfiesClause_eq, TCSlib.Cryptography.LevinHardness.Bridge.satisfiesSat3_eq
+SATtoColor.SatisfiesLiteral	TCSlib.Complexity.NPReductions.ThreeSATToColoring	direct	TCSlib.Cryptography.LevinHardness.Bridge.satisfiesClause_eq, TCSlib.Cryptography.LevinHardness.Bridge.satisfiesLiteral_neg, TCSlib.Cryptography.LevinHardness.Bridge.satisfiesLiteral_pos
+SATtoColor.SatisfiesSat3	TCSlib.Complexity.NPReductions.ThreeSATToColoring	direct	TCSlib.Cryptography.LevinHardness.Bridge.isSatisfiable_iff, TCSlib.Cryptography.LevinHardness.Bridge.satisfiesSat3_eq
+BoolCircuit.DAGCircuit.toCNF	TCSlib.Complexity.CircuitComplexity.DAGCircuitSat	direct	TCSlib.Cryptography.LevinHardness.Bridge.toCNF_eq
+TCSlib.Cryptography.LevinNPHard	TCSlib.Cryptography.ZeroKnowledge.NP	direct	TCSlib.Cryptography.LevinHardness.Bridge.levinNPHard_iff
+Std.Sat.CNF.WidthAtMost	TCSlib.Complexity.Formulas.CNF	direct	TCSlib.Cryptography.LevinHardness.Bridge.widthAtMost_iff
+Std.Sat.CNF.decode	TCSlib.Complexity.Formulas.CNFEncoding	direct	TCSlib.Cryptography.LevinHardness.Bridge.decode_eq
+Std.Sat.CNF.fallback	TCSlib.Complexity.Formulas.CNFEncoding	direct	TCSlib.Cryptography.LevinHardness.Bridge.decode_eq, TCSlib.Cryptography.LevinHardness.Bridge.fallback_eq
+Std.Sat.CNF.numVars	TCSlib.Complexity.Formulas.CNF	direct	TCSlib.Cryptography.LevinHardness.Bridge.numVars_eq
+Std.Sat.CNF.parse	TCSlib.Complexity.Formulas.CNFEncoding	direct	TCSlib.Cryptography.LevinHardness.Bridge.decode_eq
+Std.Sat.CNF.serialize	TCSlib.Complexity.Formulas.CNFEncoding	direct	TCSlib.Cryptography.LevinHardness.Bridge.serialize_eq
+Std.Sat.CNF.serializeClause	TCSlib.Complexity.Formulas.CNFEncoding	direct	TCSlib.Cryptography.LevinHardness.Bridge.serializeClause_eq, TCSlib.Cryptography.LevinHardness.Bridge.serialize_eq
+Std.Sat.CNF.serializeLit	TCSlib.Complexity.Formulas.CNFEncoding	direct	TCSlib.Cryptography.LevinHardness.Bridge.serializeClause_eq, TCSlib.Cryptography.LevinHardness.Bridge.serializeLit_eq
+Std.Sat.CNF.syntaxOK	TCSlib.Complexity.Formulas.CNFEncoding	direct	TCSlib.Cryptography.LevinHardness.Bridge.syntaxOK_eq
+Std.Sat.CNF.syntaxStep	TCSlib.Complexity.Formulas.CNFEncoding	direct	TCSlib.Cryptography.LevinHardness.Bridge.syntaxOK_eq, TCSlib.Cryptography.LevinHardness.Bridge.syntaxStep_eq

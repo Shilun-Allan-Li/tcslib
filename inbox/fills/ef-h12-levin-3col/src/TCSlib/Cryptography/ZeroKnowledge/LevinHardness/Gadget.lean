@@ -120,7 +120,10 @@ def gadgetEdge (K : ℕ) (mem : ℕ → Bool) (t t' : ℕ) : Bool :=
      (decide (t - 3 = clauseLit K ((t' - L) / 6) 2) && decide ((t' - L) % 6 = 4)))) ||
   (decide (L ≤ t) && decide (t < N) && decide ((t - L) % 6 = 5) && decide (t' = 0 ∨ t' = 2))
 
-/-- The defining equation of `gadgetEdge` (see its docstring for the cases). -/
+/-- The defining equation of `gadgetEdge` (see its docstring for the cases).
+
+**Proof sketch.** `rfl`: the right-hand side is the body of `gadgetEdge` with its two `let`s
+inlined. -/
 theorem gadgetEdge_eq (K : ℕ) (mem : ℕ → Bool) (t t' : ℕ) :
     gadgetEdge K mem t t' =
       ((decide (t < 3) && decide (t' < 3)) ||

@@ -1,0 +1,40 @@
+From 02df6dcdb386e65b06257195f13dc417c6bad131 Mon Sep 17 00:00:00 2001
+From: Claude-EF-H12 <noreply@anthropic.com>
+Date: Wed, 18 Nov 2026 10:04:58 +0000
+Subject: [PATCH 11/19] LevinHardness: CircuitWitness line width
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiM56gUi2Nwh8ya4ah
+---
+ .../ZeroKnowledge/LevinHardness/CircuitWitness.lean       | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/CircuitWitness.lean b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/CircuitWitness.lean
+index cdf10be57..c7fcbb858 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/CircuitWitness.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/CircuitWitness.lean
+@@ -387,8 +387,9 @@ theorem R_3SAT_wireValues {d u : List Bool} (h : R_CKT d u) :
+   have hW : (fun v => (wireValues C.encode u).getD v false) =
+       fun v => (C.values (fun i => u.getD i false)).getD v false :=
+     funext (wireValues_getD C hC u)
+-  rw [hW, Bridge.toCNF_eq, CNF.eval_cons, C.eval_tseitinGates_values ((DAGCircuit.isFaninTwo_iff C).mp hC).2,
+-    Bool.and_true, CNF.Clause.eval_cons, CNF.Clause.eval_nil, Bool.or_false, ← DAGCircuit.eval_eq, hev]
++  rw [hW, Bridge.toCNF_eq, CNF.eval_cons,
++    C.eval_tseitinGates_values ((DAGCircuit.isFaninTwo_iff C).mp hC).2, Bool.and_true,
++    CNF.Clause.eval_cons, CNF.Clause.eval_nil, Bool.or_false, ← DAGCircuit.eval_eq, hev]
+   rfl
+ 
+ /-- **The converse along the Tseitin map** [AB09, Lemma 6.11, p. 111]: for a fan-in-two
+@@ -406,7 +407,8 @@ theorem exists_eval_of_R_3SAT {n : ℕ} (C : DAGCircuit n) (hC : C.IsFaninTwo)
+     (fun v => a.getD v false)).mp
+     ⟨_, fun _ _ => rfl, ha.2⟩⟩
+ 
+-/-- **The Tseitin map preserves witness existence both ways** ([AB09, Lemma 6.11, p. 111]): for a fan-in-two `C : DAGCircuit n`,
++/-- **The Tseitin map preserves witness existence both ways** ([AB09, Lemma 6.11, p. 111]): for
++a fan-in-two `C : DAGCircuit n`,
+ `(∃ a, R_3SAT (dagCktSatToSAT3 C.encode) a) ↔ ∃ x : Fin n → Bool, C.eval x = true`.
+ Glue: `exists_eval_of_R_3SAT`, and `R_3SAT_wireValues` at `u = List.ofFn x`. -/
+ theorem exists_R_3SAT_iff
+-- 
+2.43.0
+

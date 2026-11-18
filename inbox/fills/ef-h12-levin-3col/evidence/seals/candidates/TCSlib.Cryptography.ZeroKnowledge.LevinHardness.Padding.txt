@@ -1,0 +1,12 @@
+# seal candidates for TCSlib.Cryptography.ZeroKnowledge.LevinHardness.Padding (27 constants walked)
+# format: <candidate>	<defining module>	<direct | inst:<transparent instance/abbrev> | stmt:<used lemma, statement> | src:<lemma named in a simp/rw list, statement> | aux:<unsealable helper, body>>	<declarations of the file using it>
+# 9 candidates sealed by the seal line; 0 already `[irreducible]` globally (sealed by construction, listed as `# already-irreducible:`)
+Complexity.PolyTimeComputable	TCSlib.Complexity.ClassNP.PolyTime	stmt:TCSlib.Cryptography.EncodingMachines.unaryLength_poly, direct	TCSlib.Cryptography.LevinHardness.polyTimeComputable_padColWord, TCSlib.Cryptography.LevinHardness.polyTimeComputable_padWord
+Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	TCSlib.Cryptography.LevinHardness.polyTimeComputable_padColWord, TCSlib.Cryptography.LevinHardness.polyTimeComputable_padWord
+Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	TCSlib.Cryptography.LevinHardness.polyTimeComputable_padColWord, TCSlib.Cryptography.LevinHardness.polyTimeComputable_padWord
+TCSlib.Cryptography.ProperColoring	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	stmt:TCSlib.Cryptography.ProperColoring_iff, direct	TCSlib.Cryptography.LevinHardness.properColoring_padGraph, TCSlib.Cryptography.LevinHardness.threeColorable_padGraph_iff
+TCSlib.Cryptography.ThreeColorable	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	direct	TCSlib.Cryptography.LevinHardness.threeColorable_padGraph_iff
+TCSlib.Cryptography.encColoring	TCSlib.Cryptography.ZeroKnowledge.Encoding	direct, stmt:TCSlib.Cryptography.getD_encColoring_two_mul_add_one	TCSlib.Cryptography.LevinHardness.padColWord_encColoring
+TCSlib.Cryptography.encGraph	TCSlib.Cryptography.ZeroKnowledge.Encoding	stmt:TCSlib.Cryptography.length_encGraph, direct	TCSlib.Cryptography.LevinHardness.padWord_encGraph
+TCSlib.Cryptography.EncodingMachines.divNum	TCSlib.Cryptography.ZeroKnowledge.EncodingMachines	stmt:TCSlib.Cryptography.EncodingMachines.divNum_poly, direct	TCSlib.Cryptography.LevinHardness.polyTimeComputable_padWord
+TCSlib.Cryptography.EncodingMachines.modNum	TCSlib.Cryptography.ZeroKnowledge.EncodingMachines	direct	TCSlib.Cryptography.LevinHardness.polyTimeComputable_padWord

@@ -1,0 +1,65 @@
+[
+ [
+  "Relations",
+  "TCSlib.Cryptography.LevinHardness.R_CKT",
+  "(d u : List Bool) : TCSlib.Cryptography.LevinHardness.R_CKT d u \u2194 \u2203 (n : \u2115) (C : BoolCircuit.DAGCircuit n), C.IsFaninTwo \u2227 C.encode = d \u2227 C.eval (fun i => u.getD i false) = true",
+  "Iff.rfl",
+  "TCSlib.Cryptography.LevinHardness.R_CKT_iff d u"
+ ],
+ [
+  "Gadget",
+  "TCSlib.Cryptography.LevinHardness.gadgetN",
+  "(K : \u2115) : TCSlib.Cryptography.LevinHardness.gadgetN K = 3 + 2 * K + 6 * (2 * K) ^ 3",
+  "rfl",
+  "TCSlib.Cryptography.LevinHardness.gadgetN_eq K"
+ ],
+ [
+  "Verifier",
+  "TCSlib.Cryptography.LevinHardness.certOf",
+  "(q : PolyExpr) (x y : List Bool) : TCSlib.Cryptography.LevinHardness.certOf q x y = y ++ true :: List.replicate (q.eval x.length - y.length) false",
+  "rfl",
+  "TCSlib.Cryptography.LevinHardness.certOf_eq q x y"
+ ],
+ [
+  "CircuitWitness",
+  "TCSlib.Cryptography.LevinHardness.retarget",
+  "(d : List Bool) (v : \u2115) : TCSlib.Cryptography.LevinHardness.retarget d v = TCSlib.Cryptography.LevinHardness.descPrefix d ++ BoolCircuit.encodeNat v",
+  "rfl",
+  "TCSlib.Cryptography.LevinHardness.retarget_eq d v"
+ ],
+ [
+  "ColoringGraph",
+  "TCSlib.Cryptography.LevinHardness.colorInst",
+  "(s : List Bool) : TCSlib.Cryptography.LevinHardness.colorInst s = if TCSlib.Cryptography.LevinHardness.goodS s then TCSlib.Cryptography.encGraph (TCSlib.Cryptography.LevinHardness.gadgetGraph s.length (TCSlib.Cryptography.LevinHardness.memS s)) else TCSlib.Cryptography.encGraph TCSlib.Cryptography.LevinHardness.k4",
+  "rfl",
+  "TCSlib.Cryptography.LevinHardness.colorInst_eq s"
+ ],
+ [
+  "ColoringParse",
+  "TCSlib.Cryptography.LevinHardness.clauseRec",
+  "(C : Std.Sat.CNF.Clause \u2115) : TCSlib.Cryptography.LevinHardness.clauseRec C = true :: Std.Sat.CNF.serializeClause C",
+  "rfl",
+  "TCSlib.Cryptography.LevinHardness.clauseRec_eq C"
+ ],
+ [
+  "ColoringWitness",
+  "TCSlib.Cryptography.LevinHardness.colorWord",
+  "(s a : List Bool) : TCSlib.Cryptography.LevinHardness.colorWord s a = TCSlib.Cryptography.encColoring (fun u : Fin (TCSlib.Cryptography.LevinHardness.gadgetN s.length) => TCSlib.Cryptography.LevinHardness.gadgetColor s.length (fun v => a.getD v false) u)",
+  "rfl",
+  "TCSlib.Cryptography.LevinHardness.colorWord_eq s a"
+ ],
+ [
+  "Soundness",
+  "TCSlib.Cryptography.LevinHardness.gadgetFormula",
+  "(K : \u2115) (mem : \u2115 \u2192 Bool) : TCSlib.Cryptography.LevinHardness.gadgetFormula K mem = ((List.finRange ((2 * K) ^ 3)).filter fun c => mem c.val).map (TCSlib.Cryptography.LevinHardness.clauseEquiv K)",
+  "rfl",
+  "TCSlib.Cryptography.LevinHardness.gadgetFormula_eq K mem"
+ ],
+ [
+  "Padding",
+  "TCSlib.Cryptography.LevinHardness.padColWord",
+  "(w : List Bool) (B : \u2115) : TCSlib.Cryptography.LevinHardness.padColWord w B = w ++ List.replicate (2 * B - w.length) false",
+  "rfl",
+  "TCSlib.Cryptography.LevinHardness.padColWord_eq w B"
+ ]
+]

@@ -192,3 +192,305 @@ TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:234:12: error
 FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): lean exited with status 1
 FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): error diagnostics reported
 FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): no fresh .olean produced
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:278:19: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:351:4: error: unsolved goals
+case mpr.inl
+K c : ℕ
+φ : CNF ℕ
+hK : ∀ C ∈ φ, ∀ ℓ ∈ C, ℓ.1 < K
+hdec : clauseLit K c 0 + 2 * K * clauseLit K c 1 + (2 * K) ^ 2 * clauseLit K c 2 = c
+hmem : candClause K c 1 ∈ φ
+hv : clauseLit K c 0 = clauseLit K c 1 ∧ clauseLit K c 1 = clauseLit K c 2
+⊢ clauseLit K (clauseLit K c 0 + 2 * K * clauseLit K c 0 + (2 * K) ^ 2 * clauseLit K c 0) 0 +
+        2 * K * clauseLit K (clauseLit K c 0 + 2 * K * clauseLit K c 0 + (2 * K) ^ 2 * clauseLit K c 0) 0 +
+      (2 * K) ^ 2 * clauseLit K (clauseLit K c 0 + 2 * K * clauseLit K c 0 + (2 * K) ^ 2 * clauseLit K c 0) 0 =
+    clauseLit K c 0 + 2 * K * clauseLit K c 0 + (2 * K) ^ 2 * clauseLit K c 0
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:357:4: error: unsolved goals
+case mpr.inr.inl
+K c : ℕ
+φ : CNF ℕ
+hK : ∀ C ∈ φ, ∀ ℓ ∈ C, ℓ.1 < K
+hdec : clauseLit K c 0 + 2 * K * clauseLit K c 1 + (2 * K) ^ 2 * clauseLit K c 2 = c
+hmem : candClause K c 2 ∈ φ
+hv : clauseLit K c 1 = clauseLit K c 2
+⊢ clauseLit K (clauseLit K c 0 + 2 * K * clauseLit K c 1 + (2 * K) ^ 2 * clauseLit K c 1) 0 +
+        2 * K * clauseLit K (clauseLit K c 0 + 2 * K * clauseLit K c 1 + (2 * K) ^ 2 * clauseLit K c 1) 1 +
+      (2 * K) ^ 2 *
+        litCode
+          ([litOfCode (clauseLit K (clauseLit K c 0 + 2 * K * clauseLit K c 1 + (2 * K) ^ 2 * clauseLit K c 1) 0),
+                litOfCode
+                  (clauseLit K (clauseLit K c 0 + 2 * K * clauseLit K c 1 + (2 * K) ^ 2 * clauseLit K c 1) 1)].getD
+            (min 2 ([].length + 1)) (0, true)) =
+    clauseLit K c 0 + 2 * K * clauseLit K c 1 + (2 * K) ^ 2 * clauseLit K c 1
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:369:6: error: Type mismatch
+  hdec
+has type
+  clauseLit K c 0 + 2 * K * clauseLit K c 1 + (2 * K) ^ 2 * clauseLit K c 2 = c
+but is expected to have type
+  clauseLit K c 0 +
+        2 * K *
+          litCode
+            ([litOfCode (clauseLit K c 0), litOfCode (clauseLit K c 1), litOfCode (clauseLit K c 2)].getD
+              (min 1 ([].length + 2)) (0, true)) +
+      (2 * K) ^ 2 *
+        litCode
+          ([litOfCode (clauseLit K c 0), litOfCode (clauseLit K c 1), litOfCode (clauseLit K c 2)].getD
+            (min 2 ([].length + 2)) (0, true)) =
+    c
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:360:47: warning: This simp argument is unused:
+  List.length_singleton
+
+Hint: Omit it from the simp argument list.
+  simp only [wideLit_eq, List.length_cons,̵ ̵L̵i̵s̵t̵.̵l̵e̵n̵g̵t̵h̵_̵s̵i̵n̵g̵l̵e̵t̵o̵n̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:361:17: warning: This simp argument is unused:
+  Nat.reduceAdd
+
+Hint: Omit it from the simp argument list.
+  simp only [Nat.r̵e̵d̵u̵c̵e̵A̵d̵d̵,̵ ̵N̵at̵.̵a̵dd_one_sub_one, Nat.zero_le, min_eq_left, List.getD_cons_zero,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵le_refl,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Nat.reduceLeDiff, min_eq_right, List.getD_cons_succ, litCode_litOfCode]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:362:8: warning: This simp argument is unused:
+  le_refl
+
+Hint: Omit it from the simp argument list.
+  simp only [Nat.reduceAdd, Nat.add_one_sub_one, Nat.zero_le, min_eq_left, List.getD_cons_zero,
+          l̵e̵_̵r̵e̵f̵l̵,̵ ̵Nat.reduceLeDiff, min_eq_right, List.getD_cons_succ, litCode_litOfCode]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:362:35: warning: This simp argument is unused:
+  min_eq_right
+
+Hint: Omit it from the simp argument list.
+  simp only [Nat.reduceAdd, Nat.add_one_sub_one, Nat.zero_le, min_eq_left, List.getD_cons_zero,
+          le_refl, Nat.reduceLeDiff, m̵i̵n̵_̵e̵q̵_̵r̵i̵g̵h̵t̵,̵ ̵List.getD_cons_succ, litCode_litOfCode]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:366:47: warning: This simp argument is unused:
+  List.length_singleton
+
+Hint: Omit it from the simp argument list.
+  simp only [wideLit_eq, List.length_cons,̵ ̵L̵i̵s̵t̵.̵l̵e̵n̵g̵t̵h̵_̵s̵i̵n̵g̵l̵e̵t̵o̵n̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:367:17: warning: This simp argument is unused:
+  Nat.reduceAdd
+
+Hint: Omit it from the simp argument list.
+  simp only [Nat.r̵e̵d̵u̵c̵e̵A̵d̵d̵,̵ ̵N̵at̵.̵a̵dd_one_sub_one, Nat.zero_le, min_eq_left, List.getD_cons_zero,
+          Nat.one_le_ofNat, List.getD_cons_succ, le_refl, min_self, litCode_litOfCode]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:368:8: warning: This simp argument is unused:
+  Nat.one_le_ofNat
+
+Hint: Omit it from the simp argument list.
+  simp only [Nat.reduceAdd, Nat.add_one_sub_one, Nat.zero_le, min_eq_left, List.getD_cons_zero,
+          N̵a̵t̵.̵o̵n̵e̵_̵l̵e̵_̵o̵f̵N̵a̵t̵,̵ ̵List.getD_cons_succ, le_refl, min_self, litCode_litOfCode]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:368:26: warning: This simp argument is unused:
+  List.getD_cons_succ
+
+Hint: Omit it from the simp argument list.
+  simp only [Nat.reduceAdd, Nat.add_one_sub_one, Nat.zero_le, min_eq_left, List.getD_cons_zero,
+          Nat.one_le_ofNat, L̵i̵s̵t̵.̵g̵e̵t̵D̵_̵c̵o̵n̵s̵_̵s̵u̵c̵c̵,̵ ̵le_refl, min_self, litCode_litOfCode]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:368:47: warning: This simp argument is unused:
+  le_refl
+
+Hint: Omit it from the simp argument list.
+  simp only [Nat.reduceAdd, Nat.add_one_sub_one, Nat.zero_le, min_eq_left, List.getD_cons_zero,
+          Nat.one_le_ofNat, List.getD_cons_succ, l̵e̵_̵r̵e̵f̵l̵,̵ ̵min_self, litCode_litOfCode]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:368:56: warning: This simp argument is unused:
+  min_self
+
+Hint: Omit it from the simp argument list.
+  simp only [Nat.reduceAdd, Nat.add_one_sub_one, Nat.zero_le, min_eq_left, List.getD_cons_zero,
+          Nat.one_le_ofNat, List.getD_cons_succ, le_refl, m̵i̵n̵_̵s̵e̵lf̵,̵ ̵l̵itCode_litOfCode]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:465:59: error: unsolved goals
+s : List Bool
+c : ℕ
+hok : CNF.syntaxOK s = true
+hs : s = (CNF.decode s).serialize
+j : ℕ
+⊢ candClause (CNF.decode s).serialize.length c j ∈ CNF.decode s ↔ candClause s.length c j ∈ CNF.decode s
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): lean exited with status 1
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): error diagnostics reported
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): no fresh .olean produced
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:278:19: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:351:4: error: unsolved goals
+case mpr.inl
+K c : ℕ
+φ : CNF ℕ
+hK : ∀ C ∈ φ, ∀ ℓ ∈ C, ℓ.1 < K
+hdec : clauseLit K c 0 + 2 * K * clauseLit K c 1 + (2 * K) ^ 2 * clauseLit K c 2 = c
+hmem : candClause K c 1 ∈ φ
+hv : clauseLit K c 0 = clauseLit K c 1 ∧ clauseLit K c 1 = clauseLit K c 2
+⊢ clauseLit K (clauseLit K c 0 + 2 * K * clauseLit K c 0 + (2 * K) ^ 2 * clauseLit K c 0) 0 +
+        2 * K * clauseLit K (clauseLit K c 0 + 2 * K * clauseLit K c 0 + (2 * K) ^ 2 * clauseLit K c 0) 0 +
+      (2 * K) ^ 2 * clauseLit K (clauseLit K c 0 + 2 * K * clauseLit K c 0 + (2 * K) ^ 2 * clauseLit K c 0) 0 =
+    clauseLit K c 0 + 2 * K * clauseLit K c 0 + (2 * K) ^ 2 * clauseLit K c 0
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:357:4: error: unsolved goals
+case mpr.inr.inl
+K c : ℕ
+φ : CNF ℕ
+hK : ∀ C ∈ φ, ∀ ℓ ∈ C, ℓ.1 < K
+hdec : clauseLit K c 0 + 2 * K * clauseLit K c 1 + (2 * K) ^ 2 * clauseLit K c 2 = c
+hmem : candClause K c 2 ∈ φ
+hv : clauseLit K c 1 = clauseLit K c 2
+⊢ clauseLit K (clauseLit K c 0 + 2 * K * clauseLit K c 1 + (2 * K) ^ 2 * clauseLit K c 1) 0 +
+        2 * K * clauseLit K (clauseLit K c 0 + 2 * K * clauseLit K c 1 + (2 * K) ^ 2 * clauseLit K c 1) 1 +
+      (2 * K) ^ 2 *
+        litCode
+          ([litOfCode (clauseLit K (clauseLit K c 0 + 2 * K * clauseLit K c 1 + (2 * K) ^ 2 * clauseLit K c 1) 0),
+                litOfCode
+                  (clauseLit K (clauseLit K c 0 + 2 * K * clauseLit K c 1 + (2 * K) ^ 2 * clauseLit K c 1) 1)].getD
+            (min 2 ([].length + 1)) (0, true)) =
+    clauseLit K c 0 + 2 * K * clauseLit K c 1 + (2 * K) ^ 2 * clauseLit K c 1
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:369:6: error: Type mismatch
+  hdec
+has type
+  clauseLit K c 0 + 2 * K * clauseLit K c 1 + (2 * K) ^ 2 * clauseLit K c 2 = c
+but is expected to have type
+  clauseLit K c 0 +
+        2 * K *
+          litCode
+            ([litOfCode (clauseLit K c 0), litOfCode (clauseLit K c 1), litOfCode (clauseLit K c 2)].getD
+              (min 1 ([].length + 2)) (0, true)) +
+      (2 * K) ^ 2 *
+        litCode
+          ([litOfCode (clauseLit K c 0), litOfCode (clauseLit K c 1), litOfCode (clauseLit K c 2)].getD
+            (min 2 ([].length + 2)) (0, true)) =
+    c
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:360:47: warning: This simp argument is unused:
+  List.length_singleton
+
+Hint: Omit it from the simp argument list.
+  simp only [wideLit_eq, List.length_cons,̵ ̵L̵i̵s̵t̵.̵l̵e̵n̵g̵t̵h̵_̵s̵i̵n̵g̵l̵e̵t̵o̵n̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): lean exited with status 1
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): error diagnostics reported
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): no fresh .olean produced
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:270:65: error: unsolved goals
+case neg
+ℓ : ℕ
+h : ¬ℓ % 2 = 0
+⊢ 2 * (ℓ / 2) + 1 = ℓ
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:278:19: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): lean exited with status 1
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): error diagnostics reported
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): no fresh .olean produced
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:606:2: error: `simp` made no progress
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:616:91: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  0 ≤ b ≤ 4
+  0 ≤ a ≤ 4
+  a - b ≥ 1
+where
+ a := ↑↑⟨min (↑n) 4, ⋯⟩
+ b := ↑↑n
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:632:10: error: don't know how to synthesize placeholder for argument `w`
+context:
+C : CNF.Clause ℕ
+n : Fin 5
+β : Bool
+h1 : widthStep (0, n, β) true = (1, 0, β)
+⊢ Fin 5
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:626:72: error: unsolved goals
+C : CNF.Clause ℕ
+n : Fin 5
+β : Bool
+h1 : widthStep (0, n, β) true = (1, 0, β)
+⊢ ∃ m,
+    (if ↑(1, ⟨min (↑0 + List.length C) 4, ⋯⟩, β).1 = 0 then if false = true then 1 else 4
+        else
+          if ↑(1, ⟨min (↑0 + List.length C) 4, ⋯⟩, β).1 = 1 then if false = true then 2 else 0
+          else
+            if ↑(1, ⟨min (↑0 + List.length C) 4, ⋯⟩, β).1 = 2 then if false = true then 2 else 3
+            else if ↑(1, ⟨min (↑0 + List.length C) 4, ⋯⟩, β).1 = 3 then 1 else 5,
+        if (1, ⟨min (↑0 + List.length C) 4, ⋯⟩, β).1 = 0 then 0
+        else
+          if (1, ⟨min (↑0 + List.length C) 4, ⋯⟩, β).1 = 1 ∧ false = true then
+            ⟨min (↑(1, ⟨min (↑0 + List.length C) 4, ⋯⟩, β).2.1 + 1) 4, ⋯⟩
+          else (1, ⟨min (↑0 + List.length C) 4, ⋯⟩, β).2.1,
+        (1, ⟨min (↑0 + List.length C) 4, ⋯⟩, β).2.2 ||
+          decide ((1, ⟨min (↑0 + List.length C) 4, ⋯⟩, β).1 = 1) && !false &&
+            decide
+              (↑(1, ⟨min (↑0 + List.length C) 4, ⋯⟩, β).2.1 = 0 ∨ ↑(1, ⟨min (↑0 + List.length C) 4, ⋯⟩, β).2.1 = 4)) =
+      (0, m, β || !(decide (1 ≤ List.length C) && decide (List.length C ≤ 3)))
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:665:9: error: unsolved goals
+case true
+s : List Bool
+hok : CNF.syntaxOK s = true
+hs : s = (CNF.decode s).serialize
+m : Fin 5
+hm :
+  List.foldl widthStep (0, 0, false) (List.flatMap clauseRec (CNF.decode s)) =
+    (0, m, false || List.any (CNF.decode s) fun C => !(decide (1 ≤ List.length C) && decide (List.length C ≤ 3)))
+hrun :
+  (List.foldl widthStep (0, 0, false) s).2.2 =
+    List.any (CNF.decode s) fun C => !(decide (1 ≤ List.length C) && decide (List.length C ≤ 3))
+⊢ (∀ C ∈ CNF.decode s, 1 ≤ List.length C ∧ List.length C ≤ 3) ↔ ∀ x ∈ CNF.decode s, ¬x = [] ∧ List.length x ≤ 3
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): lean exited with status 1
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): error diagnostics reported
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): no fresh .olean produced
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:615:21: error: Tactic `rewrite` failed: motive is not type correct:
+  fun _a => _a = ↑⟨min _a 4, ⋯⟩
+Error: Application type mismatch: The argument
+  a✝
+has type
+  ¬min (_a + [].length) 4 < 5
+but is expected to have type
+  ¬min (↑n + [].length) 4 < 5
+in the application
+  foldl_widthStep_lits._proof_1 [] n a✝
+
+Explanation: The rewrite tactic rewrites an expression 'e' using an equality 'a = b' by the following process. First, it looks for all 'a' in 'e'. Second, it tries to abstract these occurrences of 'a' to create a function 'm := fun _a => ...', called the *motive*, with the property that 'm a' is definitionally equal to 'e'. Third, we observe that 'congrArg' implies that 'm a = m b', which can be used with lemmas such as 'Eq.mpr' to change the goal. However, if 'e' depends on specific properties of 'a', then the motive 'm' might not typecheck.
+
+Possible solutions: use rewrite's 'occs' configuration option to limit which occurrences are rewritten, or use 'simp' or 'conv' mode, which have strategies for certain kinds of dependencies (these tactics can handle proofs and 'Decidable' instances whose types depend on the rewritten term, and 'simp' can apply user-defined '@[congr]' theorems as well).
+
+case nil
+β : Bool
+n : Fin 5
+⊢ ↑n = ↑⟨min (↑n) 4, ⋯⟩
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:637:82: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  1 ≤ a ≤ 3
+where
+ a := ↑(List.length C)
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:637:82: error: omega could not prove the goal:
+No usable constraints found. You may need to unfold definitions so `omega` can see linear arithmetic facts about `Nat` and `Int`, which may also involve multiplication, division, and modular remainder by constants.
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): lean exited with status 1
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): error diagnostics reported
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): no fresh .olean produced
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean:646:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  decide (min (0 + List.length C) 4 = 0 ∨ min (0 + List.length C) 4 = 4)
+in the target expression
+  (β || decide True && !false && decide (min (↑0 + List.length C) 4 = 0 ∨ min (↑0 + List.length C) 4 = 4)) =
+    (β || !(decide (1 ≤ List.length C) && decide (List.length C ≤ 3)))
+
+C : CNF.Clause ℕ
+n : Fin 5
+β : Bool
+h1 : widthStep (0, n, β) true = (1, 0, β)
+⊢ (β || decide True && !false && decide (min (↑0 + List.length C) 4 = 0 ∨ min (↑0 + List.length C) 4 = 4)) =
+    (β || !(decide (1 ≤ List.length C) && decide (List.length C ≤ 3)))
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): lean exited with status 1
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): error diagnostics reported
+FAIL(TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse): no fresh .olean produced

@@ -1,0 +1,36 @@
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Bridge.lean: foreign candidates=20 explicit foreign unfolds=7
+    (166, 'SATtoColor.EdgeRelation', 'EdgeRelation')
+    (171, 'SATtoColor.EdgeRelation', 'EdgeRelation')
+    (176, 'SATtoColor.EdgeRelation', 'EdgeRelation')
+    (183, 'SATtoColor.EdgeRelation', 'EdgeRelation')
+    (193, 'SATtoColor.EdgeRelation', 'EdgeRelation')
+    (215, 'SATtoColor.EdgeRelation', 'EdgeRelation')
+    (222, 'SATtoColor.EdgeRelation', 'EdgeRelation')
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/CircuitWitness.lean: foreign candidates=30 explicit foreign unfolds=4
+    (223, 'BoolCircuit.DAGCircuit.encode', 'DAGGate.encode')
+    (223, 'BoolCircuit.DAGGate.decode', 'DAGGate.decode')
+    (223, 'BoolCircuit.DAGGate.encode', 'DAGGate.encode')
+    (223, 'Std.Sat.CNF.decode', 'DAGGate.decode')
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringGraph.lean: foreign candidates=15 explicit foreign unfolds=1
+    (300, 'TCSlib.Cryptography.LevinHardness.gadgetN', 'gadgetN')
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean: foreign candidates=26 explicit foreign unfolds=1
+    (203, 'Std.Sat.CNF.serialize', 'CNF.serialize')
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringWitness.lean: foreign candidates=13 explicit foreign unfolds=0
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Gadget.lean: foreign candidates=0 explicit foreign unfolds=0
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Hardness.lean: foreign candidates=48 explicit foreign unfolds=0
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Padding.lean: foreign candidates=9 explicit foreign unfolds=0
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Relations.lean: foreign candidates=5 explicit foreign unfolds=0
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Soundness.lean: foreign candidates=17 explicit foreign unfolds=0
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/UnaryArith.lean: foreign candidates=5 explicit foreign unfolds=0
+TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Verifier.lean: foreign candidates=16 explicit foreign unfolds=0
+TOTAL foreign explicit unfolds: 13
+
+ADJUDICATION (lead):
+- Bridge.lean (7): the EdgeRelation case readers' proofs (`simp [EdgeRelation]`), the disclosed Rule-10 exception of
+  the quarantined bridge (user ruling); each is unsealed for exactly its own target in seals/bridge.
+- CircuitWitness.lean:223 (4 tokens): `DAGGate.decode`/`DAGGate.encode` are *arguments* of the published reader
+  `decodeList_encodeList` inside a `rw [...]` list, not rewrite rules; `CNF.decode` is a name-suffix false match.
+- ColoringGraph.lean:300: `gadgetN K` occurs in the *term* of `show i % N + gadgetN K * (i / N) = i from ...`, not as
+  a rewrite rule.
+- ColoringParse.lean:203: `CNF.serialize φ` is an *argument* of `List.take_append_drop`, not a rewrite rule.
+Result: 0 foreign explicit unfolds outside the disclosed bridge.

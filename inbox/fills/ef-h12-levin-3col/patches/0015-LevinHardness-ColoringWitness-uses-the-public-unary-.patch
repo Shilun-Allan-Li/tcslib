@@ -1,0 +1,82 @@
+From 085ebe3b6efd5acfbb49e5a56dceb44c7f46b32d Mon Sep 17 00:00:00 2001
+From: Claude-EF-H12 <noreply@anthropic.com>
+Date: Wed, 18 Nov 2026 10:14:50 +0000
+Subject: [PATCH 15/19] LevinHardness: ColoringWitness uses the public unary
+ rows (no private copies)
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiM56gUi2Nwh8ya4ah
+---
+ .../LevinHardness/ColoringWitness.lean        | 49 +------------------
+ 1 file changed, 1 insertion(+), 48 deletions(-)
+
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringWitness.lean b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringWitness.lean
+index fc9d63050..65ca3bf60 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringWitness.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringWitness.lean
+@@ -3,7 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: TCSlib contributors
+ -/
+-import TCSlib.Cryptography.ZeroKnowledge.LevinHardness.Gadget
++import TCSlib.Cryptography.ZeroKnowledge.LevinHardness.UnaryArith
+ import TCSlib.Cryptography.ZeroKnowledge.Encoding
+ import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Machines
+ 
+@@ -292,53 +292,6 @@ private theorem flatMap_colorBits (g : ℕ → Fin 3) (n : ℕ) :
+ 
+ /-! ### The witness map is polynomial-time -/
+ 
+-/-- Glue. Dividing a unary function by a constant `k`: `x ↦ 1^(f x / k)` is polynomial-time
+-(`EncodingMachines.divNum_poly`, `EncodingMachines.divNum_eq`). -/
+-private theorem unaryDivConst_poly {f : List Bool → ℕ}
+-    (hf : PolyTimeComputable fun x => List.replicate (f x) true) (k : ℕ) :
+-    PolyTimeComputable fun x => List.replicate (f x / k) true :=
+-  (divNum_poly hf (unaryConst_poly k)).congr fun x => by rw [divNum_eq]
+-
+-/-- Glue. The remainder of a unary function by a constant `k`: `x ↦ 1^(f x % k)` is
+-polynomial-time (`EncodingMachines.modNum_poly`, `EncodingMachines.modNum_eq`). -/
+-private theorem unaryModConst_poly {f : List Bool → ℕ}
+-    (hf : PolyTimeComputable fun x => List.replicate (f x) true) (k : ℕ) :
+-    PolyTimeComputable fun x => List.replicate (f x % k) true :=
+-  (modNum_poly hf (unaryConst_poly k)).congr fun x => by rw [modNum_eq]
+-
+-/-- Glue. The truth value of the literal code `ℓ x` under the assignment read from `a x` is a
+-polynomial-time test: `x ↦ [litVal (fun v => (a x).getD v false) (ℓ x)]` (parity of `ℓ x` by
+-`unaryModConst_poly`, the variable bit by `EncodingMachines.getBit_poly`). -/
+-private theorem litVal_poly {ℓ : List Bool → ℕ} {a : List Bool → List Bool}
+-    (hℓ : PolyTimeComputable fun x => List.replicate (ℓ x) true) (ha : PolyTimeComputable a) :
+-    PolyTimeComputable fun x => [litVal (fun v => (a x).getD v false) (ℓ x)] := by
+-  have hpar := eqTest_poly (unaryModConst_poly hℓ 2) (unaryConst_poly 0)
+-  have hbit := getBit_poly ha (unaryDivConst_poly hℓ 2)
+-  refine (polyTimeComputable_ite hpar hbit (polyTimeComputable_not hbit)).congr fun x => ?_
+-  rw [litVal_eq]
+-  by_cases h : ℓ x % 2 = 0 <;> simp [h]
+-
+-/-- Glue. The `j`-th literal code of the clause code `c x` for `K x` variables is a unary
+-polynomial-time function: `x ↦ 1^(clauseLit (K x) (c x) j)` (`clauseLit_eq`; division and
+-remainder by `2K` and `(2K)²`, `EncodingMachines.divNum_poly`, `EncodingMachines.modNum_poly`,
+-`EncodingMachines.unaryMul_poly`). -/
+-private theorem clauseLit_poly {K c : List Bool → ℕ}
+-    (hK : PolyTimeComputable fun x => List.replicate (K x) true)
+-    (hc : PolyTimeComputable fun x => List.replicate (c x) true) (j : Fin 3) :
+-    PolyTimeComputable fun x => List.replicate (clauseLit (K x) (c x) j) true := by
+-  have hM : PolyTimeComputable fun x => List.replicate (2 * K x) true :=
+-    unaryMul_poly (unaryConst_poly 2) hK
+-  fin_cases j
+-  · refine ((modNum_poly hc hM)).congr fun x => ?_
+-    rw [modNum_eq, clauseLit_eq]
+-    simp
+-  · refine ((modNum_poly (divNum_poly hc hM) hM)).congr fun x => ?_
+-    rw [modNum_eq, divNum_eq, clauseLit_eq]
+-    simp
+-  · refine ((divNum_poly hc (unaryMul_poly hM hM))).congr fun x => ?_
+-    rw [divNum_eq, clauseLit_eq]
+-    simp [pow_two]
+-
+ /-- Glue. The two bits of the gadget-node colour are a polynomial-time function of the three
+ truth values (one-bit tests) and the index (unary):
+ `x ↦ colorBits (gadgetNodeColor (a x) (b x) (c x) (i x))`, an `ite` tree of constants
+-- 
+2.43.0
+

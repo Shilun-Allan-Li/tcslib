@@ -1,0 +1,147 @@
+From 5dabd16493ef37c94a7b35df21bd6114b4afdf49 Mon Sep 17 00:00:00 2001
+From: Claude-EF-H12 <noreply@anthropic.com>
+Date: Wed, 18 Nov 2026 10:17:04 +0000
+Subject: [PATCH 18/19] LevinHardness: proof sketches and module-docstring
+ sections (style lint)
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiM56gUi2Nwh8ya4ah
+---
+ .../ZeroKnowledge/LevinHardness/Bridge.lean         |  4 ++++
+ .../ZeroKnowledge/LevinHardness/CircuitWitness.lean |  5 ++++-
+ .../ZeroKnowledge/LevinHardness/ColoringParse.lean  |  6 +++++-
+ .../LevinHardness/ColoringWitness.lean              | 13 +++++++++++--
+ .../ZeroKnowledge/LevinHardness/Gadget.lean         |  5 ++++-
+ .../ZeroKnowledge/LevinHardness/Hardness.lean       |  5 +++++
+ .../ZeroKnowledge/LevinHardness/UnaryArith.lean     |  4 ++++
+ 7 files changed, 37 insertions(+), 5 deletions(-)
+
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Bridge.lean b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Bridge.lean
+index 5c6fb9f71..4a40136cd 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Bridge.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Bridge.lean
+@@ -41,6 +41,10 @@ delivery's `REPORT.md`).
+ | `reductionGraph_adj` | `SATtoColor.ReductionGraph` | same |
+ | `edgeRelation_*` (case lemmas) | `SATtoColor.EdgeRelation` | same |
+ 
++## Main definitions
++
++None: this file only states readers.
++
+ ## Main results
+ 
+ The readers listed above (no new mathematics).
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/CircuitWitness.lean b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/CircuitWitness.lean
+index c7fcbb858..212eec4d1 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/CircuitWitness.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/CircuitWitness.lean
+@@ -203,7 +203,10 @@ theorem eval_withOutput {n : ℕ} (C : DAGCircuit n) (v : ℕ) (hv : v < n + C.g
+ 
+ /-- A description of the parts `encodeNat m ++ (encodeList DAGGate.encode G ++ encodeNat o)`
+ determines them: `n = m`, `C.gates = G` and `C.output = o`. Glue (the parts form of
+-`BoolCircuit.DAGCircuit.eq_of_encode_eq`, for parts that need not form a circuit). -/
++`BoolCircuit.DAGCircuit.eq_of_encode_eq`, for parts that need not form a circuit).
++
++**Proof sketch.** Decode the number of inputs (`decodeNat_encodeNat`), then the gate list
++(`decodeList_encodeList`), then the output from both sides of the equation, and compare. -/
+ private theorem parts_of_encode_eq {n m : ℕ} {C : DAGCircuit n} {G : List DAGGate} {o : ℕ}
+     (h : C.encode = encodeNat m ++ (encodeList DAGGate.encode G ++ encodeNat o)) :
+     n = m ∧ C.gates = G ∧ C.output = o := by
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean
+index df932c8dd..6ba91e4d7 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringParse.lean
+@@ -235,7 +235,11 @@ private theorem serializeLit_append_inj {a b : Literal ℕ} {x y : List Bool}
+       exact ⟨⟨by omega, hab.2⟩, hxy⟩
+ 
+ /-- **Clause serializations are prefix-free**: `serializeClause C ++ x = serializeClause D ++ y`
+-implies `C = D` and `x = y`. Glue. -/
++implies `C = D` and `x = y`. Glue.
++
++**Proof sketch.** Induction on `C`: a literal record starts with `1` and the clause terminator
++is `0`, so both sides end or continue together; two literal records followed by anything agree
++in their unary variable run, polarity bit and remainder (`serializeLit_eq`). -/
+ theorem serializeClause_append_inj {C D : CNF.Clause ℕ} {x y : List Bool}
+     (h : CNF.serializeClause C ++ x = CNF.serializeClause D ++ y) : C = D ∧ x = y := by
+   rw [Bridge.serializeClause_eq, Bridge.serializeClause_eq] at h
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringWitness.lean b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringWitness.lean
+index 65ca3bf60..d1f1b2fd3 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringWitness.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringWitness.lean
+@@ -296,7 +296,11 @@ private theorem flatMap_colorBits (g : ℕ → Fin 3) (n : ℕ) :
+ truth values (one-bit tests) and the index (unary):
+ `x ↦ colorBits (gadgetNodeColor (a x) (b x) (c x) (i x))`, an `ite` tree of constants
+ (`polyTimeComputable_ite`, `polyTimeComputable_and`, `polyTimeComputable_not`,
+-`EncodingMachines.eqTest_poly`). -/
++`EncodingMachines.eqTest_poly`).
++
++**Proof sketch.** The colour table `gadgetNodeColor_eq` is a finite case split on the three
++truth values and the index; each branch is a constant chunk, so the chunk is an `ite` tree of
++constants guarded by polynomial-time one-bit tests, and both sides agree by `split_ifs`. -/
+ private theorem gadgetNodeColorBits_poly {a b c : List Bool → Bool} {i : List Bool → ℕ}
+     (ha : PolyTimeComputable fun x => [a x]) (hb : PolyTimeComputable fun x => [b x])
+     (hc : PolyTimeComputable fun x => [c x])
+@@ -325,7 +329,12 @@ private theorem gadgetNodeColorBits_poly {a b c : List Bool → Bool} {i : List
+ 
+ /-- Glue. The two bits of the colour `gadgetColor (K x) (a x).getD (t x)` are a polynomial-time
+ function of the unary `K x`, `t x` and the word `a x` (an `ite` tree over the vertex ranges,
+-`litVal_poly`, `clauseLit_poly`, `gadgetNodeColorBits_poly`). -/
++`litVal_poly`, `clauseLit_poly`, `gadgetNodeColorBits_poly`).
++
++**Proof sketch.** Split on the vertex range (`gadgetColor_eq`): the palette colour is the vertex
++itself, a literal colour is a test on `litVal_poly`, and a gadget colour is
++`gadgetNodeColorBits_poly` of the three literal values of the clause code `(t - L) / 6`
++(`unaryDivConst_poly`, `clauseLit_poly`) at index `(t - L) % 6`. -/
+ private theorem gadgetColorBits_poly {K t : List Bool → ℕ} {a : List Bool → List Bool}
+     (hK : PolyTimeComputable fun x => List.replicate (K x) true)
+     (ht : PolyTimeComputable fun x => List.replicate (t x) true) (ha : PolyTimeComputable a) :
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Gadget.lean b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Gadget.lean
+index ae537fa9c..7ffe9a440 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Gadget.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Gadget.lean
+@@ -120,7 +120,10 @@ def gadgetEdge (K : ℕ) (mem : ℕ → Bool) (t t' : ℕ) : Bool :=
+      (decide (t - 3 = clauseLit K ((t' - L) / 6) 2) && decide ((t' - L) % 6 = 4)))) ||
+   (decide (L ≤ t) && decide (t < N) && decide ((t - L) % 6 = 5) && decide (t' = 0 ∨ t' = 2))
+ 
+-/-- The defining equation of `gadgetEdge` (see its docstring for the cases). -/
++/-- The defining equation of `gadgetEdge` (see its docstring for the cases).
++
++**Proof sketch.** `rfl`: the right-hand side is the body of `gadgetEdge` with its two `let`s
++inlined. -/
+ theorem gadgetEdge_eq (K : ℕ) (mem : ℕ → Bool) (t t' : ℕ) :
+     gadgetEdge K mem t t' =
+       ((decide (t < 3) && decide (t' < 3)) ||
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Hardness.lean b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Hardness.lean
+index 240e310a7..4e61ab2c4 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Hardness.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Hardness.lean
+@@ -37,6 +37,11 @@ This proves `LevinNPHard L3COL R3COL` ([PS10, §4.7, Theorem 124.1, step 2]; the
+ `zk_proof_of_witnessRelation` and `zk_proof_of_mem_NP` in `ZeroKnowledge/NP.lean`), and with it
+ the unconditional forms of [PS10, Theorem 124.1].
+ 
++## Main definitions
++
++None: the instance and witness maps of the reduction are explicit terms in the proof of
++`levinNPHard_L3COL`, built from the definitions of the step files.
++
+ ## Main results
+ 
+ * `TCSlib.Cryptography.LevinHardness.polyTimeComputable_certOf` — the certificate map.
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/UnaryArith.lean b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/UnaryArith.lean
+index bdd554de6..9ec91dcee 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/UnaryArith.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/UnaryArith.lean
+@@ -21,6 +21,10 @@ quotient and remainder (by a unary function or a constant), constant powers, the
+ word. All are read off the public rows of `ZeroKnowledge/EncodingMachines.lean`
+ (`divNum_poly`, `modNum_poly`, `unaryMul_poly`, `getBit_poly`, …) through their readers.
+ 
++## Main definitions
++
++None: the file states polynomial-time rows only.
++
+ ## Main results
+ 
+ * `TCSlib.Cryptography.LevinHardness.unaryDiv_poly`, `unaryMod_poly` — `f / g`, `f % g`.
+-- 
+2.43.0
+

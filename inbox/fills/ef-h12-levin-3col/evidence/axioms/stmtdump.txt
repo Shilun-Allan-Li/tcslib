@@ -1,0 +1,490 @@
+TCSlib.Cryptography.LevinHardness.Bridge.decode_eq	STD	[]
+  : ∀ (x : List Bool), Std.Sat.CNF.decode x = (Std.Sat.CNF.parse x).getD Std.Sat.CNF.fallback
+TCSlib.Cryptography.LevinHardness.Bridge.edgeRelation_gadget_gadget	STD	[propext]
+  : ∀ {V : Type} (f : SATtoColor.Sat3 V) (c c' : SATtoColor.Clause V) (i j : Fin 6),   SATtoColor.EdgeRelation f (SATtoColor.OutputVertex.clauseGadget c i) (SATtoColor.OutputVertex.clauseGadget c' j) ↔     c = c' ∧       c ∈ f ∧         (i = 0 ∧ j = 1 ∨           i = 0 ∧ j = 2 ∨             i = 1 ∧ j = 2 ∨               i = 2 ∧ j = 3 ∨                 i = 3 ∧ j = 4 ∨                   i = 3 ∧ j = 5 ∨                     i = 4 ∧ j = 5 ∨                       i = 1 ∧ j = 0 ∨                         i = 2 ∧ j = 0 ∨ i = 2 ∧ j = 1 ∨ i = 3 ∧ j = 2 ∨ i = 4 ∧ j = 3 ∨ i = 5 ∧ j = 3 ∨ i = 5 ∧ j = 4)
+TCSlib.Cryptography.LevinHardness.Bridge.edgeRelation_gadget_literal	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {V : Type} (f : SATtoColor.Sat3 V) (c : SATtoColor.Clause V) (i : Fin 6) (z : SATtoColor.Literal V),   SATtoColor.EdgeRelation f (SATtoColor.OutputVertex.clauseGadget c i) (SATtoColor.OutputVertex.literalNode z) ↔     z = c.l1 ∧ i = 0 ∨ z = c.l2 ∧ i = 1 ∨ z = c.l3 ∧ i = 4
+TCSlib.Cryptography.LevinHardness.Bridge.edgeRelation_gadget_palette	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {V : Type} (f : SATtoColor.Sat3 V) (c : SATtoColor.Clause V) (i : Fin 6) (p : Fin 3),   SATtoColor.EdgeRelation f (SATtoColor.OutputVertex.clauseGadget c i) (SATtoColor.OutputVertex.palette p) ↔     i = 5 ∧ (p = 0 ∨ p = 2)
+TCSlib.Cryptography.LevinHardness.Bridge.edgeRelation_literal_gadget	STD	[propext]
+  : ∀ {V : Type} (f : SATtoColor.Sat3 V) (z : SATtoColor.Literal V) (c : SATtoColor.Clause V) (i : Fin 6),   SATtoColor.EdgeRelation f (SATtoColor.OutputVertex.literalNode z) (SATtoColor.OutputVertex.clauseGadget c i) ↔     z = c.l1 ∧ i = 0 ∨ z = c.l2 ∧ i = 1 ∨ z = c.l3 ∧ i = 4
+TCSlib.Cryptography.LevinHardness.Bridge.edgeRelation_literal_literal	STD	[propext, Quot.sound]
+  : ∀ {V : Type} (f : SATtoColor.Sat3 V) (l l' : SATtoColor.Literal V),   SATtoColor.EdgeRelation f (SATtoColor.OutputVertex.literalNode l) (SATtoColor.OutputVertex.literalNode l') ↔     ∃ x,       l = SATtoColor.Literal.pos x ∧ l' = SATtoColor.Literal.neg x ∨         l = SATtoColor.Literal.neg x ∧ l' = SATtoColor.Literal.pos x
+TCSlib.Cryptography.LevinHardness.Bridge.edgeRelation_literal_palette	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {V : Type} (f : SATtoColor.Sat3 V) (l : SATtoColor.Literal V) (i : Fin 3),   SATtoColor.EdgeRelation f (SATtoColor.OutputVertex.literalNode l) (SATtoColor.OutputVertex.palette i) ↔ i = 0
+TCSlib.Cryptography.LevinHardness.Bridge.edgeRelation_palette_gadget	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {V : Type} (f : SATtoColor.Sat3 V) (p : Fin 3) (c : SATtoColor.Clause V) (i : Fin 6),   SATtoColor.EdgeRelation f (SATtoColor.OutputVertex.palette p) (SATtoColor.OutputVertex.clauseGadget c i) ↔     i = 5 ∧ (p = 0 ∨ p = 2)
+TCSlib.Cryptography.LevinHardness.Bridge.edgeRelation_palette_literal	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {V : Type} (f : SATtoColor.Sat3 V) (i : Fin 3) (l : SATtoColor.Literal V),   SATtoColor.EdgeRelation f (SATtoColor.OutputVertex.palette i) (SATtoColor.OutputVertex.literalNode l) ↔ i = 0
+TCSlib.Cryptography.LevinHardness.Bridge.edgeRelation_palette_palette	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {V : Type} (f : SATtoColor.Sat3 V) (i j : Fin 3),   SATtoColor.EdgeRelation f (SATtoColor.OutputVertex.palette i) (SATtoColor.OutputVertex.palette j) ↔ i ≠ j
+TCSlib.Cryptography.LevinHardness.Bridge.fallback_eq	STD	[]
+  : Std.Sat.CNF.fallback = []
+TCSlib.Cryptography.LevinHardness.Bridge.is3Colorable_iff	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {V' : Type} (G : SimpleGraph V'), SATtoColor.Is3Colorable G ↔ Nonempty (G.Coloring (Fin 3))
+TCSlib.Cryptography.LevinHardness.Bridge.isSatisfiable_iff	STD	[]
+  : ∀ {V : Type} (f : SATtoColor.Sat3 V), SATtoColor.IsSatisfiable f ↔ ∃ a, SATtoColor.SatisfiesSat3 a f = true
+TCSlib.Cryptography.LevinHardness.Bridge.levinNPHard_iff	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (L' : Language Bool) (R' : List Bool → List Bool → Prop),   TCSlib.Cryptography.LevinNPHard L' R' ↔     ∀ (L : Language Bool) (R : List Bool → List Bool → Prop),       TCSlib.Cryptography.WitnessRelation L R → ∃ f w p, TCSlib.Cryptography.LevinReduction L L' R R' f w p
+TCSlib.Cryptography.LevinHardness.Bridge.numVars_eq	STD	[]
+  : ∀ (φ : Std.Sat.CNF ℕ), φ.numVars = List.foldr max 0 (List.flatMap (fun C => List.map (fun ℓ => ℓ.1 + 1) C) φ)
+TCSlib.Cryptography.LevinHardness.Bridge.reductionGraph_adj	STD	[propext]
+  : ∀ {V : Type} (f : SATtoColor.Sat3 V) (u v : SATtoColor.OutputVertex V),   (SATtoColor.ReductionGraph f).Adj u v ↔ u ≠ v ∧ (SATtoColor.EdgeRelation f u v ∨ SATtoColor.EdgeRelation f v u)
+TCSlib.Cryptography.LevinHardness.Bridge.satisfiesClause_eq	STD	[]
+  : ∀ {V : Type} (a : V → Bool) (c : SATtoColor.Clause V),   SATtoColor.SatisfiesClause a c =     (SATtoColor.SatisfiesLiteral a c.l1 || SATtoColor.SatisfiesLiteral a c.l2 || SATtoColor.SatisfiesLiteral a c.l3)
+TCSlib.Cryptography.LevinHardness.Bridge.satisfiesLiteral_neg	STD	[]
+  : ∀ {V : Type} (a : V → Bool) (v : V), SATtoColor.SatisfiesLiteral a (SATtoColor.Literal.neg v) = !a v
+TCSlib.Cryptography.LevinHardness.Bridge.satisfiesLiteral_pos	STD	[]
+  : ∀ {V : Type} (a : V → Bool) (v : V), SATtoColor.SatisfiesLiteral a (SATtoColor.Literal.pos v) = a v
+TCSlib.Cryptography.LevinHardness.Bridge.satisfiesSat3_eq	STD	[]
+  : ∀ {V : Type} (a : V → Bool) (f : SATtoColor.Sat3 V),   SATtoColor.SatisfiesSat3 a f = List.all f (SATtoColor.SatisfiesClause a)
+TCSlib.Cryptography.LevinHardness.Bridge.serializeClause_eq	STD	[]
+  : ∀ (C : Std.Sat.CNF.Clause ℕ), Std.Sat.CNF.serializeClause C = List.flatMap Std.Sat.CNF.serializeLit C ++ [false]
+TCSlib.Cryptography.LevinHardness.Bridge.serializeLit_eq	STD	[]
+  : ∀ (ℓ : Std.Sat.Literal ℕ), Std.Sat.CNF.serializeLit ℓ = List.replicate (ℓ.1 + 1) true ++ [false, ℓ.2]
+TCSlib.Cryptography.LevinHardness.Bridge.serialize_eq	STD	[]
+  : ∀ (φ : Std.Sat.CNF ℕ), φ.serialize = List.flatMap (fun C => true :: Std.Sat.CNF.serializeClause C) φ ++ [false]
+TCSlib.Cryptography.LevinHardness.Bridge.syntaxOK_eq	STD	[propext]
+  : ∀ (x : List Bool), Std.Sat.CNF.syntaxOK x = decide (List.foldl Std.Sat.CNF.syntaxStep 0 x = 4)
+TCSlib.Cryptography.LevinHardness.Bridge.syntaxStep_eq	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (q : Fin 6) (b : Bool),   Std.Sat.CNF.syntaxStep q b =     if ↑q = 0 then if b = true then 1 else 4     else       if ↑q = 1 then if b = true then 2 else 0       else if ↑q = 2 then if b = true then 2 else 3 else if ↑q = 3 then 1 else 5
+TCSlib.Cryptography.LevinHardness.Bridge.toCNF_eq	STD	[]
+  : ∀ {n : ℕ} (C : BoolCircuit.DAGCircuit n), C.toCNF = [(C.output, true)] :: BoolCircuit.tseitinGates n C.gates
+TCSlib.Cryptography.LevinHardness.Bridge.widthAtMost_iff	STD	[]
+  : ∀ {α : Type} (φ : Std.Sat.CNF α) (k : ℕ), φ.WidthAtMost k ↔ ∀ C ∈ φ, List.length C ≤ k
+TCSlib.Cryptography.LevinHardness.R3COL_padWord	STD	[Quot.sound, propext, Classical.choice]
+  : ∀ {s a : List Bool} {B : ℕ},   TCSlib.Cryptography.LevinHardness.R_3SAT s a →     (TCSlib.Cryptography.LevinHardness.colorInst s).length ≤ B →       TCSlib.Cryptography.R3COL         (TCSlib.Cryptography.LevinHardness.padWord (TCSlib.Cryptography.LevinHardness.colorInst s) B)         (TCSlib.Cryptography.LevinHardness.padColWord (TCSlib.Cryptography.LevinHardness.colorWord s a) B)
+TCSlib.Cryptography.LevinHardness.R_3SAT	STD	[]
+  : List Bool → List Bool → Prop
+TCSlib.Cryptography.LevinHardness.R_3SAT_iff	STD	[]
+  : ∀ (s a : List Bool),   TCSlib.Cryptography.LevinHardness.R_3SAT s a ↔     (Std.Sat.CNF.decode s).WidthAtMost 3 ∧ Std.Sat.CNF.eval (fun v => a.getD v false) (Std.Sat.CNF.decode s) = true
+TCSlib.Cryptography.LevinHardness.R_3SAT_wireValues	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {d u : List Bool},   TCSlib.Cryptography.LevinHardness.R_CKT d u →     TCSlib.Cryptography.LevinHardness.R_3SAT (BoolCircuit.dagCktSatToSAT3 d)       (TCSlib.Cryptography.LevinHardness.wireValues d u)
+TCSlib.Cryptography.LevinHardness.R_CKT	STD	[]
+  : List Bool → List Bool → Prop
+TCSlib.Cryptography.LevinHardness.R_CKT_iff	STD	[]
+  : ∀ (d u : List Bool),   TCSlib.Cryptography.LevinHardness.R_CKT d u ↔     ∃ n C, C.IsFaninTwo ∧ C.encode = d ∧ (C.eval fun i => u.getD (↑i) false) = true
+TCSlib.Cryptography.LevinHardness.candClause	STD	[propext]
+  : ℕ → ℕ → ℕ → Std.Sat.CNF.Clause ℕ
+TCSlib.Cryptography.LevinHardness.candClause_one	STD	[propext]
+  : ∀ (K c : ℕ),   TCSlib.Cryptography.LevinHardness.candClause K c 1 =     [TCSlib.Cryptography.LevinHardness.litOfCode (TCSlib.Cryptography.LevinHardness.clauseLit K c 0)]
+TCSlib.Cryptography.LevinHardness.candClause_three	STD	[propext]
+  : ∀ (K c : ℕ),   TCSlib.Cryptography.LevinHardness.candClause K c 3 =     [TCSlib.Cryptography.LevinHardness.litOfCode (TCSlib.Cryptography.LevinHardness.clauseLit K c 0),       TCSlib.Cryptography.LevinHardness.litOfCode (TCSlib.Cryptography.LevinHardness.clauseLit K c 1),       TCSlib.Cryptography.LevinHardness.litOfCode (TCSlib.Cryptography.LevinHardness.clauseLit K c 2)]
+TCSlib.Cryptography.LevinHardness.candClause_two	STD	[propext]
+  : ∀ (K c : ℕ),   TCSlib.Cryptography.LevinHardness.candClause K c 2 =     [TCSlib.Cryptography.LevinHardness.litOfCode (TCSlib.Cryptography.LevinHardness.clauseLit K c 0),       TCSlib.Cryptography.LevinHardness.litOfCode (TCSlib.Cryptography.LevinHardness.clauseLit K c 1)]
+TCSlib.Cryptography.LevinHardness.candValid	STD	[propext]
+  : ℕ → ℕ → ℕ → Bool
+TCSlib.Cryptography.LevinHardness.candValid_one	STD	[propext]
+  : ∀ (K c : ℕ),   TCSlib.Cryptography.LevinHardness.candValid K c 1 =     (decide (TCSlib.Cryptography.LevinHardness.clauseLit K c 0 = TCSlib.Cryptography.LevinHardness.clauseLit K c 1) &&       decide (TCSlib.Cryptography.LevinHardness.clauseLit K c 1 = TCSlib.Cryptography.LevinHardness.clauseLit K c 2))
+TCSlib.Cryptography.LevinHardness.candValid_three	STD	[propext]
+  : ∀ (K c : ℕ), TCSlib.Cryptography.LevinHardness.candValid K c 3 = true
+TCSlib.Cryptography.LevinHardness.candValid_two	STD	[propext]
+  : ∀ (K c : ℕ),   TCSlib.Cryptography.LevinHardness.candValid K c 2 =     decide (TCSlib.Cryptography.LevinHardness.clauseLit K c 1 = TCSlib.Cryptography.LevinHardness.clauseLit K c 2)
+TCSlib.Cryptography.LevinHardness.certOf	STD	[propext]
+  : Complexity.PolyExpr → List Bool → List Bool → List Bool
+TCSlib.Cryptography.LevinHardness.certOf_eq	STD	[propext]
+  : ∀ (q : Complexity.PolyExpr) (x y : List Bool),   TCSlib.Cryptography.LevinHardness.certOf q x y = y ++ true :: List.replicate (q.eval x.length - y.length) false
+TCSlib.Cryptography.LevinHardness.clauseCode	STD	[propext]
+  : ℕ → Std.Sat.CNF.Clause ℕ → ℕ
+TCSlib.Cryptography.LevinHardness.clauseCode_eq	STD	[propext]
+  : ∀ (K : ℕ) (C : Std.Sat.CNF.Clause ℕ),   TCSlib.Cryptography.LevinHardness.clauseCode K C =     TCSlib.Cryptography.LevinHardness.litCode (TCSlib.Cryptography.LevinHardness.wideLit C 0) +         2 * K * TCSlib.Cryptography.LevinHardness.litCode (TCSlib.Cryptography.LevinHardness.wideLit C 1) +       (2 * K) ^ 2 * TCSlib.Cryptography.LevinHardness.litCode (TCSlib.Cryptography.LevinHardness.wideLit C 2)
+TCSlib.Cryptography.LevinHardness.clauseCode_lt	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {K : ℕ} {C : Std.Sat.CNF.Clause ℕ},   (∀ ℓ ∈ C, ℓ.1 < K) → 1 ≤ List.length C → TCSlib.Cryptography.LevinHardness.clauseCode K C < (2 * K) ^ 3
+TCSlib.Cryptography.LevinHardness.clauseEquiv	STD	[propext, Quot.sound, Classical.choice]
+  : (K : ℕ) → Fin ((2 * K) ^ 3) ≃ SATtoColor.Clause (Fin K)
+TCSlib.Cryptography.LevinHardness.clauseEquiv_apply	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (K : ℕ) (c : Fin ((2 * K) ^ 3)),   (TCSlib.Cryptography.LevinHardness.clauseEquiv K) c =     { l1 := (TCSlib.Cryptography.LevinHardness.litEquiv K) ⟨TCSlib.Cryptography.LevinHardness.clauseLit K (↑c) 0, ⋯⟩,       l2 := (TCSlib.Cryptography.LevinHardness.litEquiv K) ⟨TCSlib.Cryptography.LevinHardness.clauseLit K (↑c) 1, ⋯⟩,       l3 := (TCSlib.Cryptography.LevinHardness.litEquiv K) ⟨TCSlib.Cryptography.LevinHardness.clauseLit K (↑c) 2, ⋯⟩ }
+TCSlib.Cryptography.LevinHardness.clauseEquiv_symm_val	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (K : ℕ) (C : SATtoColor.Clause (Fin K)),   ↑((TCSlib.Cryptography.LevinHardness.clauseEquiv K).symm C) =     ↑((TCSlib.Cryptography.LevinHardness.litEquiv K).symm C.l1) +         2 * K * ↑((TCSlib.Cryptography.LevinHardness.litEquiv K).symm C.l2) +       (2 * K) ^ 2 * ↑((TCSlib.Cryptography.LevinHardness.litEquiv K).symm C.l3)
+TCSlib.Cryptography.LevinHardness.clauseLit	STD	[propext]
+  : ℕ → ℕ → Fin 3 → ℕ
+TCSlib.Cryptography.LevinHardness.clauseLit_clauseCode	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {K : ℕ} {C : Std.Sat.CNF.Clause ℕ},   (∀ ℓ ∈ C, ℓ.1 < K) →     1 ≤ List.length C →       ∀ (j : Fin 3),         TCSlib.Cryptography.LevinHardness.clauseLit K (TCSlib.Cryptography.LevinHardness.clauseCode K C) j =           TCSlib.Cryptography.LevinHardness.litCode (TCSlib.Cryptography.LevinHardness.wideLit C ↑j)
+TCSlib.Cryptography.LevinHardness.clauseLit_clauseEquiv_symm	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (K : ℕ) (C : SATtoColor.Clause (Fin K)) (j : Fin 3),   TCSlib.Cryptography.LevinHardness.clauseLit K (↑((TCSlib.Cryptography.LevinHardness.clauseEquiv K).symm C)) j =     ↑((TCSlib.Cryptography.LevinHardness.litEquiv K).symm (![C.l1, C.l2, C.l3] j))
+TCSlib.Cryptography.LevinHardness.clauseLit_code	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {K a b d : ℕ},   a < 2 * K →     b < 2 * K →       d < 2 * K →         ∀ (j : Fin 3), TCSlib.Cryptography.LevinHardness.clauseLit K (a + 2 * K * b + (2 * K) ^ 2 * d) j = ![a, b, d] j
+TCSlib.Cryptography.LevinHardness.clauseLit_decomp	STD	[propext, Classical.choice, Quot.sound]
+  : ∀ (K c : ℕ),   TCSlib.Cryptography.LevinHardness.clauseLit K c 0 + 2 * K * TCSlib.Cryptography.LevinHardness.clauseLit K c 1 +       (2 * K) ^ 2 * TCSlib.Cryptography.LevinHardness.clauseLit K c 2 =     c
+TCSlib.Cryptography.LevinHardness.clauseLit_eq	STD	[propext]
+  : ∀ (K c : ℕ) (j : Fin 3),   TCSlib.Cryptography.LevinHardness.clauseLit K c j = if j = 2 then c / (2 * K) ^ 2 else c / (2 * K) ^ ↑j % (2 * K)
+TCSlib.Cryptography.LevinHardness.clauseLit_lt	STD	[propext, Classical.choice, Quot.sound]
+  : ∀ {K c : ℕ}, c < (2 * K) ^ 3 → ∀ (j : Fin 3), TCSlib.Cryptography.LevinHardness.clauseLit K c j < 2 * K
+TCSlib.Cryptography.LevinHardness.clauseLit_poly	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {K c : List Bool → ℕ},   (Complexity.PolyTimeComputable fun x => List.replicate (K x) true) →     (Complexity.PolyTimeComputable fun x => List.replicate (c x) true) →       ∀ (j : Fin 3),         Complexity.PolyTimeComputable fun x =>           List.replicate (TCSlib.Cryptography.LevinHardness.clauseLit (K x) (c x) j) true
+TCSlib.Cryptography.LevinHardness.clauseRec	STD	[]
+  : Std.Sat.CNF.Clause ℕ → List Bool
+TCSlib.Cryptography.LevinHardness.clauseRec_eq	STD	[]
+  : ∀ (C : Std.Sat.CNF.Clause ℕ), TCSlib.Cryptography.LevinHardness.clauseRec C = true :: Std.Sat.CNF.serializeClause C
+TCSlib.Cryptography.LevinHardness.clauseSat	STD	[propext]
+  : ℕ → (ℕ → Bool) → ℕ → Bool
+TCSlib.Cryptography.LevinHardness.clauseSat_clauseCode	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {K : ℕ} (val : ℕ → Bool) {C : Std.Sat.CNF.Clause ℕ},   (∀ ℓ ∈ C, ℓ.1 < K) →     1 ≤ List.length C →       List.length C ≤ 3 →         TCSlib.Cryptography.LevinHardness.clauseSat K val (TCSlib.Cryptography.LevinHardness.clauseCode K C) =           Std.Sat.CNF.Clause.eval val C
+TCSlib.Cryptography.LevinHardness.clauseSat_eq	STD	[propext]
+  : ∀ (K : ℕ) (val : ℕ → Bool) (c : ℕ),   TCSlib.Cryptography.LevinHardness.clauseSat K val c =     (TCSlib.Cryptography.LevinHardness.litVal val (TCSlib.Cryptography.LevinHardness.clauseLit K c 0) ||         TCSlib.Cryptography.LevinHardness.litVal val (TCSlib.Cryptography.LevinHardness.clauseLit K c 1) ||       TCSlib.Cryptography.LevinHardness.litVal val (TCSlib.Cryptography.LevinHardness.clauseLit K c 2))
+TCSlib.Cryptography.LevinHardness.clauseSat_of_memS	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {s : List Bool} {val : ℕ → Bool} {c : ℕ},   Std.Sat.CNF.eval val (Std.Sat.CNF.decode s) = true →     TCSlib.Cryptography.LevinHardness.memS s c = true →       TCSlib.Cryptography.LevinHardness.clauseSat s.length val c = true
+TCSlib.Cryptography.LevinHardness.clauseSat_of_memS_of_lt	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {s : List Bool} {val : ℕ → Bool} {c : ℕ},   (∀ C ∈ Std.Sat.CNF.decode s, ∀ ℓ ∈ C, ℓ.1 < s.length) →     Std.Sat.CNF.eval val (Std.Sat.CNF.decode s) = true →       TCSlib.Cryptography.LevinHardness.memS s c = true →         TCSlib.Cryptography.LevinHardness.clauseSat s.length val c = true
+TCSlib.Cryptography.LevinHardness.clause_eval_eq_true_iff	STD	[propext, Quot.sound]
+  : ∀ (val : ℕ → Bool) (C : Std.Sat.CNF.Clause ℕ), Std.Sat.CNF.Clause.eval val C = true ↔ ∃ ℓ ∈ C, (val ℓ.1 == ℓ.2) = true
+TCSlib.Cryptography.LevinHardness.cnf_eval_eq_true_iff	STD	[propext, Quot.sound]
+  : ∀ (val : ℕ → Bool) (φ : Std.Sat.CNF ℕ), Std.Sat.CNF.eval val φ = true ↔ ∀ C ∈ φ, Std.Sat.CNF.Clause.eval val C = true
+TCSlib.Cryptography.LevinHardness.code_lt	STD	[propext, Classical.choice, Quot.sound]
+  : ∀ {m a b d : ℕ}, a < m → b < m → d < m → a + m * b + m ^ 2 * d < m ^ 3
+TCSlib.Cryptography.LevinHardness.colorInst	STD	[Quot.sound, propext, Classical.choice]
+  : List Bool → List Bool
+TCSlib.Cryptography.LevinHardness.colorInst_eq	STD	[Quot.sound, propext, Classical.choice]
+  : ∀ (s : List Bool),   TCSlib.Cryptography.LevinHardness.colorInst s =     if TCSlib.Cryptography.LevinHardness.goodS s = true then       TCSlib.Cryptography.encGraph         (TCSlib.Cryptography.LevinHardness.gadgetGraph s.length (TCSlib.Cryptography.LevinHardness.memS s))     else TCSlib.Cryptography.encGraph TCSlib.Cryptography.LevinHardness.k4
+TCSlib.Cryptography.LevinHardness.colorWord	STD	[Quot.sound, propext, Classical.choice]
+  : List Bool → List Bool → List Bool
+TCSlib.Cryptography.LevinHardness.colorWord_eq	STD	[Quot.sound, propext, Classical.choice]
+  : ∀ (s a : List Bool),   TCSlib.Cryptography.LevinHardness.colorWord s a =     TCSlib.Cryptography.encColoring fun u =>       TCSlib.Cryptography.LevinHardness.gadgetColor s.length (fun v => a.getD v false) ↑u
+TCSlib.Cryptography.LevinHardness.decode_eq_nil_of_syntaxOK	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {s : List Bool}, Std.Sat.CNF.syntaxOK s = false → Std.Sat.CNF.decode s = []
+TCSlib.Cryptography.LevinHardness.descPrefix	STD	[propext]
+  : List Bool → List Bool
+TCSlib.Cryptography.LevinHardness.descPrefix_encode	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {n : ℕ} (C : BoolCircuit.DAGCircuit n),   TCSlib.Cryptography.LevinHardness.descPrefix C.encode =     BoolCircuit.encodeNat n ++ BoolCircuit.encodeList BoolCircuit.DAGGate.encode C.gates
+TCSlib.Cryptography.LevinHardness.descPrefix_eq	STD	[propext]
+  : ∀ (d : List Bool),   TCSlib.Cryptography.LevinHardness.descPrefix d =     (Complexity.transduce TCSlib.Cryptography.LevinHardness.stripNext TCSlib.Cryptography.LevinHardness.stripOut 0         d.reverse).reverse
+TCSlib.Cryptography.LevinHardness.encGraph_gadgetGraph	STD	[Quot.sound, propext, Classical.choice]
+  : ∀ (K : ℕ) (mem : ℕ → Bool),   TCSlib.Cryptography.encGraph (TCSlib.Cryptography.LevinHardness.gadgetGraph K mem) =     List.flatMap       (fun i =>         [TCSlib.Cryptography.LevinHardness.gadgetAdj K mem (i / TCSlib.Cryptography.LevinHardness.gadgetN K)             (i % TCSlib.Cryptography.LevinHardness.gadgetN K)])       (List.range (TCSlib.Cryptography.LevinHardness.gadgetN K * TCSlib.Cryptography.LevinHardness.gadgetN K))
+TCSlib.Cryptography.LevinHardness.encode_withOutput	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {n : ℕ} (C : BoolCircuit.DAGCircuit n) (v : ℕ) (hv : v < n + C.gates.length),   (TCSlib.Cryptography.LevinHardness.withOutput C v hv).encode = TCSlib.Cryptography.LevinHardness.retarget C.encode v
+TCSlib.Cryptography.LevinHardness.eq_serialize_decode	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {s : List Bool}, Std.Sat.CNF.syntaxOK s = true → s = (Std.Sat.CNF.decode s).serialize
+TCSlib.Cryptography.LevinHardness.eval_verTime	STD	[propext]
+  : ∀ (C c : ℕ) (m : Complexity.PolyExpr) (n : ℕ),   (TCSlib.Cryptography.LevinHardness.verTime C c m).eval n = C * (2 * n + 3 + m.eval n) ^ c + 1
+TCSlib.Cryptography.LevinHardness.eval_withOutput	STD	[]
+  : ∀ {n : ℕ} (C : BoolCircuit.DAGCircuit n) (v : ℕ) (hv : v < n + C.gates.length) (x : Fin n → Bool),   (TCSlib.Cryptography.LevinHardness.withOutput C v hv).eval x = (C.values x).getD v false
+TCSlib.Cryptography.LevinHardness.exists_R_3SAT_iff	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {n : ℕ} (C : BoolCircuit.DAGCircuit n),   C.IsFaninTwo →     ((∃ a, TCSlib.Cryptography.LevinHardness.R_3SAT (BoolCircuit.dagCktSatToSAT3 C.encode) a) ↔ ∃ x, C.eval x = true)
+TCSlib.Cryptography.LevinHardness.exists_R_3SAT_iff_padWord	STD	[Quot.sound, propext, Classical.choice]
+  : ∀ {s : List Bool} {B : ℕ},   (TCSlib.Cryptography.LevinHardness.colorInst s).length ≤ B →     ((∃ a, TCSlib.Cryptography.LevinHardness.R_3SAT s a) ↔       TCSlib.Cryptography.LevinHardness.padWord (TCSlib.Cryptography.LevinHardness.colorInst s) B ∈         TCSlib.Cryptography.L3COL)
+TCSlib.Cryptography.LevinHardness.exists_R_3SAT_of_colorable	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {s : List Bool},   TCSlib.Cryptography.LevinHardness.goodS s = true →     TCSlib.Cryptography.ThreeColorable         (TCSlib.Cryptography.LevinHardness.gadgetGraph s.length (TCSlib.Cryptography.LevinHardness.memS s)) →       ∃ a, TCSlib.Cryptography.LevinHardness.R_3SAT s a
+TCSlib.Cryptography.LevinHardness.exists_clauseSat_of_colorable	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {K : ℕ} {mem : ℕ → Bool},   (TCSlib.Cryptography.LevinHardness.gadgetSimpleGraph K mem).Colorable 3 →     ∃ val,       (∀ (v : ℕ), K ≤ v → val v = false) ∧         ∀ c < (2 * K) ^ 3, mem c = true → TCSlib.Cryptography.LevinHardness.clauseSat K val c = true
+TCSlib.Cryptography.LevinHardness.exists_eval_of_R_3SAT	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {n : ℕ} (C : BoolCircuit.DAGCircuit n),   C.IsFaninTwo →     (∃ a, TCSlib.Cryptography.LevinHardness.R_3SAT (BoolCircuit.dagCktSatToSAT3 C.encode) a) → ∃ x, C.eval x = true
+TCSlib.Cryptography.LevinHardness.exists_mem_clauseCode_iff	STD	[propext, Classical.choice, Quot.sound]
+  : ∀ {K c : ℕ} {φ : Std.Sat.CNF ℕ},   (∀ C ∈ φ, ∀ ℓ ∈ C, ℓ.1 < K) →     ((∃ C ∈ φ, 1 ≤ List.length C ∧ List.length C ≤ 3 ∧ TCSlib.Cryptography.LevinHardness.clauseCode K C = c) ↔       ∃ j ∈ [1, 2, 3],         TCSlib.Cryptography.LevinHardness.candValid K c j = true ∧           TCSlib.Cryptography.LevinHardness.candClause K c j ∈ φ)
+TCSlib.Cryptography.LevinHardness.exists_of_verTest	STD	[propext, Quot.sound]
+  : ∀ (b : List Bool → Bool) (x u : List Bool),   TCSlib.Cryptography.LevinHardness.verTest b (Turing.pairEncode x u) = true → ∃ y, b (Turing.pairEncode x y) = true
+TCSlib.Cryptography.LevinHardness.exists_recs_of_foldl	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {t : List Bool},   List.foldl Std.Sat.CNF.syntaxStep 0 t = 0 → ∃ χ, t = List.flatMap TCSlib.Cryptography.LevinHardness.clauseRec χ
+TCSlib.Cryptography.LevinHardness.exists_split_of_boundary	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {φ : Std.Sat.CNF ℕ} {p : ℕ},   List.foldl Std.Sat.CNF.syntaxStep 0 (List.take p φ.serialize) = 0 →     ∃ χ ψ, φ = χ ++ ψ ∧ List.drop p φ.serialize = ψ.serialize
+TCSlib.Cryptography.LevinHardness.exists_tabReduction	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {L : Language Bool} {R : List Bool → List Bool → Prop},   TCSlib.Cryptography.WitnessRelation L R →     ∃ q M C c,       Complexity.PolyTimeComputable           (TCSlib.Cryptography.LevinHardness.tabInst M (q.add (Complexity.PolyExpr.const 1))             (TCSlib.Cryptography.LevinHardness.verTime C c (q.add (Complexity.PolyExpr.const 1)))) ∧         (∀ (x : List Bool),             TCSlib.Cryptography.LevinHardness.tabInst M (q.add (Complexity.PolyExpr.const 1))                 (TCSlib.Cryptography.LevinHardness.verTime C c (q.add (Complexity.PolyExpr.const 1))) x =               (TCSlib.Cryptography.LevinHardness.tabCkt M (q.add (Complexity.PolyExpr.const 1))                   (TCSlib.Cryptography.LevinHardness.verTime C c (q.add (Complexity.PolyExpr.const 1))) x).encode) ∧           (∀ (x : List Bool),               (TCSlib.Cryptography.LevinHardness.tabCkt M (q.add (Complexity.PolyExpr.const 1))                   (TCSlib.Cryptography.LevinHardness.verTime C c (q.add (Complexity.PolyExpr.const 1))) x).IsFaninTwo) ∧             (∀ (x : List Bool),                 x ∈ L ↔                   ∃ v,                     (TCSlib.Cryptography.LevinHardness.tabCkt M (q.add (Complexity.PolyExpr.const 1))                             (TCSlib.Cryptography.LevinHardness.verTime C c (q.add (Complexity.PolyExpr.const 1)))                             x).eval                         v =                       true) ∧               ∀ (x y : List Bool),                 R x y →                   TCSlib.Cryptography.LevinHardness.R_CKT                     (TCSlib.Cryptography.LevinHardness.tabInst M (q.add (Complexity.PolyExpr.const 1))                       (TCSlib.Cryptography.LevinHardness.verTime C c (q.add (Complexity.PolyExpr.const 1))) x)                     (TCSlib.Cryptography.LevinHardness.certOf q x y)
+TCSlib.Cryptography.LevinHardness.exists_wideLit_eq	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {C : Std.Sat.CNF.Clause ℕ},   List.length C ≤ 3 → ∀ {ℓ : Std.Sat.Literal ℕ}, ℓ ∈ C → ∃ j < 3, TCSlib.Cryptography.LevinHardness.wideLit C j = ℓ
+TCSlib.Cryptography.LevinHardness.foldl_clauseRec	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (C : Std.Sat.CNF.Clause ℕ), List.foldl Std.Sat.CNF.syntaxStep 0 (TCSlib.Cryptography.LevinHardness.clauseRec C) = 0
+TCSlib.Cryptography.LevinHardness.foldl_recs	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (χ : Std.Sat.CNF ℕ),   List.foldl Std.Sat.CNF.syntaxStep 0 (List.flatMap TCSlib.Cryptography.LevinHardness.clauseRec χ) = 0
+TCSlib.Cryptography.LevinHardness.gadgetAdj	STD	[propext, Quot.sound]
+  : ℕ → (ℕ → Bool) → ℕ → ℕ → Bool
+TCSlib.Cryptography.LevinHardness.gadgetAdj_comm	STD	[propext, Quot.sound]
+  : ∀ (K : ℕ) (mem : ℕ → Bool) (t t' : ℕ),   TCSlib.Cryptography.LevinHardness.gadgetAdj K mem t t' = TCSlib.Cryptography.LevinHardness.gadgetAdj K mem t' t
+TCSlib.Cryptography.LevinHardness.gadgetAdj_eq	STD	[propext, Quot.sound]
+  : ∀ (K : ℕ) (mem : ℕ → Bool) (t t' : ℕ),   TCSlib.Cryptography.LevinHardness.gadgetAdj K mem t t' =     (decide (t ≠ t') &&       (TCSlib.Cryptography.LevinHardness.gadgetEdge K mem t t' ||         TCSlib.Cryptography.LevinHardness.gadgetEdge K mem t' t))
+TCSlib.Cryptography.LevinHardness.gadgetAdj_self	STD	[propext, Quot.sound]
+  : ∀ (K : ℕ) (mem : ℕ → Bool) (t : ℕ), TCSlib.Cryptography.LevinHardness.gadgetAdj K mem t t = false
+TCSlib.Cryptography.LevinHardness.gadgetColor	STD	[propext]
+  : ℕ → (ℕ → Bool) → ℕ → Fin 3
+TCSlib.Cryptography.LevinHardness.gadgetColor_eq	STD	[propext]
+  : ∀ (K : ℕ) (val : ℕ → Bool) (t : ℕ),   TCSlib.Cryptography.LevinHardness.gadgetColor K val t =     if t = 0 then 0     else       if t = 1 then 1       else         if t = 2 then 2         else           if t < 3 + 2 * K then if TCSlib.Cryptography.LevinHardness.litVal val (t - 3) = true then 1 else 2           else             TCSlib.Cryptography.LevinHardness.gadgetNodeColor               (TCSlib.Cryptography.LevinHardness.litVal val                 (TCSlib.Cryptography.LevinHardness.clauseLit K ((t - (3 + 2 * K)) / 6) 0))               (TCSlib.Cryptography.LevinHardness.litVal val                 (TCSlib.Cryptography.LevinHardness.clauseLit K ((t - (3 + 2 * K)) / 6) 1))               (TCSlib.Cryptography.LevinHardness.litVal val                 (TCSlib.Cryptography.LevinHardness.clauseLit K ((t - (3 + 2 * K)) / 6) 2))               ((t - (3 + 2 * K)) % 6)
+TCSlib.Cryptography.LevinHardness.gadgetColor_of_gadget	STD	[propext, Quot.sound]
+  : ∀ (K : ℕ) (val : ℕ → Bool) {t : ℕ},   3 + 2 * K ≤ t →     TCSlib.Cryptography.LevinHardness.gadgetColor K val t =       TCSlib.Cryptography.LevinHardness.gadgetNodeColor         (TCSlib.Cryptography.LevinHardness.litVal val           (TCSlib.Cryptography.LevinHardness.clauseLit K ((t - (3 + 2 * K)) / 6) 0))         (TCSlib.Cryptography.LevinHardness.litVal val           (TCSlib.Cryptography.LevinHardness.clauseLit K ((t - (3 + 2 * K)) / 6) 1))         (TCSlib.Cryptography.LevinHardness.litVal val           (TCSlib.Cryptography.LevinHardness.clauseLit K ((t - (3 + 2 * K)) / 6) 2))         ((t - (3 + 2 * K)) % 6)
+TCSlib.Cryptography.LevinHardness.gadgetColor_of_lit	STD	[propext, Quot.sound]
+  : ∀ (K : ℕ) (val : ℕ → Bool) {t : ℕ},   3 ≤ t →     t < 3 + 2 * K →       TCSlib.Cryptography.LevinHardness.gadgetColor K val t =         if TCSlib.Cryptography.LevinHardness.litVal val (t - 3) = true then 1 else 2
+TCSlib.Cryptography.LevinHardness.gadgetColor_val_of_lt_three	STD	[propext, Classical.choice, Quot.sound]
+  : ∀ (K : ℕ) (val : ℕ → Bool) {t : ℕ}, t < 3 → ↑(TCSlib.Cryptography.LevinHardness.gadgetColor K val t) = t
+TCSlib.Cryptography.LevinHardness.gadgetEdge	STD	[propext, Quot.sound]
+  : ℕ → (ℕ → Bool) → ℕ → ℕ → Bool
+TCSlib.Cryptography.LevinHardness.gadgetEdge_eq	STD	[propext, Quot.sound]
+  : ∀ (K : ℕ) (mem : ℕ → Bool) (t t' : ℕ),   TCSlib.Cryptography.LevinHardness.gadgetEdge K mem t t' =     (decide (t < 3) && decide (t' < 3) || decide (t = 0) && decide (3 ≤ t') && decide (t' < 3 + 2 * K) ||             decide (3 ≤ t) && decide (t < 3 + 2 * K) && decide ((t - 3) % 2 = 0) && decide (t' = t + 1) ||           decide (3 + 2 * K ≤ t) && decide (t < TCSlib.Cryptography.LevinHardness.gadgetN K) &&                     decide (3 + 2 * K ≤ t') &&                   decide (t' < TCSlib.Cryptography.LevinHardness.gadgetN K) &&                 decide ((t - (3 + 2 * K)) / 6 = (t' - (3 + 2 * K)) / 6) &&               mem ((t - (3 + 2 * K)) / 6) &&             decide               (((t - (3 + 2 * K)) % 6, (t' - (3 + 2 * K)) % 6) ∈                 [(0, 1), (0, 2), (1, 2), (2, 3), (3, 4), (3, 5), (4, 5)]) ||         decide (3 ≤ t) && decide (t < 3 + 2 * K) && decide (3 + 2 * K ≤ t') &&             decide (t' < TCSlib.Cryptography.LevinHardness.gadgetN K) &&           (decide (t - 3 = TCSlib.Cryptography.LevinHardness.clauseLit K ((t' - (3 + 2 * K)) / 6) 0) &&                 decide ((t' - (3 + 2 * K)) % 6 = 0) ||               decide (t - 3 = TCSlib.Cryptography.LevinHardness.clauseLit K ((t' - (3 + 2 * K)) / 6) 1) &&                 decide ((t' - (3 + 2 * K)) % 6 = 1) ||             decide (t - 3 = TCSlib.Cryptography.LevinHardness.clauseLit K ((t' - (3 + 2 * K)) / 6) 2) &&               decide ((t' - (3 + 2 * K)) % 6 = 4)) ||       decide (3 + 2 * K ≤ t) && decide (t < TCSlib.Cryptography.LevinHardness.gadgetN K) &&           decide ((t - (3 + 2 * K)) % 6 = 5) &&         decide (t' = 0 ∨ t' = 2))
+TCSlib.Cryptography.LevinHardness.gadgetEdge_or_of_edgeRelation	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (K : ℕ) (mem : ℕ → Bool) (f : SATtoColor.Sat3 (Fin K)),   (∀ c ∈ f, mem ↑((TCSlib.Cryptography.LevinHardness.clauseEquiv K).symm c) = true) →     ∀ (a b : SATtoColor.OutputVertex (Fin K)),       SATtoColor.EdgeRelation f a b →         (TCSlib.Cryptography.LevinHardness.gadgetEdge K mem ↑((TCSlib.Cryptography.LevinHardness.vertexEquiv K).symm a)               ↑((TCSlib.Cryptography.LevinHardness.vertexEquiv K).symm b) ||             TCSlib.Cryptography.LevinHardness.gadgetEdge K mem               ↑((TCSlib.Cryptography.LevinHardness.vertexEquiv K).symm b)               ↑((TCSlib.Cryptography.LevinHardness.vertexEquiv K).symm a)) =           true
+TCSlib.Cryptography.LevinHardness.gadgetFormula	STD	[propext, Quot.sound, Classical.choice]
+  : (K : ℕ) → (ℕ → Bool) → SATtoColor.Sat3 (Fin K)
+TCSlib.Cryptography.LevinHardness.gadgetFormula_eq	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (K : ℕ) (mem : ℕ → Bool),   TCSlib.Cryptography.LevinHardness.gadgetFormula K mem =     List.map (⇑(TCSlib.Cryptography.LevinHardness.clauseEquiv K))       (List.filter (fun c => mem ↑c) (List.finRange ((2 * K) ^ 3)))
+TCSlib.Cryptography.LevinHardness.gadgetGraph	STD	[propext, Quot.sound]
+  : (K : ℕ) → (ℕ → Bool) → TCSlib.Cryptography.Graph (TCSlib.Cryptography.LevinHardness.gadgetN K)
+TCSlib.Cryptography.LevinHardness.gadgetGraph_apply	STD	[propext, Quot.sound]
+  : ∀ (K : ℕ) (mem : ℕ → Bool) (u v : Fin (TCSlib.Cryptography.LevinHardness.gadgetN K)),   TCSlib.Cryptography.LevinHardness.gadgetGraph K mem u v = TCSlib.Cryptography.LevinHardness.gadgetAdj K mem ↑u ↑v
+TCSlib.Cryptography.LevinHardness.gadgetN	STD	[propext]
+  : ℕ → ℕ
+TCSlib.Cryptography.LevinHardness.gadgetN_eq	STD	[propext]
+  : ∀ (K : ℕ), TCSlib.Cryptography.LevinHardness.gadgetN K = 3 + 2 * K + 6 * (2 * K) ^ 3
+TCSlib.Cryptography.LevinHardness.gadgetNodeColor	STD	[propext]
+  : Bool → Bool → Bool → ℕ → Fin 3
+TCSlib.Cryptography.LevinHardness.gadgetNodeColor_eq	STD	[propext]
+  : ∀ (a b c : Bool) (i : ℕ),   TCSlib.Cryptography.LevinHardness.gadgetNodeColor a b c i =     if i = 5 then 1     else       if (!a && !b && !c) = true then 0       else         if (!a && !b) = true then if i = 4 then 2 else if i = 3 then 0 else if i = 2 then 2 else if i = 1 then 1 else 0         else           if i = 4 then 0           else             if i = 3 then 2             else               if i = 2 then 1               else                 if i = 1 then if (!b) = true then 0 else 2 else if (!a) = true then 0 else if (!b) = true then 2 else 0
+TCSlib.Cryptography.LevinHardness.gadgetSimpleGraph	STD	[propext, Quot.sound]
+  : (K : ℕ) → (ℕ → Bool) → SimpleGraph (Fin (TCSlib.Cryptography.LevinHardness.gadgetN K))
+TCSlib.Cryptography.LevinHardness.gadgetSimpleGraph_adj	STD	[propext, Quot.sound]
+  : ∀ (K : ℕ) (mem : ℕ → Bool) (u v : Fin (TCSlib.Cryptography.LevinHardness.gadgetN K)),   (TCSlib.Cryptography.LevinHardness.gadgetSimpleGraph K mem).Adj u v ↔     TCSlib.Cryptography.LevinHardness.gadgetAdj K mem ↑u ↑v = true
+TCSlib.Cryptography.LevinHardness.goodS	STD	[]
+  : List Bool → Bool
+TCSlib.Cryptography.LevinHardness.goodS_and_properColoring_of_R_3SAT	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {s a : List Bool},   TCSlib.Cryptography.LevinHardness.R_3SAT s a →     TCSlib.Cryptography.LevinHardness.goodS s = true ∧       TCSlib.Cryptography.ProperColoring         (TCSlib.Cryptography.LevinHardness.gadgetGraph s.length (TCSlib.Cryptography.LevinHardness.memS s)) fun u =>         TCSlib.Cryptography.LevinHardness.gadgetColor s.length (fun v => a.getD v false) ↑u
+TCSlib.Cryptography.LevinHardness.goodS_eq	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (s : List Bool),   TCSlib.Cryptography.LevinHardness.goodS s =     (!Std.Sat.CNF.syntaxOK s || !(List.foldl TCSlib.Cryptography.LevinHardness.widthStep (0, 0, false) s).2.2)
+TCSlib.Cryptography.LevinHardness.goodS_iff	STD	[propext, Quot.sound]
+  : ∀ (s : List Bool),   TCSlib.Cryptography.LevinHardness.goodS s = true ↔ ∀ C ∈ Std.Sat.CNF.decode s, 1 ≤ List.length C ∧ List.length C ≤ 3
+TCSlib.Cryptography.LevinHardness.hasRec	STD	[propext, Quot.sound]
+  : List Bool → List Bool → Bool
+TCSlib.Cryptography.LevinHardness.hasRec_eq	STD	[propext, Quot.sound]
+  : ∀ (s r : List Bool),   TCSlib.Cryptography.LevinHardness.hasRec s r =     decide       (∃ p < s.length + 1,         (decide (List.foldl Std.Sat.CNF.syntaxStep 0 (List.take p s) = 0) &&             decide (List.take r.length (List.drop p s) = r)) =           true)
+TCSlib.Cryptography.LevinHardness.hasRec_serialize_iff	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (φ : Std.Sat.CNF ℕ) (C : Std.Sat.CNF.Clause ℕ),   TCSlib.Cryptography.LevinHardness.hasRec φ.serialize (TCSlib.Cryptography.LevinHardness.clauseRec C) = true ↔ C ∈ φ
+TCSlib.Cryptography.LevinHardness.isFaninTwo_withOutput	STD	[propext]
+  : ∀ {n : ℕ} {C : BoolCircuit.DAGCircuit n},   C.IsFaninTwo →     ∀ (v : ℕ) (hv : v < n + C.gates.length), (TCSlib.Cryptography.LevinHardness.withOutput C v hv).IsFaninTwo
+TCSlib.Cryptography.LevinHardness.isSatisfiable_of_colorable	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {K : ℕ} {mem : ℕ → Bool},   (TCSlib.Cryptography.LevinHardness.gadgetSimpleGraph K mem).Colorable 3 →     SATtoColor.IsSatisfiable (TCSlib.Cryptography.LevinHardness.gadgetFormula K mem)
+TCSlib.Cryptography.LevinHardness.k4	STD	[]
+  : TCSlib.Cryptography.Graph 4
+TCSlib.Cryptography.LevinHardness.k4_apply	STD	[]
+  : ∀ (u v : Fin 4), TCSlib.Cryptography.LevinHardness.k4 u v = decide (u ≠ v)
+TCSlib.Cryptography.LevinHardness.length_certOf	STD	[propext, Quot.sound]
+  : ∀ (q : Complexity.PolyExpr) (x y : List Bool),   y.length ≤ q.eval x.length → (TCSlib.Cryptography.LevinHardness.certOf q x y).length = q.eval x.length + 1
+TCSlib.Cryptography.LevinHardness.length_padWord	STD	[propext]
+  : ∀ (w : List Bool) (B : ℕ), (TCSlib.Cryptography.LevinHardness.padWord w B).length = B * B
+TCSlib.Cryptography.LevinHardness.litCode	STD	[]
+  : Std.Sat.Literal ℕ → ℕ
+TCSlib.Cryptography.LevinHardness.litCode_eq	STD	[]
+  : ∀ (ℓ : Std.Sat.Literal ℕ), TCSlib.Cryptography.LevinHardness.litCode ℓ = 2 * ℓ.1 + if ℓ.2 = true then 0 else 1
+TCSlib.Cryptography.LevinHardness.litCode_litOfCode	STD	[propext, Quot.sound]
+  : ∀ (ℓ : ℕ), TCSlib.Cryptography.LevinHardness.litCode (TCSlib.Cryptography.LevinHardness.litOfCode ℓ) = ℓ
+TCSlib.Cryptography.LevinHardness.litCode_lt	STD	[propext, Quot.sound]
+  : ∀ {K : ℕ} {ℓ : Std.Sat.Literal ℕ}, ℓ.1 < K → TCSlib.Cryptography.LevinHardness.litCode ℓ < 2 * K
+TCSlib.Cryptography.LevinHardness.litEquiv	STD	[propext, Quot.sound, Classical.choice]
+  : (K : ℕ) → Fin (2 * K) ≃ SATtoColor.Literal (Fin K)
+TCSlib.Cryptography.LevinHardness.litEquiv_apply	STD	[Quot.sound, propext, Classical.choice]
+  : ∀ (K : ℕ) (ℓ : Fin (2 * K)),   (TCSlib.Cryptography.LevinHardness.litEquiv K) ℓ =     if ↑ℓ % 2 = 0 then SATtoColor.Literal.pos ⟨↑ℓ / 2, ⋯⟩ else SATtoColor.Literal.neg ⟨↑ℓ / 2, ⋯⟩
+TCSlib.Cryptography.LevinHardness.litEquiv_symm_neg	STD	[Quot.sound, propext, Classical.choice]
+  : ∀ (K : ℕ) (v : Fin K), ↑((TCSlib.Cryptography.LevinHardness.litEquiv K).symm (SATtoColor.Literal.neg v)) = 2 * ↑v + 1
+TCSlib.Cryptography.LevinHardness.litEquiv_symm_pos	STD	[Quot.sound, propext, Classical.choice]
+  : ∀ (K : ℕ) (v : Fin K), ↑((TCSlib.Cryptography.LevinHardness.litEquiv K).symm (SATtoColor.Literal.pos v)) = 2 * ↑v
+TCSlib.Cryptography.LevinHardness.litOfCode	STD	[]
+  : ℕ → Std.Sat.Literal ℕ
+TCSlib.Cryptography.LevinHardness.litOfCode_eq	STD	[]
+  : ∀ (ℓ : ℕ), TCSlib.Cryptography.LevinHardness.litOfCode ℓ = (ℓ / 2, decide (ℓ % 2 = 0))
+TCSlib.Cryptography.LevinHardness.litOfCode_litCode	STD	[propext, Classical.choice, Quot.sound]
+  : ∀ (a : Std.Sat.Literal ℕ), TCSlib.Cryptography.LevinHardness.litOfCode (TCSlib.Cryptography.LevinHardness.litCode a) = a
+TCSlib.Cryptography.LevinHardness.litVal	STD	[]
+  : (ℕ → Bool) → ℕ → Bool
+TCSlib.Cryptography.LevinHardness.litVal_eq	STD	[]
+  : ∀ (val : ℕ → Bool) (ℓ : ℕ),   TCSlib.Cryptography.LevinHardness.litVal val ℓ = if ℓ % 2 = 0 then val (ℓ / 2) else !val (ℓ / 2)
+TCSlib.Cryptography.LevinHardness.litVal_litCode	STD	[propext, Quot.sound]
+  : ∀ (val : ℕ → Bool) (ℓ : Std.Sat.Literal ℕ),   TCSlib.Cryptography.LevinHardness.litVal val (TCSlib.Cryptography.LevinHardness.litCode ℓ) = (val ℓ.1 == ℓ.2)
+TCSlib.Cryptography.LevinHardness.litVal_poly	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {ℓ : List Bool → ℕ} {a : List Bool → List Bool},   (Complexity.PolyTimeComputable fun x => List.replicate (ℓ x) true) →     Complexity.PolyTimeComputable a →       Complexity.PolyTimeComputable fun x =>         [TCSlib.Cryptography.LevinHardness.litVal (fun v => (a x).getD v false) (ℓ x)]
+TCSlib.Cryptography.LevinHardness.memAlg	STD	[propext, Quot.sound]
+  : List Bool → ℕ → Bool
+TCSlib.Cryptography.LevinHardness.memAlg_eq	STD	[propext, Quot.sound]
+  : ∀ (s : List Bool) (c : ℕ),   TCSlib.Cryptography.LevinHardness.memAlg s c =     (Std.Sat.CNF.syntaxOK s &&       (TCSlib.Cryptography.LevinHardness.candValid s.length c 1 &&             TCSlib.Cryptography.LevinHardness.hasRec s               (TCSlib.Cryptography.LevinHardness.clauseRec                 (TCSlib.Cryptography.LevinHardness.candClause s.length c 1)) ||           TCSlib.Cryptography.LevinHardness.candValid s.length c 2 &&             TCSlib.Cryptography.LevinHardness.hasRec s               (TCSlib.Cryptography.LevinHardness.clauseRec                 (TCSlib.Cryptography.LevinHardness.candClause s.length c 2)) ||         TCSlib.Cryptography.LevinHardness.candValid s.length c 3 &&           TCSlib.Cryptography.LevinHardness.hasRec s             (TCSlib.Cryptography.LevinHardness.clauseRec (TCSlib.Cryptography.LevinHardness.candClause s.length c 3))))
+TCSlib.Cryptography.LevinHardness.memS	STD	[propext]
+  : List Bool → ℕ → Bool
+TCSlib.Cryptography.LevinHardness.memS_eq	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (s : List Bool) (c : ℕ), TCSlib.Cryptography.LevinHardness.memS s c = TCSlib.Cryptography.LevinHardness.memAlg s c
+TCSlib.Cryptography.LevinHardness.memS_iff	STD	[propext, Quot.sound]
+  : ∀ (s : List Bool) (c : ℕ),   TCSlib.Cryptography.LevinHardness.memS s c = true ↔     ∃ C ∈ Std.Sat.CNF.decode s,       1 ≤ List.length C ∧ List.length C ≤ 3 ∧ TCSlib.Cryptography.LevinHardness.clauseCode s.length C = c
+TCSlib.Cryptography.LevinHardness.mem_of_mem_gadgetFormula	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {K : ℕ} {mem : ℕ → Bool} {c : SATtoColor.Clause (Fin K)},   c ∈ TCSlib.Cryptography.LevinHardness.gadgetFormula K mem →     mem ↑((TCSlib.Cryptography.LevinHardness.clauseEquiv K).symm c) = true
+TCSlib.Cryptography.LevinHardness.not_threeColorable_k4	STD	[propext, Quot.sound, Classical.choice]
+  : ¬TCSlib.Cryptography.ThreeColorable TCSlib.Cryptography.LevinHardness.k4
+TCSlib.Cryptography.LevinHardness.padColWord	STD	[]
+  : List Bool → ℕ → List Bool
+TCSlib.Cryptography.LevinHardness.padColWord_encColoring	STD	[Quot.sound, propext, Classical.choice]
+  : ∀ {n : ℕ} (c : Fin n → Fin 3) {B : ℕ},   n ≤ B →     TCSlib.Cryptography.LevinHardness.padColWord (TCSlib.Cryptography.encColoring c) B =       TCSlib.Cryptography.encColoring (TCSlib.Cryptography.LevinHardness.padColoring c B)
+TCSlib.Cryptography.LevinHardness.padColWord_eq	STD	[]
+  : ∀ (w : List Bool) (B : ℕ),   TCSlib.Cryptography.LevinHardness.padColWord w B = w ++ List.replicate (2 * B - w.length) false
+TCSlib.Cryptography.LevinHardness.padColoring	STD	[propext]
+  : {n : ℕ} → (Fin n → Fin 3) → (B : ℕ) → Fin B → Fin 3
+TCSlib.Cryptography.LevinHardness.padColoring_apply	STD	[propext]
+  : ∀ {n : ℕ} (c : Fin n → Fin 3) (B : ℕ) (u : Fin B),   TCSlib.Cryptography.LevinHardness.padColoring c B u = if h : ↑u < n then c ⟨↑u, h⟩ else 0
+TCSlib.Cryptography.LevinHardness.padGraph	STD	[]
+  : {n : ℕ} → TCSlib.Cryptography.Graph n → (B : ℕ) → TCSlib.Cryptography.Graph B
+TCSlib.Cryptography.LevinHardness.padGraph_apply	STD	[]
+  : ∀ {n : ℕ} (G : TCSlib.Cryptography.Graph n) (B : ℕ) (u v : Fin B),   TCSlib.Cryptography.LevinHardness.padGraph G B u v = if h : ↑u < n ∧ ↑v < n then G ⟨↑u, ⋯⟩ ⟨↑v, ⋯⟩ else false
+TCSlib.Cryptography.LevinHardness.padInput	STD	[]
+  : List Bool → List Bool → List Bool
+TCSlib.Cryptography.LevinHardness.padInput_eq	STD	[]
+  : ∀ (d u : List Bool), TCSlib.Cryptography.LevinHardness.padInput d u = u ++ List.replicate d.length false
+TCSlib.Cryptography.LevinHardness.padInput_getD	STD	[propext, Classical.choice, Quot.sound]
+  : ∀ (d u : List Bool) (i : ℕ), (TCSlib.Cryptography.LevinHardness.padInput d u).getD i false = u.getD i false
+TCSlib.Cryptography.LevinHardness.padWord	STD	[propext]
+  : List Bool → ℕ → List Bool
+TCSlib.Cryptography.LevinHardness.padWord_colorInst_mem_iff	STD	[Quot.sound, propext, Classical.choice]
+  : ∀ {s : List Bool} {B : ℕ},   (TCSlib.Cryptography.LevinHardness.colorInst s).length ≤ B →     (TCSlib.Cryptography.LevinHardness.padWord (TCSlib.Cryptography.LevinHardness.colorInst s) B ∈         TCSlib.Cryptography.L3COL ↔       TCSlib.Cryptography.LevinHardness.goodS s = true ∧         TCSlib.Cryptography.ThreeColorable           (TCSlib.Cryptography.LevinHardness.gadgetGraph s.length (TCSlib.Cryptography.LevinHardness.memS s)))
+TCSlib.Cryptography.LevinHardness.padWord_encGraph	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {n : ℕ} (G : TCSlib.Cryptography.Graph n) (B : ℕ),   TCSlib.Cryptography.LevinHardness.padWord (TCSlib.Cryptography.encGraph G) B =     TCSlib.Cryptography.encGraph (TCSlib.Cryptography.LevinHardness.padGraph G B)
+TCSlib.Cryptography.LevinHardness.padWord_eq	STD	[propext]
+  : ∀ (w : List Bool) (B : ℕ),   TCSlib.Cryptography.LevinHardness.padWord w B =     List.map       (fun k =>         decide (k / B < w.length.sqrt) && decide (k % B < w.length.sqrt) &&           w.getD (k % B + w.length.sqrt * (k / B)) false)       (List.range (B * B))
+TCSlib.Cryptography.LevinHardness.polyTimeComputable_certOf	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (q : Complexity.PolyExpr),   Complexity.PolyTimeComputable fun z =>     TCSlib.Cryptography.LevinHardness.certOf q (Complexity.pairFstD z) (Complexity.pairSndD z)
+TCSlib.Cryptography.LevinHardness.polyTimeComputable_colorInst	STD	[propext, Quot.sound, Classical.choice]
+  : Complexity.PolyTimeComputable TCSlib.Cryptography.LevinHardness.colorInst
+TCSlib.Cryptography.LevinHardness.polyTimeComputable_colorInst_of	STD	[propext, Quot.sound, Classical.choice]
+  : (Complexity.PolyTimeComputable fun w =>     [TCSlib.Cryptography.LevinHardness.memS (Complexity.pairSndD w) (Complexity.pairFstD w).length]) →   (Complexity.PolyTimeComputable fun s => [TCSlib.Cryptography.LevinHardness.goodS s]) →     Complexity.PolyTimeComputable TCSlib.Cryptography.LevinHardness.colorInst
+TCSlib.Cryptography.LevinHardness.polyTimeComputable_colorWord	STD	[propext, Quot.sound, Classical.choice]
+  : Complexity.PolyTimeComputable fun z =>   TCSlib.Cryptography.LevinHardness.colorWord (Complexity.pairFstD z) (Complexity.pairSndD z)
+TCSlib.Cryptography.LevinHardness.polyTimeComputable_descPrefix	STD	[propext, Quot.sound, Classical.choice]
+  : Complexity.PolyTimeComputable TCSlib.Cryptography.LevinHardness.descPrefix
+TCSlib.Cryptography.LevinHardness.polyTimeComputable_foldl_accept	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {σ : Type} [Fintype σ] [DecidableEq σ] (δ : σ → Bool → σ) (q₀ : σ) (acc : σ → Bool),   Complexity.PolyTimeComputable fun x => [acc (List.foldl δ q₀ x)]
+TCSlib.Cryptography.LevinHardness.polyTimeComputable_gadgetAdj	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {K t t' : List Bool → ℕ} {mem : List Bool → ℕ → Bool},   (Complexity.PolyTimeComputable fun x => List.replicate (K x) true) →     (Complexity.PolyTimeComputable fun x => List.replicate (t x) true) →       (Complexity.PolyTimeComputable fun x => List.replicate (t' x) true) →         (∀ (c : List Bool → ℕ),             (Complexity.PolyTimeComputable fun x => List.replicate (c x) true) →               Complexity.PolyTimeComputable fun x => [mem x (c x)]) →           Complexity.PolyTimeComputable fun x =>             [TCSlib.Cryptography.LevinHardness.gadgetAdj (K x) (mem x) (t x) (t' x)]
+TCSlib.Cryptography.LevinHardness.polyTimeComputable_goodS	STD	[propext, Quot.sound, Classical.choice]
+  : Complexity.PolyTimeComputable fun s => [TCSlib.Cryptography.LevinHardness.goodS s]
+TCSlib.Cryptography.LevinHardness.polyTimeComputable_hasRec	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {S R : List Bool → List Bool},   Complexity.PolyTimeComputable S →     Complexity.PolyTimeComputable R →       Complexity.PolyTimeComputable fun w => [TCSlib.Cryptography.LevinHardness.hasRec (S w) (R w)]
+TCSlib.Cryptography.LevinHardness.polyTimeComputable_memS	STD	[propext, Quot.sound, Classical.choice]
+  : Complexity.PolyTimeComputable fun w =>   [TCSlib.Cryptography.LevinHardness.memS (Complexity.pairSndD w) (Complexity.pairFstD w).length]
+TCSlib.Cryptography.LevinHardness.polyTimeComputable_padColWord	STD	[propext, Quot.sound, Classical.choice]
+  : Complexity.PolyTimeComputable fun z =>   TCSlib.Cryptography.LevinHardness.padColWord (Complexity.pairFstD z) (Complexity.pairSndD z).length
+TCSlib.Cryptography.LevinHardness.polyTimeComputable_padWord	STD	[propext, Quot.sound, Classical.choice]
+  : Complexity.PolyTimeComputable fun z =>   TCSlib.Cryptography.LevinHardness.padWord (Complexity.pairFstD z) (Complexity.pairSndD z).length
+TCSlib.Cryptography.LevinHardness.polyTimeComputable_stripCert	STD	[propext, Quot.sound, Classical.choice]
+  : Complexity.PolyTimeComputable TCSlib.Cryptography.LevinHardness.stripCert
+TCSlib.Cryptography.LevinHardness.polyTimeComputable_syntaxOK	STD	[propext, Quot.sound, Classical.choice]
+  : Complexity.PolyTimeComputable fun x => [Std.Sat.CNF.syntaxOK x]
+TCSlib.Cryptography.LevinHardness.polyTimeComputable_tabInst	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (M : Turing.FinTM Bool) (m t : Complexity.PolyExpr),   Complexity.PolyTimeComputable (TCSlib.Cryptography.LevinHardness.tabInst M m t)
+TCSlib.Cryptography.LevinHardness.polyTimeComputable_verTest	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {b : List Bool → Bool},   (Complexity.PolyTimeComputable fun z => [b z]) →     Complexity.PolyTimeComputable fun z => [TCSlib.Cryptography.LevinHardness.verTest b z]
+TCSlib.Cryptography.LevinHardness.polyTimeComputable_wireValues	STD	[propext, Quot.sound, Classical.choice]
+  : Complexity.PolyTimeComputable fun z =>   TCSlib.Cryptography.LevinHardness.wireValues (Complexity.pairFstD z) (Complexity.pairSndD z)
+TCSlib.Cryptography.LevinHardness.properColoring_gadgetColor	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (K : ℕ) (mem val : ℕ → Bool),   (∀ (c : ℕ), mem c = true → TCSlib.Cryptography.LevinHardness.clauseSat K val c = true) →     TCSlib.Cryptography.ProperColoring (TCSlib.Cryptography.LevinHardness.gadgetGraph K mem) fun u =>       TCSlib.Cryptography.LevinHardness.gadgetColor K val ↑u
+TCSlib.Cryptography.LevinHardness.properColoring_padGraph	STD	[propext]
+  : ∀ {n : ℕ} {G : TCSlib.Cryptography.Graph n} {c : Fin n → Fin 3} (B : ℕ),   TCSlib.Cryptography.ProperColoring G c →     TCSlib.Cryptography.ProperColoring (TCSlib.Cryptography.LevinHardness.padGraph G B)       (TCSlib.Cryptography.LevinHardness.padColoring c B)
+TCSlib.Cryptography.LevinHardness.reductionGraphHom	STD	[propext, Quot.sound, Classical.choice]
+  : (K : ℕ) →   (mem : ℕ → Bool) →     SATtoColor.ReductionGraph (TCSlib.Cryptography.LevinHardness.gadgetFormula K mem) →g       TCSlib.Cryptography.LevinHardness.gadgetSimpleGraph K mem
+TCSlib.Cryptography.LevinHardness.reductionGraphHom_apply	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (K : ℕ) (mem : ℕ → Bool) (a : SATtoColor.OutputVertex (Fin K)),   (TCSlib.Cryptography.LevinHardness.reductionGraphHom K mem) a =     (TCSlib.Cryptography.LevinHardness.vertexEquiv K).symm a
+TCSlib.Cryptography.LevinHardness.retarget	STD	[propext]
+  : List Bool → ℕ → List Bool
+TCSlib.Cryptography.LevinHardness.retarget_encode	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {n : ℕ} (C : BoolCircuit.DAGCircuit n) (v : ℕ),   TCSlib.Cryptography.LevinHardness.retarget C.encode v =     BoolCircuit.encodeNat n ++ (BoolCircuit.encodeList BoolCircuit.DAGGate.encode C.gates ++ BoolCircuit.encodeNat v)
+TCSlib.Cryptography.LevinHardness.retarget_eq	STD	[propext]
+  : ∀ (d : List Bool) (v : ℕ),   TCSlib.Cryptography.LevinHardness.retarget d v =     TCSlib.Cryptography.LevinHardness.descPrefix d ++ BoolCircuit.encodeNat v
+TCSlib.Cryptography.LevinHardness.satisfiesLiteral_litEquiv	STD	[Quot.sound, propext, Classical.choice]
+  : ∀ {K : ℕ} (a : Fin K → Bool) (ℓ : Fin (2 * K)),   SATtoColor.SatisfiesLiteral a ((TCSlib.Cryptography.LevinHardness.litEquiv K) ℓ) =     TCSlib.Cryptography.LevinHardness.litVal (fun v => if h : v < K then a ⟨v, h⟩ else false) ↑ℓ
+TCSlib.Cryptography.LevinHardness.serializeClause_append_inj	STD	[propext, Quot.sound]
+  : ∀ {C D : Std.Sat.CNF.Clause ℕ} {x y : List Bool},   Std.Sat.CNF.serializeClause C ++ x = Std.Sat.CNF.serializeClause D ++ y → C = D ∧ x = y
+TCSlib.Cryptography.LevinHardness.serialize_eq_recs	STD	[]
+  : ∀ (φ : Std.Sat.CNF ℕ), φ.serialize = List.flatMap TCSlib.Cryptography.LevinHardness.clauseRec φ ++ [false]
+TCSlib.Cryptography.LevinHardness.serialize_injective	STD	[propext, Quot.sound]
+  : ∀ {φ ψ : Std.Sat.CNF ℕ}, φ.serialize = ψ.serialize → φ = ψ
+TCSlib.Cryptography.LevinHardness.splitAtLastTrue_certOf	STD	[propext]
+  : ∀ (q : Complexity.PolyExpr) (x y : List Bool),   Turing.splitAtLastTrue (TCSlib.Cryptography.LevinHardness.certOf q x y) = some y
+TCSlib.Cryptography.LevinHardness.stripCert	STD	[]
+  : List Bool → List Bool
+TCSlib.Cryptography.LevinHardness.stripCert_eq	STD	[]
+  : ∀ (z : List Bool),   TCSlib.Cryptography.LevinHardness.stripCert z =     match Turing.pairDecode z with     | some (a, v) =>       match Turing.splitAtLastTrue v with       | some u => Turing.pairEncode a u       | none => []     | none => []
+TCSlib.Cryptography.LevinHardness.stripNext	STD	[propext]
+  : Fin 3 → Bool → Fin 3
+TCSlib.Cryptography.LevinHardness.stripNext_eq	STD	[propext]
+  : ∀ (q : Fin 3) (b : Bool),   TCSlib.Cryptography.LevinHardness.stripNext q b = if q = 0 then 1 else if q = 1 ∧ b = true then 1 else 2
+TCSlib.Cryptography.LevinHardness.stripOut	STD	[propext]
+  : Fin 3 → Bool → Option Bool
+TCSlib.Cryptography.LevinHardness.stripOut_eq	STD	[propext]
+  : ∀ (q : Fin 3) (b : Bool),   TCSlib.Cryptography.LevinHardness.stripOut q b = if q = 0 then none else if q = 1 ∧ b = true then none else some b
+TCSlib.Cryptography.LevinHardness.syntaxOK_serialize	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (φ : Std.Sat.CNF ℕ), Std.Sat.CNF.syntaxOK φ.serialize = true
+TCSlib.Cryptography.LevinHardness.tabCkt	STD	[propext, Quot.sound, Classical.choice]
+  : Turing.FinTM Bool →   (m : Complexity.PolyExpr) → Complexity.PolyExpr → (x : List Bool) → BoolCircuit.DAGCircuit (m.eval x.length)
+TCSlib.Cryptography.LevinHardness.tabCkt_eq	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (M : Turing.FinTM Bool) (m t : Complexity.PolyExpr) (x : List Bool),   TCSlib.Cryptography.LevinHardness.tabCkt M m t x =     Complexity.cfgTab M (m.eval x.length) (Turing.pairEncode x []) (t.eval x.length)
+TCSlib.Cryptography.LevinHardness.tabCkt_eval	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {M : Turing.FinTM Bool} {β : List Bool → Bool} {C c : ℕ},   (M.ComputesFunInTime (fun z => [β z]) fun n => C * (n + 1) ^ c) →     ∀ (m : Complexity.PolyExpr) (x : List Bool) (v : Fin (m.eval x.length) → Bool),       (TCSlib.Cryptography.LevinHardness.tabCkt M m (TCSlib.Cryptography.LevinHardness.verTime C c m) x).eval v =         β (Turing.pairEncode x (List.ofFn v))
+TCSlib.Cryptography.LevinHardness.tabCkt_isFaninTwo	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (M : Turing.FinTM Bool) (m t : Complexity.PolyExpr) (x : List Bool),   (TCSlib.Cryptography.LevinHardness.tabCkt M m t x).IsFaninTwo
+TCSlib.Cryptography.LevinHardness.tabInst	STD	[propext, Quot.sound, Classical.choice]
+  : Turing.FinTM Bool → Complexity.PolyExpr → Complexity.PolyExpr → List Bool → List Bool
+TCSlib.Cryptography.LevinHardness.tabInst_def	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (M : Turing.FinTM Bool) (m t : Complexity.PolyExpr) (x : List Bool),   TCSlib.Cryptography.LevinHardness.tabInst M m t x =     Complexity.UTab.tabEmit M       (List.replicate (m.eval x.length) true ++         false :: (List.replicate (t.eval x.length) true ++ false :: Turing.pairEncode x []))
+TCSlib.Cryptography.LevinHardness.tabInst_eq	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (M : Turing.FinTM Bool) (m t : Complexity.PolyExpr) (x : List Bool),   1 ≤ t.eval x.length →     TCSlib.Cryptography.LevinHardness.tabInst M m t x = (TCSlib.Cryptography.LevinHardness.tabCkt M m t x).encode
+TCSlib.Cryptography.LevinHardness.threeColorable_gadgetGraph	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (K : ℕ) (mem val : ℕ → Bool),   (∀ (c : ℕ), mem c = true → TCSlib.Cryptography.LevinHardness.clauseSat K val c = true) →     TCSlib.Cryptography.ThreeColorable (TCSlib.Cryptography.LevinHardness.gadgetGraph K mem)
+TCSlib.Cryptography.LevinHardness.threeColorable_gadgetGraph_iff	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (K : ℕ) (mem : ℕ → Bool),   TCSlib.Cryptography.ThreeColorable (TCSlib.Cryptography.LevinHardness.gadgetGraph K mem) ↔     (TCSlib.Cryptography.LevinHardness.gadgetSimpleGraph K mem).Colorable 3
+TCSlib.Cryptography.LevinHardness.threeColorable_padGraph_iff	STD	[propext, Quot.sound]
+  : ∀ {n : ℕ} (G : TCSlib.Cryptography.Graph n) {B : ℕ},   n ≤ B →     (TCSlib.Cryptography.ThreeColorable (TCSlib.Cryptography.LevinHardness.padGraph G B) ↔       TCSlib.Cryptography.ThreeColorable G)
+TCSlib.Cryptography.LevinHardness.unaryDivConst_poly	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {f : List Bool → ℕ},   (Complexity.PolyTimeComputable fun x => List.replicate (f x) true) →     ∀ (k : ℕ), Complexity.PolyTimeComputable fun x => List.replicate (f x / k) true
+TCSlib.Cryptography.LevinHardness.unaryDiv_poly	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {f g : List Bool → ℕ},   (Complexity.PolyTimeComputable fun x => List.replicate (f x) true) →     (Complexity.PolyTimeComputable fun x => List.replicate (g x) true) →       Complexity.PolyTimeComputable fun x => List.replicate (f x / g x) true
+TCSlib.Cryptography.LevinHardness.unaryModConst_poly	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {f : List Bool → ℕ},   (Complexity.PolyTimeComputable fun x => List.replicate (f x) true) →     ∀ (k : ℕ), Complexity.PolyTimeComputable fun x => List.replicate (f x % k) true
+TCSlib.Cryptography.LevinHardness.unaryMod_poly	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {f g : List Bool → ℕ},   (Complexity.PolyTimeComputable fun x => List.replicate (f x) true) →     (Complexity.PolyTimeComputable fun x => List.replicate (g x) true) →       Complexity.PolyTimeComputable fun x => List.replicate (f x % g x) true
+TCSlib.Cryptography.LevinHardness.unaryPow_poly	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {f : List Bool → ℕ},   (Complexity.PolyTimeComputable fun x => List.replicate (f x) true) →     ∀ (n : ℕ), Complexity.PolyTimeComputable fun x => List.replicate (f x ^ n) true
+TCSlib.Cryptography.LevinHardness.var_lt_length_of_mem_decode	STD	[propext, Quot.sound]
+  : ∀ {s : List Bool} {C : Std.Sat.CNF.Clause ℕ},   C ∈ Std.Sat.CNF.decode s → ∀ {ℓ : Std.Sat.Literal ℕ}, ℓ ∈ C → ℓ.1 < s.length
+TCSlib.Cryptography.LevinHardness.verLang_mem_P	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {b : List Bool → Bool},   (Complexity.PolyTimeComputable fun z => [b z]) →     {z | TCSlib.Cryptography.LevinHardness.verTest b z = true} ∈ Complexity.P
+TCSlib.Cryptography.LevinHardness.verTest	STD	[]
+  : (List Bool → Bool) → List Bool → Bool
+TCSlib.Cryptography.LevinHardness.verTest_certOf	STD	[propext, Quot.sound]
+  : ∀ (b : List Bool → Bool) (q : Complexity.PolyExpr) (x y : List Bool),   TCSlib.Cryptography.LevinHardness.verTest b (Turing.pairEncode x (TCSlib.Cryptography.LevinHardness.certOf q x y)) =     b (Turing.pairEncode x y)
+TCSlib.Cryptography.LevinHardness.verTest_eq	STD	[]
+  : ∀ (b : List Bool → Bool) (z : List Bool),   TCSlib.Cryptography.LevinHardness.verTest b z =     ((Turing.pairDecode (TCSlib.Cryptography.LevinHardness.stripCert z)).isSome &&       b (TCSlib.Cryptography.LevinHardness.stripCert z))
+TCSlib.Cryptography.LevinHardness.verTest_pairEncode	STD	[propext, Quot.sound]
+  : ∀ (b : List Bool → Bool) (x u : List Bool),   TCSlib.Cryptography.LevinHardness.verTest b (Turing.pairEncode x u) =     match Turing.splitAtLastTrue u with     | some y => b (Turing.pairEncode x y)     | none => false
+TCSlib.Cryptography.LevinHardness.verTime	STD	[]
+  : ℕ → ℕ → Complexity.PolyExpr → Complexity.PolyExpr
+TCSlib.Cryptography.LevinHardness.verTime_eq	STD	[]
+  : ∀ (C c : ℕ) (m : Complexity.PolyExpr),   TCSlib.Cryptography.LevinHardness.verTime C c m =     ((Complexity.PolyExpr.const C).mul           (((((Complexity.PolyExpr.const 2).mul Complexity.PolyExpr.var).add (Complexity.PolyExpr.const 3)).add m).pow             c)).add       (Complexity.PolyExpr.const 1)
+TCSlib.Cryptography.LevinHardness.vertexEquiv	STD	[propext, Quot.sound, Classical.choice]
+  : (K : ℕ) → Fin (TCSlib.Cryptography.LevinHardness.gadgetN K) ≃ SATtoColor.OutputVertex (Fin K)
+TCSlib.Cryptography.LevinHardness.vertexEquiv_apply	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (K : ℕ) (t : Fin (TCSlib.Cryptography.LevinHardness.gadgetN K)),   (TCSlib.Cryptography.LevinHardness.vertexEquiv K) t =     if h : ↑t < 3 then SATtoColor.OutputVertex.palette ⟨↑t, h⟩     else       if h' : ↑t < 3 + 2 * K then         SATtoColor.OutputVertex.literalNode ((TCSlib.Cryptography.LevinHardness.litEquiv K) ⟨↑t - 3, ⋯⟩)       else         SATtoColor.OutputVertex.clauseGadget           ((TCSlib.Cryptography.LevinHardness.clauseEquiv K) ⟨(↑t - (3 + 2 * K)) / 6, ⋯⟩) ⟨(↑t - (3 + 2 * K)) % 6, ⋯⟩
+TCSlib.Cryptography.LevinHardness.vertexEquiv_symm_clauseGadget	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (K : ℕ) (c : SATtoColor.Clause (Fin K)) (i : Fin 6),   ↑((TCSlib.Cryptography.LevinHardness.vertexEquiv K).symm (SATtoColor.OutputVertex.clauseGadget c i)) =     3 + 2 * K + 6 * ↑((TCSlib.Cryptography.LevinHardness.clauseEquiv K).symm c) + ↑i
+TCSlib.Cryptography.LevinHardness.vertexEquiv_symm_literalNode	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (K : ℕ) (l : SATtoColor.Literal (Fin K)),   ↑((TCSlib.Cryptography.LevinHardness.vertexEquiv K).symm (SATtoColor.OutputVertex.literalNode l)) =     3 + ↑((TCSlib.Cryptography.LevinHardness.litEquiv K).symm l)
+TCSlib.Cryptography.LevinHardness.vertexEquiv_symm_palette	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ (K : ℕ) (p : Fin 3),   ↑((TCSlib.Cryptography.LevinHardness.vertexEquiv K).symm (SATtoColor.OutputVertex.palette p)) = ↑p
+TCSlib.Cryptography.LevinHardness.wideLit	STD	[]
+  : Std.Sat.CNF.Clause ℕ → ℕ → Std.Sat.Literal ℕ
+TCSlib.Cryptography.LevinHardness.wideLit_eq	STD	[]
+  : ∀ (C : Std.Sat.CNF.Clause ℕ) (j : ℕ),   TCSlib.Cryptography.LevinHardness.wideLit C j = List.getD C (min j (List.length C - 1)) (0, true)
+TCSlib.Cryptography.LevinHardness.wideLit_mem	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {C : Std.Sat.CNF.Clause ℕ}, 1 ≤ List.length C → ∀ (j : ℕ), TCSlib.Cryptography.LevinHardness.wideLit C j ∈ C
+TCSlib.Cryptography.LevinHardness.widthStep	STD	[propext, Quot.sound]
+  : Fin 6 × Fin 5 × Bool → Bool → Fin 6 × Fin 5 × Bool
+TCSlib.Cryptography.LevinHardness.widthStep_eq	STD	[propext, Quot.sound]
+  : ∀ (st : Fin 6 × Fin 5 × Bool) (b : Bool),   TCSlib.Cryptography.LevinHardness.widthStep st b =     (Std.Sat.CNF.syntaxStep st.1 b,       if st.1 = 0 then 0 else if st.1 = 1 ∧ b = true then ⟨min (↑st.2.1 + 1) 4, ⋯⟩ else st.2.1,       st.2.2 || decide (st.1 = 1) && !b && decide (↑st.2.1 = 0 ∨ ↑st.2.1 = 4))
+TCSlib.Cryptography.LevinHardness.wireValue	STD	[propext, Quot.sound]
+  : List Bool → List Bool → ℕ → Bool
+TCSlib.Cryptography.LevinHardness.wireValue_encode	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {n : ℕ} (C : BoolCircuit.DAGCircuit n),   C.IsFaninTwo →     ∀ (u : List Bool) (v : ℕ),       TCSlib.Cryptography.LevinHardness.wireValue C.encode u v = (C.values fun i => u.getD (↑i) false).getD v false
+TCSlib.Cryptography.LevinHardness.wireValue_eq	STD	[propext, Quot.sound]
+  : ∀ (d u : List Bool) (v : ℕ),   TCSlib.Cryptography.LevinHardness.wireValue d u v =     BoolCircuit.CircuitEval.verdict false       (Turing.pairEncode (TCSlib.Cryptography.LevinHardness.retarget d v)         (TCSlib.Cryptography.LevinHardness.padInput d u))
+TCSlib.Cryptography.LevinHardness.wireValues	STD	[propext, Quot.sound]
+  : List Bool → List Bool → List Bool
+TCSlib.Cryptography.LevinHardness.wireValues_eq	STD	[propext, Quot.sound]
+  : ∀ (d u : List Bool),   TCSlib.Cryptography.LevinHardness.wireValues d u =     List.map (TCSlib.Cryptography.LevinHardness.wireValue d u) (List.range d.length)
+TCSlib.Cryptography.LevinHardness.wireValues_getD	STD	[propext, Quot.sound, Classical.choice]
+  : ∀ {n : ℕ} (C : BoolCircuit.DAGCircuit n),   C.IsFaninTwo →     ∀ (u : List Bool) (v : ℕ),       (TCSlib.Cryptography.LevinHardness.wireValues C.encode u).getD v false =         (C.values fun i => u.getD (↑i) false).getD v false
+TCSlib.Cryptography.LevinHardness.withOutput	STD	[]
+  : {n : ℕ} → (C : BoolCircuit.DAGCircuit n) → (v : ℕ) → v < n + C.gates.length → BoolCircuit.DAGCircuit n
+TCSlib.Cryptography.LevinHardness.withOutput_gates	STD	[]
+  : ∀ {n : ℕ} (C : BoolCircuit.DAGCircuit n) (v : ℕ) (hv : v < n + C.gates.length),   (TCSlib.Cryptography.LevinHardness.withOutput C v hv).gates = C.gates
+TCSlib.Cryptography.LevinHardness.withOutput_output	STD	[]
+  : ∀ {n : ℕ} (C : BoolCircuit.DAGCircuit n) (v : ℕ) (hv : v < n + C.gates.length),   (TCSlib.Cryptography.LevinHardness.withOutput C v hv).output = v
+TCSlib.Cryptography.levinNPHard_L3COL	STD	[propext, Quot.sound, Classical.choice]
+  : TCSlib.Cryptography.LevinNPHard TCSlib.Cryptography.L3COL TCSlib.Cryptography.R3COL
+TCSlib.Cryptography.zk_proof_of_mem_NP_of_owp_unconditional	STD	[propext, Quot.sound, Classical.choice]
+  : (∃ P h, TCSlib.Cryptography.OneWayPermutation P ∧ P.HardCore h) →   ∀ {L : Language Bool},     L ∈ Complexity.NP →       ∃ R,         TCSlib.Cryptography.WitnessRelation L R ∧           (∃ π, TCSlib.Cryptography.EfficientProverProof π L R) ∧             ∃ π p,               (∀ (N : ℕ), N ≤ p.eval N) ∧                 TCSlib.Cryptography.ZK π R ∧                   TCSlib.Cryptography.EfficientProverProofErr π L R fun N => 1 - 1 / ↑(p.eval N) + (1 / 2) ^ p.eval N
+TCSlib.Cryptography.zk_proof_of_witnessRelation_of_owp_unconditional	STD	[propext, Quot.sound, Classical.choice]
+  : (∃ P, TCSlib.Cryptography.OneWayPermutation P) →   ∀ {L : Language Bool} {R : List Bool → List Bool → Prop},     TCSlib.Cryptography.WitnessRelation L R →       ∃ Com ℓ,         TCSlib.Cryptography.Commitment Com ℓ ∧           ∃ f w p,             TCSlib.Cryptography.LevinReduction L TCSlib.Cryptography.L3COL R TCSlib.Cryptography.R3COL f w p ∧               (∀ (N : ℕ), N ≤ p.eval N) ∧                 TCSlib.Cryptography.EfficientProverProof ((TCSlib.Cryptography.colProtocolRep Com ℓ).pullback f w p) L                     R ∧                   TCSlib.Cryptography.ZK ((TCSlib.Cryptography.colProtocol Com ℓ).pullback f w p) R ∧                     TCSlib.Cryptography.EfficientProverProofErr ((TCSlib.Cryptography.colProtocol Com ℓ).pullback f w p)                       L R fun N => 1 - 1 / ↑(p.eval N) + (1 / 2) ^ p.eval N

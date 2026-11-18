@@ -1,0 +1,22 @@
+TCSlib/Cryptography/ZeroKnowledge.lean: base 70 lines, head 73 lines; inserted 3 (allowed 3), non-insert differences 0, disallowed insertions 0
+RESULT PASS
+--- control (one altered character):
+TCSlib/Cryptography/ZeroKnowledge.lean: base 70 lines, head 73 lines; inserted 3 (allowed 3), non-insert differences 1, disallowed insertions 0
+  DIFF ('replace', ['import TCSlib.Cryptography.ZeroKnowledge.Encoding'], ['import TCSlib.Cryptography.ZeroKnowledge.EncodinX'])
+RESULT FAIL
+--- git diff --stat cf6a2266e9556ca8ad61e56f7232266ccc6d4e62:
+ TCSlib/Cryptography/ZeroKnowledge.lean             |   3 +
+ .../Cryptography/ZeroKnowledge/LevinHardness.lean  |  53 ++
+ .../ZeroKnowledge/LevinHardness/Bridge.lean        | 224 +++++++
+ .../LevinHardness/CircuitWitness.lean              | 426 ++++++++++++
+ .../ZeroKnowledge/LevinHardness/ColoringGraph.lean | 668 +++++++++++++++++++
+ .../ZeroKnowledge/LevinHardness/ColoringParse.lean | 720 +++++++++++++++++++++
+ .../LevinHardness/ColoringWitness.lean             | 393 +++++++++++
+ .../ZeroKnowledge/LevinHardness/Gadget.lean        | 181 ++++++
+ .../ZeroKnowledge/LevinHardness/Hardness.lean      | 300 +++++++++
+ .../ZeroKnowledge/LevinHardness/Padding.lean       | 250 +++++++
+ .../ZeroKnowledge/LevinHardness/Relations.lean     |  77 +++
+ .../ZeroKnowledge/LevinHardness/Soundness.lean     | 258 ++++++++
+ .../ZeroKnowledge/LevinHardness/UnaryArith.lean    | 112 ++++
+ .../ZeroKnowledge/LevinHardness/Verifier.lean      | 335 ++++++++++
+ 14 files changed, 4000 insertions(+)

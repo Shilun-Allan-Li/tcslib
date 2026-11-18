@@ -203,7 +203,10 @@ theorem eval_withOutput {n : ℕ} (C : DAGCircuit n) (v : ℕ) (hv : v < n + C.g
 
 /-- A description of the parts `encodeNat m ++ (encodeList DAGGate.encode G ++ encodeNat o)`
 determines them: `n = m`, `C.gates = G` and `C.output = o`. Glue (the parts form of
-`BoolCircuit.DAGCircuit.eq_of_encode_eq`, for parts that need not form a circuit). -/
+`BoolCircuit.DAGCircuit.eq_of_encode_eq`, for parts that need not form a circuit).
+
+**Proof sketch.** Decode the number of inputs (`decodeNat_encodeNat`), then the gate list
+(`decodeList_encodeList`), then the output from both sides of the equation, and compare. -/
 private theorem parts_of_encode_eq {n m : ℕ} {C : DAGCircuit n} {G : List DAGGate} {o : ℕ}
     (h : C.encode = encodeNat m ++ (encodeList DAGGate.encode G ++ encodeNat o)) :
     n = m ∧ C.gates = G ∧ C.output = o := by
@@ -387,8 +390,9 @@ theorem R_3SAT_wireValues {d u : List Bool} (h : R_CKT d u) :
   have hW : (fun v => (wireValues C.encode u).getD v false) =
       fun v => (C.values (fun i => u.getD i false)).getD v false :=
     funext (wireValues_getD C hC u)
-  rw [hW, Bridge.toCNF_eq, CNF.eval_cons, C.eval_tseitinGates_values ((DAGCircuit.isFaninTwo_iff C).mp hC).2,
-    Bool.and_true, CNF.Clause.eval_cons, CNF.Clause.eval_nil, Bool.or_false, ← DAGCircuit.eval_eq, hev]
+  rw [hW, Bridge.toCNF_eq, CNF.eval_cons,
+    C.eval_tseitinGates_values ((DAGCircuit.isFaninTwo_iff C).mp hC).2, Bool.and_true,
+    CNF.Clause.eval_cons, CNF.Clause.eval_nil, Bool.or_false, ← DAGCircuit.eval_eq, hev]
   rfl
 
 /-- **The converse along the Tseitin map** [AB09, Lemma 6.11, p. 111]: for a fan-in-two
@@ -406,7 +410,8 @@ theorem exists_eval_of_R_3SAT {n : ℕ} (C : DAGCircuit n) (hC : C.IsFaninTwo)
     (fun v => a.getD v false)).mp
     ⟨_, fun _ _ => rfl, ha.2⟩⟩
 
-/-- **The Tseitin map preserves witness existence both ways** ([AB09, Lemma 6.11, p. 111]): for a fan-in-two `C : DAGCircuit n`,
+/-- **The Tseitin map preserves witness existence both ways** ([AB09, Lemma 6.11, p. 111]): for
+a fan-in-two `C : DAGCircuit n`,
 `(∃ a, R_3SAT (dagCktSatToSAT3 C.encode) a) ↔ ∃ x : Fin n → Bool, C.eval x = true`.
 Glue: `exists_eval_of_R_3SAT`, and `R_3SAT_wireValues` at `u = List.ofFn x`. -/
 theorem exists_R_3SAT_iff
