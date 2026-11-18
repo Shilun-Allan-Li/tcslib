@@ -107,7 +107,8 @@ theorem cfg_inputSymbol {S : Type} (x : List Bool) (q : Option S) (i : ℕ)
     exact inputSymbolInner i (by simp [cfg]; omega) h
   · have he : i = x.length := by omega
     subst i
-    simp [cfg, Cfg.inputSymbol, Fin.ext_iff]
+    rw [List.getElem?_eq_none (le_refl _)]
+    exact Cfg.inputSymbol_of_end rfl
 
 /-- Two one-buffer configurations with equal input indices are equal (the bound proofs are
 irrelevant). -/
@@ -122,7 +123,9 @@ theorem cfg_congr {S : Type} (x : List Bool) (q : Option S) {i i' : ℕ}
 `(cfg x q i hi a z out).workTapeSymbols = fun _ => bufferTape a z`. -/
 theorem cfg_workTapeSymbols {S : Type} (x : List Bool) (q : Option S) (i : ℕ)
     (hi : i ≤ x.length) (a : List Bool) (z : ℤ) (out : List Bool) :
-    (cfg x q i hi a z out).workTapeSymbols = fun _ => FinTM.bufferTape a z :=
+    (cfg x q i hi a z out).workTapeSymbols = fun _ => FinTM.bufferTape a z := by
+  funext k
+  rw [Cfg.workTapeSymbols_eq]
   rfl
 
 /-- **A non-writing step that keeps the input head.** The action that writes nothing, keeps the
@@ -133,8 +136,18 @@ theorem apply_cfg_stay {S : Type} (x : List Bool) (q q' : Option S) (i : ℕ)
     (hi : i ≤ x.length) (a : List Bool) (z : ℤ) (out : List Bool) (d : SignType)
     (o : Option Bool) :
     (⟨0, fun _ => (none, d), o, q'⟩ : Action 1 Bool S).apply (cfg x q i hi a z out) =
-      cfg x q' i hi a (z + d) (out ++ o.toList) :=
-  Cfg.ext rfl (moveInputPos_zero _) rfl rfl rfl
+      cfg x q' i hi a (z + d) (out ++ o.toList) := by
+  refine Cfg.ext ?_ ?_ (funext fun k => ?_) (funext fun k => ?_) ?_
+  · rw [Action.apply_state]
+    rfl
+  · rw [Action.apply_inputPos]
+    exact moveInputPos_zero _
+  · rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
+    simp [cfg]
+  · rw [Action.apply_workTapePos]
+    rfl
+  · rw [Action.apply_output]
+    rfl
 
 /-- **A non-writing step that advances the input head.** For `i < |x|`, the action that writes
 nothing, moves the input head right, moves the work head by `d`, emits `o` and enters `q'` maps
@@ -144,8 +157,18 @@ theorem apply_cfg_advance {S : Type} (x : List Bool) (q q' : Option S) (i : ℕ)
     (hi : i ≤ x.length) (hi' : i + 1 ≤ x.length) (a : List Bool) (z : ℤ) (out : List Bool)
     (d : SignType) (o : Option Bool) :
     (⟨.pos, fun _ => (none, d), o, q'⟩ : Action 1 Bool S).apply (cfg x q i hi a z out) =
-      cfg x q' (i + 1) hi' a (z + d) (out ++ o.toList) :=
-  Cfg.ext rfl (moveInputPos_pos_of_ne_right _ (by show i + 1 ≠ x.length + 1; omega)) rfl rfl rfl
+      cfg x q' (i + 1) hi' a (z + d) (out ++ o.toList) := by
+  refine Cfg.ext ?_ ?_ (funext fun k => ?_) (funext fun k => ?_) ?_
+  · rw [Action.apply_state]
+    rfl
+  · rw [Action.apply_inputPos]
+    exact moveInputPos_pos_of_ne_right _ (by show i + 1 ≠ x.length + 1; omega)
+  · rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
+    simp [cfg]
+  · rw [Action.apply_workTapePos]
+    rfl
+  · rw [Action.apply_output]
+    rfl
 
 /-- **The first half of an aligned block.** For a one-tape machine whose parse state `p none`
 reads a bit `b` by moving the input head right into `p (some b)`, silently and without touching
@@ -157,14 +180,11 @@ theorem parse_first {S : Type} (tm : MultiTapeTM 1 Bool S) (p : Option Bool → 
     (x pre rest a : List Bool) (b : Bool) (hx : x = pre ++ b :: rest) :
     tm.step (cfg x (some (p none)) pre.length (by simp [hx]) a a.length []) =
       cfg x (some (p (some b))) (pre.length + 1) (by simp [hx]) a a.length [] := by
-  unfold MultiTapeTM.step
-  change (tm.tr (p none) _ _).apply _ = _
-  rw [cfg_inputSymbol]
+  rw [MultiTapeTM.step_of_some (cfg_state _ _ _ _ _ _ _), cfg_inputSymbol]
   have hr : x[pre.length]? = some b := by simp [hx]
   rw [hr, hp0]
-  refine Cfg.ext rfl ?_ rfl ?_ rfl
-  · exact moveInputPos_pos_of_ne_right _ (by simp [cfg, hx])
-  · funext i; simp [Action.apply, cfg]
+  refine (apply_cfg_advance _ _ _ _ _ (by simp [hx]) _ _ _ _ _).trans ?_
+  simp
 
 /-- **One aligned block.** For a one-tape machine whose parse states act as the buffered aligned
 parser (`hp0` as in `parse_first`; `hp1`: at `p (some b)` reading `c`, equal bits append `b` to
@@ -192,22 +212,25 @@ theorem parse_block {S : Type} (tm : MultiTapeTM 1 Bool S) (p : Option Bool → 
           (a ++ [b]) (a ++ [b]).length []
       else if b then cfg x none (pre.length + 2) (by simp [hx]) a a.length []
       else cfg x (some r) (pre.length + 2) (by simp [hx]) a (a.length - 1) [] := by
-  change tm.step (tm.step _) = _
+  conv_lhs => rw [show (2 : ℕ) = 0 + 1 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
+    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
   rw [parse_first tm p hp0 x pre (c :: rest) a b hx]
-  unfold MultiTapeTM.step
-  change (tm.tr (p (some b)) _ _).apply _ = _
-  rw [cfg_inputSymbol]
+  rw [MultiTapeTM.step_of_some (cfg_state _ _ _ _ _ _ _), cfg_inputSymbol]
   have hr : x[pre.length + 1]? = some c := by simp [hx]
   rw [hr, hp1]
   have hm : moveInputPos (⟨pre.length + 1 + 1, by simp [hx]⟩ : Fin (x.length + 2)) .pos =
       ⟨pre.length + 2 + 1, by simp [hx]; omega⟩ :=
     moveInputPos_pos_of_ne_right _ (by simp [hx])
   cases b <;> cases c <;> simp only [Bool.false_eq_true, Bool.true_eq_false, ↓reduceIte]
-  all_goals refine Cfg.ext rfl hm ?_ ?_ rfl
+  all_goals refine Cfg.ext ?_ ?_ (funext fun i => ?_) (funext fun i => ?_) ?_
   all_goals first
-    | rfl
-    | (funext i; exact (FinTM.bufferTape_append a _).symm)
-    | (funext i; simp [Action.apply, cfg])
+    | (rw [Action.apply_state]; rfl)
+    | (rw [Action.apply_inputPos]; exact hm)
+    | (rw [Action.apply_workTapes]; exact (FinTM.bufferTape_append a _).symm)
+    | (rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]; simp [cfg]; done)
+    | (rw [Action.apply_workTapePos]; simp [cfg]; done)
+    | (rw [Action.apply_workTapePos]; simp [cfg, sub_eq_add_neg]; done)
+    | (rw [Action.apply_output]; rfl)
 
 /-- **The rewind.** For a one-tape machine whose rewind state `r` moves the work head left while
 it reads a stored symbol and, at the left blank, moves it right into the state `n`, the input
@@ -229,24 +252,20 @@ theorem rewind_run {S : Type} (tm : MultiTapeTM 1 Bool S) (r n : S)
   induction j with
   | zero =>
     intro _
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-    unfold MultiTapeTM.step
-    simp only [hr, cfg, Cfg.workTapeSymbols, Nat.cast_zero, zero_sub, FinTM.bufferTape_left]
-    refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ ?_
-    · funext k; simp [Action.apply]
-    · simp [Action.apply]
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+      MultiTapeTM.step_of_some (cfg_state _ _ _ _ _ _ _), hr, cfg_workTapeSymbols]
+    simp only [Nat.cast_zero, zero_sub, FinTM.bufferTape_left]
+    refine (apply_cfg_stay _ _ _ _ _ _ _ _ _ _).trans ?_
+    simp
   | succ j ih =>
     intro hj
     have hs : tm.step (cfg x (some r) i hi a (((j + 1 : ℕ) : ℤ) - 1) out) =
         cfg x (some r) i hi a ((j : ℤ) - 1) out := by
       have hz : (((j + 1 : ℕ) : ℤ) - 1) = j := by omega
-      rw [hz]
-      unfold MultiTapeTM.step
-      simp only [hr, cfg, Cfg.workTapeSymbols, FinTM.bufferTape_nat,
-        List.getElem?_eq_getElem (by omega : j < a.length)]
-      refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ ?_
-      · funext k; simp [Action.apply, sub_eq_add_neg]
-      · simp [Action.apply]
+      rw [hz, MultiTapeTM.step_of_some (cfg_state _ _ _ _ _ _ _), hr, cfg_workTapeSymbols]
+      simp only [FinTM.bufferTape_nat, List.getElem?_eq_getElem (by omega : j < a.length)]
+      refine (apply_cfg_stay _ _ _ _ _ _ _ _ _ _).trans ?_
+      simp [sub_eq_add_neg]
     rw [MultiTapeTM.runFrom_succ_eq_step, hs]
     exact ih (by omega)
 
@@ -465,29 +484,29 @@ private lemma split_tail (x rest a : List Bool) (z : ℤ) : ∀ pre out (hx : x 
   | nil =>
     intro pre out hx
     simp only [List.length_nil, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-    unfold MultiTapeTM.step
+    rw [MultiTapeTM.step_of_some (PairParse.cfg_state _ _ _ _ _ _ _)]
     change (pairSplitTM.tm.tr .tail _ _).apply _ = _
     rw [PairParse.cfg_inputSymbol]
     have hr : x[pre.length]? = none := by simp [hx]
     rw [hr]
-    refine Cfg.ext rfl ?_ rfl ?_ ?_
-    · simp [pairSplitTM, Action.apply, PairParse.cfg, hx]
-    · funext k; simp [pairSplitTM, Action.apply, PairParse.cfg]
-    · simp [pairSplitTM, Action.apply, PairParse.cfg]
+    refine (PairParse.apply_cfg_stay _ _ _ _ _ _ _ _ _ _).trans ?_
+    rw [PairParse.cfg_congr x _ (i := pre.length) (i' := x.length) (by simp [hx]) (le_refl _)
+      (by simp [hx])]
+    simp
   | cons b rest ih =>
     intro pre out hx
     have hs : pairSplitTM.tm.step
         (PairParse.cfg x (some .tail) pre.length (by simp [hx]) a z out) =
         PairParse.cfg x (some .tail) (pre ++ [b]).length (by simp [hx]) a z (out ++ [b]) := by
-      unfold MultiTapeTM.step
+      rw [MultiTapeTM.step_of_some (PairParse.cfg_state _ _ _ _ _ _ _)]
       change (pairSplitTM.tm.tr .tail _ _).apply _ = _
       rw [PairParse.cfg_inputSymbol]
       have hr : x[pre.length]? = some b := by simp [hx]
       rw [hr]
-      refine Cfg.ext rfl ?_ rfl ?_ rfl
-      · simpa [PairParse.cfg] using moveInputPos_pos_of_ne_right
-          (⟨pre.length + 1, by simp [hx]; omega⟩ : Fin (x.length + 2)) (by simp [hx])
-      · funext k; simp [pairSplitTM, Action.apply, PairParse.cfg]
+      refine (PairParse.apply_cfg_advance _ _ _ _ _ (by simp [hx]) _ _ _ _ _).trans ?_
+      rw [PairParse.cfg_congr x _ (i := pre.length + 1) (i' := (pre ++ [b]).length)
+        (by simp [hx]) (by simp [hx]) (by simp)]
+      simp
     simp only [List.length_cons]
     rw [MultiTapeTM.runFrom_succ_eq_step, hs]
     simpa only [List.append_assoc, List.singleton_append] using
