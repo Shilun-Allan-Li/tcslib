@@ -61,7 +61,7 @@ extended-RAM program, which halts within `ramSteps P true c + 1` steps: a consta
 `K₀` and `K₁` depend on the program text only, as `startCost` and `stepsPerStep` do. -/
 theorem Light.Compiler.haltsWithin_compileProgram {W : ℕ} {lim : Limits} {P : Program} {p0 : ℕ}
     {x o : List Bool} {σ' : State} {c : ℕ}
-    (hx : lim.input = x)
+    (hx : lim.input = x) (hxw : (x.length : ℤ) ≤ lim.word)
     (h : Exec lim P 0 (mainStmt p0) ⟨frame [0, x.length, 0], fun _ => 0⟩ σ' o [] c)
     (hfit : Fits W lim (dispPos P true) (stackCells P lim)) :
     ∃ t, t ≤ ramSteps P true c + 1 ∧
@@ -146,7 +146,15 @@ proof must be extended in the same change. Instead:
 4. **Vendored drift:** after PROG-2, the Light files diverge from upstream beyond the
    module-syntax edits. Their headers list it. Upstream ports later must be merged by hand.
 
-## 7. Decisions for Seyoon
+## 7. Decisions (Seyoon, 2026-11-18: "go with your recommendations")
+
+Ruled: the process of §5, with a mirror statement gate (gate 167) first; H1 after job G lands;
+`AcceptsND` and `acceptProb` stated in this round. The deliverable also needs `|x| ≤ lim.word`,
+for the argument cell holding `|x|` (`Input.arg1_le`); the mirror carries it. The mirror is
+`items/ram-tm/prog2/PROG2Mirror.lean.txt`. It elaborates with 0 errors and 27 sorried statements
+(`mirror.log`).
+
+### The decisions as posed
 
 1. **The process of §5:** a mirror statement gate (Codex audit), then H1 and H2 in sequence, with
    H1's temporary compiler admissions. *Recommended.*
