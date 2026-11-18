@@ -55,7 +55,7 @@ depth; here the number of levels `L(κ)` is a polynomial.
 * [GSW13] C. Gentry, A. Sahai, B. Waters, CRYPTO 2013; IACR ePrint 2013/340, version dated
   8 June 2013: §3.2.
 * [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, author version dated
-  17 February 2016, Definition 4.2.3.
+  17 February 2016, §5.4.3.
 * [Gen09] C. Gentry, *A Fully Homomorphic Encryption Scheme*, PhD thesis, Stanford University,
   September 2009: §4.1, Thm 4.2.3.
 
@@ -75,8 +75,10 @@ open Encryption.PublicKey
 /-! ### Encodings -/
 
 /-- The canonical bit encoding of a ciphertext: its `(n+1) × N` entries row by row, `ℓ` bits
-each, `encodeCiphertext P C = Encoding.Modular.encodeMatrix P.width C` [Pei16, Def 4.2.3,
-p024-b001, the binary representation convention]. -/
+each, `encodeCiphertext P C = Encoding.Modular.encodeMatrix P.width C`. Glue: a local
+encoding choice, which the cited sources do not fix. Each entry is written as the `ℓ`-bit binary
+numeral of its canonical residue in `{0, …, q − 1}`, the base-two representation of the
+canonical representative in [Pei16, §5.4.3, p052-b001]. -/
 def encodeCiphertext (P : Parameters) (C : Ciphertext P) : List Bool :=
   Encoding.Modular.encodeMatrix P.width C
 

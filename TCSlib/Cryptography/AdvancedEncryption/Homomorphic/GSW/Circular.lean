@@ -98,9 +98,12 @@ coins in `ρ`, has advantage at most `ε` between the FHE views of `0` and `1`,
 hypothesis (A1), never derived from LWE (phase-5 Q15). Its reader `weakCircularSecure_iff` is
 the security half of [BV11, Thm 3.2, p015-b001] and [BV14, Thm 2.14 second part, p008-b003]
 (ruling Q-6B-1 A: r3's G14). Deviation: BV11's definition is asymptotic, and
-`WeakCircularSecureFamily` is the headline form. It is stated per distinguisher because,
-quantified over **every** function `FheView P → ρ → Bool`, it would hold only for `ε` near `1`:
-an unbounded distinguisher recovers `s` from `pk` and decrypts the challenge. -/
+`WeakCircularSecureFamily` is the headline form. It is stated per distinguisher because, for
+parameters under which decryption is correct, quantified over **every** function
+`FheView P → ρ → Bool` it would hold only for `ε` near `1`: an unbounded test can enumerate the
+key-generation seeds, take any seed whose public key is `pk`, and decrypt the challenge with
+that seed's secret. Recovering the original `s` uniquely is unnecessary. The definition also
+admits parameters that do not decrypt correctly, to which this argument does not apply. -/
 def WeakCircularSecure (P : Parameters) (χ : LWE.Noise) {ρ : Type*} [Fintype ρ] [Nonempty ρ]
     (D : FheView P → ρ → Bool) (ε : ℝ) : Prop :=
   distAdv (fheView P χ false) (fheView P χ true) D ≤ ε
