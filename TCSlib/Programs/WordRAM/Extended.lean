@@ -13,56 +13,52 @@ set_option autoImplicit false
 /-!
 # The extended word RAM: input, output, coins and halving; footprints and halting
 
-The word RAM of [AFM26] (`WordRAM.Instr`, nine instructions; vendored, design §15b) is extended
-by a **wrapper** (user decision, 2026-10-12; design §15d): `WordRAM.XInstr` has the nine
-vendored instructions as `XInstr.base`, and four more:
+The word RAM of [AFM26] (`WordRAM.Instr`, nine instructions) is extended by a wrapper:
+`WordRAM.XInstr` has the vendored instructions as `XInstr.base`, and four more:
 
-* `rdIn i j`, the input bit at the position held in a cell, read in place (design §15c);
+* `rdIn i j`, the input bit at the position held in a cell, read in place;
 * `emit i`, which appends the bit "`[i]` is nonzero" to an append-only output;
 * `coin i`, the next coin of a read-once coin stream;
 * `half i j`, an arithmetic shift right.
 
-A configuration `WordRAM.XCfg` extends the vendored `WordRAM.Cfg` by the bits emitted and the
-number of coins consumed. The input and the coin stream are parameters of a run. No vendored file
-is changed: the vendored run calculus applies to the base instructions through the projection
-`XProgram.proj` (`XSteps.of_steps_proj`).
+A configuration `WordRAM.XCfg` extends `WordRAM.Cfg` by the emitted bits and the number of
+coins consumed. Input and coin streams are parameters of a run. The vendored run calculus
+applies through `XProgram.proj`, as proved by `XSteps.of_steps_proj`.
 
-The file also says which cells a run touches (backlog PROG-3, at the RAM level) and when a run
-halts within a number of steps and cells. The latter, `HaltsWithin`, is the hypothesis of
-stage 2 (backlog PROG-4).
+The run calculus also records which memory cells a run touches and when the program halts
+within given bounds on steps and cells. All run, footprint, and halting results below are proved.
 
 ## Main definitions
 
 * `WordRAM.XInstr`, `WordRAM.XProgram`, `WordRAM.XCfg`, `WordRAM.xstep`, `WordRAM.XSteps`:
   the extended machine and its runs.
-* `WordRAM.CoinFree`, `WordRAM.XProgram.proj`: coin-free programs; the vendored projection.
+* `WordRAM.CoinFree`, `WordRAM.XProgram.proj`: coin-free programs and the vendored projection.
 * `WordRAM.baseTouches`, `WordRAM.XInstr.touches`: the cells one instruction reads or writes.
-* `WordRAM.StepsIn`, `WordRAM.XStepsIn`: runs every step of which stays in a set of cells.
-* `WordRAM.initMem`, `WordRAM.XCfg.init`, `WordRAM.HaltsWithin`: the start convention, and
-  halting within `t` steps and `f` cells.
+* `WordRAM.StepsIn`, `WordRAM.XStepsIn`: runs within a footprint.
+* `WordRAM.initMem`, `WordRAM.XCfg.init`, `WordRAM.HaltsWithin`: initialization and bounded halting.
 
-## Main results (statements gated 2026-10-14, `audits/stage2-statements-findings.md`; proofs pending)
+## Main results
 
-* `WordRAM.xstep_map_base`, `WordRAM.XSteps.of_steps`, `WordRAM.XSteps.of_steps_proj`:
-  conservativity over the vendored RAM.
-* `WordRAM.StepsIn.agreeOutside`: every intermediate memory agrees with the first outside the
-  footprint (design §15c, obstacle 1).
-* `WordRAM.XSteps.exists_xStepsIn`: every run of `n` steps has a footprint of at most `3 n`
-  cells, so `HaltsWithin.touches_le`: a halting bound in steps gives one in cells.
-* `WordRAM.HaltsWithin.unique`, `WordRAM.HaltsWithin.coin_irrel`.
+* `WordRAM.XSteps.trans`, `WordRAM.xstep_map_base`, `WordRAM.XSteps.of_steps`,
+  `WordRAM.XSteps.of_steps_proj`: composition and conservativity over the vendored RAM.
+* `WordRAM.StepsIn.agreeOutside`: intermediate memories agree outside the footprint.
+* `WordRAM.stepsIn_straight`: straight-line execution with a footprint.
+* `WordRAM.XSteps.exists_xStepsIn`, `WordRAM.HaltsWithin.touches_le`: a run of `n` steps
+  touches at most `3 * n` cells, giving a cell bound from a time bound.
+* `WordRAM.HaltsWithin.mono`, `WordRAM.HaltsWithin.unique`, `WordRAM.HaltsWithin.coin_irrel`:
+  monotonicity, determinism, and independence of the coin stream for coin-free programs.
 
 ## References
 
 * [AFM26] Anthropic, PBC, `anthropics/formal-math` (https://github.com/anthropics/formal-math),
   project `3sum-apsp`, commit `e1a4e6508154ea59f030480661590a9fe3018011` (2026-10-05),
-  Apache-2.0, © Anthropic, PBC. Design adaptation (policy §2): the word RAM of `EndStatement.lean`
+  Apache-2.0, © Anthropic, PBC. Design adaptation: the word RAM of `EndStatement.lean`
   and the run calculus of `ThreeSumApsp/Machine/Steps.lean`, vendored as
   `TCSlib/Programs/WordRAM/Basic.lean` and `Steps.lean`, which this file wraps. `xstep` restates
-  the match of `WordRAM.step` for the nine vendored instructions, routing the six that only change
-  the memory through the vendored `WordRAM.effect`; `XSteps` and `StepsIn` restate
-  `WordRAM.Steps`. No proved material is copied. The footprint notion is ours: upstream's
-  `ThreeSumApsp/Machine/Footprint.lean` (not vendored; backlog PROG-1(e)) bounds how many cells a
-  run changes and reads, not which.
+  the match of `WordRAM.step`, routing the six memory instructions through `WordRAM.effect`;
+  `XSteps` and `StepsIn` use the same finite-run convention as `WordRAM.Steps`. The proofs cite
+  the vendored equations and lemmas. The footprint notion is ours: upstream's
+  `ThreeSumApsp/Machine/Footprint.lean` bounds how many cells a run changes and reads, not which.
 -/
 
 namespace WordRAM
@@ -143,6 +139,58 @@ def XProgram.proj (P : XProgram) : List Instr :=
     | .base i => i
     | _ => .reject
 
+/-! ## Private instruction comparison -/
+
+/-- Mapping a fetch follows `List.getElem?_map` and `Option.getD_map`. -/
+private theorem mapped_fetch {α β : Type} (l : List α) (d : α) (f : α → β) (n : ℕ) :
+    (l.map f).getD n (f d) = f (l.getD n d) := by
+  simp only [List.getD_eq_getElem?_getD, List.getElem?_map, Option.getD_map]
+
+/-- A base instruction has the same effect in both machines. The instruction cases use
+`step_def` and `effect_def`; `Function.update_apply` identifies the memory functions. -/
+private theorem xstep_base_fetch {W : ℕ} {P : XProgram} {Q : List Instr}
+    (x ρ : List Bool) (c : Cfg W) (o : List Bool) (r : ℕ)
+    (h : P.getD c.pc (.base .reject) = .base (Q.getD c.pc .reject)) :
+    xstep P x ρ ⟨c, o, r⟩ =
+      Sum.map (fun d => (⟨d, o, r⟩ : XCfg W)) id (step Q c) := by
+  rw [xstep, h, step_def]
+  cases Q.getD c.pc .reject <;>
+    simp only [effect_def, Sum.map_inl, Sum.map_inr, id_eq]
+  all_goals congr 3; funext a; simp only [Function.update_apply]; try rfl
+
+/-- A non-verdict step of the projection can only fetch a base instruction. -/
+private theorem projected_fetch {W : ℕ} {P : XProgram} {c d : Cfg W}
+    (hs : step P.proj c = .inl d) :
+    P.getD c.pc (.base .reject) = .base (P.proj.getD c.pc .reject) := by
+  have hget : P.proj.getD c.pc .reject =
+      (match P.getD c.pc (.base .reject) with | .base i => i | _ => .reject) :=
+    by simpa only [XProgram.proj] using
+      (mapped_fetch (β := Instr) P (.base .reject)
+        (fun i : XInstr => match i with | .base j => j | _ => Instr.reject) c.pc)
+  cases hi : P.getD c.pc (.base .reject) <;> simp only [hi] at hget
+  case base i => exact congrArg XInstr.base hget.symm
+  all_goals
+    have hv := step_reject hget
+    rw [hs] at hv
+    contradiction
+
+/-! ## Private run lifting -/
+
+/-- A map that preserves single steps preserves finite runs. -/
+private theorem lift_run {C D : Type} {S : C → C → Prop} {T : D → D → Prop}
+    {R : ℕ → C → C → Prop} {R' : ℕ → D → D → Prop}
+    (hz : ∀ c d, R 0 c d ↔ c = d)
+    (hs : ∀ n c d, R (n + 1) c d ↔ ∃ e, S c e ∧ R n e d)
+    (hz' : ∀ c d, R' 0 c d ↔ c = d)
+    (hs' : ∀ n c d, R' (n + 1) c d ↔ ∃ e, T c e ∧ R' n e d)
+    (f : C → D) (hstep : ∀ c d, S c d → T (f c) (f d))
+    {n : ℕ} {c d : C} (h : R n c d) : R' n (f c) (f d) := by
+  induction n generalizing c with
+  | zero => exact (hz' _ _).mpr (congrArg f ((hz c d).mp h))
+  | succ n ih =>
+    obtain ⟨e, hstep', hr⟩ := (hs n c d).mp h
+    exact (hs' n _ _).mpr ⟨f e, hstep c e hstep', ih hr⟩
+
 section RunCalculus
 
 variable {W : ℕ} {P : XProgram} {x ρ : List Bool}
@@ -150,42 +198,62 @@ variable {W : ℕ} {P : XProgram} {x ρ : List Bool}
 /-- One run after the other: `n` steps from `c` to `c₁`, then `k` steps from `c₁` to `c₂`, are
 `n + k` steps from `c` to `c₂`. The counterpart of `WordRAM.Steps.trans`.
 
-**Proof sketch.** Induction on `n`, generalizing `c`, as for `WordRAM.Steps.trans`
-(`Steps.lean:143`). -/
+**Proof sketch.** Induct on the first run length, generalizing the starting configuration.
+The zero case is the second run; the successor case keeps the first step and composes the
+tail by induction, as in `WordRAM.Steps.trans`. -/
 theorem XSteps.trans {n k : ℕ} {c c₁ c₂ : XCfg W} (h₁ : XSteps P x ρ n c c₁)
     (h₂ : XSteps P x ρ k c₁ c₂) : XSteps P x ρ (n + k) c c₂ := by
-  sorry
+  induction n generalizing c with
+  | zero =>
+    obtain rfl := h₁
+    simpa only [Nat.zero_add] using h₂
+  | succ n ih =>
+    obtain ⟨d, hs, hr⟩ := h₁
+    rw [Nat.add_right_comm]
+    exact ⟨d, hs, ih hr⟩
 
 /-- **Conservativity, one step.** On a program of vendored instructions, a step of the extended
 RAM is the vendored step, with the output and the coin count unchanged.
 
-**Proof sketch.** Both steps read the instruction at `pc`, `reject` past the end
-(`List.getD_map`); case on it. The six straight-line arms agree because `WordRAM.step`'s
-`fun x => if x = i then v else m x` is `Function.update m i v` and `1 = wd W 1` (the
-computation of the vendored private `step_straight`, `Steps.lean:271`); `bltz` and the verdicts
-agree literally. -/
+**Proof sketch.** `mapped_fetch` identifies the instruction in the mapped program.
+Apply `xstep_base_fetch`, whose single instruction case analysis uses `step_def` and
+`effect_def`; `Function.update_apply` identifies the memory functions. -/
 theorem xstep_map_base (P : List Instr) (c : Cfg W) (o : List Bool) (r : ℕ) :
     xstep (P.map .base) x ρ ⟨c, o, r⟩ =
       Sum.map (fun c' => (⟨c', o, r⟩ : XCfg W)) id (step P c) := by
-  sorry
+  exact xstep_base_fetch x ρ c o r (mapped_fetch P .reject XInstr.base c.pc)
 
 /-- **Conservativity, runs.** A run of a vendored program is a run of its extended copy, with
 the output and the coin count unchanged.
 
-**Proof sketch.** Induction on `n`, one step at a time by `xstep_map_base`. -/
+**Proof sketch.** Apply `lift_run` with the configuration embedding that preserves
+the output and coin count. `Steps.zero_iff` and `Steps.succ_iff` expose the vendored run,
+and `xstep_map_base` preserves each step. -/
 theorem XSteps.of_steps {P : List Instr} {n : ℕ} {c c' : Cfg W} (h : Steps P n c c')
     (o : List Bool) (r : ℕ) : XSteps (P.map .base) x ρ n ⟨c, o, r⟩ ⟨c', o, r⟩ := by
-  sorry
+  refine lift_run (S := fun c d => step P c = .inl d)
+    (T := fun c d => xstep (P.map .base) x ρ c = .inl d)
+    (fun _ _ => Steps.zero_iff) (fun _ _ _ => Steps.succ_iff)
+    (fun _ _ => Iff.rfl) (fun _ _ _ => Iff.rfl)
+    (fun d => (⟨d, o, r⟩ : XCfg W)) (fun c d hs => ?_) h
+  change xstep (P.map .base) x ρ ⟨c, o, r⟩ = .inl ⟨d, o, r⟩
+  rw [xstep_map_base, hs, Sum.map_inl]
 
 /-- **The vendored run calculus on mixed code.** A verdict-free run of the projection `P.proj` is
 a run of `P` itself, with the output and the coin count unchanged.
 
-**Proof sketch.** Induction on `n`. At each executed position the projection does not hold
-`reject`, since that step would be a verdict; so `P` holds `.base` of the same instruction there,
-and the step is `xstep_map_base`'s. -/
+**Proof sketch.** Use `lift_run` with the configuration embedding. At each step,
+`projected_fetch` rules out a replacement instruction using `step_reject`.
+`xstep_base_fetch` then identifies the extended transition with the projected one. -/
 theorem XSteps.of_steps_proj {n : ℕ} {c c' : Cfg W} (h : Steps P.proj n c c')
     (o : List Bool) (r : ℕ) : XSteps P x ρ n ⟨c, o, r⟩ ⟨c', o, r⟩ := by
-  sorry
+  refine lift_run (S := fun c d => step P.proj c = .inl d)
+    (T := fun c d => xstep P x ρ c = .inl d)
+    (fun _ _ => Steps.zero_iff) (fun _ _ _ => Steps.succ_iff)
+    (fun _ _ => Iff.rfl) (fun _ _ _ => Iff.rfl)
+    (fun d => (⟨d, o, r⟩ : XCfg W)) (fun c d hs => ?_) h
+  change xstep P x ρ ⟨c, o, r⟩ = .inl ⟨d, o, r⟩
+  rw [xstep_base_fetch x ρ c o r (projected_fetch hs), hs, Sum.map_inl]
 
 end RunCalculus
 
@@ -218,11 +286,18 @@ def XInstr.touches {W : ℕ} : XInstr → (ℤ → BitVec W) → Finset ℤ
 
 /-- Every instruction touches at most three cells.
 
-**Proof sketch.** Case on the instruction; each set is listed with at most three elements
-(`Finset.card_insert_le`, `Finset.card_singleton`). -/
+**Proof sketch.** Case on the instruction and use `Finset.card_le_three`,
+`Finset.card_le_two`, `Finset.card_singleton`, and `Finset.card_empty` for the listed cells. -/
 theorem XInstr.card_touches_le {W : ℕ} (ins : XInstr) (m : ℤ → BitVec W) :
     (ins.touches m).card ≤ 3 := by
-  sorry
+  cases ins <;> simp only [touches]
+  case base i =>
+    cases i <;> simp only [baseTouches] <;>
+      first | exact Finset.card_le_three
+            | simp only [Finset.card_singleton, Finset.card_empty]; omega
+  all_goals first
+    | exact Finset.card_le_two.trans (by decide)
+    | simp only [Finset.card_singleton]; omega
 
 /-- `XStepsIn P x ρ K n c c'`: an `XSteps` run in which every step reads and writes only cells of
 `K`, the *footprint*. Every run is such a run for the set of the cells it touches
@@ -241,56 +316,159 @@ def StepsIn {W : ℕ} (P : List Instr) (K : Set ℤ) : ℕ → Cfg W → Cfg W �
   | n + 1, c, c' => ∃ c₁, step P c = .inl c₁ ∧
       ↑(baseTouches (P.getD c.pc .reject) c.mem) ⊆ K ∧ StepsIn P K n c₁ c'
 
+/-! ## Private footprint inclusion -/
+
+/-- Footprint inclusion for any run relation with the same first-step equations. -/
+private theorem footprint_mono {C : Type} {S : C → C → Prop} {F : C → Finset ℤ}
+    {R : Set ℤ → ℕ → C → C → Prop}
+    (hz : ∀ K c d, R K 0 c d ↔ c = d)
+    (hs : ∀ K n c d, R K (n + 1) c d ↔
+      ∃ e, S c e ∧ ↑(F c) ⊆ K ∧ R K n e d)
+    {K L : Set ℤ} {n : ℕ} {c d : C} (h : R K n c d) (hKL : K ⊆ L) :
+    R L n c d := by
+  induction n generalizing c with
+  | zero => exact (hz L c d).mpr ((hz K c d).mp h)
+  | succ n ih =>
+    obtain ⟨e, hstep, hK, hr⟩ := (hs K n c d).mp h
+    exact (hs L n c d).mpr ⟨e, hstep, hK.trans hKL, ih hr⟩
+
+/-- A run whose steps each touch at most three cells has a finite footprint.
+
+**Proof sketch.** Induct on the run length using its zero and successor equations. In
+the successor case unite the first step's footprint with the recursively obtained set.
+`Finset.card_union_le` gives the cardinal bound and `footprint_mono` enlarges the tail. -/
+private theorem exists_footprint {C : Type} {S : C → C → Prop} {F : C → Finset ℤ}
+    {R : ℕ → C → C → Prop} {RI : Set ℤ → ℕ → C → C → Prop}
+    (hz : ∀ c d, R 0 c d ↔ c = d)
+    (hs : ∀ n c d, R (n + 1) c d ↔ ∃ e, S c e ∧ R n e d)
+    (hIz : ∀ K c d, RI K 0 c d ↔ c = d)
+    (hIs : ∀ K n c d, RI K (n + 1) c d ↔
+      ∃ e, S c e ∧ ↑(F c) ⊆ K ∧ RI K n e d)
+    (hcard : ∀ c, (F c).card ≤ 3) {n : ℕ} {c d : C} (h : R n c d) :
+    ∃ K : Finset ℤ, K.card ≤ 3 * n ∧ RI (↑K) n c d := by
+  induction n generalizing c with
+  | zero =>
+    obtain rfl := (hz c d).mp h
+    exact ⟨∅, by simp only [Finset.card_empty, Nat.mul_zero, le_refl], (hIz _ _ _).mpr rfl⟩
+  | succ n ih =>
+    obtain ⟨e, hstep, hr⟩ := (hs n c d).mp h
+    obtain ⟨L, hL, hrL⟩ := ih hr
+    refine ⟨F c ∪ L, ?_, (hIs _ n c d).mpr ⟨e, hstep, ?_, ?_⟩⟩
+    · have hc := Finset.card_union_le (F c) L
+      have hF := hcard c
+      omega
+    · intro a ha
+      exact Finset.mem_union.mpr (Or.inl ha)
+    · exact footprint_mono hIz hIs hrL
+        (fun _ ha => Finset.mem_union.mpr (Or.inr ha))
+
 section Footprints
 
 variable {W : ℕ} {K K' : Set ℤ}
 
 /-- A run within a footprint is a `WordRAM.Steps` run, the footprint forgotten.
 
-**Proof sketch.** Induction on `n`, dropping the footprint conjunct. -/
+**Proof sketch.** Apply `lift_run` with the identity configuration map, dropping the
+footprint part of the step relation. Read the target run through `Steps.zero_iff` and
+`Steps.succ_iff`. -/
 theorem StepsIn.toSteps {P : List Instr} {n : ℕ} {c c' : Cfg W} (h : StepsIn P K n c c') :
     Steps P n c c' := by
-  sorry
+  exact lift_run (S := fun c d => step P c = .inl d ∧
+      ↑(baseTouches (P.getD c.pc .reject) c.mem) ⊆ K)
+    (T := fun c d => step P c = .inl d) (R := StepsIn P K) (R' := Steps P)
+    (fun _ _ => Iff.rfl) (fun _ _ _ => by simp only [StepsIn, and_assoc])
+    (fun _ _ => Steps.zero_iff) (fun _ _ _ => Steps.succ_iff)
+    id (fun _ _ hs => hs.1) h
 
 /-- **Every run has a small footprint**: a run of `n` steps of a vendored program stays within a
 finite set of at most `3 n` cells, the cells it touches. So `StepsIn` loses nothing.
 
-**Proof sketch.** Induction on `n`: the union of the first step's `baseTouches` (at most three
-cells, `XInstr.card_touches_le` for `.base`) and the footprint of the rest
-(`Finset.card_union_le`). -/
+**Proof sketch.** Apply `exists_footprint` to the vendored step and the
+`baseTouches` footprint. `Steps.zero_iff` and `Steps.succ_iff` expose the run, while
+`XInstr.card_touches_le` for a base instruction bounds each step by three cells. -/
 theorem Steps.exists_stepsIn {P : List Instr} {n : ℕ} {c c' : Cfg W} (h : Steps P n c c') :
     ∃ K : Finset ℤ, K.card ≤ 3 * n ∧ StepsIn P (↑K) n c c' := by
-  sorry
+  exact exists_footprint (S := fun c d => step P c = .inl d)
+    (F := fun c => baseTouches (P.getD c.pc .reject) c.mem)
+    (RI := StepsIn P) (fun _ _ => Steps.zero_iff) (fun _ _ _ => Steps.succ_iff)
+    (fun _ _ _ => Iff.rfl) (fun _ _ _ _ => Iff.rfl)
+    (fun c => XInstr.card_touches_le (.base _) c.mem) h
 
 /-- A run within a footprint is a run within every larger set of cells.
 
-**Proof sketch.** Induction on `n`, composing the inclusions. -/
+**Proof sketch.** Apply `footprint_mono`: induction on the run length composes each
+first-step inclusion with the larger footprint inclusion. -/
 theorem StepsIn.mono {P : List Instr} {n : ℕ} {c c' : Cfg W} (h : StepsIn P K n c c')
     (hK : K ⊆ K') : StepsIn P K' n c c' := by
-  sorry
+  exact footprint_mono (S := fun c d => step P c = .inl d)
+    (F := fun c => baseTouches (P.getD c.pc .reject) c.mem)
+    (fun _ _ _ => Iff.rfl) (fun _ _ _ _ => Iff.rfl) h hK
 
 /-- One run after the other, within the union of the two footprints.
 
-**Proof sketch.** Induction on `n`, generalizing `c`; enlarge each footprint to the union
-(`StepsIn.mono`). -/
+**Proof sketch.** Induct on the first run length. Enlarge the second run to the union
+with `StepsIn.mono` in the zero case; in the successor case include the first footprint
+in the union and compose the tail by induction. -/
 theorem StepsIn.trans {P : List Instr} {n k : ℕ} {c c₁ c₂ : Cfg W}
     (h₁ : StepsIn P K n c c₁) (h₂ : StepsIn P K' k c₁ c₂) :
     StepsIn P (K ∪ K') (n + k) c c₂ := by
-  sorry
+  induction n generalizing c with
+  | zero =>
+    obtain rfl := h₁
+    simpa only [Nat.zero_add] using h₂.mono Set.subset_union_right
+  | succ n ih =>
+    obtain ⟨d, hs, hK, hr⟩ := h₁
+    rw [Nat.add_right_comm]
+    exact ⟨d, hs, hK.trans Set.subset_union_left, ih hr⟩
+
+/-! ### Private one-step framing -/
+
+/-- A base step changes no cell outside its footprint.
+
+**Proof sketch.** Read the transition through `step_def`. Each writing arm is an update
+at a cell listed by `baseTouches`, so `AgreeOutside.update` applies to
+`AgreeOutside.refl`. The branch leaves the memory unchanged, and verdicts cannot step. -/
+private theorem step_agreeOutside {P : List Instr} {c d : Cfg W}
+    (hs : step P c = .inl d)
+    (hK : ↑(baseTouches (P.getD c.pc .reject) c.mem) ⊆ K) :
+    AgreeOutside K c.mem d.mem := by
+  have write (a : ℤ) (v : BitVec W) (ha : a ∈ K) :
+      AgreeOutside K c.mem (fun z => if z = a then v else c.mem z) := by
+    have he : (fun z => if z = a then v else c.mem z) = Function.update c.mem a v := by
+      funext z
+      exact (Function.update_apply c.mem a v z).symm
+    rw [he]
+    exact (AgreeOutside.refl K c.mem).update ha v
+  cases hi : P.getD c.pc .reject <;>
+    simp only [step_def, hi, Sum.inl.injEq, Sum.inr_ne_inl] at hs
+  all_goals
+    subst d
+    simp only [hi, baseTouches] at hK
+    first | exact AgreeOutside.refl K c.mem
+          | exact write _ _ (hK (by simp))
 
 /-- **Every intermediate memory stays inside the footprint** (design §15c, obstacle 1). Along a
 run within `K`, the configuration reached after any `k ≤ n` steps splits the run into two runs
 within `K`, and its memory agrees with the starting memory outside `K`. The vendored `Finished`
 and `compileProgram_correct` speak of the last memory only.
 
-**Proof sketch.** Induction on `k`. A step writes at most its target cell, which is among the
-cells it touches: `baseTouches` lists the target of every writing instruction, `(m i).toInt` for
-`store`. So the memory after the step agrees with the one before outside `K`
-(`WordRAM.AgreeOutside.update`), and `AgreeOutside.trans` chains the steps. -/
+**Proof sketch.** Induct on the prefix length. Split off the first step and
+apply induction to the remaining run. `step_agreeOutside` frames that step by
+`AgreeOutside.update`, including the indirect target of a store; `AgreeOutside.trans`
+composes this frame with that of the remaining prefix. -/
 theorem StepsIn.agreeOutside {P : List Instr} {n : ℕ} {c c' : Cfg W}
     (h : StepsIn P K n c c') {k : ℕ} (hk : k ≤ n) :
     ∃ d : Cfg W, StepsIn P K k c d ∧ StepsIn P K (n - k) d c' ∧ AgreeOutside K c.mem d.mem := by
-  sorry
+  induction k generalizing n c with
+  | zero => exact ⟨c, rfl, h, AgreeOutside.refl K c.mem⟩
+  | succ k ih =>
+    cases n with
+    | zero => omega
+    | succ n =>
+      obtain ⟨d, hs, hK, hr⟩ := h
+      obtain ⟨e, hp, ht, hm⟩ := ih hr (Nat.le_of_succ_le_succ hk)
+      refine ⟨e, ⟨d, hs, hK, hp⟩, ?_, (step_agreeOutside hs hK).trans hm⟩
+      simpa only [Nat.add_sub_add_right] using ht
 
 /-- **Straight-line code with its footprint.** A list of straight-line instructions runs through
 in its length, as in `WordRAM.steps_straight`, within any `K` that contains what each instruction
@@ -298,38 +476,85 @@ touches in every memory. For `load` and `store` the hypothesis asks `K` to conta
 a word can hold, so in practice this row serves code without them; loads and stores take the
 known-number rows `steps_load`/`steps_store`, with their address added to the footprint.
 
-**Proof sketch.** As `WordRAM.steps_straight` (`Steps.lean:286`), adding at each step the
-inclusion `hK` at the current memory. -/
+**Proof sketch.** Induct on the instruction list. Obtain the first transition by
+specializing `steps_straight` to the singleton head, using `CodeAt.left` and the published
+`Steps` equations. Add the footprint inclusion from `hK` and recurse on `CodeAt.tail`;
+`effects_cons` identifies the final memory. -/
 theorem stepsIn_straight {P : List Instr} (l : List Instr) (pc : ℕ) (m : ℤ → BitVec W)
     (hcode : CodeAt P pc l) (hl : ∀ i ∈ l, Straight i)
     (hK : ∀ i ∈ l, ∀ m' : ℤ → BitVec W, ↑(baseTouches i m') ⊆ K) :
     StepsIn P K l.length ⟨pc, m⟩ ⟨pc + l.length, effects l m⟩ := by
-  sorry
+  induction l generalizing pc m with
+  | nil => simp only [List.length_nil, Nat.add_zero, effects_nil, StepsIn]
+  | cons i l ih =>
+    obtain ⟨hi, hl⟩ := List.forall_mem_cons.mp hl
+    have hfirst : Steps P 1 ⟨pc, m⟩ ⟨pc + 1, effect i m⟩ := by
+      simpa only [List.length_singleton, effects_cons, effects_nil] using
+        (steps_straight [i] pc m (CodeAt.left (l₂ := l) hcode)
+          (by simpa only [List.forall_mem_singleton] using hi))
+    obtain ⟨d, hs, he⟩ := Steps.succ_iff.mp hfirst
+    obtain rfl := Steps.zero_iff.mp he
+    simp only [List.length_cons, effects_cons]
+    refine ⟨⟨pc + 1, effect i m⟩, hs, ?_, ?_⟩
+    · rw [hcode.head]
+      exact hK i (List.mem_cons_self) m
+    · have ht := ih (pc + 1) (effect i m) hcode.tail hl
+        (fun j hj m' => hK j (List.mem_cons_of_mem i hj) m')
+      convert ht using 1; congr 1; omega
 
 /-- An extended run within a footprint is an `XSteps` run, the footprint forgotten.
 
-**Proof sketch.** Induction on `n`, dropping the footprint conjunct. -/
+**Proof sketch.** Apply `lift_run` with the identity configuration map, dropping
+only the footprint inclusion from each extended step. -/
 theorem XStepsIn.toXSteps {P : XProgram} {x ρ : List Bool} {n : ℕ} {c c' : XCfg W}
     (h : XStepsIn P x ρ K n c c') : XSteps P x ρ n c c' := by
-  sorry
+  exact lift_run (S := fun c d => xstep P x ρ c = .inl d ∧
+      ↑((P.getD c.pc (.base .reject)).touches c.mem) ⊆ K)
+    (T := fun c d => xstep P x ρ c = .inl d) (R := XStepsIn P x ρ K)
+    (R' := XSteps P x ρ) (fun _ _ => Iff.rfl)
+    (fun _ _ _ => by simp only [XStepsIn, and_assoc])
+    (fun _ _ => Iff.rfl) (fun _ _ _ => Iff.rfl) id (fun _ _ hs => hs.1) h
 
 /-- **Every extended run has a small footprint**: a run of `n` steps stays within a finite set of
 at most `3 n` cells, the cells it touches.
 
-**Proof sketch.** As `Steps.exists_stepsIn`, with `XInstr.card_touches_le`. -/
+**Proof sketch.** Apply the shared `exists_footprint` construction to
+`xstep` and `XInstr.touches`. `XInstr.card_touches_le` bounds each step, and
+`Finset.card_union_le` bounds their accumulated union. -/
 theorem XSteps.exists_xStepsIn {P : XProgram} {x ρ : List Bool} {n : ℕ} {c c' : XCfg W}
     (h : XSteps P x ρ n c c') : ∃ K : Finset ℤ, K.card ≤ 3 * n ∧ XStepsIn P x ρ (↑K) n c c' := by
-  sorry
+  exact exists_footprint (S := fun c d => xstep P x ρ c = .inl d)
+    (F := fun c => (P.getD c.pc (.base .reject)).touches c.mem)
+    (RI := XStepsIn P x ρ) (fun _ _ => Iff.rfl) (fun _ _ _ => Iff.rfl)
+    (fun _ _ _ => Iff.rfl) (fun _ _ _ _ => Iff.rfl)
+    (fun c => XInstr.card_touches_le _ c.mem) h
 
 /-- The footprint form of `XSteps.of_steps_proj`: a verdict-free run of the projection within `K`
 is a run of the extended program within `K`.
 
-**Proof sketch.** As `XSteps.of_steps_proj`; at each step `baseTouches` of the projected
-instruction is `XInstr.touches` of the `.base` instruction that `P` holds there. -/
+**Proof sketch.** Use `lift_run` to preserve both the transition and its
+footprint. `projected_fetch` identifies the fetched base instruction, and
+`xstep_base_fetch` identifies its transition; its `XInstr.touches` is the projected
+instruction's `baseTouches`. -/
 theorem XStepsIn.of_stepsIn_proj {P : XProgram} {x ρ : List Bool} {n : ℕ}
     {c c' : Cfg W} (h : StepsIn P.proj K n c c') (o : List Bool) (r : ℕ) :
     XStepsIn P x ρ K n ⟨c, o, r⟩ ⟨c', o, r⟩ := by
-  sorry
+  refine lift_run (S := fun c d => step P.proj c = .inl d ∧
+      ↑(baseTouches (P.proj.getD c.pc .reject) c.mem) ⊆ K)
+    (T := fun c d => xstep P x ρ c = .inl d ∧
+      ↑((P.getD c.pc (.base .reject)).touches c.mem) ⊆ K)
+    (R := StepsIn P.proj K) (R' := XStepsIn P x ρ K)
+    (fun _ _ => Iff.rfl) (fun _ _ _ => by simp only [StepsIn, and_assoc])
+    (fun _ _ => Iff.rfl) (fun _ _ _ => by simp only [XStepsIn, and_assoc])
+    (fun d => (⟨d, o, r⟩ : XCfg W)) (fun c d hs => ?_) h
+  obtain ⟨hs, hK⟩ := hs
+  have hf := projected_fetch hs
+  constructor
+  · change xstep P x ρ ⟨c, o, r⟩ = .inl ⟨d, o, r⟩
+    rw [xstep_base_fetch x ρ c o r hf, hs, Sum.map_inl]
+  · change ↑((P.getD c.pc (.base .reject)).touches c.mem) ⊆ K
+    rw [hf]
+    exact hK
 
 end Footprints
 
@@ -362,36 +587,111 @@ variable {P : XProgram} {x ρ : List Bool} {W t t' f f' : ℕ} {v v' : Bool} {o 
 
 /-- A run that halts within `t` steps and `f` cells halts within any larger bounds.
 
-**Proof sketch.** The same witnesses: `n < t ≤ t'` and `K.card ≤ f ≤ f'`. -/
+**Proof sketch.** Keep the same witnesses, composing `n < t` with `t ≤ t'` and
+the footprint cardinal bound with `f ≤ f'`. -/
 theorem HaltsWithin.mono (h : HaltsWithin P x ρ W t v o f) (ht : t ≤ t') (hf : f ≤ f') :
     HaltsWithin P x ρ W t' v o f' := by
-  sorry
+  obtain ⟨n, c, K, hn, hK, hr, hv, ho⟩ := h
+  exact ⟨n, c, K, hn.trans_le ht, hK.trans hf, hr, hv, ho⟩
 
 /-- **A bound in steps gives one in cells**: a run that halts within `t` steps halts within `t`
 steps touching at most `3 t` cells. So for time bounds the cell count needs no separate proof.
 
-**Proof sketch.** Forget the footprint (`XStepsIn.toXSteps`) and take the one of
-`XSteps.exists_xStepsIn`: at most `3 n ≤ 3 t` cells for the `n < t` steps before the verdict. -/
+**Proof sketch.** Forget the footprint with `XStepsIn.toXSteps`, then use
+`XSteps.exists_xStepsIn` to obtain at most `3 * n` cells. Multiply `n < t` by three
+to place that footprint within the required bound. -/
 theorem HaltsWithin.touches_le (h : HaltsWithin P x ρ W t v o f) :
     HaltsWithin P x ρ W t v o (3 * t) := by
-  sorry
+  obtain ⟨n, c, _, hn, _, hr, hv, ho⟩ := h
+  obtain ⟨K, hK, hrun⟩ := hr.toXSteps.exists_xStepsIn
+  exact ⟨n, c, K, hn, hK.trans (Nat.mul_le_mul_left 3 hn.le), hrun, hv, ho⟩
+
+/-! ### Private halting-run determinism -/
+
+/-- Two runs from one configuration that end in verdicts have the same last configuration
+and verdict.
+
+**Proof sketch.** Induct on the first length and case on the second. A zero-length run
+already gives a verdict, so a positive-length competitor contradicts the disjointness of
+`Sum.inl` and `Sum.inr`. If both lengths are positive, injectivity of `Sum.inl` identifies
+the first successors and the induction hypothesis identifies the tails. -/
+private theorem xSteps_verdict_unique {n k : ℕ} {c d e : XCfg W}
+    (h₁ : XSteps P x ρ n c d) (hv : xstep P x ρ d = .inr v)
+    (h₂ : XSteps P x ρ k c e) (hv' : xstep P x ρ e = .inr v') :
+    d = e ∧ v = v' := by
+  induction n generalizing c k with
+  | zero =>
+    obtain rfl := h₁
+    cases k with
+    | zero =>
+      obtain rfl := h₂
+      exact ⟨rfl, Sum.inr.inj (hv.symm.trans hv')⟩
+    | succ k =>
+      obtain ⟨a, hs, _⟩ := h₂
+      have bad := hv.symm.trans hs
+      contradiction
+  | succ n ih =>
+    obtain ⟨a, hs, hr⟩ := h₁
+    cases k with
+    | zero =>
+      obtain rfl := h₂
+      have bad := hv'.symm.trans hs
+      contradiction
+    | succ k =>
+      obtain ⟨b, hs', hr'⟩ := h₂
+      have he : a = b := Sum.inl.inj (hs.symm.trans hs')
+      subst b
+      exact ih hr hr'
 
 /-- **The run is determined** by the input, the coin stream and the word size: two halting runs
 give the same verdict and the same output.
 
-**Proof sketch.** `xstep` is a function, so the two `XSteps` runs agree up to the shorter
-length. There one of them gives a verdict; the other cannot continue past it, so the lengths
-agree, and the last configurations, verdicts and outputs coincide. -/
+**Proof sketch.** Forget the footprints and apply `xSteps_verdict_unique`.
+That helper synchronizes the two runs using injectivity of `Sum.inl` and excludes
+stepping past a verdict. Equality of the last configurations identifies their outputs. -/
 theorem HaltsWithin.unique (h : HaltsWithin P x ρ W t v o f)
     (h' : HaltsWithin P x ρ W t' v' o' f') : v = v' ∧ o = o' := by
-  sorry
+  obtain ⟨_, c, _, _, _, hr, hv, ho⟩ := h
+  obtain ⟨_, d, _, _, _, hr', hv', ho'⟩ := h'
+  obtain ⟨he, hvv⟩ := xSteps_verdict_unique hr.toXSteps hv hr'.toXSteps hv'
+  exact ⟨hvv, ho.symm.trans ((congrArg XCfg.out he).trans ho')⟩
+
+/-! ### Private coin-free transition -/
+
+/-- A coin-free program takes the same step for every coin stream. -/
+private theorem xstep_coin_irrel (hP : CoinFree P) (ρ' : List Bool) (c : XCfg W) :
+    xstep P x ρ c = xstep P x ρ' c := by
+  have hnot : ∀ a, P.getD c.pc (.base .reject) ≠ .coin a := by
+    intro a ha
+    rw [List.getD_eq_getElem?_getD, Option.getD_eq_iff] at ha
+    rcases ha with hm | ⟨_, he⟩
+    · exact hP (.coin a) (List.mem_of_getElem? hm) a rfl
+    · cases he
+  cases hi : P.getD c.pc (.base .reject) <;> simp only [xstep, hi]
+  case base i => cases i <;> rfl
+  case coin i => exact (hnot i hi).elim
 
 /-- **A coin-free program does not depend on the coin stream.**
 
-**Proof sketch.** `xstep` reads `ρ` only at a `coin` instruction; induction on the run. -/
+**Proof sketch.** `xstep_coin_irrel` excludes a fetched coin instruction
+using `CoinFree` and `List.mem_of_getElem?`. Apply `lift_run` with the identity map to
+transport each footprint run between coin streams, preserving the final verdict and output.
+The same transport proves both directions. -/
 theorem HaltsWithin.coin_irrel (hP : CoinFree P) (ρ' : List Bool) :
     HaltsWithin P x ρ W t v o f ↔ HaltsWithin P x ρ' W t v o f := by
-  sorry
+  have transport (σ τ : List Bool) (h : HaltsWithin P x σ W t v o f) :
+      HaltsWithin P x τ W t v o f := by
+    obtain ⟨n, c, K, hn, hK, hr, hv, ho⟩ := h
+    refine ⟨n, c, K, hn, hK, ?_, (xstep_coin_irrel hP τ c).symm.trans hv, ho⟩
+    exact lift_run (S := fun a b => xstep P x σ a = .inl b ∧
+        ↑((P.getD a.pc (.base .reject)).touches a.mem) ⊆ (↑K : Set ℤ))
+      (T := fun a b => xstep P x τ a = .inl b ∧
+        ↑((P.getD a.pc (.base .reject)).touches a.mem) ⊆ (↑K : Set ℤ))
+      (R := XStepsIn P x σ (↑K)) (R' := XStepsIn P x τ (↑K))
+      (fun _ _ => Iff.rfl) (fun _ _ _ => by simp only [XStepsIn, and_assoc])
+      (fun _ _ => Iff.rfl) (fun _ _ _ => by simp only [XStepsIn, and_assoc])
+      id (fun a _ hs => ⟨(xstep_coin_irrel hP τ a).symm.trans hs.1, hs.2⟩) hr
+  exact ⟨transport ρ ρ', transport ρ' ρ⟩
 
 end Halting
 
