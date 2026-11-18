@@ -32,6 +32,7 @@ import TCSlib.Programs.Light.Lib.Seg
 import TCSlib.Programs.Light.Lib.Sqrt
 import TCSlib.Programs.Light.Logic
 import TCSlib.Programs.Light.Regions
+import TCSlib.Programs.Light.Renumber
 import TCSlib.Programs.Light.Rules
 import TCSlib.Programs.Light.RunsStayInLimits
 import TCSlib.Programs.Light.Syntax
@@ -73,6 +74,7 @@ A small imperative language with procedures and recursion; its program logic (`E
 * `TCSlib.Programs.Light.Lib.Sqrt`: The integer square root by counting up
 * `TCSlib.Programs.Light.Logic`: Proof rules for the light language
 * `TCSlib.Programs.Light.Regions`: Regions of the memory, and the cells that a step leaves alone
+* `TCSlib.Programs.Light.Renumber`: Two programs in one: relocation of procedures
 * `TCSlib.Programs.Light.Rules`: Derived rules: time that is not typed, blocks, counting loops
 * `TCSlib.Programs.Light.RunsStayInLimits`: Runs stay within their limits
 * `TCSlib.Programs.Light.Syntax`: The light language
