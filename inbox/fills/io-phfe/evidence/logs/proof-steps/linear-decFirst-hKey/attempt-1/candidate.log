@@ -1,0 +1,57 @@
+file=TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean
+source_sha256=a34c449a50960cd277616cfef1439d7ab5adab24ee0a74b2907810df686a1c16
+working_source_development_check=True
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean:159:77: error: unsolved goals
+G : BilinearGen
+ℓ n' : PolyExpr
+Fn : ℕ → ℕ+ → Type
+PG : PartialGarbling.Raw ℓ n' Fn
+zDim : PolyExpr
+κ : ℕ
+pp : PublicParams G κ
+f : Fn κ pp.orderParam
+M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G
+x : Fin (ℓ.eval κ) → ZMod pp.group.order
+z : Fin (zDim.eval κ) → ZMod pp.group.order
+a : SetupDraw G ℓ zDim κ pp
+s : EncDraw G κ pp
+t : KeyDraw G PG κ pp f
+hCipher :
+  ∀ (j : Fin (n'.eval κ)),
+    (pp.group.pairVec (encCore G ℓ zDim κ pp (setupCore G ℓ zDim κ pp a).1 x (pp.group.expVec pp.generator z) s).c1
+        fun k => M k j) =
+      (pp.group.pair pp.generator) (groupVecMul z M j) *
+        (pp.group.pair pp.generator) (groupVecMul (s ᵥ* a.1 ᵥ* a.2.1) M j)
+j : Fin (n'.eval κ)
+hT :
+  ∏ x, (pp.generator ^ (t.1 x (Sum.inr j)).val) ^ ((s ᵥ* a.1) x).val =
+    pp.generator ^ (s ᵥ* a.1 ⬝ᵥ fun i => t.1 i (Sum.inr j)).val
+hAssoc : ∏ i, matMulGroup a.2.1 M i j ^ ((s ᵥ* a.1) i).val = ∏ i, M i j ^ ((s ᵥ* a.1 ᵥ* a.2.1) i).val
+⊢ (pp.group.pair pp.generator) pp.generator ^ (s ᵥ* a.1 ⬝ᵥ fun i => t.1 i (Sum.inr j)).val *
+      (pp.group.pair pp.generator) (∏ i, M i j ^ ((s ᵥ* a.1 ᵥ* a.2.1) i).val) =
+    (pp.group.pair pp.generator) pp.generator ^ ((s ᵥ* a.1 ᵥ* t.1) (Sum.inr j)).val *
+      (pp.group.pair pp.generator) (∏ i, M i j ^ ((s ᵥ* a.1 ᵥ* a.2.1) i).val)
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean:183:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean:208:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean:224:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect): no fresh .olean produced
+        2.80 real         2.17 user         1.04 sys
+          2317516800  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              183092  page reclaims
+                  14  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  16  voluntary context switches
+                5180  involuntary context switches
+            32121389  instructions retired
+            15129848  cycles elapsed
+             1638736  peak memory footprint

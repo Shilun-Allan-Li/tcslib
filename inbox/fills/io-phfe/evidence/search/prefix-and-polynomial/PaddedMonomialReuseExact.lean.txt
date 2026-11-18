@@ -1,0 +1,15 @@
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Data.Fin.Tuple.Basic
+import Lean.Elab.Tactic.LibrarySearch
+set_option maxHeartbeats 200000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+open scoped BigOperators
+namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PolynomialTensorAlgebra
+example {R : Type*} [CommMonoid R] (m d : ℕ) (e : Fin m → ℕ)
+    (he : ∑ i : Fin m, e i ≤ d) :
+    ∃ tau : Fin d → Fin (m + 1), ∀ x : Fin m → R,
+      (∏ j : Fin d, Fin.snoc (α := fun _ => R) x 1 (tau j)) =
+        ∏ i : Fin m, x i ^ e i := by
+  exact?
+end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PolynomialTensorAlgebra

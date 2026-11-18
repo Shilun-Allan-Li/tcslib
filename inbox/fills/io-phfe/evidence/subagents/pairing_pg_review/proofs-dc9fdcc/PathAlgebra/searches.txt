@@ -1,0 +1,188 @@
+READ-ONLY PATH-ALGEBRA REUSE SEARCHES
+Worktree: /Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange
+No Lean, lake, Git, proof checker, live edit, or new agent was used.
+exact?/apply? remain pending for the lead.
+
+$ rg --files .lake/packages/mathlib/Mathlib/Combinatorics -g '*Matrix*' -g '*Inc*'
+exit=0
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/LapMatrix.lean
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/Regularity/Increment.lean
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/IncMatrix.lean
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/AdjMatrix.lean
+.lake/packages/mathlib/Mathlib/Combinatorics/Enumerative/IncidenceAlgebra.lean
+.lake/packages/mathlib/Mathlib/Combinatorics/Enumerative/InclusionExclusion.lean
+
+$ rg -n 'incidence.*mulVec|mulVec.*incidence|incMatrix.*mulVec|mulVec.*incMatrix|incidence.*vecMul|vecMul.*incidence|weighted_incidence|incidence_mulVec|incidence_vecMul|block_incidence' TCSlib .lake/packages/mathlib/Mathlib /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean
+exit=1
+
+$ rg -n 'weightedIncidence_mulVec|weightedIncidence_vecMul|paddedIncidence_eq|weightedCons_sum|sum_cons_mul_prod|parent.*child.*Matrix|Matrix.*parent.*child|Fin\.snoc.*mulVec|mulVec.*Fin\.snoc' TCSlib .lake/packages/mathlib/Mathlib /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean
+exit=1
+
+$ rg -n 'unoriented|oriented|def incMatrix|theorem incMatrix_apply|theorem.*incMatrix.*mul|theorem.*sum_incMatrix' .lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/IncMatrix.lean
+exit=0
+13:This file defines the unoriented incidence matrix of a simple graph.
+39:* Define the oriented incidence matrices for oriented graphs.
+40:* Define the graph Laplacian of a simple graph using the oriented incidence matrix from an
+54:def incMatrix [Zero R] [One R] [DecidableEq α] [DecidableRel G.Adj] : Matrix α (Sym2 α) R :=
+60:theorem incMatrix_apply [Zero R] [One R] [DecidableEq α] [DecidableRel G.Adj] {a : α} {e : Sym2 α} :
+65:theorem incMatrix_apply' [Zero R] [One R] [DecidableEq α] [DecidableRel G.Adj] {a : α}
+72:theorem incMatrix_apply_mul_incMatrix_apply : G.incMatrix R a e * G.incMatrix R b e =
+76:theorem incMatrix_apply_mul_incMatrix_apply_of_not_adj (hab : a ≠ b) (h : ¬G.Adj a b) :
+93:theorem incMatrix_apply_eq_zero_iff : G.incMatrix R a e = 0 ↔ e ∉ G.incidenceSet a := by
+96:theorem incMatrix_apply_eq_one_iff : G.incMatrix R a e = 1 ↔ e ∈ G.incidenceSet a := by
+106:theorem sum_incMatrix_apply [Fintype (Sym2 α)] [Fintype (neighborSet G a)] :
+110:theorem incMatrix_mul_transpose_diag [Fintype (Sym2 α)] [Fintype (neighborSet G a)] :
+116:theorem sum_incMatrix_apply_of_mem_edgeSet [Fintype α] :
+127:theorem sum_incMatrix_apply_of_notMem_edgeSet [Fintype α] (h : e ∉ G.edgeSet) :
+134:theorem incMatrix_transpose_mul_diag [Fintype α] [Decidable (e ∈ G.edgeSet)] :
+158:theorem incMatrix_mul_transpose_apply_of_adj (h : G.Adj a b) :
+167:theorem incMatrix_mul_transpose [∀ a, Fintype (neighborSet G a)] :
+
+$ rg -n 'theorem adjMatrix_mulVec|theorem lapMatrix_mulVec|def lapMatrix' .lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/AdjMatrix.lean .lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/LapMatrix.lean
+exit=0
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/AdjMatrix.lean:195:theorem adjMatrix_mulVec_apply [NonAssocSemiring α] (v : V) (vec : V → α) :
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/AdjMatrix.lean:226:theorem adjMatrix_mulVec_const_apply [NonAssocSemiring α] {a : α} {v : V} :
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/AdjMatrix.lean:229:theorem adjMatrix_mulVec_const_apply_of_regular [NonAssocSemiring α] {d : ℕ} {a : α}
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/LapMatrix.lean:45:def lapMatrix [AddGroupWithOne R] : Matrix V V R := G.degMatrix R - G.adjMatrix R
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/LapMatrix.lean:59:theorem lapMatrix_mulVec_apply [NonAssocRing R] (v : V) (vec : V → R) :
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/LapMatrix.lean:63:theorem lapMatrix_mulVec_const_eq_zero [NonAssocRing R] :
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/LapMatrix.lean:107:theorem lapMatrix_mulVec_eq_zero_iff_forall_adj {x : V → ℝ} :
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/LapMatrix.lean:127:theorem lapMatrix_mulVec_eq_zero_iff_forall_reachable {x : V → ℝ} :
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/LapMatrix.lean:168:def lapMatrix_ker_basis_aux (c : G.ConnectedComponent) :
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/LapMatrix.lean:205:noncomputable def lapMatrix_ker_basis :=
+
+$ rg -n 'theorem single_dotProduct|theorem dotProduct_single|theorem sub_mulVec|theorem vecMul_sub|theorem sub_vecMul|theorem sub_dotProduct|theorem dotProduct_sub|theorem mulVec_mulVec|theorem dotProduct_mulVec' .lake/packages/mathlib/Mathlib/Data/Matrix/Mul.lean
+exit=0
+178:theorem single_dotProduct (x : α) (i : m) : Pi.single i x ⬝ᵥ v = x * v i := by
+185:theorem dotProduct_single (x : α) (i : m) : v ⬝ᵥ Pi.single i x = v i * x := by
+201:theorem dotProduct_single_one [DecidableEq n] (v : n → α) (i : n) :
+225:theorem sub_dotProduct : (u - v) ⬝ᵥ w = u ⬝ᵥ w - v ⬝ᵥ w := by simp [sub_eq_add_neg]
+228:theorem dotProduct_sub : u ⬝ᵥ (v - w) = u ⬝ᵥ v - u ⬝ᵥ w := by simp [sub_eq_add_neg]
+710:theorem dotProduct_mulVec [Fintype n] [Fintype m] [NonUnitalSemiring R] (v : m → R)
+824:theorem mulVec_mulVec [Fintype n] [Fintype o] (v : o → α) (M : Matrix m n α) (N : Matrix n o α) :
+1007:theorem sub_mulVec [Fintype n] (A B : Matrix m n α) (x : n → α) :
+1010:theorem vecMul_sub [Fintype m] (A B : Matrix m n α) (x : m → α) :
+1013:theorem sub_vecMul [Fintype m] (A : Matrix m n α) (x y : m → α) :
+1018:theorem sub_vecMulVec (w₁ w₂ : m → α) (v : n → α) :
+
+$ rg -n 'theorem single_mulVec|theorem single_eq_of_single_single' .lake/packages/mathlib/Mathlib/Data/Matrix/Basis.lean
+exit=0
+36:theorem single_eq_of_single_single (i : m) (j : n) (a : α) :
+100:theorem single_mulVec [NonUnitalNonAssocSemiring α] [Fintype m]
+
+$ rg -n 'fromRows_apply|fromRows_mulVec|sumElim_vecMul_fromRows|vecMul_fromRows' .lake/packages/mathlib/Mathlib/Data/Matrix/ColumnRowPartitioned.lean
+exit=0
+52:lemma fromRows_apply_inl (A₁ : Matrix m₁ n R) (A₂ : Matrix m₂ n R) (i : m₁) (j : n) :
+56:lemma fromRows_apply_inr (A₁ : Matrix m₁ n R) (A₂ : Matrix m₂ n R) (i : m₂) (j : n) :
+180:lemma fromRows_mulVec [Fintype n] (A₁ : Matrix m₁ n R) (A₂ : Matrix m₂ n R) (v : n → R) :
+189:lemma sumElim_vecMul_fromRows [Fintype m₁] [Fintype m₂] (B₁ : Matrix m₁ n R) (B₂ : Matrix m₂ n R)
+196:lemma vecMul_fromRows [Fintype m₁] [Fintype m₂]
+199:  simp [← sumElim_vecMul_fromRows]
+
+$ rg -n 'prod_ite_eq|prod_ite_eq'"'"'' .lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Piecewise.lean
+exit=0
+136:theorem prod_ite_eq [DecidableEq ι] (s : Finset ι) (a : ι) (b : ι → M) :
+143:The difference with `Finset.prod_ite_eq` is that the arguments to `Eq` are swapped. -/
+148:theorem prod_ite_eq' [DecidableEq ι] (s : Finset ι) (a : ι) (b : ι → M) :
+153:theorem prod_ite_eq_of_mem [DecidableEq ι] (s : Finset ι) (a : ι) (b : ι → M) (h : a ∈ s) :
+155:  simp only [prod_ite_eq, if_pos h]
+157:/-- The difference with `Finset.prod_ite_eq_of_mem` is that the arguments to `Eq` are swapped. -/
+159:theorem prod_ite_eq_of_mem' [DecidableEq ι] (s : Finset ι) (a : ι) (b : ι → M) (h : a ∈ s) :
+161:  simp only [prod_ite_eq', if_pos h]
+264:lemma prod_ite_eq_ite_exists (p : ι → Prop) [DecidablePred p] (h : ∀ i j, p i → p j → i = j)
+286:/-- See also `Finset.prod_ite_eq`. -/
+288:lemma prod_ite_eq (i : ι) (f : ι → M) : ∏ j, (if i = j then f j else 1) = f i := by
+289:  rw [Finset.prod_ite_eq, if_pos (mem_univ _)]
+291:/-- See also `Finset.prod_ite_eq'`. -/
+293:lemma prod_ite_eq' (i : ι) (f : ι → M) : ∏ j, (if j = i then f j else 1) = f i := by
+294:  rw [Finset.prod_ite_eq', if_pos (mem_univ _)]
+
+$ rg -n 'Fintype.sum_prod_type|Fintype.prod_prod_type' .lake/packages/mathlib/Mathlib/Data/Fintype/BigOperators.lean
+exit=0
+250:in the reverse direction, use `Fintype.prod_prod_type'`. -/
+251:@[to_additive Fintype.sum_prod_type /-- The sum over a product type equals the sum of fiberwise
+252:sums. For rewriting in the reverse direction, use `Fintype.sum_prod_type'`. -/]
+253:theorem Fintype.prod_prod_type [CommMonoid γ] (f : α₁ × α₂ → γ) :
+258:in the reverse direction, use `Fintype.prod_prod_type`. -/
+259:@[to_additive Fintype.sum_prod_type' /-- The sum over a product type equals the sum of fiberwise
+260:sums. For rewriting in the reverse direction, use `Fintype.sum_prod_type`. -/]
+261:theorem Fintype.prod_prod_type' [CommMonoid γ] (f : α₁ → α₂ → γ) :
+265:@[to_additive Fintype.sum_prod_type_right]
+266:theorem Fintype.prod_prod_type_right [CommMonoid γ] (f : α₁ × α₂ → γ) :
+271:@[to_additive Fintype.sum_prod_type_right'
+273:theorem Fintype.prod_prod_type_right' [CommMonoid γ] (f : α₁ → α₂ → γ) :
+
+$ rg -n 'consEquiv|cons_zero|cons_succ|snoc_castSucc|snoc_last|append_left_snoc|append_right_cons' .lake/packages/mathlib/Mathlib/Data/Fin/Tuple/Basic.lean
+exit=0
+115:theorem cons_succ : cons x p i.succ = p i := by simp [cons]
+118:theorem cons_zero : cons x p 0 = x := by simp [cons]
+123:  rw [← cons_succ x p]; rfl
+128:  rw [← cons_succ x p]; rfl
+154:theorem update_cons_zero : update (cons x p) 0 z = cons z p := by
+169:def consEquiv (α : Fin (n + 1) → Type*) : α 0 × (∀ i, α (succ i)) ≃ ∀ i, α i where
+247:    rw [← this, cons_succ, comp_apply, comp_apply, cons_succ]
+268:  forall_fin_succ.trans <| and_congr_right' <| by simp only [cons_succ, Pi.le_def]
+279:  rw [range_fin_succ, cons_zero, tail_cons]
+353:    exact Fin.cons_zero _ _
+356:    exact Fin.cons_succ _ _ _
+506:theorem snoc_castSucc : snoc p x i.castSucc = p i := by
+511:theorem snoc_apply_zero [NeZero n] : snoc p x 0 = p 0 := snoc_castSucc x p 0
+516:  funext fun i ↦ by rw [Function.comp_apply, snoc_castSucc]
+519:theorem snoc_last : snoc p x (last n) = x := by simp [snoc]
+531:    rw [snoc_last, natAdd_last, snoc_last]
+532:  · simp only [comp_apply, snoc_castSucc]
+533:    rw [natAdd_castSucc, snoc_castSucc]
+561:theorem update_snoc_last : update (snoc p x) (last n) z = snoc p z := by
+625:      rw [cons_succ]
+643:    exact (@snoc_castSucc _ (fun _ => α) _ _ i).symm
+646:    exact (@snoc_last _ (fun _ => α) _ _).symm
+653:theorem append_left_snoc {n m} {α : Sort*} (xs : Fin n → α) (x : α) (ys : Fin m → α) :
+658:theorem append_right_cons {n m} {α : Sort*} (xs : Fin n → α) (y : α) (ys : Fin m → α) :
+661:  rw [append_left_snoc]; rfl
+718:  rw [snocCases, cast_eq_iff_heq, Fin.init_snoc, Fin.snoc_last]
+736:      simpa only [castSucc_inj, ← Injective.eq_iff hx, snoc_castSucc] using h
+738:      simp only [snoc_castSucc, snoc_last] at h
+744:      simp only [snoc_castSucc, snoc_last] at h
+754:    rw [← @snoc_last n (fun i ↦ α) x₀ x, ← @snoc_castSucc n (fun i ↦ α) x₀ x i,
+919:  convert (cons_succ x p j).symm
+932:  · rw [snoc_castSucc]
+1030:@[simp] lemma insertNthEquiv_zero (α : Fin (n + 1) → Type*) : insertNthEquiv α 0 = consEquiv α :=
+
+$ rg -n 'prod_univ_succ|prod_univ_castSucc' .lake/packages/mathlib/Mathlib/Algebra/BigOperators/Fin.lean
+exit=0
+17:The most important results are the induction formulas `Fin.prod_univ_castSucc`
+18:and `Fin.prod_univ_succ`, and the formula `Fin.prod_const` for the product of a
+64:theorem prod_univ_succAbove (f : Fin (n + 1) → M) (x : Fin (n + 1)) :
+72:theorem prod_univ_succ (f : Fin (n + 1) → M) :
+74:  prod_univ_succAbove f 0
+80:theorem prod_univ_castSucc (f : Fin (n + 1) → M) :
+82:  simpa [mul_comm] using prod_univ_succAbove f (last n)
+96:  simp_rw [prod_univ_succ, cons_zero, cons_succ]
+101:  simp [prod_univ_castSucc]
+108:  simp [prod_univ_succ]
+116:  rw [prod_univ_castSucc, prod_univ_two]
+121:  rw [prod_univ_castSucc, prod_univ_three]
+126:  rw [prod_univ_castSucc, prod_univ_four]
+131:  rw [prod_univ_castSucc, prod_univ_five]
+136:  rw [prod_univ_castSucc, prod_univ_six]
+142:  rw [prod_univ_castSucc, prod_univ_seven]
+426:    rw [Fin.prod_univ_castSucc, Fin.prod_univ_succ]
+602:      rw [Fin.prod_univ_castSucc, Fin.sum_univ_castSucc]
+639:          Fin.prod_univ_succ, Fin.castLE_zero, Fin.cons_zero, ← Nat.div_div_eq_div_mul,
+642:        exact ih (a / x) (Nat.div_lt_of_lt_mul <| a.is_lt.trans_eq (Fin.prod_univ_succ _)))
+740:    rw [Fin.prod_univ_succ]; simp
+746:        { rw [Fin.prod_univ_succ, Fin.prod_univ_succ, mul_assoc]
+
+$ rg -n 'Fin.consEquiv.*sum_comp|consEquiv.*sum_comp|sum_cons_mul_prod|weightedCons_sum' TCSlib .lake/packages/mathlib/Mathlib /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean
+exit=0
+TCSlib/BooleanAnalysis/Hypercontractivity/Products/Tensorization.lean:83:        rw [← (Fin.consEquiv Ω).sum_comp H, Fintype.sum_prod_type,
+TCSlib/Complexity/Randomized/RandomWalkMixing.lean:196:  rw [← (Fin.consEquiv fun _ => Fin D).sum_comp, Fintype.sum_prod_type]
+TCSlib/Complexity/Randomized/BiasedCoin.lean:141:    rw [biasedProb_succ, ih, ih, ← (Fin.consEquiv fun _ => Bool).sum_comp,
+TCSlib/Complexity/Randomized/RandomWalk.lean:79:  rw [Finset.natCast_card_filter, ← (Fin.consEquiv fun _ => Fin D).sum_comp, Fintype.sum_prod_type,
+
+$ rg -n 'theorem of_apply|theorem add_apply|theorem sub_apply' .lake/packages/mathlib/Mathlib/LinearAlgebra/Matrix/Defs.lean
+exit=0
+83:theorem of_apply (f : m → n → α) (i j) : of f i j = f i j :=
+216:theorem add_apply [Add α] (A B : Matrix m n α) (i : m) (j : n) :
+224:theorem sub_apply [Sub α] (A B : Matrix m n α) (i : m) (j : n) :
+

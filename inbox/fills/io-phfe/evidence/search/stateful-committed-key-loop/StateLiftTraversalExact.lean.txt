@@ -1,0 +1,14 @@
+import TCSlib.Cryptography.Games.Probability
+import Lean.Elab.Tactic.LibrarySearch
+set_option maxHeartbeats 200000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
+open TCSlib.Cryptography.Games
+example {alpha beta sigma : Type}
+    (f : alpha → ProbComp beta) (xs : List alpha) (st : sigma) :
+    (List.mapM (m := StateT sigma ProbComp)
+        (fun x => StateT.lift (f x)) xs).run st =
+      (List.mapM f xs).bind fun ys => .pure (ys, st) := by
+  exact?
+end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption

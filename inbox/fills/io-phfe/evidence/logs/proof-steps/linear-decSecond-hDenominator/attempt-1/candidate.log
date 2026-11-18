@@ -1,0 +1,83 @@
+file=TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean
+source_sha256=2affc292fd190c046f7f83d6a9689baf135135f8122a746d071e398a2bbab7a2
+working_source_development_check=True
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean:261:6: error: unsolved goals
+case refine_1
+G : BilinearGen
+ℓ n' : PolyExpr
+Fn : ℕ → ℕ+ → Type
+PG : PartialGarbling.Raw ℓ n' Fn
+zDim : PolyExpr
+κ : ℕ
+pp : PublicParams G κ
+f : Fn κ pp.orderParam
+M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G
+x : Fin (ℓ.eval κ) → ZMod pp.group.order
+z : Fin (zDim.eval κ) → ZMod pp.group.order
+a : SetupDraw G ℓ zDim κ pp
+s : EncDraw G κ pp
+t : KeyDraw G PG κ pp f
+X : Matrix (Fin (ℓ.eval κ) × PG.MIdx κ pp.orderParam f) (PG.MIdx κ pp.orderParam f) (ZMod pp.group.order) :=
+  have this := PartialGarbling.publicTensor x;
+  this
+X2 : Matrix (Fin (ℓ.eval κ) × Fin 2) (Fin 2) (ZMod pp.group.order) :=
+  have this := PartialGarbling.publicTensor x;
+  this
+T : Matrix (Fin 3) (PG.TIdx κ pp.orderParam f ⊕ Fin (n'.eval κ)) (ZMod pp.group.order) := t.1
+R : Matrix (Fin 2) (PG.MIdx κ pp.orderParam f) (ZMod pp.group.order) := t.2
+U : Matrix (Fin 3) (Fin (ℓ.eval κ) × Fin 2) (ZMod pp.group.order) := a.2.2.1
+V : Matrix (Fin 3) (Fin 2) (ZMod pp.group.order) := a.2.2.2
+H : Matrix (Fin (ℓ.eval κ) × Fin 2) (Fin (ℓ.eval κ) × PG.MIdx κ pp.orderParam f) (ZMod pp.group.order) :=
+  Matrix.kroneckerMap (fun c r => c * r) 1 R
+L1m : Matrix (PG.TIdx κ pp.orderParam f ⊕ Fin (n'.eval κ)) (Fin (ℓ.eval κ) × PG.MIdx κ pp.orderParam f)
+  (ZMod pp.group.order) :=
+  have this := PG.L1 κ pp.orderParam f;
+  this
+L0m : Matrix (PG.TIdx κ pp.orderParam f ⊕ Fin (n'.eval κ)) (PG.MIdx κ pp.orderParam f) (ZMod pp.group.order) :=
+  have this := PG.L0 κ pp.orderParam f;
+  this
+sa : Fin 3 → ZMod pp.group.order := s ᵥ* a.1
+value : PG.MIdx κ pp.orderParam f → ZMod pp.group.order := sa ᵥ* T ᵥ* (L1m * X + L0m)
+mask : PG.MIdx κ pp.orderParam f → ZMod pp.group.order := sa ᵥ* (U * X2 + V) ᵥ* R
+sk : Key G PG κ pp f := keyCore G PG zDim κ pp (setupCore G ℓ zDim κ pp a).2 f M t
+ct : CT G zDim κ pp := encCore G ℓ zDim κ pp (setupCore G ℓ zDim κ pp a).1 x (pp.group.expVec pp.generator z) s
+K : Matrix (Fin 3) (PG.MIdx κ pp.orderParam f) pp.group.G := groupMatMul sk.K2 X
+hMix : H * X = X2 * R
+hMatrix : (T * L1m + U * H) * X + (T * L0m + V * R) = T * (L1m * X + L0m) + (U * X2 + V) * R
+hNumerator :
+  ∀ (m : PG.MIdx κ pp.orderParam f),
+    (pp.group.pairVec ct.c0 fun i => K i m * sk.K3 i m) =
+      (pp.group.pair pp.generator) pp.generator ^ (value m).val *
+        (pp.group.pair pp.generator) pp.generator ^ (mask m).val
+m : PG.MIdx κ pp.orderParam f
+⊢ (fun i => pp.generator ^ (t.2 i m).val) = pp.group.expVec pp.generator fun i => R i m
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean:262:54: warning: This simp argument is unused:
+  pp.group.expVec_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [keyCore_eq, pp.group.expMat_apply,̵ ̵p̵p̵.̵g̵r̵o̵u̵p̵.̵e̵x̵p̵V̵e̵c̵_̵a̵p̵p̵l̵y̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean:283:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean:299:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect): no fresh .olean produced
+       30.77 real        30.37 user         1.04 sys
+          2328592384  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              183753  page reclaims
+                  11  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  18  voluntary context switches
+                7132  involuntary context switches
+            32166499  instructions retired
+            14168197  cycles elapsed
+             1638736  peak memory footprint

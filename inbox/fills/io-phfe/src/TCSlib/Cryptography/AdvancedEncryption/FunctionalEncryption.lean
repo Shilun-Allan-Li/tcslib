@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs
 import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Run
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PolynomialTensorAlgebra
 import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Classes
 import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling
 
@@ -22,6 +23,7 @@ set_option autoImplicit false
 
 * `Defs`: generic function classes, raw algorithms, correctness and efficient interfaces.
 * `Run`: deterministic bounded stateful oracle runs.
+* `PolynomialTensorAlgebra`: finite monomial padding for class completeness.
 * `Classes`: polynomial public computation and quadratic private computation.
 * `PartialGarbling`: corrected arithmetic partial garbling with exact privacy.
 * `Simulation`, `SemiAdaptive`: exact stateful simulation games in both adversarial orders.

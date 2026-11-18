@@ -1,0 +1,10 @@
+import TCSlib.Cryptography.Pairing.MatrixDH.Parameters
+import Lean.Elab.Tactic.LibrarySearch
+set_option maxHeartbeats 200000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+namespace TCSlib.Cryptography.Pairing.PublicParams
+example {G : BilinearGen} {κ : ℕ} :
+    Function.Injective (PublicParams.encode (G := G) (κ := κ)) := by
+  exact?
+end TCSlib.Cryptography.Pairing.PublicParams

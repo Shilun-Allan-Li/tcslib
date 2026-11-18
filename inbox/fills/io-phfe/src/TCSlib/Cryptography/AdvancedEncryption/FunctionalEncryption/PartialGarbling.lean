@@ -4,6 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.Defs
 import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.Layered
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.PathAlgebra
+
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.PrefixAlgebra
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -13,6 +16,9 @@ set_option autoImplicit false
 # Arithmetic partial garbling
 
 ## Contents
+
+* `PrefixAlgebra`: weighted finite-prefix conservation for exact privacy.
+* `PathAlgebra`: weighted endpoint-matrix identities used by the path-sum proofs.
 
 * `Defs`: corrected matrix syntax, exact reconstruction and privacy, and uniform efficiency.
 * `Layered`: the polynomial-tensor instance with explicit forward/backward path formulas.

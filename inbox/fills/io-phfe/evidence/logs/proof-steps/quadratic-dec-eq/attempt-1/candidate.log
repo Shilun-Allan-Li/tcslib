@@ -1,0 +1,83 @@
+file=TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean
+source_sha256=ca73c3d4bacbd81340c147e66ecee841b29e326210d71e54947e42393767da2a
+working_source_development_check=True
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean:62:17: warning: This simp argument is unused:
+  hi
+
+Hint: Omit it from the simp argument list.
+  simp only [h̵i̵,̵ ̵Sum.elim_inl, Matrix.kroneckerMap_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵BilinearGroup.expMat_apply,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲pp.group.pow_val_mul, pow_mul]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean:65:17: warning: This simp argument is unused:
+  hi
+
+Hint: Omit it from the simp argument list.
+  simp only [h̵i̵,̵ ̵Sum.elim_inr, Matrix.kroneckerMap_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵BilinearGroup.expMat_apply,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲pp.group.pow_val_mul, mul_comm, pow_mul]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean:83:24: warning: This simp argument is unused:
+  hi
+
+Hint: Omit it from the simp argument list.
+  simp only [h̵i̵,̵ ̵Sum.elim_inl]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean:85:17: warning: This simp argument is unused:
+  hi
+
+Hint: Omit it from the simp argument list.
+  simp only [h̵i̵,̵ ̵Sum.elim_inr, privateTensor_eq, Matrix.kroneckerMap_apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵Equiv.symm_apply_apply]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean:231:2: error: unsolved goals
+case refine_1.h
+G : BilinearGen
+ℓ n1 n2 : PolyExpr
+Fn : ℕ → ℕ+ → Type
+PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn
+κ : ℕ
+pp : PublicParams G κ
+f : Fn κ pp.orderParam
+x : Fin (ℓ.eval κ) → ZMod pp.group.order
+z1 : Fin (n1.eval κ) → ZMod pp.group.order
+z2 : Fin (n2.eval κ) → ZMod pp.group.order
+a : SetupDraw G ℓ n1 n2 κ pp
+s : EncDraw G κ pp
+t : Linear.KeyDraw G PG κ pp f
+y1 : Fin (n1.eval κ) → ZMod pp.group.order := s.1 ᵥ* a.1 + z1
+y2 : Fin (n2.eval κ) → ZMod pp.group.order := s.2.1 ᵥ* a.2.1 + z2
+signal : Fin (2 * n2.eval κ + n1.eval κ * 2) → ZMod ↑pp.orderParam := signalScalar s.1 z2 y1 s.2.1
+F : Matrix (Fin (2 * n2.eval κ + n1.eval κ * 2)) (Fin (n1.eval κ * n2.eval κ)) (ZMod ↑pp.orderParam) :=
+  mixScalar a.1 a.2.1
+fx : Fin ((n1.mul n2).eval κ) → ZMod ↑pp.orderParam := PG.eval κ pp.orderParam f x
+egg : pp.group.GT := (pp.group.pair pp.generator) pp.generator
+i : Fin (n1.eval κ * n2.eval κ)
+⊢ (pp.group.pair pp.generator) pp.generator ^ (y1 (finProdFinEquiv.symm i).1 * y2 (finProdFinEquiv.symm i).2).val =
+    egg ^ (y1 (finProdFinEquiv.symm i).1 * y2 (finProdFinEquiv.symm i).2).val
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean:255:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect): no fresh .olean produced
+        4.30 real         3.96 user         1.05 sys
+          2328133632  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              183887  page reclaims
+                 196  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  38  voluntary context switches
+                5885  involuntary context switches
+            32090298  instructions retired
+            15953148  cycles elapsed
+             1622352  peak memory footprint

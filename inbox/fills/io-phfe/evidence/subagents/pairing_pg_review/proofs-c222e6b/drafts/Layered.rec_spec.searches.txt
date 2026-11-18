@@ -1,0 +1,32 @@
+Read-only reconstruction reuse searches
+One existing theorem proof; no new helper is proved here.
+
+$ rg -n 'theorem rec_spec|pgbCore.*dotProduct|dotProduct.*pgbCore' TCSlib .lake/packages/mathlib/Mathlib
+exit=0
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean:452:theorem rec_spec (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean:454:    dotProduct (PartialGarbling.pgbCore (L1 C) (L0 C) x z t) (rec C x) =
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean:465:  rw [PartialGarbling.pgbCore_eq, hrec, sumElim_dotProduct_sumElim,
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Defs.lean:235:    dotProduct (pgbCore (L1 kappa p f) (L0 kappa p f) x z t) (recVec kappa p f x) =
+
+$ rg -n 'sumElim_dotProduct_sumElim|theorem dotProduct_zero'"'"'|theorem sub_dotProduct|theorem dotProduct_mulVec' .lake/packages/mathlib/Mathlib/Data/Matrix/Mul.lean
+exit=0
+104:theorem dotProduct_zero' : (v ⬝ᵥ fun _ => 0) = 0 :=
+123:theorem sumElim_dotProduct_sumElim : Sum.elim u x ⬝ᵥ Sum.elim v y = u ⬝ᵥ v + x ⬝ᵥ y := by
+225:theorem sub_dotProduct : (u - v) ⬝ᵥ w = u ⬝ᵥ w - v ⬝ᵥ w := by simp [sub_eq_add_neg]
+710:theorem dotProduct_mulVec [Fintype n] [Fintype m] [NonUnitalSemiring R] (v : m → R)
+
+$ rg -n 'theorem elim_comp_inl_inr' /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Sum/Lemmas.lean
+exit=0
+122:@[simp] theorem elim_comp_inl_inr (f : α ⊕ β → γ) :
+
+$ rg -n 'theorem pgbCore_eq' TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Defs.lean
+exit=0
+91:theorem pgbCore_eq
+
+$ rg -n 'theorem rec_inl|theorem rec_inr|theorem matrix_eq|theorem forward_action' TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean
+exit=0
+241:theorem matrix_eq (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ)) :
+302:theorem rec_inl (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ)) (j : Fin n) :
+306:theorem rec_inr (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ)) (u : MIdx l d) :
+359:theorem forward_action (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ)) :
+

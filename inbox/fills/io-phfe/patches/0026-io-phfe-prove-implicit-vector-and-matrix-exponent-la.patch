@@ -1,0 +1,361 @@
+From f7baa8a9c9f99ca98311e0ebab05e4190d742c4c Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 05:42:00 -0800
+Subject: [PATCH 26/30] io-phfe: prove implicit vector and matrix exponent laws
+
+---
+ TCSlib/Cryptography/Pairing/Exponents.lean | 219 ++++++++++++++++++---
+ 1 file changed, 196 insertions(+), 23 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Pairing/Exponents.lean b/TCSlib/Cryptography/Pairing/Exponents.lean
+index 1fcaf61b3..cbb8b8e21 100644
+--- a/TCSlib/Cryptography/Pairing/Exponents.lean
++++ b/TCSlib/Cryptography/Pairing/Exponents.lean
+@@ -180,71 +180,158 @@ theorem pairTensor_apply (a : ι → B.G) (b : κ → B.G) (ij : ι × κ) :
+ 
+ **Proof sketch.** Use `ZMod.val_add`, `pow_add`, `pow_mod_card` and `B.card_GT`. -/
+ theorem pow_val_add_GT (gT : B.GT) (a b : ZMod B.order) :
+-    gT ^ (a + b).val = gT ^ a.val * gT ^ b.val := sorry
++    gT ^ (a + b).val = gT ^ a.val * gT ^ b.val :=
++  (congrArg (fun n : ℕ => gT ^ n) (ZMod.val_add a b)).trans
++    ((congrArg (fun n : ℕ => gT ^ ((a.val + b.val) % n)) B.card_GT).symm.trans
++      ((pow_mod_card gT (a.val + b.val)).trans (pow_add gT a.val b.val)))
+ 
+ /-- Negating a target-group exponent inverts the group element. Technical glue parallel to
+ `BilinearGroup.pow_val_neg` for the source group.
+ 
+ **Proof sketch.** Apply `pow_val_add_GT` to `-a` and `a`, whose sum is zero. -/
+ theorem pow_val_neg_GT (gT : B.GT) (a : ZMod B.order) :
+-    gT ^ (-a).val = (gT ^ a.val)⁻¹ := sorry
++    gT ^ (-a).val = (gT ^ a.val)⁻¹ :=
++  eq_inv_iff_mul_eq_one.mpr
++    ((B.pow_val_add_GT gT (-a) a).symm.trans
++      ((congrArg (fun z : ZMod B.order => gT ^ z.val) (neg_add_cancel a)).trans
++        ((congrArg (fun n : ℕ => gT ^ n) (ZMod.val_zero (n := B.order))).trans
++          (pow_zero gT))))
+ 
+ /-- Adding scalar vectors multiplies their implicit source-group vectors
+ [Wee20, §2.1, p. 4].
+ 
+ **Proof sketch.** Apply the published source-group additive exponent law coordinatewise. -/
+ theorem expVec_add (g : B.G) (a b : ι → ZMod B.order) :
+-    B.expVec g (a + b) = B.expVec g a * B.expVec g b := sorry
++    B.expVec g (a + b) = B.expVec g a * B.expVec g b :=
++  funext fun i =>
++    (B.expVec_apply g (a + b) i).trans
++      ((B.pow_val_add g (a i) (b i)).trans
++        (congrArg₂ (fun x y : B.G => x * y)
++          (B.expVec_apply g a i).symm (B.expVec_apply g b i).symm))
+ 
+ /-- Negating a scalar vector inverts its implicit source-group vector
+ [Wee20, §2.1, p. 4].
+ 
+ **Proof sketch.** Apply the published source-group negation law coordinatewise. -/
+ theorem expVec_neg (g : B.G) (a : ι → ZMod B.order) :
+-    B.expVec g (-a) = (B.expVec g a)⁻¹ := sorry
++    B.expVec g (-a) = (B.expVec g a)⁻¹ :=
++  funext fun i =>
++    (B.expVec_apply g (-a) i).trans
++      ((B.pow_val_neg g (a i)).trans
++        (congrArg (fun x : B.G => x⁻¹) (B.expVec_apply g a i).symm))
+ 
+ /-- Scalar multiplication acts on the implicit vector by known powers
+ [Wee20, §2.1, p. 4].
+ 
+ **Proof sketch.** Use `pow_val_mul` and `pow_mul` at every coordinate. -/
+ theorem expVec_smul (g : B.G) (c : ZMod B.order) (a : ι → ZMod B.order) :
+-    B.expVec g (c • a) = fun i => (B.expVec g a i) ^ c.val := sorry
++    B.expVec g (c • a) = fun i => (B.expVec g a i) ^ c.val :=
++  funext fun i =>
++    (show B.expVec g (c • a) i = g ^ (c * a i).val from
++      B.expVec_apply g (c • a) i).trans
++      ((B.pow_val_mul g c (a i)).trans
++        ((congrArg (fun n : ℕ => g ^ n) (Nat.mul_comm c.val (a i).val)).trans
++          ((pow_mul g (a i).val c.val).trans
++            (congrArg (fun x : B.G => x ^ c.val) (B.expVec_apply g a i).symm))))
+ 
+ /-- Adding scalar vectors multiplies their target-group representations
+ [Wee20, §2.1, p. 4].
+ 
+ **Proof sketch.** Apply `pow_val_add_GT` at every coordinate. -/
+ theorem expVecT_add (gT : B.GT) (a b : ι → ZMod B.order) :
+-    B.expVecT gT (a + b) = B.expVecT gT a * B.expVecT gT b := sorry
++    B.expVecT gT (a + b) = B.expVecT gT a * B.expVecT gT b :=
++  funext fun i =>
++    (B.expVecT_apply gT (a + b) i).trans
++      ((B.pow_val_add_GT gT (a i) (b i)).trans
++        (congrArg₂ (fun x y : B.GT => x * y)
++          (B.expVecT_apply gT a i).symm (B.expVecT_apply gT b i).symm))
+ 
+ /-- Negating scalar coordinates inverts the target-group representation
+ [Wee20, §2.1, p. 4].
+ 
+ **Proof sketch.** Apply `pow_val_neg_GT` at every coordinate. -/
+ theorem expVecT_neg (gT : B.GT) (a : ι → ZMod B.order) :
+-    B.expVecT gT (-a) = (B.expVecT gT a)⁻¹ := sorry
++    B.expVecT gT (-a) = (B.expVecT gT a)⁻¹ :=
++  funext fun i =>
++    (B.expVecT_apply gT (-a) i).trans
++      ((B.pow_val_neg_GT gT (a i)).trans
++        (congrArg (fun x : B.GT => x⁻¹) (B.expVecT_apply gT a i).symm))
+ 
+ /-- A known scalar multiplies target-group exponents through known powers
+ [Wee20, §2.1, p. 4].
+ 
+ **Proof sketch.** Use `pow_val_mul_GT` and `pow_mul` coordinatewise. -/
+ theorem expVecT_smul (gT : B.GT) (c : ZMod B.order) (a : ι → ZMod B.order) :
+-    B.expVecT gT (c • a) = fun i => (B.expVecT gT a i) ^ c.val := sorry
++    B.expVecT gT (c • a) = fun i => (B.expVecT gT a i) ^ c.val :=
++  funext fun i =>
++    (show B.expVecT gT (c • a) i = gT ^ (c * a i).val from
++      B.expVecT_apply gT (c • a) i).trans
++      ((B.pow_val_mul_GT gT c (a i)).trans
++        ((congrArg (fun n : ℕ => gT ^ n) (Nat.mul_comm c.val (a i).val)).trans
++          ((pow_mul gT (a i).val c.val).trans
++            (congrArg (fun x : B.GT => x ^ c.val) (B.expVecT_apply gT a i).symm))))
+ 
+ /-- An implicit scalar dot product is a product of known powers of source-group elements
+ [Wee20, §2.1, p. 4; §4.2, p. 9, (8)].
+ 
+-**Proof sketch.** Induct over the finite index sum, using `pow_val_add`, `pow_val_mul` and
+-`Finset.prod_pow_eq_pow_sum` to combine the powers. -/
++**Proof sketch.** The local additive exponent homomorphism maps the finite sum to a
++product, giving `hSum`. The modular multiplication law gives `hCoordinate`; combine them
++with the published product reader. -/
+ theorem groupDot_expVec [Fintype ι] (g : B.G) (a b : ι → ZMod B.order) :
+-    groupDot (B.expVec g a) b = g ^ (dotProduct a b).val := sorry
++    groupDot (B.expVec g a) b = g ^ (dotProduct a b).val :=
++  let exponentMap : ZMod B.order →+ Additive B.G :=
++    { toFun := fun x => Additive.ofMul (g ^ x.val)
++      map_zero' :=
++        (show Additive.ofMul (g ^ (0 : ZMod B.order).val) = (0 : Additive B.G) from
++          congrArg Additive.ofMul
++            ((congrArg (fun n : ℕ => g ^ n) (ZMod.val_zero (n := B.order))).trans
++              (pow_zero g)))
++      map_add' := fun x y =>
++        (show Additive.ofMul (g ^ (x + y).val) =
++            Additive.ofMul (g ^ x.val) + Additive.ofMul (g ^ y.val) from
++          congrArg Additive.ofMul (B.pow_val_add g x y)) }
++  have hSum : g ^ (dotProduct a b).val = ∏ i, g ^ (a i * b i).val :=
++    (show g ^ (dotProduct a b).val = (∑ i, exponentMap (a i * b i)).toMul from
++      congrArg Additive.toMul (map_sum exponentMap (fun i => a i * b i) Finset.univ)).trans
++      (show (∑ i, exponentMap (a i * b i)).toMul = ∏ i, g ^ (a i * b i).val from
++        toMul_sum Finset.univ (fun i => exponentMap (a i * b i)))
++  have hCoordinate : ∀ i, (B.expVec g a i) ^ (b i).val =
++      g ^ (a i * b i).val :=
++    fun i => (congrArg (fun x : B.G => x ^ (b i).val) (B.expVec_apply g a i)).trans
++      ((pow_mul g (a i).val (b i).val).symm.trans (B.pow_val_mul g (a i) (b i)).symm)
++  (groupDot_eq (B.expVec g a) b).trans
++    ((Finset.prod_congr rfl (fun i _ => hCoordinate i)).trans hSum.symm)
+ 
+ /-- A target-group scalar dot product is a product of known powers
+ [Wee20, §4.2, p. 9, (8)].
+ 
+-**Proof sketch.** Combine `pow_val_add_GT` and `pow_val_mul_GT` over the finite index sum. -/
++**Proof sketch.** The local target-group exponent homomorphism maps the finite sum to
++a product, giving `hSum`. The modular multiplication law gives `hCoordinate`; combine
++them with the published product reader. -/
+ theorem groupDot_expVecT [Fintype ι] (gT : B.GT) (a b : ι → ZMod B.order) :
+-    groupDot (B.expVecT gT a) b = gT ^ (dotProduct a b).val := sorry
++    groupDot (B.expVecT gT a) b = gT ^ (dotProduct a b).val :=
++  let exponentMap : ZMod B.order →+ Additive B.GT :=
++    { toFun := fun x => Additive.ofMul (gT ^ x.val)
++      map_zero' :=
++        (show Additive.ofMul (gT ^ (0 : ZMod B.order).val) = (0 : Additive B.GT) from
++          congrArg Additive.ofMul
++            ((congrArg (fun n : ℕ => gT ^ n) (ZMod.val_zero (n := B.order))).trans
++              (pow_zero gT)))
++      map_add' := fun x y =>
++        (show Additive.ofMul (gT ^ (x + y).val) =
++            Additive.ofMul (gT ^ x.val) + Additive.ofMul (gT ^ y.val) from
++          congrArg Additive.ofMul (B.pow_val_add_GT gT x y)) }
++  have hSum : gT ^ (dotProduct a b).val = ∏ i, gT ^ (a i * b i).val :=
++    (show gT ^ (dotProduct a b).val = (∑ i, exponentMap (a i * b i)).toMul from
++      congrArg Additive.toMul (map_sum exponentMap (fun i => a i * b i) Finset.univ)).trans
++      (show (∑ i, exponentMap (a i * b i)).toMul = ∏ i, gT ^ (a i * b i).val from
++        toMul_sum Finset.univ (fun i => exponentMap (a i * b i)))
++  have hCoordinate : ∀ i, (B.expVecT gT a i) ^ (b i).val =
++      gT ^ (a i * b i).val :=
++    fun i => (congrArg (fun x : B.GT => x ^ (b i).val) (B.expVecT_apply gT a i)).trans
++      ((pow_mul gT (a i).val (b i).val).symm.trans (B.pow_val_mul_GT gT (a i) (b i)).symm)
++  (groupDot_eq (B.expVecT gT a) b).trans
++    ((Finset.prod_congr rfl (fun i _ => hCoordinate i)).trans hSum.symm)
+ 
+ /-! ## Matrix actions -/
+ 
+@@ -254,7 +341,15 @@ theorem groupDot_expVecT [Fintype ι] (gT : B.GT) (a b : ι → ZMod B.order) :
+ **Proof sketch.** At each row apply `groupDot_expVec` to the defining scalar dot product. -/
+ theorem expMat_mulVec [Fintype κ] (g : B.G) (M : Matrix ι κ (ZMod B.order))
+     (a : κ → ZMod B.order) :
+-    groupMulVec (B.expMat g M) a = B.expVec g (M *ᵥ a) := sorry
++    groupMulVec (B.expMat g M) a = B.expVec g (M *ᵥ a) :=
++  funext fun i =>
++    (groupMulVec_apply (B.expMat g M) a i).trans
++      ((congrArg (fun row : κ → B.G => groupDot row a)
++        (funext fun k => (B.expMat_apply g M i k).trans
++          (B.expVec_apply g (M i) k).symm)).trans
++        ((B.groupDot_expVec g (M i) a).trans
++          (show g ^ (dotProduct (M i) a).val = B.expVec g (M *ᵥ a) i from
++            (B.expVec_apply g (M *ᵥ a) i).symm)))
+ 
+ /-- A known row-vector action commutes with the source-group implicit representation
+ [Wee20, §2.1, p. 4].
+@@ -262,7 +357,17 @@ theorem expMat_mulVec [Fintype κ] (g : B.G) (M : Matrix ι κ (ZMod B.order))
+ **Proof sketch.** At each column apply `groupDot_expVec`, commuting scalar factors. -/
+ theorem expVec_vecMul [Fintype ι] (g : B.G) (a : ι → ZMod B.order)
+     (M : Matrix ι κ (ZMod B.order)) :
+-    groupVecMul a (B.expMat g M) = B.expVec g (a ᵥ* M) := sorry
++    groupVecMul a (B.expMat g M) = B.expVec g (a ᵥ* M) :=
++  funext fun j =>
++    (groupVecMul_apply a (B.expMat g M) j).trans
++      ((congrArg (fun column : ι → B.G => groupDot column a)
++        (funext fun i => (B.expMat_apply g M i j).trans
++          (B.expVec_apply g (fun i => M i j) i).symm)).trans
++        ((B.groupDot_expVec g (fun i => M i j) a).trans
++          ((congrArg (fun x : ZMod B.order => g ^ x.val)
++            (dotProduct_comm (fun i => M i j) a)).trans
++            (show g ^ (dotProduct a (fun i => M i j)).val = B.expVec g (a ᵥ* M) j from
++              (B.expVec_apply g (a ᵥ* M) j).symm))))
+ 
+ /-- A scalar matrix on the right can be applied to a group-valued implicit matrix
+ [Wee20, §4.2, p. 9, KeyGen].
+@@ -270,7 +375,16 @@ theorem expVec_vecMul [Fintype ι] (g : B.G) (a : ι → ZMod B.order)
+ **Proof sketch.** Apply the vector dot-product law to every row-column entry. -/
+ theorem expMat_mul [Fintype κ] (g : B.G) (M : Matrix ι κ (ZMod B.order))
+     (N : Matrix κ υ (ZMod B.order)) :
+-    groupMatMul (B.expMat g M) N = B.expMat g (M * N) := sorry
++    groupMatMul (B.expMat g M) N = B.expMat g (M * N) :=
++  funext fun i => funext fun j =>
++    (groupMatMul_apply (B.expMat g M) N i j).trans
++      ((congrArg (fun row : κ → B.G => groupDot row (fun k => N k j))
++        (funext fun k => (B.expMat_apply g M i k).trans
++          (B.expVec_apply g (M i) k).symm)).trans
++        ((B.groupDot_expVec g (M i) (fun k => N k j)).trans
++          ((congrArg (fun x : ZMod B.order => g ^ x.val)
++            (Matrix.mul_apply' (M := M) (N := N) (i := i) (k := j)).symm).trans
++            (B.expMat_apply g (M * N) i j).symm)))
+ 
+ /-- A scalar matrix on the left can be applied to a group-valued implicit matrix
+ [Wee20, §4.2, p. 10, (12)].
+@@ -278,7 +392,18 @@ theorem expMat_mul [Fintype κ] (g : B.G) (M : Matrix ι κ (ZMod B.order))
+ **Proof sketch.** Apply the vector dot-product law entrywise and commute scalar factors. -/
+ theorem expMat_mul_left [Fintype κ] (g : B.G) (M : Matrix ι κ (ZMod B.order))
+     (N : Matrix κ υ (ZMod B.order)) :
+-    matMulGroup M (B.expMat g N) = B.expMat g (M * N) := sorry
++    matMulGroup M (B.expMat g N) = B.expMat g (M * N) :=
++  funext fun i => funext fun j =>
++    (matMulGroup_apply M (B.expMat g N) i j).trans
++      ((congrArg (fun column : κ → B.G => groupDot column (M i))
++        (funext fun k => (B.expMat_apply g N k j).trans
++          (B.expVec_apply g (fun k => N k j) k).symm)).trans
++        ((B.groupDot_expVec g (fun k => N k j) (M i)).trans
++          ((congrArg (fun x : ZMod B.order => g ^ x.val)
++            (dotProduct_comm (fun k => N k j) (M i))).trans
++            ((congrArg (fun x : ZMod B.order => g ^ x.val)
++              (Matrix.mul_apply' (M := M) (N := N) (i := i) (k := j)).symm).trans
++              (B.expMat_apply g (M * N) i j).symm))))
+ 
+ /-- Known powers also implement a target-group matrix-vector action
+ [Wee20, §4.2, p. 9, (8)].
+@@ -286,7 +411,15 @@ theorem expMat_mul_left [Fintype κ] (g : B.G) (M : Matrix ι κ (ZMod B.order))
+ **Proof sketch.** Apply `groupDot_expVecT` to every row. -/
+ theorem expMatT_mulVec [Fintype κ] (gT : B.GT) (M : Matrix ι κ (ZMod B.order))
+     (a : κ → ZMod B.order) :
+-    groupMulVec (B.expMatT gT M) a = B.expVecT gT (M *ᵥ a) := sorry
++    groupMulVec (B.expMatT gT M) a = B.expVecT gT (M *ᵥ a) :=
++  funext fun i =>
++    (groupMulVec_apply (B.expMatT gT M) a i).trans
++      ((congrArg (fun row : κ → B.GT => groupDot row a)
++        (funext fun k => (B.expMatT_apply gT M i k).trans
++          (B.expVecT_apply gT (M i) k).symm)).trans
++        ((B.groupDot_expVecT gT (M i) a).trans
++          (show gT ^ (dotProduct (M i) a).val = B.expVecT gT (M *ᵥ a) i from
++            (B.expVecT_apply gT (M *ᵥ a) i).symm)))
+ 
+ /-! ## Pairings and tensor products -/
+ 
+@@ -296,7 +429,17 @@ theorem expMatT_mulVec [Fintype κ] (gT : B.GT) (M : Matrix ι κ (ZMod B.order)
+ **Proof sketch.** Apply `bilinear_pow` coordinatewise, reduce products of exponents with
+ `pow_val_mul_GT`, and combine powers with `pow_val_add_GT`. -/
+ theorem pair_expVec [Fintype ι] (g h : B.G) (a b : ι → ZMod B.order) :
+-    B.pairVec (B.expVec g a) (B.expVec h b) = B.pair g h ^ (dotProduct a b).val := sorry
++    B.pairVec (B.expVec g a) (B.expVec h b) = B.pair g h ^ (dotProduct a b).val :=
++  (B.pairVec_eq (B.expVec g a) (B.expVec h b)).trans
++    ((Finset.prod_congr rfl (fun i _ =>
++      (congrArg₂ (fun u v : B.G => B.pair u v)
++        (B.expVec_apply g a i) (B.expVec_apply h b i)).trans
++        ((B.bilinear_pow g h (a i).val (b i).val).trans
++          ((pow_mul (B.pair g h) (a i).val (b i).val).trans
++            (congrArg (fun x : B.GT => x ^ (b i).val)
++              (B.expVecT_apply (B.pair g h) a i).symm))))).trans
++      ((groupDot_eq (B.expVecT (B.pair g h) a) b).symm.trans
++        (B.groupDot_expVecT (B.pair g h) a b)))
+ 
+ /-- Pairing implicit rows and columns evaluates the scalar matrix product
+ [Wee20, §2.1, p. 4; §4.2, p. 9, (6)–(7)].
+@@ -304,7 +447,18 @@ theorem pair_expVec [Fintype ι] (g h : B.G) (a b : ι → ZMod B.order) :
+ **Proof sketch.** Apply `pair_expVec` to each row-column entry. -/
+ theorem pair_expMat [Fintype κ] (g h : B.G) (M : Matrix ι κ (ZMod B.order))
+     (N : Matrix κ υ (ZMod B.order)) :
+-    B.pairMat (B.expMat g M) (B.expMat h N) = B.expMatT (B.pair g h) (M * N) := sorry
++    B.pairMat (B.expMat g M) (B.expMat h N) = B.expMatT (B.pair g h) (M * N) :=
++  funext fun i => funext fun j =>
++    (B.pairMat_apply (B.expMat g M) (B.expMat h N) i j).trans
++      ((congrArg₂ B.pairVec
++        (funext fun k => (B.expMat_apply g M i k).trans
++          (B.expVec_apply g (M i) k).symm)
++        (funext fun k => (B.expMat_apply h N k j).trans
++          (B.expVec_apply h (fun k => N k j) k).symm)).trans
++        ((B.pair_expVec g h (M i) (fun k => N k j)).trans
++          ((congrArg (fun x : ZMod B.order => B.pair g h ^ x.val)
++            (Matrix.mul_apply' (M := M) (N := N) (i := i) (k := j)).symm).trans
++            (B.expMatT_apply (B.pair g h) (M * N) i j).symm)))
+ 
+ /-- Tensor pairings expose the product of their scalar coordinates in the target group
+ [Wee20, §3.1, p. 6].
+@@ -312,7 +466,15 @@ theorem pair_expMat [Fintype κ] (g h : B.G) (M : Matrix ι κ (ZMod B.order))
+ **Proof sketch.** At each index pair apply `bilinear_pow` and `pow_val_mul_GT`. -/
+ theorem pairTensor_expVec (g h : B.G) (a : ι → ZMod B.order) (b : κ → ZMod B.order) :
+     B.pairTensor (B.expVec g a) (B.expVec h b) =
+-      B.expVecT (B.pair g h) (fun ij : ι × κ => a ij.1 * b ij.2) := sorry
++      B.expVecT (B.pair g h) (fun ij : ι × κ => a ij.1 * b ij.2) :=
++  funext fun ij =>
++    (B.pairTensor_apply (B.expVec g a) (B.expVec h b) ij).trans
++      ((congrArg₂ (fun u v : B.G => B.pair u v)
++        (B.expVec_apply g a ij.1) (B.expVec_apply h b ij.2)).trans
++        ((B.bilinear_pow g h (a ij.1).val (b ij.2).val).trans
++          ((B.pow_val_mul_GT (B.pair g h) (a ij.1) (b ij.2)).symm.trans
++            (B.expVecT_apply (B.pair g h)
++              (fun ij : ι × κ => a ij.1 * b ij.2) ij).symm)))
+ 
+ /-- A tensor product with its right scalar factor known is computable in the source group
+ [Wee20, §3.3, p. 8, Game 3].
+@@ -320,7 +482,12 @@ theorem pairTensor_expVec (g h : B.G) (a : ι → ZMod B.order) (b : κ → ZMod
+ **Proof sketch.** Apply `pow_val_mul` and `pow_mul` at every index pair. -/
+ theorem expVec_tensor_left (g : B.G) (a : ι → ZMod B.order) (b : κ → ZMod B.order) :
+     (fun ij : ι × κ => B.expVec g a ij.1 ^ (b ij.2).val) =
+-      B.expVec g (fun ij : ι × κ => a ij.1 * b ij.2) := sorry
++      B.expVec g (fun ij : ι × κ => a ij.1 * b ij.2) :=
++  funext fun ij =>
++    (congrArg (fun x : B.G => x ^ (b ij.2).val) (B.expVec_apply g a ij.1)).trans
++      ((pow_mul g (a ij.1).val (b ij.2).val).symm.trans
++        ((B.pow_val_mul g (a ij.1) (b ij.2)).symm.trans
++          (B.expVec_apply g (fun ij : ι × κ => a ij.1 * b ij.2) ij).symm))
+ 
+ /-- A tensor product with its left scalar factor known is computable in the source group
+ [Wee20, §3.3, p. 8, Game 4].
+@@ -328,7 +495,13 @@ theorem expVec_tensor_left (g : B.G) (a : ι → ZMod B.order) (b : κ → ZMod
+ **Proof sketch.** Apply `pow_val_mul`, `pow_mul` and scalar commutativity coordinatewise. -/
+ theorem expVec_tensor_right (g : B.G) (a : ι → ZMod B.order) (b : κ → ZMod B.order) :
+     (fun ij : ι × κ => B.expVec g b ij.2 ^ (a ij.1).val) =
+-      B.expVec g (fun ij : ι × κ => a ij.1 * b ij.2) := sorry
++      B.expVec g (fun ij : ι × κ => a ij.1 * b ij.2) :=
++  funext fun ij =>
++    (congrArg (fun x : B.G => x ^ (a ij.1).val) (B.expVec_apply g b ij.2)).trans
++      ((pow_mul g (b ij.2).val (a ij.1).val).symm.trans
++        ((B.pow_val_mul g (b ij.2) (a ij.1)).symm.trans
++          ((congrArg (fun z : ZMod B.order => g ^ z.val) (mul_comm (b ij.2) (a ij.1))).trans
++            (B.expVec_apply g (fun ij : ι × κ => a ij.1 * b ij.2) ij).symm)))
+ 
+ end BilinearGroup
+ 

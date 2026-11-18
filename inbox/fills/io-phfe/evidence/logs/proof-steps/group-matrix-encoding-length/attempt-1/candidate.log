@@ -1,0 +1,69 @@
+file=TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean
+source_sha256=6b1f4ffb4ac2cccb283ed0a825f56c2c6e3f8be35a1a55fb56ab211d29039cf4
+working_source_development_check=True
+TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean:68:54: error: unsolved goals
+wG wT rows cols : ℕ
+B : BilinearGroup wG wT
+M : Matrix (Fin rows) (Fin cols) B.G
+⊢ (List.ofFn (List.length ∘ fun i => (List.ofFn fun j => List.ofFn (B.encG (M i j))).flatten)).sum = rows * (cols * wG)
+TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean:70:4: warning: This simp argument is unused:
+  Function.comp_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [groupMatrixEnc_eq, List.length_flatten, List.map_ofFn, F̵u̵n̵c̵t̵i̵o̵n̵.̵c̵o̵m̵p̵_̵a̵p̵p̵l̵y̵,̵ ̵List.length_ofFn,
+  ̲  ̲ ̲ ̲List.ofFn_const, List.sum_replicate_nat, Nat.mul_assoc]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean:70:25: warning: This simp argument is unused:
+  List.length_ofFn
+
+Hint: Omit it from the simp argument list.
+  simp only [groupMatrixEnc_eq, List.length_flatten, List.map_ofFn,
+  ̵  ̵ ̵ ̵Function.comp_apply,
+  ̲ L̵i̵s̵t̵.̵l̵e̵n̵g̵t̵h̵_̵o̵f̵F̵n̵,̵  ̲ ̲List.ofFn_const, List.sum_replicate_nat,
+  ̵  ̵ ̵ ̵Nat.mul_assoc]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean:70:43: warning: This simp argument is unused:
+  List.ofFn_const
+
+Hint: Omit it from the simp argument list.
+  simp only [groupMatrixEnc_eq, List.length_flatten, List.map_ofFn,
+  ̵  ̵ ̵ ̵Function.comp_apply,
+  ̲  ̲ ̲ ̲List.length_ofFn, List.o̵f̵F̵n̵_̵c̵o̵n̵st̵,̵ ̵L̵i̵s̵t̵.̵s̵um_replicate_nat,
+  ̵  ̵ ̵ ̵Nat.mul_assoc]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean:70:60: warning: This simp argument is unused:
+  List.sum_replicate_nat
+
+Hint: Omit it from the simp argument list.
+  simp only [groupMatrixEnc_eq, List.length_flatten, List.map_ofFn, Function.comp_apply,
+  ̲  ̲ ̲ ̲List.length_ofFn, List.ofFn_const, L̵i̵s̵t̵.̵s̵u̵m̵_̵r̵e̵p̵l̵i̵c̵a̵t̵e̵_̵n̵a̵t̵,̵Nat.mul_assoc]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean:77:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean:115:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean:122:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean:190:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/Defs): lean exited with status 1
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/Defs): error diagnostics reported
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/Defs): no fresh .olean produced
+        2.49 real         1.62 user         1.04 sys
+          2157559808  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              171720  page reclaims
+                  40  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                  22  voluntary context switches
+                7485  involuntary context switches
+            32156806  instructions retired
+            16583427  cycles elapsed
+             1655120  peak memory footprint

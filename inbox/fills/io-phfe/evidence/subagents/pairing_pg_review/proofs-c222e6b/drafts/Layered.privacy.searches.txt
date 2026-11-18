@@ -1,0 +1,35 @@
+Read-only searches performed in the active worktree; no Lean/lake/Git.
+
+1. rg -n 'expect_sample_equiv|expect_sample.*[Ee]quiv|sample_equiv|map_uniform|map.*uniform|uniform.*equiv' TCSlib/Cryptography/Games .lake/packages/mathlib/Mathlib/Probability
+   Exact existing API: Games/Probability.lean:304-306.
+   theorem expect_sample_equiv [Fintype alpha] [Nonempty alpha]
+     [Fintype beta] [Nonempty beta] (e : alpha equiv beta) (g : beta -> Real) :
+     expect (sample alpha) (fun a => g (e a)) = expect (sample beta) g
+   Existing relational consumer: Games/Relational.lean:136.
+
+2. Read Games/Probability.lean:293-312 to confirm orientation and instances.
+   Existing consumer: AdvancedEncryption/IdentityBased/BonehBoyenMachine/
+   Reduction.lean:166; Oracles.lean:357.
+   No new sampling/expectation identity is required.
+
+3. rg -n 'def mulRight|theorem mulRight_apply|def divRight|theorem divRight_apply|addRight_apply|subRight_apply' .lake/packages/mathlib/Mathlib/Logic/Equiv .lake/packages/mathlib/Mathlib/Algebra/Group TCSlib/Cryptography/Games
+   Read Mathlib/Algebra/Group/Units/Equiv.lean:96-166.
+   Equiv.addRight is generated from protected mulRight at line 116;
+   Equiv.coe_addRight from coe_mulRight at line 120.
+   Equiv.subRight is generated from divRight at line 152.
+   No new equivalence/helper is proposed.
+
+4. rg -n 'coe_addRight' .lake/packages/mathlib/Mathlib TCSlib --glob '*.lean' --max-count 1
+   Public reader confirmed by existing TCSlib uses:
+   AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Coupling.lean:310;
+   AdvancedEncryption/Homomorphic/GSW/Symmetric.lean:138;
+   SecretSharing/Shamir.lean:158;
+   Encryption/PrivateKey/FromPRF/Hybrid.lean:404.
+
+5. Read live Layered.lean:545-585 and prior translation proof/review.
+   Frozen privacy statement has real expectation on the left and unshifted
+   simulated expectation on the right. Translation supplies t - shift.
+   Main dependencies translation/backward_action are native pending.
+
+No new helper was added; no exact?/apply? probe is needed for a new declaration.
+One tactic block in this invocation, confined to existing privacy theorem body.

@@ -1,0 +1,362 @@
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => List.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ List.map ((Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) *ᵥ values) =
+    List.map fun e => weight e * values (parent e) - values (child e)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => Array.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Array.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Array.map
+      ((Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) *ᵥ values) =
+    Array.map fun e => weight e * values (parent e) - values (child e)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {α_1} {f g} [NeZero n] => Vector.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Vector.map_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {f} [Subsingleton α] {g} x y => (Function.funext_iff_of_subsingleton x y).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Function.funext_iff_of_subsingleton ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ E
+  -- ⊢ E
+  -- ⊢ Subsingleton E
+  -- ⊢ ((Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) *ᵥ values) ?_ =
+    weight ?_ * values (parent ?_) - values (child ?_)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {γ} {f} hf {g₁ g₂} => (Function.Surjective.right_cancellable hf).mp) (fun b => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Surjective.right_cancellable fun b => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Option.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Option.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Option.map
+      ((Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) *ᵥ values) =
+    Option.map fun e => weight e * values (parent e) - values (child e)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Set.graphOn_univ_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.graphOn_univ_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.graphOn
+      ((Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) *ᵥ values) Set.univ =
+    Set.graphOn (fun e => weight e * values (parent e) - values (child e)) Set.univ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} f₁ f₂ => (Set.eqOn_univ f₁ f₂).mp) (fun e => weight e * values (parent e) - values (child e))
+      ((Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) *ᵥ values) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Set.eqOn_univ
+        ((Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) *ᵥ values)
+        fun e => weight e * values (parent e) - values (child e)).mp
+    ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.EqOn ((Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) *ᵥ values)
+    (fun e => weight e * values (parent e) - values (child e)) Set.univ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [Zero M] {f g} => Function.ext_iff_support.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_support.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (Function.support
+        ((Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) *ᵥ values) =
+      Function.support fun e => weight e * values (parent e) - values (child e)) ∧
+    ∀
+      x ∈
+        Function.support
+          ((Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) *ᵥ values),
+      ((Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) *ᵥ values) x =
+        weight x * values (parent x) - values (child x)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [One M] {f g} => Function.ext_iff_mulSupport.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_mulSupport.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (Function.mulSupport
+        ((Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) *ᵥ values) =
+      Function.mulSupport fun e => weight e * values (parent e) - values (child e)) ∧
+    ∀
+      x ∈
+        Function.mulSupport
+          ((Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) *ᵥ values),
+      ((Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) *ᵥ values) x =
+        weight x * values (parent x) - values (child x)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedGT β] {f g} hf hg => (StrictAnti.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (StrictAnti.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder E
+  -- ⊢ Preorder R
+  -- ⊢ WellFoundedGT E
+  -- ⊢ StrictAnti ((Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) *ᵥ values)
+  -- ⊢ StrictAnti fun e => weight e * values (parent e) - values (child e)
+  -- ⊢ Set.range
+      ((Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) *ᵥ values) =
+    Set.range fun e => weight e * values (parent e) - values (child e)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedLT β] {f g} hf hg => (StrictMono.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (StrictMono.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder E
+  -- ⊢ Preorder R
+  -- ⊢ WellFoundedLT E
+  -- ⊢ StrictMono ((Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) *ᵥ values)
+  -- ⊢ StrictMono fun e => weight e * values (parent e) - values (child e)
+  -- ⊢ Set.range
+      ((Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) *ᵥ values) =
+    Set.range fun e => weight e * values (parent e) - values (child e)
+Try this:
+  [apply] refine Eq.symm (funext ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : E),
+    weight x * values (parent x) - values (child x) =
+      ((Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) *ᵥ values) x
+Try this:
+  [apply] refine funext ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : E),
+    ((Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) *ᵥ values) x =
+      weight x * values (parent x) - values (child x)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => funext_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine funext_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : E),
+    ((Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) *ᵥ values) x =
+      weight x * values (parent x) - values (child x)
+.lake/io-phfe-probes/PathAlgebraApply.lean:18:0: warning: declaration uses 'sorry'
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => List.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ List.map (flow ᵥ* Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) =
+    List.map fun v => (∑ e, if parent e = v then flow e * weight e else 0) - ∑ e, if child e = v then flow e else 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => Array.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Array.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Array.map (flow ᵥ* Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) =
+    Array.map fun v => (∑ e, if parent e = v then flow e * weight e else 0) - ∑ e, if child e = v then flow e else 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {α_1} {f g} [NeZero n] => Vector.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Vector.map_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {f} [Subsingleton α] {g} x y => (Function.funext_iff_of_subsingleton x y).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Function.funext_iff_of_subsingleton ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ V
+  -- ⊢ V
+  -- ⊢ Subsingleton V
+  -- ⊢ (flow ᵥ* Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) ?_ =
+    (∑ e, if parent e = ?_ then flow e * weight e else 0) - ∑ e, if child e = ?_ then flow e else 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {γ} {f} hf {g₁ g₂} => (Function.Surjective.right_cancellable hf).mp) (fun b => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Surjective.right_cancellable fun b => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Option.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Option.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Option.map (flow ᵥ* Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) =
+    Option.map fun v => (∑ e, if parent e = v then flow e * weight e else 0) - ∑ e, if child e = v then flow e else 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Set.graphOn_univ_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.graphOn_univ_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.graphOn (flow ᵥ* Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0)
+      Set.univ =
+    Set.graphOn (fun v => (∑ e, if parent e = v then flow e * weight e else 0) - ∑ e, if child e = v then flow e else 0)
+      Set.univ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} f₁ f₂ => (Set.eqOn_univ f₁ f₂).mp)
+      (fun v => (∑ e, if parent e = v then flow e * weight e else 0) - ∑ e, if child e = v then flow e else 0)
+      (flow ᵥ* Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Set.eqOn_univ
+        (flow ᵥ* Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) fun v =>
+        (∑ e, if parent e = v then flow e * weight e else 0) - ∑ e, if child e = v then flow e else 0).mp
+    ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.EqOn (flow ᵥ* Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0)
+    (fun v => (∑ e, if parent e = v then flow e * weight e else 0) - ∑ e, if child e = v then flow e else 0) Set.univ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [Zero M] {f g} => Function.ext_iff_support.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_support.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (Function.support
+        (flow ᵥ* Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) =
+      Function.support fun v =>
+        (∑ e, if parent e = v then flow e * weight e else 0) - ∑ e, if child e = v then flow e else 0) ∧
+    ∀
+      x ∈
+        Function.support
+          (flow ᵥ* Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0),
+      (flow ᵥ* Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) x =
+        (∑ e, if parent e = x then flow e * weight e else 0) - ∑ e, if child e = x then flow e else 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [One M] {f g} => Function.ext_iff_mulSupport.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_mulSupport.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (Function.mulSupport
+        (flow ᵥ* Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) =
+      Function.mulSupport fun v =>
+        (∑ e, if parent e = v then flow e * weight e else 0) - ∑ e, if child e = v then flow e else 0) ∧
+    ∀
+      x ∈
+        Function.mulSupport
+          (flow ᵥ* Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0),
+      (flow ᵥ* Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) x =
+        (∑ e, if parent e = x then flow e * weight e else 0) - ∑ e, if child e = x then flow e else 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedGT β] {f g} hf hg => (StrictAnti.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (StrictAnti.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder V
+  -- ⊢ Preorder R
+  -- ⊢ WellFoundedGT V
+  -- ⊢ StrictAnti (flow ᵥ* Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0)
+  -- ⊢ StrictAnti fun v => (∑ e, if parent e = v then flow e * weight e else 0) - ∑ e, if child e = v then flow e else 0
+  -- ⊢ Set.range (flow ᵥ* Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) =
+    Set.range fun v => (∑ e, if parent e = v then flow e * weight e else 0) - ∑ e, if child e = v then flow e else 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedLT β] {f g} hf hg => (StrictMono.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (StrictMono.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder V
+  -- ⊢ Preorder R
+  -- ⊢ WellFoundedLT V
+  -- ⊢ StrictMono (flow ᵥ* Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0)
+  -- ⊢ StrictMono fun v => (∑ e, if parent e = v then flow e * weight e else 0) - ∑ e, if child e = v then flow e else 0
+  -- ⊢ Set.range (flow ᵥ* Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) =
+    Set.range fun v => (∑ e, if parent e = v then flow e * weight e else 0) - ∑ e, if child e = v then flow e else 0
+Try this:
+  [apply] refine Eq.symm (funext ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : V),
+    ((∑ e, if parent e = x then flow e * weight e else 0) - ∑ e, if child e = x then flow e else 0) =
+      (flow ᵥ* Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) x
+Try this:
+  [apply] refine funext ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : V),
+    (flow ᵥ* Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) x =
+      (∑ e, if parent e = x then flow e * weight e else 0) - ∑ e, if child e = x then flow e else 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => funext_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine funext_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : V),
+    (flow ᵥ* Matrix.of fun e v => (if v = parent e then weight e else 0) - if v = child e then 1 else 0) x =
+      (∑ e, if parent e = x then flow e * weight e else 0) - ∑ e, if child e = x then flow e else 0
+.lake/io-phfe-probes/PathAlgebraApply.lean:28:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/PathAlgebraApply.lean:52:8: error: typeclass instance problem is stuck, it is often due to metavariables
+  HSub (?m.114 e v (label e)) ℕ R

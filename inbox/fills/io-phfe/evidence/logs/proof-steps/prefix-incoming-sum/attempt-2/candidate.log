@@ -1,0 +1,45 @@
+file=TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean
+source_sha256=f62cebc76b5a74ae7db7a42d7eb76bfb16b77c137ac25735685745b928598913
+working_source_development_check=True
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean:78:4: error: Tactic `subst` failed: did not find equation for eliminating 'tau'
+
+case zero
+I : Type u_1
+R : Type u_2
+inst✝² : Fintype I
+inst✝¹ : DecidableEq I
+inst✝ : AddCommMonoid R
+d : ℕ
+value : (k : Fin (d + 1)) × (Fin ↑k → I) → R
+child : (k : Fin d) × (Fin (↑k + 1) → I) → (k : Fin (d + 1)) × (Fin ↑k → I) := Sigma.map Fin.succ fun x tau => tau
+emptyPrefix : (k : Fin (d + 1)) × (Fin ↑k → I) := ⟨⟨0, ⋯⟩, Fin.elim0⟩
+hchild : Function.Injective child
+hroot : ∀ (e : (k : Fin d) × (Fin (↑k + 1) → I)), child e ≠ emptyPrefix
+tau : Fin ↑0 → I
+htuple :
+  (have this := tau;
+    this) =
+    Fin.elim0
+⊢ (∑ e, if child e = ⟨0, tau⟩ then value (child e) else 0) = if ⟨0, tau⟩ = emptyPrefix then 0 else value ⟨0, tau⟩
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean:99:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra): no fresh .olean produced
+        1.68 real         1.01 user         0.75 sys
+          1424654336  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              116629  page reclaims
+                  11  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  16  voluntary context switches
+                4709  involuntary context switches
+            32089945  instructions retired
+            16934012  cycles elapsed
+             1622352  peak memory footprint

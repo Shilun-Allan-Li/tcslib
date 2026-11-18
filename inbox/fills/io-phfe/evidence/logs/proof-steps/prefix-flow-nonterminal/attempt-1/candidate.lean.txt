@@ -1,0 +1,279 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
+import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
+import Mathlib.Data.Fin.Tuple.Basic
+import Mathlib.Data.Fintype.BigOperators
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Weighted prefix conservation
+
+These algebraic statements describe finite prefix tuples and their weighted suffix
+completions. The index types and endpoint maps are explicit in the statements; no
+graph, branching-program datatype or new algorithm is introduced. They support the
+path-sum specialization of [AGW20, Appendix A, (28)–(32), pp.37–38].
+
+## Main definitions
+
+The statements use finite sigma and tuple types directly, without new definitions.
+
+## Main results
+
+* `prefixIncoming_sum`: each non-root prefix is the child of one prefix edge.
+* `prefixOutgoing_sum`: outgoing edges are indexed by a final label.
+* `prefixFlow_balance`: weighted outgoing suffix values and terminal coefficients
+  sum to the current suffix value.
+
+## References
+
+* [AGW20] M. Abdalla, J. Gong, H. Wee, *Functional Encryption for Attribute-Weighted
+  Sums from k-Lin*, 2020, Appendix A, (28)–(32), pp.37–38.
+-/
+
+namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
+namespace PartialGarbling.PrefixAlgebra
+
+open scoped BigOperators
+
+/-- Every nonempty prefix has exactly one incoming prefix edge, and the empty
+prefix has none. Summing values at the child endpoints therefore gives the node
+value off the root and zero at the root. This is finite-prefix indexing glue for
+the path-sum specialization of [AGW20, Appendix A, (28)–(32), pp.37–38].
+
+**Proof sketch.** The child map is the published dependent sigma map induced by
+Fin.succ and identity tuple maps, hence is injective. At depth zero its image is
+excluded by Fin.succ_ne_zero. At positive depth use the corresponding predecessor
+edge and the published supported-sum formula. -/
+theorem prefixIncoming_sum {I R : Type*} [Fintype I] [DecidableEq I]
+    [AddCommMonoid R] (d : ℕ)
+    (value : (Σ k : Fin (d + 1), Fin k.val → I) → R)
+    (u : Σ k : Fin (d + 1), Fin k.val → I) :
+    (∑ e : (Σ k : Fin d, Fin (k.val + 1) → I),
+      if (⟨e.1.succ, e.2⟩ : Σ k : Fin (d + 1), Fin k.val → I) = u then
+        value ⟨e.1.succ, e.2⟩ else 0) =
+      if u = (⟨⟨0, Nat.zero_lt_succ d⟩, Fin.elim0⟩ :
+          Σ k : Fin (d + 1), Fin k.val → I) then 0 else value u := by
+  let child : (Σ k : Fin d, Fin (k.val + 1) → I) →
+      (Σ k : Fin (d + 1), Fin k.val → I) :=
+    Sigma.map Fin.succ (fun _ tau => tau)
+  let emptyPrefix : (Σ k : Fin (d + 1), Fin k.val → I) :=
+    ⟨⟨0, Nat.zero_lt_succ d⟩, Fin.elim0⟩
+  -- Reuse injectivity of dependent sigma maps and the successor-depth exclusion.
+  have hchild : Function.Injective child :=
+    (Fin.succ_injective d).sigma_map (fun _ => Function.injective_id)
+  have hroot : ∀ e, child e ≠ emptyPrefix :=
+    fun e h => Fin.succ_ne_zero e.1
+      (show e.1.succ = 0 from congrArg Sigma.fst h)
+  change (∑ e, if child e = u then value (child e) else 0) =
+    if u = emptyPrefix then 0 else value u
+  rcases u with ⟨k, tau⟩
+  cases k using Fin.cases with
+  | zero =>
+    have htuple : tau = Fin.elim0 :=
+      @Subsingleton.elim (Fin 0 → I) inferInstance tau Fin.elim0
+    subst tau
+    change (∑ e, if child e = emptyPrefix then value (child e) else 0) =
+      if emptyPrefix = emptyPrefix then 0 else value emptyPrefix
+    simp only [hroot, eq_self, if_true, if_false, Finset.sum_const_zero]
+  | succ k =>
+    -- The predecessor depth and the same tuple supply the unique incoming edge.
+    let e0 : (Σ k : Fin d, Fin (k.val + 1) → I) := ⟨k, tau⟩
+    change (∑ e, if child e = child e0 then value (child e) else 0) =
+      if child e0 = emptyPrefix then 0 else value (child e0)
+    simp only [hchild.eq_iff, Fintype.sum_ite_eq', hroot, if_false]
+
+/-- A prefix's outgoing edges are indexed by their last labels when its depth
+is below d, and no edges leave a depth-d prefix. This is finite-prefix indexing
+glue for [AGW20, Appendix A, (28)–(32), pp.37–38].
+
+**Proof sketch.** Split the depth sum and select the current prefix depth. At a
+nonterminal depth, use the published snoc equivalence to separate the last label
+and initial tuple, then collapse the supported initial-tuple sum. At terminal
+depth no cast-successor depth can match. -/
+theorem prefixOutgoing_sum {I R : Type*} [Fintype I] [DecidableEq I]
+    [AddCommMonoid R] (d : ℕ)
+    (flow : (Σ k : Fin d, Fin (k.val + 1) → I) → R)
+    (u : Σ k : Fin (d + 1), Fin k.val → I) :
+    (∑ e : (Σ k : Fin d, Fin (k.val + 1) → I),
+      if (⟨e.1.castSucc, Fin.init e.2⟩ :
+          Σ k : Fin (d + 1), Fin k.val → I) = u then flow e else 0) =
+      if h : u.1.val < d then
+        ∑ a : I, flow ⟨⟨u.1.val, h⟩, Fin.snoc (α := fun _ => I) u.2 a⟩
+      else 0 := by
+  let edgeEquiv : ((Σ k : Fin d, Fin k.val → I) × I) ≃
+      (Σ k : Fin d, Fin (k.val + 1) → I) :=
+    (Equiv.sigmaProdDistrib (fun k : Fin d => Fin k.val → I) I).trans
+      (Equiv.sigmaCongrRight (fun k : Fin d =>
+        (Equiv.prodComm (Fin k.val → I) I).trans
+          (Fin.snocEquiv (fun _ : Fin (k.val + 1) => I))))
+  let prefixEmbed : (Σ k : Fin d, Fin k.val → I) →
+      (Σ k : Fin (d + 1), Fin k.val → I) :=
+    Sigma.map Fin.castSucc (fun _ tau => tau)
+  have hinj : Function.Injective prefixEmbed :=
+    (Fin.castSucc_injective d).sigma_map (fun _ => Function.injective_id)
+  -- Reindex all edges by their initial tuple and final label.
+  rw [← edgeEquiv.sum_comp (fun e =>
+    if (⟨e.1.castSucc, Fin.init e.2⟩ :
+        Σ k : Fin (d + 1), Fin k.val → I) = u then flow e else 0),
+    Fintype.sum_prod_type_right]
+  change (∑ a : I, ∑ q : (Σ k : Fin d, Fin k.val → I),
+    if (⟨q.1.castSucc, Fin.init (Fin.snoc (α := fun _ => I) q.2 a)⟩ :
+        Σ k : Fin (d + 1), Fin k.val → I) = u then
+      flow ⟨q.1, Fin.snoc (α := fun _ => I) q.2 a⟩ else 0) = _
+  simp only [Fin.init_snoc]
+  change (∑ a : I, ∑ q : (Σ k : Fin d, Fin k.val → I),
+    if prefixEmbed q = u then
+      flow ⟨q.1, Fin.snoc (α := fun _ => I) q.2 a⟩ else 0) = _
+  rcases u with ⟨k, tau⟩
+  cases k using Fin.lastCases with
+  | last =>
+    -- A castSucc depth cannot be the terminal depth.
+    have hmax : ∀ q, prefixEmbed q ≠
+        (⟨Fin.last d, tau⟩ : Σ k : Fin (d + 1), Fin k.val → I) :=
+      fun q h => Fin.castSucc_ne_last q.1
+        (show q.1.castSucc = Fin.last d from congrArg Sigma.fst h)
+    rw [dif_neg (show ¬ (Fin.last d).val < d from Nat.lt_irrefl d)]
+    simp only [hmax, if_false, Finset.sum_const_zero]
+  | cast k =>
+    -- At the queried prefix, injectivity collapses the inner supported sum.
+    let q0 : (Σ k : Fin d, Fin k.val → I) := ⟨k, tau⟩
+    rw [dif_pos (show
+      (⟨k.castSucc, tau⟩ : Σ k : Fin (d + 1), Fin k.val → I).1.val < d from k.isLt)]
+    change (∑ a : I, ∑ q : (Σ k : Fin d, Fin k.val → I),
+      if prefixEmbed q = prefixEmbed q0 then
+        flow ⟨q.1, Fin.snoc (α := fun _ => I) q.2 a⟩ else 0) =
+      ∑ a : I, flow ⟨q0.1, Fin.snoc (α := fun _ => I) q0.2 a⟩
+    simp only [hinj.eq_iff, Fintype.sum_ite_eq']
+
+/-- Weighted suffix sums satisfy conservation at every prefix: weighted values
+of its children, plus its terminal coefficient when its depth is maximal, equal
+its own suffix value. This is the path-sum version of the translation calculation
+in [AGW20, Appendix A, (28)–(32), pp.37–38], abstracted to a commutative semiring.
+
+**Proof sketch.** For a nonterminal prefix, split each nonempty suffix into its
+first label and remaining tuple using the published tuple equivalence, and split
+the label product with Fin.prod_univ_succ. Reassociate prefix extension using
+Fin.append_right_cons and its canonical casts. At maximal depth the only suffix
+is empty and the only matching terminal coefficient is its own full tuple. -/
+theorem prefixFlow_balance {I R : Type*} [Fintype I] [DecidableEq I]
+    [CommSemiring R] (d : ℕ) (c : (Fin d → I) → R) (weight : I → R)
+    (u : Σ k : Fin (d + 1), Fin k.val → I) :
+    let value : (Σ k : Fin (d + 1), Fin k.val → I) → R :=
+      fun v => ∑ sigma : Fin (d - v.1.val) → I,
+        c (fun i => Fin.append v.2 sigma
+          (Fin.cast (Nat.add_sub_of_le (Nat.le_of_lt_succ v.1.isLt)).symm i)) *
+            ∏ i : Fin (d - v.1.val), weight (sigma i)
+    (∑ e : (Σ k : Fin d, Fin (k.val + 1) → I),
+      if (⟨e.1.castSucc, Fin.init e.2⟩ :
+          Σ k : Fin (d + 1), Fin k.val → I) = u then
+        value ⟨e.1.succ, e.2⟩ * weight (e.2 (Fin.last e.1.val)) else 0) +
+      (∑ tau : Fin d → I,
+        if u = (⟨Fin.last d, tau⟩ : Σ k : Fin (d + 1), Fin k.val → I) then
+          c tau else 0) = value u := by
+  let value : (Σ k : Fin (d + 1), Fin k.val → I) → R :=
+    fun v => ∑ sigma : Fin (d - v.1.val) → I,
+      c (fun i => Fin.append v.2 sigma
+        (Fin.cast (Nat.add_sub_of_le (Nat.le_of_lt_succ v.1.isLt)).symm i)) *
+          ∏ i : Fin (d - v.1.val), weight (sigma i)
+  change
+    (∑ e : (Σ k : Fin d, Fin (k.val + 1) → I),
+      if (⟨e.1.castSucc, Fin.init e.2⟩ :
+          Σ k : Fin (d + 1), Fin k.val → I) = u then
+        value ⟨e.1.succ, e.2⟩ * weight (e.2 (Fin.last e.1.val)) else 0) +
+      (∑ sigma : Fin d → I,
+        if u = (⟨Fin.last d, sigma⟩ : Σ k : Fin (d + 1), Fin k.val → I) then
+          c sigma else 0) = value u
+  rcases u with ⟨k, tau⟩
+  cases k using Fin.lastCases with
+  | last =>
+    -- No parent edge has terminal depth; the terminal tuple is unique.
+    have hparent : ∀ e : (Σ k : Fin d, Fin (k.val + 1) → I),
+        (⟨e.1.castSucc, Fin.init e.2⟩ :
+          Σ k : Fin (d + 1), Fin k.val → I) ≠ ⟨Fin.last d, tau⟩ :=
+      fun e h => Fin.castSucc_ne_last e.1 (congrArg Sigma.fst h)
+    have hleaf : Function.Injective
+        (fun sigma : Fin d → I =>
+          (⟨Fin.last d, sigma⟩ : Σ k : Fin (d + 1), Fin k.val → I)) :=
+      @sigma_mk_injective (Fin (d + 1)) (fun k => Fin k.val → I) (Fin.last d)
+    simp only [hparent, if_false, Finset.sum_const_zero, zero_add,
+      hleaf.eq_iff, Fintype.sum_ite_eq]
+    -- Remove the empty suffix before transporting its dependent index type.
+    simp only [value, Fin.val_last]
+    simp only [Fin.append_right_nil _ _ (Nat.sub_self d), Function.comp_apply,
+      Fin.cast_cast, Fin.cast_refl, id_eq]
+    rw [Nat.sub_self]
+    simp only [Fin.prod_univ_zero, mul_one]
+    exact (Fintype.sum_subsingleton (fun _ : Fin 0 → I => c tau) Fin.elim0).symm
+  | cast k =>
+    have hterminal : ∀ sigma : Fin d → I,
+        (⟨k.castSucc, tau⟩ : Σ j : Fin (d + 1), Fin j.val → I) ≠
+          ⟨Fin.last d, sigma⟩ :=
+      fun sigma h => Fin.castSucc_ne_last k (congrArg Sigma.fst h)
+    simp only [hterminal, if_false, Finset.sum_const_zero, add_zero]
+    rw [prefixOutgoing_sum d,
+      dif_pos (show (⟨k.castSucc, tau⟩ :
+        Σ j : Fin (d + 1), Fin j.val → I).1.val < d from k.isLt)]
+    simp only [Fin.snoc_last]
+    change (∑ a : I,
+      value ⟨k.succ, Fin.snoc (α := fun _ => I) tau a⟩ * weight a) =
+        value ⟨k.castSucc, tau⟩
+    -- Keep both suffix index types fixed and relate them by an equivalence.
+    let r : ℕ := d - (k.val + 1)
+    have hlen : r + 1 = d - k.val :=
+      (congrArg Nat.succ (Nat.sub_succ d k.val)).trans
+        (Nat.succ_pred_eq_of_pos (Nat.sub_pos_of_lt k.isLt))
+    have hParent : d = k.val + (d - k.val) :=
+      (Nat.add_sub_of_le (Nat.le_of_lt k.isLt)).symm
+    have hChild : d = (k.val + 1) + r :=
+      (Nat.add_sub_of_le (Nat.succ_le_of_lt k.isLt)).symm
+    let suffixEquiv : (I × (Fin r → I)) ≃ (Fin (d - k.val) → I) :=
+      (Fin.consEquiv (fun _ : Fin (r + 1) => I)).trans
+        (Equiv.arrowCongr (finCongr hlen) (Equiv.refl I))
+    change (∑ a : I,
+      (∑ sigma : Fin r → I,
+        c (fun i => Fin.append (Fin.snoc (α := fun _ => I) tau a) sigma
+          (Fin.cast hChild i)) * ∏ i : Fin r, weight (sigma i)) * weight a) =
+      ∑ sigma : Fin (d - k.val) → I,
+        c (fun i => Fin.append tau sigma (Fin.cast hParent i)) *
+          ∏ i : Fin (d - k.val), weight (sigma i)
+    rw [← suffixEquiv.sum_comp (fun sigma : Fin (d - k.val) → I =>
+      c (fun i => Fin.append tau sigma (Fin.cast hParent i)) *
+        ∏ i : Fin (d - k.val), weight (sigma i)), Fintype.sum_prod_type]
+    apply Finset.sum_congr rfl
+    intro a _
+    rw [Finset.sum_mul]
+    apply Finset.sum_congr rfl
+    intro sigma _
+    -- Reuse product reindexing and the first-coordinate product recurrence.
+    have hProduct := (finCongr hlen.symm).prod_comp
+      (fun i : Fin (r + 1) => weight (Fin.cons a sigma i))
+    change (∏ i : Fin (d - k.val), weight (suffixEquiv (a, sigma) i)) =
+      ∏ i : Fin (r + 1), weight (Fin.cons a sigma i) at hProduct
+    rw [Fin.prod_univ_succ] at hProduct
+    simp only [Fin.cons_zero, Fin.cons_succ] at hProduct
+    -- The two complete tuples agree by the published append and cast identities.
+    have hExtend :
+        (fun i : Fin d => Fin.append tau (suffixEquiv (a, sigma))
+          (Fin.cast hParent i)) =
+        (fun i : Fin d => Fin.append (Fin.snoc (α := fun _ => I) tau a) sigma
+          (Fin.cast hChild i)) := ?_
+    swap
+    · funext i
+      change Fin.append tau ((Fin.cons a sigma) ∘ Fin.cast hlen.symm)
+        (Fin.cast hParent i) =
+        Fin.append (Fin.snoc (α := fun _ => I) tau a) sigma (Fin.cast hChild i)
+      rw [Fin.append_cast_right tau (Fin.cons a sigma) (d - k.val) hlen.symm,
+        Fin.append_right_cons tau a sigma]
+      simp only [Function.comp_apply, Fin.cast_cast]
+    rw [hExtend, hProduct]
+    exact (mul_right_comm _ _ _).trans (mul_assoc _ _ _)
+
+end PartialGarbling.PrefixAlgebra
+end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption

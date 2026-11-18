@@ -65,14 +65,58 @@ theorem groupMatrixEnc_eq (M : Matrix (Fin rows) (Fin cols) B.G) :
 **Proof sketch.** Apply `List.length_flatten` and `List.length_ofFn` to both concatenations;
 every point block has length `wG`. -/
 theorem length_groupMatrixEnc (M : Matrix (Fin rows) (Fin cols) B.G) :
-    (B.groupMatrixEnc M).length = rows * cols * wG := sorry
+    (B.groupMatrixEnc M).length = rows * cols * wG := by
+  have hrow (i : Fin rows) :
+      (List.ofFn (fun j : Fin cols => List.ofFn (B.encG (M i j)))).flatten.length =
+        cols * wG := by
+    rw [List.length_flatten, List.map_ofFn]
+    change (List.ofFn (fun j : Fin cols => (List.ofFn (B.encG (M i j))).length)).sum = _
+    simp only [List.length_ofFn, List.ofFn_const, List.sum_replicate_nat]
+  rw [groupMatrixEnc_eq, List.length_flatten, List.map_ofFn]
+  change (List.ofFn (fun i : Fin rows =>
+    (List.ofFn (fun j : Fin cols => List.ofFn (B.encG (M i j)))).flatten.length)).sum = _
+  simp only [hrow, List.ofFn_const, List.sum_replicate_nat, Nat.mul_assoc]
 
 /-- Group-matrix serialization is injective, including empty dimensions. Serialization glue.
 
 **Proof sketch.** Split equal concatenations into fixed-width rows and then point blocks,
 using their known lengths. Apply `List.ofFn_injective` and `B.encG_injective` entrywise. -/
 theorem groupMatrixEnc_injective :
-    Function.Injective (B.groupMatrixEnc (rows := rows) (cols := cols)) := sorry
+    Function.Injective (B.groupMatrixEnc (rows := rows) (cols := cols)) := by
+  intro M N h
+  have hRows :
+      List.ofFn (fun i => (List.ofFn fun j => List.ofFn (B.encG (M i j))).flatten) =
+        List.ofFn (fun i => (List.ofFn fun j => List.ofFn (B.encG (N i j))).flatten) := ?_
+  swap
+  · apply List.eq_iff_flatten_eq.mpr
+    refine ⟨?_, ?_⟩
+    · simpa only [groupMatrixEnc_eq] using h
+    · rw [List.map_ofFn, List.map_ofFn]
+      apply congrArg List.ofFn
+      funext i
+      change (List.ofFn (fun j => List.ofFn (B.encG (M i j)))).flatten.length =
+        (List.ofFn (fun j => List.ofFn (B.encG (N i j)))).flatten.length
+      rw [List.length_flatten, List.length_flatten, List.map_ofFn, List.map_ofFn]
+      apply congrArg List.sum
+      apply congrArg List.ofFn
+      funext j
+      change (List.ofFn (B.encG (M i j))).length = (List.ofFn (B.encG (N i j))).length
+      rw [List.length_ofFn, List.length_ofFn]
+  have hRow := List.ofFn_injective hRows
+  funext i j
+  have hBlocks :
+      List.ofFn (fun k => List.ofFn (B.encG (M i k))) =
+        List.ofFn (fun k => List.ofFn (B.encG (N i k))) := ?_
+  swap
+  · apply List.eq_iff_flatten_eq.mpr
+    refine ⟨congrFun hRow i, ?_⟩
+    rw [List.map_ofFn, List.map_ofFn]
+    apply congrArg List.ofFn
+    funext k
+    change (List.ofFn (B.encG (M i k))).length = (List.ofFn (B.encG (N i k))).length
+    rw [List.length_ofFn, List.length_ofFn]
+  exact B.encG_injective
+    (List.ofFn_injective (congrFun (List.ofFn_injective hBlocks) j))
 
 end BilinearGroup
 
@@ -107,10 +151,21 @@ theorem mddhEnc_eq (d ℓ : PolyExpr) (κ : ℕ) (c : G.MDDHChallenge d ℓ κ) 
 /-- Matrix-challenge encoding is injective on reachable public challenges. Serialization glue.
 
 **Proof sketch.** Use `pairEncode_injective` to separate public parameters and matrix words.
-Read the shared public encoding and apply `encG_injective` to its generator; description
-reachability witnesses are propositions. Then use `groupMatrixEnc_injective` twice. -/
+Apply shared public-parameter encoding injectivity to align the dependent group types.
+Then apply `groupMatrixEnc_injective` to both matrix words. -/
 theorem mddhEnc_injective (d ℓ : PolyExpr) (κ : ℕ) :
-    Function.Injective (G.mddhEnc d ℓ κ) := sorry
+    Function.Injective (G.mddhEnc d ℓ κ) := by
+  intro c₁ c₂ h
+  rcases c₁ with ⟨pp₁, M₁, R₁⟩
+  rcases c₂ with ⟨pp₂, M₂, R₂⟩
+  simp only [mddhEnc_eq] at h
+  rcases Prod.mk.inj (pairEncode_injective h) with ⟨hpp, hmat⟩
+  have hPP : pp₁ = pp₂ := PublicParams.encode_injective hpp
+  cases hPP
+  rcases Prod.mk.inj (pairEncode_injective hmat) with ⟨hM, hR⟩
+  cases (G.group κ pp₁.description.val).groupMatrixEnc_injective hM
+  cases (G.group κ pp₁.description.val).groupMatrixEnc_injective hR
+  rfl
 
 /-- The matrix-challenge word has a fixed polynomial length. Serialization glue.
 
@@ -119,7 +174,12 @@ theorem mddhEnc_injective (d ℓ : PolyExpr) (κ : ℕ) :
 theorem length_mddhEnc (d ℓ : PolyExpr) (κ : ℕ) (c : G.MDDHChallenge d ℓ κ) :
     (G.mddhEnc d ℓ κ c).length =
       4 * G.descLen.eval κ + (2 + 4 * ℓ.eval κ + ℓ.eval κ * d.eval κ) * G.wG.eval κ + 8 :=
-  sorry
+  by
+    obtain ⟨r, hr⟩ := c.pp.description.property
+    simp only [mddhEnc_eq, PublicParams.encode_eq, length_pairEncode,
+      BilinearGroup.length_groupMatrixEnc, List.length_ofFn]
+    rw [← hr, G.length_desc]
+    ring
 
 /-- Sample a uniform two-column matrix `M`, an independent coefficient matrix `S`, and a
 uniform response matrix `U`, after generating the public group parameters. Return `[M]`

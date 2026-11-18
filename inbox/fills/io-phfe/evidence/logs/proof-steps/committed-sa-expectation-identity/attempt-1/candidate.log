@@ -1,0 +1,177 @@
+file=TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean
+source_sha256=ae384fd5b8ced8be82add5ae895ab30b547fd58309f348ef4e2c2ff9dbd32e0f
+working_source_development_check=True
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:649:18: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  ProbComp.expect ?c fun a => (ProbComp.sample ?T).expect (?h a)
+in the target expression
+  ((S.pubGen kappa).expect fun a =>
+      (Sim.setup kappa a).expect fun a_1 =>
+        (ProbComp.sample (Fin ((A.toSA q).coins.eval kappa) → Bool)).expect fun a_2 =>
+          ProbComp.expect
+            (Prod.fst <$>
+              simulate (S.idealSAImpl Sim kappa a) ((A.toSA q).run kappa a a_1.1 (List.ofFn a_2)) (a_1.2, none))
+            test) =
+    (ProbComp.sample Tape).expect result
+
+case refine_2.refine_2.refine_1.false
+C : FnClass
+S : Raw C
+Sim : SASimulator.Raw S
+A : TwoStage
+q : PolyExpr
+kappa : ℕ
+test : Bool → ℝ
+Tape : Type := Fin ((A.toSA q).coins.eval kappa) → Bool
+hlen : A.first.coinLen kappa + A.second.coinLen kappa = (A.toSA q).coins.eval kappa
+e : A.first.Coins kappa × A.second.Coins kappa ≃ Tape :=
+  (Fin.appendEquiv (A.first.coinLen kappa) (A.second.coinLen kappa)).trans
+    ((finCongr hlen).arrowCongr (Equiv.refl Bool))
+hword : ∀ (r1 : A.first.Coins kappa) (r2 : A.second.Coins kappa), List.ofFn (e (r1, r2)) = List.ofFn r1 ++ List.ofFn r2
+result : Tape → ℝ :=
+  fun r =>
+    (S.pubGen kappa).expect fun pp =>
+      if false = true then
+        (S.setup kappa pp).expect fun k =>
+          (Prod.fst <$>
+                simulate (S.realSAImpl kappa pp k.1 k.2) ((A.toSA q).run kappa pp k.1 (List.ofFn r)) none).expect
+            test
+      else
+        (Sim.setup kappa pp).expect fun k =>
+          (Prod.fst <$>
+                simulate (S.idealSAImpl Sim kappa pp) ((A.toSA q).run kappa pp k.1 (List.ofFn r)) (k.2, none)).expect
+            test
+⊢ ((S.pubGen kappa).expect fun a =>
+      (Sim.setup kappa a).expect fun a_1 =>
+        (ProbComp.sample (Fin ((A.toSA q).coins.eval kappa) → Bool)).expect fun a_2 =>
+          ProbComp.expect
+            (Prod.fst <$>
+              simulate (S.idealSAImpl Sim kappa a) ((A.toSA q).run kappa a a_1.1 (List.ofFn a_2)) (a_1.2, none))
+            test) =
+    (ProbComp.sample Tape).expect result
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:649:18: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  ProbComp.expect ?c fun a => (ProbComp.sample ?T).expect (?h a)
+in the target expression
+  ((S.pubGen kappa).expect fun a =>
+      (S.setup kappa a).expect fun a_1 =>
+        (ProbComp.sample (Fin ((A.toSA q).coins.eval kappa) → Bool)).expect fun a_2 =>
+          ProbComp.expect
+            (Prod.fst <$>
+              simulate (S.realSAImpl kappa a a_1.1 a_1.2) ((A.toSA q).run kappa a a_1.1 (List.ofFn a_2)) none)
+            test) =
+    (ProbComp.sample Tape).expect result
+
+case refine_2.refine_2.refine_1.true
+C : FnClass
+S : Raw C
+Sim : SASimulator.Raw S
+A : TwoStage
+q : PolyExpr
+kappa : ℕ
+test : Bool → ℝ
+Tape : Type := Fin ((A.toSA q).coins.eval kappa) → Bool
+hlen : A.first.coinLen kappa + A.second.coinLen kappa = (A.toSA q).coins.eval kappa
+e : A.first.Coins kappa × A.second.Coins kappa ≃ Tape :=
+  (Fin.appendEquiv (A.first.coinLen kappa) (A.second.coinLen kappa)).trans
+    ((finCongr hlen).arrowCongr (Equiv.refl Bool))
+hword : ∀ (r1 : A.first.Coins kappa) (r2 : A.second.Coins kappa), List.ofFn (e (r1, r2)) = List.ofFn r1 ++ List.ofFn r2
+result : Tape → ℝ :=
+  fun r =>
+    (S.pubGen kappa).expect fun pp =>
+      if true = true then
+        (S.setup kappa pp).expect fun k =>
+          (Prod.fst <$>
+                simulate (S.realSAImpl kappa pp k.1 k.2) ((A.toSA q).run kappa pp k.1 (List.ofFn r)) none).expect
+            test
+      else
+        (Sim.setup kappa pp).expect fun k =>
+          (Prod.fst <$>
+                simulate (S.idealSAImpl Sim kappa pp) ((A.toSA q).run kappa pp k.1 (List.ofFn r)) (k.2, none)).expect
+            test
+⊢ ((S.pubGen kappa).expect fun a =>
+      (S.setup kappa a).expect fun a_1 =>
+        (ProbComp.sample (Fin ((A.toSA q).coins.eval kappa) → Bool)).expect fun a_2 =>
+          ProbComp.expect
+            (Prod.fst <$>
+              simulate (S.realSAImpl kappa a a_1.1 a_1.2) ((A.toSA q).run kappa a a_1.1 (List.ofFn a_2)) none)
+            test) =
+    (ProbComp.sample Tape).expect result
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:676:12: error: unsolved goals
+case refine_2.refine_2.refine_2.refine_2.refine_1.refine_2.false
+C : FnClass
+S : Raw C
+Sim : SASimulator.Raw S
+A : TwoStage
+q : PolyExpr
+kappa : ℕ
+test : Bool → ℝ
+Tape : Type := Fin ((A.toSA q).coins.eval kappa) → Bool
+hlen : A.first.coinLen kappa + A.second.coinLen kappa = (A.toSA q).coins.eval kappa
+e : A.first.Coins kappa × A.second.Coins kappa ≃ Tape :=
+  (Fin.appendEquiv (A.first.coinLen kappa) (A.second.coinLen kappa)).trans
+    ((finCongr hlen).arrowCongr (Equiv.refl Bool))
+hword : ∀ (r1 : A.first.Coins kappa) (r2 : A.second.Coins kappa), List.ofFn (e (r1, r2)) = List.ofFn r1 ++ List.ofFn r2
+r1 : A.first.Coins kappa
+r2 : A.second.Coins kappa
+a : Commitment C q kappa := Commitment.decode C q kappa (A.first.runAt kappa [] r1)
+hb : (A.firstCoins kappa (List.ofFn r1 ++ List.ofFn r2), A.secondCoins kappa (List.ofFn r1 ++ List.ofFn r2)) = (r1, r2)
+hb1 : A.firstCoins kappa (List.ofFn r1 ++ List.ofFn r2) = r1
+hb2 : A.secondCoins kappa (List.ofFn r1 ++ List.ofFn r2) = r2
+hc : A.saCommitment C q kappa (List.ofFn r1 ++ List.ofFn r2) = a
+result : Tape → ℝ :=
+  fun r =>
+    (S.pubGen kappa).expect fun pp =>
+      if false = true then
+        (S.setup kappa pp).expect fun k =>
+          (Prod.fst <$>
+                simulate (S.realSAImpl kappa pp k.1 k.2) ((A.toSA q).run kappa pp k.1 (List.ofFn r)) none).expect
+            test
+      else
+        (Sim.setup kappa pp).expect fun k =>
+          (Prod.fst <$>
+                simulate (S.idealSAImpl Sim kappa pp) ((A.toSA q).run kappa pp k.1 (List.ofFn r)) (k.2, none)).expect
+            test
+hsa : (S.saGame Sim (A.toSA q) false kappa).expect test = (ProbComp.sample Tape).expect result
+hsplit :
+  (ProbComp.sample Tape).expect result =
+    (ProbComp.sample (A.first.Coins kappa)).expect fun r1 =>
+      (ProbComp.sample (A.second.Coins kappa)).expect fun r2 => result (e (r1, r2))
+⊢ ((S.pubGen kappa).expect fun pp =>
+      (Sim.setup kappa pp).expect fun k =>
+        (Sim.enc kappa pp k.2 a.publicInput).expect fun a_1 =>
+          (List.mapM
+                (fun j st' =>
+                  Sim.key kappa pp st' a.publicInput (a.functions j)
+                    (C.eval kappa (S.cprm kappa pp) (a.functions j) a.publicInput a.privateInput))
+                (List.finRange (q.eval kappa)) a_1.2).expect
+            fun a_2 => test (A.second.distinguisherL kappa (S.viewWord a pp k.1 a_2.1 a_1.1) r2)) =
+    (S.pubGen kappa).expect fun a_1 =>
+      (Sim.setup kappa a_1).expect fun a_2 =>
+        (Sim.enc kappa a_1 a_2.2 a.publicInput).expect fun a_3 =>
+          (List.mapM
+                (fun j st =>
+                  Sim.key kappa a_1 st a.publicInput (a.functions j)
+                    (C.eval kappa (S.cprm kappa a_1) (a.functions j) a.publicInput a.privateInput))
+                (List.finRange (q.eval kappa)) a_3.2).expect
+            fun a_4 => test (A.second.distinguisherL kappa (S.viewWord a a_1 a_2.1 a_4.1 a_3.1) r2)
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:715:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage): no fresh .olean produced
+        3.37 real         2.64 user         1.15 sys
+          2359558144  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              176823  page reclaims
+                8827  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                 712  voluntary context switches
+               12612  involuntary context switches
+            32344439  instructions retired
+            15958225  cycles elapsed
+             1622352  peak memory footprint

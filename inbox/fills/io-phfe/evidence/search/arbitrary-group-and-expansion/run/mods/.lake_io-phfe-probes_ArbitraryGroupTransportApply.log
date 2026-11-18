@@ -1,0 +1,180 @@
+.lake/io-phfe-probes/ArbitraryGroupTransportApply.lean:11:2: error: apply? didn't find any relevant lemmas
+Try this:
+  [apply] refine List.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ List.map (groupVecMul v (matMulGroup W M)) = List.map (groupVecMul (Matrix.vecMul v W) M)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => List.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Array.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Array.map (groupVecMul v (matMulGroup W M)) = Array.map (groupVecMul (Matrix.vecMul v W) M)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => Array.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Vector.map_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {α_1} {f g} [NeZero n] => Vector.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Function.funext_iff_of_subsingleton ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ υ
+  -- ⊢ υ
+  -- ⊢ Subsingleton υ
+  -- ⊢ groupVecMul v (matMulGroup W M) ?_ = groupVecMul (Matrix.vecMul v W) M ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {f} [Subsingleton α] {g} x y => (Function.funext_iff_of_subsingleton x y).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Surjective.right_cancellable fun b => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {γ} {f} hf {g₁ g₂} => (Function.Surjective.right_cancellable hf).mp) (fun b => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Option.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Option.map (groupVecMul v (matMulGroup W M)) = Option.map (groupVecMul (Matrix.vecMul v W) M)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Option.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.graphOn_univ_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.graphOn (groupVecMul v (matMulGroup W M)) Set.univ = Set.graphOn (groupVecMul (Matrix.vecMul v W) M) Set.univ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Set.graphOn_univ_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Set.eqOn_univ (groupVecMul v (matMulGroup W M)) (groupVecMul (Matrix.vecMul v W) M)).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.EqOn (groupVecMul v (matMulGroup W M)) (groupVecMul (Matrix.vecMul v W) M) Set.univ
+Try this:
+  [apply] refine Eq.symm
+    ((fun {α} {β} f₁ f₂ => (Set.eqOn_univ f₁ f₂).mp) (groupVecMul (Matrix.vecMul v W) M)
+      (groupVecMul v (matMulGroup W M)) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Set.EqOn (groupVecMul (Matrix.vecMul v W) M) (groupVecMul v (matMulGroup W M)) Set.univ
+Try this:
+  [apply] refine (StrictAnti.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder υ
+  -- ⊢ Preorder B.G
+  -- ⊢ WellFoundedGT υ
+  -- ⊢ StrictAnti (groupVecMul v (matMulGroup W M))
+  -- ⊢ StrictAnti (groupVecMul (Matrix.vecMul v W) M)
+  -- ⊢ Set.range (groupVecMul v (matMulGroup W M)) = Set.range (groupVecMul (Matrix.vecMul v W) M)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedGT β] {f g} hf hg => (StrictAnti.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (StrictMono.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder υ
+  -- ⊢ Preorder B.G
+  -- ⊢ WellFoundedLT υ
+  -- ⊢ StrictMono (groupVecMul v (matMulGroup W M))
+  -- ⊢ StrictMono (groupVecMul (Matrix.vecMul v W) M)
+  -- ⊢ Set.range (groupVecMul v (matMulGroup W M)) = Set.range (groupVecMul (Matrix.vecMul v W) M)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedLT β] {f g} hf hg => (StrictMono.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_support.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Zero B.G
+  -- ⊢ Function.support (groupVecMul v (matMulGroup W M)) = Function.support (groupVecMul (Matrix.vecMul v W) M) ∧
+    ∀ x ∈ Function.support (groupVecMul v (matMulGroup W M)),
+      groupVecMul v (matMulGroup W M) x = groupVecMul (Matrix.vecMul v W) M x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [Zero M] {f g} => Function.ext_iff_support.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_mulSupport.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.mulSupport (groupVecMul v (matMulGroup W M)) = Function.mulSupport (groupVecMul (Matrix.vecMul v W) M) ∧
+    ∀ x ∈ Function.mulSupport (groupVecMul v (matMulGroup W M)),
+      groupVecMul v (matMulGroup W M) x = groupVecMul (Matrix.vecMul v W) M x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [One M] {f g} => Function.ext_iff_mulSupport.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Filter.eventuallyEq_top.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ groupVecMul v (matMulGroup W M) =ᶠ[⊤] groupVecMul (Matrix.vecMul v W) M
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Filter.eventuallyEq_top.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateCol_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {α} {ι} [Nonempty ι] {v w} => Matrix.replicateCol_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateRow_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {ι} [Nonempty ι] {v w} => Matrix.replicateRow_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine funext ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : υ), groupVecMul v (matMulGroup W M) x = groupVecMul (Matrix.vecMul v W) M x
+Try this:
+  [apply] refine Eq.symm (funext ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : υ), groupVecMul (Matrix.vecMul v W) M x = groupVecMul v (matMulGroup W M) x
+Try this:
+  [apply] refine funext_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : υ), groupVecMul v (matMulGroup W M) x = groupVecMul (Matrix.vecMul v W) M x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => funext_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/ArbitraryGroupTransportApply.lean:13:0: warning: declaration uses 'sorry'

@@ -1,0 +1,235 @@
+Try this:
+  [apply] refine Function.HasLeftInverse.injective ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.HasLeftInverse encode
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.LeftInverse.injective fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.surjective_comp_right_iff_injective.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.injective_iff_hasLeftInverse.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Nonempty (PublicParams G κ)
+  -- ⊢ Function.HasLeftInverse encode
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.injective_of_isPartialInv fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.Injective.of_comp_right (fun ⦃a₁⦄ => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.Bijective.injective ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Bijective encode
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.RightInverse.injective fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Injective.of_comp_iff (fun ⦃a₁⦄ => ?_) encode).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.injective_of_subsingleton encode)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.injective_comp_left_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Injective.of_comp_iff' encode ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.Injective.of_comp fun ⦃a₁⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.rangeFactorization_bijective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Bijective (Set.rangeFactorization encode)
+Try this:
+  [apply] refine Set.rangeFactorization_injective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective (Set.rangeFactorization encode)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine injective_of_lt_imp_ne fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine injective_of_le_imp_le encode fun {x} => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.map_injective_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective (List.map encode)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (EmbeddingLike.comp_injective encode ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (EquivLike.injective_comp ?_ encode).mp fun ⦃a₁⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (EquivLike.comp_injective encode ?_).mp fun ⦃a₁⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.comp_injective encode ?_).mp fun ⦃a₁⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.injective_comp ?_ encode).mp fun ⦃a₁⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine StrictAnti.injective fun ⦃a⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Antitone.strictAnti_iff_injective fun ⦃a⦄ => ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder (PublicParams G κ)
+  -- ⊢ ∀ ⦃a b : PublicParams G κ⦄, a ≤ b → b.encode ≤ a.encode
+  -- ⊢ StrictAnti encode
+  -- ⊢ ∀ ⦃b : PublicParams G κ⦄, _fvar.12633 ≤ b → b.encode ≤ encode _fvar.12633
+  -- ⊢ _fvar.12633 ≤ _fvar.12686 → encode _fvar.12686 ≤ encode _fvar.12633
+  -- ⊢ encode _fvar.12686 ≤ encode _fvar.12633
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine StrictMono.injective fun ⦃a⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Monotone.strictMono_iff_injective fun ⦃a⦄ => ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder (PublicParams G κ)
+  -- ⊢ ∀ ⦃a b : PublicParams G κ⦄, a ≤ b → a.encode ≤ b.encode
+  -- ⊢ StrictMono encode
+  -- ⊢ ∀ ⦃b : PublicParams G κ⦄, _fvar.13131 ≤ b → encode _fvar.13131 ≤ b.encode
+  -- ⊢ _fvar.13131 ≤ _fvar.13184 → encode _fvar.13131 ≤ encode _fvar.13184
+  -- ⊢ encode _fvar.13131 ≤ encode _fvar.13184
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine GaloisCoinsertion.l_injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine GaloisInsertion.u_injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.Injective.of_sigma_map ?_ κ
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective (Sigma.map (fun a => Bool) (@encode G))
+Try this:
+  [apply] refine Set.image_injective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective (Set.image encode)
+Try this:
+  [apply] refine Set.preimage_surjective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Surjective (Set.preimage encode)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Set.injective_codRestrict ?_).mp fun ⦃a₁⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.injective_iff_injOn_univ.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.InjOn encode Set.univ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Set.InjOn.injective_iff ?_ (fun ⦃x₁⦄ => ?_) ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.injOn_univ.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.InjOn encode Set.univ
+Try this:
+  [apply] refine Function.injective_iff_pairwise_ne.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Pairwise (Function.onFun (fun x1 x2 => x1 ≠ x2) encode)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine injective_of_increasing ?_ ?_ encode ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Fintype.nodup_map_univ_iff_injective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Fintype (PublicParams G κ)
+  -- ⊢ (Multiset.map encode Finset.univ.val).Nodup
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.Surjective.injective_of_fintype ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Finite.injective_iff_surjective_of_equiv ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Finite (PublicParams G κ)
+  -- ⊢ PublicParams G κ ≃ List Bool
+  -- ⊢ Function.Surjective encode
+Try this:
+  [apply] refine PLift.map_injective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective (PLift.map encode)
+Try this:
+  [apply] refine ULift.map_injective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective (ULift.map encode)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Set.injective_iff_injective_of_iUnion_eq_univ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Setoid.injective_iff_ker_bot encode).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Setoid.ker encode = ⊥
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Topology.IsEmbedding.injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsHomeomorph.injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Topology.IsInducing.injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsDenseEmbedding.injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsUniformEmbedding.injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsUniformInducing.injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine iSupIndep.injective (fun i => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AntilipschitzWith.injective fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Isometry.injective fun x1 => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LinearIndependent.injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/PublicParamsCodecApply.lean:7:0: warning: declaration uses 'sorry'

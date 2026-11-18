@@ -1,0 +1,88 @@
+file=TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean
+source_sha256=6fa8ea75128e2c9b6c66dce98484ebc1283f31d94872977d437f56b33250aabf
+working_source_development_check=True
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean:128:4: error: unsolved goals
+case pos.refine_1
+V : Type u_1
+E : Type u_2
+R : Type u_3
+inst✝² : Fintype V
+inst✝¹ : DecidableEq V
+inst✝ : Ring R
+l : ℕ
+parent child : E → V
+label : E → Fin (l + 1)
+x : Fin l → R
+e : E
+hlast : ∀ (i : Fin l), Fin.last l ≠ i.castSucc
+a : Fin (l + 1)
+⊢ ((if True then if True then 1 else 0 else 0) - if parent e = child e then 1 else 0) =
+    (if True then 1 else 0) - if parent e = child e then 1 else 0
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean:130:4: error: unsolved goals
+case pos.refine_2
+V : Type u_1
+E : Type u_2
+R : Type u_3
+inst✝² : Fintype V
+inst✝¹ : DecidableEq V
+inst✝ : Ring R
+l : ℕ
+parent child : E → V
+label : E → Fin (l + 1)
+x : Fin l → R
+e : E
+hlast : ∀ (i : Fin l), Fin.last l ≠ i.castSucc
+a : Fin (l + 1)
+i : Fin l
+⊢ (x i * if True then 1 else 0) + ((if True then 0 else 0) + -if parent e = child e then 1 else 0) =
+    (if True then x i else 0) + -if parent e = child e then 1 else 0
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean:125:15: warning: This simp argument is unused:
+  if_pos rfl
+
+Hint: Omit it from the simp argument list.
+  simp only [i̵f̵_̵p̵o̵s̵ ̵r̵f̵l̵,̵ ̵mul_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean:125:27: warning: This simp argument is unused:
+  mul_one
+
+Hint: Omit it from the simp argument list.
+  simp only [if_pos rfl,̵ ̵m̵u̵l̵_̵o̵n̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean:128:34: warning: This simp argument is unused:
+  if_pos rfl
+
+Hint: Omit it from the simp argument list.
+  simp only [hlast, if_false, i̵f̵_̵p̵o̵s̵ ̵r̵f̵l̵,̵ ̵Fin.snoc_last, Finset.sum_const_zero, zero_add]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean:131:63: warning: This simp argument is unused:
+  zero_add
+
+Hint: Omit it from the simp argument list.
+  simp only [Fin.castSucc_inj, Fin.castSucc_ne_last, if_false, Fin.snoc_castSucc,
+  ̲  ̲ ̲ ̲ ̲ ̲Fintype.sum_ite_eq, s̵u̵b̵_̵e̵q̵_̵a̵d̵d̵_̵n̵e̵g̵,̵ ̵z̵e̵r̵o̵_̵a̵d̵d̵]̵s̲u̲b̲_̲e̲q̲_̲a̲d̲d̲_̲n̲e̲g̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra): no fresh .olean produced
+        1.71 real         1.12 user         0.72 sys
+          1436352512  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              117645  page reclaims
+                  46  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  23  voluntary context switches
+                4506  involuntary context switches
+            32253017  instructions retired
+            13939563  cycles elapsed
+             1622352  peak memory footprint

@@ -1,0 +1,126 @@
+Try this:
+  [apply] refine Set.nonempty_iInter.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (⋂ i, fun x => ∏ j, Fin.snoc i 1 (x j) = ∏ i_1, i i_1 ^ e i_1).Nonempty
+Try this:
+  [apply] refine Subtype.existsOfSubtype ?_
+  -- Remaining subgoals:
+  -- ⊢ { x // ∀ (x_1 : Fin m → R), ∏ j, Fin.snoc x_1 1 (x j) = ∏ i, x_1 i ^ e i }
+Try this:
+  [apply] refine Subtype.exists_of_subtype ?_
+  -- Remaining subgoals:
+  -- ⊢ { x // ∀ (x_1 : Fin m → R), ∏ j, Fin.snoc x_1 1 (x j) = ∏ i, x_1 i ^ e i }
+Try this:
+  [apply] refine Exists.intro ?_ fun x => ?_
+  -- Remaining subgoals:
+  -- ⊢ Fin d → Fin (m + 1)
+  -- ⊢ ∀ (x : Fin m → R), ∏ j, Fin.snoc x 1 (?_ j) = ∏ i, x i ^ e i
+  -- ⊢ ∏ j, Fin.snoc _fvar.25842 1 (?_ j) = ∏ i, @_fvar.25842 i ^ e i
+Try this:
+  [apply] refine Exists.of_psigma_prop ?_
+  -- Remaining subgoals:
+  -- ⊢ (x : Fin d → Fin (m + 1)) ×' ∀ (x_1 : Fin m → R), ∏ j, Fin.snoc x_1 1 (x j) = ∏ i, x_1 i ^ e i
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Exists.imp (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists_congr fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists_congr fun a => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Exists.imp' ?_ (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Decidable.not_forall_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Decidable (∃ x, ∀ (x_1 : Fin m → R), ∏ j, Fin.snoc x_1 1 (x j) = ∏ i, x_1 i ^ e i)
+  -- ⊢ ¬∀ (x : Fin d → Fin (m + 1)), ¬∀ (x_1 : Fin m → R), ∏ j, Fin.snoc x_1 1 (x j) = ∏ i, x_1 i ^ e i
+Try this:
+  [apply] refine Classical.not_forall_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬∀ (x : Fin d → Fin (m + 1)), ¬∀ (x_1 : Fin m → R), ∏ j, Fin.snoc x_1 1 (x j) = ∏ i, x_1 i ^ e i
+Try this:
+  [apply] refine not_forall_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬∀ (x : Fin d → Fin (m + 1)), ¬∀ (x_1 : Fin m → R), ∏ j, Fin.snoc x_1 1 (x j) = ∏ i, x_1 i ^ e i
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine exists_of_exists_mem ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine existsUnique_iff_exists.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Subsingleton (Fin d → Fin (m + 1))
+  -- ⊢ ∃! x, ∀ (x_1 : Fin m → R), ∏ j, Fin.snoc x_1 1 (x j) = ∏ i, x_1 i ^ e i
+Try this:
+  [apply] refine ExistsUnique.exists ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃! x, ∀ (x_1 : Fin m → R), ∏ j, Fin.snoc x_1 1 (x j) = ∏ i, x_1 i ^ e i
+Try this:
+  [apply] refine nonempty_subtype.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Nonempty { a // ∀ (x : Fin m → R), ∏ j, Fin.snoc x 1 (a j) = ∏ i, x i ^ e i }
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Surjective.exists fun b => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine IsEmpty.exists_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ IsEmpty (Fin d → Fin (m + 1))
+  -- ⊢ False
+Try this:
+  [apply] refine Unique.exists_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Unique (Fin d → Fin (m + 1))
+  -- ⊢ ∀ (x : Fin m → R), ∏ j, Fin.snoc x 1 (default j) = ∏ i, x i ^ e i
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr_left ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr ?_ fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr ?_ fun a => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr' ?_ fun b => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr' ?_ fun b => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_subtype_congr ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_subtype_congr ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists_le_and_iff_exists ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists_ge_and_iff_exists ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/PaddedMonomialReuseApply.lean:9:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/PaddedMonomialReuseApply.lean:10:5: warning: unused variable `he`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

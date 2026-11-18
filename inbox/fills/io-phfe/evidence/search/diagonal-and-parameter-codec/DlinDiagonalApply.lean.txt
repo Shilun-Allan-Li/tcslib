@@ -1,0 +1,21 @@
+import TCSlib.Cryptography.Pairing.Exponents
+import TCSlib.Cryptography.Games.Probability
+import TCSlib.Cryptography.OneWayFunctions.Basic
+import Lean.Elab.Tactic.LibrarySearch
+set_option maxHeartbeats 200000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+namespace TCSlib.Cryptography.Pairing
+open TCSlib.Cryptography.Games
+example {K : Type} [Field K] [Fintype K]
+    (H : (Fin 2 → K) → (Fin 3 → K) → ℝ)
+    (hH0 : ∀ ab u, 0 ≤ H ab u) (hH1 : ∀ ab u, H ab u ≤ 1) :
+    |ProbComp.expect (ProbComp.sample (Fin 2 → K))
+        (fun ab => ProbComp.expect (ProbComp.sample (Fin 3 → K)) (H ab)) -
+      ProbComp.expect (ProbComp.sample (Fin 2 → K))
+        (fun ab => ProbComp.expect (ProbComp.sample (Fin 2 → K))
+          (fun rs => ProbComp.expect (ProbComp.sample K)
+            (fun t => H ab ![ab 0 * rs 0, ab 1 * rs 1, t])))| ≤
+      2 / (Fintype.card K : ℝ) - 1 / (Fintype.card K : ℝ) ^ 2 := by
+  apply?
+end TCSlib.Cryptography.Pairing

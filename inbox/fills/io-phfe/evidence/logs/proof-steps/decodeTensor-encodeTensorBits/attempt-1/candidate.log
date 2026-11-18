@@ -1,0 +1,72 @@
+file=TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean
+source_sha256=7279380ed4db282f2d2b316484baf7a6f8ffc5e0b75555a6c68cf99fd316aeed
+working_source_development_check=True
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:134:35: warning: unused variable `i`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:241:25: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  decodeResidues ?p ?count ?width ?word ?i
+in the target expression
+  (fun j tau =>
+        decodeResidues p (n * (l + 1) ^ d) width (encodeTensorBits width C) (finProdFinEquiv (j, (tupleCoord l d) tau)))
+      j tau =
+    C j tau
+
+case pos.h.h
+p : ℕ+
+l n d width : ℕ
+hwidth : ↑p ≤ 2 ^ width
+C : PolyTensor p l n d
+h✝ :
+  (List.ofFn (encodeTensorBits width C)).length = n * (l + 1) ^ d * width ∧
+    ∀ (i : Fin (n * (l + 1) ^ d)),
+      listToNat (List.take width (List.drop (↑i * width) (List.ofFn (encodeTensorBits width C)))) < ↑p
+hparse :
+  (fun i j =>
+      ↑(listToNat
+          (List.take width (List.drop (↑(finProdFinEquiv (i, j)) * width) (List.ofFn (encodeTensorBits width C)))))) =
+    fun j k => C j ((tupleCoord l d).symm k)
+j : Fin n
+tau : Fin d → Fin (l + 1)
+⊢ (fun j tau =>
+        decodeResidues p (n * (l + 1) ^ d) width (encodeTensorBits width C) (finProdFinEquiv (j, (tupleCoord l d) tau)))
+      j tau =
+    C j tau
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:233:65: error: unsolved goals
+case neg
+p : ℕ+
+l n d width : ℕ
+hwidth : ↑p ≤ 2 ^ width
+C : PolyTensor p l n d
+h✝ :
+  ¬((List.ofFn (encodeTensorBits width C)).length = n * (l + 1) ^ d * width ∧
+      ∀ (i : Fin (n * (l + 1) ^ d)),
+        listToNat (List.take width (List.drop (↑i * width) (List.ofFn (encodeTensorBits width C)))) < ↑p)
+hparse : Option.map (fun v i j => v (finProdFinEquiv (i, j))) none = some fun j k => C j ((tupleCoord l d).symm k)
+⊢ decodeTensor p l n d width (encodeTensorBits width C) = C
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:249:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:297:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:423:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:546:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:578:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes): no fresh .olean produced
+        2.71 real         2.22 user         1.00 sys
+          2325659648  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              183717  page reclaims
+                  19  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  19  voluntary context switches
+                7842  involuntary context switches
+            32111295  instructions retired
+            13646147  cycles elapsed
+             1638736  peak memory footprint

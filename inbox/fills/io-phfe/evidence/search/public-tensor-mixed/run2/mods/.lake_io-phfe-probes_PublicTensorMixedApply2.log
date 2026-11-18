@@ -1,0 +1,153 @@
+Try this:
+  [apply] refine Matrix.ext ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : Fin l × I) (j : J),
+    (Matrix.kroneckerMap (fun a b => a * b) 1 R * publicTensor x) i j = (publicTensor x * R) i j
+Try this:
+  [apply] refine Eq.symm (Matrix.ext ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : Fin l × I) (j : J),
+    (publicTensor x * R) i j = (Matrix.kroneckerMap (fun a b => a * b) 1 R * publicTensor x) i j
+Try this:
+  [apply] refine Matrix.ext_col_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (j : J), (Matrix.kroneckerMap (fun a b => a * b) 1 R * publicTensor x).col j = (publicTensor x * R).col j
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m n α} {A B} => Matrix.ext_col_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_row_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : Fin l × I), (Matrix.kroneckerMap (fun a b => a * b) 1 R * publicTensor x).row i = (publicTensor x * R).row i
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m n α} {A B} => Matrix.ext_row_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_col ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (j : J), (Matrix.kroneckerMap (fun a b => a * b) 1 R * publicTensor x).col j = (publicTensor x * R).col j
+Try this:
+  [apply] refine Eq.symm (Matrix.ext_col ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (j : J), (publicTensor x * R).col j = (Matrix.kroneckerMap (fun a b => a * b) 1 R * publicTensor x).col j
+Try this:
+  [apply] refine Matrix.ext_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : Fin l × I) (j : J),
+    (Matrix.kroneckerMap (fun a b => a * b) 1 R * publicTensor x) i j = (publicTensor x * R) i j
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m n α} {M N} => Matrix.ext_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.transpose_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Matrix.kroneckerMap (fun a b => a * b) 1 R * publicTensor x).transpose = (publicTensor x * R).transpose
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m n α} {A B} => Matrix.transpose_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_row ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : Fin l × I), (Matrix.kroneckerMap (fun a b => a * b) 1 R * publicTensor x).row i = (publicTensor x * R).row i
+Try this:
+  [apply] refine Eq.symm (Matrix.ext_row ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : Fin l × I), (publicTensor x * R).row i = (Matrix.kroneckerMap (fun a b => a * b) 1 R * publicTensor x).row i
+Try this:
+  [apply] refine Matrix.ext_of_single_vecMul ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : Fin l × I),
+    Matrix.vecMul (Pi.single i 1) (Matrix.kroneckerMap (fun a b => a * b) 1 R * publicTensor x) =
+      Matrix.vecMul (Pi.single i 1) (publicTensor x * R)
+Try this:
+  [apply] refine Eq.symm (Matrix.ext_of_single_vecMul ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : Fin l × I),
+    Matrix.vecMul (Pi.single i 1) (publicTensor x * R) =
+      Matrix.vecMul (Pi.single i 1) (Matrix.kroneckerMap (fun a b => a * b) 1 R * publicTensor x)
+Try this:
+  [apply] refine Matrix.ext_iff_mulVec.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (v : J → ZMod ↑p),
+    (Matrix.kroneckerMap (fun a b => a * b) 1 R * publicTensor x).mulVec v = (publicTensor x * R).mulVec v
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m n α} [NonAssocSemiring α] [Fintype n] {A B} => Matrix.ext_iff_mulVec.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_of_mulVec_single ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : J),
+    (Matrix.kroneckerMap (fun a b => a * b) 1 R * publicTensor x).mulVec (Pi.single i 1) =
+      (publicTensor x * R).mulVec (Pi.single i 1)
+Try this:
+  [apply] refine Eq.symm (Matrix.ext_of_mulVec_single ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : J),
+    (publicTensor x * R).mulVec (Pi.single i 1) =
+      (Matrix.kroneckerMap (fun a b => a * b) 1 R * publicTensor x).mulVec (Pi.single i 1)
+Try this:
+  [apply] refine Matrix.ext_iff_vecMul.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (v : Fin l × I → ZMod ↑p),
+    Matrix.vecMul v (Matrix.kroneckerMap (fun a b => a * b) 1 R * publicTensor x) = Matrix.vecMul v (publicTensor x * R)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m n α} [NonAssocSemiring α] [Fintype m] {A B} => Matrix.ext_iff_vecMul.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.conjTranspose_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ InvolutiveStar (ZMod ↑p)
+  -- ⊢ (Matrix.kroneckerMap (fun a b => a * b) 1 R * publicTensor x).conjTranspose = (publicTensor x * R).conjTranspose
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m n α} [InvolutiveStar α] {A B} => Matrix.conjTranspose_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_iff_trace_mul_left.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x_1 : Matrix J (Fin l × I) (ZMod ↑p)),
+    (x_1 * (Matrix.kroneckerMap (fun a b => a * b) 1 R * publicTensor x)).trace = (x_1 * (publicTensor x * R)).trace
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {m n R} [Fintype m] [Fintype n] [NonAssocSemiring R] {A B} => Matrix.ext_iff_trace_mul_left.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_iff_trace_mul_right.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x_1 : Matrix J (Fin l × I) (ZMod ↑p)),
+    (Matrix.kroneckerMap (fun a b => a * b) 1 R * publicTensor x * x_1).trace = (publicTensor x * R * x_1).trace
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {m n R} [Fintype m] [Fintype n] [NonAssocSemiring R] {A B} => Matrix.ext_iff_trace_mul_right.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Matrix.mul_right_inj_of_invertible ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {m n α} [Fintype n] [DecidableEq n] [CommRing α] A [Invertible A] {x y} =>
+        (Matrix.mul_right_inj_of_invertible A).mp)
+      ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Matrix.mul_left_inj_of_invertible ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {m n α} [Fintype n] [DecidableEq n] [CommRing α] A [Invertible A] {x y} =>
+        (Matrix.mul_left_inj_of_invertible A).mp)
+      ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/PublicTensorMixedApply2.lean:8:0: warning: declaration uses 'sorry'

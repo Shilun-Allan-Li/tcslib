@@ -1,0 +1,5 @@
+First15 term proofs passed. pair_expVec needed an explicit binary function
+(fun u v : B.G => B.pair u v) for congrArg2, rather than relying on nested
+MonoidHom function coercion inference. The failing candidate was reverted and
+restored source rechecked; the same explicit lambda is used for pairTensor.
+No header or statement prose changed.

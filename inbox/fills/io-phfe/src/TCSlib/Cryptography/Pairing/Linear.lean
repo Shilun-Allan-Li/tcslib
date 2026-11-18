@@ -5,6 +5,7 @@ Authors: TCSlib contributors
 -/
 import TCSlib.Cryptography.Pairing.Exponents
 import TCSlib.Cryptography.Pairing.MatrixDH.Parameters
+import TCSlib.Cryptography.Pairing.MatrixDH.Diagonal
 import TCSlib.Cryptography.Asymptotic.Adversary
 import TCSlib.Cryptography.Games.Advantage
 import TCSlib.Cryptography.Foundations.Subexponential
@@ -96,7 +97,9 @@ and group width. This is serialization glue for [JLS26, §1.1, p. 3].
 to each group encoding; collect the coefficients of the fixed width. -/
 theorem length_dlinStr {wG wT : ℕ} (B : BilinearGroup wG wT) (d : List Bool)
     (g a b u v w : B.G) :
-    (dlinStr B d g a b u v w).length = 2 * d.length + 11 * wG + 12 := sorry
+    (dlinStr B d g a b u v w).length = 2 * d.length + 11 * wG + 12 := by
+  simp only [dlinStr_eq, length_pairEncode, List.length_ofFn]
+  omega
 
 /-- The DLIN matrix has rows `(a,0)`, `(0,b)`, and `(1,1)`
 [GJLS21, §3, p. 17, the distribution preceding Definition 3.3]. -/
@@ -113,7 +116,11 @@ theorem dlinMatrix_eq {p : ℕ} (a b : ZMod p) :
 **Proof sketch.** Read the three rows and the two column-vector coordinates; the three dot
 products reduce to `a*r`, `b*s`, and `r+s`. -/
 theorem dlinMatrix_mulVec {p : ℕ} (a b r s : ZMod p) :
-    dlinMatrix a b *ᵥ ![r, s] = ![a * r, b * s, r + s] := sorry
+    dlinMatrix a b *ᵥ ![r, s] = ![a * r, b * s, r + s] := by
+  rw [dlinMatrix_eq]
+  change (Matrix.of ![![a, 0], ![0, b], ![1, 1]]) *ᵥ ![r, s] = _
+  simp only [Matrix.cons_mulVec, Matrix.empty_mulVec, Matrix.vec2_dotProduct',
+    zero_mul, one_mul, add_zero, zero_add]
 
 namespace BilinearGen
 
@@ -169,11 +176,32 @@ theorem dlinEnc_dlinChallenge (κ : ℕ) (pp : PublicParams G κ)
 /-- Public challenge encoding is injective; in particular two generator coin strings yielding
 one public description do not create distinct encoded objects. Serialization glue.
 
-**Proof sketch.** Decode the description by `pairEncode_injective`, substitute equal
-descriptions, then use the same pairing reader on the remaining six encodings. Apply
-`List.ofFn_injective` and the group's `encG_injective`; proof irrelevance removes the
-reachability and nonidentity witnesses of the shared public parameters. -/
-theorem dlinEnc_injective (κ : ℕ) : Function.Injective (G.dlinEnc κ) := sorry
+**Proof sketch.** Separate the description and generator words by pair-encoding
+injectivity. Apply the shared public-parameter encoding injectivity theorem to align
+the dependent group types. Separate the five remaining words and use `List.ofFn_injective`
+and the group's `encG_injective` pointwise. -/
+theorem dlinEnc_injective (κ : ℕ) : Function.Injective (G.dlinEnc κ) := by
+  intro c₁ c₂ h
+  rcases c₁ with ⟨pp₁, a₁, b₁, u₁, v₁, w₁⟩
+  rcases c₂ with ⟨pp₂, a₂, b₂, u₂, v₂, w₂⟩
+  simp only [dlinEnc_eq, dlinStr_eq] at h
+  rcases Prod.mk.inj (pairEncode_injective h) with ⟨hdesc, h₀⟩
+  rcases Prod.mk.inj (pairEncode_injective h₀) with ⟨hgen, h₁⟩
+  have hpp : pp₁.encode = pp₂.encode :=
+    (PublicParams.encode_eq pp₁).trans
+      ((congrArg₂ pairEncode hdesc hgen).trans (PublicParams.encode_eq pp₂).symm)
+  have hPP : pp₁ = pp₂ := PublicParams.encode_injective hpp
+  cases hPP
+  rcases Prod.mk.inj (pairEncode_injective h₁) with ⟨hA, h₂⟩
+  rcases Prod.mk.inj (pairEncode_injective h₂) with ⟨hB, h₃⟩
+  rcases Prod.mk.inj (pairEncode_injective h₃) with ⟨hU, h₄⟩
+  rcases Prod.mk.inj (pairEncode_injective h₄) with ⟨hV, hW⟩
+  cases (G.group κ pp₁.description.val).encG_injective (List.ofFn_injective hA)
+  cases (G.group κ pp₁.description.val).encG_injective (List.ofFn_injective hB)
+  cases (G.group κ pp₁.description.val).encG_injective (List.ofFn_injective hU)
+  cases (G.group κ pp₁.description.val).encG_injective (List.ofFn_injective hV)
+  cases (G.group κ pp₁.description.val).encG_injective (List.ofFn_injective hW)
+  rfl
 
 /-- A reachable public DLIN challenge has one fixed polynomial encoding length.
 Serialization glue for [JLS26, §1.1, p. 3].
@@ -181,7 +209,9 @@ Serialization glue for [JLS26, §1.1, p. 3].
 **Proof sketch.** Use `length_dlinStr`. The shared description's reachability witness supplies
 a generator coin string, so `length_desc` fixes the description length. -/
 theorem length_dlinEnc (κ : ℕ) (c : G.DLINChallenge κ) :
-    (G.dlinEnc κ c).length = 2 * G.descLen.eval κ + 11 * G.wG.eval κ + 12 := sorry
+    (G.dlinEnc κ c).length = 2 * G.descLen.eval κ + 11 * G.wG.eval κ + 12 := by
+  obtain ⟨r, hr⟩ := c.pp.description.property
+  rw [dlinEnc_eq, length_dlinStr, ← hr, G.length_desc]
 
 /-- Sample the canonical DLIN challenge: group coins first, a uniform nonidentity generator,
 then `a,b`, `r,s`, and the final random scalar `t` [JLS26, §1.1, p. 3]. The real response is
@@ -316,11 +346,15 @@ theorem dlinMatrixSlack_eq (κ : ℕ) :
 /-- The real tuple and compressed matrix presentations have identical acceptance laws
 [GJLS21, Definition 3.3, p. 18; JLS26, §1.1, p. 3].
 
-**Proof sketch.** Use `dlinMatrix_mulVec` to identify the response coordinates. Integrate
-out the unused random response draws with the shared probability readers. The public group,
-generator, diagonal scalars, coefficient vector and distinguisher coins coincide. -/
+**Proof sketch.** Read the two sampling laws, whose real response coordinates already
+coincide. Integrate out the unused random response draws with the shared probability
+readers. The public group, generator, diagonal scalars, coefficient vector and
+distinguisher coins coincide. -/
 theorem dlinMatrixGame_real_accept (D : NUPPT) (κ : ℕ) :
-    accept (G.dlinMatrixGame D true κ) = accept (G.dlinGame D true κ) := sorry
+    accept (G.dlinMatrixGame D true κ) = accept (G.dlinGame D true κ) := by
+  simp only [accept_eq, dlinMatrixGame_eq, dlinGame_eq, dlinMatrixSample_eq,
+    dlinSample_eq, ProbComp.prob_bind, ProbComp.expect_bind, ProbComp.expect_pure,
+    ProbComp.prob_pure, ↓reduceIte, ProbComp.expect_const]
 
 /-- The two random presentations differ by at most the probability of a zero diagonal
 coordinate [GJLS21, Definition 3.3, p. 18; JLS26, §1.1, p. 3]. This correction is explicit;

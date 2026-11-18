@@ -1,0 +1,93 @@
+file=TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean
+source_sha256=3da44ab5918a5d9a92dcf63d02c598d03f796bbe6ecf21a7cc4c6b04ecda3bb8
+working_source_development_check=True
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:150:8: error: unsolved goals
+case nil
+alpha beta sigma : Type
+f : alpha → ProbComp beta
+st : sigma
+⊢ pure ([], st) = OracleComp.bind (pure []) fun ys => OracleComp.pure (ys, st)
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:151:17: error: unsolved goals
+case cons
+alpha beta sigma : Type
+f : alpha → ProbComp beta
+st : sigma
+x : alpha
+xs : List alpha
+ih :
+  (List.mapM (fun x => StateT.lift (f x)) xs).run st =
+    OracleComp.bind (List.mapM f xs) fun ys => OracleComp.pure (ys, st)
+⊢ (do
+      let p ← (StateT.lift (f x)).run st
+      let p_1 ← (List.mapM (fun x => StateT.lift (f x)) xs).run p.2
+      pure (p.1 :: p_1.1, p_1.2)) =
+    OracleComp.bind
+      (do
+        let __do_lift ← f x
+        let __do_lift_1 ← List.mapM f xs
+        pure (__do_lift :: __do_lift_1))
+      fun ys => OracleComp.pure (ys, st)
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:150:54: warning: This simp argument is unused:
+  pure_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [List.mapM_nil, StateT.run_pure,̵ ̵p̵u̵r̵e̵_̵b̵i̵n̵d̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:152:33: warning: This simp argument is unused:
+  StateT.run_bind_lift
+
+Hint: Omit it from the simp argument list.
+  simp only [List.mapM_cons, S̵t̵a̵t̵e̵T̵.̵r̵u̵n̵_̵b̵i̵n̵d̵_̵l̵i̵f̵t̵,̵ ̵StateT.run_bind, StateT.run_pure, ih, bind_assoc, pure_bind]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:153:25: warning: This simp argument is unused:
+  ih
+
+Hint: Omit it from the simp argument list.
+  simp only [List.mapM_cons, StateT.run_bind_lift, StateT.run_bind,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵StateT.run_pure, i̵h̵,̵ ̵bind_assoc,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲pure_bind]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:153:29: warning: This simp argument is unused:
+  bind_assoc
+
+Hint: Omit it from the simp argument list.
+  simp only [List.mapM_cons, StateT.run_bind_lift, StateT.run_bind, StateT.run_pure, ih,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲b̵i̵n̵d̵_̵a̵s̵s̵o̵c̵,̵ ̵pure_bind]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:153:41: warning: This simp argument is unused:
+  pure_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [List.mapM_cons, StateT.run_bind_lift, StateT.run_bind, StateT.run_pure, ih,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲b̵i̵n̵d̵_̵a̵s̵s̵o̵c̵,̵ ̵p̵u̵r̵e̵_̵b̵i̵n̵d̵]̵b̲i̲n̲d̲_̲a̲s̲s̲o̲c̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:426:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:447:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:480:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:490:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage): no fresh .olean produced
+        3.09 real         2.08 user         1.12 sys
+          2341715968  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              179430  page reclaims
+                5075  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 417  voluntary context switches
+               10376  involuntary context switches
+            32161984  instructions retired
+            15672509  cycles elapsed
+             1622352  peak memory footprint

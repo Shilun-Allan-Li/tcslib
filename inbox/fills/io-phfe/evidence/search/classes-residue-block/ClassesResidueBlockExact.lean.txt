@@ -1,0 +1,167 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs.Raw
+import TCSlib.Cryptography.Encoding.ModularDecode
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Data.Fin.Tuple.Basic
+import Mathlib.LinearAlgebra.Matrix.Kronecker
+import Mathlib.Algebra.MvPolynomial.Eval
+import Mathlib.Algebra.MvPolynomial.Degrees
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Polynomial classes for partially hiding functional encryption
+
+A coefficient tensor represents public-input polynomials of degree at most d by
+padding the public input with 1. Its tuple coordinates use the published explicit
+base-(l+1) equivalence. The two private-input classes are [GJLS21, §9, pp.57–58]
+and [Wee20, §3, p.6], restricted to these polynomial vectors.
+
+All wire words are interpreted modulo the supplied positive modulus. The modular
+parser is reused at the word modulus 2^w, where every width-w chunk is canonical;
+its representatives are then cast into the supplied modulus. No word is rejected
+merely because its integer representative is at least the supplied modulus.
+
+## Main definitions
+
+* `PolyTensor`, `polyTensorEval`: padded coefficient tensors and their evaluation.
+* `decodeResidues`, `decodeTensor`, `encodeTensor`: canonical wire interpretation.
+* `phfeClass`, `quadClass`: the two classes, with positive modulus as class parameter.
+* `BidegreeAtMost`: monomial-wise bounds on public and private degrees.
+
+## Main results
+
+* `decodeResidues_parse`, `decodeResidues_apply`: total modular interpretation.
+* `decodeTensor_encodeTensorBits`: tensor round trip under width coverage.
+* `phfeClass_eval_eq_quad`: the embedding by duplicating the private input.
+* `pad_one`: every polynomial of public degree at most d and private degree at most
+  two is represented after padding the private input with 1.
+
+## References
+
+* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
+  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
+  EUROCRYPT 2021; full version, ePrint 2020/764, §9, printed pp.57–58.
+* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
+  TCC 2020; full version, ePrint 2020/1420, §3, p.6.
+-/
+
+namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
+
+open Complexity Turing
+open TCSlib.Cryptography.NumberTheory (listToNat)
+
+/-- A degree-d polynomial vector is represented by coefficients on padded tuples.
+[GJLS21, §9, pp.57–58; Wee20, §3, p.6]. The representation uses ordered tuples
+rather than monomials, with the padded constant accounting for smaller degrees. -/
+abbrev PolyTensor (p : ℕ+) (l n d : ℕ) : Type :=
+  Fin n → (Fin d → Fin (l + 1)) → ZMod (p : ℕ)
+
+/-- A coefficient tensor has one residue for each output and padded monomial tuple. -/
+theorem polyTensor_eq (p : ℕ+) (l n d : ℕ) :
+    PolyTensor p l n d = (Fin n → (Fin d → Fin (l + 1)) → ZMod (p : ℕ)) := rfl
+
+/-- The padded public input appends the constant 1, so tuples of fixed length d
+can represent every smaller public degree. [GJLS21, §9, pp.57–58]. -/
+def xhat {p : ℕ+} {l : ℕ} (x : Fin l → ZMod (p : ℕ)) :
+    Fin (l + 1) → ZMod (p : ℕ) := Fin.snoc x 1
+
+/-- Public-input padding is exactly `Fin.snoc x 1`. -/
+theorem xhat_eq {p : ℕ+} {l : ℕ} (x : Fin l → ZMod (p : ℕ)) :
+    xhat x = Fin.snoc x 1 := rfl
+
+/-- Padding preserves each public-input coordinate. -/
+theorem xhat_castSucc {p : ℕ+} {l : ℕ} (x : Fin l → ZMod (p : ℕ)) (i : Fin l) :
+    xhat x i.castSucc = x i := Fin.snoc_castSucc (α := fun _ => ZMod (p : ℕ)) 1 x i
+
+/-- The final padded public-input coordinate equals 1. -/
+theorem xhat_last {p : ℕ+} {l : ℕ} (x : Fin l → ZMod (p : ℕ)) :
+    xhat x (Fin.last l) = 1 := Fin.snoc_last (α := fun _ => ZMod (p : ℕ)) 1 x
+
+/-- Tensor evaluation sums each coefficient times its padded public monomial.
+[GJLS21, §9, pp.57–58; Wee20, §3, p.6]. -/
+def polyTensorEval {p : ℕ+} {l n d : ℕ} (C : PolyTensor p l n d)
+    (x : Fin l → ZMod (p : ℕ)) : Fin n → ZMod (p : ℕ) :=
+  fun j => ∑ tau : Fin d → Fin (l + 1), C j tau * ∏ i : Fin d, xhat x (tau i)
+
+/-- Tensor evaluation is the displayed sum over padded tuples. -/
+theorem polyTensorEval_eq {p : ℕ+} {l n d : ℕ} (C : PolyTensor p l n d)
+    (x : Fin l → ZMod (p : ℕ)) (j : Fin n) :
+    polyTensorEval C x j =
+      ∑ tau : Fin d → Fin (l + 1), C j tau * ∏ i : Fin d, xhat x (tau i) := rfl
+
+/-- Padded monomial tuples have the explicit base-(l+1) coordinate ordering
+provided by `finFunctionFinEquiv`; no arbitrary finite-type enumeration is chosen. -/
+def tupleCoord (l d : ℕ) : (Fin d → Fin (l + 1)) ≃ Fin ((l + 1) ^ d) :=
+  finFunctionFinEquiv
+
+/-- Tuple coordinates use the published finite-function equivalence. -/
+theorem tupleCoord_eq (l d : ℕ) : tupleCoord l d = finFunctionFinEquiv := rfl
+
+/-- Parse a fixed-length residue word at its word modulus and cast each resulting
+integer into the supplied positive modulus. The explicit zero fallback is
+unreachable by `decodeResidues_parse`. This is total modular decoding glue. -/
+def decodeResidues (p : ℕ+) (count width : ℕ)
+    (word : Fin (count * width) → Bool) : Fin count → ZMod (p : ℕ) :=
+  fun i => ((((Encoding.Modular.decodeVector (q := 2 ^ width) (length := count)
+    width (List.ofFn word)).getD 0) i).val : ZMod (p : ℕ))
+
+/-- Residue decoding is the word-modulus parser followed by representative casting,
+with the displayed explicit fallback. -/
+theorem decodeResidues_eq (p : ℕ+) (count width : ℕ)
+    (word : Fin (count * width) → Bool) :
+    decodeResidues p count width word = fun i =>
+      ((((Encoding.Modular.decodeVector (q := 2 ^ width) (length := count)
+        width (List.ofFn word)).getD 0) i).val : ZMod (p : ℕ)) := rfl
+
+/-- Every fixed-length word passes the word-modulus parser: each width-bit block
+is less than 2^width. In particular the decoding fallback is never used.
+
+**Proof sketch.** The vector length is `List.length_ofFn`; a taken block has at
+most width bits. Apply the existing integer bound `listToNat_lt_two_pow`, then
+monotonicity of powers, and use the published parser equation to open its guard. -/
+theorem decodeResidues_parse (count width : ℕ) (word : Fin (count * width) → Bool) :
+    Encoding.Modular.decodeVector (q := 2 ^ width) (length := count) width
+        (List.ofFn word) =
+      some (fun i : Fin count =>
+        (listToNat (((List.ofFn word).drop (i.val * width)).take width) : ZMod (2 ^ width))) :=
+  (Encoding.Modular.decodeVector_eq width (List.ofFn word)).trans
+    (if_pos ⟨List.length_ofFn, fun i =>
+      lt_of_lt_of_le (Candidates.listToNat_lt_two_pow _)
+        (Nat.pow_le_pow_right (Nat.succ_pos 1) (List.length_take_le _ _))⟩)
+
+/-- Each decoded residue is the integer represented by its block, reduced modulo
+p. This reader explicitly rules out rejection of representatives at least p. -/
+theorem decodeResidues_apply (p : ℕ+) (count width : ℕ)
+    (word : Fin (count * width) → Bool) (i : Fin count) :
+    decodeResidues p count width word i =
+      (listToNat (((List.ofFn word).drop (i.val * width)).take width) : ZMod (p : ℕ)) :=
+  (congrArg
+      (fun o : Option (Fin count → ZMod (2 ^ width)) =>
+        (((o.getD 0) i).val : ZMod (p : ℕ)))
+      (decodeResidues_parse count width word)).trans
+    (congrArg (fun a : ℕ => (a : ZMod (p : ℕ)))
+      (ZMod.val_cast_of_lt (lt_of_lt_of_le (Candidates.listToNat_lt_two_pow _)
+        (Nat.pow_le_pow_right (Nat.succ_pos 1) (List.length_take_le _ _)))))
+
+
+-- ROOT-ONLY SEARCH TARGET. No helper proof is supplied here.
+-- Append after the current decodeResidues_apply proof in a Classes source prefix.
+-- Add `import Lean.Elab.Tactic.LibrarySearch` beside the prefix imports.
+-- Do not load the proposed named helper or later admitted Classes theorems.
+-- First run exact?; then replace only exact? by apply? and run this same target again.
+
+example (p : ℕ+) (count width : ℕ)
+    (word : Fin (count * width) → Bool) (i : Fin count) :
+    decodeResidues p count width word i =
+      (listToNat (List.ofFn (fun j : Fin width => word (finProdFinEquiv (i, j)))) :
+        ZMod (p : ℕ)) := by
+  exact?
+
+end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption

@@ -5,6 +5,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.Cryptography.Pairing.Group
 import TCSlib.Cryptography.Games.Probability
 
+import Mathlib.Data.List.OfFn
+
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
@@ -23,6 +25,8 @@ public data do not create different parameter objects.
 * `publicParamsGen`: exact sequential sampling of the description and generator.
 
 ## Main results
+
+* `PublicParams.encode_injective`: the public word determines its parameters.
 
 Equation readers expose the public encoding and the exact generation law.
 
@@ -90,6 +94,27 @@ def encode {G : BilinearGen} {κ : ℕ} (pp : PublicParams G κ) : List Bool :=
 theorem encode_eq {G : BilinearGen} {κ : ℕ} (pp : PublicParams G κ) :
     pp.encode = pairEncode pp.description.val
       (List.ofFn ((G.group κ pp.description.val).encG pp.generator)) := rfl
+
+/-- The encoded description and generator determine the public parameters uniquely.
+Reachability and nonidentity witnesses are propositions and do not distinguish parameters
+with the same public data. This is serialization glue for the public-parameter interface
+[GJLS21, Definition 4.1; Wee20, Section 2.1].
+
+**Proof sketch.** Read `encode_eq` and apply the shared pair-encoding injectivity theorem.
+Substitute equality of the description words to align the dependent group types. Apply
+`List.ofFn_injective` and the group's `encG_injective` to the generator words. Proof
+irrelevance removes the reachability and nonidentity witnesses. -/
+theorem encode_injective {G : BilinearGen} {κ : ℕ} :
+    Function.Injective (PublicParams.encode (G := G) (κ := κ)) := by
+  intro pp₁ pp₂ h
+  rcases pp₁ with ⟨⟨word₁, hreach₁⟩, g₁, hg₁⟩
+  rcases pp₂ with ⟨⟨word₂, hreach₂⟩, g₂, hg₂⟩
+  simp only [encode_eq] at h
+  rcases Prod.mk.inj (Turing.pairEncode_injective h) with ⟨hword, hgen⟩
+  change word₁ = word₂ at hword
+  subst word₂
+  cases (G.group κ word₁).encG_injective (List.ofFn_injective hgen)
+  rfl
 
 end PublicParams
 

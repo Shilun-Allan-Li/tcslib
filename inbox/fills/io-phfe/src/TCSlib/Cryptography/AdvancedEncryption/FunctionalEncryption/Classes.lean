@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs.Raw
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PolynomialTensorAlgebra
 import TCSlib.Cryptography.Encoding.ModularDecode
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Data.Fin.Tuple.Basic
@@ -149,6 +150,33 @@ theorem decodeResidues_apply (p : ℕ+) (count width : ℕ)
       (ZMod.val_cast_of_lt (lt_of_lt_of_le (Candidates.listToNat_lt_two_pow _)
         (Nat.pow_le_pow_right (Nat.succ_pos 1) (List.length_take_le _ _)))))
 
+/-- Each coordinate of total residue decoding reads its canonical row-major bit
+block and reduces that block's natural value modulo p. This is technical wire-
+representation glue, valid for every word without a canonicality or width bound.
+
+**Proof sketch.** Read decodeResidues_apply. Identify its drop/take block with the
+finite list of the row's width bit coordinates, using the published list element,
+length, and finite-product coordinate equations. Then transport the list equality
+through listToNat and the residue cast; no range rejection is introduced. -/
+theorem decodeResidues_block (p : ℕ+) (count width : ℕ)
+    (word : Fin (count * width) → Bool) (i : Fin count) :
+    decodeResidues p count width word i =
+      (listToNat (List.ofFn (fun j : Fin width => word (finProdFinEquiv (i, j)))) :
+        ZMod (p : ℕ)) := by
+  rw [decodeResidues_apply]
+  apply congrArg (fun bits : List Bool => (listToNat bits : ZMod (p : ℕ)))
+  apply List.ext_getElem
+  · rw [List.length_take, List.length_drop, List.length_ofFn, List.length_ofFn]
+    apply Nat.min_eq_left
+    have hcut := Nat.mul_le_mul_right width (Nat.succ_le_of_lt i.isLt)
+    rw [Nat.succ_mul] at hcut
+    omega
+  · intro j hj hk
+    simp only [List.getElem_take, List.getElem_drop, List.getElem_ofFn]
+    apply congrArg word
+    apply Fin.ext
+    simp only [finProdFinEquiv_apply_val, Nat.mul_comm, Nat.add_comm]
+
 /-- Equal modulus values give the same decoded residues after the natural cast.
 This is the reader used when replacing a drawn order by a fixed prime schedule.
 
@@ -157,18 +185,26 @@ that equality and use the residue representative casting identity coordinatewise
 theorem decodeResidues_modulus (p q : ℕ+) (hpq : (p : ℕ) = (q : ℕ)) (count width : ℕ)
     (word : Fin (count * width) → Bool) :
     (fun i => ((decodeResidues p count width word i).val : ZMod (q : ℕ))) =
-      decodeResidues q count width word := sorry
+      decodeResidues q count width word := by
+  cases PNat.coe_injective hpq
+  exact funext fun i => ZMod.natCast_zmod_val (decodeResidues p count width word i)
 
 /-- Total decoding inverts a canonical vector encoding when its residues fit.
 
-**Proof sketch.** Reinterpret the same integer representatives at the word
-modulus, use the published modular-vector round trip, then cast each representative
-back into p. The width hypothesis prevents any truncation of an original residue. -/
+**Proof sketch.** Apply the published modular-vector round trip at the canonical
+word, then read its successful parsing branch coordinatewise. The total decoding
+reader returns the same block's representative cast, so it equals the original
+residue. The round trip rules out a failed parsing branch. -/
 theorem decodeResidues_encodeVector (p : ℕ+) (count width : ℕ)
     (hwidth : (p : ℕ) ≤ 2 ^ width) (v : Fin count → ZMod (p : ℕ))
     (word : Fin (count * width) → Bool)
     (hword : List.ofFn word = Encoding.Modular.encodeVector width v) :
-    decodeResidues p count width word = v := sorry
+    decodeResidues p count width word = v := by
+  have hparse := Encoding.Modular.decodeVector_encodeVector width hwidth v
+  rw [← hword, Encoding.Modular.decodeVector_eq] at hparse
+  split_ifs at hparse
+  · exact funext fun i => (decodeResidues_apply p count width word i).trans
+      (congrFun (Option.some.inj hparse) i)
 
 /-- Encode a coefficient tensor as a row-major modular matrix using the explicit
 padded-tuple ordering. This reuses the published modular matrix encoder. -/
@@ -199,8 +235,9 @@ theorem encodeTensorBits_eq {p : ℕ+} {l n d : ℕ} (width : ℕ) (C : PolyTens
 **Proof sketch.** The encoder's length is already known. Apply the list reading
 round trip at that length; no padding or truncation occurs at any finite index. -/
 theorem ofFn_encodeTensorBits {p : ℕ+} {l n d : ℕ} (width : ℕ)
-    (C : PolyTensor p l n d) : List.ofFn (encodeTensorBits width C) = encodeTensor width C :=
-  sorry
+    (C : PolyTensor p l n d) : List.ofFn (encodeTensorBits width C) = encodeTensor width C := by
+  simpa only [encodeTensorBits_eq, padFin_def] using
+    (ofFn_padFin_of_length (encodeTensor_length width C))
 
 /-- Decode a coefficient tensor by total modular vector decoding and the explicit
 row/tuple finite-product coordinates. This is wire-representation glue. -/
@@ -222,7 +259,17 @@ theorem decodeTensor_eq (p : ℕ+) (l n d width : ℕ)
 interpretation, and the explicit tuple equivalence's inverse laws coordinatewise. -/
 theorem decodeTensor_encodeTensorBits {p : ℕ+} {l n d : ℕ} (width : ℕ)
     (hwidth : (p : ℕ) ≤ 2 ^ width) (C : PolyTensor p l n d) :
-    decodeTensor p l n d width (encodeTensorBits width C) = C := sorry
+    decodeTensor p l n d width (encodeTensorBits width C) = C := by
+  have hparse := Encoding.Modular.decodeMatrix_encodeMatrix width hwidth
+    (fun j k => C j ((tupleCoord l d).symm k))
+  rw [← encodeTensor_eq, ← ofFn_encodeTensorBits,
+    Encoding.Modular.decodeMatrix_eq, Encoding.Modular.decodeVector_eq] at hparse
+  split_ifs at hparse
+  · simp only [Option.map_some, Option.some.injEq] at hparse
+    funext j tau
+    simpa only [decodeTensor_eq, decodeResidues_apply, Equiv.symm_apply_apply] using
+      congrFun (congrFun hparse j) (tupleCoord l d tau)
+  · simp only [Option.map_none, reduceCtorEq] at hparse
 
 /-- Fixed-width coefficient descriptions are injective when every residue fits.
 
@@ -230,7 +277,10 @@ theorem decodeTensor_encodeTensorBits {p : ℕ+} {l n d : ℕ} (width : ℕ)
 round trip. This delegates the actual modular encoding argument to the published API. -/
 theorem encodeTensorBits_injective {p : ℕ+} {l n d : ℕ} (width : ℕ)
     (hwidth : (p : ℕ) ≤ 2 ^ width) :
-    Function.Injective (encodeTensorBits (p := p) (l := l) (n := n) (d := d) width) := sorry
+    Function.Injective (encodeTensorBits (p := p) (l := l) (n := n) (d := d) width) :=
+  fun C D h => (decodeTensor_encodeTensorBits width hwidth C).symm.trans
+    ((congrArg (decodeTensor p l n d width) h).trans
+      (decodeTensor_encodeTensorBits width hwidth D))
 
 /-- The private tensor is the Kronecker product z1 ⊗ z2 in row-major pair order.
 [Wee20, §3, p.6]. -/
@@ -279,7 +329,12 @@ commute scalar factors in each term. Reuse finite-product sum reindexing. -/
 theorem phfeEval_sum {p : ℕ+} {l n d : ℕ} (C : PolyTensor p l (n * n) d)
     (x : Fin l → ZMod (p : ℕ)) (y : Fin n → ZMod (p : ℕ)) :
     phfeEval C x y = ∑ j : Fin n, ∑ k : Fin n,
-      polyTensorEval C x (finProdFinEquiv (j, k)) * y j * y k := sorry
+      polyTensorEval C x (finProdFinEquiv (j, k)) * y j * y k := by
+  rw [phfeEval_eq, quadEval_eq]
+  show (∑ i : Fin (n * n), privateTensor y y i * polyTensorEval C x i) = _
+  rw [← finProdFinEquiv.sum_comp, Fintype.sum_prod_type]
+  simp only [privateTensor_eq, Matrix.kroneckerMap_apply, Equiv.symm_apply_apply,
+    mul_comm, mul_left_comm, mul_assoc]
 
 /-- The tensor-description width is n(l+1)^d residue blocks of width w. -/
 def tensorFnLen (l n w : PolyExpr) (d : ℕ) : PolyExpr :=
@@ -412,7 +467,10 @@ theorem phfeClass_eval_encoded (l n w : PolyExpr) (d kappa : ℕ) (p : ℕ+)
     (hx : List.ofFn xword = Encoding.Modular.encodeVector (w.eval kappa) x)
     (hy : List.ofFn yword = Encoding.Modular.encodeVector (w.eval kappa) y) :
     (phfeClass l n w d).eval kappa p (encodeTensorBits (w.eval kappa) C) xword yword =
-      phfeEval C x y := sorry
+      phfeEval C x y := by
+  rw [phfeClass_eval, decodeTensor_encodeTensorBits (w.eval kappa) hwidth C,
+    decodeResidues_encodeVector p (l.eval kappa) (w.eval kappa) hwidth x xword hx,
+    decodeResidues_encodeVector p (n.eval kappa) (w.eval kappa) hwidth y yword hy]
 
 /-- The quadratic wire class permits two independently sized private vectors.
 [Wee20, §3, p.6]. Scalar outputs remain unembedded at the function-class layer. -/
@@ -531,7 +589,12 @@ theorem phfeClass_eval_eq_quad (l n w : PolyExpr) (d kappa : ℕ) (p : ℕ+)
     (y : Fin (n.eval kappa * w.eval kappa) → Bool) :
     (phfeClass l n w d).eval kappa p f x y =
       (quadClass l n n w d).eval kappa p f x
-        (duplicatePrivateBits (n.eval kappa) (w.eval kappa) y) := sorry
+        (duplicatePrivateBits (n.eval kappa) (w.eval kappa) y) := by
+  rw [phfeClass_eval, quadClass_eval, phfeEval_eq]
+  apply congrArg₂ (quadEval _ _) <;> funext i <;>
+    simp only [decodeResidues_block, duplicatePrivateBits_eq,
+      Equiv.symm_apply_apply, finSumFinEquiv_symm_apply_castAdd,
+      finSumFinEquiv_symm_apply_natAdd, Sum.elim_inl, Sum.elim_inr, id_eq]
 
 /-- A multivariate polynomial has separate public/private degree bounds when
 every nonzero monomial satisfies the corresponding sums of variable exponents.
@@ -562,6 +625,12 @@ theorem pad_one {p : ℕ+} {l n d : ℕ}
     (hdeg : BidegreeAtMost d 2 P) :
     ∃ C : PolyTensor p l ((n + 1) * (n + 1)) d,
       ∀ (x : Fin l → ZMod (p : ℕ)) (y : Fin n → ZMod (p : ℕ)),
-        MvPolynomial.eval (Sum.elim x y) P = phfeEval C x (Fin.snoc y 1) := sorry
+        MvPolynomial.eval (Sum.elim x y) P = phfeEval C x (Fin.snoc y 1) := by
+  obtain ⟨C, hC⟩ := PolynomialTensorAlgebra.exists_quadratic_expansion
+    (R := ZMod (p : ℕ)) l n d P ((bidegreeAtMost_iff d 2 P).1 hdeg)
+  refine ⟨fun j tau => C (finProdFinEquiv.symm j) tau, fun x y => ?_⟩
+  rw [phfeEval_sum]
+  simpa only [Fintype.sum_prod_type, polyTensorEval_eq, Equiv.symm_apply_apply,
+    xhat_eq, Finset.sum_mul] using hC x y
 
 end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption

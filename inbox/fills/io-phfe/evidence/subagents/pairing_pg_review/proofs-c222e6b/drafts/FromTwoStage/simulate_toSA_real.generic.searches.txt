@@ -1,0 +1,25 @@
+Read-only current source inspection; no Lean/lake/Git or checker by agent.
+
+Current FromTwoStage source:
+- stateT_mapM_lift:144, root-written short proof now native PASS. It uses explicit OracleComp bind/pure readers.
+- simulate_saKeys_stateful:293, root native PASS first attempt, exact shared header.
+- simulate_toSA_real:421, frozen complete docstring/header copied unchanged.
+- Prior ideal generic-wrapper proof read as specialization pattern only.
+
+Existing public laws reused:
+realSAImpl_eq, saImpl_one_onSpec, saKeyFunction_eq, realSAKey_some;
+StateT.run_lift actual Lean4.25 Init/Control/Lawful/Instances.lean:317;
+saNext_nil, saChallengeMove_eq, toSA_run;
+saImpl_zero_onSpec, saSplitChallenge_fst/snd, saChallengeQuery_eq,
+Fin.append_left/right, realSAChallenge_none;
+buildComp_succ_of_query, simulate_query;
+saCTPayload_zero, saCTAnswer_eq, Option.map_some,
+FixedLengthScheme.decAnswer_some, Fin.cons_zero, Fin.tail_cons;
+List.length_nil/drop_zero/filterMap_nil/nil_append, Nat.sub_zero;
+OracleComp.bind_eq_bind/pure_eq_pure/map_eq_bind/bind_assoc/pure_bind;
+viewWord_eq_viewWordBits.
+
+New helper searches/probes are unnecessary: all substantive extra facts are the
+existing native-searched generic stateful-loop/lift targets, whose proofs belong
+to the separate root/generic tasks. This wrapper introduces no new helper,
+notably no new real history induction and no real-only traversal lemma.

@@ -1,0 +1,55 @@
+file=TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean
+source_sha256=f660187046e9d582dc8c9452a859ff76810c6b3b0c444b8f75d61e0d2c2650bc
+working_source_development_check=True
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean:100:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean:165:8: error: Tactic `rewrite` failed: motive is not type correct:
+  fun _a => c tau = ∑ x, (c fun i => Fin.append tau x (Fin.cast ⋯ i)) * ∏ i, weight (x i)
+Error: Application type mismatch: The argument
+  Eq.symm (Nat.add_sub_of_le (Nat.le_of_lt_succ ⟨Fin.last d, tau⟩.fst.isLt))
+has type
+  d = ↑⟨Fin.last d, tau⟩.fst + (d - ↑⟨Fin.last d, tau⟩.fst)
+but is expected to have type
+  d = d + _a
+in the application
+  Fin.cast ⋯
+
+Explanation: The rewrite tactic rewrites an expression 'e' using an equality 'a = b' by the following process. First, it looks for all 'a' in 'e'. Second, it tries to abstract these occurrences of 'a' to create a function 'm := fun _a => ...', called the *motive*, with the property that 'm a' is definitionally equal to 'e'. Third, we observe that 'congrArg' implies that 'm a = m b', which can be used with lemmas such as 'Eq.mpr' to change the goal. However, if 'e' depends on specific properties of 'a', then the motive 'm' might not typecheck.
+
+Possible solutions: use rewrite's 'occs' configuration option to limit which occurrences are rewritten, or use 'simp' or 'conv' mode, which have strategies for certain kinds of dependencies (these tactics can handle proofs and 'Decidable' instances whose types depend on the rewritten term, and 'simp' can apply user-defined '@[congr]' theorems as well).
+
+case last
+I : Type u_1
+R : Type u_2
+inst✝² : Fintype I
+inst✝¹ : DecidableEq I
+inst✝ : CommSemiring R
+d : ℕ
+c : (Fin d → I) → R
+weight : I → R
+value : (k : Fin (d + 1)) × (Fin ↑k → I) → R :=
+  fun v => ∑ sigma, (c fun i => Fin.append v.snd sigma (Fin.cast ⋯ i)) * ∏ i, weight (sigma i)
+tau : Fin ↑(Fin.last d) → I
+hparent : ∀ (e : (k : Fin d) × (Fin (↑k + 1) → I)), ⟨e.fst.castSucc, Fin.init e.snd⟩ ≠ ⟨Fin.last d, tau⟩
+hleaf : Function.Injective fun sigma => ⟨Fin.last d, sigma⟩
+⊢ c tau = ∑ x, (c fun i => Fin.append tau x (Fin.cast ⋯ i)) * ∏ i, weight (x i)
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra): no fresh .olean produced
+        1.75 real         1.14 user         0.74 sys
+          1429618688  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              116995  page reclaims
+                  11  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                  15  voluntary context switches
+                4765  involuntary context switches
+            32125670  instructions retired
+            15060087  cycles elapsed
+             1622352  peak memory footprint

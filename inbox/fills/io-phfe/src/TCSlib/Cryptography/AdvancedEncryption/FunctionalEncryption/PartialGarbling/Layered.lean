@@ -6,6 +6,9 @@ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbli
 import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Classes
 import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
 import Mathlib.Data.Fintype.BigOperators
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.PathAlgebra
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.PrefixAlgebra
+import Mathlib.Data.Matrix.ColumnRowPartitioned
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -138,13 +141,28 @@ theorem nodeBound_succ (l : PolyExpr) (d : ℕ) :
 At a successor, use Fin.sum_univ_castSucc to split the last layer; its count
 is exactly the power added by nodeBound_succ. -/
 theorem nodeBound_eval (l : PolyExpr) (d kappa : ℕ) :
-    (nodeBound l d).eval kappa = nodeCount (l.eval kappa) d := sorry
+    (nodeBound l d).eval kappa = nodeCount (l.eval kappa) d := by
+  induction d with
+  | zero =>
+      simp only [nodeBound_zero, nodeCount_eq, Fin.sum_univ_one, Fin.val_zero, pow_zero]
+      rfl
+  | succ d ih =>
+      rw [nodeBound_succ]
+      change (nodeBound l d).eval kappa + (l.eval kappa + 1) ^ (d + 1) =
+        nodeCount (l.eval kappa) (d + 1)
+      rw [ih]
+      simpa only [nodeCount_eq, Fin.coe_castSucc, Fin.val_last] using
+        (Fin.sum_univ_castSucc
+          (fun k : Fin (d + 2) => (l.eval kappa + 1) ^ k.val)).symm
 
 /-- Removing the source leaves exactly the auxiliary prefix nodes.
 
 **Proof sketch.** Split the geometric sum at depth zero using Fin.sum_univ_succ;
 the first term is 1 and the remaining terms are exactly auxCount. -/
-theorem auxCount_add_one (l d : ℕ) : auxCount l d + 1 = nodeCount l d := sorry
+theorem auxCount_add_one (l d : ℕ) : auxCount l d + 1 = nodeCount l d := by
+  rw [auxCount_eq, nodeCount_eq, Fin.sum_univ_succ]
+  simp only [Fin.val_zero, Fin.val_succ, pow_zero]
+  exact Nat.add_comm _ _
 
 /-- Node coordinates use the explicit tuple equivalence within each depth and
 the published finite-sigma equivalence between depths. No opaque enumeration is used. -/
@@ -169,7 +187,13 @@ theorem auxCoord_eq (l d : ℕ) : auxCoord l d =
 
 **Proof sketch.** Apply the published finite-sigma coordinate formula at depth
 zero; its prefix sum is empty and its empty tuple has the only coordinate in Fin 1. -/
-theorem nodeCoord_root (l d : ℕ) : (nodeCoord l d (root l d)).val = 0 := sorry
+theorem nodeCoord_root (l d : ℕ) : (nodeCoord l d (root l d)).val = 0 := by
+  rw [nodeCoord_eq, root_eq]
+  change (finSigmaFinEquiv
+    (⟨⟨0, Nat.zero_lt_succ d⟩, tupleCoord l 0 Fin.elim0⟩ :
+      Σ k : Fin (d + 1), Fin ((l + 1) ^ k.val))).val = 0
+  simp only [finSigmaFinEquiv_apply, tupleCoord_eq, finFunctionFinEquiv_apply,
+    Fin.sum_univ_zero, zero_add]
 
 section Algorithms
 
@@ -224,6 +248,26 @@ def matrix (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ)) :
 theorem matrix_eq (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ)) :
     matrix C x = L1 C * PartialGarbling.publicTensor x + L0 C := rfl
 
+/-- A non-root input-matrix row has its padded edge weight at the parent and a
+negative unit at its node. This is the layered incidence formula of
+[AGW20, Appendix A, (32), p.38].
+
+**Proof sketch.** Evaluate the abstract padded-incidence identity at the chosen
+row and column. Identify its matrices using the published incidence, public-input
+and padding readers, with the product-index sum formula. -/
+theorem matrix_inl (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
+    (v : TIdx l d) (u : MIdx l d) :
+    matrix C x (Sum.inl v) u =
+      (if u = parent v then xhat x (lastLabel v) else 0) -
+        (if u = node v then 1 else 0) := by
+  have h := congrArg
+    (fun B : Matrix (TIdx l d) (MIdx l d) (ZMod (p : ℕ)) => B v u)
+    (PathAlgebra.paddedIncidence_eq
+      (parent : TIdx l d → MIdx l d) node lastLabel x)
+  simpa only [matrix_eq, Matrix.add_apply, Matrix.mul_apply, Matrix.of_apply,
+    Fintype.sum_prod_type, L1_inl, L0_inl, PartialGarbling.publicTensor_apply,
+    xhat_eq] using h
+
 /-- A forward path value is the product of the labels in its prefix. This replaces
 the cofactor description of rec in [AGW20, Appendix A, p.38] by its path formula. -/
 def forward (x : Fin l → ZMod (p : ℕ)) (u : MIdx l d) : ZMod (p : ℕ) :=
@@ -233,10 +277,27 @@ def forward (x : Fin l → ZMod (p : ℕ)) (u : MIdx l d) : ZMod (p : ℕ) :=
 theorem forward_eq (x : Fin l → ZMod (p : ℕ)) (u : MIdx l d) :
     forward x u = ∏ i : Fin u.1.val, xhat x (u.2 i) := rfl
 
+/-- A non-root prefix's forward value is its parent's value times its final edge
+weight. This is a technical recurrence for the layered path-sum specialization of
+[AGW20, Appendix A, (32), p.38].
+
+**Proof sketch.** Apply the published node, parent, edge-label and forward readers.
+Split the final factor with Fin.prod_univ_castSucc; Fin.init_def identifies the
+remaining product with the parent's path value. -/
+theorem forward_node (x : Fin l → ZMod (p : ℕ)) (v : TIdx l d) :
+    forward x (node v) = forward x (parent v) * xhat x (lastLabel v) := by
+  simpa only [node_eq, parent_eq, lastLabel_eq, forward_eq, Fin.val_succ,
+    Fin.coe_castSucc, Fin.init_def] using
+    (Fin.prod_univ_castSucc (fun i : Fin (v.1.val + 1) => xhat x (v.2 i)))
+
 /-- The source's forward value is the empty product 1.
 
 **Proof sketch.** The root tuple has domain Fin 0; its finite product is empty. -/
-theorem forward_root (x : Fin l → ZMod (p : ℕ)) : forward x (root l d) = 1 := sorry
+theorem forward_root (x : Fin l → ZMod (p : ℕ)) : forward x (root l d) = 1 :=
+  (congrArg (forward (d := d) x) (root_eq l d)).trans
+    ((forward_eq x
+      (⟨⟨0, Nat.zero_lt_succ d⟩, Fin.elim0⟩ : MIdx l d)).trans
+      (Fin.prod_univ_zero (fun i : Fin 0 => xhat x (Fin.elim0 i))))
 
 /-- Reconstruction consists of the polynomial outputs followed by all forward
 prefix values. [AGW20, Lemma 2, p.12; Appendix A, p.38]. -/
@@ -304,7 +365,30 @@ recurrence. At each non-root prefix its parent's weighted forward value cancels
 its own value. Output rows sum the coefficient-weighted full prefix products. -/
 theorem forward_action (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ)) :
     Matrix.mulVec (matrix C x) (forward x) =
-      Sum.elim (fun _ : TIdx l d => 0) (polyTensorEval C x) := sorry
+      Sum.elim (fun _ : TIdx l d => 0) (polyTensorEval C x) := by
+  funext row
+  cases row with
+  | inl v =>
+    -- The abstract incidence action is the parent-to-child cancellation.
+    change Matrix.mulVec (matrix C x) (forward x) (Sum.inl v) = 0
+    have h := congrFun
+      (PathAlgebra.weightedIncidence_mulVec
+        (parent : TIdx l d → MIdx l d) node
+        (fun w => xhat x (lastLabel w)) (forward x)) v
+    simpa only [Matrix.mulVec_eq_sum, Finset.sum_apply, Pi.smul_apply,
+      Matrix.transpose_apply, Matrix.of_apply, op_smul_eq_mul, matrix_inl,
+      forward_node, mul_comm, sub_self] using h
+  | inr j =>
+    -- The zero variable block leaves the terminal coefficient rows.
+    change Matrix.mulVec (matrix C x) (forward x) (Sum.inr j) = polyTensorEval C x j
+    simp only [Matrix.mulVec_eq_sum, Finset.sum_apply, Pi.smul_apply,
+      Matrix.transpose_apply, op_smul_eq_mul, matrix_eq, Matrix.add_apply,
+      Matrix.mul_apply, L1_inr, zero_mul, Finset.sum_const_zero, zero_add, L0_inr]
+    -- Swap the node and tuple sums; each tuple selects precisely its own leaf.
+    simp only [Finset.sum_mul]
+    rw [Finset.sum_comm]
+    simp only [ite_mul, zero_mul, Fintype.sum_ite_eq', leaf_eq, forward_eq,
+      Fin.val_last, polyTensorEval_eq]
 
 /-- The backward value at the source is the allowed scalar z·f(x).
 
@@ -313,7 +397,44 @@ Its extension is itself. Exchange the finite output/tuple sums and regroup the
 coefficient products into polyTensorEval. -/
 theorem backward_root (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
     (z : Fin n → ZMod (p : ℕ)) :
-    backward C x z (root l d) = dotProduct z (polyTensorEval C x) := sorry
+    backward C x z (root l d) = dotProduct z (polyTensorEval C x) :=
+  let u0 : MIdx l d := ⟨⟨0, Nat.zero_lt_succ d⟩, Fin.elim0⟩
+  let hCast : d = 0 + d := (Nat.zero_add d).symm
+  let monomial := fun sigma : Fin d → Fin (l + 1) => ∏ i : Fin d, xhat x (sigma i)
+  have hExtend : ∀ sigma : Fin d → Fin (l + 1), extend u0 sigma = sigma :=
+    fun sigma => (extend_eq u0 sigma).trans
+      (funext fun i =>
+        (show Fin.append Fin.elim0 sigma (Fin.cast hCast i) = sigma i from
+          (congrFun (Fin.elim0_append sigma) (Fin.cast hCast i)).trans
+            (congrArg sigma
+              ((Fin.cast_cast hCast (Nat.zero_add d) (i := i)).trans
+                (congrFun (Fin.cast_refl d (hCast.trans (Nat.zero_add d))) i)))))
+  have hWeight : ∀ (sigma : Fin d → Fin (l + 1)) (j : Fin n),
+      (C j sigma * z j) * monomial sigma = z j * (C j sigma * monomial sigma) :=
+    fun sigma j =>
+      (congrArg (fun v : ZMod (p : ℕ) => v * monomial sigma)
+        (mul_comm (C j sigma) (z j))).trans (mul_assoc (z j) (C j sigma) (monomial sigma))
+  have hSum : (∑ sigma : Fin d → Fin (l + 1),
+      (∑ j : Fin n, C j sigma * z j) * monomial sigma) =
+        dotProduct z (polyTensorEval C x) :=
+    (Finset.sum_congr rfl (fun sigma _ =>
+      Finset.sum_mul Finset.univ (fun j : Fin n => C j sigma * z j) (monomial sigma))).trans
+      ((Finset.sum_comm (s := Finset.univ) (t := Finset.univ)
+        (f := fun (sigma : Fin d → Fin (l + 1)) (j : Fin n) =>
+          (C j sigma * z j) * monomial sigma)).trans
+        ((Finset.sum_congr rfl (fun j _ =>
+          ((Finset.sum_congr rfl (fun sigma _ => hWeight sigma j)).trans
+            (Finset.mul_sum Finset.univ
+              (fun sigma : Fin d → Fin (l + 1) => C j sigma * monomial sigma) (z j)).symm).trans
+            (congrArg (fun v : ZMod (p : ℕ) => z j * v)
+              (polyTensorEval_eq C x j).symm))).trans
+          (show (∑ j : Fin n, z j * polyTensorEval C x j) =
+              dotProduct z (polyTensorEval C x) from rfl)))
+  (congrArg (backward C x z) (root_eq l d)).trans
+    ((backward_eq C x z u0).trans
+      ((Finset.sum_congr rfl (fun sigma _ =>
+        congrArg (fun tau : Fin d → Fin (l + 1) =>
+          (∑ j : Fin n, C j tau * z j) * monomial sigma) (hExtend sigma))).trans hSum))
 
 /-- Multiplying the backward draw shift by the input matrix cancels every column
 except the source column, whose value is the allowed scalar.
@@ -326,7 +447,80 @@ The source has no negative diagonal; apply backward_root there. -/
 theorem backward_action (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
     (z : Fin n → ZMod (p : ℕ)) :
     Matrix.vecMul (shift C x z) (matrix C x) =
-      fun u => if u = root l d then dotProduct z (polyTensorEval C x) else 0 := sorry
+      fun u => if u = root l d then dotProduct z (polyTensorEval C x) else 0 := by
+  let edges : Matrix (TIdx l d) (MIdx l d) (ZMod (p : ℕ)) :=
+    Matrix.of (fun v u =>
+      (if u = parent v then xhat x (lastLabel v) else 0) -
+        (if u = node v then 1 else 0))
+  let outputs : Matrix (Fin n) (MIdx l d) (ZMod (p : ℕ)) :=
+    Matrix.of (fun j u =>
+      ∑ tau : Fin d → Fin (l + 1), if u = leaf tau then C j tau else 0)
+  -- Read the source matrices as the two row blocks.
+  have hMatrix : matrix C x = Matrix.fromRows edges outputs := ?_
+  swap
+  · funext row u
+    cases row with
+    | inl v =>
+      rw [Matrix.fromRows_apply_inl]
+      change matrix C x (Sum.inl v) u =
+        (if u = parent v then xhat x (lastLabel v) else 0) -
+          (if u = node v then 1 else 0)
+      exact matrix_inl C x v u
+    | inr j =>
+      rw [Matrix.fromRows_apply_inr]
+      change matrix C x (Sum.inr j) u =
+        ∑ tau : Fin d → Fin (l + 1), if u = leaf tau then C j tau else 0
+      simp only [matrix_eq, Matrix.add_apply, Matrix.mul_apply, L1_inr,
+        zero_mul, Finset.sum_const_zero, zero_add, L0_inr]
+  have hShift : shift C x z =
+      Sum.elim (fun v => backward C x z (node v)) z :=
+    (Sum.elim_comp_inl_inr (shift C x z)).symm.trans
+      (congrArg₂ Sum.elim (funext (shift_inl C x z)) (funext (shift_inr C x z)))
+  -- The output block contributes exactly the terminal coefficient sum.
+  have hOutput : Matrix.vecMul z outputs = fun u =>
+      ∑ tau : Fin d → Fin (l + 1),
+        if u = leaf tau then (∑ j : Fin n, C j tau * z j) else 0 := ?_
+  swap
+  · funext u
+    rw [congrFun (Matrix.vecMul_eq_sum z outputs) u]
+    simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+    change (∑ j : Fin n, z j *
+      (∑ tau : Fin d → Fin (l + 1), if u = leaf tau then C j tau else 0)) =
+        ∑ tau : Fin d → Fin (l + 1),
+          if u = leaf tau then (∑ j : Fin n, C j tau * z j) else 0
+    simp only [Finset.mul_sum, mul_ite, mul_zero]
+    rw [Finset.sum_comm]
+    simp only [Finset.sum_ite_irrel, Finset.sum_const_zero, mul_comm]
+  have hEdges := PathAlgebra.weightedIncidence_vecMul
+    (parent : TIdx l d → MIdx l d) node
+    (fun v => xhat x (lastLabel v)) (fun v => backward C x z (node v))
+  rw [hShift, hMatrix, Matrix.sumElim_vecMul_fromRows, hEdges, hOutput]
+  funext u
+  simp only [Pi.add_apply]
+  -- Specialize generic suffix conservation through the published path readers.
+  have hBalance :
+      (∑ v : TIdx l d,
+        if parent v = u then backward C x z (node v) * xhat x (lastLabel v) else 0) +
+      (∑ tau : Fin d → Fin (l + 1),
+        if u = leaf tau then (∑ j : Fin n, C j tau * z j) else 0) =
+        backward C x z u := ?_
+  swap
+  · simpa only [parent_eq, node_eq, lastLabel_eq, leaf_eq, backward_eq, extend_eq] using
+      (PrefixAlgebra.prefixFlow_balance d
+        (fun tau => ∑ j : Fin n, C j tau * z j) (xhat x) u)
+  have hIncoming :
+      (∑ v : TIdx l d,
+        if node v = u then backward C x z (node v) else 0) =
+      if u = root l d then 0 else backward C x z u := ?_
+  swap
+  · simpa only [node_eq, root_eq] using
+      (PrefixAlgebra.prefixIncoming_sum d (backward C x z) u)
+  -- Incoming cancellation leaves only the unbalanced source value.
+  rw [sub_add_eq_add_sub, hBalance, hIncoming]
+  by_cases hu : u = root l d
+  · subst u
+    simp only [eq_self, if_true, sub_zero, backward_root]
+  · simp only [hu, if_false, sub_self]
 
 /-- Every real garbling reconstructs z·f(x), independently of its draw.
 [AGW20, Lemma 2, p.12; Appendix A, p.38], proved by path sums.
@@ -338,7 +532,22 @@ output contribution cancels the draw contribution, leaving z·f(x). -/
 theorem rec_spec (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
     (z : Fin n → ZMod (p : ℕ)) (t : (TIdx l d ⊕ Fin n) → ZMod (p : ℕ)) :
     dotProduct (PartialGarbling.pgbCore (L1 C) (L0 C) x z t) (rec C x) =
-      dotProduct z (polyTensorEval C x) := sorry
+      dotProduct z (polyTensorEval C x) := by
+  -- Read the reconstruction blocks without unfolding their definition.
+  have hrec : rec C x = Sum.elim (polyTensorEval C x) (forward x) :=
+    (Sum.elim_comp_inl_inr (rec C x)).symm.trans
+      (congrArg₂ Sum.elim (funext (rec_inl C x)) (funext (rec_inr C x)))
+  -- The adversary draw paired with the output-only vector is its output block.
+  have ht := sumElim_dotProduct_sumElim
+    (u := t ∘ Sum.inl) (x := t ∘ Sum.inr)
+    (v := fun _ : TIdx l d => 0) (y := polyTensorEval C x)
+  simp only [Sum.elim_comp_inl_inr, dotProduct_zero', zero_add] at ht
+  rw [PartialGarbling.pgbCore_eq, hrec, sumElim_dotProduct_sumElim,
+    ← matrix_eq C x, ← Matrix.dotProduct_mulVec, forward_action, ht]
+  -- Forward reconstruction leaves equal and opposite mask terms.
+  change dotProduct (z - t ∘ Sum.inr) (polyTensorEval C x) +
+    dotProduct (t ∘ Sum.inr) (polyTensorEval C x) = dotProduct z (polyTensorEval C x)
+  rw [sub_dotProduct, sub_add_cancel]
 
 /-- Subtracting the backward draw shift transforms the real garbling exactly
 into the simulated garbling at its allowed scalar. [AGW20, Appendix A, (28)–(30),
@@ -351,7 +560,16 @@ theorem translation (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
     (z : Fin n → ZMod (p : ℕ)) (t : (TIdx l d ⊕ Fin n) → ZMod (p : ℕ)) :
     PartialGarbling.pgbCore (L1 C) (L0 C) x z t =
       PartialGarbling.pgbStarCore (L1 C) (L0 C) (root l d) x
-        (dotProduct z (polyTensorEval C x)) (t - shift C x z) := sorry
+        (dotProduct z (polyTensorEval C x)) (t - shift C x z) := by
+  funext row
+  cases row with
+  | inl j =>
+    simp only [PartialGarbling.pgbCore_inl, PartialGarbling.pgbStarCore_inl,
+      Pi.sub_apply, shift_inr, neg_sub]
+  | inr u =>
+    simp only [PartialGarbling.pgbCore_inr, PartialGarbling.pgbStarCore_inr,
+      ← matrix_eq C x, Matrix.sub_vecMul, Pi.sub_apply, backward_action,
+      sub_add_cancel]
 
 /-- Real and simulated layered garblings have identical laws, with no error term.
 [IW14, Definition 1, p.6; AGW20, Appendix A, (28)–(30), p.37].
@@ -365,7 +583,12 @@ theorem privacy (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
         (fun t => test (PartialGarbling.pgbCore (L1 C) (L0 C) x z t)) =
       ProbComp.expect (ProbComp.sample ((TIdx l d ⊕ Fin n) → ZMod (p : ℕ)))
         (fun t => test (PartialGarbling.pgbStarCore (L1 C) (L0 C) (root l d)
-          x (dotProduct z (polyTensorEval C x)) t)) := sorry
+          x (dotProduct z (polyTensorEval C x)) t)) := by
+  simp only [translation C x z]
+  simpa only [Equiv.coe_addRight, sub_eq_add_neg] using
+    (ProbComp.expect_sample_equiv (Equiv.addRight (-shift C x z))
+      (fun t => test (PartialGarbling.pgbStarCore (L1 C) (L0 C) (root l d)
+        x (dotProduct z (polyTensorEval C x)) t)))
 
 end Algorithms
 end PartialGarbling.Layered

@@ -1,0 +1,32 @@
+COMMAND ['rg', '-n', 'exists.*(tensor|quadratic|coefficient)|eval.*sum.*prod|monomial.*(padding|tuple)|padded.*(monomial|tuple)', 'TCSlib', '.lake/packages/mathlib/Mathlib/Algebra/MvPolynomial', '.lake/packages/mathlib/Mathlib/Algebra/BigOperators']
+TCSlib/BooleanAnalysis/BLR/ZkBLR.lean:52:-- x, y ∈ ℤ_k^n. Equivalently, f is linear iff there exists a "coefficient
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption.lean:26:* `PolynomialTensorAlgebra`: finite monomial padding for class completeness.
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:31:[Gar26, Lemma 2.3]); a linear-time multitape evaluator (`PadQuad.exists_linearTime_gStr`) gives a quadratic-time one-work-tape binary machine through
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:32:`Turing.FinTM.one_work_tape_binary` and `Turing.exists_codeTM` (`PadQuad.quadraticCode_of_linear`).
+TCSlib/Cryptography/Asymptotic/Universal.lean:73:  `TCSlib.Cryptography.exists_univCoeff_le` — its coefficient is polynomial on codes of
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PolynomialTensorAlgebra.lean:27:* `PolynomialTensorAlgebra.exists_padded_tuple`: a bounded monomial is a product
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PolynomialTensorAlgebra.lean:49:theorem exists_padded_tuple {R : Type*} [CommMonoid R] (m d : ℕ) (e : Fin m → ℕ)
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean:389:**Proof sketch.** At the empty prefix the suffix is the full monomial tuple.
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:60:/-- A degree-d polynomial vector is represented by coefficients on padded tuples.
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:66:/-- A coefficient tensor has one residue for each output and padded monomial tuple. -/
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:70:/-- The padded public input appends the constant 1, so tuples of fixed length d
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:87:/-- Tensor evaluation sums each coefficient times its padded public monomial.
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:93:/-- Tensor evaluation is the displayed sum over padded tuples. -/
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:99:/-- Padded monomial tuples have the explicit base-(l+1) coordinate ordering
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean:210:padded-tuple ordering. This reuses the published modular matrix encoder. -/
+TCSlib/Cryptography/SecureComputation/Compose.lean:442:evaluate the sum and product, and re-express the two component lengths with `Strategy.coinLen_eq`. -/
+TCSlib/Cryptography/SecureComputation/Compose.lean:462:evaluate the sum and product, and re-express the two component lengths with `Strategy.coinLen_eq`. -/
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:69:padded tuple of hybrid `j` (`hybCt`, later challenges repeat it), and output `A`'s bit. -/
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:277:  -- Notation: the game's computation, `A`'s bit, and the planted padded tuple.
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:321:  -- The handler's answer to a challenge `l` is the planted padded tuple.
+COMMAND ['rg', '-n', 'sum_fiberwise|sum_comm|sum_mul|prod_sum_type|prod_univ_two', '.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean', '.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Fin.lean', '.lake/packages/mathlib/Mathlib/Data/Fintype/BigOperators.lean']
+.lake/packages/mathlib/Mathlib/Data/Fintype/BigOperators.lean:245:theorem Fintype.prod_sum_type (f : α₁ ⊕ α₂ → M) :
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Fin.lean:107:theorem prod_univ_two (f : Fin 2 → M) : ∏ i, f i = f 0 * f 1 := by
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Fin.lean:111:theorem prod_univ_two' (f : ι → M) (a b : ι) : ∏ i, f (![a, b] i) = f a * f b :=
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Fin.lean:112:  prod_univ_two _
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Fin.lean:116:  rw [prod_univ_castSucc, prod_univ_two]
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Fin.lean:158:  · apply Fintype.prod_sum_type
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:942:  simpa only [card_eq_sum_ones] using sum_fiberwise_eq_sum_filter _ _ _ _
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:963:  simp only [card_eq_sum_ones, sum_fiberwise_of_maps_to H]
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:1058:  simpa using (Finset.sum_multiset_map_count s (fun _ => (1 : ℕ))).symm
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:1069:  rw [← Finset.sum_multiset_map_count, Multiset.sum_map_singleton]

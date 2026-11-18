@@ -1,0 +1,18 @@
+import TCSlib.Cryptography.Pairing.Exponents
+import Lean.Elab.Tactic.LibrarySearch
+set_option maxHeartbeats 200000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+namespace TCSlib.Cryptography.Pairing.BilinearGroup
+variable {ι κ υ : Type*} {wG wT : ℕ} (B : BilinearGroup wG wT)
+example [Fintype ι] (g : B.G) (v : ι → ZMod B.order)
+    (u : ι → B.G) :
+    B.pairVec (B.expVec g v) u = B.pair g (groupDot u v) := by
+  apply?
+
+example [Fintype ι] [Fintype κ]
+    (v : ι → ZMod B.order) (W : Matrix ι κ (ZMod B.order))
+    (M : Matrix κ υ B.G) :
+    groupVecMul v (matMulGroup W M) = groupVecMul (Matrix.vecMul v W) M := by
+  apply?
+end TCSlib.Cryptography.Pairing.BilinearGroup

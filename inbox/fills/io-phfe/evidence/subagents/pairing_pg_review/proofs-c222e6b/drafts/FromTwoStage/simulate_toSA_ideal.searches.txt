@@ -1,0 +1,22 @@
+Read-only reuse/search record; no Lean/lake/Git/checker by this agent.
+
+- Read exact current live FromTwoStage.lean:275-365, including frozen ideal
+  theorem/docstring and the existing toSA_run reader.
+- Read current Games.idealSAChallenge_none, idealSAKey_some,
+  idealSAImpl_eq, and adapter zero/one readers.
+- Read Data.saCTPayload_zero, saCTAnswer_eq and optional-answer format.
+- Read generic StatefulKeyLoopProbeHeader.lean to apply its exact parameter order.
+- Full-source/draft search for simulate_toSA_ideal and matching existing
+  challenge/payload correspondence found no competing proof or wrapper.
+- Existing wire facts reused: FixedLengthScheme.decAnswer_some,
+  Option.map_some, Fin.cons_zero, Fin.tail_cons, Fin.append_left/right.
+- Existing host facts: OracleComp.map_eq_bind, bind_assoc, pure_bind;
+  simulate_query, buildComp_succ_of_query, toSA_run.
+- Existing zero-prefix facts: List.length_nil, List.drop_zero,
+  List.filterMap_nil, List.nil_append, Nat.sub_zero.
+- Final typed/wire bridge: S.viewWord_eq_viewWordBits.
+
+No new public helper is introduced. simulate_saKeys_stateful had clean native
+header/reuse searches and root now reports its integrated proof native PASS on
+the first attempt (rc0, no errors). The present wrapper itself is not checked. The real wrapper and lift proof
+are neither duplicated nor modified here.

@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.Security
 import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Simulation.Games
+import TCSlib.Cryptography.Games.Bridges.Experiments
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -28,6 +29,8 @@ No efficient simulator conversion or oracle-machine construction is claimed.
 
 ## Main results
 
+* `stateT_mapM_lift`: a lifted traversal preserves the simulator state.
+* `TwoStage.simulate_saKeys_stateful`: a single stateful law for committed key calls.
 * `expect_simGame_eq_saGame`: the two experiments have identical laws.
 * `simAdv_eq_saSimAdv`: committed advantage is exactly the derived semi-adaptive advantage.
 
@@ -133,6 +136,24 @@ theorem toSim_key (kappa : ℕ) (pp : PublicParams S.G kappa)
     (key_eq Sim kappa pp st omega.publicInput (omega.functions j) (omega.values j)).symm
 
 end FEScheme.Raw.SASimulator.Raw
+
+/-- Lifting every action of a list traversal preserves its state and returns the same
+ordered results as the underlying probability computation.
+
+**Proof sketch.** Induct on the list. Read the traversal and state-transformer bind laws;
+the head action preserves state, so the induction hypothesis applies at that same state. -/
+theorem stateT_mapM_lift {alpha beta sigma : Type}
+    (f : alpha → ProbComp beta) (xs : List alpha) (st : sigma) :
+    (List.mapM (m := StateT sigma ProbComp)
+        (fun x => StateT.lift (f x)) xs).run st =
+      (List.mapM f xs).bind fun ys => .pure (ys, st) := by
+  induction xs with
+  | nil => simp only [List.mapM_nil, StateT.run_pure,
+      OracleComp.pure_eq_pure, OracleComp.pure_bind]
+  | cons x xs ih =>
+      simp only [List.mapM_cons, StateT.run_bind, StateT.run_lift,
+        StateT.run_pure, OracleComp.bind_eq_bind, OracleComp.pure_eq_pure,
+        OracleComp.bind_assoc, OracleComp.pure_bind, ih]
 
 namespace TwoStage
 
@@ -241,6 +262,336 @@ theorem toSA_run {C : FnClass} {S : FEScheme.Raw C} (A : TwoStage) (q : PolyExpr
       buildComp (A.saNext (S := S) q kappa pp pk r) false (q.eval kappa + 1) [] :=
   FEScheme.Raw.SAAdv.run_eq (A.toSA (S := S) q) kappa pp pk r
 
+/-- The two machines' typed tapes are recovered by splitting their concatenated
+bit lists at the first machine's coin length. This is deterministic coin-layout glue.
+
+**Proof sketch.** Read the published first/second coin equations. At each finite
+coordinate, apply the list append and ofFn element readers; the first coordinate
+is before the split and the second is at its original offset after the split. -/
+theorem coinBlocks_ofFn_append (A : TwoStage) (kappa : ℕ)
+    (r1 : A.first.Coins kappa) (r2 : A.second.Coins kappa) :
+    (A.firstCoins kappa (List.ofFn r1 ++ List.ofFn r2),
+      A.secondCoins kappa (List.ofFn r1 ++ List.ofFn r2)) = (r1, r2) := by
+  have h1 : (List.ofFn r1).length = A.first.coinLen kappa := List.length_ofFn
+  have h2 : (List.ofFn r2).length = A.second.coinLen kappa := List.length_ofFn
+  apply Prod.ext
+  · change A.firstCoins kappa (List.ofFn r1 ++ List.ofFn r2) = r1
+    rw [firstCoins_eq]
+    funext i
+    change (List.ofFn r1 ++ List.ofFn r2).getD i.val false = r1 i
+    have hi := lt_of_lt_of_eq i.isLt h1.symm
+    rw [List.getD_append _ _ _ _ hi, List.getD_eq_getElem _ _ hi,
+      List.getElem_ofFn]
+  · change A.secondCoins kappa (List.ofFn r1 ++ List.ofFn r2) = r2
+    rw [secondCoins_eq]
+    funext i
+    change (List.ofFn r1 ++ List.ofFn r2).getD (A.first.coinLen kappa + i.val) false = r2 i
+    have hi := lt_of_lt_of_eq i.isLt h2.symm
+    rw [List.getD_append_right _ _ _ _
+      (le_trans (le_of_eq h1) (Nat.le_add_right _ _)), h1,
+      Nat.add_sub_cancel_left, List.getD_eq_getElem _ _ hi, List.getElem_ofFn]
+
+/-- The remaining scripted key calls follow any stateful key law represented by the handler.
+The joint conclusion retains the output and represented final state.
+
+**Proof sketch.** Induct once on the exact remaining call count, generalizing the
+history prefix and abstract state. At a query use its supplied one-call law and
+the published StateT mapM recurrence, then recurse from the returned state. The
+existing suffix and payload laws align the ordered final view. -/
+theorem simulate_saKeys_stateful {C : FnClass} {S : FEScheme.Raw C}
+    (A : TwoStage) (q : PolyExpr) (kappa : ℕ) (pp : PublicParams S.G kappa)
+    (pk : S.MPK kappa pp) (r : List Bool) {sigma tau : Type}
+    (impl : QueryImpl (S.saSpec kappa) tau unifSpec)
+    (stateMap : sigma → tau)
+    (key : (Fin (C.fnLen.eval kappa) → Bool) →
+      StateT sigma ProbComp (S.SK kappa pp))
+    (hkey : ∀ (f : Fin (C.fnLen.eval kappa) → Bool) (st : sigma),
+      impl 1 f (stateMap st) =
+        (key f st).bind fun ks =>
+          .pure (S.saSKAnswer kappa pp (some ks.1), stateMap ks.2))
+    (e : Sigma fun i => (S.saSpec kappa).dom i × (S.saSpec kappa).rng i)
+    (es : QueryLog (S.saSpec kappa))
+    (ctBits : Fin (S.ctLen.eval kappa) → Bool) (st : sigma)
+    (hct : S.saCTPayload kappa e.1 e.2.2 = some ctBits)
+    (hlen : es.length ≤ q.eval kappa) :
+    let a := A.saCommitment C q kappa r
+    simulate impl
+        (buildComp (A.saNext (S := S) q kappa pp pk r) false
+          (q.eval kappa - es.length) (e :: es)) (stateMap st) =
+      ((List.mapM (m := StateT sigma ProbComp)
+        (fun j => key (a.functions j))
+        ((List.finRange (q.eval kappa)).drop es.length)).run st).bind fun keys =>
+        .pure (A.second.distinguisherL kappa
+          (S.viewWordBits a pp (S.encMPK kappa pp pk)
+            ((es.filterMap fun entry => S.saSKPayload kappa entry.1 entry.2.2) ++
+              keys.1.map (S.encSK kappa pp)) ctBits)
+          (A.secondCoins kappa r), stateMap keys.2) := by
+  let a := A.saCommitment C q kappa r
+  let next := A.saNext (S := S) q kappa pp pk r
+  let call : Fin (q.eval kappa) → StateT sigma ProbComp (S.SK kappa pp) :=
+    fun j => key (a.functions j)
+  let payload : (Sigma fun i => (S.saSpec kappa).dom i × (S.saSpec kappa).rng i) →
+      Option (Fin (S.skLen.eval kappa) → Bool) :=
+    fun entry => S.saSKPayload kappa entry.1 entry.2.2
+  change simulate impl
+      (buildComp next false (q.eval kappa - es.length) (e :: es)) (stateMap st) =
+    ((List.mapM (m := StateT sigma ProbComp) call
+      ((List.finRange (q.eval kappa)).drop es.length)).run st).bind fun keys =>
+      .pure (A.second.distinguisherL kappa
+        (S.viewWordBits a pp (S.encMPK kappa pp pk)
+          (es.filterMap payload ++ keys.1.map (S.encSK kappa pp)) ctBits)
+        (A.secondCoins kappa r), stateMap keys.2)
+  generalize hremaining : q.eval kappa - es.length = remaining
+  induction remaining generalizing es st with
+  | zero =>
+      have hdone : es.length = q.eval kappa :=
+        Nat.le_antisymm hlen (Nat.sub_eq_zero_iff_le.mp hremaining)
+      have hn := A.saNext_cons (S := S) q kappa pp pk r e es
+      simp only [hct, dif_neg (not_lt_of_ge (le_of_eq hdone.symm))] at hn
+      change next (e :: es) = .ret (A.second.distinguisherL kappa
+        (S.viewWordBits a pp (S.encMPK kappa pp pk) (es.filterMap payload) ctBits)
+        (A.secondCoins kappa r)) at hn
+      have hdrop : (List.finRange (q.eval kappa)).drop es.length = [] :=
+        List.drop_of_length_le
+          (le_trans (le_of_eq List.length_finRange) (le_of_eq hdone.symm))
+      rw [buildComp_zero_of_ret (next := next) hn, simulate_pure]
+      simp only [hdrop, List.mapM_nil, StateT.run_pure,
+        OracleComp.pure_eq_pure, OracleComp.pure_bind, List.map_nil, List.append_nil]
+  | succ remaining ih =>
+      have hmore : es.length < q.eval kappa := Nat.lt_of_sub_eq_succ hremaining
+      let j : Fin (q.eval kappa) := ⟨es.length, hmore⟩
+      have hn := A.saNext_cons (S := S) q kappa pp pk r e es
+      simp only [hct, dif_pos hmore] at hn
+      rw [S.saKeyMove_eq] at hn
+      change next (e :: es) = .query 1 (a.functions j) at hn
+      have hi : es.length < (List.finRange (q.eval kappa)).length :=
+        lt_of_lt_of_eq hmore List.length_finRange.symm
+      have hindex : (List.finRange (q.eval kappa))[es.length]'hi = j :=
+        (List.getElem_finRange hi).trans (Fin.ext rfl)
+      have hdrop : (List.finRange (q.eval kappa)).drop es.length =
+          j :: (List.finRange (q.eval kappa)).drop (es.length + 1) :=
+        (List.drop_eq_getElem_cons hi).trans
+          (congrArg (fun index : Fin (q.eval kappa) =>
+            index :: (List.finRange (q.eval kappa)).drop (es.length + 1)) hindex)
+      rw [buildComp_succ_of_query (next := next) hn, simulate_query, hkey,
+        hdrop, List.mapM_cons]
+      simp only [StateT.run_bind, StateT.run_pure,
+        OracleComp.bind_eq_bind, OracleComp.pure_eq_pure,
+        OracleComp.bind_assoc, OracleComp.pure_bind, List.cons_append]
+      apply congrArg (fun continuation => ((call j).run st).bind continuation)
+      funext ks
+      rcases ks with ⟨sk, st'⟩
+      let entry : Sigma fun i => (S.saSpec kappa).dom i × (S.saSpec kappa).rng i :=
+        ⟨1, a.functions j, S.saSKAnswer kappa pp (some sk)⟩
+      let es' := es ++ [entry]
+      have hsize : es'.length = es.length + 1 := List.length_append
+      have hlen' : es'.length ≤ q.eval kappa :=
+        le_trans (le_of_eq hsize) (Nat.succ_le_of_lt hmore)
+      have hremaining' : q.eval kappa - es'.length = remaining := ?_
+      swap
+      · rw [hsize, Nat.sub_succ, hremaining, Nat.pred_succ]
+      have hsk : payload entry = some (S.encSK kappa pp sk) := ?_
+      swap
+      · change S.saSKPayload kappa 1 (S.saSKAnswer kappa pp (some sk)) =
+          some (S.encSK kappa pp sk)
+        rw [S.saSKPayload_one, S.saSKAnswer_eq, Option.map_some,
+          TCSlib.Cryptography.Composability.FixedLengthScheme.decAnswer_some,
+          Fin.cons_zero, if_pos rfl, Fin.tail_cons]
+      have hprefix : es'.filterMap payload =
+          es.filterMap payload ++ [S.encSK kappa pp sk] := ?_
+      swap
+      · change (es ++ [entry]).filterMap payload =
+          es.filterMap payload ++ [S.encSK kappa pp sk]
+        rw [List.filterMap_append, List.filterMap_cons_some hsk, List.filterMap_nil]
+      have hstep := ih (es := es') (st := st')
+        (hlen := hlen') (hremaining := hremaining')
+      rw [hsize] at hstep
+      change simulate impl
+        (buildComp next false remaining (e :: es')) (stateMap st') = _
+      rw [hstep]
+      apply congrArg (fun continuation =>
+        ((List.mapM (m := StateT sigma ProbComp) call
+          ((List.finRange (q.eval kappa)).drop (es.length + 1))).run st').bind
+            continuation)
+      funext keys
+      simp only [hprefix, List.map_cons, List.append_assoc,
+        List.cons_append, List.nil_append]
+
+/-- For any fixed composite tape, public key and master key, the scripted real
+oracle run is encryption followed by the committed keys in order and the second
+machine's activation on their public view. This is the typed protocol form of
+[GJLS21, Definition 4.3].
+
+**Proof sketch.** Unroll the accepted challenge and then the bounded committed-key
+queries through the published builder and handler readers. Retain the challenge
+entry and the answered-key prefix in the history invariant. The ordered key law
+is List.mapM; its final wire view is the published typed view. -/
+theorem simulate_toSA_real {C : FnClass} {S : FEScheme.Raw C}
+    (A : TwoStage) (q : PolyExpr) (kappa : ℕ) (pp : PublicParams S.G kappa)
+    (pk : S.MPK kappa pp) (msk : S.MSK kappa pp) (r : List Bool) :
+    Prod.fst <$> simulate (S.realSAImpl kappa pp pk msk)
+        ((A.toSA (S := S) q).run kappa pp pk r) none =
+      let a := A.saCommitment C q kappa r
+      (S.enc kappa pp pk a.publicInput a.privateInput).bind fun ct =>
+      (List.mapM (fun j => S.keyGen kappa pp msk (a.functions j))
+        (List.finRange (q.eval kappa))).bind fun keys =>
+        .pure (A.second.distinguisherL kappa (S.viewWord a pp pk keys ct)
+          (A.secondCoins kappa r)) := by
+  let a := A.saCommitment C q kappa r
+  let ch : SAChallenge C kappa := ⟨a.publicInput, a.privateInput⟩
+  let stateMap : Unit → S.SAState kappa := fun _ => some ch
+  let key : (Fin (C.fnLen.eval kappa) → Bool) →
+      StateT Unit ProbComp (S.SK kappa pp) :=
+    fun f => StateT.lift (S.keyGen kappa pp msk f)
+  have hkey : ∀ (f : Fin (C.fnLen.eval kappa) → Bool) (state : Unit),
+      S.realSAImpl kappa pp pk msk 1 f (stateMap state) =
+        (key f state).bind fun ks =>
+          .pure (S.saSKAnswer kappa pp (some ks.1), stateMap ks.2) := ?_
+  swap
+  · intro f state
+    change S.realSAImpl kappa pp pk msk 1 f (some ch) =
+      ((StateT.lift (S.keyGen kappa pp msk f) :
+        StateT Unit ProbComp (S.SK kappa pp)).run state).bind fun ks =>
+          .pure (S.saSKAnswer kappa pp (some ks.1), some ch)
+    rw [S.realSAImpl_eq, S.saImpl_one_onSpec, S.saKeyFunction_eq,
+      S.realSAKey_some, StateT.run_lift]
+    simp only [OracleComp.bind_eq_bind, OracleComp.pure_eq_pure,
+      OracleComp.bind_assoc, OracleComp.pure_bind]
+  have hfirst : A.saNext (S := S) q kappa pp pk r [] =
+      .query 0 (S.saChallengeQuery kappa a.publicInput a.privateInput) :=
+    (A.saNext_nil (S := S) q kappa pp pk r).trans
+      (S.saChallengeMove_eq kappa a.publicInput a.privateInput)
+  have hcall : S.realSAImpl kappa pp pk msk 0
+      (S.saChallengeQuery kappa a.publicInput a.privateInput) none =
+      (S.enc kappa pp pk a.publicInput a.privateInput).bind fun ct =>
+        .pure (S.saCTAnswer kappa pp (some ct), some ch) := ?_
+  swap
+  · rw [S.realSAImpl_eq, S.saImpl_zero_onSpec]
+    simp only [S.saSplitChallenge_fst, S.saSplitChallenge_snd,
+      S.saChallengeQuery_eq, Fin.append_left, Fin.append_right]
+    rw [S.realSAChallenge_none, OracleComp.bind_assoc]
+    simp only [OracleComp.pure_bind]
+    rfl
+  rw [A.toSA_run, buildComp_succ_of_query hfirst, simulate_query, hcall,
+    OracleComp.map_eq_bind]
+  simp only [OracleComp.bind_assoc, OracleComp.pure_bind, List.nil_append]
+  apply congrArg (fun continuation =>
+    (S.enc kappa pp pk a.publicInput a.privateInput).bind continuation)
+  funext ct
+  let entry : Sigma fun i => (S.saSpec kappa).dom i × (S.saSpec kappa).rng i :=
+    ⟨0, S.saChallengeQuery kappa a.publicInput a.privateInput,
+      S.saCTAnswer kappa pp (some ct)⟩
+  have hct : S.saCTPayload kappa entry.1 entry.2.2 =
+      some (S.encCT kappa pp ct) := ?_
+  swap
+  · change S.saCTPayload kappa 0 (S.saCTAnswer kappa pp (some ct)) =
+      some (S.encCT kappa pp ct)
+    rw [S.saCTPayload_zero, S.saCTAnswer_eq, Option.map_some,
+      TCSlib.Cryptography.Composability.FixedLengthScheme.decAnswer_some,
+      Fin.cons_zero, if_pos rfl, Fin.tail_cons]
+  have hloop := simulate_saKeys_stateful (S := S) A q kappa pp pk r
+    (S.realSAImpl kappa pp pk msk) stateMap key hkey entry []
+    (S.encCT kappa pp ct) () hct (Nat.zero_le _)
+  simp only [List.length_nil, Nat.sub_zero, List.drop_zero,
+    List.filterMap_nil, List.nil_append] at hloop
+  have hlift := stateT_mapM_lift
+    (fun j : Fin (q.eval kappa) => S.keyGen kappa pp msk (a.functions j))
+    (List.finRange (q.eval kappa)) ()
+  rw [hlift] at hloop
+  have hproject := congrArg
+    (fun c : ProbComp (Bool × S.SAState kappa) => Prod.fst <$> c) hloop
+  simpa only [OracleComp.map_eq_bind, OracleComp.bind_assoc, OracleComp.pure_bind,
+    S.viewWord_eq_viewWordBits] using hproject
+
+/-- For any fixed composite tape and initial simulator state, the scripted ideal
+oracle run threads that state through encryption and all committed keys, using
+exactly their allowed values. It ends with the second machine's activation on the
+same public view. This is the ideal typed protocol in [GJLS21, Definition 4.3].
+
+**Proof sketch.** Unroll the accepted challenge and ordered keys with a history
+invariant that retains the current simulator state and the answered-key prefix.
+Apply the stateful handler readers and existing mapM laws. Project away the state
+only after the last key, and read the final canonical public view. -/
+theorem simulate_toSA_ideal {C : FnClass} {S : FEScheme.Raw C}
+    (Sim : FEScheme.Raw.SASimulator.Raw S) (A : TwoStage) (q : PolyExpr)
+    (kappa : ℕ) (pp : PublicParams S.G kappa) (pk : S.MPK kappa pp)
+    (st : Sim.St kappa pp) (r : List Bool) :
+    Prod.fst <$> simulate (S.idealSAImpl Sim kappa pp)
+        ((A.toSA (S := S) q).run kappa pp pk r) (st, none) =
+      let a := A.saCommitment C q kappa r
+      (Sim.enc kappa pp st a.publicInput).bind fun cst =>
+      (List.mapM (m := StateT (Sim.St kappa pp) ProbComp)
+        (fun j st' => Sim.key kappa pp st' a.publicInput (a.functions j)
+          (C.eval kappa (S.cprm kappa pp) (a.functions j)
+            a.publicInput a.privateInput))
+        (List.finRange (q.eval kappa)) cst.2).bind fun keys =>
+        .pure (A.second.distinguisherL kappa (S.viewWord a pp pk keys.1 cst.1)
+          (A.secondCoins kappa r)) := by
+  let a := A.saCommitment C q kappa r
+  let ch : SAChallenge C kappa := ⟨a.publicInput, a.privateInput⟩
+  let stateMap : Sim.St kappa pp → S.SAIdealState Sim kappa pp :=
+    fun state => (state, some ch)
+  let key : (Fin (C.fnLen.eval kappa) → Bool) →
+      StateT (Sim.St kappa pp) ProbComp (S.SK kappa pp) :=
+    fun f state => Sim.key kappa pp state a.publicInput f
+      (C.eval kappa (S.cprm kappa pp) f a.publicInput a.privateInput)
+  have hkey : ∀ (f : Fin (C.fnLen.eval kappa) → Bool) (state : Sim.St kappa pp),
+      S.idealSAImpl Sim kappa pp 1 f (stateMap state) =
+        (key f state).bind fun ks =>
+          .pure (S.saSKAnswer kappa pp (some ks.1), stateMap ks.2) := ?_
+  swap
+  · intro f state
+    change S.idealSAImpl Sim kappa pp 1 f (state, some ch) =
+      (Sim.key kappa pp state a.publicInput f
+        (C.eval kappa (S.cprm kappa pp) f a.publicInput a.privateInput)).bind fun ks =>
+          .pure (S.saSKAnswer kappa pp (some ks.1), (ks.2, some ch))
+    rw [S.idealSAImpl_eq, S.saImpl_one_onSpec, S.saKeyFunction_eq,
+      S.idealSAKey_some, OracleComp.bind_assoc]
+    simp only [OracleComp.pure_bind]
+    rfl
+  have hfirst : A.saNext (S := S) q kappa pp pk r [] =
+      .query 0 (S.saChallengeQuery kappa a.publicInput a.privateInput) :=
+    (A.saNext_nil (S := S) q kappa pp pk r).trans
+      (S.saChallengeMove_eq kappa a.publicInput a.privateInput)
+  have hcall : S.idealSAImpl Sim kappa pp 0
+      (S.saChallengeQuery kappa a.publicInput a.privateInput) (st, none) =
+      (Sim.enc kappa pp st a.publicInput).bind fun cst =>
+        .pure (S.saCTAnswer kappa pp (some cst.1), (cst.2, some ch)) := ?_
+  swap
+  · rw [S.idealSAImpl_eq, S.saImpl_zero_onSpec]
+    simp only [S.saSplitChallenge_fst, S.saSplitChallenge_snd,
+      S.saChallengeQuery_eq, Fin.append_left, Fin.append_right]
+    rw [S.idealSAChallenge_none, OracleComp.bind_assoc]
+    simp only [OracleComp.pure_bind]
+    rfl
+  rw [A.toSA_run, buildComp_succ_of_query hfirst, simulate_query, hcall,
+    OracleComp.map_eq_bind]
+  simp only [OracleComp.bind_assoc, OracleComp.pure_bind, List.nil_append]
+  apply congrArg (fun continuation =>
+    (Sim.enc kappa pp st a.publicInput).bind continuation)
+  funext cst
+  rcases cst with ⟨ct, st'⟩
+  let entry : Sigma fun i => (S.saSpec kappa).dom i × (S.saSpec kappa).rng i :=
+    ⟨0, S.saChallengeQuery kappa a.publicInput a.privateInput,
+      S.saCTAnswer kappa pp (some ct)⟩
+  have hct : S.saCTPayload kappa entry.1 entry.2.2 =
+      some (S.encCT kappa pp ct) := ?_
+  swap
+  · change S.saCTPayload kappa 0 (S.saCTAnswer kappa pp (some ct)) =
+      some (S.encCT kappa pp ct)
+    rw [S.saCTPayload_zero, S.saCTAnswer_eq, Option.map_some,
+      TCSlib.Cryptography.Composability.FixedLengthScheme.decAnswer_some,
+      Fin.cons_zero, if_pos rfl, Fin.tail_cons]
+  have hloop := simulate_saKeys_stateful (S := S) A q kappa pp pk r
+    (S.idealSAImpl Sim kappa pp) stateMap key hkey entry []
+    (S.encCT kappa pp ct) st' hct (Nat.zero_le _)
+  simp only [List.length_nil, Nat.sub_zero, List.drop_zero,
+    List.filterMap_nil, List.nil_append] at hloop
+  have hproject := congrArg
+    (fun c : ProbComp (Bool × S.SAIdealState Sim kappa pp) => Prod.fst <$> c) hloop
+  simpa only [OracleComp.map_eq_bind, OracleComp.bind_assoc, OracleComp.pure_bind,
+    S.viewWord_eq_viewWordBits] using hproject
+
 end TwoStage
 
 namespace FEScheme.Raw
@@ -261,7 +612,107 @@ the second-stage word through viewWord_eq_viewWordBits. -/
 theorem expect_simGame_eq_saGame (Sim : FEScheme.Raw.SASimulator.Raw S) (A : TwoStage)
     (q : PolyExpr) (real : Bool) (kappa : ℕ) (test : Bool → ℝ) :
     ProbComp.expect (S.simGame Sim.toSim A q real kappa) test =
-      ProbComp.expect (S.saGame Sim (A.toSA (S := S) q) real kappa) test := sorry
+      ProbComp.expect (S.saGame Sim (A.toSA (S := S) q) real kappa) test := by
+  let Tape := Fin ((A.toSA (S := S) q).coins.eval kappa) → Bool
+  have hlen : A.first.coinLen kappa + A.second.coinLen kappa =
+      (A.toSA (S := S) q).coins.eval kappa := ?_
+  swap
+  · rw [NUPPT.coinLen_eq, NUPPT.coinLen_eq, TwoStage.toSA_coins, PolyExpr.eval_add]
+  let e : A.first.Coins kappa × A.second.Coins kappa ≃ Tape :=
+    (Fin.appendEquiv (A.first.coinLen kappa) (A.second.coinLen kappa)).trans
+      (Equiv.arrowCongr (finCongr hlen) (Equiv.refl Bool))
+  have hword : ∀ (r1 : A.first.Coins kappa) (r2 : A.second.Coins kappa),
+      List.ofFn (e (r1, r2)) = List.ofFn r1 ++ List.ofFn r2 := ?_
+  swap
+  · intro r1 r2
+    change List.ofFn (fun i => Fin.append r1 r2 (Fin.cast hlen.symm i)) =
+      List.ofFn r1 ++ List.ofFn r2
+    exact (List.ofFn_congr hlen (Fin.append r1 r2)).symm.trans
+      (List.ofFn_fin_append r1 r2)
+  let result : Tape → ℝ := fun r => ProbComp.expect (S.pubGen kappa) fun pp =>
+    if real then
+      ProbComp.expect (S.setup kappa pp) fun k =>
+        ProbComp.expect
+          (Prod.fst <$> simulate (S.realSAImpl kappa pp k.1 k.2)
+            ((A.toSA (S := S) q).run kappa pp k.1 (List.ofFn r)) none) test
+    else
+      ProbComp.expect (Sim.setup kappa pp) fun k =>
+        ProbComp.expect
+          (Prod.fst <$> simulate (S.idealSAImpl Sim kappa pp)
+            ((A.toSA (S := S) q).run kappa pp k.1 (List.ofFn r)) (k.2, none)) test
+  have hsa : ProbComp.expect (S.saGame Sim (A.toSA (S := S) q) real kappa) test =
+      ProbComp.expect (ProbComp.sample Tape) result := ?_
+  swap
+  · rw [S.saGame_eq]
+    cases real <;>
+      simp only [Bool.false_eq_true, if_false, if_true, ProbComp.expect_bind]
+    all_goals
+      conv_lhs =>
+        arg 2
+        ext pp
+        rw [ProbComp.expect_expect_sample]
+      rw [ProbComp.expect_expect_sample]
+      rfl
+  have hsplit : ProbComp.expect (ProbComp.sample Tape) result =
+      ProbComp.expect (ProbComp.sample (A.first.Coins kappa)) fun r1 =>
+        ProbComp.expect (ProbComp.sample (A.second.Coins kappa)) fun r2 =>
+          result (e (r1, r2)) := ?_
+  swap
+  · have hpair := Bridge.expect_sample_pair
+      (fun p : A.first.Coins kappa × A.second.Coins kappa => result (e p))
+    simp only [ProbComp.expect_bind, ProbComp.expect_pure] at hpair
+    exact (ProbComp.expect_sample_equiv e result).symm.trans hpair.symm
+  have hfixed : ∀ (r1 : A.first.Coins kappa) (r2 : A.second.Coins kappa),
+      result (e (r1, r2)) =
+        let a := Commitment.decode C q kappa (A.first.runAt kappa [] r1)
+        ProbComp.expect (if real then S.realView a else S.idealView Sim.toSim a)
+          (fun v => test (A.second.distinguisherL kappa v r2)) := ?_
+  swap
+  · intro r1 r2
+    let a := Commitment.decode C q kappa (A.first.runAt kappa [] r1)
+    have hb := A.coinBlocks_ofFn_append kappa r1 r2
+    have hb1 : A.firstCoins kappa (List.ofFn r1 ++ List.ofFn r2) = r1 :=
+      congrArg Prod.fst hb
+    have hb2 : A.secondCoins kappa (List.ofFn r1 ++ List.ofFn r2) = r2 :=
+      congrArg Prod.snd hb
+    have hc : A.saCommitment C q kappa (List.ofFn r1 ++ List.ofFn r2) = a := ?_
+    swap
+    · rw [A.saCommitment_eq, hb1]
+    cases real with
+    | false =>
+        change ProbComp.expect (S.pubGen kappa) (fun pp =>
+          ProbComp.expect (Sim.setup kappa pp) (fun k =>
+            ProbComp.expect
+              (Prod.fst <$> simulate (S.idealSAImpl Sim kappa pp)
+                ((A.toSA (S := S) q).run kappa pp k.1
+                  (List.ofFn (e (r1, r2)))) (k.2, none)) test)) =
+          ProbComp.expect (S.idealView Sim.toSim a)
+            (fun v => test (A.second.distinguisherL kappa v r2))
+        simp only [hword, TwoStage.simulate_toSA_ideal, hc, hb2, S.idealView_eq,
+          FEScheme.Raw.SASimulator.Raw.toSim_setup,
+          FEScheme.Raw.SASimulator.Raw.toSim_enc,
+          FEScheme.Raw.SASimulator.Raw.toSim_key, Commitment.omega_eq,
+          ProbComp.expect_bind, ProbComp.expect_pure]
+        rfl
+    | true =>
+        change ProbComp.expect (S.pubGen kappa) (fun pp =>
+          ProbComp.expect (S.setup kappa pp) (fun k =>
+            ProbComp.expect
+              (Prod.fst <$> simulate (S.realSAImpl kappa pp k.1 k.2)
+                ((A.toSA (S := S) q).run kappa pp k.1
+                  (List.ofFn (e (r1, r2)))) none) test)) =
+          ProbComp.expect (S.realView a)
+            (fun v => test (A.second.distinguisherL kappa v r2))
+        simp only [hword, TwoStage.simulate_toSA_real, hc, hb2, S.realView_eq,
+          ProbComp.expect_bind, ProbComp.expect_pure]
+  rw [hsa, hsplit, S.simGame_eq]
+  simp only [ProbComp.expect_bind, ProbComp.expect_pure, hfixed]
+  apply congrArg (ProbComp.expect (ProbComp.sample (A.first.Coins kappa)))
+  funext r1
+  let a := Commitment.decode C q kappa (A.first.runAt kappa [] r1)
+  exact ProbComp.expect_expect_sample
+    (if real then S.realView a else S.idealView Sim.toSim a)
+    (A.second.Coins kappa) (fun v r2 => test (A.second.distinguisherL kappa v r2))
 
 /-- The committed simulation advantage equals the semi-adaptive advantage of its
 explicit typed embedding, with no loss. [GJLS21, Definition 4.3; Wee20, §2.2].
@@ -270,7 +721,9 @@ explicit typed embedding, with no loss. [GJLS21, Definition 4.3; Wee20, §2.2].
 acceptance test, then read the two advantages through their published equations. -/
 theorem simAdv_eq_saSimAdv (Sim : FEScheme.Raw.SASimulator.Raw S) (A : TwoStage)
     (q : PolyExpr) (kappa : ℕ) :
-    S.simAdv Sim.toSim A q kappa = S.saSimAdv Sim (A.toSA (S := S) q) kappa := sorry
+    S.simAdv Sim.toSim A q kappa = S.saSimAdv Sim (A.toSA (S := S) q) kappa := by
+  simp only [S.simAdv_eq, S.saSimAdv_eq, advantage_eq, accept_eq,
+    ProbComp.prob_eq_expect, S.expect_simGame_eq_saGame]
 
 end FEScheme.Raw
 end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption

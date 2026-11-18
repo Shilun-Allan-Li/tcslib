@@ -1,0 +1,61 @@
+.lake/io-phfe-probes/ClassesResidueBlockApply.lean:135:35: warning: unused variable `i`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (ZMod.inv_mul_eq_one_of_isUnit ?_
+        ↑(listToNat (List.ofFn fun j => word (finProdFinEquiv (i, j))))).mp
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm
+    ((fun p n z [NeZero p] => (ZMod.natCast_eq_iff p n z).mpr) (↑p)
+      (listToNat (List.ofFn fun j => word (finProdFinEquiv (i, j)))) (decodeResidues p count width word i) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∃ k,
+    listToNat (List.ofFn fun j => word (finProdFinEquiv (i, j))) = (decodeResidues p count width word i).val + ↑p * k
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsCyclic.ext ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {n} {a} ha b => (ZMod.inv_mul_eq_one_of_isUnit ha b).mp) ?_ (decodeResidues p count width word i) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsAddCyclic.ext ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (IsCyclic.ext ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine ZMod.toAddCircle_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ZMod.toAddCircle (decodeResidues p count width word i) =
+    ZMod.toAddCircle ↑(listToNat (List.ofFn fun j => word (finProdFinEquiv (i, j))))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (IsAddCyclic.ext ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine ZMod.valMinAbs_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (decodeResidues p count width word i).valMinAbs =
+    (↑(listToNat (List.ofFn fun j => word (finProdFinEquiv (i, j))))).valMinAbs
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {N} [NeZero N] {j k} => ZMod.toAddCircle_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Mathlib.Meta.NormNum.IsNat.out ?_
+  -- Remaining subgoals:
+  -- ⊢ Mathlib.Meta.NormNum.IsNat (decodeResidues p count width word i)
+    (listToNat (List.ofFn fun j => word (finProdFinEquiv (i, j))))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {a b} => ZMod.valMinAbs_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/ClassesResidueBlockApply.lean:160:0: warning: declaration uses 'sorry'

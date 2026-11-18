@@ -1,0 +1,15 @@
+Read-only exact API verification:
+- Frozen FromTwoStage.expect_simGame_eq_saGame and simAdv_eq_saSimAdv headers,
+  complete prose copied unchanged.
+- Simulation/Games.lean:168 S.simAdv_eq.
+- SemiAdaptive/Games.lean:259 S.saSimAdv_eq.
+- Games/Advantage.lean:67 accept_eq, :76 advantage_eq.
+- Games/Probability.lean:208 prob_eq_expect with arbitrary DecidablePred.
+- Nearest reader composition: Games/Bridges/Experiments.lean:134 rewrites
+  accept_eq, prob_eq_expect and an expectation law to compare acceptance.
+- Existing target/fullname search found the frozen declaration and downstream
+  PHFE consumers; no competing proof or new helper needed.
+
+No native exact?/apply? probe is required for a new helper: none is proposed.
+No Lean/lake/Git/checker or live edit was performed. Exact endpoint proof is
+still pending root validation according to latest status.

@@ -1,0 +1,252 @@
+import Lean
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.Defs
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Classes
+import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
+import Mathlib.Data.Fintype.BigOperators
+
+set_option maxHeartbeats 200000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Layered polynomial partial garbling
+
+The instance specializes [AGW20, Appendix A, (28)–(32), pp.37–38] to the
+coefficient-tensor representation of a polynomial vector. Its conceptual vertices
+are padded public-variable prefixes, output vertices and one sink. No branching-
+program datatype is introduced.
+
+The proof route uses forward and backward path sums and a translation of the
+random draw. This replaces the source's determinant argument while preserving its
+matrix formulas and exact law. It is the one-private-tail-column case of
+[IW14, Theorem 3, p.8]. Degree zero and an empty output vector are permitted.
+
+## Main definitions
+
+* `PartialGarbling.Layered.MIdx`, `TIdx`: prefix nodes and non-root prefix nodes.
+* `PartialGarbling.Layered.L1`, `L0`: public-variable and constant incidence matrices.
+* `PartialGarbling.Layered.rec`: forward path values for reconstruction.
+* `PartialGarbling.Layered.backward`, `shift`: backward values for privacy.
+* `layeredPG_raw`: the raw uniform family; efficiency is a later target.
+
+## Main results
+
+* `PartialGarbling.Layered.forward_action`, `backward_action`: path-sum identities.
+* `PartialGarbling.Layered.translation`: the pointwise real/simulated garbling identity.
+* `PartialGarbling.Layered.rec_spec`, `privacy`: reconstruction and exact privacy.
+* `layeredPG_raw_*`: readers for every algorithm and its coordinate types.
+
+## References
+
+* [AGW20] M. Abdalla, J. Gong, H. Wee, *Functional Encryption for Attribute-Weighted
+  Sums from k-Lin*, 2020, Lemma 2, p.12, Appendix A, pp.37–38, (28)–(32).
+* [IW14] Y. Ishai, H. Wee, *Partial Garbling Schemes and Their Applications*, 2014,
+  Definition 1, pp.6–7, Theorem 3, p.8, and §4.2, pp.9–11.
+-/
+
+namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
+
+open Complexity Turing TCSlib.Cryptography.Games
+
+namespace PartialGarbling.Layered
+
+/-- Non-output nodes are all padded public-variable prefixes of lengths 0 through d.
+This is the layered specialization of [AGW20, Appendix A, p.37]. -/
+abbrev MIdx (l d : ℕ) : Type := Σ k : Fin (d + 1), Fin k.val → Fin (l + 1)
+
+/-- Non-output indices have the displayed prefix-node type. -/
+theorem mIdx_eq (l d : ℕ) :
+    MIdx l d = (Σ k : Fin (d + 1), Fin k.val → Fin (l + 1)) := rfl
+
+/-- Auxiliary draw nodes are all non-root prefixes, indexed by their predecessor
+length. [AGW20, Appendix A, (28)–(32), pp.37–38], layered specialization. -/
+abbrev TIdx (l d : ℕ) : Type := Σ k : Fin d, Fin (k.val + 1) → Fin (l + 1)
+
+/-- Auxiliary draw indices have the displayed non-root-prefix type. -/
+theorem tIdx_eq (l d : ℕ) :
+    TIdx l d = (Σ k : Fin d, Fin (k.val + 1) → Fin (l + 1)) := rfl
+
+/-- The distinguished coordinate is the empty prefix, namely the source node.
+[AGW20, Appendix A, (30), p.37]. -/
+def root (l d : ℕ) : MIdx l d := ⟨⟨0, Nat.zero_lt_succ d⟩, Fin.elim0⟩
+
+/-- The distinguished coordinate is the explicit depth-zero prefix. -/
+theorem root_eq (l d : ℕ) : root l d = ⟨⟨0, Nat.zero_lt_succ d⟩, Fin.elim0⟩ := rfl
+
+/-- An auxiliary prefix is viewed as its corresponding non-output node. -/
+def node {l d : ℕ} (v : TIdx l d) : MIdx l d := ⟨v.1.succ, v.2⟩
+
+/-- The auxiliary-node embedding increments its predecessor depth. -/
+theorem node_eq {l d : ℕ} (v : TIdx l d) : node v = ⟨v.1.succ, v.2⟩ := rfl
+
+/-- The parent of a non-root prefix deletes its last label. -/
+def parent {l d : ℕ} (v : TIdx l d) : MIdx l d := ⟨v.1.castSucc, Fin.init v.2⟩
+
+/-- The parent is the prefix obtained by the published tuple-init operation. -/
+theorem parent_eq {l d : ℕ} (v : TIdx l d) :
+    parent v = ⟨v.1.castSucc, Fin.init v.2⟩ := rfl
+
+/-- The edge into a non-root prefix is labeled by its final tuple coordinate. -/
+def lastLabel {l d : ℕ} (v : TIdx l d) : Fin (l + 1) := v.2 (Fin.last v.1.val)
+
+/-- The final edge label is the prefix's last coordinate. -/
+theorem lastLabel_eq {l d : ℕ} (v : TIdx l d) :
+    lastLabel v = v.2 (Fin.last v.1.val) := rfl
+
+/-- A full public-variable tuple identifies its depth-d terminal prefix. -/
+def leaf {l d : ℕ} (tau : Fin d → Fin (l + 1)) : MIdx l d := ⟨Fin.last d, tau⟩
+
+/-- A leaf has depth d and the supplied tuple. -/
+theorem leaf_eq {l d : ℕ} (tau : Fin d → Fin (l + 1)) :
+    leaf tau = ⟨Fin.last d, tau⟩ := rfl
+
+/-- The number of non-output nodes is the sum of padded-prefix counts at every
+level. This depends only on l,d, not on coefficients. -/
+def nodeCount (l d : ℕ) : ℕ := ∑ k : Fin (d + 1), (l + 1) ^ k.val
+
+/-- The non-output node count is the displayed geometric sum. -/
+theorem nodeCount_eq (l d : ℕ) : nodeCount l d = ∑ k : Fin (d + 1), (l + 1) ^ k.val :=
+  rfl
+
+/-- The number of auxiliary coordinates is the sum of positive-depth prefix counts. -/
+def auxCount (l d : ℕ) : ℕ := ∑ k : Fin d, (l + 1) ^ (k.val + 1)
+
+/-- The auxiliary coordinate count is the displayed positive-depth sum. -/
+theorem auxCount_eq (l d : ℕ) : auxCount l d = ∑ k : Fin d, (l + 1) ^ (k.val + 1) :=
+  rfl
+
+/-- The fixed node bound is the polynomial sum of (l+1)^k for 0≤k≤d.
+It is independent of the modulus and function coefficients. [AGW20, Lemma 2,
+p.12], specialized to the fixed-degree layered representation. -/
+def nodeBound (l : PolyExpr) : ℕ → PolyExpr
+  | 0 => .const 1
+  | d + 1 => .add (nodeBound l d) (.pow (.add l (PolyExpr.const 1)) (d + 1))
+
+/-- At degree zero the node bound is the constant polynomial 1. -/
+theorem nodeBound_zero (l : PolyExpr) : nodeBound l 0 = .const 1 := rfl
+
+/-- Increasing the degree adds the count of the next prefix layer. -/
+theorem nodeBound_succ (l : PolyExpr) (d : ℕ) :
+    nodeBound l (d + 1) = .add (nodeBound l d) (.pow (.add l (PolyExpr.const 1)) (d + 1)) := rfl
+
+/-- The polynomial node bound equals the exact geometric node count.
+
+**Proof sketch.** Induct on d. The base geometric sum consists only of 1.
+At a successor, use Fin.sum_univ_castSucc to split the last layer; its count
+is exactly the power added by nodeBound_succ. -/
+theorem nodeBound_eval (l : PolyExpr) (d kappa : ℕ) :
+    (nodeBound l d).eval kappa = nodeCount (l.eval kappa) d := sorry
+
+/-- Removing the source leaves exactly the auxiliary prefix nodes.
+
+**Proof sketch.** Split the geometric sum at depth zero using Fin.sum_univ_succ;
+the first term is 1 and the remaining terms are exactly auxCount. -/
+theorem auxCount_add_one (l d : ℕ) : auxCount l d + 1 = nodeCount l d := sorry
+
+/-- Node coordinates use the explicit tuple equivalence within each depth and
+the published finite-sigma equivalence between depths. No opaque enumeration is used. -/
+def nodeCoord (l d : ℕ) : MIdx l d ≃ Fin (nodeCount l d) :=
+  (Equiv.sigmaCongrRight (fun k : Fin (d + 1) => tupleCoord l k.val)).trans finSigmaFinEquiv
+
+/-- Node coordinates are the displayed composition of public equivalences. -/
+theorem nodeCoord_eq (l d : ℕ) : nodeCoord l d =
+    (Equiv.sigmaCongrRight (fun k : Fin (d + 1) => tupleCoord l k.val)).trans
+      finSigmaFinEquiv := rfl
+
+/-- Auxiliary coordinates use explicit positive-depth tuple ranks and finite-sigma ranks. -/
+def auxCoord (l d : ℕ) : TIdx l d ≃ Fin (auxCount l d) :=
+  (Equiv.sigmaCongrRight (fun k : Fin d => tupleCoord l (k.val + 1))).trans finSigmaFinEquiv
+
+/-- Auxiliary coordinates are the displayed composition of public equivalences. -/
+theorem auxCoord_eq (l d : ℕ) : auxCoord l d =
+    (Equiv.sigmaCongrRight (fun k : Fin d => tupleCoord l (k.val + 1))).trans
+      finSigmaFinEquiv := rfl
+
+/-- The source is finite coordinate zero, fixing the distinguished e1 position.
+
+**Proof sketch.** Apply the published finite-sigma coordinate formula at depth
+zero; its prefix sum is empty and its empty tuple has the only coordinate in Fin 1. -/
+theorem nodeCoord_root (l d : ℕ) : (nodeCoord l d (root l d)).val = 0 := sorry
+
+section Algorithms
+
+variable {p : ℕ+} {l n d : ℕ}
+
+/-- L1 places the variable-edge coefficients at parent columns and child rows.
+Output rows are zero. This is the layered coefficient matrix of
+[AGW20, Appendix A, (32), p.38], with the corrected t×(lm) shape. -/
+def L1 (C : PolyTensor p l n d) :
+    Matrix (TIdx l d ⊕ Fin n) (Fin l × MIdx l d) (ZMod (p : ℕ)) :=
+  fun row iu => match row with
+    | Sum.inl v => if iu.2 = parent v ∧ lastLabel v = iu.1.castSucc then 1 else 0
+    | Sum.inr _ => 0
+
+/-- A non-root L1 row records the variable-labeled edge from its parent. -/
+theorem L1_inl (C : PolyTensor p l n d) (v : TIdx l d) (i : Fin l) (u : MIdx l d) :
+    L1 C (Sum.inl v) (i, u) =
+      if u = parent v ∧ lastLabel v = i.castSucc then 1 else 0 := rfl
+
+/-- Every output row of L1 is zero. -/
+theorem L1_inr (C : PolyTensor p l n d) (j : Fin n) (iu : Fin l × MIdx l d) :
+    L1 C (Sum.inr j) iu = 0 := rfl
+
+/-- L0 records constant-labeled edges, the negative non-root diagonal, and the
+terminal coefficient edges. [AGW20, Appendix A, (32), p.38], layered specialization. -/
+def L0 (C : PolyTensor p l n d) :
+    Matrix (TIdx l d ⊕ Fin n) (MIdx l d) (ZMod (p : ℕ)) :=
+  fun row u => match row with
+    | Sum.inl v =>
+      (if u = parent v ∧ lastLabel v = Fin.last l then 1 else 0) -
+        (if u = node v then 1 else 0)
+    | Sum.inr j => ∑ tau : Fin d → Fin (l + 1), if u = leaf tau then C j tau else 0
+
+/-- A non-root L0 row contains its constant edge and negative diagonal. -/
+theorem L0_inl (C : PolyTensor p l n d) (v : TIdx l d) (u : MIdx l d) :
+    L0 C (Sum.inl v) u =
+      (if u = parent v ∧ lastLabel v = Fin.last l then 1 else 0) -
+        (if u = node v then 1 else 0) := rfl
+
+/-- An output L0 row contains precisely the corresponding terminal coefficients. -/
+theorem L0_inr (C : PolyTensor p l n d) (j : Fin n) (u : MIdx l d) :
+    L0 C (Sum.inr j) u =
+      ∑ tau : Fin d → Fin (l + 1), if u = leaf tau then C j tau else 0 := rfl
+
+/-- The public-input matrix combines the variable and constant parts as in
+[AGW20, Appendix A, (32), p.38]. -/
+def matrix (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ)) :
+    Matrix (TIdx l d ⊕ Fin n) (MIdx l d) (ZMod (p : ℕ)) :=
+  L1 C * PartialGarbling.publicTensor x + L0 C
+
+/-- The input matrix is exactly L1(x⊗I)+L0. -/
+theorem matrix_eq (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ)) :
+    matrix C x = L1 C * PartialGarbling.publicTensor x + L0 C := rfl
+
+/-- A forward path value is the product of the labels in its prefix. This replaces
+the cofactor description of rec in [AGW20, Appendix A, p.38] by its path formula. -/
+def forward (x : Fin l → ZMod (p : ℕ)) (u : MIdx l d) : ZMod (p : ℕ) :=
+  ∏ i : Fin u.1.val, xhat x (u.2 i)
+
+/-- Forward values are the displayed finite label products. -/
+theorem forward_eq (x : Fin l → ZMod (p : ℕ)) (u : MIdx l d) :
+    forward x u = ∏ i : Fin u.1.val, xhat x (u.2 i) := rfl
+
+-- Search target 1: proposed public name forward_node.
+example (x : Fin l → ZMod (p : ℕ)) (v : TIdx l d) :
+    forward x (node v) = forward x (parent v) * xhat x (lastLabel v) := by
+  apply?
+
+-- Search target 2: proposed public name matrix_inl.
+example (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
+    (v : TIdx l d) (u : MIdx l d) :
+    matrix C x (Sum.inl v) u =
+      (if u = parent v then xhat x (lastLabel v) else 0) -
+        (if u = node v then 1 else 0) := by
+  apply?
+
+
+end PartialGarbling.Layered
+end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption

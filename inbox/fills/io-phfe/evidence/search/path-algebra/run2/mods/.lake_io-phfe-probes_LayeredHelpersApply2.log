@@ -1,0 +1,265 @@
+.lake/io-phfe-probes/LayeredHelpersApply2.lean:141:8: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/LayeredHelpersApply2.lean:148:8: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/LayeredHelpersApply2.lean:173:8: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/LayeredHelpersApply2.lean:182:8: warning: unused variable `C`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+Try this:
+  [apply] refine (ZMod.inv_mul_eq_one_of_isUnit ?_ (forward x (parent v) * xhat x (lastLabel v))).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ IsUnit (forward x (node v))
+  -- ⊢ (forward x (node v))⁻¹ * (forward x (parent v) * xhat x (lastLabel v)) = 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {n} {a} ha b => (ZMod.inv_mul_eq_one_of_isUnit ha b).mp) ?_ (forward x (node v)) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine ZMod.toAddCircle_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ZMod.toAddCircle (forward x (node v)) = ZMod.toAddCircle (forward x (parent v) * xhat x (lastLabel v))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {N} [NeZero N] {j k} => ZMod.toAddCircle_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine ZMod.valMinAbs_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (forward x (node v)).valMinAbs = (forward x (parent v) * xhat x (lastLabel v)).valMinAbs
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {a b} => ZMod.valMinAbs_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsCyclic.ext ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (IsCyclic.ext ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsAddCyclic.ext ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (IsAddCyclic.ext ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Ring.inverse_mul_eq_iff_eq_mul (forward x (parent v)) (forward x (node v)) (xhat x (lastLabel v))
+        ?_).mp
+    ?_
+  -- Remaining subgoals:
+  -- ⊢ IsUnit (forward x (parent v))
+  -- ⊢ Ring.inverse (forward x (parent v)) * forward x (node v) = xhat x (lastLabel v)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {M₀} [MonoidWithZero M₀] x y z h => (Ring.eq_mul_inverse_iff_mul_eq x y z h).mp) (forward x (parent v))
+      (forward x (node v)) (xhat x (lastLabel v)) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine invOf_mul_eq_iff_eq_mul_left.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Invertible (forward x (parent v))
+  -- ⊢ ⅟(forward x (parent v)) * forward x (node v) = xhat x (lastLabel v)
+Try this:
+  [apply] refine mul_invOf_eq_iff_eq_mul_right.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Invertible (xhat x (lastLabel v))
+  -- ⊢ forward x (node v) * ⅟(xhat x (lastLabel v)) = forward x (parent v)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine eq_mul_of_hasProd_ite ?_ (lastLabel v) (forward x (parent v)) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [Monoid α] {a b c} [Invertible c] => mul_right_eq_iff_eq_mul_invOf.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [Monoid α] {a b c} [Invertible c] => mul_left_eq_iff_eq_invOf_mul.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (CancelDenoms.derive_trans₂ ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (CancelDenoms.derive_trans ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (HasSum.mul_eq ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/LayeredHelpersApply2.lean:238:0: warning: declaration uses 'sorry'
+Try this:
+  [apply] refine (ZMod.inv_mul_eq_one_of_isUnit ?_
+        ((if u = parent v then xhat x (lastLabel v) else 0) - if u = node v then 1 else 0)).mp
+    ?_
+  -- Remaining subgoals:
+  -- ⊢ IsUnit (matrix C x (Sum.inl v) u)
+  -- ⊢ (matrix C x (Sum.inl v) u)⁻¹ * ((if u = parent v then xhat x (lastLabel v) else 0) - if u = node v then 1 else 0) =
+    1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {n} {a} ha b => (ZMod.inv_mul_eq_one_of_isUnit ha b).mp) ?_ (matrix C x (Sum.inl v) u) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine ZMod.toAddCircle_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ZMod.toAddCircle (matrix C x (Sum.inl v) u) =
+    ZMod.toAddCircle ((if u = parent v then xhat x (lastLabel v) else 0) - if u = node v then 1 else 0)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {N} [NeZero N] {j k} => ZMod.toAddCircle_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine ZMod.valMinAbs_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (matrix C x (Sum.inl v) u).valMinAbs =
+    ((if u = parent v then xhat x (lastLabel v) else 0) - if u = node v then 1 else 0).valMinAbs
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {a b} => ZMod.valMinAbs_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsCyclic.ext ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (IsCyclic.ext ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsAddCyclic.ext ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (IsAddCyclic.ext ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine eq_sub_of_add_eq' ?_
+  -- Remaining subgoals:
+  -- ⊢ (if u = node v then 1 else 0) + matrix C x (Sum.inl v) u = if u = parent v then xhat x (lastLabel v) else 0
+Try this:
+  [apply] refine eq_sub_of_add_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ (matrix C x (Sum.inl v) u + if u = node v then 1 else 0) = if u = parent v then xhat x (lastLabel v) else 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [AddGroup G] {a b c} => sub_eq_iff_eq_add.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine eq_sub_iff_add_eq'.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (if u = node v then 1 else 0) + matrix C x (Sum.inl v) u = if u = parent v then xhat x (lastLabel v) else 0
+Try this:
+  [apply] refine Eq.symm (sub_eq_of_eq_add' ?_)
+  -- Remaining subgoals:
+  -- ⊢ (if u = parent v then xhat x (lastLabel v) else 0) = (if u = node v then 1 else 0) + matrix C x (Sum.inl v) u
+Try this:
+  [apply] refine eq_sub_iff_add_eq.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (matrix C x (Sum.inl v) u + if u = node v then 1 else 0) = if u = parent v then xhat x (lastLabel v) else 0
+Try this:
+  [apply] refine Eq.symm (sub_eq_of_eq_add ?_)
+  -- Remaining subgoals:
+  -- ⊢ (if u = parent v then xhat x (lastLabel v) else 0) = matrix C x (Sum.inl v) u + if u = node v then 1 else 0
+Try this:
+  [apply] refine (IsAddUnit.eq_sub_iff ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ IsAddUnit (if u = node v then 1 else 0)
+  -- ⊢ (matrix C x (Sum.inl v) u + if u = node v then 1 else 0) = if u = parent v then xhat x (lastLabel v) else 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [AddCommGroup G] {a b c} => sub_eq_iff_eq_add'.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine IsAddUnit.eq_sub_of_add_eq ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ IsAddUnit (if u = node v then 1 else 0)
+  -- ⊢ (matrix C x (Sum.inl v) u + if u = node v then 1 else 0) = if u = parent v then xhat x (lastLabel v) else 0
+Try this:
+  [apply] refine Eq.symm (IsAddUnit.sub_eq_of_eq_add ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ IsAddUnit (if u = node v then 1 else 0)
+  -- ⊢ (if u = parent v then xhat x (lastLabel v) else 0) = matrix C x (Sum.inl v) u + if u = node v then 1 else 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine eq_tsub_of_add_eq ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [SubtractionMonoid α] {a b c} h => (IsAddUnit.sub_eq_iff h).mpr) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AddLECancellable.eq_tsub_of_add_eq ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (AddLECancellable.tsub_eq_of_eq_add' ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AddLECancellable.eq_tsub_of_add_eq' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (tsub_eq_of_eq_add ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (eq_tsub_iff_add_eq_of_le ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ PartialOrder (ZMod ↑p)
+  -- ⊢ AddLeftMono (ZMod ↑p)
+  -- ⊢ OrderedSub (ZMod ↑p)
+  -- ⊢ AddLeftReflectLE (ZMod ↑p)
+  -- ⊢ (if u = node v then 1 else 0) ≤ if u = parent v then xhat x (lastLabel v) else 0
+  -- ⊢ (matrix C x (Sum.inl v) u + if u = node v then 1 else 0) = if u = parent v then xhat x (lastLabel v) else 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (tsub_eq_of_eq_add_rev ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (AddLECancellable.eq_tsub_iff_add_eq_of_le ?_ ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ PartialOrder (ZMod ↑p)
+  -- ⊢ AddLeftMono (ZMod ↑p)
+  -- ⊢ OrderedSub (ZMod ↑p)
+  -- ⊢ AddLECancellable (if u = node v then 1 else 0)
+  -- ⊢ (if u = node v then 1 else 0) ≤ if u = parent v then xhat x (lastLabel v) else 0
+  -- ⊢ (matrix C x (Sum.inl v) u + if u = node v then 1 else 0) = if u = parent v then xhat x (lastLabel v) else 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (AddLECancellable.tsub_eq_of_eq_add_rev ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (AddLECancellable.tsub_eq_of_eq_add ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (AddLECancellable.tsub_eq_of_eq_add_rev' ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} [AddCommSemigroup α] [PartialOrder α] [ExistsAddOfLE α] [AddLeftMono α] [Sub α] [OrderedSub α] {a b c}
+          [AddLeftReflectLE α] h =>
+        (tsub_eq_iff_eq_add_of_le h).mpr)
+      ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} [AddCommSemigroup α] [PartialOrder α] [ExistsAddOfLE α] [AddLeftMono α] [Sub α] [OrderedSub α] {a b c} hb
+          h =>
+        (AddLECancellable.tsub_eq_iff_eq_add_of_le hb h).mpr)
+      ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/LayeredHelpersApply2.lean:243:0: warning: declaration uses 'sorry'

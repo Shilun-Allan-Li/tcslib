@@ -1,0 +1,76 @@
+file=TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PolynomialTensorAlgebra.lean
+source_sha256=69fd13f68e356ea2d8232135bc09a3fc5f19a60908f6a0abae0010183f956eb5
+working_source_development_check=True
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PolynomialTensorAlgebra.lean:118:6: error: Tactic `apply` failed: could not unify the conclusion of `Finset.sum_congr rfl`
+  Finset.sum ?m.338 ?m.335 = Finset.sum ?m.338 ?m.336
+with the goal
+  ∑ i, MvPolynomial.coeff (↑i) P * ∏ i_1, Sum.elim x y i_1 ^ ↑i i_1 =
+    ∑ ij, ∑ tau, (C ij tau * ∏ i, Fin.snoc x 1 (tau i)) * Fin.snoc y 1 ij.1 * Fin.snoc y 1 ij.2
+
+Note: The full type of `Finset.sum_congr rfl` is
+  (∀ x ∈ ?m.338, ?m.335 x = ?m.336 x) → Finset.sum ?m.338 ?m.335 = Finset.sum ?m.338 ?m.336
+
+case refine_2
+R : Type u_1
+inst✝ : CommSemiring R
+l n d : ℕ
+P : MvPolynomial (Fin l ⊕ Fin n) R
+hdeg : ∀ (s : Fin l ⊕ Fin n →₀ ℕ), MvPolynomial.coeff s P ≠ 0 → ∑ i, s (Sum.inl i) ≤ d ∧ ∑ j, s (Sum.inr j) ≤ 2
+publicTuple : ↥P.support → Fin d → Fin (l + 1)
+hpub : ∀ (s : ↥P.support) (x : Fin l → R), ∏ j, Fin.snoc x 1 (publicTuple s j) = ∏ i, x i ^ ↑s (Sum.inl i)
+privateTuple : ↥P.support → Fin 2 → Fin (n + 1)
+hpriv : ∀ (s : ↥P.support) (x : Fin n → R), ∏ j, Fin.snoc x 1 (privateTuple s j) = ∏ i, x i ^ ↑s (Sum.inr i)
+privatePair : ↥P.support → Fin (n + 1) × Fin (n + 1) := fun s => (privateTuple s 0, privateTuple s 1)
+C : Fin (n + 1) × Fin (n + 1) → (Fin d → Fin (l + 1)) → R :=
+  fun ij tau => ∑ s, if privatePair s = ij ∧ publicTuple s = tau then MvPolynomial.coeff (↑s) P else 0
+x : Fin l → R
+y : Fin n → R
+hEval :
+  (MvPolynomial.eval (Sum.elim x y)) P =
+    ∑ s,
+      (MvPolynomial.coeff (↑s) P * ∏ i, Fin.snoc x 1 (publicTuple s i)) * Fin.snoc y 1 (privatePair s).1 *
+        Fin.snoc y 1 (privatePair s).2
+⊢ ∑ i, MvPolynomial.coeff (↑i) P * ∏ i_1, Sum.elim x y i_1 ^ ↑i i_1 =
+    ∑ ij, ∑ tau, (C ij tau * ∏ i, Fin.snoc x 1 (tau i)) * Fin.snoc y 1 ij.1 * Fin.snoc y 1 ij.2
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PolynomialTensorAlgebra.lean:124:8: error(lean.unknownIdentifier): Unknown identifier `hEval`
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PolynomialTensorAlgebra.lean:98:2: error: unsolved goals
+case refine_1
+R : Type u_1
+inst✝ : CommSemiring R
+l n d : ℕ
+P : MvPolynomial (Fin l ⊕ Fin n) R
+hdeg : ∀ (s : Fin l ⊕ Fin n →₀ ℕ), MvPolynomial.coeff s P ≠ 0 → ∑ i, s (Sum.inl i) ≤ d ∧ ∑ j, s (Sum.inr j) ≤ 2
+publicTuple : ↥P.support → Fin d → Fin (l + 1)
+hpub : ∀ (s : ↥P.support) (x : Fin l → R), ∏ j, Fin.snoc x 1 (publicTuple s j) = ∏ i, x i ^ ↑s (Sum.inl i)
+privateTuple : ↥P.support → Fin 2 → Fin (n + 1)
+hpriv : ∀ (s : ↥P.support) (x : Fin n → R), ∏ j, Fin.snoc x 1 (privateTuple s j) = ∏ i, x i ^ ↑s (Sum.inr i)
+privatePair : ↥P.support → Fin (n + 1) × Fin (n + 1) := fun s => (privateTuple s 0, privateTuple s 1)
+C : Fin (n + 1) × Fin (n + 1) → (Fin d → Fin (l + 1)) → R :=
+  fun ij tau => ∑ s, if privatePair s = ij ∧ publicTuple s = tau then MvPolynomial.coeff (↑s) P else 0
+x : Fin l → R
+y : Fin n → R
+⊢ (MvPolynomial.eval (Sum.elim x y)) P =
+    ∑ s,
+      (MvPolynomial.coeff (↑s) P * ∏ i, Fin.snoc x 1 (publicTuple s i)) * Fin.snoc y 1 (privatePair s).1 *
+        Fin.snoc y 1 (privatePair s).2
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PolynomialTensorAlgebra): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PolynomialTensorAlgebra): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PolynomialTensorAlgebra): no fresh .olean produced
+        1.75 real         1.09 user         0.75 sys
+          1616707584  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              131359  page reclaims
+                 109  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  18  voluntary context switches
+                4398  involuntary context switches
+            32124103  instructions retired
+            15522791  cycles elapsed
+             1622352  peak memory footprint

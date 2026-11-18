@@ -1,0 +1,697 @@
+From 9cbc7d60cf5454594faf596dff53bc8c2b204b4b Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 07:26:20 -0800
+Subject: [PATCH 29/30] io-phfe: prove polynomial completeness and weighted
+ prefix flow
+
+---
+ .../FunctionalEncryption.lean                 |   2 +
+ .../FunctionalEncryption/Classes.lean         |  16 +-
+ .../FunctionalEncryption/PartialGarbling.lean |   3 +
+ .../PartialGarbling/Layered.lean              |   1 +
+ .../PartialGarbling/PrefixAlgebra.lean        | 280 ++++++++++++++++++
+ .../PolynomialTensorAlgebra.lean              | 137 +++++++++
+ .../Wee20/LinearCorrect.lean                  |  55 +++-
+ .../Wee20/QuadraticCorrect.lean               |  17 +-
+ TCSlib/Cryptography/Pairing/Exponents.lean    |  38 +++
+ 9 files changed, 541 insertions(+), 8 deletions(-)
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PolynomialTensorAlgebra.lean
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption.lean
+index 03d076b12..9aba0f348 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption.lean
+@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Run
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PolynomialTensorAlgebra
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Classes
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling
+ 
+@@ -22,6 +23,7 @@ set_option autoImplicit false
+ 
+ * `Defs`: generic function classes, raw algorithms, correctness and efficient interfaces.
+ * `Run`: deterministic bounded stateful oracle runs.
++* `PolynomialTensorAlgebra`: finite monomial padding for class completeness.
+ * `Classes`: polynomial public computation and quadratic private computation.
+ * `PartialGarbling`: corrected arithmetic partial garbling with exact privacy.
+ * `Simulation`, `SemiAdaptive`: exact stateful simulation games in both adversarial orders.
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean
+index 3884d9b14..771d424d7 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean
+@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs.Raw
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PolynomialTensorAlgebra
+ import TCSlib.Cryptography.Encoding.ModularDecode
+ import Mathlib.Algebra.BigOperators.Fin
+ import Mathlib.Data.Fin.Tuple.Basic
+@@ -588,7 +589,12 @@ theorem phfeClass_eval_eq_quad (l n w : PolyExpr) (d kappa : ℕ) (p : ℕ+)
+     (y : Fin (n.eval kappa * w.eval kappa) → Bool) :
+     (phfeClass l n w d).eval kappa p f x y =
+       (quadClass l n n w d).eval kappa p f x
+-        (duplicatePrivateBits (n.eval kappa) (w.eval kappa) y) := sorry
++        (duplicatePrivateBits (n.eval kappa) (w.eval kappa) y) := by
++  rw [phfeClass_eval, quadClass_eval, phfeEval_eq]
++  apply congrArg₂ (quadEval _ _) <;> funext i <;>
++    simp only [decodeResidues_block, duplicatePrivateBits_eq,
++      Equiv.symm_apply_apply, finSumFinEquiv_symm_apply_castAdd,
++      finSumFinEquiv_symm_apply_natAdd, Sum.elim_inl, Sum.elim_inr, id_eq]
+ 
+ /-- A multivariate polynomial has separate public/private degree bounds when
+ every nonzero monomial satisfies the corresponding sums of variable exponents.
+@@ -619,6 +625,12 @@ theorem pad_one {p : ℕ+} {l n d : ℕ}
+     (hdeg : BidegreeAtMost d 2 P) :
+     ∃ C : PolyTensor p l ((n + 1) * (n + 1)) d,
+       ∀ (x : Fin l → ZMod (p : ℕ)) (y : Fin n → ZMod (p : ℕ)),
+-        MvPolynomial.eval (Sum.elim x y) P = phfeEval C x (Fin.snoc y 1) := sorry
++        MvPolynomial.eval (Sum.elim x y) P = phfeEval C x (Fin.snoc y 1) := by
++  obtain ⟨C, hC⟩ := PolynomialTensorAlgebra.exists_quadratic_expansion
++    (R := ZMod (p : ℕ)) l n d P ((bidegreeAtMost_iff d 2 P).1 hdeg)
++  refine ⟨fun j tau => C (finProdFinEquiv.symm j) tau, fun x y => ?_⟩
++  rw [phfeEval_sum]
++  simpa only [Fintype.sum_prod_type, polyTensorEval_eq, Equiv.symm_apply_apply,
++    xhat_eq, Finset.sum_mul] using hC x y
+ 
+ end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling.lean
+index 2c0bf3257..7bd8c33c1 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling.lean
+@@ -6,6 +6,8 @@ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbli
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.Layered
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.PathAlgebra
+ 
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.PrefixAlgebra
++
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+@@ -15,6 +17,7 @@ set_option autoImplicit false
+ 
+ ## Contents
+ 
++* `PrefixAlgebra`: weighted finite-prefix conservation for exact privacy.
+ * `PathAlgebra`: weighted endpoint-matrix identities used by the path-sum proofs.
+ 
+ * `Defs`: corrected matrix syntax, exact reconstruction and privacy, and uniform efficiency.
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean
+index 5d9eba0ee..6308a8dc9 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean
+@@ -7,6 +7,7 @@ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Classes
+ import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
+ import Mathlib.Data.Fintype.BigOperators
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.PathAlgebra
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.PrefixAlgebra
+ import Mathlib.Data.Matrix.ColumnRowPartitioned
+ 
+ set_option maxHeartbeats 0
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean
+new file mode 100644
+index 000000000..35f2bd1f2
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean
+@@ -0,0 +1,280 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import Mathlib.Algebra.BigOperators.Fin
++import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
++import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
++import Mathlib.Data.Fin.Tuple.Basic
++import Mathlib.Data.Fintype.BigOperators
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Weighted prefix conservation
++
++These algebraic statements describe finite prefix tuples and their weighted suffix
++completions. The index types and endpoint maps are explicit in the statements; no
++graph, branching-program datatype or new algorithm is introduced. They support the
++path-sum specialization of [AGW20, Appendix A, (28)–(32), pp.37–38].
++
++## Main definitions
++
++The statements use finite sigma and tuple types directly, without new definitions.
++
++## Main results
++
++* `prefixIncoming_sum`: each non-root prefix is the child of one prefix edge.
++* `prefixOutgoing_sum`: outgoing edges are indexed by a final label.
++* `prefixFlow_balance`: weighted outgoing suffix values and terminal coefficients
++  sum to the current suffix value.
++
++## References
++
++* [AGW20] M. Abdalla, J. Gong, H. Wee, *Functional Encryption for Attribute-Weighted
++  Sums from k-Lin*, 2020, Appendix A, (28)–(32), pp.37–38.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
++namespace PartialGarbling.PrefixAlgebra
++
++open scoped BigOperators
++
++/-- Every nonempty prefix has exactly one incoming prefix edge, and the empty
++prefix has none. Summing values at the child endpoints therefore gives the node
++value off the root and zero at the root. This is finite-prefix indexing glue for
++the path-sum specialization of [AGW20, Appendix A, (28)–(32), pp.37–38].
++
++**Proof sketch.** The child map is the published dependent sigma map induced by
++Fin.succ and identity tuple maps, hence is injective. At depth zero its image is
++excluded by Fin.succ_ne_zero. At positive depth use the corresponding predecessor
++edge and the published supported-sum formula. -/
++theorem prefixIncoming_sum {I R : Type*} [Fintype I] [DecidableEq I]
++    [AddCommMonoid R] (d : ℕ)
++    (value : (Σ k : Fin (d + 1), Fin k.val → I) → R)
++    (u : Σ k : Fin (d + 1), Fin k.val → I) :
++    (∑ e : (Σ k : Fin d, Fin (k.val + 1) → I),
++      if (⟨e.1.succ, e.2⟩ : Σ k : Fin (d + 1), Fin k.val → I) = u then
++        value ⟨e.1.succ, e.2⟩ else 0) =
++      if u = (⟨⟨0, Nat.zero_lt_succ d⟩, Fin.elim0⟩ :
++          Σ k : Fin (d + 1), Fin k.val → I) then 0 else value u := by
++  let child : (Σ k : Fin d, Fin (k.val + 1) → I) →
++      (Σ k : Fin (d + 1), Fin k.val → I) :=
++    Sigma.map Fin.succ (fun _ tau => tau)
++  let emptyPrefix : (Σ k : Fin (d + 1), Fin k.val → I) :=
++    ⟨⟨0, Nat.zero_lt_succ d⟩, Fin.elim0⟩
++  -- Reuse injectivity of dependent sigma maps and the successor-depth exclusion.
++  have hchild : Function.Injective child :=
++    (Fin.succ_injective d).sigma_map (fun _ => Function.injective_id)
++  have hroot : ∀ e, child e ≠ emptyPrefix :=
++    fun e h => Fin.succ_ne_zero e.1
++      (show e.1.succ = 0 from congrArg Sigma.fst h)
++  change (∑ e, if child e = u then value (child e) else 0) =
++    if u = emptyPrefix then 0 else value u
++  rcases u with ⟨k, tau⟩
++  cases k using Fin.cases with
++  | zero =>
++    have htuple : tau = Fin.elim0 :=
++      @Subsingleton.elim (Fin 0 → I) inferInstance tau Fin.elim0
++    subst tau
++    change (∑ e, if child e = emptyPrefix then value (child e) else 0) =
++      if emptyPrefix = emptyPrefix then 0 else value emptyPrefix
++    simp only [hroot, eq_self, if_true, if_false, Finset.sum_const_zero]
++  | succ k =>
++    -- The predecessor depth and the same tuple supply the unique incoming edge.
++    let e0 : (Σ k : Fin d, Fin (k.val + 1) → I) := ⟨k, tau⟩
++    change (∑ e, if child e = child e0 then value (child e) else 0) =
++      if child e0 = emptyPrefix then 0 else value (child e0)
++    simp only [hchild.eq_iff, Fintype.sum_ite_eq', hroot, if_false]
++
++/-- A prefix's outgoing edges are indexed by their last labels when its depth
++is below d, and no edges leave a depth-d prefix. This is finite-prefix indexing
++glue for [AGW20, Appendix A, (28)–(32), pp.37–38].
++
++**Proof sketch.** Split the depth sum and select the current prefix depth. At a
++nonterminal depth, use the published snoc equivalence to separate the last label
++and initial tuple, then collapse the supported initial-tuple sum. At terminal
++depth no cast-successor depth can match. -/
++theorem prefixOutgoing_sum {I R : Type*} [Fintype I] [DecidableEq I]
++    [AddCommMonoid R] (d : ℕ)
++    (flow : (Σ k : Fin d, Fin (k.val + 1) → I) → R)
++    (u : Σ k : Fin (d + 1), Fin k.val → I) :
++    (∑ e : (Σ k : Fin d, Fin (k.val + 1) → I),
++      if (⟨e.1.castSucc, Fin.init e.2⟩ :
++          Σ k : Fin (d + 1), Fin k.val → I) = u then flow e else 0) =
++      if h : u.1.val < d then
++        ∑ a : I, flow ⟨⟨u.1.val, h⟩, Fin.snoc (α := fun _ => I) u.2 a⟩
++      else 0 := by
++  let edgeEquiv : ((Σ k : Fin d, Fin k.val → I) × I) ≃
++      (Σ k : Fin d, Fin (k.val + 1) → I) :=
++    (Equiv.sigmaProdDistrib (fun k : Fin d => Fin k.val → I) I).trans
++      (Equiv.sigmaCongrRight (fun k : Fin d =>
++        (Equiv.prodComm (Fin k.val → I) I).trans
++          (Fin.snocEquiv (fun _ : Fin (k.val + 1) => I))))
++  let prefixEmbed : (Σ k : Fin d, Fin k.val → I) →
++      (Σ k : Fin (d + 1), Fin k.val → I) :=
++    Sigma.map Fin.castSucc (fun _ tau => tau)
++  have hinj : Function.Injective prefixEmbed :=
++    (Fin.castSucc_injective d).sigma_map (fun _ => Function.injective_id)
++  -- Reindex all edges by their initial tuple and final label.
++  rw [← edgeEquiv.sum_comp (fun e =>
++    if (⟨e.1.castSucc, Fin.init e.2⟩ :
++        Σ k : Fin (d + 1), Fin k.val → I) = u then flow e else 0),
++    Fintype.sum_prod_type_right]
++  change (∑ a : I, ∑ q : (Σ k : Fin d, Fin k.val → I),
++    if (⟨q.1.castSucc, Fin.init (Fin.snoc (α := fun _ => I) q.2 a)⟩ :
++        Σ k : Fin (d + 1), Fin k.val → I) = u then
++      flow ⟨q.1, Fin.snoc (α := fun _ => I) q.2 a⟩ else 0) = _
++  simp only [Fin.init_snoc]
++  change (∑ a : I, ∑ q : (Σ k : Fin d, Fin k.val → I),
++    if prefixEmbed q = u then
++      flow ⟨q.1, Fin.snoc (α := fun _ => I) q.2 a⟩ else 0) = _
++  rcases u with ⟨k, tau⟩
++  cases k using Fin.lastCases with
++  | last =>
++    -- A castSucc depth cannot be the terminal depth.
++    have hmax : ∀ q, prefixEmbed q ≠
++        (⟨Fin.last d, tau⟩ : Σ k : Fin (d + 1), Fin k.val → I) :=
++      fun q h => Fin.castSucc_ne_last q.1
++        (show q.1.castSucc = Fin.last d from congrArg Sigma.fst h)
++    rw [dif_neg (show ¬ (Fin.last d).val < d from Nat.lt_irrefl d)]
++    simp only [hmax, if_false, Finset.sum_const_zero]
++  | cast k =>
++    -- At the queried prefix, injectivity collapses the inner supported sum.
++    let q0 : (Σ k : Fin d, Fin k.val → I) := ⟨k, tau⟩
++    rw [dif_pos (show
++      (⟨k.castSucc, tau⟩ : Σ k : Fin (d + 1), Fin k.val → I).1.val < d from k.isLt)]
++    change (∑ a : I, ∑ q : (Σ k : Fin d, Fin k.val → I),
++      if prefixEmbed q = prefixEmbed q0 then
++        flow ⟨q.1, Fin.snoc (α := fun _ => I) q.2 a⟩ else 0) =
++      ∑ a : I, flow ⟨q0.1, Fin.snoc (α := fun _ => I) q0.2 a⟩
++    simp only [hinj.eq_iff, Fintype.sum_ite_eq']
++
++/-- Weighted suffix sums satisfy conservation at every prefix: weighted values
++of its children, plus its terminal coefficient when its depth is maximal, equal
++its own suffix value. This is the path-sum version of the translation calculation
++in [AGW20, Appendix A, (28)–(32), pp.37–38], abstracted to a commutative semiring.
++
++**Proof sketch.** For a nonterminal prefix, split each nonempty suffix into its
++first label and remaining tuple using the published tuple equivalence, and split
++the label product with Fin.prod_univ_succ. Reassociate prefix extension using
++Fin.append_right_cons and its canonical casts. At maximal depth the only suffix
++is empty and the only matching terminal coefficient is its own full tuple. -/
++theorem prefixFlow_balance {I R : Type*} [Fintype I] [DecidableEq I]
++    [CommSemiring R] (d : ℕ) (c : (Fin d → I) → R) (weight : I → R)
++    (u : Σ k : Fin (d + 1), Fin k.val → I) :
++    let value : (Σ k : Fin (d + 1), Fin k.val → I) → R :=
++      fun v => ∑ sigma : Fin (d - v.1.val) → I,
++        c (fun i => Fin.append v.2 sigma
++          (Fin.cast (Nat.add_sub_of_le (Nat.le_of_lt_succ v.1.isLt)).symm i)) *
++            ∏ i : Fin (d - v.1.val), weight (sigma i)
++    (∑ e : (Σ k : Fin d, Fin (k.val + 1) → I),
++      if (⟨e.1.castSucc, Fin.init e.2⟩ :
++          Σ k : Fin (d + 1), Fin k.val → I) = u then
++        value ⟨e.1.succ, e.2⟩ * weight (e.2 (Fin.last e.1.val)) else 0) +
++      (∑ tau : Fin d → I,
++        if u = (⟨Fin.last d, tau⟩ : Σ k : Fin (d + 1), Fin k.val → I) then
++          c tau else 0) = value u := by
++  let value : (Σ k : Fin (d + 1), Fin k.val → I) → R :=
++    fun v => ∑ sigma : Fin (d - v.1.val) → I,
++      c (fun i => Fin.append v.2 sigma
++        (Fin.cast (Nat.add_sub_of_le (Nat.le_of_lt_succ v.1.isLt)).symm i)) *
++          ∏ i : Fin (d - v.1.val), weight (sigma i)
++  change
++    (∑ e : (Σ k : Fin d, Fin (k.val + 1) → I),
++      if (⟨e.1.castSucc, Fin.init e.2⟩ :
++          Σ k : Fin (d + 1), Fin k.val → I) = u then
++        value ⟨e.1.succ, e.2⟩ * weight (e.2 (Fin.last e.1.val)) else 0) +
++      (∑ sigma : Fin d → I,
++        if u = (⟨Fin.last d, sigma⟩ : Σ k : Fin (d + 1), Fin k.val → I) then
++          c sigma else 0) = value u
++  rcases u with ⟨k, tau⟩
++  cases k using Fin.lastCases with
++  | last =>
++    -- No parent edge has terminal depth; the terminal tuple is unique.
++    have hparent : ∀ e : (Σ k : Fin d, Fin (k.val + 1) → I),
++        (⟨e.1.castSucc, Fin.init e.2⟩ :
++          Σ k : Fin (d + 1), Fin k.val → I) ≠ ⟨Fin.last d, tau⟩ :=
++      fun e h => Fin.castSucc_ne_last e.1 (congrArg Sigma.fst h)
++    have hleaf : Function.Injective
++        (fun sigma : Fin d → I =>
++          (⟨Fin.last d, sigma⟩ : Σ k : Fin (d + 1), Fin k.val → I)) :=
++      @sigma_mk_injective (Fin (d + 1)) (fun k => Fin k.val → I) (Fin.last d)
++    simp only [hparent, if_false, Finset.sum_const_zero, zero_add,
++      hleaf.eq_iff, Fintype.sum_ite_eq]
++    -- Remove the empty suffix before transporting its dependent index type.
++    simp only [value, Fin.val_last]
++    simp only [Fin.append_right_nil _ _ (Nat.sub_self d), Function.comp_apply,
++      Fin.cast_cast, Fin.cast_refl, id_eq]
++    rw [Nat.sub_self]
++    simp only [Fin.prod_univ_zero, mul_one]
++    exact (Fintype.sum_subsingleton (fun _ : Fin 0 → I => c tau) Fin.elim0).symm
++  | cast k =>
++    have hterminal : ∀ sigma : Fin d → I,
++        (⟨k.castSucc, tau⟩ : Σ j : Fin (d + 1), Fin j.val → I) ≠
++          ⟨Fin.last d, sigma⟩ :=
++      fun sigma h => Fin.castSucc_ne_last k (congrArg Sigma.fst h)
++    simp only [hterminal, if_false, Finset.sum_const_zero, add_zero]
++    rw [prefixOutgoing_sum d,
++      dif_pos (show (⟨k.castSucc, tau⟩ :
++        Σ j : Fin (d + 1), Fin j.val → I).1.val < d from k.isLt)]
++    simp only [Fin.snoc_last]
++    change (∑ a : I,
++      value ⟨k.succ, Fin.snoc (α := fun _ => I) tau a⟩ * weight a) =
++        value ⟨k.castSucc, tau⟩
++    -- Keep both suffix index types fixed and relate them by an equivalence.
++    let r : ℕ := d - (k.val + 1)
++    have hlen : r + 1 = d - k.val :=
++      (congrArg Nat.succ (Nat.sub_succ d k.val)).trans
++        (Nat.succ_pred_eq_of_pos (Nat.sub_pos_of_lt k.isLt))
++    have hParent : d = k.val + (d - k.val) :=
++      (Nat.add_sub_of_le (Nat.le_of_lt k.isLt)).symm
++    have hChild : d = (k.val + 1) + r :=
++      (Nat.add_sub_of_le (Nat.succ_le_of_lt k.isLt)).symm
++    let suffixEquiv : (I × (Fin r → I)) ≃ (Fin (d - k.val) → I) :=
++      (Fin.consEquiv (fun _ : Fin (r + 1) => I)).trans
++        (Equiv.arrowCongr (finCongr hlen) (Equiv.refl I))
++    change (∑ a : I,
++      (∑ sigma : Fin r → I,
++        c (fun i => Fin.append (Fin.snoc (α := fun _ => I) tau a) sigma
++          (Fin.cast hChild i)) * ∏ i : Fin r, weight (sigma i)) * weight a) =
++      ∑ sigma : Fin (d - k.val) → I,
++        c (fun i => Fin.append tau sigma (Fin.cast hParent i)) *
++          ∏ i : Fin (d - k.val), weight (sigma i)
++    rw [← suffixEquiv.sum_comp (fun sigma : Fin (d - k.val) → I =>
++      c (fun i => Fin.append tau sigma (Fin.cast hParent i)) *
++        ∏ i : Fin (d - k.val), weight (sigma i)), Fintype.sum_prod_type]
++    apply Finset.sum_congr rfl
++    intro a _
++    rw [Finset.sum_mul]
++    apply Finset.sum_congr rfl
++    intro sigma _
++    -- Reuse product reindexing and the first-coordinate product recurrence.
++    have hProduct := (finCongr hlen.symm).prod_comp
++      (fun i : Fin (r + 1) => weight (Fin.cons (α := fun _ => I) a sigma i))
++    change (∏ i : Fin (d - k.val), weight (suffixEquiv (a, sigma) i)) =
++      ∏ i : Fin (r + 1), weight (Fin.cons (α := fun _ => I) a sigma i) at hProduct
++    rw [Fin.prod_univ_succ] at hProduct
++    simp only [Fin.cons_zero, Fin.cons_succ] at hProduct
++    -- The two complete tuples agree by the published append and cast identities.
++    have hExtend :
++        (fun i : Fin d => Fin.append tau (suffixEquiv (a, sigma))
++          (Fin.cast hParent i)) =
++        (fun i : Fin d => Fin.append (Fin.snoc (α := fun _ => I) tau a) sigma
++          (Fin.cast hChild i)) := ?_
++    swap
++    · funext i
++      change Fin.append tau ((Fin.cons (α := fun _ => I) a sigma) ∘ Fin.cast hlen.symm)
++        (Fin.cast hParent i) =
++        Fin.append (Fin.snoc (α := fun _ => I) tau a) sigma (Fin.cast hChild i)
++      rw [Fin.append_cast_right tau
++        (Fin.cons (α := fun _ => I) a sigma) (d - k.val) hlen.symm,
++        Fin.append_right_cons tau a sigma]
++      simp only [Function.comp_apply, Fin.cast_cast]
++    rw [hExtend, hProduct]
++    exact (mul_right_comm _ _ _).trans (mul_assoc _ _ _)
++
++end PartialGarbling.PrefixAlgebra
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PolynomialTensorAlgebra.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PolynomialTensorAlgebra.lean
+new file mode 100644
+index 000000000..138a6b4ee
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PolynomialTensorAlgebra.lean
+@@ -0,0 +1,137 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import Mathlib.Algebra.MvPolynomial.Eval
++import Mathlib.Algebra.BigOperators.Fin
++import Mathlib.Algebra.BigOperators.Group.List.Lemmas
++import Mathlib.Data.List.OfFn
++import Mathlib.Data.Fin.Tuple.Basic
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Padded monomial representations
++
++This module isolates the finite algebra behind the padded coefficient tensors used
++for [GJLS21, Section 9, printed pp.57–58]. It depends only on Mathlib and does not
++introduce an encoding, a sampler or a computational representation of polynomials.
++
++## Main definitions
++
++The results use finite tuples and their weighted products directly.
++
++## Main results
++
++* `PolynomialTensorAlgebra.exists_padded_tuple`: a bounded monomial is a product
++  of exactly the supplied number of variable or constant labels.
++
++* `PolynomialTensorAlgebra.exists_quadratic_expansion`: finite coefficient collection
++  into padded public tuples and private pairs.
++
++## References
++
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, ePrint 2020/764, Section 9, printed pp.57–58.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PolynomialTensorAlgebra
++
++open scoped BigOperators
++
++/-- Every finite monomial of total degree at most d is represented by a length-d
++word of variable labels and a final constant label. The word is fixed before the
++variable values. This is technical padding glue for [GJLS21, Section 9, pp.57–58].
++
++**Proof sketch.** Repeat each variable label according to its exponent, concatenate
++those finite lists, and append constant labels up to the supplied degree. The
++published list/tuple product and replicate identities identify its weighted product
++with the original power product; the degree bound certifies the padded length. -/
++theorem exists_padded_tuple {R : Type*} [CommMonoid R] (m d : ℕ) (e : Fin m → ℕ)
++    (he : ∑ i : Fin m, e i ≤ d) :
++    ∃ tau : Fin d → Fin (m + 1), ∀ x : Fin m → R,
++      (∏ j : Fin d, Fin.snoc (α := fun _ => R) x 1 (tau j)) =
++        ∏ i : Fin m, x i ^ e i := by
++  let labels : List (Fin (m + 1)) :=
++    (List.ofFn (fun i : Fin m => List.replicate (e i) i.castSucc)).flatten
++  have hlength : labels.length = ∑ i : Fin m, e i := by
++    simp only [labels, List.length_flatten, ← List.ofFn_comp',
++      List.length_replicate, List.sum_ofFn]
++  let padded := labels ++ List.replicate (d - labels.length) (Fin.last m)
++  have hpadded : padded.length = d := by
++    simp only [padded, List.length_append, List.length_replicate]
++    exact Nat.add_sub_of_le (hlength.le.trans he)
++  rw [← hpadded]
++  refine ⟨padded.get, fun x => ?_⟩
++  rw [← Fin.prod_ofFn, List.ofFn_comp', List.ofFn_get]
++  change ((labels ++ List.replicate (d - labels.length) (Fin.last m)).map
++    (Fin.snoc (α := fun _ => R) x 1)).prod = _
++  rw [List.map_append, List.prod_append, List.map_replicate, Fin.snoc_last,
++    List.prod_replicate, one_pow, mul_one]
++  simp only [labels, List.map_flatten, List.prod_flatten,
++    ← List.ofFn_comp', List.map_replicate, Fin.snoc_castSucc,
++    List.prod_replicate, List.prod_ofFn]
++
++/-- A polynomial with public degree at most d and private degree at most two has
++coefficients on padded public tuples and ordered padded private pairs. The same
++coefficients work for all variable values. This is the algebraic representation
++underlying [GJLS21, Section 9, printed p.58].
++
++**Proof sketch.** Apply the padded-monomial representation separately to the public
++and private exponents of each supported monomial. Choose one public tuple and one
++private ordered pair for each support element. Collect coefficients by those finite
++fibres. Expand evaluation with the published monomial-sum formula, interchange the
++finite sums, and select the unique assigned tuple and pair in each monomial term. -/
++theorem exists_quadratic_expansion {R : Type*} [CommSemiring R] (l n d : ℕ)
++    (P : MvPolynomial (Fin l ⊕ Fin n) R)
++    (hdeg : ∀ s : (Fin l ⊕ Fin n) →₀ ℕ, MvPolynomial.coeff s P ≠ 0 →
++      (∑ i : Fin l, s (Sum.inl i)) ≤ d ∧ (∑ j : Fin n, s (Sum.inr j)) ≤ 2) :
++    ∃ C : (Fin (n + 1) × Fin (n + 1)) → (Fin d → Fin (l + 1)) → R,
++      ∀ (x : Fin l → R) (y : Fin n → R),
++        MvPolynomial.eval (Sum.elim x y) P =
++          ∑ ij : Fin (n + 1) × Fin (n + 1), ∑ tau : Fin d → Fin (l + 1),
++            C ij tau * (∏ i : Fin d, Fin.snoc (α := fun _ => R) x 1 (tau i)) *
++              Fin.snoc (α := fun _ => R) y 1 ij.1 * Fin.snoc (α := fun _ => R) y 1 ij.2 :=
++  by
++    classical
++    choose publicTuple hpub using fun s : P.support =>
++      exists_padded_tuple (R := R) l d (fun i => s.val (Sum.inl i))
++        (hdeg s.val (MvPolynomial.mem_support_iff.mp s.property)).1
++    choose privateTuple hpriv using fun s : P.support =>
++      exists_padded_tuple (R := R) n 2 (fun i => s.val (Sum.inr i))
++        (hdeg s.val (MvPolynomial.mem_support_iff.mp s.property)).2
++    let privatePair (s : P.support) : Fin (n + 1) × Fin (n + 1) :=
++      (privateTuple s 0, privateTuple s 1)
++    let C : (Fin (n + 1) × Fin (n + 1)) → (Fin d → Fin (l + 1)) → R :=
++      fun ij tau => ∑ s : P.support,
++        if privatePair s = ij ∧ publicTuple s = tau then P.coeff s.val else 0
++    refine ⟨C, fun x y => ?_⟩
++    have hEval : MvPolynomial.eval (Sum.elim x y) P =
++        ∑ s : P.support, P.coeff s.val *
++          (∏ i : Fin d, Fin.snoc (α := fun _ => R) x 1 (publicTuple s i)) *
++          Fin.snoc (α := fun _ => R) y 1 (privatePair s).1 *
++          Fin.snoc (α := fun _ => R) y 1 (privatePair s).2 := ?_
++    swap
++    · rw [MvPolynomial.eval_eq', ← Finset.sum_coe_sort]
++      apply Finset.sum_congr rfl
++      intro s _
++      rw [Fintype.prod_sum_type]
++      simp only [Sum.elim_inl, Sum.elim_inr]
++      rw [← hpub s x, ← hpriv s y, Fin.prod_univ_two]
++      simp only [privatePair, mul_assoc]
++    rw [hEval]
++    symm
++    simp only [C, Finset.sum_mul]
++    simp_rw [Finset.sum_comm
++      (s := (Finset.univ : Finset (Fin d → Fin (l + 1))))
++      (t := (Finset.univ : Finset P.support))]
++    rw [Finset.sum_comm]
++    apply Finset.sum_congr rfl
++    intro s _
++    simp only [ite_and, ite_mul, zero_mul, Finset.sum_ite_irrel,
++      Finset.sum_const_zero, Fintype.sum_ite_eq]
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PolynomialTensorAlgebra
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean
+index 889611baf..3af9e1606 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean
+@@ -105,7 +105,15 @@ theorem leak_product (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ 
+     (z : Fin (zDim.eval κ) → ZMod pp.group.order) :
+     leak G PG zDim κ pp f M x z =
+       ∏ a, ∏ b, M a b ^ (z a * (show ZMod pp.group.order from PG.eval κ pp.orderParam f x b)).val :=
+-        sorry
++  by
++    rw [leak_eq, groupDot_eq]
++    apply Finset.prod_congr rfl
++    intro a _
++    rw [groupMulVec_apply, groupDot_eq, ← Finset.prod_pow]
++    apply Finset.prod_congr rfl
++    intro b _
++    rw [← pow_mul, ← pp.group.pow_val_mul,
++      mul_comm (PG.eval κ pp.orderParam f x b) (z a)]
+ 
+ /-- The first decryption block is the group-valued allowed input mask minus the last
+ coordinates of `sAT` [Wee20, §4.2, p. 10, (9)].
+@@ -125,7 +133,50 @@ theorem decFirst_correct (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ
+           (pp.group.expVec pp.generator z) s) =
+       fun j => pp.group.pair pp.generator (groupVecMul z M j) *
+         (pp.group.pair pp.generator pp.generator) ^
+-          (-(Matrix.vecMul (Matrix.vecMul s a.1) t.1 (Sum.inr j))).val := sorry
++          (-(Matrix.vecMul (Matrix.vecMul s a.1) t.1 (Sum.inr j))).val := by
++  -- Normalize the ciphertext numerator while keeping M group-valued.
++  have hCipher (j : Fin (n'.eval κ)) :
++      pp.group.pairVec
++          (encCore G ℓ zDim κ pp (setupCore G ℓ zDim κ pp a).1 x
++            (pp.group.expVec pp.generator z) s).c1
++          (fun k => M k j) =
++        pp.group.pair pp.generator (groupVecMul z M j) *
++          pp.group.pair pp.generator
++            (groupVecMul (Matrix.vecMul (Matrix.vecMul s a.1) a.2.1) M j) := by
++    simp only [encCore_eq, setupCore_eq]
++    rw [pp.group.expVec_vecMul, ← pp.group.expVec_add,
++      pp.group.pairVec_expVec_left]
++    simp only [groupVecMul_apply, groupDot_eq, Pi.add_apply,
++      pp.group.pow_val_add, Finset.prod_mul_distrib, map_mul,
++      ← Matrix.vecMul_vecMul]
++  -- The key pairing has the same mask and the known T-coordinate factor.
++  have hKey (j : Fin (n'.eval κ)) :
++      pp.group.pairVec
++          (encCore G ℓ zDim κ pp (setupCore G ℓ zDim κ pp a).1 x
++            (pp.group.expVec pp.generator z) s).c0
++          (fun i => (keyCore G PG zDim κ pp (setupCore G ℓ zDim κ pp a).2 f M t).K1 i j) =
++        pp.group.pair pp.generator pp.generator ^
++            (Matrix.vecMul (Matrix.vecMul s a.1) t.1 (Sum.inr j)).val *
++          pp.group.pair pp.generator
++            (groupVecMul (Matrix.vecMul (Matrix.vecMul s a.1) a.2.1) M j) := by
++    have hT := pp.group.groupDot_expVec pp.generator
++      (fun i => t.1 i (Sum.inr j)) (Matrix.vecMul s a.1)
++    simp only [groupDot_eq, pp.group.expVec_apply] at hT
++    rw [dotProduct_comm] at hT
++    have hAssoc := congrFun
++      (pp.group.groupVecMul_matMulGroup (Matrix.vecMul s a.1) a.2.1 M) j
++    simp only [groupVecMul_apply, groupDot_eq] at hAssoc
++    simp only [encCore_eq, setupCore_eq, keyCore_eq]
++    rw [pp.group.expVec_vecMul, pp.group.pairVec_expVec_left]
++    simp only [Matrix.hadamard_apply, pp.group.expMat_apply, groupDot_eq, mul_pow,
++      Finset.prod_mul_distrib, map_mul, groupVecMul_apply]
++    rw [hT, hAssoc, pp.group.pair_pow_right]
++    rfl
++  -- Cancel the shared mask using its target-group inverse.
++  rw [decFirst_eq]
++  funext j
++  rw [hCipher j, hKey j, pp.group.pow_val_neg_GT, mul_inv_rev, ← mul_assoc,
++    mul_inv_cancel_right]
+ 
+ /-- The second decryption block is the second partial-garbling block at coins `sAT`
+ [Wee20, §4.2, p. 10, (10)].
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean
+index 89495fcfc..010e4cf2c 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean
+@@ -46,15 +46,24 @@ open scoped Matrix
+ /-- The public group mixing matrix is the implicit representation of the two scalar
+ Kronecker blocks [Wee20, §3.1, p. 6, Setup].
+ 
+-**Proof sketch.** Read the two matrix definitions, split their canonical sum coordinate,
+-and apply `kroneckerMap_apply`, the identity-matrix entry reader and the known-power
+-exponent law. Zero and one coefficients yield the same source-group entries. -/
++**Proof sketch.** Read the two mixing-matrix readers and split the canonical sum
++coordinate. The Kronecker entry reader and the modular multiplication and iterated-power
++laws identify each entry. This covers the identity coefficients without extra cases. -/
+ theorem mixGroup_exp (G : BilinearGen) (n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
+     (A1 : Matrix (Fin 2) (Fin (n1.eval κ)) (ZMod pp.group.order))
+     (A2 : Matrix (Fin 2) (Fin (n2.eval κ)) (ZMod pp.group.order)) :
+     mixGroup G n1 n2 κ pp (pp.group.expMat pp.generator A1)
+         (pp.group.expMat pp.generator A2) =
+-      pp.group.expMat pp.generator (mixScalar (p := pp.orderParam) A1 A2) := sorry
++      pp.group.expMat pp.generator (mixScalar (p := pp.orderParam) A1 A2) := by
++  funext i j
++  simp only [mixGroup_eq, mixScalar_eq, BilinearGroup.expMat_apply]
++  cases hi : (signalCoord (n1.eval κ) (n2.eval κ)).symm i with
++  | inl u =>
++      simp only [hi, Sum.elim_inl, Matrix.kroneckerMap_apply,
++        BilinearGroup.expMat_apply, pp.group.pow_val_mul, pow_mul]
++  | inr u =>
++      simp only [hi, Sum.elim_inr, Matrix.kroneckerMap_apply,
++        BilinearGroup.expMat_apply, pp.group.pow_val_mul, mul_comm, pow_mul]
+ 
+ /-- When its group input is a known scalar vector, the encryption signal is exactly the
+ implicit scalar cross-term signal [Wee20, §3.1, p. 6, Enc].
+diff --git a/TCSlib/Cryptography/Pairing/Exponents.lean b/TCSlib/Cryptography/Pairing/Exponents.lean
+index cbb8b8e21..1a07335f4 100644
+--- a/TCSlib/Cryptography/Pairing/Exponents.lean
++++ b/TCSlib/Cryptography/Pairing/Exponents.lean
+@@ -503,6 +503,44 @@ theorem expVec_tensor_right (g : B.G) (a : ι → ZMod B.order) (b : κ → ZMod
+           ((congrArg (fun z : ZMod B.order => g ^ z.val) (mul_comm (b ij.2) (a ij.1))).trans
+             (B.expVec_apply g (fun ij : ι × κ => a ij.1 * b ij.2) ij).symm)))
+ 
++/-- Pairing a known exponent vector with an arbitrary source-group vector applies
++its known scalar weights inside the pairing. This is technical implicit-representation
++arithmetic for [Wee20, §2.1, p.4; §4.2, p.9]. No exponents of the arbitrary vector are
++chosen.
++
++**Proof sketch.** Read pairVec_eq, expVec_apply and groupDot_eq. The coordinate
++identity is pair_pow_left, and map_prod for the existing monoid hom B.pair g moves
++the product through the pairing. -/
++theorem pairVec_expVec_left [Fintype ι] (g : B.G) (v : ι → ZMod B.order)
++    (u : ι → B.G) :
++    B.pairVec (B.expVec g v) u = B.pair g (groupDot u v) := by
++  simp only [B.pairVec_eq, B.expVec_apply, groupDot_eq, map_prod,
++    B.pair_pow_left, B.pair_pow_right]
++
++/-- Successive known scalar row/matrix weights on an arbitrary source-group matrix
++compose by ordinary scalar matrix multiplication. This is technical implicit arithmetic
++for [Wee20, §2.1, p.4; §4.2, p.9]. The group matrix remains arbitrary.
++
++**Proof sketch.** Read the row/matrix action and product readers, distribute known
++powers over products, and interchange the two finite products. At each arbitrary
++group entry, apply the published exponent-dot-product law with that entry as base.
++Commuting the scalar dot product gives the composed row-matrix weights. -/
++theorem groupVecMul_matMulGroup [Fintype ι] [Fintype κ]
++    (v : ι → ZMod B.order) (W : Matrix ι κ (ZMod B.order))
++    (M : Matrix κ υ B.G) :
++    groupVecMul v (matMulGroup W M) = groupVecMul (Matrix.vecMul v W) M := by
++  funext j
++  simp only [groupVecMul_apply, matMulGroup_apply, groupDot_eq, ← Finset.prod_pow]
++  rw [Finset.prod_comm]
++  apply Finset.prod_congr rfl
++  intro k _
++  show (∏ i, (M k j ^ (W i k).val) ^ (v i).val) =
++    M k j ^ (dotProduct v (fun i => W i k)).val
++  have h := B.groupDot_expVec (M k j) (fun i => W i k) v
++  simp only [groupDot_eq, B.expVec_apply] at h
++  exact h.trans (congrArg (fun c : ZMod B.order => M k j ^ c.val)
++    (dotProduct_comm (fun i => W i k) v))
++
+ end BilinearGroup
+ 
+ end TCSlib.Cryptography.Pairing

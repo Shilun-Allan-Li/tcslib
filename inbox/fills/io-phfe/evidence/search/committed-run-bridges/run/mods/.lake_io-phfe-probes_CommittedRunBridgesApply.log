@@ -1,0 +1,63 @@
+Try this:
+  [apply] refine Prod.mk_inj.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ A.firstCoins kappa (List.ofFn r1 ++ List.ofFn r2) = r1 ∧ A.secondCoins kappa (List.ofFn r1 ++ List.ofFn r2) = r2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α β} {a₁ a₂} {b₁ b₂} => Prod.mk_inj.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Prod.ext_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (A.firstCoins kappa (List.ofFn r1 ++ List.ofFn r2), A.secondCoins kappa (List.ofFn r1 ++ List.ofFn r2)).1 =
+      (r1, r2).1 ∧
+    (A.firstCoins kappa (List.ofFn r1 ++ List.ofFn r2), A.secondCoins kappa (List.ofFn r1 ++ List.ofFn r2)).2 = (r1, r2).2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α β} {x y} => Prod.ext_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Prod.ext ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ (A.firstCoins kappa (List.ofFn r1 ++ List.ofFn r2), A.secondCoins kappa (List.ofFn r1 ++ List.ofFn r2)).1 =
+    (r1, r2).1
+  -- ⊢ (A.firstCoins kappa (List.ofFn r1 ++ List.ofFn r2), A.secondCoins kappa (List.ofFn r1 ++ List.ofFn r2)).2 =
+    (r1, r2).2
+Try this:
+  [apply] refine Eq.symm (Prod.ext ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ (r1, r2).1 =
+    (A.firstCoins kappa (List.ofFn r1 ++ List.ofFn r2), A.secondCoins kappa (List.ofFn r1 ++ List.ofFn r2)).1
+  -- ⊢ (r1, r2).2 =
+    (A.firstCoins kappa (List.ofFn r1 ++ List.ofFn r2), A.secondCoins kappa (List.ofFn r1 ++ List.ofFn r2)).2
+Try this:
+  [apply] refine Prod.swap_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (A.firstCoins kappa (List.ofFn r1 ++ List.ofFn r2), A.secondCoins kappa (List.ofFn r1 ++ List.ofFn r2)).swap =
+    (r1, r2).swap
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α β} {p q} => Prod.swap_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Prod.eq_iff_fst_eq_snd_eq.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (A.firstCoins kappa (List.ofFn r1 ++ List.ofFn r2), A.secondCoins kappa (List.ofFn r1 ++ List.ofFn r2)).1 =
+      (r1, r2).1 ∧
+    (A.firstCoins kappa (List.ofFn r1 ++ List.ofFn r2), A.secondCoins kappa (List.ofFn r1 ++ List.ofFn r2)).2 = (r1, r2).2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α β} {p q} => Prod.eq_iff_fst_eq_snd_eq.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Prod.toSigma_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (A.firstCoins kappa (List.ofFn r1 ++ List.ofFn r2), A.secondCoins kappa (List.ofFn r1 ++ List.ofFn r2)).toSigma =
+    (r1, r2).toSigma
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α β} {x y} => Prod.toSigma_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/CommittedRunBridgesApply.lean:251:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/CommittedRunBridgesApply.lean:270:2: error: apply? didn't find any relevant lemmas
+.lake/io-phfe-probes/CommittedRunBridgesApply.lean:289:2: error: apply? didn't find any relevant lemmas

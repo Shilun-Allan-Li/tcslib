@@ -1,0 +1,47 @@
+Read-only prefixOutgoing_sum proof searches
+Required native exact?/apply? logs cited in review. No Lean/lake/Git/live edit.
+
+$ rg -n 'prefixOutgoing_sum|sigmaProdDistrib.*sigmaCongrRight|sigmaCongrRight.*snocEquiv|castSucc.*sigma_map' TCSlib .lake/packages/mathlib/Mathlib /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean
+exit=0
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean:30:* `prefixOutgoing_sum`: outgoing edges are indexed by a final label.
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean:100:theorem prefixOutgoing_sum {I R : Type*} [Fintype I] [DecidableEq I]
+
+$ rg -n 'def sigmaProdDistrib|theorem prodComm_apply' .lake/packages/mathlib/Mathlib/Logic/Equiv/Prod.lean
+exit=0
+89:theorem prodComm_apply {α β} (x : α × β) : prodComm α β x = x.swap :=
+416:def sigmaProdDistrib {ι : Type*} (α : ι → Type*) (β : Type*) : (Σ i, α i) × β ≃ Σ i, α i × β :=
+
+$ rg -n 'def sigmaCongrRight' .lake/packages/mathlib/Mathlib/Logic/Equiv/Defs.lean
+exit=0
+627:def sigmaCongrRight {α} {β₁ β₂ : α → Type*} (F : ∀ a, β₁ a ≃ β₂ a) : (Σ a, β₁ a) ≃ Σ a, β₂ a where
+
+$ rg -n 'def snocEquiv|theorem init_snoc' .lake/packages/mathlib/Mathlib/Data/Fin/Tuple/Basic.lean
+exit=0
+500:theorem init_snoc : init (snoc p x) = p := by
+701:def snocEquiv (α : Fin (n + 1) → Type*) : α (last n) × (∀ i, α (castSucc i)) ≃ ∀ i, α i where
+
+$ rg -n 'lemma castSucc_injective|theorem castSucc_ne_last' .lake/packages/mathlib/Mathlib/Data/Fin/SuccPred.lean
+exit=0
+91:lemma castSucc_injective (n : ℕ) : Injective (@Fin.castSucc n) := castAdd_injective _ _
+196:theorem castSucc_ne_last {n : ℕ} (i : Fin n) : i.castSucc ≠ .last n :=
+
+$ rg -n 'theorem Function.Injective.sigma_map' .lake/packages/mathlib/Mathlib/Data/Sigma/Basic.lean
+exit=0
+116:theorem Function.Injective.sigma_map {f₁ : α₁ → α₂} {f₂ : ∀ a, β₁ a → β₂ (f₁ a)}
+127:theorem Function.Injective.sigma_map_iff {f₁ : α₁ → α₂} {f₂ : ∀ a, β₁ a → β₂ (f₁ a)}
+
+$ rg -n 'Fintype.sum_prod_type_right|Fintype.prod_prod_type_right' .lake/packages/mathlib/Mathlib/Data/Fintype/BigOperators.lean
+exit=0
+265:@[to_additive Fintype.sum_prod_type_right]
+266:theorem Fintype.prod_prod_type_right [CommMonoid γ] (f : α₁ × α₂ → γ) :
+271:@[to_additive Fintype.sum_prod_type_right'
+273:theorem Fintype.prod_prod_type_right' [CommMonoid γ] (f : α₁ → α₂ → γ) :
+
+$ rg -n 'lemma _root_.Equiv.prod_comp' .lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Defs.lean
+exit=0
+712:lemma _root_.Equiv.prod_comp (e : ι ≃ κ) (g : κ → M) : ∏ i, g (e i) = ∏ i, g i :=
+
+$ rg -n 'lemma prod_ite_eq'"'"'' .lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Piecewise.lean
+exit=0
+293:lemma prod_ite_eq' (i : ι) (f : ι → M) : ∏ j, (if j = i then f j else 1) = f i := by
+

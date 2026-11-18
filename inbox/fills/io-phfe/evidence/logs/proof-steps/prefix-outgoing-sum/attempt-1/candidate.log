@@ -1,0 +1,51 @@
+file=TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean
+source_sha256=ca70e6915271410b9f33fb7a4483d8a6f70151c994ae4160abfe07e71e57e501
+working_source_development_check=True
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean:147:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  dite (↑k < d) ?m.371 ?m.372
+in the target expression
+  (∑ a, ∑ q, if prefixEmbed q = ⟨k.castSucc, tau⟩ then flow ⟨q.fst, Fin.snoc q.snd a⟩ else 0) =
+    if h : ↑⟨k.castSucc, tau⟩.fst < d then ∑ x, flow ⟨⟨↑⟨k.castSucc, tau⟩.fst, ⋯⟩, Fin.snoc ⟨k.castSucc, tau⟩.snd x⟩
+    else 0
+
+case cast
+I : Type u_1
+R : Type u_2
+inst✝² : Fintype I
+inst✝¹ : DecidableEq I
+inst✝ : AddCommMonoid R
+d : ℕ
+flow : (k : Fin d) × (Fin (↑k + 1) → I) → R
+edgeEquiv : ((k : Fin d) × (Fin ↑k → I)) × I ≃ (k : Fin d) × (Fin (↑k + 1) → I) :=
+  (Equiv.sigmaProdDistrib (fun k => Fin ↑k → I) I).trans
+    (Equiv.sigmaCongrRight fun k => (Equiv.prodComm (Fin ↑k → I) I).trans (Fin.snocEquiv fun x => I))
+prefixEmbed : (k : Fin d) × (Fin ↑k → I) → (k : Fin (d + 1)) × (Fin ↑k → I) := Sigma.map Fin.castSucc fun x tau => tau
+hinj : Function.Injective prefixEmbed
+k : Fin d
+tau : Fin ↑k.castSucc → I
+q0 : (k : Fin d) × (Fin ↑k → I) := ⟨k, tau⟩
+⊢ (∑ a, ∑ q, if prefixEmbed q = ⟨k.castSucc, tau⟩ then flow ⟨q.fst, Fin.snoc q.snd a⟩ else 0) =
+    if h : ↑⟨k.castSucc, tau⟩.fst < d then ∑ x, flow ⟨⟨↑⟨k.castSucc, tau⟩.fst, ⋯⟩, Fin.snoc ⟨k.castSucc, tau⟩.snd x⟩
+    else 0
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean:164:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra): no fresh .olean produced
+        1.75 real         1.17 user         0.75 sys
+          1430536192  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              117061  page reclaims
+                  14  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                  21  voluntary context switches
+                4982  involuntary context switches
+            32217913  instructions retired
+            15434731  cycles elapsed
+             1622352  peak memory footprint

@@ -88,6 +88,9 @@ theorem subexpSASimSecure_iff :
 SubexpSmall.negligible implication to each oracle machine and total-call budget.
 No new asymptotic closure argument is needed. -/
 theorem SubexpSASimSecureWith.saSimSecureWith {Sim : SASimulator.Raw S}
-    (h : S.SubexpSASimSecureWith Sim) : S.SASimSecureWith Sim := sorry
+    (h : S.SubexpSASimSecureWith Sim) : S.SASimSecureWith Sim :=
+  Exists.elim ((S.subexpSASimSecureWith_iff Sim).1 h) fun _ hc =>
+    (S.saSimSecureWith_iff Sim).2 fun A q =>
+      SubexpSmall.negligible (hc.2 A q) hc.1
 
 end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.FEScheme.Raw

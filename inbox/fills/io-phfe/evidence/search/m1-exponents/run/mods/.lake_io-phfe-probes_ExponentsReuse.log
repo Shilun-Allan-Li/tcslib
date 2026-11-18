@@ -1,0 +1,3127 @@
+.lake/io-phfe-probes/ExponentsReuse.lean:182:83: error: unexpected token 'run_cmd'; expected 'lemma'
+REUSE_SEARCH pow_val_add_GT
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [Group G] {a b c} => eq_div_iff_mul_eq'.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (mul_eq_of_eq_mul_inv ?_)
+  -- Remaining subgoals:
+  -- ⊢ gT ^ a.val = gT ^ (a + b).val * (gT ^ b.val)⁻¹
+Try this:
+  [apply] refine Eq.symm (mul_eq_of_eq_div ?_)
+  -- Remaining subgoals:
+  -- ⊢ gT ^ a.val = gT ^ (a + b).val / gT ^ b.val
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [CommGroup G] {a b c} => eq_div_iff_mul_eq''.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine mul_inv_eq_iff_eq_mul.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ gT ^ (a + b).val * (gT ^ b.val)⁻¹ = gT ^ a.val
+Try this:
+  [apply] refine Eq.symm (mul_eq_of_eq_inv_mul ?_)
+  -- Remaining subgoals:
+  -- ⊢ gT ^ b.val = (gT ^ a.val)⁻¹ * gT ^ (a + b).val
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [Group G] {a b c} => eq_inv_mul_iff_mul_eq.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine eq_mul_of_mul_inv_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ gT ^ (a + b).val * (gT ^ b.val)⁻¹ = gT ^ a.val
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [Group G] {a b c} => eq_mul_inv_iff_mul_eq.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine div_eq_iff_eq_mul'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ gT ^ (a + b).val / gT ^ a.val = gT ^ b.val
+Try this:
+  [apply] refine Eq.symm (mul_eq_of_eq_div' ?_)
+  -- Remaining subgoals:
+  -- ⊢ gT ^ b.val = gT ^ (a + b).val / gT ^ a.val
+Try this:
+  [apply] refine eq_mul_of_inv_mul_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ (gT ^ a.val)⁻¹ * gT ^ (a + b).val = gT ^ b.val
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [DivisionMonoid α] {a b c} h => (IsUnit.eq_inv_mul_iff_mul_eq h).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [DivisionMonoid α] {a b c} h => (IsUnit.eq_div_iff h).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine eq_mul_of_div_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ gT ^ (a + b).val / gT ^ b.val = gT ^ a.val
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [DivisionMonoid α] {a b c} h => (IsUnit.eq_mul_inv_iff_mul_eq h).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine div_eq_iff_eq_mul.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ gT ^ (a + b).val / gT ^ b.val = gT ^ a.val
+Try this:
+  [apply] refine eq_mul_of_div_eq' ?_
+  -- Remaining subgoals:
+  -- ⊢ gT ^ (a + b).val / gT ^ a.val = gT ^ b.val
+Try this:
+  [apply] refine inv_mul_eq_iff_eq_mul.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (gT ^ a.val)⁻¹ * gT ^ (a + b).val = gT ^ b.val
+Try this:
+  [apply] refine (IsUnit.inv_mul_eq_iff_eq_mul ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ IsUnit (gT ^ a.val)
+  -- ⊢ (gT ^ a.val)⁻¹ * gT ^ (a + b).val = gT ^ b.val
+Try this:
+  [apply] refine (IsUnit.div_eq_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ IsUnit (gT ^ b.val)
+  -- ⊢ gT ^ (a + b).val / gT ^ b.val = gT ^ a.val
+Try this:
+  [apply] refine (IsUnit.mul_inv_eq_iff_eq_mul ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ IsUnit (gT ^ b.val)
+  -- ⊢ gT ^ (a + b).val * (gT ^ b.val)⁻¹ = gT ^ a.val
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [Monoid α] {a b c} [Invertible c] => mul_right_eq_iff_eq_mul_invOf.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine invOf_mul_eq_iff_eq_mul_left.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Invertible (gT ^ a.val)
+  -- ⊢ ⅟(gT ^ a.val) * gT ^ (a + b).val = gT ^ b.val
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [Monoid α] {a b c} [Invertible c] => mul_left_eq_iff_eq_invOf_mul.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine mul_invOf_eq_iff_eq_mul_right.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Invertible (gT ^ b.val)
+  -- ⊢ gT ^ (a + b).val * ⅟(gT ^ b.val) = gT ^ a.val
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (CancelDenoms.derive_trans₂ ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (CancelDenoms.derive_trans ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/ExponentsReuse.lean:185:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:191:8: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:197:79: error: unexpected token 'run_cmd'; expected 'lemma'
+REUSE_SEARCH pow_val_neg_GT
+Try this:
+  [apply] refine Eq.symm (DivisionMonoid.inv_eq_of_mul (gT ^ a.val) (gT ^ (-a).val) ?_)
+  -- Remaining subgoals:
+  -- ⊢ gT ^ a.val * gT ^ (-a).val = 1
+Try this:
+  [apply] refine eq_inv_of_mul_eq_one_left ?_
+  -- Remaining subgoals:
+  -- ⊢ gT ^ (-a).val * gT ^ a.val = 1
+Try this:
+  [apply] refine Eq.symm (inv_eq_of_mul_eq_one_right ?_)
+  -- Remaining subgoals:
+  -- ⊢ gT ^ a.val * gT ^ (-a).val = 1
+Try this:
+  [apply] refine mul_eq_one_iff_eq_inv.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ gT ^ (-a).val * gT ^ a.val = 1
+Try this:
+  [apply] refine Eq.symm (inv_eq_of_mul_eq_one_left ?_)
+  -- Remaining subgoals:
+  -- ⊢ gT ^ (-a).val * gT ^ a.val = 1
+Try this:
+  [apply] refine eq_inv_iff_mul_eq_one.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ gT ^ (-a).val * gT ^ a.val = 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [InvolutiveInv G] {a b} => inv_eq_iff_eq_inv.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine inv_eq_iff_eq_inv.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (gT ^ (-a).val)⁻¹ = gT ^ a.val
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [Group G] {a b} => mul_eq_one_iff_inv_eq'.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine eq_inv_of_mul_eq_one_right ?_
+  -- Remaining subgoals:
+  -- ⊢ gT ^ a.val * gT ^ (-a).val = 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [Group G] {a b} => mul_eq_one_iff_inv_eq.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine mul_eq_one_iff_eq_inv'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ gT ^ a.val * gT ^ (-a).val = 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [Group G] {a b} => inv_eq_iff_mul_eq_one.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (IsUnit.mul_eq_one_iff_eq_inv ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ IsUnit (gT ^ a.val)
+  -- ⊢ gT ^ (-a).val * gT ^ a.val = 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [DivisionMonoid α] {a b} h => (IsUnit.mul_eq_one_iff_inv_eq h).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/ExponentsReuse.lean:200:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:206:8: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:212:91: error: unexpected token 'run_cmd'; expected 'lemma'
+REUSE_SEARCH expVec_add
+Try this:
+  [apply] refine List.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ List.map (B.expVec g (a + b)) = List.map (B.expVec g a * B.expVec g b)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => List.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Array.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Array.map (B.expVec g (a + b)) = Array.map (B.expVec g a * B.expVec g b)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => Array.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Vector.map_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {α_1} {f g} [NeZero n] => Vector.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Function.funext_iff_of_subsingleton ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ι
+  -- ⊢ ι
+  -- ⊢ Subsingleton ι
+  -- ⊢ B.expVec g (a + b) ?_ = (B.expVec g a * B.expVec g b) ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {f} [Subsingleton α] {g} x y => (Function.funext_iff_of_subsingleton x y).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Surjective.right_cancellable fun b => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {γ} {f} hf {g₁ g₂} => (Function.Surjective.right_cancellable hf).mp) (fun b => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Option.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Option.map (B.expVec g (a + b)) = Option.map (B.expVec g a * B.expVec g b)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Option.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.graphOn_univ_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.graphOn (B.expVec g (a + b)) Set.univ = Set.graphOn (B.expVec g a * B.expVec g b) Set.univ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Set.graphOn_univ_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Set.eqOn_univ (B.expVec g (a + b)) (B.expVec g a * B.expVec g b)).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.EqOn (B.expVec g (a + b)) (B.expVec g a * B.expVec g b) Set.univ
+Try this:
+  [apply] refine Eq.symm
+    ((fun {α} {β} f₁ f₂ => (Set.eqOn_univ f₁ f₂).mp) (B.expVec g a * B.expVec g b) (B.expVec g (a + b)) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Set.EqOn (B.expVec g a * B.expVec g b) (B.expVec g (a + b)) Set.univ
+Try this:
+  [apply] refine (StrictAnti.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder ι
+  -- ⊢ Preorder B.G
+  -- ⊢ WellFoundedGT ι
+  -- ⊢ StrictAnti (B.expVec g (a + b))
+  -- ⊢ StrictAnti (B.expVec g a * B.expVec g b)
+  -- ⊢ Set.range (B.expVec g (a + b)) = Set.range (B.expVec g a * B.expVec g b)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedGT β] {f g} hf hg => (StrictAnti.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (StrictMono.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder ι
+  -- ⊢ Preorder B.G
+  -- ⊢ WellFoundedLT ι
+  -- ⊢ StrictMono (B.expVec g (a + b))
+  -- ⊢ StrictMono (B.expVec g a * B.expVec g b)
+  -- ⊢ Set.range (B.expVec g (a + b)) = Set.range (B.expVec g a * B.expVec g b)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedLT β] {f g} hf hg => (StrictMono.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_support.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Zero B.G
+  -- ⊢ Function.support (B.expVec g (a + b)) = Function.support (B.expVec g a * B.expVec g b) ∧
+    ∀ x ∈ Function.support (B.expVec g (a + b)), B.expVec g (a + b) x = (B.expVec g a * B.expVec g b) x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [Zero M] {f g} => Function.ext_iff_support.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_mulSupport.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.mulSupport (B.expVec g (a + b)) = Function.mulSupport (B.expVec g a * B.expVec g b) ∧
+    ∀ x ∈ Function.mulSupport (B.expVec g (a + b)), B.expVec g (a + b) x = (B.expVec g a * B.expVec g b) x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [One M] {f g} => Function.ext_iff_mulSupport.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Filter.eventuallyEq_top.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVec g (a + b) =ᶠ[⊤] B.expVec g a * B.expVec g b
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Filter.eventuallyEq_top.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateCol_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {α} {ι} [Nonempty ι] {v w} => Matrix.replicateCol_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateRow_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {ι} [Nonempty ι] {v w} => Matrix.replicateRow_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine funext ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι), B.expVec g (a + b) x = (B.expVec g a * B.expVec g b) x
+Try this:
+  [apply] refine Eq.symm (funext ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι), (B.expVec g a * B.expVec g b) x = B.expVec g (a + b) x
+Try this:
+  [apply] refine funext_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι), B.expVec g (a + b) x = (B.expVec g a * B.expVec g b) x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => funext_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [Group G] {a b c} => eq_div_iff_mul_eq'.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine mul_inv_eq_iff_eq_mul.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVec g (a + b) * (B.expVec g b)⁻¹ = B.expVec g a
+Try this:
+  [apply] refine Eq.symm (mul_eq_of_eq_mul_inv ?_)
+  -- Remaining subgoals:
+  -- ⊢ B.expVec g a = B.expVec g (a + b) * (B.expVec g b)⁻¹
+Try this:
+  [apply] refine eq_mul_of_mul_inv_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVec g (a + b) * (B.expVec g b)⁻¹ = B.expVec g a
+Try this:
+  [apply] refine Eq.symm (mul_eq_of_eq_div ?_)
+  -- Remaining subgoals:
+  -- ⊢ B.expVec g a = B.expVec g (a + b) / B.expVec g b
+Try this:
+  [apply] refine div_eq_iff_eq_mul'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVec g (a + b) / B.expVec g a = B.expVec g b
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [CommGroup G] {a b c} => eq_div_iff_mul_eq''.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine eq_mul_of_inv_mul_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ (B.expVec g a)⁻¹ * B.expVec g (a + b) = B.expVec g b
+Try this:
+  [apply] refine Eq.symm (mul_eq_of_eq_inv_mul ?_)
+  -- Remaining subgoals:
+  -- ⊢ B.expVec g b = (B.expVec g a)⁻¹ * B.expVec g (a + b)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [Group G] {a b c} => eq_inv_mul_iff_mul_eq.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine eq_mul_of_div_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVec g (a + b) / B.expVec g b = B.expVec g a
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [Group G] {a b c} => eq_mul_inv_iff_mul_eq.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine div_eq_iff_eq_mul.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVec g (a + b) / B.expVec g b = B.expVec g a
+Try this:
+  [apply] refine Eq.symm (mul_eq_of_eq_div' ?_)
+  -- Remaining subgoals:
+  -- ⊢ B.expVec g b = B.expVec g (a + b) / B.expVec g a
+Try this:
+  [apply] refine eq_mul_of_div_eq' ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVec g (a + b) / B.expVec g a = B.expVec g b
+Try this:
+  [apply] refine inv_mul_eq_iff_eq_mul.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (B.expVec g a)⁻¹ * B.expVec g (a + b) = B.expVec g b
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [DivisionMonoid α] {a b c} h => (IsUnit.eq_inv_mul_iff_mul_eq h).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (IsUnit.inv_mul_eq_iff_eq_mul ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ IsUnit (B.expVec g a)
+  -- ⊢ (B.expVec g a)⁻¹ * B.expVec g (a + b) = B.expVec g b
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [DivisionMonoid α] {a b c} h => (IsUnit.eq_div_iff h).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (IsUnit.div_eq_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ IsUnit (B.expVec g b)
+  -- ⊢ B.expVec g (a + b) / B.expVec g b = B.expVec g a
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [DivisionMonoid α] {a b c} h => (IsUnit.eq_mul_inv_iff_mul_eq h).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (IsUnit.mul_inv_eq_iff_eq_mul ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ IsUnit (B.expVec g b)
+  -- ⊢ B.expVec g (a + b) * (B.expVec g b)⁻¹ = B.expVec g a
+Try this:
+  [apply] refine invOf_mul_eq_iff_eq_mul_left.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Invertible (B.expVec g a)
+  -- ⊢ ⅟(B.expVec g a) * B.expVec g (a + b) = B.expVec g b
+Try this:
+  [apply] refine mul_invOf_eq_iff_eq_mul_right.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Invertible (B.expVec g b)
+  -- ⊢ B.expVec g (a + b) * ⅟(B.expVec g b) = B.expVec g a
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [Monoid α] {a b c} [Invertible c] => mul_right_eq_iff_eq_mul_invOf.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [Monoid α] {a b c} [Invertible c] => mul_left_eq_iff_eq_invOf_mul.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (CancelDenoms.derive_trans₂ ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (CancelDenoms.derive_trans ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/ExponentsReuse.lean:215:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:221:8: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:227:82: error: unexpected token 'run_cmd'; expected 'lemma'
+REUSE_SEARCH expVec_neg
+Try this:
+  [apply] refine List.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ List.map (B.expVec g (-a)) = List.map (B.expVec g a)⁻¹
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => List.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Array.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Array.map (B.expVec g (-a)) = Array.map (B.expVec g a)⁻¹
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => Array.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Vector.map_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {α_1} {f g} [NeZero n] => Vector.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Function.funext_iff_of_subsingleton ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ι
+  -- ⊢ ι
+  -- ⊢ Subsingleton ι
+  -- ⊢ B.expVec g (-a) ?_ = (B.expVec g a)⁻¹ ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {f} [Subsingleton α] {g} x y => (Function.funext_iff_of_subsingleton x y).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Surjective.right_cancellable fun b => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {γ} {f} hf {g₁ g₂} => (Function.Surjective.right_cancellable hf).mp) (fun b => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Option.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Option.map (B.expVec g (-a)) = Option.map (B.expVec g a)⁻¹
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Option.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.graphOn_univ_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.graphOn (B.expVec g (-a)) Set.univ = Set.graphOn (B.expVec g a)⁻¹ Set.univ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Set.graphOn_univ_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Set.eqOn_univ (B.expVec g (-a)) (B.expVec g a)⁻¹).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.EqOn (B.expVec g (-a)) (B.expVec g a)⁻¹ Set.univ
+Try this:
+  [apply] refine Eq.symm ((fun {α} {β} f₁ f₂ => (Set.eqOn_univ f₁ f₂).mp) (B.expVec g a)⁻¹ (B.expVec g (-a)) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Set.EqOn (B.expVec g a)⁻¹ (B.expVec g (-a)) Set.univ
+Try this:
+  [apply] refine (StrictAnti.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder ι
+  -- ⊢ Preorder B.G
+  -- ⊢ WellFoundedGT ι
+  -- ⊢ StrictAnti (B.expVec g (-a))
+  -- ⊢ StrictAnti (B.expVec g a)⁻¹
+  -- ⊢ Set.range (B.expVec g (-a)) = Set.range (B.expVec g a)⁻¹
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedGT β] {f g} hf hg => (StrictAnti.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (StrictMono.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder ι
+  -- ⊢ Preorder B.G
+  -- ⊢ WellFoundedLT ι
+  -- ⊢ StrictMono (B.expVec g (-a))
+  -- ⊢ StrictMono (B.expVec g a)⁻¹
+  -- ⊢ Set.range (B.expVec g (-a)) = Set.range (B.expVec g a)⁻¹
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedLT β] {f g} hf hg => (StrictMono.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_support.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Zero B.G
+  -- ⊢ Function.support (B.expVec g (-a)) = Function.support (B.expVec g a)⁻¹ ∧
+    ∀ x ∈ Function.support (B.expVec g (-a)), B.expVec g (-a) x = (B.expVec g a)⁻¹ x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [Zero M] {f g} => Function.ext_iff_support.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_mulSupport.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.mulSupport (B.expVec g (-a)) = Function.mulSupport (B.expVec g a)⁻¹ ∧
+    ∀ x ∈ Function.mulSupport (B.expVec g (-a)), B.expVec g (-a) x = (B.expVec g a)⁻¹ x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [One M] {f g} => Function.ext_iff_mulSupport.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Filter.eventuallyEq_top.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVec g (-a) =ᶠ[⊤] (B.expVec g a)⁻¹
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Filter.eventuallyEq_top.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateCol_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {α} {ι} [Nonempty ι] {v w} => Matrix.replicateCol_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateRow_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {ι} [Nonempty ι] {v w} => Matrix.replicateRow_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine funext ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι), B.expVec g (-a) x = (B.expVec g a)⁻¹ x
+Try this:
+  [apply] refine Eq.symm (funext ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι), (B.expVec g a)⁻¹ x = B.expVec g (-a) x
+Try this:
+  [apply] refine funext_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι), B.expVec g (-a) x = (B.expVec g a)⁻¹ x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => funext_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine eq_inv_of_mul_eq_one_left ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVec g (-a) * B.expVec g a = 1
+Try this:
+  [apply] refine Eq.symm (DivisionMonoid.inv_eq_of_mul (B.expVec g a) (B.expVec g (-a)) ?_)
+  -- Remaining subgoals:
+  -- ⊢ B.expVec g a * B.expVec g (-a) = 1
+Try this:
+  [apply] refine mul_eq_one_iff_eq_inv.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVec g (-a) * B.expVec g a = 1
+Try this:
+  [apply] refine Eq.symm (inv_eq_of_mul_eq_one_right ?_)
+  -- Remaining subgoals:
+  -- ⊢ B.expVec g a * B.expVec g (-a) = 1
+Try this:
+  [apply] refine eq_inv_iff_mul_eq_one.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVec g (-a) * B.expVec g a = 1
+Try this:
+  [apply] refine Eq.symm (inv_eq_of_mul_eq_one_left ?_)
+  -- Remaining subgoals:
+  -- ⊢ B.expVec g (-a) * B.expVec g a = 1
+Try this:
+  [apply] refine inv_eq_iff_eq_inv.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (B.expVec g (-a))⁻¹ = B.expVec g a
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [InvolutiveInv G] {a b} => inv_eq_iff_eq_inv.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine eq_inv_of_mul_eq_one_right ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVec g a * B.expVec g (-a) = 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [Group G] {a b} => mul_eq_one_iff_inv_eq'.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine mul_eq_one_iff_eq_inv'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVec g a * B.expVec g (-a) = 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [Group G] {a b} => mul_eq_one_iff_inv_eq.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [Group G] {a b} => inv_eq_iff_mul_eq_one.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (IsUnit.mul_eq_one_iff_eq_inv ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ IsUnit (B.expVec g a)
+  -- ⊢ B.expVec g (-a) * B.expVec g a = 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [DivisionMonoid α] {a b} h => (IsUnit.mul_eq_one_iff_inv_eq h).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/ExponentsReuse.lean:230:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:236:8: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:242:73: error: unexpected token 'run_cmd'; expected 'lemma'
+REUSE_SEARCH expVec_smul
+Try this:
+  [apply] refine List.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ List.map (B.expVec g (c • a)) = List.map fun i => B.expVec g a i ^ c.val
+Try this:
+  [apply] refine Array.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Array.map (B.expVec g (c • a)) = Array.map fun i => B.expVec g a i ^ c.val
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => List.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Vector.map_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => Array.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Function.funext_iff_of_subsingleton ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ι
+  -- ⊢ ι
+  -- ⊢ Subsingleton ι
+  -- ⊢ B.expVec g (c • a) ?_ = B.expVec g a ?_ ^ c.val
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {α_1} {f g} [NeZero n] => Vector.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Surjective.right_cancellable fun b => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {f} [Subsingleton α] {g} x y => (Function.funext_iff_of_subsingleton x y).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {γ} {f} hf {g₁ g₂} => (Function.Surjective.right_cancellable hf).mp) (fun b => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Option.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Option.map (B.expVec g (c • a)) = Option.map fun i => B.expVec g a i ^ c.val
+Try this:
+  [apply] refine Set.graphOn_univ_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.graphOn (B.expVec g (c • a)) Set.univ = Set.graphOn (fun i => B.expVec g a i ^ c.val) Set.univ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Option.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Set.eqOn_univ (B.expVec g (c • a)) fun i => B.expVec g a i ^ c.val).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.EqOn (B.expVec g (c • a)) (fun i => B.expVec g a i ^ c.val) Set.univ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Set.graphOn_univ_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (StrictAnti.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder ι
+  -- ⊢ Preorder B.G
+  -- ⊢ WellFoundedGT ι
+  -- ⊢ StrictAnti (B.expVec g (c • a))
+  -- ⊢ StrictAnti fun i => B.expVec g a i ^ c.val
+  -- ⊢ Set.range (B.expVec g (c • a)) = Set.range fun i => B.expVec g a i ^ c.val
+Try this:
+  [apply] refine Eq.symm
+    ((fun {α} {β} f₁ f₂ => (Set.eqOn_univ f₁ f₂).mp) (fun i => B.expVec g a i ^ c.val) (B.expVec g (c • a)) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Set.EqOn (fun i => B.expVec g a i ^ c.val) (B.expVec g (c • a)) Set.univ
+Try this:
+  [apply] refine (StrictMono.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder ι
+  -- ⊢ Preorder B.G
+  -- ⊢ WellFoundedLT ι
+  -- ⊢ StrictMono (B.expVec g (c • a))
+  -- ⊢ StrictMono fun i => B.expVec g a i ^ c.val
+  -- ⊢ Set.range (B.expVec g (c • a)) = Set.range fun i => B.expVec g a i ^ c.val
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedGT β] {f g} hf hg => (StrictAnti.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_support.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Zero B.G
+  -- ⊢ (Function.support (B.expVec g (c • a)) = Function.support fun i => B.expVec g a i ^ c.val) ∧
+    ∀ x ∈ Function.support (B.expVec g (c • a)), B.expVec g (c • a) x = B.expVec g a x ^ c.val
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedLT β] {f g} hf hg => (StrictMono.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_mulSupport.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (Function.mulSupport (B.expVec g (c • a)) = Function.mulSupport fun i => B.expVec g a i ^ c.val) ∧
+    ∀ x ∈ Function.mulSupport (B.expVec g (c • a)), B.expVec g (c • a) x = B.expVec g a x ^ c.val
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [Zero M] {f g} => Function.ext_iff_support.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Filter.eventuallyEq_top.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVec g (c • a) =ᶠ[⊤] fun i => B.expVec g a i ^ c.val
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [One M] {f g} => Function.ext_iff_mulSupport.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateCol_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Filter.eventuallyEq_top.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateRow_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {α} {ι} [Nonempty ι] {v w} => Matrix.replicateCol_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine funext ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι), B.expVec g (c • a) x = B.expVec g a x ^ c.val
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {ι} [Nonempty ι] {v w} => Matrix.replicateRow_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (funext ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι), B.expVec g a x ^ c.val = B.expVec g (c • a) x
+Try this:
+  [apply] refine funext_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι), B.expVec g (c • a) x = B.expVec g a x ^ c.val
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => funext_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/ExponentsReuse.lean:245:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:251:8: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:257:64: error: unexpected token 'run_cmd'; expected 'lemma'
+REUSE_SEARCH expVecT_add
+Try this:
+  [apply] refine List.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ List.map (B.expVecT gT (a + b)) = List.map (B.expVecT gT a * B.expVecT gT b)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => List.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Array.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Array.map (B.expVecT gT (a + b)) = Array.map (B.expVecT gT a * B.expVecT gT b)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => Array.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Vector.map_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {α_1} {f g} [NeZero n] => Vector.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Function.funext_iff_of_subsingleton ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ι
+  -- ⊢ ι
+  -- ⊢ Subsingleton ι
+  -- ⊢ B.expVecT gT (a + b) ?_ = (B.expVecT gT a * B.expVecT gT b) ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {f} [Subsingleton α] {g} x y => (Function.funext_iff_of_subsingleton x y).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Surjective.right_cancellable fun b => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {γ} {f} hf {g₁ g₂} => (Function.Surjective.right_cancellable hf).mp) (fun b => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Option.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Option.map (B.expVecT gT (a + b)) = Option.map (B.expVecT gT a * B.expVecT gT b)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Option.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.graphOn_univ_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.graphOn (B.expVecT gT (a + b)) Set.univ = Set.graphOn (B.expVecT gT a * B.expVecT gT b) Set.univ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Set.graphOn_univ_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Set.eqOn_univ (B.expVecT gT (a + b)) (B.expVecT gT a * B.expVecT gT b)).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.EqOn (B.expVecT gT (a + b)) (B.expVecT gT a * B.expVecT gT b) Set.univ
+Try this:
+  [apply] refine Eq.symm
+    ((fun {α} {β} f₁ f₂ => (Set.eqOn_univ f₁ f₂).mp) (B.expVecT gT a * B.expVecT gT b) (B.expVecT gT (a + b)) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Set.EqOn (B.expVecT gT a * B.expVecT gT b) (B.expVecT gT (a + b)) Set.univ
+Try this:
+  [apply] refine (StrictAnti.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder ι
+  -- ⊢ Preorder B.GT
+  -- ⊢ WellFoundedGT ι
+  -- ⊢ StrictAnti (B.expVecT gT (a + b))
+  -- ⊢ StrictAnti (B.expVecT gT a * B.expVecT gT b)
+  -- ⊢ Set.range (B.expVecT gT (a + b)) = Set.range (B.expVecT gT a * B.expVecT gT b)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedGT β] {f g} hf hg => (StrictAnti.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (StrictMono.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder ι
+  -- ⊢ Preorder B.GT
+  -- ⊢ WellFoundedLT ι
+  -- ⊢ StrictMono (B.expVecT gT (a + b))
+  -- ⊢ StrictMono (B.expVecT gT a * B.expVecT gT b)
+  -- ⊢ Set.range (B.expVecT gT (a + b)) = Set.range (B.expVecT gT a * B.expVecT gT b)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedLT β] {f g} hf hg => (StrictMono.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_support.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Zero B.GT
+  -- ⊢ Function.support (B.expVecT gT (a + b)) = Function.support (B.expVecT gT a * B.expVecT gT b) ∧
+    ∀ x ∈ Function.support (B.expVecT gT (a + b)), B.expVecT gT (a + b) x = (B.expVecT gT a * B.expVecT gT b) x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [Zero M] {f g} => Function.ext_iff_support.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_mulSupport.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.mulSupport (B.expVecT gT (a + b)) = Function.mulSupport (B.expVecT gT a * B.expVecT gT b) ∧
+    ∀ x ∈ Function.mulSupport (B.expVecT gT (a + b)), B.expVecT gT (a + b) x = (B.expVecT gT a * B.expVecT gT b) x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [One M] {f g} => Function.ext_iff_mulSupport.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Filter.eventuallyEq_top.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVecT gT (a + b) =ᶠ[⊤] B.expVecT gT a * B.expVecT gT b
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Filter.eventuallyEq_top.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateCol_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {α} {ι} [Nonempty ι] {v w} => Matrix.replicateCol_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateRow_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {ι} [Nonempty ι] {v w} => Matrix.replicateRow_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine funext ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι), B.expVecT gT (a + b) x = (B.expVecT gT a * B.expVecT gT b) x
+Try this:
+  [apply] refine Eq.symm (funext ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι), (B.expVecT gT a * B.expVecT gT b) x = B.expVecT gT (a + b) x
+Try this:
+  [apply] refine funext_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι), B.expVecT gT (a + b) x = (B.expVecT gT a * B.expVecT gT b) x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => funext_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [Group G] {a b c} => eq_div_iff_mul_eq'.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine mul_inv_eq_iff_eq_mul.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVecT gT (a + b) * (B.expVecT gT b)⁻¹ = B.expVecT gT a
+Try this:
+  [apply] refine Eq.symm (mul_eq_of_eq_mul_inv ?_)
+  -- Remaining subgoals:
+  -- ⊢ B.expVecT gT a = B.expVecT gT (a + b) * (B.expVecT gT b)⁻¹
+Try this:
+  [apply] refine eq_mul_of_mul_inv_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVecT gT (a + b) * (B.expVecT gT b)⁻¹ = B.expVecT gT a
+Try this:
+  [apply] refine Eq.symm (mul_eq_of_eq_div ?_)
+  -- Remaining subgoals:
+  -- ⊢ B.expVecT gT a = B.expVecT gT (a + b) / B.expVecT gT b
+Try this:
+  [apply] refine div_eq_iff_eq_mul'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVecT gT (a + b) / B.expVecT gT a = B.expVecT gT b
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [CommGroup G] {a b c} => eq_div_iff_mul_eq''.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine eq_mul_of_inv_mul_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ (B.expVecT gT a)⁻¹ * B.expVecT gT (a + b) = B.expVecT gT b
+Try this:
+  [apply] refine Eq.symm (mul_eq_of_eq_inv_mul ?_)
+  -- Remaining subgoals:
+  -- ⊢ B.expVecT gT b = (B.expVecT gT a)⁻¹ * B.expVecT gT (a + b)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [Group G] {a b c} => eq_inv_mul_iff_mul_eq.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine eq_mul_of_div_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVecT gT (a + b) / B.expVecT gT b = B.expVecT gT a
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [Group G] {a b c} => eq_mul_inv_iff_mul_eq.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine div_eq_iff_eq_mul.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVecT gT (a + b) / B.expVecT gT b = B.expVecT gT a
+Try this:
+  [apply] refine Eq.symm (mul_eq_of_eq_div' ?_)
+  -- Remaining subgoals:
+  -- ⊢ B.expVecT gT b = B.expVecT gT (a + b) / B.expVecT gT a
+Try this:
+  [apply] refine eq_mul_of_div_eq' ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVecT gT (a + b) / B.expVecT gT a = B.expVecT gT b
+Try this:
+  [apply] refine inv_mul_eq_iff_eq_mul.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (B.expVecT gT a)⁻¹ * B.expVecT gT (a + b) = B.expVecT gT b
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [DivisionMonoid α] {a b c} h => (IsUnit.eq_inv_mul_iff_mul_eq h).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (IsUnit.inv_mul_eq_iff_eq_mul ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ IsUnit (B.expVecT gT a)
+  -- ⊢ (B.expVecT gT a)⁻¹ * B.expVecT gT (a + b) = B.expVecT gT b
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [DivisionMonoid α] {a b c} h => (IsUnit.eq_div_iff h).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (IsUnit.div_eq_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ IsUnit (B.expVecT gT b)
+  -- ⊢ B.expVecT gT (a + b) / B.expVecT gT b = B.expVecT gT a
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [DivisionMonoid α] {a b c} h => (IsUnit.eq_mul_inv_iff_mul_eq h).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (IsUnit.mul_inv_eq_iff_eq_mul ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ IsUnit (B.expVecT gT b)
+  -- ⊢ B.expVecT gT (a + b) * (B.expVecT gT b)⁻¹ = B.expVecT gT a
+Try this:
+  [apply] refine invOf_mul_eq_iff_eq_mul_left.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Invertible (B.expVecT gT a)
+  -- ⊢ ⅟(B.expVecT gT a) * B.expVecT gT (a + b) = B.expVecT gT b
+Try this:
+  [apply] refine mul_invOf_eq_iff_eq_mul_right.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Invertible (B.expVecT gT b)
+  -- ⊢ B.expVecT gT (a + b) * ⅟(B.expVecT gT b) = B.expVecT gT a
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [Monoid α] {a b c} [Invertible c] => mul_right_eq_iff_eq_mul_invOf.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [Monoid α] {a b c} [Invertible c] => mul_left_eq_iff_eq_invOf_mul.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (CancelDenoms.derive_trans₂ ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (CancelDenoms.derive_trans ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/ExponentsReuse.lean:260:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:266:8: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:272:64: error: unexpected token 'run_cmd'; expected 'lemma'
+REUSE_SEARCH expVecT_neg
+Try this:
+  [apply] refine List.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ List.map (B.expVecT gT (-a)) = List.map (B.expVecT gT a)⁻¹
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => List.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Array.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Array.map (B.expVecT gT (-a)) = Array.map (B.expVecT gT a)⁻¹
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => Array.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Vector.map_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {α_1} {f g} [NeZero n] => Vector.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Function.funext_iff_of_subsingleton ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ι
+  -- ⊢ ι
+  -- ⊢ Subsingleton ι
+  -- ⊢ B.expVecT gT (-a) ?_ = (B.expVecT gT a)⁻¹ ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {f} [Subsingleton α] {g} x y => (Function.funext_iff_of_subsingleton x y).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Surjective.right_cancellable fun b => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {γ} {f} hf {g₁ g₂} => (Function.Surjective.right_cancellable hf).mp) (fun b => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Option.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Option.map (B.expVecT gT (-a)) = Option.map (B.expVecT gT a)⁻¹
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Option.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.graphOn_univ_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.graphOn (B.expVecT gT (-a)) Set.univ = Set.graphOn (B.expVecT gT a)⁻¹ Set.univ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Set.graphOn_univ_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Set.eqOn_univ (B.expVecT gT (-a)) (B.expVecT gT a)⁻¹).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.EqOn (B.expVecT gT (-a)) (B.expVecT gT a)⁻¹ Set.univ
+Try this:
+  [apply] refine Eq.symm ((fun {α} {β} f₁ f₂ => (Set.eqOn_univ f₁ f₂).mp) (B.expVecT gT a)⁻¹ (B.expVecT gT (-a)) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Set.EqOn (B.expVecT gT a)⁻¹ (B.expVecT gT (-a)) Set.univ
+Try this:
+  [apply] refine (StrictAnti.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder ι
+  -- ⊢ Preorder B.GT
+  -- ⊢ WellFoundedGT ι
+  -- ⊢ StrictAnti (B.expVecT gT (-a))
+  -- ⊢ StrictAnti (B.expVecT gT a)⁻¹
+  -- ⊢ Set.range (B.expVecT gT (-a)) = Set.range (B.expVecT gT a)⁻¹
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedGT β] {f g} hf hg => (StrictAnti.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (StrictMono.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder ι
+  -- ⊢ Preorder B.GT
+  -- ⊢ WellFoundedLT ι
+  -- ⊢ StrictMono (B.expVecT gT (-a))
+  -- ⊢ StrictMono (B.expVecT gT a)⁻¹
+  -- ⊢ Set.range (B.expVecT gT (-a)) = Set.range (B.expVecT gT a)⁻¹
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedLT β] {f g} hf hg => (StrictMono.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_support.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Zero B.GT
+  -- ⊢ Function.support (B.expVecT gT (-a)) = Function.support (B.expVecT gT a)⁻¹ ∧
+    ∀ x ∈ Function.support (B.expVecT gT (-a)), B.expVecT gT (-a) x = (B.expVecT gT a)⁻¹ x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [Zero M] {f g} => Function.ext_iff_support.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_mulSupport.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.mulSupport (B.expVecT gT (-a)) = Function.mulSupport (B.expVecT gT a)⁻¹ ∧
+    ∀ x ∈ Function.mulSupport (B.expVecT gT (-a)), B.expVecT gT (-a) x = (B.expVecT gT a)⁻¹ x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [One M] {f g} => Function.ext_iff_mulSupport.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Filter.eventuallyEq_top.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVecT gT (-a) =ᶠ[⊤] (B.expVecT gT a)⁻¹
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Filter.eventuallyEq_top.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateCol_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {α} {ι} [Nonempty ι] {v w} => Matrix.replicateCol_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateRow_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {ι} [Nonempty ι] {v w} => Matrix.replicateRow_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine funext ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι), B.expVecT gT (-a) x = (B.expVecT gT a)⁻¹ x
+Try this:
+  [apply] refine Eq.symm (funext ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι), (B.expVecT gT a)⁻¹ x = B.expVecT gT (-a) x
+Try this:
+  [apply] refine funext_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι), B.expVecT gT (-a) x = (B.expVecT gT a)⁻¹ x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => funext_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine eq_inv_of_mul_eq_one_left ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVecT gT (-a) * B.expVecT gT a = 1
+Try this:
+  [apply] refine Eq.symm (DivisionMonoid.inv_eq_of_mul (B.expVecT gT a) (B.expVecT gT (-a)) ?_)
+  -- Remaining subgoals:
+  -- ⊢ B.expVecT gT a * B.expVecT gT (-a) = 1
+Try this:
+  [apply] refine mul_eq_one_iff_eq_inv.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVecT gT (-a) * B.expVecT gT a = 1
+Try this:
+  [apply] refine Eq.symm (inv_eq_of_mul_eq_one_right ?_)
+  -- Remaining subgoals:
+  -- ⊢ B.expVecT gT a * B.expVecT gT (-a) = 1
+Try this:
+  [apply] refine eq_inv_iff_mul_eq_one.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVecT gT (-a) * B.expVecT gT a = 1
+Try this:
+  [apply] refine Eq.symm (inv_eq_of_mul_eq_one_left ?_)
+  -- Remaining subgoals:
+  -- ⊢ B.expVecT gT (-a) * B.expVecT gT a = 1
+Try this:
+  [apply] refine inv_eq_iff_eq_inv.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (B.expVecT gT (-a))⁻¹ = B.expVecT gT a
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [InvolutiveInv G] {a b} => inv_eq_iff_eq_inv.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine eq_inv_of_mul_eq_one_right ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVecT gT a * B.expVecT gT (-a) = 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [Group G] {a b} => mul_eq_one_iff_inv_eq'.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine mul_eq_one_iff_eq_inv'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVecT gT a * B.expVecT gT (-a) = 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [Group G] {a b} => mul_eq_one_iff_inv_eq.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {G} [Group G] {a b} => inv_eq_iff_mul_eq_one.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (IsUnit.mul_eq_one_iff_eq_inv ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ IsUnit (B.expVecT gT a)
+  -- ⊢ B.expVecT gT (-a) * B.expVecT gT a = 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [DivisionMonoid α] {a b} h => (IsUnit.mul_eq_one_iff_inv_eq h).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/ExponentsReuse.lean:275:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:281:8: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:287:71: error: unexpected token 'run_cmd'; expected 'lemma'
+REUSE_SEARCH expVecT_smul
+Try this:
+  [apply] refine List.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ List.map (B.expVecT gT (c • a)) = List.map fun i => B.expVecT gT a i ^ c.val
+Try this:
+  [apply] refine Array.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Array.map (B.expVecT gT (c • a)) = Array.map fun i => B.expVecT gT a i ^ c.val
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => List.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Vector.map_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => Array.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Function.funext_iff_of_subsingleton ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ι
+  -- ⊢ ι
+  -- ⊢ Subsingleton ι
+  -- ⊢ B.expVecT gT (c • a) ?_ = B.expVecT gT a ?_ ^ c.val
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {α_1} {f g} [NeZero n] => Vector.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Surjective.right_cancellable fun b => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {f} [Subsingleton α] {g} x y => (Function.funext_iff_of_subsingleton x y).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {γ} {f} hf {g₁ g₂} => (Function.Surjective.right_cancellable hf).mp) (fun b => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Option.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Option.map (B.expVecT gT (c • a)) = Option.map fun i => B.expVecT gT a i ^ c.val
+Try this:
+  [apply] refine Set.graphOn_univ_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.graphOn (B.expVecT gT (c • a)) Set.univ = Set.graphOn (fun i => B.expVecT gT a i ^ c.val) Set.univ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Option.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Set.eqOn_univ (B.expVecT gT (c • a)) fun i => B.expVecT gT a i ^ c.val).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.EqOn (B.expVecT gT (c • a)) (fun i => B.expVecT gT a i ^ c.val) Set.univ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Set.graphOn_univ_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (StrictAnti.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder ι
+  -- ⊢ Preorder B.GT
+  -- ⊢ WellFoundedGT ι
+  -- ⊢ StrictAnti (B.expVecT gT (c • a))
+  -- ⊢ StrictAnti fun i => B.expVecT gT a i ^ c.val
+  -- ⊢ Set.range (B.expVecT gT (c • a)) = Set.range fun i => B.expVecT gT a i ^ c.val
+Try this:
+  [apply] refine Eq.symm
+    ((fun {α} {β} f₁ f₂ => (Set.eqOn_univ f₁ f₂).mp) (fun i => B.expVecT gT a i ^ c.val) (B.expVecT gT (c • a)) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Set.EqOn (fun i => B.expVecT gT a i ^ c.val) (B.expVecT gT (c • a)) Set.univ
+Try this:
+  [apply] refine (StrictMono.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder ι
+  -- ⊢ Preorder B.GT
+  -- ⊢ WellFoundedLT ι
+  -- ⊢ StrictMono (B.expVecT gT (c • a))
+  -- ⊢ StrictMono fun i => B.expVecT gT a i ^ c.val
+  -- ⊢ Set.range (B.expVecT gT (c • a)) = Set.range fun i => B.expVecT gT a i ^ c.val
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedGT β] {f g} hf hg => (StrictAnti.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_support.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Zero B.GT
+  -- ⊢ (Function.support (B.expVecT gT (c • a)) = Function.support fun i => B.expVecT gT a i ^ c.val) ∧
+    ∀ x ∈ Function.support (B.expVecT gT (c • a)), B.expVecT gT (c • a) x = B.expVecT gT a x ^ c.val
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedLT β] {f g} hf hg => (StrictMono.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_mulSupport.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (Function.mulSupport (B.expVecT gT (c • a)) = Function.mulSupport fun i => B.expVecT gT a i ^ c.val) ∧
+    ∀ x ∈ Function.mulSupport (B.expVecT gT (c • a)), B.expVecT gT (c • a) x = B.expVecT gT a x ^ c.val
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [Zero M] {f g} => Function.ext_iff_support.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Filter.eventuallyEq_top.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ B.expVecT gT (c • a) =ᶠ[⊤] fun i => B.expVecT gT a i ^ c.val
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [One M] {f g} => Function.ext_iff_mulSupport.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateCol_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Filter.eventuallyEq_top.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateRow_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {α} {ι} [Nonempty ι] {v w} => Matrix.replicateCol_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine funext ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι), B.expVecT gT (c • a) x = B.expVecT gT a x ^ c.val
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {ι} [Nonempty ι] {v w} => Matrix.replicateRow_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (funext ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι), B.expVecT gT a x ^ c.val = B.expVecT gT (c • a) x
+Try this:
+  [apply] refine funext_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι), B.expVecT gT (c • a) x = B.expVecT gT a x ^ c.val
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => funext_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/ExponentsReuse.lean:290:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:296:8: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:303:54: error: unexpected token 'run_cmd'; expected 'lemma'
+REUSE_SEARCH groupDot_expVec
+.lake/io-phfe-probes/ExponentsReuse.lean:310:4: error: apply? didn't find any relevant lemmas
+.lake/io-phfe-probes/ExponentsReuse.lean:312:8: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:318:93: error: unexpected token 'run_cmd'; expected 'lemma'
+REUSE_SEARCH groupDot_expVecT
+.lake/io-phfe-probes/ExponentsReuse.lean:325:4: error: apply? didn't find any relevant lemmas
+.lake/io-phfe-probes/ExponentsReuse.lean:327:8: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:335:92: error: unexpected token 'run_cmd'; expected 'lemma'
+REUSE_SEARCH expMat_mulVec
+Try this:
+  [apply] refine List.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ List.map (groupMulVec (B.expMat g M) a) = List.map (B.expVec g (M *ᵥ a))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => List.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Array.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Array.map (groupMulVec (B.expMat g M) a) = Array.map (B.expVec g (M *ᵥ a))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => Array.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Vector.map_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {α_1} {f g} [NeZero n] => Vector.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Function.funext_iff_of_subsingleton ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ι
+  -- ⊢ ι
+  -- ⊢ Subsingleton ι
+  -- ⊢ groupMulVec (B.expMat g M) a ?_ = B.expVec g (M *ᵥ a) ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {f} [Subsingleton α] {g} x y => (Function.funext_iff_of_subsingleton x y).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Surjective.right_cancellable fun b => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {γ} {f} hf {g₁ g₂} => (Function.Surjective.right_cancellable hf).mp) (fun b => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Option.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Option.map (groupMulVec (B.expMat g M) a) = Option.map (B.expVec g (M *ᵥ a))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Option.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.graphOn_univ_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.graphOn (groupMulVec (B.expMat g M) a) Set.univ = Set.graphOn (B.expVec g (M *ᵥ a)) Set.univ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Set.graphOn_univ_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Set.eqOn_univ (groupMulVec (B.expMat g M) a) (B.expVec g (M *ᵥ a))).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.EqOn (groupMulVec (B.expMat g M) a) (B.expVec g (M *ᵥ a)) Set.univ
+Try this:
+  [apply] refine Eq.symm
+    ((fun {α} {β} f₁ f₂ => (Set.eqOn_univ f₁ f₂).mp) (B.expVec g (M *ᵥ a)) (groupMulVec (B.expMat g M) a) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Set.EqOn (B.expVec g (M *ᵥ a)) (groupMulVec (B.expMat g M) a) Set.univ
+Try this:
+  [apply] refine (StrictAnti.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder ι
+  -- ⊢ Preorder B.G
+  -- ⊢ WellFoundedGT ι
+  -- ⊢ StrictAnti (groupMulVec (B.expMat g M) a)
+  -- ⊢ StrictAnti (B.expVec g (M *ᵥ a))
+  -- ⊢ Set.range (groupMulVec (B.expMat g M) a) = Set.range (B.expVec g (M *ᵥ a))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedGT β] {f g} hf hg => (StrictAnti.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (StrictMono.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder ι
+  -- ⊢ Preorder B.G
+  -- ⊢ WellFoundedLT ι
+  -- ⊢ StrictMono (groupMulVec (B.expMat g M) a)
+  -- ⊢ StrictMono (B.expVec g (M *ᵥ a))
+  -- ⊢ Set.range (groupMulVec (B.expMat g M) a) = Set.range (B.expVec g (M *ᵥ a))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedLT β] {f g} hf hg => (StrictMono.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_support.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Zero B.G
+  -- ⊢ Function.support (groupMulVec (B.expMat g M) a) = Function.support (B.expVec g (M *ᵥ a)) ∧
+    ∀ x ∈ Function.support (groupMulVec (B.expMat g M) a), groupMulVec (B.expMat g M) a x = B.expVec g (M *ᵥ a) x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [Zero M] {f g} => Function.ext_iff_support.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_mulSupport.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.mulSupport (groupMulVec (B.expMat g M) a) = Function.mulSupport (B.expVec g (M *ᵥ a)) ∧
+    ∀ x ∈ Function.mulSupport (groupMulVec (B.expMat g M) a), groupMulVec (B.expMat g M) a x = B.expVec g (M *ᵥ a) x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [One M] {f g} => Function.ext_iff_mulSupport.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Filter.eventuallyEq_top.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ groupMulVec (B.expMat g M) a =ᶠ[⊤] B.expVec g (M *ᵥ a)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Filter.eventuallyEq_top.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateCol_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {α} {ι} [Nonempty ι] {v w} => Matrix.replicateCol_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateRow_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {ι} [Nonempty ι] {v w} => Matrix.replicateRow_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine funext ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι), groupMulVec (B.expMat g M) a x = B.expVec g (M *ᵥ a) x
+Try this:
+  [apply] refine Eq.symm (funext ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι), B.expVec g (M *ᵥ a) x = groupMulVec (B.expMat g M) a x
+Try this:
+  [apply] refine funext_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι), groupMulVec (B.expMat g M) a x = B.expVec g (M *ᵥ a) x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => funext_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/ExponentsReuse.lean:338:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:345:8: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:352:86: error: unexpected token 'run_cmd'; expected 'lemma'
+REUSE_SEARCH expVec_vecMul
+Try this:
+  [apply] refine List.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ List.map (groupVecMul a (B.expMat g M)) = List.map (B.expVec g (a ᵥ* M))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => List.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Array.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Array.map (groupVecMul a (B.expMat g M)) = Array.map (B.expVec g (a ᵥ* M))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => Array.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Vector.map_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {α_1} {f g} [NeZero n] => Vector.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Function.funext_iff_of_subsingleton ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ κ
+  -- ⊢ κ
+  -- ⊢ Subsingleton κ
+  -- ⊢ groupVecMul a (B.expMat g M) ?_ = B.expVec g (a ᵥ* M) ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {f} [Subsingleton α] {g} x y => (Function.funext_iff_of_subsingleton x y).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Surjective.right_cancellable fun b => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {γ} {f} hf {g₁ g₂} => (Function.Surjective.right_cancellable hf).mp) (fun b => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Option.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Option.map (groupVecMul a (B.expMat g M)) = Option.map (B.expVec g (a ᵥ* M))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Option.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.graphOn_univ_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.graphOn (groupVecMul a (B.expMat g M)) Set.univ = Set.graphOn (B.expVec g (a ᵥ* M)) Set.univ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Set.graphOn_univ_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Set.eqOn_univ (groupVecMul a (B.expMat g M)) (B.expVec g (a ᵥ* M))).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.EqOn (groupVecMul a (B.expMat g M)) (B.expVec g (a ᵥ* M)) Set.univ
+Try this:
+  [apply] refine Eq.symm
+    ((fun {α} {β} f₁ f₂ => (Set.eqOn_univ f₁ f₂).mp) (B.expVec g (a ᵥ* M)) (groupVecMul a (B.expMat g M)) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Set.EqOn (B.expVec g (a ᵥ* M)) (groupVecMul a (B.expMat g M)) Set.univ
+Try this:
+  [apply] refine (StrictAnti.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder κ
+  -- ⊢ Preorder B.G
+  -- ⊢ WellFoundedGT κ
+  -- ⊢ StrictAnti (groupVecMul a (B.expMat g M))
+  -- ⊢ StrictAnti (B.expVec g (a ᵥ* M))
+  -- ⊢ Set.range (groupVecMul a (B.expMat g M)) = Set.range (B.expVec g (a ᵥ* M))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedGT β] {f g} hf hg => (StrictAnti.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (StrictMono.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder κ
+  -- ⊢ Preorder B.G
+  -- ⊢ WellFoundedLT κ
+  -- ⊢ StrictMono (groupVecMul a (B.expMat g M))
+  -- ⊢ StrictMono (B.expVec g (a ᵥ* M))
+  -- ⊢ Set.range (groupVecMul a (B.expMat g M)) = Set.range (B.expVec g (a ᵥ* M))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedLT β] {f g} hf hg => (StrictMono.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_support.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Zero B.G
+  -- ⊢ Function.support (groupVecMul a (B.expMat g M)) = Function.support (B.expVec g (a ᵥ* M)) ∧
+    ∀ x ∈ Function.support (groupVecMul a (B.expMat g M)), groupVecMul a (B.expMat g M) x = B.expVec g (a ᵥ* M) x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [Zero M] {f g} => Function.ext_iff_support.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_mulSupport.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.mulSupport (groupVecMul a (B.expMat g M)) = Function.mulSupport (B.expVec g (a ᵥ* M)) ∧
+    ∀ x ∈ Function.mulSupport (groupVecMul a (B.expMat g M)), groupVecMul a (B.expMat g M) x = B.expVec g (a ᵥ* M) x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [One M] {f g} => Function.ext_iff_mulSupport.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Filter.eventuallyEq_top.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ groupVecMul a (B.expMat g M) =ᶠ[⊤] B.expVec g (a ᵥ* M)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Filter.eventuallyEq_top.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateCol_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {α} {ι} [Nonempty ι] {v w} => Matrix.replicateCol_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateRow_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {ι} [Nonempty ι] {v w} => Matrix.replicateRow_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine funext ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : κ), groupVecMul a (B.expMat g M) x = B.expVec g (a ᵥ* M) x
+Try this:
+  [apply] refine Eq.symm (funext ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : κ), B.expVec g (a ᵥ* M) x = groupVecMul a (B.expMat g M) x
+Try this:
+  [apply] refine funext_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : κ), groupVecMul a (B.expMat g M) x = B.expVec g (a ᵥ* M) x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => funext_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/ExponentsReuse.lean:355:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:362:8: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:369:80: error: unexpected token 'run_cmd'; expected 'lemma'
+REUSE_SEARCH expMat_mul
+Try this:
+  [apply] refine Matrix.ext ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ι) (j : υ), groupMatMul (B.expMat g M) N i j = B.expMat g (M * N) i j
+Try this:
+  [apply] refine Eq.symm (Matrix.ext ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ι) (j : υ), B.expMat g (M * N) i j = groupMatMul (B.expMat g M) N i j
+Try this:
+  [apply] refine Matrix.ext_col_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (j : υ), (groupMatMul (B.expMat g M) N).col j = (B.expMat g (M * N)).col j
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {n} {α} {A B} => Matrix.ext_col_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_row_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ι), (groupMatMul (B.expMat g M) N).row i = (B.expMat g (M * N)).row i
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {n} {α} {A B} => Matrix.ext_row_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_col ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (j : υ), (groupMatMul (B.expMat g M) N).col j = (B.expMat g (M * N)).col j
+Try this:
+  [apply] refine Eq.symm (Matrix.ext_col ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (j : υ), (B.expMat g (M * N)).col j = (groupMatMul (B.expMat g M) N).col j
+Try this:
+  [apply] refine Matrix.ext_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ι) (j : υ), groupMatMul (B.expMat g M) N i j = B.expMat g (M * N) i j
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {n} {α} {M N} => Matrix.ext_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.transpose_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (groupMatMul (B.expMat g M) N)ᵀ = (B.expMat g (M * N))ᵀ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {n} {α} {A B} => Matrix.transpose_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_row ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ι), (groupMatMul (B.expMat g M) N).row i = (B.expMat g (M * N)).row i
+Try this:
+  [apply] refine Eq.symm (Matrix.ext_row ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ι), (B.expMat g (M * N)).row i = (groupMatMul (B.expMat g M) N).row i
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.ext_of_single_vecMul ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Matrix.ext_of_single_vecMul ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_iff_mulVec.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ NonAssocSemiring B.G
+  -- ⊢ Fintype υ
+  -- ⊢ ∀ (v : υ → B.G), groupMatMul (B.expMat g M) N *ᵥ v = B.expMat g (M * N) *ᵥ v
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {m} {n} {α} [NonAssocSemiring α] [Fintype n] {A B} => Matrix.ext_iff_mulVec.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.ext_of_mulVec_single ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Matrix.ext_of_mulVec_single ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_iff_vecMul.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ NonAssocSemiring B.G
+  -- ⊢ Fintype ι
+  -- ⊢ ∀ (v : ι → B.G), v ᵥ* groupMatMul (B.expMat g M) N = v ᵥ* B.expMat g (M * N)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {m} {n} {α} [NonAssocSemiring α] [Fintype m] {A B} => Matrix.ext_iff_vecMul.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.conjTranspose_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ InvolutiveStar B.G
+  -- ⊢ (groupMatMul (B.expMat g M) N)ᴴ = (B.expMat g (M * N))ᴴ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {n} {α} [InvolutiveStar α] {A B} => Matrix.conjTranspose_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_iff_trace_mul_left.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Fintype υ
+  -- ⊢ NonAssocSemiring B.G
+  -- ⊢ Fintype ι
+  -- ⊢ ∀ (x : Matrix υ ι B.G), (x * groupMatMul (B.expMat g M) N).trace = (x * B.expMat g (M * N)).trace
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {m} {n} {R} [Fintype m] [Fintype n] [NonAssocSemiring R] {A B} => Matrix.ext_iff_trace_mul_left.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_iff_trace_mul_right.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Fintype ι
+  -- ⊢ NonAssocSemiring B.G
+  -- ⊢ Fintype υ
+  -- ⊢ ∀ (x : Matrix υ ι B.G), (groupMatMul (B.expMat g M) N * x).trace = (B.expMat g (M * N) * x).trace
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {m} {n} {R} [Fintype m] [Fintype n] [NonAssocSemiring R] {A B} => Matrix.ext_iff_trace_mul_right.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/ExponentsReuse.lean:372:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:379:8: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:386:91: error: unexpected token 'run_cmd'; expected 'lemma'
+REUSE_SEARCH expMat_mul_left
+Try this:
+  [apply] refine Matrix.ext ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ι) (j : υ), matMulGroup M (B.expMat g N) i j = B.expMat g (M * N) i j
+Try this:
+  [apply] refine Eq.symm (Matrix.ext ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ι) (j : υ), B.expMat g (M * N) i j = matMulGroup M (B.expMat g N) i j
+Try this:
+  [apply] refine Matrix.ext_col_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (j : υ), (matMulGroup M (B.expMat g N)).col j = (B.expMat g (M * N)).col j
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {n} {α} {A B} => Matrix.ext_col_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_row_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ι), (matMulGroup M (B.expMat g N)).row i = (B.expMat g (M * N)).row i
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {n} {α} {A B} => Matrix.ext_row_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_col ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (j : υ), (matMulGroup M (B.expMat g N)).col j = (B.expMat g (M * N)).col j
+Try this:
+  [apply] refine Eq.symm (Matrix.ext_col ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (j : υ), (B.expMat g (M * N)).col j = (matMulGroup M (B.expMat g N)).col j
+Try this:
+  [apply] refine Matrix.ext_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ι) (j : υ), matMulGroup M (B.expMat g N) i j = B.expMat g (M * N) i j
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {n} {α} {M N} => Matrix.ext_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.transpose_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (matMulGroup M (B.expMat g N))ᵀ = (B.expMat g (M * N))ᵀ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {n} {α} {A B} => Matrix.transpose_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_row ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ι), (matMulGroup M (B.expMat g N)).row i = (B.expMat g (M * N)).row i
+Try this:
+  [apply] refine Eq.symm (Matrix.ext_row ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ι), (B.expMat g (M * N)).row i = (matMulGroup M (B.expMat g N)).row i
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.ext_of_single_vecMul ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Matrix.ext_of_single_vecMul ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_iff_mulVec.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ NonAssocSemiring B.G
+  -- ⊢ Fintype υ
+  -- ⊢ ∀ (v : υ → B.G), matMulGroup M (B.expMat g N) *ᵥ v = B.expMat g (M * N) *ᵥ v
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {m} {n} {α} [NonAssocSemiring α] [Fintype n] {A B} => Matrix.ext_iff_mulVec.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.ext_of_mulVec_single ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Matrix.ext_of_mulVec_single ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_iff_vecMul.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ NonAssocSemiring B.G
+  -- ⊢ Fintype ι
+  -- ⊢ ∀ (v : ι → B.G), v ᵥ* matMulGroup M (B.expMat g N) = v ᵥ* B.expMat g (M * N)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {m} {n} {α} [NonAssocSemiring α] [Fintype m] {A B} => Matrix.ext_iff_vecMul.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.conjTranspose_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ InvolutiveStar B.G
+  -- ⊢ (matMulGroup M (B.expMat g N))ᴴ = (B.expMat g (M * N))ᴴ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {n} {α} [InvolutiveStar α] {A B} => Matrix.conjTranspose_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_iff_trace_mul_left.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Fintype υ
+  -- ⊢ NonAssocSemiring B.G
+  -- ⊢ Fintype ι
+  -- ⊢ ∀ (x : Matrix υ ι B.G), (x * matMulGroup M (B.expMat g N)).trace = (x * B.expMat g (M * N)).trace
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {m} {n} {R} [Fintype m] [Fintype n] [NonAssocSemiring R] {A B} => Matrix.ext_iff_trace_mul_left.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_iff_trace_mul_right.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Fintype ι
+  -- ⊢ NonAssocSemiring B.G
+  -- ⊢ Fintype υ
+  -- ⊢ ∀ (x : Matrix υ ι B.G), (matMulGroup M (B.expMat g N) * x).trace = (B.expMat g (M * N) * x).trace
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {m} {n} {R} [Fintype m] [Fintype n] [NonAssocSemiring R] {A B} => Matrix.ext_iff_trace_mul_right.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/ExponentsReuse.lean:389:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:396:8: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:403:59: error: unexpected token 'run_cmd'; expected 'lemma'
+REUSE_SEARCH expMatT_mulVec
+Try this:
+  [apply] refine List.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ List.map (groupMulVec (B.expMatT gT M) a) = List.map (B.expVecT gT (M *ᵥ a))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => List.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Array.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Array.map (groupMulVec (B.expMatT gT M) a) = Array.map (B.expVecT gT (M *ᵥ a))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => Array.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Vector.map_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {α_1} {f g} [NeZero n] => Vector.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Function.funext_iff_of_subsingleton ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ι
+  -- ⊢ ι
+  -- ⊢ Subsingleton ι
+  -- ⊢ groupMulVec (B.expMatT gT M) a ?_ = B.expVecT gT (M *ᵥ a) ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {f} [Subsingleton α] {g} x y => (Function.funext_iff_of_subsingleton x y).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Surjective.right_cancellable fun b => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {γ} {f} hf {g₁ g₂} => (Function.Surjective.right_cancellable hf).mp) (fun b => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Option.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Option.map (groupMulVec (B.expMatT gT M) a) = Option.map (B.expVecT gT (M *ᵥ a))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Option.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.graphOn_univ_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.graphOn (groupMulVec (B.expMatT gT M) a) Set.univ = Set.graphOn (B.expVecT gT (M *ᵥ a)) Set.univ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Set.graphOn_univ_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Set.eqOn_univ (groupMulVec (B.expMatT gT M) a) (B.expVecT gT (M *ᵥ a))).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.EqOn (groupMulVec (B.expMatT gT M) a) (B.expVecT gT (M *ᵥ a)) Set.univ
+Try this:
+  [apply] refine Eq.symm
+    ((fun {α} {β} f₁ f₂ => (Set.eqOn_univ f₁ f₂).mp) (B.expVecT gT (M *ᵥ a)) (groupMulVec (B.expMatT gT M) a) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Set.EqOn (B.expVecT gT (M *ᵥ a)) (groupMulVec (B.expMatT gT M) a) Set.univ
+Try this:
+  [apply] refine (StrictAnti.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder ι
+  -- ⊢ Preorder B.GT
+  -- ⊢ WellFoundedGT ι
+  -- ⊢ StrictAnti (groupMulVec (B.expMatT gT M) a)
+  -- ⊢ StrictAnti (B.expVecT gT (M *ᵥ a))
+  -- ⊢ Set.range (groupMulVec (B.expMatT gT M) a) = Set.range (B.expVecT gT (M *ᵥ a))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedGT β] {f g} hf hg => (StrictAnti.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (StrictMono.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder ι
+  -- ⊢ Preorder B.GT
+  -- ⊢ WellFoundedLT ι
+  -- ⊢ StrictMono (groupMulVec (B.expMatT gT M) a)
+  -- ⊢ StrictMono (B.expVecT gT (M *ᵥ a))
+  -- ⊢ Set.range (groupMulVec (B.expMatT gT M) a) = Set.range (B.expVecT gT (M *ᵥ a))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedLT β] {f g} hf hg => (StrictMono.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_support.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Zero B.GT
+  -- ⊢ Function.support (groupMulVec (B.expMatT gT M) a) = Function.support (B.expVecT gT (M *ᵥ a)) ∧
+    ∀ x ∈ Function.support (groupMulVec (B.expMatT gT M) a), groupMulVec (B.expMatT gT M) a x = B.expVecT gT (M *ᵥ a) x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [Zero M] {f g} => Function.ext_iff_support.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_mulSupport.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.mulSupport (groupMulVec (B.expMatT gT M) a) = Function.mulSupport (B.expVecT gT (M *ᵥ a)) ∧
+    ∀ x ∈ Function.mulSupport (groupMulVec (B.expMatT gT M) a), groupMulVec (B.expMatT gT M) a x = B.expVecT gT (M *ᵥ a) x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [One M] {f g} => Function.ext_iff_mulSupport.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Filter.eventuallyEq_top.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ groupMulVec (B.expMatT gT M) a =ᶠ[⊤] B.expVecT gT (M *ᵥ a)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Filter.eventuallyEq_top.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateCol_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {α} {ι} [Nonempty ι] {v w} => Matrix.replicateCol_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateRow_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {ι} [Nonempty ι] {v w} => Matrix.replicateRow_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine funext ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι), groupMulVec (B.expMatT gT M) a x = B.expVecT gT (M *ᵥ a) x
+Try this:
+  [apply] refine Eq.symm (funext ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι), B.expVecT gT (M *ᵥ a) x = groupMulVec (B.expMatT gT M) a x
+Try this:
+  [apply] refine funext_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι), groupMulVec (B.expMatT gT M) a x = B.expVecT gT (M *ᵥ a) x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => funext_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/ExponentsReuse.lean:406:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:413:8: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:423:62: error: unexpected token 'run_cmd'; expected 'lemma'
+REUSE_SEARCH pair_expVec
+.lake/io-phfe-probes/ExponentsReuse.lean:430:4: error: apply? didn't find any relevant lemmas
+.lake/io-phfe-probes/ExponentsReuse.lean:432:8: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:438:66: error: unexpected token 'run_cmd'; expected 'lemma'
+REUSE_SEARCH pair_expMat
+Try this:
+  [apply] refine Matrix.ext ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ι) (j : υ), B.pairMat (B.expMat g M) (B.expMat h N) i j = B.expMatT ((B.pair g) h) (M * N) i j
+Try this:
+  [apply] refine Eq.symm (Matrix.ext ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ι) (j : υ), B.expMatT ((B.pair g) h) (M * N) i j = B.pairMat (B.expMat g M) (B.expMat h N) i j
+Try this:
+  [apply] refine Matrix.ext_col_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (j : υ), (B.pairMat (B.expMat g M) (B.expMat h N)).col j = (B.expMatT ((B.pair g) h) (M * N)).col j
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {n} {α} {A B} => Matrix.ext_col_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_row_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ι), (B.pairMat (B.expMat g M) (B.expMat h N)).row i = (B.expMatT ((B.pair g) h) (M * N)).row i
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {n} {α} {A B} => Matrix.ext_row_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_col ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (j : υ), (B.pairMat (B.expMat g M) (B.expMat h N)).col j = (B.expMatT ((B.pair g) h) (M * N)).col j
+Try this:
+  [apply] refine Eq.symm (Matrix.ext_col ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (j : υ), (B.expMatT ((B.pair g) h) (M * N)).col j = (B.pairMat (B.expMat g M) (B.expMat h N)).col j
+Try this:
+  [apply] refine Matrix.ext_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ι) (j : υ), B.pairMat (B.expMat g M) (B.expMat h N) i j = B.expMatT ((B.pair g) h) (M * N) i j
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {n} {α} {M N} => Matrix.ext_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.transpose_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (B.pairMat (B.expMat g M) (B.expMat h N))ᵀ = (B.expMatT ((B.pair g) h) (M * N))ᵀ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {n} {α} {A B} => Matrix.transpose_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_row ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ι), (B.pairMat (B.expMat g M) (B.expMat h N)).row i = (B.expMatT ((B.pair g) h) (M * N)).row i
+Try this:
+  [apply] refine Eq.symm (Matrix.ext_row ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ι), (B.expMatT ((B.pair g) h) (M * N)).row i = (B.pairMat (B.expMat g M) (B.expMat h N)).row i
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.ext_of_single_vecMul ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Matrix.ext_of_single_vecMul ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_iff_mulVec.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ NonAssocSemiring B.GT
+  -- ⊢ Fintype υ
+  -- ⊢ ∀ (v : υ → B.GT), B.pairMat (B.expMat g M) (B.expMat h N) *ᵥ v = B.expMatT ((B.pair g) h) (M * N) *ᵥ v
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {m} {n} {α} [NonAssocSemiring α] [Fintype n] {A B} => Matrix.ext_iff_mulVec.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.ext_of_mulVec_single ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Matrix.ext_of_mulVec_single ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_iff_vecMul.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ NonAssocSemiring B.GT
+  -- ⊢ Fintype ι
+  -- ⊢ ∀ (v : ι → B.GT), v ᵥ* B.pairMat (B.expMat g M) (B.expMat h N) = v ᵥ* B.expMatT ((B.pair g) h) (M * N)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {m} {n} {α} [NonAssocSemiring α] [Fintype m] {A B} => Matrix.ext_iff_vecMul.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.conjTranspose_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ InvolutiveStar B.GT
+  -- ⊢ (B.pairMat (B.expMat g M) (B.expMat h N))ᴴ = (B.expMatT ((B.pair g) h) (M * N))ᴴ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {n} {α} [InvolutiveStar α] {A B} => Matrix.conjTranspose_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_iff_trace_mul_left.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Fintype υ
+  -- ⊢ NonAssocSemiring B.GT
+  -- ⊢ Fintype ι
+  -- ⊢ ∀ (x : Matrix υ ι B.GT),
+    (x * B.pairMat (B.expMat g M) (B.expMat h N)).trace = (x * B.expMatT ((B.pair g) h) (M * N)).trace
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {m} {n} {R} [Fintype m] [Fintype n] [NonAssocSemiring R] {A B} => Matrix.ext_iff_trace_mul_left.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Matrix.ext_iff_trace_mul_right.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Fintype ι
+  -- ⊢ NonAssocSemiring B.GT
+  -- ⊢ Fintype υ
+  -- ⊢ ∀ (x : Matrix υ ι B.GT),
+    (B.pairMat (B.expMat g M) (B.expMat h N) * x).trace = (B.expMatT ((B.pair g) h) (M * N) * x).trace
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {m} {n} {R} [Fintype m] [Fintype n] [NonAssocSemiring R] {A B} => Matrix.ext_iff_trace_mul_right.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/ExponentsReuse.lean:441:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:448:8: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:455:82: error: unexpected token 'run_cmd'; expected 'lemma'
+REUSE_SEARCH pairTensor_expVec
+Try this:
+  [apply] refine List.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ List.map (B.pairTensor (B.expVec g a) (B.expVec h b)) =
+    List.map (B.expVecT ((B.pair g) h) fun ij => a ij.1 * b ij.2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => List.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Array.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Array.map (B.pairTensor (B.expVec g a) (B.expVec h b)) =
+    Array.map (B.expVecT ((B.pair g) h) fun ij => a ij.1 * b ij.2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => Array.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Vector.map_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {α_1} {f g} [NeZero n] => Vector.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Function.funext_iff_of_subsingleton ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ι × κ
+  -- ⊢ ι × κ
+  -- ⊢ Subsingleton (ι × κ)
+  -- ⊢ B.pairTensor (B.expVec g a) (B.expVec h b) ?_ = B.expVecT ((B.pair g) h) (fun ij => a ij.1 * b ij.2) ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {f} [Subsingleton α] {g} x y => (Function.funext_iff_of_subsingleton x y).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Surjective.right_cancellable fun b => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {γ} {f} hf {g₁ g₂} => (Function.Surjective.right_cancellable hf).mp) (fun b => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Option.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Option.map (B.pairTensor (B.expVec g a) (B.expVec h b)) =
+    Option.map (B.expVecT ((B.pair g) h) fun ij => a ij.1 * b ij.2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Option.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.graphOn_univ_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.graphOn (B.pairTensor (B.expVec g a) (B.expVec h b)) Set.univ =
+    Set.graphOn (B.expVecT ((B.pair g) h) fun ij => a ij.1 * b ij.2) Set.univ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Set.graphOn_univ_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Set.eqOn_univ (B.pairTensor (B.expVec g a) (B.expVec h b))
+        (B.expVecT ((B.pair g) h) fun ij => a ij.1 * b ij.2)).mp
+    ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.EqOn (B.pairTensor (B.expVec g a) (B.expVec h b)) (B.expVecT ((B.pair g) h) fun ij => a ij.1 * b ij.2) Set.univ
+Try this:
+  [apply] refine Eq.symm
+    ((fun {α} {β} f₁ f₂ => (Set.eqOn_univ f₁ f₂).mp) (B.expVecT ((B.pair g) h) fun ij => a ij.1 * b ij.2)
+      (B.pairTensor (B.expVec g a) (B.expVec h b)) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Set.EqOn (B.expVecT ((B.pair g) h) fun ij => a ij.1 * b ij.2) (B.pairTensor (B.expVec g a) (B.expVec h b)) Set.univ
+Try this:
+  [apply] refine (StrictAnti.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder (ι × κ)
+  -- ⊢ Preorder B.GT
+  -- ⊢ WellFoundedGT (ι × κ)
+  -- ⊢ StrictAnti (B.pairTensor (B.expVec g a) (B.expVec h b))
+  -- ⊢ StrictAnti (B.expVecT ((B.pair g) h) fun ij => a ij.1 * b ij.2)
+  -- ⊢ Set.range (B.pairTensor (B.expVec g a) (B.expVec h b)) =
+    Set.range (B.expVecT ((B.pair g) h) fun ij => a ij.1 * b ij.2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedGT β] {f g} hf hg => (StrictAnti.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (StrictMono.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder (ι × κ)
+  -- ⊢ Preorder B.GT
+  -- ⊢ WellFoundedLT (ι × κ)
+  -- ⊢ StrictMono (B.pairTensor (B.expVec g a) (B.expVec h b))
+  -- ⊢ StrictMono (B.expVecT ((B.pair g) h) fun ij => a ij.1 * b ij.2)
+  -- ⊢ Set.range (B.pairTensor (B.expVec g a) (B.expVec h b)) =
+    Set.range (B.expVecT ((B.pair g) h) fun ij => a ij.1 * b ij.2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedLT β] {f g} hf hg => (StrictMono.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_support.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Zero B.GT
+  -- ⊢ Function.support (B.pairTensor (B.expVec g a) (B.expVec h b)) =
+      Function.support (B.expVecT ((B.pair g) h) fun ij => a ij.1 * b ij.2) ∧
+    ∀ x ∈ Function.support (B.pairTensor (B.expVec g a) (B.expVec h b)),
+      B.pairTensor (B.expVec g a) (B.expVec h b) x = B.expVecT ((B.pair g) h) (fun ij => a ij.1 * b ij.2) x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [Zero M] {f g} => Function.ext_iff_support.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_mulSupport.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.mulSupport (B.pairTensor (B.expVec g a) (B.expVec h b)) =
+      Function.mulSupport (B.expVecT ((B.pair g) h) fun ij => a ij.1 * b ij.2) ∧
+    ∀ x ∈ Function.mulSupport (B.pairTensor (B.expVec g a) (B.expVec h b)),
+      B.pairTensor (B.expVec g a) (B.expVec h b) x = B.expVecT ((B.pair g) h) (fun ij => a ij.1 * b ij.2) x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [One M] {f g} => Function.ext_iff_mulSupport.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Filter.eventuallyEq_top.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ B.pairTensor (B.expVec g a) (B.expVec h b) =ᶠ[⊤] B.expVecT ((B.pair g) h) fun ij => a ij.1 * b ij.2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Filter.eventuallyEq_top.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateCol_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {α} {ι} [Nonempty ι] {v w} => Matrix.replicateCol_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateRow_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {ι} [Nonempty ι] {v w} => Matrix.replicateRow_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine funext ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι × κ),
+    B.pairTensor (B.expVec g a) (B.expVec h b) x = B.expVecT ((B.pair g) h) (fun ij => a ij.1 * b ij.2) x
+Try this:
+  [apply] refine Eq.symm (funext ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι × κ),
+    B.expVecT ((B.pair g) h) (fun ij => a ij.1 * b ij.2) x = B.pairTensor (B.expVec g a) (B.expVec h b) x
+Try this:
+  [apply] refine funext_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι × κ),
+    B.pairTensor (B.expVec g a) (B.expVec h b) x = B.expVecT ((B.pair g) h) (fun ij => a ij.1 * b ij.2) x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => funext_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/ExponentsReuse.lean:458:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:465:8: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:472:75: error: unexpected token 'run_cmd'; expected 'lemma'
+REUSE_SEARCH expVec_tensor_left
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => List.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.map fun ij => B.expVec g a ij.1 ^ (b ij.2).val) = List.map (B.expVec g fun ij => a ij.1 * b ij.2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => Array.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Array.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Array.map fun ij => B.expVec g a ij.1 ^ (b ij.2).val) = Array.map (B.expVec g fun ij => a ij.1 * b ij.2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {α_1} {f g} [NeZero n] => Vector.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Vector.map_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {f} [Subsingleton α] {g} x y => (Function.funext_iff_of_subsingleton x y).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Function.funext_iff_of_subsingleton ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ι × κ
+  -- ⊢ ι × κ
+  -- ⊢ Subsingleton (ι × κ)
+  -- ⊢ B.expVec g a ?_.1 ^ (b ?_.2).val = B.expVec g (fun ij => a ij.1 * b ij.2) ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {γ} {f} hf {g₁ g₂} => (Function.Surjective.right_cancellable hf).mp) (fun b => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Surjective.right_cancellable fun b => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Option.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Option.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Option.map fun ij => B.expVec g a ij.1 ^ (b ij.2).val) = Option.map (B.expVec g fun ij => a ij.1 * b ij.2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Set.graphOn_univ_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.graphOn_univ_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.graphOn (fun ij => B.expVec g a ij.1 ^ (b ij.2).val) Set.univ =
+    Set.graphOn (B.expVec g fun ij => a ij.1 * b ij.2) Set.univ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} f₁ f₂ => (Set.eqOn_univ f₁ f₂).mp) (B.expVec g fun ij => a ij.1 * b ij.2)
+      (fun ij => B.expVec g a ij.1 ^ (b ij.2).val) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Set.eqOn_univ (fun ij => B.expVec g a ij.1 ^ (b ij.2).val)
+        (B.expVec g fun ij => a ij.1 * b ij.2)).mp
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedGT β] {f g} hf hg => (StrictAnti.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (StrictAnti.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder (ι × κ)
+  -- ⊢ Preorder B.G
+  -- ⊢ WellFoundedGT (ι × κ)
+  -- ⊢ StrictAnti fun ij => B.expVec g a ij.1 ^ (b ij.2).val
+  -- ⊢ StrictAnti (B.expVec g fun ij => a ij.1 * b ij.2)
+  -- ⊢ (Set.range fun ij => B.expVec g a ij.1 ^ (b ij.2).val) = Set.range (B.expVec g fun ij => a ij.1 * b ij.2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedLT β] {f g} hf hg => (StrictMono.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (StrictMono.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder (ι × κ)
+  -- ⊢ Preorder B.G
+  -- ⊢ WellFoundedLT (ι × κ)
+  -- ⊢ StrictMono fun ij => B.expVec g a ij.1 ^ (b ij.2).val
+  -- ⊢ StrictMono (B.expVec g fun ij => a ij.1 * b ij.2)
+  -- ⊢ (Set.range fun ij => B.expVec g a ij.1 ^ (b ij.2).val) = Set.range (B.expVec g fun ij => a ij.1 * b ij.2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [Zero M] {f g} => Function.ext_iff_support.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_support.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Zero B.G
+  -- ⊢ (Function.support fun ij => B.expVec g a ij.1 ^ (b ij.2).val) =
+      Function.support (B.expVec g fun ij => a ij.1 * b ij.2) ∧
+    ∀ x ∈ Function.support fun ij => B.expVec g a ij.1 ^ (b ij.2).val,
+      B.expVec g a x.1 ^ (b x.2).val = B.expVec g (fun ij => a ij.1 * b ij.2) x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [One M] {f g} => Function.ext_iff_mulSupport.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_mulSupport.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (Function.mulSupport fun ij => B.expVec g a ij.1 ^ (b ij.2).val) =
+      Function.mulSupport (B.expVec g fun ij => a ij.1 * b ij.2) ∧
+    ∀ x ∈ Function.mulSupport fun ij => B.expVec g a ij.1 ^ (b ij.2).val,
+      B.expVec g a x.1 ^ (b x.2).val = B.expVec g (fun ij => a ij.1 * b ij.2) x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Filter.eventuallyEq_top.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Filter.eventuallyEq_top.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (fun ij => B.expVec g a ij.1 ^ (b ij.2).val) =ᶠ[⊤] B.expVec g fun ij => a ij.1 * b ij.2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {α} {ι} [Nonempty ι] {v w} => Matrix.replicateCol_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateCol_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {ι} [Nonempty ι] {v w} => Matrix.replicateRow_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateRow_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (funext ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι × κ), B.expVec g (fun ij => a ij.1 * b ij.2) x = B.expVec g a x.1 ^ (b x.2).val
+Try this:
+  [apply] refine funext ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι × κ), B.expVec g a x.1 ^ (b x.2).val = B.expVec g (fun ij => a ij.1 * b ij.2) x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => funext_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine funext_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι × κ), B.expVec g a x.1 ^ (b x.2).val = B.expVec g (fun ij => a ij.1 * b ij.2) x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/ExponentsReuse.lean:475:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:482:8: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:489:92: error: unexpected token 'run_cmd'; expected 'lemma'
+REUSE_SEARCH expVec_tensor_right
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => List.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {α_1} {f g} => Array.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (List.map fun ij => B.expVec g b ij.2 ^ (a ij.1).val) = List.map (B.expVec g fun ij => a ij.1 * b ij.2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {α_1} {f g} [NeZero n] => Vector.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Array.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Array.map fun ij => B.expVec g b ij.2 ^ (a ij.1).val) = Array.map (B.expVec g fun ij => a ij.1 * b ij.2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {f} [Subsingleton α] {g} x y => (Function.funext_iff_of_subsingleton x y).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Vector.map_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} {γ} {f} hf {g₁ g₂} => (Function.Surjective.right_cancellable hf).mp) (fun b => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Function.funext_iff_of_subsingleton ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ι × κ
+  -- ⊢ ι × κ
+  -- ⊢ Subsingleton (ι × κ)
+  -- ⊢ B.expVec g b ?_.2 ^ (a ?_.1).val = B.expVec g (fun ij => a ij.1 * b ij.2) ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Surjective.right_cancellable fun b => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.LeftInverse.eq_rightInverse (fun x => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Option.map_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Set.graphOn_univ_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Option.map_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Option.map fun ij => B.expVec g b ij.2 ^ (a ij.1).val) = Option.map (B.expVec g fun ij => a ij.1 * b ij.2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {β} f₁ f₂ => (Set.eqOn_univ f₁ f₂).mp) (B.expVec g fun ij => a ij.1 * b ij.2)
+      (fun ij => B.expVec g b ij.2 ^ (a ij.1).val) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.graphOn_univ_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.graphOn (fun ij => B.expVec g b ij.2 ^ (a ij.1).val) Set.univ =
+    Set.graphOn (B.expVec g fun ij => a ij.1 * b ij.2) Set.univ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedGT β] {f g} hf hg => (StrictAnti.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Set.eqOn_univ (fun ij => B.expVec g b ij.2 ^ (a ij.1).val)
+        (B.expVec g fun ij => a ij.1 * b ij.2)).mp
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {β} {γ} [LinearOrder β] [Preorder γ] [WellFoundedLT β] {f g} hf hg => (StrictMono.range_inj hf hg).mp) ?_ ?_
+      ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (StrictAnti.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder (ι × κ)
+  -- ⊢ Preorder B.G
+  -- ⊢ WellFoundedGT (ι × κ)
+  -- ⊢ StrictAnti fun ij => B.expVec g b ij.2 ^ (a ij.1).val
+  -- ⊢ StrictAnti (B.expVec g fun ij => a ij.1 * b ij.2)
+  -- ⊢ (Set.range fun ij => B.expVec g b ij.2 ^ (a ij.1).val) = Set.range (B.expVec g fun ij => a ij.1 * b ij.2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [Zero M] {f g} => Function.ext_iff_support.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (StrictMono.range_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder (ι × κ)
+  -- ⊢ Preorder B.G
+  -- ⊢ WellFoundedLT (ι × κ)
+  -- ⊢ StrictMono fun ij => B.expVec g b ij.2 ^ (a ij.1).val
+  -- ⊢ StrictMono (B.expVec g fun ij => a ij.1 * b ij.2)
+  -- ⊢ (Set.range fun ij => B.expVec g b ij.2 ^ (a ij.1).val) = Set.range (B.expVec g fun ij => a ij.1 * b ij.2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {ι} {M} [One M] {f g} => Function.ext_iff_mulSupport.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_support.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Zero B.G
+  -- ⊢ (Function.support fun ij => B.expVec g b ij.2 ^ (a ij.1).val) =
+      Function.support (B.expVec g fun ij => a ij.1 * b ij.2) ∧
+    ∀ x ∈ Function.support fun ij => B.expVec g b ij.2 ^ (a ij.1).val,
+      B.expVec g b x.2 ^ (a x.1).val = B.expVec g (fun ij => a ij.1 * b ij.2) x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => Filter.eventuallyEq_top.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.ext_iff_mulSupport.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (Function.mulSupport fun ij => B.expVec g b ij.2 ^ (a ij.1).val) =
+      Function.mulSupport (B.expVec g fun ij => a ij.1 * b ij.2) ∧
+    ∀ x ∈ Function.mulSupport fun ij => B.expVec g b ij.2 ^ (a ij.1).val,
+      B.expVec g b x.2 ^ (a x.1).val = B.expVec g (fun ij => a ij.1 * b ij.2) x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} {α} {ι} [Nonempty ι] {v w} => Matrix.replicateCol_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Filter.eventuallyEq_top.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (fun ij => B.expVec g b ij.2 ^ (a ij.1).val) =ᶠ[⊤] B.expVec g fun ij => a ij.1 * b ij.2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} {α} {ι} [Nonempty ι] {v w} => Matrix.replicateRow_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateCol_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (funext ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι × κ), B.expVec g (fun ij => a ij.1 * b ij.2) x = B.expVec g b x.2 ^ (a x.1).val
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Matrix.replicateRow_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine funext ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι × κ), B.expVec g b x.2 ^ (a x.1).val = B.expVec g (fun ij => a ij.1 * b ij.2) x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {β} {f g} => funext_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine funext_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (x : ι × κ), B.expVec g b x.2 ^ (a x.1).val = B.expVec g (fun ij => a ij.1 * b ij.2) x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsWeakAntichain.eq (fun ⦃x⦄ => ?_) ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/ExponentsReuse.lean:492:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/ExponentsReuse.lean:499:8: warning: declaration uses 'sorry'

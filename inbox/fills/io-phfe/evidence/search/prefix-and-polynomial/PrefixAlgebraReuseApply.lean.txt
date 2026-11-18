@@ -1,0 +1,51 @@
+-- Do not load the proposed named declarations before searching.
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
+import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
+import Mathlib.Data.Fin.Tuple.Basic
+import Mathlib.Data.Fintype.BigOperators
+
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 200000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
+namespace PartialGarbling.PrefixAlgebra
+
+open scoped BigOperators
+
+-- Root-only exact?/apply? target: prefixIncoming_sum
+example {I R : Type*} [Fintype I] [DecidableEq I]
+    [AddCommMonoid R] (d : ℕ)
+    (value : (Σ k : Fin (d + 1), Fin k.val → I) → R)
+    (u : Σ k : Fin (d + 1), Fin k.val → I) :
+    (∑ e : (Σ k : Fin d, Fin (k.val + 1) → I),
+      if (⟨e.1.succ, e.2⟩ : Σ k : Fin (d + 1), Fin k.val → I) = u then
+        value ⟨e.1.succ, e.2⟩ else 0) =
+      if u = (⟨⟨0, Nat.zero_lt_succ d⟩, Fin.elim0⟩ :
+          Σ k : Fin (d + 1), Fin k.val → I) then 0 else value u := by
+  apply?
+
+-- Root-only exact?/apply? target: prefixFlow_balance
+example {I R : Type*} [Fintype I] [DecidableEq I]
+    [CommSemiring R] (d : ℕ) (c : (Fin d → I) → R) (weight : I → R)
+    (u : Σ k : Fin (d + 1), Fin k.val → I) :
+    let value : (Σ k : Fin (d + 1), Fin k.val → I) → R :=
+      fun v => ∑ sigma : Fin (d - v.1.val) → I,
+        c (fun i => Fin.append v.2 sigma
+          (Fin.cast (Nat.add_sub_of_le (Nat.le_of_lt_succ v.1.isLt)).symm i)) *
+            ∏ i : Fin (d - v.1.val), weight (sigma i)
+    (∑ e : (Σ k : Fin d, Fin (k.val + 1) → I),
+      if (⟨e.1.castSucc, Fin.init e.2⟩ :
+          Σ k : Fin (d + 1), Fin k.val → I) = u then
+        value ⟨e.1.succ, e.2⟩ * weight (e.2 (Fin.last e.1.val)) else 0) +
+      (∑ tau : Fin d → I,
+        if u = (⟨Fin.last d, tau⟩ : Σ k : Fin (d + 1), Fin k.val → I) then
+          c tau else 0) = value u := by
+  apply?
+
+
+end PartialGarbling.PrefixAlgebra
+end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption

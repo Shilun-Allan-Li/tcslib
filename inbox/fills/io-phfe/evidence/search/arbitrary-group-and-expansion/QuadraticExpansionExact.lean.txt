@@ -1,0 +1,20 @@
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PolynomialTensorAlgebra
+import Mathlib.Algebra.MvPolynomial.Eval
+import Lean.Elab.Tactic.LibrarySearch
+set_option maxHeartbeats 200000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+open scoped BigOperators
+namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PolynomialTensorAlgebra
+example {R : Type*} [CommSemiring R] (l n d : ℕ)
+    (P : MvPolynomial (Fin l ⊕ Fin n) R)
+    (hdeg : ∀ s : (Fin l ⊕ Fin n) →₀ ℕ, MvPolynomial.coeff s P ≠ 0 →
+      (∑ i : Fin l, s (Sum.inl i)) ≤ d ∧ (∑ j : Fin n, s (Sum.inr j)) ≤ 2) :
+    ∃ C : (Fin (n + 1) × Fin (n + 1)) → (Fin d → Fin (l + 1)) → R,
+      ∀ (x : Fin l → R) (y : Fin n → R),
+        MvPolynomial.eval (Sum.elim x y) P =
+          ∑ ij : Fin (n + 1) × Fin (n + 1), ∑ tau : Fin d → Fin (l + 1),
+            C ij tau * (∏ i : Fin d, Fin.snoc (α := fun _ => R) x 1 (tau i)) *
+              Fin.snoc (α := fun _ => R) y 1 ij.1 * Fin.snoc (α := fun _ => R) y 1 ij.2 := by
+  exact?
+end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PolynomialTensorAlgebra

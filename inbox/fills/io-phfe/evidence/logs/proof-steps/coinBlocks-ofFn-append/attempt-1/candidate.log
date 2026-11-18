@@ -1,0 +1,65 @@
+file=TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean
+source_sha256=b7ec10d50ebf71ad64c3aa0a5bb44d6f0a1d1f7000c36408f43f89e465a64ebd
+working_source_development_check=True
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:259:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (?m.59 ++ ?m.60).getD ?m.62 ?m.61
+in the target expression
+  (fun i => (List.ofFn r1 ++ List.ofFn r2).getD (↑i) false, A.secondCoins kappa (List.ofFn r1 ++ List.ofFn r2)).1 i =
+    (r1, r2).1 i
+
+case fst.h
+A : TwoStage
+kappa : ℕ
+r1 : A.first.Coins kappa
+r2 : A.second.Coins kappa
+h1 : (List.ofFn r1).length = A.first.coinLen kappa
+h2 : (List.ofFn r2).length = A.second.coinLen kappa
+i : Fin (A.first.coinLen kappa)
+⊢ (fun i => (List.ofFn r1 ++ List.ofFn r2).getD (↑i) false, A.secondCoins kappa (List.ofFn r1 ++ List.ofFn r2)).1 i =
+    (r1, r2).1 i
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:259:34: error: invalid `▸` notation, failed to compute motive for the substitution
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:263:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (List.ofFn r1 ++ ?m.81).getD (A.first.coinLen kappa + ?m.94) ?m.82
+in the target expression
+  (A.firstCoins kappa (List.ofFn r1 ++ List.ofFn r2), fun i =>
+          (List.ofFn r1 ++ List.ofFn r2).getD (A.first.coinLen kappa + ↑i) false).2
+      i =
+    (r1, r2).2 i
+
+case snd.h
+A : TwoStage
+kappa : ℕ
+r1 : A.first.Coins kappa
+r2 : A.second.Coins kappa
+h1 : (List.ofFn r1).length = A.first.coinLen kappa
+h2 : (List.ofFn r2).length = A.second.coinLen kappa
+i : Fin (A.second.coinLen kappa)
+⊢ (A.firstCoins kappa (List.ofFn r1 ++ List.ofFn r2), fun i =>
+          (List.ofFn r1 ++ List.ofFn r2).getD (A.first.coinLen kappa + ↑i) false).2
+      i =
+    (r1, r2).2 i
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:277:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:298:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:331:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:341:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage): no fresh .olean produced
+        2.49 real         1.75 user         1.05 sys
+          2324463616  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              183294  page reclaims
+                  13  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  18  voluntary context switches
+                8069  involuntary context switches
+            32096921  instructions retired
+            13867449  cycles elapsed
+             1622352  peak memory footprint

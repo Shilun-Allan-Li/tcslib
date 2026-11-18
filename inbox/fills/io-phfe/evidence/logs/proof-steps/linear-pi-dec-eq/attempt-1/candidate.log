@@ -1,0 +1,58 @@
+file=TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean
+source_sha256=db66d1b3736da4f857d7e6896dc7c449668670538a16d7b01f7ab3a074bab435
+working_source_development_check=True
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean:312:34: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  ?v ⬝ᵥ 0
+in the target expression
+  (v ∘ Sum.inl ⬝ᵥ fun x => 0) + v ∘ Sum.inr ⬝ᵥ e = (fun j => Sum.elim (v ∘ Sum.inl) (v ∘ Sum.inr) (Sum.inr j)) ⬝ᵥ e
+
+case refine_1
+G : BilinearGen
+ℓ n' : PolyExpr
+Fn : ℕ → ℕ+ → Type
+PG : PartialGarbling.Raw ℓ n' Fn
+zDim : PolyExpr
+κ : ℕ
+pp : PublicParams G κ
+f : Fn κ pp.orderParam
+M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G
+x : Fin (ℓ.eval κ) → ZMod pp.group.order
+z : Fin (zDim.eval κ) → ZMod pp.group.order
+a : SetupDraw G ℓ zDim κ pp
+s : EncDraw G κ pp
+t : KeyDraw G PG κ pp f
+v : PG.TIdx κ pp.orderParam f ⊕ Fin (n'.eval κ) → ZMod pp.group.order := s ᵥ* a.1 ᵥ* t.1
+K : Matrix (PG.TIdx κ pp.orderParam f ⊕ Fin (n'.eval κ)) (PG.MIdx κ pp.orderParam f) (ZMod pp.group.order) :=
+  ((have this := PG.L1 κ pp.orderParam f;
+      this) *
+      have this := PartialGarbling.publicTensor x;
+      this) +
+    have this := PG.L0 κ pp.orderParam f;
+    this
+e : Fin (n'.eval κ) → ZMod ↑pp.orderParam := PG.eval κ pp.orderParam f x
+r : PG.MIdx κ pp.orderParam f → ZMod ↑pp.orderParam := fun m => PG.recVec κ pp.orderParam f x (Sum.inr m)
+egg : pp.group.GT := (pp.group.pair pp.generator) pp.generator
+hRec : K *ᵥ r = Sum.elim (fun x => 0) e
+⊢ (v ∘ Sum.inl ⬝ᵥ fun x => 0) + v ∘ Sum.inr ⬝ᵥ e = (fun j => Sum.elim (v ∘ Sum.inl) (v ∘ Sum.inr) (Sum.inr j)) ⬝ᵥ e
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean:354:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect): no fresh .olean produced
+       30.55 real        30.58 user         0.92 sys
+          2334588928  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              184132  page reclaims
+                  12  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   3  signals received
+                  19  voluntary context switches
+                7654  involuntary context switches
+            33495671  instructions retired
+            16944554  cycles elapsed
+             1638736  peak memory footprint

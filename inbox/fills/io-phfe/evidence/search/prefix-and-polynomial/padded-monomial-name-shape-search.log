@@ -1,0 +1,53 @@
+COMMAND ['rg', '-n', 'exists.*(monomial|padded|replicate|tuple)|prod.*(replicate|ofFn|flatten)|ofFn.*prod', 'TCSlib', '.lake/packages/mathlib/Mathlib/Algebra/BigOperators', '.lake/packages/mathlib/Mathlib/Data/List', '.lake/packages/mathlib/Mathlib/Data/Fin']
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Multiset/Defs.lean:81:theorem prod_replicate (n : ℕ) (a : M) : (replicate n a).prod = a ^ n := by
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Multiset/Defs.lean:82:  simp [replicate, List.prod_replicate]
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Multiset/Defs.lean:86:  rw [filter_eq, prod_replicate]
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Multiset/Defs.lean:97:  rw [map_const', prod_replicate, one_pow]
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/List/Defs.lean:109:theorem prod_replicate (n : ℕ) (a : M) : (replicate n a).prod = a ^ n := by
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/List/Defs.lean:116:  rw [← prod_replicate, ← List.eq_replicate_iff.mpr ⟨rfl, h⟩]
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/List/Basic.lean:53:theorem prod_flatten {l : List (List M)} : l.flatten.prod = (l.map List.prod).prod := by
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Fin.lean:48:theorem prod_ofFn (f : Fin n → M) : (List.ofFn f).prod = ∏ i, f i := by
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Fin.lean:53:  rw [← List.ofFn_eq_map, prod_ofFn]
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Fin.lean:459:  ((List.ofFn f).take i).prod
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Fin.lean:701:theorem prod_take_ofFn {n : ℕ} (f : Fin n → M) (i : ℕ) :
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Fin.lean:702:    ((ofFn f).take i).prod = ∏ j with j.val < i, f j := by
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Fin.lean:727:theorem prod_ofFn {n : ℕ} {f : Fin n → M} : (ofFn f).prod = ∏ i, f i :=
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Fin.lean:728:  Fin.prod_ofFn f
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Defs.lean:369:  simp only [Finset.prod, Multiset.map_const', Multiset.prod_replicate, one_pow]
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:628:  (congr_arg _ <| s.val.map_const b).trans <| Multiset.prod_replicate #s b
+.lake/packages/mathlib/Mathlib/Data/List/OfFn.lean:178:theorem exists_iff_exists_tuple {P : List α → Prop} :
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:298:component decodes exactly (`decodeFin_ofFn`) and `StatClose.prod (hS n r) (StatClose.refl _)`
+TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean:167:  obtain ⟨tA, htA⟩ := exists_ofFn_eq (c := H.main.P.coinLen (List.replicate n true).length)
+TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean:170:  obtain ⟨tB, htB⟩ := exists_ofFn_eq (c := H.main.V.coinLen (List.replicate n true).length)
+TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean:203:  obtain ⟨tA, htA⟩ := exists_ofFn_eq (c := ρ.P.coinLen (List.replicate n true).length)
+TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean:208:  obtain ⟨tB, htB⟩ := exists_ofFn_eq (c := ρ.V.coinLen (List.replicate n true).length)
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:171:  rw [seedEquiv, Equiv.trans_apply, ofFn_coinsEquiv, Equiv.prodCongr_apply,
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:185:  rw [seedEquivPoly, Equiv.trans_apply, ofFn_coinsEquiv, Equiv.prodCongr_apply,
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:831:  obtain ⟨B, hBc, hB⟩ := C.exists_withAdvice (fun n => List.replicate (k n) true) t
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:835:with `pairFstD` (`NUPPT.exists_comp`): the encoded one-entry tuple is `⟨⟨⟦r⟧, ⟦g r⟧⟩, []⟩`, whose
+TCSlib/Cryptography/Asymptotic/OneWay.lean:454:  rw [NUPPT.advInput_eq, hspec, prod_f, ofFn_blocks_symm]
+TCSlib/Cryptography/Asymptotic/OneWay.lean:746:`Fin.appendEquiv`, `uprob_comp_equiv`, `ofFn_blocks_symm`). Probability: `invProbAt_prod_eq`
+TCSlib/Cryptography/Asymptotic/OneWay.lean:750:`ofFn_block_eq_take_drop`) gives `(𝓕.prod 2).invProbAt A' n ≤ 𝓕.invProbAt A n`; conclude by
+TCSlib/Cryptography/Asymptotic/UniversalPadding/Machine.lean:27:* `TCSlib.Cryptography.PadQuad.exists_linearTime_padded` computes the padded word formula in linear time.
+TCSlib/Cryptography/Asymptotic/UniversalPadding/Machine.lean:241:private theorem exists_linearTime_padded_of_shifted_root {F : List Bool → List Bool}
+TCSlib/Cryptography/Asymptotic/UniversalPadding/Machine.lean:409:theorem exists_linearTime_padded {F : List Bool → List Bool} {M : FinTM Bool} {C c : ℕ}
+TCSlib/Cryptography/Asymptotic/UniversalPadding/Machine.lean:418:  exists_linearTime_padded_of_shifted_root hM ℓ hd hdom (exists_linearTime_shifted_root d hd)
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:144:  simpa only [gStr, raw] using exists_linearTime_padded hM ℓ hd hdom
+TCSlib/Cryptography/Implications/PublicKey.lean:49:   (`BitPublicKeyScheme.SingleBitSecure.exists_adaptive_cpa`, from `bitwise_padded_cpa` and
+TCSlib/Cryptography/Asymptotic/UniversalLemmas.lean:51:* `TCSlib.Cryptography.exists_ofFn_eq_of_length`, `TCSlib.Cryptography.take_append_replicate_of_le`
+TCSlib/Cryptography/Encoding/ModularDecode.lean:234:trip, and identify row-major finite-product flattening with `encodeMatrix`. -/
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:452:(`Finset.exists_max_image`). The samples are the shared-key tuples of `distAdv_multi_le_sum`
+TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:43:* `TCSlib.Cryptography.exists_glBitCollEvaluator` — the hard-core bit of the padded collection
+TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:359:      simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id_eq, ofFn_finCastEquiv]
+TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:42:* `TCSlib.Cryptography.ipFun_poly`, `TCSlib.Cryptography.ipFun_ofFn` — the inner-product
+TCSlib/Cryptography/Candidates/Factoring.lean:230:(`mulStr_natToList`: the `(n + n)`-bit product). Correctness: `List.ofFn x` on blocks is
+TCSlib/Cryptography/Candidates/Factoring.lean:745:`0`), and then block `i` of `prodInverter A n` is block `i` of `yaoB` (`OneWay.padTrue_drop_ofFn`,
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Simulators.lean:352:  rw [simACoins, Equiv.symm_trans_apply, splitLen_symm_ofFn, Equiv.prodCongr_symm,
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Simulators.lean:372:  rw [simBCoins, Equiv.symm_trans_apply, splitLen_symm_ofFn, Equiv.prodCongr_symm,
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Simulators.lean:374:    Equiv.symm_trans_apply, splitLen_symm_ofFn, Equiv.prodCongr_symm, Equiv.prodCongr_apply,
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideB.lean:264:  obtain ⟨ε₂, hε₂, h⟩ := exists_gap_le (T := fun n => ρ.ExecCoins ρ.P (List.replicate n true))
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:284:vectors (`CommitmentLemmas.exists_fixCoins`) fixes them to some `(c_X, c_Y)`, and with the tuple
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideA.lean:271:  obtain ⟨ε₂, hε₂, h⟩ := exists_gap_le (T := fun n => ρ.ExecCoins ρ.P (List.replicate n true))
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean:116:`drop_ofFn_appendCoins`); reassociate the seed (`Equiv.prodAssoc`). -/
+TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:499:    Equiv.prodCongr_apply, Equiv.symm_symm, FromDiscreteLog.sumCoinsEquiv_symm_ofFn,
+TCSlib/Complexity/CircuitComplexity/LayeredDAG.lean:344:    rw [List.prod_ofFn]

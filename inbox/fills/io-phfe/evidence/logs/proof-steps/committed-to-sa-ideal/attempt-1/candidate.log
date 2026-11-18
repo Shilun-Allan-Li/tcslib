@@ -1,0 +1,80 @@
+file=TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean
+source_sha256=39a3c84ad34c5be7be067bd46de4a5fd134f46df48bb6b025b572205ad1b4f23
+working_source_development_check=True
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:428:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:477:2: error: unsolved goals
+case refine_1
+C : FnClass
+S : FEScheme.Raw C
+Sim : FEScheme.Raw.SASimulator.Raw S
+A : TwoStage
+q : PolyExpr
+kappa : ℕ
+pp : PublicParams S.G kappa
+pk : S.MPK kappa pp
+st : Sim.St kappa pp
+r : List Bool
+a : Commitment C q kappa := A.saCommitment C q kappa r
+ch : SAChallenge C kappa := { publicInput := a.publicInput, privateInput := a.privateInput }
+stateMap : Sim.St kappa pp → S.SAIdealState Sim kappa pp := fun state => (state, some ch)
+key : (Fin (C.fnLen.eval kappa) → Bool) → StateT (Sim.St kappa pp) ProbComp (S.SK kappa pp) :=
+  fun f state => Sim.key kappa pp state a.publicInput f (C.eval kappa (S.cprm kappa pp) f a.publicInput a.privateInput)
+f : Fin (C.fnLen.eval kappa) → Bool
+state : Sim.St kappa pp
+⊢ (OracleComp.bind
+      (Sim.key kappa pp state ch.publicInput f (C.eval kappa (S.cprm kappa pp) f ch.publicInput ch.privateInput))
+      fun a => OracleComp.pure (S.saSKAnswer kappa pp (some a.1), a.2, some ch)) =
+    OracleComp.bind
+      (Sim.key kappa pp state a.publicInput f (C.eval kappa (S.cprm kappa pp) f a.publicInput a.privateInput)) fun ks =>
+      OracleComp.pure (S.saSKAnswer kappa pp (some ks.1), ks.2, some ch)
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:494:2: error: unsolved goals
+case refine_2.refine_1
+C : FnClass
+S : FEScheme.Raw C
+Sim : FEScheme.Raw.SASimulator.Raw S
+A : TwoStage
+q : PolyExpr
+kappa : ℕ
+pp : PublicParams S.G kappa
+pk : S.MPK kappa pp
+st : Sim.St kappa pp
+r : List Bool
+a : Commitment C q kappa := A.saCommitment C q kappa r
+ch : SAChallenge C kappa := { publicInput := a.publicInput, privateInput := a.privateInput }
+stateMap : Sim.St kappa pp → S.SAIdealState Sim kappa pp := fun state => (state, some ch)
+key : (Fin (C.fnLen.eval kappa) → Bool) → StateT (Sim.St kappa pp) ProbComp (S.SK kappa pp) :=
+  fun f state => Sim.key kappa pp state a.publicInput f (C.eval kappa (S.cprm kappa pp) f a.publicInput a.privateInput)
+hkey :
+  ∀ (f : Fin (C.fnLen.eval kappa) → Bool) (state : Sim.St kappa pp),
+    S.idealSAImpl Sim kappa pp 1 f (stateMap state) =
+      OracleComp.bind (key f state) fun ks => OracleComp.pure (S.saSKAnswer kappa pp (some ks.1), stateMap ks.2)
+hfirst : A.saNext q kappa pp pk r [] = Move.query 0 (S.saChallengeQuery kappa a.publicInput a.privateInput)
+⊢ (OracleComp.bind (Sim.enc kappa pp st fun i => a.publicInput i) fun a_1 =>
+      OracleComp.pure
+        (S.saCTAnswer kappa pp (some a_1.1), a_1.2,
+          some { publicInput := fun i => a.publicInput i, privateInput := fun j => a.privateInput j })) =
+    OracleComp.bind (Sim.enc kappa pp st a.publicInput) fun cst =>
+      OracleComp.pure (S.saCTAnswer kappa pp (some cst.1), cst.2, some ch)
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:544:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean:554:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage): no fresh .olean produced
+        2.81 real         2.21 user         1.08 sys
+          2346975232  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              184815  page reclaims
+                  19  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  16  voluntary context switches
+                8475  involuntary context switches
+            32206225  instructions retired
+            15043220  cycles elapsed
+             1622352  peak memory footprint

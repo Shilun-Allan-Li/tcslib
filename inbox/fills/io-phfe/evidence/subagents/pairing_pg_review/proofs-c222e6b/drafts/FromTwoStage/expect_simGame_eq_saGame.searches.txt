@@ -1,0 +1,40 @@
+Read-only searches and source reads; no Lean/lake/Git/checker by agent.
+
+Current source facts:
+Both simulate_toSA_real/ideal now native PASS per root, with only explicit local
+rfl normalization repairs; source headers and behavior unchanged. Generic loop,
+lift and coinBlocks also native PASS. Complete frozen expectation header copied.
+
+Exact sampling APIs re-read:
+Games/Probability.lean:304 ProbComp.expect_sample_equiv;
+:326 ProbComp.expect_expect_sample (arbitrary computation/sample Fubini);
+:128 expect_bind; :135 expect_map; expect_pure.
+Games/Bridges/Experiments.lean:54 namespace Games.Bridge;
+:80 Bridge.expect_sample_pair. Corrected earlier planning namespace and requested
+precise import (root now adding). No sampling theorem is re-proved.
+
+Coin equivalence nearest reuse:
+Games/Efficiency/Strings.lean:573-577 composes Fin.appendEquiv with
+arrowCongr(finCongr hlen)(Equiv.refl Bool) and reads List.ofFn_congr/ofFn_fin_append.
+Do not invoke its exists_splitMachine theorem; that would construct a machine.
+Mathlib/Logic/Equiv/Defs.lean:450 arrowCongr toFun is codomain-equivalence composed
+with f composed with inverse domain-equivalence.
+Mathlib/Logic/Equiv/Fin/Basic.lean:406 Fin.appendEquiv.
+Mathlib/Data/List/OfFn.lean:47 ofFn_congr; :61 ofFn_fin_append.
+PPT.lean:171 coinLen_eq and FromTwoStage.toSA_coins + PolyExpr.eval_add read lengths.
+NUPPT.coinsEquivPoly/ofFn are alternatives, but no extra schedule conversion is
+needed: appendEquiv works on the original coinLen domain directly, and every
+schedule equation is read through public coinLen/toSA_coins/eval_add theorems.
+
+Fixed-view laws re-read:
+Simulation/Games.lean realView_eq/idealView_eq/simGame_eq;
+FromTwoStage toSim_setup/enc/key and saCommitment_eq;
+Simulation/TwoStage Commitment.omega_eq.
+No full OracleComp syntax equality between experiments is claimed.
+
+Existing source usages of expect_expect_sample found in Games/Tapes:241,
+Games/Hopping:516 and EncryptThenTag/Tools:204. They use the same existing Fubini
+law rather than manually reindexing finite sums.
+
+No new helper declaration or runtime object. All extra hlen/hword/hsa/hsplit/
+hfixed facts are local compositions of existing APIs within the existing theorem.

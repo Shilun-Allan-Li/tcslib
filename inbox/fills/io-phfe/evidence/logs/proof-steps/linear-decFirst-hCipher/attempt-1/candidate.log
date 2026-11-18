@@ -1,0 +1,54 @@
+file=TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean
+source_sha256=d172abc8895b345c380e444568d8008bf2db2a932eed19648a058e1845410467
+working_source_development_check=True
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean:146:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  pp.group.expVec ?g (?a ᵥ* ?M)
+in the target expression
+  (pp.group.pairVec (pp.group.expVec pp.generator z * groupVecMul s (pp.group.expMat pp.generator (a.1 * a.2.1)))
+      fun k => M k j) =
+    (pp.group.pair pp.generator) (groupVecMul z M j) *
+      (pp.group.pair pp.generator) (groupVecMul (s ᵥ* a.1 ᵥ* a.2.1) M j)
+
+G : BilinearGen
+ℓ n' : PolyExpr
+Fn : ℕ → ℕ+ → Type
+PG : PartialGarbling.Raw ℓ n' Fn
+zDim : PolyExpr
+κ : ℕ
+pp : PublicParams G κ
+f : Fn κ pp.orderParam
+M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G
+x : Fin (ℓ.eval κ) → ZMod pp.group.order
+z : Fin (zDim.eval κ) → ZMod pp.group.order
+a : SetupDraw G ℓ zDim κ pp
+s : EncDraw G κ pp
+t : KeyDraw G PG κ pp f
+j : Fin (n'.eval κ)
+⊢ (pp.group.pairVec (pp.group.expVec pp.generator z * groupVecMul s (pp.group.expMat pp.generator (a.1 * a.2.1)))
+      fun k => M k j) =
+    (pp.group.pair pp.generator) (groupVecMul z M j) *
+      (pp.group.pair pp.generator) (groupVecMul (s ᵥ* a.1 ᵥ* a.2.1) M j)
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean:171:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean:196:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean:212:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect): no fresh .olean produced
+        5.02 real         2.02 user         1.18 sys
+          2316124160  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              137023  page reclaims
+               45946  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                3234  voluntary context switches
+               24615  involuntary context switches
+            32325017  instructions retired
+            14530392  cycles elapsed
+             1638736  peak memory footprint

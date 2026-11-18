@@ -1,0 +1,37 @@
+Read-only searches, no Lean/lake/Git or new native probe.
+
+1. Live FromTwoStage.lean:230-345 read exactly, including new existing helper
+   headers and frozen docstrings. toSA_run:238; simulate_toSA_real:264.
+   Existing root probe evidence: committed-run-bridges/run, header typing clean,
+   exact? no match, apply? no relevant lemma for real/ideal source-prefix goals.
+
+2. New helper full-name/conclusion searches:
+   rg -n 'simulate_saKeys_real|simulate_saKeys_ideal|saKeys.*simulate|simulate.*saKeys|keys.*drop.*saNext|saNext.*drop' TCSlib Mathlib evidence/search
+   No matches. Existing simulate_bind/comp/state-abstraction theorems compare
+   whole OracleComp simulations or implementations; none identifies this
+   particular scripted builder/history with ordered List.mapM.
+
+3. Read current saNext_nil/cons (FromTwoStage:188-216), Games handler readers,
+   and the optional-answer format at Encryption/PrivateKey/OracleSecurity:161-170.
+   Used only public query/move/split/handler readers and host monad laws.
+   Fin.append_left/right Mathlib/Data/Fin/Tuple/Basic:291/302.
+
+4. Exact existing suffix/list APIs in actual Lean 4.25 core:
+   Init/Data/List/TakeDrop.lean:81 drop_eq_getElem_cons;
+   :58 drop_of_length_le; :51 length_drop; :99 drop_drop.
+   Init/Data/List/FinRange.lean:27 length_finRange;
+   :30 getElem_finRange; :37 finRange_succ; :40 finRange_succ_last.
+   Init/Data/List/Monadic.lean:64 mapM_nil; :66 mapM_cons;
+   :80 mapM_map; :84 mapM_append.
+   Init/Data/List/Lemmas.lean:1384 filterMap_cons_some;
+   :1393 filterMap_eq_map'; :1449 filterMap_map; :1475 filterMap_append.
+   No generic list/finRange/mapM theorem is proposed or re-proved.
+
+5. OracleComp.map_eq_bind:111, pure_bind:116, query_bind:120,
+   bind_assoc:130 and simulate_pure/query are the required existing host laws.
+   Core Control/Lawful/Basic.bind_congr:164 is also available; congrArg with
+   function extensionality avoids adding a new host bind congruence result.
+
+Before any proof of simulate_saKeys_real, root must run isolated statement
+checking and exact?/apply? on RealKeyLoopProbeHeader.lean, excluding future
+source endpoint theorems from the environment. No such proof supplied here.

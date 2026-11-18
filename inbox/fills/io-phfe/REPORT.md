@@ -1,6 +1,34 @@
 # Public-key PHFE for private quadratic functions from DLIN — Phase A report
 
-Status: **Checkpoint0 statements; ready for the authorized publication.**
+Status: **Checkpoint0 published; M2 proved; proofs in progress.**
+Current proof HEAD: `c222e6b92d75478549e5057c37c9119bf6be50c1`; 78 new modules
+and two permitted facade changes, with 77 direct admissions remaining. M2 is complete:
+generic FE and its committed/semi-adaptive exact game and advantage identities, the
+class embedding, and layered partial-garbling reconstruction and exact privacy.
+LinearCorrect and QuadraticCorrect are also admission-free. The latest 31 completed
+declarations have native standard-only axiom prints, with zero sorryAx dependencies.
+All eleven changed modules passed fresh exact-HEAD checks. The closure has 289 modules
+and the same 109 precise Mathlib roots. Style, proof-sketch and width/size checks pass.
+
+Post-M0 source commits: exponent algebra
+(`f7baa8a9c9f99ca98311e0ebab05e4190d742c4c`), deterministic runner/path skeleton
+(`b881f12266fa4caf841167539b4cbe2e6fc353ab`), tensor codecs/layered reconstruction
+(`dc9fdccf8bcaa454936263a2be05b446238330e4`), polynomial completeness/prefix flow
+(`9cbc7d60cf5454594faf596dff53bc8c2b204b4b`), and committed simulation, decryption
+correctness and shared codecs (`c222e6b92d75478549e5057c37c9119bf6be50c1`).
+The latter closes 23 existing admissions and adds eight proved helpers. Full native
+stored-constant census, Rule 10 seals/controls and final security proofs remain pending.
+
+The text-only frozen check reports no changes. Its handling of a top-level let in a
+theorem's return type needs a stronger native-syntax header-span audit before final
+delivery; `evidence/freeze/let-header-parser-limit.txt` records this limitation.
+Individual integration steps compare their complete exact headers, and the final
+native type comparison against checkpoint0 remains mandatory. No frozen statement
+change is authorized by this tooling issue. These development checks do not complete
+any remaining milestone or replace the final full stored-constant/Rule10 audits.
+
+## Checkpoint0 baseline
+
 Source HEAD: `70b85f9ba83f27393d98fa5bf88505aea3d22a8d`. The checked source contains 74 new Lean modules,
 13,745 physical lines and 144 direct proof admissions. Correctness, algebra,
 endpoint couplings, security bounds and asymptotic consequences are stated; their remaining
@@ -21,7 +49,9 @@ direct admissions. The census retained 41 completed chunk commands from its orig
 and replayed 4 chunks after repairing a constructor-edge omission in the audit helper.
 The original failed probe is retained; it is not described as a clean run. All 2225 names,
 types, axiom records and dependency traces were reconciled against the native collector.
-This report records the prepublication snapshot. The commit containing this payload
+Checkpoint0 was published as exchange commit `1e77173a7032b57aa22260787711c6c7a1b7596e`.
+The statement freeze is active at source HEAD `70b85f9ba83f27393d98fa5bf88505aea3d22a8d`.
+The published report records the prepublication snapshot. The commit containing this payload
 publishes checkpoint0 and activates the statement freeze. Its receipt follows in the chat
 and later checkpoint records. The checkpoint0 header/prose manifest and its negative
 controls are prepared in `evidence/freeze/`; the statement freeze begins with the first
@@ -426,13 +456,86 @@ introduced. Pure PG matrix/garbling formulas do not add another contract variant
 | PHFE adapter | Published raw equivalences/readers; List.foldl state replay and typed Option answer encoders. | Original wire x,y,f aliases are retained. It checks typed payload and key-index consistency; no inverse group decoder. |
 | Perfect→zero correctness / security closure | Shared AllOutputs/probability readers, Negligible.add/mono, SubexpSmall/SubexpHard closure. | New FE-specific glue headers, not replacement probability or negligible definitions. Final proofs must use these existing implications. |
 | Universal subexp exponent | Shared SubexpDLIN common exponent, polynomial absorption, rank/mddhSlack decay. | Choose e<min(c_DLIN,1) BEFORE adversary/q and apply explicit DLIN-composed bound. Per-dimension existential mddh_subexpHard alone is insufficient for this quantifier order; FE agent corrected sketches accordingly. |
-Exact?/apply? overlap probes, the native stored-constant inventory and the final axiom
-census remain pending. Text searches and named nearest relatives are reuse evidence,
+Remaining overlap probes, the final native stored-constant inventory and full axiom
+census remain pending. Completed helper probes are listed below. Text searches and named nearest relatives are reuse evidence,
 not proof of absence of duplication. The source-group/GT arithmetic near-copies and the
 parallel typed protocol/advice wrappers are disclosed debts, not silently generalized
 away. `PHFE.embedValue_injective` is now in proof-only `PHFE/Embedding.lean`; its use of
 `pow_val_bijective.injective` proves injectivity and returns no exponent.
 
+
+### Post-checkpoint0 helpers and implementation decisions
+
+The frozen manifest still matches every pre-existing header and statement paragraph.
+Only proof bodies and proof sketches were refreshed. Twenty-one new helpers are listed
+below; the first three were introduced as statements in `b881f122`. All twenty-one
+have native standard-axiom-only proofs at the current committed head.
+
+| Helper | Reuse and nearest relatives | Prior search evidence |
+|---|---|---|
+| `PathAlgebra.weightedIncidence_mulVec` | `Matrix.sub_mulVec`, scalar `sub_dotProduct`, `single_dotProduct`, `single_one_dotProduct`; exposes the weighted parent/child action in a generic ring. | `evidence/search/path-algebra/PathAlgebraReuse2.lean.txt` and `PathAlgebraApply2.lean.txt`; native logs under `run2/`. |
+| `PathAlgebra.weightedIncidence_vecMul` | `Matrix.vecMul_sub`, `Matrix.vecMul_eq_sum` and pointwise sum readers; the transposed endpoint action. | Same three-target native probes; partial suggestions were not complete proofs. |
+| `PathAlgebra.paddedIncidence_eq` | `Matrix.mul_apply`, `Fintype.sum_prod_type`, singleton sums, `Fin.lastCases`, `Fin.snoc_last/castSucc`; generic variable/constant edge contraction. | Same three-target probes and archived source-name/shape searches. |
+| `Layered.forward_node` | `Fin.prod_univ_castSucc`, `Fin.init_def`, plus node/parent/label/forward readers; no new product recurrence. | `LayeredHelpersReuse2.lean.txt` and `LayeredHelpersApply2.lean.txt`, prefix ending before the later action theorem. |
+| `Layered.matrix_inl` | Specializes `PathAlgebra.paddedIncidence_eq` through incidence/public-tensor/padding readers; no repeated contraction proof. | Same two-target prefix probes. |
+| `decodeResidues_block` | Existing total `decodeResidues_apply`, `List.ext_getElem`, published take/drop/ofFn element and length equations, and `finProdFinEquiv_apply_val`. The row index bound uses natural arithmetic. | `evidence/search/classes-residue-block/`; exact? found no proof and apply? returned only partial unrelated scalar equalities. The prefix excludes this helper and all later Classes admissions. |
+| `PrefixAlgebra.prefixIncoming_sum` | `Function.Injective.sigma_map`, `Fin.succ_ne_zero`, the existing empty-function subsingleton instance, and `Fintype.sum_ite_eq'`; selects the unique incoming prefix. | `evidence/search/prefix-and-polynomial/run`; exact? failed only to close the two stated targets, apply? supplied partial proofs only. |
+| `PrefixAlgebra.prefixOutgoing_sum` | `Equiv.sigmaProdDistrib`, `Fin.snocEquiv`, sigma-map injectivity and supported sums; no new tuple equivalence. | `evidence/search/prefix-outgoing/run`; one expected exact? failure, no complete apply? proof. |
+| `PrefixAlgebra.prefixFlow_balance` | The outgoing-prefix reader, `Fin.consEquiv`, `Equiv.arrowCongr`, product/sum reindexing, `Fin.append_right_nil`, `Fin.append_right_cons`, and cast readers. | The same isolated two-target prefix probes; the nonterminal branch uses the separately searched outgoing reader. |
+| `PolynomialTensorAlgebra.exists_padded_tuple` | Existing list replicate, flatten, length and finite-product readers; append constant labels to a canonical repeated-variable list. This avoids introducing a multiset-enumeration layer. | `evidence/search/prefix-and-polynomial/run`; no complete exact?/apply? match. |
+| `PolynomialTensorAlgebra.exists_quadratic_expansion` | The padded-tuple lemma, `MvPolynomial.eval_eq'`, `mem_support_iff`, `Finset.sum_coe_sort`, `Fintype.prod_sum_type`, `Fin.prod_univ_two`, finite sum interchange and supported sums. | `evidence/search/arbitrary-group-and-expansion/run`; one expected exact? failure, only partial existence wrappers from apply?. |
+| `BilinearGroup.pairVec_expVec_left` | Pairing/vector readers, `map_prod`, and the published pairing-power laws; keeps the other vector group-valued. | Same directory's two-target arbitrary-group probes; exact? found no proof and apply? found no relevant pairing lemma. |
+| `BilinearGroup.groupVecMul_matMulGroup` | Existing exponent-dot-product law at each arbitrary matrix entry, product-power distribution/interchange, and scalar dot-product commutation. No second modular-power homomorphism proof is introduced. | Same two-target arbitrary-group probes; only a partial matrix equality suggestion for this target. |
+
+
+| `PartialGarbling.kronecker_mul_publicTensor` | `Matrix.mul_kronecker_mul` and the existing tensor coordinate readers. The new helper uses Type0 indices to match the frozen tensor API. | `evidence/search/public-tensor-mixed/run2`; first universe prototype rejected before proof, repaired target has clean search failures/partial suggestions. |
+| `stateT_mapM_lift` | `List.mapM_nil/cons`, `StateT.run_bind/run_lift/run_pure`, and OracleComp monad readers. No traversal implementation is added. | `evidence/search/stateful-committed-key-loop/run`; exact?/apply? found no complete proof. |
+| `TwoStage.coinBlocks_ofFn_append` | Existing list append/ofFn/getD readers and Fin cast/append APIs. | `evidence/search/committed-run-bridges/run`; no complete proof; native prefix excludes later game-law statements. |
+| `TwoStage.simulate_saKeys_stateful` | Published buildComp/simulate case readers and one supplied handler-key law, preserving final state. One induction serves real and ideal handlers. | `evidence/search/stateful-committed-key-loop/run`; no exact?/apply? match, no target typing errors. |
+| `TwoStage.simulate_toSA_real` | Generic stateful loop specialized to Unit state, plus the lifted traversal identity. | `evidence/search/committed-run-bridges/run`; no exact?/apply? match. |
+| `TwoStage.simulate_toSA_ideal` | Same loop specialized to simulator state; the final state is projected only after all keys. | Same isolated real/ideal target probes. |
+| `dlinDiagonal_random_gap_le` | `Equiv.mulLeft₀`, finite function/product equivalences, `Bridge.expect_sample_pair`, existing uniform singleton probability, and shared expectation averaging. No counting theorem or sampler is reimplemented. | `evidence/search/diagonal-and-parameter-codec/run`; no complete exact?/apply? match, no target typing errors. |
+| `PublicParams.encode_injective` | Existing pair-codec injectivity, `List.ofFn_injective`, group encoding injectivity and proof irrelevance. Shared by DLIN and MDDH codecs. | Same isolated parameter-codec probes, excluding this helper. |
+
+The root's modularity decisions were to share the complete stateful key-loop induction
+between real and ideal protocol laws, share public-parameter codec injectivity between
+the challenge codecs, and put the finite-field diagonal estimate in the cycle-free
+MatrixDH/Diagonal module. The mixed tensor helper's Type0 repair affects only its new
+header, matching all intended callers; no checkpoint0 statement changed. These logical
+lemmas introduce no runtime host, sampler, machine, or additional efficiency interface.
+The exact committed/SA bridge uses a finite tape equivalence and the existing Fubini
+reader; it claims equality of expectations, preserving the original coin order in each
+definition. Generic Class, Layered, LinearCorrect, and QuadraticCorrect proofs are complete.
+
+The first complete concrete DLIN random-gap candidate was stopped after 176 seconds of
+CPU-bound elaboration; only recorded own Lean PID16047 was signaled. The driver restored
+and rechecked the admitted source. Both source snapshots, raw logs and the termination
+note are retained under `evidence/logs/proof-steps/dlin-random-game-gap/attempt-1/`.
+Its generic finite-field ingredient is fully proved and standard-only; the concrete
+consumer and its final advantage consequence remain admitted at this checkpoint.
+
+Detailed nearest-relative paths, line locations and shape searches accompany the fragments
+in `evidence/subagents/fe_interface_review/proofs-dc9fdcc/` and
+`evidence/subagents/pairing_pg_review/proofs-dc9fdcc/`. Later fragments and exact path/line
+references are archived under each contributor's `proofs-9cbc7d6/` directory. The generic incidence identities
+belong in the independent `PartialGarbling/PathAlgebra` module so the layered file can
+remain within the size bound without creating import cycles. The decoder helper accepts
+every word without a range or width restriction, preserving noncanonical aliases modulo p.
+
+The list round trip for `ofFn_encodeTensorBits` reuses
+`TCSlib/Cryptography/Asymptotic/Adversary.lean:218` (`ofFn_padFin_of_length`) and its
+published `padFin_def` reader, rather than adding a list reconstruction helper.
+Tensor decoding reuses `Encoding.Modular.decodeMatrix_encodeMatrix` directly.
+
+Cache attempt6 was canceled while waiting, before a lake or Lean child started; the exact
+owned-process cleanup is recorded in `cache-6-wait-cancellation.json`. Attempt6b passed
+fresh resource/package checks and successfully unpacked the narrowed 109-root closure
+(2364 archives, no downloads). It supplied the precise column/row-partitioned matrix import.
+No peer process or wrapper was changed. A development-log gap for the first exponent pairing
+candidate is disclosed in `evidence/logs/proofs-exponents/development-log-gap.txt`;
+its successful committed check and independent axiom probe are intact. Subsequent proof
+attempts preserve separate candidate and restoration logs; recent attempts additionally
+retain the exact candidate/restoration source bytes.
 
 ## Advice dimensions and reduction tape accounting
 
@@ -725,30 +828,34 @@ modules and searched before writing.
 
 | File | Lines |
 |---|---:|
-| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption.lean` | 38 |
-| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean` | 567 |
+| `TCSlib/Cryptography/AdvancedEncryption.lean` | 47 |
+| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption.lean` | 40 |
+| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean` | 636 |
 | `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs.lean` | 30 |
 | `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Correctness.lean` | 156 |
 | `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Efficient.lean` | 136 |
 | `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Raw.lean` | 210 |
 | `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Simulator.lean` | 270 |
-| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling.lean` | 27 |
-| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Defs.lean` | 487 |
-| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean` | 493 |
-| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Run.lean` | 119 |
+| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling.lean` | 33 |
+| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Defs.lean` | 525 |
+| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean` | 716 |
+| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean` | 137 |
+| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean` | 280 |
+| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PolynomialTensorAlgebra.lean` | 137 |
+| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Run.lean` | 138 |
 | `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive.lean` | 40 |
-| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean` | 291 |
-| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean` | 276 |
+| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean` | 345 |
+| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean` | 729 |
 | `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Games.lean` | 264 |
-| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Security.lean` | 93 |
+| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Security.lean` | 96 |
 | `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Simulator.lean` | 249 |
 | `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation.lean` | 37 |
 | `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Games.lean` | 174 |
-| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Security.lean` | 92 |
+| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Security.lean` | 95 |
 | `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/TwoStage.lean` | 103 |
 | `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20.lean` | 49 |
 | `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean` | 397 |
-| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean` | 167 |
+| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean` | 367 |
 | `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity.lean` | 47 |
 | `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Data.lean` | 345 |
 | `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Endpoint.lean` | 89 |
@@ -773,7 +880,7 @@ modules and searched before writing.
 | `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Simulator.lean` | 132 |
 | `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Widths.lean` | 90 |
 | `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic.lean` | 412 |
-| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean` | 142 |
+| `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean` | 271 |
 | `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity.lean` | 47 |
 | `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Advice.lean` | 167 |
 | `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Compose.lean` | 132 |
@@ -793,14 +900,16 @@ modules and searched before writing.
 | `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Sim.lean` | 134 |
 | `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Wire.lean` | 158 |
 | `TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/WireDraws.lean` | 196 |
-| `TCSlib/Cryptography/Pairing/Exponents.lean` | 335 |
-| `TCSlib/Cryptography/Pairing/Linear.lean` | 347 |
-| `TCSlib/Cryptography/Pairing/MatrixDH.lean` | 29 |
-| `TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean` | 195 |
-| `TCSlib/Cryptography/Pairing/MatrixDH/Parameters.lean` | 153 |
+| `TCSlib/Cryptography/Pairing.lean` | 51 |
+| `TCSlib/Cryptography/Pairing/Exponents.lean` | 546 |
+| `TCSlib/Cryptography/Pairing/Linear.lean` | 381 |
+| `TCSlib/Cryptography/Pairing/MatrixDH.lean` | 31 |
+| `TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean` | 255 |
+| `TCSlib/Cryptography/Pairing/MatrixDH/Diagonal.lean` | 151 |
+| `TCSlib/Cryptography/Pairing/MatrixDH/Parameters.lean` | 178 |
 | `TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean` | 328 |
 
-Source-bound ledger: 74 files, 13745 lines.
+Source-bound ledger: 78 new modules and two permitted facades, 16079 lines at `c222e6b92d75478549e5057c37c9119bf6be50c1`.
 
 ## M0 verification ledger and remaining checks
 
@@ -867,27 +976,25 @@ final no-PDF/hash/path checks remain the authority for milestone claims.
 
 ## Proof obligations and continuation under the frozen statements
 
-The report's 144-admission snapshot is an M0 statements state, not a finished Phase A proof.
-A machine-readable admission ledger must identify every declaration and dependency at
-checkpoint0 and every later proof checkpoint. The low-level perfect→zero correctness proof
-has been integrated at the current source HEAD but is awaiting the current bootstrap.
-It reuses `Games.Hopping.prob_eq_zero_of_allOutputs` and `OracleComp.AllOutputs.mono` through
-the published correctness iff readers; it introduces no helper or statement change.
+The 144-admission snapshot is the M0 state. The current committed development has
+77 direct admissions; `evidence/logs/proofs-simulation-quadratic/admissions.jsonl`
+records their full written names and source positions. M2, exponent algebra, all class
+results and the internal linear/quadratic correctness modules are proved. The latest
+31 completions have standard-only native axiom dependencies, and their eleven modules
+passed exact-HEAD checks; the final full stored-constant census is still required.
 
-The substantive obligations include:
+Remaining substantive obligations are:
 
-1. Shared exponent/vector/matrix/pairing transport, canonical DLIN encoding/comparison,
-   rank/column hybrid and uniform-matrix probability statements.
-2. Deterministic runDet/simulate bridge, generic machine-codec run bridge, actual committed/SA
-   game-law and advantage identities, and the polynomial class embedding/padding completeness.
-3. Layered forward/backward action, reconstruction for every coin, exact translation privacy,
-   finite coordinate/count/width facts, and class round trips/injectivity where admitted.
-4. Pi group-lift/correctness, dual-basis conditional laws, exact adaptive public-preserving
-   bijection, both explicit computational hops, exact PG hop and actual fresh/padded endpoints.
-5. Outer tensor/mixing/cross-leakage identities, typed Pi adversary replay, outer computational
-   hops, actual fresh endpoint coupling, generic wire replay law and all raw core inequalities.
-6. Exact rank/slack bounds, common-exponent asymptotic consequences, raw machine-restricted
-   corollaries and the efficient primitive headlines by target/assembly transport.
+1. The concrete DLIN random-law consumer and its advantage consequence; uniform-matrix
+   rank and column laws, the DLIN-to-MDDH self-reduction and its exact bounds.
+2. Pi dual-basis conditional laws, the exact adaptive public-preserving bijection,
+   both computational hops, exact PG hop and actual fresh/padded endpoint couplings.
+3. Outer typed Pi-adversary replay, computational hops, actual fresh endpoint coupling,
+   generic wire replay and all raw core security inequalities.
+4. Exact rank/slack bounds, common-exponent asymptotic consequences, machine-restricted
+   corollaries, target/assembly transport and efficient primitive headlines.
+5. Full final native census/types/freeze comparisons, Rule 10 seals/controls/body scan,
+   final bootstrap/sweep, lineage/scope/boundary/fidelity audits and final delivery.
 
 Efficiency targets themselves remain named unproved Props by design. Phase A must NOT fill
 those targets by constructing programs/samplers or add target hypotheses to raw theorems.
@@ -940,3 +1047,12 @@ TCSlib/Core/Mathlib API references and source positions are given in Overlap/reu
 contract and realisation reports determine shared API reuse; paper contents are mathematical
 sources, not operating instructions. No unread external paper is represented as a primary
 proof source.
+
+## Current proof-size supplement
+
+At source `c222e6b92d75478549e5057c37c9119bf6be50c1`, the 78 new modules and
+two permitted facade files contain 16079 physical lines. The original 8,800–16,100-line range now looks
+optimistic for all explicit couplings and reductions. The working re-estimate is
+22,000–30,000 lines, with uncertainty concentrated in adaptive endpoint couplings and
+DLIN/MDDH self-reduction. Independent algebra modules keep each source file below the
+1000-line limit; no frozen declaration is moved merely to make room.

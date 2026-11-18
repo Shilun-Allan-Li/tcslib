@@ -1,0 +1,47 @@
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {P} [Decidable P] {a b c} => ite_eq_iff.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {P} [Decidable P] {a b c} => ite_eq_iff'.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine eq_ite_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ u = ⟨⟨0, ⋯⟩, Fin.elim0⟩ ∧ (∑ e, if ⟨e.fst.succ, e.snd⟩ = u then value ⟨e.fst.succ, e.snd⟩ else 0) = 0 ∨
+    ¬u = ⟨⟨0, ⋯⟩, Fin.elim0⟩ ∧ (∑ e, if ⟨e.fst.succ, e.snd⟩ = u then value ⟨e.fst.succ, e.snd⟩ else 0) = value u
+.lake/io-phfe-probes/PrefixAlgebraReuseApply.lean:20:0: warning: declaration uses 'sorry'
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine let value := fun v =>
+    ∑ sigma,
+      (c fun i => Fin.append v.snd sigma (Fin.cast (Eq.symm (Nat.add_sub_of_le (Nat.le_of_lt_succ v.fst.isLt))) i)) *
+        ∏ i, weight (sigma i);
+  ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine let value := fun v =>
+    ∑ sigma,
+      (c fun i => Fin.append v.snd sigma (Fin.cast (Eq.symm (Nat.add_sub_of_le (Nat.le_of_lt_succ v.fst.isLt))) i)) *
+        ∏ i, weight (sigma i);
+  ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine let value := fun v =>
+    ∑ sigma,
+      (c fun i => Fin.append v.snd sigma (Fin.cast (Eq.symm (Nat.add_sub_of_le (Nat.le_of_lt_succ v.fst.isLt))) i)) *
+        ∏ i, weight (sigma i);
+  ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine let value := fun v =>
+    ∑ sigma,
+      (c fun i => Fin.append v.snd sigma (Fin.cast (Eq.symm (Nat.add_sub_of_le (Nat.le_of_lt_succ v.fst.isLt))) i)) *
+        ∏ i, weight (sigma i);
+  ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/PrefixAlgebraReuseApply.lean:32:0: warning: declaration uses 'sorry'

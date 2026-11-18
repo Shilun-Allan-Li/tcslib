@@ -1,0 +1,19 @@
+import Lean
+import TCSlib.Cryptography.Pairing.Exponents
+set_option maxHeartbeats 0
+open Lean Elab Command
+run_cmd do
+  let env ← getEnv
+  let mut count := 0
+  for (n, _) in env.constants.toList do
+    let some i := env.getModuleIdxFor? n | continue
+    unless env.header.moduleNames[i.toNat]! == `TCSlib.Cryptography.Pairing.Exponents do continue
+    let ax ← Lean.collectAxioms n
+    unless ax.all (fun a => [``propext, ``Classical.choice, ``Quot.sound].contains a) do
+      throwError "nonstandard axiom: {n}: {ax}"
+    IO.println ("EXPONENT_AXIOMS " ++ (Json.mkObj [("name", toJson n.toString),
+      ("axioms", toJson (ax.map (·.toString)))]).compress)
+    elabCommand (← `(command| #print axioms $(mkIdent n)))
+    count := count + 1
+  IO.println s!"EXPONENT_AXIOMS_DONE {count}"
+run_cmd IO.println "SOURCE_HEAD f7baa8a9c9f99ca98311e0ebab05e4190d742c4c"

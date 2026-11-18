@@ -1,0 +1,180 @@
+From b881f12266fa4caf841167539b4cbe2e6fc353ab Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 05:59:08 -0800
+Subject: [PATCH 27/30] io-phfe: prove deterministic oracle runs and scaffold
+ reusable path algebra
+
+---
+ .../FunctionalEncryption/PartialGarbling.lean |  3 +
+ .../PartialGarbling/Layered.lean              |  2 +
+ .../PartialGarbling/PathAlgebra.lean          | 95 +++++++++++++++++++
+ .../FunctionalEncryption/Run.lean             | 21 +++-
+ 4 files changed, 120 insertions(+), 1 deletion(-)
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling.lean
+index 8305a3d99..2c0bf3257 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling.lean
+@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.Defs
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.Layered
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.PathAlgebra
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -14,6 +15,8 @@ set_option autoImplicit false
+ 
+ ## Contents
+ 
++* `PathAlgebra`: weighted endpoint-matrix identities used by the path-sum proofs.
++
+ * `Defs`: corrected matrix syntax, exact reconstruction and privacy, and uniform efficiency.
+ * `Layered`: the polynomial-tensor instance with explicit forward/backward path formulas.
+ 
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean
+index 13b4d02fa..4a002afe3 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean
+@@ -6,6 +6,8 @@ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbli
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Classes
+ import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
+ import Mathlib.Data.Fintype.BigOperators
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.PathAlgebra
++import Mathlib.Data.Matrix.ColumnRowPartitioned
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean
+new file mode 100644
+index 000000000..fc012f034
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean
+@@ -0,0 +1,95 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import Mathlib.Data.Matrix.Mul
++import Mathlib.Data.Fin.Tuple.Basic
++import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Algebra of weighted endpoint matrices
++
++The statements use arbitrary node and edge types, endpoint maps, and ring weights.
++They introduce no graph representation or branching-program datatype. The padded
++incidence formula abstracts the variable/constant split in [AGW20, Appendix A,
++(32), p.38] to an arbitrary ring.
++
++## Main definitions
++
++The matrices are written explicitly in the theorem statements; no new definitions.
++
++## Main results
++
++* `weightedIncidence_mulVec`: forward action of weighted endpoint rows.
++* `weightedIncidence_vecMul`: backward action as outgoing minus incoming sums.
++* `paddedIncidence_eq`: padded variable/constant matrices equal endpoint rows.
++
++## References
++
++* [AGW20] M. Abdalla, J. Gong, H. Wee, *Functional Encryption for Attribute-Weighted
++  Sums from k-Lin*, 2020, Appendix A, (32), p.38.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
++namespace PartialGarbling.PathAlgebra
++
++open scoped BigOperators Matrix
++
++/-- A weighted endpoint row acts on node values by taking its weighted parent
++value minus its child value. No injectivity or distinctness of endpoints is required. 
++
++**Proof sketch.** Identify each row with the difference of its parent and child
++coordinate vectors. Apply the published subtraction and single-coordinate dot-product laws. -/
++theorem weightedIncidence_mulVec {V E R : Type*} [Fintype V] [DecidableEq V]
++    [Ring R] (parent child : E → V) (weight : E → R) (values : V → R) :
++    Matrix.mulVec
++      (Matrix.of fun e v =>
++        (if v = parent e then weight e else 0) -
++          (if v = child e then 1 else 0)) values =
++      fun e => weight e * values (parent e) - values (child e) := sorry
++
++/-- The backward action of weighted endpoint rows is the sum of outgoing
++weighted edge values minus the sum of incoming edge values at each node.
++Repeated endpoints and loops are permitted; node finiteness is unnecessary. 
++
++**Proof sketch.** Distribute the backward matrix action across subtraction. Read each
++coordinate through the published vector-matrix action formula and conditional multiplication. -/
++theorem weightedIncidence_vecMul {V E R : Type*} [Fintype E] [DecidableEq V]
++    [Ring R] (parent child : E → V) (weight flow : E → R) :
++    Matrix.vecMul flow
++      (Matrix.of fun e v =>
++        (if v = parent e then weight e else 0) -
++          (if v = child e then 1 else 0)) =
++      fun v =>
++        (∑ e, if parent e = v then flow e * weight e else 0) -
++          ∑ e, if child e = v then flow e else 0 := sorry
++
++/-- A variable incidence matrix contracted against the public-input tensor,
++plus its constant-edge and negative-child entries, equals the weighted endpoint
++matrix with the constant 1 appended to the input. This abstracts the split in
++[AGW20, Appendix A, (32), p.38] to an arbitrary ring and arbitrary endpoint maps. 
++
++**Proof sketch.** Contract the product-indexed matrix using the published finite-sum
++readers. Split the edge label into a variable coordinate or the final constant coordinate;
++the corresponding one-coordinate sum yields the padded input value. -/
++theorem paddedIncidence_eq {V E R : Type*} [Fintype V] [DecidableEq V]
++    [Ring R] {l : ℕ} (parent child : E → V) (label : E → Fin (l + 1))
++    (x : Fin l → R) :
++    (Matrix.of (fun e (iu : Fin l × V) =>
++        if iu.2 = parent e ∧ label e = iu.1.castSucc then (1 : R) else 0) :
++          Matrix E (Fin l × V) R) *
++      (Matrix.of (fun (iu : Fin l × V) v =>
++        x iu.1 * (if iu.2 = v then 1 else 0)) : Matrix (Fin l × V) V R) +
++      Matrix.of (fun e v =>
++        (if v = parent e ∧ label e = Fin.last l then 1 else 0) -
++          (if v = child e then 1 else 0)) =
++      Matrix.of (fun e v =>
++        (if v = parent e then Fin.snoc (α := fun _ => R) x (1 : R) (label e) else 0) -
++          (if v = child e then 1 else 0)) := sorry
++
++end PartialGarbling.PathAlgebra
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Run.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Run.lean
+index 181942421..f0c1442ae 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Run.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Run.lean
+@@ -114,6 +114,25 @@ theorem simulate_buildComp_detImpl_eq_pure
+     (q : ℕ) (hist : QueryLog spec) (s : σ) :
+     simulate (detImpl (spec' := spec') h) (buildComp next timeout q hist) s =
+       .pure (runDet next timeout h q hist s) := by
+-  sorry
++  induction q generalizing hist s with
++  | zero =>
++      -- Budget zero: a return succeeds, while a query times out without a state update.
++      cases hn : next hist with
++      | ret a =>
++          rw [buildComp_zero_of_ret hn, runDet_zero_of_ret next timeout h hist s hn,
++            simulate_pure]
++      | query i x =>
++          rw [buildComp_zero_of_query hn, runDet_zero_of_query next timeout h hist s hn,
++            simulate_pure]
++  | succ q ih =>
++      -- Positive budget: only the query case threads the deterministic answer/state.
++      cases hn : next hist with
++      | ret a =>
++          rw [buildComp_succ_of_ret hn, runDet_succ_of_ret next timeout h hist s hn,
++            simulate_pure]
++      | query i x =>
++          rw [buildComp_succ_of_query hn, runDet_succ_of_query next timeout h hist s hn,
++            simulate_query, detImpl_apply, OracleComp.pure_bind]
++          exact ih (hist ++ [⟨i, x, (h i x s).1⟩]) (h i x s).2
+ 
+ end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption

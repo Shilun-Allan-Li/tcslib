@@ -1,0 +1,46 @@
+Read-only matrix_inl searches
+No Lean/lake/Git/live edits; required root run2 probes cited in review.
+
+$ rg -n '^theorem matrix_inl|paddedIncidence_eq|matrix.*parent.*lastLabel' TCSlib .lake/packages/mathlib/Mathlib /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean
+exit=0
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean:29:* `paddedIncidence_eq`: padded variable/constant matrices equal endpoint rows.
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean:101:theorem paddedIncidence_eq {V E R : Type*} [Fintype V] [DecidableEq V]
+
+$ rg -n 'theorem L1_inl|theorem L0_inl|theorem matrix_eq' TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean
+exit=0
+190:theorem L1_inl (C : PolyTensor p l n d) (v : TIdx l d) (i : Fin l) (u : MIdx l d) :
+209:theorem L0_inl (C : PolyTensor p l n d) (v : TIdx l d) (u : MIdx l d) :
+226:theorem matrix_eq (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ)) :
+
+$ rg -n 'theorem publicTensor_apply' TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Defs.lean
+exit=0
+75:theorem publicTensor_apply (x : Fin l → ZMod (p : ℕ)) (i : Fin l) (u v : M) :
+
+$ rg -n 'theorem xhat_eq' TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean
+exit=0
+75:theorem xhat_eq {p : ℕ+} {l : ℕ} (x : Fin l → ZMod (p : ℕ)) :
+
+$ rg -n 'theorem of_apply|theorem add_apply' .lake/packages/mathlib/Mathlib/LinearAlgebra/Matrix/Defs.lean
+exit=0
+83:theorem of_apply (f : m → n → α) (i j) : of f i j = f i j :=
+216:theorem add_apply [Add α] (A B : Matrix m n α) (i : m) (j : n) :
+
+$ rg -n 'theorem mul_apply' .lake/packages/mathlib/Mathlib/Data/Matrix/Mul.lean
+exit=0
+293:theorem mul_apply [Fintype m] [Mul α] [AddCommMonoid α] {M : Matrix l m α} {N : Matrix m n α}
+299:theorem mul_apply' [Fintype m] [Mul α] [AddCommMonoid α] {M : Matrix l m α} {N : Matrix m n α}
+690:theorem mul_apply_eq_vecMul [Fintype n] (A : Matrix m n α) (B : Matrix n o α) (i : m) :
+
+$ rg -n 'Fintype.sum_prod_type|theorem Fintype.prod_prod_type' .lake/packages/mathlib/Mathlib/Data/Fintype/BigOperators.lean
+exit=0
+251:@[to_additive Fintype.sum_prod_type /-- The sum over a product type equals the sum of fiberwise
+252:sums. For rewriting in the reverse direction, use `Fintype.sum_prod_type'`. -/]
+253:theorem Fintype.prod_prod_type [CommMonoid γ] (f : α₁ × α₂ → γ) :
+259:@[to_additive Fintype.sum_prod_type' /-- The sum over a product type equals the sum of fiberwise
+260:sums. For rewriting in the reverse direction, use `Fintype.sum_prod_type`. -/]
+261:theorem Fintype.prod_prod_type' [CommMonoid γ] (f : α₁ → α₂ → γ) :
+265:@[to_additive Fintype.sum_prod_type_right]
+266:theorem Fintype.prod_prod_type_right [CommMonoid γ] (f : α₁ × α₂ → γ) :
+271:@[to_additive Fintype.sum_prod_type_right'
+273:theorem Fintype.prod_prod_type_right' [CommMonoid γ] (f : α₁ → α₂ → γ) :
+

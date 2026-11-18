@@ -1,0 +1,52 @@
+file=TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean
+source_sha256=a305891c42e8670322d5042b304898d7345f9ce4d6d71b75478c898afdde3244
+working_source_development_check=True
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean:100:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean:165:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  ∑ x, ?m.395 x
+in the target expression
+  c tau = ∑ x, (c fun i => Fin.append tau x (Fin.cast ⋯ i)) * ∏ i, weight (x i)
+
+case last
+I : Type u_1
+R : Type u_2
+inst✝² : Fintype I
+inst✝¹ : DecidableEq I
+inst✝ : CommSemiring R
+d : ℕ
+c : (Fin d → I) → R
+weight : I → R
+value : (k : Fin (d + 1)) × (Fin ↑k → I) → R :=
+  fun v => ∑ sigma, (c fun i => Fin.append v.snd sigma (Fin.cast ⋯ i)) * ∏ i, weight (sigma i)
+tau : Fin ↑(Fin.last d) → I
+hparent : ∀ (e : (k : Fin d) × (Fin (↑k + 1) → I)), ⟨e.fst.castSucc, Fin.init e.snd⟩ ≠ ⟨Fin.last d, tau⟩
+hleaf : Function.Injective fun sigma => ⟨Fin.last d, sigma⟩
+⊢ c tau = ∑ x, (c fun i => Fin.append tau x (Fin.cast ⋯ i)) * ∏ i, weight (x i)
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean:164:36: warning: This simp argument is unused:
+  Nat.sub_self
+
+Hint: Omit it from the simp argument list.
+  simp only [value, Fin.val_last,̵ ̵N̵a̵t̵.̵s̵u̵b̵_̵s̵e̵l̵f̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra): no fresh .olean produced
+        1.67 real         1.12 user         0.69 sys
+          1429471232  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              116989  page reclaims
+                  16  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  16  voluntary context switches
+                4817  involuntary context switches
+            32428426  instructions retired
+            20367823  cycles elapsed
+             1622352  peak memory footprint

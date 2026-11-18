@@ -1,0 +1,16 @@
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.Defs
+import Mathlib.LinearAlgebra.Matrix.Kronecker
+import Lean.Elab.Tactic.LibrarySearch
+set_option maxHeartbeats 200000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling
+example {p : ℕ+} {l : ℕ} {I J : Type}
+    [Fintype I] [Fintype J] [DecidableEq I] [DecidableEq J]
+    (x : Fin l → ZMod (p : ℕ)) (R : Matrix I J (ZMod (p : ℕ))) :
+    Matrix.kroneckerMap (fun a b => a * b)
+        (1 : Matrix (Fin l) (Fin l) (ZMod (p : ℕ))) R *
+      publicTensor (p := p) (M := J) x =
+        publicTensor (p := p) (M := I) x * R := by
+  apply?
+end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling
