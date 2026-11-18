@@ -1,0 +1,277 @@
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean
+index a5420c769..65834343e 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean
+@@ -29,7 +29,7 @@ set_option autoImplicit false
+ * `encrypts_homEvalPBP` (G2): a permutation program of length `L` gives noise `L·2·N·β`.
+ * `encrypts_homEvalFormula` (G3): a formula of depth `d` gives noise `4^d·2·N·β`.
+ 
+-All three are statement-phase targets (admitted); the definitions are total and computable.
++All three are proved here; the definitions are total and computable.
+ 
+ ## References
+ 
+@@ -113,15 +113,44 @@ theorem homEvalFormula_eq (P : Parameters) {k : ℕ} [NeZero k] (c : TreeCircuit
+ p011-b001; Lemma 4.1, p012-b001]. Deviation: worst case, and the selector sits on the left.
+ 
+ **Proof sketch.** `encrypts_gadget` and `Encrypts.sub` give `G − C` encrypting `1 − b` with
+-noise `0 + β`. `Encrypts.mul` gives `(G − C) ⊡ U` with noise `N·β + |1 − b|·βV` and `C ⊡ V` with
+-noise `N·β + |b|·βV`, the two products that `select_eq` exposes. `Encrypts.add` sums the
+-two; since `b ∈ {0, 1}`, `|1 − b| + |b| = 1`, so the noise is at most `βV + 2·(N·β)` by
+-`Encrypts.mono`, and the message is `(1 − b)·u + b·v`. -/
++noise `0 + β`; `select_eq` exposes the two products `(G − C) ⊡ U` and `C ⊡ V`. Case on
++`b ∈ {0, 1}`. The product whose left operand encrypts the bit `1` is `Encrypts.mul_bit`, with
++noise `N·β + βV`; the other left operand encrypts `0`, and `Encrypts.mul` gives noise
++`N·β + |0|·βV = N·β`. `Encrypts.add` sums the two, the message is `(1 − b)·u + b·v`, and the
++noise `2·(N·β) + βV` is at most `βV + 2·(N·β)` (`Encrypts.mono`). -/
+ theorem Encrypts.select (P : Parameters) {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus}
+     {b u v : ℤ} {β βV : ℕ} {C U V : Ciphertext P} (hC : Encrypts P t b β C)
+     (hU : Encrypts P t u βV U) (hV : Encrypts P t v βV V) (hb : b = 0 ∨ b = 1) :
+     Encrypts P t ((1 - b) * u + b * v) (βV + 2 * (P.columns * β)) (select P C U V) := by
+-  sorry
++  rw [select_eq]
++  -- `G − C` encrypts `1 − b` with noise `0 + β`
++  have hGC := Encrypts.sub P (encrypts_gadget P) hC
++  rcases hb with rfl | rfl
++  · -- `b = 0`: the left product carries the bit `1` (`Encrypts.mul_bit`), the right one the
++    -- message `0`, whose state noise vanishes (`Encrypts.mul`, `|0|·βV = 0`)
++    have hL := Encrypts.mul_bit P (b := true) (by simpa using hGC) hU
++    have hR := Encrypts.mul P hC hV
++    rw [show ((1 : ℤ) - 0) * u + 0 * v = ((true.toNat : ℕ) : ℤ) * u + 0 * v by simp]
++    exact Encrypts.mono P (Encrypts.add P hL hR) (by simp; omega)
++  · -- `b = 1`: the left product carries the message `0` (`Encrypts.mul`), the right one the
++    -- bit `1` (`Encrypts.mul_bit`)
++    have hL := Encrypts.mul P hGC hU
++    have hR := Encrypts.mul_bit P (b := true) (by simpa using hC) hV
++    rw [show ((1 : ℤ) - 1) * u + 1 * v = (1 - 1) * u + ((true.toNat : ℕ) : ℤ) * v by simp]
++    exact Encrypts.mono P (Encrypts.add P hL hR) (by simp; omega)
++
++/-- The selector step with a Boolean selector and natural-number messages: if `C` encrypts
++`b.toNat` with noise at most `β` and `U`, `V` encrypt `u`, `v` with noise at most `βV`, then
++`select P C U V` encrypts `if b then v else u` with noise at most `βV + 2·(N·β)`:
++`Encrypts P t ((if b then v else u : ℕ) : ℤ) (βV + 2 * (P.columns * β)) (select P C U V)`.
++Glue: `Encrypts.select` (G1) at `b.toNat`, read through `Bool.toNat`. -/
++private theorem encrypts_select_ite (P : Parameters)
++    {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus} {b : Bool} {u v : ℕ} {β βV : ℕ}
++    {C U V : Ciphertext P} (hC : Encrypts P t (b.toNat : ℤ) β C) (hU : Encrypts P t (u : ℤ) βV U)
++    (hV : Encrypts P t (v : ℤ) βV V) :
++    Encrypts P t ((if b then v else u : ℕ) : ℤ) (βV + 2 * (P.columns * β)) (select P C U V) := by
++  have h := Encrypts.select P hC hU hV (by cases b <;> simp)
++  cases b <;> simpa using h
+ 
+ /-- **G2. Homomorphic permutation-program evaluation.** For a permutation program `B` of
+ width `w` on `k` inputs, input ciphertexts `cts j` encrypting the bits `x j` with noise at most
+@@ -141,16 +170,58 @@ step `0`: `Pi.single` coordinates are `G` (`encrypts_gadget`) and `0` (`encrypts
+ the instruction is a permutation (`isPermutation_iff`), so both steps are pull forms
+ (`Instr.stepWith_of_isPermutation`, C6); coordinate `i` is `select (cts var) U V` with `U`, `V`
+ the predecessors' ciphertexts, and `Encrypts.select` (G1) with `βV = τ·(2·(N·β))` gives
+-`(τ + 1)·(2·(N·β))`; the messages agree because the Boolean coordinates are `0`/`1` and the
+-selector picks the branch of `x var`. At `τ = B.length` read `evalWith_single` and
+-`Pi.single_apply`. Uses the `homEvalPBP_eq` reader. -/
++`(τ + 1)·(2·(N·β))`; the messages agree because `(1 − b)·u + b·v` at `b = (x var).toNat` is the
++Boolean branch `if x var then v else u` (the private glue `encrypts_select_ite`). At
++`τ = B.length` read `evalWith_single` and `Pi.single_eq_same`, `Pi.single_eq_of_ne`. Uses the
++`homEvalPBP_eq` reader. -/
+ theorem encrypts_homEvalPBP (P : Parameters) {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus}
+     {w k : ℕ} (B : BranchingProgram w k) (hB : B.IsPermutation) (x : Fin k → Bool)
+     (cts : Fin k → Ciphertext P) (β : ℕ)
+     (hin : ∀ j, Encrypts P t ((x j).toNat : ℤ) β (cts j)) (s₀ i : Fin w) :
+     Encrypts P t ((decide (B.yield x s₀ = i)).toNat : ℤ) (B.length * (2 * (P.columns * β)))
+       (homEvalPBP P B cts (Pi.single s₀ (gadget P)) i) := by
+-  sorry
++  -- the relation at step `τ`: coordinate `i` of the ciphertext state encrypts coordinate `i` of
++  -- the Boolean state with noise at most `τ·(2·(N·β))`
++  let R : ℕ → (Fin w → Ciphertext P) → (Fin w → ℕ) → Prop := fun τ U U' =>
++    ∀ i, Encrypts P t ((U' i : ℕ) : ℤ) (τ * (2 * (P.columns * β))) (U i)
++  -- step `0`: the start states `Pi.single s₀ G` and `Pi.single s₀ 1`
++  have h0 : R 0 (Pi.single s₀ (gadget P)) (Pi.single s₀ 1) := by
++    intro j
++    rw [zero_mul]
++    by_cases hj : j = s₀
++    · subst hj
++      rw [Pi.single_eq_same, Pi.single_eq_same, Nat.cast_one]
++      exact encrypts_gadget P
++    · rw [Pi.single_eq_of_ne hj, Pi.single_eq_of_ne hj, Nat.cast_zero]
++      exact encrypts_zero P
++  -- one instruction: both runs take the pull form, and the selector step adds `2·(N·β)`
++  have hstep : ∀ τ (hτ : τ < B.length) (U : Fin w → Ciphertext P) (U' : Fin w → ℕ), R τ U U' →
++      R (τ + 1) ((B.instrs[τ]'(hτ.trans_eq B.length_eq)).stepWith (select P) cts U)
++        ((B.instrs[τ]'(hτ.trans_eq B.length_eq)).stepWith
++          (fun b (u v : ℕ) => if b then v else u) x U') := by
++    intro τ hτ U U' hR j
++    have hι : (B.instrs[τ]'(hτ.trans_eq B.length_eq)).IsPermutation :=
++      (BranchingProgram.Instr.isPermutation_iff _).2
++        ((BranchingProgram.isPermutation_iff B).1 hB _ (List.getElem_mem _))
++    rw [BranchingProgram.Instr.stepWith_of_isPermutation _ _ hι,
++      BranchingProgram.Instr.stepWith_of_isPermutation _ _ hι]
++    exact Encrypts.mono P (encrypts_select_ite P (hin _) (hR _) (hR _))
++      (le_of_eq (by ring))
++  have hrel := BranchingProgram.evalWith_rel (select P) (fun b (u v : ℕ) => if b then v else u)
++    cts x B R _ _ h0 hstep
++  -- read coordinate `i` of the Boolean result `Pi.single (B.yield x s₀) 1` (`evalWith_single`)
++  have hi := hrel i
++  rw [BranchingProgram.evalWith_single] at hi
++  rw [homEvalPBP_eq]
++  have hm : (((Pi.single (B.yield x s₀) 1 : Fin w → ℕ) i : ℕ) : ℤ) =
++      ((decide (B.yield x s₀ = i)).toNat : ℤ) := by
++    by_cases hy : B.yield x s₀ = i
++    · rw [hy, Pi.single_eq_same, decide_eq_true rfl]
++      rfl
++    · rw [Pi.single_eq_of_ne (Ne.symm hy), decide_eq_false hy]
++      rfl
++  rw [← hm]
++  exact hi
+ 
+ /-- **G3. Homomorphic formula evaluation.** For a formula `c` of fan-in at most two on
+ `k ≥ 1` inputs and input ciphertexts `cts j` encrypting the bits `x j` with noise at most `β`
+@@ -164,8 +235,8 @@ p003-b002]. Deviation: the output coordinate is `σ 0` (BV14: coordinate `1`), w
+ `barrington c sigma1`, which is a permutation program (`isPermutation_barrington`, C15), at
+ `s₀ = 0` and `i = sigma1 0`. Its message is `decide (yield x 0 = sigma1 0)`; by
+ `barrington_yield_zero` (C16, with `isFiveCycle_sigma1`) the yield at `0` is `sigma1 0` if
+-`c.eval x` and `0` otherwise, and `sigma1 0 ≠ 0` (a five-cycle has no fixed point:
+-`isFiveCycle_iff`, or by `decide` on `Fin 5`), so the message is `(c.eval x).toNat`. The noise
++`c.eval x` and `0` otherwise, and `sigma1 0 ≠ 0` (`sigma1_eq` and kernel `decide` on
++`Fin 5`), so the message is `(c.eval x).toNat`. The noise
+ `length·(2·(N·β))` is at most `4^(c.depth)·(2·(N·β))` by `barrington_length_le` (C14) and
+ `Encrypts.mono`. -/
+ theorem encrypts_homEvalFormula (P : Parameters)
+@@ -174,6 +245,24 @@ theorem encrypts_homEvalFormula (P : Parameters)
+     (β : ℕ) (hin : ∀ j, Encrypts P t ((x j).toNat : ℤ) β (cts j)) :
+     Encrypts P t ((c.eval x).toNat : ℤ) (4 ^ c.depth * (2 * (P.columns * β)))
+       (homEvalFormula P c cts) := by
+-  sorry
++  rw [homEvalFormula_eq]
++  -- G2 for Barrington's program, a permutation program, from `0`, read at `sigma1 0`
++  have h := encrypts_homEvalPBP P _ (BranchingProgram.isPermutation_barrington c
++    BranchingProgram.sigma1) x cts β hin 0 (BranchingProgram.sigma1 0)
++  -- the five-cycle `sigma1` moves `0` (`sigma1_eq`, kernel `decide` on `Fin 5`)
++  have h0 : BranchingProgram.sigma1 0 ≠ 0 := by
++    rw [BranchingProgram.sigma1_eq]
++    decide
++  -- the message: the yield at `0` is `sigma1 0` on accepted inputs and `0` otherwise
++  have hm : ((decide ((BranchingProgram.barrington c BranchingProgram.sigma1).yield x 0 =
++      BranchingProgram.sigma1 0)).toNat : ℤ) = ((c.eval x).toNat : ℤ) := by
++    rw [BranchingProgram.barrington_yield_zero hc BranchingProgram.isFiveCycle_sigma1 x]
++    cases c.eval x
++    · rw [if_neg Bool.false_ne_true, decide_eq_false (Ne.symm h0)]
++    · rw [if_pos rfl, decide_eq_true rfl]
++  rw [hm] at h
++  -- the noise: `length ≤ 4 ^ depth` (`barrington_length_le`)
++  exact Encrypts.mono P h (Nat.mul_le_mul_right _
++    (BranchingProgram.barrington_length_le hc BranchingProgram.sigma1))
+ 
+ end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean
+index a4f9cb418..c8f700bb4 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean
+@@ -33,7 +33,7 @@ set_option autoImplicit false
+   fan-in two, and the closed form `9⌈log₂ N⌉ + 2⌈log₂(ℓ + ⌈log₂ N⌉ + 3)⌉ + 21`, with no term
+   linear in `ℓ`.
+ 
+-All are statement-phase targets (admitted); the definitions and the instance are proved.
++All are proved, as are the definitions and the instance.
+ 
+ ## References
+ 
+@@ -144,7 +144,12 @@ theorem vecMul_secretVector_eq_sum (P : Parameters)
+     (s : Fin P.lwe.dimension → ZMod P.lwe.modulus) (C : Ciphertext P) :
+     secretVector P s ⬝ᵥ decryptColumn P C =
+       ∑ i, ((keyBits P s i).toNat : ZMod P.lwe.modulus) * decConstants P C i := by
+-  sorry
++  -- `t = G·x` with `x` the lifted key bits
++  have ht : secretVector P s =
++      (gadget P).mulVec (fun i => ((keyBits P s i).toNat : ZMod P.lwe.modulus)) := by
++    rw [keyBits_eq, gadget_mulVec_decomposeVec]
++  rw [ht, dotProduct_comm, Matrix.dotProduct_mulVec, ← decConstants_eq, dotProduct_comm]
++  rfl
+ 
+ /-- **G6. The decryption formula computes decryption.** On the key bits of `s`, the
+ decryption formula of `C` evaluates to GSW decryption of `C` under `s`:
+@@ -164,7 +169,26 @@ By G5, `⟨t, c⟩` is `∑ᵢ xᵢ·aᵢ` in `ZMod q`. Its representative is `(
+ `omega`). Both sides are Booleans equal as propositions. -/
+ theorem decryptFormula_eval (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus)
+     (C : Ciphertext P) : (decryptFormula P C).eval (keyBits P s) = decrypt P s C := by
+-  sorry
++  have hq := P.lwe.modulus_ge_two
++  -- the decoding interval lies in `[0, q]`
++  have hlh : LWE.BitEncoding.decodeLo P.lwe ≤ LWE.BitEncoding.decodeHi P.lwe := by
++    rw [LWE.BitEncoding.decodeLo_eq, LWE.BitEncoding.decodeHi_eq]; omega
++  have hhq : LWE.BitEncoding.decodeHi P.lwe ≤ P.lwe.modulus := by
++    rw [LWE.BitEncoding.decodeHi_eq]; omega
++  -- the representative of `⟨t, c⟩` is the natural subset sum modulo `q` (G5)
++  have hval : (secretVector P s ⬝ᵥ decryptColumn P C).val =
++      (∑ i, (keyBits P s i).toNat * (decConstants P C i).val) % P.lwe.modulus := by
++    have hcast : (∑ i, ((keyBits P s i).toNat : ZMod P.lwe.modulus) * decConstants P C i) =
++        ((∑ i, (keyBits P s i).toNat * (decConstants P C i).val : ℕ) : ZMod P.lwe.modulus) := by
++      rw [Nat.cast_sum]
++      exact Finset.sum_congr rfl fun i _ => by rw [Nat.cast_mul, ZMod.natCast_zmod_val]
++    rw [vecMul_secretVector_eq_sum, hcast, ZMod.val_natCast]
++  -- both sides are the interval test (O2 and F9)
++  rw [decrypt_eq_decode_dotProduct, decryptFormula_eq,
++    FormulaArith.modSumInterval_eval (a := fun i => (decConstants P C i).val)
++      (fun i => ZMod.val_lt _) hlh hhq]
++  refine Bool.eq_iff_iff.mpr ?_
++  rw [decide_eq_true_iff, LWE.BitEncoding.decode_iff_mem_Ico, hval]
+ 
+ /-- **G7. The augmented NAND formula** computes the NAND of the two decryptions under the
+ same key: `(nandFormula P C₁ C₂).eval (keyBits P s) = !(decrypt P s C₁ && decrypt P s C₂)`
+@@ -176,7 +200,8 @@ the bits of the same `s` (r3 G7).
+ theorem nandFormula_eval (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus)
+     (C₁ C₂ : Ciphertext P) :
+     (nandFormula P C₁ C₂).eval (keyBits P s) = !(decrypt P s C₁ && decrypt P s C₂) := by
+-  sorry
++  rw [nandFormula_eq, TreeCircuit.neg_eval, TreeCircuit.and2_eval, decryptFormula_eval,
++    decryptFormula_eval]
+ 
+ /-- **G8, depth.** The augmented NAND formula has depth at most `decDepth P + 1`:
+ `(nandFormula P C₁ C₂).depth ≤ decDepth P + 1` [BV14, Lemma 4.4, p019-b001: depth
+@@ -187,7 +212,15 @@ theorem nandFormula_eval (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lw
+ operands, read through `decryptFormula_eq` and `decDepth_eq`; `max_le` and `omega`. -/
+ theorem depth_nandFormula_le (P : Parameters) (C₁ C₂ : Ciphertext P) :
+     (nandFormula P C₁ C₂).depth ≤ decDepth P + 1 := by
+-  sorry
++  have h₁ := FormulaArith.depth_modSumInterval_le (fun i => (decConstants P C₁ i).val)
++    P.lwe.modulus (LWE.BitEncoding.decodeLo P.lwe) (LWE.BitEncoding.decodeHi P.lwe)
++  have h₂ := FormulaArith.depth_modSumInterval_le (fun i => (decConstants P C₂ i).val)
++    P.lwe.modulus (LWE.BitEncoding.decodeLo P.lwe) (LWE.BitEncoding.decodeHi P.lwe)
++  rw [← decryptFormula_eq, ← decDepth_eq] at h₁ h₂
++  have h₃ := TreeCircuit.depth_and2_le (decryptFormula P C₁) (decryptFormula P C₂)
++  have h₄ := max_le h₁ h₂
++  rw [nandFormula_eq, TreeCircuit.depth_neg]
++  omega
+ 
+ /-- **G8, fan-in.** The augmented NAND formula has fan-in at most two:
+ `(nandFormula P C₁ C₂).maxFanin ≤ 2` [BV11, Lemma 4.5, p029-b001: "fan-in 2 gates"].
+@@ -197,7 +230,14 @@ theorem depth_nandFormula_le (P : Parameters) (C₁ C₂ : Ciphertext P) :
+ both operands (`decryptFormula_eq`); `omega`. -/
+ theorem maxFanin_nandFormula_le (P : Parameters) (C₁ C₂ : Ciphertext P) :
+     (nandFormula P C₁ C₂).maxFanin ≤ 2 := by
+-  sorry
++  have h₁ := FormulaArith.maxFanin_modSumInterval_le (fun i => (decConstants P C₁ i).val)
++    P.lwe.modulus (LWE.BitEncoding.decodeLo P.lwe) (LWE.BitEncoding.decodeHi P.lwe)
++  have h₂ := FormulaArith.maxFanin_modSumInterval_le (fun i => (decConstants P C₂ i).val)
++    P.lwe.modulus (LWE.BitEncoding.decodeLo P.lwe) (LWE.BitEncoding.decodeHi P.lwe)
++  rw [← decryptFormula_eq] at h₁ h₂
++  have h₃ := TreeCircuit.maxFanin_and2_le (decryptFormula P C₁) (decryptFormula P C₂)
++  rw [nandFormula_eq, TreeCircuit.maxFanin_neg]
++  omega
+ 
+ /-- **G8, closed form.** The decryption depth is `O(log N + log log q)` with no term linear in
+ `ℓ`: `decDepth P ≤ 9 * Nat.clog 2 P.columns + 2 * Nat.clog 2 (P.width + Nat.clog 2 P.columns
+@@ -211,6 +251,14 @@ inner term `⌈log₂ q⌉ ≤ ℓ` because `q ≤ 2^ℓ` (`P.modulus_le`, `Nat.
+ theorem decDepth_le (P : Parameters) :
+     decDepth P ≤
+       9 * Nat.clog 2 P.columns + 2 * Nat.clog 2 (P.width + Nat.clog 2 P.columns + 3) + 21 := by
+-  sorry
++  -- `⌈log₂ q⌉ ≤ ℓ`, since `q ≤ 2^ℓ`
++  have hq : Nat.clog 2 P.lwe.modulus ≤ P.width :=
++    (Nat.clog_le_iff_le_pow (by norm_num)).mpr P.modulus_le
++  have hmono := Nat.clog_mono_right 2
++    (show Nat.clog 2 P.lwe.modulus + Nat.clog 2 P.columns + 3 ≤
++      P.width + Nat.clog 2 P.columns + 3 by omega)
++  have hF := FormulaArith.modSumDepth_le P.columns P.lwe.modulus
++  rw [decDepth_eq]
++  omega
+ 
+ end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW

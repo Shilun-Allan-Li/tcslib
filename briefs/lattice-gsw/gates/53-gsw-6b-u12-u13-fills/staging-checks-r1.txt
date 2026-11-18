@@ -1,0 +1,91 @@
+# Gate 53 staging checks (round 1). git objects and python3 -I only; no Lean, no lake.
+# repository /home/user/tcslib; records tip at staging (origin/cryptography/pass-shelat-ch2-4) 96b743bfd8566f40cd8a06c29f31d760ecc29bb6
+
+## 1. Pins (git rev-parse)
+PR #392 head: 4b2ede271e1af88ad2eee207dafd9b674f19a306
+PR #392 REST base.sha = merge base: fb56166b6454b18d73d697b84d8eb71f8247251c
+records tip at staging: 96b743bfd8566f40cd8a06c29f31d760ecc29bb6
+B6 (#377 merge, snapshot #11 T): bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d
+reviewed stack check head (scratch, on no ref): 51d46089e37030f582b24c1f84ee68ac21c98829
+exchange delivery (U12 final; contains U13 final): 9b4ab065f58581ac93ba6641f29a0d4051482dfa
+U13 final delivery commit: 87012e786e70134018a22156d3a299c2c55b943a
+issued pack pin: bbc930b3853adb29ba96324568e984d521abd257
+records tip read by the review: 31247fe71e7ab60a1d7f8f1939291147e1b5645a
+merge-base(records tip, PR head) = fb56166b6454b18d73d697b84d8eb71f8247251c
+
+## 2. Lean equality (TCSlib subtree, TCSlib.lean blob)
+B6           bff0567b6c4b  TCSlib 949dfd63c2539e1ccd738ab96ec424ee6cb17798  TCSlib.lean 8db619ce45cb060d961d39ec86b4f1a9037d642e  audits e204e63c6027d6e48abaa394d1d73d5d4615596e  lake-manifest a2a54033bc1ff8cedc0523666c407a1565f237b0
+issued pin   bbc930b3853a  TCSlib 949dfd63c2539e1ccd738ab96ec424ee6cb17798  TCSlib.lean 8db619ce45cb060d961d39ec86b4f1a9037d642e  audits e204e63c6027d6e48abaa394d1d73d5d4615596e  lake-manifest a2a54033bc1ff8cedc0523666c407a1565f237b0
+review tip   31247fe71e7a  TCSlib 949dfd63c2539e1ccd738ab96ec424ee6cb17798  TCSlib.lean 8db619ce45cb060d961d39ec86b4f1a9037d642e  audits e204e63c6027d6e48abaa394d1d73d5d4615596e  lake-manifest a2a54033bc1ff8cedc0523666c407a1565f237b0
+merge base   fb56166b6454  TCSlib 949dfd63c2539e1ccd738ab96ec424ee6cb17798  TCSlib.lean 8db619ce45cb060d961d39ec86b4f1a9037d642e  audits e204e63c6027d6e48abaa394d1d73d5d4615596e  lake-manifest a2a54033bc1ff8cedc0523666c407a1565f237b0
+records tip  96b743bfd856  TCSlib 949dfd63c2539e1ccd738ab96ec424ee6cb17798  TCSlib.lean 8db619ce45cb060d961d39ec86b4f1a9037d642e  audits e204e63c6027d6e48abaa394d1d73d5d4615596e  lake-manifest a2a54033bc1ff8cedc0523666c407a1565f237b0
+stack 51d46089 51d46089e370  TCSlib 745bf4b494b6581a5666ef9ca0a6e735a68ddcef  TCSlib.lean 8db619ce45cb060d961d39ec86b4f1a9037d642e  audits e204e63c6027d6e48abaa394d1d73d5d4615596e  lake-manifest a2a54033bc1ff8cedc0523666c407a1565f237b0
+PR head      4b2ede271e1a  TCSlib 745bf4b494b6581a5666ef9ca0a6e735a68ddcef  TCSlib.lean 8db619ce45cb060d961d39ec86b4f1a9037d642e  audits e204e63c6027d6e48abaa394d1d73d5d4615596e  lake-manifest a2a54033bc1ff8cedc0523666c407a1565f237b0
+merge-tree --write-tree (records tip, PR head) = 1dbdca0d194d6678a3a13cfcf4b1d192457ed5bf; its TCSlib 745bf4b494b6581a5666ef9ca0a6e735a68ddcef
+diff --name-only bff0567b..fb56166b over TCSlib TCSlib.lean audits lean-toolchain lake-manifest.json: 0 paths
+diff --name-only bff0567b..96b743bf over TCSlib TCSlib.lean audits lean-toolchain lake-manifest.json: 0 paths
+
+## 3. Scope
+git diff --name-only records-tip...PR-head: ['TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean', 'TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean']
+numstat: 102	13	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean | 55	7	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean
+git diff B6..PR-head over TCSlib, TCSlib.lean equals the PR diff byte for byte: True
+
+## 4. PR commits against the delivered patches (git patch-id --stable)
+bd9d1ed3244e 'fill gsw-6b-u12: G1-G3 Branching': patch-id 974801279090 vs 0001-fill-gsw-6b-u12-G1-G3-Branching.patch 974801279090 -> EQUAL; signature ssh (not verified: no allowed-signers file)
+55d2afb19532 "fill gsw-6b-u12: Branching, the glue's docstring formula with its cast": patch-id 6bb343bddfbc vs 0002-fill-gsw-6b-u12-Branching-the-glue-s-docstring-formu.patch 6bb343bddfbc -> EQUAL; signature ssh (not verified: no allowed-signers file)
+4b2ede271e1a 'fill gsw-6b-u13: G5-G8 DecryptFormula': patch-id 583a7750c642 vs 0001-fill-gsw-6b-u13-G5-G8-DecryptFormula.patch 583a7750c642 -> EQUAL; signature ssh (not verified: no allowed-signers file)
+
+## 5. Blobs: PR head vs delivered src/ and the review evidence (frozen/*.lean)
+Branching: head 65834343eedc delivered-src 65834343eedc evidence-head 65834343eedc -> EQUAL; evidence-base a5420c769eb6 B6 a5420c769eb6 -> EQUAL
+DecryptFormula: head c8f700bb4065 delivered-src c8f700bb4065 evidence-head c8f700bb4065 -> EQUAL; evidence-base a4f9cb41864e B6 a4f9cb41864e -> EQUAL
+evidence logs/stack-head.txt: ['51d46089e37030f582b24c1f84ee68ac21c98829', 'fb6884d14882417682957ee056aab4bf6376652c']
+
+## 6. Removed lines of the PR diff, classified
+Branching.lean: module admission sentence: 1
+Branching.lean: other (read: proof-sketch paragraph lines, listed below): 9
+    - noise `0 + β`. `Encrypts.mul` gives `(G − C) ⊡ U` with noise `N·β + |1 − b|·βV` and `C ⊡ V` with
+    - noise `N·β + |b|·βV`, the two products that `select_eq` exposes. `Encrypts.add` sums the
+    - two; since `b ∈ {0, 1}`, `|1 − b| + |b| = 1`, so the noise is at most `βV + 2·(N·β)` by
+    - `Encrypts.mono`, and the message is `(1 − b)·u + b·v`. -/
+    - `(τ + 1)·(2·(N·β))`; the messages agree because the Boolean coordinates are `0`/`1` and the
+    - selector picks the branch of `x var`. At `τ = B.length` read `evalWith_single` and
+    - `Pi.single_apply`. Uses the `homEvalPBP_eq` reader. -/
+    - `c.eval x` and `0` otherwise, and `sigma1 0 ≠ 0` (a five-cycle has no fixed point:
+    - `isFiveCycle_iff`, or by `decide` on `Fin 5`), so the message is `(c.eval x).toNat`. The noise
+Branching.lean: sorry body: 3
+DecryptFormula.lean: module admission sentence: 1
+DecryptFormula.lean: sorry body: 6
+Every "other" line above lies in a **Proof sketch.** paragraph (G1: 4 lines, G2: 3, G3: 2); read them in pr392.diff.txt.
+
+## 7. File statistics (B6 and PR head)
+Branching.lean b6: lines 179 max_width 97 over_100 0 tabs 0 trailing 0 sorry(code) 3 micro 0 sha256 128a478e9c39f6dd
+Branching.lean head: lines 268 max_width 97 over_100 0 tabs 0 trailing 0 sorry(code) 0 micro 0 sha256 975a5b9ae0d5024b
+DecryptFormula.lean b6: lines 216 max_width 98 over_100 0 tabs 0 trailing 0 sorry(code) 6 micro 0 sha256 58e041c0e6526d07
+DecryptFormula.lean head: lines 264 max_width 98 over_100 0 tabs 0 trailing 0 sorry(code) 0 micro 0 sha256 342f5a7bbf554e7f
+
+## 8. Review evidence ZIP
+U12/final-r1/gsw-6b-u12-u13-final-r1-evidence.zip: sha256 5a220db3c56024d4de5f760e75aeb5b741d2b670c2398a2a3e273dbb69b97202 listed 5a220db3c56024d4de5f760e75aeb5b741d2b670c2398a2a3e273dbb69b97202 -> OK
+U13/final-r1/gsw-6b-u12-u13-final-r1-evidence.zip: sha256 5a220db3c56024d4de5f760e75aeb5b741d2b670c2398a2a3e273dbb69b97202 listed 5a220db3c56024d4de5f760e75aeb5b741d2b670c2398a2a3e273dbb69b97202 -> OK
+ZIP entries 272 (directories 41, files 231); inner SHA256SUMS rows 230, verified 230, unlisted ['SHA256SUMS']
+
+## 9. Records
+briefs/lattice-gsw/phase6/issued-6b-fills-r1/rulings.md: commits on any ref touching it: 0 (never filed; ruled Q-U12-1/Q-U13-1 A, decision log 2026-11-18 "U12/U13 rulings (Seyoon) and landing")
+6599b12230e3879bc0e1fb22c0376ea6201bca8b7edd79dfc55da43986f991d4  policy.md  (at the records tip 96b743bfd856)
+c9b93227cddd0e5aa1784855dab939e8bec2d11b6aa812e26d1afb9082b07181  briefs/pass-shelat-ch5-8/MAINTAINER-HANDOFF.md  (at the records tip 96b743bfd856)
+b16a8f6869ceb4acc1edc270a2980ee122e4245ab017d2e8b5f00c49e60a1c10  briefs/lattice-gsw/phase6/issued-6b-fills-r1/README.md  (at the records tip 96b743bfd856)
+fcb785c670dcdc4f3a6880197b546ae709a07036daa07ea6d754c7f66a93f21a  briefs/lattice-gsw/phase6/issued-6b-fills-r1/COMMON.md  (at the records tip 96b743bfd856)
+2089b50fd4445011e47bf10f3718ddb63bc15ee89a20fbfcc1aa892b4af9ab3b  briefs/lattice-gsw/phase6/issued-6b-fills-r1/U12/brief.md  (at the records tip 96b743bfd856)
+dcedd38f11458dfdf9264b27e430edb37a3ef42551311046825c810bcc8f194b  briefs/lattice-gsw/phase6/issued-6b-fills-r1/U13/brief.md  (at the records tip 96b743bfd856)
+753f5c4707e41055cd44db1c1da6e2e4918d55cbe3a401dfcdc89fae50bd5d09  briefs/lattice-gsw/phase6/issued-6b-fills-r1/U12/dispatch-prompt.md  (at the records tip 96b743bfd856)
+6dcaeb201a9978132554c9cb4fd2936229407e27f681a695c7c60d7fd58b1217  briefs/lattice-gsw/phase6/issued-6b-fills-r1/U13/dispatch-prompt.md  (at the records tip 96b743bfd856)
+c68757d9ac69f64e47314383442648e4fdc587853953a6df06e260c42389384f  briefs/lattice-gsw/phase6/issued-6b-fills-r1/dup-sweep.md  (at the records tip 96b743bfd856)
+aba4f5db66544fa7deb36f6ea832aa86cd183a235300053b7e534b84842bb781  briefs/lattice-gsw/phase6/issued-6b-fills-r1/targets.txt  (at the records tip 96b743bfd856)
+6687729102c6451c44c1a87935fe8476c4758aee41c4a2483ab02463dec60ae0  briefs/lattice-gsw/phase6/issued-6b-fills-r1/base-sorries.txt  (at the records tip 96b743bfd856)
+2ed32078223d23593f4b9eaa4b65823d8ebebffd629bd8a20d6c91f7a8bce9b5  briefs/lattice-gsw/phase6/issued-6b-fills-r1/SHA256SUMS  (at the records tip 96b743bfd856)
+312fef4576b388222d69eddec186c2ac4259e5de95488fca42e6861438ad3d5d  briefs/lattice-gsw/phase6/rulings.md  (at the records tip 96b743bfd856)
+06824b3db875e7388771b6f7a5e78d62bf7d77fa35571fc3a9deeebc329214fd  briefs/lattice-gsw/phase6/plan-section.md  (at the records tip 96b743bfd856)
+5fe57fc9075fd1988add49222b66c37deb2ac40ba5a5c6fc1371f1a8eeb34358  briefs/lattice-gsw/phase6/checkpoint1-6b-review.md  (at the records tip 96b743bfd856)
+8d810ec42bf834b2a7bb2c11eb13ae568fa63393546d6772fe2f8cad1c539048  briefs/lattice-gsw/phase6/final-6b-r1/review.md  (at the records tip 96b743bfd856)
+372e69be2fbda40df91982ece23415e83ac26e5f32c70aa63e5e6b7d5856133e  briefs/lattice-gsw/gates/46-gsw-6b/findings-r1.md  (at the records tip 96b743bfd856)
+eecd1ac201a44d28dd54b93dafb70d3456df63a357c1ea1693189425504923d3  briefs/lattice-gsw/gates/46-gsw-6b/resolutions-r1.md  (at the records tip 96b743bfd856)
+609573ff789065294f64c5e4d0e40a4fa8f893a8795ce615aa0d577647f2681a  briefs/lattice-gsw/gates/46-gsw-6b/dup-sweep.md  (at the records tip 96b743bfd856)
