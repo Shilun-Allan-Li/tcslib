@@ -197,12 +197,20 @@ signature as an `example … := by exact?`.
 
 ## 6. State after the run
 
-(Final figures, recorded at the end of both checkpoints; see also Gate 51's file.)
+These are the final figures, recorded at the end of both checkpoints at 22:35Z. Gate 51 ran
+second.
 
-- **Kept:** `$SP/olean-replay-ioc0-sprg`: the accepted tree, 1523 files (42 own, 8.1 MB) and
-  3346 symlinks.
-  - Free disk after this checkpoint was 2,927 MB, above 2.5 GB, so it was kept while Gate 51
-    ran.
+- **Kept:** `$SP/olean-replay-ioc0-sprg`: the accepted tree, 1523 files (42 own, 8.1 MB) and 3346
+  symlinks. `stateplan check` gives 1480/1480 OK at the end.
+  - Free disk after this checkpoint was 2,927 MB, above 2.5 GB, so the tree was kept while
+    Gate 51 ran.
+  - It is a hard-link copy, so deleting it frees only its 8.1 MB.
+- **Source trees at the end:**
+  - Snapshot #11 rehashes **0/0/0** (1487 files, map `e7bb03b4…`).
+  - `$SP/olean-replay-efd1` rehashes **0/0/0** against the baseline taken before the copy, and
+    its state check gives 1469/1469 OK.
+- **Disk.** Free space was 3,023 MB at the start and 2,819 MB after both checkpoints.
 - **Work directory.** `$SP/io-c0/sprg/` holds the export, plan, logs and probes;
   `$SP/io-c0/git.git` is the scratch repository.
-- **No snapshot or other agent's tree was written to.**
+- **Host slots.** There were 0 other `lean` processes at every start of this gate's runs.
+- **Not touched:** `$SP/olean-snapshot-10`, and other agents' trees and processes.
