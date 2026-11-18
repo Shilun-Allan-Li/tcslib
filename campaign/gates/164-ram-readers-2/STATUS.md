@@ -1,0 +1,1 @@
+**Gate 164 (no audit; Seyoon, 2026-11-18):** PR #375 at `7342f98b`, the tier 2 readers. Gate kit: replay 148/148 on `oleans-cm373-cl162` (output `oleans-cl164-cm373`), seals pass (12 proofs), controls 14/28, 0 read candidates. The lint's missing-lemma counts drop: Catalog 8 → 6, RecordTable 4 → 1. The copy screen's result is recorded when it finishes. Ready to merge.
