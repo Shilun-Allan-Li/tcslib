@@ -195,10 +195,17 @@ machine's time on `⟨x, u⟩` (length `2|x| + 2 + m(|x|)`) and is at least `1`.
 def verTime (C c : ℕ) (m : PolyExpr) : PolyExpr :=
   .add (.mul (.const C) (.pow (.add (.add (.mul (.const 2) .var) (.const 3)) m) c)) (.const 1)
 
+/-- The defining equation of `verTime`: `verTime C c m = C · (2 var + 3 + m)^c + 1` as a
+`PolyExpr`. -/
+theorem verTime_eq (C c : ℕ) (m : PolyExpr) :
+    verTime C c m =
+      .add (.mul (.const C) (.pow (.add (.add (.mul (.const 2) .var) (.const 3)) m) c))
+        (.const 1) := rfl
+
 /-- The value of `verTime`: `verTime C c m` at `n` is `C (2n + 3 + m(n))^c + 1`. -/
 theorem eval_verTime (C c : ℕ) (m : PolyExpr) (n : ℕ) :
     (verTime C c m).eval n = C * (2 * n + 3 + m.eval n) ^ c + 1 := by
-  simp [verTime]
+  simp [verTime_eq]
 
 /-- **The tableau circuit of `x`** for a machine `M`, certificate length `m` and time `t`: the
 uniform configuration tableau (`Complexity.cfgTab`, [AB09, Remark 6.7]) of `M` on the virtual
