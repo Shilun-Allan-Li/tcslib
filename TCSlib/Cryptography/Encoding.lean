@@ -9,6 +9,7 @@ import TCSlib.Cryptography.Encoding.DyadicArithmetic
 import TCSlib.Cryptography.Encoding.DyadicUniform
 import TCSlib.Cryptography.Encoding.DyadicLinearAlgebra
 import TCSlib.Cryptography.Encoding.BooleanVector
+import TCSlib.Cryptography.Encoding.ModularArithmetic
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -27,6 +28,8 @@ set_option autoImplicit false
 * `DyadicUniform`: exact fair-bit residue, vector and matrix sampling laws.
 * `DyadicLinearAlgebra`: counted-loop encoded dot products and matrix-vector multiplication.
 * `BooleanVector`: false-padded binary domain words as encoded modular vectors.
+* `ModularArithmetic`: addition, vector addition and row subset sums modulo a general modulus
+  read from the input, on the fixed-width encodings, with polynomial-time proofs.
 
 ## References
 
