@@ -1,7 +1,10 @@
 # RAM fill (Codex): tier 3, the class corollaries (`RAMSimulation/Classes`, 9 admissions)
 
 Read `COMMON.md` (bundled) first; its rules bind. **Fill name:** `fill-ram-classes`.
-**Base:** the commit given in the dispatch prompt, on `complexity/ram-simulation`.
+**Base:** the commit given in the dispatch prompt. It is the head of PR #371 (branch
+`ram/fills-0-1`, stacked on #370), which has the readers of #370 and the proved tiers 0 and 1.
+This replaces `COMMON.md`'s base rule for this fill only (Seyoon, 2026-11-18: dispatch before
+#370 and #371 merge). The maintainer lands your delivery on the RAM branch after both merge.
 
 ## What this is
 
@@ -17,14 +20,14 @@ declarations that are, or were, admitted:
 | Declaration | Home | Status |
 |---|---|---|
 | `WordRAM.exists_simulation`, `WordRAM.exists_ndSimulation` | `RAMSimulation/Simulation` | tier 2; **admitted** at your base |
-| `WordRAM.wordSizeComputable_logSpace`, `wordSizeComputable_of_spaceConstructible` | `RAMSimulation/WordSize` | tier 1; admitted at your base unless the dispatch prompt says tier 1 has landed |
-| `WordRAM.HaltsWithin.mono`, `WordRAM.HaltsWithin.touches_le` | `Programs/WordRAM/Extended` | tier 0; this fill is dispatched only after tier 0 has proved them, and the dispatch prompt names the base that includes them |
+| `WordRAM.wordSizeComputable_logSpace`, `wordSizeComputable_of_spaceConstructible` | `RAMSimulation/WordSize` | tier 1; **proved** at your base (#371) |
+| `WordRAM.HaltsWithin.mono`, `WordRAM.HaltsWithin.touches_le` | `Programs/WordRAM/Extended` | tier 0; **proved** at your base (#371) |
 
 Use them as they are stated. Your proofs must contain no `sorry`. A `#print axioms` that shows
 `sorryAx` cannot tell which admitted declaration was reached. So for each target, `REPORT.md`
 lists the admitted declarations its proof reaches. Run a scratch dependency walk that collects
 every constant reachable from the target whose value uses `sorryAx`. The chapters 3–4 probe
-`CloseHeadlines` does exactly this; adapt it. The list must be a subset of the table above.
+`CloseHeadlines` does exactly this; adapt it. At your base the walk must list only `exists_simulation` and `exists_ndSimulation`.
 
 ## Targets (in `WordRAM`, all in the owned file)
 
