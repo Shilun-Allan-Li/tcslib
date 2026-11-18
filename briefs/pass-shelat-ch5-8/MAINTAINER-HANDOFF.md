@@ -91,6 +91,10 @@ in this folder (identical).
     still never committed (pairing Q12 A); for cloud audits the cited source items are ingested as
     `blueprint/src/references/*.md` (policy §2) or attached by Seyoon. Local-machine sections (rule 16)
     apply to Codex fills and Claude jobs that run on Seyoon's machine.
+18. **Paste-ready text only (Seyoon, 2026-11-18: "you need to stop making things inconvenient for me").**
+    Every prompt, correction or relay message for Seyoon to paste is given in full, one fenced block per
+    chat, with every value filled in. Never "the same text with these substitutions", never placeholders
+    for him to fill.
 
 ## 3. Rulings in force (full list: the decision log, `../../PassShelatChapter5-8Plan.md`)
 
