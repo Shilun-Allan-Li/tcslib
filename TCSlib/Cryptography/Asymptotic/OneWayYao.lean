@@ -297,6 +297,15 @@ def yaoRaw (T : PolyExpr) (x : List Bool) : List Bool :=
 def yaoRaw' (T : PolyExpr) (x : List Bool) : List Bool :=
   if yaoRaw D T x = [] then uIn D x else yaoRaw D T x
 
+/-- The repeated machine in `Option.elim` form: `yaoRaw D T x` is the answer `ans D (g^[i] x)` of
+the first round `i ≤ T(|x|)` whose test `acc` succeeds, and `[]` if there is none. -/
+theorem yaoRaw_eq (T : PolyExpr) :
+    yaoRaw D T = fun x => ((List.range (T.eval x.length + 1)).find?
+      (fun i => acc D ((g D)^[i] x))).elim [] (fun i => ans D ((g D)^[i] x)) := by
+  funext x
+  unfold yaoRaw
+  cases (List.range (T.eval x.length + 1)).find? (fun i => acc D ((g D)^[i] x)) <;> rfl
+
 section Poly
 
 variable {D}
@@ -446,14 +455,16 @@ theorem length_g_iterate_le (w : List Bool) (i : ℕ) : ((g D)^[i] w).length ≤
     | succ i ih =>
       rw [Function.iterate_succ_apply']
       refine (PosLoop.length_pairEncode_pairFstD_le _ _
-        (by rw [List.length_drop]; exact Nat.sub_le _ _)).trans ?_
+        (by rw [List.length_drop, NUPPT.inCoins_eq]; exact Nat.sub_le _ _)).trans ?_
       exact max_le ih (le_max_right _ _)
   exact (key i).trans (by omega)
 
 include hFe hF' hPm in
-/-- The repeated machine is polynomial-time (`Complexity.polyTimeComputable_iterateFind`). -/
-theorem yaoRaw_poly (T : PolyExpr) : PolyTimeComputable (yaoRaw D T) :=
-  polyTimeComputable_iterateFind g_poly (acc_poly hFe hF' hPm) (ans_poly hF' hPm) T
+/-- The repeated machine is polynomial-time (`Complexity.polyTimeComputable_iterateFind_elim`, read
+through `yaoRaw_eq`). -/
+theorem yaoRaw_poly (T : PolyExpr) : PolyTimeComputable (yaoRaw D T) := by
+  rw [yaoRaw_eq]
+  exact polyTimeComputable_iterateFind_elim g_poly (acc_poly hFe hF' hPm) (ans_poly hF' hPm) T
     (.add .var (.const 2)) fun w i _ => by simpa using length_g_iterate_le w i
 
 include hFe hF' hPm in
@@ -592,7 +603,7 @@ theorem adv_length (n : ℕ) : (adv D n).length ≤ (advP D).eval n := by
 theorem ρP_eval (n : ℕ) :
     (ρP D).eval n = n * D.m.eval n + (D.m.eval n * D.inLen.eval n + D.A'.coinLen n) := by
   rw [NUPPT.coinLen_eq]
-  rfl
+  simp only [ρP, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_var]
 
 /-- **The coins of a round in the form of `roundEquiv`**: the published equivalence
 `{0,1}^{ρ(n)} ≃ {0,1}^{n·m + (m·inLen + coins_{A'})}` (`finCongr` along `ρP_eval`), through which
@@ -701,7 +712,7 @@ theorem ans_layout :
       (Function.update (prodFun f (D.m.eval n) (blocksE (D.m.eval n) (D.inLen.eval n) b))
         (posOf hM (nkk_le n _ hM) a) y))) c' := by
     simp only [zOut, hu, hplanted, halpha, hrcoins]
-    rfl
+    rw [NUPPT.runAt_eq, NUPPT.runAtL_eq, NUPPT.layout_eq, NUPPT.advInput_eq]
   have huIn : uIn D w = List.replicate (D.inLen.eval n) true := by simp [uIn, hu]
   have hoffIn : offIn D w =
       List.replicate ((posOf hM (nkk_le n _ hM) a).val * D.inLen.eval n) true := by
@@ -756,14 +767,24 @@ def sampleAll (r : Fin ((T.eval n + 1) * (ρP D).eval n) → Bool) :
   fun i => roundSample n (D.m.eval n) (D.inLen.eval n) (D.A'.coinLen n) (kkOf (D.m.eval n)) hM
     (nkk_le n _ hM) (ρPEquiv D n (blocksE (T.eval n + 1) ((ρP D).eval n) r i))
 
+/-- The defining equation of `sampleAll`: the coin string is cut into `T(n) + 1` round blocks
+(`blocksE`), and round `i` is `roundSample` of block `i` read through `ρPEquiv`. -/
+theorem sampleAll_eq :
+    sampleAll T n hM =
+      (fun b : Fin (T.eval n + 1) → Fin ((ρP D).eval n) → Bool => fun i =>
+        roundSample n (D.m.eval n) (D.inLen.eval n) (D.A'.coinLen n) (kkOf (D.m.eval n)) hM
+          (nkk_le n _ hM) (ρPEquiv D n (b i))) ∘ blocksE (T.eval n + 1) ((ρP D).eval n) := rfl
+
 /-- **The coins of all rounds are close to uniform:** within `(T(n) + 1)·(1 − m/2^{kk})^n`
-(`statClose_roundSample`, `statClose_pi`, the block bijection on the coin string). -/
+(`statClose_roundSample` read through `ρPEquiv`, `statClose_pi`, the block bijection on the coin
+string). -/
 theorem statClose_sampleAll :
     StatClose (sampleAll T n hM) id
-      (((T.eval n + 1 : ℕ) : ℝ) * ((1 - (D.m.eval n : ℝ) / 2 ^ kkOf (D.m.eval n)) ^ n + 0)) :=
-  (statClose_pi (statClose_roundSample n (D.m.eval n) (D.inLen.eval n) (D.A'.coinLen n)
-    (kkOf (D.m.eval n)) hM (lt_two_pow_kkOf _).le (nkk_le n _ hM)) (T.eval n + 1)).comp_equiv_left
-    (blocksE (T.eval n + 1) ((ρP D).eval n))
+      (((T.eval n + 1 : ℕ) : ℝ) * ((1 - (D.m.eval n : ℝ) / 2 ^ kkOf (D.m.eval n)) ^ n + 0)) := by
+  rw [sampleAll_eq]
+  exact (statClose_pi ((statClose_roundSample n (D.m.eval n) (D.inLen.eval n) (D.A'.coinLen n)
+    (kkOf (D.m.eval n)) hM (lt_two_pow_kkOf _).le (nkk_le n _ hM)).comp_equiv_left (ρPEquiv D n))
+    (T.eval n + 1)).comp_equiv_left (blocksE (T.eval n + 1) ((ρP D).eval n))
 
 variable (hn : 1 ≤ n)
   (f : (Fin (D.inLen.eval n) → Bool) → (Fin (D.outLen.eval n) → Bool))
@@ -916,20 +937,26 @@ theorem exists_yaoReduction (inLen outLen m T : PolyExpr)
         List.replicate ((rejectionSample (D.m.eval n) (kkOf (D.m.eval n)) n
           fun t j => pb' (finProdFinEquiv (t, j))).getD ⟨0, hM⟩).val true :=
     fun pb' => hPmspec (D.m.eval n) (kkOf (D.m.eval n)) n hM (kkOf_pos _) (two_pow_kkOf_le _ hM) pb'
+  -- the coins of `A` are the coins of the `T(n) + 1` rounds
+  have hA : A.coinLen n = (T.eval n + 1) * (YaoMachine.ρP D).eval n := by
+    rw [NUPPT.coinLen_eq, NUPPT.coins_ofPolyTime, PolyExpr.eval_mul, PolyExpr.eval_add,
+      PolyExpr.eval_const]
+  let e : A.Coins n ≃ (Fin ((T.eval n + 1) * (YaoMachine.ρP D).eval n) → Bool) :=
+    Equiv.arrowCongr (finCongr hA) (Equiv.refl Bool)
   -- the functional identity
   have hrun : ∀ (y : Fin (outLen.eval n) → Bool) (r : A.Coins n),
       A.runAt n (List.ofFn y) r =
         List.ofFn (@yaoInverter _ _ _ _ _ ⟨fun _ => true⟩ (f n) (yaoB inLen outLen m A' n)
-          (T.eval n + 1) y (YaoMachine.sampleAll T n hM r)) := by
+          (T.eval n + 1) y (YaoMachine.sampleAll T n hM (e r))) := by
     intro y r
-    rw [NUPPT.runAt_eq]
+    rw [NUPPT.runAt_eq, ← ofFn_arrowCongr_finCongr hA r]
     show (NUPPT.ofPolyTime _ _ _ _ _).runAtL n _ _ = _
-    rw [NUPPT.runAtL_ofPolyTime]
-    exact YaoMachine.yaoRaw'_layout T n hM hn (f n) (hFe_spec n) (hF'spec n) hPm' y r
+    rw [NUPPT.runAtL_ofPolyTime, NUPPT.advInput_eq, ← NUPPT.layout_eq]
+    exact YaoMachine.yaoRaw'_layout T n hM hn (f n) (hFe_spec n) (hF'spec n) hPm' y (e r)
   have hinv : ∀ (y : Fin (outLen.eval n) → Bool) (r : A.Coins n),
       A.inverter n (inLen.eval n) (outLen.eval n) y r =
         some (@yaoInverter _ _ _ _ _ ⟨fun _ => true⟩ (f n) (yaoB inLen outLen m A' n)
-          (T.eval n + 1) y (YaoMachine.sampleAll T n hM r)) := by
+          (T.eval n + 1) y (YaoMachine.sampleAll T n hM (e r))) := by
     intro y r
     simp only [NUPPT.inverter_def, hrun, decodeFin_ofFn]
   -- the statistical switch
@@ -940,15 +967,16 @@ theorem exists_yaoReduction (inLen outLen m T : PolyExpr)
     have h2 := uprob_rejectionSample_none_le_half_pow (D.m.eval n) (kkOf (D.m.eval n)) n hM
       (lt_two_pow_kkOf _).le (two_pow_kkOf_le _ hM)
     rwa [h1] at h2
-  have hS' : StatClose (fun r : A.Coins n => YaoMachine.sampleAll T n hM r) id
-      (((T.eval n + 1 : ℕ) : ℝ) * ((1 - (D.m.eval n : ℝ) / 2 ^ kkOf (D.m.eval n)) ^ n + 0)) := hS
+  have hS' : StatClose (fun r : A.Coins n => YaoMachine.sampleAll T n hM (e r)) id
+      (((T.eval n + 1 : ℕ) : ℝ) * ((1 - (D.m.eval n : ℝ) / 2 ^ kkOf (D.m.eval n)) ^ n + 0)) :=
+    hS.comp_equiv_left e
   have key := hS'.abs_uprob_sub_le_prod fun cs (x : Fin (inLen.eval n) → Bool) =>
     f n (@yaoInverter _ _ _ _ _ ⟨fun _ => true⟩ (f n) (yaoB inLen outLen m A' n)
       (T.eval n + 1) (f n x) cs) = f n x
   have hL : invProbOpt (f n) (A.inverter n (inLen.eval n) (outLen.eval n)) =
       uprob fun z : A.Coins n × (Fin (inLen.eval n) → Bool) =>
         f n (@yaoInverter _ _ _ _ _ ⟨fun _ => true⟩ (f n) (yaoB inLen outLen m A' n)
-          (T.eval n + 1) (f n z.2) (YaoMachine.sampleAll T n hM z.1)) = f n z.2 := by
+          (T.eval n + 1) (f n z.2) (YaoMachine.sampleAll T n hM (e z.1))) = f n z.2 := by
     simp only [invProbOpt_def]
     rw [← uprob_comp_equiv (Equiv.prodComm (A.Coins n) (Fin (inLen.eval n) → Bool))]
     congr 1
