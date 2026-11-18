@@ -237,9 +237,9 @@ def push (M : NUPPT) (ℓ' : PolyExpr) (X : Ensemble ℓ) : Ensemble ℓ' where
   σ n := X.σ n × M.Coins n
   X n z := padFin (ℓ'.eval n) (M.runAt n (List.ofFn (X.X n z.1)) z.2)
 
-/-- The blockwise bijection `{0,1}^{q·ℓ} ≃ ({0,1}^ℓ)^q`: a load-bearing private alias of the
-canonical `FunFamily.blocks` of `Asymptotic/Adversary.lean`, kept so that the body of
-`Ensemble.copies` stays unchanged. -/
+/-- The blockwise bijection `{0,1}^{q·ℓ} ≃ ({0,1}^ℓ)^q`: a private alias of the canonical
+`FunFamily.blocks` of `Asymptotic/Adversary.lean` (no longer read by `Ensemble.copies`; removed
+with the other `blocks` aliases, DL-35). -/
 private def blocks (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
   FunFamily.blocks q ℓ
 
@@ -248,21 +248,25 @@ private theorem blocks_eq (q ℓ : ℕ) : blocks q ℓ = FunFamily.blocks q ℓ 
 
 /-- `t(n)` independent copies of `X_n`, concatenated into one `t(n)·ℓ(n)`-bit string: the
 ensemble `{X_n^{(1)} ‖ ⋯ ‖ X_n^{(t(n))}}` of the multicopy corollary of the hybrid lemma
-[PS10, Lemma 71.6; Gar26, Lemma 3.3]. -/
+[PS10, Lemma 71.6; Gar26, Lemma 3.3]. The `t(n)·ℓ(n)` bits are read at the length
+`(t·ℓ)(n)` through `PolyExpr.eval_mul`. -/
 def copies (t : PolyExpr) (X : Ensemble ℓ) : Ensemble (.mul t ℓ) where
   σ n := Fin (t.eval n) → X.σ n
-  X n s := (blocks (t.eval n) (ℓ.eval n)).symm (TCSlib.Cryptography.copies (t.eval n) (X.X n) s)
+  X n s := (FunFamily.blocks (t.eval n) (ℓ.eval n)).symm
+    (TCSlib.Cryptography.copies (t.eval n) (X.X n) s) ∘ Fin.cast (PolyExpr.eval_mul t ℓ n)
 
 /-- Unfolding of `copies`: bit `i` of the concatenation is bit `i mod ℓ` of copy `i / ℓ`
-(through `finProdFinEquiv`).
+(through `finProdFinEquiv`, after reading `i` at `t(n)·ℓ(n)` by `PolyExpr.eval_mul`).
 
 **Proof sketch.** Expand the copied ensemble's sample field and apply the inverse block
 and copy family equations. -/
 theorem copies_X (t : PolyExpr) (X : Ensemble ℓ) (n : ℕ) (s : Fin (t.eval n) → X.σ n)
-    (i : Fin (t.eval n * ℓ.eval n)) :
-    (X.copies t).X n s i = X.X n (s (finProdFinEquiv.symm i).1) (finProdFinEquiv.symm i).2 := by
-  simp only [copies, blocks_eq, FunFamily.blocks_symm_apply, TCSlib.Cryptography.copies_def,
-    finProdFinEquiv_symm_apply]
+    (i : Fin ((PolyExpr.mul t ℓ).eval n)) :
+    (X.copies t).X n s i =
+      X.X n (s (finProdFinEquiv.symm (Fin.cast (PolyExpr.eval_mul t ℓ n) i)).1)
+        (finProdFinEquiv.symm (Fin.cast (PolyExpr.eval_mul t ℓ n) i)).2 := by
+  simp only [copies, Function.comp_apply, FunFamily.blocks_symm_apply,
+    TCSlib.Cryptography.copies_def, finProdFinEquiv_symm_apply]
 
 /-- The uniform ensemble is efficiently samplable: `s := ℓ` and the sampler returns its coins
 (`pairSndD` of `⟨1^n, r⟩`). Non-vacuity of `Samplable` (the case `U_n` of D6). -/
@@ -540,7 +544,8 @@ theorem Ensemble.Indist.copies {ℓ : PolyExpr} {X Y : Ensemble ℓ} (h : X.Indi
   -- the distinguisher of `t(n)`-tuples behind `D`
   obtain ⟨D', hD'⟩ : ∃ D' : ∀ n, (Fin (t.eval n) → Fin (ℓ.eval n) → Bool) → D.Coins n → Bool,
       ∀ n v r, D' n v r = D.distinguisher n ((PolyExpr.mul t ℓ).eval n)
-        ((EnsembleLemmas.blocks (t.eval n) (ℓ.eval n)).symm v) r := ⟨_, fun _ _ _ => rfl⟩
+        ((FunFamily.blocks (t.eval n) (ℓ.eval n)).symm v ∘ Fin.cast (PolyExpr.eval_mul t ℓ n)) r :=
+    ⟨_, fun _ _ _ => rfl⟩
   have hadv : ∀ n, distAdv ((X.copies t).X n) ((Y.copies t).X n)
       (D.distinguisher n ((PolyExpr.mul t ℓ).eval n)) =
       distAdv (TCSlib.Cryptography.copies (t.eval n) (X.X n))
@@ -576,9 +581,9 @@ theorem Ensemble.Indist.copies {ℓ : PolyExpr} {X Y : Ensemble ℓ} (h : X.Indi
     obtain ⟨e, he⟩ : ∃ e : ((Fin (t.eval n) → Fin (sX.eval n) → Bool) ×
         (Fin (t.eval n) → Fin (sY.eval n) → Bool)) × D.Coins n ≃ B.Coins n,
         ∀ c, e c = EnsembleLemmas.coinsEquiv hlen
-          (EnsembleLemmas.coinsEquiv rfl ((EnsembleLemmas.blocks _ _).symm c.1.1,
-            (EnsembleLemmas.blocks _ _).symm c.1.2), c.2) :=
-      ⟨((((EnsembleLemmas.blocks _ _).symm.prodCongr (EnsembleLemmas.blocks _ _).symm).trans
+          (EnsembleLemmas.coinsEquiv rfl ((FunFamily.blocks _ _).symm c.1.1,
+            (FunFamily.blocks _ _).symm c.1.2), c.2) :=
+      ⟨((((FunFamily.blocks _ _).symm.prodCongr (FunFamily.blocks _ _).symm).trans
         (EnsembleLemmas.coinsEquiv rfl)).prodCongr (Equiv.refl _)).trans
           (EnsembleLemmas.coinsEquiv hlen), fun _ => rfl⟩
     have hpt : ∀ (z : Fin (ℓ.eval n) → Bool) c, B.distinguisher n (ℓ.eval n) z (e c) =
@@ -587,10 +592,13 @@ theorem Ensemble.Indist.copies {ℓ : PolyExpr} {X Y : Ensemble ℓ} (h : X.Indi
           (fun r : Fin (sY.eval n) → Bool => padFin (ℓ.eval n) (SY (NUPPT.advInput n (List.ofFn r))))
           (t.eval n) (k n) (D' n) z c := by
       intro z c
+      have hcast : ∀ w : Fin (t.eval n * ℓ.eval n) → Bool,
+          List.ofFn (w ∘ Fin.cast (PolyExpr.eval_mul t ℓ n)) = List.ofFn w :=
+        fun w => (List.ofFn_congr (PolyExpr.eval_mul t ℓ n).symm w).symm
       rw [he]
       simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq,
           EnsembleLemmas.ofFn_coinsEquiv, hB,
-        multicopyRed_def, hD']
+        multicopyRed_def, hD', hcast]
     have hdist : ∀ Z : Ensemble ℓ, acceptProb (Z.X n) (B.distinguisher n (ℓ.eval n)) =
         acceptProb (Z.X n) (multicopyRed (X.X n) (Y.X n) (t.eval n) (k n) (D' n)) := by
       intro Z
