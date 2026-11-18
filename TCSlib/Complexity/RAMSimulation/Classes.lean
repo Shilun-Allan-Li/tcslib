@@ -6,6 +6,8 @@ Authors: Seyoon Ragavan
 import TCSlib.Complexity.RAMSimulation.Simulation
 import TCSlib.Complexity.ClassP.P
 import TCSlib.Complexity.SpaceComplexity.SpaceClasses
+import TCSlib.Complexity.ClassNP.PolyTime
+import TCSlib.Programs.WordRAM.Output
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -23,6 +25,8 @@ nondeterministic space grades, with read-once coins).
 ## Main results
 
 * `WordRAM.mem_DTIME_of_decides`, `WordRAM.mem_P_of_decides`, `WordRAM.mem_P_of_decides_logWord`.
+* `WordRAM.polyTimeComputable_of_computes`, `WordRAM.polyTimeComputable_progOut`: polynomial-time
+  functions from programs (function mode).
 * `WordRAM.mem_SPACE_of_decides`, `WordRAM.mem_LOGSPACE_of_decides`,
   `WordRAM.computesInSpace_of_computes`, `WordRAM.mem_SPACE_mul_of_decides`.
 * `WordRAM.mem_NSPACE_of_accepts`, `WordRAM.mem_NL_of_accepts`.
@@ -195,6 +199,39 @@ theorem mem_P_of_decides_logWord (P : XProgram) (L : Language Bool) (c C d : ℕ
     obtain ⟨t, f, o, ht, ho⟩ := hdec x
     refine ⟨t, f, o, ht.trans ?_, ho⟩
     exact Nat.mul_le_mul (by omega) (Nat.pow_le_pow_right (by omega) (by omega))
+
+/-- **Polynomial-time functions from programs.** If `P`, with a word size of polynomial value
+computable in polynomial time, emits `g x` on every input `x` within polynomially many steps, then
+`g` is computable in polynomial time. [AB09, Definition 1.13, Exercise 1.9]
+
+**Proof sketch.** As `mem_P_of_decides`, in function mode. `exists_simulation P true hW` gives a
+machine and a constant `A`; `outputOf_true` reads its output as `g x`. `HaltsWithin.touches_le`
+and `HaltsWithin.mono` give the bounds `C·(n + 1)^d` steps and `3·C·(n + 1)^d` cells, and
+`polynomial_time_bound` bounds the simulation's deadline by `(A + 1)·a·(n + 1)^(3d + 1)`.
+`Turing.FinTM.ComputesInTime.mono` enlarges each run's deadline to it, and
+`Complexity.polyTimeComputable_iff` packages the machine. -/
+theorem polyTimeComputable_of_computes (P : XProgram) (g : List Bool → List Bool)
+    {W TW SW : ℕ → ℕ} (hW : WordSizeComputable W TW SW) (C d : ℕ)
+    (hWpoly : ∀ n, TW n + W n ≤ C * (n + 1) ^ d)
+    (hcomp : ∀ x : List Bool, ∃ (t f : ℕ) (v : Bool), t ≤ C * (x.length + 1) ^ d ∧
+      HaltsWithin P x [] (W x.length) t v (g x) f) :
+    Complexity.PolyTimeComputable g := by
+  sorry
+
+/-- **The output of a program halting in polynomial time is computable in polynomial time.** If
+`P` halts on every input within polynomially many steps, with a word size of polynomial value
+computable in polynomial time, then its output function `progOut P W` is computable in polynomial
+time. A consumer then proves halting on every input, and correctness, `progOut P W x = g x`, only
+where it needs it. [AB09, Definition 1.13, Exercise 1.9]
+
+**Proof sketch.** `polyTimeComputable_of_computes` with `g := progOut P W`, where `progOut_eq`
+identifies each halting run's output with `progOut P W x`. -/
+theorem polyTimeComputable_progOut (P : XProgram) {W TW SW : ℕ → ℕ}
+    (hW : WordSizeComputable W TW SW) (C d : ℕ) (hWpoly : ∀ n, TW n + W n ≤ C * (n + 1) ^ d)
+    (hhalt : ∀ x : List Bool, ∃ (t f : ℕ) (v : Bool) (o : List Bool),
+      t ≤ C * (x.length + 1) ^ d ∧ HaltsWithin P x [] (W x.length) t v o f) :
+    Complexity.PolyTimeComputable (progOut P W) := by
+  sorry
 
 /-! ## The space grades: L, log-space transducers, Savitch's shape -/
 

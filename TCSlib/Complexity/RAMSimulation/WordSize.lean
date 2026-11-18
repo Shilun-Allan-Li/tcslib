@@ -7,6 +7,7 @@ import TCSlib.Complexity.SpaceComplexity.Constructible
 import TCSlib.Complexity.SpaceComplexity.ConfigCount
 import TCSlib.Complexity.TuringMachine.Build.InterpreterStartup
 import TCSlib.Complexity.TuringMachine.Build.Rewind
+import TCSlib.Complexity.ClassP.TimeConstructiblePoly
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -28,6 +29,8 @@ A word-RAM simulation computes its input-dependent word size once at startup.
 * `WordRAM.WordSizeComputable.mono` weakens the time and space bounds.
 * `WordRAM.wordSizeComputable_logSpace` supplies logarithmic word sizes in linear time.
 * `WordRAM.wordSizeComputable_of_spaceConstructible` supplies space-constructible word sizes.
+* `WordRAM.wordSizeComputable_of_timeConstructible` and `WordRAM.wordSizeComputable_poly` supply
+  time-constructible and polynomial word sizes, in time linear in their value.
 
 ## References
 
@@ -913,5 +916,30 @@ theorem wordSizeComputable_of_spaceConstructible {S : ℕ → ℕ}
       apply Nat.mul_le_mul_left
       omega
     _ = _ := by ring
+
+/-! ## Polynomial word sizes -/
+
+/-- **A time-constructible function is a word size computable in time and space linear in its
+value.** [AB09, §1.3]
+
+**Proof sketch.** `Complexity.timeConstructible_iff` gives a machine writing `Nat.bits (T |x|)`
+within `c·(T |x| + 1)` steps. Its visited work cells are at most its number of tapes times the
+time plus one (`Turing.MultiTapeTM.spaceUsed_le_mul_succ`), which is linear in `T |x| + 1`. -/
+theorem wordSizeComputable_of_timeConstructible {T : ℕ → ℕ}
+    (hT : Complexity.TimeConstructible T) :
+    ∃ a : ℕ, WordSizeComputable T (fun n => a * (T n + 1)) (fun n => a * (T n + 1)) := by
+  sorry
+
+/-- **Polynomial word sizes**: `n ↦ C·(n+1)^(c+1)`, for `C > 0`, is a word size computable within
+time and space `a·(n+1)^(c+1)`. Words this wide hold, for instance, residues modulo a prime of
+polynomially many bits. [AB09, §1.3]
+
+**Proof sketch.** `wordSizeComputable_of_timeConstructible` applied to
+`Complexity.timeConstructible_poly C c hC`, then `WordSizeComputable.mono` with
+`C·(n+1)^(c+1) + 1 ≤ (C + 1)·(n+1)^(c+1)`. -/
+theorem wordSizeComputable_poly (C c : ℕ) (hC : 0 < C) :
+    ∃ a : ℕ, WordSizeComputable (fun n => C * (n + 1) ^ (c + 1))
+      (fun n => a * (n + 1) ^ (c + 1)) (fun n => a * (n + 1) ^ (c + 1)) := by
+  sorry
 
 end WordRAM
