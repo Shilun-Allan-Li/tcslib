@@ -1,0 +1,315 @@
+{
+ "base_summary": "declarations screened: 3; copy pairs (target reproduces >= half of source): 0; reproduced text: 0 chars",
+ "head_summary": "declarations screened: 152; copy pairs (target reproduces >= half of source): 30; reproduced text: 6,654 chars",
+ "population_base": [
+  "TCSlib/Complexity/TuringMachine/Build/KeyTable.lean"
+ ],
+ "population_head": [
+  "TCSlib/Complexity/TuringMachine/Build/KeyTable.lean"
+ ],
+ "new": 30,
+ "gone": 0,
+ "net_directed_pairs": "0 -> 30",
+ "pairs": [
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_copyContract",
+   "source": "KeyTable.lean::kt_copyTM",
+   "chars": 68,
+   "source_chars": 70,
+   "pct": 97,
+   "class": "citation-shape",
+   "note": "The copy row's machine and its contract are the one-line instances `kt_markerTM … copyTM …` and `kt_markerContract … copyTM_contract …` of the shared marker transformer; the match is the argument list."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_closeMarker",
+   "source": "KeyTable.lean::kt_openMarker",
+   "chars": 147,
+   "source_chars": 156,
+   "pct": 94,
+   "class": "sibling-uniformity",
+   "note": "The marker cell writes (open, close, the cell's post-state): the same tape-cell update with different symbols."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_openMarker",
+   "source": "KeyTable.lean::kt_closeMarker",
+   "chars": 147,
+   "source_chars": 164,
+   "pct": 90,
+   "class": "sibling-uniformity",
+   "note": "The marker cell writes (open, close, the cell's post-state): the same tape-cell update with different symbols."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_cellPost",
+   "source": "KeyTable.lean::kt_openMarker",
+   "chars": 132,
+   "source_chars": 156,
+   "pct": 85,
+   "class": "sibling-uniformity",
+   "note": "The marker cell writes (open, close, the cell's post-state): the same tape-cell update with different symbols."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_fieldsTape_append",
+   "source": "KeyTable.lean::kt_fieldSpan_append",
+   "chars": 146,
+   "source_chars": 175,
+   "pct": 83,
+   "class": "parallel",
+   "note": "Appending a field to the tape image versus to its span length; the shared text is the `List.append` induction step."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_cellPost",
+   "source": "KeyTable.lean::kt_closeMarker",
+   "chars": 130,
+   "source_chars": 164,
+   "pct": 79,
+   "class": "sibling-uniformity",
+   "note": "The marker cell writes (open, close, the cell's post-state): the same tape-cell update with different symbols."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_openMarker",
+   "source": "KeyTable.lean::kt_markerWrite",
+   "chars": 61,
+   "source_chars": 80,
+   "pct": 76,
+   "class": "sibling-uniformity",
+   "note": "The marker cell writes (open, close, the cell's post-state): the same tape-cell update with different symbols."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_openMarker_word",
+   "source": "KeyTable.lean::kt_openMarker_word_other",
+   "chars": 71,
+   "source_chars": 94,
+   "pct": 76,
+   "class": "sibling-uniformity",
+   "note": "The marked cell's own word and every other word under the open marker."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_markerContract_pre_time",
+   "source": "KeyTable.lean::kt_markerContract_post",
+   "chars": 341,
+   "source_chars": 453,
+   "pct": 75,
+   "class": "citation-shape",
+   "note": "Contract and post-state lemmas of the marker transformer and the table layout (`kt_markerContract_*`, `kt_markerRowStart`, `kt_phaseEntry`, `kt_*Post`, `kt_markerWrite_other`, `kt_tableFields_value`): each states a different field or row, and the shared text is the transformer's field obligations and the layout readers."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_copy_run",
+   "source": "KeyTable.lean::kt_compare_run",
+   "chars": 683,
+   "source_chars": 999,
+   "pct": 68,
+   "class": "parallel",
+   "note": "The marked copy and the marked compare sweeps, each through its own catalog contract (`copyTM_contract`, the comparator) placed by the shared marker transformer `kt_markerContract`; the shared text is the transformer's obligations."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_keyTableWrite_eq",
+   "source": "KeyTable.lean::kt_keyTableWrite_frame",
+   "chars": 277,
+   "source_chars": 415,
+   "pct": 67,
+   "class": "parallel",
+   "note": "The table write's value equation and its frame equation (cells outside the entry unchanged), each through `kt_fieldsTape_append`/the layout readers."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_copyContract_post",
+   "source": "KeyTable.lean::kt_closeMarker_openMarker",
+   "chars": 283,
+   "source_chars": 428,
+   "pct": 66,
+   "class": "citation-shape",
+   "note": "Contract and post-state lemmas of the marker transformer and the table layout (`kt_markerContract_*`, `kt_markerRowStart`, `kt_phaseEntry`, `kt_*Post`, `kt_markerWrite_other`, `kt_tableFields_value`): each states a different field or row, and the shared text is the transformer's field obligations and the layout readers."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::exists_keyAssignTM",
+   "source": "KeyTable.lean::exists_keyLookupTM",
+   "chars": 146,
+   "source_chars": 223,
+   "pct": 65,
+   "class": "parallel",
+   "note": "The two targets: lookup and assignment each package their own phase machine (`kt_lookup_end_run`, `kt_assign_end_run`) with the same `C = 64` arithmetic; the shared text is the packaging."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_markerPost_openMarker",
+   "source": "KeyTable.lean::kt_markerRowStart",
+   "chars": 414,
+   "source_chars": 637,
+   "pct": 65,
+   "class": "citation-shape",
+   "note": "Contract and post-state lemmas of the marker transformer and the table layout (`kt_markerContract_*`, `kt_markerRowStart`, `kt_phaseEntry`, `kt_*Post`, `kt_markerWrite_other`, `kt_tableFields_value`): each states a different field or row, and the shared text is the transformer's field obligations and the layout readers."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_closeContract_spec",
+   "source": "KeyTable.lean::kt_markerRowStart",
+   "chars": 414,
+   "source_chars": 637,
+   "pct": 65,
+   "class": "citation-shape",
+   "note": "Contract and post-state lemmas of the marker transformer and the table layout (`kt_markerContract_*`, `kt_markerRowStart`, `kt_phaseEntry`, `kt_*Post`, `kt_markerWrite_other`, `kt_tableFields_value`): each states a different field or row, and the shared text is the transformer's field obligations and the layout readers."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_table_value_word",
+   "source": "KeyTable.lean::kt_table_key_word",
+   "chars": 183,
+   "source_chars": 282,
+   "pct": 65,
+   "class": "sibling-uniformity",
+   "note": "Reading the value word versus the key word of an entry through `tableAt_iff`/`keyTableAt_iff`; different field offsets."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_keyTableWrite_frame",
+   "source": "KeyTable.lean::kt_keyTableWrite_eq",
+   "chars": 277,
+   "source_chars": 428,
+   "pct": 65,
+   "class": "parallel",
+   "note": "The table write's value equation and its frame equation (cells outside the entry unchanged), each through `kt_fieldsTape_append`/the layout readers."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_tableControl",
+   "source": "KeyTable.lean::kt_phaseEntry",
+   "chars": 139,
+   "source_chars": 215,
+   "pct": 65,
+   "class": "citation-shape",
+   "note": "Contract and post-state lemmas of the marker transformer and the table layout (`kt_markerContract_*`, `kt_markerRowStart`, `kt_phaseEntry`, `kt_*Post`, `kt_markerWrite_other`, `kt_tableFields_value`): each states a different field or row, and the shared text is the transformer's field obligations and the layout readers."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_openMarker",
+   "source": "KeyTable.lean::kt_cellPost",
+   "chars": 132,
+   "source_chars": 205,
+   "pct": 64,
+   "class": "sibling-uniformity",
+   "note": "The marker cell writes (open, close, the cell's post-state): the same tape-cell update with different symbols."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::exists_keyLookupTM",
+   "source": "KeyTable.lean::exists_keyAssignTM",
+   "chars": 146,
+   "source_chars": 230,
+   "pct": 63,
+   "class": "parallel",
+   "note": "The two targets: lookup and assignment each package their own phase machine (`kt_lookup_end_run`, `kt_assign_end_run`) with the same `C = 64` arithmetic; the shared text is the packaging."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_closeMarker",
+   "source": "KeyTable.lean::kt_cellPost",
+   "chars": 130,
+   "source_chars": 205,
+   "pct": 63,
+   "class": "sibling-uniformity",
+   "note": "The marker cell writes (open, close, the cell's post-state): the same tape-cell update with different symbols."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_tableExits",
+   "source": "KeyTable.lean::kt_phaseEntry",
+   "chars": 131,
+   "source_chars": 215,
+   "pct": 61,
+   "class": "citation-shape",
+   "note": "Contract and post-state lemmas of the marker transformer and the table layout (`kt_markerContract_*`, `kt_markerRowStart`, `kt_phaseEntry`, `kt_*Post`, `kt_markerWrite_other`, `kt_tableFields_value`): each states a different field or row, and the shared text is the transformer's field obligations and the layout readers."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_payloadPost",
+   "source": "KeyTable.lean::kt_markerPost",
+   "chars": 64,
+   "source_chars": 109,
+   "pct": 59,
+   "class": "citation-shape",
+   "note": "Contract and post-state lemmas of the marker transformer and the table layout (`kt_markerContract_*`, `kt_markerRowStart`, `kt_phaseEntry`, `kt_*Post`, `kt_markerWrite_other`, `kt_tableFields_value`): each states a different field or row, and the shared text is the transformer's field obligations and the layout readers."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_assignEntry_frame",
+   "source": "KeyTable.lean::kt_markerWrite_other",
+   "chars": 94,
+   "source_chars": 161,
+   "pct": 58,
+   "class": "citation-shape",
+   "note": "Contract and post-state lemmas of the marker transformer and the table layout (`kt_markerContract_*`, `kt_markerRowStart`, `kt_phaseEntry`, `kt_*Post`, `kt_markerWrite_other`, `kt_tableFields_value`): each states a different field or row, and the shared text is the transformer's field obligations and the layout readers."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_copyTM",
+   "source": "KeyTable.lean::kt_copyContract",
+   "chars": 68,
+   "source_chars": 120,
+   "pct": 57,
+   "class": "citation-shape",
+   "note": "The copy row's machine and its contract are the one-line instances `kt_markerTM … copyTM …` and `kt_markerContract … copyTM_contract …` of the shared marker transformer; the match is the argument list."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_compare_run",
+   "source": "KeyTable.lean::kt_copy_run",
+   "chars": 683,
+   "source_chars": 1253,
+   "pct": 55,
+   "class": "parallel",
+   "note": "The marked copy and the marked compare sweeps, each through its own catalog contract (`copyTM_contract`, the comparator) placed by the shared marker transformer `kt_markerContract`; the shared text is the transformer's obligations."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_keyTableLength_cons",
+   "source": "KeyTable.lean::kt_tableFields_value",
+   "chars": 78,
+   "source_chars": 148,
+   "pct": 53,
+   "class": "citation-shape",
+   "note": "Contract and post-state lemmas of the marker transformer and the table layout (`kt_markerContract_*`, `kt_markerRowStart`, `kt_phaseEntry`, `kt_*Post`, `kt_markerWrite_other`, `kt_tableFields_value`): each states a different field or row, and the shared text is the transformer's field obligations and the layout readers."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_lookup_end_run",
+   "source": "KeyTable.lean::kt_assign_end_run",
+   "chars": 651,
+   "source_chars": 1236,
+   "pct": 53,
+   "class": "parallel",
+   "note": "End-of-scan runs for lookup and for assignment over the shared entry scan; different continuations (read the payload; rewrite or append)."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_copyContract_post",
+   "source": "KeyTable.lean::kt_markerRowStart",
+   "chars": 335,
+   "source_chars": 637,
+   "pct": 53,
+   "class": "citation-shape",
+   "note": "Contract and post-state lemmas of the marker transformer and the table layout (`kt_markerContract_*`, `kt_markerRowStart`, `kt_phaseEntry`, `kt_*Post`, `kt_markerWrite_other`, `kt_tableFields_value`): each states a different field or row, and the shared text is the transformer's field obligations and the layout readers."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_appendField_keep",
+   "source": "KeyTable.lean::kt_markerWrite_other",
+   "chars": 83,
+   "source_chars": 161,
+   "pct": 52,
+   "class": "citation-shape",
+   "note": "Contract and post-state lemmas of the marker transformer and the table layout (`kt_markerContract_*`, `kt_markerRowStart`, `kt_phaseEntry`, `kt_*Post`, `kt_markerWrite_other`, `kt_tableFields_value`): each states a different field or row, and the shared text is the transformer's field obligations and the layout readers."
+  }
+ ]
+}
