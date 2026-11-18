@@ -77,6 +77,20 @@ def xgcdCoefStep (S : List Bool) : List Bool :=
         (pairFstD S)))))
     (pairFstD S))
 
+/-- The defining equation of `xgcdCoefStep`: on `S = ⟨b, ⟨⟨r', r⟩, ⟨s', s⟩⟩⟩` it is
+`mod ⟨sub ⟨add ⟨s', b⟩, mod ⟨mul ⟨div ⟨r', r⟩, s⟩, b⟩⟩, b⟩` (slots read by the projections). -/
+theorem xgcdCoefStep_eq (S : List Bool) :
+    xgcdCoefStep S = BinArith.mod (pairEncode
+      (BinArith.sub (pairEncode
+        (BinArith.add (pairEncode (pairFstD (pairSndD (pairSndD S))) (pairFstD S)))
+        (BinArith.mod (pairEncode
+          (BinArith.mul (pairEncode
+            (BinArith.div (pairEncode (pairFstD (pairFstD (pairSndD S)))
+              (pairSndD (pairFstD (pairSndD S)))))
+            (pairSndD (pairSndD (pairSndD S)))))
+          (pairFstD S)))))
+      (pairFstD S)) := rfl
+
 /-- One round of the extended Euclidean loop on `S = ⟨b, ⟨⟨r', r⟩, ⟨s', s⟩⟩⟩`: if `r = 0` the
 state is fixed; otherwise `⟨b, ⟨⟨r, r' mod r⟩, ⟨s, (s' − ⌊r'/r⌋ s) mod b⟩⟩⟩` [PS10,
 Algorithm 43.2], in the form of Mathlib's `Nat.xgcdAux`. -/
@@ -98,6 +112,31 @@ def xgcdLoopInit (z : List Bool) : List Bool :=
         (if decide (LogProg.bitsVal (toLE (pairSndD z)) = 0) then Nat.bits 0
           else BinArith.mod (pairEncode (toLE (pairFstD z)) (toLE (pairSndD z)))))
       (pairEncode (Nat.bits 0) (BinArith.mod (pairEncode (Nat.bits 1) (toLE (pairSndD z))))))
+
+/-- The defining equation of `xgcdLoopStep`: a state whose slot `r` has value `0` is kept,
+otherwise `⟨b, ⟨⟨r, mod ⟨r', r⟩⟩, ⟨s, xgcdCoefStep S⟩⟩⟩`. -/
+theorem xgcdLoopStep_eq (S : List Bool) :
+    xgcdLoopStep S =
+      if decide (LogProg.bitsVal (pairSndD (pairFstD (pairSndD S))) = 0) then S
+      else pairEncode (pairFstD S)
+        (pairEncode
+          (pairEncode (pairSndD (pairFstD (pairSndD S)))
+            (BinArith.mod (pairEncode (pairFstD (pairFstD (pairSndD S)))
+              (pairSndD (pairFstD (pairSndD S))))))
+          (pairEncode (pairSndD (pairSndD (pairSndD S))) (xgcdCoefStep S))) := rfl
+
+/-- The defining equation of `xgcdLoopInit`:
+`xgcdLoopInit z = ⟨toLE b, ⟨⟨toLE b, r₀⟩, ⟨bits 0, mod ⟨bits 1, toLE b⟩⟩⟩⟩` with
+`r₀ = bits 0` if `bitsVal (toLE b) = 0` and `r₀ = mod ⟨toLE a, toLE b⟩` otherwise. -/
+theorem xgcdLoopInit_eq (z : List Bool) :
+    xgcdLoopInit z =
+      pairEncode (toLE (pairSndD z))
+        (pairEncode
+          (pairEncode (toLE (pairSndD z))
+            (if decide (LogProg.bitsVal (toLE (pairSndD z)) = 0) then Nat.bits 0
+              else BinArith.mod (pairEncode (toLE (pairFstD z)) (toLE (pairSndD z)))))
+          (pairEncode (Nat.bits 0)
+            (BinArith.mod (pairEncode (Nat.bits 1) (toLE (pairSndD z)))))) := rfl
 
 /-- The output of the loop on `z`: the slot `s'` after `2(|z| + 1)` rounds. -/
 def xgcdLoopOut (z : List Bool) : List Bool :=
@@ -154,7 +193,7 @@ normalized words, and `xgcd_coef_residue` identifies the coefficient. -/
 theorem xgcdLoopStep_state {b r' r : ℕ} (hb : 0 < b) (hr : r ≠ 0) (s' s : ℤ) :
     xgcdLoopStep (xgcdState b r' r ((s' % b).toNat) ((s % b).toNat)) =
       xgcdState b r (r' % r) ((s % b).toNat) (((s' - (r' / r : ℕ) * s) % b).toNat) := by
-  rw [xgcdLoopStep, xgcdCoefStep, xgcdState_eq, xgcdState_eq]
+  rw [xgcdLoopStep_eq, xgcdCoefStep_eq, xgcdState_eq, xgcdState_eq]
   simp only [pairFstD_pairEncode, pairSndD_pairEncode, LogProg.bitsVal_bits,
     BinArith.div_pairEncode,
     BinArith.mul_pairEncode, BinArith.mod_pairEncode, BinArith.add_pairEncode,
@@ -164,7 +203,7 @@ theorem xgcdLoopStep_state {b r' r : ℕ} (hb : 0 < b) (hr : r ≠ 0) (s' s : �
 /-- A state with `r = 0` is fixed by the round. -/
 theorem xgcdLoopStep_of_zero (S : List Bool)
     (h : LogProg.bitsVal (pairSndD (pairFstD (pairSndD S))) = 0) : xgcdLoopStep S = S := by
-  rw [xgcdLoopStep, if_pos (decide_eq_true h)]
+  rw [xgcdLoopStep_eq, if_pos (decide_eq_true h)]
 
 /-! ### Invariant and potential -/
 
@@ -176,6 +215,14 @@ def XgcdLoopInv (a b : ℕ) (S : List Bool) : Prop :=
   ∃ (r r' : ℕ) (s t s' t' : ℤ), r ≤ b ∧ r' ≤ b ∧
     S = xgcdState b r' r ((s' % b).toNat) ((s % b).toNat) ∧
     Nat.xgcdAux r s t r' s' t' = Nat.xgcdAux (a % b) 1 0 b 0 1
+
+/-- The reader of `XgcdLoopInv`: `XgcdLoopInv a b S` holds iff `S` is an encoded state
+`⟨b, r', r, s' mod b, s mod b⟩` with `r, r' ≤ b` and
+`xgcdAux r s t r' s' t' = xgcdAux (a mod b) 1 0 b 0 1` for some `s, t, s', t'`. -/
+theorem xgcdLoopInv_iff (a b : ℕ) (S : List Bool) :
+    XgcdLoopInv a b S ↔ ∃ (r r' : ℕ) (s t s' t' : ℤ), r ≤ b ∧ r' ≤ b ∧
+      S = xgcdState b r' r ((s' % b).toNat) ((s % b).toNat) ∧
+      Nat.xgcdAux r s t r' s' t' = Nat.xgcdAux (a % b) 1 0 b 0 1 := Iff.rfl
 
 /-- The potential of a state: `0` when `r = 0`, else the number of recursive calls of the
 textbook algorithm on `(r', r)` plus one ([PS10, Claim 43.3], `extEuclidCalls`). -/
@@ -241,7 +288,7 @@ theorem xgcdLoopInv_init (z : List Bool) (hb : 0 < listToNat (pairSndD z)) :
     rw [bitsVal_toLE]; exact hb.ne'
   have h1 : ((1 : ℤ) % (b : ℤ)).toNat = 1 % b := by
     rw [← Int.natCast_one, ← Int.natCast_mod, Int.toNat_natCast]
-  rw [xgcdLoopInit, if_neg (by simpa using hb0), xgcdState_eq, toLE_eq_natBits, toLE_eq_natBits,
+  rw [xgcdLoopInit_eq, if_neg (by simpa using hb0), xgcdState_eq, toLE_eq_natBits, toLE_eq_natBits,
     BinArith.mod_pairEncode, BinArith.mod_pairEncode, Int.zero_emod, Int.toNat_zero, h1]
 
 /-- Glue. Every encoded state of numbers at most `b` has length at most `11 (|bits b| + 1)`. -/
@@ -273,7 +320,7 @@ theorem xgcdLoopOut_spec (z : List Bool) (hb : 0 < listToNat (pairSndD z)) :
     xgcdLoopMeasure hI
     (fun _ h => (xgcdLoopInv_step hb h).2.1) (fun _ h => (xgcdLoopInv_step hb h).2.2)
     (2 * (z.length + 1) ^ 1) _ (xgcdLoopInv_init z hb) (by
-      rw [xgcdLoopInit, if_neg (by rw [bitsVal_toLE]; simpa using hb.ne'), toLE_eq_natBits,
+      rw [xgcdLoopInit_eq, if_neg (by rw [bitsVal_toLE]; simpa using hb.ne'), toLE_eq_natBits,
         toLE_eq_natBits, BinArith.mod_pairEncode, BinArith.mod_pairEncode, ← xgcdState_eq,
         xgcdLoopMeasure_state]
       split_ifs with h0
@@ -313,7 +360,7 @@ theorem length_xgcdLoop_le (z : List Bool) (i : ℕ) :
     have hinit : xgcdLoopInit z = pairEncode (toLE (pairSndD z))
         (pairEncode (pairEncode (toLE (pairSndD z)) (Nat.bits 0))
           (pairEncode (Nat.bits 0) (Nat.bits 1))) := by
-      rw [xgcdLoopInit, if_pos (decide_eq_true h0), toLE_eq_natBits, BinArith.mod_pairEncode, hb,
+      rw [xgcdLoopInit_eq, if_pos (decide_eq_true h0), toLE_eq_natBits, BinArith.mod_pairEncode, hb,
         Nat.mod_zero]
     have hfix : xgcdLoopStep (xgcdLoopInit z) = xgcdLoopInit z := by
       apply xgcdLoopStep_of_zero
