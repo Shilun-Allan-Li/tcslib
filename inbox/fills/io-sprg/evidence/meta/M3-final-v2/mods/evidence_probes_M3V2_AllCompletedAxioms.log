@@ -1,0 +1,885 @@
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.encodeList_injective_of_fixedWidth' depends on axioms: [propext]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.encodeList_length_of_fixedWidth' depends on axioms: [propext,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.pubDegree_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.privDegree_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.weightedTotalDegree_add_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.weightedTotalDegree_mul_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.weightedTotalDegree_finset_sum_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.weightedTotalDegree_finset_prod_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.weightedTotalDegree_C' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.weightedTotalDegree_X_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.pubDegree_zero' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.privDegree_zero' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.pubDegree_C' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.privDegree_C' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.pubDegree_X_inl' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.pubDegree_X_inr' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.privDegree_X_inl' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.privDegree_X_inr' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.pubDegree_add_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.privDegree_add_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.pubDegree_mul_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.privDegree_mul_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.pubDegree_finset_sum_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.privDegree_finset_sum_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.pubDegree_finset_prod_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.privDegree_finset_prod_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.pubDegree_rename' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.privDegree_rename' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.D_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.ℓ_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.n_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.m_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.noiseWidth_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.noiseDenAt_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.w_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.W_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.W_eq_noiseDenAt' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.t_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.rc_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.cap_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.B_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.Γ_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.kappaOf_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.kappaOfN_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.pubLen_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.SVar_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.sLen_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.priv_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.privLen_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.sVarEquiv_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.privEquiv_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.pub_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.pubEquiv_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.idx'_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.D_pos' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.noiseWidth_pos' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.noiseDenAt_pos' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.W_pos' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.B_pos' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.kappaOf_pow' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.kappaOf_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.kappaOfN_n' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.kappaOfN_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnModulus_le_pow' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnSamples_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnFamily_raw_samples' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnFamily_raw_modulus' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnFamily_raw_noiseDen' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnFamily_raw_samplesBound' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnFamily_raw_residueBits' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.le_n' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.Γ_le_B' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.le_log_n' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.residueEquiv_eq' depends on axioms: [propext,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.vectorEquiv_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.matrixEquiv_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.boolVectorEquiv_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.noiseSeedEquiv_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.noiseVectorEquiv_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.ConstructionEncoding.oneDrawEquiv_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.idDraw_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.draw_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.seed_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.idxCard_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.idDrawCard_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.drawCard_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.idxEquiv_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.idDrawEquiv_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.drawEquiv_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.encBuckets_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.encIdx'_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.encIdDraw_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.encOneDraw_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.encDraw_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.encSeed'_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.ellBound_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.nBound_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.mBound_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.bucketBound_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.rcBound_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.pubBound_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.sVarBound_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.seedBound_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.idxBound_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.ell_le_ellBound' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.n_le_nBound' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.m_le_mBound' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.W_le_ell_add_one' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.W_le_two_pow_ell_add_one' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.B_le_bucketBound' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.rc_le_rcBound' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.sLen_le_sVarBound' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.pubLen_le_seedBound' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.privLen_le_seedBound' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.encBuckets_injective' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.encIdx'_injective' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.encIdDraw_injective' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.encOneDraw_injective' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.encDraw_injective' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.encSeed'_injective' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.encIdx'_length_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.lpnNoise_coins' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.lpnNoise_sample' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.lpnNoise_law' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.lpnNoise_law_cast' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.parameters_dimension' depends on axioms: [propext]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.parameters_samples' depends on axioms: [propext]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.parameters_modulus' depends on axioms: [propext]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.noise_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.toLWE_parameters' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.toLWE_noise' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.toLWE_dimensionBound' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.toLWE_samplesBound' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.toLWE_residueBits' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.adv_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.assumption_toLWE_iff' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.assumption_iff' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.draw_eq' depends on axioms: [propext]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.drawCard_eq' depends on axioms: [propext]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.residueEquiv_eq' depends on axioms: [propext, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.vectorEquiv_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.matrixEquiv_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.noiseSeedEquiv_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.noiseVectorEquiv_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.drawEquiv_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.sample_eq' depends on axioms: [propext]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.sampleCore_eq' depends on axioms: [propext, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.sampleLaw_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.sampleWord_eq' depends on axioms: [propext]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.encDraw_eq' depends on axioms: [propext, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.encDraw_injective' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.encSample_eq' depends on axioms: [propext]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.Raw.encSample_injective' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.toLWE_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.adv_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.LPNFamily.assumption_iff' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.bucket_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.load_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.overfull_iff' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.rank_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.indexMap_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.rank_lt_load' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.eq_of_rank_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.indexMap_some_of_not_overfull' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.indexMap_none_of_overfull' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.indexMap_injective_on_bucket' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.bucketMatrix_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.bucketMatrix_apply_indexMap' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Buckets.bucketMatrix_nonzero_card_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseEntries_eq' does not depend on any axioms
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseLeft_eq' does not depend on any axioms
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseRight_eq' does not depend on any axioms
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseFactor_eq' does not depend on any axioms
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseFactor_fst' does not depend on any axioms
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseFactor_snd' does not depend on any axioms
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseEntries_nodup' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.mem_sparseEntries_iff' depends on axioms: [propext, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseEntries_length_eq_card' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseFactor_mul' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseFactor_mul_of_card_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.monomialSlot_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.monomialSlot_two_halves_card_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.var_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.structPoly_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.outputIndex_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.bVar_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.sVar_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.uCoord_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.vCoord_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.linearCoeff_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.halfForm_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.prgPoly_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.correctionPoly_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.G1_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.G2_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.G3_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.G4struct_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.G4_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.halfForm_pubDegree_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.halfForm_privDegree_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.prgPoly_degrees' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.correctionPoly_degrees' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.G3_degrees' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.G4_degrees' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.halfForm_eval' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.G1_eval' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.G3_eval_of_scaled' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.PrimeParam.enc_eq' depends on axioms: [propext]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.primeSchedule_eq' depends on axioms: [propext]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.PrimeSchedule.nonempty' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.SPRG.Raw.instIdxFintype_eq' depends on axioms: [propext, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.SPRG.Raw.instIdDrawFintype_eq' depends on axioms: [propext, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.SPRG.Raw.instSdDrawFintype_eq' depends on axioms: [propext, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.SPRG.Raw.seed_eq' depends on axioms: [propext, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.SPRG.Raw.idSamp_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.SPRG.Raw.sdSamp_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.SPRG.Raw.encPP_eq' depends on axioms: [propext, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.SPRG.Raw.encSeed_eq' depends on axioms: [propext, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.SPRG.Raw.challengeStr_eq' depends on axioms: [propext, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.SPRG.Raw.game_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.SPRG.Raw.adv_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.SPRG.Raw.secure_iff' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.SPRG.Raw.subexpSecure_iff' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.SPRG.Raw.seedBits_eq' depends on axioms: [propext, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.SPRG.Raw.hasPolyStretch_iff' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.SPRG.Raw.hasComplexity_iff' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.SPRG.Raw.evalEfficient_iff' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.SPRG.Raw.idWord_eq' depends on axioms: [propext, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.SPRG.Raw.sdWord_eq' depends on axioms: [propext, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.SPRG.Raw.hasComplexityEff_iff' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.SPRG.Raw.HasComplexityEff.hasComplexity' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.SPRG.secure_iff' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.SPRG.hasComplexity_iff' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.SPRG.hasComplexityEff_iff' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.SPRG.hasPolyStretch_iff' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.SPRG.adv_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.noiseValue_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.errSet_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.badSet_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.oneFlag_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.corr_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.lpnVector_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.oneSd_flag' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.oneSd_pub' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.oneSd_priv' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.firstGood_eq' does not depend on any axioms
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.packSeed_fst' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.packSeed_snd' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.sdCore_σ' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.sdCore_draw' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.sdCore_instances' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.sdCore_first' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.sdCore_err' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.sdCore_seed' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.idCore_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.idSamp'_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.sdSampFull_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.sdSamp'_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.eval'_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.challengeStr_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.primeWidthBound' depends on axioms: [propext]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.jlsSPRG_raw_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.jlsSPRG_raw_modulus' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.jlsSPRG_raw_residueBits' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.jlsSPRG_raw_Idx' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.jlsSPRG_raw_IdDraw' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.jlsSPRG_raw_pubLen' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.jlsSPRG_raw_privLen' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.jlsSPRG_raw_outLen' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.jlsSPRG_raw_encIdx' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.jlsSPRG_raw_idCore' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.jlsSPRG_raw_encIdDraw' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.jlsSPRG_raw_SdDraw' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.jlsSPRG_raw_sdCore' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.jlsSPRG_raw_encSdDraw' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.jlsSPRG_raw_eval' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.jlsSPRG_raw_idSamp' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.jlsSPRG_raw_sdSamp' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.jlsSPRG_raw_encPP' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.firstGood_none_iff' depends on axioms: [propext, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.firstGood_some_flag' depends on axioms: [propext]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.firstGood_some_minimal' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.packSeed_public_block' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.packSeed_error' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.packSeed_flag' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.packSeed_unscaled' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.packSeed_scaled' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.oneFlag_bounds' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.corr_zero_of_not_bad' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.oneSd_factors_mul' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.G1_eval_of_good' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.correctionPoly_eval_oneSd' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.G2_eval_of_flag' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.G4_eval_sdCore' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.G4_eval_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.eval'_correct' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.G4_seed_allOutputs' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.jls_hasComplexity' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.E0_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.seedBitsAt_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.seedBitsAt_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.w_lower' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.stretch_gaps' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.eventually_seed_relative_gap' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.jls_seedBits_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.jls_seedBits_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.jls_hasPolyStretch' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.binomial_bound' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.bucket_tail' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.some_bucket_tail' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.full_bucket_tail' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.some_full_bucket_tail' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.cond1_iff' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.cond2_iff' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.cond3_iff' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.jointLaw_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.jointLaw_prob_eq_uprob' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.errProb_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.errProb_nonneg' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.badSet_expect_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.cond1_prob_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.bucket_count_upper' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.bucket_count_lower' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.prefactor_eventually_le_two_pow' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.binomial_ratio_quarter' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.smallset_bucket_tail_quarter' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.capacity_bucket_tail_quarter' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.cond1_single_le_quarter' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.cond1_repetitions_fixed_index' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.cond1_all_fixed_index' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.cond1_all_joint' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.cond3_joint_le_quarter_pow' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.cond2_sparse_joint_le_quarter_pow' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.errProb_le_decomposition' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.claim42' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]

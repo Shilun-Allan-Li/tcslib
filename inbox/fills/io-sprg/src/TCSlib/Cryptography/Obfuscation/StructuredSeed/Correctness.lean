@@ -396,7 +396,7 @@ theorem G4_eval_sdCore (P : Params) (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' 
   rw [P.G4struct_eq, MvPolynomial.eval_sum]
   simp_rw [hG]
   cases hf : first with
-  | none => simp [hf]
+  | none => simp
   | some q =>
     have hflag : (inst q).flag = true :=
       firstGood_some_flag (fun k => (inst k).flag) q hf
@@ -437,8 +437,8 @@ theorem eval'_correct (P : Params) (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' �
   rw [P.eval'_eq]
   change decide (MvPolynomial.eval (Sum.elim x.seed.1 x.seed.2) (P.G4 κ pp I j) = 1) = _
   rw [hx j]
-  cases he : x.err <;>
-    cases hb : P.G.eval (P.n κ) I.1 x.σ (P.outputIndex κ j) <;> simp [he, hb]
+  cases x.err <;>
+    cases P.G.eval (P.n κ) I.1 x.σ (P.outputIndex κ j) <;> simp
 
 end Params
 
@@ -468,7 +468,7 @@ theorem Params.G4_seed_allOutputs (P : Params) (κ : ℕ) (pp : PrimeParam κ)
       rw [OracleComp.allOutputs_pure] at hfield hbit ⊢
       intro j
       rw [hbit j, hfield j]
-      cases he : x.err <;> simp [he]
+      cases x.err <;> simp
     | query i a k ih =>
       rw [OracleComp.allOutputs_query] at hfield hbit ⊢
       intro y

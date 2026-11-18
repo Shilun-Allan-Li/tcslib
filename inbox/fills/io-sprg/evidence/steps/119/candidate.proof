@@ -1,0 +1,106 @@
+by
+  classical
+  let Space := P.IdDraw κ pp × P.Draw κ pp
+  let out : Space → P.Idx' κ pp × P.SdCoreOut κ pp := fun z =>
+    (P.idCore κ pp z.1, P.sdCore κ pp (P.idCore κ pp z.1) z.2)
+  have hjoint : ∀ event : (P.Idx' κ pp × P.SdCoreOut κ pp) → Prop,
+      ProbComp.prob (P.jointLaw κ pp) event =
+        uprob (fun z : Space => event (out z)) := ?_
+  swap
+  · intro event
+    calc
+      ProbComp.prob (P.jointLaw κ pp) event =
+        ProbComp.prob
+          ((ProbComp.sample (P.IdDraw κ pp)).bind fun a =>
+            (ProbComp.sample (P.Draw κ pp)).bind fun d => .pure (a, d))
+          (fun z => event (out z)) := ?_
+      _ = ProbComp.prob (ProbComp.sample Space) (fun z => event (out z)) :=
+        Bridge.prob_sample_pair (fun z => event (out z))
+      _ = uprob (fun z : Space => event (out z)) :=
+        Bridge.prob_sample_eq_uprob (fun z : Space => event (out z))
+    simp only [P.jointLaw_eq, P.idSamp'_eq, P.sdSampFull_eq,
+      ProbComp.prob_eq_expect, ProbComp.expect_bind, ProbComp.expect_map,
+      ProbComp.expect_pure, out]
+  have herrJoint : P.errProb κ pp =
+      ProbComp.prob (P.jointLaw κ pp) (fun x => x.2.err = true) := ?_
+  swap
+  · simp only [P.errProb_eq, P.jointLaw_eq, ProbComp.prob_eq_expect,
+      ProbComp.expect_bind, ProbComp.expect_map]
+  have herr : P.errProb κ pp = uprob (fun z : Space => (out z).2.err = true) :=
+    herrJoint.trans (hjoint (fun x => x.2.err = true))
+  let c1 : Fin κ → Space → Prop := fun k z =>
+    P.Cond1 κ pp (P.idCore κ pp z.1) z.2 k
+  let c2 : Fin κ → Space → Prop := fun k z =>
+    P.Cond2 κ pp (P.idCore κ pp z.1) z.2 k ∧ ¬ c1 k z
+  let c3 : Space → Prop := fun z => P.Cond3 κ pp (P.idCore κ pp z.1)
+  have hpoint : ∀ z : Space, (out z).2.err = true →
+      c3 z ∨ (∃ k, c2 k z) ∨ ∀ k, c1 k z := ?_
+  swap
+  · intro z hz
+    let I := P.idCore κ pp z.1
+    let d := z.2
+    change (P.sdCore κ pp I d).err = true at hz
+    change P.Cond3 κ pp I ∨
+      (∃ k, P.Cond2 κ pp I d k ∧ ¬ P.Cond1 κ pp I d k) ∨
+        ∀ k, P.Cond1 κ pp I d k
+    by_cases h3 : P.Cond3 κ pp I
+    · exact Or.inl h3
+    right
+    by_cases hall : ∀ k, P.Cond1 κ pp I d k
+    · exact Or.inr hall
+    left
+    obtain ⟨k, hk⟩ := not_forall.mp hall
+    refine ⟨k, ?_, hk⟩
+    have hnone :
+        firstGood (fun q => (P.oneSd κ pp I d.1 (d.2 q).1 (d.2 q).2).flag) =
+          none := ?_
+    swap
+    · rw [P.sdCore_err] at hz
+      exact Option.eq_none_of_isNone hz
+    have hflag : P.oneFlag κ pp I
+        (fun i => P.noiseValue κ pp ((d.2 k).2 i)) = false := ?_
+    swap
+    · have hflags := (firstGood_none_iff
+        (fun q => (P.oneSd κ pp I d.1 (d.2 q).1 (d.2 q).2).flag)).mp hnone
+      simpa only [P.oneSd_flag] using hflags k
+    by_contra h2
+    have hcount :
+        (P.badSet κ pp I (fun i => P.noiseValue κ pp ((d.2 k).2 i))).card ≤
+          P.Γ κ :=
+      Nat.le_of_not_gt (fun h => hk ((P.cond1_iff κ pp I d k).mpr h))
+    have hcapacity : ¬ ∃ b : Fin (P.B κ), P.cap κ < Buckets.load I.2.1 b := ?_
+    swap
+    · intro h
+      exact h3 ((P.cond3_iff κ pp I).mpr
+        ((Buckets.overfull_iff I.2.1 (P.cap κ)).mpr h))
+    have hbucket : ∀ b : Fin (P.B κ),
+        (Buckets.bucket I.2.1 b ∩
+          P.badSet κ pp I (fun i => P.noiseValue κ pp ((d.2 k).2 i))).card ≤
+            P.t κ :=
+      fun b => Nat.le_of_not_gt
+        (fun h => h2 ((P.cond2_iff κ pp I d k).mpr ⟨b, h⟩))
+    rw [P.oneFlag_eq] at hflag
+    exact (of_decide_eq_false hflag) ⟨hcount, hcapacity, hbucket⟩
+  have hfinite : uprob (fun z : Space => ∃ k, c2 k z) ≤
+      ∑ k : Fin κ, uprob (c2 k) := ?_
+  swap
+  · simpa only [Finset.mem_univ, true_and] using
+      (uprob_exists_le (α := Space) (Finset.univ : Finset (Fin κ))
+        (fun (k : Fin κ) (z : Space) => c2 k z))
+  have hbound : uprob (fun z : Space => (out z).2.err = true) ≤
+      uprob c3 + (∑ k : Fin κ, uprob (c2 k)) +
+        uprob (fun z : Space => ∀ k, c1 k z) := ?_
+  swap
+  · calc
+      uprob (fun z : Space => (out z).2.err = true) ≤
+        uprob (fun z : Space => c3 z ∨ (∃ k, c2 k z) ∨ ∀ k, c1 k z) :=
+          uprob_mono (α := Space) hpoint
+      _ ≤ uprob c3 + (∑ k : Fin κ, uprob (c2 k)) +
+          uprob (fun z : Space => ∀ k, c1 k z) := ?_
+    have hleft := uprob_or_le (α := Space) c3
+      (fun z : Space => (∃ k, c2 k z) ∨ ∀ k, c1 k z)
+    have hright := uprob_or_le (α := Space) (fun z : Space => ∃ k, c2 k z)
+      (fun z : Space => ∀ k, c1 k z)
+    linarith
+  rw [herr]
+  simpa only [hjoint, out, P.sdCore_draw, c1, c2, c3] using hbound

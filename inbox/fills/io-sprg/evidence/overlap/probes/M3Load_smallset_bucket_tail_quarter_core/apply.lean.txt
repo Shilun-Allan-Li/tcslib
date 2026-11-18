@@ -1,0 +1,17 @@
+import TCSlib.Cryptography.Games.Bridges.Experiments
+import TCSlib.Cryptography.OneWayFunctions.Basic
+import Mathlib.Data.Finset.Powerset
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography
+
+example {m B : ℕ} [NeZero B] (Γ κ : ℕ) (S : Finset (Fin m))
+    (hκ : 12 ≤ κ) (hS : S.card ≤ Γ) (hΓ : Γ ≤ B) :
+    uprob (fun φ : Fin m → Fin B => ∃ b : Fin B,
+      κ < ((Finset.univ.filter (fun j => φ j = b)) ∩ S).card) ≤
+      (B : ℝ) * (4 : ℝ)⁻¹ ^ κ := by
+  apply?

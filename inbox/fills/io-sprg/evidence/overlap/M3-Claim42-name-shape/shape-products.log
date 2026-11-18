@@ -1,0 +1,130 @@
+TCSlib/Cryptography/Authentication/MAC/FromPRF/Game.lean:68:**Proof sketch.** Unfold the game (`forgeGame_eq`, `prob_bind`) and the codec
+TCSlib/Cryptography/Authentication/MAC/FromPRF/Game.lean:86:  rw [accept_eq, MAC.forgeGame_eq, prob_bind]
+TCSlib/Cryptography/Authentication/MAC/FromPRF/Game.lean:88:  rw [prob_bind]
+TCSlib/Cryptography/Authentication/MAC/FromPRF/Game.lean:90:  rw [prob_bind, forgerCodec_eq_bitCodec,
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:536:  rw [← Bridge.expect_sample_pair]
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean:203:            uprob_pi_forall (ι := Fin q) (fun x => ¬ S x), uprob_not, Fintype.card_fin]
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean:257:        rw [uprob_pi_forall (fun c => ¬ f (yaoTry f B (f x) c) = f x), uprob_not,
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:32:* `uprob_pi_forall`: independent coordinates multiply.
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:118:theorem uprob_pi_forall {ι : Type*} [Fintype ι] [DecidableEq ι] (p : α → Prop) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean:414:  rw [← ProbComp.expect_sample_equiv φ, ← Bridge.expect_sample_pair]
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean:439:  rw [ProbComp.prob_bind] at hforward
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionGame.lean:127:          Bridge.expect_sample_pair (fun p : S.gen.Coins n × S.sign.Coins n =>
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionGame.lean:140:          Bridge.expect_sample_pair (fun p :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionGame.lean:177:        simp only [accept_eq, CRH.collisionGame_eq, ProbComp.prob_bind, ProbComp.prob_pure,
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:857:  simp only [ProbComp.prob_bind, ProbComp.prob_pure, decide_eq_true_eq,
+TCSlib/Cryptography/Pseudorandom/Functions/Defs.lean:116:`Bridge.acceptGame_eq`); `prob_bind` and `prob_pure` turn the game into the nested expectation,
+TCSlib/Cryptography/Pseudorandom/Functions/Defs.lean:127:    Bridge.acceptGame_eq, Bridge.acceptGame_eq, prob_bind, prob_bind]
+TCSlib/Cryptography/Pseudorandom/Functions/Defs.lean:130:    simp only [prob_bind, prob_pure, oracleDist_apply]
+TCSlib/Cryptography/Pseudorandom/Functions/Defs.lean:132:    simp only [prob_bind, prob_pure, oracleDist_apply, randomFunction_apply]
+TCSlib/Cryptography/NumberTheory/Primality.lean:491:iff all `t` bases are liars; the bases are independent (`uprob_pi_forall`), so the
+TCSlib/Cryptography/NumberTheory/Primality.lean:516:    OneWay.uprob_pi_forall (fun i : Fin (N - 1) => MRLiar N (((i : ℕ) + 1 : ℕ) : ZMod N)),
+TCSlib/Cryptography/Authentication/Signatures/Lamport/AveragingExtra.lean:85:      (Bridge.expect_sample_pair (fun p : ι × Bool => v p.1 p.2)).symm
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:325:attempts use disjoint coins (`OneWay.uprob_pi_forall`) and each fails with probability
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:332:    OneWay.uprob_pi_forall (ι := Fin N) (fun w => colSimAttemptH Com ℓn G c V w = none),
+TCSlib/Cryptography/Authentication/Signatures/Lamport/InversionProbability.lean:69:    ProbComp.prob_eq_expect, ← Bridge.expect_sample_pair]
+TCSlib/Cryptography/Authentication/Signatures/Lamport/InversionProbability.lean:74:  simp only [← Bridge.expect_sample_pair, ProbComp.expect_bind, ProbComp.expect_pure]
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Reduction.lean:111:pair (`Bridge.expect_sample_pair`), exchange the samples (`expect_sample_comm`) and read the seed as
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Reduction.lean:156:    rw [← Bridge.expect_sample_pair, ProbComp.expect_bind]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:324:(`OneWay.uprob_pi_forall`) and each fails with probability `1/2`
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:331:    OneWay.uprob_pi_forall (ι := Fin N) (fun c => giSimAttempt G₀ G₁ V c = none),
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean:98:generator's coins `r` (`prob_bind`). On coins with `p < 2^ℓ` the two conditional acceptances are
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean:115:  `(a, b', c)` merges into one draw (`Bridge.expect_sample_pair`); the unused `T` drops out. -/
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean:121:    ProbComp.prob_bind, ProbComp.prob_bind]
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean:153:  simp only [ProbComp.prob_bind, Bool.false_eq_true, if_false]
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Chain.lean:27:   `(a, b', c)` (`Bridge.expect_sample_pair`); the unused `T` drops out (`expect_const`).
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Chain.lean:63:**Proof sketch.** Expand both probabilities into expectations (`prob_bind`) and fix `g` and
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Chain.lean:71:(`Bridge.expect_sample_pair`); `c` moves past `A`'s coins (`expect_sample_comm`). -/
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Chain.lean:102:  simp only [ProbComp.prob_bind]
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Chain.lean:105:  rw [← Bridge.expect_sample_pair]
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Chain.lean:108:  rw [← Bridge.expect_sample_pair]
+TCSlib/Cryptography/Games/Hopping.lean:159:  rw [prob_bind]
+TCSlib/Cryptography/Games/Hopping.lean:163:        rw [prob_bind, expect_sample]
+TCSlib/Cryptography/Games/Hopping.lean:355:  rw [ProbComp.prob_bind, ProbComp.prob_bind, ProbComp.prob_bind]
+TCSlib/Cryptography/Games/Hopping.lean:424:    rw [simulate_query, prob_bind]
+TCSlib/Cryptography/Games/Hopping.lean:455:  rw [prob_bind, expect_pure, prob_bind] at h
+TCSlib/Cryptography/Hashing/FromDiscreteLog/Probability.lean:65:  rw [accept_eq, CRH.collisionGame_eq, ProbComp.prob_bind, expect_sample_eq_uexp]
+TCSlib/Cryptography/Hashing/FromDiscreteLog/Probability.lean:68:  rw [ProbComp.prob_bind, expect_sample_eq_uexp, uprob_eq_uexp]
+TCSlib/Cryptography/Games/Bridges/Experiments.lean:80:theorem expect_sample_pair [Fintype α] [Nonempty α] [Fintype β] [Nonempty β] (g : α × β → ℝ) :
+TCSlib/Cryptography/Games/Bridges/Experiments.lean:93:  rw [prob_eq_expect, prob_eq_expect, expect_sample_pair]
+TCSlib/Cryptography/Pairing/Assumptions.lean:335:    simp only [ProbComp.prob_bind, ProbComp.prob_pure, distinguisherL_tupleStr hc hD,
+TCSlib/Cryptography/Pairing/Assumptions.lean:352:    simp only [ProbComp.prob_bind, ProbComp.prob_pure, distinguisherL_tupleStr hc hD,
+TCSlib/Cryptography/Games/Advantage.lean:155:  rw [prob_bind, expect_sample]
+TCSlib/Cryptography/Games/Advantage.lean:157:    sum_insert, sum_singleton, Fintype.card_bool, prob_bind]
+TCSlib/Cryptography/Games/Probability.lean:45:  `prob_not`, `prob_bind`.
+TCSlib/Cryptography/Games/Probability.lean:224:theorem prob_bind (c : ProbComp α) (f : α → ProbComp β) (p : β → Prop) :
+TCSlib/Cryptography/Asymptotic/Sampling.lean:596:    OneWay.uprob_pi_forall fun a => ¬ E a, Fintype.card_fin, uprob_not]
+TCSlib/Cryptography/Asymptotic/Sampling.lean:802:    OneWay.uprob_pi_forall fun c : Fin k → Bool => uniformFromBits m k c = none,
+TCSlib/Cryptography/Asymptotic/Permutations.lean:71:* `TCSlib.Cryptography.uprob_pi_forall_dep` — independent coordinates with position-dependent
+TCSlib/Cryptography/Asymptotic/Permutations.lean:72:  events multiply (the dependent form of `OneWay.uprob_pi_forall`).
+TCSlib/Cryptography/Asymptotic/Permutations.lean:285:probabilities (the position-dependent form of `OneWay.uprob_pi_forall`: `Nat.card` of the
+TCSlib/Cryptography/Asymptotic/Permutations.lean:287:theorem uprob_pi_forall_dep {ι α : Type*} [Fintype ι] [DecidableEq ι] [Fintype α]
+TCSlib/Cryptography/Asymptotic/Permutations.lean:337:of `OneWay.uprob_pi_forall` for position-dependent predicates: `Nat.card` of a dependent
+TCSlib/Cryptography/Asymptotic/Permutations.lean:351:`exists_fyOffsets`, `permFromCoins_eq_some_iff` and `uprob_pi_forall_dep` of the preceding
+TCSlib/Cryptography/Asymptotic/Permutations.lean:358:  have hL := uprob_pi_forall_dep (ι := Fin n) (α := Fin T → Fin k → Bool)
+TCSlib/Cryptography/Asymptotic/Permutations.lean:360:  have hR := uprob_pi_forall_dep (ι := Fin n) (α := Fin T → Fin k → Bool)
+TCSlib/Cryptography/CoinSampling/Basic.lean:321:exact on success (`uprob_pi_forall_dep`). Glue. -/
+TCSlib/Cryptography/CoinSampling/Basic.lean:329:      uprob_pi_forall_dep (fun j x => S.dec x = some (f j)),
+TCSlib/Cryptography/CoinSampling/Basic.lean:330:      uprob_pi_forall_dep (fun j x => S.dec x = some (f' j))]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Transfer.lean:203:  rw [accept_eq, FixedLengthScheme.indGame_eq, prob_bind]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Transfer.lean:205:  rw [prob_bind]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Transfer.lean:207:  rw [prob_bind, FixedLengthScheme.indCodec_eq_bitCodec]
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:89:OneWay.uprob_pi_forall; every selected coordinate equals the bucket label with probability
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:126:      OneWay.uprob_pi_forall (ι := T) (fun a : Fin B => a = b)
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Forgery.lean:138:    rw [← simulate_ettBad_fst ins outs d n f g b rej c s false, prob_bind]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Forgery.lean:372:  rw [simulate_query, prob_bind, ettBad_apply, ettImpl_apply, OracleComp.bind_assoc, expect_bind]
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:257:  rw [accept_eq, FixedLengthScheme.indGame_eq, prob_bind,
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:263:  rw [hk, prob_bind]
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:265:  rw [prob_bind]
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:309:    Bridge.acceptGame_eq, prob_bind, prob_bind]
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:312:    simp only [prob_bind, prob_pure, oracleDist_apply]
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:315:    simp only [prob_bind, prob_pure, oracleDist_apply, randomFunction_apply]
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:753:  rw [ProbComp.prob_bind]
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:782:  rw [ProbComp.prob_bind]
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:831:    rw [PolyExpr.eval_const, accept_eq, FixedLengthScheme.indGame_eq, ProbComp.prob_bind]
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:834:    rw [ProbComp.prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean:335:  rw [← Bridge.expect_sample_pair]
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/PaddedCPA.lean:180:    rw [accept_eq, FixedLengthPKScheme.indGame_eq, prob_bind,
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/PaddedCPA.lean:183:    rw [prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/PaddedCPA.lean:185:    rw [prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/PaddedCPA.lean:264:    rw [Bridge.acceptProb_eq, accept_eq, Bridge.acceptGame_eq, prob_bind, expect_sample_prod]
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/PaddedCPA.lean:266:    simp only [prob_bind, prob_pure]
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Reduction.lean:217:  rw [prob_bind, FixedLengthPKScheme.indCodec_eq_bitCodec, h1]
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Reduction.lean:258:  rw [accept_eq, accept_eq, S.indGame_eq, acHyb_eq, prob_bind, prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Reduction.lean:260:  rw [prob_bind, prob_bind, ← expect_sample_equiv φ, expect_sample_prod, expect_sample_comm]
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Reduction.lean:270:  rw [expect_tapeImpl, prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:150:  rw [prob_bind, prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:152:  rw [prob_bind, prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:154:  rw [prob_bind, prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:392:    rw [Bridge.acceptProb_eq, accept_eq, Bridge.acceptGame_eq, prob_bind, expect_sample_prod]
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:394:    simp only [prob_bind, prob_pure]
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:411:    rw [prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:413:    rw [prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:415:    rw [prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:260:  rw [accept_eq, S.nmGame_eq, prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:262:  rw [prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:264:  rw [prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:277:  rw [prob_bind, S.nmCodec_eq_bitCodec, h2]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:611:  rw [accept_eq, snmReal_eq, realAcc_eq, ProbComp.prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:613:  rw [ProbComp.prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:615:  rw [ProbComp.prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:617:  rw [ProbComp.prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:619:  rw [ProbComp.prob_bind, ← castImpl_snmImpl S atk M n _ _ ρ ρ]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:648:  rw [accept_eq, snmIdeal_eq, idealAcc_eq, ProbComp.prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:650:  rw [ProbComp.prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:652:  rw [ProbComp.prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:654:  rw [ProbComp.prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:656:  rw [ProbComp.prob_bind, simImpl_eq_histImpl]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:338:  rw [accept_eq, accept_eq, S.indGame_eq, S.nmGame_eq, prob_bind, prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:340:  conv_lhs => rw [prob_bind, ← ProbComp.expect_sample_equiv (φ.trans (NUPPT.coinsCongr hc n)),
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:342:  conv_rhs => rw [prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:345:  conv_rhs => rw [prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:356:  rw [Equiv.trans_apply, hB', prob_bind, FixedLengthPKScheme.indCodec_eq_bitCodec, h1]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:379:  rw [prob_bind, nmCodec_eq_bitCodec, h2]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:529:  rw [accept_eq, accept_eq, S.nmGame_eq, S.indGame_eq, prob_bind, prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:531:  rw [prob_bind, prob_bind, ← ProbComp.expect_sample_equiv φ, expect_sample_prod]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:534:  rw [prob_bind]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:549:  rw [prob_bind, nmCodec_eq_bitCodec, h2]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:568:  rw [prob_bind, FixedLengthPKScheme.indCodec_eq_bitCodec, h1]
+TCSlib/Cryptography/Candidates/Concrete.lean:215:`(1 - Pr[G])^m` (`uprob_fst`, `OneWay.uprob_pi_forall`, `uprob_not`). For fixed `i`, planting
+TCSlib/Cryptography/Candidates/Concrete.lean:248:            uprob_pi_forall (ι := Fin m) (fun x => ¬ G x), uprob_not, Fintype.card_fin]

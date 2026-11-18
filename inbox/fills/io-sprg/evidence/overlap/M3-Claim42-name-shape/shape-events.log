@@ -1,0 +1,149 @@
+TCSlib/Cryptography/OneWayFunctions/Brittleness.lean:231:              apply uprob_mono
+TCSlib/Cryptography/OneWayFunctions/Brittleness.lean:252:      apply uprob_mono
+TCSlib/Cryptography/OneWayFunctions/OutputLength.lean:78:  apply uprob_mono
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:637:  exact (ProbComp.prob_mono _ (fun res hs =>
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:638:    hashAndSign_success_cases H S hlen n _ _ res hs)).trans (ProbComp.prob_or_le _ _ _)
+TCSlib/Cryptography/OneWayFunctions/Robustness.lean:98:        apply uprob_mono
+TCSlib/Cryptography/OneWayFunctions/Robustness.lean:109:        refine (uprob_or_le _ _).trans (add_le_add ((uprob_or_le _ _).trans ?_) ?_)
+TCSlib/Cryptography/OneWayFunctions/Robustness.lean:129:        apply uprob_mono
+TCSlib/Cryptography/OneWayFunctions/Robustness.lean:141:    _ ≤ _ := (uprob_or_le _ _).trans (by rw [uprob_fst S])
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean:188:        apply uprob_mono
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean:198:        (uprob_or_le _ _).trans (add_le_add_left (uprob_exists_le _ _) _)
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean:249:        apply uprob_mono
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:327:      apply uprob_mono
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:370:in the escape event (`uprob_mono`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:390:  refine le_trans (uprob_mono ?_) (uprob_adaptive_escape (edgeCount G) k hm Bad hBad)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:791:  apply uprob_mono
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:710:`b = true` event (`uprob_mono`, `uprob_not`). -/
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:717:    refine uprob_mono fun r h0 h1 => ?_
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:739:`uprob_mono` reduces to `uprob_adaptive_guess`.
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:758:    refine uprob_mono fun z hz i => ?_
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:419:  refine (uprob_mono hmono).trans ?_
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:185:`uprob_mono` reduces to `uprob_adaptive_guess`.
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:204:    refine uprob_mono fun z hz i => ?_
+TCSlib/Cryptography/Games/Hopping.lean:322:  have b0 := ProbComp.prob_mono (simulate impl₀ c s) (p := fun r => p r.1 ∧ bad r.2)
+TCSlib/Cryptography/Games/Hopping.lean:324:  have b1 := ProbComp.prob_mono (simulate impl₁ c s) (p := fun r => p r.1 ∧ bad r.2)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:290:  refine (uprob_mono hmono).trans ?_
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:925:    refine uprob_mono fun r h0 h1 => ?_
+TCSlib/Cryptography/Games/Probability.lean:44:* `ProbComp.prob_nonneg`, `prob_le_one`, `prob_mono`, `prob_or_le` (the union bound),
+TCSlib/Cryptography/Games/Probability.lean:244:theorem prob_mono (c : ProbComp α) {p q : α → Prop} (h : ∀ a, p a → q a) :
+TCSlib/Cryptography/Games/Probability.lean:256:  le_antisymm (prob_mono c fun a => (h a).1) (prob_mono c fun a => (h a).2)
+TCSlib/Cryptography/Games/Probability.lean:259:theorem prob_or_le (c : ProbComp α) (p q : α → Prop) :
+TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean:205:    uprob_mono fun r hr => by simp [hr]
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean:56:theorem firstGood_none_iff {κ : ℕ} (flags : Fin κ → Bool) :
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:156:      uprob_mono (α := Fin m → Fin B) hcover
+TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean:92:    refine (uprob_mono (fun t ht => ?_)).trans
+TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean:104:      refine (uprob_mono (fun t ht => ?_)).trans
+TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean:138:        refine (uprob_mono (fun t ht => ?_)).trans hb
+TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean:208:      uprob_mono hbad
+TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean:210:        uprob (fun w => ∃ j ∈ Finset.univ, collision j w) := uprob_or_le _ _
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:299:    refine uprob_mono fun r hr => ?_
+TCSlib/Cryptography/SecureComputation/Garbling.lean:611:    _ ≤ uprob (fun w => ∃ i ∈ Finset.univ, gateBad i w) := uprob_mono hbad
+TCSlib/Cryptography/CoinSampling/Basic.lean:425:/-- Union bound for two draws: `(S.prod S').fail ≤ S.fail + S'.fail` (`uprob_or_le`, the
+TCSlib/Cryptography/CoinSampling/Basic.lean:429:by the sum (`uprob_or_le`); read the two halves of the coins as an independent pair
+TCSlib/Cryptography/CoinSampling/Basic.lean:435:  refine (uprob_or_le _ _).trans (le_of_eq ?_)
+TCSlib/Cryptography/Composability/SequentialZK.lean:706:    _ ≤ _ := uprob_mono fun r hr => by
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1157:  refine hs.trans (uprob_mono fun ω hne => ?_)
+TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:270:  refine (uprob_mono fun ω hω => ?_).trans (chebyshev_pairwise hX hδ hm)
+TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:178:  refine uprob_mono fun w hw => ?_
+TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:205:    refine (uprob_mono fun c hc => ?_).trans (uprob_exists_le univ fun i c => R c i ≠ x i)
+TCSlib/Cryptography/Composability/SequentialZK/ErrSoundness.lean:44:    uprob_mono fun r hr => by rw [hr]; decide
+TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean:114:    refine le_trans (uprob_mono fun w hw => ?_) (uprob_or_le _ _)
+TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean:146:  refine le_trans (uprob_mono fun c hc => ?_) hb
+TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:206:  refine le_trans (uprob_mono fun ω hω => ?_) hb
+TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:234:    refine uprob_mono fun c hc => ?_
+TCSlib/Cryptography/Composability/SequentialZK/RepeatedSoundness.lean:174:      apply uprob_mono
+TCSlib/Cryptography/Candidates/Concrete.lean:143:    refine (uprob_mono ?_).trans (uprob_or_le _ _)
+TCSlib/Cryptography/Candidates/Concrete.lean:164:    refine (uprob_mono ?_).trans (uprob_or_le _ _)
+TCSlib/Cryptography/Candidates/Concrete.lean:214:(`uprob_mono`, `uprob_or_le`, `uprob_exists_le`). The first event has probability
+TCSlib/Cryptography/Candidates/Concrete.lean:232:        apply uprob_mono
+TCSlib/Cryptography/Candidates/Concrete.lean:244:        (uprob_or_le _ _).trans (add_le_add_left (uprob_exists_le _ _) _)
+TCSlib/Cryptography/Foundations/Probability.lean:34:* `uprob_nonneg`, `uprob_le_one`, `uprob_not`, `uprob_mono`, `uprob_or_le`,
+TCSlib/Cryptography/Foundations/Probability.lean:120:theorem uprob_mono {p q : α → Prop} (h : ∀ a, p a → q a) : uprob p ≤ uprob q := by
+TCSlib/Cryptography/Foundations/Probability.lean:127:theorem uprob_or_le (p q : α → Prop) : uprob (fun a => p a ∨ q a) ≤ uprob p + uprob q := by
+TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean:122:      apply uprob_mono
+TCSlib/Cryptography/Candidates/DDH.lean:152:    refine (uprob_mono fun s h => ?_).trans (uprob_or_le (fun s => T (Y s)) (fun s => X s ≠ Y s))
+TCSlib/Cryptography/Candidates/RSA.lean:1729:  apply uprob_mono
+TCSlib/Cryptography/Candidates/RSA.lean:1965:`uprob_comp_equiv`, `uprob_mono`), the inner probability is at most the RSA inner probability
+TCSlib/Cryptography/Candidates/RSA.lean:2382:`listToNat_natToList`), so `Pr_{e,y,r}[A' wins | z] ≥ Pr_r[A factors | z]` (`uprob_mono`,
+TCSlib/Cryptography/Candidates/RSA.lean:2399:  apply uprob_mono
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:1045:(`decodeFin`, `bitsToNat_eq_listToNat`, `List.ofFn_get`); `uprob_mono` with the coin types
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:1061:  refine uprob_mono fun z hz => ?_
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean:323:  apply uprob_mono
+TCSlib/Cryptography/Hashing/SIS/Experiments.lean:76:  apply uprob_mono
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:467:bound `uprob_or_le` (through `uprob_not`) gives
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:523:    refine (uprob_mono hpt).trans ((dlb_uprob_val_le m P (Ico (h - d) h ∪ Ico (m - d) m) ?_).trans ?_)
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:542:    refine (uprob_mono fun c hc => ?_).trans (uprob_or_le _ _)
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:586:  refine (uprob_mono fun c hc => ?_).trans (key.trans (le_of_eq ?_))
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:622:(`Nat.cast_sub`, `Nat.div_add_mod`). `uprob_prod` over `(e, t)` and `uprob_mono` with the
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:638:  refine le_trans ?_ (uprob_mono (p := good) (q := fun z : ZMod (p - 1) × (Fin T × ρ') =>
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:771:  have hunion := (uprob_mono hfail).trans ((uprob_exists_le univ _).trans
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2610:    refine uprob_mono fun z hz => ?_
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2776:`good_instances` (with `2ε'`) and `hbig` (`ExpGroupGen.fullLengthExcept_iff`, `uprob_or_le`) the
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2861:      refine (uprob_mono fun r' hr' => ?_).trans (uprob_or_le _ _)
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2958:of probability `≥ ε'/2` (`uprob_or_le`). At a good index `i = ⟨p, ⟨p−1, g⟩⟩` (valid,
+TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:697:  apply uprob_mono
+TCSlib/Cryptography/Candidates/Rabin.lean:138:  have h2 : uprob (fun w : α × ρ => E w.1 ∧ S w) ≤ uprob S := uprob_mono fun _ h => h.2
+TCSlib/Cryptography/Candidates/Rabin.lean:174:    exact uprob_mono fun w hw => Subtype.ext (Fin.ext (not_not.1 hw).symm)
+TCSlib/Cryptography/Candidates/Rabin.lean:236:            (w.2.1 : ℕ) = 2) := uprob_mono fun w hw => by tauto
+TCSlib/Cryptography/Candidates/Rabin.lean:238:            uprob (fun w : Primes n × Primes n => (w.2.1 : ℕ) = 2) := uprob_or_le _ _
+TCSlib/Cryptography/Candidates/Rabin.lean:242:          add_le_add_right (uprob_or_le _ _) _
+TCSlib/Cryptography/Candidates/Rabin.lean:292:          uprob_mono fun w hw => ⟨hw.1.1, (not_not.1 hw.2).symm⟩
+TCSlib/Cryptography/Candidates/Rabin.lean:304:    (uprob_mono fun w hw => by tauto).trans (uprob_or_le _ _)
+TCSlib/Cryptography/Candidates/Rabin.lean:414:`uprob_mono`), and `Pr[S] ≤ Pr[B ∨ G] ≤ Pr[B] + Pr[G] ≤ 2 Pr[G]` (`uprob_or_le`). -/
+TCSlib/Cryptography/Candidates/Rabin.lean:433:    apply uprob_mono
+TCSlib/Cryptography/Candidates/Rabin.lean:456:        apply uprob_mono
+TCSlib/Cryptography/Candidates/Rabin.lean:462:    _ ≤ _ + _ := uprob_or_le _ _
+TCSlib/Cryptography/Candidates/Rabin.lean:1753:    uprob_mono hgood
+TCSlib/Cryptography/Candidates/Rabin.lean:1835:    refine (uprob_mono fun e he => ?_).trans (uprob_or_le _ _)
+TCSlib/Cryptography/Candidates/Rabin.lean:1843:    uprob_mono fun _ h => h.2
+TCSlib/Cryptography/Candidates/Rabin.lean:2090:  refine (uprob_mono ?_).trans (rabin_core H A z hp2 hq2 (fun w => (rabinDec (rabin_idx z) w).map e) ?_)
+TCSlib/Cryptography/Candidates/Rabin.lean:3097:    apply uprob_mono
+TCSlib/Cryptography/Candidates/Rabin.lean:3116:  refine (uprob_mono ?_).trans (rabin_core H A z hp2 hq2
+TCSlib/Cryptography/Candidates/Rabin.lean:3467:  apply uprob_mono
+TCSlib/Cryptography/Candidates/Rabin.lean:3508:`rabinBlumInverter_coinsEquiv`, `uprob_fst`, `uprob_mono`; `rabin_inner_inv`), and averaging
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:50:    (uprob_mono fun u ha => by
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:53:      · exact Or.inl ((h u hc).1 ha)).trans (uprob_or_le B C)
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:55:    (uprob_mono fun u hb => by
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:58:      · exact Or.inl ((h u hc).2 hb)).trans (uprob_or_le A C)
+TCSlib/Cryptography/Candidates/Factoring.lean:532:    apply uprob_mono
+TCSlib/Cryptography/Candidates/Factoring.lean:747:in the one with `yaoB` (`uprob_mono`). Probability: `OneWay.statClose_roundSample` puts the
+TCSlib/Cryptography/Candidates/Factoring.lean:838:    apply uprob_mono
+TCSlib/Cryptography/Candidates/Factoring.lean:957:    apply uprob_mono
+TCSlib/Cryptography/Candidates/Factoring.lean:1028:factor (`uprob_mono`, `modulusBits_eq_fmult`); drop the diagonal by
+TCSlib/Cryptography/Candidates/Factoring.lean:1738:  refine le_trans (uprob_mono ?_) (le_of_eq (uprob_comp_equiv (Equiv.prodCongr
+TCSlib/Cryptography/Candidates/Factoring.lean:1764:`uprob_mono` with the coin types identified (`collectionFactorer_coinsEquiv`,
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:55:Likewise for Bob's output on Alice's side; take `ε_c = ε_A + ε_B` (`uprob_or_le`). -/
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:85:  refine ⟨fun n => εA n + εB n, hεA.add hεB, fun n x y => (uprob_or_le _ _).trans
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:194:        uprob_mono hsub
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:305:against `D_i × B.Coins n` by `uprob_comp_equiv` on `splitCoins`, and `uprob_mono`: a decoded
+TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:262:  refine uprob_mono fun w hw => ?_
+TCSlib/Cryptography/Asymptotic/Universal.lean:543:**Proof sketch.** `uprob_or_le` on the complements and `uprob_not`. -/
+TCSlib/Cryptography/Asymptotic/Universal.lean:554:      _ ≤ _ := uprob_or_le _ _
+TCSlib/Cryptography/Asymptotic/Universal.lean:701:`B`'s by `exists_preimage_of_fUniversal_eq` (`uprob_mono`). -/
+TCSlib/Cryptography/Asymptotic/Universal.lean:750:  refine uprob_mono fun w hw => ?_
+TCSlib/Cryptography/Asymptotic/Universal.lean:802:`𝓖.invProbAt B m ≥ 1 - 1/n² ≥ 1/2` (`invProbAt_eq_uprob`, `uprob_mono`). *Conclusion:* for
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:185:coordinate (`uprob_mono`). -/
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:196:  apply uprob_mono
+TCSlib/Cryptography/Asymptotic/Sampling.lean:174:samplers differ there; so `Pr[T (X)] ≤ Pr[T (Y)] + Pr[X ≠ Y]` (`uprob_mono`, `uprob_or_le`), and
+TCSlib/Cryptography/Asymptotic/Sampling.lean:183:    refine (uprob_mono fun s h => ?_).trans (uprob_or_le (fun s => T (Y s)) (fun s => X s ≠ Y s))
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:271:`f_n(b') = f_n(b)` (`f_eq_of_gStr_eq`); conclude by `uprob_mono`. -/
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:322:  refine uprob_mono fun q hq => ?_
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:430:(`uprob_mono`): if `g(A(g(z ‖ e))) = g(z ‖ e)`, write `A`'s answer as `init ‖ last`
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:443:  refine uprob_mono fun w hw => ?_
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:684:`glPad_inEquiv` and `oddCoins` (`uprob_comp_equiv`); then compare pointwise (`uprob_mono`). A
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:703:  refine uprob_mono fun w hw => ?_
+TCSlib/Cryptography/Asymptotic/HardCore/Functions.lean:355:`uprob_comp_equiv` on the coin split `splitCoins`, `uprob_mono` (if `A`'s decoded answer
+TCSlib/Cryptography/Asymptotic/Adversary.lean:442:  refine uprob_mono ?_
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:232:`appendEquiv`, regroup by `Equiv.prodAssoc` and compare pointwise (`uprob_mono`): if `A`'s
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:251:  refine uprob_mono fun w hw => ?_
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:398:regroup by `Equiv.prodAssoc` and compare pointwise (`uprob_mono`): a decoded answer `(x', r')`
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:423:  refine uprob_mono fun w hw => ?_
+TCSlib/Cryptography/Asymptotic/OneWay.lean:502:(`uprob_mono`). -/
+TCSlib/Cryptography/Asymptotic/OneWay.lean:511:  apply uprob_mono
+TCSlib/Cryptography/Asymptotic/OneWay.lean:698:    apply uprob_mono
+TCSlib/Cryptography/Asymptotic/OneWay.lean:749:`uprob_mono` (a `2·inLen n`-bit answer of `A'` decodes to the first block of `A`'s answer,
+TCSlib/Cryptography/Asymptotic/OneWay.lean:816:  apply uprob_mono
+TCSlib/Cryptography/Asymptotic/Collections.lean:984:on `⟨i, f_i(x)⟩` (`uprob_mono`); `StatClose.abs_uprob_sub_le_prod` with `h.sampleClose`
+TCSlib/Cryptography/Asymptotic/Collections.lean:1020:    refine uprob_mono fun v hv => ?_
+TCSlib/Cryptography/Asymptotic/Collections.lean:1090:"the sampled `x` is inverted by the reduction" (`uprob_mono`), and

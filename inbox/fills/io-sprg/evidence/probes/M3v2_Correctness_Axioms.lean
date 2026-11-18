@@ -1,0 +1,20 @@
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Correctness
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.firstGood_none_iff
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.firstGood_some_flag
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.firstGood_some_minimal
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.packSeed_public_block
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.packSeed_error
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.packSeed_flag
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.packSeed_unscaled
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.packSeed_scaled
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.oneFlag_bounds
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.corr_zero_of_not_bad
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.oneSd_factors_mul
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.G1_eval_of_good
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.correctionPoly_eval_oneSd
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.G2_eval_of_flag
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.G4_eval_sdCore
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.G4_eval_eq
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.eval'_correct
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.Params.G4_seed_allOutputs
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.jls_hasComplexity

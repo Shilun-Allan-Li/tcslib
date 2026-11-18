@@ -133,7 +133,7 @@ monomial, then apply the published finite-supremum bound. -/
 theorem weightedTotalDegree_X_le (w : σ → ℕ) (i : σ) :
     (MvPolynomial.X i : MvPolynomial σ R).weightedTotalDegree w ≤ w i :=
   show (MvPolynomial.X i : MvPolynomial σ R).support.sup (Finsupp.weight w) ≤ w i from
-    Finset.sup_le fun d hd =>
+    Finset.sup_le fun _d hd =>
       ((MvPolynomial.isWeightedHomogeneous_X R w i)
         (MvPolynomial.mem_support_iff.mp hd)).le
 

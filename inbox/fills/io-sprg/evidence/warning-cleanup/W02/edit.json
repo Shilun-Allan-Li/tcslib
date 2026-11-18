@@ -1,0 +1,17 @@
+{
+ "id": "W02",
+ "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Degree.lean",
+ "theorem": "Internal.weightedTotalDegree_X_le",
+ "lines": [
+  136
+ ],
+ "before": "    Finset.sup_le fun d hd =>",
+ "after": "    Finset.sup_le fun _d hd =>",
+ "reason": "Unused lambda binder is proof-local. Leading underscore retains exactly the same lambda type and avoids a theorem-header edit.",
+ "before_sha256": "8e4982d7fb7d95eb39487c224ee831bf1a0727a05f8f11eff136fe23c68e338a",
+ "after_sha256": "4a3ebfba018adf71e38585934e203eb2ee7f0bc4ef16855167c2f769de865c7c",
+ "status": "COMBINED_FINAL_OWNER_CHECKED_PASS",
+ "final_owner_source_sha256": "4a3ebfba018adf71e38585934e203eb2ee7f0bc4ef16855167c2f769de865c7c",
+ "check": "evidence/build/M3/opacity-warning-repair-v2/results.jsonl",
+ "qualification": "Final combined owner with all selected cleanup edits checked; intermediate individual files are retained without claiming separate checks."
+}

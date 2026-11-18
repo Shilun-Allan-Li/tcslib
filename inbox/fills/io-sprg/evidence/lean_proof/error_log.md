@@ -58,3 +58,13 @@ Step104: omega normalized symbolic natural quotients into integer divisions with
 Step109: rpow_natCast introduces a casted five; normalize that literal with Nat.cast_ofNat before exponent arithmetic. Normalize the casted κ+1 in the seed inequality with push_cast to match the already-normalized power bound; retain natural quotient casting as an inequality.
 
 Step110: exact_mod_cast could not see the natural output length behind the local real alias m. Expand only that local alias before transporting the polynomial inequality; no output bound, coefficient or exponent changes.
+
+M3 step111: Real.pow_div_factorial_le_exp has explicit section variable x before hx,n. Corrected call with (k:ℝ); failed source/log retained.
+
+M3 step112: recorded slow attempt stopped before next check. First bounded diagnostic also misplaced set_option after the doc comment (parser error); its separate rw error exposed an untyped uprob_fst rewrite failure. Replaced hfixed chain by typed hrelabel/hfst/hpi/hpoint compositions; bounded global diagnostic pending.
+
+M3 step112 repaired: diagnostic showed hfixed and hcover completed. Adding explicit α and typed T,φ to uprob_exists_le (and α to uprob_mono) eliminated the remaining higher-order/cardinality elaboration slowdown. Bounded check rc0; restoring standard maxHeartbeats0 for final source-bound check. All attempts retained.
+
+M3 step118: exact_mod_cast did not unfold local count alias q; dsimp only [q] exposes the natural-cardinality cast. No foreign definition unfolded. Failed source/log retained.
+
+M3 step132: htransport reduced fully except `(idx g φ A).2.1 = φ` for the local tuple constructor idx. Added rfl to close this definitional projection; no foreign definition unfolded. Failed source/log retained.

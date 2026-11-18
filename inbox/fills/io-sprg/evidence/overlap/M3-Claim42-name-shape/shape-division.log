@@ -1,0 +1,99 @@
+.lake/packages/mathlib/Mathlib/Algebra/Order/Ring/GeomSum.lean:201:    _ ≤ m ^ n - 1 := Nat.div_le_self _ _
+.lake/packages/mathlib/Mathlib/Algebra/Order/Floor/Semifield.lean:88:    · exact _root_.div_le_self (by positivity) hb.le
+.lake/packages/mathlib/Mathlib/Algebra/Order/Floor/Ring.lean:726:  refine le_antisymm (ceil_le.2 <| div_le_self (by positivity) ha.le) <| ?_
+.lake/packages/mathlib/Mathlib/Algebra/Order/Floor/Div.lean:188:    simp [div_le_iff_le_mul_add_pred ha, add_assoc, tsub_add_cancel_of_le <| succ_le_iff.2 ha]
+.lake/packages/mathlib/Mathlib/Algebra/Order/Field/Basic.lean:33:theorem div_le_self (ha : 0 ≤ a) (hb : 1 ≤ b) : a / b ≤ a := by
+.lake/packages/mathlib/Mathlib/Algebra/Order/Field/Basic.lean:247:  else div_le_self ha (n.one_le_cast_iff_ne_zero.mpr h)
+TCSlib/Programs/Light/Lib/NextPair.lean:53:  have hdiv := Nat.div_le_self t n
+TCSlib/Programs/Light/Lib/Emod.lean:111:  calc a / M ≤ a := Nat.div_le_self _ _
+TCSlib/BooleanAnalysis/GaussianSpace/InvarianceDistribution.lean:215:        ((div_le_self hscale (by norm_num : (1 : ℝ) ≤ 12)).trans
+TCSlib/BooleanAnalysis/GaussianSpace/InvarianceDistribution.lean:248:      _ ≤ (k : ℝ) * r ^ (3 * k) := div_le_self (by positivity) (by norm_num)
+.lake/packages/mathlib/Mathlib/Dynamics/TopologicalEntropy/CoverEntropy.lean:314:  (coverMincard_monotone_time T F (U ○ U) (Nat.lt_mul_div_succ n m_pos).le).trans
+.lake/packages/mathlib/Mathlib/Dynamics/Ergodic/AddCircle.lean:94:      min_eq_right (div_le_self hT₀.le huj'), mul_comm, ← nsmul_eq_mul, ← ENNReal.ofReal_nsmul,
+TCSlib/BooleanAnalysis/LMN/LayerReductionHelpers.lean:89:  · exact div_le_self zero_le_one ( by norm_cast; linarith )
+TCSlib/BooleanAnalysis/Hypercontractivity/Products/General.lean:404:      (fun i x => (div_le_self hlam.le (by linarith)).trans (hπ i x))
+.lake/packages/mathlib/Mathlib/Algebra/Order/Group/Unbundled/Basic.lean:213:theorem div_le_self_iff (a : α) {b : α} : a / b ≤ a ↔ 1 ≤ b := by
+.lake/packages/mathlib/Mathlib/Algebra/Order/Group/Unbundled/Int.lean:122:      | (m : ℕ), n => Nat.div_le_self _ _
+.lake/packages/mathlib/Mathlib/Algebra/Order/Group/Unbundled/Int.lean:124:      | -[m+1], n + 1 => Nat.succ_le_succ (Nat.div_le_self _ _))
+.lake/packages/mathlib/Mathlib/Data/Bool/Count.lean:117:  rw [Nat.div_le_iff_le_mul_add_pred two_pos, ← tsub_le_iff_right]
+.lake/packages/mathlib/Mathlib/Order/Filter/AtTopBot/Basic.lean:441:    (fun a b _ => by rw [Nat.div_le_iff_le_mul_add_pred hk])
+.lake/packages/mathlib/Mathlib/NumberTheory/WellApproximable.lean:359:    mul_div_cancel₀ _ two_ne_zero, min_eq_right (div_le_self hT.out.le <| by simp), nsmul_eq_mul,
+.lake/packages/mathlib/Mathlib/NumberTheory/Bertrand.lean:142:  · grw [Nat.div_le_self]
+.lake/packages/mathlib/Mathlib/Topology/Algebra/Polynomial.lean:198:    · exact mod_cast Nat.succ_le_iff.mpr (Nat.choose_pos (d.div_le_self 2))
+.lake/packages/mathlib/Mathlib/NumberTheory/FactorisationProperties.lean:162:      _ ≤ (n ^ m - 1) := Nat.div_le_self (n ^ m - 1) (n - 1)
+.lake/packages/mathlib/Mathlib/Computability/PartrecCode.lean:137:        lt_of_le_of_lt (le_trans (Nat.div_le_self _ _) (Nat.div_le_self _ _))
+.lake/packages/mathlib/Mathlib/Computability/PartrecCode.lean:158:        lt_of_le_of_lt (le_trans (Nat.div_le_self _ _) (Nat.div_le_self _ _))
+.lake/packages/mathlib/Mathlib/Computability/PartrecCode.lean:328:      (le_trans (Nat.div_le_self ..) (Nat.div_le_self ..))
+.lake/packages/mathlib/Mathlib/Computability/PartrecCode.lean:443:      (le_trans (Nat.div_le_self ..) (Nat.div_le_self ..))
+.lake/packages/mathlib/Mathlib/Topology/Algebra/PontryaginDual.lean:42:    have ht' := ht.trans_le (div_le_self Real.pi_nonneg (one_le_pow₀ one_le_two))
+TCSlib/Complexity/TimeHierarchy/Separation.lean:119:  have hn1 : n + 1 ≤ d * (m + 1) := Nat.lt_mul_div_succ n hd0
+.lake/packages/mathlib/Mathlib/Computability/Primrec.lean:705:  refine of_graph ⟨_, fst, fun p => Nat.div_le_self _ _⟩ ?_
+.lake/packages/mathlib/Mathlib/Data/Nat/Log.lean:312:      Nat.div_le_iff_le_mul_add_pred b_pos, Nat.mul_comm b, ← Nat.pow_succ,
+.lake/packages/mathlib/Mathlib/Data/Nat/Log.lean:465:      exact Nat.mul_le_mul_left _ (Nat.lt_mul_div_succ _ (zero_lt_of_lt hpw))
+.lake/packages/mathlib/Mathlib/Data/Nat/Squarefree.lean:114:        lt_of_le_of_lt (by gcongr; apply div_le_self) this
+TCSlib/Complexity/Randomized/Build/StringLoops.lean:653:(`Nat.div_le_self`, `length_pair_components_le`); `PolyExpr.eval_subst` and
+TCSlib/Complexity/Randomized/Build/StringLoops.lean:665:    hi.trans ((Nat.div_le_self _ _).trans (by omega))
+TCSlib/Complexity/Randomized/Build/StringLoops.lean:705:    have h1 := Nat.lt_mul_div_succ (pairSndD z).length hk
+.lake/packages/mathlib/Mathlib/Data/Nat/Init.lean:115:@[deprecated (since := "2025-06-05")] protected alias div_le_self' := Nat.div_le_self
+.lake/packages/mathlib/Mathlib/Data/Nat/Factorization/Basic.lean:113:  Nat.div_le_self _ _
+TCSlib/Complexity/Randomized/Repetition.lean:487:below round `|snd z| / k` and `true` there (`Nat.le_div_iff_mul_le`, `Nat.lt_mul_div_succ`),
+TCSlib/Complexity/Randomized/Repetition.lean:500:    exact (Nat.div_le_self _ _).trans (by simp only [PolyExpr.eval_var]; omega)
+.lake/packages/mathlib/Mathlib/Data/Nat/Choose/Bounds.lean:45:  exact Nat.div_le_self _ _
+.lake/packages/mathlib/Mathlib/Data/Nat/Choose/Basic.lean:285:  refine Nat.le_of_mul_le_mul_right ?_ (Nat.sub_pos_of_lt (h.trans_le (n.div_le_self 2)))
+.lake/packages/mathlib/Mathlib/Data/Nat/Sqrt.lean:75:    exact Nat.add_lt_add_left (lt_mul_div_succ _ (lt_of_le_of_lt (Nat.zero_le m) h)) _
+.lake/packages/mathlib/Mathlib/Tactic/NormNum/LegendreSymbol.lean:100:    ⟨ne_of_gt ((Nat.pos_of_ne_zero (Nat.ne_of_beq_eq_false hb₀)).trans_le (Nat.div_le_self b 2)),
+TCSlib/Complexity/SpaceComplexity/Machines/ARMLoops.lean:283:      · subst hs; simp [Ne.symm hcr]; exact (Nat.div_le_self _ _).trans (hv _)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean:138:        (Nat.lt_mul_div_succ (P.m κ) hwpos).le
+TCSlib/Complexity/SpaceComplexity/Logspace/PathHardWalk.lean:230:    have hji : j ≤ i := Nat.div_le_self _ _
+TCSlib/Complexity/SpaceComplexity/Logspace/PathHardWalk.lean:253:      (by have := Nat.div_le_self j (2 ^ e); sbd) (by simp [cpDst, cpSrc])
+TCSlib/Complexity/SpaceComplexity/Logspace/PathHardWalk.lean:260:      (by have := Nat.div_le_self j (2 ^ e); sbd) (by simp [cpDst, cpSrc])
+TCSlib/Complexity/SpaceComplexity/Logspace/PathHardWalk.lean:267:      (by have := Nat.div_le_self j (2 ^ e); sbd) rfl (by simp [shReg]; sbd)
+TCSlib/Complexity/SpaceComplexity/Logspace/PathHardWalk.lean:274:      (by have := Nat.div_le_self j (2 ^ e); sbd)
+TCSlib/Complexity/SpaceComplexity/Logspace/PathHardWalk.lean:281:      (by have := Nat.div_le_self j (2 ^ e); sbd)
+TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean:1060:        ((Nat.div_le_self _ _).trans (hv cap))
+TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2144:    have bn : ∀ r, vn r ≤ B := register_update_le v 0 B _ hv ((Nat.div_le_self _ _).trans (hv 0))
+TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean:925:    register_update_le v 11 _ _ bound ((Nat.div_le_self _ _).trans (bound 11))
+TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean:1035:            · exact register_update_le ve 11 _ _ be ((Nat.div_le_self _ _).trans (be 11))
+TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean:1330:    register_update_le vb 6 _ _ bb ((Nat.div_le_self _ _).trans (bb 3))
+.lake/packages/mathlib/Mathlib/Analysis/Hofer.lean:37:    have := H (ε / 2 ^ k) (by positivity) x' (div_le_self ε_pos.le <| one_le_pow₀ one_le_two)
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Run.lean:301:  have hq : q ≤ st.SE := by rw [← hdiv]; exact Nat.div_le_self _ _
+.lake/packages/mathlib/Mathlib/Analysis/SpecialFunctions/Trigonometric/Bounds.lean:175:    exact sin_pos_of_mem_Ioo (Ioo_subset_Ioo_right (div_le_self pi_pos.le one_le_two) hy)
+TCSlib/Complexity/ClassPSPACE/TQBFARM/Leaf.lean:180:      simp only [hq, hst3, hT, zero_add]; exact Nat.div_le_self _ _
+.lake/packages/mathlib/Mathlib/Analysis/SpecialFunctions/Trigonometric/Basic.lean:698:  · exact div_le_self pi_pos.le <| one_le_pow₀ one_le_two
+.lake/packages/mathlib/Mathlib/Analysis/SpecialFunctions/Trigonometric/Inverse.lean:406:      ((arcsin_le_pi_div_two _).trans (div_le_self pi_pos.le one_le_two))
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:637:    · exact Nat.lt_succ_of_le (Nat.div_le_self a m)
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:640:      exact Nat.lt_mul_div_succ a hm
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:95:    P.f (n / 2) (fun j => z (Fin.castLE (Nat.div_le_self n 2) j)) ⟨i, h⟩
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:102:    (P.f (n / 2)).symm (fun j => z (Fin.castLE (Nat.div_le_self n 2) j)) ⟨i, h⟩
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:109:    P.glHalfFun n z (Fin.castLE (Nat.div_le_self n 2) j) =
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:110:      P.f (n / 2) (fun j => z (Fin.castLE (Nat.div_le_self n 2) j)) j := by
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:116:    P.glHalfInv n z (Fin.castLE (Nat.div_le_self n 2) j) =
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:117:      (P.f (n / 2)).symm (fun j => z (Fin.castLE (Nat.div_le_self n 2) j)) j := by
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:136:        · have hfun : (fun j => P.glHalfFun n z (Fin.castLE (Nat.div_le_self n 2) j)) =
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:137:              P.f (n / 2) (fun j => z (Fin.castLE (Nat.div_le_self n 2) j)) :=
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:139:          have : i = Fin.castLE (Nat.div_le_self n 2) ⟨i, h⟩ := Fin.ext rfl
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:145:        · have hfun : (fun j => P.glHalfInv n z (Fin.castLE (Nat.div_le_self n 2) j)) =
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:146:              (P.f (n / 2)).symm (fun j => z (Fin.castLE (Nat.div_le_self n 2) j)) :=
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:148:          have : i = Fin.castLE (Nat.div_le_self n 2) ⟨i, h⟩ := Fin.ext rfl
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:155:      P.f (n / 2) (fun j => z (Fin.castLE (Nat.div_le_self n 2) j)) ⟨i, h⟩ else z i := rfl
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:168:  HardcoreBit.ip (fun j : Fin (n / 2) => z (Fin.castLE (Nat.div_le_self n 2) j))
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:356:          (Fin.castLE (Nat.div_le_self (m + m + 1) 2) (Fin.cast hm.symm j')) : Fin m → Bool) =
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:359:        have : Fin.castLE (Nat.div_le_self (m + m + 1) 2) (Fin.cast hm.symm j') =
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:384:    have : Fin.castLE (Nat.div_le_self (m + m + 1) 2) (Fin.cast hm.symm j) =
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:503:      List.ofFn (P.f (n / 2) fun j => z (Fin.castLE (Nat.div_le_self n 2) j)) ++
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:548:  rw [take_ofFn_castLE (Nat.div_le_self n 2), hFx']
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:564:  rw [take_ofFn_castLE (Nat.div_le_self n 2), take_drop_ofFn (by omega), ipFun_ofFn]
+TCSlib/Cryptography/Candidates/RSA.lean:2239:      listToNat_natToList ((Nat.div_le_self _ _).trans_lt (listToNat_lt_two_pow Nw))]
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:958:    listToNat_natToList (lt_of_le_of_lt (Nat.div_le_self _ _) (listToNat_lt_two_pow _))]
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2226:  have hslt : sv < 2 ^ n := lt_of_le_of_lt (Nat.div_le_self _ _) (by omega)
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2286:      listToNat_natToList (lt_of_le_of_lt (Nat.div_le_self _ _) hpn)]
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2886:      (Nat.div_le_self _ _).trans (by omega)
+TCSlib/Cryptography/Candidates/Rabin.lean:2476:    listToNat_natToList ((Nat.div_le_self _ _).trans_lt (listToNat_lt_two_pow pw))]
+TCSlib/Cryptography/Candidates/Rabin.lean:3324:      listToNat_natToList ((Nat.div_le_self _ _).trans_lt (listToNat_lt_two_pow _))]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Machines.lean:321:    (fun m => by rw [PolyExpr.eval_var]; exact Nat.div_le_self m 2)
+.lake/packages/mathlib/Mathlib/MeasureTheory/Group/AddCircle.lean:87:      div_self, one_mul, min_eq_right (div_le_self hT.out.le hn), hG_card,
+.lake/packages/mathlib/Mathlib/Combinatorics/Extremal/RuzsaSzemeredi.lean:216:      exact (Nat.lt_mul_div_succ _ <| by simp).le
+.lake/packages/mathlib/Mathlib/Combinatorics/SetFamily/KruskalKatona.lean:358:  have : r ≤ n := h₃.trans (Nat.div_le_self n 2)
+.lake/packages/mathlib/Mathlib/Combinatorics/SetFamily/LYM.lean:234:    Nat.cast_pos.2 <| choose_pos (Nat.div_le_self _ _)
+.lake/packages/mathlib/Mathlib/Combinatorics/Additive/AP/Three/Behrend.lean:205:  sum_eq.trans_lt <| (Nat.div_le_self _ 2).trans_lt <| pred_lt (pow_pos (succ_pos _) _).ne'
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/CompleteMultipartite.lean:241:      · rw [Nat.div_le_iff_le_mul_add_pred v.1.pos, mul_comm r ↑v.2]

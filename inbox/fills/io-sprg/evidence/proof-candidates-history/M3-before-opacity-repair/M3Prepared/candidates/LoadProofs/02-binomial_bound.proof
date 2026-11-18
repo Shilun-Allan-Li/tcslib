@@ -1,0 +1,25 @@
+by
+  have hkR : 0 < (k : ℝ) := Nat.cast_pos.mpr hk
+  have hkpow : 0 < (k : ℝ) ^ k := pow_pos hkR k
+  have hfact : 0 < (k.factorial : ℝ) := Nat.cast_pos.mpr (Nat.factorial_pos k)
+  have hexp : Real.exp (k : ℝ) = Real.exp 1 ^ k := ?_
+  swap
+  · simpa only [mul_one] using Real.exp_nat_mul (1 : ℝ) k
+  have hseries := Real.pow_div_factorial_le_exp (k : ℝ) (Nat.cast_nonneg k) k
+  rw [hexp] at hseries
+  have hfac : 1 / (k.factorial : ℝ) ≤ (Real.exp 1 / (k : ℝ)) ^ k := ?_
+  swap
+  · rw [div_pow]
+    apply (div_le_div_iff₀ hfact hkpow).2
+    simpa only [one_mul] using (div_le_iff₀ hfact).1 hseries
+  have hchoose : (Nat.choose n k : ℝ) ≤
+      (n : ℝ) ^ k * (1 / (k.factorial : ℝ)) := ?_
+  swap
+  · simpa only [div_eq_mul_inv, one_mul] using (Nat.choose_le_pow_div (α := ℝ) k n)
+  have hfinal := hchoose.trans
+    (mul_le_mul_of_nonneg_left hfac (pow_nonneg (Nat.cast_nonneg n) k))
+  have hbase : (n : ℝ) * (Real.exp 1 / (k : ℝ)) = Real.exp 1 * (n : ℝ) / k := ?_
+  swap
+  · ring
+  rw [← mul_pow, hbase] at hfinal
+  exact hfinal

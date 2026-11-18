@@ -1,0 +1,48 @@
+/- NOT_RUN. Proposed area-local Internal helper, dependency candidate01.
+No new imports. Reuses PolyExpr.eval_le and the public polynomial/exponential
+limit, not a custom subexponential definition. Search: no exact public
+construction-prefactor domination statement found. exact?/apply? pending. -/
+
+theorem prefactor_eventually_le_two_pow (P : Params) :
+    ∃ κ₀, ∀ κ ≥ κ₀, (((κ + 1) * P.B κ + 1 : ℕ) : ℝ) ≤ (2 : ℝ) ^ κ := by
+  let q : Complexity.PolyExpr :=
+    .add (.mul (.add .var (.const 1))
+      (.add (.mul (P.G.outBound.subst (.pow .var (P.E * P.D))) .var)
+        (.const 1))) (.const 1)
+  have hq : ∀ κ, (κ + 1) * P.B κ + 1 ≤ q.eval κ := ?_
+  swap
+  · intro κ
+    have hn : (Complexity.PolyExpr.pow .var (P.E * P.D)).eval κ = P.n κ := ?_
+    swap
+    · rw [Complexity.PolyExpr.eval_pow, Complexity.PolyExpr.eval_var,
+        P.n_eq, P.ℓ_eq, pow_mul]
+    have hm : P.m κ ≤ (P.G.outBound.subst (.pow .var (P.E * P.D))).eval κ := ?_
+    swap
+    · rw [Complexity.PolyExpr.eval_subst, hn, P.m_eq]
+      exact P.G.outLen_le (P.n κ)
+    have hb := (bucket_count_upper P κ).trans
+      (Nat.add_le_add_right (Nat.mul_le_mul_right κ hm) 1)
+    simpa only [q, Complexity.PolyExpr.eval_add, Complexity.PolyExpr.eval_mul,
+      Complexity.PolyExpr.eval_var, Complexity.PolyExpr.eval_const] using
+      Nat.add_le_add_right (Nat.mul_le_mul_left (κ + 1) hb) 1
+  obtain ⟨C, c, hnorm⟩ := Complexity.PolyExpr.eval_le q
+  have hlim : Filter.Tendsto
+      (fun κ : ℕ => (2 * (C : ℝ)) * (((κ + 1 : ℕ) : ℝ) ^ c /
+        (2 : ℝ) ^ (κ + 1))) Filter.atTop (nhds 0) := ?_
+  swap
+  · simpa only [mul_zero] using
+      (((tendsto_pow_const_div_const_pow_of_one_lt c
+        (r := (2 : ℝ)) one_lt_two).comp
+        (Filter.tendsto_add_atTop_nat 1)).const_mul (2 * (C : ℝ)))
+  obtain ⟨κ₀, hκ₀⟩ :=
+    Filter.eventually_atTop.mp (hlim.eventually_le_const zero_lt_one)
+  refine ⟨κ₀, ?_⟩
+  intro κ hκ
+  have hr := hκ₀ κ hκ
+  rw [← mul_div_assoc, div_le_iff₀ (pow_pos zero_lt_two (κ + 1))] at hr
+  simp only [one_mul, pow_succ] at hr
+  have hb : (((κ + 1) * P.B κ + 1 : ℕ) : ℝ) ≤
+      (C : ℝ) * (((κ + 1 : ℕ) : ℝ) ^ c) := ?_
+  swap
+  · exact_mod_cast ((hq κ).trans (hnorm κ))
+  nlinarith

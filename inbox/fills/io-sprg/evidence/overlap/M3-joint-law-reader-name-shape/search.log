@@ -1,0 +1,25 @@
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:536:  rw [← Bridge.expect_sample_pair]
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean:414:  rw [← ProbComp.expect_sample_equiv φ, ← Bridge.expect_sample_pair]
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionGame.lean:127:          Bridge.expect_sample_pair (fun p : S.gen.Coins n × S.sign.Coins n =>
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionGame.lean:140:          Bridge.expect_sample_pair (fun p :
+TCSlib/Cryptography/Authentication/Signatures/Lamport/AveragingExtra.lean:85:      (Bridge.expect_sample_pair (fun p : ι × Bool => v p.1 p.2)).symm
+TCSlib/Cryptography/Authentication/Signatures/Lamport/InversionProbability.lean:69:    ProbComp.prob_eq_expect, ← Bridge.expect_sample_pair]
+TCSlib/Cryptography/Authentication/Signatures/Lamport/InversionProbability.lean:74:  simp only [← Bridge.expect_sample_pair, ProbComp.expect_bind, ProbComp.expect_pure]
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Reduction.lean:111:pair (`Bridge.expect_sample_pair`), exchange the samples (`expect_sample_comm`) and read the seed as
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine/Reduction.lean:156:    rw [← Bridge.expect_sample_pair, ProbComp.expect_bind]
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean:115:  `(a, b', c)` merges into one draw (`Bridge.expect_sample_pair`); the unused `T` drops out. -/
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Chain.lean:27:   `(a, b', c)` (`Bridge.expect_sample_pair`); the unused `T` drops out (`expect_const`).
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Chain.lean:71:(`Bridge.expect_sample_pair`); `c` moves past `A`'s coins (`expect_sample_comm`). -/
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Chain.lean:105:  rw [← Bridge.expect_sample_pair]
+TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity/Chain.lean:108:  rw [← Bridge.expect_sample_pair]
+TCSlib/Cryptography/Games/Bridges/Experiments.lean:25:(`prob_sample_pair`), so the games may sample the seed and the coins in sequence.
+TCSlib/Cryptography/Games/Bridges/Experiments.lean:38:* `Games.Bridge.prob_sample_pair`: sampling `α` then `β` is sampling `α × β`.
+TCSlib/Cryptography/Games/Bridges/Experiments.lean:80:theorem expect_sample_pair [Fintype α] [Nonempty α] [Fintype β] [Nonempty β] (g : α × β → ℝ) :
+TCSlib/Cryptography/Games/Bridges/Experiments.lean:89:theorem prob_sample_pair [Fintype α] [Nonempty α] [Fintype β] [Nonempty β] (p : α × β → Prop) :
+TCSlib/Cryptography/Games/Bridges/Experiments.lean:93:  rw [prob_eq_expect, prob_eq_expect, expect_sample_pair]
+TCSlib/Cryptography/Games/Bridges/Experiments.lean:102:  rw [invProb_def, prob_sample_pair, prob_sample_eq_uprob]
+TCSlib/Cryptography/Games/Bridges/Experiments.lean:111:  rw [predProb_def, prob_sample_pair, prob_sample_eq_uprob]
+TCSlib/Cryptography/Games/Bridges/Experiments.lean:135:    (p := fun z : σ × ρ => D (X z.1) z.2 = true), prob_sample_pair, prob_sample_eq_uprob]
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Conditions.lean:188:        Bridge.prob_sample_pair (fun z => event (out z))
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Conditions.lean:192:      ProbComp.prob_eq_expect, ProbComp.expect_bind, ProbComp.expect_map,
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean:335:  rw [← Bridge.expect_sample_pair]

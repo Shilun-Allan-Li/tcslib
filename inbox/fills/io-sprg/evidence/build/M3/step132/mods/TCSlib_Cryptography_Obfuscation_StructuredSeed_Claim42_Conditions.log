@@ -1,0 +1,61 @@
+2026-11-18T18:48:14.295313+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Conditions
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Conditions.lean:238:2: error: unsolved goals
+case refine_2.refine_2.refine_1.h
+P : Params
+κ : ℕ
+pp : PrimeParam κ
+k : Fin κ
+hκ : 12 ≤ κ
+hΓ : P.Γ κ ≤ P.B κ
+GDraw : Type := P.G.IdDraw (P.n κ)
+Buck : Type := Fin (P.m κ) → Fin (P.B κ)
+Mat : Type := Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p)
+D : Type := P.Draw κ pp
+φ₀ : Buck := fun x => ⟨0, ⋯⟩
+idx : GDraw → Buck → Mat → P.Idx' κ pp := fun g φ A => (P.G.idCore (P.n κ) g, φ, A)
+S : GDraw × Mat × D → Finset (Fin (P.m κ)) :=
+  fun z => P.badSet κ pp (idx z.1 φ₀ z.2.1) fun i => P.noiseValue κ pp ((z.2.2.2 k).2 i)
+event : P.IdDraw κ pp × D → Prop :=
+  fun z => P.Cond2 κ pp (P.idCore κ pp z.1) z.2 k ∧ ¬P.Cond1 κ pp (P.idCore κ pp z.1) z.2 k
+hbad :
+  ∀ (g : GDraw) (φ : Buck) (A : Mat) (e : Fin (P.n κ) → ZMod pp.p),
+    P.badSet κ pp (idx g φ A) e = P.badSet κ pp (idx g φ₀ A) e
+hunif : ((P.jointLaw κ pp).prob fun x => P.Cond2 κ pp x.1 x.2.draw k ∧ ¬P.Cond1 κ pp x.1 x.2.draw k) = uprob event
+e : P.IdDraw κ pp × D ≃ (GDraw × Mat × D) × Buck :=
+  (Equiv.prodAssoc GDraw (Buck × Mat) D).trans
+    (((Equiv.refl GDraw).prodCongr (Equiv.prodAssoc Buck Mat D)).trans
+      (((Equiv.refl GDraw).prodCongr (Equiv.prodComm Buck (Mat × D))).trans
+        (Equiv.prodAssoc GDraw (Mat × D) Buck).symm))
+z : (GDraw × Mat × D) × Buck
+⊢ (∃ b,
+        κ <
+          (Buckets.bucket (idx z.1.1 z.2 z.1.2.1).2.1 b ∩
+              P.badSet κ pp (idx z.1.1 φ₀ z.1.2.1) fun i => P.noiseValue κ pp ((z.1.2.2.2 k).2 i)).card) ∧
+      (P.badSet κ pp (idx z.1.1 φ₀ z.1.2.1) fun i => P.noiseValue κ pp ((z.1.2.2.2 k).2 i)).card ≤ P.Γ κ ↔
+    (∃ b,
+        κ <
+          (Buckets.bucket z.2 b ∩
+              P.badSet κ pp (idx z.1.1 φ₀ z.1.2.1) fun i => P.noiseValue κ pp ((z.1.2.2.2 k).2 i)).card) ∧
+      (P.badSet κ pp (idx z.1.1 φ₀ z.1.2.1) fun i => P.noiseValue κ pp ((z.1.2.2.2 k).2 i)).card ≤ P.Γ κ
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Conditions): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Conditions): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Conditions): no fresh .olean produced
+        3.59 real         2.47 user         1.15 sys
+          2377383936  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              179211  page reclaims
+               11738  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 951  voluntary context switches
+               13044  involuntary context switches
+            32371102  instructions retired
+            16397708  cycles elapsed
+             1638736  peak memory footprint
+2026-11-18T18:48:17.912720+00:00 END rc=1

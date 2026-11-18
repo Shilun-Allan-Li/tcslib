@@ -1,0 +1,27 @@
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Degree
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.pubDegree_eq
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.privDegree_eq
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.weightedTotalDegree_add_le
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.weightedTotalDegree_mul_le
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.weightedTotalDegree_finset_sum_le
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.weightedTotalDegree_finset_prod_le
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.weightedTotalDegree_C
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal.weightedTotalDegree_X_le
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.pubDegree_zero
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.privDegree_zero
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.pubDegree_C
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.privDegree_C
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.pubDegree_X_inl
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.pubDegree_X_inr
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.privDegree_X_inl
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.privDegree_X_inr
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.pubDegree_add_le
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.privDegree_add_le
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.pubDegree_mul_le
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.privDegree_mul_le
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.pubDegree_finset_sum_le
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.privDegree_finset_sum_le
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.pubDegree_finset_prod_le
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.privDegree_finset_prod_le
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.pubDegree_rename
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.privDegree_rename

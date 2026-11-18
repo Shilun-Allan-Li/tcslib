@@ -1,0 +1,18 @@
+{
+ "id": "W07",
+ "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean",
+ "theorem": "Internal.eventually_seed_relative_gap",
+ "lines": [
+  298,
+  298
+ ],
+ "before": "    field_simp [(Real.rpow_pos_of_pos hxpos b).ne'] <;> ring",
+ "after": "    field_simp [(Real.rpow_pos_of_pos hxpos b).ne']",
+ "reason": "field_simp already closes this equality. The subsequent ring is both unreachable and unused; delete only that suffix.",
+ "before_sha256": "563e4dfb22c01aa1cfc0de836cfd0d3a31df579a77cf33057d8b0debc78aae84",
+ "after_sha256": "c0399a3657af61075087591a757f974281c03088c22e296794699d5f12769b48",
+ "status": "COMBINED_FINAL_OWNER_CHECKED_PASS",
+ "final_owner_source_sha256": "065377b877435c8c77fa6af9ad0e32b5dfad186e3d3b2422f1be36bc617d65df",
+ "check": "evidence/build/M3/opacity-warning-repair-v2/results.jsonl",
+ "qualification": "Final combined owner with all selected cleanup edits checked; intermediate individual files are retained without claiming separate checks."
+}

@@ -1,0 +1,105 @@
+[
+ {
+  "name": "bucket_count_upper",
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Bounds.lean",
+  "candidate": "/private/tmp/io-sprg-proof-notes/M3Prepared/candidates/Claim42Final/01-bucket_count_upper.lean.candidate",
+  "probe": "M3Load_bucket_count_upper_core",
+  "doc": "The rounded bucket count satisfies `B κ ≤ m κ * κ + 1`; glue for the JLS allocation.\n[JLS26, proof of Claim 4.2, pp. 20-21]. This is theorem-only analytic glue;\nno sampling or efficiency construction is introduced.\n\n**Proof sketch.** Read the rounded quotient, apply the public natural-division bound, and use W≥1."
+ },
+ {
+  "name": "bucket_count_lower",
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Bounds.lean",
+  "candidate": "/private/tmp/io-sprg-proof-notes/M3Prepared/candidates/Claim42Final/09-bucket_count_lower.lean.candidate",
+  "probe": "M3Load_bucket_count_lower_core",
+  "doc": "The rounded bucket count covers the allocation: `m κ * κ ≤ B κ * W κ`; glue.\n[JLS26, proof of Claim 4.2, pp. 20-21]. This is theorem-only analytic glue;\nno sampling or efficiency construction is introduced.\n\n**Proof sketch.** Apply the public strict quotient bound, clear its additive rounding term, then use the max bound."
+ },
+ {
+  "name": "prefactor_eventually_le_two_pow",
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Bounds.lean",
+  "candidate": "/private/tmp/io-sprg-proof-notes/M3Prepared/candidates/Claim42Final/02-prefactor_eventually_le_two_pow.lean.candidate",
+  "probe": "M3Load_prefactor_eventually_le_two_pow_core_v2",
+  "doc": "The construction prefactor `(κ+1)*B κ+1` is eventually at most `2^κ`.\n[JLS26, proof of Claim 4.2, pp. 20-21]. This is theorem-only analytic glue;\nno sampling or efficiency construction is introduced.\n\n**Proof sketch.** Bound the prefactor by the stored output polynomial. Apply PolyExpr.eval_le and the existing polynomial-over-exponential limit, then choose a common cutoff.",
+  "probe_supersession": "Unused namespace open removed; statement/imports unchanged; invalid exact retained and invalid apply not run."
+ },
+ {
+  "name": "binomial_ratio_quarter",
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Bounds.lean",
+  "candidate": "/private/tmp/io-sprg-proof-notes/M3Prepared/candidates/Claim42Final/08-binomial_ratio_quarter.lean.candidate",
+  "probe": "M3Load_binomial_ratio_quarter_core",
+  "doc": "For positive B,r with `4*exp(1)*N ≤ B*r` and `κ ≤ r`, the ratio `choose(N,r)/B^r` is at most `4⁻¹^κ`.\n[JLS26, proof of Claim 4.2, pp. 20-21]. This is theorem-only analytic glue;\nno sampling or efficiency construction is introduced.\n\n**Proof sketch.** Use binomial_bound once, divide the resulting power by B^r, bound its base by 1/4, then lower the exponent using the public ordered-power lemma."
+ },
+ {
+  "name": "smallset_bucket_tail_quarter",
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Bounds.lean",
+  "candidate": "/private/tmp/io-sprg-proof-notes/M3Prepared/candidates/Claim42Final/10-smallset_bucket_tail_quarter.lean.candidate",
+  "probe": "M3Load_smallset_bucket_tail_quarter_core",
+  "doc": "For κ≥12 and Γ κ≤B κ, every fixed set of size at most Γ κ has some overloaded bucket with probability at most `B κ * 4⁻¹^κ`.\n[JLS26, proof of Claim 4.2, pp. 20-21]. This is theorem-only analytic glue;\nno sampling or efficiency construction is introduced.\n\n**Proof sketch.** Use the exact finite bucket-tail bound. The cardinality and bucket hypotheses give the base inequality for binomial_ratio_quarter at r=κ+1."
+ },
+ {
+  "name": "capacity_bucket_tail_quarter",
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Bounds.lean",
+  "candidate": "/private/tmp/io-sprg-proof-notes/M3Prepared/candidates/Claim42Final/11-capacity_bucket_tail_quarter.lean.candidate",
+  "probe": "M3Load_capacity_bucket_tail_quarter_core",
+  "doc": "For κ≥12, uniform placement exceeds the rounded capacity in some bucket with probability at most `B κ * 4⁻¹^κ`.\n[JLS26, proof of Claim 4.2, pp. 20-21]. This is theorem-only analytic glue;\nno sampling or efficiency construction is introduced.\n\n**Proof sketch.** Use the full-load bound, bucket_count_lower and the capacity reader to verify the base inequality, then apply binomial_ratio_quarter."
+ },
+ {
+  "name": "cond1_single_le_quarter",
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Conditions.lean",
+  "candidate": "/private/tmp/io-sprg-proof-notes/M3Prepared/candidates/Claim42Final/03-cond1_single_le_quarter.lean.candidate",
+  "probe": "M3Load_cond1_single_le_quarter_core",
+  "doc": "If `4*cLoc ≤ log₂(n κ)`, one fixed-index bad-count failure has probability at most 1/4.\n[JLS26, proof of Claim 4.2, pp. 20-21]. This is theorem-only analytic glue;\nno sampling or efficiency construction is introduced.\n\n**Proof sketch.** Combine the existing Markov bound with the public quotient rounding bound for Γ. Cast the resulting natural inequality and clear the positive denominator."
+ },
+ {
+  "name": "cond1_repetitions_fixed_index",
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Conditions.lean",
+  "candidate": "/private/tmp/io-sprg-proof-notes/M3Prepared/candidates/Claim42Final/04-cond1_repetitions_fixed_index.lean.candidate",
+  "probe": "M3Load_cond1_repetitions_fixed_index_core",
+  "doc": "At a fixed complete index, the probability that every independent repetition satisfies Cond1 is at most `4⁻¹^κ`, under the logarithmic locality bound.\n[JLS26, proof of Claim 4.2, pp. 20-21]. This is theorem-only analytic glue;\nno sampling or efficiency construction is introduced.\n\n**Proof sketch.** Discard each unused secret by the product probability reader. Reuse OneWay.uprob_pi_forall for the independent repetitions, then apply the single-repetition bound."
+ },
+ {
+  "name": "cond1_all_fixed_index",
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Conditions.lean",
+  "candidate": "/private/tmp/io-sprg-proof-notes/M3Prepared/candidates/Claim42Final/05-cond1_all_fixed_index.lean.candidate",
+  "probe": "M3Load_cond1_all_fixed_index_core",
+  "doc": "Under the logarithmic locality bound, the full seed-core law at each fixed index has simultaneous Cond1 probability at most `4⁻¹^κ`.\n[JLS26, proof of Claim 4.2, pp. 20-21]. This is theorem-only analytic glue;\nno sampling or efficiency construction is introduced.\n\n**Proof sketch.** Read the full seed sampler as its exact uniform draw, transport through sdCore_draw, discard the Boolean seed, and apply the fixed-index repetition bound."
+ },
+ {
+  "name": "cond1_all_joint",
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Conditions.lean",
+  "candidate": "/private/tmp/io-sprg-proof-notes/M3Prepared/candidates/Claim42Final/06-cond1_all_joint.lean.candidate",
+  "probe": "M3Load_cond1_all_joint_core",
+  "doc": "Under the logarithmic locality bound, simultaneous Cond1 under the actual joint law has probability at most `4⁻¹^κ`.\n[JLS26, proof of Claim 4.2, pp. 20-21]. This is theorem-only analytic glue;\nno sampling or efficiency construction is introduced.\n\n**Proof sketch.** Condition on the complete index, apply the same fixed-index bound to every section, and average over the actual index sampler using expectation monotonicity."
+ },
+ {
+  "name": "cond3_joint_le_quarter_pow",
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Conditions.lean",
+  "candidate": "/private/tmp/io-sprg-proof-notes/M3JointReader/cond3_joint_le_quarter_pow.lean.candidate",
+  "probe": "M3Load_cond3_joint_le_quarter_pow_core",
+  "doc": "For κ≥12, common capacity failure under the actual joint law has probability at most `B κ * 4⁻¹^κ`.\n[JLS26, proof of Claim 4.2, pp. 20-21]. This is theorem-only analytic glue;\nno sampling or efficiency construction is introduced.\n\n**Proof sketch.** Discard the unused full seed draw and the unused generator/matrix coordinates through the probability readers, then apply the uniform full-load bound.",
+  "original_candidate": "/private/tmp/io-sprg-proof-notes/M3Prepared/candidates/Claim42Final/12-cond3_joint_le_quarter_pow.lean.candidate"
+ },
+ {
+  "name": "cond2_sparse_joint_le_quarter_pow",
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Conditions.lean",
+  "candidate": "/private/tmp/io-sprg-proof-notes/M3JointReader/cond2_sparse_joint_le_quarter_pow.lean.candidate",
+  "probe": "M3Load_cond2_sparse_joint_le_quarter_pow_core",
+  "doc": "For κ≥12 and Γ κ≤B κ, each joint Cond2-and-not-Cond1 event has probability at most `B κ * 4⁻¹^κ`.\n[JLS26, proof of Claim 4.2, pp. 20-21]. This is theorem-only analytic glue;\nno sampling or efficiency construction is introduced.\n\n**Proof sketch.** Transport the actual index/core draws through explicit product equivalences so placement is last. Fix all other data, use the fixed small-set bound when its cardinality is at most Γ, handle the impossible case by zero, and average the section bounds.",
+  "original_candidate": "/private/tmp/io-sprg-proof-notes/M3Prepared/candidates/Claim42Final/13-cond2_sparse_joint_le_quarter_pow.lean.candidate"
+ },
+ {
+  "name": "jointLaw_prob_eq_uprob",
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Defs.lean",
+  "candidate": "/private/tmp/io-sprg-proof-notes/M3JointReader/jointLaw_prob_eq_uprob.lean.candidate",
+  "probe": "M3Load_jointLaw_prob_eq_uprob_core",
+  "marker": "\n/-- Error probability is the exact chance",
+  "doc": "The probability of any event under jointLaw equals its probability after the index and seed cores are applied to one uniform raw product draw.\n[JLS26, proof of Claim 4.2, pp. 19-21]; semantic probability reader glue.\n\n**Proof sketch.** Read the two deterministic pushforwards through the public expectation rules. Combine the independent raw draws with Bridge.prob_sample_pair and finish with the uniform probability reader."
+ },
+ {
+  "name": "Internal.lpnNoise_law_cast",
+  "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean",
+  "candidate": "/private/tmp/io-sprg-proof-notes/M3JointReader/lpnNoise_law_cast.lean.candidate",
+  "probe": "M3Load_lpnNoise_law_cast_core",
+  "marker": "\nnamespace LPNFamily\n\n/-- A raw LPN family",
+  "doc": "The scalar noise law also holds when the explicit product seed is cast into the stored coin type.\n[JLS26, before Definition 2.3, p. 9]; cast-indexed reader glue.\n\n**Proof sketch.** Reuse lpnNoise_law and Core.cast_eq in the noise owner. The published statement exposes the cast normalization needed by foreign consumers without unfolding the noise definition."
+ }
+]

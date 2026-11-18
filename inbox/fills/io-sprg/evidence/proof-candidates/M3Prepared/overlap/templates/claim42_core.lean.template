@@ -1,0 +1,22 @@
+import TCSlib.Cryptography.Games.Bridges.Experiments
+import TCSlib.Cryptography.OneWayFunctions.Basic
+import Mathlib.Data.Finset.Powerset
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography
+
+example (PP : ℕ → Type) (B : ℕ → ℕ)
+    (err c3 c1 : (κ : ℕ) → PP κ → ℝ)
+    (c2 : (κ : ℕ) → PP κ → Fin κ → ℝ)
+    (hparts : ∃ κ₀, ∀ κ ≥ κ₀, ∀ pp : PP κ,
+      err κ pp ≤ c3 κ pp + Finset.sum Finset.univ (c2 κ pp) + c1 κ pp ∧
+      c3 κ pp ≤ (B κ : ℝ) * (4 : ℝ)⁻¹ ^ κ ∧
+      (∀ k, c2 κ pp k ≤ (B κ : ℝ) * (4 : ℝ)⁻¹ ^ κ) ∧
+      c1 κ pp ≤ (4 : ℝ)⁻¹ ^ κ)
+    (hpoly : ∃ κ₀, ∀ κ ≥ κ₀,
+      (((κ + 1) * B κ + 1 : ℕ) : ℝ) ≤ (2 : ℝ) ^ κ) :
+    ∃ κ₀, ∀ κ ≥ κ₀, ∀ pp : PP κ, err κ pp ≤ (2 : ℝ)⁻¹ ^ κ := __PROBE_BODY__

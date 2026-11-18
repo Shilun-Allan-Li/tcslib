@@ -104,12 +104,25 @@ theorem lpnNoise_law (p W : ℕ) [NeZero p] [NeZero W] (z : ZMod p) :
     swap
     · intro c
       rw [hs c]
-      by_cases ha : c.1 = 0 <;> simp [ha, hz, Ne.symm hz]
+      by_cases ha : c.1 = 0 <;> simp [ha, Ne.symm hz]
     rw [OneWay.uprob_congr hevent,
       HardcoreBit.uprob_prod_and (fun a : Fin W => a = 0) (fun x : ZMod p => x = z),
       hW, hp]
     simp only [one_div, mul_inv_rev]
     ring
+
+/-- The scalar noise law also holds when the explicit product seed is cast into the stored coin
+type. [JLS26, before Definition 2.3, p. 9]; cast-indexed reader glue.
+
+**Proof sketch.** Reuse lpnNoise_law and Core.cast_eq in the noise owner. The published
+statement exposes the cast normalization needed by foreign consumers without unfolding the
+noise definition. -/
+theorem Internal.lpnNoise_law_cast (p W : ℕ) [NeZero p] [NeZero W] (z : ZMod p) :
+    uprob (fun c : Fin W × ZMod p =>
+      ((lpnNoise p W).sample (cast (lpnNoise_coins p W).symm c) : ZMod p) = z) =
+      if z = 0 then 1 - 1 / (W : ℝ) + 1 / ((W : ℝ) * p)
+      else 1 / ((W : ℝ) * p) := by
+  simpa only [cast_eq] using lpnNoise_law p W z
 
 namespace LPNFamily
 

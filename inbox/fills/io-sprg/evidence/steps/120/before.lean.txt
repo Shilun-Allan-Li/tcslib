@@ -1,0 +1,44 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Claim42.Defs
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Numeric bucket and exponential bounds for Claim 4.2
+
+## Main definitions
+
+None. This file hosts theorem-only arithmetic and finite-load consequences.
+
+## Main results
+
+The `Internal` helpers bound the exact rounded bucket count, its
+polynomial prefactor, and the sparse/full bucket tails.
+
+
+## References
+
+* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
+  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026,
+  proof of Claim 4.2, pp. 19-21.
+* [PS10] R. Pass, A. Shelat, *A Course in Cryptography*, 2010, Definition 26.8.
+-/
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal
+
+
+/-- The rounded bucket count satisfies `B κ ≤ m κ * κ + 1`; glue for the JLS allocation. [JLS26,
+proof of Claim 4.2, pp. 20-21]. This is theorem-only analytic glue; no sampling or
+efficiency construction is introduced.
+
+**Proof sketch.** Read the rounded quotient, apply the public natural-division bound, and
+use W≥1. -/
+theorem bucket_count_upper (P : Params) (κ : ℕ) :
+    P.B κ ≤ P.m κ * κ + 1 := sorry
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal

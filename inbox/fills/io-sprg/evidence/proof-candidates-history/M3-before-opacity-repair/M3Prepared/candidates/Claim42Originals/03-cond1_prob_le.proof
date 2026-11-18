@@ -1,0 +1,25 @@
+by
+  classical
+  let c := Games.ProbComp.sample (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
+  let q := fun r : Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p =>
+    ((P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))).card : ℝ)
+  let ev := fun r : Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p =>
+    P.Γ κ < (P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))).card
+  have hmarkov : ((P.Γ κ : ℝ) + 1) * Games.ProbComp.prob c ev ≤
+      Games.ProbComp.expect c q := ?_
+  swap
+  · apply TCSlib.Cryptography.Authentication.LamportReduction.expect_favourable_of_success
+    · intro r
+      exact Nat.cast_nonneg _
+    · intro r hr
+      exact_mod_cast (Nat.succ_le_of_lt hr)
+  have hmean : Games.ProbComp.expect c q ≤ (cLoc : ℝ) * P.m κ / P.W κ :=
+    P.badSet_expect_le hLoc κ pp I
+  have hW : (0 : ℝ) < P.W κ := Nat.cast_pos.mpr (P.W_pos κ)
+  have hΓ : (0 : ℝ) < (P.Γ κ : ℝ) + 1 :=
+    add_pos_of_nonneg_of_pos (Nat.cast_nonneg _) zero_lt_one
+  change Games.ProbComp.prob c ev ≤ _
+  apply (le_div_iff₀ (mul_pos hW hΓ)).2
+  have hmul := mul_le_mul_of_nonneg_right (hmarkov.trans hmean) hW.le
+  rw [div_mul_cancel₀ _ hW.ne'] at hmul
+  nlinarith

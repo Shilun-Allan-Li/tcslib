@@ -1,0 +1,12 @@
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.SparseFactor
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseEntries_eq
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseLeft_eq
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseRight_eq
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseFactor_eq
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseFactor_fst
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseFactor_snd
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseEntries_nodup
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.mem_sparseEntries_iff
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseEntries_length_eq_card
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseFactor_mul
+#print axioms TCSlib.Cryptography.Obfuscation.StructuredSeed.sparseFactor_mul_of_card_le

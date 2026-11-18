@@ -1,0 +1,70 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Claim42.Bounds
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Correctness
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Conditional failure estimates for Claim 4.2
+
+## Main definitions
+
+None. All failure events are imported from `Claim42.Defs`.
+
+## Main results
+
+* The proposed `Internal` helpers condition on a fixed index, then average over
+  its actual law; they also bound the common capacity and sparse overload events.
+* `Params.errProb_le_decomposition` is the existing three-event decomposition.
+
+New helper candidates remain separate from this declaration-only relocation.
+
+## References
+
+* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
+  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026,
+  proof of Claim 4.2, pp. 19-21.
+* [PS10] R. Pass, A. Shelat, *A Course in Cryptography*, 2010, Definition 26.8.
+-/
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+
+open TCSlib.Cryptography.Games
+open scoped BigOperators
+
+namespace Internal
+
+-- Insert completed theorem-only candidates in this dependency order:
+-- Claim42Final/03-cond1_single_le_quarter.lean.candidate
+-- Claim42Final/04-cond1_repetitions_fixed_index.lean.candidate
+-- Claim42Final/05-cond1_all_fixed_index.lean.candidate
+-- Claim42Final/06-cond1_all_joint.lean.candidate
+-- Claim42Final/12-cond3_joint_le_quarter_pow.lean.candidate
+-- Claim42Final/13-cond2_sparse_joint_le_quarter_pow.lean.candidate
+
+end Internal
+
+namespace Params
+
+/-- The error event is bounded by common capacity failure, the sparse-but-overloaded
+repetitions, and simultaneous bad-count failure [JLS26, proof of Claim 4.2, p. 21].
+Dv7 keeps every probability explicit before taking eventual estimates.
+
+**Proof sketch.** Read firstGood's failure condition. If no repetition succeeds, either the
+common capacity event holds, some repetition has Cond2 without Cond1, or all have Cond1.
+Apply the existing finite-event union bound through the uniform-draw bridge. -/
+theorem errProb_le_decomposition (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
+    P.errProb κ pp ≤
+      ProbComp.prob (P.jointLaw κ pp) (fun x => P.Cond3 κ pp x.1) +
+      (∑ k : Fin κ, ProbComp.prob (P.jointLaw κ pp)
+        (fun x => P.Cond2 κ pp x.1 x.2.draw k ∧ ¬ P.Cond1 κ pp x.1 x.2.draw k)) +
+      ProbComp.prob (P.jointLaw κ pp) (fun x => ∀ k, P.Cond1 κ pp x.1 x.2.draw k) := sorry
+
+
+end Params
+end TCSlib.Cryptography.Obfuscation.StructuredSeed

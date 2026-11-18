@@ -1,0 +1,2700 @@
+Try this:
+  [apply] refine Real.pow_le_of_le_log ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < 4⁻¹
+  -- ⊢ Real.log
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    ↑κ * Real.log 4⁻¹
+Try this:
+  [apply] refine (Real.le_pow_iff_log_le ?_ ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+  -- ⊢ 0 < 4⁻¹
+  -- ⊢ Real.log
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    ↑κ * Real.log 4⁻¹
+Try this:
+  [apply] refine Real.le_pow_of_log_le ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < 4⁻¹
+  -- ⊢ Real.log
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    ↑κ * Real.log 4⁻¹
+Try this:
+  [apply] refine (Real.toNNReal_le_toNNReal_iff_of_pos ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x =>
+        q x.1 x.2).toNNReal ≤
+    (4⁻¹ ^ κ).toNNReal
+Try this:
+  [apply] refine (Real.toNNReal_le_toNNReal_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ 4⁻¹ ^ κ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x =>
+        q x.1 x.2).toNNReal ≤
+    (4⁻¹ ^ κ).toNNReal
+Try this:
+  [apply] refine (ENNReal.ofReal_le_ofReal_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ 4⁻¹ ^ κ
+  -- ⊢ ENNReal.ofReal
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    ENNReal.ofReal (4⁻¹ ^ κ)
+Try this:
+  [apply] refine EReal.coe_le_coe_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    ↑(4⁻¹ ^ κ)
+Try this:
+  [apply] refine (Real.sqrt_le_sqrt_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ 4⁻¹ ^ κ
+  -- ⊢ √(Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    √(4⁻¹ ^ κ)
+Try this:
+  [apply] refine (Real.sqrt_le_sqrt_iff' ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+  -- ⊢ √(Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    √(4⁻¹ ^ κ)
+Try this:
+  [apply] refine Complex.real_le_real.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    ↑(4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine RCLike.ofReal_le_ofReal.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Complex.le_of_eq_sum_of_eq_sum_norm ?_ ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Real.exp_le_exp.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Real.exp
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    Real.exp (4⁻¹ ^ κ)
+Try this:
+  [apply] refine (Real.log_le_log_iff ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+  -- ⊢ 0 < 4⁻¹ ^ κ
+  -- ⊢ Real.log
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    Real.log (4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Real.rpow_le_rpow_iff_of_neg ?_ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Real.rpow_le_rpow_iff ?_ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Real.rpow_le_rpow_left_iff_of_base_lt_one ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Real.rpow_le_rpow_left_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_eq_of_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine ge_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 4⁻¹ ^ κ ≥ Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine ge_iff_le.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤ 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_le_of_eq ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Std.IsPreorder.le_trans
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ?_
+    (4⁻¹ ^ κ) ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ ℝ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤ ?_
+  -- ⊢ ?_ ≤ 4⁻¹ ^ κ
+Try this:
+  [apply] refine Std.le_of_not_ge ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬4⁻¹ ^ κ ≤ Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine Std.not_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬4⁻¹ ^ κ < Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine Std.le_of_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) < 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.le_trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Option.some_le_some.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ some (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    some (4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (List.max?_le_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (List.le_min?_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (isLE_compareOfLessAndEq ?_ ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ {x y : ℝ}, x ≤ y → y ≤ x → x = y
+  -- ⊢ ∀ {x y : ℝ}, ¬x ≤ y ↔ y < x
+  -- ⊢ ∀ (x y : ℝ), x ≤ y ∨ y ≤ x
+  -- ⊢ (compareOfLessAndEq
+        (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+        (4⁻¹ ^ κ)).isLE =
+    true
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.left_le_left_of_cons_le_cons fun a => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Std.PRange.UpwardEnumerable.le_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Std.PRange.UpwardEnumerable ℝ
+  -- ⊢ Std.PRange.LawfulUpwardEnumerableLE ℝ
+  -- ⊢ Std.PRange.UpwardEnumerable.LE
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) (4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Std.PRange.LawfulUpwardEnumerableLE.le_iff
+        (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+        (4⁻¹ ^ κ)).mpr
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Std.Rxc.size_pos_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Std.Rxc.HasSize ℝ
+  -- ⊢ Std.PRange.UpwardEnumerable ℝ
+  -- ⊢ Std.Rxc.LawfulHasSize ℝ
+  -- ⊢ 0 <
+    Std.Rxc.HasSize.size
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) (4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Std.LawfulOrderOrd.isGE_compare (4⁻¹ ^ κ)
+        (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)).mp
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Std.LawfulOrderOrd.isLE_compare
+        (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+        (4⁻¹ ^ κ)).mp
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Std.isGE_compare.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Std.LawfulOrderOrd ℝ
+  -- ⊢ (compare (4⁻¹ ^ κ)
+        (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)).isGE =
+    true
+Try this:
+  [apply] refine Std.isLE_compare.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Std.LawfulOrderOrd ℝ
+  -- ⊢ (compare (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+        (4⁻¹ ^ κ)).isLE =
+    true
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.LawfulLECmp.ne_lt_iff_ge.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.LawfulBCmp.isLE_iff_le.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.LawfulLECmp.ne_gt_iff_le.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.LawfulLECmp.isLE_iff_le.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.LawfulCmp.isLE_iff_le.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.LawfulLECmp.isGE_iff_ge.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Maximal.le_of_ge ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Minimal.le_of_le ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_le_of_eq'' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_eq_of_le'' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_iff_lt_or_eq'.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) <
+      4⁻¹ ^ κ ∨
+    4⁻¹ ^ κ = Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine Preorder.le_trans
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ?_
+    (4⁻¹ ^ κ) ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ ℝ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤ ?_
+  -- ⊢ ?_ ≤ 4⁻¹ ^ κ
+Try this:
+  [apply] refine ge_of_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ 4⁻¹ ^ κ = Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine le_of_eq_or_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) =
+      4⁻¹ ^ κ ∨
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) < 4⁻¹ ^ κ
+Try this:
+  [apply] refine le_of_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) = 4⁻¹ ^ κ
+Try this:
+  [apply] refine le_iff_lt_or_eq.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) <
+      4⁻¹ ^ κ ∨
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) = 4⁻¹ ^ κ
+Try this:
+  [apply] refine Decidable.le_iff_lt_or_eq'.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) <
+      4⁻¹ ^ κ ∨
+    4⁻¹ ^ κ = Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine Decidable.le_iff_lt_or_eq.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) <
+      4⁻¹ ^ κ ∨
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) = 4⁻¹ ^ κ
+Try this:
+  [apply] refine le_of_eq_or_lt' ?_
+  -- Remaining subgoals:
+  -- ⊢ (4⁻¹ ^ κ =
+      Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ∨
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) < 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_of_lt_or_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) <
+      4⁻¹ ^ κ ∨
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) = 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine ge_trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_of_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) < 4⁻¹ ^ κ
+Try this:
+  [apply] refine le_of_lt_or_eq' ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) <
+      4⁻¹ ^ κ ∨
+    4⁻¹ ^ κ = Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine le_of_not_ge ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬4⁻¹ ^ κ ≤ Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine le_of_not_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬4⁻¹ ^ κ < Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine not_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬4⁻¹ ^ κ < Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_imp_le_of_lt_imp_lt (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_of_not_le ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬4⁻¹ ^ κ ≤ Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine compare_ge_iff_ge.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compare (4⁻¹ ^ κ)
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≠
+    Ordering.lt
+Try this:
+  [apply] refine le_of_not_gt ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬4⁻¹ ^ κ < Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine compare_le_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compare (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+      (4⁻¹ ^ κ) ≠
+    Ordering.gt
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_eq_of_le' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine forall_lt_imp_le_iff_le_of_dense.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ a < Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2,
+    a ≤ 4⁻¹ ^ κ
+Try this:
+  [apply] refine le_of_forall_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ c < Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2,
+    c < 4⁻¹ ^ κ
+Try this:
+  [apply] refine forall_lt_iff_le'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ ⦃c : ℝ⦄,
+    4⁻¹ ^ κ < c →
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) < c
+Try this:
+  [apply] refine le_iff_eq_or_lt.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) =
+      4⁻¹ ^ κ ∨
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) < 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_trans' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine forall_gt_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ ⦃c : ℝ⦄,
+    4⁻¹ ^ κ < c →
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) < c
+Try this:
+  [apply] refine LT.lt.le ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) < 4⁻¹ ^ κ
+Try this:
+  [apply] refine le_update_self_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ DecidableEq (I × X → Prop)
+  -- ⊢ Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) ≤
+    Function.update (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i))
+      (fun x => q x.1 x.2) (4⁻¹ ^ κ)
+Try this:
+  [apply] refine Eq.ge ?_
+  -- Remaining subgoals:
+  -- ⊢ 4⁻¹ ^ κ = Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine Eq.le ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) = 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LE.le.trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (LE.le.le_iff_eq ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 4⁻¹ ^ κ ≤ Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) = 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Prod.mk_le_mk_iff_right.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine forall_le_iff_ge.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ ⦃c : ℝ⦄,
+    4⁻¹ ^ κ ≤ c →
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤ c
+Try this:
+  [apply] refine le_of_forall_le ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ c ≤ Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2,
+    c ≤ 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LE.le.trans' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Subtype.mk_le_mk.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine forall_le_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ ⦃c : ℝ⦄,
+    (c ≤ Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) →
+      c ≤ 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_imp_le_of_le_of_le ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Decidable.ne_iff_lt_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≠
+      4⁻¹ ^ κ ↔
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) < 4⁻¹ ^ κ
+Try this:
+  [apply] refine (LE.le.ge_iff_eq' ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 4⁻¹ ^ κ ≤ Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) = 4⁻¹ ^ κ
+Try this:
+  [apply] refine Decidable.le_iff_eq_or_lt.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) =
+      4⁻¹ ^ κ ∨
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) < 4⁻¹ ^ κ
+Try this:
+  [apply] refine forall_lt_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ ⦃c : ℝ⦄,
+    (c < Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) →
+      c < 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LE.le.trans_eq' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_le_of_eq' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.const_le_const.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine forall_gt_imp_ge_iff_le_of_dense.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : ℝ),
+    4⁻¹ ^ κ < a →
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤ a
+Try this:
+  [apply] refine le_of_forall_lt' ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (c : ℝ),
+    4⁻¹ ^ κ < c →
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) < c
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.trans_ge ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_subsingleton)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (LE.le.ge_iff_eq ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 4⁻¹ ^ κ ≤ Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+  -- ⊢ 4⁻¹ ^ κ = Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine ne_iff_lt_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≠
+      4⁻¹ ^ κ ↔
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) < 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.trans_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_of_forall_gt_imp_ge_of_dense ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : ℝ),
+    4⁻¹ ^ κ < a →
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤ a
+Try this:
+  [apply] refine le_of_forall_ge ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (c : ℝ),
+    4⁻¹ ^ κ ≤ c →
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤ c
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_implies_le_of_le_of_le ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_of_forall_lt_imp_le_of_dense ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ a < Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2,
+    a ≤ 4⁻¹ ^ κ
+Try this:
+  [apply] refine forall_ge_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ ⦃c : ℝ⦄,
+    4⁻¹ ^ κ ≤ c →
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤ c
+Try this:
+  [apply] refine LE.le.ge ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤ 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Prod.mk_le_mk_iff_left.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine GE.ge.le ?_
+  -- Remaining subgoals:
+  -- ⊢ 4⁻¹ ^ κ ≥ Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LE.le.trans_eq ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Ne.le_iff_lt ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≠ 4⁻¹ ^ κ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) < 4⁻¹ ^ κ
+Try this:
+  [apply] refine le_of_forall_gt ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (c : ℝ),
+    4⁻¹ ^ κ < c →
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) < c
+Try this:
+  [apply] refine OrderDual.toDual_le_toDual.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ OrderDual.toDual (4⁻¹ ^ κ) ≤
+    OrderDual.toDual
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+Try this:
+  [apply] refine ULift.up_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {
+      down := Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2 } ≤
+    { down := 4⁻¹ ^ κ }
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Ordering.Compares.ne_lt ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Ordering.Compares.ne_gt ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (le_iff_le_of_cmp_eq_cmp ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (le_iff_le_of_cmp_eq_cmp ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine StrictMono.maximal_of_maximal_image (fun ⦃a⦄ => ?_) ?_
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine StrictMono.minimal_of_minimal_image (fun ⦃a⦄ => ?_) ?_ (4⁻¹ ^ κ))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine StrictAnti.maximal_of_minimal_image (fun ⦃a⦄ => ?_) ?_
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictMono.le_iff_le fun ⦃a⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictAntiOn.le_iff_le (fun ⦃a⦄ => ?_) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictMonoOn.le_iff_le (fun ⦃a⦄ => ?_) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictAntiOn.le_iff_ge (fun ⦃a⦄ => ?_) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine StrictAnti.minimal_of_maximal_image (fun ⦃a⦄ => ?_) ?_ (4⁻¹ ^ κ))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictAnti.le_iff_le fun ⦃a⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictAnti.le_iff_ge fun ⦃a⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine right_eq_inf.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) =
+    min (4⁻¹ ^ κ)
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+Try this:
+  [apply] refine sup_eq_left.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max (4⁻¹ ^ κ)
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) =
+    4⁻¹ ^ κ
+Try this:
+  [apply] refine left_eq_inf.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) =
+    min (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+      (4⁻¹ ^ κ)
+Try this:
+  [apply] refine le_of_sup_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ max (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+      (4⁻¹ ^ κ) =
+    4⁻¹ ^ κ
+Try this:
+  [apply] refine left_eq_sup.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 4⁻¹ ^ κ =
+    max (4⁻¹ ^ κ)
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+Try this:
+  [apply] refine right_eq_sup.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 4⁻¹ ^ κ =
+    max (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+      (4⁻¹ ^ κ)
+Try this:
+  [apply] refine inf_eq_left.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ min (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+      (4⁻¹ ^ κ) =
+    Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine le_iff_exists_sup.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ c,
+    4⁻¹ ^ κ =
+      max (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) c
+Try this:
+  [apply] refine inf_eq_right.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ min (4⁻¹ ^ κ)
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) =
+    Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine sup_eq_right.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+      (4⁻¹ ^ κ) =
+    4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_inf_le_sup_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_of_inf_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ min (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+      (4⁻¹ ^ κ) =
+    Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsCompl.Antitone ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsCompl.disjoint_left_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsCompl.disjoint_right_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsCompl.right_le_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Codisjoint.left_le_of_le_inf_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsCompl.left_le_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsCompl.inf_left_eq_bot_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Disjoint.left_le_of_le_sup_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsCompl.le_left_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Codisjoint.left_le_of_le_inf_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsCompl.inf_right_eq_bot_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsCompl.le_right_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Disjoint.le_of_codisjoint ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Disjoint.left_le_of_le_sup_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine GaloisConnection.le_u (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (GaloisCoinsertion.l_le_l_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine GaloisConnection.le_u_l_trans ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine GaloisConnection.l_le (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (GaloisInsertion.u_le_u_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (GaloisConnection.le_iff_le fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (GaloisConnection.le_iff_le fun a => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (map_le_map_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (OrderEmbedding.le_iff_le ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (map_inv_le_map_inv_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (OrderIso.le_iff_le ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine min_eq_right_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ min (4⁻¹ ^ κ)
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) =
+    Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine max_eq_left_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max (4⁻¹ ^ κ)
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) =
+    4⁻¹ ^ κ
+Try this:
+  [apply] refine max_eq_right_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+      (4⁻¹ ^ κ) =
+    4⁻¹ ^ κ
+Try this:
+  [apply] refine min_eq_left_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ min (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+      (4⁻¹ ^ κ) =
+    Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_max_le_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_max_le_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.mem_Iic.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ∈
+    Set.Iic (4⁻¹ ^ κ)
+Try this:
+  [apply] refine Set.mem_Ici.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 4⁻¹ ^ κ ∈
+    Set.Ici (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine DirectedOn.is_top_of_is_max (fun x => ?_) ?_ ?_
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine DirectedOn.is_bot_of_is_min (fun x => ?_) ?_ ?_ (4⁻¹ ^ κ) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.head_le_of_lt ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Subsingleton.le
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) (4⁻¹ ^ κ))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AddLECancellable.add_le_add_iff_left fun ⦃b⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (add_le_add_iff_left ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℝ
+  -- ⊢ (?_ + Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    ?_ + 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_le_mul_of_le_one_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_le_add_of_nonpos_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_add_le_of_nonneg_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_mul_le_of_one_le_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_le_add_of_nonpos_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_mul_le_mul_right' ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (mul_le_mul_iff_right ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℝ
+  -- ⊢ MulRightMono ℝ
+  -- ⊢ MulRightReflectLE ℝ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) * ?_ ≤
+    4⁻¹ ^ κ * ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_add_le_add_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (mul_le_mul_iff_left ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℝ
+  -- ⊢ MulLeftMono ℝ
+  -- ⊢ MulLeftReflectLE ℝ
+  -- ⊢ (?_ * Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    ?_ * 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (MulLECancellable.mul_le_mul_iff_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_add_le_of_nonneg_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (MulLECancellable.mul_le_mul_iff_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (add_le_add_iff_right ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℝ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) + ?_ ≤
+    4⁻¹ ^ κ + ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AddLECancellable.add_le_add_iff_right fun ⦃b⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_le_mul_of_le_one_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_add_le_add_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_mul_le_of_one_le_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_mul_le_mul_left' ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_forall_one_lt_lt_mul' ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_iff_exists_nonneg_add.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ c,
+    0 ≤ c ∧
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) + c =
+        4⁻¹ ^ κ
+Try this:
+  [apply] refine le_of_forall_pos_le_add ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (ε : ℝ),
+    0 < ε →
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+        4⁻¹ ^ κ + ε
+Try this:
+  [apply] refine le_of_forall_pos_lt_add' ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (ε : ℝ),
+    0 < ε →
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) <
+        4⁻¹ ^ κ + ε
+Try this:
+  [apply] refine le_iff_forall_pos_le_add.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (ε : ℝ),
+    0 < ε →
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+        4⁻¹ ^ κ + ε
+Try this:
+  [apply] refine le_iff_forall_pos_lt_add'.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (ε : ℝ),
+    0 < ε →
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) <
+        4⁻¹ ^ κ + ε
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_forall_one_lt_le_mul ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_iff_forall_one_lt_le_mul.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ExistsMulOfLE ℝ
+  -- ⊢ MulLeftReflectLT ℝ
+  -- ⊢ MulLeftStrictMono ℝ
+  -- ⊢ ∀ (ε : ℝ),
+    1 < ε →
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+        4⁻¹ ^ κ * ε
+Try this:
+  [apply] refine le_iff_exists_one_le_mul.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ExistsMulOfLE ℝ
+  -- ⊢ MulLeftMono ℝ
+  -- ⊢ MulLeftReflectLE ℝ
+  -- ⊢ ∃ c,
+    1 ≤ c ∧
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) * c =
+        4⁻¹ ^ κ
+Try this:
+  [apply] refine le_iff_forall_one_lt_lt_mul'.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ExistsMulOfLE ℝ
+  -- ⊢ MulLeftReflectLT ℝ
+  -- ⊢ MulLeftStrictMono ℝ
+  -- ⊢ ∀ (ε : ℝ),
+    1 < ε →
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) <
+        4⁻¹ ^ κ * ε
+Try this:
+  [apply] refine tsub_nonpos.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) -
+      4⁻¹ ^ κ ≤
+    0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (tsub_le_tsub_iff_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.left_mem_Icc.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ∈
+    Set.Icc (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+      (4⁻¹ ^ κ)
+Try this:
+  [apply] refine Set.Iic_subset_Iic.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.Iic (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ⊆
+    Set.Iic (4⁻¹ ^ κ)
+Try this:
+  [apply] refine Set.Ici_subset_Ici.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.Ici (4⁻¹ ^ κ) ⊆
+    Set.Ici (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+Try this:
+  [apply] refine Set.right_mem_Icc.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 4⁻¹ ^ κ ∈
+    Set.Icc (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+      (4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Set.Icc_subset_Ici_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.subsingleton_Icc_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Set.Icc (4⁻¹ ^ κ)
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x =>
+        q x.1 x.2)).Subsingleton
+Try this:
+  [apply] refine Set.nonempty_Icc.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Set.Icc (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+      (4⁻¹ ^ κ)).Nonempty
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Set.Icc_subset_Iic_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine StrictMono.minimal_preimage_bot (fun ⦃a⦄ => ?_) ?_ (4⁻¹ ^ κ))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine StrictMono.maximal_preimage_top (fun ⦃a⦄ => ?_) ?_
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsLUB.mono ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine isGLB_le_isLUB ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsGreatest.mono ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsGLB.mono ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_isLUB_le_isGLB ?_ ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (isLUB_le_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (le_isGLB_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lowerBounds_le_upperBounds (fun ⦃a⦄ => ?_) ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine lub_Iio_le (4⁻¹ ^ κ) ?_
+  -- Remaining subgoals:
+  -- ⊢ IsLUB (Set.Iio (4⁻¹ ^ κ))
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsLeast.mono ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_glb_Ioi
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ?_
+  -- Remaining subgoals:
+  -- ⊢ IsGLB
+    (Set.Ioi (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2))
+    (4⁻¹ ^ κ)
+Try this:
+  [apply] refine WithBot.coe_le_coe.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    ↑(4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (WithTop.le_coe ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine WithTop.coe_le_coe.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    ↑(4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (WithBot.coe_le ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Finset.min_le_of_eq ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Finset.le_max_of_eq ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine add_neg_nonpos_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) +
+      -4⁻¹ ^ κ ≤
+    0
+Try this:
+  [apply] refine le_neg_add_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤
+    (-Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) + 4⁻¹ ^ κ
+Try this:
+  [apply] refine add_neg_nonpos_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) +
+      -4⁻¹ ^ κ ≤
+    0
+Try this:
+  [apply] refine neg_le_neg_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ -4⁻¹ ^ κ ≤ -Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine sub_le_sub_flip.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) -
+      4⁻¹ ^ κ ≤
+    4⁻¹ ^ κ - Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine div_le_div_flip.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ CommGroup ℝ
+  -- ⊢ MulLeftMono ℝ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) /
+      4⁻¹ ^ κ ≤
+    4⁻¹ ^ κ / Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine (sub_le_sub_iff_right ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℝ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) - ?_ ≤
+    4⁻¹ ^ κ - ?_
+Try this:
+  [apply] refine div_le_inv_mul_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℝ
+  -- ⊢ MulLeftMono ℝ
+  -- ⊢ MulRightMono ℝ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) /
+      4⁻¹ ^ κ ≤
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)⁻¹ * 4⁻¹ ^ κ
+Try this:
+  [apply] refine (sub_le_sub_iff_left ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℝ
+  -- ⊢ ?_ - 4⁻¹ ^ κ ≤
+    ?_ - Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine sub_nonneg.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤
+    4⁻¹ ^ κ - Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine le_of_sub_nonpos ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) -
+      4⁻¹ ^ κ ≤
+    0
+Try this:
+  [apply] refine sub_nonpos.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) -
+      4⁻¹ ^ κ ≤
+    0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_forall_one_lt_lt_mul ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (div_le_div_iff_right ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℝ
+  -- ⊢ ℝ
+  -- ⊢ MulRightMono ℝ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) / ?_ ≤
+    4⁻¹ ^ κ / ?_
+Try this:
+  [apply] refine le_of_sub_nonneg ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤
+    4⁻¹ ^ κ - Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine mul_inv_le_one_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℝ
+  -- ⊢ MulRightMono ℝ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) *
+      (4⁻¹ ^ κ)⁻¹ ≤
+    1
+Try this:
+  [apply] refine le_iff_forall_pos_lt_add.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (ε : ℝ),
+    0 < ε →
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) <
+        4⁻¹ ^ κ + ε
+Try this:
+  [apply] refine le_inv_mul_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℝ
+  -- ⊢ MulLeftMono ℝ
+  -- ⊢ 1 ≤
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)⁻¹ * 4⁻¹ ^ κ
+Try this:
+  [apply] refine mul_inv_le_one_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℝ
+  -- ⊢ MulRightMono ℝ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) *
+      (4⁻¹ ^ κ)⁻¹ ≤
+    1
+Try this:
+  [apply] refine inv_le_inv_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℝ
+  -- ⊢ MulLeftMono ℝ
+  -- ⊢ MulRightMono ℝ
+  -- ⊢ (4⁻¹ ^ κ)⁻¹ ≤
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)⁻¹
+Try this:
+  [apply] refine le_of_forall_pos_lt_add ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (ε : ℝ),
+    0 < ε →
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) <
+        4⁻¹ ^ κ + ε
+Try this:
+  [apply] refine le_of_neg_le_neg ?_
+  -- Remaining subgoals:
+  -- ⊢ -4⁻¹ ^ κ ≤ -Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine sub_le_neg_add_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) -
+      4⁻¹ ^ κ ≤
+    (-Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) + 4⁻¹ ^ κ
+Try this:
+  [apply] refine inv_mul_le_one_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℝ
+  -- ⊢ MulLeftMono ℝ
+  -- ⊢ ((4⁻¹ ^ κ)⁻¹ *
+      Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    1
+Try this:
+  [apply] refine le_iff_forall_one_lt_lt_mul.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℝ
+  -- ⊢ MulLeftMono ℝ
+  -- ⊢ ∀ (ε : ℝ),
+    1 < ε →
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) <
+        4⁻¹ ^ κ * ε
+Try this:
+  [apply] refine le_mul_inv_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℝ
+  -- ⊢ MulRightMono ℝ
+  -- ⊢ 1 ≤
+    4⁻¹ ^ κ * (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)⁻¹
+Try this:
+  [apply] refine neg_add_nonpos_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (-4⁻¹ ^ κ +
+      Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    0
+Try this:
+  [apply] refine one_le_div'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℝ
+  -- ⊢ MulRightMono ℝ
+  -- ⊢ 1 ≤
+    4⁻¹ ^ κ / Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine le_add_neg_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤
+    4⁻¹ ^ κ + -Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine (div_le_div_iff_left ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℝ
+  -- ⊢ ℝ
+  -- ⊢ MulLeftMono ℝ
+  -- ⊢ MulRightMono ℝ
+  -- ⊢ ?_ / 4⁻¹ ^ κ ≤
+    ?_ / Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine div_le_one'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℝ
+  -- ⊢ MulRightMono ℝ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) /
+      4⁻¹ ^ κ ≤
+    1
+Try this:
+  [apply] refine IsOrderedCancelAddMonoid.le_of_add_le_add_right ?_
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) (4⁻¹ ^ κ)
+    ?_
+  -- Remaining subgoals:
+  -- ⊢ ℝ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) + ?_ ≤
+    4⁻¹ ^ κ + ?_
+Try this:
+  [apply] refine IsOrderedCancelAddMonoid.le_of_add_le_add_left ?_
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) (4⁻¹ ^ κ)
+    ?_
+  -- Remaining subgoals:
+  -- ⊢ ℝ
+  -- ⊢ (?_ + Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    ?_ + 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsOrderedCancelMonoid.le_of_mul_le_mul_left ?_
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) (4⁻¹ ^ κ)
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsOrderedCancelMonoid.le_of_mul_le_mul_right ?_
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) (4⁻¹ ^ κ)
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine OrderedCommGroup.le_of_add_le_add_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine OrderedCommGroup.le_of_mul_le_mul_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_nsmul_le_nsmul_right (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_pow_le_pow_left' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pow_le_pow_iff_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (nsmul_le_nsmul_iff_right fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_mabs_le ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_of_abs_le ?_
+  -- Remaining subgoals:
+  -- ⊢ |Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2| ≤ 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_mul_le_mul_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_mul_le_mul_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_mul_le_mul_of_pos_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_mul_le_mul_of_pos_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_le_mul_iff_of_pos_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_le_mul_iff_of_pos_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_le_mul_iff_left₀ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_le_mul_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_le_mul_iff_right₀ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_le_mul_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (one_le_inv_mul₀ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+  -- ⊢ 1 ≤
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)⁻¹ * 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (div_le_div_iff_of_pos_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (sq_le_sq₀ ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+  -- ⊢ 0 ≤ 4⁻¹ ^ κ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ^ 2 ≤
+    (4⁻¹ ^ κ) ^ 2
+Try this:
+  [apply] refine (inv_mul_le_one₀ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < 4⁻¹ ^ κ
+  -- ⊢ ((4⁻¹ ^ κ)⁻¹ *
+      Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    1
+Try this:
+  [apply] refine (inv_le_inv₀ ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < 4⁻¹ ^ κ
+  -- ⊢ 0 < Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+  -- ⊢ (4⁻¹ ^ κ)⁻¹ ≤
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)⁻¹
+Try this:
+  [apply] refine (div_le_one₀ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < 4⁻¹ ^ κ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) /
+      4⁻¹ ^ κ ≤
+    1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pow_le_pow_iff_left₀ ?_ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (div_le_div_iff_of_pos_left ?_ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (one_le_div₀ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+  -- ⊢ 1 ≤
+    4⁻¹ ^ κ / Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_pow_le_pow_left₀ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_mul_le_of_one_le ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (mul_self_le_mul_self_iff ?_ ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+  -- ⊢ 0 ≤ 4⁻¹ ^ κ
+  -- ⊢ ((Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) *
+      Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    4⁻¹ ^ κ * 4⁻¹ ^ κ
+Try this:
+  [apply] refine nonneg_le_nonneg_of_sq_le_sq ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ 4⁻¹ ^ κ
+  -- ⊢ ((Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) *
+      Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    4⁻¹ ^ κ * 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_le_mul_left_of_neg ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (mul_le_mul_right_of_neg ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Odd.pow_le_pow ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_add_le_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_iff_exists_add'.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ CanonicallyOrderedAdd ℝ
+  -- ⊢ ∃ c,
+    4⁻¹ ^ κ = c + Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_mul_le_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_iff_exists_mul.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ CanonicallyOrderedMul ℝ
+  -- ⊢ ∃ c,
+    4⁻¹ ^ κ =
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) * c
+Try this:
+  [apply] refine le_iff_exists_add.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ CanonicallyOrderedAdd ℝ
+  -- ⊢ ∃ c,
+    4⁻¹ ^ κ =
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) + c
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_mul_le_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_add_le_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_iff_exists_mul'.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ CanonicallyOrderedMul ℝ
+  -- ⊢ ∃ c,
+    4⁻¹ ^ κ = c * Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine Multiplicative.ofAdd_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Multiplicative.ofAdd
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    Multiplicative.ofAdd (4⁻¹ ^ κ)
+Try this:
+  [apply] refine Additive.ofMul_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Additive.ofMul
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    Additive.ofMul (4⁻¹ ^ κ)
+Try this:
+  [apply] refine WithZero.coe_le_coe.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    ↑(4⁻¹ ^ κ)
+Try this:
+  [apply] refine WithZero.exp_le_exp.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ WithZero.exp
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    WithZero.exp (4⁻¹ ^ κ)
+Try this:
+  [apply] refine add_tsub_cancel_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ CanonicallyOrderedAdd ℝ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) +
+      (4⁻¹ ^ κ -
+        Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) =
+    4⁻¹ ^ κ
+Try this:
+  [apply] refine tsub_eq_zero_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ CanonicallyOrderedAdd ℝ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) -
+      4⁻¹ ^ κ =
+    0
+Try this:
+  [apply] refine tsub_add_cancel_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ CanonicallyOrderedAdd ℝ
+  -- ⊢ ((4⁻¹ ^ κ -
+        Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) +
+      Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) =
+    4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AddLECancellable.tsub_le_tsub_iff_left ?_ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (tsub_le_tsub_iff_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_of_sq_le_sq ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ^ 2 ≤
+    (4⁻¹ ^ κ) ^ 2
+  -- ⊢ 0 ≤ 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LE.le.trans_antisymmRel ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AntisymmRel.trans_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_antisymmRel_of_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AntisymmRel.le_congr_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AntisymmRel.le_congr_right ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AntisymmRel.le_congr ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AntisymmRel.le_congr ?_ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_iff_lt_or_antisymmRel.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) <
+      4⁻¹ ^ κ ∨
+    AntisymmRel (fun x1 x2 => x1 ≤ x2)
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) (4⁻¹ ^ κ)
+Try this:
+  [apply] refine toAntisymmetrization_le_toAntisymmetrization_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ toAntisymmetrization (fun x1 x2 => x1 ≤ x2)
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    toAntisymmetrization (fun x1 x2 => x1 ≤ x2) (4⁻¹ ^ κ)
+Try this:
+  [apply] refine AntisymmRel.ge ?_
+  -- Remaining subgoals:
+  -- ⊢ AntisymmRel (fun x1 x2 => x1 ≤ x2) (4⁻¹ ^ κ)
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+Try this:
+  [apply] refine AntisymmRel.le ?_
+  -- Remaining subgoals:
+  -- ⊢ AntisymmRel (fun x1 x2 => x1 ≤ x2)
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) (4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AntisymmRel.le_congr_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AntisymmRel.le_congr_left ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_le_of_antisymmRel ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.Iio_subset_Iic_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.Iio (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ⊆
+    Set.Iic (4⁻¹ ^ κ)
+Try this:
+  [apply] refine Set.Iio_subset_Iio_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.Iio (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ⊆
+    Set.Iio (4⁻¹ ^ κ)
+Try this:
+  [apply] refine Set.not_mem_Iio.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 4⁻¹ ^ κ ∉
+    Set.Iio (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+Try this:
+  [apply] refine Set.notMem_Iio.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 4⁻¹ ^ κ ∉
+    Set.Iio (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+Try this:
+  [apply] refine Set.Ioi_subset_Ici_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.Ioi (4⁻¹ ^ κ) ⊆
+    Set.Ici (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+Try this:
+  [apply] refine Set.notMem_Ioi.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ∉
+    Set.Ioi (4⁻¹ ^ κ)
+Try this:
+  [apply] refine Set.Ioi_subset_Ioi_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.Ioi (4⁻¹ ^ κ) ⊆
+    Set.Ioi (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+Try this:
+  [apply] refine Set.not_mem_Ioi.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ∉
+    Set.Ioi (4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsChain.le_of_not_gt ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsChain.not_lt ?_ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsChain.le_of_not_lt ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (CovBy.le_iff_lt_left ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (CovBy.lt_iff_le_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine CovBy.le_of_lt ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine WCovBy.le_of_lt ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (WCovBy.wcovBy_iff_le ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 4⁻¹ ^ κ ⩿ Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ⩿ 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (CovBy.le_iff_lt_right ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine CovBy.ge_of_gt ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine WCovBy.ge_of_gt ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine WCovBy.le ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ⩿ 4⁻¹ ^ κ
+Try this:
+  [apply] refine CovBy.le ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ⋖ 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (CovBy.lt_iff_le_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Order.le_of_pred_lt ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Order.pred_lt_iff_of_not_isMin ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ PredOrder ℝ
+  -- ⊢ ¬IsMin (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+  -- ⊢ Order.pred
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) <
+    4⁻¹ ^ κ
+Try this:
+  [apply] refine (Order.succ_le_succ_iff_of_not_isMax ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ SuccOrder ℝ
+  -- ⊢ ¬IsMax (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+  -- ⊢ ¬IsMax (4⁻¹ ^ κ)
+  -- ⊢ Order.succ
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    Order.succ (4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Order.le_of_pred_le_pred ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Order.pred_lt_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ PredOrder ℝ
+  -- ⊢ Order.pred
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) <
+    4⁻¹ ^ κ
+Try this:
+  [apply] refine Order.pred_le_pred_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ PredOrder ℝ
+  -- ⊢ Order.pred
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    Order.pred (4⁻¹ ^ κ)
+Try this:
+  [apply] refine (Order.lt_succ_iff_of_not_isMax ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ SuccOrder ℝ
+  -- ⊢ ¬IsMax (4⁻¹ ^ κ)
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) <
+    Order.succ (4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Order.le_of_succ_le_succ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Order.le_iff_eq_or_le_pred.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ PredOrder ℝ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) =
+      4⁻¹ ^ κ ∨
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+      Order.pred (4⁻¹ ^ κ)
+Try this:
+  [apply] refine Order.le_iff_eq_or_succ_le.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ SuccOrder ℝ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) =
+      4⁻¹ ^ κ ∨
+    Order.succ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+      4⁻¹ ^ κ
+Try this:
+  [apply] refine (Order.pred_le_pred_iff_of_not_isMin ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ PredOrder ℝ
+  -- ⊢ ¬IsMin (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+  -- ⊢ ¬IsMin (4⁻¹ ^ κ)
+  -- ⊢ Order.pred
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    Order.pred (4⁻¹ ^ κ)
+Try this:
+  [apply] refine Order.succ_le_succ_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ SuccOrder ℝ
+  -- ⊢ Order.succ
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    Order.succ (4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Order.le_of_lt_succ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Order.lt_succ_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ SuccOrder ℝ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) <
+    Order.succ (4⁻¹ ^ κ)
+Try this:
+  [apply] refine exists_pred_iterate_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ PredOrder ℝ
+  -- ⊢ IsPredArchimedean ℝ
+  -- ⊢ ∃ n,
+    Order.pred^[n] (4⁻¹ ^ κ) =
+      Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine exists_succ_iterate_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ SuccOrder ℝ
+  -- ⊢ IsSuccArchimedean ℝ
+  -- ⊢ ∃ n,
+    Order.succ^[n]
+        (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) =
+      4⁻¹ ^ κ
+Try this:
+  [apply] refine (Order.IsSuccLimit.le_succ_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ SuccOrder ℝ
+  -- ⊢ Order.IsSuccLimit
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    Order.succ (4⁻¹ ^ κ)
+Try this:
+  [apply] refine (Order.IsPredPrelimit.le_iff_forall_le ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Order.IsPredPrelimit (4⁻¹ ^ κ)
+  -- ⊢ ∀ ⦃c : ℝ⦄,
+    4⁻¹ ^ κ < c →
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤ c
+Try this:
+  [apply] refine (Order.IsPredLimit.le_iff_forall_le ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Order.IsPredLimit (4⁻¹ ^ κ)
+  -- ⊢ ∀ ⦃c : ℝ⦄,
+    4⁻¹ ^ κ < c →
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤ c
+Try this:
+  [apply] refine (Order.IsSuccPrelimit.le_succ_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ SuccOrder ℝ
+  -- ⊢ Order.IsSuccPrelimit
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    Order.succ (4⁻¹ ^ κ)
+Try this:
+  [apply] refine (Order.IsSuccLimit.le_iff_forall_le ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Order.IsSuccLimit
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+  -- ⊢ ∀ c < Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2,
+    c ≤ 4⁻¹ ^ κ
+Try this:
+  [apply] refine (Order.IsPredLimit.pred_le_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ PredOrder ℝ
+  -- ⊢ Order.IsPredLimit (4⁻¹ ^ κ)
+  -- ⊢ Order.pred
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    4⁻¹ ^ κ
+Try this:
+  [apply] refine (Order.IsPredPrelimit.pred_le_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ PredOrder ℝ
+  -- ⊢ Order.IsPredPrelimit (4⁻¹ ^ κ)
+  -- ⊢ Order.pred
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    4⁻¹ ^ κ
+Try this:
+  [apply] refine (Order.IsSuccPrelimit.le_iff_forall_le ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Order.IsSuccPrelimit
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+  -- ⊢ ∀ c < Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2,
+    c ≤ 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Order.le_of_sub_one_lt ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Order.le_of_lt_add_one ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Order.lt_add_one_iff_of_not_isMax ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ SuccAddOrder ℝ
+  -- ⊢ ¬IsMax (4⁻¹ ^ κ)
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) <
+    4⁻¹ ^ κ + 1
+Try this:
+  [apply] refine Order.lt_add_one_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ SuccAddOrder ℝ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) <
+    4⁻¹ ^ κ + 1
+Try this:
+  [apply] refine (Order.sub_one_lt_iff_of_not_isMin ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ PredSubOrder ℝ
+  -- ⊢ ¬IsMin (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) - 1 <
+    4⁻¹ ^ κ
+Try this:
+  [apply] refine Order.sub_one_lt_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ PredSubOrder ℝ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) - 1 <
+    4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (OrderAddMonoidIso.map_le_map_iff' ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (OrderMonoidIso.map_le_map_iff' ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (OrderRingIso.map_le_map_iff' ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.le_maximum_of_mem ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.minimum_le_of_mem ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Sum.inl_le_inl_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Sum.inr_le_inr_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Sum.Lex.inl_le_inl_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Sum.Lex.inr_le_inr_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (PrincipalSeg.le_iff_le ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (InitialSeg.le_iff_le ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (LocallyFiniteOrderBot.finset_mem_Iic (4⁻¹ ^ κ)
+        (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)).mp
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Finset.mem_Ici.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LocallyFiniteOrderTop ℝ
+  -- ⊢ 4⁻¹ ^ κ ∈
+    Finset.Ici (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+Try this:
+  [apply] refine Finset.mem_Iic.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LocallyFiniteOrderBot ℝ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ∈
+    Finset.Iic (4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (LocallyFiniteOrderTop.finset_mem_Ici
+        (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+        (4⁻¹ ^ κ)).mp
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Finset.Iic_subset_Iic.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LocallyFiniteOrderBot ℝ
+  -- ⊢ Finset.Iic
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ⊆
+    Finset.Iic (4⁻¹ ^ κ)
+Try this:
+  [apply] refine Finset.Ici_subset_Ici.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LocallyFiniteOrderTop ℝ
+  -- ⊢ Finset.Ici (4⁻¹ ^ κ) ⊆
+    Finset.Ici (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+Try this:
+  [apply] refine Finset.left_mem_Icc.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LocallyFiniteOrder ℝ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ∈
+    Finset.Icc (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+      (4⁻¹ ^ κ)
+Try this:
+  [apply] refine Finset.right_mem_Icc.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LocallyFiniteOrder ℝ
+  -- ⊢ 4⁻¹ ^ κ ∈
+    Finset.Icc (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+      (4⁻¹ ^ κ)
+Try this:
+  [apply] refine Finset.nonempty_Icc.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LocallyFiniteOrder ℝ
+  -- ⊢ (Finset.Icc
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+      (4⁻¹ ^ κ)).Nonempty
+Try this:
+  [apply] refine le_iff_transGen_wcovBy.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ LocallyFiniteOrder ℝ
+  -- ⊢ Relation.TransGen (fun x1 x2 => x1 ⩿ x2)
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) (4⁻¹ ^ κ)
+Try this:
+  [apply] refine le_iff_reflTransGen_covBy.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ LocallyFiniteOrder ℝ
+  -- ⊢ Relation.ReflTransGen (fun x1 x2 => x1 ⋖ x2)
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) (4⁻¹ ^ κ)
+Try this:
+  [apply] refine Multiset.left_mem_Icc.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LocallyFiniteOrder ℝ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ∈
+    Multiset.Icc (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+      (4⁻¹ ^ κ)
+Try this:
+  [apply] refine Multiset.right_mem_Icc.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LocallyFiniteOrder ℝ
+  -- ⊢ 4⁻¹ ^ κ ∈
+    Multiset.Icc (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+      (4⁻¹ ^ κ)
+Try this:
+  [apply] refine Multiset.mem_Ici.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LocallyFiniteOrderTop ℝ
+  -- ⊢ 4⁻¹ ^ κ ∈
+    Multiset.Ici (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+Try this:
+  [apply] refine Multiset.mem_Iic.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LocallyFiniteOrderBot ℝ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ∈
+    Multiset.Iic (4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (le_iff_oneLePart_leOnePart
+        (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+        (4⁻¹ ^ κ)).mpr
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (le_iff_posPart_negPart
+        (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+        (4⁻¹ ^ κ)).mpr
+    ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)⁺ ≤
+      (4⁻¹ ^ κ)⁺ ∧
+    (4⁻¹ ^ κ)⁻ ≤
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)⁻
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Mathlib.Meta.NormNum.isNat_le_true ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Mathlib.Meta.NormNum.isRat_le_true ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Mathlib.Meta.NormNum.isNNRat_le_true ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Mathlib.Meta.NormNum.isInt_le_true ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (div_le_div_right_of_neg ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (div_le_one ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < 4⁻¹ ^ κ
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) /
+      4⁻¹ ^ κ ≤
+    1
+Try this:
+  [apply] refine (inv_le_inv_of_neg ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 4⁻¹ ^ κ < 0
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) < 0
+  -- ⊢ (4⁻¹ ^ κ)⁻¹ ≤
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)⁻¹
+Try this:
+  [apply] refine (one_div_le_one_div_of_neg ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 4⁻¹ ^ κ < 0
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) < 0
+  -- ⊢ 1 / 4⁻¹ ^ κ ≤
+    1 / Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine le_of_forall_sub_le ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ ε > 0,
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) - ε ≤
+      4⁻¹ ^ κ
+Try this:
+  [apply] refine (div_le_one_of_neg ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) < 0
+  -- ⊢ (4⁻¹ ^ κ /
+      Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    1
+Try this:
+  [apply] refine (le_iff_forall_one_lt_le_mul₀ ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ 4⁻¹ ^ κ
+  -- ⊢ ∀ (ε : ℝ),
+    1 < ε →
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+        4⁻¹ ^ κ * ε
+Try this:
+  [apply] refine (one_le_div_of_neg ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 4⁻¹ ^ κ < 0
+  -- ⊢ 1 ≤
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) / 4⁻¹ ^ κ
+Try this:
+  [apply] refine le_of_one_div_le_one_div ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < 4⁻¹ ^ κ
+  -- ⊢ 1 / 4⁻¹ ^ κ ≤
+    1 / Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine le_of_neg_of_one_div_le_one_div ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) < 0
+  -- ⊢ 1 / 4⁻¹ ^ κ ≤
+    1 / Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine (one_div_le_one_div ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < 4⁻¹ ^ κ
+  -- ⊢ 0 < Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+  -- ⊢ 1 / 4⁻¹ ^ κ ≤
+    1 / Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine (one_le_div ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+  -- ⊢ 1 ≤
+    4⁻¹ ^ κ / Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (zsmul_le_zsmul_iff_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (zpow_le_zpow_iff_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_of_forall_lt_rat_imp_le ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (q_1 : ℚ),
+    4⁻¹ ^ κ < ↑q_1 →
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤ ↑q_1
+Try this:
+  [apply] refine le_of_forall_rat_lt_imp_le ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (q_1 : ℚ),
+    (↑q_1 < Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) →
+      ↑q_1 ≤ 4⁻¹ ^ κ
+Try this:
+  [apply] refine le_iff_forall_lt_rat_imp_le.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (q_1 : ℚ),
+    4⁻¹ ^ κ < ↑q_1 →
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤ ↑q_1
+Try this:
+  [apply] refine le_iff_forall_rat_lt_imp_le.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (q_1 : ℚ),
+    (↑q_1 < Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) →
+      ↑q_1 ≤ 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_smul_le_smul_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (smul_le_smul_iff_of_pos_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine SMulPosReflectLE.le_of_smul_le_smul_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (smul_le_smul_iff_of_neg_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_smul_le_smul_of_neg ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine PosSMulReflectLE.le_of_smul_le_smul_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (smul_le_smul_iff_of_pos_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_smul_le_smul_of_pos_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_smul_le_smul_of_pos_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_smul_le_smul_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine CauSeq.const_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ CauSeq.const abs
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    CauSeq.const abs (4⁻¹ ^ κ)
+Try this:
+  [apply] refine (IsAtom.not_disjoint_iff_le ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ OrderBot ℝ
+  -- ⊢ IsAtom (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+  -- ⊢ ¬Disjoint (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+      (4⁻¹ ^ κ)
+Try this:
+  [apply] refine (IsCoatom.not_codisjoint_iff_le ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ OrderTop ℝ
+  -- ⊢ IsCoatom (4⁻¹ ^ κ)
+  -- ⊢ ¬Codisjoint (4⁻¹ ^ κ)
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+Try this:
+  [apply] refine (IsCoatom.le_iff_eq ?_ ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ OrderTop ℝ
+  -- ⊢ IsCoatom (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+  -- ⊢ 4⁻¹ ^ κ ≠ ⊤
+  -- ⊢ 4⁻¹ ^ κ = Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine (IsAtom.le_iff_eq ?_ ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ OrderBot ℝ
+  -- ⊢ IsAtom (4⁻¹ ^ κ)
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≠ ⊥
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) = 4⁻¹ ^ κ
+Try this:
+  [apply] refine le_iff_atom_le_imp.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ OrderBot ℝ
+  -- ⊢ IsAtomistic ℝ
+  -- ⊢ ∀ (c : ℝ),
+    IsAtom c →
+      (c ≤ Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) →
+        c ≤ 4⁻¹ ^ κ
+Try this:
+  [apply] refine (IsAtom.le_iff ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ OrderBot ℝ
+  -- ⊢ IsAtom (4⁻¹ ^ κ)
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) = ⊥ ∨
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) = 4⁻¹ ^ κ
+Try this:
+  [apply] refine (IsCoatom.le_iff ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ OrderTop ℝ
+  -- ⊢ IsCoatom (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+  -- ⊢ 4⁻¹ ^ κ = ⊤ ∨
+    4⁻¹ ^ κ = Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2
+Try this:
+  [apply] refine UpperSet.mem_Ici_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 4⁻¹ ^ κ ∈
+    UpperSet.Ici (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+Try this:
+  [apply] refine LowerSet.mem_Iic_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ∈
+    LowerSet.Iic (4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (LeftOrdContinuous.le_iff (fun ⦃s⦄ => ?_) ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (RightOrdContinuous.le_iff (fun ⦃s⦄ => ?_) ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_tendsto' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_tendsto ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_tendsto_of_tendsto ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine ge_of_tendsto ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine tendsto_le_of_eventuallyLE ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_tendsto_of_tendsto_of_frequently (fun ⦃U⦄ => ?_) ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_tendsto_of_tendsto' ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine ge_of_tendsto' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine ge_of_tendsto_of_frequently (fun ⦃U⦄ => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_tendsto_of_frequently (fun ⦃U⦄ => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine isClosed_Ioo_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ IsClosed
+    (Set.Ioo (4⁻¹ ^ κ)
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2))
+Try this:
+  [apply] refine isClosed_Ico_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ IsClosed
+    (Set.Ico (4⁻¹ ^ κ)
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2))
+Try this:
+  [apply] refine isClosed_Ioc_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ IsClosed
+    (Set.Ioc (4⁻¹ ^ κ)
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2))
+Try this:
+  [apply] refine Monotone.le_of_tendsto ?_ ?_ κ
+  -- Remaining subgoals:
+  -- ⊢ Monotone (HPow.hPow 4⁻¹)
+  -- ⊢ Filter.Tendsto (HPow.hPow 4⁻¹) Filter.atBot
+    (nhds (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Antitone.ge_of_tendsto ?_ ?_ fun x => q x.1 x.2)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Antitone.le_of_tendsto ?_ ?_ κ
+  -- Remaining subgoals:
+  -- ⊢ Antitone (HPow.hPow 4⁻¹)
+  -- ⊢ Filter.Tendsto (HPow.hPow 4⁻¹) Filter.atTop
+    (nhds (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Monotone.ge_of_tendsto ?_ ?_ fun x => q x.1 x.2)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine hasProd_le_of_prod_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine hasProd_le_inj ?_ ?_ ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine hasSum_mono (fun ⦃U⦄ => ?_) ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_hasSum_of_le_sum ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_hasProd' ?_ fun x => q x.1 x.2)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine hasSum_le_of_sum_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_hasSum ?_ (fun x => q x.1 x.2) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_hasProd_of_le_prod ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine hasProd_mono ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_hasProd ?_ (fun x => q x.1 x.2) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine hasProd_le ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine hasSum_le_inj ?_ (fun ⦃a₁⦄ => ?_) ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine hasSum_le (fun i => ?_) ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_hasSum' ?_ fun x => q x.1 x.2)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine isCompact_Ico_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ IsCompact
+    (Set.Ico (4⁻¹ ^ κ)
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2))
+Try this:
+  [apply] refine isCompact_Ioo_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ IsCompact
+    (Set.Ioo (4⁻¹ ^ κ)
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2))
+Try this:
+  [apply] refine isCompact_Ioc_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ IsCompact
+    (Set.Ioc (4⁻¹ ^ κ)
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2))
+Try this:
+  [apply] refine LinearLocallyFiniteOrder.le_of_lt_succFn
+    (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) (4⁻¹ ^ κ)
+    ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) <
+    LinearLocallyFiniteOrder.succFn (4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_toZ_le ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (toZ_le_iff
+        (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+        (4⁻¹ ^ κ)).mp
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine MulOpposite.op_le_op.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ MulOpposite.op
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    MulOpposite.op (4⁻¹ ^ κ)
+Try this:
+  [apply] refine AddOpposite.op_le_op.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ AddOpposite.op
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    AddOpposite.op (4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsStarProjection.le_of_mul_eq_right ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StarOrderedRing.le_iff
+        (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+        (4⁻¹ ^ κ)).mpr
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsStarProjection.le_of_mul_eq_left ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine star_le_star_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ StarOrderedRing ℝ
+  -- ⊢ star (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+    star (4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (LowerAdjoint.closure_le_closed_iff_le ?_
+        (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ?_).mp
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (ClosureOperator.IsClosed.closure_le_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Set.projIcc_eq_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.projIci_eq_self.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.projIci (4⁻¹ ^ κ)
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) =
+    ⟨4⁻¹ ^ κ, ⋯⟩
+Try this:
+  [apply] refine Set.projIic_eq_self.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.projIic
+      (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2)
+      (4⁻¹ ^ κ) =
+    ⟨Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2, ⋯⟩
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Set.projIcc_eq_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine RCLike.le_iff_re_im.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ RCLike.re
+        (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) ≤
+      RCLike.re (4⁻¹ ^ κ) ∧
+    RCLike.im (Games.ProbComp.prob (Games.OracleComp.bind idx fun i => (fun x => (i, x)) <$> law i) fun x => q x.1 x.2) =
+      RCLike.im (4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Finsupp.single_le_single.mp fun i => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine algebraMap_le_algebraMap.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+/private/tmp/io-sprg-overlap/M3Load_cond1_all_joint_core-apply.lean:12:0: warning: declaration uses 'sorry'
+/private/tmp/io-sprg-overlap/M3Load_cond1_all_joint_core-apply.lean:14:5: warning: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

@@ -239,3 +239,49 @@ Stretch_eventually_seed_relative_gap: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_
 M2Bridges_jls_hasPolyStretch_namespace_v2: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: Corrected root Complexity.PolyExpr namespace; actual theorem uses stretch_gaps, eventual relative gap, PolyExpr.eval_le with retained coefficient, and tendsto_rpow_atTop.
 
 M3Load_binomial_bound: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: Nat.choose_le_pow_div; Real.pow_div_factorial_le_exp; Real.exp_nat_mul; ordered-field division and power identities.
+
+M3Load_bucket_tail: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: Equiv.piEquivPiSubtypeProd; uprob_comp_equiv; uprob_fst; OneWay.uprob_pi_forall; uprob_exists_le; Finset.card_powersetCard.
+
+M3Load_some_bucket_tail: exact=NO_CLOSING_PROOF, apply=DIAGNOSTIC_FAILURE. Reuse: uprob_exists_le over all bucket labels; bucket_tail; Finset.sum_le_sum; Fintype.card_fin.
+
+M3Load_full_bucket_tail: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: bucket_tail on Finset.univ; Buckets.load_eq; Finset.inter_univ; Finset.card_univ; Fintype.card_fin.
+
+M3Load_some_full_bucket_tail: exact=NO_CLOSING_PROOF, apply=DIAGNOSTIC_FAILURE. Reuse: some_bucket_tail on Finset.univ; Buckets.load_eq; Finset.inter_univ; Finset.card_univ; Fintype.card_fin.
+
+M3Load_errProb_nonneg_core: exact=CLOSED, apply=CLOSED. Reuse: Params.errProb_eq followed by Games.ProbComp.prob_nonneg.
+
+M3Load_badSet_expect_le_core: exact=NO_CLOSING_PROOF, apply=DIAGNOSTIC_FAILURE. Reuse: lpnNoise_law; ProbComp.expect_sample_coord; uprob_exists_le with explicit sample type; ProbComp.expect_sum; Finset.sum_boole; BoolPRG.MultilinearRep.hasLocality_iff.
+
+M3Load_cond1_prob_le_core: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: LamportReduction.expect_favourable_of_success; Params.badSet_expect_le; positive rounded widths; le_div_iff₀.
+
+M3Load_errProb_le_decomposition_core: exact=NO_CLOSING_PROOF, apply=DIAGNOSTIC_FAILURE. Reuse: firstGood_none_iff; Samplers core/flag/error readers; probability product/bind/map readers; uprob_mono, uprob_or_le and uprob_exists_le with explicit sample type.
+
+M3Load_bucket_count_upper_core: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: Params.B_eq and t_eq; Nat.div_le_iff_le_mul_add_pred; Nat.le_mul_of_pos_left; max_le_iff.
+
+M3Load_bucket_count_lower_core: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: Nat.lt_mul_div_succ; Params.B_eq and t_eq; le_max_right; Nat.mul_le_mul_left.
+
+M3Load_prefactor_eventually_le_two_pow_core_v2: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: Complexity.PolyExpr.eval_le and composition; tendsto_pow_const_div_const_pow_of_one_lt; Filter.tendsto_add_atTop_nat; bucket_count_upper.
+
+M3Load_binomial_ratio_quarter_core: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: binomial_bound; div_le_div_of_nonneg_right; div_pow; pow_le_pow_left₀; pow_le_pow_of_le_one.
+
+M3Load_smallset_bucket_tail_quarter_core: exact=NO_CLOSING_PROOF, apply=DIAGNOSTIC_FAILURE. Reuse: some_bucket_tail; binomial_ratio_quarter; Real.exp_one_lt_d9; cardinality transitivity and monotone multiplication.
+
+M3Load_capacity_bucket_tail_quarter_core: exact=NO_CLOSING_PROOF, apply=DIAGNOSTIC_FAILURE. Reuse: some_full_bucket_tail; bucket_count_lower; binomial_ratio_quarter; Real.exp_one_lt_d9; Nat.le_self_pow.
+
+M3Load_cond1_single_le_quarter_core: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: Params.cond1_prob_le; Nat.lt_mul_div_succ; Params.Γ_eq; positive-denominator division.
+
+M3Load_cond1_repetitions_fixed_index_core: exact=NO_CLOSING_PROOF, apply=DIAGNOSTIC_FAILURE. Reuse: uprob_comp_equiv via prodComm; uprob_fst; OneWay.uprob_pi_forall; cond1_single_le_quarter; pow_le_pow_left₀.
+
+M3Load_cond1_all_fixed_index_core: exact=DIAGNOSTIC_FAILURE, apply=DIAGNOSTIC_FAILURE. Reuse: Params.sdSampFull_eq and sdCore_draw; ProbComp.expect_map; Bridge.prob_sample_eq_uprob; uniform product relabeling; cond1_repetitions_fixed_index.
+
+M3Load_cond1_all_joint_core: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: Params.jointLaw_eq; ProbComp.prob_bind, expect_mono, expect_const and expect_map; cond1_all_fixed_index.
+
+M3Load_jointLaw_prob_eq_uprob_core: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: ProbComp.expect_bind, expect_map and expect_pure; Bridge.prob_sample_pair; Bridge.prob_sample_eq_uprob; existing operational sampler readers.
+
+M3Load_cond3_joint_le_quarter_pow_core: exact=NO_CLOSING_PROOF, apply=DIAGNOSTIC_FAILURE. Reuse: Params.jointLaw_prob_eq_uprob; uprob_fst; uprob_comp_equiv via prodComm; capacity_bucket_tail_quarter.
+
+M3Load_cond2_sparse_joint_le_quarter_pow_core: exact=NO_CLOSING_PROOF, apply=DIAGNOSTIC_FAILURE. Reuse: Params.jointLaw_prob_eq_uprob; explicit prodAssoc/prodComm equivalences; badSet/Cond readers; uprob_prod; smallset_bucket_tail_quarter; expectation monotonicity.
+
+M3Load_claim42_core: exact=NO_CLOSING_PROOF, apply=PARTIAL_NOT_PROOF. Reuse: Params.Γ_le_B and le_log_n; finite sum monotonicity; completed three-event decomposition and conditional bounds; prefactor_eventually_le_two_pow; mul_pow.
+
+M3Load_lpnNoise_law_cast_core: exact=CLOSED, apply=CLOSED. Reuse: Core.cast_eq and existing uprob relabeling/congruence; normalization-only control, with actual opaque-owner statement searches recorded separately.

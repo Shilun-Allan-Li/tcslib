@@ -1,0 +1,37 @@
+--- /private/tmp/io-sprg-proof-notes/Claim42Final/13-cond2_sparse_joint_le_quarter_pow.lean.candidate
++++ /private/tmp/io-sprg-proof-notes/M3Prepared/candidates/Claim42Final/13-cond2_sparse_joint_le_quarter_pow.lean.candidate
+@@ -27,18 +27,21 @@
+       ¬ P.Cond1 κ pp (P.idCore κ pp z.1) z.2 k
+   have hbad (g : GDraw) (φ : Buck) (A : Mat)
+       (e : Fin (P.n κ) → ZMod pp.p) :
+-      P.badSet κ pp (idx g φ A) e = P.badSet κ pp (idx g φ₀ A) e
++      P.badSet κ pp (idx g φ A) e = P.badSet κ pp (idx g φ₀ A) e := ?_
++  swap
+   · simp only [P.badSet_eq, idx]
+   have hunif : Games.ProbComp.prob (P.jointLaw κ pp)
+       (fun x => P.Cond2 κ pp x.1 x.2.draw k ∧
+-        ¬ P.Cond1 κ pp x.1 x.2.draw k) = uprob event
++        ¬ P.Cond1 κ pp x.1 x.2.draw k) = uprob event := ?_
++  swap
+   · rw [P.jointLaw_eq, Games.ProbComp.prob_eq_expect,
+       Games.ProbComp.expect_bind]
+     simp_rw [Games.ProbComp.expect_map]
+     rw [P.idSamp'_eq, Games.ProbComp.expect_map]
+     simp_rw [P.sdSampFull_eq, Games.ProbComp.expect_map, P.sdCore_draw]
+     rw [← Games.Bridge.prob_sample_eq_uprob event,
+-      Games.ProbComp.prob_eq_expect, ← Games.Bridge.expect_sample_pair]
++      Games.ProbComp.prob_eq_expect, ← Games.Bridge.expect_sample_pair
++      (fun z : P.IdDraw κ pp × D => if event z then (1 : ℝ) else 0)]
+     simp only [Games.ProbComp.expect_bind, Games.ProbComp.expect_pure, event]
+   let e : (P.IdDraw κ pp × D) ≃ ((GDraw × (Mat × D)) × Buck) :=
+     (Equiv.prodAssoc GDraw (Buck × Mat) D).trans
+@@ -50,7 +53,8 @@
+         ¬ P.Cond1 κ pp x.1 x.2.draw k) =
+       uprob (fun z : (GDraw × (Mat × D)) × Buck =>
+         (∃ b, κ < (Buckets.bucket z.2 b ∩ S z.1).card) ∧
+-          (S z.1).card ≤ P.Γ κ)
++          (S z.1).card ≤ P.Γ κ) := ?_
++  swap
+   · rw [hunif, ← uprob_comp_equiv e.symm]
+     apply OneWay.uprob_congr
+     intro z

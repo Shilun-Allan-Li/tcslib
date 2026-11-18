@@ -1,0 +1,109 @@
+TCSlib/Cryptography/Authentication/MAC/FromPRF/Random.lean:23:fresh message is not a key, and its value is `R` there, uniform (`expect_sample_coord`,
+TCSlib/Cryptography/Authentication/MAC/FromPRF/Random.lean:53:(`expect_sample_coord`), and hits the one value `σ` with probability `1 / 2^b`
+TCSlib/Cryptography/Authentication/MAC/FromPRF/Random.lean:83:    rw [expect_sample_coord (splitBits w).1 (fun y (_ : (Fin a → Bool) → (Fin b → Bool)) =>
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean:198:        (uprob_or_le _ _).trans (add_le_add_left (uprob_exists_le _ _) _)
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Statistics.lean:57:(`ProbComp.expect_sample_coord`). This is generic probability glue for the planting
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Statistics.lean:145:      exact ProbComp.expect_sample_coord p
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:934:prover's coins, condition on all `|x|` samplers succeeding (union bound `uprob_exists_le`
+TCSlib/Cryptography/Games/Hopping.lean:166:          simp only [prob_pure, Finset.sum_boole]
+TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:1644:    simp only [term_diag, Finset.sum_boole]
+TCSlib/Cryptography/Games/Bridges/Experiments.lean:69:  rw [prob_eq_expect, expect_sample, uprob_eq_card_filter, sum_boole, inv_mul_eq_div]
+TCSlib/Cryptography/Games/Probability.lean:42:* `ProbComp.expect_add`, `expect_const_mul`, `expect_sum`, `expect_mono`: linearity and
+TCSlib/Cryptography/Games/Probability.lean:47:  `expect_sample_update`, `expect_sample_coord`: reindexing, exchanging and resampling uniform
+TCSlib/Cryptography/Games/Probability.lean:184:theorem expect_sum {ι : Type} (c : ProbComp α) (s : Finset ι) (f : ι → α → ℝ) :
+TCSlib/Cryptography/Games/Probability.lean:285:    rw [← expect_sum]
+TCSlib/Cryptography/Games/Probability.lean:325:factor and the finite sum out of the outer expectation (`expect_const_mul`, `expect_sum`). -/
+TCSlib/Cryptography/Games/Probability.lean:331:  rw [expect_const_mul, expect_sum]
+TCSlib/Cryptography/Games/Probability.lean:383:theorem expect_sample_coord {ι : Type} [Fintype ι] [DecidableEq ι] [Fintype β] [Nonempty β]
+.lake/packages/mathlib/Mathlib/NumberTheory/MulChar/Basic.lean:559:    _ = ((Finset.univ : Finset R).filter IsUnit).card := Finset.sum_boole _ _
+TCSlib/Cryptography/Randomness/Learning/Random.lean:24:`Pr[x ∈ s] ≤ Σ_j Pr[x = s_j] = m · 2^{-n}` (`uprob_exists_le`, `uprob_eq_point`).
+TCSlib/Cryptography/Randomness/Learning/Random.lean:143:`|gameProb − ½| ≤ Pr[∃ j, s_j = x]`, which the union bound (`uprob_exists_le`) bounds by
+TCSlib/Cryptography/Randomness/Learning/Random.lean:177:  have hunion := uprob_exists_le (Finset.univ : Finset (Fin m))
+TCSlib/Cryptography/Games/Tapes.lean:207:`ProbComp.expect_sample_coord` replaces `T j` by the fresh coin of `freshImpl`
+TCSlib/Cryptography/Games/Tapes.lean:229:    refine (expect_sample_coord jj (fun t T => expect (K i x s t) fun p =>
+TCSlib/Cryptography/Games/Tapes.lean:326:**Proof sketch.** `ProbComp.expect_sample_coord` at the coordinate `p` with
+TCSlib/Cryptography/Games/Tapes.lean:335:  have h := expect_sample_coord p (fun y R => F y (Games.ovr ((p, y) :: M) R)) fun y y' R => by
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:87:Apply the existing uprob_exists_le to these subsets. For each fixed subset, split its
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:159:      uprob_exists_le (α := Fin m → Fin B) (S.powersetCard (t + 1))
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:175:**Proof sketch.** Apply the published uprob_exists_le over all finite bucket labels,
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:182:    (uprob_exists_le (Finset.univ : Finset (Fin B))
+TCSlib/Cryptography/CoinSampling/Basic.lean:338:**Proof sketch.** `piDec_eq_none_iff` and the union bound `uprob_exists_le`; each block event
+TCSlib/Cryptography/CoinSampling/Basic.lean:345:  refine (uprob_exists_le univ fun j c => S.dec (block c j) = none).trans (le_of_eq ?_)
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Polys.lean:366:  rw [Finset.sum_boole] at hnum
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Ring/Finset.lean:40:@[simp] lemma sum_boole (p) [DecidablePred p] (s : Finset ι) :
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Ring/Finset.lean:95:lemma sum_boole_mul (s : Finset ι) (f : ι → R) (i : ι) :
+TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean:192:    refine (uprob_exists_le Finset.univ collision).trans ?_
+TCSlib/Cryptography/SecureComputation/Garbling.lean:597:    refine (uprob_exists_le (Finset.univ : Finset A)
+TCSlib/Cryptography/SecureComputation/Garbling.lean:603:        refine (uprob_exists_le (Finset.univ.erase a) (fun a' w => event i a a' w)).trans ?_
+TCSlib/Cryptography/SecureComputation/Garbling.lean:612:    _ ≤ ∑ i ∈ Finset.univ, uprob (gateBad i) := uprob_exists_le _ _
+TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:139:  simp only [ind, sum_boole]
+TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:205:    refine (uprob_mono fun c hc => ?_).trans (uprob_exists_le univ fun i c => R c i ≠ x i)
+TCSlib/BooleanAnalysis/ThresholdFunctions/NoiseStability.lean:461:          simp_rw [expect_eq_fintypeExpect, Finset.expect_sum_comm]
+TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/General.lean:81:  rw [P.expect_sum, ← P.parseval]
+TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/General.lean:263:    Finset.expect_sum_comm]
+TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/General.lean:288:    rw [P.expect_sum_mul]
+TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/General.lean:296:  rw [expect_eq_fintypeExpect, Finset.expect_sum_comm]
+TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/General.lean:341:        Finset.expect_sum_comm, ← Finset.mul_expect]
+TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/General.lean:347:        Finset.expect_sum_comm, ← Finset.mul_expect]
+TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/General.lean:433:          Finset.expect_sum_comm, ← Finset.mul_expect]
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Piecewise.lean:234:@[to_additive /-- See also `Finset.sum_boole`. -/]
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Piecewise.lean:246:@[to_additive sum_boole_nsmul]
+TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/Contraction.lean:261:    rw [P.expect_sum_mul]
+TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/Basic.lean:98:      rw [P.expect_sum_mul]
+TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/Basic.lean:208:      simp_rw [P.expect_sum_mul, Finset.mul_sum]
+TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/Basic.lean:558:      rw [P.expect_sum_mul]
+TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/Basic.lean:647:      simp only [Finset.sum_boole, Finset.filter_univ_mem]
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Expect.lean:131:lemma expect_sum_comm (s : Finset ι) (t : Finset κ) (f : ι → κ → M) :
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Expect.lean:137:  rw [expect, expect, ← expect_sum_comm, ← expect_sum_comm, expect, expect, smul_comm, sum_comm]
+TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/ProjectionBounds.lean:236:      simp_rw [P.expect_sum_mul, Finset.mul_sum]
+TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/ProjectionBounds.lean:290:  simp only [FiniteProduct.lowDegree, Finset.sum_mul, Finset.mul_sum, P.expect_sum]
+TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/ProjectionBounds.lean:295:    simp only [FiniteProduct.component, Finset.sum_mul, Finset.mul_sum, P.expect_sum]
+TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/DNF.lean:279:      simp_rw [expect_eq_fintypeExpect, Finset.expect_sum_comm]
+TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Rounding.lean:108:      simp_rw [expect_eq_fintypeExpect, Finset.expect_sum_comm]
+TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Rounding.lean:162:        simp_rw [expect_eq_fintypeExpect, Finset.expect_sum_comm]
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:152:outputs are wrong (`goodRuns_iff`; `uprob_exists_le`). For fixed `main`-tapes `m` that event
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:198:        uprob_exists_le _ _
+TCSlib/Cryptography/Foundations/Probability.lean:35:  `uprob_exists_le`: basic laws and the union bound.
+TCSlib/Cryptography/Foundations/Probability.lean:82:  rw [uprob_eq_card_filter, uexp, Finset.sum_boole]
+TCSlib/Cryptography/Foundations/Probability.lean:137:theorem uprob_exists_le {ι : Type*} (s : Finset ι) (p : ι → α → Prop) :
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:286:`uprob_exists_le` over the `C(q+1, 2)` pairs `i < j` (`Finset.card_filter` of `univ.filter (i < j)`
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:316:  have h2 := uprob_exists_le S (fun p (r : Fin (q + 1) → Fin n → Bool) => r p.1 = r p.2)
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Forgery.lean:293:(`ovr_of_not_mem`), uniform (`expect_sample_coord`, `expect_sample_mem_le`). -/
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Forgery.lean:339:    rw [expect_sample_coord (pairW n w) (fun t (_ : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) =>
+TCSlib/BooleanAnalysis/Hypercontractivity/Products/Basic.lean:36:* `FiniteProduct.expect_const`, `expect_sum_mul`: constants and finite linear combinations.
+TCSlib/BooleanAnalysis/Hypercontractivity/Products/Basic.lean:314:theorem expect_sum_mul (P : FiniteProduct.{u} n) {α : Type*}
+TCSlib/BooleanAnalysis/Hypercontractivity/Products/Basic.lean:396:theorem expect_sum (P : FiniteProduct.{u} n) {α : Type*}
+TCSlib/BooleanAnalysis/Hypercontractivity/Products/Basic.lean:400:  simpa only [one_mul] using P.expect_sum_mul s (fun _ => 1) F
+TCSlib/BooleanAnalysis/Hypercontractivity/Products/Basic.lean:439:    rw [P.expect_sum]
+TCSlib/BooleanAnalysis/Hypercontractivity/Products/Basic.lean:442:    rw [P.expect_sum]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:165:`ProbComp.expect_sample_coord` replaces `T j` by the fresh coin of `freshImpl`
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:188:    refine (expect_sample_coord jj (fun t T => expect (K i x s t) fun p =>
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:277:**Proof sketch.** `ProbComp.expect_sample_coord` at the coordinate `p` with
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:285:  have h := expect_sample_coord p (fun y R => F y (ovr ((p, y) :: M) R)) fun y y' R => by
+TCSlib/BooleanAnalysis/Hypercontractivity/Products/Applications.lean:74:    simp_rw [P.expect_sum]
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean:27:  (`ProbComp.expect_sample_coord`), using that the run from a history of length `j + 1` ignores the
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean:242:`ProbComp.expect_sample_coord` replaces `T j` by fresh coins; then apply the induction
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean:272:          refine (expect_sample_coord j (fun r T => expect (simulate
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Games.lean:29:(`ProbComp.expect_sample_coord`), using that the run from the counter `j` ignores the tapes
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Games.lean:235:`ProbComp.expect_sample_coord` replaces `T j` by the fresh sample of `fImpl`. The other
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Games.lean:272:      refine (ProbComp.expect_sample_coord jj (fun r T => expect (simulate
+TCSlib/Cryptography/Candidates/Concrete.lean:214:(`uprob_mono`, `uprob_or_le`, `uprob_exists_le`). The first event has probability
+TCSlib/Cryptography/Candidates/Concrete.lean:244:        (uprob_or_le _ _).trans (add_le_add_left (uprob_exists_le _ _) _)
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:723:its query (`uprob_exists_le` over the `k` rounds, `Fin.cons` bookkeeping). Along the correct
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:771:  have hunion := (uprob_mono hfail).trans ((uprob_exists_le univ _).trans
+TCSlib/Cryptography/Asymptotic/Permutations.lean:376:**Proof sketch.** `permFromCoins_eq_none_iff`, the union bound `uprob_exists_le`, projection
+TCSlib/Cryptography/Asymptotic/Permutations.lean:388:  refine (uprob_exists_le univ fun (i : Fin n) (b : Fin n → Fin T → Fin k → Bool) =>
+TCSlib/Complexity/Randomized/RandomWalkMixing.lean:158:  rw [Finset.sum_boole]
+.lake/packages/mathlib/Mathlib/Data/Nat/Multiplicity.lean:109:        rw [sum_add_distrib, sum_boole]
+.lake/packages/mathlib/Mathlib/Data/Nat/Choose/Factorization.lean:51:        simp [Nat.add_comm, sum_add_distrib, sum_boole]
+.lake/packages/mathlib/Mathlib/Data/Nat/Choose/Factorization.lean:105:    _ = _ := by simp [sum_add_distrib, sum_boole]
+.lake/packages/mathlib/Mathlib/Combinatorics/Additive/ErdosGinzburgZiv.lean:80:    · rw [← CharP.cast_eq_zero_iff (ZMod p), ← Finset.sum_boole]
+.lake/packages/mathlib/Mathlib/Combinatorics/Additive/Randomisation.lean:32:        simp_rw [expect_mul, ← expect_sum_comm, ← Fintype.prod_add, add_comm,
+.lake/packages/mathlib/Mathlib/Combinatorics/Additive/Randomisation.lean:37:  simp only [map_mul, prod_div_distrib, prod_add, prod_const, ← expect_div, expect_sum_comm,
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/LapMatrix.lean:36:  rw [sum_boole, Set.toFinset_setOf]
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/IncMatrix.lean:108:  simp [incMatrix_apply', sum_boole, Set.filter_mem_univ_eq_toFinset]
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/IncMatrix.lean:114:  simp_all only [ite_true, sum_boole]
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/IncMatrix.lean:122:  simp only [incMatrix_apply', sum_boole, mk'_mem_incidenceSet_iff, h]
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/IncMatrix.lean:137:    sum_boole, and_self_iff]
+.lake/packages/mathlib/Mathlib/Combinatorics/SimpleGraph/IncMatrix.lean:161:    Set.indicator_apply, Pi.one_apply, sum_boole]
+.lake/packages/mathlib/Mathlib/MeasureTheory/Function/Intersectivity.lean:106:        simpa only [Finset.sum_apply, indicator_apply, Pi.one_apply, Finset.sum_boole, Nat.cast_le]

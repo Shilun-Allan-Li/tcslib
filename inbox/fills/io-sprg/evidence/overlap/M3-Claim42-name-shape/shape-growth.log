@@ -1,0 +1,8 @@
+TCSlib/Complexity/Randomized/PolyExpr.lean:159:theorem eval_le (p : PolyExpr) : ∃ C c : ℕ, ∀ n, p.eval n ≤ C * (n + 1) ^ c := by
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:677:`N ^ c ≤ (2 C)^c (t + 1)^{2c}`. By `tendsto_pow_const_div_const_pow_of_one_lt`
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:688:  have ht := tendsto_pow_const_div_const_pow_of_one_lt (2 * c) ha
+TCSlib/Cryptography/Foundations/Negligible.lean:155:  have ht := tendsto_pow_const_div_const_pow_of_one_lt c (r := (2 : ℝ)) one_lt_two
+TCSlib/Cryptography/Games/Efficiency/Strings.lean:255:theorem eval_le_sumPoly : ∀ {k : ℕ} (d : Fin k → PolyExpr) (i : Fin k) (n : ℕ),
+.lake/packages/mathlib/Mathlib/Analysis/SpecialFunctions/Exp.lean:245:      ((tendsto_pow_const_div_const_pow_of_one_lt n (one_lt_exp_iff.2 zero_lt_one)).eventually
+.lake/packages/mathlib/Mathlib/Analysis/SpecificLimits/Normed.lean:177:theorem tendsto_pow_const_div_const_pow_of_one_lt (k : ℕ) {r : ℝ} (hr : 1 < r) :
+.lake/packages/mathlib/Mathlib/Analysis/SpecificLimits/Normed.lean:189:  simpa [div_eq_mul_inv] using tendsto_pow_const_div_const_pow_of_one_lt k hr'

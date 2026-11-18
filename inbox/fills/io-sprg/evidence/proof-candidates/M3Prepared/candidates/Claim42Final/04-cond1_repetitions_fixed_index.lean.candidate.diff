@@ -1,0 +1,12 @@
+--- /private/tmp/io-sprg-proof-notes/Claim42Final/04-cond1_repetitions_fixed_index.lean.candidate
++++ /private/tmp/io-sprg-proof-notes/M3Prepared/candidates/Claim42Final/04-cond1_repetitions_fixed_index.lean.candidate
+@@ -19,7 +19,8 @@
+   let p : Noise → Prop := fun r => P.Γ κ <
+     (P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))).card
+   let q : Secret × Noise → Prop := fun z => p z.2
+-  have hp : uprob p ≤ (4 : ℝ)⁻¹
++  have hp : uprob p ≤ (4 : ℝ)⁻¹ := ?_
++  swap
+   · rw [← Games.Bridge.prob_sample_eq_uprob p]
+     exact cond1_single_le_quarter P hLoc κ pp I hlog
+   have hq : uprob q = uprob p :=

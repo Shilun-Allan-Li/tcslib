@@ -1,0 +1,18 @@
+import TCSlib.Cryptography.Games.Bridges.Experiments
+import TCSlib.Cryptography.OneWayFunctions.Basic
+import Mathlib.Data.Finset.Powerset
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography
+
+example {X : Type} (c : Games.ProbComp X) (badCount : X → ℕ)
+    (cLoc m W Γ : ℕ) (hW : 0 < W)
+    (hmean : Games.ProbComp.expect c (fun x => (badCount x : ℝ)) ≤
+      (cLoc : ℝ) * m / W) :
+    Games.ProbComp.prob c (fun x => Γ < badCount x) ≤
+      (cLoc : ℝ) * m / ((W : ℝ) * (Γ + 1)) := by
+  apply?

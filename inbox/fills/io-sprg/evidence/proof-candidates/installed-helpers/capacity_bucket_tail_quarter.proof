@@ -1,0 +1,37 @@
+by
+  have hκpos : 0 < κ := ?_
+  swap
+  · omega
+  have hcap : P.cap κ = κ ^ 2 * P.W κ := ?_
+  swap
+  · rw [P.cap_eq, P.rc_eq, P.t_eq, P.W_eq, mul_pow]
+  have hWcap : P.W κ ≤ P.cap κ := ?_
+  swap
+  · rw [hcap]
+    exact Nat.le_mul_of_pos_left _ (pow_pos hκpos 2)
+  have hκcap : κ ≤ P.cap κ := ?_
+  swap
+  · rw [hcap]
+    exact (Nat.le_self_pow two_ne_zero κ).trans
+      (Nat.le_mul_of_pos_right (κ ^ 2) (P.W_pos κ))
+  have hnat : 12 * P.m κ ≤ P.B κ * (P.cap κ + 1) := ?_
+  swap
+  · calc
+      12 * P.m κ ≤ κ * P.m κ := Nat.mul_le_mul_right _ hκ
+      _ = P.m κ * κ := Nat.mul_comm _ _
+      _ ≤ P.B κ * P.W κ := bucket_count_lower P κ
+      _ ≤ P.B κ * (P.cap κ + 1) := Nat.mul_le_mul_left _
+        (hWcap.trans (Nat.le_add_right (P.cap κ) 1))
+  have he : 4 * Real.exp 1 ≤ (12 : ℝ) := ?_
+  swap
+  · nlinarith [Real.exp_one_lt_d9]
+  have hbase : 4 * Real.exp 1 * (P.m κ : ℝ) ≤
+      (P.B κ : ℝ) * ((P.cap κ + 1 : ℕ) : ℝ) := ?_
+  swap
+  · refine (mul_le_mul_of_nonneg_right he (Nat.cast_nonneg _)).trans ?_
+    exact_mod_cast hnat
+  exact (some_full_bucket_tail (m := P.m κ) (B := P.B κ) (P.cap κ)).trans
+    (mul_le_mul_of_nonneg_left
+      (binomial_ratio_quarter (P.m κ) (P.B κ) (P.cap κ + 1) κ
+        (P.B_pos κ) (Nat.succ_pos _) hbase
+        (hκcap.trans (Nat.le_add_right (P.cap κ) 1))) (Nat.cast_nonneg _))

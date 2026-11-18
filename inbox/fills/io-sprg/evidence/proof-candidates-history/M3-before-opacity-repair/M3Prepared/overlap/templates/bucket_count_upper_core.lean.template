@@ -1,0 +1,12 @@
+import TCSlib.Cryptography.Foundations.Probability
+import Mathlib.Data.Nat.Basic
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography
+
+example (m κ W : ℕ) (hW : 0 < W) :
+    max 1 ((m * κ + W - 1) / W) ≤ m * κ + 1 := __PROBE_BODY__

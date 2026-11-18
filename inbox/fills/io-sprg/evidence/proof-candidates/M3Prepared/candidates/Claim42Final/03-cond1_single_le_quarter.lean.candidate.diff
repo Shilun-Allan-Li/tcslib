@@ -1,0 +1,20 @@
+--- /private/tmp/io-sprg-proof-notes/Claim42Final/03-cond1_single_le_quarter.lean.candidate
++++ /private/tmp/io-sprg-proof-notes/M3Prepared/candidates/Claim42Final/03-cond1_single_le_quarter.lean.candidate
+@@ -14,13 +14,15 @@
+   have hround := Nat.lt_mul_div_succ
+     (P.m κ * Nat.log 2 (P.n κ)) (P.W_pos κ)
+   rw [← P.Γ_eq] at hround
+-  have hnat : 4 * cLoc * P.m κ ≤ P.W κ * (P.Γ κ + 1)
++  have hnat : 4 * cLoc * P.m κ ≤ P.W κ * (P.Γ κ + 1) := ?_
++  swap
+   · calc
+       4 * cLoc * P.m κ = P.m κ * (4 * cLoc) := Nat.mul_comm _ _
+       _ ≤ P.m κ * Nat.log 2 (P.n κ) := Nat.mul_le_mul_left _ hlog
+       _ ≤ P.W κ * (P.Γ κ + 1) := hround.le
+   have hreal : (4 : ℝ) * cLoc * P.m κ ≤
+-      (P.W κ : ℝ) * ((P.Γ κ : ℝ) + 1)
++      (P.W κ : ℝ) * ((P.Γ κ : ℝ) + 1) := ?_
++  swap
+   · exact_mod_cast hnat
+   have hW : (0 : ℝ) < P.W κ := Nat.cast_pos.mpr (P.W_pos κ)
+   have hden : (0 : ℝ) < (P.W κ : ℝ) * ((P.Γ κ : ℝ) + 1) :=

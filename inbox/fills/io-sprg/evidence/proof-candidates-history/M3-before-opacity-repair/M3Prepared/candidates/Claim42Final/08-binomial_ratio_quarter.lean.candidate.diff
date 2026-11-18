@@ -1,0 +1,12 @@
+--- /private/tmp/io-sprg-proof-notes/Claim42Final/08-binomial_ratio_quarter.lean.candidate
++++ /private/tmp/io-sprg-proof-notes/M3Prepared/candidates/Claim42Final/08-binomial_ratio_quarter.lean.candidate
+@@ -11,7 +11,8 @@
+     mul_pos (Nat.cast_pos.mpr hB) (Nat.cast_pos.mpr hr)
+   have hnum : (0 : ℝ) ≤ Real.exp 1 * (N : ℝ) :=
+     mul_nonneg (Real.exp_pos 1).le (Nat.cast_nonneg N)
+-  have hratio : Real.exp 1 * (N : ℝ) / ((B : ℝ) * r) ≤ (4 : ℝ)⁻¹
++  have hratio : Real.exp 1 * (N : ℝ) / ((B : ℝ) * r) ≤ (4 : ℝ)⁻¹ := ?_
++  swap
+   · apply (div_le_iff₀ hBr).2
+     nlinarith
+   refine (div_le_div_of_nonneg_right (binomial_bound N r hr)

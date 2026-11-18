@@ -1,0 +1,104 @@
+Try this:
+  [apply] refine Real.pow_le_of_le_log ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < 4⁻¹
+  -- ⊢ Real.log (uprob fun reps => ∀ (k : Fin κ), q (reps k).2) ≤ ↑κ * Real.log 4⁻¹
+Try this:
+  [apply] refine (Real.le_pow_iff_log_le ?_ ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < uprob fun reps => ∀ (k : Fin κ), q (reps k).2
+  -- ⊢ 0 < 4⁻¹
+  -- ⊢ Real.log (uprob fun reps => ∀ (k : Fin κ), q (reps k).2) ≤ ↑κ * Real.log 4⁻¹
+Try this:
+  [apply] refine Real.le_pow_of_log_le ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < 4⁻¹
+  -- ⊢ Real.log (uprob fun reps => ∀ (k : Fin κ), q (reps k).2) ≤ ↑κ * Real.log 4⁻¹
+Try this:
+  [apply] refine (Real.toNNReal_le_toNNReal_iff_of_pos ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < uprob fun reps => ∀ (k : Fin κ), q (reps k).2
+  -- ⊢ (uprob fun reps => ∀ (k : Fin κ), q (reps k).2).toNNReal ≤ (4⁻¹ ^ κ).toNNReal
+Try this:
+  [apply] refine (Real.toNNReal_le_toNNReal_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ 4⁻¹ ^ κ
+  -- ⊢ (uprob fun reps => ∀ (k : Fin κ), q (reps k).2).toNNReal ≤ (4⁻¹ ^ κ).toNNReal
+Try this:
+  [apply] refine (ENNReal.ofReal_le_ofReal_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ 4⁻¹ ^ κ
+  -- ⊢ ENNReal.ofReal (uprob fun reps => ∀ (k : Fin κ), q (reps k).2) ≤ ENNReal.ofReal (4⁻¹ ^ κ)
+Try this:
+  [apply] refine EReal.coe_le_coe_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(uprob fun reps => ∀ (k : Fin κ), q (reps k).2) ≤ ↑(4⁻¹ ^ κ)
+Try this:
+  [apply] refine (Real.sqrt_le_sqrt_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ 4⁻¹ ^ κ
+  -- ⊢ √(uprob fun reps => ∀ (k : Fin κ), q (reps k).2) ≤ √(4⁻¹ ^ κ)
+Try this:
+  [apply] refine (Real.sqrt_le_sqrt_iff' ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < uprob fun reps => ∀ (k : Fin κ), q (reps k).2
+  -- ⊢ √(uprob fun reps => ∀ (k : Fin κ), q (reps k).2) ≤ √(4⁻¹ ^ κ)
+Try this:
+  [apply] refine Complex.real_le_real.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(uprob fun reps => ∀ (k : Fin κ), q (reps k).2) ≤ ↑(4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine RCLike.ofReal_le_ofReal.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Complex.le_of_eq_sum_of_eq_sum_norm ?_ ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Real.exp_le_exp.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Real.exp (uprob fun reps => ∀ (k : Fin κ), q (reps k).2) ≤ Real.exp (4⁻¹ ^ κ)
+Try this:
+  [apply] refine (Real.log_le_log_iff ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < uprob fun reps => ∀ (k : Fin κ), q (reps k).2
+  -- ⊢ 0 < 4⁻¹ ^ κ
+  -- ⊢ Real.log (uprob fun reps => ∀ (k : Fin κ), q (reps k).2) ≤ Real.log (4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Real.rpow_le_rpow_iff_of_neg ?_ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Real.rpow_le_rpow_iff ?_ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Real.rpow_le_rpow_left_iff_of_base_lt_one ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Real.rpow_le_rpow_left_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_eq_of_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine ge_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 4⁻¹ ^ κ ≥ uprob fun reps => ∀ (k : Fin κ), q (reps k).2
+Try this:
+  [apply] refine ge_iff_le.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (uprob fun reps => ∀ (k : Fin κ), q (reps k).2) ≤ 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_le_of_eq ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+/private/tmp/io-sprg-overlap/M3Load_cond1_repetitions_fixed_index_core-apply.lean:1:1: error: (deterministic) timeout at `isDefEq`, maximum number of heartbeats (100000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.

@@ -1,0 +1,19 @@
+import TCSlib.Cryptography.Games.Bridges.Experiments
+import TCSlib.Cryptography.OneWayFunctions.Basic
+import Mathlib.Data.Finset.Powerset
+import Lean.Elab.Tactic.LibrarySearch
+import Mathlib.Data.ZMod.Basic
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography
+
+example (n m W p cLoc : ℕ) [NeZero W] [NeZero p]
+    (vars : Fin m → Finset (Fin n)) (hLoc : ∀ j, (vars j).card ≤ cLoc) :
+    Games.ProbComp.expect (Games.ProbComp.sample (Fin n → Fin W × ZMod p))
+      (fun r => ((Finset.univ.filter (fun j : Fin m =>
+        ((vars j) ∩ Finset.univ.filter (fun i : Fin n =>
+          (((if (r i).1 = 0 then ((r i).2.val : ℤ) else 0) : ℤ) : ZMod p) ≠ 0)).Nonempty)).card
+          : ℝ)) ≤ (cLoc : ℝ) * m / W := __PROBE_BODY__

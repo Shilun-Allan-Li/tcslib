@@ -1,0 +1,18 @@
+import TCSlib.Cryptography.Games.Bridges.Experiments
+import TCSlib.Cryptography.OneWayFunctions.Basic
+import Mathlib.Data.Finset.Powerset
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography
+
+example {I X : Type} (idx : Games.ProbComp I) (law : I → Games.ProbComp X)
+    (q : I → X → Prop) (κ : ℕ)
+    (h : ∀ i, Games.ProbComp.prob (law i) (q i) ≤ (4 : ℝ)⁻¹ ^ κ) :
+    Games.ProbComp.prob
+      (idx.bind fun i => (fun x => (i, x)) <$> law i)
+      (fun x => q x.1 x.2) ≤ (4 : ℝ)⁻¹ ^ κ := by
+  exact?

@@ -1,0 +1,16 @@
+--- /private/tmp/io-sprg-proof-notes/Claim42Final/09-bucket_count_lower.lean.candidate
++++ /private/tmp/io-sprg-proof-notes/M3Prepared/candidates/Claim42Final/09-bucket_count_lower.lean.candidate
+@@ -10,9 +10,11 @@
+     (P.m κ * κ + P.W κ - 1) hW
+   rw [Nat.mul_add, Nat.mul_one] at hround
+   have hceil : P.m κ * κ ≤
+-      P.W κ * ((P.m κ * κ + P.W κ - 1) / P.W κ)
++      P.W κ * ((P.m κ * κ + P.W κ - 1) / P.W κ) := ?_
++  swap
+   · omega
+-  have hB : (P.m κ * κ + P.W κ - 1) / P.W κ ≤ P.B κ
++  have hB : (P.m κ * κ + P.W κ - 1) / P.W κ ≤ P.B κ := ?_
++  swap
+   · rw [P.B_eq, P.t_eq]
+     exact le_max_right _ _
+   exact hceil.trans ((Nat.mul_le_mul_left (P.W κ) hB).trans_eq

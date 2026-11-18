@@ -1,0 +1,11 @@
+import TCSlib.Cryptography.Foundations.Probability
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography
+
+example {A : Type} [Fintype A] (h : A = A) (p : A → Prop) :
+    uprob (fun c : A => p (cast h c)) = uprob p := __PROBE_BODY__

@@ -1,0 +1,8 @@
+by
+  rw [P.B_eq, P.t_eq, max_le_iff]
+  refine ⟨Nat.succ_le_succ (Nat.zero_le _), ?_⟩
+  rw [Nat.div_le_iff_le_mul_add_pred (P.W_pos κ), Nat.mul_add, Nat.mul_one]
+  exact (Nat.sub_le (P.m κ * κ + P.W κ) 1).trans
+    ((Nat.add_le_add_right
+      (Nat.le_mul_of_pos_left (P.m κ * κ) (P.W_pos κ)) (P.W κ)).trans
+      (Nat.le_add_right _ (P.W κ - 1)))

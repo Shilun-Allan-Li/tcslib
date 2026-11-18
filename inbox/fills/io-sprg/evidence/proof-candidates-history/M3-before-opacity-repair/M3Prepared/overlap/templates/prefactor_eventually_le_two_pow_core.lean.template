@@ -1,0 +1,14 @@
+import Mathlib.Analysis.SpecificLimits.Normed
+import Mathlib.Analysis.Complex.Exponential
+import TCSlib.Complexity.Randomized.PolyExpr
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography
+
+example (B m : ℕ → ℕ) (q : Complexity.PolyExpr)
+    (hm : ∀ κ, m κ ≤ q.eval κ) (hB : ∀ κ, B κ ≤ m κ * κ + 1) :
+    ∃ κ₀, ∀ κ ≥ κ₀, (((κ + 1) * B κ + 1 : ℕ) : ℝ) ≤ (2 : ℝ) ^ κ := __PROBE_BODY__

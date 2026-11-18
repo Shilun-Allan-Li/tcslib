@@ -1,0 +1,18 @@
+{
+ "id": "W06",
+ "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean",
+ "theorem": "Params.seedBitsAt_le",
+ "lines": [
+  192,
+  192
+ ],
+ "before": "  convert hbits using 1 <;> dsimp only [K, X, a] <;> ring",
+ "after": "  convert hbits using 1\n  dsimp only [K, X, a]\n  ring",
+ "reason": "Both unnecessarySeqFocus diagnostics say the following tactic sees only one goal. Use ordinary consecutive tactics, retaining convert/dsimp/ring.",
+ "before_sha256": "7367a3d7d4c08ef7aa07ce8aa7760f7c3c972451ea0b34d26758acf3afd52ff9",
+ "after_sha256": "563e4dfb22c01aa1cfc0de836cfd0d3a31df579a77cf33057d8b0debc78aae84",
+ "status": "COMBINED_FINAL_OWNER_CHECKED_PASS",
+ "final_owner_source_sha256": "065377b877435c8c77fa6af9ad0e32b5dfad186e3d3b2422f1be36bc617d65df",
+ "check": "evidence/build/M3/opacity-warning-repair-v2/results.jsonl",
+ "qualification": "Final combined owner with all selected cleanup edits checked; intermediate individual files are retained without claiming separate checks."
+}

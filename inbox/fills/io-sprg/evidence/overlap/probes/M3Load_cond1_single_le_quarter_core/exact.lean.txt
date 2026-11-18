@@ -1,0 +1,14 @@
+import TCSlib.Cryptography.Foundations.Probability
+import Mathlib.Data.Nat.Basic
+import Lean.Elab.Tactic.LibrarySearch
+import Mathlib.Data.Nat.Log
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography
+
+example (cLoc m W n : ℕ) (hW : 0 < W) (hlog : 4 * cLoc ≤ Nat.log 2 n) :
+    (cLoc : ℝ) * m / ((W : ℝ) * (((m * Nat.log 2 n / W : ℕ) : ℝ) + 1)) ≤ (4 : ℝ)⁻¹ := by
+  exact?

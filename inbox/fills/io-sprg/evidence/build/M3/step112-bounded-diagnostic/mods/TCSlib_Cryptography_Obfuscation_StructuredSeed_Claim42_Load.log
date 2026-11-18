@@ -1,0 +1,49 @@
+2026-11-18T17:54:15.427498+00:00 START TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:90:73: error: unexpected token 'set_option'; expected 'lemma'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:113:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  uprob fun z => ?p z.1
+in the target expression
+  (uprob fun fg => ∀ (j : ↥T), fg.1 j = b) = 1 / ↑B ^ T.card
+
+case refine_1.refine_2
+m B : ℕ
+inst✝ : NeZero B
+S : Finset (Fin m)
+b : Fin B
+t : ℕ
+this : Inhabited (Fin B) := { default := b }
+T : Finset (Fin m)
+e : (Fin m → Fin B) ≃ (↥T → Fin B) × ({ j // j ∉ T } → Fin B) :=
+  Equiv.piEquivPiSubtypeProd (fun j => j ∈ T) fun x => Fin B
+hsplit : (uprob fun φ => ∀ j ∈ T, φ j = b) = uprob fun φ => ∀ (j : ↥T), (e φ).1 j = b
+⊢ (uprob fun fg => ∀ (j : ↥T), fg.1 j = b) = 1 / ↑B ^ T.card
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:92:0: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (200000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:152:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:162:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean:172:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load): lean exited with status 1
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load): error diagnostics reported
+FAIL(TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load): no fresh .olean produced
+       10.06 real         7.98 user         1.09 sys
+          2172436480  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              159731  page reclaims
+               13785  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                2385  voluntary context switches
+               11340  involuntary context switches
+            32006720  instructions retired
+            15520717  cycles elapsed
+             1638736  peak memory footprint
+2026-11-18T17:54:25.516241+00:00 END rc=1

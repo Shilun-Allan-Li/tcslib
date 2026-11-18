@@ -1,234 +1,353 @@
-# io-sprg Phase A — checkpoint 2 (M2)
+# io-sprg Phase A — checkpoint 3 (M3), repaired v2
 
-M2 polynomial stretch is proved and locally checked at
-`4ecc40c04a001bc87349b7ec368ece309774c28a`. M1 was published at exchange commit
-`10da7fdefd9a44023cc117a672f19e8a3617b81d`, from source
-`19dde91afc384656e7e47cb018057e088d4ded0a`. M0 remains frozen at
-`d10a560b34d58919bc1a5206ce66a444613f94c7`, delivered at
-`15946b52d0615fda8afad9ed3c57cfaf5beaaa8d`.
+M3 Claim 4.2 and all ten original M3 obligations are proved and locally checked at
+`04249b85e80a007dc5845077a18a365d5150e14b`. All 26 owned modules pass the fresh
+build, all 134 saved proof steps are CHECKED_PASS, and all 335 selected public
+theorems in 17 completed owners print only standard axioms. Six of 19 current
+headlines are standard-only, now including `Params.claim42`; thirteen later
+headlines still retain sorryAx.
 
-This is an intermediate proof checkpoint. M2 proof work and local gates are
-complete; its packaging and publication remain pending. M3–M6 remain unfinished,
-with **42 original direct proof holes**. T1–T6 remain unproved Phase B targets.
-The whole end-to-end goal and final proof gates remain open.
+This is an intermediate proof checkpoint. **M3 packaging and publication remain
+pending.** M4–M6 and the full final proof gates remain unfinished, with 32 original
+direct proof holes. T1–T6 remain the named, unproved Phase B efficiency hypotheses.
+The complete end-to-end goal is not yet finished.
 
-## Bases, heads and milestone scope
+M0 was frozen at `d10a560b34d58919bc1a5206ce66a444613f94c7` and delivered at
+exchange `15946b52d0615fda8afad9ed3c57cfaf5beaaa8d`. M1 source
+`19dde91afc384656e7e47cb018057e088d4ded0a` was published at exchange
+`10da7fdefd9a44023cc117a672f19e8a3617b81d`. M2 source
+`4ecc40c04a001bc87349b7ec368ece309774c28a` was published at exchange
+`c1d4f422f071f4a8e346d71a0f00ea3525941eee`. `evidence/delivery/M2.json`
+records its successful non-force push, exact 5,270-file payload path set and zero
+committed SHA-256 mismatches. These remain historical M2 delivery results.
 
-The source branch is local `fill/io-sprg`, based on
-`5ed465f62e4ae0f93ded1a1ba49e807591b589eb` (`iO/phase-a-base`), without rebasing.
-The delivery branch writes only `inbox/fills/io-sprg/` on
-`exchange/pass-shelat-ch5-8`.
+The source branch is `fill/io-sprg` on base
+`5ed465f62e4ae0f93ded1a1ba49e807591b589eb`, without rebasing. Delivery writes
+only `inbox/fills/io-sprg/` on `exchange/pass-shelat-ch5-8`.
 
-| Milestone | Status | Source commit |
-| --- | --- | --- |
-| M0 | Frozen and published | `d10a560b34d58919bc1a5206ce66a444613f94c7` |
-| M1 | Complete and published at exchange10da7fdefd9a44023cc117a672f19e8a3617b81d | `19dde91afc384656e7e47cb018057e088d4ded0a` |
-| M2 | All four original bodies, three new helpers and local gates complete; delivery pending | `4ecc40c04a001bc87349b7ec368ece309774c28a` |
-| M3 | Claim4.2/load bounds: all ten original obligations next | Pending |
-| M4 | Hybrids/reductions, including shared M4/M6 support | Pending |
-| M5 | Raw security and existence | Pending |
-| M6 | Target links/conditional assemblies | Pending |
+## Milestones
 
-M1 filled100 original bodies (83 foundational/M1 plus17 encoding support obligations)
-and added three theorem-only helpers. Its103 checked steps cover Degree24,
-Params14, Encoding17, LPN3, Buckets7, SparseFactor5, Polys10, Correctness18,
-the Defs efficiency-forgetting bridge, the Samplers prime-width bridge, Basic2,
-and the G4 seed-support helper. Supporting encodings done early do not complete M6.
+Cumulative source line counts refer to each named historical source checkpoint.
 
-M2 fills four more original bodies and adds three theorem-only helpers. The
-cumulative record is **104 original bodies + six helpers =110 CHECKED_PASS steps**.
-Failed attempts and their repaired records remain in evidence; only final checked
-states are counted. No transitive sorryAx-dependent count is inferred from the
-42 remaining direct holes.
+| Milestone | Status | Source commit | Cumulative source lines |
+| --- | --- | --- | --- |
+| M0 statements | Frozen and published | `d10a560b34d58919bc1a5206ce66a444613f94c7` | 5,911 (22 owners) |
+| M1 algebraic correctness | Complete and published | `19dde91afc384656e7e47cb018057e088d4ded0a` | 7,244 (23 owners) |
+| M2 stretch | Complete and published | `4ecc40c04a001bc87349b7ec368ece309774c28a` | 7,694 (23 owners) |
+| M3 Claim 4.2 | Proofs/local gates complete; packaging/publication pending | `04249b85e80a007dc5845077a18a365d5150e14b` | 8,672 (26 owners) |
+| M4 hybrids/reductions | Unfinished | No completion commit | Not measured as complete |
+| M5 raw security/existence | Unfinished | No completion commit | Not measured as complete |
+| M6 target links/assemblies | Unfinished; target truth stays Phase B | No completion commit | Not measured as complete |
 
-## M2 stretch proof route
+## Source commits and confirmed proof scope
 
-| Declaration (area prefix omitted) | Current source anchor | Role |
-| --- | --- | --- |
-| `E0` | `Stretch.lean:51` | Unchanged definition/reader |
-| `E0_eq` | `Stretch.lean:55` | Unchanged definition/reader |
-| `Params.seedBitsAt` | `Stretch.lean:64` | Unchanged definition/reader |
-| `Params.seedBitsAt_eq` | `Stretch.lean:68` | Unchanged definition/reader |
-| `Params.seedBitsAt_le` | `Stretch.lean:82` | Original M2 obligation; CHECKED_PASS step 104 |
-| `Internal.w_lower` | `Stretch.lean:204` | New theorem-only helper; CHECKED_PASS step 107 |
-| `Internal.stretch_gaps` | `Stretch.lean:223` | New theorem-only helper; CHECKED_PASS step 108 |
-| `Internal.eventually_seed_relative_gap` | `Stretch.lean:254` | New theorem-only helper; CHECKED_PASS step 109 |
-| `jls_seedBits_eq` | `Stretch.lean:390` | Original M2 obligation; CHECKED_PASS step 105 |
-| `jls_seedBits_le` | `Stretch.lean:404` | Original M2 obligation; CHECKED_PASS step 106 |
-| `jls_hasPolyStretch` | `Stretch.lean:428` | Original M2 obligation; CHECKED_PASS step 110 |
-
-The four original M2 obligations are Params.seedBitsAt_le, jls_seedBits_eq,
-jls_seedBits_le and jls_hasPolyStretch (steps104,105,106,110). The new Internal
-helpers w_lower, stretch_gaps and eventually_seed_relative_gap are steps107–109.
-All nine public Stretch theorem prints, including the two existing readers,
-are standard-only at the current source hash.
-
-The seed estimate uses `C = 2*(2^P.D)+12`, covers integral rounding and κ=0,
-and is independent of the prime schedule. The noise-width lower bound and E0
-threshold supply positive exponent gaps. The relative-gap helper yields
-`seedBitsAt κ ≤ m κ * κ^(-ε)` eventually.
-
-The final proof keeps the actual coefficient from public
-`Complexity.PolyExpr.eval_le`, sets `D = max 1 ((C:ℝ)*2^c)` and
-`η = ε/(2*(c+1))`, then absorbs `D^η` through the existing real-power growth API.
-The old generic monic-normalization candidates02/06 were rejected and are not the
-implemented proof route. The public API is composed rather than rederived as a
-new generic monic-normalization theorem. No new algorithm, machine, sampler,
-efficiency claim, or frozen statement is introduced by these helpers.
-`evidence/checkpoints/M2/helper-plan.md` records the route.
-
-SP-W1 keeps δ rational in construction data, coerced to real for these analytic
-bounds. SP-W3's growth conjunct is proved as well as the power bound: the actual
-construction has `κ+1 ≤ seedBits κ` for every κ, hence `κ ≤ seedBits κ` beyond the
-common cutoff. No positive-κ premise is added to the frozen stretch theorem.
-
-## Current local checks and their limits
-
-| Check | Current M2 result and evidence |
+| M3 source checkpoint | Commit |
 | --- | --- |
-| Owner compilation | Exact set of23 owners, including both facades: rc0, zero errors in both forms. `evidence/build/M2/all-owners/results.jsonl`; all23 actual source/log/object hashes match, and every record names source4ecc40c. |
-| Completed theorem axioms | All306 public theorem prints in12 completed owners use only propext, Classical.choice, Quot.sound (or subsets). Fresh `evidence/checkpoints/M2/axiom-summary.json`. |
-| Headline axioms | Fresh19 prints: exactly five standard-only (G4_eval_eq, jls_hasComplexity, jls_hasPolyStretch, lpnNoise_law, PrimeSchedule.nonempty);14 later headlines retain sorryAx, listed below. |
-| Source declarations | Base-to-head676 ADDED, zero CHANGED/REMOVED; zero clashes. All670 frozen M0 headers unchanged, exactly six cumulative new helpers. `evidence/checks/m2-final/`. |
-| Style/campaign | Style and widths pass; sk15 returns rc0 with the retained lexical flag described below. No new individual campaign FAIL/WARN against the pinned base; campaign rc1 is baseline-only. The unchanged15-line hasComplexityEff_iff lexical statement flag and triage remain retained. |
-| Size/width | 23 owned files,7694 lines; maximum file801 lines, maximum width100. Stretch576 lines, maximum width90. |
-| Phase A boundary | No forbidden new import, realization/contract variant, forbidden enumeration, machine or sampler construction. Only the existing target-conditioned primitive assemblies. `evidence/checks/m2-final/boundary.json`. |
-| Saved proof steps | All110 `evidence/steps/*/step.json` records are CHECKED_PASS. Original completed104, new helpers6, original holes42. |
-| Focused opacity history | The M1 Correctness foreign-jlsSPRG_raw opacity diagnostic passed in `evidence/meta/M1-focused-raw-opacity/`. It remains historical M1 evidence, not a fresh M2 canonical seal. |
+| First M3 source commit | `e966956e25caf9512050ddf5d480a5dec7f4d3de` |
+| Second M3 source commit | `bc5d5227a52571ad5e1e9b86219cfcb4987b7771` |
+| Third M3 source checkpoint (pre-opacity repair) | `c767ee867e76c0b1248cee46d4af5296ffa078d5` |
+| Fourth M3 source commit, repaired v2 | `04249b85e80a007dc5845077a18a365d5150e14b` |
 
-The full stored-constant census, typed StmtDump, sorryAx dependency graph, full
-four-variant canonical seals and paired controls **have not been rerun at M2**.
-Their delivered M0 artifacts are historical evidence for M0 only:22 owners,
-88 seals plus96 controls, all184 passed;1036 stored constants,948 public kernel
-types and511 theorem prints were checked there. They are not current M2 counts
-or proof passes. The final gate must regenerate an exact dynamic owner inventory
-(including Basic and any later split modules), all stored roots, controls,
-request masks/environment bindings and all four variants. The detailed tooling
-coverage audit remains in `evidence/proof-candidates/tmpFinalAuditTools/`.
+The final package's COMMITS.tsv must supply exact source-commit subjects and
+metadata; no exchange delivery hash is inferred from these source hashes.
 
-This checkpoint carries partial final-gate evidence, as allowed for intermediate
-milestones. Neither306 selected theorem prints nor676 explicit source commands
-are a full kernel census; actual final transitive counts must come from the
-fresh kernel graph, not subtraction from M0.
+M3 fills all ten frozen original obligations (five Load and five Claim42 obligations) and adds fourteen
+theorem-only helpers: six numerical bounds, six conditional probability bounds,
+and two specialized semantic readers (joint-law transport and cast-indexed noise law).
+The joint-law reader avoids duplicating the same sampler transport in the decomposition and Cond2 proof; Cond3 also reuses it.
+It adds no algorithm or sampler. The decomposition consumer received a fresh root
+check after this refactor. Cond2's repaired local index projection closes by rfl;
+no projection equality or transport premise was added to a frozen statement.
 
-## Statement changes and judgment calls
+| Confirmed source/proof quantity | Value | Evidence and limit |
+| --- | --- | --- |
+| Owned source modules, including both facades | 26 | Exact current inventory; fresh full build pass |
+| Explicit source headers | 690 | Fresh base→HEAD decls2: 690 ADDED, zero CHANGED/REMOVED |
+| Frozen M0 headers and statement-prose prefixes | 670 unchanged | Global freeze PASS, no approved prose change |
+| Cumulative new theorem-only helpers | 20 (M1 3 + M2 3 + M3 14) | Global map; all twenty are standard-only in fresh selected prints |
+| Existing declarations relocated | 14 | Exact move ledger and retained per-file decls2 rows |
+| Saved checked proof steps | 134 CHECKED_PASS | Read all evidence/steps/001–134/step.json records |
+| Completed original bodies | 114 (M1 100 + M2 4 + M3 10) | Root-confirmed original/helper classification |
+| Remaining original direct holes | 32 | Root-confirmed; no transitive sorryAx-dependent count inferred |
+| Source size and width | 26 files; 8,672 lines; largest 801; width ≤ 100 | Direct byte/line measurement, source hashes match freeze snapshot |
 
-There is **no post-M0 change to an existing definition, theorem header or statement
-prose**. Proof sketches were synchronized where the implementation strategy changed.
-The six cumulative theorem-only helpers are:
+The global freeze remains explicitly a source-bound WORKTREE_CANDIDATE audit.
+This preparation checked every captured source hash against the repaired current
+files and fresh committed-source static inventory. Root supplied the source head;
+this preparation invoked no Git. Source header/prose preservation is separate
+from the later complete generated kernel-type audit.
+Intermediate progress snapshots retain their earlier scope; the repaired source
+inventory and fresh v2 evidence below determine this checkpoint status. Fresh source/build/static/selected-axiom/slot evidence is recorded below; the
+complete stored-root/kernel-type/canonical seal suite remains a later final gate.
 
-| Helper | Purpose |
+## Claim 4.2 proof route
+
+The finite load bound counts `(t+1)`-element witnesses inside the overloaded
+intersection. For each fixed witness subset, `Equiv.piEquivPiSubtypeProd` separates
+selected from unused placement coordinates. Public `uprob_comp_equiv`, `uprob_fst`,
+`OneWay.uprob_pi_forall` and `OneWay.uprob_eq_one_div_card` give the exact reciprocal
+bucket probability. Public `uprob_exists_le` and `Finset.card_powersetCard` then give
+`choose(|S|,t+1)/B^(t+1)`. Union over all B labels and specialize `S=univ` for the
+remaining load bounds. This counts all labels and preserves the strict threshold
+at every finite parameter, including zero thresholds.
+
+The binomial estimate composes public natural-choice/factorial bounds and the
+existing exponential-series estimate. The checked-root API correction to the
+staged body supplies the explicit real argument to
+`Real.pow_div_factorial_le_exp (k : ℝ) ... k`; discarded/failed attempts remain
+archived. The source proof and root's final check are the authority, not the
+untested preparation packet.
+
+The locality estimate bounds the expected BAD cardinality by summing per-output
+coordinate failures. The existing finite probability/expectation and Markov APIs
+supply Cond1's single-repetition bound. The complete index is fixed **before**
+independence over noise repetitions is used. Only afterwards is the bound averaged
+under the actual index sampler. No uniform distribution on Boolean generator
+indices is assumed.
+
+Cond2 fixes all nuisance data while leaving the genuine placement draw uniform.
+The small-set condition is handled inside the event; a BAD set larger than Γ is
+not assumed away by an extra global premise. Cond3 uses the full-load estimate.
+`Params.jointLaw_prob_eq_uprob` transports events through the actual deterministic
+index/seed cores from one uniform raw product draw, once, and is reused by the
+specialized decomposition and Cond2 proof. This is semantic probability equality;
+no equality of free-oracle programs is asserted for unused queries.
+
+The decomposition reuses `Correctness.firstGood_none_iff`. Polynomial bucket-count
+bounds and the shared public polynomial/exponential growth APIs yield one eventual
+cutoff. The final frozen statement is
+`∃ κ₀, ∀ κ ≥ κ₀, ∀ pp : PrimeParam κ, errProb κ pp ≤ 2⁻κ`:
+the cutoff precedes the public prime. Internal positive/large-κ helper hypotheses
+do not change that statement or impose a new positive-κ premise on the raw family.
+The rational δ convention remains SP-W1; no new analytic assumption on δ or the
+noise width is introduced for Claim 4.2.
+
+## Original M3 declarations
+
+These current anchors and saved checked steps refer to the repaired M3 v2 source.
+The fresh full-owner build and completed-owner axiom probes pass.
+
+| Declaration (area prefix omitted) | M3 v2 source anchor | Saved step |
+| --- | --- | --- |
+| `Params.errProb_nonneg` | `Claim42/Defs.lean:135` | 116: CHECKED_PASS |
+| `Params.badSet_expect_le` | `Claim42/Defs.lean:146` | 117: CHECKED_PASS |
+| `Params.cond1_prob_le` | `Claim42/Defs.lean:274` | 118: CHECKED_PASS |
+| `Params.errProb_le_decomposition` | `Claim42/Conditions.lean:268` | 119: CHECKED_PASS |
+| `Params.claim42` | `Claim42.lean:58` | 133: CHECKED_PASS |
+| `Internal.binomial_bound` | `Claim42/Load.lean:54` | 111: CHECKED_PASS |
+| `Internal.bucket_tail` | `Claim42/Load.lean:91` | 112: CHECKED_PASS |
+| `Internal.some_bucket_tail` | `Claim42/Load.lean:177` | 113: CHECKED_PASS |
+| `Internal.full_bucket_tail` | `Claim42/Load.lean:194` | 114: CHECKED_PASS |
+| `Internal.some_full_bucket_tail` | `Claim42/Load.lean:206` | 115: CHECKED_PASS |
+
+## New M3 theorem-only helpers
+
+All fourteen helper bodies have saved CHECKED_PASS records and standard-only
+axioms in the fresh selected probe. The fourteenth is the cast-indexed scalar
+noise-law reader, step 134, owned beside lpnNoise in LPN.lean. It is not a new
+algorithm or assumption. Per-helper public reuse and search scopes are recorded
+below; search suggestions themselves are not proof evidence.
+
+| Declaration (area prefix omitted) | M3 v2 source anchor | Saved step |
+| --- | --- | --- |
+| `Internal.bucket_count_upper` | `Claim42/Bounds.lean:41` | 120: CHECKED_PASS |
+| `Internal.bucket_count_lower` | `Claim42/Bounds.lean:57` | 121: CHECKED_PASS |
+| `Internal.prefactor_eventually_le_two_pow` | `Claim42/Bounds.lean:81` | 122: CHECKED_PASS |
+| `Internal.binomial_ratio_quarter` | `Claim42/Bounds.lean:131` | 123: CHECKED_PASS |
+| `Internal.smallset_bucket_tail_quarter` | `Claim42/Bounds.lean:159` | 124: CHECKED_PASS |
+| `Internal.capacity_bucket_tail_quarter` | `Claim42/Bounds.lean:195` | 125: CHECKED_PASS |
+| `Internal.cond1_single_le_quarter` | `Claim42/Conditions.lean:48` | 126: CHECKED_PASS |
+| `Internal.cond1_repetitions_fixed_index` | `Claim42/Conditions.lean:83` | 127: CHECKED_PASS |
+| `Internal.cond1_all_fixed_index` | `Claim42/Conditions.lean:114` | 128: CHECKED_PASS |
+| `Internal.cond1_all_joint` | `Claim42/Conditions.lean:141` | 129: CHECKED_PASS |
+| `Internal.cond3_joint_le_quarter_pow` | `Claim42/Conditions.lean:161` | 131: CHECKED_PASS |
+| `Internal.cond2_sparse_joint_le_quarter_pow` | `Claim42/Conditions.lean:193` | 132: CHECKED_PASS |
+| `Params.jointLaw_prob_eq_uprob` | `Claim42/Defs.lean:96` | 130: CHECKED_PASS |
+| `Internal.lpnNoise_law_cast` | `LPN.lean:120` | 134: CHECKED_PASS |
+
+## Module organization and frozen interface preservation
+
+The approved split moves fourteen existing declarations out of Claim42.lean,
+preserving their FQNs, statement headers and pre-sketch prose. Claim42.lean keeps
+the frozen `Params.claim42` statement as the public facade. The fifteen-row move
+ledger includes that stationary claim as well as the fourteen actual moves.
+
+| Module | Role and dependencies |
 | --- | --- |
-| Internal.encodeList_injective_of_fixedWidth | A narrow fixed-width specialization using existing BoolCircuit nil/cons readers and List.append_inj. |
-| Internal.encodeList_length_of_fixedWidth | Exact tagged-list length, counting every true tag and the final false marker. |
-| Params.G4_seed_allOutputs | Retains the literal G4 polynomial witness on the exact seed law for both complexity links. |
-| Internal.w_lower | Lower-bounds rounded noise width by half its real-power schedule at κ≥1. |
-| Internal.stretch_gaps | Extracts positive public/noise exponent gaps from the explicit E0 threshold. |
-| Internal.eventually_seed_relative_gap | Combines the rounded payload estimate and exponent gaps into a prime-independent relative seed bound. |
+| Claim42/Load | Existing finite binomial and placement bounds |
+| Claim42/Defs | Cond1/Cond2/Cond3, joint law/error definitions and readers; locality/Markov bounds; shared joint-law probability reader |
+| Claim42/Bounds | Rounded bucket and numerical tail bounds; imports Defs and Load |
+| Claim42/Conditions | Fixed-index/repetition/placement bounds and decomposition; imports Bounds and the precise existing Correctness module |
+| Claim42 | Public claim42 body and facade imports |
 
-Basic is a new theorem-only module importing the already-required Uniform owner.
-At M1 it added no external module or Mathlib cache root; the refreshed M1 closure
-had128 modules and the same83 direct Mathlib roots. M2 adds no import root. A later LPN reduction split into
-Defs/Encoding/Transport/Hop is planned for modularity but **has not landed** in this
-checkpoint. See `evidence/proof-candidates/LPNModularity/`.
+Correctness depends on Samplers, so the additional owned import is acyclic.
+The split introduces no new external Mathlib import root. This is a source
+organization decision authorized by root's best judgment while preserving frozen
+mathematical interfaces. The five Claim42 files measure 102 facade, 307 Defs, 236 Bounds, 368 Conditions and
+212 Load lines, respectively; every line has width ≤ 96. The full static refresh passes. No file exceeds 1,000 lines; the split adds only
+owned imports and no new external Mathlib root.
 
-The pre-M0 decisions remain unchanged and disclosed in the M0 report: SP-W1 uses
-rational delta with real coercions for analysis, as explicitly ruled by the user;
-SP-W2 states semantic accept-probability correspondence because free computations
-with different unused queries are not literally equal; SP-W3 adds eventual
-kappa≤seedBits to raw polynomial stretch to exclude constant/zero-seed vacuity.
-Optional empty-grid positions, deterministic row-major sparse factors, explicit
-finite coordinates, faithful encodings and prime-before-input quantifiers remain
-frozen. No efficiency target, machine or sampler construction was added.
+The former per-file decls2 output legitimately contains paired REMOVED/ADDED rows
+for the fourteen moves. Those rows are retained, not discarded. The new global
+freeze guard rejects duplicate FQNs, compares every frozen kind/normalized header
+and statement-prose prefix before `**Proof sketch.**`, and reconciles each move
+against the explicit ledger with unchanged headers. New entries are separately
+reported theorem/lemma helpers. Full frozen kernel-expression types are a separate
+required final check, including generated public fields/constructors.
 
-Current size is7694 lines. The remaining analytic/security proofs can exceed the
-original4950–8450 estimate; plan roughly10000–13000 final lines, subject to actual
-proofs. Keep each file below1000 lines and split coherent helpers rather than
-compressing proofs or weakening statements. The user authorized routine judgment
-calls favoring modular, adaptable code; the calls above are recorded for review.
+Root's proof-complete global guard PASS is archived in
+`evidence/checks/m3-final-v2/global-freeze/`. All 26 captured source hashes
+match the current proof-complete files; 670 frozen headers/prose prefixes are
+preserved, fourteen moves are exact and twenty added helpers are separately
+reported. The fresh static pass rebinds current source bytes to committed HEAD in
+`evidence/checks/m3-final-v2/sizes-widths.json`. All twenty helper axioms are
+standard-only in the fresh selected probe; full generated kernel types remain a
+separate final gate.
 
-## Overlap and reuse
+## Current local checks and final-gate limits
 
-Existing public APIs are reused for weighted polynomial degrees, finite support
-counts, list/range products, modular encodings, bounded inverse schedules, scalar
-probability laws, sparse reconstruction, selection and OracleComp support transport.
-`evidence/lean_proof/search_log.md` and immutable paired probes record actual searches.
-The shared realization/sampler/subexponential APIs remain the mandatory route;
-34 required existing APIs were separately axiom-checked standard-only.
+| Check | Current M3 result and evidence |
+| --- | --- |
+| Exact-owner compilation | All 26 expected owners, including both facades, pass with rc0 and zero errors in both forms. Every current source/log/object SHA matches; every record identifies 04249b8. `evidence/build/M3/all-owners-v2/`. |
+| Lean warnings | Exactly 32 expected warnings for the remaining frozen later-stage sorry bodies; zero other warnings. All twelve previous linter warnings were removed by eight proof-only edits in four prior owners. `evidence/checks/m3-final-v2/lean-warning-summary.json`. |
+| Saved proof steps | All 134 `evidence/steps/001–134/step.json` records are CHECKED_PASS: 114 original bodies and 20 new helpers. Failed attempts/repairs remain archived; they are not counted as additional passes. |
+| Selected theorem axioms | All 335 selected source public theorems in 17 completed owners use only propext, Classical.choice, Quot.sound (or subsets). This includes all ten M3 originals and all twenty cumulative helpers. Fresh `evidence/checkpoints/M3/axiom-summary-v2.json` binds both probe logs. |
+| Headline axioms | Fresh 19 prints: six standard-only (`Params.claim42`, `Params.G4_eval_eq`, `jls_hasComplexity`, `jls_hasPolyStretch`, `lpnNoise_law`, `PrimeSchedule.nonempty`); thirteen later headlines retain sorryAx. Exact sets are listed below. |
+| Source declarations and frozen interface | Base→HEAD 690 ADDED only, no CHANGED/REMOVED; 670 frozen global headers/prose prefixes unchanged, 14 exact ledgered moves, 20 added helpers. `evidence/checks/m3-final-v2/` retains per-file relocation rows and the global guard. |
+| Style/campaign | Style, sk15 and widths pass; zero new individual campaign FAIL/WARN against the pinned base. Campaign rc1 is baseline-only. The unchanged 15-line hasComplexityEff_iff lexical sk15 false positive and prior triage remain retained. |
+| Sizes/names | 26 files, 8,672 lines; largest 801, maximum width 100. Clash scan: 690 OK, zero CLASH/DUP-NEW/MODIFIED. |
+| Phase A/PDF boundary | Current scan has no forbidden import, new realization/contract variant, forbidden enumeration or PDF path; only the designated sampler-contract imports. `evidence/checks/m3-final-v2/boundary.json`. Full all-intermediate-commit PDF verification remains a packaging check. |
+| Overlap/reuse | 24 public-only full/core exact/apply pairs plus one separate actual-reader pair with target absent from the pre-search owner; all 50 source/log bindings retained. Closed normalization controls are public reuse, partial/inconclusive outputs are not proofs. |
+| Focused noise opacity | V3 passes after the full repaired build with only lpnNoise locally opaque; zero errors/warnings. Old v1 failure is retained. This is a single-definition diagnostic, not a canonical seal. |
+| Tagged wrapper history | Fresh 19:21:31UTC audit: 1,273 acquisitions, maximum two because the exact historical violation remains recorded; 504 post-correction acquisitions have maximum one, seriality true, zero active wrappers. `evidence/host/M3-final-v2/`. |
 
-Private BoolCircuit prefix-free and variable-size list-length machinery overlaps
-conceptually with the new fixed-width specializations. The private declarations
-are not accessed or copied. The helpers use public readers and Core append/length
-lemmas, introduce no parser or new encoder, and record the narrower statement and
-unavailable public alternatives in FixedWidthList/OverlapEncoding notes. Raw LPN's
-variable Nat.bits selector was retained and recovered through its existing pair
-delimiter; it was not given a false fixed-width premise. The G4 support helper
-uses published pure/query/bind readers once for the two complexity consumers.
+The current build, static, probe and slot records were read and hash-checked during
+report preparation. Probe stdout's raw substring count is not a diagnostic count:
+the completed probe has one occurrence in an identifier, but zero actual error
+forms and rc0. No full-graph or canonical seal completion is inferred from these
+selected source public-theorem probes.
 
-The archived M1 immutable-log review covers218 search runs, all saved source/log hashes
-matching:20 closed,68 partial suggestions,92 exact searches without a closing proof,
-9 clean apply no-hits,17 bounded timeouts,8 statement-elaboration failures and4
-scope failures. Timeouts and finite no-hits do not prove global absence. Partial
-suggestions with diagnostic sorry warnings are not proofs. All faulty statement/scope
-pairs are retained and explicitly superseded by corrected V2 pairs, including the
-OracleComp Type0 repair. A new pre-insertion guard rejects statement-elaboration
-errors. `evidence/proof-candidates/M1CheckpointDraft/overlap-log-review.json` and
-`evidence/proof-candidates/M1CheckpointDraft/supersession.tsv` contain per-log details.
-Other preparation mistakes, including a missing filename and an unquoted question
-mark, are retained separately in the search/error notes and
-`evidence/overlap/reproduced-missing/`; they are not counted as search outcomes.
+M0's full stored-constant census, typed dump, dependency graph and four-variant
+Rule10 matrix remain **historical M0 evidence until the final fresh gates**.
+At M0 there were 22 owners, 88 seals plus 96 controls, 1036 stored constants,
+948 public kernel types and 511 theorem prints. These are neither current M3
+counts nor M3 proof passes. M1/M2 selected theorem prints likewise retain their
+published limited scopes; no transitive sorryAx-dependent number is inferred by
+subtracting filled source holes.
 
-The delivered evidence also includes early M3 load reuse probes, explicitly pending source proofs.
-They do not change M2 source or its completed proof counts.
+Root's final audit must discover all current owners, including Basic and the new
+Claim42 modules (and any later LPN splits), before generating seals/census/controls.
+The prepared V2 audit adapters derive exact owners from base→committed HEAD,
+require owner×four complete seals and all paired reader controls, retain full
+conservative closures/request/runtime/EOF guards, bind source/log/object/import
+environments, and support an empty final obligations TSV. They are **untested
+candidates**, not gate results. Only the unchanged-byte global freeze tool has a
+root-reported execution result. Final source/helper overlap admission remains a
+separate required record.
 
-The M2 stretch route uses public PolyExpr coefficient bounds, floor bounds and
-real-power growth/composition APIs. Retaining the actual output coefficient avoids
-the discarded generic monic-normalization overlap. Current M2 source uses the three
-owned theorem-only helpers inventoried above; source status and fresh check logs
-are the authority, rather than untested preparation packets.
+## Opacity repair and proof-only cleanup
 
-## Source and host provenance; process-limit disclosures
+The c767ee8 report and checks were held before publication after the focused
+single-definition diagnostic failed: making the foreign `lpnNoise` opaque exposed
+an implicit cast normalization in `Params.badSet_expect_le`. The old proof used
+`cast_eq` on a stored coin-type equality whose reduction depended on that foreign
+definition. The failure is retained in `evidence/meta/M3-focused-noise-opacity/`
+and its old source/probe hashes. The pre-repair c767ee8 checkpoint artifacts remain
+historical under `evidence/checkpoints/M3/pre-opacity-repair-c767ee8/`.
 
-The source PDF was verified in place before reading, SHA-256
-`bb357e8d01cc0932899453f3d877b67b58f33253eabf2564854f8f38721e2f3d`.
-It is never copied or committed. The initial3.918167GiB headroom preflight was below
-4GiB; the logged retry10m39s later passed at4.368317GiB, with95.748741GiB disk,
-12 CPUs and18GiB RAM. These are historical measurements, not current-resource claims.
+The fourth M3 commit adds only the theorem
+`Internal.lpnNoise_law_cast` in LPN.lean. Its literal statement includes the cast
+from the explicit selector/residue product into the noise's stored coin type.
+The noise owner composes the already proved `lpnNoise_law` with public `cast_eq` from Lean core;
+foreign consumers now use the published cast-indexed law rather than normalize
+that foreign definition. No frozen theorem statement, encoding, algorithm,
+parameter, import or assumption was changed. The updated consumer and affected
+owners passed, then all 26 repaired owners were freshly rebuilt.
 
-The prescribed host cap is three Lean processes across jobs and one for this job,
-with only the narrowed cache-k3 exception. Root uses the pinned lean-slot wrapper,
-LEAN_SLOT_TAG=io-sprg, foreground serial runners and retained process handles.
-The user explicitly overrode the generic AGENTS shell-check prohibition for these
-slot-wrapped dispatch checks; `evidence/scope-request/lean-check-approval.txt` records it.
+After that full build, the final focused probe
+`evidence/probes/M3_FocusedNoiseOpacityV3.lean` copied the current Claim42/Defs
+body under a **local irreducible lpnNoise only**. It passed rc0, zero errors and
+warnings at the exact current consumer source hash. `focused-v3-binding.json` and
+the third run in `evidence/meta/M3-final-v2/results.jsonl` bind its source/log.
+This is a focused single-definition diagnostic, **not** a canonical full-closure
+Rule10 seal. The historical v1 failure is not counted as a pass or erased.
 
-**Two historical instruction breaches remain disclosed.** A third research descendant
-was spawned beyond the whole-job two-subagent limit and was interrupted by root;
-only the original two agents were reused thereafter. No Lean/cache/push or source
-mutation was reported for that descendant, based on task reports rather than an
-independent activity audit; duration is not independently established.
-`evidence/host/team-limit-correction.json` retains the record.
+The same commit applies eight proof-only warning cleanups in LPN, Degree,
+Correctness and Stretch. The stored W01–W08 JSON records and before/after snapshots
+under `evidence/warning-cleanup/` retain the exact hunks. Unused simp arguments and
+a lambda binder were removed/renamed, redundant case equation labels removed,
+two unnecessary focused-sequence operators replaced by ordinary sequencing, and
+two dead ring suffixes deleted. Each proof-body edit was applied in a separate
+tool invocation; combined final owner checks are recorded, not invented individual
+compile claims. These four prior owners are therefore **changed from M2**.
+Their frozen headers and pre-sketch prose remain byte-equivalent under the global
+guard. No linter option or attribute was changed/disabled. The fresh v2 full build
+has exactly 32 remaining-sorry warnings and zero other warnings.
 
-Separately, root discarded an ongoing exec session_id by retaining only its output,
-then launched the next owner check while the Params_B_pos apply search remained
-active. Tagged wrappers93883 and93983 overlapped at15:07:45–15:07:48UTC. The recorded
-search child alone was terminated; its wrapper release is15:08:34UTC. Evidence is
-`evidence/host/search-process-correction.json`. This violated this job's one-process
-rule. The fresh checker in `evidence/host/M2-final/` preserves the exact incident and REAP
-provenance:1118 tagged acquisitions, maximum two wrappers, historical seriality false,
-349 post-correction acquisitions with maximum one wrapper, post-correction tagged
-seriality true, and zero active wrappers at its 17:45:27UTC snapshot. Every
-other overlap would fail the exact-exception checker. This is a tagged wrapper audit,
-not a global host/child-process history proof. No unqualified whole-job seriality or
-independent all-jobs-cap claim is made.
+## Overlap and public API reuse
+
+The name/shape logs remain under `evidence/overlap/M3-Load-name-shape/`,
+`M3-Claim42-name-shape/` and the joint-law/noise-reader search records. Twenty-four
+public-only full/core goal pairs now have 48 exact?/apply? runs under
+`evidence/overlap/probes/M3Load_*/`; their archived imports exclude StructuredSeed.
+The added cast-normalization **control** closes by the existing `cast_eq` from Lean core.
+This motivates composing that API in the noise owner; it is not evidence that
+the actual opaque-noise reader statement was already available publicly.
+
+A separate actual-reader exact/apply pair under
+`evidence/overlap/probes/M3NoiseActual_lpnNoise_law_cast/` imports the preexisting
+owned noise algorithm/law with lpnNoise opaque. The target reader was absent from
+the bound source before both searches, so it cannot match itself. Both outcomes
+are recorded INCONCLUSIVE_FINITE_SEARCH; they establish no global absence claim.
+This is distinct from the public-only normalization control. In total 50 current
+search source/log hashes were checked across those25 pairs.
+
+The original errProb_nonneg core closes by public
+`Games.ProbComp.prob_nonneg`; its frozen named wrapper composes that fact with the
+published reader. Other partial/diagnostic outputs are not theorem proofs. The
+original invalid prefactor harness attempt remains retained and superseded by its
+fresh namespace-correct v2 pair. Specialized sampler/record goals are explicitly
+mathematical cores, not claims that a complete source statement was searched under
+all its own definitions. Actual saved source bodies, fresh 26-owner compilation
+and 335 standard-only selected theorem prints supply the proof evidence.
+
+The specialized helpers compose public finite expectation/product, Markov,
+binomial/factorial, power-order and polynomial/exponential growth APIs. The two
+new semantic readers centralize their concrete joint-law/cast transports; no
+copied generic identity, local contract variant, machine, fair-coin sampler or
+algorithm construction is introduced. Complete conservative Rule10 closures,
+all controls and runtime masks/EOF coverage remain final fresh gates.
+
+## Statement changes and deviations from the design note
+
+### Frozen quantifiers, targets and earlier judgments
+
+SP-W1 uses rational δ with real analytic coercions. SP-W2 asserts only the two
+semantic acceptance equalities needed by the hybrid bridge, not equality of
+free-oracle programs with an extra unused query. SP-W3 requires growing seed size
+as well as the polynomial output bound; M2 proved both for the construction.
+The public prime remains an input and all constructions accept every schedule.
+Canonical LPN and Boolean assumption challenge encodings remain unchanged.
+
+Rule15 primitive evaluator and exact-draw sampler efficiency fields remain
+mandatory. Target witnesses are selected before every applicable size, schedule,
+prime or input. In particular, T6 chooses one shared sampler witness before all
+prime schedules; it is not a family of separately selected witnesses after π.
+T1/T3/T5/T6 will fill the respective primitive fields only conditionally on the
+unproved target propositions. No Phase B machine/sampler/efficiency construction
+is introduced here. M4's advice-family-before-all-realisers/all-κ requirements and
+M5's fixed shared subexponential exponent remain the frozen later obligations.
+
+The four historical mathematical tables below retain the complete earlier
+fidelity/deviation, Rule15 field, target-selection and nonvacuity detail. Their
+historical line references are not altered to pretend they are current anchors.
+The separate source-04249b8 appendix follows declaration identity and handles moved
+Claim42 declarations explicitly.
 
 ## Frozen fidelity, Rule15 and non-vacuity tables
 
-The following mathematical tables are preserved byte-for-byte from the frozen M0
-report. **Their line references are historical M0 anchors.** The current M2 anchor
-appendix follows by declaration identity; its TSV includes structure fields. The
-contracts/formulas are unchanged. Current proof status is given above, not inferred
-from these historical location labels. Full M0 deviation details remain in
-`evidence/checkpoints/M0/REPORT.md`.
+All four mathematical tables below are byte-exact M0 snapshots. Their line numbers
+are **historical M0 anchors**; current committed-source anchors are indexed separately.
 
 ### Archived M0 fidelity table
 
@@ -305,19 +424,18 @@ from these historical location labels. Full M0 deviation details remain in
 | LPN exact joint draw | `LPNFamily.Raw.Draw` (`LPN.lean:189`) is the concrete matrix/secret/noise-seed product. `drawEquiv` (`:278`) gives explicit `Fin (drawCard ell)` coordinates; nonzero modulus and noise denominator instances are at `:101`/`:102`. | It remains nonempty when the secret dimension or sample count is zero. It is one product draw, not an illicit product fair-coin sampler construction. |
 | Shared realiser predicate | Existing `Complexity.NUPPT.realizesOn_self` and `realizesOn_self_take` (`TCSlib/Cryptography/Asymptotic/Realization.lean:167`, `:179`) establish generic satisfiability, including the required coin-prefix shape. | These do **not** by themselves realize the actual LPN/PRG preprocessing. Actual reduction realisers are obtained conditionally from T4 by the existing `exists_realizesOn_of_preTarget` (`:220`) through the M0 `realizable_of_targets` obligation. |
 
-## Current M2 declaration anchors for the archived tables
 
-The fidelity, Rule15, target-selection and non-vacuity tables in
-`evidence/checkpoints/M1/REPORT.md` are exact frozen M0 tables. Their original
-line references remain historical M0 anchors. This appendix updates declaration
-locations to M2 source `4ecc40c04a001bc87349b7ec368ece309774c28a`.
-Only Stretch changed from the published M1 source; hashes of the other 22 owned
-files match the saved M1 snapshot. The accompanying complete TSV has 785 explicit
-named declarations and structure-field anchors. Generated constructors, recursors
-and inherited fields remain represented by their owning structure. This source
-index is not a new typed kernel census or a proof-status table.
+## Current M3 v2 source declaration anchors
 
-| Current full name (area prefix omitted) | M2 source anchor |
+These locations refer to root-confirmed repaired source
+`04249b85e80a007dc5845077a18a365d5150e14b`. Every source/log/object hash was
+checked against the fresh 26-owner build and committed-source static inventory.
+The complete TSV includes explicit structure fields; LPN field locations were
+remapped through exact equal source lines after the new cast reader was inserted.
+Generated constructors/recursors/inherited fields remain represented by their
+owning structure. This lexical index is not a full typed kernel census.
+
+| Declaration (area prefix omitted) | M3 v2 source anchor |
 | --- | --- |
 | `BoolPRG` | `BoolPRG.lean:50` |
 | `BoolPRG.HasStretch` | `BoolPRG.lean:207` |
@@ -363,38 +481,51 @@ index is not a new typed kernel census or a proof-status table.
 | `E0` | `Stretch.lean:51` |
 | `HybridStage` | `Hybrids.lean:43` |
 | `Internal.binomial_bound` | `Claim42/Load.lean:54` |
-| `Internal.bucket_tail` | `Claim42/Load.lean:67` |
+| `Internal.binomial_ratio_quarter` | `Claim42/Bounds.lean:131` |
+| `Internal.bucket_count_lower` | `Claim42/Bounds.lean:57` |
+| `Internal.bucket_count_upper` | `Claim42/Bounds.lean:41` |
+| `Internal.bucket_tail` | `Claim42/Load.lean:91` |
+| `Internal.capacity_bucket_tail_quarter` | `Claim42/Bounds.lean:195` |
+| `Internal.cond1_all_fixed_index` | `Claim42/Conditions.lean:114` |
+| `Internal.cond1_all_joint` | `Claim42/Conditions.lean:141` |
+| `Internal.cond1_repetitions_fixed_index` | `Claim42/Conditions.lean:83` |
+| `Internal.cond1_single_le_quarter` | `Claim42/Conditions.lean:48` |
+| `Internal.cond2_sparse_joint_le_quarter_pow` | `Claim42/Conditions.lean:193` |
+| `Internal.cond3_joint_le_quarter_pow` | `Claim42/Conditions.lean:161` |
 | `Internal.encodeList_injective_of_fixedWidth` | `Basic.lean:49` |
 | `Internal.encodeList_length_of_fixedWidth` | `Basic.lean:82` |
-| `Internal.eventually_seed_relative_gap` | `Stretch.lean:254` |
-| `Internal.full_bucket_tail` | `Claim42/Load.lean:88` |
-| `Internal.some_bucket_tail` | `Claim42/Load.lean:78` |
-| `Internal.some_full_bucket_tail` | `Claim42/Load.lean:98` |
-| `Internal.stretch_gaps` | `Stretch.lean:223` |
-| `Internal.w_lower` | `Stretch.lean:204` |
-| `LPNFamily` | `LPN.lean:512` |
-| `LPNFamily.Raw` | `LPN.lean:120` |
-| `LPNFamily.Raw.Assumption` | `LPN.lean:216` |
-| `LPNFamily.Raw.Draw` | `LPN.lean:230` |
-| `LPNFamily.Raw.adv` | `LPN.lean:207` |
-| `LPNFamily.Raw.modulus` | `LPN.lean:124` |
-| `LPNFamily.Raw.modulus_le_pow` | `LPN.lean:138` |
-| `LPNFamily.Raw.modulus_prime` | `LPN.lean:128` |
-| `LPNFamily.Raw.noiseDen` | `LPN.lean:126` |
-| `LPNFamily.Raw.noiseDen_pos` | `LPN.lean:130` |
-| `LPNFamily.Raw.residueBits` | `LPN.lean:134` |
-| `LPNFamily.Raw.sampleCore` | `LPN.lean:347` |
-| `LPNFamily.Raw.sampleLaw` | `LPN.lean:358` |
-| `LPNFamily.Raw.samples` | `LPN.lean:122` |
-| `LPNFamily.Raw.samplesBound` | `LPN.lean:132` |
-| `LPNFamily.Raw.samples_le` | `LPN.lean:136` |
-| `LPNFamily.Raw.toLWE` | `LPN.lean:177` |
-| `LPNFamily.sample_eff` | `LPN.lean:514` |
+| `Internal.eventually_seed_relative_gap` | `Stretch.lean:256` |
+| `Internal.full_bucket_tail` | `Claim42/Load.lean:194` |
+| `Internal.lpnNoise_law_cast` | `LPN.lean:120` |
+| `Internal.prefactor_eventually_le_two_pow` | `Claim42/Bounds.lean:81` |
+| `Internal.smallset_bucket_tail_quarter` | `Claim42/Bounds.lean:159` |
+| `Internal.some_bucket_tail` | `Claim42/Load.lean:177` |
+| `Internal.some_full_bucket_tail` | `Claim42/Load.lean:206` |
+| `Internal.stretch_gaps` | `Stretch.lean:225` |
+| `Internal.w_lower` | `Stretch.lean:206` |
+| `LPNFamily` | `LPN.lean:525` |
+| `LPNFamily.Raw` | `LPN.lean:133` |
+| `LPNFamily.Raw.Assumption` | `LPN.lean:229` |
+| `LPNFamily.Raw.Draw` | `LPN.lean:243` |
+| `LPNFamily.Raw.adv` | `LPN.lean:220` |
+| `LPNFamily.Raw.modulus` | `LPN.lean:137` |
+| `LPNFamily.Raw.modulus_le_pow` | `LPN.lean:151` |
+| `LPNFamily.Raw.modulus_prime` | `LPN.lean:141` |
+| `LPNFamily.Raw.noiseDen` | `LPN.lean:139` |
+| `LPNFamily.Raw.noiseDen_pos` | `LPN.lean:143` |
+| `LPNFamily.Raw.residueBits` | `LPN.lean:147` |
+| `LPNFamily.Raw.sampleCore` | `LPN.lean:360` |
+| `LPNFamily.Raw.sampleLaw` | `LPN.lean:371` |
+| `LPNFamily.Raw.samples` | `LPN.lean:135` |
+| `LPNFamily.Raw.samplesBound` | `LPN.lean:145` |
+| `LPNFamily.Raw.samples_le` | `LPN.lean:149` |
+| `LPNFamily.Raw.toLWE` | `LPN.lean:190` |
+| `LPNFamily.sample_eff` | `LPN.lean:527` |
 | `Params` | `Params.lean:50` |
 | `Params.B` | `Params.lean:138` |
-| `Params.Cond1` | `Claim42.lean:45` |
-| `Params.Cond2` | `Claim42.lean:58` |
-| `Params.Cond3` | `Claim42.lean:73` |
+| `Params.Cond1` | `Claim42/Defs.lean:43` |
+| `Params.Cond2` | `Claim42/Defs.lean:56` |
+| `Params.Cond3` | `Claim42/Defs.lean:71` |
 | `Params.D` | `Params.lean:64` |
 | `Params.Draw` | `Encoding.lean:148` |
 | `Params.E` | `Params.lean:56` |
@@ -446,13 +577,13 @@ index is not a new typed kernel census or a proof-status table.
 | `Params.Targets` | `Targets.lean:216` |
 | `Params.W` | `Params.lean:111` |
 | `Params.badSet` | `Samplers.lean:69` |
-| `Params.badSet_expect_le` | `Claim42.lean:114` |
+| `Params.badSet_expect_le` | `Claim42/Defs.lean:146` |
 | `Params.bucketBound` | `Encoding.lean:350` |
 | `Params.cap` | `Params.lean:132` |
 | `Params.chainGame` | `Hybrids.lean:86` |
 | `Params.chainPublic` | `Hybrids.lean:69` |
-| `Params.claim42` | `Claim42.lean:155` |
-| `Params.cond1_prob_le` | `Claim42.lean:126` |
+| `Params.claim42` | `Claim42.lean:58` |
+| `Params.cond1_prob_le` | `Claim42/Defs.lean:274` |
 | `Params.coreTarget` | `Targets.lean:116` |
 | `Params.corr` | `Samplers.lean:97` |
 | `Params.correctionPoly` | `Polys.lean:240` |
@@ -466,8 +597,9 @@ index is not a new typed kernel census or a proof-status table.
 | `Params.encLPNAdvice` | `Reductions/LPN.lean:243` |
 | `Params.encPRGAdvice` | `Reductions/PRG.lean:206` |
 | `Params.encSeed'` | `Encoding.lean:321` |
-| `Params.errProb` | `Claim42.lean:93` |
-| `Params.errProb_le_decomposition` | `Claim42.lean:139` |
+| `Params.errProb` | `Claim42/Defs.lean:123` |
+| `Params.errProb_le_decomposition` | `Claim42/Conditions.lean:268` |
+| `Params.errProb_nonneg` | `Claim42/Defs.lean:135` |
 | `Params.errSet` | `Samplers.lean:58` |
 | `Params.eval'` | `Samplers.lean:313` |
 | `Params.eval'_correct` | `Correctness.lean:431` |
@@ -488,6 +620,7 @@ index is not a new typed kernel census or a proof-status table.
 | `Params.idSamp'` | `Samplers.lean:283` |
 | `Params.idxBound` | `Encoding.lean:393` |
 | `Params.idxEquiv` | `Encoding.lean:197` |
+| `Params.jointLaw_prob_eq_uprob` | `Claim42/Defs.lean:96` |
 | `Params.kappaOf` | `Params.lean:155` |
 | `Params.kappaOfN` | `Params.lean:164` |
 | `Params.kappaOfN_n` | `Params.lean:332` |
@@ -614,9 +747,9 @@ index is not a new typed kernel census or a proof-status table.
 | `jlsSPRG_raw` | `Samplers.lean:355` |
 | `jlsSPRG_toRaw` | `Targets.lean:308` |
 | `jls_hasComplexity` | `Correctness.lean:489` |
-| `jls_hasPolyStretch` | `Stretch.lean:428` |
+| `jls_hasPolyStretch` | `Stretch.lean:430` |
 | `jls_secure` | `Security.lean:102` |
-| `jls_seedBits_le` | `Stretch.lean:404` |
+| `jls_seedBits_le` | `Stretch.lean:406` |
 | `jls_subexpSecure` | `Security.lean:129` |
 | `jls_subexpSmall` | `Security.lean:115` |
 | `lemma42` | `Security.lean:62` |
@@ -634,105 +767,43 @@ index is not a new typed kernel census or a proof-status table.
 | `theorem41_of_targets` | `Targets.lean:319` |
 | `theorem41_subexp` | `Security.lean:153` |
 
-## Phase B target statements (unproved)
+## Source and host disclosures
 
-These are the exact frozen definitions, with parameters in their enclosing Params namespace.
+The paper was verified in place at SHA-256
+`bb357e8d01cc0932899453f3d877b67b58f33253eabf2564854f8f38721e2f3d`.
+No PDF is copied, committed or delivered. The initial memory/disk observations
+and the preflight retry remain historical measurements in the M0/M1/M2 reports;
+this report makes no new resource measurement claim.
 
-### T1
+Both historical instruction breaches remain disclosed. An extra research
+descendant exceeded the whole-job two-subagent limit and root interrupted it.
+No Lean/cache/push/source mutation was reported for that descendant, based on
+task reports rather than an independent process audit; no further agents were
+spawned. Separately, tagged wrappers93883 and93983 overlapped at
+15:07:45–15:07:48UTC; the recorded search child was terminated and the prior
+wrapper released at15:08:34UTC. The records are
+`evidence/host/team-limit-correction.json` and
+`evidence/host/search-process-correction.json`.
 
-```lean
-def evalTarget (P : Params) : Prop :=
-  ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
-    ∀ κ (pp : PrimeParam κ) (I : P.Idx' κ pp) (sd : P.Seed κ pp),
-      f (NUPPT.advInput κ (pairEncode pp.enc
-        (pairEncode (P.encIdx' κ pp I) (P.encSeed' κ pp sd)))) =
-          List.ofFn (P.eval' κ pp I sd)
-```
+The fresh exact-exception slot audit at 19:21:31UTC preserves every tagged line
+and REAP provenance. It records 1,273 acquisitions, whole-history seriality false,
+and maximum two tagged wrappers because the known three-second violation is not
+erased. Its 504 post-correction acquisitions have maximum one wrapper, seriality
+true and no active wrappers. Every other overlap would fail the checker. These
+are snapshot-qualified tagged wrapper facts, not a global host process cap,
+actual simultaneous Lean-process census or complete child-process history proof.
+`evidence/host/M3-final-v2/slot-summary.json` gives the exact qualification and hashes.
 
-### T2
+## Current M3 v2 headline axiom prints
 
-```lean
-def qGenTarget (P : Params) : Prop :=
-  ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
-    ∀ κ (pp : PrimeParam κ) (I : P.Idx' κ pp) (j : Fin (P.m κ)),
-      ∃ ts : PolyTerms (Fin (P.pubLen κ) ⊕ Fin (P.privLen κ)) (ZMod pp.p),
-        f (NUPPT.advInput κ (pairEncode pp.enc
-          (pairEncode (P.encIdx' κ pp I) (PolyTerms.encFin j)))) =
-            PolyTerms.encTerms (fun z => Candidates.natToList (κ + 1) z.val)
-              (fun v => PolyTerms.encFin (finSumFinEquiv v)) ts ∧
-        PolyTerms.denote ts = P.G4 κ pp I j
-```
-
-### T3
-
-```lean
-def coreTarget (P : Params) : Prop :=
-  CoreComputable (P := PrimeParam)
-      (fun κ pp => P.idWord κ pp) (fun κ pp => P.encIdDraw κ pp)
-      (fun κ pp => P.encIdx' κ pp) (fun κ pp => P.idCore κ pp) ∧
-    CoreComputable (P := P.SdParam)
-      (fun κ q => P.sdWord κ q) (fun κ q => P.encDraw κ q.1)
-      (fun κ q => P.encSeed' κ q.1)
-      (fun κ q d => (P.sdCore κ q.1 q.2 d).seed)
-```
-
-### T4
-
-```lean
-def lpnPreTarget (P : Params) : Prop :=
-  ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
-    ∀ (π : PrimeSchedule) L (ω : P.LPNAdvice π L) (x : P.LPNChal π L),
-      f (pairEncode (P.encLPNAdvice π L ω) (P.lpnEnc π L x)) = P.lpnPre π L ω x
-
-def prgPreTarget (P : Params) : Prop :=
-  ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
-    ∀ (π : PrimeSchedule) N (ω : P.PRGAdvice π N) (x : P.PRGChal N),
-      f (pairEncode (P.encPRGAdvice π N ω) (P.prgEnc N x)) = P.prgPre π N ω x
-
-def ReductionTargets (P : Params) : Prop :=
-  P.lpnPreTarget ∧ P.prgPreTarget
-```
-
-### T5
-
-```lean
-def drawSamplerTarget (P : Params) : Prop :=
-  DrawSamplable (P := PrimeParam)
-      (fun κ pp => P.idWord κ pp) (fun κ pp => P.encIdDraw κ pp) ∧
-    DrawSamplable (P := P.SdParam)
-      (fun κ q => P.sdWord κ q) (fun κ q => P.encDraw κ q.1)
-```
-
-### T6
-
-```lean
-def lpnSamplerTarget (P : Params) : Prop :=
-  SamplesEfficiently (P := fun _ => PrimeSchedule)
-    (fun L π => (P.lpnFamily_raw π).sampleWord L)
-    (fun L π => (P.lpnFamily_raw π).encDraw L)
-    (fun L π => (P.lpnFamily_raw π).encSample L)
-    (fun L π => (P.lpnFamily_raw π).sampleCore L)
-```
-
-### Conjunction
-
-```lean
-def Targets (P : Params) : Prop :=
-  P.evalTarget ∧ P.qGenTarget ∧ P.coreTarget ∧ P.ReductionTargets ∧
-    P.drawSamplerTarget ∧ P.lpnSamplerTarget
-```
-
-## Current M2 headline axiom prints
-
-Fresh19-headline probe at source4ecc40c; exactly five standard-only and14 retaining
-sorryAx. All names below have the area prefix
-`TCSlib.Cryptography.Obfuscation.StructuredSeed.`. Exact printed dependencies and
-log hashes are recorded in `evidence/checkpoints/M2/axiom-summary.json`.
+Fresh 19-headline probe at source 04249b8. Names have the prefix
+`TCSlib.Cryptography.Obfuscation.StructuredSeed.`. Exact logs and hashes are in
+`evidence/checkpoints/M3/axiom-summary-v2.json`.
 
 | Headline | Current printed axioms |
 | --- | --- |
 | `prop41` | `Classical.choice, Quot.sound, propext, sorryAx` |
-| `Params.claim42` | `Classical.choice, Quot.sound, propext, sorryAx` |
+| `Params.claim42` | `Classical.choice, Quot.sound, propext` |
 | `Params.G4_eval_eq` | `Classical.choice, Quot.sound, propext` |
 | `jls_hasComplexity` | `Classical.choice, Quot.sound, propext` |
 | `jls_hasPolyStretch` | `Classical.choice, Quot.sound, propext` |
@@ -751,13 +822,97 @@ log hashes are recorded in `evidence/checkpoints/M2/axiom-summary.json`.
 | `exists_sprg_of_targets` | `Classical.choice, Quot.sound, propext, sorryAx` |
 | `exists_sprg_of_targets_subexp` | `Classical.choice, Quot.sound, propext, sorryAx` |
 
-## Source commits
+## Size re-estimate
 
-The table below preserves the M0/M1 source-commit history from the published M1
-report. M2 adds source checkpoint `4ecc40c04a001bc87349b7ec368ece309774c28a`. Exact
-final source-commit subjects, author/committer metadata and signing status must be
-bound by the M2 package's `patches/COMMITS.tsv`; no delivery hash is inferred from a
-source hash.
+Current source is 8,672 lines, 222 above the original expected upper estimate of
+8,450, while every file remains below the hard 1,000-line limit. M3 adds 978 lines
+to M2's 7,694: the five load proofs, the fourteen specialized theorem-only helpers,
+the five original Claim42 proofs and the three new module headers. This reflects
+proof size and modular organization within the requested scope.
+
+A provisional final estimate is 9,500–12,500 lines while the remaining 32 reduction,
+security and target-link proofs are completed. This is a planning range, not a
+completion claim or permission to add scope; M4's explicit realiser/averaging
+transports dominate its uncertainty. Additional splits must preserve FQNs/frozen
+headers/prose, exact move ledgers and complete final owner coverage. The final
+measured source inventory will supersede this estimate.
+
+## Remaining original obligations and continuation
+
+The 32 remaining direct original bodies comprise M4's eight hybrid/security
+statements, eight shared M4/M6 reduction/encoding obligations, M5's seven raw
+security/existence statements, and M6's nine target links/assemblies. Supporting
+encoding proofs completed in M1 do not by themselves complete M6. No transitive
+sorryAx-dependent count is inferred from this direct-hole count.
+
+| Frozen milestone | Remaining declaration (area prefix omitted) | M3 v2 source anchor |
+| --- | --- | --- |
+| M4 | `Params.hyb_real_eq_raw` | `Hybrids.lean:142` |
+| M4 | `Params.hyb_random_eq_raw` | `Hybrids.lean:148` |
+| M4 | `Params.hyb_prg_accept_eq_chain_zero` | `Hybrids.lean:157` |
+| M4 | `Params.hyb_uniform_accept_eq_chain_zero` | `Hybrids.lean:167` |
+| M4 | `Params.hyb_real_prg_le` | `Hybrids.lean:176` |
+| M4 | `Params.hyb_uniform_random_le` | `Hybrids.lean:184` |
+| M4 / M6 | `Params.lpnEnc_injective` | `Reductions/LPN.lean:368` |
+| M4 / M6 | `Params.encLPNAdvice_injective` | `Reductions/LPN.lean:376` |
+| M4 / M6 | `Params.encLPNAdvice_length_le` | `Reductions/LPN.lean:385` |
+| M4 / M6 | `Params.lpn_hop` | `Reductions/LPN.lean:398` |
+| M4 / M6 | `Params.prgEnc_injective` | `Reductions/PRG.lean:304` |
+| M4 / M6 | `Params.encPRGAdvice_injective` | `Reductions/PRG.lean:311` |
+| M4 / M6 | `Params.encPRGAdvice_length_le` | `Reductions/PRG.lean:322` |
+| M4 / M6 | `Params.prg_hop` | `Reductions/PRG.lean:338` |
+| M4 | `lemma42` | `Security.lean:62` |
+| M4 | `prop41` | `Security.lean:84` |
+| M5 | `jls_secure` | `Security.lean:102` |
+| M5 | `jls_subexpSmall` | `Security.lean:115` |
+| M5 | `jls_subexpSecure` | `Security.lean:129` |
+| M5 | `theorem41` | `Security.lean:141` |
+| M5 | `theorem41_subexp` | `Security.lean:153` |
+| M5 | `exists_sprg_raw` | `Security.lean:167` |
+| M5 | `exists_sprg_raw_subexp` | `Security.lean:184` |
+| M6 | `Params.realizable_of_targets` | `Targets.lean:232` |
+| M6 | `Params.evalEfficient_of_target` | `Targets.lean:238` |
+| M6 | `Params.idSampEfficient_of_targets` | `Targets.lean:245` |
+| M6 | `Params.sdSampEfficient_of_targets` | `Targets.lean:257` |
+| M6 | `Params.lpnSamplerEfficient_of_target` | `Targets.lean:269` |
+| M6 | `Params.hasComplexityEff_of_target` | `Targets.lean:293` |
+| M6 | `theorem41_of_targets` | `Targets.lean:319` |
+| M6 | `exists_sprg_of_targets` | `Targets.lean:333` |
+| M6 | `exists_sprg_of_targets_subexp` | `Targets.lean:349` |
+
+## Delivery verification
+
+M3 source proofs and local milestone gates are complete at
+`04249b85e80a007dc5845077a18a365d5150e14b`. **M3 packaging and publication
+remain pending.** This READY report is ready for root's packager, not a claim that
+an M3 payload has already been replayed, bundled, committed or pushed.
+
+The packager must copy committed source; replay every patch at the pinned base
+with exact commit hashes, including M0's empty marker; verify the bundle; check
+every intermediate commit tree for PDFs; and verify exact source/evidence manifest
+path sets and hashes. The future M3 `evidence/replay.json`, `bundle-verify.txt`,
+`pdf-commit-trees.json`, `payload-source-binding.json`, COMMITS.tsv and exchange
+publication record will be the delivery authority. No M3 delivery hash, successful
+push or final ZIP is invented. Report SHA-256 is recorded externally in this
+preparation's provenance, so no circular self-hash is embedded in REPORT.md.
+
+Continue M4–M6 and then the full fresh stored-constant/kernel-type/canonical
+four-variant seal/control gates. The candidate V2 tools remain unrun adaptations;
+AST syntax checks are not gate passes. The four M0 mathematical tables are retained
+byte-for-byte and their historical counts/anchors stay explicitly attributed.
+
+No user question is pending. SP-W1 is resolved; SP-W2/SP-W3 and the disclosed
+organization/process judgments remain available for downstream review. The agent's temporary report
+preparation performed static reads and temporary writes only. It did not invoke
+Lean, Lake, Git, cache tooling, source edits, final gates or agents. The pure temp
+producer was executed only to verify existing root-produced records and render
+this report/anchor/provenance packet; active evidence/REPORT.md is untouched.
+
+## Complete source commit ledger
+
+Every source commit since the pinned base is listed below. Exact author/committer
+metadata and signing status are supplied by patches/COMMITS.tsv. Root appended this
+ledger from Git when staging the active report.
 
 | Commit | Subject |
 | --- | --- |
@@ -785,50 +940,8 @@ source hash.
 | `8854cf709238defb459377fea0a1e2ff54db88b7` | io-sprg: M1 explicit sparse-factor reconstruction |
 | `6477edc198ec33eec8c682bd62ff344be896d07c` | io-sprg: M1 polynomial bidegrees and tensor evaluation |
 | `19dde91afc384656e7e47cb018057e088d4ded0a` | io-sprg: M1 algebraic correctness and complexity links |
-
-## Delivery verification and continuation
-
-M1 is published at exchange commit
-`10da7fdefd9a44023cc117a672f19e8a3617b81d`; the source head is
-`19dde91afc384656e7e47cb018057e088d4ded0a`.
-`evidence/delivery/M1.json` records5040 payload files, exact committed path-set
-verification, zero committed SHA-256 mismatches and successful non-force push.
-The Unicode-path verifier correction is retained in that record.
-
-M2 source is committed at `4ecc40c04a001bc87349b7ec368ece309774c28a`, with proof and
-local gates complete. **M2 packaging and publication are pending.** The packager
-must stage only this unit's payload, replay every patch at the pinned base with
-exact hash equality (including the empty M0 marker), verify the bundle, check all
-intermediate commit trees for PDFs, and check exact manifest path sets and hashes.
-It must copy committed source, not unstaged files. M2's fresh `evidence/replay.json`,
-`bundle-verify.txt`, `pdf-commit-trees.json` and `payload-source-binding.json` will be
-the packaging authority. No M2 delivery hash, successful push or final ZIP is
-claimed before those records exist.
-
-Continue with **all ten original M3 obligations**, listed in the table below from
-the frozen proof-obligation TSV, then M4–M6 and the full final gates. The M3 final
-Claim42 cutoff must be independent of the public prime parameter.
-
-| Original full name (area prefix omitted) | Current source anchor |
-| --- | --- |
-| `Internal.binomial_bound` | `Claim42/Load.lean:54` |
-| `Internal.bucket_tail` | `Claim42/Load.lean:67` |
-| `Internal.some_bucket_tail` | `Claim42/Load.lean:78` |
-| `Internal.full_bucket_tail` | `Claim42/Load.lean:88` |
-| `Internal.some_full_bucket_tail` | `Claim42/Load.lean:98` |
-| `Params.errProb_nonneg` | `Claim42.lean:105` |
-| `Params.badSet_expect_le` | `Claim42.lean:114` |
-| `Params.cond1_prob_le` | `Claim42.lean:126` |
-| `Params.errProb_le_decomposition` | `Claim42.lean:139` |
-| `Params.claim42` | `Claim42.lean:155` |
-
-The final Claim42 cutoff must be independent of the public prime parameter.
-Complete the existing probability and bucket-load obligations, not only the final
-`claim42` body. Additional specialized theorem-only helpers, if needed, require
-explicit inventories and later seal coverage; they do not reduce this original
-obligation count by renaming it.
-
-No user question is pending. SP-W1 is resolved; SP-W2/SP-W3 and the disclosed
-organization/process decisions remain recorded for downstream review. The report
-preparation itself performed static reads and temporary writes only; it did not
-run Lean, Git, cache tooling, source edits or agents.
+| `4ecc40c04a001bc87349b7ec368ece309774c28a` | io-sprg: M2 polynomial stretch with explicit rounded seed bounds |
+| `e966956e25caf9512050ddf5d480a5dec7f4d3de` | io-sprg: M3 finite load bounds and modular probability analysis |
+| `bc5d5227a52571ad5e1e9b86219cfcb4987b7771` | io-sprg: M3 error decomposition and explicit exponential load bounds |
+| `c767ee867e76c0b1248cee46d4af5296ffa078d5` | io-sprg: M3 Claim 4.2 uniform in the public prime |
+| `04249b85e80a007dc5845077a18a365d5150e14b` | io-sprg: M3 opacity-safe scalar law reader and proof cleanup |

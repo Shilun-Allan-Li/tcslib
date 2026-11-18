@@ -238,3 +238,51 @@ Step 108: stretch_gaps owner check passed. Current sorry tokens: 43.
 Step 109: eventually_seed_relative_gap owner check passed. Current sorry tokens: 43.
 
 Step 110: jls_hasPolyStretch owner check passed. Current sorry tokens: 42.
+
+Step 111: binomial_bound owner check passed. Current sorry tokens: 41.
+
+Step 112: bucket_tail owner check passed. Current sorry tokens: 40.
+
+Step 113: some_bucket_tail owner check passed. Current sorry tokens: 39.
+
+Step 114: full_bucket_tail owner check passed. Current sorry tokens: 38.
+
+Step 115: some_full_bucket_tail owner check passed. Current sorry tokens: 37.
+
+Step 116: errProb_nonneg owner check passed. Current sorry tokens: 36.
+
+Step 117: badSet_expect_le owner check passed. Current sorry tokens: 35.
+
+Step 118: cond1_prob_le owner check passed. Current sorry tokens: 34.
+
+Step 119: errProb_le_decomposition owner check passed. Current sorry tokens: 33.
+
+Step 120: bucket_count_upper owner check passed. Current sorry tokens: 33.
+
+Step 121: bucket_count_lower owner check passed. Current sorry tokens: 33.
+
+Step 122: prefactor_eventually_le_two_pow owner check passed. Current sorry tokens: 33.
+
+Step 123: binomial_ratio_quarter owner check passed. Current sorry tokens: 33.
+
+Step 124: smallset_bucket_tail_quarter owner check passed. Current sorry tokens: 33.
+
+Step 125: capacity_bucket_tail_quarter owner check passed. Current sorry tokens: 33.
+
+Step 126: cond1_single_le_quarter owner check passed. Current sorry tokens: 33.
+
+Step 127: cond1_repetitions_fixed_index owner check passed. Current sorry tokens: 33.
+
+Step 128: cond1_all_fixed_index owner check passed. Current sorry tokens: 33.
+
+Step 129: cond1_all_joint owner check passed. Current sorry tokens: 33.
+
+Step 130: jointLaw_prob_eq_uprob owner check passed. Current sorry tokens: 33.
+
+Step 131: cond3_joint_le_quarter_pow owner check passed. Current sorry tokens: 33.
+
+Step 132: cond2_sparse_joint_le_quarter_pow owner check passed. Current sorry tokens: 33.
+
+Step 133: claim42 owner check passed. Current sorry tokens: 32.
+
+Step 134: Internal.lpnNoise_law_cast owner check passed. Current sorry tokens: 32.

@@ -1,0 +1,94 @@
+[
+  {
+    "id": "W01",
+    "file": "LPN.lean",
+    "theorem": "lpnNoise_law",
+    "lines": [
+      107
+    ],
+    "before": "      by_cases ha : c.1 = 0 <;> simp [ha, hz, Ne.symm hz]",
+    "after": "      by_cases ha : c.1 = 0 <;> simp [ha, Ne.symm hz]",
+    "reason": "Linter specifically marks hz unused when Ne.symm hz is already supplied; remove only that argument."
+  },
+  {
+    "id": "W02",
+    "file": "Degree.lean",
+    "theorem": "Internal.weightedTotalDegree_X_le",
+    "lines": [
+      136
+    ],
+    "before": "    Finset.sup_le fun d hd =>",
+    "after": "    Finset.sup_le fun _d hd =>",
+    "reason": "Unused lambda binder is proof-local. Leading underscore retains exactly the same lambda type and avoids a theorem-header edit."
+  },
+  {
+    "id": "W03",
+    "file": "Correctness.lean",
+    "theorem": "Params.G4_eval_sdCore",
+    "lines": [
+      399
+    ],
+    "before": "  | none => simp [hf]",
+    "after": "  | none => simp",
+    "reason": "The cases substitution already specializes first to none; hf is an unused simp argument. Keep the outer named cases equation because the some branch uses it."
+  },
+  {
+    "id": "W04",
+    "file": "Correctness.lean",
+    "theorem": "Params.eval'_correct",
+    "lines": [
+      441,
+      441
+    ],
+    "before": "  cases he : x.err <;>\n    cases hb : P.G.eval (P.n κ) I.1 x.σ (P.outputIndex κ j) <;> simp [he, hb]",
+    "after": "  cases x.err <;>\n    cases P.G.eval (P.n κ) I.1 x.σ (P.outputIndex κ j) <;> simp",
+    "reason": "Both case equalities are unused in simp after the cases reductions. Remove the unused simp arguments and their unneeded equation labels."
+  },
+  {
+    "id": "W05",
+    "file": "Correctness.lean",
+    "theorem": "Params.G4_seed_allOutputs",
+    "lines": [
+      471
+    ],
+    "before": "      cases he : x.err <;> simp [he]",
+    "after": "      cases x.err <;> simp",
+    "reason": "The pure-branch Boolean cases reduction already determines the expressions; remove unused equation label/simp argument."
+  },
+  {
+    "id": "W06",
+    "file": "Stretch.lean",
+    "theorem": "Params.seedBitsAt_le",
+    "lines": [
+      192,
+      192
+    ],
+    "before": "  convert hbits using 1 <;> dsimp only [K, X, a] <;> ring",
+    "after": "  convert hbits using 1\n  dsimp only [K, X, a]\n  ring",
+    "reason": "Both unnecessarySeqFocus diagnostics say the following tactic sees only one goal. Use ordinary consecutive tactics, retaining convert/dsimp/ring."
+  },
+  {
+    "id": "W07",
+    "file": "Stretch.lean",
+    "theorem": "Internal.eventually_seed_relative_gap",
+    "lines": [
+      298,
+      298
+    ],
+    "before": "    field_simp [(Real.rpow_pos_of_pos hxpos b).ne'] <;> ring",
+    "after": "    field_simp [(Real.rpow_pos_of_pos hxpos b).ne']",
+    "reason": "field_simp already closes this equality. The subsequent ring is both unreachable and unused; delete only that suffix."
+  },
+  {
+    "id": "W08",
+    "file": "Stretch.lean",
+    "theorem": "jls_hasPolyStretch",
+    "lines": [
+      463,
+      463
+    ],
+    "before": "    field_simp [hN.ne'] <;> ring",
+    "after": "    field_simp [hN.ne']",
+    "reason": "field_simp already closes the eta identity; remove unreachable/no-op ring."
+  }
+]

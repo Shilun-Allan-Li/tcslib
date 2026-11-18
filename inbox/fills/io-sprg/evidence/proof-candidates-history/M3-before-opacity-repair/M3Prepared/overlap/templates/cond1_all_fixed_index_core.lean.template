@@ -1,0 +1,15 @@
+import TCSlib.Cryptography.Games.Bridges.Experiments
+import TCSlib.Cryptography.OneWayFunctions.Basic
+import Mathlib.Data.Finset.Powerset
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography
+
+example {Seed Rep : Type} [Fintype Seed] [Nonempty Seed]
+    [Fintype Rep] [Nonempty Rep] (κ : ℕ) (q : Rep → Prop)
+    (h : uprob (fun reps : Fin κ → Rep => ∀ k, q (reps k)) ≤ (4 : ℝ)⁻¹ ^ κ) :
+    uprob (fun d : Seed × (Fin κ → Rep) => ∀ k, q (d.2 k)) ≤ (4 : ℝ)⁻¹ ^ κ := __PROBE_BODY__

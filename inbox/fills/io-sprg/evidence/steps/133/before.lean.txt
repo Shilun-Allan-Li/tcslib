@@ -1,0 +1,63 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Samplers
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Claim42.Load
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Claim42.Defs
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Claim42.Bounds
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Claim42.Conditions
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# The uniformly small JLS error event
+
+## Main definitions
+
+* The three failure events, the exact joint law, and `Params.errProb`.
+
+## Contents
+
+* `Claim42.Load`: finite binomial and bucket-tail bounds.
+* `Claim42.Defs`: failure events, joint law, and locality bounds.
+* `Claim42.Bounds`: rounded bucket counts and numerical tail bounds.
+* `Claim42.Conditions`: conditional event estimates and decomposition.
+
+## Main results
+
+* `Params.claim42`: eventual error at most 2^(-κ), uniformly in the public prime.
+* Locality/Markov and event-decomposition statements support the error analysis.
+
+## References
+
+* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
+  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026, §§2-4.
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
+  3rd ed., January 2010, Definition 26.8 (non-uniform PPT adversaries).
+-/
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+
+open TCSlib.Cryptography.Games
+open scoped BigOperators
+
+namespace Params
+
+/-- For all sufficiently large κ the error event has probability at most 2^(-κ),
+uniformly in every public prime [JLS26, Claim 4.2, pp. 19-21]. Dv3 uses the rounded
+rational noise schedule (SP-W1); Dv7 makes the common eventual threshold explicit.
+
+**Proof sketch.** Use the three-event decomposition. Locality and Markov bound Cond1,
+conditionally on each fixed generator index. Independent noise repetitions then bound
+simultaneous Cond1. Bucket-tail bounds control Cond2 outside Cond1 and the common Cond3.
+The bucket count is polynomial; logarithmic growth and the resulting exponential bounds
+make their sum at most 2^(-κ), with no dependence on pp. -/
+theorem claim42 (P : Params) {cLoc : ℕ} (hLoc : P.R.HasLocality cLoc) :
+    ∃ κ₀, ∀ κ ≥ κ₀, ∀ pp : PrimeParam κ,
+      P.errProb κ pp ≤ (2 : ℝ)⁻¹ ^ κ := sorry
+
+end Params
+end TCSlib.Cryptography.Obfuscation.StructuredSeed

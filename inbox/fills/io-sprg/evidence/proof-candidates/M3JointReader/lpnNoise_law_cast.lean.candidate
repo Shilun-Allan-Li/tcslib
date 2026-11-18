@@ -1,0 +1,6 @@
+theorem Internal.lpnNoise_law_cast (p W : ℕ) [NeZero p] [NeZero W] (z : ZMod p) :
+    uprob (fun c : Fin W × ZMod p =>
+      ((lpnNoise p W).sample (cast (lpnNoise_coins p W).symm c) : ZMod p) = z) =
+      if z = 0 then 1 - 1 / (W : ℝ) + 1 / ((W : ℝ) * p)
+      else 1 / ((W : ℝ) * p) := by
+  simpa only [cast_eq] using lpnNoise_law p W z

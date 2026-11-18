@@ -1,0 +1,30 @@
+--- /private/tmp/io-sprg-proof-notes/LoadProofs/01-bucket_tail.proof
++++ /private/tmp/io-sprg-proof-notes/M3Prepared/candidates/LoadProofs/01-bucket_tail.proof
+@@ -3,13 +3,15 @@
+   letI : Inhabited (Fin B) := ⟨b⟩
+   have hfixed : ∀ T : Finset (Fin m),
+       uprob (fun φ : Fin m → Fin B => ∀ j ∈ T, φ j = b) =
+-        1 / (B : ℝ) ^ T.card
++        1 / (B : ℝ) ^ T.card := ?_
++  swap
+   · intro T
+     let e : (Fin m → Fin B) ≃
+         (T → Fin B) × ({j : Fin m // j ∉ T} → Fin B) :=
+       Equiv.piEquivPiSubtypeProd (fun j => j ∈ T) (fun _ => Fin B)
+     have hsplit : uprob (fun φ : Fin m → Fin B => ∀ j ∈ T, φ j = b) =
+-        uprob (fun φ : Fin m → Fin B => ∀ j : T, (e φ).1 j = b)
++        uprob (fun φ : Fin m → Fin B => ∀ j : T, (e φ).1 j = b) := ?_
++    swap
+     · apply OneWay.uprob_congr
+       intro φ
+       change (∀ j ∈ T, φ j = b) ↔ ∀ j : T, φ j = b
+@@ -19,7 +21,8 @@
+       Fintype.card_fin, Fintype.card_coe, div_pow, one_pow]
+   have hcover : ∀ φ : Fin m → Fin B,
+       t < (Buckets.bucket φ b ∩ S).card →
+-        ∃ T ∈ S.powersetCard (t + 1), ∀ j ∈ T, φ j = b
++        ∃ T ∈ S.powersetCard (t + 1), ∀ j ∈ T, φ j = b := ?_
++  swap
+   · intro φ hφ
+     obtain ⟨T, hT, hcard⟩ := Finset.exists_subset_card_eq (Nat.succ_le_of_lt hφ)
+     refine ⟨T, Finset.mem_powersetCard.mpr ⟨?_, hcard⟩, ?_⟩

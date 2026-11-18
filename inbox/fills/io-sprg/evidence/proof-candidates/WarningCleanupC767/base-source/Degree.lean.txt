@@ -1,0 +1,300 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import Mathlib.RingTheory.MvPolynomial.Homogeneous
+import Mathlib.Algebra.MvPolynomial.Degrees
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Public and private polynomial degrees
+
+## Main definitions
+
+* `pubDegree` counts only public variables in a polynomial on a sum of variable types.
+* `privDegree` counts only private variables.
+
+## Main results
+
+* The degrees satisfy sum and product bounds and are preserved by groupwise renaming.
+* `Internal` supplies the missing weighted-degree closure lemmas.
+
+## References
+
+* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
+  Assumptions*, J. ACM 73(1), Article 1, February 2026, Definition 3.3 and pp. 16-17.
+* [PS10] R. Pass, A. Shelat, *A Course in Cryptography*, 2010, Definition 26.8.
+
+**Deviations.** Dv6 specializes Definition 3.3 to one polynomial with separately bounded
+public and private degrees. Dv10 uses public degree `d`, as on p. 17, rather than the
+motivating overview's `d + 1` on p. 14. The closure facts are mathematical glue.
+-/
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+
+open scoped BigOperators
+
+variable {σ τ σ' τ' R ι : Type*} [CommSemiring R]
+
+/-- Public degree weights public variables by one and private variables by zero,
+`pubDegree q = q.weightedTotalDegree (Sum.elim 1 0)`
+[JLS26, Definition 3.3, p. 10]. Dv6 uses the composite polynomial form. -/
+noncomputable def pubDegree (q : MvPolynomial (σ ⊕ τ) R) : ℕ :=
+  q.weightedTotalDegree (Sum.elim (fun _ : σ => 1) (fun _ : τ => 0))
+
+/-- Public degree equals weighted degree for the public indicator. Glue reader. -/
+theorem pubDegree_eq (q : MvPolynomial (σ ⊕ τ) R) :
+    pubDegree q =
+      q.weightedTotalDegree (Sum.elim (fun _ : σ => 1) (fun _ : τ => 0)) := rfl
+
+/-- Private degree weights public variables by zero and private variables by one,
+`privDegree q = q.weightedTotalDegree (Sum.elim 0 1)`
+[JLS26, Definition 3.3, p. 10]. Dv6 uses the composite polynomial form. -/
+noncomputable def privDegree (q : MvPolynomial (σ ⊕ τ) R) : ℕ :=
+  q.weightedTotalDegree (Sum.elim (fun _ : σ => 0) (fun _ : τ => 1))
+
+/-- Private degree equals weighted degree for the private indicator. Glue reader. -/
+theorem privDegree_eq (q : MvPolynomial (σ ⊕ τ) R) :
+    privDegree q =
+      q.weightedTotalDegree (Sum.elim (fun _ : σ => 0) (fun _ : τ => 1)) := rfl
+
+namespace Internal
+
+/-- Weighted degree of a sum is at most the maximum of the summands' degrees.
+Mathematical glue for [JLS26, §4, p. 17].
+
+**Proof sketch.** Apply the published support-degree addition bound to the
+`Finsupp.weight` map; weighted total degree is its support supremum. -/
+theorem weightedTotalDegree_add_le (w : σ → ℕ) (q r : MvPolynomial σ R) :
+    (q + r).weightedTotalDegree w ≤ max (q.weightedTotalDegree w)
+      (r.weightedTotalDegree w) :=
+  show (q + r).support.sup (Finsupp.weight w) ≤
+      q.support.sup (Finsupp.weight w) ⊔ r.support.sup (Finsupp.weight w) from
+    AddMonoidAlgebra.sup_support_add_le (Finsupp.weight w) q r
+
+/-- Weighted degree of a product is at most the sum of the factors' degrees.
+Mathematical glue for [JLS26, §4, p. 17].
+
+**Proof sketch.** Apply the published support-degree multiplication bound with the
+additive `Finsupp.weight` map. Its existing map-add equation supplies subadditivity. -/
+theorem weightedTotalDegree_mul_le (w : σ → ℕ) (q r : MvPolynomial σ R) :
+    (q * r).weightedTotalDegree w ≤ q.weightedTotalDegree w +
+      r.weightedTotalDegree w :=
+  show (q * r).support.sup (Finsupp.weight w) ≤
+      q.support.sup (Finsupp.weight w) + r.support.sup (Finsupp.weight w) from
+    AddMonoidAlgebra.sup_support_mul_le
+      (fun a b => (map_add (Finsupp.weight w) a b).le) q r
+
+/-- A finite sum of polynomials of weighted degree at most `d` has degree at most `d`.
+Mathematical glue for [JLS26, §4, p. 17].
+
+**Proof sketch.** Use the published supremum bound for a sum of supported
+polynomials, then apply the supplied pointwise bound to that finite supremum. -/
+theorem weightedTotalDegree_finset_sum_le (w : σ → ℕ) (s : Finset ι)
+    (q : ι → MvPolynomial σ R) (d : ℕ)
+    (h : ∀ i ∈ s, (q i).weightedTotalDegree w ≤ d) :
+    (∑ i ∈ s, q i).weightedTotalDegree w ≤ d :=
+  show (∑ i ∈ s, q i).support.sup (Finsupp.weight w) ≤ d from
+    (AddMonoidAlgebra.supDegree_sum_le
+      (D := Finsupp.weight w) (s := s) (f := q)).trans
+        (Finset.sup_le h)
+
+/-- A finite product has weighted degree at most the sum of the factors' degrees.
+Mathematical glue for [JLS26, §4, p. 17].
+
+**Proof sketch.** Apply the published finite-product support-degree bound. The
+existing zero and addition equations of `Finsupp.weight` discharge its map hypotheses. -/
+theorem weightedTotalDegree_finset_prod_le (w : σ → ℕ) (s : Finset ι)
+    (q : ι → MvPolynomial σ R) :
+    (∏ i ∈ s, q i).weightedTotalDegree w ≤ ∑ i ∈ s, (q i).weightedTotalDegree w :=
+  show (∏ i ∈ s, q i).support.sup (Finsupp.weight w) ≤
+      ∑ i ∈ s, (q i).support.sup (Finsupp.weight w) from
+    AddMonoidAlgebra.supDegree_prod_le (D := Finsupp.weight w)
+      (map_zero (Finsupp.weight w)) (map_add (Finsupp.weight w))
+
+/-- Constants have weighted degree zero, `weightedTotalDegree w (C a) = 0`.
+Mathematical glue for [JLS26, §4, p. 17].
+
+**Proof sketch.** Reuse weighted homogeneity of a constant and the published
+equivalence between homogeneity of weight zero and weighted degree zero. -/
+theorem weightedTotalDegree_C (w : σ → ℕ) (a : R) :
+    (MvPolynomial.C a : MvPolynomial σ R).weightedTotalDegree w = 0 :=
+  (MvPolynomial.isWeightedHomogeneous_zero_iff_weightedTotalDegree_eq_zero
+    (w := w)).mp (MvPolynomial.isWeightedHomogeneous_C w a)
+
+/-- A variable's weighted degree is at most its weight, also over the zero ring.
+Mathematical glue for [JLS26, §4, p. 17].
+
+**Proof sketch.** Use weighted homogeneity of X to bound every supported
+monomial, then apply the published finite-supremum bound. -/
+theorem weightedTotalDegree_X_le (w : σ → ℕ) (i : σ) :
+    (MvPolynomial.X i : MvPolynomial σ R).weightedTotalDegree w ≤ w i :=
+  show (MvPolynomial.X i : MvPolynomial σ R).support.sup (Finsupp.weight w) ≤ w i from
+    Finset.sup_le fun d hd =>
+      ((MvPolynomial.isWeightedHomogeneous_X R w i)
+        (MvPolynomial.mem_support_iff.mp hd)).le
+
+end Internal
+
+/-- The zero polynomial has public degree zero, `pubDegree 0 = 0`. Mathematical glue.
+
+**Proof sketch.** Use Mathlib's weighted-degree zero lemma and `pubDegree_eq`. -/
+theorem pubDegree_zero : pubDegree (0 : MvPolynomial (σ ⊕ τ) R) = 0 := by
+  rw [pubDegree_eq]
+  exact MvPolynomial.weightedTotalDegree_zero _
+
+/-- The zero polynomial has private degree zero, `privDegree 0 = 0`. Mathematical glue.
+
+**Proof sketch.** Use Mathlib's weighted-degree zero lemma and `privDegree_eq`. -/
+theorem privDegree_zero : privDegree (0 : MvPolynomial (σ ⊕ τ) R) = 0 := by
+  rw [privDegree_eq]
+  exact MvPolynomial.weightedTotalDegree_zero _
+
+/-- Constants have public degree zero, `pubDegree (C a) = 0`. Mathematical glue.
+
+**Proof sketch.** Specialize `Internal.weightedTotalDegree_C`. -/
+theorem pubDegree_C (a : R) :
+    pubDegree (MvPolynomial.C a : MvPolynomial (σ ⊕ τ) R) = 0 := by
+  rw [pubDegree_eq]
+  exact Internal.weightedTotalDegree_C _ a
+
+/-- Constants have private degree zero, `privDegree (C a) = 0`. Mathematical glue.
+
+**Proof sketch.** Specialize `Internal.weightedTotalDegree_C`. -/
+theorem privDegree_C (a : R) :
+    privDegree (MvPolynomial.C a : MvPolynomial (σ ⊕ τ) R) = 0 := by
+  rw [privDegree_eq]
+  exact Internal.weightedTotalDegree_C _ a
+
+/-- Public variables have public degree at most one. Mathematical glue.
+
+**Proof sketch.** Specialize the variable bound at the public indicator. -/
+theorem pubDegree_X_inl (i : σ) :
+    pubDegree (MvPolynomial.X (Sum.inl i) : MvPolynomial (σ ⊕ τ) R) ≤ 1 := by
+  rw [pubDegree_eq]
+  exact Internal.weightedTotalDegree_X_le _ (Sum.inl i)
+
+/-- Private variables have public degree zero. Mathematical glue.
+
+**Proof sketch.** The public indicator is zero on private variables. -/
+theorem pubDegree_X_inr (i : τ) :
+    pubDegree (MvPolynomial.X (Sum.inr i) : MvPolynomial (σ ⊕ τ) R) = 0 := by
+  rw [pubDegree_eq]
+  exact Nat.eq_zero_of_le_zero (Internal.weightedTotalDegree_X_le _ (Sum.inr i))
+
+/-- Public variables have private degree zero. Mathematical glue.
+
+**Proof sketch.** The private indicator is zero on public variables. -/
+theorem privDegree_X_inl (i : σ) :
+    privDegree (MvPolynomial.X (Sum.inl i) : MvPolynomial (σ ⊕ τ) R) = 0 := by
+  rw [privDegree_eq]
+  exact Nat.eq_zero_of_le_zero (Internal.weightedTotalDegree_X_le _ (Sum.inl i))
+
+/-- Private variables have private degree at most one. Mathematical glue.
+
+**Proof sketch.** Specialize the variable bound at the private indicator. -/
+theorem privDegree_X_inr (i : τ) :
+    privDegree (MvPolynomial.X (Sum.inr i) : MvPolynomial (σ ⊕ τ) R) ≤ 1 := by
+  rw [privDegree_eq]
+  exact Internal.weightedTotalDegree_X_le _ (Sum.inr i)
+
+/-- Public degree of a sum is at most the maximum of the public degrees. Mathematical glue.
+
+**Proof sketch.** Specialize `Internal.weightedTotalDegree_add_le`. -/
+theorem pubDegree_add_le (q r : MvPolynomial (σ ⊕ τ) R) :
+    pubDegree (q + r) ≤ max (pubDegree q) (pubDegree r) := by
+  simpa only [pubDegree_eq] using
+    (Internal.weightedTotalDegree_add_le
+      (Sum.elim (fun _ : σ => 1) (fun _ : τ => 0)) q r)
+
+/-- Private degree of a sum is at most the maximum of the private degrees. Mathematical glue.
+
+**Proof sketch.** Specialize `Internal.weightedTotalDegree_add_le`. -/
+theorem privDegree_add_le (q r : MvPolynomial (σ ⊕ τ) R) :
+    privDegree (q + r) ≤ max (privDegree q) (privDegree r) := by
+  simpa only [privDegree_eq] using
+    (Internal.weightedTotalDegree_add_le
+      (Sum.elim (fun _ : σ => 0) (fun _ : τ => 1)) q r)
+
+/-- Public degree of a product is at most the sum of the public degrees. Mathematical glue.
+
+**Proof sketch.** Specialize `Internal.weightedTotalDegree_mul_le`. -/
+theorem pubDegree_mul_le (q r : MvPolynomial (σ ⊕ τ) R) :
+    pubDegree (q * r) ≤ pubDegree q + pubDegree r := by
+  simpa only [pubDegree_eq] using
+    (Internal.weightedTotalDegree_mul_le
+      (Sum.elim (fun _ : σ => 1) (fun _ : τ => 0)) q r)
+
+/-- Private degree of a product is at most the sum of the private degrees. Mathematical glue.
+
+**Proof sketch.** Specialize `Internal.weightedTotalDegree_mul_le`. -/
+theorem privDegree_mul_le (q r : MvPolynomial (σ ⊕ τ) R) :
+    privDegree (q * r) ≤ privDegree q + privDegree r := by
+  simpa only [privDegree_eq] using
+    (Internal.weightedTotalDegree_mul_le
+      (Sum.elim (fun _ : σ => 0) (fun _ : τ => 1)) q r)
+
+/-- Finite sums preserve a uniform public-degree bound. Mathematical glue.
+
+**Proof sketch.** Specialize the weighted finite-sum bound. -/
+theorem pubDegree_finset_sum_le (s : Finset ι) (q : ι → MvPolynomial (σ ⊕ τ) R)
+    (d : ℕ) (h : ∀ i ∈ s, pubDegree (q i) ≤ d) :
+    pubDegree (∑ i ∈ s, q i) ≤ d := by
+  simp only [pubDegree_eq] at h ⊢
+  exact Internal.weightedTotalDegree_finset_sum_le _ s q d h
+
+/-- Finite sums preserve a uniform private-degree bound. Mathematical glue.
+
+**Proof sketch.** Specialize the weighted finite-sum bound. -/
+theorem privDegree_finset_sum_le (s : Finset ι) (q : ι → MvPolynomial (σ ⊕ τ) R)
+    (d : ℕ) (h : ∀ i ∈ s, privDegree (q i) ≤ d) :
+    privDegree (∑ i ∈ s, q i) ≤ d := by
+  simp only [privDegree_eq] at h ⊢
+  exact Internal.weightedTotalDegree_finset_sum_le _ s q d h
+
+/-- Finite products have public degree at most the sum of the public degrees. Mathematical glue.
+
+**Proof sketch.** Specialize the weighted finite-product bound. -/
+theorem pubDegree_finset_prod_le (s : Finset ι) (q : ι → MvPolynomial (σ ⊕ τ) R) :
+    pubDegree (∏ i ∈ s, q i) ≤ ∑ i ∈ s, pubDegree (q i) := by
+  simpa only [pubDegree_eq] using
+    (Internal.weightedTotalDegree_finset_prod_le
+      (Sum.elim (fun _ : σ => 1) (fun _ : τ => 0)) s q)
+
+/-- Finite products have private degree at most the sum of the private degrees. Mathematical glue.
+
+**Proof sketch.** Specialize the weighted finite-product bound. -/
+theorem privDegree_finset_prod_le (s : Finset ι) (q : ι → MvPolynomial (σ ⊕ τ) R) :
+    privDegree (∏ i ∈ s, q i) ≤ ∑ i ∈ s, privDegree (q i) := by
+  simpa only [privDegree_eq] using
+    (Internal.weightedTotalDegree_finset_prod_le
+      (Sum.elim (fun _ : σ => 0) (fun _ : τ => 1)) s q)
+
+/-- Groupwise bijective renaming preserves public degree [JLS26, §4, p. 17].
+Dv15 uses explicit equivalences to transport structured seed indices; mathematical glue.
+
+**Proof sketch.** Use `weightedTotalDegree_rename_of_injective` and the indicators. -/
+theorem pubDegree_rename (e : σ ≃ σ') (f : τ ≃ τ') (q : MvPolynomial (σ ⊕ τ) R) :
+    pubDegree (MvPolynomial.rename (Sum.map e f) q) = pubDegree q := by
+  rw [pubDegree_eq, pubDegree_eq,
+    MvPolynomial.weightedTotalDegree_rename_of_injective
+      (Sum.map_injective.mpr ⟨e.injective, f.injective⟩)]
+  exact congrArg (fun w : σ ⊕ τ → ℕ => q.weightedTotalDegree w)
+    (funext fun v => Sum.casesOn v (fun _ => rfl) (fun _ => rfl))
+
+/-- Groupwise bijective renaming preserves private degree [JLS26, §4, p. 17].
+Dv15 uses explicit equivalences to transport structured seed indices; mathematical glue.
+
+**Proof sketch.** Use `weightedTotalDegree_rename_of_injective` and the indicators. -/
+theorem privDegree_rename (e : σ ≃ σ') (f : τ ≃ τ') (q : MvPolynomial (σ ⊕ τ) R) :
+    privDegree (MvPolynomial.rename (Sum.map e f) q) = privDegree q := by
+  rw [privDegree_eq, privDegree_eq,
+    MvPolynomial.weightedTotalDegree_rename_of_injective
+      (Sum.map_injective.mpr ⟨e.injective, f.injective⟩)]
+  exact congrArg (fun w : σ ⊕ τ → ℕ => q.weightedTotalDegree w)
+    (funext fun v => Sum.casesOn v (fun _ => rfl) (fun _ => rfl))
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed

@@ -1,0 +1,31 @@
+/- NOT_RUN. Proposed area-local Internal helper, dependency candidate03.
+The index I is FIXED, so its generator component is fixed before independence
+is used. The extra fixed bucket/matrix components cause no conditioning gap.
+Uses existing uniform product/relabeling APIs and OneWay.uprob_pi_forall;
+no new independence or finite-uniform product theorem is rederived.
+No new imports, exact?/apply? and elaboration pending root. -/
+
+theorem cond1_repetitions_fixed_index (P : Params) {cLoc : ℕ}
+    (hLoc : P.R.HasLocality cLoc) (κ : ℕ) (pp : PrimeParam κ)
+    (I : P.Idx' κ pp) (hlog : 4 * cLoc ≤ Nat.log 2 (P.n κ)) :
+    uprob (fun reps : Fin κ → (Fin (P.ℓ κ) → ZMod pp.p) ×
+        (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p) =>
+      ∀ k, P.Γ κ <
+        (P.badSet κ pp I (fun i => P.noiseValue κ pp ((reps k).2 i))).card) ≤
+      (4 : ℝ)⁻¹ ^ κ := by
+  classical
+  let Noise := Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p
+  let Secret := Fin (P.ℓ κ) → ZMod pp.p
+  let p : Noise → Prop := fun r => P.Γ κ <
+    (P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))).card
+  let q : Secret × Noise → Prop := fun z => p z.2
+  have hp : uprob p ≤ (4 : ℝ)⁻¹ := ?_
+  swap
+  · rw [← Games.Bridge.prob_sample_eq_uprob p]
+    exact cond1_single_le_quarter P hLoc κ pp I hlog
+  have hq : uprob q = uprob p :=
+    (uprob_comp_equiv (Equiv.prodComm Noise Secret) q).symm.trans
+      (uprob_fst (β := Secret) p)
+  change uprob (fun reps : Fin κ → Secret × Noise => ∀ k, q (reps k)) ≤ _
+  rw [OneWay.uprob_pi_forall, Fintype.card_fin, hq]
+  exact pow_le_pow_left₀ (uprob_nonneg p) hp κ

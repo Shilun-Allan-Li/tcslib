@@ -1,0 +1,9 @@
+by
+  classical
+  rw [P.jointLaw_eq, Games.ProbComp.prob_bind]
+  refine (Games.ProbComp.expect_mono (P.idSamp' κ pp) ?_).trans_eq
+    (Games.ProbComp.expect_const (P.idSamp' κ pp) ((4 : ℝ)⁻¹ ^ κ))
+  intro I
+  rw [Games.ProbComp.prob_eq_expect, Games.ProbComp.expect_map,
+    ← Games.ProbComp.prob_eq_expect]
+  exact cond1_all_fixed_index P hLoc κ pp I hlog

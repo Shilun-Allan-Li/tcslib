@@ -1,0 +1,1764 @@
+Try this:
+  [apply] refine (Real.toNNReal_le_toNNReal_iff_of_pos ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 <
+    (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card).toNNReal ≤
+    (↑cLoc * ↑m / ↑W).toNNReal
+Try this:
+  [apply] refine (Real.toNNReal_le_toNNReal_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ ↑cLoc * ↑m / ↑W
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card).toNNReal ≤
+    (↑cLoc * ↑m / ↑W).toNNReal
+Try this:
+  [apply] refine (ENNReal.ofReal_le_ofReal_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ ↑cLoc * ↑m / ↑W
+  -- ⊢ ENNReal.ofReal
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≤
+    ENNReal.ofReal (↑cLoc * ↑m / ↑W)
+Try this:
+  [apply] refine EReal.coe_le_coe_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≤
+    ↑(↑cLoc * ↑m / ↑W)
+Try this:
+  [apply] refine (Real.sqrt_le_sqrt_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ ↑cLoc * ↑m / ↑W
+  -- ⊢ √((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≤
+    √(↑cLoc * ↑m / ↑W)
+Try this:
+  [apply] refine (Real.sqrt_le_sqrt_iff' ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 <
+    (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+  -- ⊢ √((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≤
+    √(↑cLoc * ↑m / ↑W)
+Try this:
+  [apply] refine Complex.real_le_real.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≤
+    ↑(↑cLoc * ↑m / ↑W)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine RCLike.ofReal_le_ofReal.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Complex.le_of_eq_sum_of_eq_sum_norm ?_ ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Real.exp_le_exp.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Real.exp
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≤
+    Real.exp (↑cLoc * ↑m / ↑W)
+Try this:
+  [apply] refine (Real.log_le_log_iff ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 <
+    (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+  -- ⊢ 0 < ↑cLoc * ↑m / ↑W
+  -- ⊢ Real.log
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≤
+    Real.log (↑cLoc * ↑m / ↑W)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Real.rpow_le_rpow_iff_of_neg ?_ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Real.rpow_le_rpow_iff ?_ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Real.rpow_le_rpow_left_iff_of_base_lt_one ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Real.rpow_le_rpow_left_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (le_div_iff₀ ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑W
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) *
+      ↑W ≤
+    ↑cLoc * ↑m
+Try this:
+  [apply] refine (le_div_comm₀ ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑W
+  -- ⊢ 0 <
+    (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+  -- ⊢ ↑W ≤
+    ↑cLoc * ↑m /
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine (le_div_comm₀ ?_ ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 <
+    (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+  -- ⊢ 0 < ↑W
+  -- ⊢ ↑W ≤
+    ↑cLoc * ↑m /
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine (le_div_iff₀' ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑W
+  -- ⊢ (↑W *
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≤
+    ↑cLoc * ↑m
+Try this:
+  [apply] refine (le_div_iff_of_neg' ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑W < 0
+  -- ⊢ ↑cLoc * ↑m ≤
+    ↑W *
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine (le_div_iff_of_neg ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑W < 0
+  -- ⊢ ↑cLoc * ↑m ≤
+    ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) *
+      ↑W
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_eq_of_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine ge_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑cLoc * ↑m / ↑W ≥
+    (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine ge_iff_le.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≤
+    ↑cLoc * ↑m / ↑W
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_le_of_eq ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.IsPreorder.le_trans
+    ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+    ?_ (↑cLoc * ↑m / ↑W) ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Std.le_of_not_ge ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬↑cLoc * ↑m / ↑W ≤
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine Std.not_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬↑cLoc * ↑m / ↑W <
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine Std.le_of_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) <
+    ↑cLoc * ↑m / ↑W
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.le_trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Option.some_le_some.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ some
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≤
+    some (↑cLoc * ↑m / ↑W)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (List.max?_le_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (List.le_min?_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (isLE_compareOfLessAndEq ?_ ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ {x y : ℝ}, x ≤ y → y ≤ x → x = y
+  -- ⊢ ∀ {x y : ℝ}, ¬x ≤ y ↔ y < x
+  -- ⊢ ∀ (x y : ℝ), x ≤ y ∨ y ≤ x
+  -- ⊢ (compareOfLessAndEq
+        ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+        (↑cLoc * ↑m / ↑W)).isLE =
+    true
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.left_le_left_of_cons_le_cons fun a => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Std.PRange.UpwardEnumerable.le_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Std.PRange.UpwardEnumerable ℝ
+  -- ⊢ Std.PRange.LawfulUpwardEnumerableLE ℝ
+  -- ⊢ Std.PRange.UpwardEnumerable.LE
+    ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+    (↑cLoc * ↑m / ↑W)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Std.PRange.LawfulUpwardEnumerableLE.le_iff
+        ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+        (↑cLoc * ↑m / ↑W)).mpr
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Std.Rxc.size_pos_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Std.Rxc.HasSize ℝ
+  -- ⊢ Std.PRange.UpwardEnumerable ℝ
+  -- ⊢ Std.Rxc.LawfulHasSize ℝ
+  -- ⊢ 0 <
+    Std.Rxc.HasSize.size
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+      (↑cLoc * ↑m / ↑W)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Std.LawfulOrderOrd.isGE_compare (↑cLoc * ↑m / ↑W)
+        ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)).mp
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Std.LawfulOrderOrd.isLE_compare
+        ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+        (↑cLoc * ↑m / ↑W)).mp
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Std.isGE_compare.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Std.LawfulOrderOrd ℝ
+  -- ⊢ (compare (↑cLoc * ↑m / ↑W)
+        ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)).isGE =
+    true
+Try this:
+  [apply] refine Std.isLE_compare.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Std.LawfulOrderOrd ℝ
+  -- ⊢ (compare
+        ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+        (↑cLoc * ↑m / ↑W)).isLE =
+    true
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.LawfulLECmp.ne_lt_iff_ge.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.LawfulBCmp.isLE_iff_le.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.LawfulLECmp.ne_gt_iff_le.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.LawfulLECmp.isLE_iff_le.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.LawfulCmp.isLE_iff_le.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.LawfulLECmp.isGE_iff_ge.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Maximal.le_of_ge ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Minimal.le_of_le ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_le_of_eq'' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_eq_of_le'' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_iff_lt_or_eq'.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) <
+      ↑cLoc * ↑m / ↑W ∨
+    ↑cLoc * ↑m / ↑W =
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Preorder.le_trans
+    ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+    ?_ (↑cLoc * ↑m / ↑W) ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine ge_of_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑cLoc * ↑m / ↑W =
+    (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine le_of_eq_or_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) =
+      ↑cLoc * ↑m / ↑W ∨
+    ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) <
+      ↑cLoc * ↑m / ↑W
+Try this:
+  [apply] refine le_of_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) =
+    ↑cLoc * ↑m / ↑W
+Try this:
+  [apply] refine le_iff_lt_or_eq.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) <
+      ↑cLoc * ↑m / ↑W ∨
+    ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) =
+      ↑cLoc * ↑m / ↑W
+Try this:
+  [apply] refine Decidable.le_iff_lt_or_eq'.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) <
+      ↑cLoc * ↑m / ↑W ∨
+    ↑cLoc * ↑m / ↑W =
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine Decidable.le_iff_lt_or_eq.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) <
+      ↑cLoc * ↑m / ↑W ∨
+    ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) =
+      ↑cLoc * ↑m / ↑W
+Try this:
+  [apply] refine le_of_eq_or_lt' ?_
+  -- Remaining subgoals:
+  -- ⊢ (↑cLoc * ↑m / ↑W =
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ∨
+    ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) <
+      ↑cLoc * ↑m / ↑W
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_of_lt_or_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) <
+      ↑cLoc * ↑m / ↑W ∨
+    ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) =
+      ↑cLoc * ↑m / ↑W
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine ge_trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_of_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) <
+    ↑cLoc * ↑m / ↑W
+Try this:
+  [apply] refine le_of_lt_or_eq' ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) <
+      ↑cLoc * ↑m / ↑W ∨
+    ↑cLoc * ↑m / ↑W =
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine le_of_not_ge ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬↑cLoc * ↑m / ↑W ≤
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine le_of_not_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬↑cLoc * ↑m / ↑W <
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine not_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬↑cLoc * ↑m / ↑W <
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_imp_le_of_lt_imp_lt (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_of_not_le ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬↑cLoc * ↑m / ↑W ≤
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine compare_ge_iff_ge.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compare (↑cLoc * ↑m / ↑W)
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≠
+    Ordering.lt
+Try this:
+  [apply] refine le_of_not_gt ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬↑cLoc * ↑m / ↑W <
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine compare_le_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compare
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+      (↑cLoc * ↑m / ↑W) ≠
+    Ordering.gt
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_eq_of_le' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine forall_lt_imp_le_iff_le_of_dense.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀
+    a <
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card,
+    a ≤ ↑cLoc * ↑m / ↑W
+Try this:
+  [apply] refine le_of_forall_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀
+    c <
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card,
+    c < ↑cLoc * ↑m / ↑W
+Try this:
+  [apply] refine forall_lt_iff_le'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ ⦃c : ℝ⦄,
+    ↑cLoc * ↑m / ↑W < c →
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) <
+        c
+Try this:
+  [apply] refine le_iff_eq_or_lt.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) =
+      ↑cLoc * ↑m / ↑W ∨
+    ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) <
+      ↑cLoc * ↑m / ↑W
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_trans' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine forall_gt_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ ⦃c : ℝ⦄,
+    ↑cLoc * ↑m / ↑W < c →
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) <
+        c
+Try this:
+  [apply] refine LT.lt.le ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) <
+    ↑cLoc * ↑m / ↑W
+Try this:
+  [apply] refine le_update_self_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect ≤
+    Function.update (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect
+      (fun r => ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) (↑cLoc * ↑m / ↑W)
+Try this:
+  [apply] refine Eq.ge ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑cLoc * ↑m / ↑W =
+    (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine Eq.le ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) =
+    ↑cLoc * ↑m / ↑W
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LE.le.trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (LE.le.le_iff_eq ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑cLoc * ↑m / ↑W ≤
+    (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) =
+    ↑cLoc * ↑m / ↑W
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Prod.mk_le_mk_iff_right.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine forall_le_iff_ge.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ ⦃c : ℝ⦄,
+    ↑cLoc * ↑m / ↑W ≤ c →
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≤
+        c
+Try this:
+  [apply] refine le_of_forall_le ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀
+    c ≤
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card,
+    c ≤ ↑cLoc * ↑m / ↑W
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LE.le.trans' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Subtype.mk_le_mk.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine forall_le_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ ⦃c : ℝ⦄,
+    (c ≤
+        (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) →
+      c ≤ ↑cLoc * ↑m / ↑W
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_imp_le_of_le_of_le ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Decidable.ne_iff_lt_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≠
+      ↑cLoc * ↑m / ↑W ↔
+    ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) <
+      ↑cLoc * ↑m / ↑W
+Try this:
+  [apply] refine (LE.le.ge_iff_eq' ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑cLoc * ↑m / ↑W ≤
+    (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) =
+    ↑cLoc * ↑m / ↑W
+Try this:
+  [apply] refine Decidable.le_iff_eq_or_lt.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) =
+      ↑cLoc * ↑m / ↑W ∨
+    ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) <
+      ↑cLoc * ↑m / ↑W
+Try this:
+  [apply] refine forall_lt_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ ⦃c : ℝ⦄,
+    (c <
+        (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) →
+      c < ↑cLoc * ↑m / ↑W
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LE.le.trans_eq' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_le_of_eq' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.const_le_const.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine forall_gt_imp_ge_iff_le_of_dense.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : ℝ),
+    ↑cLoc * ↑m / ↑W < a →
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≤
+        a
+Try this:
+  [apply] refine le_of_forall_lt' ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (c : ℝ),
+    ↑cLoc * ↑m / ↑W < c →
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) <
+        c
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.trans_ge ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_subsingleton)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (LE.le.ge_iff_eq ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑cLoc * ↑m / ↑W ≤
+    (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+  -- ⊢ ↑cLoc * ↑m / ↑W =
+    (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine ne_iff_lt_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≠
+      ↑cLoc * ↑m / ↑W ↔
+    ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) <
+      ↑cLoc * ↑m / ↑W
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.trans_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_of_forall_gt_imp_ge_of_dense ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : ℝ),
+    ↑cLoc * ↑m / ↑W < a →
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≤
+        a
+Try this:
+  [apply] refine le_of_forall_ge ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (c : ℝ),
+    ↑cLoc * ↑m / ↑W ≤ c →
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≤
+        c
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_implies_le_of_le_of_le ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_of_forall_lt_imp_le_of_dense ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀
+    a <
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card,
+    a ≤ ↑cLoc * ↑m / ↑W
+Try this:
+  [apply] refine forall_ge_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ ⦃c : ℝ⦄,
+    ↑cLoc * ↑m / ↑W ≤ c →
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≤
+        c
+Try this:
+  [apply] refine LE.le.ge ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≤
+    ↑cLoc * ↑m / ↑W
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Prod.mk_le_mk_iff_left.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine GE.ge.le ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑cLoc * ↑m / ↑W ≥
+    (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LE.le.trans_eq ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Ne.le_iff_lt ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≠
+    ↑cLoc * ↑m / ↑W
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) <
+    ↑cLoc * ↑m / ↑W
+Try this:
+  [apply] refine le_of_forall_gt ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (c : ℝ),
+    ↑cLoc * ↑m / ↑W < c →
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) <
+        c
+Try this:
+  [apply] refine OrderDual.toDual_le_toDual.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ OrderDual.toDual (↑cLoc * ↑m / ↑W) ≤
+    OrderDual.toDual
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+Try this:
+  [apply] refine ULift.up_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ {
+      down :=
+        (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card } ≤
+    { down := ↑cLoc * ↑m / ↑W }
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Ordering.Compares.ne_lt ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Ordering.Compares.ne_gt ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (le_iff_le_of_cmp_eq_cmp ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (le_iff_le_of_cmp_eq_cmp ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine StrictMono.maximal_of_maximal_image (fun ⦃a⦄ => ?_) ?_
+    ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine StrictMono.minimal_of_minimal_image (fun ⦃a⦄ => ?_) ?_ (↑cLoc * ↑m / ↑W))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine StrictAnti.maximal_of_minimal_image (fun ⦃a⦄ => ?_) ?_
+    ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictMono.le_iff_le fun ⦃a⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictAntiOn.le_iff_le (fun ⦃a⦄ => ?_) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictMonoOn.le_iff_le (fun ⦃a⦄ => ?_) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictAntiOn.le_iff_ge (fun ⦃a⦄ => ?_) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine StrictAnti.minimal_of_maximal_image (fun ⦃a⦄ => ?_) ?_ (↑cLoc * ↑m / ↑W))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictAnti.le_iff_le fun ⦃a⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictAnti.le_iff_ge fun ⦃a⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine right_eq_inf.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) =
+    min (↑cLoc * ↑m / ↑W)
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+Try this:
+  [apply] refine sup_eq_left.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max (↑cLoc * ↑m / ↑W)
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) =
+    ↑cLoc * ↑m / ↑W
+Try this:
+  [apply] refine left_eq_inf.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) =
+    min
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+      (↑cLoc * ↑m / ↑W)
+Try this:
+  [apply] refine le_of_sup_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ max
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+      (↑cLoc * ↑m / ↑W) =
+    ↑cLoc * ↑m / ↑W
+Try this:
+  [apply] refine left_eq_sup.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑cLoc * ↑m / ↑W =
+    max (↑cLoc * ↑m / ↑W)
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+Try this:
+  [apply] refine right_eq_sup.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑cLoc * ↑m / ↑W =
+    max
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+      (↑cLoc * ↑m / ↑W)
+Try this:
+  [apply] refine inf_eq_left.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ min
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+      (↑cLoc * ↑m / ↑W) =
+    (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine le_iff_exists_sup.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ c,
+    ↑cLoc * ↑m / ↑W =
+      max
+        ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+        c
+Try this:
+  [apply] refine inf_eq_right.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ min (↑cLoc * ↑m / ↑W)
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) =
+    (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine sup_eq_right.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+      (↑cLoc * ↑m / ↑W) =
+    ↑cLoc * ↑m / ↑W
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_inf_le_sup_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_of_inf_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ min
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+      (↑cLoc * ↑m / ↑W) =
+    (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsCompl.Antitone ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsCompl.disjoint_left_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsCompl.disjoint_right_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsCompl.right_le_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Codisjoint.left_le_of_le_inf_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsCompl.left_le_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsCompl.inf_left_eq_bot_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Disjoint.left_le_of_le_sup_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsCompl.le_left_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Codisjoint.left_le_of_le_inf_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsCompl.inf_right_eq_bot_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsCompl.le_right_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Disjoint.le_of_codisjoint ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Disjoint.left_le_of_le_sup_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine GaloisConnection.le_u (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (GaloisCoinsertion.l_le_l_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine GaloisConnection.le_u_l_trans ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine GaloisConnection.l_le (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (GaloisInsertion.u_le_u_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (GaloisConnection.le_iff_le fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (GaloisConnection.le_iff_le fun a => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (map_le_map_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (OrderEmbedding.le_iff_le ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (map_inv_le_map_inv_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (OrderIso.le_iff_le ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine min_eq_right_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ min (↑cLoc * ↑m / ↑W)
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) =
+    (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine max_eq_left_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max (↑cLoc * ↑m / ↑W)
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) =
+    ↑cLoc * ↑m / ↑W
+Try this:
+  [apply] refine max_eq_right_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+      (↑cLoc * ↑m / ↑W) =
+    ↑cLoc * ↑m / ↑W
+Try this:
+  [apply] refine min_eq_left_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ min
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+      (↑cLoc * ↑m / ↑W) =
+    (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_max_le_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_max_le_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.mem_Iic.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ∈
+    Set.Iic (↑cLoc * ↑m / ↑W)
+Try this:
+  [apply] refine Set.mem_Ici.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑cLoc * ↑m / ↑W ∈
+    Set.Ici
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine DirectedOn.is_top_of_is_max (fun x => ?_) ?_ ?_
+    ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine DirectedOn.is_bot_of_is_min (fun x => ?_) ?_ ?_ (↑cLoc * ↑m / ↑W) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.head_le_of_lt ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Subsingleton.le
+    ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+    (↑cLoc * ↑m / ↑W))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AddLECancellable.add_le_add_iff_left fun ⦃b⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (add_le_add_iff_left ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℝ
+  -- ⊢ (?_ +
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≤
+    ?_ + ↑cLoc * ↑m / ↑W
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_le_mul_of_le_one_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_le_add_of_nonpos_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_add_le_of_nonneg_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_mul_le_of_one_le_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_le_add_of_nonpos_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_mul_le_mul_right' ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (mul_le_mul_iff_right ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℝ
+  -- ⊢ MulRightMono ℝ
+  -- ⊢ MulRightReflectLE ℝ
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) *
+      ?_ ≤
+    ↑cLoc * ↑m / ↑W * ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_add_le_add_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (mul_le_mul_iff_left ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℝ
+  -- ⊢ MulLeftMono ℝ
+  -- ⊢ MulLeftReflectLE ℝ
+  -- ⊢ (?_ *
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≤
+    ?_ * (↑cLoc * ↑m / ↑W)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (MulLECancellable.mul_le_mul_iff_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_add_le_of_nonneg_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (MulLECancellable.mul_le_mul_iff_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (add_le_add_iff_right ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℝ
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) +
+      ?_ ≤
+    ↑cLoc * ↑m / ↑W + ?_
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (AddLECancellable.add_le_add_iff_right fun ⦃b⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_le_mul_of_le_one_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_add_le_add_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_mul_le_of_one_le_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_mul_le_mul_left' ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_forall_one_lt_lt_mul' ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_iff_exists_nonneg_add.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ c,
+    0 ≤ c ∧
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+            ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) +
+          c =
+        ↑cLoc * ↑m / ↑W
+Try this:
+  [apply] refine le_of_forall_pos_le_add ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (ε : ℝ),
+    0 < ε →
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≤
+        ↑cLoc * ↑m / ↑W + ε
+Try this:
+  [apply] refine le_of_forall_pos_lt_add' ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (ε : ℝ),
+    0 < ε →
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) <
+        ↑cLoc * ↑m / ↑W + ε
+Try this:
+  [apply] refine le_iff_forall_pos_le_add.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (ε : ℝ),
+    0 < ε →
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≤
+        ↑cLoc * ↑m / ↑W + ε
+Try this:
+  [apply] refine le_iff_forall_pos_lt_add'.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (ε : ℝ),
+    0 < ε →
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) <
+        ↑cLoc * ↑m / ↑W + ε
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_forall_one_lt_le_mul ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_iff_forall_one_lt_le_mul.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ExistsMulOfLE ℝ
+  -- ⊢ MulLeftReflectLT ℝ
+  -- ⊢ MulLeftStrictMono ℝ
+  -- ⊢ ∀ (ε : ℝ),
+    1 < ε →
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≤
+        ↑cLoc * ↑m / ↑W * ε
+Try this:
+  [apply] refine le_iff_exists_one_le_mul.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ExistsMulOfLE ℝ
+  -- ⊢ MulLeftMono ℝ
+  -- ⊢ MulLeftReflectLE ℝ
+  -- ⊢ ∃ c,
+    1 ≤ c ∧
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+            ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) *
+          c =
+        ↑cLoc * ↑m / ↑W
+Try this:
+  [apply] refine le_iff_forall_one_lt_lt_mul'.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ExistsMulOfLE ℝ
+  -- ⊢ MulLeftReflectLT ℝ
+  -- ⊢ MulLeftStrictMono ℝ
+  -- ⊢ ∀ (ε : ℝ),
+    1 < ε →
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) <
+        ↑cLoc * ↑m / ↑W * ε
+Try this:
+  [apply] refine tsub_nonpos.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) -
+      ↑cLoc * ↑m / ↑W ≤
+    0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (tsub_le_tsub_iff_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.left_mem_Icc.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ∈
+    Set.Icc
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+      (↑cLoc * ↑m / ↑W)
+Try this:
+  [apply] refine Set.Iic_subset_Iic.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.Iic
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ⊆
+    Set.Iic (↑cLoc * ↑m / ↑W)
+Try this:
+  [apply] refine Set.Ici_subset_Ici.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.Ici (↑cLoc * ↑m / ↑W) ⊆
+    Set.Ici
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+Try this:
+  [apply] refine Set.right_mem_Icc.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑cLoc * ↑m / ↑W ∈
+    Set.Icc
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+      (↑cLoc * ↑m / ↑W)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Set.Icc_subset_Ici_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.subsingleton_Icc_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Set.Icc (↑cLoc * ↑m / ↑W)
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)).Subsingleton
+Try this:
+  [apply] refine Set.nonempty_Icc.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Set.Icc
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+      (↑cLoc * ↑m / ↑W)).Nonempty
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Set.Icc_subset_Iic_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine StrictMono.minimal_preimage_bot (fun ⦃a⦄ => ?_) ?_ (↑cLoc * ↑m / ↑W))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine StrictMono.maximal_preimage_top (fun ⦃a⦄ => ?_) ?_
+    ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsLUB.mono ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine isGLB_le_isLUB ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsGreatest.mono ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsGLB.mono ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_isLUB_le_isGLB ?_ ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (isLUB_le_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (le_isGLB_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lowerBounds_le_upperBounds (fun ⦃a⦄ => ?_) ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine lub_Iio_le (↑cLoc * ↑m / ↑W) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsLeast.mono ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_glb_Ioi
+    ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine WithBot.coe_le_coe.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≤
+    ↑(↑cLoc * ↑m / ↑W)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (WithTop.le_coe ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine WithTop.coe_le_coe.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≤
+    ↑(↑cLoc * ↑m / ↑W)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (WithBot.coe_le ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Finset.min_le_of_eq ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Finset.le_max_of_eq ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine add_neg_nonpos_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) +
+      -(↑cLoc * ↑m / ↑W) ≤
+    0
+Try this:
+  [apply] refine le_neg_add_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤
+    (-(Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) +
+      ↑cLoc * ↑m / ↑W
+Try this:
+  [apply] refine add_neg_nonpos_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) +
+      -(↑cLoc * ↑m / ↑W) ≤
+    0
+Try this:
+  [apply] refine neg_le_neg_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ -(↑cLoc * ↑m / ↑W) ≤
+    -(Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine sub_le_sub_flip.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) -
+      ↑cLoc * ↑m / ↑W ≤
+    ↑cLoc * ↑m / ↑W -
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine div_le_div_flip.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ CommGroup ℝ
+  -- ⊢ MulLeftMono ℝ
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) /
+      (↑cLoc * ↑m / ↑W) ≤
+    ↑cLoc * ↑m / ↑W /
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine (sub_le_sub_iff_right ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℝ
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) -
+      ?_ ≤
+    ↑cLoc * ↑m / ↑W - ?_
+Try this:
+  [apply] refine div_le_inv_mul_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℝ
+  -- ⊢ MulLeftMono ℝ
+  -- ⊢ MulRightMono ℝ
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) /
+      (↑cLoc * ↑m / ↑W) ≤
+    ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)⁻¹ *
+      (↑cLoc * ↑m / ↑W)
+Try this:
+  [apply] refine (sub_le_sub_iff_left ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ℝ
+  -- ⊢ ?_ - ↑cLoc * ↑m / ↑W ≤
+    ?_ -
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine sub_nonneg.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤
+    ↑cLoc * ↑m / ↑W -
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine le_of_sub_nonpos ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) -
+      ↑cLoc * ↑m / ↑W ≤
+    0
+Try this:
+  [apply] refine sub_nonpos.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) -
+      ↑cLoc * ↑m / ↑W ≤
+    0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_forall_one_lt_lt_mul ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (div_le_div_iff_right ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℝ
+  -- ⊢ ℝ
+  -- ⊢ MulRightMono ℝ
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) /
+      ?_ ≤
+    ↑cLoc * ↑m / ↑W / ?_
+Try this:
+  [apply] refine le_of_sub_nonneg ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤
+    ↑cLoc * ↑m / ↑W -
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine mul_inv_le_one_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℝ
+  -- ⊢ MulRightMono ℝ
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) *
+      (↑cLoc * ↑m / ↑W)⁻¹ ≤
+    1
+Try this:
+  [apply] refine le_iff_forall_pos_lt_add.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (ε : ℝ),
+    0 < ε →
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) <
+        ↑cLoc * ↑m / ↑W + ε
+Try this:
+  [apply] refine le_inv_mul_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℝ
+  -- ⊢ MulLeftMono ℝ
+  -- ⊢ 1 ≤
+    ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)⁻¹ *
+      (↑cLoc * ↑m / ↑W)
+Try this:
+  [apply] refine mul_inv_le_one_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℝ
+  -- ⊢ MulRightMono ℝ
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) *
+      (↑cLoc * ↑m / ↑W)⁻¹ ≤
+    1
+Try this:
+  [apply] refine inv_le_inv_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℝ
+  -- ⊢ MulLeftMono ℝ
+  -- ⊢ MulRightMono ℝ
+  -- ⊢ (↑cLoc * ↑m / ↑W)⁻¹ ≤
+    ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)⁻¹
+Try this:
+  [apply] refine le_of_forall_pos_lt_add ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (ε : ℝ),
+    0 < ε →
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) <
+        ↑cLoc * ↑m / ↑W + ε
+Try this:
+  [apply] refine le_of_neg_le_neg ?_
+  -- Remaining subgoals:
+  -- ⊢ -(↑cLoc * ↑m / ↑W) ≤
+    -(Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine sub_le_neg_add_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) -
+      ↑cLoc * ↑m / ↑W ≤
+    (-(Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) +
+      ↑cLoc * ↑m / ↑W
+Try this:
+  [apply] refine inv_mul_le_one_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℝ
+  -- ⊢ MulLeftMono ℝ
+  -- ⊢ ((↑cLoc * ↑m / ↑W)⁻¹ *
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≤
+    1
+Try this:
+  [apply] refine le_iff_forall_one_lt_lt_mul.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℝ
+  -- ⊢ MulLeftMono ℝ
+  -- ⊢ ∀ (ε : ℝ),
+    1 < ε →
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) <
+        ↑cLoc * ↑m / ↑W * ε
+Try this:
+  [apply] refine le_mul_inv_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℝ
+  -- ⊢ MulRightMono ℝ
+  -- ⊢ 1 ≤
+    ↑cLoc * ↑m / ↑W *
+      ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)⁻¹
+Try this:
+  [apply] refine neg_add_nonpos_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (-(↑cLoc * ↑m / ↑W) +
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) ≤
+    0
+Try this:
+  [apply] refine one_le_div'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℝ
+  -- ⊢ MulRightMono ℝ
+  -- ⊢ 1 ≤
+    ↑cLoc * ↑m / ↑W /
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine le_add_neg_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤
+    ↑cLoc * ↑m / ↑W +
+      -(Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+          ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine (div_le_div_iff_left ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℝ
+  -- ⊢ ℝ
+  -- ⊢ MulLeftMono ℝ
+  -- ⊢ MulRightMono ℝ
+  -- ⊢ ?_ / (↑cLoc * ↑m / ↑W) ≤
+    ?_ /
+      (Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card
+Try this:
+  [apply] refine div_le_one'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Group ℝ
+  -- ⊢ MulRightMono ℝ
+  -- ⊢ ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+        ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card) /
+      (↑cLoc * ↑m / ↑W) ≤
+    1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsOrderedCancelAddMonoid.le_of_add_le_add_right ?_
+    ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+    (↑cLoc * ↑m / ↑W) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsOrderedCancelAddMonoid.le_of_add_le_add_left ?_
+    ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+    (↑cLoc * ↑m / ↑W) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsOrderedCancelMonoid.le_of_mul_le_mul_left ?_
+    ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+    (↑cLoc * ↑m / ↑W) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsOrderedCancelMonoid.le_of_mul_le_mul_right ?_
+    ((Games.ProbComp.sample (Fin n → Fin W × ZMod p)).expect fun r =>
+      ↑{j | (vars j ∩ {i | ↑(if (r i).1 = 0 then ↑(r i).2.val else 0) ≠ 0}).Nonempty}.card)
+    (↑cLoc * ↑m / ↑W) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine OrderedCommGroup.le_of_add_le_add_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine OrderedCommGroup.le_of_mul_le_mul_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_nsmul_le_nsmul_right (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_pow_le_pow_left' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pow_le_pow_iff_left ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (nsmul_le_nsmul_iff_right fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_mabs_le ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+/private/tmp/io-sprg-overlap/M3Load_badSet_expect_le_core-apply.lean:1:1: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (100000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.

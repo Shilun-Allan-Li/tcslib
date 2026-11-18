@@ -1,0 +1,236 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Claim42.Defs
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Numeric bucket and exponential bounds for Claim 4.2
+
+## Main definitions
+
+None. This file hosts theorem-only arithmetic and finite-load consequences.
+
+## Main results
+
+The `Internal` helpers bound the exact rounded bucket count, its
+polynomial prefactor, and the sparse/full bucket tails.
+
+
+## References
+
+* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
+  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026,
+  proof of Claim 4.2, pp. 19-21.
+* [PS10] R. Pass, A. Shelat, *A Course in Cryptography*, 2010, Definition 26.8.
+-/
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal
+
+
+/-- The rounded bucket count satisfies `B κ ≤ m κ * κ + 1`; glue for the JLS allocation. [JLS26,
+proof of Claim 4.2, pp. 20-21]. This is theorem-only analytic glue; no sampling or
+efficiency construction is introduced.
+
+**Proof sketch.** Read the rounded quotient, apply the public natural-division bound, and
+use W≥1. -/
+theorem bucket_count_upper (P : Params) (κ : ℕ) :
+    P.B κ ≤ P.m κ * κ + 1 := by
+  rw [P.B_eq, P.t_eq, max_le_iff]
+  refine ⟨Nat.succ_le_succ (Nat.zero_le _), ?_⟩
+  rw [Nat.div_le_iff_le_mul_add_pred (P.W_pos κ), Nat.mul_add, Nat.mul_one]
+  exact (Nat.sub_le (P.m κ * κ + P.W κ) 1).trans
+    ((Nat.add_le_add_right
+      (Nat.le_mul_of_pos_left (P.m κ * κ) (P.W_pos κ)) (P.W κ)).trans
+      (Nat.le_add_right _ (P.W κ - 1)))
+
+/-- The rounded bucket count covers the allocation: `m κ * κ ≤ B κ * W κ`; glue. [JLS26, proof
+of Claim 4.2, pp. 20-21]. This is theorem-only analytic glue; no sampling or efficiency
+construction is introduced.
+
+**Proof sketch.** Apply the public strict quotient bound, clear its additive rounding term,
+then use the max bound. -/
+theorem bucket_count_lower (P : Params) (κ : ℕ) :
+    P.m κ * κ ≤ P.B κ * P.W κ := by
+  have hW := P.W_pos κ
+  have hround := Nat.lt_mul_div_succ
+    (P.m κ * κ + P.W κ - 1) hW
+  rw [Nat.mul_add, Nat.mul_one] at hround
+  have hceil : P.m κ * κ ≤
+      P.W κ * ((P.m κ * κ + P.W κ - 1) / P.W κ) := ?_
+  swap
+  · omega
+  have hB : (P.m κ * κ + P.W κ - 1) / P.W κ ≤ P.B κ := ?_
+  swap
+  · rw [P.B_eq, P.t_eq]
+    exact le_max_right _ _
+  exact hceil.trans ((Nat.mul_le_mul_left (P.W κ) hB).trans_eq
+    (Nat.mul_comm (P.W κ) (P.B κ)))
+
+/-- The construction prefactor `(κ+1)*B κ+1` is eventually at most `2^κ`. [JLS26, proof of Claim
+4.2, pp. 20-21]. This is theorem-only analytic glue; no sampling or efficiency construction
+is introduced.
+
+**Proof sketch.** Bound the prefactor by the stored output polynomial. Apply
+PolyExpr.eval_le and the existing polynomial-over-exponential limit, then choose a common
+cutoff. -/
+theorem prefactor_eventually_le_two_pow (P : Params) :
+    ∃ κ₀, ∀ κ ≥ κ₀, (((κ + 1) * P.B κ + 1 : ℕ) : ℝ) ≤ (2 : ℝ) ^ κ := by
+  let q : Complexity.PolyExpr :=
+    .add (.mul (.add .var (.const 1))
+      (.add (.mul (P.G.outBound.subst (.pow .var (P.E * P.D))) .var)
+        (.const 1))) (.const 1)
+  have hq : ∀ κ, (κ + 1) * P.B κ + 1 ≤ q.eval κ := ?_
+  swap
+  · intro κ
+    have hn : (Complexity.PolyExpr.pow .var (P.E * P.D)).eval κ = P.n κ := ?_
+    swap
+    · rw [Complexity.PolyExpr.eval_pow, Complexity.PolyExpr.eval_var,
+        P.n_eq, P.ℓ_eq, pow_mul]
+    have hm : P.m κ ≤ (P.G.outBound.subst (.pow .var (P.E * P.D))).eval κ := ?_
+    swap
+    · rw [Complexity.PolyExpr.eval_subst, hn, P.m_eq]
+      exact P.G.outLen_le (P.n κ)
+    have hb := (bucket_count_upper P κ).trans
+      (Nat.add_le_add_right (Nat.mul_le_mul_right κ hm) 1)
+    simpa only [q, Complexity.PolyExpr.eval_add, Complexity.PolyExpr.eval_mul,
+      Complexity.PolyExpr.eval_var, Complexity.PolyExpr.eval_const] using
+      Nat.add_le_add_right (Nat.mul_le_mul_left (κ + 1) hb) 1
+  obtain ⟨C, c, hnorm⟩ := Complexity.PolyExpr.eval_le q
+  have hlim : Filter.Tendsto
+      (fun κ : ℕ => (2 * (C : ℝ)) * (((κ + 1 : ℕ) : ℝ) ^ c /
+        (2 : ℝ) ^ (κ + 1))) Filter.atTop (nhds 0) := ?_
+  swap
+  · simpa only [mul_zero] using
+      (((tendsto_pow_const_div_const_pow_of_one_lt c
+        (r := (2 : ℝ)) one_lt_two).comp
+        (Filter.tendsto_add_atTop_nat 1)).const_mul (2 * (C : ℝ)))
+  obtain ⟨κ₀, hκ₀⟩ :=
+    Filter.eventually_atTop.mp (hlim.eventually_le_const zero_lt_one)
+  refine ⟨κ₀, ?_⟩
+  intro κ hκ
+  have hr := hκ₀ κ hκ
+  rw [← mul_div_assoc, div_le_iff₀ (pow_pos zero_lt_two (κ + 1))] at hr
+  simp only [one_mul, pow_succ] at hr
+  have hb : (((κ + 1) * P.B κ + 1 : ℕ) : ℝ) ≤
+      (C : ℝ) * (((κ + 1 : ℕ) : ℝ) ^ c) := ?_
+  swap
+  · exact_mod_cast ((hq κ).trans (hnorm κ))
+  nlinarith
+
+/-- For positive B,r with `4*exp(1)*N ≤ B*r` and `κ ≤ r`, the ratio `choose(N,r)/B^r` is at most
+`4⁻¹^κ`. [JLS26, proof of Claim 4.2, pp. 20-21]. This is theorem-only analytic glue; no
+sampling or efficiency construction is introduced.
+
+**Proof sketch.** Use binomial_bound once, divide the resulting power by B^r, bound its base
+by 1/4, then lower the exponent using the public ordered-power lemma. -/
+theorem binomial_ratio_quarter (N B r κ : ℕ) (hB : 0 < B) (hr : 0 < r)
+    (hbase : 4 * Real.exp 1 * (N : ℝ) ≤ (B : ℝ) * r) (hκ : κ ≤ r) :
+    (Nat.choose N r : ℝ) / (B : ℝ) ^ r ≤ (4 : ℝ)⁻¹ ^ κ := by
+  have hBr : (0 : ℝ) < (B : ℝ) * r :=
+    mul_pos (Nat.cast_pos.mpr hB) (Nat.cast_pos.mpr hr)
+  have hnum : (0 : ℝ) ≤ Real.exp 1 * (N : ℝ) :=
+    mul_nonneg (Real.exp_pos 1).le (Nat.cast_nonneg N)
+  have hratio : Real.exp 1 * (N : ℝ) / ((B : ℝ) * r) ≤ (4 : ℝ)⁻¹ := ?_
+  swap
+  · apply (div_le_iff₀ hBr).2
+    nlinarith
+  refine (div_le_div_of_nonneg_right (binomial_bound N r hr)
+    (pow_nonneg (Nat.cast_nonneg B) r)).trans ?_
+  calc
+    (Real.exp 1 * (N : ℝ) / r) ^ r / (B : ℝ) ^ r =
+        (Real.exp 1 * (N : ℝ) / ((B : ℝ) * r)) ^ r := ?_
+    _ ≤ (4 : ℝ)⁻¹ ^ r :=
+      pow_le_pow_left₀ (div_nonneg hnum hBr.le) hratio r
+    _ ≤ (4 : ℝ)⁻¹ ^ κ := ?_
+  · rw [← div_pow, div_div, mul_comm (r : ℝ) (B : ℝ)]
+  · apply pow_le_pow_of_le_one _ _ hκ <;> norm_num
+
+/-- For κ≥12 and Γ κ≤B κ, every fixed set of size at most Γ κ has some overloaded bucket with
+probability at most `B κ * 4⁻¹^κ`. [JLS26, proof of Claim 4.2, pp. 20-21]. This is theorem-
+only analytic glue; no sampling or efficiency construction is introduced.
+
+**Proof sketch.** Use the exact finite bucket-tail bound. The cardinality and bucket
+hypotheses give the base inequality for binomial_ratio_quarter at r=κ+1. -/
+theorem smallset_bucket_tail_quarter (P : Params) (κ : ℕ)
+    (S : Finset (Fin (P.m κ))) (hκ : 12 ≤ κ)
+    (hS : S.card ≤ P.Γ κ) (hΓ : P.Γ κ ≤ P.B κ) :
+    uprob (fun φ : Fin (P.m κ) → Fin (P.B κ) =>
+      ∃ b, κ < (Buckets.bucket φ b ∩ S).card) ≤
+        (P.B κ : ℝ) * (4 : ℝ)⁻¹ ^ κ := by
+  have he : 4 * Real.exp 1 ≤ (12 : ℝ) := ?_
+  swap
+  · nlinarith [Real.exp_one_lt_d9]
+  have hSB : (S.card : ℝ) ≤ P.B κ := ?_
+  swap
+  · exact_mod_cast (hS.trans hΓ)
+  have hκR : (12 : ℝ) ≤ ((κ + 1 : ℕ) : ℝ) := ?_
+  swap
+  · exact_mod_cast (hκ.trans (Nat.le_add_right κ 1))
+  have hbase : 4 * Real.exp 1 * (S.card : ℝ) ≤
+      (P.B κ : ℝ) * ((κ + 1 : ℕ) : ℝ) := ?_
+  swap
+  · calc
+      _ ≤ 12 * (S.card : ℝ) :=
+        mul_le_mul_of_nonneg_right he (Nat.cast_nonneg S.card)
+      _ ≤ 12 * (P.B κ : ℝ) := mul_le_mul_of_nonneg_left hSB (Nat.cast_nonneg 12)
+      _ = (P.B κ : ℝ) * 12 := mul_comm _ _
+      _ ≤ _ := mul_le_mul_of_nonneg_left hκR (Nat.cast_nonneg _)
+  exact (some_bucket_tail S κ).trans
+    (mul_le_mul_of_nonneg_left
+      (binomial_ratio_quarter S.card (P.B κ) (κ + 1) κ
+        (P.B_pos κ) (Nat.succ_pos κ) hbase (Nat.le_add_right κ 1))
+      (Nat.cast_nonneg _))
+
+/-- For κ≥12, uniform placement exceeds the rounded capacity in some bucket with probability at
+most `B κ * 4⁻¹^κ`. [JLS26, proof of Claim 4.2, pp. 20-21]. This is theorem-only analytic
+glue; no sampling or efficiency construction is introduced.
+
+**Proof sketch.** Use the full-load bound, bucket_count_lower and the capacity reader to
+verify the base inequality, then apply binomial_ratio_quarter. -/
+theorem capacity_bucket_tail_quarter (P : Params) (κ : ℕ) (hκ : 12 ≤ κ) :
+    uprob (fun φ : Fin (P.m κ) → Fin (P.B κ) =>
+      ∃ b, P.cap κ < Buckets.load φ b) ≤
+        (P.B κ : ℝ) * (4 : ℝ)⁻¹ ^ κ := by
+  have hκpos : 0 < κ := ?_
+  swap
+  · omega
+  have hcap : P.cap κ = κ ^ 2 * P.W κ := ?_
+  swap
+  · rw [P.cap_eq, P.rc_eq, P.t_eq, P.W_eq, mul_pow]
+  have hWcap : P.W κ ≤ P.cap κ := ?_
+  swap
+  · rw [hcap]
+    exact Nat.le_mul_of_pos_left _ (pow_pos hκpos 2)
+  have hκcap : κ ≤ P.cap κ := ?_
+  swap
+  · rw [hcap]
+    exact (Nat.le_self_pow two_ne_zero κ).trans
+      (Nat.le_mul_of_pos_right (κ ^ 2) (P.W_pos κ))
+  have hnat : 12 * P.m κ ≤ P.B κ * (P.cap κ + 1) := ?_
+  swap
+  · calc
+      12 * P.m κ ≤ κ * P.m κ := Nat.mul_le_mul_right _ hκ
+      _ = P.m κ * κ := Nat.mul_comm _ _
+      _ ≤ P.B κ * P.W κ := bucket_count_lower P κ
+      _ ≤ P.B κ * (P.cap κ + 1) := Nat.mul_le_mul_left _
+        (hWcap.trans (Nat.le_add_right (P.cap κ) 1))
+  have he : 4 * Real.exp 1 ≤ (12 : ℝ) := ?_
+  swap
+  · nlinarith [Real.exp_one_lt_d9]
+  have hbase : 4 * Real.exp 1 * (P.m κ : ℝ) ≤
+      (P.B κ : ℝ) * ((P.cap κ + 1 : ℕ) : ℝ) := ?_
+  swap
+  · refine (mul_le_mul_of_nonneg_right he (Nat.cast_nonneg _)).trans ?_
+    exact_mod_cast hnat
+  exact (some_full_bucket_tail (m := P.m κ) (B := P.B κ) (P.cap κ)).trans
+    (mul_le_mul_of_nonneg_left
+      (binomial_ratio_quarter (P.m κ) (P.B κ) (P.cap κ + 1) κ
+        (P.B_pos κ) (Nat.succ_pos _) hbase
+        (hκcap.trans (Nat.le_add_right (P.cap κ) 1))) (Nat.cast_nonneg _))
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal

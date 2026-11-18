@@ -1,0 +1,31 @@
+--- /Users/seyoonr/.codex/worktrees/io-sprg/tcslib-exchange/evidence/tools/io-sprg-rule10/mkctl_iosprg.py
++++ /private/tmp/io-sprg-proof-notes/tmpFinalAuditToolsV2/io-sprg-rule10/mkctl_iosprg.py
+@@ -8,7 +8,7 @@
+ sys.dont_write_bytecode=True
+ ap=argparse.ArgumentParser();ap.add_argument('tools');ap.add_argument('sealdir')
+ ap.add_argument('worktree');ap.add_argument('probe_subdir');ap.add_argument('outdir')
+-ap.add_argument('--static-plan',default=str(Path(__file__).with_name('static-plan.json')))
++ap.add_argument('--static-plan',required=True)
+ a=ap.parse_args();wt=Path(a.worktree).resolve();out=Path(a.outdir).resolve();out.mkdir(parents=True,exist_ok=True)
+ static=json.loads(Path(a.static_plan).read_text())
+ assert str(wt)==static['root'],'static inventory belongs to another worktree'
+@@ -35,6 +35,10 @@
+ 
+ recs=[json.loads(p.read_text()) for p in sorted(Path(a.sealdir).glob('Seal*_*.json'))]
+ assert recs,'no completed seal records'
++assert len(recs)==len(static['owners']) and {r['module'] for r in recs}==set(static['owners']),'seal/static owner set differs'
++source_hashes={r['file']:r['sha256'] for r in static['files']}
++for r in recs:
++ assert r['rev']==static['head'] and r['source_sha256']==source_hashes[r['source']],'seal/static revision or source differs'
+ letters=sorted({r['label'].split('_')[0][-1]for r in recs})
+ candidates=[];issues=[];excluded=[]
+ requested_all={x['spelling']for r in recs for x in r['rows']}
+@@ -78,7 +82,7 @@
+   label=('ControlS_'if sealed else'ControlU_')+rec['label'][4:]
+   src=f'import Lean\nimport {rec["module"]}\n\nset_option maxHeartbeats 0\nset_option maxRecDepth 65536\nset_option autoImplicit false\nset_option relaxedAutoImplicit false\n\n'.encode()
+   if sealed:src+=bs.seal_command(label,rec['rows'],end=False)
+-  src+=Path(__file__).with_name('reader_rfl_elaborator.lean.txt').read_bytes()
++  src+=(wt/'evidence/tools/io-sprg-rule10/reader_rfl_elaborator.lean.txt').read_bytes()
+   src+=b'namespace StructuredSeedSensitivity\n\n';expect=[]
+   for ix,row in items:
+    for negative in [True,False]:

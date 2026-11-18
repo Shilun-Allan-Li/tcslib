@@ -1,0 +1,12 @@
+import TCSlib.Cryptography.Foundations.Probability
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography
+
+example {A : Type} [Fintype A] (h : A = A) (p : A → Prop) :
+    uprob (fun c : A => p (cast h c)) = uprob p := by
+  apply?

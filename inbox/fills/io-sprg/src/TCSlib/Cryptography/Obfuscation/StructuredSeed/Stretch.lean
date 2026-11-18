@@ -189,7 +189,9 @@ theorem seedBitsAt_le (P : Params) :
     nlinarith
   have hbits := Nat.mul_le_mul_right K hcount
   rw [P.seedBitsAt_eq]
-  convert hbits using 1 <;> dsimp only [K, X, a] <;> ring
+  convert hbits using 1
+  dsimp only [K, X, a]
+  ring
 
 end Params
 
@@ -295,7 +297,7 @@ theorem eventually_seed_relative_gap (P : Params) {τ ε : ℝ}
           (half_pos (Real.rpow_pos_of_pos hxpos b)) hw
       _ = 2 * (P.m κ : ℝ) * x ^ (-b) := ?_
     rw [Real.rpow_neg hx0]
-    field_simp [(Real.rpow_pos_of_pos hxpos b).ne'] <;> ring
+    field_simp [(Real.rpow_pos_of_pos hxpos b).ne']
   have hexp : 5 + a ≤ a * τ + (-2 * ε) := ?_
   swap
   · linarith
@@ -460,7 +462,7 @@ theorem jls_hasPolyStretch (P : Params) (π : PrimeSchedule) {τ : ℝ} (hτ : 1
   have hNη : (((c + 1 : ℕ) : ℝ)) * η = ε / 2 := ?_
   swap
   · dsimp only [η]
-    field_simp [hN.ne'] <;> ring
+    field_simp [hN.ne']
   have hcη : (c : ℝ) * η ≤ ε / 2 := ?_
   swap
   · push_cast at hNη

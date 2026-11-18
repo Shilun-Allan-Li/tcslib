@@ -1,0 +1,26 @@
+/- NOT_RUN. Proposed area-local Internal helper, dependency candidate04.
+No independent-conditioning axiom: the original Boolean seed is discarded
+using uniform-product relabeling/fst, then the fixed-index tuple bound applies.
+The only syntax-sensitive part is transport through the published sdCore_draw
+and draw type readers under opaque-owner seals. No Lean/probe ran. -/
+
+theorem cond1_all_fixed_index (P : Params) {cLoc : ℕ}
+    (hLoc : P.R.HasLocality cLoc) (κ : ℕ) (pp : PrimeParam κ)
+    (I : P.Idx' κ pp) (hlog : 4 * cLoc ≤ Nat.log 2 (P.n κ)) :
+    Games.ProbComp.prob (P.sdSampFull κ pp I)
+      (fun x => ∀ k, P.Cond1 κ pp I x.draw k) ≤ (4 : ℝ)⁻¹ ^ κ := by
+  classical
+  rw [P.sdSampFull_eq, Games.ProbComp.prob_eq_expect, Games.ProbComp.expect_map,
+    ← Games.ProbComp.prob_eq_expect, Games.Bridge.prob_sample_eq_uprob]
+  simp_rw [P.sdCore_draw, P.cond1_iff]
+  let Seed := Fin (P.n κ) → Bool
+  let Rep := (Fin (P.ℓ κ) → ZMod pp.p) ×
+    (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
+  let p : (Fin κ → Rep) → Prop := fun reps => ∀ k, P.Γ κ <
+    (P.badSet κ pp I (fun i => P.noiseValue κ pp ((reps k).2 i))).card
+  change uprob (fun d : Seed × (Fin κ → Rep) => p d.2) ≤ _
+  have heq : uprob (fun d : Seed × (Fin κ → Rep) => p d.2) = uprob p :=
+    (uprob_comp_equiv (Equiv.prodComm (Fin κ → Rep) Seed)
+      (fun d : Seed × (Fin κ → Rep) => p d.2)).symm.trans
+      (uprob_fst (β := Seed) p)
+  exact heq.le.trans (cond1_repetitions_fixed_index P hLoc κ pp I hlog)

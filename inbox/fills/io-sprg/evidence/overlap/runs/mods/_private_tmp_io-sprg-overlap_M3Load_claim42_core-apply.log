@@ -1,0 +1,196 @@
+Try this:
+  [apply] refine Nat.or_exists_add_one.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (∀ κ ≥ 0, ∀ (pp : PP κ), err κ pp ≤ 2⁻¹ ^ κ) ∨ ∃ n, ∀ κ ≥ n + 1, ∀ (pp : PP κ), err κ pp ≤ 2⁻¹ ^ κ
+Try this:
+  [apply] refine Set.nonempty_iInter.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (⋂ i, fun x => i ≥ x → ∀ (pp : PP i), err i pp ≤ 2⁻¹ ^ i).Nonempty
+Try this:
+  [apply] refine Filter.mem_atTop_sets.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (fun b => ∀ (pp : PP b), err b pp ≤ 2⁻¹ ^ b) ∈ Filter.atTop
+Try this:
+  [apply] refine Filter.eventually_atTop.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ᶠ (x : ℕ) in Filter.atTop, ∀ (pp : PP x), err x pp ≤ 2⁻¹ ^ x
+Try this:
+  [apply] refine Filter.Eventually.exists_forall_of_atTop ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ᶠ (x : ℕ) in Filter.atTop, ∀ (pp : PP x), err x pp ≤ 2⁻¹ ^ x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Filter.HasAntitoneBasis.mem_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine exists_subset_nhds_of_isCompact' ?_ ?_ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ Directed (fun x1 x2 => x1 ⊇ x2) Nat.le
+  -- ⊢ ∀ (i : ℕ), IsCompact i.le
+  -- ⊢ ∀ (i : ℕ), IsClosed i.le
+  -- ⊢ ∀ x ∈ ⋂ i, i.le, (fun a => ∀ (pp : PP a), err a pp ≤ 2⁻¹ ^ a) ∈ nhds x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine exists_subset_nhds_of_compactSpace ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine exists_subset_nhds_of_isCompact ?_ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ Directed (fun x1 x2 => x1 ⊇ x2) Nat.le
+  -- ⊢ ∀ (i : ℕ), IsCompact i.le
+  -- ⊢ ∀ x ∈ ⋂ i, i.le, (fun a => ∀ (pp : PP a), err a pp ≤ 2⁻¹ ^ a) ∈ nhds x
+Try this:
+  [apply] refine Filter.isCobounded_bot.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Filter.IsCobounded (fun b x => x ≥ b → ∀ (pp : PP x), err x pp ≤ 2⁻¹ ^ x) ⊥
+Try this:
+  [apply] refine Filter.isBounded_top.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Filter.IsBounded (fun x t => x ≥ t → ∀ (pp : PP x), err x pp ≤ 2⁻¹ ^ x) ⊤
+Try this:
+  [apply] refine Subtype.existsOfSubtype ?_
+  -- Remaining subgoals:
+  -- ⊢ { x // ∀ κ ≥ x, ∀ (pp : PP κ), err κ pp ≤ 2⁻¹ ^ κ }
+Try this:
+  [apply] refine Subtype.exists_of_subtype ?_
+  -- Remaining subgoals:
+  -- ⊢ { x // ∀ κ ≥ x, ∀ (pp : PP κ), err κ pp ≤ 2⁻¹ ^ κ }
+Try this:
+  [apply] refine Exists.intro ?_ fun κ => ?_
+  -- Remaining subgoals:
+  -- ⊢ ℕ
+  -- ⊢ ∀ κ ≥ ?_, ∀ (pp : PP κ), err κ pp ≤ 2⁻¹ ^ κ
+  -- ⊢ _fvar.69230 ≥ ?_ → ∀ (pp : PP _fvar.69230), err _fvar.69230 pp ≤ 2⁻¹ ^ _fvar.69230
+  -- ⊢ ∀ (pp : PP _fvar.69230), err _fvar.69230 pp ≤ 2⁻¹ ^ _fvar.69230
+  -- ⊢ err _fvar.69230 _fvar.69427 ≤ 2⁻¹ ^ _fvar.69230
+Try this:
+  [apply] refine Exists.of_psigma_prop ?_
+  -- Remaining subgoals:
+  -- ⊢ (x : ℕ) ×' ∀ κ ≥ x, ∀ (pp : PP κ), err κ pp ≤ 2⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Exists.imp (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists_congr fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists_congr fun a => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Exists.imp' ?_ (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Decidable.not_forall_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Decidable (∃ x, ∀ κ ≥ x, ∀ (pp : PP κ), err κ pp ≤ 2⁻¹ ^ κ)
+  -- ⊢ ¬∀ (x : ℕ), ¬∀ κ ≥ x, ∀ (pp : PP κ), err κ pp ≤ 2⁻¹ ^ κ
+Try this:
+  [apply] refine Classical.not_forall_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬∀ (x : ℕ), ¬∀ κ ≥ x, ∀ (pp : PP κ), err κ pp ≤ 2⁻¹ ^ κ
+Try this:
+  [apply] refine not_forall_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬∀ (x : ℕ), ¬∀ κ ≥ x, ∀ (pp : PP κ), err κ pp ≤ 2⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine exists_of_exists_mem ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine existsUnique_iff_exists.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Subsingleton ℕ
+  -- ⊢ ∃! x, ∀ κ ≥ x, ∀ (pp : PP κ), err κ pp ≤ 2⁻¹ ^ κ
+Try this:
+  [apply] refine ExistsUnique.exists ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃! x, ∀ κ ≥ x, ∀ (pp : PP κ), err κ pp ≤ 2⁻¹ ^ κ
+Try this:
+  [apply] refine nonempty_subtype.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Nonempty { a // ∀ κ ≥ a, ∀ (pp : PP κ), err κ pp ≤ 2⁻¹ ^ κ }
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Surjective.exists fun b => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine IsEmpty.exists_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ IsEmpty ℕ
+  -- ⊢ False
+Try this:
+  [apply] refine Unique.exists_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Unique ℕ
+  -- ⊢ ∀ κ ≥ default, ∀ (pp : PP κ), err κ pp ≤ 2⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr_left ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr ?_ fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr ?_ fun a => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr' ?_ fun b => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr' ?_ fun b => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_subtype_congr ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_subtype_congr ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists_le_and_iff_exists ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists_ge_and_iff_exists ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Filter.Frequently.exists fun a => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Filter.Eventually.exists ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Filter.frequently_top.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ᶠ (x : ℕ) in ⊤, ∀ κ ≥ x, ∀ (pp : PP κ), err κ pp ≤ 2⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Filter.HasBasis.ex_mem ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Filter.IsBasis.nonempty ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+/private/tmp/io-sprg-overlap/M3Load_claim42_core-apply.lean:12:0: warning: declaration uses 'sorry'
+/private/tmp/io-sprg-overlap/M3Load_claim42_core-apply.lean:15:5: warning: unused variable `hparts`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/private/tmp/io-sprg-overlap/M3Load_claim42_core-apply.lean:20:5: warning: unused variable `hpoly`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

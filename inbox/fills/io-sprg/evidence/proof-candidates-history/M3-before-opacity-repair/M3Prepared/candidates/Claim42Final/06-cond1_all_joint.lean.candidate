@@ -1,0 +1,19 @@
+/- NOT_RUN. Proposed area-local Internal helper, dependency candidate05.
+Averages the UNIFORM fixed-index upper bound over the ACTUAL idSamp' law.
+Does not assume generator indices are uniform or Cond1 is independent after
+index averaging. Uses existing prob_bind/expect_map/expect_mono/expect_const.
+No new imports or sampler. exact?/apply? and elaboration pending root. -/
+
+theorem cond1_all_joint (P : Params) {cLoc : ℕ}
+    (hLoc : P.R.HasLocality cLoc) (κ : ℕ) (pp : PrimeParam κ)
+    (hlog : 4 * cLoc ≤ Nat.log 2 (P.n κ)) :
+    Games.ProbComp.prob (P.jointLaw κ pp)
+      (fun x => ∀ k, P.Cond1 κ pp x.1 x.2.draw k) ≤ (4 : ℝ)⁻¹ ^ κ := by
+  classical
+  rw [P.jointLaw_eq, Games.ProbComp.prob_bind]
+  refine (Games.ProbComp.expect_mono (P.idSamp' κ pp) ?_).trans_eq
+    (Games.ProbComp.expect_const (P.idSamp' κ pp) ((4 : ℝ)⁻¹ ^ κ))
+  intro I
+  rw [Games.ProbComp.prob_eq_expect, Games.ProbComp.expect_map,
+    ← Games.ProbComp.prob_eq_expect]
+  exact cond1_all_fixed_index P hLoc κ pp I hlog

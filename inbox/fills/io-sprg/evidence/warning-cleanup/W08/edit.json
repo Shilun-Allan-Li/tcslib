@@ -1,0 +1,18 @@
+{
+ "id": "W08",
+ "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean",
+ "theorem": "jls_hasPolyStretch",
+ "lines": [
+  463,
+  463
+ ],
+ "before": "    field_simp [hN.ne'] <;> ring",
+ "after": "    field_simp [hN.ne']",
+ "reason": "field_simp already closes the eta identity; remove unreachable/no-op ring.",
+ "before_sha256": "c0399a3657af61075087591a757f974281c03088c22e296794699d5f12769b48",
+ "after_sha256": "065377b877435c8c77fa6af9ad0e32b5dfad186e3d3b2422f1be36bc617d65df",
+ "status": "COMBINED_FINAL_OWNER_CHECKED_PASS",
+ "final_owner_source_sha256": "065377b877435c8c77fa6af9ad0e32b5dfad186e3d3b2422f1be36bc617d65df",
+ "check": "evidence/build/M3/opacity-warning-repair-v2/results.jsonl",
+ "qualification": "Final combined owner with all selected cleanup edits checked; intermediate individual files are retained without claiming separate checks."
+}

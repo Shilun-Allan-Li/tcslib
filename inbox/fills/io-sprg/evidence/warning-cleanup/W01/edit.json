@@ -1,0 +1,17 @@
+{
+ "id": "W01",
+ "file": "TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean",
+ "theorem": "lpnNoise_law",
+ "lines": [
+  107
+ ],
+ "before": "      by_cases ha : c.1 = 0 <;> simp [ha, hz, Ne.symm hz]",
+ "after": "      by_cases ha : c.1 = 0 <;> simp [ha, Ne.symm hz]",
+ "reason": "Linter specifically marks hz unused when Ne.symm hz is already supplied; remove only that argument.",
+ "before_sha256": "c8606e158ad98fe6fcd3262ad10eae8967242115e2b6b272136175dca3b7bfbe",
+ "after_sha256": "f617d7307ba4849d9b30667c3714113418adad5607c1e301e3edaf7e264aa761",
+ "status": "COMBINED_FINAL_OWNER_CHECKED_PASS",
+ "final_owner_source_sha256": "f617d7307ba4849d9b30667c3714113418adad5607c1e301e3edaf7e264aa761",
+ "check": "evidence/build/M3/opacity-warning-repair-v2/results.jsonl",
+ "qualification": "Final combined owner with all selected cleanup edits checked; intermediate individual files are retained without claiming separate checks."
+}

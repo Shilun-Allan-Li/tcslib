@@ -1,0 +1,14 @@
+import TCSlib.Cryptography.OneWayFunctions.Basic
+import Mathlib.Data.Finset.Powerset
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography
+
+example {m B : ℕ} [NeZero B] (S : Finset (Fin m)) (b : Fin B) (t : ℕ) :
+    uprob (fun φ : Fin m → Fin B =>
+      t < ((Finset.univ.filter (fun j => φ j = b)) ∩ S).card) ≤
+      (Nat.choose S.card (t + 1) : ℝ) / (B : ℝ) ^ (t + 1) := __PROBE_BODY__

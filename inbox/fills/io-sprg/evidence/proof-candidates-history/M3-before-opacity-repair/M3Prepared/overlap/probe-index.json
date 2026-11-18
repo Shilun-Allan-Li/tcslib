@@ -1,0 +1,301 @@
+[
+  {
+    "name": "binomial_bound",
+    "family": "M3-frozen-Load-expanded",
+    "template": "templates/binomial_bound.lean.template",
+    "imports": [
+      "TCSlib.Cryptography.Foundations.Probability",
+      "Mathlib.Data.Nat.Choose.Bounds",
+      "Mathlib.Analysis.Complex.Exponential",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "candidate": "candidates/LoadProofs/02-binomial_bound.proof",
+    "status": "UNRUN",
+    "abstraction": "Only Buckets.bucket/load expanded to the literal finite fiber filter; all original hypotheses/thresholds preserved."
+  },
+  {
+    "name": "bucket_tail",
+    "family": "M3-frozen-Load-expanded",
+    "template": "templates/bucket_tail.lean.template",
+    "imports": [
+      "TCSlib.Cryptography.OneWayFunctions.Basic",
+      "Mathlib.Data.Finset.Powerset",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "candidate": "candidates/LoadProofs/01-bucket_tail.proof",
+    "status": "UNRUN",
+    "abstraction": "Only Buckets.bucket/load expanded to the literal finite fiber filter; all original hypotheses/thresholds preserved."
+  },
+  {
+    "name": "some_bucket_tail",
+    "family": "M3-frozen-Load-expanded",
+    "template": "templates/some_bucket_tail.lean.template",
+    "imports": [
+      "TCSlib.Cryptography.OneWayFunctions.Basic",
+      "Mathlib.Data.Finset.Powerset",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "candidate": "candidates/LoadProofs/03-some_bucket_tail.proof",
+    "status": "UNRUN",
+    "abstraction": "Only Buckets.bucket/load expanded to the literal finite fiber filter; all original hypotheses/thresholds preserved."
+  },
+  {
+    "name": "full_bucket_tail",
+    "family": "M3-frozen-Load-expanded",
+    "template": "templates/full_bucket_tail.lean.template",
+    "imports": [
+      "TCSlib.Cryptography.OneWayFunctions.Basic",
+      "Mathlib.Data.Finset.Powerset",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "candidate": "candidates/LoadProofs/04-full_bucket_tail.proof",
+    "status": "UNRUN",
+    "abstraction": "Only Buckets.bucket/load expanded to the literal finite fiber filter; all original hypotheses/thresholds preserved."
+  },
+  {
+    "name": "some_full_bucket_tail",
+    "family": "M3-frozen-Load-expanded",
+    "template": "templates/some_full_bucket_tail.lean.template",
+    "imports": [
+      "TCSlib.Cryptography.OneWayFunctions.Basic",
+      "Mathlib.Data.Finset.Powerset",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "candidate": "candidates/LoadProofs/05-some_full_bucket_tail.proof",
+    "status": "UNRUN",
+    "abstraction": "Only Buckets.bucket/load expanded to the literal finite fiber filter; all original hypotheses/thresholds preserved."
+  },
+  {
+    "name": "bucket_count_upper_core",
+    "family": "M3-helper-core",
+    "template": "templates/bucket_count_upper_core.lean.template",
+    "imports": [
+      "TCSlib.Cryptography.Foundations.Probability",
+      "Mathlib.Data.Nat.Basic",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "status": "UNRUN",
+    "abstraction": "Scalar/finite-law core after actual published owner readers; no owned declaration is imported."
+  },
+  {
+    "name": "bucket_count_lower_core",
+    "family": "M3-helper-core",
+    "template": "templates/bucket_count_lower_core.lean.template",
+    "imports": [
+      "TCSlib.Cryptography.Foundations.Probability",
+      "Mathlib.Data.Nat.Basic",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "status": "UNRUN",
+    "abstraction": "Scalar/finite-law core after actual published owner readers; no owned declaration is imported."
+  },
+  {
+    "name": "prefactor_eventually_le_two_pow_core",
+    "family": "M3-helper-core",
+    "template": "templates/prefactor_eventually_le_two_pow_core.lean.template",
+    "imports": [
+      "Mathlib.Analysis.SpecificLimits.Normed",
+      "Mathlib.Analysis.Complex.Exponential",
+      "TCSlib.Complexity.Randomized.PolyExpr",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "status": "UNRUN",
+    "abstraction": "Actual composed output polynomial majorant and previously proved bucket-count upper bound are abstracted; coefficient retained through existing limit, no monic normalization helper."
+  },
+  {
+    "name": "cond1_single_le_quarter_core",
+    "family": "M3-helper-core",
+    "template": "templates/cond1_single_le_quarter_core.lean.template",
+    "imports": [
+      "TCSlib.Cryptography.Foundations.Probability",
+      "Mathlib.Data.Nat.Basic",
+      "Lean.Elab.Tactic.LibrarySearch",
+      "Mathlib.Data.Nat.Log"
+    ],
+    "status": "UNRUN",
+    "abstraction": "Scalar/finite-law core after actual published owner readers; no owned declaration is imported."
+  },
+  {
+    "name": "cond1_repetitions_fixed_index_core",
+    "family": "M3-helper-core",
+    "template": "templates/cond1_repetitions_fixed_index_core.lean.template",
+    "imports": [
+      "TCSlib.Cryptography.Games.Bridges.Experiments",
+      "TCSlib.Cryptography.OneWayFunctions.Basic",
+      "Mathlib.Data.Finset.Powerset",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "status": "UNRUN",
+    "abstraction": "Entire index is FIXED before this probability; Secret/Noise are actual independent repetition coordinates. No unconditional independence after index averaging is assumed."
+  },
+  {
+    "name": "cond1_all_fixed_index_core",
+    "family": "M3-helper-core",
+    "template": "templates/cond1_all_fixed_index_core.lean.template",
+    "imports": [
+      "TCSlib.Cryptography.Games.Bridges.Experiments",
+      "TCSlib.Cryptography.OneWayFunctions.Basic",
+      "Mathlib.Data.Finset.Powerset",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "status": "UNRUN",
+    "abstraction": "After sdSampFull pushforward/sdCore_draw readers, discard only the independent Boolean Seed, retaining the fixed-index tuple event."
+  },
+  {
+    "name": "cond1_all_joint_core",
+    "family": "M3-helper-core",
+    "template": "templates/cond1_all_joint_core.lean.template",
+    "imports": [
+      "TCSlib.Cryptography.Games.Bridges.Experiments",
+      "TCSlib.Cryptography.OneWayFunctions.Basic",
+      "Mathlib.Data.Finset.Powerset",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "status": "UNRUN",
+    "abstraction": "idx is the ACTUAL possibly nonuniform index law, not a uniform I. Fixed-index estimate is the preceding helper conclusion."
+  },
+  {
+    "name": "binomial_ratio_quarter_core",
+    "family": "M3-helper-core",
+    "template": "templates/binomial_ratio_quarter_core.lean.template",
+    "imports": [
+      "TCSlib.Cryptography.Foundations.Probability",
+      "Mathlib.Data.Nat.Choose.Bounds",
+      "Mathlib.Analysis.Complex.Exponential",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "status": "UNRUN",
+    "abstraction": "Scalar/finite-law core after actual published owner readers; no owned declaration is imported."
+  },
+  {
+    "name": "smallset_bucket_tail_quarter_core",
+    "family": "M3-helper-core",
+    "template": "templates/smallset_bucket_tail_quarter_core.lean.template",
+    "imports": [
+      "TCSlib.Cryptography.Games.Bridges.Experiments",
+      "TCSlib.Cryptography.OneWayFunctions.Basic",
+      "Mathlib.Data.Finset.Powerset",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "status": "UNRUN",
+    "abstraction": "Scalar/finite-law core after actual published owner readers; no owned declaration is imported."
+  },
+  {
+    "name": "capacity_bucket_tail_quarter_core",
+    "family": "M3-helper-core",
+    "template": "templates/capacity_bucket_tail_quarter_core.lean.template",
+    "imports": [
+      "TCSlib.Cryptography.Games.Bridges.Experiments",
+      "TCSlib.Cryptography.OneWayFunctions.Basic",
+      "Mathlib.Data.Finset.Powerset",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "status": "UNRUN",
+    "abstraction": "cap expands exactly to kappa^2*W; hround is preceding exact bucket-count-lower helper, no noise asymptotic assumption."
+  },
+  {
+    "name": "cond3_joint_le_quarter_pow_core",
+    "family": "M3-helper-core",
+    "template": "templates/cond3_joint_le_quarter_pow_core.lean.template",
+    "imports": [
+      "TCSlib.Cryptography.Games.Bridges.Experiments",
+      "TCSlib.Cryptography.OneWayFunctions.Basic",
+      "Mathlib.Data.Finset.Powerset",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "status": "UNRUN",
+    "abstraction": "Actual index DRAW plus matrix/full draw, after public pushforward uniform bridge. Only uniform Buck marginal used; never replace generator index by uniform G.Idx."
+  },
+  {
+    "name": "cond2_sparse_joint_le_quarter_pow_core",
+    "family": "M3-helper-core",
+    "template": "templates/cond2_sparse_joint_le_quarter_pow_core.lean.template",
+    "imports": [
+      "TCSlib.Cryptography.Games.Bridges.Experiments",
+      "TCSlib.Cryptography.OneWayFunctions.Basic",
+      "Mathlib.Data.Finset.Powerset",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "status": "UNRUN",
+    "abstraction": "Exact bucket-LAST section core after hunif/htransport. S depends on G DRAW/matrix/full draw and ignores bucket labels. No assumption that all S are small: smallness remains INSIDE the event."
+  },
+  {
+    "name": "errProb_nonneg_core",
+    "family": "M3-frozen-original-core",
+    "template": "templates/errProb_nonneg_core.lean.template",
+    "imports": [
+      "TCSlib.Cryptography.Games.Bridges.Experiments",
+      "TCSlib.Cryptography.OneWayFunctions.Basic",
+      "Mathlib.Data.Finset.Powerset",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "status": "UNRUN",
+    "abstraction": "Scalar/finite-law core after actual published owner readers; no owned declaration is imported."
+  },
+  {
+    "name": "badSet_expect_le_core",
+    "family": "M3-frozen-original-core",
+    "template": "templates/badSet_expect_le_core.lean.template",
+    "imports": [
+      "TCSlib.Cryptography.Games.Bridges.Experiments",
+      "TCSlib.Cryptography.OneWayFunctions.Basic",
+      "Mathlib.Data.Finset.Powerset",
+      "Lean.Elab.Tactic.LibrarySearch",
+      "Mathlib.Data.ZMod.Basic"
+    ],
+    "status": "UNRUN",
+    "abstraction": "Literal BAD dependency/error intersection, after actual variable sets and scalar noise readers. Uniform selector/residue draw retained, including integer-lift cast. Locality is actual per-output vars-card bound."
+  },
+  {
+    "name": "cond1_prob_le_core",
+    "family": "M3-frozen-original-core",
+    "template": "templates/cond1_prob_le_core.lean.template",
+    "imports": [
+      "TCSlib.Cryptography.Games.Bridges.Experiments",
+      "TCSlib.Cryptography.OneWayFunctions.Basic",
+      "Mathlib.Data.Finset.Powerset",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "status": "UNRUN",
+    "abstraction": "Actual preceding first-moment estimate abstracted; consume public Lamport Markov API rather than reproduce it. Strict Nat threshold Gamma+1 retained."
+  },
+  {
+    "name": "errProb_le_decomposition_core",
+    "family": "M3-frozen-original-core",
+    "template": "templates/errProb_le_decomposition_core.lean.template",
+    "imports": [
+      "TCSlib.Cryptography.Games.Bridges.Experiments",
+      "TCSlib.Cryptography.OneWayFunctions.Basic",
+      "Mathlib.Data.Finset.Powerset",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "status": "UNRUN",
+    "abstraction": "After actual exact draw pushforward and reused proved firstGood_none_iff. hflags is actual oneFlag reader rewritten to three complement failure predicates, not an extra independence premise."
+  },
+  {
+    "name": "claim42_core",
+    "family": "M3-frozen-original-core",
+    "template": "templates/claim42_core.lean.template",
+    "imports": [
+      "TCSlib.Cryptography.Games.Bridges.Experiments",
+      "TCSlib.Cryptography.OneWayFunctions.Basic",
+      "Mathlib.Data.Finset.Powerset",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "status": "UNRUN",
+    "abstraction": "Final actual event-bound arithmetic/quantifier core. Both preceding cutoffs are BEFORE every pp, preserving prime-uniform threshold order."
+  },
+  {
+    "name": "cond2_hunif_control",
+    "family": "M3-public-reuse-control",
+    "template": "templates/cond2_hunif_control.lean.template",
+    "imports": [
+      "TCSlib.Cryptography.Games.Bridges.Experiments",
+      "TCSlib.Cryptography.OneWayFunctions.Basic",
+      "Mathlib.Data.Finset.Powerset",
+      "Lean.Elab.Tactic.LibrarySearch"
+    ],
+    "status": "UNRUN",
+    "abstraction": "Exact public sequential-uniform-pair probability bridge required by hunif. Type0; a search hit must be reused, not rederived."
+  }
+]

@@ -1,0 +1,13 @@
+import TCSlib.Cryptography.Foundations.Probability
+import Mathlib.Data.Nat.Choose.Bounds
+import Mathlib.Analysis.Complex.Exponential
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography
+
+example (n k : ℕ) (hk : 0 < k) :
+    (Nat.choose n k : ℝ) ≤ (Real.exp 1 * (n : ℝ) / k) ^ k := __PROBE_BODY__

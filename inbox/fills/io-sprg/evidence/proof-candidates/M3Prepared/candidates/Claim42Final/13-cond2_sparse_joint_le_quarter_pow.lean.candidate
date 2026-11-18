@@ -1,0 +1,74 @@
+/- NOT_RUN. Proposed area-local Internal helper, dependency candidate10.
+FIX generator draw, matrix and seed draw BEFORE averaging over the independent
+bucket map. BAD ignores bucket labels by its published equation. All changes
+below are probability/expectation equalities, never free-OracleComp equality.
+No new imports, sampler or generic probability theorem. exact?/apply? pending.
+Transport blocks hunif/htransport are the syntax-sensitive root test points. -/
+
+theorem cond2_sparse_joint_le_quarter_pow (P : Params) (κ : ℕ)
+    (pp : PrimeParam κ) (k : Fin κ) (hκ : 12 ≤ κ) (hΓ : P.Γ κ ≤ P.B κ) :
+    Games.ProbComp.prob (P.jointLaw κ pp)
+      (fun x => P.Cond2 κ pp x.1 x.2.draw k ∧
+        ¬ P.Cond1 κ pp x.1 x.2.draw k) ≤
+      (P.B κ : ℝ) * (4 : ℝ)⁻¹ ^ κ := by
+  classical
+  let GDraw := P.G.IdDraw (P.n κ)
+  let Buck := Fin (P.m κ) → Fin (P.B κ)
+  let Mat := Matrix (Fin (P.n κ)) (Fin (P.ℓ κ)) (ZMod pp.p)
+  let D := P.Draw κ pp
+  let φ₀ : Buck := fun _ => ⟨0, P.B_pos κ⟩
+  let idx : GDraw → Buck → Mat → P.Idx' κ pp :=
+    fun g φ A => (P.G.idCore (P.n κ) g, (φ, A))
+  let S : GDraw × (Mat × D) → Finset (Fin (P.m κ)) := fun z =>
+    P.badSet κ pp (idx z.1 φ₀ z.2.1)
+      (fun i => P.noiseValue κ pp ((z.2.2.2 k).2 i))
+  let event : P.IdDraw κ pp × D → Prop := fun z =>
+    P.Cond2 κ pp (P.idCore κ pp z.1) z.2 k ∧
+      ¬ P.Cond1 κ pp (P.idCore κ pp z.1) z.2 k
+  have hbad (g : GDraw) (φ : Buck) (A : Mat)
+      (e : Fin (P.n κ) → ZMod pp.p) :
+      P.badSet κ pp (idx g φ A) e = P.badSet κ pp (idx g φ₀ A) e := ?_
+  swap
+  · simp only [P.badSet_eq, idx]
+  have hunif : Games.ProbComp.prob (P.jointLaw κ pp)
+      (fun x => P.Cond2 κ pp x.1 x.2.draw k ∧
+        ¬ P.Cond1 κ pp x.1 x.2.draw k) = uprob event := ?_
+  swap
+  · rw [P.jointLaw_eq, Games.ProbComp.prob_eq_expect,
+      Games.ProbComp.expect_bind]
+    simp_rw [Games.ProbComp.expect_map]
+    rw [P.idSamp'_eq, Games.ProbComp.expect_map]
+    simp_rw [P.sdSampFull_eq, Games.ProbComp.expect_map, P.sdCore_draw]
+    rw [← Games.Bridge.prob_sample_eq_uprob event,
+      Games.ProbComp.prob_eq_expect, ← Games.Bridge.expect_sample_pair
+      (fun z : P.IdDraw κ pp × D => if event z then (1 : ℝ) else 0)]
+    simp only [Games.ProbComp.expect_bind, Games.ProbComp.expect_pure, event]
+  let e : (P.IdDraw κ pp × D) ≃ ((GDraw × (Mat × D)) × Buck) :=
+    (Equiv.prodAssoc GDraw (Buck × Mat) D).trans
+      ((Equiv.prodCongr (Equiv.refl GDraw) (Equiv.prodAssoc Buck Mat D)).trans
+        ((Equiv.prodCongr (Equiv.refl GDraw) (Equiv.prodComm Buck (Mat × D))).trans
+          (Equiv.prodAssoc GDraw (Mat × D) Buck).symm))
+  have htransport : Games.ProbComp.prob (P.jointLaw κ pp)
+      (fun x => P.Cond2 κ pp x.1 x.2.draw k ∧
+        ¬ P.Cond1 κ pp x.1 x.2.draw k) =
+      uprob (fun z : (GDraw × (Mat × D)) × Buck =>
+        (∃ b, κ < (Buckets.bucket z.2 b ∩ S z.1).card) ∧
+          (S z.1).card ≤ P.Γ κ) := ?_
+  swap
+  · rw [hunif, ← uprob_comp_equiv e.symm]
+    apply OneWay.uprob_congr
+    intro z
+    simp only [event, P.idCore_eq]
+    change (P.Cond2 κ pp (idx z.1.1 z.2 z.1.2.1) z.1.2.2 k ∧
+        ¬ P.Cond1 κ pp (idx z.1.1 z.2 z.1.2.1) z.1.2.2 k) ↔ _
+    simp only [P.cond2_iff, P.cond1_iff, P.t_eq, hbad, not_lt, S]
+  rw [htransport, uprob_prod]
+  refine (OneWay.uexp_mono
+    (g := fun _ : GDraw × (Mat × D) => (P.B κ : ℝ) * (4 : ℝ)⁻¹ ^ κ) ?_).trans_eq
+    (OneWay.uexp_const _)
+  intro z
+  by_cases hS : (S z).card ≤ P.Γ κ
+  · exact (uprob_mono (fun _ h => h.1)).trans
+      (smallset_bucket_tail_quarter P κ (S z) hκ hS hΓ)
+  · simp only [hS, and_false, uprob_false]
+    positivity

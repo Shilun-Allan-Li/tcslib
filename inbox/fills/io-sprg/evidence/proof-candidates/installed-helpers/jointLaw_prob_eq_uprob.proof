@@ -1,0 +1,20 @@
+by
+  classical
+  let Space := P.IdDraw κ pp × P.Draw κ pp
+  let out : Space → P.Idx' κ pp × P.SdCoreOut κ pp := fun z =>
+    (P.idCore κ pp z.1, P.sdCore κ pp (P.idCore κ pp z.1) z.2)
+  change Games.ProbComp.prob (P.jointLaw κ pp) event =
+    uprob (fun z : Space => event (out z))
+  calc
+    Games.ProbComp.prob (P.jointLaw κ pp) event =
+      Games.ProbComp.prob
+        ((Games.ProbComp.sample (P.IdDraw κ pp)).bind fun a =>
+          (Games.ProbComp.sample (P.Draw κ pp)).bind fun d => .pure (a, d))
+        (fun z => event (out z)) := ?_
+    _ = Games.ProbComp.prob (Games.ProbComp.sample Space) (fun z => event (out z)) :=
+      Games.Bridge.prob_sample_pair (fun z => event (out z))
+    _ = uprob (fun z : Space => event (out z)) :=
+      Games.Bridge.prob_sample_eq_uprob (fun z : Space => event (out z))
+  simp only [P.jointLaw_eq, P.idSamp'_eq, P.sdSampFull_eq,
+    Games.ProbComp.prob_eq_expect, Games.ProbComp.expect_bind,
+    Games.ProbComp.expect_map, Games.ProbComp.expect_pure, out]

@@ -1,0 +1,25 @@
+--- /private/tmp/io-sprg-proof-notes/Claim42Final/10-smallset_bucket_tail_quarter.lean.candidate
++++ /private/tmp/io-sprg-proof-notes/M3Prepared/candidates/Claim42Final/10-smallset_bucket_tail_quarter.lean.candidate
+@@ -10,14 +10,18 @@
+     uprob (fun φ : Fin (P.m κ) → Fin (P.B κ) =>
+       ∃ b, κ < (Buckets.bucket φ b ∩ S).card) ≤
+         (P.B κ : ℝ) * (4 : ℝ)⁻¹ ^ κ := by
+-  have he : 4 * Real.exp 1 ≤ (12 : ℝ)
++  have he : 4 * Real.exp 1 ≤ (12 : ℝ) := ?_
++  swap
+   · nlinarith [Real.exp_one_lt_d9]
+-  have hSB : (S.card : ℝ) ≤ P.B κ
++  have hSB : (S.card : ℝ) ≤ P.B κ := ?_
++  swap
+   · exact_mod_cast (hS.trans hΓ)
+-  have hκR : (12 : ℝ) ≤ ((κ + 1 : ℕ) : ℝ)
++  have hκR : (12 : ℝ) ≤ ((κ + 1 : ℕ) : ℝ) := ?_
++  swap
+   · exact_mod_cast (hκ.trans (Nat.le_add_right κ 1))
+   have hbase : 4 * Real.exp 1 * (S.card : ℝ) ≤
+-      (P.B κ : ℝ) * ((κ + 1 : ℕ) : ℝ)
++      (P.B κ : ℝ) * ((κ + 1 : ℕ) : ℝ) := ?_
++  swap
+   · calc
+       _ ≤ 12 * (S.card : ℝ) :=
+         mul_le_mul_of_nonneg_right he (Nat.cast_nonneg S.card)

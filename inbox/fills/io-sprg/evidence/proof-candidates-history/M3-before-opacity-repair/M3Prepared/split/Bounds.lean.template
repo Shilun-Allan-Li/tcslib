@@ -1,0 +1,44 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Claim42.Defs
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Numeric bucket and exponential bounds for Claim 4.2
+
+## Main definitions
+
+None. This file hosts theorem-only arithmetic and finite-load consequences.
+
+## Main results
+
+The proposed `Internal` helpers bound the exact rounded bucket count, its
+polynomial prefactor, and the sparse/full bucket tails.
+
+The theorem candidates are staged separately and are not inserted by this split.
+
+## References
+
+* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
+  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026,
+  proof of Claim 4.2, pp. 19-21.
+* [PS10] R. Pass, A. Shelat, *A Course in Cryptography*, 2010, Definition 26.8.
+-/
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal
+
+-- Insert completed theorem-only candidates in this dependency order:
+-- Claim42Final/01-bucket_count_upper.lean.candidate
+-- Claim42Final/09-bucket_count_lower.lean.candidate
+-- Claim42Final/02-prefactor_eventually_le_two_pow.lean.candidate
+-- Claim42Final/08-binomial_ratio_quarter.lean.candidate
+-- Claim42Final/10-smallset_bucket_tail_quarter.lean.candidate
+-- Claim42Final/11-capacity_bucket_tail_quarter.lean.candidate
+-- Keep the separately reviewed proof bodies unchanged when performing relocation.
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal

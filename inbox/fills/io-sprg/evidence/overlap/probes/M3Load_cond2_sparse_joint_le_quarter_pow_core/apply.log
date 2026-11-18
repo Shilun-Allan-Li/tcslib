@@ -1,0 +1,762 @@
+`apply?` stopped because it was running out of time.
+You may get better results using `set_option maxHeartbeats 0`.
+Try this:
+  [apply] refine (Real.toNNReal_le_toNNReal_iff_of_pos ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ).toNNReal ≤ (↑B * 4⁻¹ ^ κ).toNNReal
+Try this:
+  [apply] refine (Real.toNNReal_le_toNNReal_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ ↑B * 4⁻¹ ^ κ
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ).toNNReal ≤ (↑B * 4⁻¹ ^ κ).toNNReal
+Try this:
+  [apply] refine (ENNReal.ofReal_le_ofReal_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ ↑B * 4⁻¹ ^ κ
+  -- ⊢ ENNReal.ofReal (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) ≤
+    ENNReal.ofReal (↑B * 4⁻¹ ^ κ)
+Try this:
+  [apply] refine EReal.coe_le_coe_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) ≤ ↑(↑B * 4⁻¹ ^ κ)
+Try this:
+  [apply] refine (Real.sqrt_le_sqrt_iff ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ ↑B * 4⁻¹ ^ κ
+  -- ⊢ √(uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) ≤ √(↑B * 4⁻¹ ^ κ)
+Try this:
+  [apply] refine (Real.sqrt_le_sqrt_iff' ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ
+  -- ⊢ √(uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) ≤ √(↑B * 4⁻¹ ^ κ)
+Try this:
+  [apply] refine Complex.real_le_real.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) ≤ ↑(↑B * 4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine RCLike.ofReal_le_ofReal.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Complex.le_of_eq_sum_of_eq_sum_norm ?_ ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Real.exp_le_exp.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Real.exp (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) ≤ Real.exp (↑B * 4⁻¹ ^ κ)
+Try this:
+  [apply] refine (Real.log_le_log_iff ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ
+  -- ⊢ 0 < ↑B * 4⁻¹ ^ κ
+  -- ⊢ Real.log (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) ≤ Real.log (↑B * 4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Real.rpow_le_rpow_iff_of_neg ?_ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Real.rpow_le_rpow_iff ?_ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Real.rpow_le_rpow_left_iff_of_base_lt_one ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Real.rpow_le_rpow_left_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_mul_of_le_of_one_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_mul_of_le_mul_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_mul_of_one_le_of_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_mul_of_le_mul_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_mul_of_le_mul_of_nonneg_right ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_mul_of_le_mul_of_nonneg_left ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (inv_mul_le_iff₀' ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < 4⁻¹ ^ κ
+  -- ⊢ ((4⁻¹ ^ κ)⁻¹ * uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) ≤ ↑B
+Try this:
+  [apply] refine (mul_inv_le_iff₀ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < 4⁻¹ ^ κ
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) * (4⁻¹ ^ κ)⁻¹ ≤ ↑B
+Try this:
+  [apply] refine (inv_mul_le_iff₀ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑B
+  -- ⊢ ((↑B)⁻¹ * uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) ≤ 4⁻¹ ^ κ
+Try this:
+  [apply] refine (div_le_iff₀' ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑B
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) / ↑B ≤ 4⁻¹ ^ κ
+Try this:
+  [apply] refine (mul_inv_le_iff₀' ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < ↑B
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) * (↑B)⁻¹ ≤ 4⁻¹ ^ κ
+Try this:
+  [apply] refine (div_le_iff₀ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < 4⁻¹ ^ κ
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) / 4⁻¹ ^ κ ≤ ↑B
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_mul_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_mul_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_mul_of_le_right ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_mul_of_le_left ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (le_div_iff_of_neg' ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑B < 0
+  -- ⊢ 4⁻¹ ^ κ ≤ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) / ↑B
+Try this:
+  [apply] refine le_mul_of_forall_lt₀ ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ a' > ↑B, ∀ b' > 4⁻¹ ^ κ, (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) ≤ a' * b'
+Try this:
+  [apply] refine (le_div_iff_of_neg ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 4⁻¹ ^ κ < 0
+  -- ⊢ ↑B ≤ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) / 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_eq_of_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine ge_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑B * 4⁻¹ ^ κ ≥ uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ
+Try this:
+  [apply] refine ge_iff_le.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) ≤ ↑B * 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_le_of_eq ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.IsPreorder.le_trans
+    (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) ?_ (↑B * 4⁻¹ ^ κ) ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Std.le_of_not_ge ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬↑B * 4⁻¹ ^ κ ≤ uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ
+Try this:
+  [apply] refine Std.not_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬↑B * 4⁻¹ ^ κ < uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ
+Try this:
+  [apply] refine Std.le_of_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) < ↑B * 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.le_trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Option.some_le_some.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ some (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) ≤ some (↑B * 4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (List.max?_le_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (List.le_min?_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (isLE_compareOfLessAndEq ?_ ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ {x y : ℝ}, x ≤ y → y ≤ x → x = y
+  -- ⊢ ∀ {x y : ℝ}, ¬x ≤ y ↔ y < x
+  -- ⊢ ∀ (x y : ℝ), x ≤ y ∨ y ≤ x
+  -- ⊢ (compareOfLessAndEq (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ)
+        (↑B * 4⁻¹ ^ κ)).isLE =
+    true
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.left_le_left_of_cons_le_cons fun a => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Std.PRange.UpwardEnumerable.le_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Std.PRange.UpwardEnumerable ℝ
+  -- ⊢ Std.PRange.LawfulUpwardEnumerableLE ℝ
+  -- ⊢ Std.PRange.UpwardEnumerable.LE (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ)
+    (↑B * 4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Std.PRange.LawfulUpwardEnumerableLE.le_iff
+        (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) (↑B * 4⁻¹ ^ κ)).mpr
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Std.Rxc.size_pos_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Std.Rxc.HasSize ℝ
+  -- ⊢ Std.PRange.UpwardEnumerable ℝ
+  -- ⊢ Std.Rxc.LawfulHasSize ℝ
+  -- ⊢ 0 <
+    Std.Rxc.HasSize.size (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) (↑B * 4⁻¹ ^ κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Std.LawfulOrderOrd.isGE_compare (↑B * 4⁻¹ ^ κ)
+        (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ)).mp
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Std.LawfulOrderOrd.isLE_compare
+        (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) (↑B * 4⁻¹ ^ κ)).mp
+    ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Std.isGE_compare.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Std.LawfulOrderOrd ℝ
+  -- ⊢ (compare (↑B * 4⁻¹ ^ κ) (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ)).isGE = true
+Try this:
+  [apply] refine Std.isLE_compare.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Std.LawfulOrderOrd ℝ
+  -- ⊢ (compare (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) (↑B * 4⁻¹ ^ κ)).isLE = true
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.LawfulLECmp.ne_lt_iff_ge.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.LawfulBCmp.isLE_iff_le.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.LawfulLECmp.ne_gt_iff_le.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.LawfulLECmp.isLE_iff_le.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.LawfulCmp.isLE_iff_le.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Std.LawfulLECmp.isGE_iff_ge.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Maximal.le_of_ge ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Minimal.le_of_le ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_le_of_eq'' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_eq_of_le'' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_iff_lt_or_eq'.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) < ↑B * 4⁻¹ ^ κ ∨
+    ↑B * 4⁻¹ ^ κ = uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Preorder.le_trans (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ)
+    ?_ (↑B * 4⁻¹ ^ κ) ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine ge_of_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑B * 4⁻¹ ^ κ = uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ
+Try this:
+  [apply] refine le_of_eq_or_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) = ↑B * 4⁻¹ ^ κ ∨
+    (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) < ↑B * 4⁻¹ ^ κ
+Try this:
+  [apply] refine le_of_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) = ↑B * 4⁻¹ ^ κ
+Try this:
+  [apply] refine le_iff_lt_or_eq.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) < ↑B * 4⁻¹ ^ κ ∨
+    (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) = ↑B * 4⁻¹ ^ κ
+Try this:
+  [apply] refine Decidable.le_iff_lt_or_eq'.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) < ↑B * 4⁻¹ ^ κ ∨
+    ↑B * 4⁻¹ ^ κ = uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ
+Try this:
+  [apply] refine Decidable.le_iff_lt_or_eq.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) < ↑B * 4⁻¹ ^ κ ∨
+    (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) = ↑B * 4⁻¹ ^ κ
+Try this:
+  [apply] refine le_of_eq_or_lt' ?_
+  -- Remaining subgoals:
+  -- ⊢ (↑B * 4⁻¹ ^ κ = uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) ∨
+    (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) < ↑B * 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_of_lt_or_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) < ↑B * 4⁻¹ ^ κ ∨
+    (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) = ↑B * 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine ge_trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_of_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) < ↑B * 4⁻¹ ^ κ
+Try this:
+  [apply] refine le_of_lt_or_eq' ?_
+  -- Remaining subgoals:
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) < ↑B * 4⁻¹ ^ κ ∨
+    ↑B * 4⁻¹ ^ κ = uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ
+Try this:
+  [apply] refine le_of_not_ge ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬↑B * 4⁻¹ ^ κ ≤ uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ
+Try this:
+  [apply] refine le_of_not_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬↑B * 4⁻¹ ^ κ < uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ
+Try this:
+  [apply] refine not_lt.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬↑B * 4⁻¹ ^ κ < uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_imp_le_of_lt_imp_lt (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_of_not_le ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬↑B * 4⁻¹ ^ κ ≤ uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ
+Try this:
+  [apply] refine compare_ge_iff_ge.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compare (↑B * 4⁻¹ ^ κ) (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) ≠ Ordering.lt
+Try this:
+  [apply] refine le_of_not_gt ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬↑B * 4⁻¹ ^ κ < uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ
+Try this:
+  [apply] refine compare_le_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compare (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) (↑B * 4⁻¹ ^ κ) ≠ Ordering.gt
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_eq_of_le' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine forall_lt_imp_le_iff_le_of_dense.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ a < uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ, a ≤ ↑B * 4⁻¹ ^ κ
+Try this:
+  [apply] refine le_of_forall_lt ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ c < uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ, c < ↑B * 4⁻¹ ^ κ
+Try this:
+  [apply] refine forall_lt_iff_le'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ ⦃c : ℝ⦄, ↑B * 4⁻¹ ^ κ < c → (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) < c
+Try this:
+  [apply] refine le_iff_eq_or_lt.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) = ↑B * 4⁻¹ ^ κ ∨
+    (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) < ↑B * 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_trans' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine forall_gt_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ ⦃c : ℝ⦄, ↑B * 4⁻¹ ^ κ < c → (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) < c
+Try this:
+  [apply] refine LT.lt.le ?_
+  -- Remaining subgoals:
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) < ↑B * 4⁻¹ ^ κ
+Try this:
+  [apply] refine le_update_self_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ uprob ≤
+    Function.update uprob (fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) (↑B * 4⁻¹ ^ κ)
+Try this:
+  [apply] refine Eq.ge ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑B * 4⁻¹ ^ κ = uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ
+Try this:
+  [apply] refine Eq.le ?_
+  -- Remaining subgoals:
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) = ↑B * 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LE.le.trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (LE.le.le_iff_eq ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑B * 4⁻¹ ^ κ ≤ uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) = ↑B * 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Prod.mk_le_mk_iff_right.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine forall_le_iff_ge.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ ⦃c : ℝ⦄, ↑B * 4⁻¹ ^ κ ≤ c → (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) ≤ c
+Try this:
+  [apply] refine le_of_forall_le ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ c ≤ uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ, c ≤ ↑B * 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LE.le.trans' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Subtype.mk_le_mk.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine forall_le_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ ⦃c : ℝ⦄, (c ≤ uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) → c ≤ ↑B * 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_imp_le_of_le_of_le ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Decidable.ne_iff_lt_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) ≠ ↑B * 4⁻¹ ^ κ ↔
+    (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) < ↑B * 4⁻¹ ^ κ
+Try this:
+  [apply] refine (LE.le.ge_iff_eq' ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑B * 4⁻¹ ^ κ ≤ uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) = ↑B * 4⁻¹ ^ κ
+Try this:
+  [apply] refine Decidable.le_iff_eq_or_lt.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) = ↑B * 4⁻¹ ^ κ ∨
+    (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) < ↑B * 4⁻¹ ^ κ
+Try this:
+  [apply] refine forall_lt_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ ⦃c : ℝ⦄, (c < uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) → c < ↑B * 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LE.le.trans_eq' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_le_of_eq' ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.const_le_const.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine forall_gt_imp_ge_iff_le_of_dense.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : ℝ), ↑B * 4⁻¹ ^ κ < a → (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) ≤ a
+Try this:
+  [apply] refine le_of_forall_lt' ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (c : ℝ), ↑B * 4⁻¹ ^ κ < c → (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) < c
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.trans_ge ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_subsingleton)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (LE.le.ge_iff_eq ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑B * 4⁻¹ ^ κ ≤ uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ
+  -- ⊢ ↑B * 4⁻¹ ^ κ = uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ
+Try this:
+  [apply] refine ne_iff_lt_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) ≠ ↑B * 4⁻¹ ^ κ ↔
+    (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) < ↑B * 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.trans_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_of_forall_gt_imp_ge_of_dense ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : ℝ), ↑B * 4⁻¹ ^ κ < a → (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) ≤ a
+Try this:
+  [apply] refine le_of_forall_ge ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (c : ℝ), ↑B * 4⁻¹ ^ κ ≤ c → (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) ≤ c
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_implies_le_of_le_of_le ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_of_forall_lt_imp_le_of_dense ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ a < uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ, a ≤ ↑B * 4⁻¹ ^ κ
+Try this:
+  [apply] refine forall_ge_iff_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ ⦃c : ℝ⦄, ↑B * 4⁻¹ ^ κ ≤ c → (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) ≤ c
+Try this:
+  [apply] refine LE.le.ge ?_
+  -- Remaining subgoals:
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) ≤ ↑B * 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Prod.mk_le_mk_iff_left.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine GE.ge.le ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑B * 4⁻¹ ^ κ ≥ uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LE.le.trans_eq ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Ne.le_iff_lt ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) ≠ ↑B * 4⁻¹ ^ κ
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) < ↑B * 4⁻¹ ^ κ
+Try this:
+  [apply] refine le_of_forall_gt ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (c : ℝ), ↑B * 4⁻¹ ^ κ < c → (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) < c
+Try this:
+  [apply] refine OrderDual.toDual_le_toDual.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ OrderDual.toDual (↑B * 4⁻¹ ^ κ) ≤
+    OrderDual.toDual (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ)
+Try this:
+  [apply] refine ULift.up_le.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ { down := uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ } ≤ { down := ↑B * 4⁻¹ ^ κ }
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Ordering.Compares.ne_lt ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Ordering.Compares.ne_gt ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (le_iff_le_of_cmp_eq_cmp ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (le_iff_le_of_cmp_eq_cmp ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine StrictMono.maximal_of_maximal_image (fun ⦃a⦄ => ?_) ?_
+    (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine StrictMono.minimal_of_minimal_image (fun ⦃a⦄ => ?_) ?_ (↑B * 4⁻¹ ^ κ))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine StrictAnti.maximal_of_minimal_image (fun ⦃a⦄ => ?_) ?_
+    (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictMono.le_iff_le fun ⦃a⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictAntiOn.le_iff_le (fun ⦃a⦄ => ?_) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictMonoOn.le_iff_le (fun ⦃a⦄ => ?_) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictAntiOn.le_iff_ge (fun ⦃a⦄ => ?_) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine StrictAnti.minimal_of_maximal_image (fun ⦃a⦄ => ?_) ?_ (↑B * 4⁻¹ ^ κ))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictAnti.le_iff_le fun ⦃a⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (StrictAnti.le_iff_ge fun ⦃a⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine right_eq_inf.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) =
+    min (↑B * 4⁻¹ ^ κ) (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ)
+Try this:
+  [apply] refine sup_eq_left.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max (↑B * 4⁻¹ ^ κ) (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) = ↑B * 4⁻¹ ^ κ
+Try this:
+  [apply] refine left_eq_inf.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) =
+    min (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) (↑B * 4⁻¹ ^ κ)
+Try this:
+  [apply] refine le_of_sup_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ max (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) (↑B * 4⁻¹ ^ κ) = ↑B * 4⁻¹ ^ κ
+Try this:
+  [apply] refine left_eq_sup.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑B * 4⁻¹ ^ κ = max (↑B * 4⁻¹ ^ κ) (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ)
+Try this:
+  [apply] refine right_eq_sup.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑B * 4⁻¹ ^ κ = max (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) (↑B * 4⁻¹ ^ κ)
+Try this:
+  [apply] refine inf_eq_left.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ min (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) (↑B * 4⁻¹ ^ κ) =
+    uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ
+Try this:
+  [apply] refine le_iff_exists_sup.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ c, ↑B * 4⁻¹ ^ κ = max (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) c
+Try this:
+  [apply] refine inf_eq_right.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ min (↑B * 4⁻¹ ^ κ) (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) =
+    uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ
+Try this:
+  [apply] refine sup_eq_right.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ max (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) (↑B * 4⁻¹ ^ κ) = ↑B * 4⁻¹ ^ κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine le_of_inf_le_sup_le ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine le_of_inf_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ min (uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ) (↑B * 4⁻¹ ^ κ) =
+    uprob fun z => (∃ b, κ < ({j | z.2 j = b} ∩ S z.1).card) ∧ (S z.1).card ≤ Γ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsCompl.Antitone ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsCompl.disjoint_left_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsCompl.disjoint_right_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsCompl.right_le_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Codisjoint.left_le_of_le_inf_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsCompl.left_le_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsCompl.inf_left_eq_bot_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Disjoint.left_le_of_le_sup_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsCompl.le_left_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Codisjoint.left_le_of_le_inf_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsCompl.inf_right_eq_bot_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsCompl.le_right_iff ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Disjoint.le_of_codisjoint ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+/private/tmp/io-sprg-overlap/M3Load_cond2_sparse_joint_le_quarter_pow_core-apply.lean:1:1: error: (deterministic) timeout at `isDefEq`, maximum number of heartbeats (100000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.

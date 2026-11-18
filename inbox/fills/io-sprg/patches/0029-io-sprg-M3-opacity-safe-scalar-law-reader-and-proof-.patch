@@ -1,0 +1,140 @@
+From 04249b85e80a007dc5845077a18a365d5150e14b Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 11:14:31 -0800
+Subject: [PATCH 29/29] io-sprg: M3 opacity-safe scalar law reader and proof
+ cleanup
+
+---
+ .../Obfuscation/StructuredSeed/Claim42/Defs.lean  |  4 ++--
+ .../Obfuscation/StructuredSeed/Correctness.lean   |  8 ++++----
+ .../Obfuscation/StructuredSeed/Degree.lean        |  2 +-
+ .../Obfuscation/StructuredSeed/LPN.lean           | 15 ++++++++++++++-
+ .../Obfuscation/StructuredSeed/Stretch.lean       |  8 +++++---
+ 5 files changed, 26 insertions(+), 11 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Defs.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Defs.lean
+index 296a3be745d4e45f139b835c9c207d81f9e82cd8..a8d92f0f0cac5e5d137639613144e2d197a96a60 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Defs.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Defs.lean
+@@ -158,8 +158,8 @@ theorem badSet_expect_le (P : Params) {cLoc : ℕ} (hLoc : P.R.HasLocality cLoc)
+   · have hzero : uprob (fun c : Noise => P.noiseValue κ pp c = 0) =
+         1 - 1 / (P.W κ : ℝ) + 1 / ((P.W κ : ℝ) * pp.p) := ?_
+     swap
+-    · simpa only [P.noiseValue_eq, cast_eq, if_pos rfl] using
+-        (lpnNoise_law pp.p (P.W κ) (0 : ZMod pp.p))
++    · simpa only [P.noiseValue_eq, if_pos rfl, ite_true] using
++        (Internal.lpnNoise_law_cast pp.p (P.W κ) (0 : ZMod pp.p))
+     rw [Bridge.prob_sample_eq_uprob (fun c : Noise => P.noiseValue κ pp c ≠ 0),
+       uprob_not (fun c : Noise => P.noiseValue κ pp c = 0), hzero]
+     have hnonneg : 0 ≤ 1 / ((P.W κ : ℝ) * pp.p) :=
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean
+index 4341823fa152aa28ddcaf21a750b656612209c5a..5c36e040fa4adf9b3b5e6f183f6c6e9f52e0fbfb 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Correctness.lean
+@@ -396,7 +396,7 @@ theorem G4_eval_sdCore (P : Params) (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx'
+   rw [P.G4struct_eq, MvPolynomial.eval_sum]
+   simp_rw [hG]
+   cases hf : first with
+-  | none => simp [hf]
++  | none => simp
+   | some q =>
+     have hflag : (inst q).flag = true :=
+       firstGood_some_flag (fun k => (inst k).flag) q hf
+@@ -437,8 +437,8 @@ theorem eval'_correct (P : Params) (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' 
+   rw [P.eval'_eq]
+   change decide (MvPolynomial.eval (Sum.elim x.seed.1 x.seed.2) (P.G4 κ pp I j) = 1) = _
+   rw [hx j]
+-  cases he : x.err <;>
+-    cases hb : P.G.eval (P.n κ) I.1 x.σ (P.outputIndex κ j) <;> simp [he, hb]
++  cases x.err <;>
++    cases P.G.eval (P.n κ) I.1 x.σ (P.outputIndex κ j) <;> simp
+ 
+ end Params
+ 
+@@ -468,7 +468,7 @@ theorem Params.G4_seed_allOutputs (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+       rw [OracleComp.allOutputs_pure] at hfield hbit ⊢
+       intro j
+       rw [hbit j, hfield j]
+-      cases he : x.err <;> simp [he]
++      cases x.err <;> simp
+     | query i a k ih =>
+       rw [OracleComp.allOutputs_query] at hfield hbit ⊢
+       intro y
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Degree.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Degree.lean
+index bb3d0c7ee96c31ead8fa66dd9ee2cdeb384f7fe7..dc25ec4f02442af5ad2237d009431daf1c096931 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Degree.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Degree.lean
+@@ -133,7 +133,7 @@ monomial, then apply the published finite-supremum bound. -/
+ theorem weightedTotalDegree_X_le (w : σ → ℕ) (i : σ) :
+     (MvPolynomial.X i : MvPolynomial σ R).weightedTotalDegree w ≤ w i :=
+   show (MvPolynomial.X i : MvPolynomial σ R).support.sup (Finsupp.weight w) ≤ w i from
+-    Finset.sup_le fun d hd =>
++    Finset.sup_le fun _d hd =>
+       ((MvPolynomial.isWeightedHomogeneous_X R w i)
+         (MvPolynomial.mem_support_iff.mp hd)).le
+ 
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean
+index eeef312b444b97ab566c1e3c9ef234efa8b974f7..13d3fb81ccc2f0406e9d3a19d4ee23daeae5e2a4 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean
+@@ -104,13 +104,26 @@ theorem lpnNoise_law (p W : ℕ) [NeZero p] [NeZero W] (z : ZMod p) :
+     swap
+     · intro c
+       rw [hs c]
+-      by_cases ha : c.1 = 0 <;> simp [ha, hz, Ne.symm hz]
++      by_cases ha : c.1 = 0 <;> simp [ha, Ne.symm hz]
+     rw [OneWay.uprob_congr hevent,
+       HardcoreBit.uprob_prod_and (fun a : Fin W => a = 0) (fun x : ZMod p => x = z),
+       hW, hp]
+     simp only [one_div, mul_inv_rev]
+     ring
+ 
++/-- The scalar noise law also holds when the explicit product seed is cast into the stored coin
++type. [JLS26, before Definition 2.3, p. 9]; cast-indexed reader glue.
++
++**Proof sketch.** Reuse lpnNoise_law and Core.cast_eq in the noise owner. The published
++statement exposes the cast normalization needed by foreign consumers without unfolding the
++noise definition. -/
++theorem Internal.lpnNoise_law_cast (p W : ℕ) [NeZero p] [NeZero W] (z : ZMod p) :
++    uprob (fun c : Fin W × ZMod p =>
++      ((lpnNoise p W).sample (cast (lpnNoise_coins p W).symm c) : ZMod p) = z) =
++      if z = 0 then 1 - 1 / (W : ℝ) + 1 / ((W : ℝ) * p)
++      else 1 / ((W : ℝ) * p) := by
++  simpa only [cast_eq] using lpnNoise_law p W z
++
+ namespace LPNFamily
+ 
+ /-- A raw LPN family fixes sample count, prime modulus and exact noise denominator at every
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean
+index 45a30bf773906d31e427a2ec88be9bd439fd7abc..23a9b6079f7b22cec10b9fd4df1946e287fab3b4 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Stretch.lean
+@@ -189,7 +189,9 @@ theorem seedBitsAt_le (P : Params) :
+     nlinarith
+   have hbits := Nat.mul_le_mul_right K hcount
+   rw [P.seedBitsAt_eq]
+-  convert hbits using 1 <;> dsimp only [K, X, a] <;> ring
++  convert hbits using 1
++  dsimp only [K, X, a]
++  ring
+ 
+ end Params
+ 
+@@ -295,7 +297,7 @@ theorem eventually_seed_relative_gap (P : Params) {τ ε : ℝ}
+           (half_pos (Real.rpow_pos_of_pos hxpos b)) hw
+       _ = 2 * (P.m κ : ℝ) * x ^ (-b) := ?_
+     rw [Real.rpow_neg hx0]
+-    field_simp [(Real.rpow_pos_of_pos hxpos b).ne'] <;> ring
++    field_simp [(Real.rpow_pos_of_pos hxpos b).ne']
+   have hexp : 5 + a ≤ a * τ + (-2 * ε) := ?_
+   swap
+   · linarith
+@@ -460,7 +462,7 @@ theorem jls_hasPolyStretch (P : Params) (π : PrimeSchedule) {τ : ℝ} (hτ : 1
+   have hNη : (((c + 1 : ℕ) : ℝ)) * η = ε / 2 := ?_
+   swap
+   · dsimp only [η]
+-    field_simp [hN.ne'] <;> ring
++    field_simp [hN.ne']
+   have hcη : (c : ℝ) * η ≤ ε / 2 := ?_
+   swap
+   · push_cast at hNη

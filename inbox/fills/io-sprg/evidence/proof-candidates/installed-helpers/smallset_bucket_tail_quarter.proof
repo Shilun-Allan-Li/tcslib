@@ -1,0 +1,24 @@
+by
+  have he : 4 * Real.exp 1 ≤ (12 : ℝ) := ?_
+  swap
+  · nlinarith [Real.exp_one_lt_d9]
+  have hSB : (S.card : ℝ) ≤ P.B κ := ?_
+  swap
+  · exact_mod_cast (hS.trans hΓ)
+  have hκR : (12 : ℝ) ≤ ((κ + 1 : ℕ) : ℝ) := ?_
+  swap
+  · exact_mod_cast (hκ.trans (Nat.le_add_right κ 1))
+  have hbase : 4 * Real.exp 1 * (S.card : ℝ) ≤
+      (P.B κ : ℝ) * ((κ + 1 : ℕ) : ℝ) := ?_
+  swap
+  · calc
+      _ ≤ 12 * (S.card : ℝ) :=
+        mul_le_mul_of_nonneg_right he (Nat.cast_nonneg S.card)
+      _ ≤ 12 * (P.B κ : ℝ) := mul_le_mul_of_nonneg_left hSB (Nat.cast_nonneg 12)
+      _ = (P.B κ : ℝ) * 12 := mul_comm _ _
+      _ ≤ _ := mul_le_mul_of_nonneg_left hκR (Nat.cast_nonneg _)
+  exact (some_bucket_tail S κ).trans
+    (mul_le_mul_of_nonneg_left
+      (binomial_ratio_quarter S.card (P.B κ) (κ + 1) κ
+        (P.B_pos κ) (Nat.succ_pos κ) hbase (Nat.le_add_right κ 1))
+      (Nat.cast_nonneg _))

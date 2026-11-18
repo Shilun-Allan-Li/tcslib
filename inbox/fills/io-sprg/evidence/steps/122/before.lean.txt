@@ -1,0 +1,84 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Claim42.Defs
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Numeric bucket and exponential bounds for Claim 4.2
+
+## Main definitions
+
+None. This file hosts theorem-only arithmetic and finite-load consequences.
+
+## Main results
+
+The `Internal` helpers bound the exact rounded bucket count, its
+polynomial prefactor, and the sparse/full bucket tails.
+
+
+## References
+
+* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
+  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026,
+  proof of Claim 4.2, pp. 19-21.
+* [PS10] R. Pass, A. Shelat, *A Course in Cryptography*, 2010, Definition 26.8.
+-/
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal
+
+
+/-- The rounded bucket count satisfies `B κ ≤ m κ * κ + 1`; glue for the JLS allocation. [JLS26,
+proof of Claim 4.2, pp. 20-21]. This is theorem-only analytic glue; no sampling or
+efficiency construction is introduced.
+
+**Proof sketch.** Read the rounded quotient, apply the public natural-division bound, and
+use W≥1. -/
+theorem bucket_count_upper (P : Params) (κ : ℕ) :
+    P.B κ ≤ P.m κ * κ + 1 := by
+  rw [P.B_eq, P.t_eq, max_le_iff]
+  refine ⟨Nat.succ_le_succ (Nat.zero_le _), ?_⟩
+  rw [Nat.div_le_iff_le_mul_add_pred (P.W_pos κ), Nat.mul_add, Nat.mul_one]
+  exact (Nat.sub_le (P.m κ * κ + P.W κ) 1).trans
+    ((Nat.add_le_add_right
+      (Nat.le_mul_of_pos_left (P.m κ * κ) (P.W_pos κ)) (P.W κ)).trans
+      (Nat.le_add_right _ (P.W κ - 1)))
+
+/-- The rounded bucket count covers the allocation: `m κ * κ ≤ B κ * W κ`; glue. [JLS26, proof
+of Claim 4.2, pp. 20-21]. This is theorem-only analytic glue; no sampling or efficiency
+construction is introduced.
+
+**Proof sketch.** Apply the public strict quotient bound, clear its additive rounding term,
+then use the max bound. -/
+theorem bucket_count_lower (P : Params) (κ : ℕ) :
+    P.m κ * κ ≤ P.B κ * P.W κ := by
+  have hW := P.W_pos κ
+  have hround := Nat.lt_mul_div_succ
+    (P.m κ * κ + P.W κ - 1) hW
+  rw [Nat.mul_add, Nat.mul_one] at hround
+  have hceil : P.m κ * κ ≤
+      P.W κ * ((P.m κ * κ + P.W κ - 1) / P.W κ) := ?_
+  swap
+  · omega
+  have hB : (P.m κ * κ + P.W κ - 1) / P.W κ ≤ P.B κ := ?_
+  swap
+  · rw [P.B_eq, P.t_eq]
+    exact le_max_right _ _
+  exact hceil.trans ((Nat.mul_le_mul_left (P.W κ) hB).trans_eq
+    (Nat.mul_comm (P.W κ) (P.B κ)))
+
+/-- The construction prefactor `(κ+1)*B κ+1` is eventually at most `2^κ`. [JLS26, proof of Claim
+4.2, pp. 20-21]. This is theorem-only analytic glue; no sampling or efficiency construction
+is introduced.
+
+**Proof sketch.** Bound the prefactor by the stored output polynomial. Apply
+PolyExpr.eval_le and the existing polynomial-over-exponential limit, then choose a common
+cutoff. -/
+theorem prefactor_eventually_le_two_pow (P : Params) :
+    ∃ κ₀, ∀ κ ≥ κ₀, (((κ + 1) * P.B κ + 1 : ℕ) : ℝ) ≤ (2 : ℝ) ^ κ := sorry
+
+end TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal

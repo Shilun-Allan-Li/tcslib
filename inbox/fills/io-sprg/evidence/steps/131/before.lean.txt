@@ -1,0 +1,277 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Claim42.Bounds
+import TCSlib.Cryptography.Obfuscation.StructuredSeed.Correctness
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Conditional failure estimates for Claim 4.2
+
+## Main definitions
+
+None. All failure events are imported from `Claim42.Defs`.
+
+## Main results
+
+* The `Internal` helpers condition on a fixed index, then average over
+  its actual law; they also bound the common capacity and sparse overload events.
+* `Params.errProb_le_decomposition` is the existing three-event decomposition.
+
+
+## References
+
+* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
+  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026,
+  proof of Claim 4.2, pp. 19-21.
+* [PS10] R. Pass, A. Shelat, *A Course in Cryptography*, 2010, Definition 26.8.
+-/
+
+namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
+
+open TCSlib.Cryptography.Games
+open scoped BigOperators
+
+namespace Internal
+
+
+/-- If `4*cLoc ≤ log₂(n κ)`, one fixed-index bad-count failure has probability at most 1/4.
+[JLS26, proof of Claim 4.2, pp. 20-21]. This is theorem-only analytic glue; no sampling or
+efficiency construction is introduced.
+
+**Proof sketch.** Combine the existing Markov bound with the public quotient rounding bound
+for Γ. Cast the resulting natural inequality and clear the positive denominator. -/
+theorem cond1_single_le_quarter (P : Params) {cLoc : ℕ}
+    (hLoc : P.R.HasLocality cLoc) (κ : ℕ) (pp : PrimeParam κ)
+    (I : P.Idx' κ pp) (hlog : 4 * cLoc ≤ Nat.log 2 (P.n κ)) :
+    Games.ProbComp.prob
+      (Games.ProbComp.sample (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))
+      (fun r => P.Γ κ <
+        (P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))).card) ≤ (4 : ℝ)⁻¹ := by
+  refine (P.cond1_prob_le hLoc κ pp I).trans ?_
+  have hround := Nat.lt_mul_div_succ
+    (P.m κ * Nat.log 2 (P.n κ)) (P.W_pos κ)
+  rw [← P.Γ_eq] at hround
+  have hnat : 4 * cLoc * P.m κ ≤ P.W κ * (P.Γ κ + 1) := ?_
+  swap
+  · calc
+      4 * cLoc * P.m κ = P.m κ * (4 * cLoc) := Nat.mul_comm _ _
+      _ ≤ P.m κ * Nat.log 2 (P.n κ) := Nat.mul_le_mul_left _ hlog
+      _ ≤ P.W κ * (P.Γ κ + 1) := hround.le
+  have hreal : (4 : ℝ) * cLoc * P.m κ ≤
+      (P.W κ : ℝ) * ((P.Γ κ : ℝ) + 1) := ?_
+  swap
+  · exact_mod_cast hnat
+  have hW : (0 : ℝ) < P.W κ := Nat.cast_pos.mpr (P.W_pos κ)
+  have hden : (0 : ℝ) < (P.W κ : ℝ) * ((P.Γ κ : ℝ) + 1) :=
+    mul_pos hW (add_pos_of_nonneg_of_pos (Nat.cast_nonneg _) zero_lt_one)
+  apply (div_le_iff₀ hden).2
+  nlinarith
+
+/-- At a fixed complete index, the probability that every independent repetition satisfies Cond1
+is at most `4⁻¹^κ`, under the logarithmic locality bound. [JLS26, proof of Claim 4.2, pp.
+20-21]. This is theorem-only analytic glue; no sampling or efficiency construction is
+introduced.
+
+**Proof sketch.** Discard each unused secret by the product probability reader. Reuse
+OneWay.uprob_pi_forall for the independent repetitions, then apply the single-repetition
+bound. -/
+theorem cond1_repetitions_fixed_index (P : Params) {cLoc : ℕ}
+    (hLoc : P.R.HasLocality cLoc) (κ : ℕ) (pp : PrimeParam κ)
+    (I : P.Idx' κ pp) (hlog : 4 * cLoc ≤ Nat.log 2 (P.n κ)) :
+    uprob (fun reps : Fin κ → (Fin (P.ℓ κ) → ZMod pp.p) ×
+        (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p) =>
+      ∀ k, P.Γ κ <
+        (P.badSet κ pp I (fun i => P.noiseValue κ pp ((reps k).2 i))).card) ≤
+      (4 : ℝ)⁻¹ ^ κ := by
+  classical
+  let Noise := Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p
+  let Secret := Fin (P.ℓ κ) → ZMod pp.p
+  let p : Noise → Prop := fun r => P.Γ κ <
+    (P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))).card
+  let q : Secret × Noise → Prop := fun z => p z.2
+  have hp : uprob p ≤ (4 : ℝ)⁻¹ := ?_
+  swap
+  · rw [← Games.Bridge.prob_sample_eq_uprob p]
+    exact cond1_single_le_quarter P hLoc κ pp I hlog
+  have hq : uprob q = uprob p :=
+    (uprob_comp_equiv (Equiv.prodComm Noise Secret) q).symm.trans
+      (uprob_fst (β := Secret) p)
+  change uprob (fun reps : Fin κ → Secret × Noise => ∀ k, q (reps k)) ≤ _
+  rw [OneWay.uprob_pi_forall, Fintype.card_fin, hq]
+  exact pow_le_pow_left₀ (uprob_nonneg p) hp κ
+
+/-- Under the logarithmic locality bound, the full seed-core law at each fixed index has
+simultaneous Cond1 probability at most `4⁻¹^κ`. [JLS26, proof of Claim 4.2, pp. 20-21]. This
+is theorem-only analytic glue; no sampling or efficiency construction is introduced.
+
+**Proof sketch.** Read the full seed sampler as its exact uniform draw, transport through
+sdCore_draw, discard the Boolean seed, and apply the fixed-index repetition bound. -/
+theorem cond1_all_fixed_index (P : Params) {cLoc : ℕ}
+    (hLoc : P.R.HasLocality cLoc) (κ : ℕ) (pp : PrimeParam κ)
+    (I : P.Idx' κ pp) (hlog : 4 * cLoc ≤ Nat.log 2 (P.n κ)) :
+    Games.ProbComp.prob (P.sdSampFull κ pp I)
+      (fun x => ∀ k, P.Cond1 κ pp I x.draw k) ≤ (4 : ℝ)⁻¹ ^ κ := by
+  classical
+  rw [P.sdSampFull_eq, Games.ProbComp.prob_eq_expect, Games.ProbComp.expect_map,
+    ← Games.ProbComp.prob_eq_expect, Games.Bridge.prob_sample_eq_uprob]
+  simp_rw [P.sdCore_draw, P.cond1_iff]
+  let Seed := Fin (P.n κ) → Bool
+  let Rep := (Fin (P.ℓ κ) → ZMod pp.p) ×
+    (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
+  let p : (Fin κ → Rep) → Prop := fun reps => ∀ k, P.Γ κ <
+    (P.badSet κ pp I (fun i => P.noiseValue κ pp ((reps k).2 i))).card
+  change uprob (fun d : Seed × (Fin κ → Rep) => p d.2) ≤ _
+  have heq : uprob (fun d : Seed × (Fin κ → Rep) => p d.2) = uprob p :=
+    (uprob_comp_equiv (Equiv.prodComm (Fin κ → Rep) Seed)
+      (fun d : Seed × (Fin κ → Rep) => p d.2)).symm.trans
+      (uprob_fst (β := Seed) p)
+  exact heq.le.trans (cond1_repetitions_fixed_index P hLoc κ pp I hlog)
+
+/-- Under the logarithmic locality bound, simultaneous Cond1 under the actual joint law has
+probability at most `4⁻¹^κ`. [JLS26, proof of Claim 4.2, pp. 20-21]. This is theorem-only
+analytic glue; no sampling or efficiency construction is introduced.
+
+**Proof sketch.** Condition on the complete index, apply the same fixed-index bound to every
+section, and average over the actual index sampler using expectation monotonicity. -/
+theorem cond1_all_joint (P : Params) {cLoc : ℕ}
+    (hLoc : P.R.HasLocality cLoc) (κ : ℕ) (pp : PrimeParam κ)
+    (hlog : 4 * cLoc ≤ Nat.log 2 (P.n κ)) :
+    Games.ProbComp.prob (P.jointLaw κ pp)
+      (fun x => ∀ k, P.Cond1 κ pp x.1 x.2.draw k) ≤ (4 : ℝ)⁻¹ ^ κ := by
+  classical
+  rw [P.jointLaw_eq, Games.ProbComp.prob_bind]
+  refine (Games.ProbComp.expect_mono (P.idSamp' κ pp) ?_).trans_eq
+    (Games.ProbComp.expect_const (P.idSamp' κ pp) ((4 : ℝ)⁻¹ ^ κ))
+  intro I
+  rw [Games.ProbComp.prob_eq_expect, Games.ProbComp.expect_map,
+    ← Games.ProbComp.prob_eq_expect]
+  exact cond1_all_fixed_index P hLoc κ pp I hlog
+
+/-- For κ≥12, common capacity failure under the actual joint law has probability at most `B κ *
+4⁻¹^κ`. [JLS26, proof of Claim 4.2, pp. 20-21]. This is theorem-only analytic glue; no
+sampling or efficiency construction is introduced.
+
+**Proof sketch.** Discard the unused full seed draw and the unused generator/matrix
+coordinates through the probability readers, then apply the uniform full-load bound. -/
+theorem cond3_joint_le_quarter_pow (P : Params) (κ : ℕ)
+    (pp : PrimeParam κ) (hκ : 12 ≤ κ) :
+    Games.ProbComp.prob (P.jointLaw κ pp) (fun x => P.Cond3 κ pp x.1) ≤
+      (P.B κ : ℝ) * (4 : ℝ)⁻¹ ^ κ := sorry
+
+end Internal
+
+namespace Params
+
+/-- The error event is bounded by common capacity failure, the sparse-but-overloaded
+repetitions, and simultaneous bad-count failure [JLS26, proof of Claim 4.2, p. 21].
+Dv7 keeps every probability explicit before taking eventual estimates.
+
+**Proof sketch.** Read firstGood's failure condition. If no repetition succeeds, either the
+common capacity event holds, some repetition has Cond2 without Cond1, or all have Cond1.
+Apply the existing finite-event union bound through the uniform-draw bridge. -/
+theorem errProb_le_decomposition (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
+    P.errProb κ pp ≤
+      ProbComp.prob (P.jointLaw κ pp) (fun x => P.Cond3 κ pp x.1) +
+      (∑ k : Fin κ, ProbComp.prob (P.jointLaw κ pp)
+        (fun x => P.Cond2 κ pp x.1 x.2.draw k ∧ ¬ P.Cond1 κ pp x.1 x.2.draw k)) +
+      ProbComp.prob (P.jointLaw κ pp) (fun x => ∀ k, P.Cond1 κ pp x.1 x.2.draw k) := by
+  classical
+  let Space := P.IdDraw κ pp × P.Draw κ pp
+  let out : Space → P.Idx' κ pp × P.SdCoreOut κ pp := fun z =>
+    (P.idCore κ pp z.1, P.sdCore κ pp (P.idCore κ pp z.1) z.2)
+  have hjoint : ∀ event : (P.Idx' κ pp × P.SdCoreOut κ pp) → Prop,
+      ProbComp.prob (P.jointLaw κ pp) event =
+        uprob (fun z : Space => event (out z)) :=
+    fun event => P.jointLaw_prob_eq_uprob κ pp event
+  have herrJoint : P.errProb κ pp =
+      ProbComp.prob (P.jointLaw κ pp) (fun x => x.2.err = true) := ?_
+  swap
+  · simp only [P.errProb_eq, P.jointLaw_eq, ProbComp.prob_eq_expect,
+      ProbComp.expect_bind, ProbComp.expect_map]
+  have herr : P.errProb κ pp = uprob (fun z : Space => (out z).2.err = true) :=
+    herrJoint.trans (hjoint (fun x => x.2.err = true))
+  let c1 : Fin κ → Space → Prop := fun k z =>
+    P.Cond1 κ pp (P.idCore κ pp z.1) z.2 k
+  let c2 : Fin κ → Space → Prop := fun k z =>
+    P.Cond2 κ pp (P.idCore κ pp z.1) z.2 k ∧ ¬ c1 k z
+  let c3 : Space → Prop := fun z => P.Cond3 κ pp (P.idCore κ pp z.1)
+  have hpoint : ∀ z : Space, (out z).2.err = true →
+      c3 z ∨ (∃ k, c2 k z) ∨ ∀ k, c1 k z := ?_
+  swap
+  · intro z hz
+    let I := P.idCore κ pp z.1
+    let d := z.2
+    change (P.sdCore κ pp I d).err = true at hz
+    change P.Cond3 κ pp I ∨
+      (∃ k, P.Cond2 κ pp I d k ∧ ¬ P.Cond1 κ pp I d k) ∨
+        ∀ k, P.Cond1 κ pp I d k
+    by_cases h3 : P.Cond3 κ pp I
+    · exact Or.inl h3
+    right
+    by_cases hall : ∀ k, P.Cond1 κ pp I d k
+    · exact Or.inr hall
+    left
+    obtain ⟨k, hk⟩ := not_forall.mp hall
+    refine ⟨k, ?_, hk⟩
+    have hnone :
+        firstGood (fun q => (P.oneSd κ pp I d.1 (d.2 q).1 (d.2 q).2).flag) =
+          none := ?_
+    swap
+    · rw [P.sdCore_err] at hz
+      exact Option.eq_none_of_isNone hz
+    have hflag : P.oneFlag κ pp I
+        (fun i => P.noiseValue κ pp ((d.2 k).2 i)) = false := ?_
+    swap
+    · have hflags := (firstGood_none_iff
+        (fun q => (P.oneSd κ pp I d.1 (d.2 q).1 (d.2 q).2).flag)).mp hnone
+      simpa only [P.oneSd_flag] using hflags k
+    by_contra h2
+    have hcount :
+        (P.badSet κ pp I (fun i => P.noiseValue κ pp ((d.2 k).2 i))).card ≤
+          P.Γ κ :=
+      Nat.le_of_not_gt (fun h => hk ((P.cond1_iff κ pp I d k).mpr h))
+    have hcapacity : ¬ ∃ b : Fin (P.B κ), P.cap κ < Buckets.load I.2.1 b := ?_
+    swap
+    · intro h
+      exact h3 ((P.cond3_iff κ pp I).mpr
+        ((Buckets.overfull_iff I.2.1 (P.cap κ)).mpr h))
+    have hbucket : ∀ b : Fin (P.B κ),
+        (Buckets.bucket I.2.1 b ∩
+          P.badSet κ pp I (fun i => P.noiseValue κ pp ((d.2 k).2 i))).card ≤
+            P.t κ :=
+      fun b => Nat.le_of_not_gt
+        (fun h => h2 ((P.cond2_iff κ pp I d k).mpr ⟨b, h⟩))
+    rw [P.oneFlag_eq] at hflag
+    exact (of_decide_eq_false hflag) ⟨hcount, hcapacity, hbucket⟩
+  have hfinite : uprob (fun z : Space => ∃ k, c2 k z) ≤
+      ∑ k : Fin κ, uprob (c2 k) := ?_
+  swap
+  · simpa only [Finset.mem_univ, true_and] using
+      (uprob_exists_le (α := Space) (Finset.univ : Finset (Fin κ))
+        (fun (k : Fin κ) (z : Space) => c2 k z))
+  have hbound : uprob (fun z : Space => (out z).2.err = true) ≤
+      uprob c3 + (∑ k : Fin κ, uprob (c2 k)) +
+        uprob (fun z : Space => ∀ k, c1 k z) := ?_
+  swap
+  · calc
+      uprob (fun z : Space => (out z).2.err = true) ≤
+        uprob (fun z : Space => c3 z ∨ (∃ k, c2 k z) ∨ ∀ k, c1 k z) :=
+          uprob_mono (α := Space) hpoint
+      _ ≤ uprob c3 + (∑ k : Fin κ, uprob (c2 k)) +
+          uprob (fun z : Space => ∀ k, c1 k z) := ?_
+    have hleft := uprob_or_le (α := Space) c3
+      (fun z : Space => (∃ k, c2 k z) ∨ ∀ k, c1 k z)
+    have hright := uprob_or_le (α := Space) (fun z : Space => ∃ k, c2 k z)
+      (fun z : Space => ∀ k, c1 k z)
+    linarith
+  rw [herr]
+  simpa only [hjoint, out, P.sdCore_draw, c1, c2, c3] using hbound
+
+
+end Params
+end TCSlib.Cryptography.Obfuscation.StructuredSeed

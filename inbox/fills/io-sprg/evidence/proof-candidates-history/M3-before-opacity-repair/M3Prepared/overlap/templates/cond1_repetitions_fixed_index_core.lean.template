@@ -1,0 +1,15 @@
+import TCSlib.Cryptography.Games.Bridges.Experiments
+import TCSlib.Cryptography.OneWayFunctions.Basic
+import Mathlib.Data.Finset.Powerset
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography
+
+example {Secret Noise : Type} [Fintype Secret] [Nonempty Secret]
+    [Fintype Noise] [Nonempty Noise] (κ : ℕ) (q : Noise → Prop)
+    (h : uprob q ≤ (4 : ℝ)⁻¹) :
+    uprob (fun reps : Fin κ → Secret × Noise => ∀ k, q (reps k).2) ≤ (4 : ℝ)⁻¹ ^ κ := __PROBE_BODY__

@@ -1,0 +1,7 @@
+evidence/probes/M3_FocusedNoiseOpacity.lean:165:6: error: Type mismatch: After simplification, term
+  lpnNoise_law pp.p (P.W κ) 0
+ has type
+  (uprob fun c => ↑((lpnNoise pp.p (P.W κ)).sample c) = 0) =
+    if True then 1 - 1 / ↑(P.W κ) + 1 / (↑(P.W κ) * ↑pp.p) else 1 / (↑(P.W κ) * ↑pp.p)
+but is expected to have type
+  (uprob fun c => ↑((lpnNoise pp.p (P.W κ)).sample (cast ⋯ c)) = 0) = 1 - 1 / ↑(P.W κ) + 1 / (↑(P.W κ) * ↑pp.p)

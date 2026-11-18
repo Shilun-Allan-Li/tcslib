@@ -1,0 +1,27 @@
+/- NOT_RUN. Proposed area-local Internal arithmetic glue.
+Consumes existing binomial_bound and ordered-field/power APIs; no new
+Chernoff/Stirling or factorial estimate. Searches found no public lemma for
+this construction's exact binomial/base/threshold combination. No new import.
+Exact?/apply? and elaboration pending root. -/
+
+theorem binomial_ratio_quarter (N B r κ : ℕ) (hB : 0 < B) (hr : 0 < r)
+    (hbase : 4 * Real.exp 1 * (N : ℝ) ≤ (B : ℝ) * r) (hκ : κ ≤ r) :
+    (Nat.choose N r : ℝ) / (B : ℝ) ^ r ≤ (4 : ℝ)⁻¹ ^ κ := by
+  have hBr : (0 : ℝ) < (B : ℝ) * r :=
+    mul_pos (Nat.cast_pos.mpr hB) (Nat.cast_pos.mpr hr)
+  have hnum : (0 : ℝ) ≤ Real.exp 1 * (N : ℝ) :=
+    mul_nonneg (Real.exp_pos 1).le (Nat.cast_nonneg N)
+  have hratio : Real.exp 1 * (N : ℝ) / ((B : ℝ) * r) ≤ (4 : ℝ)⁻¹ := ?_
+  swap
+  · apply (div_le_iff₀ hBr).2
+    nlinarith
+  refine (div_le_div_of_nonneg_right (binomial_bound N r hr)
+    (pow_nonneg (Nat.cast_nonneg B) r)).trans ?_
+  calc
+    (Real.exp 1 * (N : ℝ) / r) ^ r / (B : ℝ) ^ r =
+        (Real.exp 1 * (N : ℝ) / ((B : ℝ) * r)) ^ r := ?_
+    _ ≤ (4 : ℝ)⁻¹ ^ r :=
+      pow_le_pow_left₀ (div_nonneg hnum hBr.le) hratio r
+    _ ≤ (4 : ℝ)⁻¹ ^ κ := ?_
+  · rw [← div_pow, div_div, mul_comm (r : ℝ) (B : ℝ)]
+  · apply pow_le_pow_of_le_one _ _ hκ <;> norm_num

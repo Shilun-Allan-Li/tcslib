@@ -1,0 +1,19 @@
+import TCSlib.Cryptography.Games.Bridges.Experiments
+import TCSlib.Cryptography.OneWayFunctions.Basic
+import Mathlib.Data.Finset.Powerset
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography
+
+example {X : Type} [Fintype X] [Nonempty X] (κ : ℕ)
+    (flags : X → Fin κ → Bool) (C : X → Prop) (A B : X → Fin κ → Prop)
+    (hflags : ∀ x k, flags x k = true ↔ ¬ A x k ∧ ¬ C x ∧ ¬ B x k) :
+    uprob (fun x => ∀ k, flags x k = false) ≤
+      uprob C + Finset.sum Finset.univ
+        (fun k : Fin κ => uprob (fun x => B x k ∧ ¬ A x k)) +
+      uprob (fun x => ∀ k, A x k) := by
+  exact?

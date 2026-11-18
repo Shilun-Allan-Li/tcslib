@@ -1,0 +1,11 @@
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/LPN.lean
+@@ -104,7 +104,7 @@
+     swap
+     · intro c
+       rw [hs c]
+-      by_cases ha : c.1 = 0 <;> simp [ha, hz, Ne.symm hz]
++      by_cases ha : c.1 = 0 <;> simp [ha, Ne.symm hz]
+     rw [OneWay.uprob_congr hevent,
+       HardcoreBit.uprob_prod_and (fun a : Fin W => a = 0) (fun x : ZMod p => x = z),
+       hW, hp]

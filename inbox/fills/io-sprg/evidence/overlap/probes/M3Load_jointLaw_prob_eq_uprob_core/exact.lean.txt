@@ -1,0 +1,17 @@
+import TCSlib.Cryptography.Games.Bridges.Experiments
+import TCSlib.Cryptography.OneWayFunctions.Basic
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 100000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open TCSlib.Cryptography
+
+example {I D O C : Type} [Fintype I] [Nonempty I] [Fintype D] [Nonempty D]
+    (idx : I → O) (core : O → D → C) (event : O × C → Prop) :
+    Games.ProbComp.prob
+      (((fun a => idx a) <$> Games.ProbComp.sample I).bind fun j =>
+        (fun x => (j, x)) <$> ((core j) <$> Games.ProbComp.sample D)) event =
+      uprob (fun z : I × D => event (idx z.1, core (idx z.1) z.2)) := by
+  exact?

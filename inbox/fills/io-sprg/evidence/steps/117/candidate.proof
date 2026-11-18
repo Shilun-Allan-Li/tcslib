@@ -1,0 +1,117 @@
+by
+  classical
+  let Noise := Fin (P.W κ) × ZMod pp.p
+  let NoiseVec := Fin (P.n κ) → Noise
+  letI : Nonempty (Fin (P.W κ)) := ⟨0⟩
+  have hscalar : ProbComp.prob (ProbComp.sample Noise)
+      (fun c => P.noiseValue κ pp c ≠ 0) ≤ 1 / (P.W κ : ℝ) := ?_
+  swap
+  · have hzero : uprob (fun c : Noise => P.noiseValue κ pp c = 0) =
+        1 - 1 / (P.W κ : ℝ) + 1 / ((P.W κ : ℝ) * pp.p) := ?_
+    swap
+    · simpa only [P.noiseValue_eq, cast_eq, if_pos rfl] using
+        (lpnNoise_law pp.p (P.W κ) (0 : ZMod pp.p))
+    rw [Bridge.prob_sample_eq_uprob (fun c : Noise => P.noiseValue κ pp c ≠ 0),
+      uprob_not (fun c : Noise => P.noiseValue κ pp c = 0), hzero]
+    have hnonneg : 0 ≤ 1 / ((P.W κ : ℝ) * pp.p) :=
+      div_nonneg zero_le_one (mul_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _))
+    linarith
+  have hcoord : ∀ i : Fin (P.n κ),
+      ProbComp.prob (ProbComp.sample NoiseVec)
+        (fun r => P.noiseValue κ pp (r i) ≠ 0) ≤ 1 / (P.W κ : ℝ) := ?_
+  swap
+  · intro i
+    rw [ProbComp.prob_eq_expect]
+    have h := ProbComp.expect_sample_coord (β := Noise) i
+      (fun c (_ : NoiseVec) => if P.noiseValue κ pp c ≠ 0 then (1 : ℝ) else 0)
+      (fun _ _ _ => rfl)
+    calc
+      ProbComp.expect (ProbComp.sample NoiseVec)
+          (fun r => if P.noiseValue κ pp (r i) ≠ 0 then (1 : ℝ) else 0) =
+        ProbComp.prob (ProbComp.sample Noise)
+          (fun c => P.noiseValue κ pp c ≠ 0) := ?_
+      _ ≤ 1 / (P.W κ : ℝ) := hscalar
+    rw [ProbComp.prob_eq_expect]
+    simpa only [ProbComp.expect_const] using h
+  have hbad : ∀ j : Fin (P.m κ),
+      ProbComp.prob (ProbComp.sample NoiseVec)
+        (fun r => j ∈ P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))) ≤
+          (cLoc : ℝ) / P.W κ := ?_
+  swap
+  · intro j
+    let s := (P.R.poly (P.n κ) I.1 (P.outputIndex κ j)).vars
+    have hevent : ∀ r : NoiseVec,
+        j ∈ P.badSet κ pp I (fun i => P.noiseValue κ pp (r i)) ↔
+          ∃ i ∈ s, P.noiseValue κ pp (r i) ≠ 0 := ?_
+    swap
+    · intro r
+      rw [P.badSet_eq]
+      constructor
+      · intro hj
+        obtain ⟨i, hi⟩ := (Finset.mem_filter.mp hj).2
+        have hparts := Finset.mem_inter.mp hi
+        have herr := hparts.2
+        rw [P.errSet_eq] at herr
+        exact ⟨i, hparts.1, (Finset.mem_filter.mp herr).2⟩
+      · rintro ⟨i, hi, hnoise⟩
+        apply Finset.mem_filter.mpr
+        refine ⟨Finset.mem_univ _, i, Finset.mem_inter.mpr ⟨hi, ?_⟩⟩
+        rw [P.errSet_eq]
+        exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, hnoise⟩
+    have hlocal : s.card ≤ cLoc :=
+      (BoolPRG.MultilinearRep.hasLocality_iff P.R cLoc).mp hLoc
+        (P.n κ) I.1 (P.outputIndex κ j)
+    have hlocalR : (s.card : ℝ) ≤ cLoc := ?_
+    swap
+    · exact_mod_cast hlocal
+    rw [Bridge.prob_sample_eq_uprob]
+    calc
+      uprob (fun r : NoiseVec =>
+          j ∈ P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))) =
+        uprob (fun r : NoiseVec => ∃ i ∈ s, P.noiseValue κ pp (r i) ≠ 0) :=
+          OneWay.uprob_congr (α := NoiseVec) hevent
+      _ ≤ ∑ i ∈ s, uprob (fun r : NoiseVec => P.noiseValue κ pp (r i) ≠ 0) :=
+        uprob_exists_le (α := NoiseVec) s
+          (fun (i : Fin (P.n κ)) (r : NoiseVec) => P.noiseValue κ pp (r i) ≠ 0)
+      _ ≤ ∑ _i ∈ s, 1 / (P.W κ : ℝ) := Finset.sum_le_sum (fun i _ => ?_)
+      _ = (s.card : ℝ) / P.W κ := ?_
+      _ ≤ (cLoc : ℝ) / P.W κ :=
+        div_le_div_of_nonneg_right hlocalR (Nat.cast_nonneg _)
+    · simpa only [Bridge.prob_sample_eq_uprob] using hcoord i
+    · rw [Finset.sum_const, nsmul_eq_mul]
+      ring
+  have hcard : ∀ r : NoiseVec,
+      ((P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))).card : ℝ) =
+        ∑ j : Fin (P.m κ),
+          if j ∈ P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))
+          then (1 : ℝ) else 0 := ?_
+  swap
+  · intro r
+    simpa only [Finset.filter_mem_eq_inter, Finset.univ_inter] using
+      (Finset.sum_boole
+        (fun (j : Fin (P.m κ)) => j ∈ P.badSet κ pp I (fun i => P.noiseValue κ pp (r i)))
+        Finset.univ).symm
+  calc
+    ProbComp.expect (ProbComp.sample NoiseVec)
+        (fun r => ((P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))).card : ℝ)) =
+      ProbComp.expect (ProbComp.sample NoiseVec)
+        (fun r => ∑ j : Fin (P.m κ),
+          if j ∈ P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))
+          then (1 : ℝ) else 0) :=
+        congrArg (ProbComp.expect (ProbComp.sample NoiseVec)) (funext hcard)
+    _ = ∑ j : Fin (P.m κ), ProbComp.expect (ProbComp.sample NoiseVec)
+        (fun r => if j ∈ P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))
+          then (1 : ℝ) else 0) :=
+      ProbComp.expect_sum (ProbComp.sample NoiseVec) Finset.univ
+        (fun j r => if j ∈ P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))
+          then (1 : ℝ) else 0)
+    _ = ∑ j : Fin (P.m κ), ProbComp.prob (ProbComp.sample NoiseVec)
+        (fun r => j ∈ P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))) :=
+      Finset.sum_congr rfl (fun j _ =>
+        (ProbComp.prob_eq_expect (ProbComp.sample NoiseVec)
+          (fun r => j ∈ P.badSet κ pp I (fun i => P.noiseValue κ pp (r i)))).symm)
+    _ ≤ ∑ _j : Fin (P.m κ), (cLoc : ℝ) / P.W κ :=
+      Finset.sum_le_sum (fun j _ => hbad j)
+    _ = (cLoc : ℝ) * P.m κ / P.W κ := ?_
+  rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+  ring

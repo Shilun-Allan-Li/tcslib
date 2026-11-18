@@ -1,0 +1,699 @@
+From e966956e25caf9512050ddf5d480a5dec7f4d3de Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 10:09:56 -0800
+Subject: [PATCH 26/29] io-sprg: M3 finite load bounds and modular probability
+ analysis
+
+---
+ .../Obfuscation/StructuredSeed/Claim42.lean   | 109 +------
+ .../StructuredSeed/Claim42/Bounds.lean        |  35 +++
+ .../StructuredSeed/Claim42/Conditions.lean    |  62 ++++
+ .../StructuredSeed/Claim42/Defs.lean          | 275 ++++++++++++++++++
+ .../StructuredSeed/Claim42/Load.lean          | 120 +++++++-
+ 5 files changed, 493 insertions(+), 108 deletions(-)
+ create mode 100644 TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Bounds.lean
+ create mode 100644 TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Conditions.lean
+ create mode 100644 TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Defs.lean
+
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42.lean
+index d0dc2fa099d5904786908f7d512a11d4ba500f25..5f1e53ba21e2d2346bbb10733df0ffebd25916c4 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42.lean
+@@ -4,6 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.Obfuscation.StructuredSeed.Samplers
+ import TCSlib.Cryptography.Obfuscation.StructuredSeed.Claim42.Load
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Claim42.Defs
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Claim42.Bounds
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Claim42.Conditions
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -19,6 +22,9 @@ set_option autoImplicit false
+ ## Contents
+ 
+ * `Claim42.Load`: finite binomial and bucket-tail bounds.
++* `Claim42.Defs`: failure events, joint law, and locality bounds.
++* `Claim42.Bounds`: rounded bucket counts and numerical tail bounds.
++* `Claim42.Conditions`: conditional event estimates and decomposition.
+ 
+ ## Main results
+ 
+@@ -40,109 +46,6 @@ open scoped BigOperators
+ 
+ namespace Params
+ 
+-/-- The first failure condition is too many bad outputs in repetition k
+-[JLS26, proof of Claim 4.2, pp. 19-20]. Dv3 uses the rounded threshold Γ. -/
+-noncomputable def Cond1 (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+-    (I : P.Idx' κ pp) (d : P.Draw κ pp) (k : Fin κ) : Prop :=
+-  P.Γ κ < (P.badSet κ pp I (fun i => P.noiseValue κ pp ((d.2 k).2 i))).card
+-
+-/-- The first condition compares the bad-output count with Γ; glue. -/
+-theorem cond1_iff (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+-    (I : P.Idx' κ pp) (d : P.Draw κ pp) (k : Fin κ) :
+-    P.Cond1 κ pp I d k ↔
+-      P.Γ κ < (P.badSet κ pp I (fun i => P.noiseValue κ pp ((d.2 k).2 i))).card :=
+-  Iff.rfl
+-
+-/-- The second failure condition is more than t bad outputs in some bucket
+-[JLS26, proof of Claim 4.2, pp. 19-20]. Dv3 uses an integer threshold. -/
+-noncomputable def Cond2 (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+-    (I : P.Idx' κ pp) (d : P.Draw κ pp) (k : Fin κ) : Prop :=
+-  ∃ b : Fin (P.B κ), P.t κ <
+-    (Buckets.bucket I.2.1 b ∩
+-      P.badSet κ pp I (fun i => P.noiseValue κ pp ((d.2 k).2 i))).card
+-
+-/-- The second condition is the finite bucket-overload event for bad outputs; glue. -/
+-theorem cond2_iff (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+-    (I : P.Idx' κ pp) (d : P.Draw κ pp) (k : Fin κ) :
+-    P.Cond2 κ pp I d k ↔ ∃ b : Fin (P.B κ), P.t κ <
+-      (Buckets.bucket I.2.1 b ∩
+-        P.badSet κ pp I (fun i => P.noiseValue κ pp ((d.2 k).2 i))).card := Iff.rfl
+-
+-/-- The third failure condition is a bucket beyond capacity
+-[JLS26, proof of Claim 4.2, pp. 19-20]. This event is shared by all repetitions. -/
+-noncomputable def Cond3 (P : Params) (κ : ℕ) (pp : PrimeParam κ)
+-    (I : P.Idx' κ pp) : Prop := Buckets.overfull I.2.1 (P.cap κ)
+-
+-/-- The third condition is the overfull-placement predicate; glue. -/
+-theorem cond3_iff (P : Params) (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' κ pp) :
+-    P.Cond3 κ pp I ↔ Buckets.overfull I.2.1 (P.cap κ) := Iff.rfl
+-
+-/-- The proof-facing joint law retains index and full seed-core output
+-[JLS26, Claim 4.2, p. 19]. Dv17 uses exact finite draws, without a coin sampler. -/
+-noncomputable def jointLaw (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
+-    ProbComp (P.Idx' κ pp × P.SdCoreOut κ pp) :=
+-  (P.idSamp' κ pp).bind fun I => (fun x => (I, x)) <$> P.sdSampFull κ pp I
+-
+-/-- The joint law samples index and the corresponding core output; glue. -/
+-theorem jointLaw_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
+-    P.jointLaw κ pp = (P.idSamp' κ pp).bind fun I =>
+-      (fun x => (I, x)) <$> P.sdSampFull κ pp I := rfl
+-
+-/-- Error probability is the exact chance that SdSamp' finds no successful repetition
+-[JLS26, Claim 4.2, p. 19]. Dv7 leaves its value explicit at every κ and pp. -/
+-noncomputable def errProb (P : Params) (κ : ℕ) (pp : PrimeParam κ) : ℝ :=
+-  ProbComp.prob ((P.idSamp' κ pp).bind fun I => P.sdSampFull κ pp I)
+-    (fun x => x.err = true)
+-
+-/-- Error probability is the stated exact-law event; glue. -/
+-theorem errProb_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
+-    P.errProb κ pp = ProbComp.prob
+-      ((P.idSamp' κ pp).bind fun I => P.sdSampFull κ pp I) (fun x => x.err = true) := rfl
+-
+-/-- Error probabilities are nonnegative; glue.
+-
+-**Proof sketch.** Use the existing nonnegativity of ProbComp.prob. -/
+-theorem errProb_nonneg (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
+-    0 ≤ P.errProb κ pp := sorry
+-
+-/-- Locality bounds the expected number of bad output coordinates by cLoc*m/W
+-[JLS26, proof of Claim 4.2, p. 20]. Dv3 uses exact rounded noise, and the bound
+-is uniform in every public prime and index.
+-
+-**Proof sketch.** Union-bound the error events in each output's at most cLoc variables,
+-then sum their indicator expectations using the existing probability readers. -/
+-theorem badSet_expect_le (P : Params) {cLoc : ℕ} (hLoc : P.R.HasLocality cLoc)
+-    (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' κ pp) :
+-    ProbComp.expect (ProbComp.sample (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))
+-      (fun r => ((P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))).card : ℝ)) ≤
+-        (cLoc : ℝ) * P.m κ / P.W κ := sorry
+-
+-/-- Markov's inequality bounds the too-many-bad event using Γ+1
+-[JLS26, proof of Claim 4.2, p. 20]. Dv3 makes the strict integer threshold
+-explicit, avoiding any division by Γ=0.
+-
+-**Proof sketch.** On the event, the integer bad count is at least Γ+1. Apply the published
+-Markov inequality and the locality expectation estimate, using W>0. -/
+-theorem cond1_prob_le (P : Params) {cLoc : ℕ} (hLoc : P.R.HasLocality cLoc)
+-    (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' κ pp) :
+-    ProbComp.prob (ProbComp.sample (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))
+-      (fun r => P.Γ κ < (P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))).card) ≤
+-        (cLoc : ℝ) * P.m κ / ((P.W κ : ℝ) * (P.Γ κ + 1)) := sorry
+-
+-/-- The error event is bounded by common capacity failure, the sparse-but-overloaded
+-repetitions, and simultaneous bad-count failure [JLS26, proof of Claim 4.2, p. 21].
+-Dv7 keeps every probability explicit before taking eventual estimates.
+-
+-**Proof sketch.** Read firstGood's failure condition. If no repetition succeeds, either the
+-common capacity event holds, some repetition has Cond2 without Cond1, or all have Cond1.
+-Apply the existing finite-event union bound through the uniform-draw bridge. -/
+-theorem errProb_le_decomposition (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
+-    P.errProb κ pp ≤
+-      ProbComp.prob (P.jointLaw κ pp) (fun x => P.Cond3 κ pp x.1) +
+-      (∑ k : Fin κ, ProbComp.prob (P.jointLaw κ pp)
+-        (fun x => P.Cond2 κ pp x.1 x.2.draw k ∧ ¬ P.Cond1 κ pp x.1 x.2.draw k)) +
+-      ProbComp.prob (P.jointLaw κ pp) (fun x => ∀ k, P.Cond1 κ pp x.1 x.2.draw k) := sorry
+-
+ /-- For all sufficiently large κ the error event has probability at most 2^(-κ),
+ uniformly in every public prime [JLS26, Claim 4.2, pp. 19-21]. Dv3 uses the rounded
+ rational noise schedule (SP-W1); Dv7 makes the common eventual threshold explicit.
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Bounds.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Bounds.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..5347a9b69bd61dc6cd7e3bc47e5cd115f6c71d81
+--- /dev/null
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Bounds.lean
+@@ -0,0 +1,35 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Claim42.Defs
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Numeric bucket and exponential bounds for Claim 4.2
++
++## Main definitions
++
++None. This file hosts theorem-only arithmetic and finite-load consequences.
++
++## Main results
++
++The `Internal` helpers bound the exact rounded bucket count, its
++polynomial prefactor, and the sparse/full bucket tails.
++
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026,
++  proof of Claim 4.2, pp. 19-21.
++* [PS10] R. Pass, A. Shelat, *A Course in Cryptography*, 2010, Definition 26.8.
++-/
++
++namespace TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal
++
++
++end TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Conditions.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Conditions.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..59afd8879b96e6e744ba92eb9d9de415d3820692
+--- /dev/null
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Conditions.lean
+@@ -0,0 +1,62 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Claim42.Bounds
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Correctness
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Conditional failure estimates for Claim 4.2
++
++## Main definitions
++
++None. All failure events are imported from `Claim42.Defs`.
++
++## Main results
++
++* The `Internal` helpers condition on a fixed index, then average over
++  its actual law; they also bound the common capacity and sparse overload events.
++* `Params.errProb_le_decomposition` is the existing three-event decomposition.
++
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026,
++  proof of Claim 4.2, pp. 19-21.
++* [PS10] R. Pass, A. Shelat, *A Course in Cryptography*, 2010, Definition 26.8.
++-/
++
++namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
++
++open TCSlib.Cryptography.Games
++open scoped BigOperators
++
++namespace Internal
++
++
++end Internal
++
++namespace Params
++
++/-- The error event is bounded by common capacity failure, the sparse-but-overloaded
++repetitions, and simultaneous bad-count failure [JLS26, proof of Claim 4.2, p. 21].
++Dv7 keeps every probability explicit before taking eventual estimates.
++
++**Proof sketch.** Read firstGood's failure condition. If no repetition succeeds, either the
++common capacity event holds, some repetition has Cond2 without Cond1, or all have Cond1.
++Apply the existing finite-event union bound through the uniform-draw bridge. -/
++theorem errProb_le_decomposition (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
++    P.errProb κ pp ≤
++      ProbComp.prob (P.jointLaw κ pp) (fun x => P.Cond3 κ pp x.1) +
++      (∑ k : Fin κ, ProbComp.prob (P.jointLaw κ pp)
++        (fun x => P.Cond2 κ pp x.1 x.2.draw k ∧ ¬ P.Cond1 κ pp x.1 x.2.draw k)) +
++      ProbComp.prob (P.jointLaw κ pp) (fun x => ∀ k, P.Cond1 κ pp x.1 x.2.draw k) := sorry
++
++
++end Params
++end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Defs.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Defs.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..055c09d737c9848b0fc5eefe7e5bf34fa8c5b03e
+--- /dev/null
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Defs.lean
+@@ -0,0 +1,275 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Samplers
++import TCSlib.Cryptography.Obfuscation.StructuredSeed.Claim42.Load
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Failure events and locality bounds for Claim 4.2
++
++## Main definitions
++
++* `Params.Cond1`, `Params.Cond2`, `Params.Cond3` are the three failure events.
++* `Params.jointLaw` and `Params.errProb` retain the actual index and full core law.
++
++## Main results
++
++* `Params.errProb_nonneg`, `Params.badSet_expect_le`, `Params.cond1_prob_le`.
++
++This module relocation preserves the existing declarations and their documentation.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, J. ACM 73(1), Article 1, February 2026,
++  proof of Claim 4.2, pp. 19-21.
++* [PS10] R. Pass, A. Shelat, *A Course in Cryptography*, 2010, Definition 26.8.
++-/
++
++namespace TCSlib.Cryptography.Obfuscation.StructuredSeed
++
++open TCSlib.Cryptography.Games
++open scoped BigOperators
++
++namespace Params
++
++/-- The first failure condition is too many bad outputs in repetition k
++[JLS26, proof of Claim 4.2, pp. 19-20]. Dv3 uses the rounded threshold Γ. -/
++noncomputable def Cond1 (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (I : P.Idx' κ pp) (d : P.Draw κ pp) (k : Fin κ) : Prop :=
++  P.Γ κ < (P.badSet κ pp I (fun i => P.noiseValue κ pp ((d.2 k).2 i))).card
++
++/-- The first condition compares the bad-output count with Γ; glue. -/
++theorem cond1_iff (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (I : P.Idx' κ pp) (d : P.Draw κ pp) (k : Fin κ) :
++    P.Cond1 κ pp I d k ↔
++      P.Γ κ < (P.badSet κ pp I (fun i => P.noiseValue κ pp ((d.2 k).2 i))).card :=
++  Iff.rfl
++
++/-- The second failure condition is more than t bad outputs in some bucket
++[JLS26, proof of Claim 4.2, pp. 19-20]. Dv3 uses an integer threshold. -/
++noncomputable def Cond2 (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (I : P.Idx' κ pp) (d : P.Draw κ pp) (k : Fin κ) : Prop :=
++  ∃ b : Fin (P.B κ), P.t κ <
++    (Buckets.bucket I.2.1 b ∩
++      P.badSet κ pp I (fun i => P.noiseValue κ pp ((d.2 k).2 i))).card
++
++/-- The second condition is the finite bucket-overload event for bad outputs; glue. -/
++theorem cond2_iff (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (I : P.Idx' κ pp) (d : P.Draw κ pp) (k : Fin κ) :
++    P.Cond2 κ pp I d k ↔ ∃ b : Fin (P.B κ), P.t κ <
++      (Buckets.bucket I.2.1 b ∩
++        P.badSet κ pp I (fun i => P.noiseValue κ pp ((d.2 k).2 i))).card := Iff.rfl
++
++/-- The third failure condition is a bucket beyond capacity
++[JLS26, proof of Claim 4.2, pp. 19-20]. This event is shared by all repetitions. -/
++noncomputable def Cond3 (P : Params) (κ : ℕ) (pp : PrimeParam κ)
++    (I : P.Idx' κ pp) : Prop := Buckets.overfull I.2.1 (P.cap κ)
++
++/-- The third condition is the overfull-placement predicate; glue. -/
++theorem cond3_iff (P : Params) (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' κ pp) :
++    P.Cond3 κ pp I ↔ Buckets.overfull I.2.1 (P.cap κ) := Iff.rfl
++
++/-- The proof-facing joint law retains index and full seed-core output
++[JLS26, Claim 4.2, p. 19]. Dv17 uses exact finite draws, without a coin sampler. -/
++noncomputable def jointLaw (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
++    ProbComp (P.Idx' κ pp × P.SdCoreOut κ pp) :=
++  (P.idSamp' κ pp).bind fun I => (fun x => (I, x)) <$> P.sdSampFull κ pp I
++
++/-- The joint law samples index and the corresponding core output; glue. -/
++theorem jointLaw_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
++    P.jointLaw κ pp = (P.idSamp' κ pp).bind fun I =>
++      (fun x => (I, x)) <$> P.sdSampFull κ pp I := rfl
++
++/-- Error probability is the exact chance that SdSamp' finds no successful repetition
++[JLS26, Claim 4.2, p. 19]. Dv7 leaves its value explicit at every κ and pp. -/
++noncomputable def errProb (P : Params) (κ : ℕ) (pp : PrimeParam κ) : ℝ :=
++  ProbComp.prob ((P.idSamp' κ pp).bind fun I => P.sdSampFull κ pp I)
++    (fun x => x.err = true)
++
++/-- Error probability is the stated exact-law event; glue. -/
++theorem errProb_eq (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
++    P.errProb κ pp = ProbComp.prob
++      ((P.idSamp' κ pp).bind fun I => P.sdSampFull κ pp I) (fun x => x.err = true) := rfl
++
++/-- Error probabilities are nonnegative; glue.
++
++**Proof sketch.** Use the existing nonnegativity of ProbComp.prob. -/
++theorem errProb_nonneg (P : Params) (κ : ℕ) (pp : PrimeParam κ) :
++    0 ≤ P.errProb κ pp := by
++  rw [P.errProb_eq]
++  exact Games.ProbComp.prob_nonneg _ _
++
++/-- Locality bounds the expected number of bad output coordinates by cLoc*m/W
++[JLS26, proof of Claim 4.2, p. 20]. Dv3 uses exact rounded noise, and the bound
++is uniform in every public prime and index.
++
++**Proof sketch.** Union-bound the error events in each output's at most cLoc variables,
++then sum their indicator expectations using the existing probability readers. -/
++theorem badSet_expect_le (P : Params) {cLoc : ℕ} (hLoc : P.R.HasLocality cLoc)
++    (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' κ pp) :
++    ProbComp.expect (ProbComp.sample (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))
++      (fun r => ((P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))).card : ℝ)) ≤
++        (cLoc : ℝ) * P.m κ / P.W κ := by
++  classical
++  let Noise := Fin (P.W κ) × ZMod pp.p
++  let NoiseVec := Fin (P.n κ) → Noise
++  letI : Nonempty (Fin (P.W κ)) := ⟨0⟩
++  have hscalar : ProbComp.prob (ProbComp.sample Noise)
++      (fun c => P.noiseValue κ pp c ≠ 0) ≤ 1 / (P.W κ : ℝ) := ?_
++  swap
++  · have hzero : uprob (fun c : Noise => P.noiseValue κ pp c = 0) =
++        1 - 1 / (P.W κ : ℝ) + 1 / ((P.W κ : ℝ) * pp.p) := ?_
++    swap
++    · simpa only [P.noiseValue_eq, cast_eq, if_pos rfl] using
++        (lpnNoise_law pp.p (P.W κ) (0 : ZMod pp.p))
++    rw [Bridge.prob_sample_eq_uprob (fun c : Noise => P.noiseValue κ pp c ≠ 0),
++      uprob_not (fun c : Noise => P.noiseValue κ pp c = 0), hzero]
++    have hnonneg : 0 ≤ 1 / ((P.W κ : ℝ) * pp.p) :=
++      div_nonneg zero_le_one (mul_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _))
++    linarith
++  have hcoord : ∀ i : Fin (P.n κ),
++      ProbComp.prob (ProbComp.sample NoiseVec)
++        (fun r => P.noiseValue κ pp (r i) ≠ 0) ≤ 1 / (P.W κ : ℝ) := ?_
++  swap
++  · intro i
++    rw [ProbComp.prob_eq_expect]
++    have h := ProbComp.expect_sample_coord (β := Noise) i
++      (fun c (_ : NoiseVec) => if P.noiseValue κ pp c ≠ 0 then (1 : ℝ) else 0)
++      (fun _ _ _ => rfl)
++    calc
++      ProbComp.expect (ProbComp.sample NoiseVec)
++          (fun r => if P.noiseValue κ pp (r i) ≠ 0 then (1 : ℝ) else 0) =
++        ProbComp.prob (ProbComp.sample Noise)
++          (fun c => P.noiseValue κ pp c ≠ 0) := ?_
++      _ ≤ 1 / (P.W κ : ℝ) := hscalar
++    rw [ProbComp.prob_eq_expect]
++    simpa only [ProbComp.expect_const] using h
++  have hbad : ∀ j : Fin (P.m κ),
++      ProbComp.prob (ProbComp.sample NoiseVec)
++        (fun r => j ∈ P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))) ≤
++          (cLoc : ℝ) / P.W κ := ?_
++  swap
++  · intro j
++    let s := (P.R.poly (P.n κ) I.1 (P.outputIndex κ j)).vars
++    have hevent : ∀ r : NoiseVec,
++        j ∈ P.badSet κ pp I (fun i => P.noiseValue κ pp (r i)) ↔
++          ∃ i ∈ s, P.noiseValue κ pp (r i) ≠ 0 := ?_
++    swap
++    · intro r
++      rw [P.badSet_eq]
++      constructor
++      · intro hj
++        obtain ⟨i, hi⟩ := (Finset.mem_filter.mp hj).2
++        have hparts := Finset.mem_inter.mp hi
++        have herr := hparts.2
++        rw [P.errSet_eq] at herr
++        exact ⟨i, hparts.1, (Finset.mem_filter.mp herr).2⟩
++      · rintro ⟨i, hi, hnoise⟩
++        apply Finset.mem_filter.mpr
++        refine ⟨Finset.mem_univ _, i, Finset.mem_inter.mpr ⟨hi, ?_⟩⟩
++        rw [P.errSet_eq]
++        exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, hnoise⟩
++    have hlocal : s.card ≤ cLoc :=
++      (BoolPRG.MultilinearRep.hasLocality_iff P.R cLoc).mp hLoc
++        (P.n κ) I.1 (P.outputIndex κ j)
++    have hlocalR : (s.card : ℝ) ≤ cLoc := ?_
++    swap
++    · exact_mod_cast hlocal
++    rw [Bridge.prob_sample_eq_uprob]
++    calc
++      uprob (fun r : NoiseVec =>
++          j ∈ P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))) =
++        uprob (fun r : NoiseVec => ∃ i ∈ s, P.noiseValue κ pp (r i) ≠ 0) :=
++          OneWay.uprob_congr (α := NoiseVec) hevent
++      _ ≤ ∑ i ∈ s, uprob (fun r : NoiseVec => P.noiseValue κ pp (r i) ≠ 0) :=
++        uprob_exists_le (α := NoiseVec) s
++          (fun (i : Fin (P.n κ)) (r : NoiseVec) => P.noiseValue κ pp (r i) ≠ 0)
++      _ ≤ ∑ _i ∈ s, 1 / (P.W κ : ℝ) := Finset.sum_le_sum (fun i _ => ?_)
++      _ = (s.card : ℝ) / P.W κ := ?_
++      _ ≤ (cLoc : ℝ) / P.W κ :=
++        div_le_div_of_nonneg_right hlocalR (Nat.cast_nonneg _)
++    · simpa only [Bridge.prob_sample_eq_uprob] using hcoord i
++    · rw [Finset.sum_const, nsmul_eq_mul]
++      ring
++  have hcard : ∀ r : NoiseVec,
++      ((P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))).card : ℝ) =
++        ∑ j : Fin (P.m κ),
++          if j ∈ P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))
++          then (1 : ℝ) else 0 := ?_
++  swap
++  · intro r
++    simpa only [Finset.filter_mem_eq_inter, Finset.univ_inter] using
++      (Finset.sum_boole
++        (fun (j : Fin (P.m κ)) => j ∈ P.badSet κ pp I (fun i => P.noiseValue κ pp (r i)))
++        Finset.univ).symm
++  calc
++    ProbComp.expect (ProbComp.sample NoiseVec)
++        (fun r => ((P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))).card : ℝ)) =
++      ProbComp.expect (ProbComp.sample NoiseVec)
++        (fun r => ∑ j : Fin (P.m κ),
++          if j ∈ P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))
++          then (1 : ℝ) else 0) :=
++        congrArg (ProbComp.expect (ProbComp.sample NoiseVec)) (funext hcard)
++    _ = ∑ j : Fin (P.m κ), ProbComp.expect (ProbComp.sample NoiseVec)
++        (fun r => if j ∈ P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))
++          then (1 : ℝ) else 0) :=
++      ProbComp.expect_sum (ProbComp.sample NoiseVec) Finset.univ
++        (fun j r => if j ∈ P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))
++          then (1 : ℝ) else 0)
++    _ = ∑ j : Fin (P.m κ), ProbComp.prob (ProbComp.sample NoiseVec)
++        (fun r => j ∈ P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))) :=
++      Finset.sum_congr rfl (fun j _ =>
++        (ProbComp.prob_eq_expect (ProbComp.sample NoiseVec)
++          (fun r => j ∈ P.badSet κ pp I (fun i => P.noiseValue κ pp (r i)))).symm)
++    _ ≤ ∑ _j : Fin (P.m κ), (cLoc : ℝ) / P.W κ :=
++      Finset.sum_le_sum (fun j _ => hbad j)
++    _ = (cLoc : ℝ) * P.m κ / P.W κ := ?_
++  rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
++  ring
++
++/-- Markov's inequality bounds the too-many-bad event using Γ+1
++[JLS26, proof of Claim 4.2, p. 20]. Dv3 makes the strict integer threshold
++explicit, avoiding any division by Γ=0.
++
++**Proof sketch.** On the event, the integer bad count is at least Γ+1. Apply the published
++Markov inequality and the locality expectation estimate, using W>0. -/
++theorem cond1_prob_le (P : Params) {cLoc : ℕ} (hLoc : P.R.HasLocality cLoc)
++    (κ : ℕ) (pp : PrimeParam κ) (I : P.Idx' κ pp) :
++    ProbComp.prob (ProbComp.sample (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p))
++      (fun r => P.Γ κ < (P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))).card) ≤
++        (cLoc : ℝ) * P.m κ / ((P.W κ : ℝ) * (P.Γ κ + 1)) := by
++  classical
++  let c := Games.ProbComp.sample (Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p)
++  let q := fun r : Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p =>
++    ((P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))).card : ℝ)
++  let ev := fun r : Fin (P.n κ) → Fin (P.W κ) × ZMod pp.p =>
++    P.Γ κ < (P.badSet κ pp I (fun i => P.noiseValue κ pp (r i))).card
++  have hmarkov : ((P.Γ κ : ℝ) + 1) * Games.ProbComp.prob c ev ≤
++      Games.ProbComp.expect c q := ?_
++  swap
++  · apply TCSlib.Cryptography.Authentication.LamportReduction.expect_favourable_of_success
++    · intro r
++      exact Nat.cast_nonneg _
++    · intro r hr
++      dsimp only [q]
++      exact_mod_cast (Nat.succ_le_of_lt hr)
++  have hmean : Games.ProbComp.expect c q ≤ (cLoc : ℝ) * P.m κ / P.W κ :=
++    P.badSet_expect_le hLoc κ pp I
++  have hW : (0 : ℝ) < P.W κ := Nat.cast_pos.mpr (P.W_pos κ)
++  have hΓ : (0 : ℝ) < (P.Γ κ : ℝ) + 1 :=
++    add_pos_of_nonneg_of_pos (Nat.cast_nonneg _) zero_lt_one
++  change Games.ProbComp.prob c ev ≤ _
++  apply (le_div_iff₀ (mul_pos hW hΓ)).2
++  have hmul := mul_le_mul_of_nonneg_right (hmarkov.trans hmean) hW.le
++  rw [div_mul_cancel₀ _ hW.ne'] at hmul
++  nlinarith
++
++
++end Params
++end TCSlib.Cryptography.Obfuscation.StructuredSeed
+diff --git a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean
+index 1566fa312c7a805ddad6e44fcf3d15425b88ab26..a64d5c68468985cfebc628a209366094379b6c7e 100644
+--- a/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean
++++ b/TCSlib/Cryptography/Obfuscation/StructuredSeed/Claim42/Load.lean
+@@ -52,7 +52,31 @@ presentation, it need not assume a nonzero binomial coefficient.
+ Real.pow_div_factorial_le_exp at x=k to bound the reciprocal factorial by (exp(1)/k)^k,
+ then multiply by n^k and combine the powers. No separate Stirling result is rederived. -/
+ theorem binomial_bound (n k : ℕ) (hk : 0 < k) :
+-    (Nat.choose n k : ℝ) ≤ (Real.exp 1 * (n : ℝ) / k) ^ k := sorry
++    (Nat.choose n k : ℝ) ≤ (Real.exp 1 * (n : ℝ) / k) ^ k := by
++  have hkR : 0 < (k : ℝ) := Nat.cast_pos.mpr hk
++  have hkpow : 0 < (k : ℝ) ^ k := pow_pos hkR k
++  have hfact : 0 < (k.factorial : ℝ) := Nat.cast_pos.mpr (Nat.factorial_pos k)
++  have hexp : Real.exp (k : ℝ) = Real.exp 1 ^ k := ?_
++  swap
++  · simpa only [mul_one] using Real.exp_nat_mul (1 : ℝ) k
++  have hseries := Real.pow_div_factorial_le_exp (k : ℝ) (Nat.cast_nonneg k) k
++  rw [hexp] at hseries
++  have hfac : 1 / (k.factorial : ℝ) ≤ (Real.exp 1 / (k : ℝ)) ^ k := ?_
++  swap
++  · rw [div_pow]
++    apply (div_le_div_iff₀ hfact hkpow).2
++    simpa only [one_mul] using (div_le_iff₀ hfact).1 hseries
++  have hchoose : (Nat.choose n k : ℝ) ≤
++      (n : ℝ) ^ k * (1 / (k.factorial : ℝ)) := ?_
++  swap
++  · simpa only [div_eq_mul_inv, one_mul] using (Nat.choose_le_pow_div (α := ℝ) k n)
++  have hfinal := hchoose.trans
++    (mul_le_mul_of_nonneg_left hfac (pow_nonneg (Nat.cast_nonneg n) k))
++  have hbase : (n : ℝ) * (Real.exp 1 / (k : ℝ)) = Real.exp 1 * (n : ℝ) / k := ?_
++  swap
++  · ring
++  rw [← mul_pow, hbase] at hfinal
++  exact hfinal
+ 
+ /-- For uniform bucket placement, a fixed bucket contains more than t elements of a fixed
+ set S with probability at most `choose(|S|,t+1)/B^(t+1)`.
+@@ -66,7 +90,82 @@ OneWay.uprob_pi_forall; every selected coordinate equals the bucket label with p
+ 1/B. Count the subsets with the existing powerset-cardinality theorem. -/
+ theorem bucket_tail {m B : ℕ} [NeZero B] (S : Finset (Fin m)) (b : Fin B) (t : ℕ) :
+     uprob (fun φ : Fin m → Fin B => t < (Buckets.bucket φ b ∩ S).card) ≤
+-      (Nat.choose S.card (t + 1) : ℝ) / (B : ℝ) ^ (t + 1) := sorry
++      (Nat.choose S.card (t + 1) : ℝ) / (B : ℝ) ^ (t + 1) := by
++  classical
++  letI : Inhabited (Fin B) := ⟨b⟩
++  have hfixed : ∀ T : Finset (Fin m),
++      uprob (fun φ : Fin m → Fin B => ∀ j ∈ T, φ j = b) =
++        1 / (B : ℝ) ^ T.card := ?_
++  swap
++  · intro T
++    let e : (Fin m → Fin B) ≃
++        (T → Fin B) × ({j : Fin m // j ∉ T} → Fin B) :=
++      Equiv.piEquivPiSubtypeProd (fun j => j ∈ T) (fun _ => Fin B)
++    have hsplit : uprob (fun φ : Fin m → Fin B => ∀ j ∈ T, φ j = b) =
++        uprob (fun φ : Fin m → Fin B => ∀ j : T, (e φ).1 j = b) := ?_
++    swap
++    · apply OneWay.uprob_congr
++      intro φ
++      change (∀ j ∈ T, φ j = b) ↔ ∀ j : T, φ j = b
++      simp only [Subtype.forall]
++    have hrelabel :
++        uprob (fun φ : Fin m → Fin B => ∀ j : T, (e φ).1 j = b) =
++          uprob (fun fg : (T → Fin B) × ({j : Fin m // j ∉ T} → Fin B) =>
++            ∀ j : T, fg.1 j = b) :=
++      uprob_comp_equiv e
++        (fun fg : (T → Fin B) × ({j : Fin m // j ∉ T} → Fin B) =>
++          ∀ j : T, fg.1 j = b)
++    have hfst :
++        uprob (fun fg : (T → Fin B) × ({j : Fin m // j ∉ T} → Fin B) =>
++          ∀ j : T, fg.1 j = b) =
++            uprob (fun f : T → Fin B => ∀ j : T, f j = b) :=
++      uprob_fst (β := {j : Fin m // j ∉ T} → Fin B)
++        (fun f : T → Fin B => ∀ j : T, f j = b)
++    have hpi : uprob (fun f : T → Fin B => ∀ j : T, f j = b) =
++        uprob (fun a : Fin B => a = b) ^ Fintype.card T :=
++      OneWay.uprob_pi_forall (ι := T) (fun a : Fin B => a = b)
++    have hpoint : uprob (fun a : Fin B => a = b) = 1 / (B : ℝ) := ?_
++    swap
++    · simpa only [Fintype.card_fin] using OneWay.uprob_eq_one_div_card b
++    calc
++      uprob (fun φ : Fin m → Fin B => ∀ j ∈ T, φ j = b) =
++          uprob (fun f : T → Fin B => ∀ j : T, f j = b) :=
++        hsplit.trans (hrelabel.trans hfst)
++      _ = uprob (fun a : Fin B => a = b) ^ Fintype.card T := hpi
++      _ = (1 / (B : ℝ)) ^ Fintype.card T :=
++        congrArg (fun x : ℝ => x ^ Fintype.card T) hpoint
++      _ = 1 / (B : ℝ) ^ T.card := ?_
++    rw [Fintype.card_coe, div_pow, one_pow]
++  have hcover : ∀ φ : Fin m → Fin B,
++      t < (Buckets.bucket φ b ∩ S).card →
++        ∃ T ∈ S.powersetCard (t + 1), ∀ j ∈ T, φ j = b := ?_
++  swap
++  · intro φ hφ
++    obtain ⟨T, hT, hcard⟩ := Finset.exists_subset_card_eq (Nat.succ_le_of_lt hφ)
++    refine ⟨T, Finset.mem_powersetCard.mpr ⟨?_, hcard⟩, ?_⟩
++    · intro j hj
++      exact (Finset.mem_inter.mp (hT hj)).2
++    · intro j hj
++      have hjbucket := (Finset.mem_inter.mp (hT hj)).1
++      simpa only [Buckets.bucket_eq, Finset.mem_filter, Finset.mem_univ,
++        true_and] using hjbucket
++  calc
++    uprob (fun φ : Fin m → Fin B => t < (Buckets.bucket φ b ∩ S).card) ≤
++        uprob (fun φ : Fin m → Fin B =>
++          ∃ T ∈ S.powersetCard (t + 1), ∀ j ∈ T, φ j = b) :=
++      uprob_mono (α := Fin m → Fin B) hcover
++    _ ≤ Finset.sum (S.powersetCard (t + 1))
++        (fun T => uprob (fun φ : Fin m → Fin B => ∀ j ∈ T, φ j = b)) :=
++      uprob_exists_le (α := Fin m → Fin B) (S.powersetCard (t + 1))
++        (fun (T : Finset (Fin m)) (φ : Fin m → Fin B) => ∀ j ∈ T, φ j = b)
++    _ = Finset.sum (S.powersetCard (t + 1))
++        (fun _ => 1 / (B : ℝ) ^ (t + 1)) := ?_
++    _ = (Nat.choose S.card (t + 1) : ℝ) / (B : ℝ) ^ (t + 1) := ?_
++  · apply Finset.sum_congr rfl
++    intro T hT
++    rw [hfixed T, (Finset.mem_powersetCard.mp hT).2]
++  · rw [Finset.sum_const, Finset.card_powersetCard, nsmul_eq_mul]
++    ring
+ 
+ /-- For uniform placement, some bucket contains more than t elements of S with probability
+ at most `B*choose(|S|,t+1)/B^(t+1)`.
+@@ -77,7 +176,14 @@ estimate uses t+1, and counts all B buckets explicitly.
+ substitute bucket_tail for each label, and read the cardinality of Fin B. -/
+ theorem some_bucket_tail {m B : ℕ} [NeZero B] (S : Finset (Fin m)) (t : ℕ) :
+     uprob (fun φ : Fin m → Fin B => ∃ b : Fin B, t < (Buckets.bucket φ b ∩ S).card) ≤
+-      (B : ℝ) * ((Nat.choose S.card (t + 1) : ℝ) / (B : ℝ) ^ (t + 1)) := sorry
++      (B : ℝ) * ((Nat.choose S.card (t + 1) : ℝ) / (B : ℝ) ^ (t + 1)) := by
++  classical
++  have h :=
++    (uprob_exists_le (Finset.univ : Finset (Fin B))
++      (fun b (φ : Fin m → Fin B) => t < (Buckets.bucket φ b ∩ S).card)).trans
++      (Finset.sum_le_sum (fun b _ => bucket_tail S b t))
++  simpa only [Finset.mem_univ, true_and, Finset.sum_const, Finset.card_univ,
++    Fintype.card_fin, nsmul_eq_mul] using h
+ 
+ /-- A fixed bucket's full load exceeds t with probability at most
+ `choose(m,t+1)/B^(t+1)`. [JLS26, proof of Claim 4.2, p. 20]. Disclosed refinement:
+@@ -87,7 +193,9 @@ this uses the t+1-element witness for a strictly overflowing load.
+ load_eq, and use the existing intersection and finite-universe cardinality lemmas. -/
+ theorem full_bucket_tail {m B : ℕ} [NeZero B] (b : Fin B) (t : ℕ) :
+     uprob (fun φ : Fin m → Fin B => t < Buckets.load φ b) ≤
+-      (Nat.choose m (t + 1) : ℝ) / (B : ℝ) ^ (t + 1) := sorry
++      (Nat.choose m (t + 1) : ℝ) / (B : ℝ) ^ (t + 1) := by
++  simpa only [Buckets.load_eq, Finset.inter_univ, Finset.card_univ, Fintype.card_fin]
++    using (bucket_tail (Finset.univ : Finset (Fin m)) b t)
+ 
+ /-- Some bucket's full load exceeds t with probability at most
+ `B*choose(m,t+1)/B^(t+1)`. [JLS26, proof of Claim 4.2, p. 20]. Disclosed refinement:
+@@ -97,6 +205,8 @@ the finite bound keeps the exact strict-threshold witness and explicit bucket fa
+ intersection and universe-cardinality equations through their published readers. -/
+ theorem some_full_bucket_tail {m B : ℕ} [NeZero B] (t : ℕ) :
+     uprob (fun φ : Fin m → Fin B => ∃ b : Fin B, t < Buckets.load φ b) ≤
+-      (B : ℝ) * ((Nat.choose m (t + 1) : ℝ) / (B : ℝ) ^ (t + 1)) := sorry
++      (B : ℝ) * ((Nat.choose m (t + 1) : ℝ) / (B : ℝ) ^ (t + 1)) := by
++  simpa only [Buckets.load_eq, Finset.inter_univ, Finset.card_univ, Fintype.card_fin]
++    using (some_bucket_tail (Finset.univ : Finset (Fin m)) t)
+ 
+ end TCSlib.Cryptography.Obfuscation.StructuredSeed.Internal

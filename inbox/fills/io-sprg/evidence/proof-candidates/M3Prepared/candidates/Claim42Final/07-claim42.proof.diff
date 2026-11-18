@@ -1,0 +1,41 @@
+--- /private/tmp/io-sprg-proof-notes/Claim42Final/07-claim42.proof
++++ /private/tmp/io-sprg-proof-notes/M3Prepared/candidates/Claim42Final/07-claim42.proof
+@@ -5,7 +5,8 @@
+   obtain ⟨κpoly, hpoly⟩ := Internal.prefactor_eventually_le_two_pow P
+   refine ⟨max 12 (max κΓ (max κlog κpoly)), ?_⟩
+   intro κ hκ pp
+-  have hcuts : 12 ≤ κ ∧ κΓ ≤ κ ∧ κlog ≤ κ ∧ κpoly ≤ κ
++  have hcuts : 12 ≤ κ ∧ κΓ ≤ κ ∧ κlog ≤ κ ∧ κpoly ≤ κ := ?_
++  swap
+   · omega
+   rcases hcuts with ⟨h12, hκΓ, hκlog, hκpoly⟩
+   have h3 := Internal.cond3_joint_le_quarter_pow P κ pp h12
+@@ -14,20 +15,24 @@
+       (∑ k : Fin κ, Games.ProbComp.prob (P.jointLaw κ pp)
+         (fun x => P.Cond2 κ pp x.1 x.2.draw k ∧
+           ¬ P.Cond1 κ pp x.1 x.2.draw k)) ≤
+-        (κ : ℝ) * ((P.B κ : ℝ) * (4 : ℝ)⁻¹ ^ κ)
++        (κ : ℝ) * ((P.B κ : ℝ) * (4 : ℝ)⁻¹ ^ κ) := ?_
++  swap
+   · refine (Finset.sum_le_sum (fun k _ =>
+       Internal.cond2_sparse_joint_le_quarter_pow P κ pp k h12 (hΓ κ hκΓ))).trans ?_
+     simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin,
+       nsmul_eq_mul, le_refl]
+   have hcoarse : P.errProb κ pp ≤
+-      (((κ + 1) * P.B κ + 1 : ℕ) : ℝ) * (4 : ℝ)⁻¹ ^ κ
++      (((κ + 1) * P.B κ + 1 : ℕ) : ℝ) * (4 : ℝ)⁻¹ ^ κ := ?_
++  swap
+   · have hd := P.errProb_le_decomposition κ pp
+     push_cast
+     nlinarith
+-  have hnonneg : (0 : ℝ) ≤ (4 : ℝ)⁻¹ ^ κ
++  have hnonneg : (0 : ℝ) ≤ (4 : ℝ)⁻¹ ^ κ := ?_
++  swap
+   · positivity
+   have hfinal : (((κ + 1) * P.B κ + 1 : ℕ) : ℝ) * (4 : ℝ)⁻¹ ^ κ ≤
+-      (2 : ℝ)⁻¹ ^ κ
++      (2 : ℝ)⁻¹ ^ κ := ?_
++  swap
+   · refine (mul_le_mul_of_nonneg_right (hpoly κ hκpoly) hnonneg).trans_eq ?_
+     rw [← mul_pow]
+     congr 1
