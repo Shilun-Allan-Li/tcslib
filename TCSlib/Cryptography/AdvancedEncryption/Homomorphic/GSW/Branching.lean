@@ -142,7 +142,7 @@ theorem Encrypts.select (P : Parameters) {t : Fin (P.lwe.dimension + 1) → ZMod
 /-- The selector step with a Boolean selector and natural-number messages: if `C` encrypts
 `b.toNat` with noise at most `β` and `U`, `V` encrypt `u`, `v` with noise at most `βV`, then
 `select P C U V` encrypts `if b then v else u` with noise at most `βV + 2·(N·β)`:
-`Encrypts P t (if b then v else u : ℕ) (βV + 2 * (P.columns * β)) (select P C U V)`.
+`Encrypts P t ((if b then v else u : ℕ) : ℤ) (βV + 2 * (P.columns * β)) (select P C U V)`.
 Glue: `Encrypts.select` (G1) at `b.toNat`, read through `Bool.toNat`. -/
 private theorem encrypts_select_ite (P : Parameters)
     {t : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus} {b : Bool} {u v : ℕ} {β βV : ℕ}
