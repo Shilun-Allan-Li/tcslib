@@ -56,15 +56,11 @@ open PrivateKeyScheme (encodeList)
 
 /-! ## The tuple encoding as a concatenation of blocks -/
 
-/-- The nested-pair encoding is the concatenation of the self-delimiting blocks `⟨c, []⟩`. -/
+/-- The nested-pair encoding is the concatenation of the self-delimiting blocks `⟨c, []⟩`
+(`PrivateKeyScheme.encodeList_eq_flatMap`; the name is kept for its consumers). -/
 theorem encodeList_eq_flatMap (l : List (List Bool)) :
-    encodeList l = l.flatMap fun c => pairEncode c [] := by
-  induction l with
-  | nil =>
-    rw [PrivateKeyScheme.encodeList_nil]
-    rfl
-  | cons c cs ih => simp [PrivateKeyScheme.encodeList_nil, PrivateKeyScheme.encodeList_cons, ih,
-      pairEncode_eq]
+    encodeList l = l.flatMap fun c => pairEncode c [] :=
+  PrivateKeyScheme.encodeList_eq_flatMap l
 
 /-- A tuple encoding is at least as long as the tuple. -/
 theorem length_le_length_encodeList (l : List (List Bool)) :
@@ -287,6 +283,7 @@ theorem blockEncFun_poly {E : List Bool → List Bool} (hE : PolyTimeComputable 
       simp only [PolyExpr.eval_var] at hi
       simp only [PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
       nlinarith)
+  simp only [PolyExpr.eval_var] at h
   exact h
 
 /-- One step of the tuple decryptor on `⟨sk, cs⟩`: drop the first ciphertext. -/
@@ -383,6 +380,7 @@ theorem decListFun_poly {Dc : List Bool → List Bool} (hD : PolyTimeComputable 
       simp only [PolyExpr.eval_var] at hi
       simp only [PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
       nlinarith)
+  simp only [PolyExpr.eval_var] at h
   exact h
 
 /-- `blockList` with one-bit blocks and enough fuel on an `n`-bit message is the list of the `n`

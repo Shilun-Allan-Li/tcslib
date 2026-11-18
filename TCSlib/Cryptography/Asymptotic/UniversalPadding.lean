@@ -102,8 +102,8 @@ theorem length_gStr (F : List Bool → List Bool) (ℓ : PolyExpr) (d : ℕ) (z 
 
 /-- `gStr` is length-regular with output length `2·var`. -/
 theorem lengthRegular_gStr (F : List Bool → List Bool) (ℓ : PolyExpr) (d : ℕ) :
-    FunFamily.LengthRegular (gStr F ℓ d) (.mul (.const 2) .var) := fun z => by
-  simp [length_gStr]
+    FunFamily.LengthRegular (gStr F ℓ d) (.mul (.const 2) .var) :=
+  (FunFamily.lengthRegular_iff _ _).2 fun z => by simp [length_gStr]
 
 /-- **The padded family** `g'` of [PS10, Lemma 64.3]: `FunFamily.ofString` of `gStr` with
 output length `2·var` (so `inLen = var`). -/
@@ -112,7 +112,8 @@ def family (F : List Bool → List Bool) (ℓ : PolyExpr) (d : ℕ) : FunFamily 
 
 /-- The input length of the padded family is the parameter. -/
 theorem family_inLen (F : List Bool → List Bool) (ℓ : PolyExpr) (d : ℕ) :
-    (family F ℓ d).inLen = .var := rfl
+    (family F ℓ d).inLen = .var :=
+  FunFamily.ofString_inLen (gStr F ℓ d) (.mul (.const 2) .var)
 
 /-- The encoding of the padded family's value is `gStr`. -/
 theorem ofFn_family_f (F : List Bool → List Bool) (ℓ : PolyExpr) (d : ℕ) (m : ℕ)
@@ -278,11 +279,17 @@ theorem invProbAt_family_le (A' A : NUPPT) {n m : ℕ} (hnu : nu d m = n)
         ((r.drop (p.eval n)).take (A'.coinLen m))).take (𝓕.inLen.eval n)) :
     (family F 𝓕.inLen d).invProbAt A' m ≤ 𝓕.invProbAt A n := by
   have hcast₁ : 𝓕.inLen.eval n + (m - 𝓕.inLen.eval n) = m := by omega
-  let e : (Fin (𝓕.inLen.eval n) → Bool) × (Fin (m - 𝓕.inLen.eval n) → Bool) ≃ (Fin m → Bool) :=
-    (Fin.appendEquiv _ _).trans (Equiv.arrowCongr (finCongr hcast₁) (Equiv.refl Bool))
+  have hmF : (family F 𝓕.inLen d).inLen.eval m = m := by rw [family_inLen, PolyExpr.eval_var]
+  -- `x ‖ a` at the input length of the padded family
+  let e : (Fin (𝓕.inLen.eval n) → Bool) × (Fin (m - 𝓕.inLen.eval n) → Bool) ≃
+      (Fin ((family F 𝓕.inLen d).inLen.eval m) → Bool) :=
+    (Fin.appendEquiv _ _).trans
+      (Equiv.arrowCongr (finCongr (hcast₁.trans hmF.symm)) (Equiv.refl Bool))
   have hofn : ∀ q, List.ofFn (e q) = List.ofFn q.1 ++ List.ofFn q.2 := fun q =>
-    ofFn_appendEquiv hcast₁ q
-  have hc₁ : A'.coinLen m ≤ A'.coinLen (p.eval n) := A'.coins.eval_mono hm
+    ofFn_appendEquiv (hcast₁.trans hmF.symm) q
+  have hc₁ : A'.coinLen m ≤ A'.coinLen (p.eval n) := by
+    rw [NUPPT.coinLen_eq, NUPPT.coinLen_eq]
+    exact A'.coins.eval_mono hm
   have hcast₂ : (m - 𝓕.inLen.eval n) + (p.eval n - (m - 𝓕.inLen.eval n)) = p.eval n := by omega
   have hcast₃ : A'.coinLen m + (A'.coinLen (p.eval n) - A'.coinLen m) = A'.coinLen (p.eval n) := by
     omega
@@ -459,7 +466,11 @@ theorem strongOneWay (h : 𝓕.StrongOneWay) {n₁ : ℕ}
     have hsucc := hgood'.2.2
     -- real arithmetic: `1/n^(de+1) ≤ 1/(n+1)^(de) ≤ 1/m'^e`
     have hm'e : (φ (nu d m) : ℝ) ^ e ≤ ((nu d m : ℝ) + 1) ^ (d * e) := by
-      have h1 : φ (nu d m) ^ e ≤ ((nu d m + 1) ^ d) ^ e := Nat.pow_le_pow_left hm'p e
+      have hp : p.eval (nu d m) = (nu d m + 1) ^ d := by
+        simp only [p, PolyExpr.eval_pow, PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const]
+      have h1 : φ (nu d m) ^ e ≤ ((nu d m + 1) ^ d) ^ e := by
+        rw [← hp]
+        exact Nat.pow_le_pow_left hm'p e
       rw [← pow_mul] at h1
       exact_mod_cast h1
     have hnde : ((nu d m : ℝ) + 1) ^ (d * e) ≤ (nu d m : ℝ) ^ (d * e + 1) := by
@@ -515,8 +526,12 @@ theorem exists_family (h : ∃ 𝓕 : FunFamily, 𝓕.StrongOneWay) :
         omega
       omega
   have hlin := exists_linearTime_gStr hM 𝓕.inLen hd hdom₂
+  obtain ⟨Mc, c₀, hc⟩ := quadraticCode_of_linear hlin
+  have hm : ∀ m, (family F 𝓕.inLen d).inLen.eval m = m := fun m => by
+    rw [family_inLen, PolyExpr.eval_var]
   exact ⟨family F 𝓕.inLen d, family_inLen F 𝓕.inLen d, strongOneWay hFx hd h hdom₁ hlin,
-    quadraticCode_of_linear hlin⟩
+    Mc, c₀, fun m x => (congrArg (fun t => Mc.toFinTM.ComputesInTime (List.ofFn x)
+      (List.ofFn ((family F 𝓕.inLen d).f m x)) (c₀ * (t + 1) ^ 2)) (hm m)).mpr (hc m x)⟩
 
 
 end TCSlib.Cryptography.PadQuad
