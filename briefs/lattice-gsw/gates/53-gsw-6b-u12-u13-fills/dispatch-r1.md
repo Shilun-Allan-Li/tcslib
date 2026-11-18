@@ -1,7 +1,7 @@
 # Dispatch · Gate 53 round 1 (GSW 6b fills U12 and U13: PR #392)
 
 **This file postdates the records pin** (lesson G48-02). The records pin is the commit that files this directory. At
-the pin, this file holds the placeholder `<RECORDS-G53>` (every occurrence); the next records commit replaces it with
+the pin, this file holds the placeholder `761852890a3ba7b0ea7852d179266ca85c366b37` (every occurrence); the next records commit replaces it with
 that commit's full hash (`git rev-parse`) and changes nothing else. `SHA256SUMS-r1` does not cover this file. Every
 other value in the prompt is filled in.
 
@@ -26,7 +26,7 @@ evidence by reading it.
       land/gsw-6b-u12-u13 exchange/pass-shelat-ch5-8
   (If your git refuses --filter, use --depth=300 instead of --filter=blob:none.)
 - Check that every commit exists:
-    for c in <RECORDS-G53> \
+    for c in 761852890a3ba7b0ea7852d179266ca85c366b37 \
              4b2ede271e1af88ad2eee207dafd9b674f19a306 fb56166b6454b18d73d697b84d8eb71f8247251c \
              bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d 9b4ab065f58581ac93ba6641f29a0d4051482dfa \
              87012e786e70134018a22156d3a299c2c55b943a bbc930b3853adb29ba96324568e984d521abd257; do
@@ -38,14 +38,14 @@ evidence by reading it.
   what is reachable.
 
 1. READ THE PACK
-- Records: cryptography/pass-shelat-ch2-4 at <RECORDS-G53> (the commit that files the pack).
+- Records: cryptography/pass-shelat-ch2-4 at 761852890a3ba7b0ea7852d179266ca85c366b37 (the commit that files the pack).
     mkdir -p /tmp/g53-pack
-    git archive <RECORDS-G53> briefs/lattice-gsw/gates/53-gsw-6b-u12-u13-fills \
+    git archive 761852890a3ba7b0ea7852d179266ca85c366b37 briefs/lattice-gsw/gates/53-gsw-6b-u12-u13-fills \
       | tar -x -C /tmp/g53-pack
     cd /tmp/g53-pack/briefs/lattice-gsw/gates/53-gsw-6b-u12-u13-fills && sha256sum -c SHA256SUMS-r1
   Expected: 7 lines ending in OK. Read pack-r1.md (your task: questions A-I, in that order),
   staging-checks-r1.txt, source-head-r1.json, pr392-description.md and the three diffs.
-- Also read, at the same records commit (git show <RECORDS-G53>:<path>):
+- Also read, at the same records commit (git show 761852890a3ba7b0ea7852d179266ca85c366b37:<path>):
   * the maintainer's reviews: briefs/lattice-gsw/phase6/issued-6b-fills-r1/U12/final-r1/review.md
     and phase2.md, and U13/final-r1/review.md and phase2.md;
   * the issued fill pack briefs/lattice-gsw/phase6/issued-6b-fills-r1/: README.md, COMMON.md
@@ -59,7 +59,7 @@ evidence by reading it.
     briefs/lattice-gsw/gates/46-gsw-6b/findings-r1.md, resolutions-r1.md and dup-sweep.md (N1);
   * policy.md, and briefs/pass-shelat-ch5-8/MAINTAINER-HANDOFF.md section 2 (rules 3, 5, 15, 17).
 - The review evidence ZIP (one ZIP, filed in both review folders):
-    git show <RECORDS-G53>:briefs/lattice-gsw/phase6/issued-6b-fills-r1/U12/final-r1/gsw-6b-u12-u13-final-r1-evidence.zip \
+    git show 761852890a3ba7b0ea7852d179266ca85c366b37:briefs/lattice-gsw/phase6/issued-6b-fills-r1/U12/final-r1/gsw-6b-u12-u13-final-r1-evidence.zip \
       > /tmp/g53-ev.zip
     sha256sum /tmp/g53-ev.zip
   Expected: 5a220db3c56024d4de5f760e75aeb5b741d2b670c2398a2a3e273dbb69b97202. Then
@@ -149,7 +149,7 @@ instructions. The user dispatches and merges.
 - Staged 2026-11-18 by the maintainer, statically (no Lean, no `lake`), on the records checkout at the records tip
   `96b743bfd8566f40cd8a06c29f31d760ecc29bb6` ("Records: U12/U13 rulings; landing PR #392"). The files of this
   directory are written and **not committed**; the maintainer commits them with explicit paths, which makes the pin
-  `<RECORDS-G53>`.
+  `761852890a3ba7b0ea7852d179266ca85c366b37`.
 - **PR at staging:** #392 is a draft at `4b2ede271e1af88ad2eee207dafd9b674f19a306` (REST `base.sha`
   `fb56166b6454b18d73d697b84d8eb71f8247251c`), created and last updated 2026-11-18T22:52:54Z; 3 commits, 2 files,
   +157/−20. `pr392-description.md` is the body read then.
@@ -167,7 +167,7 @@ instructions. The user dispatches and merges.
   `exact?` probes D1–D4 on the replay tree); the static read of `pr392.diff.txt` at staging found nothing new.
 - `SHA256SUMS-r1` covers `pack-r1.md`, `pr392.diff.txt`, `pr392-u12.diff.txt`, `pr392-u13.diff.txt`,
   `pr392-description.md`, `source-head-r1.json` and `staging-checks-r1.txt`.
-- **Before dispatch:** commit this directory; replace `<RECORDS-G53>` in this file with `git rev-parse` of that commit
+- **Before dispatch:** commit this directory; replace `761852890a3ba7b0ea7852d179266ca85c366b37` in this file with `git rev-parse` of that commit
   (a records-only follow-up commit); push the records. Nothing else is pending.
 
 **Ready to dispatch**
