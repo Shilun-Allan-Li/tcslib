@@ -1,7 +1,7 @@
 # Dispatch · Gate 51 round 1 (io-phfe statements gate)
 
 **This file postdates the records pin** (lesson G48-02). The records pin is the commit that files
-this directory. At the pin, this file holds the placeholder `<RECORDS-G51>`; the next records commit
+this directory. At the pin, this file holds the placeholder `8ba55910eafa03c02c39943729c606bb457be60f`; the next records commit
 fills it with that commit's full hash (`git rev-parse`) and changes nothing else. `SHA256SUMS` does
 not cover this file or `README.md`.
 
@@ -43,7 +43,7 @@ Expected: five lines ending in `OK`.
 git -C <exchange checkout> fetch origin exchange/pass-shelat-ch5-8 iO/phase-a-base \
   cryptography/pass-shelat-ch2-4
 for c in 1e77173a7032b57aa22260787711c6c7a1b7596e 5ed465f62e4ae0f93ded1a1ba49e807591b589eb \
-         <RECORDS-G51>; do
+         8ba55910eafa03c02c39943729c606bb457be60f; do
   git -C <exchange checkout> cat-file -e "$c^{commit}" && echo "ok $c"; done
 ```
 Expected: three `ok` lines.
@@ -95,9 +95,9 @@ exchange checkout, the slot wrapper and the packages option.
   none in your findings or ZIP (cite page and item instead).
 
 1. READ THE PACK
-- Records: cryptography/pass-shelat-ch2-4 at <RECORDS-G51>. Extract the pack and verify it:
+- Records: cryptography/pass-shelat-ch2-4 at 8ba55910eafa03c02c39943729c606bb457be60f. Extract the pack and verify it:
     mkdir -p ../g51-pack
-    git -C <exchange checkout> archive <RECORDS-G51> \
+    git -C <exchange checkout> archive 8ba55910eafa03c02c39943729c606bb457be60f \
       briefs/io-components/gates/51-phfe-statements | tar -x -C ../g51-pack
     cd ../g51-pack/briefs/io-components/gates/51-phfe-statements && shasum -a 256 -c SHA256SUMS
   Read pack.md (your task, in its order A-H), intake-r1.md (the maintainer's intake; grade its
@@ -187,12 +187,12 @@ The user dispatches and merges.
 
 - Staged 2026-11-18 by the maintainer, statically (no Lean, no `lake`), on the records checkout at
   `8be2c0fa47b3fd3d8654eebead034f6a68efb791`. The files of this directory are written and **not
-  committed**; the maintainer commits them with explicit paths, which makes `<RECORDS-G51>`.
+  committed**; the maintainer commits them with explicit paths, which makes `8ba55910eafa03c02c39943729c606bb457be60f`.
 - Intake: `intake-r1.md` (1 blocker, 1 major, 8 minor, 9 notes); questions Q-G51-1..6 for Seyoon.
   None blocks this dispatch: Q-G51-4 (A) sends F01 through this gate, and Q-G51-6 is answered in
   Seyoon's paste-in sentence.
 - `SHA256SUMS` covers `pack.md`, `intake-r1.md`, `dup-sweep.md` and `source-head.json`.
-- **Before dispatch:** commit this directory; fill `<RECORDS-G51>` in this file with
+- **Before dispatch:** commit this directory; fill `8ba55910eafa03c02c39943729c606bb457be60f` in this file with
   `git rev-parse` of that commit (a records-only follow-up commit); push the records. Nothing else
   is pending.
 
