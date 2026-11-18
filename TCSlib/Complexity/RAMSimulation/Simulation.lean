@@ -9,6 +9,8 @@ import TCSlib.Complexity.ClassNP.NTIME
 import TCSlib.Complexity.TuringMachine.NondeterministicSpace
 import TCSlib.Complexity.RAMSimulation.Sim.Startup
 import TCSlib.Complexity.RAMSimulation.Sim.Phases
+import TCSlib.Complexity.RAMSimulation.Sim.RunInput
+import TCSlib.Complexity.RAMSimulation.Sim.RunBranch
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -17,40 +19,33 @@ set_option autoImplicit false
 /-!
 # Stage 2: the word RAM on Turing machines
 
-A program `P` of the extended word RAM (`WordRAM.XProgram`: the nine vendored instructions and
-`rdIn`, `emit`, `coin`, `half`) is run on an input `x`, a coin stream `ρ` and a word size
-`W = W (|x|)`. Stage 2 (backlog PROG-4; design §15a, §15d, §16b) says that one `FinTM Bool`
-simulates it, instruction by instruction, with a polynomial time overhead and a space bound
-linear in the number of cells touched times the word size: with `n = |x|`,
+A program `P` of the extended word RAM (`WordRAM.XProgram`) runs on an input `x`, a coin stream
+`ρ` and a word size `W = W (|x|)`. One finite binary Turing machine simulates its
+instructions with the following bounds, where `n = |x|`:
 
 * time `TW n + A·(t + 1)·(f·(W + 1) + W² + n + 1)`;
-* space `SW n + A·(f·(W + 1) + W + logSpace n + 1)`;
+* space `SW n + A·(f·(W + 1) + W + logSpace n + 1)`.
 
-where `t` bounds the RAM's steps, `f` the number of cells it touches, `W` is computed within
-time `TW` and space `SW` (`WordRAM.WordSizeComputable`), and `A` depends on `P` only. The
-nondeterministic form is the same with one `FinNDTM` choice step per `coin`, under bounds that
-are uniform over all coin streams.
+Here `t` bounds the RAM's steps, `f` bounds the number of cells it touches, and the word size is
+computed within time `TW` and space `SW` (`WordRAM.WordSizeComputable`). The constant may depend
+on the program, output mode and word-size witness, but not on the input or its resource bounds.
+The nondeterministic form uses one binary choice per `coin`, with bounds uniform over streams.
+Both constructions use the finite phase host and the shared run induction.
 
-**Deviations from the shape drafted in design §15a**, each read off the code (design §15d):
-
-* *No separate address width.* Addresses are words: `load` reads `m (m j).toInt` and `store`
-  writes at `(m i).toInt` (`TCSlib/Programs/WordRAM/Basic.lean:62-63`), and the immediate
-  addresses are constants of `P`. So a table entry has `W + O_P(1)` bits, and `f·(W + a)`
-  becomes `f·(W + 1)`, the constant going into `A`.
-* *The input seek is linear.* R8.5b (`Turing.exists_inputSeekTM`, `Build/InputCall.lean:294`)
-  seeks position `p` within `C·(|w| + pos + p + 1)` steps for a position word `w`, with work
-  envelope `C·(|w| + 1)`; here `|w| ≤ W` and `pos, p ≤ n + 1`. So the per-step seek term is `n`,
-  not `n·log n`.
-* *The word size's own cost* is added once, as `TW n` and `SW n`.
+**Bounds and model.** An address computed by `load` or `store` is a word's signed value; the
+program's immediate addresses are fixed integers (`WordRAM.Sim.ImmBound`). A memory-table entry
+therefore has `W + O_P(1)` bits. Input access uses `Turing.exists_inputSeekTM`, whose time is
+linear in the position and input length. The word-size computation's time and space costs are
+added once, using the silent embedding `Turing.embedSilentTM`.
 
 ## Main definitions
 
-* `WordRAM.simTime`, `WordRAM.simSpace`: the two bounds.
-* `WordRAM.outputOf`: what the machine leaves on its output tape, in verdict or function mode.
-  Its equations `outputOf_false` and `outputOf_true`, and `simTime_eq` and `simSpace_eq`, are
-  the readers that other files use.
+* `WordRAM.simTime`, `WordRAM.simSpace`: the time and space bounds, with readers `simTime_eq`
+  and `simSpace_eq`.
+* `WordRAM.outputOf`: the verdict or emitted word, with readers `outputOf_false` and
+  `outputOf_true`.
 
-## Main results (statements gated 2026-10-14, `audits/stage2-statements-findings.md`; proofs pending)
+## Main results
 
 * `WordRAM.exists_simulation`: stage 2, deterministic form.
 * `WordRAM.exists_ndSimulation`: stage 2, nondeterministic form.
@@ -114,31 +109,13 @@ Deviations: [AB09] has a RAM Turing machine with a symbol array and the bound `T
 word size. From design §15a's draft shape: no separate address width, a seek term `n` rather than
 `n·log n`, and the word size's own cost added (module docstring).
 
-**Proof sketch.** The machine is a phase host (`Turing.phaseHostTM`, `Build/Seam.lean:813`) over
-the finitely many positions of `P`, after a start-up. It works over `Bool` with fields of fixed
-width `W + O_P(1)` measured against the ruler below; a richer alphabet would need a per-input
-alphabet reduction, which is not public today (`Turing.FinTM.alphabet_reduction` has
-length-indexed bounds; its per-input core `arTM_computes`, `Robustness/AlphabetReduction.lean:546`,
-is private; there is no nondeterministic variant).
-1. *Start-up.* Run the word-size witness with its output captured on a work tape (the R1 silent
-   embedding `Turing.embedSilentTM`, `Build/Embed.lean:241`), turn `Nat.bits W` into a unary
-   ruler of `W` cells, count `|x|` into a private binary copy (R8.5c,
-   `Turing.exists_inputLengthTM`), and install the table entry `-1 ↦ |x| mod 2^W`
-   (`WordRAM.initMem`). Cost `TW n + O(n + W²)`, space `SW n + O(W + logSpace n)`.
-2. *One phase per position.* Each instruction kind is a framed contract (`Turing.Contract`,
-   MIG-0a, landing first) whose precondition says that the tapes encode a RAM configuration (a
-   memory table of (address, word) pairs, the position as the phase, the ruler, the length copy)
-   and whose endpoint encodes its `xstep`. The new rows (design §15a) are find-by-key in the
-   table with the key on another tape; two-tape addition and subtraction modulo `2^W`;
-   shift-and-add multiplication; the sign test (`bltz`); the arithmetic shift (`half`); in-place
-   overwrite or append of a table entry; the input seek R8.5b (`rdIn`, after a range test of the
-   position against `|x|`, `O(W + logSpace n)`); and an output append (`emit`, in function mode
-   only). `coin` writes `0`. Each costs at most `A·(f·(W + 1) + W² + n + 1)` steps on a table of
-   at most `f + 1` entries.
-3. *Simulation.* Induction on the `XStepsIn` run: the encoding invariant holds after every
-   step, and the table holds only cells of the footprint `K` and `-1`, so at most
-   `|K| + 1 ≤ f + 1` entries of `W + O_P(1)` bits.
-4. *Verdict.* At `accept` or `reject`, write `[v]` in verdict mode, and halt. -/
+**Proof sketch.** Choose the finite phase host with `Sim.exists_runSetup`, and fix its choices
+to false. `Sim.RunSetup.input_run` combines startup with the shared execution induction,
+whose exact touched-cell set is bounded by the source halting witness. Every consumed coin
+is false, so the stream is the empty stream. Its schedule word is a constant false word;
+`Sim.runWith_replicate` and `Sim.runSpace_replicate` transfer its run and visited cells to the
+deterministic slice. The common head envelope and fixed setup coefficient give the stated
+bounds. Halting preserves the space bound at the final, possibly larger, time. -/
 theorem exists_simulation (P : XProgram) (fn : Bool) {W TW SW : ℕ → ℕ}
     (hW : WordSizeComputable W TW SW) :
     ∃ (M : Turing.FinTM Bool) (A : ℕ), ∀ (x : List Bool) (t f : ℕ) (v : Bool) (o : List Bool),
@@ -146,7 +123,53 @@ theorem exists_simulation (P : XProgram) (fn : Bool) {W TW SW : ℕ → ℕ}
         M.ComputesInTime x (outputOf fn v o) (simTime A TW x.length (W x.length) t f) ∧
         M.tm.spaceUsed (M.tm.initCfg x) (simTime A TW x.length (W x.length) t f) ≤
           simSpace A SW x.length (W x.length) f := by
-  sorry
+  obtain ⟨Mw, hMw⟩ := (wordSizeComputable_iff W TW SW).mp hW
+  obtain ⟨A⟩ := Sim.exists_runSetup P fn Mw
+  let M : Turing.FinTM Bool := ⟨8 + A.extraTapes, A.State, A.host.fixChoice false⟩
+  refine ⟨M, A.boundCost, ?_⟩
+  intro x t f v o hh
+  obtain ⟨tw, htw, hcomp, hspace⟩ := hMw x
+  let D : Sim.RunDriver (W x.length) := Sim.RunDriver.ofSchedule (fun _ => false)
+  let B : ℕ → Bool → Prop := fun _ b => b = false
+  have hD : D.Respects B := by
+    rw [Sim.RunDriver.respects_iff]
+    intro s c
+    exact Sim.RunDriver.ofSchedule_coin (fun _ => false) s c
+  have hhalt : ∀ coins, Sim.RunCoinsSatisfy B coins →
+      ∃ ρ, Sim.RunCoinsAgree coins ρ ∧ ∃ v' out,
+        HaltsWithin P x ρ (W x.length) t v' out f ∧ (v' = v ∧ out = o) := by
+    intro coins hc
+    refine ⟨[], ?_, v, o, hh, rfl, rfl⟩
+    rw [Sim.runCoinsAgree_iff]
+    intro i hi
+    rw [List.getD_nil]
+    exact (Sim.runCoinsSatisfy_iff B coins).mp hc i hi
+  obtain ⟨w, e, ρ, v', out, _, ⟨hv, hout⟩, hr, hd, ho, ht, hs, hf⟩ :=
+    A.input_run x tw (SW x.length) t f hcomp hspace D B hD (fun _ v' out => v' = v ∧ out = o) hhalt
+  subst v'
+  subst out
+  have hrep : w = List.replicate w.length false :=
+    (hf (fun _ => false) (Sim.RunDriver.ofSchedule_follows _)).trans
+      (Sim.runChoices_const false 0 w.length)
+  have hinit : M.tm.initCfg x = A.host.initCfg x := by
+    change (A.host.fixChoice false).initCfg x = A.host.initCfg x
+    rw [Turing.MultiTapeTM.initCfg_eq, Turing.NDTM.initCfg_eq, Turing.NDTM.fixChoice_q₀]
+  have hrun : M.tm.runFrom (M.tm.initCfg x) w.length = e := by
+    change (A.host.fixChoice false).runFrom (M.tm.initCfg x) w.length = e
+    rw [hinit, ← Sim.runWith_replicate, ← hrep]
+    exact hr
+  have hc : M.ComputesInTime x (outputOf fn v o) w.length :=
+    (Turing.FinTM.computesInTime_iff _ _ _ _).mpr
+      ⟨by rw [hrun]; exact hd, by rw [hrun]; simpa only [outputOf] using ho⟩
+  have hsM : M.tm.spaceUsed (M.tm.initCfg x) w.length ≤
+      simSpace A.boundCost SW x.length (W x.length) f := by
+    change (A.host.fixChoice false).spaceUsed (M.tm.initCfg x) w.length ≤ _
+    rw [hinit, ← Sim.runSpace_replicate, ← hrep, simSpace_eq]
+    exact hs
+  have htM : w.length ≤ simTime A.boundCost TW x.length (W x.length) t f := by
+    rw [simTime_eq]
+    exact ht.trans (Nat.add_le_add_right htw _)
+  exact ⟨hc.mono htM, hc.spaceUsed_le_of_halt hsM _⟩
 
 /-- **Stage 2, nondeterministic form** (design §15c, §16b item 4; backlog PROG-4). For every
 program `P` of the extended word RAM and every word size `W` computable within `TW` and `SW`,
@@ -158,15 +181,13 @@ cells, and `N` accepts `x` within `T` exactly when some coin stream makes `P` ac
 [AB09, Exercise 1.9 with §2.1.2 and Definition 4.1; the coins are read once, as the certificate
 of §4.3.1]
 
-**Proof sketch.** As `exists_simulation`, in verdict mode, with one change: the phase for
-`coin i` is a single choice step whose two transitions write `0` or `1` into the table entry of
-`i`, and every other state has two equal transitions. A branch, a choice word `w` of length `T`,
-then simulates the RAM run whose coin stream is the subsequence of `w` at the coin steps;
-conversely every coin stream is realized by a branch that places its bits there, padded to length
-`T`. Every branch is a run of `P` on some stream, so the uniform bounds bound every branch. On
-the stretches between coin steps the branch is the deterministic run of the slice
-`N.tm.fixChoice false` (`Turing.NDTM.runWith_eq_fixChoice_runFrom`, in `TuringMachine/Nondeterministic.lean`),
-whose phases are those of `exists_simulation`. -/
+**Proof sketch.** Use `Sim.exists_runSetup` in verdict mode. For each choice word,
+`Sim.RunSetup.branch_run` reads its timed schedule, extracts the consumed coins and applies
+uniform source halting. It gives both a halted endpoint and the common visited-cell bound.
+An accepting endpoint therefore supplies an accepting source stream. Conversely the
+`Sim.RunDriver.ofCoins` driver places a prescribed accepting stream's next bit at each coin
+entry. `Sim.RunSetup.input_run` constructs the accepting branch within the same time bound;
+`Turing.FinNDTM.AcceptsWithin.mono` pads it to the exact stated length. -/
 theorem exists_ndSimulation (P : XProgram) {W TW SW : ℕ → ℕ} (hW : WordSizeComputable W TW SW) :
     ∃ (N : Turing.FinNDTM Bool) (A : ℕ), ∀ (x : List Bool) (t f : ℕ),
       (∀ ρ : List Bool, ∃ (v : Bool) (o : List Bool), HaltsWithin P x ρ (W x.length) t v o f) →
@@ -175,6 +196,57 @@ theorem exists_ndSimulation (P : XProgram) {W TW SW : ℕ → ℕ} (hW : WordSiz
           N.tm.spaceUsedWith w (N.tm.initCfg x) ≤ simSpace A SW x.length (W x.length) f) ∧
         (N.AcceptsWithin x (simTime A TW x.length (W x.length) t f) ↔
           ∃ (ρ o : List Bool), HaltsWithin P x ρ (W x.length) t true o f) := by
-  sorry
+  obtain ⟨Mw, hMw⟩ := (wordSizeComputable_iff W TW SW).mp hW
+  obtain ⟨A⟩ := Sim.exists_runSetup P false Mw
+  let N : Turing.FinNDTM Bool := ⟨8 + A.extraTapes, A.State, A.host⟩
+  refine ⟨N, A.boundCost, ?_⟩
+  intro x t f hhalt
+  obtain ⟨tw, htw, hcomp, hspace⟩ := hMw x
+  have hbranches : ∀ w : List Bool,
+      w.length = simTime A.boundCost TW x.length (W x.length) t f →
+      ∃ ρ v out, HaltsWithin P x ρ (W x.length) t v out f ∧
+        (N.tm.runWith w (N.tm.initCfg x)).state = none ∧
+        (N.tm.runWith w (N.tm.initCfg x)).output = [v] ∧
+        N.tm.spaceUsedWith w (N.tm.initCfg x) ≤
+          simSpace A.boundCost SW x.length (W x.length) f := by
+    intro w hw
+    have hlen : tw + A.boundCost * (t + 1) *
+        (f * (W x.length + 1) + W x.length ^ 2 + x.length + 1) ≤ w.length := by
+      rw [hw, simTime_eq]
+      exact Nat.add_le_add_right htw _
+    simpa only [N, simSpace_eq, Bool.false_eq_true, if_false] using
+      A.branch_run x tw (SW x.length) t f hcomp hspace hhalt w hlen
+  refine ⟨Turing.NDTM.haltsWithin_iff.mpr ?_, ?_, ?_⟩
+  · intro w hw
+    obtain ⟨_, _, _, _, hd, _, _⟩ := hbranches w hw
+    exact hd
+  · intro w hw
+    obtain ⟨_, _, _, _, _, _, hs⟩ := hbranches w hw
+    exact hs
+  · constructor
+    · intro hacc
+      obtain ⟨w, hw, _, hout⟩ := Turing.FinNDTM.acceptsWithin_iff.mp hacc
+      obtain ⟨ρ, v, out, hρ, _, hv, _⟩ := hbranches w hw
+      have hvtrue : v = true := List.singleton_inj.mp (hv.symm.trans hout)
+      exact ⟨ρ, out, by rw [hvtrue] at hρ; exact hρ⟩
+    · rintro ⟨ρ, out, hρ⟩
+      let D : Sim.RunDriver (W x.length) := Sim.RunDriver.ofCoins ρ
+      let B : ℕ → Bool → Prop := fun i b => b = ρ.getD i false
+      have hsource : ∀ coins, Sim.RunCoinsSatisfy B coins →
+          ∃ τ, Sim.RunCoinsAgree coins τ ∧ ∃ v out',
+            HaltsWithin P x τ (W x.length) t v out' f ∧ (v = true ∧ out' = out) := by
+        intro coins hc
+        exact ⟨ρ, (Sim.runCoinsAgree_iff coins ρ).mpr
+          ((Sim.runCoinsSatisfy_iff B coins).mp hc), true, out, hρ, rfl, rfl⟩
+      obtain ⟨u, e, _, v, out', _, ⟨hv, ho⟩, hr, hd, hout, ht, _, _⟩ :=
+        A.input_run x tw (SW x.length) t f hcomp hspace D B
+          (Sim.RunDriver.ofCoins_respects ρ) (fun _ v out' => v = true ∧ out' = out) hsource
+      subst v
+      subst out'
+      have hacc : N.AcceptsWithin x u.length := Turing.FinNDTM.acceptsWithin_iff.mpr
+        ⟨u, rfl, by rw [hr]; exact hd, by rw [hr]; exact hout⟩
+      apply hacc.mono
+      rw [simTime_eq]
+      exact ht.trans (Nat.add_le_add_right htw _)
 
 end WordRAM

@@ -62,6 +62,13 @@ def visitedWith (tm : NDTM k Symbol State) (w : List Bool)
     (cfg : Cfg k Symbol State input) (i : Fin k) : Finset ℤ :=
   (Finset.range (w.length + 1)).image fun j => (tm.runWith (w.take j) cfg).workTapePos i
 
+/-- The visited cells of one nondeterministic branch, as the image of its prefix head
+positions. This equation reads `visitedWith` without unfolding it in consumers. -/
+theorem visitedWith_eq (tm : NDTM k Symbol State) (w : List Bool)
+    (cfg : Cfg k Symbol State input) (i : Fin k) :
+    tm.visitedWith w cfg i =
+      (Finset.range (w.length + 1)).image (fun j => (tm.runWith (w.take j) cfg).workTapePos i) := rfl
+
 /-- The space used by `tm` along the run under the choice word `w` from `cfg`: the
 number of visited cells, summed over the work tapes — the nondeterministic
 counterpart of `Turing.MultiTapeTM.spaceUsed`, for one branch. The input tape
@@ -70,6 +77,12 @@ counterpart of `Turing.MultiTapeTM.spaceUsed`, for one branch. The input tape
 def spaceUsedWith (tm : NDTM k Symbol State) (w : List Bool)
     (cfg : Cfg k Symbol State input) : ℕ :=
   ∑ i, (tm.visitedWith w cfg i).card
+
+/-- The space of a nondeterministic branch is the sum of the visited-set cardinalities over
+its work tapes. This is the equation of `spaceUsedWith`. -/
+theorem spaceUsedWith_eq (tm : NDTM k Symbol State) (w : List Bool)
+    (cfg : Cfg k Symbol State input) :
+    tm.spaceUsedWith w cfg = ∑ i, (tm.visitedWith w cfg i).card := rfl
 
 /-- The empty choice word visits exactly the starting position of each head. -/
 @[simp]

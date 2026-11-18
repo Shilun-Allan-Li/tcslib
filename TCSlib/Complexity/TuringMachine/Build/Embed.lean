@@ -267,6 +267,10 @@ def embedEmitTM (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Symbol S) :
   tr := fun q inp w =>
     embedActionCore ι none (M.tr q inp fun i => w (ι i))
 
+/-- The forwarding tape embedding preserves the source machine's initial state. -/
+theorem embedEmitTM_q₀ (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Symbol S) :
+    (embedEmitTM ι M).q₀ = M.q₀ := rfl
+
 /-- **R1, the forwarding transformer's transition** (12.2c item 6's prerequisite export;
 user, 2026-10-10, from the RB5 review). One host transition of `embedEmitTM ι M` is the
 source transition, read through `ι` and transported along it. Each selected host tape
