@@ -4,6 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.RAMSimulation.WordSize
+import TCSlib.Complexity.RAMSimulation.Sim.Encoding
+import TCSlib.Complexity.RAMSimulation.Sim.Startup
+import TCSlib.Complexity.RAMSimulation.Sim.Phases
 import TCSlib.Complexity.RAMSimulation.Simulation
 import TCSlib.Complexity.RAMSimulation.Classes
 
@@ -20,6 +23,9 @@ their gate on 2026-10-14 (`audits/stage2-statements-findings.md`); their proofs 
 
 - `RAMSimulation.WordSize`: the word-size hypothesis `WordRAM.WordSizeComputable` and its two
   bridges (`c · logSpace`, and `c · S` from a space-constructible `S`)
+- `RAMSimulation.Sim.Encoding`, `RAMSimulation.Sim.Startup`, `RAMSimulation.Sim.Phases`: the
+  simulation's internal interfaces (namespace `WordRAM.Sim`): how eight tapes encode a
+  configuration, the start-up, and one phase per instruction
 - `RAMSimulation.Simulation`: stage 2, `WordRAM.exists_simulation` and
   `WordRAM.exists_ndSimulation`, with their time and space bounds
 - `RAMSimulation.Classes`: the nine corollaries (DTIME, P, SPACE, L, log-space transducers,

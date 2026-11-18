@@ -9,6 +9,7 @@ import TCSlib.Complexity.TuringMachine.Build.Contract.Embed
 import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
 import TCSlib.Complexity.TuringMachine.Build.Contract.Counter
 import TCSlib.Complexity.TuringMachine.Build.Contract.Lift
+import TCSlib.Complexity.TuringMachine.Build.Contract.Reach
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -43,6 +44,8 @@ work head inside an interval. The core adds segments, rounds and joint trajector
   compare.
 * `TCSlib.Complexity.TuringMachine.Build.Contract.Counter` — the counter rows (the successful
   increment and decrement) as contracts (MIG-11a, user 2026-10-16), beside `Build/CounterLoop`.
+* `TCSlib.Complexity.TuringMachine.Build.Contract.Reach` — `Turing.ReachesWithin`, the shape of
+  an existentially stated row, and `Turing.Contract.ofReaches`, its contract.
 * `TCSlib.Complexity.TuringMachine.Build.Contract.Lift` — the symbol lift.
 
 Elsewhere, beside the machinery they adapt: the counter loop over round contracts in

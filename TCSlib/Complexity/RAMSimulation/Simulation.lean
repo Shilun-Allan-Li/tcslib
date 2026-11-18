@@ -7,6 +7,8 @@ import TCSlib.Programs.WordRAM.Extended
 import TCSlib.Complexity.RAMSimulation.WordSize
 import TCSlib.Complexity.ClassNP.NTIME
 import TCSlib.Complexity.TuringMachine.NondeterministicSpace
+import TCSlib.Complexity.RAMSimulation.Sim.Startup
+import TCSlib.Complexity.RAMSimulation.Sim.Phases
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
