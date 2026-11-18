@@ -34,6 +34,6 @@ changed:
 
 ## Merge
 
-Run 2 of the gate kit checks the repaired head (`run1/` holds the audited head's run). Seyoon
+**Run 2 of the gate kit on the repaired head `80e762e9`** gives the same results as run 1 on the audited head: replay 88/88 (30 admissions, the same), 49 proofs sealed, controls 32/64, 0 read candidates, 7 copy pairs as at the base (0 new); `SOURCE.json` again gives 69 declarations added and no header or definition change. Seyoon
 merges #372. After the merge the branch's build is the replay output of whichever PR merges
 second, checked on the merged tree.
