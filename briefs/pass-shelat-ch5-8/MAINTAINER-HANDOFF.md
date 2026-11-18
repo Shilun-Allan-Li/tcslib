@@ -78,6 +78,11 @@ in this folder (identical).
     as part of the structure, so no instance exists without the proof. A construction may first be
     built as a "raw" algorithm bundle with its correctness/security, but the primitive itself is
     only inhabited once efficiency is proved.
+16. **Local inputs stated up front (Seyoon, 2026-11-18: "please tell me this clearly in future").** When a
+    dispatch needs anything from Seyoon's machine (source PDFs not staged on the exchange, a local
+    folder, credentials, a registered host), the dispatch message says so explicitly, before the
+    prompt: what to prepare, the exact file names, their SHA-256 values, ready-to-run commands to set it
+    up, and the sentence to paste into the worker's chat. Never leave it implicit in the prompt text.
 
 ## 3. Rulings in force (full list: the decision log, `../../PassShelatChapter5-8Plan.md`)
 
