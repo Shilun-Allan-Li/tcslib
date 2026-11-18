@@ -1,0 +1,39 @@
+import Lean
+import TCSlib.Complexity.RAMSimulation.Classes
+open Lean Meta Elab Command
+
+/-- The constants reachable from `root` (types and values) whose own value or type uses `sorryAx`
+directly. -/
+partial def directAdmissions (env : Environment) (root : Name) : Array Name := Id.run do
+  let mut seen : NameSet := {}
+  let mut stack : Array Name := #[root]
+  let mut out : Array Name := #[]
+  while h : stack.size > 0 do
+    let n := stack.back
+    stack := stack.pop
+    if seen.contains n then continue
+    seen := seen.insert n
+    match env.find? n with
+    | none => pure ()
+    | some ci =>
+      let refs := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants)).getD #[]
+      if refs.contains ``sorryAx then out := out.push n
+      for r in refs do
+        unless seen.contains r do stack := stack.push r
+  return out
+
+elab "#walk " id:ident : command => do
+  let env ← getEnv
+  let n := id.getId
+  let adm := directAdmissions env n
+  logInfo m!"WALK|{n}|{adm.toList}"
+
+#walk WordRAM.mem_DTIME_of_decides
+#walk WordRAM.mem_P_of_decides
+#walk WordRAM.mem_P_of_decides_logWord
+#walk WordRAM.mem_SPACE_of_decides
+#walk WordRAM.mem_LOGSPACE_of_decides
+#walk WordRAM.computesInSpace_of_computes
+#walk WordRAM.mem_SPACE_mul_of_decides
+#walk WordRAM.mem_NSPACE_of_accepts
+#walk WordRAM.mem_NL_of_accepts

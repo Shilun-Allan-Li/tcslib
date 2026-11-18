@@ -1,0 +1,45 @@
+{
+ "base_summary": "declarations screened: 0; copy pairs (target reproduces >= half of source): 0; reproduced text: 0 chars",
+ "head_summary": "declarations screened: 12; copy pairs (target reproduces >= half of source): 3; reproduced text: 425 chars",
+ "population_base": [
+  "TCSlib/Complexity/RAMSimulation/Classes.lean"
+ ],
+ "population_head": [
+  "TCSlib/Complexity/RAMSimulation/Classes.lean"
+ ],
+ "new": 3,
+ "gone": 0,
+ "net_directed_pairs": "0 -> 3",
+ "pairs": [
+  {
+   "status": "NEW",
+   "target": "Classes.lean::mem_NL_of_accepts",
+   "source": "Classes.lean::mem_LOGSPACE_of_decides",
+   "chars": 122,
+   "source_chars": 167,
+   "pct": 73,
+   "class": "parallel",
+   "note": "The deterministic and nondeterministic logarithmic grades instantiate their general theorems (`mem_SPACE_of_decides`, `mem_NSPACE_of_accepts`) the same way: obtain the word-size witness from `wordSizeComputable_logSpace c`, rewrite the class (`LOGSPACE_eq`, `NL_eq`), and pass the shared private `logarithmic_space_bound`. The shared text is these three citations; the hypotheses and classes differ."
+  },
+  {
+   "status": "NEW",
+   "target": "Classes.lean::mem_LOGSPACE_of_decides",
+   "source": "Classes.lean::mem_NL_of_accepts",
+   "chars": 122,
+   "source_chars": 172,
+   "pct": 71,
+   "class": "parallel",
+   "note": "The reverse direction of the pair above: the same three-citation instantiation of a general theorem with the shared private bound lemma."
+  },
+  {
+   "status": "NEW",
+   "target": "Classes.lean::mem_DTIME_of_decides",
+   "source": "Classes.lean::mem_SPACE_of_decides",
+   "chars": 181,
+   "source_chars": 330,
+   "pct": 55,
+   "class": "parallel",
+   "note": "The time and space grades package the same simulation witness into two classes: obtain the machine from `exists_simulation P false hW`, apply the class reader (`mem_DTIME_iff`, `mem_SPACE_iff`) and the decider reader with the constant `(A + 1) * a`, and read the output with `outputOf_false`. The bound arithmetic differs (`simulation_constant_bound` with `ComputesInTime.mono` for time, `simulation_space_bound` for space)."
+  }
+ ]
+}
