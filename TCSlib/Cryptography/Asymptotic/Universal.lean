@@ -135,9 +135,7 @@ def univCoeff (c : EffectiveMachineCode) (α : List Bool) : ℕ :=
 theorem clockedAnswer_eq_cons_of_computesInTime (c : EffectiveMachineCode) {α x out : List Bool}
     {t : ℕ} (h : (c.decode α).toFinTM.ComputesInTime x out t) :
     clockedAnswer c α x t = true :: out := by
-  obtain ⟨hs, ho⟩ := (FinTM.computesInTime_iff _ _ _ _).mp h
-  have hs' : ((c.decode α).tm.runFrom ((c.decode α).tm.initCfg x) t).state = none := hs
-  have ho' : ((c.decode α).tm.runFrom ((c.decode α).tm.initCfg x) t).output = out := ho
+  obtain ⟨hs', ho'⟩ := (CodeTM.toFinTM_computesInTime_iff _ _ _ _).mp h
   unfold clockedAnswer
   rw [if_pos hs', ho']
 
@@ -148,7 +146,7 @@ theorem clockedAnswer_eq_false_of_not_computesInTime (c : EffectiveMachineCode)
     clockedAnswer c α x t = [false] := by
   have hs : ((c.decode α).tm.runFrom ((c.decode α).tm.initCfg x) t).state ≠ none := by
     intro hs
-    exact h _ ((FinTM.computesInTime_iff (c.decode α).toFinTM _ _ _).mpr ⟨hs, rfl⟩)
+    exact h _ ((CodeTM.toFinTM_computesInTime_iff (c.decode α) _ _ _).mpr ⟨hs, rfl⟩)
   unfold clockedAnswer
   rw [if_neg hs]
 
@@ -228,7 +226,9 @@ def univOutLen : PolyExpr :=
   .add (.add (.mul (.const 2) .var) (.const 3)) (.pow (.add .var (.const 1)) 3)
 
 /-- `univOutLen` evaluates to `2n + 3 + (n + 1)³`. -/
-@[simp] theorem eval_univOutLen (n : ℕ) : univOutLen.eval n = 2 * n + 3 + (n + 1) ^ 3 := rfl
+@[simp] theorem eval_univOutLen (n : ℕ) : univOutLen.eval n = 2 * n + 3 + (n + 1) ^ 3 := by
+  simp only [univOutLen, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_pow, PolyExpr.eval_var,
+    PolyExpr.eval_const]
 
 /-- The output of `f_universal` on `y` has at most `univOutLen |y|` bits (so the family
 `fUniversal` pads and never truncates). -/
@@ -263,8 +263,9 @@ theorem fUniversal_inLen_eval (c : EffectiveMachineCode) (n : ℕ) :
 /-- The padded reading of a string: `List.ofFn (fun i : Fin p => w.getD i false)` is
 `(w ++ 0^p).take p` (the encoding of `FunFamily.ofString`'s output). -/
 theorem ofFn_getD_eq_take (w : List Bool) (p : ℕ) :
-    List.ofFn (fun i : Fin p => w.getD i false) = (w ++ List.replicate p false).take p :=
-  ofFn_padFin_eq_take p w
+    List.ofFn (fun i : Fin p => w.getD i false) = (w ++ List.replicate p false).take p := by
+  rw [← padFin_def]
+  exact ofFn_padFin_eq_take p w
 
 /-- The encoding of `fUniversal c` at parameter `n` is the string output padded with `false`
 to `univOutLen n` bits. -/
@@ -710,10 +711,15 @@ private theorem invProbAt_reduction_ge (c : EffectiveMachineCode) {L : PolyExpr}
       univArg (A.runAtL n (padStr univOutLen (List.replicate n true) (pairEncode code (true :: y)))
         (r.take (A.coinLen n))))
     (hA : 1 - 1 / (n : ℝ) ^ 3 < (fUniversal c).invProbAt A n) :
-    1 - 1 / (n : ℝ) ^ 2 ≤ (⟨.var, L, g⟩ : FunFamily).invProbAt B (n - Nat.log 2 n) := by
+    1 - 1 / (n : ℝ) ^ 2 ≤ (⟨.var, L, fun m x => g m (x ∘ Fin.cast (PolyExpr.eval_var m).symm)⟩ :
+      FunFamily).invProbAt B (n - Nat.log 2 n) := by
   have hkn : Nat.log 2 n ≤ n := Nat.log_le_self 2 n
-  have hcast : Nat.log 2 n + (n - Nat.log 2 n) = n := by omega
-  let e : (Fin (Nat.log 2 n) → Bool) × (Fin (n - Nat.log 2 n) → Bool) ≃ (Fin n → Bool) :=
+  have hcast : Nat.log 2 n + (n - Nat.log 2 n) = (fUniversal c).inLen.eval n := by
+    rw [fUniversal_inLen_eval]
+    omega
+  -- `code ‖ y` at the input length of `f_universal`
+  let e : (Fin (Nat.log 2 n) → Bool) × (Fin (n - Nat.log 2 n) → Bool) ≃
+      (Fin ((fUniversal c).inLen.eval n) → Bool) :=
     (Fin.appendEquiv (Nat.log 2 n) (n - Nat.log 2 n)).trans
       (Equiv.arrowCongr (finCongr hcast) (Equiv.refl Bool))
   have hofn : ∀ z : (Fin (Nat.log 2 n) → Bool) × (Fin (n - Nat.log 2 n) → Bool),
@@ -740,8 +746,9 @@ private theorem invProbAt_reduction_ge (c : EffectiveMachineCode) {L : PolyExpr}
       A.coinLen n + (B.coinLen (n - Nat.log 2 n) - A.coinLen n) := by omega
   let e₂ : ((Fin (n - Nat.log 2 n) → Bool) × A.Coins n) ×
       (Fin (B.coinLen (n - Nat.log 2 n) - A.coinLen n) → Bool) ≃
-      (Fin (n - Nat.log 2 n) → Bool) × B.Coins (n - Nat.log 2 n) :=
-    (Equiv.prodAssoc _ _ _).trans (Equiv.prodCongr (Equiv.refl _)
+      (Fin (PolyExpr.var.eval (n - Nat.log 2 n)) → Bool) × B.Coins (n - Nat.log 2 n) :=
+    (Equiv.prodAssoc _ _ _).trans (Equiv.prodCongr
+      (Equiv.arrowCongr (finCongr (PolyExpr.eval_var _).symm) (Equiv.refl Bool))
       ((Fin.appendEquiv _ _).trans (Equiv.arrowCongr (finCongr hlen.symm) (Equiv.refl Bool))))
   rw [← uprob_comp_equiv e₂]
   refine hfib.trans ?_
@@ -755,8 +762,9 @@ private theorem invProbAt_reduction_ge (c : EffectiveMachineCode) {L : PolyExpr}
     rw [← List.ofFn_fin_append]
     exact (List.ofFn_congr hlen.symm (Fin.append w.1.2 w.2)).symm
   have hy : List.ofFn (e (cf, w.1.1)) = code ++ List.ofFn w.1.1 := by rw [hofn, hcf]
-  show ∃ x', B.runAt (n - Nat.log 2 n) (List.ofFn (g _ w.1.1)) (e₂ w).2 = List.ofFn x' ∧
-    g _ x' = g _ w.1.1
+  show ∃ x' : Fin (PolyExpr.var.eval (n - Nat.log 2 n)) → Bool,
+    B.runAt (n - Nat.log 2 n) (List.ofFn (g _ w.1.1)) (e₂ w).2 = List.ofFn x' ∧
+      g _ (x' ∘ Fin.cast (PolyExpr.eval_var _).symm) = g _ w.1.1
   have hBrun : B.runAt (n - Nat.log 2 n) (List.ofFn (g _ w.1.1)) (e₂ w).2 =
       univArg (List.ofFn y') := by
     rw [NUPPT.runAt_eq, hB, hcoins, List.take_left' (List.length_ofFn (f := w.1.2)),
@@ -764,7 +772,8 @@ private theorem invProbAt_reduction_ge (c : EffectiveMachineCode) {L : PolyExpr}
       padStr_eq_ofFn_fUniversal_f c g Mg c₀ hMg hcode hdec hc₀ w.1.1 (e (cf, w.1.1)) hy, hy']
   obtain ⟨x', hx', hgx'⟩ :=
     exists_preimage_of_fUniversal_eq c g Mg c₀ hMg hcode hdec hc₀ w.1.1 (e (cf, w.1.1)) y' hy hfy'
-  exact ⟨x', by rw [hBrun, hx'], hgx'⟩
+  exact ⟨x' ∘ Fin.cast (PolyExpr.eval_var _),
+    hBrun.trans (hx'.symm.trans (List.ofFn_congr (PolyExpr.eval_var _).symm x')), hgx'⟩
 
 /-- **`f_universal` is hard to invert with `q(n) = n³`** [PS10, Theorem 63.1, proof of weak
 one-wayness]: for a scheme `c` with an exponential canonizer, if some strong one-way function
@@ -895,7 +904,19 @@ theorem fUniversal_hard (c : EffectiveMachineCode) (hc : CanonizerExp c)
     intro y r
     rw [hφm]
     exact hB' _ y r
-  have hkey := invProbAt_reduction_ge c g Mg c₀ hMg A B (n := φ (n - Nat.log 2 n)) (by omega)
+  -- the machine of `g` on `{0,1}^m`, read through `PolyExpr.eval_var`
+  have hMg' : ∀ m (x : Fin m → Bool), Mg.toFinTM.ComputesInTime (List.ofFn x)
+      (List.ofFn (g m (x ∘ Fin.cast (PolyExpr.eval_var m)))) (c₀ * (m + 1) ^ 2) := fun m x => by
+    have h1 : List.ofFn (x ∘ Fin.cast (PolyExpr.eval_var m)) = List.ofFn x :=
+      (List.ofFn_congr (PolyExpr.eval_var m).symm x).symm
+    have h2 : c₀ * (PolyExpr.var.eval m + 1) ^ 2 = c₀ * (m + 1) ^ 2 := by rw [PolyExpr.eval_var]
+    have h : Mg.toFinTM.ComputesInTime (List.ofFn (x ∘ Fin.cast (PolyExpr.eval_var m)))
+        (List.ofFn (g m (x ∘ Fin.cast (PolyExpr.eval_var m))))
+        (c₀ * (PolyExpr.var.eval m + 1) ^ 2) := hMg m _
+    rw [h1, h2] at h
+    exact h
+  have hkey := invProbAt_reduction_ge c (fun m x => g m (x ∘ Fin.cast (PolyExpr.eval_var m))) Mg
+    c₀ hMg' A B (n := φ (n - Nat.log 2 n)) (by omega)
     (hcode_len _ hn'N) (hcode_dec _) (by omega) hcoins hrun hgood'.2
   rw [hφm] at hkey
   rw [abs_of_nonneg (FunFamily.invProbAt_nonneg _ _ _)]
