@@ -61,6 +61,7 @@ part of the public API of the campaign.
   times a negligible function is negligible.
 * `TCSlib.Cryptography.EnsembleLemmas.ofFn_padFin_eq_padL` — the string of a padded vector is
   `padL`.
+* `TCSlib.Cryptography.EnsembleLemmas.swapAux_apply` — the reader of the reindexing `swapAux`.
 
 ## References
 
@@ -505,6 +506,12 @@ def swapAux (ζ S ρ : Type*) : ζ × (S × ρ) ≃ S × (ζ × ρ) where
   invFun v := (v.2.1, (v.1, v.2.2))
   left_inv _ := rfl
   right_inv _ := rfl
+
+/-- The reindexing `swapAux` moves the middle component to the front:
+`swapAux ζ S ρ (a, b) = (b.1, (a, b.2))`. Glue: the reader of `EnsembleLemmas.swapAux`. -/
+theorem swapAux_apply (ζ S ρ : Type*) (a : ζ) (b : S × ρ) :
+    swapAux ζ S ρ (a, b) = (b.1, (a, b.2)) :=
+  rfl
 
 /-- **Replacing the ideal samplers of the multicopy reduction by exactly distributed ones**
 leaves the acceptance probability unchanged: the other `t − 1` copies are drawn from

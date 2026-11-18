@@ -81,6 +81,8 @@ of `predict_eq` are discharged automatically for ensemble seeds and machine coin
 
 ## Main results
 
+* `TCSlib.Cryptography.Ensemble.distAdv_uniform`, `indist_iff`, `samplable_iff` — readers of the
+  uniform ensemble, of indistinguishability and of samplability.
 * `TCSlib.Cryptography.Ensemble.Indist.refl`, `Indist.symm`, `Indist.trans` — `≈` is an
   equivalence relation (transitivity is the two-step hybrid lemma, [PS10, §3.1.1]).
 * `TCSlib.Cryptography.Ensemble.Indist.push` — closure under efficient operations
@@ -161,6 +163,15 @@ along `uniform_σ`. -/
 theorem uniform_X (ℓ : PolyExpr) (n : ℕ) (x : (uniform ℓ).σ n) :
     (uniform ℓ).X n x = cast (uniform_σ ℓ n) x := rfl
 
+/-- The advantage against the uniform ensemble is the advantage against the identity sampler
+on `{0,1}^{ℓ(n)}`: `distAdv X ((uniform ℓ).X n) D = distAdv X id D`. Glue: the reader of
+`Ensemble.uniform` at the level of advantages. -/
+theorem distAdv_uniform {σ ρ : Type*} [Fintype σ] [Fintype ρ] (ℓ : PolyExpr) (n : ℕ)
+    (X : σ → (Fin (ℓ.eval n) → Bool)) (D : (Fin (ℓ.eval n) → Bool) → ρ → Bool) :
+    distAdv X ((uniform ℓ).X n) D =
+      distAdv X (id : (Fin (ℓ.eval n) → Bool) → Fin (ℓ.eval n) → Bool) D :=
+  rfl
+
 /-- **Efficiently samplable** ensemble (distribution level, D6): there is a syntactic
 polynomial `s` and a polynomial-time sampler `S` such that at every `n` the law of
 `S(⟨1^n, r⟩)` for `s(n)` uniform bits `r` (padded or truncated to `ℓ(n)` bits) is exactly the
@@ -170,6 +181,16 @@ def Samplable (X : Ensemble ℓ) : Prop :=
   ∃ (s : PolyExpr) (S : List Bool → List Bool), PolyTimeComputable S ∧
     ∀ n, StatClose (fun r : Fin (s.eval n) → Bool =>
       padFin (ℓ.eval n) (S (NUPPT.advInput n (List.ofFn r)))) (X.X n) 0
+
+/-- The defining property of `Samplable`: `X.Samplable` iff there are a syntactic polynomial
+`s` and a polynomial-time `S` such that, at every `n`, `S(⟨1^n, r⟩)` for `s(n)` uniform bits `r`,
+padded or truncated to `ℓ(n)` bits, has exactly the law of `X n`. Glue: the reader of
+`Ensemble.Samplable` [PS10, p. 72, Example]. -/
+theorem samplable_iff (X : Ensemble ℓ) :
+    X.Samplable ↔ ∃ (s : PolyExpr) (S : List Bool → List Bool), PolyTimeComputable S ∧
+      ∀ n, StatClose (fun r : Fin (s.eval n) → Bool =>
+        padFin (ℓ.eval n) (S (NUPPT.advInput n (List.ofFn r)))) (X.X n) 0 :=
+  Iff.rfl
 
 /-- **Computational indistinguishability** `{X_n} ≈ {Y_n}` [PS10, Definition 69.4], headline
 form: for every non-uniform PPT `D`, the advantage
@@ -181,6 +202,14 @@ equivalent, `indist_iff_exists_negligible`.)
 `IndistLit`, and the two are related by `Indist.toLit` and `IndistLit.toIndist`. -/
 def Indist (X Y : Ensemble ℓ) : Prop :=
   ∀ D : NUPPT, Negligible fun n => distAdv (X.X n) (Y.X n) (D.distinguisher n (ℓ.eval n))
+
+/-- The defining property of `Indist`: `X.Indist Y` iff for every non-uniform PPT `D` the
+advantage `distAdv (X.X n) (Y.X n) (D(1^n, ·))` is negligible in `n`. Glue: the reader of
+`Ensemble.Indist` [PS10, Definition 69.4]. -/
+theorem indist_iff (X Y : Ensemble ℓ) :
+    X.Indist Y ↔
+      ∀ D : NUPPT, Negligible fun n => distAdv (X.X n) (Y.X n) (D.distinguisher n (ℓ.eval n)) :=
+  Iff.rfl
 
 /-- **Computational indistinguishability, literal form** [PS10, Definition 69.4]: the
 distinguisher receives the sample `t` only, i.e. is activated at parameter `|t| = ℓ(n)`

@@ -64,6 +64,8 @@ range `1` and `n` bits per trial), so this file now owns the campaign parameters
 
 ## Main results
 
+* `TCSlib.Cryptography.fisherYates_def`, `TCSlib.Cryptography.permFromCoins_def` — the defining
+  equations of the two samplers.
 * `TCSlib.Cryptography.fisherYates_succ`, `TCSlib.Cryptography.fisherYates_injOn`,
   `TCSlib.Cryptography.exists_fyOffsets` — the Fisher–Yates recursion through
   `Equiv.Perm.decomposeFin`, and the offset map is a bijection from the `n!` in-range offset
@@ -103,6 +105,15 @@ def fisherYates (n : ℕ) (c : Fin n → ℕ) : Equiv.Perm (Fin n) :=
     (fun i σ => Equiv.swap i ⟨(i + c i % (n - i)) % n,
       Nat.mod_lt _ (Nat.pos_of_ne_zero (by have := i.isLt; omega))⟩ * σ) 1
 
+/-- The defining equation of `fisherYates`: the product, over `i` in `List.finRange n` from the
+left, of the transpositions `swap i ((i + c i mod (n - i)) mod n)`. Glue: the reader of
+`fisherYates`. -/
+theorem fisherYates_def (n : ℕ) (c : Fin n → ℕ) :
+    fisherYates n c = (List.finRange n).foldr
+      (fun i σ => Equiv.swap i ⟨(i + c i % (n - i)) % n,
+        Nat.mod_lt _ (Nat.pos_of_ne_zero (by have := i.isLt; omega))⟩ * σ) 1 :=
+  rfl
+
 /-- A permutation from `n` rejection samplers (`T` trials of `k` bits for position `i`,
 range `n - i`); uniform conditioned on `some`. The permutations `π ← S_n` of the prover and
 simulator of [PS10, Protocol 120.6] and the colour permutations of [PS10, Protocol 127.5]. -/
@@ -110,6 +121,16 @@ def permFromCoins (n k T : ℕ) (b : Fin n → Fin T → Fin k → Bool) : Optio
   if h : ∀ i : Fin n, (rejectionSample (n - i) k T (b i)).isSome then
     some (fisherYates n fun i => ((rejectionSample (n - i) k T (b i)).get (h i)).val)
   else none
+
+/-- The defining equation of `permFromCoins`: if every position's rejection sampler succeeds,
+the Fisher–Yates permutation of the sampled offsets, and `none` otherwise. Glue: the reader of
+`permFromCoins`. -/
+theorem permFromCoins_def (n k T : ℕ) (b : Fin n → Fin T → Fin k → Bool) :
+    permFromCoins n k T b =
+      if h : ∀ i : Fin n, (rejectionSample (n - i) k T (b i)).isSome then
+        some (fisherYates n fun i => ((rejectionSample (n - i) k T (b i)).get (h i)).val)
+      else none :=
+  rfl
 
 /-- The permutation sampler fails exactly when some position's rejection sampler fails. -/
 theorem permFromCoins_eq_none_iff (n k T : ℕ) (b : Fin n → Fin T → Fin k → Bool) :
