@@ -6,7 +6,7 @@
   (`189af085`) merged in.
 - **Kit fixes to send back to `seyoon-devtools`** (made in the local kit at gates 162–163):
   `mksource.py` and `assemble.py` handle owners that are new at the head; `checks/metadata.py`
-  admits `sorryAx` only for the admissions named in `gate.json`'s `inherited_admissions`.
+  admits `sorryAx` only for the admissions named in `gate.json`'s `inherited_admissions`. Later (gates 171–172): `templates/MetadataBody.lean.txt` excludes internal auxiliaries (`_auto._@…`, `_private…`) and already-irreducible definitions from the heads to seal; `checks/grouped.py` and `grouped-cmp.py` keep a trailing scope closer (`end X`) out of a probe, name probe files by their full path (two `Embed.lean` owners), and `grouped-cmp.py` treats a head the owner file already makes locally irreducible as sealed. Gate folders' `historical_timing` must point at a live gate (164's folder was removed for disk space).
 - **Rule 10 and vendored files (Seyoon, 2026-11-18):** rule 10 does not apply between vendored files. Their text stays upstream's. TCSlib's own files read vendored definitions only through readers.
 - **Snapshot:** `oleans-cl166-cl165` (908 objects; manifest `manifests/oleans-cl166-cl165.output.json`, verified), the build of the branch after #379 (2026-11-18): gate 166's replay output; the merge's Lean equals `36fd655a`'s. Earlier: `oleans-cl165-cl164` (after #381), `oleans-cl164-cm373` (after #375), `oleans-cm373-cl162`, `oleans-cl161-cl160`, `oleans-cl160-cc91f4`, `oleans-cc91f4`.
 - **Plan:** `items/ram-tm/PLAN.md` §0. The 32 admissions come in four tiers: Extended 18,

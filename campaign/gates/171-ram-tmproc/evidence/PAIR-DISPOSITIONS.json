@@ -1,0 +1,142 @@
+{
+ "base_summary": "declarations screened: 25; copy pairs (target reproduces >= half of source): 0; reproduced text: 0 chars",
+ "head_summary": "declarations screened: 106; copy pairs (target reproduces >= half of source): 12; reproduced text: 1,521 chars",
+ "population_base": [
+  "TCSlib/Programs/Light.lean",
+  "TCSlib/Programs/Light/Calls.lean",
+  "TCSlib/Programs/Light/Rules.lean",
+  "TCSlib/Programs/Light/Syntax.lean"
+ ],
+ "population_head": [
+  "TCSlib/Programs/Light.lean",
+  "TCSlib/Programs/Light/Calls.lean",
+  "TCSlib/Programs/Light/Rules.lean",
+  "TCSlib/Programs/Light/Syntax.lean",
+  "TCSlib/Programs/Light/TMProc.lean"
+ ],
+ "new": 12,
+ "gone": 0,
+ "net_directed_pairs": "0 -> 12",
+ "pairs": [
+  {
+   "status": "NEW",
+   "target": "TMProc.lean::TMTapesAway",
+   "source": "TMProc.lean::TMTapes",
+   "chars": 73,
+   "source_chars": 73,
+   "pct": 100,
+   "class": "sibling-uniformity",
+   "note": "The tape invariant and its variant away from the current head positions (one extra hypothesis `z ≠ c.workTapePos j`), used while a round rewrites the scanned cells."
+  },
+  {
+   "status": "NEW",
+   "target": "TMProc.lean::TMTapes",
+   "source": "TMProc.lean::TMTapesAway",
+   "chars": 73,
+   "source_chars": 90,
+   "pct": 81,
+   "class": "sibling-uniformity",
+   "note": "The tape invariant and its variant away from the current head positions (one extra hypothesis `z ≠ c.workTapePos j`), used while a round rewrites the scanned cells."
+  },
+  {
+   "status": "NEW",
+   "target": "TMProc.lean::tmTail_runs",
+   "source": "TMProc.lean::tmRowTests_matches_iff",
+   "chars": 87,
+   "source_chars": 108,
+   "pct": 81,
+   "class": "citation-shape",
+   "note": "Row selection cites the row-test characterization; the shared text is that citation's argument list."
+  },
+  {
+   "status": "NEW",
+   "target": "TMProc.lean::tmEmit_runs",
+   "source": "TMProc.lean::tmInputEnd_read",
+   "chars": 169,
+   "source_chars": 227,
+   "pct": 74,
+   "class": "citation-shape",
+   "note": "Expression and statement evaluation through the 28 vendored readers (`Expr.safe_op_iff`, `Expr.val_op`, `Op.eval_add`, …): each lemma evaluates a different expression or statement, and the shared text is the reader `simp only`/`rw` list."
+  },
+  {
+   "status": "NEW",
+   "target": "TMProc.lean::tmMoveInput_runs",
+   "source": "TMProc.lean::tmInputEnd_read",
+   "chars": 161,
+   "source_chars": 227,
+   "pct": 71,
+   "class": "citation-shape",
+   "note": "Expression and statement evaluation through the 28 vendored readers (`Expr.safe_op_iff`, `Expr.val_op`, `Op.eval_add`, …): each lemma evaluates a different expression or statement, and the shared text is the reader `simp only`/`rw` list."
+  },
+  {
+   "status": "NEW",
+   "target": "TMProc.lean::tmReadInput_runs",
+   "source": "TMProc.lean::tmInputEnd_read",
+   "chars": 159,
+   "source_chars": 227,
+   "pct": 70,
+   "class": "citation-shape",
+   "note": "Expression and statement evaluation through the 28 vendored readers (`Expr.safe_op_iff`, `Expr.val_op`, `Op.eval_add`, …): each lemma evaluates a different expression or statement, and the shared text is the reader `simp only`/`rw` list."
+  },
+  {
+   "status": "NEW",
+   "target": "TMProc.lean::tmCodeExpr_read",
+   "source": "TMProc.lean::tmInputEnd_read",
+   "chars": 154,
+   "source_chars": 227,
+   "pct": 68,
+   "class": "citation-shape",
+   "note": "Expression and statement evaluation through the 28 vendored readers (`Expr.safe_op_iff`, `Expr.val_op`, `Op.eval_add`, …): each lemma evaluates a different expression or statement, and the shared text is the reader `simp only`/`rw` list."
+  },
+  {
+   "status": "NEW",
+   "target": "TMProc.lean::tmTail_runs",
+   "source": "TMProc.lean::tmInputEnd_read",
+   "chars": 134,
+   "source_chars": 227,
+   "pct": 59,
+   "class": "citation-shape",
+   "note": "Expression and statement evaluation through the 28 vendored readers (`Expr.safe_op_iff`, `Expr.val_op`, `Op.eval_add`, …): each lemma evaluates a different expression or statement, and the shared text is the reader `simp only`/`rw` list."
+  },
+  {
+   "status": "NEW",
+   "target": "TMProc.lean::tmAddrExpr_read",
+   "source": "TMProc.lean::tmInputEnd_read",
+   "chars": 124,
+   "source_chars": 227,
+   "pct": 55,
+   "class": "citation-shape",
+   "note": "Expression and statement evaluation through the 28 vendored readers (`Expr.safe_op_iff`, `Expr.val_op`, `Op.eval_add`, …): each lemma evaluates a different expression or statement, and the shared text is the reader `simp only`/`rw` list."
+  },
+  {
+   "status": "NEW",
+   "target": "TMProc.lean::tmReadInput",
+   "source": "TMProc.lean::tmMoveInput",
+   "chars": 89,
+   "source_chars": 167,
+   "pct": 53,
+   "class": "sibling-uniformity",
+   "note": "Two small Light statement builders (move the input head; read the input bit) over the same local-variable layout."
+  },
+  {
+   "status": "NEW",
+   "target": "TMProc.lean::tmMoveInput",
+   "source": "TMProc.lean::tmReadInput",
+   "chars": 89,
+   "source_chars": 173,
+   "pct": 51,
+   "class": "sibling-uniformity",
+   "note": "Two small Light statement builders (move the input head; read the input bit) over the same local-variable layout."
+  },
+  {
+   "status": "NEW",
+   "target": "TMProc.lean::tmReadInput_runs",
+   "source": "TMProc.lean::tmAddrExpr_read",
+   "chars": 209,
+   "source_chars": 408,
+   "pct": 51,
+   "class": "citation-shape",
+   "note": "Expression and statement evaluation through the 28 vendored readers (`Expr.safe_op_iff`, `Expr.val_op`, `Op.eval_add`, …): each lemma evaluates a different expression or statement, and the shared text is the reader `simp only`/`rw` list."
+  }
+ ]
+}
