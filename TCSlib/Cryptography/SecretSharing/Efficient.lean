@@ -171,7 +171,7 @@ public parameter `π` admissible at `κ` (`Adm κ π`, typically a bit-length bo
 in terms of `κ`), the coins `r : Rand π` are drawn by an honest sampler in the
 `CoinSampling.SamplesEfficiently` form, whose output is `encRand π r`, with the identity core, so
 that on success they are exactly uniform and the failure is at most `2^{-κ}`
-[PS10, Def 23.4]; and the sampler's parameter word `y κ π` is computed by one
+(the uniform notion of that contract); and the sampler's parameter word `y κ π` is computed by one
 `PolyTimeComputable` map from `⟨1^κ, encPub π⟩`. The draw's own encoding `encDraw` is the
 sampler's and is not constrained. This is the probabilistic half of [PS10, Def 152.1]'s
 requirement that `Share` be probabilistic polynomial-time. -/
