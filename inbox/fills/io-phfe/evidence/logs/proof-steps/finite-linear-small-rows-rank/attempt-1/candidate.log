@@ -1,0 +1,43 @@
+file=TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear.lean
+source_sha256=b4ffe83937dbeef269a24c1dfa8ed0cc9b4fd9ce25abc4d02907443dc7ad6c34
+working_source_development_check=True
+TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear.lean:127:28: error: expected token
+TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear.lean:127:25: error: typeclass instance problem is stuck, it is often due to metavariables
+  HMul (Matrix (Fin 1) (Fin 2) K) ?m.386 (Fin 1 → K)
+TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear.lean:110:13: error: unsolved goals
+case refine_2.succ.zero.refine_2
+K : Type
+inst✝¹ : Field K
+inst✝ : Fintype K
+q : ℕ := Fintype.card K
+hq2 : 2 ≤ q
+hq1 : 1 ≤ q
+hq : 1 ≤ ↑q
+hqpos : 0 < ↑q
+hrecip : 1 / ↑q ^ 2 ≤ 1 / ↑q
+hr : 0 + 1 ≤ 2
+hbad : ∀ (M : Matrix (Fin 1) (Fin 2) K), ¬Function.Surjective M.mulVec → M = 0
+⊢ ((ProbComp.sample (Matrix (Fin (0 + 1)) (Fin 2) K)).prob fun M => ¬Function.Surjective M.mulVec) ≤
+    2 / ↑(Fintype.card K)
+TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear.lean:109:6: error: Alternative `succ` has not been provided
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear): lean exited with status 1
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear): error diagnostics reported
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear): no fresh .olean produced
+        4.05 real         2.38 user         1.07 sys
+          2227879936  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              162013  page reclaims
+               16091  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                1702  voluntary context switches
+               10400  involuntary context switches
+            32082996  instructions retired
+            13729381  cycles elapsed
+             1638736  peak memory footprint

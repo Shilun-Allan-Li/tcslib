@@ -1,0 +1,12 @@
+Read current LinearSecurity/Slack.lean exact header and full opening docstring.
+Searched linearSlack_nonneg, linearSlack_eq, rankSlack_nonneg, expect_nonneg, and
+expect_sample nonnegativity across current Wee20 and Games sources.
+
+Exact nearest/existing APIs:
+- Wee20/LinearSimulator.lean:410 linearSlack_eq, a proved equation reader.
+- Games/Probability.lean:202 ProbComp.expect_nonneg (c) (h : forall a, 0 <= f a).
+  This theorem already packages expectation monotonicity and expect_const.
+- Wee20/LinearSecurity/Slack.lean:46 rankSlack_nonneg, the existing pointwise target.
+
+No helper is needed; native exact?/apply? probes for a NEW helper are inapplicable.
+Root authorizes this existing frozen target and provisional rankSlack dependency.

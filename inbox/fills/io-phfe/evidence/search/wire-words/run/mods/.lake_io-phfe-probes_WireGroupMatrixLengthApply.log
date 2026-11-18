@@ -1,0 +1,893 @@
+Try this:
+  [apply] refine (Nat.div_eq_iff_eq_mul_left ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < G.wG.eval κ
+  -- ⊢ G.wG.eval κ ∣ (groupMatrix pp A).length
+  -- ⊢ (groupMatrix pp A).length / G.wG.eval κ = m * n
+Try this:
+  [apply] refine (Nat.div_eq_iff_eq_mul_right ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < m * n
+  -- ⊢ m * n ∣ (groupMatrix pp A).length
+  -- ⊢ (groupMatrix pp A).length / (m * n) = G.wG.eval κ
+Try this:
+  [apply] refine Nat.eq_mul_of_div_eq_right ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ m * n ∣ (groupMatrix pp A).length
+  -- ⊢ (groupMatrix pp A).length / (m * n) = G.wG.eval κ
+Try this:
+  [apply] refine (Nat.eq_div_iff_mul_eq_left ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ G.wG.eval κ ≠ 0
+  -- ⊢ G.wG.eval κ ∣ (groupMatrix pp A).length
+  -- ⊢ m * n = (groupMatrix pp A).length / G.wG.eval κ
+Try this:
+  [apply] refine Nat.eq_mul_of_div_eq_left ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ G.wG.eval κ ∣ (groupMatrix pp A).length
+  -- ⊢ (groupMatrix pp A).length / G.wG.eval κ = m * n
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine length_eq_of_decodeFin_eq_some ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.length_of_sublistsLen ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.eq_of_beq_eq_true ?_
+  -- Remaining subgoals:
+  -- ⊢ (groupMatrix pp A).length.beq (m * n * G.wG.eval κ) = true
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n x y} hn => (Nat.prodMk_mem_divisorsAntidiag hn).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.le_antisymm ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ (groupMatrix pp A).length ≤ m * n * G.wG.eval κ
+  -- ⊢ m * n * G.wG.eval κ ≤ (groupMatrix pp A).length
+Try this:
+  [apply] refine Nat.succ_inj'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (groupMatrix pp A).length.succ = (m * n * G.wG.eval κ).succ
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_beq_eq_true ?_)
+  -- Remaining subgoals:
+  -- ⊢ (m * n * G.wG.eval κ).beq (groupMatrix pp A).length = true
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_right_cancel ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.le_antisymm ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ m * n * G.wG.eval κ ≤ (groupMatrix pp A).length
+  -- ⊢ (groupMatrix pp A).length ≤ m * n * G.wG.eval κ
+Try this:
+  [apply] refine Nat.succ_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (groupMatrix pp A).length.succ = (m * n * G.wG.eval κ).succ
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.succ_inj'.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (m * n * G.wG.eval κ).succ = (groupMatrix pp A).length.succ
+Try this:
+  [apply] refine Nat.sub_one_cancel ?_ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < (groupMatrix pp A).length
+  -- ⊢ 0 < m * n * G.wG.eval κ
+  -- ⊢ (groupMatrix pp A).length - 1 = m * n * G.wG.eval κ - 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.add_right_cancel ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.add_one_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (groupMatrix pp A).length + 1 = m * n * G.wG.eval κ + 1
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.succ_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (m * n * G.wG.eval κ).succ = (groupMatrix pp A).length.succ
+Try this:
+  [apply] refine Nat.pred_inj ?_ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < (groupMatrix pp A).length
+  -- ⊢ 0 < m * n * G.wG.eval κ
+  -- ⊢ (groupMatrix pp A).length.pred = (m * n * G.wG.eval κ).pred
+Try this:
+  [apply] refine Eq.symm (Nat.sub_one_cancel ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 < m * n * G.wG.eval κ
+  -- ⊢ 0 < (groupMatrix pp A).length
+  -- ⊢ m * n * G.wG.eval κ - 1 = (groupMatrix pp A).length - 1
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.add_one_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ m * n * G.wG.eval κ + 1 = (groupMatrix pp A).length + 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.eq_of_mul_eq_mul_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.eq_iff_le_and_ge.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (groupMatrix pp A).length ≤ m * n * G.wG.eval κ ∧ m * n * G.wG.eval κ ≤ (groupMatrix pp A).length
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_left_cancel ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.eq_of_mul_eq_mul_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.pred_inj ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 < m * n * G.wG.eval κ
+  -- ⊢ 0 < (groupMatrix pp A).length
+  -- ⊢ (m * n * G.wG.eval κ).pred = (groupMatrix pp A).length.pred
+Try this:
+  [apply] refine Nat.eq_of_lt_succ_of_not_lt ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ (groupMatrix pp A).length < m * n * G.wG.eval κ + 1
+  -- ⊢ ¬(groupMatrix pp A).length < m * n * G.wG.eval κ
+Try this:
+  [apply] refine Nat.eq_of_le_of_lt_succ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ m * n * G.wG.eval κ ≤ (groupMatrix pp A).length
+  -- ⊢ (groupMatrix pp A).length < m * n * G.wG.eval κ + 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.eq_of_mul_eq_mul_left ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.pow_left_inj fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.eq_iff_le_and_ge.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ m * n * G.wG.eval κ ≤ (groupMatrix pp A).length ∧ (groupMatrix pp A).length ≤ m * n * G.wG.eval κ
+Try this:
+  [apply] refine Nat.le_antisymm_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (groupMatrix pp A).length ≤ m * n * G.wG.eval κ ∧ m * n * G.wG.eval κ ≤ (groupMatrix pp A).length
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.add_left_cancel ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.eq_of_mul_eq_mul_right ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_lt_succ_of_not_lt ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ m * n * G.wG.eval κ < (groupMatrix pp A).length + 1
+  -- ⊢ ¬m * n * G.wG.eval κ < (groupMatrix pp A).length
+Try this:
+  [apply] refine Int.neg_ofNat_eq_negSucc_add_one_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ -↑(groupMatrix pp A).length = Int.negSucc (m * n * G.wG.eval κ) + 1
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_le_of_lt_succ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ (groupMatrix pp A).length ≤ m * n * G.wG.eval κ
+  -- ⊢ m * n * G.wG.eval κ < (groupMatrix pp A).length + 1
+Try this:
+  [apply] refine Int.negSucc_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Int.negSucc (groupMatrix pp A).length = Int.negSucc (m * n * G.wG.eval κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a b n} hn => (Nat.pow_left_inj hn).mp) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.le_antisymm_iff.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ m * n * G.wG.eval κ ≤ (groupMatrix pp A).length ∧ (groupMatrix pp A).length ≤ m * n * G.wG.eval κ
+Try this:
+  [apply] refine Int.subNat_eq_zero_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Int.subNatNat (groupMatrix pp A).length (m * n * G.wG.eval κ) = 0
+Try this:
+  [apply] refine Int.ofNat_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(groupMatrix pp A).length = ↑(m * n * G.wG.eval κ)
+Try this:
+  [apply] refine Int.negSucc_add_one_eq_neg_ofNat_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Int.negSucc (groupMatrix pp A).length + 1 = -↑(m * n * G.wG.eval κ)
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Int.neg_ofNat_eq_negSucc_add_one_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ -↑(m * n * G.wG.eval κ) = Int.negSucc (groupMatrix pp A).length + 1
+Try this:
+  [apply] refine Nat.dvd_antisymm ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ (groupMatrix pp A).length ∣ m * n * G.wG.eval κ
+  -- ⊢ m * n * G.wG.eval κ ∣ (groupMatrix pp A).length
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Int.negSucc_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Int.negSucc (m * n * G.wG.eval κ) = Int.negSucc (groupMatrix pp A).length
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.pow_right_inj ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_left_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Int.subNat_eq_zero_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Int.subNatNat (m * n * G.wG.eval κ) (groupMatrix pp A).length = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_left_inj fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Int.ofNat_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ↑(m * n * G.wG.eval κ) = ↑(groupMatrix pp A).length
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.div_eq_iff_eq_of_dvd_dvd (fun a => ?_) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Int.negSucc_add_one_eq_neg_ofNat_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Int.negSucc (m * n * G.wG.eval κ) + 1 = -↑(groupMatrix pp A).length
+Try this:
+  [apply] refine Nat.mul_self_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (groupMatrix pp A).length * (groupMatrix pp A).length = m * n * G.wG.eval κ * (m * n * G.wG.eval κ)
+Try this:
+  [apply] refine Eq.symm (Nat.dvd_antisymm ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ m * n * G.wG.eval κ ∣ (groupMatrix pp A).length
+  -- ⊢ (groupMatrix pp A).length ∣ m * n * G.wG.eval κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_right_inj fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a m n} ha => (Nat.pow_right_inj ha).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.mul_left_cancel ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m k n} => Nat.add_left_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_right_cancel_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a b c} ha => (Nat.mul_left_inj ha).mp) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.eq_of_dvd_of_lt_two_mul ?_ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ (groupMatrix pp A).length ≠ 0
+  -- ⊢ m * n * G.wG.eval κ ∣ (groupMatrix pp A).length
+  -- ⊢ (groupMatrix pp A).length < 2 * (m * n * G.wG.eval κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {n a b} hn ha hb => (Nat.div_eq_iff_eq_of_dvd_dvd hn ha hb).mp) (fun a => ?_) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_left_cancel_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Nat.mul_self_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ m * n * G.wG.eval κ * (m * n * G.wG.eval κ) = (groupMatrix pp A).length * (groupMatrix pp A).length
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_right_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a b c} ha => (Nat.mul_right_inj ha).mp) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.div_left_inj ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.mul_left_cancel ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_right_cancel_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m k n} => Nat.add_right_cancel_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.mul_right_cancel ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_dvd_of_lt_two_mul ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ m * n * G.wG.eval κ ≠ 0
+  -- ⊢ (groupMatrix pp A).length ∣ m * n * G.wG.eval κ
+  -- ⊢ m * n * G.wG.eval κ < 2 * (groupMatrix pp A).length
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m k n} => Nat.add_left_cancel_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_left_cancel_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m k n} => Nat.add_right_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.eq_of_dvd_of_div_eq_one ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ (groupMatrix pp A).length ∣ m * n * G.wG.eval κ
+  -- ⊢ m * n * G.wG.eval κ / (groupMatrix pp A).length = 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a b d} hda hdb => (Nat.div_left_inj hda hdb).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.eq_of_testBit_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ℕ), (groupMatrix pp A).length.testBit i = (m * n * G.wG.eval κ).testBit i
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} p {n k} => (Nat.mul_right_cancel_iff p).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.mul_right_cancel ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Fin.mk.inj_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Int.natCast_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(groupMatrix pp A).length = ↑(m * n * G.wG.eval κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} p {m k} => (Nat.mul_left_cancel_iff p).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.getElem?_inj ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_dvd_of_div_eq_one ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ m * n * G.wG.eval κ ∣ (groupMatrix pp A).length
+  -- ⊢ (groupMatrix pp A).length / (m * n * G.wG.eval κ) = 1
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_testBit_eq ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ℕ), (m * n * G.wG.eval κ).testBit i = (groupMatrix pp A).length.testBit i
+Try this:
+  [apply] refine Nat.compare_eq_eq.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compare (groupMatrix pp A).length (m * n * G.wG.eval κ) = Ordering.eq
+Try this:
+  [apply] refine Rat.natCast_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(groupMatrix pp A).length = ↑(m * n * G.wG.eval κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n a b} {ha} {hb} => Fin.mk.inj_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Rat.ofNat_eq_ofNat.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ OfNat.ofNat (groupMatrix pp A).length = OfNat.ofNat (m * n * G.wG.eval κ)
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Int.natCast_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ↑(m * n * G.wG.eval κ) = ↑(groupMatrix pp A).length
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (List.getElem?_inj ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.replicate_left_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.dvd_right_iff_eq.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : ℕ), (groupMatrix pp A).length ∣ a ↔ m * n * G.wG.eval κ ∣ a
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.compare_eq_eq.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ compare (m * n * G.wG.eval κ) (groupMatrix pp A).length = Ordering.eq
+Try this:
+  [apply] refine Nat.dvd_left_iff_eq.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : ℕ), a ∣ (groupMatrix pp A).length ↔ a ∣ m * n * G.wG.eval κ
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Rat.natCast_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ↑(m * n * G.wG.eval κ) = ↑(groupMatrix pp A).length
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Rat.ofNat_eq_ofNat.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ OfNat.ofNat (m * n * G.wG.eval κ) = OfNat.ofNat (groupMatrix pp A).length
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (List.Nodup.getElem_inj_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Fin.mk_eq_mk.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {a} {n m} => List.replicate_left_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Fin.equiv_iff_eq.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Nonempty (Fin (groupMatrix pp A).length ≃ Fin (m * n * G.wG.eval κ))
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Nat.dvd_right_iff_eq.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : ℕ), m * n * G.wG.eval κ ∣ a ↔ (groupMatrix pp A).length ∣ a
+Try this:
+  [apply] refine (Nat.factorial_inj' ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 1 < (groupMatrix pp A).length ∨ 1 < m * n * G.wG.eval κ
+  -- ⊢ (groupMatrix pp A).length.factorial = (m * n * G.wG.eval κ).factorial
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Nat.dvd_left_iff_eq.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a : ℕ), a ∣ m * n * G.wG.eval κ ↔ a ∣ (groupMatrix pp A).length
+Try this:
+  [apply] refine (Nat.factorial_inj ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 1 < (groupMatrix pp A).length
+  -- ⊢ (groupMatrix pp A).length.factorial = (m * n * G.wG.eval κ).factorial
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pow_right_inj₀ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {l} h {i} {hi} {j} {hj} => (List.Nodup.getElem_inj_iff h).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.cast_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n a} {h} {a'} {h'} => Fin.mk_eq_mk.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine MultiTapeTM.halting_step_unique ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {n m} => Fin.equiv_iff_eq.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Nonempty (Fin (m * n * G.wG.eval κ) ≃ Fin (groupMatrix pp A).length)
+Try this:
+  [apply] refine Eq.symm ((fun {m n} h => (Nat.factorial_inj' h).mp) ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 1 < m * n * G.wG.eval κ ∨ 1 < (groupMatrix pp A).length
+  -- ⊢ (m * n * G.wG.eval κ).factorial = (groupMatrix pp A).length.factorial
+Try this:
+  [apply] refine Eq.symm ((fun {m n} hn => (Nat.factorial_inj hn).mp) ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 1 < m * n * G.wG.eval κ
+  -- ⊢ (m * n * G.wG.eval κ).factorial = (groupMatrix pp A).length.factorial
+Try this:
+  [apply] refine Nat.succPNat_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (groupMatrix pp A).length.succPNat = (m * n * G.wG.eval κ).succPNat
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {M₀} [MonoidWithZero M₀] [LinearOrder M₀] [PosMulStrictMono M₀] {a} {m n} [ZeroLEOneClass M₀] ha₀ ha₁ =>
+        (pow_right_inj₀ ha₀ ha₁).mp)
+      ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine ENat.coe_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(groupMatrix pp A).length = ↑(m * n * G.wG.eval κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {R} [AddMonoidWithOne R] [CharZero R] {m n} => Nat.cast_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.ModEq.eq_of_lt_of_lt ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (MultiTapeTM.halting_step_unique ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.ModEq.eq_of_abs_lt ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.modEq_zero_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (groupMatrix pp A).length ≡ m * n * G.wG.eval κ [MOD 0]
+Try this:
+  [apply] refine (Nat.prime_dvd_prime_iff_eq ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.Prime (groupMatrix pp A).length
+  -- ⊢ Nat.Prime (m * n * G.wG.eval κ)
+  -- ⊢ (groupMatrix pp A).length ∣ m * n * G.wG.eval κ
+Try this:
+  [apply] refine Eq.symm ((fun {n m} => Nat.succPNat_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (m * n * G.wG.eval κ).succPNat = (groupMatrix pp A).length.succPNat
+Try this:
+  [apply] refine (Nat.dvd_prime_two_le ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.Prime (m * n * G.wG.eval κ)
+  -- ⊢ 2 ≤ (groupMatrix pp A).length
+  -- ⊢ (groupMatrix pp A).length ∣ m * n * G.wG.eval κ
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => ENat.coe_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ↑(m * n * G.wG.eval κ) = ↑(groupMatrix pp A).length
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine CharP.eq ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.ModEq.eq_of_lt_of_lt ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (char_eq_expChar_iff ?_ (groupMatrix pp A).length (m * n * G.wG.eval κ)).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.ModEq.eq_of_abs_lt ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine ExpChar.eq ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.modEq_zero_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ m * n * G.wG.eval κ ≡ (groupMatrix pp A).length [MOD 0]
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pow_inj_of_not_isUnit (fun a => ?_) ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {p q} pp qp => (Nat.prime_dvd_prime_iff_eq pp qp).mp) ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ Nat.Prime (m * n * G.wG.eval κ)
+  -- ⊢ Nat.Prime (groupMatrix pp A).length
+  -- ⊢ m * n * G.wG.eval κ ∣ (groupMatrix pp A).length
+Try this:
+  [apply] refine Eq.symm ((fun {p m} pp H => (Nat.dvd_prime_two_le pp H).mp) ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ Nat.Prime (groupMatrix pp A).length
+  -- ⊢ 2 ≤ m * n * G.wG.eval κ
+  -- ⊢ m * n * G.wG.eval κ ∣ (groupMatrix pp A).length
+Try this:
+  [apply] refine (Nat.Prime.dvd_iff_eq ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.Prime (groupMatrix pp A).length
+  -- ⊢ m * n * G.wG.eval κ ≠ 1
+  -- ⊢ m * n * G.wG.eval κ ∣ (groupMatrix pp A).length
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (CharP.eq ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.prime_eq_prime_of_dvd_pow ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun R [AddMonoidWithOne R] p q [CharP R p] [ExpChar R q] => (char_eq_expChar_iff R p q).mpr) ?_
+      (m * n * G.wG.eval κ) (groupMatrix pp A).length ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.iterate_eq_iterate_iff_of_lt_minimalPeriod ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (ExpChar.eq ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {M} [CancelCommMonoidWithZero M] {q} hq hq' {m n} => (pow_inj_of_not_isUnit hq hq').mp) (fun a => ?_) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.eq_of_perm_primeFactorsList ?_ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ (groupMatrix pp A).length ≠ 0
+  -- ⊢ m * n * G.wG.eval κ ≠ 0
+  -- ⊢ (groupMatrix pp A).length.primeFactorsList.Perm (m * n * G.wG.eval κ).primeFactorsList
+Try this:
+  [apply] refine Nat.divisors_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (groupMatrix pp A).length.divisors = (m * n * G.wG.eval κ).divisors
+Try this:
+  [apply] refine Eq.symm ((fun {p a} hp a1 => (Nat.Prime.dvd_iff_eq hp a1).mp) ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ Nat.Prime (m * n * G.wG.eval κ)
+  -- ⊢ (groupMatrix pp A).length ≠ 1
+  -- ⊢ (groupMatrix pp A).length ∣ m * n * G.wG.eval κ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pow_inj_iff_of_orderOf_eq_zero ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.prime_eq_prime_of_dvd_pow ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (nsmul_inj_iff_of_addOrderOf_eq_zero ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} {f} {x} {m n} hm hn => (Function.iterate_eq_iterate_iff_of_lt_minimalPeriod hm hn).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.digits_inj_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.eq_of_factorization_eq ?_ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ (groupMatrix pp A).length ≠ 0
+  -- ⊢ m * n * G.wG.eval κ ≠ 0
+  -- ⊢ ∀ (p : ℕ), (groupMatrix pp A).length.factorization p = (m * n * G.wG.eval κ).factorization p
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_perm_primeFactorsList ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ m * n * G.wG.eval κ ≠ 0
+  -- ⊢ (groupMatrix pp A).length ≠ 0
+  -- ⊢ (m * n * G.wG.eval κ).primeFactorsList.Perm (groupMatrix pp A).length.primeFactorsList
+Try this:
+  [apply] refine (Nat.eq_iff_prime_padicValNat_eq (groupMatrix pp A).length (m * n * G.wG.eval κ) ?_ ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (groupMatrix pp A).length ≠ 0
+  -- ⊢ m * n * G.wG.eval κ ≠ 0
+  -- ⊢ ∀ (p : ℕ), Nat.Prime p → padicValNat p (groupMatrix pp A).length = padicValNat p (m * n * G.wG.eval κ)
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.divisors_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (m * n * G.wG.eval κ).divisors = (groupMatrix pp A).length.divisors
+Try this:
+  [apply] refine Nat.Prime.eq_of_factorization_pos ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.Prime (groupMatrix pp A).length
+  -- ⊢ (groupMatrix pp A).length.factorization (m * n * G.wG.eval κ) ≠ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {G} [LeftCancelMonoid G] {x} h {n m} => (pow_inj_iff_of_orderOf_eq_zero h).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.count_injective ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {G} [AddLeftCancelMonoid G] {x} h {n m} => (nsmul_inj_iff_of_addOrderOf_eq_zero h).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine EReal.natCast_eq_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑(groupMatrix pp A).length = ↑(m * n * G.wG.eval κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {b n m} => Nat.digits_inj_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsMulTorsionFree.pow_right_inj₀ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_factorization_eq ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ m * n * G.wG.eval κ ≠ 0
+  -- ⊢ (groupMatrix pp A).length ≠ 0
+  -- ⊢ ∀ (p : ℕ), (m * n * G.wG.eval κ).factorization p = (groupMatrix pp A).length.factorization p
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (IsMulTorsionFree.pow_right_inj ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm
+    ((fun a b ha hb => (Nat.eq_iff_prime_padicValNat_eq a b ha hb).mpr) (m * n * G.wG.eval κ) (groupMatrix pp A).length
+      ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ m * n * G.wG.eval κ ≠ 0
+  -- ⊢ (groupMatrix pp A).length ≠ 0
+  -- ⊢ ∀ (p : ℕ), Nat.Prime p → padicValNat p (m * n * G.wG.eval κ) = padicValNat p (groupMatrix pp A).length
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Polynomial.monomial_left_inj fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.Prime.eq_of_factorization_pos ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ Nat.Prime (m * n * G.wG.eval κ)
+  -- ⊢ (m * n * G.wG.eval κ).factorization (groupMatrix pp A).length ≠ 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Polynomial.natCast_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.count_injective ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Polynomial.mem_support_C_mul_X_pow ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => EReal.natCast_eq_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ↑(m * n * G.wG.eval κ) = ↑(groupMatrix pp A).length
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Polynomial.monomial_one_eq_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {M} [CancelMonoidWithZero M] [IsMulTorsionFree M] {x} hx hx' {n m} =>
+        (IsMulTorsionFree.pow_right_inj₀ hx hx').mp)
+      ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Nat.Squarefree.ext_iff ?_ ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Squarefree (groupMatrix pp A).length
+  -- ⊢ Squarefree (m * n * G.wG.eval κ)
+  -- ⊢ ∀ (p : ℕ), Nat.Prime p → (p ∣ (groupMatrix pp A).length ↔ p ∣ m * n * G.wG.eval κ)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {M} [CancelMonoid M] [IsMulTorsionFree M] {x} hx {n m} => (IsMulTorsionFree.pow_right_inj hx).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine InvariantBasisNumber.eq_of_fin_equiv ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {R} [Semiring R] {a} ha {i j} => (Polynomial.monomial_left_inj ha).mp) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine eq_of_fin_equiv ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m n} {R} [Semiring R] [CharZero R] => Polynomial.natCast_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Candidates.natToBits_injOn ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Polynomial.mem_support_C_mul_X_pow ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Candidates.natToList_injOn ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {R} [Semiring R] [Nontrivial R] {i j} => Polynomial.monomial_one_eq_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {n m} hn hm => (Nat.Squarefree.ext_iff hn hm).mpr) ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ Squarefree (m * n * G.wG.eval κ)
+  -- ⊢ Squarefree (groupMatrix pp A).length
+  -- ⊢ ∀ (p : ℕ), Nat.Prime p → (p ∣ m * n * G.wG.eval κ ↔ p ∣ (groupMatrix pp A).length)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (InvariantBasisNumber.eq_of_fin_equiv ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (eq_of_fin_equiv ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Candidates.natToBits_injOn ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Candidates.natToList_injOn ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Ring.inverse_mul_eq_iff_eq_mul (m * n) (groupMatrix pp A).length (G.wG.eval κ) ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ IsUnit (m * n)
+  -- ⊢ Ring.inverse (m * n) * (groupMatrix pp A).length = G.wG.eval κ
+Try this:
+  [apply] refine invOf_mul_eq_iff_eq_mul_left.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Invertible (m * n)
+  -- ⊢ ⅟(m * n) * (groupMatrix pp A).length = G.wG.eval κ
+Try this:
+  [apply] refine mul_invOf_eq_iff_eq_mul_right.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Invertible (G.wG.eval κ)
+  -- ⊢ (groupMatrix pp A).length * ⅟(G.wG.eval κ) = m * n
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine eq_mul_of_hasProd_ite ?_ κ (m * n) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {M₀} [MonoidWithZero M₀] x y z h => (Ring.eq_mul_inverse_iff_mul_eq x y z h).mp) (m * n)
+      (groupMatrix pp A).length (G.wG.eval κ) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [Monoid α] {a b c} [Invertible c] => mul_right_eq_iff_eq_mul_invOf.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} [Monoid α] {a b c} [Invertible c] => mul_left_eq_iff_eq_invOf_mul.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (CancelDenoms.derive_trans₂ ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (CancelDenoms.derive_trans ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (HasSum.mul_eq (fun ⦃U⦄ => ?_) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/WireGroupMatrixLengthApply.lean:13:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/WireGroupMatrixLengthApply.lean:17:12: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+.lake/io-phfe-probes/WireGroupMatrixLengthApply.lean:17:2: warning: 'all_goals sorry' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`

@@ -1,0 +1,32 @@
+working_source_development_check=True
+checkout_head=9ff3fc19f7cecd268ee7eb1a6b58590e97dbfee2
+source_sha256=a2de21401dd18486b58ae4a6cdadb97e56d2338d0ee9713287b2ead667781b5b
+start=2026-11-18T18:53:14.061223+00:00
+TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear.lean:190:10: error: 'change' tactic failed, pattern
+  1 - (↑q ^ 2 - 1) * (↑q ^ 2 - ↑q) / ↑q ^ 4 ≤ 2 / ↑q
+is not definitionally equal to target
+  1 - ↑(∏ i, (Fintype.card K ^ (0 + 1 + 1) - Fintype.card K ^ ↑i)) / ↑(Fintype.card K) ^ ((0 + 1 + 1) * (0 + 1 + 1)) ≤
+    2 / ↑(Fintype.card K)
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear): lean exited with status 1
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear): error diagnostics reported
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear): no fresh .olean produced
+        3.04 real         2.62 user         0.91 sys
+          2251341824  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              179432  page reclaims
+                3060  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 258  voluntary context switches
+                7697  involuntary context switches
+            32048387  instructions retired
+            14160485  cycles elapsed
+             1638736  peak memory footprint
+end=2026-11-18T18:53:17.129290+00:00
+rc=1

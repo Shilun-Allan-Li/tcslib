@@ -10,6 +10,7 @@ import TCSlib.Cryptography.Asymptotic.Adversary
 import TCSlib.Cryptography.Games.Advantage
 import TCSlib.Cryptography.Foundations.Subexponential
 import Mathlib.Data.Fin.VecNotation
+import Mathlib.Algebra.Field.ZMod
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -366,7 +367,147 @@ Use `expect_sample_equiv` for those bijections. Bound the acceptance difference 
 the exceptional event, whose exact probability is `2/p - 1/p^2`, and average over group coins. -/
 theorem dlinMatrixGame_random_gap_le (D : NUPPT) (κ : ℕ) :
     |accept (G.dlinMatrixGame D false κ) - accept (G.dlinGame D false κ)| ≤
-      G.dlinMatrixSlack κ := sorry
+      G.dlinMatrixSlack κ := by
+  let H (pp : PublicParams G κ) (ab : Fin 2 → ZMod pp.group.order)
+      (u : Fin 3 → ZMod pp.group.order) : ℝ :=
+    ProbComp.prob (ProbComp.sample (D.Coins κ)) fun r =>
+      D.distinguisherL κ
+        (G.dlinEnc κ (G.dlinChallenge κ pp
+          (pp.generator ^ (ab 0).val) (pp.generator ^ (ab 1).val)
+          (pp.generator ^ (u 0).val) (pp.generator ^ (u 1).val)
+          (pp.generator ^ (u 2).val))) r = true
+  let P (pp : PublicParams G κ) : ℝ :=
+    ProbComp.expect (ProbComp.sample (Fin 2 → ZMod pp.group.order)) fun ab =>
+      ProbComp.expect (ProbComp.sample (Fin 3 → ZMod pp.group.order)) (H pp ab)
+  let Q (pp : PublicParams G κ) : ℝ :=
+    ProbComp.expect (ProbComp.sample (Fin 2 → ZMod pp.group.order)) fun ab =>
+      ProbComp.expect (ProbComp.sample (Fin 2 → ZMod pp.group.order)) fun rs =>
+        ProbComp.expect (ProbComp.sample (ZMod pp.group.order)) fun t =>
+          H pp ab ![ab 0 * rs 0, ab 1 * rs 1, t]
+  let loss (pp : PublicParams G κ) : ℝ :=
+    2 / (pp.group.order : ℝ) - 1 / (pp.group.order : ℝ) ^ 2
+  have hPoint (pp : PublicParams G κ) : |P pp - Q pp| ≤ loss pp := by
+    letI : Fact pp.group.order.Prime := ⟨pp.group.order_prime⟩
+    letI : NeZero pp.group.order := ⟨pp.group.order_prime.ne_zero⟩
+    let obs (ab : Fin 2 → ZMod pp.group.order) (u : Fin 3 → ZMod pp.group.order)
+        (r : D.Coins κ) : Prop :=
+      D.distinguisherL κ
+        (G.dlinEnc κ (G.dlinChallenge κ pp
+          (pp.generator ^ (ab 0).val) (pp.generator ^ (ab 1).val)
+          (pp.generator ^ (u 0).val) (pp.generator ^ (u 1).val)
+          (pp.generator ^ (u 2).val))) r = true
+    have h0 (ab : Fin 2 → ZMod pp.group.order) (u : Fin 3 → ZMod pp.group.order) :
+        0 ≤ H pp ab u :=
+      ProbComp.prob_nonneg (ProbComp.sample (D.Coins κ)) (obs ab u)
+    have h1 (ab : Fin 2 → ZMod pp.group.order) (u : Fin 3 → ZMod pp.group.order) :
+        H pp ab u ≤ 1 :=
+      ProbComp.prob_le_one (ProbComp.sample (D.Coins κ)) (obs ab u)
+    have h := dlinDiagonal_random_gap_le (K := ZMod pp.group.order) (H pp) h0 h1
+    have hc := congrArg (fun n : ℕ => 2 / (n : ℝ) - 1 / (n : ℝ) ^ 2)
+      (ZMod.card pp.group.order)
+    exact h.trans hc.le
+  have hLoss : ProbComp.expect (publicParamsGen G κ) loss = G.dlinMatrixSlack κ := by
+    rw [G.dlinMatrixSlack_eq κ, publicParamsGen_eq G κ, ProbComp.expect_bind]
+    apply congrArg (ProbComp.expect (ProbComp.sample (G.gen.Coins κ)))
+    funext ρ
+    let d : GroupDescription G κ := ⟨G.desc κ ρ, ⟨ρ, rfl⟩⟩
+    let c : ℝ :=
+      2 / ((G.group κ d.val).order : ℝ) - 1 / ((G.group κ d.val).order : ℝ) ^ 2
+    change ProbComp.expect
+        (publicParamsCore G κ d <$> ProbComp.sample (GeneratorDraw G κ d)) loss =
+      2 / ((G.inst κ ρ).order : ℝ) - 1 / ((G.inst κ ρ).order : ℝ) ^ 2
+    rw [ProbComp.expect_map, G.inst_eq κ ρ]
+    change ProbComp.expect (ProbComp.sample (GeneratorDraw G κ d))
+      (fun g => loss (publicParamsCore G κ d g)) = c
+    have hOrder (g : GeneratorDraw G κ d) :
+        (publicParamsCore G κ d g).group.order = (G.group κ d.val).order := ?_
+    swap
+    · rw [PublicParams.group_eq (publicParamsCore G κ d g), publicParamsCore_eq G κ d g]
+    have hIntegrand :
+        (fun g : GeneratorDraw G κ d => loss (publicParamsCore G κ d g)) =
+          (fun _ => c) :=
+      funext (fun g => congrArg
+        (fun n : ℕ => 2 / (n : ℝ) - 1 / (n : ℝ) ^ 2) (hOrder g))
+    rw [hIntegrand]
+    exact ProbComp.expect_const (ProbComp.sample (GeneratorDraw G κ d)) c
+  have hMatrixAccept : accept (G.dlinMatrixGame D false κ) =
+      ProbComp.expect (publicParamsGen G κ) P := by
+    rw [accept_eq (G.dlinMatrixGame D false κ), G.dlinMatrixGame_eq D false κ,
+      ProbComp.prob_bind, G.dlinMatrixSample_eq false κ, ProbComp.expect_bind]
+    apply congrArg (ProbComp.expect (publicParamsGen G κ))
+    funext pp
+    rw [ProbComp.expect_bind]
+    dsimp only [P]
+    apply congrArg
+      (ProbComp.expect (ProbComp.sample (Fin 2 → ZMod pp.group.order)))
+    funext ab
+    simp only [ProbComp.expect_bind, ProbComp.expect_pure, Bool.false_eq_true, if_false]
+    let word (u : Fin 3 → ZMod pp.group.order) : List Bool :=
+      G.dlinEnc κ (G.dlinChallenge κ pp
+        (pp.generator ^ (ab 0).val) (pp.generator ^ (ab 1).val)
+        (pp.generator ^ (u 0).val) (pp.generator ^ (u 1).val)
+        (pp.generator ^ (u 2).val))
+    let obs (u : Fin 3 → ZMod pp.group.order) : ℝ :=
+      ProbComp.prob ((ProbComp.sample (D.Coins κ)).bind fun r =>
+        .pure (D.distinguisherL κ (word u) r)) (fun b => b = true)
+    change ProbComp.expect (ProbComp.sample (Fin 2 → ZMod pp.group.order))
+        (fun _ => ProbComp.expect (ProbComp.sample (Fin 3 → ZMod pp.group.order)) obs) =
+      ProbComp.expect (ProbComp.sample (Fin 3 → ZMod pp.group.order)) (H pp ab)
+    rw [ProbComp.expect_const (ProbComp.sample (Fin 2 → ZMod pp.group.order))
+      (ProbComp.expect (ProbComp.sample (Fin 3 → ZMod pp.group.order)) obs)]
+    apply congrArg
+      (ProbComp.expect (ProbComp.sample (Fin 3 → ZMod pp.group.order)))
+    funext u
+    let verdict : D.Coins κ → Bool := fun r => D.distinguisherL κ (word u) r
+    change ProbComp.prob
+        ((ProbComp.sample (D.Coins κ)).bind fun r => .pure (verdict r))
+        (fun b => b = true) =
+      ProbComp.prob (ProbComp.sample (D.Coins κ)) (fun r => verdict r = true)
+    rw [ProbComp.prob_eq_expect (ProbComp.sample (D.Coins κ))
+      (fun r => verdict r = true), ProbComp.prob_bind]
+    apply congrArg (ProbComp.expect (ProbComp.sample (D.Coins κ)))
+    funext r
+    exact ProbComp.prob_pure (verdict r) (fun b => b = true)
+  have hTupleAccept : accept (G.dlinGame D false κ) =
+      ProbComp.expect (publicParamsGen G κ) Q := by
+    rw [accept_eq (G.dlinGame D false κ), G.dlinGame_eq D false κ,
+      ProbComp.prob_bind, G.dlinSample_eq false κ, ProbComp.expect_bind]
+    apply congrArg (ProbComp.expect (publicParamsGen G κ))
+    funext pp
+    rw [ProbComp.expect_bind]
+    dsimp only [Q]
+    apply congrArg
+      (ProbComp.expect (ProbComp.sample (Fin 2 → ZMod pp.group.order)))
+    funext ab
+    rw [ProbComp.expect_bind]
+    apply congrArg
+      (ProbComp.expect (ProbComp.sample (Fin 2 → ZMod pp.group.order)))
+    funext rs
+    rw [ProbComp.expect_bind]
+    apply congrArg (ProbComp.expect (ProbComp.sample (ZMod pp.group.order)))
+    funext t
+    rw [ProbComp.expect_pure]
+    simp only [Bool.false_eq_true, if_false]
+    dsimp only [H]
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
+      Matrix.head_cons, Matrix.tail_cons]
+    let word : List Bool :=
+      G.dlinEnc κ (G.dlinChallenge κ pp
+        (pp.generator ^ (ab 0).val) (pp.generator ^ (ab 1).val)
+        (pp.generator ^ (ab 0 * rs 0).val) (pp.generator ^ (ab 1 * rs 1).val)
+        (pp.generator ^ t.val))
+    let verdict : D.Coins κ → Bool := fun r => D.distinguisherL κ word r
+    change ProbComp.prob
+        ((ProbComp.sample (D.Coins κ)).bind fun r => .pure (verdict r))
+        (fun b => b = true) =
+      ProbComp.prob (ProbComp.sample (D.Coins κ)) (fun r => verdict r = true)
+    rw [ProbComp.prob_eq_expect (ProbComp.sample (D.Coins κ))
+      (fun r => verdict r = true), ProbComp.prob_bind]
+    apply congrArg (ProbComp.expect (ProbComp.sample (D.Coins κ)))
+    funext r
+    exact ProbComp.prob_pure (verdict r) (fun b => b = true)
+  rw [hMatrixAccept, hTupleAccept, ← hLoss]
+  exact ProbComp.abs_expect_sub_le_expect (publicParamsGen G κ) hPoint
 
 /-- Canonical DLIN bounds the matrix DLIN advantage with the explicit diagonal-zero slack
 [GJLS21, Definition 3.3, p. 18; JLS26, §1.1, p. 3].
@@ -374,7 +515,19 @@ theorem dlinMatrixGame_random_gap_le (D : NUPPT) (κ : ℕ) :
 **Proof sketch.** Apply the triangle inequality to the random acceptance probabilities,
 using `dlinMatrixGame_real_accept` and `dlinMatrixGame_random_gap_le`. -/
 theorem dlinMatrixAdv_le (D : NUPPT) (κ : ℕ) :
-    G.dlinMatrixAdv D κ ≤ G.dlinAdv D κ + G.dlinMatrixSlack κ := sorry
+    G.dlinMatrixAdv D κ ≤ G.dlinAdv D κ + G.dlinMatrixSlack κ := by
+  rw [dlinMatrixAdv_eq, dlinAdv_eq, advantage_eq, advantage_eq,
+    dlinMatrixGame_real_accept]
+  calc
+    |accept (G.dlinMatrixGame D false κ) - accept (G.dlinGame D true κ)| ≤
+        |accept (G.dlinMatrixGame D false κ) - accept (G.dlinGame D false κ)| +
+          |accept (G.dlinGame D false κ) - accept (G.dlinGame D true κ)| :=
+      abs_sub_le _ _ _
+    _ ≤ G.dlinMatrixSlack κ +
+        |accept (G.dlinGame D false κ) - accept (G.dlinGame D true κ)| :=
+      add_le_add_right (G.dlinMatrixGame_random_gap_le D κ) _
+    _ = |accept (G.dlinGame D false κ) - accept (G.dlinGame D true κ)| +
+        G.dlinMatrixSlack κ := add_comm _ _
 
 end BilinearGen
 

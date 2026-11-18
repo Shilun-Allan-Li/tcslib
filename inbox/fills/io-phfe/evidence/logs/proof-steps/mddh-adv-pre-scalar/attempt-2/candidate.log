@@ -1,0 +1,159 @@
+file=TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean
+source_sha256=8577832d0515e61226e337d6341c4d0d29c795a78b7c9a36eca7d78727cd94d9
+working_source_development_check=True
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:408:4: error: unsolved goals
+case refine_1.h.h.«0»
+G : BilinearGen
+p : ℕ → ℕ
+hp : ∀ (κ : ℕ) (r : G.gen.Coins κ), (G.inst κ r).order = p κ
+d ℓ : PolyExpr
+D : NUPPT
+Tape : ℕ → Type :=
+  fun κ =>
+    Matrix (Fin (ℓ.eval κ)) (Fin 3) (ZMod (p κ)) ×
+      Matrix (Fin 2) (Fin (d.eval κ)) (ZMod (p κ)) × Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod (p κ))
+avgTape : (κ : ℕ) → (Tape κ → ℝ) → ℝ := fun κ f => (ProbComp.sample (Tape κ)).expect f
+hybrid : ℕ → ℕ → ProbComp Bool :=
+  fun κ i =>
+    OracleComp.bind (publicParamsGen G κ) fun pp =>
+      OracleComp.bind (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order))) fun M =>
+        OracleComp.bind (ProbComp.sample (Matrix (Fin 2) (Fin (d.eval κ)) (ZMod pp.group.order))) fun S =>
+          OracleComp.bind (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod pp.group.order))) fun U =>
+            OracleComp.bind (ProbComp.sample (D.Coins κ)) fun r =>
+              OracleComp.pure
+                (D.distinguisherL κ
+                  (G.mddhEnc d ℓ κ
+                    { pp := pp, matrix := pp.group.expMat pp.generator M,
+                      response := pp.group.expMat pp.generator fun a b => if ↑b < i then (M * S) a b else U a b })
+                  r)
+redGame : (κ : ℕ) → MddhAdvice p d ℓ κ → Bool → ProbComp Bool :=
+  fun κ w real =>
+    OracleComp.bind (G.dlinSample real κ) fun c =>
+      OracleComp.bind (ProbComp.sample (D.Coins κ)) fun r =>
+        OracleComp.pure (D.distinguisherL κ (G.mddhPre p hp d ℓ κ w c) r)
+redGap : (κ : ℕ) → MddhAdvice p d ℓ κ → ℝ := fun κ w => advantage (redGame κ w false) (redGame κ w true)
+hEnds :
+  ∀ (κ : ℕ),
+    accept (hybrid κ 0) = accept (G.mddhGame d ℓ D false κ) ∧
+      accept (hybrid κ (d.eval κ)) = accept (G.mddhGame d ℓ D true κ)
+hEndpointGap : ∀ (κ : ℕ), G.mddhAdv d ℓ D κ = advantage (hybrid κ 0) (hybrid κ (d.eval κ))
+κ : ℕ
+w : MddhAdvice p d ℓ κ
+pp : PublicParams G κ
+ab rs : Fin 2 → ZMod pp.group.order
+t : ZMod pp.group.order
+real : Bool
+castScalar : ZMod (p κ) ≃+* ZMod (G.group κ ↑pp.description).order := ZMod.ringEquivCongr ⋯
+L : Matrix (Fin (ℓ.eval κ)) (Fin 3) (ZMod pp.group.order) := fun i j => castScalar (w.2.1 i j)
+S : Matrix (Fin 2) (Fin (d.eval κ)) (ZMod pp.group.order) := fun i j => castScalar (w.2.2.1 i j)
+U : Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod pp.group.order) := fun i j => castScalar (w.2.2.2 i j)
+A0 : Matrix (Fin 3) (Fin 2) (ZMod pp.group.order) := ![![ab 0, 0], ![0, ab 1], ![1, 1]]
+v0 : Fin 3 → ZMod pp.group.order := ![ab 0 * rs 0, ab 1 * rs 1, if real = true then rs 0 + rs 1 else t]
+this : Fact (1 < pp.group.order) := { out := Nat.Prime.one_lt pp.group.order_prime }
+M : Matrix (Fin (ℓ.eval κ)) (Fin 2) pp.group.G :=
+  fun i j =>
+    if j = 0 then (pp.generator ^ (ab 0).val) ^ (L i 0).val * pp.generator ^ (L i 2).val
+    else (pp.generator ^ (ab 1).val) ^ (L i 1).val * pp.generator ^ (L i 2).val
+v : Fin (ℓ.eval κ) → pp.group.G :=
+  fun i =>
+    (pp.generator ^ (ab 0 * rs 0).val) ^ (L i 0).val * (pp.generator ^ (ab 1 * rs 1).val) ^ (L i 1).val *
+      (pp.generator ^ (if real = true then rs 0 + rs 1 else t).val) ^ (L i 2).val
+i : Fin (ℓ.eval κ)
+⊢ (if ⟨0, ⋯⟩ = 0 then (pp.generator ^ (ab 0).val) ^ (L i 0).val * pp.generator ^ (L i 2).val
+    else (pp.generator ^ (ab 1).val) ^ (L i 1).val * pp.generator ^ (L i 2).val) =
+    (pp.generator ^ (![ab 0, 0] ⟨0, ⋯⟩).val) ^ (L i 0).val * (pp.generator ^ (![0, ab 1] ⟨0, ⋯⟩).val) ^ (L i 1).val *
+      (pp.generator ^ (![1, 1] ⟨0, ⋯⟩).val) ^ (L i 2).val
+
+case refine_1.h.h.«1»
+G : BilinearGen
+p : ℕ → ℕ
+hp : ∀ (κ : ℕ) (r : G.gen.Coins κ), (G.inst κ r).order = p κ
+d ℓ : PolyExpr
+D : NUPPT
+Tape : ℕ → Type :=
+  fun κ =>
+    Matrix (Fin (ℓ.eval κ)) (Fin 3) (ZMod (p κ)) ×
+      Matrix (Fin 2) (Fin (d.eval κ)) (ZMod (p κ)) × Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod (p κ))
+avgTape : (κ : ℕ) → (Tape κ → ℝ) → ℝ := fun κ f => (ProbComp.sample (Tape κ)).expect f
+hybrid : ℕ → ℕ → ProbComp Bool :=
+  fun κ i =>
+    OracleComp.bind (publicParamsGen G κ) fun pp =>
+      OracleComp.bind (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order))) fun M =>
+        OracleComp.bind (ProbComp.sample (Matrix (Fin 2) (Fin (d.eval κ)) (ZMod pp.group.order))) fun S =>
+          OracleComp.bind (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod pp.group.order))) fun U =>
+            OracleComp.bind (ProbComp.sample (D.Coins κ)) fun r =>
+              OracleComp.pure
+                (D.distinguisherL κ
+                  (G.mddhEnc d ℓ κ
+                    { pp := pp, matrix := pp.group.expMat pp.generator M,
+                      response := pp.group.expMat pp.generator fun a b => if ↑b < i then (M * S) a b else U a b })
+                  r)
+redGame : (κ : ℕ) → MddhAdvice p d ℓ κ → Bool → ProbComp Bool :=
+  fun κ w real =>
+    OracleComp.bind (G.dlinSample real κ) fun c =>
+      OracleComp.bind (ProbComp.sample (D.Coins κ)) fun r =>
+        OracleComp.pure (D.distinguisherL κ (G.mddhPre p hp d ℓ κ w c) r)
+redGap : (κ : ℕ) → MddhAdvice p d ℓ κ → ℝ := fun κ w => advantage (redGame κ w false) (redGame κ w true)
+hEnds :
+  ∀ (κ : ℕ),
+    accept (hybrid κ 0) = accept (G.mddhGame d ℓ D false κ) ∧
+      accept (hybrid κ (d.eval κ)) = accept (G.mddhGame d ℓ D true κ)
+hEndpointGap : ∀ (κ : ℕ), G.mddhAdv d ℓ D κ = advantage (hybrid κ 0) (hybrid κ (d.eval κ))
+κ : ℕ
+w : MddhAdvice p d ℓ κ
+pp : PublicParams G κ
+ab rs : Fin 2 → ZMod pp.group.order
+t : ZMod pp.group.order
+real : Bool
+castScalar : ZMod (p κ) ≃+* ZMod (G.group κ ↑pp.description).order := ZMod.ringEquivCongr ⋯
+L : Matrix (Fin (ℓ.eval κ)) (Fin 3) (ZMod pp.group.order) := fun i j => castScalar (w.2.1 i j)
+S : Matrix (Fin 2) (Fin (d.eval κ)) (ZMod pp.group.order) := fun i j => castScalar (w.2.2.1 i j)
+U : Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod pp.group.order) := fun i j => castScalar (w.2.2.2 i j)
+A0 : Matrix (Fin 3) (Fin 2) (ZMod pp.group.order) := ![![ab 0, 0], ![0, ab 1], ![1, 1]]
+v0 : Fin 3 → ZMod pp.group.order := ![ab 0 * rs 0, ab 1 * rs 1, if real = true then rs 0 + rs 1 else t]
+this : Fact (1 < pp.group.order) := { out := Nat.Prime.one_lt pp.group.order_prime }
+M : Matrix (Fin (ℓ.eval κ)) (Fin 2) pp.group.G :=
+  fun i j =>
+    if j = 0 then (pp.generator ^ (ab 0).val) ^ (L i 0).val * pp.generator ^ (L i 2).val
+    else (pp.generator ^ (ab 1).val) ^ (L i 1).val * pp.generator ^ (L i 2).val
+v : Fin (ℓ.eval κ) → pp.group.G :=
+  fun i =>
+    (pp.generator ^ (ab 0 * rs 0).val) ^ (L i 0).val * (pp.generator ^ (ab 1 * rs 1).val) ^ (L i 1).val *
+      (pp.generator ^ (if real = true then rs 0 + rs 1 else t).val) ^ (L i 2).val
+i : Fin (ℓ.eval κ)
+⊢ (if ⟨1, ⋯⟩ = 0 then (pp.generator ^ (ab 0).val) ^ (L i 0).val * pp.generator ^ (L i 2).val
+    else (pp.generator ^ (ab 1).val) ^ (L i 1).val * pp.generator ^ (L i 2).val) =
+    (pp.generator ^ (![ab 0, 0] ⟨1, ⋯⟩).val) ^ (L i 0).val * (pp.generator ^ (![0, ab 1] ⟨1, ⋯⟩).val) ^ (L i 1).val *
+      (pp.generator ^ (![1, 1] ⟨1, ⋯⟩).val) ^ (L i 2).val
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:368:20: warning: This simp argument is unused:
+  if_true
+
+Hint: Omit it from the simp argument list.
+  simp only [accept_eq, G.mddhGame_eq d ℓ D true κ, G.mddhSample_eq d ℓ true κ,
+          ProbComp.prob_bind, ProbComp.expect_bind, ProbComp.expect_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵↓reduceIte, i̵f̵_̵t̵r̵u̵e̵,̵ ̵Fin.is_lt]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:678:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:689:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction): lean exited with status 1
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction): error diagnostics reported
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction): no fresh .olean produced
+        4.24 real         4.04 user         1.11 sys
+          2431385600  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              193869  page reclaims
+                  14  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  15  voluntary context switches
+                8112  involuntary context switches
+            32068275  instructions retired
+            15790704  cycles elapsed
+             1638736  peak memory footprint

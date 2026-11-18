@@ -1,0 +1,39 @@
+Native authorization supplied by root:
+evidence/search/real-committed-key-loop/run; isolated prefix has proved
+coinBlocks, excludes real/ideal run endpoints and game-law statements.
+Target typed cleanly. exact? no proof; apply? no relevant lemmas; one expected
+error per search, no typing errors. No agent native checker run.
+
+Existing statement/name/conclusion searches are in simulate_toSA_real.searches.txt
+and found no duplicate key-loop law. This invocation reread exact target from
+RealKeyLoopProbeHeader.lean and root's RealCommittedKeyLoopExact.lean.txt.
+
+Public readers consumed:
+FromTwoStage.saNext_cons; SemiAdaptive.Data.saKeyMove_eq,
+saKeyFunction_eq, saSKAnswer_eq, saSKPayload_one;
+Games.realSAImpl_eq, saImpl_one_onSpec, realSAKey_some;
+Games.Machines buildComp_zero_of_ret / buildComp_succ_of_query;
+Games.Simulate simulate_pure / simulate_query;
+Games.OracleComp map_eq_bind, bind_eq_bind, pure_eq_pure, pure_bind, bind_assoc.
+
+Actual Lean 4.25 source signatures read:
+Init/Data/Nat/Basic.lean:1115 Nat.lt_of_sub_eq_succ;
+:281 Nat.sub_succ; :322 Nat.succ_le_of_lt; :882 Nat.pred_succ.
+Init/Data/Nat/Lemmas.lean:327 Nat.sub_eq_zero_iff_le.
+Init/Data/List/TakeDrop.lean:58 drop_of_length_le;
+:81 drop_eq_getElem_cons.
+Init/Data/List/FinRange.lean:27 length_finRange; :30 getElem_finRange.
+Init/Data/List/Monadic.lean:64 mapM_nil; :66 mapM_cons.
+Init/Data/List/Basic.lean:84 length_singleton; :466 map_nil; :467 map_cons;
+:513 filterMap_nil; :608 cons_append; :620 length_append; :625 append_assoc.
+Init/Data/List/Lemmas.lean:1384 filterMap_cons_some; :1475 filterMap_append.
+Init/Data/Fin/Lemmas.lean:41 Fin.ext; Fin.cast preserves val definitionally.
+
+Optional-answer wire source:
+Encryption/PrivateKey/OracleSecurity.lean:166 FixedLengthScheme.decAnswer_some.
+Mathlib/Data/Fin/Tuple/Basic.lean:111 Fin.tail_cons;
+core/matrix imports already provide Fin.cons_zero.
+
+No new list, finite-range, mapM, monad, state or sampler helper is introduced.
+All result/view constructors remain opaque except through their published
+readers; only local abbreviations and core Fin proof irrelevance reduce.

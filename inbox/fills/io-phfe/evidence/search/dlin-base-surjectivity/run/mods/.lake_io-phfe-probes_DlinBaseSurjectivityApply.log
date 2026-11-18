@@ -1,0 +1,177 @@
+Try this:
+  [apply] refine Matrix.mulVec_surjective_iff_exists_right_inverse.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ B, ![![a, 0], ![0, b], ![1, 1]]ᵀ * B = 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.RightInverse.surjective fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.HasRightInverse.surjective ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.HasRightInverse ![![a, 0], ![0, b], ![1, 1]]ᵀ.mulVec
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.surjective_to_subsingleton ![![a, 0], ![0, b], ![1, 1]]ᵀ.mulVec)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.surjective_comp_left_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.surjective_of_right_cancellable_Prop ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (g₁ g₂ : (Fin 2 → K) → Prop),
+    g₁ ∘ ![![a, 0], ![0, b], ![1, 1]]ᵀ.mulVec = g₂ ∘ ![![a, 0], ![0, b], ![1, 1]]ᵀ.mulVec → g₁ = g₂
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Surjective.of_comp_iff ![![a, 0], ![0, b], ![1, 1]]ᵀ.mulVec fun b => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Surjective.of_comp_iff' ?_ ![![a, 0], ![0, b], ![1, 1]]ᵀ.mulVec).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.Surjective.of_comp fun b => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.surjective_iff_hasRightInverse.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.HasRightInverse ![![a, 0], ![0, b], ![1, 1]]ᵀ.mulVec
+Try this:
+  [apply] refine Function.Bijective.surjective ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Bijective ![![a, 0], ![0, b], ![1, 1]]ᵀ.mulVec
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.Surjective.of_comp_left (fun b => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.LeftInverse.surjective fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.injective_comp_right_iff_surjective.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.map_surjective_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Surjective (List.map ![![a, 0], ![0, b], ![1, 1]]ᵀ.mulVec)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Quot.surjective_lift ?_).mp fun b => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Quotient.surjective_liftOn' ?_).mp fun b => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Quotient.lift_surjective_iff ![![a, 0], ![0, b], ![1, 1]]ᵀ.mulVec ?_).mp fun b => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (EquivLike.surjective_comp ?_ ![![a, 0], ![0, b], ![1, 1]]ᵀ.mulVec).mp fun b => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (EquivLike.comp_surjective ![![a, 0], ![0, b], ![1, 1]]ᵀ.mulVec ?_).mp fun b => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.comp_surjective ![![a, 0], ![0, b], ![1, 1]]ᵀ.mulVec ?_).mp fun b => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.surjective_comp ?_ ![![a, 0], ![0, b], ![1, 1]]ᵀ.mulVec).mp fun b => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine GaloisInsertion.l_surjective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine GaloisCoinsertion.u_surjective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.range_eq_univ.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.range ![![a, 0], ![0, b], ![1, 1]]ᵀ.mulVec = Set.univ
+Try this:
+  [apply] refine Set.image_surjective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Surjective (Set.image ![![a, 0], ![0, b], ![1, 1]]ᵀ.mulVec)
+Try this:
+  [apply] refine Set.preimage_injective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective (Set.preimage ![![a, 0], ![0, b], ![1, 1]]ᵀ.mulVec)
+Try this:
+  [apply] refine Set.surjOn_univ.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.SurjOn ![![a, 0], ![0, b], ![1, 1]]ᵀ.mulVec Set.univ Set.univ
+Try this:
+  [apply] refine Set.surjective_iff_surjOn_univ.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.SurjOn ![![a, 0], ![0, b], ![1, 1]]ᵀ.mulVec Set.univ Set.univ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.Injective.surjective_of_fintype ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Finite.injective_iff_surjective_of_equiv ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Finite (Fin (Nat.succ 2) → K)
+  -- ⊢ (Fin (Nat.succ 2) → K) ≃ (Fin 2 → K)
+  -- ⊢ Function.Injective ![![a, 0], ![0, b], ![1, 1]]ᵀ.mulVec
+Try this:
+  [apply] refine ULift.map_surjective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Surjective (ULift.map ![![a, 0], ![0, b], ![1, 1]]ᵀ.mulVec)
+Try this:
+  [apply] refine PLift.map_surjective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Surjective (PLift.map ![![a, 0], ![0, b], ![1, 1]]ᵀ.mulVec)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Set.surjective_iff_surjective_of_iUnion_eq_univ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine FreeAddMonoid.map_surjective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Surjective ⇑(FreeAddMonoid.map ![![a, 0], ![0, b], ![1, 1]]ᵀ.mulVec)
+Try this:
+  [apply] refine FreeMonoid.map_surjective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Surjective ⇑(FreeMonoid.map ![![a, 0], ![0, b], ![1, 1]]ᵀ.mulVec)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsOpenQuotientMap.surjective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Topology.IsQuotientMap.surjective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine denseRange_discrete.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ TopologicalSpace (Fin 2 → K)
+  -- ⊢ DiscreteTopology (Fin 2 → K)
+  -- ⊢ DenseRange ![![a, 0], ![0, b], ![1, 1]]ᵀ.mulVec
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsHomeomorph.surjective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Continuous.surjective' ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Continuous.surjective ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/DlinBaseSurjectivityApply.lean:9:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/DlinBaseSurjectivityApply.lean:9:40: warning: unused variable `hab`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

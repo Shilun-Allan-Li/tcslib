@@ -1,0 +1,33 @@
+Focused read-only searches for weightedIncidence_vecMul
+Root run2 exact?/apply? logs cited in review. Agent ran no Lean/lake/Git.
+
+$ rg -n 'weightedIncidence_vecMul|vecMul.*parent|vecMul.*child|vecMul.*if.*weight' TCSlib .lake/packages/mathlib/Mathlib
+exit=0
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean:28:* `weightedIncidence_vecMul`: backward action as outgoing minus incoming sums.
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean:61:theorem weightedIncidence_vecMul {V E R : Type*} [Fintype E] [DecidableEq V]
+
+$ rg -n 'theorem vecMul_eq_sum|theorem vecMul_sub' .lake/packages/mathlib/Mathlib/Data/Matrix/Mul.lean
+exit=0
+694:theorem vecMul_eq_sum [Fintype m] (v : m → α) (M : Matrix m n α) : v ᵥ* M = ∑ i, v i • M i :=
+1010:theorem vecMul_sub [Fintype m] (A B : Matrix m n α) (x : m → α) :
+
+$ rg -n 'theorem Finset.prod_apply' .lake/packages/mathlib/Mathlib/Algebra/BigOperators/Pi.lean
+exit=0
+41:theorem Finset.prod_apply {α : Type*} {M : α → Type*} [∀ a, CommMonoid (M a)] (a : α)
+
+$ rg -n 'smul_apply|sub_apply' .lake/packages/mathlib/Mathlib/Algebra/Notation/Pi/Defs.lean
+exit=0
+132:@[to_additive (attr := simp, to_additive) (reorder := 5 6) smul_apply]
+
+$ rg -n 'lemma smul_eq_mul' .lake/packages/mathlib/Mathlib/Algebra/Group/Action/Defs.lean
+exit=0
+68:lemma smul_eq_mul {α : Type*} [Mul α] (a b : α) : a • b = a * b := rfl
+
+$ rg -n 'lemma mul_ite' .lake/packages/mathlib/Mathlib/Algebra/Notation/Defs.lean
+exit=0
+109:lemma mul_ite (a b c : α) : (a * if P then b else c) = if P then a * b else a * c := mul_dite ..
+
+$ rg -n 'theorem of_apply' .lake/packages/mathlib/Mathlib/LinearAlgebra/Matrix/Defs.lean
+exit=0
+83:theorem of_apply (f : m → n → α) (i j) : of f i j = f i j :=
+

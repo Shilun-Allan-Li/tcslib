@@ -1,0 +1,27 @@
+Static full-name/conclusion searches performed:
+
+Searched groupVector_length/injective, groupMatrix_length/injective, length_groupVector,
+length_groupMatrix, and groupMatrixEnc across TCSlib and full Mathlib. No existing Wire
+adapter full names found. Exact mathematical matrix facts already exist:
+- Pairing/MatrixDH/Defs.lean:56 groupMatrixEnc; :60 groupMatrixEnc_eq.
+- Same file:68 BilinearGroup.length_groupMatrixEnc; :85 groupMatrixEnc_injective.
+- Wee20/Wire.lean:44 groupVector_eq, :52 groupMatrix_eq.
+
+Relevant public existing shape/consumer APIs read:
+- Core Init/Data/List/OfFn.lean:77 ofFn_succ and ofFn_zero.
+- Core Init/Data/List/Lemmas.lean:1875 flatten_singleton.
+- Core List/Lemmas.lean:1618 append_inj_right; :1621 append_inj_left.
+- TuringMachine/Encoding.lean:173 pairEncode_injective; :220 length_pairEncode.
+- Cryptography/Encoding/Modular.lean:79 encodeVector_length; :89 encodeMatrix_length;
+  :101 encodeVector_injective; :126 encodeMatrix_injective.
+- Asymptotic/Adversary.lean:218 ofFn_padFin_of_length.
+- Asymptotic/CollectionsHelpers.lean:182 Collection.ofFn_padFin_of_le (zeros appended),
+  not a false blanket injectivity theorem for arbitrary bounded zero-padded words.
+- IdentityBased/BonehBoyenMachine/Draws.lean:156 BB1Machine.order_le_two_pow.
+- PartialGarbling/Defs.lean:239 mCount_le_mBound; :247 auxCount_add_one.
+- Wee20/Quadratic.lean:59 piDim_eq; PHFE/Widths exact evaluation readers.
+
+No new flatten counting/injectivity or generic padding/framing helper is proposed.
+All four exact?% probes use only Wire + MatrixDH.Defs and core LibrarySearch; no
+new Mathlib roots, no admitted WireLemmas import, no future consumer theorem import.
+Native typing/exact/apply results remain for root; no proof has been drafted.

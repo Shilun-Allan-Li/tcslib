@@ -1,0 +1,47 @@
+file=TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Slack.lean
+source_sha256=8453500bf8869c0e928e5b223dcd8418b2057144602d3728743717a1a4a59048
+working_source_development_check=True
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Slack.lean:103:2: error: linarith failed to find a contradiction
+case refine_2.refine_2.refine_2.h
+G : BilinearGen
+κ : ℕ
+pp : PublicParams G κ
+q : ℝ := ↑pp.group.order
+hq : 1 ≤ q
+hq0 : 0 ≤ q
+hx0 : 0 ≤ 1 / q
+hy0 : 0 ≤ 1 / q ^ 2
+hz0 : 0 ≤ 1 / q ^ 3
+hx1 : 1 / q ≤ 1
+hyx : 1 / q ^ 2 ≤ 1 / q
+hzx : 1 / q ^ 3 ≤ 1 / q
+hz1 : 1 / q ^ 3 ≤ 1
+hrem : 0 ≤ 1 / q * (1 / q ^ 2) * (1 - 1 / q ^ 3) + 1 / q * (1 / q ^ 3) + 1 / q ^ 2 * (1 / q ^ 3)
+a✝ : 3 / q < 1 - (1 - 1 / q) * (1 - 1 / q ^ 2) * (1 - 1 / q ^ 3)
+⊢ False
+failed
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Slack.lean:109:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Slack.lean:115:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Slack.lean:125:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Slack.lean:133:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Slack): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Slack): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Slack): no fresh .olean produced
+        2.71 real         1.89 user         1.00 sys
+          2333310976  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              185817  page reclaims
+                  12  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                  16  voluntary context switches
+                4043  involuntary context switches
+            32131133  instructions retired
+            14246610  cycles elapsed
+             1622352  peak memory footprint

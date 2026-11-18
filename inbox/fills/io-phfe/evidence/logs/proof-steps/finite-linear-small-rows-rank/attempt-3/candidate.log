@@ -1,0 +1,39 @@
+file=TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear.lean
+source_sha256=1ebef9edc5b8559694348f16eb09f50c0c9d08350301eae288d513df629fc479
+working_source_development_check=True
+TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear.lean:140:10: error: unsolved goals
+case refine_2.succ.zero.refine_2.refine_1
+K : Type
+inst✝¹ : Field K
+inst✝ : Fintype K
+q : ℕ := Fintype.card K
+hq2 : 2 ≤ q
+hq1 : 1 ≤ q
+hq : 1 ≤ ↑q
+hqpos : 0 < ↑q
+hrecip : 1 / ↑q ^ 2 ≤ 1 / ↑q
+htwo : 2 / ↑q = 2 * (1 / ↑q)
+hr : 0 + 1 ≤ 2
+hbad : ∀ (M : Matrix (Fin 1) (Fin 2) K), ¬Function.Surjective M.mulVec → M = 0
+⊢ 1 / ↑(Fintype.card K) ^ 2 = 1 / ↑q ^ 2
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear): lean exited with status 1
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear): error diagnostics reported
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear): no fresh .olean produced
+        3.30 real         2.87 user         0.98 sys
+          2257911808  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              183869  page reclaims
+                  70  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  19  voluntary context switches
+                4863  involuntary context switches
+            31937469  instructions retired
+            14028430  cycles elapsed
+             1638736  peak memory footprint

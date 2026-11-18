@@ -1,0 +1,25 @@
+Static full-name/conclusion searches (no native execution):
+
+Searched mddhCorrection_subexpSmall, mddh_subexpHard_of_adv_le,
+mddh_negligible_of_adv_le, weighted/poly
+SubexpHard/adv-le closure shapes across Pairing, Foundations, Asymptotic and FE.
+No complete existing matrix consequence helper or SubexpHard.mono/poly-multiplication theorem found.
+Existing nearest results:
+- SelfReduction.lean:813 mddhSlack_subexpSmall, already proved; MOVE its math body.
+  It cannot be imported upstream without a cycle, and its original header is frozen.
+- CoinSampling/Asymptotic.lean:57 majorant and :78 subexpSmall_polyExpr_mul:
+  nearest generic closure, FORBIDDEN import, NOT copied or used.
+- Asymptotic/EnsemblesLemmas.lean:377 negligible_polyExpr_mul: MUST reuse whole for
+  the new MDDH negligible consequence (explicit existing import authorized by root).
+- Foundations/Negligible.lean:74 mono and :86 add.
+- Existing scratch mddhAdv_negligible candidate: move its consequence logic to the
+  lower hBound/hbeta statement, leave advice/realiser plumbing in the frozen wrapper.
+- Foundations/Subexponential.lean:150 mono, :190 const_mul, :207 mul_pow,
+  :173 add, :258 subexpSmall_two_pow_neg, :280 subexpHard_iff.
+- Pairing/Linear.lean:279 subexpDLIN_iff (common exponent for all NUPPT B).
+- MatrixDH/Defs.lean:236 mddhAdv_eq; Games/Advantage.lean:86 advantage_nonneg.
+- Complexity/Randomized/PolyExpr.lean:159 eval_le.
+
+Probes are anonymous exact?% terms under Defs + Foundations.Subexponential + Asymptotic.EnsemblesLemmas + core
+LibrarySearch only. Native exact/apply authorization is still required before ANY
+new helper proof; no full-match/no-match result is claimed from static searches alone.

@@ -1,0 +1,140 @@
+file=TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean
+source_sha256=0e7b0c37de0ff850a8e2fba4b821e03b960be5a35c039fed089357edb6b2d58f
+working_source_development_check=True
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean:197:65: error: Application type mismatch: The argument
+  hU
+has type
+  ((fun i => Wire.groupVector pp ((fun i j => a.linear.AU i (finProdFinEquiv.symm j)) i)) ⟨0, ⋯⟩).append
+      ((fun x1 x2 => (fun i => Wire.groupVector pp ((fun i j => a.linear.AU i (finProdFinEquiv.symm j)) i)) x1 :: x2)
+          ⟨1, ⋯⟩ []).flatten =
+    ((fun i => Wire.groupVector pp ((fun i j => b.linear.AU i (finProdFinEquiv.symm j)) i)) ⟨0, ⋯⟩).append
+      ((fun x1 x2 => (fun i => Wire.groupVector pp ((fun i j => b.linear.AU i (finProdFinEquiv.symm j)) i)) x1 :: x2)
+          ⟨1, ⋯⟩ []).flatten
+but is expected to have type
+  Wire.groupMatrix pp ?m.176 = Wire.groupMatrix pp ?m.177
+in the application
+  Wire.groupMatrix_injective pp hU
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean:200:44: error: Application type mismatch: The argument
+  h1
+has type
+  ((fun i => Wire.groupVector pp (a.A1 i)) ⟨0, ⋯⟩).append
+      ((fun x1 x2 => (fun i => Wire.groupVector pp (a.A1 i)) x1 :: x2) ⟨1, ⋯⟩ []).flatten =
+    ((fun i => Wire.groupVector pp (b.A1 i)) ⟨0, ⋯⟩).append
+      ((fun x1 x2 => (fun i => Wire.groupVector pp (b.A1 i)) x1 :: x2) ⟨1, ⋯⟩ []).flatten
+but is expected to have type
+  Wire.groupMatrix pp ?m.188 = Wire.groupMatrix pp ?m.189
+in the application
+  Wire.groupMatrix_injective pp h1
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean:182:72: error: unsolved goals
+case refine_2
+G : BilinearGen
+ℓ n : PolyExpr
+κ : ℕ
+pp : PublicParams G κ
+a b : Quadratic.MPK G ℓ n n κ pp
+h : encMPK G ℓ n κ pp a = encMPK G ℓ n κ pp b
+hw :
+  pairEncode (Wire.groupMatrix pp a.A1)
+      (pairEncode (Wire.groupMatrix pp a.A2)
+        (pairEncode (Wire.groupMatrix pp a.linear.A)
+          (pairEncode (Wire.groupMatrix pp a.linear.AW)
+            (pairEncode (Wire.groupMatrix pp fun i j => a.linear.AU i (finProdFinEquiv.symm j))
+              (Wire.groupMatrix pp a.linear.AV))))) =
+    pairEncode (Wire.groupMatrix pp b.A1)
+      (pairEncode (Wire.groupMatrix pp b.A2)
+        (pairEncode (Wire.groupMatrix pp b.linear.A)
+          (pairEncode (Wire.groupMatrix pp b.linear.AW)
+            (pairEncode (Wire.groupMatrix pp fun i j => b.linear.AU i (finProdFinEquiv.symm j))
+              (Wire.groupMatrix pp b.linear.AV)))))
+h1 :
+  ((fun i => Wire.groupVector pp (a.A1 i)) ⟨0, ⋯⟩).append
+      ((fun x1 x2 => (fun i => Wire.groupVector pp (a.A1 i)) x1 :: x2) ⟨1, ⋯⟩ []).flatten =
+    ((fun i => Wire.groupVector pp (b.A1 i)) ⟨0, ⋯⟩).append
+      ((fun x1 x2 => (fun i => Wire.groupVector pp (b.A1 i)) x1 :: x2) ⟨1, ⋯⟩ []).flatten
+ht :
+  List.flatMap (fun b => [b, b]) (Wire.groupMatrix pp a.A2) ++ [false, true] ++
+      pairEncode (Wire.groupMatrix pp a.linear.A)
+        (pairEncode (Wire.groupMatrix pp a.linear.AW)
+          (pairEncode (Wire.groupMatrix pp fun i j => a.linear.AU i (finProdFinEquiv.symm j))
+            (Wire.groupMatrix pp a.linear.AV))) =
+    List.flatMap (fun b => [b, b]) (Wire.groupMatrix pp b.A2) ++ [false, true] ++
+      pairEncode (Wire.groupMatrix pp b.linear.A)
+        (pairEncode (Wire.groupMatrix pp b.linear.AW)
+          (pairEncode (Wire.groupMatrix pp fun i j => b.linear.AU i (finProdFinEquiv.symm j))
+            (Wire.groupMatrix pp b.linear.AV)))
+h2 :
+  ((fun i => Wire.groupVector pp (a.A2 i)) ⟨0, ⋯⟩).append
+      ((fun x1 x2 => (fun i => Wire.groupVector pp (a.A2 i)) x1 :: x2) ⟨1, ⋯⟩ []).flatten =
+    ((fun i => Wire.groupVector pp (b.A2 i)) ⟨0, ⋯⟩).append
+      ((fun x1 x2 => (fun i => Wire.groupVector pp (b.A2 i)) x1 :: x2) ⟨1, ⋯⟩ []).flatten
+hl✝¹ :
+  List.flatMap (fun b => [b, b]) (Wire.groupMatrix pp a.linear.A) ++ [false, true] ++
+      pairEncode (Wire.groupMatrix pp a.linear.AW)
+        (pairEncode (Wire.groupMatrix pp fun i j => a.linear.AU i (finProdFinEquiv.symm j))
+          (Wire.groupMatrix pp a.linear.AV)) =
+    List.flatMap (fun b => [b, b]) (Wire.groupMatrix pp b.linear.A) ++ [false, true] ++
+      pairEncode (Wire.groupMatrix pp b.linear.AW)
+        (pairEncode (Wire.groupMatrix pp fun i j => b.linear.AU i (finProdFinEquiv.symm j))
+          (Wire.groupMatrix pp b.linear.AV))
+hA :
+  ((fun i => Wire.groupVector pp (a.linear.A i)) ⟨0, ⋯⟩).append
+      ((fun x1 x2 => (fun i => Wire.groupVector pp (a.linear.A i)) x1 :: x2) ⟨1, ⋯⟩ []).flatten =
+    ((fun i => Wire.groupVector pp (b.linear.A i)) ⟨0, ⋯⟩).append
+      ((fun x1 x2 => (fun i => Wire.groupVector pp (b.linear.A i)) x1 :: x2) ⟨1, ⋯⟩ []).flatten
+hl✝ :
+  List.flatMap (fun b => [b, b]) (Wire.groupMatrix pp a.linear.AW) ++ [false, true] ++
+      pairEncode (Wire.groupMatrix pp fun i j => a.linear.AU i (finProdFinEquiv.symm j))
+        (Wire.groupMatrix pp a.linear.AV) =
+    List.flatMap (fun b => [b, b]) (Wire.groupMatrix pp b.linear.AW) ++ [false, true] ++
+      pairEncode (Wire.groupMatrix pp fun i j => b.linear.AU i (finProdFinEquiv.symm j))
+        (Wire.groupMatrix pp b.linear.AV)
+hW :
+  ((fun i => Wire.groupVector pp (a.linear.AW i)) ⟨0, ⋯⟩).append
+      ((fun x1 x2 => (fun i => Wire.groupVector pp (a.linear.AW i)) x1 :: x2) ⟨1, ⋯⟩ []).flatten =
+    ((fun i => Wire.groupVector pp (b.linear.AW i)) ⟨0, ⋯⟩).append
+      ((fun x1 x2 => (fun i => Wire.groupVector pp (b.linear.AW i)) x1 :: x2) ⟨1, ⋯⟩ []).flatten
+hl :
+  List.flatMap (fun b => [b, b]) (Wire.groupMatrix pp fun i j => a.linear.AU i (finProdFinEquiv.symm j)) ++
+        [false, true] ++
+      Wire.groupMatrix pp a.linear.AV =
+    List.flatMap (fun b => [b, b]) (Wire.groupMatrix pp fun i j => b.linear.AU i (finProdFinEquiv.symm j)) ++
+        [false, true] ++
+      Wire.groupMatrix pp b.linear.AV
+hU :
+  ((fun i => Wire.groupVector pp ((fun i j => a.linear.AU i (finProdFinEquiv.symm j)) i)) ⟨0, ⋯⟩).append
+      ((fun x1 x2 => (fun i => Wire.groupVector pp ((fun i j => a.linear.AU i (finProdFinEquiv.symm j)) i)) x1 :: x2)
+          ⟨1, ⋯⟩ []).flatten =
+    ((fun i => Wire.groupVector pp ((fun i j => b.linear.AU i (finProdFinEquiv.symm j)) i)) ⟨0, ⋯⟩).append
+      ((fun x1 x2 => (fun i => Wire.groupVector pp ((fun i j => b.linear.AU i (finProdFinEquiv.symm j)) i)) x1 :: x2)
+          ⟨1, ⋯⟩ []).flatten
+hV :
+  ((fun i => Wire.groupVector pp (a.linear.AV i)) ⟨0, ⋯⟩).append
+      ((fun x1 x2 => (fun i => Wire.groupVector pp (a.linear.AV i)) x1 :: x2) ⟨1, ⋯⟩ []).flatten =
+    ((fun i => Wire.groupVector pp (b.linear.AV i)) ⟨0, ⋯⟩).append
+      ((fun x1 x2 => (fun i => Wire.groupVector pp (b.linear.AV i)) x1 :: x2) ⟨1, ⋯⟩ []).flatten
+hu : a.linear.AU = b.linear.AU
+⊢ a = b
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean:220:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean:228:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean:262:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings): no fresh .olean produced
+        2.90 real         2.02 user         1.12 sys
+          2353545216  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              183615  page reclaims
+                2340  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 139  voluntary context switches
+                9253  involuntary context switches
+            32041003  instructions retired
+            14847206  cycles elapsed
+             1622352  peak memory footprint

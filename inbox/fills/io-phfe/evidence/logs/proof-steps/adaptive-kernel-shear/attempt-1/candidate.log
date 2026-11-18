@@ -1,0 +1,41 @@
+file=TCSlib/Cryptography/Pairing/MatrixDH/AdaptiveShear.lean
+source_sha256=c83479aca2ccbd8b4de05e0c120124271c63320d8867d967f2d37f7415870471
+working_source_development_check=True
+TCSlib/Cryptography/Pairing/MatrixDH/AdaptiveShear.lean:62:2: error: unsolved goals
+case refine_2.refine_1
+U : Type u_1
+E : Type u_2
+P : Type u_3
+inst✝¹ : AddGroup E
+inst✝ : AddGroup P
+projection : E →+ P
+shift : U → P → E
+hshift : ∀ (u : U) (p : P), projection (shift u p) = 0
+hpres : ∀ (u : U) (p : P) (x : E), projection x = p ↔ projection ((Equiv.addRight (shift u p)) x) = p
+fiber : U → (p : P) → { x // projection x = p } ≃ { x // projection x = p } :=
+  fun u p => Equiv.subtypeEquiv (Equiv.addRight (shift u p)) ⋯
+e : U × E ≃ U × E := Equiv.prodCongrRight fun u => Equiv.ofFiberEquiv (fiber u)
+u : U
+x : E
+⊢ (u, ↑((Equiv.sigmaFiberEquiv ⇑projection).symm x).snd + shift u (projection x)) = (u, x + shift u (projection x))
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/AdaptiveShear): lean exited with status 1
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/AdaptiveShear): error diagnostics reported
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/AdaptiveShear): no fresh .olean produced
+        1.53 real         0.87 user         0.68 sys
+          1342685184  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              110060  page reclaims
+                  19  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  20  voluntary context switches
+                2805  involuntary context switches
+            32157489  instructions retired
+            15025783  cycles elapsed
+             1638736  peak memory footprint

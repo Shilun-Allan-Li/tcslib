@@ -1,0 +1,25 @@
+/-- Right mixed leakage equals the scalar tensor leakage for a KNOWN scalar y2
+[Wee20, §3.3, pp. 7–8].
+
+**Proof sketch.** Use the same published exponent/tensor laws as crossLeakLeft_known,
+with scalar multiplication commuted in the tensor coordinate. No new generic group law
+is proved and no scalar is extracted from a group element. -/
+theorem crossLeakRight_known (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
+    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
+    (κ : ℕ) (pp : PublicParams G κ) (f : Fn κ pp.orderParam)
+    (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
+    (y1 : Fin (n1.eval κ) → ZMod pp.group.order)
+    (y2 : Fin (n2.eval κ) → ZMod pp.group.order) (mu : pp.group.G) :
+    crossLeakRight G n1 n2 PG κ pp f x y1 (pp.group.expVec pp.generator y2) mu =
+      pp.generator ^ (value G n1 n2 PG κ pp f x y1 y2).val * mu⁻¹ := by
+  have hTensor :
+      (fun i : Fin (n1.eval κ * n2.eval κ) =>
+        pp.group.expVec pp.generator y2 (finProdFinEquiv.symm i).2 ^
+          (y1 (finProdFinEquiv.symm i).1).val) =
+        pp.group.expVec pp.generator (privateTensor (p := pp.orderParam) y1 y2) := ?_
+  swap
+  · funext i
+    have h := congrFun (pp.group.expVec_tensor_right pp.generator y1 y2)
+      (finProdFinEquiv.symm i)
+    simpa only [pp.group.expVec_apply, privateTensor_eq, Matrix.kroneckerMap_apply] using h
+  rw [crossLeakRight_eq, hTensor, pp.group.groupDot_expVec, value_eq]

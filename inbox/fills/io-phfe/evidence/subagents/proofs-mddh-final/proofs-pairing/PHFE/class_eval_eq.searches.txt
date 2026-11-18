@@ -1,0 +1,19 @@
+Static exact-name/conclusion reuse search (no native execution):
+
+- PHFE/Correctness.lean:51 frozen PHFE.class_eval_eq and its full opening docstring.
+- PHFE/Data.lean:69 pgSound_iff; :79 classParam_eq; :90 valueEquiv_eq.
+- PHFE/Data.lean:116/121/126 publicWidth/privateWidth/functionWidth.
+- PHFE/Data.lean:139/152/164 decodePublic_eq/decodePrivate_eq/decodeFunction_eq.
+- Classes.lean:409 phfeClass_eval (total arbitrary wire word reader).
+- Classes.lean:424 phfeClassParamEquiv_eq; :438 phfeClassValueEquiv_eq.
+- Classes.lean:460 phfeClass_eval_encoded, canonical representation theorem
+  (not applied because this frozen goal includes arbitrary noncanonical aliases).
+- Classes.lean:320 phfeEval_eq, typed diagonal embedding; :311 quadEval_eq.
+- Classes.lean:586 phfeClass_eval_eq_quad, nearest wire embedding law
+  (the typed diagonal identity avoids introducing duplicatePrivateBits unnecessarily).
+- Wee20/Quadratic.lean:308 value_eq.
+- Mathlib/Data/Fin/SuccPred.lean:144 finCongr_refl; :146 finCongr_symm;
+  :150 finCongr_symm_apply_coe.
+
+No generic helper is needed or proposed; root authorizes this existing frozen theorem.
+The only consumed semantic hypothesis is its original hPG. No efficiency target used.

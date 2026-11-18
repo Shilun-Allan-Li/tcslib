@@ -1,0 +1,55 @@
+Read-only reuse searches for existing Layered.backward_action
+No new helper declaration/proof; no Lean/lake/Git/live edit by the agent.
+
+$ rg -n 'backward_action|vecMul.*shift|shift.*vecMul' TCSlib .lake/packages/mathlib/Mathlib /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean
+exit=0
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean:40:* `PartialGarbling.Layered.forward_action`, `backward_action`: path-sum identities.
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean:441:theorem backward_action (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean:443:    Matrix.vecMul (shift C x z) (matrix C x) =
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean:478:linearity of vecMul and backward_action give (t−s)B+μe_source=tB. This proves the
+
+$ rg -n 'sumElim_vecMul_fromRows|fromRows_apply_inl|fromRows_apply_inr' .lake/packages/mathlib/Mathlib/Data/Matrix/ColumnRowPartitioned.lean
+exit=0
+52:lemma fromRows_apply_inl (A₁ : Matrix m₁ n R) (A₂ : Matrix m₂ n R) (i : m₁) (j : n) :
+56:lemma fromRows_apply_inr (A₁ : Matrix m₁ n R) (A₂ : Matrix m₂ n R) (i : m₂) (j : n) :
+189:lemma sumElim_vecMul_fromRows [Fintype m₁] [Fintype m₂] (B₁ : Matrix m₁ n R) (B₂ : Matrix m₂ n R)
+199:  simp [← sumElim_vecMul_fromRows]
+
+$ rg -n 'theorem vecMul_eq_sum' .lake/packages/mathlib/Mathlib/Data/Matrix/Mul.lean
+exit=0
+694:theorem vecMul_eq_sum [Fintype m] (v : m → α) (M : Matrix m n α) : v ᵥ* M = ∑ i, v i • M i :=
+
+$ rg -n 'theorem prod_ite_irrel' .lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Defs.lean
+exit=0
+550:theorem prod_ite_irrel (p : Prop) [Decidable p] (s : Finset ι) (f g : ι → M) :
+
+$ rg -n 'theorem div_mul_eq_mul_div' .lake/packages/mathlib/Mathlib/Algebra/Group/Basic.lean
+exit=0
+547:theorem div_mul_eq_mul_div : a / b * c = a * c / b := by simp
+
+$ rg -n 'theorem elim_comp_inl_inr' /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Sum/Lemmas.lean
+exit=0
+122:@[simp] theorem elim_comp_inl_inr (f : α ⊕ β → γ) :
+
+$ rg -n 'theorem weightedIncidence_vecMul' TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean
+exit=0
+76:theorem weightedIncidence_vecMul {V E R : Type*} [Fintype E] [DecidableEq V]
+
+$ rg -n 'theorem prefixIncoming_sum|theorem prefixOutgoing_sum|theorem prefixFlow_balance' TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean
+exit=0
+54:theorem prefixIncoming_sum {I R : Type*} [Fintype I] [DecidableEq I]
+100:theorem prefixOutgoing_sum {I R : Type*} [Fintype I] [DecidableEq I]
+165:theorem prefixFlow_balance {I R : Type*} [Fintype I] [DecidableEq I]
+
+$ rg -n 'theorem matrix_inl|theorem matrix_eq|theorem L1_inr|theorem L0_inr|theorem shift_inl|theorem shift_inr|theorem backward_eq|theorem extend_eq|theorem backward_root' TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean
+exit=0
+211:theorem L1_inr (C : PolyTensor p l n d) (j : Fin n) (iu : Fin l × MIdx l d) :
+231:theorem L0_inr (C : PolyTensor p l n d) (j : Fin n) (u : MIdx l d) :
+242:theorem matrix_eq (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ)) :
+252:theorem matrix_inl (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
+318:theorem extend_eq (u : MIdx l d) (sigma : Fin (d - u.1.val) → Fin (l + 1)) :
+332:theorem backward_eq (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
+346:theorem shift_inl (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
+351:theorem shift_inr (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
+392:theorem backward_root (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
+

@@ -1,0 +1,16 @@
+Static exact-name/conclusion searches (no native execution):
+
+- Read full Foundations/Subexponential.lean and the frozen Slack target/docstring.
+- Subexponential.lean:150 SubexpSmall.mono: eventual absolute-value domination.
+- Subexponential.lean:190 SubexpSmall.const_mul hmu (hc : 0 < c) (h : cprime < c) a.
+- Subexponential.lean:258 subexpSmall_two_pow_neg, geometric inverse-power form.
+- CoinSampling/Asymptotic.lean:120-126 subexpSmall_drawSlack is the nearest existing
+  closure route; it explicitly notes positivity of the target exponent is source-facing.
+- Mathlib/Algebra/Order/GroupWithZero/Unbundled/Basic.lean:1229
+  div_le_div_of_nonneg_left (ha : 0 <= a) (hc : 0 < c) (h : c <= b).
+- Mathlib/Algebra/Order/Monoid/NatCast.lean:33 zero_le_three.
+- Mathlib/Algebra/Group/Basic.lean:404 inv_pow: inverse a ^ n = inverse (a ^ n).
+- Mathlib/Algebra/Group/Defs.lean:968 div_eq_mul_inv.
+
+No new helper target is proposed. Existing frozen-target proof authorized by root;
+pointwise prerequisite proofs are queued, and this candidate is unvalidated.

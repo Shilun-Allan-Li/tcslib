@@ -1,0 +1,23 @@
+Root native authorization (reported in task):
+evidence/search/committed-run-bridges/run, source-prefix-only probes;
+three targets typecheck; exact? no complete proofs; apply? coin target only
+partial Prod.ext, real/ideal targets no relevant lemmas. Future endpoint and
+simAdv laws excluded from the probe environment.
+
+Read-only source searches and reads:
+- Full names coinBlocks_ofFn_append / firstCoins_ofFn_append /
+  secondCoins_ofFn_append in TCSlib and committed-run evidence: no competing
+  public source result before the new skeleton insertion.
+- FromTwoStage.lean:145 firstCoins_eq; :153 secondCoins_eq.
+- Mathlib/Data/List/GetD.lean:30 getD_eq_getElem;
+  :60 getD_append (explicit bound n < l.length);
+  :65 getD_append_right (explicit bound l.length <= n).
+- Actual lean-toolchain is leanprover/lean4:v4.25.0.
+  Init/Data/List/OfFn.lean:41 length_ofFn;
+  :47 List.getElem_ofFn with its known in-range proof.
+- Complexity/Randomized/PPT.lean:223 Coins is the existing Fin coinLen -> Bool
+  abbreviation. We only rely on the published list length equality; no
+  rewriting of Coins or coinLen bodies.
+
+No new helper beyond the already natively searched coinBlocks_ofFn_append.
+No agent-run Lean/lake/Git or additional exact?/apply? invocation.

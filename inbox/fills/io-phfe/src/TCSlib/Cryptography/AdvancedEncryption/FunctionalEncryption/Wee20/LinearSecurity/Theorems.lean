@@ -74,7 +74,18 @@ theorem adviceEnc_injective (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → 
 theorem paddedDrawIndex_lt {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
     (PG : PartialGarbling.Raw ℓ n' Fn) (κ : ℕ) (p : ℕ+) (f : Fn κ p)
     (u : PG.TIdx κ p f ⊕ Fin (n'.eval κ)) :
-    paddedDrawIndex PG κ p f u < PG.mBound.eval κ + n'.eval κ := sorry
+    paddedDrawIndex PG κ p f u < PG.mBound.eval κ + n'.eval κ := by
+  rw [paddedDrawIndex_eq]
+  cases u with
+  | inl i =>
+      simp only [Sum.elim_inl]
+      have hi := (PG.tCoord κ p f i).isLt
+      have hAux := PG.auxCount_add_one κ p f
+      have hm := PG.mCount_le_mBound κ p f
+      omega
+  | inr j =>
+      simp only [Sum.elim_inr]
+      exact Nat.add_lt_add_left j.isLt (PG.mBound.eval κ)
 
 /-- Every accepted key's group-challenge row is in bounds, even when its function-dependent
 node count is below the padded maximum. Technical size glue.
@@ -84,7 +95,16 @@ product-index bound. This also shows that no accepted query uses the identity de
 theorem challengeRow_lt {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
     (PG : PartialGarbling.Raw ℓ n' Fn) (q : PolyExpr) (κ : ℕ) (p : ℕ+) (f : Fn κ p)
     (u : PG.MIdx κ p f) {j : ℕ} (hj : j < q.eval κ) :
-    (PG.mCoord κ p f u).val * q.eval κ + j < (PG.mBound.mul q).eval κ := sorry
+    (PG.mCoord κ p f u).val * q.eval κ + j < (PG.mBound.mul q).eval κ := by
+  rw [PolyExpr.eval_mul]
+  have hm : (PG.mCoord κ p f u).val < PG.mBound.eval κ :=
+    lt_of_lt_of_le (PG.mCoord κ p f u).isLt (PG.mCount_le_mBound κ p f)
+  have hIndex := (finProdFinEquiv
+    ((⟨(PG.mCoord κ p f u).val, hm⟩ : Fin (PG.mBound.eval κ)),
+      (⟨j, hj⟩ : Fin (q.eval κ)))).isLt
+  change j + q.eval κ * (PG.mCoord κ p f u).val <
+    PG.mBound.eval κ * q.eval κ at hIndex
+  simpa only [Nat.add_comm, Nat.mul_comm] using hIndex
 
 /-- Simulation of the typed bounded run by any deterministic handler has the shared
 runDet form. This is the handler-machine hypothesis shape, without constructing a machine.
@@ -98,7 +118,10 @@ theorem simulate_saRun_det {ι' σ : Type} {spec' : OracleSpec ι'}
     (h : ∀ i, (saSpec G PG zDim κ pp).dom i → σ →
       (saSpec G PG zDim κ pp).rng i × σ) (s : σ) :
     simulate (detImpl (spec' := spec') h) (SAAdv.run G PG zDim A κ pp pk r) s =
-      .pure (runDet (A.next κ pp pk r) false h (A.budget.eval κ) [] s) := sorry
+      .pure (runDet (A.next κ pp pk r) false h (A.budget.eval κ) [] s) := by
+  rw [SAAdv.run_eq G PG zDim A κ pp pk r]
+  exact simulate_buildComp_detImpl_eq_pure (spec' := spec')
+    (A.next κ pp pk r) false h (A.budget.eval κ) [] s
 
 /-- The two unfiltered padded real endpoint presentations coincide
 [Wee20, Appendix B, Game 0, p. 12]. The substantive connection to the actual fresh raw

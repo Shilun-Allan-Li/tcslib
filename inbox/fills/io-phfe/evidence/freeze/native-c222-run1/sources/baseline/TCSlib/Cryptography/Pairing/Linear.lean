@@ -1,0 +1,347 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
+-/
+import TCSlib.Cryptography.Pairing.Exponents
+import TCSlib.Cryptography.Pairing.MatrixDH.Parameters
+import TCSlib.Cryptography.Asymptotic.Adversary
+import TCSlib.Cryptography.Games.Advantage
+import TCSlib.Cryptography.Foundations.Subexponential
+import Mathlib.Data.Fin.VecNotation
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# The decisional linear assumption on symmetric bilinear groups
+
+The primary experiment is the tuple form of DLIN in [JLS26, §1.1]: its real tuple contains
+`g^a, g^b, g^(ar), g^(bs), g^(r+s)` and its random tuple replaces only the last coordinate
+by `g^t`. The public input also includes the group description and the generator `g`, drawn
+uniformly from the nonidentity source-group elements, as in the pairing library.
+
+The matrix experiment follows [GJLS21, Definition 3.3], with the two source groups identified:
+`A = ((a, 0), (0, b), (1, 1))`, real vector `A(r,s)` and a fully uniform random vector.
+The two real laws agree. Their random laws need an explicit correction when `a` or `b` is
+zero: conditioned on both being nonzero, multiplication by them bijects the first two
+coordinates; the exceptional probability is `2/p - 1/p^2`. No unconditional equality of the
+random laws is asserted.
+
+## Main definitions
+
+* `dlinStr`: public serialization of the description, generator and five group elements.
+* `dlinMatrix`: the scalar DLIN matrix of [GJLS21, §3].
+* `BilinearGen.DLINChallenge`, `BilinearGen.dlinEnc`: reachable public challenges and their
+  encoding, without recording generator coins in the challenge.
+* `BilinearGen.dlinGame`, `BilinearGen.dlinAdv`: the canonical tuple experiment and advantage.
+* `BilinearGen.DLINAssumption`, `BilinearGen.SubexpDLIN`: polynomial and subexponential DLIN.
+* `BilinearGen.dlinMatrixGame`, `BilinearGen.dlinMatrixAdv`, `BilinearGen.dlinMatrixSlack`:
+  the matrix experiment and its explicit comparison with the canonical experiment.
+
+## Main results
+
+* `dlinMatrix_mulVec`: the real vector has coordinates `ar, bs, r+s`.
+* `BilinearGen.dlinEnc_injective`, `BilinearGen.length_dlinEnc`: public encoding is faithful
+  and has a fixed polynomial length on reachable challenges.
+* `BilinearGen.dlinMatrixGame_real_accept`: the canonical and matrix real laws agree.
+* `BilinearGen.dlinMatrixGame_random_gap_le`, `BilinearGen.dlinMatrixAdv_le`: the zero-
+  coordinate event bounds the difference between the two presentations.
+
+The generator's coin strings are sampled before the group-dependent draws. A typed challenge
+stores the actual public description and a reachability proposition, rather than the coins
+that produced it. Thus duplicate generator coin strings do not create duplicate public
+objects. No finite-type instance on a dependent sum is introduced.
+
+## References
+
+* [JLS26] A. Jain, H. Lin, and A. Sahai, *Indistinguishability Obfuscation from Well-Founded
+  Assumptions*, Journal of the ACM 73(1), Article 1, 2026, §1.1, p. 3 (DLIN), §1.4,
+  pp. 7–8 (public-key PHFE), Theorem 5.1, p. 21 (symmetric DLIN implies bilateral DLIN).
+* [GJLS21] R. Gay, A. Jain, H. Lin, and A. Sahai, *Indistinguishability Obfuscation from
+  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
+  EUROCRYPT 2021; Cryptology ePrint Archive 2020/764, revision 2025-01-03, §3, p. 17
+  (the DLIN matrix), Definition 3.3, p. 18 (bilateral DLIN).
+-/
+
+namespace TCSlib.Cryptography.Pairing
+
+open Complexity Turing TCSlib.Cryptography.Games
+open scoped Matrix
+
+/-- Serialize a public DLIN tuple as the description followed by the generator and five
+source-group points [JLS26, §1.1, p. 3]. The generator is explicit because it is randomized
+in the library convention; the paper's generator is canonical. -/
+def dlinStr {wG wT : ℕ} (B : BilinearGroup wG wT) (d : List Bool)
+    (g a b u v w : B.G) : List Bool :=
+  pairEncode d (pairEncode (List.ofFn (B.encG g))
+    (pairEncode (List.ofFn (B.encG a)) (pairEncode (List.ofFn (B.encG b))
+      (pairEncode (List.ofFn (B.encG u))
+        (pairEncode (List.ofFn (B.encG v)) (List.ofFn (B.encG w)))))))
+
+/-- The DLIN input is the nested pair of the description and the six encoded group points. -/
+theorem dlinStr_eq {wG wT : ℕ} (B : BilinearGroup wG wT) (d : List Bool)
+    (g a b u v w : B.G) :
+    dlinStr B d g a b u v w =
+      pairEncode d (pairEncode (List.ofFn (B.encG g))
+        (pairEncode (List.ofFn (B.encG a)) (pairEncode (List.ofFn (B.encG b))
+          (pairEncode (List.ofFn (B.encG u))
+            (pairEncode (List.ofFn (B.encG v)) (List.ofFn (B.encG w))))))) := rfl
+
+/-- Fixed-width group encodings make the tuple length depend only on the description length
+and group width. This is serialization glue for [JLS26, §1.1, p. 3].
+
+**Proof sketch.** Apply `length_pairEncode` to the six nested pairs and `List.length_ofFn`
+to each group encoding; collect the coefficients of the fixed width. -/
+theorem length_dlinStr {wG wT : ℕ} (B : BilinearGroup wG wT) (d : List Bool)
+    (g a b u v w : B.G) :
+    (dlinStr B d g a b u v w).length = 2 * d.length + 11 * wG + 12 := sorry
+
+/-- The DLIN matrix has rows `(a,0)`, `(0,b)`, and `(1,1)`
+[GJLS21, §3, p. 17, the distribution preceding Definition 3.3]. -/
+def dlinMatrix {p : ℕ} (a b : ZMod p) : Matrix (Fin 3) (Fin 2) (ZMod p) :=
+  ![![a, 0], ![0, b], ![1, 1]]
+
+/-- The three rows of the scalar DLIN matrix are its displayed definition. -/
+theorem dlinMatrix_eq {p : ℕ} (a b : ZMod p) :
+    dlinMatrix a b = ![![a, 0], ![0, b], ![1, 1]] := rfl
+
+/-- The real DLIN vector is the DLIN matrix applied to its two random scalars
+[GJLS21, Definition 3.3, p. 18; JLS26, §1.1, p. 3].
+
+**Proof sketch.** Read the three rows and the two column-vector coordinates; the three dot
+products reduce to `a*r`, `b*s`, and `r+s`. -/
+theorem dlinMatrix_mulVec {p : ℕ} (a b r s : ZMod p) :
+    dlinMatrix a b *ᵥ ![r, s] = ![a * r, b * s, r + s] := sorry
+
+namespace BilinearGen
+
+variable (G : BilinearGen)
+
+/-- A reachable public DLIN challenge consists of shared public parameters and five
+source-group points [JLS26, §1.1, p. 3]. The public parameters contain the actual reachable
+description and a nonidentity generator, independently of any coins producing them. -/
+structure DLINChallenge (κ : ℕ) where
+  /-- The shared group description and nonidentity generator. -/
+  pp : PublicParams G κ
+  /-- The first base power `g^a`. -/
+  baseA : (G.group κ pp.description.val).G
+  /-- The second base power `g^b`. -/
+  baseB : (G.group κ pp.description.val).G
+  /-- The first response coordinate. -/
+  responseA : (G.group κ pp.description.val).G
+  /-- The second response coordinate. -/
+  responseB : (G.group κ pp.description.val).G
+  /-- The last response coordinate. -/
+  responseSum : (G.group κ pp.description.val).G
+
+/-- Attach five group points to the shared public parameters. This is technical glue for
+the sampling experiment of [JLS26, §1.1, p. 3]. -/
+def dlinChallenge (κ : ℕ) (pp : PublicParams G κ)
+    (a b u v w : (G.group κ pp.description.val).G) : G.DLINChallenge κ :=
+  ⟨pp, a, b, u, v, w⟩
+
+/-- The constructor records exactly its public parameters and five group points. -/
+theorem dlinChallenge_eq (κ : ℕ) (pp : PublicParams G κ)
+    (a b u v w : (G.group κ pp.description.val).G) :
+    G.dlinChallenge κ pp a b u v w = ⟨pp, a, b, u, v, w⟩ := rfl
+
+/-- Encode precisely the public description, generator and five response points
+[JLS26, §1.1, p. 3]. No generator coins or private scalar witnesses are encoded. -/
+def dlinEnc (κ : ℕ) (c : G.DLINChallenge κ) : List Bool :=
+  dlinStr (G.group κ c.pp.description.val) c.pp.description.val c.pp.generator
+    c.baseA c.baseB c.responseA c.responseB c.responseSum
+
+/-- A challenge encodes as its public DLIN tuple. -/
+theorem dlinEnc_eq (κ : ℕ) (c : G.DLINChallenge κ) :
+    G.dlinEnc κ c =
+      dlinStr (G.group κ c.pp.description.val) c.pp.description.val c.pp.generator
+        c.baseA c.baseB c.responseA c.responseB c.responseSum := rfl
+
+/-- Encoding a constructed challenge produces its public tuple. This is the interface
+between the typed experiment and its string input. -/
+theorem dlinEnc_dlinChallenge (κ : ℕ) (pp : PublicParams G κ)
+    (a b u v w : (G.group κ pp.description.val).G) :
+    G.dlinEnc κ (G.dlinChallenge κ pp a b u v w) =
+      dlinStr (G.group κ pp.description.val) pp.description.val pp.generator a b u v w := rfl
+
+/-- Public challenge encoding is injective; in particular two generator coin strings yielding
+one public description do not create distinct encoded objects. Serialization glue.
+
+**Proof sketch.** Decode the description by `pairEncode_injective`, substitute equal
+descriptions, then use the same pairing reader on the remaining six encodings. Apply
+`List.ofFn_injective` and the group's `encG_injective`; proof irrelevance removes the
+reachability and nonidentity witnesses of the shared public parameters. -/
+theorem dlinEnc_injective (κ : ℕ) : Function.Injective (G.dlinEnc κ) := sorry
+
+/-- A reachable public DLIN challenge has one fixed polynomial encoding length.
+Serialization glue for [JLS26, §1.1, p. 3].
+
+**Proof sketch.** Use `length_dlinStr`. The shared description's reachability witness supplies
+a generator coin string, so `length_desc` fixes the description length. -/
+theorem length_dlinEnc (κ : ℕ) (c : G.DLINChallenge κ) :
+    (G.dlinEnc κ c).length = 2 * G.descLen.eval κ + 11 * G.wG.eval κ + 12 := sorry
+
+/-- Sample the canonical DLIN challenge: group coins first, a uniform nonidentity generator,
+then `a,b`, `r,s`, and the final random scalar `t` [JLS26, §1.1, p. 3]. The real response is
+`(g^(ar),g^(bs),g^(r+s))`; the random response replaces only its last coordinate by `g^t`. -/
+noncomputable def dlinSample (real : Bool) (κ : ℕ) : ProbComp (G.DLINChallenge κ) :=
+  (publicParamsGen G κ).bind fun pp =>
+  (ProbComp.sample (Fin 2 → ZMod (G.group κ pp.description.val).order)).bind fun ab =>
+  (ProbComp.sample (Fin 2 → ZMod (G.group κ pp.description.val).order)).bind fun rs =>
+  (ProbComp.sample (ZMod (G.group κ pp.description.val).order)).bind fun t =>
+    .pure (G.dlinChallenge κ pp (pp.generator ^ (ab 0).val) (pp.generator ^ (ab 1).val)
+      (pp.generator ^ (ab 0 * rs 0).val) (pp.generator ^ (ab 1 * rs 1).val)
+      (pp.generator ^ (if real then rs 0 + rs 1 else t).val))
+
+/-- The canonical sampling law uses shared sequential public-parameter generation followed
+by the displayed scalar draws. -/
+theorem dlinSample_eq (real : Bool) (κ : ℕ) :
+    G.dlinSample real κ =
+      (publicParamsGen G κ).bind fun pp =>
+      (ProbComp.sample (Fin 2 → ZMod (G.group κ pp.description.val).order)).bind fun ab =>
+      (ProbComp.sample (Fin 2 → ZMod (G.group κ pp.description.val).order)).bind fun rs =>
+      (ProbComp.sample (ZMod (G.group κ pp.description.val).order)).bind fun t =>
+        .pure (G.dlinChallenge κ pp (pp.generator ^ (ab 0).val) (pp.generator ^ (ab 1).val)
+          (pp.generator ^ (ab 0 * rs 0).val) (pp.generator ^ (ab 1 * rs 1).val)
+          (pp.generator ^ (if real then rs 0 + rs 1 else t).val)) := rfl
+
+/-- Run a non-uniform PPT distinguisher on a canonical DLIN challenge, using independent
+machine coins [JLS26, §1.1, p. 3]. The machine receives the security parameter through the
+library's `distinguisherL` activation. -/
+noncomputable def dlinGame (D : NUPPT) (real : Bool) (κ : ℕ) : ProbComp Bool :=
+  (G.dlinSample real κ).bind fun c =>
+  (ProbComp.sample (D.Coins κ)).bind fun r =>
+    .pure (D.distinguisherL κ (G.dlinEnc κ c) r)
+
+/-- The DLIN experiment draws a typed challenge and the distinguisher's independent coins. -/
+theorem dlinGame_eq (D : NUPPT) (real : Bool) (κ : ℕ) :
+    G.dlinGame D real κ =
+      (G.dlinSample real κ).bind fun c =>
+      (ProbComp.sample (D.Coins κ)).bind fun r =>
+        .pure (D.distinguisherL κ (G.dlinEnc κ c) r) := rfl
+
+/-- The DLIN advantage is the absolute difference of the two acceptance probabilities
+[JLS26, §1.1, p. 3]. -/
+noncomputable def dlinAdv (D : NUPPT) (κ : ℕ) : ℝ :=
+  advantage (G.dlinGame D false κ) (G.dlinGame D true κ)
+
+/-- The DLIN advantage uses the library's two-experiment convention. -/
+theorem dlinAdv_eq (D : NUPPT) (κ : ℕ) :
+    G.dlinAdv D κ = advantage (G.dlinGame D false κ) (G.dlinGame D true κ) := rfl
+
+/-- Canonical symmetric DLIN is hard when every non-uniform PPT distinguisher has negligible
+advantage [JLS26, §1.1, p. 3]. The prime order is read from the generated public parameters;
+no fixed modulus schedule is needed for the assumption itself. -/
+def DLINAssumption : Prop := ∀ D : NUPPT, Negligible (G.dlinAdv D)
+
+/-- DLIN hardness is negligibility of every non-uniform PPT advantage. -/
+theorem dlinAssumption_iff :
+    G.DLINAssumption ↔ ∀ D : NUPPT, Negligible (G.dlinAdv D) := Iff.rfl
+
+/-- Subexponential symmetric DLIN has one positive security exponent before the adversary
+[JLS26, §1.1, p. 3; Theorem 5.1, p. 21]. -/
+def SubexpDLIN : Prop := SubexpHard G.dlinAdv
+
+/-- Subexponential DLIN uses the shared `SubexpHard` predicate. -/
+theorem subexpDLIN_iff : G.SubexpDLIN ↔ SubexpHard G.dlinAdv := Iff.rfl
+
+/-! ## The bilateral matrix presentation in a symmetric group -/
+
+/-- Sample the matrix form of DLIN in one symmetric source group
+[GJLS21, Definition 3.3, p. 18]. The real vector is `A(r,s)` and the random vector is fully
+uniform. Identifying the two source groups removes the duplicated bilateral copy. -/
+noncomputable def dlinMatrixSample (real : Bool) (κ : ℕ) : ProbComp (G.DLINChallenge κ) :=
+  (publicParamsGen G κ).bind fun pp =>
+  (ProbComp.sample (Fin 2 → ZMod (G.group κ pp.description.val).order)).bind fun ab =>
+  (ProbComp.sample (Fin 2 → ZMod (G.group κ pp.description.val).order)).bind fun rs =>
+  (ProbComp.sample (Fin 3 → ZMod (G.group κ pp.description.val).order)).bind fun u =>
+    .pure (G.dlinChallenge κ pp (pp.generator ^ (ab 0).val) (pp.generator ^ (ab 1).val)
+      (pp.generator ^ (if real then ab 0 * rs 0 else u 0).val)
+      (pp.generator ^ (if real then ab 1 * rs 1 else u 1).val)
+      (pp.generator ^ (if real then rs 0 + rs 1 else u 2).val))
+
+/-- The matrix sampling law uses shared sequential public-parameter generation followed
+by the displayed independent scalar draws. -/
+theorem dlinMatrixSample_eq (real : Bool) (κ : ℕ) :
+    G.dlinMatrixSample real κ =
+      (publicParamsGen G κ).bind fun pp =>
+      (ProbComp.sample (Fin 2 → ZMod (G.group κ pp.description.val).order)).bind fun ab =>
+      (ProbComp.sample (Fin 2 → ZMod (G.group κ pp.description.val).order)).bind fun rs =>
+      (ProbComp.sample (Fin 3 → ZMod (G.group κ pp.description.val).order)).bind fun u =>
+        .pure (G.dlinChallenge κ pp (pp.generator ^ (ab 0).val) (pp.generator ^ (ab 1).val)
+          (pp.generator ^ (if real then ab 0 * rs 0 else u 0).val)
+          (pp.generator ^ (if real then ab 1 * rs 1 else u 1).val)
+          (pp.generator ^ (if real then rs 0 + rs 1 else u 2).val)) := rfl
+
+/-- Run the same distinguisher on the compressed symmetric matrix experiment
+[GJLS21, Definition 3.3, p. 18]. The omitted matrix entries are zero and one, whose implicit
+representations are determined by the public generator. -/
+noncomputable def dlinMatrixGame (D : NUPPT) (real : Bool) (κ : ℕ) : ProbComp Bool :=
+  (G.dlinMatrixSample real κ).bind fun c =>
+  (ProbComp.sample (D.Coins κ)).bind fun r =>
+    .pure (D.distinguisherL κ (G.dlinEnc κ c) r)
+
+/-- The matrix experiment draws its typed challenge and independent distinguisher coins. -/
+theorem dlinMatrixGame_eq (D : NUPPT) (real : Bool) (κ : ℕ) :
+    G.dlinMatrixGame D real κ =
+      (G.dlinMatrixSample real κ).bind fun c =>
+      (ProbComp.sample (D.Coins κ)).bind fun r =>
+        .pure (D.distinguisherL κ (G.dlinEnc κ c) r) := rfl
+
+/-- The matrix DLIN advantage is the two-experiment advantage
+[GJLS21, Definition 3.3, p. 18]. -/
+noncomputable def dlinMatrixAdv (D : NUPPT) (κ : ℕ) : ℝ :=
+  advantage (G.dlinMatrixGame D false κ) (G.dlinMatrixGame D true κ)
+
+/-- The matrix DLIN advantage uses the same advantage convention as canonical DLIN. -/
+theorem dlinMatrixAdv_eq (D : NUPPT) (κ : ℕ) :
+    G.dlinMatrixAdv D κ =
+      advantage (G.dlinMatrixGame D false κ) (G.dlinMatrixGame D true κ) := rfl
+
+/-- The probability that either of the two DLIN diagonal scalars is zero, averaged over the
+public group draw. This is the explicit comparison slack between [JLS26, §1.1, p. 3] and
+[GJLS21, Definition 3.3, p. 18]; it is needed because both sources allow zero scalars. -/
+noncomputable def dlinMatrixSlack (κ : ℕ) : ℝ :=
+  ProbComp.expect (ProbComp.sample (G.gen.Coins κ)) fun ρ =>
+    2 / ((G.inst κ ρ).order : ℝ) - 1 / ((G.inst κ ρ).order : ℝ) ^ 2
+
+/-- The diagonal-zero correction averages `2/p - 1/p^2` over the generated group. -/
+theorem dlinMatrixSlack_eq (κ : ℕ) :
+    G.dlinMatrixSlack κ =
+      ProbComp.expect (ProbComp.sample (G.gen.Coins κ)) fun ρ =>
+        2 / ((G.inst κ ρ).order : ℝ) - 1 / ((G.inst κ ρ).order : ℝ) ^ 2 := rfl
+
+/-- The real tuple and compressed matrix presentations have identical acceptance laws
+[GJLS21, Definition 3.3, p. 18; JLS26, §1.1, p. 3].
+
+**Proof sketch.** Use `dlinMatrix_mulVec` to identify the response coordinates. Integrate
+out the unused random response draws with the shared probability readers. The public group,
+generator, diagonal scalars, coefficient vector and distinguisher coins coincide. -/
+theorem dlinMatrixGame_real_accept (D : NUPPT) (κ : ℕ) :
+    accept (G.dlinMatrixGame D true κ) = accept (G.dlinGame D true κ) := sorry
+
+/-- The two random presentations differ by at most the probability of a zero diagonal
+coordinate [GJLS21, Definition 3.3, p. 18; JLS26, §1.1, p. 3]. This correction is explicit;
+the source presentations are not asserted to have identical random laws.
+
+**Proof sketch.** Condition on the diagonal scalars. Off the zero-coordinate event,
+multiplication by each nonzero scalar bijects its uniform mask with a uniform response.
+Use `expect_sample_equiv` for those bijections. Bound the acceptance difference by one on
+the exceptional event, whose exact probability is `2/p - 1/p^2`, and average over group coins. -/
+theorem dlinMatrixGame_random_gap_le (D : NUPPT) (κ : ℕ) :
+    |accept (G.dlinMatrixGame D false κ) - accept (G.dlinGame D false κ)| ≤
+      G.dlinMatrixSlack κ := sorry
+
+/-- Canonical DLIN bounds the matrix DLIN advantage with the explicit diagonal-zero slack
+[GJLS21, Definition 3.3, p. 18; JLS26, §1.1, p. 3].
+
+**Proof sketch.** Apply the triangle inequality to the random acceptance probabilities,
+using `dlinMatrixGame_real_accept` and `dlinMatrixGame_random_gap_le`. -/
+theorem dlinMatrixAdv_le (D : NUPPT) (κ : ℕ) :
+    G.dlinMatrixAdv D κ ≤ G.dlinAdv D κ + G.dlinMatrixSlack κ := sorry
+
+end BilinearGen
+
+end TCSlib.Cryptography.Pairing

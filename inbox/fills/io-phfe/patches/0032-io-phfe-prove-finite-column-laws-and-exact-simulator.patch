@@ -1,0 +1,1601 @@
+From 2f02d9debe3659da7693e9326a7ce6d29b519282 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 11:03:57 -0800
+Subject: [PATCH 32/34] io-phfe: prove finite column laws and exact simulator
+ rank probability
+
+---
+ .../Wee20/LinearSecurity/Slack.lean           |  89 +++-
+ .../Wee20/LinearSimulator.lean                |  94 +++-
+ .../Wee20/PHFE/Correctness.lean               |   9 +-
+ TCSlib/Cryptography/Pairing/Linear.lean       | 136 ++++-
+ TCSlib/Cryptography/Pairing/MatrixDH.lean     |   4 +
+ .../Pairing/MatrixDH/AdaptiveShear.lean       |  75 +++
+ .../Pairing/MatrixDH/ColumnLaws.lean          | 481 ++++++++++++++++++
+ .../Cryptography/Pairing/MatrixDH/Defs.lean   | 227 ++++++++-
+ .../Pairing/MatrixDH/FiniteLinear.lean        | 146 +++++-
+ .../Pairing/MatrixDH/SelfReduction.lean       | 107 +++-
+ 10 files changed, 1344 insertions(+), 24 deletions(-)
+ create mode 100644 TCSlib/Cryptography/Pairing/MatrixDH/AdaptiveShear.lean
+ create mode 100644 TCSlib/Cryptography/Pairing/MatrixDH/ColumnLaws.lean
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Slack.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Slack.lean
+index 06ac5c3b2..b2fd026d4 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Slack.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Slack.lean
+@@ -44,7 +44,27 @@ open Complexity TCSlib.Cryptography.Pairing
+ **Proof sketch.** Each factor of the invertible-matrix fraction lies between zero and one
+ because the prime order is at least two. Their product is at most one. -/
+ theorem rankSlack_nonneg {G : BilinearGen} {κ : ℕ} (pp : PublicParams G κ) :
+-    0 ≤ rankSlack pp := sorry
++    0 ≤ rankSlack pp := by
++  have hq : (1 : ℝ) ≤ (pp.group.order : ℝ) :=
++    Nat.one_le_cast.mpr ((Nat.le_add_right 1 1).trans pp.group.order_prime.two_le)
++  have hq0 : (0 : ℝ) ≤ (pp.group.order : ℝ) := zero_le_one.trans hq
++  have h2 : (1 : ℝ) / (pp.group.order : ℝ) ^ 2 ≤ 1 := ?_
++  swap
++  · simpa only [div_one] using one_div_le_one_div_of_le zero_lt_one
++      (one_le_pow₀ hq : (1 : ℝ) ≤ (pp.group.order : ℝ) ^ 2)
++  have h3 : (1 : ℝ) / (pp.group.order : ℝ) ^ 3 ≤ 1 := ?_
++  swap
++  · simpa only [div_one] using one_div_le_one_div_of_le zero_lt_one
++      (one_le_pow₀ hq : (1 : ℝ) ≤ (pp.group.order : ℝ) ^ 3)
++  rw [rankSlack_eq]
++  apply sub_nonneg.mpr
++  exact mul_le_one₀
++    (mul_le_one₀
++      (sub_le_self _ (one_div_nonneg.mpr hq0))
++      (sub_nonneg.mpr h2)
++      (sub_le_self _ (one_div_nonneg.mpr (pow_nonneg hq0 2))))
++    (sub_nonneg.mpr h3)
++    (sub_le_self _ (one_div_nonneg.mpr (pow_nonneg hq0 3)))
+ 
+ /-- The exact three-by-three rank correction is at most 3/p.
+ This coarse upper bound preserves the exact loss in the core inequality.
+@@ -52,13 +72,45 @@ This coarse upper bound preserves the exact loss in the core inequality.
+ **Proof sketch.** For factors in [0,1], one minus their product is at most the sum of
+ one minus each factor. Bound 1/p² and 1/p³ by 1/p, using p≥2. -/
+ theorem rankSlack_le_three_div {G : BilinearGen} {κ : ℕ} (pp : PublicParams G κ) :
+-    rankSlack pp ≤ 3 / (pp.group.order : ℝ) := sorry
++    rankSlack pp ≤ 3 / (pp.group.order : ℝ) := by
++  let q : ℝ := pp.group.order
++  have hq : 1 ≤ q :=
++    Nat.one_le_cast.mpr ((Nat.le_add_right 1 1).trans pp.group.order_prime.two_le)
++  have hq0 : 0 ≤ q := zero_le_one.trans hq
++  have hx0 : (0 : ℝ) ≤ 1 / q := one_div_nonneg.mpr hq0
++  have hy0 : (0 : ℝ) ≤ 1 / q ^ 2 := one_div_nonneg.mpr (pow_nonneg hq0 2)
++  have hz0 : (0 : ℝ) ≤ 1 / q ^ 3 := one_div_nonneg.mpr (pow_nonneg hq0 3)
++  have hx1 : (1 : ℝ) / q ≤ 1 := ?_
++  swap
++  · simpa only [div_one] using one_div_le_one_div_of_le zero_lt_one hq
++  have hyx : (1 : ℝ) / q ^ 2 ≤ 1 / q := ?_
++  swap
++  · simpa only [pow_one] using
++      one_div_pow_le_one_div_pow_of_le hq (Nat.le_add_right 1 1)
++  have hzx : (1 : ℝ) / q ^ 3 ≤ 1 / q := ?_
++  swap
++  · simpa only [pow_one] using
++      one_div_pow_le_one_div_pow_of_le hq (Nat.le_add_right 1 2)
++  have hz1 : (1 : ℝ) / q ^ 3 ≤ 1 := hzx.trans hx1
++  have hrem : (0 : ℝ) ≤ (1 / q) * (1 / q ^ 2) * (1 - 1 / q ^ 3) +
++      (1 / q) * (1 / q ^ 3) + (1 / q ^ 2) * (1 / q ^ 3) :=
++    add_nonneg
++      (add_nonneg (mul_nonneg (mul_nonneg hx0 hy0) (sub_nonneg.mpr hz1))
++        (mul_nonneg hx0 hz0))
++      (mul_nonneg hy0 hz0)
++  rw [rankSlack_eq]
++  change 1 - (1 - 1 / q) * (1 - 1 / q ^ 2) * (1 - 1 / q ^ 3) ≤ 3 / q
++  rw [show (3 : ℝ) / q = 3 * (1 / q) from by ring]
++  nlinarith only [hrem, hyx, hzx]
+ 
+ /-- Averaging the nonnegative exact rank correction preserves nonnegativity.
+ 
+ **Proof sketch.** Apply the shared expectation monotonicity and constant expectation readers
+ to the pointwise nonnegative correction. -/
+-theorem linearSlack_nonneg (G : BilinearGen) (κ : ℕ) : 0 ≤ linearSlack G κ := sorry
++theorem linearSlack_nonneg (G : BilinearGen) (κ : ℕ) : 0 ≤ linearSlack G κ := by
++  rw [linearSlack_eq]
++  exact TCSlib.Cryptography.Games.ProbComp.expect_nonneg (publicParamsGen G κ)
++    (fun pp => rankSlack_nonneg pp)
+ 
+ /-- Every fixed prime schedule bounds the averaged correction by 3/p(κ).
+ 
+@@ -66,7 +118,17 @@ theorem linearSlack_nonneg (G : BilinearGen) (κ : ℕ) : 0 ≤ linearSlack G κ
+ then average rankSlack_le_three_div and apply the constant expectation reader. -/
+ theorem linearSlack_le_fixedOrder (G : BilinearGen) (p : ℕ → ℕ)
+     (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) :
+-    linearSlack G κ ≤ 3 / (p κ : ℝ) := sorry
++    linearSlack G κ ≤ 3 / (p κ : ℝ) := by
++  rw [linearSlack_eq]
++  calc
++    _ ≤ TCSlib.Cryptography.Games.ProbComp.expect (publicParamsGen G κ)
++        (fun _ => 3 / (p κ : ℝ)) :=
++      TCSlib.Cryptography.Games.ProbComp.expect_mono (publicParamsGen G κ) ?_
++    _ = 3 / (p κ : ℝ) :=
++      TCSlib.Cryptography.Games.ProbComp.expect_const (publicParamsGen G κ) _
++  intro pp
++  simpa only [PublicParams.group_eq, order_eq_of_publicParams G p hp κ pp] using
++    (rankSlack_le_three_div pp)
+ 
+ /-- Exponential order growth makes the exact rank correction subexponentially small at
+ any positive exponent below one [JLS26, Section 1.1].
+@@ -76,7 +138,20 @@ Use subexpSmall_two_pow_neg and the shared constant-multiple and domination clos
+ the requested smaller exponent. No negligible estimate is reproved locally. -/
+ theorem linearSlack_subexpSmall (G : BilinearGen) (p : ℕ → ℕ)
+     (hp : ∀ κ r, (G.inst κ r).order = p κ) (hpb : ∀ κ, 2 ^ κ ≤ p κ)
+-    {c : ℝ} (hc₀ : 0 < c) (hc₁ : c < 1) : SubexpSmall c (linearSlack G) := sorry
++    {c : ℝ} (hc₀ : 0 < c) (hc₁ : c < 1) : SubexpSmall c (linearSlack G) := by
++  refine (subexpSmall_two_pow_neg.const_mul zero_lt_one hc₁ 3).mono ⟨0, ?_⟩
++  intro κ _
++  have hcast : (2 : ℝ) ^ κ ≤ (p κ : ℝ) := ?_
++  swap
++  · exact_mod_cast hpb κ
++  rw [abs_of_nonneg (linearSlack_nonneg G κ)]
++  calc
++    _ ≤ 3 / (p κ : ℝ) := linearSlack_le_fixedOrder G p hp κ
++    _ ≤ 3 * (2 : ℝ)⁻¹ ^ κ := ?_
++    _ ≤ |3 * (2 : ℝ)⁻¹ ^ κ| := le_abs_self _
++  simpa only [div_eq_mul_inv, inv_pow] using
++    (div_le_div_of_nonneg_left (a := (3 : ℝ)) zero_le_three
++      (pow_pos two_pos κ) hcast)
+ 
+ /-- Exponential order growth makes the exact rank correction negligible.
+ 
+@@ -84,6 +159,8 @@ theorem linearSlack_subexpSmall (G : BilinearGen) (p : ℕ → ℕ)
+ SubexpSmall.negligible theorem. -/
+ theorem linearSlack_negligible (G : BilinearGen) (p : ℕ → ℕ)
+     (hp : ∀ κ r, (G.inst κ r).order = p κ) (hpb : ∀ κ, 2 ^ κ ≤ p κ) :
+-    Negligible (linearSlack G) := sorry
++    Negligible (linearSlack G) := by
++  exact (linearSlack_subexpSmall G p hp hpb (c := (1 : ℝ) / 2)
++    (half_pos zero_lt_one) (half_lt_self zero_lt_one)).negligible (half_pos zero_lt_one)
+ 
+ end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean
+index f6e2e9b61..1a65f97de 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean
+@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: TCSlib contributors
+ -/
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
++import TCSlib.Cryptography.Pairing.MatrixDH.FiniteLinear
+ import Mathlib.Data.Fin.Tuple.Basic
+ import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+ import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Card
+@@ -95,7 +96,20 @@ theorem groupPGStar_lift (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ
+     (mu : ZMod pp.group.order)
+     (t : (PG.TIdx κ pp.orderParam f ⊕ Fin (n'.eval κ)) → ZMod pp.group.order) :
+     groupPGStar G PG κ pp f x (pp.generator ^ mu.val) t =
+-      pp.group.expVec pp.generator (PG.pgbStar κ pp.orderParam f x mu t) := sorry
++      pp.group.expVec pp.generator (PG.pgbStar κ pp.orderParam f x mu t) := by
++  rw [groupPGStar_eq]
++  funext i
++  cases i with
++  | inl j =>
++      simp only [Sum.elim_inl, pp.group.expVec_apply, PG.pgbStar_eq,
++        PartialGarbling.pgbStarCore_inl]
++  | inr u =>
++      simp only [Sum.elim_inr, pp.group.expVec_apply, PG.pgbStar_eq,
++        PartialGarbling.pgbStarCore_inr]
++      by_cases h : u = PG.m0 κ pp.orderParam f
++      · simp only [if_pos h, add_zero]
++        exact (pp.group.pow_val_add pp.generator _ _).symm
++      · simp only [if_neg h, add_zero, mul_one]
+ 
+ /-- The simulator's basis matrix is `(A|c)^T` with the final row supplied by `c`
+ [Wee20, §4.2, p. 10, Setup*]. -/
+@@ -197,7 +211,9 @@ theorem simSetupCore_eq (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ)
+ theorem simSetupCore_singular (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ)
+     (pp : PublicParams G κ) (ω : SimSetupDraw G ℓ zDim κ pp)
+     (h : ¬ IsUnit (basisMatrix G κ pp ω.1 ω.2.1).det) :
+-    (simSetupCore G ℓ zDim κ pp ω).2.basisInv = 0 := sorry
++    (simSetupCore G ℓ zDim κ pp ω).2.basisInv = 0 := by
++  rw [simSetupCore_eq]
++  exact Matrix.nonsing_inv_apply_not_isUnit _ h
+ 
+ /-- Simulated encryption reveals only the three preselected group masks
+ [Wee20, §4.2, p. 10, Enc*]. The public input is accepted but does not affect these masks. -/
+@@ -399,7 +415,79 @@ divide by the cardinality of all matrices, using `ZMod.card`. -/
+ theorem simSetup_fullRank_prob (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ)
+     (pp : PublicParams G κ) :
+     ProbComp.prob (ProbComp.sample (SimSetupDraw G ℓ zDim κ pp))
+-      (fun ω => IsUnit (basisMatrix G κ pp ω.1 ω.2.1).det) = 1 - rankSlack pp := sorry
++      (fun ω => IsUnit (basisMatrix G κ pp ω.1 ω.2.1).det) = 1 - rankSlack pp := by
++  classical
++  let K := ZMod pp.group.order
++  let Tail : Type :=
++    Matrix (Fin 3) (Fin (zDim.eval κ)) K ×
++      Matrix (Fin 3) (Fin (ℓ.eval κ) × Fin 2) K ×
++      Matrix (Fin 3) (Fin 2) K ×
++      (Fin (zDim.eval κ) → K) × (Fin 2 → K)
++  let row : ((Fin 2 → K) × K) ≃ (Fin 3 → K) :=
++    (Equiv.prodComm (Fin 2 → K) K).trans
++      (Fin.snocEquiv (fun _ : Fin 3 => K))
++  let ac : (Matrix (Fin 3) (Fin 2) K × (Fin 3 → K)) ≃
++      Matrix (Fin 3) (Fin 3) K :=
++    (Equiv.arrowProdEquivProdArrow (Fin 3)
++      (fun _ => Fin 2 → K) (fun _ => K)).symm.trans
++      ((Equiv.piCongrRight (fun _ : Fin 3 => row)).trans
++        (Equiv.piComm (fun (_ : Fin 3) (_ : Fin 3) => K)))
++  let e : SimSetupDraw G ℓ zDim κ pp ≃ (Matrix (Fin 3) (Fin 3) K × Tail) :=
++    (Equiv.prodAssoc (Matrix (Fin 3) (Fin 2) K) (Fin 3 → K) Tail).symm.trans
++      (Equiv.prodCongr ac (Equiv.refl Tail))
++  have hBasis : ∀ ω : SimSetupDraw G ℓ zDim κ pp,
++      (e ω).1 = basisMatrix G κ pp ω.1 ω.2.1 := by
++    intro ω
++    exact (basisMatrix_eq G κ pp ω.1 ω.2.1).symm
++  have hEvent :
++      (fun ω : SimSetupDraw G ℓ zDim κ pp =>
++        IsUnit (basisMatrix G κ pp ω.1 ω.2.1).det) =
++      (fun ω : SimSetupDraw G ℓ zDim κ pp => IsUnit (e ω).1) := ?_
++  swap
++  · funext ω
++    rw [hBasis ω]
++    exact propext (Matrix.isUnit_iff_isUnit_det _).symm
++  have hDist :
++      ProbComp.prob (ProbComp.sample (SimSetupDraw G ℓ zDim κ pp))
++          (fun ω => IsUnit (basisMatrix G κ pp ω.1 ω.2.1).det) =
++        ProbComp.prob (ProbComp.sample (Matrix (Fin 3) (Fin 3) K))
++          (fun M => IsUnit M) := ?_
++  swap
++  · rw [Bridge.prob_sample_eq_uprob, Bridge.prob_sample_eq_uprob, hEvent]
++    exact (uprob_comp_equiv e
++      (fun z : Matrix (Fin 3) (Fin 3) K × Tail => IsUnit z.1)).trans
++        (uprob_fst (β := Tail) (fun M : Matrix (Fin 3) (Fin 3) K => IsUnit M))
++  have hCount :
++      (((∏ i : Fin 3,
++          (Fintype.card K ^ 3 - Fintype.card K ^ (i : ℕ))) : ℕ) : ℝ) /
++          (Fintype.card K : ℝ) ^ (3 * 3) =
++        (1 - 1 / (pp.group.order : ℝ)) *
++          (1 - 1 / (pp.group.order : ℝ) ^ 2) *
++          (1 - 1 / (pp.group.order : ℝ) ^ 3) := by
++    let q : ℕ := pp.group.order
++    have hq₂ : 2 ≤ q := pp.group.order_prime.two_le
++    have hq₁ : 1 ≤ q := (Nat.le_add_right 1 1).trans hq₂
++    have h31 : 1 ≤ q ^ 3 := one_le_pow₀ hq₁
++    have h3q : q ≤ q ^ 3 := le_self_pow₀ hq₁ (Nat.succ_ne_zero 2)
++    have h32 : q ^ 2 ≤ q ^ 3 := pow_le_pow_right₀ hq₁ (Nat.le_succ 2)
++    have hqne : (q : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr pp.group.order_prime.ne_zero
++    have hcard : Fintype.card K = q := ZMod.card pp.group.order
++    rw [hcard, Fin.prod_univ_three]
++    change (((q ^ 3 - q ^ 0) * (q ^ 3 - q ^ 1) * (q ^ 3 - q ^ 2) : ℕ) : ℝ) /
++        (q : ℝ) ^ 9 =
++      (1 - 1 / (q : ℝ)) * (1 - 1 / (q : ℝ) ^ 2) *
++        (1 - 1 / (q : ℝ) ^ 3)
++    simp only [pow_zero, pow_one, Nat.cast_mul, Nat.cast_sub h31,
++      Nat.cast_sub h3q, Nat.cast_sub h32, Nat.cast_pow, Nat.cast_one]
++    field_simp [hqne] <;> ring
++  calc
++    _ = ProbComp.prob (ProbComp.sample (Matrix (Fin 3) (Fin 3) K))
++        (fun M => IsUnit M) := hDist
++    _ = _ := prob_sample_matrix_isUnit_eq (K := K) 3
++    _ = _ := hCount
++    _ = 1 - rankSlack pp := ?_
++  rw [rankSlack_eq]
++  ring
+ 
+ /-- Π's statistical correction averages its exact rank failure over sequential public-
+ parameter generation [Wee20, Appendix B, Theorem 1, p. 12, with exact rank accounting]. -/
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean
+index 1789b65c9..dad907394 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean
+@@ -58,7 +58,14 @@ theorem PHFE.class_eval_eq (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+         ((phfeClass ℓ n G.wG d).eval κ (PHFE.classParam G ℓ n d κ pp) f x y) =
+       Quadratic.value G n n PG κ pp (PHFE.decodeFunction G ℓ n d κ pp f)
+         (PHFE.decodePublic G ℓ n d κ pp x)
+-        (PHFE.decodePrivate G ℓ n d κ pp y) (PHFE.decodePrivate G ℓ n d κ pp y) := sorry
++        (PHFE.decodePrivate G ℓ n d κ pp y) (PHFE.decodePrivate G ℓ n d κ pp y) := by
++  rw [Quadratic.value_eq, (PHFE.pgSound_iff PG).mp hPG]
++  simp only [PHFE.valueEquiv_eq, phfeClassValueEquiv_eq, PHFE.classParam_eq,
++    phfeClassParamEquiv_eq, Equiv.refl_symm, Equiv.refl_apply,
++    phfeClass_eval, phfeEval_eq, quadEval_eq, PHFE.decodeFunction_eq,
++    PHFE.decodePublic_eq, PHFE.decodePrivate_eq, finCongr_refl,
++    Equiv.coe_refl, Function.comp_id]
++  rfl
+ 
+ /-- The raw PHFE scheme is perfectly correct for every honest draw, in the target-group
+ exponent [GJLS21, Definition 4.2; Wee20, Section 3.1, (4)-(5)].
+diff --git a/TCSlib/Cryptography/Pairing/Linear.lean b/TCSlib/Cryptography/Pairing/Linear.lean
+index db0de5de2..37b0dfd35 100644
+--- a/TCSlib/Cryptography/Pairing/Linear.lean
++++ b/TCSlib/Cryptography/Pairing/Linear.lean
+@@ -386,12 +386,126 @@ theorem dlinMatrixGame_random_gap_le (D : NUPPT) (κ : ℕ) :
+           H pp ab ![ab 0 * rs 0, ab 1 * rs 1, t]
+   let loss (pp : PublicParams G κ) : ℝ :=
+     2 / (pp.group.order : ℝ) - 1 / (pp.group.order : ℝ) ^ 2
+-  have hPoint (pp : PublicParams G κ) : |P pp - Q pp| ≤ loss pp := sorry
+-  have hLoss : ProbComp.expect (publicParamsGen G κ) loss = G.dlinMatrixSlack κ := sorry
++  have hPoint (pp : PublicParams G κ) : |P pp - Q pp| ≤ loss pp := by
++    letI : Fact pp.group.order.Prime := ⟨pp.group.order_prime⟩
++    letI : NeZero pp.group.order := ⟨pp.group.order_prime.ne_zero⟩
++    let obs (ab : Fin 2 → ZMod pp.group.order) (u : Fin 3 → ZMod pp.group.order)
++        (r : D.Coins κ) : Prop :=
++      D.distinguisherL κ
++        (G.dlinEnc κ (G.dlinChallenge κ pp
++          (pp.generator ^ (ab 0).val) (pp.generator ^ (ab 1).val)
++          (pp.generator ^ (u 0).val) (pp.generator ^ (u 1).val)
++          (pp.generator ^ (u 2).val))) r = true
++    have h0 (ab : Fin 2 → ZMod pp.group.order) (u : Fin 3 → ZMod pp.group.order) :
++        0 ≤ H pp ab u :=
++      ProbComp.prob_nonneg (ProbComp.sample (D.Coins κ)) (obs ab u)
++    have h1 (ab : Fin 2 → ZMod pp.group.order) (u : Fin 3 → ZMod pp.group.order) :
++        H pp ab u ≤ 1 :=
++      ProbComp.prob_le_one (ProbComp.sample (D.Coins κ)) (obs ab u)
++    have h := dlinDiagonal_random_gap_le (K := ZMod pp.group.order) (H pp) h0 h1
++    have hc := congrArg (fun n : ℕ => 2 / (n : ℝ) - 1 / (n : ℝ) ^ 2)
++      (ZMod.card pp.group.order)
++    exact h.trans hc.le
++  have hLoss : ProbComp.expect (publicParamsGen G κ) loss = G.dlinMatrixSlack κ := by
++    rw [G.dlinMatrixSlack_eq κ, publicParamsGen_eq G κ, ProbComp.expect_bind]
++    apply congrArg (ProbComp.expect (ProbComp.sample (G.gen.Coins κ)))
++    funext ρ
++    let d : GroupDescription G κ := ⟨G.desc κ ρ, ⟨ρ, rfl⟩⟩
++    let c : ℝ :=
++      2 / ((G.group κ d.val).order : ℝ) - 1 / ((G.group κ d.val).order : ℝ) ^ 2
++    change ProbComp.expect
++        (publicParamsCore G κ d <$> ProbComp.sample (GeneratorDraw G κ d)) loss =
++      2 / ((G.inst κ ρ).order : ℝ) - 1 / ((G.inst κ ρ).order : ℝ) ^ 2
++    rw [ProbComp.expect_map, G.inst_eq κ ρ]
++    change ProbComp.expect (ProbComp.sample (GeneratorDraw G κ d))
++      (fun g => loss (publicParamsCore G κ d g)) = c
++    have hOrder (g : GeneratorDraw G κ d) :
++        (publicParamsCore G κ d g).group.order = (G.group κ d.val).order := ?_
++    swap
++    · rw [PublicParams.group_eq (publicParamsCore G κ d g), publicParamsCore_eq G κ d g]
++    have hIntegrand :
++        (fun g : GeneratorDraw G κ d => loss (publicParamsCore G κ d g)) =
++          (fun _ => c) :=
++      funext (fun g => congrArg
++        (fun n : ℕ => 2 / (n : ℝ) - 1 / (n : ℝ) ^ 2) (hOrder g))
++    rw [hIntegrand]
++    exact ProbComp.expect_const (ProbComp.sample (GeneratorDraw G κ d)) c
+   have hMatrixAccept : accept (G.dlinMatrixGame D false κ) =
+-      ProbComp.expect (publicParamsGen G κ) P := sorry
++      ProbComp.expect (publicParamsGen G κ) P := by
++    rw [accept_eq (G.dlinMatrixGame D false κ), G.dlinMatrixGame_eq D false κ,
++      ProbComp.prob_bind, G.dlinMatrixSample_eq false κ, ProbComp.expect_bind]
++    apply congrArg (ProbComp.expect (publicParamsGen G κ))
++    funext pp
++    rw [ProbComp.expect_bind]
++    dsimp only [P]
++    apply congrArg
++      (ProbComp.expect (ProbComp.sample (Fin 2 → ZMod pp.group.order)))
++    funext ab
++    simp only [ProbComp.expect_bind, ProbComp.expect_pure, Bool.false_eq_true, if_false]
++    let word (u : Fin 3 → ZMod pp.group.order) : List Bool :=
++      G.dlinEnc κ (G.dlinChallenge κ pp
++        (pp.generator ^ (ab 0).val) (pp.generator ^ (ab 1).val)
++        (pp.generator ^ (u 0).val) (pp.generator ^ (u 1).val)
++        (pp.generator ^ (u 2).val))
++    let obs (u : Fin 3 → ZMod pp.group.order) : ℝ :=
++      ProbComp.prob ((ProbComp.sample (D.Coins κ)).bind fun r =>
++        .pure (D.distinguisherL κ (word u) r)) (fun b => b = true)
++    change ProbComp.expect (ProbComp.sample (Fin 2 → ZMod pp.group.order))
++        (fun _ => ProbComp.expect (ProbComp.sample (Fin 3 → ZMod pp.group.order)) obs) =
++      ProbComp.expect (ProbComp.sample (Fin 3 → ZMod pp.group.order)) (H pp ab)
++    rw [ProbComp.expect_const (ProbComp.sample (Fin 2 → ZMod pp.group.order))
++      (ProbComp.expect (ProbComp.sample (Fin 3 → ZMod pp.group.order)) obs)]
++    apply congrArg
++      (ProbComp.expect (ProbComp.sample (Fin 3 → ZMod pp.group.order)))
++    funext u
++    let verdict : D.Coins κ → Bool := fun r => D.distinguisherL κ (word u) r
++    change ProbComp.prob
++        ((ProbComp.sample (D.Coins κ)).bind fun r => .pure (verdict r))
++        (fun b => b = true) =
++      ProbComp.prob (ProbComp.sample (D.Coins κ)) (fun r => verdict r = true)
++    rw [ProbComp.prob_eq_expect (ProbComp.sample (D.Coins κ))
++      (fun r => verdict r = true), ProbComp.prob_bind]
++    apply congrArg (ProbComp.expect (ProbComp.sample (D.Coins κ)))
++    funext r
++    exact ProbComp.prob_pure (verdict r) (fun b => b = true)
+   have hTupleAccept : accept (G.dlinGame D false κ) =
+-      ProbComp.expect (publicParamsGen G κ) Q := sorry
++      ProbComp.expect (publicParamsGen G κ) Q := by
++    rw [accept_eq (G.dlinGame D false κ), G.dlinGame_eq D false κ,
++      ProbComp.prob_bind, G.dlinSample_eq false κ, ProbComp.expect_bind]
++    apply congrArg (ProbComp.expect (publicParamsGen G κ))
++    funext pp
++    rw [ProbComp.expect_bind]
++    dsimp only [Q]
++    apply congrArg
++      (ProbComp.expect (ProbComp.sample (Fin 2 → ZMod pp.group.order)))
++    funext ab
++    rw [ProbComp.expect_bind]
++    apply congrArg
++      (ProbComp.expect (ProbComp.sample (Fin 2 → ZMod pp.group.order)))
++    funext rs
++    rw [ProbComp.expect_bind]
++    apply congrArg (ProbComp.expect (ProbComp.sample (ZMod pp.group.order)))
++    funext t
++    rw [ProbComp.expect_pure]
++    simp only [Bool.false_eq_true, if_false]
++    dsimp only [H]
++    simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
++      Matrix.head_cons, Matrix.tail_cons]
++    let word : List Bool :=
++      G.dlinEnc κ (G.dlinChallenge κ pp
++        (pp.generator ^ (ab 0).val) (pp.generator ^ (ab 1).val)
++        (pp.generator ^ (ab 0 * rs 0).val) (pp.generator ^ (ab 1 * rs 1).val)
++        (pp.generator ^ t.val))
++    let verdict : D.Coins κ → Bool := fun r => D.distinguisherL κ word r
++    change ProbComp.prob
++        ((ProbComp.sample (D.Coins κ)).bind fun r => .pure (verdict r))
++        (fun b => b = true) =
++      ProbComp.prob (ProbComp.sample (D.Coins κ)) (fun r => verdict r = true)
++    rw [ProbComp.prob_eq_expect (ProbComp.sample (D.Coins κ))
++      (fun r => verdict r = true), ProbComp.prob_bind]
++    apply congrArg (ProbComp.expect (ProbComp.sample (D.Coins κ)))
++    funext r
++    exact ProbComp.prob_pure (verdict r) (fun b => b = true)
+   rw [hMatrixAccept, hTupleAccept, ← hLoss]
+   exact ProbComp.abs_expect_sub_le_expect (publicParamsGen G κ) hPoint
+ 
+@@ -401,7 +515,19 @@ theorem dlinMatrixGame_random_gap_le (D : NUPPT) (κ : ℕ) :
+ **Proof sketch.** Apply the triangle inequality to the random acceptance probabilities,
+ using `dlinMatrixGame_real_accept` and `dlinMatrixGame_random_gap_le`. -/
+ theorem dlinMatrixAdv_le (D : NUPPT) (κ : ℕ) :
+-    G.dlinMatrixAdv D κ ≤ G.dlinAdv D κ + G.dlinMatrixSlack κ := sorry
++    G.dlinMatrixAdv D κ ≤ G.dlinAdv D κ + G.dlinMatrixSlack κ := by
++  rw [dlinMatrixAdv_eq, dlinAdv_eq, advantage_eq, advantage_eq,
++    dlinMatrixGame_real_accept]
++  calc
++    |accept (G.dlinMatrixGame D false κ) - accept (G.dlinGame D true κ)| ≤
++        |accept (G.dlinMatrixGame D false κ) - accept (G.dlinGame D false κ)| +
++          |accept (G.dlinGame D false κ) - accept (G.dlinGame D true κ)| :=
++      abs_sub_le _ _ _
++    _ ≤ G.dlinMatrixSlack κ +
++        |accept (G.dlinGame D false κ) - accept (G.dlinGame D true κ)| :=
++      add_le_add_right (G.dlinMatrixGame_random_gap_le D κ) _
++    _ = |accept (G.dlinGame D false κ) - accept (G.dlinGame D true κ)| +
++        G.dlinMatrixSlack κ := add_comm _ _
+ 
+ end BilinearGen
+ 
+diff --git a/TCSlib/Cryptography/Pairing/MatrixDH.lean b/TCSlib/Cryptography/Pairing/MatrixDH.lean
+index 8d0913c84..ec4ad20d8 100644
+--- a/TCSlib/Cryptography/Pairing/MatrixDH.lean
++++ b/TCSlib/Cryptography/Pairing/MatrixDH.lean
+@@ -5,6 +5,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ import TCSlib.Cryptography.Pairing.MatrixDH.Parameters
+ import TCSlib.Cryptography.Pairing.MatrixDH.Diagonal
+ import TCSlib.Cryptography.Pairing.MatrixDH.FiniteLinear
++import TCSlib.Cryptography.Pairing.MatrixDH.AdaptiveShear
++import TCSlib.Cryptography.Pairing.MatrixDH.ColumnLaws
+ import TCSlib.Cryptography.Pairing.MatrixDH.Defs
+ import TCSlib.Cryptography.Pairing.MatrixDH.SelfReduction
+ 
+@@ -20,6 +22,8 @@ set_option autoImplicit false
+ * `Parameters`: generated group descriptions and public nonidentity generators.
+ * `Diagonal`: exact finite-field bounds for random diagonal masks.
+ * `FiniteLinear`: uniform matrix images and exact small-row rank estimates.
++* `AdaptiveShear`: kernel-valued translations preserving a public projection.
++* `ColumnLaws`: exact canonical real/random column comparisons.
+ * `Defs`: uniform-matrix experiments and their two-experiment advantage.
+ * `SelfReduction`: explicit column-hybrid preprocessing, advice, and advantage inequalities.
+ 
+diff --git a/TCSlib/Cryptography/Pairing/MatrixDH/AdaptiveShear.lean b/TCSlib/Cryptography/Pairing/MatrixDH/AdaptiveShear.lean
+new file mode 100644
+index 000000000..38f460de2
+--- /dev/null
++++ b/TCSlib/Cryptography/Pairing/MatrixDH/AdaptiveShear.lean
+@@ -0,0 +1,75 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import Mathlib.GroupTheory.Coset.Basic
++import Mathlib.Logic.Equiv.Prod
++import Mathlib.Logic.Equiv.Sum
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Public-preserving adaptive translations
++
++## Main definitions
++
++The construction uses the existing subtype, fiber and product equivalences.
++
++## Main results
++
++* `exists_fiberwise_add_right_equiv`: a kernel-valued adaptive translation with explicit inverse.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive, Report 2020/1420,
++  Appendix B, Lemma 3, pp. 13–14.
++-/
++
++namespace TCSlib.Cryptography.Pairing
++
++/-- A kernel-valued translation depending on a latent parameter and a public projection
++is an equivalence. It fixes the latent parameter and that projection, and its inverse
++subtracts the same shift. This is the algebraic reindexing used in the adaptive change of
++variables [Wee20, Appendix B, Lemma 3, pp. 13–14], stated for general additive groups.
++
++**Proof sketch.** Restrict the existing right-translation equivalence to every fiber of
++the public projection. Assemble the fiber equivalences with `ofFiberEquiv`, and retain
++the latent coordinate with `prodCongrRight`. Read projection preservation from the fiber
++constructor. Because the projection is unchanged, the inverse subtracts the same shift. -/
++theorem exists_fiberwise_add_right_equiv {U E P : Type*} [AddGroup E] [AddGroup P]
++    (projection : E →+ P) (shift : U → P → E)
++    (hshift : ∀ (u : U) (p : P), projection (shift u p) = 0) :
++    ∃ e : (U × E) ≃ (U × E),
++      (∀ (u : U) (x : E), e (u, x) = (u, x + shift u (projection x))) ∧
++      (∀ (u : U) (x : E), e.symm (u, x) = (u, x - shift u (projection x))) ∧
++      (∀ (u : U) (x : E), projection (e (u, x)).2 = projection x) := by
++  have hpres : ∀ (u : U) (p : P) (x : E),
++      projection x = p ↔ projection (Equiv.addRight (shift u p) x) = p := ?_
++  swap
++  · intro u p x
++    simp only [Equiv.coe_addRight, map_add, hshift, add_zero]
++  let fiber : ∀ (u : U) (p : P),
++      {x : E // projection x = p} ≃ {x : E // projection x = p} :=
++    fun u p => (Equiv.addRight (shift u p)).subtypeEquiv (hpres u p)
++  let e : (U × E) ≃ (U × E) :=
++    Equiv.prodCongrRight (fun u => Equiv.ofFiberEquiv (fiber u))
++  have hf : ∀ (u : U) (x : E),
++      e (u, x) = (u, x + shift u (projection x)) := ?_
++  swap
++  · intro u x
++    simp only [e, Equiv.prodCongrRight_apply, Equiv.ofFiberEquiv_apply,
++      fiber, Equiv.subtypeEquiv_apply, Equiv.coe_addRight]
++    rfl
++  refine ⟨e, hf, ?_, ?_⟩
++  · intro u x
++    apply (Equiv.symm_apply_eq e).mpr
++    rw [hf]
++    simp only [map_sub, hshift, sub_zero, sub_add_cancel]
++  · intro u x
++    simpa only [e, Equiv.prodCongrRight_apply] using
++      (Equiv.ofFiberEquiv_map (fiber u) x)
++
++end TCSlib.Cryptography.Pairing
+diff --git a/TCSlib/Cryptography/Pairing/MatrixDH/ColumnLaws.lean b/TCSlib/Cryptography/Pairing/MatrixDH/ColumnLaws.lean
+new file mode 100644
+index 000000000..9328ef923
+--- /dev/null
++++ b/TCSlib/Cryptography/Pairing/MatrixDH/ColumnLaws.lean
+@@ -0,0 +1,481 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Pairing.MatrixDH.FiniteLinear
++import Mathlib.Logic.Equiv.Fin.Basic
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Canonical DLIN column laws
++
++## Main definitions
++
++The tests observe a scalar base matrix and one scalar response column.
++
++## Main results
++
++* `dlin_base_transpose_mulVec_surjective`: the canonical base's nondegenerate geometry.
++* `dlin_real_column_gap_le`: the real-column comparison with loss `1/N²`.
++* `dlin_random_column_gap_le`: the random-column comparison with loss `1-(1-1/N)³`.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive, Report 2020/1420, Section 2.1, p. 4.
++-/
++
++namespace TCSlib.Cryptography.Pairing
++
++open TCSlib.Cryptography.Games
++open scoped Matrix
++
++/-- If either canonical diagonal entry is nonzero, the transpose of the three-by-two
++canonical DLIN base maps three scalar coordinates onto two. This is fixed scalar-matrix
++geometry for the direct column route to [Wee20, §2.1, p. 4].
++
++**Proof sketch.** Apply the published right-inverse characterization of a surjective matrix
++column map. A nonzero first or second diagonal entry supplies the corresponding right
++inverse using division by that known nonzero scalar; matrix entry readers verify it. -/
++theorem dlin_base_transpose_mulVec_surjective {K : Type} [Field K]
++    (a b : K) (hab : a ≠ 0 ∨ b ≠ 0) :
++    Function.Surjective
++      (Matrix.mulVec ((![![a, 0], ![0, b], ![1, 1]] :
++        Matrix (Fin 3) (Fin 2) K)ᵀ)) := by
++  apply (Matrix.mulVec_surjective_iff_exists_right_inverse
++    (A := ((![![a, 0], ![0, b], ![1, 1]] : Matrix (Fin 3) (Fin 2) K)ᵀ))).2
++  rcases hab with ha | hb
++  · -- Use the first nonzero diagonal entry to construct a scalar right inverse.
++    refine ⟨(![![a⁻¹, -a⁻¹], ![0, 0], ![0, 1]] :
++      Matrix (Fin 3) (Fin 2) K), ?_⟩
++    ext i j
++    fin_cases i <;> fin_cases j <;>
++      simp only [Matrix.mul_apply, Fin.sum_univ_three, Matrix.transpose_apply,
++        Matrix.of_apply, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
++        Matrix.head_cons, Matrix.tail_cons, Matrix.one_apply, mul_zero, zero_mul,
++        one_mul, mul_one, mul_neg, mul_inv_cancel₀ ha, add_zero, zero_add,
++        neg_add_cancel] <;> norm_num <;>
++        simp only [mul_inv_cancel₀ ha, neg_add_cancel]
++  · -- The second nonzero diagonal entry gives the symmetric scalar right inverse.
++    refine ⟨(![![0, 0], ![-b⁻¹, b⁻¹], ![1, 0]] :
++      Matrix (Fin 3) (Fin 2) K), ?_⟩
++    ext i j
++    fin_cases i <;> fin_cases j <;>
++      simp only [Matrix.mul_apply, Fin.sum_univ_three, Matrix.transpose_apply,
++        Matrix.of_apply, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
++        Matrix.head_cons, Matrix.tail_cons, Matrix.one_apply, mul_zero, zero_mul,
++        one_mul, mul_one, mul_neg, mul_inv_cancel₀ hb, add_zero, zero_add,
++        neg_add_cancel] <;> norm_num <;>
++        simp only [mul_inv_cancel₀ hb, neg_add_cancel]
++
++/-- Left-randomized canonical real DLIN columns and uniform-base real columns have
++expectation gap at most `1/N²` for every `[0,1]`-valued test, where `N` is the finite field
++cardinality. This is scalar distribution glue for the column route to [Wee20, §2.1, p. 4];
++the explicit loss is the probability that both canonical diagonal scalars vanish.
++
++**Proof sketch.** The transpose of the canonical three-by-two base has a surjective
++column map unless both diagonal entries vanish. Apply the existing uniform matrix-image
++law through transposition, then matrix-vector associativity, on that good event. Bound
++the gap by one on its complement. The published independent-coordinate and singleton
++probability laws give exact exceptional mass `N⁻²`; average the pointwise gap. -/
++theorem dlin_real_column_gap_le {K : Type} [Field K] [Fintype K] (rows : ℕ)
++    (H : Matrix (Fin rows) (Fin 2) K → (Fin rows → K) → ℝ)
++    (hH0 : ∀ M v, 0 ≤ H M v) (hH1 : ∀ M v, H M v ≤ 1) :
++    let A : (Fin 2 → K) → Matrix (Fin 3) (Fin 2) K :=
++      fun ab => ![![ab 0, 0], ![0, ab 1], ![1, 1]]
++    |ProbComp.expect (ProbComp.sample (Fin 2 → K))
++        (fun ab => ProbComp.expect (ProbComp.sample (Fin 2 → K))
++          (fun rs => ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K))
++            (fun L => H (L * A ab) (L *ᵥ (A ab *ᵥ rs))))) -
++      ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 2) K))
++        (fun M => ProbComp.expect (ProbComp.sample (Fin 2 → K))
++          (fun rs => H M (M *ᵥ rs)))| ≤
++      1 / (Fintype.card K : ℝ) ^ 2 := by
++  intro A
++  letI : DecidableEq K := Classical.decEq K
++  let P (ab : Fin 2 → K) : ℝ :=
++    ProbComp.expect (ProbComp.sample (Fin 2 → K)) fun rs =>
++      ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K)) fun L =>
++        H (L * A ab) (L *ᵥ (A ab *ᵥ rs))
++  let Q : ℝ :=
++    ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 2) K)) fun M =>
++      ProbComp.expect (ProbComp.sample (Fin 2 → K)) fun rs => H M (M *ᵥ rs)
++  let bad (ab : Fin 2 → K) : Prop := ab 0 = 0 ∧ ab 1 = 0
++  change |ProbComp.expect (ProbComp.sample (Fin 2 → K)) P - Q| ≤
++    1 / (Fintype.card K : ℝ) ^ 2
++  -- Reuse the canonical-base geometry without repeating its right-inverse proof.
++  have hSurj : ∀ ab : Fin 2 → K, ab 0 ≠ 0 ∨ ab 1 ≠ 0 →
++      Function.Surjective (Matrix.mulVec (A ab)ᵀ) :=
++    fun ab hab => dlin_base_transpose_mulVec_surjective (K := K) (ab 0) (ab 1) hab
++  -- Both conditional experiments are averages of the original bounded test.
++  have hP0 (ab : Fin 2 → K) : 0 ≤ P ab :=
++    ProbComp.expect_nonneg (ProbComp.sample (Fin 2 → K)) fun rs =>
++      ProbComp.expect_nonneg (ProbComp.sample (Matrix (Fin rows) (Fin 3) K)) fun L =>
++        hH0 (L * A ab) (L *ᵥ (A ab *ᵥ rs))
++  have hP1 (ab : Fin 2 → K) : P ab ≤ 1 := ?_
++  swap
++  · calc
++      P ab ≤ ProbComp.expect (ProbComp.sample (Fin 2 → K)) (fun _ => 1) :=
++        ProbComp.expect_mono (ProbComp.sample (Fin 2 → K)) fun rs =>
++          calc
++            ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K))
++                (fun L => H (L * A ab) (L *ᵥ (A ab *ᵥ rs))) ≤
++              ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K))
++                (fun _ => 1) :=
++              ProbComp.expect_mono (ProbComp.sample (Matrix (Fin rows) (Fin 3) K))
++                (fun L => hH1 (L * A ab) (L *ᵥ (A ab *ᵥ rs)))
++            _ = 1 := ProbComp.expect_const
++              (ProbComp.sample (Matrix (Fin rows) (Fin 3) K)) 1
++      _ = 1 := ProbComp.expect_const (ProbComp.sample (Fin 2 → K)) 1
++  have hQ0 : 0 ≤ Q :=
++    ProbComp.expect_nonneg (ProbComp.sample (Matrix (Fin rows) (Fin 2) K)) fun M =>
++      ProbComp.expect_nonneg (ProbComp.sample (Fin 2 → K)) fun rs => hH0 M (M *ᵥ rs)
++  have hQ1 : Q ≤ 1 := ?_
++  swap
++  · calc
++      Q ≤ ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 2) K))
++          (fun _ => 1) :=
++        ProbComp.expect_mono (ProbComp.sample (Matrix (Fin rows) (Fin 2) K)) fun M =>
++          calc
++            ProbComp.expect (ProbComp.sample (Fin 2 → K))
++                (fun rs => H M (M *ᵥ rs)) ≤
++              ProbComp.expect (ProbComp.sample (Fin 2 → K)) (fun _ => 1) :=
++              ProbComp.expect_mono (ProbComp.sample (Fin 2 → K))
++                (fun rs => hH1 M (M *ᵥ rs))
++            _ = 1 := ProbComp.expect_const (ProbComp.sample (Fin 2 → K)) 1
++      _ = 1 := ProbComp.expect_const
++        (ProbComp.sample (Matrix (Fin rows) (Fin 2) K)) 1
++  -- The existing left-matrix image law gives the right-matrix image by transposition.
++  have hGood : ∀ ab : Fin 2 → K, ¬ bad ab → P ab = Q := ?_
++  swap
++  · intro ab hb
++    have hab : ab 0 ≠ 0 ∨ ab 1 ≠ 0 := ?_
++    swap
++    · by_cases ha : ab 0 = 0
++      · exact Or.inr (fun h => hb ⟨ha, h⟩)
++      · exact Or.inl ha
++    have hUniform (rs : Fin 2 → K) :
++        ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K))
++            (fun L => H (L * A ab) (L *ᵥ (A ab *ᵥ rs))) =
++          ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 2) K))
++            (fun M => H M (M *ᵥ rs)) := ?_
++    swap
++    · have hImage := expect_sample_matrix_mul_of_mulVec_surjective
++        (K := K) (r := 2) (m := 3) (c := rows) (A ab)ᵀ (hSurj ab hab)
++        (fun V : Matrix (Fin 2) (Fin rows) K => H Vᵀ (Vᵀ *ᵥ rs))
++      simp only [Matrix.transpose_mul, Matrix.transpose_transpose] at hImage
++      have hLeft := ProbComp.expect_sample_equiv
++        (Matrix.transposeAddEquiv (Fin rows) (Fin 3) K).toEquiv
++        (fun S : Matrix (Fin 3) (Fin rows) K =>
++          H (Sᵀ * A ab) ((Sᵀ * A ab) *ᵥ rs))
++      have hRight := ProbComp.expect_sample_equiv
++        (Matrix.transposeAddEquiv (Fin rows) (Fin 2) K).toEquiv
++        (fun V : Matrix (Fin 2) (Fin rows) K => H Vᵀ (Vᵀ *ᵥ rs))
++      simp only [Matrix.transposeAddEquiv_apply, Matrix.transpose_transpose] at hLeft hRight
++      simpa only [Matrix.mulVec_mulVec] using hLeft.trans (hImage.trans hRight.symm)
++    calc
++      P ab = ProbComp.expect (ProbComp.sample (Fin 2 → K))
++          (fun rs => ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 2) K))
++            (fun M => H M (M *ᵥ rs))) :=
++        congrArg (ProbComp.expect (ProbComp.sample (Fin 2 → K))) (funext hUniform)
++      _ = Q := ProbComp.expect_sample_comm (fun rs M => H M (M *ᵥ rs))
++  -- The only bad event has both independent diagonal coordinates equal to zero.
++  have hBadMass :
++      ProbComp.expect (ProbComp.sample (Fin 2 → K))
++          (fun ab => if bad ab then (1 : ℝ) else 0) =
++        1 / (Fintype.card K : ℝ) ^ 2 := ?_
++  swap
++  · have hEvent :
++        ProbComp.prob (ProbComp.sample (Fin 2 → K)) bad =
++          ProbComp.prob (ProbComp.sample (Fin 2 → K))
++            (fun ab => ∀ i : Fin 2, ab i = 0) :=
++      ProbComp.prob_congr (ProbComp.sample (Fin 2 → K))
++        (fun ab => (@Fin.forall_fin_two (fun i : Fin 2 => ab i = 0)).symm)
++    rw [← ProbComp.prob_eq_expect (ProbComp.sample (Fin 2 → K)) bad, hEvent,
++      Bridge.prob_sample_eq_uprob,
++      TCSlib.Cryptography.OneWay.uprob_pi_forall (ι := Fin 2) (fun x : K => x = 0),
++      TCSlib.Cryptography.OneWay.uprob_eq_one_div_card, Fintype.card_fin, one_div_pow]
++  have hPoint (ab : Fin 2 → K) :
++      |P ab - Q| ≤ if bad ab then (1 : ℝ) else 0 := ?_
++  swap
++  · by_cases hb : bad ab
++    · rw [if_pos hb, abs_le]
++      constructor <;> linarith [hP0 ab, hP1 ab, hQ0, hQ1]
++    · simpa only [if_neg hb, hGood ab hb, sub_self, abs_zero] using
++        (le_refl (0 : ℝ))
++  have hAverage := ProbComp.abs_expect_sub_le_expect
++    (ProbComp.sample (Fin 2 → K)) (f := P) (g := fun _ => Q)
++    (h := fun ab => if bad ab then (1 : ℝ) else 0) hPoint
++  rw [ProbComp.expect_const (ProbComp.sample (Fin 2 → K)) Q, hBadMass] at hAverage
++  exact hAverage
++
++/-- Left-randomized canonical random DLIN columns and independent uniform base/response
++columns have expectation gap at most `1-(1-1/N)³` for every `[0,1]`-valued test. Here `N`
++is the finite field cardinality. This is scalar distribution glue for the direct canonical
++column route to [Wee20, §2.1, p. 4]; the loss includes zero diagonal scalars.
++
++**Proof sketch.** The augmented three-by-three matrix has determinant `ab(t-r-s)`.
++When its three factors are nonzero, use the existing uniform matrix-image law through
++transposition and split a uniform three-column output into its first two columns and last
++column by standard finite-function equivalences. Bound the gap by one otherwise. The
++published singleton law gives the same miss probability
++for each coefficient sum `r+s`; combine it with independent-coordinate and complement
++probability laws to obtain exact exceptional mass `1-(1-1/N)³`. -/
++theorem dlin_random_column_gap_le {K : Type} [Field K] [Fintype K] (rows : ℕ)
++    (H : Matrix (Fin rows) (Fin 2) K → (Fin rows → K) → ℝ)
++    (hH0 : ∀ M v, 0 ≤ H M v) (hH1 : ∀ M v, H M v ≤ 1) :
++    let A : (Fin 2 → K) → Matrix (Fin 3) (Fin 2) K :=
++      fun ab => ![![ab 0, 0], ![0, ab 1], ![1, 1]]
++    |ProbComp.expect (ProbComp.sample (Fin 2 → K))
++        (fun ab => ProbComp.expect (ProbComp.sample (Fin 2 → K))
++          (fun rs => ProbComp.expect (ProbComp.sample K)
++            (fun t => ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K))
++              (fun L => H (L * A ab)
++                (L *ᵥ ![ab 0 * rs 0, ab 1 * rs 1, t]))))) -
++      ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 2) K))
++        (fun M => ProbComp.expect (ProbComp.sample (Fin rows → K))
++          (fun v => H M v))| ≤
++      1 - (1 - 1 / (Fintype.card K : ℝ)) ^ 3 := by
++  intro A
++  letI : DecidableEq K := Classical.decEq K
++  let C (ab rs : Fin 2 → K) (t : K) : Matrix (Fin 3) (Fin 3) K :=
++    ![![ab 0, 0, ab 0 * rs 0], ![0, ab 1, ab 1 * rs 1], ![1, 1, t]]
++  let split : Matrix (Fin rows) (Fin 3) K ≃
++      (Matrix (Fin rows) (Fin 2) K × (Fin rows → K)) :=
++    (Equiv.arrowCongr (Equiv.refl (Fin rows)) (Fin.succFunEquiv K 2)).trans
++      (Equiv.arrowProdEquivProdArrow (Fin rows) (fun _ => Fin 2 → K) (fun _ => K))
++  let F (U : Matrix (Fin rows) (Fin 3) K) : ℝ := H (split U).1 (split U).2
++  let P (ab rs : Fin 2 → K) (t : K) : ℝ :=
++    ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K)) fun L =>
++      H (L * A ab) (L *ᵥ ![ab 0 * rs 0, ab 1 * rs 1, t])
++  let Q : ℝ :=
++    ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 2) K)) fun M =>
++      ProbComp.expect (ProbComp.sample (Fin rows → K)) fun v => H M v
++  let bad (ab rs : Fin 2 → K) (t : K) : Prop :=
++    ab 0 = 0 ∨ ab 1 = 0 ∨ t = rs 0 + rs 1
++  change |ProbComp.expect (ProbComp.sample (Fin 2 → K))
++      (fun ab => ProbComp.expect (ProbComp.sample (Fin 2 → K))
++        (fun rs => ProbComp.expect (ProbComp.sample K) (P ab rs))) - Q| ≤
++    1 - (1 - 1 / (Fintype.card K : ℝ)) ^ 3
++  -- Read the canonical augmented determinant with the existing three-by-three formula.
++  have hDet : ∀ (ab rs : Fin 2 → K) (t : K),
++      (C ab rs t).det = ab 0 * ab 1 * (t - rs 0 - rs 1) := by
++    intro ab rs t
++    rw [Matrix.det_fin_three]
++    simp only [C, Matrix.of_apply, Matrix.cons_val_zero, Matrix.cons_val_one,
++      Matrix.cons_val_two, Matrix.head_cons, Matrix.tail_cons, mul_zero, zero_mul,
++      mul_one, one_mul, sub_zero, add_zero, zero_add]
++    ring
++  -- The standard finite-function equivalence separates the first two and final columns.
++  have hCoords : ∀ (ab rs : Fin 2 → K) (t : K)
++      (L : Matrix (Fin rows) (Fin 3) K),
++      split (L * C ab rs t) =
++        (L * A ab, L *ᵥ ![ab 0 * rs 0, ab 1 * rs 1, t]) := by
++    intro ab rs t L
++    apply Prod.ext
++    · funext i j
++      refine (show (L * C ab rs t) i (Fin.castAdd 1 j) = (L * A ab) i j from ?_)
++      rw [Matrix.mul_apply, Matrix.mul_apply]
++      apply Finset.sum_congr rfl
++      intro k _
++      apply congrArg (fun z : K => L i k * z)
++      fin_cases k <;> fin_cases j <;> rfl
++    · funext i
++      refine (show (L * C ab rs t) i (2 : Fin 3) =
++        L i ⬝ᵥ ![ab 0 * rs 0, ab 1 * rs 1, t] from ?_)
++      rw [Matrix.mul_apply']
++      apply congrArg (fun v : Fin 3 → K => L i ⬝ᵥ v)
++      funext k
++      fin_cases k <;> rfl
++  have hSplit :
++      ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K)) F = Q := ?_
++  swap
++  · dsimp only [F, Q]
++    rw [ProbComp.expect_sample_equiv split (fun z => H z.1 z.2),
++      ← Bridge.expect_sample_pair]
++    simp only [ProbComp.expect_bind, ProbComp.expect_pure]
++  -- Nonzero determinant gives surjectivity using the existing matrix-unit readers.
++  have hSurj : ∀ (ab rs : Fin 2 → K) (t : K), ¬ bad ab rs t →
++      Function.Surjective (Matrix.mulVec (C ab rs t)ᵀ) := ?_
++  swap
++  · intro ab rs t hbad
++    rcases not_or.mp hbad with ⟨ha, hrest⟩
++    rcases not_or.mp hrest with ⟨hb, ht⟩
++    rw [Matrix.mulVec_surjective_iff_isUnit, Matrix.isUnit_iff_isUnit_det,
++      Matrix.det_transpose, hDet, isUnit_iff_ne_zero]
++    apply mul_ne_zero (mul_ne_zero ha hb)
++    simpa only [sub_sub, sub_ne_zero] using ht
++  -- Reuse the generic uniform image through transposition; do not recount its fibers.
++  have hUniform : ∀ (ab rs : Fin 2 → K) (t : K), ¬ bad ab rs t →
++      ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K))
++          (fun L => F (L * C ab rs t)) =
++        ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K)) F := ?_
++  swap
++  · intro ab rs t hbad
++    have hImage := expect_sample_matrix_mul_of_mulVec_surjective
++      (K := K) (r := 3) (m := 3) (c := rows) (C ab rs t)ᵀ (hSurj ab rs t hbad)
++      (fun V : Matrix (Fin 3) (Fin rows) K => F Vᵀ)
++    simp only [Matrix.transpose_mul, Matrix.transpose_transpose] at hImage
++    have hLeft := ProbComp.expect_sample_equiv
++      (Matrix.transposeAddEquiv (Fin rows) (Fin 3) K).toEquiv
++      (fun S : Matrix (Fin 3) (Fin rows) K => F (Sᵀ * C ab rs t))
++    have hRight := ProbComp.expect_sample_equiv
++      (Matrix.transposeAddEquiv (Fin rows) (Fin 3) K).toEquiv
++      (fun V : Matrix (Fin 3) (Fin rows) K => F Vᵀ)
++    simp only [Matrix.transposeAddEquiv_apply, Matrix.transpose_transpose] at hLeft hRight
++    exact hLeft.trans (hImage.trans hRight.symm)
++  have hGood : ∀ (ab rs : Fin 2 → K) (t : K), ¬ bad ab rs t → P ab rs t = Q := ?_
++  swap
++  · intro ab rs t hbad
++    calc
++      P ab rs t = ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K))
++          (fun L => F (L * C ab rs t)) :=
++        congrArg (ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K)))
++          (funext (fun L => (congrArg
++            (fun z : Matrix (Fin rows) (Fin 2) K × (Fin rows → K) => H z.1 z.2)
++            (hCoords ab rs t L)).symm))
++      _ = ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K)) F :=
++        hUniform ab rs t hbad
++      _ = Q := hSplit
++  -- These are averages of the supplied bounded test, on good and bad inputs alike.
++  have hP0 (ab rs : Fin 2 → K) (t : K) : 0 ≤ P ab rs t :=
++    ProbComp.expect_nonneg (ProbComp.sample (Matrix (Fin rows) (Fin 3) K))
++      (fun L => hH0 (L * A ab) (L *ᵥ ![ab 0 * rs 0, ab 1 * rs 1, t]))
++  have hP1 (ab rs : Fin 2 → K) (t : K) : P ab rs t ≤ 1 := ?_
++  swap
++  · calc
++      P ab rs t ≤ ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K))
++          (fun _ => 1) :=
++        ProbComp.expect_mono (ProbComp.sample (Matrix (Fin rows) (Fin 3) K))
++          (fun L => hH1 (L * A ab) (L *ᵥ ![ab 0 * rs 0, ab 1 * rs 1, t]))
++      _ = 1 := ProbComp.expect_const (ProbComp.sample (Matrix (Fin rows) (Fin 3) K)) 1
++  have hQ0 : 0 ≤ Q :=
++    ProbComp.expect_nonneg (ProbComp.sample (Matrix (Fin rows) (Fin 2) K)) fun M =>
++      ProbComp.expect_nonneg (ProbComp.sample (Fin rows → K)) fun v => hH0 M v
++  have hQ1 : Q ≤ 1 := ?_
++  swap
++  · calc
++      Q ≤ ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 2) K))
++          (fun _ => 1) :=
++        ProbComp.expect_mono (ProbComp.sample (Matrix (Fin rows) (Fin 2) K)) fun M =>
++          calc
++            ProbComp.expect (ProbComp.sample (Fin rows → K)) (fun v => H M v) ≤
++                ProbComp.expect (ProbComp.sample (Fin rows → K)) (fun _ => 1) :=
++              ProbComp.expect_mono (ProbComp.sample (Fin rows → K)) (fun v => hH1 M v)
++            _ = 1 := ProbComp.expect_const (ProbComp.sample (Fin rows → K)) 1
++      _ = 1 := ProbComp.expect_const (ProbComp.sample (Matrix (Fin rows) (Fin 2) K)) 1
++  -- Use the singleton law at r+s, then reuse coordinate independence and complement.
++  have hBadMass :
++      ProbComp.expect (ProbComp.sample (Fin 2 → K))
++          (fun ab => ProbComp.expect (ProbComp.sample (Fin 2 → K))
++            (fun rs => ProbComp.expect (ProbComp.sample K)
++              (fun t => if bad ab rs t then (1 : ℝ) else 0))) =
++        1 - (1 - 1 / (Fintype.card K : ℝ)) ^ 3 := by
++    let c : ℝ := 1 / (Fintype.card K : ℝ)
++    let diagGood (ab : Fin 2 → K) : Prop := ab 0 ≠ 0 ∧ ab 1 ≠ 0
++    -- Reuse the public independent-coordinate law with an explicit scalar predicate.
++    have hDiagMass :
++        ProbComp.expect (ProbComp.sample (Fin 2 → K))
++            (fun ab => if diagGood ab then (1 : ℝ) else 0) = (1 - c) ^ 2 := ?_
++    swap
++    · have hEvent :
++          ProbComp.prob (ProbComp.sample (Fin 2 → K)) diagGood =
++            ProbComp.prob (ProbComp.sample (Fin 2 → K))
++              (fun ab : Fin 2 → K => ∀ i : Fin 2, ab i ≠ 0) :=
++        ProbComp.prob_congr (ProbComp.sample (Fin 2 → K))
++          (p := diagGood) (q := fun ab : Fin 2 → K => ∀ i : Fin 2, ab i ≠ 0)
++          (fun ab => (Fin.forall_fin_two (p := fun i : Fin 2 => ab i ≠ 0)).symm)
++      rw [← ProbComp.prob_eq_expect (ProbComp.sample (Fin 2 → K)) diagGood, hEvent,
++        Bridge.prob_sample_eq_uprob (fun ab : Fin 2 → K => ∀ i : Fin 2, ab i ≠ 0),
++        TCSlib.Cryptography.OneWay.uprob_pi_forall (ι := Fin 2) (fun x : K => x ≠ 0),
++        TCSlib.Cryptography.uprob_not (fun x : K => x = 0),
++        TCSlib.Cryptography.OneWay.uprob_eq_one_div_card (0 : K), Fintype.card_fin]
++    -- At every coefficient pair, the uniform t misses its sum with probability 1-c.
++    have hMiss (rs : Fin 2 → K) :
++        ProbComp.expect (ProbComp.sample K)
++            (fun t : K => if t ≠ rs 0 + rs 1 then (1 : ℝ) else 0) = 1 - c := ?_
++    swap
++    · rw [← ProbComp.prob_eq_expect (ProbComp.sample K)
++          (fun t : K => t ≠ rs 0 + rs 1),
++        ProbComp.prob_not (ProbComp.sample K) (fun t : K => t = rs 0 + rs 1),
++        Bridge.prob_sample_eq_uprob (fun t : K => t = rs 0 + rs 1),
++        TCSlib.Cryptography.OneWay.uprob_eq_one_div_card (rs 0 + rs 1)]
++    have hGoodMass (ab rs : Fin 2 → K) :
++        ProbComp.expect (ProbComp.sample K)
++            (fun t : K => if ¬ bad ab rs t then (1 : ℝ) else 0) =
++          (1 - c) * (if diagGood ab then (1 : ℝ) else 0) := ?_
++    swap
++    · have hFactor :
++          (fun t : K => if ¬ bad ab rs t then (1 : ℝ) else 0) =
++            (fun t : K => (if diagGood ab then (1 : ℝ) else 0) *
++              (if t ≠ rs 0 + rs 1 then (1 : ℝ) else 0)) := ?_
++      swap
++      · funext t
++        simp only [bad, diagGood, not_or, ← and_assoc, ite_and, ite_mul, one_mul, zero_mul]
++      rw [hFactor, ProbComp.expect_const_mul, hMiss rs]
++      exact mul_comm _ _
++    -- Complement the actual bad predicate; no additional event is counted.
++    have hInnerBad (ab rs : Fin 2 → K) :
++        ProbComp.expect (ProbComp.sample K)
++            (fun t : K => if bad ab rs t then (1 : ℝ) else 0) =
++          1 - (1 - c) * (if diagGood ab then (1 : ℝ) else 0) := ?_
++    swap
++    · have hComp := ProbComp.prob_not (ProbComp.sample K) (bad ab rs)
++      rw [ProbComp.prob_eq_expect (ProbComp.sample K) (fun t : K => ¬ bad ab rs t),
++        hGoodMass ab rs, ProbComp.prob_eq_expect (ProbComp.sample K) (bad ab rs)] at hComp
++      apply eq_sub_iff_add_eq.mpr
++      exact (add_comm _ _).trans (eq_sub_iff_add_eq.mp hComp)
++    simp only [hInnerBad, ProbComp.expect_const]
++    rw [ProbComp.expect_sub (ProbComp.sample (Fin 2 → K)) (fun _ => 1)
++        (fun ab => (1 - c) * (if diagGood ab then (1 : ℝ) else 0)),
++      ProbComp.expect_const (ProbComp.sample (Fin 2 → K)) 1,
++      ProbComp.expect_const_mul (ProbComp.sample (Fin 2 → K)) (1 - c)
++        (fun ab => if diagGood ab then (1 : ℝ) else 0), hDiagMass]
++    exact congrArg (fun z : ℝ => 1 - z) (pow_succ' (1 - c) 2).symm
++  have hPoint (ab rs : Fin 2 → K) (t : K) :
++      |P ab rs t - Q| ≤ if bad ab rs t then (1 : ℝ) else 0 := ?_
++  swap
++  · by_cases hbad : bad ab rs t
++    · rw [if_pos hbad, abs_le]
++      constructor <;> linarith [hP0 ab rs t, hP1 ab rs t, hQ0, hQ1]
++    · simpa only [if_neg hbad, hGood ab rs t hbad, sub_self, abs_zero] using
++        (le_refl (0 : ℝ))
++  -- Average first over t, then over its independent coefficient pair and base pair.
++  have hAtT (ab rs : Fin 2 → K) :
++      |ProbComp.expect (ProbComp.sample K) (P ab rs) - Q| ≤
++        ProbComp.expect (ProbComp.sample K)
++          (fun t => if bad ab rs t then (1 : ℝ) else 0) := ?_
++  swap
++  · have h := ProbComp.abs_expect_sub_le_expect (ProbComp.sample K)
++      (f := P ab rs) (g := fun _ => Q)
++      (h := fun t => if bad ab rs t then (1 : ℝ) else 0) (hPoint ab rs)
++    rw [ProbComp.expect_const (ProbComp.sample K) Q] at h
++    exact h
++  have hAtRS (ab : Fin 2 → K) :
++      |ProbComp.expect (ProbComp.sample (Fin 2 → K))
++          (fun rs => ProbComp.expect (ProbComp.sample K) (P ab rs)) - Q| ≤
++        ProbComp.expect (ProbComp.sample (Fin 2 → K))
++          (fun rs => ProbComp.expect (ProbComp.sample K)
++            (fun t => if bad ab rs t then (1 : ℝ) else 0)) := ?_
++  swap
++  · have h := ProbComp.abs_expect_sub_le_expect (ProbComp.sample (Fin 2 → K))
++      (f := fun rs => ProbComp.expect (ProbComp.sample K) (P ab rs))
++      (g := fun _ => Q)
++      (h := fun rs => ProbComp.expect (ProbComp.sample K)
++        (fun t => if bad ab rs t then (1 : ℝ) else 0)) (hAtT ab)
++    rw [ProbComp.expect_const (ProbComp.sample (Fin 2 → K)) Q] at h
++    exact h
++  have hAverage := ProbComp.abs_expect_sub_le_expect (ProbComp.sample (Fin 2 → K))
++    (f := fun ab => ProbComp.expect (ProbComp.sample (Fin 2 → K))
++      (fun rs => ProbComp.expect (ProbComp.sample K) (P ab rs)))
++    (g := fun _ => Q)
++    (h := fun ab => ProbComp.expect (ProbComp.sample (Fin 2 → K))
++      (fun rs => ProbComp.expect (ProbComp.sample K)
++        (fun t => if bad ab rs t then (1 : ℝ) else 0))) hAtRS
++  rw [ProbComp.expect_const (ProbComp.sample (Fin 2 → K)) Q, hBadMass] at hAverage
++  exact hAverage
++
++end TCSlib.Cryptography.Pairing
+diff --git a/TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean b/TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean
+index ad0b735a0..65064a10d 100644
+--- a/TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean
++++ b/TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean
+@@ -249,7 +249,232 @@ theorem mddhAdv_smallRows_le (d ℓ : PolyExpr) (D : NUPPT)
+     (hℓ : ∀ κ, ℓ.eval κ ≤ 2) (κ : ℕ) :
+     G.mddhAdv d ℓ D κ ≤
+       ProbComp.expect (ProbComp.sample (G.gen.Coins κ))
+-        (fun r => 2 / ((G.inst κ r).order : ℝ)) := sorry
++        (fun r => 2 / ((G.inst κ r).order : ℝ)) := by
++  classical
++  let H (pp : PublicParams G κ)
++      (M : Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order))
++      (U : Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod pp.group.order)) : ℝ :=
++    ProbComp.prob (ProbComp.sample (D.Coins κ)) fun r =>
++      D.distinguisherL κ (G.mddhEnc d ℓ κ
++        ⟨pp, pp.group.expMat pp.generator M, pp.group.expMat pp.generator U⟩) r = true
++  let P (pp : PublicParams G κ)
++      (M : Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order)) : ℝ :=
++    ProbComp.expect
++      (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod pp.group.order)))
++      (H pp M)
++  let Q (pp : PublicParams G κ)
++      (M : Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order)) : ℝ :=
++    ProbComp.expect
++      (ProbComp.sample (Matrix (Fin 2) (Fin (d.eval κ)) (ZMod pp.group.order)))
++      (fun S => H pp M (M * S))
++  let good (pp : PublicParams G κ)
++      (M : Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order)) : Prop :=
++    Function.Surjective (Matrix.mulVec M)
++  -- The actual distinguisher test and both conditional averages take values in [0, 1].
++  have hP0 : ∀ pp M, 0 ≤ P pp M := ?_
++  swap
++  · intro pp M
++    letI : Fact pp.group.order.Prime := ⟨pp.group.order_prime⟩
++    letI : NeZero pp.group.order := ⟨pp.group.order_prime.ne_zero⟩
++    exact ProbComp.expect_nonneg
++      (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod pp.group.order)))
++      (fun U => ProbComp.prob_nonneg (ProbComp.sample (D.Coins κ))
++        (fun r : D.Coins κ => D.distinguisherL κ (G.mddhEnc d ℓ κ
++          ⟨pp, pp.group.expMat pp.generator M, pp.group.expMat pp.generator U⟩) r = true))
++  have hP1 : ∀ pp M, P pp M ≤ 1 := ?_
++  swap
++  · intro pp M
++    letI : Fact pp.group.order.Prime := ⟨pp.group.order_prime⟩
++    letI : NeZero pp.group.order := ⟨pp.group.order_prime.ne_zero⟩
++    calc
++      P pp M ≤ ProbComp.expect
++          (ProbComp.sample
++            (Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod pp.group.order)))
++          (fun _ => 1) :=
++        ProbComp.expect_mono
++          (ProbComp.sample
++            (Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod pp.group.order)))
++          (fun U => ProbComp.prob_le_one (ProbComp.sample (D.Coins κ))
++            (fun r : D.Coins κ => D.distinguisherL κ (G.mddhEnc d ℓ κ
++              ⟨pp, pp.group.expMat pp.generator M, pp.group.expMat pp.generator U⟩)
++              r = true))
++      _ = 1 := ProbComp.expect_const
++        (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod pp.group.order))) 1
++  have hQ0 : ∀ pp M, 0 ≤ Q pp M := ?_
++  swap
++  · intro pp M
++    letI : Fact pp.group.order.Prime := ⟨pp.group.order_prime⟩
++    letI : NeZero pp.group.order := ⟨pp.group.order_prime.ne_zero⟩
++    exact ProbComp.expect_nonneg
++      (ProbComp.sample (Matrix (Fin 2) (Fin (d.eval κ)) (ZMod pp.group.order)))
++      (fun S => ProbComp.prob_nonneg (ProbComp.sample (D.Coins κ))
++        (fun r : D.Coins κ => D.distinguisherL κ (G.mddhEnc d ℓ κ
++          ⟨pp, pp.group.expMat pp.generator M, pp.group.expMat pp.generator (M * S)⟩)
++          r = true))
++  have hQ1 : ∀ pp M, Q pp M ≤ 1 := ?_
++  swap
++  · intro pp M
++    letI : Fact pp.group.order.Prime := ⟨pp.group.order_prime⟩
++    letI : NeZero pp.group.order := ⟨pp.group.order_prime.ne_zero⟩
++    calc
++      Q pp M ≤ ProbComp.expect
++          (ProbComp.sample (Matrix (Fin 2) (Fin (d.eval κ)) (ZMod pp.group.order)))
++          (fun _ => 1) :=
++        ProbComp.expect_mono
++          (ProbComp.sample (Matrix (Fin 2) (Fin (d.eval κ)) (ZMod pp.group.order)))
++          (fun S => ProbComp.prob_le_one (ProbComp.sample (D.Coins κ))
++            (fun r : D.Coins κ => D.distinguisherL κ (G.mddhEnc d ℓ κ
++              ⟨pp, pp.group.expMat pp.generator M, pp.group.expMat pp.generator (M * S)⟩)
++              r = true))
++      _ = 1 := ProbComp.expect_const
++        (ProbComp.sample (Matrix (Fin 2) (Fin (d.eval κ)) (ZMod pp.group.order))) 1
++  -- On a surjective base matrix, the whole response matrix has exactly the uniform law.
++  have hUniform : ∀ pp M, good pp M → P pp M = Q pp M := ?_
++  swap
++  · intro pp M hM
++    letI : Fact pp.group.order.Prime := ⟨pp.group.order_prime⟩
++    letI : NeZero pp.group.order := ⟨pp.group.order_prime.ne_zero⟩
++    exact (expect_sample_matrix_mul_of_mulVec_surjective
++      (K := ZMod pp.group.order) (r := ℓ.eval κ) (m := 2) (c := d.eval κ)
++      M hM (H pp M)).symm
++  have hFailure : ∀ pp : PublicParams G κ,
++      ProbComp.expect
++          (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order)))
++          (fun M => if good pp M then (0 : ℝ) else 1) ≤
++        2 / (pp.group.order : ℝ) := ?_
++  swap
++  · intro pp
++    letI : Fact pp.group.order.Prime := ⟨pp.group.order_prime⟩
++    letI : NeZero pp.group.order := ⟨pp.group.order_prime.ne_zero⟩
++    have h := smallRows_surjectivity_failure_le
++      (K := ZMod pp.group.order) (ℓ.eval κ) (hℓ κ)
++    rw [ProbComp.prob_eq_expect
++      (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order)))
++      (fun M : Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order) =>
++        ¬ Function.Surjective (Matrix.mulVec M))] at h
++    simpa only [good, ite_not, ZMod.card] using h
++  -- The gap vanishes on good bases and is at most one on the rank-failure event.
++  have hEntry : ∀ pp M, |P pp M - Q pp M| ≤ if good pp M then (0 : ℝ) else 1 := ?_
++  swap
++  · intro pp M
++    by_cases hg : good pp M
++    · simpa only [if_pos hg, hUniform pp M hg, sub_self, abs_zero] using
++        (le_refl (0 : ℝ))
++    · rw [if_neg hg, abs_le]
++      constructor <;> linarith [hP0 pp M, hP1 pp M, hQ0 pp M, hQ1 pp M]
++  have hPoint (pp : PublicParams G κ) :
++      |ProbComp.expect
++            (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order)))
++            (P pp) -
++          ProbComp.expect
++            (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order)))
++            (Q pp)| ≤ 2 / (pp.group.order : ℝ) :=
++    (ProbComp.abs_expect_sub_le_expect
++      (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order)))
++      (f := P pp) (g := Q pp)
++      (h := fun M => if good pp M then (0 : ℝ) else 1) (hEntry pp)).trans (hFailure pp)
++  -- The loss depends only on the generated description, not on the fresh generator draw.
++  have hLoss :
++      ProbComp.expect (publicParamsGen G κ) (fun pp => 2 / (pp.group.order : ℝ)) =
++        ProbComp.expect (ProbComp.sample (G.gen.Coins κ))
++          (fun r => 2 / ((G.inst κ r).order : ℝ)) := ?_
++  swap
++  · rw [publicParamsGen_eq G κ, ProbComp.expect_bind]
++    apply congrArg (ProbComp.expect (ProbComp.sample (G.gen.Coins κ)))
++    funext ρ
++    let desc : GroupDescription G κ := ⟨G.desc κ ρ, ⟨ρ, rfl⟩⟩
++    change ProbComp.expect
++        (publicParamsCore G κ desc <$> ProbComp.sample (GeneratorDraw G κ desc))
++        (fun pp : PublicParams G κ => 2 / (pp.group.order : ℝ)) =
++      2 / ((G.inst κ ρ).order : ℝ)
++    rw [ProbComp.expect_map, G.inst_eq κ ρ]
++    have hOrder (g : GeneratorDraw G κ desc) :
++        (publicParamsCore G κ desc g).group.order = (G.group κ desc.val).order := ?_
++    swap
++    · rw [PublicParams.group_eq (publicParamsCore G κ desc g),
++        publicParamsCore_eq G κ desc g]
++    have hIntegrand :
++        (fun g : GeneratorDraw G κ desc =>
++          2 / ((publicParamsCore G κ desc g).group.order : ℝ)) =
++          (fun _ => 2 / ((G.group κ desc.val).order : ℝ)) :=
++      funext (fun g => congrArg (fun n : ℕ => 2 / (n : ℝ)) (hOrder g))
++    rw [hIntegrand]
++    exact ProbComp.expect_const (ProbComp.sample (GeneratorDraw G κ desc))
++      (2 / ((G.group κ desc.val).order : ℝ))
++  -- Read each actual game, keeping the encoded distinguisher leaf opaque.
++  have hAccept (real : Bool) :
++      accept (G.mddhGame d ℓ D real κ) =
++        ProbComp.expect (publicParamsGen G κ) (fun pp =>
++          ProbComp.expect
++            (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order)))
++            (fun M => if real then Q pp M else P pp M)) := ?_
++  swap
++  · rw [accept_eq (G.mddhGame d ℓ D real κ), G.mddhGame_eq d ℓ D real κ,
++      ProbComp.prob_bind, G.mddhSample_eq d ℓ real κ, ProbComp.expect_bind]
++    apply congrArg (ProbComp.expect (publicParamsGen G κ))
++    funext pp
++    letI : Fact pp.group.order.Prime := ⟨pp.group.order_prime⟩
++    letI : NeZero pp.group.order := ⟨pp.group.order_prime.ne_zero⟩
++    rw [ProbComp.expect_bind]
++    apply congrArg
++      (ProbComp.expect
++        (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order))))
++    funext M
++    have hVerdict
++        (U : Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod pp.group.order)) :
++        ProbComp.prob ((ProbComp.sample (D.Coins κ)).bind fun r =>
++          .pure (D.distinguisherL κ (G.mddhEnc d ℓ κ
++            ⟨pp, pp.group.expMat pp.generator M, pp.group.expMat pp.generator U⟩) r))
++          (fun b => b = true) = H pp M U := ?_
++    swap
++    · change ProbComp.prob ((ProbComp.sample (D.Coins κ)).bind fun r =>
++          .pure (D.distinguisherL κ (G.mddhEnc d ℓ κ
++            ⟨pp, pp.group.expMat pp.generator M, pp.group.expMat pp.generator U⟩) r))
++          (fun b => b = true) =
++        ProbComp.prob (ProbComp.sample (D.Coins κ))
++          (fun r : D.Coins κ => D.distinguisherL κ (G.mddhEnc d ℓ κ
++            ⟨pp, pp.group.expMat pp.generator M, pp.group.expMat pp.generator U⟩) r = true)
++      rw [ProbComp.prob_eq_expect (ProbComp.sample (D.Coins κ))
++        (fun r : D.Coins κ => D.distinguisherL κ (G.mddhEnc d ℓ κ
++          ⟨pp, pp.group.expMat pp.generator M, pp.group.expMat pp.generator U⟩) r = true),
++        ProbComp.prob_bind]
++      apply congrArg (ProbComp.expect (ProbComp.sample (D.Coins κ)))
++      funext r
++      exact ProbComp.prob_pure
++        (D.distinguisherL κ (G.mddhEnc d ℓ κ
++          ⟨pp, pp.group.expMat pp.generator M, pp.group.expMat pp.generator U⟩) r)
++        (fun b => b = true)
++    simp only [ProbComp.expect_bind, ProbComp.expect_pure, hVerdict]
++    cases real
++    · simp only [Bool.false_eq_true, if_false]
++      exact ProbComp.expect_const
++        (ProbComp.sample (Matrix (Fin 2) (Fin (d.eval κ)) (ZMod pp.group.order))) (P pp M)
++    · simp only [↓reduceIte, if_true]
++      change ProbComp.expect
++          (ProbComp.sample (Matrix (Fin 2) (Fin (d.eval κ)) (ZMod pp.group.order)))
++          (fun S => ProbComp.expect
++            (ProbComp.sample
++              (Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod pp.group.order)))
++            (fun _ => H pp M (M * S))) =
++        ProbComp.expect
++          (ProbComp.sample (Matrix (Fin 2) (Fin (d.eval κ)) (ZMod pp.group.order)))
++          (fun S => H pp M (M * S))
++      apply congrArg
++        (ProbComp.expect
++          (ProbComp.sample (Matrix (Fin 2) (Fin (d.eval κ)) (ZMod pp.group.order))))
++      funext S
++      exact ProbComp.expect_const
++        (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod pp.group.order)))
++        (H pp M (M * S))
++  have hAverage := ProbComp.abs_expect_sub_le_expect (publicParamsGen G κ)
++    (f := fun pp => ProbComp.expect
++      (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order))) (P pp))
++    (g := fun pp => ProbComp.expect
++      (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order))) (Q pp))
++    (h := fun pp => 2 / (pp.group.order : ℝ)) hPoint
++  rw [hLoss] at hAverage
++  rw [G.mddhAdv_eq d ℓ D κ, advantage_eq, hAccept false, hAccept true]
++  simpa only [Bool.false_eq_true, ↓reduceIte, if_false, if_true] using hAverage
+ 
+ end BilinearGen
+ 
+diff --git a/TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear.lean b/TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear.lean
+index d9277067e..303eb8b31 100644
+--- a/TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear.lean
++++ b/TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear.lean
+@@ -25,6 +25,7 @@ The results concern exact finite laws and introduce no sampling implementation.
+ ## Main results
+ 
+ * `expect_sample_matrix_mul_of_mulVec_surjective`: uniform images under surjective matrix maps.
++* `prob_sample_matrix_isUnit_eq`: the published general-linear count as an exact probability.
+ * `smallRows_surjectivity_failure_le`: the two-column rank bound for at most two rows.
+ 
+ ## References
+@@ -39,19 +40,66 @@ The results concern exact finite laws and introduce no sampling implementation.
+ namespace TCSlib.Cryptography.Pairing
+ 
+ open TCSlib.Cryptography.Games
++open scoped Matrix
+ 
+ /-- A surjective scalar column map sends a uniform coefficient matrix to a uniform output
+ matrix. This is finite-field distribution glue; no sampler or machine is constructed.
+ 
+-**Proof sketch.** Regard the matrix product as independent applications of the surjective
+-linear map to each column. All fibers are translates of its kernel and have equal size;
+-reuse the finite linear quotient/fiber and uniform-average APIs. -/
++**Proof sketch.** Regard multiplication of the whole coefficient matrix as a surjective
++additive homomorphism, using a right inverse of the column map. Reuse the equivalences
++from each fiber to its kernel to split a uniform input into output and kernel coordinates.
++The existing uniform-average and product laws then remove the unused kernel coordinate. -/
+ theorem expect_sample_matrix_mul_of_mulVec_surjective
+     {K : Type} [Field K] [Fintype K] {r m c : ℕ}
+     (M : Matrix (Fin r) (Fin m) K) (hM : Function.Surjective (Matrix.mulVec M))
+     (F : Matrix (Fin r) (Fin c) K → ℝ) :
+     ProbComp.expect (ProbComp.sample (Matrix (Fin m) (Fin c) K)) (fun S => F (M * S)) =
+-      ProbComp.expect (ProbComp.sample (Matrix (Fin r) (Fin c) K)) F := sorry
++      ProbComp.expect (ProbComp.sample (Matrix (Fin r) (Fin c) K)) F := by
++  classical
++  obtain ⟨R, hR⟩ :=
++    (Matrix.mulVec_surjective_iff_exists_right_inverse (A := M)).mp hM
++  let f : Matrix (Fin m) (Fin c) K →+ Matrix (Fin r) (Fin c) K :=
++    Matrix.addMonoidHomMulLeft M
++  have hf : Function.Surjective f := ?_
++  swap
++  · intro U
++    refine ⟨R * U, ?_⟩
++    change M * (R * U) = U
++    rw [← Matrix.mul_assoc, hR, Matrix.one_mul]
++  let e : Matrix (Fin m) (Fin c) K ≃ (Matrix (Fin r) (Fin c) K × f.ker) :=
++    (Equiv.sigmaFiberEquiv f).symm.trans
++      (Equiv.sigmaEquivProdOfEquiv
++        (fun U => AddMonoidHom.fiberEquivKerOfSurjective (f := f) hf U))
++  have hFst (S : Matrix (Fin m) (Fin c) K) : (e S).1 = M * S := rfl
++  have h := ProbComp.expect_sample_equiv e (fun p => F p.1)
++  simp only [hFst] at h
++  rw [h, ← Bridge.expect_sample_pair]
++  simp only [ProbComp.expect_bind, ProbComp.expect_pure, ProbComp.expect_const]
++
++/-- The probability that a uniform square matrix over a finite field is a unit is the
++published general-linear-group cardinality divided by the cardinality of all matrices.
++The numerator uses natural subtraction, and the formula includes dimension zero.
++
++**Proof sketch.** Read prob_sample_eq_uprob and uprob_def. Identify the unit predicate
++subtype with the range of Units.val and use card_range_of_injective val_injective.
++Apply Matrix.card_GL_field and the existing function-cardinality/power laws. -/
++theorem prob_sample_matrix_isUnit_eq {K : Type} [Field K] [Fintype K] (n : ℕ) :
++    ProbComp.prob (ProbComp.sample (Matrix (Fin n) (Fin n) K)) (fun M => IsUnit M) =
++      (((∏ i : Fin n,
++          (Fintype.card K ^ n - Fintype.card K ^ (i : ℕ))) : ℕ) : ℝ) /
++        (Fintype.card K : ℝ) ^ (n * n) := by
++  classical
++  rw [Bridge.prob_sample_eq_uprob, uprob_def]
++  change (Nat.card (Set.range (Units.val :
++      (Matrix (Fin n) (Fin n) K)ˣ → Matrix (Fin n) (Fin n) K)) : ℝ) /
++      (Fintype.card (Matrix (Fin n) (Fin n) K) : ℝ) = _
++  rw [Nat.card_range_of_injective Units.val_injective,
++    Matrix.card_GL_field (𝔽 := K) n]
++  congr 1
++  change (Fintype.card (Fin n → Fin n → K) : ℝ) =
++    (Fintype.card K : ℝ) ^ (n * n)
++  simp only [Fintype.card_fun, Fintype.card_fin, Nat.cast_pow]
++  exact (pow_mul (Fintype.card K : ℝ) n n).symm
+ 
+ /-- A uniform matrix with two columns and at most two rows fails surjectivity with
+ probability at most `2/|K|`. This is the exact rank-failure obligation for small-row MDDH.
+@@ -64,6 +112,94 @@ theorem smallRows_surjectivity_failure_le {K : Type} [Field K] [Fintype K]
+     (r : ℕ) (hr : r ≤ 2) :
+     ProbComp.prob (ProbComp.sample (Matrix (Fin r) (Fin 2) K))
+         (fun M => ¬ Function.Surjective (Matrix.mulVec M)) ≤
+-      2 / (Fintype.card K : ℝ) := sorry
++      2 / (Fintype.card K : ℝ) := by
++  classical
++  let q : ℕ := Fintype.card K
++  have hq2 : 2 ≤ q := Fintype.one_lt_card_iff_nontrivial.mpr inferInstance
++  have hq1 : 1 ≤ q := (Nat.le_add_right 1 1).trans hq2
++  have hq : (1 : ℝ) ≤ (q : ℝ) := Nat.one_le_cast.mpr hq1
++  have hqpos : (0 : ℝ) < (q : ℝ) := lt_of_lt_of_le zero_lt_one hq
++  have hrecip : (1 : ℝ) / (q : ℝ) ^ 2 ≤ 1 / (q : ℝ) := ?_
++  swap
++  · simpa only [pow_one] using
++      one_div_pow_le_one_div_pow_of_le hq (Nat.le_add_right 1 1)
++  have htwo : (2 : ℝ) / (q : ℝ) = 2 * (1 / (q : ℝ)) := by ring
++  cases r with
++  | zero =>
++      have hs : ∀ M : Matrix (Fin 0) (Fin 2) K,
++          Function.Surjective (Matrix.mulVec M) := ?_
++      swap
++      · intro M y
++        exact ⟨0, Subsingleton.elim _ _⟩
++      simp only [ProbComp.prob_eq_expect, hs, not_true_eq_false, if_false,
++        ProbComp.expect_const]
++      positivity
++  | succ r =>
++      cases r with
++      | zero =>
++          have hbad : ∀ M : Matrix (Fin 1) (Fin 2) K,
++              ¬ Function.Surjective (Matrix.mulVec M) → M = 0 := ?_
++          swap
++          · intro M hM
++            let e : (Fin 1 → K) ≃ₗ[K] K := LinearEquiv.funUnique (Fin 1) K K
++            let L : Module.Dual K (Fin 2 → K) :=
++              e.toLinearMap.comp (Matrix.mulVecLin M)
++            have hL : L = 0 := ?_
++            swap
++            · by_contra hL
++              apply hM
++              have hsurj : Function.Surjective L :=
++                LinearMap.range_eq_top.mp (Module.Dual.range_eq_top_of_ne_zero hL)
++              exact (Equiv.comp_surjective (Matrix.mulVec M) e.toEquiv).mp hsurj
++            ext i j
++            change M i j = 0
++            have he : e (M *ᵥ Pi.single j 1) = 0 :=
++              congrArg (fun F : Module.Dual K (Fin 2 → K) => F (Pi.single j 1)) hL
++            rw [Matrix.mulVec_single_one] at he
++            change (LinearEquiv.funUnique (Fin 1) K K) (M.col j) = 0 at he
++            rw [LinearEquiv.funUnique_apply] at he
++            change M default j = 0 at he
++            have hi : i = (default : Fin 1) := Subsingleton.elim _ _
++            simpa only [hi] using he
++          have hzero : uprob (fun M : Matrix (Fin 1) (Fin 2) K => M = 0) =
++              1 / (q : ℝ) ^ 2 := ?_
++          swap
++          · rw [TCSlib.Cryptography.OneWay.uprob_eq_one_div_card]
++            change (1 : ℝ) / (Fintype.card (Fin 1 → Fin 2 → K) : ℝ) = _
++            simp only [Fintype.card_fun, Fintype.card_fin, pow_one, Nat.cast_pow]
++            rfl
++          rw [Bridge.prob_sample_eq_uprob]
++          refine le_trans (uprob_mono hbad) ?_
++          rw [hzero]
++          have hx0 : (0 : ℝ) ≤ 1 / (q : ℝ) := one_div_nonneg.mpr hqpos.le
++          change (1 : ℝ) / (q : ℝ) ^ 2 ≤ 2 / (q : ℝ)
++          rw [htwo]
++          nlinarith only [hrecip, hx0]
++      | succ r =>
++          have hr0 : r = 0 := ?_
++          swap
++          · omega
++          subst r
++          have hsq1 : 1 ≤ q ^ 2 := one_le_pow₀ hq1
++          have hsqq : q ≤ q ^ 2 := le_self_pow₀ hq1 (Nat.succ_ne_zero 1)
++          rw [ProbComp.prob_not]
++          simp only [Matrix.mulVec_surjective_iff_isUnit]
++          rw [prob_sample_matrix_isUnit_eq]
++          change 1 - (((∏ i : Fin 2, (q ^ 2 - q ^ (i : ℕ))) : ℕ) : ℝ) /
++              (q : ℝ) ^ 4 ≤ 2 / (q : ℝ)
++          simp only [Fin.prod_univ_two, Fin.val_zero, Fin.val_one, pow_zero, pow_one,
++            Nat.cast_mul, Nat.cast_sub hsq1, Nat.cast_sub hsqq, Nat.cast_pow, Nat.cast_one]
++          change 1 - (((q : ℝ) ^ 2 - 1) * ((q : ℝ) ^ 2 - q)) /
++              (q : ℝ) ^ 4 ≤ 2 / (q : ℝ)
++          have hformula : 1 - (((q : ℝ) ^ 2 - 1) * ((q : ℝ) ^ 2 - q)) /
++              (q : ℝ) ^ 4 =
++              1 / (q : ℝ) + 1 / (q : ℝ) ^ 2 - 1 / (q : ℝ) ^ 3 := ?_
++          swap
++          · field_simp [ne_of_gt hqpos] <;> ring
++          rw [hformula]
++          have hz0 : (0 : ℝ) ≤ 1 / (q : ℝ) ^ 3 :=
++            one_div_nonneg.mpr (pow_nonneg hqpos.le 3)
++          rw [htwo]
++          linarith only [hrecip, hz0]
+ 
+ end TCSlib.Cryptography.Pairing
+diff --git a/TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean b/TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean
+index b659880e2..45bc2c98c 100644
+--- a/TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean
++++ b/TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean
+@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: TCSlib contributors
+ -/
+ import TCSlib.Cryptography.Pairing.MatrixDH.Defs
++import TCSlib.Cryptography.Pairing.MatrixDH.ColumnLaws
+ import TCSlib.Cryptography.Asymptotic.Realization
+ import TCSlib.Cryptography.Asymptotic.EnsemblesLemmas
+ import TCSlib.Cryptography.Authentication.Signatures.Lamport.Averaging
+@@ -163,7 +164,17 @@ length by its value plus one and use the polynomial evaluation readers. -/
+ theorem length_mddhAdviceEnc_le (p : ℕ → ℕ)
+     (hp : ∀ κ r, (G.inst κ r).order = p κ) (d ℓ : PolyExpr)
+     (κ : ℕ) (ω : MddhAdvice p d ℓ κ) :
+-    (G.mddhAdviceEnc p hp d ℓ κ ω).length ≤ (G.mddhAdviceLen d ℓ).eval κ := sorry
++    (G.mddhAdviceEnc p hp d ℓ κ ω).length ≤ (G.mddhAdviceLen d ℓ).eval κ := by
++  letI : NeZero (p κ) := orderSchedule_neZero G p hp κ
++  have hd := Turing.length_bits_le_self (d.eval κ)
++  have hℓ := Turing.length_bits_le_self (ℓ.eval κ)
++  rw [Nat.size_eq_bits_len] at hd hℓ
++  rw [G.mddhAdviceEnc_eq p hp d ℓ κ ω, G.mddhAdviceLen_eq d ℓ]
++  simp only [length_pairEncode, List.length_replicate, Candidates.length_natToList,
++    List.length_append, List.length_ofFn, Encoding.Modular.encodeMatrix_length,
++    PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_var, PolyExpr.eval_const,
++    Nat.add_mul]
++  omega
+ 
+ /-- The advice word is injective on its index and scalar matrices. Technical glue.
+ 
+@@ -172,7 +183,48 @@ Use `BB1Machine.order_le_two_pow` and the fixed order equality for a generated i
+ then apply `Encoding.Modular.encodeMatrix_injective` to each scalar block. -/
+ theorem mddhAdviceEnc_injective (p : ℕ → ℕ)
+     (hp : ∀ κ r, (G.inst κ r).order = p κ) (d ℓ : PolyExpr) (κ : ℕ) :
+-    Function.Injective (G.mddhAdviceEnc p hp d ℓ κ) := sorry
++    Function.Injective (G.mddhAdviceEnc p hp d ℓ κ) := by
++  letI : NeZero (p κ) := orderSchedule_neZero G p hp κ
++  intro ω₁ ω₂ h
++  -- Separate the fixed public metadata and then the fixed-length scalar blocks.
++  simp only [G.mddhAdviceEnc_eq p hp d ℓ κ] at h
++  rcases Prod.mk.inj (pairEncode_injective h) with ⟨_, h₁⟩
++  rcases Prod.mk.inj (pairEncode_injective h₁) with ⟨_, h₂⟩
++  rcases Prod.mk.inj (pairEncode_injective h₂) with ⟨_, hBody⟩
++  simp only [List.append_assoc] at hBody
++  have hIndexLen :=
++    (List.length_ofFn (f := fun i : Fin (d.eval κ + 1) => decide (i = ω₁.1))).trans
++      (List.length_ofFn (f := fun i : Fin (d.eval κ + 1) => decide (i = ω₂.1))).symm
++  rcases List.append_inj hBody hIndexLen with ⟨hIndexWord, hBlocks⟩
++  have hLLen :=
++    (Encoding.Modular.encodeMatrix_length (G.wG.eval κ) ω₁.2.1).trans
++      (Encoding.Modular.encodeMatrix_length (G.wG.eval κ) ω₂.2.1).symm
++  rcases List.append_inj hBlocks hLLen with ⟨hLWord, hTail⟩
++  have hSLen :=
++    (Encoding.Modular.encodeMatrix_length (G.wG.eval κ) ω₁.2.2.1).trans
++      (Encoding.Modular.encodeMatrix_length (G.wG.eval κ) ω₂.2.2.1).symm
++  rcases List.append_inj hTail hSLen with ⟨hSWord, hUWord⟩
++  -- The one-hot bit at the first advice index identifies that index.
++  have hIndex : ω₁.1 = ω₂.1 :=
++    of_decide_eq_true
++      ((congrFun (List.ofFn_injective hIndexWord) ω₁.1).symm.trans
++        (decide_eq_true (Eq.refl ω₁.1)))
++  -- A generated instance supplies the existing no-truncation bound for each scalar word.
++  have hWidth : p κ ≤ 2 ^ G.wG.eval κ := ?_
++  swap
++  · rw [← hp κ (fun _ => false), G.inst_eq κ (fun _ => false)]
++    exact TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.order_le_two_pow
++      G κ (G.desc κ (fun _ => false))
++  have hL : ω₁.2.1 = ω₂.2.1 :=
++    Encoding.Modular.encodeMatrix_injective
++      (q := p κ) (rows := ℓ.eval κ) (columns := 3) (G.wG.eval κ) hWidth hLWord
++  have hS : ω₁.2.2.1 = ω₂.2.2.1 :=
++    Encoding.Modular.encodeMatrix_injective
++      (q := p κ) (rows := 2) (columns := d.eval κ) (G.wG.eval κ) hWidth hSWord
++  have hU : ω₁.2.2.2 = ω₂.2.2.2 :=
++    Encoding.Modular.encodeMatrix_injective
++      (q := p κ) (rows := ℓ.eval κ) (columns := d.eval κ) (G.wG.eval κ) hWidth hUWord
++  exact Prod.ext hIndex (Prod.ext hL (Prod.ext hS hU))
+ 
+ /-- The L1 typed preprocessor embeds the canonical DLIN column into a matrix hybrid. Its
+ role is to provide one challenge column and compute all other columns from fixed advice.
+@@ -298,7 +350,56 @@ one when the prime schedule is at least `2^κ`. This uses the shared subexponent
+ `d`, and apply `subexpSmall_two_pow_neg`, `SubexpSmall.mul_pow`, `.const_mul` and `.mono`. -/
+ theorem mddhSlack_subexpSmall (p : ℕ → ℕ) (d : PolyExpr)
+     (hpb : ∀ κ, 2 ^ κ ≤ p κ) {c : ℝ} (hc₀ : 0 < c) (hc₁ : c < 1) :
+-    SubexpSmall c (mddhSlack p d) := sorry
++    SubexpSmall c (mddhSlack p d) := by
++  obtain ⟨C, k, hC⟩ := d.eval_le
++  have he₀ : 0 < (c + 1) / 2 := ?_
++  swap
++  · linarith only [hc₀]
++  have he₁ : (c + 1) / 2 < 1 := ?_
++  swap
++  · linarith only [hc₁]
++  have hce : c < (c + 1) / 2 := ?_
++  swap
++  · linarith only [hc₁]
++  have hbase := (subexpSmall_two_pow_neg.mul_pow zero_lt_one he₁ k).const_mul
++    he₀ hce (4 * (C : ℝ) * 2 ^ k)
++  refine hbase.mono ⟨1, ?_⟩
++  intro κ hκ
++  have hκ₁ : (1 : ℝ) ≤ κ := Nat.one_le_cast.mpr hκ
++  have hd : (d.eval κ : ℝ) ≤ (C : ℝ) * ((κ : ℝ) + 1) ^ k := ?_
++  swap
++  · exact_mod_cast hC κ
++  have hstep : (κ : ℝ) + 1 ≤ 2 * (κ : ℝ) := ?_
++  swap
++  · linarith only [hκ₁]
++  have hpoly : (d.eval κ : ℝ) ≤ (C : ℝ) * 2 ^ k * (κ : ℝ) ^ k := ?_
++  swap
++  · calc
++      _ ≤ (C : ℝ) * (2 * (κ : ℝ)) ^ k :=
++        hd.trans (mul_le_mul_of_nonneg_left
++          (pow_le_pow_left₀ (add_nonneg (Nat.cast_nonneg _) zero_le_one) hstep k)
++          (Nat.cast_nonneg _))
++      _ = (C : ℝ) * 2 ^ k * (κ : ℝ) ^ k := ?_
++    rw [_root_.mul_pow, mul_assoc]
++  have hcast : (2 : ℝ) ^ κ ≤ (p κ : ℝ) := ?_
++  swap
++  · exact_mod_cast hpb κ
++  have hdiv : (4 : ℝ) / (p κ : ℝ) ≤ 4 * (2 : ℝ)⁻¹ ^ κ := ?_
++  swap
++  · simpa only [div_eq_mul_inv, inv_pow] using
++      (div_le_div_of_nonneg_left (a := (4 : ℝ)) zero_le_four
++        (pow_pos two_pos κ) hcast)
++  rw [mddhSlack_eq, abs_mul, Nat.abs_cast,
++    abs_of_nonneg (div_nonneg zero_le_four (Nat.cast_nonneg _))]
++  calc
++    _ ≤ (d.eval κ : ℝ) * (4 * (2 : ℝ)⁻¹ ^ κ) :=
++      mul_le_mul_of_nonneg_left hdiv (Nat.cast_nonneg _)
++    _ ≤ ((C : ℝ) * 2 ^ k * (κ : ℝ) ^ k) * (4 * (2 : ℝ)⁻¹ ^ κ) :=
++      mul_le_mul_of_nonneg_right hpoly
++        (mul_nonneg zero_le_four (pow_nonneg (inv_nonneg.mpr zero_le_two) κ))
++    _ = (4 * (C : ℝ) * 2 ^ k) * ((κ : ℝ) ^ k * (2 : ℝ)⁻¹ ^ κ) := ?_
++    _ ≤ |(4 * (C : ℝ) * 2 ^ k) * ((κ : ℝ) ^ k * (2 : ℝ)⁻¹ ^ κ)| := le_abs_self _
++  ring
+ 
+ /-- DLIN hardness implies uniform-matrix MDDH negligibility once the fixed-advice reduction
+ functions have machine realisers [Wee20, §2.1, p. 4].

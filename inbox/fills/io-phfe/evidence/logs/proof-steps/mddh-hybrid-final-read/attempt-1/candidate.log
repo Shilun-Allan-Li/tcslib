@@ -1,0 +1,185 @@
+file=TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean
+source_sha256=61f39fc6b6fb51d2d98d5d7c4ffcf10f7fa921dd826d9e0c8bd45b9e563a915b
+working_source_development_check=True
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:618:8: error: unsolved goals
+case pos
+G : BilinearGen
+p : ℕ → ℕ
+hp : ∀ (κ : ℕ) (r : G.gen.Coins κ), (G.inst κ r).order = p κ
+d ℓ : PolyExpr
+D : NUPPT
+Tape : ℕ → Type :=
+  fun κ =>
+    Matrix (Fin (ℓ.eval κ)) (Fin 3) (ZMod (p κ)) ×
+      Matrix (Fin 2) (Fin (d.eval κ)) (ZMod (p κ)) × Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod (p κ))
+avgTape : (κ : ℕ) → (Tape κ → ℝ) → ℝ := fun κ f => (ProbComp.sample (Tape κ)).expect f
+hybrid : ℕ → ℕ → ProbComp Bool :=
+  fun κ i =>
+    OracleComp.bind (publicParamsGen G κ) fun pp =>
+      OracleComp.bind (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order))) fun M =>
+        OracleComp.bind (ProbComp.sample (Matrix (Fin 2) (Fin (d.eval κ)) (ZMod pp.group.order))) fun S =>
+          OracleComp.bind (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod pp.group.order))) fun U =>
+            OracleComp.bind (ProbComp.sample (D.Coins κ)) fun r =>
+              OracleComp.pure
+                (D.distinguisherL κ
+                  (G.mddhEnc d ℓ κ
+                    { pp := pp, matrix := pp.group.expMat pp.generator M,
+                      response := pp.group.expMat pp.generator fun a b => if ↑b < i then (M * S) a b else U a b })
+                  r)
+redGame : (κ : ℕ) → MddhAdvice p d ℓ κ → Bool → ProbComp Bool :=
+  fun κ w real =>
+    OracleComp.bind (G.dlinSample real κ) fun c =>
+      OracleComp.bind (ProbComp.sample (D.Coins κ)) fun r =>
+        OracleComp.pure (D.distinguisherL κ (G.mddhPre p hp d ℓ κ w c) r)
+redGap : (κ : ℕ) → MddhAdvice p d ℓ κ → ℝ := fun κ w => advantage (redGame κ w false) (redGame κ w true)
+hEnds :
+  ∀ (κ : ℕ),
+    accept (hybrid κ 0) = accept (G.mddhGame d ℓ D false κ) ∧
+      accept (hybrid κ (d.eval κ)) = accept (G.mddhGame d ℓ D true κ)
+hEndpointGap : ∀ (κ : ℕ), G.mddhAdv d ℓ D κ = advantage (hybrid κ 0) (hybrid κ (d.eval κ))
+hPreScalar :
+  ∀ (κ : ℕ) (w : MddhAdvice p d ℓ κ) (pp : PublicParams G κ) (ab rs : Fin 2 → ZMod pp.group.order)
+    (t : ZMod pp.group.order) (real : Bool),
+    let castScalar := ZMod.ringEquivCongr ⋯;
+    let L := fun i j => castScalar (w.2.1 i j);
+    let S := fun i j => castScalar (w.2.2.1 i j);
+    let U := fun i j => castScalar (w.2.2.2 i j);
+    let A0 := ![![ab 0, 0], ![0, ab 1], ![1, 1]];
+    let v0 := ![ab 0 * rs 0, ab 1 * rs 1, if real = true then rs 0 + rs 1 else t];
+    G.mddhPreChallenge p hp d ℓ κ w
+        (G.dlinChallenge κ pp (pp.generator ^ (ab 0).val) (pp.generator ^ (ab 1).val) (pp.generator ^ (ab 0 * rs 0).val)
+          (pp.generator ^ (ab 1 * rs 1).val) (pp.generator ^ (if real = true then rs 0 + rs 1 else t).val)) =
+      { pp := pp, matrix := pp.group.expMat pp.generator (L * A0),
+        response :=
+          pp.group.expMat pp.generator fun i j =>
+            if ↑j = ↑w.1 then L.mulVec v0 i else if ↑j < ↑w.1 then (L * A0 * S) i j else U i j }
+SType : (κ : ℕ) → PublicParams G κ → Type := fun κ pp => Matrix (Fin 2) (Fin (d.eval κ)) (ZMod pp.group.order)
+UType : (κ : ℕ) → PublicParams G κ → Type := fun κ pp => Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod pp.group.order)
+A0 : (κ : ℕ) → (pp : PublicParams G κ) → (Fin 2 → ZMod pp.group.order) → Matrix (Fin 3) (Fin 2) (ZMod pp.group.order) :=
+  fun κ pp ab => ![![ab 0, 0], ![0, ab 1], ![1, 1]]
+obs : (κ : ℕ) →
+  Fin (d.eval κ) →
+    (pp : PublicParams G κ) →
+      SType κ pp →
+        UType κ pp →
+          Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order) → (Fin (ℓ.eval κ) → ZMod pp.group.order) → ℝ :=
+  fun κ j pp S U M v =>
+    (ProbComp.sample (D.Coins κ)).prob fun r =>
+      D.distinguisherL κ
+          (G.mddhEnc d ℓ κ
+            { pp := pp, matrix := pp.group.expMat pp.generator M,
+              response :=
+                pp.group.expMat pp.generator fun a b =>
+                  if ↑b = ↑j then v a else if ↑b < ↑j then (M * S) a b else U a b })
+          r =
+        true
+idealCore : (κ : ℕ) → Fin (d.eval κ) → Bool → (pp : PublicParams G κ) → SType κ pp → UType κ pp → ℝ :=
+  fun κ j real pp S U =>
+    (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order))).expect fun M =>
+      if real = true then
+        (ProbComp.sample (Fin 2 → ZMod pp.group.order)).expect fun rs => obs κ j pp S U M (M.mulVec rs)
+      else (ProbComp.sample (Fin (ℓ.eval κ) → ZMod pp.group.order)).expect (obs κ j pp S U M)
+plantedCore : (κ : ℕ) → Fin (d.eval κ) → Bool → (pp : PublicParams G κ) → SType κ pp → UType κ pp → ℝ :=
+  fun κ j real pp S U =>
+    (ProbComp.sample (Fin 2 → ZMod pp.group.order)).expect fun ab =>
+      (ProbComp.sample (Fin 2 → ZMod pp.group.order)).expect fun rs =>
+        (ProbComp.sample (ZMod pp.group.order)).expect fun t =>
+          (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 3) (ZMod pp.group.order))).expect fun L =>
+            obs κ j pp S U (L * A0 κ pp ab)
+              (L.mulVec ![ab 0 * rs 0, ab 1 * rs 1, if real = true then rs 0 + rs 1 else t])
+ideal : (κ : ℕ) → Fin (d.eval κ) → Bool → PublicParams G κ → ℝ :=
+  fun κ j real pp =>
+    (ProbComp.sample (SType κ pp)).expect fun S => (ProbComp.sample (UType κ pp)).expect (idealCore κ j real pp S)
+planted : (κ : ℕ) → Fin (d.eval κ) → Bool → PublicParams G κ → ℝ :=
+  fun κ j real pp =>
+    (ProbComp.sample (SType κ pp)).expect fun S => (ProbComp.sample (UType κ pp)).expect (plantedCore κ j real pp S)
+coreLoss : ℕ → Bool → ℝ := fun κ real => if real = true then 1 / ↑(p κ) ^ 2 else 1 - (1 - 1 / ↑(p κ)) ^ 3
+hReductionTransport :
+  ∀ (κ : ℕ) (j : Fin (d.eval κ)) (real : Bool),
+    (avgTape κ fun τ => accept (redGame κ (j.castSucc, τ) real)) = (publicParamsGen G κ).expect (planted κ j real)
+κ : ℕ
+j : Fin (d.eval κ)
+pp : PublicParams G κ
+M : Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order)
+S : Matrix (Fin 2) (Fin (d.eval κ)) (ZMod pp.group.order)
+U : Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod pp.group.order)
+r : D.Coins κ
+a : Fin (ℓ.eval κ)
+h : ↑j = ↑j
+⊢ U a j = if True then U a j else U a j
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:369:20: warning: This simp argument is unused:
+  if_true
+
+Hint: Omit it from the simp argument list.
+  simp only [accept_eq, G.mddhGame_eq d ℓ D true κ, G.mddhSample_eq d ℓ true κ,
+          ProbComp.prob_bind, ProbComp.expect_bind, ProbComp.expect_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵↓reduceIte, i̵f̵_̵t̵r̵u̵e̵,̵ ̵Fin.is_lt]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:541:45: warning: This simp argument is unused:
+  ProbComp.prob_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [accept_eq, G.dlinSample_eq, P̵r̵o̵b̵C̵o̵m̵p̵.̵p̵r̵o̵b̵_̵b̵i̵n̵d̵,̵ProbComp.expect_bind, ProbComp.expect_pure,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ProbComp.prob_pure, G.mddhPre_eq, hPreScalar, obs, ProbComp.prob_eq_expect]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:542:52: warning: This simp argument is unused:
+  ProbComp.prob_pure
+
+Hint: Omit it from the simp argument list.
+  simp only [accept_eq, G.dlinSample_eq, ProbComp.prob_bind, ProbComp.expect_bind,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ProbComp.expect_pure, P̵r̵o̵b̵C̵o̵m̵p̵.̵p̵r̵o̵b̵_̵p̵u̵r̵e̵,̵G.mddhPre_eq, hPreScalar, obs, ProbComp.prob_eq_expect]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:597:48: warning: This simp argument is unused:
+  ProbComp.expect_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [accept_eq, ProbComp.prob_bind, P̵r̵o̵b̵C̵o̵m̵p̵.̵e̵x̵p̵e̵c̵t̵_̵b̵i̵n̵d̵,̵ProbComp.expect_pure, ProbComp.prob_pure]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:598:8: warning: This simp argument is unused:
+  ProbComp.expect_pure
+
+Hint: Omit it from the simp argument list.
+  simp only [accept_eq, ProbComp.prob_bind, ProbComp.expect_bind, P̵r̵o̵b̵C̵o̵m̵p̵.̵e̵x̵p̵e̵c̵t̵_̵p̵u̵r̵e̵,̵ ̵ProbComp.prob_pure]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:620:21: warning: This simp argument is unused:
+  if_pos rfl
+
+Hint: Omit it from the simp argument list.
+  simp only [i̵f̵_̵p̵o̵s̵ ̵r̵f̵l̵,̵ ̵Nat.lt_irrefl, if_false]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:627:48: warning: This simp argument is unused:
+  if_pos rfl
+
+Hint: Omit it from the simp argument list.
+  simp only [Nat.lt_succ_self, if_true,̵ ̵i̵f̵_̵p̵o̵s̵ ̵r̵f̵l̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:972:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:983:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction): lean exited with status 1
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction): error diagnostics reported
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction): no fresh .olean produced
+        5.60 real         5.02 user         1.08 sys
+          2467119104  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              196032  page reclaims
+                  17  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  16  voluntary context switches
+                7768  involuntary context switches
+            32005251  instructions retired
+            13772088  cycles elapsed
+             1638736  peak memory footprint

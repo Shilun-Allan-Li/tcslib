@@ -1,0 +1,17 @@
+Static searches/readings (no native execution):
+
+- SelfReduction.lean:254 mddhSlack_eq, :299 exact existing frozen target/docstring.
+- Complexity/Randomized/PolyExpr.lean:159 PolyExpr.eval_le.
+- Foundations/Subexponential.lean:150 SubexpSmall.mono.
+- Foundations/Subexponential.lean:190 SubexpSmall.const_mul.
+- Foundations/Subexponential.lean:207 SubexpSmall.mul_pow.
+- Foundations/Subexponential.lean:258 subexpSmall_two_pow_neg.
+- Asymptotic/ReductionSupport.lean:269-274 inline normal-form polynomial majorant.
+- CoinSampling/Asymptotic.lean:57 polyExpr_eval_le_mul_pow, :78
+  subexpSmall_polyExpr_mul: nearest existing generic results, NOT imported/called.
+- Mathlib ordered field div_le_div_of_nonneg_left, pow_le_pow_left0,
+  mul_le_mul_of_nonneg_left/right, inv_pow, Nat casts; ordinary ring normalization.
+
+Root explicitly disallowed the proposed CoinSampling.Asymptotic import via dispatch
+items 2/3/9 and requested the frozen specialized primitive proof. No new helper is
+proposed, so a new-helper exact?/apply? probe is inapplicable.

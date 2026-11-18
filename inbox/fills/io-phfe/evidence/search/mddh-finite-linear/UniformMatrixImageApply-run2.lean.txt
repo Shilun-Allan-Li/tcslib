@@ -1,0 +1,20 @@
+import TCSlib.Cryptography.Pairing.Exponents
+import TCSlib.Cryptography.Games.Probability
+import TCSlib.Cryptography.OneWayFunctions.Basic
+import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Card
+import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+import Lean.Elab.Tactic.LibrarySearch
+set_option maxHeartbeats 200000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+namespace TCSlib.Cryptography.Pairing
+open TCSlib.Cryptography.Games
+example
+    {K : Type} [Field K] [Fintype K] {r m c : ℕ}
+    (M : Matrix (Fin r) (Fin m) K) (hM : Function.Surjective (Matrix.mulVec M))
+    (F : Matrix (Fin r) (Fin c) K → ℝ) :
+    ProbComp.expect (ProbComp.sample (Matrix (Fin m) (Fin c) K)) (fun S => F (M * S)) =
+      ProbComp.expect (ProbComp.sample (Matrix (Fin r) (Fin c) K)) F := by
+  classical
+  apply?
+end TCSlib.Cryptography.Pairing

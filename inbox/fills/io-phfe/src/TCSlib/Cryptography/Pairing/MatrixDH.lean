@@ -4,7 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Pairing.MatrixDH.Parameters
 import TCSlib.Cryptography.Pairing.MatrixDH.Diagonal
+import TCSlib.Cryptography.Pairing.MatrixDH.FiniteLinear
+import TCSlib.Cryptography.Pairing.MatrixDH.AdaptiveShear
+import TCSlib.Cryptography.Pairing.MatrixDH.ColumnLaws
 import TCSlib.Cryptography.Pairing.MatrixDH.Defs
+import TCSlib.Cryptography.Pairing.MatrixDH.Hardness
 import TCSlib.Cryptography.Pairing.MatrixDH.SelfReduction
 
 set_option maxHeartbeats 0
@@ -18,7 +22,11 @@ set_option autoImplicit false
 
 * `Parameters`: generated group descriptions and public nonidentity generators.
 * `Diagonal`: exact finite-field bounds for random diagonal masks.
+* `FiniteLinear`: uniform matrix images and exact small-row rank estimates.
+* `AdaptiveShear`: kernel-valued translations preserving a public projection.
+* `ColumnLaws`: exact canonical real/random column comparisons.
 * `Defs`: uniform-matrix experiments and their two-experiment advantage.
+* `Hardness`: mathematical closure of polynomial-loss advantage bounds.
 * `SelfReduction`: explicit column-hybrid preprocessing, advice, and advantage inequalities.
 
 ## References

@@ -167,7 +167,9 @@ theorem crossLeak_known_value (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyEx
     (f : Fn κ pp.orderParam) (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
     (mu : ZMod pp.group.order) :
     crossLeak G n1 n2 PG κ pp st f x (pp.generator ^ mu.val) =
-      pp.generator ^ (value G n1 n2 PG κ pp f x st.y1 st.y2 - mu).val := sorry
+      pp.generator ^ (value G n1 n2 PG κ pp f x st.y1 st.y2 - mu).val := by
+  simp only [crossLeak_eq, value_eq, sub_eq_add_neg,
+    pp.group.pow_val_add, pp.group.pow_val_neg]
 
 /-- Simulator key generation computes the cross-term group value and forwards it to Π's
 simulator [Wee20, §3.2, p. 7, KeyGen*]. The fixed public matrix is retained as key metadata. -/

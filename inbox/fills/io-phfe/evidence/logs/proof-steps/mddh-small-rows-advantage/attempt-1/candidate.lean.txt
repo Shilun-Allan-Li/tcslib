@@ -1,0 +1,481 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
+-/
+import TCSlib.Cryptography.Pairing.Linear
+import TCSlib.Cryptography.Pairing.MatrixDH.FiniteLinear
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Uniform-matrix decisional Diffie–Hellman experiments
+
+The matrix assumption uses a uniform matrix with two columns. Its real response is its
+product with an independent uniform coefficient matrix; its random response is a fully
+uniform matrix. Public parameters are generated sequentially before all field-dependent
+draws. The source group is symmetric and the matrix width is fixed at two.
+
+## Main definitions
+
+* `BilinearGroup.groupMatrixEnc`: row-major fixed-width encoding of source-group matrices.
+* `BilinearGen.MDDHChallenge`, `BilinearGen.mddhEnc`: typed public matrix challenges and
+  their public encoding.
+* `BilinearGen.mddhSample`, `BilinearGen.mddhGame`, `BilinearGen.mddhAdv`: exact challenge
+  law, experiment and two-experiment advantage.
+
+## Main results
+
+* `BilinearGen.mddhEnc_injective`, `BilinearGen.length_mddhEnc`: faithful public encoding
+  and its fixed length.
+* `BilinearGen.mddhAdv_smallRows_le`: when there are at most two rows, security is
+  statistical, with an explicit rank-deficiency bound.
+
+The coefficient-column and row dimensions are polynomial expressions and may evaluate to
+zero. In particular, no nonempty-row or positive-column condition is required for the game.
+Uniform sampling is only used to specify the exact laws; no coin sampler is constructed.
+
+## References
+
+* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
+  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, §2.1, p. 4, Assumption 1.
+-/
+
+namespace TCSlib.Cryptography.Pairing
+
+open Complexity Turing TCSlib.Cryptography.Games
+
+namespace BilinearGroup
+
+variable {wG wT rows cols : ℕ} (B : BilinearGroup wG wT)
+
+/-- Encode a source-group matrix row by row using the group's fixed-width point encoding.
+This is serialization glue for the implicit matrices of [Wee20, §2.1, p. 4]. -/
+def groupMatrixEnc (M : Matrix (Fin rows) (Fin cols) B.G) : List Bool :=
+  (List.ofFn fun i => (List.ofFn fun j => List.ofFn (B.encG (M i j))).flatten).flatten
+
+/-- The group-matrix word concatenates the encoded entries, with rows and columns increasing. -/
+theorem groupMatrixEnc_eq (M : Matrix (Fin rows) (Fin cols) B.G) :
+    B.groupMatrixEnc M =
+      (List.ofFn fun i => (List.ofFn fun j => List.ofFn (B.encG (M i j))).flatten).flatten := rfl
+
+/-- A source-group matrix has one fixed-width block per entry. Serialization glue.
+
+**Proof sketch.** Apply `List.length_flatten` and `List.length_ofFn` to both concatenations;
+every point block has length `wG`. -/
+theorem length_groupMatrixEnc (M : Matrix (Fin rows) (Fin cols) B.G) :
+    (B.groupMatrixEnc M).length = rows * cols * wG := by
+  have hrow (i : Fin rows) :
+      (List.ofFn (fun j : Fin cols => List.ofFn (B.encG (M i j)))).flatten.length =
+        cols * wG := by
+    rw [List.length_flatten, List.map_ofFn]
+    change (List.ofFn (fun j : Fin cols => (List.ofFn (B.encG (M i j))).length)).sum = _
+    simp only [List.length_ofFn, List.ofFn_const, List.sum_replicate_nat]
+  rw [groupMatrixEnc_eq, List.length_flatten, List.map_ofFn]
+  change (List.ofFn (fun i : Fin rows =>
+    (List.ofFn (fun j : Fin cols => List.ofFn (B.encG (M i j)))).flatten.length)).sum = _
+  simp only [hrow, List.ofFn_const, List.sum_replicate_nat, Nat.mul_assoc]
+
+/-- Group-matrix serialization is injective, including empty dimensions. Serialization glue.
+
+**Proof sketch.** Split equal concatenations into fixed-width rows and then point blocks,
+using their known lengths. Apply `List.ofFn_injective` and `B.encG_injective` entrywise. -/
+theorem groupMatrixEnc_injective :
+    Function.Injective (B.groupMatrixEnc (rows := rows) (cols := cols)) := by
+  intro M N h
+  have hRows :
+      List.ofFn (fun i => (List.ofFn fun j => List.ofFn (B.encG (M i j))).flatten) =
+        List.ofFn (fun i => (List.ofFn fun j => List.ofFn (B.encG (N i j))).flatten) := ?_
+  swap
+  · apply List.eq_iff_flatten_eq.mpr
+    refine ⟨?_, ?_⟩
+    · simpa only [groupMatrixEnc_eq] using h
+    · rw [List.map_ofFn, List.map_ofFn]
+      apply congrArg List.ofFn
+      funext i
+      change (List.ofFn (fun j => List.ofFn (B.encG (M i j)))).flatten.length =
+        (List.ofFn (fun j => List.ofFn (B.encG (N i j)))).flatten.length
+      rw [List.length_flatten, List.length_flatten, List.map_ofFn, List.map_ofFn]
+      apply congrArg List.sum
+      apply congrArg List.ofFn
+      funext j
+      change (List.ofFn (B.encG (M i j))).length = (List.ofFn (B.encG (N i j))).length
+      rw [List.length_ofFn, List.length_ofFn]
+  have hRow := List.ofFn_injective hRows
+  funext i j
+  have hBlocks :
+      List.ofFn (fun k => List.ofFn (B.encG (M i k))) =
+        List.ofFn (fun k => List.ofFn (B.encG (N i k))) := ?_
+  swap
+  · apply List.eq_iff_flatten_eq.mpr
+    refine ⟨congrFun hRow i, ?_⟩
+    rw [List.map_ofFn, List.map_ofFn]
+    apply congrArg List.ofFn
+    funext k
+    change (List.ofFn (B.encG (M i k))).length = (List.ofFn (B.encG (N i k))).length
+    rw [List.length_ofFn, List.length_ofFn]
+  exact B.encG_injective
+    (List.ofFn_injective (congrFun (List.ofFn_injective hBlocks) j))
+
+end BilinearGroup
+
+namespace BilinearGen
+
+variable (G : BilinearGen)
+
+/-- An MDDH challenge contains shared public parameters, the two-column base matrix and its
+response matrix [Wee20, §2.1, p. 4, Assumption 1]. Private scalar witnesses are not stored. -/
+structure MDDHChallenge (d ℓ : PolyExpr) (κ : ℕ) where
+  /-- The common public description and source-group generator. -/
+  pp : PublicParams G κ
+  /-- The implicit base matrix with exactly two columns. -/
+  matrix : Matrix (Fin (ℓ.eval κ)) (Fin 2) (G.group κ pp.description.val).G
+  /-- The implicit response with `d(κ)` columns. -/
+  response : Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (G.group κ pp.description.val).G
+
+/-- Serialize the public parameters followed by the base and response matrices
+[Wee20, §2.1, p. 4, Assumption 1]. The encoding contains no group-generator coin strings. -/
+def mddhEnc (d ℓ : PolyExpr) (κ : ℕ) (c : G.MDDHChallenge d ℓ κ) : List Bool :=
+  pairEncode c.pp.encode
+    (pairEncode ((G.group κ c.pp.description.val).groupMatrixEnc c.matrix)
+      ((G.group κ c.pp.description.val).groupMatrixEnc c.response))
+
+/-- A public matrix challenge serializes as its parameters, base matrix and response matrix. -/
+theorem mddhEnc_eq (d ℓ : PolyExpr) (κ : ℕ) (c : G.MDDHChallenge d ℓ κ) :
+    G.mddhEnc d ℓ κ c =
+      pairEncode c.pp.encode
+        (pairEncode ((G.group κ c.pp.description.val).groupMatrixEnc c.matrix)
+          ((G.group κ c.pp.description.val).groupMatrixEnc c.response)) := rfl
+
+/-- Matrix-challenge encoding is injective on reachable public challenges. Serialization glue.
+
+**Proof sketch.** Use `pairEncode_injective` to separate public parameters and matrix words.
+Apply shared public-parameter encoding injectivity to align the dependent group types.
+Then apply `groupMatrixEnc_injective` to both matrix words. -/
+theorem mddhEnc_injective (d ℓ : PolyExpr) (κ : ℕ) :
+    Function.Injective (G.mddhEnc d ℓ κ) := by
+  intro c₁ c₂ h
+  rcases c₁ with ⟨pp₁, M₁, R₁⟩
+  rcases c₂ with ⟨pp₂, M₂, R₂⟩
+  simp only [mddhEnc_eq] at h
+  rcases Prod.mk.inj (pairEncode_injective h) with ⟨hpp, hmat⟩
+  have hPP : pp₁ = pp₂ := PublicParams.encode_injective hpp
+  cases hPP
+  rcases Prod.mk.inj (pairEncode_injective hmat) with ⟨hM, hR⟩
+  cases (G.group κ pp₁.description.val).groupMatrixEnc_injective hM
+  cases (G.group κ pp₁.description.val).groupMatrixEnc_injective hR
+  rfl
+
+/-- The matrix-challenge word has a fixed polynomial length. Serialization glue.
+
+**Proof sketch.** Use the shared public encoding reader, `length_pairEncode`,
+`length_groupMatrixEnc`, and `length_desc` from the description's reachability witness. -/
+theorem length_mddhEnc (d ℓ : PolyExpr) (κ : ℕ) (c : G.MDDHChallenge d ℓ κ) :
+    (G.mddhEnc d ℓ κ c).length =
+      4 * G.descLen.eval κ + (2 + 4 * ℓ.eval κ + ℓ.eval κ * d.eval κ) * G.wG.eval κ + 8 :=
+  by
+    obtain ⟨r, hr⟩ := c.pp.description.property
+    simp only [mddhEnc_eq, PublicParams.encode_eq, length_pairEncode,
+      BilinearGroup.length_groupMatrixEnc, List.length_ofFn]
+    rw [← hr, G.length_desc]
+    ring
+
+/-- Sample a uniform two-column matrix `M`, an independent coefficient matrix `S`, and a
+uniform response matrix `U`, after generating the public group parameters. Return `[M]`
+with `[MS]` in the real branch and `[U]` in the random branch
+[Wee20, §2.1, p. 4, Assumption 1, with k=2]. -/
+noncomputable def mddhSample (d ℓ : PolyExpr) (real : Bool) (κ : ℕ) :
+    ProbComp (G.MDDHChallenge d ℓ κ) :=
+  (publicParamsGen G κ).bind fun pp =>
+  (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2)
+    (ZMod (G.group κ pp.description.val).order))).bind fun M =>
+  (ProbComp.sample (Matrix (Fin 2) (Fin (d.eval κ))
+    (ZMod (G.group κ pp.description.val).order))).bind fun S =>
+  (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ))
+    (ZMod (G.group κ pp.description.val).order))).bind fun U =>
+    .pure ⟨pp, (G.group κ pp.description.val).expMat pp.generator M,
+      (G.group κ pp.description.val).expMat pp.generator (if real then M * S else U)⟩
+
+/-- The MDDH sampling law is the displayed sequence of dependent public and uniform scalar
+matrix draws. -/
+theorem mddhSample_eq (d ℓ : PolyExpr) (real : Bool) (κ : ℕ) :
+    G.mddhSample d ℓ real κ =
+      (publicParamsGen G κ).bind fun pp =>
+      (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2)
+        (ZMod (G.group κ pp.description.val).order))).bind fun M =>
+      (ProbComp.sample (Matrix (Fin 2) (Fin (d.eval κ))
+        (ZMod (G.group κ pp.description.val).order))).bind fun S =>
+      (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ))
+        (ZMod (G.group κ pp.description.val).order))).bind fun U =>
+        .pure ⟨pp, (G.group κ pp.description.val).expMat pp.generator M,
+          (G.group κ pp.description.val).expMat pp.generator (if real then M * S else U)⟩ := rfl
+
+/-- Run a non-uniform PPT distinguisher on the encoded MDDH challenge with independent
+machine coins [Wee20, §2.1, p. 4, Assumption 1]. -/
+noncomputable def mddhGame (d ℓ : PolyExpr) (D : NUPPT) (real : Bool) (κ : ℕ) :
+    ProbComp Bool :=
+  (G.mddhSample d ℓ real κ).bind fun c =>
+  (ProbComp.sample (D.Coins κ)).bind fun r =>
+    .pure (D.distinguisherL κ (G.mddhEnc d ℓ κ c) r)
+
+/-- The MDDH game draws a challenge and independent distinguisher coins. -/
+theorem mddhGame_eq (d ℓ : PolyExpr) (D : NUPPT) (real : Bool) (κ : ℕ) :
+    G.mddhGame d ℓ D real κ =
+      (G.mddhSample d ℓ real κ).bind fun c =>
+      (ProbComp.sample (D.Coins κ)).bind fun r =>
+        .pure (D.distinguisherL κ (G.mddhEnc d ℓ κ c) r) := rfl
+
+/-- The uniform-matrix MDDH advantage is the absolute difference of acceptance probabilities
+[Wee20, §2.1, p. 4, Assumption 1]. -/
+noncomputable def mddhAdv (d ℓ : PolyExpr) (D : NUPPT) (κ : ℕ) : ℝ :=
+  advantage (G.mddhGame d ℓ D false κ) (G.mddhGame d ℓ D true κ)
+
+/-- MDDH uses the library's two-experiment advantage. -/
+theorem mddhAdv_eq (d ℓ : PolyExpr) (D : NUPPT) (κ : ℕ) :
+    G.mddhAdv d ℓ D κ =
+      advantage (G.mddhGame d ℓ D false κ) (G.mddhGame d ℓ D true κ) := rfl
+
+/-- With at most two rows the matrix assumption is statistical, with the explicit
+rank-deficiency bound averaged over the public group draw
+[Wee20, §2.1, p. 4, paragraph after Assumption 1].
+
+**Proof sketch.** Condition on the uniform base matrix having full row rank. Then its map
+from two scalar coordinates onto the row space is surjective and sends uniform independent
+coefficient columns to uniform response columns. The failure probability for zero, one,
+or two rows is at most `2/p`; bound the distinguisher's gap by that event probability. -/
+theorem mddhAdv_smallRows_le (d ℓ : PolyExpr) (D : NUPPT)
+    (hℓ : ∀ κ, ℓ.eval κ ≤ 2) (κ : ℕ) :
+    G.mddhAdv d ℓ D κ ≤
+      ProbComp.expect (ProbComp.sample (G.gen.Coins κ))
+        (fun r => 2 / ((G.inst κ r).order : ℝ)) := by
+  classical
+  let H (pp : PublicParams G κ)
+      (M : Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order))
+      (U : Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod pp.group.order)) : ℝ :=
+    ProbComp.prob (ProbComp.sample (D.Coins κ)) fun r =>
+      D.distinguisherL κ (G.mddhEnc d ℓ κ
+        ⟨pp, pp.group.expMat pp.generator M, pp.group.expMat pp.generator U⟩) r = true
+  let P (pp : PublicParams G κ)
+      (M : Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order)) : ℝ :=
+    ProbComp.expect
+      (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod pp.group.order)))
+      (H pp M)
+  let Q (pp : PublicParams G κ)
+      (M : Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order)) : ℝ :=
+    ProbComp.expect
+      (ProbComp.sample (Matrix (Fin 2) (Fin (d.eval κ)) (ZMod pp.group.order)))
+      (fun S => H pp M (M * S))
+  let good (pp : PublicParams G κ)
+      (M : Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order)) : Prop :=
+    Function.Surjective (Matrix.mulVec M)
+  -- The actual distinguisher test and both conditional averages take values in [0, 1].
+  have hP0 : ∀ pp M, 0 ≤ P pp M := ?_
+  swap
+  · intro pp M
+    letI : Fact pp.group.order.Prime := ⟨pp.group.order_prime⟩
+    letI : NeZero pp.group.order := ⟨pp.group.order_prime.ne_zero⟩
+    exact ProbComp.expect_nonneg
+      (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod pp.group.order)))
+      (fun U => ProbComp.prob_nonneg (ProbComp.sample (D.Coins κ))
+        (fun r : D.Coins κ => D.distinguisherL κ (G.mddhEnc d ℓ κ
+          ⟨pp, pp.group.expMat pp.generator M, pp.group.expMat pp.generator U⟩) r = true))
+  have hP1 : ∀ pp M, P pp M ≤ 1 := ?_
+  swap
+  · intro pp M
+    letI : Fact pp.group.order.Prime := ⟨pp.group.order_prime⟩
+    letI : NeZero pp.group.order := ⟨pp.group.order_prime.ne_zero⟩
+    calc
+      P pp M ≤ ProbComp.expect
+          (ProbComp.sample
+            (Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod pp.group.order)))
+          (fun _ => 1) :=
+        ProbComp.expect_mono
+          (ProbComp.sample
+            (Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod pp.group.order)))
+          (fun U => ProbComp.prob_le_one (ProbComp.sample (D.Coins κ))
+            (fun r : D.Coins κ => D.distinguisherL κ (G.mddhEnc d ℓ κ
+              ⟨pp, pp.group.expMat pp.generator M, pp.group.expMat pp.generator U⟩)
+              r = true))
+      _ = 1 := ProbComp.expect_const
+        (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod pp.group.order))) 1
+  have hQ0 : ∀ pp M, 0 ≤ Q pp M := ?_
+  swap
+  · intro pp M
+    letI : Fact pp.group.order.Prime := ⟨pp.group.order_prime⟩
+    letI : NeZero pp.group.order := ⟨pp.group.order_prime.ne_zero⟩
+    exact ProbComp.expect_nonneg
+      (ProbComp.sample (Matrix (Fin 2) (Fin (d.eval κ)) (ZMod pp.group.order)))
+      (fun S => ProbComp.prob_nonneg (ProbComp.sample (D.Coins κ))
+        (fun r : D.Coins κ => D.distinguisherL κ (G.mddhEnc d ℓ κ
+          ⟨pp, pp.group.expMat pp.generator M, pp.group.expMat pp.generator (M * S)⟩)
+          r = true))
+  have hQ1 : ∀ pp M, Q pp M ≤ 1 := ?_
+  swap
+  · intro pp M
+    letI : Fact pp.group.order.Prime := ⟨pp.group.order_prime⟩
+    letI : NeZero pp.group.order := ⟨pp.group.order_prime.ne_zero⟩
+    calc
+      Q pp M ≤ ProbComp.expect
+          (ProbComp.sample (Matrix (Fin 2) (Fin (d.eval κ)) (ZMod pp.group.order)))
+          (fun _ => 1) :=
+        ProbComp.expect_mono
+          (ProbComp.sample (Matrix (Fin 2) (Fin (d.eval κ)) (ZMod pp.group.order)))
+          (fun S => ProbComp.prob_le_one (ProbComp.sample (D.Coins κ))
+            (fun r : D.Coins κ => D.distinguisherL κ (G.mddhEnc d ℓ κ
+              ⟨pp, pp.group.expMat pp.generator M, pp.group.expMat pp.generator (M * S)⟩)
+              r = true))
+      _ = 1 := ProbComp.expect_const
+        (ProbComp.sample (Matrix (Fin 2) (Fin (d.eval κ)) (ZMod pp.group.order))) 1
+  -- On a surjective base matrix, the whole response matrix has exactly the uniform law.
+  have hUniform : ∀ pp M, good pp M → P pp M = Q pp M := ?_
+  swap
+  · intro pp M hM
+    letI : Fact pp.group.order.Prime := ⟨pp.group.order_prime⟩
+    letI : NeZero pp.group.order := ⟨pp.group.order_prime.ne_zero⟩
+    exact (expect_sample_matrix_mul_of_mulVec_surjective
+      (K := ZMod pp.group.order) (r := ℓ.eval κ) (m := 2) (c := d.eval κ)
+      M hM (H pp M)).symm
+  have hFailure : ∀ pp : PublicParams G κ,
+      ProbComp.expect
+          (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order)))
+          (fun M => if good pp M then (0 : ℝ) else 1) ≤
+        2 / (pp.group.order : ℝ) := ?_
+  swap
+  · intro pp
+    letI : Fact pp.group.order.Prime := ⟨pp.group.order_prime⟩
+    letI : NeZero pp.group.order := ⟨pp.group.order_prime.ne_zero⟩
+    have h := smallRows_surjectivity_failure_le
+      (K := ZMod pp.group.order) (ℓ.eval κ) (hℓ κ)
+    rw [ProbComp.prob_eq_expect
+      (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order)))
+      (fun M : Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order) =>
+        ¬ Function.Surjective (Matrix.mulVec M))] at h
+    simpa only [good, ite_not, ZMod.card] using h
+  -- The gap vanishes on good bases and is at most one on the rank-failure event.
+  have hEntry : ∀ pp M, |P pp M - Q pp M| ≤ if good pp M then (0 : ℝ) else 1 := ?_
+  swap
+  · intro pp M
+    by_cases hg : good pp M
+    · simpa only [if_pos hg, hUniform pp M hg, sub_self, abs_zero] using
+        (le_refl (0 : ℝ))
+    · rw [if_neg hg, abs_le]
+      constructor <;> linarith [hP0 pp M, hP1 pp M, hQ0 pp M, hQ1 pp M]
+  have hPoint (pp : PublicParams G κ) :
+      |ProbComp.expect
+            (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order)))
+            (P pp) -
+          ProbComp.expect
+            (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order)))
+            (Q pp)| ≤ 2 / (pp.group.order : ℝ) :=
+    (ProbComp.abs_expect_sub_le_expect
+      (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order)))
+      (f := P pp) (g := Q pp)
+      (h := fun M => if good pp M then (0 : ℝ) else 1) (hEntry pp)).trans (hFailure pp)
+  -- The loss depends only on the generated description, not on the fresh generator draw.
+  have hLoss :
+      ProbComp.expect (publicParamsGen G κ) (fun pp => 2 / (pp.group.order : ℝ)) =
+        ProbComp.expect (ProbComp.sample (G.gen.Coins κ))
+          (fun r => 2 / ((G.inst κ r).order : ℝ)) := ?_
+  swap
+  · rw [publicParamsGen_eq G κ, ProbComp.expect_bind]
+    apply congrArg (ProbComp.expect (ProbComp.sample (G.gen.Coins κ)))
+    funext ρ
+    let desc : GroupDescription G κ := ⟨G.desc κ ρ, ⟨ρ, rfl⟩⟩
+    change ProbComp.expect
+        (publicParamsCore G κ desc <$> ProbComp.sample (GeneratorDraw G κ desc))
+        (fun pp : PublicParams G κ => 2 / (pp.group.order : ℝ)) =
+      2 / ((G.inst κ ρ).order : ℝ)
+    rw [ProbComp.expect_map, G.inst_eq κ ρ]
+    have hOrder (g : GeneratorDraw G κ desc) :
+        (publicParamsCore G κ desc g).group.order = (G.group κ desc.val).order := ?_
+    swap
+    · rw [PublicParams.group_eq (publicParamsCore G κ desc g),
+        publicParamsCore_eq G κ desc g]
+    have hIntegrand :
+        (fun g : GeneratorDraw G κ desc =>
+          2 / ((publicParamsCore G κ desc g).group.order : ℝ)) =
+          (fun _ => 2 / ((G.group κ desc.val).order : ℝ)) :=
+      funext (fun g => congrArg (fun n : ℕ => 2 / (n : ℝ)) (hOrder g))
+    rw [hIntegrand]
+    exact ProbComp.expect_const (ProbComp.sample (GeneratorDraw G κ desc))
+      (2 / ((G.group κ desc.val).order : ℝ))
+  -- Read each actual game, keeping the encoded distinguisher leaf opaque.
+  have hAccept (real : Bool) :
+      accept (G.mddhGame d ℓ D real κ) =
+        ProbComp.expect (publicParamsGen G κ) (fun pp =>
+          ProbComp.expect
+            (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order)))
+            (fun M => if real then Q pp M else P pp M)) := ?_
+  swap
+  · rw [accept_eq (G.mddhGame d ℓ D real κ), G.mddhGame_eq d ℓ D real κ,
+      ProbComp.prob_bind, G.mddhSample_eq d ℓ real κ, ProbComp.expect_bind]
+    apply congrArg (ProbComp.expect (publicParamsGen G κ))
+    funext pp
+    letI : Fact pp.group.order.Prime := ⟨pp.group.order_prime⟩
+    letI : NeZero pp.group.order := ⟨pp.group.order_prime.ne_zero⟩
+    rw [ProbComp.expect_bind]
+    apply congrArg
+      (ProbComp.expect
+        (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order))))
+    funext M
+    have hVerdict
+        (U : Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod pp.group.order)) :
+        ProbComp.prob ((ProbComp.sample (D.Coins κ)).bind fun r =>
+          .pure (D.distinguisherL κ (G.mddhEnc d ℓ κ
+            ⟨pp, pp.group.expMat pp.generator M, pp.group.expMat pp.generator U⟩) r))
+          (fun b => b = true) = H pp M U := ?_
+    swap
+    · change ProbComp.prob ((ProbComp.sample (D.Coins κ)).bind fun r =>
+          .pure (D.distinguisherL κ (G.mddhEnc d ℓ κ
+            ⟨pp, pp.group.expMat pp.generator M, pp.group.expMat pp.generator U⟩) r))
+          (fun b => b = true) =
+        ProbComp.prob (ProbComp.sample (D.Coins κ))
+          (fun r : D.Coins κ => D.distinguisherL κ (G.mddhEnc d ℓ κ
+            ⟨pp, pp.group.expMat pp.generator M, pp.group.expMat pp.generator U⟩) r = true)
+      rw [ProbComp.prob_eq_expect (ProbComp.sample (D.Coins κ))
+        (fun r : D.Coins κ => D.distinguisherL κ (G.mddhEnc d ℓ κ
+          ⟨pp, pp.group.expMat pp.generator M, pp.group.expMat pp.generator U⟩) r = true),
+        ProbComp.prob_bind]
+      apply congrArg (ProbComp.expect (ProbComp.sample (D.Coins κ)))
+      funext r
+      exact ProbComp.prob_pure
+        (D.distinguisherL κ (G.mddhEnc d ℓ κ
+          ⟨pp, pp.group.expMat pp.generator M, pp.group.expMat pp.generator U⟩) r)
+        (fun b => b = true)
+    simp only [ProbComp.expect_bind, ProbComp.expect_pure, hVerdict]
+    cases real
+    · simp only [Bool.false_eq_true, if_false]
+      exact ProbComp.expect_const
+        (ProbComp.sample (Matrix (Fin 2) (Fin (d.eval κ)) (ZMod pp.group.order))) (P pp M)
+    · simp only [Bool.true_eq_true, if_true]
+      change ProbComp.expect
+          (ProbComp.sample (Matrix (Fin 2) (Fin (d.eval κ)) (ZMod pp.group.order)))
+          (fun S => ProbComp.expect
+            (ProbComp.sample
+              (Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod pp.group.order)))
+            (fun _ => H pp M (M * S))) =
+        ProbComp.expect
+          (ProbComp.sample (Matrix (Fin 2) (Fin (d.eval κ)) (ZMod pp.group.order)))
+          (fun S => H pp M (M * S))
+      apply congrArg
+        (ProbComp.expect
+          (ProbComp.sample (Matrix (Fin 2) (Fin (d.eval κ)) (ZMod pp.group.order))))
+      funext S
+      exact ProbComp.expect_const
+        (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod pp.group.order)))
+        (H pp M (M * S))
+  have hAverage := ProbComp.abs_expect_sub_le_expect (publicParamsGen G κ)
+    (f := fun pp => ProbComp.expect
+      (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order))) (P pp))
+    (g := fun pp => ProbComp.expect
+      (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order))) (Q pp))
+    (h := fun pp => 2 / (pp.group.order : ℝ)) hPoint
+  rw [hLoss] at hAverage
+  rw [G.mddhAdv_eq d ℓ D κ, advantage_eq, hAccept false, hAccept true]
+  simpa only [Bool.false_eq_true, Bool.true_eq_true, if_false, if_true] using hAverage
+
+end BilinearGen
+
+end TCSlib.Cryptography.Pairing

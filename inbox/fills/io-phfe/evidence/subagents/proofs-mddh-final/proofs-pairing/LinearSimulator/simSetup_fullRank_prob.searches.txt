@@ -1,0 +1,17 @@
+Static API/name/shape readings for this existing frozen theorem:
+
+- LinearSimulator.lean basisMatrix_eq and simSetupDraw_eq expose the exact layout.
+- Mathlib/Data/Fin/Tuple/Basic.lean:700 Fin.snocEquiv (constant family stated explicitly).
+- Mathlib/Logic/Equiv/Prod.lean:337 arrowProdEquivProdArrow; :98 prodAssoc.
+- Mathlib/Logic/Equiv/Basic.lean:147 piCongrRight; :158 piComm.
+- Mathlib Matrix.isUnit_iff_isUnit_det in NonsingularInverse.lean:118.
+- Foundations/Probability.lean:167 uprob_comp_equiv; :175 uprob_fst.
+- Games/Bridges/Experiments.lean:66 prob_sample_eq_uprob.
+- MatrixDH/FiniteLinear.prob_sample_matrix_isUnit_eq is live and root-native-PASS.
+- Pairing/Group.lean:167 factPrime, :170 neZeroOrder provide existing modulus instances.
+- Mathlib Fin.prod_univ_succ/two, ZMod.card, Nat.cast_sub, field arithmetic are nearest
+  existing tools for the remaining hCount specialization.
+
+No new helper declaration is proposed/proved. Existing theorem skeleton authorized by
+root; proposed direct FiniteLinear import is within the task, no new Mathlib roots.
+No native execution by this agent. The two local holes remain explicit term sorry.

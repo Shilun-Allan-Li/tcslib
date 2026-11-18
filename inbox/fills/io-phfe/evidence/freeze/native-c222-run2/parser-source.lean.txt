@@ -1,0 +1,266 @@
+import Lean
+
+/-!
+Syntax-only freeze-span extractor for Lean 4.25. Audited declarations are never elaborated.
+The imported checked module supplies existing notation/parser extensions and namespace names.
+Both historical and current source are parsed with the same imported environment.
+-/
+
+open Lean
+
+namespace NativeFreeze
+
+structure ByteSpan where
+  start : Nat
+  stop : Nat
+  deriving Inhabited, ToJson
+
+structure Row where
+  name : String
+  rawName : String
+  kind : String
+  privateDecl : Bool
+  command : ByteSpan
+  headerStart : Nat
+  delimiter : Option ByteSpan
+  proofTerm : Option ByteSpan
+  signature : Option ByteSpan
+  doc : Option ByteSpan
+  returnLetBodies : Array ByteSpan
+  deriving ToJson
+
+structure OtherCommand where
+  kind : String
+  span : ByteSpan
+  scopeOnlyElaborated : Bool
+  deriving ToJson
+
+structure Request where
+  id : String
+  path : String
+  deriving FromJson
+
+structure Result where
+  schema : String := "native-freeze-spans-v1"
+  id : String
+  path : String
+  moduleName : String
+  sourceBytes : Nat
+  rows : Array Row
+  otherCommands : Array OtherCommand
+  deriving ToJson
+
+private def sourceSpan (stx : Syntax) : IO ByteSpan := do
+  match stx.getPos?, stx.getTailPos? with
+  | some a, some b =>
+      if a.byteIdx > b.byteIdx then
+        throw <| IO.userError "reversed native syntax range"
+      pure { start := a.byteIdx, stop := b.byteIdx }
+  | _, _ => throw <| IO.userError s!"missing source range for syntax kind {stx.getKind}"
+
+private partial def findKind? (kind : Name) (stx : Syntax) : Option Syntax :=
+  if stx.isOfKind kind then some stx
+  else stx.getArgs.findSome? (findKind? kind)
+
+/-- Stop at signature/body nodes: a nested let/where declaration cannot supply the outer id. -/
+private partial def findDeclId? (stx : Syntax) : Option Syntax :=
+  if stx.isOfKind ``Parser.Command.declId then some stx
+  else if [``Parser.Command.declSig, ``Parser.Command.optDeclSig,
+      ``Parser.Command.declValSimple, ``Parser.Command.declValEqns,
+      ``Parser.Command.whereStructInst].contains stx.getKind then none
+  else stx.getArgs.findSome? findDeclId?
+
+private partial def hasAtom (value : String) (stx : Syntax) : Bool :=
+  match stx with
+  | .atom _ s => s == value
+  | .node _ _ args => args.any (hasAtom value)
+  | _ => false
+
+private partial def letBodies (stx : Syntax) : IO (Array ByteSpan) := do
+  let mut out := #[]
+  if stx.getKind.toString == "Lean.Parser.Term.let" then
+    if stx.getNumArgs == 0 then
+      throw <| IO.userError "let syntax unexpectedly has no body"
+    out := out.push (← sourceSpan stx.getArgs.back!)
+  for arg in stx.getArgs do
+    out := out ++ (← letBodies arg)
+  pure out
+
+private def coreKind? (core : Syntax) : Option String :=
+  let k := core.getKind.toString
+  if k == "Lean.Parser.Command.theorem" then some "theorem"
+  else if k == "Lean.Parser.Command.definition" then some "def"
+  else if k == "Lean.Parser.Command.abbrev" then some "abbrev"
+  else if k == "Lean.Parser.Command.structure" then
+    some (if hasAtom "class" core[0] then "class" else "structure")
+  else if k == "Lean.Parser.Command.inductive" then some "inductive"
+  else if k == "Lean.Parser.Command.coinductive" then some "coinductive"
+  else if k == "Lean.Parser.Command.classInductive" then some "class"
+  else if k == "Lean.Parser.Command.instance" then some "instance"
+  else if k == "Lean.Parser.Command.opaque" then some "opaque"
+  else if k == "Lean.Parser.Command.axiom" then some "axiom"
+  else none
+
+private def declShape? (cmd : Syntax) : Option (Syntax × Syntax × String) :=
+  if cmd.isOfKind ``Parser.Command.declaration then
+    (fun kind => (cmd[0], cmd[1], kind)) <$> coreKind? cmd[1]
+  else if cmd.getKind.toString == "lemma" then
+    -- Mathlib/Tactic/Lemma.lean: expandLemma preserves this exact modifiers/core shape.
+    some (cmd[0], cmd[1], "lemma")
+  else none
+
+private def qualify (ns : Name) (id : Name) : String :=
+  let s := id.toString
+  if s.startsWith "_root_." then s.drop 7 else (ns ++ id).toString
+
+private def extractRow (cmd mods core : Syntax) (kind : String) (ns : Name)
+    (ordinal : Nat) : IO Row := do
+  let command ← sourceSpan cmd
+  let docStx? := findKind? ``Parser.Command.docComment mods
+  let doc ← docStx?.mapM sourceSpan
+  let headerStart := (doc.map (·.stop)).getD command.start
+  let id? := findDeclId? core
+  let rawName ← match id? with
+    | some id => pure id[0].getId
+    | none =>
+        if kind == "instance" then
+          pure <| Name.mkSimple s!"<anonymous instance at command {ordinal}>"
+        else throw <| IO.userError s!"missing outer declaration id: {kind}"
+  let signatureStx? := core.getArgs.find? fun s =>
+    (s.isOfKind ``Parser.Command.declSig || s.isOfKind ``Parser.Command.optDeclSig) &&
+      s.getPos?.isSome && s.getTailPos?.isSome
+  let signature ← signatureStx?.mapM sourceSpan
+  let returns ← match signatureStx? with
+    | none => pure #[]
+    | some sig => letBodies sig
+  let mut delimiter : Option ByteSpan := none
+  let mut proofTerm : Option ByteSpan := none
+  if kind == "theorem" || kind == "lemma" then
+    -- CRITICAL: only a DIRECT declaration-value child; never search nested term := atoms.
+    let some value := core.getArgs.find? (·.isOfKind ``Parser.Command.declValSimple)
+      | throw <| IO.userError s!"unsupported theorem body form for {rawName}"
+    if value[0].getAtomVal != ":=" then
+      throw <| IO.userError s!"unexpected declaration-value delimiter for {rawName}"
+    delimiter := some (← sourceSpan value[0])
+    proofTerm := some (← sourceSpan value[1])
+    let some sig := signature
+      | throw <| IO.userError s!"missing theorem signature for {rawName}"
+    if sig.stop > (delimiter.get!).start then
+      throw <| IO.userError s!"overlapping signature and declaration value for {rawName}"
+  pure {
+    name := qualify ns rawName
+    rawName := rawName.toString
+    kind := kind
+    privateDecl := hasAtom "private" mods
+    command := command
+    headerStart := headerStart
+    delimiter := delimiter
+    proofTerm := proofTerm
+    signature := signature
+    doc := doc
+    returnLetBodies := returns }
+
+
+private def scopeOnlyKind (kind : Name) : Bool :=
+  [``Parser.Command.namespace, ``Parser.Command.section, ``Parser.Command.end,
+   ``Parser.Command.open, ``Parser.Command.set_option,
+   ``Parser.Command.notation, ``Parser.Command.mixfix].contains kind
+
+private def forbiddenParserCommand (kind : Name) : Bool :=
+  ["Lean.Parser.Command.syntax", "Lean.Parser.Command.syntaxAbbrev",
+   "Lean.Parser.Command.syntaxCat", "Lean.Parser.Command.macro",
+   "Lean.Parser.Command.macro_rules", "Lean.Parser.Command.elab"].contains kind.toString
+
+private def checkMessages (messages : MessageLog) : IO Unit := do
+  if messages.hasErrors then
+    let mut lines := #[]
+    for msg in messages.toList do
+      lines := lines.push (← msg.toString)
+    throw <| IO.userError (String.intercalate "\n" lines.toList)
+
+private def updateScope (cmd : Syntax) (ictx : Parser.InputContext)
+    (pos : String.Pos.Raw) (state : Elab.Command.State) : IO Elab.Command.State := do
+  let ctx : Elab.Command.Context := {
+    fileName := ictx.fileName, fileMap := ictx.fileMap, cmdPos := pos,
+    snap? := none, cancelTk? := none }
+  let result ← EIO.toIO' <| (Elab.Command.elabCommandTopLevel cmd ctx).run state
+  match result with
+  | .error e => throw <| IO.userError (← e.toMessageData.toString)
+  | .ok (_, state) =>
+      checkMessages state.messages
+      pure state
+
+private def parseSource (env : Environment) (moduleName : String) (request : Request) :
+    IO Result := do
+  let source ← IO.FS.readFile request.path
+  let ictx := Parser.mkInputContext source request.path
+  let (_, initial, headerMessages) ← Parser.parseHeader ictx
+  checkMessages headerMessages
+  let mut pstate := initial
+  let mut cstate := Elab.Command.mkState (env.setMainModule `NativeFreezeInput)
+  let mut rows := #[]
+  let mut others : Array OtherCommand := #[]
+  let mut ordinal := 0
+  repeat
+    let before := pstate.pos
+    let scope := cstate.scopes.head!
+    let pmctx : Parser.ParserModuleContext := {
+      env := cstate.env, options := scope.opts,
+      currNamespace := scope.currNamespace, openDecls := scope.openDecls }
+    let (cmd, next, messages) := Parser.parseCommand ictx pmctx pstate {}
+    checkMessages messages
+    if next.recovering then throw <| IO.userError "native parser entered error recovery"
+    if cmd.isOfKind ``Parser.Command.eoi then break
+    if Parser.isTerminalCommand cmd then
+      throw <| IO.userError "unexpected import/exit after module header"
+    if next.pos.byteIdx ≤ before.byteIdx then
+      throw <| IO.userError "native parser did not advance"
+    ordinal := ordinal + 1
+    if let some (mods, core, kind) := declShape? cmd then
+      rows := rows.push (← extractRow cmd mods core kind scope.currNamespace ordinal)
+    else
+      if forbiddenParserCommand cmd.getKind then
+        throw <| IO.userError s!"unsupported in-file parser extension: {cmd.getKind}"
+      let process := scopeOnlyKind cmd.getKind
+      others := others.push {
+        kind := cmd.getKind.toString, span := (← sourceSpan cmd),
+        scopeOnlyElaborated := process }
+      if process then cstate ← updateScope cmd ictx before cstate
+    pstate := next
+  if cstate.scopes.length != 1 then
+    throw <| IO.userError "unclosed namespace/section scope"
+  pure {
+    id := request.id
+    path := request.path
+    moduleName := moduleName
+    sourceBytes := source.utf8ByteSize
+    rows := rows
+    otherCommands := others }
+
+
+def run (args : List String) : IO Unit := do
+  let [sysroot, moduleName, requestFile] := args
+    | throw <| IO.userError "usage: NativeFreeze SYSROOT MODULE REQUESTS_JSON"
+  -- Never spawn `lean --print-prefix`: the slot-owning caller supplies this explicit path.
+  initSearchPath (System.FilePath.mk sysroot)
+  let name := moduleName.splitOn "." |>.foldl Name.str Name.anonymous
+  let env ← importModules #[{ module := name }] {} (loadExts := true)
+  let json ← match Json.parse (← IO.FS.readFile requestFile) with
+    | .ok j => pure j
+    | .error e => throw <| IO.userError e
+  let requests : Array Request ← match (fromJson? json : Except String (Array Request)) with
+    | .ok rs => pure rs
+    | .error e => throw <| IO.userError e
+  for request in requests do
+    let result ← parseSource env moduleName request
+    IO.println ("NATIVE_FREEZE_JSON\t" ++ (toJson result).compress)
+
+end NativeFreeze
+
+def main (args : List String) : IO UInt32 := do
+  try
+    NativeFreeze.run args
+    pure 0
+  catch e =>
+    IO.eprintln s!"NATIVE_FREEZE_ERROR: {e}"
+    pure 1

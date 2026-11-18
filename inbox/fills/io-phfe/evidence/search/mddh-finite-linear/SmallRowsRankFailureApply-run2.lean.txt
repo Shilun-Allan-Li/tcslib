@@ -1,0 +1,19 @@
+import TCSlib.Cryptography.Pairing.Exponents
+import TCSlib.Cryptography.Games.Probability
+import TCSlib.Cryptography.OneWayFunctions.Basic
+import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Card
+import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+import Lean.Elab.Tactic.LibrarySearch
+set_option maxHeartbeats 200000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+namespace TCSlib.Cryptography.Pairing
+open TCSlib.Cryptography.Games
+example {K : Type} [Field K] [Fintype K]
+    (r : ℕ) (hr : r ≤ 2) :
+    ProbComp.prob (ProbComp.sample (Matrix (Fin r) (Fin 2) K))
+        (fun M => ¬ Function.Surjective (Matrix.mulVec M)) ≤
+      2 / (Fintype.card K : ℝ) := by
+  classical
+  apply?
+end TCSlib.Cryptography.Pairing

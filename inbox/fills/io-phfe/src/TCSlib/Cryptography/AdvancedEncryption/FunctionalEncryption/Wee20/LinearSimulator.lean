@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
 import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
+import TCSlib.Cryptography.Pairing.MatrixDH.FiniteLinear
 import Mathlib.Data.Fin.Tuple.Basic
 import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Card
@@ -95,7 +96,20 @@ theorem groupPGStar_lift (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ
     (mu : ZMod pp.group.order)
     (t : (PG.TIdx κ pp.orderParam f ⊕ Fin (n'.eval κ)) → ZMod pp.group.order) :
     groupPGStar G PG κ pp f x (pp.generator ^ mu.val) t =
-      pp.group.expVec pp.generator (PG.pgbStar κ pp.orderParam f x mu t) := sorry
+      pp.group.expVec pp.generator (PG.pgbStar κ pp.orderParam f x mu t) := by
+  rw [groupPGStar_eq]
+  funext i
+  cases i with
+  | inl j =>
+      simp only [Sum.elim_inl, pp.group.expVec_apply, PG.pgbStar_eq,
+        PartialGarbling.pgbStarCore_inl]
+  | inr u =>
+      simp only [Sum.elim_inr, pp.group.expVec_apply, PG.pgbStar_eq,
+        PartialGarbling.pgbStarCore_inr]
+      by_cases h : u = PG.m0 κ pp.orderParam f
+      · simp only [if_pos h, add_zero]
+        exact (pp.group.pow_val_add pp.generator _ _).symm
+      · simp only [if_neg h, add_zero, mul_one]
 
 /-- The simulator's basis matrix is `(A|c)^T` with the final row supplied by `c`
 [Wee20, §4.2, p. 10, Setup*]. -/
@@ -197,7 +211,9 @@ theorem simSetupCore_eq (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ)
 theorem simSetupCore_singular (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ)
     (pp : PublicParams G κ) (ω : SimSetupDraw G ℓ zDim κ pp)
     (h : ¬ IsUnit (basisMatrix G κ pp ω.1 ω.2.1).det) :
-    (simSetupCore G ℓ zDim κ pp ω).2.basisInv = 0 := sorry
+    (simSetupCore G ℓ zDim κ pp ω).2.basisInv = 0 := by
+  rw [simSetupCore_eq]
+  exact Matrix.nonsing_inv_apply_not_isUnit _ h
 
 /-- Simulated encryption reveals only the three preselected group masks
 [Wee20, §4.2, p. 10, Enc*]. The public input is accepted but does not affect these masks. -/
@@ -399,7 +415,79 @@ divide by the cardinality of all matrices, using `ZMod.card`. -/
 theorem simSetup_fullRank_prob (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ)
     (pp : PublicParams G κ) :
     ProbComp.prob (ProbComp.sample (SimSetupDraw G ℓ zDim κ pp))
-      (fun ω => IsUnit (basisMatrix G κ pp ω.1 ω.2.1).det) = 1 - rankSlack pp := sorry
+      (fun ω => IsUnit (basisMatrix G κ pp ω.1 ω.2.1).det) = 1 - rankSlack pp := by
+  classical
+  let K := ZMod pp.group.order
+  let Tail : Type :=
+    Matrix (Fin 3) (Fin (zDim.eval κ)) K ×
+      Matrix (Fin 3) (Fin (ℓ.eval κ) × Fin 2) K ×
+      Matrix (Fin 3) (Fin 2) K ×
+      (Fin (zDim.eval κ) → K) × (Fin 2 → K)
+  let row : ((Fin 2 → K) × K) ≃ (Fin 3 → K) :=
+    (Equiv.prodComm (Fin 2 → K) K).trans
+      (Fin.snocEquiv (fun _ : Fin 3 => K))
+  let ac : (Matrix (Fin 3) (Fin 2) K × (Fin 3 → K)) ≃
+      Matrix (Fin 3) (Fin 3) K :=
+    (Equiv.arrowProdEquivProdArrow (Fin 3)
+      (fun _ => Fin 2 → K) (fun _ => K)).symm.trans
+      ((Equiv.piCongrRight (fun _ : Fin 3 => row)).trans
+        (Equiv.piComm (fun (_ : Fin 3) (_ : Fin 3) => K)))
+  let e : SimSetupDraw G ℓ zDim κ pp ≃ (Matrix (Fin 3) (Fin 3) K × Tail) :=
+    (Equiv.prodAssoc (Matrix (Fin 3) (Fin 2) K) (Fin 3 → K) Tail).symm.trans
+      (Equiv.prodCongr ac (Equiv.refl Tail))
+  have hBasis : ∀ ω : SimSetupDraw G ℓ zDim κ pp,
+      (e ω).1 = basisMatrix G κ pp ω.1 ω.2.1 := by
+    intro ω
+    exact (basisMatrix_eq G κ pp ω.1 ω.2.1).symm
+  have hEvent :
+      (fun ω : SimSetupDraw G ℓ zDim κ pp =>
+        IsUnit (basisMatrix G κ pp ω.1 ω.2.1).det) =
+      (fun ω : SimSetupDraw G ℓ zDim κ pp => IsUnit (e ω).1) := ?_
+  swap
+  · funext ω
+    rw [hBasis ω]
+    exact propext (Matrix.isUnit_iff_isUnit_det _).symm
+  have hDist :
+      ProbComp.prob (ProbComp.sample (SimSetupDraw G ℓ zDim κ pp))
+          (fun ω => IsUnit (basisMatrix G κ pp ω.1 ω.2.1).det) =
+        ProbComp.prob (ProbComp.sample (Matrix (Fin 3) (Fin 3) K))
+          (fun M => IsUnit M) := ?_
+  swap
+  · rw [Bridge.prob_sample_eq_uprob, Bridge.prob_sample_eq_uprob, hEvent]
+    exact (uprob_comp_equiv e
+      (fun z : Matrix (Fin 3) (Fin 3) K × Tail => IsUnit z.1)).trans
+        (uprob_fst (β := Tail) (fun M : Matrix (Fin 3) (Fin 3) K => IsUnit M))
+  have hCount :
+      (((∏ i : Fin 3,
+          (Fintype.card K ^ 3 - Fintype.card K ^ (i : ℕ))) : ℕ) : ℝ) /
+          (Fintype.card K : ℝ) ^ (3 * 3) =
+        (1 - 1 / (pp.group.order : ℝ)) *
+          (1 - 1 / (pp.group.order : ℝ) ^ 2) *
+          (1 - 1 / (pp.group.order : ℝ) ^ 3) := by
+    let q : ℕ := pp.group.order
+    have hq₂ : 2 ≤ q := pp.group.order_prime.two_le
+    have hq₁ : 1 ≤ q := (Nat.le_add_right 1 1).trans hq₂
+    have h31 : 1 ≤ q ^ 3 := one_le_pow₀ hq₁
+    have h3q : q ≤ q ^ 3 := le_self_pow₀ hq₁ (Nat.succ_ne_zero 2)
+    have h32 : q ^ 2 ≤ q ^ 3 := pow_le_pow_right₀ hq₁ (Nat.le_succ 2)
+    have hqne : (q : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr pp.group.order_prime.ne_zero
+    have hcard : Fintype.card K = q := ZMod.card pp.group.order
+    rw [hcard, Fin.prod_univ_three]
+    change (((q ^ 3 - q ^ 0) * (q ^ 3 - q ^ 1) * (q ^ 3 - q ^ 2) : ℕ) : ℝ) /
+        (q : ℝ) ^ 9 =
+      (1 - 1 / (q : ℝ)) * (1 - 1 / (q : ℝ) ^ 2) *
+        (1 - 1 / (q : ℝ) ^ 3)
+    simp only [pow_zero, pow_one, Nat.cast_mul, Nat.cast_sub h31,
+      Nat.cast_sub h3q, Nat.cast_sub h32, Nat.cast_pow, Nat.cast_one]
+    field_simp [hqne] <;> ring
+  calc
+    _ = ProbComp.prob (ProbComp.sample (Matrix (Fin 3) (Fin 3) K))
+        (fun M => IsUnit M) := hDist
+    _ = _ := prob_sample_matrix_isUnit_eq (K := K) 3
+    _ = _ := hCount
+    _ = 1 - rankSlack pp := ?_
+  rw [rankSlack_eq]
+  ring
 
 /-- Π's statistical correction averages its exact rank failure over sequential public-
 parameter generation [Wee20, Appendix B, Theorem 1, p. 12, with exact rank accounting]. -/

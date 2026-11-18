@@ -1,0 +1,689 @@
+From 359e440a46f5939223bbbe73cb67731e5b4c0b94 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 11:58:57 -0800
+Subject: [PATCH 33/34] io-phfe: prove PHFE encoding faithfulness and raw
+ correctness
+
+---
+ .../FunctionalEncryption/Wee20.lean           |   3 +
+ .../Wee20/PHFE/Correctness.lean               |  30 +-
+ .../Wee20/PHFE/Encodings.lean                 | 369 +++++++++++++++++-
+ .../FunctionalEncryption/Wee20/PHFE/Raw.lean  |   7 +
+ .../Wee20/QuadraticSimulator.lean             |   4 +-
+ .../Wee20/WireLemmas.lean                     |  90 +++++
+ .../Pairing/MatrixDH/Parameters.lean          |  12 +
+ 7 files changed, 497 insertions(+), 18 deletions(-)
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/WireLemmas.lean
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20.lean
+index f3cbdd6d5..0d62404e8 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20.lean
+@@ -14,6 +14,7 @@ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadrat
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Wire
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.WireDraws
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.WireLemmas
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -24,6 +25,8 @@ set_option autoImplicit false
+ 
+ ## Contents
+ 
++* `Wee20.WireLemmas`: length and faithfulness adapters to the existing group-matrix encoder.
++
+ * `Linear`, `LinearCorrect`, `LinearSimulator`: the internal building block.
+ * `LinearSecurity`: explicit adaptive games, fresh-law coupling and deterministic reductions.
+ * `Quadratic`, `QuadraticCorrect`, `QuadraticSimulator`: the outer typed construction.
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean
+index dad907394..d2674cc70 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean
+@@ -76,7 +76,31 @@ adapter identity identifies its scalar value with the generic class evaluation;
+ pushforward laws give AllOutputs of that result. -/
+ theorem wee20PHFE_raw_correct (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+     (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) (hPG : PHFE.PGSound PG) :
+-    (wee20PHFE_raw G ℓ n d PG).Correct := sorry
++    (wee20PHFE_raw G ℓ n d PG).Correct := by
++  have hEmbed : (wee20PHFE_raw G ℓ n d PG).embed = PHFE.embedValue G ℓ n d :=
++    wee20PHFE_raw_embed G ℓ n d PG
++  refine ((wee20PHFE_raw G ℓ n d PG).correct_iff).2 ?_
++  intro κ f x y
++  rw [FEScheme.Raw.honestRun_eq]
++  simp only [FEScheme.Raw.setup_eq, FEScheme.Raw.enc_eq, FEScheme.Raw.keyGen_eq,
++    Games.OracleComp.map_eq_bind, Games.OracleComp.bind_assoc,
++    Games.OracleComp.pure_bind]
++  refine Games.OracleComp.AllOutputs.bind (Games.OracleComp.allOutputs_true _) ?_
++  intro pp _
++  refine Games.OracleComp.AllOutputs.bind (Games.OracleComp.allOutputs_true _) ?_
++  intro a _
++  refine Games.OracleComp.AllOutputs.bind (Games.OracleComp.allOutputs_true _) ?_
++  intro s _
++  refine Games.OracleComp.AllOutputs.bind (Games.OracleComp.allOutputs_true _) ?_
++  intro t _
++  apply Games.OracleComp.allOutputs_pure.mpr
++  simp only [wee20PHFE_raw_dec, wee20PHFE_raw_keyCore, wee20PHFE_raw_encCore,
++    wee20PHFE_raw_setupCore, wee20PHFE_raw_cprm, hEmbed,
++    PHFE.keyCore_eq, PHFE.encCore_eq, PHFE.setupCore_eq, PHFE.dec_eq,
++    PHFE.embedValue_eq, PHFE.class_eval_eq G ℓ n d PG hPG]
++  exact congrArg some (Quadratic.quadratic_dec_eq G n n PG κ pp
++    (PHFE.decodeFunction G ℓ n d κ pp f) (PHFE.decodePublic G ℓ n d κ pp x)
++    (PHFE.decodePrivate G ℓ n d κ pp y) (PHFE.decodePrivate G ℓ n d κ pp y) a s t)
+ 
+ /-- Perfect PHFE correctness implies zero error in GJLS21's bounded-error syntax
+ [GJLS21, Definition 4.2].
+@@ -85,7 +109,9 @@ theorem wee20PHFE_raw_correct (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+ correctness theorem. No probabilistic approximation is introduced. -/
+ theorem wee20PHFE_raw_correctExcept_zero (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+     (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) (hPG : PHFE.PGSound PG) :
+-    (wee20PHFE_raw G ℓ n d PG).CorrectExcept (fun _ => 0) := sorry
++    (wee20PHFE_raw G ℓ n d PG).CorrectExcept (fun _ => 0) := by
++  exact FEScheme.Raw.Correct.correctExcept_zero (wee20PHFE_raw G ℓ n d PG)
++    (wee20PHFE_raw_correct G ℓ n d PG hPG)
+ 
+ /-- The layered raw garbling evaluates the coefficient tensor it represents.
+ This is the semantic reader needed to instantiate raw PHFE correctness. -/
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean
+index 79e2594d2..f614e5fc5 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean
+@@ -4,7 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Widths
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.WireDraws
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.WireLemmas
+ import TCSlib.Cryptography.Asymptotic.Adversary
++import TCSlib.Cryptography.Asymptotic.CollectionsLemmas
++import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction
++import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenMachine.Draws
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -47,12 +51,16 @@ open Complexity Turing TCSlib.Cryptography.Pairing
+ 
+ /-- The public key has its exact polynomial wire width.
+ 
+-**Proof sketch.** Read the group-vector, matrix and public-key word equations. Use
+-`length_pairEncode` and `List.length_ofFn` for each matrix row, then evaluate `mpkLen`.
++**Proof sketch.** Read the public-key wire equations and reuse the shared group-matrix
++length law. Combine the nested pair lengths and the numeric public-key width reader.
+ No padding is included in this count. -/
+ theorem quadraticMPK_length (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ)
+     (pp : PublicParams G κ) (pk : Quadratic.MPK G ℓ n n κ pp) :
+-    (Wire.quadraticMPK pp pk).length = (mpkLen G ℓ n).eval κ := sorry
++    (Wire.quadraticMPK pp pk).length = (mpkLen G ℓ n).eval κ := by
++  simp only [Wire.quadraticMPK_eq, Wire.linearMPK_eq, length_pairEncode,
++    Wire.groupMatrix_length, mpkLen_eval, Quadratic.piDim_eq,
++    PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
++  ring
+ 
+ /-- The master secret has its exact polynomial wire width.
+ 
+@@ -61,7 +69,11 @@ shared modular encoding length readers. Expand only the published wire equations
+ numeric width reader; collect polynomial terms. -/
+ theorem quadraticMSK_length (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ)
+     (pp : PublicParams G κ) (sk : Quadratic.MSK G ℓ n n κ pp) :
+-    (Wire.quadraticMSK pp sk).length = (mskLen G ℓ n).eval κ := sorry
++    (Wire.quadraticMSK pp sk).length = (mskLen G ℓ n).eval κ := by
++  simp only [Wire.quadraticMSK_eq, Wire.linearMSK_eq, length_pairEncode,
++    Wire.groupMatrix_length, Encoding.Modular.encodeMatrix_length, mskLen_eval,
++    Quadratic.piDim_eq, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
++  ring
+ 
+ /-- The ciphertext has exactly `6n+5` source-group entries.
+ 
+@@ -69,7 +81,11 @@ theorem quadraticMSK_length (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ)
+ use concatenation lengths and the polynomial evaluation reader. -/
+ theorem quadraticCT_length (G : BilinearGen) (n : PolyExpr) (κ : ℕ)
+     (pp : PublicParams G κ) (ct : Quadratic.CT G n n κ pp) :
+-    (Wire.quadraticCT pp ct).length = (ctLen G n).eval κ := sorry
++    (Wire.quadraticCT pp ct).length = (ctLen G n).eval κ := by
++  simp only [Wire.quadraticCT_eq, Wire.linearCT_eq, List.length_append,
++    Wire.groupVector_length, ctLen_eval, Quadratic.piDim_eq, PolyExpr.eval_add,
++    PolyExpr.eval_mul, PolyExpr.eval_const]
++  ring
+ 
+ /-- A function key's word retains the original function bits before the typed key. -/
+ def keyWord (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
+@@ -91,7 +107,33 @@ Apply `mCount_le_mBound` to its actual function, then the explicit `skLen_eval`
+ theorem keyWord_length_le (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
+     (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
+     (pp : PublicParams G κ) (sk : Key G PG κ pp) :
+-    (keyWord G PG κ pp sk).length ≤ (skLen G PG).eval κ := sorry
++    (keyWord G PG κ pp sk).length ≤ (skLen G PG).eval κ := by
++  have hLen :
++      (keyWord G PG κ pp sk).length =
++        2 * (tensorFnLen ℓ (n.mul n) G.wG d).eval κ +
++          (8 * n.eval κ ^ 3 + 6 * n.eval κ ^ 2 +
++            (6 * ℓ.eval κ + 8) * PG.mCount κ pp.orderParam
++              (decodeFunction G ℓ n d κ pp sk.function)) * G.wG.eval κ + 10 := ?_
++  swap
++  · simp only [keyWord_eq, Wire.quadraticKey_eq, Wire.linearKey_eq,
++      length_pairEncode, List.length_ofFn, Wire.groupMatrix_length,
++      phfeClass_fnLen, Quadratic.piDim_eq, PolyExpr.eval_add, PolyExpr.eval_mul,
++      PolyExpr.eval_const]
++    ring
++  have hNode :
++      (6 * ℓ.eval κ + 8) * PG.mCount κ pp.orderParam
++          (decodeFunction G ℓ n d κ pp sk.function) ≤
++        (6 * ℓ.eval κ + 8) * PG.mBound.eval κ :=
++    mul_le_mul_of_nonneg_left
++      (PG.mCount_le_mBound κ pp.orderParam (decodeFunction G ℓ n d κ pp sk.function))
++      (Nat.zero_le _)
++  rw [hLen, skLen_eval]
++  exact add_le_add_right
++    (add_le_add_left
++      (mul_le_mul_of_nonneg_right
++        (add_le_add_left hNode (8 * n.eval κ ^ 3 + 6 * n.eval κ ^ 2))
++        (Nat.zero_le _))
++      (2 * (tensorFnLen ℓ (n.mul n) G.wG d).eval κ)) 10
+ 
+ /-- Public-key encoding reads the exact word at its fixed polynomial width. -/
+ def encMPK (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
+@@ -137,10 +179,69 @@ theorem encCT_eq (G : BilinearGen) (n : PolyExpr) (κ : ℕ)
+ 
+ /-- Public-key encoding is injective on all typed public keys.
+ 
+-**Proof sketch.** Use exact width to recover the complete word from equal encodings.
+-Separate its pair blocks, then each fixed-width matrix entry. Apply encG_injective. -/
++**Proof sketch.** Use exact width to recover the complete word and separate its pair
++blocks. Reuse shared group-matrix faithfulness and undo the public product-coordinate
++equivalence for the public-variable mask. Record field equalities identify both keys. -/
+ theorem encMPK_injective (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ)
+-    (pp : PublicParams G κ) : Function.Injective (encMPK G ℓ n κ pp) := sorry
++    (pp : PublicParams G κ) : Function.Injective (encMPK G ℓ n κ pp) := by
++  intro a b h
++  have hw := congrArg List.ofFn h
++  simp only [encMPK_eq] at hw
++  rw [ofFn_padFin_of_length (quadraticMPK_length G ℓ n κ pp a),
++    ofFn_padFin_of_length (quadraticMPK_length G ℓ n κ pp b)] at hw
++  simp only [Wire.quadraticMPK_eq, Wire.linearMPK_eq] at hw
++  let aTail0 := pairEncode
++    (Wire.groupMatrix pp (fun i j => a.linear.AU i (finProdFinEquiv.symm j)))
++    (Wire.groupMatrix pp a.linear.AV)
++  let aTail1 := pairEncode (Wire.groupMatrix pp a.linear.AW) aTail0
++  let aTail2 := pairEncode (Wire.groupMatrix pp a.linear.A) aTail1
++  let aTail3 := pairEncode (Wire.groupMatrix pp a.A2) aTail2
++  let bTail0 := pairEncode
++    (Wire.groupMatrix pp (fun i j => b.linear.AU i (finProdFinEquiv.symm j)))
++    (Wire.groupMatrix pp b.linear.AV)
++  let bTail1 := pairEncode (Wire.groupMatrix pp b.linear.AW) bTail0
++  let bTail2 := pairEncode (Wire.groupMatrix pp b.linear.A) bTail1
++  let bTail3 := pairEncode (Wire.groupMatrix pp b.A2) bTail2
++  change pairEncode (Wire.groupMatrix pp a.A1) aTail3 =
++    pairEncode (Wire.groupMatrix pp b.A1) bTail3 at hw
++  obtain ⟨h1, ht⟩ := Prod.mk.inj
++    (@pairEncode_injective (Wire.groupMatrix pp a.A1, aTail3)
++      (Wire.groupMatrix pp b.A1, bTail3) hw)
++  obtain ⟨h2, hl⟩ := Prod.mk.inj
++    (@pairEncode_injective (Wire.groupMatrix pp a.A2, aTail2)
++      (Wire.groupMatrix pp b.A2, bTail2) ht)
++  obtain ⟨hA, hl⟩ := Prod.mk.inj
++    (@pairEncode_injective (Wire.groupMatrix pp a.linear.A, aTail1)
++      (Wire.groupMatrix pp b.linear.A, bTail1) hl)
++  obtain ⟨hW, hl⟩ := Prod.mk.inj
++    (@pairEncode_injective (Wire.groupMatrix pp a.linear.AW, aTail0)
++      (Wire.groupMatrix pp b.linear.AW, bTail0) hl)
++  obtain ⟨hU, hV⟩ := Prod.mk.inj
++    (@pairEncode_injective
++      (Wire.groupMatrix pp (fun i j => a.linear.AU i (finProdFinEquiv.symm j)),
++        Wire.groupMatrix pp a.linear.AV)
++      (Wire.groupMatrix pp (fun i j => b.linear.AU i (finProdFinEquiv.symm j)),
++        Wire.groupMatrix pp b.linear.AV) hl)
++  have hu : a.linear.AU = b.linear.AU := ?_
++  swap
++  · funext i j
++    have hh := congrFun (congrFun (Wire.groupMatrix_injective pp hU) i)
++      (finProdFinEquiv j)
++    simpa only [Equiv.symm_apply_apply] using hh
++  have h1' := Wire.groupMatrix_injective pp h1
++  have h2' := Wire.groupMatrix_injective pp h2
++  have hA' := Wire.groupMatrix_injective pp hA
++  have hW' := Wire.groupMatrix_injective pp hW
++  have hV' := Wire.groupMatrix_injective pp hV
++  rcases a with ⟨a1, a2, ⟨aA, aW, aU, aV⟩⟩
++  rcases b with ⟨b1, b2, ⟨bA, bW, bU, bV⟩⟩
++  cases h1'
++  cases h2'
++  cases hA'
++  cases hW'
++  cases hu
++  cases hV'
++  rfl
+ 
+ /-- Master-secret encoding is injective on all typed master secrets.
+ 
+@@ -148,7 +249,63 @@ theorem encMPK_injective (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ)
+ matrix metadata and the shared modular-matrix injectivity under the group's order-width
+ bound for all scalar blocks. -/
+ theorem encMSK_injective (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ)
+-    (pp : PublicParams G κ) : Function.Injective (encMSK G ℓ n κ pp) := sorry
++    (pp : PublicParams G κ) : Function.Injective (encMSK G ℓ n κ pp) := by
++  intro a b h
++  have hw := congrArg List.ofFn h
++  simp only [encMSK_eq] at hw
++  rw [ofFn_padFin_of_length (quadraticMSK_length G ℓ n κ pp a),
++    ofFn_padFin_of_length (quadraticMSK_length G ℓ n κ pp b)] at hw
++  rcases a with ⟨M₁, ⟨W₁, U₁, V₁⟩⟩
++  rcases b with ⟨M₂, ⟨W₂, U₂, V₂⟩⟩
++  simp only [Wire.quadraticMSK_eq, Wire.linearMSK_eq] at hw
++  have hwidth : pp.group.order ≤ 2 ^ G.wG.eval κ := ?_
++  swap
++  · simpa only [PublicParams.group_eq] using
++      (IdentityBased.BB1Machine.order_le_two_pow G κ pp.description.val)
++  let tail1 := pairEncode (Encoding.Modular.encodeMatrix (G.wG.eval κ) W₁)
++    (pairEncode (Encoding.Modular.encodeMatrix (G.wG.eval κ)
++      (fun i j => U₁ i (finProdFinEquiv.symm j)))
++      (Encoding.Modular.encodeMatrix (G.wG.eval κ) V₁))
++  let tail2 := pairEncode (Encoding.Modular.encodeMatrix (G.wG.eval κ) W₂)
++    (pairEncode (Encoding.Modular.encodeMatrix (G.wG.eval κ)
++      (fun i j => U₂ i (finProdFinEquiv.symm j)))
++      (Encoding.Modular.encodeMatrix (G.wG.eval κ) V₂))
++  have hp := @pairEncode_injective (Wire.groupMatrix pp M₁, tail1)
++    (Wire.groupMatrix pp M₂, tail2) hw
++  have hM := Wire.groupMatrix_injective pp (congrArg Prod.fst hp)
++  have hL := @pairEncode_injective
++    (Encoding.Modular.encodeMatrix (G.wG.eval κ) W₁,
++      pairEncode (Encoding.Modular.encodeMatrix (G.wG.eval κ)
++        (fun i j => U₁ i (finProdFinEquiv.symm j)))
++        (Encoding.Modular.encodeMatrix (G.wG.eval κ) V₁))
++    (Encoding.Modular.encodeMatrix (G.wG.eval κ) W₂,
++      pairEncode (Encoding.Modular.encodeMatrix (G.wG.eval κ)
++        (fun i j => U₂ i (finProdFinEquiv.symm j)))
++        (Encoding.Modular.encodeMatrix (G.wG.eval κ) V₂)) (congrArg Prod.snd hp)
++  have hW := Encoding.Modular.encodeMatrix_injective (q := pp.group.order)
++    (G.wG.eval κ) hwidth (congrArg Prod.fst hL)
++  have hUV := @pairEncode_injective
++    (Encoding.Modular.encodeMatrix (G.wG.eval κ) (fun i j => U₁ i (finProdFinEquiv.symm j)),
++      Encoding.Modular.encodeMatrix (G.wG.eval κ) V₁)
++    (Encoding.Modular.encodeMatrix (G.wG.eval κ) (fun i j => U₂ i (finProdFinEquiv.symm j)),
++      Encoding.Modular.encodeMatrix (G.wG.eval κ) V₂) (congrArg Prod.snd hL)
++  have hUflat :
++      (fun i (j : Fin (ℓ.eval κ * 2)) => U₁ i (finProdFinEquiv.symm j)) =
++        (fun i (j : Fin (ℓ.eval κ * 2)) => U₂ i (finProdFinEquiv.symm j)) :=
++    Encoding.Modular.encodeMatrix_injective (q := pp.group.order)
++      (G.wG.eval κ) hwidth (congrArg Prod.fst hUV)
++  have hV := Encoding.Modular.encodeMatrix_injective (q := pp.group.order)
++    (G.wG.eval κ) hwidth (congrArg Prod.snd hUV)
++  have hU : U₁ = U₂ := ?_
++  swap
++  · funext i j
++    simpa only [Equiv.symm_apply_apply] using
++      (congrFun (congrFun hUflat i) (finProdFinEquiv j))
++  cases hM
++  cases hW
++  cases hU
++  cases hV
++  rfl
+ 
+ /-- Function-key encoding is injective, including across different original function words.
+ 
+@@ -157,14 +314,141 @@ That fixes their coordinate dimensions, hence their unpadded lengths. Recover th
+ key words and use pair and element-encoding injectivity in each block. -/
+ theorem encSK_injective (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
+     (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
+-    (pp : PublicParams G κ) : Function.Injective (encSK G PG κ pp) := sorry
++    (pp : PublicParams G κ) : Function.Injective (encSK G PG κ pp) := by
++  let L := (skLen G PG).eval κ
++  have hPadded : ∀ k : Key G PG κ pp,
++      List.ofFn (encSK G PG κ pp k) = keyWord G PG κ pp k ++
++        List.replicate (L - (keyWord G PG κ pp k).length) false := ?_
++  swap
++  · intro k
++    rw [encSK_eq, ofFn_padFin_eq_take, List.take_append,
++      List.take_of_length_le (keyWord_length_le G PG κ pp k), List.take_replicate,
++      Nat.min_eq_left (Nat.sub_le L _)]
++  intro a b h
++  have hw := congrArg List.ofFn h
++  rw [hPadded a, hPadded b] at hw
++  let aTail := Wire.quadraticKey pp PG a.quadratic ++
++    List.replicate (L - (keyWord G PG κ pp a).length) false
++  let bTail := Wire.quadraticKey pp PG b.quadratic ++
++    List.replicate (L - (keyWord G PG κ pp b).length) false
++  have hPair : pairEncode (List.ofFn a.function) aTail =
++      pairEncode (List.ofFn b.function) bTail := ?_
++  swap
++  · simpa only [aTail, bTail, keyWord_eq, GGMRed.pairEncode_append_right] using hw
++  have hPrefix := @pairEncode_injective
++    (List.ofFn a.function, aTail) (List.ofFn b.function, bTail) hPair
++  have hf := List.ofFn_injective (congrArg Prod.fst hPrefix)
++  rcases a with ⟨fa, ka⟩
++  rcases b with ⟨fb, kb⟩
++  change fa = fb at hf
++  cases hf
++  have hLen : (keyWord G PG κ pp ⟨fa, ka⟩).length =
++      (keyWord G PG κ pp ⟨fa, kb⟩).length := ?_
++  swap
++  · simp only [keyWord_eq, Wire.quadraticKey_eq, Wire.linearKey_eq,
++      length_pairEncode, List.length_ofFn, Wire.groupMatrix_length]
++  rw [← hLen] at hw
++  have hWord := List.append_cancel_right hw
++  simp only [keyWord_eq] at hWord
++  have hQ := congrArg Prod.snd
++    (@pairEncode_injective
++      (List.ofFn fa, Wire.quadraticKey pp PG ka)
++      (List.ofFn fa, Wire.quadraticKey pp PG kb) hWord)
++  let aLin := Wire.linearKey pp PG ka.linear
++  let bLin := Wire.linearKey pp PG kb.linear
++  simp only [Wire.quadraticKey_eq] at hQ
++  change pairEncode (Wire.groupMatrix pp ka.matrix) aLin =
++    pairEncode (Wire.groupMatrix pp kb.matrix) bLin at hQ
++  obtain ⟨hM, hLin⟩ := Prod.mk.inj
++    (@pairEncode_injective (Wire.groupMatrix pp ka.matrix, aLin)
++      (Wire.groupMatrix pp kb.matrix, bLin) hQ)
++  let f := decodeFunction G ℓ n d κ pp fa
++  let coord := PG.mCoord κ pp.orderParam f
++  let a2 : Matrix (Fin 3) (Fin (ℓ.eval κ * PG.mCount κ pp.orderParam f)) pp.group.G :=
++    fun i j => let u := finProdFinEquiv.symm j
++      ka.linear.K2 i (u.1, coord.symm u.2)
++  let b2 : Matrix (Fin 3) (Fin (ℓ.eval κ * PG.mCount κ pp.orderParam f)) pp.group.G :=
++    fun i j => let u := finProdFinEquiv.symm j
++      kb.linear.K2 i (u.1, coord.symm u.2)
++  let a3 : Matrix (Fin 3) (Fin (PG.mCount κ pp.orderParam f)) pp.group.G :=
++    fun i j => ka.linear.K3 i (coord.symm j)
++  let b3 : Matrix (Fin 3) (Fin (PG.mCount κ pp.orderParam f)) pp.group.G :=
++    fun i j => kb.linear.K3 i (coord.symm j)
++  let ar : Matrix (Fin 2) (Fin (PG.mCount κ pp.orderParam f)) pp.group.G :=
++    fun i j => ka.linear.R i (coord.symm j)
++  let br : Matrix (Fin 2) (Fin (PG.mCount κ pp.orderParam f)) pp.group.G :=
++    fun i j => kb.linear.R i (coord.symm j)
++  let aTail0 := pairEncode (Wire.groupMatrix pp a3) (Wire.groupMatrix pp ar)
++  let bTail0 := pairEncode (Wire.groupMatrix pp b3) (Wire.groupMatrix pp br)
++  let aTail1 := pairEncode (Wire.groupMatrix pp a2) aTail0
++  let bTail1 := pairEncode (Wire.groupMatrix pp b2) bTail0
++  change Wire.linearKey pp PG ka.linear = Wire.linearKey pp PG kb.linear at hLin
++  simp only [Wire.linearKey_eq] at hLin
++  change pairEncode (Wire.groupMatrix pp ka.linear.K1) aTail1 =
++    pairEncode (Wire.groupMatrix pp kb.linear.K1) bTail1 at hLin
++  obtain ⟨h1, hTail1⟩ := Prod.mk.inj
++    (@pairEncode_injective (Wire.groupMatrix pp ka.linear.K1, aTail1)
++      (Wire.groupMatrix pp kb.linear.K1, bTail1) hLin)
++  obtain ⟨h2, hTail0⟩ := Prod.mk.inj
++    (@pairEncode_injective (Wire.groupMatrix pp a2, aTail0)
++      (Wire.groupMatrix pp b2, bTail0) hTail1)
++  obtain ⟨h3, hr⟩ := Prod.mk.inj
++    (@pairEncode_injective (Wire.groupMatrix pp a3, Wire.groupMatrix pp ar)
++      (Wire.groupMatrix pp b3, Wire.groupMatrix pp br) hTail0)
++  have hM' := Wire.groupMatrix_injective pp hM
++  have h1' := Wire.groupMatrix_injective pp h1
++  have h2flat : a2 = b2 := Wire.groupMatrix_injective pp h2
++  have h3flat : a3 = b3 := Wire.groupMatrix_injective pp h3
++  have hrflat : ar = br := Wire.groupMatrix_injective pp hr
++  have h2' : ka.linear.K2 = kb.linear.K2 := ?_
++  swap
++  · funext i j
++    have hh := congrFun (congrFun h2flat i) (finProdFinEquiv (j.1, coord j.2))
++    simpa only [a2, b2, Equiv.symm_apply_apply] using hh
++  have h3' : ka.linear.K3 = kb.linear.K3 := ?_
++  swap
++  · funext i j
++    have hh := congrFun (congrFun h3flat i) (coord j)
++    simpa only [a3, b3, Equiv.symm_apply_apply] using hh
++  have hr' : ka.linear.R = kb.linear.R := ?_
++  swap
++  · funext i j
++    have hh := congrFun (congrFun hrflat i) (coord j)
++    simpa only [ar, br, Equiv.symm_apply_apply] using hh
++  rcases ka with ⟨aM, ⟨aK1, aK2, aK3, aR⟩⟩
++  rcases kb with ⟨bM, ⟨bK1, bK2, bK3, bR⟩⟩
++  cases hM'
++  cases h1'
++  cases h2'
++  cases h3'
++  cases hr'
++  rfl
+ 
+ /-- Ciphertext encoding is injective on all typed ciphertexts.
+ 
+-**Proof sketch.** Recover the exact word. Split the fixed-width vector blocks and read their
+-individual group encodings; encG_injective and record extensionality finish. -/
++**Proof sketch.** Recover the exact word and split its fixed-width vector blocks using
++their published lengths. Reuse group-vector faithfulness for every block; the resulting
++field equalities identify the ciphertext records. -/
+ theorem encCT_injective (G : BilinearGen) (n : PolyExpr) (κ : ℕ)
+-    (pp : PublicParams G κ) : Function.Injective (encCT G n κ pp) := sorry
++    (pp : PublicParams G κ) : Function.Injective (encCT G n κ pp) := by
++  intro c d h
++  have hw := congrArg List.ofFn h
++  simp only [encCT_eq] at hw
++  rw [ofFn_padFin_of_length (quadraticCT_length G n κ pp c),
++    ofFn_padFin_of_length (quadraticCT_length G n κ pp d)] at hw
++  simp only [Wire.quadraticCT_eq, Wire.linearCT_eq, List.append_assoc] at hw
++  rcases c with ⟨y1, y2, ⟨c0, c1, c2⟩⟩
++  rcases d with ⟨z1, z2, ⟨d0, d1, d2⟩⟩
++  rcases List.append_inj hw (by simp only [Wire.groupVector_length]) with ⟨h1, ht⟩
++  rcases List.append_inj ht (by simp only [Wire.groupVector_length]) with ⟨h2, hl⟩
++  rcases List.append_inj hl (by simp only [Wire.groupVector_length]) with ⟨h0, hl⟩
++  rcases List.append_inj hl (by simp only [Wire.groupVector_length]) with ⟨hc1, hc2⟩
++  cases Wire.groupVector_injective pp h1
++  cases Wire.groupVector_injective pp h2
++  cases Wire.groupVector_injective pp h0
++  cases Wire.groupVector_injective pp hc1
++  cases Wire.groupVector_injective pp hc2
++  rfl
+ 
+ /-- The complete private simulator-state word is injective on all typed states.
+ 
+@@ -173,6 +457,61 @@ and all scalar matrices/vectors with their public encoding injectivity theorems.
+ modulus fits the source-group width by the existing order-width theorem. -/
+ theorem quadraticSimState_injective (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ)
+     (pp : PublicParams G κ) :
+-    Function.Injective (Wire.quadraticSimState pp (ℓ := ℓ) (n1 := n) (n2 := n)) := sorry
++    Function.Injective (Wire.quadraticSimState pp (ℓ := ℓ) (n1 := n) (n2 := n)) := by
++  intro a b h
++  simp only [Wire.quadraticSimState_eq, Wire.linearSimState_eq,
++    List.foldr_cons, List.foldr_nil, pairEncode_eq_iff, eq_self_iff_true,
++    and_true] at h
++  rcases h with ⟨hM, ⟨hA, hW, hU, hV, hc, hw, hv, hInv⟩, hy1, hy2⟩
++  have hwidth : pp.group.order ≤ 2 ^ G.wG.eval κ := ?_
++  swap
++  · simpa only [PublicParams.group_eq] using
++      (IdentityBased.BB1Machine.order_le_two_pow G κ pp.description.val)
++  have hM' := Wire.groupMatrix_injective pp hM
++  simp only [Wire.scalarMatrix_eq, Wire.scalarVector_eq] at hA hW hU hV hc hw hv hInv hy1 hy2
++  have hA' := Encoding.Modular.encodeMatrix_injective (q := pp.group.order)
++    (G.wG.eval κ) hwidth hA
++  have hW' := Encoding.Modular.encodeMatrix_injective (q := pp.group.order)
++    (G.wG.eval κ) hwidth hW
++  have hUflat :
++      (fun (i : Fin 3) (j : Fin (ℓ.eval κ * 2)) =>
++        a.linear.U i (finProdFinEquiv.symm j)) =
++      (fun (i : Fin 3) (j : Fin (ℓ.eval κ * 2)) =>
++        b.linear.U i (finProdFinEquiv.symm j)) :=
++    Encoding.Modular.encodeMatrix_injective (q := pp.group.order)
++      (G.wG.eval κ) hwidth hU
++  have hU' : a.linear.U = b.linear.U := ?_
++  swap
++  · funext i j
++    simpa only [Equiv.symm_apply_apply] using
++      (congrFun (congrFun hUflat i) (finProdFinEquiv j))
++  have hV' := Encoding.Modular.encodeMatrix_injective (q := pp.group.order)
++    (G.wG.eval κ) hwidth hV
++  have hc' := Encoding.Modular.encodeVector_injective (q := pp.group.order)
++    (G.wG.eval κ) hwidth hc
++  have hw' := Encoding.Modular.encodeVector_injective (q := pp.group.order)
++    (G.wG.eval κ) hwidth hw
++  have hv' := Encoding.Modular.encodeVector_injective (q := pp.group.order)
++    (G.wG.eval κ) hwidth hv
++  have hInv' := Encoding.Modular.encodeMatrix_injective (q := pp.group.order)
++    (G.wG.eval κ) hwidth hInv
++  have hy1' := Encoding.Modular.encodeVector_injective (q := pp.group.order)
++    (G.wG.eval κ) hwidth hy1
++  have hy2' := Encoding.Modular.encodeVector_injective (q := pp.group.order)
++    (G.wG.eval κ) hwidth hy2
++  rcases a with ⟨aM, ⟨aA, aW, aU, aV, ac, aw, av, aInv⟩, ay1, ay2⟩
++  rcases b with ⟨bM, ⟨bA, bW, bU, bV, bc, bw, bv, bInv⟩, by1, by2⟩
++  cases hM'
++  cases hA'
++  cases hW'
++  cases hU'
++  cases hV'
++  cases hc'
++  cases hw'
++  cases hv'
++  cases hInv'
++  cases hy1'
++  cases hy2'
++  rfl
+ 
+ end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean
+index 5fcab1eb5..654adbb33 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean
+@@ -120,6 +120,13 @@ theorem wee20PHFE_raw_dec (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+     (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) :
+     (wee20PHFE_raw G ℓ n d PG).dec = PHFE.dec G PG := rfl
+ 
++/-- The raw PHFE output embedding is precisely the published class-value embedding
++at every security parameter and public parameter; no efficiency or correctness premise
++is needed. This projection reader preserves the parameter-dependent value/output types. -/
++theorem wee20PHFE_raw_embed (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) :
++    (wee20PHFE_raw G ℓ n d PG).embed = PHFE.embedValue G ℓ n d := rfl
++
+ /-- The raw PHFE ciphertext width has exactly `6n+5` group entries. -/
+ theorem wee20PHFE_raw_ctLen (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+     (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) :
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSimulator.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSimulator.lean
+index 16a3384cd..a853f464d 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSimulator.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSimulator.lean
+@@ -167,7 +167,9 @@ theorem crossLeak_known_value (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyEx
+     (f : Fn κ pp.orderParam) (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
+     (mu : ZMod pp.group.order) :
+     crossLeak G n1 n2 PG κ pp st f x (pp.generator ^ mu.val) =
+-      pp.generator ^ (value G n1 n2 PG κ pp f x st.y1 st.y2 - mu).val := sorry
++      pp.generator ^ (value G n1 n2 PG κ pp f x st.y1 st.y2 - mu).val := by
++  simp only [crossLeak_eq, value_eq, sub_eq_add_neg,
++    pp.group.pow_val_add, pp.group.pow_val_neg]
+ 
+ /-- Simulator key generation computes the cross-term group value and forwards it to Π's
+ simulator [Wee20, §3.2, p. 7, KeyGen*]. The fixed public matrix is retained as key metadata. -/
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/WireLemmas.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/WireLemmas.lean
+new file mode 100644
+index 000000000..902324f33
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/WireLemmas.lean
+@@ -0,0 +1,90 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Wire
++import TCSlib.Cryptography.Pairing.MatrixDH.Defs
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Length and faithfulness of Wee's source-group words
++
++## Main definitions
++
++No new encoder or other runtime definition is introduced.
++
++## Main results
++
++* Wire.groupMatrix_length and groupVector_length: exact public-width lengths.
++* Wire.groupMatrix_injective and groupVector_injective: fixed-shape faithfulness.
++
++## References
++
++* [Wee20] H. Wee, Functional Encryption for Quadratic Functions from k-Lin, Revisited,
++  TCC 2020; full version, ePrint 2020/1420, Sections 3.1 and 4.2.
++
++These are technical interface adapters to the existing BilinearGroup.groupMatrixEnc
++length and injectivity theorems; they introduce no serialization/counting construction.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Wire
++
++open Complexity Turing TCSlib.Cryptography.Pairing
++
++/-- A source-group matrix word contains exactly one public-width block for each entry,
++including empty row or column sets. This transports the existing pairing serialization law.
++
++**Proof sketch.** Read groupMatrix_eq, groupVector_eq and groupMatrixEnc_eq to identify
++the words. Reuse BilinearGroup.length_groupMatrixEnc; do not recount flatten lengths. -/
++theorem groupMatrix_length {G : BilinearGen} {κ : ℕ} (pp : PublicParams G κ) {m n : ℕ}
++    (A : Matrix (Fin m) (Fin n) pp.group.G) :
++    (groupMatrix pp A).length = m * n * G.wG.eval κ := by
++  simpa only [groupMatrix_eq, groupVector_eq, BilinearGroup.groupMatrixEnc_eq] using
++    (pp.group.length_groupMatrixEnc A)
++
++/-- Source-group matrix words distinguish all matrices of the fixed shape, including
++empty shapes. This is the existing pairing matrix encoder's injectivity through Wire.
++
++**Proof sketch.** Identify the two encoders using their published readers, then apply
++BilinearGroup.groupMatrixEnc_injective. No new block-splitting proof is required. -/
++theorem groupMatrix_injective {G : BilinearGen} {κ : ℕ} (pp : PublicParams G κ) {m n : ℕ} :
++    Function.Injective (groupMatrix pp (m := m) (n := n)) := by
++  intro A B h
++  apply pp.group.groupMatrixEnc_injective
++  simpa only [groupMatrix_eq, groupVector_eq, BilinearGroup.groupMatrixEnc_eq] using h
++
++/-- A source-group vector word contains exactly one public-width block per coordinate,
++including the empty vector. It is the one-row case of the existing matrix serialization.
++
++**Proof sketch.** Regard the vector as a one-row matrix. Use groupVector_eq and the
++pairing encoder's equation reader plus existing singleton-list equations, then reuse
++BilinearGroup.length_groupMatrixEnc at one row. -/
++theorem groupVector_length {G : BilinearGen} {κ : ℕ} (pp : PublicParams G κ) {n : ℕ}
++    (v : Fin n → pp.group.G) :
++    (groupVector pp v).length = n * G.wG.eval κ := by
++  simpa only [groupVector_eq, BilinearGroup.groupMatrixEnc_eq, List.ofFn_const,
++    List.replicate_one, List.flatten_singleton, Nat.one_mul] using
++    (pp.group.length_groupMatrixEnc (fun (_ : Fin 1) (j : Fin n) => v j))
++
++/-- Source-group vector words distinguish all vectors of the fixed dimension, including
++zero coordinates. This specializes the existing matrix encoder's injectivity to one row.
++
++**Proof sketch.** Identify each vector word with the pairing encoding of its one-row
++matrix, apply BilinearGroup.groupMatrixEnc_injective, and read that row. Reuse the
++existing singleton-list equations rather than re-splitting point blocks. -/
++theorem groupVector_injective {G : BilinearGen} {κ : ℕ} (pp : PublicParams G κ) {n : ℕ} :
++    Function.Injective (groupVector pp (n := n)) := by
++  intro v w h
++  have hrow :
++      pp.group.groupMatrixEnc (fun (_ : Fin 1) (j : Fin n) => v j) =
++        pp.group.groupMatrixEnc (fun (_ : Fin 1) (j : Fin n) => w j) := ?_
++  swap
++  · simpa only [groupVector_eq, BilinearGroup.groupMatrixEnc_eq, List.ofFn_const,
++      List.replicate_one, List.flatten_singleton] using h
++  exact congrArg (fun M : Matrix (Fin 1) (Fin n) pp.group.G => M 0)
++    (pp.group.groupMatrixEnc_injective hrow)
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Wire
+diff --git a/TCSlib/Cryptography/Pairing/MatrixDH/Parameters.lean b/TCSlib/Cryptography/Pairing/MatrixDH/Parameters.lean
+index fa0c04131..0370389fc 100644
+--- a/TCSlib/Cryptography/Pairing/MatrixDH/Parameters.lean
++++ b/TCSlib/Cryptography/Pairing/MatrixDH/Parameters.lean
+@@ -26,6 +26,7 @@ public data do not create different parameter objects.
+ 
+ ## Main results
+ 
++* `pairEncode_eq_iff`: the existing pair injectivity in binary-word form.
+ * `PublicParams.encode_injective`: the public word determines its parameters.
+ 
+ Equation readers expose the public encoding and the exact generation law.
+@@ -44,6 +45,17 @@ namespace TCSlib.Cryptography.Pairing
+ 
+ open Complexity Turing TCSlib.Cryptography.Games
+ 
++/-- Two framed pair words are equal exactly when their first and second words agree.
++This binary-form reader reuses the existing pair encoder's injectivity and keeps later
++word proofs from inferring opaque pair components by normalization. -/
++theorem pairEncode_eq_iff (a b c d : List Bool) :
++    pairEncode a b = pairEncode c d ↔ a = c ∧ b = d := by
++  constructor
++  · intro h
++    exact Prod.mk.inj (@pairEncode_injective (a, b) (c, d) h)
++  · rintro ⟨rfl, rfl⟩
++    rfl
++
+ /-- A group description is reachable when the bilinear generator outputs it on some coin
+ string. Technical glue: the witness is a proposition, so it does not distinguish equal
+ descriptions or supply advice to an algorithm. -/

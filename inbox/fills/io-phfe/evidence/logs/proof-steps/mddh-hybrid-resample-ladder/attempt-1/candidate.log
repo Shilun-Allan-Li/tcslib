@@ -1,0 +1,89 @@
+file=TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean
+source_sha256=f2873050418ab5169090dcc77402bade73443cd457a5b6544ac49bcd8b35bba2
+working_source_development_check=True
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:632:25: error: Type mismatch
+  congrFun (Function.update_of_ne ((Fin.ne_iff_vne b j).mpr hb) ?m.2273 T) a
+has type
+  Function.update T j ?m.2273 b a = T b a
+but is expected to have type
+  (cols 2).symm (Function.update T j r') a b = (cols 2).symm T a b
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:638:17: error: Application type mismatch: The argument
+  ProbComp.expect_sample_equiv (cols 2).symm ?m.2332
+has type
+  (@ProbComp.expect (Fin (d.eval κ) → Fin 2 → K) (ProbComp.sample (Fin (d.eval κ) → Fin 2 → K)) fun a =>
+      ?m.2332 ((cols 2).symm a)) =
+    (ProbComp.sample (Matrix (Fin 2) (Fin (d.eval κ)) K)).expect ?m.2332
+but is expected to have type
+  (@ProbComp.expect (Fin (d.eval κ) → Fin 2 → K) (ProbComp.sample (Fin (d.eval κ) → Fin 2 → K)) fun b =>
+      (ProbComp.sample (Fin 2 → K)).expect fun a => F a b) =
+    (ProbComp.sample (SType κ pp)).expect fun S =>
+      (ProbComp.sample (Fin 2 → K)).expect fun rs => obs κ j pp S U M (M.mulVec rs)
+in the application
+  Eq.trans h (ProbComp.expect_sample_equiv (cols 2).symm ?m.2332)
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:651:25: error: Type mismatch
+  congrFun (Function.update_of_ne ((Fin.ne_iff_vne b j).mpr hb) ?m.2391 T) a
+has type
+  Function.update T j ?m.2391 b a = T b a
+but is expected to have type
+  (cols (ℓ.eval κ)).symm (Function.update T j r') a b = (cols (ℓ.eval κ)).symm T a b
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:656:17: error: Application type mismatch: The argument
+  ProbComp.expect_sample_equiv (cols (ℓ.eval κ)).symm ?m.2441
+has type
+  (@ProbComp.expect (Fin (d.eval κ) → Fin (ℓ.eval κ) → K) (ProbComp.sample (Fin (d.eval κ) → Fin (ℓ.eval κ) → K))
+      fun a => ?m.2441 ((cols (ℓ.eval κ)).symm a)) =
+    (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) K)).expect ?m.2441
+but is expected to have type
+  (@ProbComp.expect (Fin (d.eval κ) → Fin (ℓ.eval κ) → K) (ProbComp.sample (Fin (d.eval κ) → Fin (ℓ.eval κ) → K))
+      fun b => (ProbComp.sample (Fin (ℓ.eval κ) → K)).expect fun a => F a b) =
+    (ProbComp.sample (UType κ pp)).expect fun U =>
+      (ProbComp.sample (Fin (ℓ.eval κ) → K)).expect fun v => obs κ j pp S U M v
+in the application
+  Eq.trans h (ProbComp.expect_sample_equiv (cols (ℓ.eval κ)).symm ?m.2441)
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:368:20: warning: This simp argument is unused:
+  if_true
+
+Hint: Omit it from the simp argument list.
+  simp only [accept_eq, G.mddhGame_eq d ℓ D true κ, G.mddhSample_eq d ℓ true κ,
+          ProbComp.prob_bind, ProbComp.expect_bind, ProbComp.expect_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵↓reduceIte, i̵f̵_̵t̵r̵u̵e̵,̵ ̵Fin.is_lt]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:540:45: warning: This simp argument is unused:
+  ProbComp.prob_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [accept_eq, G.dlinSample_eq, P̵r̵o̵b̵C̵o̵m̵p̵.̵p̵r̵o̵b̵_̵b̵i̵n̵d̵,̵ProbComp.expect_bind, ProbComp.expect_pure,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ProbComp.prob_pure, G.mddhPre_eq, hPreScalar, obs, ProbComp.prob_eq_expect]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:541:52: warning: This simp argument is unused:
+  ProbComp.prob_pure
+
+Hint: Omit it from the simp argument list.
+  simp only [accept_eq, G.dlinSample_eq, ProbComp.prob_bind, ProbComp.expect_bind,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ProbComp.expect_pure, P̵r̵o̵b̵C̵o̵m̵p̵.̵p̵r̵o̵b̵_̵p̵u̵r̵e̵,̵G.mddhPre_eq, hPreScalar, obs, ProbComp.prob_eq_expect]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:973:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:984:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction): lean exited with status 1
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction): error diagnostics reported
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction): no fresh .olean produced
+       62.33 real        58.13 user         1.62 sys
+          2482520064  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              132533  page reclaims
+               64878  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                5900  voluntary context switches
+               45215  involuntary context switches
+            32221085  instructions retired
+            15170683  cycles elapsed
+             1638736  peak memory footprint

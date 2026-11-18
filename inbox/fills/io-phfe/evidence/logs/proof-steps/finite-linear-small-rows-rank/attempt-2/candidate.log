@@ -1,0 +1,77 @@
+file=TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear.lean
+source_sha256=6525e0aedea4fc68fdadfed535bbe365647db42f392a7cc982d500b511bc5dc7
+working_source_development_check=True
+TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear.lean:139:10: error: unsolved goals
+case refine_2.succ.zero.refine_2.refine_1
+K : Type
+inst✝¹ : Field K
+inst✝ : Fintype K
+q : ℕ := Fintype.card K
+hq2 : 2 ≤ q
+hq1 : 1 ≤ q
+hq : 1 ≤ ↑q
+hqpos : 0 < ↑q
+hrecip : 1 / ↑q ^ 2 ≤ 1 / ↑q
+hr : 0 + 1 ≤ 2
+hbad : ∀ (M : Matrix (Fin 1) (Fin 2) K), ¬Function.Surjective M.mulVec → M = 0
+⊢ 1 / ↑(Fintype.card K) ^ 2 = 1 / ↑q ^ 2
+TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear.lean:147:10: error: linarith failed to find a contradiction
+case refine_2.succ.zero.refine_2.refine_2.h
+K : Type
+inst✝¹ : Field K
+inst✝ : Fintype K
+q : ℕ := Fintype.card K
+hq2 : 2 ≤ q
+hq1 : 1 ≤ q
+hq : 1 ≤ ↑q
+hqpos : 0 < ↑q
+hrecip : 1 / ↑q ^ 2 ≤ 1 / ↑q
+hr : 0 + 1 ≤ 2
+hbad : ∀ (M : Matrix (Fin 1) (Fin 2) K), ¬Function.Surjective M.mulVec → M = 0
+hzero : (uprob fun M => M = 0) = 1 / ↑q ^ 2
+hx0 : 0 ≤ 1 / ↑q
+a✝ : 2 / ↑q < 1 / ↑q ^ 2
+⊢ False
+failed
+TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear.lean:183:10: error: linarith failed to find a contradiction
+case refine_2.succ.succ.refine_2.refine_2.refine_2.refine_2.h
+K : Type
+inst✝¹ : Field K
+inst✝ : Fintype K
+q : ℕ := Fintype.card K
+hq2 : 2 ≤ q
+hq1 : 1 ≤ q
+hq : 1 ≤ ↑q
+hqpos : 0 < ↑q
+hrecip : 1 / ↑q ^ 2 ≤ 1 / ↑q
+hr : 0 + 1 + 1 ≤ 2
+hgood : Nat.card { M // Function.Surjective M.mulVec } = (q ^ 2 - 1) * (q ^ 2 - q)
+hall : Fintype.card (Matrix (Fin 2) (Fin 2) K) = q ^ 4
+hsq1 : 1 ≤ q ^ 2
+hsqq : q ≤ q ^ 2
+hformula : 1 - (↑q ^ 2 - 1) * (↑q ^ 2 - ↑q) / ↑q ^ 4 = 1 / ↑q + 1 / ↑q ^ 2 - 1 / ↑q ^ 3
+hz0 : 0 ≤ 1 / ↑q ^ 3
+a✝ : 2 / ↑q < 1 / ↑q + 1 / ↑q ^ 2 - 1 / ↑q ^ 3
+⊢ False
+failed
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear): lean exited with status 1
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear): error diagnostics reported
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear): no fresh .olean produced
+        6.63 real         2.67 user         1.31 sys
+          2240610304  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              132222  page reclaims
+               52140  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   3  signals received
+                4634  voluntary context switches
+               43507  involuntary context switches
+            33789524  instructions retired
+            18541164  cycles elapsed
+             1638736  peak memory footprint

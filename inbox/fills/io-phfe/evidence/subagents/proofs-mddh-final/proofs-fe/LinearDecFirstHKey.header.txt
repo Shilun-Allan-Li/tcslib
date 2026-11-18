@@ -1,0 +1,9 @@
+  have hKey (j : Fin (n'.eval κ)) :
+      pp.group.pairVec
+          (encCore G ℓ zDim κ pp (setupCore G ℓ zDim κ pp a).1 x
+            (pp.group.expVec pp.generator z) s).c0
+          (fun i => (keyCore G PG zDim κ pp (setupCore G ℓ zDim κ pp a).2 f M t).K1 i j) =
+        pp.group.pair pp.generator pp.generator ^
+            (Matrix.vecMul (Matrix.vecMul s a.1) t.1 (Sum.inr j)).val *
+          pp.group.pair pp.generator
+            (groupVecMul (Matrix.vecMul (Matrix.vecMul s a.1) a.2.1) M j) :=

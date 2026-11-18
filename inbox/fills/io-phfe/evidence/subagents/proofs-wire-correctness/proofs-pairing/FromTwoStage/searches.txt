@@ -1,0 +1,58 @@
+Read-only reuse searches; no Lean/lake/Git/native checker by this agent.
+
+Sources read in active worktree:
+SemiAdaptive/FromTwoStage.lean (all, 280 lines): toSim readers, tape readers,
+saNext_nil/cons, toSA_coins/budget/next/run, frozen expectation statement.
+SemiAdaptive/Games.lean (all): typed handler cases and saGame_eq.
+Simulation/Games.lean (all): real/idealView_eq, viewWord_eq_viewWordBits,
+simGame_eq. Simulation/TwoStage.lean: parser and Commitment.omega_eq.
+
+Full-name search (no hits):
+rg -n 'simulate_toSA_real|simulate_toSA_ideal|coinBlocks_ofFn_append|firstCoins_ofFn_append|secondCoins_ofFn_append' TCSlib Mathlib evidence/search
+
+Conclusion-shape search:
+rg -n 'simulate.*toSA|toSA.*simulate|saNext.*mapM|toSA.*realView|toSA.*idealView|firstCoins.*ofFn|secondCoins.*ofFn|expect_simGame' TCSlib evidence/search proof drafts
+Only the frozen expectation theorem and module index mention; no run-law bridge.
+
+Sampling APIs:
+Games/Probability.lean:304 expect_sample_equiv;
+:313 expect_sample_comm (sample/sample only);
+:326 expect_expect_sample (arbitrary computation/sample, exact required Fubini);
+:128 expect_bind; :135 expect_map.
+Games/Bridges/Experiments.lean:80 expect_sample_pair is the existing exact product law.
+Games/Tapes.lean protected expect_simulate_abs/_inv are state-abstraction laws
+for the SAME OracleComp and per-call correspondence; they do not directly turn
+this specific protocol into List.mapM. No fresh/tape sampler construction needed.
+
+Coin APIs:
+Complexity/Randomized/PPT.lean:171 coinLen_eq;
+:274 coinsEquivPoly; :280 coinsEquivPoly_ofFn; :286 inverse reader.
+Mathlib Logic/Equiv/Fin/Basic.lean:406 Fin.appendEquiv with generated application
+reader; no need to assemble sumArrowEquivProdArrow manually.
+Mathlib Data/List/OfFn.lean:61 ofFn_fin_append.
+Nearest existing composition: Games/Efficiency/Strings.lean:562-578
+exists_splitMachine builds appendEquiv then arrowCongr and reads List.ofFn.
+Do not invoke that theorem: it constructs a machine, which is unnecessary here.
+Mathlib Data/List/GetD.lean:59 getD_append, :65 getD_append_right,
+:30 getD_eq_getElem. Core List.getElem_ofFn supplies coordinate reading.
+
+Wire APIs:
+saSplitChallenge_fst/snd; saChallengeQuery_eq; Fin.append_left/right;
+saCTAnswer_eq/saSKAnswer_eq; saCTPayload_zero/saSKPayload_one;
+Encryption/PrivateKey/OracleSecurity.lean:166 FixedLengthScheme.decAnswer_some;
+Mathlib Data/Fin/Tuple/Basic.lean:111 Fin.tail_cons.
+Core List/Lemmas:1381 filterMap_cons_none, :1384 filterMap_cons_some,
+:1393 filterMap_eq_map', :1449 filterMap_map, :1475 filterMap_append.
+
+List/state APIs checked against lean-toolchain actual v4.25.0:
+Init/Data/List/Monadic.lean:64 mapM_nil, :66 mapM_cons,
+:80 mapM_map, :84 mapM_append. The actual definition at Control:58 is tail
+recursive, so consume those public laws rather than reducing its loop.
+Init/Data/List/FinRange.lean:37 finRange_succ, :40 finRange_succ_last,
+:27 length_finRange, :30 getElem_finRange.
+Init/Control/State.lean:76 StateT.pure, :83 StateT.bind, :90 StateT.map.
+A broad search found StateT.run_bind only in unrelated Mathlib Cont code, not
+as a declared theorem available in v4.25; do not invent a state reader name.
+
+No helper proof was attempted: root native typing and exact?/apply? probes
+must precede each proposed new logical helper proof.

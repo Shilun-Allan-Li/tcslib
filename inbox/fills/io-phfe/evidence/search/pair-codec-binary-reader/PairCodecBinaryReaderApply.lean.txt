@@ -1,0 +1,10 @@
+import TCSlib.Complexity.TuringMachine.Encoding
+import Lean.Elab.Tactic.LibrarySearch
+set_option maxHeartbeats 200000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+open Turing
+example (a b c d : List Bool) :
+    pairEncode a b = pairEncode c d ↔ a = c ∧ b = d := by
+  apply?
+  all_goals sorry

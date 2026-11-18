@@ -1,0 +1,29 @@
+Native authorization supplied by root:
+evidence/search/stateful-committed-key-loop/run. Generic protocol/lift headers
+both typed; exact? no complete proof; apply? no relevant lemmas; only expected
+search errors. Protocol prefix excludes concrete run/game endpoints.
+
+Read-only reuse inspection this invocation:
+- Read exact StatefulKeyLoopProbeHeader.lean and native source-prefix target.
+- Reused prior simulate_saKeys_real candidate solely as a drafting pattern;
+  it is NOT an imported theorem or a required duplicate induction.
+- Read actual v4.25 StateT public readers at
+  Init/Control/Lawful/Instances.lean:288-322, especially run_pure299,
+  run_bind301 and run_lift317 (last not used in this proof).
+- Read core StateT.run projection only to verify local application matching;
+  no StateT definition body is passed to simp/rw/unfold.
+- Searched current TCSlib for mapM_cons+StateT.run_bind patterns: no
+  concrete existing protocol/list bridge was found.
+
+Same exact public suffix/wire APIs as prior authorized real target:
+List.length_finRange/getElem_finRange/drop_eq_getElem_cons;
+List.drop_of_length_le/mapM_nil/mapM_cons/filterMap_append/
+filterMap_cons_some/filterMap_nil/map_cons/append_assoc/cons_append;
+Nat.sub_eq_zero_iff_le/lt_of_sub_eq_succ/sub_succ/pred_succ;
+saNext_cons/saKeyMove_eq/saSKPayload_one/saSKAnswer_eq;
+Option.map_some/FixedLengthScheme.decAnswer_some/Fin.cons_zero/tail_cons;
+buildComp_zero_of_ret/buildComp_succ_of_query/simulate_pure/query;
+OracleComp.bind_eq_bind/pure_eq_pure/pure_bind/bind_assoc.
+
+No new helper beyond the already natively searched generic target.
+No lift proof drafted, no checker run, no live edit/Git mutation.

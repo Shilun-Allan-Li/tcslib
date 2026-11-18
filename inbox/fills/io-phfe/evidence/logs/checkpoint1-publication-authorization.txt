@@ -1,0 +1,60 @@
+User-supplied /goal attachment: /Users/seyoonr/.codex/attachments/879350e9-e077-4032-b683-677e08881cf1/pasted-text-1.txt
+SHA256: ce6570e862e84fdf9c19736e06af761e6a1d32a8060931b11261c5939eb3dea5
+
+1: You are an external Codex worker for the iO-components unit io-phfe (Phase A) of
+2: https://github.com/Shilun-Allan-Li/tcslib (Lean 4.25.0 and pinned Mathlib), running on
+3: Seyoon's Mac from his local checkout of the exchange branch.
+4: 
+5: This is an END-TO-END job: you write both the statements and the proofs of public-key
+6: partially hiding functional encryption (PHFE) for degree-2 private computation from DLIN on
+
+402: 
+403: 6. MILESTONES (design-r3 §6; push a checkpoint at each)
+404: - M0, CHECKPOINT 0: the statements commit. It is your FIRST push: push nothing to the exchange
+405:   before it. Push it as soon as it is ready, then keep working without waiting for the gate.
+406:   It contains:
+407:   - every new file with its definitions and readers, the readers proved: the raw bundles and the
+408:     efficient interfaces, the targets, and the assembly definitions;
+409:   - every theorem stated with sorry under its policy proof sketch;
+410:   - every reduction function defined, with its role, the game it plays, and the slack terms it
+411:     contributes, in its docstring;
+412:   - the module docstrings and the facade lines;
+413:   - in REPORT.md:
+414:     - the fidelity tables (GJLS21 first; then Wee20 §2.2; then a Wee20/AGW20/IW14 table mapping
+415:       every algorithm, game, lemma and misprint reading to its page);
+416:     - THE RULE-15 TABLE;
+417:     - a source location for every definition and theorem;
+418:     - the deviations;
+419:     - a size re-estimate.
+420:   M0 checks: every new module elaborates (rc 0, 0 errors in both forms); the decls2 list and
+421:   StmtDump; axioms (sorryAx only in the sorried declarations); lint, widths, clash scan.
+422: - AFTER M0 THE STATEMENTS ARE FROZEN. Headers and statement prose change only by a gate repair
+423:   that Seyoon relays into this chat, applied as its own commit "statements r<k>: <finding ids>"
+424:   and pushed as a checkpoint. Proof sketches may be refreshed when a proof route changes (same
+425:   commit). New helper lemmas may be added; list them.
+426: - M1: Exponents; DLIN with its matrix form; uniform-matrix MDDH; DLIN => MDDH (dlinToMddh,
+427:   mddhAdv_le).
+
+559: 10. DELIVERY (workflow.md §4.1; host addendum §5)
+560: - Payload under inbox/fills/io-phfe/ on exchange/pass-shelat-ch5-8:
+561:   - REPORT.md;
+562:   - patches/: git format-patch 5ed465f62e4ae0f93ded1a1ba49e807591b589eb..fill/io-phfe, with
+563:     patches/COMMITS.tsv (hash, author, committer, subject, signing column);
+564:   - src/: every new and changed file at its repository path;
+565:   - evidence/: preflight, cache-store and cache-get logs, mathlib-roots.txt, order.txt, your
+566:     lines of ~/.lean-slots/slots.log, build and sweep logs with summary, admissions, decls2,
+567:     StmtDump, the fidelity and rule-15 tables, axioms with census and trace, Rule 10 seals,
+568:     controls and scan, the frozen checks, lint, widths, the clash scan, the boundary greps, the
+569:     search log, and any sub-agent logs under evidence/subagents/<name>/;
+570:   - a top-level SHA256SUMS whose paths equal the delivered files; no PDF anywhere.
+571: - Push from your OWN delivery worktree of the exchange branch:
+572:     git -C <exchange checkout> worktree add ../exchange-io-phfe origin/exchange/pass-shelat-ch5-8
+573:   Commit only inbox/fills/io-phfe/, with these messages:
+574:     "fill io-phfe: checkpoint 0 (statements)"
+575:     "fill io-phfe: checkpoint <n> (M<n>)"
+576:     "fill io-phfe: final" (or "fill io-phfe: final PARTIAL")
+577:   Run git pull --rebase origin exchange/pass-shelat-ch5-8 before each push.
+578: - Never force-push, never edit another path, never push any other branch, and open no PR. If a
+579:   push is refused, keep the commit and say so here.
+580: - At the end, ALSO return the final payload here as a ZIP with io-phfe/ at its root.
+

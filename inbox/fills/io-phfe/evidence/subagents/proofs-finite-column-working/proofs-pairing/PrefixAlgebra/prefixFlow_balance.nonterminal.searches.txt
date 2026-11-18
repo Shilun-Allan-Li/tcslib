@@ -1,0 +1,64 @@
+Read-only nonterminal prefix-flow reuse searches
+No new public helper, no Lean/lake/Git/live edit.
+The protected diagnostic partial was never written by this invocation.
+
+$ rg -n 'consEquiv.*arrowCongr|arrowCongr.*consEquiv|append_cast_right.*append_right_cons|append_right_cons.*cast_cast|sub_succ.*succ_pred_eq_of_pos' TCSlib .lake/packages/mathlib/Mathlib
+exit=0
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:765:  (Fin.consEquiv fun _ => Bool).trans (Equiv.arrowCongr (finCongr (Nat.add_comm c 1)) (Equiv.refl Bool))
+
+$ rg -n 'theorem sub_succ |theorem succ_pred_eq_of_pos|theorem sub_pos_of_lt' /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Nat/Basic.lean
+exit=0
+281:theorem sub_succ (n m : Nat) : n - succ m = pred (n - m) := rfl
+900:theorem succ_pred_eq_of_pos : ∀ {n}, 0 < n → succ (pred n) = n
+1087:protected theorem sub_pos_of_lt (h : m < n) : 0 < n - m :=
+
+$ rg -n 'def arrowCongr' .lake/packages/mathlib/Mathlib/Logic/Equiv/Defs.lean
+exit=0
+450:def arrowCongr {α₁ β₁ α₂ β₂ : Sort*} (e₁ : α₁ ≃ α₂) (e₂ : β₁ ≃ β₂) : (α₁ → β₁) ≃ (α₂ → β₂) where
+476:def arrowCongr' {α₁ β₁ α₂ β₂ : Type*} (hα : α₁ ≃ α₂) (hβ : β₁ ≃ β₂) : (α₁ → β₁) ≃ (α₂ → β₂) :=
+
+$ rg -n 'def _root_.finCongr|lemma _root_.finCongr_symm' .lake/packages/mathlib/Mathlib/Data/Fin/SuccPred.lean
+exit=0
+134:def _root_.finCongr (eq : n = m) : Fin n ≃ Fin m where
+146:@[simp] lemma _root_.finCongr_symm (h : m = n) : (finCongr h).symm = finCongr h.symm := rfl
+150:lemma _root_.finCongr_symm_apply_coe (h : m = n) (k : Fin n) : ((finCongr h).symm k : ℕ) = k := rfl
+
+$ rg -n 'def consEquiv|theorem cons_zero|theorem cons_succ|append_cast_right|append_right_cons' .lake/packages/mathlib/Mathlib/Data/Fin/Tuple/Basic.lean
+exit=0
+115:theorem cons_succ : cons x p i.succ = p i := by simp [cons]
+118:theorem cons_zero : cons x p 0 = x := by simp [cons]
+169:def consEquiv (α : Fin (n + 1) → Type*) : α 0 × (∀ i, α (succ i)) ≃ ∀ i, α i where
+368:@[simp] lemma append_cast_right {n m} (xs : Fin n → α) (ys : Fin m → α) (m' : ℕ)
+656:  rw [snoc_eq_append, append_assoc, append_left_eq_cons, append_cast_right]; rfl
+658:theorem append_right_cons {n m} {α : Sort*} (xs : Fin n → α) (y : α) (ys : Fin m → α) :
+
+$ rg -n _root_.Equiv.prod_comp .lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Defs.lean
+exit=0
+712:lemma _root_.Equiv.prod_comp (e : ι ≃ κ) (g : κ → M) : ∏ i, g (e i) = ∏ i, g i :=
+
+$ rg -n 'Fintype.sum_prod_type|theorem Fintype.prod_prod_type' .lake/packages/mathlib/Mathlib/Data/Fintype/BigOperators.lean
+exit=0
+251:@[to_additive Fintype.sum_prod_type /-- The sum over a product type equals the sum of fiberwise
+252:sums. For rewriting in the reverse direction, use `Fintype.sum_prod_type'`. -/]
+253:theorem Fintype.prod_prod_type [CommMonoid γ] (f : α₁ × α₂ → γ) :
+259:@[to_additive Fintype.sum_prod_type' /-- The sum over a product type equals the sum of fiberwise
+260:sums. For rewriting in the reverse direction, use `Fintype.sum_prod_type`. -/]
+261:theorem Fintype.prod_prod_type' [CommMonoid γ] (f : α₁ → α₂ → γ) :
+265:@[to_additive Fintype.sum_prod_type_right]
+266:theorem Fintype.prod_prod_type_right [CommMonoid γ] (f : α₁ × α₂ → γ) :
+271:@[to_additive Fintype.sum_prod_type_right'
+273:theorem Fintype.prod_prod_type_right' [CommMonoid γ] (f : α₁ → α₂ → γ) :
+
+$ rg -n 'theorem prod_univ_succ' .lake/packages/mathlib/Mathlib/Algebra/BigOperators/Fin.lean
+exit=0
+64:theorem prod_univ_succAbove (f : Fin (n + 1) → M) (x : Fin (n + 1)) :
+72:theorem prod_univ_succ (f : Fin (n + 1) → M) :
+
+$ rg -n 'lemma sum_mul ' .lake/packages/mathlib/Mathlib/Algebra/BigOperators/Ring/Finset.lean
+exit=0
+49:lemma sum_mul (s : Finset ι) (f : ι → R) (a : R) :
+
+$ rg -n 'theorem cast_cast ' /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Fin/Lemmas.lean
+exit=0
+498:@[simp, grind =] theorem cast_cast {k : Nat} (h : n = m) (h' : m = k) {i : Fin n} :
+

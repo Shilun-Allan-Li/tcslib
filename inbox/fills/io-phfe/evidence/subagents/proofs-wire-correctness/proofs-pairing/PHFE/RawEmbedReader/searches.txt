@@ -1,0 +1,19 @@
+Static full-name/shape searches across PHFE and generic FE definitions:
+
+Searched wee20PHFE_raw_embed, raw embed projection equalities, DecOut/output equivalence
+names, scalarValueEquiv/publicParamsEquiv, and all current Raw.lean projection readers.
+No concrete raw embedding reader, raw bundle equation reader, or DecOut codec found.
+Root independently confirmed the missing-reader gap and authorized this routine addition.
+
+Nearest existing APIs read:
+- PHFE/Raw.lean:97 wee20PHFE_raw_cprm; core/dec projections :104-127.
+- Raw.lean:152 publicParamsEquiv and :157 publicParamsEquiv_eq.
+- Raw.lean:203 scalarValueEquiv and :211 scalarValueEquiv_eq.
+- PHFE/Data.lean:79 classParam_eq; :90 valueEquiv_eq; :108 embedValue_eq.
+- Generic FEScheme.toRaw_embed is a different efficient/raw projection; it does not
+  identify the concrete wee20PHFE_raw embedding.
+
+Exact probes supplied: primary full-function projection and anonymous existing-codec
+pointwise shape. No new public helper is proposed by the second diagnostic. Both use
+term exact?% and current Raw, with no admitted target import and no tactic block.
+Native typing/exact/apply gate and any proof remain root work.

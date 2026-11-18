@@ -1,0 +1,346 @@
+Try this:
+  [apply] refine Function.Injective2.eq_iff ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective2 pairEncode
+Try this:
+  [apply] refine Eq.to_iff ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode a b = pairEncode c d) = (a = c ∧ b = d)
+Try this:
+  [apply] refine iff_iff_implies_and_implies.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode a b = pairEncode c d → a = c ∧ b = d) ∧ (a = c ∧ b = d → pairEncode a b = pairEncode c d)
+Try this:
+  [apply] refine (iff_false_right ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬(a = c ∧ b = d)
+  -- ⊢ ¬pairEncode a b = pairEncode c d
+Try this:
+  [apply] refine (iff_true_right ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ a = c ∧ b = d
+  -- ⊢ pairEncode a b = pairEncode c d
+Try this:
+  [apply] refine Iff.symm (Eq.to_iff ?_)
+  -- Remaining subgoals:
+  -- ⊢ (a = c ∧ b = d) = (pairEncode a b = pairEncode c d)
+Try this:
+  [apply] refine iff_comm.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ a = c ∧ b = d ↔ pairEncode a b = pairEncode c d
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => iff_iff_implies_and_implies.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (a = c ∧ b = d → pairEncode a b = pairEncode c d) ∧ (pairEncode a b = pairEncode c d → a = c ∧ b = d)
+Try this:
+  [apply] refine iff_comm.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ a = c ∧ b = d ↔ pairEncode a b = pairEncode c d
+Try this:
+  [apply] refine iff_of_true ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ pairEncode a b = pairEncode c d
+  -- ⊢ a = c ∧ b = d
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} ha => (iff_false_right ha).mpr) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (iff_false_left ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬pairEncode a b = pairEncode c d
+  -- ⊢ ¬(a = c ∧ b = d)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} ha => (iff_true_right ha).mpr) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Iff.of_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode a b = pairEncode c d) = (a = c ∧ b = d)
+Try this:
+  [apply] refine { mp := ?_, mpr := ?_ }
+  -- Remaining subgoals:
+  -- ⊢ pairEncode a b = pairEncode c d → a = c ∧ b = d
+  -- ⊢ a = c ∧ b = d → pairEncode a b = pairEncode c d
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => iff_comm.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ pairEncode a b = pairEncode c d ↔ a = c ∧ b = d
+Try this:
+  [apply] refine Iff.symm ?_
+  -- Remaining subgoals:
+  -- ⊢ a = c ∧ b = d ↔ pairEncode a b = pairEncode c d
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => iff_comm.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ pairEncode a b = pairEncode c d ↔ a = c ∧ b = d
+Try this:
+  [apply] refine iff_iff_eq.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode a b = pairEncode c d) = (a = c ∧ b = d)
+Try this:
+  [apply] refine Iff.symm (iff_of_true ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ a = c ∧ b = d
+  -- ⊢ pairEncode a b = pairEncode c d
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.trans ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Iff.symm ((fun {a b} ha => (iff_false_left ha).mpr) ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ ¬(a = c ∧ b = d)
+  -- ⊢ ¬pairEncode a b = pairEncode c d
+Try this:
+  [apply] refine iff_of_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode a b = pairEncode c d) = (a = c ∧ b = d)
+Try this:
+  [apply] refine Iff.symm (Iff.of_eq ?_)
+  -- Remaining subgoals:
+  -- ⊢ (a = c ∧ b = d) = (pairEncode a b = pairEncode c d)
+Try this:
+  [apply] refine iff_of_false ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬pairEncode a b = pairEncode c d
+  -- ⊢ ¬(a = c ∧ b = d)
+Try this:
+  [apply] refine Iff.symm { mp := ?_, mpr := ?_ }
+  -- Remaining subgoals:
+  -- ⊢ a = c ∧ b = d → pairEncode a b = pairEncode c d
+  -- ⊢ pairEncode a b = pairEncode c d → a = c ∧ b = d
+Try this:
+  [apply] refine Iff.comm.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ a = c ∧ b = d ↔ pairEncode a b = pairEncode c d
+Try this:
+  [apply] refine Iff.symm (Iff.symm ?_)
+  -- Remaining subgoals:
+  -- ⊢ pairEncode a b = pairEncode c d ↔ a = c ∧ b = d
+Try this:
+  [apply] refine Iff.comm.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ a = c ∧ b = d ↔ pairEncode a b = pairEncode c d
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => iff_iff_eq.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (a = c ∧ b = d) = (pairEncode a b = pairEncode c d)
+Try this:
+  [apply] refine iff_def.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode a b = pairEncode c d → a = c ∧ b = d) ∧ (a = c ∧ b = d → pairEncode a b = pairEncode c d)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm (Iff.trans ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine iff_def'.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (a = c ∧ b = d → pairEncode a b = pairEncode c d) ∧ (pairEncode a b = pairEncode c d → a = c ∧ b = d)
+Try this:
+  [apply] refine Iff.symm (iff_of_eq ?_)
+  -- Remaining subgoals:
+  -- ⊢ (a = c ∧ b = d) = (pairEncode a b = pairEncode c d)
+Try this:
+  [apply] refine eq_iff_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode a b = pairEncode c d) = (a = c ∧ b = d)
+Try this:
+  [apply] refine Iff.symm (iff_of_false ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ ¬(a = c ∧ b = d)
+  -- ⊢ ¬pairEncode a b = pairEncode c d
+Try this:
+  [apply] refine (iff_true_left ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ pairEncode a b = pairEncode c d
+  -- ⊢ a = c ∧ b = d
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => Iff.comm.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ pairEncode a b = pairEncode c d ↔ a = c ∧ b = d
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (iff_congr ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => Iff.comm.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ pairEncode a b = pairEncode c d ↔ a = c ∧ b = d
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (iff_congr ?_ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => iff_def.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (a = c ∧ b = d → pairEncode a b = pairEncode c d) ∧ (pairEncode a b = pairEncode c d → a = c ∧ b = d)
+Try this:
+  [apply] refine Decidable.not_iff_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬pairEncode a b = pairEncode c d ↔ ¬(a = c ∧ b = d)
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => iff_def'.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode a b = pairEncode c d → a = c ∧ b = d) ∧ (a = c ∧ b = d → pairEncode a b = pairEncode c d)
+Try this:
+  [apply] refine Decidable.iff_iff_not_or_and_or_not.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (¬pairEncode a b = pairEncode c d ∨ a = c ∧ b = d) ∧ (pairEncode a b = pairEncode c d ∨ ¬(a = c ∧ b = d))
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => eq_iff_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (a = c ∧ b = d) = (pairEncode a b = pairEncode c d)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Decidable.iff_congr_right.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Iff.symm ((fun {a b} ha => (iff_true_left ha).mpr) ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ a = c ∧ b = d
+  -- ⊢ pairEncode a b = pairEncode c d
+Try this:
+  [apply] refine Decidable.iff_iff_and_or_not_and_not.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ pairEncode a b = pairEncode c d ∧ a = c ∧ b = d ∨ ¬pairEncode a b = pairEncode c d ∧ ¬(a = c ∧ b = d)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {p₁ p₂ q₁ q₂} h₁ h₂ => (iff_congr h₁ h₂).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine decide_eq_decide.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {p₁ p₂ q₁ q₂} h₁ h₂ => (iff_congr h₁ h₂).mpr) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Decidable.iff_congr_left.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} [Decidable a] [Decidable b] => Decidable.not_iff_not.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine propext_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (pairEncode a b = pairEncode c d) = (a = c ∧ b = d)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm
+    ((fun {a b} [Decidable a] [Decidable b] => Decidable.iff_iff_not_or_and_or_not.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine iff_iff_and_or_not_and_not.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ pairEncode a b = pairEncode c d ∧ a = c ∧ b = d ∨ ¬pairEncode a b = pairEncode c d ∧ ¬(a = c ∧ b = d)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm
+    ((fun {P Q R} [Decidable P] [Decidable Q] [Decidable R] => Decidable.iff_congr_right.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (not_xor (pairEncode a b = pairEncode c d) (a = c ∧ b = d)).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬Xor' (pairEncode a b = pairEncode c d) (a = c ∧ b = d)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {a b} [Decidable b] => Decidable.iff_iff_and_or_not_and_not.mpr) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine xor_not_right.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Xor' (pairEncode a b = pairEncode c d) ¬(a = c ∧ b = d)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {p q} {x} {x_1} => decide_eq_decide.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine iff_iff_not_or_and_or_not.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (¬pairEncode a b = pairEncode c d ∨ a = c ∧ b = d) ∧ (pairEncode a b = pairEncode c d ∨ ¬(a = c ∧ b = d))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm
+    ((fun {P Q R} [Decidable P] [Decidable Q] [Decidable R] => Decidable.iff_congr_left.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine not_iff_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬pairEncode a b = pairEncode c d ↔ ¬(a = c ∧ b = d)
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => propext_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (a = c ∧ b = d) = (pairEncode a b = pairEncode c d)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Iff.iff ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => iff_iff_and_or_not_and_not.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (a = c ∧ b = d) ∧ pairEncode a b = pairEncode c d ∨ ¬(a = c ∧ b = d) ∧ ¬pairEncode a b = pairEncode c d
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Iff.iff ?_ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Iff.symm ((fun P Q => (not_xor P Q).mp) (a = c ∧ b = d) (pairEncode a b = pairEncode c d) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ¬Xor' (a = c ∧ b = d) (pairEncode a b = pairEncode c d)
+Try this:
+  [apply] refine xor_not_left.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Xor' (¬pairEncode a b = pairEncode c d) (a = c ∧ b = d)
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => xor_not_right.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Xor' (a = c ∧ b = d) ¬pairEncode a b = pairEncode c d
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => iff_iff_not_or_and_or_not.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (¬(a = c ∧ b = d) ∨ pairEncode a b = pairEncode c d) ∧ (a = c ∧ b = d ∨ ¬pairEncode a b = pairEncode c d)
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => not_iff_not.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ¬(a = c ∧ b = d) ↔ ¬pairEncode a b = pairEncode c d
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {p₁ p₂ q₁ q₂} h₁ h₂ => (Iff.iff h₁ h₂).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm ((fun {p₁ p₂ q₁ q₂} h₁ h₂ => (Iff.iff h₁ h₂).mpr) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Iff.symm ((fun {a b} => xor_not_left.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Xor' (¬(a = c ∧ b = d)) (pairEncode a b = pairEncode c d)
+Try this:
+  [apply] refine bihimp_iff_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ bihimp (pairEncode a b = pairEncode c d) (a = c ∧ b = d)
+Try this:
+  [apply] refine Iff.symm ((fun {p q} => bihimp_iff_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ bihimp (a = c ∧ b = d) (pairEncode a b = pairEncode c d)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.TFAE.out (fun x => ?_) ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Iff.symm (List.TFAE.out (fun x => ?_) ?_ ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/PairCodecBinaryReaderApply.lean:7:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/PairCodecBinaryReaderApply.lean:10:12: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+.lake/io-phfe-probes/PairCodecBinaryReaderApply.lean:10:2: warning: 'all_goals sorry' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`

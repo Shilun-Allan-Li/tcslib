@@ -1,0 +1,26 @@
+import TCSlib.Cryptography.Games.Probability
+import TCSlib.Cryptography.Games.Bridges.Experiments
+import TCSlib.Cryptography.OneWayFunctions.Basic
+import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Card
+import Mathlib.LinearAlgebra.Dual.Lemmas
+import Mathlib.GroupTheory.Coset.Basic
+import Mathlib.Logic.Equiv.Sum
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 800000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace TCSlib.Cryptography.Pairing
+
+open TCSlib.Cryptography.Games
+open scoped Matrix
+
+example {K : Type} [Field K] [Fintype K] (n : ℕ) :
+    ProbComp.prob (ProbComp.sample (Matrix (Fin n) (Fin n) K)) (fun M => IsUnit M) =
+      (((∏ i : Fin n,
+          (Fintype.card K ^ n - Fintype.card K ^ (i : ℕ))) : ℕ) : ℝ) /
+        (Fintype.card K : ℝ) ^ (n * n) := exact?%
+
+end TCSlib.Cryptography.Pairing

@@ -1,0 +1,229 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
+-/
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Reductions
+import TCSlib.Cryptography.Games.Relational
+import TCSlib.Cryptography.Games.Tapes
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Semi-adaptive simulation bound for the raw linear building block
+
+## Main definitions
+
+This module introduces no reduction predicate or machine-construction target. It uses the
+shared RealizesOn API and the explicit functions in Reductions.
+
+## Main results
+
+* `Wee20.Linear.length_adviceEnc_le`, `adviceEnc_injective`: finite polynomial advice.
+* `Wee20.Linear.game0_game1_le`, `game3_game4_le`: the two computational hops.
+* `Wee20.Linear.game2_game3_accept`, `game4_game5_accept`: exact adaptive/statistical hops.
+* `Wee20.Linear.endpoint_good_comparison`: both endpoint bad portions cost ONE exact
+  rank-failure probability.
+* `Wee20.Linear.linear_saSimAdv_le`: every typed adversary has one advice family that works
+  for every realising machine family at every security parameter.
+
+No realisability hypothesis quantifies over all typed adversaries. Machine existence for
+the eventual derived outer adversaries remains a separate obligation.
+
+## References
+
+* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
+  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Appendix B, Theorem 1,
+  pp. 12–14, Lemmas 2–5. The exact rank failure replaces the printed `1/p` accounting.
+* [AGW20] M. Abdalla, J. Gong, and H. Wee, *Functional Encryption for Attribute-Weighted
+  Sums from k-Lin*, CRYPTO 2020; full version, Cryptology ePrint Archive 2020/762,
+  Lemma 2, p. 12 and Appendix A, (28)–(32), pp. 37–38.
+-/
+
+namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
+
+open Complexity TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
+
+/-- Advice encoding has its explicit polynomial bound, uniformly over all scalar tapes.
+This is fixed-advice reduction glue.
+
+**Proof sketch.** Read `adviceEnc_eq` and `adviceMeta_eq`. Use the shared pair-length and
+modular-vector-length readers, bound binary numeral lengths by their values plus one,
+and evaluate `adviceLen`. -/
+theorem length_adviceEnc_le (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (p : ℕ → ℕ)
+    (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) (ω : Advice PG zDim q p κ) :
+    (adviceEnc G PG zDim q p hp κ ω).length ≤ (adviceLen G PG zDim q).eval κ := sorry
+
+/-- The advice word is injective on its complete scalar tape. Fixed-advice encoding glue.
+
+**Proof sketch.** Separate the fixed metadata with `pairEncode_injective`. Reuse
+`Encoding.Modular.encodeVector_injective`, the shared order schedule, and the published
+`BB1Machine.order_le_two_pow`; no scalar encoder is redefined. -/
+theorem adviceEnc_injective (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (p : ℕ → ℕ)
+    (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) :
+    Function.Injective (adviceEnc G PG zDim q p hp κ) := sorry
+
+/-- Padded garbling draw coordinates fit the tape block. Technical size glue.
+
+**Proof sketch.** For auxiliary coordinates use `PG.tCoord`, `auxCount_add_one` and
+`mCount_le_mBound`; for output coordinates use the final-block offset and Fin.isLt. -/
+theorem paddedDrawIndex_lt {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+    (PG : PartialGarbling.Raw ℓ n' Fn) (κ : ℕ) (p : ℕ+) (f : Fn κ p)
+    (u : PG.TIdx κ p f ⊕ Fin (n'.eval κ)) :
+    paddedDrawIndex PG κ p f u < PG.mBound.eval κ + n'.eval κ := sorry
+
+/-- Every accepted key's group-challenge row is in bounds, even when its function-dependent
+node count is below the padded maximum. Technical size glue.
+
+**Proof sketch.** Bound mCoord by mCount and then mBound. Combine j<q with the canonical
+product-index bound. This also shows that no accepted query uses the identity default. -/
+theorem challengeRow_lt {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+    (PG : PartialGarbling.Raw ℓ n' Fn) (q : PolyExpr) (κ : ℕ) (p : ℕ+) (f : Fn κ p)
+    (u : PG.MIdx κ p f) {j : ℕ} (hj : j < q.eval κ) :
+    (PG.mCoord κ p f u).val * q.eval κ + j < (PG.mBound.mul q).eval κ := sorry
+
+/-- Simulation of the typed bounded run by any deterministic handler has the shared
+runDet form. This is the handler-machine hypothesis shape, without constructing a machine.
+
+**Proof sketch.** Use `SAAdv.run_eq` and the published
+`simulate_buildComp_detImpl_eq_pure`, with the same budget, history and initial state. -/
+theorem simulate_saRun_det {ι' σ : Type} {spec' : OracleSpec ι'}
+    (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (A : SAAdv G PG zDim)
+    (κ : ℕ) (pp : PublicParams G κ) (pk : MPK G ℓ zDim κ pp) (r : List Bool)
+    (h : ∀ i, (saSpec G PG zDim κ pp).dom i → σ →
+      (saSpec G PG zDim κ pp).rng i × σ) (s : σ) :
+    simulate (detImpl (spec' := spec') h) (SAAdv.run G PG zDim A κ pp pk r) s =
+      .pure (runDet (A.next κ pp pk r) false h (A.budget.eval κ) [] s) := sorry
+
+/-- The two unfiltered padded real endpoint presentations coincide
+[Wee20, Appendix B, Game 0, p. 12]. The substantive connection to the actual fresh raw
+experiment is saGame_eq_freshSaGame in LinearSecurity.Endpoint.
+
+**Proof sketch.** Read the two indexed game laws and their deterministic run readers.
+For mode zero the optional middle-game filter is false, so both runs use exactly the
+same public parameters, scalar tape, coin string and honest handler. -/
+theorem game0_real_accept (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (A : SAAdv G PG zDim) (κ : ℕ) :
+    accept (game G PG zDim A 0 κ) = accept (saGame G PG zDim A false κ) := sorry
+
+/-- One MDDH¹_{2,3} realiser bounds the unfiltered ciphertext hop
+[Wee20, Appendix B, Lemma 2, p. 13]. The shared predicate constrains only encoded
+challenges and layout-length coin strings, which suffices for this bound.
+
+**Proof sketch.** Use the challenge base as group A and its response as the group first
+ciphertext block. All key answers use the known W,U,V and per-query tape coordinates.
+The two MDDH branches give exactly the two game laws. Fix the remaining scalar tape by
+`exists_expect_sample_le` and `abs_expect_sub_le_expect`, then transfer every realiser's
+verdict through `RealizesOn.distinguisherL_eq`. -/
+theorem game0_game1_le (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (p : ℕ → ℕ)
+    (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G PG zDim) :
+    ∃ ω : ∀ κ, Advice PG zDim A.budget p κ, ∀ D : NUPPT,
+      D.RealizesOn (G.mddhEnc (PolyExpr.const 1) (PolyExpr.const 3)) A.coins (red0 G PG zDim p hp A
+        ω) →
+      ∀ κ, advantage (game G PG zDim A 0 κ) (game G PG zDim A 1 κ) ≤
+        G.mddhAdv (PolyExpr.const 1) (PolyExpr.const 3) D κ := sorry
+
+/-- The basis decomposition changes no good-event transcript
+[Wee20, Appendix B, Game 2, p. 13].
+
+**Proof sketch.** On nonzero determinant, use the total inverse's published left/right
+inverse laws and group matrix-action identities to reconstruct each honest key. Couple
+all adaptive queries with `expect_simulate_rel`; both filtered games return false on bad H. -/
+theorem game1_good_eq_game2 (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (A : SAAdv G PG zDim)
+    (κ : ℕ) (pp : PublicParams G κ) (ω : SecurityDraw G PG zDim A.budget κ pp)
+    (r : List Bool) :
+    (if (basisMatrix G κ pp
+          (setupAt G PG zDim A.budget κ pp ω).1
+          (setupAt G PG zDim A.budget κ pp ω).2.1).det = 0 then false
+      else runGameDet G PG zDim A 1 false κ pp ω r) =
+      runGameDet G PG zDim A 2 true κ pp ω r := sorry
+
+/-- The adaptive third-game change of variables is exact on the good basis event
+[Wee20, Appendix B, Lemma 3, pp. 13–14]. This replaces the paper's guessing argument.
+
+**Proof sketch.** Fix pp,A,c and adversary coins. Write a for the final inverse column.
+The triangular map U'=U, W'=W+a*z*, V'=V+a*((c^T U)X(x*)) fixes every public projection.
+Thus it preserves the chosen x*,z* and unchanged latent U; its inverse subtracts those
+same shifts. Reindex setup draws by this equivalence. Per-key inverse-basis coordinate
+changes preserve projected T and create a fresh independent low row. Couple the adaptive
+transcripts through `expect_simulate_rel`, retaining the same good-event filter. -/
+theorem game2_game3_accept (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (A : SAAdv G PG zDim) (κ : ℕ) :
+    accept (game G PG zDim A 2 κ) = accept (game G PG zDim A 3 κ) := sorry
+
+/-- One MDDH^ℓ_{2,mBound*q} realiser bounds the filtered adaptive-key hop
+[Wee20, Appendix B, Lemma 4, p. 14]. The shared predicate constrains only encoded
+challenges and layout-length coin strings, which suffices for this bound.
+
+**Proof sketch.** Preload R and uhat from identical query/node rows of the MDDH base and
+response. `challengeRow_lt` shows every accepted query uses valid coordinates. In the real
+branch the response is the common hidden row times each R block; in the random branch
+these rows are fresh uniform. Public coefficients and the good filter are known advice.
+Use fresh-block relational couplings, average the remaining tape, and apply the shared
+realiser verdict reader. There is no added rank or partial-garbling correction. -/
+theorem game3_game4_le (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (p : ℕ → ℕ)
+    (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G PG zDim) :
+    ∃ ω : ∀ κ, Advice PG zDim A.budget p κ, ∀ D : NUPPT,
+      D.RealizesOn (G.mddhEnc ℓ (PG.mBound.mul A.budget)) A.coins
+        (red1 G PG zDim p hp A ω) →
+      ∀ κ, advantage (game G PG zDim A 3 κ) (game G PG zDim A 4 κ) ≤
+        G.mddhAdv ℓ (PG.mBound.mul A.budget) D κ := sorry
+
+/-- The final partial-garbling hop has EXACT privacy, including adaptive group-matrix keys
+[Wee20, Appendix B, Lemma 5, p. 14; AGW20, Appendix A, (30), p. 37].
+
+**Proof sketch.** Translate the independent uhat row by the low garbling row times L1.
+Use the raw garbling's exactPrivacy at each query and map through group operations.
+For arbitrary group messages, existential scalar representatives may be eliminated in
+this proof only; no algorithm returns those representatives. Couple adaptive transcripts
+by the shared relational readers. Both sides retain the same good filter. -/
+theorem game4_game5_accept (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (A : SAAdv G PG zDim) (κ : ℕ) :
+    accept (game G PG zDim A 4 κ) = accept (game G PG zDim A 5 κ) := sorry
+
+/-- Splitting the TWO unfiltered endpoint laws by their common good event charges the
+rank failure ONCE [Wee20, Appendix B, Theorem 1, p. 12, with exact rank accounting].
+
+**Proof sketch.** Couple the common setup coordinates and partition both endpoint
+acceptances by the same basis event. On good H, use `game1_good_eq_game2` and the filtered
+ideal law. On bad H, the difference of the two conditional acceptance values is at most
+one, so its integral is at most rankSlack, not twice rankSlack. Average over public
+parameters using `simSetup_fullRank_prob`; keep the unfiltered first computational hop. -/
+theorem endpoint_good_comparison (G : BilinearGen) {ℓ n' : PolyExpr}
+    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr)
+    (A : SAAdv G PG zDim) (κ : ℕ) :
+    saSimAdv G PG zDim A κ ≤
+      advantage (game G PG zDim A 0 κ) (game G PG zDim A 1 κ) +
+      advantage (game G PG zDim A 2 κ) (game G PG zDim A 5 κ) + linearSlack G κ := sorry
+
+/-- For every typed semi-adaptive adversary there is fixed scalar advice such that EVERY
+pair of realising MDDH machines satisfies Π's explicit simulation bound at every parameter
+[Wee20, Appendix B, Theorem 1, p. 12 and Lemmas 2–5]. The shared realisation predicate
+constrains only encoded challenges and layout-length coin strings, which suffices here.
+
+**Proof sketch.** Choose the independent advice families from the two computational-hop
+lemmas. Apply `endpoint_good_comparison`. Rewrite the good-event middle endpoints by the
+exact adaptive change of variables and exact partial-garbling privacy, then apply the
+second computational-hop bound. The only statistical term is the exact single rank
+failure; no partial-garbling term or guessing factor occurs. -/
+theorem linear_saSimAdv_le (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (p : ℕ → ℕ)
+    (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G PG zDim) :
+    ∃ ω : Fin 2 → ∀ κ, Advice PG zDim A.budget p κ, ∀ D : Fin 2 → NUPPT,
+      (D 0).RealizesOn (G.mddhEnc (PolyExpr.const 1) (PolyExpr.const 3)) A.coins
+        (red0 G PG zDim p hp A (ω 0)) →
+      (D 1).RealizesOn (G.mddhEnc ℓ (PG.mBound.mul A.budget)) A.coins
+        (red1 G PG zDim p hp A (ω 1)) →
+      ∀ κ, saSimAdv G PG zDim A κ ≤
+        G.mddhAdv (PolyExpr.const 1) (PolyExpr.const 3) (D 0) κ +
+        G.mddhAdv ℓ (PG.mBound.mul A.budget) (D 1) κ + linearSlack G κ := sorry
+
+end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear

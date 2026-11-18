@@ -1,0 +1,44 @@
+Read-only search evidence in the active worktree.
+No Lean/lake/Git or native tactic search was run by this agent.
+
+1. Read SemiAdaptive/Data.lean:1-294 and FunctionalEncryption/Run.lean:1-154.
+   Existing SAAdv.run_eq:226; toSAAdv_next:269; saReadMove_eq:245;
+   saCodec_eq:87; toSAAdv_budget:264; frozen toSAAdv_run:283.
+   Run.runDet/simulate_buildComp_detImpl_eq_pure concern deterministic handlers,
+   whereas this statement is equality of unhandled OracleComp trees.
+
+2. rg -n 'toSAAdv_run|toCompOn_eq|runAt_eq|buildComp|run_map|run.*map|map.*run|homomorph' SemiAdaptive Games
+   NUPPT.toCompOn_eq Games/Machines.lean:266-271;
+   buildComp_zero_of_ret:128, zero_of_query:134,
+   succ_of_ret:140, succ_of_query:148.
+   Read all four exact signatures at Machines.lean:108-153.
+
+3. Read Complexity/Randomized/PPT.lean:224-254.
+   NUPPT.runAt_eq:249 identifies runAt with runAtL on List.ofFn coins.
+   No coin coercion or fresh-randomness lemma is required.
+
+4. rg -n 'map_pure|map_query|map_bind|map_map|map_id|buildComp.*map|map.*buildComp|buildComp.*congr|next.*congr' Games Mathlib/Control
+   Read Games/OracleComp.lean:75-149.
+   OracleComp.map_eq_bind:111; pure_bind:116; query_bind:120;
+   existing LawfulMonad instance:139.
+   No complete generic buildComp map-output bridge found.
+
+5. Read Games/BitCodec.lean:215-248 and zeroBits_apply:129.
+   bitCodec_timeout:242 is exact timeout reader, zeroBits_apply gives false.
+   bitCodec_decodeMove:229 exists but is not needed: the proof keeps the codec
+   decoder opaque and branches on its actual Move result, preserving malformed
+   words exactly rather than assuming canonical encoding.
+
+6. rg -n 'map_eq_bind|query_bind|simulate.*map|map.*simulate|buildComp.*map|map.*buildComp|buildComp.*congr' Games/{Simulate,Forwarding,Bridges/Machines,Efficiency/Replay}.lean
+   Games/Simulate.simulate_bind:107, simulate_comp:199 are handler composition.
+   Games/Bridges/Machines.buildComp_singleCodec:119-140 is nearest builder
+   induction: different single-oracle input representation and different tree
+   datatype, no direct application to the two-oracle final-bit map.
+   Replay.buildComp_of_replaysFrom:70 requires a replay predicate proof and
+   would add unnecessary machinery here.
+
+7. Searched evidence/search and both existing proof draft directories for
+   toSAAdv_run; no competing candidate or reusable native result found.
+
+This proof uses existing theorem only, not a newly introduced helper. Therefore
+no new helper native exact?/apply? probe target is requested.

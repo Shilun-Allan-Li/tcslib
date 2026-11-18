@@ -1,0 +1,27 @@
+Read-only searches at /Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange.
+No Lean/lake/Git/build command was run.
+
+Read:
+- TCSlib/Cryptography/Pairing/Exponents.lean:1-255 (exact target, readers, context)
+- TCSlib/Cryptography/Pairing/Operations.lean:1-265 (complete public Ops contract)
+- TCSlib/Cryptography/Pairing/Group.lean published pow_val_add:254 (via rg exact signature)
+- Mathlib/Algebra/Group/Pi/Lemmas.lean:86-113 (Pi.evalMulHom and Pi.mul_apply use)
+
+Name/conclusion shape:
+rg -n '\bexpVec_add\b|expVec.*\(.*\+.*\).*expVec|theorem pow_val_add|lemma mul_apply|theorem mul_apply|add_apply' \
+  TCSlib/Cryptography/Pairing .lake/packages/mathlib/Mathlib/Algebra/Group/Pi \
+  /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init
+Result: target Exponents:196-197; target-group analogue:218; Group.pow_val_add:254.
+No independent source-vector wrapper with this full name/conclusion found.
+
+Core extensionality:
+rg -n '^theorem funext|^axiom funext|^protected theorem funext|^theorem congrArg₂' \
+  /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Core.lean \
+  /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Prelude.lean
+Result: Core.lean:2254 theorem funext.
+
+An initial broad targeted rg also named the nonexistent Mathlib/Algebra/GroupPower directory
+and returned rc2 for that path. Actual Group/Basic.lean and Group/Pi directories were then
+searched directly; no missing-path result is treated as evidence of absence.
+
+exact?/apply?: NOT RUN, deferred to parent under explicit no-Lean delegation.

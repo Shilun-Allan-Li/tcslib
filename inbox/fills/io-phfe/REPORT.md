@@ -1,14 +1,15 @@
 # Public-key PHFE for private quadratic functions from DLIN — Phase A report
 
-Status: **Checkpoint0 published; M2 proved; proofs in progress.**
-Current proof HEAD: `c222e6b92d75478549e5057c37c9119bf6be50c1`; 78 new modules
-and two permitted facade changes, with 77 direct admissions remaining. M2 is complete:
-generic FE and its committed/semi-adaptive exact game and advantage identities, the
-class embedding, and layered partial-garbling reconstruction and exact privacy.
-LinearCorrect and QuadraticCorrect are also admission-free. The latest 31 completed
-declarations have native standard-only axiom prints, with zero sorryAx dependencies.
-All eleven changed modules passed fresh exact-HEAD checks. The closure has 289 modules
-and the same 109 precise Mathlib roots. Style, proof-sketch and width/size checks pass.
+Status: **Checkpoint 0 and M2 published; M1 proofs complete; this payload publishes checkpoint 1.**
+Current proof HEAD: `d88f0284cb898f940e9e2c6a5690233422a79e30`; 83 new modules
+and two permitted facade changes, 18,790 source lines, with 43 direct admissions remaining.
+M1's exponent algebra, DLIN matrix comparisons, uniform-matrix MDDH, explicit DLIN-to-MDDH
+reduction, and both asymptotic consequences are admission-free. The four latest changed
+modules pass fresh exact-commit checks. All ten batch axiom prints use only standard axioms;
+these include nine newly completed declarations and the relocated correction's original
+wrapper. M2 remains complete. The official import closure has 294 modules and the unchanged
+112 precise Mathlib roots. Full final census, Rule 10 seals/controls and later security
+proofs remain required. The native M0 syntax/prose freeze audit passes at this exact source commit.
 
 Post-M0 source commits: exponent algebra
 (`f7baa8a9c9f99ca98311e0ebab05e4190d742c4c`), deterministic runner/path skeleton
@@ -19,13 +20,26 @@ correctness and shared codecs (`c222e6b92d75478549e5057c37c9119bf6be50c1`).
 The latter closes 23 existing admissions and adds eight proved helpers. Full native
 stored-constant census, Rule 10 seals/controls and final security proofs remain pending.
 
-The text-only frozen check reports no changes. Its handling of a top-level let in a
-theorem's return type needs a stronger native-syntax header-span audit before final
-delivery; `evidence/freeze/let-header-parser-limit.txt` records this limitation.
-Individual integration steps compare their complete exact headers, and the final
-native type comparison against checkpoint0 remains mandatory. No frozen statement
-change is authorized by this tooling issue. These development checks do not complete
-any remaining milestone or replace the final full stored-constant/Rule10 audits.
+
+M2 was published as exchange commit `e50e4a2520c32cac1f411d302153c9065806e681`.
+Its 2941-file payload contains 80 Lean source files; SHA256SUMS has hash
+`63d7c5ec1997dee7416d3df1e6ab2eca1cdabc771eb3285880c0e6ba05c636ab`.
+The first push attempt was rejected by automatic review for unverified egress
+authorization. Re-reading the user-supplied dispatch's explicit destination and checkpoint
+instructions, then checking clean scope, all hashes, no PDFs and no credential hits,
+resolved the rejection; the identical command was accepted. Both pull logs and the
+successful push log are retained. Only the owned payload path changed.
+
+The stronger native-syntax freeze audit passed at this exact committed HEAD:
+all 1171 M0 declarations were recovered, with zero frozen header/prose changes and
+21 permitted helpers (1192 current written declarations). All five actual-source controls
+behaved correctly: reject a type edit after a return-type let, prose edit with a sketch,
+and sketch-marker edit; permit genuine proof-body and sketch-only edits. Evidence is
+`evidence/freeze/native-c222-run3/` and `native-c222-binding.json`, binding all 80 current
+files to git show HEAD. The original M0 manifest remains unchanged. Earlier text-parser
+limitations and failed tool-development attempts are retained honestly; no user theorem
+was changed to make this check pass. The final compiled-declaration type comparison,
+full stored-constant census and Rule10 suite remain separate required checks.
 
 ## Checkpoint0 baseline
 
@@ -1056,3 +1070,305 @@ optimistic for all explicit couplings and reductions. The working re-estimate is
 22,000–30,000 lines, with uncertainty concentrated in adaptive endpoint couplings and
 DLIN/MDDH self-reduction. Independent algebra modules keep each source file below the
 1000-line limit; no frozen declaration is moved merely to make room.
+
+
+## Finite-column development supplement (after M2)
+
+The published M2 snapshot is source c222e6b92d75478549e5057c37c9119bf6be50c1 and
+exchange e50e4a2520c32cac1f411d302153c9065806e681. The subsequent local source commit
+9ff3fc19f7cecd268ee7eb1a6b58590e97dbfee2 adds the finite-linear helper statements and
+precise prime-field import. At that 9ff3fc19 snapshot M1 was not complete.
+At this working snapshot, 83 touched files have 17348 lines and 63 direct admissions.
+The source-bound development inventory is evidence/logs/proofs-finite-column/; its
+working labels do not claim exact-HEAD verification. Final native checks supersede it.
+
+The concrete DLIN matrix comparison and its advantage consequence are now proved, as
+are uniform images of surjective matrix maps, the at-most-two-row rank estimate and the
+small-row MDDH bound. The canonical real-column comparison has exact loss p^-2. The
+random-column ladder compiles with its determinant and coordinate split proved, leaving
+only its exact bad-event probability. Its outer theorem is still admitted until that
+local obligation is filled. The advice codec length and injectivity are proved. Both
+polynomial-over-order slack decay and all six linear-slack results are proved. The PHFE
+class evaluation identity and simulator singular/lift glue are also proved. Each result
+has a successful slot-wrapped module check; the batch axiom census is still pending.
+
+### New helper overlap and modularity decisions
+
+| Helper | Reused API and nearest relatives | Prior searches |
+|---|---|---|
+| expect_sample_matrix_mul_of_mulVec_surjective | Matrix right-inverse criterion, Matrix.addMonoidHomMulLeft, AddMonoidHom.fiberEquivKerOfSurjective, Equiv.sigmaFiberEquiv and sigmaEquivProdOfEquiv, existing uniform-equivalence and pair readers. No fiber count is reproved. | evidence/search/mddh-finite-linear/run2; run1's missing LibrarySearch import is retained as invalid. |
+| smallRows_surjectivity_failure_le | Module.Dual.range_eq_top_of_ne_zero, singleton probability, Matrix.card_GL_field. Its current unit-event cardinality bridge will be shared with the simulator rank proof through the separately searched GL-probability helper. | Same isolated native two-target probes and static nearest-relative notes. |
+| exists_fiberwise_add_right_equiv | Equiv.subtypeEquiv, ofFiberEquiv, prodCongrRight and existing add-group translation laws. The general kernel translation fixes the public projection and preserves the complete latent tape. | evidence/search/adaptive-kernel-shear/run; no complete exact/apply proof. |
+| dlin_base_transpose_mulVec_surjective | Existing matrix right-inverse criterion with an explicit three-by-two scalar right inverse. | evidence/search/dlin-base-surjectivity/run; clean target, no complete exact/apply proof. |
+| dlin_real_column_gap_le | Shared uniform matrix-image law through transpose, matrix-vector associativity, OneWay.uprob_pi_forall and singleton probability, shared bounded-expectation averaging. | evidence/search/dlin-column-laws/run; clean isolated targets. |
+| dlin_random_column_gap_le | Same image law; Matrix.det_fin_three and standard finite-function equivalences, independent-coordinate and complement probabilities. The local bad-mass obligation remains open at this snapshot. | Same native probes; new target is glue for the direct canonical-column route. |
+
+The choice to keep FiniteLinear, AdaptiveShear and ColumnLaws below the cryptographic
+consumers avoids import cycles and repeated finite-law arguments. No runtime host,
+machine, sampler, product UniformSampler or new efficiency interface is introduced.
+The direct column bound includes zero diagonal scalars. The final reduction must retain
+4d/p and must not add the unrelated canonical-matrix random slack a second time.
+
+### Diagnostics and resource disclosure
+
+The initially slow concrete DLIN pointwise checks were caused by a missing direct import
+of Mathlib.Algebra.Field.ZMod: Data.ZMod.Basic provided the ring, but not the prime-field
+instance required by the generic diagonal theorem. A scratch typed-term diagnostic
+exposed the failed Field synthesis. The earlier hypothesis about classical instance
+mismatch was not established and was not the cause. The corrected precise import is in
+9ff3fc1, with the local prime Fact supplied from the public parameters. The subsequent
+pointwise and averaging proofs pass native checks. All diagnostic source bytes, failed
+attempts, restoration checks and recorded own-PID terminations are retained; no peer
+process was stopped. Debug run_tac instrumentation exists only in diagnostic snapshots,
+not in the live mathematical source.
+
+The narrowed cache-get-7 completed with 112 roots, 2364 existing archives and no download.
+Its three-slot acquisition never overlapped this job's own Lean process. The package
+pins and resource floors passed; logs include cache-get-7.json, package-check-7.txt,
+cache-7-resource.log and the store-before snapshot. No blanket cache or lake build ran.
+
+A draft asymptotic proof proposed importing CoinSampling.Asymptotic. Root rejected that
+restricted import before any source edit and used the permitted Foundations primitives
+PolyExpr.eval_le, SubexpSmall.mul_pow, const_mul and mono instead. The rejected draft is
+retained as superseded provenance, not as landed or checked source.
+
+The separately proposed general GL-probability target required parentheses around its
+product body: the first native probe exposed an out-of-scope binder. Run1 is invalid
+reuse evidence. Corrected run2 has a clean header and an expected exact-search failure;
+apply-search returned only partial equality wrappers before its heartbeat limit. That
+limit is disclosed rather than represented as an exhaustive no-match result.
+
+
+The random-column bad-mass block subsequently passed native checking, so ColumnLaws is
+now admission-free. Its proof uses the stronger published singleton law directly at
+r+s instead of an explicit translation; the proof sketch was refreshed accordingly.
+The shared prob_sample_matrix_isUnit_eq helper passed its first native proof check.
+The small-row square branch was refactored to consume it, removing the former local
+unit-subtype cardinality conversion; the refactored module passes. The first refactor
+attempts exposed only the syntactic Fin(0+1+1) versus Fin2 normalization issue; their
+raw logs and source snapshots are retained. The helper covers dimension zero as well.
+The simulator now imports this lower-level finite-law module directly; no new Mathlib
+root or forbidden import is introduced.
+
+
+The completed finite-column batch is now local source commit
+2f02d9debe3659da7693e9326a7ce6d29b519282, `io-phfe: prove finite column laws and exact
+simulator rank probability`. It touches ten modules with proof bodies, refreshed sketches,
+seven new helpers and precise imports/facade entries. The full owned source inventory is
+83 files, 17498 lines, 61 direct admissions. Compared with M2, 23 declarations have newly
+completed proofs (seven new helpers and sixteen frozen statements). This is a local proof
+checkpoint; at that 2f02d9d snapshot M1's reduction and consequences remained open,
+so no M1 exchange milestone was claimed. The source branch has not been pushed.
+
+The exact simulator rank proof now reindexes the complete independent A,c draw as a
+uniform square matrix, integrates all unused masks, and uses the shared n=3 formula.
+The full LinearSimulator module is admission-free. Proof-only kernel-shear glue remains
+available for the later adaptive coupling; its existence alone is not a proof of that hop.
+The finite-column helpers' current overlap ledger has seven entries including the shared
+prob_sample_matrix_isUnit_eq, whose nearest API is Matrix.card_GL_field plus the standard
+Units.val range-cardinality and uniform probability readers. No new counting theorem is
+reproved. Its native search qualification is recorded above.
+
+Both official fillinputs inventories completed at this commit. The merged closure has
+292 modules and 112 Mathlib roots, with no additional roots since cache-get-7; no further
+cache fetch is warranted. Current resource headroom is 6.81 GiB and free disk 79.62 GiB,
+above the dispatch floors. Style and sk15 checks pass across all 83 files. Width checking
+initially exposed one overly long refreshed proof-sketch line; after wrapping it,
+WIDTH/SIZE PASS reports zero violations. The weak development freeze reports no changes
+and 28 helpers since M0; the stronger native syntax audit and batch native axiom checks
+will bind this exact source commit separately.
+
+
+Exact-commit checks now pass for all ten changed modules (rc0, both error forms0,
+fresh oleans), and all 23 newly completed declarations print standard axioms only:
+0 sorryAx-dependent, 0 other nonstandard. See proofs-finite-column-head-2 and
+proofs-finite-column/axioms-summary.json. The static Phase A/scope audit at this same
+commit reports 61 admissions, unchanged base admissions, zero forbidden imports,
+forbidden proof escapes, sampler instances, local replacement contracts/realization,
+new axioms or PDF paths. Its sole R-DLOG hit is the previously disclosed proof of
+embedding injectivity; it computes no logarithm and is outside all algorithms.
+Full final stored-constant, Rule10 and proof-completion audits remain outstanding.
+
+
+The stronger native syntax freeze at 2f02d9d passed with 1171 original declarations,
+1199 current declarations and zero frozen-header/prose changes. All five actual-source
+controls passed: return-let header character, prose and sketch-marker changes are rejected;
+changed sketch and genuinely changed proof body are allowed. Evidence:
+evidence/freeze/native-2f02-run1 and native-2f02-binding.json. This is syntax/prose freeze
+verification, not the separate final compiled-full-type comparison.
+
+
+A fresh Rule10 metadata snapshot at 2f02d9d covers 81 owned modules (the two base
+facades are excluded from owner roots). Its 474 public written entries include 40
+instances and four structures without ordinary reader candidates; these are explicit
+kind rows, not missing def/abbrev controls. All 387 ordinary public defs/abbrevs have
+candidates, pending the final native reader/control verification. The 2f02 snapshot is
+bound to Git bytes. Its canonical explicit-body scan prepared 1345 tactic items and
+21970 native name candidates; that kind probe and the full seals/controls have not run.
+Prepared metadata is not reported as Rule10 PASS and must be refreshed at final HEAD.
+
+The subsequent working mddhAdv_le ladder compiles with six named local obligations.
+Its endpoint laws, shared-realization coin verdict identity, and scalar combination of
+losses into 4/p have now passed native checks. The actual group-arithmetic embedding and
+two conditional column-law consumers remain open. The selected finite advice is fixed
+before introducing any realiser, preserving the frozen universal-realiser quantifier.
+
+
+Post-2f02 working proofs add four WireLemmas interface adapters and the missing concrete
+raw embedding projection reader. Their isolated native searches precede their proofs:
+evidence/search/wire-words (four clean exact-search failures, four partial apply results)
+and phfe-raw-embed-reader (both exact targets and the apply target succeed by reflexivity).
+The adapters reuse BilinearGroup.length_groupMatrixEnc/groupMatrixEnc_injective; vectors
+are one-row specializations. No flatten count or point-encoding injectivity is reproved.
+The new proof module is exposed by Wee20 and imported by Encodings without an import cycle.
+
+The raw perfect-correctness and zero-error proofs now compile using the typed quadratic
+correctness and shared AllOutputs/perfect-to-zero APIs. Their final standard-axiom claim
+is deliberately held until the raw record's encoding proof fields are admission-free.
+Public/master-secret/ciphertext lengths and the key-word upper bound compile. The current
+key representation contains only K1/K2/K3/R; its actual length needs mCount_le_mBound,
+not an auxiliary-row count. Ciphertext/public-key injectivity also compile. A projection
+inference pitfall in the public-key proof was fixed with explicit pair inputs, keeping
+wire words behind their published interfaces. These are working developments, not a new
+published milestone or replacement for final checks.
+
+The direct reduction's preprocessor identity now compiles through the existing group
+matrix/vector action theorems. Only its two conditional-law consumers remain. The proof
+architecture is being factored across the real/random flag to share observer, tape/order
+transport and whole-column resampling, avoiding duplicate arguments and the 1000-line
+file limit. This is a proof-body refactor under the same frozen statement and loss.
+
+
+A further native-gated binary reader, Pairing.pairEncode_eq_iff, now lives in the owned
+Parameters module shared by pairing and wire consumers. It states pair equality as two
+component equalities and reuses Turing.pairEncode_injective; it builds no parser. Static
+name/shape searches and clean exact/apply probes are in evidence/search/pair-codec-binary-reader.
+The engineering choice avoids a new fold/serialization theorem and repeated explicit
+pair-argument plumbing. Requested promotion: move this generic reader to the shared
+Turing.Encoding API at a future permitted shared-file window. No out-of-scope file is edited.
+
+The function-key proof consumes the existing GGMRed.pairEncode_append_right instead of
+reproving that append law, and ofFn_padFin_eq_take from CollectionsLemmas. It treats any
+trailing padding as part of the second framed component, recovers the original function,
+then aligns actual node dimensions and lengths. Only then can the common padding tail be
+cancelled and typed key fields compared. All newly needed base oleans already exist;
+the static import-closure comparison found no new Mathlib module. Scalar faithfulness uses
+only BB1Machine.order_le_two_pow from the existing Draws module, never its draws or decoders.
+
+
+Function-key injectivity subsequently passed its first native proof attempt, including
+original-function recovery and dependent dimension alignment. The shared MDDH proof-body
+refactor also passed its first native check with exactly two common transport/resampling
+holes, projecting SelfReduction to 821 lines before fills. The four earlier checked
+proof blocks are byte-identical. Its upstream-only import closure differs from the official
+fillinputs closure, which additionally includes all downstream consumers and their imports;
+only the official merged order is used for final build coverage and root accounting.
+
+
+The encoding/raw-correctness batch is local commit
+359e440a46f5939223bbbe73cb67731e5b4c0b94 (`io-phfe: prove PHFE encoding faithfulness and
+raw correctness`). Its seven changed modules pass exact-commit checks with fresh oleans,
+zero rc/errors, style/sk15/width PASS. The committed snapshot has 84 touched files,
+17977 lines and 49 direct admissions. Eighteen declarations are newly completed versus
+2f02d9d: twelve frozen statements and six new helpers. The separate working MDDH proof
+is intentionally unstaged; its body does not enter this committed snapshot inventory.
+No source branch is pushed. Native axiom checks for the eighteen are in progress.
+
+The quadratic simulator's last arithmetic admission, crossLeak_known_value, also passes;
+that module is now admission-free and uses supplied scalar values without logarithm
+extraction. PHFE.Encodings and PHFE.Correctness are admission-free, and the current raw
+embedding reader and four wire adapters are proved. Current resource headroom/free disk
+are 6.93/79.61 GiB. The official merged import closure is refreshed separately; narrowed
+cache work is needed only if the official root set changes.
+
+The whole-column resampling ladder now compiles with one inner normalization hole. The
+shared fixed-order transport is proved. Explicit update expression types and complete
+uniform-equivalence observer functions repair the initial inference failures; no new
+resampling/counting theorem is introduced. Existing expect_sample_coord is called for
+both coefficient and uniform-response columns, retaining every unused coordinate.
+
+
+At 359e440a4, all eighteen new completions print only standard axioms, including both
+raw PHFE correctness headlines and every encoding theorem: zero sorryAx dependencies
+and zero other nonstandard axioms. See proofs-wire-correctness/axioms-summary.json.
+The official merged downstream/upstream order has 293 modules and the unchanged 112
+Mathlib roots, so no extra cache fetch ran. The seven exact-commit module checks and
+native dependency audit certify this batch, not completion of the overall job or M5.
+
+
+## M1 completion and modularity decisions
+
+Local source commit `d88f0284cb898f940e9e2c6a5690233422a79e30` closes all three remaining
+SelfReduction admissions: the explicit advantage bound, negligibility, and common-exponent
+subexponential hardness. No frozen header or statement prose was deliberately changed.
+Exact-head four-module checks are in `evidence/logs/proofs-mddh-final-head/`; all return
+rc 0, both error forms 0, and fresh oleans. The native batch axiom summary is
+`evidence/logs/proofs-mddh-final/axioms-summary.json`: 10 standard-only, 0 sorryAx-dependent,
+0 other nonstandard. Its explicit reduction never constructs a realising machine.
+Advice is chosen before the realiser and works for all security parameters. The direct
+`4d/p` loss already covers zero canonical masks; no matrix-DLIN slack is added again.
+
+The reduction shares one observer and one scalar-column law across the real and random
+branches. Fixed-order transport uses the shared coin congruence and public order readers.
+Whole-column resampling calls the existing coordinate-resampling theorem for both the
+coefficient and response tapes, retaining unused coordinates. The last normalization step
+initially left an `if True` goal; replacing that conditional simplification by reduceIte
+closed it. Both failed attempt and clean retry logs are retained. No statement was repaired.
+
+I chose a separate lower mathematical module, `Pairing/MatrixDH/Hardness.lean`, rather than
+allowing the long reduction file to exceed the hard size limit. Its three new helpers are:
+
+- `BilinearGen.mddhCorrection_subexpSmall`, the explicit scalar correction estimate;
+- `BilinearGen.mddh_subexpHard_of_adv_le`, a reduction-specific common-exponent consequence;
+- `BilinearGen.mddh_negligible_of_adv_le`, the analogous negligible consequence.
+
+The first moves the existing correction argument: its old location now reads the correction
+formula and calls the new helper. Exactly one live mathematical proof remains. The other
+two consume a supplied machine-wise inequality, with one machine working for all parameters;
+they construct no machine, sampler or runtime algorithm. The subexponential helper fixes
+eta=min(a,1)/4 before the adversary. SelfReduction has 999 logical lines; the width tool
+and style lint differed by the terminal newline at 1000, so one empty separator was removed.
+All lines are at most 100 characters. This choice and all three additions are disclosed for
+review under the user's instruction to make modular, adaptable implementation judgments.
+
+Overlap and reuse for the three helpers is recorded in
+`evidence/search/mddh-hardness-closure/`, `evidence/search/mddh-hardness-type-only/`, and
+`evidence/subagents/proofs-mddh-final/proofs-pairing/MatrixDH/HardnessDesign/`.
+Name/shape searches found no allowed reduction-specific result. The correction exact search
+could not close its target; apply returned only partial suggestions. Both closure exact/apply
+searches timed out at 200,000 heartbeats, so they are NOT exhaustive no-match claims.
+Separate TYPE_ONLY probes verify both headers with rc 0/errors 0. Nearest whole APIs consumed
+are Foundations.Subexponential's mul_pow/const_mul/add/mono and PolyExpr.eval_le, and
+Asymptotic.EnsemblesLemmas.negligible_polyExpr_mul (line 377). The nearest generic
+CoinSampling polynomial-subexponential closure is in a forbidden module; it is neither
+imported nor copied. The local polynomial comparison specializes PolyExpr.eval_le and
+standard scalar inequalities; the asymptotic absorption/decay API is reused whole.
+
+The same commit proves three Pi infrastructure declarations: paddedDrawIndex_lt,
+challengeRow_lt, and simulate_saRun_det. The last consumes the generic published run bridge;
+challengeRow_lt consumes the standard finite-product index bound. They introduce no helper,
+new import, new sampler, or new machine. Both active subagents supplied scratch candidates
+and static reuse analysis; only the root ran serial slot-wrapped Lean and Git. Current
+memory headroom/free disk were 6.86/79.58 GiB. Official fillinputs union adds Hardness as
+one TCSlib module but no Mathlib root, so no cache fetch ran.
+
+M3, M4, and M5 security/coupling proofs, the final compiled-type comparison, complete
+stored-constant census, Rule 10 suite and final delivery audits remain outstanding.
+This is a milestone proof batch, not the completed end-to-end development.
+
+The M1 R-DLOG recheck has exactly three textual hits. SelfReduction's choose and choose_spec
+select the proof-established advice family by averaging; they do not select a group exponent,
+and no reduction evaluates them. PHFE/Embedding uses only the injectivity projection of
+pow_val_bijective in a theorem about the explicit exponent embedding. It defines no inverse
+and extracts no witness. The raw grep is `proofs-mddh-final/rdlog-hits.txt`.
+All 85 owned source files pass style, sk15 and widths at this checkpoint; logs are in the
+same directory. The newly prepared Rule 10 d88f snapshot is HEAD-bound but NOT natively
+executed; no full-suite Rule 10 or final stored-constant census claim is made here.
+
+The native M0 freeze audit at d88f0284c passes: all 1,171 original declarations are recovered,
+1,208 current declarations include 37 permitted helpers, and no frozen header or prose changes
+are found. All five source controls behave correctly. `native-d88f-binding.json` compares
+EVERY one of the 85 native current source snapshots to git show d88f0284c and to unchanged
+working bytes. The final compiled-type comparison is separate and remains required.
+This payload is checkpoint 1 (M1); the receipt is recorded after publication, without
+predicting the exchange commit hash in advance. Source branch fill/io-phfe remains local.

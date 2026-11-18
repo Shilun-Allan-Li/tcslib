@@ -1,0 +1,18 @@
+Read-only searches and exact API reads:
+- Original LinearSecurity/Slack.lean rankSlack_nonneg frozen header/docstring.
+- LinearSimulator.lean:389 rankSlack_eq, exact three-factor formula.
+- Mathlib/Data/Nat/Cast/Order/Basic.lean:83 Nat.one_le_cast.
+- Mathlib/Algebra/Order/GroupWithZero/Unbundled/Basic.lean:409 mul_le_one₀:
+  (a <= 1) -> (0 <= b) -> (b <= 1) -> a*b <= 1.
+- Same file:421 one_le_pow₀, for every natural exponent when 1 <= base.
+- Mathlib/Algebra/Order/Field/Basic.lean:73 one_div_le_one_div_of_le.
+- Existing near-identical reciprocal normalization in
+  TCSlib/Cryptography/Composability/ThreeColoring.lean:76-77:
+  simpa only [div_one] using one_div_le_one_div_of_le zero_lt_one hN1R.
+- Public order laws one_div_nonneg, pow_nonneg, sub_le_self and sub_nonneg
+  supply the remaining factor bounds/cancellation; no new generic order lemma.
+- Full-name rankSlack_nonneg search found only the existing statement/module
+  index, no competing source proof or duplicate helper.
+
+No native exact?/apply? needed for a new helper: none is introduced.
+No Lean/lake/Git/checker or live source edit performed.

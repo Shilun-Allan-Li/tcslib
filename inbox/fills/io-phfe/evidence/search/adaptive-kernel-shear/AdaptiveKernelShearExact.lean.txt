@@ -1,0 +1,17 @@
+import Mathlib.GroupTheory.Coset.Basic
+import Mathlib.Logic.Equiv.Prod
+import Mathlib.Logic.Equiv.Sum
+import Lean.Elab.Tactic.LibrarySearch
+set_option maxHeartbeats 200000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+namespace TCSlib.Cryptography.Pairing
+example {U E P : Type*} [AddGroup E] [AddGroup P]
+    (projection : E →+ P) (shift : U → P → E)
+    (hshift : ∀ (u : U) (p : P), projection (shift u p) = 0) :
+    ∃ e : (U × E) ≃ (U × E),
+      (∀ (u : U) (x : E), e (u, x) = (u, x + shift u (projection x))) ∧
+      (∀ (u : U) (x : E), e.symm (u, x) = (u, x - shift u (projection x))) ∧
+      (∀ (u : U) (x : E), projection (e (u, x)).2 = projection x) := by
+  exact?
+end TCSlib.Cryptography.Pairing

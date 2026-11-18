@@ -1,0 +1,62 @@
+Focused read-only searches for paddedIncidence_eq
+Root run2 exact?/apply? logs cited in review. Agent ran no Lean/lake/Git.
+
+$ rg -n 'paddedIncidence_eq|padded_incidence|sum.*if.*castSucc|Fintype.sum_prod_type.*sum_ite_eq|sum_ite_eq.*Fintype.sum_prod_type' TCSlib .lake/packages/mathlib/Mathlib /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean
+exit=0
+TCSlib/BooleanAnalysis/Hypercontractivity/Cube/FourthMoment.lean:131:    rw [ Finset.mul_sum _ _ _ ] ; refine' Finset.sum_congr rfl fun T hT => _ ; rw [ fourierCoeff_diffLast ] ; rw [ card_image_castSucc_union_last ] ; ring_nf;
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean:29:* `paddedIncidence_eq`: padded variable/constant matrices equal endpoint rows.
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean:79:theorem paddedIncidence_eq {V E R : Type*} [Fintype V] [DecidableEq V]
+
+$ rg -n 'theorem add_apply|theorem of_apply' .lake/packages/mathlib/Mathlib/LinearAlgebra/Matrix/Defs.lean
+exit=0
+83:theorem of_apply (f : m → n → α) (i j) : of f i j = f i j :=
+216:theorem add_apply [Add α] (A B : Matrix m n α) (i : m) (j : n) :
+
+$ rg -n 'theorem mul_apply' .lake/packages/mathlib/Mathlib/Data/Matrix/Mul.lean
+exit=0
+293:theorem mul_apply [Fintype m] [Mul α] [AddCommMonoid α] {M : Matrix l m α} {N : Matrix m n α}
+299:theorem mul_apply' [Fintype m] [Mul α] [AddCommMonoid α] {M : Matrix l m α} {N : Matrix m n α}
+690:theorem mul_apply_eq_vecMul [Fintype n] (A : Matrix m n α) (B : Matrix n o α) (i : m) :
+
+$ rg -n 'Fintype.sum_prod_type|theorem Fintype.prod_prod_type' .lake/packages/mathlib/Mathlib/Data/Fintype/BigOperators.lean
+exit=0
+251:@[to_additive Fintype.sum_prod_type /-- The sum over a product type equals the sum of fiberwise
+252:sums. For rewriting in the reverse direction, use `Fintype.sum_prod_type'`. -/]
+253:theorem Fintype.prod_prod_type [CommMonoid γ] (f : α₁ × α₂ → γ) :
+259:@[to_additive Fintype.sum_prod_type' /-- The sum over a product type equals the sum of fiberwise
+260:sums. For rewriting in the reverse direction, use `Fintype.sum_prod_type`. -/]
+261:theorem Fintype.prod_prod_type' [CommMonoid γ] (f : α₁ → α₂ → γ) :
+265:@[to_additive Fintype.sum_prod_type_right]
+266:theorem Fintype.prod_prod_type_right [CommMonoid γ] (f : α₁ × α₂ → γ) :
+271:@[to_additive Fintype.sum_prod_type_right'
+273:theorem Fintype.prod_prod_type_right' [CommMonoid γ] (f : α₁ → α₂ → γ) :
+
+$ rg -n 'lemma prod_ite_eq|lemma prod_ite_eq'"'"'' .lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Piecewise.lean
+exit=0
+264:lemma prod_ite_eq_ite_exists (p : ι → Prop) [DecidablePred p] (h : ∀ i j, p i → p j → i = j)
+288:lemma prod_ite_eq (i : ι) (f : ι → M) : ∏ j, (if i = j then f j else 1) = f i := by
+293:lemma prod_ite_eq' (i : ι) (f : ι → M) : ∏ j, (if j = i then f j else 1) = f i := by
+
+$ rg -n 'theorem ite_and' .lake/packages/mathlib/Mathlib/Logic/Basic.lean
+exit=0
+910:theorem ite_and : ite (P ∧ Q) a b = ite P (ite Q a b) b := by
+
+$ rg -n 'lemma ite_mul' .lake/packages/mathlib/Mathlib/Algebra/Notation/Defs.lean
+exit=0
+116:lemma ite_mul (a b c : α) : (if P then a else b) * c = if P then a * c else b * c := dite_mul ..
+131:lemma ite_mul_ite (a b c d : α) :
+
+$ rg -n 'theorem castSucc_inj|def lastCases' /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Fin/Lemmas.lean
+exit=0
+571:theorem castSucc_inj {a b : Fin n} : a.castSucc = b.castSucc ↔ a = b := by simp [Fin.ext_iff]
+985:@[elab_as_elim] def lastCases {n : Nat} {motive : Fin (n + 1) → Sort _} (last : motive (Fin.last n))
+
+$ rg -n 'theorem castSucc_ne_last' .lake/packages/mathlib/Mathlib/Data/Fin/SuccPred.lean
+exit=0
+196:theorem castSucc_ne_last {n : ℕ} (i : Fin n) : i.castSucc ≠ .last n :=
+
+$ rg -n 'theorem snoc_castSucc|theorem snoc_last' .lake/packages/mathlib/Mathlib/Data/Fin/Tuple/Basic.lean
+exit=0
+506:theorem snoc_castSucc : snoc p x i.castSucc = p i := by
+519:theorem snoc_last : snoc p x (last n) = x := by simp [snoc]
+

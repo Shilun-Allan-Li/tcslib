@@ -1,0 +1,992 @@
+{
+  "schema": "native-freeze-manifest-v1",
+  "baseline_head": "70b85f9ba83f27393d98fa5bf88505aea3d22a8d",
+  "original_manifest": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/checkpoint0.json",
+  "original_manifest_sha256": "b13ecc2d7c3a4020611d4166f2724ba3b723961ad6594fefc9eabfc1f66b69a1",
+  "parser_source": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/preparation/native-freeze/NativeFreeze.lean",
+  "parser_source_sha256": "a500a2980d7cbfcea45acc153c7a4b8aaef079915137efbf5edee7db5e3e68e9",
+  "driver_sha256": "dce514e1805021f0dfb948f8200fbf9d833727c9c962139fa1bd3253c455db18",
+  "parser_command": [
+    "bash",
+    "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/preparation/lean-slot.sh",
+    "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/bin/lean",
+    "--run",
+    "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/preparation/native-freeze/RunNativeFreeze.lean"
+  ],
+  "sysroot": "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0",
+  "prose_policy": "opening doc prose before first literal **Proof sketch.**; remainder excluded",
+  "scope": "all parsed declarations in original-manifest files plus current owned-files list",
+  "pass": true,
+  "changes": [],
+  "helpers": [
+    {
+      "file": "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean",
+      "name": "TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.decodeResidues_block"
+    },
+    {
+      "file": "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Defs.lean",
+      "name": "TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.kronecker_mul_publicTensor"
+    },
+    {
+      "file": "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean",
+      "name": "TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.Layered.matrix_inl"
+    },
+    {
+      "file": "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean",
+      "name": "TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.Layered.forward_node"
+    },
+    {
+      "file": "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean",
+      "name": "TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.PathAlgebra.weightedIncidence_mulVec"
+    },
+    {
+      "file": "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean",
+      "name": "TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.PathAlgebra.weightedIncidence_vecMul"
+    },
+    {
+      "file": "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean",
+      "name": "TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.PathAlgebra.paddedIncidence_eq"
+    },
+    {
+      "file": "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean",
+      "name": "TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.PrefixAlgebra.prefixIncoming_sum"
+    },
+    {
+      "file": "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean",
+      "name": "TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.PrefixAlgebra.prefixOutgoing_sum"
+    },
+    {
+      "file": "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean",
+      "name": "TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.PrefixAlgebra.prefixFlow_balance"
+    },
+    {
+      "file": "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PolynomialTensorAlgebra.lean",
+      "name": "TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PolynomialTensorAlgebra.exists_padded_tuple"
+    },
+    {
+      "file": "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PolynomialTensorAlgebra.lean",
+      "name": "TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PolynomialTensorAlgebra.exists_quadratic_expansion"
+    },
+    {
+      "file": "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean",
+      "name": "TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.stateT_mapM_lift"
+    },
+    {
+      "file": "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean",
+      "name": "TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.TwoStage.coinBlocks_ofFn_append"
+    },
+    {
+      "file": "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean",
+      "name": "TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.TwoStage.simulate_saKeys_stateful"
+    },
+    {
+      "file": "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean",
+      "name": "TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.TwoStage.simulate_toSA_real"
+    },
+    {
+      "file": "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean",
+      "name": "TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.TwoStage.simulate_toSA_ideal"
+    },
+    {
+      "file": "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean",
+      "name": "TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.wee20PHFE_raw_embed"
+    },
+    {
+      "file": "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/WireLemmas.lean",
+      "name": "TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Wire.groupMatrix_length"
+    },
+    {
+      "file": "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/WireLemmas.lean",
+      "name": "TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Wire.groupMatrix_injective"
+    },
+    {
+      "file": "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/WireLemmas.lean",
+      "name": "TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Wire.groupVector_length"
+    },
+    {
+      "file": "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/WireLemmas.lean",
+      "name": "TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Wire.groupVector_injective"
+    },
+    {
+      "file": "TCSlib/Cryptography/Pairing/Exponents.lean",
+      "name": "TCSlib.Cryptography.Pairing.BilinearGroup.pairVec_expVec_left"
+    },
+    {
+      "file": "TCSlib/Cryptography/Pairing/Exponents.lean",
+      "name": "TCSlib.Cryptography.Pairing.BilinearGroup.groupVecMul_matMulGroup"
+    },
+    {
+      "file": "TCSlib/Cryptography/Pairing/MatrixDH/AdaptiveShear.lean",
+      "name": "TCSlib.Cryptography.Pairing.exists_fiberwise_add_right_equiv"
+    },
+    {
+      "file": "TCSlib/Cryptography/Pairing/MatrixDH/ColumnLaws.lean",
+      "name": "TCSlib.Cryptography.Pairing.dlin_base_transpose_mulVec_surjective"
+    },
+    {
+      "file": "TCSlib/Cryptography/Pairing/MatrixDH/ColumnLaws.lean",
+      "name": "TCSlib.Cryptography.Pairing.dlin_real_column_gap_le"
+    },
+    {
+      "file": "TCSlib/Cryptography/Pairing/MatrixDH/ColumnLaws.lean",
+      "name": "TCSlib.Cryptography.Pairing.dlin_random_column_gap_le"
+    },
+    {
+      "file": "TCSlib/Cryptography/Pairing/MatrixDH/Diagonal.lean",
+      "name": "TCSlib.Cryptography.Pairing.dlinDiagonal_random_gap_le"
+    },
+    {
+      "file": "TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear.lean",
+      "name": "TCSlib.Cryptography.Pairing.expect_sample_matrix_mul_of_mulVec_surjective"
+    },
+    {
+      "file": "TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear.lean",
+      "name": "TCSlib.Cryptography.Pairing.prob_sample_matrix_isUnit_eq"
+    },
+    {
+      "file": "TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear.lean",
+      "name": "TCSlib.Cryptography.Pairing.smallRows_surjectivity_failure_le"
+    },
+    {
+      "file": "TCSlib/Cryptography/Pairing/MatrixDH/Hardness.lean",
+      "name": "TCSlib.Cryptography.Pairing.BilinearGen.mddhCorrection_subexpSmall"
+    },
+    {
+      "file": "TCSlib/Cryptography/Pairing/MatrixDH/Hardness.lean",
+      "name": "TCSlib.Cryptography.Pairing.BilinearGen.mddh_subexpHard_of_adv_le"
+    },
+    {
+      "file": "TCSlib/Cryptography/Pairing/MatrixDH/Hardness.lean",
+      "name": "TCSlib.Cryptography.Pairing.BilinearGen.mddh_negligible_of_adv_le"
+    },
+    {
+      "file": "TCSlib/Cryptography/Pairing/MatrixDH/Parameters.lean",
+      "name": "TCSlib.Cryptography.Pairing.pairEncode_eq_iff"
+    },
+    {
+      "file": "TCSlib/Cryptography/Pairing/MatrixDH/Parameters.lean",
+      "name": "TCSlib.Cryptography.Pairing.PublicParams.encode_injective"
+    }
+  ],
+  "original_declarations": 1171,
+  "native_baseline_declarations": 1171,
+  "native_current_declarations": 1208,
+  "negative_controls_correct": true,
+  "source_metadata": {
+    "TCSlib/Cryptography/AdvancedEncryption.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption.lean",
+        "sha256": "caec0b8bf3ecf57fd429fa705983bcfa00fe364337336096fc59e142096dff4a"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption.lean",
+        "sha256": "caec0b8bf3ecf57fd429fa705983bcfa00fe364337336096fc59e142096dff4a"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption.lean",
+        "sha256": "12c465cc3f468e867a8ed5d4bc85f01d8247f492c1f8cb511ccb2c9321cacd1b"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption.lean",
+        "sha256": "cf2f95936e7da08b0ac7d8b0a1e6c1bf8eff55482d8076da6dae5cca386a84a3"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean",
+        "sha256": "4f3f1ca3cda5d84cbdb8bd2675e6432cf0dda9f9a623f98f0682e7520a976464"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean",
+        "sha256": "2801e92a00c50e1529b787e1fff259c16f2e4d5e4b5c0ae43d3825dc7aaae795"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs.lean",
+        "sha256": "cc07e681f677b695c8b3c9a1464b16784e25128c163c21980f7fd37bb46fb4e0"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs.lean",
+        "sha256": "cc07e681f677b695c8b3c9a1464b16784e25128c163c21980f7fd37bb46fb4e0"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Correctness.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Correctness.lean",
+        "sha256": "2d1d36513f45a031d7a05f12c23ec1866ac662e23fa82155ea709a2790d18017"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Correctness.lean",
+        "sha256": "2d1d36513f45a031d7a05f12c23ec1866ac662e23fa82155ea709a2790d18017"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Efficient.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Efficient.lean",
+        "sha256": "8e64fb93f76656dfa1f7aec993641e3f80935bb5f0cf46c333d5944ded996e7d"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Efficient.lean",
+        "sha256": "8e64fb93f76656dfa1f7aec993641e3f80935bb5f0cf46c333d5944ded996e7d"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Raw.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Raw.lean",
+        "sha256": "2a08af8f1a4b16236d45a30fd5a5b949c8fb380c9965585ab804ea3a253aa8a6"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Raw.lean",
+        "sha256": "2a08af8f1a4b16236d45a30fd5a5b949c8fb380c9965585ab804ea3a253aa8a6"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Simulator.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Simulator.lean",
+        "sha256": "3a06f4563f98c0748b686091f27733d21601e6c59ff5bdfa0642a5887370299d"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Simulator.lean",
+        "sha256": "3a06f4563f98c0748b686091f27733d21601e6c59ff5bdfa0642a5887370299d"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling.lean",
+        "sha256": "526faba48ea505ae37629013c8d44094a21c9b75b95f35c9303a296d63ac4722"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling.lean",
+        "sha256": "247ddaf233c3492a4eea702b0e711ecb7536dc044d73e7d54fff444a6ad98f11"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Defs.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Defs.lean",
+        "sha256": "0212044a70b67065ec204dd696a3f6189c7a7986003bf92b84fa0932f21bfb2e"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Defs.lean",
+        "sha256": "9474cfe96e36ef832b9bdd610848048b6bfbedc12c12cb1bbda433a049e51b05"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean",
+        "sha256": "09b1074dd541ec70c64dbdf3d8dd93e3c022f82b3724474d804bcf80c5899475"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean",
+        "sha256": "4bb5ea20417a8f6a6d9c4949385ecd5eb0fc2d7bd341ac194b6369fca6df4697"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean": {
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean",
+        "sha256": "7195dbd6b948d25fbc0b48a6aeaaec1ff187e3f161639939a775abf7b4dfadb7"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean": {
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean",
+        "sha256": "28536aea36962eef04344e01df2609adba299c13e532d8673365d3922d5b8031"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PolynomialTensorAlgebra.lean": {
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PolynomialTensorAlgebra.lean",
+        "sha256": "91a6d7eec8a87b5fd6eba80a620f5c0d467c6bd6972297c012cb1eab1bda3427"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Run.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Run.lean",
+        "sha256": "8ddcaa467a941479651160ce4ca7d939cb97821efcd2e0689a2963e81195180d"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Run.lean",
+        "sha256": "9418d6cdd32378ff45945339d055461e3b23a582684ba12c64af4cb8e697e40c"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive.lean",
+        "sha256": "f4490e98491ddd6e5997a366f16f55587295611168dfaf906a82fb82be0eb540"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive.lean",
+        "sha256": "f4490e98491ddd6e5997a366f16f55587295611168dfaf906a82fb82be0eb540"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean",
+        "sha256": "ab02585f2e84545731a324614ec5aa68a53431bd94a9eca8e070548e176afe34"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean",
+        "sha256": "eeed949c4b7c58ab889255119715d11f70d1c499997b487c9b148be3ccdf5bb5"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean",
+        "sha256": "e9764199036757dedf090b2ac7d849db3da5c68e9b2e6bf3d73a7df3fee8eca7"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean",
+        "sha256": "75e494de16a60aeb2af1fd18113ee7735f342d02f0c7c45f7f2d16a44eda45cd"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Games.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Games.lean",
+        "sha256": "dd4a4d9bd6fe06b73665ac09dc3233efda6702c0935bc1e211483fd79fe9b770"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Games.lean",
+        "sha256": "dd4a4d9bd6fe06b73665ac09dc3233efda6702c0935bc1e211483fd79fe9b770"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Security.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Security.lean",
+        "sha256": "ae863b27da8c5dde8cf434faf357400abfb7a75a498c1b03a526690c2e1c7d69"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Security.lean",
+        "sha256": "0fd63015d943490fedb1ce2fbff9ee98a2d3bef9267380bbb114929a4b9a8671"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Simulator.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Simulator.lean",
+        "sha256": "7fe366f52a372b87a12c3b5591a1c28c63ce2ad07b38388102531d51289b2136"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Simulator.lean",
+        "sha256": "7fe366f52a372b87a12c3b5591a1c28c63ce2ad07b38388102531d51289b2136"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation.lean",
+        "sha256": "7e2e3af8a1627ae74b238ec09d5565d301c1c8725c9b825d5528193982f5ff63"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation.lean",
+        "sha256": "7e2e3af8a1627ae74b238ec09d5565d301c1c8725c9b825d5528193982f5ff63"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Games.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Games.lean",
+        "sha256": "050bf3742777c1fffc52b65a0c70c44133348202dfc98f2e9617d5e624dcdef6"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Games.lean",
+        "sha256": "050bf3742777c1fffc52b65a0c70c44133348202dfc98f2e9617d5e624dcdef6"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Security.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Security.lean",
+        "sha256": "dc44bc2330b2ebdc5716e01380e20a8597484740f0bbc39bf114125a5708928b"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Security.lean",
+        "sha256": "8879a216b4a56b5e86083a34b3b287a170962ca000bc58beece4357fa26d4cf9"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/TwoStage.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/TwoStage.lean",
+        "sha256": "da4e03c392bb9f94f6b0d8750807ad7705e511caab13d117d8f05ccbe46f914c"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/TwoStage.lean",
+        "sha256": "da4e03c392bb9f94f6b0d8750807ad7705e511caab13d117d8f05ccbe46f914c"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20.lean",
+        "sha256": "d307f8933888ffd23ec2c23a95bcbd67c29784eec8198f2cf593da0b819f3079"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20.lean",
+        "sha256": "b502ddbb758afc04750431fc0269e064f1af4279b8b5b3ce01690c8be499372b"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean",
+        "sha256": "99c37e5e73e28b0e773dc1b6c742c2180a7c310d5a3027b5df66fb9245eb54c4"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean",
+        "sha256": "99c37e5e73e28b0e773dc1b6c742c2180a7c310d5a3027b5df66fb9245eb54c4"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean",
+        "sha256": "5bd6907ac9d142ab3a5ddd29cf15e838725bc9ce4bb60a0ca1c32ce039b651d9"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean",
+        "sha256": "c7cfbcdbb7acf75851e27151e87bb1a099924b5ccae5d29a357da0c49f7866c9"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity.lean",
+        "sha256": "83a09b9720f41f625b5ef0628ec46cca251294ae45a89540308ca775ac33dbec"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity.lean",
+        "sha256": "83a09b9720f41f625b5ef0628ec46cca251294ae45a89540308ca775ac33dbec"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Data.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Data.lean",
+        "sha256": "5216e635ea7922b5423a2d81820ef2147823c24024efaaa518e24cf6f012c6e3"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Data.lean",
+        "sha256": "5216e635ea7922b5423a2d81820ef2147823c24024efaaa518e24cf6f012c6e3"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Endpoint.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Endpoint.lean",
+        "sha256": "901eff48635e3f4a87cd11479253140ffee087b3297f77912fd7714eaf37dd34"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Endpoint.lean",
+        "sha256": "901eff48635e3f4a87cd11479253140ffee087b3297f77912fd7714eaf37dd34"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean",
+        "sha256": "1917b3799be72518fceee4b136b2547643ff077bf806f59b7fc95d355915dce8"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean",
+        "sha256": "1917b3799be72518fceee4b136b2547643ff077bf806f59b7fc95d355915dce8"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Games.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Games.lean",
+        "sha256": "d5ec2a3ee70286c193d1592b9dad6983eb9226afe3da9c110e2592ed57534568"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Games.lean",
+        "sha256": "d5ec2a3ee70286c193d1592b9dad6983eb9226afe3da9c110e2592ed57534568"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean",
+        "sha256": "fdb0f1a64999c9e4d098c069b28a385dbe9d3669a526dce1d1feda8b85e1a88f"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean",
+        "sha256": "fdb0f1a64999c9e4d098c069b28a385dbe9d3669a526dce1d1feda8b85e1a88f"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Reductions.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Reductions.lean",
+        "sha256": "a02264dd3d0474fd0eafb984e0668c1dc117e2c6b3c665786a98187d1d2439da"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Reductions.lean",
+        "sha256": "a02264dd3d0474fd0eafb984e0668c1dc117e2c6b3c665786a98187d1d2439da"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Slack.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Slack.lean",
+        "sha256": "b601d6c9cc4a533af3dd37312f64b8faddcdcb6dda6193bfce43baa4a6ec54c7"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Slack.lean",
+        "sha256": "c44d7a884d4943820cdeff31c995645f1ec5418976dd711c6adecb7aa5ed991d"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean",
+        "sha256": "be59a370b65082099293ee0c2ef779b9b8fd20b4569f5e9d30aa0fef9ecaf56d"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean",
+        "sha256": "f00ab9c345e9fbbff0b529a2f46bc7911f8d8f1a01958721015e658819fd6812"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean",
+        "sha256": "9ecba1dc47b32e1671bc003b205d4370fc8a12cfb48a71d8fb9a39960880d4ca"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean",
+        "sha256": "f220b7cb4d712e2d8fc67ad4103930bcc43140e93c292f3e916f8b503fac5379"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE.lean",
+        "sha256": "3c5bee9fd593b7dcdb6afd83f58d44d26f298cdd66e065a9ec4d509fd72dfd84"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE.lean",
+        "sha256": "3c5bee9fd593b7dcdb6afd83f58d44d26f298cdd66e065a9ec4d509fd72dfd84"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Adapter.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Adapter.lean",
+        "sha256": "f11f43b09c6547a4cf86c31b9fc39283c0e1cca8c5d86fb5a6df7d8f0fc2aed5"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Adapter.lean",
+        "sha256": "f11f43b09c6547a4cf86c31b9fc39283c0e1cca8c5d86fb5a6df7d8f0fc2aed5"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/CommittedSimulator.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/CommittedSimulator.lean",
+        "sha256": "2707e8fb619de6ab30678da51505c23ac4e69406469c7411c9adf00e6a4eb8e6"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/CommittedSimulator.lean",
+        "sha256": "2707e8fb619de6ab30678da51505c23ac4e69406469c7411c9adf00e6a4eb8e6"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Core.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Core.lean",
+        "sha256": "594621582e5814915ce43e4bd7f83026e1f9f5a252aa45abb4532fa17a5cdfc1"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Core.lean",
+        "sha256": "594621582e5814915ce43e4bd7f83026e1f9f5a252aa45abb4532fa17a5cdfc1"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean",
+        "sha256": "939f9f9120177d347f779fe2a3a2a33c0317dbcfb61e4621956e31287a05d7a8"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean",
+        "sha256": "685b6a12febce80bd8bc23f2e3a24bd47579982b8c2d532ff19251965f886122"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Data.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Data.lean",
+        "sha256": "96c08d5a21935381701f0d48039cb5aa7a3263fc519c50781070c516b030f30a"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Data.lean",
+        "sha256": "96c08d5a21935381701f0d48039cb5aa7a3263fc519c50781070c516b030f30a"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Embedding.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Embedding.lean",
+        "sha256": "56036f8ef35f2d29ed9dbf0657eb922719e194c7fedb30f0f546d6a05bea4365"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Embedding.lean",
+        "sha256": "56036f8ef35f2d29ed9dbf0657eb922719e194c7fedb30f0f546d6a05bea4365"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean",
+        "sha256": "b9b34395ca13c3428e91b0ed81663417f825b64ba5ca6917fb584738396e6351"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean",
+        "sha256": "ccb504f90f45eaec84ef6895f83076c4107fd831893e029e3085c4f6fdf60289"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Headlines.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Headlines.lean",
+        "sha256": "2c9cf801d85bdb9f37061b987b91d0211d58bcdedf3b28684d0e75d4be370c12"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Headlines.lean",
+        "sha256": "2c9cf801d85bdb9f37061b987b91d0211d58bcdedf3b28684d0e75d4be370c12"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean",
+        "sha256": "c28d0bfb85dd03749ce44f1f3688188c8dd72713fa60f2c611c3b3c7c3cbfd4c"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean",
+        "sha256": "3ea8910d0fe7440d98534f48bd6d30175dee1097918be350c024fb2bbada1769"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Security.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Security.lean",
+        "sha256": "89f65b9688fe8bc240727d41b1d7177914cf2bad760c2ed9611cb953a75c5527"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Security.lean",
+        "sha256": "89f65b9688fe8bc240727d41b1d7177914cf2bad760c2ed9611cb953a75c5527"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Simulator.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Simulator.lean",
+        "sha256": "ac6907fd3daa2f30e4fee87e8cad47b96d1e2dff9760ba6e46e5b2007b6352ac"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Simulator.lean",
+        "sha256": "ac6907fd3daa2f30e4fee87e8cad47b96d1e2dff9760ba6e46e5b2007b6352ac"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Widths.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Widths.lean",
+        "sha256": "7c6377195c3132d4bf618a263e8fe9ed422ac052d98ead3c9b069a3ffc7f2303"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Widths.lean",
+        "sha256": "7c6377195c3132d4bf618a263e8fe9ed422ac052d98ead3c9b069a3ffc7f2303"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic.lean",
+        "sha256": "6b2fd2686089c480690723ce8aa0c0000374aebc0b3ce10052e70d9dddb3ab8a"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic.lean",
+        "sha256": "6b2fd2686089c480690723ce8aa0c0000374aebc0b3ce10052e70d9dddb3ab8a"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean",
+        "sha256": "431aafc6907399040badbf2ff3cfe3809bd73792f5bb85afbb1a4e0ecd0aa1ee"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean",
+        "sha256": "e05094f491da75c44fbac2c19096edb71261c3ef4cfb46e6ff652d689b0f17c1"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity.lean",
+        "sha256": "c6c0c376be9d792c0124d5dde4db71f972ed5f51eb0a86534720be024a3327b2"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity.lean",
+        "sha256": "c6c0c376be9d792c0124d5dde4db71f972ed5f51eb0a86534720be024a3327b2"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Advice.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Advice.lean",
+        "sha256": "eb9097a435b8dae2a14ec509a38254fd0a61fc6b14207334dffeee1e48efe01e"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Advice.lean",
+        "sha256": "eb9097a435b8dae2a14ec509a38254fd0a61fc6b14207334dffeee1e48efe01e"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Compose.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Compose.lean",
+        "sha256": "75c52dab8319191552f91d872e9f7d1637ece6ddb5a182f4df22df868ffe2182"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Compose.lean",
+        "sha256": "75c52dab8319191552f91d872e9f7d1637ece6ddb5a182f4df22df868ffe2182"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Data.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Data.lean",
+        "sha256": "ca32dd677e350c3732d932807259b2c343661ace1098075c9d0f42e54070a0e8"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Data.lean",
+        "sha256": "ca32dd677e350c3732d932807259b2c343661ace1098075c9d0f42e54070a0e8"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Derived.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Derived.lean",
+        "sha256": "391a15528ba5f6e97765d452a027cccd084fad817e4775d7a0c7ae86144497be"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Derived.lean",
+        "sha256": "391a15528ba5f6e97765d452a027cccd084fad817e4775d7a0c7ae86144497be"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Fresh.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Fresh.lean",
+        "sha256": "f454362970bd765130bfd72636f35f3235c2f4bdbd5022f9b1e1d71d77994f40"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Fresh.lean",
+        "sha256": "f454362970bd765130bfd72636f35f3235c2f4bdbd5022f9b1e1d71d77994f40"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Games.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Games.lean",
+        "sha256": "accdab4e88dd7e548f672e8bab65a8f43bf34de117a7c3bd81cd2b7551ddc92b"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Games.lean",
+        "sha256": "accdab4e88dd7e548f672e8bab65a8f43bf34de117a7c3bd81cd2b7551ddc92b"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Reduction.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Reduction.lean",
+        "sha256": "9d5e0ba438f05e5b744702580e510d27521aeec9436136b991543ae5c487e811"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Reduction.lean",
+        "sha256": "9d5e0ba438f05e5b744702580e510d27521aeec9436136b991543ae5c487e811"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean",
+        "sha256": "dd23bfd5a44c01798ab9add11cf2216511f87d84fe89e0d886512c294cbc05d3"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean",
+        "sha256": "dd23bfd5a44c01798ab9add11cf2216511f87d84fe89e0d886512c294cbc05d3"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSimulator.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSimulator.lean",
+        "sha256": "45c6e8ae2a852821d58bc7b9f495bf55714c4004c6ae266c735fd0bf52dd7ba1"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSimulator.lean",
+        "sha256": "84a05b61f5e7e35845e64955c5f2519b54fe69c9ae115df81e3210eedcc82996"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets.lean",
+        "sha256": "06ba304f863becfdcbd10a6e931124c14b489df7701e5aa3d07660a56025bdd3"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets.lean",
+        "sha256": "06ba304f863becfdcbd10a6e931124c14b489df7701e5aa3d07660a56025bdd3"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Assembly.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Assembly.lean",
+        "sha256": "1705538c05ac39f3670b2d02a11856cfc1783a34523ae3edb8b161db466d9270"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Assembly.lean",
+        "sha256": "1705538c05ac39f3670b2d02a11856cfc1783a34523ae3edb8b161db466d9270"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Garbling.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Garbling.lean",
+        "sha256": "f1857ad25d07e9e200b607b894efa0dc383d1245dd20423a972886c0c9c8c04d"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Garbling.lean",
+        "sha256": "f1857ad25d07e9e200b607b894efa0dc383d1245dd20423a972886c0c9c8c04d"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/LinearEfficiency.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/LinearEfficiency.lean",
+        "sha256": "b33ee7261906eb974146eedd30971219a3ff688539658f090ddb6cdcc07beede"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/LinearEfficiency.lean",
+        "sha256": "b33ee7261906eb974146eedd30971219a3ff688539658f090ddb6cdcc07beede"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/MatrixDH.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/MatrixDH.lean",
+        "sha256": "a9883200f70138e076a094c9abc6c9ca66a2e62c7541145b1fceca20d83b07eb"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/MatrixDH.lean",
+        "sha256": "a9883200f70138e076a094c9abc6c9ca66a2e62c7541145b1fceca20d83b07eb"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Scheme.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Scheme.lean",
+        "sha256": "59fe0d6a2a6b8b9b38c23cb22b6c431c2cc9ed3a39922d42245af5b969d45ec6"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Scheme.lean",
+        "sha256": "59fe0d6a2a6b8b9b38c23cb22b6c431c2cc9ed3a39922d42245af5b969d45ec6"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Sim.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Sim.lean",
+        "sha256": "b20b37e3156367fb013687ea1c56a1e26f8f3c0d7ce344063945c36d72561fba"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Sim.lean",
+        "sha256": "b20b37e3156367fb013687ea1c56a1e26f8f3c0d7ce344063945c36d72561fba"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Wire.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Wire.lean",
+        "sha256": "0b204250ad84b4074ba5692ed600684de18933eb7a3005d2c77bc39fdb03e151"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Wire.lean",
+        "sha256": "0b204250ad84b4074ba5692ed600684de18933eb7a3005d2c77bc39fdb03e151"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/WireDraws.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/WireDraws.lean",
+        "sha256": "ae053179b4559d4d522332dd7d32d995d1faf12945d319d990a45de557eb01f1"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/WireDraws.lean",
+        "sha256": "ae053179b4559d4d522332dd7d32d995d1faf12945d319d990a45de557eb01f1"
+      }
+    },
+    "TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/WireLemmas.lean": {
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/WireLemmas.lean",
+        "sha256": "b7d02a6d4e691619a0eaaedea3eb4e0d5c62bedf9b2ea1b7b9291e597d94f346"
+      }
+    },
+    "TCSlib/Cryptography/Pairing.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/Pairing.lean",
+        "sha256": "79718523fb4dbe8d7ad53b40066b4159763255354e2b2de05a48ea970b753082"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/Pairing.lean",
+        "sha256": "79718523fb4dbe8d7ad53b40066b4159763255354e2b2de05a48ea970b753082"
+      }
+    },
+    "TCSlib/Cryptography/Pairing/Exponents.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/Pairing/Exponents.lean",
+        "sha256": "756a27b4e2b3c6d5f440d23d1083f4faad0895e88f778ba1616d16be8d00d6e4"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/Pairing/Exponents.lean",
+        "sha256": "52ea6a034beeb8f3c7677e819ad7ad02ae90aff3132bb9652650aecdb3019d93"
+      }
+    },
+    "TCSlib/Cryptography/Pairing/Linear.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/Pairing/Linear.lean",
+        "sha256": "ed770cd5f5cecb7cc8288a42bcabc57dcb7bbe5cd37bb2a558cdf311722c5e9a"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/Pairing/Linear.lean",
+        "sha256": "41d8de9ab060f573775e584423a1e00c492c01cf3886d5cf50b90f52183c5c4c"
+      }
+    },
+    "TCSlib/Cryptography/Pairing/MatrixDH.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/Pairing/MatrixDH.lean",
+        "sha256": "98effc6b52bac5a6453c34ca85a266241547dffea28441d743dc6ae920d4bdb4"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/Pairing/MatrixDH.lean",
+        "sha256": "9403ee39b248e5c96943818de6ffcdf0a8165e7fc7b07a829e6586a43f4fdd4d"
+      }
+    },
+    "TCSlib/Cryptography/Pairing/MatrixDH/AdaptiveShear.lean": {
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/Pairing/MatrixDH/AdaptiveShear.lean",
+        "sha256": "07ffb5417b175a70c7a54153a70a3b18d064d587a1b5bb1efc68d3182977473b"
+      }
+    },
+    "TCSlib/Cryptography/Pairing/MatrixDH/ColumnLaws.lean": {
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/Pairing/MatrixDH/ColumnLaws.lean",
+        "sha256": "66becf4d250df5c30bff96372ce1f2e0492005149b79c9bde640b85735d18b7a"
+      }
+    },
+    "TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean",
+        "sha256": "f91d3683662e1362a037e9a974eca581e68c7183e241d6549a2ad184eb578c5c"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/Pairing/MatrixDH/Defs.lean",
+        "sha256": "d61a28a3df7ecab2070decd8d27d2d3584c5574fae1a1c435c574ab0ff8c4d3b"
+      }
+    },
+    "TCSlib/Cryptography/Pairing/MatrixDH/Diagonal.lean": {
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/Pairing/MatrixDH/Diagonal.lean",
+        "sha256": "a20c2c1e0073397bc492824ceef0eb38aa7ce5ee3096991983461ce161040d02"
+      }
+    },
+    "TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear.lean": {
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/Pairing/MatrixDH/FiniteLinear.lean",
+        "sha256": "38856814999bf99be2efc810097bfc27d365d3fb860ff6b2f370bbd8e65bcae8"
+      }
+    },
+    "TCSlib/Cryptography/Pairing/MatrixDH/Hardness.lean": {
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/Pairing/MatrixDH/Hardness.lean",
+        "sha256": "70578e9a1a7260b196fe71c84cebe1e27e93222bf919913f6015828bf18532f5"
+      }
+    },
+    "TCSlib/Cryptography/Pairing/MatrixDH/Parameters.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/Pairing/MatrixDH/Parameters.lean",
+        "sha256": "3d1420287cd283a1f4633224e8b47b1af062febb7335d54f2c488c55df02a20d"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/Pairing/MatrixDH/Parameters.lean",
+        "sha256": "17164d378c68336a7d267a15c95322599eaec9fc858beb99330ba0fc30c4c815"
+      }
+    },
+    "TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean": {
+      "baseline": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/baseline/TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean",
+        "sha256": "1c0252f7bc6654dd28d98516c9460c70ac0c15fef316b29e4fbe8fa57c7a9f4d"
+      },
+      "current": {
+        "path": "/Users/seyoonr/.codex/worktrees/tcslib-io-phfe/tcslib-exchange/evidence/freeze/native-d88f-run1/sources/current/TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean",
+        "sha256": "7802f8f4e51e3c5999e41a2d2f3663ba4f0247f08915d6ad24cd79b7aea647c1"
+      }
+    }
+  },
+  "limitation": "native syntax/header preservation only; compiled declaration-type/axiom audit remains separate"
+}

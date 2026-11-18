@@ -1,0 +1,88 @@
+file=TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean
+source_sha256=ce17fd1ae22ff0c65489c7b3c7f68cc633b75c50aeb9f3cb92c99a837db8d737
+working_source_development_check=True
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean:61:83: error: unsolved goals
+G : BilinearGen
+ℓ n : PolyExpr
+d : ℕ
+PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)
+hPG : PGSound PG
+κ : ℕ
+pp : PublicParams G κ
+f : Fin ((phfeClass ℓ n G.wG d).fnLen.eval κ) → Bool
+x : Fin ((phfeClass ℓ n G.wG d).pubLen.eval κ) → Bool
+y : Fin ((phfeClass ℓ n G.wG d).privLen.eval κ) → Bool
+⊢ (Equiv.refl (ZMod ↑pp.orderParam))
+      (privateTensor (decodeResidues ((Equiv.refl ℕ+).symm pp.orderParam) (n.eval κ) (G.wG.eval κ) y)
+          (decodeResidues ((Equiv.refl ℕ+).symm pp.orderParam) (n.eval κ) (G.wG.eval κ) y) ⬝ᵥ
+        polyTensorEval
+          (decodeTensor ((Equiv.refl ℕ+).symm pp.orderParam) (ℓ.eval κ) (n.eval κ * n.eval κ) d (G.wG.eval κ) f)
+          (decodeResidues ((Equiv.refl ℕ+).symm pp.orderParam) (ℓ.eval κ) (G.wG.eval κ) x)) =
+    privateTensor
+        (decodeResidues pp.orderParam (n.eval κ) (G.wG.eval κ)
+          (y ∘ ⇑(Equiv.refl (Fin ((phfeClass ℓ n G.wG d).privLen.eval κ)))))
+        (decodeResidues pp.orderParam (n.eval κ) (G.wG.eval κ)
+          (y ∘ ⇑(Equiv.refl (Fin ((phfeClass ℓ n G.wG d).privLen.eval κ))))) ⬝ᵥ
+      polyTensorEval
+        (decodeTensor pp.orderParam (ℓ.eval κ) (n.eval κ * n.eval κ) d (G.wG.eval κ)
+          (f ∘ ⇑(Equiv.refl (Fin ((phfeClass ℓ n G.wG d).fnLen.eval κ)))))
+        (decodeResidues pp.orderParam (ℓ.eval κ) (G.wG.eval κ)
+          (x ∘ ⇑(Equiv.refl (Fin ((phfeClass ℓ n G.wG d).pubLen.eval κ)))))
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean:64:45: warning: This simp argument is unused:
+  Equiv.refl_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [PHFE.valueEquiv_eq, phfeClassValueEquiv_eq, PHFE.classParam_eq, phfeClassParamEquiv_eq,
+  ̲  ̲ ̲ ̲Equiv.refl_symm, E̵q̵u̵i̵v̵.̵r̵e̵f̵l̵_̵a̵p̵p̵l̵y̵,̵phfeClass_eval, phfeEval_eq, quadEval_eq, PHFE.decodeFunction_eq,
+  ̲  ̲ ̲ ̲PHFE.decodePublic_eq, PHFE.decodePrivate_eq, finCongr_refl, Equiv.coe_refl, Function.comp_id]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean:67:4: warning: This simp argument is unused:
+  Equiv.coe_refl
+
+Hint: Omit it from the simp argument list.
+  simp only [PHFE.valueEquiv_eq, phfeClassValueEquiv_eq, PHFE.classParam_eq,
+  ̵  ̵ ̵ ̵phfeClassParamEquiv_eq,
+  ̲  ̲ ̲ ̲Equiv.refl_symm, Equiv.refl_apply,
+  ̵  ̵ ̵ ̵phfeClass_eval, phfeEval_eq, quadEval_eq,
+  ̲  ̲ ̲ ̲PHFE.decodeFunction_eq,
+  ̵  ̵ ̵ ̵PHFE.decodePublic_eq, PHFE.decodePrivate_eq, finCongr_refl,
+      E̵q̵u̵i̵v̵.̵c̵o̵e̵_̵r̵e̵f̵l̵,̵ ̵Function.comp_id]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean:67:20: warning: This simp argument is unused:
+  Function.comp_id
+
+Hint: Omit it from the simp argument list.
+  simp only [PHFE.valueEquiv_eq, phfeClassValueEquiv_eq, PHFE.classParam_eq,
+  ̵  ̵ ̵ ̵phfeClassParamEquiv_eq,
+  ̲  ̲ ̲ ̲Equiv.refl_symm, Equiv.refl_apply,
+  ̵  ̵ ̵ ̵phfeClass_eval, phfeEval_eq, quadEval_eq,
+  ̲  ̲ ̲ ̲PHFE.decodeFunction_eq,
+  ̵  ̵ ̵ ̵PHFE.decodePublic_eq, PHFE.decodePrivate_eq, finCongr_refl,
+      Equiv.coe_refl,̵ ̵F̵u̵n̵c̵t̵i̵o̵n̵.̵c̵o̵m̵p̵_̵i̵d̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean:76:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness.lean:85:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Correctness): no fresh .olean produced
+        2.50 real         1.50 user         1.01 sys
+          2316926976  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              182452  page reclaims
+                 364  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  82  voluntary context switches
+                3772  involuntary context switches
+            32065032  instructions retired
+            14878655  cycles elapsed
+             1622352  peak memory footprint

@@ -1,0 +1,24 @@
+{
+  "status": "header_only_no_proof",
+  "target": "TCSlib.Cryptography.Pairing.dlin_base_transpose_mulVec_surjective",
+  "header_file": "DlinBaseSurjective.helper-header.lean.inc",
+  "imports": [
+    "TCSlib.Cryptography.Pairing.MatrixDH.FiniteLinear",
+    "Mathlib.Logic.Equiv.Fin.Basic",
+    "Lean.Elab.Tactic.LibrarySearch"
+  ],
+  "exclude_imports": [
+    "TCSlib.Cryptography.Pairing.Linear",
+    "TCSlib.Cryptography.Pairing.MatrixDH.Defs",
+    "TCSlib.Cryptography.Pairing.MatrixDH.SelfReduction",
+    "TCSlib.Cryptography.Pairing.MatrixDH.ColumnLaws"
+  ],
+  "requested_checks": [
+    "typing",
+    "exact?",
+    "apply?"
+  ],
+  "native_checks_run_by_child": false,
+  "new_helper_proof_supplied": false,
+  "main_skeleton_remaining_admission": "hSurj"
+}

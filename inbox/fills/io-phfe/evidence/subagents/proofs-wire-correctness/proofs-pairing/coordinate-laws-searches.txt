@@ -1,0 +1,39 @@
+Read-only search evidence, current managed worktree. No Lean/lake/Git/build command.
+
+Exact header read:
+  sed -n '176,350p' TCSlib/Cryptography/Pairing/Exponents.lean
+Published source law read:
+  Pairing/Group.lean:204-226 (pow_order, pow_order_GT, pow_val_mul, pow_val_mul_GT)
+  Pairing/Group.lean:254/260 (pow_val_add and pow_val_neg, read in prior preparation)
+Operations.lean contract was read in full in preceding preparation; no algebra law is
+hidden in its efficient string-operation specifications.
+
+Full-name search across TCSlib, pinned Mathlib and Lean core Init:
+  expMat_add,expMatT_add,expMat_neg,expMatT_neg,expVecGT_add,expVecGT_neg,
+  expVecT_add,expVecT_neg,expVec_neg,expVec_smul,expVecT_smul,
+  expVec_tensor_left,expVec_tensor_right.
+Results: existing Exponents declarations for actual vector names; no matrix add/neg or
+expVecGT_* header. QuadraticCorrect references tensor_left but does not duplicate its proof.
+
+Conclusion-shape / nearest law search:
+  pow_mod_card, pow_mul, ZMod.val_add, eq_inv_iff_mul_eq_one, neg_add_cancel,
+  pow_val_add_GT/pow_val_neg_GT, Pi scalar-action application, smul_eq_mul.
+Read actual published signatures:
+- Mathlib/GroupTheory/OrderOfElement.lean:1012 pow_mod_card (Fintype.card form)
+- Mathlib/Data/ZMod/Basic.lean:630 val_add; :66 val_zero has implicit modulus
+- Mathlib/Algebra/Group/Defs.lean:646 pow_add, :654 pow_mul
+- Mathlib/Algebra/Group/Basic.lean:645 eq_inv_iff_mul_eq_one
+- Mathlib/Algebra/Group/Action/Defs.lean:68 smul_eq_mul
+- Mathlib/Algebra/Group/Action/Pi.lean:25-70 dependent action readers/instances
+- Pairing/Group.lean:120 card_GT, :178 bilinear_pow, :218/:222 scalar multiplication laws
+
+No existing public GT addition/negation analogue outside the new Exponents M0 headers was
+found. These two mirror the existing source-group laws and this near-copy is disclosed.
+All other candidates directly apply a published base law rather than reproduce it.
+
+Two exploratory rg calls mentioned nonexistent targeted directories (GroupPower in the
+prior preparation; Algebra/SMulWithZero in this one). Actual Group/Defs, Group/Basic,
+Group/Action/Pi and ZMod files were subsequently read directly. Missing-path results are
+NOT treated as negative evidence.
+
+exact?/apply?: NOT RUN, parent-only by task instruction.

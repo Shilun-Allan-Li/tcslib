@@ -1,0 +1,20 @@
+Read-only exact source/API searches:
+- Frozen Slack.lean rankSlack_le_three_div header/docstring and current rank reader.
+- Mathlib/Algebra/Order/Field/Basic.lean:73 one_div_le_one_div_of_le;
+  :203 one_div_pow_le_one_div_pow_of_le for 1 <= base and m <= n.
+  Exact signature read; this avoids re-proving q <= q^2/q^3.
+- Mathlib/Data/Nat/Cast/Order/Basic.lean:83 Nat.one_le_cast.
+- Published one_div_nonneg, pow_nonneg, sub_nonneg, add_nonneg/mul_nonneg.
+- Broad conclusion searches one_sub_prod/prod_one_sub and product/subtraction/sum
+  inequalities in Algebra/Order/BigOperators found no directly applicable
+  three-factor correction lemma. No new generic lemma is introduced: the
+  remainder is a concrete product/sum consequence inside the existing theorem.
+- Existing one_div_pow_le_one_div_pow_of_le and le_self_pow0 searches identified
+  the former as the closer public theorem; the latter is not re-proved/needed.
+- Imported TCSlib/Cryptography/Foundations/Subexponential.lean uses nlinarith at
+  :117 and :228, confirming the tactic is already in the current import closure.
+- Full-name rankSlack_le_three_div search found only the existing statement and
+  module index, no competing proof or helper to reuse.
+
+One existing theorem body only, one tactic block, no helper probe required.
+No Lean/lake/Git/native checker or live-source edit performed.

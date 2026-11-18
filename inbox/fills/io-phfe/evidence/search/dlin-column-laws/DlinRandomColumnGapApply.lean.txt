@@ -1,0 +1,27 @@
+import TCSlib.Cryptography.Pairing.MatrixDH.FiniteLinear
+import Mathlib.Logic.Equiv.Fin.Basic
+import Lean.Elab.Tactic.LibrarySearch
+set_option maxHeartbeats 200000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+namespace TCSlib.Cryptography.Pairing
+open TCSlib.Cryptography.Games
+open scoped Matrix
+example {K : Type} [Field K] [Fintype K] (rows : ℕ)
+    (H : Matrix (Fin rows) (Fin 2) K → (Fin rows → K) → ℝ)
+    (hH0 : ∀ M v, 0 ≤ H M v) (hH1 : ∀ M v, H M v ≤ 1) :
+    let A : (Fin 2 → K) → Matrix (Fin 3) (Fin 2) K :=
+      fun ab => ![![ab 0, 0], ![0, ab 1], ![1, 1]]
+    |ProbComp.expect (ProbComp.sample (Fin 2 → K))
+        (fun ab => ProbComp.expect (ProbComp.sample (Fin 2 → K))
+          (fun rs => ProbComp.expect (ProbComp.sample K)
+            (fun t => ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K))
+              (fun L => H (L * A ab)
+                (L *ᵥ ![ab 0 * rs 0, ab 1 * rs 1, t]))))) -
+      ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 2) K))
+        (fun M => ProbComp.expect (ProbComp.sample (Fin rows → K))
+          (fun v => H M v))| ≤
+      1 - (1 - 1 / (Fintype.card K : ℝ)) ^ 3 := by
+  classical
+  apply?
+end TCSlib.Cryptography.Pairing

@@ -1,0 +1,21 @@
+.lake/io-phfe-probes/DlinPointTypedDebug.lean:404:14: error: failed to synthesize
+  Field (ZMod pp.group.order)
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+.lake/io-phfe-probes/DlinPointTypedDebug.lean:388:67: error: unsolved goals
+case refine_1
+G : BilinearGen
+D : NUPPT
+κ : ℕ
+H : (pp : PublicParams G κ) → (Fin 2 → ZMod pp.group.order) → (Fin 3 → ZMod pp.group.order) → ℝ := ⋯
+P : PublicParams G κ → ℝ := ⋯
+Q : PublicParams G κ → ℝ := ⋯
+loss : PublicParams G κ → ℝ := ⋯
+pp : PublicParams G κ
+this✝ : Fact (Nat.Prime pp.group.order) := ⋯
+this : NeZero pp.group.order := ⋯
+obs : (Fin 2 → ZMod pp.group.order) → (Fin 3 → ZMod pp.group.order) → D.Coins κ → Prop := ⋯
+h0 : ∀ (ab : Fin 2 → ZMod pp.group.order) (u : Fin 3 → ZMod pp.group.order), 0 ≤ H pp ab u
+h1 : ∀ (ab : Fin 2 → ZMod pp.group.order) (u : Fin 3 → ZMod pp.group.order), H pp ab u ≤ 1
+⊢ Field (ZMod pp.group.order)
+.lake/io-phfe-probes/DlinPointTypedDebug.lean:434:8: warning: declaration uses 'sorry'

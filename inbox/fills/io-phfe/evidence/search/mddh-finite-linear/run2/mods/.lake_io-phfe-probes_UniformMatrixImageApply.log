@@ -1,0 +1,115 @@
+`apply?` stopped because it was running out of time.
+You may get better results using `set_option maxHeartbeats 0`.
+Try this:
+  [apply] refine Eq.symm (Real.ext_cauchy ?_)
+  -- Remaining subgoals:
+  -- ⊢ ((ProbComp.sample (Matrix (Fin r) (Fin c) K)).expect F).cauchy =
+    ((ProbComp.sample (Matrix (Fin m) (Fin c) K)).expect fun S => F (M * S)).cauchy
+Try this:
+  [apply] refine Eq.symm ((fun {x y} => Real.ext_cauchy_iff.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ((ProbComp.sample (Matrix (Fin r) (Fin c) K)).expect F).cauchy =
+    ((ProbComp.sample (Matrix (Fin m) (Fin c) K)).expect fun S => F (M * S)).cauchy
+Try this:
+  [apply] refine Real.ext_cauchy ?_
+  -- Remaining subgoals:
+  -- ⊢ ((ProbComp.sample (Matrix (Fin m) (Fin c) K)).expect fun S => F (M * S)).cauchy =
+    ((ProbComp.sample (Matrix (Fin r) (Fin c) K)).expect F).cauchy
+Try this:
+  [apply] refine Eq.symm ((fun {r p} hr hp => (Real.toNNReal_eq_toNNReal_iff hr hp).mp) ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ (ProbComp.sample (Matrix (Fin r) (Fin c) K)).expect F
+  -- ⊢ 0 ≤ (ProbComp.sample (Matrix (Fin m) (Fin c) K)).expect fun S => F (M * S)
+  -- ⊢ ((ProbComp.sample (Matrix (Fin r) (Fin c) K)).expect F).toNNReal =
+    ((ProbComp.sample (Matrix (Fin m) (Fin c) K)).expect fun S => F (M * S)).toNNReal
+Try this:
+  [apply] refine Real.ext_cauchy_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ((ProbComp.sample (Matrix (Fin m) (Fin c) K)).expect fun S => F (M * S)).cauchy =
+    ((ProbComp.sample (Matrix (Fin r) (Fin c) K)).expect F).cauchy
+Try this:
+  [apply] refine Eq.symm ((fun {p q} hp hq => (ENNReal.ofReal_eq_ofReal_iff hp hq).mp) ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ (ProbComp.sample (Matrix (Fin r) (Fin c) K)).expect F
+  -- ⊢ 0 ≤ (ProbComp.sample (Matrix (Fin m) (Fin c) K)).expect fun S => F (M * S)
+  -- ⊢ ENNReal.ofReal ((ProbComp.sample (Matrix (Fin r) (Fin c) K)).expect F) =
+    ENNReal.ofReal ((ProbComp.sample (Matrix (Fin m) (Fin c) K)).expect fun S => F (M * S))
+Try this:
+  [apply] refine (Real.toNNReal_eq_toNNReal_iff ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ (ProbComp.sample (Matrix (Fin m) (Fin c) K)).expect fun S => F (M * S)
+  -- ⊢ 0 ≤ (ProbComp.sample (Matrix (Fin r) (Fin c) K)).expect F
+  -- ⊢ ((ProbComp.sample (Matrix (Fin m) (Fin c) K)).expect fun S => F (M * S)).toNNReal =
+    ((ProbComp.sample (Matrix (Fin r) (Fin c) K)).expect F).toNNReal
+Try this:
+  [apply] refine Eq.symm ((fun {x y} => EReal.coe_eq_coe_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ↑((ProbComp.sample (Matrix (Fin r) (Fin c) K)).expect F) =
+    ↑((ProbComp.sample (Matrix (Fin m) (Fin c) K)).expect fun S => F (M * S))
+Try this:
+  [apply] refine (ENNReal.ofReal_eq_ofReal_iff ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ (ProbComp.sample (Matrix (Fin m) (Fin c) K)).expect fun S => F (M * S)
+  -- ⊢ 0 ≤ (ProbComp.sample (Matrix (Fin r) (Fin c) K)).expect F
+  -- ⊢ ENNReal.ofReal ((ProbComp.sample (Matrix (Fin m) (Fin c) K)).expect fun S => F (M * S)) =
+    ENNReal.ofReal ((ProbComp.sample (Matrix (Fin r) (Fin c) K)).expect F)
+Try this:
+  [apply] refine Eq.symm ((fun {z w} => Complex.ofReal_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ↑((ProbComp.sample (Matrix (Fin r) (Fin c) K)).expect F) =
+    ↑((ProbComp.sample (Matrix (Fin m) (Fin c) K)).expect fun S => F (M * S))
+Try this:
+  [apply] refine EReal.coe_eq_coe_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑((ProbComp.sample (Matrix (Fin m) (Fin c) K)).expect fun S => F (M * S)) =
+    ↑((ProbComp.sample (Matrix (Fin r) (Fin c) K)).expect F)
+Try this:
+  [apply] refine Eq.symm ((fun {x y} hx hy => (Real.sqrt_inj hx hy).mp) ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ (ProbComp.sample (Matrix (Fin r) (Fin c) K)).expect F
+  -- ⊢ 0 ≤ (ProbComp.sample (Matrix (Fin m) (Fin c) K)).expect fun S => F (M * S)
+  -- ⊢ √((ProbComp.sample (Matrix (Fin r) (Fin c) K)).expect F) =
+    √((ProbComp.sample (Matrix (Fin m) (Fin c) K)).expect fun S => F (M * S))
+Try this:
+  [apply] refine Complex.ofReal_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑((ProbComp.sample (Matrix (Fin m) (Fin c) K)).expect fun S => F (M * S)) =
+    ↑((ProbComp.sample (Matrix (Fin r) (Fin c) K)).expect F)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {K} [RCLike K] {z w} => RCLike.ofReal_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Real.sqrt_inj ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 ≤ (ProbComp.sample (Matrix (Fin m) (Fin c) K)).expect fun S => F (M * S)
+  -- ⊢ 0 ≤ (ProbComp.sample (Matrix (Fin r) (Fin c) K)).expect F
+  -- ⊢ √((ProbComp.sample (Matrix (Fin m) (Fin c) K)).expect fun S => F (M * S)) =
+    √((ProbComp.sample (Matrix (Fin r) (Fin c) K)).expect F)
+Try this:
+  [apply] refine Eq.symm ((fun {x y} => Real.exp_eq_exp.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Real.exp ((ProbComp.sample (Matrix (Fin r) (Fin c) K)).expect F) =
+    Real.exp ((ProbComp.sample (Matrix (Fin m) (Fin c) K)).expect fun S => F (M * S))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine RCLike.ofReal_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Real.tan_inj_of_lt_of_lt_pi_div_two ?_ ?_ ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ -(Real.pi / 2) < (ProbComp.sample (Matrix (Fin r) (Fin c) K)).expect F
+  -- ⊢ (ProbComp.sample (Matrix (Fin r) (Fin c) K)).expect F < Real.pi / 2
+  -- ⊢ -(Real.pi / 2) < (ProbComp.sample (Matrix (Fin m) (Fin c) K)).expect fun S => F (M * S)
+  -- ⊢ ((ProbComp.sample (Matrix (Fin m) (Fin c) K)).expect fun S => F (M * S)) < Real.pi / 2
+  -- ⊢ Real.tan ((ProbComp.sample (Matrix (Fin r) (Fin c) K)).expect F) =
+    Real.tan ((ProbComp.sample (Matrix (Fin m) (Fin c) K)).expect fun S => F (M * S))
+Try this:
+  [apply] refine Real.exp_eq_exp.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Real.exp ((ProbComp.sample (Matrix (Fin m) (Fin c) K)).expect fun S => F (M * S)) =
+    Real.exp ((ProbComp.sample (Matrix (Fin r) (Fin c) K)).expect F)
+.lake/io-phfe-probes/UniformMatrixImageApply.lean:12:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/UniformMatrixImageApply.lean:14:36: warning: unused variable `hM`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

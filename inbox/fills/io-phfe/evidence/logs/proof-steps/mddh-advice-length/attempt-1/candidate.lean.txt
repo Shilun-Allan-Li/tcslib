@@ -1,0 +1,339 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
+-/
+import TCSlib.Cryptography.Pairing.MatrixDH.Defs
+import TCSlib.Cryptography.Pairing.MatrixDH.ColumnLaws
+import TCSlib.Cryptography.Asymptotic.Realization
+import TCSlib.Cryptography.Asymptotic.EnsemblesLemmas
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.Averaging
+import TCSlib.Cryptography.Encoding.Modular
+import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenMachine.Draws
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# A column-hybrid reduction from uniform-matrix MDDH to DLIN
+
+A canonical DLIN challenge implicitly contains the matrix `A₀` with rows `(a,0)`, `(0,b)`,
+`(1,1)` and a response column `c`. A known left randomizer `L` produces `[LA₀]` and `[Lc]`
+using products and powers only. On the real branch, full column rank of `A₀` gives a uniform
+base matrix and a real response column. On the random branch, invertibility of `(A₀|c)`
+gives a uniform base matrix and an independent uniform response column.
+
+A hybrid index and the other response columns' masks are fixed in advice by averaging.
+There is one realising machine, with the hybrid index inside its advice; the inequality
+has a polynomial factor `d(κ)` rather than an unbounded family of machine advantages.
+This is a column-hybrid implementation of the implication stated in [Wee20, §2.1], with
+an explicit polynomial loss rather than the tight reduction cited there.
+
+## Main definitions
+
+* `BilinearGen.MddhAdvice`: one hybrid index and scalar matrices over the fixed schedule.
+* `BilinearGen.mddhAdviceEnc`, `BilinearGen.mddhAdviceLen`: explicit advice encoding and bound.
+* `BilinearGen.mddhPreChallenge`, `BilinearGen.mddhPre`: deterministic typed and string
+  preprocessing of a canonical DLIN challenge.
+* `BilinearGen.dlinToMddh`: one activation of the MDDH distinguisher, with its own coins.
+* `BilinearGen.mddhSlack`: the explicit `4d(κ)/p(κ)` statistical correction.
+* `BilinearGen.MDDHRealizable`: existence of a machine realising each fixed-advice reduction.
+
+## Main results
+
+* `BilinearGen.mddhAdvice_finite`, `BilinearGen.mddhAdvice_nonempty`: advice is finite and
+  inhabited at every security parameter, including zero response columns.
+* `BilinearGen.mddhAdviceEnc_injective`, `BilinearGen.length_mddhAdviceEnc_le`: bounded advice.
+* `BilinearGen.mddhAdv_le`: one advice family works for every realiser at every parameter.
+* `BilinearGen.mddhAdv_negligible`, `BilinearGen.mddh_subexpHard`: asymptotic consequences
+  through the shared negligible and subexponential APIs.
+
+The reduction never samples. Every scalar in its arithmetic is already in the advice.
+The schedule only transports advice into the drawn field through the public order equality;
+the algorithms do not compute the schedule. The advice encoding includes unary `κ` and
+binary dimension headers, so one uniform preprocessing target can read its parameter and
+dimensions directly from its input.
+
+The width bound is reused from `BB1Machine.order_le_two_pow`; none of that module's draws
+or coin decoders is used here.
+
+## References
+
+* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
+  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, §2.1, p. 4 (the MDDH
+  implication, attributed there to Escala et al.; the reduction here has polynomial loss).
+* [JLS26] A. Jain, H. Lin, and A. Sahai, *Indistinguishability Obfuscation from Well-Founded
+  Assumptions*, Journal of the ACM 73(1), Article 1, 2026, §1.1, p. 3 (canonical DLIN).
+-/
+
+namespace TCSlib.Cryptography.Pairing
+
+open Complexity Turing TCSlib.Cryptography.Games
+
+namespace BilinearGen
+
+variable (G : BilinearGen)
+
+/-- Advice fixes a hybrid-column index, a left randomizer, coefficient masks for the other
+real columns, and uniform scalars for the other random columns. This is reduction glue for
+[Wee20, §2.1, p. 4]. The extra index value is a sentinel, ensuring inhabitation when `d=0`. -/
+abbrev MddhAdvice (p : ℕ → ℕ) (d ℓ : PolyExpr) (κ : ℕ) : Type :=
+  Fin (d.eval κ + 1) ×
+    Matrix (Fin (ℓ.eval κ)) (Fin 3) (ZMod (p κ)) ×
+    Matrix (Fin 2) (Fin (d.eval κ)) (ZMod (p κ)) ×
+    Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod (p κ))
+
+/-- Advice is exactly the hybrid index and its three known scalar matrices. -/
+theorem mddhAdvice_eq (p : ℕ → ℕ) (d ℓ : PolyExpr) (κ : ℕ) :
+    MddhAdvice p d ℓ κ =
+      (Fin (d.eval κ + 1) ×
+        Matrix (Fin (ℓ.eval κ)) (Fin 3) (ZMod (p κ)) ×
+        Matrix (Fin 2) (Fin (d.eval κ)) (ZMod (p κ)) ×
+        Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod (p κ))) := rfl
+
+/-- Zero matrices and the first index give advice even when the response has no columns.
+This is technical inhabitation glue, not a sampling algorithm. -/
+def mddhAdviceDefault (p : ℕ → ℕ) (d ℓ : PolyExpr) (κ : ℕ) : MddhAdvice p d ℓ κ :=
+  ⟨0, 0, 0, 0⟩
+
+/-- The default advice consists of the first index and three zero matrices. -/
+theorem mddhAdviceDefault_eq (p : ℕ → ℕ) (d ℓ : PolyExpr) (κ : ℕ) :
+    mddhAdviceDefault p d ℓ κ = ⟨0, 0, 0, 0⟩ := rfl
+
+/-- Advice is nonempty at every parameter, including `d(κ)=0`. Technical glue. -/
+theorem mddhAdvice_nonempty (p : ℕ → ℕ) (d ℓ : PolyExpr) (κ : ℕ) :
+    Nonempty (MddhAdvice p d ℓ κ) := ⟨mddhAdviceDefault p d ℓ κ⟩
+
+/-- A fixed prime order schedule makes every advice type finite. Technical glue; no
+additional nonzero-schedule assumption is imposed. -/
+theorem mddhAdvice_finite (p : ℕ → ℕ)
+    (hp : ∀ κ r, (G.inst κ r).order = p κ) (d ℓ : PolyExpr) (κ : ℕ) :
+    Finite (MddhAdvice p d ℓ κ) :=
+  letI : NeZero (p κ) := orderSchedule_neZero G p hp κ
+  inferInstance
+
+/-- The advice word stores unary `κ`, shortest binary dimension headers, a one-hot hybrid
+index, and fixed-width modular matrices. Scalars are advice, never drawn by the reduction. -/
+def mddhAdviceEnc (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order = p κ)
+    (d ℓ : PolyExpr) (κ : ℕ) (ω : MddhAdvice p d ℓ κ) : List Bool :=
+  letI : NeZero (p κ) := orderSchedule_neZero G p hp κ
+  pairEncode (List.replicate κ true)
+    (pairEncode (Candidates.natToList (Nat.size (d.eval κ)) (d.eval κ))
+      (pairEncode (Candidates.natToList (Nat.size (ℓ.eval κ)) (ℓ.eval κ))
+        ((List.ofFn fun i : Fin (d.eval κ + 1) => decide (i = ω.1)) ++
+          Encoding.Modular.encodeMatrix (G.wG.eval κ) ω.2.1 ++
+          Encoding.Modular.encodeMatrix (G.wG.eval κ) ω.2.2.1 ++
+          Encoding.Modular.encodeMatrix (G.wG.eval κ) ω.2.2.2)))
+
+/-- The advice encoding exposes the security parameter, numeric dimensions and scalar blocks. -/
+theorem mddhAdviceEnc_eq (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order = p κ)
+    (d ℓ : PolyExpr) (κ : ℕ) (ω : MddhAdvice p d ℓ κ) :
+    G.mddhAdviceEnc p hp d ℓ κ ω =
+      letI : NeZero (p κ) := orderSchedule_neZero G p hp κ
+      pairEncode (List.replicate κ true)
+        (pairEncode (Candidates.natToList (Nat.size (d.eval κ)) (d.eval κ))
+          (pairEncode (Candidates.natToList (Nat.size (ℓ.eval κ)) (ℓ.eval κ))
+            ((List.ofFn fun i : Fin (d.eval κ + 1) => decide (i = ω.1)) ++
+              Encoding.Modular.encodeMatrix (G.wG.eval κ) ω.2.1 ++
+              Encoding.Modular.encodeMatrix (G.wG.eval κ) ω.2.2.1 ++
+              Encoding.Modular.encodeMatrix (G.wG.eval κ) ω.2.2.2))) := rfl
+
+/-- A polynomial bounds the parameter, dimension and one-hot headers and scalar blocks.
+This is reduction-encoding glue. Binary lengths are bounded by their values plus one. -/
+def mddhAdviceLen (d ℓ : PolyExpr) : PolyExpr :=
+  ((((PolyExpr.var.mul (PolyExpr.const 2)).add ((PolyExpr.const 2).mul d)).add ((PolyExpr.const
+    2).mul ℓ)).add
+    (PolyExpr.const 10)).add ((d.add (PolyExpr.const 1)).add
+      ((((ℓ.mul (PolyExpr.const 3)).add ((PolyExpr.const 2).mul d)).add (ℓ.mul d)).mul G.wG))
+
+/-- The advice-length expression has one term for each serialized block. -/
+theorem mddhAdviceLen_eq (d ℓ : PolyExpr) :
+    G.mddhAdviceLen d ℓ =
+      ((((PolyExpr.var.mul (PolyExpr.const 2)).add ((PolyExpr.const 2).mul d)).add ((PolyExpr.const
+        2).mul ℓ)).add
+        (PolyExpr.const 10)).add ((d.add (PolyExpr.const 1)).add
+          ((((ℓ.mul (PolyExpr.const 3)).add ((PolyExpr.const 2).mul d)).add (ℓ.mul d)).mul G.wG)) :=
+            rfl
+
+/-- Every advice family has the same polynomial length bound. Technical glue.
+
+**Proof sketch.** Use `length_pairEncode`, `Candidates.length_natToList`, the unary and
+one-hot lengths, and `Encoding.Modular.encodeMatrix_length`. Bound each binary dimension
+length by its value plus one and use the polynomial evaluation readers. -/
+theorem length_mddhAdviceEnc_le (p : ℕ → ℕ)
+    (hp : ∀ κ r, (G.inst κ r).order = p κ) (d ℓ : PolyExpr)
+    (κ : ℕ) (ω : MddhAdvice p d ℓ κ) :
+    (G.mddhAdviceEnc p hp d ℓ κ ω).length ≤ (G.mddhAdviceLen d ℓ).eval κ := by
+  letI : NeZero (p κ) := orderSchedule_neZero G p hp κ
+  have hd := Turing.length_bits_le_self (d.eval κ)
+  have hℓ := Turing.length_bits_le_self (ℓ.eval κ)
+  rw [Nat.size_eq_bits_len] at hd hℓ
+  rw [G.mddhAdviceEnc_eq p hp d ℓ κ ω, G.mddhAdviceLen_eq d ℓ]
+  simp only [length_pairEncode, List.length_replicate, Candidates.length_natToList,
+    List.length_append, List.length_ofFn, Encoding.Modular.encodeMatrix_length,
+    PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_var, PolyExpr.eval_const,
+    Nat.add_mul]
+  omega
+
+/-- The advice word is injective on its index and scalar matrices. Technical glue.
+
+**Proof sketch.** Split the fixed-width blocks. The one-hot word recovers the hybrid index.
+Use `BB1Machine.order_le_two_pow` and the fixed order equality for a generated instance;
+then apply `Encoding.Modular.encodeMatrix_injective` to each scalar block. -/
+theorem mddhAdviceEnc_injective (p : ℕ → ℕ)
+    (hp : ∀ κ r, (G.inst κ r).order = p κ) (d ℓ : PolyExpr) (κ : ℕ) :
+    Function.Injective (G.mddhAdviceEnc p hp d ℓ κ) := sorry
+
+/-- The L1 typed preprocessor embeds the canonical DLIN column into a matrix hybrid. Its
+role is to provide one challenge column and compute all other columns from fixed advice.
+The per-column statistical correction is at most `4/p`; the hybrid contributes `d(κ)`.
+All group entries are formed by products and known scalar powers [Wee20, §2.1, p. 4]. -/
+def mddhPreChallenge (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order = p κ)
+    (d ℓ : PolyExpr) (κ : ℕ) (ω : MddhAdvice p d ℓ κ) (c : G.DLINChallenge κ) :
+    G.MDDHChallenge d ℓ κ :=
+  let castScalar := ZMod.ringEquivCongr (order_eq_of_publicParams G p hp κ c.pp).symm
+  let L := fun i j => castScalar (ω.2.1 i j)
+  let S := fun i j => castScalar (ω.2.2.1 i j)
+  let U := fun i j => castScalar (ω.2.2.2 i j)
+  let M := fun (i : Fin (ℓ.eval κ)) (j : Fin 2) =>
+    if j = 0 then c.baseA ^ (L i 0).val * c.pp.generator ^ (L i 2).val
+    else c.baseB ^ (L i 1).val * c.pp.generator ^ (L i 2).val
+  let v := fun i =>
+    c.responseA ^ (L i 0).val * c.responseB ^ (L i 1).val * c.responseSum ^ (L i 2).val
+  ⟨c.pp, M, fun i j =>
+    if j.val = ω.1.val then v i
+    else if j.val < ω.1.val then M i 0 ^ (S 0 j).val * M i 1 ^ (S 1 j).val
+    else c.pp.generator ^ (U i j).val⟩
+
+/-- The typed preprocessor is precisely the displayed group-arithmetic embedding. 
+
+**Proof sketch.** The explicit preprocessing formula reduces by reflexivity. -/
+theorem mddhPreChallenge_eq (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order = p κ)
+    (d ℓ : PolyExpr) (κ : ℕ) (ω : MddhAdvice p d ℓ κ) (c : G.DLINChallenge κ) :
+    G.mddhPreChallenge p hp d ℓ κ ω c =
+      let castScalar := ZMod.ringEquivCongr (order_eq_of_publicParams G p hp κ c.pp).symm
+      let L := fun i j => castScalar (ω.2.1 i j)
+      let S := fun i j => castScalar (ω.2.2.1 i j)
+      let U := fun i j => castScalar (ω.2.2.2 i j)
+      let M := fun (i : Fin (ℓ.eval κ)) (j : Fin 2) =>
+        if j = 0 then c.baseA ^ (L i 0).val * c.pp.generator ^ (L i 2).val
+        else c.baseB ^ (L i 1).val * c.pp.generator ^ (L i 2).val
+      let v := fun i =>
+        c.responseA ^ (L i 0).val * c.responseB ^ (L i 1).val * c.responseSum ^ (L i 2).val
+      ⟨c.pp, M, fun i j =>
+        if j.val = ω.1.val then v i
+        else if j.val < ω.1.val then M i 0 ^ (S 0 j).val * M i 1 ^ (S 1 j).val
+        else c.pp.generator ^ (U i j).val⟩ := rfl
+
+/-- The L1 string preprocessor serializes its typed matrix hybrid. Its input is a canonical
+DLIN challenge and fixed advice; its output is the MDDH distinguisher's public input.
+It contributes the same per-column correction as `mddhPreChallenge` and never samples. -/
+def mddhPre (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order = p κ)
+    (d ℓ : PolyExpr) (κ : ℕ) (ω : MddhAdvice p d ℓ κ) (c : G.DLINChallenge κ) : List Bool :=
+  G.mddhEnc d ℓ κ (G.mddhPreChallenge p hp d ℓ κ ω c)
+
+/-- The string preprocessor is the encoding of its typed matrix hybrid. -/
+theorem mddhPre_eq (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order = p κ)
+    (d ℓ : PolyExpr) (κ : ℕ) (ω : MddhAdvice p d ℓ κ) (c : G.DLINChallenge κ) :
+    G.mddhPre p hp d ℓ κ ω c =
+      G.mddhEnc d ℓ κ (G.mddhPreChallenge p hp d ℓ κ ω c) := rfl
+
+/-- The L1 DLIN reduction activates `D` once on the preprocessed matrix hybrid, using the
+input coins truncated to `D.coinLen κ`. It never samples. Its comparison has a hybrid
+factor `d(κ)` and total statistical correction `4d(κ)/p(κ)` [Wee20, §2.1, p. 4]. -/
+def dlinToMddh (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order = p κ)
+    (d ℓ : PolyExpr) (D : NUPPT) (ω : ∀ κ, MddhAdvice p d ℓ κ)
+    (κ : ℕ) (c : G.DLINChallenge κ) (r : List Bool) : List Bool :=
+  D.runAtL κ (G.mddhPre p hp d ℓ κ (ω κ) c) (r.take (D.coinLen κ))
+
+/-- The reduction runs the MDDH distinguisher on its deterministic preprocessed input. -/
+theorem dlinToMddh_eq (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order = p κ)
+    (d ℓ : PolyExpr) (D : NUPPT) (ω : ∀ κ, MddhAdvice p d ℓ κ)
+    (κ : ℕ) (c : G.DLINChallenge κ) (r : List Bool) :
+    G.dlinToMddh p hp d ℓ D ω κ c r =
+      D.runAtL κ (G.mddhPre p hp d ℓ κ (ω κ) c) (r.take (D.coinLen κ)) := rfl
+
+/-- The full column-hybrid correction is `4d(κ)/p(κ)`. On a real DLIN challenge the base
+matrix has rank below two with probability `p⁻²`. On a random challenge the augmented
+matrix is singular with probability `3/p-3/p²+1/p³`. Their sum is at most `4/p` per column.
+This is an explicit loss for the column-hybrid route to [Wee20, §2.1, p. 4]. -/
+noncomputable def mddhSlack (p : ℕ → ℕ) (d : PolyExpr) (κ : ℕ) : ℝ :=
+  (d.eval κ : ℝ) * (4 / (p κ : ℝ))
+
+/-- The correction is the response-column count times the per-column `4/p` bound. -/
+theorem mddhSlack_eq (p : ℕ → ℕ) (d : PolyExpr) (κ : ℕ) :
+    mddhSlack p d κ = (d.eval κ : ℝ) * (4 / (p κ : ℝ)) := rfl
+
+/-- For every MDDH distinguisher, one advice family makes the column-hybrid bound hold for
+EVERY machine realising the reduction, simultaneously at all parameters
+[Wee20, §2.1, p. 4, polynomial-loss implementation of its cited implication].
+The shared realisation predicate constrains only encoded challenges and coin strings of
+the stated layout length, which suffices for this bound.
+
+**Proof sketch.** For a nonzero column count, select an adjacent response-column hybrid by
+the shared hybrid-gap lemma. Fix the left randomizer and other columns' masks by averaging.
+For the real challenge, condition on rank two of `A₀`; for the random challenge, condition
+on `det(A₀|c)=ab(t-r-s)` being nonzero. Left multiplication by the corresponding full-rank
+matrix is a uniform linear map, giving the required adjacent laws. Bound their exceptional
+probabilities by `p⁻²` and `3/p-3/p²+1/p³`. Transfer the typed reduction's verdict through
+`RealizesOn.distinguisherL_eq`. Multiply by the column count. For zero columns the advantage
+is zero, and the sentinel advice supplies the required inhabited value. -/
+theorem mddhAdv_le (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order = p κ)
+    (d ℓ : PolyExpr) (D : NUPPT) :
+    ∃ ω : ∀ κ, MddhAdvice p d ℓ κ, ∀ B : NUPPT,
+      B.RealizesOn G.dlinEnc D.coins (G.dlinToMddh p hp d ℓ D ω) →
+      ∀ κ, G.mddhAdv d ℓ D κ ≤
+        (d.eval κ : ℝ) * G.dlinAdv B κ + mddhSlack p d κ := sorry
+
+/-- Realisability asks for one DLIN machine per fixed-advice reduction of a machine MDDH
+adversary. This is the later machine-construction obligation, not an honest-algorithm
+notion. The shared predicate constrains encoded challenges and layout-length coins only. -/
+def MDDHRealizable (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order = p κ)
+    (d ℓ : PolyExpr) : Prop :=
+  ∀ (D : NUPPT) (ω : ∀ κ, MddhAdvice p d ℓ κ), ∃ B : NUPPT,
+    B.RealizesOn G.dlinEnc D.coins (G.dlinToMddh p hp d ℓ D ω)
+
+/-- Matrix reduction realisability is exactly existence of a realiser for every machine and
+advice family. -/
+theorem mddhRealizable_iff (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order = p κ)
+    (d ℓ : PolyExpr) :
+    G.MDDHRealizable p hp d ℓ ↔
+      ∀ (D : NUPPT) (ω : ∀ κ, MddhAdvice p d ℓ κ), ∃ B : NUPPT,
+        B.RealizesOn G.dlinEnc D.coins (G.dlinToMddh p hp d ℓ D ω) := Iff.rfl
+
+/-- The polynomial-over-order correction is subexponentially small at every exponent below
+one when the prime schedule is at least `2^κ`. This uses the shared subexponential notion.
+
+**Proof sketch.** Bound the correction by `4d(κ)2⁻κ`, use the polynomial growth bound for
+`d`, and apply `subexpSmall_two_pow_neg`, `SubexpSmall.mul_pow`, `.const_mul` and `.mono`. -/
+theorem mddhSlack_subexpSmall (p : ℕ → ℕ) (d : PolyExpr)
+    (hpb : ∀ κ, 2 ^ κ ≤ p κ) {c : ℝ} (hc₀ : 0 < c) (hc₁ : c < 1) :
+    SubexpSmall c (mddhSlack p d) := sorry
+
+/-- DLIN hardness implies uniform-matrix MDDH negligibility once the fixed-advice reduction
+functions have machine realisers [Wee20, §2.1, p. 4].
+
+**Proof sketch.** Choose the single advice family and its realiser. Apply
+`EnsembleLemmas.negligible_polyExpr_mul` to the realiser's DLIN advantage. The explicit
+correction is negligible by `mddhSlack_subexpSmall` and `SubexpSmall.negligible`; finish by
+`Negligible.add` and `.mono`. -/
+theorem mddhAdv_negligible (p : ℕ → ℕ)
+    (hp : ∀ κ r, (G.inst κ r).order = p κ) (d ℓ : PolyExpr)
+    (hpb : ∀ κ, 2 ^ κ ≤ p κ) (hR : G.MDDHRealizable p hp d ℓ)
+    (h : G.DLINAssumption) (D : NUPPT) : Negligible (G.mddhAdv d ℓ D) := sorry
+
+/-- Subexponential DLIN implies subexponential MDDH for every fixed polynomial dimension
+pair, under reduction realisability [Wee20, §2.1, p. 4; JLS26, §1.1, p. 3].
+
+**Proof sketch.** Take a smaller positive exponent than the shared DLIN exponent and one.
+The fixed polynomial hybrid factor is absorbed by `.mul_pow`, `.const_mul` and `.mono`.
+Combine with `mddhSlack_subexpSmall` through `.add`; the exponent is independent of `D`. -/
+theorem mddh_subexpHard (p : ℕ → ℕ)
+    (hp : ∀ κ r, (G.inst κ r).order = p κ) (d ℓ : PolyExpr)
+    (hpb : ∀ κ, 2 ^ κ ≤ p κ) (hR : G.MDDHRealizable p hp d ℓ)
+    (h : G.SubexpDLIN) : SubexpHard (G.mddhAdv d ℓ) := sorry
+
+end BilinearGen
+
+end TCSlib.Cryptography.Pairing

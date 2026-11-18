@@ -1,0 +1,253 @@
+Try this:
+  [apply] refine Function.HasLeftInverse.injective ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.HasLeftInverse (groupMatrix pp)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.LeftInverse.injective fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.surjective_comp_right_iff_injective.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.injective_iff_hasLeftInverse.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Nonempty (Matrix (Fin m) (Fin n) pp.group.G)
+  -- ⊢ Function.HasLeftInverse (groupMatrix pp)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.injective_of_isPartialInv fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.Injective.of_comp_right (fun ⦃a₁⦄ => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.Bijective.injective ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Bijective (groupMatrix pp)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.RightInverse.injective fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Injective.of_comp_iff (fun ⦃a₁⦄ => ?_) (groupMatrix pp)).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.injective_of_subsingleton (groupMatrix pp))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.injective_comp_left_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Injective.of_comp_iff' (groupMatrix pp) ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Function.Injective.of_comp fun ⦃a₁⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.rangeFactorization_bijective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Bijective (Set.rangeFactorization (groupMatrix pp))
+Try this:
+  [apply] refine Set.rangeFactorization_injective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective (Set.rangeFactorization (groupMatrix pp))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine injective_of_lt_imp_ne fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine injective_of_le_imp_le (groupMatrix pp) fun {x} => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine List.map_injective_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective (List.map (groupMatrix pp))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (EmbeddingLike.comp_injective (groupMatrix pp) ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (EquivLike.injective_comp ?_ (groupMatrix pp)).mp fun ⦃a₁⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (EquivLike.comp_injective (groupMatrix pp) ?_).mp fun ⦃a₁⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.comp_injective (groupMatrix pp) ?_).mp fun ⦃a₁⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.injective_comp ?_ (groupMatrix pp)).mp fun ⦃a₁⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine StrictAnti.injective fun ⦃a⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Antitone.strictAnti_iff_injective fun ⦃a⦄ => ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder (Matrix (Fin m) (Fin n) pp.group.G)
+  -- ⊢ ∀ ⦃a b : Matrix (Fin m) (Fin n) pp.group.G⦄, a ≤ b → groupMatrix pp b ≤ groupMatrix pp a
+  -- ⊢ StrictAnti (groupMatrix pp)
+  -- ⊢ ∀ ⦃b : Matrix (Fin m) (Fin n) pp.group.G⦄, _fvar.16414 ≤ b → groupMatrix pp b ≤ groupMatrix pp _fvar.16414
+  -- ⊢ _fvar.16414 ≤ _fvar.16483 → groupMatrix pp _fvar.16483 ≤ groupMatrix pp _fvar.16414
+  -- ⊢ groupMatrix pp _fvar.16483 ≤ groupMatrix pp _fvar.16414
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine StrictMono.injective fun ⦃a⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Monotone.strictMono_iff_injective fun ⦃a⦄ => ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ LinearOrder (Matrix (Fin m) (Fin n) pp.group.G)
+  -- ⊢ ∀ ⦃a b : Matrix (Fin m) (Fin n) pp.group.G⦄, a ≤ b → groupMatrix pp a ≤ groupMatrix pp b
+  -- ⊢ StrictMono (groupMatrix pp)
+  -- ⊢ ∀ ⦃b : Matrix (Fin m) (Fin n) pp.group.G⦄, _fvar.16976 ≤ b → groupMatrix pp _fvar.16976 ≤ groupMatrix pp b
+  -- ⊢ _fvar.16976 ≤ _fvar.17045 → groupMatrix pp _fvar.16976 ≤ groupMatrix pp _fvar.17045
+  -- ⊢ groupMatrix pp _fvar.16976 ≤ groupMatrix pp _fvar.17045
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine GaloisCoinsertion.l_injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine GaloisInsertion.u_injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Function.Injective.of_sigma_map ?_ n
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective (Sigma.map (fun a => Bool) (@groupMatrix G κ pp m))
+Try this:
+  [apply] refine Set.image_injective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective (Set.image (groupMatrix pp))
+Try this:
+  [apply] refine Set.preimage_surjective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Surjective (Set.preimage (groupMatrix pp))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Set.injective_codRestrict ?_).mp fun ⦃a₁⦄ => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.injective_iff_injOn_univ.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.InjOn (groupMatrix pp) Set.univ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Set.InjOn.injective_iff ?_ (fun ⦃x₁⦄ => ?_) ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Set.injOn_univ.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Set.InjOn (groupMatrix pp) Set.univ
+Try this:
+  [apply] refine Function.injective_iff_pairwise_ne.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Pairwise (Function.onFun (fun x1 x2 => x1 ≠ x2) (groupMatrix pp))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine injective_of_increasing ?_ ?_ (groupMatrix pp) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Fintype.nodup_map_univ_iff_injective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (Multiset.map (groupMatrix pp) Finset.univ.val).Nodup
+Try this:
+  [apply] refine Function.Surjective.injective_of_fintype ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ Matrix (Fin m) (Fin n) pp.group.G ≃ List Bool
+  -- ⊢ Function.Surjective (groupMatrix pp)
+Try this:
+  [apply] refine (Finite.injective_iff_surjective_of_equiv ?_).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Matrix (Fin m) (Fin n) pp.group.G ≃ List Bool
+  -- ⊢ Function.Surjective (groupMatrix pp)
+Try this:
+  [apply] refine PLift.map_injective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective (PLift.map (groupMatrix pp))
+Try this:
+  [apply] refine ULift.map_injective.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Function.Injective (ULift.map (groupMatrix pp))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Set.injective_iff_injective_of_iUnion_eq_univ ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Setoid.injective_iff_ker_bot (groupMatrix pp)).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Setoid.ker (groupMatrix pp) = ⊥
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine iSupIndep.injective (fun i => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Topology.IsEmbedding.injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsHomeomorph.injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Topology.IsInducing.injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsDenseEmbedding.injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsUniformEmbedding.injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine IsUniformInducing.injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AntilipschitzWith.injective fun x => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Isometry.injective fun x1 => ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine LinearIndependent.injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine AffineIndependent.injective ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Polynomial.Separable.injective_of_prod_X_sub_C ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Polynomial.separable_prod_X_sub_C_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Field (List Bool)
+  -- ⊢ (∏ i, (Polynomial.X - Polynomial.C (groupMatrix pp i))).Separable
+.lake/io-phfe-probes/WireGroupMatrixInjectiveApply.lean:13:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/WireGroupMatrixInjectiveApply.lean:16:12: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+.lake/io-phfe-probes/WireGroupMatrixInjectiveApply.lean:16:2: warning: 'all_goals sorry' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`

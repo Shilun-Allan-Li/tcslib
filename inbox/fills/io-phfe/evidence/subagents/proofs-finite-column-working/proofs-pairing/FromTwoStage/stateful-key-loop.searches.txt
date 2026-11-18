@@ -1,0 +1,48 @@
+Read-only search evidence; no proof or native tool run this invocation.
+
+1. Full names (no source matches): simulate_saKeys_state,
+   simulate_saKeys_stateful, stateT_mapM_lift, mapM_lift_stateT,
+   run_mapM_lift in TCSlib, Mathlib and actual Lean4.25 Init.
+
+2. Conclusion searches:
+   mapM.*(lift|monadLift|hom|morphism|StateT), StateT.*mapM,
+   mapM_hom, mapM.*natTrans, mapM.*monad in core Init/Data/List/Monadic,
+   Mathlib/Control, Mathlib/Data/List and TCSlib/Games.
+   No direct list-mapM/state-lift transport lemma found.
+   Other IterM/Option mapM laws concern different traversals/types.
+
+3. Important public-state-reader discovery and correction:
+   Init/Control/Lawful/Instances.lean, namespace StateT:
+   :296 run'_eq; :299 run_pure; :301 run_bind;
+   :305 run_map; :317 run_lift; :320 run_bind_lift;
+   :323 run_monadLift. Exact signatures read at288-325.
+   Earlier notes searching only State.lean were incomplete; do not repeat
+   their claim that StateT.run_bind/pure are absent.
+
+4. Existing general simulation result:
+   Games/Simulate.lean:334 simulate_eq_of_abs relates TWO existing
+   implementations for the SAME OracleComp, using a law for all oracle
+   indices. Its bounded variant is357. Neither identifies the particular
+   committed builder with StateT.mapM; applying it would require another
+   implementation construction and another script-to-list theorem. The new
+   target uses only an already supplied implementation and its key-call law.
+
+5. Existing traversal generic result:
+   Mathlib/Control/Traversable/Instances.lean List.naturality:82;
+   LawfulTraversable.naturality and Traversable.naturality':86 in Lemmas.
+   Those are about List.traverse. Searched all Mathlib for traverse.*mapM,
+   mapM.*traverse, mapA.*traverse, traverse.*mapA and found no List bridge;
+   only Option has an unrelated direct bridge. Therefore no unverified
+   applicability claim or generic proof duplicate is introduced.
+
+6. Core List.mapM laws already available:
+   Init/Data/List/Monadic.lean:64 mapM_nil, :66 mapM_cons,
+   :80 mapM_map, :84 mapM_append. Public host laws are OracleComp.pure_bind,
+   bind_assoc, bind_eq_bind, pure_eq_pure and map_eq_bind.
+   New generic protocol uses the same native-searched prefix/drop/payload
+   invariant as RealKeyLoopProbeHeader, but keeps abstract state and its
+   one-call law as parameters and returns the final represented state.
+
+Required next step: root isolated statement typing, exact? and apply? on
+BOTH targets before any new proof. No helper proof supplied here; only term
+admitted headers and proposed specialization choices.

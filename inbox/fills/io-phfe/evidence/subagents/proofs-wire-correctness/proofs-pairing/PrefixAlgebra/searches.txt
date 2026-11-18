@@ -1,0 +1,125 @@
+READ-ONLY PREFIX-ALGEBRA HELPER SEARCHES
+New helper statements only; exact?/apply? pending with the lead.
+No new helper proof, Lean/lake/Git, or live edit was performed.
+
+$ rg -n 'prefixIncoming_sum|prefixFlow_balance|prefix.*[Ii]ncoming|prefix.*[Ff]low|sum.*Fin.init|Fin.init.*sum|sum.*castSucc.*snoc|sum.*snoc.*castSucc|weightedCons_sum|sum_cons_mul_prod|weighted.*suffix|suffix.*weighted' TCSlib .lake/packages/mathlib/Mathlib /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean
+exit=0
+TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Decomposition.lean:84:    apply Finset.sum_bij (fun x _ => (Fin.init x, x (Fin.last n)))
+TCSlib/Complexity/TuringMachine/Build/Convention.lean:58:  increment's carry through a `true` prefix and its overflow criterion (CH34-D4).
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean:321:/-- A backward value sums all suffix paths, weighted by terminal coefficients and
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:170:    Finset.sum_neg_distrib, Fin.init_def]
+
+$ rg -n 'prod_fiberwise|prod_preimage|prod_subtype|prod_image' .lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Preimage.lean .lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean
+exit=0
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Preimage.lean:24:lemma prod_preimage' (f : ι → κ) [DecidablePred (· ∈ Set.range f)] (s : Finset κ) (hf) (g : κ → β) :
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Preimage.lean:29:      Eq.symm <| prod_image <| by simpa [mem_preimage, Set.InjOn] using hf
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Preimage.lean:33:lemma prod_preimage (f : ι → κ) (s : Finset κ) (hf) (g : κ → β)
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Preimage.lean:36:  classical rw [prod_preimage', prod_filter_of_ne]; exact fun x hx ↦ Not.imp_symm (hg x hx)
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Preimage.lean:39:lemma prod_preimage_of_bij (f : ι → κ) (s : Finset κ) (hf : Set.BijOn f (f ⁻¹' ↑s) ↑s) (g : κ → β) :
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Preimage.lean:41:  prod_preimage _ _ hf.injOn g fun _ hs h_f ↦ (h_f <| hf.subset_range hs).elim
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:95:theorem prod_image [DecidableEq ι] {s : Finset κ} {g : κ → ι} :
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:101:  classical rw [← prod_image Subtype.coe_injective.injOn, attach_image_val]
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:170:For a version expressed with subtypes, see `Fintype.prod_subtype_mul_prod_subtype`. -/
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:240:lemma prod_fiberwise_eq_prod_filter (s : Finset ι) (t : Finset κ) (g : ι → κ) (f : ι → M) :
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:248:lemma prod_fiberwise_eq_prod_filter' (s : Finset ι) (t : Finset κ) (g : ι → κ) (f : κ → M) :
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:253:    _ = _ := prod_fiberwise_eq_prod_filter _ _ _ _
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:256:lemma prod_fiberwise_of_maps_to {g : ι → κ} (h : ∀ i ∈ s, g i ∈ t) (f : ι → M) :
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:264:lemma prod_fiberwise_of_maps_to' {g : ι → κ} (h : ∀ i ∈ s, g i ∈ t) (f : κ → M) :
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:269:    _ = _ := prod_fiberwise_of_maps_to h _
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:274:lemma prod_fiberwise (s : Finset ι) (g : ι → κ) (f : ι → M) :
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:276:  prod_fiberwise_of_maps_to (fun _ _ ↦ mem_univ _) _
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:279:lemma prod_fiberwise' (s : Finset ι) (g : ι → κ) (f : κ → M) :
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:281:  prod_fiberwise_of_maps_to' (fun _ _ ↦ mem_univ _) _
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:291:theorem prod_image' [DecidableEq ι] {s : Finset κ} {g : κ → ι} (h : κ → M)
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:299:    _ = ∏ i ∈ s, h i := prod_fiberwise_of_maps_to (fun _ => mem_image_of_mem g) _
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:420:theorem prod_subtype_eq_prod_filter (f : ι → M) {p : ι → Prop} [DecidablePred p] :
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:429:theorem prod_subtype_of_mem (f : ι → M) {p : ι → Prop} [DecidablePred p] (h : ∀ x ∈ s, p x) :
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:431:  rw [prod_subtype_eq_prod_filter, filter_true_of_mem]
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:440:theorem prod_subtype_map_embedding {p : ι → Prop} {s : Finset { x // p x }} {f : { x // p x } → M}
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:458:theorem prod_subtype {p : ι → Prop} {F : Fintype (Subtype p)} (s : Finset ι) (h : ∀ x, x ∈ s ↔ p x)
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:467:  (Finset.prod_subtype s.toFinset (fun _ ↦ Set.mem_toFinset) f).symm
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:477:  rw [← prod_subset s.toFinset.subset_univ (by simpa), prod_subtype (p := (· ∈ s)) _ (by simp)]
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:692:`f b` to the power of the cardinality of the fibre of `b`. See also `Finset.prod_image`. -/
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:698:  simp_rw [← prod_const, prod_fiberwise_of_maps_to' fun _ ↦ mem_image_of_mem _]
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:704:  refine (Finset.prod_image' f fun x _hx => ?_).symm
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:802:/-- A version of `Finset.prod_map` and `Finset.prod_image`, but we do not assume that `f` is
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:804:The conclusion is the same as in `prod_image`. -/
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:809:lemma prod_image_of_pairwise_eq_one [DecidableEq ι] {f : κ → ι} {g : ι → M} {I : Finset κ}
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:812:  rw [prod_image']
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:815:/-- A version of `Finset.prod_map` and `Finset.prod_image`, but we do not assume that `f` is
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:817:conclusion is the same as in `prod_image`. -/
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:822:lemma prod_image_of_disjoint [DecidableEq ι] [PartialOrder ι] [OrderBot ι] {f : κ → ι} {g : ι → M}
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:825:  refine prod_image_of_pairwise_eq_one <| hf_disj.imp fun i j hdisj hfij ↦ ?_
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:986:lemma prod_fiberwise [DecidableEq κ] (g : ι → κ) (f : ι → M) :
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:988:  rw [← Finset.prod_fiberwise _ g f]
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:990:  exact (prod_subtype _ (by simp) _).symm
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:993:lemma prod_fiberwise' [DecidableEq κ] (g : ι → κ) (f : κ → M) :
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:995:  rw [← Finset.prod_fiberwise' _ g f]
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:997:  exact (prod_subtype _ (by simp) fun _ ↦ _).symm
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:1011:theorem prod_subtype_mul_prod_subtype (p : ι → Prop) (f : ι → M) [DecidablePred p] :
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:1015:    rw [← Finset.prod_subtype s, ← Finset.prod_subtype sᶜ]
+
+$ rg -n 'theorem prod_sigma|theorem prod_sigma'"'"'|Fintype.sum_prod_type' .lake/packages/mathlib/Mathlib/Data/Fintype/BigOperators.lean
+exit=0
+144:theorem prod_sigma {ι} {α : ι → Type*} {M : Type*} [Fintype ι] [∀ i, Fintype (α i)] [CommMonoid M]
+152:theorem prod_sigma' {ι} {α : ι → Type*} {M : Type*} [Fintype ι] [∀ i, Fintype (α i)] [CommMonoid M]
+251:@[to_additive Fintype.sum_prod_type /-- The sum over a product type equals the sum of fiberwise
+252:sums. For rewriting in the reverse direction, use `Fintype.sum_prod_type'`. -/]
+259:@[to_additive Fintype.sum_prod_type' /-- The sum over a product type equals the sum of fiberwise
+260:sums. For rewriting in the reverse direction, use `Fintype.sum_prod_type`. -/]
+265:@[to_additive Fintype.sum_prod_type_right]
+271:@[to_additive Fintype.sum_prod_type_right'
+
+$ rg -n 'consEquiv|snocEquiv|append_left_snoc|append_right_cons|append_cast_left|append_cast_right' .lake/packages/mathlib/Mathlib/Data/Fin/Tuple/Basic.lean
+exit=0
+169:def consEquiv (α : Fin (n + 1) → Type*) : α 0 × (∀ i, α (succ i)) ≃ ∀ i, α i where
+363:@[simp] lemma append_cast_left {n m} (xs : Fin n → α) (ys : Fin m → α) (n' : ℕ)
+368:@[simp] lemma append_cast_right {n m} (xs : Fin n → α) (ys : Fin m → α) (m' : ℕ)
+653:theorem append_left_snoc {n m} {α : Sort*} (xs : Fin n → α) (x : α) (ys : Fin m → α) :
+656:  rw [snoc_eq_append, append_assoc, append_left_eq_cons, append_cast_right]; rfl
+658:theorem append_right_cons {n m} {α : Sort*} (xs : Fin n → α) (y : α) (ys : Fin m → α) :
+661:  rw [append_left_snoc]; rfl
+701:def snocEquiv (α : Fin (n + 1) → Type*) : α (last n) × (∀ i, α (castSucc i)) ≃ ∀ i, α i where
+1030:@[simp] lemma insertNthEquiv_zero (α : Fin (n + 1) → Type*) : insertNthEquiv α 0 = consEquiv α :=
+1036:    insertNthEquiv (fun _ ↦ α) (last n) = snocEquiv (fun _ ↦ α) := by ext; simp
+
+$ rg -n 'prod_univ_succ|prod_univ_castSucc|prod_univ_zero' .lake/packages/mathlib/Mathlib/Algebra/BigOperators/Fin.lean
+exit=0
+17:The most important results are the induction formulas `Fin.prod_univ_castSucc`
+18:and `Fin.prod_univ_succ`, and the formula `Fin.prod_const` for the product of a
+57:theorem prod_univ_zero (f : Fin 0 → M) : ∏ i, f i = 1 :=
+64:theorem prod_univ_succAbove (f : Fin (n + 1) → M) (x : Fin (n + 1)) :
+72:theorem prod_univ_succ (f : Fin (n + 1) → M) :
+74:  prod_univ_succAbove f 0
+80:theorem prod_univ_castSucc (f : Fin (n + 1) → M) :
+82:  simpa [mul_comm] using prod_univ_succAbove f (last n)
+96:  simp_rw [prod_univ_succ, cons_zero, cons_succ]
+101:  simp [prod_univ_castSucc]
+108:  simp [prod_univ_succ]
+116:  rw [prod_univ_castSucc, prod_univ_two]
+121:  rw [prod_univ_castSucc, prod_univ_three]
+126:  rw [prod_univ_castSucc, prod_univ_four]
+131:  rw [prod_univ_castSucc, prod_univ_five]
+136:  rw [prod_univ_castSucc, prod_univ_six]
+142:  rw [prod_univ_castSucc, prod_univ_seven]
+426:    rw [Fin.prod_univ_castSucc, Fin.prod_univ_succ]
+602:      rw [Fin.prod_univ_castSucc, Fin.sum_univ_castSucc]
+639:          Fin.prod_univ_succ, Fin.castLE_zero, Fin.cons_zero, ← Nat.div_div_eq_div_mul,
+642:        exact ih (a / x) (Nat.div_lt_of_lt_mul <| a.is_lt.trans_eq (Fin.prod_univ_succ _)))
+740:    rw [Fin.prod_univ_succ]; simp
+746:        { rw [Fin.prod_univ_succ, Fin.prod_univ_succ, mul_assoc]
+
+$ rg -n '_root_.Equiv.prod_comp|_root_.Function.Bijective.prod_comp' .lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Defs.lean
+exit=0
+708:lemma _root_.Function.Bijective.prod_comp {e : ι → κ} (he : e.Bijective) (g : κ → M) :
+712:lemma _root_.Equiv.prod_comp (e : ι ≃ κ) (g : κ → M) : ∏ i, g (e i) = ∏ i, g i :=
+
+$ rg -n 'theorem mk.inj_iff|sigma_mk_injective' .lake/packages/mathlib/Mathlib/Data/Sigma/Basic.lean
+exit=0
+53:theorem mk.inj_iff {a₁ a₂ : α} {b₁ : β a₁} {b₂ : β a₂} :
+92:theorem _root_.sigma_mk_injective {i : α} : Injective (@Sigma.mk α β i)
+106:  ⟨fun h _ ↦ ⟨fun _ _ ↦ sigma_mk_injective <| h rfl⟩, @fst_injective _ _⟩
+120:    obtain rfl : x = y := h₂ i (sigma_mk_injective h)
+125:  sigma_mk_injective <| @h ⟨a, x⟩ ⟨a, y⟩ (Sigma.ext rfl (heq_of_eq hxy))
+230:theorem mk.inj_iff {a₁ a₂ : α} {b₁ : β a₁} {b₂ : β a₂} :
+

@@ -1,0 +1,59 @@
+file=TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean
+source_sha256=43f50dea9f223c7aeb0d8caf6c8be34f20002f83ecbb4bac44e1d00d596a38e9
+working_source_development_check=True
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean:440:2: error: expected '{' or indented tactic sequence
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean:439:48: error: unsolved goals
+G : BilinearGen
+ℓ zDim : PolyExpr
+κ : ℕ
+pp : PublicParams G κ
+K : Type := ZMod pp.group.order
+Tail : Type :=
+  Matrix (Fin 3) (Fin (zDim.eval κ)) K ×
+    Matrix (Fin 3) (Fin (ℓ.eval κ) × Fin 2) K × Matrix (Fin 3) (Fin 2) K × (Fin (zDim.eval κ) → K) × (Fin 2 → K)
+row : (Fin 2 → K) × K ≃ (Fin 3 → K) := (Equiv.prodComm (Fin 2 → K) K).trans (Fin.snocEquiv fun x => K)
+ac : Matrix (Fin 3) (Fin 2) K × (Fin 3 → K) ≃ Matrix (Fin 3) (Fin 3) K :=
+  (Equiv.arrowProdEquivProdArrow (Fin 3) (fun x => Fin 2 → K) fun x => K).symm.trans
+    ((Equiv.piCongrRight fun x => row).trans (Equiv.piComm fun x x_1 => K))
+e : SimSetupDraw G ℓ zDim κ pp ≃ Matrix (Fin 3) (Fin 3) K × Tail :=
+  (Equiv.prodAssoc (Matrix (Fin 3) (Fin 2) K) (Fin 3 → K) Tail).symm.trans (ac.prodCongr (Equiv.refl Tail))
+⊢ ∀ (ω : SimSetupDraw G ℓ zDim κ pp), (e ω).1 = basisMatrix G κ pp ω.1 ω.2.1
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean:418:81: error: unsolved goals
+G : BilinearGen
+ℓ zDim : PolyExpr
+κ : ℕ
+pp : PublicParams G κ
+K : Type := ZMod pp.group.order
+Tail : Type :=
+  Matrix (Fin 3) (Fin (zDim.eval κ)) K ×
+    Matrix (Fin 3) (Fin (ℓ.eval κ) × Fin 2) K × Matrix (Fin 3) (Fin 2) K × (Fin (zDim.eval κ) → K) × (Fin 2 → K)
+row : (Fin 2 → K) × K ≃ (Fin 3 → K) := (Equiv.prodComm (Fin 2 → K) K).trans (Fin.snocEquiv fun x => K)
+ac : Matrix (Fin 3) (Fin 2) K × (Fin 3 → K) ≃ Matrix (Fin 3) (Fin 3) K :=
+  (Equiv.arrowProdEquivProdArrow (Fin 3) (fun x => Fin 2 → K) fun x => K).symm.trans
+    ((Equiv.piCongrRight fun x => row).trans (Equiv.piComm fun x x_1 => K))
+e : SimSetupDraw G ℓ zDim κ pp ≃ Matrix (Fin 3) (Fin 3) K × Tail :=
+  (Equiv.prodAssoc (Matrix (Fin 3) (Fin 2) K) (Fin 3 → K) Tail).symm.trans (ac.prodCongr (Equiv.refl Tail))
+hBasis : ∀ (ω : SimSetupDraw G ℓ zDim κ pp), (e ω).1 = basisMatrix G κ pp ω.1 ω.2.1
+⊢ ((ProbComp.sample (SimSetupDraw G ℓ zDim κ pp)).prob fun ω => IsUnit (basisMatrix G κ pp ω.1 ω.2.1).det) =
+    1 - rankSlack pp
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator): no fresh .olean produced
+        3.36 real         2.34 user         0.99 sys
+          2342289408  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              179375  page reclaims
+                5199  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 626  voluntary context switches
+                9482  involuntary context switches
+            32343244  instructions retired
+            16104322  cycles elapsed
+             1622352  peak memory footprint

@@ -1,0 +1,27 @@
+Static searches performed; no native compiler/library-search execution:
+
+Searched full proposed name and probability/uprob invertibility/isUnit matrix shapes in
+TCSlib and Mathlib LinearAlgebra/Probability. No complete probability theorem found.
+Searched units-subtype/equivalence/range APIs throughout Mathlib; nearest exact route
+is the existing Nat.card_range_of_injective with Units.val_injective, already used by
+current FiniteLinear smallRows. No need to invent a generic units-subtype equivalence.
+
+Exact read APIs:
+- Mathlib/LinearAlgebra/Matrix/GeneralLinearGroup/Card.lean:82 Matrix.card_GL_field.
+  Nat.card (GL (Fin n) K) = product i : Fin n of q^n-q^(i:Nat).
+- Mathlib/LinearAlgebra/Matrix/GeneralLinearGroup/Defs.lean:39 GeneralLinearGroup
+  abbreviation is (Matrix n n R).units.
+- Mathlib/Algebra/Group/Units/Defs.lean:108 Units.val_injective.
+- Mathlib/SetTheory/Cardinal/Finite.lean:174 Nat.card_range_of_injective.
+- TCSlib/Cryptography/Foundations/Probability.lean:64 uprob_def.
+- TCSlib/Cryptography/Games/Bridges/Experiments.lean:66 prob_sample_eq_uprob.
+- Mathlib/LinearAlgebra/Matrix/NonsingularInverse.lean:118
+  Matrix.isUnit_iff_isUnit_det for the simulator consumer.
+- Existing FiniteLinear.lean:156-175 square branch unit/cardinality bridge;
+  this local bridge should be removed after the new shared helper is proved.
+- LinearSimulator.lean:398 simSetup_fullRank_prob; it currently imports the GL
+  count directly and has no import path to FiniteLinear.
+- Existing Fintype.card_fun/card_fin + pow_mul provide ambient q^(n*n) count.
+
+No theorem proof or generic cardinality helper has been written in this task.
+Native exact?/apply? target is the accompanying exact theorem fragment.

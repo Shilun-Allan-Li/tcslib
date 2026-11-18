@@ -1,0 +1,183 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Widths
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.WireDraws
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.WireLemmas
+import TCSlib.Cryptography.Asymptotic.Adversary
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Fixed-width PHFE encodings
+
+Public and master-secret keys use their exact word widths. Ciphertexts concatenate their
+source-group entries without framing overhead. Function keys are padded to the garbling's
+uniform polynomial bound and retain the original function word; it determines the actual
+coordinate lengths before padding. All data, including simulator state, are represented
+without extracting an exponent from a group element.
+
+## Main definitions
+
+* `Wee20.PHFE.encMPK`, `encMSK`, `encSK`, `encCT`: fixed-width data encodings.
+* `Wee20.PHFE.keyWord`: a function word and its typed quadratic key.
+
+## Main results
+
+Exact public/secret/ciphertext word lengths, a bounded function-key length, and injectivity
+of every data and simulator-state encoding.
+
+## References
+
+* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
+  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Sections 3.1-3.2 and 4.2.
+* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
+  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
+  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
+  revision of 3 January 2025, Definitions 4.1-4.2 and 4.6.
+
+These encoding lemmas are technical representation glue for the cited algorithms.
+-/
+
+namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE
+
+open Complexity Turing TCSlib.Cryptography.Pairing
+
+/-- The public key has its exact polynomial wire width.
+
+**Proof sketch.** Read the group-vector, matrix and public-key word equations. Use
+`length_pairEncode` and `List.length_ofFn` for each matrix row, then evaluate `mpkLen`.
+No padding is included in this count. -/
+theorem quadraticMPK_length (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ)
+    (pp : PublicParams G κ) (pk : Quadratic.MPK G ℓ n n κ pp) :
+    (Wire.quadraticMPK pp pk).length = (mpkLen G ℓ n).eval κ := sorry
+
+/-- The master secret has its exact polynomial wire width.
+
+**Proof sketch.** Count the public matrix entries and the three scalar matrix blocks using
+shared modular encoding length readers. Expand only the published wire equations and the
+numeric width reader; collect polynomial terms. -/
+theorem quadraticMSK_length (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ)
+    (pp : PublicParams G κ) (sk : Quadratic.MSK G ℓ n n κ pp) :
+    (Wire.quadraticMSK pp sk).length = (mskLen G ℓ n).eval κ := sorry
+
+/-- The ciphertext has exactly `6n+5` source-group entries.
+
+**Proof sketch.** Count the two outer vectors and the three linear ciphertext blocks;
+use concatenation lengths and the polynomial evaluation reader. -/
+theorem quadraticCT_length (G : BilinearGen) (n : PolyExpr) (κ : ℕ)
+    (pp : PublicParams G κ) (ct : Quadratic.CT G n n κ pp) :
+    (Wire.quadraticCT pp ct).length = (ctLen G n).eval κ := by
+  simp only [Wire.quadraticCT_eq, Wire.linearCT_eq, List.length_append,
+    Wire.groupVector_length, ctLen_eval, Quadratic.piDim_eq, PolyExpr.eval_add,
+    PolyExpr.eval_mul, PolyExpr.eval_const]
+  ring
+
+/-- A function key's word retains the original function bits before the typed key. -/
+def keyWord (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
+    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
+    (pp : PublicParams G κ) (sk : Key G PG κ pp) : List Bool :=
+  pairEncode (List.ofFn sk.function) (Wire.quadraticKey pp PG sk.quadratic)
+
+/-- The function-key word is exactly the original function and its quadratic-key word. -/
+theorem keyWord_eq (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
+    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
+    (pp : PublicParams G κ) (sk : Key G PG κ pp) :
+    keyWord G PG κ pp sk =
+      pairEncode (List.ofFn sk.function) (Wire.quadraticKey pp PG sk.quadratic) := rfl
+
+/-- Every function-key word fits the garbling's uniform fixed width.
+
+**Proof sketch.** Count the original function bits and group entries in each key block.
+Apply `mCount_le_mBound` to its actual function, then the explicit `skLen_eval` reader. -/
+theorem keyWord_length_le (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
+    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
+    (pp : PublicParams G κ) (sk : Key G PG κ pp) :
+    (keyWord G PG κ pp sk).length ≤ (skLen G PG).eval κ := sorry
+
+/-- Public-key encoding reads the exact word at its fixed polynomial width. -/
+def encMPK (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
+    (pk : Quadratic.MPK G ℓ n n κ pp) : Fin ((mpkLen G ℓ n).eval κ) → Bool :=
+  padFin ((mpkLen G ℓ n).eval κ) (Wire.quadraticMPK pp pk)
+
+/-- The public-key encoder is the shared exact-width word adapter. -/
+theorem encMPK_eq (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ)
+    (pp : PublicParams G κ) (pk : Quadratic.MPK G ℓ n n κ pp) :
+    encMPK G ℓ n κ pp pk = padFin ((mpkLen G ℓ n).eval κ) (Wire.quadraticMPK pp pk) := rfl
+
+/-- Master-secret encoding uses the exact word at its fixed polynomial width. -/
+def encMSK (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
+    (sk : Quadratic.MSK G ℓ n n κ pp) : Fin ((mskLen G ℓ n).eval κ) → Bool :=
+  padFin ((mskLen G ℓ n).eval κ) (Wire.quadraticMSK pp sk)
+
+/-- The master-secret encoder is the shared exact-width word adapter. -/
+theorem encMSK_eq (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ)
+    (pp : PublicParams G κ) (sk : Quadratic.MSK G ℓ n n κ pp) :
+    encMSK G ℓ n κ pp sk = padFin ((mskLen G ℓ n).eval κ) (Wire.quadraticMSK pp sk) := rfl
+
+/-- Function-key encoding pads the bounded word to its fixed polynomial width. -/
+def encSK (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
+    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
+    (pp : PublicParams G κ) (sk : Key G PG κ pp) : Fin ((skLen G PG).eval κ) → Bool :=
+  padFin ((skLen G PG).eval κ) (keyWord G PG κ pp sk)
+
+/-- The function-key encoder is the shared padding adapter at its uniform width. -/
+theorem encSK_eq (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
+    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
+    (pp : PublicParams G κ) (sk : Key G PG κ pp) :
+    encSK G PG κ pp sk = padFin ((skLen G PG).eval κ) (keyWord G PG κ pp sk) := rfl
+
+/-- Ciphertext encoding reads the concatenated group word at its exact width. -/
+def encCT (G : BilinearGen) (n : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
+    (ct : Quadratic.CT G n n κ pp) : Fin ((ctLen G n).eval κ) → Bool :=
+  padFin ((ctLen G n).eval κ) (Wire.quadraticCT pp ct)
+
+/-- The ciphertext encoder is the shared exact-width word adapter. -/
+theorem encCT_eq (G : BilinearGen) (n : PolyExpr) (κ : ℕ)
+    (pp : PublicParams G κ) (ct : Quadratic.CT G n n κ pp) :
+    encCT G n κ pp ct = padFin ((ctLen G n).eval κ) (Wire.quadraticCT pp ct) := rfl
+
+/-- Public-key encoding is injective on all typed public keys.
+
+**Proof sketch.** Use exact width to recover the complete word from equal encodings.
+Separate its pair blocks, then each fixed-width matrix entry. Apply encG_injective. -/
+theorem encMPK_injective (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ)
+    (pp : PublicParams G κ) : Function.Injective (encMPK G ℓ n κ pp) := sorry
+
+/-- Master-secret encoding is injective on all typed master secrets.
+
+**Proof sketch.** Recover the exact word and its pair blocks. Use encG_injective for public
+matrix metadata and the shared modular-matrix injectivity under the group's order-width
+bound for all scalar blocks. -/
+theorem encMSK_injective (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ)
+    (pp : PublicParams G κ) : Function.Injective (encMSK G ℓ n κ pp) := sorry
+
+/-- Function-key encoding is injective, including across different original function words.
+
+**Proof sketch.** Equal padded words first have equal fixed-length original function blocks.
+That fixes their coordinate dimensions, hence their unpadded lengths. Recover the complete
+key words and use pair and element-encoding injectivity in each block. -/
+theorem encSK_injective (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
+    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
+    (pp : PublicParams G κ) : Function.Injective (encSK G PG κ pp) := sorry
+
+/-- Ciphertext encoding is injective on all typed ciphertexts.
+
+**Proof sketch.** Recover the exact word. Split the fixed-width vector blocks and read their
+individual group encodings; encG_injective and record extensionality finish. -/
+theorem encCT_injective (G : BilinearGen) (n : PolyExpr) (κ : ℕ)
+    (pp : PublicParams G κ) : Function.Injective (encCT G n κ pp) := sorry
+
+/-- The complete private simulator-state word is injective on all typed states.
+
+**Proof sketch.** Separate the fixed number of nested blocks. Read the public group matrix
+and all scalar matrices/vectors with their public encoding injectivity theorems. The scalar
+modulus fits the source-group width by the existing order-width theorem. -/
+theorem quadraticSimState_injective (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ)
+    (pp : PublicParams G κ) :
+    Function.Injective (Wire.quadraticSimState pp (ℓ := ℓ) (n1 := n) (n2 := n)) := sorry
+
+end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE

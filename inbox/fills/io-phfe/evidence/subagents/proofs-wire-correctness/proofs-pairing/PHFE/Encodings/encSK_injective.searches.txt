@@ -1,0 +1,14 @@
+Static source/name/shape reads (no native commands):
+- Frozen PHFE.Encodings.encSK_injective, encSK_eq, keyWord_eq/keyWord_length_le.
+- Asymptotic/CollectionsLemmas.lean:95 ofFn_padFin_eq_take.
+- Pseudorandom/Functions/Asymptotic/GGM/Reduction.lean:150
+  GGMRed.pairEncode_append_right, root-identified mandatory reuse.
+- Core List/Nat/TakeDrop.lean:117 take_replicate; :129 take_append;
+  List/TakeDrop.lean:64 take_of_length_le; BasicAux.lean:250 append_cancel_right.
+- Turing pairEncode_injective; Core/Mathlib List.ofFn_injective.
+- Wire.quadraticKey_eq/linearKey_eq and live Wire.groupMatrix_length/injective.
+- PartialGarbling.Raw.mCoord and generic Equiv.symm_apply_apply.
+- Root's now-native-PASS encMPK proof's explicit tuple/tail-alias pattern, with
+  no copy of generic matrix counting or injectivity proof.
+
+Only this existing theorem body is drafted; no new helper proof or parser.

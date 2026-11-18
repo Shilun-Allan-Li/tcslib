@@ -1,0 +1,33 @@
+Read-only Layered.translation reuse searches
+Existing M0 theorem; no new helper, no Lean/lake/Git/live edit.
+backward_action native check is pending according to the lead.
+
+$ rg -n 'pgbCore.*pgbStarCore|theorem translation|sub_vecMul.*backward' TCSlib/Cryptography .lake/packages/mathlib/Mathlib/Data/Matrix
+exit=0
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean:480:theorem translation (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Defs.lean:38:* `PartialGarbling.pgbCore`, `pgbStarCore`: the canonical matrix formulas.
+
+$ rg -n 'theorem pgbCore_inl|theorem pgbCore_inr|theorem pgbStarCore_inl|theorem pgbStarCore_inr' TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Defs.lean
+exit=0
+139:theorem pgbCore_inl
+147:theorem pgbCore_inr
+178:theorem pgbStarCore_inl
+187:theorem pgbStarCore_inr
+
+$ rg -n 'theorem matrix_eq|theorem shift_inr|theorem backward_action' TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean
+exit=0
+242:theorem matrix_eq (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ)) :
+351:theorem shift_inr (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
+441:theorem backward_action (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
+
+$ rg -n 'theorem sub_vecMul|theorem vecMul_sub' .lake/packages/mathlib/Mathlib/Data/Matrix/Mul.lean
+exit=0
+1010:theorem vecMul_sub [Fintype m] (A B : Matrix m n α) (x : m → α) :
+1013:theorem sub_vecMul [Fintype m] (A : Matrix m n α) (x y : m → α) :
+1018:theorem sub_vecMulVec (w₁ w₂ : m → α) (v : n → α) :
+
+$ rg -n 'theorem inv_div |theorem div_mul_cancel' .lake/packages/mathlib/Mathlib/Algebra/Group/Basic.lean
+exit=0
+386:theorem inv_div : (a / b)⁻¹ = b / a := by simp
+936:theorem div_mul_cancel_left (a b : G) : a / (a * b) = b⁻¹ := by rw [← inv_div, mul_div_cancel_left]
+

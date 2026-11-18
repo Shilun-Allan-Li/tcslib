@@ -1,0 +1,2797 @@
+H type: |((ProbComp.sample (Fin 2 → ZMod pp.group.order)).expect fun ab =>
+        (ProbComp.sample (Fin 3 → ZMod pp.group.order)).expect (H pp ab)) -
+      (ProbComp.sample (Fin 2 → ZMod pp.group.order)).expect fun ab =>
+        (ProbComp.sample (Fin 2 → ZMod pp.group.order)).expect fun rs =>
+          (ProbComp.sample (ZMod pp.group.order)).expect fun t => H pp ab ![ab 0 * rs 0, ab 1 * rs 1, t]| ≤
+  2 / ↑(Fintype.card (ZMod pp.group.order)) - 1 / ↑(Fintype.card (ZMod pp.group.order)) ^ 2
+Target: |P pp - Q pp| ≤ loss pp
+RAW_H: Lean.Expr.mvar (Lean.Name.mkNum `_uniq 23822)
+RAW_P: some (Lean.Expr.lam
+  `pp
+  (Lean.Expr.app
+    (Lean.Expr.app
+      (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams [])
+      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+  (Lean.Expr.app
+    (Lean.Expr.app
+      (Lean.Expr.app
+        (Lean.Expr.const `TCSlib.Cryptography.Games.ProbComp.expect [])
+        (Lean.Expr.forallE
+          (Lean.Name.mkNum `a._@._internal._hyg 0)
+          (Lean.Expr.app
+            (Lean.Expr.const `Fin [])
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                (Lean.Expr.lit (Lean.Literal.natVal 2)))
+              (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+          (Lean.Expr.app
+            (Lean.Expr.const `ZMod [])
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                      (Lean.Expr.app
+                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                    (Lean.Expr.app
+                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                (Lean.Expr.bvar 1))))
+          (Lean.BinderInfo.default)))
+      (Lean.Expr.app
+        (Lean.Expr.app
+          (Lean.Expr.app
+            (Lean.Expr.const `TCSlib.Cryptography.Games.ProbComp.sample [])
+            (Lean.Expr.forallE
+              (Lean.Name.mkNum `a._@._internal._hyg 0)
+              (Lean.Expr.app
+                (Lean.Expr.const `Fin [])
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                    (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                  (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+              (Lean.Expr.app
+                (Lean.Expr.const `ZMod [])
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                    (Lean.Expr.bvar 1))))
+              (Lean.BinderInfo.default)))
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.const `Pi.instFintype [Lean.Level.zero, Lean.Level.zero])
+                    (Lean.Expr.app
+                      (Lean.Expr.const `Fin [])
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                          (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                        (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2))))))
+                  (Lean.Expr.lam
+                    (Lean.Name.mkNum `a._@._internal._hyg 0)
+                    (Lean.Expr.app
+                      (Lean.Expr.const `Fin [])
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                          (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                        (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+                    (Lean.Expr.app
+                      (Lean.Expr.const `ZMod [])
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                              (Lean.Expr.app
+                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                          (Lean.Expr.bvar 1))))
+                    (Lean.BinderInfo.default)))
+                (Lean.Expr.app
+                  (Lean.Expr.const `instDecidableEqFin [])
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                      (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                    (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2))))))
+              (Lean.Expr.app
+                (Lean.Expr.const `Fin.fintype [])
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                    (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                  (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2))))))
+            (Lean.Expr.lam
+              `a
+              (Lean.Expr.app
+                (Lean.Expr.const `Fin [])
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                    (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                  (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.const `ZMod.fintype [])
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                            (Lean.Expr.app
+                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                      (Lean.Expr.bvar 1))))
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.neZeroOrder [])
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                    (Lean.Expr.bvar 1))))
+              (Lean.BinderInfo.default))))
+        (Lean.Expr.app
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.const `Pi.instNonempty [Lean.Level.succ (Lean.Level.zero), Lean.Level.succ (Lean.Level.zero)])
+              (Lean.Expr.app
+                (Lean.Expr.const `Fin [])
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                    (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                  (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2))))))
+            (Lean.Expr.lam
+              (Lean.Name.mkNum `a._@._internal._hyg 0)
+              (Lean.Expr.app
+                (Lean.Expr.const `Fin [])
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                    (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                  (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+              (Lean.Expr.app
+                (Lean.Expr.const `ZMod [])
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                    (Lean.Expr.bvar 1))))
+              (Lean.BinderInfo.default)))
+          (Lean.Expr.lam
+            `a
+            (Lean.Expr.app
+              (Lean.Expr.const `Fin [])
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                  (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.const `instNonemptyOfInhabited [Lean.Level.succ (Lean.Level.zero)])
+                (Lean.Expr.app
+                  (Lean.Expr.const `ZMod [])
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                            (Lean.Expr.app
+                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                      (Lean.Expr.bvar 1)))))
+              (Lean.Expr.app
+                (Lean.Expr.const `ZMod.inhabited [])
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                    (Lean.Expr.bvar 1)))))
+            (Lean.BinderInfo.default)))))
+    (Lean.Expr.lam
+      `ab
+      (Lean.Expr.forallE
+        (Lean.Name.mkNum `a._@._internal._hyg 0)
+        (Lean.Expr.app
+          (Lean.Expr.const `Fin [])
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+              (Lean.Expr.lit (Lean.Literal.natVal 2)))
+            (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+        (Lean.Expr.app
+          (Lean.Expr.const `ZMod [])
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                    (Lean.Expr.app
+                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                  (Lean.Expr.app
+                    (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+              (Lean.Expr.bvar 1))))
+        (Lean.BinderInfo.default))
+      (Lean.Expr.app
+        (Lean.Expr.app
+          (Lean.Expr.app
+            (Lean.Expr.const `TCSlib.Cryptography.Games.ProbComp.expect [])
+            (Lean.Expr.forallE
+              (Lean.Name.mkNum `a._@._internal._hyg 0)
+              (Lean.Expr.app
+                (Lean.Expr.const `Fin [])
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                    (Lean.Expr.lit (Lean.Literal.natVal 3)))
+                  (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 3)))))
+              (Lean.Expr.app
+                (Lean.Expr.const `ZMod [])
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                    (Lean.Expr.bvar 2))))
+              (Lean.BinderInfo.default)))
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.const `TCSlib.Cryptography.Games.ProbComp.sample [])
+                (Lean.Expr.forallE
+                  (Lean.Name.mkNum `a._@._internal._hyg 0)
+                  (Lean.Expr.app
+                    (Lean.Expr.const `Fin [])
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                        (Lean.Expr.lit (Lean.Literal.natVal 3)))
+                      (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 3)))))
+                  (Lean.Expr.app
+                    (Lean.Expr.const `ZMod [])
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                              (Lean.Expr.app
+                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                            (Lean.Expr.app
+                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                        (Lean.Expr.bvar 2))))
+                  (Lean.BinderInfo.default)))
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `Pi.instFintype [Lean.Level.zero, Lean.Level.zero])
+                        (Lean.Expr.app
+                          (Lean.Expr.const `Fin [])
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                              (Lean.Expr.lit (Lean.Literal.natVal 3)))
+                            (Lean.Expr.app
+                              (Lean.Expr.const `instOfNatNat [])
+                              (Lean.Expr.lit (Lean.Literal.natVal 3))))))
+                      (Lean.Expr.lam
+                        (Lean.Name.mkNum `a._@._internal._hyg 0)
+                        (Lean.Expr.app
+                          (Lean.Expr.const `Fin [])
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                              (Lean.Expr.lit (Lean.Literal.natVal 3)))
+                            (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 3)))))
+                        (Lean.Expr.app
+                          (Lean.Expr.const `ZMod [])
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                (Lean.Expr.app
+                                  (Lean.Expr.app
+                                    (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                              (Lean.Expr.app
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                  (Lean.Expr.app
+                                    (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                              (Lean.Expr.bvar 2))))
+                        (Lean.BinderInfo.default)))
+                    (Lean.Expr.app
+                      (Lean.Expr.const `instDecidableEqFin [])
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                          (Lean.Expr.lit (Lean.Literal.natVal 3)))
+                        (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 3))))))
+                  (Lean.Expr.app
+                    (Lean.Expr.const `Fin.fintype [])
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                        (Lean.Expr.lit (Lean.Literal.natVal 3)))
+                      (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 3))))))
+                (Lean.Expr.lam
+                  `a
+                  (Lean.Expr.app
+                    (Lean.Expr.const `Fin [])
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                        (Lean.Expr.lit (Lean.Literal.natVal 3)))
+                      (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 3)))))
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.const `ZMod.fintype [])
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                              (Lean.Expr.app
+                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                          (Lean.Expr.bvar 2))))
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.neZeroOrder [])
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                              (Lean.Expr.app
+                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                            (Lean.Expr.app
+                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                        (Lean.Expr.bvar 2))))
+                  (Lean.BinderInfo.default))))
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.const
+                    `Pi.instNonempty
+                    [Lean.Level.succ (Lean.Level.zero), Lean.Level.succ (Lean.Level.zero)])
+                  (Lean.Expr.app
+                    (Lean.Expr.const `Fin [])
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                        (Lean.Expr.lit (Lean.Literal.natVal 3)))
+                      (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 3))))))
+                (Lean.Expr.lam
+                  (Lean.Name.mkNum `a._@._internal._hyg 0)
+                  (Lean.Expr.app
+                    (Lean.Expr.const `Fin [])
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                        (Lean.Expr.lit (Lean.Literal.natVal 3)))
+                      (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 3)))))
+                  (Lean.Expr.app
+                    (Lean.Expr.const `ZMod [])
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                              (Lean.Expr.app
+                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                            (Lean.Expr.app
+                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                        (Lean.Expr.bvar 2))))
+                  (Lean.BinderInfo.default)))
+              (Lean.Expr.lam
+                `a
+                (Lean.Expr.app
+                  (Lean.Expr.const `Fin [])
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                      (Lean.Expr.lit (Lean.Literal.natVal 3)))
+                    (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 3)))))
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.const `instNonemptyOfInhabited [Lean.Level.succ (Lean.Level.zero)])
+                    (Lean.Expr.app
+                      (Lean.Expr.const `ZMod [])
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                              (Lean.Expr.app
+                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                          (Lean.Expr.bvar 2)))))
+                  (Lean.Expr.app
+                    (Lean.Expr.const `ZMod.inhabited [])
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                              (Lean.Expr.app
+                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                            (Lean.Expr.app
+                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                        (Lean.Expr.bvar 2)))))
+                (Lean.BinderInfo.default)))))
+        (Lean.Expr.app
+          (Lean.Expr.app (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 19689)) (Lean.Expr.bvar 1))
+          (Lean.Expr.bvar 0)))
+      (Lean.BinderInfo.default)))
+  (Lean.BinderInfo.default))
+RAW_Q: some (Lean.Expr.lam
+  `pp
+  (Lean.Expr.app
+    (Lean.Expr.app
+      (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams [])
+      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+  (Lean.Expr.app
+    (Lean.Expr.app
+      (Lean.Expr.app
+        (Lean.Expr.const `TCSlib.Cryptography.Games.ProbComp.expect [])
+        (Lean.Expr.forallE
+          (Lean.Name.mkNum `a._@._internal._hyg 0)
+          (Lean.Expr.app
+            (Lean.Expr.const `Fin [])
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                (Lean.Expr.lit (Lean.Literal.natVal 2)))
+              (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+          (Lean.Expr.app
+            (Lean.Expr.const `ZMod [])
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                      (Lean.Expr.app
+                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                    (Lean.Expr.app
+                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                (Lean.Expr.bvar 1))))
+          (Lean.BinderInfo.default)))
+      (Lean.Expr.app
+        (Lean.Expr.app
+          (Lean.Expr.app
+            (Lean.Expr.const `TCSlib.Cryptography.Games.ProbComp.sample [])
+            (Lean.Expr.forallE
+              (Lean.Name.mkNum `a._@._internal._hyg 0)
+              (Lean.Expr.app
+                (Lean.Expr.const `Fin [])
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                    (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                  (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+              (Lean.Expr.app
+                (Lean.Expr.const `ZMod [])
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                    (Lean.Expr.bvar 1))))
+              (Lean.BinderInfo.default)))
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.const `Pi.instFintype [Lean.Level.zero, Lean.Level.zero])
+                    (Lean.Expr.app
+                      (Lean.Expr.const `Fin [])
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                          (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                        (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2))))))
+                  (Lean.Expr.lam
+                    (Lean.Name.mkNum `a._@._internal._hyg 0)
+                    (Lean.Expr.app
+                      (Lean.Expr.const `Fin [])
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                          (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                        (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+                    (Lean.Expr.app
+                      (Lean.Expr.const `ZMod [])
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                              (Lean.Expr.app
+                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                          (Lean.Expr.bvar 1))))
+                    (Lean.BinderInfo.default)))
+                (Lean.Expr.app
+                  (Lean.Expr.const `instDecidableEqFin [])
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                      (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                    (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2))))))
+              (Lean.Expr.app
+                (Lean.Expr.const `Fin.fintype [])
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                    (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                  (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2))))))
+            (Lean.Expr.lam
+              `a
+              (Lean.Expr.app
+                (Lean.Expr.const `Fin [])
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                    (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                  (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.const `ZMod.fintype [])
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                            (Lean.Expr.app
+                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                      (Lean.Expr.bvar 1))))
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.neZeroOrder [])
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                    (Lean.Expr.bvar 1))))
+              (Lean.BinderInfo.default))))
+        (Lean.Expr.app
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.const `Pi.instNonempty [Lean.Level.succ (Lean.Level.zero), Lean.Level.succ (Lean.Level.zero)])
+              (Lean.Expr.app
+                (Lean.Expr.const `Fin [])
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                    (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                  (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2))))))
+            (Lean.Expr.lam
+              (Lean.Name.mkNum `a._@._internal._hyg 0)
+              (Lean.Expr.app
+                (Lean.Expr.const `Fin [])
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                    (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                  (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+              (Lean.Expr.app
+                (Lean.Expr.const `ZMod [])
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                    (Lean.Expr.bvar 1))))
+              (Lean.BinderInfo.default)))
+          (Lean.Expr.lam
+            `a
+            (Lean.Expr.app
+              (Lean.Expr.const `Fin [])
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                  (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.const `instNonemptyOfInhabited [Lean.Level.succ (Lean.Level.zero)])
+                (Lean.Expr.app
+                  (Lean.Expr.const `ZMod [])
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                            (Lean.Expr.app
+                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                      (Lean.Expr.bvar 1)))))
+              (Lean.Expr.app
+                (Lean.Expr.const `ZMod.inhabited [])
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                    (Lean.Expr.bvar 1)))))
+            (Lean.BinderInfo.default)))))
+    (Lean.Expr.lam
+      `ab
+      (Lean.Expr.forallE
+        (Lean.Name.mkNum `a._@._internal._hyg 0)
+        (Lean.Expr.app
+          (Lean.Expr.const `Fin [])
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+              (Lean.Expr.lit (Lean.Literal.natVal 2)))
+            (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+        (Lean.Expr.app
+          (Lean.Expr.const `ZMod [])
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                    (Lean.Expr.app
+                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                  (Lean.Expr.app
+                    (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+              (Lean.Expr.bvar 1))))
+        (Lean.BinderInfo.default))
+      (Lean.Expr.app
+        (Lean.Expr.app
+          (Lean.Expr.app
+            (Lean.Expr.const `TCSlib.Cryptography.Games.ProbComp.expect [])
+            (Lean.Expr.forallE
+              (Lean.Name.mkNum `a._@._internal._hyg 0)
+              (Lean.Expr.app
+                (Lean.Expr.const `Fin [])
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                    (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                  (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+              (Lean.Expr.app
+                (Lean.Expr.const `ZMod [])
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                    (Lean.Expr.bvar 2))))
+              (Lean.BinderInfo.default)))
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.const `TCSlib.Cryptography.Games.ProbComp.sample [])
+                (Lean.Expr.forallE
+                  (Lean.Name.mkNum `a._@._internal._hyg 0)
+                  (Lean.Expr.app
+                    (Lean.Expr.const `Fin [])
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                        (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                      (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+                  (Lean.Expr.app
+                    (Lean.Expr.const `ZMod [])
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                              (Lean.Expr.app
+                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                            (Lean.Expr.app
+                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                        (Lean.Expr.bvar 2))))
+                  (Lean.BinderInfo.default)))
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `Pi.instFintype [Lean.Level.zero, Lean.Level.zero])
+                        (Lean.Expr.app
+                          (Lean.Expr.const `Fin [])
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                              (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                            (Lean.Expr.app
+                              (Lean.Expr.const `instOfNatNat [])
+                              (Lean.Expr.lit (Lean.Literal.natVal 2))))))
+                      (Lean.Expr.lam
+                        (Lean.Name.mkNum `a._@._internal._hyg 0)
+                        (Lean.Expr.app
+                          (Lean.Expr.const `Fin [])
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                              (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                            (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+                        (Lean.Expr.app
+                          (Lean.Expr.const `ZMod [])
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                (Lean.Expr.app
+                                  (Lean.Expr.app
+                                    (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                              (Lean.Expr.app
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                  (Lean.Expr.app
+                                    (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                              (Lean.Expr.bvar 2))))
+                        (Lean.BinderInfo.default)))
+                    (Lean.Expr.app
+                      (Lean.Expr.const `instDecidableEqFin [])
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                          (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                        (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2))))))
+                  (Lean.Expr.app
+                    (Lean.Expr.const `Fin.fintype [])
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                        (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                      (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2))))))
+                (Lean.Expr.lam
+                  `a
+                  (Lean.Expr.app
+                    (Lean.Expr.const `Fin [])
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                        (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                      (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.const `ZMod.fintype [])
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                              (Lean.Expr.app
+                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                          (Lean.Expr.bvar 2))))
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.neZeroOrder [])
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                              (Lean.Expr.app
+                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                            (Lean.Expr.app
+                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                        (Lean.Expr.bvar 2))))
+                  (Lean.BinderInfo.default))))
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.const
+                    `Pi.instNonempty
+                    [Lean.Level.succ (Lean.Level.zero), Lean.Level.succ (Lean.Level.zero)])
+                  (Lean.Expr.app
+                    (Lean.Expr.const `Fin [])
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                        (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                      (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2))))))
+                (Lean.Expr.lam
+                  (Lean.Name.mkNum `a._@._internal._hyg 0)
+                  (Lean.Expr.app
+                    (Lean.Expr.const `Fin [])
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                        (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                      (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+                  (Lean.Expr.app
+                    (Lean.Expr.const `ZMod [])
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                              (Lean.Expr.app
+                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                            (Lean.Expr.app
+                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                        (Lean.Expr.bvar 2))))
+                  (Lean.BinderInfo.default)))
+              (Lean.Expr.lam
+                `a
+                (Lean.Expr.app
+                  (Lean.Expr.const `Fin [])
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                      (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                    (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.const `instNonemptyOfInhabited [Lean.Level.succ (Lean.Level.zero)])
+                    (Lean.Expr.app
+                      (Lean.Expr.const `ZMod [])
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                              (Lean.Expr.app
+                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                          (Lean.Expr.bvar 2)))))
+                  (Lean.Expr.app
+                    (Lean.Expr.const `ZMod.inhabited [])
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                              (Lean.Expr.app
+                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                            (Lean.Expr.app
+                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                        (Lean.Expr.bvar 2)))))
+                (Lean.BinderInfo.default)))))
+        (Lean.Expr.lam
+          `rs
+          (Lean.Expr.forallE
+            (Lean.Name.mkNum `a._@._internal._hyg 0)
+            (Lean.Expr.app
+              (Lean.Expr.const `Fin [])
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                  (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+            (Lean.Expr.app
+              (Lean.Expr.const `ZMod [])
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                      (Lean.Expr.app
+                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                  (Lean.Expr.bvar 2))))
+            (Lean.BinderInfo.default))
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.const `TCSlib.Cryptography.Games.ProbComp.expect [])
+                (Lean.Expr.app
+                  (Lean.Expr.const `ZMod [])
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                            (Lean.Expr.app
+                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                      (Lean.Expr.bvar 2)))))
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.const `TCSlib.Cryptography.Games.ProbComp.sample [])
+                    (Lean.Expr.app
+                      (Lean.Expr.const `ZMod [])
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                              (Lean.Expr.app
+                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                          (Lean.Expr.bvar 2)))))
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.const `ZMod.fintype [])
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                              (Lean.Expr.app
+                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                          (Lean.Expr.bvar 2))))
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.neZeroOrder [])
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                              (Lean.Expr.app
+                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                            (Lean.Expr.app
+                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                        (Lean.Expr.bvar 2)))))
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.const `instNonemptyOfInhabited [Lean.Level.succ (Lean.Level.zero)])
+                    (Lean.Expr.app
+                      (Lean.Expr.const `ZMod [])
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                              (Lean.Expr.app
+                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                          (Lean.Expr.bvar 2)))))
+                  (Lean.Expr.app
+                    (Lean.Expr.const `ZMod.inhabited [])
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                              (Lean.Expr.app
+                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                            (Lean.Expr.app
+                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                        (Lean.Expr.bvar 2)))))))
+            (Lean.Expr.lam
+              `t
+              (Lean.Expr.app
+                (Lean.Expr.const `ZMod [])
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                          (Lean.Expr.app
+                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                        (Lean.Expr.app
+                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                    (Lean.Expr.bvar 2))))
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.app (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 19689)) (Lean.Expr.bvar 3))
+                  (Lean.Expr.bvar 2))
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `Matrix.vecCons [Lean.Level.mvar (Lean.Name.mkNum `_uniq 20261)])
+                        (Lean.Expr.app
+                          (Lean.Expr.const `ZMod [])
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                (Lean.Expr.app
+                                  (Lean.Expr.app
+                                    (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                              (Lean.Expr.app
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                  (Lean.Expr.app
+                                    (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                              (Lean.Expr.bvar 3)))))
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                          (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                        (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.const
+                                  `HMul.hMul
+                                  [Lean.Level.mvar (Lean.Name.mkNum `_uniq 20270),
+                                   Lean.Level.mvar (Lean.Name.mkNum `_uniq 20269),
+                                   Lean.Level.mvar (Lean.Name.mkNum `_uniq 20268)])
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `ZMod [])
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                        (Lean.Expr.app
+                                          (Lean.Expr.app
+                                            (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                            (Lean.Expr.app
+                                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                      (Lean.Expr.app
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                          (Lean.Expr.app
+                                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                                      (Lean.Expr.bvar 3)))))
+                              (Lean.Expr.app
+                                (Lean.Expr.const `ZMod [])
+                                (Lean.Expr.app
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                      (Lean.Expr.app
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                          (Lean.Expr.app
+                                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                                    (Lean.Expr.bvar 3)))))
+                            (Lean.Expr.app
+                              (Lean.Expr.const `ZMod [])
+                              (Lean.Expr.app
+                                (Lean.Expr.app
+                                  (Lean.Expr.app
+                                    (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                (Lean.Expr.app
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                                  (Lean.Expr.bvar 3)))))
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `instHMul [Lean.Level.zero])
+                              (Lean.Expr.app
+                                (Lean.Expr.const `ZMod [])
+                                (Lean.Expr.app
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                      (Lean.Expr.app
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                          (Lean.Expr.app
+                                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                                    (Lean.Expr.bvar 3)))))
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.const `Distrib.toMul [Lean.Level.zero])
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `ZMod [])
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                        (Lean.Expr.app
+                                          (Lean.Expr.app
+                                            (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                            (Lean.Expr.app
+                                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                      (Lean.Expr.app
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                          (Lean.Expr.app
+                                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                                      (Lean.Expr.bvar 3)))))
+                              (Lean.Expr.app
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `NonUnitalNonAssocSemiring.toDistrib [Lean.Level.zero])
+                                  (Lean.Expr.app
+                                    (Lean.Expr.const `ZMod [])
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                          (Lean.Expr.app
+                                            (Lean.Expr.app
+                                              (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                              (Lean.Expr.app
+                                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                        (Lean.Expr.app
+                                          (Lean.Expr.app
+                                            (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                            (Lean.Expr.app
+                                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                      (Lean.Expr.app
+                                        (Lean.Expr.app
+                                          (Lean.Expr.app
+                                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                                        (Lean.Expr.bvar 3)))))
+                                (Lean.Expr.app
+                                  (Lean.Expr.app
+                                    (Lean.Expr.const
+                                      `NonUnitalNonAssocCommSemiring.toNonUnitalNonAssocSemiring
+                                      [Lean.Level.zero])
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const `ZMod [])
+                                      (Lean.Expr.app
+                                        (Lean.Expr.app
+                                          (Lean.Expr.app
+                                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                            (Lean.Expr.app
+                                              (Lean.Expr.app
+                                                (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                                (Lean.Expr.app
+                                                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                          (Lean.Expr.app
+                                            (Lean.Expr.app
+                                              (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                              (Lean.Expr.app
+                                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                        (Lean.Expr.app
+                                          (Lean.Expr.app
+                                            (Lean.Expr.app
+                                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                                          (Lean.Expr.bvar 3)))))
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const
+                                        `NonUnitalNonAssocCommRing.toNonUnitalNonAssocCommSemiring
+                                        [Lean.Level.zero])
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const `ZMod [])
+                                        (Lean.Expr.app
+                                          (Lean.Expr.app
+                                            (Lean.Expr.app
+                                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                              (Lean.Expr.app
+                                                (Lean.Expr.app
+                                                  (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                                  (Lean.Expr.app
+                                                    (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                            (Lean.Expr.app
+                                              (Lean.Expr.app
+                                                (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                                (Lean.Expr.app
+                                                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                          (Lean.Expr.app
+                                            (Lean.Expr.app
+                                              (Lean.Expr.app
+                                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                                            (Lean.Expr.bvar 3)))))
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const
+                                          `NonUnitalCommRing.toNonUnitalNonAssocCommRing
+                                          [Lean.Level.zero])
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const `ZMod [])
+                                          (Lean.Expr.app
+                                            (Lean.Expr.app
+                                              (Lean.Expr.app
+                                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                                (Lean.Expr.app
+                                                  (Lean.Expr.app
+                                                    (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                                    (Lean.Expr.app
+                                                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                              (Lean.Expr.app
+                                                (Lean.Expr.app
+                                                  (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                                  (Lean.Expr.app
+                                                    (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                            (Lean.Expr.app
+                                              (Lean.Expr.app
+                                                (Lean.Expr.app
+                                                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                                              (Lean.Expr.bvar 3)))))
+                                      (Lean.Expr.app
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const `CommRing.toNonUnitalCommRing [Lean.Level.zero])
+                                          (Lean.Expr.app
+                                            (Lean.Expr.const `ZMod [])
+                                            (Lean.Expr.app
+                                              (Lean.Expr.app
+                                                (Lean.Expr.app
+                                                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                                  (Lean.Expr.app
+                                                    (Lean.Expr.app
+                                                      (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                                      (Lean.Expr.app
+                                                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                                (Lean.Expr.app
+                                                  (Lean.Expr.app
+                                                    (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                                    (Lean.Expr.app
+                                                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                              (Lean.Expr.app
+                                                (Lean.Expr.app
+                                                  (Lean.Expr.app
+                                                    (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                                                (Lean.Expr.bvar 3)))))
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const `ZMod.commRing [])
+                                          (Lean.Expr.app
+                                            (Lean.Expr.app
+                                              (Lean.Expr.app
+                                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                                (Lean.Expr.app
+                                                  (Lean.Expr.app
+                                                    (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                                    (Lean.Expr.app
+                                                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                              (Lean.Expr.app
+                                                (Lean.Expr.app
+                                                  (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                                  (Lean.Expr.app
+                                                    (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                            (Lean.Expr.app
+                                              (Lean.Expr.app
+                                                (Lean.Expr.app
+                                                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                                              (Lean.Expr.bvar 3))))))))))))
+                        (Lean.Expr.app
+                          (Lean.Expr.bvar 2)
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero])
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `Fin [])
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero])
+                                        (Lean.Expr.const `Nat []))
+                                      (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const `instOfNatNat [])
+                                      (Lean.Expr.lit (Lean.Literal.natVal 2))))))
+                              (Lean.Expr.lit (Lean.Literal.natVal 0)))
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `Fin.instOfNat [])
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero])
+                                        (Lean.Expr.const `Nat []))
+                                      (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const `instOfNatNat [])
+                                      (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `Nat.instNeZeroSucc [])
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero])
+                                        (Lean.Expr.const `Nat []))
+                                      (Lean.Expr.lit (Lean.Literal.natVal 1)))
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const `instOfNatNat [])
+                                      (Lean.Expr.lit (Lean.Literal.natVal 1))))))
+                              (Lean.Expr.lit (Lean.Literal.natVal 0))))))
+                      (Lean.Expr.app
+                        (Lean.Expr.bvar 1)
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero])
+                              (Lean.Expr.app
+                                (Lean.Expr.const `Fin [])
+                                (Lean.Expr.app
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero])
+                                      (Lean.Expr.const `Nat []))
+                                    (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                                  (Lean.Expr.app
+                                    (Lean.Expr.const `instOfNatNat [])
+                                    (Lean.Expr.lit (Lean.Literal.natVal 2))))))
+                            (Lean.Expr.lit (Lean.Literal.natVal 0)))
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.const `Fin.instOfNat [])
+                                (Lean.Expr.app
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero])
+                                      (Lean.Expr.const `Nat []))
+                                    (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                                  (Lean.Expr.app
+                                    (Lean.Expr.const `instOfNatNat [])
+                                    (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+                              (Lean.Expr.app
+                                (Lean.Expr.const `Nat.instNeZeroSucc [])
+                                (Lean.Expr.app
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero])
+                                      (Lean.Expr.const `Nat []))
+                                    (Lean.Expr.lit (Lean.Literal.natVal 1)))
+                                  (Lean.Expr.app
+                                    (Lean.Expr.const `instOfNatNat [])
+                                    (Lean.Expr.lit (Lean.Literal.natVal 1))))))
+                            (Lean.Expr.lit (Lean.Literal.natVal 0)))))))
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.const `Matrix.vecCons [Lean.Level.mvar (Lean.Name.mkNum `_uniq 20430)])
+                          (Lean.Expr.app
+                            (Lean.Expr.const `ZMod [])
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                (Lean.Expr.app
+                                  (Lean.Expr.app
+                                    (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                              (Lean.Expr.app
+                                (Lean.Expr.app
+                                  (Lean.Expr.app
+                                    (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                                (Lean.Expr.bvar 3)))))
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                            (Lean.Expr.lit (Lean.Literal.natVal 1)))
+                          (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 1)))))
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.app
+                                  (Lean.Expr.const
+                                    `HMul.hMul
+                                    [Lean.Level.mvar (Lean.Name.mkNum `_uniq 20439),
+                                     Lean.Level.mvar (Lean.Name.mkNum `_uniq 20438),
+                                     Lean.Level.mvar (Lean.Name.mkNum `_uniq 20437)])
+                                  (Lean.Expr.app
+                                    (Lean.Expr.const `ZMod [])
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                          (Lean.Expr.app
+                                            (Lean.Expr.app
+                                              (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                              (Lean.Expr.app
+                                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                        (Lean.Expr.app
+                                          (Lean.Expr.app
+                                            (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                            (Lean.Expr.app
+                                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                      (Lean.Expr.app
+                                        (Lean.Expr.app
+                                          (Lean.Expr.app
+                                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                                        (Lean.Expr.bvar 3)))))
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `ZMod [])
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                        (Lean.Expr.app
+                                          (Lean.Expr.app
+                                            (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                            (Lean.Expr.app
+                                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                      (Lean.Expr.app
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                          (Lean.Expr.app
+                                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                                      (Lean.Expr.bvar 3)))))
+                              (Lean.Expr.app
+                                (Lean.Expr.const `ZMod [])
+                                (Lean.Expr.app
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                      (Lean.Expr.app
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                          (Lean.Expr.app
+                                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                                    (Lean.Expr.bvar 3)))))
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.const `instHMul [Lean.Level.zero])
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `ZMod [])
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                        (Lean.Expr.app
+                                          (Lean.Expr.app
+                                            (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                            (Lean.Expr.app
+                                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                      (Lean.Expr.app
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                          (Lean.Expr.app
+                                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                                      (Lean.Expr.bvar 3)))))
+                              (Lean.Expr.app
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `Distrib.toMul [Lean.Level.zero])
+                                  (Lean.Expr.app
+                                    (Lean.Expr.const `ZMod [])
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                          (Lean.Expr.app
+                                            (Lean.Expr.app
+                                              (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                              (Lean.Expr.app
+                                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                        (Lean.Expr.app
+                                          (Lean.Expr.app
+                                            (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                            (Lean.Expr.app
+                                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                      (Lean.Expr.app
+                                        (Lean.Expr.app
+                                          (Lean.Expr.app
+                                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                                        (Lean.Expr.bvar 3)))))
+                                (Lean.Expr.app
+                                  (Lean.Expr.app
+                                    (Lean.Expr.const `NonUnitalNonAssocSemiring.toDistrib [Lean.Level.zero])
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const `ZMod [])
+                                      (Lean.Expr.app
+                                        (Lean.Expr.app
+                                          (Lean.Expr.app
+                                            (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                            (Lean.Expr.app
+                                              (Lean.Expr.app
+                                                (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                                (Lean.Expr.app
+                                                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                          (Lean.Expr.app
+                                            (Lean.Expr.app
+                                              (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                              (Lean.Expr.app
+                                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                        (Lean.Expr.app
+                                          (Lean.Expr.app
+                                            (Lean.Expr.app
+                                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                            (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                                          (Lean.Expr.bvar 3)))))
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const
+                                        `NonUnitalNonAssocCommSemiring.toNonUnitalNonAssocSemiring
+                                        [Lean.Level.zero])
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const `ZMod [])
+                                        (Lean.Expr.app
+                                          (Lean.Expr.app
+                                            (Lean.Expr.app
+                                              (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                              (Lean.Expr.app
+                                                (Lean.Expr.app
+                                                  (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                                  (Lean.Expr.app
+                                                    (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                            (Lean.Expr.app
+                                              (Lean.Expr.app
+                                                (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                                (Lean.Expr.app
+                                                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                          (Lean.Expr.app
+                                            (Lean.Expr.app
+                                              (Lean.Expr.app
+                                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                              (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                                            (Lean.Expr.bvar 3)))))
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const
+                                          `NonUnitalNonAssocCommRing.toNonUnitalNonAssocCommSemiring
+                                          [Lean.Level.zero])
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const `ZMod [])
+                                          (Lean.Expr.app
+                                            (Lean.Expr.app
+                                              (Lean.Expr.app
+                                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                                (Lean.Expr.app
+                                                  (Lean.Expr.app
+                                                    (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                                    (Lean.Expr.app
+                                                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                              (Lean.Expr.app
+                                                (Lean.Expr.app
+                                                  (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                                  (Lean.Expr.app
+                                                    (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                            (Lean.Expr.app
+                                              (Lean.Expr.app
+                                                (Lean.Expr.app
+                                                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                                              (Lean.Expr.bvar 3)))))
+                                      (Lean.Expr.app
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const
+                                            `NonUnitalCommRing.toNonUnitalNonAssocCommRing
+                                            [Lean.Level.zero])
+                                          (Lean.Expr.app
+                                            (Lean.Expr.const `ZMod [])
+                                            (Lean.Expr.app
+                                              (Lean.Expr.app
+                                                (Lean.Expr.app
+                                                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                                  (Lean.Expr.app
+                                                    (Lean.Expr.app
+                                                      (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                                      (Lean.Expr.app
+                                                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                                (Lean.Expr.app
+                                                  (Lean.Expr.app
+                                                    (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                                    (Lean.Expr.app
+                                                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                              (Lean.Expr.app
+                                                (Lean.Expr.app
+                                                  (Lean.Expr.app
+                                                    (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                                                (Lean.Expr.bvar 3)))))
+                                        (Lean.Expr.app
+                                          (Lean.Expr.app
+                                            (Lean.Expr.const `CommRing.toNonUnitalCommRing [Lean.Level.zero])
+                                            (Lean.Expr.app
+                                              (Lean.Expr.const `ZMod [])
+                                              (Lean.Expr.app
+                                                (Lean.Expr.app
+                                                  (Lean.Expr.app
+                                                    (Lean.Expr.const
+                                                      `TCSlib.Cryptography.Pairing.BilinearGroup.order
+                                                      [])
+                                                    (Lean.Expr.app
+                                                      (Lean.Expr.app
+                                                        (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                                        (Lean.Expr.app
+                                                          (Lean.Expr.const
+                                                            `TCSlib.Cryptography.Pairing.BilinearGen.wG
+                                                            [])
+                                                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                                  (Lean.Expr.app
+                                                    (Lean.Expr.app
+                                                      (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                                      (Lean.Expr.app
+                                                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                                (Lean.Expr.app
+                                                  (Lean.Expr.app
+                                                    (Lean.Expr.app
+                                                      (Lean.Expr.const
+                                                        `TCSlib.Cryptography.Pairing.PublicParams.group
+                                                        [])
+                                                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                                                  (Lean.Expr.bvar 3)))))
+                                          (Lean.Expr.app
+                                            (Lean.Expr.const `ZMod.commRing [])
+                                            (Lean.Expr.app
+                                              (Lean.Expr.app
+                                                (Lean.Expr.app
+                                                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                                  (Lean.Expr.app
+                                                    (Lean.Expr.app
+                                                      (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                                      (Lean.Expr.app
+                                                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                                (Lean.Expr.app
+                                                  (Lean.Expr.app
+                                                    (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                                    (Lean.Expr.app
+                                                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                              (Lean.Expr.app
+                                                (Lean.Expr.app
+                                                  (Lean.Expr.app
+                                                    (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                                                (Lean.Expr.bvar 3))))))))))))
+                          (Lean.Expr.app
+                            (Lean.Expr.bvar 2)
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero])
+                                  (Lean.Expr.app
+                                    (Lean.Expr.const `Fin [])
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero])
+                                          (Lean.Expr.const `Nat []))
+                                        (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const `instOfNatNat [])
+                                        (Lean.Expr.lit (Lean.Literal.natVal 2))))))
+                                (Lean.Expr.lit (Lean.Literal.natVal 1)))
+                              (Lean.Expr.app
+                                (Lean.Expr.app
+                                  (Lean.Expr.app
+                                    (Lean.Expr.const `Fin.instOfNat [])
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero])
+                                          (Lean.Expr.const `Nat []))
+                                        (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const `instOfNatNat [])
+                                        (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+                                  (Lean.Expr.app
+                                    (Lean.Expr.const `Nat.instNeZeroSucc [])
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero])
+                                          (Lean.Expr.const `Nat []))
+                                        (Lean.Expr.lit (Lean.Literal.natVal 1)))
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const `instOfNatNat [])
+                                        (Lean.Expr.lit (Lean.Literal.natVal 1))))))
+                                (Lean.Expr.lit (Lean.Literal.natVal 1))))))
+                        (Lean.Expr.app
+                          (Lean.Expr.bvar 1)
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero])
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `Fin [])
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero])
+                                        (Lean.Expr.const `Nat []))
+                                      (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const `instOfNatNat [])
+                                      (Lean.Expr.lit (Lean.Literal.natVal 2))))))
+                              (Lean.Expr.lit (Lean.Literal.natVal 1)))
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `Fin.instOfNat [])
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero])
+                                        (Lean.Expr.const `Nat []))
+                                      (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const `instOfNatNat [])
+                                      (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `Nat.instNeZeroSucc [])
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero])
+                                        (Lean.Expr.const `Nat []))
+                                      (Lean.Expr.lit (Lean.Literal.natVal 1)))
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const `instOfNatNat [])
+                                      (Lean.Expr.lit (Lean.Literal.natVal 1))))))
+                              (Lean.Expr.lit (Lean.Literal.natVal 1)))))))
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.const `Matrix.vecCons [Lean.Level.mvar (Lean.Name.mkNum `_uniq 20531)])
+                            (Lean.Expr.app
+                              (Lean.Expr.const `ZMod [])
+                              (Lean.Expr.app
+                                (Lean.Expr.app
+                                  (Lean.Expr.app
+                                    (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                    (Lean.Expr.app
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                        (Lean.Expr.app
+                                          (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                          (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                      (Lean.Expr.app
+                                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                                (Lean.Expr.app
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                                  (Lean.Expr.bvar 3)))))
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                              (Lean.Expr.lit (Lean.Literal.natVal 0)))
+                            (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 0)))))
+                        (Lean.Expr.bvar 0))
+                      (Lean.Expr.app
+                        (Lean.Expr.const `Matrix.vecEmpty [Lean.Level.mvar (Lean.Name.mkNum `_uniq 20540)])
+                        (Lean.Expr.app
+                          (Lean.Expr.const `ZMod [])
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                                (Lean.Expr.app
+                                  (Lean.Expr.app
+                                    (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                              (Lean.Expr.app
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                                  (Lean.Expr.app
+                                    (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.app
+                                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                              (Lean.Expr.bvar 3)))))))))
+              (Lean.BinderInfo.default)))
+          (Lean.BinderInfo.default)))
+      (Lean.BinderInfo.default)))
+  (Lean.BinderInfo.default))
+RAW_LOSS: some (Lean.Expr.lam
+  `pp
+  (Lean.Expr.app
+    (Lean.Expr.app
+      (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams [])
+      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+  (Lean.Expr.app
+    (Lean.Expr.app
+      (Lean.Expr.app
+        (Lean.Expr.app
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.const
+                `HSub.hSub
+                [Lean.Level.mvar (Lean.Name.mkNum `_uniq 20579),
+                 Lean.Level.mvar (Lean.Name.mkNum `_uniq 20578),
+                 Lean.Level.mvar (Lean.Name.mkNum `_uniq 20577)])
+              (Lean.Expr.const `Real []))
+            (Lean.Expr.app (Lean.Expr.mvar (Lean.Name.mkNum `_uniq 20810)) (Lean.Expr.bvar 0)))
+          (Lean.Expr.const `Real []))
+        (Lean.Expr.app (Lean.Expr.mvar (Lean.Name.mkNum `_uniq 20811)) (Lean.Expr.bvar 0)))
+      (Lean.Expr.app
+        (Lean.Expr.app
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.const
+                    `HDiv.hDiv
+                    [Lean.Level.mvar (Lean.Name.mkNum `_uniq 20582),
+                     Lean.Level.mvar (Lean.Name.mkNum `_uniq 20581),
+                     Lean.Level.mvar (Lean.Name.mkNum `_uniq 20580)])
+                  (Lean.Expr.const `Real []))
+                (Lean.Expr.const `Real []))
+              (Lean.Expr.const `Real []))
+            (Lean.Expr.app
+              (Lean.Expr.app (Lean.Expr.const `instHDiv [Lean.Level.zero]) (Lean.Expr.const `Real []))
+              (Lean.Expr.app
+                (Lean.Expr.app (Lean.Expr.const `DivInvMonoid.toDiv [Lean.Level.zero]) (Lean.Expr.const `Real []))
+                (Lean.Expr.const `Real.instDivInvMonoid []))))
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.const `OfNat.ofNat [Lean.Level.mvar (Lean.Name.mkNum `_uniq 20585)])
+                (Lean.Expr.const `Real []))
+              (Lean.Expr.lit (Lean.Literal.natVal 2)))
+            (Lean.Expr.app (Lean.Expr.mvar (Lean.Name.mkNum `_uniq 20812)) (Lean.Expr.bvar 0))))
+        (Lean.Expr.app
+          (Lean.Expr.app
+            (Lean.Expr.app (Lean.Expr.const `Nat.cast [Lean.Level.zero]) (Lean.Expr.const `Real []))
+            (Lean.Expr.const `Real.instNatCast []))
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                    (Lean.Expr.app
+                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                  (Lean.Expr.app
+                    (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+              (Lean.Expr.bvar 0))))))
+    (Lean.Expr.app
+      (Lean.Expr.app
+        (Lean.Expr.app
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.const
+                  `HDiv.hDiv
+                  [Lean.Level.mvar (Lean.Name.mkNum `_uniq 20633),
+                   Lean.Level.mvar (Lean.Name.mkNum `_uniq 20632),
+                   Lean.Level.mvar (Lean.Name.mkNum `_uniq 20631)])
+                (Lean.Expr.const `Real []))
+              (Lean.Expr.app (Lean.Expr.mvar (Lean.Name.mkNum `_uniq 20813)) (Lean.Expr.bvar 0)))
+            (Lean.Expr.app (Lean.Expr.mvar (Lean.Name.mkNum `_uniq 20810)) (Lean.Expr.bvar 0)))
+          (Lean.Expr.app (Lean.Expr.mvar (Lean.Name.mkNum `_uniq 20814)) (Lean.Expr.bvar 0)))
+        (Lean.Expr.app
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.const `OfNat.ofNat [Lean.Level.mvar (Lean.Name.mkNum `_uniq 20636)])
+              (Lean.Expr.const `Real []))
+            (Lean.Expr.lit (Lean.Literal.natVal 1)))
+          (Lean.Expr.app (Lean.Expr.mvar (Lean.Name.mkNum `_uniq 20815)) (Lean.Expr.bvar 0))))
+      (Lean.Expr.app
+        (Lean.Expr.app
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.const
+                    `HPow.hPow
+                    [Lean.Level.mvar (Lean.Name.mkNum `_uniq 20651),
+                     Lean.Level.mvar (Lean.Name.mkNum `_uniq 20650),
+                     Lean.Level.mvar (Lean.Name.mkNum `_uniq 20649)])
+                  (Lean.Expr.const `Real []))
+                (Lean.Expr.app (Lean.Expr.mvar (Lean.Name.mkNum `_uniq 20816)) (Lean.Expr.bvar 0)))
+              (Lean.Expr.app (Lean.Expr.mvar (Lean.Name.mkNum `_uniq 20813)) (Lean.Expr.bvar 0)))
+            (Lean.Expr.app (Lean.Expr.mvar (Lean.Name.mkNum `_uniq 20817)) (Lean.Expr.bvar 0)))
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.app (Lean.Expr.const `Nat.cast [Lean.Level.zero]) (Lean.Expr.const `Real []))
+              (Lean.Expr.const `Real.instNatCast []))
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGroup.order [])
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                      (Lean.Expr.app
+                        (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wG [])
+                        (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.const `Complexity.PolyExpr.eval [])
+                    (Lean.Expr.app
+                      (Lean.Expr.const `TCSlib.Cryptography.Pairing.BilinearGen.wT [])
+                      (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489))))
+                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564))))
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.const `TCSlib.Cryptography.Pairing.PublicParams.group [])
+                    (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17489)))
+                  (Lean.Expr.fvar (Lean.Name.mkNum `_uniq 17564)))
+                (Lean.Expr.bvar 0)))))
+        (Lean.Expr.app
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.const `OfNat.ofNat [Lean.Level.mvar (Lean.Name.mkNum `_uniq 20662)])
+              (Lean.Expr.app (Lean.Expr.mvar (Lean.Name.mkNum `_uniq 20816)) (Lean.Expr.bvar 0)))
+            (Lean.Expr.lit (Lean.Literal.natVal 2)))
+          (Lean.Expr.app (Lean.Expr.mvar (Lean.Name.mkNum `_uniq 20818)) (Lean.Expr.bvar 0))))))
+  (Lean.BinderInfo.default))

@@ -1,0 +1,41 @@
+file=TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean
+source_sha256=db159616108892c8ecce2ddf9ce202c1ad7370915f9939c9ac6c4c7c0179cf11
+working_source_development_check=True
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean:262:34: error: Application type mismatch: The argument
+  hw
+has type
+  pairEncode (Wire.groupMatrix pp M₁)
+      (pairEncode (Encoding.Modular.encodeMatrix (G.wG.eval κ) W₁)
+        (pairEncode (Encoding.Modular.encodeMatrix (G.wG.eval κ) fun i j => U₁ i (finProdFinEquiv.symm j))
+          (Encoding.Modular.encodeMatrix (G.wG.eval κ) V₁))) =
+    pairEncode (Wire.groupMatrix pp M₂)
+      (pairEncode (Encoding.Modular.encodeMatrix (G.wG.eval κ) W₂)
+        (pairEncode (Encoding.Modular.encodeMatrix (G.wG.eval κ) fun i j => U₂ i (finProdFinEquiv.symm j))
+          (Encoding.Modular.encodeMatrix (G.wG.eval κ) V₂)))
+but is expected to have type
+  (fun p => pairEncode p.1 p.2) ?m.97 = (fun p => pairEncode p.1 p.2) ?m.98
+in the application
+  pairEncode_injective hw
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean:288:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean:322:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings): lean exited with status 1
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings): error diagnostics reported
+FAIL(TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings): no fresh .olean produced
+       18.64 real         8.03 user         2.09 sys
+          2375254016  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               77964  page reclaims
+              112170  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+               18259  voluntary context switches
+               94603  involuntary context switches
+            32992869  instructions retired
+            15701357  cycles elapsed
+             1622352  peak memory footprint

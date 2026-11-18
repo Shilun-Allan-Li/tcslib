@@ -1,0 +1,13 @@
+import TCSlib.Cryptography.Pairing.MatrixDH.FiniteLinear
+import Mathlib.Logic.Equiv.Fin.Basic
+import Lean.Elab.Tactic.LibrarySearch
+set_option maxHeartbeats 200000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+namespace TCSlib.Cryptography.Pairing
+open scoped Matrix
+example {K : Type} [Field K] (a b : K) (hab : a ≠ 0 ∨ b ≠ 0) :
+    Function.Surjective (Matrix.mulVec
+      ((![![a, 0], ![0, b], ![1, 1]] : Matrix (Fin 3) (Fin 2) K)ᵀ)) := by
+  exact?
+end TCSlib.Cryptography.Pairing

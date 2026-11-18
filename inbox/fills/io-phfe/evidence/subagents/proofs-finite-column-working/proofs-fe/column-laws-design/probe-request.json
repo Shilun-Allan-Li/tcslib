@@ -1,0 +1,28 @@
+{
+  "status": "design_only_not_natively_typed_or_searched",
+  "namespace": "TCSlib.Cryptography.Pairing",
+  "proposed_home": "TCSlib/Cryptography/Pairing/MatrixDH/ColumnLaws.lean",
+  "imports": [
+    "TCSlib.Cryptography.Pairing.MatrixDH.FiniteLinear",
+    "Mathlib.Logic.Equiv.Fin.Basic"
+  ],
+  "exclude_imports": [
+    "TCSlib.Cryptography.Pairing.Linear",
+    "TCSlib.Cryptography.Pairing.MatrixDH.Defs",
+    "TCSlib.Cryptography.Pairing.MatrixDH.SelfReduction",
+    "TCSlib.Cryptography.Games.Closeness"
+  ],
+  "targets": [
+    "dlin_real_column_gap_le",
+    "dlin_random_column_gap_le"
+  ],
+  "requested_probes": [
+    "typing",
+    "exact?",
+    "apply?"
+  ],
+  "new_proofs_supplied": 0,
+  "source_statement_changes": 0,
+  "extra_counting_helper_recommended": false,
+  "counting_reuse": "OneWay.uprob_pi_forall + singleton/complement + sample bridge"
+}

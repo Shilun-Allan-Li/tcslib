@@ -14,6 +14,7 @@ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadrat
 import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets
 import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Wire
 import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.WireDraws
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.WireLemmas
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -23,6 +24,8 @@ set_option autoImplicit false
 # Quadratic PHFE from symmetric DLIN
 
 ## Contents
+
+* `Wee20.WireLemmas`: length and faithfulness adapters to the existing group-matrix encoder.
 
 * `Linear`, `LinearCorrect`, `LinearSimulator`: the internal building block.
 * `LinearSecurity`: explicit adaptive games, fresh-law coupling and deterministic reductions.

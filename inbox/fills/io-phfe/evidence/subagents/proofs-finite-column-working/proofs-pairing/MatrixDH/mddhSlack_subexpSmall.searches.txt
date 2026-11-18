@@ -1,0 +1,18 @@
+Static searches for names/shapes (no native checks):
+
+- SelfReduction.lean:254 mddhSlack_eq; :299 exact existing frozen target.
+- CoinSampling/Asymptotic.lean:57 polyExpr_eval_le_mul_pow (published majorant).
+- CoinSampling/Asymptotic.lean:78 subexpSmall_polyExpr_mul hmu hc h pExpr.
+  It already uses PolyExpr.eval_le plus SubexpSmall.mul_pow/const_mul/mono.
+- CoinSampling/Asymptotic.lean:123 subexpSmall_drawSlack, nearest geometric-polynomial
+  slack theorem (but drawSlack itself is not used/redefined in this proof).
+- Foundations/Subexponential.lean:150 SubexpSmall.mono; :190 const_mul; :207 mul_pow;
+  :258 subexpSmall_two_pow_neg.
+- Complexity/Randomized/PolyExpr.lean:159 eval_le; existing eval_mul/eval_const readers.
+- Mathlib/Algebra/Order/GroupWithZero/Unbundled/Basic.lean:1229
+  div_le_div_of_nonneg_left; Group/Basic.lean:404 inv_pow; NatCast.lean zero_le_four.
+
+Current import graph lacks CoinSampling.Asymptotic; proposed precise import has no
+reverse dependency path to SelfReduction (static traversal, all TCSlib/Mathlib imports).
+No new helper is proposed, so a new-helper exact?/apply? probe is inapplicable.
+Root authorized this existing frozen theorem; candidate not native-validated.

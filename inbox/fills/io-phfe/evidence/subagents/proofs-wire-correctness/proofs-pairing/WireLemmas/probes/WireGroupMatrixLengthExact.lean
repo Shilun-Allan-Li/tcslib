@@ -1,0 +1,17 @@
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Wire
+import TCSlib.Cryptography.Pairing.MatrixDH.Defs
+import Lean.Elab.Tactic.LibrarySearch
+
+set_option maxHeartbeats 200000
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Wire
+
+open Complexity Turing TCSlib.Cryptography.Pairing
+
+example {G : BilinearGen} {κ : ℕ} (pp : PublicParams G κ) {m n : ℕ}
+    (A : Matrix (Fin m) (Fin n) pp.group.G) :
+    (groupMatrix pp A).length = m * n * G.wG.eval κ := exact?%
+
+end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Wire

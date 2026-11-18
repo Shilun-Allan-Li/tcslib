@@ -1,0 +1,15 @@
+Static exact APIs consumed (no new native execution):
+
+- Games/Bridges/Experiments.lean:66 Bridge.prob_sample_eq_uprob.
+- Foundations/Probability.lean:64 uprob_def.
+- Mathlib/SetTheory/Cardinal/Finite.lean:174 Nat.card_range_of_injective.
+- Mathlib/Algebra/Group/Units/Defs.lean:108 Units.val_injective.
+- Mathlib/LinearAlgebra/Matrix/GeneralLinearGroup/Defs.lean:39
+  GeneralLinearGroup abbreviates matrix units.
+- Mathlib/LinearAlgebra/Matrix/GeneralLinearGroup/Card.lean:82 Matrix.card_GL_field.
+- Existing Fintype.card_fun/card_fin, Nat.cast_pow, pow_mul.
+- Root-native corrected search evidence: matrix-unit-probability/run2; exact full
+  search did not close; apply partial search EXHAUSTED 800000 heartbeats.
+
+No unsupported claim of exhaustive apply?-search failure. Root authorized the proof
+with this explicit limit. Target/type text taken verbatim from the corrected exact probe.

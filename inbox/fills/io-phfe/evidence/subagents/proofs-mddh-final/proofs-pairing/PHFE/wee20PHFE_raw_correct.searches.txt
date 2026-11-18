@@ -1,0 +1,16 @@
+Static exact-name/conclusion readings; no native execution:
+
+- Defs/Correctness.lean:127 correct_iff; :112 honestRun_eq; :59/:71/:83
+  setup_eq/enc_eq/keyGen_eq.
+- Games/OracleComp.lean:111 map_eq_bind; :130 bind_assoc; :115 pure_bind;
+  :310 allOutputs_true; :324 AllOutputs.bind; :297 allOutputs_pure.
+- PHFE/Raw.lean raw G/cprm/setupCore/encCore/keyCore/dec projection readers.
+- Searched raw embed projection names/shape throughout PHFE: none published; root
+  confirmed absence. hEmbed is retained as the unique missing-reader hole.
+- PHFE/Core.lean setupCore_eq, encCore_eq, keyCore_eq, dec_eq.
+- PHFE/Data.lean embedValue_eq.
+- PHFE/Correctness.lean PHFE.class_eval_eq is root-native-PASS/proved.
+- Wee20/QuadraticCorrect.lean:208 quadratic_dec_eq and :256 scheme_raw_correct proved.
+
+No new helper proof or runtime construction. Existing frozen theorem draft authorized
+by root, with the one isolated embedding projection hole left explicit.

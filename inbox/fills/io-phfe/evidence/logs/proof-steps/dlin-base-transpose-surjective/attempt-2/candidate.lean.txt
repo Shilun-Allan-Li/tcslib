@@ -1,0 +1,125 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.Pairing.MatrixDH.FiniteLinear
+import Mathlib.Logic.Equiv.Fin.Basic
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Canonical DLIN column laws
+
+## Main definitions
+
+The tests observe a scalar base matrix and one scalar response column.
+
+## Main results
+
+* `dlin_base_transpose_mulVec_surjective`: the canonical base's nondegenerate geometry.
+* `dlin_real_column_gap_le`: the real-column comparison with loss `1/N²`.
+* `dlin_random_column_gap_le`: the random-column comparison with loss `1-(1-1/N)³`.
+
+## References
+
+* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
+  TCC 2020; full version, Cryptology ePrint Archive, Report 2020/1420, Section 2.1, p. 4.
+-/
+
+namespace TCSlib.Cryptography.Pairing
+
+open TCSlib.Cryptography.Games
+open scoped Matrix
+
+/-- If either canonical diagonal entry is nonzero, the transpose of the three-by-two
+canonical DLIN base maps three scalar coordinates onto two. This is fixed scalar-matrix
+geometry for the direct column route to [Wee20, §2.1, p. 4].
+
+**Proof sketch.** Apply the published right-inverse characterization of a surjective matrix
+column map. A nonzero first or second diagonal entry supplies the corresponding right
+inverse using division by that known nonzero scalar; matrix entry readers verify it. -/
+theorem dlin_base_transpose_mulVec_surjective {K : Type} [Field K]
+    (a b : K) (hab : a ≠ 0 ∨ b ≠ 0) :
+    Function.Surjective
+      (Matrix.mulVec ((![![a, 0], ![0, b], ![1, 1]] :
+        Matrix (Fin 3) (Fin 2) K)ᵀ)) := by
+  apply (Matrix.mulVec_surjective_iff_exists_right_inverse
+    (A := ((![![a, 0], ![0, b], ![1, 1]] : Matrix (Fin 3) (Fin 2) K)ᵀ))).2
+  rcases hab with ha | hb
+  · -- Use the first nonzero diagonal entry to construct a scalar right inverse.
+    refine ⟨(![![a⁻¹, -a⁻¹], ![0, 0], ![0, 1]] :
+      Matrix (Fin 3) (Fin 2) K), ?_⟩
+    ext i j
+    fin_cases i <;> fin_cases j <;>
+      simp only [Matrix.mul_apply, Fin.sum_univ_three, Matrix.transpose_apply,
+        Matrix.of_apply, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
+        Matrix.head_cons, Matrix.tail_cons, Matrix.one_apply, mul_zero, zero_mul,
+        one_mul, mul_one, mul_neg, mul_inv_cancel₀ ha, add_zero, zero_add,
+        neg_add_cancel] <;> norm_num <;>
+        simp only [mul_inv_cancel₀ ha, neg_add_cancel]
+  · -- The second nonzero diagonal entry gives the symmetric scalar right inverse.
+    refine ⟨(![![0, 0], ![-b⁻¹, b⁻¹], ![1, 0]] :
+      Matrix (Fin 3) (Fin 2) K), ?_⟩
+    ext i j
+    fin_cases i <;> fin_cases j <;>
+      simp only [Matrix.mul_apply, Fin.sum_univ_three, Matrix.transpose_apply,
+        Matrix.of_apply, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
+        Matrix.head_cons, Matrix.tail_cons, Matrix.one_apply, mul_zero, zero_mul,
+        one_mul, mul_one, mul_neg, mul_inv_cancel₀ hb, add_zero, zero_add,
+        neg_add_cancel] <;> norm_num <;>
+        simp only [mul_inv_cancel₀ hb, neg_add_cancel]
+
+/-- Left-randomized canonical real DLIN columns and uniform-base real columns have
+expectation gap at most `1/N²` for every `[0,1]`-valued test, where `N` is the finite field
+cardinality. This is scalar distribution glue for the column route to [Wee20, §2.1, p. 4];
+the explicit loss is the probability that both canonical diagonal scalars vanish.
+
+**Proof sketch.** The transpose of the canonical three-by-two base has a surjective
+column map unless both diagonal entries vanish. Apply the existing uniform matrix-image
+law through transposition, then matrix-vector associativity, on that good event. Bound
+the gap by one on its complement. The published independent-coordinate and singleton
+probability laws give exact exceptional mass `N⁻²`; average the pointwise gap. -/
+theorem dlin_real_column_gap_le {K : Type} [Field K] [Fintype K] (rows : ℕ)
+    (H : Matrix (Fin rows) (Fin 2) K → (Fin rows → K) → ℝ)
+    (hH0 : ∀ M v, 0 ≤ H M v) (hH1 : ∀ M v, H M v ≤ 1) :
+    let A : (Fin 2 → K) → Matrix (Fin 3) (Fin 2) K :=
+      fun ab => ![![ab 0, 0], ![0, ab 1], ![1, 1]]
+    |ProbComp.expect (ProbComp.sample (Fin 2 → K))
+        (fun ab => ProbComp.expect (ProbComp.sample (Fin 2 → K))
+          (fun rs => ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K))
+            (fun L => H (L * A ab) (L *ᵥ (A ab *ᵥ rs))))) -
+      ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 2) K))
+        (fun M => ProbComp.expect (ProbComp.sample (Fin 2 → K))
+          (fun rs => H M (M *ᵥ rs)))| ≤
+      1 / (Fintype.card K : ℝ) ^ 2 := sorry
+
+/-- Left-randomized canonical random DLIN columns and independent uniform base/response
+columns have expectation gap at most `1-(1-1/N)³` for every `[0,1]`-valued test. Here `N`
+is the finite field cardinality. This is scalar distribution glue for the direct canonical
+column route to [Wee20, §2.1, p. 4]; the loss includes zero diagonal scalars.
+
+**Proof sketch.** The augmented three-by-three matrix has determinant `ab(t-r-s)`.
+When its three factors are nonzero, use the existing uniform matrix-image law through
+transposition and split a uniform three-column output into its first two columns and last
+column by standard finite-function equivalences. Bound the gap by one otherwise. Translate
+the uniform scalar `t` by `-(r+s)` and apply the published independent-coordinate singleton
+and complement probability laws to obtain exact exceptional mass `1-(1-1/N)³`. -/
+theorem dlin_random_column_gap_le {K : Type} [Field K] [Fintype K] (rows : ℕ)
+    (H : Matrix (Fin rows) (Fin 2) K → (Fin rows → K) → ℝ)
+    (hH0 : ∀ M v, 0 ≤ H M v) (hH1 : ∀ M v, H M v ≤ 1) :
+    let A : (Fin 2 → K) → Matrix (Fin 3) (Fin 2) K :=
+      fun ab => ![![ab 0, 0], ![0, ab 1], ![1, 1]]
+    |ProbComp.expect (ProbComp.sample (Fin 2 → K))
+        (fun ab => ProbComp.expect (ProbComp.sample (Fin 2 → K))
+          (fun rs => ProbComp.expect (ProbComp.sample K)
+            (fun t => ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K))
+              (fun L => H (L * A ab)
+                (L *ᵥ ![ab 0 * rs 0, ab 1 * rs 1, t]))))) -
+      ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 2) K))
+        (fun M => ProbComp.expect (ProbComp.sample (Fin rows → K))
+          (fun v => H M v))| ≤
+      1 - (1 - 1 / (Fintype.card K : ℝ)) ^ 3 := sorry
+
+end TCSlib.Cryptography.Pairing

@@ -1,0 +1,23 @@
+Try this:
+  [apply] refine (subexpSmall_iff_eventually c fun κ => ↑(d.eval κ) * (4 / ↑(p κ))).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ᶠ (n : ℕ) in Filter.atTop, |↑(d.eval n) * (4 / ↑(p n))| ≤ 2 ^ (-↑n ^ c)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine SubexpSmall.mono_exponent ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (subexpSmall_iff c fun κ => ↑(d.eval κ) * (4 / ↑(p κ))).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ n₀, ∀ n ≥ n₀, |↑(d.eval n) * (4 / ↑(p n))| ≤ 2 ^ (-↑n ^ c)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine SubexpSmall.mono ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/MddhCorrectionSubexpApply.lean:14:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/MddhCorrectionSubexpApply.lean:18:12: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+.lake/io-phfe-probes/MddhCorrectionSubexpApply.lean:18:2: warning: 'all_goals sorry' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`

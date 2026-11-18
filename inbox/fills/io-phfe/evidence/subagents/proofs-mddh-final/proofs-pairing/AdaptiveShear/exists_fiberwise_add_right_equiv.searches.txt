@@ -1,0 +1,19 @@
+Static searches/readings for this one proof (no native commands):
+
+- Logic/Equiv/Basic.lean:195 Equiv.ofFiberEquiv, @[simps!] generating apply reader.
+- Logic/Equiv/Basic.lean:199 Equiv.ofFiberEquiv_map.
+- Logic/Equiv/Basic.lean:266 Equiv.subtypeEquiv, @[simps apply] generating apply reader.
+- Logic/Equiv/Basic.lean:285 Equiv.subtypeEquiv_symm (not needed).
+- Logic/Equiv/Prod.lean:249 Equiv.prodCongrRight, :256 prodCongrRight_apply.
+- Logic/Equiv/Sum.lean:231 Equiv.sigmaFiberEquiv, existing lower-level assembly.
+- Algebra/Group/Units/Equiv.lean:116-124 multiplicative APIs generating additive
+  Equiv.addRight, coe_addRight and addRight_symm.
+- Logic/Equiv/Defs.lean:295 Equiv.symm_apply_eq.
+
+Searched by names/shapes across Logic/Equiv and full Mathlib: no full adaptive fiber
+translation result was found. Existing map_add/map_sub/cancellation laws cover the
+small predicate/inverse equations; no new algebra or finite-reindex theorem is needed.
+
+Root's native exact?/apply? probe reports supersede static search alone and authorize
+this exact target. Scope root used: cached GroupTheory.Coset.Basic, Logic.Equiv.Prod,
+Logic.Equiv.Sum, core LibrarySearch. No new import requirement is claimed.

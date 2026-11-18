@@ -1,0 +1,31 @@
+Native authorization: evidence/search/mddh-finite-linear/run2. Corrected import
+path; no complete exact?/apply? proof or typing errors. Run1 invalid import
+failure is excluded. No native check run by this agent.
+
+Exact existing APIs read and reused:
+- Matrix/NonsingularInverse.lean:340 mulVec_surjective_iff_isUnit.
+- Matrix/GeneralLinearGroup/Card.lean:82 card_GL_field; its finite-field
+  parameter name is 𝔽 and n is explicit. GeneralLinearGroup is existing Units.
+- Data/Matrix/Mul.lean:782 mulVec_single; coefficient appears via the canonical
+  opposite scalar action; :791 mulVec_single_one (not needed).
+- Algebra/GroupWithZero/Units/Basic.lean:407 mul_div_cancel0.
+- SetTheory/Cardinal/Finite.lean:174 Nat.card_range_of_injective.
+- Algebra/Group/Units/Defs.lean:365 IsUnit exists a unit with value = element;
+  changed only in a Mathlib type presentation, never passed to simp/unfold.
+- Data/Fintype/EquivFin.lean:237 one_lt_card_iff_nontrivial.
+- Data/Fintype/Card.lean:149 Fintype.card_subtype_eq for a singleton.
+- Data/Fintype/BigOperators.lean:195 Fintype.card_fun.
+- Foundations/Probability.lean:64 uprob_def; :109 uprob_not; :120 uprob_mono.
+- Games/Bridges/Experiments.lean:66 Bridge.prob_sample_eq_uprob.
+- Games/Probability.lean:208 prob_eq_expect and expect_const.
+- Algebra/Order/Field/Basic.lean:203 one_div_pow_le_one_div_pow_of_le.
+- one_le_pow0 / le_self_pow0 supply the exact natural-cast subtraction bounds.
+
+Searches for units/isUnit subtype cardinality and product/surjectivity APIs
+found Nat.card_range_of_injective as the direct reusable bridge. No new generic
+units-cardinality theorem/equivalence is introduced, and card_GL_field is used
+as published rather than its linearly-independent-vector counting proof.
+
+All local facts belong to this one already natively searched target; there is
+no new helper declaration or unsearched helper proof. No sampler/machine/group
+operation construction and no Lean/lake/Git/live-source edit.

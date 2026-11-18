@@ -1,0 +1,102 @@
+file=TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean
+source_sha256=a7df4530d39dfadeb5e2f3e6e7428b6249e75e0024695dd1f33254c55e7b52dc
+working_source_development_check=True
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:417:4: error: linarith failed to find a contradiction
+case h
+G : BilinearGen
+p : ℕ → ℕ
+hp : ∀ (κ : ℕ) (r : G.gen.Coins κ), (G.inst κ r).order = p κ
+d ℓ : PolyExpr
+D : NUPPT
+Tape : ℕ → Type :=
+  fun κ =>
+    Matrix (Fin (ℓ.eval κ)) (Fin 3) (ZMod (p κ)) ×
+      Matrix (Fin 2) (Fin (d.eval κ)) (ZMod (p κ)) × Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod (p κ))
+avgTape : (κ : ℕ) → (Tape κ → ℝ) → ℝ := fun κ f => (ProbComp.sample (Tape κ)).expect f
+hybrid : ℕ → ℕ → ProbComp Bool :=
+  fun κ i =>
+    OracleComp.bind (publicParamsGen G κ) fun pp =>
+      OracleComp.bind (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order))) fun M =>
+        OracleComp.bind (ProbComp.sample (Matrix (Fin 2) (Fin (d.eval κ)) (ZMod pp.group.order))) fun S =>
+          OracleComp.bind (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin (d.eval κ)) (ZMod pp.group.order))) fun U =>
+            OracleComp.bind (ProbComp.sample (D.Coins κ)) fun r =>
+              OracleComp.pure
+                (D.distinguisherL κ
+                  (G.mddhEnc d ℓ κ
+                    { pp := pp, matrix := pp.group.expMat pp.generator M,
+                      response := pp.group.expMat pp.generator fun a b => if ↑b < i then (M * S) a b else U a b })
+                  r)
+redGame : (κ : ℕ) → MddhAdvice p d ℓ κ → Bool → ProbComp Bool :=
+  fun κ w real =>
+    OracleComp.bind (G.dlinSample real κ) fun c =>
+      OracleComp.bind (ProbComp.sample (D.Coins κ)) fun r =>
+        OracleComp.pure (D.distinguisherL κ (G.mddhPre p hp d ℓ κ w c) r)
+redGap : (κ : ℕ) → MddhAdvice p d ℓ κ → ℝ := fun κ w => advantage (redGame κ w false) (redGame κ w true)
+hEnds :
+  ∀ (κ : ℕ),
+    accept (hybrid κ 0) = accept (G.mddhGame d ℓ D false κ) ∧
+      accept (hybrid κ (d.eval κ)) = accept (G.mddhGame d ℓ D true κ)
+hEndpointGap : ∀ (κ : ℕ), G.mddhAdv d ℓ D κ = advantage (hybrid κ 0) (hybrid κ (d.eval κ))
+hPreScalar :
+  ∀ (κ : ℕ) (w : MddhAdvice p d ℓ κ) (pp : PublicParams G κ) (ab rs : Fin 2 → ZMod pp.group.order)
+    (t : ZMod pp.group.order) (real : Bool),
+    let castScalar := ZMod.ringEquivCongr ⋯;
+    let L := fun i j => castScalar (w.2.1 i j);
+    let S := fun i j => castScalar (w.2.2.1 i j);
+    let U := fun i j => castScalar (w.2.2.2 i j);
+    let A0 := ![![ab 0, 0], ![0, ab 1], ![1, 1]];
+    let v0 := ![ab 0 * rs 0, ab 1 * rs 1, if real = true then rs 0 + rs 1 else t];
+    G.mddhPreChallenge p hp d ℓ κ w
+        (G.dlinChallenge κ pp (pp.generator ^ (ab 0).val) (pp.generator ^ (ab 1).val) (pp.generator ^ (ab 0 * rs 0).val)
+          (pp.generator ^ (ab 1 * rs 1).val) (pp.generator ^ (if real = true then rs 0 + rs 1 else t).val)) =
+      { pp := pp, matrix := pp.group.expMat pp.generator (L * A0),
+        response :=
+          pp.group.expMat pp.generator fun i j =>
+            if ↑j = ↑w.1 then L.mulVec v0 i else if ↑j < ↑w.1 then (L * A0 * S) i j else U i j }
+hRealClose :
+  ∀ (κ : ℕ) (j : Fin (d.eval κ)),
+    |accept (hybrid κ (↑j + 1)) - avgTape κ fun τ => accept (redGame κ (j.castSucc, τ) true)| ≤ 1 / ↑(p κ) ^ 2
+hRandomClose :
+  ∀ (κ : ℕ) (j : Fin (d.eval κ)),
+    |accept (hybrid κ ↑j) - avgTape κ fun τ => accept (redGame κ (j.castSucc, τ) false)| ≤ 1 - (1 - 1 / ↑(p κ)) ^ 3
+κ : ℕ
+hp1 : 1 ≤ ↑(p κ)
+hp0 : 0 < ↑(p κ)
+hx1 : 1 / ↑(p κ) ≤ 1
+hx0 : 0 ≤ (↑(p κ))⁻¹
+h3 : (↑(p κ) ^ 3)⁻¹ ≤ (↑(p κ) ^ 2)⁻¹
+a✝ : 4 * (↑(p κ))⁻¹ < (↑(p κ) ^ 2)⁻¹ + (1 - (1 - (↑(p κ))⁻¹) ^ 3)
+⊢ False
+failed
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:368:20: warning: This simp argument is unused:
+  if_true
+
+Hint: Omit it from the simp argument list.
+  simp only [accept_eq, G.mddhGame_eq d ℓ D true κ, G.mddhSample_eq d ℓ true κ,
+          ProbComp.prob_bind, ProbComp.expect_bind, ProbComp.expect_pure,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵↓reduceIte, i̵f̵_̵t̵r̵u̵e̵,̵ ̵Fin.is_lt]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:603:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean:614:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction): lean exited with status 1
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction): error diagnostics reported
+FAIL(TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction): no fresh .olean produced
+        3.66 real         3.44 user         1.10 sys
+          2417786880  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              192930  page reclaims
+                  25  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                  15  voluntary context switches
+                7967  involuntary context switches
+            32075518  instructions retired
+            15174431  cycles elapsed
+             1638736  peak memory footprint

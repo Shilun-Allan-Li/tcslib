@@ -1,0 +1,39 @@
+prefixIncoming_sum read-only proof reuse searches
+Required root exact?/apply? logs read and cited in review.
+No Lean/lake/Git/live edit or new helper proof beyond this authorized theorem.
+
+$ rg -n 'prefixIncoming_sum|prefix.*[Ii]ncoming|sum.*Fin.init|Fin.init.*sum' TCSlib .lake/packages/mathlib/Mathlib /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean
+exit=0
+TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Decomposition.lean:84:    apply Finset.sum_bij (fun x _ => (Fin.init x, x (Fin.last n)))
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean:29:* `prefixIncoming_sum`: each non-root prefix is the child of one prefix edge.
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean:44:/-- Every nonempty prefix has exactly one incoming prefix edge, and the empty
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean:52:theorem prefixIncoming_sum {I R : Type*} [Fintype I] [DecidableEq I]
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:170:    Finset.sum_neg_distrib, Fin.init_def]
+
+$ rg -n 'theorem Function.Injective.sigma_map|theorem Function.Injective.sigma_map_iff|lemma map_mk' .lake/packages/mathlib/Mathlib/Data/Sigma/Basic.lean
+exit=0
+112:lemma map_mk (f₁ : α₁ → α₂) (f₂ : ∀ a, β₁ a → β₂ (f₁ a)) (x : α₁) (y : β₁ x) :
+116:theorem Function.Injective.sigma_map {f₁ : α₁ → α₂} {f₂ : ∀ a, β₁ a → β₂ (f₁ a)}
+127:theorem Function.Injective.sigma_map_iff {f₁ : α₁ → α₂} {f₂ : ∀ a, β₁ a → β₂ (f₁ a)}
+
+$ rg -n 'lemma succ_injective' .lake/packages/mathlib/Mathlib/Data/Fin/SuccPred.lean
+exit=0
+39:lemma succ_injective (n : ℕ) : Injective (@Fin.succ n) := fun a b ↦ by simp [Fin.ext_iff]
+
+$ rg -n 'theorem succ_ne_zero|def cases' /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Fin/Lemmas.lean
+exit=0
+405:theorem succ_ne_zero {n} : ∀ k : Fin n, Fin.succ k ≠ 0
+893:@[elab_as_elim, expose] def cases {motive : Fin (n + 1) → Sort _}
+
+$ rg -n 'lemma prod_ite_eq'"'"'' .lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Piecewise.lean
+exit=0
+293:lemma prod_ite_eq' (i : ι) (f : ι → M) : ∏ j, (if j = i then f j else 1) = f i := by
+
+$ rg -n Pi.uniqueOfIsEmpty .lake/packages/mathlib/Mathlib/Logic/Unique.lean
+exit=0
+165:instance Pi.uniqueOfIsEmpty [IsEmpty α] (β : α → Sort v) : Unique (∀ a, β a) where
+
+$ rg -n 'theorem eq_self ' /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/SimpLemmas.lean
+exit=0
+36:@[simp] theorem eq_self (a : α) : (a = a) = True := eq_true rfl
+

@@ -26,6 +26,7 @@ public data do not create different parameter objects.
 
 ## Main results
 
+* `pairEncode_eq_iff`: the existing pair injectivity in binary-word form.
 * `PublicParams.encode_injective`: the public word determines its parameters.
 
 Equation readers expose the public encoding and the exact generation law.
@@ -43,6 +44,17 @@ Equation readers expose the public encoding and the exact generation law.
 namespace TCSlib.Cryptography.Pairing
 
 open Complexity Turing TCSlib.Cryptography.Games
+
+/-- Two framed pair words are equal exactly when their first and second words agree.
+This binary-form reader reuses the existing pair encoder's injectivity and keeps later
+word proofs from inferring opaque pair components by normalization. -/
+theorem pairEncode_eq_iff (a b c d : List Bool) :
+    pairEncode a b = pairEncode c d ↔ a = c ∧ b = d := by
+  constructor
+  · intro h
+    exact Prod.mk.inj (@pairEncode_injective (a, b) (c, d) h)
+  · rintro ⟨rfl, rfl⟩
+    rfl
 
 /-- A group description is reachable when the bilinear generator outputs it on some coin
 string. Technical glue: the witness is a proposition, so it does not distinguish equal

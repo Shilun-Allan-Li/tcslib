@@ -1,0 +1,23 @@
+Static source/reuse searches (no Lean/lake/Git):
+
+Searched mulVecLin/funUnique composition, nonzero-functional surjectivity, range_eq_top,
+comp_surjective, matrix singleton action, and fixed-point uniform mass across current
+TCSlib and Mathlib sources. No complete one-row matrix theorem was found.
+
+Existing exact APIs consumed:
+- Mathlib/LinearAlgebra/Dual/Lemmas.lean:710
+  Module.Dual.range_eq_top_of_ne_zero (hf : f != 0) : LinearMap.range f = top.
+  Its own body delegates to LinearMap.surjective hf; the candidate uses this public result.
+- Mathlib/LinearAlgebra/Pi.lean:576 funUnique, :583 funUnique_apply.
+- Mathlib/Logic/Equiv/Defs.lean:338 Equiv.comp_surjective.
+- Mathlib/LinearAlgebra/Matrix/ToLin.lean:274 coe_mulVecLin, :278 mulVecLin_apply.
+- Mathlib/Data/Matrix/Mul.lean:791 Matrix.mulVec_single_one.
+- Mathlib/Algebra/Module/Equiv/Defs.lean:204 coe_toEquiv, :208 coe_toLinearMap.
+- TCSlib/Cryptography/OneWayFunctions/Basic.lean:144 uprob_eq_one_div_card.
+- TCSlib/Cryptography/Pairing/MatrixDH/Diagonal.lean:109-113 existing singleton-law use.
+
+Native exact?/apply? authorization: root supplied existing smallRows target probe results;
+no new helper was added or proved here. Native verification of this revised block is pending.
+
+Existing import path to Mathlib.LinearAlgebra.Pi:
+Mathlib.LinearAlgebra.Matrix.NonsingularInverse -> Mathlib.LinearAlgebra.Matrix.Kronecker -> Mathlib.Data.Matrix.Basic -> Mathlib.LinearAlgebra.Pi

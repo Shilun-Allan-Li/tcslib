@@ -1,0 +1,70 @@
+Read-only searches for existing M0 forward_action proof
+No new helper is introduced; the incidence prerequisites have root native searches.
+No Lean/lake/Git/live edits were run by the agent.
+
+$ rg -n 'forward_action|mulVec.*forward|forward.*mulVec|sum.*leaf.*forward' TCSlib .lake/packages/mathlib/Mathlib /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean
+exit=0
+.lake/packages/mathlib/Mathlib/LinearAlgebra/Matrix/ToLin.lean:371:Note that the forward-direction does not require `DecidableEq` and is `Matrix.mulVecLin`. -/
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean:39:* `PartialGarbling.Layered.forward_action`, `backward_action`: path-sum identities.
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean:359:theorem forward_action (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ)) :
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean:360:    Matrix.mulVec (matrix C x) (forward x) =
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean:427:the published dot-product/mulVec identity, then apply forward_action. The masked
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean:27:* `weightedIncidence_mulVec`: forward action of weighted endpoint rows.
+
+$ rg -n 'theorem matrix_inl|theorem forward_node|theorem matrix_eq|theorem L1_inr|theorem L0_inr|theorem leaf_eq|theorem forward_eq' TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean
+exit=0
+105:theorem leaf_eq {l d : ℕ} (tau : Fin d → Fin (l + 1)) :
+210:theorem L1_inr (C : PolyTensor p l n d) (j : Fin n) (iu : Fin l × MIdx l d) :
+230:theorem L0_inr (C : PolyTensor p l n d) (j : Fin n) (u : MIdx l d) :
+241:theorem matrix_eq (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ)) :
+251:theorem matrix_inl (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
+270:theorem forward_eq (x : Fin l → ZMod (p : ℕ)) (u : MIdx l d) :
+280:theorem forward_node (x : Fin l → ZMod (p : ℕ)) (v : TIdx l d) :
+
+$ rg -n 'theorem weightedIncidence_mulVec' TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PathAlgebra.lean
+exit=0
+47:theorem weightedIncidence_mulVec {V E R : Type*} [Fintype V] [DecidableEq V]
+
+$ rg -n 'theorem mulVec_eq_sum|theorem mul_apply' .lake/packages/mathlib/Mathlib/Data/Matrix/Mul.lean
+exit=0
+293:theorem mul_apply [Fintype m] [Mul α] [AddCommMonoid α] {M : Matrix l m α} {N : Matrix m n α}
+299:theorem mul_apply' [Fintype m] [Mul α] [AddCommMonoid α] {M : Matrix l m α} {N : Matrix m n α}
+690:theorem mul_apply_eq_vecMul [Fintype n] (A : Matrix m n α) (B : Matrix n o α) (i : m) :
+697:theorem mulVec_eq_sum [Fintype n] (v : n → α) (M : Matrix m n α) :
+
+$ rg -n 'theorem transpose_apply|theorem of_apply|theorem add_apply' .lake/packages/mathlib/Mathlib/LinearAlgebra/Matrix/Defs.lean
+exit=0
+83:theorem of_apply (f : m → n → α) (i j) : of f i j = f i j :=
+134:theorem transpose_apply (M : Matrix m n α) (i j) : transpose M i j = M j i :=
+216:theorem add_apply [Add α] (A B : Matrix m n α) (i : m) (j : n) :
+
+$ rg -n 'lemma op_smul_eq_mul' .lake/packages/mathlib/Mathlib/Algebra/Group/Action/Defs.lean
+exit=0
+71:lemma op_smul_eq_mul {α : Type*} [Mul α] (a b : α) : MulOpposite.op a • b = b * a := rfl
+
+$ rg -n 'theorem Finset.prod_apply' .lake/packages/mathlib/Mathlib/Algebra/BigOperators/Pi.lean
+exit=0
+41:theorem Finset.prod_apply {α : Type*} {M : α → Type*} [∀ a, CommMonoid (M a)] (a : α)
+
+$ rg -n 'lemma sum_mul' .lake/packages/mathlib/Mathlib/Algebra/BigOperators/Ring/Finset.lean
+exit=0
+49:lemma sum_mul (s : Finset ι) (f : ι → R) (a : R) :
+55:lemma sum_mul_sum (s : Finset ι) (t : Finset κ) (f : ι → R) (g : κ → R) :
+92:lemma sum_mul_boole (s : Finset ι) (f : ι → R) (i : ι) :
+
+$ rg -n 'theorem prod_comm ' .lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Sigma.lean
+exit=0
+117:theorem prod_comm {s : Finset γ} {t : Finset α} {f : γ → α → β} :
+
+$ rg -n 'lemma prod_ite_eq'"'"'' .lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Piecewise.lean
+exit=0
+293:lemma prod_ite_eq' (i : ι) (f : ι → M) : ∏ j, (if j = i then f j else 1) = f i := by
+
+$ rg -n 'theorem val_last' /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Fin/Lemmas.lean
+exit=0
+284:@[simp] theorem val_last (n : Nat) : (last n).1 = n := rfl
+
+$ rg -n 'theorem polyTensorEval_eq' TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean
+exit=0
+93:theorem polyTensorEval_eq {p : ℕ+} {l n d : ℕ} (C : PolyTensor p l n d)
+

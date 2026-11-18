@@ -1,0 +1,66 @@
+Read-only prefix-flow and outgoing-fiber reuse searches
+One partial prefixFlow proof; no outgoing helper proof was written in this invocation.
+
+$ rg -n 'prefixOutgoing_sum|prefixFlow_balance' TCSlib .lake/packages/mathlib/Mathlib /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean
+exit=0
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean:30:* `prefixOutgoing_sum`: outgoing edges are indexed by a final label.
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean:31:* `prefixFlow_balance`: weighted outgoing suffix values and terminal coefficients
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean:100:theorem prefixOutgoing_sum {I R : Type*} [Fintype I] [DecidableEq I]
+TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/PrefixAlgebra.lean:121:theorem prefixFlow_balance {I R : Type*} [Fintype I] [DecidableEq I]
+
+$ rg -n 'Fin\.init.*sum|sum.*Fin\.init|sum.*Fin\.snoc' .lake/packages/mathlib/Mathlib/Data/Fin .lake/packages/mathlib/Mathlib/Algebra/BigOperators TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption
+exit=1
+
+$ rg -n 'def snocEquiv|def consEquiv|append_right_cons|append_left_snoc|append_elim0|snoc_init_self|init_snoc|snoc_last' .lake/packages/mathlib/Mathlib/Data/Fin/Tuple/Basic.lean
+exit=0
+169:def consEquiv (α : Fin (n + 1) → Type*) : α 0 × (∀ i, α (succ i)) ≃ ∀ i, α i where
+315:theorem append_elim0 (u : Fin m → α) :
+500:theorem init_snoc : init (snoc p x) = p := by
+519:theorem snoc_last : snoc p x (last n) = x := by simp [snoc]
+531:    rw [snoc_last, natAdd_last, snoc_last]
+561:theorem update_snoc_last : update (snoc p x) (last n) z = snoc p z := by
+588:theorem snoc_init_self : snoc (init q) (q (last n)) = q := by
+646:    exact (@snoc_last _ (fun _ => α) _ _).symm
+653:theorem append_left_snoc {n m} {α : Sort*} (xs : Fin n → α) (x : α) (ys : Fin m → α) :
+658:theorem append_right_cons {n m} {α : Sort*} (xs : Fin n → α) (y : α) (ys : Fin m → α) :
+661:  rw [append_left_snoc]; rfl
+701:def snocEquiv (α : Fin (n + 1) → Type*) : α (last n) × (∀ i, α (castSucc i)) ≃ ∀ i, α i where
+712:  _root_.cast (by rw [Fin.snoc_init_self]) <| h (Fin.init x) (x <| Fin.last _)
+718:  rw [snocCases, cast_eq_iff_heq, Fin.init_snoc, Fin.snoc_last]
+738:      simp only [snoc_castSucc, snoc_last] at h
+744:      simp only [snoc_castSucc, snoc_last] at h
+754:    rw [← @snoc_last n (fun i ↦ α) x₀ x, ← @snoc_castSucc n (fun i ↦ α) x₀ x i,
+
+$ rg -n 'theorem prod_sigma|Fintype.sum_prod_type' .lake/packages/mathlib/Mathlib/Data/Fintype/BigOperators.lean
+exit=0
+144:theorem prod_sigma {ι} {α : ι → Type*} {M : Type*} [Fintype ι] [∀ i, Fintype (α i)] [CommMonoid M]
+152:theorem prod_sigma' {ι} {α : ι → Type*} {M : Type*} [Fintype ι] [∀ i, Fintype (α i)] [CommMonoid M]
+251:@[to_additive Fintype.sum_prod_type /-- The sum over a product type equals the sum of fiberwise
+252:sums. For rewriting in the reverse direction, use `Fintype.sum_prod_type'`. -/]
+259:@[to_additive Fintype.sum_prod_type' /-- The sum over a product type equals the sum of fiberwise
+260:sums. For rewriting in the reverse direction, use `Fintype.sum_prod_type`. -/]
+265:@[to_additive Fintype.sum_prod_type_right]
+271:@[to_additive Fintype.sum_prod_type_right'
+
+$ rg -n 'theorem prod_unique|theorem prod_subsingleton' .lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean
+exit=0
+830:theorem prod_unique_nonempty [Unique ι] (s : Finset ι) (f : ι → M) (h : s.Nonempty) :
+1000:theorem prod_unique [Unique ι] (f : ι → M) : ∏ x : ι, f x = f default := by
+1004:theorem prod_subsingleton [Subsingleton ι] (f : ι → M) (a : ι) : ∏ x : ι, f x = f a := by
+
+$ rg -n 'theorem cast_refl|theorem cast_cast|def lastCases|theorem val_last' /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Fin/Lemmas.lean
+exit=0
+284:@[simp] theorem val_last (n : Nat) : (last n).1 = n := rfl
+479:@[simp] theorem cast_castLE {k m n} (km : k ≤ m) (mn : m = n) (i : Fin k) :
+483:@[simp] theorem cast_castLT {k m n} (i : Fin k) (h : (i : Nat) < m) (mn : m = n) :
+494:@[simp] theorem cast_refl (n : Nat) (h : n = n) : Fin.cast h = id := by
+498:@[simp, grind =] theorem cast_cast {k : Nat} (h : n = m) (h' : m = k) {i : Fin n} :
+524:theorem cast_castAdd_left {n n' m : Nat} (i : Fin n') (h : n' + m = n + m) :
+527:@[simp] theorem cast_castAdd_right {n m m' : Nat} (i : Fin n) (h : n + m' = n + m) :
+545:@[simp] theorem cast_castSucc {n' : Nat} {h : n + 1 = n' + 1} {i : Fin n} :
+985:@[elab_as_elim] def lastCases {n : Nat} {motive : Fin (n + 1) → Sort _} (last : motive (Fin.last n))
+
+$ rg -n 'theorem castSucc_ne_last' .lake/packages/mathlib/Mathlib/Data/Fin/SuccPred.lean
+exit=0
+196:theorem castSucc_ne_last {n : ℕ} (i : Fin n) : i.castSucc ≠ .last n :=
+

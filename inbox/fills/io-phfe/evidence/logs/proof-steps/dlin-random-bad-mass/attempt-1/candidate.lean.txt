@@ -1,0 +1,480 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.Pairing.MatrixDH.FiniteLinear
+import Mathlib.Logic.Equiv.Fin.Basic
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Canonical DLIN column laws
+
+## Main definitions
+
+The tests observe a scalar base matrix and one scalar response column.
+
+## Main results
+
+* `dlin_base_transpose_mulVec_surjective`: the canonical base's nondegenerate geometry.
+* `dlin_real_column_gap_le`: the real-column comparison with loss `1/N²`.
+* `dlin_random_column_gap_le`: the random-column comparison with loss `1-(1-1/N)³`.
+
+## References
+
+* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
+  TCC 2020; full version, Cryptology ePrint Archive, Report 2020/1420, Section 2.1, p. 4.
+-/
+
+namespace TCSlib.Cryptography.Pairing
+
+open TCSlib.Cryptography.Games
+open scoped Matrix
+
+/-- If either canonical diagonal entry is nonzero, the transpose of the three-by-two
+canonical DLIN base maps three scalar coordinates onto two. This is fixed scalar-matrix
+geometry for the direct column route to [Wee20, §2.1, p. 4].
+
+**Proof sketch.** Apply the published right-inverse characterization of a surjective matrix
+column map. A nonzero first or second diagonal entry supplies the corresponding right
+inverse using division by that known nonzero scalar; matrix entry readers verify it. -/
+theorem dlin_base_transpose_mulVec_surjective {K : Type} [Field K]
+    (a b : K) (hab : a ≠ 0 ∨ b ≠ 0) :
+    Function.Surjective
+      (Matrix.mulVec ((![![a, 0], ![0, b], ![1, 1]] :
+        Matrix (Fin 3) (Fin 2) K)ᵀ)) := by
+  apply (Matrix.mulVec_surjective_iff_exists_right_inverse
+    (A := ((![![a, 0], ![0, b], ![1, 1]] : Matrix (Fin 3) (Fin 2) K)ᵀ))).2
+  rcases hab with ha | hb
+  · -- Use the first nonzero diagonal entry to construct a scalar right inverse.
+    refine ⟨(![![a⁻¹, -a⁻¹], ![0, 0], ![0, 1]] :
+      Matrix (Fin 3) (Fin 2) K), ?_⟩
+    ext i j
+    fin_cases i <;> fin_cases j <;>
+      simp only [Matrix.mul_apply, Fin.sum_univ_three, Matrix.transpose_apply,
+        Matrix.of_apply, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
+        Matrix.head_cons, Matrix.tail_cons, Matrix.one_apply, mul_zero, zero_mul,
+        one_mul, mul_one, mul_neg, mul_inv_cancel₀ ha, add_zero, zero_add,
+        neg_add_cancel] <;> norm_num <;>
+        simp only [mul_inv_cancel₀ ha, neg_add_cancel]
+  · -- The second nonzero diagonal entry gives the symmetric scalar right inverse.
+    refine ⟨(![![0, 0], ![-b⁻¹, b⁻¹], ![1, 0]] :
+      Matrix (Fin 3) (Fin 2) K), ?_⟩
+    ext i j
+    fin_cases i <;> fin_cases j <;>
+      simp only [Matrix.mul_apply, Fin.sum_univ_three, Matrix.transpose_apply,
+        Matrix.of_apply, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
+        Matrix.head_cons, Matrix.tail_cons, Matrix.one_apply, mul_zero, zero_mul,
+        one_mul, mul_one, mul_neg, mul_inv_cancel₀ hb, add_zero, zero_add,
+        neg_add_cancel] <;> norm_num <;>
+        simp only [mul_inv_cancel₀ hb, neg_add_cancel]
+
+/-- Left-randomized canonical real DLIN columns and uniform-base real columns have
+expectation gap at most `1/N²` for every `[0,1]`-valued test, where `N` is the finite field
+cardinality. This is scalar distribution glue for the column route to [Wee20, §2.1, p. 4];
+the explicit loss is the probability that both canonical diagonal scalars vanish.
+
+**Proof sketch.** The transpose of the canonical three-by-two base has a surjective
+column map unless both diagonal entries vanish. Apply the existing uniform matrix-image
+law through transposition, then matrix-vector associativity, on that good event. Bound
+the gap by one on its complement. The published independent-coordinate and singleton
+probability laws give exact exceptional mass `N⁻²`; average the pointwise gap. -/
+theorem dlin_real_column_gap_le {K : Type} [Field K] [Fintype K] (rows : ℕ)
+    (H : Matrix (Fin rows) (Fin 2) K → (Fin rows → K) → ℝ)
+    (hH0 : ∀ M v, 0 ≤ H M v) (hH1 : ∀ M v, H M v ≤ 1) :
+    let A : (Fin 2 → K) → Matrix (Fin 3) (Fin 2) K :=
+      fun ab => ![![ab 0, 0], ![0, ab 1], ![1, 1]]
+    |ProbComp.expect (ProbComp.sample (Fin 2 → K))
+        (fun ab => ProbComp.expect (ProbComp.sample (Fin 2 → K))
+          (fun rs => ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K))
+            (fun L => H (L * A ab) (L *ᵥ (A ab *ᵥ rs))))) -
+      ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 2) K))
+        (fun M => ProbComp.expect (ProbComp.sample (Fin 2 → K))
+          (fun rs => H M (M *ᵥ rs)))| ≤
+      1 / (Fintype.card K : ℝ) ^ 2 := by
+  intro A
+  letI : DecidableEq K := Classical.decEq K
+  let P (ab : Fin 2 → K) : ℝ :=
+    ProbComp.expect (ProbComp.sample (Fin 2 → K)) fun rs =>
+      ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K)) fun L =>
+        H (L * A ab) (L *ᵥ (A ab *ᵥ rs))
+  let Q : ℝ :=
+    ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 2) K)) fun M =>
+      ProbComp.expect (ProbComp.sample (Fin 2 → K)) fun rs => H M (M *ᵥ rs)
+  let bad (ab : Fin 2 → K) : Prop := ab 0 = 0 ∧ ab 1 = 0
+  change |ProbComp.expect (ProbComp.sample (Fin 2 → K)) P - Q| ≤
+    1 / (Fintype.card K : ℝ) ^ 2
+  -- Reuse the canonical-base geometry without repeating its right-inverse proof.
+  have hSurj : ∀ ab : Fin 2 → K, ab 0 ≠ 0 ∨ ab 1 ≠ 0 →
+      Function.Surjective (Matrix.mulVec (A ab)ᵀ) :=
+    fun ab hab => dlin_base_transpose_mulVec_surjective (K := K) (ab 0) (ab 1) hab
+  -- Both conditional experiments are averages of the original bounded test.
+  have hP0 (ab : Fin 2 → K) : 0 ≤ P ab :=
+    ProbComp.expect_nonneg (ProbComp.sample (Fin 2 → K)) fun rs =>
+      ProbComp.expect_nonneg (ProbComp.sample (Matrix (Fin rows) (Fin 3) K)) fun L =>
+        hH0 (L * A ab) (L *ᵥ (A ab *ᵥ rs))
+  have hP1 (ab : Fin 2 → K) : P ab ≤ 1 := ?_
+  swap
+  · calc
+      P ab ≤ ProbComp.expect (ProbComp.sample (Fin 2 → K)) (fun _ => 1) :=
+        ProbComp.expect_mono (ProbComp.sample (Fin 2 → K)) fun rs =>
+          calc
+            ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K))
+                (fun L => H (L * A ab) (L *ᵥ (A ab *ᵥ rs))) ≤
+              ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K))
+                (fun _ => 1) :=
+              ProbComp.expect_mono (ProbComp.sample (Matrix (Fin rows) (Fin 3) K))
+                (fun L => hH1 (L * A ab) (L *ᵥ (A ab *ᵥ rs)))
+            _ = 1 := ProbComp.expect_const
+              (ProbComp.sample (Matrix (Fin rows) (Fin 3) K)) 1
+      _ = 1 := ProbComp.expect_const (ProbComp.sample (Fin 2 → K)) 1
+  have hQ0 : 0 ≤ Q :=
+    ProbComp.expect_nonneg (ProbComp.sample (Matrix (Fin rows) (Fin 2) K)) fun M =>
+      ProbComp.expect_nonneg (ProbComp.sample (Fin 2 → K)) fun rs => hH0 M (M *ᵥ rs)
+  have hQ1 : Q ≤ 1 := ?_
+  swap
+  · calc
+      Q ≤ ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 2) K))
+          (fun _ => 1) :=
+        ProbComp.expect_mono (ProbComp.sample (Matrix (Fin rows) (Fin 2) K)) fun M =>
+          calc
+            ProbComp.expect (ProbComp.sample (Fin 2 → K))
+                (fun rs => H M (M *ᵥ rs)) ≤
+              ProbComp.expect (ProbComp.sample (Fin 2 → K)) (fun _ => 1) :=
+              ProbComp.expect_mono (ProbComp.sample (Fin 2 → K))
+                (fun rs => hH1 M (M *ᵥ rs))
+            _ = 1 := ProbComp.expect_const (ProbComp.sample (Fin 2 → K)) 1
+      _ = 1 := ProbComp.expect_const
+        (ProbComp.sample (Matrix (Fin rows) (Fin 2) K)) 1
+  -- The existing left-matrix image law gives the right-matrix image by transposition.
+  have hGood : ∀ ab : Fin 2 → K, ¬ bad ab → P ab = Q := ?_
+  swap
+  · intro ab hb
+    have hab : ab 0 ≠ 0 ∨ ab 1 ≠ 0 := ?_
+    swap
+    · by_cases ha : ab 0 = 0
+      · exact Or.inr (fun h => hb ⟨ha, h⟩)
+      · exact Or.inl ha
+    have hUniform (rs : Fin 2 → K) :
+        ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K))
+            (fun L => H (L * A ab) (L *ᵥ (A ab *ᵥ rs))) =
+          ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 2) K))
+            (fun M => H M (M *ᵥ rs)) := ?_
+    swap
+    · have hImage := expect_sample_matrix_mul_of_mulVec_surjective
+        (K := K) (r := 2) (m := 3) (c := rows) (A ab)ᵀ (hSurj ab hab)
+        (fun V : Matrix (Fin 2) (Fin rows) K => H Vᵀ (Vᵀ *ᵥ rs))
+      simp only [Matrix.transpose_mul, Matrix.transpose_transpose] at hImage
+      have hLeft := ProbComp.expect_sample_equiv
+        (Matrix.transposeAddEquiv (Fin rows) (Fin 3) K).toEquiv
+        (fun S : Matrix (Fin 3) (Fin rows) K =>
+          H (Sᵀ * A ab) ((Sᵀ * A ab) *ᵥ rs))
+      have hRight := ProbComp.expect_sample_equiv
+        (Matrix.transposeAddEquiv (Fin rows) (Fin 2) K).toEquiv
+        (fun V : Matrix (Fin 2) (Fin rows) K => H Vᵀ (Vᵀ *ᵥ rs))
+      simp only [Matrix.transposeAddEquiv_apply, Matrix.transpose_transpose] at hLeft hRight
+      simpa only [Matrix.mulVec_mulVec] using hLeft.trans (hImage.trans hRight.symm)
+    calc
+      P ab = ProbComp.expect (ProbComp.sample (Fin 2 → K))
+          (fun rs => ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 2) K))
+            (fun M => H M (M *ᵥ rs))) :=
+        congrArg (ProbComp.expect (ProbComp.sample (Fin 2 → K))) (funext hUniform)
+      _ = Q := ProbComp.expect_sample_comm (fun rs M => H M (M *ᵥ rs))
+  -- The only bad event has both independent diagonal coordinates equal to zero.
+  have hBadMass :
+      ProbComp.expect (ProbComp.sample (Fin 2 → K))
+          (fun ab => if bad ab then (1 : ℝ) else 0) =
+        1 / (Fintype.card K : ℝ) ^ 2 := ?_
+  swap
+  · have hEvent :
+        ProbComp.prob (ProbComp.sample (Fin 2 → K)) bad =
+          ProbComp.prob (ProbComp.sample (Fin 2 → K))
+            (fun ab => ∀ i : Fin 2, ab i = 0) :=
+      ProbComp.prob_congr (ProbComp.sample (Fin 2 → K))
+        (fun ab => (@Fin.forall_fin_two (fun i : Fin 2 => ab i = 0)).symm)
+    rw [← ProbComp.prob_eq_expect (ProbComp.sample (Fin 2 → K)) bad, hEvent,
+      Bridge.prob_sample_eq_uprob,
+      TCSlib.Cryptography.OneWay.uprob_pi_forall (ι := Fin 2) (fun x : K => x = 0),
+      TCSlib.Cryptography.OneWay.uprob_eq_one_div_card, Fintype.card_fin, one_div_pow]
+  have hPoint (ab : Fin 2 → K) :
+      |P ab - Q| ≤ if bad ab then (1 : ℝ) else 0 := ?_
+  swap
+  · by_cases hb : bad ab
+    · rw [if_pos hb, abs_le]
+      constructor <;> linarith [hP0 ab, hP1 ab, hQ0, hQ1]
+    · simpa only [if_neg hb, hGood ab hb, sub_self, abs_zero] using
+        (le_refl (0 : ℝ))
+  have hAverage := ProbComp.abs_expect_sub_le_expect
+    (ProbComp.sample (Fin 2 → K)) (f := P) (g := fun _ => Q)
+    (h := fun ab => if bad ab then (1 : ℝ) else 0) hPoint
+  rw [ProbComp.expect_const (ProbComp.sample (Fin 2 → K)) Q, hBadMass] at hAverage
+  exact hAverage
+
+/-- Left-randomized canonical random DLIN columns and independent uniform base/response
+columns have expectation gap at most `1-(1-1/N)³` for every `[0,1]`-valued test. Here `N`
+is the finite field cardinality. This is scalar distribution glue for the direct canonical
+column route to [Wee20, §2.1, p. 4]; the loss includes zero diagonal scalars.
+
+**Proof sketch.** The augmented three-by-three matrix has determinant `ab(t-r-s)`.
+When its three factors are nonzero, use the existing uniform matrix-image law through
+transposition and split a uniform three-column output into its first two columns and last
+column by standard finite-function equivalences. Bound the gap by one otherwise. Translate
+the uniform scalar `t` by `-(r+s)` and apply the published independent-coordinate singleton
+and complement probability laws to obtain exact exceptional mass `1-(1-1/N)³`. -/
+theorem dlin_random_column_gap_le {K : Type} [Field K] [Fintype K] (rows : ℕ)
+    (H : Matrix (Fin rows) (Fin 2) K → (Fin rows → K) → ℝ)
+    (hH0 : ∀ M v, 0 ≤ H M v) (hH1 : ∀ M v, H M v ≤ 1) :
+    let A : (Fin 2 → K) → Matrix (Fin 3) (Fin 2) K :=
+      fun ab => ![![ab 0, 0], ![0, ab 1], ![1, 1]]
+    |ProbComp.expect (ProbComp.sample (Fin 2 → K))
+        (fun ab => ProbComp.expect (ProbComp.sample (Fin 2 → K))
+          (fun rs => ProbComp.expect (ProbComp.sample K)
+            (fun t => ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K))
+              (fun L => H (L * A ab)
+                (L *ᵥ ![ab 0 * rs 0, ab 1 * rs 1, t]))))) -
+      ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 2) K))
+        (fun M => ProbComp.expect (ProbComp.sample (Fin rows → K))
+          (fun v => H M v))| ≤
+      1 - (1 - 1 / (Fintype.card K : ℝ)) ^ 3 := by
+  intro A
+  letI : DecidableEq K := Classical.decEq K
+  let C (ab rs : Fin 2 → K) (t : K) : Matrix (Fin 3) (Fin 3) K :=
+    ![![ab 0, 0, ab 0 * rs 0], ![0, ab 1, ab 1 * rs 1], ![1, 1, t]]
+  let split : Matrix (Fin rows) (Fin 3) K ≃
+      (Matrix (Fin rows) (Fin 2) K × (Fin rows → K)) :=
+    (Equiv.arrowCongr (Equiv.refl (Fin rows)) (Fin.succFunEquiv K 2)).trans
+      (Equiv.arrowProdEquivProdArrow (Fin rows) (fun _ => Fin 2 → K) (fun _ => K))
+  let F (U : Matrix (Fin rows) (Fin 3) K) : ℝ := H (split U).1 (split U).2
+  let P (ab rs : Fin 2 → K) (t : K) : ℝ :=
+    ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K)) fun L =>
+      H (L * A ab) (L *ᵥ ![ab 0 * rs 0, ab 1 * rs 1, t])
+  let Q : ℝ :=
+    ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 2) K)) fun M =>
+      ProbComp.expect (ProbComp.sample (Fin rows → K)) fun v => H M v
+  let bad (ab rs : Fin 2 → K) (t : K) : Prop :=
+    ab 0 = 0 ∨ ab 1 = 0 ∨ t = rs 0 + rs 1
+  change |ProbComp.expect (ProbComp.sample (Fin 2 → K))
+      (fun ab => ProbComp.expect (ProbComp.sample (Fin 2 → K))
+        (fun rs => ProbComp.expect (ProbComp.sample K) (P ab rs))) - Q| ≤
+    1 - (1 - 1 / (Fintype.card K : ℝ)) ^ 3
+  -- Read the canonical augmented determinant with the existing three-by-three formula.
+  have hDet : ∀ (ab rs : Fin 2 → K) (t : K),
+      (C ab rs t).det = ab 0 * ab 1 * (t - rs 0 - rs 1) := by
+    intro ab rs t
+    rw [Matrix.det_fin_three]
+    simp only [C, Matrix.of_apply, Matrix.cons_val_zero, Matrix.cons_val_one,
+      Matrix.cons_val_two, Matrix.head_cons, Matrix.tail_cons, mul_zero, zero_mul,
+      mul_one, one_mul, sub_zero, add_zero, zero_add]
+    ring
+  -- The standard finite-function equivalence separates the first two and final columns.
+  have hCoords : ∀ (ab rs : Fin 2 → K) (t : K)
+      (L : Matrix (Fin rows) (Fin 3) K),
+      split (L * C ab rs t) =
+        (L * A ab, L *ᵥ ![ab 0 * rs 0, ab 1 * rs 1, t]) := by
+    intro ab rs t L
+    apply Prod.ext
+    · funext i j
+      refine (show (L * C ab rs t) i (Fin.castAdd 1 j) = (L * A ab) i j from ?_)
+      rw [Matrix.mul_apply, Matrix.mul_apply]
+      apply Finset.sum_congr rfl
+      intro k _
+      apply congrArg (fun z : K => L i k * z)
+      fin_cases k <;> fin_cases j <;> rfl
+    · funext i
+      refine (show (L * C ab rs t) i (2 : Fin 3) =
+        L i ⬝ᵥ ![ab 0 * rs 0, ab 1 * rs 1, t] from ?_)
+      rw [Matrix.mul_apply']
+      apply congrArg (fun v : Fin 3 → K => L i ⬝ᵥ v)
+      funext k
+      fin_cases k <;> rfl
+  have hSplit :
+      ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K)) F = Q := ?_
+  swap
+  · dsimp only [F, Q]
+    rw [ProbComp.expect_sample_equiv split (fun z => H z.1 z.2),
+      ← Bridge.expect_sample_pair]
+    simp only [ProbComp.expect_bind, ProbComp.expect_pure]
+  -- Nonzero determinant gives surjectivity using the existing matrix-unit readers.
+  have hSurj : ∀ (ab rs : Fin 2 → K) (t : K), ¬ bad ab rs t →
+      Function.Surjective (Matrix.mulVec (C ab rs t)ᵀ) := ?_
+  swap
+  · intro ab rs t hbad
+    rcases not_or.mp hbad with ⟨ha, hrest⟩
+    rcases not_or.mp hrest with ⟨hb, ht⟩
+    rw [Matrix.mulVec_surjective_iff_isUnit, Matrix.isUnit_iff_isUnit_det,
+      Matrix.det_transpose, hDet, isUnit_iff_ne_zero]
+    apply mul_ne_zero (mul_ne_zero ha hb)
+    simpa only [sub_sub, sub_ne_zero] using ht
+  -- Reuse the generic uniform image through transposition; do not recount its fibers.
+  have hUniform : ∀ (ab rs : Fin 2 → K) (t : K), ¬ bad ab rs t →
+      ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K))
+          (fun L => F (L * C ab rs t)) =
+        ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K)) F := ?_
+  swap
+  · intro ab rs t hbad
+    have hImage := expect_sample_matrix_mul_of_mulVec_surjective
+      (K := K) (r := 3) (m := 3) (c := rows) (C ab rs t)ᵀ (hSurj ab rs t hbad)
+      (fun V : Matrix (Fin 3) (Fin rows) K => F Vᵀ)
+    simp only [Matrix.transpose_mul, Matrix.transpose_transpose] at hImage
+    have hLeft := ProbComp.expect_sample_equiv
+      (Matrix.transposeAddEquiv (Fin rows) (Fin 3) K).toEquiv
+      (fun S : Matrix (Fin 3) (Fin rows) K => F (Sᵀ * C ab rs t))
+    have hRight := ProbComp.expect_sample_equiv
+      (Matrix.transposeAddEquiv (Fin rows) (Fin 3) K).toEquiv
+      (fun V : Matrix (Fin 3) (Fin rows) K => F Vᵀ)
+    simp only [Matrix.transposeAddEquiv_apply, Matrix.transpose_transpose] at hLeft hRight
+    exact hLeft.trans (hImage.trans hRight.symm)
+  have hGood : ∀ (ab rs : Fin 2 → K) (t : K), ¬ bad ab rs t → P ab rs t = Q := ?_
+  swap
+  · intro ab rs t hbad
+    calc
+      P ab rs t = ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K))
+          (fun L => F (L * C ab rs t)) :=
+        congrArg (ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K)))
+          (funext (fun L => (congrArg
+            (fun z : Matrix (Fin rows) (Fin 2) K × (Fin rows → K) => H z.1 z.2)
+            (hCoords ab rs t L)).symm))
+      _ = ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K)) F :=
+        hUniform ab rs t hbad
+      _ = Q := hSplit
+  -- These are averages of the supplied bounded test, on good and bad inputs alike.
+  have hP0 (ab rs : Fin 2 → K) (t : K) : 0 ≤ P ab rs t :=
+    ProbComp.expect_nonneg (ProbComp.sample (Matrix (Fin rows) (Fin 3) K))
+      (fun L => hH0 (L * A ab) (L *ᵥ ![ab 0 * rs 0, ab 1 * rs 1, t]))
+  have hP1 (ab rs : Fin 2 → K) (t : K) : P ab rs t ≤ 1 := ?_
+  swap
+  · calc
+      P ab rs t ≤ ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 3) K))
+          (fun _ => 1) :=
+        ProbComp.expect_mono (ProbComp.sample (Matrix (Fin rows) (Fin 3) K))
+          (fun L => hH1 (L * A ab) (L *ᵥ ![ab 0 * rs 0, ab 1 * rs 1, t]))
+      _ = 1 := ProbComp.expect_const (ProbComp.sample (Matrix (Fin rows) (Fin 3) K)) 1
+  have hQ0 : 0 ≤ Q :=
+    ProbComp.expect_nonneg (ProbComp.sample (Matrix (Fin rows) (Fin 2) K)) fun M =>
+      ProbComp.expect_nonneg (ProbComp.sample (Fin rows → K)) fun v => hH0 M v
+  have hQ1 : Q ≤ 1 := ?_
+  swap
+  · calc
+      Q ≤ ProbComp.expect (ProbComp.sample (Matrix (Fin rows) (Fin 2) K))
+          (fun _ => 1) :=
+        ProbComp.expect_mono (ProbComp.sample (Matrix (Fin rows) (Fin 2) K)) fun M =>
+          calc
+            ProbComp.expect (ProbComp.sample (Fin rows → K)) (fun v => H M v) ≤
+                ProbComp.expect (ProbComp.sample (Fin rows → K)) (fun _ => 1) :=
+              ProbComp.expect_mono (ProbComp.sample (Fin rows → K)) (fun v => hH1 M v)
+            _ = 1 := ProbComp.expect_const (ProbComp.sample (Fin rows → K)) 1
+      _ = 1 := ProbComp.expect_const (ProbComp.sample (Matrix (Fin rows) (Fin 2) K)) 1
+  -- Translate the uniform t by -(r+s), then reuse coordinate independence and complement.
+  have hBadMass :
+      ProbComp.expect (ProbComp.sample (Fin 2 → K))
+          (fun ab => ProbComp.expect (ProbComp.sample (Fin 2 → K))
+            (fun rs => ProbComp.expect (ProbComp.sample K)
+              (fun t => if bad ab rs t then (1 : ℝ) else 0))) =
+        1 - (1 - 1 / (Fintype.card K : ℝ)) ^ 3 := by
+    let c : ℝ := 1 / (Fintype.card K : ℝ)
+    let diagGood (ab : Fin 2 → K) : Prop := ab 0 ≠ 0 ∧ ab 1 ≠ 0
+    -- Reuse the public independent-coordinate law with an explicit scalar predicate.
+    have hDiagMass :
+        ProbComp.expect (ProbComp.sample (Fin 2 → K))
+            (fun ab => if diagGood ab then (1 : ℝ) else 0) = (1 - c) ^ 2 := ?_
+    swap
+    · have hEvent :
+          ProbComp.prob (ProbComp.sample (Fin 2 → K)) diagGood =
+            ProbComp.prob (ProbComp.sample (Fin 2 → K))
+              (fun ab : Fin 2 → K => ∀ i : Fin 2, ab i ≠ 0) :=
+        ProbComp.prob_congr (ProbComp.sample (Fin 2 → K))
+          (p := diagGood) (q := fun ab : Fin 2 → K => ∀ i : Fin 2, ab i ≠ 0)
+          (fun ab => (Fin.forall_fin_two (p := fun i : Fin 2 => ab i ≠ 0)).symm)
+      rw [← ProbComp.prob_eq_expect (ProbComp.sample (Fin 2 → K)) diagGood, hEvent,
+        Bridge.prob_sample_eq_uprob (fun ab : Fin 2 → K => ∀ i : Fin 2, ab i ≠ 0),
+        TCSlib.Cryptography.OneWay.uprob_pi_forall (ι := Fin 2) (fun x : K => x ≠ 0),
+        TCSlib.Cryptography.uprob_not (fun x : K => x = 0),
+        TCSlib.Cryptography.OneWay.uprob_eq_one_div_card (0 : K), Fintype.card_fin]
+    -- At every coefficient pair, the uniform t misses its sum with probability 1-c.
+    have hMiss (rs : Fin 2 → K) :
+        ProbComp.expect (ProbComp.sample K)
+            (fun t : K => if t ≠ rs 0 + rs 1 then (1 : ℝ) else 0) = 1 - c := ?_
+    swap
+    · rw [← ProbComp.prob_eq_expect (ProbComp.sample K)
+          (fun t : K => t ≠ rs 0 + rs 1),
+        ProbComp.prob_not (ProbComp.sample K) (fun t : K => t = rs 0 + rs 1),
+        Bridge.prob_sample_eq_uprob (fun t : K => t = rs 0 + rs 1),
+        TCSlib.Cryptography.OneWay.uprob_eq_one_div_card (rs 0 + rs 1)]
+    have hGoodMass (ab rs : Fin 2 → K) :
+        ProbComp.expect (ProbComp.sample K)
+            (fun t : K => if ¬ bad ab rs t then (1 : ℝ) else 0) =
+          (1 - c) * (if diagGood ab then (1 : ℝ) else 0) := ?_
+    swap
+    · have hFactor :
+          (fun t : K => if ¬ bad ab rs t then (1 : ℝ) else 0) =
+            (fun t : K => (if diagGood ab then (1 : ℝ) else 0) *
+              (if t ≠ rs 0 + rs 1 then (1 : ℝ) else 0)) := ?_
+      swap
+      · funext t
+        simp only [bad, diagGood, not_or, ← and_assoc, ite_and, ite_mul, one_mul, zero_mul]
+      rw [hFactor, ProbComp.expect_const_mul, hMiss rs]
+      exact mul_comm _ _
+    -- Complement the actual bad predicate; no additional event is counted.
+    have hInnerBad (ab rs : Fin 2 → K) :
+        ProbComp.expect (ProbComp.sample K)
+            (fun t : K => if bad ab rs t then (1 : ℝ) else 0) =
+          1 - (1 - c) * (if diagGood ab then (1 : ℝ) else 0) := ?_
+    swap
+    · have hComp := ProbComp.prob_not (ProbComp.sample K) (bad ab rs)
+      rw [ProbComp.prob_eq_expect (ProbComp.sample K) (fun t : K => ¬ bad ab rs t),
+        hGoodMass ab rs, ProbComp.prob_eq_expect (ProbComp.sample K) (bad ab rs)] at hComp
+      apply eq_sub_iff_add_eq.mpr
+      exact (add_comm _ _).trans (eq_sub_iff_add_eq.mp hComp)
+    simp only [hInnerBad, ProbComp.expect_const]
+    rw [ProbComp.expect_sub (ProbComp.sample (Fin 2 → K)) (fun _ => 1)
+        (fun ab => (1 - c) * (if diagGood ab then (1 : ℝ) else 0)),
+      ProbComp.expect_const (ProbComp.sample (Fin 2 → K)) 1,
+      ProbComp.expect_const_mul (ProbComp.sample (Fin 2 → K)) (1 - c)
+        (fun ab => if diagGood ab then (1 : ℝ) else 0), hDiagMass]
+    exact congrArg (fun z : ℝ => 1 - z) (pow_succ' (1 - c) 2).symm
+  have hPoint (ab rs : Fin 2 → K) (t : K) :
+      |P ab rs t - Q| ≤ if bad ab rs t then (1 : ℝ) else 0 := ?_
+  swap
+  · by_cases hbad : bad ab rs t
+    · rw [if_pos hbad, abs_le]
+      constructor <;> linarith [hP0 ab rs t, hP1 ab rs t, hQ0, hQ1]
+    · simpa only [if_neg hbad, hGood ab rs t hbad, sub_self, abs_zero] using
+        (le_refl (0 : ℝ))
+  -- Average first over t, then over its independent coefficient pair and base pair.
+  have hAtT (ab rs : Fin 2 → K) :
+      |ProbComp.expect (ProbComp.sample K) (P ab rs) - Q| ≤
+        ProbComp.expect (ProbComp.sample K)
+          (fun t => if bad ab rs t then (1 : ℝ) else 0) := ?_
+  swap
+  · have h := ProbComp.abs_expect_sub_le_expect (ProbComp.sample K)
+      (f := P ab rs) (g := fun _ => Q)
+      (h := fun t => if bad ab rs t then (1 : ℝ) else 0) (hPoint ab rs)
+    rw [ProbComp.expect_const (ProbComp.sample K) Q] at h
+    exact h
+  have hAtRS (ab : Fin 2 → K) :
+      |ProbComp.expect (ProbComp.sample (Fin 2 → K))
+          (fun rs => ProbComp.expect (ProbComp.sample K) (P ab rs)) - Q| ≤
+        ProbComp.expect (ProbComp.sample (Fin 2 → K))
+          (fun rs => ProbComp.expect (ProbComp.sample K)
+            (fun t => if bad ab rs t then (1 : ℝ) else 0)) := ?_
+  swap
+  · have h := ProbComp.abs_expect_sub_le_expect (ProbComp.sample (Fin 2 → K))
+      (f := fun rs => ProbComp.expect (ProbComp.sample K) (P ab rs))
+      (g := fun _ => Q)
+      (h := fun rs => ProbComp.expect (ProbComp.sample K)
+        (fun t => if bad ab rs t then (1 : ℝ) else 0)) (hAtT ab)
+    rw [ProbComp.expect_const (ProbComp.sample (Fin 2 → K)) Q] at h
+    exact h
+  have hAverage := ProbComp.abs_expect_sub_le_expect (ProbComp.sample (Fin 2 → K))
+    (f := fun ab => ProbComp.expect (ProbComp.sample (Fin 2 → K))
+      (fun rs => ProbComp.expect (ProbComp.sample K) (P ab rs)))
+    (g := fun _ => Q)
+    (h := fun ab => ProbComp.expect (ProbComp.sample (Fin 2 → K))
+      (fun rs => ProbComp.expect (ProbComp.sample K)
+        (fun t => if bad ab rs t then (1 : ℝ) else 0))) hAtRS
+  rw [ProbComp.expect_const (ProbComp.sample (Fin 2 → K)) Q, hBadMass] at hAverage
+  exact hAverage
+
+end TCSlib.Cryptography.Pairing

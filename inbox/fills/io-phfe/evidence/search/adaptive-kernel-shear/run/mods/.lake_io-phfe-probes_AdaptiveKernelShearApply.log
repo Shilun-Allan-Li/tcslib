@@ -1,0 +1,217 @@
+Try this:
+  [apply] refine bex_def.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃ x,
+    ∃ (_ : ∀ (u : U) (x_1 : E), x (u, x_1) = (u, x_1 + shift u (projection x_1))),
+      (∀ (u : U) (x_2 : E), x.symm (u, x_2) = (u, x_2 - shift u (projection x_2))) ∧
+        ∀ (u : U) (x_2 : E), projection (x (u, x_2)).2 = projection x_2
+Try this:
+  [apply] refine (exists_and_iff_of_antitone ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ SemilatticeInf (U × E ≃ U × E)
+  -- ⊢ Antitone fun x => ∀ (u : U) (x_1 : E), x (u, x_1) = (u, x_1 + shift u (projection x_1))
+  -- ⊢ Antitone fun x =>
+    (∀ (u : U) (x_1 : E), x.symm (u, x_1) = (u, x_1 - shift u (projection x_1))) ∧
+      ∀ (u : U) (x_1 : E), projection (x (u, x_1)).2 = projection x_1
+  -- ⊢ (∃ x, ∀ (u : U) (x_1 : E), x (u, x_1) = (u, x_1 + shift u (projection x_1))) ∧
+    ∃ x,
+      (∀ (u : U) (x_1 : E), x.symm (u, x_1) = (u, x_1 - shift u (projection x_1))) ∧
+        ∀ (u : U) (x_1 : E), projection (x (u, x_1)).2 = projection x_1
+Try this:
+  [apply] refine (exists_and_iff_of_monotone ?_ ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ SemilatticeSup (U × E ≃ U × E)
+  -- ⊢ Monotone fun x => ∀ (u : U) (x_1 : E), x (u, x_1) = (u, x_1 + shift u (projection x_1))
+  -- ⊢ Monotone fun x =>
+    (∀ (u : U) (x_1 : E), x.symm (u, x_1) = (u, x_1 - shift u (projection x_1))) ∧
+      ∀ (u : U) (x_1 : E), projection (x (u, x_1)).2 = projection x_1
+  -- ⊢ (∃ x, ∀ (u : U) (x_1 : E), x (u, x_1) = (u, x_1 + shift u (projection x_1))) ∧
+    ∃ x,
+      (∀ (u : U) (x_1 : E), x.symm (u, x_1) = (u, x_1 - shift u (projection x_1))) ∧
+        ∀ (u : U) (x_1 : E), projection (x (u, x_1)).2 = projection x_1
+Try this:
+  [apply] refine Set.inter_nonempty.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ((fun x => ∀ (u : U) (x_1 : E), x (u, x_1) = (u, x_1 + shift u (projection x_1))) ∩ fun x =>
+      (∀ (u : U) (x_1 : E), x.symm (u, x_1) = (u, x_1 - shift u (projection x_1))) ∧
+        ∀ (u : U) (x_1 : E), projection (x (u, x_1)).2 = projection x_1).Nonempty
+Try this:
+  [apply] refine Set.inter_nonempty_iff_exists_left.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ((fun x => ∀ (u : U) (x_1 : E), x (u, x_1) = (u, x_1 + shift u (projection x_1))) ∩ fun x =>
+      (∀ (u : U) (x_1 : E), x.symm (u, x_1) = (u, x_1 - shift u (projection x_1))) ∧
+        ∀ (u : U) (x_1 : E), projection (x (u, x_1)).2 = projection x_1).Nonempty
+Try this:
+  [apply] refine Set.inter_nonempty_iff_exists_right.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ((fun x =>
+        (∀ (u : U) (x_1 : E), x.symm (u, x_1) = (u, x_1 - shift u (projection x_1))) ∧
+          ∀ (u : U) (x_1 : E), projection (x (u, x_1)).2 = projection x_1) ∩
+      fun x => ∀ (u : U) (x_1 : E), x (u, x_1) = (u, x_1 + shift u (projection x_1))).Nonempty
+Try this:
+  [apply] refine Set.not_disjoint_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬Disjoint (fun x => ∀ (u : U) (x_1 : E), x (u, x_1) = (u, x_1 + shift u (projection x_1))) fun x =>
+      (∀ (u : U) (x_1 : E), x.symm (u, x_1) = (u, x_1 - shift u (projection x_1))) ∧
+        ∀ (u : U) (x_1 : E), projection (x (u, x_1)).2 = projection x_1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Set.BijOn.exists ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Subtype.existsOfSubtype ?_
+  -- Remaining subgoals:
+  -- ⊢ { x //
+    (∀ (u : U) (x_1 : E), x (u, x_1) = (u, x_1 + shift u (projection x_1))) ∧
+      (∀ (u : U) (x_1 : E), x.symm (u, x_1) = (u, x_1 - shift u (projection x_1))) ∧
+        ∀ (u : U) (x_1 : E), projection (x (u, x_1)).2 = projection x_1 }
+Try this:
+  [apply] refine Subtype.exists_of_subtype ?_
+  -- Remaining subgoals:
+  -- ⊢ { x //
+    (∀ (u : U) (x_1 : E), x (u, x_1) = (u, x_1 + shift u (projection x_1))) ∧
+      (∀ (u : U) (x_1 : E), x.symm (u, x_1) = (u, x_1 - shift u (projection x_1))) ∧
+        ∀ (u : U) (x_1 : E), projection (x (u, x_1)).2 = projection x_1 }
+Try this:
+  [apply] refine Exists.intro ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ U × E ≃ U × E
+  -- ⊢ (∀ (u : U) (x : E), ?_ (u, x) = (u, x + shift u (projection x))) ∧
+    (∀ (u : U) (x : E), (Equiv.symm ?_) (u, x) = (u, x - shift u (projection x))) ∧
+      ∀ (u : U) (x : E), projection (?_ (u, x)).2 = projection x
+Try this:
+  [apply] refine Exists.of_psigma_prop ?_
+  -- Remaining subgoals:
+  -- ⊢ (x : U × E ≃ U × E) ×'
+    (∀ (u : U) (x_1 : E), x (u, x_1) = (u, x_1 + shift u (projection x_1))) ∧
+      (∀ (u : U) (x_1 : E), x.symm (u, x_1) = (u, x_1 - shift u (projection x_1))) ∧
+        ∀ (u : U) (x_1 : E), projection (x (u, x_1)).2 = projection x_1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Exists.imp (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists_congr fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists_congr fun a => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Exists.imp' ?_ (fun a => ?_) ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Decidable.not_forall_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Decidable
+    (∃ x,
+      (∀ (u : U) (x_1 : E), x (u, x_1) = (u, x_1 + shift u (projection x_1))) ∧
+        (∀ (u : U) (x_1 : E), x.symm (u, x_1) = (u, x_1 - shift u (projection x_1))) ∧
+          ∀ (u : U) (x_1 : E), projection (x (u, x_1)).2 = projection x_1)
+  -- ⊢ ¬∀ (x : U × E ≃ U × E),
+      ¬((∀ (u : U) (x_1 : E), x (u, x_1) = (u, x_1 + shift u (projection x_1))) ∧
+          (∀ (u : U) (x_1 : E), x.symm (u, x_1) = (u, x_1 - shift u (projection x_1))) ∧
+            ∀ (u : U) (x_1 : E), projection (x (u, x_1)).2 = projection x_1)
+Try this:
+  [apply] refine Classical.not_forall_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬∀ (x : U × E ≃ U × E),
+      ¬((∀ (u : U) (x_1 : E), x (u, x_1) = (u, x_1 + shift u (projection x_1))) ∧
+          (∀ (u : U) (x_1 : E), x.symm (u, x_1) = (u, x_1 - shift u (projection x_1))) ∧
+            ∀ (u : U) (x_1 : E), projection (x (u, x_1)).2 = projection x_1)
+Try this:
+  [apply] refine not_forall_not.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ¬∀ (x : U × E ≃ U × E),
+      ¬((∀ (u : U) (x_1 : E), x (u, x_1) = (u, x_1 + shift u (projection x_1))) ∧
+          (∀ (u : U) (x_1 : E), x.symm (u, x_1) = (u, x_1 - shift u (projection x_1))) ∧
+            ∀ (u : U) (x_1 : E), projection (x (u, x_1)).2 = projection x_1)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine exists_of_exists_mem ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine existsUnique_iff_exists.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Subsingleton (U × E ≃ U × E)
+  -- ⊢ ∃! x,
+    (∀ (u : U) (x_1 : E), x (u, x_1) = (u, x_1 + shift u (projection x_1))) ∧
+      (∀ (u : U) (x_1 : E), x.symm (u, x_1) = (u, x_1 - shift u (projection x_1))) ∧
+        ∀ (u : U) (x_1 : E), projection (x (u, x_1)).2 = projection x_1
+Try this:
+  [apply] refine ExistsUnique.exists ?_
+  -- Remaining subgoals:
+  -- ⊢ ∃! x,
+    (∀ (u : U) (x_1 : E), x (u, x_1) = (u, x_1 + shift u (projection x_1))) ∧
+      (∀ (u : U) (x_1 : E), x.symm (u, x_1) = (u, x_1 - shift u (projection x_1))) ∧
+        ∀ (u : U) (x_1 : E), projection (x (u, x_1)).2 = projection x_1
+Try this:
+  [apply] refine nonempty_subtype.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Nonempty
+    { a //
+      (∀ (u : U) (x : E), a (u, x) = (u, x + shift u (projection x))) ∧
+        (∀ (u : U) (x : E), a.symm (u, x) = (u, x - shift u (projection x))) ∧
+          ∀ (u : U) (x : E), projection (a (u, x)).2 = projection x }
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Function.Surjective.exists fun b => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine IsEmpty.exists_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ IsEmpty (U × E ≃ U × E)
+  -- ⊢ False
+Try this:
+  [apply] refine Unique.exists_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ Unique (U × E ≃ U × E)
+  -- ⊢ (∀ (u : U) (x : E), default (u, x) = (u, x + shift u (projection x))) ∧
+    (∀ (u : U) (x : E), default.symm (u, x) = (u, x - shift u (projection x))) ∧
+      ∀ (u : U) (x : E), projection (default (u, x)).2 = projection x
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr_left ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr_right ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr ?_ fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr ?_ fun a => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr' ?_ fun b => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_congr' ?_ fun b => ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_subtype_congr ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Equiv.exists_subtype_congr ?_).mpr ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists_le_and_iff_exists fun ⦃a⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (exists_ge_and_iff_exists fun ⦃a⦄ => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+.lake/io-phfe-probes/AdaptiveKernelShearApply.lean:9:0: warning: declaration uses 'sorry'
+.lake/io-phfe-probes/AdaptiveKernelShearApply.lean:11:5: warning: unused variable `hshift`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

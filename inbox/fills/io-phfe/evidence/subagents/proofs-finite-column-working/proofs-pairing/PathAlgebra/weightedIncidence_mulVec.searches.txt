@@ -1,0 +1,19 @@
+Focused read-only searches for the weightedIncidence_mulVec proof
+Root exact?/apply? logs are cited in the review; the agent ran no Lean/lake/Git.
+
+$ rg -n 'weightedIncidence_mulVec|weighted_incidence|incidence.*mulVec|mulVec.*incidence' TCSlib .lake/packages/mathlib/Mathlib
+exit=1
+
+$ rg -n 'theorem single_dotProduct|theorem single_one_dotProduct|theorem sub_dotProduct' .lake/packages/mathlib/Mathlib/Data/Matrix/Mul.lean
+exit=0
+178:theorem single_dotProduct (x : α) (i : m) : Pi.single i x ⬝ᵥ v = x * v i := by
+205:theorem single_one_dotProduct [DecidableEq n] (i : n) (v : n → α) :
+225:theorem sub_dotProduct : (u - v) ⬝ᵥ w = u ⬝ᵥ w - v ⬝ᵥ w := by simp [sub_eq_add_neg]
+
+$ rg -n 'lemma mulSingle_apply|lemma mulSingle_eq_same|lemma mulSingle_eq_of_ne' .lake/packages/mathlib/Mathlib/Algebra/Notation/Pi/Basic.lean
+exit=0
+29:lemma mulSingle_eq_same (i : ι) (x : M i) : mulSingle i x i = x := Function.update_self i x _
+32:lemma mulSingle_eq_of_ne {i i' : ι} (h : i' ≠ i) (x : M i) : mulSingle i x i' = 1 :=
+38:lemma mulSingle_eq_of_ne' {i i' : ι} (h : i ≠ i') (x : M i) : mulSingle i x i' = 1 :=
+89:lemma mulSingle_apply (i : ι) (x : M) (i' : ι) :
+
