@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Foundations.Negligible
+import TCSlib.Cryptography.Foundations.Subexponential
 import TCSlib.Cryptography.Foundations.Probability
 import TCSlib.Cryptography.Foundations.Experiments
 import TCSlib.Cryptography.Foundations.BitLists
@@ -21,6 +22,8 @@ one-way function, hard-concentrate bit and pseudorandomness developments are bui
 ## Contents
 
 * `Negligible`: negligible and noticeable functions and their closure properties.
+* `Subexponential`: subexponentially small functions (eventually at most `2^{-n^c}`),
+  their closure properties, and subexponential hardness of an advantage family.
 * `Probability`: uniform probability `uprob`, expectation `uexp`, the union bound,
   Fubini, averaging and the hybrid argument.
 * `Experiments`: `invProb`, `predProb`, `acceptProb`, `distAdv`, and the bound of
