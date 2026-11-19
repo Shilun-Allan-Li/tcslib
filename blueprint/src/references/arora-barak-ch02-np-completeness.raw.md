@@ -1,7 +1,7 @@
 <!-- generated-by: scoped pypdf extraction (maintainer ingest for EF-H12, 2026-11-19; ruling EF-H12-R4 A / Q-H12-2 A) -->
 <!-- source-pdf-sha256: da0881782a35bde6a0779a2eb1a8d480f39fbddf70bbb92824d1dc5550a033b2 -->
 <!-- source: S. Arora, B. Barak, "Computational Complexity: A Modern Approach", authors' public web draft (Princeton), https://theory.cs.princeton.edu/complexity/book.pdf, 489 pages, page footers "Web draft 2007-01-08 21:59"; NOT the Cambridge University Press 2009 edition: its chapter, section, theorem and page numbers are the draft's and may differ from CUP 2009 -->
-<!-- extractor: pypdf 6.17.0 under python3 -I, extract_text(extraction_mode="layout"); per page the common left indentation is removed, trailing spaces are stripped and runs of blank lines are collapsed; nothing else is edited (the "DRAFT" watermark, running heads, footers and figure debris are kept as extracted) -->
+<!-- extractor: pypdf 6.17.0 under python3 -I, extract_text(extraction_mode="layout"); per page the common left indentation is removed, trailing spaces are stripped, runs of blank lines are collapsed and C0 control characters (figure debris) are replaced by U+FFFD; nothing else is edited (the "DRAFT" watermark, running heads, footers and figure debris are kept as extracted) -->
 <!-- scope: PDF pages 55-80, the whole of Chapter 2 'NP and NP completeness' (chapter title to the end of Exercise 23; Chapter 3 begins on PDF page 81) -->
 <!-- note: physical PDF page p is printed draft page p - 16; the draft prints a chapter label as well, "p2.k (N)" with k = p - 54 and N = p - 16 -->
 <!-- validation-status: awaiting Codex source review -->
@@ -545,26 +545,26 @@ DRAFT
                    Theorem              2.10       (Lemma             2.12)
                                                                                    SAT?     X                         X                         X                         X                         X                         X                         X                         X                         X                         X                         X                         X                         X                         X                         X                         X X
                                                                                                        Theorem              2.10      (Lemma              2.15)
-   Theorem              2.18                                                        
-                        9                                                            ?Theorem              2.17
-     dHAMPATH                                                                   INTEGERPROG                                                                z
-                                                                                                                                                                 3SAT
-                                                                                                Theorem              2.16                                           ~ Z       ZEx  16
-                           ?    Ex     17                                                             9                                                       Exactone3SAT
-     HAMPATH                                                          
-                               H                         H                         H                         H            HINDSET                   Ex     16
-                                                                                                          @
-                       Ex      17         j                                                                    @                         @                         @                         @?
- TSP                   HAMCYCLE                                                                                                                            SUBSETSUM
-                                                                                              Ex      14
-                                                                                       
-              Ex      6                                                                                                        R@                 @
-                                                                                                                          VERTEXCOVER
-    THEOREMS                                                           CLIQUE
-                                                                                                                                          Ex      15
-                                                                                                                                        ?
-             Ex      18                                                                                                      MAXCUT
-                                         
+   Theorem              2.18                                                        �
+                        9                                                         �   ?Theorem              2.17
+     dHAMPATH                                                                  � INTEGERPROG                                                                z
+                                                                             �                                                                                    3SAT
+                                                                           �                     Theorem              2.16                                           ~ Z       ZEx  16
+                           ?    Ex     17                                �                             9                                                       Exactone3SAT
+     HAMPATH                                                          �
+                               H                         H                         H                         H            H�INDSET                   Ex     16
+                     �                                            �                              �          @
+                 �     Ex      17         j                    �                               �                 @                         @                         @                         @?
+ TSP                   HAMCYCLE�                                                             �                                                               SUBSETSUM
+                                                           �                              �     Ex      14
+                                                         �                              �
+              Ex      6                               �                             � �                                           R@                 @
+                                                    �                                                                      VERTEXCOVER
+    THEOREMS                                      �                     CLIQUE
+                                                �                                                                                          Ex      15
+                                             �                                                                                           ?
+             Ex      18                    �                                                                                  MAXCUT
+                                         ��
             QUADEQ
 
 Figure 2.4:  Web of reductions between the NP-completeness problems described in this chapter

@@ -27,7 +27,7 @@ and discussion are condensed; exercises are summarised by number. Bold block lab
 ingester's, and notes marked *Transcription note* are not part of the source.
 
 <a id="pdf-da0881782a35-p117-b001"></a>
-<!-- pdf-source: page=117; block=1; confidence=0.95 -->
+<!-- pdf-source: page=117; block=1; confidence=0.93 -->
 # Chapter 6: Circuits
 
 _Epigraph (Karp and Lipton, 1982): one might imagine that P ≠ NP, but SAT is tractable in the sense that for every ℓ there is a very short program that runs in time ℓ² and correctly treats all instances of size ℓ._
@@ -127,7 +127,7 @@ P/poly can be defined using Turing machines that "take advice".
 **Example 6.10.** Every unary language can be decided by a polynomial time Turing machine with 1 bit of advice: the advice string for inputs of length n is the single bit indicating whether or not 1ⁿ is in the language. In particular this is true of the language of Example 6.4.
 
 <a id="pdf-da0881782a35-p122-b001"></a>
-<!-- pdf-source: page=122; block=1; confidence=0.95 -->
+<!-- pdf-source: page=122; block=1; confidence=0.93 -->
 **Theorem 6.11.** P/poly = ⋃_{c,d} DTIME(n^c)/n^d. **Proof.** If L ∈ P/poly, give the polynomial-sized description of its circuit family as advice; on inputs of size n the machine simulates the circuit. Conversely, if L is decided by a polynomial-time TM M with advice {α_n} of size a(n), a polynomial, the construction of Theorem 6.7 gives for every n a polynomial-sized circuit D_n with D_n(x, α) = M(x, α) for all x ∈ {0,1}ⁿ, α ∈ {0,1}^{a(n)}; let C_n be D_n with α_n "hardwired" as its second input, mapping x to D_n(x, α_n). ∎
 
 <a id="pdf-da0881782a35-p122-b002"></a>
@@ -135,7 +135,7 @@ P/poly can be defined using Turing machines that "take advice".
 **Remark 6.12.** By "hardwiring" an input into a circuit we mean taking a circuit C with two inputs x ∈ {0,1}ⁿ, y ∈ {0,1}^m and transforming it into the circuit C_y that for every x returns C(x, y). It is easy to do so while ensuring that the size of C_y is not greater than the size of C. This simple idea is often used in complexity theory.
 
 <a id="pdf-da0881782a35-p122-b003"></a>
-<!-- pdf-source: page=122; block=3; confidence=0.96 -->
+<!-- pdf-source: page=122; block=3; confidence=0.93 -->
 ## 6.2 Karp-Lipton Theorem
 
 Karp and Lipton asked whether SAT is in P/poly and showed the answer is "NO" if the polynomial hierarchy does not collapse.
@@ -165,7 +165,7 @@ With the time hierarchy theorem (Theorem 3.1), the previous theorem implies that
 Since P ⊆ P/poly, NP ⊄ P/poly would give P ≠ NP, and Karp–Lipton gives hope that NP ⊄ P/poly. Circuits seem to let one "peer into the guts" of computation and perhaps avoid the limits of relativizing methods (Chapter 3). But after two decades the best circuit size lower bound for an NP language is only 5n (Exercise 1 gives a better one for a language in PH); restricted circuit models fare better (Chapter 13). It is easy to show that for large n almost every Boolean function requires large circuits.
 
 <a id="pdf-da0881782a35-p123-b005"></a>
-<!-- pdf-source: page=123; block=5; confidence=0.95 -->
+<!-- pdf-source: page=123; block=5; confidence=0.93 -->
 **Theorem 6.15.** For n ≥ 100, almost all boolean functions on n variables require circuits of size at least 2ⁿ/(10n). **Proof.** Counting: there are at most s^{3s} circuits of size s (count labeled directed graphs with in-degree at most 2), which bounds the number of functions with circuits of size s. For s = 2ⁿ/(10n) this is at most 2^{2ⁿ/10}, minuscule compared with the 2^{2ⁿ} Boolean functions on n variables. ∎
 
 <a id="pdf-da0881782a35-p123-b006"></a>
@@ -223,7 +223,7 @@ Since unbounded (but poly(n)) fanin can be simulated by a tree of ORs/ANDs of de
 **Theorem 6.24.** A language has efficient parallel algorithms iff it is in NC. **Proof.** If L ∈ NC via circuits C_n of size N = O(n^c) and depth D = O(log^d n), configure a parallel computer with N nodes, one processor per circuit node (done once); each processor sends its node's output to the nodes that need it. With message delivery in O(log N) time the total time is O(log^{d+1} N). Conversely, a circuit of N·D nodes in D layers, node i of layer t performing processor i's computation at time t, with wires in place of the network. ∎
 
 <a id="pdf-da0881782a35-p126-b004"></a>
-<!-- pdf-source: page=126; block=4; confidence=0.95 -->
+<!-- pdf-source: page=126; block=4; confidence=0.93 -->
 ### 6.5.2 P-completeness
 
 Whether P = NC is a major open question, believed NO (even PH vs. NC¹ is not separated); P-completeness studies which problems are likely in NC.

@@ -1,7 +1,7 @@
 <!-- generated-by: scoped pypdf extraction (maintainer ingest for EF-H12, 2026-11-19; ruling EF-H12-R4 A / Q-H12-2 A) -->
 <!-- source-pdf-sha256: da0881782a35bde6a0779a2eb1a8d480f39fbddf70bbb92824d1dc5550a033b2 -->
 <!-- source: S. Arora, B. Barak, "Computational Complexity: A Modern Approach", authors' public web draft (Princeton), https://theory.cs.princeton.edu/complexity/book.pdf, 489 pages, page footers "Web draft 2007-01-08 21:59"; NOT the Cambridge University Press 2009 edition: its chapter, section, theorem and page numbers are the draft's and may differ from CUP 2009 -->
-<!-- extractor: pypdf 6.17.0 under python3 -I, extract_text(extraction_mode="layout"); per page the common left indentation is removed, trailing spaces are stripped and runs of blank lines are collapsed; nothing else is edited (the "DRAFT" watermark, running heads, footers and figure debris are kept as extracted) -->
+<!-- extractor: pypdf 6.17.0 under python3 -I, extract_text(extraction_mode="layout"); per page the common left indentation is removed, trailing spaces are stripped, runs of blank lines are collapsed and C0 control characters (figure debris) are replaced by U+FFFD; nothing else is edited (the "DRAFT" watermark, running heads, footers and figure debris are kept as extracted) -->
 <!-- scope: PDF pages 117-130, the whole of Chapter 6 'Circuits' (chapter title to the end of Exercise 15; Chapter 7 begins on PDF page 131) -->
 <!-- note: physical PDF page p is printed draft page p - 16; the draft prints a chapter label as well, "p6.k (N)" with k = p - 116 and N = p - 16 -->
 <!-- validation-status: awaiting Codex source review -->

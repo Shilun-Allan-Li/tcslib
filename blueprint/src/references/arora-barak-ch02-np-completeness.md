@@ -26,7 +26,7 @@ number. Bold block labels are the ingester's, and notes marked *Transcription no
 of the source.
 
 <a id="pdf-da0881782a35-p055-b001"></a>
-<!-- pdf-source: page=55; block=1; confidence=0.95 -->
+<!-- pdf-source: page=55; block=1; confidence=0.93 -->
 # Chapter 2: NP and NP completeness
 
 _Epigraphs: Gödel's 1956 letter to von Neumann (if φ(n) ≈ Kn² — footnote: in modern terms, if SAT has a quadratic-time algorithm — the mathematician's effort on yes-or-no questions could be replaced by machines); Jack Edmonds, 1966 (conjecture that there is no good algorithm for the traveling salesman problem); Richard Karp, 1972 (theorems that suggest, but do not imply, that these problems will remain intractable)._
