@@ -1,0 +1,180 @@
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean
+index 178936f4d..4d6fbea71 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean
+@@ -287,11 +287,11 @@ between the encoded real views of `false` and `true` at `P_κ = ofFamily F κ`,
+ p013-b002]. Deviation: concrete reductions covered by (A4).
+ 
+ **Proof sketch.** At each `κ`, phase 5's `distAdv_encrypt_le_of_width` with `w = ℓ`
+-(`q ≤ 2^ℓ` by the family's `modulus_le_pow`, `hm` read through `Parameters.ofFamily_lwe` and
+-`Parameters.ofFamily_width`) bounds the advantage by the two DLWE advantages of `reduction`
+-plus `N·2^{−κ}`. `heff` (`reductionEfficient_iff`) gives `D'₀`, `D'₁` dominating them by
+-`F.advantageAt D'ᵢ κ`, negligible by `dlweAssumption_iff`. `N = (n + 1)·ℓ` is at most
+-`(d(κ) + 1)·ℓ(κ)` (`dimension_le`, `PolyExpr.eval`), so `negligible_polyExpr_mul`
++(`q ≤ 2^ℓ` by the family's `modulus_le_pow`, `hm` read through `Parameters.ofFamily_lwe`)
++bounds the advantage by the two DLWE advantages of `reduction` plus `N·2^{−κ}`. `heff`
++(`reductionEfficient_iff`) gives `D'₀`, `D'₁` dominating them by `F.advantageAt D'ᵢ κ`,
++negligible by `dlweAssumption_iff`. `N = (n + 1)·ℓ` is at most `(d(κ) + 1)·ℓ(κ)`
++(`Parameters.ofFamily_columns_le`, `PolyExpr.eval`), so `negligible_polyExpr_mul`
+ (`Asymptotic/EnsemblesLemmas.lean`) with `negligible_two_pow_neg` makes the last term negligible;
+ `Negligible.add` and `Negligible.mono` (`distAdv` is nonnegative) finish. -/
+ theorem indCPA_of_dlweAssumption (F : LWE.Family) (hF : LWE.DLWEAssumption F)
+@@ -356,9 +356,9 @@ disclosed (module docstring).
+ every DLWE advantage in `levelTerm_eq` and `challengeTerm_eq`; `Regev.two_extractionError_le`
+ with `hm` bounds `2·ε_LHL ≤ 2^{−κ}`. So the bound is at most
+ `(2·L(κ)·N + 1)·(2·(advantageAt D'₀ κ + advantageAt D'₁ κ) + N·2^{−κ})`, a polynomial
+-(`(d(κ) + 1)·ℓ(κ)` bounds `N`; `PolyExpr.eval`) times negligible functions
+-(`dlweAssumption_iff`, `negligible_two_pow_neg`, `negligible_polyExpr_mul` from
+-`Asymptotic/EnsemblesLemmas.lean`, `Negligible.add`, `Negligible.mono`). -/
++(`(d(κ) + 1)·ℓ(κ)` bounds `N` by `Parameters.ofFamily_columns_le`; `PolyExpr.eval`) times
++negligible functions (`dlweAssumption_iff`, `negligible_two_pow_neg`, `negligible_polyExpr_mul`
++from `Asymptotic/EnsemblesLemmas.lean`, `Negligible.add`, `Negligible.mono`). -/
+ theorem leveledINDCPA_of_dlweAssumption (F : LWE.Family) (L : PolyExpr)
+     (hF : LWE.DLWEAssumption F) (heff : LeveledReductionEfficient F L)
+     (hm : ∀ κ, ((F.parameters κ).dimension + 1) * F.residueBits.eval κ + 2 * κ ≤
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean
+index 6759bacd2..bf70162bf 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean
+@@ -304,7 +304,7 @@ theorem challengeTerm_eq (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ₀ μ
+ of the level key `e` replaced by encryptions of `0` under `pk_{e+1}` (same coins),
+ `levelPosHybrid P χ L μ e t r = (H.1, fun e' i => if e' = e ∧ i < t then
+ encrypt P (pk e.succ) false (r.2.1 e i) else H.2.1 e' i, H.2.2)` with
+-`H = levelHybrid P χ L μ (e + 1) r`. -/
++`H = levelHybrid P χ L μ (e + 1) r`. Glue. -/
+ private def levelPosHybrid (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ : Bool) (e : Fin L) (t : ℕ)
+     (r : LeveledSeeds P χ L) : LeveledView P L :=
+   ((levelHybrid P χ L μ (e.val + 1) r).1,
+@@ -313,14 +313,16 @@ private def levelPosHybrid (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ : Boo
+       else (levelHybrid P χ L μ (e.val + 1) r).2.1 e' i,
+     (levelHybrid P χ L μ (e.val + 1) r).2.2)
+ 
+-/-- `G_0` is `H_{e+1}`: no position is replaced. -/
++/-- `G_0` is `H_{e+1}`: no position is replaced,
++`levelPosHybrid P χ L μ e 0 = levelHybrid P χ L μ (e + 1)`. Glue. -/
+ private theorem levelPosHybrid_zero (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ : Bool)
+     (e : Fin L) : levelPosHybrid P χ L μ e 0 = levelHybrid P χ L μ (e.val + 1) := by
+   funext r
+   simp only [levelPosHybrid, Nat.not_lt_zero, and_false, if_false]
+ 
+ /-- `G_N` is `H_e`: every position of the level key `e` is replaced, and for `e' ≠ e` the
+-conditions `e + 1 ≤ e'` and `e ≤ e'` agree (`levelHybrid_eq`). -/
++conditions `e + 1 ≤ e'` and `e ≤ e'` agree (`levelHybrid_eq`),
++`levelPosHybrid P χ L μ e P.columns = levelHybrid P χ L μ e`. Glue. -/
+ private theorem levelPosHybrid_columns (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ : Bool)
+     (e : Fin L) : levelPosHybrid P χ L μ e P.columns = levelHybrid P χ L μ e.val := by
+   funext r
+@@ -335,7 +337,9 @@ private theorem levelPosHybrid_columns (P : Parameters) (χ : LWE.Noise) (L : 
+ 
+ /-- **On a real key the reduction runs a position hybrid.** On an LWE sample,
+ `levelReduction P χ L μ e j b D` accepts exactly as `D` accepts `G_j` (`b = true`: position `j`
+-encrypts its key bit) or `G_{j+1}` (`b = false`: it encrypts `0`).
++encrypts its key bit) or `G_{j+1}` (`b = false`: it encrypts `0`),
++`acceptProb (LWE.sample P.lwe χ) (levelReduction P χ L μ e j b D) =
++acceptProb (levelPosHybrid P χ L μ e (if b then j else j + 1)) D`. Glue.
+ 
+ **Proof sketch.** The bijection `Ψ` of the seeds plants the LWE seed as the key seed of
+ `pk_{e+1}` and the reduction's coins as the coins of the level key `e` (`R₀` at position `j`, the
+@@ -351,6 +355,7 @@ private theorem acceptProb_sample_levelReduction (P : Parameters) (χ : LWE.Nois
+     acceptProb (LWE.sample P.lwe χ) (levelReduction P χ L μ e j b D) =
+       acceptProb (levelPosHybrid P χ L μ e (if b then j.val else j.val + 1)) D := by
+   have h : P.columns - 1 + 1 = P.columns := Nat.sub_one_add_one (NeZero.ne P.columns)
++  -- The seed bijection `Ψ`: the LWE seed as the key seed of `pk_{e+1}`, `R₀` at position `j`.
+   let Ψ : KeySeed P χ × (Coins P × ((Fin (P.columns - 1 + 1) → Coins P) ×
+       (LeveledSeeds P χ L × ρ))) ≃
+       (LeveledSeeds P χ L × ρ) × (KeySeed P χ × ((Fin P.columns → Coins P) × Coins P)) :=
+@@ -388,11 +393,13 @@ private theorem acceptProb_sample_levelReduction (P : Parameters) (χ : LWE.Nois
+               simp [Function.update_of_ne hi, Function.update_of_ne hi']
+           · simp [Function.update_of_ne he]
+         · simp }
++  -- Transport along `Ψ` and drop the replaced coordinates (`uprob_comp_equiv`, `uprob_fst`).
+   rw [acceptProb_def, acceptProb_def,
+     ← uprob_fst (β := KeySeed P χ × ((Fin P.columns → Coins P) × Coins P))
+       (fun z : LeveledSeeds P χ L × ρ =>
+         D (levelPosHybrid P χ L μ e (if b then j.val else j.val + 1) z.1) z.2 = true),
+     ← uprob_comp_equiv Ψ]
++  -- The views agree pointwise (the readers; the positions below, at and above `j`).
+   refine congrArg uprob (funext fun w => ?_)
+   obtain ⟨k, R₀, Rs, ⟨K, RC, R₁⟩, c⟩ := w
+   congr 1
+@@ -440,7 +447,7 @@ private theorem acceptProb_sample_levelReduction (P : Parameters) (χ : LWE.Nois
+ 
+ /-- **Under a uniform key the two sides are `2·(N·ε_LHL)`-close**: the acceptance probabilities of
+ `levelReduction P χ L μ e j b D` on a uniform key, `b = true` and `b = false`, differ by at most
+-`2 * (P.columns * Regev.extractionError P.lwe)`.
++`2 * (P.columns * Regev.extractionError P.lwe)`. Glue.
+ 
+ **Proof sketch.** Regrouping the seeds (`uprob_comp_equiv`, `uprob_prod`), each side is the average
+ over the reduction's own seeds `ω` of the acceptance of `uniformKeyView P m` by one test `T ω`
+@@ -460,6 +467,7 @@ private theorem abs_acceptProb_id_levelReduction_sub_le (P : Parameters) (χ : L
+       v (c.1, (ω, c.2))
+   let msg : Bool → LeveledSeeds P χ L → Bool := fun b ω =>
+     if b then levelMsgs P χ L e ω j' else false
++  -- Each side: the average over the reduction's own seeds `ω` of one uniform-key test `T ω`.
+   have hsec : ∀ b, acceptProb (id : PublicKey P → PublicKey P) (levelReduction P χ L μ e j b D) =
+       uexp fun ω => acceptProb (uniformKeyView P (msg b ω)) (T ω) := by
+     intro b
+@@ -477,12 +485,14 @@ private theorem abs_acceptProb_id_levelReduction_sub_le (P : Parameters) (χ : L
+     refine congrArg uprob (funext fun z => ?_)
+     rw [uniformKeyView_eq, levelReduction_eq, reduction_eq]
+     rfl
++  -- `0 ≤ 2·(N·ε_LHL)`, read off the statistical bound at a constant test.
+   have hc : 0 ≤ 2 * (P.columns * Regev.extractionError P.lwe) := by
+     have h0 := uniformKey_uniform_advantage_le P false (fun _ (_ : Unit) => true)
+     rw [distAdv_def] at h0
+     linarith [abs_nonneg (acceptProb (uniformKeyView P false) (fun _ (_ : Unit) => true) -
+       acceptProb (id : PublicKey P × Ciphertext P → PublicKey P × Ciphertext P)
+         (fun _ (_ : Unit) => true))]
++  -- Per seed: two statistical hybrids and the triangle inequality; `abs_uexp_sub_le` averages.
+   rw [hsec true, hsec false]
+   refine abs_uexp_sub_le hc fun ω => ?_
+   have h₁ := uniformKey_uniform_advantage_le P (msg true ω) (T ω)
+@@ -496,7 +506,7 @@ private theorem abs_acceptProb_id_levelReduction_sub_le (P : Parameters) (χ : L
+   linarith
+ 
+ /-- The leveled view is the hybrid `H_L`: `leveledView P χ L μ = levelHybrid P χ L μ L`, since no
+-`e : Fin L` has `L ≤ e` (`leveledView_eq`, `levelHybrid_eq`). -/
++`e : Fin L` has `L ≤ e` (`leveledView_eq`, `levelHybrid_eq`). Glue. -/
+ private theorem leveledView_eq_levelHybrid (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ : Bool) :
+     leveledView P χ L μ = levelHybrid P χ L μ L := by
+   funext r
+@@ -507,6 +517,7 @@ private theorem leveledView_eq_levelHybrid (P : Parameters) (χ : LWE.Noise) (L
+ /-- **The hybrid `H_0` is phase 5's view under `challengeDist`**: `D` accepts `H_0(μ)` exactly as
+ `challengeDist P χ L D` accepts `realView P χ μ`,
+ `acceptProb (levelHybrid P χ L μ 0) D = acceptProb (realView P χ μ) (challengeDist P χ L D)`.
++Glue.
+ 
+ **Proof sketch.** `challengeDist_eq` writes the distinguisher as `D` after a map `F` reading its
+ own seeds, so `acceptProb_bind` moves those seeds into the sampler. The bijection `Ψ` plants the
+@@ -517,6 +528,8 @@ so the secrets are not read), and `acceptProb_comp_equiv` and `acceptProb_fst` d
+ private theorem acceptProb_levelHybrid_zero_realView (P : Parameters) (χ : LWE.Noise) (L : ℕ)
+     (μ : Bool) {ρ : Type*} [Fintype ρ] [Nonempty ρ] (D : LeveledView P L → ρ → Bool) :
+     acceptProb (levelHybrid P χ L μ 0) D = acceptProb (realView P χ μ) (challengeDist P χ L D) := by
++  -- The seed bijection `Ψ`: `realView`'s key seed and challenge coins as those of `pk_0` and of
++  -- the challenge.
+   let Ψ : (KeySeed P χ × Coins P) × LeveledSeeds P χ L ≃
+       LeveledSeeds P χ L × (KeySeed P χ × Coins P) :=
+     { toFun := fun w => ((Function.update w.2.1 0 w.1.1, w.2.2.1, w.1.2), (w.2.1 0, w.2.2.2))
+@@ -527,12 +540,14 @@ private theorem acceptProb_levelHybrid_zero_realView (P : Parameters) (χ : LWE.
+       right_inv := by
+         rintro ⟨⟨K, RC, R₀⟩, k, R₁⟩
+         simp }
++  -- `challengeDist` is `D` after the map `F` of its own seeds (`challengeDist_eq`).
+   let F : PublicKey P × Ciphertext P → LeveledSeeds P χ L → LeveledView P L := fun v ω =>
+     (Function.update (fun d => (Regev.keygen P.lwe χ (ω.1 d)).1) 0 v.1,
+       fun e j => encrypt P (Regev.keygen P.lwe χ (ω.1 e.succ)).1 false (ω.2.1 e j), v.2)
+   have hdist : challengeDist P χ L D = fun v (c : LeveledSeeds P χ L × ρ) => D (F v c.1) c.2 := by
+     funext v c
+     exact challengeDist_eq P χ L D v c
++  -- After `Ψ`, the sampler is `H_0` of the first factor (no secret is read).
+   have hview : (fun s : (KeySeed P χ × Coins P) × LeveledSeeds P χ L =>
+       F (realView P χ μ s.1) s.2) = fun s => levelHybrid P χ L μ 0 (Ψ s).1 := by
+     funext s
+@@ -549,6 +564,7 @@ private theorem acceptProb_levelHybrid_zero_realView (P : Parameters) (χ : LWE.
+       · simp [Function.update_of_ne hd]
+     simp only [Function.update_self, Function.update_of_ne (Fin.succ_ne_zero _)]
+     rw [← funext h0]
++  -- Seeds into the sampler (`acceptProb_bind`), along `Ψ`, the second factor dropped.
+   rw [hdist, acceptProb_bind, hview,
+     acceptProb_comp_equiv Ψ (fun z => levelHybrid P χ L μ 0 z.1) D, acceptProb_fst]
+ 

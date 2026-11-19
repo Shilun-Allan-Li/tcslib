@@ -1,0 +1,209 @@
+# Gate 55 staging checks (round 1). git objects and python3 -I only; no Lean, no lake.
+# repository /home/user/tcslib; records tip at staging (origin/cryptography/pass-shelat-ch2-4) 53e430b68cbe22416312a4f80bbc3426c71cf86d
+
+## 1. Pins (git rev-parse)
+PR #396 head (branch land/gsw-6b-u14-u19): dd6d274eba9b55b5a2c7c97730245a4f1bea1e90
+origin/land/gsw-6b-u14-u19: dd6d274eba9b55b5a2c7c97730245a4f1bea1e90
+fills head (last worker commit on the branch): 103a8bde9aa19e933633fa70eee94e75a308806b
+records tip at staging = branch base: 53e430b68cbe22416312a4f80bbc3426c71cf86d
+merge-base(records tip, PR head): 53e430b68cbe22416312a4f80bbc3426c71cf86d
+B6 (#377 merge, snapshot #11 T): bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d
+#392 merge (U12+U13): 0ab2042439df4a3e392a7df6066a98f32c9a38e9
+reviewed full 6b stack (scratch, on no ref): 6e363a298ff6fe59e861f968d4c54262d96e9f74
+issued pack pin (U14-U19): 27e53754d28703907571cacbaf905b441e03c393
+U14-U19 prompts pinned: f5dade193cf294082780d0568ebf26da3b6f1bba
+exchange tip at staging: 8f15c31d38b834505dc3ecd64200dc524eeacccc
+delivery u14-u16: checkpoint e727c64dd02c0219f6f4c4588638ebea946d14cc, final 90b4c3a1549008f93ae35a0395bca88f0f557f73, worker head 9852429ef14ce063fcf11ff860e7262f92063d55
+delivery u15-u17: checkpoint 2e6cddf0f0a477e29b50a866bc587331c43c1ad2, final f501b6694a82f7c57a82c18da7985b38ed9ca5ca, worker head 619d202992b026ab7464595884d9b1b77736d8ab
+delivery u18-u19: checkpoint 5fb0d4b8324f1c5e8d1e64e013f083f0bd154e20, final c414248e3562acfb91ac05cab16e6e308f56ee26, worker head 4672ed30d036feb624ca84b4199af19d77f5768f
+
+## 2. Lean equality (TCSlib subtree, TCSlib.lean blob)
+B6          bff0567b6c4b  TCSlib 949dfd63c2539e1ccd738ab96ec424ee6cb17798  TCSlib.lean 8db619ce45cb  audits e204e63c6027  lake-manifest a2a54033bc1f  toolchain e5ab73a51fe1
+issued pin  27e53754d287  TCSlib 949dfd63c2539e1ccd738ab96ec424ee6cb17798  TCSlib.lean 8db619ce45cb  audits e204e63c6027  lake-manifest a2a54033bc1f  toolchain e5ab73a51fe1
+c63ee44f    c63ee44f47c7  TCSlib 745bf4b494b6581a5666ef9ca0a6e735a68ddcef  TCSlib.lean 8db619ce45cb  audits e204e63c6027  lake-manifest a2a54033bc1f  toolchain e5ab73a51fe1
+c87eb403    c87eb40365e8  TCSlib 745bf4b494b6581a5666ef9ca0a6e735a68ddcef  TCSlib.lean 8db619ce45cb  audits e204e63c6027  lake-manifest a2a54033bc1f  toolchain e5ab73a51fe1
+a25338e0    a25338e0f782  TCSlib 745bf4b494b6581a5666ef9ca0a6e735a68ddcef  TCSlib.lean 8db619ce45cb  audits e204e63c6027  lake-manifest a2a54033bc1f  toolchain e5ab73a51fe1
+records tip 53e430b68cbe  TCSlib 745bf4b494b6581a5666ef9ca0a6e735a68ddcef  TCSlib.lean 8db619ce45cb  audits e204e63c6027  lake-manifest a2a54033bc1f  toolchain e5ab73a51fe1
+full stack  6e363a298ff6  TCSlib 37ae0f3223db419f636bb2d39484191f698de994  TCSlib.lean 8db619ce45cb  audits e204e63c6027  lake-manifest a2a54033bc1f  toolchain e5ab73a51fe1
+fills head  103a8bde9aa1  TCSlib 37ae0f3223db419f636bb2d39484191f698de994  TCSlib.lean 8db619ce45cb  audits e204e63c6027  lake-manifest a2a54033bc1f  toolchain e5ab73a51fe1
+PR head     dd6d274eba9b  TCSlib 004dfaefe57ac8d72d539c55151ccf0fce0b6b65  TCSlib.lean 8db619ce45cb  audits e204e63c6027  lake-manifest a2a54033bc1f  toolchain e5ab73a51fe1
+merge-tree --write-tree (records tip, PR head) = c33c231aaaea24f45b62b0c848cb4d3af59ef536; its TCSlib 004dfaefe57ac8d72d539c55151ccf0fce0b6b65 (the PR head descends from the tip)
+diff --name-only bff0567b..53e430b6 over TCSlib TCSlib.lean audits lean-toolchain lake-manifest.json: 2 paths ['TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean', 'TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean']
+diff --name-only 27e53754..bff0567b over TCSlib TCSlib.lean audits lean-toolchain lake-manifest.json: 0 paths []
+TCSlib tree of the fills head = the reviewed full stack 6e363a29: True
+
+## 3. Scope
+git diff --name-only records-tip...PR-head: ['TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean', 'TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean', 'TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean', 'TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean', 'TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean', 'TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean']
+numstat: 129	11	Asymptotic.lean | 189	20	Bootstrap.lean | 21	9	Circular.lean | 102	9	Leveled.lean | 361	26	LeveledSecurity.lean | 81	15	PolyRatio.lean | total +883/-90
+pr.diff.txt == git diff bff0567b..PR-head over the six files: True
+pr.diff.txt == git diff records-tip...PR-head: True
+pr-u14-u16.diff.txt == git diff 53e430b6..96e22a6d: True
+pr-u15-u17.diff.txt == git diff 96e22a6d..1664c477: True
+pr-u18-u19.diff.txt == git diff 1664c477..103a8bde: True
+pr-landing-edits.diff.txt == git diff 103a8bde..dd6d274e: True
+
+## 4. PR commits against the delivered patches (git patch-id --stable); landing edits
+7fc783362614 'fill gsw-6b-u14-u16: G9-G13 Bootstrap': patch-id 0742b03d952e vs 0001-fill-gsw-6b-u14-u16-G9-G13-Bootstrap.patch 0742b03d952e -> EQUAL; author Claude <noreply@anthropic.com> 2026-11-19T00:38:37+00:00; committer date 2026-11-19T00:38:37+00:00; signature ssh (not verified: no allowed-signers file)
+96e22a6dbfa1 'fill gsw-6b-u14-u16: L2-L3 Leveled': patch-id bc2fb6e583f6 vs 0002-fill-gsw-6b-u14-u16-L2-L3-Leveled.patch bc2fb6e583f6 -> EQUAL; author Claude <noreply@anthropic.com> 2026-11-19T00:39:35+00:00; committer date 2026-11-19T00:39:35+00:00; signature ssh (not verified: no allowed-signers file)
+a8f241819b8f 'fill gsw-6b-u15-u17: G15 Circular': patch-id cc672029c0ab vs 0001-fill-gsw-6b-u15-u17-G15-Circular.patch cc672029c0ab -> EQUAL; author Claude <noreply@anthropic.com> 2026-11-19T00:40:38+00:00; committer date 2026-11-19T00:40:38+00:00; signature ssh (not verified: no allowed-signers file)
+f400635c569a 'fill gsw-6b-u15-u17: L4 LeveledSecurity': patch-id 27ad07bd83b6 vs 0002-fill-gsw-6b-u15-u17-L4-LeveledSecurity.patch 27ad07bd83b6 -> EQUAL; author Claude <noreply@anthropic.com> 2026-11-19T00:47:50+00:00; committer date 2026-11-19T00:47:50+00:00; signature ssh (not verified: no allowed-signers file)
+1664c477eee9 'fill gsw-6b-u15-u17: L5 LeveledSecurity': patch-id b02e93cc5f23 vs 0003-fill-gsw-6b-u15-u17-L5-LeveledSecurity.patch b02e93cc5f23 -> EQUAL; author Claude <noreply@anthropic.com> 2026-11-19T01:07:12+00:00; committer date 2026-11-19T01:07:12+00:00; signature ssh (not verified: no allowed-signers file)
+f66fb1bb5d20 'fill gsw-6b-u18-u19: G16, G17 (pure, leveled) and Parameters.ofFamily_columns_le, PolyRatio': patch-id f0c74141f0b2 vs 0001-fill-gsw-6b-u18-u19-G16-G17-pure-leveled-and-Paramet.patch f0c74141f0b2 -> EQUAL; author Claude <noreply@anthropic.com> 2026-11-19T00:46:41+00:00; committer date 2026-11-19T00:46:41+00:00; signature ssh (not verified: no allowed-signers file)
+103a8bde9aa1 'fill gsw-6b-u18-u19: A1, A3, Asymptotic': patch-id 07b0ce9c1caa vs 0002-fill-gsw-6b-u18-u19-A1-A3-Asymptotic.patch 07b0ce9c1caa -> EQUAL; author Claude <noreply@anthropic.com> 2026-11-19T00:46:41+00:00; committer date 2026-11-19T00:46:41+00:00; signature ssh (not verified: no allowed-signers file)
+64ccd270825a 'LE-u1517-doc: LeveledSecurity helper docstrings and step comments (docs only)': maintainer landing edit; author Claude <noreply@anthropic.com> 2026-11-19T03:37:41+00:00; signature ssh (not verified); files ['TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean']
+dd6d274eba9b 'LE-u1819-doc: Asymptotic A1/A3 proof sketches name ofFamily_columns_le (docs only)': maintainer landing edit; author Claude <noreply@anthropic.com> 2026-11-19T03:38:15+00:00; signature ssh (not verified); files ['TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean']
+landing edits, comments and docstrings stripped (land-u1419 tools/stripcmp.py; evidence docs/stripcmp-*.txt):
+  stripcmp-u1517.txt: LeveledSecurity.lean: raw differs; stripped 103a8bde9aa1 d5c5767e9ac314d8 412 lines, 64ccd270825a d5c5767e9ac314d8 412 lines -> IDENTICAL
+  stripcmp-u1517.txt: RESULT OK
+  stripcmp-u1819.txt: Asymptotic.lean: raw differs; stripped 64ccd270825a 3a2a3843ebc35f13 252 lines, dd6d274eba9b 3a2a3843ebc35f13 252 lines -> IDENTICAL
+  stripcmp-u1819.txt: RESULT OK
+  stripcmp-all.txt: Bootstrap.lean: raw same; stripped 103a8bde9aa1 03682e7785c92d79 263 lines, dd6d274eba9b 03682e7785c92d79 263 lines -> IDENTICAL
+  stripcmp-all.txt: Leveled.lean: raw same; stripped 103a8bde9aa1 b6fd3b234fac32a0 180 lines, dd6d274eba9b b6fd3b234fac32a0 180 lines -> IDENTICAL
+  stripcmp-all.txt: Circular.lean: raw same; stripped 103a8bde9aa1 50cc55581f89b038 53 lines, dd6d274eba9b 50cc55581f89b038 53 lines -> IDENTICAL
+  stripcmp-all.txt: LeveledSecurity.lean: raw differs; stripped 103a8bde9aa1 d5c5767e9ac314d8 412 lines, dd6d274eba9b d5c5767e9ac314d8 412 lines -> IDENTICAL
+  stripcmp-all.txt: PolyRatio.lean: raw same; stripped 103a8bde9aa1 0a09db19e4501e46 112 lines, dd6d274eba9b 0a09db19e4501e46 112 lines -> IDENTICAL
+  stripcmp-all.txt: Asymptotic.lean: raw differs; stripped 103a8bde9aa1 3a2a3843ebc35f13 252 lines, dd6d274eba9b 3a2a3843ebc35f13 252 lines -> IDENTICAL
+  stripcmp-all.txt: RESULT OK
+  stripcmp-control.txt: Asymptotic.lean: raw differs; stripped f66fb1bb5d20 0afdc828eb8b9a0b 144 lines, 103a8bde9aa1 3a2a3843ebc35f13 252 lines -> DIFFERENT
+  stripcmp-control.txt: RESULT FAIL
+
+## 5. Blobs: PR head vs delivered src/, the review evidence (frozen/*.lean) and B6
+Bootstrap: fills-head 552864017440 delivered-src 552864017440 evidence-head 552864017440 -> EQUAL; PR-head 552864017440 (= fills head); B6 9c69ef4c4921 records-tip 9c69ef4c4921 evidence-base 9c69ef4c4921 -> EQUAL
+Leveled: fills-head 1d8b4c8c64ac delivered-src 1d8b4c8c64ac evidence-head 1d8b4c8c64ac -> EQUAL; PR-head 1d8b4c8c64ac (= fills head); B6 70e29cbf3e8b records-tip 70e29cbf3e8b evidence-base 70e29cbf3e8b -> EQUAL
+Circular: fills-head 783e58178923 delivered-src 783e58178923 evidence-head 783e58178923 -> EQUAL; PR-head 783e58178923 (= fills head); B6 355fefbd09eb records-tip 355fefbd09eb evidence-base 355fefbd09eb -> EQUAL
+LeveledSecurity: fills-head 6759bacd2e34 delivered-src 6759bacd2e34 evidence-head 6759bacd2e34 -> EQUAL; PR-head bf70162bf697 (= evidence proposed/LeveledSecurity.LE-u1517-doc.lean bf70162bf697: True); B6 a07967b4b4bd records-tip a07967b4b4bd evidence-base a07967b4b4bd -> EQUAL
+PolyRatio: fills-head dc193a7a0e74 delivered-src dc193a7a0e74 evidence-head dc193a7a0e74 -> EQUAL; PR-head dc193a7a0e74 (= fills head); B6 2995b996e443 records-tip 2995b996e443 evidence-base 2995b996e443 -> EQUAL
+Asymptotic: fills-head 178936f4d83f delivered-src 178936f4d83f evidence-head 178936f4d83f -> EQUAL; PR-head 4d6fbea717b8 (fills head + LE-u1819-doc); B6 a0c4823cd486 records-tip a0c4823cd486 evidence-base a0c4823cd486 -> EQUAL
+evidence (U15-U19 zip) logs/stack-head-full.txt: full 6b stack (no ref): 6e363a298ff6fe59e861f968d4c54262d96e9f74, TCSlib tree 37ae0f3223db419f636bb2d39484191f698de994; diff vs B6: Asymptotic.lean Bootstrap.lean Branching.lean Circular.lean DecryptFormula.lean Leveled.lean LeveledSecurity.lean PolyRatio.lean
+
+## 6. Removed lines of the PR diff, classified (against B6); targets' headers and statement prose
+## removed lines, classified against bff0567b6c4b
+Bootstrap.lean: module docstring line: 1
+Bootstrap.lean: proof-sketch line (bootNoise_le): 7
+Bootstrap.lean: proof-sketch line (decrypt_fheEval): 7
+Bootstrap.lean: sorry body: 5
+    Bootstrap.lean:40 [module docstring line] The targets G9, G10, G12, G13 and G18 are admitted; G11 is proved.
+Leveled.lean: module docstring line: 1
+Leveled.lean: proof-sketch line (encrypts_leveledEval): 6
+Leveled.lean: sorry body: 2
+    Leveled.lean:39 [module docstring line] L2 and L3 are admitted; L1 is proved.
+Circular.lean: proof-sketch line (distAdv_fheView_noEvk_le): 8
+Circular.lean: sorry body: 1
+LeveledSecurity.lean: module docstring line: 1
+LeveledSecurity.lean: proof-sketch line (distAdv_levelHybrid_le): 15
+LeveledSecurity.lean: proof-sketch line (distAdv_leveledView_le): 8
+LeveledSecurity.lean: sorry body: 2
+    LeveledSecurity.lean:33 [module docstring line] Both are admitted statement-phase targets.
+PolyRatio.lean: module docstring line: 1
+PolyRatio.lean: proof-sketch line (bootRatio_le_poly): 6
+PolyRatio.lean: proof-sketch line (decrypt_fheEval_of_ratio): 4
+PolyRatio.lean: proof-sketch line (decrypt_leveledEval_of_ratio): 1
+PolyRatio.lean: sorry body: 3
+    PolyRatio.lean:31 [module docstring line] All three are admitted statement-phase targets. With `LWE.Family.RatioBounded F B p` the
+Asymptotic.lean: module docstring line: 1
+Asymptotic.lean: proof-sketch line (indCPA_of_dlweAssumption): 5
+Asymptotic.lean: proof-sketch line (leveledINDCPA_of_dlweAssumption): 3
+Asymptotic.lean: sorry body: 2
+    Asymptotic.lean:35 [module docstring line] Both are admitted statement-phase targets. Ruling Q-6B-1 A: r3's A2 (`fheView_negligible`) is
+## targets: header and statement prose, base vs head
+G9	Bootstrap.lean	encrypts_bootNAND	header 6 lines same	prose same
+G10	Bootstrap.lean	decrypt_fheEval	header 8 lines same	prose same
+G18	Bootstrap.lean	decrypt_fheEvalCircuit	header 9 lines same	prose same
+G12	Bootstrap.lean	decrypt_keygen_fheEvalCircuit	header 8 lines same	prose same
+G13	Bootstrap.lean	bootNoise_le	header 3 lines same	prose same
+L2	Leveled.lean	encrypts_leveledEval	header 11 lines same	prose same
+L3	Leveled.lean	decrypt_keygen_leveledEvalCircuit	header 12 lines same	prose same
+G15	Circular.lean	distAdv_fheView_noEvk_le	header 7 lines same	prose same
+L4	LeveledSecurity.lean	distAdv_levelHybrid_le	header 4 lines same	prose same
+L5	LeveledSecurity.lean	distAdv_leveledView_le	header 6 lines same	prose same
+G16	PolyRatio.lean	bootRatio_le_poly	header 4 lines same	prose same
+G17 (pure)	PolyRatio.lean	decrypt_fheEval_of_ratio	header 15 lines same	prose same
+G17 (leveled)	PolyRatio.lean	decrypt_leveledEval_of_ratio	header 16 lines same	prose same
+A1	Asymptotic.lean	indCPA_of_dlweAssumption	header 9 lines same	prose same
+A3	Asymptotic.lean	leveledINDCPA_of_dlweAssumption	header 10 lines same	prose same
+RESULT OK
+-- the landing edits alone (against the fills head):
+## removed lines, classified against 103a8bde9aa1
+LeveledSecurity.lean: docstring prose before the sketch (private abs_acceptProb_id_levelReduction_sub_le): 1
+LeveledSecurity.lean: docstring prose before the sketch (private acceptProb_sample_levelReduction): 1
+LeveledSecurity.lean: docstring prose before the sketch (private levelPosHybrid): 1
+LeveledSecurity.lean: docstring prose before the sketch (private levelPosHybrid_columns): 1
+LeveledSecurity.lean: docstring prose before the sketch (private levelPosHybrid_zero): 1
+LeveledSecurity.lean: docstring prose before the sketch (private leveledView_eq_levelHybrid): 1
+    LeveledSecurity.lean:307 [docstring prose before the sketch (private levelPosHybrid)] `H = levelHybrid P χ L μ (e + 1) r`. -/
+    LeveledSecurity.lean:316 [docstring prose before the sketch (private levelPosHybrid_zero)] /-- `G_0` is `H_{e+1}`: no position is replaced. -/
+    LeveledSecurity.lean:323 [docstring prose before the sketch (private levelPosHybrid_columns)] conditions `e + 1 ≤ e'` and `e ≤ e'` agree (`levelHybrid_eq`). -/
+    LeveledSecurity.lean:338 [docstring prose before the sketch (private acceptProb_sample_levelReduction)] encrypts its key bit) or `G_{j+1}` (`b = false`: it encrypts `0`).
+    LeveledSecurity.lean:443 [docstring prose before the sketch (private abs_acceptProb_id_levelReduction_sub_le)] `2 * (P.columns * Regev.extractionError P.lwe)`.
+    LeveledSecurity.lean:499 [docstring prose before the sketch (private leveledView_eq_levelHybrid)] `e : Fin L` has `L ≤ e` (`leveledView_eq`, `levelHybrid_eq`). -/
+Asymptotic.lean: proof-sketch line (indCPA_of_dlweAssumption): 5
+Asymptotic.lean: proof-sketch line (leveledINDCPA_of_dlweAssumption): 3
+
+## 7. File statistics (B6 = records tip, fills head, PR head)
+Bootstrap.lean b6: lines 349 max_width 99 over_100 0 tabs 0 trailing_space 0 micro_sign 0 sorry_in_code 5 admit_in_code 0 native_decide_in_code 0 axiom_in_code 0 opaque_in_code 0 sha256 5fabe2779a18980f
+Bootstrap.lean fills: lines 518 max_width 99 over_100 0 tabs 0 trailing_space 0 micro_sign 0 sorry_in_code 0 admit_in_code 0 native_decide_in_code 0 axiom_in_code 0 opaque_in_code 0 sha256 d5cc7ac4fc25b9b7
+Bootstrap.lean head: lines 518 max_width 99 over_100 0 tabs 0 trailing_space 0 micro_sign 0 sorry_in_code 0 admit_in_code 0 native_decide_in_code 0 axiom_in_code 0 opaque_in_code 0 sha256 d5cc7ac4fc25b9b7
+Leveled.lean b6: lines 291 max_width 99 over_100 0 tabs 0 trailing_space 0 micro_sign 0 sorry_in_code 2 admit_in_code 0 native_decide_in_code 0 axiom_in_code 0 opaque_in_code 0 sha256 c78bb8d48dd7eac3
+Leveled.lean fills: lines 384 max_width 99 over_100 0 tabs 0 trailing_space 0 micro_sign 0 sorry_in_code 0 admit_in_code 0 native_decide_in_code 0 axiom_in_code 0 opaque_in_code 0 sha256 3675f92045bfdf7a
+Leveled.lean head: lines 384 max_width 99 over_100 0 tabs 0 trailing_space 0 micro_sign 0 sorry_in_code 0 admit_in_code 0 native_decide_in_code 0 axiom_in_code 0 opaque_in_code 0 sha256 3675f92045bfdf7a
+Circular.lean b6: lines 149 max_width 95 over_100 0 tabs 0 trailing_space 0 micro_sign 0 sorry_in_code 1 admit_in_code 0 native_decide_in_code 0 axiom_in_code 0 opaque_in_code 0 sha256 00370542214ed9a6
+Circular.lean fills: lines 161 max_width 98 over_100 0 tabs 0 trailing_space 0 micro_sign 0 sorry_in_code 0 admit_in_code 0 native_decide_in_code 0 axiom_in_code 0 opaque_in_code 0 sha256 10d4db9d33fe2705
+Circular.lean head: lines 161 max_width 98 over_100 0 tabs 0 trailing_space 0 micro_sign 0 sorry_in_code 0 admit_in_code 0 native_decide_in_code 0 axiom_in_code 0 opaque_in_code 0 sha256 10d4db9d33fe2705
+LeveledSecurity.lean b6: lines 362 max_width 98 over_100 0 tabs 0 trailing_space 0 micro_sign 0 sorry_in_code 2 admit_in_code 0 native_decide_in_code 0 axiom_in_code 0 opaque_in_code 0 sha256 e6b55d7dca0c0712
+LeveledSecurity.lean fills: lines 681 max_width 100 over_100 0 tabs 0 trailing_space 0 micro_sign 0 sorry_in_code 0 admit_in_code 0 native_decide_in_code 0 axiom_in_code 0 opaque_in_code 0 sha256 7e9b0731f1c844df
+LeveledSecurity.lean head: lines 697 max_width 100 over_100 0 tabs 0 trailing_space 0 micro_sign 0 sorry_in_code 0 admit_in_code 0 native_decide_in_code 0 axiom_in_code 0 opaque_in_code 0 sha256 de246a8f3e3cee8b
+PolyRatio.lean b6: lines 179 max_width 98 over_100 0 tabs 0 trailing_space 0 micro_sign 0 sorry_in_code 3 admit_in_code 0 native_decide_in_code 0 axiom_in_code 0 opaque_in_code 0 sha256 f8647ed421e6e175
+PolyRatio.lean fills: lines 245 max_width 98 over_100 0 tabs 0 trailing_space 0 micro_sign 0 sorry_in_code 0 admit_in_code 0 native_decide_in_code 0 axiom_in_code 0 opaque_in_code 0 sha256 0a37e8e27e45e8de
+PolyRatio.lean head: lines 245 max_width 98 over_100 0 tabs 0 trailing_space 0 micro_sign 0 sorry_in_code 0 admit_in_code 0 native_decide_in_code 0 axiom_in_code 0 opaque_in_code 0 sha256 0a37e8e27e45e8de
+Asymptotic.lean b6: lines 340 max_width 99 over_100 0 tabs 0 trailing_space 0 micro_sign 0 sorry_in_code 2 admit_in_code 0 native_decide_in_code 0 axiom_in_code 0 opaque_in_code 0 sha256 4b8d7c2fe133c095
+Asymptotic.lean fills: lines 458 max_width 99 over_100 0 tabs 0 trailing_space 0 micro_sign 0 sorry_in_code 0 admit_in_code 0 native_decide_in_code 0 axiom_in_code 0 opaque_in_code 0 sha256 694bb31da4a3f466
+Asymptotic.lean head: lines 458 max_width 99 over_100 0 tabs 0 trailing_space 0 micro_sign 0 sorry_in_code 0 admit_in_code 0 native_decide_in_code 0 axiom_in_code 0 opaque_in_code 0 sha256 fff1c18a8a9db375
+sorry tokens in the code of the base-sorries.txt modules at B6: 42 in 16 modules
+sorry tokens in the code of the base-sorries.txt modules at records tip: 33 in 14 modules
+sorry tokens in the code of the base-sorries.txt modules at PR head: 18 in 8 modules
+
+## 8. Review evidence ZIPs and the landing re-check ZIP
+U14-U16/final-r1/gsw-6b-u14-u16-final-r1-evidence.zip: sha256 36a92cb89c5e85a809f60dec4517f826cb57597e700b60f5eb4318f611420113 listed 36a92cb89c5e85a809f60dec4517f826cb57597e700b60f5eb4318f611420113 -> OK; entries 317 (directories 52, files 265); inner g6b-u1416/SHA256SUMS rows 264, verified 264, unlisted ['g6b-u1416/SHA256SUMS']
+U15-U17/final-r1/gsw-6b-u15-u17-u18-u19-final-r1-evidence.zip: sha256 ff76e89961ce42254530e3ac9e700925a1cdaf870ec31d9808fe453cd783865d listed ff76e89961ce42254530e3ac9e700925a1cdaf870ec31d9808fe453cd783865d -> OK; entries 561 (directories 85, files 476); inner SHA256SUMS rows 475, verified 475, unlisted ['SHA256SUMS']
+U18-U19/final-r1/gsw-6b-u15-u17-u18-u19-final-r1-evidence.zip: sha256 ff76e89961ce42254530e3ac9e700925a1cdaf870ec31d9808fe453cd783865d listed ff76e89961ce42254530e3ac9e700925a1cdaf870ec31d9808fe453cd783865d -> OK; entries 561 (directories 85, files 476); inner SHA256SUMS rows 475, verified 475, unlisted ['SHA256SUMS']
+landing-u14-u19-recheck-evidence.zip (this directory): sha256 315668d7be753bdf76197234bfa962550cc2148bbe90ba59ad7e12ce0cfcc485; files 156; inner land-u1419/SHA256SUMS rows 155, verified 155, unlisted ['land-u1419/SHA256SUMS']
+
+## 9. Landing re-check (the ZIP above; summary)
+replay of the PR head dd6d274e on a cp -al copy of snapshot #11 (verified 0/0/0 before): plan against B6 changed 8, down 12, build 12, reuse 1,444
+build: 12/12 rc 0 (Branching, DecryptFormula, Bootstrap, Circular, Leveled, LeveledSecurity, PolyRatio, Asymptotic, GSW, Homomorphic, AdvancedEncryption, root TCSlib); 0 errors; 0 warnings; 0 `sorry`
+state: stateplan update 12 taken; check 1,456 RESULT OK (again at the end; rebuilt oleans unchanged)
+oleans vs the U15-U19 review's full-stack replay (TCSlib 37ae0f32): 10 byte-identical; LeveledSecurity and Asymptotic differ (the docs edits)
+admissions: 18 in 8 (base-sorries 42 minus U12/U13's 9 minus the 15 targets); records tip 33 in 14
+axioms: 168 stored constants of the six owners, 0 sorryAx; 15 targets + encrypts_bootGate [propext, Classical.choice, Quot.sound]; Parameters.ofFamily_columns_le [propext, Quot.sound]; control [sorryAx]
+coe-A (canonical, A variant) rc 0, 0 errors, requested = verified: Bootstrap 444, Leveled 479, Circular 464, LeveledSecurity 1,561, PolyRatio 1,394, Asymptotic 1,654
+paired controls for the helpers: Leveled sealed NEG 568/572 one error each, POS 569/573 pass; Asymptotic sealed NEG 642 one error, POS 643 pass; open copies 0 errors -> ALL_OK
+decls2 vs records tip: ADDED encrypts_bootGate (Bootstrap.lean:270), Parameters.ofFamily_columns_le (PolyRatio.lean:106); 0 CHANGED; 0 REMOVED
+lint: campaign_style_lint --check8b 92 FAIL / 103 WARN over 540 files at the tip and the head, identical FAIL/WARN lines; style_lint 0 findings on the six files
+
+## 10. Records
+6599b12230e3879bc0e1fb22c0376ea6201bca8b7edd79dfc55da43986f991d4  policy.md  (at the records tip 53e430b68cbe)
+c9b93227cddd0e5aa1784855dab939e8bec2d11b6aa812e26d1afb9082b07181  briefs/pass-shelat-ch5-8/MAINTAINER-HANDOFF.md  (at the records tip 53e430b68cbe)
+250ccafec1e1e6afa82057ad78fc06accf0fc9dffece8b047b52e52ce7d44e70  briefs/pass-shelat-ch5-8/duplication-ledger.md  (at the records tip 53e430b68cbe)
+b16a8f6869ceb4acc1edc270a2980ee122e4245ab017d2e8b5f00c49e60a1c10  briefs/lattice-gsw/phase6/issued-6b-fills-r1/README.md  (at the records tip 53e430b68cbe)
+184924d7163fa71742d2411873881c9f652f290ed2705d659a264cf6f94a0d8b  briefs/lattice-gsw/phase6/issued-6b-fills-r1/COMMON.md  (at the records tip 53e430b68cbe)
+855ea62b79b5a525ef6321702c953284da5ad407326a07d6eae0b246ef96659e  briefs/lattice-gsw/phase6/issued-6b-fills-r1/rulings.md  (at the records tip 53e430b68cbe)
+fa1d9b5e0bf955efaef4dffd083d5d430e85fe407a262cb9cb83c543d7098d2a  briefs/lattice-gsw/phase6/issued-6b-fills-r1/SHA256SUMS  (at the records tip 53e430b68cbe)
+c68757d9ac69f64e47314383442648e4fdc587853953a6df06e260c42389384f  briefs/lattice-gsw/phase6/issued-6b-fills-r1/dup-sweep.md  (at the records tip 53e430b68cbe)
+aba4f5db66544fa7deb36f6ea832aa86cd183a235300053b7e534b84842bb781  briefs/lattice-gsw/phase6/issued-6b-fills-r1/targets.txt  (at the records tip 53e430b68cbe)
+6687729102c6451c44c1a87935fe8476c4758aee41c4a2483ab02463dec60ae0  briefs/lattice-gsw/phase6/issued-6b-fills-r1/base-sorries.txt  (at the records tip 53e430b68cbe)
+34b81ec876786bf51de28cc9b4deadbec52ae8a2f5ce54743b7a8f267b4a2173  briefs/lattice-gsw/phase6/issued-6b-fills-r1/closures.txt  (at the records tip 53e430b68cbe)
+8eeca56ffa0b3978628ef07f3933ed669b9f94c1f1f20292f8bea35efdb240c2  briefs/lattice-gsw/phase6/issued-6b-fills-r1/U14-U16/brief.md  (at the records tip 53e430b68cbe)
+3c74f8261ea35d9b5756fdb766ed4af8681bdab6d5001b808a30f29eb10173c4  briefs/lattice-gsw/phase6/issued-6b-fills-r1/U14-U16/dispatch-prompt.md  (at the records tip 53e430b68cbe)
+632c65ab97b95452247211969568034e75a21c4f93f11541fc7c56fb61d2cd45  briefs/lattice-gsw/phase6/issued-6b-fills-r1/U15-U17/brief.md  (at the records tip 53e430b68cbe)
+0b4d9fa5148a4fe4b680593ba7e50c7957b54d7244520a98c6b900e8c7215abd  briefs/lattice-gsw/phase6/issued-6b-fills-r1/U15-U17/dispatch-prompt.md  (at the records tip 53e430b68cbe)
+bec059f1479977aba75bdf959ba43afbc3acd64cbe5337ea1da95734a99c0c9d  briefs/lattice-gsw/phase6/issued-6b-fills-r1/U18-U19/brief.md  (at the records tip 53e430b68cbe)
+435b61ce5e9e912c3a1da20461538138984fbc9ecebbf7c982b571d17cb94d9d  briefs/lattice-gsw/phase6/issued-6b-fills-r1/U18-U19/dispatch-prompt.md  (at the records tip 53e430b68cbe)
+312fef4576b388222d69eddec186c2ac4259e5de95488fca42e6861438ad3d5d  briefs/lattice-gsw/phase6/rulings.md  (at the records tip 53e430b68cbe)
+06824b3db875e7388771b6f7a5e78d62bf7d77fa35571fc3a9deeebc329214fd  briefs/lattice-gsw/phase6/plan-section.md  (at the records tip 53e430b68cbe)
+8d810ec42bf834b2a7bb2c11eb13ae568fa63393546d6772fe2f8cad1c539048  briefs/lattice-gsw/phase6/final-6b-r1/review.md  (at the records tip 53e430b68cbe)
+372e69be2fbda40df91982ece23415e83ac26e5f32c70aa63e5e6b7d5856133e  briefs/lattice-gsw/gates/46-gsw-6b/findings-r1.md  (at the records tip 53e430b68cbe)
+eecd1ac201a44d28dd54b93dafb70d3456df63a357c1ea1693189425504923d3  briefs/lattice-gsw/gates/46-gsw-6b/resolutions-r1.md  (at the records tip 53e430b68cbe)
+609573ff789065294f64c5e4d0e40a4fa8f893a8795ce615aa0d577647f2681a  briefs/lattice-gsw/gates/46-gsw-6b/dup-sweep.md  (at the records tip 53e430b68cbe)
+e161a28a0c6eb17175da7567da648c5203bd9d20140a7d8accb92ae91bbd7dd3  briefs/lattice-gsw/gates/53-gsw-6b-u12-u13-fills/findings-r1.md  (at the records tip 53e430b68cbe)
+781b02b9c3e44bc421a2392ba30ac1a2fae6ad69f95f2853fd8f149981c1cdc9  briefs/lattice-gsw/gates/53-gsw-6b-u12-u13-fills/closure.md  (at the records tip 53e430b68cbe)
+7272f29c408a3276ca994bb492842fc5ff440de81dac3bfa6ab38ad9dea0d0f5  briefs/lattice-gsw/gates/53-gsw-6b-u12-u13-fills/pack-r1.md  (at the records tip 53e430b68cbe)
