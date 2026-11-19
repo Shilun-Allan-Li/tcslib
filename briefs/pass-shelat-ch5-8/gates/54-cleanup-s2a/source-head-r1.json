@@ -1,0 +1,2440 @@
+{
+ "commits": [
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T04:45:04+00:00",
+   "commit": "70503f3cf0a7bb88a376a88020a70a4edc01828a",
+   "committer_date": "2026-11-18T04:45:04+00:00",
+   "files": [
+    "TCSlib/Complexity/TuringMachine/Encoding.lean"
+   ],
+   "parents": [
+    "61a5f0fb640622c15fdd33df56efa470b2bf26c8"
+   ],
+   "shortstat": "1 file changed, 47 insertions(+), 1 deletion(-)",
+   "signature": "ssh",
+   "subject": "S2-A A01: Q11 provider readers in Encoding.lean",
+   "tcslib_tree": "8c37976ff24c6340f3aa0362c03e8dfea1ba6127",
+   "tree": "c09c4df8adc233158e7001452da1412964262450"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T04:45:52+00:00",
+   "commit": "e548dcaf1d17b070cd7b257f95071cf709f42b43",
+   "committer_date": "2026-11-18T04:45:52+00:00",
+   "files": [
+    "TCSlib/Complexity/Randomized/Repetition.lean"
+   ],
+   "parents": [
+    "70503f3cf0a7bb88a376a88020a70a4edc01828a"
+   ],
+   "shortstat": "1 file changed, 24 insertions(+), 1 deletion(-)",
+   "signature": "ssh",
+   "subject": "S2-A A02: iterateFind elim reader + majority B-fix (Repetition)",
+   "tcslib_tree": "59ad358f203e3461f9c04701673e7ee88aae38a4",
+   "tree": "89a9bd9264cc574adcf701f1292fd5c4e95ce4b0"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T04:46:20+00:00",
+   "commit": "da4c401cacac882bf4377aa7d13505ad97de0f0b",
+   "committer_date": "2026-11-18T04:46:20+00:00",
+   "files": [
+    "TCSlib/Cryptography/Games/Tapes.lean"
+   ],
+   "parents": [
+    "e548dcaf1d17b070cd7b257f95071cf709f42b43"
+   ],
+   "shortstat": "1 file changed, 5 insertions(+), 4 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A03: DL-59 Games.extTape at Type* + Tapes docstring nit",
+   "tcslib_tree": "4fce14bc8fdfe47191f52cdeba6dad943166217b",
+   "tree": "317980108a5e205aba09fc38fd012a7a1a158bc4"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T04:46:52+00:00",
+   "commit": "80990814b8c81fa08109dceeb05d235437c3982c",
+   "committer_date": "2026-11-18T04:46:52+00:00",
+   "files": [
+    "TCSlib/Cryptography/Games/Probability.lean"
+   ],
+   "parents": [
+    "da4c401cacac882bf4377aa7d13505ad97de0f0b"
+   ],
+   "shortstat": "1 file changed, 20 insertions(+)",
+   "signature": "ssh",
+   "subject": "S2-A A04: DL-43 ProbComp.mul_prob_le_expect",
+   "tcslib_tree": "6fc1663d6a8f8a28d3384dab66ff3d9738a67a48",
+   "tree": "5f00003bc92f3c48b32bb6c3fad75ba29efba679"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T04:47:53+00:00",
+   "commit": "2950d13c86612bb12356c064462cdb30a91a03b2",
+   "committer_date": "2026-11-18T04:47:53+00:00",
+   "files": [
+    "TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean",
+    "TCSlib/Cryptography/Foundations/BitLists.lean",
+    "TCSlib/Cryptography/Pairing/Assumptions.lean"
+   ],
+   "parents": [
+    "80990814b8c81fa08109dceeb05d235437c3982c"
+   ],
+   "shortstat": "3 files changed, 9 insertions(+), 8 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A05: DL-55 move to Foundations/BitLists + Pairing and DL-47 re-points",
+   "tcslib_tree": "c650bc0d76acdd893b03ee5227a293732782db9d",
+   "tree": "c33fc426b398cbf54b1060c57da79e7b330d6423"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T04:50:30+00:00",
+   "commit": "da5d4ed6bf1c55ffb2fcb36d991ade515e87b549",
+   "committer_date": "2026-11-18T04:50:30+00:00",
+   "files": [
+    "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean",
+    "TCSlib/Cryptography/Games/BitCodec.lean"
+   ],
+   "parents": [
+    "2950d13c86612bb12356c064462cdb30a91a03b2"
+   ],
+   "shortstat": "2 files changed, 43 insertions(+)",
+   "signature": "ssh",
+   "subject": "S2-A A06: DL-57 IBEScheme.sidSpec_* and Games.zeroBits_eq_cast promotion",
+   "tcslib_tree": "4f84a9e46a783adc76139eaecf3d791c7b5ff56f",
+   "tree": "ac9c1e672bfbc218819309649cfb32b5ee56e75a"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T04:51:15+00:00",
+   "commit": "bbd628bc60acca40f7d6b41055679eecb36e8aba",
+   "committer_date": "2026-11-18T04:51:15+00:00",
+   "files": [
+    "TCSlib/Cryptography/Asymptotic/Ensembles.lean",
+    "TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean",
+    "TCSlib/Cryptography/Asymptotic/Permutations.lean"
+   ],
+   "parents": [
+    "da5d4ed6bf1c55ffb2fcb36d991ade515e87b549"
+   ],
+   "shortstat": "3 files changed, 57 insertions(+)",
+   "signature": "ssh",
+   "subject": "S2-A A07: cross-job readers in Ensembles, EnsemblesLemmas, Permutations",
+   "tcslib_tree": "e3101dfbf80b8c161c7834f086faf8bbc1cce372",
+   "tree": "c70c558a6133edf921c595d3a30b806d3a5af0e9"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T04:51:48+00:00",
+   "commit": "0f21dcd3bd86dc79c39f4aeea95cb189a064283a",
+   "committer_date": "2026-11-18T04:51:48+00:00",
+   "files": [
+    "TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean"
+   ],
+   "parents": [
+    "bbd628bc60acca40f7d6b41055679eecb36e8aba"
+   ],
+   "shortstat": "1 file changed, 18 insertions(+)",
+   "signature": "ssh",
+   "subject": "S2-A A08: cross-job readers in GeneratorFromPermutation",
+   "tcslib_tree": "b61d83af4ff4d605650b56924fddddfc141842fb",
+   "tree": "bf4edf7aa6c67ee5bde1835caac88f63fc574fa3"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T04:51:48+00:00",
+   "commit": "62cb7753be3950b01993aa244e0bdd7fe24ba488",
+   "committer_date": "2026-11-18T05:19:37+00:00",
+   "files": [
+    "TCSlib/Cryptography/Games/Efficiency.lean"
+   ],
+   "parents": [
+    "0f21dcd3bd86dc79c39f4aeea95cb189a064283a"
+   ],
+   "shortstat": "1 file changed, 14 insertions(+)",
+   "signature": "ssh",
+   "subject": "S2-A A09: DL-56 InteractiveHandler readers in Games/Efficiency",
+   "tcslib_tree": "90721d4ece73e35a06ab5d18a1f6968c0583b4b1",
+   "tree": "9df3a652fa3001323928a1c06539cce607f0cc79"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T05:00:04+00:00",
+   "commit": "5f628db877a2e9da2e03bad2382def7af65be96a",
+   "committer_date": "2026-11-18T05:19:37+00:00",
+   "files": [
+    "TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean"
+   ],
+   "parents": [
+    "62cb7753be3950b01993aa244e0bdd7fe24ba488"
+   ],
+   "shortstat": "1 file changed, 60 insertions(+), 18 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A10: ModuleHost seal fixes (DW-9)",
+   "tcslib_tree": "e8c97e3fbce8397d9b985292b8b4722e3efd9233",
+   "tree": "33a3823c9a3fb7474613523f756ecce6841ffe60"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T05:02:16+00:00",
+   "commit": "6cdf8bab5df879b310bd2aea0b02c212337332e8",
+   "committer_date": "2026-11-18T05:19:37+00:00",
+   "files": [
+    "TCSlib/Complexity/Randomized/Build/IterateFindHost.lean"
+   ],
+   "parents": [
+    "5f628db877a2e9da2e03bad2382def7af65be96a"
+   ],
+   "shortstat": "1 file changed, 30 insertions(+), 68 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A11: IterateFindHost: delete host_* (DW10-Q9) + copy_clean/copy_finish seal fixes",
+   "tcslib_tree": "0eb45c51f970368e309a7e8d3a41e416a508a9c5",
+   "tree": "8873033d81e4e12d39cc1b049f8ebbefdd9c56e2"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T05:03:11+00:00",
+   "commit": "24c6d1491cd86a4fe7bdecad8aaf53421560ec58",
+   "committer_date": "2026-11-18T05:19:37+00:00",
+   "files": [
+    "TCSlib/Complexity/Randomized/Build/IterateFindHost.lean"
+   ],
+   "parents": [
+    "6cdf8bab5df879b310bd2aea0b02c212337332e8"
+   ],
+   "shortstat": "1 file changed, 34 insertions(+), 33 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A12: IterateFindHost: remaining seal fixes",
+   "tcslib_tree": "64689547b7bf8a1b87493d0e9609e75f6c1884e6",
+   "tree": "d8488bd482eef5937aa50e9d4c295a8391f7c852"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T05:07:03+00:00",
+   "commit": "3d2334937f750df026bdfb259c3ce9722b0953f8",
+   "committer_date": "2026-11-18T05:19:37+00:00",
+   "files": [
+    "TCSlib/Complexity/Randomized/Build/PairSplit.lean"
+   ],
+   "parents": [
+    "24c6d1491cd86a4fe7bdecad8aaf53421560ec58"
+   ],
+   "shortstat": "1 file changed, 42 insertions(+), 41 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A13: PairSplit seal fixes, part 1 (pairDecode readers)",
+   "tcslib_tree": "d6361154d474f6b86d8ae616423209d331cd5fa5",
+   "tree": "370e00d0144593a29b77976650c8590870bf9cf0"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T05:09:14+00:00",
+   "commit": "ca9219439581e8b7cf660a811981bddffecdbcbb",
+   "committer_date": "2026-11-18T05:19:37+00:00",
+   "files": [
+    "TCSlib/Complexity/Randomized/Build/PairSplit.lean"
+   ],
+   "parents": [
+    "3d2334937f750df026bdfb259c3ce9722b0953f8"
+   ],
+   "shortstat": "1 file changed, 62 insertions(+), 43 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A14: PairSplit seal fixes, part 2",
+   "tcslib_tree": "f046c88e1bcab219dd1714942c03ce656f73aa72",
+   "tree": "430321ed18b45810fdb464fb8e8275c2100e9de5"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T05:11:00+00:00",
+   "commit": "c739a6061a727999da927b133a1c15beb7bf9fc6",
+   "committer_date": "2026-11-18T05:19:38+00:00",
+   "files": [
+    "TCSlib/Complexity/Randomized/Build/UnaryMul.lean"
+   ],
+   "parents": [
+    "ca9219439581e8b7cf660a811981bddffecdbcbb"
+   ],
+   "shortstat": "1 file changed, 20 insertions(+), 15 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A15: UnaryMul seal fixes (incl. needs-check SL-089)",
+   "tcslib_tree": "1db23aa16e9a718658aa5705310ce5fee1374b7d",
+   "tree": "d0f0e3b527868aa4c9b87ba3a0f34f06d589e196"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T05:13:46+00:00",
+   "commit": "1c9723c1f69cdce3e8b988f50063bfea2183068e",
+   "committer_date": "2026-11-18T05:19:38+00:00",
+   "files": [
+    "TCSlib/Complexity/Randomized/PPT.lean",
+    "TCSlib/Complexity/Randomized/Primitives.lean"
+   ],
+   "parents": [
+    "c739a6061a727999da927b133a1c15beb7bf9fc6"
+   ],
+   "shortstat": "2 files changed, 11 insertions(+), 6 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A16: Primitives + PPT: seal and B-only fixes",
+   "tcslib_tree": "a8895d1ea8ed5315f69e7d7d72628675a1b0bc84",
+   "tree": "67d77a741808b7f9684ef14c3f2177386f0a84a7"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T05:14:52+00:00",
+   "commit": "a3c7c6e2ff10ac9389c2d57135b71ac037ccefd0",
+   "committer_date": "2026-11-18T05:19:38+00:00",
+   "files": [
+    "TCSlib/Complexity/Randomized/Build/IterateFind.lean"
+   ],
+   "parents": [
+    "1c9723c1f69cdce3e8b988f50063bfea2183068e"
+   ],
+   "shortstat": "1 file changed, 7 insertions(+), 21 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A17: IterateFind: hdisp/hbranch/hhalt -> host_*_view; PS10 A1 site",
+   "tcslib_tree": "0883a811829eca752f5dad9028bf3cff2cc0b1fc",
+   "tree": "5062fd19cffc44170cda3e2dd7cc9614bdd38145"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T05:16:09+00:00",
+   "commit": "c119a3c4f1d8642b1328740f1d1d1165a92f5567",
+   "committer_date": "2026-11-18T05:19:38+00:00",
+   "files": [
+    "TCSlib/Complexity/Randomized/SeedMajority.lean",
+    "TCSlib/Complexity/Randomized/SeedMajority/Enumeration.lean",
+    "TCSlib/Complexity/Randomized/SeedMajority/State.lean",
+    "TCSlib/Complexity/Randomized/SeedMajority/Words.lean",
+    "TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean"
+   ],
+   "parents": [
+    "a3c7c6e2ff10ac9389c2d57135b71ac037ccefd0"
+   ],
+   "shortstat": "5 files changed, 32 insertions(+), 30 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A18: PS10 Tier A, Theorem 180.1 (SeedMajority family, RootSchedule)",
+   "tcslib_tree": "4733db863d7cef9fb8187c4826a0695697e944b8",
+   "tree": "0781c041b3d2e5e57cbeb73286fb0906fc495ca3"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T08:18:58+00:00",
+   "commit": "75b04bd0a71e44f092bb3fad3ceb03f60fa8fba8",
+   "committer_date": "2026-11-18T08:18:58+00:00",
+   "files": [
+    "TCSlib/Cryptography/Asymptotic/SamplingFinDist.lean",
+    "TCSlib/Cryptography/NumberTheory/Chebyshev.lean",
+    "TCSlib/Cryptography/NumberTheory/Primality.lean",
+    "TCSlib/InformationTheory/Entropy.lean",
+    "TCSlib/InformationTheory/LeftoverHash.lean"
+   ],
+   "parents": [
+    "c119a3c4f1d8642b1328740f1d1d1165a92f5567"
+   ],
+   "shortstat": "5 files changed, 36 insertions(+), 22 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A19: NumberTheory, InformationTheory and SamplingFinDist seal and B-only fixes",
+   "tcslib_tree": "36f8017d1210ae8c06bda1d15e274e850b4dfc55",
+   "tree": "6d73795e9c3e42d763fb9555d85e74f717c209ab"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T08:32:20+00:00",
+   "commit": "f9c03bbe6ef08bc52147bd138abb8faad2fb9056",
+   "committer_date": "2026-11-18T08:32:20+00:00",
+   "files": [
+    "TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain.lean",
+    "TCSlib/Cryptography/Encoding/BooleanVector.lean",
+    "TCSlib/Cryptography/HardcoreBit/InnerProduct.lean",
+    "TCSlib/Cryptography/Hashing/CollisionResistant.lean",
+    "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+    "TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean",
+    "TCSlib/Cryptography/Hashing/FromDiscreteLog/Probability.lean",
+    "TCSlib/Cryptography/Hashing/SIS/CollisionOutput.lean"
+   ],
+   "parents": [
+    "75b04bd0a71e44f092bb3fad3ceb03f60fa8fba8"
+   ],
+   "shortstat": "8 files changed, 36 insertions(+), 39 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A20: InnerProduct reader and seal fixes, GoldreichLevinDomain, Hashing re-points, PS10 A8",
+   "tcslib_tree": "eb2350d21d0256eb009f6e89e83d22160199d9ab",
+   "tree": "a52750c552d4794f8923620023c96fddb5af33fb"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T08:43:34+00:00",
+   "commit": "dd0473643756b251518a3e8585e2d95a38ff66b1",
+   "committer_date": "2026-11-18T08:43:34+00:00",
+   "files": [
+    "TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean",
+    "TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean"
+   ],
+   "parents": [
+    "f9c03bbe6ef08bc52147bd138abb8faad2fb9056"
+   ],
+   "shortstat": "2 files changed, 53 insertions(+), 47 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A21: CollectionsHelpers and EnsemblesLemmas: DL-35 #1/#3, re-points, seal fixes",
+   "tcslib_tree": "bd3b7ed4642ba55680582c1b66b54dfe042baad0",
+   "tree": "0ceae7bff48dbc97ad6c77e9f42a7ead58786935"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T08:49:42+00:00",
+   "commit": "061c4e97d441b8863535fa17bc48e9823c94f0c0",
+   "committer_date": "2026-11-18T08:49:42+00:00",
+   "files": [
+    "TCSlib/Cryptography/Asymptotic/OneWayYao.lean"
+   ],
+   "parents": [
+    "dd0473643756b251518a3e8585e2d95a38ff66b1"
+   ],
+   "shortstat": "1 file changed, 47 insertions(+), 19 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A22: OneWayYao: yaoRaw_eq and sampleAll_eq readers, seal and B-only fixes",
+   "tcslib_tree": "e8a7ec907e68abe7e2ca7e3c977d61352ddeb14b",
+   "tree": "5df1b539cac3cc9eb5141dde23ab8f0a2a3953db"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T08:54:26+00:00",
+   "commit": "69660020bec9df2fca95eb6e9095d90f5317577e",
+   "committer_date": "2026-11-18T08:54:26+00:00",
+   "files": [
+    "TCSlib/Cryptography/Asymptotic/OneWay.lean"
+   ],
+   "parents": [
+    "061c4e97d441b8863535fa17bc48e9823c94f0c0"
+   ],
+   "shortstat": "1 file changed, 40 insertions(+), 12 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A23: OneWay part 1: readers, length readers, definition bodies",
+   "tcslib_tree": "77a9235b1b29679911c4500001d84c3470fb141e",
+   "tree": "e5867633a9fda71a66a4daa0834320fe65b42f57"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T08:56:46+00:00",
+   "commit": "75f85d89594e505d4f5cba57828afbf5f4eaf1d3",
+   "committer_date": "2026-11-18T08:56:46+00:00",
+   "files": [
+    "TCSlib/Cryptography/Asymptotic/OneWay.lean"
+   ],
+   "parents": [
+    "69660020bec9df2fca95eb6e9095d90f5317577e"
+   ],
+   "shortstat": "1 file changed, 120 insertions(+), 49 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A24: OneWay part 2: four statement-level headers, remaining B-only fixes",
+   "tcslib_tree": "178ee54d5fca0c46d3076777225d84806235d272",
+   "tree": "0ac5d4d88300b8c4f06e5e400eac5584084424ed"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T09:00:24+00:00",
+   "commit": "817f2b54efc8c06a50c03a8f2db1f6f9c59ecc8a",
+   "committer_date": "2026-11-18T09:00:24+00:00",
+   "files": [
+    "TCSlib/Cryptography/Asymptotic/Ensembles.lean"
+   ],
+   "parents": [
+    "75f85d89594e505d4f5cba57828afbf5f4eaf1d3"
+   ],
+   "shortstat": "1 file changed, 23 insertions(+), 15 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A25: Ensembles: copies body (DL-35 #6 and the B cast), copies_X header, alias proof uses",
+   "tcslib_tree": "5ecfbcbfbc0f2497ccb73626fd049324083b0945",
+   "tree": "411cc93fbcef4447e2c3ef9810b7bc29288f835b"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T09:00:42+00:00",
+   "commit": "e8d81c5db11486be83f4a46cafbd51c876f08c9e",
+   "committer_date": "2026-11-18T09:00:42+00:00",
+   "files": [
+    "TCSlib/Cryptography/Asymptotic/Ensembles.lean"
+   ],
+   "parents": [
+    "817f2b54efc8c06a50c03a8f2db1f6f9c59ecc8a"
+   ],
+   "shortstat": "1 file changed, 28 insertions(+), 17 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A26: Ensembles seal fixes",
+   "tcslib_tree": "d466b32ffe18774d18546e6c8308107c1bc84054",
+   "tree": "bdad5f4bc0e1e79486c2b9f592742c1e2e1e8b1c"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T09:10:06+00:00",
+   "commit": "18d7a5d68d5cf3b808867f60f69fdb6b6905072e",
+   "committer_date": "2026-11-18T09:10:06+00:00",
+   "files": [
+    "TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean",
+    "TCSlib/Cryptography/Asymptotic/UniversalLemmas.lean",
+    "TCSlib/Cryptography/Asymptotic/UniversalPadding.lean"
+   ],
+   "parents": [
+    "e8d81c5db11486be83f4a46cafbd51c876f08c9e"
+   ],
+   "shortstat": "3 files changed, 37 insertions(+), 20 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A27: UniversalLemmas, UniversalPadding, BlockEncryptor seal and B-only fixes",
+   "tcslib_tree": "948ec75f9613719d000ffa4e00ca14ee2d10e197",
+   "tree": "5fd4ed1cfdd087207c2baf8d6844cc4eab5caced"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T09:18:41+00:00",
+   "commit": "fc676daaa165d64caac253cd91666bd6d4fa8e4f",
+   "committer_date": "2026-11-18T09:18:41+00:00",
+   "files": [
+    "TCSlib/Cryptography/Asymptotic/Collections.lean",
+    "TCSlib/Cryptography/Candidates/Concrete.lean"
+   ],
+   "parents": [
+    "18d7a5d68d5cf3b808867f60f69fdb6b6905072e"
+   ],
+   "shortstat": "2 files changed, 77 insertions(+), 35 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A28: Collections (owfFamily body, two private headers) and Concrete",
+   "tcslib_tree": "43b2ddcd4db2de2d218c9a4d1249e5a9eac8aa09",
+   "tree": "b0488fdbdb0ff5efc3eb65d69a02f8259c596cc1"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T09:27:15+00:00",
+   "commit": "64d662b3371aa47cc175c9cedbb6d78dae1e9bbe",
+   "committer_date": "2026-11-18T09:27:15+00:00",
+   "files": [
+    "TCSlib/Cryptography/Asymptotic/Universal.lean"
+   ],
+   "parents": [
+    "fc676daaa165d64caac253cd91666bd6d4fa8e4f"
+   ],
+   "shortstat": "1 file changed, 37 insertions(+), 16 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A29: Universal: Q11 consumer, B-only fixes, private header (Q-A3)",
+   "tcslib_tree": "81bd1353f75d6f6db2a97906ed09f4f2d867357b",
+   "tree": "51f459c8730741648cb95ec723e75e3cb9497b92"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T09:31:51+00:00",
+   "commit": "ecd35ee997a6aa4147e4eada2a12560e61821a0b",
+   "committer_date": "2026-11-18T09:31:51+00:00",
+   "files": [
+    "TCSlib/Cryptography/Candidates/Factoring.lean"
+   ],
+   "parents": [
+    "64d662b3371aa47cc175c9cedbb6d78dae1e9bbe"
+   ],
+   "shortstat": "1 file changed, 16 insertions(+), 22 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A30: Factoring (partial): length readers and DL-38 fac_ofFn_halves deletion",
+   "tcslib_tree": "311ab1b19a43b02dbebf870a7d9e7fa2035e8851",
+   "tree": "1cb863d9cefdc12f5cf375291c3cb3a8221b2866"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T09:42:14+00:00",
+   "commit": "f68d452534359bf27622fcb5add2658700884bd2",
+   "committer_date": "2026-11-18T09:42:14+00:00",
+   "files": [
+    "TCSlib/Cryptography/Candidates/DDH.lean",
+    "TCSlib/Cryptography/Candidates/RSA.lean",
+    "TCSlib/Cryptography/Candidates/Rabin.lean",
+    "TCSlib/Cryptography/Encoding/DyadicUniform.lean"
+   ],
+   "parents": [
+    "ecd35ee997a6aa4147e4eada2a12560e61821a0b"
+   ],
+   "shortstat": "4 files changed, 35 insertions(+), 75 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A31: RSA, Rabin, DDH, DyadicUniform (Q-A7 b)",
+   "tcslib_tree": "1632499d4d54a29e8d10fbc6a511f336f8b60816",
+   "tree": "b61a20c98c6635eb7901da18ac321abd1b7665f7"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T09:48:44+00:00",
+   "commit": "dbd03dea6851597223d0f38edc4ce42b2745be58",
+   "committer_date": "2026-11-18T09:48:44+00:00",
+   "files": [
+    "TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean",
+    "TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean"
+   ],
+   "parents": [
+    "f68d452534359bf27622fcb5add2658700884bd2"
+   ],
+   "shortstat": "2 files changed, 26 insertions(+), 11 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A32: HardCoreLemmas and HardCoreLoops: SelXor.input_eq, seal and B-only fixes",
+   "tcslib_tree": "74a91ec23bf07569b7de7bdb94e9c8652bd42911",
+   "tree": "7a3a3c8c45ae69560dabd477bec525d3c19ce82d"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T10:08:58+00:00",
+   "commit": "a0e600206bebb76ce66a49ab4fd039295b978ad7",
+   "committer_date": "2026-11-18T10:08:58+00:00",
+   "files": [
+    "TCSlib/Cryptography/Asymptotic/HardCoreGL.lean",
+    "TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean",
+    "TCSlib/Cryptography/Asymptotic/HardCoreGLFamily.lean"
+   ],
+   "parents": [
+    "dbd03dea6851597223d0f38edc4ce42b2745be58"
+   ],
+   "shortstat": "3 files changed, 33 insertions(+), 14 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A33: HardCoreGL, HardCoreGLColl, HardCoreGLFamily seal and B-only fixes",
+   "tcslib_tree": "224a020c753d8bc41f670e0c5b63f01592de9792",
+   "tree": "65ae9b5b90649568123b04035230ef1b719dcd0a"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T10:18:04+00:00",
+   "commit": "88d52800ae54c013ab7dcc31a948df2423a8464a",
+   "committer_date": "2026-11-18T10:18:04+00:00",
+   "files": [
+    "TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean"
+   ],
+   "parents": [
+    "a0e600206bebb76ce66a49ab4fd039295b978ad7"
+   ],
+   "shortstat": "1 file changed, 17 insertions(+), 10 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A34: HardCoreCollection seal and B-only fixes",
+   "tcslib_tree": "81f07aadd1965f32a55c3cba6d7618260967fc9c",
+   "tree": "1255420170cea3a1ab51763c5965d02b598dfe36"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T10:27:50+00:00",
+   "commit": "44f8909ac9df1e9023e30e6c4fa7c8e96050615e",
+   "committer_date": "2026-11-18T10:27:50+00:00",
+   "files": [
+    "TCSlib/Cryptography/Asymptotic/HardCore/Functions.lean"
+   ],
+   "parents": [
+    "88d52800ae54c013ab7dcc31a948df2423a8464a"
+   ],
+   "shortstat": "1 file changed, 117 insertions(+), 37 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A35: HardCore/Functions part 1: glPad family bodies, length readers, glPad_f/glBit_append (Q-A3)",
+   "tcslib_tree": "4c978542fc0d0caf724de3ccdb6dd1a0bae44afb",
+   "tree": "7b220ab4bfdc688f262a549940f28a799fce19d0"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T10:28:04+00:00",
+   "commit": "54fb99bf8761fa7e3d9cf9f8a2676b5948115c77",
+   "committer_date": "2026-11-18T10:28:04+00:00",
+   "files": [
+    "TCSlib/Cryptography/Asymptotic/HardCore/Functions.lean"
+   ],
+   "parents": [
+    "44f8909ac9df1e9023e30e6c4fa7c8e96050615e"
+   ],
+   "shortstat": "1 file changed, 12 insertions(+), 7 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A36: HardCore/Functions part 2: seal fixes and remaining B-only fixes",
+   "tcslib_tree": "432f287b740abe1187afb1c7f2d4d966bea2f0c6",
+   "tree": "861a7c645f824be9b44236a7af43f19495ac23cd"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T10:30:03+00:00",
+   "commit": "a1545eae990f82918ad4e344428e38668ab911ed",
+   "committer_date": "2026-11-18T10:30:03+00:00",
+   "files": [
+    "TCSlib/Complexity/Randomized/SeedMajority/Enumeration.lean",
+    "TCSlib/Complexity/Randomized/SeedMajority/State.lean",
+    "TCSlib/Cryptography/Games/Relational.lean"
+   ],
+   "parents": [
+    "54fb99bf8761fa7e3d9cf9f8a2676b5948115c77"
+   ],
+   "shortstat": "3 files changed, 17 insertions(+), 7 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A38: Games/Relational G49-01/G49-02 docstrings; Q-D1-1 reference labels",
+   "tcslib_tree": "7d165ef99a870a9448b1bf8e6138ebd31a4437f8",
+   "tree": "00d05ada46821388f7b6f46e916ab8aaa9e58e0b"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T14:33:45+00:00",
+   "commit": "316083129cd1ac3a6deaf2482b039f9c78509d04",
+   "committer_date": "2026-11-18T14:33:45+00:00",
+   "files": [
+    "TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean"
+   ],
+   "parents": [
+    "a1545eae990f82918ad4e344428e38668ab911ed"
+   ],
+   "shortstat": "1 file changed, 51 insertions(+), 20 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A37: GoldreichLevin: oddCoins body, ofFn_oddCoins header, oddParam_eval",
+   "tcslib_tree": "36afc35d7eef0522f621ca2c40f8fe567cefb8f5",
+   "tree": "1d6cf6c7d666cd8fc5f7490a6ce2c80281b10e09"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-18T14:50:32+00:00",
+   "commit": "dff281b53746377cd72e57c3aeeadf3d1f59a332",
+   "committer_date": "2026-11-18T14:50:56+00:00",
+   "files": [
+    "TCSlib/Cryptography/Candidates/Factoring.lean"
+   ],
+   "parents": [
+    "316083129cd1ac3a6deaf2482b039f9c78509d04"
+   ],
+   "shortstat": "1 file changed, 187 insertions(+), 79 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A A30: Factoring (rest): fmult and plantFactor bodies, three headers, consumers",
+   "tcslib_tree": "d1b28617ce14fb9399adac155659d9460fae7488",
+   "tree": "26e97edcb655010653301455d9a377f5201f58ba"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-19T00:18:14+00:00",
+   "commit": "27cbdeb057f915e64be8fe42790f2f965c5ee219",
+   "committer_date": "2026-11-19T00:18:14+00:00",
+   "files": [
+    "TCSlib/Cryptography/Asymptotic/SamplingFinDist.lean",
+    "TCSlib/InformationTheory/Extractors.lean"
+   ],
+   "parents": [
+    "dff281b53746377cd72e57c3aeeadf3d1f59a332"
+   ],
+   "shortstat": "2 files changed, 7 insertions(+), 1 deletion(-)",
+   "signature": "ssh",
+   "subject": "S2-A Q-D2-1: epsClose_iff reader; SamplingFinDist reads EpsClose through it",
+   "tcslib_tree": "4d7732d1f66188f578f7184780a98087f39d3e2a",
+   "tree": "ef5303786d3591477a175ea952ee203cf07e4737"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-19T00:21:28+00:00",
+   "commit": "d6fd4bb5bcb033e8a8ada44cc1cf03d52a91af05",
+   "committer_date": "2026-11-19T00:21:28+00:00",
+   "files": [
+    "TCSlib/Cryptography/Asymptotic/Collections.lean",
+    "TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean",
+    "TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean",
+    "TCSlib/Cryptography/Asymptotic/OneWayYao.lean",
+    "TCSlib/Cryptography/Candidates/Factoring.lean"
+   ],
+   "parents": [
+    "27cbdeb057f915e64be8fe42790f2f965c5ee219"
+   ],
+   "shortstat": "5 files changed, 56 insertions(+), 36 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A Q-D2-3: proof sketches for five proofs; OneWayYao docstrings tightened below 1,000 lines",
+   "tcslib_tree": "de98e361bef9a2b8ef7483853df5bf489060ac8d",
+   "tree": "ab3997efd69981afbef6aeb5f9b44b4e529e3f33"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-19T00:23:59+00:00",
+   "commit": "96918135065b801d67d1be953fef4ea6e222eb1c",
+   "committer_date": "2026-11-19T00:25:07+00:00",
+   "files": [
+    "TCSlib/Cryptography/Asymptotic/HardCore/Functions.lean"
+   ],
+   "parents": [
+    "d6fd4bb5bcb033e8a8ada44cc1cf03d52a91af05"
+   ],
+   "shortstat": "1 file changed, 37 insertions(+), 49 deletions(-)",
+   "signature": "ssh",
+   "subject": "S2-A Q-D2-4: HardCore/Functions: private invProbAt_glPad_eq replaces the two local hbridge copies",
+   "tcslib_tree": "c07df05ead0077afac631b1a01cccbfd0a3cd92a",
+   "tree": "89d75f9516e5fa52185d60f673b603c63db3fac0"
+  },
+  {
+   "author": "Claude <noreply@anthropic.com>",
+   "author_date": "2026-11-19T00:28:25+00:00",
+   "commit": "9f7f409c2e09749428db75b9ddd324f92695e4af",
+   "committer_date": "2026-11-19T00:28:25+00:00",
+   "files": [
+    "TCSlib/Cryptography/Hashing/SIS/CollisionOutput.lean"
+   ],
+   "parents": [
+    "96918135065b801d67d1be953fef4ea6e222eb1c"
+   ],
+   "shortstat": "1 file changed, 22 insertions(+), 1 deletion(-)",
+   "signature": "ssh",
+   "subject": "S2-A Q-D2-5: SIS/CollisionOutput: explicit rawCollisionInputs_fst/_snd in place of simps!",
+   "tcslib_tree": "ae345736160511e6d3e7d8b47ad76c430c424500",
+   "tree": "df1952ed048de92371cb6f754d65dbbbdf6eff7d"
+  }
+ ],
+ "files": {
+  "TCSlib/Complexity/Randomized/Build/IterateFind.lean": {
+   "base": {
+    "git_blob": "30edb6037ca42b846252de96240ee59e65854f8d",
+    "lines": 633,
+    "max_width": 99,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "fa61bace7c54b4e995562a998221bb921119e60cb3734437eac4377cc9896cb0",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "000c212412d9f24d416a71d0eb83f4ca8986e3ad",
+    "lines": 619,
+    "max_width": 99,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "ffafd66a1080b83eee04bfc3b4143a62378b006eafc9f8dd18cb6a6ab948fb3f",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Complexity/Randomized/Build/IterateFindHost.lean": {
+   "base": {
+    "git_blob": "ebe98588f37438edc694fde6b3fdc900e08f2cf2",
+    "lines": 450,
+    "max_width": 98,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "396e4cc79d6998eb4d3ff66a82357a6a251dfa4fa02d882c21cb6192680cb069",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "b636510ce94b837c45e590a3dc573a4e883cb927",
+    "lines": 413,
+    "max_width": 98,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "4413b89e2ef99a80adcf41438121273bca791492301fb0f338c2229641eeb9e7",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Complexity/Randomized/Build/PairSplit.lean": {
+   "base": {
+    "git_blob": "29ab9ad9d4c91f34c9d4564a68547b4a352c2907",
+    "lines": 673,
+    "max_width": 100,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "059cef36d526f27bb3b15de8d4bc9054d3944f15719fc94d20fd3125f7a41d50",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "b449c5dfdb68d555a03e363130b8b4cdead2d235",
+    "lines": 693,
+    "max_width": 100,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "32c34748bf558e9381633c417bef49eedaf08b00f1c40d4669445ca563bf9e82",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Complexity/Randomized/Build/UnaryMul.lean": {
+   "base": {
+    "git_blob": "dd0c594944b6519e227827da15f01d08f0969428",
+    "lines": 411,
+    "max_width": 98,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "131790bd75b421ab914a10cfa5ce27a28c4c49f5bb4b2b03899f104f7b56018f",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "10f940ed448a3140759373ab8cad83d90401a82e",
+    "lines": 416,
+    "max_width": 98,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "411cd45a6f4451edd5c2e8862528471974e383aa4a1814ec32fc22b8a1847d66",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Complexity/Randomized/PPT.lean": {
+   "base": {
+    "git_blob": "36b6d77cba1e2e8bde21c9b2c53c3a6e48bd4f52",
+    "lines": 494,
+    "max_width": 102,
+    "micro_sign": 0,
+    "over_100": 2,
+    "sha256": "4bc2e2c06660a004045a30205742f908542d58ec72dded845bb842d57071dd45",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "6ed7e71f79e53df70f68d20ee727bb5495f4b93a",
+    "lines": 495,
+    "max_width": 102,
+    "micro_sign": 0,
+    "over_100": 2,
+    "sha256": "ee3d96cd3f12f11e7458d0f825869512db35f838a9748132a5d42e38b3af3e4a",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Complexity/Randomized/Primitives.lean": {
+   "base": {
+    "git_blob": "a40cd75d24d7c16ab4ebbfe41e05b96aaba205ca",
+    "lines": 214,
+    "max_width": 97,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "0612ba120fab6fe4cac4770a6e15228f718949627d31b00100a0535efb0bd0ec",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "857c5fffe8b163249a3397bb42bedca8af6c526b",
+    "lines": 218,
+    "max_width": 97,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "e778cf86de577d87586992794f37b65fb61c31d695d41285097b7d74fa526986",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Complexity/Randomized/Repetition.lean": {
+   "base": {
+    "git_blob": "05eaa252a0fa65e7828147873ef5bd5ae7e5279b",
+    "lines": 509,
+    "max_width": 104,
+    "micro_sign": 0,
+    "over_100": 1,
+    "sha256": "f94702f4f5e17f71bfead906aa25e9993b25e6a20ad57c6e6b43c770a4bc329e",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "24881a5b26191a6ecb2ed3f51257e16019c39f24",
+    "lines": 532,
+    "max_width": 104,
+    "micro_sign": 0,
+    "over_100": 1,
+    "sha256": "599caccec4f8b7ebbda8f24351bb2369155757c4fb69ffbbd686fc42bd983c4c",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Complexity/Randomized/SeedMajority.lean": {
+   "base": {
+    "git_blob": "ca7471f0af614518a5a39c66f9cf1195ef5685e5",
+    "lines": 261,
+    "max_width": 98,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "7a7b38767e81828e00be16e5221f7b904a82aabdd6b50f51d98a15df61339826",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "52f3382a51e68f44d9d8b67a86d1aadc8b055a06",
+    "lines": 262,
+    "max_width": 100,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "9ead84098c3fc9c742bf6c2606725896e051a02366ad5ad5cc37ceae805b183a",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Complexity/Randomized/SeedMajority/Enumeration.lean": {
+   "base": {
+    "git_blob": "ef3da4e3afca7e550cc86aca3c2e69a112311868",
+    "lines": 127,
+    "max_width": 87,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "0f877aa92fe221234a24480bdd666d135db57d39da199541863b140f2d31380f",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "3144686356e4c1d585d01a712b0a78611fb4a8ee",
+    "lines": 127,
+    "max_width": 87,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "4270a815dd404571e2f4a822e3349e6885bd9fa4a0d8e80071a5cb9c74c43d66",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Complexity/Randomized/SeedMajority/State.lean": {
+   "base": {
+    "git_blob": "c5d7331de7abe2d425afeb56aa4360c0cbd06dc6",
+    "lines": 233,
+    "max_width": 95,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "80f3bbbb3444af00988692b7abaefdd0470ab549aa643f1f5754ca7abe93783c",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "460ce37fc69da098a48d4919a7d19af7b694b4c8",
+    "lines": 233,
+    "max_width": 95,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "3b1c35f5c8af3c06030732f15f5559c895bb9d3e903e4f46de08bdf026d5d0b8",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Complexity/Randomized/SeedMajority/Words.lean": {
+   "base": {
+    "git_blob": "db8b7b7c9053abeb5d5b6e02ed6cf6c8b661b58f",
+    "lines": 172,
+    "max_width": 92,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "a39adacd5fbd00c36091c212c46b63bedec1dbd52fb32de83c1ad6cee21f83e5",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "1432d758e130c47a8a93d10549a04436f009b32c",
+    "lines": 172,
+    "max_width": 92,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "eaeec931871b15a11670ae0cf773c78f6da2fc4d688036b3691630d1aa27f630",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean": {
+   "base": {
+    "git_blob": "4670e2e5dce9ccaf7ceaea8f38709187730e8a26",
+    "lines": 769,
+    "max_width": 98,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "5af07b7f5e3302de04ec29dc0a35de1286daa3d30cb7554669ab253852d94b92",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "8b599e0bbab3a21963cad875219a378649723672",
+    "lines": 811,
+    "max_width": 98,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "70ba66fd6c7a23c34137a1498711a0691cd0caf3e149c1ce31bb996a3db25a22",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Complexity/TuringMachine/Encoding.lean": {
+   "base": {
+    "git_blob": "be8b0629fc0eacb8ee5ddb2734f5c40121726c2e",
+    "lines": 819,
+    "max_width": 103,
+    "micro_sign": 0,
+    "over_100": 1,
+    "sha256": "15b0f286ca1048ea6c86f7b93e5eae99b7ddea65d8d304f99c229a85950dbbd0",
+    "sorry_tokens": 1,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "8b4d23fbd79fcd3ef81eb1aaaf7124a722cafd33",
+    "lines": 865,
+    "max_width": 103,
+    "micro_sign": 0,
+    "over_100": 1,
+    "sha256": "64f7f098d23bc4e4d2c1f150ae4a74d258f373bf63e4140062b71cf2664b6240",
+    "sorry_tokens": 1,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean": {
+   "base": {
+    "git_blob": "da69b0f568317fdfecc8922b66b8f8a0bc53a638",
+    "lines": 563,
+    "max_width": 100,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "97ecb6e02413d18fce255949ed4b3e777c8f653a59f0792b575be3ff24a6a9a0",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "ca78bf043545525ee1be81de037db18d91467800",
+    "lines": 597,
+    "max_width": 100,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "05724dce35789588c3b5440c68d2bd5ee1d2d5d7688b868b763dc79da1789697",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean": {
+   "base": {
+    "git_blob": "76b264cbaf4b7cbcf33ff65ebaca7063dd8ea2b3",
+    "lines": 415,
+    "max_width": 111,
+    "micro_sign": 0,
+    "over_100": 4,
+    "sha256": "8ed192dad20c7549d92eb670e40cb28089ad3bf37490eb2bc4e917820b318626",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "320751380a92344750e8defa960781a100337e9f",
+    "lines": 413,
+    "max_width": 111,
+    "micro_sign": 0,
+    "over_100": 4,
+    "sha256": "ae288d482e2a12161c7055c36eb69fe3ea5fff188255d9903cf16f47a1d988b5",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Asymptotic/Collections.lean": {
+   "base": {
+    "git_blob": "79f100e6f5e8fe83cee37761a75fc7f7044efd6b",
+    "lines": 1123,
+    "max_width": 108,
+    "micro_sign": 0,
+    "over_100": 11,
+    "sha256": "627d44400fb9dfec4b772be3fa1c0be5bc9305dbe333cca492286bd712956153",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "6a73da9aed2564821335fd2e8a8322d3b002010d",
+    "lines": 1176,
+    "max_width": 108,
+    "micro_sign": 0,
+    "over_100": 11,
+    "sha256": "bcf1dfd729f7e9546c92d59117ca7f9d9a68d7bf7975e2395d6bf3258eafbaac",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean": {
+   "base": {
+    "git_blob": "128cfc1cf71b1beab8787d242478b05f841dadb7",
+    "lines": 227,
+    "max_width": 104,
+    "micro_sign": 0,
+    "over_100": 2,
+    "sha256": "29716bdb4b048b45e331ab18311908b2b250985445d57ba25583211f07e91beb",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "6b7749eb9850805539adaf0711370ba335277b6f",
+    "lines": 226,
+    "max_width": 104,
+    "micro_sign": 0,
+    "over_100": 2,
+    "sha256": "5602168923cc13b74da542d1ea1ed809e4d07ff9537ecf2e47412449033365b5",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Asymptotic/Ensembles.lean": {
+   "base": {
+    "git_blob": "55eaa199fb7ce9243695e86f45a07291469f5980",
+    "lines": 734,
+    "max_width": 101,
+    "micro_sign": 0,
+    "over_100": 2,
+    "sha256": "c7b8e72e91ac524092b2043cc86b6568a92419d8b33864f5a6f118bfd8de352b",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "7c585fb1df6c2a9758ebfd9ffe2bff594bc89bc5",
+    "lines": 782,
+    "max_width": 101,
+    "micro_sign": 0,
+    "over_100": 2,
+    "sha256": "87f2452daf39cc25ae2e7ace96d6920478f667ba51e549a8d9b8f5ca3cddae20",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean": {
+   "base": {
+    "git_blob": "a0de8e3a2cee952dc9e9746b3b6209f9213f7a46",
+    "lines": 887,
+    "max_width": 104,
+    "micro_sign": 0,
+    "over_100": 7,
+    "sha256": "a503d42f456bb97ef05e9e1450d86db279314fc6fee8bc6ba30d90ff15f59af7",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "36f2f94811fba89e1e72afbf3e03a9b6d253cea6",
+    "lines": 905,
+    "max_width": 104,
+    "micro_sign": 0,
+    "over_100": 7,
+    "sha256": "cf2a857b47c0bf85fb5c4fb2a50f22adcfde5c590bf58bddc4e90b45958a1d39",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain.lean": {
+   "base": {
+    "git_blob": "a5ece521eb08df00f2500537a4ab30c8d613d96f",
+    "lines": 173,
+    "max_width": 97,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "1bea9e80f0c710575f8857d5e632319f235ab4aaa10358ba34075d03d4966cff",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "673c8b7ebd08e9e29476478f4ec9fb29945d7800",
+    "lines": 175,
+    "max_width": 99,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "b3a5c18e5618d2209c40ea804bc5e758d3a98e7a9c6d394e45a1ee779941ed05",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Asymptotic/HardCore/Functions.lean": {
+   "base": {
+    "git_blob": "ccae8c74033a42203fef719cee1a22da0b660e2b",
+    "lines": 481,
+    "max_width": 107,
+    "micro_sign": 0,
+    "over_100": 2,
+    "sha256": "0c31d6fa9060a900e72dd91c6c23b6efb56e16d0e9505b38bc33d88a00f011f5",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "dfe26ee47b9bc59b39c10710b001f274c1e6e83c",
+    "lines": 554,
+    "max_width": 107,
+    "micro_sign": 0,
+    "over_100": 1,
+    "sha256": "0b53f39f8a2240189bd8688dd8e58751ea7b9ba57c796de1fcbba020d2601a9c",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean": {
+   "base": {
+    "git_blob": "9e0339e89ab4dbd3c07bae91c620529ad9a359e3",
+    "lines": 505,
+    "max_width": 111,
+    "micro_sign": 0,
+    "over_100": 35,
+    "sha256": "e6c572eeb4654e07c86f29e7cdaa0b03c52afda56c47e3e48e7032e3ba0080c6",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "87b8055e2bb2dfe8ed95ed7ef0ac4f91892faf7c",
+    "lines": 512,
+    "max_width": 111,
+    "micro_sign": 0,
+    "over_100": 37,
+    "sha256": "df39a09bdeaa3d4b58f3cb510339e5f4c9a824e1db49fadf57683f7e0c0cc703",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Asymptotic/HardCoreGL.lean": {
+   "base": {
+    "git_blob": "24fd200d120fad84fa59d7fb6775cc144629e79f",
+    "lines": 890,
+    "max_width": 503,
+    "micro_sign": 0,
+    "over_100": 37,
+    "sha256": "975168b479add15a513dfa431dfc4dd539036ba9aef76b9fbec7d3b7de719053",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 3
+   },
+   "head": {
+    "git_blob": "f92f4e1dc20c46a6d5a58eff562476019c512ac7",
+    "lines": 903,
+    "max_width": 503,
+    "micro_sign": 0,
+    "over_100": 37,
+    "sha256": "c6b55e0e0ec7991248198f52d7d13136100a176401a5199acb2f67862db8a409",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 3
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean": {
+   "base": {
+    "git_blob": "fa812959c3faf3e14e35b206b88b6ba630ad5e22",
+    "lines": 399,
+    "max_width": 147,
+    "micro_sign": 0,
+    "over_100": 17,
+    "sha256": "7cfeb07a636c958779d615b919755343d343f61545a5686905438a6f2398d617",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "4bdbde3fdff2a979cb7f5ce261cde806a71d9df5",
+    "lines": 402,
+    "max_width": 147,
+    "micro_sign": 0,
+    "over_100": 17,
+    "sha256": "0b5613ba97280d3b7f3f411c06fe4c8cfa24a2549edfd1a69c57e0425e5769a2",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Asymptotic/HardCoreGLFamily.lean": {
+   "base": {
+    "git_blob": "a963e73ff58703ecffdcf0f8bf1f9c632c60307f",
+    "lines": 276,
+    "max_width": 133,
+    "micro_sign": 0,
+    "over_100": 10,
+    "sha256": "1e2956ea157e3bbdda2307a66f77dd1a5beff13c58421f6be71587422b3c5694",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "eb07996566430d667cf20ba4b8b8de183216a93b",
+    "lines": 279,
+    "max_width": 133,
+    "micro_sign": 0,
+    "over_100": 10,
+    "sha256": "1f1cb714889ea4d2e1b2a7b8a0a368f98ab7a7a962528e1528dff61bdb511826",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean": {
+   "base": {
+    "git_blob": "68a1369eb7d1ed6595a4ce1a4540fd492f0ff454",
+    "lines": 586,
+    "max_width": 113,
+    "micro_sign": 0,
+    "over_100": 7,
+    "sha256": "2f05347e28472abae71d4eb3afce2594d5380e64a53775409a993a62b8e17d77",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "e84c32a1afe340c5b3f2d6d5c70fa4aae6bfe5fc",
+    "lines": 603,
+    "max_width": 113,
+    "micro_sign": 0,
+    "over_100": 5,
+    "sha256": "60d02dadf9d3c35f84322ec7d886595483c1fe3c67b0fc2f2878c426fe3b9782",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean": {
+   "base": {
+    "git_blob": "96718de5572adef822f71c50d4e4deff537c0fda",
+    "lines": 405,
+    "max_width": 338,
+    "micro_sign": 0,
+    "over_100": 9,
+    "sha256": "cf4b546aaa7ee2e5e55f1ee43c8acfc632b3fe169684269574b04585f0078606",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 4
+   },
+   "head": {
+    "git_blob": "3c873d5bfd6d23d3e48b8638974f1dda960f4eaa",
+    "lines": 409,
+    "max_width": 338,
+    "micro_sign": 0,
+    "over_100": 9,
+    "sha256": "92e2d5711f3a764e7cfa9b105f3d087153a461929a9234b3db429b8006566dcd",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 4
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean": {
+   "base": {
+    "git_blob": "40189244cc53caae27c3b50ab29bce51b6e3d557",
+    "lines": 854,
+    "max_width": 105,
+    "micro_sign": 0,
+    "over_100": 4,
+    "sha256": "86d03c663f04e785ca4ad94ac12888450d34c41b801155e8d1164649a2aecedb",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "4dc3e9d02114f1766d5860401500aba6fe72058c",
+    "lines": 885,
+    "max_width": 105,
+    "micro_sign": 0,
+    "over_100": 4,
+    "sha256": "1f8bc1395238bacd09844ec8c49e6d5e2d7b8ea5f04a1df068ae2e32e02797d9",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Asymptotic/OneWay.lean": {
+   "base": {
+    "git_blob": "864180a01ca891455656bd71c8fb28a9685ddebe",
+    "lines": 995,
+    "max_width": 157,
+    "micro_sign": 0,
+    "over_100": 6,
+    "sha256": "d091dc49b988899d0a2d2235390701c9a7265eb70cd28bddc9002aa307270ec3",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "c789db1fbf0c1cb4adfac16cb02fcbaa48f5b4e7",
+    "lines": 1094,
+    "max_width": 157,
+    "micro_sign": 0,
+    "over_100": 8,
+    "sha256": "8e4edcc58fa971518e1adb56f15100b539a971ae3c36f2d58f4bd3e2e2f05234",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Asymptotic/OneWayYao.lean": {
+   "base": {
+    "git_blob": "ca516064939c107963d7106ecb783962e6801abf",
+    "lines": 976,
+    "max_width": 104,
+    "micro_sign": 0,
+    "over_100": 8,
+    "sha256": "bd5c284e3d08636b108f25cb91f72a39ced7e70e27be8784e96ce5dbc36c1ae1",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "fd6a05ee8e3e04b40ab6f3f17fd862d72936bbe9",
+    "lines": 999,
+    "max_width": 104,
+    "micro_sign": 0,
+    "over_100": 7,
+    "sha256": "86152b6871c8ba99d9dea1b61d868eec1838be7d583c8adcd45cfc05e7b7c917",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Asymptotic/Permutations.lean": {
+   "base": {
+    "git_blob": "4177415ceac715bcaaddd0900df66e9a5f2f8e6b",
+    "lines": 509,
+    "max_width": 102,
+    "micro_sign": 0,
+    "over_100": 1,
+    "sha256": "9b1c1bb645be4637abb97160662ac57aaf63adbf154b4aec8e7621856d59af50",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "25e07ae997438b44b847690f75e59d434d18ca00",
+    "lines": 530,
+    "max_width": 102,
+    "micro_sign": 0,
+    "over_100": 1,
+    "sha256": "69d09e52766850817b5b38570bdeedd5c37bb4589568b64ee76509578f4f9cfd",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Asymptotic/SamplingFinDist.lean": {
+   "base": {
+    "git_blob": "c5e5d131ee8f516ebed43d938ca57cd0a6ca1964",
+    "lines": 76,
+    "max_width": 98,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "0c042b0bb79d42646f53cb6b810dd75d522817023fdf49bbcf9a20b41cf9ddb3",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "62de074b9330997595bb5ea58500afc289b05b9b",
+    "lines": 80,
+    "max_width": 98,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "ce6166061c531ba3e7df9ad5ba4990a06aad2e69577eed4442bec887e3b40112",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Asymptotic/Universal.lean": {
+   "base": {
+    "git_blob": "b87bc08bc5c96261bc31c7b8ce7867ad5979c040",
+    "lines": 955,
+    "max_width": 100,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "44b0b31ba6be2d5b1307b1dbed211ea48b649d42d1792b7417ecf35126df28c7",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "aae8ce2a175625229eb56bd3cf7516bbed1a2004",
+    "lines": 976,
+    "max_width": 100,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "5c52be1df33707a7a0f9704c541ff2e40b2739d3144cb83a5974e0a6a395d873",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Asymptotic/UniversalLemmas.lean": {
+   "base": {
+    "git_blob": "de75887e914236fe9260d6151723f6587a4adee8",
+    "lines": 299,
+    "max_width": 100,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "62de15792248e7316ca56a293a24e2b56da9577a762da9e4650b7be196dbc9db",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "bd101eb9cc472739d789248dc121a12f3631aa47",
+    "lines": 303,
+    "max_width": 100,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "59f2744f1b42c0df4057f8ad20de986f49cdc1500b9ee60d83ab839a63bd804e",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Asymptotic/UniversalPadding.lean": {
+   "base": {
+    "git_blob": "cd7319b559f64f4431246738bd9f1f84ebb2ea39",
+    "lines": 522,
+    "max_width": 149,
+    "micro_sign": 0,
+    "over_100": 4,
+    "sha256": "3b41d90235251e8eb1ce3549dc42931950fa0f639a713148c0d02b06f0be9065",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "374d37a39d38bf80e0c634749069dd734ab33c11",
+    "lines": 537,
+    "max_width": 149,
+    "micro_sign": 0,
+    "over_100": 4,
+    "sha256": "5bb74ec2e389fa3f151874544b39dbf318136f3b1fe7ed61764813f921137de6",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Candidates/Concrete.lean": {
+   "base": {
+    "git_blob": "ec2fc13d8b5107339283a63087ab30f3f37c09d7",
+    "lines": 921,
+    "max_width": 109,
+    "micro_sign": 0,
+    "over_100": 3,
+    "sha256": "09adc5fc8565e28d0bb3e49fa4e95bfe26872ac6f74761fb5bd0d4782d5ff2f5",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "802a3f120ad3d4d734b7eab1f6e0334daa9aa749",
+    "lines": 917,
+    "max_width": 109,
+    "micro_sign": 0,
+    "over_100": 3,
+    "sha256": "323c517b155066b5c39629b03e08e8ae7bae9b58df3053f1b79b37b0a2950c86",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Candidates/DDH.lean": {
+   "base": {
+    "git_blob": "dcca365c6a00d1e6cc84dd92c6a42b50367c2ab5",
+    "lines": 400,
+    "max_width": 108,
+    "micro_sign": 0,
+    "over_100": 5,
+    "sha256": "4b07c41be0e61e206c96ee2c55bf00545b9630089a038f6624dd9758340a469c",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "4e902f37547147c3fbe807348f78d164a984d37f",
+    "lines": 387,
+    "max_width": 108,
+    "micro_sign": 0,
+    "over_100": 5,
+    "sha256": "9d161558e7b916f5b1e9a13abbfb3f7396d0e6c87df9b0dc74a98062ae91dda1",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Candidates/Factoring.lean": {
+   "base": {
+    "git_blob": "475c773c03ec793133961f1d22539fe508c3d547",
+    "lines": 1813,
+    "max_width": 130,
+    "micro_sign": 0,
+    "over_100": 41,
+    "sha256": "5446ee5bc4677d801eb6939d1746a0904cc0633956b611a6e0cb8726801656a5",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "b264d206ab5b7906243778b446119ff35f3ad2bd",
+    "lines": 1923,
+    "max_width": 130,
+    "micro_sign": 0,
+    "over_100": 35,
+    "sha256": "002a95c5935e350a98835afca90be6e49fa5c11646935dba6ce6e71f77a9af9b",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Candidates/RSA.lean": {
+   "base": {
+    "git_blob": "e191e5c198358307b624f490eb3251c53ccf1abf",
+    "lines": 2432,
+    "max_width": 142,
+    "micro_sign": 0,
+    "over_100": 68,
+    "sha256": "cdd8ea62d05bfd323fb7fc85fde11b2e724b2023cf086d4762f2cbe4e60dc496",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "152ce2a6d720a8fb8aa1a5d0d91c21fc5fcd350d",
+    "lines": 2434,
+    "max_width": 142,
+    "micro_sign": 0,
+    "over_100": 69,
+    "sha256": "67cd4f7771452e9bd4975acbeb0032092f830185b61b80f16f28bbd950db0ad4",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Candidates/Rabin.lean": {
+   "base": {
+    "git_blob": "b74e58094c3cf58c7fc8cb5e444b169c764ff29a",
+    "lines": 3557,
+    "max_width": 702,
+    "micro_sign": 0,
+    "over_100": 193,
+    "sha256": "b3184a8c2d3a5af910301dcd1bdbedc917e0eec482a3bcdcd1dffd1bdcb90813",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "6129975ce7e5ffa6f3d5ea2d6d167dfa5090894d",
+    "lines": 3562,
+    "max_width": 702,
+    "micro_sign": 0,
+    "over_100": 193,
+    "sha256": "5b9661795ece6d870aa5ff3fd8c42d39faa7787813fe33e352e242bd150cc7e7",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Encoding/BooleanVector.lean": {
+   "base": {
+    "git_blob": "61930bc61d7b8f0dd54de9c6dc35225024ecb07f",
+    "lines": 203,
+    "max_width": 100,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "c25a0c4c5768798d2140abd0070735caa38ac9940533016cda8c7a104bcd7855",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "e65a87d90c523c9d707ddaa3cb4959fa90a43fbd",
+    "lines": 203,
+    "max_width": 100,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "8c524200c1bf648fe4a68d91db6dffc3d4359a6cd0a98551fe74b6e648c8eca9",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Encoding/DyadicUniform.lean": {
+   "base": {
+    "git_blob": "81ca9ccf7940f62914b49563b3d452824dca855c",
+    "lines": 248,
+    "max_width": 94,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "a219d80f442ccc1448e71ea0ab6d92140a33ba02d6ed2d0f2fa9f94408eaf130",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "628983797f049e8ab5dc6349bf951e8953b00102",
+    "lines": 214,
+    "max_width": 96,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "131cf95df125ef9e8e7d29669e4967aeda344dee401006f6babc8c94bfa5ab5b",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean": {
+   "base": {
+    "git_blob": "35cec6d378ced6e197da353eab2348bdb59c877e",
+    "lines": 184,
+    "max_width": 107,
+    "micro_sign": 0,
+    "over_100": 1,
+    "sha256": "3bbb9afa487875575564e3a53623ade9318ee5a0f28cbc87d5bc05eb012e6e9a",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "5a1f820c025cfc097cfeddf5b51f182c9f98a4b6",
+    "lines": 180,
+    "max_width": 107,
+    "micro_sign": 0,
+    "over_100": 1,
+    "sha256": "834eadbb74a2094816f67e4e2bf65f1a372a65a59b916d419dba44ec5b173420",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Foundations/BitLists.lean": {
+   "base": {
+    "git_blob": "19da9109151b43128f5d8fb3ed59bad6500cc5ae",
+    "lines": 244,
+    "max_width": 100,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "a032a22e6859f0912c13f54d792a7f1bdc9646adecb7c3b30d95daf0eed625cb",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "d2987819b3c470e8dd4ec2b506e3a7264bfc1a4b",
+    "lines": 250,
+    "max_width": 100,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "8efeb70a901fcaf8cda457d943141b67864d66cbec844e5df6b9385692428551",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Games/BitCodec.lean": {
+   "base": {
+    "git_blob": "ab6e953a48f464f7c6933476d8c3ec1017130702",
+    "lines": 444,
+    "max_width": 99,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "f147902791a4ed8947f056422fdecfef5846501b86e582e75ca345a88d2c8e96",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "df0499ca6590186d04bda63e748d904d3ddb8ddf",
+    "lines": 453,
+    "max_width": 99,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "5999e81e60f4b88b8531d456588ce6d9d77713a2fab8154a28dfe46f6e8bb344",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Games/Efficiency.lean": {
+   "base": {
+    "git_blob": "84fb9358e4e157699f809d24edc24c772cb06d37",
+    "lines": 982,
+    "max_width": 116,
+    "micro_sign": 0,
+    "over_100": 1,
+    "sha256": "f5b0b3d96923433774d108e0640b5fc60df31edb20a31a67ba551a3cdf4af814",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "9118a23831f60b42393c5513f83343da6d3f09e6",
+    "lines": 996,
+    "max_width": 116,
+    "micro_sign": 0,
+    "over_100": 1,
+    "sha256": "d1205fd0931fa6b2e95b3bed78e82436f46583be61d77904cc64cdfcda61ac8a",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Games/Probability.lean": {
+   "base": {
+    "git_blob": "b7e8d3d107e87066aa53aa56b015ae8bb3e1e7d9",
+    "lines": 423,
+    "max_width": 99,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "ddbe55e93b89be218836a068686736e35055eb0bb86c301dbd4912db8643a9d7",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "f45249f18e04156e38851a82e60cb15280a7ba2c",
+    "lines": 443,
+    "max_width": 99,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "2131a12b6c6925324cd1c147098cf25d7d6c14c4252d170861455509bf52906e",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Games/Relational.lean": {
+   "base": {
+    "git_blob": "15015555b353be37a8f0889453d8ad10e74e4051",
+    "lines": 146,
+    "max_width": 97,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "aec82c1ce5c060482f43ac056ed5041c521ed7d3866a29c01346551a13ec22da",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "7869728ec95fa86a64363aa3f43779b90d9c7896",
+    "lines": 156,
+    "max_width": 97,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "0a56918f07f48f2ab337b411dc608d01449bc8f7f59a8c95e09a4e9d719ceb95",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Games/Tapes.lean": {
+   "base": {
+    "git_blob": "895f59a882e637be692bee86af32c8b1fd9144ff",
+    "lines": 346,
+    "max_width": 100,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "95e3a8a9b32bbb1ef0d28a563b41fde8042da9d539e72b0827438bf0aff896e2",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "7a7699eea42232a1e94411e9ee61aacb066c7f22",
+    "lines": 347,
+    "max_width": 100,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "7d7536cc5c551c06e890eb347d329873e1ee6e64341952ce1f0de49837611b46",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/HardcoreBit/InnerProduct.lean": {
+   "base": {
+    "git_blob": "ee9e236a6bfac69fd5f51ba8ced294c64aff092e",
+    "lines": 259,
+    "max_width": 95,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "f8be76f17d15340df1c6cbe83bf33058cfa6b95d956dc6ae4ba64f331a93e4ef",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "c801336ebe060690e4e3b1cabedbe50f147a81f4",
+    "lines": 262,
+    "max_width": 95,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "e6464c680592231e7da67db85d5207e885fe30feb0b42844f4694efb592dda25",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Hashing/CollisionResistant.lean": {
+   "base": {
+    "git_blob": "780cda9bac7156a9d8a2584f3a54a3796bd57a28",
+    "lines": 144,
+    "max_width": 99,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "fc01b447911ba683a01fc4b694a93b527590e4b490ecf4c57b492083ec8f056b",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "cb2c63a75f3d4ff9566126e95053d3809993f5e9",
+    "lines": 145,
+    "max_width": 99,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "f970ecc773c4b2062e24f3977d6398a814d518e6982e3267bd38d6c27a40db7d",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean": {
+   "base": {
+    "git_blob": "aa748c2535bc5fe1b66d559ef1b9fc77dc2eaf1b",
+    "lines": 785,
+    "max_width": 100,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "fd4128f9f537c0cc830c8ecab4b1ad942f69d87596b47d2639abe026d37f5bb6",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "29ad24285c7e4a9fc383f0ac8a7b5dfd833f1378",
+    "lines": 784,
+    "max_width": 100,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "09db92aafe5c6f2073e9de788c9821b2f9a7e9e14975a7bbf0cbed46a5821c55",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean": {
+   "base": {
+    "git_blob": "fd751608a0ae889edc0d7da5e6f4732b00e651d1",
+    "lines": 201,
+    "max_width": 96,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "0cea7598cdf20c34d5e0827baf1dc2d8212d598f5e4ff9f9062acdc68e7ba696",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "efad3e22e37aa505061c0962d1cf1969b46e273c",
+    "lines": 190,
+    "max_width": 96,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "47be006e7cd69e55d9cba3678c0527dad2aafcc44cd833c8a372f88607d47d74",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Hashing/FromDiscreteLog/Probability.lean": {
+   "base": {
+    "git_blob": "d27c5c70247a657e087355a3bc97e8be8094b3e1",
+    "lines": 73,
+    "max_width": 93,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "2acea00f42373541e6c10e4546ef0391edf326f1606e02ed4907f6a02c1a6a58",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "b5e86c6e35c9037a76ee760efef70f82f2e0afab",
+    "lines": 74,
+    "max_width": 93,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "bba5b98838f927e8716ded6fc1466ad0886f90ea792240be0581ab296fa01e68",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Hashing/SIS/CollisionOutput.lean": {
+   "base": {
+    "git_blob": "6eb722372cbb9ca3d69b7e5793f71682524a02c5",
+    "lines": 321,
+    "max_width": 95,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "4fdd47c65513cc36d0ccf7f8403150f01b77e93cd948e0d9748c5dc1fae86264",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "00b46bc1b7e9e9d05d81c82bba2822b3b851d6fe",
+    "lines": 344,
+    "max_width": 95,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "7679a752b4891f26d4c1e3c1bd426192412d6a40868d6016f5cbce55cd46b3f0",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/NumberTheory/Chebyshev.lean": {
+   "base": {
+    "git_blob": "ddae2c967589f1be24a3a4ad10033e17ce3aafd4",
+    "lines": 311,
+    "max_width": 99,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "397f9a14c8ab21501b8135d007459ca0b3ba210dadf48d9ac78849acdaccddf1",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "ecdfff60620df46e061bdd0aebd84d328f73cf5c",
+    "lines": 313,
+    "max_width": 99,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "f8c1bd5fae8aa9b9dceaec9f768b86d9af2b8370bebbe0a95d93b578b916fb86",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/NumberTheory/Primality.lean": {
+   "base": {
+    "git_blob": "3e194b765b22c878c1f66b4183cfa7e997a35d87",
+    "lines": 930,
+    "max_width": 100,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "bc3bede2d28fc0842dff52184365197310f286a5a723779a6c7a80b0bf639287",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "e2f4a3a4be87fdf57fa7d059fd91853f6bd59339",
+    "lines": 939,
+    "max_width": 100,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "7324a8fb561414487b405f231d80684fec32bb6744ae0a531d4a83984d853e15",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Pairing/Assumptions.lean": {
+   "base": {
+    "git_blob": "f38ea5b4b4fb9a34bebadfeb07462e1ff28bba80",
+    "lines": 440,
+    "max_width": 99,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "40b9880ddd57e1299578d8007e9c9791aae98e2aeaee700363f80644e0d1b085",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "ba6e195ab73e1b3497b4ee9c93c80e1bbe59c305",
+    "lines": 439,
+    "max_width": 99,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "d0f2b38fb3b9d762082da4d77e0f98407ef5795f58511c2d80abb5e443c2de9a",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean": {
+   "base": {
+    "git_blob": "f8904f6f2d4e6fff905ef88cc5e292b8b07d83a3",
+    "lines": 249,
+    "max_width": 97,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "a37cbcf65eb1438dcea25384523e8adc56b4fbd01f8ce33aee23b057ed015db3",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "f6871228650cf88f74e875cae5d3b465881b2432",
+    "lines": 267,
+    "max_width": 97,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "32780251c68ac72ab4840d03b5c74b311dc90d112bdb44dfa27393cbe5a1afb2",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean": {
+   "base": {
+    "git_blob": "21cfd102e7623aec79c5d5520841f90eac6231ba",
+    "lines": 173,
+    "max_width": 90,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "7daedf58eef322a97678c498f9d439edb391d71eb4a331f93db3b4ae503bf1a6",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "a4a8ca95f80567454891f5b90887946a5fea70a0",
+    "lines": 174,
+    "max_width": 100,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "917076f350ce97cf51fae8accc2e84a3c084b4bb45cd297df88e9c9fdee1eb87",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/InformationTheory/Entropy.lean": {
+   "base": {
+    "git_blob": "dccabe2cffdd1a8f759f668895bdacacb7f9a4fc",
+    "lines": 263,
+    "max_width": 99,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "84843687e0e0e4eaaa3b2331c58442b37bf2037f0f1842fc9dbcf975190b09c7",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "1f66e525963f20ae9f6c8926c5d85f3f6a54c6ff",
+    "lines": 263,
+    "max_width": 99,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "cc5135dd5f90fab40c5f4e48ab635a67e9ee5e34bd601f3377a778c98ca293c4",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/InformationTheory/Extractors.lean": {
+   "base": {
+    "git_blob": "dd2dac1f466ae947e90aa416e64219c255eb117a",
+    "lines": 224,
+    "max_width": 98,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "d87f66fbce8fd3ac2c6fb39ea7d8a1ca25d749c6e0d1f1bdd45bf375140f5447",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "5664472bcf7477a16727265e9c41d1e188237c92",
+    "lines": 229,
+    "max_width": 98,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "a4b0bcfc2a8fdc67b0de4cbc2683c55437a53aa64c02eb11643f4077a2221f5a",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  },
+  "TCSlib/InformationTheory/LeftoverHash.lean": {
+   "base": {
+    "git_blob": "6038b82fb3c1f33b9bf4ce6ebacc8dfcd7628edf",
+    "lines": 186,
+    "max_width": 98,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "32fcfa08f3caaccc3c318d6efa261b627d41203eb1988d80ddf369df1159431c",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "head": {
+    "git_blob": "f58f8ccb0a20060bf6a36eb1e5ad5421c3ce6e2e",
+    "lines": 186,
+    "max_width": 98,
+    "micro_sign": 0,
+    "over_100": 0,
+    "sha256": "61a16868e46674a4c537dd3efe6403ece7216e7a2c6995abac6fe5726eee971a",
+    "sorry_tokens": 0,
+    "tabs": 0,
+    "trailing_space": 0
+   },
+   "merged_blob_equals_head": true
+  }
+ },
+ "gate": 54,
+ "lean_paths_changed_records_side": [
+  "TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW.lean",
+  "TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean",
+  "TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean",
+  "TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean",
+  "TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean",
+  "TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean",
+  "TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean",
+  "TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean",
+  "TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean",
+  "TCSlib/Cryptography/LWE.lean",
+  "TCSlib/Cryptography/LWE/BitEncoding.lean",
+  "TCSlib/Cryptography/LWE/Ratio.lean"
+ ],
+ "manifest_packages": {
+  "BibtexQuery": "29a4b34f8caa7c95934ab4494d8866fde1850c0b",
+  "Cli": "1dae8b12f8ba27576ffe5ddee78bebf6458157b0",
+  "LeanAPAP": "5bbd91f52aa2e2d413a19afc10d30362e4872527",
+  "LeanSearchClient": "2ed4ba69b6127de8f5c2af83cccacd3c988b06bf",
+  "MD4Lean": "44da417da3705ede62b5c39382ddd2261ec3933e",
+  "PFR": "e1095d58b7c6f10734988816f7764f2103b9bf29",
+  "Qq": "2781d8ad404303b2fe03710ac7db946ddfe3539f",
+  "UnicodeBasic": "1829aec18f0e8a661dd5acf5d659d636979ba4f2",
+  "aesop": "26e4c7c0e63eb3e6cce3cf7faba27b8526ea8349",
+  "batteries": "39260e31b7b3f7f05643da95242463b462dc05f1",
+  "importGraph": "009064c21bad4d7f421f2901c5e817c8bf3468cb",
+  "mathlib": "029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e",
+  "plausible": "2503bfb5e2d4d8202165f5bd2cc39e44a3be31c3",
+  "proofwidgets": "fb8ed0a85a96e3176f6e94b20d413ea72d92576d",
+  "«doc-gen4»": "0ece4c27ae1abbd0b70df729e09d8b9c06351b80"
+ },
+ "merge_tree_at_staging_tip": "5952993497422ba0071c980d1a38b7f22d5cb80f",
+ "merge_tree_at_staging_tip_tcslib_tree": "73af3ec6968e023e87ce00af649db0e2e02f4353",
+ "merged": {
+  "merge_tree": "84c0205e003688519b1bd13156066d09d0ebe6b4",
+  "parents": [
+   "8836292693d7c611ee375d162f34766841635337",
+   "9f7f409c2e09749428db75b9ddd324f92695e4af"
+  ],
+  "scratch_commit": "62c2794272bd5cbe4fe3f031d4186924e4e1a222",
+  "scratch_commit_on_any_ref": false,
+  "tcslib_tree": "73af3ec6968e023e87ce00af649db0e2e02f4353"
+ },
+ "name": "Cleanup Stage 2, S2-A (PR #390)",
+ "pr": {
+  "base_branch": "cryptography/pass-shelat-ch2-4",
+  "base_tcslib_tree": "849ee9454cff17b1fb15a22183526d7e071a9669",
+  "branch": "cleanup/stage2-s2a",
+  "changed_files": 63,
+  "commits": 43,
+  "head": "9f7f409c2e09749428db75b9ddd324f92695e4af",
+  "head_tcslib_tree": "ae345736160511e6d3e7d8b47ad76c430c424500",
+  "head_tree": "df1952ed048de92371cb6f754d65dbbbdf6eff7d",
+  "merge_base_with_records_tip": "61a5f0fb640622c15fdd33df56efa470b2bf26c8",
+  "number": 390,
+  "s2a_base": "61a5f0fb640622c15fdd33df56efa470b2bf26c8",
+  "shortstat": "63 files changed, 1650 insertions(+), 897 deletions(-)"
+ },
+ "records_sha256_at_staging_tip": {
+  "PassShelatChapter5-8Plan.md": "ac6d356143317a751b01b26d8ab555d52afa1bff26452f745a14cd30b58c579a",
+  "briefs/pass-shelat-ch5-8/MAINTAINER-HANDOFF.md": "c9b93227cddd0e5aa1784855dab939e8bec2d11b6aa812e26d1afb9082b07181",
+  "briefs/pass-shelat-ch5-8/cleanup-stage2/plan-r1.md": "7d5496ff8a105de5420760d96593cf9724b468b22c2260854048d9958d34cc62",
+  "briefs/pass-shelat-ch5-8/cleanup-stage2/s2a-d1-report.md": "51ba1e3386e71eda0e01171e0632882971973209ee2c53f28bcd58968e5842bf",
+  "briefs/pass-shelat-ch5-8/cleanup-stage2/s2a-d2-report.md": "57f117e35ef4a22a4c1a1b1beaad09d40b10a94e6803223e0dcf999930499a94",
+  "briefs/pass-shelat-ch5-8/cleanup-stage2/s2a-d3-report.md": "7bfc461ee1f52ba17a92a33c89401ce1783523451d37bdf9e2aa9b6b235dbcd6",
+  "briefs/pass-shelat-ch5-8/cleanup-stage2/s2a-d4-report.md": "04c2df4856e0f4a4f9d5cb172385440109d04b645cc855585bb5e3de4ed6685f",
+  "briefs/pass-shelat-ch5-8/cleanup-stage2/s2a-items.tsv": "52d6b3a4c442aa46da1cc00214ec2ffe4ded196e662b48b0e692fa1936b7e3cf",
+  "briefs/pass-shelat-ch5-8/cleanup-stage2/s2a-workplan-r1.md": "50f162ee4c79a8a529bb20ab9778e3c7546edfc996c1b3df9a2b466d1e4b247a",
+  "briefs/pass-shelat-ch5-8/cleanup-stage2/scope.tsv": "59509ea8a0b7fb9a86350da91540abaacde78a2d8f7ba6b37f3b07c4b5e5bf91",
+  "briefs/pass-shelat-ch5-8/cleanup-stages.md": "45f0acb856e22004dc3b96a5d8301f919dc72da67891e3ac388465dcaa8d2e26",
+  "briefs/pass-shelat-ch5-8/deferred-work.md": "6a7c9d30c8b2ddb4f12abe14b95444ffda8abf3c7f5b330f76366bf60ef57ac4",
+  "briefs/pass-shelat-ch5-8/duplication-ledger.md": "3b36f91b42e19c34ab70a12aed0a09106433ca6e7db9425703933b0fa1ab0293",
+  "policy.md": "6599b12230e3879bc0e1fb22c0376ea6201bca8b7edd79dfc55da43986f991d4"
+ },
+ "records_tip_at_staging": "25c6a28ac31cd07c299afcb89fe030f4ada45b00",
+ "records_tip_at_staging_lean_paths_changed_since_replayed": [],
+ "records_tip_at_staging_tcslib_tree": "745bf4b494b6581a5666ef9ca0a6e735a68ddcef",
+ "records_tip_replayed": "8836292693d7c611ee375d162f34766841635337",
+ "records_tip_replayed_tcslib_tree": "745bf4b494b6581a5666ef9ca0a6e735a68ddcef",
+ "round": 1,
+ "staged": "2026-11-19",
+ "toolchain": "leanprover/lean4:v4.25.0",
+ "unchanged_everywhere": {
+  "TCSlib.lean": "8db619ce45cb060d961d39ec86b4f1a9037d642e",
+  "audits": "e204e63c6027d6e48abaa394d1d73d5d4615596e",
+  "lake-manifest.json": "a2a54033bc1ff8cedc0523666c407a1565f237b0",
+  "lakefile.lean": "841a96bdb510f201743fea9d68045c7a9580afd2",
+  "lean-toolchain": "e5ab73a51fe1bcd591244dc2f68b1e7807f21135"
+ }
+}
