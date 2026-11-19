@@ -16,8 +16,8 @@
   "The reverse direction of the pair above."
  ],
  "NEW|RunStep.lean::host_ordinary|RunStep.lean::host_verdict": [
-  "shared-prelude",
-  "DISCLOSED FOR THE AUDIT. The host's ordinary-phase and verdict-phase steps share a prelude of about 20 lines (the entry renaming `locald`, `phase_correct`, the word bookkeeping) before diverging into dispatch and halt. Raised in the pack."
+  "citation-shape",
+  "G168-01 repaired: the shared preparation is factored into `host_local` (local entry, encoding transport, reconstruction, heads), `words_headD` (the word/head obligation) and `host_envelope` (the selected/frame head-envelope split). What the two proofs still share is their local `let` bindings and one-line citations of these helpers and of `phase_correct`; they diverge into dispatch (`host_phase_dispatch`, `resumeTag_of_step`) and halt (`host_slice_prefix`). Round 1: 72%."
  ],
  "NEW|WordSize.lean::logarithmic_computation|RunStartup.lean::host_initCfg": [
   "shape-match",
@@ -58,5 +58,41 @@
  "NEW|RunStartup.lean::host_initCfg|RunEncoding.lean::runEntry_reconstruct": [
   "citation-shape",
   "Both now cite `Cfg.mapState_eq_of_fields` (run 2's repair) with their own field readers."
+ ],
+ "NEW|NDHost.lean::guessCtlRunTM_stop_of_halted|RunStartup.lean::host_initCfg": [
+  "parallel",
+  "Both prove that the initial configuration with its state mapped is the host's initial configuration, field by field: `host_initCfg` through `Cfg.mapState_eq_of_fields`, and the library's inline `hinit` in `guessCtlRunTM_stop_of_halted` (a cited home, newly in the screen through `population_extra`) through `Cfg.ext`. `Cfg.mapState_init` (PR #391) states this once; the approved follow-up after #391 and #383 merge retires `host_initCfg` to a citation of it, and `NDHost`'s `hinit` is listed there as a further candidate."
+ ],
+ "NEW|NDHost.lean::gr_handoff|RunStartup.lean::host_initCfg": [
+  "parallel",
+  "The same match as `guessCtlRunTM_stop_of_halted` above: the library's private `gr_handoff` proves the same mapped-initial-configuration equation inline (`hinit`, through `Cfg.ext`). Same disposition: `Cfg.mapState_init` (PR #391) states it once; the follow-up after #391 and #383 merge retires `host_initCfg` to a citation, with `NDHost`'s two inline copies listed as further candidates."
+ ],
+ "NEW|Startup.lean::startupErase_attach|RunEncoding.lean::encodes_mapState": [
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`); the match is pre-existing merged text against E's new lemma. Both discharge a `Cfg` equality field by field through the `Cfg.mapState_*` readers, for different equations; `encodes_mapState` is an `Encodes` invariance, `startupErase_attach` an erase-after-attach identity."
+ ],
+ "NEW|KeyTable.lean::kt_payloadPost_markerPost|RunEncoding.lean::encodes_mapState": [
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`); the match is pre-existing merged text against E's new lemma. Both discharge a `Cfg` equality field by field through the `Cfg.mapState_*` readers, for different equations; `kt_payloadPost_markerPost` identifies a closed payload's post-configuration with the marker's, through `kt_closeContract_spec`."
+ ],
+ "NEW|KeyTable.lean::kt_compare_run|RunEncoding.lean::runEntry_reconstruct": [
+  "citation-shape",
+  "Cited home newly in the screen (`population_extra`); the match is pre-existing merged text against E's new lemma. Both cite `Cfg.mapState_eq_of_fields` with the same five reader obligations, to re-tag a configuration; `kt_compare_run` then runs the comparison phase."
+ ],
+ "NEW|KeyTable.lean::kt_done_state|RunEncoding.lean::runEntry_reconstruct": [
+  "citation-shape",
+  "Cited home newly in the screen (`population_extra`); the match is pre-existing merged text against E's new lemma. Both cite `Cfg.mapState_eq_of_fields` with the same five reader obligations (`htag`, re-tagging a configuration); `kt_done_state` then runs the done phase."
+ ],
+ "NEW|Startup.lean::startupErase_attach|RunEncoding.lean::runEntry_reconstruct": [
+  "parallel",
+  "Cited home newly in the screen (`population_extra`); the match is pre-existing merged text against E's new lemma. Both prove that re-tagging a configuration and then restoring its state gives it back, field by field: `runEntry_reconstruct` through `Cfg.mapState_eq_of_fields`, `startupErase_attach` (C's, private) through `Cfg.ext`. Listed for the approved follow-up after #391 and #383 merge, which retires C's private copies: `startupErase_attach` can cite `Cfg.mapState_eq_of_fields` there."
+ ],
+ "NEW|NDHost.lean::guessCtlRunTM_stop_of_halted|RunEncoding.lean::encodes_mapState": [
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`); the match is pre-existing merged text against E's new lemma. Both discharge a `Cfg` equality field by field through the `Cfg.mapState_*` readers, for different equations; here the library's inline `hinit` (see the `host_initCfg` pair above)."
+ ],
+ "NEW|NDHost.lean::gr_handoff|RunEncoding.lean::encodes_mapState": [
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`); the match is pre-existing merged text against E's new lemma. Both discharge a `Cfg` equality field by field through the `Cfg.mapState_*` readers, for different equations; here the library's inline `hinit` (see the `host_initCfg` pair above)."
  ]
 }
