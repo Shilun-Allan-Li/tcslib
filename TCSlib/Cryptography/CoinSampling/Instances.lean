@@ -58,7 +58,8 @@ def zmod (q : ℕ) [NeZero q] (s : ℕ) : CoinSampler (ZMod q) s :=
 
 /-- `(zmod q s).dec c = (bucketDec q s c).map (ZMod.finEquiv q)`. -/
 theorem zmod_dec (q : ℕ) [NeZero q] (s : ℕ) (c : Fin s → Bool) :
-    (zmod q s).dec c = (bucketDec q s c).map (ZMod.finEquiv q).toEquiv := rfl
+    (zmod q s).dec c = (bucketDec q s c).map (ZMod.finEquiv q).toEquiv := by
+  rw [zmod, congr_dec, bucket_dec]
 
 /-- The residue sampler fails as the bucket sampler: `(zmod q s).fail = (2^s mod q)/2^s`
 (`fail_congr`, `fail_bucket`). -/
