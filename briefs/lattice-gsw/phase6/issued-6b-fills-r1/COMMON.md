@@ -10,7 +10,7 @@ Prepared by the maintainer on 2026-11-18 from records tip `9b92d4ff2f2a5e63f1d2a
 
 ## 1. Inputs (records branch `cryptography/pass-shelat-ch2-4` at the records pin `<RECORDS>`)
 
-Read in full, and check the SHA-256 (taken at `9b92d4ff`; if one differs at `<RECORDS>`, stop with **E-INPUT** and
+Read in full, and check the SHA-256 (taken at `64ce91e9`; the handoff and ledger rows re-taken there for U14–U19 and EF-R1; if one differs at `<RECORDS>`, stop with **E-INPUT** and
 report both values):
 
 | File | SHA-256 |
@@ -24,11 +24,11 @@ report both values):
 | `briefs/efficiency-gaps/audit-r1.md` (§0 classes; §3.3 the lattice reductions; §5 EF-R1) | `f2ca1ae4871dc3888159508a8e52d36ea4ffae461158c0c9510af901eb24dfae` |
 | `briefs/efficiency-gaps/rulings-r1.md` (Q2 A: EF-R1, wrappers, P6-Q10 superseded; Q10 A: TM tooling) | `17ebe870ce0650723b7cb0e45d3b86ebff22402ba9aa312a390eca358c608b47` |
 | `briefs/efficiency-gaps/wave1/EF-R2-R3/brief.md` (the general-modulus toolkit EF-R1 reuses) and `wave1/rulings.md` | `a7bceb049fd7b42cb49cfa7c4f64d834d1d5ef792060aa1b9a047a35c96a9e0f`, `637245f16ed59e7a89d25a06407664e8004b26206b5a7c5d81867e468fcd820f` |
-| `briefs/pass-shelat-ch5-8/MAINTAINER-HANDOFF.md` §2 (standing rules; 15 efficiency, 16 local inputs) | `926fd8515b768acaabf25c60853cc83e22a79b392afbec46c35080a907086166` |
+| `briefs/pass-shelat-ch5-8/MAINTAINER-HANDOFF.md` §2 (standing rules; 15 efficiency, 16 local inputs, 17 where Codex runs, 18 paste-ready text) | `c9b93227cddd0e5aa1784855dab939e8bec2d11b6aa812e26d1afb9082b07181` |
 | `policy.md` (§1 layout, *Definitions land with their lemmas*, *Hosts come first*, *Duplication*, Rule 10; §2 attribution; §3 sketches) | `6599b12230e3879bc0e1fb22c0376ea6201bca8b7edd79dfc55da43986f991d4` |
 | `workflow.md` (§4 batch ground rules, §6 tooling) | `a89d9a4e38bf14a90271000376828d7c5246617c5a6f9f55f3366bf4d0dbed0e` |
 | `briefs/lattice-gsw/phase6/issued-6b-r1/fill-environment-addendum.md` (Part 1; the *Lean parallelism* text of its adaptation) | `0420f23ba1c520e566e695d329686a6ec3902c63c72e073fb150a1fa54205e3d` |
-| `briefs/pass-shelat-ch5-8/duplication-ledger.md` (DL-55, DL-56, DL-58, DL-61) | `be12f234993895a1d9428227dcd1dcd5526a780ee2906515f89ebb1dd96c9e3d` |
+| `briefs/pass-shelat-ch5-8/duplication-ledger.md` (DL-55, DL-56, DL-58, DL-61) | `670e62aa2fa22d825080a7f83a068d6786aaa539a93bc76eed94a3458a04a68c` |
 | `briefs/pass-shelat-ch5-8/EXCHANGE.md` (*Fills*, *Rules for exchange pushes*) | `d685d75511c2729b9f86e60a6036e9d68a8fd7edd236a53cc7fe39f8476e160e` |
 | `briefs/pass-shelat-ch5-8/maintainer/tools/decls2.py` | `fa81981add5de30d3a98b7e1614e73b17f149723e8be79558ac1a29b6fe67fbc` |
 
