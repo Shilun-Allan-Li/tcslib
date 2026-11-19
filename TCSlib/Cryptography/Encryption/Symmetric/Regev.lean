@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Encryption.Symmetric.Regev.Basic
 import TCSlib.Cryptography.Encryption.Symmetric.Regev.Experiments
+import TCSlib.Cryptography.Encryption.Symmetric.Regev.Asymptotic
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -16,6 +17,8 @@ set_option autoImplicit false
 
 * `Basic`: mathematical encryption/decryption and bounded-error correctness statements.
 * `Experiments`: common-secret sampling and the concrete two-reduction security bound.
+* `Asymptotic`: the shift reduction as a proved `NUPPT` and single-message security of the
+  encoded encryptions from `DLWEAssumption`.
 
 The nontrivial results are statement-phase obligations. Efficient uniform algorithms,
 the existing `PrivateKeyScheme` bridge and adaptive CPA security remain later work.
