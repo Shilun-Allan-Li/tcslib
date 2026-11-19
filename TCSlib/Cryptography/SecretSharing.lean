@@ -3,8 +3,10 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.SecretSharing.Defs
+import TCSlib.Cryptography.SecretSharing.Efficient
 import TCSlib.Cryptography.SecretSharing.Interpolation
 import TCSlib.Cryptography.SecretSharing.Shamir
+import TCSlib.Cryptography.SecretSharing.ShamirEfficient
 import TCSlib.Cryptography.SecretSharing.Sharing
 import TCSlib.Cryptography.SecretSharing.Vector
 
@@ -25,6 +27,11 @@ and the polynomial-counting lemmas it is proved from.
 * `TCSlib.Cryptography.SecretSharing.Sharing`: the algebra of share vectors — closure under
   addition, scaling and multiplication, and reconstruction as a linear functional.
 * `TCSlib.Cryptography.SecretSharing.Vector`: sharing a vector of secrets, with joint privacy.
+* `TCSlib.Cryptography.SecretSharing.Efficient`: the efficient secret-sharing interface
+  (polynomial-time share and reconstruction maps, efficiently sampled dealer coins), Shamir's
+  public parameters, and modular arithmetic on residue words.
+* `TCSlib.Cryptography.SecretSharing.ShamirEfficient`: Shamir's scheme over `ℤ_p` as an efficient
+  scheme, with correctness and privacy transferred from `Shamir`.
 
 ## References
 

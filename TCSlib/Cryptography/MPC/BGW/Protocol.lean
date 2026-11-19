@@ -77,6 +77,11 @@ the Lagrange combination of those re-sharings with the coefficients of `A`. [BGW
 noncomputable def degreeReduce (u : Party F → F) : Party F → F :=
   fun j => ∑ i ∈ A, recombineCoeff A i * R.reshare i (u i) j
 
+/-- `degreeReduce R A u j = ∑ i ∈ A, λ_i · R.reshare i (u i) j`, with `λ_i = recombineCoeff A i`:
+the defining equation of `degreeReduce`. Glue. -/
+theorem degreeReduce_apply (u : Party F → F) (j : Party F) :
+    degreeReduce R A u j = ∑ i ∈ A, recombineCoeff A i * R.reshare i (u i) j := rfl
+
 /-- **Degree reduction.** If `u` is a degree-`2d` sharing of `z` and at least `2d + 1` parties
 take part, then the reduced vector is a degree-`d` sharing of the *same* value `z`. [BGW88, §3],
 [AL17, §3.3]

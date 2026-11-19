@@ -1,0 +1,255 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.MPC.BGW.Protocol
+import TCSlib.Cryptography.SecretSharing.ShamirEfficient
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# The BGW protocol over `ℤ_p`: the parties' steps are polynomial-time
+
+`TCSlib.Cryptography.MPC.BGW.Protocol` evaluates a circuit on shares over an abstract field, with
+the parties' re-sharings at multiplication gates abstracted into a `Resharer`. This file runs the
+protocol over `ℤ_p` for Shamir's public parameters `π` (`SecretSharing.ShamirParams`), with residues
+written as binary numerals (`SecretSharing.resWord`), and shows that every step a party performs is
+carried out by a polynomial-time word map, uniform in `p`:
+
+* **re-sharing**: party `i` re-shares a value `x` with Shamir's dealer, using one draw
+  `ρ i x < p^{k−1}` of the dealer's coins (`shamirResharer`); the share it sends to party `j` is
+  computed by the share machine `Shamir.shareRaw`, and its coins are sampled as the dealer's are
+  (`Shamir.dealerSamples_shamir`);
+* **input and constant gates**: a party's share is the word it already holds, so the step is the
+  identity map;
+* **addition** and **multiplication by a public constant**: the residue maps
+  `SecretSharing.addModW` and `SecretSharing.mulModW` on the party's share words;
+* **multiplication**: the local product `SecretSharing.mulModW`, then party `j`'s half of the degree
+  reduction, the Lagrange recombination of the re-sharings it received, computed by the
+  recombination machine `Shamir.recombineRaw`.
+
+Each statement says that the machine, run on the words of a party's data, writes the word of the
+share that `bgwEval` assigns to that party. The whole-circuit evaluator (a host iterating these
+steps over the gates) is not built here.
+
+**Multiplication gates.** The last step identifies party `j`'s recombination
+`recombine A fun i => R.reshare i (u i) j` with `degreeReduce R A u j`, the share that
+`bgwEval_mul` assigns, through the readers `degreeReduce_apply` (`MPC.BGW.Protocol`) and
+`Shamir.recombine_eq_sum` (`SecretSharing.Sharing`): `recombineRaw_bgwEval_mul`.
+
+## Main definitions
+
+* `TCSlib.MPC.BGW.shamirResharer`: Shamir re-sharing over `ℤ_p` with explicit coins, as a
+  `Resharer`.
+
+## Main results
+
+* `TCSlib.MPC.BGW.shareRaw_shamirResharer`, `TCSlib.MPC.BGW.polyTimeComputable_reshare`: one
+  party's re-sharing is computed by a polynomial-time map;
+  `TCSlib.MPC.BGW.reshare_dealerSamples`: with its coins sampled as the dealer's are.
+* `TCSlib.MPC.BGW.resWord_bgwEval_input`, `TCSlib.MPC.BGW.resWord_bgwEval_const`: the input and
+  constant gates are the identity on words.
+* `TCSlib.MPC.BGW.addModW_bgwEval`, `TCSlib.MPC.BGW.mulModW_bgwEval_smul`: addition and scalar
+  multiplication gates.
+* `TCSlib.MPC.BGW.mulModW_bgwEval_mul`, `TCSlib.MPC.BGW.recombineRaw_reshare`: the local product
+  and the recombination step of a multiplication gate;
+  `TCSlib.MPC.BGW.recombineRaw_bgwEval_mul`: the recombination writes the share that `bgwEval_mul`
+  assigns; `TCSlib.MPC.BGW.recombineRaw_shareRaw`: the recombination step with Shamir re-sharing.
+
+## References
+
+* [BGW88] M. Ben-Or, S. Goldwasser, A. Wigderson, *Completeness theorems for non-cryptographic
+  fault-tolerant distributed computation*, STOC 1988, §3.
+* [AL17] G. Asharov, Y. Lindell, *A full proof of the BGW protocol for perfectly secure
+  multiparty computation*, J. Cryptology 30(1), 2017, §3–4.
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
+  §6.1.1 (Definition 152.1, `(k, n)` secret sharing).
+-/
+
+namespace TCSlib.MPC.BGW
+
+open Finset Complexity Turing TCSlib.Shamir TCSlib.SecretSharing
+
+/-! ### Re-sharing with Shamir's dealer -/
+
+section Reshare
+
+/-- **Shamir re-sharing with explicit coins**: over `ℤ_p` at the parameters `π`, party `i`
+re-shares a value `x` as Shamir's dealer would, with threshold `k` (so degree `d = k − 1`) and the
+coins `ρ i x < p^{k−1}`, decoded by `coinEquiv π`:
+`reshare i x j = (scheme k (ZMod p)).share x (coinEquiv π (ρ i x)) j`. It is a degree-`(k − 1)`
+sharing of `x` by `Shamir.isSharing_share`. This is the re-sharing of [BGW88, §3] with the private
+coins made explicit; `Resharer` abstracts them away. -/
+noncomputable def shamirResharer (π : ShamirParams)
+    (ρ : Party (ZMod π.p) → ZMod π.p → Fin (π.p ^ (π.k - 1))) :
+    Resharer (ZMod π.p) (π.k - 1) where
+  reshare i x j := (scheme π.k (ZMod π.p)).share x (coinEquiv π (ρ i x)) j
+  isSharing_reshare i x := isSharing_share π.k_pos x (coinEquiv π (ρ i x))
+
+/-- `(shamirResharer π ρ).reshare i x j = (scheme k (ZMod p)).share x (coinEquiv π (ρ i x)) j`.
+Glue. -/
+theorem shamirResharer_reshare (π : ShamirParams)
+    (ρ : Party (ZMod π.p) → ZMod π.p → Fin (π.p ^ (π.k - 1))) (i : Party (ZMod π.p))
+    (x : ZMod π.p) (j : Party (ZMod π.p)) :
+    (shamirResharer π ρ).reshare i x j = (scheme π.k (ZMod π.p)).share x (coinEquiv π (ρ i x)) j :=
+  rfl
+
+/-- **The share machine computes a re-sharing**: on `⟨π, ⟨x, ⟨ρ i x, j⟩⟩⟩` (the parameter word,
+the value, the coins as a numeral and the recipient's label) `Shamir.shareRaw` writes the share
+`(shamirResharer π ρ).reshare i x j` that party `i` sends to party `j`. Glue
+(`Shamir.shareRaw_spec`, `Shamir.scheme_share`). -/
+theorem shareRaw_shamirResharer (π : ShamirParams)
+    (ρ : Party (ZMod π.p) → ZMod π.p → Fin (π.p ^ (π.k - 1))) (i : Party (ZMod π.p))
+    (x : ZMod π.p) (j : Party (ZMod π.p)) :
+    shareRaw (pairEncode π.encode (pairEncode (resWord x)
+      (pairEncode (Nat.bits (ρ i x)) (resWord (label j))))) =
+      resWord ((shamirResharer π ρ).reshare i x j) := by
+  rw [shamirResharer_reshare, scheme_share, shareRaw_spec]
+
+/-- **Re-sharing is polynomial-time**: one polynomial-time map `f` (the share machine
+`Shamir.shareRaw`), uniform in the parameters, computes from
+`⟨π, ⟨x, ⟨ρ i x, j⟩⟩⟩` the share `(shamirResharer π ρ).reshare i x j` that party `i` sends to party
+`j` when it re-shares `x`. This is the efficiency clause of [PS10, Def 152.1] for the sharing step
+of [BGW88, §3]. -/
+theorem polyTimeComputable_reshare :
+    ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
+      ∀ (π : ShamirParams) (ρ : Party (ZMod π.p) → ZMod π.p → Fin (π.p ^ (π.k - 1)))
+        (i : Party (ZMod π.p)) (x : ZMod π.p) (j : Party (ZMod π.p)),
+        f (pairEncode π.encode (pairEncode (resWord x)
+          (pairEncode (Nat.bits (ρ i x)) (resWord (label j))))) =
+          resWord ((shamirResharer π ρ).reshare i x j) :=
+  ⟨shareRaw, polyTimeComputable_shareRaw, shareRaw_shamirResharer⟩
+
+/-- **Re-sharing is efficient, coins included**: for every bit-length bound `b`, there is one
+polynomial-time map `f` computing each re-shared share from `⟨π, ⟨x, ⟨r, j⟩⟩⟩` with the coins `r`
+written `Nat.bits r`, and the coins of each re-sharing, a single residue `r < p^{k−1}` in exactly
+that encoding, are drawn as the dealer's coins are (`DealerSamples` at the parameters `π`
+admissible at `κ`, `shamirAdm b κ π`). So every re-sharing a party performs at a multiplication
+gate is one dealer draw followed by one run of the share machine: the probabilistic
+polynomial-time requirement of [PS10, Def 152.1] for the sharing step of [BGW88, §3]. Glue
+(`polyTimeComputable_reshare`, `Shamir.dealerSamples_shamir`). -/
+theorem reshare_dealerSamples (b : PolyExpr) :
+    ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
+      (∀ (π : ShamirParams) (ρ : Party (ZMod π.p) → ZMod π.p → Fin (π.p ^ (π.k - 1)))
+        (i : Party (ZMod π.p)) (x : ZMod π.p) (j : Party (ZMod π.p)),
+        f (pairEncode π.encode (pairEncode (resWord x)
+          (pairEncode (Nat.bits (ρ i x)) (resWord (label j))))) =
+          resWord ((shamirResharer π ρ).reshare i x j)) ∧
+      DealerSamples (fun π : ShamirParams => Fin (π.p ^ (π.k - 1))) (shamirAdm b)
+        ShamirParams.encode fun _ r => Nat.bits r := by
+  obtain ⟨f, hf, hspec⟩ := polyTimeComputable_reshare
+  exact ⟨f, hf, hspec, dealerSamples_shamir b⟩
+
+end Reshare
+
+/-! ### The local steps of a party -/
+
+section LocalSteps
+
+variable {p : ℕ} [Fact p.Prime] {d : ℕ} {ι : Type*} (R : Resharer (ZMod p) d)
+  (A : Finset (Party (ZMod p))) (inp : ι → Party (ZMod p) → ZMod p) (j : Party (ZMod p))
+
+/-- **Input gate**: party `j`'s share of the input wire `i` is the word of its input share,
+`resWord (bgwEval R A inp (input i) j) = resWord (inp i j)`; the step is the identity map
+(`polyTimeComputable_id`). [BGW88, §3] -/
+theorem resWord_bgwEval_input (i : ι) :
+    resWord (bgwEval R A inp (.input i) j) = resWord (inp i j) := by
+  rw [bgwEval_input]
+
+/-- **Constant gate**: party `j`'s share of the public constant `c` is the word of `c`,
+`resWord (bgwEval R A inp (const c) j) = resWord c`; the step is the identity map on the public
+word of `c` (`polyTimeComputable_id`). [BGW88, §3] -/
+theorem resWord_bgwEval_const (c : ZMod p) :
+    resWord (bgwEval R A inp (.const c) j) = resWord c := by
+  rw [bgwEval_const]
+
+/-- **Addition gate**: the polynomial-time map `SecretSharing.addModW`
+(`polyTimeComputable_addModW`), run on `⟨p, ⟨a_j, b_j⟩⟩` with party `j`'s shares of the two
+input wires, writes its share of the sum wire, `(bgwEval a + bgwEval b) j`. [BGW88, §3] -/
+theorem addModW_bgwEval (a b : Circuit (ZMod p) ι) :
+    addModW (pairEncode (Nat.bits p) (pairEncode (resWord (bgwEval R A inp a j))
+      (resWord (bgwEval R A inp b j)))) = resWord (bgwEval R A inp (a.add b) j) := by
+  rw [addModW_resWord, bgwEval_add, Pi.add_apply]
+
+/-- **Scalar multiplication gate**: the polynomial-time map `SecretSharing.mulModW`
+(`polyTimeComputable_mulModW`), run on `⟨p, ⟨c, a_j⟩⟩` with the public constant `c` and party
+`j`'s share of the input wire, writes its share `c * bgwEval a j` of the scaled wire.
+[BGW88, §3] -/
+theorem mulModW_bgwEval_smul (c : ZMod p) (a : Circuit (ZMod p) ι) :
+    mulModW (pairEncode (Nat.bits p) (pairEncode (resWord c) (resWord (bgwEval R A inp a j)))) =
+      resWord (bgwEval R A inp (a.smul c) j) := by
+  rw [mulModW_resWord, bgwEval_smul]
+
+/-- **Multiplication gate, local product**: the polynomial-time map `SecretSharing.mulModW`
+(`polyTimeComputable_mulModW`), run on `⟨p, ⟨a_j, b_j⟩⟩` with party `j`'s shares of the two input
+wires, writes its product share `(bgwEval a * bgwEval b) j`, the share of degree `2d` that the
+degree reduction then re-shares. [BGW88, §3] -/
+theorem mulModW_bgwEval_mul (a b : Circuit (ZMod p) ι) :
+    mulModW (pairEncode (Nat.bits p) (pairEncode (resWord (bgwEval R A inp a j))
+      (resWord (bgwEval R A inp b j)))) =
+      resWord ((bgwEval R A inp a * bgwEval R A inp b) j) := by
+  rw [mulModW_resWord, Pi.mul_apply]
+
+/-- **Multiplication gate, recombination step**: after every party `i ∈ A` has re-shared its value
+`u i` (at a multiplication gate, its product share), party `j` holds the shares
+`R.reshare i (u i) j`; the polynomial-time recombination machine `Shamir.recombineRaw`
+(`polyTimeComputable_recombineRaw`), run on `⟨p, [⟨i, R.reshare i (u i) j⟩ : i ∈ l]⟩` for any
+duplicate-free listing `l` of `A`, writes its new share
+`recombine A fun i => R.reshare i (u i) j`. [BGW88, §3], [AL17, §3–4]
+
+At a multiplication gate this is `degreeReduce R A u j`, the share that `bgwEval_mul` assigns
+(`recombineRaw_bgwEval_mul`). -/
+theorem recombineRaw_reshare (u : Party (ZMod p) → ZMod p) (l : List (Party (ZMod p)))
+    (hl : l.Nodup) (hlA : ∀ i, i ∈ l ↔ i ∈ A) :
+    recombineRaw (pairEncode (Nat.bits p) (BinArith.encWords
+      (l.map fun i => pairEncode (resWord (label i)) (resWord (R.reshare i (u i) j))))) =
+      resWord (recombine A fun i => R.reshare i (u i) j) := by
+  have hA : l.toFinset = A := Finset.ext fun i => List.mem_toFinset.trans (hlA i)
+  have h := recombineRaw_spec l hl fun i => R.reshare i (u i) j
+  rw [hA] at h
+  exact h
+
+/-- **Multiplication gate, machine level**: after the local product (`mulModW_bgwEval_mul`) and
+the re-sharing of every product share `u i = (bgwEval a * bgwEval b) i` by the parties `i ∈ A`,
+the polynomial-time recombination machine `Shamir.recombineRaw` (`polyTimeComputable_recombineRaw`),
+run by party `j` on `⟨p, [⟨i, R.reshare i (u i) j⟩ : i ∈ l]⟩` for any duplicate-free listing `l`
+of `A`, writes party `j`'s share `bgwEval R A inp (a.mul b) j` of the product wire, exactly the
+share that `bgwEval_mul` assigns after degree reduction. [BGW88, §3], [AL17, §3–4]
+
+**Proof sketch.** `recombineRaw_reshare` gives the recombination
+`recombine A fun i => R.reshare i (u i) j`; `bgwEval_mul` and `degreeReduce_apply` write the
+assigned share as `∑ i ∈ A, λ_i · R.reshare i (u i) j`, which is that recombination by
+`recombine_eq_sum`. -/
+theorem recombineRaw_bgwEval_mul (a b : Circuit (ZMod p) ι) (l : List (Party (ZMod p)))
+    (hl : l.Nodup) (hlA : ∀ i, i ∈ l ↔ i ∈ A) :
+    recombineRaw (pairEncode (Nat.bits p) (BinArith.encWords (l.map fun i =>
+      pairEncode (resWord (label i))
+        (resWord (R.reshare i ((bgwEval R A inp a * bgwEval R A inp b) i) j))))) =
+      resWord (bgwEval R A inp (a.mul b) j) := by
+  rw [recombineRaw_reshare R A j _ l hl hlA, bgwEval_mul, degreeReduce_apply, recombine_eq_sum]
+
+end LocalSteps
+
+/-! ### The multiplication gate with Shamir re-sharing -/
+
+/-- **Multiplication gate with Shamir re-sharing, machine level**: if each party `i ∈ A`
+re-shares its value `u i` with Shamir's dealer by running the share machine `Shamir.shareRaw` on
+`⟨π, ⟨u i, ⟨ρ i (u i), j⟩⟩⟩`, then the recombination machine `Shamir.recombineRaw`, run by party
+`j` on the listed outputs `⟨p, [⟨i, shareRaw ⋯⟩ : i ∈ l]⟩`, writes
+`recombine A fun i => (shamirResharer π ρ).reshare i (u i) j`. So party `j`'s part of a
+multiplication gate is a composition of polynomial-time machines on words. [BGW88, §3]
+Glue (`shareRaw_shamirResharer`, `recombineRaw_reshare`). -/
+theorem recombineRaw_shareRaw (π : ShamirParams)
+    (ρ : Party (ZMod π.p) → ZMod π.p → Fin (π.p ^ (π.k - 1))) (A : Finset (Party (ZMod π.p)))
+    (u : Party (ZMod π.p) → ZMod π.p) (j : Party (ZMod π.p)) (l : List (Party (ZMod π.p)))
+    (hl : l.Nodup) (hlA : ∀ i, i ∈ l ↔ i ∈ A) :
+    recombineRaw (pairEncode (Nat.bits π.p) (BinArith.encWords (l.map fun i =>
+      pairEncode (resWord (label i)) (shareRaw (pairEncode π.encode (pairEncode (resWord (u i))
+        (pairEncode (Nat.bits (ρ i (u i))) (resWord (label j))))))))) =
+      resWord (recombine A fun i => (shamirResharer π ρ).reshare i (u i) j) := by
+  simp only [shareRaw_shamirResharer]
+  exact recombineRaw_reshare (shamirResharer π ρ) A j u l hl hlA
+
+end TCSlib.MPC.BGW
