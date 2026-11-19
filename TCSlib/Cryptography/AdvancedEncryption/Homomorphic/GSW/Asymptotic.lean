@@ -32,7 +32,7 @@ set_option autoImplicit false
 * `leveledINDCPA_of_dlweAssumption` (A3): asymptotic IND-CPA of leveled GSW-FHE from
   `DLWEAssumption F` and (A4), with no circular-security assumption.
 
-Both are admitted statement-phase targets. Ruling Q-6B-1 A: r3's A2 (`fheView_negligible`) is
+Both are proved here. Ruling Q-6B-1 A: r3's A2 (`fheView_negligible`) is
 not a theorem; the reader `weakCircularSecureFamily_iff` is that statement, the pure-FHE reading
 of the hypothesis [BV11, Thm 3.2; BV14, Thm 2.14 second part]: pure-FHE security *is* (A1).
 
@@ -287,11 +287,11 @@ between the encoded real views of `false` and `true` at `P_κ = ofFamily F κ`,
 p013-b002]. Deviation: concrete reductions covered by (A4).
 
 **Proof sketch.** At each `κ`, phase 5's `distAdv_encrypt_le_of_width` with `w = ℓ`
-(`q ≤ 2^ℓ` by the family's `modulus_le_pow`, `hm` read through `Parameters.ofFamily_lwe` and
-`Parameters.ofFamily_width`) bounds the advantage by the two DLWE advantages of `reduction`
-plus `N·2^{−κ}`. `heff` (`reductionEfficient_iff`) gives `D'₀`, `D'₁` dominating them by
-`F.advantageAt D'ᵢ κ`, negligible by `dlweAssumption_iff`. `N = (n + 1)·ℓ` is at most
-`(d(κ) + 1)·ℓ(κ)` (`dimension_le`, `PolyExpr.eval`), so `negligible_polyExpr_mul`
+(`q ≤ 2^ℓ` by the family's `modulus_le_pow`, `hm` read through `Parameters.ofFamily_lwe`)
+bounds the advantage by the two DLWE advantages of `reduction` plus `N·2^{−κ}`. `heff`
+(`reductionEfficient_iff`) gives `D'₀`, `D'₁` dominating them by `F.advantageAt D'ᵢ κ`,
+negligible by `dlweAssumption_iff`. `N = (n + 1)·ℓ` is at most `(d(κ) + 1)·ℓ(κ)`
+(`Parameters.ofFamily_columns_le`, `PolyExpr.eval`), so `negligible_polyExpr_mul`
 (`Asymptotic/EnsemblesLemmas.lean`) with `negligible_two_pow_neg` makes the last term negligible;
 `Negligible.add` and `Negligible.mono` (`distAdv` is nonnegative) finish. -/
 theorem indCPA_of_dlweAssumption (F : LWE.Family) (hF : LWE.DLWEAssumption F)
@@ -303,7 +303,41 @@ theorem indCPA_of_dlweAssumption (F : LWE.Family) (hF : LWE.DLWEAssumption F)
       distAdv (realView (Parameters.ofFamily F κ) (F.noise κ) false)
         (realView (Parameters.ofFamily F κ) (F.noise κ) true)
         (fun v r => D.distinguisherL κ (encodeView (Parameters.ofFamily F κ) v) r) := by
-  sorry
+  -- Step 1: (A4) at `μ = false, true` gives `D'₀`, `D'₁`, whose advantages are negligible.
+  obtain ⟨D₀, hD₀⟩ := (reductionEfficient_iff F).1 heff D false
+  obtain ⟨D₁, hD₁⟩ := (reductionEfficient_iff F).1 heff D true
+  have hneg₀ := (LWE.dlweAssumption_iff F).1 hF D₀
+  have hneg₁ := (LWE.dlweAssumption_iff F).1 hF D₁
+  -- Step 2: the statistical term `N̂(κ)·2^{−κ}` with `N̂ = (d + 1)·r` is negligible.
+  have hstat := EnsembleLemmas.negligible_polyExpr_mul
+    (.mul (.add F.dimensionBound (.const 1)) F.residueBits) negligible_two_pow_neg
+  refine ((hneg₀.add hneg₁).add hstat).mono ⟨0, fun κ _ => ?_⟩
+  -- Step 3: phase 5's concrete bound at `κ` with width `r(κ)`, read through `ofFamily_lwe`.
+  have hq : (Parameters.ofFamily F κ).lwe.modulus ≤ 2 ^ F.residueBits.eval κ := by
+    rw [Parameters.ofFamily_lwe]
+    exact F.modulus_le_pow κ
+  have hmκ : ((Parameters.ofFamily F κ).lwe.dimension + 1) * F.residueBits.eval κ + 2 * κ ≤
+      (Parameters.ofFamily F κ).lwe.samples := by
+    rw [Parameters.ofFamily_lwe]
+    exact hm κ
+  have hbound := distAdv_encrypt_le_of_width (Parameters.ofFamily F κ) (F.noise κ) false true
+    (F.residueBits.eval κ) κ hq hmκ
+    (fun v r => D.distinguisherL κ (encodeView (Parameters.ofFamily F κ) v) r)
+  -- Step 4: `N ≤ N̂(κ)` (`Parameters.ofFamily_columns_le`), and `distAdv ≥ 0`.
+  have hN : ((Parameters.ofFamily F κ).columns : ℝ) * (2 : ℝ)⁻¹ ^ κ ≤
+      ((PolyExpr.mul (.add F.dimensionBound (.const 1)) F.residueBits).eval κ : ℝ) *
+        (2 : ℝ)⁻¹ ^ κ := by
+    rw [PolyExpr.eval_mul, PolyExpr.eval_add, PolyExpr.eval_const]
+    exact mul_le_mul_of_nonneg_right (by exact_mod_cast Parameters.ofFamily_columns_le F κ)
+      (by positivity)
+  have h0 : 0 ≤ distAdv (realView (Parameters.ofFamily F κ) (F.noise κ) false)
+      (realView (Parameters.ofFamily F κ) (F.noise κ) true)
+      (fun v r => D.distinguisherL κ (encodeView (Parameters.ofFamily F κ) v) r) := by
+    rw [distAdv_def]
+    exact abs_nonneg _
+  rw [abs_of_nonneg h0]
+  refine le_trans ?_ (le_abs_self _)
+  linarith only [hbound, hD₀ κ, hD₁ κ, hN]
 
 /-- **A3. Asymptotic IND-CPA of leveled GSW-FHE from DLWE**: for an LWE family `F` with
 `DLWEAssumption F`, a polynomial number of levels `L`, the leveled reduction-efficiency
@@ -322,9 +356,9 @@ disclosed (module docstring).
 every DLWE advantage in `levelTerm_eq` and `challengeTerm_eq`; `Regev.two_extractionError_le`
 with `hm` bounds `2·ε_LHL ≤ 2^{−κ}`. So the bound is at most
 `(2·L(κ)·N + 1)·(2·(advantageAt D'₀ κ + advantageAt D'₁ κ) + N·2^{−κ})`, a polynomial
-(`(d(κ) + 1)·ℓ(κ)` bounds `N`; `PolyExpr.eval`) times negligible functions
-(`dlweAssumption_iff`, `negligible_two_pow_neg`, `negligible_polyExpr_mul` from
-`Asymptotic/EnsemblesLemmas.lean`, `Negligible.add`, `Negligible.mono`). -/
+(`(d(κ) + 1)·ℓ(κ)` bounds `N` by `Parameters.ofFamily_columns_le`; `PolyExpr.eval`) times
+negligible functions (`dlweAssumption_iff`, `negligible_two_pow_neg`, `negligible_polyExpr_mul`
+from `Asymptotic/EnsemblesLemmas.lean`, `Negligible.add`, `Negligible.mono`). -/
 theorem leveledINDCPA_of_dlweAssumption (F : LWE.Family) (L : PolyExpr)
     (hF : LWE.DLWEAssumption F) (heff : LeveledReductionEfficient F L)
     (hm : ∀ κ, ((F.parameters κ).dimension + 1) * F.residueBits.eval κ + 2 * κ ≤
@@ -335,6 +369,90 @@ theorem leveledINDCPA_of_dlweAssumption (F : LWE.Family) (L : PolyExpr)
         (leveledView (Parameters.ofFamily F κ) (F.noise κ) (L.eval κ) true)
         (fun v r => D.distinguisherL κ (encodeLeveledView (Parameters.ofFamily F κ) (L.eval κ) v)
           r) := by
-  sorry
+  -- Step 1: (A4) at `μ = false, true` gives `D'₀`, `D'₁`, whose advantages are negligible.
+  obtain ⟨D₀, hD₀⟩ := (leveledReductionEfficient_iff F L).1 heff D false
+  obtain ⟨D₁, hD₁⟩ := (leveledReductionEfficient_iff F L).1 heff D true
+  have hneg₀ := (LWE.dlweAssumption_iff F).1 hF D₀
+  have hneg₁ := (LWE.dlweAssumption_iff F).1 hF D₁
+  -- Step 2: `(2·L·N̂ + 1)·(2·(adv D'₀ + adv D'₁) + N̂·2^{−κ})` is negligible, `N̂ = (d + 1)·r`.
+  have hstat := EnsembleLemmas.negligible_polyExpr_mul
+    (.mul (.add F.dimensionBound (.const 1)) F.residueBits) negligible_two_pow_neg
+  have hinner := ((hneg₀.add hneg₁).const_mul 2).add hstat
+  refine (EnsembleLemmas.negligible_polyExpr_mul
+    (.add (.mul (.mul (.const 2) L) (.mul (.add F.dimensionBound (.const 1)) F.residueBits))
+      (.const 1)) hinner).mono ⟨0, fun κ _ => ?_⟩
+  -- Step 3: L5 at `κ`, and `2·ε_LHL ≤ 2^{−κ}` from `hm`, read through `ofFamily_lwe`.
+  have hq : (Parameters.ofFamily F κ).lwe.modulus ≤ 2 ^ F.residueBits.eval κ := by
+    rw [Parameters.ofFamily_lwe]
+    exact F.modulus_le_pow κ
+  have hmκ : ((Parameters.ofFamily F κ).lwe.dimension + 1) * F.residueBits.eval κ + 2 * κ ≤
+      (Parameters.ofFamily F κ).lwe.samples := by
+    rw [Parameters.ofFamily_lwe]
+    exact hm κ
+  have hε := Regev.two_extractionError_le (Parameters.ofFamily F κ).lwe (F.residueBits.eval κ) κ
+    hq hmκ
+  have hNle : ((Parameters.ofFamily F κ).columns : ℝ) ≤
+      ((F.dimensionBound.eval κ : ℝ) + 1) * F.residueBits.eval κ := by
+    exact_mod_cast Parameters.ofFamily_columns_le F κ
+  have hL5 := distAdv_leveledView_le (Parameters.ofFamily F κ) (F.noise κ) (L.eval κ) false true
+    (fun v r => D.distinguisherL κ (encodeLeveledView (Parameters.ofFamily F κ) (L.eval κ) v) r)
+  obtain ⟨hlev₀, hch₀⟩ := hD₀ κ
+  obtain ⟨hlev₁, hch₁⟩ := hD₁ κ
+  set P := Parameters.ofFamily F κ
+  set N := (P.columns : ℝ)
+  set t := (2 : ℝ)⁻¹ ^ κ
+  -- Step 4: every level pair is at most `2·(adv D'₀ + adv D'₁) + 2·N·t`, the challenge term at
+  -- most `2·adv D'₀ + N·t`; both advantages are nonnegative.
+  have hNε : 2 * (N * Regev.extractionError P.lwe) ≤ N * t := by
+    rw [mul_left_comm]
+    exact mul_le_mul_of_nonneg_left hε (Nat.cast_nonneg _)
+  have hpair : ∀ (e : Fin (L.eval κ)) (j : Fin P.columns),
+      levelTerm P (F.noise κ) (L.eval κ) false e j
+          (fun v r => D.distinguisherL κ (encodeLeveledView P (L.eval κ) v) r) +
+        levelTerm P (F.noise κ) (L.eval κ) true e j
+          (fun v r => D.distinguisherL κ (encodeLeveledView P (L.eval κ) v) r) ≤
+      2 * (F.advantageAt D₀ κ + F.advantageAt D₁ κ) + 2 * (N * t) := fun e j => by
+    rw [levelTerm_eq, levelTerm_eq]
+    linarith only [hlev₀ e j true, hlev₀ e j false, hlev₁ e j true, hlev₁ e j false, hNε]
+  have hsum := Finset.sum_le_sum fun e (_ : e ∈ Finset.univ) =>
+    Finset.sum_le_sum fun j (_ : j ∈ Finset.univ) => hpair e j
+  simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul] at hsum
+  have hch : challengeTerm P (F.noise κ) (L.eval κ) false true
+      (fun v r => D.distinguisherL κ (encodeLeveledView P (L.eval κ) v) r) ≤
+      2 * F.advantageAt D₀ κ + N * t := by
+    rw [challengeTerm_eq]
+    linarith only [hch₀ false, hch₀ true, hNε]
+  have ha₀ : 0 ≤ F.advantageAt D₀ κ := by
+    refine le_trans ?_ (hch₀ false)
+    rw [LWE.decisionAdvantage_eq, distAdv_def]
+    exact abs_nonneg _
+  have ha₁ : 0 ≤ F.advantageAt D₁ κ := by
+    refine le_trans ?_ (hch₁ false)
+    rw [LWE.decisionAdvantage_eq, distAdv_def]
+    exact abs_nonneg _
+  -- Step 5: `N ≤ N̂` and the polynomial arithmetic; `distAdv ≥ 0`.
+  have h0 : 0 ≤ distAdv (leveledView P (F.noise κ) (L.eval κ) false)
+      (leveledView P (F.noise κ) (L.eval κ) true)
+      (fun v r => D.distinguisherL κ (encodeLeveledView P (L.eval κ) v) r) := by
+    rw [distAdv_def]
+    exact abs_nonneg _
+  rw [abs_of_nonneg h0]
+  refine le_trans ?_ (le_abs_self _)
+  simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
+  push_cast
+  have ht : 0 ≤ t := by positivity
+  have hN0 : 0 ≤ N := Nat.cast_nonneg _
+  have hL0 : (0 : ℝ) ≤ L.eval κ := Nat.cast_nonneg _
+  have hM0 : (0 : ℝ) ≤ ((F.dimensionBound.eval κ : ℝ) + 1) * F.residueBits.eval κ :=
+    hN0.trans hNle
+  have hA : 0 ≤ F.advantageAt D₀ κ + F.advantageAt D₁ κ := add_nonneg ha₀ ha₁
+  have hNt := mul_le_mul_of_nonneg_right hNle ht
+  have hmono : (L.eval κ : ℝ) * (N * (2 * (F.advantageAt D₀ κ + F.advantageAt D₁ κ) +
+      2 * (N * t))) ≤ (L.eval κ : ℝ) * ((((F.dimensionBound.eval κ : ℝ) + 1) *
+        F.residueBits.eval κ) * (2 * (F.advantageAt D₀ κ + F.advantageAt D₁ κ) +
+          2 * ((((F.dimensionBound.eval κ : ℝ) + 1) * F.residueBits.eval κ) * t))) :=
+    mul_le_mul_of_nonneg_left (mul_le_mul hNle (by linarith only [hNt])
+      (by linarith only [hA, mul_nonneg hN0 ht]) hM0) hL0
+  linarith only [hL5, hsum, hch, hmono, hNt, ha₁, mul_nonneg (mul_nonneg hL0 hM0) hA]
 
 end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW

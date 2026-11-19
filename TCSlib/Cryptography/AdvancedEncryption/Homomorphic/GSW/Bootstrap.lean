@@ -30,6 +30,8 @@ set_option autoImplicit false
 ## Main results
 
 * `encrypts_bootNAND` (G9): bootstrapped NAND in the key-switching form.
+* `encrypts_bootGate`: the bootstrapped gate, an encryption of a NAND gate's value from argument
+  ciphertexts that decrypt to the argument values (the gate step of G10 and of L2).
 * `decrypt_fheEval` (G10), `decrypt_fheEvalCircuit` (G18): pure FHE correctness for circuits
   of every depth.
 * `encrypts_evalKey` (G11): evaluation-key noise `m·B`, a proved citation of phase 5's
@@ -37,7 +39,7 @@ set_option autoImplicit false
 * `decrypt_keygen_fheEvalCircuit` (G12): correctness for honest keys and every circuit.
 * `bootNoise_le` (G13): `bootNoise P β ≤ 4^33·N^19·(ℓ + ⌈log₂ N⌉ + 3)^4·(2·β)`.
 
-The targets G9, G10, G12, G13 and G18 are admitted; G11 is proved.
+The targets G9, G10, G12, G13 and G18 are proved, as is G11.
 
 **Compactness** [BV14, Def 2.12, p008-b001; BV11, Def 3.4, p014-b001; Lemma 3.3, p015-b001]
 holds by typing: `fheEval` and `fheEvalCircuit` return a `Ciphertext P`, an `(n+1) × N` matrix,
@@ -238,7 +240,70 @@ theorem encrypts_bootNAND (P : Parameters)
     (hk : ∀ i, Encrypts P t' ((keyBits P s i).toNat : ℤ) βk (evk i)) (C₁ C₂ : Ciphertext P) :
     Encrypts P t' ((!(decrypt P s C₁ && decrypt P s C₂)).toNat : ℤ) (bootNoise P βk)
       (bootNAND P evk C₁ C₂) := by
-  sorry
+  rw [bootNAND_eq]
+  -- G3 on the augmented formula, fed the evaluation key
+  have h := encrypts_homEvalFormula P (nandFormula P C₁ C₂) (maxFanin_nandFormula_le P C₁ C₂)
+    (keyBits P s) evk βk hk
+  -- G7 reads the message; G8 bounds the depth
+  rw [nandFormula_eval] at h
+  refine Encrypts.mono P h ?_
+  rw [bootNoise_eq]
+  exact Nat.mul_le_mul_right _
+    (Nat.pow_le_pow_right (by norm_num) (depth_nandFormula_le P C₁ C₂))
+
+/-- **The bootstrapped gate.** Glue. If every evaluation-key ciphertext `evk i` encrypts the key
+bit `keyBits P s i` under `t'` with noise at most `βk`, then for every NAND gate `g`
+(`g.IsNAND`) whose argument ciphertexts decrypt under `s` to the argument values,
+`∀ a ∈ g.args, decrypt P s (cts.getD a 0) = vals.getD a false`, the bootstrapped gate encrypts
+the gate's value under `t'` with noise at most `bootNoise P βk`:
+`Encrypts P t' (g.eval vals).toNat (bootNoise P βk) (bootGate P evk g cts)`. It is the gate step
+of G10 and of L2.
+
+**Proof sketch.** A NAND gate has at most two arguments (`DAGGate.isNAND_iff`), so the three case
+readers `bootGate_of_args_eq_nil`, `bootGate_of_args_eq_singleton` and
+`bootGate_of_args_eq_cons_cons` (with an empty tail) cover it. In each case G9
+(`encrypts_bootNAND`) on `(G, G)`, `(a, a)` or `(a, b)` gives an encryption of `!(d₁ && d₂)`
+with noise `bootNoise P βk`. The padded `G` decrypts to `true` (`decrypt_of_encrypts` on
+`encrypts_gadget`, noise `0`, `q ≥ 2`) and the arguments to their values (`hargs`), so
+`!(d₁ && d₂)` is `!(g.args.all fun a => vals.getD a false)`, the gate's value by
+`DAGGate.eval_of_isNAND` (N1). -/
+theorem encrypts_bootGate (P : Parameters) {t' : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus}
+    (s : Secret P) (βk : ℕ) (evk : Fin P.columns → Ciphertext P)
+    (hk : ∀ i, Encrypts P t' ((keyBits P s i).toNat : ℤ) βk (evk i))
+    {g : DAGGate} (hg : g.IsNAND) (vals : List Bool) (cts : List (Ciphertext P))
+    (hargs : ∀ a ∈ g.args, decrypt P s (cts.getD a 0) = vals.getD a false) :
+    Encrypts P t' ((g.eval vals).toNat : ℤ) (bootNoise P βk) (bootGate P evk g cts) := by
+  have hlen := ((DAGGate.isNAND_iff g).mp hg).2
+  rw [DAGGate.eval_of_isNAND hg]
+  -- the padding `G` decrypts to `true`: noise `0`, and `0 < ⌊q/2⌋` since `q ≥ 2`
+  have hG : decrypt P s (gadget P) = true := by
+    refine decrypt_of_encrypts P s true 0 (gadget P) ?_ ?_
+    · rw [Bool.toNat_true, Nat.cast_one]
+      exact encrypts_gadget P
+    · have hq := P.lwe.modulus_ge_two
+      rw [Nat.mul_zero, Nat.mul_zero]
+      omega
+  rcases h : g.args with _ | ⟨a, _ | ⟨b, l⟩⟩
+  · -- fan-in 0: `NAND(1, 1) = 0 = NAND()`
+    rw [bootGate_of_args_eq_nil P evk g cts h]
+    have hb := encrypts_bootNAND P s βk evk hk (gadget P) (gadget P)
+    rw [hG] at hb
+    simpa using hb
+  · -- fan-in 1: `NAND(a, a) = ¬a`
+    rw [h] at hargs
+    rw [bootGate_of_args_eq_singleton P evk g cts a h]
+    have hb := encrypts_bootNAND P s βk evk hk (cts.getD a 0) (cts.getD a 0)
+    rw [hargs a (List.mem_singleton_self a)] at hb
+    simpa using hb
+  · -- fan-in 2: the tail is empty
+    rw [h] at hargs hlen
+    obtain rfl : l = [] := List.eq_nil_of_length_eq_zero (by
+      simp only [List.length_cons] at hlen
+      omega)
+    rw [bootGate_of_args_eq_cons_cons P evk g cts a b [] h]
+    have hb := encrypts_bootNAND P s βk evk hk (cts.getD a 0) (cts.getD b 0)
+    rw [hargs a (by simp), hargs b (by simp)] at hb
+    simpa using hb
 
 /-- **G10. Pure-FHE correctness for NAND-form circuits of every depth.** Let `evk` encrypt
 the key bits of `s` under `t = secretVector P s` with noise at most `βk`, and the inputs
@@ -254,13 +319,13 @@ ciphertext encrypts the vertex's value under `t` with noise at most `βin` (an i
 `bootNoise P βk` (a gate)", as `eval_encrypts` does for phase 5. Inputs: `hin`. A gate `g`
 (a NAND gate by `isNANDForm_iff`, `DAGGate.isNAND_iff`): its arguments are earlier vertices
 (`Cc.args_lt`), so they decrypt to their values by `decrypt_of_encrypts` with `hβin` or
-`hboot`; the padded `G` decrypts to `true` (`encrypts_gadget`, noise `0`, `q ≥ 2`). By the
-three case readers `bootGate_of_args_eq_nil`/`_singleton`/`_cons_cons` and G9
-(`encrypts_bootNAND`, `t' = t`), the gate's ciphertext encrypts `!(d₁ && d₂)` with noise
-`bootNoise P βk`, which is the gate's value by `DAGGate.eval_of_isNAND` (N1): `NAND() = false
-= NAND(1, 1)` and `NAND(a) = ¬a = NAND(a, a)`. The output vertex is in range (`Cc.output_lt`);
-`decrypt_of_encrypts` with `hβin` or `hboot` and `DAGCircuit.eval_eq`, `values_eq` finish,
-through `fheEval_eq`. -/
+`hboot`. The gate step is `encrypts_bootGate` (`t' = t`): the padded `G` decrypts to `true`
+(`encrypts_gadget`, noise `0`, `q ≥ 2`), and by the three case readers
+`bootGate_of_args_eq_nil`/`_singleton`/`_cons_cons` and G9 (`encrypts_bootNAND`), the gate's
+ciphertext encrypts `!(d₁ && d₂)` with noise `bootNoise P βk`, which is the gate's value by
+`DAGGate.eval_of_isNAND` (N1): `NAND() = false = NAND(1, 1)` and `NAND(a) = ¬a = NAND(a, a)`.
+The output vertex is in range (`Cc.output_lt`); `decrypt_of_encrypts` with `hβin` or `hboot` and
+`DAGCircuit.eval_eq`, `values_eq` finish, through `fheEval_eq`. -/
 theorem decrypt_fheEval (P : Parameters) {k : ℕ} (Cc : DAGCircuit k) (hNAND : Cc.IsNANDForm)
     (s : Secret P) (evk : Fin P.columns → Ciphertext P) (βk βin : ℕ)
     (hevk : ∀ i, Encrypts P (secretVector P s) ((keyBits P s i).toNat : ℤ) βk (evk i))
@@ -269,7 +334,41 @@ theorem decrypt_fheEval (P : Parameters) {k : ℕ} (Cc : DAGCircuit k) (hNAND : 
     (hβin : 2 * (P.width * βin) < P.lwe.modulus / 2)
     (hboot : 2 * (P.width * bootNoise P βk) < P.lwe.modulus / 2) :
     decrypt P s (fheEval P evk Cc cts) = Cc.eval x := by
-  sorry
+  -- an input or a gate decrypts at its noise bound
+  have hsep : ∀ v : ℕ, 2 * (P.width * (if v < k then βin else bootNoise P βk)) <
+      P.lwe.modulus / 2 := by
+    intro v
+    split_ifs
+    · exact hβin
+    · exact hboot
+  -- Step 1: the per-vertex invariant, by `runWith_rel` (the pattern of `eval_encrypts`).
+  have key := runWith_rel DAGGate.eval (bootGate P evk)
+    (fun v b C => Encrypts P (secretVector P s) (b.toNat : ℤ)
+      (if v < k then βin else bootNoise P βk) C)
+    false 0 Cc.gates (List.ofFn x) (List.ofFn cts) (by rw [List.length_ofFn, List.length_ofFn])
+    (by
+      -- input vertices hold the input encryptions
+      intro v hv
+      rw [List.length_ofFn] at hv
+      rw [List.getD_eq_getElem _ _ (by rwa [List.length_ofFn]),
+        List.getD_eq_getElem _ _ (by rwa [List.length_ofFn]), List.getElem_ofFn,
+        List.getElem_ofFn, if_pos hv]
+      exact hin ⟨v, hv⟩)
+    (by
+      intro i hi a ha
+      rw [List.length_ofFn]
+      exact Cc.args_lt i hi a ha)
+    (by
+      -- gate vertices: the arguments decrypt to their values, then the bootstrapped gate
+      intro i hi vA vB _ _ hargs
+      rw [List.length_ofFn, if_neg (by omega)]
+      exact encrypts_bootGate P s βk evk hevk
+        ((DAGCircuit.isNANDForm_iff Cc).mp hNAND _ (List.getElem_mem hi)) vA vB
+        fun a ha => decrypt_of_encrypts P s _ _ _ (hargs a ha) (hsep a))
+  -- Step 2: read the in-range output vertex on both sides.
+  have hout := key Cc.output (by rw [List.length_ofFn]; exact Cc.output_lt)
+  rw [fheEval_eq, Cc.eval_eq, Cc.values_eq]
+  exact decrypt_of_encrypts P s _ _ _ hout (hsep Cc.output)
 
 /-- **G18. Pure-FHE correctness for every fan-in-2 circuit**, through the NAND conversion:
 under the hypotheses of G10, for every circuit `Cc` whose gates have at most two arguments,
@@ -288,7 +387,9 @@ theorem decrypt_fheEvalCircuit (P : Parameters) {k : ℕ} (Cc : DAGCircuit k)
     (hβin : 2 * (P.width * βin) < P.lwe.modulus / 2)
     (hboot : 2 * (P.width * bootNoise P βk) < P.lwe.modulus / 2) :
     decrypt P s (fheEvalCircuit P evk Cc hC cts) = Cc.eval x := by
-  sorry
+  rw [fheEvalCircuit_eq, ← DAGCircuit.toNANDForm_eval Cc hC x]
+  exact decrypt_fheEval P (Cc.toNANDForm hC) (DAGCircuit.toNANDForm_isNANDForm Cc hC) s evk βk βin
+    hevk x cts hin hβin hboot
 
 /-- **G11. Evaluation-key noise.** For an honest public key `(A, A s + e)` with errors of
 magnitude at most `B`, every evaluation-key ciphertext encrypts its key bit under
@@ -327,23 +428,91 @@ theorem decrypt_keygen_fheEvalCircuit (P : Parameters) (χ : LWE.Noise) (rg : Ke
         (fheEvalCircuit P (evalKey P (Regev.keygen P.lwe χ rg).1 (Regev.keygen P.lwe χ rg).2 R)
           Cc hC fun j => encrypt P (Regev.keygen P.lwe χ rg).1 (x j) (R' j)) =
       Cc.eval x := by
-  sorry
+  -- the honest key is `(A, A s + e)` with `B`-bounded errors
+  have hs : LWE.sample P.lwe χ rg =
+      (rg.1, LWE.noisyValues P.lwe rg.1 rg.2.1 (fun i => χ.sample (rg.2.2 i))) :=
+    Prod.ext (LWE.sample_fst P.lwe χ rg) (LWE.sample_snd P.lwe χ rg)
+  have he : ∀ i, (χ.sample (rg.2.2 i)).natAbs ≤ B :=
+    fun i => (LWE.Noise.bounded_iff χ B).1 hχ (rg.2.2 i)
+  -- the evaluation key (G11) and the inputs have noise `m·B`
+  have hevk : ∀ i, Encrypts P (secretVector P (Regev.keygen P.lwe χ rg).2)
+      ((keyBits P (Regev.keygen P.lwe χ rg).2 i).toNat : ℤ) (P.lwe.samples * B)
+      (evalKey P (Regev.keygen P.lwe χ rg).1 (Regev.keygen P.lwe χ rg).2 R i) := by
+    intro i
+    rw [Regev.keygen_fst, Regev.keygen_snd, hs]
+    exact encrypts_evalKey P rg.1 rg.2.1 _ B he R i
+  have hin : ∀ j, Encrypts P (secretVector P (Regev.keygen P.lwe χ rg).2) ((x j).toNat : ℤ)
+      (P.lwe.samples * B) (encrypt P (Regev.keygen P.lwe χ rg).1 (x j) (R' j)) :=
+    fun j => encrypts_keygen_encrypt P χ rg B hχ (x j) (R' j)
+  -- `m·B ≤ bootNoise P (m·B)` since `N ≥ 1`, so `hsep` gives the input condition
+  have hle : P.lwe.samples * B ≤ bootNoise P (P.lwe.samples * B) := by
+    rw [bootNoise_eq]
+    have hN : 0 < P.columns := Nat.pos_of_ne_zero (NeZero.ne P.columns)
+    calc P.lwe.samples * B ≤ P.columns * (P.lwe.samples * B) := Nat.le_mul_of_pos_left _ hN
+      _ ≤ 2 * (P.columns * (P.lwe.samples * B)) := Nat.le_mul_of_pos_left _ (by norm_num)
+      _ ≤ 4 ^ (decDepth P + 1) * (2 * (P.columns * (P.lwe.samples * B))) :=
+        Nat.le_mul_of_pos_left _ (Nat.pos_of_ne_zero (pow_ne_zero _ (by norm_num)))
+  exact decrypt_fheEvalCircuit P Cc hC _ _ (P.lwe.samples * B) (P.lwe.samples * B) hevk x _ hin
+    (lt_of_le_of_lt (Nat.mul_le_mul_left 2 (Nat.mul_le_mul_left _ hle)) hsep) hsep
+
+/-- For `y ≥ 1`, `4 ^ ⌈log₂ y⌉ ≤ 4 * y ^ 2`, because `2 ^ ⌈log₂ y⌉ ≤ 2 * y`
+(`Nat.pow_pred_clog_lt_self` for `y ≥ 2`, `Nat.clog_one_right` for `y = 1`). Glue for G13. -/
+private theorem four_pow_clog_le (y : ℕ) (hy : 1 ≤ y) : 4 ^ Nat.clog 2 y ≤ 4 * y ^ 2 := by
+  have h2 : 2 ^ Nat.clog 2 y ≤ 2 * y := by
+    rcases Nat.lt_or_ge y 2 with hy2 | hy2
+    · obtain rfl : y = 1 := by omega
+      rw [Nat.clog_one_right]
+      norm_num
+    · have hpred := Nat.pow_pred_clog_lt_self one_lt_two (by omega : 1 < y)
+      have hpos : 0 < Nat.clog 2 y := Nat.clog_pos one_lt_two hy2
+      obtain ⟨j, hj⟩ : ∃ j, Nat.clog 2 y = j + 1 := ⟨_, (Nat.succ_pred_eq_of_pos hpos).symm⟩
+      rw [hj, Nat.pred_succ] at hpred
+      rw [hj, pow_succ]
+      omega
+  calc 4 ^ Nat.clog 2 y = (2 ^ Nat.clog 2 y) ^ 2 := by
+        rw [← pow_mul, mul_comm, pow_mul]
+        norm_num
+    _ ≤ (2 * y) ^ 2 := Nat.pow_le_pow_left h2 2
+    _ = 4 * y ^ 2 := by ring
 
 /-- **G13. Closed form of the bootstrapped noise.** For every noise bound `β`,
 `bootNoise P β ≤ 4 ^ 33 * P.columns ^ 19 * (P.width + Nat.clog 2 P.columns + 3) ^ 4 * (2 * β)`:
 polynomial in `N` and `ℓ`, with no factor exponential in `ℓ` (r3 §H3.3, §H6). Glue; the
 constants of r3 G13 *(fix)* are settled here: `c₀ = 33`, `c₁ = 9`, `c₂ = 2`.
 
-**Proof sketch.** `bootNoise_eq`. If `N = 0` both sides are `0`. Otherwise `decDepth_le` (G8)
-gives `decDepth P + 1 ≤ 9a + 2b + 22` with `a = ⌈log₂ N⌉` and `b = ⌈log₂ X⌉`,
-`X = ℓ + ⌈log₂ N⌉ + 3 ≥ 1`. For `y ≥ 1`, `2^⌈log₂ y⌉ < 2y` (`Nat.pow_pred_clog_lt_self` for
-`y ≥ 2`; `Nat.clog_one_right` for `y = 1`), so `4^⌈log₂ y⌉ ≤ 4y²`. Hence
-`4^(decDepth P + 1) ≤ 4^22·(4N²)^9·(4X²)^2 = 4^33·N^18·X^4` (`Nat.pow_le_pow_right`,
-`Nat.pow_le_pow_left`, `pow_mul`), and multiplying by `2·(N·β)` gives the bound
-(`Nat.mul_le_mul_right`, `ring_nf`). -/
+**Proof sketch.** `bootNoise_eq`. Here `N ≥ 1` (`Parameters.neZero_columns`), and `decDepth_le`
+(G8) gives `decDepth P + 1 ≤ 9a + 2b + 22` with `a = ⌈log₂ N⌉` and `b = ⌈log₂ X⌉`,
+`X = ℓ + ⌈log₂ N⌉ + 3 ≥ 1`. For `y ≥ 1`, `2^⌈log₂ y⌉ ≤ 2y` (`Nat.pow_pred_clog_lt_self` for
+`y ≥ 2`; `Nat.clog_one_right` for `y = 1`), so `4^⌈log₂ y⌉ ≤ 4y²` (private
+`four_pow_clog_le`). Hence `4^(decDepth P + 1) ≤ 4^22·(4N²)^9·(4X²)^2 = 4^33·N^18·X^4`
+(`Nat.pow_le_pow_right`, `pow_mul`, `pow_add`, `Nat.pow_le_pow_left`, `ring`), and multiplying
+by `2·(N·β)` gives the bound (`Nat.mul_le_mul_right`, `ring`). -/
 theorem bootNoise_le (P : Parameters) (β : ℕ) :
     bootNoise P β ≤
       4 ^ 33 * P.columns ^ 19 * (P.width + Nat.clog 2 P.columns + 3) ^ 4 * (2 * β) := by
-  sorry
+  rw [bootNoise_eq]
+  have hN : 1 ≤ P.columns := Nat.one_le_iff_ne_zero.mpr (NeZero.ne P.columns)
+  have hX : 1 ≤ P.width + Nat.clog 2 P.columns + 3 := by omega
+  have hd := decDepth_le P
+  -- `4^(decDepth P + 1) ≤ 4^22·(4N²)^9·(4X²)^2 = 4^33·N^18·X^4`
+  have h4 : 4 ^ (decDepth P + 1) ≤
+      4 ^ 33 * P.columns ^ 18 * (P.width + Nat.clog 2 P.columns + 3) ^ 4 := by
+    calc 4 ^ (decDepth P + 1)
+        ≤ 4 ^ (9 * Nat.clog 2 P.columns +
+            2 * Nat.clog 2 (P.width + Nat.clog 2 P.columns + 3) + 22) :=
+          Nat.pow_le_pow_right (by norm_num) (by omega)
+      _ = 4 ^ 22 * (4 ^ Nat.clog 2 P.columns) ^ 9 *
+            (4 ^ Nat.clog 2 (P.width + Nat.clog 2 P.columns + 3)) ^ 2 := by
+          rw [← pow_mul, ← pow_mul, ← pow_add, ← pow_add]
+          congr 1
+          omega
+      _ ≤ 4 ^ 22 * (4 * P.columns ^ 2) ^ 9 * (4 * (P.width + Nat.clog 2 P.columns + 3) ^ 2) ^ 2 :=
+          Nat.mul_le_mul (Nat.mul_le_mul_left _ (Nat.pow_le_pow_left (four_pow_clog_le _ hN) 9))
+            (Nat.pow_le_pow_left (four_pow_clog_le _ hX) 2)
+      _ = 4 ^ 33 * P.columns ^ 18 * (P.width + Nat.clog 2 P.columns + 3) ^ 4 := by ring
+  calc 4 ^ (decDepth P + 1) * (2 * (P.columns * β))
+      ≤ 4 ^ 33 * P.columns ^ 18 * (P.width + Nat.clog 2 P.columns + 3) ^ 4 *
+          (2 * (P.columns * β)) := Nat.mul_le_mul_right _ h4
+    _ = 4 ^ 33 * P.columns ^ 19 * (P.width + Nat.clog 2 P.columns + 3) ^ 4 * (2 * β) := by ring
 
 end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
