@@ -10,7 +10,7 @@ set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# Certified instruction blocks
+# Certified finite-exit instruction blocks
 
 The component rows use different native allowances and exact frame transformations. A block
 retains their finite control and bounded run, with a precondition and postcondition on frames
@@ -18,12 +18,13 @@ and a single uniform phase constant. Blocks compose through the existing seam co
 
 ## Main definitions
 
-* `WordRAM.Sim.PhaseBlock`: a finite deterministic block with a uniform phase allowance.
+* `WordRAM.Sim.PhaseCertificate`: a deterministic certificate over a finite exit family.
+* `WordRAM.Sim.PhaseBlock`, `WordRAM.Sim.PhaseBranch`: its Unit and Bool specializations.
 * `WordRAM.Sim.PhaseState`: the RAM encoding together with known register words.
 
 ## Main results
 
-* `WordRAM.Sim.PhaseBlock.seq`: sequence blocks while adding their constants and one dispatch.
+* `WordRAM.Sim.PhaseCertificate.seq`: prefix any certificate with a one-exit block.
 * `WordRAM.Sim.phase_state_write`: retain the encoding and known words after a register write.
 
 ## References
@@ -36,21 +37,40 @@ namespace WordRAM.Sim
 
 open Turing
 
-/-- A finite deterministic block takes a frame satisfying its precondition to a frame satisfying
-its postcondition, restores all work heads and obeys a uniform instruction-phase allowance. -/
-structure PhaseBlock
-    (P Q : (x : List Bool) → PhaseData → PhaseFrame x → Prop) where
+/-- A finite deterministic certificate restores the work heads and reaches the exit selected
+by its input and data, with a postcondition and uniform phase allowances. Distinct exit labels
+name distinct live states. -/
+structure PhaseCertificate (E : Type) [Fintype E] [DecidableEq E]
+    (P Q : (x : List Bool) → PhaseData → PhaseFrame x → Prop)
+    (selected : List Bool → PhaseData → E) where
   State : Type
   finite : Fintype State
   decEq : DecidableEq State
   machine : MultiTapeTM 8 Bool State
   entry : State
-  exit : State
+  exit : E ↪ State
   constant : ℕ
   run : ∀ (x : List Bool) (i : PhaseData) (F : PhaseFrame x), P x i F →
     ∃ G : PhaseFrame x, Q x i G ∧ G.workTapePos = F.workTapePos ∧
-      ReachesWithin machine (F.cfg entry) {some exit}
-        (constant * phaseTime i x) (constant * phaseSpace i x) (G.cfg exit)
+      ReachesWithin machine (F.cfg entry) (Set.range (fun e => some (exit e)))
+        (constant * phaseTime i x) (constant * phaseSpace i x) (G.cfg (exit (selected x i)))
+
+/-- A block is the certificate with one Unit-labelled exit. -/
+abbrev PhaseBlock (P Q : (x : List Bool) → PhaseData → PhaseFrame x → Prop) :=
+  PhaseCertificate Unit P Q (fun _ _ => ())
+
+/-- A block is exactly a Unit-exit certificate with its unique selected label. -/
+theorem PhaseBlock_eq (P Q : (x : List Bool) → PhaseData → PhaseFrame x → Prop) :
+    PhaseBlock P Q = PhaseCertificate Unit P Q (fun _ _ => ()) := rfl
+
+/-- A branch is the certificate with Bool-labelled exits, selected by its flag. -/
+abbrev PhaseBranch (P Q : (x : List Bool) → PhaseData → PhaseFrame x → Prop)
+    (flag : List Bool → PhaseData → Bool) := PhaseCertificate Bool P Q flag
+
+/-- A branch is exactly a Bool-exit certificate with the same selected flag. -/
+theorem PhaseBranch_eq (P Q : (x : List Bool) → PhaseData → PhaseFrame x → Prop)
+    (flag : List Bool → PhaseData → Bool) :
+    PhaseBranch P Q flag = PhaseCertificate Bool P Q flag := rfl
 
 /-- A row whose precondition follows from `P`, whose result satisfies `Q`, and whose allowances
 fit the common phase units gives a block with the same finite machine. -/
@@ -64,53 +84,59 @@ theorem PhaseBlock.ofRow
     (hQ : ∀ x i F, P x i F → Q x i (f i F))
     (hB : ∀ x i, B (x := x) i ≤ C * phaseTime i x)
     (hE : ∀ x i, E (x := x) i ≤ C * phaseSpace i x) : Nonempty (PhaseBlock P Q) := by
-  refine ⟨⟨R.State, R.finite, R.decEq, R.machine, R.entry, R.exit, C, ?_⟩⟩
+  refine ⟨⟨R.State, R.finite, R.decEq, R.machine, R.entry,
+    ⟨fun _ : Unit => R.exit, fun u v _ => Subsingleton.elim u v⟩, C, ?_⟩⟩
   intro x i F hp
-  exact ⟨f i F, hQ x i F hp, R.heads i F (hP x i F hp),
-    (R.run i F (hP x i F hp)).mono (hB x i) (hE x i)⟩
+  refine ⟨f i F, hQ x i F hp, R.heads i F (hP x i F hp), ?_⟩
+  simpa only [Set.range_unique] using
+    (R.run i F (hP x i F hp)).mono (hB x i) (hE x i)
 
 /-- Changing a block's precondition to a stronger one and its postcondition to a weaker one
 retains its machine and allowance. -/
-theorem PhaseBlock.weaken
+theorem PhaseCertificate.weaken {E : Type} [Fintype E] [DecidableEq E]
+    {selected : List Bool → PhaseData → E}
     {P Q P' Q' : (x : List Bool) → PhaseData → PhaseFrame x → Prop}
-    (R : PhaseBlock P Q) (hP : ∀ x i F, P' x i F → P x i F)
-    (hQ : ∀ x i F, Q x i F → Q' x i F) : Nonempty (PhaseBlock P' Q') := by
+    (R : PhaseCertificate E P Q selected) (hP : ∀ x i F, P' x i F → P x i F)
+    (hQ : ∀ x i F, Q x i F → Q' x i F) : Nonempty (PhaseCertificate E P' Q' selected) := by
   refine ⟨⟨R.State, R.finite, R.decEq, R.machine, R.entry, R.exit, R.constant, ?_⟩⟩
   intro x i F hp
   obtain ⟨G, hq, hh, hr⟩ := R.run x i F (hP x i F hp)
   exact ⟨G, hQ x i G hq, hh, hr⟩
 
-/-- Two blocks compose through their seam. Their constants add, with one further unit for the
-dispatch step.
+/-- A one-exit block can precede any finite-exit certificate. Its exit labels and selected
+label are retained, and the constants add with one further dispatch unit.
 
-**Proof sketch.** Run the first block and use its postcondition as the second block's
-precondition. `phase_reaches_seq` composes the bounded runs through `Contract.seq`; the restored
-intermediate heads give a common center. The phase units are positive, so their sum plus the
-one dispatch step is bounded by the sum of constants plus one. -/
-theorem PhaseBlock.seq
+**Proof sketch.** Apply `phase_reaches_seq` to the first block and the selected run of the
+second certificate. The image of its exit range is the range of the transported exit map.
+Restored intermediate heads give a common center; the positive phase time absorbs dispatch. -/
+theorem PhaseCertificate.seq {E : Type} [Fintype E] [DecidableEq E]
     {P Q R : (x : List Bool) → PhaseData → PhaseFrame x → Prop}
-    (A : PhaseBlock P Q) (B : PhaseBlock Q R) : Nonempty (PhaseBlock P R) := by
+    {selected : List Bool → PhaseData → E}
+    (A : PhaseBlock P Q) (B : PhaseCertificate E Q R selected) :
+    Nonempty (PhaseCertificate E P R selected) := by
   classical
   letI := A.finite
   letI := A.decEq
   letI := B.finite
   letI := B.decEq
   refine ⟨⟨A.State ⊕ B.State, inferInstance, inferInstance,
-    seamCompTM A.machine A.exit B.machine B.entry, Sum.inl A.entry, Sum.inr B.exit,
+    seamCompTM A.machine (A.exit ()) B.machine B.entry, Sum.inl A.entry,
+    ⟨fun e => Sum.inr (B.exit e), fun _ _ h => B.exit.injective (Sum.inr.inj h)⟩,
     A.constant + B.constant + 1, ?_⟩⟩
   intro x i F hp
   obtain ⟨G, hq, hhG, hrA⟩ := A.run x i F hp
   obtain ⟨H, hr, hhH, hrB⟩ := B.run x i G hq
   refine ⟨H, hr, hhH.trans hhG, ?_⟩
-  have hrun := phase_reaches_seq A.machine B.machine A.entry A.exit B.entry B.exit
-    {some B.exit} F G H _ _ _ _ hrA hrB (Set.mem_singleton_iff.mpr rfl) hhG
+  have hrun := phase_reaches_seq A.machine B.machine A.entry (A.exit ()) B.entry
+    (B.exit (selected x i)) (Set.range (fun e => some (B.exit e))) F G H _ _ _ _
+    (by simpa only [Set.range_unique] using hrA) hrB (Set.mem_range_self _) hhG
   have ht : A.constant * phaseTime i x + 1 + B.constant * phaseTime i x ≤
       (A.constant + B.constant + 1) * phaseTime i x := by
     have hu := (phase_units i x).1
     nlinarith
   have he : A.constant * phaseSpace i x + B.constant * phaseSpace i x ≤
       (A.constant + B.constant + 1) * phaseSpace i x := by nlinarith
-  simpa only [Set.image_singleton, Option.map_some] using hrun.mono ht he
+  simpa only [← Set.range_comp', Option.map_some] using hrun.mono ht he
 
 /-- The encoding together with the specified known words in any registers. A `none` register
 specification imposes no additional word condition. -/

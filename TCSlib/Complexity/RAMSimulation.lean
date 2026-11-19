@@ -61,7 +61,7 @@ their gate on 2026-10-14 (`audits/stage2-statements-findings.md`); their proofs 
 - `RAMSimulation.Sim.PhaseMemory`: placed keyed lookup and assignment rows
 - `RAMSimulation.Sim.PhaseInput`: placed input-bit access with its input-head endpoint
 - `RAMSimulation.Sim.PhaseBounds`: common time and radius allowances for instruction rows
-- `RAMSimulation.Sim.PhaseBlock`: certified blocks and tracked register contents
+- `RAMSimulation.Sim.PhaseBlock`: finite-exit certificates, Unit/Bool specializations and tracked registers
 - `RAMSimulation.Sim.PhaseAtoms`: normalized constant and keyed-memory blocks
 - `RAMSimulation.Sim.PhaseCompute`: normalized arithmetic, sign-extension and input blocks
 - `RAMSimulation.Sim.PhaseSchedules`: immediate fetch, store and binary arithmetic schedules
@@ -70,7 +70,7 @@ their gate on 2026-10-14 (`audits/stage2-statements-findings.md`); their proofs 
 - `RAMSimulation.Sim.PhaseSemantics`: matching extended-RAM steps and encoded postconditions
 - `RAMSimulation.Sim.PhaseMemoryMachines`: complete deterministic memory-instruction phase certificates
 - `RAMSimulation.Sim.PhaseTests`: placed sign and nonzero tests
-- `RAMSimulation.Sim.PhaseBranching`: prefixing and wrapping two-exit branch blocks
+- `RAMSimulation.Sim.PhaseBranching`: the Bool specialization of shared phase packaging
 - `RAMSimulation.Sim.PhaseBranchMachines`: shared operand tests and the signed branch phase
 - `RAMSimulation.Sim.PhaseHost`: frame contracts placed through the registered phase host
 - `RAMSimulation.Sim.PhaseFork`: two continuations joined at the common next exit

@@ -124,9 +124,10 @@ theorem phase_reaches_inPhase {I : Type} {Ph : I → Type} {x : List Bool}
 /-- Two bounded runs of the same machine concatenate without a dispatch step when their frame
 endpoints agree. Restored intermediate heads give the sum of their radius allowances.
 
-**Proof sketch.** Split a prefix time before or after the first witness. `runFrom_add` reduces
-the latter part to the second run, giving its cut and endpoint. Restoration of the
-intermediate heads identifies the two radius centers, and each allowance fits their sum. -/
+**Proof sketch.** Read both witnesses with `reachesWithin_iff` and put their head predicates
+inside the summed radius about the original frame. Restored intermediate heads identify the
+second center. Convert with `segment_iff`, cite `Segment.trans`, and read the resulting segment
+back as `ReachesWithin`. -/
 theorem phase_reaches_trans {S : Type} {x : List Bool} (M : MultiTapeTM 8 Bool S)
     (q₀ q₁ q₂ : S) (X : Set (Option S)) (F G H : PhaseFrame x) (B₁ E₁ B₂ E₂ : ℕ)
     (h₁ : ReachesWithin M (F.cfg q₀) X B₁ E₁ (G.cfg q₁))
@@ -135,23 +136,27 @@ theorem phase_reaches_trans {S : Type} {x : List Bool} (M : MultiTapeTM 8 Bool S
     ReachesWithin M (F.cfg q₀) X (B₁ + B₂) (E₁ + E₂) (H.cfg q₂) := by
   obtain ⟨t₁, ht₁, hc₁, he₁, hr₁⟩ := (reachesWithin_iff _ _ _ _ _ _).mp h₁
   obtain ⟨t₂, ht₂, hc₂, he₂, hr₂⟩ := (reachesWithin_iff _ _ _ _ _ _).mp h₂
-  have tail (u : ℕ) : M.runFrom (F.cfg q₀) (t₁ + u) = M.runFrom (G.cfg q₁) u := by
-    rw [MultiTapeTM.runFrom_add, hr₁]
+  let P := fun p : Fin 8 → ℤ => ∀ j, |p j - F.workTapePos j| ≤ ((E₁ + E₂ : ℕ) : ℤ)
+  have hs₁ : Segment M X P (F.cfg q₀) (G.cfg q₁) t₁ := by
+    apply (segment_iff _ _ _ _ _ _).mpr
+    refine ⟨hr₁, hc₁, ?_⟩
+    intro u hu j
+    have he := he₁ u hu j
+    simp only [PhaseFrame.cfg_eq] at he ⊢
+    exact he.trans (show (E₁ : ℤ) ≤ ((E₁ + E₂ : ℕ) : ℤ) by
+      exact_mod_cast Nat.le_add_right E₁ E₂)
+  have hs₂ : Segment M X P (G.cfg q₁) (H.cfg q₂) t₂ := by
+    apply (segment_iff _ _ _ _ _ _).mpr
+    refine ⟨hr₂, hc₂, ?_⟩
+    intro u hu j
+    have he := he₂ u hu j
+    simp only [PhaseFrame.cfg_eq, hh] at he ⊢
+    exact he.trans (show (E₂ : ℤ) ≤ ((E₁ + E₂ : ℕ) : ℤ) by
+      exact_mod_cast Nat.le_add_left E₂ E₁)
+  obtain ⟨hr, hc, he⟩ := (segment_iff _ _ _ _ _ _).mp (Segment.trans hs₁ hs₂)
   apply (reachesWithin_iff _ _ _ _ _ _).mpr
-  refine ⟨t₁ + t₂, by omega, ?_, ?_, by rw [tail, hr₂]⟩
-  · intro u hu
-    by_cases h : u < t₁
-    · exact hc₁ u h
-    · have hu' : u = t₁ + (u - t₁) := by omega
-      rw [hu', tail]
-      exact hc₂ (u - t₁) (by omega)
-  · intro u hu j
-    by_cases h : u ≤ t₁
-    · exact (he₁ u h j).trans (by exact_mod_cast Nat.le_add_right E₁ E₂)
-    · have hu' : u = t₁ + (u - t₁) := by omega
-      rw [hu', tail]
-      have he := he₂ (u - t₁) (by omega) j
-      simp only [PhaseFrame.cfg_eq, hh] at he ⊢
-      exact he.trans (by exact_mod_cast Nat.le_add_left E₂ E₁)
+  refine ⟨t₁ + t₂, by omega, hc, ?_, hr⟩
+  intro u hu j
+  simpa only [PhaseFrame.cfg_eq] using he u hu j
 
 end WordRAM.Sim

@@ -13,9 +13,9 @@ set_option autoImplicit false
 /-!
 # Entry and exit control of instruction phases
 
-A deterministic instruction block gains a fresh entry and two distinct exits. The entry is a
-one-step seam dispatch that no transition targets; the unused jump exit is also never targeted.
-The nondeterministic embedding has equal transitions under both choices.
+A finite-exit certificate gains a fresh entry and two distinct routed exits. One shared seam
+construction handles its one-exit and Boolean specializations; an empty exit slot uses a
+never-targeted padding state. The deterministic embedding agrees under both choices.
 
 ## Main definitions
 
@@ -55,15 +55,10 @@ theorem phase_toNDTM_fixChoice {S : Type} (M : MultiTapeTM 8 Bool S) (b : Bool) 
 cut for any chosen exit set. -/
 theorem phase_reaches_zero {S : Type} {x : List Bool} (M : MultiTapeTM 8 Bool S)
     (d : Turing.Cfg 8 Bool S x) (X : Set (Option S)) : ReachesWithin M d X 0 0 d := by
-  apply (reachesWithin_iff _ _ _ _ _ _).mpr
-  refine ⟨0, le_rfl, ?_, ?_, MultiTapeTM.runFrom_zero⟩
-  · intro s hs
-    omega
-  · intro s hs j
-    have hs' : s = 0 := by omega
-    subst s
-    rw [MultiTapeTM.runFrom_zero, sub_self, abs_zero]
-    exact le_rfl
+  have hs : Segment M X (fun p => ∀ j, |p j - d.workTapePos j| ≤ (0 : ℤ)) d d 0 :=
+    Segment.zero (by intro j; rw [sub_self, abs_zero])
+  obtain ⟨hr, hc, he⟩ := (segment_iff _ _ _ _ _ _).mp hs
+  exact (reachesWithin_iff _ _ _ _ _ _).mpr ⟨0, le_rfl, hc, he, hr⟩
 
 /-- A state that no transition targets is absent from every time of a run launched elsewhere. -/
 theorem phase_run_avoids {S : Type} (M : MultiTapeTM 8 Bool S) (q : S)
@@ -80,19 +75,21 @@ theorem phase_run_avoids {S : Type} (M : MultiTapeTM 8 Bool S) (q : S)
       rw [MultiTapeTM.step_of_some hs, Action.apply_state]
       exact ht s _ _
 
-/-- Adding a never-targeted exit to a bounded run's cut is valid when the start is elsewhere. -/
+/-- A bounded run avoids any smaller cut formed from its old exits and one never-targeted
+state, provided that state is absent initially. -/
 theorem phase_reaches_add_unused {S : Type} {x : List Bool} (M : MultiTapeTM 8 Bool S)
-    (d : Turing.Cfg 8 Bool S x) (next jump : S) (B E : ℕ) (post : Turing.Cfg 8 Bool S x)
-    (h : ReachesWithin M d {some next} B E post)
-    (ht : ∀ q inp work, (M.tr q inp work).state ≠ some jump) (hd : d.state ≠ some jump) :
-    ReachesWithin M d {some next, some jump} B E post := by
+    (d : Turing.Cfg 8 Bool S x) (unused : S) (X Y : Set (Option S))
+    (B E : ℕ) (post : Turing.Cfg 8 Bool S x) (h : ReachesWithin M d X B E post)
+    (ht : ∀ q inp work, (M.tr q inp work).state ≠ some unused)
+    (hd : d.state ≠ some unused) (hY : Y ⊆ insert (some unused) X) :
+    ReachesWithin M d Y B E post := by
   obtain ⟨t, hb, hc, he, hr⟩ := (reachesWithin_iff _ _ _ _ _ _).mp h
   apply (reachesWithin_iff _ _ _ _ _ _).mpr
   refine ⟨t, hb, ?_, he, hr⟩
   intro s hs hm
-  rcases (Set.mem_insert_iff.mp hm) with hn | hj
-  · exact hc s hs (Set.mem_singleton_iff.mpr hn)
-  · exact phase_run_avoids M jump ht d hd s (Set.mem_singleton_iff.mp hj)
+  rcases Set.mem_insert_iff.mp (hY hm) with hu | hx
+  · exact phase_run_avoids M unused ht d hd s hu
+  · exact hc s hs hx
 
 /-- A finite instruction phase has a never-targeted entry, choice agreement except possibly at
 that entry, distinct next/jump exits and bounded fixed-choice runs. Its postcondition and jump
@@ -134,7 +131,10 @@ theorem PhaseMachine.weaken {coin : Bool}
 
 /-- The Boolean halted padding leaf of a seam has no transitions back to either of its left
 states: the false state dispatches right and the true state halts. This is shared by the
-single-exit and branch phase wrappers. -/
+single-exit and branch phase wrappers.
+
+**Proof sketch.** Read the two seam transition equations. Left control either dispatches right
+or halts, and right control is renamed by `Sum.inr`; none can target a left Boolean state. -/
 theorem phase_seam_fresh {S : Type} (R : MultiTapeTM 8 Bool S) (entry : S) (v : Bool) :
     ∀ q inp work,
       ((seamCompTM (⟨false, fun _ _ _ => ⟨0, fun _ => (none, 0), none, none⟩⟩ :
@@ -160,55 +160,87 @@ theorem phase_seam_fresh {S : Type} (R : MultiTapeTM 8 Bool S) (entry : S) (v : 
       simp only [Option.map_some, ne_eq, Option.some.injEq]
       exact Sum.inr_ne_inl
 
-/-- A deterministic single-exit instruction block gains a fresh entry, an unused jump exit,
-and equal nondeterministic transitions under both choices.
+/-- A finite-exit certificate whose labels route to distinct next/jump slots gains a fresh
+entry and equal nondeterministic transitions. A `none` slot is an unused, never-targeted exit.
 
-**Proof sketch.** Use `seamCompTM` to dispatch immediately from the false state of a halted
-Boolean leaf into the block; its true state is the unused jump exit. The leaf needs no
-computation, and the seam supplies its dispatch. The seam transition equations prove that no
-transition targets either left state. `phase_reaches_seq` composes a zero-time prefix contract
-with the block, and `phase_reaches_add_unused` supplies the two-exit cut. Embed deterministically
-and use `phase_toNDTM_fixChoice` for each slice. -/
-theorem phase_machine_ofBlock
-    {P Q : (x : List Bool) → PhaseData → PhaseFrame x → Prop} (R : PhaseBlock P Q) :
-    Nonempty (PhaseMachine false P (fun _ => Q) (fun _ _ _ => false)) := by
+**Proof sketch.** Place all native exits on the right of one Boolean padding seam; its unused
+true state supplies any empty slot. The injective location map preserves distinctness, and
+`phase_seam_fresh` supplies entry freshness. Compose the zero-time prefix once, absorb dispatch
+into one extra phase unit, and restrict the cut to the two routed slots with
+`phase_reaches_add_unused`. Finally `phase_toNDTM_fixChoice` reads each deterministic slice. -/
+theorem phase_machine_ofCertificate {E : Type} [Fintype E] [DecidableEq E]
+    {P Q : (x : List Bool) → PhaseData → PhaseFrame x → Prop}
+    {selected : List Bool → PhaseData → E} (R : PhaseCertificate E P Q selected)
+    (next jump : Option E) (hdistinct : next ≠ jump) (classify : E → Bool)
+    (hroute : ∀ e, some e = if classify e then jump else next) :
+    Nonempty (PhaseMachine false P (fun _ => Q)
+      (fun _ x i => classify (selected x i))) := by
   classical
   letI := R.finite
   letI := R.decEq
   let A : MultiTapeTM 8 Bool Bool :=
     ⟨false, fun _ _ _ => ⟨0, fun _ => (none, 0), none, none⟩⟩
   let M := seamCompTM A false R.machine R.entry
-  have fresh (v : Bool) : ∀ q inp work, (M.tr q inp work).state ≠ some (Sum.inl v) :=
-    phase_seam_fresh R.machine R.entry v
+  let loc : Option E → Bool ⊕ R.State
+    | none => Sum.inl true
+    | some e => Sum.inr (R.exit e)
+  have hloc : Function.Injective loc := by
+    intro u v h
+    cases u <;> cases v
+    · rfl
+    · exact Sum.noConfusion h
+    · exact Sum.noConfusion h
+    · exact congrArg some (R.exit.injective (Sum.inr.inj h))
+  let X : Set (Option (Bool ⊕ R.State)) := Set.range (fun e => some (Sum.inr (R.exit e)))
+  have hmem (v : Option E) : some (loc v) ∈ insert (some (Sum.inl true)) X := by
+    cases v with
+    | none => exact Set.mem_insert _ _
+    | some e => exact Set.mem_insert_of_mem _ (Set.mem_range_self e)
+  have hcut : ({some (loc next), some (loc jump)} : Set _) ⊆
+      insert (some (Sum.inl true)) X := by
+    intro q hq
+    rcases Set.mem_insert_iff.mp hq with h | h
+    · exact h.symm ▸ hmem next
+    · exact (Set.mem_singleton_iff.mp h).symm ▸ hmem jump
   refine ⟨⟨Bool ⊕ R.State, inferInstance, inferInstance, M.toNDTM,
-    Sum.inl false, Sum.inr R.exit, Sum.inl true, R.constant + 1, ?_, ?_, ?_, ?_⟩⟩
-  · exact Sum.inr_ne_inl
+    Sum.inl false, loc next, loc jump, R.constant + 1, ?_, ?_, ?_, ?_⟩⟩
+  · exact fun h => hdistinct (hloc h)
   · intro b q inp work
     rw [MultiTapeTM.toNDTM_tr]
-    exact fresh false q inp work
+    exact phase_seam_fresh R.machine R.entry false q inp work
   · intro q hq
     funext inp work
     rw [MultiTapeTM.toNDTM_tr, MultiTapeTM.toNDTM_tr]
   · intro b x i F hp
     obtain ⟨G, hQ, hh, hr⟩ := R.run x i F hp
-    have hzero := phase_reaches_zero A (F.cfg false) {some false}
-    have hs := phase_reaches_seq A R.machine false false R.entry R.exit {some R.exit}
-      F F G 0 0 _ _ hzero hr (Set.mem_singleton_iff.mpr rfl) rfl
+    have hs := phase_reaches_seq A R.machine false false R.entry (R.exit (selected x i))
+      (Set.range (fun e => some (R.exit e))) F F G 0 0 _ _
+      (phase_reaches_zero A (F.cfg false) {some false}) hr (Set.mem_range_self _) rfl
     have ht : 0 + 1 + R.constant * phaseTime i x ≤ (R.constant + 1) * phaseTime i x := by
       have hu := (phase_units i x).1
       nlinarith
     have he : 0 + R.constant * phaseSpace i x ≤ (R.constant + 1) * phaseSpace i x := by
       nlinarith
-    have hs' : ReachesWithin M (F.cfg (Sum.inl false)) {some (Sum.inr R.exit)}
+    have hs' : ReachesWithin M (F.cfg (Sum.inl false)) X
         ((R.constant + 1) * phaseTime i x) ((R.constant + 1) * phaseSpace i x)
-        (G.cfg (Sum.inr R.exit)) := by
-      simpa only [M, Set.image_singleton, Option.map_some] using hs.mono ht he
+        (G.cfg (Sum.inr (R.exit (selected x i)))) := by
+      simpa only [X, ← Set.range_comp', Option.map_some] using hs.mono ht he
+    have hend : Sum.inr (R.exit (selected x i)) =
+        if classify (selected x i) then loc jump else loc next := by
+      simpa only [apply_ite] using congrArg loc (hroute (selected x i))
     refine ⟨G, hQ, ?_⟩
-    rw [phase_toNDTM_fixChoice]
-    apply phase_reaches_add_unused M _ _ _ _ _ _ hs' (fresh true)
+    rw [phase_toNDTM_fixChoice, ← hend]
+    apply phase_reaches_add_unused M _ (Sum.inl true) X _ _ _ _ hs'
+      (phase_seam_fresh R.machine R.entry true) _ hcut
     rw [PhaseFrame.cfg_eq]
-    intro h
-    have h' := Sum.inl.inj (Option.some.inj h)
-    cases h'
+    exact fun h => Bool.false_ne_true (Sum.inl.inj (Option.some.inj h))
+
+/-- A single-exit block specializes the finite-exit packaging: its unique label is next and
+the empty jump slot is never selected. -/
+theorem phase_machine_ofBlock
+    {P Q : (x : List Bool) → PhaseData → PhaseFrame x → Prop} (R : PhaseBlock P Q) :
+    Nonempty (PhaseMachine false P (fun _ => Q) (fun _ _ _ => false)) :=
+  phase_machine_ofCertificate R (some ()) none (Option.some_ne_none ())
+    (fun _ => false) (fun _ => rfl)
 
 end WordRAM.Sim

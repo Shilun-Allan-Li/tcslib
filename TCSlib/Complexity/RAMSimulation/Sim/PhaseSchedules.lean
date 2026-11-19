@@ -86,7 +86,7 @@ result and assigns it once at its immediate destination.
 
 **Proof sketch.** Two `phase_fetchBlock` calls load registers two and three. Known-register
 updates preserve the first operand during the second fetch. `phase_arithBlock` computes into
-register four, and `phase_storeImmediateBlock` makes the sole memory change. `PhaseBlock.seq`
+register four, and `phase_storeImmediateBlock` makes the sole memory change. `PhaseCertificate.seq`
 combines the four blocks and their uniform allowances. -/
 theorem phase_binarySchedule (a : ℕ) (fn : Bool) (z j k : ℤ)
     (hz : InRange a z) (hj : InRange a j) (hk : InRange a k) (op : PhaseArith) :

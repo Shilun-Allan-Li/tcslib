@@ -85,7 +85,7 @@ theorem phase_forkMachine {coin : Bool}
     | .source, q =>
       if q = A.jump then some ⟨.branch true, (B true).entry⟩
       else if q = A.next then some ⟨.branch false, (B false).entry⟩ else none
-    | .branch value, q => if q = (B value).exit then some ⟨.done, false⟩ else none
+    | .branch value, q => if q = ((B value).exit ()) then some ⟨.done, false⟩ else none
     | .done, _ => none
   let q₀ : Σ p, Ph p := ⟨.source, A.entry⟩
   let N := NDTM.phaseHostND Nf q₀ red
@@ -191,11 +191,11 @@ theorem phase_forkMachine {coin : Bool}
       source_none source_red source_some ⟨.branch value, (B value).entry⟩
       (source_target value) Y ynone (ytag .source (by decide))
     have hb : ReachesWithin (Mf b (.branch value)) (G.cfg (B value).entry)
-        {some (B value).exit} ((B value).constant * phaseTime i x)
-        ((B value).constant * phaseSpace i x) (H.cfg (B value).exit) := by
-      simpa only [Mf, Nf, phase_toNDTM_fixChoice] using hrB
+        {some ((B value).exit ())} ((B value).constant * phaseTime i x)
+        ((B value).constant * phaseSpace i x) (H.cfg ((B value).exit ())) := by
+      simpa only [Mf, Nf, phase_toNDTM_fixChoice, Set.range_unique] using hrB
     have ht := phase_reaches_inPhase (Mf b) q₀ red (.branch value) (B value).entry
-      (B value).exit {some (B value).exit} G H ((B value).constant * phaseTime i x)
+      ((B value).exit ()) {some ((B value).exit ())} G H ((B value).constant * phaseTime i x)
       ((B value).constant * phaseSpace i x) hb (Set.mem_singleton_iff.mpr rfl)
       (by intro h; exact Option.noConfusion (Set.mem_singleton_iff.mp h))
       (by
@@ -204,7 +204,7 @@ theorem phase_forkMachine {coin : Bool}
         simp only [red, if_neg hq])
       (by
         intro q hq
-        have he : q = (B value).exit := Option.some.inj (Set.mem_singleton_iff.mp hq)
+        have he : q = ((B value).exit ()) := Option.some.inj (Set.mem_singleton_iff.mp hq)
         subst q
         exact ⟨⟨.done, false⟩, by simp only [red, ↓reduceIte], by intro h; cases h⟩)
       ⟨.done, false⟩ (by simp only [red, ↓reduceIte]) Y ynone

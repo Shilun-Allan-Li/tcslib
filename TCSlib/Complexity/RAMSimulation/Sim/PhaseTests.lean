@@ -3,6 +3,7 @@ Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
+import Mathlib.Data.Bool.Set
 import TCSlib.Complexity.RAMSimulation.Sim.PhaseControl
 
 set_option maxHeartbeats 0
@@ -18,7 +19,7 @@ live exits, and can be prefixed by an ordinary instruction block through the sam
 ## Main definitions
 
 * `WordRAM.Sim.PhaseTestKind`: sign or nonzero testing of a word.
-* `WordRAM.Sim.PhaseBranch`: a bounded two-exit deterministic block.
+The finite-exit certificate and its branch specialization are defined in `PhaseBlock`.
 
 ## Main results
 
@@ -74,26 +75,6 @@ theorem phase_embed_state {S : Type} {x : List Bool} (σ : Fin 5 ↪ Fin 8)
   simpa only [Cfg.select_eq, Function.update_eq_self] using
     phase_embed_update σ d q d.inputPos 0 (d.workTapes (σ 0))
 
-/-- A finite deterministic two-exit block returns a frame satisfying its postcondition at the
-yes or no exit selected by its indexed Boolean flag, restores heads and obeys phase allowances. -/
-structure PhaseBranch
-    (P Q : (x : List Bool) → PhaseData → PhaseFrame x → Prop)
-    (flag : List Bool → PhaseData → Bool) where
-  State : Type
-  finite : Fintype State
-  decEq : DecidableEq State
-  machine : MultiTapeTM 8 Bool State
-  entry : State
-  yes : State
-  no : State
-  distinct : yes ≠ no
-  constant : ℕ
-  run : ∀ x i F, P x i F → ∃ G : PhaseFrame x, Q x i G ∧
-    G.workTapePos = F.workTapePos ∧
-    ReachesWithin machine (F.cfg entry) {some yes, some no}
-      (constant * phaseTime i x) (constant * phaseSpace i x)
-      (G.cfg (if flag x i then yes else no))
-
 /-- Testing a known operand in register two gives a two-exit block with the selected sign or
 nonzero flag, without changing its encoding, known words or frame.
 
@@ -110,8 +91,10 @@ theorem phase_testBlock (a : ℕ) (fn : Bool)
   obtain ⟨S, hfin, hdec, M, entry, yes, no, C, hy, hM⟩ := op.native
   letI := hfin
   letI := hdec
+  let exits : Bool ↪ S := ⟨fun b => if b then yes else no,
+    Bool.injective_iff.mpr (Ne.symm hy)⟩
   refine ⟨⟨S, inferInstance, inferInstance, embedEmitTM phaseArithBank M,
-    entry, yes, no, hy, C, ?_⟩⟩
+    entry, exits, C, ?_⟩⟩
   intro x i F hp
   obtain ⟨he, hregs⟩ := (phaseState_iff a fn regs x i F).mp hp
   have hw : WordAt ((F.cfg entry).select phaseArithBank) 0 (bvBits (u i)) := by
@@ -128,6 +111,7 @@ theorem phase_testBlock (a : ℕ) (fn : Bool)
   refine ⟨F, hp, rfl, ?_⟩
   apply ReachesWithin.mono _ (Nat.mul_le_mul_left C (phase_units i x).2.2.1)
     (Nat.mul_le_mul_left C (phase_units i x).2.2.2.1)
-  simpa only [PhaseFrame.cfg_eq] using hr
+  simpa only [Bool.range_eq, exits, Function.Embedding.coeFn_mk, Bool.false_eq_true, ↓reduceIte,
+    Set.pair_comm, PhaseFrame.cfg_eq] using hr
 
 end WordRAM.Sim

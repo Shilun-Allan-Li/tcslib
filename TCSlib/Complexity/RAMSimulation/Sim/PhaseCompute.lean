@@ -66,7 +66,11 @@ theorem phase_arithBlock (a : ℕ) (fn : Bool)
       (Nat.mul_le_mul_right _ (by omega : C ≤ C * 3))
 
 /-- A linear row reading register two and writing one compatible register gives a block that
-retains the encoding and records its result. The adapter is shared by half and sign extension. -/
+retains the encoding and records its result. The adapter is shared by half and sign extension.
+
+**Proof sketch.** Apply `phase_writeBlock`. Read the known source from `phaseState_iff`,
+obtain destination readiness and blank scratch from the encoding, and use `phase_units` to
+place the native linear allowances inside the common phase bounds. -/
 theorem phase_sourceBlock (a : ℕ) (fn : Bool)
     (regs : (x : List Bool) → PhaseData → Fin 8 → Option (List Bool))
     (u : (i : PhaseData) → List Bool) (r : Fin 8) (hr₀ : 1 ≤ r.val) (hr₁ : r.val ≤ 4)

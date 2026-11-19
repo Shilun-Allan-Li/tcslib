@@ -67,14 +67,14 @@ theorem phase_testMachine (a : ℕ) (fn : Bool) (z : ℤ) (hz : InRange a z) (op
   obtain ⟨F⟩ := phase_fetchBlock a fn (fun _ _ _ => none) z 0 hz
   simp only [phaseMemoryBank_apply] at F
   obtain ⟨T⟩ := phase_testBlock a fn regs (fun i => i.cfg.mem z) op (by intro x i; rfl)
-  obtain ⟨FT⟩ := PhaseBranch.seq F T
+  obtain ⟨FT⟩ := PhaseCertificate.seq F T
   exact phase_machine_ofBranch FT
 
 /-- A branch instruction has a finite phase with a fresh entry, equal choices, and the jump
 exit exactly when its operand has negative signed value.
 
 **Proof sketch.** Fetch the operand into register two and prefix the native sign test using
-`PhaseBranch.seq`. `phase_machine_ofBranch` supplies the fresh entry and maps its yes/no exits
+`PhaseCertificate.seq`. `phase_machine_ofBranch` supplies the fresh entry and maps its yes/no exits
 to jump/next. The unchanged encoding transfers through `phase_post_of_read`, while `xstep_def`
 and `PhaseTestKind.bit_eq` identify the selected program counter. -/
 theorem phase_bltzMachine (a : ℕ) (fn : Bool) (z : ℤ) (label : ℕ) (hz : InRange a z) :
