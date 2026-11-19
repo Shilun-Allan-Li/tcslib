@@ -16,10 +16,14 @@ set_option autoImplicit false
 Polynomial-time rows on unary functions `x ↦ 1^(f x)` used by the instance map
 (`LevinHardness/ColoringGraph.lean`) and the colouring witness map
 (`LevinHardness/ColoringWitness.lean`) of the Levin reduction `3SAT → 3COL` ([AB09, §2.3]):
-quotient and remainder (by a unary function or a constant), constant powers, the literal codes
-`clauseLit` of a clause code, and the truth value `litVal` of a literal code under an assignment
-word. All are read off the public rows of `ZeroKnowledge/EncodingMachines.lean`
-(`divNum_poly`, `modNum_poly`, `unaryMul_poly`, `getBit_poly`, …) through their readers.
+quotient and remainder by a constant, the literal codes `clauseLit` of a clause code, and the
+truth value `litVal` of a literal code under an assignment word. All are read off the public rows
+of `ZeroKnowledge/EncodingMachines.lean` (`divNum_poly`, `modNum_poly`, `unaryPolyOf_poly`,
+`unaryMul_poly`, `getBit_poly`, …) through their readers.
+
+Quotient and remainder by a unary function and constant powers are not restated here: callers use
+`EncodingMachines.divNum_poly`/`modNum_poly` with `divNum_eq`/`modNum_eq`, and
+`EncodingMachines.unaryPolyOf_poly` with `PolyExpr.eval_pow`.
 
 ## Main definitions
 
@@ -27,9 +31,7 @@ None: the file states polynomial-time rows only.
 
 ## Main results
 
-* `TCSlib.Cryptography.LevinHardness.unaryDiv_poly`, `unaryMod_poly` — `f / g`, `f % g`.
 * `TCSlib.Cryptography.LevinHardness.unaryDivConst_poly`, `unaryModConst_poly` — `f / k`, `f % k`.
-* `TCSlib.Cryptography.LevinHardness.unaryPow_poly` — `f ^ n`.
 * `TCSlib.Cryptography.LevinHardness.clauseLit_poly` — `clauseLit K c j` at unary `K`, `c`.
 * `TCSlib.Cryptography.LevinHardness.litVal_poly` — `litVal` at a unary code.
 
@@ -43,48 +45,26 @@ namespace TCSlib.Cryptography.LevinHardness
 
 open Complexity EncodingMachines
 
-/-- **Unary quotient**: if `f`, `g` are unary polynomial-time functions, so is
-`x ↦ 1^(f x / g x)` (`EncodingMachines.divNum_poly` read through `divNum_eq`). Glue. -/
-theorem unaryDiv_poly {f g : List Bool → ℕ}
-    (hf : PolyTimeComputable fun x => List.replicate (f x) true)
-    (hg : PolyTimeComputable fun x => List.replicate (g x) true) :
-    PolyTimeComputable fun x => List.replicate (f x / g x) true :=
-  (divNum_poly hf hg).congr fun x => by rw [divNum_eq]
-
-/-- **Unary remainder**: if `f`, `g` are unary polynomial-time functions, so is
-`x ↦ 1^(f x % g x)` (`EncodingMachines.modNum_poly` read through `modNum_eq`). Glue. -/
-theorem unaryMod_poly {f g : List Bool → ℕ}
-    (hf : PolyTimeComputable fun x => List.replicate (f x) true)
-    (hg : PolyTimeComputable fun x => List.replicate (g x) true) :
-    PolyTimeComputable fun x => List.replicate (f x % g x) true :=
-  (modNum_poly hf hg).congr fun x => by rw [modNum_eq]
-
 /-- **Unary quotient by a constant**: `x ↦ 1^(f x / k)` is polynomial-time for a unary
-polynomial-time `f`. Glue. -/
+polynomial-time `f` (`EncodingMachines.divNum_poly` at the constant `k`, read through
+`divNum_eq`). Glue. -/
 theorem unaryDivConst_poly {f : List Bool → ℕ}
     (hf : PolyTimeComputable fun x => List.replicate (f x) true) (k : ℕ) :
     PolyTimeComputable fun x => List.replicate (f x / k) true :=
-  unaryDiv_poly hf (unaryConst_poly k)
+  (divNum_poly hf (unaryConst_poly k)).congr fun x => by rw [divNum_eq]
 
 /-- **Unary remainder by a constant**: `x ↦ 1^(f x % k)` is polynomial-time for a unary
-polynomial-time `f`. Glue. -/
+polynomial-time `f` (`EncodingMachines.modNum_poly` at the constant `k`, read through
+`modNum_eq`). Glue. -/
 theorem unaryModConst_poly {f : List Bool → ℕ}
     (hf : PolyTimeComputable fun x => List.replicate (f x) true) (k : ℕ) :
     PolyTimeComputable fun x => List.replicate (f x % k) true :=
-  unaryMod_poly hf (unaryConst_poly k)
-
-/-- **Unary constant power**: `x ↦ 1^(f x ^ n)` is polynomial-time for a unary polynomial-time
-`f` (`EncodingMachines.unaryMul_poly`, `pow_succ`). Glue. -/
-theorem unaryPow_poly {f : List Bool → ℕ}
-    (hf : PolyTimeComputable fun x => List.replicate (f x) true) (n : ℕ) :
-    PolyTimeComputable fun x => List.replicate (f x ^ n) true := by
-  induction n with
-  | zero => simpa using unaryConst_poly 1
-  | succ n ih => simpa only [pow_succ] using unaryMul_poly ih hf
+  (modNum_poly hf (unaryConst_poly k)).congr fun x => by rw [modNum_eq]
 
 /-- **The literal codes of a clause code are unary polynomial-time**: for unary polynomial-time
 `K`, `c`, the map `x ↦ 1^(clauseLit (K x) (c x) j)` is polynomial-time (`clauseLit_eq`:
-`c % 2K`, `c / 2K % 2K`, `c / (2K)²`). Glue. -/
+`c % 2K`, `c / 2K % 2K`, `c / (2K)²`, by `EncodingMachines.divNum_poly`/`modNum_poly` read
+through `divNum_eq`/`modNum_eq`, and `(2K)²` by `EncodingMachines.unaryPolyOf_poly`). Glue. -/
 theorem clauseLit_poly {K c : List Bool → ℕ}
     (hK : PolyTimeComputable fun x => List.replicate (K x) true)
     (hc : PolyTimeComputable fun x => List.replicate (c x) true) (j : Fin 3) :
@@ -92,9 +72,9 @@ theorem clauseLit_poly {K c : List Bool → ℕ}
   have h2K := unaryMul_poly (unaryConst_poly 2) hK
   simp only [clauseLit_eq]
   fin_cases j
-  · simpa using unaryMod_poly hc h2K
-  · simpa using unaryMod_poly (unaryDiv_poly hc h2K) h2K
-  · simpa using unaryDiv_poly hc (unaryPow_poly h2K 2)
+  · simpa [modNum_eq] using modNum_poly hc h2K
+  · simpa [divNum_eq, modNum_eq] using modNum_poly (divNum_poly hc h2K) h2K
+  · simpa [divNum_eq] using divNum_poly hc (unaryPolyOf_poly (.pow .var 2) h2K)
 
 /-- **The truth value of a unary literal code is a polynomial-time test**: for a unary
 polynomial-time code `ℓ` and a polynomial-time assignment word `a`, the map

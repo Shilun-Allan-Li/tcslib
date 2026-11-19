@@ -331,9 +331,12 @@ theorem polyTimeComputable_gadgetAdj {K t t' : List Bool → ℕ} {mem : List Bo
     PolyTimeComputable fun x => [gadgetAdj (K x) (mem x) (t x) (t' x)] := by
   open EncodingMachines in
   have hN : PolyTimeComputable fun x => List.replicate (gadgetN (K x)) true := by
+    have hcube : PolyTimeComputable fun x => List.replicate ((2 * K x) ^ 3) true := by
+      simpa only [PolyExpr.eval_pow, PolyExpr.eval_var] using
+        unaryPolyOf_poly (.pow .var 3) (unaryMul_poly (unaryConst_poly 2) hK)
     simp only [gadgetN_eq]
     exact unaryAdd_poly (unaryAdd_poly (unaryConst_poly 3) (unaryMul_poly (unaryConst_poly 2) hK))
-      (unaryMul_poly (unaryConst_poly 6) (unaryPow_poly (unaryMul_poly (unaryConst_poly 2) hK) 3))
+      (unaryMul_poly (unaryConst_poly 6) hcube)
   have hpairs : ∀ a b : List Bool → ℕ, (PolyTimeComputable fun x => List.replicate (a x) true) →
       (PolyTimeComputable fun x => List.replicate (b x) true) →
       PolyTimeComputable fun x =>
@@ -354,16 +357,16 @@ theorem polyTimeComputable_gadgetAdj {K t t' : List Bool → ℕ} {mem : List Bo
       (PolyTimeComputable fun x => List.replicate (u' x) true) →
       PolyTimeComputable fun x => [gadgetEdge (K x) (mem x) (u x) (u' x)] := by
     intro u u' hu hu'
-    simp only [gadgetEdge_eq]
+    simp only [gadgetEdge_eq, ← divNum_eq, ← modNum_eq]
     repeat' first
       | exact hN | exact hK | exact hu | exact hu'
+      | apply divNum_poly | apply modNum_poly
       | apply unaryConst_poly
       | apply polyTimeComputable_or | apply polyTimeComputable_and
       | apply hpairs | apply h02 | apply hmem
       | apply clauseLit_poly
       | apply ltTest_poly | apply leTest_poly | apply eqTest_poly
       | apply unaryAdd_poly | apply unarySub_poly | apply unaryMul_poly
-      | apply unaryDiv_poly | apply unaryMod_poly
   simp only [gadgetAdj_eq, decide_not]
   exact polyTimeComputable_and (polyTimeComputable_not (eqTest_poly ht ht'))
     (polyTimeComputable_or (hE t t' ht ht') (hE t' t ht' ht))
@@ -388,15 +391,19 @@ theorem polyTimeComputable_colorInst_of
   have hNu : ∀ {K : List Bool → ℕ}, (PolyTimeComputable fun x => List.replicate (K x) true) →
       PolyTimeComputable fun x => List.replicate (gadgetN (K x)) true := by
     intro K hK
+    have hcube : PolyTimeComputable fun x => List.replicate ((2 * K x) ^ 3) true := by
+      simpa only [PolyExpr.eval_pow, PolyExpr.eval_var] using
+        unaryPolyOf_poly (.pow .var 3) (unaryMul_poly (unaryConst_poly 2) hK)
     simp only [gadgetN_eq]
     exact unaryAdd_poly (unaryAdd_poly (unaryConst_poly 3) (unaryMul_poly (unaryConst_poly 2) hK))
-      (unaryMul_poly (unaryConst_poly 6) (unaryPow_poly (unaryMul_poly (unaryConst_poly 2) hK) 3))
+      (unaryMul_poly (unaryConst_poly 6) hcube)
   have hchunk : PolyTimeComputable fun w =>
       [gadgetAdj (pairSndD w).length (memS (pairSndD w))
         ((pairFstD w).length / gadgetN (pairSndD w).length)
         ((pairFstD w).length % gadgetN (pairSndD w).length)] := by
-    refine polyTimeComputable_gadgetAdj hs (unaryDiv_poly hi (hNu hs))
-      (unaryMod_poly hi (hNu hs)) ?_
+    refine polyTimeComputable_gadgetAdj hs
+      ((divNum_poly hi (hNu hs)).congr fun w => by rw [divNum_eq])
+      ((modNum_poly hi (hNu hs)).congr fun w => by rw [modNum_eq]) ?_
     intro c hc
     refine (hmem.comp' (hc.pairEncode polyTimeComputable_pairSndD)).congr fun w => ?_
     simp only [pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
