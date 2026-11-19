@@ -1,0 +1,29 @@
+# Reader census (gsw-6b-u15-u17, C6): every definition of another file that the proofs of Circular.lean (G15)
+# and LeveledSecurity.lean (L4, L5 and their private helpers) read, with the published lemma or reader used.
+# No definition is unfolded (explicit-unfold scan: 0 foreign); none is MISSING. Paths under TCSlib/Cryptography/.
+# definition (home)	read through (path:line)
+Regev.keygen (Encryption/PublicKey/Regev/Basic.lean:45)	Regev.keygen_fst Regev/Basic.lean:53 (G15, L4, L5: the public key is LWE.sample of the seed); the secret component is never read
+GSW.realView (AdvancedEncryption/Homomorphic/GSW/Security.lean:77)	realView_eq Security.lean:86 (G15, L5)
+GSW.view (GSW/Security.lean:59)	view_eq Security.lean:68 (G15, L4, L5)
+GSW.uniformKeyView (GSW/Security.lean:95)	uniformKeyView_eq Security.lean:104 (L4, uniform-key helper)
+GSW.reduction (GSW/Security.lean:113)	reduction_eq Security.lean:122 (L4)
+hybridPlant (Encryption/PublicKey/EnsembleSecurity.lean:110)	hybridPlant_eq EnsembleSecurity.lean:121 (L4, real-key helper); in the uniform-key helper it stays folded on both sides
+GSW.levelKey (GSW/Leveled.lean:101)	levelKey_eq Leveled.lean:107 (L4)
+GSW.evalKey (GSW/Bootstrap.lean:207)	evalKey_eq Bootstrap.lean:212 (L4)
+LWE.decisionAdvantage (LWE/Experiments.lean:44)	LWE.decisionAdvantage_eq LWE/Experiments.lean:53 (L4)
+acceptProb (Foundations/Experiments.lean:72)	acceptProb_def Experiments.lean:98, acceptProb_comp_equiv :107, acceptProb_fst Pseudorandom/Indistinguishability.lean:73, acceptProb_bind :91
+distAdv (Foundations/Experiments.lean:78)	distAdv_def Experiments.lean:102
+uprob (Foundations/Probability.lean:59)	uprob_comp_equiv Probability.lean:165, uprob_fst :175, uprob_prod :153 (L4 helpers); otherwise only as congrArg's function
+uexp (Foundations/Probability.lean:68)	abs_uexp_sub_le Asymptotic/Sampling.lean:239 (L4, uniform-key helper); otherwise only as congrArg's function
+# Definitions that occur only as opaque arguments (never reduced, never rewritten): GSW.encrypt (Scheme.lean:102),
+# GSW.keyBits (DecryptFormula.lean:73), LWE.sample (LWE/Basic.lean:101), Regev.extractionError
+# (Regev/Experiments.lean:227); bounds used as stated: distAdv_encrypt_le Security.lean:248,
+# uniformKey_uniform_advantage_le :189, abs_sub_le_sum_hybrids Foundations/Probability.lean:218.
+# The owned files' own definitions (fheView, levelHybrid, leveledView, levelMsgs, levelAssemble, levelReduction,
+# levelTerm, challengeDist, challengeTerm, and the private levelPosHybrid) are read through their own readers
+# (fheView_fst/_snd, leveledView_eq, levelHybrid_eq, levelMsgs_eq, levelAssemble_eq, levelReduction_eq, levelTerm_eq,
+# challengeDist_eq, challengeTerm_eq) or, for the private glue definition, by simp in its own file.
+# Core and Mathlib definitions (Function.update, Fin.cast, Fin.succ, Fin.castSucc, Equiv) are read through
+# Mathlib lemmas (Function.update_self, update_of_ne, update_idem, update_eq_self, Fin.succ_injective,
+# Fin.castSucc_lt_succ, Fin.succ_ne_zero, Equiv.coe_fn_mk) or reduce in rfl steps.
+RESULT missing=0

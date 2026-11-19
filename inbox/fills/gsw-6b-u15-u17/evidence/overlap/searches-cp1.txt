@@ -1,0 +1,182 @@
+=== evk-free view, fheView projections :: rg -n fheView|noEvk TCSlib
+hits: 30
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:35:Both are admitted statement-phase targets. Ruling Q-6B-1 A: r3's A2 (`fheView_negligible`) is
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:185:(fheView P_κ (F.noise κ) false) (fheView P_κ (F.noise κ) true)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:193:    distAdv (fheView (Parameters.ofFamily F κ) (F.noise κ) false)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:194:      (fheView (Parameters.ofFamily F κ) (F.noise κ) true)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:198:`distAdv (fheView P_κ (F.noise κ) false) (fheView P_κ (F.noise κ) true)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:203:      distAdv (fheView (Parameters.ofFamily F κ) (F.noise κ) false)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:204:        (fheView (Parameters.ofFamily F κ) (F.noise κ) true)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:19:* `fheView`: the FHE view of a bit from honest key generation, the evaluation key of P6-Q8 and
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:26:* `distAdv_fheView_noEvk_le` (G15): with the evaluation key dropped, the view inherits phase
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:29:Ruling Q-6B-1 A: r3's G14 (`distAdv_fheView_le`) is not a theorem. The reader
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:79:`fheView P χ μ r = (pk, evalKey P pk s r.2.1, encrypt P pk μ r.2.2)`. -/
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:81:def fheView (P : Parameters) (χ : LWE.Noise) (μ : Bool) (r : Seeds P χ) : FheView P :=
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:86:/-- `fheView P χ μ r` is `(pk, evalKey P pk s r.2.1, encrypt P pk μ r.2.2)` with
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:88:theorem fheView_eq (P : Parameters) (χ : LWE.Noise) (μ : Bool) (r : Seeds P χ) :
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:89:    fheView P χ μ r =
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:97:`WeakCircularSecure P χ D ε ↔ distAdv (fheView P χ false) (fheView P χ true) D ≤ ε`. A
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:109:  distAdv (fheView P χ false) (fheView P χ true) D ≤ ε
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:112:`distAdv (fheView P χ false) (fheView P χ true) D ≤ ε`. This reader is r3's G14 (Q-6B-1 A). -/
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:115:    WeakCircularSecure P χ D ε ↔ distAdv (fheView P χ false) (fheView P χ true) D ≤ ε :=
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:122:`fheView`'s seeds (the evaluation key dropped) differ by at most two DLWE advantages plus
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:124:`distAdv (fun r => ((fheView P χ μ₀ r).1, (fheView P χ μ₀ r).2.2))
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:125:(fun r => ((fheView P χ μ₁ r).1, (fheView P χ μ₁ r).2.2)) D ≤
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:128:p015-b002]. Stated over the projection of `fheView`, not over `realView`, of which it would be
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:134:`Equiv.prodAssoc`. Through `fheView_fst`, `fheView_snd`, `Regev.keygen_fst`, `realView_eq` and
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:139:theorem distAdv_fheView_noEvk_le (P : Parameters) (χ : LWE.Noise) {ρ : Type*} [Fintype ρ]
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:141:    distAdv (fun r : Seeds P χ => ((fheView P χ μ₀ r).1, (fheView P χ μ₀ r).2.2))
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:142:        (fun r : Seeds P χ => ((fheView P χ μ₁ r).1, (fheView P χ μ₁ r).2.2)) D ≤
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:150:      ((fheView P χ μ r).1, (fheView P χ μ r).2.2)) D = acceptProb (realView P χ μ) D := by
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:152:    have hfun : (fun r : Seeds P χ => ((fheView P χ μ r).1, (fheView P χ μ r).2.2)) =
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:155:      rw [fheView_fst, fheView_snd, realView_eq, view_eq, Regev.keygen_fst]
+
+=== phase-5 bound and its users :: rg -n distAdv_encrypt_le TCSlib
+hits: 18
+TCSlib/Cryptography/Encryption/Symmetric/Regev/Experiments.lean:22:in the ideal uniform experiment. `distAdv_encrypt_le` proves the two-reduction bound.
+TCSlib/Cryptography/Encryption/Symmetric/Regev/Experiments.lean:116:theorem distAdv_encrypt_le (P : Parameters) (χ : Noise)
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:301:theorem distAdv_encrypt_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:289:**Proof sketch.** At each `κ`, phase 5's `distAdv_encrypt_le_of_width` with `w = ℓ`
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:241:`distAdv_encrypt_le`'s right-hand side,
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:580:phase 5's `distAdv_encrypt_le` bounds it by `challengeTerm P χ L μ₀ μ₁ D` (`challengeTerm_eq`).
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:30:* `distAdv_encrypt_le`: two fixed bits' views differ by at most two DLWE advantages plus
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:32:* `distAdv_encrypt_le_of_width`: with `(n+1)·w + 2κ ≤ m` the statistical term is at most
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:247:in `Regev.distAdv_encrypt_le`; `linarith` adds them up. -/
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:248:theorem distAdv_encrypt_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:285:**Proof sketch.** `distAdv_encrypt_le` and `Regev.two_extractionError_le`, multiplying the
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:287:theorem distAdv_encrypt_le_of_width {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:297:  have h := distAdv_encrypt_le P χ μ₀ μ₁ D
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:27:  5's IND-CPA bound `distAdv_encrypt_le` (two DLWE advantages plus `2·N·ε_LHL`).
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:129:a restatement (G45-01); its content is the transport of `distAdv_encrypt_le` along the coin
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:138:Then `distAdv_def` and phase 5's `distAdv_encrypt_le`. -/
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean:159:  exact distAdv_encrypt_le P χ μ₀ μ₁ D
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Symmetric.lean:147:**Proof sketch.** As `Encryption.Symmetric.Regev.distAdv_encrypt_le`: each real batch is
+
+=== leveled hybrids :: rg -n levelHybrid|leveledView|levelReduction|challengeDist TCSlib --glob !**/GSW/LeveledSecurity.lean
+hits: 11
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:239:`levelReduction P_κ χ_κ L(κ) μ e j b D_κ` (every level `e`, position `j` and side `b`, L4) and
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:240:of the challenge reductions `reduction P_κ μ' (challengeDist P_κ χ_κ L(κ) D_κ)` (L5), with
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:250:          (levelReduction (Parameters.ofFamily F κ) (F.noise κ) (L.eval κ) μ e j b fun v r =>
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:256:            (challengeDist (Parameters.ofFamily F κ) (F.noise κ) (L.eval κ) fun v r =>
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:267:            (levelReduction (Parameters.ofFamily F κ) (F.noise κ) (L.eval κ) μ e j b fun v r =>
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:273:              (challengeDist (Parameters.ofFamily F κ) (F.noise κ) (L.eval κ) fun v r =>
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:313:`Negligible fun κ => distAdv (leveledView P_κ (F.noise κ) (L.eval κ) false)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:314:(leveledView P_κ (F.noise κ) (L.eval κ) true)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:319:**Proof sketch.** At each `κ`, L5 (`distAdv_leveledView_le`) bounds the advantage by
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:334:      distAdv (leveledView (Parameters.ofFamily F κ) (F.noise κ) (L.eval κ) false)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:335:        (leveledView (Parameters.ofFamily F κ) (F.noise κ) (L.eval κ) true)
+
+=== position hybrids / planting over a seed tuple :: rg -n theorem (distAdv_multi_le_sum|distAdv_tuple_le_sum|acceptProb_plant|acceptProb_update|uprob_update) TCSlib
+hits: 9
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:49:theorem acceptProb_update_tuple {I A O C : Type*} [DecidableEq I] [Fintype I]
+TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:52:private theorem acceptProb_plant {κ π γ ρ ρ' : Type*} [Fintype κ] [Fintype ρ] [Fintype ρ']
+TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:88:theorem distAdv_tuple_le_sum {κ π μ γ ρ ρ' : Type*} [Fintype κ] [Fintype ρ] [Fintype ρ']
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:146:theorem distAdv_multi_le_sum {κ π μ γ ρ ρ' : Type*} [Fintype κ] [Fintype ρ] [Fintype ρ']
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:131:theorem uprob_update {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty α] (i : ι)
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:103:theorem acceptProb_update [DecidableEq ι] [Fintype ι] [Nonempty σ] (k : ι)
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:87:theorem uprob_update_absorb [Nonempty β] (i : α) (f : (α → β) → γ → Prop) :
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:100:theorem uprob_update_absorb' [Nonempty β] (i : α) (f : (α → β) → Prop) :
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:112:theorem uprob_update_split [Nonempty β] (i : α) (g : β → (α → β) → Prop)
+
+=== marginalization lemmas :: rg -n theorem (acceptProb_fst|acceptProb_snd|uprob_fst|acceptProb_coins_fst|uexp_fst) TCSlib
+hits: 5
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:92:theorem acceptProb_coins_fst [Nonempty κ] (X : σ → γ) (D : γ → ρ → Bool) :
+TCSlib/Cryptography/Foundations/Probability.lean:175:theorem uprob_fst [Nonempty β] (p : α → Prop) : uprob (fun z : α × β => p z.1) = uprob p := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:99:theorem uexp_fst [Nonempty β] (F : α → ℝ) : uexp (fun z : α × β => F z.1) = uexp F := by
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:73:theorem acceptProb_fst [Nonempty τ] (X : σ → γ) (D : γ → ρ → Bool) :
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:83:theorem acceptProb_snd [Nonempty τ] (X : σ → γ) (D : γ → ρ → Bool) :
+
+=== averaging pointwise-close functions :: rg -n theorem (abs_uexp_sub_le|abs_uexp_le_uexp_abs|exists_abs_uexp_le|exists_abs_uexp_sub_le|uexp_sub) TCSlib
+hits: 6
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:79:theorem exists_abs_uexp_le {κ : Type*} [Fintype κ] [Nonempty κ] (f : κ → ℝ) :
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:49:theorem abs_uexp_le_uexp_abs {Ω : Type*} [Fintype Ω] (f : Ω → ℝ) :
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:61:theorem abs_uexp_sub_le_uprob {Ω : Type*} [Fintype Ω] (a b : Ω → ℝ) (E : Ω → Prop)
+TCSlib/Cryptography/Asymptotic/Sampling.lean:239:theorem abs_uexp_sub_le {α : Type*} [Fintype α] {f g : α → ℝ} {c : ℝ} (hc : 0 ≤ c)
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:83:theorem exists_abs_uexp_sub_le [Nonempty σ] (f g : σ → ℝ) :
+TCSlib/Cryptography/HardcoreBit/Basic.lean:63:theorem uexp_sub (f g : Ω → ℝ) : uexp (fun ω => f ω - g ω) = uexp f - uexp g := by
+
+=== acceptance as an average of sections :: rg -n theorem (acceptProb_eq_uexp|acceptProb_eq_uexp_sections|acceptProb_eq_uexp_fst|exists_fixSeed) TCSlib
+hits: 4
+TCSlib/Cryptography/Foundations/Experiments.lean:137:theorem acceptProb_eq_uexp_sum_map [Nonempty σ] [Fintype γ] [DecidableEq γ] (X : σ → γ)
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:92:theorem acceptProb_eq_uexp_fst {σ γ κ ρ : Type*} [Fintype σ] [Fintype κ] [Fintype ρ]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:157:theorem exists_fixSeed {κ σ τ γ ρ : Type*} [Fintype κ] [Nonempty κ] [Fintype σ] [Fintype τ]
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:75:theorem acceptProb_eq_uexp_sections (X : σ × τ → γ) (D : γ → ρ → Bool) :
+
+=== uniform-key statistical step and its users :: rg -n uniformKey_uniform_advantage_le|real_uniformKey_advantage TCSlib
+hits: 22
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:128:theorem real_uniformKey_advantage {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:244:theorem uniformKey_uniform_advantage_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:312:  have hkey₀ := real_uniformKey_advantage P χ μ₀ D
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:313:  have hkey₁ := real_uniformKey_advantage P χ μ₁ D
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:315:    uniformKey_uniform_advantage_le P μ₀ D
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:317:    uniformKey_uniform_advantage_le P μ₁ D
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:448:(`b = true`) or `0`. For each `ω`, `uniformKey_uniform_advantage_le` twice and the triangle
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:481:    have h0 := uniformKey_uniform_advantage_le P false (fun _ (_ : Unit) => true)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:488:  have h₁ := uniformKey_uniform_advantage_le P (msg true ω) (T ω)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:489:  have h₂ := uniformKey_uniform_advantage_le P (msg false ω) (T ω)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:524:(`uniformKey_uniform_advantage_le`, twice) and so on average (`abs_uexp_sub_le`). Sum over `j`
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:27:* `real_uniformKey_advantage`: real-to-uniform-key advantage equals one DLWE advantage.
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:28:* `uniformKey_uniform_advantage_le`: under a uniform key the view is within
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:151:**Proof sketch.** As `Regev.real_uniformKey_advantage`, with the reassociation of the
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:156:theorem real_uniformKey_advantage {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:181:**Proof sketch.** As `Regev.uniformKey_uniform_advantage_le`. Relabel the key by the
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:189:theorem uniformKey_uniform_advantage_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:246:(`real_uniformKey_advantage`) and two statistical terms (`uniformKey_uniform_advantage_le`), as
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:260:  have hkey₀ := real_uniformKey_advantage P χ μ₀ D
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:261:  have hkey₁ := real_uniformKey_advantage P χ μ₁ D
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:264:    uniformKey_uniform_advantage_le P μ₀ D
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:267:    uniformKey_uniform_advantage_le P μ₁ D
+
+=== telescoping hybrid argument users :: rg -n abs_sub_le_sum_hybrids TCSlib
+hits: 21
+TCSlib/Cryptography/Composability/SequentialZK/HybridRecursion.lean:89:  have hbound := (abs_sub_le_sum_hybrids P q).trans hsum
+TCSlib/Cryptography/Hashing/SIS/Columns.lean:83:(`acceptProb_comp_equiv`, `acceptProb_fst`). `abs_sub_le_sum_hybrids` bounds the end-to-end
+TCSlib/Cryptography/Hashing/SIS/Columns.lean:190:  refine (abs_sub_le_sum_hybrids (fun k => acceptProb (hyb k) D) N).trans
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction.lean:171:  refine (abs_sub_le_sum_hybrids (fun i => acceptProb (H i) D) t).trans ?_
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Chain.lean:22:run `i` replaced by a given word). Summing (`abs_sub_le_sum_hybrids`) gives `abs_chain_le`.
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Chain.lean:217:`acceptProb_hyb_last`); telescope (`abs_sub_le_sum_hybrids`) and bound each of the `L` steps by
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Chain.lean:231:  have htel := abs_sub_le_sum_hybrids
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:511:`G_N = H_e` (`levelHybrid_eq`). `abs_sub_le_sum_hybrids` and `Fin.sum_univ_eq_sum_range` reduce to
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:558:    _ ≤ ∑ t ∈ Finset.range P.columns, |G t - G (t + 1)| := abs_sub_le_sum_hybrids G P.columns
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:575:H_L(μ₁)`: `abs_sub_le_sum_hybrids` (or the triangle inequality, `abs_sub_le`) on each side
+TCSlib/Cryptography/Foundations/Probability.lean:42:* `abs_sub_le_sum_hybrids`, `exists_hybrid_gap`: the hybrid argument for a chain of
+TCSlib/Cryptography/Foundations/Probability.lean:218:theorem abs_sub_le_sum_hybrids (P : ℕ → ℝ) (t : ℕ) :
+TCSlib/Cryptography/Foundations/Probability.lean:238:  linarith [abs_sub_le_sum_hybrids P t]
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:280:    _ ≤ ∑ i ∈ Finset.range w, |score i - score (i + 1)| := abs_sub_le_sum_hybrids score w
+TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:82:on the seeds `κ × (Fin (q+1) → ρ)`, `H_0` and `H_{q+1}` the two sides; `abs_sub_le_sum_hybrids`
+TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:153:      ≤ ∑ t ∈ Finset.range (q + 1), |Pr t - Pr (t + 1)| := abs_sub_le_sum_hybrids Pr (q + 1)
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:138:`κ × (Fin (q+1) → ρ)`, `H_0` and `H_{q+1}` the two sides; `abs_sub_le_sum_hybrids` over
+TCSlib/Cryptography/Pseudorandom/Functions/GGM.lean:255:  refine (abs_sub_le_sum_hybrids (fun i => hybridProb G A i) n).trans ?_
+TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:281:  have key := abs_sub_le_sum_hybrids (fun j => subHybridProb G A q j) q
+TCSlib/Cryptography/Games/Advantage.lean:109:[PS10, Lemma 71.6]. It is the concrete layer's `abs_sub_le_sum_hybrids` for the acceptance
+TCSlib/Cryptography/Games/Advantage.lean:113:  abs_sub_le_sum_hybrids (fun i => accept (G i)) n
+
+=== key-seed planting by Function.update in a seed tuple (Regev / Lossy / GSW) :: rg -n Function.update .*keygen|update .* e.succ|update .* 0 k TCSlib/Cryptography
+hits: 9
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:169:`levelAssemble P χ L μ e D v c = D (update pk e.succ v.1, fun e' j => if e' = e then
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:176:  D (Function.update (fun d => (Regev.keygen P.lwe χ (c.1.1 d)).1) e.succ v.1,
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:191:      D (Function.update (fun d => (Regev.keygen P.lwe χ (c.1.1 d)).1) e.succ v.1,
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:265:`challengeDist P χ L D v c = D (update pk 0 v.1, fun e j => encrypt P (pk e.succ) false
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:270:  D (Function.update (fun d => (Regev.keygen P.lwe χ (c.1.1 d)).1) 0 v.1,
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:273:/-- `challengeDist P χ L D v c` is `D (update pk 0 v.1, fun e j => encrypt P (pk e.succ) false
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:279:      D (Function.update (fun d => (Regev.keygen P.lwe χ (c.1.1 d)).1) 0 v.1,
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:357:    { toFun := fun w => (((Function.update w.2.2.2.1.1 e.succ w.1,
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:364:          ((Function.update v.1.1.1 e.succ v.2.1, Function.update v.1.1.2.1 e v.2.2.1,
+
+=== N - 1 + 1 index casts :: rg -n Nat.sub_one_add_one TCSlib
+hits: 10
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:155:    (Fin.cast (Nat.sub_one_add_one (NeZero.ne P.columns)) i)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:163:        (Fin.cast (Nat.sub_one_add_one (NeZero.ne P.columns)) i) := rfl
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:177:    fun e' j => if e' = e then v.2 (Fin.cast (Nat.sub_one_add_one (NeZero.ne P.columns)).symm j)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:193:            v.2 (Fin.cast (Nat.sub_one_add_one (NeZero.ne P.columns)).symm j)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:216:      levelMsgs P χ L e c.2.2.1 (Fin.cast (Nat.sub_one_add_one (NeZero.ne P.columns)).symm j)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:219:      (Fin.cast (Nat.sub_one_add_one (NeZero.ne P.columns)).symm j) (levelAssemble P χ L μ e D))
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:232:          levelMsgs P χ L e c.2.2.1 (Fin.cast (Nat.sub_one_add_one (NeZero.ne P.columns)).symm j)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:235:          (fun _ => false) (Fin.cast (Nat.sub_one_add_one (NeZero.ne P.columns)).symm j)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:353:  have h : P.columns - 1 + 1 = P.columns := Nat.sub_one_add_one (NeZero.ne P.columns)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean:456:  let j' := Fin.cast (Nat.sub_one_add_one (NeZero.ne P.columns)).symm j
+
+=== Mathlib: averaging a pointwise bound :: rg -n theorem abs_sum_le_sum_abs|theorem sum_le_card_nsmul .lake/packages/mathlib/Mathlib/Algebra/Order/BigOperators/Group/Finset.lean
+hits: 1
+265:theorem abs_sum_le_sum_abs {G : Type*} [AddCommGroup G] [LinearOrder G] [IsOrderedAddMonoid G]
+

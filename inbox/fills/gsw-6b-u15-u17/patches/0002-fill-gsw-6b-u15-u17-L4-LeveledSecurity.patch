@@ -1,0 +1,303 @@
+From 56fe8e9ad5c414088ebed7bb2d77022f6eb97eb6 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 19 Nov 2026 00:47:50 +0000
+Subject: [PATCH 2/2] fill gsw-6b-u15-u17: L4 LeveledSecurity
+
+---
+ .../Homomorphic/GSW/LeveledSecurity.lean      | 262 ++++++++++++++++--
+ 1 file changed, 245 insertions(+), 17 deletions(-)
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean
+index a07967b4..ed429334 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean
+@@ -30,7 +30,7 @@ set_option autoImplicit false
+ * `distAdv_levelHybrid_le` (L4): one level, `N` positions.
+ * `distAdv_leveledView_le` (L5): IND-CPA of leveled GSW-FHE from DLWE.
+ 
+-Both are admitted statement-phase targets.
++L4 is proved here; L5 is an admitted statement-phase target.
+ 
+ **Sources and reconstruction (P6-Q19 B).** The key chain is Gentry's [Gen09, §4.1, `KeyGen` of
+ `E^(d)`, pp. 46–47, p056-b003], with his reverse order of the levels undone: his level `i` is
+@@ -300,6 +300,201 @@ theorem challengeTerm_eq (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ₀ μ
+         LWE.decisionAdvantage P.lwe χ (reduction P μ₁ (challengeDist P χ L D)) +
+         2 * (P.columns * Regev.extractionError P.lwe) := rfl
+ 
++/-- The position hybrid `G_t` of step `e` (glue for L4): `H_{e+1}` with the first `t` ciphertexts
++of the level key `e` replaced by encryptions of `0` under `pk_{e+1}` (same coins),
++`levelPosHybrid P χ L μ e t r = (H.1, fun e' i => if e' = e ∧ i < t then
++encrypt P (pk e.succ) false (r.2.1 e i) else H.2.1 e' i, H.2.2)` with
++`H = levelHybrid P χ L μ (e + 1) r`. -/
++private def levelPosHybrid (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ : Bool) (e : Fin L) (t : ℕ)
++    (r : LeveledSeeds P χ L) : LeveledView P L :=
++  ((levelHybrid P χ L μ (e.val + 1) r).1,
++    fun e' i => if e' = e ∧ i.val < t then
++        encrypt P (Regev.keygen P.lwe χ (r.1 e.succ)).1 false (r.2.1 e i)
++      else (levelHybrid P χ L μ (e.val + 1) r).2.1 e' i,
++    (levelHybrid P χ L μ (e.val + 1) r).2.2)
++
++/-- `G_0` is `H_{e+1}`: no position is replaced. -/
++private theorem levelPosHybrid_zero (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ : Bool)
++    (e : Fin L) : levelPosHybrid P χ L μ e 0 = levelHybrid P χ L μ (e.val + 1) := by
++  funext r
++  simp only [levelPosHybrid, Nat.not_lt_zero, and_false, if_false]
++
++/-- `G_N` is `H_e`: every position of the level key `e` is replaced, and for `e' ≠ e` the
++conditions `e + 1 ≤ e'` and `e ≤ e'` agree (`levelHybrid_eq`). -/
++private theorem levelPosHybrid_columns (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ : Bool)
++    (e : Fin L) : levelPosHybrid P χ L μ e P.columns = levelHybrid P χ L μ e.val := by
++  funext r
++  simp only [levelPosHybrid, levelHybrid_eq, Fin.is_lt, and_true]
++  refine Prod.ext rfl (Prod.ext (funext fun e' => funext fun i => ?_) rfl)
++  by_cases he : e' = e
++  · subst he
++    simp
++  · have hv : e.val ≠ e'.val := fun h => he (Fin.ext h).symm
++    have hle : (e.val + 1 ≤ e'.val) ↔ (e.val ≤ e'.val) := by omega
++    simp only [he, if_false, hle]
++
++/-- **On a real key the reduction runs a position hybrid.** On an LWE sample,
++`levelReduction P χ L μ e j b D` accepts exactly as `D` accepts `G_j` (`b = true`: position `j`
++encrypts its key bit) or `G_{j+1}` (`b = false`: it encrypts `0`).
++
++**Proof sketch.** The bijection `Ψ` of the seeds plants the LWE seed as the key seed of
++`pk_{e+1}` and the reduction's coins as the coins of the level key `e` (`R₀` at position `j`, the
++others elsewhere), keeping the replaced coordinates as a second factor; `uprob_comp_equiv` and
++`uprob_fst` reduce to an identity of the views, read through `levelReduction_eq`, `reduction_eq`,
++`view_eq`, `hybridPlant_eq`, `levelAssemble_eq`, `levelMsgs_eq`, `levelHybrid_eq`,
++`levelKey_eq`, `evalKey_eq` and `Regev.keygen_fst`. The secret of `pk_{e+1}` is not read (in
++`H_{e+1}` the level key `e + 1` encrypts `0`), and the cases `i < j`, `i = j`, `j < i` match the
++planted tuple. -/
++private theorem acceptProb_sample_levelReduction (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ : Bool)
++    (e : Fin L) (j : Fin P.columns) (b : Bool) {ρ : Type*} [Fintype ρ] [Nonempty ρ]
++    (D : LeveledView P L → ρ → Bool) :
++    acceptProb (LWE.sample P.lwe χ) (levelReduction P χ L μ e j b D) =
++      acceptProb (levelPosHybrid P χ L μ e (if b then j.val else j.val + 1)) D := by
++  have h : P.columns - 1 + 1 = P.columns := Nat.sub_one_add_one (NeZero.ne P.columns)
++  let Ψ : KeySeed P χ × (Coins P × ((Fin (P.columns - 1 + 1) → Coins P) ×
++      (LeveledSeeds P χ L × ρ))) ≃
++      (LeveledSeeds P χ L × ρ) × (KeySeed P χ × ((Fin P.columns → Coins P) × Coins P)) :=
++    { toFun := fun w => (((Function.update w.2.2.2.1.1 e.succ w.1,
++          Function.update w.2.2.2.1.2.1 e
++            (Function.update (fun i => w.2.2.1 (Fin.cast h.symm i)) j w.2.1),
++          w.2.2.2.1.2.2), w.2.2.2.2),
++        (w.2.2.2.1.1 e.succ, w.2.2.2.1.2.1 e, w.2.2.1 (Fin.cast h.symm j)))
++      invFun := fun v => (v.1.1.1 e.succ, (v.1.1.2.1 e j,
++        (Function.update (fun i => v.1.1.2.1 e (Fin.cast h i)) (Fin.cast h.symm j) v.2.2.2,
++          ((Function.update v.1.1.1 e.succ v.2.1, Function.update v.1.1.2.1 e v.2.2.1,
++            v.1.1.2.2), v.1.2))))
++      left_inv := by
++        rintro ⟨k, R₀, Rs, ⟨K, RC, R₁⟩, c⟩
++        simp only [Function.update_self, Function.update_idem, Function.update_eq_self]
++        refine Prod.ext rfl (Prod.ext rfl (Prod.ext (funext fun i => ?_) rfl))
++        by_cases hi : i = Fin.cast h.symm j
++        · subst hi
++          simp
++        · have hi' : Fin.cast h i ≠ j := fun hc => hi (by rw [← hc]; rfl)
++          simp [Function.update_of_ne hi, Function.update_of_ne hi']
++      right_inv := by
++        rintro ⟨⟨⟨K, RC, R₁⟩, c⟩, ⟨k, rc, r₀⟩⟩
++        simp only [Function.update_self, Function.update_idem, Function.update_eq_self]
++        refine Prod.ext (Prod.ext (Prod.ext rfl (Prod.ext ?_ rfl)) rfl)
++          (Prod.ext rfl (Prod.ext rfl ?_))
++        · funext e' i
++          by_cases he : e' = e
++          · subst he
++            by_cases hi : i = j
++            · subst hi
++              simp
++            · have hi' : Fin.cast h.symm i ≠ Fin.cast h.symm j := fun hc => hi (by
++                simpa using congrArg (Fin.cast h) hc)
++              simp [Function.update_of_ne hi, Function.update_of_ne hi']
++          · simp [Function.update_of_ne he]
++        · simp }
++  rw [acceptProb_def, acceptProb_def,
++    ← uprob_fst (β := KeySeed P χ × ((Fin P.columns → Coins P) × Coins P))
++      (fun z : LeveledSeeds P χ L × ρ =>
++        D (levelPosHybrid P χ L μ e (if b then j.val else j.val + 1) z.1) z.2 = true),
++    ← uprob_comp_equiv Ψ]
++  refine congrArg uprob (funext fun w => ?_)
++  obtain ⟨k, R₀, Rs, ⟨K, RC, R₁⟩, c⟩ := w
++  congr 1
++  rw [levelReduction_eq, reduction_eq, view_eq, hybridPlant_eq, levelAssemble_eq]
++  simp only [Ψ, Equiv.coe_fn_mk, levelPosHybrid, levelHybrid_eq, levelMsgs_eq, Regev.keygen_fst]
++  congr 1
++  have hne : e.castSucc ≠ e.succ := (Fin.castSucc_lt_succ e).ne
++  refine Prod.ext ?_ (Prod.ext ?_ ?_)
++  · funext d
++    by_cases hd : d = e.succ
++    · subst hd
++      simp
++    · simp [Function.update_of_ne hd]
++  · funext e' i
++    by_cases he : e' = e
++    · subst he
++      simp only [true_and, if_true, levelKey_eq, evalKey_eq, Function.update_self,
++        Function.update_of_ne hne, lt_self_iff_false, if_false, add_le_iff_nonpos_right,
++        Nat.one_ne_zero, nonpos_iff_eq_zero]
++      rcases lt_trichotomy i j with hij | rfl | hij
++      · have hb : i.val < if b = true then j.val else j.val + 1 := by
++          cases b <;> simp only [Bool.false_eq_true, if_false, if_true] <;> omega
++        have hij' : i ≠ j := hij.ne
++        simp [Fin.lt_def, hij, hb, Function.update_of_ne hij']
++      · cases b <;> simp
++      · have hb : ¬ i.val < if b = true then j.val else j.val + 1 := by
++          cases b <;> simp only [Bool.false_eq_true, if_false, if_true] <;> omega
++        have hij' : i ≠ j := hij.ne'
++        have hlt : ¬ i.val < j.val := by omega
++        have hv : i.val ≠ j.val := by omega
++        simp [Fin.lt_def, Fin.ext_iff, hlt, hb, hij', hv]
++    · have hs : e'.succ ≠ e.succ := fun hs => he (Fin.succ_injective _ hs)
++      simp only [he, if_false, false_and, Function.update_of_ne he, Function.update_of_ne hs]
++      by_cases hlt : e.val < e'.val
++      · have hle : e.val + 1 ≤ e'.val := hlt
++        simp only [hlt, hle, if_true]
++      · have hle : ¬ e.val + 1 ≤ e'.val := hlt
++        have hc : e'.castSucc ≠ e.succ := fun hc => hlt (by
++          have := congrArg Fin.val hc
++          simp only [Fin.coe_castSucc, Fin.val_succ] at this
++          omega)
++        simp only [hlt, hle, if_false, levelKey_eq, evalKey_eq,
++          Function.update_of_ne hs, Function.update_of_ne hc, Function.update_of_ne he]
++  · simp [Function.update_of_ne (Fin.succ_ne_zero e).symm]
++
++/-- **Under a uniform key the two sides are `2·(N·ε_LHL)`-close**: the acceptance probabilities of
++`levelReduction P χ L μ e j b D` on a uniform key, `b = true` and `b = false`, differ by at most
++`2 * (P.columns * Regev.extractionError P.lwe)`.
++
++**Proof sketch.** Regrouping the seeds (`uprob_comp_equiv`, `uprob_prod`), each side is the average
++over the reduction's own seeds `ω` of the acceptance of `uniformKeyView P m` by one test `T ω`
++(`levelReduction_eq`, `reduction_eq`, `uniformKeyView_eq`), the bit `m` being the key bit
++(`b = true`) or `0`. For each `ω`, `uniformKey_uniform_advantage_le` twice and the triangle
++inequality through the uniform view bound the gap by `2·(N·ε_LHL)`; `abs_uexp_sub_le` averages. -/
++private theorem abs_acceptProb_id_levelReduction_sub_le (P : Parameters) (χ : LWE.Noise) (L : ℕ)
++    (μ : Bool) (e : Fin L) (j : Fin P.columns) {ρ : Type*} [Fintype ρ] [Nonempty ρ]
++    (D : LeveledView P L → ρ → Bool) :
++    |acceptProb (id : PublicKey P → PublicKey P) (levelReduction P χ L μ e j true D) -
++        acceptProb (id : PublicKey P → PublicKey P) (levelReduction P χ L μ e j false D)| ≤
++      2 * (P.columns * Regev.extractionError P.lwe) := by
++  let j' := Fin.cast (Nat.sub_one_add_one (NeZero.ne P.columns)).symm j
++  let T : LeveledSeeds P χ L → PublicKey P × Ciphertext P →
++      (Fin (P.columns - 1 + 1) → Coins P) × ρ → Bool := fun ω v c =>
++    hybridPlant (encrypt P) (levelMsgs P χ L e ω) (fun _ => false) j' (levelAssemble P χ L μ e D)
++      v (c.1, (ω, c.2))
++  let msg : Bool → LeveledSeeds P χ L → Bool := fun b ω =>
++    if b then levelMsgs P χ L e ω j' else false
++  have hsec : ∀ b, acceptProb (id : PublicKey P → PublicKey P) (levelReduction P χ L μ e j b D) =
++      uexp fun ω => acceptProb (uniformKeyView P (msg b ω)) (T ω) := by
++    intro b
++    let Φ : PublicKey P × (Coins P × ((Fin (P.columns - 1 + 1) → Coins P) ×
++          (LeveledSeeds P χ L × ρ))) ≃
++        LeveledSeeds P χ L ×
++          ((PublicKey P × Coins P) × ((Fin (P.columns - 1 + 1) → Coins P) × ρ)) :=
++      { toFun := fun w => (w.2.2.2.1, ((w.1, w.2.1), (w.2.2.1, w.2.2.2.2)))
++        invFun := fun v => (v.2.1.1, (v.2.1.2, (v.2.2.1, (v.1, v.2.2.2))))
++        left_inv := fun _ => rfl
++        right_inv := fun _ => rfl }
++    rw [acceptProb_def, ← uprob_comp_equiv Φ.symm, uprob_prod]
++    refine congrArg uexp (funext fun ω => ?_)
++    rw [acceptProb_def]
++    refine congrArg uprob (funext fun z => ?_)
++    rw [uniformKeyView_eq, levelReduction_eq, reduction_eq]
++    rfl
++  have hc : 0 ≤ 2 * (P.columns * Regev.extractionError P.lwe) := by
++    have h0 := uniformKey_uniform_advantage_le P false (fun _ (_ : Unit) => true)
++    rw [distAdv_def] at h0
++    linarith [abs_nonneg (acceptProb (uniformKeyView P false) (fun _ (_ : Unit) => true) -
++      acceptProb (id : PublicKey P × Ciphertext P → PublicKey P × Ciphertext P)
++        (fun _ (_ : Unit) => true))]
++  rw [hsec true, hsec false]
++  refine abs_uexp_sub_le hc fun ω => ?_
++  have h₁ := uniformKey_uniform_advantage_le P (msg true ω) (T ω)
++  have h₂ := uniformKey_uniform_advantage_le P (msg false ω) (T ω)
++  rw [distAdv_def] at h₁ h₂
++  have htri := abs_sub_le (acceptProb (uniformKeyView P (msg true ω)) (T ω))
++    (acceptProb (id : PublicKey P × Ciphertext P → PublicKey P × Ciphertext P) (T ω))
++    (acceptProb (uniformKeyView P (msg false ω)) (T ω))
++  rw [abs_sub_comm
++    (acceptProb (id : PublicKey P × Ciphertext P → PublicKey P × Ciphertext P) (T ω))] at htri
++  linarith
++
+ /-! ### Targets L4–L5 -/
+ 
+ /-- **L4. One level of the key hybrid.** For every level `e : Fin L`, bit `μ` and distinguisher
+@@ -311,26 +506,59 @@ GSW13, §3.2, Lemma 1, p009-b002, p010-b001]. Legitimate because `s_{e+1}` occur
+ level key `e + 1`, already replaced in `H_{e+1}` (top-down order). Reconstruction disclosed
+ (module docstring).
+ 
+-**Proof sketch.** Position hybrids `G_i` (`i ≤ N`) between `H_{e+1}` (`G_0`) and `H_e` (`G_N`):
+-the first `i` ciphertexts of the level key `e` encrypt `0`. `abs_sub_le_sum_hybrids` reduces
+-to the gaps `|Pr[D(G_i)] − Pr[D(G_{i+1})]|`, as in `distAdv_multi_le_sum` (whose
+-`hybridPlant` the reduction uses; the messages, the bits of `s_e`, are drawn inside the
+-reduction's coins, r3 §H8 item 12, so the multi-ciphertext lemma is applied per value of the
+-other seeds or its proof is followed with them in the coins). The gap at `i = j` is the gap of
+-`levelReduction P χ L μ e j b D` between a real LWE key and a uniform key, plus the gap
+-between `b = true` and `b = false` under a uniform key: `levelReduction_eq`, `reduction_eq`,
+-`hybridPlant_eq` (the planted position), `levelAssemble_eq`, `levelHybrid_eq`, `Regev.keygen_fst`
+-(the planted key is distributed as `pk_{e+1}`, whose secret is otherwise unused in `H_{e+1}`),
+-and the seed regrouping (`acceptProb_comp_equiv`, `OneWay.uprob_update`). As in phase 5's
+-`distAdv_encrypt_le`: the two DLWE gaps are the exact advantages (`real_uniformKey_advantage`,
+-`LWE.decisionAdvantage_eq`), and the uniform-key gap is at most `2·(N·ε_LHL)` for each value
+-of the reduction's own seeds (`uniformKey_uniform_advantage_le`, twice), averaged. Sum over
+-`j` (`levelTerm_eq`). -/
++**Proof sketch.** Position hybrids `G_t` (`t ≤ N`, the private `levelPosHybrid`): `H_{e+1}`
++with the first `t` ciphertexts of the level key `e` encrypting `0`, so `G_0 = H_{e+1}` and
++`G_N = H_e` (`levelHybrid_eq`). `abs_sub_le_sum_hybrids` and `Fin.sum_univ_eq_sum_range` reduce to
++the gaps `|Pr[D(G_j)] − Pr[D(G_{j+1})]|`, as in the proof of `distAdv_multi_le_sum` (whose
++`hybridPlant` the reduction uses); the lemma itself does not apply, the messages (the bits of
++`s_e`) being drawn inside the reduction's coins (r3 §H8 item 12), so its proof is followed with
++them in the coins. On a real LWE key, `levelReduction P χ L μ e j b D` accepts exactly as `D`
++accepts `G_j` (`b = true`) or `G_{j+1}` (`b = false`): a bijection of the seeds plants the LWE
++seed as the key seed of `pk_{e+1}`, whose secret `H_{e+1}` does not read, and the reduction's
++coins as those of the level key `e` (`uprob_comp_equiv`, `uprob_fst`; `levelReduction_eq`,
++`reduction_eq`, `view_eq`, `hybridPlant_eq`, `levelAssemble_eq`, `levelMsgs_eq`, `levelHybrid_eq`,
++`Regev.keygen_fst`). So by the triangle inequality the gap is at most the two DLWE advantages
++(`LWE.decisionAdvantage_eq`, `distAdv_def`) plus the gap between `b = true` and `b = false` under
++a uniform key, which is the average over the reduction's own seeds (`uprob_prod`) of the gap of
++`uniformKeyView` at two bits for one test, at most `2·(N·ε_LHL)` for each value of the seeds
++(`uniformKey_uniform_advantage_le`, twice) and so on average (`abs_uexp_sub_le`). Sum over `j`
++(`levelTerm_eq`). -/
+ theorem distAdv_levelHybrid_le (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ : Bool) (e : Fin L)
+     {ρ : Type*} [Fintype ρ] [Nonempty ρ] (D : LeveledView P L → ρ → Bool) :
+     distAdv (levelHybrid P χ L μ (e.val + 1)) (levelHybrid P χ L μ e.val) D ≤
+       ∑ j : Fin P.columns, levelTerm P χ L μ e j D := by
+-  sorry
++  -- The position hybrids: `G t` is the acceptance of `levelPosHybrid P χ L μ e t`.
++  let G : ℕ → ℝ := fun t => acceptProb (levelPosHybrid P χ L μ e t) D
++  -- One position: two exact DLWE advantages and the uniform-key gap.
++  have hstep : ∀ j : Fin P.columns, |G j - G (j + 1)| ≤ levelTerm P χ L μ e j D := by
++    intro j
++    have ht := acceptProb_sample_levelReduction P χ L μ e j true D
++    have hf := acceptProb_sample_levelReduction P χ L μ e j false D
++    simp only [if_true, Bool.false_eq_true, if_false] at ht hf
++    have hu := abs_acceptProb_id_levelReduction_sub_le P χ L μ e j D
++    rw [levelTerm_eq, LWE.decisionAdvantage_eq, LWE.decisionAdvantage_eq, distAdv_def,
++      distAdv_def]
++    show |acceptProb (levelPosHybrid P χ L μ e j) D -
++      acceptProb (levelPosHybrid P χ L μ e (j + 1)) D| ≤ _
++    rw [← ht, ← hf]
++    have h₁ := abs_sub_le (acceptProb (LWE.sample P.lwe χ) (levelReduction P χ L μ e j true D))
++      (acceptProb (id : PublicKey P → PublicKey P) (levelReduction P χ L μ e j true D))
++      (acceptProb (LWE.sample P.lwe χ) (levelReduction P χ L μ e j false D))
++    have h₂ := abs_sub_le
++      (acceptProb (id : PublicKey P → PublicKey P) (levelReduction P χ L μ e j true D))
++      (acceptProb (id : PublicKey P → PublicKey P) (levelReduction P χ L μ e j false D))
++      (acceptProb (LWE.sample P.lwe χ) (levelReduction P χ L μ e j false D))
++    rw [abs_sub_comm
++      (acceptProb (id : PublicKey P → PublicKey P) (levelReduction P χ L μ e j false D))] at h₂
++    linarith
++  -- The telescoping chain `G 0 = H_{e+1}`, …, `G N = H_e`.
++  calc distAdv (levelHybrid P χ L μ (e.val + 1)) (levelHybrid P χ L μ e.val) D
++      = |G 0 - G P.columns| := by
++        rw [distAdv_def, ← levelPosHybrid_zero P χ L μ e, ← levelPosHybrid_columns P χ L μ e]
++    _ ≤ ∑ t ∈ Finset.range P.columns, |G t - G (t + 1)| := abs_sub_le_sum_hybrids G P.columns
++    _ = ∑ j : Fin P.columns, |G j - G (j + 1)| :=
++        (Fin.sum_univ_eq_sum_range (fun t => |G t - G (t + 1)|) P.columns).symm
++    _ ≤ ∑ j : Fin P.columns, levelTerm P χ L μ e j D := Finset.sum_le_sum fun j _ => hstep j
+ 
+ /-- **L5. IND-CPA of leveled GSW-FHE from DLWE.** For all bits `μ₀`, `μ₁` and every
+ distinguisher `D`, the leveled views of `μ₀` and `μ₁` differ by at most the sum of the level
+-- 
+2.43.0
+
