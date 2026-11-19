@@ -14,6 +14,7 @@ import TCSlib.Cryptography.ZeroKnowledge.Commitment
 import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring
 import TCSlib.Cryptography.ZeroKnowledge.NP
 import TCSlib.Cryptography.ZeroKnowledge.Encryption
+import TCSlib.Cryptography.ZeroKnowledge.LevinHardness
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -59,6 +60,8 @@ zero-knowledge theorems are statistical (D8, D10).
   Propositions 127.6 and 128.8] (a sub-facade over `ThreeColoring/{Language,Protocol,Simulator}`).
 * `NP` — Levin reductions and zero-knowledge proofs for NP
   [PS10, Theorem 124.1].
+* `LevinHardness` — `3COL` is NP-hard with Levin reductions (`levinNPHard_L3COL`; Karp form:
+  [St73, Theorem, p. 22]), making [PS10, Theorem 124.1] unconditional.
 * `Encryption` — zero-knowledge encryption and its equivalence with
   single-message security [PS10, Definition 111.1, Theorem 112.2].
 
@@ -66,4 +69,8 @@ zero-knowledge theorems are statistical (D8, D10).
 
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
   (Chapter 4, Knowledge.)
+* [St73] L. Stockmeyer, *Planar 3-Colorability is Polynomial Complete*, ACM SIGACT News 5(3),
+  July 1973, pp. 19–25. (Theorem, p. 22; proof pp. 21–22; Fig. 1, p. 24. The printed pages of
+  this issue are bound out of order: the proof of part 1), the reduction from 3SAT, runs from
+  p. 22 back to p. 21.)
 -/
