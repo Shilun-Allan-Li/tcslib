@@ -313,6 +313,21 @@ def bucketSampler : UniformSampler where
   raw_layout κ y α s c := bucketRaw_layout κ y α s c
   polyTime := polyTimeComputable_bucketRaw
 
+/-- `bucketSampler.Ω y = Fin ⟦y⟧`: the draws of the bucket sampler on the parameter word `y` are
+the residues below the numeral of `y`. Glue. -/
+theorem bucketSampler_Ω (y : List Bool) : bucketSampler.Ω y = Fin (listToNat y) := rfl
+
+/-- The encoding of a draw `w : bucketSampler.Ω y`, read through `bucketSampler_Ω`:
+`bucketSampler.enc y w = natToList |y| (cast (bucketSampler_Ω y) w)`. Glue. -/
+theorem bucketSampler_enc_cast (y : List Bool) (w : bucketSampler.Ω y) :
+    bucketSampler.enc y w =
+      Candidates.natToList y.length ((cast (bucketSampler_Ω y) w : Fin (listToNat y)) : ℕ) := rfl
+
+/-- The failure probability of the bucket sampler's coin sampler is the bucket sampler's on
+`Fin ⟦y⟧`: `(bucketSampler.sampler y s).fail = (bucket ⟦y⟧ s).fail`. Glue. -/
+theorem bucketSampler_fail (y : List Bool) (s : ℕ) :
+    (bucketSampler.sampler y s).fail = (bucket (listToNat y) s).fail := rfl
+
 /-- `bucketSampler.sampler y s = bucket ⟦y⟧ s`. -/
 theorem bucketSampler_sampler (y : List Bool) (s : ℕ) :
     bucketSampler.sampler y s = bucket (listToNat y) s := rfl
