@@ -287,11 +287,11 @@ between the encoded real views of `false` and `true` at `P_κ = ofFamily F κ`,
 p013-b002]. Deviation: concrete reductions covered by (A4).
 
 **Proof sketch.** At each `κ`, phase 5's `distAdv_encrypt_le_of_width` with `w = ℓ`
-(`q ≤ 2^ℓ` by the family's `modulus_le_pow`, `hm` read through `Parameters.ofFamily_lwe` and
-`Parameters.ofFamily_width`) bounds the advantage by the two DLWE advantages of `reduction`
-plus `N·2^{−κ}`. `heff` (`reductionEfficient_iff`) gives `D'₀`, `D'₁` dominating them by
-`F.advantageAt D'ᵢ κ`, negligible by `dlweAssumption_iff`. `N = (n + 1)·ℓ` is at most
-`(d(κ) + 1)·ℓ(κ)` (`dimension_le`, `PolyExpr.eval`), so `negligible_polyExpr_mul`
+(`q ≤ 2^ℓ` by the family's `modulus_le_pow`, `hm` read through `Parameters.ofFamily_lwe`)
+bounds the advantage by the two DLWE advantages of `reduction` plus `N·2^{−κ}`. `heff`
+(`reductionEfficient_iff`) gives `D'₀`, `D'₁` dominating them by `F.advantageAt D'ᵢ κ`,
+negligible by `dlweAssumption_iff`. `N = (n + 1)·ℓ` is at most `(d(κ) + 1)·ℓ(κ)`
+(`Parameters.ofFamily_columns_le`, `PolyExpr.eval`), so `negligible_polyExpr_mul`
 (`Asymptotic/EnsemblesLemmas.lean`) with `negligible_two_pow_neg` makes the last term negligible;
 `Negligible.add` and `Negligible.mono` (`distAdv` is nonnegative) finish. -/
 theorem indCPA_of_dlweAssumption (F : LWE.Family) (hF : LWE.DLWEAssumption F)
@@ -356,9 +356,9 @@ disclosed (module docstring).
 every DLWE advantage in `levelTerm_eq` and `challengeTerm_eq`; `Regev.two_extractionError_le`
 with `hm` bounds `2·ε_LHL ≤ 2^{−κ}`. So the bound is at most
 `(2·L(κ)·N + 1)·(2·(advantageAt D'₀ κ + advantageAt D'₁ κ) + N·2^{−κ})`, a polynomial
-(`(d(κ) + 1)·ℓ(κ)` bounds `N`; `PolyExpr.eval`) times negligible functions
-(`dlweAssumption_iff`, `negligible_two_pow_neg`, `negligible_polyExpr_mul` from
-`Asymptotic/EnsemblesLemmas.lean`, `Negligible.add`, `Negligible.mono`). -/
+(`(d(κ) + 1)·ℓ(κ)` bounds `N` by `Parameters.ofFamily_columns_le`; `PolyExpr.eval`) times
+negligible functions (`dlweAssumption_iff`, `negligible_two_pow_neg`, `negligible_polyExpr_mul`
+from `Asymptotic/EnsemblesLemmas.lean`, `Negligible.add`, `Negligible.mono`). -/
 theorem leveledINDCPA_of_dlweAssumption (F : LWE.Family) (L : PolyExpr)
     (hF : LWE.DLWEAssumption F) (heff : LeveledReductionEfficient F L)
     (hm : ∀ κ, ((F.parameters κ).dimension + 1) * F.residueBits.eval κ + 2 * κ ≤
