@@ -44,6 +44,8 @@ which may use advice, are realised by `Complexity.NUPPT.RealizesOn` instead.
 * `CoinSampling.SamplesEfficiently y encDraw encOut core`: both halves.
 * `CoinSampling.BoundedModulus b κ`, `modulusWord b`, `residueEnc b`: moduli `0 < q ≤ 2^{b(κ)}`,
   their numerals, and residues modulo `q` written as numerals.
+* `CoinSampling.seedModulusWord n`: the numeral `⦃2^n⦄_{n+1} = 1 0^n`, the word on which the
+  bucket sampler draws an `n`-bit seed.
 
 ## Main results
 
@@ -55,6 +57,10 @@ which may use advice, are realised by `Complexity.NUPPT.RealizesOn` instead.
   `DrawSamplable.congr`, and their `SamplesEfficiently` forms: pushforward of the output along a
   polynomial-time map, pairing of two cores on one draw, and transport of the draw along an
   equivalence.
+* `DrawSamplable.comap`, `samplesEfficiently_comap`, `drawSamplable_restrict`: reindexing a
+  sampler along a map of public inputs, and its restriction to a section.
+* `natToList_two_pow`, `polyTimeComputable_twoPowWord`: the numeral of `2^w` is `1 0^w`, and
+  `1 0^{W(|x|)}` is written in polynomial time.
 * `drawSamplable_residue`, `samplesEfficiently_residue`: non-vacuity, uniform `ZMod q` through
   the bucket sampler `bucketSampler`, with `q` read from the input.
 
@@ -299,6 +305,45 @@ theorem SamplesEfficiently.congr {y : ∀ κ, P κ → List Bool}
   intro κ π d
   rw [← hfe, ← hε κ π ((ε κ π).symm d), Equiv.apply_symm_apply]
 
+/-- **Reindexing the draw half along a map of public inputs** `φ κ : P' κ → P κ`: if the draws
+`Draw κ π` are `DrawSamplable` at the words `y κ π`, so are the draws `Draw κ (φ κ π')` at the
+words `y κ (φ κ π')`, by the same `UniformSampler`, coin polynomial and equivalences, read at
+`φ κ π'` (`drawSamplable_iff`). Glue. -/
+theorem DrawSamplable.comap {P P' : ℕ → Type} {Draw : (κ : ℕ) → P κ → Type}
+    {y : ∀ κ, P κ → List Bool} {encDraw : ∀ κ π, Draw κ π → List Bool}
+    (h : DrawSamplable y encDraw) (φ : ∀ κ, P' κ → P κ) :
+    DrawSamplable (Draw := fun κ π => Draw κ (φ κ π)) (fun κ π => y κ (φ κ π))
+      (fun κ π => encDraw κ (φ κ π)) := by
+  obtain ⟨U, c, e, he, hc⟩ := (drawSamplable_iff _ _).1 h
+  exact (drawSamplable_iff _ _).2
+    ⟨U, c, fun κ π => e κ (φ κ π), fun κ π w => he κ (φ κ π) w, fun κ π => hc κ (φ κ π)⟩
+
+/-- **Restriction of the draw half along a section**: if draws indexed by public inputs `π` are
+`DrawSamplable`, so are the draws at the fixed public input `s κ`, with the public input `Unit`
+(the same sampler, coin polynomial and equivalences, read at `π = s κ`: `DrawSamplable.comap`
+along the constant map `_ ↦ s κ`). Glue. -/
+theorem drawSamplable_restrict {P : ℕ → Type} {Draw : (κ : ℕ) → P κ → Type}
+    {y : ∀ κ, P κ → List Bool} {encDraw : ∀ κ π, Draw κ π → List Bool}
+    (h : DrawSamplable y encDraw) (s : ∀ κ, P κ) :
+    DrawSamplable (P := fun _ => Unit) (Draw := fun κ _ => Draw κ (s κ))
+      (fun κ _ => y κ (s κ)) (fun κ _ => encDraw κ (s κ)) :=
+  h.comap fun κ _ => s κ
+
+/-- **Reindexing an efficient sampler along a map of public inputs** `φ κ : P' κ → P κ`: the
+same sampler, read at `φ κ π'` (the same `UniformSampler`, coin polynomial and core machine;
+`samplesEfficiently_iff_exists`). Glue. -/
+theorem samplesEfficiently_comap {P P' : ℕ → Type} {Draw β : (κ : ℕ) → P κ → Type}
+    {y : ∀ κ, P κ → List Bool} {encDraw : ∀ κ π, Draw κ π → List Bool}
+    {encOut : ∀ κ π, β κ π → List Bool} {core : ∀ κ π, Draw κ π → β κ π}
+    (h : SamplesEfficiently y encDraw encOut core) (φ : ∀ κ, P' κ → P κ) :
+    SamplesEfficiently (Draw := fun κ π => Draw κ (φ κ π))
+      (β := fun κ π => β κ (φ κ π)) (fun κ π => y κ (φ κ π)) (fun κ π => encDraw κ (φ κ π))
+      (fun κ π => encOut κ (φ κ π)) fun κ π => core κ (φ κ π) := by
+  obtain ⟨U, c, e, f, he, hc, hf, hfe⟩ := (samplesEfficiently_iff_exists _ _ _ _).1 h
+  exact (samplesEfficiently_iff_exists _ _ _ _).2
+    ⟨U, c, fun κ π => e κ (φ κ π), f, fun κ π => he κ (φ κ π), fun κ π => hc κ (φ κ π), hf,
+      fun κ π => hfe κ (φ κ π)⟩
+
 /-! ### Non-vacuity: uniform residues with the modulus on the input -/
 
 /-- **Moduli of polynomial bit length**: the public input `q` with `0 < q ≤ 2^{b(κ)}`. Glue. -/
@@ -324,6 +369,46 @@ theorem listToNat_modulusWord (b : PolyExpr) (κ : ℕ) (q : BoundedModulus b κ
   rw [modulusWord_eq]
   exact Candidates.listToNat_natToList
     (q.2.trans_lt (Nat.pow_lt_pow_right (by norm_num) (Nat.lt_succ_self _)))
+
+/-- **The numeral of `2^w` at width `w + 1`** is `1 0^w`. Glue
+(`Candidates.natToList_length_listToNat`, `NumberTheory.listToNat_cons`). -/
+theorem natToList_two_pow (w : ℕ) :
+    Candidates.natToList (w + 1) (2 ^ w) = true :: List.replicate w false := by
+  have h := Candidates.natToList_length_listToNat (true :: List.replicate w false)
+  rw [List.length_cons, List.length_replicate, NumberTheory.listToNat_cons,
+    Candidates.listToNat_replicate_false, List.length_replicate, if_pos rfl, one_mul,
+    add_zero] at h
+  exact h
+
+/-- **The word `1 0^{W(|x|)}` is polynomial-time** (`EnsembleLemmas.polyTimeComputable_zeros`,
+`BinArith.polyTimeComputable_cons`). Glue. -/
+theorem polyTimeComputable_twoPowWord (W : PolyExpr) :
+    PolyTimeComputable fun x : List Bool => true :: List.replicate (W.eval x.length) false :=
+  BinArith.polyTimeComputable_cons (p := fun _ => true) (polyTimeComputable_const [true])
+    (EnsembleLemmas.polyTimeComputable_zeros W polyTimeComputable_id)
+
+/-- **The parameter word of an `n`-bit seed draw**: the numeral `⦃2^n⦄_{n+1}`, on which
+`bucketSampler` [Lem19, §3.2, Algorithm 4] draws a uniform element of `Fin (2^n)`. It is
+`modulusWord` at the modulus `2^n` and width `n`. Glue. -/
+def seedModulusWord (n : ℕ) : List Bool := Candidates.natToList (n + 1) (2 ^ n)
+
+/-- `seedModulusWord n = natToList (n + 1) (2^n)`. -/
+theorem seedModulusWord_eq (n : ℕ) :
+    seedModulusWord n = Candidates.natToList (n + 1) (2 ^ n) := rfl
+
+/-- `seedModulusWord n = 1 0^n` (`natToList_two_pow`). -/
+theorem seedModulusWord_eq_cons (n : ℕ) :
+    seedModulusWord n = true :: List.replicate n false := by
+  rw [seedModulusWord_eq, natToList_two_pow]
+
+/-- The seed word reads as `2^n` (`Candidates.listToNat_natToList`). -/
+theorem listToNat_seedModulusWord (n : ℕ) : listToNat (seedModulusWord n) = 2 ^ n := by
+  rw [seedModulusWord_eq]
+  exact Candidates.listToNat_natToList (Nat.pow_lt_pow_right (by norm_num) (Nat.lt_succ_self n))
+
+/-- The seed word has length `n + 1`. -/
+theorem length_seedModulusWord (n : ℕ) : (seedModulusWord n).length = n + 1 := by
+  rw [seedModulusWord_eq, Candidates.length_natToList]
 
 /-- **A residue modulo `q` as a numeral**: `a` written through Mathlib's `ZMod.finEquiv q` at the
 modulus' width `b(κ) + 1`. Glue. -/
