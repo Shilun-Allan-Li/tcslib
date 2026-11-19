@@ -138,6 +138,11 @@ manifest; BGW's degree reduction is exactly an application of that linearity. [B
 noncomputable def recombine (A : Finset (Party F)) (f : Party F → F) : F :=
   ∑ i ∈ A, recombineCoeff A i * f i
 
+/-- `recombine A f = ∑ i ∈ A, λ_i · f i`, with `λ_i = recombineCoeff A i`: the defining equation
+of `recombine` as a sum. Glue. -/
+theorem recombine_eq_sum (A : Finset (Party F)) (f : Party F → F) :
+    recombine A f = ∑ i ∈ A, recombineCoeff A i * f i := rfl
+
 theorem recombine_eq_eval_interpolate (A : Finset (Party F)) (f : Party F → F) :
     recombine A f = (Lagrange.interpolate A label f).eval 0 := by
   simp [recombine, recombineCoeff, Lagrange.interpolate_apply, eval_finset_sum, mul_comm]

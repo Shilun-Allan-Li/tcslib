@@ -34,12 +34,10 @@ Each statement says that the machine, run on the words of a party's data, writes
 share that `bgwEval` assigns to that party. The whole-circuit evaluator (a host iterating these
 steps over the gates) is not built here.
 
-**Scope note (multiplication gates).** The last step identifies party `j`'s recombination
+**Multiplication gates.** The last step identifies party `j`'s recombination
 `recombine A fun i => R.reshare i (u i) j` with `degreeReduce R A u j`, the share that
-`bgwEval_mul` assigns. That is true by the definition of `degreeReduce`, which has no published
-reader; this file stops at the recombination, and the identification needs the one-line reader
-`degreeReduce_apply : degreeReduce R A u j = recombine A fun i => R.reshare i (u i) j` beside
-`degreeReduce`.
+`bgwEval_mul` assigns, through the readers `degreeReduce_apply` (`MPC.BGW.Protocol`) and
+`Shamir.recombine_eq_sum` (`SecretSharing.Sharing`): `recombineRaw_bgwEval_mul`.
 
 ## Main definitions
 
@@ -57,7 +55,8 @@ reader; this file stops at the recombination, and the identification needs the o
   multiplication gates.
 * `TCSlib.MPC.BGW.mulModW_bgwEval_mul`, `TCSlib.MPC.BGW.recombineRaw_reshare`: the local product
   and the recombination step of a multiplication gate;
-  `TCSlib.MPC.BGW.recombineRaw_shareRaw`: the two composed, with Shamir re-sharing.
+  `TCSlib.MPC.BGW.recombineRaw_bgwEval_mul`: the recombination writes the share that `bgwEval_mul`
+  assigns; `TCSlib.MPC.BGW.recombineRaw_shareRaw`: the recombination step with Shamir re-sharing.
 
 ## References
 
@@ -199,8 +198,8 @@ theorem mulModW_bgwEval_mul (a b : Circuit (ZMod p) ι) :
 duplicate-free listing `l` of `A`, writes its new share
 `recombine A fun i => R.reshare i (u i) j`. [BGW88, §3], [AL17, §3–4]
 
-This is `degreeReduce R A u j` by the definition of `degreeReduce`, for which no reader is
-published; see the scope note in the module docstring. -/
+At a multiplication gate this is `degreeReduce R A u j`, the share that `bgwEval_mul` assigns
+(`recombineRaw_bgwEval_mul`). -/
 theorem recombineRaw_reshare (u : Party (ZMod p) → ZMod p) (l : List (Party (ZMod p)))
     (hl : l.Nodup) (hlA : ∀ i, i ∈ l ↔ i ∈ A) :
     recombineRaw (pairEncode (Nat.bits p) (BinArith.encWords
@@ -210,6 +209,25 @@ theorem recombineRaw_reshare (u : Party (ZMod p) → ZMod p) (l : List (Party (Z
   have h := recombineRaw_spec l hl fun i => R.reshare i (u i) j
   rw [hA] at h
   exact h
+
+/-- **Multiplication gate, machine level**: after the local product (`mulModW_bgwEval_mul`) and
+the re-sharing of every product share `u i = (bgwEval a * bgwEval b) i` by the parties `i ∈ A`,
+the polynomial-time recombination machine `Shamir.recombineRaw` (`polyTimeComputable_recombineRaw`),
+run by party `j` on `⟨p, [⟨i, R.reshare i (u i) j⟩ : i ∈ l]⟩` for any duplicate-free listing `l`
+of `A`, writes party `j`'s share `bgwEval R A inp (a.mul b) j` of the product wire, exactly the
+share that `bgwEval_mul` assigns after degree reduction. [BGW88, §3], [AL17, §3–4]
+
+**Proof sketch.** `recombineRaw_reshare` gives the recombination
+`recombine A fun i => R.reshare i (u i) j`; `bgwEval_mul` and `degreeReduce_apply` write the
+assigned share as `∑ i ∈ A, λ_i · R.reshare i (u i) j`, which is that recombination by
+`recombine_eq_sum`. -/
+theorem recombineRaw_bgwEval_mul (a b : Circuit (ZMod p) ι) (l : List (Party (ZMod p)))
+    (hl : l.Nodup) (hlA : ∀ i, i ∈ l ↔ i ∈ A) :
+    recombineRaw (pairEncode (Nat.bits p) (BinArith.encWords (l.map fun i =>
+      pairEncode (resWord (label i))
+        (resWord (R.reshare i ((bgwEval R A inp a * bgwEval R A inp b) i) j))))) =
+      resWord (bgwEval R A inp (a.mul b) j) := by
+  rw [recombineRaw_reshare R A j _ l hl hlA, bgwEval_mul, degreeReduce_apply, recombine_eq_sum]
 
 end LocalSteps
 
