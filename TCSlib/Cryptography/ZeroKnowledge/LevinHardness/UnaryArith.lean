@@ -15,7 +15,7 @@ set_option autoImplicit false
 
 Polynomial-time rows on unary functions `x ↦ 1^(f x)` used by the instance map
 (`LevinHardness/ColoringGraph.lean`) and the colouring witness map
-(`LevinHardness/ColoringWitness.lean`) of the Levin reduction `3SAT → 3COL` ([AB09, §2.3]):
+(`LevinHardness/ColoringWitness.lean`) of the Levin reduction `3SAT → 3COL`:
 quotient and remainder by a constant, the literal codes `clauseLit` of a clause code, and the
 truth value `litVal` of a literal code under an assignment word. All are read off the public rows
 of `ZeroKnowledge/EncodingMachines.lean` (`divNum_poly`, `modNum_poly`, `unaryPolyOf_poly`,
@@ -38,7 +38,7 @@ None: the file states polynomial-time rows only.
 ## References
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*, Cambridge
-  University Press, 2009. (§2.3.)
+  University Press, 2009.
 -/
 
 namespace TCSlib.Cryptography.LevinHardness

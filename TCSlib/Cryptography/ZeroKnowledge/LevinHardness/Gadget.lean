@@ -30,6 +30,12 @@ its negation; the gadget triangles `{0,1,2}`, `{3,4,5}` and the edge `{2,3}` ins
 each clause **of the formula** (the test `mem`); gadget nodes `0, 1, 4` to the clause's first,
 second and third literal; gadget node `5` to the base and to the false node.
 
+This is the graph of Stockmeyer's reduction from 3SAT [St73, proof of the Theorem, part 1),
+p. 22, Fig. 1 p. 24] in the course material's variant: gadget nodes `0, …, 5` are [St73]'s
+`v₁, v₂, v₄, v₅, v₃, v₆`, with the literals attached at `0, 1, 4` as at `v₁, v₂, v₃`; the
+palette is a triangle (base, true, false) instead of [St73]'s arc `{t₁, t₂}` (base, false), and
+gadget node `5` is joined to the base as well as to the false node, which [St73] does not do.
+
 ## Main definitions
 
 * `TCSlib.Cryptography.LevinHardness.gadgetN` — the number of vertices `N = 3 + 2K + 6(2K)³`.
@@ -51,7 +57,11 @@ second and third literal; gadget node `5` to the base and to the false node.
 * CS 294-268 course material (UC Berkeley, Spring 2026, V. Guruswami), the 3SAT → 3-colouring
   reduction as formalized in `Complexity/NPReductions/ThreeSATToColoring.lean`.
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*, Cambridge
-  University Press, 2009. (§2.3.)
+  University Press, 2009.
+* [St73] L. Stockmeyer, *Planar 3-Colorability is Polynomial Complete*, ACM SIGACT News 5(3),
+  July 1973, pp. 19–25. (Theorem, p. 22; proof pp. 21–22; Fig. 1, p. 24. The printed pages of
+  this issue are bound out of order: the proof of part 1), the reduction from 3SAT, runs from
+  p. 22 back to p. 21.)
 -/
 
 namespace TCSlib.Cryptography.LevinHardness

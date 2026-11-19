@@ -19,8 +19,9 @@ set_option autoImplicit false
 # `3COL` is NP-hard with Levin reductions
 
 The assembly of the Levin reduction `(L, R) → (3COL, R_3COL)` for every witness relation, along
-the circuit route [AB09, Lemmas 6.10 and 6.11, p. 111] followed by the 3SAT → 3-colouring gadget
-of the course material:
+the circuit route [AB09, Lemmas 6.10 and 6.11, p. 111] followed by the 3SAT → 3-colouring
+reduction of [St73, proof of the Theorem, part 1), pp. 21–22], in the variant formalized in the
+course material:
 
 * `f₁ = tabInst …` prints the tableau circuit of the verifier (`Verifier.lean`), witness map the
   certificate `certOf q x y`;
@@ -35,7 +36,9 @@ of the course material:
 
 This proves `LevinNPHard L3COL R3COL` ([PS10, §4.7, Theorem 124.1, step 2]; the hypothesis of
 `zk_proof_of_witnessRelation` and `zk_proof_of_mem_NP` in `ZeroKnowledge/NP.lean`), and with it
-the unconditional forms of [PS10, Theorem 124.1].
+the unconditional forms of [PS10, Theorem 124.1]. In Karp form, the polynomial completeness of
+3-colourability is [St73, Theorem, p. 22]; this file proves the stronger Levin form, with a
+witness map and exact output lengths.
 
 ## Main definitions
 
@@ -60,6 +63,10 @@ None: the instance and witness maps of the reduction are explicit terms in the p
   (§4.7, Theorem 124.1, step 2.)
 * CS 294-268 course material (UC Berkeley, Spring 2026, V. Guruswami), the 3SAT → 3-colouring
   reduction of `Complexity/NPReductions/ThreeSATToColoring.lean`.
+* [St73] L. Stockmeyer, *Planar 3-Colorability is Polynomial Complete*, ACM SIGACT News 5(3),
+  July 1973, pp. 19–25. (Theorem, p. 22; proof pp. 21–22; Fig. 1, p. 24. The printed pages of
+  this issue are bound out of order: the proof of part 1), the reduction from 3SAT, runs from
+  p. 22 back to p. 21.)
 -/
 
 namespace TCSlib.Cryptography.LevinHardness
@@ -196,10 +203,16 @@ namespace TCSlib.Cryptography
 open Complexity Turing BoolCircuit LevinHardness
 
 /-- **`3COL` is NP-hard with Levin reductions** [PS10, §4.7, Theorem 124.1, step 2 (the
-hypothesis of the "every language in NP" form)]; [AB09, Lemmas 6.10 and 6.11, p. 111] for the
-circuit route and the course 3SAT → 3-colouring reduction: every language `L` with a witness
-relation `R` has a Levin reduction `(f, w)` to `(3COL, R_3COL)` with length polynomial `p ≥ id`,
-`LevinNPHard L3COL R3COL`.
+hypothesis of the "every language in NP" form)]: every language `L` with a witness relation `R`
+has a Levin reduction `(f, w)` to `(3COL, R_3COL)` with length polynomial `p ≥ id`,
+`LevinNPHard L3COL R3COL`. In Karp form this is the polynomial completeness of 3-COLORABILITY
+[St73, Theorem, p. 22]. *Deviation:* [St73] gives an instance map only; this theorem adds a
+polynomial-time witness map and an exact output length (padding), reaches 3SAT along the circuit
+route [AB09, Lemmas 6.10 and 6.11, p. 111], and ends with [St73]'s reduction from 3SAT
+[St73, proof of the Theorem, part 1), pp. 21–22, Fig. 1] in the variant of the course material
+(a palette triangle in place of [St73]'s arc `{t₁, t₂}`, and each gadget's output node joined to
+the base as well as to the false node). The witness colouring, which [St73] leaves as "the
+converse is similar", is explicit here.
 
 **Proof sketch.** Let `q, M, C, c` and the tableau instance map `f₁` come from
 `exists_tabReduction`; `f₂ = dagCktSatToSAT3`, `f₃ = colorInst`. The composite `f₃ ∘ f₂ ∘ f₁` is

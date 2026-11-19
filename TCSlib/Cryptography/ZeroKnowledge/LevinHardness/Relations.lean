@@ -19,8 +19,9 @@ The two intermediate witness relations of the Levin reduction
 files of `ZeroKnowledge/LevinHardness/` read them through their readers.
 
 * `R_CKT d u`: the string `d` describes (`BoolCircuit.DAGCircuit.encode`) a fan-in-two circuit
-  that outputs `1` on the input read from `u` with default `false` (the certificate convention
-  of `BoolCircuit.CVALPrefix`, [AB09, Def 6.9]).
+  that outputs `1` on the input read from `u` with default `false` ([AB09, Def 6.9] takes
+  `u ∈ {0,1}ⁿ`; reading `u` with default `false` is TCSlib's certificate convention, that of
+  `BoolCircuit.CVALPrefix`).
 * `R_3SAT s a`: the formula `CNF.decode s` is a 3-CNF satisfied by the assignment read from the
   word `a` with default `false`.
 

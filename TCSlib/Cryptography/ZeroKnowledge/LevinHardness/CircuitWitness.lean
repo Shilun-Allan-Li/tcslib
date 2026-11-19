@@ -47,7 +47,7 @@ is read by a one-pass transducer on the reversed string (`descPrefix`).
 * `TCSlib.Cryptography.LevinHardness.polyTimeComputable_wireValues` — the witness map is
   polynomial-time.
 * `TCSlib.Cryptography.LevinHardness.R_3SAT_wireValues` — the witness map maps
-  `R_CKT` into `R_3SAT` (given the equation of the Tseitin formula, see below).
+  `R_CKT` into `R_3SAT`.
 * `TCSlib.Cryptography.LevinHardness.exists_eval_of_R_3SAT` — a witness of the Tseitin image
   of a fan-in-two circuit gives a satisfying input.
 
@@ -55,14 +55,14 @@ is read by a one-pass transducer on the reversed string (`descPrefix`).
 `R_3SAT_wireValues` and `exists_eval_of_R_3SAT` follow the pattern of
 `BoolCircuit.DAGCircuit.satisfiable_iff_toCNF_satisfiable` (`DAGCircuitSat.lean:354`) and
 `Complexity.TQBFHard.toCNF_extension_iff` (`TQBFHardTseitin.lean:67`), with an explicit
-witness. `BoolCircuit.DAGCircuit.toCNF` has no published equation; the first theorem
-therefore takes it as the hypothesis
-`∀ n (C : DAGCircuit n), C.toCNF = [(C.output, true)] :: tseitinGates n C.gates`.
+witness. `BoolCircuit.DAGCircuit.toCNF` has no published equation; the first theorem reads it
+through the quarantined reader `Bridge.toCNF_eq`,
+`C.toCNF = [(C.output, true)] :: tseitinGates n C.gates`.
 
 ## References
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*, Cambridge
-  University Press, 2009. (§6.1.2, Definition 6.9, Lemma 6.11, p. 111.)
+  University Press, 2009. (Definition 6.1; §6.1.2, Lemma 6.11, p. 111.)
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
   (§4.7, Theorem 124.1, step 2.)
 -/
@@ -307,7 +307,7 @@ theorem wireValue_encode {n : ℕ} (C : DAGCircuit n) (hC : C.IsFaninTwo) (u : L
     · rw [padInput_eq, List.length_append, List.length_replicate]; omega
     · rw [hx, eval_withOutput]; exact h
 
-/-- **The wire values are the circuit's vertex values** [AB09, Def 6.9]: for a fan-in-two
+/-- **The wire values are the circuit's vertex values** [AB09, Def 6.1]: for a fan-in-two
 `C : DAGCircuit n` and every `v`,
 `(wireValues C.encode u).getD v false = (C.values (fun i => u.getD i false)).getD v false`.
 

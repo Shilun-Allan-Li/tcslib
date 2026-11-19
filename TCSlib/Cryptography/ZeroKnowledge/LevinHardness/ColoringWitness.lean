@@ -27,6 +27,9 @@ nodes of a clause gadget get the colours of the course table `clauseGadgetColor`
 (`gadgetNodeColor` here). The proof that it is proper is redone here by a case analysis over the
 edge families of `gadgetEdge`.
 
+This is the completeness colouring of [St73]'s reduction, which the paper leaves as "the converse
+is similar" [St73, p. 21], made explicit (disclosed re-derivation of the course's `sat3Coloring`).
+
 ## Main definitions
 
 * `TCSlib.Cryptography.LevinHardness.gadgetNodeColor` — the colours of the six gadget nodes.
@@ -48,6 +51,10 @@ edge families of `gadgetEdge`.
   reduction as formalized in `Complexity/NPReductions/ThreeSATToColoring.lean`.
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*, Cambridge
   University Press, 2009. (§2.3.)
+* [St73] L. Stockmeyer, *Planar 3-Colorability is Polynomial Complete*, ACM SIGACT News 5(3),
+  July 1973, pp. 19–25. (Theorem, p. 22; proof pp. 21–22; Fig. 1, p. 24. The printed pages of
+  this issue are bound out of order: the proof of part 1), the reduction from 3SAT, runs from
+  p. 22 back to p. 21.)
 -/
 
 namespace TCSlib.Cryptography.LevinHardness

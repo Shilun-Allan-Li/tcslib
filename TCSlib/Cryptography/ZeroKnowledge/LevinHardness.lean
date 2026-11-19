@@ -24,9 +24,9 @@ set_option autoImplicit false
 # `3COL` is NP-hard with Levin reductions
 
 The string-level Levin reduction of every witness relation to `(3COL, R_3COL)` along the circuit
-route [AB09, Lemmas 6.10 and 6.11, p. 111] and the course 3SAT → 3-colouring reduction, which
-proves `TCSlib.Cryptography.LevinNPHard L3COL R3COL` and makes [PS10, Theorem 124.1]
-unconditional.
+route [AB09, Lemmas 6.10 and 6.11, p. 111] and the 3SAT → 3-colouring reduction of [St73] in
+the course material's variant, which proves `TCSlib.Cryptography.LevinNPHard L3COL R3COL` and
+makes [PS10, Theorem 124.1] unconditional.
 
 ## Contents
 
@@ -50,4 +50,10 @@ unconditional.
   University Press, 2009. (§6.1.2, Lemmas 6.10 and 6.11, p. 111.)
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
   (§4.7, Theorem 124.1.)
+* [St73] L. Stockmeyer, *Planar 3-Colorability is Polynomial Complete*, ACM SIGACT News 5(3),
+  July 1973, pp. 19–25. (Theorem, p. 22; proof pp. 21–22; Fig. 1, p. 24. The printed pages of
+  this issue are bound out of order: the proof of part 1), the reduction from 3SAT, runs from
+  p. 22 back to p. 21.)
+* CS 294-268 course material (UC Berkeley, Spring 2026, V. Guruswami), the 3SAT →
+  3-colouring reduction as formalized in `Complexity/NPReductions/ThreeSATToColoring.lean`.
 -/

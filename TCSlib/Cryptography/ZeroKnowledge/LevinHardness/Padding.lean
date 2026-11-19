@@ -42,7 +42,7 @@ both polynomial-time with `B` given in unary. Framework glue, no textbook counte
 ## References
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*, Cambridge
-  University Press, 2009. (§2.3.)
+  University Press, 2009.
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
   (§4.7, Theorem 124.1, step 2.)
 -/
