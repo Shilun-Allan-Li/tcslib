@@ -1,7 +1,7 @@
 # Dispatch · Gate 55 round 1 (GSW 6b fills U14+U16, U15+U17, U18+U19: PR #396)
 
 **This file postdates the records pin** (lesson G48-02). The records pin is the commit that files this directory. At
-the pin, this file holds the placeholder `<RECORDS-G55>` (every occurrence); the next records commit replaces it with
+the pin, this file holds the placeholder `df0089df6178d6ffe12a676fa62c9a78f2c24583` (every occurrence); the next records commit replaces it with
 that commit's full hash (`git rev-parse`) and changes nothing else. `SHA256SUMS-r1` does not cover this file. Every
 other value in the prompt is filled in, except the PR number `#396`, which the maintainer fills (here and in the pack)
 when the PR is opened, before the pin.
@@ -28,7 +28,7 @@ you grade that evidence by reading it.
       land/gsw-6b-u14-u19 exchange/pass-shelat-ch5-8
   (If your git refuses --filter, use --depth=300 instead of --filter=blob:none.)
 - Check that every commit exists:
-    for c in <RECORDS-G55> \
+    for c in df0089df6178d6ffe12a676fa62c9a78f2c24583 \
              dd6d274eba9b55b5a2c7c97730245a4f1bea1e90 103a8bde9aa19e933633fa70eee94e75a308806b \
              53e430b68cbe22416312a4f80bbc3426c71cf86d bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d \
              90b4c3a1549008f93ae35a0395bca88f0f557f73 f501b6694a82f7c57a82c18da7985b38ed9ca5ca \
@@ -41,14 +41,14 @@ you grade that evidence by reading it.
   what is reachable.
 
 1. READ THE PACK
-- Records: cryptography/pass-shelat-ch2-4 at <RECORDS-G55> (the commit that files the pack).
+- Records: cryptography/pass-shelat-ch2-4 at df0089df6178d6ffe12a676fa62c9a78f2c24583 (the commit that files the pack).
     mkdir -p /tmp/g55-pack
-    git archive <RECORDS-G55> briefs/lattice-gsw/gates/55-gsw-6b-u14-u19-fills \
+    git archive df0089df6178d6ffe12a676fa62c9a78f2c24583 briefs/lattice-gsw/gates/55-gsw-6b-u14-u19-fills \
       | tar -x -C /tmp/g55-pack
     cd /tmp/g55-pack/briefs/lattice-gsw/gates/55-gsw-6b-u14-u19-fills && sha256sum -c SHA256SUMS-r1
   Expected: 10 lines ending in OK. Read pack-r1.md (your task: questions A-I, in that order),
   staging-checks-r1.txt, source-head-r1.json, pr-description.md and the five diffs.
-- Also read, at the same records commit (git show <RECORDS-G55>:<path>):
+- Also read, at the same records commit (git show df0089df6178d6ffe12a676fa62c9a78f2c24583:<path>):
   * the maintainer's reviews: briefs/lattice-gsw/phase6/issued-6b-fills-r1/U14-U16/final-r1/,
     U15-U17/final-r1/ and U18-U19/final-r1/ (review.md and phase2.md in each), and the landing
     record briefs/lattice-gsw/phase6/issued-6b-fills-r1/landing-u14-u19.md;
@@ -67,9 +67,9 @@ you grade that evidence by reading it.
     17, 18).
 - The evidence ZIPs (four):
     R=briefs/lattice-gsw/phase6/issued-6b-fills-r1
-    git show <RECORDS-G55>:$R/U14-U16/final-r1/gsw-6b-u14-u16-final-r1-evidence.zip > /tmp/g55-ev1416.zip
-    git show <RECORDS-G55>:$R/U15-U17/final-r1/gsw-6b-u15-u17-u18-u19-final-r1-evidence.zip > /tmp/g55-ev1519.zip
-    git show <RECORDS-G55>:$R/U18-U19/final-r1/gsw-6b-u15-u17-u18-u19-final-r1-evidence.zip > /tmp/g55-ev1519b.zip
+    git show df0089df6178d6ffe12a676fa62c9a78f2c24583:$R/U14-U16/final-r1/gsw-6b-u14-u16-final-r1-evidence.zip > /tmp/g55-ev1416.zip
+    git show df0089df6178d6ffe12a676fa62c9a78f2c24583:$R/U15-U17/final-r1/gsw-6b-u15-u17-u18-u19-final-r1-evidence.zip > /tmp/g55-ev1519.zip
+    git show df0089df6178d6ffe12a676fa62c9a78f2c24583:$R/U18-U19/final-r1/gsw-6b-u15-u17-u18-u19-final-r1-evidence.zip > /tmp/g55-ev1519b.zip
     cp /tmp/g55-pack/briefs/lattice-gsw/gates/55-gsw-6b-u14-u19-fills/landing-u14-u19-recheck-evidence.zip \
       /tmp/g55-land.zip
     sha256sum /tmp/g55-ev1416.zip /tmp/g55-ev1519.zip /tmp/g55-ev1519b.zip /tmp/g55-land.zip
@@ -188,7 +188,7 @@ instructions. The user dispatches and merges.
 - Staged 2026-11-19 by the maintainer, statically (no Lean, no `lake`), on the records checkout at the records tip
   `53e430b68cbe22416312a4f80bbc3426c71cf86d` ("Records: 6b fill landing rulings; ledger DL-71"). The files of this
   directory are written and **not committed**; the maintainer commits them with explicit paths, which makes the pin
-  `<RECORDS-G55>`.
+  `df0089df6178d6ffe12a676fa62c9a78f2c24583`.
 - **PR at staging:** not opened. The branch `land/gsw-6b-u14-u19` is pushed at
   `dd6d274eba9b55b5a2c7c97730245a4f1bea1e90`, cut from the records tip `53e430b6`; 9 commits, 6 files, +883/−90.
   `pr-description.md` is the body to open it with (base `cryptography/pass-shelat-ch2-4`, draft).
@@ -212,7 +212,7 @@ instructions. The user dispatches and merges.
   `source-head-r1.json` and `staging-checks-r1.txt`.
 - **Before dispatch:** open the PR (draft) with `pr-description.md` as its body; fill `#396` in `pack-r1.md`,
   `source-head-r1.json` (`"number"`, `"name"`), `staging-checks-r1.txt` (§1) and this file, then regenerate
-  `SHA256SUMS-r1`; commit this directory and `ISSUED/landing-u14-u19.md`; replace `<RECORDS-G55>` in this file with
+  `SHA256SUMS-r1`; commit this directory and `ISSUED/landing-u14-u19.md`; replace `df0089df6178d6ffe12a676fa62c9a78f2c24583` in this file with
   `git rev-parse` of that commit (a records-only follow-up commit); push the records.
 
 **Ready to dispatch** once the steps above are done.
