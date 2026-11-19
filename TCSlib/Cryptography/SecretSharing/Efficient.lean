@@ -112,14 +112,14 @@ theorem restrict_reconstruct_of_eqOn (hL : S.LocalReconstruct) (A : Finset Q) (f
     (g : P → Share) (hfg : ∀ i ∈ A, g (e i) = f i) :
     (S.restrict e ε s₀).reconstruct A f = S.reconstruct (A.map e) g := by
   rw [restrict_reconstruct]
-  refine hL _ _ _ fun j hj => ?_
+  refine (Scheme.localReconstruct_iff S).1 hL _ _ _ fun j hj => ?_
   obtain ⟨i, hi, rfl⟩ := Finset.mem_map.1 hj
   rw [e.injective.extend_apply, hfg i hi]
 
 /-- **Locality transfers to a restriction.** Glue. -/
 theorem restrict_localReconstruct (hL : S.LocalReconstruct) :
     (S.restrict e ε s₀).LocalReconstruct := by
-  intro A f g hfg
+  refine (Scheme.localReconstruct_iff _).2 fun A f g hfg => ?_
   rw [restrict_reconstruct_of_eqOn e ε s₀ hL A f (Function.extend e g fun _ => s₀)
     fun i hi => by rw [e.injective.extend_apply, hfg i hi], restrict_reconstruct]
 
@@ -129,10 +129,10 @@ correct for `Γ'`. Glue. -/
 theorem restrict_correct {Γ : AccessStructure P} {Γ' : AccessStructure Q} (hS : S.Correct Γ)
     (hL : S.LocalReconstruct) (hΓ : ∀ A, Γ'.Auth A → Γ.Auth (A.map e)) :
     (S.restrict e ε s₀).Correct Γ' := by
-  intro A hA sec r
+  refine (Scheme.correct_iff _ Γ').2 fun A hA sec r => ?_
   rw [restrict_reconstruct_of_eqOn e ε s₀ hL A ((S.restrict e ε s₀).share sec r)
     (S.share sec (ε r)) fun i _ => (restrict_share S e ε s₀ sec r i).symm]
-  exact hS _ (hΓ A hA) sec (ε r)
+  exact (Scheme.correct_iff S Γ).1 hS _ (hΓ A hA) sec (ε r)
 
 /-- **Perfect privacy transfers to a restriction**: if `S` is perfectly private for `Γ` and every
 `Γ'`-unauthorized set of `Q` maps to a `Γ`-unauthorized set, the restriction is perfectly private
@@ -140,8 +140,8 @@ for `Γ'`; the coin bijection is `S`'s, conjugated by `ε`. Glue. -/
 theorem restrict_perfectPrivacy {Γ : AccessStructure P} {Γ' : AccessStructure Q}
     (hS : S.PerfectPrivacy Γ) (hΓ : ∀ B, ¬ Γ'.Auth B → ¬ Γ.Auth (B.map e)) :
     (S.restrict e ε s₀).PerfectPrivacy Γ' := by
-  intro B hB sec sec'
-  obtain ⟨σ, hσ⟩ := hS _ (hΓ B hB) sec sec'
+  refine (Scheme.perfectPrivacy_iff _ Γ').2 fun B hB sec sec' => ?_
+  obtain ⟨σ, hσ⟩ := (Scheme.perfectPrivacy_iff S Γ).1 hS _ (hΓ B hB) sec sec'
   refine ⟨(ε.trans σ).trans ε.symm, fun r i hi => ?_⟩
   rw [restrict_share, restrict_share, Equiv.trans_apply, Equiv.apply_symm_apply,
     Equiv.trans_apply]
