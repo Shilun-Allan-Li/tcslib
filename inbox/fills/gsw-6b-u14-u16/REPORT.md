@@ -1,4 +1,4 @@
-# Fill gsw-6b-u14-u16 — checkpoint 1 (GSW 6b units U14 and U16: bootstrapping and the leveled scheme, G9–G13, G18, L2, L3)
+# Fill gsw-6b-u14-u16 — final (GSW 6b units U14 and U16: bootstrapping and the leveled scheme, G9–G13, G18, L2, L3)
 
 **Unit** `gsw-6b-u14-u16` · **Worker** Claude (lead, alone; no sub-agent was used, so the brief's `lev` split did not
 apply and the lead wrote both files) · **Base** B6 `bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d` (tree
@@ -6,10 +6,9 @@ apply and the lead wrote both files) · **Base** B6 `bff0567b6c4b6b724c8fd20ff3e
 `fill/gsw-6b-u14-u16`, two commits, one owned file each) · **Records pin** `27e53754d28703907571cacbaf905b441e03c393` ·
 **Lean** 4.25.0, Mathlib `029db123ddaa`.
 
-**Status: checkpoint 1, carrying the whole fill. All seven targets are proved, and so is the one public helper
-`encrypts_bootGate`.** Neither owned file contains `sorry`. The brief asked checkpoint 1 for the helper, G9 and G13
-proved and L2 outlined. This checkpoint delivers all seven with the full C1–C13 payload (COMMON §8: a checkpoint carries
-the full payload for what it claims).
+**Status: final. All seven targets are proved, and so is the one public helper `encrypts_bootGate`.** Neither owned
+file contains `sorry`. The head is the one delivered at checkpoint 1 (exchange commit `e727c64dd…`), and no Lean
+changed since. The evidence is that checkpoint's, unchanged except for this report and the two manifests.
 
 | Row | Target (`TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.`) | File | Base line → head line | Status |
 |---|---|---|---|---|
@@ -45,7 +44,8 @@ G11 or L1 changed. Neither file contains `sorry`, `admit`, `native_decide`, `axi
 - **Base check.** `git rev-parse bff0567b… bff0567b…^{tree}` gives `bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d` and
   `845bdc982fd8f79aba755796bb13188922c4655d`, as in the brief. The 224 sources of `order.txt` match `SOURCE-SHA256SUMS`
   (`logs/source-sha256.log`). `order.txt`, `roots.txt` and `closures.txt` are the pack's own.
-- **Records tip seen at delivery** (`cryptography/pass-shelat-ch2-4`): `f46a2ae434fe16ab81187ea547487a65bcfffd28`. The
+- **Records tip seen at delivery** (`cryptography/pass-shelat-ch2-4`): `f46a2ae434fe16ab81187ea547487a65bcfffd28`, the
+  same at checkpoint 1 and when re-read for this final. The
   base is an ancestor of it. Between the base and the tip, under `TCSlib/`, only `GSW/Branching.lean` (U12) and
   `GSW/DecryptFormula.lean` (U13) differ. `git merge-tree --write-tree 9852429e… f46a2ae4…` is clean, with tree
   `72f7452519dedd12878a72c77d7249597f00dd4e`. This is information only: `logs/merge-check.log` rebuilds Branching,
@@ -558,10 +558,12 @@ None. No frozen file was touched, and no reader was missing.
 
 ## 8. Checkpoints
 
-- **Checkpoint 1** (this delivery): head `9852429e…`. All seven targets and the helper are proved, and C1–C13 have run
-  (a full payload). The brief asked for the helper, G9 and G13, and an outline of L2. L2's outline is its proof (§2).
-- **Final:** to follow. If the head does not change, the final will carry the same head and evidence, with the records
-  tip re-read.
+- **Checkpoint 1** (exchange commit `e727c64dd02c0219f6f4c4588638ebea946d14cc`): head `9852429e…`. All seven targets
+  and the helper were proved, and C1–C13 had run (a full payload). The brief asked for the helper, G9 and G13, and an
+  outline of L2. L2 was delivered proved.
+- **Final** (this delivery): the same head and evidence, with this report as the final one. The records tip was re-read
+  at delivery: it is unchanged (`f46a2ae4…`), and the merge-tree's tree is unchanged
+  (`72f7452519dedd12878a72c77d7249597f00dd4e`).
 
 ## 9. Probes and attribution
 
