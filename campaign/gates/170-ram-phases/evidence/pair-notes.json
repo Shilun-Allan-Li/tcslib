@@ -364,11 +364,111 @@
   "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
  ],
  "NEW|PhaseCore.lean::PhaseFrame.cfg|NDHost.lean::streamStartCfg": [
-  "sibling-uniformity",
-  "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`, G170-04); Both rebuild a configuration-shaped record field by field from the same five `Cfg` fields; different records and purposes. `streamStartCfg` is the stream host's start; `PhaseFrame.cfg` installs a control state on a frame."
  ],
  "NEW|PhaseCoin.lean::phase_choiceMachine|PhaseControl.lean::phase_reaches_zero": [
   "citation-shape",
   "The coin's choice machine composes the zero-time prefix `phase_reaches_zero`; shared text is that citation."
+ ],
+ "NEW|PhaseControl.lean::phase_run_avoids|Deterministic.lean::_root_.Turing.MultiTapeTM.runFrom_one": [
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`, G170-04); `runFrom_one` is a 63-character one-step equation; `phase_run_avoids` (a run never enters a state no transition targets) cites the same step readers (`runFrom_succ_eq_step'`, `step_of_halt`, `step_of_some`) in its successor case. Different statements."
+ ],
+ "NEW|PhaseCore.lean::PhaseFrame|InputBit.lean::InputBitData": [
+  "parallel",
+  "Cited home newly in the screen (`population_extra`, G170-04); `PhaseFrame` (public, 8 tapes, `Sim/PhaseCore`) and `InputBitData` (private, 5 tapes, `Build/InputBit`, merged with #388) are the same notion: a configuration's input head, work tapes, heads and output, without control. A tape-count-generic frame in the Turing-machine library could serve both; listed as a follow-up candidate (its home needs Seyoon's ruling). Not a copied proof: two four-field records."
+ ],
+ "NEW|InputBit.lean::InputBitData|PhaseCore.lean::PhaseFrame": [
+  "parallel",
+  "Cited home newly in the screen (`population_extra`, G170-04); The reverse direction of the pair above. `PhaseFrame` (public, 8 tapes, `Sim/PhaseCore`) and `InputBitData` (private, 5 tapes, `Build/InputBit`, merged with #388) are the same notion: a configuration's input head, work tapes, heads and output, without control. A tape-count-generic frame in the Turing-machine library could serve both; listed as a follow-up candidate (its home needs Seyoon's ruling). Not a copied proof: two four-field records."
+ ],
+ "NEW|PhaseCore.lean::PhaseFrame.ofCfg|TCSlib/Complexity/TuringMachine/Build/Contract/Seam.lean::_root_.Turing.Cfg.bindState": [
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`, G170-04); Both rebuild a configuration-shaped record field by field from the same five `Cfg` fields; different records and purposes. `bindState` redirects the state of a configuration; `PhaseFrame.ofCfg` drops it."
+ ],
+ "NEW|TCSlib/Complexity/TuringMachine/Build/Contract/Seam.lean::_root_.Turing.Cfg.bindState|PhaseCore.lean::PhaseFrame.ofCfg": [
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`, G170-04); The reverse direction of the pair above."
+ ],
+ "NEW|Simulation.lean::rightCfg|PhaseRows.lean::PhaseFrame.write": [
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`, G170-04); Both rebuild a configuration-shaped record field by field from the same five `Cfg` fields; different records and purposes. `rightCfg` (the library's simulation) builds a right-component configuration; the phase frame constructors write, emit, install or drop control."
+ ],
+ "NEW|Simulation.lean::rightCfg|PhaseEmit.lean::PhaseFrame.emit": [
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`, G170-04); Both rebuild a configuration-shaped record field by field from the same five `Cfg` fields; different records and purposes. `rightCfg` (the library's simulation) builds a right-component configuration; the phase frame constructors write, emit, install or drop control."
+ ],
+ "NEW|Simulation.lean::rightCfg|PhaseCore.lean::PhaseFrame.cfg": [
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`, G170-04); Both rebuild a configuration-shaped record field by field from the same five `Cfg` fields; different records and purposes. `rightCfg` (the library's simulation) builds a right-component configuration; the phase frame constructors write, emit, install or drop control."
+ ],
+ "NEW|Simulation.lean::rightCfg|PhaseCore.lean::PhaseFrame.ofCfg": [
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`, G170-04); Both rebuild a configuration-shaped record field by field from the same five `Cfg` fields; different records and purposes. `rightCfg` (the library's simulation) builds a right-component configuration; the phase frame constructors write, emit, install or drop control."
+ ],
+ "NEW|Catalog.lean::walkTM_run_ofCfg|PhaseEmit.lean::phase_emitAction_apply": [
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`, G170-04); Both discharge an applied action's fields through the `Action.apply` field readers (`Action.apply_state`, tape and head equations), for different actions: emitting a bit versus moving or transferring."
+ ],
+ "NEW|InputBit.lean::inputBit_move_step|PhaseEmit.lean::phase_emitAction_apply": [
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`, G170-04); Both discharge an applied action's fields through the `Action.apply` field readers (`Action.apply_state`, tape and head equations), for different actions: emitting a bit versus moving or transferring."
+ ],
+ "NEW|Catalog.lean::step_of_tapeAction_move|PhaseEmit.lean::phase_emitAction_apply": [
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`, G170-04); Both discharge an applied action's fields through the `Action.apply` field readers (`Action.apply_state`, tape and head equations), for different actions: emitting a bit versus moving or transferring."
+ ],
+ "NEW|PhaseEmit.lean::phase_emitAction_apply|InputBit.lean::inputBit_move_step": [
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`, G170-04); Both discharge an applied action's fields through the `Action.apply` field readers (`Action.apply_state`, tape and head equations), for different actions: emitting a bit versus moving or transferring."
+ ],
+ "NEW|KeyTable.lean::kt_wordWrite_at_other|PhaseTape.lean::phase_single_tape_update": [
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`, G170-04); Both read a one-tape update at an untouched tape or cell through `Function.update` readers and the tape equations; different updates."
+ ],
+ "NEW|Catalog.lean::catalog_transferMap_trace|PhaseTape.lean::phase_single_tape_update": [
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`, G170-04); Both read a one-tape update at an untouched tape or cell through `Function.update` readers and the tape equations; different updates."
+ ],
+ "NEW|KeyTable.lean::kt_skip_run|PhaseHost.lean::phase_frame_bindState": [
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`, G170-04); `phase_frame_bindState` redirects a frame configuration's state (`Cfg.ext` with the `bindState` readers); KeyTable's run lemmas (merged with #389) re-tag a configuration through the same five field readers before running a phase. Different statements."
+ ],
+ "NEW|KeyTable.lean::kt_inspect_run|PhaseHost.lean::phase_frame_bindState": [
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`, G170-04); `phase_frame_bindState` redirects a frame configuration's state (`Cfg.ext` with the `bindState` readers); KeyTable's run lemmas (merged with #389) re-tag a configuration through the same five field readers before running a phase. Different statements."
+ ],
+ "NEW|KeyTable.lean::kt_copy_run|PhaseHost.lean::phase_frame_bindState": [
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`, G170-04); `phase_frame_bindState` redirects a frame configuration's state (`Cfg.ext` with the `bindState` readers); KeyTable's run lemmas (merged with #389) re-tag a configuration through the same five field readers before running a phase. Different statements."
+ ],
+ "NEW|KeyTable.lean::kt_compare_run|PhaseHost.lean::phase_frame_bindState": [
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`, G170-04); `phase_frame_bindState` redirects a frame configuration's state (`Cfg.ext` with the `bindState` readers); KeyTable's run lemmas (merged with #389) re-tag a configuration through the same five field readers before running a phase. Different statements."
+ ],
+ "NEW|KeyTable.lean::kt_rewind_run|PhaseHost.lean::phase_frame_bindState": [
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`, G170-04); `phase_frame_bindState` redirects a frame configuration's state (`Cfg.ext` with the `bindState` readers); KeyTable's run lemmas (merged with #389) re-tag a configuration through the same five field readers before running a phase. Different statements."
+ ],
+ "NEW|KeyTable.lean::kt_markField_run|PhaseHost.lean::phase_frame_bindState": [
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`, G170-04); `phase_frame_bindState` redirects a frame configuration's state (`Cfg.ext` with the `bindState` readers); KeyTable's run lemmas (merged with #389) re-tag a configuration through the same five field readers before running a phase. Different statements."
+ ],
+ "NEW|RecordTable.lean::rt_tail_run|PhaseLayout.lean::phase_keyAssign_length_le": [
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`, G170-04); Length arithmetic over joined record fields (`joinFields_length`, `List.length_append`, `omega`); different layouts."
+ ],
+ "NEW|RecordTable.lean::joinFields_cfgRecord_length|PhaseLayout.lean::phase_keyAssign_length_le": [
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`, G170-04); Length arithmetic over joined record fields (`joinFields_length`, `List.length_append`, `omega`); different layouts."
+ ],
+ "NEW|PhaseBlock.lean::PhaseCertificate|PhaseCore.lean::PhaseRow": [
+  "structure-interface",
+  "Cited home newly in the screen (`population_extra`, G170-04); Not new in kind: the merged certificate's machine/entry/run fields follow `PhaseRow`'s interface (the fill's REPORT: 159/300, replacing the old records' matches). Two structures, no proof text."
+ ],
+ "NEW|Phases.lean::exists_verdictPhase|WordArith.lean::wordProbe_run": [
+  "shape-match",
+  "Cited home newly in the screen (`population_extra`, G170-04); Both run a one-step stationary machine through the step readers; `exists_verdictPhase` emits the verdict and halts, `wordProbe_run` probes a word cell."
  ]
 }

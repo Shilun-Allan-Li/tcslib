@@ -27,7 +27,6 @@
   "TCSlib.Complexity.RAMSimulation.Sim.PhaseTape",
   "TCSlib.Complexity.RAMSimulation.Sim.PhaseTests",
   "TCSlib.Complexity.RAMSimulation.Sim.Phases",
-  "TCSlib.Complexity.TuringMachine.Build.Embed",
   "TCSlib.Complexity.TuringMachine.Build.NDHost",
   "TCSlib.Complexity.TuringMachine.Build.Seam"
  ],
@@ -72,8 +71,8 @@
    ]
   },
   "TCSlib/Complexity/RAMSimulation/Sim/PhaseBlock.lean": {
-   "identifiers": 150,
-   "resolved": 49,
+   "identifiers": 164,
+   "resolved": 59,
    "newly_cited_foreign": [
     [
      "Turing.MultiTapeTM",
@@ -154,20 +153,9 @@
    ]
   },
   "TCSlib/Complexity/RAMSimulation/Sim/PhaseBranching.lean": {
-   "identifiers": 110,
-   "resolved": 38,
-   "newly_cited_foreign": [
-    [
-     "Turing.MultiTapeTM",
-     "induct",
-     "TCSlib.Complexity.TuringMachine.Deterministic"
-    ],
-    [
-     "Turing.MultiTapeTM.toNDTM_tr",
-     "thm",
-     "TCSlib.Complexity.TuringMachine.Nondeterministic"
-    ]
-   ]
+   "identifiers": 32,
+   "resolved": 19,
+   "newly_cited_foreign": []
   },
   "TCSlib/Complexity/RAMSimulation/Sim/PhaseCoin.lean": {
    "identifiers": 126,
@@ -302,8 +290,8 @@
    ]
   },
   "TCSlib/Complexity/RAMSimulation/Sim/PhaseControl.lean": {
-   "identifiers": 170,
-   "resolved": 65,
+   "identifiers": 199,
+   "resolved": 81,
    "newly_cited_foreign": [
     [
      "Turing.Action.apply_state",
@@ -376,9 +364,24 @@
      "TCSlib.Complexity.TuringMachine.Build.Contract.Reach"
     ],
     [
+     "Turing.Segment",
+     "def",
+     "TCSlib.Complexity.TuringMachine.Build.Contract.Basic"
+    ],
+    [
+     "Turing.Segment.zero",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Build.Contract.Basic"
+    ],
+    [
      "Turing.reachesWithin_iff",
      "thm",
      "TCSlib.Complexity.TuringMachine.Build.Contract.Reach"
+    ],
+    [
+     "Turing.segment_iff",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Build.Contract.Basic"
     ]
    ]
   },
@@ -620,8 +623,8 @@
    ]
   },
   "TCSlib/Complexity/RAMSimulation/Sim/PhaseFork.lean": {
-   "identifiers": 151,
-   "resolved": 52,
+   "identifiers": 152,
+   "resolved": 53,
    "newly_cited_foreign": [
     [
      "Turing.Action",
@@ -651,8 +654,8 @@
    ]
   },
   "TCSlib/Complexity/RAMSimulation/Sim/PhaseHost.lean": {
-   "identifiers": 144,
-   "resolved": 48,
+   "identifiers": 146,
+   "resolved": 50,
    "newly_cited_foreign": [
     [
      "Turing.Cfg.bindState_inputPos",
@@ -760,19 +763,29 @@
      "TCSlib.Complexity.TuringMachine.Deterministic"
     ],
     [
-     "Turing.MultiTapeTM.runFrom_add",
-     "thm",
-     "TCSlib.Complexity.TuringMachine.Deterministic"
-    ],
-    [
      "Turing.ReachesWithin",
      "def",
      "TCSlib.Complexity.TuringMachine.Build.Contract.Reach"
     ],
     [
+     "Turing.Segment",
+     "def",
+     "TCSlib.Complexity.TuringMachine.Build.Contract.Basic"
+    ],
+    [
+     "Turing.Segment.trans",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Build.Contract.Basic"
+    ],
+    [
      "Turing.reachesWithin_iff",
      "thm",
      "TCSlib.Complexity.TuringMachine.Build.Contract.Reach"
+    ],
+    [
+     "Turing.segment_iff",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Build.Contract.Basic"
     ]
    ]
   },
@@ -780,6 +793,11 @@
    "identifiers": 70,
    "resolved": 36,
    "newly_cited_foreign": [
+    [
+     "Turing.Cfg.select_eq",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Build.Embed"
+    ],
     [
      "Turing.ReachesWithin",
      "def",
@@ -1044,6 +1062,11 @@
    "resolved": 70,
    "newly_cited_foreign": [
     [
+     "Turing.Cfg.select_eq",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Build.Embed"
+    ],
+    [
      "Turing.KeyTableAt",
      "def",
      "TCSlib.Complexity.TuringMachine.Build.KeyTable"
@@ -1238,6 +1261,11 @@
      "TCSlib.Complexity.TuringMachine.Configuration"
     ],
     [
+     "Turing.Cfg.select_eq",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Build.Embed"
+    ],
+    [
      "Turing.MultiTapeTM",
      "induct",
      "TCSlib.Complexity.TuringMachine.Deterministic"
@@ -1261,6 +1289,16 @@
      "Turing.bvBits",
      "def",
      "TCSlib.Complexity.TuringMachine.Build.WordArith"
+    ],
+    [
+     "Turing.embedEmitCfg",
+     "def",
+     "TCSlib.Complexity.TuringMachine.Build.Embed"
+    ],
+    [
+     "Turing.embedEmitTM",
+     "def",
+     "TCSlib.Complexity.TuringMachine.Build.Embed"
     ],
     [
      "Turing.exists_wordAddTM",
@@ -1447,6 +1485,11 @@
      "TCSlib.Complexity.TuringMachine.Configuration"
     ],
     [
+     "Turing.Cfg.select_eq",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Build.Embed"
+    ],
+    [
      "Turing.FinTM.bufferTape",
      "def",
      "TCSlib.Complexity.TuringMachine.Simulation"
@@ -1480,6 +1523,46 @@
      "Turing.WordAt",
      "def",
      "TCSlib.Complexity.TuringMachine.Build.WordArith"
+    ],
+    [
+     "Turing.embedEmitCfg",
+     "def",
+     "TCSlib.Complexity.TuringMachine.Build.Embed"
+    ],
+    [
+     "Turing.embedEmitCfg_eq",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Build.Embed"
+    ],
+    [
+     "Turing.embedEmitCfg_select",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Build.Embed"
+    ],
+    [
+     "Turing.embedEmitCfg_selected_pos",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Build.Embed"
+    ],
+    [
+     "Turing.embedEmitCfg_state",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Build.Embed"
+    ],
+    [
+     "Turing.embedEmitCfg_unselected",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Build.Embed"
+    ],
+    [
+     "Turing.embedEmitTM",
+     "def",
+     "TCSlib.Complexity.TuringMachine.Build.Embed"
+    ],
+    [
+     "Turing.embedEmitTM_runFrom",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Build.Embed"
     ],
     [
      "Turing.fieldsTape",
@@ -1559,13 +1642,18 @@
    ]
   },
   "TCSlib/Complexity/RAMSimulation/Sim/PhaseTests.lean": {
-   "identifiers": 116,
-   "resolved": 51,
+   "identifiers": 108,
+   "resolved": 53,
    "newly_cited_foreign": [
     [
      "Turing.Cfg",
      "induct",
      "TCSlib.Complexity.TuringMachine.Configuration"
+    ],
+    [
+     "Turing.Cfg.select_eq",
+     "thm",
+     "TCSlib.Complexity.TuringMachine.Build.Embed"
     ],
     [
      "Turing.MultiTapeTM",
@@ -1596,6 +1684,16 @@
      "Turing.bvBits",
      "def",
      "TCSlib.Complexity.TuringMachine.Build.WordArith"
+    ],
+    [
+     "Turing.embedEmitCfg",
+     "def",
+     "TCSlib.Complexity.TuringMachine.Build.Embed"
+    ],
+    [
+     "Turing.embedEmitTM",
+     "def",
+     "TCSlib.Complexity.TuringMachine.Build.Embed"
     ],
     [
      "Turing.exists_wordNonzeroTM",
@@ -1670,17 +1768,6 @@
     ]
    ]
   },
-  "TCSlib/Complexity/TuringMachine/Build/Embed.lean": {
-   "identifiers": 16,
-   "resolved": 5,
-   "newly_cited_foreign": [
-    [
-     "Turing.Cfg",
-     "induct",
-     "TCSlib.Complexity.TuringMachine.Configuration"
-    ]
-   ]
-  },
   "TCSlib/Complexity/TuringMachine/Build/NDHost.lean": {
    "identifiers": 22,
    "resolved": 10,
@@ -1722,6 +1809,12 @@
    "Turing.fieldsTape_of_length_le",
    "Turing.fieldsTape_of_neg"
   ],
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean": [
+   "Turing.Segment",
+   "Turing.Segment.trans",
+   "Turing.Segment.zero",
+   "Turing.segment_iff"
+  ],
   "TCSlib/Complexity/TuringMachine/Build/Contract/Reach.lean": [
    "Turing.Contract.ofReaches",
    "Turing.Contract.ofReaches_hi",
@@ -1751,6 +1844,17 @@
    "Turing.Contract.seq_post",
    "Turing.Contract.seq_pre",
    "Turing.Contract.seq_time"
+  ],
+  "TCSlib/Complexity/TuringMachine/Build/Embed.lean": [
+   "Turing.Cfg.select_eq",
+   "Turing.embedEmitCfg",
+   "Turing.embedEmitCfg_eq",
+   "Turing.embedEmitCfg_select",
+   "Turing.embedEmitCfg_selected_pos",
+   "Turing.embedEmitCfg_state",
+   "Turing.embedEmitCfg_unselected",
+   "Turing.embedEmitTM",
+   "Turing.embedEmitTM_runFrom"
   ],
   "TCSlib/Complexity/TuringMachine/Build/InputBit.lean": [
    "Turing.exists_inputBitTM"
@@ -1814,7 +1918,6 @@
   ],
   "TCSlib/Complexity/TuringMachine/Deterministic.lean": [
    "Turing.MultiTapeTM",
-   "Turing.MultiTapeTM.runFrom_add",
    "Turing.MultiTapeTM.runFrom_one",
    "Turing.MultiTapeTM.runFrom_succ_eq_step'",
    "Turing.MultiTapeTM.runFrom_zero",

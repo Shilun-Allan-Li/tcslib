@@ -1,12 +1,28 @@
 {
- "base_summary": "declarations screened: 112; copy pairs (target reproduces >= half of source): 50; reproduced text: 7,770 chars",
- "head_summary": "declarations screened: 252; copy pairs (target reproduces >= half of source): 143; reproduced text: 27,561 chars",
+ "base_summary": "declarations screened: 863; copy pairs (target reproduces >= half of source): 260; reproduced text: 51,896 chars",
+ "head_summary": "declarations screened: 1002; copy pairs (target reproduces >= half of source): 366; reproduced text: 70,311 chars",
  "population_base": [
   "TCSlib/Complexity/RAMSimulation.lean",
   "TCSlib/Complexity/RAMSimulation/Sim/Phases.lean",
-  "TCSlib/Complexity/TuringMachine/Build/Embed.lean",
   "TCSlib/Complexity/TuringMachine/Build/NDHost.lean",
-  "TCSlib/Complexity/TuringMachine/Build/Seam.lean"
+  "TCSlib/Complexity/TuringMachine/Build/Seam.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/Encoding.lean",
+  "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean",
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Reach.lean",
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Seam.lean",
+  "TCSlib/Complexity/TuringMachine/Build/InputBit.lean",
+  "TCSlib/Complexity/TuringMachine/Build/KeyTable.lean",
+  "TCSlib/Complexity/TuringMachine/Build/RecordTable.lean",
+  "TCSlib/Complexity/TuringMachine/Build/WordArith.lean",
+  "TCSlib/Complexity/TuringMachine/CfgFacts.lean",
+  "TCSlib/Complexity/TuringMachine/Configuration.lean",
+  "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+  "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+  "TCSlib/Complexity/TuringMachine/Simulation.lean",
+  "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+  "TCSlib/Programs/WordRAM/Extended.lean",
+  "TCSlib/Programs/WordRAM/Steps.lean"
  ],
  "population_head": [
   "TCSlib/Complexity/RAMSimulation.lean",
@@ -36,14 +52,40 @@
   "TCSlib/Complexity/RAMSimulation/Sim/PhaseTape.lean",
   "TCSlib/Complexity/RAMSimulation/Sim/PhaseTests.lean",
   "TCSlib/Complexity/RAMSimulation/Sim/Phases.lean",
-  "TCSlib/Complexity/TuringMachine/Build/Embed.lean",
   "TCSlib/Complexity/TuringMachine/Build/NDHost.lean",
-  "TCSlib/Complexity/TuringMachine/Build/Seam.lean"
+  "TCSlib/Complexity/TuringMachine/Build/Seam.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/Encoding.lean",
+  "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean",
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Reach.lean",
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Seam.lean",
+  "TCSlib/Complexity/TuringMachine/Build/InputBit.lean",
+  "TCSlib/Complexity/TuringMachine/Build/KeyTable.lean",
+  "TCSlib/Complexity/TuringMachine/Build/RecordTable.lean",
+  "TCSlib/Complexity/TuringMachine/Build/WordArith.lean",
+  "TCSlib/Complexity/TuringMachine/CfgFacts.lean",
+  "TCSlib/Complexity/TuringMachine/Configuration.lean",
+  "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+  "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+  "TCSlib/Complexity/TuringMachine/Simulation.lean",
+  "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+  "TCSlib/Programs/WordRAM/Extended.lean",
+  "TCSlib/Programs/WordRAM/Steps.lean"
  ],
- "new": 93,
+ "new": 106,
  "gone": 0,
- "net_directed_pairs": "50 -> 143",
+ "net_directed_pairs": "260 -> 366",
  "pairs": [
+  {
+   "status": "NEW",
+   "target": "PhaseControl.lean::phase_run_avoids",
+   "source": "Deterministic.lean::_root_.Turing.MultiTapeTM.runFrom_one",
+   "chars": 60,
+   "source_chars": 63,
+   "pct": 95,
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`, G170-04); `runFrom_one` is a 63-character one-step equation; `phase_run_avoids` (a run never enters a state no transition targets) cites the same step readers (`runFrom_succ_eq_step'`, `step_of_halt`, `step_of_some`) in its successor case. Different statements."
+  },
   {
    "status": "NEW",
    "target": "PhaseRows.lean::phase_unaryRow",
@@ -63,16 +105,6 @@
    "pct": 91,
    "class": "citation-shape",
    "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
-  },
-  {
-   "status": "NEW",
-   "target": "PhaseBranching.lean::PhaseBranch.seq",
-   "source": "PhaseBlock.lean::PhaseBlock.seq",
-   "chars": 661,
-   "source_chars": 747,
-   "pct": 88,
-   "class": "parallel",
-   "note": "DISCLOSED FOR THE AUDIT. One-exit and two-exit composition: the structures `PhaseBlock` (one exit), `PhaseBranch` (two exits) and `PhaseRow`, their `seq` compositions, and their `phase_machine_of*` packagings share their text and differ in the exit set and the cut. One structure over a finite exit family would merge them; the fill kept two because the two-exit form adds `distinct` and the flag-selected endpoint. Raised in the pack for the auditor's judgment."
   },
   {
    "status": "NEW",
@@ -126,6 +158,26 @@
   },
   {
    "status": "NEW",
+   "target": "PhaseCore.lean::PhaseFrame",
+   "source": "InputBit.lean::InputBitData",
+   "chars": 70,
+   "source_chars": 89,
+   "pct": 79,
+   "class": "parallel",
+   "note": "Cited home newly in the screen (`population_extra`, G170-04); `PhaseFrame` (public, 8 tapes, `Sim/PhaseCore`) and `InputBitData` (private, 5 tapes, `Build/InputBit`, merged with #388) are the same notion: a configuration's input head, work tapes, heads and output, without control. A tape-count-generic frame in the Turing-machine library could serve both; listed as a follow-up candidate (its home needs Seyoon's ruling). Not a copied proof: two four-field records."
+  },
+  {
+   "status": "NEW",
+   "target": "InputBit.lean::InputBitData",
+   "source": "PhaseCore.lean::PhaseFrame",
+   "chars": 70,
+   "source_chars": 89,
+   "pct": 79,
+   "class": "parallel",
+   "note": "Cited home newly in the screen (`population_extra`, G170-04); The reverse direction of the pair above. `PhaseFrame` (public, 8 tapes, `Sim/PhaseCore`) and `InputBitData` (private, 5 tapes, `Build/InputBit`, merged with #388) are the same notion: a configuration's input head, work tapes, heads and output, without control. A tape-count-generic frame in the Turing-machine library could serve both; listed as a follow-up candidate (its home needs Seyoon's ruling). Not a copied proof: two four-field records."
+  },
+  {
+   "status": "NEW",
    "target": "PhaseRows.lean::phase_intRow",
    "source": "PhaseRows.lean::phase_unaryRow",
    "chars": 385,
@@ -136,16 +188,6 @@
   },
   {
    "status": "NEW",
-   "target": "PhaseControl.lean::phase_machine_ofBlock",
-   "source": "PhaseBranching.lean::phase_machine_ofBranch",
-   "chars": 806,
-   "source_chars": 1035,
-   "pct": 78,
-   "class": "parallel",
-   "note": "DISCLOSED FOR THE AUDIT. One-exit and two-exit composition: the structures `PhaseBlock` (one exit), `PhaseBranch` (two exits) and `PhaseRow`, their `seq` compositions, and their `phase_machine_of*` packagings share their text and differ in the exit set and the cut. One structure over a finite exit family would merge them; the fill kept two because the two-exit form adds `distinct` and the flag-selected endpoint. Raised in the pack for the auditor's judgment."
-  },
-  {
-   "status": "NEW",
    "target": "PhaseRows.lean::phase_arithRow",
    "source": "PhaseRows.lean::phase_intRow",
    "chars": 327,
@@ -153,26 +195,6 @@
    "pct": 78,
    "class": "citation-shape",
    "note": "Instances of the shared row placement `phase_wordRow` (or `phase_nativeRow`), each with its own native row from jobs A/C; the shared text is the placement obligations (`Cfg.select_eq`, `phase_wordAt_select`, `phase_wordAt_frame`, `phase_scratch_select`)."
-  },
-  {
-   "status": "NEW",
-   "target": "PhaseBlock.lean::PhaseBlock.seq",
-   "source": "PhaseBranching.lean::PhaseBranch.seq",
-   "chars": 661,
-   "source_chars": 858,
-   "pct": 77,
-   "class": "parallel",
-   "note": "DISCLOSED FOR THE AUDIT. One-exit and two-exit composition: the structures `PhaseBlock` (one exit), `PhaseBranch` (two exits) and `PhaseRow`, their `seq` compositions, and their `phase_machine_of*` packagings share their text and differ in the exit set and the cut. One structure over a finite exit family would merge them; the fill kept two because the two-exit form adds `distinct` and the flag-selected endpoint. Raised in the pack for the auditor's judgment."
-  },
-  {
-   "status": "NEW",
-   "target": "PhaseTests.lean::PhaseBranch",
-   "source": "PhaseBlock.lean::PhaseBlock",
-   "chars": 239,
-   "source_chars": 313,
-   "pct": 76,
-   "class": "parallel",
-   "note": "DISCLOSED FOR THE AUDIT. One-exit and two-exit composition: the structures `PhaseBlock` (one exit), `PhaseBranch` (two exits) and `PhaseRow`, their `seq` compositions, and their `phase_machine_of*` packagings share their text and differ in the exit set and the cut. One structure over a finite exit family would merge them; the fill kept two because the two-exit form adds `distinct` and the flag-selected endpoint. Raised in the pack for the auditor's judgment."
   },
   {
    "status": "NEW",
@@ -193,16 +215,6 @@
    "pct": 75,
    "class": "citation-shape",
    "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
-  },
-  {
-   "status": "NEW",
-   "target": "PhaseBlock.lean::PhaseBlock",
-   "source": "PhaseTests.lean::PhaseBranch",
-   "chars": 239,
-   "source_chars": 323,
-   "pct": 74,
-   "class": "parallel",
-   "note": "DISCLOSED FOR THE AUDIT. One-exit and two-exit composition: the structures `PhaseBlock` (one exit), `PhaseBranch` (two exits) and `PhaseRow`, their `seq` compositions, and their `phase_machine_of*` packagings share their text and differ in the exit set and the cut. One structure over a finite exit family would merge them; the fill kept two because the two-exit form adds `distinct` and the flag-selected endpoint. Raised in the pack for the auditor's judgment."
   },
   {
    "status": "NEW",
@@ -246,6 +258,16 @@
   },
   {
    "status": "NEW",
+   "target": "Catalog.lean::walkTM_run_ofCfg",
+   "source": "PhaseEmit.lean::phase_emitAction_apply",
+   "chars": 203,
+   "source_chars": 284,
+   "pct": 71,
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`, G170-04); Both discharge an applied action's fields through the `Action.apply` field readers (`Action.apply_state`, tape and head equations), for different actions: emitting a bit versus moving or transferring."
+  },
+  {
+   "status": "NEW",
    "target": "Phases.lean::exists_phase",
    "source": "PhaseControl.lean::PhaseMachine.weaken",
    "chars": 125,
@@ -273,6 +295,16 @@
    "pct": 71,
    "class": "citation-shape",
    "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseCore.lean::PhaseFrame.ofCfg",
+   "source": "TCSlib/Complexity/TuringMachine/Build/Contract/Seam.lean::_root_.Turing.Cfg.bindState",
+   "chars": 86,
+   "source_chars": 122,
+   "pct": 70,
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`, G170-04); Both rebuild a configuration-shaped record field by field from the same five `Cfg` fields; different records and purposes. `bindState` redirects the state of a configuration; `PhaseFrame.ofCfg` drops it."
   },
   {
    "status": "NEW",
@@ -406,16 +438,6 @@
   },
   {
    "status": "NEW",
-   "target": "PhaseEmit.lean::phase_emitBlock",
-   "source": "PhaseControl.lean::phase_reaches_zero",
-   "chars": 124,
-   "source_chars": 190,
-   "pct": 65,
-   "class": "citation-shape",
-   "note": "The emission block composes the zero-time prefix `phase_reaches_zero`; shared text is that citation."
-  },
-  {
-   "status": "NEW",
    "target": "PhaseRows.lean::PhaseFrame.write",
    "source": "PhaseEmit.lean::PhaseFrame.emit",
    "chars": 87,
@@ -506,13 +528,13 @@
   },
   {
    "status": "NEW",
-   "target": "PhaseBranching.lean::phase_machine_ofBranch",
-   "source": "PhaseControl.lean::phase_machine_ofBlock",
-   "chars": 806,
-   "source_chars": 1290,
+   "target": "TCSlib/Complexity/TuringMachine/Build/Contract/Seam.lean::_root_.Turing.Cfg.bindState",
+   "source": "PhaseCore.lean::PhaseFrame.ofCfg",
+   "chars": 86,
+   "source_chars": 138,
    "pct": 62,
-   "class": "parallel",
-   "note": "DISCLOSED FOR THE AUDIT. One-exit and two-exit composition: the structures `PhaseBlock` (one exit), `PhaseBranch` (two exits) and `PhaseRow`, their `seq` compositions, and their `phase_machine_of*` packagings share their text and differ in the exit set and the cut. One structure over a finite exit family would merge them; the fill kept two because the two-exit form adds `distinct` and the flag-selected endpoint. Raised in the pack for the auditor's judgment."
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`, G170-04); The reverse direction of the pair above."
   },
   {
    "status": "NEW",
@@ -543,6 +565,16 @@
    "pct": 62,
    "class": "sibling-uniformity",
    "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_wordWrite_at_other",
+   "source": "PhaseTape.lean::phase_single_tape_update",
+   "chars": 71,
+   "source_chars": 114,
+   "pct": 62,
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`, G170-04); Both read a one-tape update at an untouched tape or cell through `Function.update` readers and the tape equations; different updates."
   },
   {
    "status": "NEW",
@@ -626,6 +658,26 @@
   },
   {
    "status": "NEW",
+   "target": "InputBit.lean::inputBit_move_step",
+   "source": "PhaseEmit.lean::phase_emitAction_apply",
+   "chars": 168,
+   "source_chars": 284,
+   "pct": 59,
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`, G170-04); Both discharge an applied action's fields through the `Action.apply` field readers (`Action.apply_state`, tape and head equations), for different actions: emitting a bit versus moving or transferring."
+  },
+  {
+   "status": "NEW",
+   "target": "Catalog.lean::catalog_transferMap_trace",
+   "source": "PhaseTape.lean::phase_single_tape_update",
+   "chars": 67,
+   "source_chars": 114,
+   "pct": 59,
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`, G170-04); Both read a one-tape update at an untouched tape or cell through `Function.update` readers and the tape equations; different updates."
+  },
+  {
+   "status": "NEW",
    "target": "PhaseCompute.lean::phase_sourceBlock",
    "source": "PhaseAtoms.lean::phase_intBlock",
    "chars": 259,
@@ -676,16 +728,6 @@
   },
   {
    "status": "NEW",
-   "target": "PhaseBlock.lean::PhaseBlock",
-   "source": "PhaseCore.lean::PhaseRow",
-   "chars": 175,
-   "source_chars": 300,
-   "pct": 58,
-   "class": "parallel",
-   "note": "DISCLOSED FOR THE AUDIT. One-exit and two-exit composition: the structures `PhaseBlock` (one exit), `PhaseBranch` (two exits) and `PhaseRow`, their `seq` compositions, and their `phase_machine_of*` packagings share their text and differ in the exit set and the cut. One structure over a finite exit family would merge them; the fill kept two because the two-exit form adds `distinct` and the flag-selected endpoint. Raised in the pack for the auditor's judgment."
-  },
-  {
-   "status": "NEW",
    "target": "PhaseMemoryMachines.lean::phase_storeMachine",
    "source": "PhaseMemoryMachines.lean::phase_oneMachine",
    "chars": 200,
@@ -703,6 +745,16 @@
    "pct": 58,
    "class": "citation-shape",
    "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
+  },
+  {
+   "status": "NEW",
+   "target": "Simulation.lean::rightCfg",
+   "source": "PhaseRows.lean::PhaseFrame.write",
+   "chars": 75,
+   "source_chars": 129,
+   "pct": 58,
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`, G170-04); Both rebuild a configuration-shaped record field by field from the same five `Cfg` fields; different records and purposes. `rightCfg` (the library's simulation) builds a right-component configuration; the phase frame constructors write, emit, install or drop control."
   },
   {
    "status": "NEW",
@@ -756,6 +808,56 @@
   },
   {
    "status": "NEW",
+   "target": "KeyTable.lean::kt_skip_run",
+   "source": "PhaseHost.lean::phase_frame_bindState",
+   "chars": 167,
+   "source_chars": 291,
+   "pct": 57,
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`, G170-04); `phase_frame_bindState` redirects a frame configuration's state (`Cfg.ext` with the `bindState` readers); KeyTable's run lemmas (merged with #389) re-tag a configuration through the same five field readers before running a phase. Different statements."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_inspect_run",
+   "source": "PhaseHost.lean::phase_frame_bindState",
+   "chars": 167,
+   "source_chars": 291,
+   "pct": 57,
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`, G170-04); `phase_frame_bindState` redirects a frame configuration's state (`Cfg.ext` with the `bindState` readers); KeyTable's run lemmas (merged with #389) re-tag a configuration through the same five field readers before running a phase. Different statements."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_copy_run",
+   "source": "PhaseHost.lean::phase_frame_bindState",
+   "chars": 167,
+   "source_chars": 291,
+   "pct": 57,
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`, G170-04); `phase_frame_bindState` redirects a frame configuration's state (`Cfg.ext` with the `bindState` readers); KeyTable's run lemmas (merged with #389) re-tag a configuration through the same five field readers before running a phase. Different statements."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_compare_run",
+   "source": "PhaseHost.lean::phase_frame_bindState",
+   "chars": 167,
+   "source_chars": 291,
+   "pct": 57,
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`, G170-04); `phase_frame_bindState` redirects a frame configuration's state (`Cfg.ext` with the `bindState` readers); KeyTable's run lemmas (merged with #389) re-tag a configuration through the same five field readers before running a phase. Different statements."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_rewind_run",
+   "source": "PhaseHost.lean::phase_frame_bindState",
+   "chars": 166,
+   "source_chars": 291,
+   "pct": 57,
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`, G170-04); `phase_frame_bindState` redirects a frame configuration's state (`Cfg.ext` with the `bindState` readers); KeyTable's run lemmas (merged with #389) re-tag a configuration through the same five field readers before running a phase. Different statements."
+  },
+  {
+   "status": "NEW",
    "target": "PhaseMemoryMachines.lean::phase_binaryMachine",
    "source": "PhaseMemoryMachines.lean::phase_loadMachine",
    "chars": 203,
@@ -776,6 +878,16 @@
   },
   {
    "status": "NEW",
+   "target": "Simulation.lean::rightCfg",
+   "source": "PhaseEmit.lean::PhaseFrame.emit",
+   "chars": 75,
+   "source_chars": 134,
+   "pct": 56,
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`, G170-04); Both rebuild a configuration-shaped record field by field from the same five `Cfg` fields; different records and purposes. `rightCfg` (the library's simulation) builds a right-component configuration; the phase frame constructors write, emit, install or drop control."
+  },
+  {
+   "status": "NEW",
    "target": "NDHost.lean::streamStartCfg",
    "source": "PhaseEmit.lean::PhaseFrame.emit",
    "chars": 75,
@@ -793,16 +905,6 @@
    "pct": 56,
    "class": "sibling-uniformity",
    "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
-  },
-  {
-   "status": "NEW",
-   "target": "PhaseCore.lean::PhaseRow",
-   "source": "PhaseBlock.lean::PhaseBlock",
-   "chars": 175,
-   "source_chars": 313,
-   "pct": 56,
-   "class": "parallel",
-   "note": "DISCLOSED FOR THE AUDIT. One-exit and two-exit composition: the structures `PhaseBlock` (one exit), `PhaseBranch` (two exits) and `PhaseRow`, their `seq` compositions, and their `phase_machine_of*` packagings share their text and differ in the exit set and the cut. One structure over a finite exit family would merge them; the fill kept two because the two-exit form adds `distinct` and the flag-selected endpoint. Raised in the pack for the auditor's judgment."
   },
   {
    "status": "NEW",
@@ -836,6 +938,26 @@
   },
   {
    "status": "NEW",
+   "target": "KeyTable.lean::kt_markField_run",
+   "source": "PhaseHost.lean::phase_frame_bindState",
+   "chars": 160,
+   "source_chars": 291,
+   "pct": 55,
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`, G170-04); `phase_frame_bindState` redirects a frame configuration's state (`Cfg.ext` with the `bindState` readers); KeyTable's run lemmas (merged with #389) re-tag a configuration through the same five field readers before running a phase. Different statements."
+  },
+  {
+   "status": "NEW",
+   "target": "Catalog.lean::step_of_tapeAction_move",
+   "source": "PhaseEmit.lean::phase_emitAction_apply",
+   "chars": 156,
+   "source_chars": 284,
+   "pct": 55,
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`, G170-04); Both discharge an applied action's fields through the `Action.apply` field readers (`Action.apply_state`, tape and head equations), for different actions: emitting a bit versus moving or transferring."
+  },
+  {
+   "status": "NEW",
    "target": "PhaseTests.lean::phase_testBlock",
    "source": "PhaseCompute.lean::phase_sourceBlock",
    "chars": 188,
@@ -853,6 +975,26 @@
    "pct": 55,
    "class": "citation-shape",
    "note": "Block and schedule compositions from the shared atoms (`phase_keyBlock`, `phase_lookupBlock`, `phase_assignBlock`, `PhaseBlock.ofRow`, `PhaseBlock.seq`); each composes different atoms for its instruction, and the shared text is the `obtain`/`seq` composition."
+  },
+  {
+   "status": "NEW",
+   "target": "Simulation.lean::rightCfg",
+   "source": "PhaseCore.lean::PhaseFrame.cfg",
+   "chars": 80,
+   "source_chars": 147,
+   "pct": 54,
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`, G170-04); Both rebuild a configuration-shaped record field by field from the same five `Cfg` fields; different records and purposes. `rightCfg` (the library's simulation) builds a right-component configuration; the phase frame constructors write, emit, install or drop control."
+  },
+  {
+   "status": "NEW",
+   "target": "Simulation.lean::rightCfg",
+   "source": "PhaseCore.lean::PhaseFrame.ofCfg",
+   "chars": 75,
+   "source_chars": 138,
+   "pct": 54,
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`, G170-04); Both rebuild a configuration-shaped record field by field from the same five `Cfg` fields; different records and purposes. `rightCfg` (the library's simulation) builds a right-component configuration; the phase frame constructors write, emit, install or drop control."
   },
   {
    "status": "NEW",
@@ -876,6 +1018,16 @@
   },
   {
    "status": "NEW",
+   "target": "RecordTable.lean::rt_tail_run",
+   "source": "PhaseLayout.lean::phase_keyAssign_length_le",
+   "chars": 62,
+   "source_chars": 116,
+   "pct": 53,
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`, G170-04); Length arithmetic over joined record fields (`joinFields_length`, `List.length_append`, `omega`); different layouts."
+  },
+  {
+   "status": "NEW",
    "target": "PhaseMemoryMachines.lean::phase_inputMachine",
    "source": "PhaseMemoryMachines.lean::phase_oneMachine",
    "chars": 183,
@@ -886,13 +1038,23 @@
   },
   {
    "status": "NEW",
-   "target": "PhaseTests.lean::PhaseBranch",
+   "target": "PhaseBlock.lean::PhaseCertificate",
    "source": "PhaseCore.lean::PhaseRow",
    "chars": 159,
    "source_chars": 300,
    "pct": 53,
-   "class": "parallel",
-   "note": "DISCLOSED FOR THE AUDIT. One-exit and two-exit composition: the structures `PhaseBlock` (one exit), `PhaseBranch` (two exits) and `PhaseRow`, their `seq` compositions, and their `phase_machine_of*` packagings share their text and differ in the exit set and the cut. One structure over a finite exit family would merge them; the fill kept two because the two-exit form adds `distinct` and the flag-selected endpoint. Raised in the pack for the auditor's judgment."
+   "class": "structure-interface",
+   "note": "Cited home newly in the screen (`population_extra`, G170-04); Not new in kind: the merged certificate's machine/entry/run fields follow `PhaseRow`'s interface (the fill's REPORT: 159/300, replacing the old records' matches). Two structures, no proof text."
+  },
+  {
+   "status": "NEW",
+   "target": "RecordTable.lean::joinFields_cfgRecord_length",
+   "source": "PhaseLayout.lean::phase_keyAssign_length_le",
+   "chars": 61,
+   "source_chars": 116,
+   "pct": 53,
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`, G170-04); Length arithmetic over joined record fields (`joinFields_length`, `List.length_append`, `omega`); different layouts."
   },
   {
    "status": "NEW",
@@ -906,6 +1068,26 @@
   },
   {
    "status": "NEW",
+   "target": "Phases.lean::exists_verdictPhase",
+   "source": "WordArith.lean::wordProbe_run",
+   "chars": 81,
+   "source_chars": 157,
+   "pct": 52,
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`, G170-04); Both run a one-step stationary machine through the step readers; `exists_verdictPhase` emits the verdict and halts, `wordProbe_run` probes a word cell."
+  },
+  {
+   "status": "NEW",
+   "target": "PhaseEmit.lean::phase_emitAction_apply",
+   "source": "InputBit.lean::inputBit_move_step",
+   "chars": 168,
+   "source_chars": 326,
+   "pct": 52,
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`, G170-04); Both discharge an applied action's fields through the `Action.apply` field readers (`Action.apply_state`, tape and head equations), for different actions: emitting a bit versus moving or transferring."
+  },
+  {
+   "status": "NEW",
    "target": "PhaseMemoryMachines.lean::phase_oneMachine",
    "source": "PhaseMemoryMachines.lean::phase_inputMachine",
    "chars": 183,
@@ -913,16 +1095,6 @@
    "pct": 51,
    "class": "sibling-uniformity",
    "note": "Per-instruction phase certificates: each packages its own schedule through `phase_machine_ofBlock` (or the branch/fork form) and `PhasePost`; the shared text is the certificate packaging, the schedules differ."
-  },
-  {
-   "status": "NEW",
-   "target": "PhaseTests.lean::phase_testBlock",
-   "source": "PhaseRows.lean::phase_nativeRow",
-   "chars": 103,
-   "source_chars": 203,
-   "pct": 51,
-   "class": "citation-shape",
-   "note": "The test block places its native test through `phase_nativeRow`'s obligations."
   },
   {
    "status": "NEW",
@@ -961,18 +1133,8 @@
    "chars": 81,
    "source_chars": 161,
    "pct": 50,
-   "class": "sibling-uniformity",
-   "note": "Record-shape match: each builds a `Turing.Cfg` from a frame with the same five fields (`state`, `inputPos`, `workTapes`, `workTapePos`, `output`), differing in the field values. `guessRunCfg`/`streamStartCfg` are existing NDHost definitions matched by shape only."
-  },
-  {
-   "status": "NEW",
-   "target": "PhaseCoin.lean::phase_choiceMachine",
-   "source": "PhaseControl.lean::phase_reaches_zero",
-   "chars": 95,
-   "source_chars": 190,
-   "pct": 50,
-   "class": "citation-shape",
-   "note": "The coin's choice machine composes the zero-time prefix `phase_reaches_zero`; shared text is that citation."
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`, G170-04); Both rebuild a configuration-shaped record field by field from the same five `Cfg` fields; different records and purposes. `streamStartCfg` is the stream host's start; `PhaseFrame.cfg` installs a control state on a frame."
   }
  ]
 }
