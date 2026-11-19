@@ -1,17 +1,20 @@
-# Cleanup Stage 2, S2-A batch D4 (Seyoon's rulings of 2026-11-18): report (interim)
+# Cleanup Stage 2, S2-A batch D4 (Seyoon's rulings of 2026-11-18): report
 
-**Status:** the code is finished, but the checks are not.
-- **Code:** all four items are committed, one signed commit each, and pushed fast-forward to `cleanup/stage2-s2a`.
-  The head is **`9f7f409c2e09749428db75b9ddd324f92695e4af`**.
-- **Done at the head:** the development seals, decls2, the admissions and the lints.
-- **Not done:** the D4 replay is at 84 of 288 modules, and the final seals have not been run.
-- **First stop:** a container restart killed the replay.
-- **Second stop:** I resumed it, and the runner's disk guard stopped it when free space fell to about 1.4 GB. Other jobs'
-  directories were filling the disk. Under the 2,000 MB rule I stopped there. My own scratch has nothing large enough to
-  free, because the D1 and D2 evidence stay.
-- **Resume:** run the queue file `replay/plan/queue-resume2.txt` (204 modules) once free space is above 2,000 MB.
+**Status:** D4 is done in-house.
+- **Code:** the four ruled items are committed, one signed commit each, and pushed fast-forward to
+  `cleanup/stage2-s2a`. The head is **`9f7f409c2e09749428db75b9ddd324f92695e4af`**.
+- **Replay:** clean.
+- **Seals:** coe-A and coe-B give 0 errors on all 10 S2-A owners checked, now including `SamplingFinDist` and
+  `CollisionOutput`. `FromPermutation` keeps job J3's residue, identical to D3's.
+- **S2-A rows:** every row is done. The only size findings left are the ones assigned to Stage 3.
+- **Interruptions:** the replay was interrupted twice and resumed both times (§2):
+  - a container restart killed it;
+  - then its disk guard stopped it below 1.5 GB free;
+  - the coordinator freed disk (Q-D4-1 (a)).
 
 Evidence is in `$SP/s2a-d4/`, where `$SP` is `/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad`.
+Its `SHA256SUMS` file covers 544 files and has SHA-256
+`51d39684348f257592ed45b56c8f745c92e36a84b56585e2c164b7a8def06b30`.
 
 | Pin | Value |
 |---|---|
@@ -69,29 +72,46 @@ Evidence is in `$SP/s2a-d4/`, where `$SP` is `/tmp/claude-0/-home-user-tcslib/d0
 | Check | Result |
 |---|---|
 | Per-item file checks (`lean_check_tree.sh` on a `cp -al` of D3's tree, since deleted) | all changed files, plus the direct importers of `Extractors` (2), `HardCore/Functions` (3) and `CollisionOutput` (2): rc 0, 0 errors, no `sorry` |
-| Development seals (records of D2's or D3's head) | `SamplingFinDist` A/B **0/0** (1/1 at D3); `HardCore/Functions` 0/0; `CollisionOutput` A/B **0/0** (1/1 at D3) |
-| decls2 vs D3 head | ADDED `epsClose_iff`, `rawCollisionInputs_fst`, `rawCollisionInputs_snd` (the last two existed before as generated lemmas; decls2 does not see `simps!` output); nothing CHANGED or REMOVED. The private `invProbAt_glPad_eq` is not tracked |
-| decls2 vs base `61a5f0fb` | 41 ADDED, 15 CHANGED, 4 REMOVED: D3's list plus those 3 ADDED |
+| Development seals (records of D2's or D3's head) | `SamplingFinDist` A/B 0/0 (1/1 at D3); `HardCore/Functions` 0/0; `CollisionOutput` A/B 0/0 (1/1 at D3) |
+| decls2 vs D3 head | ADDED `epsClose_iff`, `rawCollisionInputs_fst`, `rawCollisionInputs_snd` (the last two existed before as generated lemmas; decls2 does not see `simps!` output; same names and statements); nothing CHANGED or REMOVED. The private `invProbAt_glPad_eq` is not tracked |
+| decls2 vs base `61a5f0fb` | 41 ADDED, 15 CHANGED, 4 REMOVED: D3's list plus those 3 ADDED, all ruled |
 | Admissions (`sorryscan.py`) | `TOTAL 192 in 44 modules; native_decide 0; axiom 0`, byte-identical to D3 |
-| `style_lint` on the 9 files | 2 findings, both size: `Collections` (1,177 lines, already over at the base) and `Factoring` (1,924, Stage 3). The 5 sketch findings and `OneWayYao`'s size finding are gone |
+| `style_lint` on the 9 files | 2 findings, both size: `Collections` (1,177 lines, already over at the base) and `Factoring` (1,924, Stage 3, Q-D3-2 (A)). The 5 sketch findings and `OneWayYao`'s size finding are gone. `OneWay` is not touched; its size finding stays for Stage 3 |
 | `campaign_style_lint --check8b` | FAIL 25/92 unchanged; WARN Complexity 389 unchanged, Cryptography 105 → 104 (`OneWayYao` size WARN gone) |
-| D3 tree rehash (`$SP/olean-replay-s2a-d3`) | byte-identical map before, after the copy, after the restart and after the stop |
-| **D4 replay** | **incomplete**; details below |
 
-**The D4 replay:**
-- **Setup:** `$SP/olean-replay-s2a-d4` is a `cp -al` copy of D3's tree. The plan, made from D3's checked state, lists 9
-  changed modules: 288 to build and 1,159 reused.
-- **Progress:** 84 modules are built, all rc 0 with 0 errors. Each built `.olean` matches its run record.
-- **Interruptions:** the run was killed once by the container restart, during `EncryptThenTag/CPAHandler`. That module
-  is rebuilt in the resumed run. The run was then stopped once by its disk guard.
-- **Left:** 204 modules, listed in `replay/plan/queue-resume2.txt`. Every module not yet built keeps D3's object, and the
-  resume rebuilds each of them.
+**The D4 replay** ran on `$SP/olean-replay-s2a-d4`, a `cp -al` copy of D3's tree, which was kept intact as the parent.
 
-**Still to run once disk allows:**
-- the rest of the replay;
-- `permod`, then `stateplan update`/`check`, the link counts and the output map;
-- the final coe-A/coe-B seals on the touched owners and `FromPermutation`, where J3's residue is expected unchanged;
-- the D3 rehash at the end.
+| Check | Result |
+|---|---|
+| Plan | from D3's checked state at `9f7f409c`: 9 changed modules, 288 to build, 1,159 reused |
+| Runs | 3. The first was killed by the container restart after 77 modules, during `EncryptThenTag/CPAHandler`. The second was stopped by the runner's disk guard after 84. The third ran the last 204 (`queue-resume2.txt`) |
+| Resume rule | before each resume, every completed module's `.olean` was checked against its run record (all matched), and every module without a completed record (`CPAHandler` among them) was rebuilt |
+| `permod` | 288 modules; rc≠0 0; `error:` 0; `error(` 0; `sorry` 0; no log/record mismatches |
+| `stateplan update`, then `check` over the 1,447-module order | 288 taken; **RESULT OK** |
+| Link counts | 288 rebuilt at link count 1; 1,159 reused, all hard links |
+| Output map | 1,478 entries, SHA-256 `1abe4bed0742baa2495c4f193b9c70192ac8aaca121fc8c10761027795b2692d` |
+| Output map vs D3's map | changed only the 9 changed modules |
+| `NthRootLemmas` overlay | `c0a9cff0…` |
+| D3 tree rehash | byte-identical map before, after the copy, after the restart, after the disk stop, before the last resume, after the replay and at the end |
+| D4 tree rehash | byte-identical map after the seals |
+
+**Seals at the head** (`seal/d4/`, D4 tree, the archived instrumenter unmodified, gated runner):
+- **Owners:** 11 — the 9 changed modules, plus `HardCorePermutation/GoldreichLevin` and
+  `Generators/Asymptotic/FromPermutation` downstream.
+- **Probes run:** 20, because 2 B probes are byte-identical to their A probe (`order/ab-dedup.tsv`).
+
+| Owner | coe-A D3 → D4 | coe-B D3 → D4 |
+|---|---|---|
+| `Asymptotic/SamplingFinDist` | 1 → **0** | 1 → **0** (= A) |
+| `Hashing/SIS/CollisionOutput` | 1 → **0** | 1 → **0** |
+| `InformationTheory/Extractors` | (not sealed before) → 0 | (= A) 0 |
+| `Collections`, `EnsemblesLemmas`, `HardCoreLemmas`, `OneWayYao`, `Factoring`, `HardCore/Functions`, `GoldreichLevin` | 0 → 0 | 0 → 0 |
+| `Generators/Asymptotic/FromPermutation` | 2 → 2 | 19 → 19 |
+
+- **The `FromPermutation` residue is job J3's**, and unchanged:
+  - it is the same declarations as at D3 (`exists_owpPredictorSnoc`; with B, also `iterPRG`, `iterPRG_eq_expand`,
+    `cor_81_7`, `owpGenPRG*` and `owp_hardcore_prg`), which are scope rows S2-SL-313..315 and S2-BO-002/009/155..163;
+  - the error lines are identical to D3's, line for line.
 
 ## 3. Deviations
 
@@ -101,11 +121,12 @@ Evidence is in `$SP/s2a-d4/`, where `$SP` is `/tmp/claude-0/-home-user-tcslib/d0
 - **Item 2, trim size:** `OneWayYao` was trimmed to 999 lines. `style_lint` counts one line more than `wc`, so this is the
   most it can have and pass.
 
-## 4. Questions
+## 4. Items left
 
-- **Q-D4-1. Disk for the rest of the replay** (about 0.2–0.4 GB of new objects).
-  - **(a) Recommended:** free space to above 2,000 MB (other jobs' scratch), then I resume from
-    `queue-resume2.txt`, followed by the acceptance checks and the seals.
-  - (b) Allow me to delete my D1/D2 evidence seal logs (`$SP/s2a-d2/seal`, 574 MB) after archiving their `SHA256SUMS`.
+None in S2-A. S2-SL-214 is complete (item 1). The remaining size findings belong to Stage 3:
+- `OneWay`, `Factoring` and the other files already over 1,000 lines;
+- `Collections` (1,177), already over at the base.
 
-**Not yet clear to merge — the D4 replay (204 modules) and the final seals are pending: disk below 2,000 MB.**
+The `invProbAt_glPad_eq` lemma (item 3) and the two explicit field lemmas (item 4) are the ruled additions.
+
+**Ready to run** — S2-A D4 is complete at `9f7f409c`; the replay output `$SP/olean-replay-s2a-d4` is kept for adoption.
