@@ -15,31 +15,47 @@ set_option autoImplicit false
 /-!
 # Reader bridge for frozen definitions without published readers (quarantined)
 
-**Disclosed Rule-10 exception (user ruling on EF-H12's E-SCOPE, 2026-11-18: "readers in our
-files").** The definitions below live in read-only files (`Complexity/**`, Arora–Barak and course
-material) and publish no reader, so no consumer can read them without unfolding. This file states
-each missing reader, with the content its owner would publish, proved by `rfl`/`Iff.rfl`; it is the
-**only** place of `ZeroKnowledge/LevinHardness/` that sees through these definitions. Every
-statement is a one-line reader to be moved, unchanged, into the owner file by an owner PR, after
-which this file is deleted and its consumers re-pointed one-for-one (scope requests in the
-delivery's `REPORT.md`).
+**Bounded, recorded Rule-10 exception** (decision log `PassShelatChapter5-8Plan.md`, row
+"EF-H12-R1 ruled (A)", 2026-11-18, under EF-W1-R (A); ledger DL-65). The definitions below live in
+files this development may not edit (`Complexity/**`, including the course material, and
+`ZeroKnowledge/NP.lean`) and publish no reader, so no consumer can read them without unfolding.
+This file states each missing reader, with the content its owner would publish; it is the **only**
+place of `ZeroKnowledge/LevinHardness/` that sees through these definitions. It holds exactly these
+27 readers and nothing else, each to be moved unchanged into its owner file:
 
-| Reader | Definition | Owner file |
-|---|---|---|
-| `levinNPHard_iff` | `TCSlib.Cryptography.LevinNPHard` | `ZeroKnowledge/NP.lean:654` |
-| `toCNF_eq` | `BoolCircuit.DAGCircuit.toCNF` | `CircuitComplexity/DAGCircuitSat.lean:267` |
-| `widthAtMost_iff` | `Std.Sat.CNF.WidthAtMost` | `Formulas/CNF.lean:102` |
-| `numVars_eq` | `CNF.numVars` | `Formulas/CNF.lean:96` |
-| `serialize*_eq` (three) | `CNF.serialize*` | `Formulas/CNFEncoding.lean:99-110` |
-| `decode_eq`, `fallback_eq` | `CNF.decode`, `fallback` | `CNFEncoding.lean:169-175` |
-| `syntaxStep_eq`, `syntaxOK_eq` | `CNF.syntaxStep`, `syntaxOK` | `CNFEncoding.lean:608-723` |
-| `satisfiesLiteral_pos`, `_neg` | `SATtoColor.SatisfiesLiteral` | `ThreeSATToColoring.lean` |
-| `satisfiesClause_eq` | `SATtoColor.SatisfiesClause` | same |
-| `satisfiesSat3_eq` | `SATtoColor.SatisfiesSat3` | same |
-| `isSatisfiable_iff` | `SATtoColor.IsSatisfiable` | same |
-| `is3Colorable_iff` | `SATtoColor.Is3Colorable` | same |
-| `reductionGraph_adj` | `SATtoColor.ReductionGraph` | same |
-| `edgeRelation_*` (case lemmas) | `SATtoColor.EdgeRelation` | same |
+* the 10 readers of `Formulas/CNF.lean`, `Formulas/CNFEncoding.lean` and
+  `CircuitComplexity/DAGCircuitSat.lean`, by one reader-only owner PR; their rows here are deleted
+  when it merges;
+* `levinNPHard_iff`, into `ZeroKnowledge/NP.lean` after PR #390 (Stage 2) merges;
+* the 16 readers of the course file `NPReductions/ThreeSATToColoring.lean`, by its reader-only
+  owner PR (decision-log row "EF-H12-R2 ruled (B)").
+
+Their consumers are then re-pointed one-for-one, and this file is deleted.
+
+**Proofs.** 17 readers restate their definition by `rfl`/`Iff.rfl`. The other 10 are **case
+lemmas**: they state the definition one case at a time rather than restating its body.
+`syntaxStep_eq` is proved by `fin_cases`/`cases` and `rfl` in each case; of the nine
+`edgeRelation_*` lemmas, `edgeRelation_literal_gadget` and `edgeRelation_gadget_literal` are proved
+by `cases`/`fin_cases` and `rfl`, and the other seven by `simp` with `EdgeRelation`'s equation
+lemmas (after `cases`/`fin_cases` for some).
+
+| Reader | Definition | Owner file | Proof |
+|---|---|---|---|
+| `levinNPHard_iff` | `TCSlib.Cryptography.LevinNPHard` | `ZeroKnowledge/NP.lean:654` | `Iff.rfl` |
+| `toCNF_eq` | `BoolCircuit.DAGCircuit.toCNF` | `CircuitComplexity/DAGCircuitSat.lean:267` | `rfl` |
+| `widthAtMost_iff` | `Std.Sat.CNF.WidthAtMost` | `Formulas/CNF.lean:102` | `Iff.rfl` |
+| `numVars_eq` | `CNF.numVars` | `Formulas/CNF.lean:96` | `rfl` |
+| `serialize*_eq` (three) | `CNF.serialize*` | `Formulas/CNFEncoding.lean:99-110` | `rfl` |
+| `decode_eq`, `fallback_eq` | `CNF.decode`, `fallback` | `CNFEncoding.lean:169-175` | `rfl` |
+| `syntaxStep_eq` | `CNF.syntaxStep` | `CNFEncoding.lean:608` | case lemma |
+| `syntaxOK_eq` | `CNF.syntaxOK` | `CNFEncoding.lean:723` | `rfl` |
+| `satisfiesLiteral_pos`, `_neg` | `SATtoColor.SatisfiesLiteral` | `ThreeSATToColoring` | `rfl` |
+| `satisfiesClause_eq` | `SATtoColor.SatisfiesClause` | same | `rfl` |
+| `satisfiesSat3_eq` | `SATtoColor.SatisfiesSat3` | same | `rfl` |
+| `isSatisfiable_iff` | `SATtoColor.IsSatisfiable` | same | `Iff.rfl` |
+| `is3Colorable_iff` | `SATtoColor.Is3Colorable` | same | `Iff.rfl` |
+| `reductionGraph_adj` | `SATtoColor.ReductionGraph` | same | `Iff.rfl` |
+| `edgeRelation_*` (nine) | `SATtoColor.EdgeRelation` | same | case lemmas |
 
 ## Main definitions
 

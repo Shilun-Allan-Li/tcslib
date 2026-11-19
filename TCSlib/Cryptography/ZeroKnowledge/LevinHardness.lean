@@ -31,8 +31,8 @@ unconditional.
 ## Contents
 
 * `Relations` — the witness relations `R_CKT` and `R_3SAT`.
-* `Bridge` — quarantined readers for frozen definitions without published readers (disclosed
-  Rule-10 exception, user ruling; scope requests).
+* `Bridge` — quarantined readers for frozen definitions without published readers (bounded
+  Rule-10 exception, decision-log row "EF-H12-R1 ruled (A)"; repaid by owner PRs).
 * `Verifier` — step 1: certificate, verifier in `P`, tableau instance map [AB09, Lemma 6.10].
 * `CircuitWitness` — step 2: the Tseitin map with the wire values as witness [AB09, Lemma 6.11].
 * `Gadget` — the course gadget graph laid out on `Fin N`.

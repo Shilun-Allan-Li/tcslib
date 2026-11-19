@@ -20,7 +20,8 @@ along the vertex equivalence `vertexEquiv K`, for the formula `f` of the clause 
 `ReductionGraph f`, which by the course theorem `SATtoColor.SATtoColorReduction` makes `f`
 satisfiable: the soundness of the reduction is **not** re-proved here, it is transported.
 The definitions of the course file are read only through the quarantined readers of
-`LevinHardness/Bridge.lean` (user ruling, disclosed there).
+`LevinHardness/Bridge.lean` (the bounded Rule-10 exception of decision-log row
+"EF-H12-R1 ruled (A)", disclosed there).
 
 **Statement change (disclosed).** The brief proposes an explicit graph isomorphism; soundness
 needs only the homomorphism `ReductionGraph f →g gadgetSimpleGraph K mem` (the other direction,
