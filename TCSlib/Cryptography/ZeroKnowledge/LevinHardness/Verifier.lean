@@ -127,10 +127,33 @@ theorem stripCert_eq (z : List Bool) :
         | none => []
       | none => [] := rfl
 
-/-- **The marker strip is polynomial-time** (`Turing.FinTM.computesFunInTime_stripLast`). -/
+/-- **The marker strip is polynomial-time** (`Turing.FinTM.computesFunInTime_stripLast`).
+
+**Proof sketch.** The catalog row computes, in time `c (n + 1)²`, a function stated as a nested
+anonymous `match`. It equals `stripCert` pointwise: split the outer `match` on `pairDecode z`,
+case on `splitAtLastTrue v`, and rewrite the inner `match` by the equation lemmas `eq_1`/`eq_2` of
+its compiled matcher `Turing.FinTM.stripLastTM_computes.match_1`, never by unfolding it; the
+`stripCert` side is `stripCert_eq`. Transport `computesFunInTime_stripLast` along this equality and
+conclude by `polyTimeComputable_iff`. -/
 theorem polyTimeComputable_stripCert : PolyTimeComputable stripCert := by
   obtain ⟨M, c, hM⟩ := FinTM.computesFunInTime_stripLast
-  exact (polyTimeComputable_iff _).2 ⟨M, c, 2, hM⟩
+  refine (polyTimeComputable_iff _).2 ⟨M, c, 2, ?_⟩
+  refine cast (congrArg (fun f => M.ComputesFunInTime f fun n => c * (n + 1) ^ 2)
+    (funext fun z => ?_)) hM
+  beta_reduce
+  split
+  · rename_i a v hz
+    cases hv : splitAtLastTrue v with
+    | none =>
+      refine (FinTM.stripLastTM_computes.match_1.eq_2 (fun _ => List Bool)
+        (fun u => pairEncode a u) (fun _ => [])).trans ?_
+      simp only [stripCert_eq, hz, hv]
+    | some u =>
+      refine (FinTM.stripLastTM_computes.match_1.eq_1 (fun _ => List Bool) u
+        (fun u => pairEncode a u) (fun _ => [])).trans ?_
+      simp only [stripCert_eq, hz, hv]
+  · rename_i hz
+    simp only [stripCert_eq, hz]
 
 /-- **The verifier test** for the decider `b` of a witness relation: strip the certificate of
 `⟨x, u⟩` and run `b` on the resulting pair `⟨x, y⟩`; reject when the strip fails,
