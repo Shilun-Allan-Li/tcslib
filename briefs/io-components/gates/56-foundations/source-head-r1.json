@@ -1,0 +1,501 @@
+{
+ "gate": 56,
+ "manifest_packages": {
+  "BibtexQuery": "29a4b34f8caa7c95934ab4494d8866fde1850c0b",
+  "Cli": "1dae8b12f8ba27576ffe5ddee78bebf6458157b0",
+  "LeanAPAP": "5bbd91f52aa2e2d413a19afc10d30362e4872527",
+  "LeanSearchClient": "2ed4ba69b6127de8f5c2af83cccacd3c988b06bf",
+  "MD4Lean": "44da417da3705ede62b5c39382ddd2261ec3933e",
+  "PFR": "e1095d58b7c6f10734988816f7764f2103b9bf29",
+  "Qq": "2781d8ad404303b2fe03710ac7db946ddfe3539f",
+  "UnicodeBasic": "1829aec18f0e8a661dd5acf5d659d636979ba4f2",
+  "aesop": "26e4c7c0e63eb3e6cce3cf7faba27b8526ea8349",
+  "batteries": "39260e31b7b3f7f05643da95242463b462dc05f1",
+  "importGraph": "009064c21bad4d7f421f2901c5e817c8bf3468cb",
+  "mathlib": "029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e",
+  "plausible": "2503bfb5e2d4d8202165f5bd2cc39e44a3be31c3",
+  "proofwidgets": "fb8ed0a85a96e3176f6e94b20d413ea72d92576d",
+  "«doc-gen4»": "0ece4c27ae1abbd0b70df729e09d8b9c06351b80"
+ },
+ "merged": {
+  "merge_tree": "4d0347941c394f6fe1ed88ec067814bcfc1fb6f9",
+  "merge_tree_output_lines": 1,
+  "scratch_commit": "ed165e99431951c466668f0b235edd12b457b3cb",
+  "scratch_commit_on_any_ref": false,
+  "scratch_commit_parents": [
+   "53e430b68cbe22416312a4f80bbc3426c71cf86d",
+   "5382668bc9cc496355c83e7b77909d9647e089b3"
+  ],
+  "tcslib_tree": "6a724839672002fcf75c0c36e79564cbea62d0ba"
+ },
+ "name": "Foundations: #374 Subexponential, #378 CoinSampling, #384 SamplesEfficiently, #380 RealizesOn",
+ "phase_a_base": {
+  "branch": "iO/phase-a-base",
+  "changed_paths_vs_merge_base": [
+   "TCSlib.lean",
+   "TCSlib/Cryptography/Asymptotic.lean",
+   "TCSlib/Cryptography/Asymptotic/Realization.lean",
+   "TCSlib/Cryptography/CoinSampling.lean",
+   "TCSlib/Cryptography/CoinSampling/Asymptotic.lean",
+   "TCSlib/Cryptography/CoinSampling/Basic.lean",
+   "TCSlib/Cryptography/CoinSampling/Buckets.lean",
+   "TCSlib/Cryptography/CoinSampling/Contract.lean",
+   "TCSlib/Cryptography/CoinSampling/Efficiency.lean",
+   "TCSlib/Cryptography/CoinSampling/Instances.lean",
+   "TCSlib/Cryptography/CoinSampling/Transfer.lean",
+   "TCSlib/Cryptography/Foundations.lean",
+   "TCSlib/Cryptography/Foundations/Subexponential.lean",
+   "TCSlib/Cryptography/Games.lean",
+   "TCSlib/Cryptography/Games/Closeness.lean"
+  ],
+  "head": "5382668bc9cc496355c83e7b77909d9647e089b3",
+  "merge_base_with_records": "a2bf4bac0d545fce1fcb4014ef12b44f9651a658",
+  "parents": [
+   "5ed465f62e4ae0f93ded1a1ba49e807591b589eb",
+   "40e12f64293833056e311ab7aaf5a62fb3006353"
+  ],
+  "tcslib_tree": "9dcf16477970d330a6202fad6ca2fd1e0e6d5405"
+ },
+ "prs": [
+  {
+   "base_branch": "cryptography/pass-shelat-ch2-4",
+   "branch": "foundations/subexp",
+   "commits": [
+    {
+     "author": "Claude <noreply@anthropic.com>",
+     "author_date": "2026-11-18T05:47:57+00:00",
+     "commit": "cbce64d1c135c710b7c036968ed9d4f21414aa72",
+     "files": [
+      "TCSlib/Cryptography/Foundations.lean",
+      "TCSlib/Cryptography/Foundations/Subexponential.lean"
+     ],
+     "parents": [
+      "a2bf4bac0d545fce1fcb4014ef12b44f9651a658"
+     ],
+     "signature": "ssh",
+     "subject": "Foundations: subexponential smallness of advantage functions",
+     "tcslib_tree": "67dccde3d06ce7468d3827050bd4033936a497ab"
+    }
+   ],
+   "diff_base": "a2bf4bac0d545fce1fcb4014ef12b44f9651a658",
+   "diff_file": "pr374.diff.txt",
+   "files": {
+    "TCSlib/Cryptography/Foundations.lean": {
+     "base_blob": "2cd2acc8e0e191c5dfe6185607b3e5b31b183df7",
+     "blob": "a9dc9a0a8b28fa70ee0f894ea18e220d6ff315f4",
+     "lines": 38
+    },
+    "TCSlib/Cryptography/Foundations/Subexponential.lean": {
+     "base_blob": null,
+     "blob": "ff46f251bcf22e647c1acdfd0122f57b3225ce45",
+     "lines": 300
+    }
+   },
+   "head": "cbce64d1c135c710b7c036968ed9d4f21414aa72",
+   "head_tcslib_tree": "67dccde3d06ce7468d3827050bd4033936a497ab",
+   "head_tree": "8e5fb2f7304ffd4a0d960b659231afe468a2ef43",
+   "merge_base": "a2bf4bac0d545fce1fcb4014ef12b44f9651a658",
+   "number": 374,
+   "shortstat": "2 files changed, 303 insertions(+)"
+  },
+  {
+   "base_branch": "foundations/subexp",
+   "branch": "foundations/coin-sampling",
+   "commits": [
+    {
+     "author": "Claude <noreply@anthropic.com>",
+     "author_date": "2026-11-18T06:53:17+00:00",
+     "commit": "5bfdeca580652fd18e30b04f8c906c31e2d91bfd",
+     "files": [
+      "TCSlib/Cryptography/Games.lean",
+      "TCSlib/Cryptography/Games/Closeness.lean"
+     ],
+     "parents": [
+      "cbce64d1c135c710b7c036968ed9d4f21414aa72"
+     ],
+     "signature": "ssh",
+     "subject": "Games: statistical closeness and output inclusion of computations",
+     "tcslib_tree": "9965834fc6a9a2533f6c17dfe58aae61d93ae474"
+    },
+    {
+     "author": "Claude <noreply@anthropic.com>",
+     "author_date": "2026-11-18T06:53:28+00:00",
+     "commit": "46c227a1fb7940b6b2982ef5d0f78ab04a5c046a",
+     "files": [
+      "TCSlib/Cryptography/CoinSampling/Basic.lean"
+     ],
+     "parents": [
+      "5bfdeca580652fd18e30b04f8c906c31e2d91bfd"
+     ],
+     "signature": "ssh",
+     "subject": "CoinSampling: the coin-sampler contract and the mixture identity",
+     "tcslib_tree": "249cfb27e2fa49c76cb33324677fb11457ee81a8"
+    },
+    {
+     "author": "Claude <noreply@anthropic.com>",
+     "author_date": "2026-11-18T06:53:29+00:00",
+     "commit": "b7bfd79761d198812b592810902a4bbd1daac2b0",
+     "files": [
+      "TCSlib/Cryptography/CoinSampling/Buckets.lean"
+     ],
+     "parents": [
+      "46c227a1fb7940b6b2982ef5d0f78ab04a5c046a"
+     ],
+     "signature": "ssh",
+     "subject": "CoinSampling: the bucket sampler and weighted buckets",
+     "tcslib_tree": "839fa780b409bd358b152d3db3b876f57f5bea66"
+    },
+    {
+     "author": "Claude <noreply@anthropic.com>",
+     "author_date": "2026-11-18T06:53:29+00:00",
+     "commit": "2b115addad1787ed8e36f0b4232dfd5ab3b94d89",
+     "files": [
+      "TCSlib/Cryptography/CoinSampling/Transfer.lean"
+     ],
+     "parents": [
+      "b7bfd79761d198812b592810902a4bbd1daac2b0"
+     ],
+     "signature": "ssh",
+     "subject": "CoinSampling: coin draws in games, closeness and correctness transfer",
+     "tcslib_tree": "a8dfd6348e139a31f5dde5b1b58e8524639f4c6e"
+    },
+    {
+     "author": "Claude <noreply@anthropic.com>",
+     "author_date": "2026-11-18T06:56:04+00:00",
+     "commit": "b3e684c292cb79cb471d395fbb3b8956b13f986e",
+     "files": [
+      "TCSlib/Cryptography/CoinSampling/Asymptotic.lean"
+     ],
+     "parents": [
+      "2b115addad1787ed8e36f0b4232dfd5ab3b94d89"
+     ],
+     "signature": "ssh",
+     "subject": "CoinSampling: summed failure of coin draws is negligible and subexponential",
+     "tcslib_tree": "5d80ccc9aa4f8af45673b1a52577250cf5321c95"
+    },
+    {
+     "author": "Claude <noreply@anthropic.com>",
+     "author_date": "2026-11-18T06:56:05+00:00",
+     "commit": "e33bee263139afad58be0b72893ee9e19da478d0",
+     "files": [
+      "TCSlib/Cryptography/CoinSampling/Instances.lean"
+     ],
+     "parents": [
+      "b3e684c292cb79cb471d395fbb3b8956b13f986e"
+     ],
+     "signature": "ssh",
+     "subject": "CoinSampling: residues modulo any q and LWE seeds from fair coins",
+     "tcslib_tree": "2d9b11222a78e15a7cfc1e26b4c801ee85554315"
+    },
+    {
+     "author": "Claude <noreply@anthropic.com>",
+     "author_date": "2026-11-18T07:02:19+00:00",
+     "commit": "2fab24e9cd1bbd084a69ab12fa7bd77e18fa98c3",
+     "files": [
+      "TCSlib/Cryptography/CoinSampling/Efficiency.lean"
+     ],
+     "parents": [
+      "e33bee263139afad58be0b72893ee9e19da478d0"
+     ],
+     "signature": "ssh",
+     "subject": "CoinSampling: uniform polynomial-time samplers in the Turing-machine model",
+     "tcslib_tree": "3b47fbf0d7e3d7943fe5d91b825cbf989b8fe484"
+    },
+    {
+     "author": "Claude <noreply@anthropic.com>",
+     "author_date": "2026-11-18T07:02:19+00:00",
+     "commit": "6c65010faafd995322cd0611f16709cfe32c863f",
+     "files": [
+      "TCSlib.lean",
+      "TCSlib/Cryptography/CoinSampling.lean"
+     ],
+     "parents": [
+      "2fab24e9cd1bbd084a69ab12fa7bd77e18fa98c3"
+     ],
+     "signature": "ssh",
+     "subject": "CoinSampling: facade and export",
+     "tcslib_tree": "6075aaa6d00fd42465a074a5942aa25f99edc04a"
+    },
+    {
+     "author": "Claude <noreply@anthropic.com>",
+     "author_date": "2026-11-18T07:05:07+00:00",
+     "commit": "51dc767269bf81c4c7450d9a6430ad6bd3016470",
+     "files": [
+      "TCSlib/Cryptography/CoinSampling/Efficiency.lean"
+     ],
+     "parents": [
+      "6c65010faafd995322cd0611f16709cfe32c863f"
+     ],
+     "signature": "ssh",
+     "subject": "CoinSampling: reuse NumberTheory.bitsToNat_eq_listToNat",
+     "tcslib_tree": "3e085e97d8f9bb281a5ecb9b7d4a22f2da43a5ee"
+    },
+    {
+     "author": "Claude <noreply@anthropic.com>",
+     "author_date": "2026-11-19T01:53:52+00:00",
+     "commit": "3473adda66d9c61c51ba640ed4c701e5cde0b6b1",
+     "files": [
+      "TCSlib/Cryptography/CoinSampling/Efficiency.lean"
+     ],
+     "parents": [
+      "51dc767269bf81c4c7450d9a6430ad6bd3016470"
+     ],
+     "signature": "ssh",
+     "subject": "CoinSampling: readers of the bucket sampler's draw type, encoding and failure",
+     "tcslib_tree": "c939c7e205d2e950d9dd2a0baaaa5c50209c2a57"
+    }
+   ],
+   "diff_base": "cbce64d1c135c710b7c036968ed9d4f21414aa72",
+   "diff_file": "pr378.diff.txt",
+   "files": {
+    "TCSlib.lean": {
+     "base_blob": "8db619ce45cb060d961d39ec86b4f1a9037d642e",
+     "blob": "2fd3a3db15a40eaa6c012d286aa4b8750a00a574",
+     "lines": 91
+    },
+    "TCSlib/Cryptography/CoinSampling.lean": {
+     "base_blob": null,
+     "blob": "8bb6b718693809ade9b6a2e7552a359b2159b83e",
+     "lines": 56
+    },
+    "TCSlib/Cryptography/CoinSampling/Asymptotic.lean": {
+     "base_blob": null,
+     "blob": "1022684baf3a49cb5f35fc62b257961b6d0e7998",
+     "lines": 147
+    },
+    "TCSlib/Cryptography/CoinSampling/Basic.lean": {
+     "base_blob": null,
+     "blob": "90a81256c20479b73eb1ae34c14e499ee85ff33a",
+     "lines": 487
+    },
+    "TCSlib/Cryptography/CoinSampling/Buckets.lean": {
+     "base_blob": null,
+     "blob": "170f9365a99f01c2bdf5149a0b0c5416dd0df97c",
+     "lines": 241
+    },
+    "TCSlib/Cryptography/CoinSampling/Efficiency.lean": {
+     "base_blob": null,
+     "blob": "11ea720d21339fabe24889d662d48374bd54255d",
+     "lines": 342
+    },
+    "TCSlib/Cryptography/CoinSampling/Instances.lean": {
+     "base_blob": null,
+     "blob": "dd02154d513305277d6eee2c1c9fb564f920acb7",
+     "lines": 173
+    },
+    "TCSlib/Cryptography/CoinSampling/Transfer.lean": {
+     "base_blob": null,
+     "blob": "45b2ba19453866a15edaa4824667fd8b3ccee660",
+     "lines": 173
+    },
+    "TCSlib/Cryptography/Games.lean": {
+     "base_blob": "7cccb7675728de17886d6c44f0fb4849572b5376",
+     "blob": "86b3baa0f24b9b95183ac3f527963db79ed6b28b",
+     "lines": 73
+    },
+    "TCSlib/Cryptography/Games/Closeness.lean": {
+     "base_blob": null,
+     "blob": "c9e78baa7cc879d3211d8d8e519eab77e5d17ea7",
+     "lines": 269
+    }
+   },
+   "head": "3473adda66d9c61c51ba640ed4c701e5cde0b6b1",
+   "head_tcslib_tree": "c939c7e205d2e950d9dd2a0baaaa5c50209c2a57",
+   "head_tree": "b5233cf70d1bb7c213717cdbbce8edac529bd4cc",
+   "merge_base": "cbce64d1c135c710b7c036968ed9d4f21414aa72",
+   "number": 378,
+   "shortstat": "10 files changed, 1892 insertions(+)"
+  },
+  {
+   "base_branch": "foundations/coin-sampling",
+   "branch": "foundations/coin-contract",
+   "commits": [
+    {
+     "author": "Claude <noreply@anthropic.com>",
+     "author_date": "2026-11-18T08:03:38+00:00",
+     "commit": "8e01b720aa127f6cbdb066e629f883258b73cf9e",
+     "files": [
+      "TCSlib/Cryptography/CoinSampling.lean",
+      "TCSlib/Cryptography/CoinSampling/Contract.lean"
+     ],
+     "parents": [
+      "51dc767269bf81c4c7450d9a6430ad6bd3016470"
+     ],
+     "signature": "ssh",
+     "subject": "CoinSampling: the shared efficiency contract of honest samplers",
+     "tcslib_tree": "adebe3134f42f0a7c511db4a34fc4ae116bed81e"
+    },
+    {
+     "author": "Claude <noreply@anthropic.com>",
+     "author_date": "2026-11-19T01:25:57+00:00",
+     "commit": "f96ae32ed861f33b67ebabf2b29344d2a66909cf",
+     "files": [
+      "TCSlib/Cryptography/CoinSampling/Contract.lean"
+     ],
+     "parents": [
+      "8e01b720aa127f6cbdb066e629f883258b73cf9e"
+     ],
+     "signature": "ssh",
+     "subject": "CoinSampling: promote the shared sampler helpers into the contract",
+     "tcslib_tree": "db4b0979999f3b5c34c1c6c3748cae7719cb00a7"
+    },
+    {
+     "author": "Claude <noreply@anthropic.com>",
+     "author_date": "2026-11-19T01:57:05+00:00",
+     "commit": "21f549c28317e96ae46edd92813ec01834791a3c",
+     "files": [
+      "TCSlib/Cryptography/CoinSampling/Efficiency.lean",
+      "TCSlib/Cryptography/CoinSampling.lean",
+      "TCSlib/Cryptography/CoinSampling/Contract.lean"
+     ],
+     "parents": [
+      "f96ae32ed861f33b67ebabf2b29344d2a66909cf",
+      "3473adda66d9c61c51ba640ed4c701e5cde0b6b1"
+     ],
+     "signature": "ssh",
+     "subject": "Merge foundations/coin-sampling (bucketSampler readers) into the contract",
+     "tcslib_tree": "718aca1be92bc4ad62642d0d0d26861fcb076ea9"
+    },
+    {
+     "author": "Claude <noreply@anthropic.com>",
+     "author_date": "2026-11-19T01:57:25+00:00",
+     "commit": "40e12f64293833056e311ab7aaf5a62fb3006353",
+     "files": [
+      "TCSlib/Cryptography/CoinSampling/Contract.lean"
+     ],
+     "parents": [
+      "21f549c28317e96ae46edd92813ec01834791a3c"
+     ],
+     "signature": "ssh",
+     "subject": "CoinSampling: read the bucket sampler through its readers in drawSamplable_residue",
+     "tcslib_tree": "e4be1f3a6783dd9bdbdf795c9d8535dd34d82708"
+    }
+   ],
+   "diff_base": "3473adda66d9c61c51ba640ed4c701e5cde0b6b1",
+   "diff_file": "pr384.diff.txt",
+   "files": {
+    "TCSlib/Cryptography/CoinSampling.lean": {
+     "base_blob": "8bb6b718693809ade9b6a2e7552a359b2159b83e",
+     "blob": "60e4140584c0c280d0fbe0a4bd13c165f0fbed2a",
+     "lines": 60
+    },
+    "TCSlib/Cryptography/CoinSampling/Contract.lean": {
+     "base_blob": null,
+     "blob": "bb85f6a093cf2d2cf759d8ab344065f5340e74a3",
+     "lines": 460
+    }
+   },
+   "head": "40e12f64293833056e311ab7aaf5a62fb3006353",
+   "head_tcslib_tree": "e4be1f3a6783dd9bdbdf795c9d8535dd34d82708",
+   "head_tree": "e00edf1d22a4a0805bc1fb81a50ce38f5deb0fea",
+   "merge_base": "3473adda66d9c61c51ba640ed4c701e5cde0b6b1",
+   "number": 384,
+   "shortstat": "2 files changed, 464 insertions(+)"
+  },
+  {
+   "base_branch": "foundations/subexp",
+   "branch": "foundations/realization",
+   "commits": [
+    {
+     "author": "Claude <noreply@anthropic.com>",
+     "author_date": "2026-11-18T07:21:00+00:00",
+     "commit": "cdc0934f36365533d410607d0664a0570ae92679",
+     "files": [
+      "TCSlib/Cryptography/Asymptotic.lean",
+      "TCSlib/Cryptography/Asymptotic/Realization.lean"
+     ],
+     "parents": [
+      "cbce64d1c135c710b7c036968ed9d4f21414aa72"
+     ],
+     "signature": "ssh",
+     "subject": "Foundations: realisation of reduction functions by non-uniform machines",
+     "tcslib_tree": "7a9df657f995f36cf3b9c9a90acb19229eedbb63"
+    }
+   ],
+   "diff_base": "cbce64d1c135c710b7c036968ed9d4f21414aa72",
+   "diff_file": "pr380.diff.txt",
+   "files": {
+    "TCSlib/Cryptography/Asymptotic.lean": {
+     "base_blob": "54d83adce54679684fc1212ef33fe8a36719d1a7",
+     "blob": "bf468a3ba4b42e289d976b9b7472631924476399",
+     "lines": 104
+    },
+    "TCSlib/Cryptography/Asymptotic/Realization.lean": {
+     "base_blob": null,
+     "blob": "22223264a95aa5a79d4b4067ce3254baf29d05ad",
+     "lines": 250
+    }
+   },
+   "head": "cdc0934f36365533d410607d0664a0570ae92679",
+   "head_tcslib_tree": "7a9df657f995f36cf3b9c9a90acb19229eedbb63",
+   "head_tree": "72a7ee8825c13501c0c2f9ac8b3ef4d6980a0121",
+   "merge_base": "cbce64d1c135c710b7c036968ed9d4f21414aa72",
+   "number": 380,
+   "shortstat": "2 files changed, 254 insertions(+)"
+  }
+ ],
+ "records": {
+  "branch": "cryptography/pass-shelat-ch2-4",
+  "lean_paths_changed_since_merge_base": [
+   "TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW.lean",
+   "TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean",
+   "TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean",
+   "TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean",
+   "TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Circular.lean",
+   "TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean",
+   "TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean",
+   "TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/LeveledSecurity.lean",
+   "TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean",
+   "TCSlib/Cryptography/LWE.lean",
+   "TCSlib/Cryptography/LWE/BitEncoding.lean",
+   "TCSlib/Cryptography/LWE/Ratio.lean"
+  ],
+  "tip_at_staging": "53e430b68cbe22416312a4f80bbc3426c71cf86d",
+  "tip_tcslib_tree": "745bf4b494b6581a5666ef9ca0a6e735a68ddcef"
+ },
+ "records_sha256_at_staging_tip": {
+  "IOComponentsPlan.md": "bc81482b425d7a08953592e7131d5f76566092a2eafcf13e4c928d5b8bddb780",
+  "briefs/efficiency-gaps/wave1/EF-D1/final-r1/landing-r2.md": "16d9242693be6528e6dcd8b159cacc23c765019844ab81b61cc0b2cf593f3708",
+  "briefs/io-components/contract/REPORT.md": "213238cb8de6aaed796d04e90e0b18cbc0742bd8756e10f8b7644a39fbc6d5e9",
+  "briefs/io-components/gates/51-phfe-statements/findings-r1.md": "5e28af06391d139980fabb9818543516c969d56713f13f6ab03f31d00fafbdae",
+  "briefs/io-components/phfe/rulings.md": "e4036884501420f1270dc9669c7d9394ef3aa38d482ed40b3c03c47a2e8eeb82",
+  "briefs/io-components/realization/REPORT.md": "bcdd4ec551df640710b29e55eb2ad7b552886dd023ecff5ac784e9dd92939c5a",
+  "briefs/io-components/sampler-bridge/IMPL-REPORT.md": "d5618d74b020f42dabe14acf9c5676e882d757303470a918c765fb65d6c7c6e5",
+  "briefs/io-components/sampler-bridge/design-r1.md": "7714bfb6609766907399dd645e3c1e9df03d2f337ce860d017c162d52c3a7dd2",
+  "briefs/io-components/sprg/design-r3.md": "1f3f4017582308fc16de99388b93bd13f97216448a1b5a1826007082e63699fa",
+  "briefs/io-components/sprg/rulings.md": "68abaa68f313adbc0b7755721e4651579968092cbbbbc8dcbed9e14127834cec",
+  "briefs/io-components/subexp/REPORT.md": "44e75144694d1cb4514dacc4510b8e3471ac6d2be8c5353a3a1c624ae6ad51d1",
+  "briefs/pass-shelat-ch5-8/MAINTAINER-HANDOFF.md": "c9b93227cddd0e5aa1784855dab939e8bec2d11b6aa812e26d1afb9082b07181",
+  "briefs/pass-shelat-ch5-8/duplication-ledger.md": "250ccafec1e1e6afa82057ad78fc06accf0fc9dffece8b047b52e52ce7d44e70",
+  "policy.md": "6599b12230e3879bc0e1fb22c0376ea6201bca8b7edd79dfc55da43986f991d4"
+ },
+ "round": 1,
+ "staged": "2026-11-19",
+ "toolchain": "leanprover/lean4:v4.25.0",
+ "unchanged": {
+  "audits": {
+   "merge": "e204e63c6027d6e48abaa394d1d73d5d4615596e",
+   "merge_base": "e204e63c6027d6e48abaa394d1d73d5d4615596e",
+   "phase_a_base": "e204e63c6027d6e48abaa394d1d73d5d4615596e",
+   "records_tip": "e204e63c6027d6e48abaa394d1d73d5d4615596e"
+  },
+  "lake-manifest.json": {
+   "merge": "a2a54033bc1ff8cedc0523666c407a1565f237b0",
+   "merge_base": "a2a54033bc1ff8cedc0523666c407a1565f237b0",
+   "phase_a_base": "a2a54033bc1ff8cedc0523666c407a1565f237b0",
+   "records_tip": "a2a54033bc1ff8cedc0523666c407a1565f237b0"
+  },
+  "lakefile.lean": {
+   "merge": "841a96bdb510f201743fea9d68045c7a9580afd2",
+   "merge_base": "841a96bdb510f201743fea9d68045c7a9580afd2",
+   "phase_a_base": "841a96bdb510f201743fea9d68045c7a9580afd2",
+   "records_tip": "841a96bdb510f201743fea9d68045c7a9580afd2"
+  },
+  "lean-toolchain": {
+   "merge": "e5ab73a51fe1bcd591244dc2f68b1e7807f21135",
+   "merge_base": "e5ab73a51fe1bcd591244dc2f68b1e7807f21135",
+   "phase_a_base": "e5ab73a51fe1bcd591244dc2f68b1e7807f21135",
+   "records_tip": "e5ab73a51fe1bcd591244dc2f68b1e7807f21135"
+  }
+ }
+}

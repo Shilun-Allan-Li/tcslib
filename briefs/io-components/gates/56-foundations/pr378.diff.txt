@@ -1,0 +1,1969 @@
+diff --git a/TCSlib.lean b/TCSlib.lean
+index 8db619ce4..2fd3a3db1 100644
+--- a/TCSlib.lean
++++ b/TCSlib.lean
+@@ -65,6 +65,7 @@ import TCSlib.Cryptography.TrapdoorFunctions
+ import TCSlib.Cryptography.ZeroKnowledge
+ import TCSlib.Cryptography.Games
+ import TCSlib.Cryptography.Games.Bridges
++import TCSlib.Cryptography.CoinSampling
+ import TCSlib.Cryptography.Authentication
+ import TCSlib.Cryptography.Hashing
+ import TCSlib.Cryptography.SecureComputation
+diff --git a/TCSlib/Cryptography/CoinSampling.lean b/TCSlib/Cryptography/CoinSampling.lean
+new file mode 100644
+index 000000000..8bb6b7186
+--- /dev/null
++++ b/TCSlib/Cryptography/CoinSampling.lean
+@@ -0,0 +1,56 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.CoinSampling.Basic
++import TCSlib.Cryptography.CoinSampling.Buckets
++import TCSlib.Cryptography.CoinSampling.Transfer
++import TCSlib.Cryptography.CoinSampling.Asymptotic
++import TCSlib.Cryptography.CoinSampling.Instances
++import TCSlib.Cryptography.CoinSampling.Efficiency
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Coin sampling: exact non-dyadic laws from fair coins, with perfect correctness kept
++
++Experiments in the library are stated with exact laws: a uniform draw `Games.ProbComp.sample Ω`
++of a finite type (uniform `ℤ_q` for any `q`, the seeds of `LWE.Noise`, rational seeds) and its
++pushforwards. Machines have fair coins only, and `|Ω|` is rarely a power of two. This area
++connects the two, keeping every every-outcome property (perfect correctness, injectivity on
++reachable encodings) exact:
++
++* **per sampler**, `CoinSampler Ω s`: a decoder from `s` fair coins to `Option Ω`, exact on
++  success, with derived failure probability; the bucket sampler `bucket N s` (one draw
++  `x < 2^s`, accepted below `⌊2^s/N⌋·N`, output `x mod N`) fails with probability
++  `(2^s mod N)/2^s < N/2^s`;
++* **per experiment**, `Games.ProbComp.Close` (`TCSlib.Cryptography.Games.Closeness`): replacing
++  exact draws by coin draws anywhere in a game moves every acceptance probability by at most the
++  summed failure probabilities;
++* **correctness**, `Games.OracleComp.OutputsSubset`: with a default value as the fallback, every
++  `AllOutputs` property transfers unchanged;
++* **asymptotics**, `drawSlack`: `q(κ)` draws with `t(κ) ≥ κ` slack bits are negligible and
++  `SubexpSmall c` for every `c < 1`;
++* **efficiency**, `UniformSampler`: one polynomial-time string map reading the modulus from its
++  input, whose machine `NUPPT.ofPolyTimeUniform` is a PPT (no advice, no κ-indexed programs, no
++  hard-wired modulus); `bucketSampler` is built from the proved `Complexity.BinArith` arithmetic.
++
++## Contents
++
++* `TCSlib.Cryptography.CoinSampling.Basic`: the contract `CoinSampler`, the mixture identity,
++  closeness to the exact draw, transport, independent draws, the rejection sampler as an
++  instance.
++* `TCSlib.Cryptography.CoinSampling.Buckets`: the bucket sampler, its exact failure and the
++  slack-bit bound, enumerations, rational seeds and weighted buckets.
++* `TCSlib.Cryptography.CoinSampling.Transfer`: coin draws in games; closeness of one draw, of a
++  draw per oracle query, and output inclusion of default-fallback draws.
++* `TCSlib.Cryptography.CoinSampling.Asymptotic`: the summed slack `q(κ)·2^{-t(κ)}`, negligible
++  and subexponentially small.
++* `TCSlib.Cryptography.CoinSampling.Instances`: residues modulo any `q`, noise seeds, the LWE
++  seed and the LWE challenge from fair coins.
++* `TCSlib.Cryptography.CoinSampling.Efficiency`: `UniformSampler`, its uniform machine, and the
++  polynomial-time bucket decoder.
++-/
+diff --git a/TCSlib/Cryptography/CoinSampling/Asymptotic.lean b/TCSlib/Cryptography/CoinSampling/Asymptotic.lean
+new file mode 100644
+index 000000000..1022684ba
+--- /dev/null
++++ b/TCSlib/Cryptography/CoinSampling/Asymptotic.lean
+@@ -0,0 +1,147 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.CoinSampling.Buckets
++import TCSlib.Cryptography.Asymptotic.ReductionSupport
++import TCSlib.Cryptography.Foundations.Subexponential
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Summed failure of coin draws: negligible and subexponentially small
++
++A bucket draw of a modulus `N ≤ 2^b` with `b + t` coins fails with probability at most `2^{-t}`
++(`fail_bucket_le`). A game making at most `q(κ)` such draws, with `t(κ)` slack bits each, is
++therefore `drawSlack q t κ = q(κ) · 2^{-t(κ)}`-close to its exact version (`Close.bind`,
++`Close.simulate`). With `t(κ) ≥ κ` (the default: `s = b + κ` coins per draw) this slack is
++negligible, and subexponentially small with every exponent `c < 1`.
++
++## Main definitions
++
++* `CoinSampling.drawSlack q t`: `κ ↦ q(κ) · 2^{-t(κ)}`.
++
++## Main results
++
++* `CoinSampling.negligible_drawSlack`: `Negligible (drawSlack q t)` for `t(κ) ≥ κ`.
++* `CoinSampling.subexpSmall_polyExpr_mul`: a polynomial times a `SubexpSmall c` function is
++  `SubexpSmall c'` for every `c' < c`.
++* `CoinSampling.subexpSmall_drawSlack`: `SubexpSmall c (drawSlack q t)` for `0 < c < 1`.
++* `CoinSampling.fail_bucket_schedule_le`: the per-draw bound along a modulus schedule.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
++  Assumptions*, J. ACM 73(1), Article 1, 2026, Definition 2.1 (subexponential
++  indistinguishability, `ε(λ) = 2^{-λ^c}`).
++* [Gar26] S. Garg, *A Course in Theory of Cryptography*, lecture notes, UC Berkeley, draft of
++  22 January 2026, §1.2 (negligible functions and their closure under polynomial factors).
++
++**Disclosed overlap.** The majorant `p(n) ≤ C · 2^d · n^d` for `n ≥ 1`
++(`polyExpr_eval_le_mul_pow`) is the same estimate as the inline step of
++`Negligible.polyExpr_mul` (`Asymptotic/ReductionSupport.lean`), published here as a lemma so
++that the subexponential analogue can use it; the negligible case reuses
++`Negligible.polyExpr_mul` itself.
++-/
++
++namespace TCSlib.Cryptography.CoinSampling
++
++open Complexity
++
++/-- **The normal-form majorant of a syntactic polynomial**: there are `C, d` with
++`p(n) ≤ C · 2^d · n^d` for every `n ≥ 1` (`PolyExpr.eval_le` and `(n + 1)^d ≤ (2n)^d`). Glue;
++disclosed overlap with the inline step of `Negligible.polyExpr_mul`. -/
++theorem polyExpr_eval_le_mul_pow (p : PolyExpr) :
++    ∃ C d : ℕ, ∀ n : ℕ, 1 ≤ n → (p.eval n : ℝ) ≤ (C : ℝ) * 2 ^ d * (n : ℝ) ^ d := by
++  obtain ⟨C, d, hC⟩ := p.eval_le
++  refine ⟨C, d, fun n hn => ?_⟩
++  have hn1 : (1 : ℝ) ≤ n := by exact_mod_cast hn
++  have h1 : (p.eval n : ℝ) ≤ C * ((n : ℝ) + 1) ^ d := by exact_mod_cast hC n
++  have h2 : ((n : ℝ) + 1) ^ d ≤ (2 * (n : ℝ)) ^ d :=
++    pow_le_pow_left₀ (by positivity) (by linarith) d
++  calc (p.eval n : ℝ) ≤ C * ((n : ℝ) + 1) ^ d := h1
++    _ ≤ C * (2 * (n : ℝ)) ^ d := mul_le_mul_of_nonneg_left h2 (Nat.cast_nonneg _)
++    _ = (C : ℝ) * 2 ^ d * (n : ℝ) ^ d := by rw [_root_.mul_pow, mul_assoc]
++
++/-- **A polynomial times a subexponentially small function** is subexponentially small with
++every smaller exponent: `SubexpSmall c μ`, `0 < c`, `c' < c` give
++`SubexpSmall c' (n ↦ p(n) · μ n)` [JLS26, Definition 2.1] (the closure that lets a polynomial
++number of losses be absorbed).
++
++**Proof sketch.** With the majorant `p(n) ≤ C 2^d n^d` (`polyExpr_eval_le_mul_pow`), pass through
++the intermediate exponent `c'' = (c + max c' 0)/2`: `n^d μ` is `SubexpSmall c''`
++(`SubexpSmall.mul_pow`), the constant multiple is `SubexpSmall c'` (`SubexpSmall.const_mul`),
++and it dominates `|p(n) μ n|` for `n ≥ 1` (`SubexpSmall.mono`). -/
++theorem subexpSmall_polyExpr_mul {c c' : ℝ} {μ : ℕ → ℝ} (hμ : SubexpSmall c μ) (hc : 0 < c)
++    (h : c' < c) (p : PolyExpr) : SubexpSmall c' fun n => (p.eval n : ℝ) * μ n := by
++  obtain ⟨C, d, hp⟩ := polyExpr_eval_le_mul_pow p
++  have hm0 : 0 ≤ max c' 0 := le_max_right _ _
++  have hm1 : c' ≤ max c' 0 := le_max_left _ _
++  have hmc : max c' 0 < c := max_lt h hc
++  have h1 := (hμ.mul_pow hc (show (c + max c' 0) / 2 < c by linarith) d).const_mul
++    (by linarith) (show c' < (c + max c' 0) / 2 by linarith) ((C : ℝ) * 2 ^ d)
++  refine h1.mono ⟨1, fun n hn => ?_⟩
++  have hpn := hp n hn
++  calc |(p.eval n : ℝ) * μ n| = (p.eval n : ℝ) * |μ n| := by rw [abs_mul, Nat.abs_cast]
++    _ ≤ (C : ℝ) * 2 ^ d * (n : ℝ) ^ d * |μ n| := mul_le_mul_of_nonneg_right hpn (abs_nonneg _)
++    _ = |(C : ℝ) * 2 ^ d * ((n : ℝ) ^ d * μ n)| := by
++        rw [abs_mul ((C : ℝ) * 2 ^ d) ((n : ℝ) ^ d * μ n), abs_mul ((n : ℝ) ^ d) (μ n),
++          abs_of_nonneg (by positivity : (0 : ℝ) ≤ (C : ℝ) * 2 ^ d),
++          abs_of_nonneg (by positivity : (0 : ℝ) ≤ (n : ℝ) ^ d), mul_assoc]
++
++/-- **The slack of `q(κ)` coin draws with `t(κ)` slack bits each**: `q(κ) · 2^{-t(κ)}`. By
++`fail_bucket_le`, a bucket draw of a modulus `N ≤ 2^b` with `b + t` coins costs at most
++`2^{-t}`, so the summed failure bound of a game making at most `q(κ)` draws is
++`drawSlack q t κ`. Glue. -/
++noncomputable def drawSlack (q t : PolyExpr) (κ : ℕ) : ℝ :=
++  (q.eval κ : ℝ) * (2 : ℝ)⁻¹ ^ t.eval κ
++
++/-- `drawSlack q t κ = q(κ) · (2⁻¹)^{t(κ)}`. -/
++theorem drawSlack_eq (q t : PolyExpr) (κ : ℕ) :
++    drawSlack q t κ = (q.eval κ : ℝ) * (2 : ℝ)⁻¹ ^ t.eval κ := rfl
++
++/-- `2^{-t(κ)} ≤ 2^{-κ}` when `κ ≤ t(κ)`, in absolute values. Glue. -/
++theorem abs_two_inv_pow_le {t : PolyExpr} (ht : ∀ κ, κ ≤ t.eval κ) (κ : ℕ) :
++    |(2 : ℝ)⁻¹ ^ t.eval κ| ≤ |(2 : ℝ)⁻¹ ^ κ| := by
++  rw [abs_of_pos (by positivity), abs_of_pos (by positivity)]
++  exact pow_le_pow_of_le_one (by norm_num) (by norm_num) (ht κ)
++
++/-- **The slack is negligible** when `t(κ) ≥ κ` [Gar26, §1.2]: `negligible_two_pow_neg`, moved
++to `t` by monotonicity (`Negligible.mono`), times the polynomial `q`
++(`Negligible.polyExpr_mul`). -/
++theorem negligible_drawSlack (q t : PolyExpr) (ht : ∀ κ, κ ≤ t.eval κ) :
++    Negligible (drawSlack q t) :=
++  (negligible_two_pow_neg.mono ⟨0, fun κ _ => abs_two_inv_pow_le ht κ⟩).polyExpr_mul q
++
++/-- **The slack is subexponentially small** for every exponent `0 < c < 1` when `t(κ) ≥ κ`
++[JLS26, Definition 2.1]: `subexpSmall_two_pow_neg` (exponent `1`), moved to `t`
++(`SubexpSmall.mono`), times the polynomial `q` (`subexpSmall_polyExpr_mul`, which lowers the
++exponent strictly). (`0 < c` is not needed by the proof; it is the source's requirement.) -/
++theorem subexpSmall_drawSlack (q t : PolyExpr) (ht : ∀ κ, κ ≤ t.eval κ) {c : ℝ} (_hc0 : 0 < c)
++    (hc1 : c < 1) : SubexpSmall c (drawSlack q t) :=
++  subexpSmall_polyExpr_mul (subexpSmall_two_pow_neg.mono ⟨0, fun κ _ => abs_two_inv_pow_le ht κ⟩)
++    one_pos hc1 q
++
++/-- **Per-draw bound along a modulus schedule**: if `0 < N(κ) ≤ 2^{b(κ)}`, the bucket sampler
++with `b(κ) + t(κ)` coins fails with probability at most `2^{-t(κ)}` (`fail_bucket_le`). The
++modulus is a value here (a law parameter), not a hard-wired program constant: the program reads
++it from its input (`bucketSampler`, `CoinSampling.Efficiency`). Glue. -/
++theorem fail_bucket_schedule_le (N : ℕ → ℕ) (b t : PolyExpr) (hN0 : ∀ κ, 0 < N κ)
++    (hN : ∀ κ, N κ ≤ 2 ^ b.eval κ) (κ : ℕ) :
++    (bucket (N κ) ((b.add t).eval κ)).fail ≤ (2 : ℝ)⁻¹ ^ t.eval κ := by
++  rw [PolyExpr.eval_add]
++  exact fail_bucket_le (hN0 κ) (hN κ) (t.eval κ)
++
++/-- **The summed slack of a schedule of draws**: if each of the at most `q(κ)` draws of a game
++fails with probability at most `2^{-t(κ)}`, their summed failure is at most `drawSlack q t κ`.
++Glue: the arithmetic `m · f ≤ q(κ) · 2^{-t(κ)}` for `m ≤ q(κ)` and `0 ≤ f ≤ 2^{-t(κ)}`, the shape
++in which `Close.simulate` (`m · fail`) meets the asymptotic lemmas. -/
++theorem mul_fail_le_drawSlack (q t : PolyExpr) (κ m : ℕ) (hm : m ≤ q.eval κ) {f : ℝ}
++    (hf0 : 0 ≤ f) (hf : f ≤ (2 : ℝ)⁻¹ ^ t.eval κ) : (m : ℝ) * f ≤ drawSlack q t κ := by
++  rw [drawSlack_eq]
++  exact mul_le_mul (by exact_mod_cast hm) hf hf0 (Nat.cast_nonneg _)
++
++end TCSlib.Cryptography.CoinSampling
+diff --git a/TCSlib/Cryptography/CoinSampling/Basic.lean b/TCSlib/Cryptography/CoinSampling/Basic.lean
+new file mode 100644
+index 000000000..90a81256c
+--- /dev/null
++++ b/TCSlib/Cryptography/CoinSampling/Basic.lean
+@@ -0,0 +1,487 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.Asymptotic.Permutations
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Coin samplers: decoders from fair coins, exact on success
++
++A *coin sampler* `CoinSampler Ω s` of a finite type `Ω` reads `s` fair coins and either outputs
++an element of `Ω` or gives up (`none`), and is **exact on success**: any two elements of `Ω` are
++output with the same probability, so that conditioned on success the output is exactly uniform.
++This is the shape the library already proves for its rejection-type samplers
++(`rejectionSample_uniform_of_some`, `firstHit_uniform_of_some`,
++`permFromCoins_uniform_of_some`) and the hypothesis of `statClose_getD_of_uniform_of_some`;
++`CoinSampler` names it. The failure probability `fail` is derived, not a field.
++
++The statistical content of "exact on success, fallback on failure" is one exact identity, the
++**mixture identity** `uexp_comp_dec`: averaging any `F : Option Ω → ℝ` over the decoded coins is
++`fail · F none + (1 − fail) · 𝔼_{a ← Ω} F (some a)`. Its `Option` form `statClose_some` (fallback
++branches) and its default-value form `statClose_getD` (the existing lemma, applied) follow.
++
++Non-uniform exact laws are pushforwards of a uniform seed (`LWE.Noise`, the rational seeds of
++`CoinSampling.Buckets`), so uniform targets suffice.
++
++## Main definitions
++
++* `CoinSampler Ω s`: a decoder `(Fin s → Bool) → Option Ω`, exact on success.
++* `CoinSampler.fail`: the probability of giving up.
++* `CoinSampler.congr`, `.reindex`: transport along a bijection of outcomes or of coin strings.
++* `CoinSampling.block`, `blockEquiv`: the `n` blocks of `n · s` coins.
++* `CoinSampler.pi`, `.prod`: independent draws.
++* `CoinSampler.ofRejection`: the library's `rejectionSample` as a coin sampler.
++
++## Main results
++
++* `CoinSampler.uprob_dec_eq_some`: each outcome has probability `(1 − fail)/|Ω|`.
++* `CoinSampler.uexp_comp_dec`: the mixture identity.
++* `CoinSampler.statClose_some`, `.statClose_getD`: closeness to the exact draw.
++* `CoinSampler.fail_pi_le`, `.fail_prod_le`, `.fail_ofRejection`: failure probabilities.
++* `CoinSampler.forall_comp_getD`, `.forall_comp_elim`: every-seed properties survive fallbacks.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Lemma 51.17 (a rejection sampler is uniform conditioned on success) and Definition 181.1
++  (`ε`-closeness).
++
++**Disclosed overlap (design r1 §6, ruling Q8).** The mixture identity is proved here by the
++fibre decomposition that is also the step `hdec` inside the proof of
++`statClose_getD_of_uniform_of_some` (`Asymptotic/Sampling.lean`). That file is in the scope of
++cleanup Stage 2 (S2-A) and is not edited here; once S2-A lands, the old lemma is to be
++re-derived from `uexp_comp_dec` (follow-up in the implementation report).
++-/
++
++namespace TCSlib.Cryptography.CoinSampling
++
++open Finset
++
++/-- **Averaging along the fibres of a map**: the average of `F ∘ X` over a uniform seed is
++`Σ_b F b · Pr[X = b]`. Glue: Mathlib's `Finset.sum_fiberwise` in `uexp` form (the library has
++the event form `uprob_comp_eq_sum_fiber` and the `FinDist` form `uprob_comp_eq_sum_map`, but
++no real-valued one). -/
++theorem uexp_comp_eq_sum_fiber {Ω' β : Type*} [Fintype Ω'] [Fintype β] [DecidableEq β]
++    (X : Ω' → β) (F : β → ℝ) :
++    uexp (fun ω => F (X ω)) = ∑ b, F b * uprob (fun ω => X ω = b) := by
++  rw [uexp_def, ← Finset.sum_fiberwise univ X (fun ω => F (X ω)), Finset.sum_div]
++  refine sum_congr rfl fun b _ => ?_
++  rw [uprob_eq_card_filter, Finset.sum_congr rfl (g := fun _ => F b) fun ω hω => by
++    rw [(mem_filter.1 hω).2], sum_const, nsmul_eq_mul]
++  ring
++
++/-- **An event on one coordinate of a uniform tuple** has the probability of the event:
++`Pr_{x ← (ι → α)}[p (x j)] = Pr_{a ← α}[p a]`. Glue: `Equiv.piSplitAt` and `uprob_fst`
++(the step used inside `uexp_le_of_statClose`, not published there). -/
++theorem uprob_apply_coord {ι α : Type*} [Fintype ι] [DecidableEq ι] [Fintype α] [Nonempty α]
++    (j : ι) (p : α → Prop) : uprob (fun x : ι → α => p (x j)) = uprob p := by
++  have h := uprob_comp_equiv (Equiv.piSplitAt j fun _ => α) (fun z => p z.1)
++  rw [uprob_fst] at h
++  exact h
++
++/-- **A coin sampler** of the finite type `Ω` from `s` fair coins: a decoder `dec` from `s`-bit
++coin strings to `Option Ω`, where `none` means that the sampler gives up, which is **exact on
++success**: any two elements of `Ω` are decoded with the same probability, so that conditioned on
++success the output is exactly uniform on `Ω` [PS10, Lemma 51.17] (the property of rejection
++sampling, here as a contract; it is the hypothesis `huni` of
++`statClose_getD_of_uniform_of_some`). The failure probability is the derived `fail`. -/
++structure CoinSampler (Ω : Type) [Fintype Ω] (s : ℕ) where
++  /-- The decoder: an element of `Ω`, or `none` when the sampler gives up. -/
++  dec : (Fin s → Bool) → Option Ω
++  /-- Exact on success: any two elements of `Ω` are decoded with the same probability. -/
++  uniform_of_some : ∀ a a' : Ω,
++    uprob (fun c => dec c = some a) = uprob (fun c => dec c = some a')
++
++namespace CoinSampler
++
++variable {Ω Ω' : Type} [Fintype Ω] [Fintype Ω'] {s s' : ℕ}
++
++/-- The **failure probability** of `S`: the probability over `s` uniform coins that the decoder
++gives up, `fail S = Pr_c[dec c = none]`. -/
++noncomputable def fail (S : CoinSampler Ω s) : ℝ :=
++  uprob fun c : Fin s → Bool => S.dec c = none
++
++/-- `S.fail = Pr_c[S.dec c = none]`. -/
++theorem fail_eq (S : CoinSampler Ω s) :
++    S.fail = uprob fun c : Fin s → Bool => S.dec c = none := rfl
++
++/-- A failure probability is nonnegative: `0 ≤ S.fail` (`uprob_nonneg`). -/
++theorem fail_nonneg (S : CoinSampler Ω s) : 0 ≤ S.fail := uprob_nonneg _
++
++/-- A failure probability is at most one: `S.fail ≤ 1` (`uprob_le_one`). -/
++theorem fail_le_one (S : CoinSampler Ω s) : S.fail ≤ 1 := uprob_le_one _
++
++/-- **The exact conditional law**: every element `a` of the nonempty type `Ω` is decoded with
++probability `(1 − fail)/|Ω|`, `Pr_c[dec c = some a] = (1 − S.fail)/|Ω|` [PS10, Lemma 51.17],
++abstract form.
++
++**Proof sketch.** The `|Ω| + 1` events `{dec = some a}` and `{dec = none}` partition the coins
++(`uprob_comp_eq_sum_fiber`, `Fintype.sum_option`), and the first `|Ω|` have one common value
++(`uniform_of_some`), so `|Ω| · Pr[dec = some a] + fail = 1`. -/
++theorem uprob_dec_eq_some [Nonempty Ω] (S : CoinSampler Ω s) (a : Ω) :
++    uprob (fun c => S.dec c = some a) = (1 - S.fail) / Fintype.card Ω := by
++  classical
++  have hpart := uprob_comp_eq_sum_fiber S.dec (fun _ => True)
++  rw [uprob_true, Finset.filter_true, Fintype.sum_option] at hpart
++  have hsum : ∑ b : Ω, uprob (fun c => S.dec c = some b) =
++      Fintype.card Ω * uprob (fun c => S.dec c = some a) := by
++    rw [Finset.sum_congr rfl fun b _ => S.uniform_of_some b a, sum_const, card_univ,
++      nsmul_eq_mul]
++  have hG : (0 : ℝ) < Fintype.card Ω := by exact_mod_cast Fintype.card_pos
++  rw [hsum] at hpart
++  rw [eq_div_iff hG.ne', fail_eq]
++  linarith
++
++/-- **The mixture identity**: averaging any `F : Option Ω → ℝ` over the decoded coins is the
++mixture of `F none` with weight `fail` and of the uniform average of `F ∘ some` with weight
++`1 − fail`: `𝔼_c F(dec c) = fail · F(none) + (1 − fail) · 𝔼_{a ← Ω} F(some a)`. This exact
++identity is the whole statistical content of "exact on success, fallback on failure"
++[PS10, Lemma 51.17], abstract form. (Disclosed overlap: the same fibre decomposition is the
++step `hdec` of `statClose_getD_of_uniform_of_some`; see the module docstring.)
++
++**Proof sketch.** Group the coin average by the value of `dec` (`uexp_comp_eq_sum_fiber`), split
++`Option Ω` into `none` and `some a` (`Fintype.sum_option`), and substitute
++`uprob_dec_eq_some`. -/
++theorem uexp_comp_dec [Nonempty Ω] (S : CoinSampler Ω s) (F : Option Ω → ℝ) :
++    uexp (fun c => F (S.dec c)) =
++      S.fail * F none + (1 - S.fail) * uexp (fun a => F (some a)) := by
++  classical
++  rw [uexp_comp_eq_sum_fiber S.dec F, Fintype.sum_option, ← fail_eq, uexp_def]
++  simp_rw [S.uprob_dec_eq_some]
++  rw [mul_comm (F none), mul_div_assoc', Finset.mul_sum, Finset.sum_div]
++  congr 1
++  refine sum_congr rfl fun a _ => ?_
++  ring
++
++/-- **The decoder is `fail`-close to the exact draw, failures included**: as samplers of
++`Option Ω`, the coin decoder and `some` of a uniform element are `S.fail`-close,
++`StatClose S.dec some S.fail` [PS10, Definition 181.1]. This is the `Option` form of
++`statClose_getD_of_uniform_of_some` (which is its image under `getD d`), needed when the
++fallback is a branch rather than a default value.
++
++**Proof sketch.** For a test set `T` of `Option Ω`, the mixture identity with `F` the indicator
++of `T` gives `Pr[T(dec c)] − Pr[T(some a)] = fail · (1_T(none) − Pr_a[T(some a)])`, of absolute
++value at most `fail` (both indicator values lie in `[0, 1]`). -/
++theorem statClose_some [Nonempty Ω] (S : CoinSampler Ω s) :
++    StatClose S.dec (some : Ω → Option Ω) S.fail := by
++  classical
++  refine (statClose_iff _ _ _).2 fun T => ?_
++  rw [uprob_eq_uexp, uprob_eq_uexp (fun a : Ω => T (some a)),
++    S.uexp_comp_dec (fun o => if T o then (1 : ℝ) else 0)]
++  have hu0 := uprob_nonneg (fun a : Ω => T (some a))
++  have hu1 := uprob_le_one (fun a : Ω => T (some a))
++  rw [uprob_eq_uexp] at hu0 hu1
++  generalize uexp (fun a : Ω => if T (some a) then (1 : ℝ) else 0) = u at hu0 hu1 ⊢
++  have hf0 := S.fail_nonneg
++  have hf1 := S.fail_le_one
++  generalize S.fail = f at hf0 hf1 ⊢
++  by_cases hT : T none
++  · rw [if_pos hT]
++    exact abs_le.2 ⟨by nlinarith, by nlinarith⟩
++  · rw [if_neg hT]
++    exact abs_le.2 ⟨by nlinarith, by nlinarith⟩
++
++/-- **With a default value the decoder is `fail`-close to uniform**:
++`StatClose (fun c => (dec c).getD d) id S.fail`. The existing abstract lemma
++`statClose_getD_of_uniform_of_some` [PS10, Lemma 51.17], applied as it stands (no re-proof). -/
++theorem statClose_getD [DecidableEq Ω] (S : CoinSampler Ω s) (d : Ω) :
++    StatClose (fun c => (S.dec c).getD d) (id : Ω → Ω) S.fail :=
++  statClose_getD_of_uniform_of_some S.dec S.uniform_of_some (S.fail_eq).ge d
++
++omit [Fintype Ω] [Fintype Ω'] in
++/-- `o.map e = some a ↔ o = some (e.symm a)` for a bijection `e`. Glue. -/
++theorem option_map_equiv_eq_some_iff (e : Ω ≃ Ω') (o : Option Ω) (a : Ω') :
++    o.map e = some a ↔ o = some (e.symm a) := by
++  cases o with
++  | none => exact ⟨fun h => Option.noConfusion h, fun h => Option.noConfusion h⟩
++  | some b =>
++    rw [Option.map_some, Option.some_inj, Option.some_inj]
++    exact ⟨fun h => h ▸ (e.symm_apply_apply b).symm, fun h => h ▸ e.apply_symm_apply a⟩
++
++/-- **Transport along a bijection** `e : Ω ≃ Ω'`: decode with `S`, then apply `e`. Exact on
++success because `e` is a bijection; the failure event is unchanged. Glue. -/
++def congr (S : CoinSampler Ω s) (e : Ω ≃ Ω') : CoinSampler Ω' s where
++  dec c := (S.dec c).map e
++  uniform_of_some a a' := by
++    rw [OneWay.uprob_congr fun c => option_map_equiv_eq_some_iff e (S.dec c) a,
++      OneWay.uprob_congr fun c => option_map_equiv_eq_some_iff e (S.dec c) a']
++    exact S.uniform_of_some _ _
++
++/-- `(S.congr e).dec c = (S.dec c).map e`. -/
++theorem congr_dec (S : CoinSampler Ω s) (e : Ω ≃ Ω') (c : Fin s → Bool) :
++    (S.congr e).dec c = (S.dec c).map e := rfl
++
++/-- Transport keeps the failure probability: `(S.congr e).fail = S.fail`
++(`Option.map_eq_none_iff`). -/
++theorem fail_congr (S : CoinSampler Ω s) (e : Ω ≃ Ω') : (S.congr e).fail = S.fail := by
++  rw [fail_eq, fail_eq]
++  exact OneWay.uprob_congr fun c => by rw [congr_dec, Option.map_eq_none_iff]
++
++/-- **Coins read through a bijection** `e` of coin strings: `(S.reindex e).dec c = S.dec (e c)`.
++Exact on success, since a bijection of the coin space preserves `uprob` (`uprob_comp_equiv`).
++Glue. -/
++def reindex (S : CoinSampler Ω s) (e : (Fin s' → Bool) ≃ (Fin s → Bool)) :
++    CoinSampler Ω s' where
++  dec c := S.dec (e c)
++  uniform_of_some a a' := by
++    rw [uprob_comp_equiv e (fun c => S.dec c = some a),
++      uprob_comp_equiv e (fun c => S.dec c = some a')]
++    exact S.uniform_of_some a a'
++
++/-- `(S.reindex e).dec c = S.dec (e c)`. -/
++theorem reindex_dec (S : CoinSampler Ω s) (e : (Fin s' → Bool) ≃ (Fin s → Bool))
++    (c : Fin s' → Bool) : (S.reindex e).dec c = S.dec (e c) := rfl
++
++/-- Reindexing keeps the failure probability: `(S.reindex e).fail = S.fail`
++(`uprob_comp_equiv`). -/
++theorem fail_reindex (S : CoinSampler Ω s) (e : (Fin s' → Bool) ≃ (Fin s → Bool)) :
++    (S.reindex e).fail = S.fail :=
++  uprob_comp_equiv e (fun c => S.dec c = none)
++
++end CoinSampler
++
++/-- Block `j` of a string of `n · s` coins: the coins at the positions
++`finProdFinEquiv (j, i) = i + s·j`, `i < s`. Glue. -/
++def block {n s : ℕ} (c : Fin (n * s) → Bool) (j : Fin n) : Fin s → Bool :=
++  fun i => c (finProdFinEquiv (j, i))
++
++/-- `block c j i = c (finProdFinEquiv (j, i))`. -/
++theorem block_apply {n s : ℕ} (c : Fin (n * s) → Bool) (j : Fin n) (i : Fin s) :
++    block c j i = c (finProdFinEquiv (j, i)) := rfl
++
++/-- The **block bijection**: `n · s` coins are `n` blocks of `s` coins (Mathlib's
++`finProdFinEquiv`, `Equiv.arrowCongr` and `Equiv.curry`). Glue. -/
++def blockEquiv (n s : ℕ) : (Fin (n * s) → Bool) ≃ (Fin n → Fin s → Bool) :=
++  (Equiv.arrowCongr finProdFinEquiv.symm (Equiv.refl Bool)).trans
++    (Equiv.curry (Fin n) (Fin s) Bool)
++
++/-- `blockEquiv n s c = block c`. -/
++theorem blockEquiv_apply (n s : ℕ) (c : Fin (n * s) → Bool) : blockEquiv n s c = block c := rfl
++
++/-- An event of the blocks has the probability of the event on independent blocks:
++`Pr_c[P (block c)] = Pr_b[P b]` (`uprob_comp_equiv` along `blockEquiv`). -/
++theorem uprob_block {n s : ℕ} (P : (Fin n → Fin s → Bool) → Prop) :
++    uprob (fun c : Fin (n * s) → Bool => P (block c)) = uprob P :=
++  uprob_comp_equiv (blockEquiv n s) P
++
++namespace CoinSampler
++
++variable {Ω Ω' : Type} [Fintype Ω] [Fintype Ω'] {s s' : ℕ}
++
++/-- The decoder of `n` independent draws: decode each of the `n` blocks of `n · s` coins with
++`S`; `some` of the tuple when every block succeeds, `none` otherwise. Glue. -/
++def piDec (n : ℕ) (S : CoinSampler Ω s) (c : Fin (n * s) → Bool) : Option (Fin n → Ω) :=
++  if h : ∀ j, (S.dec (block c j)).isSome then some fun j => (S.dec (block c j)).get (h j)
++  else none
++
++/-- `piDec n S c` decodes every block, and succeeds iff every block does. -/
++theorem piDec_eq (n : ℕ) (S : CoinSampler Ω s) (c : Fin (n * s) → Bool) :
++    piDec n S c = if h : ∀ j, (S.dec (block c j)).isSome then
++      some fun j => (S.dec (block c j)).get (h j) else none := rfl
++
++/-- The `n`-draw decoder outputs the tuple `f` exactly when every block decodes to its
++coordinate: `piDec n S c = some f ↔ ∀ j, S.dec (block c j) = some (f j)`. -/
++theorem piDec_eq_some_iff (n : ℕ) (S : CoinSampler Ω s) (c : Fin (n * s) → Bool)
++    (f : Fin n → Ω) : piDec n S c = some f ↔ ∀ j, S.dec (block c j) = some (f j) := by
++  rw [piDec_eq]
++  split_ifs with h
++  · rw [Option.some_inj]
++    constructor
++    · rintro rfl j
++      exact (Option.some_get (h j)).symm
++    · intro hg
++      funext j
++      exact (Option.eq_some_iff_get_eq.1 (hg j)).2
++  · refine ⟨fun h' => by simp at h', fun hg => absurd (fun j => ?_) h⟩
++    rw [hg j]
++    rfl
++
++/-- The `n`-draw decoder gives up exactly when some block does:
++`piDec n S c = none ↔ ∃ j, S.dec (block c j) = none`. -/
++theorem piDec_eq_none_iff (n : ℕ) (S : CoinSampler Ω s) (c : Fin (n * s) → Bool) :
++    piDec n S c = none ↔ ∃ j, S.dec (block c j) = none := by
++  rw [piDec_eq]
++  split_ifs with h
++  · refine ⟨fun h' => by simp at h', fun ⟨j, hj⟩ => ?_⟩
++    have := h j
++    rw [hj] at this
++    exact absurd this Bool.false_ne_true
++  · refine ⟨fun _ => ?_, fun _ => rfl⟩
++    push_neg at h
++    obtain ⟨j, hj⟩ := h
++    exact ⟨j, Option.not_isSome_iff_eq_none.1 hj⟩
++
++/-- **`n` independent draws** as a coin sampler on `Fin n → Ω` from `n · s` coins (`piDec`).
++Exact on success, since the blocks of uniform coins are independent (`uprob_block`) and each is
++exact on success (`uprob_pi_forall_dep`). Glue. -/
++def pi (n : ℕ) (S : CoinSampler Ω s) : CoinSampler (Fin n → Ω) (n * s) where
++  dec := piDec n S
++  uniform_of_some f f' := by
++    rw [OneWay.uprob_congr fun c => piDec_eq_some_iff n S c f,
++      OneWay.uprob_congr fun c => piDec_eq_some_iff n S c f',
++      uprob_block (fun b => ∀ j, S.dec (b j) = some (f j)),
++      uprob_block (fun b => ∀ j, S.dec (b j) = some (f' j)),
++      uprob_pi_forall_dep (fun j x => S.dec x = some (f j)),
++      uprob_pi_forall_dep (fun j x => S.dec x = some (f' j))]
++    exact Finset.prod_congr rfl fun j _ => S.uniform_of_some (f j) (f' j)
++
++/-- `(pi n S).dec = piDec n S`. -/
++theorem pi_dec (n : ℕ) (S : CoinSampler Ω s) : (pi n S).dec = piDec n S := rfl
++
++/-- **Union bound for independent draws**: `(pi n S).fail ≤ n · S.fail`.
++
++**Proof sketch.** `piDec_eq_none_iff` and the union bound `uprob_exists_le`; each block event
++has probability `S.fail`, since the blocks of uniform coins are independent uniform blocks
++(`uprob_block`, `uprob_apply_coord`). -/
++theorem fail_pi_le (n : ℕ) (S : CoinSampler Ω s) : (pi n S).fail ≤ n * S.fail := by
++  rw [fail_eq, pi_dec, OneWay.uprob_congr fun c => (piDec_eq_none_iff n S c).trans
++    (by simp only [Finset.mem_univ, true_and] :
++      (∃ j, S.dec (block c j) = none) ↔ ∃ j ∈ (univ : Finset (Fin n)), S.dec (block c j) = none)]
++  refine (uprob_exists_le univ fun j c => S.dec (block c j) = none).trans (le_of_eq ?_)
++  have hj : ∀ j : Fin n, uprob (fun c : Fin (n * s) → Bool => S.dec (block c j) = none) =
++      S.fail := fun j => by
++    rw [uprob_block (fun b => S.dec (b j) = none), uprob_apply_coord j
++      (fun x => S.dec x = none), fail_eq]
++  rw [Finset.sum_congr rfl fun j _ => hj j, sum_const, card_univ, Fintype.card_fin,
++    nsmul_eq_mul]
++
++/-- **The two halves of uniform coins are an independent uniform pair**:
++`Pr_c[P (c↾s, c↾s')] = Pr_{(a, b)}[P (a, b)]` for the first `s` and the last `s'` of `s + s'`
++coins (`uprob_comp_equiv` along Mathlib's `Fin.appendEquiv`). Glue. -/
++theorem uprob_halves (P : (Fin s → Bool) × (Fin s' → Bool) → Prop) :
++    uprob (fun c : Fin (s + s') → Bool =>
++      P ((fun i => c (Fin.castAdd s' i)), (fun i => c (Fin.natAdd s i)))) = uprob P :=
++  uprob_comp_equiv (Fin.appendEquiv s s').symm P
++
++/-- The decoder of two independent draws: the first `s` coins decoded by `S`, the last `s'`
++by `S'`; `some (a, b)` when both succeed. Glue. -/
++def prodDec (S : CoinSampler Ω s) (S' : CoinSampler Ω' s') (c : Fin (s + s') → Bool) :
++    Option (Ω × Ω') :=
++  (S.dec fun i => c (Fin.castAdd s' i)).bind fun a =>
++    (S'.dec fun i => c (Fin.natAdd s i)).map fun b => (a, b)
++
++/-- `prodDec S S' c` decodes the two coin blocks and pairs the results. -/
++theorem prodDec_eq (S : CoinSampler Ω s) (S' : CoinSampler Ω' s') (c : Fin (s + s') → Bool) :
++    prodDec S S' c = (S.dec fun i => c (Fin.castAdd s' i)).bind fun a =>
++      (S'.dec fun i => c (Fin.natAdd s i)).map fun b => (a, b) := rfl
++
++/-- The pair decoder outputs `q` exactly when the two halves decode to its coordinates. -/
++theorem prodDec_eq_some_iff (S : CoinSampler Ω s) (S' : CoinSampler Ω' s')
++    (c : Fin (s + s') → Bool) (q : Ω × Ω') :
++    prodDec S S' c = some q ↔ S.dec (fun i => c (Fin.castAdd s' i)) = some q.1 ∧
++      S'.dec (fun i => c (Fin.natAdd s i)) = some q.2 := by
++  rw [prodDec_eq]
++  cases S.dec fun i => c (Fin.castAdd s' i) with
++  | none => exact ⟨fun h => Option.noConfusion h, fun h => Option.noConfusion h.1⟩
++  | some a =>
++    cases S'.dec fun i => c (Fin.natAdd s i) with
++    | none => exact ⟨fun h => Option.noConfusion h, fun h => Option.noConfusion h.2⟩
++    | some b =>
++      rw [Option.bind_some, Option.map_some, Option.some_inj, Option.some_inj,
++        Option.some_inj, Prod.ext_iff]
++
++/-- The pair decoder gives up exactly when one of the two draws does. -/
++theorem prodDec_eq_none_iff (S : CoinSampler Ω s) (S' : CoinSampler Ω' s')
++    (c : Fin (s + s') → Bool) :
++    prodDec S S' c = none ↔
++      S.dec (fun i => c (Fin.castAdd s' i)) = none ∨
++        S'.dec (fun i => c (Fin.natAdd s i)) = none := by
++  rw [prodDec_eq]
++  cases S.dec fun i => c (Fin.castAdd s' i) with
++  | none => exact ⟨fun _ => Or.inl rfl, fun _ => rfl⟩
++  | some a =>
++    cases S'.dec fun i => c (Fin.natAdd s i) with
++    | none => exact ⟨fun _ => Or.inr rfl, fun _ => rfl⟩
++    | some b =>
++      rw [Option.bind_some, Option.map_some]
++      exact ⟨fun h => Option.noConfusion h, fun h => h.elim (fun h' => Option.noConfusion h')
++        fun h' => Option.noConfusion h'⟩
++
++/-- **Two independent draws** as a coin sampler on `Ω × Ω'` from `s + s'` coins (`prodDec`).
++Exact on success: the two halves of uniform coins are an independent uniform pair
++(`Fin.appendEquiv`), and `uprob_prod_and` splits the event. Glue. -/
++def prod (S : CoinSampler Ω s) (S' : CoinSampler Ω' s') : CoinSampler (Ω × Ω') (s + s') where
++  dec := prodDec S S'
++  uniform_of_some p p' := by
++    have e : ∀ q : Ω × Ω', uprob (fun c => prodDec S S' c = some q) =
++        uprob (fun z : (Fin s → Bool) × (Fin s' → Bool) =>
++          S.dec z.1 = some q.1 ∧ S'.dec z.2 = some q.2) := fun q => by
++      rw [OneWay.uprob_congr fun c => prodDec_eq_some_iff S S' c q]
++      exact uprob_halves (fun z => S.dec z.1 = some q.1 ∧ S'.dec z.2 = some q.2)
++    rw [e p, e p', HardcoreBit.uprob_prod_and (fun a => S.dec a = some p.1)
++      (fun b => S'.dec b = some p.2), HardcoreBit.uprob_prod_and (fun a => S.dec a = some p'.1)
++      (fun b => S'.dec b = some p'.2),
++      S.uniform_of_some p.1 p'.1, S'.uniform_of_some p.2 p'.2]
++
++/-- `(S.prod S').dec = prodDec S S'`. -/
++theorem prod_dec (S : CoinSampler Ω s) (S' : CoinSampler Ω' s') :
++    (S.prod S').dec = prodDec S S' := rfl
++
++/-- Union bound for two draws: `(S.prod S').fail ≤ S.fail + S'.fail` (`uprob_or_le`, the
++marginals of `Fin.appendEquiv`).
++
++**Proof sketch.** The pair gives up iff one draw does (`prodDec_eq_none_iff`); bound the union
++by the sum (`uprob_or_le`); read the two halves of the coins as an independent pair
++(`uprob_comp_equiv` along `Fin.appendEquiv`), so each event has its own failure probability
++(`uprob_prod_and` with the certain event on the other side). -/
++theorem fail_prod_le (S : CoinSampler Ω s) (S' : CoinSampler Ω' s') :
++    (S.prod S').fail ≤ S.fail + S'.fail := by
++  rw [fail_eq, prod_dec, OneWay.uprob_congr (prodDec_eq_none_iff S S')]
++  refine (uprob_or_le _ _).trans (le_of_eq ?_)
++  have h₁ := uprob_halves (s := s) (s' := s') (fun z => S.dec z.1 = none ∧ True)
++  have h₂ := uprob_halves (s := s) (s' := s') (fun z => True ∧ S'.dec z.2 = none)
++  rw [HardcoreBit.uprob_prod_and (fun a => S.dec a = none) (fun _ => True), uprob_true,
++    mul_one] at h₁
++  rw [HardcoreBit.uprob_prod_and (fun _ => True) (fun b => S'.dec b = none), uprob_true,
++    one_mul] at h₂
++  rw [fail_eq, fail_eq, ← h₁, ← h₂]
++  congr 1
++  · exact OneWay.uprob_congr fun c => ⟨fun h => ⟨h, trivial⟩, fun h => h.1⟩
++  · exact OneWay.uprob_congr fun c => ⟨fun h => ⟨trivial, h⟩, fun h => h.2⟩
++
++/-- **The library's rejection sampler as a coin sampler**: `rejectionSample m k T` (`T` trials
++of `k` bits, the first value below `m`) on the `T` blocks of `T · k` coins. Exact on success is
++the existing `rejectionSample_uniform_of_some`, moved along the block bijection
++[PS10, Lemma 51.17]. Reuse, not a new sampler. -/
++def ofRejection (m k T : ℕ) (hm : 0 < m) (hk : m ≤ 2 ^ k) : CoinSampler (Fin m) (T * k) where
++  dec c := rejectionSample m k T (block c)
++  uniform_of_some a a' := by
++    rw [uprob_block (fun b => rejectionSample m k T b = some a),
++      uprob_block (fun b => rejectionSample m k T b = some a')]
++    exact rejectionSample_uniform_of_some m k T hm hk a a'
++
++/-- `(ofRejection m k T hm hk).dec c = rejectionSample m k T (block c)`. -/
++theorem ofRejection_dec (m k T : ℕ) (hm : 0 < m) (hk : m ≤ 2 ^ k) (c : Fin (T * k) → Bool) :
++    (ofRejection m k T hm hk).dec c = rejectionSample m k T (block c) := rfl
++
++/-- The rejection sampler fails with probability `(1 − m/2^k)^T` [PS10, Lemma 51.17]: the
++existing `uprob_rejectionSample_none`, moved along the block bijection. -/
++theorem fail_ofRejection (m k T : ℕ) (hm : 0 < m) (hk : m ≤ 2 ^ k) :
++    (ofRejection m k T hm hk).fail = (1 - (m : ℝ) / 2 ^ k) ^ T := by
++  rw [fail_eq, ← uprob_rejectionSample_none m k T hm hk]
++  exact uprob_block (fun b => rejectionSample m k T b = none)
++
++/-- **Every-outcome properties survive a default fallback** (seed-function form, for algorithms
++written as functions of their exact seed, such as `Regev.keygen`): if `P (f a)` holds for every
++seed `a`, it holds for `f ((dec c).getD d)` at every coin string `c`. Glue. -/
++theorem forall_comp_getD (S : CoinSampler Ω s) {β : Type} {P : β → Prop} (f : Ω → β) (d : Ω)
++    (h : ∀ a, P (f a)) (c : Fin s → Bool) : P (f ((S.dec c).getD d)) :=
++  h _
++
++/-- **Every-outcome properties survive a fallback branch that is correct by construction**: if
++`P (f a)` holds for every seed `a` and `P fb` holds for the fallback `fb`, then
++`P ((dec c).elim fb f)` holds at every coin string `c`. Glue. -/
++theorem forall_comp_elim (S : CoinSampler Ω s) {β : Type} {P : β → Prop} (f : Ω → β) (fb : β)
++    (h : ∀ a, P (f a)) (hfb : P fb) (c : Fin s → Bool) : P ((S.dec c).elim fb f) := by
++  cases S.dec c with
++  | none => exact hfb
++  | some a => exact h a
++
++end CoinSampler
++
++end TCSlib.Cryptography.CoinSampling
+diff --git a/TCSlib/Cryptography/CoinSampling/Buckets.lean b/TCSlib/Cryptography/CoinSampling/Buckets.lean
+new file mode 100644
+index 000000000..170f9365a
+--- /dev/null
++++ b/TCSlib/Cryptography/CoinSampling/Buckets.lean
+@@ -0,0 +1,241 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.CoinSampling.Basic
++import Mathlib.Algebra.BigOperators.Fin
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The bucket sampler and rational laws
++
++The single-draw sampler of a non-dyadic range: read `s` fair coins as a number `x < 2^s`; with
++`q = ⌊2^s/N⌋`, accept iff `x < q·N` and output `x mod N`. Every residue has exactly `q`
++preimages below `q·N` (equal buckets), so the output is exactly uniform on success, and the
++sampler gives up on the leftover `2^s mod N` values: `fail = (2^s mod N)/2^s < N/2^s`. With
++`b + t` coins for a modulus `N ≤ 2^b`, the failure is at most `2^{-t}`.
++
++Laws other than uniform are pushforwards of a uniform seed. A rational law with integer weights
++`w` is the first coordinate of a uniform `RatSeed w = Σ a, Fin (w a)` (weighted buckets), read
++through Mathlib's cumulative enumeration `finSigmaFinEquiv`.
++
++## Main definitions
++
++* `CoinSampling.bucketDec N s`, `bucket N s`: the bucket decoder and sampler of `Fin N`.
++* `CoinSampling.ofEquiv e s`: the bucket sampler of any finite type through `e : Ω ≃ Fin N`.
++* `CoinSampling.RatSeed w`, `weighted w s`: the seed of a rational law and its sampler.
++
++## Main results
++
++* `CoinSampling.bucketDec_eq_some_iff`, `bucketDec_eq_none_iff`: the decoder in numbers.
++* `CoinSampling.uprob_bucketDec_eq_some`: every residue has probability `⌊2^s/N⌋/2^s`.
++* `CoinSampling.fail_bucket`: `fail = (2^s mod N)/2^s` exactly; `fail_bucket_lt`,
++  `fail_bucket_le` (slack bits).
++* `CoinSampling.uprob_ratSeed_fst`: a uniform rational seed has the law `w a / Σ w`.
++
++## References
++
++* [Lem19] D. Lemire, *Fast Random Integer Generation in an Interval*, ACM Trans. Model. Comput.
++  Simul. 29(1), 2019; arXiv:1805.10941v4 (28 December 2018), §3.2 and Algorithm 4 (the Java
++  algorithm: accept `x ∈ [0, 2^L − (2^L mod s))`, return `x mod s`), Lemma 2.1 (equal counts
++  of each remainder on an interval whose length `s` divides).
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Lemma 51.17 (rejection sampling is uniform conditioned on success).
++
++**Deviation.** [Lem19, Algorithm 4] repeats the draw until it is accepted (a loop with an
++unbounded number of coins); `bucket N s` makes one draw of `s` coins and gives up on rejection,
++so that its coin count is fixed and the failure is an explicit term (`fail_bucket`). The
++acceptance test `x < ⌊2^s/N⌋·N` is the algorithm's `x ∈ [0, 2^L − (2^L mod s))`.
++-/
++
++namespace TCSlib.Cryptography.CoinSampling
++
++open Finset
++
++/-- **The bucket decoder**: read the `s` coins as a number `x < 2^s` (`bitsToNat`, as
++`uniformFromBits` does); with `q = ⌊2^s/N⌋`, accept iff `x < q·N` and output `x mod N`, the
++second coordinate of `finProdFinEquiv.symm x : Fin q × Fin N`. One rejection trial
++(`uniformFromBits`) at the threshold `q·N`, then a reduction: one round of
++[Lem19, §3.2, Algorithm 4], giving up instead of retrying (see the module docstring). -/
++def bucketDec (N s : ℕ) (c : Fin s → Bool) : Option (Fin N) :=
++  (uniformFromBits (2 ^ s / N * N) s c).map fun x => (finProdFinEquiv.symm x).2
++
++/-- `bucketDec N s c` is the one-trial rejection read `uniformFromBits (⌊2^s/N⌋·N) s c`,
++reduced modulo `N` through `finProdFinEquiv.symm`. -/
++theorem bucketDec_eq (N s : ℕ) (c : Fin s → Bool) :
++    bucketDec N s c =
++      (uniformFromBits (2 ^ s / N * N) s c).map fun x => (finProdFinEquiv.symm x).2 := rfl
++
++/-- The bucket decoder outputs `a` exactly when the coins read below `⌊2^s/N⌋·N` and are
++congruent to `a` mod `N`: `bucketDec N s c = some a ↔ x < ⌊2^s/N⌋·N ∧ x % N = a` with
++`x = bitsToNat c`. -/
++theorem bucketDec_eq_some_iff (N s : ℕ) (c : Fin s → Bool) (a : Fin N) :
++    bucketDec N s c = some a ↔ bitsToNat c < 2 ^ s / N * N ∧ bitsToNat c % N = a := by
++  rw [bucketDec_eq, Option.map_eq_some_iff]
++  constructor
++  · rintro ⟨x, hx, rfl⟩
++    rw [uniformFromBits_eq_some_iff] at hx
++    refine ⟨hx ▸ x.2, ?_⟩
++    rw [hx, finProdFinEquiv_symm_apply, Fin.coe_modNat]
++  · rintro ⟨hlt, hmod⟩
++    refine ⟨⟨bitsToNat c, hlt⟩, (uniformFromBits_eq_some_iff c _).2 rfl, Fin.ext ?_⟩
++    rw [finProdFinEquiv_symm_apply, Fin.coe_modNat]
++    exact hmod
++
++/-- The bucket decoder gives up exactly when the coins read at least `⌊2^s/N⌋·N`. -/
++theorem bucketDec_eq_none_iff (N s : ℕ) (c : Fin s → Bool) :
++    bucketDec N s c = none ↔ 2 ^ s / N * N ≤ bitsToNat c := by
++  rw [bucketDec_eq, Option.map_eq_none_iff, uniformFromBits_eq_none_iff]
++
++/-- **Equal buckets** [Lem19, Lemma 2.1]: below `q·N` (`q = ⌊2^s/N⌋`) each residue `a` mod `N`
++has exactly `q` representatives: the fibre of `a` under `x ↦ (finProdFinEquiv.symm x).2` is
++`{finProdFinEquiv (j, a) | j < q}`. -/
++theorem card_filter_finProdFinEquiv_symm_snd (q N : ℕ) (a : Fin N) :
++    (univ.filter fun x : Fin (q * N) => (finProdFinEquiv.symm x).2 = a).card = q := by
++  rw [← Fintype.card_subtype]
++  refine (Fintype.card_congr
++    { toFun := fun x => (finProdFinEquiv.symm x.1).1
++      invFun := fun j => ⟨finProdFinEquiv (j, a),
++        congrArg Prod.snd (finProdFinEquiv.symm_apply_apply (j, a))⟩
++      left_inv := fun x => by
++        rcases x with ⟨y, rfl⟩
++        exact Subtype.ext (finProdFinEquiv.apply_symm_apply y)
++      right_inv := fun j => by
++        dsimp only
++        rw [Equiv.symm_apply_apply] }).trans (Fintype.card_fin q)
++
++/-- **Equal buckets**: every residue is output with probability `⌊2^s/N⌋ / 2^s`.
++
++**Proof sketch.** The event is the union over the `q = ⌊2^s/N⌋` values `x < q·N` in the fibre of
++`a` (`card_filter_finProdFinEquiv_symm_snd`) of `{uniformFromBits = some x}` (grouped by
++`uprob_comp_eq_sum_fiber`, `Fintype.sum_option`), each of probability `1/2^s`
++(`uprob_uniformFromBits_eq_some`, valid as `q·N ≤ 2^s`). -/
++theorem uprob_bucketDec_eq_some (N s : ℕ) (a : Fin N) :
++    uprob (fun c => bucketDec N s c = some a) = ((2 ^ s / N : ℕ) : ℝ) / 2 ^ s := by
++  classical
++  have hk : 2 ^ s / N * N ≤ 2 ^ s := Nat.div_mul_le_self _ _
++  have h := uprob_comp_eq_sum_fiber (uniformFromBits (2 ^ s / N * N) s)
++    (fun o => o.map (fun x => (finProdFinEquiv.symm x).2) = some a)
++  rw [sum_filter, Fintype.sum_option, Option.map_none, if_neg (fun h' => by simp at h'),
++    zero_add] at h
++  refine h.trans ?_
++  have hterm : ∀ x : Fin (2 ^ s / N * N),
++      (if (some x).map (fun x => (finProdFinEquiv.symm x).2) = some a then
++        uprob (fun c => uniformFromBits (2 ^ s / N * N) s c = some x) else 0) =
++      if (finProdFinEquiv.symm x).2 = a then 1 / 2 ^ s else 0 := fun x => by
++    by_cases hx : (finProdFinEquiv.symm x).2 = a
++    · rw [if_pos (by rw [Option.map_some, hx]), if_pos hx, uprob_uniformFromBits_eq_some hk]
++    · rw [if_neg (by rw [Option.map_some, Option.some_inj]; exact hx), if_neg hx]
++  rw [Finset.sum_congr rfl fun x _ => hterm x, ← sum_filter, sum_const,
++    card_filter_finProdFinEquiv_symm_snd, nsmul_eq_mul, mul_one_div]
++
++/-- **The bucket sampler** of `Fin N` from `s` coins: `bucketDec N s`, exact on success by
++`uprob_bucketDec_eq_some` [Lem19, §3.2, Algorithm 4] (one round). -/
++def bucket (N s : ℕ) : CoinSampler (Fin N) s where
++  dec := bucketDec N s
++  uniform_of_some a a' := by rw [uprob_bucketDec_eq_some, uprob_bucketDec_eq_some]
++
++/-- `(bucket N s).dec = bucketDec N s`. -/
++theorem bucket_dec (N s : ℕ) : (bucket N s).dec = bucketDec N s := rfl
++
++/-- **The bucket failure probability, exactly**: `(bucket N s).fail = (2^s mod N)/2^s`
++(also for `N = 0`, where it is `1`).
++
++**Proof sketch.** The decoder gives up iff the trial does (`Option.map_eq_none_iff`), so
++`uprob_uniformFromBits_none` gives `1 − ⌊2^s/N⌋·N/2^s`, and
++`2^s = ⌊2^s/N⌋·N + 2^s mod N` (`Nat.div_add_mod`). -/
++theorem fail_bucket (N s : ℕ) : (bucket N s).fail = ((2 ^ s % N : ℕ) : ℝ) / 2 ^ s := by
++  have hk : 2 ^ s / N * N ≤ 2 ^ s := Nat.div_mul_le_self _ _
++  rw [CoinSampler.fail_eq, bucket_dec,
++    OneWay.uprob_congr fun c =>
++      (bucketDec_eq_none_iff N s c).trans (uniformFromBits_eq_none_iff c).symm,
++    uprob_uniformFromBits_none hk]
++  have hsum : ((2 ^ s / N * N : ℕ) : ℝ) + ((2 ^ s % N : ℕ) : ℝ) = 2 ^ s := by
++    have := Nat.div_add_mod (2 ^ s) N
++    rw [mul_comm] at this
++    exact_mod_cast this
++  have h2 : (0 : ℝ) < 2 ^ s := by positivity
++  rw [eq_div_iff h2.ne', sub_mul, one_mul, div_mul_cancel₀ _ h2.ne']
++  push_cast at hsum ⊢
++  linarith
++
++/-- **The design sketch's bound**: for `0 < N`, the bucket sampler fails with probability
++`< N/2^s` (`fail_bucket`, `2^s mod N < N`). -/
++theorem fail_bucket_lt {N : ℕ} (hN : 0 < N) (s : ℕ) : (bucket N s).fail < N / 2 ^ s := by
++  rw [fail_bucket]
++  have h2 : (0 : ℝ) < 2 ^ s := by positivity
++  exact div_lt_div_of_pos_right (by exact_mod_cast Nat.mod_lt _ hN) h2
++
++/-- **Slack bits**: if `0 < N ≤ 2^b`, the bucket sampler with `b + t` coins fails with
++probability at most `2^{-t}`: `(bucket N (b + t)).fail ≤ (2⁻¹)^t` (`fail_bucket_lt` and
++`N/2^{b+t} ≤ 2^b/2^{b+t} = 2^{-t}`). -/
++theorem fail_bucket_le {N b : ℕ} (hN0 : 0 < N) (hN : N ≤ 2 ^ b) (t : ℕ) :
++    (bucket N (b + t)).fail ≤ (2 : ℝ)⁻¹ ^ t := by
++  refine (fail_bucket_lt hN0 (b + t)).le.trans ?_
++  have hN' : (N : ℝ) ≤ 2 ^ b := by exact_mod_cast hN
++  have h2 : (0 : ℝ) < 2 ^ (b + t) := by positivity
++  calc (N : ℝ) / 2 ^ (b + t) ≤ 2 ^ b / 2 ^ (b + t) := div_le_div_of_nonneg_right hN' h2.le
++    _ = (2 : ℝ)⁻¹ ^ t := by
++      rw [pow_add, inv_pow, div_mul_eq_div_div, div_self (by positivity), one_div]
++
++/-- **Uniform on any finite type through an enumeration** `e : Ω ≃ Fin N`: the bucket sampler
++of `Fin N`, transported along `e.symm`. Efficient decoding needs a computable `e`
++(`ZMod.finEquiv`, `finProdFinEquiv`, `finSigmaFinEquiv`); `Fintype.equivFin` serves laws only.
++Glue. -/
++def ofEquiv {Ω : Type} [Fintype Ω] {N : ℕ} (e : Ω ≃ Fin N) (s : ℕ) : CoinSampler Ω s :=
++  (bucket N s).congr e.symm
++
++/-- `(ofEquiv e s).dec c = (bucketDec N s c).map e.symm`. -/
++theorem ofEquiv_dec {Ω : Type} [Fintype Ω] {N : ℕ} (e : Ω ≃ Fin N) (s : ℕ) (c : Fin s → Bool) :
++    (ofEquiv e s).dec c = (bucketDec N s c).map e.symm := rfl
++
++/-- `(ofEquiv e s).fail = (bucket N s).fail` (`CoinSampler.fail_congr`). -/
++theorem fail_ofEquiv {Ω : Type} [Fintype Ω] {N : ℕ} (e : Ω ≃ Fin N) (s : ℕ) :
++    (ofEquiv e s).fail = (bucket N s).fail :=
++  CoinSampler.fail_congr _ _
++
++/-- **The seed type of a rational law** with integer weights `w : α → ℕ`: one element per unit
++of weight, `Σ a, Fin (w a)`. Its uniform law pushed along `Sigma.fst` is the law
++`a ↦ w a / Σ_b w b` (`uprob_ratSeed_fst`): the weighted buckets of the design sketch. Glue. -/
++abbrev RatSeed {α : Type} (w : α → ℕ) : Type := Σ a, Fin (w a)
++
++/-- `RatSeed w = Σ a, Fin (w a)`. -/
++theorem ratSeed_eq {α : Type} (w : α → ℕ) : RatSeed w = (Σ a, Fin (w a)) := rfl
++
++/-- **The rational law of a seed**: a uniform seed of `RatSeed w` has first coordinate `a` with
++probability `w a / Σ_b w b`: the fibre of `a` under `Sigma.fst` is `Fin (w a)` and the type has
++`Σ_b w b` elements (`Fintype.card_sigma`). Glue. -/
++theorem uprob_ratSeed_fst {α : Type} [Fintype α] (w : α → ℕ) (a : α) :
++    uprob (fun x : RatSeed w => x.1 = a) = (w a : ℝ) / ∑ b, w b := by
++  let e : {x : RatSeed w // x.1 = a} ≃ Fin (w a) :=
++    { toFun := fun x => Fin.cast (congrArg w x.2) x.1.2
++      invFun := fun j => ⟨⟨a, j⟩, rfl⟩
++      left_inv := fun x => by
++        rcases x with ⟨⟨b, j⟩, rfl⟩
++        rfl
++      right_inv := fun _ => rfl }
++  rw [uprob_def, Nat.card_congr e, Nat.card_eq_fintype_card, Fintype.card_fin,
++    Fintype.card_sigma]
++  simp only [Fintype.card_fin]
++
++/-- **Weighted buckets** for weights indexed by `Fin m`: the bucket sampler of
++`Fin (Σ_i w i)` read through Mathlib's `finSigmaFinEquiv` (cumulative buckets: value `i` owns
++the `w i` consecutive indices after `Σ_{i' < i} w i'`). Glue. -/
++def weighted {m : ℕ} (w : Fin m → ℕ) (s : ℕ) : CoinSampler (RatSeed w) s :=
++  ofEquiv finSigmaFinEquiv s
++
++/-- `weighted w s = ofEquiv finSigmaFinEquiv s`. -/
++theorem weighted_eq {m : ℕ} (w : Fin m → ℕ) (s : ℕ) :
++    weighted w s = ofEquiv finSigmaFinEquiv s := rfl
++
++/-- The weighted sampler fails as the bucket sampler of the total weight:
++`(weighted w s).fail = (bucket (Σ_i w i) s).fail` (`fail_ofEquiv`). -/
++theorem fail_weighted {m : ℕ} (w : Fin m → ℕ) (s : ℕ) :
++    (weighted w s).fail = (bucket (∑ i, w i) s).fail :=
++  fail_ofEquiv _ _
++
++end TCSlib.Cryptography.CoinSampling
+diff --git a/TCSlib/Cryptography/CoinSampling/Efficiency.lean b/TCSlib/Cryptography/CoinSampling/Efficiency.lean
+new file mode 100644
+index 000000000..11ea720d2
+--- /dev/null
++++ b/TCSlib/Cryptography/CoinSampling/Efficiency.lean
+@@ -0,0 +1,342 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.CoinSampling.Transfer
++import TCSlib.Cryptography.CoinSampling.Buckets
++import TCSlib.Cryptography.Encoding.BinaryArith
++import TCSlib.Complexity.ClassP.BinaryArith.Div
++import TCSlib.Complexity.Randomized.Closure
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Uniform polynomial-time coin samplers in the Turing-machine model
++
++The efficiency half of the coin-sampling bridge. A `UniformSampler` is **one** polynomial-time
++string map `raw` that, on the NUPPT input layout `⟨⟨⟨1^κ, y⟩, α⟩, r⟩`, writes the encoded outcome
++of a coin sampler of a finite type `Ω y` on the coins `r`. The parameter word `y` (for buckets,
++the numeral of the modulus) is read from the machine's input: there is no κ-indexed family of
++programs, no advice and no hard-wired modulus; `κ` only fixes the number of coins. Its machine
++is `NUPPT.ofPolyTimeUniform`, a PPT (empty advice), whose output law is the coin draw's
++(`expect_toNUPPT_runAt`), hence the exact law up to the failure term (`CoinSampling.Transfer`).
++
++The instance `bucketSampler` reads the modulus `N` from the argument and the coins `x` (with
++their number `s`) from the coin slot, tests `x < 2^s − (2^s mod N)`, and writes `true` followed
++by `x mod N` as a numeral of the argument's width, or `[]` on rejection. Its polynomial-time
++proof `polyTimeComputable_bucketRaw` is assembled only from proved tooling: the layout
++projections, the MSB/LE adapters `Encoding.BinaryArith.toLE`/`fromLEPoly`, the zero word of
++`EnsembleLemmas.polyTimeComputable_zeros`, the binary arithmetic `Complexity.BinArith.mod`,
++`sub` and `lt`, and `polyTimeComputable_ite`. No host and no loop of its own.
++
++## Main definitions
++
++* `CoinSampling.encodeOption`: `[]` for `none`, `true :: enc a` for `some a`.
++* `CoinSampling.UniformSampler`: the efficiency contract of a sampler (uniform, modulus as input).
++* `CoinSampling.UniformSampler.toNUPPT`: its machine, `NUPPT.ofPolyTimeUniform`.
++* `CoinSampling.bucketRaw`, `CoinSampling.bucketSampler`: the uniform bucket sampler.
++
++## Main results
++
++* `CoinSampling.UniformSampler.toNUPPT_uniform`: the machine has empty advice.
++* `CoinSampling.UniformSampler.toNUPPT_runAt`, `.expect_toNUPPT_runAt`: the machine's run and
++  output law are the coin sampler's.
++* `CoinSampling.bucketRaw_layout`: the raw decoder computes the bucket sampler.
++* `CoinSampling.polyTimeComputable_bucketRaw`: it is polynomial-time.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Definition 23.4 (probabilistic polynomial-time machines: one machine, uniform coins).
++* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*, Cambridge University
++  Press, 2009, §7.2 (the surrounding machine model of the binary-arithmetic machines).
++* [Lem19] D. Lemire, *Fast Random Integer Generation in an Interval*, ACM Trans. Model. Comput.
++  Simul. 29(1), 2019; arXiv:1805.10941v4, §3.2, Algorithm 4 (the bucket test and reduction).
++
++**Readers of `Complexity.BinArith`.** `ClassP/BinaryArith` publishes no equation lemmas for
++`lt`, `sub` and `mod` (only `beq_def`); the three private readers below
++(`binArith_lt_pairEncode`, `binArith_sub_pairEncode`, `binArith_mod_pairEncode`) read the
++definitions by `rfl` on encoded pairs. Publishing them beside the definitions is a follow-up.
++-/
++
++namespace TCSlib.Cryptography.CoinSampling
++
++open Complexity Turing
++open TCSlib.Cryptography.NumberTheory (listToNat)
++open TCSlib.Cryptography.Games
++
++/-- **Encoding an outcome or a failure**: `[]` for `none` (gave up), `true :: enc a` for
++`some a` (the convention of the list-coin rejection samplers, where rejection is the empty
++word). Glue. -/
++def encodeOption {Ω : Type} (enc : Ω → List Bool) : Option Ω → List Bool
++  | none => []
++  | some a => true :: enc a
++
++/-- `encodeOption enc none = []`. -/
++theorem encodeOption_none {Ω : Type} (enc : Ω → List Bool) : encodeOption enc none = [] := rfl
++
++/-- `encodeOption enc (some a) = true :: enc a`. -/
++theorem encodeOption_some {Ω : Type} (enc : Ω → List Bool) (a : Ω) :
++    encodeOption enc (some a) = true :: enc a := rfl
++
++/-- **A uniform sampler** (the efficiency contract of a sampler): a family of finite types
++`Ω y` indexed by the **parameter word** `y` that the machine reads from its input (for buckets,
++the numeral of the modulus `N`), an encoding of their elements, for every coin count `s` a coin
++sampler of `Ω y` reading exactly `s` coins, and **one** polynomial-time string map `raw` that,
++on the NUPPT layout `⟨⟨⟨1^κ, y⟩, α⟩, r⟩`, writes the encoded decoded outcome of the coins `r`.
++There is no κ-indexed family of programs and no hard-wired modulus: `κ` only fixes the number of
++coins (`toNUPPT`), and the machine built from `raw` has empty advice [PS10, Definition 23.4]
++(a PPT: one machine, uniform coins). -/
++structure UniformSampler where
++  /-- The finite type sampled at the parameter word `y`. -/
++  Ω : List Bool → Type
++  /-- Each sampled type is finite. -/
++  [fintype : ∀ y, Fintype (Ω y)]
++  /-- The encoding of a sampled element at the parameter `y`. -/
++  enc : (y : List Bool) → Ω y → List Bool
++  /-- The coin sampler of `Ω y` reading `s` coins. -/
++  sampler : (y : List Bool) → (s : ℕ) → CoinSampler (Ω y) s
++  /-- The string map computed by the machine. -/
++  raw : List Bool → List Bool
++  /-- On every layout, `raw` writes the encoded outcome of the coins (any advice slot). -/
++  raw_layout : ∀ (κ : ℕ) (y α : List Bool) (s : ℕ) (c : Fin s → Bool),
++    raw (NUPPT.layout (List.replicate κ true) y α (List.ofFn c)) =
++      encodeOption (enc y) ((sampler y s).dec c)
++  /-- The string map is polynomial-time (Turing-machine model). -/
++  polyTime : PolyTimeComputable raw
++
++attribute [instance] UniformSampler.fintype
++
++namespace UniformSampler
++
++/-- **The sampler's machine** with `coins(κ)` coins: `NUPPT.ofPolyTimeUniform`, a PPT (empty
++advice) [PS10, Definition 23.4]. -/
++noncomputable def toNUPPT (U : UniformSampler) (coins : PolyExpr) : NUPPT :=
++  NUPPT.ofPolyTimeUniform U.polyTime coins
++
++/-- `U.toNUPPT coins = NUPPT.ofPolyTimeUniform U.polyTime coins`. -/
++theorem toNUPPT_eq (U : UniformSampler) (coins : PolyExpr) :
++    U.toNUPPT coins = NUPPT.ofPolyTimeUniform U.polyTime coins := rfl
++
++/-- The sampler's machine is uniform (`NUPPT.ofPolyTimeUniform_uniform`): no advice. -/
++theorem toNUPPT_uniform (U : UniformSampler) (coins : PolyExpr) : (U.toNUPPT coins).Uniform :=
++  NUPPT.ofPolyTimeUniform_uniform _ _
++
++/-- The sampler's machine reads `coins(κ)` coins (`NUPPT.coins_ofPolyTimeUniform`). -/
++theorem toNUPPT_coins (U : UniformSampler) (coins : PolyExpr) :
++    (U.toNUPPT coins).coins = coins :=
++  NUPPT.coins_ofPolyTimeUniform _ _
++
++/-- **The run of the sampler's machine** on the parameter `y` at `κ` with coins `r` writes the
++encoded outcome of the coin sampler `sampler y (coins κ)` on `r` (`NUPPT.runAt_eq`,
++`runAtL_ofPolyTimeUniform`, `raw_layout`, `coinsEquiv_ofPolyTimeUniform_ofFn`). Glue. -/
++theorem toNUPPT_runAt (U : UniformSampler) (coins : PolyExpr) (κ : ℕ) (y : List Bool)
++    (r : (U.toNUPPT coins).Coins κ) :
++    (U.toNUPPT coins).runAt κ y r =
++      encodeOption (U.enc y) ((U.sampler y (coins.eval κ)).dec
++        (NUPPT.coinsEquiv_ofPolyTimeUniform U.polyTime coins κ r)) := by
++  rw [NUPPT.runAt_eq]
++  refine (NUPPT.runAtL_ofPolyTimeUniform U.polyTime coins κ y (List.ofFn r)).trans ?_
++  rw [← NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn U.polyTime coins κ r, NUPPT.advInput_eq,
++    ← NUPPT.layout_eq]
++  exact U.raw_layout κ y [] (coins.eval κ) _
++
++/-- **The machine's output law is the coin draw's**: averaging any `g` over the machine's coins
++is averaging `g ∘ encodeOption` over `(sampler y (coins κ)).draw`; with
++`CoinSampler.expect_draw` it is the exact law up to the failure term (`toNUPPT_runAt`,
++`ProbComp.expect_sample_equiv`). Glue. -/
++theorem expect_toNUPPT_runAt (U : UniformSampler) (coins : PolyExpr) (κ : ℕ) (y : List Bool)
++    (g : List Bool → ℝ) :
++    ProbComp.expect (ProbComp.sample ((U.toNUPPT coins).Coins κ))
++        (fun r => g ((U.toNUPPT coins).runAt κ y r)) =
++      ProbComp.expect (U.sampler y (coins.eval κ)).draw
++        (fun o => g (encodeOption (U.enc y) o)) := by
++  simp_rw [U.toNUPPT_runAt coins κ y]
++  rw [CoinSampler.draw_eq, ProbComp.expect_map]
++  exact ProbComp.expect_sample_equiv (NUPPT.coinsEquiv_ofPolyTimeUniform U.polyTime coins κ)
++    (fun c => g (encodeOption (U.enc y) ((U.sampler y (coins.eval κ)).dec c)))
++
++end UniformSampler
++
++/-- **The raw bucket decoder** on the layout `⟨⟨⟨1^κ, ⦃N⦄⟩, α⟩, r⟩`: with `N` the number read from
++the argument (MSB first, `listToNat`), `s = |r|` and `x` the number read from the coins, accept
++iff `x < ⌊2^s/N⌋·N` and write `true` followed by `x mod N` as a numeral of the argument's width;
++write `[]` otherwise [Lem19, §3.2, Algorithm 4] (one round). The modulus is input, never
++hard-wired. -/
++def bucketRaw (z : List Bool) : List Bool :=
++  if listToNat (NUPPT.inCoins z) <
++      2 ^ (NUPPT.inCoins z).length / listToNat (NUPPT.inArg z) * listToNat (NUPPT.inArg z) then
++    true :: Candidates.natToList (NUPPT.inArg z).length
++      (listToNat (NUPPT.inCoins z) % listToNat (NUPPT.inArg z))
++  else []
++
++/-- The defining equation of `bucketRaw` (read through `NUPPT.inArg`, `NUPPT.inCoins`). -/
++theorem bucketRaw_eq (z : List Bool) :
++    bucketRaw z =
++      if listToNat (NUPPT.inCoins z) <
++          2 ^ (NUPPT.inCoins z).length / listToNat (NUPPT.inArg z) * listToNat (NUPPT.inArg z)
++      then
++        true :: Candidates.natToList (NUPPT.inArg z).length
++          (listToNat (NUPPT.inCoins z) % listToNat (NUPPT.inArg z))
++      else [] := rfl
++
++/-- **The raw decoder computes the bucket sampler**: on the layout with argument `y` and coins
++`c`, `bucketRaw` writes `encodeOption` of `(bucket ⟦y⟧ s).dec c`, elements written as numerals of
++width `|y|` (`NUPPT.inArg_layout`, `NUPPT.inCoins_layout`, `NumberTheory.bitsToNat_eq_listToNat`,
++`bucketDec_eq_some_iff`, `bucketDec_eq_none_iff`). Glue. -/
++theorem bucketRaw_layout (κ : ℕ) (y α : List Bool) (s : ℕ) (c : Fin s → Bool) :
++    bucketRaw (NUPPT.layout (List.replicate κ true) y α (List.ofFn c)) =
++      encodeOption (fun a : Fin (listToNat y) => Candidates.natToList y.length a)
++        ((bucket (listToNat y) s).dec c) := by
++  rw [bucketRaw_eq, NUPPT.inArg_layout, NUPPT.inCoins_layout, List.length_ofFn,
++    ← NumberTheory.bitsToNat_eq_listToNat, bucket_dec]
++  by_cases h : bitsToNat c < 2 ^ s / listToNat y * listToNat y
++  · have hN : 0 < listToNat y := Nat.pos_of_ne_zero fun h0 => by
++      rw [h0, Nat.mul_zero] at h
++      exact Nat.not_lt_zero _ h
++    rw [if_pos h, (bucketDec_eq_some_iff _ s c ⟨_, Nat.mod_lt _ hN⟩).2 ⟨h, rfl⟩,
++      encodeOption_some]
++  · rw [if_neg h, (bucketDec_eq_none_iff _ s c).2 (not_lt.1 h), encodeOption_none]
++
++/-- `BinArith.lt` on an encoded pair compares the two little-endian values. Reader (`rfl`). -/
++private theorem binArith_lt_pairEncode (a b : List Bool) :
++    BinArith.lt (pairEncode a b) = decide (LogProg.bitsVal a < LogProg.bitsVal b) := by
++  rw [show BinArith.lt (pairEncode a b) = decide (LogProg.bitsVal (pairFstD (pairEncode a b)) <
++    LogProg.bitsVal (pairSndD (pairEncode a b))) from rfl, pairFstD_pairEncode,
++    pairSndD_pairEncode]
++
++/-- `BinArith.sub` on an encoded pair is the truncated difference. Reader (`rfl`). -/
++private theorem binArith_sub_pairEncode (a b : List Bool) :
++    BinArith.sub (pairEncode a b) = Nat.bits (LogProg.bitsVal a - LogProg.bitsVal b) := by
++  rw [show BinArith.sub (pairEncode a b) = Nat.bits (LogProg.bitsVal (pairFstD (pairEncode a b)) -
++    LogProg.bitsVal (pairSndD (pairEncode a b))) from rfl, pairFstD_pairEncode,
++    pairSndD_pairEncode]
++
++/-- `BinArith.mod` on an encoded pair is the remainder. Reader (`rfl`). -/
++private theorem binArith_mod_pairEncode (a b : List Bool) :
++    BinArith.mod (pairEncode a b) = Nat.bits (LogProg.bitsVal a % LogProg.bitsVal b) := by
++  rw [show BinArith.mod (pairEncode a b) = Nat.bits (LogProg.bitsVal (pairFstD (pairEncode a b)) %
++    LogProg.bitsVal (pairSndD (pairEncode a b))) from rfl, pairFstD_pairEncode,
++    pairSndD_pairEncode]
++
++/-- The little-endian word `0^s 1` has value `2^s` (`BinArith.bitsVal_append_singleton`,
++`BinArith.bitsVal_eq_zero_iff`). Glue. -/
++theorem bitsVal_replicate_false_append_true (s : ℕ) :
++    LogProg.bitsVal (List.replicate s false ++ [true]) = 2 ^ s := by
++  rw [BinArith.bitsVal_append_singleton, (BinArith.bitsVal_eq_zero_iff _).2 (by simp),
++    List.length_replicate, Bool.toNat_true, one_mul, zero_add]
++
++/-- `2^s − (2^s mod N) = ⌊2^s/N⌋ · N` (`Nat.div_add_mod'`), for every `N` (`N = 0` included).
++Glue. -/
++theorem two_pow_sub_mod_eq (s N : ℕ) : 2 ^ s - 2 ^ s % N = 2 ^ s / N * N := by
++  have h := Nat.div_add_mod' (2 ^ s) N
++  generalize 2 ^ s / N * N = q at h ⊢
++  generalize 2 ^ s % N = r at h ⊢
++  omega
++
++/-- **The raw decoder in binary arithmetic**: with `X = toLE (coins)`, `A = toLE (argument)`,
++`P = 0^s 1` (`2^s`, little-endian), the threshold `T = P − (P mod A)` and the residue
++`R = X mod A`, `bucketRaw z = if lt ⟨X, T⟩ then true :: fromLEPoly var ⟨argument, R⟩ else []`.
++Glue: the functional equation behind `polyTimeComputable_bucketRaw`.
++
++**Proof sketch.** Read the binary-arithmetic words as numbers: the `toLE` words have the values
++of the MSB words (`bitsVal_toLE`), `0^s 1` has value `2^s`, so the threshold is
++`2^s − (2^s mod N) = ⌊2^s/N⌋·N` (`two_pow_sub_mod_eq`) and the residue is `x mod N`, written back
++at the argument's width (`fromLEPoly_pairEncode`). The two branches then agree case by case on
++`x < ⌊2^s/N⌋·N`. -/
++theorem bucketRaw_eq_binArith (z : List Bool) :
++    bucketRaw z =
++      if BinArith.lt (pairEncode (Encoding.BinaryArith.toLE (NUPPT.inCoins z))
++        (BinArith.sub (pairEncode
++          (List.replicate (PolyExpr.var.eval (NUPPT.inCoins z).length) false ++ [true])
++          (BinArith.mod (pairEncode
++            (List.replicate (PolyExpr.var.eval (NUPPT.inCoins z).length) false ++ [true])
++            (Encoding.BinaryArith.toLE (NUPPT.inArg z)))))))
++      then true :: Encoding.BinaryArith.fromLEPoly .var (pairEncode (NUPPT.inArg z)
++        (BinArith.mod (pairEncode (Encoding.BinaryArith.toLE (NUPPT.inCoins z))
++          (Encoding.BinaryArith.toLE (NUPPT.inArg z)))))
++      else [] := by
++  rw [binArith_mod_pairEncode, binArith_mod_pairEncode, binArith_sub_pairEncode,
++    binArith_lt_pairEncode, LogProg.bitsVal_bits, LogProg.bitsVal_bits,
++    Encoding.BinaryArith.fromLEPoly_pairEncode, LogProg.bitsVal_bits,
++    Encoding.BinaryArith.bitsVal_toLE, Encoding.BinaryArith.bitsVal_toLE,
++    bitsVal_replicate_false_append_true, two_pow_sub_mod_eq, bucketRaw_eq]
++  simp only [PolyExpr.eval_var]
++  by_cases h : listToNat (NUPPT.inCoins z) <
++      2 ^ (NUPPT.inCoins z).length / listToNat (NUPPT.inArg z) * listToNat (NUPPT.inArg z)
++  · rw [if_pos h, if_pos (decide_eq_true h)]
++  · rw [if_neg h, if_neg (by rw [decide_eq_false h]; exact Bool.false_ne_true)]
++
++/-- **The bucket decoder is polynomial-time** in the Turing-machine model, from the proved
++binary arithmetic of `Complexity.BinArith` [AB09, §7.2].
++
++**Proof sketch.** By `bucketRaw_eq_binArith`, `bucketRaw` is a branch (`polyTimeComputable_ite`)
++on a comparison (`BinArith.polyTimeComputable_lt`) of two words built from: the layout
++projections (`NUPPT.polyTimeComputable_inArg`, `polyTimeComputable_inCoins`), the MSB-to-LE
++adapter (`Encoding.BinaryArith.polyTimeComputable_toLE`), the word `0^s 1`
++(`EnsembleLemmas.polyTimeComputable_zeros`, `PolyTimeComputable.append`), `BinArith.mod` and
++`BinArith.sub`; the accepting branch prepends `true` (`BinArith.polyTimeComputable_cons`) to the
++residue written back at the argument's width (`Encoding.BinaryArith.polyTimeComputable_fromLEPoly`),
++the rejecting branch is constant. No host, no loop of its own. -/
++theorem polyTimeComputable_bucketRaw : PolyTimeComputable bucketRaw := by
++  have hX : PolyTimeComputable fun z => Encoding.BinaryArith.toLE (NUPPT.inCoins z) :=
++    Encoding.BinaryArith.polyTimeComputable_toLE.comp NUPPT.polyTimeComputable_inCoins
++  have hA : PolyTimeComputable fun z => Encoding.BinaryArith.toLE (NUPPT.inArg z) :=
++    Encoding.BinaryArith.polyTimeComputable_toLE.comp NUPPT.polyTimeComputable_inArg
++  have hP : PolyTimeComputable fun z =>
++      List.replicate (PolyExpr.var.eval (NUPPT.inCoins z).length) false ++ [true] :=
++    (EnsembleLemmas.polyTimeComputable_zeros .var NUPPT.polyTimeComputable_inCoins).append
++      (polyTimeComputable_const [true])
++  have hT := BinArith.polyTimeComputable_sub.comp
++    (hP.pairEncode (BinArith.polyTimeComputable_mod.comp (hP.pairEncode hA)))
++  have hlt := BinArith.polyTimeComputable_lt.comp (hX.pairEncode hT)
++  have hR := BinArith.polyTimeComputable_mod.comp (hX.pairEncode hA)
++  have hout := BinArith.polyTimeComputable_cons (p := fun _ => true)
++    (polyTimeComputable_const [true])
++    ((Encoding.BinaryArith.polyTimeComputable_fromLEPoly .var).comp
++      (NUPPT.polyTimeComputable_inArg.pairEncode hR))
++  exact (polyTimeComputable_ite hlt hout (polyTimeComputable_const [])).congr
++    fun z => (bucketRaw_eq_binArith z).symm
++
++/-- **The uniform bucket sampler**: parameter word `y` = the numeral of the modulus,
++`Ω y = Fin ⟦y⟧`, elements written at width `|y|`, the bucket sampler at every coin count, and the
++raw decoder `bucketRaw` [Lem19, §3.2, Algorithm 4] (one round). Its machine
++`bucketSampler.toNUPPT coins` is one PPT for every modulus and every `κ`. -/
++def bucketSampler : UniformSampler where
++  Ω y := Fin (listToNat y)
++  enc y a := Candidates.natToList y.length a
++  sampler y s := bucket (listToNat y) s
++  raw := bucketRaw
++  raw_layout κ y α s c := bucketRaw_layout κ y α s c
++  polyTime := polyTimeComputable_bucketRaw
++
++/-- `bucketSampler.Ω y = Fin ⟦y⟧`: the draws of the bucket sampler on the parameter word `y` are
++the residues below the numeral of `y`. Glue. -/
++theorem bucketSampler_Ω (y : List Bool) : bucketSampler.Ω y = Fin (listToNat y) := rfl
++
++/-- The encoding of a draw `w : bucketSampler.Ω y`, read through `bucketSampler_Ω`:
++`bucketSampler.enc y w = natToList |y| (cast (bucketSampler_Ω y) w)`. Glue. -/
++theorem bucketSampler_enc_cast (y : List Bool) (w : bucketSampler.Ω y) :
++    bucketSampler.enc y w =
++      Candidates.natToList y.length ((cast (bucketSampler_Ω y) w : Fin (listToNat y)) : ℕ) := rfl
++
++/-- The failure probability of the bucket sampler's coin sampler is the bucket sampler's on
++`Fin ⟦y⟧`: `(bucketSampler.sampler y s).fail = (bucket ⟦y⟧ s).fail`. Glue. -/
++theorem bucketSampler_fail (y : List Bool) (s : ℕ) :
++    (bucketSampler.sampler y s).fail = (bucket (listToNat y) s).fail := rfl
++
++/-- `bucketSampler.sampler y s = bucket ⟦y⟧ s`. -/
++theorem bucketSampler_sampler (y : List Bool) (s : ℕ) :
++    bucketSampler.sampler y s = bucket (listToNat y) s := rfl
++
++/-- `bucketSampler.raw = bucketRaw`. -/
++theorem bucketSampler_raw : bucketSampler.raw = bucketRaw := rfl
++
++/-- `bucketSampler.enc y a = natToList |y| a`. -/
++theorem bucketSampler_enc (y : List Bool) (a : Fin (listToNat y)) :
++    bucketSampler.enc y a = Candidates.natToList y.length a := rfl
++
++end TCSlib.Cryptography.CoinSampling
+diff --git a/TCSlib/Cryptography/CoinSampling/Instances.lean b/TCSlib/Cryptography/CoinSampling/Instances.lean
+new file mode 100644
+index 000000000..dd02154d5
+--- /dev/null
++++ b/TCSlib/Cryptography/CoinSampling/Instances.lean
+@@ -0,0 +1,173 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.CoinSampling.Buckets
++import TCSlib.Cryptography.LWE.Experiments
++import Mathlib.Data.ZMod.Basic
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Coin samplers for residues and LWE seeds
++
++Instances of the bucket sampler for the exact laws of the library's lattice layer: uniform
++residues modulo any `q ≥ 1` (dyadic or not), the seeds of a finite LWE noise law, and the full
++seed of an LWE challenge (matrix, secret, one noise seed per row). The LWE challenge computed
++from fair coins with a default seed is close to the exact challenge, and every distinguisher's
++advantage moves by at most the seed sampler's failure probability: the sampler contract that
++`LWE.Family` leaves to implementations, for any modulus (`LWE.sampleFromBits` covers only
++`q = 2^width`).
++
++## Main definitions
++
++* `CoinSampling.CoinSampler.zmod q s`: uniform residues modulo `q` from `s` coins.
++* `CoinSampling.CoinSampler.noiseSeeds χ s`: seeds of a finite noise law (laws only).
++* `CoinSampling.CoinSampler.LWESeed`, `.lweSeeds`: the LWE seed and its coin sampler.
++
++## Main results
++
++* `CoinSampling.CoinSampler.fail_zmod_le`: `≤ 2^{-t}` with `b + t` coins for `q ≤ 2^b`.
++* `CoinSampling.CoinSampler.fail_lweSeeds_le`: union bound over the seed's draws.
++* `CoinSampling.CoinSampler.statClose_lweSample_coins`,
++  `CoinSampling.CoinSampler.distAdv_lweSample_coins_le`: the LWE challenge from fair coins.
++* `CoinSampling.CoinSampler.uprob_zmod_three_four_eq_some`,
++  `CoinSampling.CoinSampler.fail_zmod_three_four`: a concrete instance (`q = 3`, four coins:
++  each residue with probability `5/16`, failure `1/16`).
++
++## References
++
++* [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, author version dated 17 February
++  2016, Definitions 4.2.1 (the LWE distribution) and 4.2.3 (decision-LWE).
++* [Lem19] D. Lemire, *Fast Random Integer Generation in an Interval*, ACM Trans. Model. Comput.
++  Simul. 29(1), 2019; arXiv:1805.10941v4, §3.2, Algorithm 4 (the bucket sampler, one round).
++-/
++
++namespace TCSlib.Cryptography.CoinSampling
++
++namespace CoinSampler
++
++/-- **Uniform residues modulo `q`**: the bucket sampler of `Fin q` read through Mathlib's
++`ZMod.finEquiv q` [Pei16, Definition 4.2.1: the uniform matrix and secret of LWE]
++[Lem19, §3.2, Algorithm 4] (one round). -/
++def zmod (q : ℕ) [NeZero q] (s : ℕ) : CoinSampler (ZMod q) s :=
++  (bucket q s).congr (ZMod.finEquiv q).toEquiv
++
++/-- `(zmod q s).dec c = (bucketDec q s c).map (ZMod.finEquiv q)`. -/
++theorem zmod_dec (q : ℕ) [NeZero q] (s : ℕ) (c : Fin s → Bool) :
++    (zmod q s).dec c = (bucketDec q s c).map (ZMod.finEquiv q).toEquiv := rfl
++
++/-- The residue sampler fails as the bucket sampler: `(zmod q s).fail = (2^s mod q)/2^s`
++(`fail_congr`, `fail_bucket`). -/
++theorem fail_zmod (q : ℕ) [NeZero q] (s : ℕ) :
++    (zmod q s).fail = ((2 ^ s % q : ℕ) : ℝ) / 2 ^ s := by
++  rw [zmod, fail_congr, fail_bucket]
++
++/-- With `q ≤ 2^b`, the residue sampler with `b + t` coins fails with probability at most
++`2^{-t}` (`fail_congr`, `fail_bucket_le`). -/
++theorem fail_zmod_le (q : ℕ) [NeZero q] {b : ℕ} (hq : q ≤ 2 ^ b) (t : ℕ) :
++    (zmod q (b + t)).fail ≤ (2 : ℝ)⁻¹ ^ t := by
++  rw [zmod, fail_congr]
++  exact fail_bucket_le (NeZero.pos q) hq t
++
++/-- **Non-vacuity, success**: from four coins, each residue modulo `3` is output with
++probability `⌊16/3⌋/16 = 5/16` (`uprob_bucketDec_eq_some`). Glue: a concrete check. -/
++theorem uprob_zmod_three_four_eq_some (a : ZMod 3) :
++    uprob (fun c => (zmod 3 4).dec c = some a) = 5 / 16 := by
++  rw [OneWay.uprob_congr fun c => (zmod_dec 3 4 c).symm ▸
++    option_map_equiv_eq_some_iff (ZMod.finEquiv 3).toEquiv (bucketDec 3 4 c) a,
++    uprob_bucketDec_eq_some]
++  norm_num
++
++/-- **Non-vacuity, failure**: from four coins, the residue sampler modulo `3` gives up with
++probability `(16 mod 3)/16 = 1/16` (`fail_zmod`), below the design bound `3/16`
++(`fail_bucket_lt`). Glue: a concrete check. -/
++theorem fail_zmod_three_four : (zmod 3 4).fail = 1 / 16 := by
++  rw [fail_zmod]
++  norm_num
++
++/-- **Seeds of a finite LWE noise law** [Pei16, Definition 4.2.1, finite-seed specialization of
++`LWE.Noise`]: the bucket sampler of `χ.Coins` through its enumeration (laws only; an efficient
++noise sampler supplies a computable enumeration). -/
++noncomputable def noiseSeeds (χ : LWE.Noise) (s : ℕ) : CoinSampler χ.Coins s :=
++  ofEquiv (Fintype.equivFin χ.Coins) s
++
++/-- `noiseSeeds χ s = ofEquiv (Fintype.equivFin χ.Coins) s`. -/
++theorem noiseSeeds_eq (χ : LWE.Noise) (s : ℕ) :
++    noiseSeeds χ s = ofEquiv (Fintype.equivFin χ.Coins) s := rfl
++
++/-- The seed type of `LWE.sample P χ` [Pei16, Definition 4.2.1]: the matrix, one common
++secret, one noise seed per row. -/
++abbrev LWESeed (P : LWE.Parameters) (χ : LWE.Noise) : Type :=
++  Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
++    ((Fin P.dimension → ZMod P.modulus) × (Fin P.samples → χ.Coins))
++
++/-- `LWESeed P χ` is the seed type of `LWE.sample P χ`. -/
++theorem lweSeed_eq (P : LWE.Parameters) (χ : LWE.Noise) :
++    LWESeed P χ = (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
++      ((Fin P.dimension → ZMod P.modulus) × (Fin P.samples → χ.Coins))) := rfl
++
++/-- **The LWE seed from fair coins** at any modulus (dyadic or not) [Pei16, Definition 4.2.1]:
++`m · n` residues for the matrix, `n` for the secret, `m` noise seeds, all independent (`pi`,
++`prod`, `Matrix.of`). Complements `LWE.sampleFromBits`, exact only for `q = 2^width`. -/
++noncomputable def lweSeeds (P : LWE.Parameters) (χ : LWE.Noise) (s s' : ℕ) :
++    CoinSampler (LWESeed P χ)
++      (P.samples * (P.dimension * s) + (P.dimension * s + P.samples * s')) :=
++  ((pi P.samples (pi P.dimension (zmod P.modulus s))).congr Matrix.of).prod
++    ((pi P.dimension (zmod P.modulus s)).prod (pi P.samples (noiseSeeds χ s')))
++
++/-- `lweSeeds P χ s s'` is the product of the matrix, secret and noise-seed samplers. -/
++theorem lweSeeds_eq (P : LWE.Parameters) (χ : LWE.Noise) (s s' : ℕ) :
++    lweSeeds P χ s s' =
++      ((pi P.samples (pi P.dimension (zmod P.modulus s))).congr Matrix.of).prod
++        ((pi P.dimension (zmod P.modulus s)).prod (pi P.samples (noiseSeeds χ s'))) := rfl
++
++/-- **Union bound for the LWE seed**: `fail ≤ (m n + n) · fail(zmod) + m · fail(noise)`
++(`fail_prod_le`, `fail_pi_le`, `fail_congr`). -/
++theorem fail_lweSeeds_le (P : LWE.Parameters) (χ : LWE.Noise) (s s' : ℕ) :
++    (lweSeeds P χ s s').fail ≤
++      (P.samples * P.dimension + P.dimension) * (zmod P.modulus s).fail +
++        P.samples * (noiseSeeds χ s').fail := by
++  have hz := (zmod P.modulus s).fail_nonneg
++  have hA : (pi P.samples (pi P.dimension (zmod P.modulus s))).fail ≤
++      P.samples * (P.dimension * (zmod P.modulus s).fail) :=
++    (fail_pi_le _ _).trans (mul_le_mul_of_nonneg_left (fail_pi_le _ _) (Nat.cast_nonneg _))
++  have hB := fail_pi_le P.dimension (zmod P.modulus s)
++  have hC := fail_pi_le P.samples (noiseSeeds χ s')
++  refine (fail_prod_le _ _).trans ?_
++  rw [fail_congr]
++  have hBC := fail_prod_le (pi P.dimension (zmod P.modulus s)) (pi P.samples (noiseSeeds χ s'))
++  nlinarith
++
++/-- **The LWE challenge from fair coins** (default fallback seed `d`) is `fail`-close to the
++exact challenge [Pei16, Definition 4.2.1]: `statClose_getD`, post-processed by
++`LWE.sample P χ` (`StatClose.map`). -/
++theorem statClose_lweSample_coins (P : LWE.Parameters) (χ : LWE.Noise) (s s' : ℕ)
++    [DecidableEq (LWESeed P χ)] (d : LWESeed P χ) :
++    StatClose (fun c => LWE.sample P χ (((lweSeeds P χ s s').dec c).getD d)) (LWE.sample P χ)
++      (lweSeeds P χ s s').fail :=
++  ((lweSeeds P χ s s').statClose_getD d).map (LWE.sample P χ)
++
++/-- **Distinguishers transfer** [Pei16, Definition 4.2.3]: any distinguisher's advantage
++between the coin-implemented LWE challenge and uniform exceeds its `decisionAdvantage` by at
++most the seed failure probability (`distAdv_le_of_statClose` on the real side, triangle
++inequality). The form an `LWE.Family` implementation contract consumes. -/
++theorem distAdv_lweSample_coins_le {ρ : Type} [Fintype ρ] [Nonempty ρ] (P : LWE.Parameters)
++    (χ : LWE.Noise) (s s' : ℕ) [DecidableEq (LWESeed P χ)] (d : LWESeed P χ)
++    (D : (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
++      (Fin P.samples → ZMod P.modulus)) → ρ → Bool) :
++    distAdv (fun c => LWE.sample P χ (((lweSeeds P χ s s').dec c).getD d)) id D ≤
++      LWE.decisionAdvantage P χ D + (lweSeeds P χ s s').fail := by
++  have h := distAdv_le_of_statClose _ _ (statClose_lweSample_coins P χ s s' d) D
++  rw [LWE.decisionAdvantage_eq, distAdv_def, distAdv_def]
++  rw [distAdv_def] at h
++  have := abs_sub_le (acceptProb (fun c => LWE.sample P χ (((lweSeeds P χ s s').dec c).getD d)) D)
++    (acceptProb (LWE.sample P χ) D) (acceptProb id D)
++  linarith
++
++end CoinSampler
++
++end TCSlib.Cryptography.CoinSampling
+diff --git a/TCSlib/Cryptography/CoinSampling/Transfer.lean b/TCSlib/Cryptography/CoinSampling/Transfer.lean
+new file mode 100644
+index 000000000..45b2ba194
+--- /dev/null
++++ b/TCSlib/Cryptography/CoinSampling/Transfer.lean
+@@ -0,0 +1,173 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.CoinSampling.Basic
++import TCSlib.Cryptography.Games.Closeness
++import TCSlib.Cryptography.Games.Bridges.Experiments
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Coin draws in games: closeness and correctness transfer
++
++A coin sampler `S` used inside a game is the computation `S.draw` (fair coins, decoded; `none`
++when it gives up) or, with a default value `d` as the fallback, `S.drawD d`. This file connects
++these draws to the exact draw `sample Ω` of the game:
++
++* **security** (statistical): one draw followed by any continuation is `S.fail`-close to the
++  exact draw followed by the same continuation (`close_draw_bind`, any fallback branch;
++  `close_drawD_bind`, default fallback), and a fresh draw per oracle query costs `S.fail` per
++  query (`close_simulate_draw`); `ProbComp.Close.bind` chains the draws of a game;
++* **correctness** (exact): a default-fallback draw only produces possible outputs of the exact
++  draw (`outputsSubset_drawD`), so with `OracleComp.OutputsSubset.bind`/`.simulate` every
++  `AllOutputs` property of a scheme (perfect correctness, injectivity on reachable encodings)
++  holds for its coin implementation without re-proof; a fallback branch that is correct by
++  construction is `allOutputs_draw_bind`.
++
++## Main definitions
++
++* `CoinSampling.CoinSampler.draw`, `.drawD`: draws through a coin sampler in a game.
++
++## Main results
++
++* `CoinSampling.CoinSampler.expect_draw`: the mixture identity for games.
++* `CoinSampling.CoinSampler.close_draw_bind`, `.close_drawD_bind`, `.close_simulate_draw`.
++* `CoinSampling.allOutputs_sample_iff`: the possible outputs of an exact draw are all values.
++* `CoinSampling.CoinSampler.outputsSubset_drawD`, `.allOutputs_draw_bind`.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Lemma 51.17 (rejection sampling is uniform conditioned on success) and Definition 181.1
++  (`ε`-closeness).
++* [Sho04] V. Shoup, *Sequences of games: a tool for taming complexity in security proofs*, IACR
++  ePrint 2004/332, revision of 18 January 2006, §1.1 (bridging steps and the difference lemma).
++-/
++
++namespace TCSlib.Cryptography.CoinSampling
++
++open TCSlib.Cryptography.Games
++
++/-- **The possible outputs of an exact draw are all values**:
++`(sample T).AllOutputs P ↔ ∀ t, P t` (`sample_eq`, `allOutputs_query`, and surjectivity of the
++enumeration `(Fintype.equivFin T).symm`). Glue. -/
++theorem allOutputs_sample_iff {T : Type} [Fintype T] [Nonempty T] {P : T → Prop} :
++    (ProbComp.sample T).AllOutputs P ↔ ∀ t, P t := by
++  rw [ProbComp.sample_eq, OracleComp.map_eq_bind, ProbComp.sampleFin_eq, OracleComp.query_bind,
++    OracleComp.allOutputs_query]
++  simp only [OracleComp.pure_bind, OracleComp.allOutputs_pure]
++  refine ⟨fun h t => ?_, fun h y => h _⟩
++  have := h (Fin.cast (Nat.sub_add_cancel Fintype.card_pos).symm (Fintype.equivFin T t))
++  exact ((Fintype.equivFin T).symm_apply_apply t) ▸ this
++
++namespace CoinSampler
++
++variable {Ω β : Type} [Fintype Ω] {s : ℕ}
++
++/-- **A draw through the sampler**: `s` uniform coins, decoded; `none` when it gives up.
++Glue. -/
++noncomputable def draw (S : CoinSampler Ω s) : ProbComp (Option Ω) :=
++  S.dec <$> ProbComp.sample (Fin s → Bool)
++
++/-- `S.draw = S.dec <$> sample (Fin s → Bool)`. -/
++theorem draw_eq (S : CoinSampler Ω s) :
++    S.draw = S.dec <$> ProbComp.sample (Fin s → Bool) := rfl
++
++/-- **A draw with the default fallback** `d`: the decoded value, or `d` when the sampler gives
++up. The standard fallback: `d` is a legitimate exact outcome, so no format changes and every
++`AllOutputs` property transfers (`outputsSubset_drawD`). Glue. -/
++noncomputable def drawD (S : CoinSampler Ω s) (d : Ω) : ProbComp Ω :=
++  (fun c => (S.dec c).getD d) <$> ProbComp.sample (Fin s → Bool)
++
++/-- `S.drawD d = (fun c => (S.dec c).getD d) <$> sample (Fin s → Bool)`. -/
++theorem drawD_eq (S : CoinSampler Ω s) (d : Ω) :
++    S.drawD d = (fun c => (S.dec c).getD d) <$> ProbComp.sample (Fin s → Bool) := rfl
++
++/-- **The mixture identity for games**: for every `F : Option Ω → ℝ`,
++`𝔼_{S.draw} F = fail · F(none) + (1 − fail) · 𝔼_{a ← Ω} F(some a)` [PS10, Lemma 51.17],
++abstract form (`expect_map`, `Bridge.expect_sample_eq_uexp`, `uexp_comp_dec`). -/
++theorem expect_draw [Nonempty Ω] (S : CoinSampler Ω s) (F : Option Ω → ℝ) :
++    ProbComp.expect S.draw F =
++      S.fail * F none +
++        (1 - S.fail) * ProbComp.expect (ProbComp.sample Ω) (fun a => F (some a)) := by
++  rw [draw_eq, ProbComp.expect_map, Bridge.expect_sample_eq_uexp, S.uexp_comp_dec,
++    Bridge.expect_sample_eq_uexp]
++
++/-- **One draw, any fallback branch**: a game that draws through `S` and continues with `K`
++(`K none` is the fallback) is `fail`-close to the game that draws exactly and continues with
++`K ∘ some` [PS10, Definition 181.1], a statistical bridging step of [Sho04, §1.1].
++
++**Proof sketch.** `expect_bind`, then `expect_draw` with `F o = 𝔼_{K o} g ∈ [0, 1]`: the
++difference is `fail · (F none − 𝔼_a F(some a))`, of absolute value at most `fail`. -/
++theorem close_draw_bind [Nonempty Ω] (S : CoinSampler Ω s) (K : Option Ω → ProbComp β) :
++    ProbComp.Close S.fail (S.draw.bind K)
++      ((ProbComp.sample Ω).bind fun a => K (some a)) := fun g hg => by
++  rw [ProbComp.expect_bind, ProbComp.expect_bind, S.expect_draw]
++  have h₀ := ProbComp.expect_mem_unit (K none) hg
++  have h₁ := ProbComp.expect_mem_unit (ProbComp.sample Ω)
++    (g := fun a => ProbComp.expect (K (some a)) g) fun a => ProbComp.expect_mem_unit _ hg
++  have hf0 := S.fail_nonneg
++  have hf1 := S.fail_le_one
++  generalize ProbComp.expect (K none) g = x at h₀ ⊢
++  generalize ProbComp.expect (ProbComp.sample Ω) (fun a => ProbComp.expect (K (some a)) g) = y
++    at h₁ ⊢
++  generalize S.fail = f at hf0 hf1 ⊢
++  obtain ⟨hx0, hx1⟩ := h₀
++  obtain ⟨hy0, hy1⟩ := h₁
++  exact abs_le.2 ⟨by nlinarith, by nlinarith⟩
++
++/-- **One draw, default fallback**: `S.drawD d >>= k` is `fail`-close to `sample Ω >>= k`
++(`close_draw_bind` with `K o = k (o.getD d)`). -/
++theorem close_drawD_bind [Nonempty Ω] (S : CoinSampler Ω s) (d : Ω) (k : Ω → ProbComp β) :
++    ProbComp.Close S.fail ((S.drawD d).bind k) ((ProbComp.sample Ω).bind k) := fun g hg => by
++  have e : ProbComp.expect ((S.drawD d).bind k) g =
++      ProbComp.expect (S.draw.bind fun o => k (o.getD d)) g := by
++    rw [ProbComp.expect_bind, ProbComp.expect_bind, drawD_eq, draw_eq, ProbComp.expect_map,
++      ProbComp.expect_map]
++  rw [e]
++  exact S.close_draw_bind (fun o => k (o.getD d)) g hg
++
++/-- **A fresh draw per oracle query**: an oracle whose every call draws through `S` (body `K`,
++fallback `K … none`) is, over a computation with at most `m` queries, `m · fail`-close to the
++oracle that draws exactly (`ProbComp.Close.simulate` with `close_draw_bind`). The summed failure
++bound for draws made inside oracles (keys per `KeyGen` query). -/
++theorem close_simulate_draw [Nonempty Ω] {ι σ α : Type} {spec : OracleSpec ι}
++    (S : CoinSampler Ω s) (K : ∀ i, spec.dom i → σ → Option Ω → ProbComp (spec.rng i × σ))
++    (c : OracleComp spec α) (m : ℕ) (hc : c.CostBoundedBy (fun _ => 1) m) (st : σ) :
++    ProbComp.Close (m * S.fail)
++      (Games.simulate (fun i x st' => S.draw.bind (K i x st')) c st)
++      (Games.simulate
++        (fun i x st' => (ProbComp.sample Ω).bind fun a => K i x st' (some a)) c st) :=
++  ProbComp.Close.simulate S.fail_nonneg (fun i x st' => S.close_draw_bind (K i x st')) c m hc st
++
++/-- **A default fallback only shrinks the possible outputs**: every possible output of
++`S.drawD d` is a possible output of `sample Ω` (it is an element of `Ω`;
++`allOutputs_sample_iff`). With `OracleComp.OutputsSubset.bind` and `.simulate`, a scheme whose
++exact draws are replaced by default-fallback coin draws keeps **every** `AllOutputs` property.
++Glue. -/
++theorem outputsSubset_drawD [Nonempty Ω] (S : CoinSampler Ω s) (d : Ω) :
++    OracleComp.OutputsSubset (S.drawD d) (ProbComp.sample Ω) := fun P hP => by
++  have hall := allOutputs_sample_iff.1 hP
++  rw [drawD_eq, OracleComp.map_eq_bind]
++  exact OracleComp.AllOutputs.bind (OracleComp.allOutputs_true _) fun c _ =>
++    OracleComp.allOutputs_pure.2 (hall _)
++
++/-- **A fallback branch that is correct by construction keeps correctness**: if every
++continuation `K (some a)` and the fallback `K none` satisfy `P` at all outputs, so does the
++coin draw followed by `K` (`allOutputs_true`, `AllOutputs.bind`). The form for fallbacks that
++change the output format, such as sending in the clear. Glue. -/
++theorem allOutputs_draw_bind (S : CoinSampler Ω s) {K : Option Ω → ProbComp β} {P : β → Prop}
++    (hsome : ∀ a, (K (some a)).AllOutputs P) (hnone : (K none).AllOutputs P) :
++    (S.draw.bind K).AllOutputs P :=
++  OracleComp.AllOutputs.bind (OracleComp.allOutputs_true _) fun o _ => by
++    cases o with
++    | none => exact hnone
++    | some a => exact hsome a
++
++end CoinSampler
++
++end TCSlib.Cryptography.CoinSampling
+diff --git a/TCSlib/Cryptography/Games.lean b/TCSlib/Cryptography/Games.lean
+index 7cccb7675..86b3baa0f 100644
+--- a/TCSlib/Cryptography/Games.lean
++++ b/TCSlib/Cryptography/Games.lean
+@@ -11,6 +11,7 @@ import TCSlib.Cryptography.Games.Relational
+ import TCSlib.Cryptography.Games.Protocols
+ import TCSlib.Cryptography.Games.Forwarding
+ import TCSlib.Cryptography.Games.Tapes
++import TCSlib.Cryptography.Games.Closeness
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -51,6 +52,8 @@ the interaction model `Strategy`.
+   handlers read on lists, and hard-wiring a second input component (S2b layer).
+ * `TCSlib.Cryptography.Games.Tapes`: simulation through a state abstraction in law, coins drawn in
+   advance on tapes, and functions overridden by a table.
++* `TCSlib.Cryptography.Games.Closeness`: statistical closeness of computations, closed under
++  sequencing and simulation, and output inclusion (the transfer of every-outcome properties).
+ 
+ ## References
+ 
+diff --git a/TCSlib/Cryptography/Games/Closeness.lean b/TCSlib/Cryptography/Games/Closeness.lean
+new file mode 100644
+index 000000000..c9e78baa7
+--- /dev/null
++++ b/TCSlib/Cryptography/Games/Closeness.lean
+@@ -0,0 +1,269 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.Games.Hopping
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Statistical closeness and output inclusion of computations
++
++Two relations between computations, the per-experiment half of the coin-sampling bridge
++(`TCSlib.Cryptography.CoinSampling`).
++
++* **Closeness** `ProbComp.Close ε c₁ c₂`: every test of the output with values in `[0, 1]` has
++  expectations differing by at most `ε`. With `[0, 1]`-valued tests in place of events, the
++  relation is closed under sequencing (`Close.bind`) and under oracle simulation
++  (`Close.simulate`, `m` queries cost `m · ε`), so replacing exact draws by approximate draws
++  anywhere in a game moves its acceptance probability by at most the summed per-draw bounds
++  (`Close.abs_accept_sub_le`, `advantage_le_of_close`).
++* **Output inclusion** `OracleComp.OutputsSubset c₁ c₂`: every property that holds at all
++  possible outputs of `c₂` holds at all possible outputs of `c₁`. It is closed under sequencing
++  and simulation, so every-outcome properties (perfect correctness and the like) transfer
++  exactly along it.
++
++## Main definitions
++
++* `Games.ProbComp.Close ε c₁ c₂`: `|𝔼_{c₁} g − 𝔼_{c₂} g| ≤ ε` for every `g : α → [0, 1]`.
++* `Games.OracleComp.OutputsSubset c₁ c₂`: `∀ P, c₂.AllOutputs P → c₁.AllOutputs P`.
++
++## Main results
++
++* `Games.ProbComp.Close.refl`, `.symm`, `.mono`, `.trans`, `.nonneg`, `close_of_expect_eq`.
++* `Games.ProbComp.Close.bind_left`, `.bind_right`, `.bind`, `.map`: sequencing.
++* `Games.ProbComp.Close.simulate`: `m` queries to `ε`-close implementations are `m · ε`-close.
++* `Games.ProbComp.Close.abs_prob_sub_le`, `.abs_accept_sub_le`, `Games.advantage_le_of_close`.
++* `Games.OracleComp.allOutputs_bind_iff`: the converse of `AllOutputs.bind`.
++* `Games.OracleComp.OutputsSubset.refl`, `.trans`, `.bind`, `.simulate`.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Definition 181.1 (`ε`-closeness: every distinguisher's acceptance probabilities differ by at
++  most `ε`).
++* [Sho04] V. Shoup, *Sequences of games: a tool for taming complexity in security proofs*, IACR
++  ePrint 2004/332, revision of 18 January 2006, §1.1 (bridging steps and the difference lemma).
++* [Gar26] S. Garg, *A Course in Theory of Cryptography*, lecture notes, UC Berkeley, draft of
++  22 January 2026, Lemma 3.1 (statistical distance bounds every distinguishing advantage).
++
++**Deviation.** [PS10, Definition 181.1] quantifies over distinguishers (events); `Close` uses
++`[0, 1]`-valued tests, which bound the same event differences (`Close.abs_prob_sub_le`) and
++make the relation closed under `bind`. The interop reader with `EpsClose` of the output laws
++(design r1 §4.3, optional) is not in this file.
++-/
++
++namespace TCSlib.Cryptography.Games
++
++variable {ι : Type} {α β σ : Type}
++
++namespace ProbComp
++
++/-- **Statistical closeness of computations**: `c₁` and `c₂` are `ε`-close when every function
++`g` of the output with values in `[0, 1]` has expectations differing by at most `ε`,
++`|𝔼_{c₁} g − 𝔼_{c₂} g| ≤ ε`. [PS10, Definition 181.1] for computations, with `[0, 1]`-valued
++tests in place of distinguishers so that the relation is closed under sequencing. -/
++def Close (ε : ℝ) (c₁ c₂ : ProbComp α) : Prop :=
++  ∀ g : α → ℝ, (∀ a, 0 ≤ g a ∧ g a ≤ 1) → |expect c₁ g - expect c₂ g| ≤ ε
++
++/-- `Close ε c₁ c₂ ↔ ∀ g ∈ [0,1]^α, |𝔼_{c₁} g − 𝔼_{c₂} g| ≤ ε`. -/
++theorem close_iff (ε : ℝ) (c₁ c₂ : ProbComp α) :
++    Close ε c₁ c₂ ↔ ∀ g : α → ℝ, (∀ a, 0 ≤ g a ∧ g a ≤ 1) →
++      |expect c₁ g - expect c₂ g| ≤ ε := Iff.rfl
++
++/-- A test with values in `[0, 1]` has its expectation in `[0, 1]` (`expect_nonneg`,
++`expect_mono`, `expect_const`). Glue. -/
++theorem expect_mem_unit (c : ProbComp α) {g : α → ℝ} (hg : ∀ a, 0 ≤ g a ∧ g a ≤ 1) :
++    0 ≤ expect c g ∧ expect c g ≤ 1 :=
++  ⟨expect_nonneg c fun a => (hg a).1,
++    (expect_mono c fun a => (hg a).2).trans (expect_const c 1).le⟩
++
++/-- A closeness bound is nonnegative (the test `g = 0`). -/
++theorem Close.nonneg {ε : ℝ} {c₁ c₂ : ProbComp α} (h : Close ε c₁ c₂) : 0 ≤ ε :=
++  (abs_nonneg _).trans (h (fun _ => 0) fun _ => ⟨le_rfl, zero_le_one⟩)
++
++/-- Every computation is `0`-close to itself. -/
++theorem Close.refl (c : ProbComp α) : Close 0 c c := fun g _ => by
++  rw [sub_self, abs_zero]
++
++/-- Closeness is symmetric. -/
++theorem Close.symm {ε : ℝ} {c₁ c₂ : ProbComp α} (h : Close ε c₁ c₂) : Close ε c₂ c₁ :=
++  fun g hg => by
++    rw [abs_sub_comm]
++    exact h g hg
++
++/-- A closeness bound may be weakened. -/
++theorem Close.mono {ε ε' : ℝ} {c₁ c₂ : ProbComp α} (h : Close ε c₁ c₂) (hε : ε ≤ ε') :
++    Close ε' c₁ c₂ := fun g hg => (h g hg).trans hε
++
++/-- Closeness bounds add along a chain (triangle inequality): the statistical bridging steps
++of [Sho04, §1.1] compose. -/
++theorem Close.trans {ε ε' : ℝ} {c₁ c₂ c₃ : ProbComp α} (h : Close ε c₁ c₂)
++    (h' : Close ε' c₂ c₃) : Close (ε + ε') c₁ c₃ := fun g hg =>
++  (abs_sub_le _ _ _).trans (add_le_add (h g hg) (h' g hg))
++
++/-- Computations with the same expectations are `0`-close; with `expect_simulate_congr` this
++is how exact identities enter a chain of hops. -/
++theorem close_of_expect_eq {c₁ c₂ : ProbComp α} (h : ∀ g, expect c₁ g = expect c₂ g) :
++    Close 0 c₁ c₂ := fun g _ => by
++  rw [h g, sub_self, abs_zero]
++
++/-- **Sequencing on the left**: if `c₁` and `c₂` are `ε`-close, so are `c₁ >>= f` and
++`c₂ >>= f`: the test `a ↦ 𝔼_{f a} g` has values in `[0, 1]` (`expect_bind`). -/
++theorem Close.bind_left {ε : ℝ} {c₁ c₂ : ProbComp α} (h : Close ε c₁ c₂) (f : α → ProbComp β) :
++    Close ε (c₁.bind f) (c₂.bind f) := fun g hg => by
++  rw [expect_bind, expect_bind]
++  exact h _ fun a => expect_mem_unit (f a) hg
++
++/-- **Sequencing on the right**: if `f₁ a` and `f₂ a` are `ε`-close for every `a`, so are
++`c >>= f₁` and `c >>= f₂` (`expect_bind`, `abs_expect_sub_le`). -/
++theorem Close.bind_right {ε : ℝ} (c : ProbComp α) {f₁ f₂ : α → ProbComp β}
++    (h : ∀ a, Close ε (f₁ a) (f₂ a)) : Close ε (c.bind f₁) (c.bind f₂) := fun g hg => by
++  rw [expect_bind, expect_bind]
++  exact abs_expect_sub_le c fun a => h a g hg
++
++/-- **Sequencing**: `ε`-close first steps and `ε'`-close continuations give `(ε + ε')`-close
++sequences (`bind_left`, `bind_right`, `trans`). -/
++theorem Close.bind {ε ε' : ℝ} {c₁ c₂ : ProbComp α} {f₁ f₂ : α → ProbComp β}
++    (h : Close ε c₁ c₂) (h' : ∀ a, Close ε' (f₁ a) (f₂ a)) :
++    Close (ε + ε') (c₁.bind f₁) (c₂.bind f₂) :=
++  (h.bind_left f₁).trans (Close.bind_right c₂ h')
++
++/-- Post-processing keeps closeness: `Close ε (k <$> c₁) (k <$> c₂)` (`expect_map`). -/
++theorem Close.map {ε : ℝ} {c₁ c₂ : ProbComp α} (h : Close ε c₁ c₂) (k : α → β) :
++    Close ε (k <$> c₁) (k <$> c₂) := fun g hg => by
++  rw [expect_map, expect_map]
++  exact h _ fun a => hg (k a)
++
++/-- Events move by at most `ε`: `|Pr_{c₁}[p] − Pr_{c₂}[p]| ≤ ε` (the indicator of `p` is a
++test), the distinguisher form of [PS10, Definition 181.1]. -/
++theorem Close.abs_prob_sub_le {ε : ℝ} {c₁ c₂ : ProbComp α} (h : Close ε c₁ c₂) (p : α → Prop) :
++    |prob c₁ p - prob c₂ p| ≤ ε := by
++  classical
++  rw [prob_eq_expect, prob_eq_expect]
++  exact h _ fun a => by
++    by_cases hp : p a
++    · rw [if_pos hp]
++      exact ⟨zero_le_one, le_rfl⟩
++    · rw [if_neg hp]
++      exact ⟨le_rfl, zero_le_one⟩
++
++/-- **Oracle simulation**: if every call of `impl₀` is `ε`-close to the same call of `impl₁`
++(with `0 ≤ ε`), then for a computation with at most `m` queries the two simulations are
++`m · ε`-close. The `ε = 0` case is `expect_simulate_congr`.
++
++**Deviation from the design skeleton:** the hypothesis `0 ≤ ε` is added; without it the
++statement fails for a computation without queries over an oracle family with no oracles.
++
++**Proof sketch.** Induction on the computation with its budget, as in `prob_bad_le`. A return
++gives equal computations. At a query (budget `m ≥ 1`), sequence the `ε`-close calls with the
++continuations, which are `(m − 1) · ε`-close by induction (`Close.bind`), and
++`ε + (m − 1) · ε = m · ε`. -/
++theorem Close.simulate {spec : OracleSpec ι} {impl₀ impl₁ : QueryImpl spec σ unifSpec} {ε : ℝ}
++    (hε : 0 ≤ ε) (h : ∀ i x s, Close ε (impl₀ i x s) (impl₁ i x s)) (c : OracleComp spec α)
++    (m : ℕ) (hc : c.CostBoundedBy (fun _ => 1) m) (s : σ) :
++    Close (m * ε) (Games.simulate impl₀ c s) (Games.simulate impl₁ c s) := by
++  induction c generalizing m s with
++  | pure a =>
++    rw [simulate_pure, simulate_pure]
++    exact (Close.refl _).mono (mul_nonneg (Nat.cast_nonneg m) hε)
++  | query i x k ih =>
++    obtain ⟨hm, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
++    rw [simulate_query, simulate_query]
++    have hstep := Close.bind (h i x s) fun ys => ih ys.1 (m - 1) (hk ys.1) ys.2
++    refine hstep.mono (le_of_eq ?_)
++    have hm' : ((m - 1 : ℕ) : ℝ) = m - 1 := by
++      rw [Nat.cast_sub hm, Nat.cast_one]
++    rw [hm']
++    ring
++
++end ProbComp
++
++/-- Acceptance probabilities of `ε`-close games differ by at most `ε`
++(`Close.abs_prob_sub_le` at the event `· = true`). -/
++theorem ProbComp.Close.abs_accept_sub_le {ε : ℝ} {G₁ G₂ : ProbComp Bool}
++    (h : ProbComp.Close ε G₁ G₂) : |accept G₁ - accept G₂| ≤ ε := by
++  rw [accept_eq, accept_eq]
++  exact h.abs_prob_sub_le _
++
++/-- **Advantage transfer**: replacing each of two games by an `ε_b`-close one changes the
++distinguishing advantage by at most `ε₀ + ε₁`: `advantage G₀' G₁' ≤ advantage G₀ G₁ + ε₀ + ε₁`
++[Gar26, Lemma 3.1] (statistical distance bounds every advantage), with the triangle
++inequality. -/
++theorem advantage_le_of_close {ε₀ ε₁ : ℝ} {G₀ G₁ G₀' G₁' : ProbComp Bool}
++    (h₀ : ProbComp.Close ε₀ G₀' G₀) (h₁ : ProbComp.Close ε₁ G₁' G₁) :
++    advantage G₀' G₁' ≤ advantage G₀ G₁ + ε₀ + ε₁ := by
++  rw [advantage_eq, advantage_eq]
++  have e₀ := h₀.abs_accept_sub_le
++  have e₁ := h₁.abs_accept_sub_le
++  have e₁' : |accept G₁ - accept G₁'| ≤ ε₁ := by
++    rw [abs_sub_comm]
++    exact e₁
++  have t₁ := abs_sub_le (accept G₀') (accept G₀) (accept G₁')
++  have t₂ := abs_sub_le (accept G₀) (accept G₁) (accept G₁')
++  linarith
++
++namespace OracleComp
++
++variable {spec : OracleSpec ι}
++
++/-- **Output inclusion**: every possible output of `c₁` is a possible output of `c₂`, read
++through predicates: whatever holds at all outputs of `c₂` holds at all outputs of `c₁`. The
++relation along which perfect correctness and every other `AllOutputs` property transfer.
++Glue: no textbook counterpart. -/
++def OutputsSubset (c₁ c₂ : OracleComp spec α) : Prop :=
++  ∀ P : α → Prop, c₂.AllOutputs P → c₁.AllOutputs P
++
++/-- `OutputsSubset c₁ c₂ ↔ ∀ P, c₂.AllOutputs P → c₁.AllOutputs P`. -/
++theorem outputsSubset_iff (c₁ c₂ : OracleComp spec α) :
++    OutputsSubset c₁ c₂ ↔ ∀ P : α → Prop, c₂.AllOutputs P → c₁.AllOutputs P := Iff.rfl
++
++/-- **Possible outputs of a sequence**, in both directions: `(c >>= f).AllOutputs Q` iff every
++possible output `a` of `c` has `(f a).AllOutputs Q`. The `←` direction is `AllOutputs.bind`;
++`→` is an induction on `c` (a return is `f a`; a query passes to every continuation). -/
++theorem allOutputs_bind_iff {c : OracleComp spec α} {f : α → OracleComp spec β}
++    {Q : β → Prop} : (c.bind f).AllOutputs Q ↔ c.AllOutputs fun a => (f a).AllOutputs Q := by
++  refine ⟨fun h => ?_, fun h => AllOutputs.bind h fun _ ha => ha⟩
++  induction c with
++  | pure a =>
++    rw [pure_bind] at h
++    exact allOutputs_pure.2 h
++  | query i x k ih =>
++    rw [query_bind] at h
++    exact allOutputs_query.2 fun y => ih y (allOutputs_query.1 h y)
++
++/-- Output inclusion is reflexive. -/
++theorem OutputsSubset.refl (c : OracleComp spec α) : OutputsSubset c c := fun _ h => h
++
++/-- Output inclusion is transitive. -/
++theorem OutputsSubset.trans {c₁ c₂ c₃ : OracleComp spec α} (h : OutputsSubset c₁ c₂)
++    (h' : OutputsSubset c₂ c₃) : OutputsSubset c₁ c₃ := fun P hP => h P (h' P hP)
++
++/-- **Sequencing**: included first steps and included continuations give included sequences:
++`allOutputs_bind_iff` on `c₂ >>= f₂`, then `h` with the predicate `a ↦ (f₂ a).AllOutputs P`,
++then `h'` pointwise and `AllOutputs.bind`. -/
++theorem OutputsSubset.bind {c₁ c₂ : OracleComp spec α} {f₁ f₂ : α → OracleComp spec β}
++    (h : OutputsSubset c₁ c₂) (h' : ∀ a, OutputsSubset (f₁ a) (f₂ a)) :
++    OutputsSubset (c₁.bind f₁) (c₂.bind f₂) := fun P hP =>
++  AllOutputs.bind (h _ (allOutputs_bind_iff.1 hP)) fun a ha => h' a P ha
++
++/-- **Oracle simulation**: implementations whose every call is output-included give
++output-included simulations (induction on the computation, `OutputsSubset.bind`). -/
++theorem OutputsSubset.simulate {ι' : Type} {spec' : OracleSpec ι'} {spec'' : OracleSpec ι}
++    {impl₀ impl₁ : QueryImpl spec' σ spec''}
++    (h : ∀ i x s, OutputsSubset (impl₀ i x s) (impl₁ i x s)) (c : OracleComp spec' α) (s : σ) :
++    OutputsSubset (Games.simulate impl₀ c s) (Games.simulate impl₁ c s) := by
++  induction c generalizing s with
++  | pure a =>
++    rw [simulate_pure, simulate_pure]
++    exact OutputsSubset.refl _
++  | query i x k ih =>
++    rw [simulate_query, simulate_query]
++    exact OutputsSubset.bind (h i x s) fun ys => ih ys.1 ys.2
++
++end OracleComp
++
++end TCSlib.Cryptography.Games

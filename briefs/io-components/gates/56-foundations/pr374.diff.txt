@@ -1,0 +1,327 @@
+diff --git a/TCSlib/Cryptography/Foundations.lean b/TCSlib/Cryptography/Foundations.lean
+index 2cd2acc8e..a9dc9a0a8 100644
+--- a/TCSlib/Cryptography/Foundations.lean
++++ b/TCSlib/Cryptography/Foundations.lean
+@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.Foundations.Negligible
++import TCSlib.Cryptography.Foundations.Subexponential
+ import TCSlib.Cryptography.Foundations.Probability
+ import TCSlib.Cryptography.Foundations.Experiments
+ import TCSlib.Cryptography.Foundations.BitLists
+@@ -21,6 +22,8 @@ one-way function, hard-concentrate bit and pseudorandomness developments are bui
+ ## Contents
+ 
+ * `Negligible`: negligible and noticeable functions and their closure properties.
++* `Subexponential`: subexponentially small functions (eventually at most `2^{-n^c}`),
++  their closure properties, and subexponential hardness of an advantage family.
+ * `Probability`: uniform probability `uprob`, expectation `uexp`, the union bound,
+   Fubini, averaging and the hybrid argument.
+ * `Experiments`: `invProb`, `predProb`, `acceptProb`, `distAdv`, and the bound of
+diff --git a/TCSlib/Cryptography/Foundations/Subexponential.lean b/TCSlib/Cryptography/Foundations/Subexponential.lean
+new file mode 100644
+index 000000000..ff46f251b
+--- /dev/null
++++ b/TCSlib/Cryptography/Foundations/Subexponential.lean
+@@ -0,0 +1,300 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
++import TCSlib.Cryptography.Foundations.Negligible
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Subexponentially small functions
++
++A function of the security parameter is subexponentially small with exponent `c` when it is
++eventually at most `2^{-n^c}` in absolute value, with a real exponent `c`. Subexponential
++security of a primitive or an assumption [JLS26, §1.1 and Definition 2.1] asks this of the
++advantage of every polynomial-time adversary, for one constant `c > 0` fixed before the
++adversary. `SubexpHard` records that quantifier order for a family of advantage functions.
++
++As in `Negligible`, the functions take real values and the condition bounds `|μ n|`, so that
++differences of probabilities can be fed in directly.
++
++The closure lemmas lose exponent: a sum, a constant multiple or a polynomial multiple of a
++`SubexpSmall c` function is `SubexpSmall c'` for every `c' < c` (with `0 < c`), because
++`2^{n^c - n^{c'}}` eventually absorbs any such factor. The same absorption, at `c' = 0`, shows
++that a subexponentially small function is negligible.
++
++`SubexpHard` is stated for an arbitrary adversary type `α`. The files of `Foundations` import
++only Mathlib and `InformationTheory`, while the library's adversary class `Complexity.NUPPT`
++(`Complexity/Randomized/PPT.lean`) carries the Turing-machine layer and is joined with
++`Foundations` only downstream, in `Asymptotic/Adversary.lean`. Assumption files instantiate
++`α := NUPPT`, matching their `∀ D : NUPPT, Negligible …` convention.
++
++## Main definitions
++
++* `SubexpSmall c μ`: eventually `|μ n| ≤ 2^{-n^c}`.
++* `SubexpHard adv`: for some `c > 0`, `SubexpSmall c (adv D)` for every adversary `D`.
++
++## Main results
++
++* `SubexpSmall.negligible`, `SubexpHard.negligible`: subexponentially small advantage is
++  negligible.
++* `SubexpSmall.mono`, `SubexpSmall.mono_exponent`: domination, and weakening the exponent.
++* `SubexpSmall.add`, `SubexpSmall.const_mul`, `SubexpSmall.mul_pow`: closure at every smaller
++  exponent.
++* `SubexpSmall.comp_of_rpow_le`, `SubexpHard.comp_of_rpow_le`: re-indexing by a parameter
++  `ℓ n ≥ n^a` multiplies the exponent by `a`.
++* `eventually_const_mul_rpow_mul_two_rpow_neg_le`: eventually `A n^s 2^{-n^c} ≤ 2^{-n^{c'}}`
++  for `c' < c` and `0 < c`, the estimate behind the closure lemmas.
++* `subexpSmall_zero`, `subexpSmall_two_pow_neg`: `0` and `2^{-n}` are subexponentially small.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
++  Assumptions*, J. ACM 73(1), Article 1, 2026, §1.1, Definition 2.1 and Remark 2.1.
++* [Gar26] S. Garg, *A Course in Theory of Cryptography*, lecture notes, UC Berkeley,
++  draft of 22 January 2026, §1.2 (Definition 1.4, Exercise 1.1).
++-/
++
++namespace TCSlib.Cryptography
++
++open Filter Topology
++
++/-- A function `μ` of the security parameter is subexponentially small with exponent `c` when
++there is `n₀` with `|μ n| ≤ 2^{-n^c}` for all `n ≥ n₀`, where `n^c` is the real power.
++[JLS26, Definition 2.1]: `ε`-indistinguishability for `ε(λ) = 2^{-λ^c}`, stated here for a
++single real-valued function bounded in absolute value (the source bounds a distinguishing
++advantage, and asks `c > 0`; `SubexpHard` adds that requirement). -/
++def SubexpSmall (c : ℝ) (μ : ℕ → ℝ) : Prop :=
++  ∃ n₀ : ℕ, ∀ n ≥ n₀, |μ n| ≤ (2 : ℝ) ^ (-((n : ℝ) ^ c))
++
++/-- The defining property of `SubexpSmall`: `SubexpSmall c μ` iff there is `n₀` with
++`|μ n| ≤ 2^{-n^c}` for all `n ≥ n₀`. -/
++theorem subexpSmall_iff (c : ℝ) (μ : ℕ → ℝ) :
++    SubexpSmall c μ ↔ ∃ n₀ : ℕ, ∀ n ≥ n₀, |μ n| ≤ (2 : ℝ) ^ (-((n : ℝ) ^ c)) := Iff.rfl
++
++/-- `SubexpSmall c μ` iff `|μ n| ≤ 2^{-n^c}` holds eventually along `atTop`. Glue: the filter
++form of `subexpSmall_iff` (via Mathlib's `Filter.eventually_atTop`), for `filter_upwards`. -/
++theorem subexpSmall_iff_eventually (c : ℝ) (μ : ℕ → ℝ) :
++    SubexpSmall c μ ↔ ∀ᶠ n in atTop, |μ n| ≤ (2 : ℝ) ^ (-((n : ℝ) ^ c)) :=
++  (subexpSmall_iff c μ).trans eventually_atTop.symm
++
++variable {μ ν : ℕ → ℝ} {c c' : ℝ}
++
++/-- For `c' < c` with `0 < c` and every real `s`, `x^s · 2^{x^{c'} - x^c} → 0` as `x → ∞`.
++Glue: Mathlib has no lemma for this composite; it is assembled from Mathlib's
++`tendsto_rpow_mul_exp_neg_mul_atTop_nhds_zero`, `tendsto_rpow_atTop` and
++`tendsto_rpow_neg_atTop`.
++
++**Proof sketch.** Since `x^{c'-c} → 0`, eventually `x^{c'} ≤ x^c / 2`, so the function lies
++between `0` and `x^s e^{-(log 2 / 2) x^c}`. With `t = x^c → ∞` the latter is
++`t^{s/c} e^{-(log 2 / 2) t}`, which tends to `0`. -/
++private theorem tendsto_rpow_mul_two_rpow_sub (hc : 0 < c) (h : c' < c) (s : ℝ) :
++    Tendsto (fun x : ℝ => x ^ s * (2 : ℝ) ^ (x ^ c' - x ^ c)) atTop (𝓝 0) := by
++  have hlog : 0 < Real.log 2 := Real.log_pos one_lt_two
++  -- the upper bound `x^s e^{-(log 2 / 2) x^c}` tends to zero
++  have hup : Tendsto (fun x : ℝ => x ^ s * Real.exp (-(Real.log 2 / 2) * x ^ c)) atTop (𝓝 0) := by
++    refine ((tendsto_rpow_mul_exp_neg_mul_atTop_nhds_zero (s / c) (Real.log 2 / 2)
++      (half_pos hlog)).comp (tendsto_rpow_atTop hc)).congr' ?_
++    filter_upwards [eventually_ge_atTop (0 : ℝ)] with x hx
++    rw [Function.comp_apply, ← Real.rpow_mul hx, show c * (s / c) = s by field_simp]
++  -- eventually `x^{c'} ≤ x^c / 2`
++  have hratio : Tendsto (fun x : ℝ => x ^ (c' - c)) atTop (𝓝 0) := by
++    simpa only [neg_sub] using tendsto_rpow_neg_atTop (sub_pos.mpr h)
++  refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hup ?_ ?_
++  · filter_upwards [eventually_ge_atTop (0 : ℝ)] with x hx
++    exact mul_nonneg (Real.rpow_nonneg hx s) (Real.rpow_nonneg zero_le_two _)
++  · filter_upwards [eventually_gt_atTop (0 : ℝ),
++      hratio.eventually (ge_mem_nhds (half_pos one_pos))] with x hx hx2
++    have hxc : 0 < x ^ c := Real.rpow_pos_of_pos hx c
++    have hle : x ^ c' ≤ x ^ c / 2 := by
++      have hsplit := Real.rpow_add hx (c' - c) c
++      rw [sub_add_cancel] at hsplit
++      rw [hsplit]
++      nlinarith
++    refine mul_le_mul_of_nonneg_left ?_ (Real.rpow_nonneg hx.le s)
++    rw [Real.rpow_def_of_pos two_pos]
++    refine Real.exp_le_exp.mpr ?_
++    calc Real.log 2 * (x ^ c' - x ^ c) ≤ Real.log 2 * (-(x ^ c / 2)) :=
++          mul_le_mul_of_nonneg_left (by linarith) hlog.le
++      _ = -(Real.log 2 / 2) * x ^ c := by ring
++
++/-- For `c' < c` with `0 < c`, every constant `A` and every real `s`, eventually
++`A · n^s · 2^{-n^c} ≤ 2^{-n^{c'}}`. Glue: the estimate behind the closure lemmas below
++(`2^{n^c - n^{c'}}` absorbs a constant times a power of `n`); downstream reductions with
++explicit slack use it to read off subexponential bounds.
++
++**Proof sketch.** `A · n^s · 2^{n^{c'} - n^c} → 0`, so it is eventually below `1`; multiply
++by `2^{-n^{c'}}` and use `2^{n^{c'} - n^c} · 2^{-n^{c'}} = 2^{-n^c}`. -/
++theorem eventually_const_mul_rpow_mul_two_rpow_neg_le (hc : 0 < c) (h : c' < c) (A s : ℝ) :
++    ∀ᶠ n : ℕ in atTop,
++      A * (n : ℝ) ^ s * (2 : ℝ) ^ (-((n : ℝ) ^ c)) ≤ (2 : ℝ) ^ (-((n : ℝ) ^ c')) := by
++  have ht := ((tendsto_rpow_mul_two_rpow_sub hc h s).comp
++    tendsto_natCast_atTop_atTop).const_mul A
++  rw [mul_zero] at ht
++  filter_upwards [ht.eventually (gt_mem_nhds zero_lt_one)] with n hn
++  have hn' : A * (n : ℝ) ^ s * (2 : ℝ) ^ ((n : ℝ) ^ c' - (n : ℝ) ^ c) ≤ 1 := by
++    rw [mul_assoc]
++    exact hn.le
++  have hsplit : (2 : ℝ) ^ (-((n : ℝ) ^ c)) =
++      (2 : ℝ) ^ ((n : ℝ) ^ c' - (n : ℝ) ^ c) * (2 : ℝ) ^ (-((n : ℝ) ^ c')) := by
++    rw [← Real.rpow_add two_pos]
++    congr 1
++    ring
++  rw [hsplit, ← mul_assoc]
++  exact mul_le_of_le_one_left (Real.rpow_nonneg zero_le_two _) hn'
++
++/-- A function eventually dominated in absolute value by a `SubexpSmall c` function is
++`SubexpSmall c`. Glue: the analogue of `Negligible.mono`. -/
++theorem SubexpSmall.mono (hμ : SubexpSmall c μ) (h : ∃ n₀, ∀ n ≥ n₀, |ν n| ≤ |μ n|) :
++    SubexpSmall c ν := by
++  obtain ⟨n₀, h₀⟩ := h
++  obtain ⟨n₁, h₁⟩ := hμ
++  exact (subexpSmall_iff c ν).2 ⟨max n₀ n₁, fun n hn =>
++    (h₀ n (le_of_max_le_left hn)).trans (h₁ n (le_of_max_le_right hn))⟩
++
++/-- A `SubexpSmall c` function is `SubexpSmall c'` for every `c' ≤ c`: a smaller exponent is a
++weaker requirement. Glue (the exponent in [JLS26, Definition 2.1] is only asked to exist).
++
++**Proof sketch.** For `n ≥ 1`, `n^{c'} ≤ n^c`, so `2^{-n^c} ≤ 2^{-n^{c'}}`. -/
++theorem SubexpSmall.mono_exponent (hμ : SubexpSmall c μ) (h : c' ≤ c) : SubexpSmall c' μ := by
++  obtain ⟨n₀, h₀⟩ := hμ
++  refine (subexpSmall_iff c' μ).2 ⟨max n₀ 1, fun n hn => (h₀ n (le_of_max_le_left hn)).trans ?_⟩
++  have hn1 : (1 : ℝ) ≤ n := by exact_mod_cast le_of_max_le_right hn
++  exact Real.rpow_le_rpow_of_exponent_le one_le_two
++    (neg_le_neg (Real.rpow_le_rpow_of_exponent_le hn1 h))
++
++/-- The sum of two `SubexpSmall c` functions is `SubexpSmall c'` for every `c' < c`, provided
++`0 < c`. Glue: the subexponential analogue of `Negligible.add` ([Gar26, Exercise 1.1]); the
++exponent drops because the factor `2` must be absorbed.
++
++**Proof sketch.** `|μ n + ν n| ≤ 2 · 2^{-n^c}`, which is eventually at most `2^{-n^{c'}}`
++(`eventually_const_mul_rpow_mul_two_rpow_neg_le` with `A = 2`, `s = 0`). -/
++theorem SubexpSmall.add (hμ : SubexpSmall c μ) (hν : SubexpSmall c ν) (hc : 0 < c)
++    (h : c' < c) : SubexpSmall c' (fun n => μ n + ν n) := by
++  rw [subexpSmall_iff_eventually] at hμ hν ⊢
++  filter_upwards [hμ, hν, eventually_const_mul_rpow_mul_two_rpow_neg_le hc h 2 0]
++    with n h₁ h₂ h₃
++  rw [Real.rpow_zero, mul_one] at h₃
++  calc |μ n + ν n| ≤ |μ n| + |ν n| := abs_add_le _ _
++    _ ≤ 2 * (2 : ℝ) ^ (-((n : ℝ) ^ c)) := by linarith
++    _ ≤ _ := h₃
++
++/-- A constant multiple of a `SubexpSmall c` function is `SubexpSmall c'` for every `c' < c`,
++provided `0 < c`. Glue: the subexponential analogue of `Negligible.const_mul` ([Gar26, §1.2]).
++
++**Proof sketch.** `|a μ n| ≤ |a| · 2^{-n^c}`, eventually at most `2^{-n^{c'}}`. -/
++theorem SubexpSmall.const_mul (hμ : SubexpSmall c μ) (hc : 0 < c) (h : c' < c) (a : ℝ) :
++    SubexpSmall c' (fun n => a * μ n) := by
++  rw [subexpSmall_iff_eventually] at hμ ⊢
++  filter_upwards [hμ, eventually_const_mul_rpow_mul_two_rpow_neg_le hc h |a| 0] with n h₁ h₂
++  rw [Real.rpow_zero, mul_one] at h₂
++  rw [abs_mul]
++  exact (mul_le_mul_of_nonneg_left h₁ (abs_nonneg a)).trans h₂
++
++/-- A `SubexpSmall c` function times the polynomial `n^k` is `SubexpSmall c'` for every
++`c' < c`, provided `0 < c`; used when a hybrid argument multiplies an advantage by a
++polynomial number of hybrids. Glue: the subexponential analogue of `Negligible.mul_pow`
++([Gar26, §1.2]).
++
++**Proof sketch.** `|n^k μ n| ≤ n^k · 2^{-n^c}`, eventually at most `2^{-n^{c'}}`. -/
++theorem SubexpSmall.mul_pow (hμ : SubexpSmall c μ) (hc : 0 < c) (h : c' < c) (k : ℕ) :
++    SubexpSmall c' (fun n => (n : ℝ) ^ k * μ n) := by
++  rw [subexpSmall_iff_eventually] at hμ ⊢
++  filter_upwards [hμ, eventually_const_mul_rpow_mul_two_rpow_neg_le hc h 1 k] with n h₁ h₂
++  rw [one_mul, Real.rpow_natCast] at h₂
++  rw [abs_mul, abs_of_nonneg (by positivity)]
++  exact (mul_le_mul_of_nonneg_left h₁ (by positivity)).trans h₂
++
++/-- A `SubexpSmall c` function with `0 < c` is negligible. Implicit in [JLS26, §1.1], where
++subexponential hardness is the stronger of the two security levels; negligible is
++[Gar26, Definition 1.4].
++
++**Proof sketch.** Given `k`, `n^k μ n` is `SubexpSmall 0` (`SubexpSmall.mul_pow` with
++`c' = 0`), so eventually `n^k |μ n| ≤ 2^{-1} < 1`, that is `|μ n| < 1 / n^k`. -/
++theorem SubexpSmall.negligible (hμ : SubexpSmall c μ) (hc : 0 < c) : Negligible μ := by
++  refine (negligible_iff μ).2 fun k => ?_
++  obtain ⟨n₀, h₀⟩ := hμ.mul_pow hc hc k
++  refine ⟨max n₀ 1, fun n hn => ?_⟩
++  have hn1 : (1 : ℝ) ≤ n := by exact_mod_cast le_of_max_le_right hn
++  have hpos : (0 : ℝ) < (n : ℝ) ^ k := pow_pos (by linarith) k
++  have hb := h₀ n (le_of_max_le_left hn)
++  rw [Real.rpow_zero, Real.rpow_neg_one, abs_mul, abs_of_pos hpos] at hb
++  rw [lt_div_iff₀ hpos]
++  have h2 : (2 : ℝ)⁻¹ < 1 := by norm_num
++  nlinarith
++
++/-- Re-indexing: if `μ` is `SubexpSmall c` in its own parameter (`c ≥ 0`) and the parameter
++`ℓ n` eventually satisfies `n^a ≤ ℓ n` with `a > 0`, then `n ↦ μ (ℓ n)` is
++`SubexpSmall (a c)`. [JLS26, Remark 2.1 and §1.1]: hardness measured in an assumption's own
++parameter, set polynomially in `λ`, translates into hardness in `λ`. The source states the
++translation without the exponent; here it is explicit.
++
++**Proof sketch.** `ℓ n ≥ n^a → ∞`, so eventually `ℓ n` is past the threshold of `μ`; then
++`|μ (ℓ n)| ≤ 2^{-(ℓ n)^c} ≤ 2^{-(n^a)^c} = 2^{-n^{a c}}`. -/
++theorem SubexpSmall.comp_of_rpow_le (hμ : SubexpSmall c μ) (hc : 0 ≤ c) {a : ℝ} (ha : 0 < a)
++    {ℓ : ℕ → ℕ} (hℓ : ∃ n₀ : ℕ, ∀ n ≥ n₀, (n : ℝ) ^ a ≤ ℓ n) :
++    SubexpSmall (a * c) (fun n => μ (ℓ n)) := by
++  obtain ⟨n₀, h₀⟩ := hμ
++  have hbig : ∀ᶠ n : ℕ in atTop, (n₀ : ℝ) ≤ (n : ℝ) ^ a :=
++    ((tendsto_rpow_atTop ha).comp tendsto_natCast_atTop_atTop).eventually_ge_atTop (n₀ : ℝ)
++  rw [subexpSmall_iff_eventually]
++  filter_upwards [eventually_atTop.2 hℓ, hbig] with n h₁ h₂
++  have hn₀ : n₀ ≤ ℓ n := by exact_mod_cast h₂.trans h₁
++  refine (h₀ (ℓ n) hn₀).trans (Real.rpow_le_rpow_of_exponent_le one_le_two (neg_le_neg ?_))
++  rw [Real.rpow_mul (Nat.cast_nonneg n)]
++  exact Real.rpow_le_rpow (Real.rpow_nonneg (Nat.cast_nonneg n) a) h₁ hc
++
++/-- The constant zero function is `SubexpSmall c` for every `c`: `|0| = 0 ≤ 2^{-n^c}`. Glue
++(non-vacuity; the advantage between two equal distributions), as `negligible_zero`. -/
++theorem subexpSmall_zero (c : ℝ) : SubexpSmall c fun _ : ℕ => (0 : ℝ) :=
++  (subexpSmall_iff c _).2 ⟨0, fun n _ => by rw [abs_zero]; positivity⟩
++
++/-- The function `2^{-n}` is `SubexpSmall 1`: `|2^{-n}| = 2^{-n^1}` for every `n`. Glue
++(non-vacuity, [JLS26, Definition 2.1] with `c = 1`), as `negligible_two_pow_neg`. -/
++theorem subexpSmall_two_pow_neg : SubexpSmall 1 fun n => (2 : ℝ)⁻¹ ^ n := by
++  refine (subexpSmall_iff 1 _).2 ⟨0, fun n _ => le_of_eq ?_⟩
++  show |(2 : ℝ)⁻¹ ^ n| = (2 : ℝ) ^ (-((n : ℝ) ^ (1 : ℝ)))
++  rw [Real.rpow_one, Real.rpow_neg zero_le_two, Real.rpow_natCast, inv_pow,
++    abs_of_pos (by positivity)]
++
++section Hard
++
++variable {α : Type*} {adv : α → ℕ → ℝ}
++
++/-- A family of advantage functions `adv D`, indexed by adversaries `D : α`, is
++subexponentially hard when one exponent `c > 0`, fixed before the adversary, makes every
++`adv D` `SubexpSmall c`. [JLS26, §1.1 and Definition 2.1] (sub-exponential
++indistinguishability: `ε(λ) = 2^{-λ^c}` for some positive real `c`, against every adversary).
++Stated for an arbitrary adversary type; the library's convention instantiates
++`α := Complexity.NUPPT`. -/
++def SubexpHard (adv : α → ℕ → ℝ) : Prop :=
++  ∃ c : ℝ, 0 < c ∧ ∀ D : α, SubexpSmall c (adv D)
++
++/-- The defining property of `SubexpHard`: `SubexpHard adv` iff there is `c > 0` with
++`SubexpSmall c (adv D)` for every `D`. -/
++theorem subexpHard_iff (adv : α → ℕ → ℝ) :
++    SubexpHard adv ↔ ∃ c : ℝ, 0 < c ∧ ∀ D : α, SubexpSmall c (adv D) := Iff.rfl
++
++/-- A subexponentially hard advantage family is negligible against every adversary.
++Implicit in [JLS26, §1.1] (subexponential hardness implies polynomial hardness).
++
++**Proof sketch.** `SubexpSmall.negligible` at the common exponent. -/
++theorem SubexpHard.negligible (h : SubexpHard adv) (D : α) : Negligible (adv D) := by
++  obtain ⟨c, hc, hD⟩ := h
++  exact (hD D).negligible hc
++
++/-- Re-indexing a subexponentially hard family by a parameter `ℓ n` that eventually satisfies
++`n^a ≤ ℓ n` (`a > 0`) keeps it subexponentially hard, with exponent multiplied by `a`.
++[JLS26, Remark 2.1 and §1.1], for a whole family; see `SubexpSmall.comp_of_rpow_le`. -/
++theorem SubexpHard.comp_of_rpow_le (h : SubexpHard adv) {a : ℝ} (ha : 0 < a) {ℓ : ℕ → ℕ}
++    (hℓ : ∃ n₀ : ℕ, ∀ n ≥ n₀, (n : ℝ) ^ a ≤ ℓ n) : SubexpHard fun D n => adv D (ℓ n) := by
++  obtain ⟨c, hc, hD⟩ := h
++  exact (subexpHard_iff _).2 ⟨a * c, mul_pos ha hc, fun D => (hD D).comp_of_rpow_le hc.le ha hℓ⟩
++
++end Hard
++
++end TCSlib.Cryptography
