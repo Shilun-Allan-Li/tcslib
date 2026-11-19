@@ -149,7 +149,13 @@ theorem owpPredMachine_predictor (D : NUPPT) (flip : ℕ → Bool) (n : ℕ) (y 
 
 /-- **The prediction probability of the predictor machine** equals that of the concrete
 predictor `owpPredictor` [Gar26, Theorem 3.2] run against `D(1^n, ·)` with the sign `flip n`,
-for any `f` and `B` on `{0,1}^n`. -/
+for any `f` and `B` on `{0,1}^n`.
+
+**Proof sketch.** The coins of the predictor machine are a bit `σ` followed by the coins of `D`
+(`NUPPT.coins_wrap`, `PolyExpr.eval_add`, `PolyExpr.eval_const`); identify them through
+`Equiv.funUnique`, `Fin.appendEquiv` and `finCastEquiv` (`predProb_coins_equiv`). On such coins the
+machine's verdict is that of the concrete predictor (`owpPredMachine_predictor`, the coin string
+read by `ofFn_appendEquiv` and `ofFn_finCastEquiv`). -/
 theorem owpPredMachine_predProb (D : NUPPT) (flip : ℕ → Bool) {n : ℕ}
     (f : (Fin n → Bool) → (Fin n → Bool)) (B : (Fin n → Bool) → Bool) :
     predProb f B ((owpPredMachine D flip).predictor n n) =

@@ -725,7 +725,15 @@ private theorem fac_blocks_apply (q ℓ : ℕ) (x : Fin (q * ℓ) → Bool) (i :
 
 /-- **The direct-product inverter and the padded inverter agree on success**: block `i` of the
 answer of `prodInverter A n` (the all-`false` tuple on a wrong-length answer) is block `i` of the
-padded answer `OneWay.yaoB` whenever its first half reads as a prime. -/
+padded answer `OneWay.yaoB` whenever its first half reads as a prime.
+
+**Proof sketch.** Case on the answer of `A` (`prodInverter`, `OneWay.yaoB_apply`). A
+wrong-length answer gives the all-`false` block, which reads as `0` and is not prime
+(`fac_blocks_apply`, `fac_bitsToNat_false`). Otherwise the run of `A` on the challenge is the
+answer `x` (`NUPPT.inverter_eq_some_iff`); the challenge read at `outLen` has the same encoding
+(`FunFamily.ofFn_blocks_symm`), padding read at `inLen` and cast back is padding at `2n` bits
+(`OneWay.ofFn_padTrue`, `fmult_inLen`), and the padded tail of `x` after `i` blocks is block `i`
+of `x` (`OneWay.padTrue_drop_ofFn`). -/
 private theorem fac_prodInverter_eq_yaoB (A : NUPPT) (n : ℕ)
     (Y : Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) (r : A.Coins n) (i : Fin (fmultBlocks.eval n))
     (hp : (bitsToNat (FunFamily.blocks 2 n (prodInverter A n Y r i) 0)).Prime) :

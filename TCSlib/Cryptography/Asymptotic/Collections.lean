@@ -553,7 +553,14 @@ theorem toCollection_sample (n : ℕ) (i : List Bool) (s : (𝓕.toCollection F 
   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
   simp [NUPPT.inCoins_eq]
 
-/-- The sampler of `toCollection` is exactly uniform (`δ = 0`). -/
+/-- The sampler of `toCollection` is exactly uniform (`δ = 0`).
+
+**Proof sketch.** The index at `n` is `1^n` (`toCollection_index`), so the domain is `{0,1}^{inLen
+n}`. The sampler returns its coins (`toCollection_sample`) and the decoder reads them back
+(`toCollection_decD`, `decodeFin_ofFn`), so the decoded sample is the coins read through the
+equivalence `NUPPT.coinsEquiv_ofPolyTimeUniform` followed by `toCollection_domEquiv⁻¹`; a uniform
+sample stays exactly uniform under an equivalence (`StatClose.refl`,
+`StatClose.comp_equiv_left`). -/
 theorem toCollection_sampleClose : (𝓕.toCollection F hF hspec).SampleClose fun _ => 0 := by
   intro n r
   generalize hidx : (𝓕.toCollection F hF hspec).index n r = i

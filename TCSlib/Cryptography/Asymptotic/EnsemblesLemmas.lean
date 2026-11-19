@@ -518,9 +518,13 @@ theorem swapAux_apply (ζ S ρ : Type*) (a : ζ) (b : S × ρ) :
 
 /-- **Replacing the ideal samplers of the multicopy reduction by exactly distributed ones**
 leaves the acceptance probability unchanged: the other `t − 1` copies are drawn from
-`X'`, `Y'` (statistically identical to `X`, `Y`), the challenge `Z` and the coins of `D` are
-auxiliary coins (`StatClose.abs_uprob_sub_le_prod` at `δ = 0` after `statClose_copies` and
-`StatClose.prod`). -/
+`X'`, `Y'` (statistically identical to `X`, `Y`).
+
+**Proof sketch.** Write both acceptance probabilities over the copies and the auxiliary coins
+(`acceptProb_def`, `multicopyRed_def`, `copies_def`, reindexed by `swapAux` through
+`uprob_eq_of_equiv`). The copies of `X'`, `Y'` are `0`-close to those of `X`, `Y`
+(`statClose_copies`, `StatClose.prod`), so `StatClose.abs_uprob_sub_le_prod` at `δ = 0`, with the
+challenge `Z` and the coins of `D` as auxiliary coins, gives equality. -/
 theorem acceptProb_multicopyRed_congr {κX κY σ τ ζ γ ρ : Type*} [Fintype κX] [Fintype κY]
     [Fintype σ] [Fintype τ] [Fintype ζ] [Fintype ρ] {X' : κX → γ} {X : σ → γ} {Y' : κY → γ}
     {Y : τ → γ} (hX : StatClose X' X 0) (hY : StatClose Y' Y 0) (Z : ζ → γ) (t k : ℕ)
