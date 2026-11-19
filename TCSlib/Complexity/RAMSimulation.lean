@@ -6,6 +6,31 @@ Authors: Seyoon Ragavan
 import TCSlib.Complexity.RAMSimulation.WordSize
 import TCSlib.Complexity.RAMSimulation.Sim.Encoding
 import TCSlib.Complexity.RAMSimulation.Sim.Startup
+import TCSlib.Complexity.RAMSimulation.Sim.PhaseTable
+import TCSlib.Complexity.RAMSimulation.Sim.PhaseLayout
+import TCSlib.Complexity.RAMSimulation.Sim.PhaseCore
+import TCSlib.Complexity.RAMSimulation.Sim.PhaseTape
+import TCSlib.Complexity.RAMSimulation.Sim.PhaseInvariant
+import TCSlib.Complexity.RAMSimulation.Sim.PhaseRows
+import TCSlib.Complexity.RAMSimulation.Sim.PhaseRegister
+import TCSlib.Complexity.RAMSimulation.Sim.PhaseMemory
+import TCSlib.Complexity.RAMSimulation.Sim.PhaseInput
+import TCSlib.Complexity.RAMSimulation.Sim.PhaseBounds
+import TCSlib.Complexity.RAMSimulation.Sim.PhaseBlock
+import TCSlib.Complexity.RAMSimulation.Sim.PhaseAtoms
+import TCSlib.Complexity.RAMSimulation.Sim.PhaseCompute
+import TCSlib.Complexity.RAMSimulation.Sim.PhaseSchedules
+import TCSlib.Complexity.RAMSimulation.Sim.PhaseOperations
+import TCSlib.Complexity.RAMSimulation.Sim.PhaseControl
+import TCSlib.Complexity.RAMSimulation.Sim.PhaseSemantics
+import TCSlib.Complexity.RAMSimulation.Sim.PhaseMemoryMachines
+import TCSlib.Complexity.RAMSimulation.Sim.PhaseTests
+import TCSlib.Complexity.RAMSimulation.Sim.PhaseBranching
+import TCSlib.Complexity.RAMSimulation.Sim.PhaseBranchMachines
+import TCSlib.Complexity.RAMSimulation.Sim.PhaseHost
+import TCSlib.Complexity.RAMSimulation.Sim.PhaseFork
+import TCSlib.Complexity.RAMSimulation.Sim.PhaseCoin
+import TCSlib.Complexity.RAMSimulation.Sim.PhaseEmit
 import TCSlib.Complexity.RAMSimulation.Sim.Phases
 import TCSlib.Complexity.RAMSimulation.Simulation
 import TCSlib.Complexity.RAMSimulation.Classes
@@ -26,6 +51,31 @@ their gate on 2026-10-14 (`audits/stage2-statements-findings.md`); their proofs 
 - `RAMSimulation.Sim.Encoding`, `RAMSimulation.Sim.Startup`, `RAMSimulation.Sim.Phases`: the
   simulation's internal interfaces (namespace `WordRAM.Sim`): how eight tapes encode a
   configuration, the start-up, and one phase per instruction
+- `RAMSimulation.Sim.PhaseTable`: memory-table lookup and assignment invariants for the phases
+- `RAMSimulation.Sim.PhaseLayout`: address ranges and physical memory-table bounds
+- `RAMSimulation.Sim.PhaseCore`: finite rows and their framed sequential composition
+- `RAMSimulation.Sim.PhaseTape`: tape selection, framing and bounded-run placement
+- `RAMSimulation.Sim.PhaseInvariant`: preservation of the encoding by register/table writes
+- `RAMSimulation.Sim.PhaseRows`: native constant, arithmetic, half and sign-extension rows
+- `RAMSimulation.Sim.PhaseRegister`: register readiness and intermediate frame invariants
+- `RAMSimulation.Sim.PhaseMemory`: placed keyed lookup and assignment rows
+- `RAMSimulation.Sim.PhaseInput`: placed input-bit access with its input-head endpoint
+- `RAMSimulation.Sim.PhaseBounds`: common time and radius allowances for instruction rows
+- `RAMSimulation.Sim.PhaseBlock`: finite-exit certificates, Unit/Bool specializations and tracked registers
+- `RAMSimulation.Sim.PhaseAtoms`: normalized constant and keyed-memory blocks
+- `RAMSimulation.Sim.PhaseCompute`: normalized arithmetic, sign-extension and input blocks
+- `RAMSimulation.Sim.PhaseSchedules`: immediate fetch, store and binary arithmetic schedules
+- `RAMSimulation.Sim.PhaseOperations`: half, input and indirect memory schedules
+- `RAMSimulation.Sim.PhaseControl`: fresh entries, choice agreement and live phase exits
+- `RAMSimulation.Sim.PhaseSemantics`: matching extended-RAM steps and encoded postconditions
+- `RAMSimulation.Sim.PhaseMemoryMachines`: complete deterministic memory-instruction phase certificates
+- `RAMSimulation.Sim.PhaseTests`: placed sign and nonzero tests
+- `RAMSimulation.Sim.PhaseBranching`: the Bool specialization of shared phase packaging
+- `RAMSimulation.Sim.PhaseBranchMachines`: shared operand tests and the signed branch phase
+- `RAMSimulation.Sim.PhaseHost`: frame contracts placed through the registered phase host
+- `RAMSimulation.Sim.PhaseFork`: two continuations joined at the common next exit
+- `RAMSimulation.Sim.PhaseCoin`: the single-choice coin phase
+- `RAMSimulation.Sim.PhaseEmit`: optional emission and the complete output phase
 - `RAMSimulation.Simulation`: stage 2, `WordRAM.exists_simulation` and
   `WordRAM.exists_ndSimulation`, with their time and space bounds
 - `RAMSimulation.Classes`: the nine corollaries (DTIME, P, SPACE, L, log-space transducers,

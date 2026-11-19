@@ -148,6 +148,18 @@ def seamCompTM {Symbol : Type*} [DecidableEq S₁] (M₁ : MultiTapeTM k Symbol 
       let a := M₂.tr s inp w
       ⟨a.inputTape, a.workTapes, a.output, a.state.map Sum.inr⟩
 
+/-- At a left state, the seam composite dispatches silently and without moving at its exit;
+otherwise it uses the first machine's action with its successor state in the left summand. -/
+theorem seamCompTM_tr_inl {Symbol : Type*} [DecidableEq S₁]
+    (M₁ : MultiTapeTM k Symbol S₁) (exit : S₁)
+    (M₂ : MultiTapeTM k Symbol S₂) (entry : S₂) (q : S₁)
+    (inp : Option Symbol) (work : Fin k → Option Symbol) :
+    (seamCompTM M₁ exit M₂ entry).tr (Sum.inl q) inp work =
+      if q = exit then ⟨0, fun _ => (none, 0), none, some (Sum.inr entry)⟩
+      else
+        let a := M₁.tr q inp work
+        ⟨a.inputTape, a.workTapes, a.output, a.state.map Sum.inl⟩ := rfl
+
 /-- At a right state, the seam composite uses the second machine's action with its
 successor state injected into the right summand. -/
 theorem seamCompTM_tr_inr {Symbol : Type*} [DecidableEq S₁]
