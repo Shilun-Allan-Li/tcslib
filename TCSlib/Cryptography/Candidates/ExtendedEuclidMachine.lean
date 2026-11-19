@@ -163,7 +163,12 @@ theorem xgcdState_eq (b r' r s' s : ℕ) :
 
 /-- Glue. The residue arithmetic of a round: for `b > 0`, natural residues `S' = s' mod b`,
 `S = s mod b` and any `q`, `(S' + b − (q S mod b)) mod b = (s' − q s) mod b` (as a natural
-number). -/
+number).
+
+**Proof sketch.** Cast to `ℤ`: the natural residues are the integer ones (`Int.toNat_of_nonneg`,
+`Int.emod_nonneg`), and `q S mod b ≤ S' + b`, so the natural subtraction casts exactly. Modulo
+`b`, `S' + b − (q S mod b) ≡ s' + 0 − q s` (`Int.mod_modEq`, `Int.ModEq.mul_left`), and
+congruent integers have equal residues (`Int.ModEq.eq`). -/
 theorem xgcd_coef_residue {b : ℕ} (hb : 0 < b) (q : ℕ) (s' s : ℤ) :
     ((s' % b).toNat + b - q * (s % b).toNat % b) % b = ((s' - q * s) % b).toNat := by
   have hb' : (0 : ℤ) < b := by exact_mod_cast hb
@@ -384,7 +389,13 @@ theorem length_xgcdLoop_le (z : List Bool) (i : ℕ) :
     omega
 
 /-- Glue. One round of the loop is polynomial-time: a zero test on `r`, then the `div`, `mul`,
-`mod`, `add`, `sub` machines of `Complexity.BinArith` on the slots. -/
+`mod`, `add`, `sub` machines of `Complexity.BinArith` on the slots.
+
+**Proof sketch.** The slots `b`, `r'`, `r`, `s'`, `s` are projections
+(`BinArith.polyTimeComputable_slot2`, `BinArith.polyTimeComputable_slot3`). The new coefficient
+`xgcdCoefStep` is `(s' + b − (⌊r'/r⌋ · s mod b)) mod b`, a composition of the `div`, `mul`,
+`mod`, `add` and `sub` machines; the round re-pairs `⟨b, ⟨⟨r, r' mod r⟩, ⟨s, xgcdCoefStep⟩⟩⟩`,
+and `polyTimeComputable_ite` on the zero test of `r` keeps the state when `r = 0`. -/
 theorem polyTimeComputable_xgcdLoopStep : PolyTimeComputable xgcdLoopStep := by
   have hB : PolyTimeComputable fun S => pairFstD S := polyTimeComputable_pairFstD
   have hR' : PolyTimeComputable fun S => pairFstD (pairFstD (pairSndD S)) :=
@@ -436,7 +447,9 @@ def xgcdInvWord (z : List Bool) : List Bool :=
 for `a = pairFstD z`, `b = pairSndD z`, on every word.
 
 **Proof sketch.** For `⟦b⟧ = 0`, `Z_0 = ℤ`, the inverse is the sign and its value is
-`[⟦a⟧ ≠ 0]` (`Int.natAbs_sign`). For `⟦b⟧ = n + 1`, Mathlib's inverse is
+`[⟦a⟧ ≠ 0]` (`Int.natAbs_sign`, derived inline: `Arithmetic.lean`'s
+`val_inv_natCast_zmod_zero_le` makes the same reading but states only `≤ 1`, and Mathlib has no
+equality lemma). For `⟦b⟧ = n + 1`, Mathlib's inverse is
 `gcdA ((⟦a⟧ : Z_b).val) b` cast to `Z_b` (by definition), `(⟦a⟧ : Z_b).val = ⟦a⟧ mod b`
 (`ZMod.val_natCast`) and the value of an integer cast is its residue (`ZMod.val_intCast`); that
 is `xgcdLoopOut_spec`. -/

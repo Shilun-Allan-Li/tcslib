@@ -23,8 +23,10 @@ content the owner files would publish, proved by `Iff.rfl`; it is the only place
 **This file is to be deleted** when the Complexity owner PR adding `Randomized.mem_PRIMES` and
 `Randomized.mem_PRIMESBin` merges: its consumers (the `PRIMESBin` bridge of `PrimesInP.lean`,
 `ArithmeticFP.ofPrimesInP` and `arithmeticFP_iff_primesInP`) are then re-pointed one-for-one
-to the owner readers. The readers live in their own namespace so that the owner names never
-clash with them in between.
+to the owner readers. The readers live in their own namespace (as EF-H12's
+`LevinHardness/Bridge.lean` does), so that the owner names never clash with them in between;
+the re-point is a rename, `PrimesBridge.mem_PRIMES` ↦ `Randomized.mem_PRIMES` and
+`PrimesBridge.mem_PRIMESBin` ↦ `Randomized.mem_PRIMESBin`, with the statements unchanged.
 
 | Reader | Definition | Owner file |
 |---|---|---|

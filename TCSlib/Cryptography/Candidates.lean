@@ -39,18 +39,22 @@ polynomial-time computability is an explicit hypothesis, never an axiom.
   comparison, bit length, primality testing; `add`/`sub`/`size` added by the run-3 audit
   repair P7-1) and the fixed-width binary numerals `natToBits`/`natToList` with their
   round-trip lemmas.
-* `ArithmeticDischarge` — the cheap fields of `ArithmeticFP` from the binary-arithmetic
-  machines: multiplication, addition, subtraction, division with remainder, modular
-  exponentiation [PS10, Algorithm 45.5] and comparison (on re-paired inputs), and the bit
-  length `polyTimeComputable_sizeStr`.
+* `ArithmeticDischarge` — seven fields of `ArithmeticFP` from the binary-arithmetic machines,
+  with no hypothesis: `polyTimeComputable_mulStr`, `polyTimeComputable_addStr`,
+  `polyTimeComputable_subStr`, `polyTimeComputable_divModStr`, `polyTimeComputable_modExpStr`
+  [PS10, Algorithm 45.5, Theorem 45.6], `polyTimeComputable_leStr` (each first on re-paired
+  inputs, then on every word through the readers `mulStr_eq`, …) and the bit length
+  `polyTimeComputable_sizeStr`.
 * `ExtendedEuclidMachine` — the extended Euclidean algorithm as a polynomial-time loop
-  [PS10, Algorithm 43.2, Claim 43.3]: the gcd and Mathlib's `ZMod` inverse for every modulus.
+  [PS10, Algorithm 43.2, Claim 43.3]: the gcd and Mathlib's `ZMod` inverse for every modulus,
+  and the field `polyTimeComputable_xgcdStr`.
 * `PrimesBridge` — the bounded reader bridge for `Randomized.PRIMES` and `Randomized.PRIMESBin`
   (a recorded Rule-10 exception, ruling EF-H1-R2 (B), ledger DL-69; deleted when the Complexity
   owner readers land).
 * `PrimesInP` — `PRIMES ∈ P` as the named hypothesis `PrimesInP` (true by
-  Agrawal–Kayal–Saxena, [PS10, §2.6.5]) and the equivalence of the bundle's primality test with
-  the little-endian one.
+  Agrawal–Kayal–Saxena, [PS10, §2.6.5]), the equivalence of the bundle's primality test with
+  the little-endian one and with `PRIMESBin ∈ P`, the bundle `ArithmeticFP.ofPrimesInP` from
+  `PrimesInP` and the equivalence `arithmeticFP_iff_primesInP`.
 * `Concrete` — the concrete-layer lemmas of the factoring reductions: conditioning on an
   event (C1), the diagonal, random-position planting with a good set (C3), the tail bounds
   `(1 - 1/a)^{ak} ≤ e^{-k}` (C8, [PS10, Claim 36.2]), prime-pair density on bit strings,

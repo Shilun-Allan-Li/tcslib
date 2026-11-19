@@ -95,7 +95,9 @@ theorem toLE_pair_eq (a b : List Bool) :
   rw [toLE_eq_natBits, toLE_eq_natBits]
 
 /-- Glue. Writing a normalized word at the width of a template: `fromLEPoly var ⟨u, bits n⟩`
-is the `|u|`-bit numeral of `n` (`fromLEPoly_pairEncode`, `LogProg.bitsVal_bits`). -/
+is the `|u|`-bit numeral of `n`. A one-line specialization of the public
+`fromLEPoly_pairEncode` (`Encoding/BinaryArith.lean`) at the template `PolyExpr.var` and a
+normalized word, with `LogProg.bitsVal_bits` and `PolyExpr.eval_var`. -/
 theorem fromLEPoly_var_bits (u : List Bool) (n : ℕ) :
     fromLEPoly .var (pairEncode u (Nat.bits n)) = natToList u.length n := by
   rw [fromLEPoly_pairEncode, LogProg.bitsVal_bits, PolyExpr.eval_var]
@@ -111,7 +113,7 @@ theorem polyTimeComputable_fromLEPoly_var {t g : List Bool → List Bool}
 
 /-- Glue. **Binary multiplication of numerals is polynomial-time** on re-paired inputs:
 `z ↦ mulStr ⟨a, b⟩ = ⟦⟦a⟧ · ⟦b⟧⟧_{|a| + |b|}` with `a = pairFstD z`, `b = pairSndD z`
-(`BinArith.polyTimeComputable_mul`, [AB09, §7.2]). -/
+(`BinArith.polyTimeComputable_mul`). -/
 theorem polyTimeComputable_mulStr_pairEncode :
     PolyTimeComputable fun z => mulStr (pairEncode (pairFstD z) (pairSndD z)) :=
   (polyTimeComputable_fromLEPoly_var polyTimeComputable_pairConcat
@@ -120,8 +122,7 @@ theorem polyTimeComputable_mulStr_pairEncode :
       mulStr_pairEncode]
 
 /-- Glue. **Binary addition of numerals is polynomial-time** on re-paired inputs:
-`z ↦ addStr ⟨a, b⟩ = ⟦⟦a⟧ + ⟦b⟧⟧_{|a| + |b|}` (`BinArith.polyTimeComputable_add`,
-[AB09, §7.2]). -/
+`z ↦ addStr ⟨a, b⟩ = ⟦⟦a⟧ + ⟦b⟧⟧_{|a| + |b|}` (`BinArith.polyTimeComputable_add`). -/
 theorem polyTimeComputable_addStr_pairEncode :
     PolyTimeComputable fun z => addStr (pairEncode (pairFstD z) (pairSndD z)) :=
   (polyTimeComputable_fromLEPoly_var polyTimeComputable_pairConcat
@@ -130,7 +131,7 @@ theorem polyTimeComputable_addStr_pairEncode :
       addStr_pairEncode]
 
 /-- Glue. **Truncated subtraction of numerals is polynomial-time** on re-paired inputs:
-`z ↦ subStr ⟨a, b⟩ = ⟦⟦a⟧ ∸ ⟦b⟧⟧_{|a|}` (`BinArith.polyTimeComputable_sub`, [AB09, §7.2]). -/
+`z ↦ subStr ⟨a, b⟩ = ⟦⟦a⟧ ∸ ⟦b⟧⟧_{|a|}` (`BinArith.polyTimeComputable_sub`). -/
 theorem polyTimeComputable_subStr_pairEncode :
     PolyTimeComputable fun z => subStr (pairEncode (pairFstD z) (pairSndD z)) :=
   (polyTimeComputable_fromLEPoly_var polyTimeComputable_pairFstD
@@ -142,7 +143,7 @@ theorem polyTimeComputable_subStr_pairEncode :
 /-- Glue. **Division with remainder of numerals is polynomial-time** on re-paired inputs:
 `z ↦ divModStr ⟨a, b⟩ = ⟨⟦⟦a⟧ / ⟦b⟧⟧_{|a|}, ⟦⟦a⟧ mod ⟦b⟧⟧_{|b|}⟩`, including `⟦b⟧ = 0`, where
 `a / 0 = 0` and `a mod 0 = a` hold for the machines as for Lean (`BinArith.polyTimeComputable_div`,
-`BinArith.polyTimeComputable_mod`, [AB09, §7.2]). -/
+`BinArith.polyTimeComputable_mod`). -/
 theorem polyTimeComputable_divModStr_pairEncode :
     PolyTimeComputable fun z => divModStr (pairEncode (pairFstD z) (pairSndD z)) :=
   ((polyTimeComputable_fromLEPoly_var polyTimeComputable_pairFstD
@@ -153,7 +154,7 @@ theorem polyTimeComputable_divModStr_pairEncode :
       fromLEPoly_var_bits, divModStr_pairEncode]
 
 /-- Glue. **Comparison of numerals is polynomial-time** on re-paired inputs:
-`z ↦ leStr ⟨a, b⟩ = [⟦a⟧ ≤ ⟦b⟧]` (`BinArith.polyTimeComputable_le`, [AB09, §7.2]). -/
+`z ↦ leStr ⟨a, b⟩ = [⟦a⟧ ≤ ⟦b⟧]` (`BinArith.polyTimeComputable_le`). -/
 theorem polyTimeComputable_leStr_pairEncode :
     PolyTimeComputable fun z => leStr (pairEncode (pairFstD z) (pairSndD z)) :=
   (BinArith.polyTimeComputable_le.comp' polyTimeComputable_toLE_pair).congr fun z => by
