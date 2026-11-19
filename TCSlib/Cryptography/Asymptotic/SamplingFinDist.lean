@@ -63,7 +63,8 @@ bound on `decide ∘ T` passes through the statistical distance, `epsClose_iff_s
 theorem statClose_iff_epsClose_map (X : σ → γ) (Y : τ → γ) (δ : ℝ) :
     StatClose X Y δ ↔ EpsClose δ ((FinDist.uniform σ).map X) ((FinDist.uniform τ).map Y) := by
   constructor
-  · intro h D
+  · intro h
+    refine epsClose_iff.2 fun D => ?_
     rw [← uprob_comp_eq_probTrue_map, ← uprob_comp_eq_probTrue_map]
     exact (statClose_iff X Y δ).1 h fun g => D g = true
   · intro h
