@@ -577,6 +577,10 @@ private theorem glHalfInvPost_poly : PolyTimeComputable glHalfInvPost :=
 /-- The parameter `2m + 1` as a syntactic polynomial. -/
 private def oddParam : PolyExpr := .add (.add .var .var) (.const 1)
 
+/-- The value of `oddParam` at `m` is `m + m + 1`. -/
+private theorem oddParam_eval (m : ℕ) : oddParam.eval m = m + m + 1 := by
+  rw [oddParam, PolyExpr.eval_add, PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const]
+
 /-- **The odd-length inverter**: for an inverter `A` of `glHalf` and the parameter `m`, the
 machine at parameter `m` that draws one coin `e`, runs `A` at parameter `2m + 1` on `y ++ [e]`
 and drops the last bit of the answer (`Complexity.NUPPT.reparam` and `NUPPT.wrap`). -/
@@ -592,25 +596,33 @@ noncomputable def glHalfOddPred (A : NUPPT) : NUPPT :=
     (fun _ => by simp) (.const 1)
 
 /-- The coins `(e, c)` of the odd-length machines (for any post-processing `post`): the
-pass-through bit and the coins of `A` at `2m + 1`. -/
+pass-through bit and the coins of `A` at `2m + 1` (read at `oddParam.eval m` by `oddParam_eval`,
+the one-bit prefix at `(const 1).eval m` by `PolyExpr.eval_const`). -/
 private noncomputable def oddCoins (A : NUPPT) (m : ℕ) {post : List Bool → List Bool}
     (hpost : PolyTimeComputable post) :
     Bool × A.Coins (m + m + 1) ≃ (NUPPT.wrap (A.reparam oddParam) owpPredPre_poly hpost
       (fun _ => []) (.const 0) (fun _ => by simp) (.const 1)).Coins m :=
-  ((Equiv.funUnique (Fin 1) Bool).symm.prodCongr (NUPPT.reparamCoins A oddParam m)).trans
+  ((Equiv.funUnique (Fin 1) Bool).symm.prodCongr
+      ((Equiv.arrowCongr (finCongr (congrArg A.coinLen (oddParam_eval m)).symm)
+        (Equiv.refl Bool)).trans (NUPPT.reparamCoins A oddParam m))).trans
     ((Fin.appendEquiv 1 ((A.reparam oddParam).coinLen m)).trans
+      ((Equiv.arrowCongr (finCongr (show 1 + (A.reparam oddParam).coinLen m =
+        (PolyExpr.const 1).eval m + (A.reparam oddParam).coinLen m by rw [PolyExpr.eval_const]))
+        (Equiv.refl Bool)).trans
       (NUPPT.wrapCoinsEquiv (A.reparam oddParam) owpPredPre_poly hpost (fun _ => []) (.const 0)
-        (fun _ => by simp) (.const 1) m).symm)
+        (fun _ => by simp) (.const 1) m).symm))
 
-/-- The encoding of the coins `(e, c)` is `[e] ++ c`. -/
+/-- The encoding of the coins `(e, c)` is `[e] ++ c`, with `c` read at `oddParam.eval m`. -/
 private theorem ofFn_oddCoins (A : NUPPT) (m : ℕ) {post : List Bool → List Bool}
     (hpost : PolyTimeComputable post) (e : Bool) (c : A.Coins (m + m + 1)) :
     List.ofFn (oddCoins A m hpost (e, c)) =
-      List.ofFn (fun _ : Fin 1 => e) ++ List.ofFn (NUPPT.reparamCoins A oddParam m c) := by
-  simp only [oddCoins, Equiv.trans_apply]
-  refine (NUPPT.wrapCoinsEquiv_symm_ofFn _ _ _ _ _ _ _ _ _).trans ?_
-  exact (ofFn_appendEquiv ((Equiv.funUnique (Fin 1) Bool).symm e) _).trans
-    (congrArg (· ++ _) (by simp [List.ofFn_succ]))
+      List.ofFn (fun _ : Fin 1 => e) ++ List.ofFn (NUPPT.reparamCoins A oddParam m
+        (c ∘ Fin.cast (congrArg A.coinLen (oddParam_eval m)))) := by
+  simp only [oddCoins, Equiv.trans_apply, Equiv.prodCongr_apply, Prod.map_apply]
+  refine (NUPPT.wrapCoinsEquiv_symm_ofFn (A.reparam oddParam) owpPredPre_poly hpost (fun _ => [])
+    (.const 0) (fun _ => by simp) (.const 1) m _).trans ?_
+  rw [ofFn_arrowCongr_finCongr, ofFn_appendEquiv]
+  exact congrArg (· ++ _) (by simp [List.ofFn_succ])
 
 /-- The odd-length inverter on `(e, c)` returns the first `|y|` bits of `A(1^{2m+1}, y ++ [e]; c)`. -/
 private theorem glHalfOddInv_runAt (A : NUPPT) (m : ℕ) (y : List Bool) (e : Bool)
@@ -619,11 +631,14 @@ private theorem glHalfOddInv_runAt (A : NUPPT) (m : ℕ) (y : List Bool) (e : Bo
       (A.runAt (m + m + 1) (y ++ [e]) c).take y.length := by
   unfold glHalfOddInv
   rw [NUPPT.runAt_wrap (A.reparam oddParam) owpPredPre_poly glHalfInvPost_poly (fun _ => [])
-    (.const 0) (fun _ => by simp) (.const 1) m y rfl (fun _ => e)
-    (NUPPT.reparamCoins A oddParam m c) (oddCoins A m glHalfInvPost_poly (e, c))
-    (ofFn_oddCoins A m glHalfInvPost_poly e c)]
+    (.const 0) (fun _ => by simp) (.const 1) m y (PolyExpr.eval_const 1 m).symm (fun _ => e)
+    (NUPPT.reparamCoins A oddParam m (c ∘ Fin.cast (congrArg A.coinLen (oddParam_eval m))))
+    (oddCoins A m glHalfInvPost_poly (e, c)) (ofFn_oddCoins A m glHalfInvPost_poly e c)]
   simp only [glHalfInvPost, owpPredPre_def, pairSndD_pairEncode, pairFstD_pairEncode,
     NUPPT.inArg_layout, NUPPT.inAdvice_layout, NUPPT.runAt_reparam]
+  rw [NUPPT.runAt_eq, NUPPT.runAt_eq,
+    show List.ofFn (c ∘ Fin.cast (congrArg A.coinLen (oddParam_eval m))) = List.ofFn c from
+      (List.ofFn_congr (congrArg A.coinLen (oddParam_eval m)).symm c).symm, oddParam_eval]
   rfl
 
 /-- The odd-length predictor on `(e, c)` returns the verdict of `A(1^{2m+1}, y ++ [e]; c)`. -/
@@ -633,11 +648,16 @@ private theorem glHalfOddPred_runAt (A : NUPPT) (m : ℕ) (y : List Bool) (e : B
       A.runAt (m + m + 1) (y ++ [e]) c := by
   unfold glHalfOddPred
   rw [NUPPT.runAt_wrap (A.reparam oddParam) owpPredPre_poly polyTimeComputable_pairSndD
-    (fun _ => []) (.const 0) (fun _ => by simp) (.const 1) m y rfl (fun _ => e)
-    (NUPPT.reparamCoins A oddParam m c) (oddCoins A m polyTimeComputable_pairSndD (e, c))
+    (fun _ => []) (.const 0) (fun _ => by simp) (.const 1) m y (PolyExpr.eval_const 1 m).symm
+    (fun _ => e)
+    (NUPPT.reparamCoins A oddParam m (c ∘ Fin.cast (congrArg A.coinLen (oddParam_eval m))))
+    (oddCoins A m polyTimeComputable_pairSndD (e, c))
     (ofFn_oddCoins A m polyTimeComputable_pairSndD e c)]
   simp only [owpPredPre_def, pairSndD_pairEncode, NUPPT.inArg_layout, NUPPT.inAdvice_layout,
     NUPPT.runAt_reparam]
+  rw [NUPPT.runAt_eq, NUPPT.runAt_eq,
+    show List.ofFn (c ∘ Fin.cast (congrArg A.coinLen (oddParam_eval m))) = List.ofFn c from
+      (List.ofFn_congr (congrArg A.coinLen (oddParam_eval m)).symm c).symm, oddParam_eval]
   rfl
 
 /-- **Inversion at even length**: inverting `glHalf` at `2m` with `A` is inverting `glPad` at
@@ -663,11 +683,19 @@ theorem glHalf_invProbAt_even (P : PermFamily) (A : NUPPT) (m : ℕ) :
   have hI : ∀ x x', P.glHalf.toFunFamily.f (m + m) x' = P.glHalf.toFunFamily.f (m + m) x ↔
       P.toFunFamily.glPad.f m (e₁ x') = P.toFunFamily.glPad.f m (e₁ x) := fun x x' => by
     rw [← List.ofFn_inj, hF, hF, List.ofFn_inj]
+  -- the coins of `A` at `m + m`, read at `(var + var).eval m`
+  have hv : (PolyExpr.add .var .var).eval m = m + m := by
+    rw [PolyExpr.eval_add, PolyExpr.eval_var]
+  let ec := (Equiv.arrowCongr (finCongr (congrArg A.coinLen hv).symm) (Equiv.refl Bool)).trans
+    (NUPPT.reparamCoins A (.add .var .var) m)
+  have hrun : ∀ y c, (A.reparam (.add .var .var)).runAt m y (ec c) = A.runAt (m + m) y c :=
+    fun y c => by
+      rw [Equiv.trans_apply, NUPPT.runAt_reparam, NUPPT.runAt_eq, NUPPT.runAt_eq,
+        ofFn_arrowCongr_finCongr, hv]
   rw [FunFamily.invProbAt_eq_uprob, FunFamily.invProbAt_eq_uprob]
-  refine (OneWay.uprob_congr fun z => ?_).trans (uprob_comp_equiv
-    (e₁.prodCongr (NUPPT.reparamCoins A (.add .var .var) m)) _)
+  refine (OneWay.uprob_congr fun z => ?_).trans (uprob_comp_equiv (e₁.prodCongr ec) _)
   obtain ⟨x, c⟩ := z
-  simp only [Equiv.prodCongr_apply, Prod.map_apply, NUPPT.runAt_reparam]
+  simp only [Equiv.prodCongr_apply, Prod.map_apply, hrun]
   constructor
   · rintro ⟨x', h1, h2⟩
     exact ⟨e₁ x', by rw [← hF x, he x']; exact h1, (hI x x').1 h2⟩
@@ -722,11 +750,14 @@ theorem glHalf_predProb_even (P : PermFamily) (A : NUPPT) (m : ℕ) :
     predProb (P.glHalf.f (m + m)) (glHalfBit (m + m)) (A.predictor (m + m) (m + m)) =
       predProb (P.toFunFamily.glPad.f m) (P.toFunFamily.glBit m)
         ((A.reparam (.add .var .var)).predictor m (P.toFunFamily.glPad.outLen.eval m)) := by
+  have hv : (PolyExpr.add .var .var).eval m = m + m := by
+    rw [PolyExpr.eval_add, PolyExpr.eval_var]
   rw [predProb_glHalf_even]
-  refine (predProb_coins_equiv _ _ _ _ (NUPPT.reparamCoins A (.add .var .var) m) fun y c => ?_).symm
+  refine (predProb_coins_equiv _ _ _ _ ((Equiv.arrowCongr (finCongr (congrArg A.coinLen hv).symm)
+    (Equiv.refl Bool)).trans (NUPPT.reparamCoins A (.add .var .var) m)) fun y c => ?_).symm
   simp only [NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq,
-    NUPPT.runAt_reparam, PermFamily.glPad_outEquiv_ofFn]
-  rfl
+    Equiv.trans_apply, NUPPT.runAt_reparam, PermFamily.glPad_outEquiv_ofFn]
+  rw [NUPPT.runAt_eq, NUPPT.runAt_eq, ofFn_arrowCongr_finCongr, hv]
 
 /-- **Prediction at odd length**: predicting `glHalfBit` from `glHalf` at `2m + 1` with `A` is
 predicting `⟨x, r⟩` from `glPad` at `m` with the odd-length predictor. -/

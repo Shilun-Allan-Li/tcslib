@@ -62,6 +62,11 @@ no bound on its running time, has advantage at most `ε`,
 def EpsClose (ε : ℝ) (p q : FinDist α) : Prop :=
   ∀ D : α → Bool, |p.probTrue D - q.probTrue D| ≤ ε
 
+/-- The defining condition of `EpsClose`: `p ≈_ε q` exactly when every distinguisher `D` has
+advantage `|Pr_p[D = 1] - Pr_q[D = 1]| ≤ ε`. [PS10, Def 181.1] -/
+theorem epsClose_iff {ε : ℝ} {p q : FinDist α} :
+    EpsClose ε p q ↔ ∀ D : α → Bool, |p.probTrue D - q.probTrue D| ≤ ε := Iff.rfl
+
 /-- The probability differences of two distributions sum to zero. -/
 private theorem sum_sub_eq_zero (p q : FinDist α) : ∑ a, (p a - q a) = 0 := by
   rw [sum_sub_distrib, p.sum_prob, q.sum_prob, sub_self]

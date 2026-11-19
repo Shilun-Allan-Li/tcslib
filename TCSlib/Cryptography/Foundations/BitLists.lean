@@ -31,6 +31,8 @@ an association list. They depend on Mathlib only.
   entry at that index.
 * `TCSlib.Cryptography.flatten_ofFn_one`, `flatten_ofFn_singleton`: flattening one-element blocks.
 * `TCSlib.Cryptography.headD_ofFn_one`: the bit of a one-bit vector is the head of its string.
+* `TCSlib.Cryptography.decide_singleton_eq_true`: the verdict convention on a one-bit output,
+  `decide ([b] = [true]) = b`.
 * `TCSlib.Cryptography.zipWith_xor_cancel_left`: `(a ⊕ c) ⊕ a = c`.
 * `TCSlib.Cryptography.xorPerm_apply`: `xorPerm v y = y ⊕ v`.
 * `TCSlib.Cryptography.mem_keys_of_lookup_isSome`: a key with a value in an association list is
@@ -97,8 +99,12 @@ theorem flatten_ofFn_singleton {p : ℕ} (hp : p = 1) :
   fun f => flatten_ofFn_one hp fun i _ => f i
 
 /-- The bit of a one-bit output is the head of its string: `⟦f⟧.headD false = f 0`. -/
-theorem headD_ofFn_one (f : Fin 1 → Bool) : (List.ofFn f).headD false = f 0 := by
-  rw [List.ofFn_succ, List.headD_cons]
+theorem headD_ofFn_one (f : Fin 1 → Bool) : (List.ofFn f).headD false = f 0 :=
+  headD_drop_ofFn f 0 false
+
+/-- The verdict convention on a one-bit output: `[b] = [true]` iff `b`. -/
+theorem decide_singleton_eq_true (b : Bool) : decide ([b] = [true]) = b := by
+  cases b <;> rfl
 
 /-- Exclusive-or with the same list twice cancels: `(a ⊕ c) ⊕ a = c` for `|a| = |c|`. -/
 theorem zipWith_xor_cancel_left {a c : List Bool} (h : a.length = c.length) :

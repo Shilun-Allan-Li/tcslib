@@ -141,25 +141,11 @@ end SafePrime
 
 /-- **Two samplers on the same seeds are statistically close within the probability that they
 differ**: `|Pr[T(X)] − Pr[T(Y)]| ≤ Pr[X ≠ Y]` (the device for the `1/q` term of
-Theorem 107.3: the scheme's `h = g²` and the derived generator's `h` differ only on `g² = 1`). -/
+Theorem 107.3: the scheme's `h = g²` and the derived generator's `h` differ only on `g² = 1`);
+`StatClose.of_uprob_ne`, the name kept for its consumers. -/
 theorem statClose_of_uprob_ne {σ γ : Type*} [Fintype σ] (X Y : σ → γ) :
-    StatClose X Y (uprob fun s => X s ≠ Y s) := by
-  rw [statClose_iff]
-  intro T
-  have key : ∀ (X Y : σ → γ), uprob (fun s => T (X s)) ≤
-      uprob (fun s => T (Y s)) + uprob (fun s => X s ≠ Y s) := by
-    intro X Y
-    refine (uprob_mono fun s h => ?_).trans (uprob_or_le (fun s => T (Y s)) (fun s => X s ≠ Y s))
-    by_cases hxy : X s = Y s
-    · exact Or.inl (hxy ▸ h)
-    · exact Or.inr hxy
-  have h1 := key X Y
-  have h2 := key Y X
-  have hsymm : uprob (fun s => Y s ≠ X s) = uprob (fun s => X s ≠ Y s) :=
-    OneWay.uprob_congr fun s => ne_comm
-  rw [hsymm] at h2
-  rw [abs_sub_le_iff]
-  constructor <;> linarith
+    StatClose X Y (uprob fun s => X s ≠ Y s) :=
+  StatClose.of_uprob_ne X Y
 
 /-- **Removing one point moves every probability by at most `1/|α|`** (the counting step of
 `statClose_sq_generator`): the uniform element of `α` and the uniform element of `α ∖ {a}` give
@@ -263,7 +249,8 @@ noncomputable def ddhTuple (i : List Bool) (a b c : ZMod (expOrd i)) : List Bool
 def ddhLen : PolyExpr := .add (.mul (.const 15) .var) (.const 14)
 
 /-- `ddhLen.eval n = 15n + 14`. -/
-@[simp] theorem eval_ddhLen (n : ℕ) : ddhLen.eval n = 15 * n + 14 := rfl
+@[simp] theorem eval_ddhLen (n : ℕ) : ddhLen.eval n = 15 * n + 14 := by
+  simp only [ddhLen, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
 
 /-- A DDH tuple at a well-formed index has length exactly `15n + 14` (the padding of the
 ensembles is lossless). -/

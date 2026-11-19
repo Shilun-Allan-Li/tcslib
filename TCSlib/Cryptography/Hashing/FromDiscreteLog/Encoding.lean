@@ -43,25 +43,14 @@ open TCSlib.Cryptography TCSlib.Cryptography.Candidates TCSlib.Cryptography.Numb
 /-- The word of the first component of `splitBits w` is the first `a` bits of `w`:
 `List.ofFn (splitBits w).1 = (List.ofFn w).take a`. -/
 theorem ofFn_splitBits_fst {a b : ℕ} (w : Fin (a + b) → Bool) :
-    List.ofFn (splitBits w).1 = (List.ofFn w).take a := by
-  have hfst : (splitBits w).1 = fun j : Fin a => w (Fin.castAdd b j) :=
-    funext fun j => splitBits_fst w j
-  rw [hfst]
-  have hwindow := ofFn_drop_take w 0 a (by omega)
-  simpa only [List.drop_zero, Nat.zero_add] using hwindow.symm
+    List.ofFn (splitBits w).1 = (List.ofFn w).take a :=
+  Authentication.ofFn_splitBits_fst w
 
 /-- The word of the second component of `splitBits w` is the word of `w` after its first
 `a` bits: `List.ofFn (splitBits w).2 = (List.ofFn w).drop a`. -/
 theorem ofFn_splitBits_snd {a b : ℕ} (w : Fin (a + b) → Bool) :
-    List.ofFn (splitBits w).2 = (List.ofFn w).drop a := by
-  have hsnd : (splitBits w).2 = fun j : Fin b => w (Fin.natAdd a j) :=
-    funext fun j => splitBits_snd w j
-  rw [hsnd]
-  have hwindow := ofFn_drop_take w a b (by omega)
-  have hlen : ((List.ofFn w).drop a).length = b := by
-    simp only [List.length_drop, List.length_ofFn, Nat.add_sub_cancel_left]
-  rw [List.take_of_length_le hlen.le] at hwindow
-  exact hwindow.symm
+    List.ofFn (splitBits w).2 = (List.ofFn w).drop a :=
+  Authentication.ofFn_splitBits_snd w
 
 /-- The word of an `(n + 1)`-bit vector is its first `n` bits followed by its final bit:
 `List.ofFn x = List.ofFn (fun j : Fin n => x j.castSucc) ++ [x (Fin.last n)]`. -/

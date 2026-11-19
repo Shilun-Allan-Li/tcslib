@@ -28,7 +28,7 @@ prefix of at most `2^w` rounds. The terminal rank is included in the search.
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
   Cambridge University Press, 2009, §7.1, p. 126.
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
-  3rd ed., January 2010, §8.2, Theorem 180.1, step 4.
+  3rd ed., January 2010, §8.2, Theorem 180.1, final paragraph of the proof.
 -/
 
 namespace Complexity.SeedMajority
@@ -39,7 +39,7 @@ open Classical in
 /-- A finite machine computes the seed-majority bit with the claimed time:
 `M.ComputesFunInTime (x ↦ [decide (2^(w |x|) < 2 * count_all)])`
 `(n ↦ c * (2^(w n) * (n+1)^e))` for some `M,c,e`.
-[AB09, §7.1, p. 126]; [PS10, Theorem 180.1, step 4]
+[AB09, §7.1, p. 126]; [PS10, Theorem 180.1, final paragraph of the proof]
 
 **Proof sketch.** Bound the unary width by a polynomial. Then the retained
 input and the two counters, including their terminal values, fit in a

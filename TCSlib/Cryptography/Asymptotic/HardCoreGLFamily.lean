@@ -137,8 +137,9 @@ theorem glFamMachine_runAt (A : NUPPT) (iP oP K : PolyExpr) (k : ℕ → ℕ)
     (glFamMachine A iP oP K k hk).runAt n (List.ofFn y ++ List.ofFn r) r' =
       (glMachine A iP K k hk).runAt n (List.ofFn y) c ++ List.ofFn r := by
   unfold glFamMachine
-  rw [NUPPT.runAt_wrap (glMachine A iP K k hk) (glFamPre_poly oP) (glFamPost_poly oP) _ _ _
-    (.const 0) n _ rfl (fun _ : Fin 0 => false) c r' (by rw [hr']; rfl)]
+  rw [NUPPT.runAt_wrap (glMachine A iP K k hk) (glFamPre_poly oP) (glFamPost_poly oP)
+    (fun _ => []) (.const 0) (fun _ => by simp) (.const 0) n _ (PolyExpr.eval_const 0 n).symm
+    (fun _ : Fin 0 => false) c r' (by rw [hr']; rfl)]
   simp [glFamPre, glFamPost]
 
 /-! ## The evaluator of `⟨x, r⟩` on `⟨1^n, x ‖ r⟩` -/
@@ -223,8 +224,10 @@ theorem invProbOpt_glFam_eq (𝓕 : FunFamily) (A : NUPPT) (K : PolyExpr) (k : �
       HardcoreBit.glInverter_apply, hrec]
   simp only [Equiv.prodCongr_apply, Prod.map_fst, Prod.map_snd, Equiv.coe_refl, id_eq, hinv]
   have hcoins : (glFamMachine A₁ 𝓕.inLen 𝓕.outLen K k hk).coinLen n = (glCoins 𝓕.inLen K A₁).eval n := by
-    rw [NUPPT.coinLen_eq, glFamMachine, NUPPT.coins_wrap, coins_glMachine, PolyExpr.eval_add,
-      PolyExpr.eval_const, zero_add]
+    rw [NUPPT.coinLen_eq, glFamMachine,
+      NUPPT.coins_wrap (glMachine A₁ 𝓕.inLen K k hk) (glFamPre_poly 𝓕.outLen)
+        (glFamPost_poly 𝓕.outLen) (fun _ => []) (.const 0) (fun _ => by simp) (.const 0),
+      coins_glMachine, PolyExpr.eval_add, PolyExpr.eval_const, zero_add]
   let eC : HardcoreBit.GuessCoins (𝓕.inLen.eval n) (k n) (A₁.Coins n) ×
       (Fin ((glCoins 𝓕.inLen K A₁).eval n - glNeed A₁ 𝓕.inLen k n) → Bool) ≃
       (glFamMachine A₁ 𝓕.inLen 𝓕.outLen K k hk).Coins n :=

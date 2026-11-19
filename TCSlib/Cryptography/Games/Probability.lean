@@ -47,6 +47,8 @@ information-theory layer, so statistical distance and closeness (`EpsClose`) app
   `expect_sample_update`, `expect_sample_coord`: reindexing, exchanging and resampling uniform
   samples; `expect_sub`, `abs_expect_sub_le`: subtraction and pointwise closeness.
 * `ProbComp.abs_expect_sub_le_expect`: averaging a pointwise bound.
+* `ProbComp.mul_prob_le_expect`: `b * prob c P ≤ expect c q` when `q ≥ 0` is at least `b` on
+  `P` (averaging a favourable mass).
 * `ProbComp.expect_expect_sample`: exchanging an expectation with a uniform sample (Fubini).
 
 ## References
@@ -290,6 +292,24 @@ noncomputable def dist [Fintype α] [DecidableEq α] (c : ProbComp α) : FinDist
 /-- The output distribution gives each outcome its probability. -/
 theorem dist_apply [Fintype α] [DecidableEq α] (c : ProbComp α) (a : α) :
     dist c a = prob c (· = a) := rfl
+
+/-- **Averaging a favourable mass**: if `q` is nonnegative and at least `b` on every output
+satisfying `P`, then `b * prob c P ≤ expect c q`. Glue, no textbook counterpart of its own;
+first use: the averaging step of [PS10, proof of Theorem 137.2]. It is the `ProbComp`
+counterpart of `HardcoreBit.uprob_mul_le_uexp`.
+
+**Proof sketch.** Write the probability as the expectation of the indicator of `P`, move `b`
+inside, and compare pointwise: on `P` the integrand `b` is at most `q`, off it `0 ≤ q`. -/
+theorem mul_prob_le_expect (c : ProbComp α) (P : α → Prop) (q : α → ℝ) (b : ℝ)
+    (hq : ∀ a, 0 ≤ q a) (hP : ∀ a, P a → b ≤ q a) :
+    b * prob c P ≤ expect c q := by
+  classical
+  rw [prob_eq_expect, ← expect_const_mul]
+  apply expect_mono
+  intro a
+  by_cases ha : P a
+  · simpa only [ha, if_true, mul_one] using hP a ha
+  · simpa only [ha, if_false, mul_zero] using hq a
 
 /-! ### Sampling identities -/
 

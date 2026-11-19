@@ -23,13 +23,13 @@ The counting enumeration host: a deterministic machine that, on input `x`, runs 
 polynomial-time test on `⟨x, u⟩` for **every** seed `u ∈ {0,1}^{w(|x|)}`, counts the accepting
 seeds, and accepts iff more than half of them accept, in time `2^{w(n)} · poly(n)`. It is the
 enumeration behind `BPP ⊆ EXP` [AB09, §7.1, p. 126] (run the machine on every random string
-and count the accepting ones) and step 4 of the proof of [PS10, §8.2, Theorem 180.1] (run the
-derandomized verifier on every seed of the generator and take the majority). It is a *host* in
-the sense of `policy.md` §1 (*Hosts come first*): an odometer over all seeds, generic in the
-leaf test `V` and in the width `w`. Its contract is stated here, ahead of its consumers, by
-Seyoon's rulings of 2026-11-14 (the host) and 2026-11-15 (the machine-level contract with a
-head envelope, Gate 28, G28-02). **Proof owner:** the `derand` fill proves the host contract
-`Complexity.exists_seedMajorityTM`, its corollary `Complexity.seedMajority_mem_DTIME`, and
+and count the accepting ones) and the final paragraph of the proof of [PS10, §8.2, Theorem 180.1]
+(simulate the machine on all possible random tapes, i.e. on every seed of the generator, and take
+the majority). It is a *host* in the sense of `policy.md` §1 (*Hosts come first*): an odometer over
+all seeds, generic in the leaf test `V` and in the width `w`. Its contract is stated here, ahead of
+its consumers, by Seyoon's rulings of 2026-11-14 (the host) and 2026-11-15 (the machine-level
+contract with a head envelope, Gate 28, G28-02). **Proof owner:** the `derand` fill proves the host
+contract `Complexity.exists_seedMajorityTM`, its corollary `Complexity.seedMajority_mem_DTIME`, and
 Theorem 180.1 (`TCSlib.Cryptography.Randomness.bpp_subset_dtime_subexp`).
 
 **The formal reading.**
@@ -71,7 +71,7 @@ Theorem 180.1 (`TCSlib.Cryptography.Randomness.bpp_subset_dtime_subexp`).
 
 * `Complexity.exists_seedMajorityTM` — the host's machine-level contract: correctness, time and
   head envelope of one machine, proved through the generic binary-fuel harvest.
-  [AB09, §7.1, p. 126]; [PS10, Theorem 180.1, step 4 of the proof]
+  [AB09, §7.1, p. 126]; [PS10, Theorem 180.1, final paragraph of the proof]
 * `Complexity.seedMajority_mem_DTIME` — the decision-class corollary
   `∃ e, {x | 2^{w(|x|)} < 2 · count} ∈ DTIME (n ↦ 2^{w(n)} · (n+1)^e)`, proved from
   the host contract through `mem_DTIME_iff`.
@@ -81,8 +81,9 @@ Theorem 180.1 (`TCSlib.Cryptography.Randomness.bpp_subset_dtime_subexp`).
 ## Consumers
 
 * `TCSlib.Cryptography.Randomness.bpp_subset_dtime_subexp` ([PS10, Theorem 180.1]), through
-  `seedMajority_mem_DTIME`, with the test **and** the width of the paper proof, both piecewise in
-  a threshold length `n₀`. Let `V₁` be the accepting paired language of the `BPP` verifier `M`,
+  `seedMajority_mem_DTIME`, with a test and width adapted from the paper proof (a repository
+  construction, piecewise in a threshold length `n₀`; the book uses seed length `n^{ε/2}` at every
+  length). Let `V₁` be the accepting paired language of the `BPP` verifier `M`,
   `m(n)` its coin width, `F'` the evaluator of the expanded generator, and `ℓ(n)` the least `t`
   with `n ≤ t^d`. Below `n₀`, the test is `V₁` itself on the true coins,
   `⟨x, u⟩ ↦ M(x; u)`, with the width `w(n) = m(n)`. From `n₀` on, the test is
@@ -170,9 +171,9 @@ open Turing
 
 open Classical in
 /-- **Deterministic majority over all seeds: the machine contract** [AB09, §7.1, p. 126];
-[PS10, §8.2, Theorem 180.1, step 4 of the proof]. For a test `V ∈ P` on paired words and a width
-`w : ℕ → ℕ` whose unary word `x ↦ 1^{w(|x|)}` is polynomial-time computable, one finite machine
-`M`, with constants `c, e` and the budget `B(n) = c · (2^{w(n)} · (n+1)^e)`,
+[PS10, §8.2, Theorem 180.1, final paragraph of the proof]. For a test `V ∈ P` on paired words and
+a width `w : ℕ → ℕ` whose unary word `x ↦ 1^{w(|x|)}` is polynomial-time computable, one finite
+machine `M`, with constants `c, e` and the budget `B(n) = c · (2^{w(n)} · (n+1)^e)`,
 - decides the strict-majority language
   `S = {x | 2^{w(|x|)} < 2 · #{u : Fin (w |x|) → Bool | pairEncode x (List.ofFn u) ∈ V}}`
   within `B` (`M.DecidesInTime S B`): on every input `x` it halts within `B |x|` steps with
@@ -232,8 +233,8 @@ theorem exists_seedMajorityTM {V : Language Bool} (hV : V ∈ P) (w : ℕ → �
 
 open Classical in
 /-- **Deterministic majority over all seeds: the decision class** [AB09, §7.1, p. 126];
-[PS10, §8.2, Theorem 180.1, step 4 of the proof]: for a test `V ∈ P` on paired words and a width
-`w : ℕ → ℕ` whose unary word `x ↦ 1^{w(|x|)}` is polynomial-time computable, some degree `e`
+[PS10, §8.2, Theorem 180.1, final paragraph of the proof]: for a test `V ∈ P` on paired words and
+a width `w : ℕ → ℕ` whose unary word `x ↦ 1^{w(|x|)}` is polynomial-time computable, some degree `e`
 puts the strict-majority language in `DTIME (n ↦ 2^{w(n)} · (n+1)^e)`:
 `∃ e, {x | 2^{w(|x|)} < 2 · #{u : Fin (w |x|) → Bool | pairEncode x (List.ofFn u) ∈ V}}
 ∈ DTIME (fun n => 2^{w(n)} · (n+1)^e)`. Ties (`2 · count = 2^w`) reject. It is the corollary

@@ -688,7 +688,9 @@ def samplePrimeCoins : PolyExpr :=
   PolyExpr.mul (PolyExpr.mul (PolyExpr.const 2) (PolyExpr.pow PolyExpr.var 2)) PolyExpr.var
 
 /-- `samplePrimeCoins` evaluates to `2n² · n`. -/
-theorem eval_samplePrimeCoins (n : ℕ) : samplePrimeCoins.eval n = 2 * n ^ 2 * n := rfl
+theorem eval_samplePrimeCoins (n : ℕ) : samplePrimeCoins.eval n = 2 * n ^ 2 * n := by
+  simp only [samplePrimeCoins, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_pow,
+    PolyExpr.eval_var]
 
 /-- The `T` blocks of `n` bits of a coin string of length `T · n`: block `t` is the bits
 `t·n, …, t·n + n − 1`. -/
@@ -776,12 +778,14 @@ private theorem length_spStep_iterate_le (x : List Bool) (i : ℕ) :
       rw [Function.iterate_succ_apply']
       exact (length_spStep_spStep_le _).trans ih
 
-/-- Block `t` of the coin layout `chunk` is the `t`-th `n`-bit segment of the coin list. -/
+/-- Block `t` of the coin layout `chunk` is the `t`-th `n`-bit segment of the coin list: `chunk` is
+`FunFamily.blocks` read pointwise (`chunk_apply`, `FunFamily.blocks_apply`), so this is
+`FunFamily.ofFn_blocks` (DL-38). -/
 private theorem ofFn_chunk {T n : ℕ} (r : Fin (T * n) → Bool) (t : Fin T) :
     List.ofFn (chunk T n r t) = ((List.ofFn r).drop (t * n)).take n := by
-  have ht : ((t : ℕ) + 1) * n ≤ T * n := Nat.mul_le_mul_right n t.2
-  rw [Nat.add_mul, one_mul] at ht
-  exact (ofFn_drop_take r _ n ht).symm
+  have h : chunk T n r t = FunFamily.blocks T n r t :=
+    funext fun i => (chunk_apply T n r t i).trans (FunFamily.blocks_apply T n r t i).symm
+  rw [h, FunFamily.ofFn_blocks]
 
 /-- `firstHit` returns the first draw satisfying `E` (induction on the number of draws,
 `List.finRange_succ`). -/
@@ -893,7 +897,7 @@ compute `hP`'s function exactly): there is a uniform `NUPPT` with coin polynomia
 whose activation at parameter `n` on the empty argument with coins `r` (read as `2n²` blocks
 of `n` bits) outputs the bits of `samplePrime n (2n²)`, or `[]` on failure.
 
-**Proof sketch.** Instance of `Complexity.polyTimeComputable_iterateFind` (M3): on the state
+**Proof sketch.** Instance of `Complexity.polyTimeComputable_iterateFind_elim` (M3): on the state
 word `⟨1^n, r⟩`, the step `spStep` drops the first `n` bits of the second component
 (`polyTimeComputable_pairDropPoly var`), the acceptance test `spAcc` is the primality test
 `hP` on the first `n` bits (`polyTimeComputable_pairTakePoly var`), the payload `spOut` is
@@ -910,7 +914,7 @@ theorem exists_samplePrime_nuppt
       ∀ (n : ℕ) (r : Fin (2 * n ^ 2 * n) → Bool),
         A.runAtL n [] (List.ofFn r) =
           ((samplePrime n (2 * n ^ 2) (chunk (2 * n ^ 2) n r)).map List.ofFn).getD [] := by
-  have hF := polyTimeComputable_iterateFind spStep_poly (spAcc_poly hP) spOut_poly
+  have hF := polyTimeComputable_iterateFind_elim spStep_poly (spAcc_poly hP) spOut_poly
     PolyExpr.var (PolyExpr.add (.mul (.const 2) .var) (.const 2))
     (fun x i _ => by simpa using length_spStep_iterate_le x i)
   have hpre : PolyTimeComputable fun z => pairEncode (NUPPT.inParam z) (NUPPT.inCoins z) :=
@@ -925,6 +929,11 @@ theorem exists_samplePrime_nuppt
       List.ofFn r := by
     simp [NUPPT.inCoins_eq]
   simp only [Function.comp_apply, h1, h2]
-  exact spFind_eq n r
+  -- `spFind_eq` is stated with this file's `match`; read it at each value of the search
+  have h := spFind_eq n r
+  revert h
+  cases List.find? (fun i => spAcc (spStep^[i] (pairEncode (List.replicate n true) (List.ofFn r))))
+      (List.range (PolyExpr.var.eval (pairEncode (List.replicate n true) (List.ofFn r)).length + 1))
+    <;> exact id
 
 end TCSlib.Cryptography.NumberTheory

@@ -134,7 +134,8 @@ theorem owpPredMachine_predictor (D : NUPPT) (flip : ℕ → Bool) (n : ℕ) (y 
   unfold owpPredMachine
   simp only [NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq]
   rw [NUPPT.runAt_wrap D owpPredPre_poly owpPredPost_poly (fun n => [flip n]) (.const 1)
-    (fun _ => by simp) (.const 1) n (List.ofFn y) (m := 1) rfl (fun _ => σ) c r
+    (fun _ => by simp) (.const 1) n (List.ofFn y) (m := 1) (PolyExpr.eval_const 1 n).symm
+    (fun _ => σ) c r
     (by rw [hr]; rfl)]
   have h1 : List.ofFn (fun _ : Fin 1 => σ) = [σ] := by simp [List.ofFn_succ]
   simp only [owpPredPost, owpPredPre, pairSndD_pairEncode, pairFstD_pairEncode,
@@ -148,14 +149,23 @@ theorem owpPredMachine_predictor (D : NUPPT) (flip : ℕ → Bool) (n : ℕ) (y 
 
 /-- **The prediction probability of the predictor machine** equals that of the concrete
 predictor `owpPredictor` [Gar26, Theorem 3.2] run against `D(1^n, ·)` with the sign `flip n`,
-for any `f` and `B` on `{0,1}^n`. -/
+for any `f` and `B` on `{0,1}^n`.
+
+**Proof sketch.** The coins of the predictor machine are a bit `σ` followed by the coins of `D`
+(`NUPPT.coins_wrap`, `PolyExpr.eval_add`, `PolyExpr.eval_const`); identify them through
+`Equiv.funUnique`, `Fin.appendEquiv` and `finCastEquiv` (`predProb_coins_equiv`). On such coins the
+machine's verdict is that of the concrete predictor (`owpPredMachine_predictor`, the coin string
+read by `ofFn_appendEquiv` and `ofFn_finCastEquiv`). -/
 theorem owpPredMachine_predProb (D : NUPPT) (flip : ℕ → Bool) {n : ℕ}
     (f : (Fin n → Bool) → (Fin n → Bool)) (B : (Fin n → Bool) → Bool) :
     predProb f B ((owpPredMachine D flip).predictor n n) =
       predProb f B (fun y (c : Bool × D.Coins n) =>
         xor (if D.distinguisher n (n + 1) (Fin.snoc y c.1) c.2 then c.1 else !c.1) (flip n)) := by
   have hcoinLen : 1 + D.coinLen n = (owpPredMachine D flip).coinLen n := by
-    simp only [NUPPT.coinLen_eq, owpPredMachine, NUPPT.coins_wrap, PolyExpr.eval_add, PolyExpr.eval_const]
+    rw [NUPPT.coinLen_eq, NUPPT.coinLen_eq]
+    unfold owpPredMachine
+    rw [NUPPT.coins_wrap D owpPredPre_poly owpPredPost_poly (fun n => [flip n]) (.const 1)
+      (fun _ => by simp) (.const 1), PolyExpr.eval_add, PolyExpr.eval_const]
   refine predProb_coins_equiv f B _ _
     (((Equiv.funUnique (Fin 1) Bool).symm.prodCongr (Equiv.refl (D.Coins n))).trans
       ((Fin.appendEquiv 1 (D.coinLen n)).trans (finCastEquiv hcoinLen))) fun y c => ?_
@@ -220,7 +230,8 @@ theorem glPadInvMachine_runAt (A : NUPPT) (p : PolyExpr) (n : ℕ) (y : List Boo
     (hr : List.ofFn r = List.ofFn a ++ List.ofFn c) :
     (glPadInvMachine A p).runAt n y r = (A.runAt n (y ++ List.ofFn a) c).take (p.eval n) := by
   unfold glPadInvMachine
-  rw [NUPPT.runAt_wrap A owpPredPre_poly glPadInvPost_poly _ _ _ p n y rfl a c r hr]
+  rw [NUPPT.runAt_wrap A owpPredPre_poly glPadInvPost_poly (fun _ => []) (.const 0)
+    (fun _ => by simp) p n y rfl a c r hr]
   simp [glPadInvPost, owpPredPre]
 
 /-- **The padding inverter inverts `f` at least as often as `A` inverts `g`**
@@ -240,7 +251,10 @@ theorem invProbOpt_glPad_le (𝓕 : FunFamily) (A : NUPPT) (n : ℕ) :
     invProbOpt (𝓕.f n)
       ((glPadInvMachine A 𝓕.inLen).inverter n (𝓕.inLen.eval n) (𝓕.outLen.eval n)) := by
   have hcoinLen : 𝓕.inLen.eval n + A.coinLen n = (glPadInvMachine A 𝓕.inLen).coinLen n := by
-    simp only [NUPPT.coinLen_eq, glPadInvMachine, NUPPT.coins_wrap, PolyExpr.eval_add]
+    rw [NUPPT.coinLen_eq, NUPPT.coinLen_eq]
+    unfold glPadInvMachine
+    rw [NUPPT.coins_wrap A owpPredPre_poly glPadInvPost_poly (fun _ => []) (.const 0)
+      (fun _ => by simp) 𝓕.inLen, PolyExpr.eval_add]
   simp only [invProbOpt_def]
   refine le_of_eq_of_le (uprob_comp_equiv
     ((Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).prodCongr (Equiv.refl (A.Coins n))) _).symm ?_
@@ -333,8 +347,7 @@ theorem statClose_glPadSampler (F : Collection) (m : PolyExpr) (S : NUPPT)
     StatClose (fun s : S.Coins n => glPadDecode F (F.index n r) L (S.runAt n (F.index n r) s))
       (fun x : F.D (F.index n r) × (Fin L → Bool) => some x) (δ n) := by
   have hlen : F.sample.coinLen n + L = S.coinLen n := by
-    show F.sample.coinLen n + L = S.coins.eval n
-    rw [hS, PolyExpr.eval_add, hL]; rfl
+    rw [NUPPT.coinLen_eq S n, hS, PolyExpr.eval_add, hL, NUPPT.coinLen_eq]
   let e : F.sample.Coins n × (Fin L → Bool) ≃ S.Coins n :=
     (Fin.appendEquiv _ _).trans (finCastEquiv hlen)
   have h0 : StatClose (fun s : Fin L → Bool => s) (fun s : Fin L → Bool => s) 0 := StatClose.refl _
@@ -385,7 +398,8 @@ theorem glPadCollInvMachine_runAt (A : NUPPT) (m : PolyExpr) (n : ℕ) (i y : Li
     (glPadCollInvMachine A m).runAt n (pairEncode i y) r =
       pairFstD (A.runAt n (pairEncode i (pairEncode y (List.ofFn a))) c) := by
   unfold glPadCollInvMachine
-  rw [NUPPT.runAt_wrap A glPadCollPre_poly glPadCollPost_poly _ _ _ m n (pairEncode i y) rfl a c r hr]
+  rw [NUPPT.runAt_wrap A glPadCollPre_poly glPadCollPost_poly (fun _ => []) (.const 0)
+    (fun _ => by simp) m n (pairEncode i y) rfl a c r hr]
   simp [glPadCollPost, glPadCollPre]
 
 /-- **The collection inverter inverts `F` at least as often as `A` inverts the padded
@@ -410,7 +424,10 @@ theorem glPad_invProbAt_le (F : Collection) (m : PolyExpr) (A : NUPPT) (n : ℕ)
             pairEncode (F.f (F.index n r) z.1.1) (List.ofFn z.1.2)) ≤
     F.invProbAt (glPadCollInvMachine A m) n := by
   have hcoinLen : m.eval n + A.coinLen n = (glPadCollInvMachine A m).coinLen n := by
-    simp only [NUPPT.coinLen_eq, glPadCollInvMachine, NUPPT.coins_wrap, PolyExpr.eval_add]
+    rw [NUPPT.coinLen_eq, NUPPT.coinLen_eq]
+    unfold glPadCollInvMachine
+    rw [NUPPT.coins_wrap A glPadCollPre_poly glPadCollPost_poly (fun _ => []) (.const 0)
+      (fun _ => by simp) m, PolyExpr.eval_add]
   simp only [Collection.invProbAt_eq]
   refine OneWay.uexp_mono fun r => ?_
   refine le_of_eq_of_le (uprob_comp_equiv

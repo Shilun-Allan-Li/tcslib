@@ -61,6 +61,7 @@ part of the public API of the campaign.
   times a negligible function is negligible.
 * `TCSlib.Cryptography.EnsembleLemmas.ofFn_padFin_eq_padL` — the string of a padded vector is
   `padL`.
+* `TCSlib.Cryptography.EnsembleLemmas.swapAux_apply` — the reader of the reindexing `swapAux`.
 
 ## References
 
@@ -83,15 +84,17 @@ variable {σ τ γ ρ κ : Type*} [Fintype σ] [Fintype τ] [Fintype ρ] [Fintyp
 /-- Relabelling the coin space of a distinguisher by a bijection does not change the
 acceptance probability (the coin analogue of `acceptProb_comp_equiv`). -/
 theorem acceptProb_coins_equiv (e : κ ≃ ρ) (X : σ → γ) (D : γ → ρ → Bool) :
-    acceptProb X (fun z c => D z (e c)) = acceptProb X D :=
-  uprob_eq_of_equiv ((Equiv.refl σ).prodCongr e)
+    acceptProb X (fun z c => D z (e c)) = acceptProb X D := by
+  rw [acceptProb_def, acceptProb_def]
+  exact uprob_eq_of_equiv ((Equiv.refl σ).prodCongr e)
     (q := fun w : σ × ρ => D (X w.1) w.2 = true) fun _ => Iff.rfl
 
 /-- Coins the distinguisher never reads (a second, ignored coin factor) do not change the
 acceptance probability. -/
 theorem acceptProb_coins_fst [Nonempty κ] (X : σ → γ) (D : γ → ρ → Bool) :
-    acceptProb X (fun z (c : ρ × κ) => D z c.1) = acceptProb X D :=
-  (uprob_eq_of_equiv (Equiv.prodAssoc σ ρ κ).symm
+    acceptProb X (fun z (c : ρ × κ) => D z c.1) = acceptProb X D := by
+  rw [acceptProb_def, acceptProb_def]
+  exact (uprob_eq_of_equiv (Equiv.prodAssoc σ ρ κ).symm
     (q := fun w : (σ × ρ) × κ => D (X w.1.1) w.1.2 = true) fun _ => Iff.rfl).trans
     (uprob_fst fun w : σ × ρ => D (X w.1) w.2 = true)
 
@@ -120,6 +123,7 @@ theorem uprob_const {α : Type*} [Fintype α] [Nonempty α] (p : Prop) [Decidabl
 theorem statClose_of_subsingleton [Subsingleton γ] [Nonempty σ] [Nonempty τ] (X : σ → γ)
     (Y : τ → γ) : StatClose X Y 0 := by
   classical
+  rw [statClose_iff]
   intro T
   have c := X (Classical.arbitrary σ)
   have hX : ∀ s, X s = c := fun s => Subsingleton.elim _ _
@@ -130,7 +134,8 @@ theorem statClose_of_subsingleton [Subsingleton γ] [Nonempty σ] [Nonempty τ] 
 case `t(n) = 0` of the multicopy corollary). -/
 theorem distAdv_eq_zero_of_subsingleton [Subsingleton γ] [Nonempty σ] [Nonempty τ] (X : σ → γ)
     (Y : τ → γ) (D : γ → ρ → Bool) : distAdv X Y D = 0 :=
-  le_antisymm (distAdv_le_of_statClose X Y (statClose_of_subsingleton X Y) D) (abs_nonneg _)
+  le_antisymm (distAdv_le_of_statClose X Y (statClose_of_subsingleton X Y) D)
+    (by rw [distAdv_def]; exact abs_nonneg _)
 
 end Probability
 
@@ -283,7 +288,9 @@ theorem acceptProb_reparam {σ : Type*} [Fintype σ] {B D : NUPPT} {p : PolyExpr
   congr 1
   funext z c
   have hofn : List.ofFn (e c) = List.ofFn c := (List.ofFn_congr hlen c).symm
-  simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hofn, hB]
+  refine Bool.eq_iff_iff.mpr ?_
+  simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, decide_eq_true_eq]
+  simp only [NUPPT.runAt_eq, hofn, hB]
 
 /-- The acceptance probability of `NUPPT.exists_reparam_advice D φ p` at parameter `m` is that
 of `D` at parameter `φ m`: the unread coins are an independent uniform factor
@@ -302,8 +309,9 @@ theorem acceptProb_reparam_advice {σ : Type*} [Fintype σ] {A D : NUPPT} {φ : 
     X (D.distinguisher (φ m) k)]
   congr 1
   funext z c
-  simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hA,
-      take_ofFn_coinsEquiv]
+  refine Bool.eq_iff_iff.mpr ?_
+  simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, decide_eq_true_eq]
+  simp only [NUPPT.runAt_eq, hA, take_ofFn_coinsEquiv]
 
 /-! ### The machine of Lemma 71.5 -/
 
@@ -342,7 +350,8 @@ theorem exists_pushRed (M D : NUPPT) (ℓ' : PolyExpr) :
     simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
     omega
   refine ⟨NUPPT.ofPolyTime hF (.add M.coins D.coins) _
-    (fun n => NUPPT.combineAdvice (M.advice n) (D.advice n)) hadv, rfl, fun n y r => ?_⟩
+    (fun n => NUPPT.combineAdvice (M.advice n) (D.advice n)) hadv, NUPPT.coins_ofPolyTime _ _ _ _ _,
+    fun n y r => ?_⟩
   rw [NUPPT.runAtL_ofPolyTime]
   simp [NUPPT.runAtL_eq, NUPPT.advInput_eq, NUPPT.coinLen_eq, NUPPT.layout_eq, NUPPT.inParam_eq,
       NUPPT.inArg_eq,
@@ -365,9 +374,9 @@ theorem acceptProb_pushRed {σ : Type*} [Fintype σ] {M D B : NUPPT} {ℓ' : Pol
       (D.distinguisher n (ℓ'.eval n))]
   congr 1
   funext z c
-  simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hB,
-      take_ofFn_coinsEquiv, drop_ofFn_coinsEquiv,
-    padL]
+  refine Bool.eq_iff_iff.mpr ?_
+  simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, decide_eq_true_eq]
+  simp only [NUPPT.runAt_eq, hB, take_ofFn_coinsEquiv, drop_ofFn_coinsEquiv, padL]
 
 /-! ### Negligible functions and syntactic polynomials -/
 
@@ -423,23 +432,18 @@ theorem finProdFinEquiv_symm_mk {q ℓ : ℕ} (i : Fin q) (j : Fin ℓ) (h : i *
   ring
 
 /-- The `i`-th chunk of `s` bits of the string of a `q·s`-bit word is its block `i`
-(`FunFamily.ofFn_blocks`, the block window, through `blocks_eq`). -/
+(`FunFamily.ofFn_blocks`, the block window). -/
 theorem take_drop_ofFn_blocks {q s : ℕ} (w : Fin (q * s) → Bool) (i : ℕ) (hi : i < q) :
-    ((List.ofFn w).drop (i * s)).take s = List.ofFn (blocks q s w ⟨i, hi⟩) := by
-  rw [blocks_eq, FunFamily.ofFn_blocks]
+    ((List.ofFn w).drop (i * s)).take s = List.ofFn (FunFamily.blocks q s w ⟨i, hi⟩) :=
+  (FunFamily.ofFn_blocks q s w ⟨i, hi⟩).symm
 
 /-- The string of `(blocks q ℓ).symm V` is the concatenation of the `q` block strings
-(`List.ofFn_mul`). -/
+(`FunFamily.ofFn_blocks_symm_eq_flatMap` through `blocks_eq`). -/
 theorem ofFn_blocks_symm {q ℓ : ℕ} (V : Fin q → Fin ℓ → Bool) (F : ℕ → List Bool)
     (hF : ∀ i (h : i < q), F i = List.ofFn (V ⟨i, h⟩)) :
     List.ofFn ((blocks q ℓ).symm V) = (List.range q).flatMap F := by
-  rw [List.ofFn_mul, List.flatMap_def, ← List.map_coe_finRange, List.map_map, List.ofFn_eq_map]
-  congr 1
-  refine List.map_congr_left fun i _ => ?_
-  rw [Function.comp_apply, hF i i.isLt]
-  congr 1
-  funext j
-  rw [blocks_symm_apply, finProdFinEquiv_symm_mk]
+  rw [blocks_eq]
+  exact FunFamily.ofFn_blocks_symm_eq_flatMap V F hF
 
 /-- The concatenation of `q` chunks of `ℓ` bits has `q·ℓ` bits. -/
 theorem length_flatMap_range (F : ℕ → List Bool) {q ℓ : ℕ} (hF : ∀ i < q, (F i).length = ℓ) :
@@ -506,11 +510,21 @@ def swapAux (ζ S ρ : Type*) : ζ × (S × ρ) ≃ S × (ζ × ρ) where
   left_inv _ := rfl
   right_inv _ := rfl
 
+/-- The reindexing `swapAux` moves the middle component to the front:
+`swapAux ζ S ρ (a, b) = (b.1, (a, b.2))`. Glue: the reader of `EnsembleLemmas.swapAux`. -/
+theorem swapAux_apply (ζ S ρ : Type*) (a : ζ) (b : S × ρ) :
+    swapAux ζ S ρ (a, b) = (b.1, (a, b.2)) :=
+  rfl
+
 /-- **Replacing the ideal samplers of the multicopy reduction by exactly distributed ones**
 leaves the acceptance probability unchanged: the other `t − 1` copies are drawn from
-`X'`, `Y'` (statistically identical to `X`, `Y`), the challenge `Z` and the coins of `D` are
-auxiliary coins (`StatClose.abs_uprob_sub_le_prod` at `δ = 0` after `statClose_copies` and
-`StatClose.prod`). -/
+`X'`, `Y'` (statistically identical to `X`, `Y`).
+
+**Proof sketch.** Write both acceptance probabilities over the copies and the auxiliary coins
+(`acceptProb_def`, `multicopyRed_def`, `copies_def`, reindexed by `swapAux` through
+`uprob_eq_of_equiv`). The copies of `X'`, `Y'` are `0`-close to those of `X`, `Y`
+(`statClose_copies`, `StatClose.prod`), so `StatClose.abs_uprob_sub_le_prod` at `δ = 0`, with the
+challenge `Z` and the coins of `D` as auxiliary coins, gives equality. -/
 theorem acceptProb_multicopyRed_congr {κX κY σ τ ζ γ ρ : Type*} [Fintype κX] [Fintype κY]
     [Fintype σ] [Fintype τ] [Fintype ζ] [Fintype ρ] {X' : κX → γ} {X : σ → γ} {Y' : κY → γ}
     {Y : τ → γ} (hX : StatClose X' X 0) (hY : StatClose Y' Y 0) (Z : ζ → γ) (t k : ℕ)
@@ -524,13 +538,17 @@ theorem acceptProb_multicopyRed_congr {κX κY σ τ ζ γ ρ : Type*} [Fintype 
   calc acceptProb Z (multicopyRed X' Y' t k D)
       = uprob fun v : ((Fin t → κX) × (Fin t → κY)) × (ζ × ρ) =>
           D (fun i => if (i : ℕ) < k then copies t Y' v.1.2 i
-            else if (i : ℕ) = k then Z v.2.1 else copies t X' v.1.1 i) v.2.2 = true :=
-        uprob_eq_of_equiv (swapAux ζ ((Fin t → κX) × (Fin t → κY)) ρ) fun _ => Iff.rfl
+            else if (i : ℕ) = k then Z v.2.1 else copies t X' v.1.1 i) v.2.2 = true := by
+        rw [acceptProb_def, multicopyRed_def]
+        exact uprob_eq_of_equiv (swapAux ζ ((Fin t → κX) × (Fin t → κY)) ρ) fun ⟨_, _⟩ => by
+          simp only [copies_def, swapAux_apply]
     _ = uprob fun v : ((Fin t → σ) × (Fin t → τ)) × (ζ × ρ) =>
           D (fun i => if (i : ℕ) < k then copies t Y v.1.2 i
             else if (i : ℕ) = k then Z v.2.1 else copies t X v.1.1 i) v.2.2 = true := key
-    _ = acceptProb Z (multicopyRed X Y t k D) :=
-        (uprob_eq_of_equiv (swapAux ζ ((Fin t → σ) × (Fin t → τ)) ρ) fun _ => Iff.rfl).symm
+    _ = acceptProb Z (multicopyRed X Y t k D) := by
+        rw [acceptProb_def, multicopyRed_def]
+        exact (uprob_eq_of_equiv (swapAux ζ ((Fin t → σ) × (Fin t → τ)) ρ) fun ⟨_, _⟩ => by
+          simp only [copies_def, swapAux_apply]).symm
 
 /-! ### The sampler loop of the multicopy reduction -/
 
@@ -809,7 +827,7 @@ padded sample of `X` from `cX i` for `i > k n`.
 runs the state loop `CopiesLoop` on `⟨1^n, ⟨[], ⟨1^k, ⟨z, ⟨rX, rY⟩⟩⟩⟩⟩` for `t(|x|) + 1 ≥ t(n)`
 rounds and truncates to `t(n)·ℓ(n)` bits (`take_flatMap_range`); the `i`-th chunk is the
 `i`-th block of the coins (`take_drop_ofFn_blocks`) and the concatenation of the blocks is the
-string of `(blocks t ℓ).symm` (`ofFn_blocks_symm`). The reduction is
+string of `(FunFamily.blocks t ℓ).symm` (`FunFamily.ofFn_blocks_symm_eq_flatMap`). The reduction is
 `NUPPT.exists_withAdvice (NUPPT.exists_seq M₀ (NUPPT.exists_comp D pairSndD id)) (1^{k n})`,
 which hard-wires the hybrid index and hands the tuple to `D` with the remaining coins. -/
 theorem exists_copiesRed (D : NUPPT) {SX SY : List Bool → List Bool} (hSX : PolyTimeComputable SX)
@@ -818,9 +836,9 @@ theorem exists_copiesRed (D : NUPPT) {SX SY : List Bool → List Bool} (hSX : Po
       ∀ n (z : Fin (ℓ.eval n) → Bool) (cX : Fin (t.eval n) → Fin (sX.eval n) → Bool)
         (cY : Fin (t.eval n) → Fin (sY.eval n) → Bool) (cD : List Bool),
         B.runAtL n (List.ofFn z)
-          (List.ofFn ((blocks (t.eval n) (sX.eval n)).symm cX) ++
-            List.ofFn ((blocks (t.eval n) (sY.eval n)).symm cY) ++ cD) =
-        D.runAtL n (List.ofFn ((blocks (t.eval n) (ℓ.eval n)).symm fun i =>
+          (List.ofFn ((FunFamily.blocks (t.eval n) (sX.eval n)).symm cX) ++
+            List.ofFn ((FunFamily.blocks (t.eval n) (sY.eval n)).symm cY) ++ cD) =
+        D.runAtL n (List.ofFn ((FunFamily.blocks (t.eval n) (ℓ.eval n)).symm fun i =>
           if (i : ℕ) < k n then padFin (ℓ.eval n) (SY (NUPPT.advInput n (List.ofFn (cY i))))
           else if (i : ℕ) = k n then z
           else padFin (ℓ.eval n) (SX (NUPPT.advInput n (List.ofFn (cX i)))))) cD := by
@@ -830,10 +848,10 @@ theorem exists_copiesRed (D : NUPPT) {SX SY : List Bool → List Bool} (hSX : Po
     D₂
   obtain ⟨B, hBc, hB⟩ := C.exists_withAdvice (fun n => List.replicate (k n) true) t
     (fun n => by simpa using hk n)
-  refine ⟨B, by rw [hBc, hCc, hD₂c]; rfl, fun n z cX cY cD => ?_⟩
+  refine ⟨B, by rw [hBc, hCc, hD₂c, NUPPT.coins_ofPolyTimeUniform], fun n z cX cY cD => ?_⟩
   rw [hB, hC, hD₂]
-  have hlen : (List.ofFn ((blocks (t.eval n) (sX.eval n)).symm cX) ++
-      List.ofFn ((blocks (t.eval n) (sY.eval n)).symm cY)).length =
+  have hlen : (List.ofFn ((FunFamily.blocks (t.eval n) (sX.eval n)).symm cX) ++
+      List.ofFn ((FunFamily.blocks (t.eval n) (sY.eval n)).symm cY)).length =
       (NUPPT.ofPolyTimeUniform (copiesSampler_poly hSX hSY sX sY ℓ t)
         (.add (.mul t sX) (.mul t sY))).coinLen n := by
     simp [NUPPT.coinLen_eq]
@@ -841,16 +859,16 @@ theorem exists_copiesRed (D : NUPPT) {SX SY : List Bool → List Bool} (hSX : Po
   congr 1
   rw [NUPPT.runAtL_ofPolyTimeUniform]
   -- the sampler function on the layout
-  have hX' : (List.ofFn ((blocks (t.eval n) (sX.eval n)).symm cX) ++
-      List.ofFn ((blocks (t.eval n) (sY.eval n)).symm cY)).take
+  have hX' : (List.ofFn ((FunFamily.blocks (t.eval n) (sX.eval n)).symm cX) ++
+      List.ofFn ((FunFamily.blocks (t.eval n) (sY.eval n)).symm cY)).take
         ((PolyExpr.mul t sX).eval (List.replicate n true).length) =
-      List.ofFn ((blocks (t.eval n) (sX.eval n)).symm cX) := by
+      List.ofFn ((FunFamily.blocks (t.eval n) (sX.eval n)).symm cX) := by
     rw [List.take_left']
     simp
-  have hY' : (List.ofFn ((blocks (t.eval n) (sX.eval n)).symm cX) ++
-      List.ofFn ((blocks (t.eval n) (sY.eval n)).symm cY)).drop
+  have hY' : (List.ofFn ((FunFamily.blocks (t.eval n) (sX.eval n)).symm cX) ++
+      List.ofFn ((FunFamily.blocks (t.eval n) (sY.eval n)).symm cY)).drop
         ((PolyExpr.mul t sX).eval (List.replicate n true).length) =
-      List.ofFn ((blocks (t.eval n) (sY.eval n)).symm cY) := by
+      List.ofFn ((FunFamily.blocks (t.eval n) (sY.eval n)).symm cY) := by
     rw [List.drop_left']
     simp
   simp only [copiesSampler, copiesInit, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq,
@@ -860,24 +878,24 @@ theorem exists_copiesRed (D : NUPPT) {SX SY : List Bool → List Bool} (hSX : Po
   set F : ℕ → List Bool := fun i =>
     if i < k n then
       padL (ℓ.eval n) (SY (pairEncode (List.replicate n true)
-        (((List.ofFn ((blocks (t.eval n) (sY.eval n)).symm cY)).drop (i * sY.eval n)).take
+        (((List.ofFn ((FunFamily.blocks (t.eval n) (sY.eval n)).symm cY)).drop (i * sY.eval n)).take
           (sY.eval n))))
     else if i = k n then List.ofFn z
     else padL (ℓ.eval n) (SX (pairEncode (List.replicate n true)
-      (((List.ofFn ((blocks (t.eval n) (sX.eval n)).symm cX)).drop (i * sX.eval n)).take
+      (((List.ofFn ((FunFamily.blocks (t.eval n) (sX.eval n)).symm cX)).drop (i * sX.eval n)).take
         (sX.eval n)))) with hF
   have hFlen : ∀ i < t.eval n, (F i).length = ℓ.eval n := by
     intro i _
     simp only [hF]
     split_ifs <;> simp [length_padL]
   have hq : t.eval n ≤ t.eval (CopiesLoop.st (List.replicate n true) [] (List.replicate (k n) true)
-      (List.ofFn z) (List.ofFn ((blocks (t.eval n) (sX.eval n)).symm cX))
-      (List.ofFn ((blocks (t.eval n) (sY.eval n)).symm cY))).length + 1 := by
+      (List.ofFn z) (List.ofFn ((FunFamily.blocks (t.eval n) (sX.eval n)).symm cX))
+      (List.ofFn ((FunFamily.blocks (t.eval n) (sY.eval n)).symm cY))).length + 1 := by
     refine (t.eval_mono ?_).trans (Nat.le_succ _)
     simp only [CopiesLoop.st, length_pairEncode, List.length_replicate]
     omega
   rw [PolyExpr.eval_mul, List.length_replicate, take_flatMap_range F hq hFlen]
-  refine (ofFn_blocks_symm _ F fun i hi => ?_).symm
+  refine (FunFamily.ofFn_blocks_symm_eq_flatMap _ F fun i hi => ?_).symm
   simp only [hF]
   split_ifs with h₁ h₂
   · simp only [padL, take_drop_ofFn_blocks _ i hi, Equiv.apply_symm_apply]

@@ -50,7 +50,6 @@ open Encoding.BinaryArith
 
 /-- Pad or truncate a raw word to `m+m` bits and split it into two domain words.
 Missing bits are false and excess bits are ignored, using existing public conventions. -/
-@[simps! (config := { isSimp := false }) fst snd]
 def rawCollisionInputs (m : ℕ) (raw : List Bool) :
     (Fin m → Bool) × (Fin m → Bool) :=
   splitCoins m m (padFin (m + m) raw)
@@ -58,6 +57,28 @@ def rawCollisionInputs (m : ℕ) (raw : List Bool) :
 /-- The complete raw interpretation uses the original `padFin` and `splitCoins` maps. -/
 theorem rawCollisionInputs_eq (m : ℕ) (raw : List Bool) :
     rawCollisionInputs m raw = splitCoins m m (padFin (m + m) raw) := rfl
+
+/-- Bit `a` of the first domain word is bit `a` of the padded word.
+
+**Proof sketch.** Read bit `a` of both sides of `ofFn_splitCoins_fst` (the first half of
+`splitCoins` is the first `m` bits of the encoding). -/
+theorem rawCollisionInputs_fst (m : ℕ) (raw : List Bool) (a : Fin m) :
+    (rawCollisionInputs m raw).1 a = padFin (m + m) raw (Fin.castAdd m a) := by
+  have h := congrArg (·[a.1]?) (ofFn_splitCoins_fst m m (padFin (m + m) raw))
+  simp only [List.getElem?_ofFn, List.getElem?_take, a.isLt, if_true] at h
+  rw [rawCollisionInputs_eq]
+  simpa [a.isLt, Nat.lt_add_right, Fin.castAdd] using h
+
+/-- Bit `a` of the second domain word is bit `a + m` of the padded word.
+
+**Proof sketch.** Read bit `a` of both sides of `ofFn_splitCoins_snd` (the second half of
+`splitCoins` is the encoding after its first `m` bits). -/
+theorem rawCollisionInputs_snd (m : ℕ) (raw : List Bool) (a : Fin m) :
+    (rawCollisionInputs m raw).2 a = padFin (m + m) raw (a.addNat m) := by
+  have h := congrArg (·[a.1]?) (ofFn_splitCoins_snd m m (padFin (m + m) raw))
+  simp only [List.getElem?_ofFn, List.getElem?_drop] at h
+  rw [rawCollisionInputs_eq]
+  simpa [a.isLt, Fin.addNat, Nat.add_comm] using h
 
 /-- Emit one sign/magnitude block for the integer difference of the next two bits.
 Zero has a false sign; only the false/true pair has a negative sign. -/
@@ -234,12 +255,14 @@ theorem collisionOutputPoly_pairEncode (P : TCSlib.Cryptography.SIS.Parameters)
       ((raw.take m).drop i.val).headD false = (rawCollisionInputs m raw).1 i ∧
       ((raw.drop m).drop i.val).headD false = (rawCollisionInputs m raw).2 i := by
     constructor
-    · have h := congrArg (fun w : List Bool => (w[i.val]?).getD false) hleft
-      simp only [List.getElem?_ofFn, dif_pos i.isLt, Option.getD_some,
-        List.getElem?_take_of_lt i.isLt, hread i.val (by omega)] at h
+    · have h := congrArg (fun w : List Bool => w.getD i.val false) hleft
+      dsimp only at h
+      rw [getD_ofFn _ i.isLt, List.getD_eq_getElem?_getD, List.getElem?_take_of_lt i.isLt,
+        hread i.val (by omega)] at h
       rw [hhead, List.getElem?_take_of_lt i.isLt, ← h]
-    · have h := congrArg (fun w : List Bool => (w[i.val]?).getD false) hright
-      simp only [List.getElem?_ofFn, dif_pos i.isLt, Option.getD_some, List.getElem?_drop,
+    · have h := congrArg (fun w : List Bool => w.getD i.val false) hright
+      dsimp only at h
+      rw [getD_ofFn _ i.isLt, List.getD_eq_getElem?_getD, List.getElem?_drop,
         hread (m + i.val) (Nat.add_lt_add_left i.isLt m)] at h
       rw [hhead, List.getElem?_drop, ← h]
   have hsign (x y : Bool) : block x y = decide ((x.toNat : ℤ) - y.toNat < 0) ::

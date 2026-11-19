@@ -89,6 +89,8 @@ which records the departures from the frozen steps 2–5).**
 * `Complexity.polyTimeComputable_iterateFind` — the load-bearing lemma (proved: the machine
   is built in `TCSlib.Complexity.Randomized.Build.IterateFind`, and the pure facts below
   identify its guarded orbit with `g^[i] x`).
+* `Complexity.polyTimeComputable_iterateFind_elim` — the same lemma with the case split
+  written by `Option.elim` (the form consumers state, avoiding the `match`).
 * `Complexity.polyTimeComputable_iterate`, `Complexity.polyTimeComputable_iterateEmit` —
   `R(|x|)`-fold iteration and concatenated emissions (proved; state loops with a unary round
   counter).
@@ -219,6 +221,26 @@ theorem polyTimeComputable_iterateFind {g : List Bool → List Bool} (hg : PolyT
     have hi := List.mem_of_find?_eq_some hf
     rw [List.mem_range] at hi
     simp only [hstep, iterate_guardedStep_eq g R P x (horbit x) i (by omega), pairSndD_pairEncode]
+
+/-- **The repetition lemma in `Option.elim` form**: under the hypotheses of
+`polyTimeComputable_iterateFind`, the map sending `x` to `out (g^[i] x)` for the first
+`i ≤ R|x|` with `acc (g^[i] x)`, and to `[]` if there is none, written
+`(find? …).elim [] (fun i => out (g^[i] x))`, is polynomial-time computable. Glue: the
+statement of `polyTimeComputable_iterateFind` with the case split written by `Option.elim`
+instead of a `match`, so that consumers can state and read it without that statement's
+matcher. -/
+theorem polyTimeComputable_iterateFind_elim {g : List Bool → List Bool}
+    (hg : PolyTimeComputable g)
+    {acc : List Bool → Bool} (hacc : PolyTimeComputable fun s => [acc s])
+    {out : List Bool → List Bool} (hout : PolyTimeComputable out)
+    (R P : PolyExpr)
+    (horbit : ∀ (x : List Bool) (i : ℕ), i ≤ R.eval x.length →
+      (g^[i] x).length ≤ P.eval x.length) :
+    PolyTimeComputable fun x =>
+      ((List.range (R.eval x.length + 1)).find? (fun i => acc (g^[i] x))).elim []
+        (fun i => out (g^[i] x)) := by
+  convert polyTimeComputable_iterateFind hg hacc hout R P horbit using 2 with x
+  cases (List.range (R.eval x.length + 1)).find? (fun i => acc (g^[i] x)) <;> rfl
 
 /-! ### State loops: the common form of the derived lemmas -/
 
@@ -406,7 +428,8 @@ at most `5|w| + 4`. -/
 theorem polyTimeComputable_majority :
     PolyTimeComputable fun w => [decide (w.length < 2 * w.count true)] := by
   have h := polyTimeComputable_stateFind MajLoop.start_poly MajLoop.step_poly MajLoop.acc_poly
-    MajLoop.out_poly .var (.add (.mul (.const 5) .var) (.const 4)) List.length (fun _ => le_rfl)
+    MajLoop.out_poly .var (.add (.mul (.const 5) .var) (.const 4)) List.length
+    (fun _ => (PolyExpr.eval_var _).ge)
     (fun w i hi => by simpa using MajLoop.orbit_length_le w i hi) MajLoop.acc_orbit_false
     MajLoop.acc_orbit_true
   convert h using 1

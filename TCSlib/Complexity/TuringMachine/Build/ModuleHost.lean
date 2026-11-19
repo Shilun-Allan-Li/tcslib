@@ -147,7 +147,14 @@ private def stopCfg {k : ℕ} {S : Type} {x : List Bool}
   ⟨c.state.map (b, ·), c.inputPos, c.workTapes, c.workTapePos, c.output⟩
 
 /-- Before the designated positive exit, the stopped source takes the same physical step as the
-module and raises the release flag. -/
+module and raises the release flag.
+
+**Proof sketch.** At a live state `q` both machines take their table's action. The flagged
+configuration reads the same input and work symbols as the module's (the input symbol is a
+function of the input position, `FinTM.bufferTape_inputSymbol`; the work symbols are the cells
+under the heads, `Cfg.workTapeSymbols_eq`), and since the flag is not at the exit the stopped
+table is the module's action with the flag raised; the two applied actions agree field by field
+(`Action.apply_state`, `_inputPos`, `_workTapes`, `_workTapePos`, `_output`). -/
 private lemma stop_step (C : FinTM Bool) (entry exit : C.State)
     {x : List Bool} (b : Bool) (c : Cfg C.k Bool C.State x)
     (hlive : c.state ≠ none) (hg : b = true → c.state ≠ some exit) :
@@ -159,8 +166,20 @@ private lemma stop_step (C : FinTM Bool) (entry exit : C.State)
       rintro ⟨hb, rfl⟩; exact hg hb hs
     have hs' : (stopCfg b c).state = some (b, q) := by simp [stopCfg, hs]
     rw [MultiTapeTM.step_of_some hs', MultiTapeTM.step_of_some hs]
-    simp only [stopTM, hq, ↓reduceIte]
-    rfl
+    have hin : (stopCfg b c).inputSymbol = c.inputSymbol := by
+      rw [← FinTM.bufferTape_inputSymbol (stopCfg b c), ← FinTM.bufferTape_inputSymbol c]
+      rfl
+    have hw : (stopCfg b c).workTapeSymbols = c.workTapeSymbols := by
+      funext i
+      rw [Cfg.workTapeSymbols_eq, Cfg.workTapeSymbols_eq]
+      rfl
+    simp only [stopTM, hq, ↓reduceIte, hin, hw]
+    refine Cfg.ext ?_ ?_ (funext fun i => ?_) (funext fun i => ?_) ?_
+    · simp only [stopCfg, Action.apply_state]
+    · simp only [stopCfg, Action.apply_inputPos]
+    · simp only [stopCfg, Action.apply_workTapes, Cfg.workTapeSymbols_eq]
+    · simp only [stopCfg, Action.apply_workTapePos]
+    · simp only [stopCfg, Action.apply_output]
 
 /-- Stop a clean call one silent step after its certified first positive exit.
 
@@ -183,7 +202,7 @@ private lemma stop_clean (C : FinTM Bool) (entry exit : C.State)
       stopCfg (decide (v ≠ 0)) (C.tm.runFrom c v) := by
     intro v
     induction v with
-    | zero => intro _; rfl
+    | zero => intro _; rw [MultiTapeTM.runFrom_zero, MultiTapeTM.runFrom_zero]; rfl
     | succ v ih =>
       intro hv
       rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega),
@@ -192,7 +211,10 @@ private lemma stop_clean (C : FinTM Bool) (entry exit : C.State)
           exact hg v (Nat.pos_of_ne_zero (of_decide_eq_true hn)) (by omega)),
         MultiTapeTM.runFrom_succ_eq_step']
       rfl
-  have hi : Cfg.ofWords (input := x) (false, entry) (stateWord C.k arg) = stopCfg false c := rfl
+  have hi : Cfg.ofWords (input := x) (false, entry) (stateWord C.k arg) = stopCfg false c := by
+    show _ = stopCfg false (Cfg.ofWords (input := x) entry (stateWord C.k arg))
+    rw [Cfg.ofWords_def, Cfg.ofWords_def]
+    rfl
   rw [hi, MultiTapeTM.runFrom_succ_eq_step', hp t (Nat.le_refl _)]
   have hflag : decide (t ≠ 0) = true := by simp [Nat.ne_of_gt ht]
   rw [hflag, show C.tm.runFrom c t = _ from he]
@@ -320,19 +342,20 @@ positive visit of an exit state, within `c (T + |arg| + |f arg| + 1)` steps for 
 the form `A' (|arg| + 1)^{d+1}`. -/
 theorem clean_install {f : List Bool → List Bool} (hf : PolyTimeComputable f) :
     ∃ M A d, Clean M f (fun _ => []) (fun n => A * (n + 1) ^ d) := by
-  obtain ⟨F, A, d, hF⟩ := hf
+  obtain ⟨F, A, d, hF⟩ := (Complexity.polyTimeComputable_iff f).mp hf
   obtain ⟨C, entry, exit, c, hk, hc⟩ := FinTM.exists_installCallTM F f _ hF
   -- The bridge's result length depends on the word, so enlarge it pointwise to the source
   -- time before putting it in the uniform argument-length budget.
   have hlen (arg : List Bool) : (f arg).length ≤ A * (arg.length + 1) ^ d := by
-    have ho := ((FinTM.computesInTime_iff _ _ _ _).mp (hF arg)).2
+    have ho := ((FinTM.computesInTime_iff _ _ _ _).mp
+      ((FinTM.computesFunInTime_iff _ _ _).mp hF arg)).2
     simpa only [ho] using F.tm.output_length_le arg (A * (arg.length + 1) ^ d)
   have hstop := clean_stop C entry exit f (fun _ => [])
     (fun n => c * (A * (n + 1) ^ d + n + A * (n + 1) ^ d + 1)) hk (by
       intro x arg
       obtain ⟨t, ht, hp, hg, he⟩ := hc x arg
       refine ⟨t, ht.trans (Nat.mul_le_mul_left c (by have := hlen arg; omega)), hp, hg, ?_⟩
-      exact he)
+      rw [he, Cfg.ofWords_def])
   refine ⟨stopTM C entry exit, c * (2 * A + 1) + 1, d + 1, hk, fun x arg => ?_⟩
   obtain ⟨t, hp, ht, hg, he⟩ := hstop.2 x arg
   exact ⟨t, hp, ht.trans (bridge_bound c A d arg.length _ (Nat.le_refl _)), hg, he⟩
@@ -344,10 +367,11 @@ keeps its argument as the tape-resident word and emits exactly `f arg`, with a b
 **Proof sketch.** As `clean_install`, from `Turing.FinTM.exists_emitCallTM`. -/
 theorem clean_emit {f : List Bool → List Bool} (hf : PolyTimeComputable f) :
     ∃ M A d, Clean M id f (fun n => A * (n + 1) ^ d) := by
-  obtain ⟨F, A, d, hF⟩ := hf
+  obtain ⟨F, A, d, hF⟩ := (Complexity.polyTimeComputable_iff f).mp hf
   obtain ⟨C, entry, exit, c, hk, hc⟩ := FinTM.exists_emitCallTM F f _ hF
   have hlen (arg : List Bool) : (f arg).length ≤ A * (arg.length + 1) ^ d := by
-    have ho := ((FinTM.computesInTime_iff _ _ _ _).mp (hF arg)).2
+    have ho := ((FinTM.computesInTime_iff _ _ _ _).mp
+      ((FinTM.computesFunInTime_iff _ _ _).mp hF arg)).2
     simpa only [ho] using F.tm.output_length_le arg (A * (arg.length + 1) ^ d)
   have hstop := clean_stop C entry exit id f
     (fun n => c * (A * (n + 1) ^ d + n + A * (n + 1) ^ d + 1)) hk (by
@@ -392,15 +416,23 @@ private def padCfg {k K : ℕ} {S : Type} {x : List Bool}
 private lemma pad_apply {k K : ℕ} {S : Type} {x : List Bool}
     (a : Action k Bool S) (c : Cfg k Bool S x) :
     (padAction (K := K) a).apply (padCfg c) = padCfg (a.apply c) := by
-  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+  · simp only [padAction, padCfg, Action.apply_state]
+  · simp only [padAction, padCfg, Action.apply_inputPos]
   · funext i z
     by_cases h : i.val < k <;> simp [padAction, padCfg, Action.apply_state, Action.apply_output,
         Action.apply_workTapes, Action.apply_workTapePos, Action.apply_inputPos, h]
   · funext i
     by_cases h : i.val < k <;> simp [padAction, padCfg, Action.apply_state, Action.apply_output,
         Action.apply_workTapes, Action.apply_workTapePos, Action.apply_inputPos, h]
+  · simp only [padAction, padCfg, Action.apply_output]
 
-/-- The padded module runs in lockstep with the module. -/
+/-- The padded module runs in lockstep with the module.
+
+**Proof sketch.** Commute one step with the padding (`MultiTapeTM.runFrom_comm_of_step`): a
+halted configuration stays put on both sides; at a live state the padded configuration reads the
+module's input symbol (`FinTM.bufferTape_inputSymbol`) and, on the module's tapes, its work
+symbols, so the padded machine applies the padded action and `pad_apply` finishes. -/
 private lemma pad_run (M : FinTM Bool) (K : ℕ) (hk : M.k ≤ K)
     {x : List Bool} (c : Cfg M.k Bool M.State x) (t : ℕ) :
     (padTM M K hk).tm.runFrom (padCfg c) t = padCfg (M.tm.runFrom c t) := by
@@ -415,7 +447,10 @@ private lemma pad_run (M : FinTM Bool) (K : ℕ) (hk : M.k ≤ K)
         ⟨i.val, Nat.lt_of_lt_of_le i.isLt hk⟩) = c.workTapeSymbols := by
       funext i; simp [padCfg, Cfg.workTapeSymbols_eq, i.isLt]
     have hstate : (padCfg (K := K) c).state = some q := hs
-    rw [MultiTapeTM.step_of_some hstate, MultiTapeTM.step_of_some hs]
+    have hin : (padCfg (K := K) c).inputSymbol = c.inputSymbol := by
+      rw [← FinTM.bufferTape_inputSymbol (padCfg (K := K) c), ← FinTM.bufferTape_inputSymbol c]
+      rfl
+    rw [MultiTapeTM.step_of_some hstate, MultiTapeTM.step_of_some hs, hin]
     change (padAction (M.tm.tr q c.inputSymbol _)).apply _ = _
     rw [hw]
     exact pad_apply _ _
@@ -425,7 +460,9 @@ private lemma pad_seam {k K : ℕ} {S : Type} {x : List Bool}
     (hk : 0 < k) (q : S) (w out : List Bool) :
     padCfg (K := K) ({Cfg.ofWords (input := x) q (stateWord k w) with output := out}) =
       {Cfg.ofWords (input := x) q (stateWord K w) with output := out} := by
-  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  refine Cfg.ext ?_ ?_ ?_ ?_ rfl
+  · simp [padCfg, Cfg.ofWords_def]
+  · simp [padCfg, Cfg.ofWords_def]
   · funext i z
     by_cases hi : i.val < k
     · simp [padCfg, Cfg.ofWords_def, stateWord_eq, hi]
@@ -498,9 +535,14 @@ private lemma host_seam {C : Type} {n : ℕ} (M : Fin n → FinTM Bool) (K : ℕ
       {Cfg.ofWords (((state.map (fun s => (Sum.inr ⟨i, s⟩ : State C M))).getD (ret i)))
         (stateWord K w) with output := pre ++ out} := by
   have h := pad_seam (K := K) (x := x) hp q w out
-  refine Cfg.ext rfl rfl ?_ ?_ rfl
-  · exact congrArg (fun c : Cfg K Bool (M i).State x => c.workTapes) h
-  · exact congrArg (fun c : Cfg K Bool (M i).State x => c.workTapePos) h
+  refine Cfg.ext (by simp [emitCfg_state, padCfg, Cfg.ofWords_def])
+    (by simp [emitCfg_inputPos, padCfg, Cfg.ofWords_def]) ?_ ?_ (by rw [emitCfg_output]; rfl)
+  · rw [emitCfg_workTapes]
+    simpa [padCfg, Cfg.ofWords_def] using
+      congrArg (fun c : Cfg K Bool (M i).State x => c.workTapes) h
+  · rw [emitCfg_workTapePos]
+    simpa [padCfg, Cfg.ofWords_def] using
+      congrArg (fun c : Cfg K Bool (M i).State x => c.workTapePos) h
 
 /-- **A module call inside the host.** Suppose module `i` (with `0 < (M i).k`), run from the seam
 at its start state with argument `arg`, is live before time `t` and at time `t` is halted at the
@@ -536,7 +578,7 @@ theorem host_call {C : Type} [Fintype C] [DecidableEq C] {n : ℕ} (M : Fin n �
   let emb : (M i).State → State C M := fun s => .inr ⟨i, s⟩
   have hinit : emitCfg emb (ret i) pre (padCfg (K := K) c) =
       {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre} := by
-    simpa [emb, c, entry] using
+    simpa [emb, c, entry, Cfg.ofWords_def] using
       host_seam M K ret i hp x arg pre [] (M i).tm.q₀ (some (M i).tm.q₀)
   have hrun (v : ℕ) (hv : v ≤ t) :
       (hostTM M K hk ctrl ret q₀).tm.runFrom

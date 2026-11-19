@@ -39,6 +39,7 @@ extension of `AdaptiveCPA.extTape` restated here.
   abstraction.
 * `Games.simulate_tapeImpl_congr`, `Games.expect_simulate_tapeImpl`: coins in advance.
 * `Games.extTape_of_lt`, `Games.extTape_of_not_lt`, `Games.extTape_update`: the tape extension.
+* `Games.freshImpl_apply`, `Games.tapeImpl_apply`: the readers of the two implementations.
 * `Games.ovr_nil`, `Games.ovr_cons`, `Games.ovr_of_not_mem`, `Games.ovr_of_mem`,
   `Games.ovr_update`, `Games.ovr_append`, `Games.expect_sample_ovr`: tables over functions.
 
@@ -136,24 +137,24 @@ protected theorem freshImpl_apply [Fintype τ] [Nonempty τ]
 /-- **A family of `κ` coins, extended to every index** by an arbitrary value:
 `extTape T m = T ⟨m, hm⟩` for `hm : m < κ`, and `Classical.arbitrary C` otherwise.
 Framework glue, no textbook counterpart. -/
-protected noncomputable def extTape {C : Type} [Nonempty C] {κ : ℕ} (T : Fin κ → C) (m : ℕ) : C :=
+protected noncomputable def extTape {C : Type*} [Nonempty C] {κ : ℕ} (T : Fin κ → C) (m : ℕ) : C :=
   if hm : m < κ then T ⟨m, hm⟩ else Classical.arbitrary C
 
 /-- Below `κ` the extended family is the family: `m < κ → extTape T m = T ⟨m, hm⟩`.
 Framework glue, no textbook counterpart. -/
-protected theorem extTape_of_lt {C : Type} [Nonempty C] {κ : ℕ} (T : Fin κ → C) {m : ℕ}
+protected theorem extTape_of_lt {C : Type*} [Nonempty C] {κ : ℕ} (T : Fin κ → C) {m : ℕ}
     (hm : m < κ) : Games.extTape T m = T ⟨m, hm⟩ := by
   rw [Games.extTape, dif_pos hm]
 
 /-- From `κ` on the extended family is the arbitrary value:
 `¬ m < κ → extTape T m = Classical.arbitrary C`. Framework glue, no textbook counterpart. -/
-protected theorem extTape_of_not_lt {C : Type} [Nonempty C] {κ : ℕ} (T : Fin κ → C) {m : ℕ}
+protected theorem extTape_of_not_lt {C : Type*} [Nonempty C] {κ : ℕ} (T : Fin κ → C) {m : ℕ}
     (hm : ¬ m < κ) : Games.extTape T m = Classical.arbitrary C := by
   rw [Games.extTape, dif_neg hm]
 
 /-- Changing one coordinate `j` of `T` changes its extension only at `j`:
 `m ≠ j → extTape (update T j r) m = extTape T m`. Framework glue, no textbook counterpart. -/
-protected theorem extTape_update {C : Type} [Nonempty C] {κ : ℕ} (T : Fin κ → C) (j : Fin κ)
+protected theorem extTape_update {C : Type*} [Nonempty C] {κ : ℕ} (T : Fin κ → C) (j : Fin κ)
     (r : C) {m : ℕ} (hm : m ≠ j) : Games.extTape (Function.update T j r) m = Games.extTape T m := by
   by_cases h : m < κ
   · rw [Games.extTape_of_lt _ h, Games.extTape_of_lt _ h, Function.update_of_ne]

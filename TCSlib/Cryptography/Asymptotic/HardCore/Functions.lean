@@ -191,6 +191,7 @@ theorem not_hardCore_const (𝓕 : FunFamily) (b : Bool) : ¬ HardCore 𝓕 (fun
     haveI : Nonempty ((Fin (𝓕.inLen.eval n) → Bool) ×
       (NUPPT.ofPolyTimeUniform (polyTimeComputable_const [b]) (.const 0)).Coins n) :=
       ⟨(fun _ => false, fun _ => false)⟩
+    rw [predProb_def]
     refine HardcoreBit.uprob_eq_one_of_forall fun z => ?_
     simp only [NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq,
         NUPPT.runAtL_eq, NUPPT.output_ofPolyTimeUniform]
@@ -218,12 +219,15 @@ def glPad : FunFamily where
   inLen := .add 𝓕.inLen 𝓕.inLen
   outLen := .add 𝓕.outLen 𝓕.inLen
   f n z := Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)
-    (HardcoreBit.glPad (𝓕.f n) ((Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).symm z))
+    (HardcoreBit.glPad (𝓕.f n) ((Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).symm
+      (z ∘ Fin.cast (PolyExpr.eval_add 𝓕.inLen 𝓕.inLen n).symm))) ∘
+    Fin.cast (PolyExpr.eval_add 𝓕.outLen 𝓕.inLen n)
 
 /-- The predicate `h(x, r) = ⟨x, r⟩` of [PS10, Theorem 87.3] on the string `x ‖ r`
 (the concrete `HardcoreBit.glBit`, Fact 88.4's inner product). -/
 def glBit : ∀ n, (Fin (𝓕.glPad.inLen.eval n) → Bool) → Bool :=
-  fun n z => HardcoreBit.glBit ((Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).symm z)
+  fun n z => HardcoreBit.glBit ((Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).symm
+    (z ∘ Fin.cast (PolyExpr.eval_add 𝓕.inLen 𝓕.inLen n).symm))
 
 /-- The inverter of `g` built from a recovery procedure `R` for `x` from `f(x)`: on
 `f(x) ‖ r` with coins `c` it outputs `R(f(x), c) ‖ r` (the concrete `HardcoreBit.glInverter`;
@@ -231,64 +235,107 @@ all inverters of [PS10, §3.4.3] have this shape). -/
 def glInverter {γ : Type*} (n : ℕ) (R : (Fin (𝓕.outLen.eval n) → Bool) → γ → Fin (𝓕.inLen.eval n) → Bool) :
     (Fin (𝓕.glPad.outLen.eval n) → Bool) → γ → (Fin (𝓕.glPad.inLen.eval n) → Bool) :=
   fun y c => Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)
-    (HardcoreBit.glInverter R ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)).symm y) c)
+    (HardcoreBit.glInverter R ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)).symm
+      (y ∘ Fin.cast (PolyExpr.eval_add 𝓕.outLen 𝓕.inLen n).symm)) c) ∘
+    Fin.cast (PolyExpr.eval_add 𝓕.inLen 𝓕.inLen n)
 
 /-- The input length of `g`: `inLen_g(n) = inLen(n) + inLen(n)`. -/
-theorem glPad_inLen_eval (n : ℕ) : 𝓕.glPad.inLen.eval n = 𝓕.inLen.eval n + 𝓕.inLen.eval n := rfl
+theorem glPad_inLen_eval (n : ℕ) : 𝓕.glPad.inLen.eval n = 𝓕.inLen.eval n + 𝓕.inLen.eval n :=
+  PolyExpr.eval_add _ _ n
 
 /-- The output length of `g`: `outLen_g(n) = outLen(n) + inLen(n)`. -/
 theorem glPad_outLen_eval (n : ℕ) :
-    𝓕.glPad.outLen.eval n = 𝓕.outLen.eval n + 𝓕.inLen.eval n := rfl
+    𝓕.glPad.outLen.eval n = 𝓕.outLen.eval n + 𝓕.inLen.eval n :=
+  PolyExpr.eval_add _ _ n
 
 /-- **The inputs of `g` are strings `x ‖ r`**: the published equivalence
-`{0,1}^{inLen_g(n)} ≃ {0,1}^{inLen(n) + inLen(n)}` (the identity on the definition). -/
+`{0,1}^{inLen_g(n)} ≃ {0,1}^{inLen(n) + inLen(n)}` (reindexing along `glPad_inLen_eval`). -/
 def glPad_inEquiv (n : ℕ) :
     (Fin (𝓕.glPad.inLen.eval n) → Bool) ≃ (Fin (𝓕.inLen.eval n + 𝓕.inLen.eval n) → Bool) :=
-  Equiv.refl _
+  Equiv.arrowCongr (finCongr (𝓕.glPad_inLen_eval n)) (Equiv.refl Bool)
 
 /-- **The outputs of `g` are strings `y ‖ r`**: the published equivalence
-`{0,1}^{outLen_g(n)} ≃ {0,1}^{outLen(n) + inLen(n)}` (the identity on the definition). -/
+`{0,1}^{outLen_g(n)} ≃ {0,1}^{outLen(n) + inLen(n)}` (reindexing along `glPad_outLen_eval`). -/
 def glPad_outEquiv (n : ℕ) :
     (Fin (𝓕.glPad.outLen.eval n) → Bool) ≃ (Fin (𝓕.outLen.eval n + 𝓕.inLen.eval n) → Bool) :=
-  Equiv.refl _
+  Equiv.arrowCongr (finCongr (𝓕.glPad_outLen_eval n)) (Equiv.refl Bool)
 
 /-- The input equivalence keeps the string: `List.ofFn (glPad_inEquiv n z) = List.ofFn z`. -/
 theorem glPad_inEquiv_ofFn (n : ℕ) (z : Fin (𝓕.glPad.inLen.eval n) → Bool) :
-    List.ofFn (𝓕.glPad_inEquiv n z) = List.ofFn z := rfl
+    List.ofFn (𝓕.glPad_inEquiv n z) = List.ofFn z :=
+  ofFn_arrowCongr_finCongr (𝓕.glPad_inLen_eval n) z
 
 /-- The inverse input equivalence keeps the string. -/
 theorem glPad_inEquiv_symm_ofFn (n : ℕ) (z : Fin (𝓕.inLen.eval n + 𝓕.inLen.eval n) → Bool) :
-    List.ofFn ((𝓕.glPad_inEquiv n).symm z) = List.ofFn z := rfl
+    List.ofFn ((𝓕.glPad_inEquiv n).symm z) = List.ofFn z :=
+  ofFn_arrowCongr_finCongr (𝓕.glPad_inLen_eval n).symm z
 
 /-- The output equivalence keeps the string: `List.ofFn (glPad_outEquiv n y) = List.ofFn y`. -/
 theorem glPad_outEquiv_ofFn (n : ℕ) (y : Fin (𝓕.glPad.outLen.eval n) → Bool) :
-    List.ofFn (𝓕.glPad_outEquiv n y) = List.ofFn y := rfl
+    List.ofFn (𝓕.glPad_outEquiv n y) = List.ofFn y :=
+  ofFn_arrowCongr_finCongr (𝓕.glPad_outLen_eval n) y
 
 /-- The inverse output equivalence keeps the string. -/
 theorem glPad_outEquiv_symm_ofFn (n : ℕ) (y : Fin (𝓕.outLen.eval n + 𝓕.inLen.eval n) → Bool) :
-    List.ofFn ((𝓕.glPad_outEquiv n).symm y) = List.ofFn y := rfl
+    List.ofFn ((𝓕.glPad_outEquiv n).symm y) = List.ofFn y :=
+  ofFn_arrowCongr_finCongr (𝓕.glPad_outLen_eval n).symm y
 
-/-- Unfolding: `g` on `x ‖ r` is `f(x) ‖ r`. -/
+/-- **The inversion experiment of `g` on split strings** [PS10, Theorem 87.3]: the inversion
+probability of `g = glPad` against `M` at `n` is that of the concrete
+`appendEquiv ∘ HardcoreBit.glPad (f n) ∘ appendEquiv⁻¹` on `{0,1}^{inLen(n) + inLen(n)}`, the
+inputs read through `glPad_inEquiv` and the outputs through `glPad_outEquiv`.
+
+**Proof sketch.** Reindex the uniform input by `glPad_inEquiv⁻¹` (`invProbAt_eq_uprob`,
+`invProbOpt_def`, `uprob_comp_equiv`); `g` is the concrete map read through the two equivalences
+(by definition), the encodings agree (`glPad_inEquiv_ofFn`, `glPad_inEquiv_symm_ofFn`,
+`glPad_outEquiv_symm_ofFn`), and preimages correspond since both equivalences and
+`Fin.appendEquiv` are injective. -/
+private theorem invProbAt_glPad_eq (M : NUPPT) (n : ℕ) :
+    𝓕.glPad.invProbAt M n =
+      invProbOpt (fun z : Fin (𝓕.inLen.eval n + 𝓕.inLen.eval n) → Bool =>
+        Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)
+          (HardcoreBit.glPad (𝓕.f n) ((Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).symm z)))
+        (M.inverter n (𝓕.inLen.eval n + 𝓕.inLen.eval n) (𝓕.outLen.eval n + 𝓕.inLen.eval n)) := by
+  have hf : ∀ v, 𝓕.glPad.f n v = (𝓕.glPad_outEquiv n).symm (Fin.appendEquiv _ _
+      (HardcoreBit.glPad (𝓕.f n) ((Fin.appendEquiv _ _).symm (𝓕.glPad_inEquiv n v)))) :=
+    fun _ => rfl
+  rw [FunFamily.invProbAt_eq_uprob, invProbOpt_def,
+    ← uprob_comp_equiv ((𝓕.glPad_inEquiv n).symm.prodCongr (Equiv.refl (M.Coins n)))]
+  refine OneWay.uprob_congr fun z => ?_
+  simp only [Equiv.prodCongr_apply, Equiv.coe_refl, Prod.map_fst, Prod.map_snd, id_eq, hf,
+    Equiv.apply_symm_apply, NUPPT.inverter_eq_some_iff, glPad_outEquiv_symm_ofFn]
+  constructor
+  · rintro ⟨x', hx', hfx⟩
+    refine ⟨𝓕.glPad_inEquiv n x', by rw [hx', glPad_inEquiv_ofFn], ?_⟩
+    exact (Fin.appendEquiv _ _).symm.injective ((𝓕.glPad_outEquiv n).symm.injective hfx
+      |> congrArg (Fin.appendEquiv _ _).symm)
+  · rintro ⟨x', hx', hfx⟩
+    refine ⟨(𝓕.glPad_inEquiv n).symm x', by rw [hx', glPad_inEquiv_symm_ofFn], ?_⟩
+    rw [Equiv.apply_symm_apply, hfx]
+
+/-- Unfolding: `g` on `x ‖ r` is `f(x) ‖ r`, with `x ‖ r` read at the input length by
+`glPad_inEquiv` and `f(x) ‖ r` at the output length by `glPad_outEquiv`. -/
 theorem glPad_f (n : ℕ) (x r : Fin (𝓕.inLen.eval n) → Bool) :
-    𝓕.glPad.f n (Fin.append x r) = Fin.append (𝓕.f n x) r := by
+    𝓕.glPad.f n ((𝓕.glPad_inEquiv n).symm (Fin.append x r)) =
+      (𝓕.glPad_outEquiv n).symm (Fin.append (𝓕.f n x) r) := by
   show Fin.appendEquiv _ _ (HardcoreBit.glPad (𝓕.f n)
-    ((Fin.appendEquiv _ _).symm (Fin.appendEquiv _ _ (x, r)))) = _
-  rw [Equiv.symm_apply_apply]
+    ((Fin.appendEquiv _ _).symm (Fin.appendEquiv _ _ (x, r)))) ∘
+      Fin.cast (PolyExpr.eval_add 𝓕.outLen 𝓕.inLen n) = _
+  rw [Equiv.symm_apply_apply, HardcoreBit.glPad_apply]
   rfl
 
-/-- Unfolding: `h(x ‖ r) = ⟨x, r⟩`. -/
+/-- Unfolding: `h(x ‖ r) = ⟨x, r⟩`, with `x ‖ r` read at the input length by `glPad_inEquiv`. -/
 theorem glBit_append (n : ℕ) (x r : Fin (𝓕.inLen.eval n) → Bool) :
-    𝓕.glBit n (Fin.append x r) = HardcoreBit.ip x r := by
+    𝓕.glBit n ((𝓕.glPad_inEquiv n).symm (Fin.append x r)) = HardcoreBit.ip x r := by
   show HardcoreBit.glBit ((Fin.appendEquiv _ _).symm (Fin.appendEquiv _ _ (x, r))) = _
-  rw [Equiv.symm_apply_apply]
-  rfl
+  rw [Equiv.symm_apply_apply, HardcoreBit.glBit_eq]
 
 /-- `g` through the published equivalences: `g(x ‖ r) = f(x) ‖ r` with `x ‖ r` read by
 `glPad_inEquiv` and the value by `glPad_outEquiv`. -/
 theorem glPad_f_equiv (n : ℕ) (x r : Fin (𝓕.inLen.eval n) → Bool) :
     𝓕.glPad_outEquiv n (𝓕.glPad.f n ((𝓕.glPad_inEquiv n).symm (Fin.append x r))) =
-      Fin.append (𝓕.f n x) r :=
-  𝓕.glPad_f n x r
+      Fin.append (𝓕.f n x) r := by
+  rw [glPad_f, Equiv.apply_symm_apply]
 
 /-- `h` through the published equivalence: `h(x ‖ r) = ⟨x, r⟩`. -/
 theorem glBit_equiv (n : ℕ) (x r : Fin (𝓕.inLen.eval n) → Bool) :
@@ -306,7 +353,8 @@ theorem predProb_glPad {ρ : Type*} [Fintype ρ] (n : ℕ)
           (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y)) r) := by
   rw [predProb_def, predProb_def]
   exact uprob_eq_of_equiv
-    ((Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).symm.prodCongr (Equiv.refl ρ))
+    (((𝓕.glPad_inEquiv n).trans (Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).symm).prodCongr
+      (Equiv.refl ρ))
     fun _ => Iff.rfl
 
 /-- **Bridge to the concrete setting (inversion)**: the inversion probability of the family
@@ -316,11 +364,18 @@ theorem invProb_glInverter {γ : Type*} [Fintype γ] (n : ℕ)
     (R : (Fin (𝓕.outLen.eval n) → Bool) → γ → Fin (𝓕.inLen.eval n) → Bool) :
     invProb (𝓕.glPad.f n) (𝓕.glInverter n R) =
       invProb (HardcoreBit.glPad (𝓕.f n)) (HardcoreBit.glInverter R) := by
+  have hf : ∀ v, 𝓕.glPad.f n v = (𝓕.glPad_outEquiv n).symm (Fin.appendEquiv _ _
+      (HardcoreBit.glPad (𝓕.f n) ((Fin.appendEquiv _ _).symm (𝓕.glPad_inEquiv n v)))) :=
+    fun _ => rfl
+  have hI : ∀ y c, 𝓕.glInverter n R y c = (𝓕.glPad_inEquiv n).symm (Fin.appendEquiv _ _
+      (HardcoreBit.glInverter R ((Fin.appendEquiv _ _).symm (𝓕.glPad_outEquiv n y)) c)) :=
+    fun _ _ => rfl
   simp only [invProb_def]
-  refine uprob_eq_of_equiv (splitPair (𝓕.inLen.eval n) (𝓕.inLen.eval n) γ) fun z => ?_
-  simp only [glPad, glInverter, splitPair_apply, splitPair_symm_apply, Equiv.coe_fn_mk,
-      Equiv.symm_apply_apply]
-  exact Equiv.apply_eq_iff_eq _
+  refine uprob_eq_of_equiv (((𝓕.glPad_inEquiv n).prodCongr (Equiv.refl γ)).trans
+    (splitPair (𝓕.inLen.eval n) (𝓕.inLen.eval n) γ)) fun z => ?_
+  simp only [hf, hI, Equiv.trans_apply, Equiv.prodCongr_apply, Equiv.coe_refl, Prod.map_fst,
+    Prod.map_snd, id_eq, splitPair_apply, Equiv.apply_symm_apply, Equiv.symm_apply_apply]
+  exact (𝓕.glPad_outEquiv n).symm.injective.eq_iff.trans (Fin.appendEquiv _ _).injective.eq_iff
 
 /-- **`g` is a permutation when `f` is** ([PS10, Theorem 87.3], the "(OWP)" clause): the
 family `g(x, r) = (f(x), r)` is bijective at every `n` at which `f` is.
@@ -333,12 +388,15 @@ theorem glPad_f_bijective (n : ℕ) (hf : Function.Bijective (𝓕.f n)) :
     Function.Bijective (𝓕.glPad.f n) := by
   have e : HardcoreBit.glPad (𝓕.f n) =
       ⇑((Equiv.ofBijective _ hf).prodCongr (Equiv.refl (Fin (𝓕.inLen.eval n) → Bool))) := by
-    funext z; rfl
-  show Function.Bijective fun z => Fin.appendEquiv _ _ (HardcoreBit.glPad (𝓕.f n)
-    ((Fin.appendEquiv _ _).symm z))
-  rw [e]
-  exact (Fin.appendEquiv _ _).bijective.comp
-    (((Equiv.ofBijective _ hf).prodCongr _).bijective.comp (Fin.appendEquiv _ _).symm.bijective)
+    funext z
+    rw [HardcoreBit.glPad_apply]
+    rfl
+  have hg : 𝓕.glPad.f n = (𝓕.glPad_outEquiv n).symm ∘ Fin.appendEquiv _ _ ∘
+      HardcoreBit.glPad (𝓕.f n) ∘ (Fin.appendEquiv _ _).symm ∘ 𝓕.glPad_inEquiv n := rfl
+  rw [hg, e]
+  exact (𝓕.glPad_outEquiv n).symm.bijective.comp ((Fin.appendEquiv _ _).bijective.comp
+    (((Equiv.ofBijective _ hf).prodCongr _).bijective.comp
+      ((Fin.appendEquiv _ _).symm.bijective.comp (𝓕.glPad_inEquiv n).bijective)))
 
 /-- **`g` is one-way** ([PS10, Theorem 87.3], first clause; inventory Thm-87.3.a): if `f` is a
 strong one-way function then so is `g(x, r) = (f(x), r)`.
@@ -360,12 +418,19 @@ theorem StrongOneWay.glPad {𝓕 : FunFamily} (h : 𝓕.StrongOneWay) : 𝓕.glP
   refine ⟨?_, fun A => ?_⟩
   · obtain ⟨E, hE, hEs⟩ := exists_glPadEvaluator 𝓕 hF hFx
     refine (FunFamily.easy_iff _).2 ⟨E, hE, fun n z => ?_⟩
-    obtain ⟨⟨x, r⟩, rfl⟩ := (Fin.appendEquiv _ _).surjective z
-    show E (NUPPT.advInput n (List.ofFn (Fin.append x r))) = List.ofFn (𝓕.glPad.f n (Fin.append x r))
-    rw [List.ofFn_fin_append, hEs, glPad_f, List.ofFn_fin_append]
+    obtain ⟨⟨x, r⟩, hz⟩ := ((Fin.appendEquiv _ _).trans (𝓕.glPad_inEquiv n).symm).surjective z
+    subst hz
+    show E (NUPPT.advInput n (List.ofFn ((𝓕.glPad_inEquiv n).symm (Fin.append x r)))) =
+      List.ofFn (𝓕.glPad.f n ((𝓕.glPad_inEquiv n).symm (Fin.append x r)))
+    rw [glPad_inEquiv_symm_ofFn, List.ofFn_fin_append, hEs, glPad_f, glPad_outEquiv_symm_ofFn,
+      List.ofFn_fin_append]
   · refine (h.hard (glPadInvMachine A 𝓕.inLen)).mono ⟨0, fun n _ => ?_⟩
-    rw [abs_of_nonneg (invProbAt_nonneg _ _ _), abs_of_nonneg (invProbAt_nonneg _ _ _)]
-    exact invProbOpt_glPad_le 𝓕 A n
+    rw [abs_of_nonneg (invProbAt_nonneg _ _ _), abs_of_nonneg (invProbAt_nonneg _ _ _),
+      invProbAt_glPad_eq]
+    refine (invProbOpt_glPad_le 𝓕 A n).trans_eq ?_
+    rw [FunFamily.invProbAt_eq_uprob, invProbOpt_def]
+    refine OneWay.uprob_congr fun z => ?_
+    simp only [NUPPT.inverter_eq_some_iff]
 
 /-- **`⟨x, r⟩` is hard-core for `g`** ([PS10, Theorem 87.3], second clause; inventory
 Thm-87.3.b): if `f` is a strong one-way function then `h(x, r) = ⟨x, r⟩` is a hard-core
@@ -401,9 +466,11 @@ theorem StrongOneWay.glPad_hardCore {𝓕 : FunFamily} (h : 𝓕.StrongOneWay) :
   refine ⟨?_, fun A => ?_⟩
   · obtain ⟨H, hH, hHx⟩ := exists_glBitEvaluator 𝓕.inLen
     refine ⟨H, hH, fun n z => ?_⟩
-    obtain ⟨⟨x, r⟩, rfl⟩ := (Fin.appendEquiv _ _).surjective z
-    show H (NUPPT.advInput n (List.ofFn (Fin.append x r))) = [𝓕.glBit n (Fin.append x r)]
-    rw [List.ofFn_fin_append, hHx, glBit_append]
+    obtain ⟨⟨x, r⟩, hz⟩ := ((Fin.appendEquiv _ _).trans (𝓕.glPad_inEquiv n).symm).surjective z
+    subst hz
+    show H (NUPPT.advInput n (List.ofFn ((𝓕.glPad_inEquiv n).symm (Fin.append x r)))) =
+      [𝓕.glBit n ((𝓕.glPad_inEquiv n).symm (Fin.append x r))]
+    rw [glPad_inEquiv_symm_ofFn, List.ofFn_fin_append, hHx, glBit_append]
   · refine ⟨fun n => max 0 (predProb (𝓕.glPad.f n) (𝓕.glBit n)
       (A.predictor n (𝓕.glPad.outLen.eval n)) - 1 / 2), ?_, fun n => by
         linarith [le_max_right (0 : ℝ)
@@ -428,6 +495,12 @@ theorem StrongOneWay.glPad_hardCore {𝓕 : FunFamily} (h : 𝓕.StrongOneWay) :
       · rw [max_eq_left hle] at hgap; linarith
       · rw [max_eq_right hlt.le] at hgap; linarith
     rw [predProb_glPad] at hpred
+    -- the predictor at the output length of `g` reads the same string (`glPad_outEquiv`)
+    have hpe : ∀ w c, A.predictor n (𝓕.glPad.outLen.eval n) ((𝓕.glPad_outEquiv n).symm w) c =
+        A.predictor n (𝓕.outLen.eval n + 𝓕.inLen.eval n) w c := by
+      intro w c
+      simp only [NUPPT.predictor_eq, NUPPT.distinguisher_eq, glPad_outEquiv_symm_ofFn]
+    simp only [hpe] at hpred
     have hGL := HardcoreBit.invProb_guessInverter (𝓕.f n)
       (fun y c => A.predictor n (𝓕.outLen.eval n + 𝓕.inLen.eval n)
         (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y) c)
@@ -435,8 +508,8 @@ theorem StrongOneWay.glPad_hardCore {𝓕 : FunFamily} (h : 𝓕.StrongOneWay) :
     have hid : 𝓕.glPad.invProbAt B n = invProb (HardcoreBit.glPad (𝓕.f n))
         (HardcoreBit.guessInverter (fun y c => A.predictor n (𝓕.outLen.eval n + 𝓕.inLen.eval n)
           (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y) c) (glK 𝓕.inLen c n)) :=
-      invProbOpt_glFam_eq 𝓕 A K (glK 𝓕.inLen c) (two_pow_glK_le 𝓕.inLen c) n
-        (glK_pos_or 𝓕.inLen c n hn1)
+      (𝓕.invProbAt_glPad_eq B n).trans (invProbOpt_glFam_eq 𝓕 A K (glK 𝓕.inLen c)
+        (two_pow_glK_le 𝓕.inLen c) n (glK_pos_or 𝓕.inLen c n hn1))
     have hsmall := hn₀ n (le_of_max_le_left hn)
     rw [abs_of_nonneg (FunFamily.invProbAt_nonneg _ _ _), hid] at hsmall
     have h2k : ((2 : ℝ) ^ glK 𝓕.inLen c n) ≤ (C : ℝ) * ((n : ℝ) + 1) ^ d := by

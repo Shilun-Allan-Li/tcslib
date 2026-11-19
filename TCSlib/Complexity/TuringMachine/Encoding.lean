@@ -70,7 +70,9 @@ self-delimiting pairing used by the universal machine.
 * `Turing.MachineCode.decode_encode` — decoding a code recovers the machine.
 * `Turing.pairEncode_injective` — the pairing is injective (aligned-pair parsing).
 * `Turing.length_pairEncode`, `Turing.pairEncode_ne_nil`, `Turing.pairEncode_eq_dbl`,
-  `Turing.pairDecode_eq_none`,
+  `Turing.pairDecode_eq_none`, the case equations `Turing.pairDecode_false_false`,
+  `pairDecode_true_true`, `pairDecode_false_true`, `pairDecode_true_false`,
+  `pairDecode_singleton`,
   `Turing.eq_pairEncode_of_pairDecode`, `Turing.pairEncode_replicate_inj` — the shape of
   the pairing, shared by the machine-side developments.
 * `Turing.length_bits_le_self` — `|bits m| ≤ m`.
@@ -82,6 +84,8 @@ self-delimiting pairing used by the universal machine.
   F-A).
 * `Turing.FinTM.toCodeTM_computesInTime_iff` — the code normal form halts with the same
   outputs at the same times (MIG-1).
+* `Turing.CodeTM.toFinTM_computesInTime_iff` — the bundled form of a coded machine computes
+  exactly what the coded machine's run computes (the reader of `CodeTM.toFinTM`).
 * `Turing.exists_codeTM` — every one-work-tape binary machine is equivalent to a
   coded machine (state relabeling).
 * `Turing.exists_codeTM_spaceUsed` — the same coded machine also uses the same space at
@@ -124,6 +128,17 @@ def CodeTM.toFinTM (M : CodeTM) : FinTM Bool where
 @[simp]
 lemma CodeTM.toFinTM_k (M : CodeTM) : M.toFinTM.k = 1 := rfl
 
+/-- **The run of the bundled form is the run of the coded machine**: `M.toFinTM` computes `w`
+from `x` within `t` steps iff the coded machine `M.tm`, run `t` steps from its initial
+configuration on `x`, has halted (state `none`) with output `w`. Glue: the reader of
+`CodeTM.toFinTM` (its state type and machine fields, which are dependent-typed and so cannot
+be read by a field equation) in the run form of `Turing.FinTM.computesInTime_iff`. -/
+theorem CodeTM.toFinTM_computesInTime_iff (M : CodeTM) (x w : List Bool) (t : ℕ) :
+    M.toFinTM.ComputesInTime x w t ↔
+      (M.tm.runFrom (M.tm.initCfg x) t).state = none ∧
+      (M.tm.runFrom (M.tm.initCfg x) t).output = w :=
+  FinTM.computesInTime_iff M.toFinTM x w t
+
 /-- Self-delimiting pairing of two binary strings: the **first** string with every bit
 doubled, then the separator `[false, true]`, then the second string verbatim. Parsing
 reads aligned two-bit blocks: `00`/`11` are data, the first aligned `01` is the
@@ -152,6 +167,37 @@ def pairDecode : List Bool → Option (List Bool × List Bool)
 /-- The empty word is not a pair: `pairDecode [] = none`. -/
 theorem pairDecode_nil : pairDecode [] = none :=
   rfl
+
+/-- An aligned `00` block is a data bit `false` of the first component:
+`pairDecode (false :: false :: r)` is `pairDecode r` with `false` prepended to its first
+component. Glue: case equation of `Turing.pairDecode`. -/
+theorem pairDecode_false_false (r : List Bool) :
+    pairDecode (false :: false :: r) = (pairDecode r).map fun p => (false :: p.1, p.2) :=
+  rfl
+
+/-- An aligned `11` block is a data bit `true` of the first component:
+`pairDecode (true :: true :: r)` is `pairDecode r` with `true` prepended to its first
+component. Glue: case equation of `Turing.pairDecode`. -/
+theorem pairDecode_true_true (r : List Bool) :
+    pairDecode (true :: true :: r) = (pairDecode r).map fun p => (true :: p.1, p.2) :=
+  rfl
+
+/-- An aligned `01` block is the separator: `pairDecode (false :: true :: r) = some ([], r)`.
+Glue: case equation of `Turing.pairDecode`. -/
+theorem pairDecode_false_true (r : List Bool) :
+    pairDecode (false :: true :: r) = some ([], r) :=
+  rfl
+
+/-- An aligned `10` block is malformed: `pairDecode (true :: false :: r) = none`. Glue: case
+equation of `Turing.pairDecode`. -/
+theorem pairDecode_true_false (r : List Bool) :
+    pairDecode (true :: false :: r) = none :=
+  rfl
+
+/-- A single leftover bit is malformed: `pairDecode [b] = none`. Glue: case equation of
+`Turing.pairDecode`. -/
+theorem pairDecode_singleton (b : Bool) : pairDecode [b] = none := by
+  cases b <;> rfl
 
 /-- The aligned parser recovers both components, by induction on the first word. -/
 lemma pairDecode_pairEncode (x α : List Bool) :

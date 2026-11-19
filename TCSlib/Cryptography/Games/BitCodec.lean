@@ -50,6 +50,7 @@ It is the shared codec of every prong's statements, and the T0 definitions of th
 * `Games.decodeBitMove_of_not_canonical`: every other word decodes to the all-`false` output.
 * `Games.padFin_ofFn_zeroBits`, `Games.padFin_replicate_false`, `Games.padFin_nil`,
   `Games.decodeFin_nil_getD`: all-`false` strings and the empty answer read as `zeroBits`.
+* `Games.zeroBits_eq_cast`: the all-`false` word, cast along an equal width.
 * `Games.padFin_append_split`: the two parts of a padded concatenation.
 * `Games.simulate_castImpl_toCompOn`, `Games.expect_simulate_castImpl_toCompOn`: transport of a
   machine's run between two codecs with equal lengths.
@@ -127,6 +128,14 @@ def zeroBits (d : ℕ) : Fin d → Bool := fun _ => false
 
 /-- Every bit of the default output is `false`: `zeroBits d j = false`. -/
 theorem zeroBits_apply (d : ℕ) (j : Fin d) : zeroBits d j = false :=
+  rfl
+
+/-- The `⊥` word of a width equal to `m`, cast: `zeroBits n = cast e (zeroBits m)` for `n = m`
+and any type equation `e : (Fin m → Bool) = (Fin n → Bool)`. Glue for games whose answer types
+are computed widths. -/
+theorem zeroBits_eq_cast {n m : ℕ} (hnm : n = m) (e : (Fin m → Bool) = (Fin n → Bool)) :
+    zeroBits n = cast e (zeroBits m) := by
+  subst hnm
   rfl
 
 /-- The default output, written as a string, is `d` copies of `false`:

@@ -81,6 +81,8 @@ of `predict_eq` are discharged automatically for ensemble seeds and machine coin
 
 ## Main results
 
+* `TCSlib.Cryptography.Ensemble.distAdv_uniform`, `indist_iff`, `samplable_iff` — readers of the
+  uniform ensemble, of indistinguishability and of samplability.
 * `TCSlib.Cryptography.Ensemble.Indist.refl`, `Indist.symm`, `Indist.trans` — `≈` is an
   equivalence relation (transitivity is the two-step hybrid lemma, [PS10, §3.1.1]).
 * `TCSlib.Cryptography.Ensemble.Indist.push` — closure under efficient operations
@@ -161,6 +163,15 @@ along `uniform_σ`. -/
 theorem uniform_X (ℓ : PolyExpr) (n : ℕ) (x : (uniform ℓ).σ n) :
     (uniform ℓ).X n x = cast (uniform_σ ℓ n) x := rfl
 
+/-- The advantage against the uniform ensemble is the advantage against the identity sampler
+on `{0,1}^{ℓ(n)}`: `distAdv X ((uniform ℓ).X n) D = distAdv X id D`. Glue: the reader of
+`Ensemble.uniform` at the level of advantages. -/
+theorem distAdv_uniform {σ ρ : Type*} [Fintype σ] [Fintype ρ] (ℓ : PolyExpr) (n : ℕ)
+    (X : σ → (Fin (ℓ.eval n) → Bool)) (D : (Fin (ℓ.eval n) → Bool) → ρ → Bool) :
+    distAdv X ((uniform ℓ).X n) D =
+      distAdv X (id : (Fin (ℓ.eval n) → Bool) → Fin (ℓ.eval n) → Bool) D :=
+  rfl
+
 /-- **Efficiently samplable** ensemble (distribution level, D6): there is a syntactic
 polynomial `s` and a polynomial-time sampler `S` such that at every `n` the law of
 `S(⟨1^n, r⟩)` for `s(n)` uniform bits `r` (padded or truncated to `ℓ(n)` bits) is exactly the
@@ -170,6 +181,16 @@ def Samplable (X : Ensemble ℓ) : Prop :=
   ∃ (s : PolyExpr) (S : List Bool → List Bool), PolyTimeComputable S ∧
     ∀ n, StatClose (fun r : Fin (s.eval n) → Bool =>
       padFin (ℓ.eval n) (S (NUPPT.advInput n (List.ofFn r)))) (X.X n) 0
+
+/-- The defining property of `Samplable`: `X.Samplable` iff there are a syntactic polynomial
+`s` and a polynomial-time `S` such that, at every `n`, `S(⟨1^n, r⟩)` for `s(n)` uniform bits `r`,
+padded or truncated to `ℓ(n)` bits, has exactly the law of `X n`. Glue: the reader of
+`Ensemble.Samplable` [PS10, p. 72, Example]. -/
+theorem samplable_iff (X : Ensemble ℓ) :
+    X.Samplable ↔ ∃ (s : PolyExpr) (S : List Bool → List Bool), PolyTimeComputable S ∧
+      ∀ n, StatClose (fun r : Fin (s.eval n) → Bool =>
+        padFin (ℓ.eval n) (S (NUPPT.advInput n (List.ofFn r)))) (X.X n) 0 :=
+  Iff.rfl
 
 /-- **Computational indistinguishability** `{X_n} ≈ {Y_n}` [PS10, Definition 69.4], headline
 form: for every non-uniform PPT `D`, the advantage
@@ -181,6 +202,14 @@ equivalent, `indist_iff_exists_negligible`.)
 `IndistLit`, and the two are related by `Indist.toLit` and `IndistLit.toIndist`. -/
 def Indist (X Y : Ensemble ℓ) : Prop :=
   ∀ D : NUPPT, Negligible fun n => distAdv (X.X n) (Y.X n) (D.distinguisher n (ℓ.eval n))
+
+/-- The defining property of `Indist`: `X.Indist Y` iff for every non-uniform PPT `D` the
+advantage `distAdv (X.X n) (Y.X n) (D(1^n, ·))` is negligible in `n`. Glue: the reader of
+`Ensemble.Indist` [PS10, Definition 69.4]. -/
+theorem indist_iff (X Y : Ensemble ℓ) :
+    X.Indist Y ↔
+      ∀ D : NUPPT, Negligible fun n => distAdv (X.X n) (Y.X n) (D.distinguisher n (ℓ.eval n)) :=
+  Iff.rfl
 
 /-- **Computational indistinguishability, literal form** [PS10, Definition 69.4]: the
 distinguisher receives the sample `t` only, i.e. is activated at parameter `|t| = ℓ(n)`
@@ -208,9 +237,9 @@ def push (M : NUPPT) (ℓ' : PolyExpr) (X : Ensemble ℓ) : Ensemble ℓ' where
   σ n := X.σ n × M.Coins n
   X n z := padFin (ℓ'.eval n) (M.runAt n (List.ofFn (X.X n z.1)) z.2)
 
-/-- The blockwise bijection `{0,1}^{q·ℓ} ≃ ({0,1}^ℓ)^q`: a load-bearing private alias of the
-canonical `FunFamily.blocks` of `Asymptotic/Adversary.lean`, kept so that the body of
-`Ensemble.copies` stays unchanged. -/
+/-- The blockwise bijection `{0,1}^{q·ℓ} ≃ ({0,1}^ℓ)^q`: a private alias of the canonical
+`FunFamily.blocks` of `Asymptotic/Adversary.lean` (no longer read by `Ensemble.copies`; removed
+with the other `blocks` aliases, DL-35). -/
 private def blocks (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
   FunFamily.blocks q ℓ
 
@@ -219,21 +248,25 @@ private theorem blocks_eq (q ℓ : ℕ) : blocks q ℓ = FunFamily.blocks q ℓ 
 
 /-- `t(n)` independent copies of `X_n`, concatenated into one `t(n)·ℓ(n)`-bit string: the
 ensemble `{X_n^{(1)} ‖ ⋯ ‖ X_n^{(t(n))}}` of the multicopy corollary of the hybrid lemma
-[PS10, Lemma 71.6; Gar26, Lemma 3.3]. -/
+[PS10, Lemma 71.6; Gar26, Lemma 3.3]. The `t(n)·ℓ(n)` bits are read at the length
+`(t·ℓ)(n)` through `PolyExpr.eval_mul`. -/
 def copies (t : PolyExpr) (X : Ensemble ℓ) : Ensemble (.mul t ℓ) where
   σ n := Fin (t.eval n) → X.σ n
-  X n s := (blocks (t.eval n) (ℓ.eval n)).symm (TCSlib.Cryptography.copies (t.eval n) (X.X n) s)
+  X n s := (FunFamily.blocks (t.eval n) (ℓ.eval n)).symm
+    (TCSlib.Cryptography.copies (t.eval n) (X.X n) s) ∘ Fin.cast (PolyExpr.eval_mul t ℓ n)
 
 /-- Unfolding of `copies`: bit `i` of the concatenation is bit `i mod ℓ` of copy `i / ℓ`
-(through `finProdFinEquiv`).
+(through `finProdFinEquiv`, after reading `i` at `t(n)·ℓ(n)` by `PolyExpr.eval_mul`).
 
 **Proof sketch.** Expand the copied ensemble's sample field and apply the inverse block
 and copy family equations. -/
 theorem copies_X (t : PolyExpr) (X : Ensemble ℓ) (n : ℕ) (s : Fin (t.eval n) → X.σ n)
-    (i : Fin (t.eval n * ℓ.eval n)) :
-    (X.copies t).X n s i = X.X n (s (finProdFinEquiv.symm i).1) (finProdFinEquiv.symm i).2 := by
-  simp only [copies, blocks_eq, FunFamily.blocks_symm_apply, TCSlib.Cryptography.copies_def,
-    finProdFinEquiv_symm_apply]
+    (i : Fin ((PolyExpr.mul t ℓ).eval n)) :
+    (X.copies t).X n s i =
+      X.X n (s (finProdFinEquiv.symm (Fin.cast (PolyExpr.eval_mul t ℓ n) i)).1)
+        (finProdFinEquiv.symm (Fin.cast (PolyExpr.eval_mul t ℓ n) i)).2 := by
+  simp only [copies, Function.comp_apply, FunFamily.blocks_symm_apply,
+    TCSlib.Cryptography.copies_def, finProdFinEquiv_symm_apply]
 
 /-- The uniform ensemble is efficiently samplable: `s := ℓ` and the sampler returns its coins
 (`pairSndD` of `⟨1^n, r⟩`). Non-vacuity of `Samplable` (the case `U_n` of D6). -/
@@ -278,7 +311,9 @@ theorem Ensemble.indist_iff_exists_negligible {ℓ : PolyExpr} (X Y : Ensemble �
   · intro h D
     obtain ⟨ε, hε, hlt⟩ := h D
     refine hε.mono ⟨0, fun n _ => ?_⟩
-    have h0 : 0 ≤ distAdv (X.X n) (Y.X n) (D.distinguisher n (ℓ.eval n)) := abs_nonneg _
+    have h0 : 0 ≤ distAdv (X.X n) (Y.X n) (D.distinguisher n (ℓ.eval n)) := by
+      rw [distAdv_def]
+      exact abs_nonneg _
     rw [abs_of_nonneg h0]
     exact (hlt n).le.trans (le_abs_self _)
 
@@ -339,7 +374,7 @@ theorem Ensemble.Indist.symm {ℓ : PolyExpr} {X Y : Ensemble ℓ} (h : X.Indist
   intro D
   have e : (fun n => distAdv (Y.X n) (X.X n) (D.distinguisher n (ℓ.eval n))) =
       fun n => distAdv (X.X n) (Y.X n) (D.distinguisher n (ℓ.eval n)) :=
-    funext fun n => abs_sub_comm _ _
+    funext fun n => by rw [distAdv_def, distAdv_def]; exact abs_sub_comm _ _
   rw [e]
   exact h D
 
@@ -407,7 +442,7 @@ theorem Ensemble.IndistLit.toIndist {ℓ : PolyExpr} {X Y : Ensemble ℓ}
   refine (h A).mono ⟨0, fun n _ => le_of_eq ?_⟩
   congr 1
   have hle' : D.coinLen (φ (ℓ.eval n)) ≤ D.coinLen (PolyExpr.var.eval (ℓ.eval n)) := by
-    rw [hφn, PolyExpr.eval_var]
+    rw [hφn, PolyExpr.eval_var, NUPPT.coinLen_eq, NUPPT.coinLen_eq]
     exact D.coins.eval_mono (hle n)
   simp only [distAdv_def]
   rw [EnsembleLemmas.acceptProb_reparam_advice hAc hA (ℓ.eval n) hle',
@@ -452,7 +487,9 @@ theorem hybrid_lemma {σ γ ρ : Type*} [Fintype σ] [Fintype ρ] {m : ℕ} (hm 
     (X : ℕ → σ → γ) (D : γ → ρ → Bool) :
     ∃ i < m, distAdv (X 0) (X m) D / m ≤ distAdv (X i) (X (i + 1)) D := by
   obtain ⟨i, hi, h⟩ := exists_hybrid_gap (fun i => acceptProb (X i) D) hm
-  exact ⟨i, hi, h⟩
+  refine ⟨i, hi, ?_⟩
+  rw [distAdv_def, distAdv_def]
+  exact h
 
 /-- **Transitivity of `≈`** [PS10, §3.1.1, "Transitivity – The Hybrid Lemma"]: the two-step
 case of the hybrid lemma. The advantage between `X` and `Z` is at most the sum of the
@@ -463,8 +500,9 @@ theorem Ensemble.Indist.trans {ℓ : PolyExpr} {X Y Z : Ensemble ℓ} (h₁ : X.
   intro D
   refine ((h₁ D).add (h₂ D)).mono ⟨0, fun n _ => ?_⟩
   have h0 : 0 ≤ distAdv (X.X n) (Y.X n) (D.distinguisher n (ℓ.eval n)) +
-      distAdv (Y.X n) (Z.X n) (D.distinguisher n (ℓ.eval n)) :=
-    add_nonneg (abs_nonneg _) (abs_nonneg _)
+      distAdv (Y.X n) (Z.X n) (D.distinguisher n (ℓ.eval n)) := by
+    rw [distAdv_def, distAdv_def]
+    exact add_nonneg (abs_nonneg _) (abs_nonneg _)
   rw [abs_of_nonneg h0]
   simp only [distAdv_def]
   rw [abs_abs]
@@ -511,7 +549,8 @@ theorem Ensemble.Indist.copies {ℓ : PolyExpr} {X Y : Ensemble ℓ} (h : X.Indi
   -- the distinguisher of `t(n)`-tuples behind `D`
   obtain ⟨D', hD'⟩ : ∃ D' : ∀ n, (Fin (t.eval n) → Fin (ℓ.eval n) → Bool) → D.Coins n → Bool,
       ∀ n v r, D' n v r = D.distinguisher n ((PolyExpr.mul t ℓ).eval n)
-        ((EnsembleLemmas.blocks (t.eval n) (ℓ.eval n)).symm v) r := ⟨_, fun _ _ _ => rfl⟩
+        ((FunFamily.blocks (t.eval n) (ℓ.eval n)).symm v ∘ Fin.cast (PolyExpr.eval_mul t ℓ n)) r :=
+    ⟨_, fun _ _ _ => rfl⟩
   have hadv : ∀ n, distAdv ((X.copies t).X n) ((Y.copies t).X n)
       (D.distinguisher n ((PolyExpr.mul t ℓ).eval n)) =
       distAdv (TCSlib.Cryptography.copies (t.eval n) (X.X n))
@@ -521,6 +560,7 @@ theorem Ensemble.Indist.copies {ℓ : PolyExpr} {X Y : Ensemble ℓ} (h : X.Indi
         (D.distinguisher n ((PolyExpr.mul t ℓ).eval n)) =
         acceptProb (TCSlib.Cryptography.copies (t.eval n) (Z.X n)) (D' n) := by
       intro Z
+      rw [acceptProb_def, acceptProb_def]
       refine OneWay.uprob_congr fun z => ?_
       rw [hD']
       exact Iff.rfl
@@ -547,9 +587,9 @@ theorem Ensemble.Indist.copies {ℓ : PolyExpr} {X Y : Ensemble ℓ} (h : X.Indi
     obtain ⟨e, he⟩ : ∃ e : ((Fin (t.eval n) → Fin (sX.eval n) → Bool) ×
         (Fin (t.eval n) → Fin (sY.eval n) → Bool)) × D.Coins n ≃ B.Coins n,
         ∀ c, e c = EnsembleLemmas.coinsEquiv hlen
-          (EnsembleLemmas.coinsEquiv rfl ((EnsembleLemmas.blocks _ _).symm c.1.1,
-            (EnsembleLemmas.blocks _ _).symm c.1.2), c.2) :=
-      ⟨((((EnsembleLemmas.blocks _ _).symm.prodCongr (EnsembleLemmas.blocks _ _).symm).trans
+          (EnsembleLemmas.coinsEquiv rfl ((FunFamily.blocks _ _).symm c.1.1,
+            (FunFamily.blocks _ _).symm c.1.2), c.2) :=
+      ⟨((((FunFamily.blocks _ _).symm.prodCongr (FunFamily.blocks _ _).symm).trans
         (EnsembleLemmas.coinsEquiv rfl)).prodCongr (Equiv.refl _)).trans
           (EnsembleLemmas.coinsEquiv hlen), fun _ => rfl⟩
     have hpt : ∀ (z : Fin (ℓ.eval n) → Bool) c, B.distinguisher n (ℓ.eval n) z (e c) =
@@ -558,10 +598,14 @@ theorem Ensemble.Indist.copies {ℓ : PolyExpr} {X Y : Ensemble ℓ} (h : X.Indi
           (fun r : Fin (sY.eval n) → Bool => padFin (ℓ.eval n) (SY (NUPPT.advInput n (List.ofFn r))))
           (t.eval n) (k n) (D' n) z c := by
       intro z c
+      have hcast : ∀ w : Fin (t.eval n * ℓ.eval n) → Bool,
+          List.ofFn (w ∘ Fin.cast (PolyExpr.eval_mul t ℓ n)) = List.ofFn w :=
+        fun w => (List.ofFn_congr (PolyExpr.eval_mul t ℓ n).symm w).symm
       rw [he]
-      simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq,
-          EnsembleLemmas.ofFn_coinsEquiv, hB,
-        multicopyRed_def, hD']
+      refine Bool.eq_iff_iff.mpr ?_
+      simp only [multicopyRed_def, hD', NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq,
+        decide_eq_true_eq]
+      simp only [NUPPT.runAt_eq, EnsembleLemmas.ofFn_coinsEquiv, hB, hcast]
     have hdist : ∀ Z : Ensemble ℓ, acceptProb (Z.X n) (B.distinguisher n (ℓ.eval n)) =
         acceptProb (Z.X n) (multicopyRed (X.X n) (Y.X n) (t.eval n) (k n) (D' n)) := by
       intro Z
@@ -588,11 +632,15 @@ theorem Ensemble.Indist.copies {ℓ : PolyExpr} {X Y : Ensemble ℓ} (h : X.Indi
         rw [ht0]
         infer_instance
       rw [EnsembleLemmas.distAdv_eq_zero_of_subsingleton]
-      exact mul_nonneg (Nat.cast_nonneg _) (abs_nonneg _)
+      exact mul_nonneg (Nat.cast_nonneg _) (by rw [distAdv_def]; exact abs_nonneg _)
   refine (EnsembleLemmas.negligible_polyExpr_mul t (h B)).mono ⟨0, fun n _ => ?_⟩
   have h₁ : (0 : ℝ) ≤ distAdv ((X.copies t).X n) ((Y.copies t).X n)
-      (D.distinguisher n ((PolyExpr.mul t ℓ).eval n)) := abs_nonneg _
-  have h₂ : (0 : ℝ) ≤ distAdv (X.X n) (Y.X n) (B.distinguisher n (ℓ.eval n)) := abs_nonneg _
+      (D.distinguisher n ((PolyExpr.mul t ℓ).eval n)) := by
+    rw [distAdv_def]
+    exact abs_nonneg _
+  have h₂ : (0 : ℝ) ≤ distAdv (X.X n) (Y.X n) (B.distinguisher n (ℓ.eval n)) := by
+    rw [distAdv_def]
+    exact abs_nonneg _
   rw [abs_of_nonneg h₁, abs_of_nonneg (mul_nonneg (Nat.cast_nonneg _) h₂)]
   exact hbound n
 
@@ -634,8 +682,7 @@ theorem predict_eq {ℓ : ℕ} {σ₀ σ₁ ρ : Type*} [Fintype σ₀] [Fintype
     funext c
     simp
   have hB : uprob (fun c : (σ₀ × σ₁) × ρ => D (X₁ c.1.2) c.2 = true) = acceptProb X₁ D := by
-    rw [← acceptProb_snd (τ := σ₀) X₁ D]
-    rfl
+    rw [← acceptProb_snd (τ := σ₀) X₁ D, acceptProb_def]
   simp only [Equiv.prodAssoc_symm_apply, Bool.false_eq_true, if_false, if_true]
   rw [hA, hB]
   ring
@@ -667,14 +714,15 @@ theorem prediction_lemma {ℓ : PolyExpr} (X₀ X₁ : Ensemble ℓ) (D : NUPPT)
   obtain ⟨δ, hδ⟩ : ∃ δ : ℕ → ℝ, ∀ n, δ n = acceptProb (X₁.X n) (D.distinguisher n (ℓ.eval n)) -
       acceptProb (X₀.X n) (D.distinguisher n (ℓ.eval n)) := ⟨_, fun _ => rfl⟩
   have hkey : ∀ n, distAdv (X₀.X n) (X₁.X n) (D.distinguisher n (ℓ.eval n)) = |δ n| := fun n => by
-    rw [hδ]
+    rw [hδ, distAdv_def]
     exact abs_sub_comm _ _
   -- predicting is distinguishing, for any machine `A`
   have hpred : ∀ (A : NUPPT) n, (uprob fun z : (Bool × (X₀.σ n × X₁.σ n)) × A.Coins n =>
       A.predictor n (ℓ.eval n) (mixEnsemble X₀ X₁ n z.1).2 z.2 = (mixEnsemble X₀ X₁ n z.1).1) =
       1 / 2 + (acceptProb (X₁.X n) (A.distinguisher n (ℓ.eval n)) -
-        acceptProb (X₀.X n) (A.distinguisher n (ℓ.eval n))) / 2 := fun A n =>
-    predict_eq (X₀.X n) (X₁.X n) (A.distinguisher n (ℓ.eval n))
+        acceptProb (X₀.X n) (A.distinguisher n (ℓ.eval n))) / 2 := fun A n => by
+    rw [NUPPT.predictor_eq]
+    exact predict_eq (X₀.X n) (X₁.X n) (A.distinguisher n (ℓ.eval n))
   by_cases hpos : ∀ n₀, ∃ n ≥ n₀, μ n < δ n
   · -- the difference is positive infinitely often: `D` itself predicts
     refine ⟨D, fun n₀ => ?_⟩

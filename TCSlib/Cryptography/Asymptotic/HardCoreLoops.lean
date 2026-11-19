@@ -253,6 +253,11 @@ theorem out_poly : PolyTimeComputable out :=
 def input (m : ℕ) {k : ℕ} (β : Fin k → Bool) (s : Fin k → Fin m → Bool) : List Bool :=
   pairEncode (pairEncode (List.replicate m true) (List.ofFn β)) (blocksStr s)
 
+/-- The defining equation of `input`: `input m β s = ⟨⟨1^m, β⟩, blocksStr s⟩`. -/
+theorem input_eq (m : ℕ) {k : ℕ} (β : Fin k → Bool) (s : Fin k → Fin m → Bool) :
+    input m β s = pairEncode (pairEncode (List.replicate m true) (List.ofFn β)) (blocksStr s) :=
+  rfl
+
 /-- The closed form of the orbit on a well-formed input, for `i ≤ k` rounds:
 `⟨β.drop i, ⟨s.drop (i·m), partialSum β s i⟩⟩`. 
 
@@ -275,9 +280,8 @@ theorem orbit_eq (m : ℕ) {k : ℕ} (β : Fin k → Bool) (s : Fin k → Fin m 
     simp only [pairFstD_pairEncode, pairSndD_pairEncode, input, List.length_replicate]
     have hne : (List.ofFn β).drop i ≠ [] := by
       rw [ne_eq, List.drop_eq_nil_iff, List.length_ofFn]; omega
-    rw [if_neg hne, List.tail_drop, List.drop_drop,
-      List.drop_eq_getElem_cons (i := i) (l := List.ofFn β) (by rw [List.length_ofFn]; exact hi'),
-      List.headD_cons, List.getElem_ofFn, take_drop_blocksStr s ⟨i, hi'⟩]
+    rw [if_neg hne, List.tail_drop, List.drop_drop, headD_drop_ofFn β ⟨i, hi'⟩,
+      take_drop_blocksStr s ⟨i, hi'⟩]
     congr 2
     · rw [Nat.succ_mul]
     · rw [partialSum, dif_pos hi']

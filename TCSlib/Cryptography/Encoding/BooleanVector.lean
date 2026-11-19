@@ -165,10 +165,10 @@ theorem expandPoly_encode {q : ℕ} [NeZero q] (M W : PolyExpr) (u raw : List Bo
         Nat.add_comm 1, List.append_assoc]
   have hbit (i : Fin (M.eval u.length)) : (raw.drop i.val).headD false =
       padFin (M.eval u.length) raw i := by
-    have h := congrArg (fun w : List Bool => (w[i.val]?).getD false)
+    have h := congrArg (fun w : List Bool => w.getD i.val false)
       (ofFn_padFin_eq_take (M.eval u.length) raw)
-    simp only [List.getElem?_ofFn, dif_pos i.isLt, Option.getD_some,
-      List.getElem?_take_of_lt i.isLt] at h
+    dsimp only at h
+    rw [getD_ofFn _ i.isLt, List.getD_eq_getElem?_getD, List.getElem?_take_of_lt i.isLt] at h
     rw [List.headD_eq_head?_getD, List.head?_eq_getElem?, List.getElem?_drop, Nat.add_zero, h]
     by_cases hi : i.val < raw.length
     · rw [List.getElem?_append_left hi]

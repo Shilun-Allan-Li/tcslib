@@ -848,14 +848,16 @@ private theorem rabin_genCore_eq (P : ℕ → Prop) [DecidablePred P] (dflt : �
       ((NUPPT.inCoins z).take (rabinPrimeCoins.eval (max (NUPPT.inParam z).length 3))) := by
     rw [rabin_gP, rabin_spOut_eq (fun v => v.Prime ∧ P v) hspec, rabin_gC1, hUl,
       ← h1 (NUPPT.inParam z).length, samplePrimePL]
-    rfl
+    simp only [rabinTrials, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_pow,
+      PolyExpr.eval_var]
   have hQ : rabin_gQ acc0 ds2 z = samplePrimePL P (max (NUPPT.inParam z).length 3)
       (dflt (NUPPT.inParam z).length).z.q
       (((NUPPT.inCoins z).drop (rabinPrimeCoins.eval (max (NUPPT.inParam z).length 3))).take
         (rabinPrimeCoins.eval (max (NUPPT.inParam z).length 3))) := by
     rw [rabin_gQ, rabin_spOut_eq (fun v => v.Prime ∧ P v) hspec, rabin_gC2, hUl,
       ← h2 (NUPPT.inParam z).length, samplePrimePL]
-    rfl
+    simp only [rabinTrials, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_pow,
+      PolyExpr.eval_var]
   have hd1 : ((dflt (NUPPT.inParam z).length).z.p).Prime ∧ P (dflt (NUPPT.inParam z).length).z.p ∧
       (dflt (NUPPT.inParam z).length).z.p < 2 ^ max (NUPPT.inParam z).length 3 :=
     ⟨(dflt _).z.p_prime, (dflt _).hp, (dflt _).z.p_lt⟩
@@ -1994,7 +1996,10 @@ private theorem rabin_genIndex (P : ℕ → Prop) [DecidablePred P] (dflt : ∀ 
       rabin_idx (rabin_X P z0 s) := by
   unfold rabin_X
   have hmx : max n 3 = n := max_eq_left hn
-  have hL : rabinPrimeCoins.eval (max n 3) = 4 * n ^ 2 * n := by rw [hmx]; rfl
+  have hL : rabinPrimeCoins.eval (max n 3) = 4 * n ^ 2 * n := by
+    rw [hmx]
+    simp only [rabinPrimeCoins, rabinTrials, PolyExpr.eval_mul, PolyExpr.eval_const,
+      PolyExpr.eval_pow, PolyExpr.eval_var]
   have hS : ∀ d r, samplePrimePL P (max n 3) d r = samplePrimePL P n d r := by intro d r; rw [hmx]
   have hl1 : (List.ofFn s.1).length = 4 * n ^ 2 * n := List.length_ofFn
   have hl2 : (List.ofFn s.2).length = 4 * n ^ 2 * n := List.length_ofFn

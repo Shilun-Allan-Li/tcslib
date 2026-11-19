@@ -49,7 +49,7 @@ variable {σ τ γ : Type*} [Fintype σ] [Fintype τ] [Nonempty σ] [Nonempty τ
 probability of `D` under the law of `X` (the uniform distribution pushed forward along `X`). -/
 theorem uprob_comp_eq_probTrue_map (X : σ → γ) (D : γ → Bool) :
     uprob (fun s => D (X s) = true) = ((FinDist.uniform σ).map X).probTrue D := by
-  rw [uprob_comp_eq_sum_map X (fun g => D g = true), FinDist.probTrue]
+  rw [uprob_comp_eq_sum_map X (fun g => D g = true), FinDist.probTrue_eq]
 
 /-- **Statistical closeness of samplers is closeness of their laws:** on a finite sample space,
 `StatClose X Y δ` (every test set moves by at most `δ`) holds exactly when the laws of `X` and
@@ -58,19 +58,23 @@ theorem uprob_comp_eq_probTrue_map (X : σ → γ) (D : γ → Bool) :
 
 **Proof sketch.** A distinguisher `D` is the test set `{g | D g = true}`, and a test set `T` is
 the distinguisher `decide ∘ T`; in both directions `uprob_comp_eq_probTrue_map` turns the
-probability over seeds into the acceptance probability under the law. -/
+probability over seeds into the acceptance probability under the law (in the second direction the
+bound on `decide ∘ T` passes through the statistical distance, `epsClose_iff_statDist_le`). -/
 theorem statClose_iff_epsClose_map (X : σ → γ) (Y : τ → γ) (δ : ℝ) :
     StatClose X Y δ ↔ EpsClose δ ((FinDist.uniform σ).map X) ((FinDist.uniform τ).map Y) := by
   constructor
-  · intro h D
+  · intro h
+    refine epsClose_iff.2 fun D => ?_
     rw [← uprob_comp_eq_probTrue_map, ← uprob_comp_eq_probTrue_map]
-    exact h fun g => D g = true
-  · intro h T
+    exact (statClose_iff X Y δ).1 h fun g => D g = true
+  · intro h
+    rw [statClose_iff]
+    intro T
     classical
     have hX : uprob (fun s => T (X s)) = uprob (fun s => decide (T (X s)) = true) := by simp
     have hY : uprob (fun t => T (Y t)) = uprob (fun t => decide (T (Y t)) = true) := by simp
     rw [hX, hY, uprob_comp_eq_probTrue_map X (fun g => decide (T g)),
       uprob_comp_eq_probTrue_map Y (fun g => decide (T g))]
-    exact h _
+    exact (abs_probTrue_sub_le_statDist _ _ _).trans (epsClose_iff_statDist_le.1 h)
 
 end TCSlib.Cryptography

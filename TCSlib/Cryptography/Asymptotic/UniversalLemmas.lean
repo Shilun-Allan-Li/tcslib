@@ -109,7 +109,7 @@ theorem _root_.Complexity.NUPPT.exists_reparam_pre_post (A : NUPPT) (φ : ℕ �
     omega
   refine ⟨NUPPT.ofPolyTime hF (A.coins.subst p) _
     (fun m => pairEncode (pairEncode (List.replicate (φ m) true) (A.advice (φ m))) (β m)) hadv,
-    rfl, fun m y r => ?_⟩
+    NUPPT.coins_ofPolyTime _ _ _ _ _, fun m y r => ?_⟩
   rw [NUPPT.runAtL_ofPolyTime]
   simp [NUPPT.runAtL_eq, NUPPT.advInput_eq, NUPPT.coinLen_eq, NUPPT.layout_eq, NUPPT.inArg_eq,
       NUPPT.inAdvice_eq,
@@ -157,7 +157,7 @@ theorem _root_.Complexity.NUPPT.exists_reparam_pre_post_adv (A : NUPPT) (φ : �
     omega
   refine ⟨NUPPT.ofPolyTime hF (A.coins.subst p) _
     (fun m => pairEncode (pairEncode (List.replicate (φ m) true) (A.advice (φ m))) (β m)) hadv,
-    rfl, fun m y r => ?_⟩
+    NUPPT.coins_ofPolyTime _ _ _ _ _, fun m y r => ?_⟩
   rw [NUPPT.runAtL_ofPolyTime]
   simp [NUPPT.runAtL_eq, NUPPT.advInput_eq, NUPPT.coinLen_eq, NUPPT.layout_eq, NUPPT.inArg_eq,
       NUPPT.inAdvice_eq,
@@ -205,7 +205,11 @@ theorem length_serialize_decode_le (c : EffectiveMachineCode) (α : List Bool) :
   exact c.canonizer.tm.output_length_le α _
 
 /-- The sign serialization has two bits. -/
-theorem length_signBits (s : SignType) : (signBits s).length = 2 := by cases s <;> rfl
+theorem length_signBits (s : SignType) : (signBits s).length = 2 := by
+  cases s
+  · rw [signBits_zero]; rfl
+  · rw [signBits_neg]; rfl
+  · rw [signBits_pos]; rfl
 
 /-- The serialization of a transition record has at least two bits (its sign field). -/
 theorem two_le_length_actionBits {n : ℕ} (a : Action 1 Bool (Fin (n + 1))) :

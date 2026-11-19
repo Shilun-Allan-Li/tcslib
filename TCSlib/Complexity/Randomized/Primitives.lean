@@ -117,7 +117,9 @@ theorem computesFunInTime_unaryMul :
           | none => [])
         fun n => c * (n + 1) ^ 2 := by
   obtain ⟨M, hM⟩ := exists_unaryMulTM
-  exact ⟨M, 5, hM⟩
+  refine ⟨M, 5, (computesFunInTime_iff _ _ _).2 fun z => ?_⟩
+  have h := (computesFunInTime_iff _ _ _).1 hM z
+  rcases hd : pairDecode z with _ | ⟨u, v⟩ <;> rw [hd] at h <;> exact h
 
 end Turing.FinTM
 
@@ -135,7 +137,7 @@ private theorem polyTimeComputable_unaryMulFun {f g : List Bool → ℕ}
   obtain ⟨M, c, hM⟩ := Turing.FinTM.computesFunInTime_unaryMul
   have hmul : PolyTimeComputable (fun z => match pairDecode z with
       | some (u, v) => List.replicate (u.length * v.length) true
-      | none => []) := ⟨M, c, 2, hM⟩
+      | none => []) := (polyTimeComputable_iff _).2 ⟨M, c, 2, hM⟩
   convert hmul.comp (hf.pairEncode hg) using 1
   funext x
   simp [pairDecode_pairEncode]
@@ -155,11 +157,13 @@ being the `mul` case against `1^{p(|x|)}` (`pow_succ`). -/
 theorem polyTimeComputable_unaryPoly (p : PolyExpr) :
     PolyTimeComputable fun x => List.replicate (p.eval x.length) true := by
   induction p with
-  | const c => exact polyTimeComputable_const (List.replicate c true)
-  | var => exact polyTimeComputable_unary
+  | const c =>
+    simpa only [PolyExpr.eval_const] using polyTimeComputable_const (List.replicate c true)
+  | var => simpa only [PolyExpr.eval_var] using polyTimeComputable_unary
   | add p q hp hq =>
     simpa only [PolyExpr.eval_add, List.replicate_add] using hp.append hq
-  | mul p q hp hq => exact polyTimeComputable_unaryMulFun hp hq
+  | mul p q hp hq =>
+    simpa only [PolyExpr.eval_mul] using polyTimeComputable_unaryMulFun hp hq
   | pow p c hp =>
     induction c with
     | zero => simpa using polyTimeComputable_const (List.replicate 1 true)

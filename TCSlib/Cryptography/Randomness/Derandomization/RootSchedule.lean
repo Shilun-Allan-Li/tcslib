@@ -13,9 +13,10 @@ set_option autoImplicit false
 /-!
 # An integer-root seed schedule
 
-The schedule in the proof of [PS10, Theorem 180.1] is the least natural `t` with
-`n ≤ t ^ d`. It uses the existing natural `nthRoot`; its unary implementation
-searches through `0, …, n` with integer length comparisons and fixed powers.
+The seed schedule replacing the book's `n^{ε/2}` in the proof of [PS10, Theorem 180.1] (a repository
+substitute: integer exponents) is the least natural `t` with `n ≤ t ^ d`. It uses the existing
+natural `nthRoot`; its unary implementation searches through `0, …, n` with integer length
+comparisons and fixed powers.
 
 ## Main definitions
 

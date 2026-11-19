@@ -138,8 +138,8 @@ noncomputable def minEntropy (p : FinDist α) : ℝ :=
 `m ≤ c` exactly when every point probability is at most `c`. -/
 theorem le_minEntropy_iff (p : FinDist α) (k : ℝ) :
     k ≤ minEntropy p ↔ HasMinEntropy p k := by
-  rw [minEntropy, le_neg, logb_le_iff_le_rpow one_lt_two (maxProb_pos p), maxProb_le_iff]
-  rfl
+  rw [minEntropy, le_neg, logb_le_iff_le_rpow one_lt_two (maxProb_pos p), maxProb_le_iff,
+    hasMinEntropy_iff]
 
 /-! ### Sources -/
 
@@ -181,7 +181,7 @@ theorem isFlatSource_iff [DecidableEq α] {k : ℕ} {p : FinDist α} :
 theorem IsFlatSource.isSource [DecidableEq α] {k : ℕ} {p : FinDist α} (h : IsFlatSource k p) :
     IsSource k p := by
   obtain ⟨s, -, hp⟩ := h
-  refine isSource_iff_hasMinEntropy.2 fun a => ?_
+  refine isSource_iff_hasMinEntropy.2 ((hasMinEntropy_iff p k).2 fun a => ?_)
   rw [hp a, rpow_neg zero_le_two, rpow_natCast]
   split_ifs
   · exact le_rfl
@@ -209,7 +209,7 @@ theorem isFlatSource_flat [DecidableEq α] {k : ℕ} (s : Finset α) (hs : #s = 
 /-- The uniform distribution on `α` is a `log₂ |α|`-source; on `n`-bit strings, an `n`-source.
 An elementary consequence of [PS10, Defs 183.4 and 183.5]. -/
 theorem isSource_uniform [Nonempty α] : IsSource (logb 2 (Fintype.card α)) (uniform α) := by
-  refine isSource_iff_hasMinEntropy.2 fun a => ?_
+  refine isSource_iff_hasMinEntropy.2 ((hasMinEntropy_iff _ _).2 fun a => ?_)
   have hc : (0 : ℝ) < Fintype.card α := by exact_mod_cast Fintype.card_pos
   rw [uniform_apply, rpow_neg zero_le_two, rpow_logb two_pos (by norm_num) hc]
 

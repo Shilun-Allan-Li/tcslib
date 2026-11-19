@@ -142,19 +142,27 @@ of Theorem 33.5 fixes the input length `2n`, `|x| = |y| = n`). -/
 def fmult : FunFamily where
   inLen := .mul (.const 2) .var
   outLen := .mul (.const 2) .var
-  f n x := natToBits (2 * n)
-    (fmultNat (bitsToNat (FunFamily.blocks 2 n x 0)) (bitsToNat (FunFamily.blocks 2 n x 1)))
+  f n x :=
+    have h : ((PolyExpr.const 2).mul PolyExpr.var).eval n = 2 * n := by
+      rw [PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
+    natToBits (2 * n) (fmultNat (bitsToNat (FunFamily.blocks 2 n (x ∘ Fin.cast h.symm) 0))
+      (bitsToNat (FunFamily.blocks 2 n (x ∘ Fin.cast h.symm) 1))) ∘ Fin.cast h
 
 /-- The input length of `f_mult` at parameter `n` is `2n`. -/
-@[simp] theorem fmult_inLen (n : ℕ) : fmult.inLen.eval n = 2 * n := rfl
+@[simp] theorem fmult_inLen (n : ℕ) : fmult.inLen.eval n = 2 * n := by
+  simp only [fmult, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
 
 /-- The output length of `f_mult` at parameter `n` is `2n`. -/
-@[simp] theorem fmult_outLen (n : ℕ) : fmult.outLen.eval n = 2 * n := rfl
+@[simp] theorem fmult_outLen (n : ℕ) : fmult.outLen.eval n = 2 * n := by
+  simp only [fmult, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
 
-/-- Unfolding `f_mult` on a `2n`-bit string. -/
-theorem fmult_f (n : ℕ) (x : Fin (2 * n) → Bool) :
+/-- Unfolding `f_mult` on a `2n`-bit string, read at the family's lengths by `fmult_inLen` and
+`fmult_outLen`. -/
+theorem fmult_f (n : ℕ) (x : Fin (fmult.inLen.eval n) → Bool) :
     fmult.f n x = natToBits (2 * n)
-      (fmultNat (bitsToNat (FunFamily.blocks 2 n x 0)) (bitsToNat (FunFamily.blocks 2 n x 1))) := rfl
+      (fmultNat (bitsToNat (FunFamily.blocks 2 n (x ∘ Fin.cast (fmult_inLen n).symm) 0))
+        (bitsToNat (FunFamily.blocks 2 n (x ∘ Fin.cast (fmult_inLen n).symm) 1))) ∘
+      Fin.cast (fmult_outLen n) := rfl
 
 /-- **An inverse of `f_mult` at a product of primes is a factor** [PS10, Claim 34.1, in the
 form the reductions use]: if `f_mult(x') = pq` as `2n`-bit numerals, with `p, q < 2^n`
@@ -168,12 +176,16 @@ Repair (run-3 audit P7-4): the former conclusion carried a dead middle disjunct
 `mul_lt_two_pow_add`), so `f_mult(a, b) = pq` by `natToBits_injOn`; conclude by
 `fmultNat_eq_mul_prime`. -/
 theorem fmult_inv_factor {n p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hpn : p < 2 ^ n)
-    (hqn : q < 2 ^ n) (x' : Fin (2 * n) → Bool) (h : fmult.f n x' = natToBits (2 * n) (p * q)) :
+    (hqn : q < 2 ^ n) (x' : Fin (2 * n) → Bool)
+    (h : fmult.f n (x' ∘ Fin.cast (fmult_inLen n)) =
+      natToBits (2 * n) (p * q) ∘ Fin.cast (fmult_outLen n)) :
     bitsToNat (FunFamily.blocks 2 n x' 0) = p ∨ bitsToNat (FunFamily.blocks 2 n x' 0) = q := by
-  rw [fmult_f] at h
+  have h' : natToBits (2 * n) (fmultNat (bitsToNat (FunFamily.blocks 2 n x' 0))
+      (bitsToNat (FunFamily.blocks 2 n x' 1))) = natToBits (2 * n) (p * q) :=
+    congrArg (· ∘ Fin.cast (fmult_outLen n).symm) h
   have hlt : p * q < 2 ^ (2 * n) := by rw [two_mul]; exact mul_lt_two_pow_add hpn hqn
   exact fmultNat_eq_mul_prime hp hq
-    (natToBits_injOn (fmultNat_lt (bitsToNat_lt _) (bitsToNat_lt _)) hlt h)
+    (natToBits_injOn (fmultNat_lt (bitsToNat_lt _) (bitsToNat_lt _)) hlt h')
 
 /-- **Leading zeros**: the `(j + |w|)`-bit numeral of the number read from `w` is `0^j w`
 (`natToList_length_listToNat` on `0^j w`, which reads as the same number). -/
@@ -192,21 +204,6 @@ private theorem fac_natToList_one (k : ℕ) : natToList k 1 = (List.replicate k 
   · have h := fac_natToList_lead m [true]
     rw [listToNat_eq] at h
     exact h
-
-/-- The two `n`-bit halves of a `2n`-bit string are its two blocks:
-`(List.ofFn x).take n = List.ofFn (blocks 2 n x 0)` and `.drop n` is block `1`. -/
-private theorem fac_ofFn_halves (n : ℕ) (x : Fin (2 * n) → Bool) :
-    (List.ofFn x).take n = List.ofFn (FunFamily.blocks 2 n x 0) ∧
-      (List.ofFn x).drop n = List.ofFn (FunFamily.blocks 2 n x 1) := by
-  have hb (i : Fin 2) :
-      List.ofFn (FunFamily.blocks 2 n x i) = ((List.ofFn x).drop (i * n)).take n :=
-    (congrArg List.ofFn (funext (FunFamily.blocks_apply 2 n x i))).trans
-      (OneWay.ofFn_block_eq_take_drop x i)
-  have hlen : ((List.ofFn x).drop n).length ≤ n := by
-    simp only [List.length_drop, List.length_ofFn]; omega
-  refine ⟨?_, ?_⟩
-  · rw [hb 0, Fin.val_zero, zero_mul, List.drop_zero]
-  · rw [hb 1, Fin.val_one, one_mul, List.take_of_length_le hlen]
 
 /-- The test "the word reads as `1`" by two comparisons with the numeral `[true]` (`H.le`). -/
 private theorem fac_polyTimeComputable_isOne (H : ArithmeticFP) {g : List Bool → List Bool}
@@ -243,13 +240,22 @@ theorem fmult_easy (H : ArithmeticFP) : fmult.Easy := by
       ((polyTimeComputable_zerosPoly (.mul (.const 2) .var)).append (polyTimeComputable_const [true])))
     simpa only [Function.comp_def, pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_const,
       PolyExpr.eval_var, PolyExpr.eval_mul] using h
-  refine ⟨_, polyTimeComputable_ite htest hone (H.mul.comp (hx.pairEncode hy)), fun n x => ?_⟩
-  obtain ⟨h0, h1⟩ := fac_ofFn_halves n x
+  refine ⟨_, polyTimeComputable_ite htest hone (H.mul.comp (hx.pairEncode hy)), fun n x₀ => ?_⟩
+  -- the input read at `2n` bits (`fmult_inLen`)
+  set x := x₀ ∘ Fin.cast (fmult_inLen n).symm with hxdef
+  have hx₀ : List.ofFn x₀ = List.ofFn x := List.ofFn_congr (fmult_inLen n) x₀
+  have h0 : (List.ofFn x).take n = List.ofFn (FunFamily.blocks 2 n x 0) := by
+    rw [FunFamily.ofFn_blocks, Fin.val_zero, zero_mul, List.drop_zero]
+  have h1 : (List.ofFn x).drop n = List.ofFn (FunFamily.blocks 2 n x 1) := by
+    rw [FunFamily.ofFn_blocks, Fin.val_one, one_mul, List.take_of_length_le]
+    simp only [List.length_drop, List.length_ofFn]
+    omega
   simp only [Function.comp_apply, NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode,
-    List.length_replicate, h0, h1, mulStr_pairEncode, List.length_ofFn]
-  have hf : List.ofFn (fmult.f n x) = natToList (2 * n)
+    List.length_replicate, hx₀, h0, h1, mulStr_pairEncode, List.length_ofFn]
+  have hf : List.ofFn (fmult.f n x₀) = natToList (2 * n)
       (fmultNat (bitsToNat (FunFamily.blocks 2 n x 0)) (bitsToNat (FunFamily.blocks 2 n x 1))) := by
     rw [fmult_f, natToList_eq]
+    exact (List.ofFn_congr (fmult_outLen n).symm _).symm
   rw [hf]
   unfold fmultNat
   rw [← bitsToNat_eq_listToNat, ← bitsToNat_eq_listToNat]
@@ -484,7 +490,7 @@ factors a uniform pair of distinct primes with probability at least `1/2 − 2n/
 `Pr[E] ≥ 1/(4n²)` (`fac_density`). Conditioning (`one_sub_div_le_uprob_subtype`) gives
 `Pr[S | E] ≥ 1 − 4n²/(8(n+1)²) ≥ 1/2`. On `S ∧ E`, with `p, q` the two blocks,
 `f_mult(x) = ⟦pq⟧_{2n}` and block `0` of the preimage is `p` or `q` (`fmult_inv_factor`), which is
-what `A''` returns (`oneCallFactorer_runAtL`, `fac_ofFn_halves`, the coins through
+what `A''` returns (`oneCallFactorer_runAtL`, `FunFamily.ofFn_blocks`, the coins through
 `oneCallFactorer_coinsEquiv`). The good subtype is `Π_n × Π_n` (`fac_goodEquiv`), and dropping
 the diagonal costs `2n/2^n` (`fac_uprob_primes_le`); the experiment on distinct primes is
 `factorProb A'' n` (`modulusBits_eq`). -/
@@ -495,9 +501,20 @@ private theorem fac_weak_key (A : NUPPT) (n : ℕ) (hn : 2 ≤ n)
   rw [FunFamily.invProbAt_eq_uprob, eval_fmultWeakPoly] at h
   -- the inversion event, on `2n`-bit inputs (`fmult_inLen`)
   let S := fun z : (Fin (2 * n) → Bool) × A.Coins n =>
-    ∃ x' : Fin (2 * n) → Bool, A.runAt n (List.ofFn (fmult.f n z.1)) z.2 = List.ofFn x' ∧
-      fmult.f n x' = fmult.f n z.1
-  have h' : 1 - 1 / ((8 * (n + 1) ^ 2 : ℕ) : ℝ) < uprob S := h
+    ∃ x' : Fin (2 * n) → Bool,
+      A.runAt n (List.ofFn (fmult.f n (z.1 ∘ Fin.cast (fmult_inLen n)))) z.2 = List.ofFn x' ∧
+        fmult.f n (x' ∘ Fin.cast (fmult_inLen n)) = fmult.f n (z.1 ∘ Fin.cast (fmult_inLen n))
+  have h' : 1 - 1 / ((8 * (n + 1) ^ 2 : ℕ) : ℝ) < uprob S := by
+    refine h.trans_eq ((OneWay.uprob_congr fun w => ?_).trans (uprob_comp_equiv
+      ((Equiv.arrowCongr (finCongr (fmult_inLen n)) (Equiv.refl Bool)).prodCongr
+        (Equiv.refl (A.Coins n))) S))
+    constructor
+    · rintro ⟨x', hrun, hfx⟩
+      exact ⟨x' ∘ Fin.cast (fmult_inLen n).symm, hrun.trans (List.ofFn_congr (fmult_inLen n) x'),
+        hfx⟩
+    · rintro ⟨x', hrun, hfx⟩
+      exact ⟨x' ∘ Fin.cast (fmult_inLen n), hrun.trans (List.ofFn_congr (fmult_inLen n).symm x'),
+        hfx⟩
   have hE : 1 / (4 * (n : ℝ) ^ 2) ≤
       uprob (fun z : (Fin (2 * n) → Bool) × A.Coins n => fac_PrimeBlocks n z.1) := by
     rw [uprob_fst (fac_PrimeBlocks n)]
@@ -533,19 +550,26 @@ private theorem fac_weak_key (A : NUPPT) (n : ℕ) (hn : 2 ≤ n)
     rintro ⟨a, r⟩ ⟨x', hrun, hx'⟩
     have hp := a.2.1
     have hq := a.2.2
-    have hf : fmult.f n a.1 = natToBits (2 * n)
-        (bitsToNat (FunFamily.blocks 2 n a.1 0) * bitsToNat (FunFamily.blocks 2 n a.1 1)) := by
-      rw [fmult_f, fac_fmultNat_of_prime hp hq]
+    have hf : fmult.f n (a.1 ∘ Fin.cast (fmult_inLen n)) = natToBits (2 * n)
+        (bitsToNat (FunFamily.blocks 2 n a.1 0) * bitsToNat (FunFamily.blocks 2 n a.1 1)) ∘
+          Fin.cast (fmult_outLen n) :=
+      (fmult_f n _).trans (congrArg (fun k => natToBits (2 * n) k ∘ Fin.cast (fmult_outLen n))
+        (fac_fmultNat_of_prime hp hq))
     rw [hf] at hx'
     have hrun' : A.runAt n (List.ofFn (natToBits (2 * n)
         (bitsToNat (FunFamily.blocks 2 n a.1 0) * bitsToNat (FunFamily.blocks 2 n a.1 1)))) r =
-        List.ofFn x' := by rw [← hf]; exact hrun
+        List.ofFn x' := by
+      have hv : List.ofFn (fmult.f n (a.1 ∘ Fin.cast (fmult_inLen n))) =
+          List.ofFn (natToBits (2 * n)
+            (bitsToNat (FunFamily.blocks 2 n a.1 0) * bitsToNat (FunFamily.blocks 2 n a.1 1))) := by
+        rw [hf]; exact (List.ofFn_congr (fmult_outLen n).symm _).symm
+      rw [← hv]; exact hrun
     refine ⟨FunFamily.blocks 2 n x' 0, ?_, fmult_inv_factor hp hq (bitsToNat_lt _) (bitsToNat_lt _) x' hx'⟩
     have hco : List.ofFn ((oneCallFactorer_coinsEquiv A n).symm r) = List.ofFn r := by
       rw [← oneCallFactorer_coinsEquiv_ofFn A n, Equiv.apply_symm_apply]
     rw [NUPPT.inverter_eq_some_iff, NUPPT.runAt_eq, oneCallFactorer_runAtL, hco, ← NUPPT.runAt_eq,
       hrun']
-    exact (fac_ofFn_halves n x').1
+    rw [FunFamily.ofFn_blocks, Fin.val_zero, zero_mul, List.drop_zero]
   -- the good subtype is `Π_n × Π_n`
   have htrans : uprob (fun z : {a // fac_PrimeBlocks n a} × A.Coins n =>
         G (bitsToNat (FunFamily.blocks 2 n z.1.1 0)) (bitsToNat (FunFamily.blocks 2 n z.1.1 1)) z.2) =
@@ -629,7 +653,9 @@ theorem fmult_weakOneWay (H : ArithmeticFP) (hF : FactoringAssumption) : fmult.W
 def fmultBlocks : PolyExpr := .mul (.const 4) (.pow .var 3)
 
 /-- `m_n = 4n³`. -/
-@[simp] theorem eval_fmultBlocks (n : ℕ) : fmultBlocks.eval n = 4 * n ^ 3 := rfl
+@[simp] theorem eval_fmultBlocks (n : ℕ) : fmultBlocks.eval n = 4 * n ^ 3 := by
+  simp only [fmultBlocks, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_pow,
+    PolyExpr.eval_var]
 
 /-- The input length of `f_mult^{m_n}` at parameter `n` is `4n³ · 2n = 8n⁴` (the text's `n'`). -/
 theorem fmult_prod_inLen (n : ℕ) : (fmult.prod fmultBlocks).inLen.eval n = 4 * n ^ 3 * (2 * n) := by
@@ -678,7 +704,8 @@ def plantFactor {n : ℕ} {ρ : Type*}
     (N : Fin (2 * n) → Bool)
     (c : Fin (fmultBlocks.eval n) × ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × ρ)) :
     Fin n → Bool :=
-  FunFamily.blocks 2 n (OneWay.yaoTry (fmult.f n) B N c) 0
+  FunFamily.blocks 2 n (OneWay.yaoTry
+    (fun x => fmult.f n (x ∘ Fin.cast (fmult_inLen n)) ∘ Fin.cast (fmult_outLen n).symm) B N c) 0
 
 /-- The two block bijections of the library coincide: `FunFamily.blocks q ℓ = OneWay.blocksE q ℓ`
 (`OneWay.blocksE` is an alias of the canonical `FunFamily.blocks`, `OneWay.blocksE_eq`). -/
@@ -698,21 +725,44 @@ private theorem fac_blocks_apply (q ℓ : ℕ) (x : Fin (q * ℓ) → Bool) (i :
 
 /-- **The direct-product inverter and the padded inverter agree on success**: block `i` of the
 answer of `prodInverter A n` (the all-`false` tuple on a wrong-length answer) is block `i` of the
-padded answer `OneWay.yaoB` whenever its first half reads as a prime. -/
+padded answer `OneWay.yaoB` whenever its first half reads as a prime.
+
+**Proof sketch.** Case on the answer of `A` (`prodInverter`, `OneWay.yaoB_apply`). A
+wrong-length answer gives the all-`false` block, which reads as `0` and is not prime
+(`fac_blocks_apply`, `fac_bitsToNat_false`). Otherwise the run of `A` on the challenge is the
+answer `x` (`NUPPT.inverter_eq_some_iff`); the challenge read at `outLen` has the same encoding
+(`FunFamily.ofFn_blocks_symm`), padding read at `inLen` and cast back is padding at `2n` bits
+(`OneWay.ofFn_padTrue`, `fmult_inLen`), and the padded tail of `x` after `i` blocks is block `i`
+of `x` (`OneWay.padTrue_drop_ofFn`). -/
 private theorem fac_prodInverter_eq_yaoB (A : NUPPT) (n : ℕ)
     (Y : Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) (r : A.Coins n) (i : Fin (fmultBlocks.eval n))
     (hp : (bitsToNat (FunFamily.blocks 2 n (prodInverter A n Y r i) 0)).Prime) :
-    prodInverter A n Y r i = OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n Y r i := by
+    prodInverter A n Y r i = OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n
+      (fun j => Y j ∘ Fin.cast (fmult_outLen n)) r i ∘ Fin.cast (fmult_inLen n).symm := by
   unfold prodInverter at hp ⊢
   rw [OneWay.yaoB_apply]
   rcases hx : A.inverter n (fmultBlocks.eval n * (2 * n)) (fmultBlocks.eval n * (2 * n))
       ((FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm Y) r with _ | x
   · rw [hx, Option.getD_none, fac_blocks_apply, fac_blocks_apply, fac_bitsToNat_false] at hp
     exact absurd hp Nat.not_prime_zero
-  · have h2 : A.runAt n (List.ofFn ((FunFamily.blocks (fmultBlocks.eval n)
-        (fmult.outLen.eval n)).symm Y)) r = List.ofFn x := (NUPPT.inverter_eq_some_iff _ _ _ _ _ _ _).1 hx
-    rw [Option.getD_some, fac_blocks_apply, ← fac_blocks_eq_blocksE, h2]
-    exact (OneWay.padTrue_drop_ofFn (q := fmultBlocks.eval n) (ℓ := fmult.inLen.eval n) x i).symm
+  · have h2 : A.runAt n (List.ofFn ((FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm Y)) r =
+        List.ofFn x := (NUPPT.inverter_eq_some_iff _ _ _ _ _ _ _).1 hx
+    -- the challenge read at `outLen` has the same encoding (`FunFamily.ofFn_blocks_symm`)
+    have hY : List.ofFn ((FunFamily.blocks (fmultBlocks.eval n) (fmult.outLen.eval n)).symm
+        fun j => Y j ∘ Fin.cast (fmult_outLen n)) =
+        List.ofFn ((FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm Y) := by
+      rw [FunFamily.ofFn_blocks_symm, FunFamily.ofFn_blocks_symm]
+      exact congrArg List.flatten (congrArg List.ofFn
+        (funext fun j => (List.ofFn_congr (fmult_outLen n).symm (Y j)).symm))
+    -- padding read at `inLen` and cast back to `2n` bits is padding at `2n` bits
+    have hpad : ∀ w : List Bool,
+        OneWay.padTrue (fmult.inLen.eval n) w ∘ Fin.cast (fmult_inLen n).symm =
+          OneWay.padTrue (2 * n) w := fun w => by
+      apply List.ofFn_injective
+      exact (List.ofFn_congr (fmult_inLen n) (OneWay.padTrue (fmult.inLen.eval n) w)).symm.trans
+        (by rw [OneWay.ofFn_padTrue, OneWay.ofFn_padTrue, fmult_inLen])
+    rw [Option.getD_some, fac_blocks_apply, ← fac_blocks_eq_blocksE, hY, h2, hpad, fmult_inLen]
+    exact (OneWay.padTrue_drop_ofFn (q := fmultBlocks.eval n) (ℓ := 2 * n) x i).symm
 
 /-- **The machine of Algorithm 37.4** [PS10, Algorithm 37.4]: for every inverter `A` of the
 direct product there is a non-uniform PPT `A''` whose factoring probability is, up to the
@@ -739,7 +789,8 @@ and `Complexity.polyTimeComputable_pairTakePoly`. Functional identity: by
 `YaoMachine.ρP_eval`) and the round identity `YaoMachine.ans_layout`, `A''(1^n, N; r)` is the
 first `n`-bit block of `OneWay.yaoTry (f_mult) yaoB N (roundSample r)`, i.e.
 `plantFactor yaoB N (roundSample r)`, where `OneWay.yaoB` reads block `i` of `A`'s answer
-padded with `true`. Inverter comparison: whenever
+padded with `true` (the blocks, the challenge and the round coins read at `2n` bits through
+`fmult_inLen` and `fmult_outLen`). Inverter comparison: whenever
 `plantFactor (prodInverter A n)` outputs a factor its first block reads as a prime, so `A`'s
 answer had the right length (a wrong-length answer gives the all-`false` block, which reads as
 `0`), and then block `i` of `prodInverter A n` is block `i` of `yaoB` (`OneWay.padTrue_drop_ofFn`,
@@ -785,25 +836,53 @@ theorem exists_plantFactorer (H : ArithmeticFP) (A : NUPPT) :
     exact (List.ofFn_congr (OneWay.YaoMachine.ρP_eval D n) _).symm
   set S := OneWay.roundSample n (fmultBlocks.eval n) (fmult.inLen.eval n) (A.coinLen n)
     (OneWay.kkOf (fmultBlocks.eval n)) hM (OneWay.YaoMachine.nkk_le n _ hM) with hS
+  -- the padded inverter and the round coins read at `2n`-bit blocks (`fmult_inLen`, `fmult_outLen`)
+  let yB : (Fin (fmultBlocks.eval n) → Fin (2 * n) → Bool) → A.Coins n →
+      Fin (fmultBlocks.eval n) → Fin (2 * n) → Bool := fun Y r i =>
+    OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n (fun j => Y j ∘ Fin.cast (fmult_outLen n))
+      r i ∘ Fin.cast (fmult_inLen n).symm
+  let cc : Fin (fmultBlocks.eval n) × (Fin (fmultBlocks.eval n) → Fin (fmult.inLen.eval n) → Bool) ×
+      (Fin (A.coinLen n) → Bool) ≃
+      Fin (fmultBlocks.eval n) × (Fin (fmultBlocks.eval n) → Fin (2 * n) → Bool) × A.Coins n :=
+    (Equiv.refl _).prodCongr ((Equiv.piCongrRight fun _ =>
+      Equiv.arrowCongr (finCongr (fmult_inLen n)) (Equiv.refl Bool)).prodCongr (Equiv.refl _))
+  -- a try at `2n`-bit blocks is the try at the family's lengths, read back at `2n` bits
+  have htry : ∀ (N : Fin (2 * n) → Bool) c, OneWay.yaoTry
+      (fun x => fmult.f n (x ∘ Fin.cast (fmult_inLen n)) ∘ Fin.cast (fmult_outLen n).symm) yB N
+        (cc c) =
+      OneWay.yaoTry (fmult.f n) (OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n)
+        (N ∘ Fin.cast (fmult_outLen n)) c ∘ Fin.cast (fmult_inLen n).symm := by
+    rintro N ⟨i, xs, r⟩
+    show OneWay.yaoTry _ yB N (i, fun j => xs j ∘ Fin.cast (fmult_inLen n).symm, r) = _
+    rw [OneWay.yaoTry_eq, OneWay.yaoTry_eq]
+    refine congrArg (fun Y => OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n Y r i ∘
+      Fin.cast (fmult_inLen n).symm) (funext fun j => ?_)
+    by_cases hj : j = i
+    · subst hj
+      simp only [Function.update_self]
+    · simp only [Function.update_of_ne hj, OneWay.prodFun_apply]
+      rfl
   -- the round identity: `A''` outputs the first half of the planted answer block
   have hround : ∀ (N : Fin (2 * n) → Bool) r,
       (NUPPT.ofPolyTime hpoly (OneWay.YaoMachine.ρP D) (OneWay.YaoMachine.advP D)
         (OneWay.YaoMachine.adv D) (OneWay.YaoMachine.adv_length D)).runAt n (List.ofFn N) r =
-      List.ofFn (plantFactor (OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n) N (S (ce r))) := by
+      List.ofFn (plantFactor yB N (cc (S (ce r)))) := by
     intro N r
     rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTime, NUPPT.advInput_eq, ← NUPPT.layout_eq,
       NUPPT.inParam_layout, List.length_replicate, ← hce_ofFn r,
       show List.ofFn (ce r) = List.ofFn (ce r) ++ [] from (List.append_nil _).symm,
-      OneWay.YaoMachine.ans_layout (D := D) n hM (fmult.f n) hFe hF'' hPm'' N (ce r) []]
+      show List.ofFn N = List.ofFn (N ∘ Fin.cast (fmult_outLen n)) from
+        List.ofFn_congr (fmult_outLen n).symm N,
+      OneWay.YaoMachine.ans_layout (D := D) n hM (fmult.f n) hFe hF'' hPm''
+        (N ∘ Fin.cast (fmult_outLen n)) (ce r) []]
     unfold plantFactor
-    exact (fac_ofFn_halves n _).1
+    rw [htry, FunFamily.ofFn_blocks, Fin.val_zero, zero_mul, List.drop_zero]
+    exact congrArg (List.take n) (List.ofFn_congr (fmult_inLen n) _)
   -- the success event of the planting reduction with the padded inverter `yaoB`
   let P : (Fin (fmultBlocks.eval n) × (Fin (fmultBlocks.eval n) → Fin (fmult.inLen.eval n) → Bool) ×
       (Fin (A.coinLen n) → Bool)) → DistinctPrimes n → Prop := fun c z =>
-    bitsToNat (plantFactor (OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n) (modulusBits n z) c) =
-        z.p ∨
-      bitsToNat (plantFactor (OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n) (modulusBits n z) c) =
-        z.q
+    bitsToNat (plantFactor yB (modulusBits n z) (cc c)) = z.p ∨
+      bitsToNat (plantFactor yB (modulusBits n z) (cc c)) = z.q
   -- the factoring probability of `A''` is that event on the sampled coins
   have hfp : factorProb (NUPPT.ofPolyTime hpoly (OneWay.YaoMachine.ρP D) (OneWay.YaoMachine.advP D)
       (OneWay.YaoMachine.adv D) (OneWay.YaoMachine.adv_length D)) n =
@@ -834,20 +913,19 @@ theorem exists_plantFactorer (H : ArithmeticFP) (A : NUPPT) :
       uprob (fun z : (Fin (fmultBlocks.eval n) × (Fin (fmultBlocks.eval n) →
         Fin (fmult.inLen.eval n) → Bool) × (Fin (A.coinLen n) → Bool)) × DistinctPrimes n =>
           P (id z.1) z.2) := by
-    rw [← uprob_comp_equiv (Equiv.prodComm (DistinctPrimes n) _)]
+    rw [← uprob_comp_equiv ((Equiv.prodComm (DistinctPrimes n) _).trans
+      (cc.symm.prodCongr (Equiv.refl (DistinctPrimes n))))]
     apply uprob_mono
     rintro ⟨z, i, xs, r⟩ h
-    show bitsToNat (plantFactor (OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n)
-        (modulusBits n z) (i, xs, r)) = z.p ∨
-      bitsToNat (plantFactor (OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n)
-        (modulusBits n z) (i, xs, r)) = z.q
+    show P (cc.symm (i, xs, r)) z
+    simp only [P, Equiv.apply_symm_apply]
     have hp : (bitsToNat (plantFactor (prodInverter A n) (modulusBits n z) (i, xs, r))).Prime := by
       rcases h with h | h
       · rw [h]; exact z.p_prime
       · rw [h]; exact z.q_prime
     unfold plantFactor at h hp ⊢
     rw [OneWay.yaoTry_eq] at h hp ⊢
-    rw [← fac_prodInverter_eq_yaoB A n _ r i hp]
+    rw [fac_prodInverter_eq_yaoB A n _ r i hp] at h
     exact h
   have hb : (1 - (fmultBlocks.eval n : ℝ) / 2 ^ OneWay.kkOf (fmultBlocks.eval n)) ^ n + 0 ≤
       (1 / 2 : ℝ) ^ n := by
@@ -878,16 +956,18 @@ theorem exists_plantFactorer (H : ArithmeticFP) (A : NUPPT) :
 machine `A''` of `exists_plantFactorer`, the inversion probability of the direct product is at
 most `(1/2)^n + 4n³ (Pr[A'' factors] + (1/2)^n + 2n/2^n)`.
 
-**Proof sketch.** `FunFamily.invProbAt_prod_eq` and `invProbOpt_le_invProb` bound the inversion
-probability by `invProb (prodFun f_mult (4n³)) (prodInverter A n)` (the default answer is the
-all-`false` tuple, `fac_blocks_apply`). Random-position planting with the good set "both blocks
-prime" (`invProb_prodFun_le_plant`) bounds this by `(1 − Pr[G])^{4n³} + 4n³ Pr[G ∧ planted
-success]`; the first term is at most `(1 − 1/(4n²))^{4n³} ≤ (1/2)^n` (`fac_density`,
+**Proof sketch.** `FunFamily.invProbAt_prod_eq` gives the inversion probability on blocks at the
+family's lengths. Reading every block at `2n` bits (`fmult_inLen`, `fmult_outLen`: the challenges
+have the same encoding, `FunFamily.ofFn_blocks_symm`, and an answer of `A` of the right length is
+the answer of `prodInverter A n`, `NUPPT.inverter_eq_some_iff`) bounds it by `invProb (prodFun
+f_mult (4n³)) (prodInverter A n)`, `f_mult` read at `2n` bits. Random-position planting with the
+good set "both blocks prime" (`invProb_prodFun_le_plant`) bounds this by `(1 − Pr[G])^{4n³} + 4n³
+Pr[G ∧ planted success]`; the first term is at most `(1 − 1/(4n²))^{4n³} ≤ (1/2)^n` (`fac_density`,
 `claim_36_2_half_pow`). The second probability is at most the conditioned one
 (`uprob_and_eq_mul_subtype`, `uprob_subtype_prod_eq`), on which a planted success is a factor
-(`fmult_inv_factor`, `plantFactor`); the good subtype is `Π_n × Π_n` (`fac_goodEquiv`), the
-diagonal costs `2n/2^n` (`fac_uprob_primes_le`), and on distinct primes the event is the left side
-of `exists_plantFactorer`, at most `factorProb A'' n + (1/2)^n`. -/
+(`fmult_inv_factor`, `plantFactor`); the good subtype is `Π_n × Π_n` (`fac_goodEquiv`), the diagonal
+costs `2n/2^n` (`fac_uprob_primes_le`), and on distinct primes the event is the left side of
+`exists_plantFactorer`, at most `factorProb A'' n + (1/2)^n`. -/
 private theorem fac_strong_key (A A'' : NUPPT) (n : ℕ) (hn : 2 ≤ n)
     (hA : uprob (fun z : DistinctPrimes n × (Fin (fmultBlocks.eval n) ×
           ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) =>
@@ -897,34 +977,64 @@ private theorem fac_strong_key (A A'' : NUPPT) (n : ℕ) (hn : 2 ≤ n)
     (fmult.prod fmultBlocks).invProbAt A n ≤
       (1 / 2 : ℝ) ^ n + 4 * (n : ℝ) ^ 3 * (factorProb A'' n + (1 / 2 : ℝ) ^ n + 2 * n / 2 ^ n) := by
   classical
+  -- `f_mult` read at `2n`-bit strings (`fmult_inLen`, `fmult_outLen`), as in `plantFactor`
+  let fm : (Fin (2 * n) → Bool) → Fin (2 * n) → Bool := fun x =>
+    fmult.f n (x ∘ Fin.cast (fmult_inLen n)) ∘ Fin.cast (fmult_outLen n).symm
   rw [FunFamily.invProbAt_prod_eq]
-  refine (invProbOpt_le_invProb _ _).trans ?_
-  have hB : (fun ys r => ((A.inverter n (fmultBlocks.eval n * fmult.inLen.eval n)
-      (fmultBlocks.eval n * fmult.outLen.eval n)
-      ((FunFamily.blocks (fmultBlocks.eval n) (fmult.outLen.eval n)).symm ys) r).map
-        (FunFamily.blocks (fmultBlocks.eval n) (fmult.inLen.eval n))).getD default) =
-      prodInverter A n := by
-    have key : ∀ o : Option (Fin (fmultBlocks.eval n * (2 * n)) → Bool),
-        (o.map (FunFamily.blocks (fmultBlocks.eval n) (2 * n))).getD default =
-          FunFamily.blocks (fmultBlocks.eval n) (2 * n) (o.getD fun _ => false) := by
-      rintro (_ | x)
-      · rw [Option.map_none, Option.getD_none, Option.getD_none]
-        funext i j
-        rw [fac_blocks_apply]
-        rfl
-      · rw [Option.map_some, Option.getD_some, Option.getD_some]
-    funext ys r
-    unfold prodInverter
-    exact key _
-  rw [hB]
+  -- the inversion probability at the family's lengths is at most that of `prodInverter A n`
+  -- against `prodFun fm` on `2n`-bit blocks
+  have hm : fmultBlocks.eval n * (2 * n) = fmultBlocks.eval n * fmult.inLen.eval n := by
+    rw [fmult_inLen]
+  refine le_trans (b := invProb (OneWay.prodFun fm (fmultBlocks.eval n)) (prodInverter A n)) ?_ ?_
+  · rw [invProbOpt_def, invProb_def]
+    let E : (Fin (fmultBlocks.eval n) → Fin (fmult.inLen.eval n) → Bool) ≃
+        (Fin (fmultBlocks.eval n) → Fin (2 * n) → Bool) :=
+      Equiv.piCongrRight fun _ => Equiv.arrowCongr (finCongr (fmult_inLen n)) (Equiv.refl Bool)
+    refine le_of_le_of_eq ?_ (uprob_comp_equiv (E.prodCongr (Equiv.refl (A.Coins n))) _)
+    refine uprob_mono fun w hw => ?_
+    obtain ⟨xs, r⟩ := w
+    obtain ⟨x, hx, hfx⟩ := hw
+    obtain ⟨u, hu, rfl⟩ := Option.map_eq_some_iff.1 hx
+    have hrun := (NUPPT.inverter_eq_some_iff _ _ _ _ _ _ _).1 hu
+    -- the challenge has the same encoding on `2n`-bit blocks (`FunFamily.ofFn_blocks_symm`)
+    have hY : List.ofFn ((FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm
+        (OneWay.prodFun fm (fmultBlocks.eval n) (E xs))) =
+        List.ofFn ((FunFamily.blocks (fmultBlocks.eval n) (fmult.outLen.eval n)).symm
+          (OneWay.prodFun (fmult.f n) (fmultBlocks.eval n) xs)) := by
+      rw [FunFamily.ofFn_blocks_symm, FunFamily.ofFn_blocks_symm]
+      simp only [OneWay.prodFun_apply]
+      exact congrArg List.flatten (congrArg List.ofFn (funext fun j =>
+        (List.ofFn_congr (fmult_outLen n) (fmult.f n (xs j))).symm))
+    have hinv : A.inverter n (fmultBlocks.eval n * (2 * n)) (fmultBlocks.eval n * (2 * n))
+        ((FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm
+          (OneWay.prodFun fm (fmultBlocks.eval n) (E xs))) r = some (u ∘ Fin.cast hm) :=
+      (NUPPT.inverter_eq_some_iff _ _ _ _ _ _ _).2 (by
+        rw [hY, hrun]; exact List.ofFn_congr hm.symm u)
+    show OneWay.prodFun fm _ (prodInverter A n (OneWay.prodFun fm _ (E xs)) r) =
+      OneWay.prodFun fm _ (E xs)
+    rw [prodInverter_eq, hinv, Option.getD_some]
+    funext j
+    -- block `j` of the answer read at `2n` bits is block `j` read at the family's length
+    have hb : FunFamily.blocks (fmultBlocks.eval n) (2 * n) (u ∘ Fin.cast hm) j =
+        FunFamily.blocks (fmultBlocks.eval n) (fmult.inLen.eval n) u j ∘
+          Fin.cast (fmult_inLen n).symm := by
+      apply List.ofFn_injective
+      have hu' : List.ofFn (u ∘ Fin.cast hm) = List.ofFn u := (List.ofFn_congr hm.symm u).symm
+      refine Eq.trans ?_ (List.ofFn_congr (fmult_inLen n) (FunFamily.blocks _ _ u j))
+      rw [FunFamily.ofFn_blocks, FunFamily.ofFn_blocks, hu']
+      generalize List.ofFn u = L
+      rw [fmult_inLen]
+    have hj := congrFun hfx j
+    rw [OneWay.prodFun_apply, OneWay.prodFun_apply] at hj
+    rw [OneWay.prodFun_apply, OneWay.prodFun_apply, hb]
+    exact congrArg (· ∘ Fin.cast (fmult_outLen n).symm) hj
   -- random-position planting with the good set "both blocks prime" (lemma C3)
-  have hplant : invProb (OneWay.prodFun (fmult.f n) (fmultBlocks.eval n)) (prodInverter A n) ≤
+  have hplant : invProb (OneWay.prodFun fm (fmultBlocks.eval n)) (prodInverter A n) ≤
       (1 - uprob (fac_PrimeBlocks n)) ^ (fmultBlocks.eval n) + (fmultBlocks.eval n : ℕ) *
         uprob (fun z : (Fin (2 * n) → Bool) × (Fin (fmultBlocks.eval n) ×
           ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) =>
           fac_PrimeBlocks n z.1 ∧
-            fmult.f n (OneWay.yaoTry (fmult.f n) (prodInverter A n) (fmult.f n z.1) z.2) =
-              fmult.f n z.1) :=
+            fm (OneWay.yaoTry fm (prodInverter A n) (fm z.1) z.2) = fm z.1) :=
     invProb_prodFun_le_plant _ _ _
   -- Claim 36.2: no good block among `4n³` with probability at most `(1/2)^n`
   have hd := fac_density n hn
@@ -939,7 +1049,7 @@ private theorem fac_strong_key (A A'' : NUPPT) (n : ℕ) (hn : 2 ≤ n)
       bitsToNat (plantFactor (prodInverter A n) (natToBits (2 * n) (p * q)) c) = q
   let S : (Fin (2 * n) → Bool) × (Fin (fmultBlocks.eval n) ×
       ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) → Prop := fun z =>
-    fmult.f n (OneWay.yaoTry (fmult.f n) (prodInverter A n) (fmult.f n z.1) z.2) = fmult.f n z.1
+    fm (OneWay.yaoTry fm (prodInverter A n) (fm z.1) z.2) = fm z.1
   have h2 : uprob (fun z : (Fin (2 * n) → Bool) × (Fin (fmultBlocks.eval n) ×
         ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) =>
         fac_PrimeBlocks n z.1 ∧ S z) ≤
@@ -958,13 +1068,14 @@ private theorem fac_strong_key (A A'' : NUPPT) (n : ℕ) (hn : 2 ≤ n)
     rintro ⟨a, c⟩ hS
     have hp := a.2.1
     have hq := a.2.2
-    have hf : fmult.f n a.1 = natToBits (2 * n)
-        (bitsToNat (FunFamily.blocks 2 n a.1 0) * bitsToNat (FunFamily.blocks 2 n a.1 1)) := by
-      rw [fmult_f, fac_fmultNat_of_prime hp hq]
-    change fmult.f n (OneWay.yaoTry (fmult.f n) (prodInverter A n) (fmult.f n a.1) c) = fmult.f n a.1
-      at hS
+    have hf : fm a.1 = natToBits (2 * n)
+        (bitsToNat (FunFamily.blocks 2 n a.1 0) * bitsToNat (FunFamily.blocks 2 n a.1 1)) :=
+      (congrArg (· ∘ Fin.cast (fmult_outLen n).symm) (fmult_f n _)).trans
+        (congrArg (natToBits (2 * n)) (fac_fmultNat_of_prime hp hq))
+    change fm (OneWay.yaoTry fm (prodInverter A n) (fm a.1) c) = fm a.1 at hS
     rw [hf] at hS
-    have := fmult_inv_factor hp hq (bitsToNat_lt _) (bitsToNat_lt _) _ hS
+    have := fmult_inv_factor hp hq (bitsToNat_lt _) (bitsToNat_lt _) _
+      (congrArg (· ∘ Fin.cast (fmult_outLen n)) hS)
     simp only [G]
     unfold plantFactor
     exact this
@@ -1014,10 +1125,9 @@ the deviation of `FunFamily.prod`); the reduction is the random-planting one-cal
 **Proof sketch.** *Easy:* `FunFamily.Easy.prod (fmult_easy H)`. *Hard:* fix `A` and
 suppose `fun n => (fmult.prod fmultBlocks).invProbAt A n` is not negligible;
 `not_negligible_iff` gives `c` with `1/n^c ≤ invProbAt` for infinitely many `n`
-(`FunFamily.invProbAt_nonneg`). `FunFamily.invProbAt_prod_eq` and `invProbOpt_le_invProb`
-give `1/n^c ≤ invProb (prodFun (fmult.f n) (m n)) (prodInverter A n)` (the default
-`fun _ => false` is `blocks` of the all-zero string). `invProb_prodFun_le_plant` with the
-good set `G x` = "both blocks of `x` read as primes" yields
+(`FunFamily.invProbAt_nonneg`). `FunFamily.invProbAt_prod_eq`, with every block read at `2n`
+bits (`fac_strong_key`), gives `1/n^c ≤ invProb (prodFun (fmult.f n) (m n)) (prodInverter A n)`.
+`invProb_prodFun_le_plant` with the good set `G x` = "both blocks of `x` read as primes" yields
 `1/n^c ≤ (1 - Pr[G])^{m n} + m n · Pr[G x ∧ f_mult(yaoTry … (f_mult x) c) = f_mult x]`;
 `one_div_le_uprob_prime_pair_bits` (transported along `FunFamily.blocks 2 n` and
 `piFinTwoEquiv`) gives `Pr[G] ≥ 1/(4n²)`, and `claim_36_2_half_pow` gives

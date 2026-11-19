@@ -15,11 +15,15 @@ set_option autoImplicit false
 Two implementations of the same oracles may keep states of different types: in a security proof
 the real game and its simulation often record different data for the same history (for BB1, the
 committed identity with a group element `h`, or with an exponent `α_1`). If a relation `R`
-between the two kinds of state holds at the start, and every call from related states answers
-alike and leads to related states, then the two simulations of any computation answer alike and
-end in related states (`ProbComp.expect_simulate_rel`). "Alike" is measured by expectations: a
-call, or a run, from related states gives the same expectation to any two functions of the
-answer and the state that agree at equal answers and related states.
+between the two kinds of state holds at the start, and every call from related states gives
+equal expectations to any two tests of the answer and the new state that agree at equal answers
+and related states, then so does every simulated computation, for tests of the output and the
+final state (`ProbComp.expect_simulate_rel`). This preserves equality of compatible test
+expectations; it is not a coupling of the two runs supported on `R`. A coupling of each call's
+outcomes supported on equal answers and related states gives the per-call hypothesis
+(`ProbComp.expect_sample_rel` for one uniform sample), but for an arbitrary relation the
+hypothesis does not make the final states coupled inside `R` (Gate 49, G49-01). In particular
+the output laws agree (`ProbComp.prob_simulate_rel`).
 
 With one state type and `R` the equality this is `ProbComp.expect_simulate_congr`
 (`Games.Hopping`); with `R s t ↔ s = f t` it is the law form of `simulate_eq_of_abs`
@@ -124,6 +128,12 @@ theorem prob_simulate_rel (impl₀ : QueryImpl spec σ unifSpec)
 states, `(f₀ u).1 = (f₁ (e u)).1` and `R (f₀ u).2 (f₁ (e u)).2`, then `c₀` and `c₁` give the same
 expectation to any `g₀`, `g₁` that agree at equal answers and related states,
 `𝔼[g₀] c₀ = 𝔼[g₁] c₁`: the hypothesis of `expect_simulate_rel` for such a call.
+
+Source: [BGZ09, §4.1, rule R-Rand], adapted: the rule couples two random assignments by a
+bijection between equally distributed samplings and establishes the postcondition; here the two
+uniform sample types may differ (`e : U ≃ V` between finite types) and the conclusion is stated
+as equality of real-valued expectations of tests that agree along `R`, the form
+`expect_simulate_rel` consumes.
 
 **Proof sketch.** Both sides are uniform averages (`expect_bind`, `expect_pure`); reindex the
 average over `V` along `e` (`expect_sample_equiv`) and compare the two averages pointwise. -/

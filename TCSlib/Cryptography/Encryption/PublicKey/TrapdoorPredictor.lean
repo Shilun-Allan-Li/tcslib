@@ -140,10 +140,6 @@ theorem ofFn_predCoins (D : NUPPT) (flip : Bool) (n : ℕ) (c : Bool) (ρ : D.Co
 theorem ite_eq_xor_not (v c : Bool) : (if v = true then c else !c) = xor c (!v) := by
   cases v <;> cases c <;> rfl
 
-/-- The verdict convention on a one-bit output: `[b] = [true]` iff `b`. -/
-theorem decide_singleton_eq_true (b : Bool) : decide ([b] = [true]) = b := by
-  cases b <;> rfl
-
 /-- **The prediction experiment of the predictor machine** is the concrete predictor
 experiment: over uniform `x` and the coins `c :: ρ`, `A_flip(1^n, ⟨i, enc (f x)⟩) = h x` has the
 probability that `(if D(⟨i, ⟨enc (f x), [c]⟩⟩; ρ) then c else ¬c) ⊕ flip = h x`

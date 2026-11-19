@@ -195,8 +195,7 @@ private theorem distinguisherL_tupleStr {A D : NUPPT} (hc : D.coins = A.coins)
       decide (A.runAt κ (bdhStr B d g x y z) (NUPPT.coinsCongr hc κ ρ) =
         List.ofFn (B.encT t)) := by
   rw [NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hD, NUPPT.runAt_coinsCongr, tupleBdh_tupleStr,
-    tupleTgt_tupleStr]
-  simp only [List.cons.injEq, and_true, decide_eq_true_eq]
+    tupleTgt_tupleStr, decide_singleton_eq_true]
 
 /-- A fixed string is the encoding of a uniform element of `G_T` with probability at most `1/p`:
 `Pr_{t ← G_T}[w = enc(t)] ≤ 1/p`, since `encT` is injective, so at most one `t` qualifies. -/

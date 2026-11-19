@@ -38,7 +38,7 @@ so no fixed state bound is claimed after termination.
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
   Cambridge University Press, 2009, §7.1, p. 126.
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
-  3rd ed., January 2010, §8.2, Theorem 180.1, step 4.
+  3rd ed., January 2010, §8.2, Theorem 180.1, final paragraph of the proof.
 -/
 
 namespace Complexity.SeedMajority
@@ -67,7 +67,7 @@ theorem seedFor_state (w : ℕ → ℕ) (x : List Bool) (i a : ℕ) :
 
 /-- Binary exponential fuel is FP when the width has an FP unary word:
 `x ↦ bits(2^(w |x|))` is FP. This reuses the shared power-of-two evaluator.
-[PS10, Theorem 180.1, step 4] -/
+[PS10, Theorem 180.1, final paragraph of the proof] -/
 theorem polyTimeComputable_seedFuel {w : ℕ → ℕ}
     (hw : PolyTimeComputable fun x => List.replicate (w x.length) true) :
     PolyTimeComputable fun x => Nat.bits (2 ^ w x.length) := by
@@ -96,7 +96,7 @@ theorem polyTimeComputable_seedFor {w : ℕ → ℕ}
 /-- One total counting round keeps the input and increments the binary counters:
 `advance V w (state x i a) = state x (i+1) (a + [⟨x,word (w |x|) i⟩ ∈ V])`.
 The step is total; the outer host retains its size guard after termination.
-[AB09, §7.1, p. 126]; [PS10, §8.2, Theorem 180.1, step 4] -/
+[AB09, §7.1, p. 126]; [PS10, §8.2, Theorem 180.1, final paragraph of the proof] -/
 noncomputable def advance (V : Language Bool) (w : ℕ → ℕ) (z : List Bool) : List Bool :=
   pairEncode (pairFstD z)
     (pairEncode (BinArith.add (pairEncode (pairFstD (pairSndD z)) (Nat.bits 1)))
@@ -139,7 +139,7 @@ theorem polyTimeComputable_advance {V : Language Bool} (hV : V ∈ P) {w : ℕ �
 open Classical in
 /-- On a counting state one round has its intended arithmetic meaning:
 `advance V w (state x i a) = state x (i+1) (a + [⟨x,word(w |x|) i⟩ ∈ V])`.
-[AB09, §7.1, p. 126]; [PS10, Theorem 180.1, step 4] -/
+[AB09, §7.1, p. 126]; [PS10, Theorem 180.1, final paragraph of the proof] -/
 theorem advance_state (V : Language Bool) (w : ℕ → ℕ) (x : List Bool) (i a : ℕ) :
     advance V w (state x i a) = state x (i + 1)
       (a + if pairEncode x (word (w x.length) i) ∈ V then 1 else 0) := by
@@ -152,7 +152,7 @@ theorem advance_state (V : Language Bool) (w : ℕ → ℕ) (x : List Bool) (i a
 
 /-- The terminal test compares the rank with its binary fuel:
 `finished w z = beq ⟨fst(snd z), bits(2^(w |fst z|))⟩`.
-[PS10, Theorem 180.1, step 4] -/
+[PS10, Theorem 180.1, final paragraph of the proof] -/
 def finished (w : ℕ → ℕ) (z : List Bool) : Bool :=
   BinArith.beq (pairEncode (pairFstD (pairSndD z)) (Nat.bits (2 ^ w (pairFstD z).length)))
 
@@ -180,7 +180,7 @@ theorem finished_state (w : ℕ → ℕ) (x : List Bool) (i a : ℕ) :
 
 /-- The output bit tests whether the doubled count exceeds the fuel:
 `payload w z = [lt ⟨bits(2^(w |fst z|)),add ⟨snd(snd z),snd(snd z)⟩⟩]`.
-[AB09, §7.1, p. 126]; [PS10, Theorem 180.1, step 4] -/
+[AB09, §7.1, p. 126]; [PS10, Theorem 180.1, final paragraph of the proof] -/
 def payload (w : ℕ → ℕ) (z : List Bool) : List Bool :=
   [BinArith.lt (pairEncode (Nat.bits (2 ^ w (pairFstD z).length))
     (BinArith.add (pairEncode (pairSndD (pairSndD z)) (pairSndD (pairSndD z)))))]
@@ -217,7 +217,7 @@ theorem polyTimeComputable_initial : PolyTimeComputable fun x => state x 0 0 := 
 
 /-- Through the terminal rank, the state has linear width in the input and
 seed length: `|state x i a| ≤ 2|x|+3m+7` if `a ≤ i ≤ 2^m`.
-[AB09, §7.1, p. 126]; [PS10, Theorem 180.1, step 4] -/
+[AB09, §7.1, p. 126]; [PS10, Theorem 180.1, final paragraph of the proof] -/
 theorem length_state_le (x : List Bool) (m i a : ℕ) (hi : i ≤ 2 ^ m) (ha : a ≤ i) :
     (state x i a).length ≤ 2 * x.length + 3 * m + 7 := by
   have hlen (j : ℕ) (hj : j ≤ 2 ^ m) : (Nat.bits j).length ≤ m + 1 := by
