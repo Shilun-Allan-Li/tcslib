@@ -13,6 +13,9 @@ Local modifications (see policy.md §2, vendored code, and the repository NOTICE
 * added the repository-standard `set_option` header;
 * appended reading lemmas (`rfl`/`Iff.rfl` restatements of definitions) for TCSlib's own
   proofs, which do not unfold vendored definitions.
+* added input, output, coin and halving constructs, and threaded output and coin indices
+  through the affected syntax, semantics and run witnesses;
+* added a docstring with a proof sketch to `Ends.of_blockSafe`.
 The remaining content is unchanged.
 -/
 import TCSlib.Programs.Light.Logic
@@ -153,6 +156,12 @@ theorem Stmt.Runs.ite_neg {c : Cond} {s t : Stmt} {σ : State} {R : State → Pr
     (Stmt.ite c s t).Runs lim σ R :=
   ⟨⟨hs, fun hp => absurd hp hc, fun _ => h.1⟩, by simpa only [Stmt.after, if_neg hc] using h.2⟩
 
+/-- A block that runs safely from `σ`, given `s.blockCost` steps, ends in `s.after σ`.
+
+**Proof sketch.** Induction on the statement. `skip`, `set` and `store` are their `Ends` rules;
+`seq` and `ite` compose the induction hypotheses with `Ends.seq` and `Ends.ite`, the branch read
+through `Stmt.after`. Loops, calls and the four input/output statements are not blocks, so
+`BlockSafe` is false for them. -/
 theorem Ends.of_blockSafe : ∀ {s : Stmt} {σ : State} {T : ℕ} {Q : State → Prop}, s.BlockSafe lim σ →
     s.blockCost ≤ T → Q (s.after σ) → Ends lim P d s σ T Q
   | .skip, _, _, _, _, _, h => Ends.skip h
@@ -170,6 +179,10 @@ theorem Ends.of_blockSafe : ∀ {s : Stmt} {σ : State} {T : ℕ} {Q : State →
       hT
   | .while _ _, _, _, _, hs, _, _ => hs.elim
   | .call _ _ _, _, _, _, hs, _, _ => hs.elim
+  | .inBit _ _, _, _, _, hs, _, _ => hs.elim
+  | .emit _, _, _, _, hs, _, _ => hs.elim
+  | .coin _, _, _, _, hs, _, _ => hs.elim
+  | .half _ _, _, _, _, hs, _, _ => hs.elim
 
 /-- **Blocks.**  A block that runs safely from σ ends within any T ≥ s.blockCost, in the state
 s.after σ. -/
@@ -189,11 +202,11 @@ theorem Ends.next {σ : State} {T : ℕ} {s₁ s₂ : Stmt} {Q : State → Prop}
 run statement by statement. -/
 theorem Ends.seqAssoc {σ : State} {T : ℕ} {s₁ s₂ s₃ : Stmt} {Q : State → Prop}
     (h : Ends lim P d (s₁ ;; (s₂ ;; s₃)) σ T Q) : Ends lim P d ((s₁ ;; s₂) ;; s₃) σ T Q := by
-  obtain ⟨σ', _, he, hc, hq⟩ := h
+  obtain ⟨σ', o, r, _, he, hc, hq⟩ := h
   cases he with
   | seq he₁ he₂₃ =>
     cases he₂₃ with
-    | seq he₂ he₃ => exact ⟨σ', _, .seq (.seq he₁ he₂) he₃, by omega, hq⟩
+    | seq he₂ he₃ => exact ⟨σ', _, _, _, .seq (.seq he₁ he₂) he₃, by omega, hq⟩
 
 /-- A `skip` before the rest of the program takes no step. -/
 theorem Ends.skipThen {σ : State} {T : ℕ} {s : Stmt} {Q : State → Prop} (h : Ends lim P d s σ T Q) :
@@ -203,11 +216,11 @@ theorem Ends.skipThen {σ : State} {T : ℕ} {s : Stmt} {Q : State → Prop} (h 
 /-- A `skip` may be put behind a statement. -/
 theorem Ends.skipLast {σ : State} {T : ℕ} {s : Stmt} {Q : State → Prop}
     (h : Ends lim P d (s ;; .skip) σ T Q) : Ends lim P d s σ T Q := by
-  obtain ⟨σ', _, he, hc, hq⟩ := h
+  obtain ⟨σ', o, r, _, he, hc, hq⟩ := h
   cases he with
   | seq he₁ he₂ =>
     cases he₂
-    exact ⟨σ', _, he₁, by omega, hq⟩
+    exact ⟨σ', _, _, _, he₁, by omega, hq⟩
 
 /-- A program that is defined as a sequence may be treated as the sequence. -/
 theorem Ends.seqSelf {σ : State} {T : ℕ} {s₁ s₂ : Stmt} {Q : State → Prop}
@@ -273,12 +286,12 @@ theorem Ends.iteThen {σ : State} {T : ℕ} {c : Cond} {s₁ s₂ s : Stmt} {Q :
     (hs : c.Safe lim σ := by light_side) (hT : c.cost + 1 ≤ T := by light_time) :
     Ends lim P d (.ite c s₁ s₂ ;; s) σ T Q := by
   by_cases hc : c.Holds σ
-  · obtain ⟨σ'', _, he, hk, hq⟩ := h₁ hc
+  · obtain ⟨σ'', o, r, _, he, hk, hq⟩ := h₁ hc
     cases he with
-    | seq he₁ he₂ => exact ⟨σ'', _, .seq (.iteTrue hs hc he₁) he₂, by omega, hq⟩
-  · obtain ⟨σ'', _, he, hk, hq⟩ := h₂ hc
+    | seq he₁ he₂ => exact ⟨σ'', _, _, _, .seq (.iteTrue hs hc he₁) he₂, by omega, hq⟩
+  · obtain ⟨σ'', o, r, _, he, hk, hq⟩ := h₂ hc
     cases he with
-    | seq he₁ he₂ => exact ⟨σ'', _, .seq (.iteFalse hs hc he₁) he₂, by omega, hq⟩
+    | seq he₁ he₂ => exact ⟨σ'', _, _, _, .seq (.iteFalse hs hc he₁) he₂, by omega, hq⟩
 
 /-- A branch, followed by the rest of the program, where the test says `p`: the first side is run
 under the hypothesis `p`, the second under `¬ p`. -/

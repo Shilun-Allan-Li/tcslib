@@ -12,10 +12,13 @@ Local modifications (see policy.md §2, vendored code, and the repository NOTICE
 * namespaces `EndStatement` and `ThreeSumApsp.WordRam` renamed to `WordRAM`, and `ThreeSumApsp` to `Light`, with module names and paths in comments updated;
 * added a `## References` section citing [AFM26];
 * added the repository-standard `set_option` header.
+* added input, output, coin and halving cases and threaded the output and coin indices;
+  compilation of the four new constructs is temporarily admitted.
 The remaining content is unchanged.
 -/
 import TCSlib.Programs.Light.Compiler.Simulation
 import TCSlib.Programs.Light.Compiler.StartUp
+import TCSlib.Programs.Light.IO
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -239,8 +242,9 @@ the cell -3 holds the result of the procedure and the cells `a ≥ 0` hold the f
 cells -1 and -2, the cells below `-lowCell` and the cells from `lim.space` on are unchanged.  The
 two constants of the time depend on the text of P and on dec only. -/
 theorem compileProgram_correct {lim : Limits} {P : Program} {p0 : ℕ} {dec : Bool} {μ : ℕ → ℤ}
-    {i j : ℤ} {σ' : State} {c : ℕ} {m : ℤ → BitVec W}
-    (h : Exec lim P 0 (mainStmt p0) ⟨frame [0, i, j], μ⟩ σ' c)
+    {i j : ℤ} {σ' : State} {o r : List Bool} {c : ℕ} {m : ℤ → BitVec W}
+    (h : Exec lim P 0 (mainStmt p0) ⟨frame [0, i, j], μ⟩ σ' o r c)
+    (hw : (1 : ℤ) ≤ lim.word)
     (hfit : Fits W lim (dispPos P dec) (stackCells P lim)) (hm : Input lim μ i j m) :
     ∃ m' : ℤ → BitVec W, exec (compileProgram P p0 dec) (ramSteps P dec c) 0 m
         = some (verdictOf dec (σ'.loc 0), m') ∧ Outcome lim P dec m σ' m' := by
@@ -248,12 +252,12 @@ theorem compileProgram_correct {lim : Limits} {P : Program} {p0 : ℕ} {dec : Bo
   have hdisp := two_mul_frameSize_add_le_dispPos P dec
   have hσ : State.Bounded lim ⟨frame [0, i, j], μ⟩ :=
     bounded_frame (by simp [hm.arg1_le, hm.arg2_le, (abs_nonneg i).trans hm.arg1_le]) hm.bounded
-  have hσ' := h.bounded hσ
+  have hσ' := h.bounded hw hσ
   -- the start-up code
   have run₁ := steps_start P p0 dec (setting P p0 dec hfit).inRange_neg_one m
   have keep₁ := agreeOutside_startMem hF (dispPos P dec) m
   -- the outermost statement
-  obtain ⟨m', n, fin⟩ := sim (setting P p0 dec hfit) h mainPos mainFrame _ (start_mainStmt hfit hσ
+  obtain ⟨m', n, fin⟩ := sim (setting P p0 dec hfit) hw h mainPos mainFrame _ (start_mainStmt hfit hσ
     (rel_startMem _ hF (by simp only [setting, codeLayout, mainFrame]; omega)
       (fun a _ => hm.rep a) hm.arg1 hm.arg2))
   have hn : n ≤ stepsPerStep (dispPos P dec) * c := fin.le

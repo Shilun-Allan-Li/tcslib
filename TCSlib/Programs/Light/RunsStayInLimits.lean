@@ -12,11 +12,14 @@ Local modifications (see policy.md §2, vendored code, and the repository NOTICE
 * namespaces `EndStatement` and `ThreeSumApsp.WordRam` renamed to `WordRAM`, and `ThreeSumApsp` to `Light`, with module names and paths in comments updated;
 * added a `## References` section citing [AFM26];
 * added the repository-standard `set_option` header.
+* added input, output, coin and halving constructs, and threaded output and coin indices
+  through the affected syntax, semantics and run witnesses.
 The remaining content is unchanged.
 -/
 import TCSlib.Programs.Light.Syntax
 import TCSlib.Programs.Util.List
 import Mathlib.Tactic.SplitIfs
+import Mathlib.Algebra.Order.Ring.Abs
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -79,8 +82,15 @@ theorem bounded_callFrame {σ : State} (hσ : σ.Bounded lim) (args : List Expr)
   obtain ⟨e, he, rfl⟩ := List.mem_map.1 hv
   exact Expr.abs_val_le hσ e (ha e he)
 
-/-- A run that starts with words in all variables and cells ends with words in all of them. -/
-theorem Exec.bounded {s : Stmt} {σ σ' : State} {c : ℕ} (h : Exec lim P d s σ σ' c)
+variable {s : Stmt} {σ σ' : State} {o r : List Bool} {c : ℕ}
+
+/-- A run that starts with words in all variables and cells ends with words in all of them,
+provided the word limit holds `1`.
+
+**Proof sketch.** Induct on `Exec`. Existing assignments use `Expr.abs_val_le`, and calls use
+`bounded_callFrame`. Input reads and coins write `0` or `1`; integer halving preserves the
+absolute-value bound. The other rules propagate boundedness. -/
+theorem Exec.bounded (h : Exec lim P d s σ σ' o r c) (hw : (1 : ℤ) ≤ lim.word)
     (hσ : σ.Bounded lim) : σ'.Bounded lim := by
   induction h with
   | skip => exact hσ
@@ -94,10 +104,26 @@ theorem Exec.bounded {s : Stmt} {σ σ' : State} {c : ℕ} (h : Exec lim P d s �
   | call ha _ _ _ ih =>
     have hbody := ih (bounded_callFrame hσ _ ha)
     exact ⟨abs_update_le hσ.1 (hbody.1 0) _, hbody.2⟩
+  | @inBit d σ x e hs =>
+    have hv : |inBitVal lim.input (e.val σ)| ≤ lim.word := by
+      rw [inBitVal_eq]
+      split_ifs <;> simp only [abs_one, abs_zero] <;> omega
+    exact ⟨abs_update_le hσ.1 hv _, hσ.2⟩
+  | emit _ => exact hσ
+  | coin b =>
+    have hv : |(if b then 1 else 0 : ℤ)| ≤ lim.word := by
+      cases b <;> simp only [Bool.false_eq_true, ite_false, ite_true, abs_zero, abs_one] <;> omega
+    exact ⟨abs_update_le hσ.1 hv _, hσ.2⟩
+  | @half d σ x e hs =>
+    have hv := Expr.abs_val_le hσ _ hs
+    have hd : |(e.val σ / 2 : ℤ)| ≤ lim.word := by
+      rw [abs_le] at hv ⊢
+      omega
+    exact ⟨abs_update_le hσ.1 hd _, hσ.2⟩
 
 /-- A run does not change the cells from lim.space on. -/
-theorem Exec.mem_outside {s : Stmt} {σ σ' : State} {c : ℕ} (h : Exec lim P d s σ σ' c) (a : ℕ)
-    (ha : lim.space ≤ a) : σ'.mem a = σ.mem a := by
+theorem Exec.mem_outside (h : Exec lim P d s σ σ' o r c) (a : ℕ) (ha : lim.space ≤ a) :
+    σ'.mem a = σ.mem a := by
   induction h with
   | skip => rfl
   | set _ => rfl
@@ -110,6 +136,10 @@ theorem Exec.mem_outside {s : Stmt} {σ σ' : State} {c : ℕ} (h : Exec lim P d
   | whileFalse _ _ => rfl
   | whileTrue _ _ _ _ ih₁ ih₂ => rw [ih₂, ih₁]
   | call _ _ _ _ ih => exact ih
+  | inBit _ => rfl
+  | emit _ => rfl
+  | coin _ => rfl
+  | half _ => rfl
 
 end Light
 end

@@ -178,7 +178,7 @@ private theorem tmMeets_behind {lim : Limits} {Q : Program} {p d T : ℕ}
     {args : List ℤ} {μ : ℕ → ℤ} {R : ℤ → (ℕ → ℤ) → Prop}
     (h : Meets lim Q p d args μ T R) (Pre Post : Program) :
     Meets lim (Program.behind Pre Q ++ Post) (p + Pre.length) d args μ T R := by
-  obtain ⟨body, hp, he⟩ := (meets_iff).mp h
+  obtain ⟨body, hp, he⟩ := (meets_iff ..).mp h
   exact Meets.of_body (getElem?_append_of_eq_some (Program.getElem?_behind_right Pre hp) Post)
     (he.shift_append Pre Post)
 
