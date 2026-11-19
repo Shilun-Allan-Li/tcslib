@@ -49,6 +49,11 @@ theorem bitNoise_Coins (t : ℕ) (f : (Fin t → Bool) → ℤ) :
 theorem bitNoise_sample (t : ℕ) (f : (Fin t → Bool) → ℤ) (r : Fin t → Bool) :
     (bitNoise t f).sample r = f r := rfl
 
+/-- A sample of `bitNoise t f` at a seed of type `Coins` is `f` of the seed read through
+`bitNoise_Coins`: `(bitNoise t f).sample c = f (cast (bitNoise_Coins t f) c)`. -/
+theorem bitNoise_sample_cast (t : ℕ) (f : (Fin t → Bool) → ℤ) (c : (bitNoise t f).Coins) :
+    (bitNoise t f).sample c = f (cast (bitNoise_Coins t f) c) := rfl
+
 /-- An output's probability is its number of bit-seed preimages divided by `2^t`.
 Repeated outputs retain their multiplicities [Pei16, Definition 4.2.1, finite-law
 specialization].
@@ -88,6 +93,12 @@ theorem centeredNoise_Coins (t : ℕ) :
 /-- The centered sampler's sample projection is exactly its integer two-count difference. -/
 theorem centeredNoise_sample (t : ℕ) (r : Fin (t + t) → Bool) :
     (centeredNoise t).sample r = centeredValue t r := rfl
+
+/-- A sample of `centeredNoise t` at a seed of type `Coins` is `centeredValue t` of the seed
+read through `centeredNoise_Coins`:
+`(centeredNoise t).sample c = centeredValue t (cast (centeredNoise_Coins t) c)`. -/
+theorem centeredNoise_sample_cast (t : ℕ) (c : (centeredNoise t).Coins) :
+    (centeredNoise t).sample c = centeredValue t (cast (centeredNoise_Coins t) c) := rfl
 
 /-- Every centered-noise output has absolute value at most `t`.
 

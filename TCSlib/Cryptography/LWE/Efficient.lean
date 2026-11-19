@@ -476,17 +476,9 @@ theorem noise_efficient_of_bitSeeds (t : PolyExpr) (n : ℕ → ℕ) (hn : ∀ �
 /-- **Bit noise is efficient**: the bit-seed noise `bitNoise (n κ) (f κ)` (`LWE/BitNoise.lean`)
 with `n(κ) = t(κ)` and a polynomial-time `g` writing `noiseWord (f κ r)` on `⟨1^κ, r⟩` is
 efficient in the contract form, its seeds drawn from fair coins (`noise_efficient_of_bitSeeds`,
-`bitNoise_Coins`). Glue.
-
-**The hypothesis `hs`** is the sample equation of `bitNoise` at a seed of type
-`(bitNoise n f).Coins` read through the cast `bitNoise_Coins`: true by definition, but not
-derivable from the published reader `bitNoise_sample` (stated at seeds of type `Fin n → Bool`)
-without unfolding `bitNoise` (Rule 10). Scope request EF-D1-SR1 adds it to `LWE/BitNoise.lean` as
-`bitNoise_sample_cast`; `hs` is then discharged by `fun κ => bitNoise_sample_cast _ _`. -/
+`bitNoise_Coins`, `bitNoise_sample_cast`). Glue. -/
 theorem noise_efficient_of_bitNoise (t : PolyExpr) (n : ℕ → ℕ) (hn : ∀ κ, n κ = t.eval κ)
     (f : ∀ κ, (Fin (n κ) → Bool) → ℤ)
-    (hs : ∀ κ (c : (bitNoise (n κ) (f κ)).Coins),
-      (bitNoise (n κ) (f κ)).sample c = f κ (cast (bitNoise_Coins (n κ) (f κ)) c))
     {g : List Bool → List Bool} (hg : PolyTimeComputable g)
     (hgf : ∀ κ r, g (pairEncode (List.replicate κ true) (List.ofFn r)) = noiseWord (f κ r)) :
     CoinSampling.SamplesEfficiently (P := fun _ => Unit)
@@ -496,7 +488,7 @@ theorem noise_efficient_of_bitNoise (t : PolyExpr) (n : ℕ → ℕ) (hn : ∀ �
       (fun κ _ => (bitNoise (n κ) (f κ)).sample) :=
   noise_efficient_of_bitSeeds t n hn (fun κ => bitNoise (n κ) (f κ))
     (fun κ => bitNoise_Coins (n κ) (f κ)) hg fun κ c => by
-      rw [hgf, hs]
+      rw [hgf, bitNoise_sample_cast]
 
 /-! ### The core of the centered noise -/
 
@@ -605,39 +597,11 @@ theorem centeredCore_ofFn (T : PolyExpr) (κ : ℕ) (r : Fin (T.eval κ + T.eval
   push_cast
   rfl
 
-/-- The sample equation of `centeredNoise (T κ)` at seeds of type `Coins`, read through the cast
-`centeredNoise_Coins`: the hypothesis of `noise_efficient_centeredNoise`, true by definition
-(see `noise_efficient_of_bitNoise` on why it is a hypothesis; scope request EF-D1-SR1). Glue. -/
-def CenteredSampleEq (T : PolyExpr) : Prop :=
-  ∀ κ (c : (centeredNoise (T.eval κ)).Coins), (centeredNoise (T.eval κ)).sample c =
-    centeredValue (T.eval κ) (cast (centeredNoise_Coins (T.eval κ)) c)
-
-/-- The defining equation of `CenteredSampleEq`. -/
-theorem centeredSampleEq_iff (T : PolyExpr) :
-    CenteredSampleEq T ↔ ∀ κ (c : (centeredNoise (T.eval κ)).Coins),
-      (centeredNoise (T.eval κ)).sample c =
-        centeredValue (T.eval κ) (cast (centeredNoise_Coins (T.eval κ)) c) := Iff.rfl
-
-/-- **The zero-width centered noise reads as zero**: `CenteredSampleEq (const 0)`, from published
-readers only: every sample of `centeredNoise 0` has absolute value at most `0`
-(`centeredNoise_bounded`, `Noise.bounded_iff`), and `centeredValue 0 r` is a difference of empty
-sums (`centeredValue_eq`). Glue. -/
-theorem centeredSampleEq_zero : CenteredSampleEq (.const 0) := by
-  rw [centeredSampleEq_iff]
-  intro κ c
-  have hb := Int.natAbs_eq_zero.1 (Nat.le_zero.1
-    (((Noise.bounded_iff _ _).1 (centeredNoise_bounded ((PolyExpr.const 0).eval κ)) c).trans
-      (PolyExpr.eval_const 0 κ).le))
-  have h0 : ∀ g : Fin ((PolyExpr.const 0).eval κ) → Bool, ∑ i, ((g i).toNat : ℤ) = 0 :=
-    fun g => Finset.sum_eq_zero fun i _ =>
-      absurd (i.2.trans_eq (PolyExpr.eval_const 0 κ)) (Nat.not_lt_zero _)
-  rw [hb, centeredValue_eq, h0, h0, sub_self]
-
 /-- **The centered noise is efficient**: `centeredNoise (T κ)` (`LWE/BitNoise.lean`), with
 `2 T(κ)` fair seed bits drawn by the bucket sampler and the core `centeredCore T`, is efficient
 in the contract form [PS10, Definition 23.4] (`noise_efficient_of_bitSeeds`,
-`centeredCore_ofFn`), given its sample equation `CenteredSampleEq T`. Glue. -/
-theorem noise_efficient_centeredNoise (T : PolyExpr) (hs : CenteredSampleEq T) :
+`centeredCore_ofFn`, `centeredNoise_sample_cast`). Glue. -/
+theorem noise_efficient_centeredNoise (T : PolyExpr) :
     CoinSampling.SamplesEfficiently (P := fun _ => Unit)
       (Draw := fun κ _ => (centeredNoise (T.eval κ)).Coins) (β := fun _ _ => ℤ)
       (fun κ _ => seedModulusWord (T.eval κ + T.eval κ))
@@ -646,7 +610,7 @@ theorem noise_efficient_centeredNoise (T : PolyExpr) (hs : CenteredSampleEq T) :
   noise_efficient_of_bitSeeds (T.add T) (fun κ => T.eval κ + T.eval κ)
     (fun κ => (PolyExpr.eval_add T T κ).symm) (fun κ => centeredNoise (T.eval κ))
     (fun κ => centeredNoise_Coins (T.eval κ)) (polyTimeComputable_centeredCore T)
-    fun κ c => by rw [centeredCore_ofFn, (centeredSampleEq_iff T).1 hs κ c]
+    fun κ c => by rw [centeredCore_ofFn, centeredNoise_sample_cast]
 
 /-! ### Constructors -/
 
@@ -706,47 +670,43 @@ theorem EfficientFamily.ofBitSeeds_encodeSeed (F : Family)
 
 /-- **The dyadic efficient family with centered noise**: the schedule `n = N(κ)`, `m = M(κ)`,
 `q = 2^{W(κ)}` (`dyadicFamily`) with noise `centeredNoise (T κ)`, its parameter map
-(`dyadicFamily_params_uniform`) and its noise sampler (`centeredCore T`) proved efficient,
-given the sample equation `CenteredSampleEq T`. No hardness is claimed. Glue. -/
-def EfficientFamily.ofDyadic (N M W T : PolyExpr) (hW : ∀ κ, 1 ≤ W.eval κ)
-    (hs : CenteredSampleEq T) : EfficientFamily :=
+(`dyadicFamily_params_uniform`) and its noise sampler (`centeredCore T`,
+`centeredNoise_sample_cast`) proved efficient. No hardness is claimed. Glue. -/
+def EfficientFamily.ofDyadic (N M W T : PolyExpr) (hW : ∀ κ, 1 ≤ W.eval κ) :
+    EfficientFamily :=
   EfficientFamily.ofBitSeeds (dyadicFamily N M W hW fun κ => centeredNoise (T.eval κ))
     (dyadicFamily_params_uniform N M W hW _) (T.add T) (fun κ => T.eval κ + T.eval κ)
     (fun κ => (PolyExpr.eval_add T T κ).symm) (fun κ => centeredNoise_Coins (T.eval κ))
     (polyTimeComputable_centeredCore T) fun κ c =>
       (centeredCore_ofFn T κ _).trans
-        (congrArg noiseWord ((centeredSampleEq_iff T).1 hs κ c).symm)
+        (congrArg noiseWord (centeredNoise_sample_cast (T.eval κ) c).symm)
 
-/-- The family of `EfficientFamily.ofDyadic N M W T hW hs` is the dyadic family with noise
+/-- The family of `EfficientFamily.ofDyadic N M W T hW` is the dyadic family with noise
 `centeredNoise (T κ)`. -/
-theorem EfficientFamily.ofDyadic_toFamily (N M W T : PolyExpr) (hW : ∀ κ, 1 ≤ W.eval κ)
-    (hs : CenteredSampleEq T) :
-    (EfficientFamily.ofDyadic N M W T hW hs).toFamily =
+theorem EfficientFamily.ofDyadic_toFamily (N M W T : PolyExpr) (hW : ∀ κ, 1 ≤ W.eval κ) :
+    (EfficientFamily.ofDyadic N M W T hW).toFamily =
       dyadicFamily N M W hW fun κ => centeredNoise (T.eval κ) := rfl
 
-/-- The noise word of `EfficientFamily.ofDyadic N M W T hW hs` is
+/-- The noise word of `EfficientFamily.ofDyadic N M W T hW` is
 `seedModulusWord (2 T(κ))`. -/
 theorem EfficientFamily.ofDyadic_noiseInput (N M W T : PolyExpr) (hW : ∀ κ, 1 ≤ W.eval κ)
-    (hs : CenteredSampleEq T) (κ : ℕ) :
-    (EfficientFamily.ofDyadic N M W T hW hs).noiseInput κ =
+    (κ : ℕ) :
+    (EfficientFamily.ofDyadic N M W T hW).noiseInput κ =
       seedModulusWord (T.eval κ + T.eval κ) := rfl
 
 /-! ### Non-vacuity -/
 
 /-- **A non-vacuity instance** of `EfficientFamily`: `n = κ + 1`, `m = 2(κ + 1)²`,
-`q = 2^{κ+1}` and the centered noise `χ = centeredNoise 0`, the point law at `0`
-(`EfficientFamily.ofDyadic`, `centeredSampleEq_zero`). Its parameter map and its noise sampler
-are proved efficient. **No hardness is claimed**: this instance only shows that the structure is
-inhabited; `DLWEAssumption dyadicExample.toFamily` is not asserted (and fails for zero noise).
-With the reader of scope request EF-D1-SR1, `EfficientFamily.ofDyadic … (.const 1) …` gives the
-same instance with `χ = centeredNoise 1`. Glue. -/
+`q = 2^{κ+1}` and the centered noise `χ = centeredNoise 1`, the difference of two fair bits
+(`EfficientFamily.ofDyadic`). Its parameter map and its noise sampler are proved efficient.
+**No hardness is claimed**: this instance only shows that the structure is inhabited;
+`DLWEAssumption dyadicExample.toFamily` is not asserted. Glue. -/
 def dyadicExample : EfficientFamily :=
   EfficientFamily.ofDyadic (.add .var (.const 1)) (.mul (.const 2) (.pow (.add .var (.const 1)) 2))
-    (.add .var (.const 1)) (.const 0)
+    (.add .var (.const 1)) (.const 1)
     (fun κ => by
       rw [PolyExpr.eval_add, PolyExpr.eval_const]
       exact Nat.le_add_left 1 _)
-    centeredSampleEq_zero
 
 /-- The parameters of `dyadicExample` at `κ`: dimension `κ + 1`, `2(κ + 1)²` samples and
 modulus `2^{κ+1}`. -/
@@ -763,9 +723,9 @@ theorem dyadicExample_parameters (κ : ℕ) :
   · show 2 ^ (PolyExpr.add .var (.const 1)).eval κ = 2 ^ (κ + 1)
     rw [PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const]
 
-/-- The noise of `dyadicExample` is `centeredNoise 0` at every `κ`. -/
-theorem dyadicExample_noise (κ : ℕ) : dyadicExample.noise κ = centeredNoise 0 := by
-  show centeredNoise ((PolyExpr.const 0).eval κ) = centeredNoise 0
+/-- The noise of `dyadicExample` is `centeredNoise 1` at every `κ`. -/
+theorem dyadicExample_noise (κ : ℕ) : dyadicExample.noise κ = centeredNoise 1 := by
+  show centeredNoise ((PolyExpr.const 1).eval κ) = centeredNoise 1
   rw [PolyExpr.eval_const]
 
 end TCSlib.Cryptography.LWE
