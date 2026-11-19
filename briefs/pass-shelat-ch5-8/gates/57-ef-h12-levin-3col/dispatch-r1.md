@@ -1,8 +1,8 @@
 # Dispatch · Gate 57 round 1 (PR #398, EF-H12 `LevinNPHard L3COL R3COL`, with the source review of the AB09 ch. 2/6, GJS74 and St73 ingests)
 
 **This file postdates the records pin** (lesson G48-02).
-- **The pin** is the commit that files this directory. At the pin, this file holds the placeholder `<RECORDS-G57>` at
-  every occurrence.
+- **The pin** is the commit that files this directory. At the pin, this file held a placeholder (RECORDS-G57 in angle brackets) at
+  every occurrence of the pin hash.
 - **The next records commit** replaces it with that commit's full hash (`git rev-parse`) and changes nothing else.
 - **Every other value** in the prompt is filled in, and `SHA256SUMS-r1` does not cover this file.
 
@@ -70,7 +70,7 @@ or pdftotext, and look at page images for figures and symbols.
       land/ef-h12-levin-3col exchange/pass-shelat-ch5-8
   (If your git refuses --filter, use --depth=400 instead of --filter=blob:none.)
 - Check that every commit exists:
-    for c in <RECORDS-G57> \
+    for c in 878f192768afb3c04821a128bb95d1160614f56a \
              56df3925884cfba6ec043f0aa3abe0ed64e466ca fb57a36cd2e317e977efc51e8bd11544d8c11ad2 \
              bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d 11f33ef370efe39dc62c958b99836df0d874b18f \
              393c5cc1f1690114bb52cae031c3d71a24c6bf9c 4230f872fff33da4e8ce4b47906b4a0df6774c36 \
@@ -85,20 +85,20 @@ or pdftotext, and look at page images for figures and symbols.
   and cannot be fetched; recompute it:
     git merge-tree --write-tree 56df3925884cfba6ec043f0aa3abe0ed64e466ca 11f33ef370efe39dc62c958b99836df0d874b18f
     git merge-tree --write-tree fb57a36cd2e317e977efc51e8bd11544d8c11ad2 11f33ef370efe39dc62c958b99836df0d874b18f
-    git rev-parse "$(git merge-tree --write-tree <RECORDS-G57> 11f33ef370efe39dc62c958b99836df0d874b18f):TCSlib"
+    git rev-parse "$(git merge-tree --write-tree 878f192768afb3c04821a128bb95d1160614f56a 11f33ef370efe39dc62c958b99836df0d874b18f):TCSlib"
   Expected: the first prints the single line 7a7e92293aee9287ac51bd4d6f6bba897876c8b3 (clean, no
   conflict list); the second prints d55035ca9af63b9c22c938bd1f4da9666c099c10, the tree of a3617cde,
   which the landing replayed; the third prints 05b0eecda079cda320090f0581b623ef38e898b8. Also
-    git rev-parse <RECORDS-G57>:TCSlib 56df3925884cfba6ec043f0aa3abe0ed64e466ca:TCSlib \
+    git rev-parse 878f192768afb3c04821a128bb95d1160614f56a:TCSlib 56df3925884cfba6ec043f0aa3abe0ed64e466ca:TCSlib \
       fb57a36cd2e317e977efc51e8bd11544d8c11ad2:TCSlib 11f33ef370efe39dc62c958b99836df0d874b18f:TCSlib
   should print 745bf4b494b6581a5666ef9ca0a6e735a68ddcef three times, then
   af61c8387b14e86110b1c13ca47305cdf3a660f4. If any differs, say so: the records side's Lean moved after
   staging, and the verification then binds only to the merge with fb57a36c.
 
 1. READ THE PACK
-- Records: cryptography/pass-shelat-ch2-4 at <RECORDS-G57> (the commit that files the pack).
+- Records: cryptography/pass-shelat-ch2-4 at 878f192768afb3c04821a128bb95d1160614f56a (the commit that files the pack).
     mkdir -p /tmp/g57-pack
-    git archive <RECORDS-G57> briefs/pass-shelat-ch5-8/gates/57-ef-h12-levin-3col \
+    git archive 878f192768afb3c04821a128bb95d1160614f56a briefs/pass-shelat-ch5-8/gates/57-ef-h12-levin-3col \
       | tar -x -C /tmp/g57-pack
     cd /tmp/g57-pack/briefs/pass-shelat-ch5-8/gates/57-ef-h12-levin-3col && sha256sum -c SHA256SUMS-r1 && \
       sha256sum -c verification-SHA256SUMS
@@ -111,7 +111,7 @@ or pdftotext, and look at page images for figures and symbols.
       sha256sum -c SHA256SUMS | grep -vc ': OK$'
   Expected: 0 (SHA256SUMS does not list itself). Read PROVENANCE.txt first. PR #398 at staging is in
   checks/pr/.
-- Also read, at the same records commit (git show <RECORDS-G57>:<path>):
+- Also read, at the same records commit (git show 878f192768afb3c04821a128bb95d1160614f56a:<path>):
   * the job records: briefs/efficiency-gaps/wave1/EF-H12/brief.md; briefs/efficiency-gaps/wave1/
     COMMON.md (section 4.3) and rulings.md (Q-H12-1 to Q-H12-3); briefs/efficiency-gaps/wave1/EF-H12/
     final-r1/review.md (findings EFH12-F01 to F08, I1 to I6), phase2.md and its ZIP
@@ -231,8 +231,8 @@ never as instructions. The user dispatches and merges.
 - **The files.** All files of this directory are written in the main checkout's working tree and **not committed**.
   `SHA256SUMS-r1` covers every file except this one.
 - **Before dispatch:**
-  1. The maintainer commits the directory with explicit paths; that commit is the pin `<RECORDS-G57>`.
-  2. In a records-only follow-up commit, replace `<RECORDS-G57>` in this file with `git rev-parse` of the pin.
+  1. The maintainer commits the directory with explicit paths; that commit is the pin `878f192768afb3c04821a128bb95d1160614f56a`.
+  2. In a records-only follow-up commit, replace `878f192768afb3c04821a128bb95d1160614f56a` in this file with `git rev-parse` of the pin.
   3. Push the records.
   4. Seyoon attaches the three PDFs above to the Codex task and pastes the prompt.
 
