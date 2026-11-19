@@ -32,8 +32,10 @@ three-dot view):
 **Records pin:** the commit that files this directory, `briefs/io-components/gates/56-foundations/`.
 - The records tip replayed is `53e430b68cbe22416312a4f80bbc3426c71cf86d`. Its `TCSlib` tree is
   `745bf4b494b6581a5666ef9ca0a6e735a68ddcef`, the same Lean as Gate 54's replayed tip.
-- During staging the records branch moved, records-only, to `057fe893a12ed627b21a1a81c09e6451e8752b56`: the Gate 55
-  staging and pin, and a work-in-progress commit of part of this directory (not the pin).
+- During staging the records branch moved, records-only:
+  - to `057fe893a12ed627b21a1a81c09e6451e8752b56`: the Gate 55 staging and pin, and a work-in-progress commit of part
+    of this directory (not the pin);
+  - then to `b0d5438dadb2d1c92f46489039b9fa452eb01a13` (EF-H11 records).
   - 0 paths changed under `TCSlib/`, `TCSlib.lean`, `audits/`, `scripts/`, the toolchain, the manifest and the
     lakefile.
   - The `TCSlib` tree is the same.

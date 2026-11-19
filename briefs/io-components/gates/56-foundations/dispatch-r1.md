@@ -185,8 +185,10 @@ instructions. The user dispatches and merges.
 
 - **Who and where.** Staged 2026-11-19 by a maintainer sub-agent on the records checkout.
 - **The records tip.** The tip replayed is `53e430b68cbe22416312a4f80bbc3426c71cf86d`. During staging the branch moved
-  records-only to `057fe893a12ed627b21a1a81c09e6451e8752b56`, the Gate 55 pin plus a work-in-progress commit of part of
-  this directory. It changed 0 Lean, toolchain, manifest or lakefile paths, and the `TCSlib` tree is the same,
+  records-only:
+  - to `057fe893a12ed627b21a1a81c09e6451e8752b56`, the Gate 55 pin plus a work-in-progress commit of part of this
+    directory;
+  - then to `b0d5438dadb2d1c92f46489039b9fa452eb01a13` (EF-H11 records). It changed 0 Lean, toolchain, manifest or lakefile paths, and the `TCSlib` tree is the same,
   `745bf4b4…`.
 - **What is committed.** `pack-r1.md`, `SHA256SUMS-r1` and this file are written and **not committed**. The maintainer
   commits the directory with explicit paths, which makes the pin `<RECORDS-G56>`.
