@@ -1,0 +1,31 @@
+scratch/dup/DupProbe.lean:18:2: error: (deterministic) timeout at `isDefEq`, maximum number of heartbeats (4000000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+scratch/dup/DupProbe.lean:17:36: error: stuck at solving universe constraint
+  max (max ?u.503547 ?u.503548) ?u.503549 =?= u_1
+while trying to unify
+  acceptProb.{?u.503547, max ?u.503549 ?u.503548, ?u.503546} (fun z => ?X (Prod.snd.{?u.503548, ?u.503549} z)) ?D =
+    acceptProb.{?u.503547, ?u.503549, ?u.503546} ?X ?D : Prop
+with
+  acceptProb (fun r => ((fheView P χ μ r).1, (fheView P χ μ r).2.2)) D = acceptProb (realView P χ μ) D : Prop
+scratch/dup/DupProbe.lean:23:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+scratch/dup/DupProbe.lean:29:2: error: (deterministic) timeout at `isDefEq`, maximum number of heartbeats (4000000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+scratch/dup/DupProbe.lean:37:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+scratch/dup/DupProbe.lean:45:2: error: (deterministic) timeout at `isDefEq`, maximum number of heartbeats (4000000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+Try this:
+  [apply] exact abs_uexp_sub_le hc h
+
+real	7m34.039s
+user	7m36.325s
+sys	0m1.319s
+EXIT 1

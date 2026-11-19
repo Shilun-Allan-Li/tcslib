@@ -30,7 +30,7 @@ set_option autoImplicit false
 * `distAdv_levelHybrid_le` (L4): one level, `N` positions.
 * `distAdv_leveledView_le` (L5): IND-CPA of leveled GSW-FHE from DLWE.
 
-L4 is proved here; L5 is an admitted statement-phase target.
+Both are proved here.
 
 **Sources and reconstruction (P6-Q19 B).** The key chain is Gentry's [Gen09, §4.1, `KeyGen` of
 `E^(d)`, pp. 46–47, p056-b003], with his reverse order of the levels undone: his level `i` is
@@ -495,6 +495,63 @@ private theorem abs_acceptProb_id_levelReduction_sub_le (P : Parameters) (χ : L
     (acceptProb (id : PublicKey P × Ciphertext P → PublicKey P × Ciphertext P) (T ω))] at htri
   linarith
 
+/-- The leveled view is the hybrid `H_L`: `leveledView P χ L μ = levelHybrid P χ L μ L`, since no
+`e : Fin L` has `L ≤ e` (`leveledView_eq`, `levelHybrid_eq`). -/
+private theorem leveledView_eq_levelHybrid (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ : Bool) :
+    leveledView P χ L μ = levelHybrid P χ L μ L := by
+  funext r
+  rw [leveledView_eq, levelHybrid_eq]
+  refine Prod.ext rfl (Prod.ext (funext fun e => funext fun i => ?_) rfl)
+  simp only [not_le.mpr e.isLt, if_false]
+
+/-- **The hybrid `H_0` is phase 5's view under `challengeDist`**: `D` accepts `H_0(μ)` exactly as
+`challengeDist P χ L D` accepts `realView P χ μ`,
+`acceptProb (levelHybrid P χ L μ 0) D = acceptProb (realView P χ μ) (challengeDist P χ L D)`.
+
+**Proof sketch.** `challengeDist_eq` writes the distinguisher as `D` after a map `F` reading its
+own seeds, so `acceptProb_bind` moves those seeds into the sampler. The bijection `Ψ` plants the
+key seed and the challenge coins of `realView` as those of `pk_0` and of the challenge, keeping the
+replaced coordinates as a second factor; through `realView_eq`, `view_eq`, `levelHybrid_eq` and
+`Regev.keygen_fst` the sampler is `H_0` of the first factor (in `H_0` every level key encrypts `0`,
+so the secrets are not read), and `acceptProb_comp_equiv` and `acceptProb_fst` drop the second. -/
+private theorem acceptProb_levelHybrid_zero_realView (P : Parameters) (χ : LWE.Noise) (L : ℕ)
+    (μ : Bool) {ρ : Type*} [Fintype ρ] [Nonempty ρ] (D : LeveledView P L → ρ → Bool) :
+    acceptProb (levelHybrid P χ L μ 0) D = acceptProb (realView P χ μ) (challengeDist P χ L D) := by
+  let Ψ : (KeySeed P χ × Coins P) × LeveledSeeds P χ L ≃
+      LeveledSeeds P χ L × (KeySeed P χ × Coins P) :=
+    { toFun := fun w => ((Function.update w.2.1 0 w.1.1, w.2.2.1, w.1.2), (w.2.1 0, w.2.2.2))
+      invFun := fun v => ((v.1.1 0, v.1.2.2), (Function.update v.1.1 0 v.2.1, v.1.2.1, v.2.2))
+      left_inv := by
+        rintro ⟨⟨k, R₀⟩, K, RC, R₁⟩
+        simp
+      right_inv := by
+        rintro ⟨⟨K, RC, R₀⟩, k, R₁⟩
+        simp }
+  let F : PublicKey P × Ciphertext P → LeveledSeeds P χ L → LeveledView P L := fun v ω =>
+    (Function.update (fun d => (Regev.keygen P.lwe χ (ω.1 d)).1) 0 v.1,
+      fun e j => encrypt P (Regev.keygen P.lwe χ (ω.1 e.succ)).1 false (ω.2.1 e j), v.2)
+  have hdist : challengeDist P χ L D = fun v (c : LeveledSeeds P χ L × ρ) => D (F v c.1) c.2 := by
+    funext v c
+    exact challengeDist_eq P χ L D v c
+  have hview : (fun s : (KeySeed P χ × Coins P) × LeveledSeeds P χ L =>
+      F (realView P χ μ s.1) s.2) = fun s => levelHybrid P χ L μ 0 (Ψ s).1 := by
+    funext s
+    obtain ⟨⟨k, R₀⟩, K, RC, R₁⟩ := s
+    rw [realView_eq, view_eq]
+    simp only [F, Ψ, Equiv.coe_fn_mk, levelHybrid_eq, Regev.keygen_fst, Nat.zero_le, if_true]
+    have h0 : ∀ d : Fin (L + 1),
+        Function.update (fun d => LWE.sample P.lwe χ (K d)) 0 (LWE.sample P.lwe χ k) d =
+          LWE.sample P.lwe χ (Function.update K 0 k d) := by
+      intro d
+      by_cases hd : d = 0
+      · subst hd
+        simp
+      · simp [Function.update_of_ne hd]
+    simp only [Function.update_self, Function.update_of_ne (Fin.succ_ne_zero _)]
+    rw [← funext h0]
+  rw [hdist, acceptProb_bind, hview,
+    acceptProb_comp_equiv Ψ (fun z => levelHybrid P χ L μ 0 z.1) D, acceptProb_fst]
+
 /-! ### Targets L4–L5 -/
 
 /-- **L4. One level of the key hybrid.** For every level `e : Fin L`, bit `μ` and distinguisher
@@ -571,20 +628,54 @@ becomes the sum over the two chains, the level terms depending on the challenge 
 reconstruction disclosed (module docstring).
 
 **Proof sketch.** `leveledView P χ L μ = levelHybrid P χ L μ L` (`leveledView_eq`,
-`levelHybrid_eq`: no `e : Fin L` has `L ≤ e`). The chain `H_L(μ₀), …, H_0(μ₀), H_0(μ₁), …,
-H_L(μ₁)`: `abs_sub_le_sum_hybrids` (or the triangle inequality, `abs_sub_le`) on each side
-with L4 (`distAdv_levelHybrid_le`) for `e = L − 1, …, 0` (`Fin.sum_univ_eq_sum_range`). The
-middle step: `H_0(μ)` is `challengeDist P χ L D` run on phase 5's `realView P χ μ`, after the
-seed regrouping (`challengeDist_eq`, `realView_eq`, `view_eq`, `Regev.keygen_fst`, and
-`acceptProb_comp_equiv`; the seed of `pk_0` and the unused coordinates are integrated out), so
-phase 5's `distAdv_encrypt_le` bounds it by `challengeTerm P χ L μ₀ μ₁ D` (`challengeTerm_eq`).
-`linarith`. -/
+`levelHybrid_eq`: no `e : Fin L` has `L ≤ e`; the private `leveledView_eq_levelHybrid`). On each
+side, `abs_sub_le_sum_hybrids` over `H_0(μ), …, H_L(μ)` (`Fin.sum_univ_eq_sum_range`) and L4
+(`distAdv_levelHybrid_le`) at every level bound `|Pr[D(H_0(μ))] − Pr[D(H_L(μ))]|` by
+`∑ e, ∑ j, levelTerm P χ L μ e j D`. The middle step: `D` accepts `H_0(μ)` exactly as
+`challengeDist P χ L D` accepts phase 5's `realView P χ μ` (the private
+`acceptProb_levelHybrid_zero_realView`: `challengeDist_eq` and `acceptProb_bind` move its seeds into
+the sampler; a seed bijection plants the key seed and the challenge coins of `realView` as those of
+`pk_0` and of the challenge, `realView_eq`, `view_eq`, `levelHybrid_eq`, `Regev.keygen_fst`;
+`acceptProb_comp_equiv` and `acceptProb_fst` drop the replaced coordinates), so phase 5's
+`distAdv_encrypt_le` bounds it by `challengeTerm P χ L μ₀ μ₁ D` (`challengeTerm_eq`). The triangle
+inequality (`abs_sub_le`), `Finset.sum_add_distrib` and `linarith` conclude. -/
 theorem distAdv_leveledView_le (P : Parameters) (χ : LWE.Noise) (L : ℕ) (μ₀ μ₁ : Bool)
     {ρ : Type*} [Fintype ρ] [Nonempty ρ] (D : LeveledView P L → ρ → Bool) :
     distAdv (leveledView P χ L μ₀) (leveledView P χ L μ₁) D ≤
       ∑ e : Fin L, ∑ j : Fin P.columns,
           (levelTerm P χ L μ₀ e j D + levelTerm P χ L μ₁ e j D) +
         challengeTerm P χ L μ₀ μ₁ D := by
-  sorry
+  -- Each chain `H_0(μ), …, H_L(μ)`: L4 at every level.
+  have hchain : ∀ μ : Bool, |acceptProb (levelHybrid P χ L μ 0) D -
+      acceptProb (levelHybrid P χ L μ L) D| ≤ ∑ e : Fin L, ∑ j : Fin P.columns,
+        levelTerm P χ L μ e j D := by
+    intro μ
+    calc |acceptProb (levelHybrid P χ L μ 0) D - acceptProb (levelHybrid P χ L μ L) D|
+        ≤ ∑ t ∈ Finset.range L, |acceptProb (levelHybrid P χ L μ t) D -
+            acceptProb (levelHybrid P χ L μ (t + 1)) D| :=
+          abs_sub_le_sum_hybrids (fun t => acceptProb (levelHybrid P χ L μ t) D) L
+      _ = ∑ e : Fin L, |acceptProb (levelHybrid P χ L μ e.val) D -
+            acceptProb (levelHybrid P χ L μ (e.val + 1)) D| :=
+          (Fin.sum_univ_eq_sum_range (fun t => |acceptProb (levelHybrid P χ L μ t) D -
+            acceptProb (levelHybrid P χ L μ (t + 1)) D|) L).symm
+      _ ≤ ∑ e : Fin L, ∑ j : Fin P.columns, levelTerm P χ L μ e j D :=
+          Finset.sum_le_sum fun e _ => by
+            rw [abs_sub_comm, ← distAdv_def]
+            exact distAdv_levelHybrid_le P χ L μ e D
+  -- The middle step: phase 5's bound on `challengeDist`.
+  have hmid := distAdv_encrypt_le P χ μ₀ μ₁ (challengeDist P χ L D)
+  rw [← challengeTerm_eq, distAdv_def, ← acceptProb_levelHybrid_zero_realView,
+    ← acceptProb_levelHybrid_zero_realView] at hmid
+  have h₀ := hchain μ₀
+  have h₁ := hchain μ₁
+  rw [distAdv_def, leveledView_eq_levelHybrid, leveledView_eq_levelHybrid]
+  simp only [Finset.sum_add_distrib]
+  have htri₀ := abs_sub_le (acceptProb (levelHybrid P χ L μ₀ L) D)
+    (acceptProb (levelHybrid P χ L μ₀ 0) D) (acceptProb (levelHybrid P χ L μ₁ L) D)
+  have htri₁ := abs_sub_le (acceptProb (levelHybrid P χ L μ₀ 0) D)
+    (acceptProb (levelHybrid P χ L μ₁ 0) D) (acceptProb (levelHybrid P χ L μ₁ L) D)
+  have hcomm := abs_sub_comm (acceptProb (levelHybrid P χ L μ₀ L) D)
+    (acceptProb (levelHybrid P χ L μ₀ 0) D)
+  linarith
 
 end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW

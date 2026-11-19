@@ -1,0 +1,40 @@
+== Circular (HEAD)
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.distAdv_fheView_noEvk_le : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters) (χ : TCSlib.Cryptography.LWE.Noise)
+  {ρ : Type u_1} [inst : Fintype ρ] [inst_1 : Nonempty ρ] (μ₀ μ₁ : Bool)
+  (D :
+    TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.PublicKey P ×
+        TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P →
+      ρ → Bool),
+  TCSlib.Cryptography.distAdv
+      (fun (r : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Seeds P χ) =>
+        ((TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.fheView P χ μ₀ r).1,
+          (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.fheView P χ μ₀ r).2.2))
+      (fun (r : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Seeds P χ) =>
+        ((TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.fheView P χ μ₁ r).1,
+          (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.fheView P χ μ₁ r).2.2))
+      D ≤
+    TCSlib.Cryptography.LWE.decisionAdvantage P.lwe χ
+          (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.reduction P μ₀ D) +
+        TCSlib.Cryptography.LWE.decisionAdvantage P.lwe χ
+          (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.reduction P μ₁ D) +
+      2 * (↑P.columns * TCSlib.Cryptography.Encryption.PublicKey.Regev.extractionError P.lwe)
+== LeveledSecurity (HEAD)
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.distAdv_levelHybrid_le : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters) (χ : TCSlib.Cryptography.LWE.Noise) (L : ℕ)
+  (μ : Bool) (e : Fin L) {ρ : Type u_1} [inst : Fintype ρ] [inst_1 : Nonempty ρ]
+  (D : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.LeveledView P L → ρ → Bool),
+  TCSlib.Cryptography.distAdv (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.levelHybrid P χ L μ (↑e + 1))
+      (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.levelHybrid P χ L μ ↑e) D ≤
+    ∑ j : Fin P.columns, TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.levelTerm P χ L μ e j D
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.distAdv_leveledView_le : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters) (χ : TCSlib.Cryptography.LWE.Noise) (L : ℕ)
+  (μ₀ μ₁ : Bool) {ρ : Type u_1} [inst : Fintype ρ] [inst_1 : Nonempty ρ]
+  (D : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.LeveledView P L → ρ → Bool),
+  TCSlib.Cryptography.distAdv (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.leveledView P χ L μ₀)
+      (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.leveledView P χ L μ₁) D ≤
+    ∑ e : Fin L,
+        ∑ j : Fin P.columns,
+          (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.levelTerm P χ L μ₀ e j D +
+            TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.levelTerm P χ L μ₁ e j D) +
+      TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.challengeTerm P χ L μ₀ μ₁ D
