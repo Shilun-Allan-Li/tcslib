@@ -14,7 +14,8 @@ Local modifications (see policy.md §2, vendored code, and the repository NOTICE
 * appended reading lemmas (`rfl`/`Iff.rfl` restatements of definitions) for TCSlib's own
   proofs, which do not unfold vendored definitions.
 * added input, output, coin and halving constructs, and threaded output and coin indices
-  through the affected syntax, semantics and run witnesses.
+  through the affected syntax, semantics and run witnesses;
+* added a docstring with a proof sketch to `Ends.of_blockSafe`.
 The remaining content is unchanged.
 -/
 import TCSlib.Programs.Light.Logic
@@ -155,6 +156,12 @@ theorem Stmt.Runs.ite_neg {c : Cond} {s t : Stmt} {σ : State} {R : State → Pr
     (Stmt.ite c s t).Runs lim σ R :=
   ⟨⟨hs, fun hp => absurd hp hc, fun _ => h.1⟩, by simpa only [Stmt.after, if_neg hc] using h.2⟩
 
+/-- A block that runs safely from `σ`, given `s.blockCost` steps, ends in `s.after σ`.
+
+**Proof sketch.** Induction on the statement. `skip`, `set` and `store` are their `Ends` rules;
+`seq` and `ite` compose the induction hypotheses with `Ends.seq` and `Ends.ite`, the branch read
+through `Stmt.after`. Loops, calls and the four input/output statements are not blocks, so
+`BlockSafe` is false for them. -/
 theorem Ends.of_blockSafe : ∀ {s : Stmt} {σ : State} {T : ℕ} {Q : State → Prop}, s.BlockSafe lim σ →
     s.blockCost ≤ T → Q (s.after σ) → Ends lim P d s σ T Q
   | .skip, _, _, _, _, _, h => Ends.skip h

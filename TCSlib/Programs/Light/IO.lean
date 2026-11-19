@@ -275,7 +275,7 @@ theorem Stmt.silent_while (c : Cond) (s : Stmt) : (Stmt.while c s).silent = s.si
 /-- `emit` and `coin` are the statements that are not silent. -/
 theorem Stmt.silent_emit (e : Expr) : (Stmt.emit e).silent = false := rfl
 
-@[inherit_doc Stmt.silent_emit]
+/-- Reading `Stmt.silent` on a coin: it is not silent. -/
 theorem Stmt.silent_coin (x : ℕ) : (Stmt.coin x).silent = false := rfl
 
 /-- Reading `Stmt.calls` on a call. -/
@@ -292,11 +292,11 @@ theorem Stmt.silent_leaf (x p : ℕ) (a e : Expr) (args : List Expr) :
 /-- Reading `Stmt.calls` on compound statements. -/
 theorem Stmt.calls_seq (s t : Stmt) : (Stmt.seq s t).calls = s.calls ++ t.calls := rfl
 
-@[inherit_doc Stmt.calls_seq]
+/-- Reading `Stmt.calls` on a branch: the calls of both arms. -/
 theorem Stmt.calls_ite (c : Cond) (s t : Stmt) :
     (Stmt.ite c s t).calls = s.calls ++ t.calls := rfl
 
-@[inherit_doc Stmt.calls_seq]
+/-- Reading `Stmt.calls` on a loop: the calls of its body. -/
 theorem Stmt.calls_while (c : Cond) (s : Stmt) : (Stmt.while c s).calls = s.calls := rfl
 
 /-- Reading `Stmt.calls` on the leaves other than `call`: they call nothing. -/
