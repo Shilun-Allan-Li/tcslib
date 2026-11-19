@@ -425,27 +425,29 @@ theorem residueEnc_eq (b : PolyExpr) (κ : ℕ) (q : BoundedModulus b κ) (a : Z
 the input as numerals, is sampled by `bucketSampler` [Lem19, §3.2, Algorithm 4] (one round) with
 `b(κ) + κ` coins, through `Fin ⟦y⟧ = Fin q ≃ ZMod q` (`ZMod.finEquiv`).
 
-**Proof sketch.** The parameter word reads back as `q` (`listToNat_modulusWord`). The encodings
-agree: `bucketSampler` writes `a : Fin q` as a numeral of the word's width `b(κ) + 1`
-(`bucketSampler_enc`, `Candidates.length_natToList`), and `residueEnc` writes
-`(finEquiv q).symm (finEquiv q a) = a`. The failure is the bucket sampler's with `b(κ) + κ`
-coins and `q ≤ 2^{b(κ)}`, at most `2^{-κ}` (`bucketSampler_sampler`, `fail_bucket_le`). -/
+**Proof sketch.** The parameter word reads back as `q` (`listToNat_modulusWord`), and the draws of
+`bucketSampler` on it are `Fin ⟦y⟧` (`bucketSampler_Ω`). The encodings agree: `bucketSampler`
+writes a draw `a` as a numeral of the word's width `b(κ) + 1` (`bucketSampler_enc_cast`,
+`Candidates.length_natToList`), and `residueEnc` writes `(finEquiv q).symm (finEquiv q a) = a`.
+The failure is the bucket sampler's with `b(κ) + κ` coins and `q ≤ 2^{b(κ)}`, at most `2^{-κ}`
+(`bucketSampler_fail`, `fail_bucket_le`). -/
 theorem drawSamplable_residue (b : PolyExpr) :
     DrawSamplable (modulusWord b) (residueEnc b) := by
   refine (drawSamplable_iff _ _).2 ⟨bucketSampler, b.add .var,
-    fun κ q => (finCongr (listToNat_modulusWord b κ q)).trans (ZMod.finEquiv (q.1 : ℕ)).toEquiv,
+    fun κ q => (Equiv.cast (bucketSampler_Ω _)).trans
+      ((finCongr (listToNat_modulusWord b κ q)).trans (ZMod.finEquiv (q.1 : ℕ)).toEquiv),
     fun κ q w => ?_, fun κ q => ?_⟩
   · -- the encodings agree: same width, same value
     have hlen : (modulusWord b κ q).length = b.eval κ + 1 := by
       rw [modulusWord_eq, Candidates.length_natToList]
-    rw [bucketSampler_enc, residueEnc_eq, hlen]
+    rw [bucketSampler_enc_cast, residueEnc_eq, hlen]
     congr 1
-    rw [Equiv.trans_apply, RingEquiv.toEquiv_eq_coe, RingEquiv.coe_toEquiv,
-      RingEquiv.symm_apply_apply]
-    exact (Fin.coe_cast (listToNat_modulusWord b κ q) w).symm
+    rw [Equiv.trans_apply, Equiv.trans_apply, RingEquiv.toEquiv_eq_coe, RingEquiv.coe_toEquiv,
+      RingEquiv.symm_apply_apply, Equiv.cast_apply]
+    exact (Fin.coe_cast (listToNat_modulusWord b κ q) _).symm
   · -- the failure is at most `2^{-κ}`
     have hq := listToNat_modulusWord b κ q
-    rw [bucketSampler_sampler, PolyExpr.eval_add, PolyExpr.eval_var]
+    rw [bucketSampler_fail, PolyExpr.eval_add, PolyExpr.eval_var]
     exact fail_bucket_le (by rw [hq]; exact q.1.pos) (by rw [hq]; exact q.2) κ
 
 /-- **Non-vacuity of the contract**: the uniform sampler of `ZMod q` (identity core), with the
