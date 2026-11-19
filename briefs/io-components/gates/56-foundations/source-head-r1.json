@@ -18,15 +18,15 @@
   "«doc-gen4»": "0ece4c27ae1abbd0b70df729e09d8b9c06351b80"
  },
  "merged": {
-  "merge_tree": "4d0347941c394f6fe1ed88ec067814bcfc1fb6f9",
+  "merge_tree": "91d43e1f0320618c1986cd88c2cf0d1c1d4bf44e",
   "merge_tree_output_lines": 1,
-  "scratch_commit": "ed165e99431951c466668f0b235edd12b457b3cb",
+  "scratch_commit": "ef93fdb1a31cf0523c49a05407b45f2ccb09148e",
   "scratch_commit_on_any_ref": false,
   "scratch_commit_parents": [
-   "53e430b68cbe22416312a4f80bbc3426c71cf86d",
-   "5382668bc9cc496355c83e7b77909d9647e089b3"
+   "1b18206f5d3fee9214bfaa0fff74262836b67f48",
+   "686bf03f25faafb5e3db20899be25e427b82099c"
   ],
-  "tcslib_tree": "6a724839672002fcf75c0c36e79564cbea62d0ba"
+  "tcslib_tree": "e4c027393d1c59a30f312623aba5a3369386eeb1"
  },
  "name": "Foundations: #374 Subexponential, #378 CoinSampling, #384 SamplesEfficiently, #380 RealizesOn",
  "phase_a_base": {
@@ -48,13 +48,13 @@
    "TCSlib/Cryptography/Games.lean",
    "TCSlib/Cryptography/Games/Closeness.lean"
   ],
-  "head": "5382668bc9cc496355c83e7b77909d9647e089b3",
+  "head": "686bf03f25faafb5e3db20899be25e427b82099c",
   "merge_base_with_records": "a2bf4bac0d545fce1fcb4014ef12b44f9651a658",
   "parents": [
-   "5ed465f62e4ae0f93ded1a1ba49e807591b589eb",
-   "40e12f64293833056e311ab7aaf5a62fb3006353"
+   "5382668bc9cc496355c83e7b77909d9647e089b3",
+   "5b17523b3360572ef266c44c7da8633d7f651280"
   ],
-  "tcslib_tree": "9dcf16477970d330a6202fad6ca2fd1e0e6d5405"
+  "tcslib_tree": "279bae0c0a927c8aa847f47e47493adb47cec118"
  },
  "prs": [
   {
@@ -243,6 +243,22 @@
      "signature": "ssh",
      "subject": "CoinSampling: readers of the bucket sampler's draw type, encoding and failure",
      "tcslib_tree": "c939c7e205d2e950d9dd2a0baaaa5c50209c2a57"
+    },
+    {
+     "author": "Claude <noreply@anthropic.com>",
+     "author_date": "2026-11-19T04:24:00+00:00",
+     "commit": "2bf61a2eed72d3aad1de95134be8f89da9424af7",
+     "files": [
+      "TCSlib/Cryptography/CoinSampling/Buckets.lean",
+      "TCSlib/Cryptography/CoinSampling/Instances.lean",
+      "TCSlib/Cryptography/CoinSampling/Transfer.lean"
+     ],
+     "parents": [
+      "3473adda66d9c61c51ba640ed4c701e5cde0b6b1"
+     ],
+     "signature": "ssh",
+     "subject": "LE-g56-s1: read through existing readers in Buckets/Instances/Transfer (Gate 56 S-1, Q-G56-1 A)",
+     "tcslib_tree": "a01d2039c140962e9fdf2665241b1c74a43da880"
     }
    ],
    "diff_base": "cbce64d1c135c710b7c036968ed9d4f21414aa72",
@@ -270,8 +286,8 @@
     },
     "TCSlib/Cryptography/CoinSampling/Buckets.lean": {
      "base_blob": null,
-     "blob": "170f9365a99f01c2bdf5149a0b0c5416dd0df97c",
-     "lines": 241
+     "blob": "2c8119070cbc0a01474488b1d4146674814ce977",
+     "lines": 242
     },
     "TCSlib/Cryptography/CoinSampling/Efficiency.lean": {
      "base_blob": null,
@@ -280,13 +296,13 @@
     },
     "TCSlib/Cryptography/CoinSampling/Instances.lean": {
      "base_blob": null,
-     "blob": "dd02154d513305277d6eee2c1c9fb564f920acb7",
-     "lines": 173
+     "blob": "fdf85797358d710317ab813726a28a6328ed56ca",
+     "lines": 174
     },
     "TCSlib/Cryptography/CoinSampling/Transfer.lean": {
      "base_blob": null,
-     "blob": "45b2ba19453866a15edaa4824667fd8b3ccee660",
-     "lines": 173
+     "blob": "34b1d721a5c22b712cb8a1089a15f421e558cbfc",
+     "lines": 175
     },
     "TCSlib/Cryptography/Games.lean": {
      "base_blob": "7cccb7675728de17886d6c44f0fb4849572b5376",
@@ -299,12 +315,12 @@
      "lines": 269
     }
    },
-   "head": "3473adda66d9c61c51ba640ed4c701e5cde0b6b1",
-   "head_tcslib_tree": "c939c7e205d2e950d9dd2a0baaaa5c50209c2a57",
-   "head_tree": "b5233cf70d1bb7c213717cdbbce8edac529bd4cc",
+   "head": "2bf61a2eed72d3aad1de95134be8f89da9424af7",
+   "head_tcslib_tree": "a01d2039c140962e9fdf2665241b1c74a43da880",
+   "head_tree": "f82d30fb7282b2522d3ae1af30e657cbf32afda5",
    "merge_base": "cbce64d1c135c710b7c036968ed9d4f21414aa72",
    "number": 378,
-   "shortstat": "10 files changed, 1892 insertions(+)"
+   "shortstat": "10 files changed, 1896 insertions(+)"
   },
   {
    "base_branch": "foundations/coin-sampling",
@@ -369,9 +385,28 @@
      "signature": "ssh",
      "subject": "CoinSampling: read the bucket sampler through its readers in drawSamplable_residue",
      "tcslib_tree": "e4be1f3a6783dd9bdbdf795c9d8535dd34d82708"
+    },
+    {
+     "author": "Claude <noreply@anthropic.com>",
+     "author_date": "2026-11-19T04:24:13+00:00",
+     "commit": "5b17523b3360572ef266c44c7da8633d7f651280",
+     "files": [
+      "TCSlib/Cryptography/CoinSampling/Buckets.lean",
+      "TCSlib/Cryptography/CoinSampling/Instances.lean",
+      "TCSlib/Cryptography/CoinSampling/Transfer.lean",
+      "TCSlib/Cryptography/CoinSampling.lean",
+      "TCSlib/Cryptography/CoinSampling/Contract.lean"
+     ],
+     "parents": [
+      "40e12f64293833056e311ab7aaf5a62fb3006353",
+      "2bf61a2eed72d3aad1de95134be8f89da9424af7"
+     ],
+     "signature": "ssh",
+     "subject": "Merge foundations/coin-sampling (LE-g56-s1 reader fixes) into the contract",
+     "tcslib_tree": "190f7c1fbcb4097336737677c98b16479c2fcaa4"
     }
    ],
-   "diff_base": "3473adda66d9c61c51ba640ed4c701e5cde0b6b1",
+   "diff_base": "2bf61a2eed72d3aad1de95134be8f89da9424af7",
    "diff_file": "pr384.diff.txt",
    "files": {
     "TCSlib/Cryptography/CoinSampling.lean": {
@@ -385,10 +420,10 @@
      "lines": 460
     }
    },
-   "head": "40e12f64293833056e311ab7aaf5a62fb3006353",
-   "head_tcslib_tree": "e4be1f3a6783dd9bdbdf795c9d8535dd34d82708",
-   "head_tree": "e00edf1d22a4a0805bc1fb81a50ce38f5deb0fea",
-   "merge_base": "3473adda66d9c61c51ba640ed4c701e5cde0b6b1",
+   "head": "5b17523b3360572ef266c44c7da8633d7f651280",
+   "head_tcslib_tree": "190f7c1fbcb4097336737677c98b16479c2fcaa4",
+   "head_tree": "98a5501340bcd0ae33daca7279501d87c7b42f02",
+   "merge_base": "2bf61a2eed72d3aad1de95134be8f89da9424af7",
    "number": 384,
    "shortstat": "2 files changed, 464 insertions(+)"
   },
@@ -450,11 +485,11 @@
    "TCSlib/Cryptography/LWE/BitEncoding.lean",
    "TCSlib/Cryptography/LWE/Ratio.lean"
   ],
-  "tip_at_staging": "53e430b68cbe22416312a4f80bbc3426c71cf86d",
+  "tip_at_staging": "1b18206f5d3fee9214bfaa0fff74262836b67f48",
   "tip_tcslib_tree": "745bf4b494b6581a5666ef9ca0a6e735a68ddcef"
  },
  "records_sha256_at_staging_tip": {
-  "IOComponentsPlan.md": "bc81482b425d7a08953592e7131d5f76566092a2eafcf13e4c928d5b8bddb780",
+  "IOComponentsPlan.md": "2f2ce7a775ba84af36cd635cd1a8330a8e2c01c41f2f45671dd1b56e53865c5f",
   "briefs/efficiency-gaps/wave1/EF-D1/final-r1/landing-r2.md": "16d9242693be6528e6dcd8b159cacc23c765019844ab81b61cc0b2cf593f3708",
   "briefs/io-components/contract/REPORT.md": "213238cb8de6aaed796d04e90e0b18cbc0742bd8756e10f8b7644a39fbc6d5e9",
   "briefs/io-components/gates/51-phfe-statements/findings-r1.md": "5e28af06391d139980fabb9818543516c969d56713f13f6ab03f31d00fafbdae",
@@ -469,8 +504,14 @@
   "briefs/pass-shelat-ch5-8/duplication-ledger.md": "250ccafec1e1e6afa82057ad78fc06accf0fc9dffece8b047b52e52ce7d44e70",
   "policy.md": "6599b12230e3879bc0e1fb22c0376ea6201bca8b7edd79dfc55da43986f991d4"
  },
+ "restaged": "2026-11-19 on the LE-g56-s1 heads (Q-G56-1 (A)); supersedes the draft r1 of records 057fe893/0cd8a194",
  "round": 1,
  "staged": "2026-11-19",
+ "superseded_heads": {
+  "378": "3473adda66d9c61c51ba640ed4c701e5cde0b6b1",
+  "384": "40e12f64293833056e311ab7aaf5a62fb3006353",
+  "iO/phase-a-base": "5382668bc9cc496355c83e7b77909d9647e089b3"
+ },
  "toolchain": "leanprover/lean4:v4.25.0",
  "unchanged": {
   "audits": {

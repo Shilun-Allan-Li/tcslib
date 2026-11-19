@@ -720,10 +720,10 @@ index 000000000..90a81256c
 +end TCSlib.Cryptography.CoinSampling
 diff --git a/TCSlib/Cryptography/CoinSampling/Buckets.lean b/TCSlib/Cryptography/CoinSampling/Buckets.lean
 new file mode 100644
-index 000000000..170f9365a
+index 000000000..2c8119070
 --- /dev/null
 +++ b/TCSlib/Cryptography/CoinSampling/Buckets.lean
-@@ -0,0 +1,241 @@
+@@ -0,0 +1,242 @@
 +/-
 +Copyright (c) 2026 TCSlib contributors. All rights reserved.
 +Released under Apache 2.0 license as described in the file LICENSE.
@@ -917,7 +917,8 @@ index 000000000..170f9365a
 +
 +/-- `(ofEquiv e s).dec c = (bucketDec N s c).map e.symm`. -/
 +theorem ofEquiv_dec {Ω : Type} [Fintype Ω] {N : ℕ} (e : Ω ≃ Fin N) (s : ℕ) (c : Fin s → Bool) :
-+    (ofEquiv e s).dec c = (bucketDec N s c).map e.symm := rfl
++    (ofEquiv e s).dec c = (bucketDec N s c).map e.symm := by
++  rw [ofEquiv, CoinSampler.congr_dec, bucket_dec]
 +
 +/-- `(ofEquiv e s).fail = (bucket N s).fail` (`CoinSampler.fail_congr`). -/
 +theorem fail_ofEquiv {Ω : Type} [Fintype Ω] {N : ℕ} (e : Ω ≃ Fin N) (s : ℕ) :
@@ -1315,10 +1316,10 @@ index 000000000..11ea720d2
 +end TCSlib.Cryptography.CoinSampling
 diff --git a/TCSlib/Cryptography/CoinSampling/Instances.lean b/TCSlib/Cryptography/CoinSampling/Instances.lean
 new file mode 100644
-index 000000000..dd02154d5
+index 000000000..fdf857973
 --- /dev/null
 +++ b/TCSlib/Cryptography/CoinSampling/Instances.lean
-@@ -0,0 +1,173 @@
+@@ -0,0 +1,174 @@
 +/-
 +Copyright (c) 2026 TCSlib contributors. All rights reserved.
 +Released under Apache 2.0 license as described in the file LICENSE.
@@ -1379,7 +1380,8 @@ index 000000000..dd02154d5
 +
 +/-- `(zmod q s).dec c = (bucketDec q s c).map (ZMod.finEquiv q)`. -/
 +theorem zmod_dec (q : ℕ) [NeZero q] (s : ℕ) (c : Fin s → Bool) :
-+    (zmod q s).dec c = (bucketDec q s c).map (ZMod.finEquiv q).toEquiv := rfl
++    (zmod q s).dec c = (bucketDec q s c).map (ZMod.finEquiv q).toEquiv := by
++  rw [zmod, congr_dec, bucket_dec]
 +
 +/-- The residue sampler fails as the bucket sampler: `(zmod q s).fail = (2^s mod q)/2^s`
 +(`fail_congr`, `fail_bucket`). -/
@@ -1494,10 +1496,10 @@ index 000000000..dd02154d5
 +end TCSlib.Cryptography.CoinSampling
 diff --git a/TCSlib/Cryptography/CoinSampling/Transfer.lean b/TCSlib/Cryptography/CoinSampling/Transfer.lean
 new file mode 100644
-index 000000000..45b2ba194
+index 000000000..34b1d721a
 --- /dev/null
 +++ b/TCSlib/Cryptography/CoinSampling/Transfer.lean
-@@ -0,0 +1,173 @@
+@@ -0,0 +1,175 @@
 +/-
 +Copyright (c) 2026 TCSlib contributors. All rights reserved.
 +Released under Apache 2.0 license as described in the file LICENSE.
@@ -1605,7 +1607,7 @@ index 000000000..45b2ba194
 +difference is `fail · (F none − 𝔼_a F(some a))`, of absolute value at most `fail`. -/
 +theorem close_draw_bind [Nonempty Ω] (S : CoinSampler Ω s) (K : Option Ω → ProbComp β) :
 +    ProbComp.Close S.fail (S.draw.bind K)
-+      ((ProbComp.sample Ω).bind fun a => K (some a)) := fun g hg => by
++      ((ProbComp.sample Ω).bind fun a => K (some a)) := (ProbComp.close_iff _ _ _).2 fun g hg => by
 +  rw [ProbComp.expect_bind, ProbComp.expect_bind, S.expect_draw]
 +  have h₀ := ProbComp.expect_mem_unit (K none) hg
 +  have h₁ := ProbComp.expect_mem_unit (ProbComp.sample Ω)
@@ -1623,13 +1625,14 @@ index 000000000..45b2ba194
 +/-- **One draw, default fallback**: `S.drawD d >>= k` is `fail`-close to `sample Ω >>= k`
 +(`close_draw_bind` with `K o = k (o.getD d)`). -/
 +theorem close_drawD_bind [Nonempty Ω] (S : CoinSampler Ω s) (d : Ω) (k : Ω → ProbComp β) :
-+    ProbComp.Close S.fail ((S.drawD d).bind k) ((ProbComp.sample Ω).bind k) := fun g hg => by
++    ProbComp.Close S.fail ((S.drawD d).bind k) ((ProbComp.sample Ω).bind k) :=
++    (ProbComp.close_iff _ _ _).2 fun g hg => by
 +  have e : ProbComp.expect ((S.drawD d).bind k) g =
 +      ProbComp.expect (S.draw.bind fun o => k (o.getD d)) g := by
 +    rw [ProbComp.expect_bind, ProbComp.expect_bind, drawD_eq, draw_eq, ProbComp.expect_map,
 +      ProbComp.expect_map]
 +  rw [e]
-+  exact S.close_draw_bind (fun o => k (o.getD d)) g hg
++  exact (ProbComp.close_iff _ _ _).1 (S.close_draw_bind (fun o => k (o.getD d))) g hg
 +
 +/-- **A fresh draw per oracle query**: an oracle whose every call draws through `S` (body `K`,
 +fallback `K … none`) is, over a computation with at most `m` queries, `m · fail`-close to the
@@ -1650,7 +1653,8 @@ index 000000000..45b2ba194
 +exact draws are replaced by default-fallback coin draws keeps **every** `AllOutputs` property.
 +Glue. -/
 +theorem outputsSubset_drawD [Nonempty Ω] (S : CoinSampler Ω s) (d : Ω) :
-+    OracleComp.OutputsSubset (S.drawD d) (ProbComp.sample Ω) := fun P hP => by
++    OracleComp.OutputsSubset (S.drawD d) (ProbComp.sample Ω) :=
++    (OracleComp.outputsSubset_iff _ _).2 fun P hP => by
 +  have hall := allOutputs_sample_iff.1 hP
 +  rw [drawD_eq, OracleComp.map_eq_bind]
 +  exact OracleComp.AllOutputs.bind (OracleComp.allOutputs_true _) fun c _ =>

@@ -1,4 +1,4 @@
-# Gate 56 · the iO foundations gate: PRs #374, #378, #384, #380 · round 1
+# Gate 56 · the iO foundations gate: PRs #374, #378, #384, #380 · round 1 (restaged)
 
 Round 1. The auditor is Codex, under the standing ruling of 2026-11-11 (Codex for audits and reviews). **Gate 56** is the
 one Codex gate for the four in-house foundation PRs that the iO-components jobs and the efficiency remediation build
@@ -6,17 +6,26 @@ on. Gates 51 and 52 audited the io-phfe and io-sprg deliveries built on these PR
 the PRs themselves; Gate 51's G51-04 touched the contract only as used by a consumer. These PRs have had no external
 audit until now.
 
+**Restaged.** A draft of this round (records `057fe893` and `0cd8a194`, superseded) found in house that 5 declarations
+of #378 read other files' definitions (pack S-1). Seyoon ruled Q-G56-1 (A): fix first, then gate (records `1b18206f`).
+The maintainer landed the proof-only fix LE-g56-s1 on #378, merged it into #384 and `iO/phase-a-base`, and re-ran the
+whole verification on the new heads. This pack, the diffs, `source-head-r1.json` and `verification-r1.*` are all at
+those heads.
+
 | PR | Branch → base branch | Head | Commits · diff | Content |
 |---|---|---|---|---|
 | **#374** | `foundations/subexp` → `cryptography/pass-shelat-ch2-4` | `cbce64d1c135c710b7c036968ed9d4f21414aa72` | 1 · 2 files, +303 | `Foundations/Subexponential.lean`: `SubexpSmall`, `SubexpHard` |
-| **#378** | `foundations/coin-sampling` → `foundations/subexp` | `3473adda66d9c61c51ba640ed4c701e5cde0b6b1` | 10 · 10 files, +1,892 | the sampler bridge: `Games/Closeness`, `CoinSampling/{Basic,Buckets,Transfer,Asymptotic,Instances,Efficiency}` and the facade |
-| **#384** | `foundations/coin-contract` → `foundations/coin-sampling` | `40e12f64293833056e311ab7aaf5a62fb3006353` | 4 (one a merge of #378's readers) · 2 files, +464 | `CoinSampling/Contract.lean`: `DrawSamplable`, `CoreComputable`, `SamplesEfficiently` |
+| **#378** | `foundations/coin-sampling` → `foundations/subexp` | `2bf61a2eed72d3aad1de95134be8f89da9424af7` | 11 · 10 files, +1,896 | the sampler bridge: `Games/Closeness`, `CoinSampling/{Basic,Buckets,Transfer,Asymptotic,Instances,Efficiency}` and the facade |
+| **#384** | `foundations/coin-contract` → `foundations/coin-sampling` | `5b17523b3360572ef266c44c7da8633d7f651280` | 5 (two merges of #378) · 2 files, +464 | `CoinSampling/Contract.lean`: `DrawSamplable`, `CoreComputable`, `SamplesEfficiently` |
 | **#380** | `foundations/realization` → `foundations/subexp` | `cdc0934f36365533d410607d0664a0570ae92679` | 1 · 2 files, +254 | `Asymptotic/Realization.lean`: `NUPPT.RealizesOn` and its link lemmas |
+
+The superseded heads are #378 `3473adda`, #384 `40e12f64` and `iO/phase-a-base` `5382668b`. All three new heads are
+fast-forwards of them.
 
 **Stack.** #374 → (#378 → #384) and #374 → #380.
 
-**`iO/phase-a-base`** = `5382668bc9cc496355c83e7b77909d9647e089b3` merges all four. Its `TCSlib` tree is
-`9dcf16477970d330a6202fad6ca2fd1e0e6d5405`, and each of its 15 changed paths is blob-equal to the PR head that owns
+**`iO/phase-a-base`** = `686bf03f25faafb5e3db20899be25e427b82099c` merges all four. Its `TCSlib` tree is
+`279bae0c0a927c8aa847f47e47493adb47cec118`, and each of its 15 changed paths is blob-equal to the PR head that owns
 it (`verification-r1.zip:merge/phase-a-composition.txt`).
 
 **Merge base with the records:** `a2bf4bac0d545fce1fcb4014ef12b44f9651a658` (`TCSlib` tree `849ee945…`, Lean-equal to
@@ -25,31 +34,24 @@ olean snapshot #10).
 **The diffs** in this directory are taken against each PR's base branch head, which is also its merge base (GitHub's
 three-dot view):
 - `pr374.diff.txt`: `a2bf4bac..cbce64d1`;
-- `pr378.diff.txt`: `cbce64d1..3473adda`;
-- `pr384.diff.txt`: `3473adda..40e12f64`;
+- `pr378.diff.txt`: `cbce64d1..2bf61a2e`;
+- `pr384.diff.txt`: `2bf61a2e..5b17523b`. It is byte-identical to the draft's `3473adda..40e12f64`, because
+  `Contract.lean` and the facade are unchanged;
 - `pr380.diff.txt`: `cbce64d1..cdc0934f`.
 
 **Records pin:** the commit that files this directory, `briefs/io-components/gates/56-foundations/`.
-- The records tip replayed is `53e430b68cbe22416312a4f80bbc3426c71cf86d`. Its `TCSlib` tree is
-  `745bf4b494b6581a5666ef9ca0a6e735a68ddcef`, the same Lean as Gate 54's replayed tip.
-- During staging the records branch moved, records-only:
-  - to `057fe893a12ed627b21a1a81c09e6451e8752b56`: the Gate 55 staging and pin, and a work-in-progress commit of part
-    of this directory (not the pin);
-  - then to `b0d5438dadb2d1c92f46489039b9fa452eb01a13` (EF-H11 records).
-  - 0 paths changed under `TCSlib/`, `TCSlib.lean`, `audits/`, `scripts/`, the toolchain, the manifest and the
-    lakefile.
-  - The `TCSlib` tree is the same.
-  - `merge-tree(057fe893, 5382668b)` has the same `TCSlib` tree, `6a724839…`.
-  
-  `source-head-r1.json` records `53e430b6` as `tip_at_staging`; read that field as "the tip replayed".
-- Since `a2bf4bac`, the records side changed 12 Lean paths (GSW 6b statements, U12/U13, `LWE/BitEncoding`,
+- **The records tip replayed** is `1b18206f5d3fee9214bfaa0fff74262836b67f48`, `TCSlib` tree
+  `745bf4b494b6581a5666ef9ca0a6e735a68ddcef`. Its Lean is unchanged since Gate 54's replayed tip: 0 paths under
+  `TCSlib/`, `TCSlib.lean`, `audits/`, `scripts/`, the toolchain, the manifest or the lakefile.
+- **The pin** is records-only on top of it.
+- **Since `a2bf4bac`,** the records side changed 12 Lean paths (GSW 6b statements, U12/U13, `LWE/BitEncoding`,
   `LWE/Ratio`). None of them is a foundation path.
 
 **Merged tree:**
-- `git merge-tree --write-tree 53e430b6 5382668b` is clean: tree `4d0347941c394f6fe1ed88ec067814bcfc1fb6f9`, `TCSlib`
-  tree **`6a724839672002fcf75c0c36e79564cbea62d0ba`**.
-- The maintainer replayed it as the scratch commit `ed165e99431951c466668f0b235edd12b457b3cb` (parents `53e430b6` and
-  `5382668b`; **on no ref, never pushed**).
+- `git merge-tree --write-tree 1b18206f 686bf03f` is clean: tree `91d43e1f0320618c1986cd88c2cf0d1c1d4bf44e`, `TCSlib`
+  tree **`e4c027393d1c59a30f312623aba5a3369386eeb1`**.
+- The maintainer replayed it as the scratch commit `ef93fdb1a31cf0523c49a05407b45f2ccb09148e` (parents `1b18206f` and
+  `686bf03f`; **on no ref, never pushed**).
 
 **Mathlib** `029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e`, **Batteries** `39260e31b7b3f7f05643da95242463b462dc05f1`,
 toolchain `leanprover/lean4:v4.25.0` (the manifest is unchanged by all four PRs).
@@ -110,8 +112,12 @@ Ruling: the decision log `IOComponentsPlan.md`, row 2026-11-18 *Subexponential s
 - **Records:**
   - design `briefs/io-components/sampler-bridge/design-r1.md` and `Skeleton.lean`;
   - report `IMPL-REPORT.md`, which lists 11 deviations from the skeleton and the disclosed overlaps.
-- **Landing edit `3473adda`** (Q-L2-1 (b), Q-L2-2): three `rfl` readers, `bucketSampler_Ω`, `bucketSampler_enc_cast`
-  and `bucketSampler_fail`.
+- **Landing edits:**
+  - `3473adda` (Q-L2-1 (b), Q-L2-2): three `rfl` readers, `bucketSampler_Ω`, `bucketSampler_enc_cast` and
+    `bucketSampler_fail`;
+  - **`2bf61a2e` LE-g56-s1** (Q-G56-1 (A), S-1): proof-only. `ofEquiv_dec`, `zmod_dec`, `close_draw_bind`,
+    `close_drawD_bind` and `outputsSubset_drawD` read through `congr_dec`, `bucket_dec`, `close_iff` and
+    `outputsSubset_iff`.
 
 **#384 the contract** (`CS/Contract.lean`, 460 lines, 38 public declarations).
 - **The definitions:** `DrawSamplable`, `CoreComputable` and `SamplesEfficiently`, with readers,
@@ -126,7 +132,8 @@ Ruling: the decision log `IOComponentsPlan.md`, row 2026-11-18 *Subexponential s
 - **Landing edits** (`briefs/efficiency-gaps/wave1/EF-D1/final-r1/landing-r2.md`):
   - `f96ae32e`, the promotions (EF-D1-W2 (B), EF-H11-R5 (A), DL-66);
   - merge `21f549c2` of #378's readers;
-  - `40e12f64`, a proof-only re-proof of `drawSamplable_residue` through those readers (Q-L2-1 (b)).
+  - `40e12f64`, a proof-only re-proof of `drawSamplable_residue` through those readers (Q-L2-1 (b));
+  - merge **`5b17523b`** of #378's LE-g56-s1 (`Contract.lean` unchanged).
 
 **#380 `Asymptotic/Realization.lean`** (250 lines, 14 public declarations).
 - **The predicate:** `NUPPT.RealizesOn B enc c R := B.coins = c ∧ ∀ m x r, r.length = c.eval m →
@@ -193,28 +200,36 @@ Ruling: the decision log `IOComponentsPlan.md`, row 2026-11-18 *Subexponential s
 
 ## Staging observations (the maintainer's, from staging and `verification-r1`)
 
-- **S-1 · undisclosed Rule-10 residues in #378 (in-house finding).** The merged-tree coe-A seals
-  (`verification-r1.md` §6) give 0 on 6 of the 10 owners, and `CS/Efficiency` gives exactly its known 3 (DL-70).
-  **8 further errors in 5 declarations** are not recorded anywhere: the #378 report and body seal only `Efficiency`,
-  and the landing sealed only `Efficiency` and `Contract`.
+- **S-1 · RESOLVED before the gate: Rule-10 reads in #378 (in-house finding, fixed by LE-g56-s1).** The draft's
+  merged-tree coe-A seals found **8 errors in 5 declarations** of #378 besides `Efficiency`'s 3 known DL-70 errors. No
+  record disclosed them: the #378 report and body sealed only `Efficiency`, and the landing r2b sealed only
+  `Efficiency` and `Contract`.
 
-  | Owner | Errors | Declarations (line) | What each reads |
+  | Owner | Errors | Declarations (draft line) | What each read |
   |---|---:|---|---|
-  | `CS/Buckets` | 1 | `ofEquiv_dec` (194) | `CoinSampler.congr` (`Basic`) |
-  | `CS/Instances` | 1 | `zmod_dec` (61) | `CoinSampler.congr` (`Basic`) |
+  | `CS/Buckets` | 1 | `ofEquiv_dec` (194) | `CoinSampler.congr` (`Basic`), by `rfl` |
+  | `CS/Instances` | 1 | `zmod_dec` (61) | `CoinSampler.congr` (`Basic`), by `rfl` |
   | `CS/Transfer` | 6 | `close_draw_bind` (108–109), `close_drawD_bind` (126, 131), `outputsSubset_drawD` (153) | `ProbComp.Close` and `OracleComp.OutputsSubset` (`Games/Closeness`), as functions |
 
-  - **The readers exist in #378:** `CoinSampler.congr_dec`, `bucket_dec`, `ProbComp.close_iff` and
-    `OracleComp.outputsSubset_iff`.
-  - **The fix probe:** one-line, proof-only edits through these readers seal each of the three owners to **0**
-    (`verification-r1.zip:seal/fixprobe/`).
-  - **No PR has been changed.** A landing edit on #378 is the expected remedy, as for Q-L2-1.
+  - **The fix.** Q-G56-1 (A) ruled fix first. LE-g56-s1 (`2bf61a2e`) reroutes the five proofs through readers that
+    #378 already had: `CoinSampler.congr_dec`, `bucket_dec`, `ProbComp.close_iff` and `OracleComp.outputsSubset_iff`.
+  - **What it changes:** proofs only, +10/−6 in 3 files.
+    - decls2 is empty for `2bf61a2e` against `3473adda`, and for `686bf03f` against `5382668b`.
+    - The only new stored constant is the auto-generated `ofEquiv.eq_1`, from `rw [ofEquiv]`.
+  - **The re-check on the new heads** (`verification-r1.md` §1, §6):
+    - coe-A is **0 on all owners except `Efficiency`'s 3** (lines 208, 215, 222, DL-70);
+    - the paired controls of the four readers are ALL_OK (each NEG fails once sealed, each POS passes, unsealed 0).
+  - **Evidence:** the draft's evidence is under `verification-r1.zip:draft-r1/`.
+  - **For the auditor:** confirm that the fix is proof-only, minimal and through the right readers, and that no other
+    read escapes the seal (question E).
 - **S-2 · PR #378's body overstates reuse.** Its *Reuse* paragraph lists `OneWay.statClose_pi` and
   `Nat.count_modEq_card`. Neither name occurs in the 15 files (`checks/pr378-reuse-claims.txt`), and `IMPL-REPORT.md`
   says both were "not needed".
-- **S-3 · stale gate lines in two bodies.** The bodies of #374 and #380 say "Audited together with the first
-  iO-components statements gate". Gates 51 and 52 used `iO/phase-a-base` as their base and did not audit these PRs;
-  this gate is that audit.
+- **S-3 · stale PR bodies.**
+  - The bodies of #374 and #380 say "Audited together with the first iO-components statements gate". Gates 51 and 52
+    used `iO/phase-a-base` as their base and did not audit these PRs; this gate is that audit.
+  - At restaging, the bodies of #378 and #384 (`checks/pr/`) do not yet mention LE-g56-s1 or the new heads. The
+    maintainer updates them after the gate.
 - **S-4 · the κ question (G51-04 class).**
   - **What the contract does:**
     - `DrawSamplable` reads the law through `U.Ω (y κ π)`, `U.enc (y κ π)` and `U.sampler (y κ π) (c.eval κ)`, so κ
@@ -322,13 +337,17 @@ Ruling: the decision log `IOComponentsPlan.md`, row 2026-11-18 *Subexponential s
 **E. Readers and Rule 10 (S-1).**
 1. **Readers.** Does every public definition of the 10 owners have a definitional reader beside it (`rfl`/`Iff.rfl`),
    with a formula docstring?
-2. **Rule-10 reads.** Read the five declarations of S-1 and confirm that each reads another file's definition. Check
-   the proposed one-line fixes in `seal/fixprobe/edits.txt`. Look for any other read of another TCSlib file's
-   definition that the coe-A seal cannot see: `show`/`change`/`decide` steps, or `unfold` of a foreign name.
+2. **Rule-10 reads.** Read LE-g56-s1 (`git show 2bf61a2eed72d3aad1de95134be8f89da9424af7`; the draft errors and probe
+   are in `draft-r1/`).
+   - Is it proof-only, and minimal?
+   - Does each of the five proofs now read only its own file's definitions and published readers?
+   - Do the paired controls (`ctl/`) show what they claim?
+   - Look for any other read of another TCSlib file's definition that the coe-A seal cannot see: `show`, `change` or
+     `decide` steps, or an `unfold` of a foreign name.
 3. **The landing readers.** Are the three `bucketSampler_*` readers `rfl` and beside `bucketSampler`, and do they read
    only their own file? Is Q-L2-2's choice (three readers, not one) justified?
 4. **DL-70.** Are `Efficiency`'s three private readers exactly DL-70's bounded debt?
-5. **Severity.** Grade S-1 and say whether it must be fixed before merge.
+5. **Severity.** Grade S-1's resolution. Is anything left to fix before merge?
 
 **F. Duplication.**
 1. **Report the searches you ran, with hit counts,** for each new public definition and lemma, against TCSlib at the
@@ -354,7 +373,8 @@ Ruling: the decision log `IOComponentsPlan.md`, row 2026-11-18 *Subexponential s
 2. Is `f96ae32e` exactly the 10 additions, with no import or existing statement changed?
 3. Does merge `21f549c2` take only #378's readers?
 4. Is `40e12f64` proof-only?
-5. Do Q-L2-1 (b), Q-L2-2 and Q-L2-3 (a) hold as recorded?
+5. Is `2bf61a2e` (LE-g56-s1) proof-only? Do the merges `5b17523b` and `686bf03f` take only it?
+6. Do Q-L2-1 (b), Q-L2-2 and Q-L2-3 (a) hold as recorded?
 
 **H. Docstrings, sketches, attribution, size.**
 1. Is every result tagged with a source or marked Glue, and is every nontrivial proof sketched? Check in particular:
@@ -368,11 +388,12 @@ Ruling: the decision log `IOComponentsPlan.md`, row 2026-11-18 *Subexponential s
 **I. Evidence.**
 1. **Grade `verification-r1.md` and its ZIP:**
    - the merge;
-   - the start-tree state check and the 37-module replay;
-   - the forced downstream rebuild;
-   - the admissions, the axiom census (280 constants), the seals and the fix probe, and the lint.
+   - the start-tree state check and the 17-module replay (the forced foundation downstream);
+   - the admissions and the axiom census (281 constants);
+   - the seals and the paired controls;
+   - decls2 of the fix, and the lint.
 2. **Grade the PR reports' check sections and the landing r2b re-check.**
-3. **Binding.** Does each piece of evidence bind to the stated heads, or, for the merge, to `TCSlib` tree `6a724839`?
+3. **Binding.** Does each piece of evidence bind to the stated heads, or, for the merge, to `TCSlib` tree `e4c02739`?
    A missing or non-binding piece of necessary evidence is a major.
 
 **J. Anything undisclosed.** S-1 to S-7 are the known items.
