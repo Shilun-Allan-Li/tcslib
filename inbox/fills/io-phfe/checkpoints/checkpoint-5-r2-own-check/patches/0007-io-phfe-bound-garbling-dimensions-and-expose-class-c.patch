@@ -1,0 +1,1069 @@
+From dd43cb9bb3dff51fb888c0f3d31fbbbdcb189af1 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 02:47:14 -0800
+Subject: [PATCH 07/37] io-phfe: bound garbling dimensions and expose class
+ codecs
+
+---
+ .../FunctionalEncryption/Classes.lean         |  97 +++-
+ .../PartialGarbling/Defs.lean                 |   6 +
+ .../PartialGarbling/Layered.lean              | 493 ++++++++++++++++++
+ .../FunctionalEncryption/Wee20/Linear.lean    |  12 +-
+ .../Wee20/LinearSimulator.lean                |  13 +-
+ .../FunctionalEncryption/Wee20/Quadratic.lean |  12 +-
+ .../Wee20/QuadraticSimulator.lean             |  14 +-
+ .../FunctionalEncryption/Wee20/Wire.lean      | 158 ++++++
+ 8 files changed, 770 insertions(+), 35 deletions(-)
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Wire.lean
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean
+index 839fd33e1..2edc5c417 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Classes.lean
+@@ -77,11 +77,11 @@ theorem xhat_eq {p : ℕ+} {l : ℕ} (x : Fin l → ZMod (p : ℕ)) :
+ 
+ /-- Padding preserves each public-input coordinate. -/
+ theorem xhat_castSucc {p : ℕ+} {l : ℕ} (x : Fin l → ZMod (p : ℕ)) (i : Fin l) :
+-    xhat x i.castSucc = x i := Fin.snoc_castSucc (p := x) (x := 1) i
++    xhat x i.castSucc = x i := Fin.snoc_castSucc (α := fun _ => ZMod (p : ℕ)) 1 x i
+ 
+ /-- The final padded public-input coordinate equals 1. -/
+ theorem xhat_last {p : ℕ+} {l : ℕ} (x : Fin l → ZMod (p : ℕ)) :
+-    xhat x (Fin.last l) = 1 := Fin.snoc_last (p := x) (x := 1)
++    xhat x (Fin.last l) = 1 := Fin.snoc_last (α := fun _ => ZMod (p : ℕ)) 1 x
+ 
+ /-- Tensor evaluation sums each coefficient times its padded public monomial.
+ [GJLS21, §9, pp.57–58; Wee20, §3, p.6]. -/
+@@ -108,16 +108,16 @@ integer into the supplied positive modulus. The explicit zero fallback is
+ unreachable by `decodeResidues_parse`. This is total modular decoding glue. -/
+ def decodeResidues (p : ℕ+) (count width : ℕ)
+     (word : Fin (count * width) → Bool) : Fin count → ZMod (p : ℕ) :=
+-  fun i => (((Encoding.Modular.decodeVector (q := 2 ^ width) (length := count)
+-    width (List.ofFn word)).getD 0) i).val
++  fun i => ((((Encoding.Modular.decodeVector (q := 2 ^ width) (length := count)
++    width (List.ofFn word)).getD 0) i).val : ZMod (p : ℕ))
+ 
+ /-- Residue decoding is the word-modulus parser followed by representative casting,
+ with the displayed explicit fallback. -/
+ theorem decodeResidues_eq (p : ℕ+) (count width : ℕ)
+     (word : Fin (count * width) → Bool) :
+     decodeResidues p count width word = fun i =>
+-      (((Encoding.Modular.decodeVector (q := 2 ^ width) (length := count)
+-        width (List.ofFn word)).getD 0) i).val := rfl
++      ((((Encoding.Modular.decodeVector (q := 2 ^ width) (length := count)
++        width (List.ofFn word)).getD 0) i).val : ZMod (p : ℕ)) := rfl
+ 
+ /-- Every fixed-length word passes the word-modulus parser: each width-bit block
+ is less than 2^width. In particular the decoding fallback is never used.
+@@ -131,7 +131,7 @@ theorem decodeResidues_parse (count width : ℕ) (word : Fin (count * width) →
+       some (fun i : Fin count =>
+         (listToNat (((List.ofFn word).drop (i.val * width)).take width) : ZMod (2 ^ width))) :=
+   (Encoding.Modular.decodeVector_eq width (List.ofFn word)).trans
+-    (if_pos ⟨List.length_ofFn _, fun i =>
++    (if_pos ⟨List.length_ofFn, fun i =>
+       lt_of_lt_of_le (Candidates.listToNat_lt_two_pow _)
+         (Nat.pow_le_pow_right (Nat.succ_pos 1) (List.length_take_le _ _))⟩)
+ 
+@@ -289,6 +289,11 @@ def tensorFnLen (l n w : PolyExpr) (d : ℕ) : PolyExpr :=
+ theorem tensorFnLen_eq (l n w : PolyExpr) (d : ℕ) :
+     tensorFnLen l n w d = .mul (.mul n (.pow (.add l (.const 1)) d)) w := rfl
+ 
++/-- The coefficient-description polynomial evaluates to its numeric block width. -/
++theorem tensorFnLen_eval (l n w : PolyExpr) (d kappa : ℕ) :
++    (tensorFnLen l n w d).eval kappa =
++      n.eval kappa * (l.eval kappa + 1) ^ d * w.eval kappa := rfl
++
+ /-- Encode a scalar allowed value as a singleton modular vector at the binary
+ width of the supplied modulus. This preserves the scalar simulator input. -/
+ def encodeScalar (p : ℕ+) (a : ZMod (p : ℕ)) : List Bool :=
+@@ -355,6 +360,42 @@ theorem phfeClass_eval (l n w : PolyExpr) (d kappa : ℕ) (p : ℕ+)
+         (decodeResidues p (l.eval kappa) (w.eval kappa) x)
+         (decodeResidues p (n.eval kappa) (w.eval kappa) y) := rfl
+ 
++/-- The PHFE class parameter is transported explicitly to its positive modulus.
++This codec avoids unfolding the class bundle in foreign scheme constructions. -/
++def phfeClassParamEquiv (l n w : PolyExpr) (d kappa : ℕ) :
++    (phfeClass l n w d).Prm kappa ≃ ℕ+ := Equiv.refl _
++
++/-- The PHFE parameter codec is internally the identity equivalence. -/
++theorem phfeClassParamEquiv_eq (l n w : PolyExpr) (d kappa : ℕ) :
++    phfeClassParamEquiv l n w d kappa = Equiv.refl ℕ+ := rfl
++
++/-- Encoding then decoding a PHFE parameter recovers the supplied modulus. -/
++theorem phfeClassParamEquiv_apply_symm (l n w : PolyExpr) (d kappa : ℕ) (p : ℕ+) :
++    phfeClassParamEquiv l n w d kappa ((phfeClassParamEquiv l n w d kappa).symm p) = p :=
++  (phfeClassParamEquiv l n w d kappa).apply_symm_apply p
++
++/-- The PHFE value codec preserves the scalar at its explicitly encoded modulus. -/
++def phfeClassValueEquiv (l n w : PolyExpr) (d kappa : ℕ) (p : ℕ+) :
++    (phfeClass l n w d).Out kappa ((phfeClassParamEquiv l n w d kappa).symm p) ≃
++      ZMod (p : ℕ) := Equiv.refl _
++
++/-- The PHFE scalar-value codec is internally the identity equivalence. -/
++theorem phfeClassValueEquiv_eq (l n w : PolyExpr) (d kappa : ℕ) (p : ℕ+) :
++    phfeClassValueEquiv l n w d kappa p = Equiv.refl (ZMod (p : ℕ)) := rfl
++
++/-- Encoding then decoding a PHFE scalar preserves the scalar value. -/
++theorem phfeClassValueEquiv_apply_symm (l n w : PolyExpr) (d kappa : ℕ) (p : ℕ+)
++    (a : ZMod (p : ℕ)) :
++    phfeClassValueEquiv l n w d kappa p
++      ((phfeClassValueEquiv l n w d kappa p).symm a) = a :=
++  (phfeClassValueEquiv l n w d kappa p).apply_symm_apply a
++
++/-- Encoding a packaged PHFE scalar gives the canonical residue encoding. -/
++theorem phfeClass_encValue_codec (l n w : PolyExpr) (d kappa : ℕ) (p : ℕ+)
++    (a : ZMod (p : ℕ)) :
++    (phfeClass l n w d).encValue kappa ((phfeClassParamEquiv l n w d kappa).symm p)
++      ((phfeClassValueEquiv l n w d kappa p).symm a) = encodeScalar p a := rfl
++
+ /-- Canonical encoded inputs realize the intended typed PHFE evaluation whenever
+ every residue fits in the public word width. [GJLS21, §9, pp.57–58].
+ 
+@@ -384,11 +425,11 @@ def quadClass (l n1 n2 w : PolyExpr) (d : ℕ) : FnClass where
+   encValue := fun _ p => encodeScalar p
+   encValue_injective := fun _ p => encodeScalar_injective p
+   eval := fun kappa p f x z =>
+-    let private := decodeResidues p (n1.eval kappa + n2.eval kappa) (w.eval kappa) z
++    let privateValues := decodeResidues p (n1.eval kappa + n2.eval kappa) (w.eval kappa) z
+     quadEval (decodeTensor p (l.eval kappa) (n1.eval kappa * n2.eval kappa) d (w.eval kappa) f)
+       (decodeResidues p (l.eval kappa) (w.eval kappa) x)
+-      (fun i => private (Fin.castAdd (n2.eval kappa) i))
+-      (fun j => private (Fin.natAdd (n1.eval kappa) j))
++      (fun i => privateValues (Fin.castAdd (n2.eval kappa) i))
++      (fun j => privateValues (Fin.natAdd (n1.eval kappa) j))
+ 
+ /-- The quadratic public-input width is l residue blocks. -/
+ theorem quadClass_pubLen (l n1 n2 w : PolyExpr) (d : ℕ) :
+@@ -428,6 +469,42 @@ theorem quadClass_eval (l n1 n2 w : PolyExpr) (d kappa : ℕ) (p : ℕ+)
+         (fun j => decodeResidues p (n1.eval kappa + n2.eval kappa) (w.eval kappa) z
+           (Fin.natAdd (n1.eval kappa) j)) := rfl
+ 
++/-- The quadratic class parameter is explicitly transported to its positive modulus. -/
++def quadClassParamEquiv (l n1 n2 w : PolyExpr) (d kappa : ℕ) :
++    (quadClass l n1 n2 w d).Prm kappa ≃ ℕ+ := Equiv.refl _
++
++/-- The quadratic parameter codec is internally the identity equivalence. -/
++theorem quadClassParamEquiv_eq (l n1 n2 w : PolyExpr) (d kappa : ℕ) :
++    quadClassParamEquiv l n1 n2 w d kappa = Equiv.refl ℕ+ := rfl
++
++/-- Encoding then decoding a quadratic parameter recovers the supplied modulus. -/
++theorem quadClassParamEquiv_apply_symm (l n1 n2 w : PolyExpr) (d kappa : ℕ) (p : ℕ+) :
++    quadClassParamEquiv l n1 n2 w d kappa
++      ((quadClassParamEquiv l n1 n2 w d kappa).symm p) = p :=
++  (quadClassParamEquiv l n1 n2 w d kappa).apply_symm_apply p
++
++/-- The quadratic value codec preserves the scalar at its explicitly encoded modulus. -/
++def quadClassValueEquiv (l n1 n2 w : PolyExpr) (d kappa : ℕ) (p : ℕ+) :
++    (quadClass l n1 n2 w d).Out kappa ((quadClassParamEquiv l n1 n2 w d kappa).symm p) ≃
++      ZMod (p : ℕ) := Equiv.refl _
++
++/-- The quadratic scalar-value codec is internally the identity equivalence. -/
++theorem quadClassValueEquiv_eq (l n1 n2 w : PolyExpr) (d kappa : ℕ) (p : ℕ+) :
++    quadClassValueEquiv l n1 n2 w d kappa p = Equiv.refl (ZMod (p : ℕ)) := rfl
++
++/-- Encoding then decoding a quadratic scalar preserves the scalar value. -/
++theorem quadClassValueEquiv_apply_symm (l n1 n2 w : PolyExpr) (d kappa : ℕ) (p : ℕ+)
++    (a : ZMod (p : ℕ)) :
++    quadClassValueEquiv l n1 n2 w d kappa p
++      ((quadClassValueEquiv l n1 n2 w d kappa p).symm a) = a :=
++  (quadClassValueEquiv l n1 n2 w d kappa p).apply_symm_apply a
++
++/-- Encoding a packaged quadratic scalar gives the canonical residue encoding. -/
++theorem quadClass_encValue_codec (l n1 n2 w : PolyExpr) (d kappa : ℕ) (p : ℕ+)
++    (a : ZMod (p : ℕ)) :
++    (quadClass l n1 n2 w d).encValue kappa ((quadClassParamEquiv l n1 n2 w d kappa).symm p)
++      ((quadClassValueEquiv l n1 n2 w d kappa p).symm a) = encodeScalar p a := rfl
++
+ /-- Duplicate private residue words in block order, without decoding them. This is
+ the wire form of y↦(y,y) used to embed [GJLS21, §9] into [Wee20, §3]. -/
+ def duplicatePrivateBits (n width : ℕ) (y : Fin (n * width) → Bool) :
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Defs.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Defs.lean
+index 9fe0f2983..fdfea913f 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Defs.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Defs.lean
+@@ -193,6 +193,12 @@ structure Raw (l n : PolyExpr) (Fn : (kappa : ℕ) → ℕ+ → Type) where
+   [tDecEq : ∀ kappa p f, DecidableEq (TIdx kappa p f)]
+   /-- The number of non-output coordinates. -/
+   mCount : (kappa : ℕ) → (p : ℕ+) → Fn kappa p → ℕ
++  /-- A polynomial bound on the non-output dimension, fixed by the function class
++  independently of the modulus and adaptively chosen function. This is the size
++  bound in [AGW20, Lemma 2, p.12], not an algorithm-efficiency hypothesis. -/
++  mBound : PolyExpr
++  /-- Every represented function uses at most the fixed polynomial node bound. -/
++  mCount_le_mBound : ∀ kappa p f, mCount kappa p f ≤ mBound.eval kappa
+   /-- The number of auxiliary draw coordinates. -/
+   auxCount : (kappa : ℕ) → (p : ℕ+) → Fn kappa p → ℕ
+   /-- Explicit non-output coordinates in the order used on machine inputs. -/
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean
+new file mode 100644
+index 000000000..152f0de1d
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean
+@@ -0,0 +1,493 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.Defs
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Classes
++import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
++import Mathlib.Data.Fintype.BigOperators
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Layered polynomial partial garbling
++
++The instance specializes [AGW20, Appendix A, (28)–(32), pp.37–38] to the
++coefficient-tensor representation of a polynomial vector. Its conceptual vertices
++are padded public-variable prefixes, output vertices and one sink. No branching-
++program datatype is introduced.
++
++The proof route uses forward and backward path sums and a translation of the
++random draw. This replaces the source's determinant argument while preserving its
++matrix formulas and exact law. It is the one-private-tail-column case of
++[IW14, Theorem 3, p.8]. Degree zero and an empty output vector are permitted.
++
++## Main definitions
++
++* `PartialGarbling.Layered.MIdx`, `TIdx`: prefix nodes and non-root prefix nodes.
++* `PartialGarbling.Layered.L1`, `L0`: public-variable and constant incidence matrices.
++* `PartialGarbling.Layered.rec`: forward path values for reconstruction.
++* `PartialGarbling.Layered.backward`, `shift`: backward values for privacy.
++* `layeredPG_raw`: the raw uniform family; efficiency is a later target.
++
++## Main results
++
++* `PartialGarbling.Layered.forward_action`, `backward_action`: path-sum identities.
++* `PartialGarbling.Layered.translation`: the pointwise real/simulated garbling identity.
++* `PartialGarbling.Layered.rec_spec`, `privacy`: reconstruction and exact privacy.
++* `layeredPG_raw_*`: readers for every algorithm and its coordinate types.
++
++## References
++
++* [AGW20] M. Abdalla, J. Gong, H. Wee, *Functional Encryption for Attribute-Weighted
++  Sums from k-Lin*, 2020, Lemma 2, p.12, Appendix A, pp.37–38, (28)–(32).
++* [IW14] Y. Ishai, H. Wee, *Partial Garbling Schemes and Their Applications*, 2014,
++  Definition 1, pp.6–7, Theorem 3, p.8, and §4.2, pp.9–11.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
++
++open Complexity Turing TCSlib.Cryptography.Games
++
++namespace PartialGarbling.Layered
++
++/-- Non-output nodes are all padded public-variable prefixes of lengths 0 through d.
++This is the layered specialization of [AGW20, Appendix A, p.37]. -/
++abbrev MIdx (l d : ℕ) : Type := Σ k : Fin (d + 1), Fin k.val → Fin (l + 1)
++
++/-- Non-output indices have the displayed prefix-node type. -/
++theorem mIdx_eq (l d : ℕ) :
++    MIdx l d = (Σ k : Fin (d + 1), Fin k.val → Fin (l + 1)) := rfl
++
++/-- Auxiliary draw nodes are all non-root prefixes, indexed by their predecessor
++length. [AGW20, Appendix A, (28)–(32), pp.37–38], layered specialization. -/
++abbrev TIdx (l d : ℕ) : Type := Σ k : Fin d, Fin (k.val + 1) → Fin (l + 1)
++
++/-- Auxiliary draw indices have the displayed non-root-prefix type. -/
++theorem tIdx_eq (l d : ℕ) :
++    TIdx l d = (Σ k : Fin d, Fin (k.val + 1) → Fin (l + 1)) := rfl
++
++/-- The distinguished coordinate is the empty prefix, namely the source node.
++[AGW20, Appendix A, (30), p.37]. -/
++def root (l d : ℕ) : MIdx l d := ⟨⟨0, Nat.zero_lt_succ d⟩, Fin.elim0⟩
++
++/-- The distinguished coordinate is the explicit depth-zero prefix. -/
++theorem root_eq (l d : ℕ) : root l d = ⟨⟨0, Nat.zero_lt_succ d⟩, Fin.elim0⟩ := rfl
++
++/-- An auxiliary prefix is viewed as its corresponding non-output node. -/
++def node {l d : ℕ} (v : TIdx l d) : MIdx l d := ⟨v.1.succ, v.2⟩
++
++/-- The auxiliary-node embedding increments its predecessor depth. -/
++theorem node_eq {l d : ℕ} (v : TIdx l d) : node v = ⟨v.1.succ, v.2⟩ := rfl
++
++/-- The parent of a non-root prefix deletes its last label. -/
++def parent {l d : ℕ} (v : TIdx l d) : MIdx l d := ⟨v.1.castSucc, Fin.init v.2⟩
++
++/-- The parent is the prefix obtained by the published tuple-init operation. -/
++theorem parent_eq {l d : ℕ} (v : TIdx l d) :
++    parent v = ⟨v.1.castSucc, Fin.init v.2⟩ := rfl
++
++/-- The edge into a non-root prefix is labeled by its final tuple coordinate. -/
++def lastLabel {l d : ℕ} (v : TIdx l d) : Fin (l + 1) := v.2 (Fin.last v.1.val)
++
++/-- The final edge label is the prefix's last coordinate. -/
++theorem lastLabel_eq {l d : ℕ} (v : TIdx l d) :
++    lastLabel v = v.2 (Fin.last v.1.val) := rfl
++
++/-- A full public-variable tuple identifies its depth-d terminal prefix. -/
++def leaf {l d : ℕ} (tau : Fin d → Fin (l + 1)) : MIdx l d := ⟨Fin.last d, tau⟩
++
++/-- A leaf has depth d and the supplied tuple. -/
++theorem leaf_eq {l d : ℕ} (tau : Fin d → Fin (l + 1)) :
++    leaf tau = ⟨Fin.last d, tau⟩ := rfl
++
++/-- The number of non-output nodes is the sum of padded-prefix counts at every
++level. This depends only on l,d, not on coefficients. -/
++def nodeCount (l d : ℕ) : ℕ := ∑ k : Fin (d + 1), (l + 1) ^ k.val
++
++/-- The non-output node count is the displayed geometric sum. -/
++theorem nodeCount_eq (l d : ℕ) : nodeCount l d = ∑ k : Fin (d + 1), (l + 1) ^ k.val :=
++  rfl
++
++/-- The number of auxiliary coordinates is the sum of positive-depth prefix counts. -/
++def auxCount (l d : ℕ) : ℕ := ∑ k : Fin d, (l + 1) ^ (k.val + 1)
++
++/-- The auxiliary coordinate count is the displayed positive-depth sum. -/
++theorem auxCount_eq (l d : ℕ) : auxCount l d = ∑ k : Fin d, (l + 1) ^ (k.val + 1) :=
++  rfl
++
++/-- The fixed node bound is the polynomial sum of (l+1)^k for 0≤k≤d.
++It is independent of the modulus and function coefficients. [AGW20, Lemma 2,
++p.12], specialized to the fixed-degree layered representation. -/
++def nodeBound (l : PolyExpr) : ℕ → PolyExpr
++  | 0 => .const 1
++  | d + 1 => .add (nodeBound l d) (.pow (.add l (.const 1)) (d + 1))
++
++/-- At degree zero the node bound is the constant polynomial 1. -/
++theorem nodeBound_zero (l : PolyExpr) : nodeBound l 0 = .const 1 := rfl
++
++/-- Increasing the degree adds the count of the next prefix layer. -/
++theorem nodeBound_succ (l : PolyExpr) (d : ℕ) :
++    nodeBound l (d + 1) = .add (nodeBound l d) (.pow (.add l (.const 1)) (d + 1)) := rfl
++
++/-- The polynomial node bound equals the exact geometric node count.
++
++**Proof sketch.** Induct on d. The base geometric sum consists only of 1.
++At a successor, use Fin.sum_univ_castSucc to split the last layer; its count
++is exactly the power added by nodeBound_succ. -/
++theorem nodeBound_eval (l : PolyExpr) (d kappa : ℕ) :
++    (nodeBound l d).eval kappa = nodeCount (l.eval kappa) d := sorry
++
++/-- Removing the source leaves exactly the auxiliary prefix nodes.
++
++**Proof sketch.** Split the geometric sum at depth zero using Fin.sum_univ_succ;
++the first term is 1 and the remaining terms are exactly auxCount. -/
++theorem auxCount_add_one (l d : ℕ) : auxCount l d + 1 = nodeCount l d := sorry
++
++/-- Node coordinates use the explicit tuple equivalence within each depth and
++the published finite-sigma equivalence between depths. No opaque enumeration is used. -/
++def nodeCoord (l d : ℕ) : MIdx l d ≃ Fin (nodeCount l d) :=
++  (Equiv.sigmaCongrRight (fun k : Fin (d + 1) => tupleCoord l k.val)).trans finSigmaFinEquiv
++
++/-- Node coordinates are the displayed composition of public equivalences. -/
++theorem nodeCoord_eq (l d : ℕ) : nodeCoord l d =
++    (Equiv.sigmaCongrRight (fun k : Fin (d + 1) => tupleCoord l k.val)).trans
++      finSigmaFinEquiv := rfl
++
++/-- Auxiliary coordinates use explicit positive-depth tuple ranks and finite-sigma ranks. -/
++def auxCoord (l d : ℕ) : TIdx l d ≃ Fin (auxCount l d) :=
++  (Equiv.sigmaCongrRight (fun k : Fin d => tupleCoord l (k.val + 1))).trans finSigmaFinEquiv
++
++/-- Auxiliary coordinates are the displayed composition of public equivalences. -/
++theorem auxCoord_eq (l d : ℕ) : auxCoord l d =
++    (Equiv.sigmaCongrRight (fun k : Fin d => tupleCoord l (k.val + 1))).trans
++      finSigmaFinEquiv := rfl
++
++/-- The source is finite coordinate zero, fixing the distinguished e1 position.
++
++**Proof sketch.** Apply the published finite-sigma coordinate formula at depth
++zero; its prefix sum is empty and its empty tuple has the only coordinate in Fin 1. -/
++theorem nodeCoord_root (l d : ℕ) : (nodeCoord l d (root l d)).val = 0 := sorry
++
++section Algorithms
++
++variable {p : ℕ+} {l n d : ℕ}
++
++/-- L1 places the variable-edge coefficients at parent columns and child rows.
++Output rows are zero. This is the layered coefficient matrix of
++[AGW20, Appendix A, (32), p.38], with the corrected t×(lm) shape. -/
++def L1 (C : PolyTensor p l n d) :
++    Matrix (TIdx l d ⊕ Fin n) (Fin l × MIdx l d) (ZMod (p : ℕ)) :=
++  fun row iu => match row with
++    | Sum.inl v => if iu.2 = parent v ∧ lastLabel v = iu.1.castSucc then 1 else 0
++    | Sum.inr _ => 0
++
++/-- A non-root L1 row records the variable-labeled edge from its parent. -/
++theorem L1_inl (C : PolyTensor p l n d) (v : TIdx l d) (i : Fin l) (u : MIdx l d) :
++    L1 C (Sum.inl v) (i, u) =
++      if u = parent v ∧ lastLabel v = i.castSucc then 1 else 0 := rfl
++
++/-- Every output row of L1 is zero. -/
++theorem L1_inr (C : PolyTensor p l n d) (j : Fin n) (iu : Fin l × MIdx l d) :
++    L1 C (Sum.inr j) iu = 0 := rfl
++
++/-- L0 records constant-labeled edges, the negative non-root diagonal, and the
++terminal coefficient edges. [AGW20, Appendix A, (32), p.38], layered specialization. -/
++def L0 (C : PolyTensor p l n d) :
++    Matrix (TIdx l d ⊕ Fin n) (MIdx l d) (ZMod (p : ℕ)) :=
++  fun row u => match row with
++    | Sum.inl v =>
++      (if u = parent v ∧ lastLabel v = Fin.last l then 1 else 0) -
++        (if u = node v then 1 else 0)
++    | Sum.inr j => ∑ tau : Fin d → Fin (l + 1), if u = leaf tau then C j tau else 0
++
++/-- A non-root L0 row contains its constant edge and negative diagonal. -/
++theorem L0_inl (C : PolyTensor p l n d) (v : TIdx l d) (u : MIdx l d) :
++    L0 C (Sum.inl v) u =
++      (if u = parent v ∧ lastLabel v = Fin.last l then 1 else 0) -
++        (if u = node v then 1 else 0) := rfl
++
++/-- An output L0 row contains precisely the corresponding terminal coefficients. -/
++theorem L0_inr (C : PolyTensor p l n d) (j : Fin n) (u : MIdx l d) :
++    L0 C (Sum.inr j) u =
++      ∑ tau : Fin d → Fin (l + 1), if u = leaf tau then C j tau else 0 := rfl
++
++/-- The public-input matrix combines the variable and constant parts as in
++[AGW20, Appendix A, (32), p.38]. -/
++def matrix (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ)) :
++    Matrix (TIdx l d ⊕ Fin n) (MIdx l d) (ZMod (p : ℕ)) :=
++  L1 C * PartialGarbling.publicTensor x + L0 C
++
++/-- The input matrix is exactly L1(x⊗I)+L0. -/
++theorem matrix_eq (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ)) :
++    matrix C x = L1 C * PartialGarbling.publicTensor x + L0 C := rfl
++
++/-- A forward path value is the product of the labels in its prefix. This replaces
++the cofactor description of rec in [AGW20, Appendix A, p.38] by its path formula. -/
++def forward (x : Fin l → ZMod (p : ℕ)) (u : MIdx l d) : ZMod (p : ℕ) :=
++  ∏ i : Fin u.1.val, xhat x (u.2 i)
++
++/-- Forward values are the displayed finite label products. -/
++theorem forward_eq (x : Fin l → ZMod (p : ℕ)) (u : MIdx l d) :
++    forward x u = ∏ i : Fin u.1.val, xhat x (u.2 i) := rfl
++
++/-- The source's forward value is the empty product 1.
++
++**Proof sketch.** The root tuple has domain Fin 0; its finite product is empty. -/
++theorem forward_root (x : Fin l → ZMod (p : ℕ)) : forward x (root l d) = 1 := sorry
++
++/-- Reconstruction consists of the polynomial outputs followed by all forward
++prefix values. [AGW20, Lemma 2, p.12; Appendix A, p.38]. -/
++def rec (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ)) :
++    (Fin n ⊕ MIdx l d) → ZMod (p : ℕ) :=
++  Sum.elim (polyTensorEval C x) (forward x)
++
++/-- The output-coordinate reconstruction block is the evaluated polynomial vector. -/
++theorem rec_inl (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ)) (j : Fin n) :
++    rec C x (Sum.inl j) = polyTensorEval C x j := rfl
++
++/-- The non-output reconstruction block is the forward prefix vector. -/
++theorem rec_inr (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ)) (u : MIdx l d) :
++    rec C x (Sum.inr u) = forward x u := rfl
++
++/-- Extend a prefix by a suffix to obtain a full degree-d tuple. The length cast
++uses the prefix's certified bound and does not choose an enumeration. -/
++def extend (u : MIdx l d) (sigma : Fin (d - u.1.val) → Fin (l + 1)) :
++    Fin d → Fin (l + 1) :=
++  fun i => Fin.append u.2 sigma
++    (Fin.cast (Nat.add_sub_of_le (Nat.le_of_lt_succ u.1.isLt)).symm i)
++
++/-- Prefix extension is the displayed tuple append after the canonical length cast. -/
++theorem extend_eq (u : MIdx l d) (sigma : Fin (d - u.1.val) → Fin (l + 1)) :
++    extend u sigma = fun i => Fin.append u.2 sigma
++      (Fin.cast (Nat.add_sub_of_le (Nat.le_of_lt_succ u.1.isLt)).symm i) := rfl
++
++/-- A backward value sums all suffix paths, weighted by terminal coefficients and
++private values. This is the path form of the source's privacy translation.
++[AGW20, Appendix A, (28)–(30), p.37; IW14, §4.2, p.11]. -/
++def backward (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
++    (z : Fin n → ZMod (p : ℕ)) (u : MIdx l d) : ZMod (p : ℕ) :=
++  ∑ sigma : Fin (d - u.1.val) → Fin (l + 1),
++    (∑ j : Fin n, C j (extend u sigma) * z j) *
++      ∏ i : Fin (d - u.1.val), xhat x (sigma i)
++
++/-- Backward values are the displayed finite suffix sums. -/
++theorem backward_eq (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
++    (z : Fin n → ZMod (p : ℕ)) (u : MIdx l d) :
++    backward C x z u =
++      ∑ sigma : Fin (d - u.1.val) → Fin (l + 1),
++        (∑ j : Fin n, C j (extend u sigma) * z j) *
++          ∏ i : Fin (d - u.1.val), xhat x (sigma i) := rfl
++
++/-- The draw translation uses backward values at non-root nodes and the private
++values at output nodes. [AGW20, Appendix A, (28)–(30), p.37], path-sum proof route. -/
++def shift (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
++    (z : Fin n → ZMod (p : ℕ)) : (TIdx l d ⊕ Fin n) → ZMod (p : ℕ) :=
++  Sum.elim (fun v => backward C x z (node v)) z
++
++/-- The auxiliary draw shift is the corresponding node's backward value. -/
++theorem shift_inl (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
++    (z : Fin n → ZMod (p : ℕ)) (v : TIdx l d) :
++    shift C x z (Sum.inl v) = backward C x z (node v) := rfl
++
++/-- The output draw shift equals the original private vector. -/
++theorem shift_inr (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
++    (z : Fin n → ZMod (p : ℕ)) (j : Fin n) : shift C x z (Sum.inr j) = z j := rfl
++
++/-- Applying the input matrix to forward values cancels every internal prefix
++row and leaves exactly the polynomial vector on output rows.
++
++**Proof sketch.** Use the variable/constant edge readers and the Fin.snoc product
++recurrence. At each non-root prefix its parent's weighted forward value cancels
++its own value. Output rows sum the coefficient-weighted full prefix products. -/
++theorem forward_action (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ)) :
++    Matrix.mulVec (matrix C x) (forward x) =
++      Sum.elim (fun _ : TIdx l d => 0) (polyTensorEval C x) := sorry
++
++/-- The backward value at the source is the allowed scalar z·f(x).
++
++**Proof sketch.** At the empty prefix the suffix is the full monomial tuple.
++Its extension is itself. Exchange the finite output/tuple sums and regroup the
++coefficient products into polyTensorEval. -/
++theorem backward_root (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
++    (z : Fin n → ZMod (p : ℕ)) :
++    backward C x z (root l d) = dotProduct z (polyTensorEval C x) := sorry
++
++/-- Multiplying the backward draw shift by the input matrix cancels every column
++except the source column, whose value is the allowed scalar.
++
++**Proof sketch.** Split each nonempty suffix into first label and remaining
++suffix using Fin.consEquiv, and use Fin.snoc to extend the prefix. Thus each
++internal column's weighted child sum equals its backward value and cancels its
++negative diagonal. Terminal columns use the coefficient-weighted z values.
++The source has no negative diagonal; apply backward_root there. -/
++theorem backward_action (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
++    (z : Fin n → ZMod (p : ℕ)) :
++    Matrix.vecMul (shift C x z) (matrix C x) =
++      fun u => if u = root l d then dotProduct z (polyTensorEval C x) else 0 := sorry
++
++/-- Every real garbling reconstructs z·f(x), independently of its draw.
++[AGW20, Lemma 2, p.12; Appendix A, p.38], proved by path sums.
++
++**Proof sketch.** Split the garbling/reconstruction dot product into its output
++and non-output blocks. Move the latter matrix action onto forward values using
++the published dot-product/mulVec identity, then apply forward_action. The masked
++output contribution cancels the draw contribution, leaving z·f(x). -/
++theorem rec_spec (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
++    (z : Fin n → ZMod (p : ℕ)) (t : (TIdx l d ⊕ Fin n) → ZMod (p : ℕ)) :
++    dotProduct (PartialGarbling.pgbCore (L1 C) (L0 C) x z t) (rec C x) =
++      dotProduct z (polyTensorEval C x) := sorry
++
++/-- Subtracting the backward draw shift transforms the real garbling exactly
++into the simulated garbling at its allowed scalar. [AGW20, Appendix A, (28)–(30),
++p.37; IW14, §4.2, p.11], with path sums replacing the determinant argument.
++
++**Proof sketch.** At output coordinates, −(t−z)=z−t. At non-output coordinates,
++linearity of vecMul and backward_action give (t−s)B+μe_source=tB. This proves the
++pointwise identity with the subtraction sign shown, including empty index types. -/
++theorem translation (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
++    (z : Fin n → ZMod (p : ℕ)) (t : (TIdx l d ⊕ Fin n) → ZMod (p : ℕ)) :
++    PartialGarbling.pgbCore (L1 C) (L0 C) x z t =
++      PartialGarbling.pgbStarCore (L1 C) (L0 C) (root l d) x
++        (dotProduct z (polyTensorEval C x)) (t - shift C x z) := sorry
++
++/-- Real and simulated layered garblings have identical laws, with no error term.
++[IW14, Definition 1, p.6; AGW20, Appendix A, (28)–(30), p.37].
++
++**Proof sketch.** Apply the pointwise translation, then reindex the uniform draw
++by Equiv.addRight (−shift C x z), using ProbComp.expect_sample_equiv. No rank,
++nonzero-value or positive-dimension event is needed. -/
++theorem privacy (C : PolyTensor p l n d) (x : Fin l → ZMod (p : ℕ))
++    (z : Fin n → ZMod (p : ℕ)) (test : ((Fin n ⊕ MIdx l d) → ZMod (p : ℕ)) → ℝ) :
++    ProbComp.expect (ProbComp.sample ((TIdx l d ⊕ Fin n) → ZMod (p : ℕ)))
++        (fun t => test (PartialGarbling.pgbCore (L1 C) (L0 C) x z t)) =
++      ProbComp.expect (ProbComp.sample ((TIdx l d ⊕ Fin n) → ZMod (p : ℕ)))
++        (fun t => test (PartialGarbling.pgbStarCore (L1 C) (L0 C) (root l d)
++          x (dotProduct z (polyTensorEval C x)) t)) := sorry
++
++end Algorithms
++end PartialGarbling.Layered
++
++/-- The layered raw family instantiates the corrected partial-garbling interface
++for padded polynomial tensors. [AGW20, Appendix A, (28)–(32), pp.37–38; IW14,
++Theorem 3, p.8], specialized to one private-tail column.
++
++The algorithms and index coordinates are explicit. Correctness and exact privacy
++use forward/backward path sums and translation, rather than determinants. The
++family covers every positive modulus; no efficiency proof is assumed or constructed. -/
++def layeredPG_raw (l n : PolyExpr) (d : ℕ) :
++    PartialGarbling.Raw l n (fun kappa p => PolyTensor p (l.eval kappa) (n.eval kappa) d) where
++  MIdx := fun kappa _ _ => PartialGarbling.Layered.MIdx (l.eval kappa) d
++  TIdx := fun kappa _ _ => PartialGarbling.Layered.TIdx (l.eval kappa) d
++  mFinite := fun _ _ _ => inferInstance
++  tFinite := fun _ _ _ => inferInstance
++  mDecEq := fun _ _ _ => inferInstance
++  tDecEq := fun _ _ _ => inferInstance
++  mCount := fun kappa _ _ => PartialGarbling.Layered.nodeCount (l.eval kappa) d
++  mBound := PartialGarbling.Layered.nodeBound l d
++  mCount_le_mBound := fun kappa _ _ =>
++    (PartialGarbling.Layered.nodeBound_eval l d kappa).ge
++  auxCount := fun kappa _ _ => PartialGarbling.Layered.auxCount (l.eval kappa) d
++  mCoord := fun kappa _ _ => PartialGarbling.Layered.nodeCoord (l.eval kappa) d
++  tCoord := fun kappa _ _ => PartialGarbling.Layered.auxCoord (l.eval kappa) d
++  auxCount_add_one := fun kappa _ _ =>
++    PartialGarbling.Layered.auxCount_add_one (l.eval kappa) d
++  m0 := fun kappa _ _ => PartialGarbling.Layered.root (l.eval kappa) d
++  m0_coord := fun kappa _ _ => PartialGarbling.Layered.nodeCoord_root (l.eval kappa) d
++  fnLen := fun kappa p => n.eval kappa * (l.eval kappa + 1) ^ d * Nat.size (p : ℕ)
++  encFn := fun _ p C => encodeTensorBits (Nat.size (p : ℕ)) C
++  encFn_inj := fun _ p => encodeTensorBits_injective (Nat.size (p : ℕ))
++    (Nat.le_of_lt (Nat.lt_size_self (p : ℕ)))
++  eval := fun _ _ C => polyTensorEval C
++  L1 := fun _ _ C => PartialGarbling.Layered.L1 C
++  L0 := fun _ _ C => PartialGarbling.Layered.L0 C
++  rec := fun _ _ C => PartialGarbling.Layered.rec C
++  rec_spec := fun _ _ C => PartialGarbling.Layered.rec_spec C
++  privacy := fun _ _ C => PartialGarbling.Layered.privacy C
++
++/-- The layered raw family's non-output coordinates are exactly its prefix nodes. -/
++theorem layeredPG_raw_MIdx (l n : PolyExpr) (d kappa : ℕ) (p : ℕ+)
++    (C : PolyTensor p (l.eval kappa) (n.eval kappa) d) :
++    (layeredPG_raw l n d).MIdx kappa p C =
++      PartialGarbling.Layered.MIdx (l.eval kappa) d := rfl
++
++/-- The layered raw family's auxiliary coordinates are exactly its non-root prefixes. -/
++theorem layeredPG_raw_TIdx (l n : PolyExpr) (d kappa : ℕ) (p : ℕ+)
++    (C : PolyTensor p (l.eval kappa) (n.eval kappa) d) :
++    (layeredPG_raw l n d).TIdx kappa p C =
++      PartialGarbling.Layered.TIdx (l.eval kappa) d := rfl
++
++/-- The layered non-output dimension is independent of the coefficient tensor. -/
++theorem layeredPG_raw_mCount (l n : PolyExpr) (d kappa : ℕ) (p : ℕ+)
++    (C : PolyTensor p (l.eval kappa) (n.eval kappa) d) :
++    (layeredPG_raw l n d).mCount kappa p C =
++      PartialGarbling.Layered.nodeCount (l.eval kappa) d := rfl
++
++/-- The raw family's fixed bound is the polynomial sum of its layer counts. -/
++theorem layeredPG_raw_mBound (l n : PolyExpr) (d : ℕ) :
++    (layeredPG_raw l n d).mBound = PartialGarbling.Layered.nodeBound l d := rfl
++
++/-- The bound evaluates to the exact node count, so padded reductions lose no
++extra statistical term from the layered instance's dimension bound. -/
++theorem layeredPG_raw_mBound_eval (l n : PolyExpr) (d kappa : ℕ) :
++    (layeredPG_raw l n d).mBound.eval kappa =
++      PartialGarbling.Layered.nodeCount (l.eval kappa) d :=
++  PartialGarbling.Layered.nodeBound_eval l d kappa
++
++/-- The layered auxiliary dimension is independent of the coefficient tensor. -/
++theorem layeredPG_raw_auxCount (l n : PolyExpr) (d kappa : ℕ) (p : ℕ+)
++    (C : PolyTensor p (l.eval kappa) (n.eval kappa) d) :
++    (layeredPG_raw l n d).auxCount kappa p C =
++      PartialGarbling.Layered.auxCount (l.eval kappa) d := rfl
++
++/-- The raw matrix-generation algorithms are the explicit layered matrices L1. -/
++theorem layeredPG_raw_L1 (l n : PolyExpr) (d kappa : ℕ) (p : ℕ+)
++    (C : PolyTensor p (l.eval kappa) (n.eval kappa) d) :
++    (layeredPG_raw l n d).L1 kappa p C = PartialGarbling.Layered.L1 C := rfl
++
++/-- The raw constant matrices are the explicit layered matrices L0. -/
++theorem layeredPG_raw_L0 (l n : PolyExpr) (d kappa : ℕ) (p : ℕ+)
++    (C : PolyTensor p (l.eval kappa) (n.eval kappa) d) :
++    (layeredPG_raw l n d).L0 kappa p C = PartialGarbling.Layered.L0 C := rfl
++
++/-- The raw reconstruction algorithm is the explicit forward path vector. -/
++theorem layeredPG_raw_rec (l n : PolyExpr) (d kappa : ℕ) (p : ℕ+)
++    (C : PolyTensor p (l.eval kappa) (n.eval kappa) d) :
++    (layeredPG_raw l n d).rec kappa p C = PartialGarbling.Layered.rec C := rfl
++
++/-- The raw evaluated vector is the shared coefficient-tensor evaluation. -/
++theorem layeredPG_raw_eval (l n : PolyExpr) (d kappa : ℕ) (p : ℕ+)
++    (C : PolyTensor p (l.eval kappa) (n.eval kappa) d) :
++    (layeredPG_raw l n d).eval kappa p C = polyTensorEval C := rfl
++
++/-- The raw function-description width follows the input modulus, permitting one
++uniform efficient interface for every positive modulus. -/
++theorem layeredPG_raw_fnLen (l n : PolyExpr) (d kappa : ℕ) (p : ℕ+) :
++    (layeredPG_raw l n d).fnLen kappa p =
++      n.eval kappa * (l.eval kappa + 1) ^ d * Nat.size (p : ℕ) := rfl
++
++/-- The raw function encoding is the shared canonical tensor encoding. -/
++theorem layeredPG_raw_encFn (l n : PolyExpr) (d kappa : ℕ) (p : ℕ+)
++    (C : PolyTensor p (l.eval kappa) (n.eval kappa) d) :
++    (layeredPG_raw l n d).encFn kappa p C = encodeTensorBits (Nat.size (p : ℕ)) C := rfl
++
++/-- The raw distinguished coordinate is the empty prefix. -/
++theorem layeredPG_raw_m0 (l n : PolyExpr) (d kappa : ℕ) (p : ℕ+)
++    (C : PolyTensor p (l.eval kappa) (n.eval kappa) d) :
++    (layeredPG_raw l n d).m0 kappa p C = PartialGarbling.Layered.root (l.eval kappa) d := rfl
++
++/-- The raw non-output coordinate encoding uses explicit tuple and depth ranks. -/
++theorem layeredPG_raw_mCoord (l n : PolyExpr) (d kappa : ℕ) (p : ℕ+)
++    (C : PolyTensor p (l.eval kappa) (n.eval kappa) d) :
++    (layeredPG_raw l n d).mCoord kappa p C =
++      PartialGarbling.Layered.nodeCoord (l.eval kappa) d := rfl
++
++/-- The raw auxiliary coordinate encoding uses explicit positive-depth tuple ranks. -/
++theorem layeredPG_raw_tCoord (l n : PolyExpr) (d kappa : ℕ) (p : ℕ+)
++    (C : PolyTensor p (l.eval kappa) (n.eval kappa) d) :
++    (layeredPG_raw l n d).tCoord kappa p C =
++      PartialGarbling.Layered.auxCoord (l.eval kappa) d := rfl
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean
+index f65146d2d..3533159dc 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean
+@@ -295,25 +295,25 @@ theorem leak_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Typ
+ [Wee20, §4.2, p. 9]. -/
+ noncomputable def setup (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ)
+     (pp : PublicParams G κ) : ProbComp (MPK G ℓ zDim κ pp × MSK G ℓ zDim κ pp) :=
+-  (ProbComp.sample (SetupDraw G ℓ zDim κ pp)).map (setupCore G ℓ zDim κ pp)
++  (setupCore G ℓ zDim κ pp <$> (ProbComp.sample (SetupDraw G ℓ zDim κ pp)))
+ 
+ /-- Honest setup has the displayed core-plus-draw law. -/
+ theorem setup_eq (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
+     setup G ℓ zDim κ pp =
+-      (ProbComp.sample (SetupDraw G ℓ zDim κ pp)).map (setupCore G ℓ zDim κ pp) := rfl
++      (setupCore G ℓ zDim κ pp <$> (ProbComp.sample (SetupDraw G ℓ zDim κ pp))) := rfl
+ 
+ /-- Honest encryption samples its two scalars and applies the core [Wee20, §4.2, p. 9]. -/
+ noncomputable def enc (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
+     (pk : MPK G ℓ zDim κ pp) (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
+     (z : Fin (zDim.eval κ) → pp.group.G) : ProbComp (CT G zDim κ pp) :=
+-  (ProbComp.sample (EncDraw G κ pp)).map (encCore G ℓ zDim κ pp pk x z)
++  (encCore G ℓ zDim κ pp pk x z <$> (ProbComp.sample (EncDraw G κ pp)))
+ 
+ /-- Honest encryption has the displayed core-plus-draw law. -/
+ theorem enc_eq (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
+     (pk : MPK G ℓ zDim κ pp) (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
+     (z : Fin (zDim.eval κ) → pp.group.G) :
+     enc G ℓ zDim κ pp pk x z =
+-      (ProbComp.sample (EncDraw G κ pp)).map (encCore G ℓ zDim κ pp pk x z) := rfl
++      (encCore G ℓ zDim κ pp pk x z <$> (ProbComp.sample (EncDraw G κ pp))) := rfl
+ 
+ /-- Honest key generation samples its actual function-dependent matrices and applies the
+ core [Wee20, §4.2, p. 9]. This is one draw, not a product-sampler construction. -/
+@@ -322,7 +322,7 @@ noncomputable def keyGen (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ
+     (msk : MSK G ℓ zDim κ pp) (f : Fn κ pp.orderParam)
+     (M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G) :
+     ProbComp (Key G PG κ pp f) :=
+-  (ProbComp.sample (KeyDraw G PG κ pp f)).map (keyCore G PG zDim κ pp msk f M)
++  (keyCore G PG zDim κ pp msk f M <$> (ProbComp.sample (KeyDraw G PG κ pp f)))
+ 
+ /-- Honest key generation has the displayed core-plus-draw law. -/
+ theorem keyGen_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+@@ -330,7 +330,7 @@ theorem keyGen_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → T
+     (msk : MSK G ℓ zDim κ pp) (f : Fn κ pp.orderParam)
+     (M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G) :
+     keyGen G PG zDim κ pp msk f M =
+-      (ProbComp.sample (KeyDraw G PG κ pp f)).map (keyCore G PG zDim κ pp msk f M) := rfl
++      (keyCore G PG zDim κ pp msk f M <$> (ProbComp.sample (KeyDraw G PG κ pp f))) := rfl
+ 
+ /-- Π is an internal raw bundle of cores, with efficiency supplied only through the outer
+ construction's targets [Wee20, §4.2, pp. 9–10]. -/
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean
+index 3cb600452..73a102404 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean
+@@ -274,7 +274,10 @@ def simKeyCore (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type
+   ⟨combineRows G κ pp C a high1 low1, combineRows G κ pp C a high2 low2,
+     combineRows G κ pp C a high3 low3, pp.group.expMat pp.generator R⟩
+ 
+-/-- The simulated key's three blocks have the projected and hidden-row form of (12). -/
++/-- The simulated key's three blocks have the projected and hidden-row form of (12).
++
++**Proof sketch.** The deterministic core and this equation use the same named blocks,
++so the equation follows by reduction of the core alone. -/
+ theorem simKeyCore_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+     (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
+     (st : SimState G ℓ zDim κ pp) (f : Fn κ pp.orderParam)
+@@ -311,12 +314,12 @@ theorem simKeyCore_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ 
+ [Wee20, §4.2, p. 10]. -/
+ noncomputable def simSetup (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ)
+     (pp : PublicParams G κ) : ProbComp (MPK G ℓ zDim κ pp × SimState G ℓ zDim κ pp) :=
+-  (ProbComp.sample (SimSetupDraw G ℓ zDim κ pp)).map (simSetupCore G ℓ zDim κ pp)
++  (simSetupCore G ℓ zDim κ pp <$> (ProbComp.sample (SimSetupDraw G ℓ zDim κ pp)))
+ 
+ /-- Simulated setup has the displayed core-plus-draw law. -/
+ theorem simSetup_eq (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
+     simSetup G ℓ zDim κ pp =
+-      (ProbComp.sample (SimSetupDraw G ℓ zDim κ pp)).map (simSetupCore G ℓ zDim κ pp) := rfl
++      (simSetupCore G ℓ zDim κ pp <$> (ProbComp.sample (SimSetupDraw G ℓ zDim κ pp))) := rfl
+ 
+ /-- Simulated encryption is deterministic after setup chooses its masks
+ [Wee20, §4.2, p. 10, Enc*]. -/
+@@ -337,7 +340,7 @@ noncomputable def simKey (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ
+     (M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G)
+     (x : Fin (ℓ.eval κ) → ZMod pp.group.order) (mu : pp.group.G) :
+     ProbComp (Key G PG κ pp f) :=
+-  (ProbComp.sample (SimKeyDraw G PG κ pp f)).map (simKeyCore G PG zDim κ pp st f M x mu)
++  (simKeyCore G PG zDim κ pp st f M x mu <$> (ProbComp.sample (SimKeyDraw G PG κ pp f)))
+ 
+ /-- Simulated keys have the displayed core-plus-draw law. -/
+ theorem simKey_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+@@ -346,7 +349,7 @@ theorem simKey_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → T
+     (M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G)
+     (x : Fin (ℓ.eval κ) → ZMod pp.group.order) (mu : pp.group.G) :
+     simKey G PG zDim κ pp st f M x mu =
+-      (ProbComp.sample (SimKeyDraw G PG κ pp f)).map (simKeyCore G PG zDim κ pp st f M x mu) :=
++      (simKeyCore G PG zDim κ pp st f M x mu <$> (ProbComp.sample (SimKeyDraw G PG κ pp f))) :=
+   rfl
+ 
+ /-- The exact failure probability of an unconditioned uniform three-by-three basis is
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic.lean
+index 6aafbc45b..06a8fa269 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic.lean
+@@ -324,12 +324,12 @@ theorem dec_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
+ /-- The exact setup law samples its single product draw and applies the core. -/
+ noncomputable def setup (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ)
+     (pp : PublicParams G κ) : ProbComp (MPK G ℓ n1 n2 κ pp × MSK G ℓ n1 n2 κ pp) :=
+-  (ProbComp.sample (SetupDraw G ℓ n1 n2 κ pp)).map (setupCore G ℓ n1 n2 κ pp)
++  (setupCore G ℓ n1 n2 κ pp <$> (ProbComp.sample (SetupDraw G ℓ n1 n2 κ pp)))
+ 
+ /-- Setup has the displayed exact core-plus-draw law. -/
+ theorem setup_eq (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
+     setup G ℓ n1 n2 κ pp =
+-      (ProbComp.sample (SetupDraw G ℓ n1 n2 κ pp)).map (setupCore G ℓ n1 n2 κ pp) := rfl
++      (setupCore G ℓ n1 n2 κ pp <$> (ProbComp.sample (SetupDraw G ℓ n1 n2 κ pp))) := rfl
+ 
+ /-- The exact encryption law samples its two masks and Π's randomness. -/
+ noncomputable def enc (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ)
+@@ -337,7 +337,7 @@ noncomputable def enc (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ)
+     (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
+     (z1 : Fin (n1.eval κ) → ZMod pp.group.order)
+     (z2 : Fin (n2.eval κ) → ZMod pp.group.order) : ProbComp (CT G n1 n2 κ pp) :=
+-  (ProbComp.sample (EncDraw G κ pp)).map (encCore G ℓ n1 n2 κ pp pk x z1 z2)
++  (encCore G ℓ n1 n2 κ pp pk x z1 z2 <$> (ProbComp.sample (EncDraw G κ pp)))
+ 
+ /-- Encryption has the displayed exact core-plus-draw law. -/
+ theorem enc_eq (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
+@@ -345,14 +345,14 @@ theorem enc_eq (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicP
+     (z1 : Fin (n1.eval κ) → ZMod pp.group.order)
+     (z2 : Fin (n2.eval κ) → ZMod pp.group.order) :
+     enc G ℓ n1 n2 κ pp pk x z1 z2 =
+-      (ProbComp.sample (EncDraw G κ pp)).map (encCore G ℓ n1 n2 κ pp pk x z1 z2) := rfl
++      (encCore G ℓ n1 n2 κ pp pk x z1 z2 <$> (ProbComp.sample (EncDraw G κ pp))) := rfl
+ 
+ /-- The exact key law uses Π's function-dependent key draw. -/
+ noncomputable def keyGen (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
+     {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
+     (κ : ℕ) (pp : PublicParams G κ) (msk : MSK G ℓ n1 n2 κ pp)
+     (f : Fn κ pp.orderParam) : ProbComp (Key G n1 n2 PG κ pp f) :=
+-  (ProbComp.sample (Linear.KeyDraw G PG κ pp f)).map (keyCore G n1 n2 PG κ pp msk f)
++  (keyCore G n1 n2 PG κ pp msk f <$> (ProbComp.sample (Linear.KeyDraw G PG κ pp f)))
+ 
+ /-- Key generation has the displayed exact core-plus-draw law. -/
+ theorem keyGen_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
+@@ -360,7 +360,7 @@ theorem keyGen_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
+     (κ : ℕ) (pp : PublicParams G κ) (msk : MSK G ℓ n1 n2 κ pp)
+     (f : Fn κ pp.orderParam) :
+     keyGen G n1 n2 PG κ pp msk f =
+-      (ProbComp.sample (Linear.KeyDraw G PG κ pp f)).map (keyCore G n1 n2 PG κ pp msk f) := rfl
++      (keyCore G n1 n2 PG κ pp msk f <$> (ProbComp.sample (Linear.KeyDraw G PG κ pp f))) := rfl
+ 
+ /-- The quadratic construction is an internal raw algorithm bundle
+ [Wee20, §3.1, p. 6]. Uniform efficiency is supplied by the outer targets. -/
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSimulator.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSimulator.lean
+index f57039d58..79553d0ea 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSimulator.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSimulator.lean
+@@ -177,12 +177,12 @@ theorem simKeyCore_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
+ /-- Simulated setup has its exact core-plus-draw law [Wee20, §3.2, p. 7]. -/
+ noncomputable def simSetup (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ)
+     (pp : PublicParams G κ) : ProbComp (MPK G ℓ n1 n2 κ pp × SimState G ℓ n1 n2 κ pp) :=
+-  (ProbComp.sample (SimSetupDraw G ℓ n1 n2 κ pp)).map (simSetupCore G ℓ n1 n2 κ pp)
++  (simSetupCore G ℓ n1 n2 κ pp <$> (ProbComp.sample (SimSetupDraw G ℓ n1 n2 κ pp)))
+ 
+ /-- Simulated setup is one uniform draw followed by its total core. -/
+ theorem simSetup_eq (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
+     simSetup G ℓ n1 n2 κ pp =
+-      (ProbComp.sample (SimSetupDraw G ℓ n1 n2 κ pp)).map (simSetupCore G ℓ n1 n2 κ pp) := rfl
++      (simSetupCore G ℓ n1 n2 κ pp <$> (ProbComp.sample (SimSetupDraw G ℓ n1 n2 κ pp))) := rfl
+ 
+ /-- Simulated encryption draws the masks once and returns the ciphertext and updated state
+ [Wee20, §3.2, p. 7]. -/
+@@ -190,13 +190,13 @@ noncomputable def simEnc (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ)
+     (pp : PublicParams G κ) (st : SimState G ℓ n1 n2 κ pp)
+     (x : Fin (ℓ.eval κ) → ZMod pp.group.order) :
+     ProbComp (CT G n1 n2 κ pp × SimState G ℓ n1 n2 κ pp) :=
+-  (ProbComp.sample (SimEncDraw G n1 n2 κ pp)).map (simEncCore G ℓ n1 n2 κ pp st x)
++  (simEncCore G ℓ n1 n2 κ pp st x <$> (ProbComp.sample (SimEncDraw G n1 n2 κ pp)))
+ 
+ /-- Simulated encryption has the displayed stateful core-plus-draw law. -/
+ theorem simEnc_eq (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
+     (st : SimState G ℓ n1 n2 κ pp) (x : Fin (ℓ.eval κ) → ZMod pp.group.order) :
+     simEnc G ℓ n1 n2 κ pp st x =
+-      (ProbComp.sample (SimEncDraw G n1 n2 κ pp)).map (simEncCore G ℓ n1 n2 κ pp st x) := rfl
++      (simEncCore G ℓ n1 n2 κ pp st x <$> (ProbComp.sample (SimEncDraw G n1 n2 κ pp))) := rfl
+ 
+ /-- Simulated function keys use Π's single function-dependent draw
+ [Wee20, §3.2, p. 7]. -/
+@@ -205,8 +205,7 @@ noncomputable def simKey (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
+     (κ : ℕ) (pp : PublicParams G κ) (st : SimState G ℓ n1 n2 κ pp)
+     (f : Fn κ pp.orderParam) (x : Fin (ℓ.eval κ) → ZMod pp.group.order) (mu : pp.group.G) :
+     ProbComp (Key G n1 n2 PG κ pp f) :=
+-  (ProbComp.sample (Linear.SimKeyDraw G PG κ pp f)).map
+-    (simKeyCore G n1 n2 PG κ pp st f x mu)
++  (simKeyCore G n1 n2 PG κ pp st f x mu <$> (ProbComp.sample (Linear.SimKeyDraw G PG κ pp f)))
+ 
+ /-- Simulated keys have the displayed core-plus-draw law. -/
+ theorem simKey_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
+@@ -214,7 +213,6 @@ theorem simKey_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
+     (κ : ℕ) (pp : PublicParams G κ) (st : SimState G ℓ n1 n2 κ pp)
+     (f : Fn κ pp.orderParam) (x : Fin (ℓ.eval κ) → ZMod pp.group.order) (mu : pp.group.G) :
+     simKey G n1 n2 PG κ pp st f x mu =
+-      (ProbComp.sample (Linear.SimKeyDraw G PG κ pp f)).map
+-        (simKeyCore G n1 n2 PG κ pp st f x mu) := rfl
++      (simKeyCore G n1 n2 PG κ pp st f x mu <$> (ProbComp.sample (Linear.SimKeyDraw G PG κ pp f))) := rfl
+ 
+ end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Wire.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Wire.lean
+new file mode 100644
+index 000000000..7817ee174
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Wire.lean
+@@ -0,0 +1,158 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSimulator
++import TCSlib.Cryptography.Encoding.Modular
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Wire representations of Wee's typed data
++
++Source-group entries use the public group's injective encoding. Scalar entries use the
++existing modular encoding at the source-group width. Explicit finite coordinates order
++all partial-garbling entries; no enumeration of functions or group exponent extraction is
++used. Nested pairs retain the boundaries of the finite blocks.
++
++## Main definitions
++
++* `Wee20.Wire.groupVector`, `groupMatrix`: source-group coordinate encodings.
++* `Wee20.Wire.linearMPK`, `linearMSK`, `linearCT`, `linearKey`: the linear data words.
++* `Wee20.Wire.quadraticMPK`, `quadraticMSK`, `quadraticCT`, `quadraticKey`: outer words.
++
++## Main results
++
++Equation readers expose every representation. Faithfulness and polynomial width bounds
++are stated at the concrete outer wrapper, where all dimensions are fixed.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Sections 3.1 and 4.2.
++
++The wire representations are technical glue for these typed algorithms.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Wire
++
++open Complexity Turing TCSlib.Cryptography.Pairing
++
++variable {G : BilinearGen} {κ : ℕ} (pp : PublicParams G κ)
++
++/-- Encode a source-group vector in increasing coordinate order. -/
++def groupVector {n : ℕ} (v : Fin n → pp.group.G) : List Bool :=
++  (List.ofFn fun i => List.ofFn (pp.group.encG (v i))).flatten
++
++/-- The group-vector word concatenates its fixed-width element encodings. -/
++theorem groupVector_eq {n : ℕ} (v : Fin n → pp.group.G) :
++    groupVector pp v = (List.ofFn fun i => List.ofFn (pp.group.encG (v i))).flatten := rfl
++
++/-- Encode a source-group matrix in increasing row and column order. -/
++def groupMatrix {m n : ℕ} (A : Matrix (Fin m) (Fin n) pp.group.G) : List Bool :=
++  (List.ofFn fun i => groupVector pp (A i)).flatten
++
++/-- The matrix word is the concatenation of its group-vector row words. -/
++theorem groupMatrix_eq {m n : ℕ} (A : Matrix (Fin m) (Fin n) pp.group.G) :
++    groupMatrix pp A = (List.ofFn fun i => groupVector pp (A i)).flatten := rfl
++
++/-- Encode Π's public key in its four public matrix blocks. -/
++def linearMPK {ℓ z : PolyExpr} (pk : Linear.MPK G ℓ z κ pp) : List Bool :=
++  pairEncode (groupMatrix pp pk.A) (pairEncode (groupMatrix pp pk.AW)
++    (pairEncode (groupMatrix pp (fun i j => pk.AU i (finProdFinEquiv.symm j)))
++      (groupMatrix pp pk.AV)))
++
++/-- The public-key word has exactly the four specified matrix blocks. -/
++theorem linearMPK_eq {ℓ z : PolyExpr} (pk : Linear.MPK G ℓ z κ pp) :
++    linearMPK pp pk = pairEncode (groupMatrix pp pk.A) (pairEncode (groupMatrix pp pk.AW)
++      (pairEncode (groupMatrix pp (fun i j => pk.AU i (finProdFinEquiv.symm j)))
++        (groupMatrix pp pk.AV))) := rfl
++
++/-- Encode Π's scalar master secret at the public source-group width. -/
++def linearMSK {ℓ z : PolyExpr} (sk : Linear.MSK G ℓ z κ pp) : List Bool :=
++  pairEncode (Encoding.Modular.encodeMatrix (G.wG.eval κ) sk.W)
++    (pairEncode (Encoding.Modular.encodeMatrix (G.wG.eval κ)
++      (fun i j => sk.U i (finProdFinEquiv.symm j)))
++      (Encoding.Modular.encodeMatrix (G.wG.eval κ) sk.V))
++
++/-- The master-secret word is the displayed scalar matrix encoding. -/
++theorem linearMSK_eq {ℓ z : PolyExpr} (sk : Linear.MSK G ℓ z κ pp) :
++    linearMSK pp sk = pairEncode (Encoding.Modular.encodeMatrix (G.wG.eval κ) sk.W)
++      (pairEncode (Encoding.Modular.encodeMatrix (G.wG.eval κ)
++        (fun i j => sk.U i (finProdFinEquiv.symm j)))
++        (Encoding.Modular.encodeMatrix (G.wG.eval κ) sk.V)) := rfl
++
++/-- Encode Π's ciphertext by concatenating its three fixed-size group vectors. -/
++def linearCT {z : PolyExpr} (ct : Linear.CT G z κ pp) : List Bool :=
++  groupVector pp ct.c0 ++ groupVector pp ct.c1 ++ groupVector pp ct.c2
++
++/-- The ciphertext word concatenates the three source-group blocks. -/
++theorem linearCT_eq {z : PolyExpr} (ct : Linear.CT G z κ pp) :
++    linearCT pp ct = groupVector pp ct.c0 ++ groupVector pp ct.c1 ++
++      groupVector pp ct.c2 := rfl
++
++variable {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++  (PG : PartialGarbling.Raw ℓ n' Fn)
++
++/-- Encode a function key using the partial garbling's published node coordinates. -/
++def linearKey {f : Fn κ pp.orderParam} (sk : Linear.Key G PG κ pp f) : List Bool :=
++  pairEncode (groupMatrix pp sk.K1)
++    (pairEncode (groupMatrix pp (fun i j =>
++      let a := finProdFinEquiv.symm j
++      sk.K2 i (a.1, (PG.mCoord κ pp.orderParam f).symm a.2)))
++      (pairEncode (groupMatrix pp (fun i j => sk.K3 i ((PG.mCoord κ pp.orderParam f).symm j)))
++        (groupMatrix pp (fun i j => sk.R i ((PG.mCoord κ pp.orderParam f).symm j)))))
++
++/-- The function-key word uses `K1,K2,K3,R` in that order. -/
++theorem linearKey_eq {f : Fn κ pp.orderParam} (sk : Linear.Key G PG κ pp f) :
++    linearKey pp PG sk = pairEncode (groupMatrix pp sk.K1)
++      (pairEncode (groupMatrix pp (fun i j =>
++        let a := finProdFinEquiv.symm j
++        sk.K2 i (a.1, (PG.mCoord κ pp.orderParam f).symm a.2)))
++        (pairEncode (groupMatrix pp
++          (fun i j => sk.K3 i ((PG.mCoord κ pp.orderParam f).symm j)))
++          (groupMatrix pp (fun i j => sk.R i ((PG.mCoord κ pp.orderParam f).symm j))))) := rfl
++
++/-- Encode an outer public key by its two masks and Π's public key. -/
++def quadraticMPK {ℓ n1 n2 : PolyExpr} (pk : Quadratic.MPK G ℓ n1 n2 κ pp) : List Bool :=
++  pairEncode (groupMatrix pp pk.A1)
++    (pairEncode (groupMatrix pp pk.A2) (linearMPK pp pk.linear))
++
++/-- The outer public-key word is the displayed three-block pair. -/
++theorem quadraticMPK_eq {ℓ n1 n2 : PolyExpr} (pk : Quadratic.MPK G ℓ n1 n2 κ pp) :
++    quadraticMPK pp pk = pairEncode (groupMatrix pp pk.A1)
++      (pairEncode (groupMatrix pp pk.A2) (linearMPK pp pk.linear)) := rfl
++
++/-- Encode the outer master secret with its public matrix metadata. -/
++def quadraticMSK {ℓ n1 n2 : PolyExpr} (sk : Quadratic.MSK G ℓ n1 n2 κ pp) : List Bool :=
++  pairEncode (groupMatrix pp sk.matrix) (linearMSK pp sk.linear)
++
++/-- The outer master-secret word retains its public matrix and Π's secret word. -/
++theorem quadraticMSK_eq {ℓ n1 n2 : PolyExpr} (sk : Quadratic.MSK G ℓ n1 n2 κ pp) :
++    quadraticMSK pp sk = pairEncode (groupMatrix pp sk.matrix) (linearMSK pp sk.linear) := rfl
++
++/-- Encode the outer ciphertext by the two masks followed by Π's ciphertext. -/
++def quadraticCT {n1 n2 : PolyExpr} (ct : Quadratic.CT G n1 n2 κ pp) : List Bool :=
++  groupVector pp ct.y1 ++ groupVector pp ct.y2 ++ linearCT pp ct.linear
++
++/-- The outer ciphertext word is the displayed concatenation. -/
++theorem quadraticCT_eq {n1 n2 : PolyExpr} (ct : Quadratic.CT G n1 n2 κ pp) :
++    quadraticCT pp ct = groupVector pp ct.y1 ++ groupVector pp ct.y2 ++
++      linearCT pp ct.linear := rfl
++
++/-- Encode an outer key by its public matrix and Π's key. -/
++def quadraticKey {n1 n2 : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) {f : Fn κ pp.orderParam}
++    (sk : Quadratic.Key G n1 n2 PG κ pp f) : List Bool :=
++  pairEncode (groupMatrix pp sk.matrix) (linearKey pp PG sk.linear)
++
++/-- The outer key word is the displayed public-matrix and linear-key pair. -/
++theorem quadraticKey_eq {n1 n2 : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) {f : Fn κ pp.orderParam}
++    (sk : Quadratic.Key G n1 n2 PG κ pp f) :
++    quadraticKey pp PG sk = pairEncode (groupMatrix pp sk.matrix)
++      (linearKey pp PG sk.linear) := rfl
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Wire
