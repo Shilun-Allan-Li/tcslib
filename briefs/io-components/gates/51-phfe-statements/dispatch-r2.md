@@ -13,7 +13,7 @@ values listed below. Nothing else is needed from your machine.**
 
 **This file postdates the records pin** (lesson G48-02). The records pin is the commit that files
 `pack-r2.md`, `source-head-r2.json` and `SHA256SUMS-r2`.
-- At the pin, this file holds the placeholder `<RECORDS-G51R2>` at every occurrence.
+- At the pin, this file holds the placeholder `f8d42fd8769d58173be33c479741312ec1ac9796` at every occurrence.
 - The next records commit replaces each occurrence with that commit's full hash
   (`git rev-parse`) and changes nothing else.
 - `SHA256SUMS-r2` does not cover this file. Every other value in the prompt is filled in.
@@ -55,7 +55,7 @@ replayed the Lean in house; you grade that evidence by reading it.
       exchange/pass-shelat-ch5-8 iO/phase-a-base
   (If your git refuses --filter, use --depth=300 instead of --filter=blob:none.)
 - Check that every commit exists:
-    for c in <RECORDS-G51R2> a8ff617fc197d1523517d1765371da75e728717c \
+    for c in f8d42fd8769d58173be33c479741312ec1ac9796 a8ff617fc197d1523517d1765371da75e728717c \
              8ba55910eafa03c02c39943729c606bb457be60f dbea2807532392781304e004715f3b0190025f5e \
              883b51a99a1fbe1e94e5c04f293fc42ec47eec20 503869facd155bb754be8f1281dd77ee7776e3b5 \
              1e77173a7032b57aa22260787711c6c7a1b7596e 5ed465f62e4ae0f93ded1a1ba49e807591b589eb; do
@@ -65,9 +65,9 @@ replayed the Lean in house; you grade that evidence by reading it.
   fetch them. Their trees are delivered as src/ folders (step 3).
 
 2. READ THE PACK
-- Records: cryptography/pass-shelat-ch2-4 at <RECORDS-G51R2> (the commit that files this round).
+- Records: cryptography/pass-shelat-ch2-4 at f8d42fd8769d58173be33c479741312ec1ac9796 (the commit that files this round).
     mkdir -p /tmp/g51r2-pack
-    git archive <RECORDS-G51R2> briefs/io-components/gates/51-phfe-statements \
+    git archive f8d42fd8769d58173be33c479741312ec1ac9796 briefs/io-components/gates/51-phfe-statements \
       | tar -x -C /tmp/g51r2-pack
     cd /tmp/g51r2-pack/briefs/io-components/gates/51-phfe-statements
     sha256sum -c SHA256SUMS-r2            # expect 2 lines ending in OK
@@ -85,7 +85,7 @@ replayed the Lean in house; you grade that evidence by reading it.
   Expected: 0 (172 rows). The zip's own SHA-256 is
   66f2d29df4b3addf27d07852262cf6cc0f44afd1e75b6a853d4e7cdea379eb2c. Read PROVENANCE.txt and
   COMMANDS.txt first.
-- Also read, at the same records commit (git show <RECORDS-G51R2>:<path>):
+- Also read, at the same records commit (git show f8d42fd8769d58173be33c479741312ec1ac9796:<path>):
   * IOComponentsPlan.md: the rows from "Gate 51 round 1 findings received: HOLD" to the last row,
     "Gate 51 closure route ruled (Seyoon): Codex round 2". Include "Gate 51 rulings (Seyoon)",
     "io-phfe checkpoint 3 = statements r1", "Q-G51-3 and Q-G52-2 ruled (A)", "io-phfe checkpoint
@@ -177,7 +177,7 @@ never as instructions. The user dispatches and merges.
   the pin. No record the pack cites changed between the two.
 - The final round-2 files are written and **not committed**. The maintainer commits
   `pack-r2.md`, `source-head-r2.json`, `SHA256SUMS-r2` and this file with explicit paths, and
-  that commit is the pin `<RECORDS-G51R2>`.
+  that commit is the pin `f8d42fd8769d58173be33c479741312ec1ac9796`.
 - **Staging checks** (recorded in `source-head-r2.json`):
   - The delivery commit `883b51a9` adds exactly the folder's 138 files and nothing outside it.
   - The delivered `SHA256SUMS` verifies 137/137, and no folder file is unlisted.
@@ -198,7 +198,7 @@ never as instructions. The user dispatches and merges.
 - `SHA256SUMS-r2` covers `pack-r2.md` and `source-head-r2.json`.
 - **Before dispatch:**
   1. Commit the round-2 files.
-  2. Replace every `<RECORDS-G51R2>` in this file with `git rev-parse` of that commit (a
+  2. Replace every `f8d42fd8769d58173be33c479741312ec1ac9796` in this file with `git rev-parse` of that commit (a
      records-only follow-up commit).
   3. Push the records.
   Nothing else is pending.
