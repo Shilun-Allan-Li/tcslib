@@ -1,7 +1,7 @@
 # Dispatch · Gate 56 round 1, restaged (the iO foundation PRs #374, #378, #384, #380)
 
 **This file postdates the records pin** (lesson G48-02).
-- **The pin** is the commit that files this directory. At the pin, this file holds the placeholder `<RECORDS-G56>` at
+- **The pin** is the commit that files this directory. At the pin, this file holds the placeholder `56736ba6c99ad015b7e6f84873a55fecbe8e8280` at
   every occurrence.
 - **The next records commit** replaces it with that commit's full hash (`git rev-parse`) and changes nothing else.
 - **Every other value** in the prompt is filled in, and `SHA256SUMS-r1` does not cover this file.
@@ -38,7 +38,7 @@ evidence by reading it.
       exchange/pass-shelat-ch5-8
   (If your git refuses --filter, use --depth=400 instead of --filter=blob:none.)
 - Check that every commit exists:
-    for c in <RECORDS-G56> \
+    for c in 56736ba6c99ad015b7e6f84873a55fecbe8e8280 \
              1b18206f5d3fee9214bfaa0fff74262836b67f48 a2bf4bac0d545fce1fcb4014ef12b44f9651a658 \
              cbce64d1c135c710b7c036968ed9d4f21414aa72 2bf61a2eed72d3aad1de95134be8f89da9424af7 \
              5b17523b3360572ef266c44c7da8633d7f651280 cdc0934f36365533d410607d0664a0570ae92679 \
@@ -60,19 +60,19 @@ evidence by reading it.
 - The merged tree. The maintainer's scratch merge ef93fdb1a31cf0523c49a05407b45f2ccb09148e is on no
   ref and cannot be fetched; recompute it:
     git merge-tree --write-tree 1b18206f5d3fee9214bfaa0fff74262836b67f48 686bf03f25faafb5e3db20899be25e427b82099c
-    git rev-parse "$(git merge-tree --write-tree <RECORDS-G56> 686bf03f25faafb5e3db20899be25e427b82099c):TCSlib"
+    git rev-parse "$(git merge-tree --write-tree 56736ba6c99ad015b7e6f84873a55fecbe8e8280 686bf03f25faafb5e3db20899be25e427b82099c):TCSlib"
   Expected: the first prints the single line 91d43e1f0320618c1986cd88c2cf0d1c1d4bf44e (clean, no
   conflict list); the second prints e4c027393d1c59a30f312623aba5a3369386eeb1. Also
-    git rev-parse <RECORDS-G56>:TCSlib 1b18206f5d3fee9214bfaa0fff74262836b67f48:TCSlib \
+    git rev-parse 56736ba6c99ad015b7e6f84873a55fecbe8e8280:TCSlib 1b18206f5d3fee9214bfaa0fff74262836b67f48:TCSlib \
       686bf03f25faafb5e3db20899be25e427b82099c:TCSlib
   should print 745bf4b494b6581a5666ef9ca0a6e735a68ddcef twice, then
   279bae0c0a927c8aa847f47e47493adb47cec118. If either differs, say so: the records side's Lean moved
   after staging, and the verification then binds to the earlier merge only.
 
 1. READ THE PACK
-- Records: cryptography/pass-shelat-ch2-4 at <RECORDS-G56> (the commit that files the pack).
+- Records: cryptography/pass-shelat-ch2-4 at 56736ba6c99ad015b7e6f84873a55fecbe8e8280 (the commit that files the pack).
     mkdir -p /tmp/g56-pack
-    git archive <RECORDS-G56> briefs/io-components/gates/56-foundations \
+    git archive 56736ba6c99ad015b7e6f84873a55fecbe8e8280 briefs/io-components/gates/56-foundations \
       | tar -x -C /tmp/g56-pack
     cd /tmp/g56-pack/briefs/io-components/gates/56-foundations && sha256sum -c SHA256SUMS-r1 && \
       sha256sum -c verification-SHA256SUMS
@@ -85,7 +85,7 @@ evidence by reading it.
       sha256sum -c SHA256SUMS | grep -vc ': OK$'
   Expected: 0 (SHA256SUMS does not list itself). Read PROVENANCE.txt first. The PR bodies at staging
   are in checks/pr/.
-- Also read, at the same records commit (git show <RECORDS-G56>:<path>):
+- Also read, at the same records commit (git show 56736ba6c99ad015b7e6f84873a55fecbe8e8280:<path>):
   * the reports: briefs/io-components/subexp/REPORT.md; briefs/io-components/sampler-bridge/
     design-r1.md, Skeleton.lean, IMPL-REPORT.md; briefs/io-components/contract/REPORT.md;
     briefs/io-components/realization/REPORT.md; briefs/efficiency-gaps/wave1/EF-D1/final-r1/
@@ -216,8 +216,8 @@ instructions. The user dispatches and merges.
 - **The files.** All files of this directory are written in the main checkout's working tree and **not committed**.
   `SHA256SUMS-r1` covers every file except this one.
 - **Before dispatch:**
-  1. The maintainer commits the directory with explicit paths; that commit is the pin `<RECORDS-G56>`.
-  2. In a records-only follow-up commit, replace `<RECORDS-G56>` in this file with `git rev-parse` of the pin.
+  1. The maintainer commits the directory with explicit paths; that commit is the pin `56736ba6c99ad015b7e6f84873a55fecbe8e8280`.
+  2. In a records-only follow-up commit, replace `56736ba6c99ad015b7e6f84873a55fecbe8e8280` in this file with `git rev-parse` of the pin.
   3. Push the records.
 
   If the records tip's Lean moves before the pin, re-run the merged-tree check first.
