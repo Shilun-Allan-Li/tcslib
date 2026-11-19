@@ -1,0 +1,92 @@
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootRatio_le_poly : ∀ (F : TCSlib.Cryptography.LWE.Family)
+  (B : ℕ → ℕ) (κ : ℕ),
+  8 *
+      ((TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ).width *
+        TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootNoise
+          (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ)
+          ((TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ).lwe.samples * B κ)) ≤
+    (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.pBoot F).eval κ * B κ
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decrypt_fheEval_of_ratio : ∀ (F : TCSlib.Cryptography.LWE.Family)
+  (B : ℕ → ℕ) (κ : ℕ),
+  (F.noise κ).Bounded (B κ) →
+    (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.pBoot F).eval κ * B κ < (F.parameters κ).modulus →
+      ∀
+        (rg :
+          TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.KeySeed
+            (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ) (F.noise κ))
+        (R :
+          Fin (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ).columns →
+            TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Coins
+              (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ))
+        {k : ℕ} (Cc : BoolCircuit.DAGCircuit k) (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2) (x : Fin k → Bool)
+        (R' :
+          Fin k →
+            TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Coins
+              (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ)),
+        TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decrypt
+            (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ)
+            (TCSlib.Cryptography.Encryption.PublicKey.Regev.keygen
+                (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ).lwe (F.noise κ) rg).2
+            (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.fheEvalCircuit
+              (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ)
+              (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.evalKey
+                (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ)
+                (TCSlib.Cryptography.Encryption.PublicKey.Regev.keygen
+                    (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ).lwe (F.noise κ)
+                    rg).1
+                (TCSlib.Cryptography.Encryption.PublicKey.Regev.keygen
+                    (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ).lwe (F.noise κ)
+                    rg).2
+                R)
+              Cc hC fun (j : Fin k) =>
+              TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.encrypt
+                (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ)
+                (TCSlib.Cryptography.Encryption.PublicKey.Regev.keygen
+                    (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ).lwe (F.noise κ)
+                    rg).1
+                (x j) (R' j)) =
+          Cc.eval x
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decrypt_leveledEval_of_ratio : ∀
+  (F : TCSlib.Cryptography.LWE.Family) (B : ℕ → ℕ) (κ : ℕ),
+  (F.noise κ).Bounded (B κ) →
+    (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.pBoot F).eval κ * B κ < (F.parameters κ).modulus →
+      ∀ {L k : ℕ} [inst : NeZero k]
+        (rgs :
+          Fin (L + 1) →
+            TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.KeySeed
+              (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ) (F.noise κ))
+        (R :
+          TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.LevelCoins
+            (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ) L)
+        (Cc : BoolCircuit.DAGCircuit k) (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2) (hdepth : (Cc.toNANDForm hC).depth ≤ L)
+        (x : Fin k → Bool)
+        (R' :
+          Fin k →
+            TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Coins
+              (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ)),
+        TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decrypt
+            (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ)
+            (TCSlib.Cryptography.Encryption.PublicKey.Regev.keygen
+                (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ).lwe (F.noise κ)
+                (rgs ⟨(Cc.toNANDForm hC).depth, ⋯⟩)).2
+            (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.leveledEvalCircuit
+              (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ)
+              (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.levelKey
+                (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ)
+                (fun (e : Fin (L + 1)) =>
+                  (TCSlib.Cryptography.Encryption.PublicKey.Regev.keygen
+                      (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ).lwe (F.noise κ)
+                      (rgs e)).1)
+                (fun (e : Fin (L + 1)) =>
+                  (TCSlib.Cryptography.Encryption.PublicKey.Regev.keygen
+                      (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ).lwe (F.noise κ)
+                      (rgs e)).2)
+                R)
+              Cc hC fun (j : Fin k) =>
+              TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.encrypt
+                (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ)
+                (TCSlib.Cryptography.Encryption.PublicKey.Regev.keygen
+                    (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ).lwe (F.noise κ)
+                    (rgs 0)).1
+                (x j) (R' j)) =
+          Cc.eval x

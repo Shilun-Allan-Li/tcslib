@@ -1,0 +1,4 @@
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily_columns_le : ∀
+  (F : TCSlib.Cryptography.LWE.Family) (κ : ℕ),
+  (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ).columns ≤
+    (F.dimensionBound.eval κ + 1) * F.residueBits.eval κ

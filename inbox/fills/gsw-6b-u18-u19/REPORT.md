@@ -1,4 +1,4 @@
-# gsw-6b-u18-u19 · checkpoint 1
+# gsw-6b-u18-u19 · final
 
 **Head: `4672ed30d036feb624ca84b4199af19d77f5768f`** (`fill/gsw-6b-u18-u19`, local only).
 **Base:** B6 `bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d`, tree `845bdc982fd8f79aba755796bb13188922c4655d`.
@@ -11,10 +11,9 @@ public helper the brief names, `Parameters.ofFamily_columns_le`. A1 and A3 are p
 hypotheses**; nothing proves or removes `heff` (EF-R1's job). Neither owned file contains `sorry`. No statement
 changed, no hypothesis was added, no efficiency claim was added, and no scope request is open.
 
-This checkpoint is a full payload. It holds the base check, preflight, cache and bootstrap, and **both owned files
-fully proved**, with C1–C13 and the unit checks run at this head (tag `cp1`). That is more than the brief's
-checkpoint 1 (the helper, G16 and A1). The final will re-run every check at the same head under the tag `final`,
-unless review asks for changes.
+Checkpoint 1 (the same head, `4672ed30`, all five targets already proved) was delivered as exchange commit
+`5fb0d4b8324f1c5e8d1e64e013f083f0bd154e20`. The final adds nothing to the source. It re-runs every check under the tag
+`final` and keeps the checkpoint's evidence beside it (`*-cp1*`).
 
 No sub-agent was used. The brief allows one (`ratio`, for `PolyRatio.lean`), but the unit was small enough for the
 lead alone, so the lead wrote both files and all the tooling.
@@ -30,9 +29,9 @@ lead alone, so the lead wrote both files and all the tooling.
   is an ancestor of `cryptography/pass-shelat-ch2-4`.
   - The clone is separate: `/work/tcslib`, cloned without checkout from the host mirror, with `origin` set to GitHub.
   - The base was fetched by hash and by branch name, and `fill/gsw-6b-u18-u19` was branched from it. I stayed on the base.
-- **Records tip at delivery:** `c63ee44f47c72a09545235fddccaa765efd64568`.
-  - `git merge-tree --write-tree 4672ed30 c63ee44f` is clean: rc 0, tree `512bc647d3e3ad98d31fe9c2d47d97dd53993312`
-    (`evidence/git-merge-tree-cp1.txt`).
+- **Records tip at delivery:** `eddf183f84fb7ead32236ff26dbf7281979b2f9e`.
+  - `git merge-tree --write-tree 4672ed30 eddf183f` is clean: rc 0, tree `6d263c01386ecd48e1bba417c089da0547039289`
+    (`evidence/git-merge-tree-final.txt`).
 
 | # | Commit | File |
 |---|---|---|
@@ -207,7 +206,7 @@ None added.
     helper's *Main results* entry was added (brief).
   - `Asymptotic.lean`: "Both are admitted statement-phase targets." became "Both are proved here.".
 
-## 5. Checks (runner `tools/lead/checks.sh`, log `evidence/checks-cp1.log`)
+## 5. Checks (runner `tools/lead/checks.sh`, log `evidence/checks-final.log`; checkpoint 1's run: `checks-cp1.log`)
 
 - **C1 Bootstrap and sweep.**
   - Bootstrap of `order.txt` at the base: **224/224 rc 0, 0 errors** in both forms, and 42 `sorry` warnings
@@ -216,16 +215,16 @@ None added.
   - All 224 sources equal `SOURCE-SHA256SUMS` (`build/source-binding-base.txt`).
   - Head sweep of the 5 `UNIT-DOWN` modules (PolyRatio, Asymptotic, `GSW`, `Homomorphic`, `AdvancedEncryption`):
     these are the changed modules and everything downstream of them. **5/5 rc 0, 0 errors** in both forms. Each source
-    is bound to `git show HEAD` (`build/summary-cp1.txt`: `RESULT modules=5 bad=0`).
+    is bound to `git show HEAD` (`build/summary-final.txt`: `RESULT modules=5 bad=0`).
   - The root `TCSlib` is not built.
 - **C2 Admissions.** At the head: **37 declarations in 14 modules** = `base-sorries.txt` minus the 5 targets. The diff is
-  exactly the PolyRatio and Asymptotic rows (`build/admissions-cp1-vs-base.txt`). The owned files contain 0 tokens of
+  exactly the PolyRatio and Asymptotic rows (`build/admissions-final-vs-base.txt`). The owned files contain 0 tokens of
   `sorry`, `admit`, `native_decide`, `axiom` or `opaque`.
 - **C3 Statements.**
   - decls2 gives: `PolyRatio.lean` **ADDED 1** (`…GSW.Parameters.ofFamily_columns_le`), 0 CHANGED, 0 REMOVED;
-    `Asymptotic.lean` 0/0/0 (`stmt/decls2-cp1-summary.txt`).
+    `Asymptotic.lean` 0/0/0 (`stmt/decls2-final-summary.txt`).
   - The StmtDumps of the five targets (full names, `pp.fullNames`) are **identical** at base and head
-    (`stmt/StmtDump-diff-cp1.txt`). The helper's dump is `stmt/StmtDump-helper-head-cp1.log`.
+    (`stmt/StmtDump-diff-final.txt`). The helper's dump is `stmt/StmtDump-helper-head-final.log`.
   - §4 maps every target to its proof.
 - **C4 Frozen check** (`tools/lead/frozen_owned.py`). This is the gsw-6b-u12 tool plus an allow kind `PUBLIC` for the
   brief's one helper: its block is removed at the head, and it must be absent at the base.
@@ -234,7 +233,7 @@ None added.
   - In each file the seven controls FAIL as stated: header 1, prose spill 1, definition body 1, reader 1, unpermitted
     import 1, deleted target 2, unlisted new public declaration 1.
   - The base passes against itself (`headers/frozen-base-vs-base.txt`). `git diff --stat` lists only the two owned files.
-- **C5 Axioms** (`axioms/AxiomProbe-cp1.log`, check `axioms/axcheck-cp1.txt`). The census covers all 37 stored
+- **C5 Axioms** (`axioms/AxiomProbe-final.log`, check `axioms/axcheck-final.txt`). The census covers all 37 stored
   constants of the two modules.
   - **32 use only `propext`, `Classical.choice`, `Quot.sound`**, among them A1 and the helper (the helper uses
     `[propext, Quot.sound]`).
@@ -252,11 +251,11 @@ None added.
 - **C6 Rule 10** (`evidence/rule10/`).
   - **Seals.** Whole-file seals strict-A, strict-B, coe-A and coe-B, `-DmaxErrors=0`, over the full import closure.
     Requests: PolyRatio 1,395 / 1,396 / 1,394 / 1,395; Asymptotic 1,654 / 1,655 / 1,653 / 1,654.
-    - At the head (`cp1/`) and at the base (`base/`, sources `git archive` of B6): **all 16 probes rc 0, 0 errors,
+    - At the head (`final/`) and at the base (`base/`, sources `git archive` of B6): **all 16 probes rc 0, 0 errors,
       no failing declaration**, each with its install and verify records.
     - The request sets were built at the base from its oleans. The only change at the head is that PolyRatio adds
       theorems, and no definition, so the sets are equal.
-  - **Liveness pairs** (`live-PolyRatio-cp1/`, `live-Asymptotic-cp1/`, sources `live-src/`), appended to each
+  - **Liveness pairs** (`live-PolyRatio-final/`, `live-Asymptotic-final/`, sources `live-src/`), appended to each
     owner's own probe:
 
     | Pair | unsealed | strict-A, strict-B, coe-A, coe-B |
@@ -265,23 +264,24 @@ None added.
     | Asymptotic: NEG `levelTerm` by `rfl` / POS `levelTerm_eq` | 0 / 0 | 1 / 0 each |
     | helper: NEG `ofFamily` columns by `rfl` / POS through `columns_eq`, `ofFamily_lwe`, `ofFamily_width` / POS `Parameters.ofFamily_columns_le` used sealed | 0 / 0 / 0 | 1 / 0 / 0 each |
 
-  - **Explicit-unfold scan:** **0 foreign definitions** (`unfold-cp1/explicit-unfold-scan.txt`). Every identifier
+  - **Explicit-unfold scan:** **0 foreign definitions** (`unfold-final/explicit-unfold-scan.txt`). Every identifier
     given to `rw`/`simp` is a theorem, and one is a local hypothesis (`hw`).
   - **Reader census:** MISSING 0.
 - **C7 Lint.**
   - `style_lint` on the two owned files: **0 findings** at both base and head.
   - `campaign_style_lint TCSlib/Cryptography --check8b`: **92 FAIL / 103 WARN** at both base and head, matching the
-    maintainer's B6 figures. The line sets are identical: 0 new, 0 gone (`lint/campaign-diff-cp1.txt`).
-- **C8 Sizes:** §3 (`sizes/sizes-cp1.txt`). No line over 100 and no file over 1,000.
-- **C9 Hygiene** (`docs/hygiene-cp1.txt`).
+    maintainer's B6 figures. The line sets are identical: 0 new, 0 gone (`lint/campaign-diff-final.txt`).
+- **C8 Sizes:** §3 (`sizes/sizes-final.txt`). No line over 100 and no file over 1,000.
+- **C9 Hygiene** (`docs/hygiene-final.txt`).
   - The new public helper and the private glue each have a formula and "Glue.".
   - G16 (28 lines), G17 leveled (31), A1 (45) and A3 (96) have sketches, with step comments at their major `have`s.
     G17 pure (18) also has one.
   - **flagged = 0**.
-- **C10 Clashes** (`clash/clash-cp1.txt`). There are two new names: `Parameters.ofFamily_columns_le` (public) and
+- **C10 Clashes** (`clash/clash-final.txt`). There are two new names: `Parameters.ofFamily_columns_le` (public) and
   `two_mul_width_lt_of_ratio` (private).
   - Each has 0 hits at the base, on `iO/phase-a-base` (`5ed465f6…`), on `cleanup/stage2-s2a` (origin
-    `9f7f409c2e09749428db75b9ddd324f92695e4af`) and at the records tip.
+    `9f7f409c2e09749428db75b9ddd324f92695e4af`) and at the records tip `c63ee44f` (the scan's run). A re-check at the
+    later tip `eddf183f` also gives 0 hits.
   - Neither short name exists elsewhere, so no unqualified use in a `UNIT-DOWN` module can change its resolution. The
     head sweep is clean.
 - **C11 Reuse and overlap:** §6.
@@ -292,7 +292,7 @@ None added.
     - `(2, 20, 16, 4, 3)`: 3.6·10^30 ≤ 1.2·10^49;
     - `(3, 40, 257, 9, 2)`: 8.6·10^39 ≤ 1.7·10^60.
   - Evidence only; no `native_decide`.
-- **C13 Reproduction** (`evidence/reproduce-cp1.log`). In a scratch clone (sparse: the owned files) reset to the
+- **C13 Reproduction** (`evidence/reproduce-final.log`). In a scratch clone (sparse: the owned files) reset to the
   base, `git am` of `patches/` with `COMMITS.tsv`'s committer data reproduces both hashes, and `src/` equals the head's
   files byte for byte.
 - **Unit checks.**
@@ -389,7 +389,7 @@ closed**:
 - `Hashing/SIS/Asymptotic.lean:71` `negligible_collisions_of_SIS` has the same `Negligible` bookkeeping
   (`negligible_polyExpr_mul`, `.mono`). Nothing is copied.
 - **EF-R2-R3's `singleBitSecure_of_dlweAssumption`** (Regev PKE, the same width condition) has **not landed**: 0 hits at
-  the records tip `c63ee44f`. It sits in the exchange delivery `inbox/fills/ef-r23-regev/`. Its analogy with A1 is the
+  the records tip `eddf183f`. It sits in the exchange delivery `inbox/fills/ef-r23-regev/`. Its analogy with A1 is the
   per-`κ` concrete bound from the width lemma, then `negligible_polyExpr_mul`. Nothing is reused.
 - The private glue `two_mul_width_lt_of_ratio` has no library counterpart (P4). It is private, in one file, and used
   three times.
