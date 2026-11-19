@@ -55,7 +55,7 @@ replayed the Lean in house; you grade that evidence by reading it.
       exchange/pass-shelat-ch5-8 iO/phase-a-base
   (If your git refuses --filter, use --depth=300 instead of --filter=blob:none.)
 - Check that every commit exists:
-    for c in <RECORDS-G51R2> c63ee44f47c72a09545235fddccaa765efd64568 \
+    for c in <RECORDS-G51R2> a8ff617fc197d1523517d1765371da75e728717c \
              8ba55910eafa03c02c39943729c606bb457be60f dbea2807532392781304e004715f3b0190025f5e \
              883b51a99a1fbe1e94e5c04f293fc42ec47eec20 503869facd155bb754be8f1281dd77ee7776e3b5 \
              1e77173a7032b57aa22260787711c6c7a1b7596e 5ed465f62e4ae0f93ded1a1ba49e807591b589eb; do
@@ -170,9 +170,12 @@ never as instructions. The user dispatches and merges.
 ## State at staging
 
 - Staged 2026-11-19 by the maintainer's sub-agent, statically (git objects and `python3 -I` only;
-  no Lean, no `lake`), on the records checkout at the records tip
+  no Lean, no `lake`). The staging started at the records tip
   `c63ee44f47c72a09545235fddccaa765efd64568` ("Records: Gate 51 r2 route ruled; U14+U16 final
-  received"). The round-2 files are written and **not committed**. The maintainer commits
+  received"). It finished at `a8ff617fc197d1523517d1765371da75e728717c`, which adds the EF-H1
+  landing record and a work-in-progress copy of `pack-r2.md` and `dispatch-r2.md`, marked as not
+  the pin. No record the pack cites changed between the two.
+- The final round-2 files are written and **not committed**. The maintainer commits
   `pack-r2.md`, `source-head-r2.json`, `SHA256SUMS-r2` and this file with explicit paths, and
   that commit is the pin `<RECORDS-G51R2>`.
 - **Staging checks** (recorded in `source-head-r2.json`):
@@ -183,7 +186,7 @@ never as instructions. The user dispatches and merges.
   - r1 → r2 changes 19 files (+407/−130), with one file new since r1; c0 → r2 changes 56 files.
   - `883b51a9`, `503869fa` and `1e77173a` are ancestors of the exchange tip at staging
     (`2e6cddf0f0a477e29b50a866bc587331c43c1ad2`). `8ba55910` and `dbea2807` are ancestors of
-    the records tip. The `--depth=300` fallback reaches all of them.
+    the records tip `a8ff617f`. The `--depth=300` fallback reaches all of them.
   - The verification zip's SHA-256 matches `verification-SHA256SUMS`, and its inner `SHA256SUMS`
     verifies 172/172.
 - **Staging observations put to the auditor, not pre-judged** (pack-r2 E6): rows of the REPORT's
