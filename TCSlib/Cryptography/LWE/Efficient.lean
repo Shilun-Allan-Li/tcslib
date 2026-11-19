@@ -38,8 +38,8 @@ requires an `EfficientFamily`: an `LWE.Family` together with
 * `noiseWord e`: the sign-magnitude word `[e < 0] :: bits |e|` of an integer error.
 * `EfficientFamily`: `Family` with `params_uniform`, `noiseInput`, `noiseInput_uniform`,
   `encodeSeed` and `noise_efficient`.
-* `seedModulusWord n`, `seedWord r`: the bucket parameter word `⦃2^n⦄_{n+1}` of an `n`-bit seed
-  draw and the numeral `0 :: r` of a seed.
+* `seedWord r`: the numeral `0 :: r` of an `n`-bit seed, drawn at the bucket parameter word
+  `CoinSampling.seedModulusWord n = ⦃2^n⦄_{n+1}` (`CoinSampling/Contract.lean`).
 * `onesCount`, `signedDiff`, `centeredCore T`: the polynomial-time core of `centeredNoise`
   (the unary ones are `Randomized.onesW`).
 * `dyadicParameters`, `dyadicFamily`, `EfficientFamily.ofBitSeeds`, `EfficientFamily.ofDyadic`:
@@ -71,7 +71,7 @@ the families without an efficiency clause. No hardness is asserted anywhere in t
 `U` with `U.Ω (y κ π) ≃ (noise κ).Coins` at the parameter word `y κ π`. No registered sampler
 reads a bit-seed type from the LWE parameter word (`bucketSampler` reads its whole word as a
 numeral), so the noise sampler reads its own word `noiseInput κ`, which is uniformly computable
-from `1^κ` (`noiseInput_uniform`); for bit seeds it is `seedModulusWord n = ⦃2^n⦄`.
+from `1^κ` (`noiseInput_uniform`); for bit seeds it is `CoinSampling.seedModulusWord n = ⦃2^n⦄`.
 
 **The noise output.** The core sees `1^κ`, the sampler's word and the seed, not the modulus, so
 the error is written modulus-free, in sign-magnitude form (`noiseWord`); an honest algorithm
@@ -224,31 +224,14 @@ structure EfficientFamily extends Family where
 
 /-! ### Uniform schedules -/
 
-/-- **The numeral of `2^w` at width `w + 1`** is `1 0^w`. Glue
-(`Candidates.natToList_length_listToNat`, `NumberTheory.listToNat_cons`). -/
-theorem natToList_two_pow (w : ℕ) :
-    Candidates.natToList (w + 1) (2 ^ w) = true :: List.replicate w false := by
-  have h := Candidates.natToList_length_listToNat (true :: List.replicate w false)
-  rw [List.length_cons, List.length_replicate, NumberTheory.listToNat_cons,
-    Candidates.listToNat_replicate_false, List.length_replicate, if_pos rfl, one_mul,
-    add_zero] at h
-  exact h
-
-/-- **The word `1 0^{W(|x|)}` is polynomial-time** (`EnsembleLemmas.polyTimeComputable_zeros`,
-`BinArith.polyTimeComputable_cons`). Glue. -/
-theorem polyTimeComputable_twoPowWord (W : PolyExpr) :
-    PolyTimeComputable fun x : List Bool => true :: List.replicate (W.eval x.length) false :=
-  BinArith.polyTimeComputable_cons (p := fun _ => true) (polyTimeComputable_const [true])
-    (EnsembleLemmas.polyTimeComputable_zeros W polyTimeComputable_id)
-
 /-- **A polynomial dyadic schedule has a uniform parameter map**: if `n(κ) = N(κ)`,
 `m(κ) = M(κ)` and `q(κ) = 2^{W(κ)}`, one polynomial-time map sends `1^κ` to
 `(P κ).encode (W(κ))`. Glue.
 
 **Proof sketch.** The map writes `⟨1^{N(|x|)}, ⟨1^{M(|x|)}, 1 0^{W(|x|)}⟩⟩`: the unary words
-by `polyTimeComputable_unaryPoly`, the numeral of `2^{W}` (`natToList_two_pow`) by
-`polyTimeComputable_twoPowWord`, the pairs by `PolyTimeComputable.pairEncode`. On `1^κ` the
-length is `κ`. -/
+by `polyTimeComputable_unaryPoly`, the numeral of `2^{W}` (`CoinSampling.natToList_two_pow`) by
+`CoinSampling.polyTimeComputable_twoPowWord`, the pairs by `PolyTimeComputable.pairEncode`. On
+`1^κ` the length is `κ`. -/
 theorem params_uniform_of_schedule (N M W : PolyExpr) (P : ℕ → Parameters)
     (hn : ∀ κ, (P κ).dimension = N.eval κ) (hm : ∀ κ, (P κ).samples = M.eval κ)
     (hq : ∀ κ, (P κ).modulus = 2 ^ W.eval κ) :
@@ -258,10 +241,10 @@ theorem params_uniform_of_schedule (N M W : PolyExpr) (P : ℕ → Parameters)
     (pairEncode (List.replicate (M.eval x.length) true)
       (true :: List.replicate (W.eval x.length) false)),
     (polyTimeComputable_unaryPoly N).pairEncode
-      ((polyTimeComputable_unaryPoly M).pairEncode (polyTimeComputable_twoPowWord W)),
+      ((polyTimeComputable_unaryPoly M).pairEncode (CoinSampling.polyTimeComputable_twoPowWord W)),
     fun κ => ?_⟩
   dsimp only
-  rw [List.length_replicate, Parameters.encode_eq, hn, hm, hq, natToList_two_pow]
+  rw [List.length_replicate, Parameters.encode_eq, hn, hm, hq, CoinSampling.natToList_two_pow]
 
 /-! ### Dyadic families -/
 
@@ -333,39 +316,18 @@ theorem dyadicFamily_params_uniform (N M W : PolyExpr) (hW : ∀ κ, 1 ≤ W.eva
 
 /-! ### Bit-seed noise -/
 
-/-- **The parameter word of an `n`-bit seed draw**: the numeral `⦃2^n⦄_{n+1}`, on which
-`CoinSampling.bucketSampler` draws a uniform element of `Fin (2^n)`. Glue. -/
-def seedModulusWord (n : ℕ) : List Bool := Candidates.natToList (n + 1) (2 ^ n)
-
-/-- `seedModulusWord n = natToList (n + 1) (2^n)`. -/
-theorem seedModulusWord_eq (n : ℕ) :
-    seedModulusWord n = Candidates.natToList (n + 1) (2 ^ n) := rfl
-
-/-- `seedModulusWord n = 1 0^n` (`natToList_two_pow`). -/
-theorem seedModulusWord_eq_cons (n : ℕ) :
-    seedModulusWord n = true :: List.replicate n false := by
-  rw [seedModulusWord_eq, natToList_two_pow]
-
-/-- The seed word reads as `2^n` (`Candidates.listToNat_natToList`). -/
-theorem listToNat_seedModulusWord (n : ℕ) : listToNat (seedModulusWord n) = 2 ^ n := by
-  rw [seedModulusWord_eq]
-  exact Candidates.listToNat_natToList (Nat.pow_lt_pow_right (by norm_num) (Nat.lt_succ_self n))
-
-/-- The seed word has length `n + 1`. -/
-theorem length_seedModulusWord (n : ℕ) : (seedModulusWord n).length = n + 1 := by
-  rw [seedModulusWord_eq, Candidates.length_natToList]
-
 /-- **The seed word of a polynomial seed length is uniform**: if `n(κ) = t(κ)`, one
-polynomial-time map sends `1^κ` to `seedModulusWord (n κ)` (`polyTimeComputable_twoPowWord`).
-Glue. -/
+polynomial-time map sends `1^κ` to `CoinSampling.seedModulusWord (n κ)`
+(`CoinSampling.polyTimeComputable_twoPowWord`). Glue. -/
 theorem seedModulusWord_uniform (t : PolyExpr) (n : ℕ → ℕ) (hn : ∀ κ, n κ = t.eval κ) :
     ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
-      ∀ κ, f (List.replicate κ true) = seedModulusWord (n κ) :=
-  ⟨_, polyTimeComputable_twoPowWord t, fun κ => by
-    rw [List.length_replicate, seedModulusWord_eq_cons, hn]⟩
+      ∀ κ, f (List.replicate κ true) = CoinSampling.seedModulusWord (n κ) :=
+  ⟨_, CoinSampling.polyTimeComputable_twoPowWord t, fun κ => by
+    rw [List.length_replicate, CoinSampling.seedModulusWord_eq_cons, hn]⟩
 
 /-- **The numeral of a seed**: the `n`-bit seed `r` as the `(n+1)`-bit numeral `0 :: r` of its
-value `bitsToNat r` (the encoding `bucketSampler` writes at the word `seedModulusWord n`). Glue. -/
+value `bitsToNat r` (the encoding `bucketSampler` writes at the word
+`CoinSampling.seedModulusWord n`). Glue. -/
 def seedWord {n : ℕ} (r : Fin n → Bool) : List Bool := false :: List.ofFn r
 
 /-- `seedWord r = false :: List.ofFn r`. -/
@@ -381,19 +343,6 @@ theorem natToList_bitsToNat {n : ℕ} (r : Fin n → Bool) :
     if_neg Bool.false_ne_true, zero_mul, zero_add, ← NumberTheory.bitsToNat_eq_listToNat] at h
   rw [h, seedWord_eq]
 
-/-- **Restriction of the draw half along a section**: if draws indexed by public inputs `π` are
-`DrawSamplable`, so are the draws at the fixed public input `s κ`, with the public input `Unit`
-(the same sampler, coin polynomial and equivalences, read at `π = s κ`; `drawSamplable_iff`).
-Glue. -/
-theorem drawSamplable_restrict {P : ℕ → Type} {Draw : (κ : ℕ) → P κ → Type}
-    {y : ∀ κ, P κ → List Bool} {encDraw : ∀ κ π, Draw κ π → List Bool}
-    (h : CoinSampling.DrawSamplable y encDraw) (s : ∀ κ, P κ) :
-    CoinSampling.DrawSamplable (P := fun _ => Unit) (Draw := fun κ _ => Draw κ (s κ))
-      (fun κ _ => y κ (s κ)) (fun κ _ => encDraw κ (s κ)) := by
-  obtain ⟨U, c, e, he, hc⟩ := (CoinSampling.drawSamplable_iff _ _).1 h
-  exact (CoinSampling.drawSamplable_iff _ _).2
-    ⟨U, c, fun κ _ => e κ (s κ), fun κ _ w => he κ (s κ) w, fun κ _ => hc κ (s κ)⟩
-
 /-- **The seed modulus** `2^{n(κ)}` as a bounded modulus of width `t(κ) = n(κ)`. Glue. -/
 def seedModulus (t : PolyExpr) (n : ℕ → ℕ) (hn : ∀ κ, n κ = t.eval κ) (κ : ℕ) :
     CoinSampling.BoundedModulus t κ :=
@@ -403,21 +352,21 @@ def seedModulus (t : PolyExpr) (n : ℕ → ℕ) (hn : ∀ κ, n κ = t.eval κ)
 theorem seedModulus_val (t : PolyExpr) (n : ℕ → ℕ) (hn : ∀ κ, n κ = t.eval κ) (κ : ℕ) :
     ((seedModulus t n hn κ).1 : ℕ) = 2 ^ n κ := rfl
 
-/-- The residue sampler's word of the seed modulus is `seedModulusWord (n κ)`
+/-- The residue sampler's word of the seed modulus is `CoinSampling.seedModulusWord (n κ)`
 (`CoinSampling.modulusWord_eq`). Glue. -/
 theorem modulusWord_seedModulus (t : PolyExpr) (n : ℕ → ℕ) (hn : ∀ κ, n κ = t.eval κ)
     (κ : ℕ) :
-    CoinSampling.modulusWord t κ (seedModulus t n hn κ) = seedModulusWord (n κ) := by
-  rw [CoinSampling.modulusWord_eq, seedModulus_val, seedModulusWord_eq, hn]
+    CoinSampling.modulusWord t κ (seedModulus t n hn κ) = CoinSampling.seedModulusWord (n κ) := by
+  rw [CoinSampling.modulusWord_eq, seedModulus_val, CoinSampling.seedModulusWord_eq, hn]
 
 /-- **Bit seeds are drawn by the bucket sampler**: for noise laws whose seed types are
 `n(κ)`-bit words (`hc`), with `n(κ) = t(κ)`, the seeds, written as `seedWord`, are
-`DrawSamplable` at the word `seedModulusWord (n κ)` [Lem19, §3.2, Algorithm 4; PS10,
+`DrawSamplable` at the word `CoinSampling.seedModulusWord (n κ)` [Lem19, §3.2, Algorithm 4; PS10,
 Definition 23.4].
 
 **Proof sketch.** This is `CoinSampling.drawSamplable_residue t` (uniform `ZMod q` by
 `bucketSampler`, failure at most `2^{-κ}`) at the modulus `q = 2^{n(κ)}`
-(`drawSamplable_restrict`, `modulusWord_seedModulus`), transported along
+(`CoinSampling.drawSamplable_restrict`, `modulusWord_seedModulus`), transported along
 `ZMod (2^n) ≃ Fin (2^n) ≃ (Fin n → Bool) ≃ Coins` (`ZMod.finEquiv`, `bitsEquiv`, `Equiv.cast`;
 `DrawSamplable.congr`). The encodings agree: `residueEnc` writes `a : Fin (2^n)` as `⦃a⦄_{n+1}`
 (`CoinSampling.residueEnc_eq`), and `a = bitsToNat r` for the seed `r` (`bitsEquiv_val`), whose
@@ -425,8 +374,8 @@ numeral is `seedWord r` (`natToList_bitsToNat`). -/
 theorem drawSamplable_bitSeeds (t : PolyExpr) (n : ℕ → ℕ) (hn : ∀ κ, n κ = t.eval κ)
     (χ : ℕ → Noise) (hc : ∀ κ, (χ κ).Coins = (Fin (n κ) → Bool)) :
     CoinSampling.DrawSamplable (P := fun _ => Unit) (Draw := fun κ _ => (χ κ).Coins)
-      (fun κ _ => seedModulusWord (n κ)) (fun κ _ c => seedWord (cast (hc κ) c)) := by
-  have h := (drawSamplable_restrict (CoinSampling.drawSamplable_residue t)
+      (fun κ _ => CoinSampling.seedModulusWord (n κ)) (fun κ _ c => seedWord (cast (hc κ) c)) := by
+  have h := (CoinSampling.drawSamplable_restrict (CoinSampling.drawSamplable_residue t)
     (seedModulus t n hn)).congr
     (Draw' := fun κ _ => (χ κ).Coins) (encDraw' := fun κ _ c => seedWord (cast (hc κ) c))
     (fun κ _ => (ZMod.finEquiv _).symm.toEquiv.trans
@@ -439,7 +388,7 @@ theorem drawSamplable_bitSeeds (t : PolyExpr) (n : ℕ → ℕ) (hn : ∀ κ, n 
       rw [← bitsEquiv_val]
       exact congrArg Fin.val ((bitsEquiv (n κ)).apply_symm_apply _)
   have hy : (fun κ (_ : Unit) => CoinSampling.modulusWord t κ (seedModulus t n hn κ)) =
-      fun κ _ => seedModulusWord (n κ) := by
+      fun κ _ => CoinSampling.seedModulusWord (n κ) := by
     funext κ _
     exact modulusWord_seedModulus t n hn κ
   rw [hy] at h
@@ -459,7 +408,7 @@ theorem noise_efficient_of_bitSeeds (t : PolyExpr) (n : ℕ → ℕ) (hn : ∀ �
     (hgf : ∀ κ c, g (pairEncode (List.replicate κ true) (List.ofFn (cast (hc κ) c))) =
       noiseWord ((χ κ).sample c)) :
     CoinSampling.SamplesEfficiently (P := fun _ => Unit) (Draw := fun κ _ => (χ κ).Coins)
-      (β := fun _ _ => ℤ) (fun κ _ => seedModulusWord (n κ))
+      (β := fun _ _ => ℤ) (fun κ _ => CoinSampling.seedModulusWord (n κ))
       (fun κ _ c => seedWord (cast (hc κ) c)) (fun _ _ e => noiseWord e)
       (fun κ _ => (χ κ).sample) := by
   refine .intro (drawSamplable_bitSeeds t n hn χ hc)
@@ -483,7 +432,7 @@ theorem noise_efficient_of_bitNoise (t : PolyExpr) (n : ℕ → ℕ) (hn : ∀ �
     (hgf : ∀ κ r, g (pairEncode (List.replicate κ true) (List.ofFn r)) = noiseWord (f κ r)) :
     CoinSampling.SamplesEfficiently (P := fun _ => Unit)
       (Draw := fun κ _ => (bitNoise (n κ) (f κ)).Coins) (β := fun _ _ => ℤ)
-      (fun κ _ => seedModulusWord (n κ))
+      (fun κ _ => CoinSampling.seedModulusWord (n κ))
       (fun κ _ c => seedWord (cast (bitNoise_Coins (n κ) (f κ)) c)) (fun _ _ e => noiseWord e)
       (fun κ _ => (bitNoise (n κ) (f κ)).sample) :=
   noise_efficient_of_bitSeeds t n hn (fun κ => bitNoise (n κ) (f κ))
@@ -604,7 +553,7 @@ in the contract form [PS10, Definition 23.4] (`noise_efficient_of_bitSeeds`,
 theorem noise_efficient_centeredNoise (T : PolyExpr) :
     CoinSampling.SamplesEfficiently (P := fun _ => Unit)
       (Draw := fun κ _ => (centeredNoise (T.eval κ)).Coins) (β := fun _ _ => ℤ)
-      (fun κ _ => seedModulusWord (T.eval κ + T.eval κ))
+      (fun κ _ => CoinSampling.seedModulusWord (T.eval κ + T.eval κ))
       (fun κ _ c => seedWord (cast (centeredNoise_Coins (T.eval κ)) c))
       (fun _ _ e => noiseWord e) (fun κ _ => (centeredNoise (T.eval κ)).sample) :=
   noise_efficient_of_bitSeeds (T.add T) (fun κ => T.eval κ + T.eval κ)
@@ -616,8 +565,8 @@ theorem noise_efficient_centeredNoise (T : PolyExpr) :
 
 /-- **An efficient family from bit-seed noise**: a family `F` with a uniform parameter map whose
 noise seeds are `n(κ)`-bit words (`hc`), `n(κ) = t(κ)`, and a polynomial-time core `g` of the
-noise (`noise_efficient_of_bitSeeds`), with noise word `seedModulusWord (n κ)` and seeds written
-as `seedWord`. Glue. -/
+noise (`noise_efficient_of_bitSeeds`), with noise word `CoinSampling.seedModulusWord (n κ)` and
+seeds written as `seedWord`. Glue. -/
 def EfficientFamily.ofBitSeeds (F : Family)
     (hparams : ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
       ∀ κ, f (List.replicate κ true) = (F.parameters κ).encode (F.residueBits.eval κ))
@@ -628,7 +577,7 @@ def EfficientFamily.ofBitSeeds (F : Family)
       noiseWord ((F.noise κ).sample c)) : EfficientFamily where
   toFamily := F
   params_uniform := hparams
-  noiseInput κ := seedModulusWord (n κ)
+  noiseInput κ := CoinSampling.seedModulusWord (n κ)
   noiseInput_uniform := seedModulusWord_uniform t n hn
   encodeSeed κ c := seedWord (cast (hc κ) c)
   noise_efficient := noise_efficient_of_bitSeeds t n hn F.noise hc hg hgf
@@ -644,7 +593,7 @@ theorem EfficientFamily.ofBitSeeds_toFamily (F : Family)
       noiseWord ((F.noise κ).sample c)) :
     (EfficientFamily.ofBitSeeds F hparams t n hn hc hg hgf).toFamily = F := rfl
 
-/-- The noise word of `EfficientFamily.ofBitSeeds F …` is `seedModulusWord (n κ)`. -/
+/-- The noise word of `EfficientFamily.ofBitSeeds F …` is `CoinSampling.seedModulusWord (n κ)`. -/
 theorem EfficientFamily.ofBitSeeds_noiseInput (F : Family)
     (hparams : ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
       ∀ κ, f (List.replicate κ true) = (F.parameters κ).encode (F.residueBits.eval κ))
@@ -654,7 +603,7 @@ theorem EfficientFamily.ofBitSeeds_noiseInput (F : Family)
     (hgf : ∀ κ c, g (pairEncode (List.replicate κ true) (List.ofFn (cast (hc κ) c))) =
       noiseWord ((F.noise κ).sample c)) (κ : ℕ) :
     (EfficientFamily.ofBitSeeds F hparams t n hn hc hg hgf).noiseInput κ =
-      seedModulusWord (n κ) := rfl
+      CoinSampling.seedModulusWord (n κ) := rfl
 
 /-- The seed encoding of `EfficientFamily.ofBitSeeds F …` is `seedWord ∘ cast`. -/
 theorem EfficientFamily.ofBitSeeds_encodeSeed (F : Family)
@@ -688,11 +637,11 @@ theorem EfficientFamily.ofDyadic_toFamily (N M W T : PolyExpr) (hW : ∀ κ, 1 �
       dyadicFamily N M W hW fun κ => centeredNoise (T.eval κ) := rfl
 
 /-- The noise word of `EfficientFamily.ofDyadic N M W T hW` is
-`seedModulusWord (2 T(κ))`. -/
+`CoinSampling.seedModulusWord (2 T(κ))`. -/
 theorem EfficientFamily.ofDyadic_noiseInput (N M W T : PolyExpr) (hW : ∀ κ, 1 ≤ W.eval κ)
     (κ : ℕ) :
     (EfficientFamily.ofDyadic N M W T hW).noiseInput κ =
-      seedModulusWord (T.eval κ + T.eval κ) := rfl
+      CoinSampling.seedModulusWord (T.eval κ + T.eval κ) := rfl
 
 /-! ### Non-vacuity -/
 

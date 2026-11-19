@@ -3,7 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.SIS.Assumption
-import TCSlib.Cryptography.LWE.Efficient
+import TCSlib.Cryptography.CoinSampling.Contract
 import TCSlib.Cryptography.Encoding.BinaryArith
 import TCSlib.Complexity.ClassP.BinaryArith.PrimeFind
 import TCSlib.Complexity.Randomized.Primitives
@@ -49,9 +49,10 @@ map sending `1^κ` to the parameter word `⟨1^n, ⟨1^m, ⟨⦃q⦄, ⦃β⦄�
 the families without an efficiency clause. No hardness is asserted anywhere in this file. The
 dyadic schedule here is local; the hashing profile `Hashing.SIS.dyadicFamily` is not used.
 
-**Import.** The file imports `LWE.Efficient` only for the numeral of `2^W` and its
-polynomial-time writer (`LWE.natToList_two_pow`, `LWE.polyTimeComputable_twoPowWord`), stated
-once there; SIS hardness stays independent of LWE.
+**Import.** The numeral of `2^W` and its polynomial-time writer
+(`CoinSampling.natToList_two_pow`, `CoinSampling.polyTimeComputable_twoPowWord`) come from the
+shared sampler contract `CoinSampling/Contract.lean`; the file does not import the LWE layer, and
+SIS hardness stays independent of LWE.
 -/
 
 namespace TCSlib.Cryptography.SIS
@@ -164,8 +165,8 @@ theorem polyTimeComputable_numeralPoly (S B : PolyExpr) :
 `(P κ).encode (W(κ)) (B(κ))`. Glue.
 
 **Proof sketch.** The map writes `⟨1^{N(|x|)}, ⟨1^{M(|x|)}, ⟨1 0^{W(|x|)}, ⦃S(|x|)⦄_{B(|x|)}⟩⟩⟩`:
-the unary words by `polyTimeComputable_unaryPoly`, `1 0^W = ⦃2^W⦄_{W+1}` (`LWE.natToList_two_pow`)
-by `LWE.polyTimeComputable_twoPowWord`, the bound by
+the unary words by `polyTimeComputable_unaryPoly`, `1 0^W = ⦃2^W⦄_{W+1}`
+(`CoinSampling.natToList_two_pow`) by `CoinSampling.polyTimeComputable_twoPowWord`, the bound by
 `polyTimeComputable_numeralPoly`, the pairs by `PolyTimeComputable.pairEncode`. On `1^κ` the
 length is `κ`. -/
 theorem params_uniform_of_schedule (N M W S B : PolyExpr) (P : ℕ → Parameters)
@@ -178,10 +179,11 @@ theorem params_uniform_of_schedule (N M W S B : PolyExpr) (P : ℕ → Parameter
       (pairEncode (true :: List.replicate (W.eval x.length) false)
         (Candidates.natToList (B.eval x.length) (S.eval x.length)))),
     (polyTimeComputable_unaryPoly N).pairEncode ((polyTimeComputable_unaryPoly M).pairEncode
-      ((LWE.polyTimeComputable_twoPowWord W).pairEncode (polyTimeComputable_numeralPoly S B))),
+      ((CoinSampling.polyTimeComputable_twoPowWord W).pairEncode
+        (polyTimeComputable_numeralPoly S B))),
     fun κ => ?_⟩
   dsimp only
-  rw [List.length_replicate, Parameters.encode_eq, hn, hm, hq, hβ, LWE.natToList_two_pow]
+  rw [List.length_replicate, Parameters.encode_eq, hn, hm, hq, hβ, CoinSampling.natToList_two_pow]
 
 /-! ### Dyadic schedules -/
 
