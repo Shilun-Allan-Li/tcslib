@@ -12,6 +12,8 @@ Local modifications (see policy.md §2, vendored code, and the repository NOTICE
 * namespaces `EndStatement` and `ThreeSumApsp.WordRam` renamed to `WordRAM`, and `ThreeSumApsp` to `Light`, with module names and paths in comments updated;
 * added a `## References` section citing [AFM26];
 * added the repository-standard `set_option` header.
+* added input, output, coin and halving cases and threaded the output and coin indices;
+  compilation of the four new constructs is temporarily admitted.
 The remaining content is unchanged.
 -/
 import TCSlib.Programs.Light.Compiler.CallFrames
@@ -194,7 +196,7 @@ def Simulates (d : ℕ) (s : Stmt) (σ σ' : State) (c : ℕ) : Prop :=
   ∀ (pos q : ℕ) (m : ℤ → BitVec W), Start S d s σ pos q m →
     ∃ (m' : ℤ → BitVec W) (n : ℕ), Finished S s σ' c pos q m m' n
 
-variable {S} {d pos q : ℕ} {s s₁ s₂ : Stmt} {σ σ' σ₁ σ₂ : State} {m : ℤ → BitVec W}
+variable {S} {o r : List Bool} {d pos q : ℕ} {s s₁ s₂ : Stmt} {σ σ' σ₁ σ₂ : State} {m : ℤ → BitVec W}
 
 /-- The situation before a part t of the statement runs, in the same frame. -/
 private theorem Start.sub (B : Start S d s σ pos q m) {t : Stmt} {pos' : ℕ} {m' : ℤ → BitVec W}
@@ -265,7 +267,7 @@ private theorem sim_store {a e : Expr} (hsa : a.Safe S.lim σ) (hse : e.Safe S.l
     agree := (A₁.mono scratch_subset_writable).update (mem_writable_of_addr haddr) _ }⟩
 
 /-- s₁; s₂: the code of s₁, then the code of s₂. -/
-private theorem sim_seq {c₁ c₂ : ℕ} (h₁ : Exec S.lim S.P d s₁ σ σ₁ c₁)
+private theorem sim_seq {c₁ c₂ : ℕ} (hword : (1 : ℤ) ≤ S.lim.word) (h₁ : Exec S.lim S.P d s₁ σ σ₁ o r c₁)
     (ih₁ : Simulates S d s₁ σ σ₁ c₁) (ih₂ : Simulates S d s₂ σ₁ σ₂ c₂) :
     Simulates S d (.seq s₁ s₂) σ σ₂ (c₁ + c₂) := by
   intro pos q m B
@@ -274,7 +276,7 @@ private theorem sim_seq {c₁ c₂ : ℕ} (h₁ : Exec S.lim S.P d s₁ σ σ₁
   have hpos : pos + (s₁.size S.F + s₂.size S.F) ≤ S.disp := B.below
   obtain ⟨m₁, n₁, run₁, le₁, R₁, A₁⟩ := ih₁ _ _ _ (B.sub firstCode (by omega) hw₁ B.bounded B.rel)
   obtain ⟨m₂, n₂, run₂, le₂, R₂, A₂⟩ := ih₂ _ _ _
-    (B.sub secondCode (by omega) hw₂ (h₁.bounded B.bounded) R₁)
+    (B.sub secondCode (by omega) hw₂ (h₁.bounded hword B.bounded) R₁)
   exact ⟨m₂, n₁ + n₂, {
     run := (run₁.trans run₂).cast_pos (by rw [Stmt.size, Nat.add_assoc])
     le := Nat.mul_add _ c₁ c₂ ▸ Nat.add_le_add le₁ le₂
@@ -336,8 +338,8 @@ private theorem sim_whileFalse {c : Cond} (hs : c.Safe S.lim σ) (fails : ¬ c.H
 
 /-- while c do s, when c holds: the test goes on to the code of s, a jump leads back to the test,
 and the loop runs again. -/
-private theorem sim_whileTrue {c : Cond} {k₁ k₂ : ℕ} (hs : c.Safe S.lim σ) (holds : c.Holds σ)
-    (h₁ : Exec S.lim S.P d s σ σ₁ k₁) (ih₁ : Simulates S d s σ σ₁ k₁)
+private theorem sim_whileTrue (hword : (1 : ℤ) ≤ S.lim.word) {c : Cond} {k₁ k₂ : ℕ} (hs : c.Safe S.lim σ) (holds : c.Holds σ)
+    (h₁ : Exec S.lim S.P d s σ σ₁ o r k₁) (ih₁ : Simulates S d s σ σ₁ k₁)
     (ih₂ : Simulates S d (.while c s) σ₁ σ₂ k₂) :
     Simulates S d (.while c s) σ σ₂ (c.cost + 1 + k₁ + k₂) := by
   intro pos q m B
@@ -353,7 +355,7 @@ private theorem sim_whileTrue {c : Cond} {k₁ k₂ : ℕ} (hs : c.Safe S.lim σ
   have run₂ := (run₀.trans run₁).trans (steps_jump jumpCode R₁.neg S.inRange_neg_one)
   -- the loop again
   obtain ⟨m₃, n₃, run₃, le₃, R₃, A₃⟩ := ih₂ _ _ _
-    (B.sub B.codeAt B.below B.width (h₁.bounded B.bounded) R₁)
+    (B.sub B.codeAt B.below B.width (h₁.bounded hword B.bounded) R₁)
   exact ⟨m₃, n₀ + 1 + n₁ + n₃, {
     run := (run₂.trans run₃).cast_count (by omega)
     le := Nat.mul_add _ _ k₂ ▸ Nat.add_le_add (add_le_stepsPerStep_mul (by omega) (by omega) le₁)
@@ -480,18 +482,23 @@ end call
 /-! ## The theorem -/
 
 /-- **The simulation theorem.**  The code of a statement matches every run of the statement. -/
-theorem sim (S : Setting W) {c : ℕ} (h : Exec S.lim S.P d s σ σ' c) :
+theorem sim (S : Setting W) (hw : (1 : ℤ) ≤ S.lim.word) {c : ℕ}
+    (h : Exec S.lim S.P d s σ σ' o r c) :
     Simulates S d s σ σ' c := by
   induction h with
   | skip => exact sim_skip
   | set hs => exact sim_set hs
   | store hsa hse haddr => exact sim_store hsa hse haddr
-  | seq h₁ _ ih₁ ih₂ => exact sim_seq h₁ ih₁ ih₂
+  | seq h₁ _ ih₁ ih₂ => exact sim_seq hw h₁ ih₁ ih₂
   | iteTrue hs holds _ ih => exact sim_iteTrue hs holds ih
   | iteFalse hs fails _ ih => exact sim_iteFalse hs fails ih
   | whileFalse hs fails => exact sim_whileFalse hs fails
-  | whileTrue hs holds h₁ _ ih₁ ih₂ => exact sim_whileTrue hs holds h₁ ih₁ ih₂
+  | whileTrue hs holds h₁ _ ih₁ ih₂ => exact sim_whileTrue hw hs holds h₁ ih₁ ih₂
   | call hsa hp hd _ ih => exact sim_call hsa hp hd ih
+  | inBit hs => sorry
+  | emit hs => sorry
+  | coin b => sorry
+  | half hs => sorry
 
 end Light.Compiler
 end

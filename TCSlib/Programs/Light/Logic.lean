@@ -11,6 +11,8 @@ Local modifications (see policy.md §2, vendored code, and the repository NOTICE
 * moved to `TCSlib/Programs/Light/Logic.lean`, with imports remapped;
 * added a `## References` section citing [AFM26];
 * added the repository-standard `set_option` header.
+* added input, output, coin and halving constructs, and threaded output and coin indices
+  through the affected syntax, semantics and run witnesses.
 The remaining content is unchanged.
 -/
 import TCSlib.Programs.Light.Syntax
@@ -74,9 +76,11 @@ theorem getElem?_append_length_add (P₀ : Program) {R : Program} {i : ℕ} {bod
   rw [List.getElem?_append_right (by omega), Nat.add_sub_cancel_left]
   exact h
 
+variable {s : Stmt} {σ σ' : State} {o r : List Bool} {c : ℕ}
+
 /-- A run stays a run when procedures are appended to the program. -/
-theorem Exec.append {s : Stmt} {σ σ' : State} {c : ℕ} (h : Exec lim P d s σ σ' c) (R : Program) :
-    Exec lim (P ++ R) d s σ σ' c := by
+theorem Exec.append (h : Exec lim P d s σ σ' o r c) (R : Program) :
+    Exec lim (P ++ R) d s σ σ' o r c := by
   induction h with
   | skip => exact .skip
   | set h => exact .set h
@@ -87,65 +91,74 @@ theorem Exec.append {s : Stmt} {σ σ' : State} {c : ℕ} (h : Exec lim P d s σ
   | whileFalse h₁ h₂ => exact .whileFalse h₁ h₂
   | whileTrue h₁ h₂ _ _ ih₁ ih₂ => exact .whileTrue h₁ h₂ ih₁ ih₂
   | call h₁ h₂ h₃ _ ih => exact .call h₁ (getElem?_append_of_eq_some h₂ R) h₃ ih
+  | inBit hs => exact .inBit hs
+  | emit hs => exact .emit hs
+  | coin b => exact .coin b
+  | half hs => exact .half hs
 
 /-! ## The rules -/
 
 /-- The statement s, started in σ, ends within T steps in a state that satisfies Q. -/
 def Ends (lim : Limits) (P : Program) (d : ℕ) (s : Stmt) (σ : State) (T : ℕ) (Q : State → Prop) :
     Prop :=
-  ∃ σ' c, Exec lim P d s σ σ' c ∧ c ≤ T ∧ Q σ'
+  ∃ σ' o r c, Exec lim P d s σ σ' o r c ∧ c ≤ T ∧ Q σ'
+
+/-- Reading `Ends`: a run, its cost within `T`, and the final postcondition. -/
+theorem ends_iff (lim : Limits) (P : Program) (d : ℕ) (s : Stmt) (σ : State) (T : ℕ)
+    (Q : State → Prop) :
+    Ends lim P d s σ T Q ↔ ∃ σ' o r c, Exec lim P d s σ σ' o r c ∧ c ≤ T ∧ Q σ' := Iff.rfl
 
 /-- More time and a weaker conclusion. -/
 theorem Ends.mono {s σ T T' Q Q'} (h : Ends lim P d s σ T Q) (hT : T ≤ T')
     (hQ : ∀ σ', Q σ' → Q' σ') : Ends lim P d s σ T' Q' := by
-  obtain ⟨σ', c, he, hc, hq⟩ := h
-  exact ⟨σ', c, he, hc.trans hT, hQ _ hq⟩
+  obtain ⟨σ', o, r, c, he, hc, hq⟩ := h
+  exact ⟨σ', o, r, c, he, hc.trans hT, hQ _ hq⟩
 
 /-- What is proved about a program holds for the program with more procedures appended. -/
 theorem Ends.append {s σ T Q} (h : Ends lim P d s σ T Q) (R : Program) :
     Ends lim (P ++ R) d s σ T Q := by
-  obtain ⟨σ', c, he, hc, hq⟩ := h
-  exact ⟨σ', c, he.append R, hc, hq⟩
+  obtain ⟨σ', o, r, c, he, hc, hq⟩ := h
+  exact ⟨σ', o, r, c, he.append R, hc, hq⟩
 
 theorem Ends.skip {σ T} {Q : State → Prop} (h : Q σ) : Ends lim P d .skip σ T Q :=
-  ⟨σ, 0, .skip, Nat.zero_le _, h⟩
+  ⟨σ, [], [], 0, .skip, Nat.zero_le _, h⟩
 
 theorem Ends.set {σ T x e} {Q : State → Prop} (hs : e.Safe lim σ) (hT : e.cost + 1 ≤ T)
     (h : Q { σ with loc := Function.update σ.loc x (e.val σ) }) : Ends lim P d (.set x e) σ T Q :=
-  ⟨_, _, .set hs, hT, h⟩
+  ⟨_, [], [], _, .set hs, hT, h⟩
 
 theorem Ends.store {σ T a e} {Q : State → Prop} (ha : a.Safe lim σ) (he : e.Safe lim σ)
     (hA : lim.Addr (a.val σ)) (hT : a.cost + e.cost + 1 ≤ T)
     (h : Q { σ with mem := Function.update σ.mem (a.val σ).toNat (e.val σ) }) :
     Ends lim P d (.store a e) σ T Q :=
-  ⟨_, _, .store ha he hA, hT, h⟩
+  ⟨_, [], [], _, .store ha he hA, hT, h⟩
 
 theorem Ends.seq {σ T s₁ s₂} {Q : State → Prop} (T₁ T₂ : ℕ)
     (h : Ends lim P d s₁ σ T₁ fun σ' => Ends lim P d s₂ σ' T₂ Q) (hT : T₁ + T₂ ≤ T) :
     Ends lim P d (.seq s₁ s₂) σ T Q := by
-  obtain ⟨σ', c₁, he₁, hc₁, σ'', c₂, he₂, hc₂, hq⟩ := h
-  exact ⟨σ'', _, .seq he₁ he₂, by omega, hq⟩
+  obtain ⟨σ', o₁, r₁, c₁, he₁, hc₁, σ'', o₂, r₂, c₂, he₂, hc₂, hq⟩ := h
+  exact ⟨σ'', _, _, _, .seq he₁ he₂, by omega, hq⟩
 
 theorem Ends.ite {σ T c s₁ s₂} {Q : State → Prop} (T' : ℕ) (hs : c.Safe lim σ)
     (h₁ : c.Holds σ → Ends lim P d s₁ σ T' Q) (h₂ : ¬ c.Holds σ → Ends lim P d s₂ σ T' Q)
     (hT : c.cost + 1 + T' ≤ T) : Ends lim P d (.ite c s₁ s₂) σ T Q := by
   by_cases hv : c.Holds σ
-  · obtain ⟨σ', k, he, hk, hq⟩ := h₁ hv
-    exact ⟨σ', _, .iteTrue hs hv he, by omega, hq⟩
-  · obtain ⟨σ', k, he, hk, hq⟩ := h₂ hv
-    exact ⟨σ', _, .iteFalse hs hv he, by omega, hq⟩
+  · obtain ⟨σ', o, r, k, he, hk, hq⟩ := h₁ hv
+    exact ⟨σ', o, r, _, .iteTrue hs hv he, by omega, hq⟩
+  · obtain ⟨σ', o, r, k, he, hk, hq⟩ := h₂ hv
+    exact ⟨σ', o, r, _, .iteFalse hs hv he, by omega, hq⟩
 
 /-- A loop whose test holds: one round, then the loop again. -/
 theorem Ends.whileStep {σ c s T} {Q : State → Prop} (T₁ T₂ : ℕ) (hs : c.Safe lim σ) (hc : c.Holds σ)
     (h : Ends lim P d s σ T₁ fun σ' => Ends lim P d (.while c s) σ' T₂ Q)
     (hT : c.cost + 1 + T₁ + T₂ ≤ T) : Ends lim P d (.while c s) σ T Q := by
-  obtain ⟨σ', c₁, he₁, hc₁, σ'', c₂, he₂, hc₂, hq⟩ := h
-  exact ⟨σ'', _, .whileTrue hs hc he₁ he₂, by omega, hq⟩
+  obtain ⟨σ', o₁, r₁, c₁, he₁, hc₁, σ'', o₂, r₂, c₂, he₂, hc₂, hq⟩ := h
+  exact ⟨σ'', _, _, _, .whileTrue hs hc he₁ he₂, by omega, hq⟩
 
 /-- A loop whose test fails. -/
 theorem Ends.whileDone {σ c s T} {Q : State → Prop} (hs : c.Safe lim σ) (hc : ¬ c.Holds σ)
     (hQ : Q σ) (hT : c.cost + 1 ≤ T) : Ends lim P d (.while c s) σ T Q :=
-  ⟨σ, _, .whileFalse hs hc, hT, hQ⟩
+  ⟨σ, [], [], _, .whileFalse hs hc, hT, hQ⟩
 
 /-- Loops.  I i is the invariant before round number i (counted from 0) of n rounds, and b i bounds
 the cost of that round. -/
@@ -163,12 +176,12 @@ theorem Ends.while {σ c s} {Q : State → Prop} (I : ℕ → State → Prop) (n
       intro i σ hij hi
       obtain rfl : i = n := by omega
       obtain ⟨h1, h2, h3⟩ := hn σ hi
-      exact ⟨σ, _, .whileFalse h1 h2, by simp, h3⟩
+      exact ⟨σ, [], [], _, .whileFalse h1 h2, by simp, h3⟩
     | succ j ih =>
       intro i σ hij hi
-      obtain ⟨h1, h2, σ', k₁, he₁, hk₁, hi'⟩ := hs i σ (by omega) hi
-      obtain ⟨σ'', k₂, he₂, hk₂, hq⟩ := ih (i + 1) σ' (by omega) hi'
-      refine ⟨σ'', _, .whileTrue h1 h2 he₁ he₂, ?_, hq⟩
+      obtain ⟨h1, h2, σ', o₁, r₁, k₁, he₁, hk₁, hi'⟩ := hs i σ (by omega) hi
+      obtain ⟨σ'', o₂, r₂, k₂, he₂, hk₂, hq⟩ := ih (i + 1) σ' (by omega) hi'
+      refine ⟨σ'', _, _, _, .whileTrue h1 h2 he₁ he₂, ?_, hq⟩
       rw [Finset.sum_range_succ']
       have : ∀ k, i + 1 + k = i + (k + 1) := fun k => by omega
       simp only [this] at hk₂
@@ -197,21 +210,21 @@ theorem Ends.whileVariant {σ c s T} {Q : State → Prop} (I : State → Prop) (
     | zero =>
       intro σ h hm
       by_cases hc : c.Holds σ
-      · obtain ⟨σ₁, k₁, -, -, -, hlt⟩ := hs σ h hc
+      · obtain ⟨σ₁, _, _, k₁, -, -, -, hlt⟩ := hs σ h hc
         omega
-      · exact ⟨σ, _, .whileFalse (hsafe _ h) hc, by omega, hn σ h hc⟩
+      · exact ⟨σ, [], [], _, .whileFalse (hsafe _ h) hc, by omega, hn σ h hc⟩
     | succ n ih =>
       intro σ h hm
       by_cases hc : c.Holds σ
-      · obtain ⟨σ₁, k₁, he₁, hk₁, hI₁, hlt⟩ := hs σ h hc
-        obtain ⟨σ₂, k₂, he₂, hk₂, hq⟩ := ih σ₁ hI₁ (by omega)
-        refine ⟨σ₂, _, .whileTrue (hsafe _ h) hc he₁ he₂, ?_, hq⟩
+      · obtain ⟨σ₁, o₁, r₁, k₁, he₁, hk₁, hI₁, hlt⟩ := hs σ h hc
+        obtain ⟨σ₂, o₂, r₂, k₂, he₂, hk₂, hq⟩ := ih σ₁ hI₁ (by omega)
+        refine ⟨σ₂, _, _, _, .whileTrue (hsafe _ h) hc he₁ he₂, ?_, hq⟩
         have h1 : (m σ₁ + 1) * (c.cost + 1 + b) ≤ m σ * (c.cost + 1 + b) :=
           Nat.mul_le_mul_right _ hlt
         have h2 : (m σ₁ + 1) * (c.cost + 1 + b) = m σ₁ * (c.cost + 1 + b) + (c.cost + 1 + b) := by
           ring
         omega
-      · exact ⟨σ, _, .whileFalse (hsafe _ h) hc, by omega, hn σ h hc⟩
+      · exact ⟨σ, [], [], _, .whileFalse (hsafe _ h) hc, by omega, hn σ h hc⟩
   exact (key _ σ hI le_rfl).mono hT fun _ h => h
 
 /-- Calls: verify the body from the frame made of the arguments. -/
@@ -220,8 +233,8 @@ theorem Ends.call {σ T p args x body} {Q : State → Prop} (T' : ℕ) (ha : ∀
     (h : Ends lim P (d + 1) body ⟨frame (args.map (·.val σ)), σ.mem⟩ T'
       fun σ' => Q ⟨Function.update σ.loc x (σ'.loc 0), σ'.mem⟩)
     (hT : (args.map Expr.cost).sum + 2 + T' ≤ T) : Ends lim P d (.call p args x) σ T Q := by
-  obtain ⟨σ', k, he, hk, hq⟩ := h
-  exact ⟨_, _, .call ha hp hd he, by omega, hq⟩
+  obtain ⟨σ', o, r, k, he, hk, hq⟩ := h
+  exact ⟨_, o, r, _, .call ha hp hd he, by omega, hq⟩
 
 /-! ## Notation for writing programs
 

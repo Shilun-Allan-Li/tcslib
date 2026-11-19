@@ -13,6 +13,8 @@ Local modifications (see policy.md §2, vendored code, and the repository NOTICE
 * added the repository-standard `set_option` header;
 * appended reading lemmas (`rfl`/`Iff.rfl` restatements of definitions) for TCSlib's own
   proofs, which do not unfold vendored definitions.
+* added input, output, coin and halving constructs, and threaded output and coin indices
+  through the affected syntax, semantics and run witnesses.
 The remaining content is unchanged.
 -/
 import Mathlib.Algebra.Group.Int.Defs
@@ -34,7 +36,7 @@ and, up to a constant factor that depends on the program text only, step counts.
 * A program is a finite piece of data: a list of procedure bodies.  It contains no Lean functions.
 * The memory is an array of integers addressed by natural numbers.  Each running procedure has local
   variables 0, 1, 2, ….
-* Arithmetic: +, −, ×.  There is no division.  Comparisons (<, =) occur as the tests of if and
+* Arithmetic: +, −, ×, and halving rounded down. Input reads, output and coins are explicit.  Comparisons (<, =) occur as the tests of if and
   while.
 * Every executed operation costs one step: each constant, variable, operation and load of an
   expression, each comparison, assignment, store, branch, call and return.
@@ -87,6 +89,10 @@ inductive Stmt : Type
   | ite (c : Cond) (s₁ s₂ : Stmt)
   | while (c : Cond) (s : Stmt)
   | call (p : ℕ) (args : List Expr) (x : ℕ)
+  | inBit (x : ℕ) (e : Expr)
+  | emit (e : Expr)
+  | coin (x : ℕ)
+  | half (x : ℕ) (e : Expr)
   deriving Repr
 
 /-- A program: the bodies of its procedures, numbered from 0. -/
@@ -103,6 +109,16 @@ structure Limits : Type where
   word : ℤ
   space : ℕ
   depth : ℕ
+  /-- The input string read by `inBit`. -/
+  input : List Bool
+
+/-- The value of the input bit at position `p`: `1` if `0 ≤ p` and the bit there is `true`,
+`0` otherwise (in particular off the input). -/
+def inBitVal (x : List Bool) (p : ℤ) : ℤ := if 0 ≤ p ∧ x.getD p.toNat false = true then 1 else 0
+
+/-- Reading `inBitVal`: `1` exactly at a nonnegative position holding `true`. -/
+theorem inBitVal_eq (x : List Bool) (p : ℤ) :
+    inBitVal x p = if 0 ≤ p ∧ x.getD p.toNat false = true then 1 else 0 := rfl
 
 /-- The value of an expression. -/
 def Expr.val (s : State) : Expr → ℤ
@@ -152,32 +168,54 @@ def frame (args : List ℤ) : ℕ → ℤ := fun i => args.getD i 0
 /-- The memory that holds the list ws in the cells 0, 1, 2, … and 0 elsewhere. -/
 def memOf (ws : List ℤ) : ℕ → ℤ := fun a => ws.getD a 0
 
-/-- `Exec lim P d s σ σ' c`: within the limits lim, and at nesting depth d of calls, the statement
-s of the program P, started in the state σ, ends in the state σ' after exactly c steps. -/
-inductive Exec (lim : Limits) (P : Program) : ℕ → Stmt → State → State → ℕ → Prop
-  | skip {d σ} : Exec lim P d .skip σ σ 0
+/-- `Exec lim P d s σ σ' o r c`: within the limits `lim`, at call depth `d`, the statement
+`s`, started in `σ`, ends in `σ'` after exactly `c` steps, emitting `o` and consuming `r`. -/
+inductive Exec (lim : Limits) (P : Program) :
+    ℕ → Stmt → State → State → List Bool → List Bool → ℕ → Prop
+  | skip {d σ} : Exec lim P d .skip σ σ [] [] 0
   | set {d σ x e} : e.Safe lim σ →
-      Exec lim P d (.set x e) σ { σ with loc := Function.update σ.loc x (e.val σ) } (e.cost + 1)
-  | store {d σ a e} : a.Safe lim σ → e.Safe lim σ → lim.Addr (a.val σ) →
-      Exec lim P d (.store a e) σ { σ with mem := Function.update σ.mem (a.val σ).toNat (e.val σ) }
+      Exec lim P d (.set x e) σ { σ with loc := Function.update σ.loc x (e.val σ) } [] []
+        (e.cost + 1)
+  | store {d σ a e} : a.Safe lim σ → e.Safe lim σ →
+      lim.Addr (a.val σ) →
+      Exec lim P d (.store a e) σ
+        { σ with mem := Function.update σ.mem (a.val σ).toNat (e.val σ) } [] []
         (a.cost + e.cost + 1)
-  | seq {d σ σ' σ'' s₁ s₂ c₁ c₂} : Exec lim P d s₁ σ σ' c₁ → Exec lim P d s₂ σ' σ'' c₂ →
-      Exec lim P d (.seq s₁ s₂) σ σ'' (c₁ + c₂)
-  | iteTrue {d σ σ' c s₁ s₂ k} : c.Safe lim σ → c.Holds σ → Exec lim P d s₁ σ σ' k →
-      Exec lim P d (.ite c s₁ s₂) σ σ' (c.cost + 1 + k)
-  | iteFalse {d σ σ' c s₁ s₂ k} : c.Safe lim σ → ¬ c.Holds σ → Exec lim P d s₂ σ σ' k →
-      Exec lim P d (.ite c s₁ s₂) σ σ' (c.cost + 1 + k)
-  | whileFalse {d σ c s} : c.Safe lim σ → ¬ c.Holds σ → Exec lim P d (.while c s) σ σ (c.cost + 1)
-  | whileTrue {d σ σ' σ'' c s k₁ k₂} : c.Safe lim σ → c.Holds σ → Exec lim P d s σ σ' k₁ →
-      Exec lim P d (.while c s) σ' σ'' k₂ → Exec lim P d (.while c s) σ σ'' (c.cost + 1 + k₁ + k₂)
-  | call {d σ σ' p args x body k} : (∀ e ∈ args, e.Safe lim σ) → P[p]? = some body → d < lim.depth →
-      Exec lim P (d + 1) body ⟨frame (args.map (·.val σ)), σ.mem⟩ σ' k →
-      Exec lim P d (.call p args x) σ ⟨Function.update σ.loc x (σ'.loc 0), σ'.mem⟩
+  | seq {d σ σ' σ'' s₁ s₂ o₁ o₂ r₁ r₂ c₁ c₂} : Exec lim P d s₁ σ σ' o₁ r₁ c₁ →
+      Exec lim P d s₂ σ' σ'' o₂ r₂ c₂ →
+      Exec lim P d (.seq s₁ s₂) σ σ'' (o₁ ++ o₂) (r₁ ++ r₂) (c₁ + c₂)
+  | iteTrue {d σ σ' c s₁ s₂ o r k} : c.Safe lim σ → c.Holds σ →
+      Exec lim P d s₁ σ σ' o r k → Exec lim P d (.ite c s₁ s₂) σ σ' o r (c.cost + 1 + k)
+  | iteFalse {d σ σ' c s₁ s₂ o r k} : c.Safe lim σ → ¬ c.Holds σ →
+      Exec lim P d s₂ σ σ' o r k → Exec lim P d (.ite c s₁ s₂) σ σ' o r (c.cost + 1 + k)
+  | whileFalse {d σ c s} : c.Safe lim σ → ¬ c.Holds σ →
+      Exec lim P d (.while c s) σ σ [] [] (c.cost + 1)
+  | whileTrue {d σ σ' σ'' c s o₁ o₂ r₁ r₂ k₁ k₂} : c.Safe lim σ → c.Holds σ →
+      Exec lim P d s σ σ' o₁ r₁ k₁ → Exec lim P d (.while c s) σ' σ'' o₂ r₂ k₂ →
+      Exec lim P d (.while c s) σ σ'' (o₁ ++ o₂) (r₁ ++ r₂) (c.cost + 1 + k₁ + k₂)
+  | call {d σ σ' p args x body o r k} : (∀ e ∈ args, e.Safe lim σ) → P[p]? = some body →
+      d < lim.depth → Exec lim P (d + 1) body ⟨frame (args.map (·.val σ)), σ.mem⟩ σ' o r k →
+      Exec lim P d (.call p args x) σ ⟨Function.update σ.loc x (σ'.loc 0), σ'.mem⟩ o r
         ((args.map Expr.cost).sum + 2 + k)
+  | inBit {d σ x e} : e.Safe lim σ →
+      Exec lim P d (.inBit x e) σ
+        { σ with loc := Function.update σ.loc x (inBitVal lim.input (e.val σ)) } [] [] (e.cost + 1)
+  | emit {d σ e} : e.Safe lim σ →
+      Exec lim P d (.emit e) σ σ [decide (e.val σ ≠ 0)] [] (e.cost + 1)
+  | coin {d σ x} (b : Bool) :
+      Exec lim P d (.coin x) σ { σ with loc := Function.update σ.loc x (if b then 1 else 0) } []
+        [b] 1
+  | half {d σ x e} : e.Safe lim σ →
+      Exec lim P d (.half x e) σ { σ with loc := Function.update σ.loc x (e.val σ / 2) } [] []
+        (e.cost + 1)
 
 /-- Everything held in a variable or in a cell fits in a word. -/
 def State.Bounded (lim : Limits) (σ : State) : Prop :=
   (∀ x, |σ.loc x| ≤ lim.word) ∧ ∀ a, |σ.mem a| ≤ lim.word
+
+/-- Reading boundedness: every local and memory cell fits the word limit. -/
+theorem State.bounded_iff (lim : Limits) (σ : State) :
+    σ.Bounded lim ↔ (∀ x, |σ.loc x| ≤ lim.word) ∧ ∀ a, |σ.mem a| ≤ lim.word := Iff.rfl
 
 /-! ## Equations for reading expressions and tests -/
 

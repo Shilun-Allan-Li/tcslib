@@ -11,6 +11,8 @@ Local modifications (see policy.md §2, vendored code, and the repository NOTICE
 * moved to `TCSlib/Programs/Light/Renumber.lean`, with imports remapped;
 * added a `## References` section citing [AFM26];
 * added the repository-standard `set_option` header.
+* added input, output, coin and halving constructs, and threaded output and coin indices
+  through the affected syntax, semantics and run witnesses.
 The remaining content is unchanged.
 -/
 import TCSlib.Programs.Light.Logic
@@ -50,9 +52,61 @@ def Stmt.shift (n : ℕ) : Stmt → Stmt
   | .ite c s t => .ite c (s.shift n) (t.shift n)
   | .while c s => .while c (s.shift n)
   | .call p args x => .call (p + n) args x
+  | .inBit x e => .inBit x e
+  | .emit e => .emit e
+  | .coin x => .coin x
+  | .half x e => .half x e
+
+/-- Reading procedure relocation on `skip`. -/
+theorem Stmt.shift_skip (n : ℕ)  :
+    (Stmt.skip).shift n = .skip := rfl
+
+/-- Reading procedure relocation on `set`. -/
+theorem Stmt.shift_set (n : ℕ) (x : ℕ) (e : Expr) :
+    (Stmt.set x e).shift n = .set x e := rfl
+
+/-- Reading procedure relocation on `store`. -/
+theorem Stmt.shift_store (n : ℕ) (a e : Expr) :
+    (Stmt.store a e).shift n = .store a e := rfl
+
+/-- Reading procedure relocation on `seq`. -/
+theorem Stmt.shift_seq (n : ℕ) (s t : Stmt) :
+    (Stmt.seq s t).shift n = .seq (s.shift n) (t.shift n) := rfl
+
+/-- Reading procedure relocation on `ite`. -/
+theorem Stmt.shift_ite (n : ℕ) (c : Cond) (s t : Stmt) :
+    (Stmt.ite c s t).shift n = .ite c (s.shift n) (t.shift n) := rfl
+
+/-- Reading procedure relocation on `while`. -/
+theorem Stmt.shift_while (n : ℕ) (c : Cond) (s : Stmt) :
+    (Stmt.while c s).shift n = .while c (s.shift n) := rfl
+
+/-- Reading procedure relocation on `call`. -/
+theorem Stmt.shift_call (n : ℕ) (p : ℕ) (args : List Expr) (x : ℕ) :
+    (Stmt.call p args x).shift n = .call (p + n) args x := rfl
+
+/-- Reading procedure relocation on `inBit`. -/
+theorem Stmt.shift_inBit (n : ℕ) (x : ℕ) (e : Expr) :
+    (Stmt.inBit x e).shift n = .inBit x e := rfl
+
+/-- Reading procedure relocation on `emit`. -/
+theorem Stmt.shift_emit (n : ℕ) (e : Expr) :
+    (Stmt.emit e).shift n = .emit e := rfl
+
+/-- Reading procedure relocation on `coin`. -/
+theorem Stmt.shift_coin (n : ℕ) (x : ℕ) :
+    (Stmt.coin x).shift n = .coin x := rfl
+
+/-- Reading procedure relocation on `half`. -/
+theorem Stmt.shift_half (n : ℕ) (x : ℕ) (e : Expr) :
+    (Stmt.half x e).shift n = .half x e := rfl
 
 /-- The program P placed behind the program Q. -/
 def Program.behind (Q P : Program) : Program := Q ++ P.map (Stmt.shift Q.length)
+
+/-- Reading program relocation: the prefix followed by shifted procedure bodies. -/
+theorem Program.behind_eq (Q P : Program) :
+    Program.behind Q P = Q ++ P.map (Stmt.shift Q.length) := rfl
 
 /-- Procedure p of P is procedure `p + Q.length` of P placed behind Q, with its calls
 shifted. -/
@@ -64,8 +118,9 @@ theorem Program.getElem?_behind_right (Q : Program) {p : ℕ} {body : Stmt} (h :
 
 /-- **Relocation.**  A run in P is a run, with the same states and the same number of steps, of
 the shifted statement in P placed behind Q. -/
-theorem Exec.shift {s : Stmt} {σ σ' : State} {c : ℕ} (h : Exec lim P d s σ σ' c) (Q : Program) :
-    Exec lim (Program.behind Q P) d (s.shift Q.length) σ σ' c := by
+theorem Exec.shift {lim : Limits} {P : Program} {d : ℕ} {s : Stmt} {σ σ' : State}
+    {o r : List Bool} {c : ℕ} (h : Exec lim P d s σ σ' o r c) (Q : Program) :
+    Exec lim (Program.behind Q P) d (s.shift Q.length) σ σ' o r c := by
   induction h with
   | skip => exact .skip
   | set h => exact .set h
@@ -76,13 +131,17 @@ theorem Exec.shift {s : Stmt} {σ σ' : State} {c : ℕ} (h : Exec lim P d s σ 
   | whileFalse h₁ h₂ => exact .whileFalse h₁ h₂
   | whileTrue h₁ h₂ _ _ ih₁ ih₂ => exact .whileTrue h₁ h₂ ih₁ ih₂
   | call h₁ h₂ h₃ _ ih => exact .call h₁ (Program.getElem?_behind_right Q h₂) h₃ ih
+  | inBit hs => exact .inBit hs
+  | emit hs => exact .emit hs
+  | coin b => exact .coin b
+  | half hs => exact .half hs
 
 /-- What is proved about a statement in P holds for the shifted statement in P placed behind
 Q. -/
 theorem Ends.shift {s σ T post} (h : Ends lim P d s σ T post) (Q : Program) :
     Ends lim (Program.behind Q P) d (s.shift Q.length) σ T post := by
-  obtain ⟨σ', c, he, hc, hq⟩ := h
-  exact ⟨σ', c, he.shift Q, hc, hq⟩
+  obtain ⟨σ', o, r, c, he, hc, hq⟩ := h
+  exact ⟨σ', o, r, c, he.shift Q, hc, hq⟩
 
 /-- The same with more procedures appended behind. -/
 theorem Ends.shift_append {s σ T post} (h : Ends lim P d s σ T post) (Q R : Program) :

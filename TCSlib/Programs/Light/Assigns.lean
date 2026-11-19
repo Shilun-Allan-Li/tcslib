@@ -11,6 +11,8 @@ Local modifications (see policy.md §2, vendored code, and the repository NOTICE
 * moved to `TCSlib/Programs/Light/Assigns.lean`, with imports remapped;
 * added a `## References` section citing [AFM26];
 * added the repository-standard `set_option` header.
+* added input, output, coin and halving constructs, and threaded output and coin indices
+  through the affected syntax, semantics and run witnesses.
 The remaining content is unchanged.
 -/
 import TCSlib.Programs.Light.Logic
@@ -49,10 +51,16 @@ variables of its calls. -/
   | .ite _ s t => s.assigns ++ t.assigns
   | .while _ s => s.assigns
   | .call _ _ x => [x]
+  | .inBit x _ => [x]
+  | .emit _ => []
+  | .coin x => [x]
+  | .half x _ => [x]
+
+variable {s : Stmt} {σ σ' : State} {o r : List Bool} {c : ℕ}
 
 /-- A run leaves a local variable that the statement does not assign as it was. -/
-theorem Exec.loc_eq_of_notMem_assigns {s : Stmt} {σ σ' : State} {c y : ℕ}
-    (h : Exec lim P d s σ σ' c) (hy : y ∉ s.assigns) : σ'.loc y = σ.loc y := by
+theorem Exec.loc_eq_of_notMem_assigns {y : ℕ} (h : Exec lim P d s σ σ' o r c)
+    (hy : y ∉ s.assigns) : σ'.loc y = σ.loc y := by
   induction h with
   | skip => rfl
   | set _ => exact Function.update_of_ne (by simpa using hy) _ _
@@ -65,14 +73,18 @@ theorem Exec.loc_eq_of_notMem_assigns {s : Stmt} {σ σ' : State} {c y : ℕ}
   | whileFalse _ _ => rfl
   | whileTrue _ _ _ _ ih₁ ih₂ => exact (ih₂ hy).trans (ih₁ hy)
   | call _ _ _ _ _ => exact Function.update_of_ne (by simpa using hy) _ _
+  | inBit _ => exact Function.update_of_ne (by simpa using hy) _ _
+  | emit _ => rfl
+  | coin _ => exact Function.update_of_ne (by simpa using hy) _ _
+  | half _ => exact Function.update_of_ne (by simpa using hy) _ _
 
 /-- **All other locals are as before.**  Whatever holds after a statement, it also holds that the
 locals that the statement does not assign are unchanged. -/
 theorem Ends.keeping {s : Stmt} {σ : State} {T : ℕ} {Q : State → Prop}
     (h : Ends lim P d s σ T Q) :
     Ends lim P d s σ T fun σ' => Q σ' ∧ ∀ y ∉ s.assigns, σ'.loc y = σ.loc y := by
-  obtain ⟨σ', c, he, hc, hq⟩ := h
-  exact ⟨σ', c, he, hc, hq, fun _ hy => he.loc_eq_of_notMem_assigns hy⟩
+  obtain ⟨σ', o, r, c, he, hc, hq⟩ := h
+  exact ⟨σ', o, r, c, he, hc, hq, fun _ hy => he.loc_eq_of_notMem_assigns hy⟩
 
 /-- **All other locals are as before**, for a list `xs` that contains the locals that the statement
 assigns. -/

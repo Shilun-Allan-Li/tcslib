@@ -12,6 +12,8 @@ Local modifications (see policy.md §2, vendored code, and the repository NOTICE
 * namespaces `EndStatement` and `ThreeSumApsp.WordRam` renamed to `WordRAM`, and `ThreeSumApsp` to `Light`, with module names and paths in comments updated;
 * added a `## References` section citing [AFM26];
 * added the repository-standard `set_option` header.
+* added input, output, coin and halving cases and threaded the output and coin indices;
+  compilation of the four new constructs is temporarily admitted.
 The remaining content is unchanged.
 -/
 import TCSlib.Programs.Light.Syntax
@@ -210,6 +212,10 @@ def _root_.Light.Stmt.size (F : ℕ) : Stmt → ℕ
   | .ite c s t => c.size + s.size F + 1 + t.size F
   | .while c s => c.size + s.size F + 1
   | .call _ args _ => callSize F args + 2
+  | .inBit _ e => e.size + 3
+  | .emit e => e.size + 1
+  | .coin _ => 3
+  | .half _ e => e.size + 3
 
 /-- The code of a statement, for the position pos. -/
 def compileStmt (G : CodeLayout) : Stmt → ℕ → List Instr
@@ -227,6 +233,11 @@ def compileStmt (G : CodeLayout) : Stmt → ℕ → List Instr
   | .call p args x, pos =>
     callCode G p args (pos + callSize G.F args) ++
       [.sub cADDR cFP (cPool (2 * x)), .store cADDR cRET]
+  -- These four cases are implemented when the compiler moves to extended instructions.
+  | .inBit _ _, _ => by sorry
+  | .emit _, _ => by sorry
+  | .coin _, _ => by sorry
+  | .half _ _, _ => by sorry
 
 /-- The return sequence of a procedure: the result (local variable 0) into RET, the position to
 return to into RR, the frame of the caller, and the jump to the dispatcher. -/
@@ -294,6 +305,10 @@ theorem length_compileStmt (G : CodeLayout) (s : Stmt) (pos : ℕ) :
   | ite c s t ihs iht => simp +arith [compileStmt, Stmt.size, ihs, iht, length_compileCond]
   | «while» c s ih => simp +arith [compileStmt, Stmt.size, ih, length_compileCond]
   | call p args x => simp [compileStmt, Stmt.size, length_callCode]
+  | inBit x e => sorry
+  | emit e => sorry
+  | coin x => sorry
+  | half x e => sorry
 
 end Compiler
 
@@ -342,6 +357,10 @@ def Stmt.width : Stmt → ℕ
   | .ite c s t => max c.width (max s.width t.width)
   | .while c s => max c.width s.width
   | .call _ args x => max (x + 1) (max args.length (maxOf Expr.width args))
+  | .inBit x e => max (x + 1) e.width
+  | .emit e => e.width
+  | .coin x => x + 1
+  | .half x e => max (x + 1) e.width
 
 section width
 
@@ -375,6 +394,21 @@ theorem Stmt.width_while_le_iff : (Stmt.while c s).width ≤ F ↔ c.width ≤ F
 theorem Stmt.width_call_le_iff :
     (Stmt.call p args x).width ≤ F ↔ x < F ∧ args.length ≤ F ∧ ∀ e ∈ args, e.width ≤ F := by
   simp only [Stmt.width, max_le_iff, maxOf_le_iff, Nat.succ_le_iff]
+
+/-- The input-read statement uses its target local and its expression's width. -/
+theorem Stmt.width_inBit_le_iff {F x : ℕ} {e : Expr} :
+    (Stmt.inBit x e).width ≤ F ↔ x < F ∧ e.width ≤ F := max_le_iff
+
+/-- Emitting a value uses exactly its expression's width. -/
+theorem Stmt.width_emit_le_iff {F : ℕ} {e : Expr} : (Stmt.emit e).width ≤ F ↔ e.width ≤ F :=
+  Iff.rfl
+
+/-- Reading a coin uses its target local. -/
+theorem Stmt.width_coin_le_iff {F x : ℕ} : (Stmt.coin x).width ≤ F ↔ x < F := Iff.rfl
+
+/-- Halving a value uses its target local and its expression's width. -/
+theorem Stmt.width_half_le_iff {F x : ℕ} {e : Expr} :
+    (Stmt.half x e).width ≤ F ↔ x < F ∧ e.width ≤ F := max_le_iff
 
 end width
 
