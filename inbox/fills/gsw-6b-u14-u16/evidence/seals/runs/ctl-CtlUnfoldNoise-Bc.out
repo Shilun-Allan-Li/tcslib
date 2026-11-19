@@ -1,0 +1,13 @@
+===== lean_proof/u1416/ctl/CtlUnfoldNoise.lean [B-coe]
+DLC-SEAL lean_proof_u1416_ctl_CtlUnfoldNoise: sealed=329 (already irreducible 18) abbrev-excluded=338 excluded=0 coe-excluded=1 [TCSlib.InformationTheory.FinDist.instCoeFunForallReal]
+lean_proof/dlc/seal/ctlBc/lean_proof_u1416_ctl_CtlUnfoldNoise.lean:77:47: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.31 ↔ ?m.31
+but is expected to have type
+  Encrypts P t x β C ↔
+    ∃ e,
+      (∀ (j : Fin P.columns), (e j).natAbs ≤ β) ∧ Matrix.vecMul t C = ↑x • Matrix.vecMul t (gadget P) + fun j => ↑(e j)
+Command exited with non-zero status 1
+time: elapsed=30.81 s, maxrss=2626100 KiB, exit=1
+

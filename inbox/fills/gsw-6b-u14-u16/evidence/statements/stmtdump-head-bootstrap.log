@@ -1,0 +1,218 @@
+=== lean_proof/u1416/probes/StmtDumpHeadBoot.lean (scratch.sh: lean on lean_check_tree.sh's LEAN_PATH, no -o)
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Coins : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters →
+  Type
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Coins_eq : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters),
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Coins P = Matrix (Fin P.lwe.samples) (Fin P.columns) Bool
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.KeySeed : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters →
+  TCSlib.Cryptography.LWE.Noise → Type
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.KeySeed_eq : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters) (χ : TCSlib.Cryptography.LWE.Noise),
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.KeySeed P χ =
+    (Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
+      (Fin P.lwe.dimension → ZMod P.lwe.modulus) × (Fin P.lwe.samples → χ.Coins))
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.PublicKey : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters →
+  Type
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.PublicKey_eq : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters),
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.PublicKey P =
+    (Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) × (Fin P.lwe.samples → ZMod P.lwe.modulus))
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Secret : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters →
+  Type
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Secret_eq : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters),
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Secret P = (Fin P.lwe.dimension → ZMod P.lwe.modulus)
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootGate : (P :
+    TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters) →
+  (Fin P.columns → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P) →
+    BoolCircuit.DAGGate →
+      List (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P) →
+        TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootGate_of_args_eq_cons_cons : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters)
+  (evk : Fin P.columns → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P) (g : BoolCircuit.DAGGate)
+  (cts : List (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P)) (a b : ℕ) (l : List ℕ),
+  g.args = a :: b :: l →
+    TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootGate P evk g cts =
+      TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootNAND P evk (cts.getD a 0) (cts.getD b 0)
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootGate_of_args_eq_nil : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters)
+  (evk : Fin P.columns → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P) (g : BoolCircuit.DAGGate)
+  (cts : List (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P)),
+  g.args = [] →
+    TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootGate P evk g cts =
+      TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootNAND P evk
+        (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.gadget P)
+        (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.gadget P)
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootGate_of_args_eq_singleton : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters)
+  (evk : Fin P.columns → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P) (g : BoolCircuit.DAGGate)
+  (cts : List (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P)) (a : ℕ),
+  g.args = [a] →
+    TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootGate P evk g cts =
+      TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootNAND P evk (cts.getD a 0) (cts.getD a 0)
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootNAND : (P :
+    TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters) →
+  (Fin P.columns → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P) →
+    TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P →
+      TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P →
+        TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootNAND_eq : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters)
+  (evk : Fin P.columns → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P)
+  (C₁ C₂ : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P),
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootNAND P evk C₁ C₂ =
+    TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.homEvalFormula P
+      (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.nandFormula P C₁ C₂) evk
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootNoise : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters →
+  ℕ → ℕ
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootNoise_eq : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters) (β : ℕ),
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootNoise P β =
+    4 ^ (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decDepth P + 1) * (2 * (P.columns * β))
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootNoise_le : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters) (β : ℕ),
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootNoise P β ≤
+    4 ^ 33 * P.columns ^ 19 * (P.width + Nat.clog 2 P.columns + 3) ^ 4 * (2 * β)
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decrypt_fheEval : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters) {k : ℕ} (Cc : BoolCircuit.DAGCircuit k),
+  Cc.IsNANDForm →
+    ∀ (s : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Secret P)
+      (evk : Fin P.columns → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P) (βk βin : ℕ),
+      (∀ (i : Fin P.columns),
+          TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Encrypts P
+            (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.secretVector P s)
+            (↑(TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.keyBits P s i).toNat) βk (evk i)) →
+        ∀ (x : Fin k → Bool) (cts : Fin k → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P),
+          (∀ (j : Fin k),
+              TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Encrypts P
+                (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.secretVector P s) (↑(x j).toNat) βin (cts j)) →
+            2 * (P.width * βin) < P.lwe.modulus / 2 →
+              2 * (P.width * TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootNoise P βk) <
+                  P.lwe.modulus / 2 →
+                TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decrypt P s
+                    (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.fheEval P evk Cc cts) =
+                  Cc.eval x
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decrypt_fheEvalCircuit : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters) {k : ℕ} (Cc : BoolCircuit.DAGCircuit k)
+  (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2) (s : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Secret P)
+  (evk : Fin P.columns → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P) (βk βin : ℕ),
+  (∀ (i : Fin P.columns),
+      TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Encrypts P
+        (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.secretVector P s)
+        (↑(TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.keyBits P s i).toNat) βk (evk i)) →
+    ∀ (x : Fin k → Bool) (cts : Fin k → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P),
+      (∀ (j : Fin k),
+          TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Encrypts P
+            (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.secretVector P s) (↑(x j).toNat) βin (cts j)) →
+        2 * (P.width * βin) < P.lwe.modulus / 2 →
+          2 * (P.width * TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootNoise P βk) < P.lwe.modulus / 2 →
+            TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decrypt P s
+                (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.fheEvalCircuit P evk Cc hC cts) =
+              Cc.eval x
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decrypt_keygen_fheEvalCircuit : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters) (χ : TCSlib.Cryptography.LWE.Noise)
+  (rg : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.KeySeed P χ) (B : ℕ),
+  χ.Bounded B →
+    ∀ (R : Fin P.columns → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Coins P) {k : ℕ}
+      (Cc : BoolCircuit.DAGCircuit k) (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2) (x : Fin k → Bool)
+      (R' : Fin k → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Coins P),
+      2 * (P.width * TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootNoise P (P.lwe.samples * B)) <
+          P.lwe.modulus / 2 →
+        TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decrypt P
+            (TCSlib.Cryptography.Encryption.PublicKey.Regev.keygen P.lwe χ rg).2
+            (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.fheEvalCircuit P
+              (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.evalKey P
+                (TCSlib.Cryptography.Encryption.PublicKey.Regev.keygen P.lwe χ rg).1
+                (TCSlib.Cryptography.Encryption.PublicKey.Regev.keygen P.lwe χ rg).2 R)
+              Cc hC fun (j : Fin k) =>
+              TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.encrypt P
+                (TCSlib.Cryptography.Encryption.PublicKey.Regev.keygen P.lwe χ rg).1 (x j) (R' j)) =
+          Cc.eval x
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.encrypts_bootGate : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters)
+  {t' : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus}
+  (s : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Secret P) (βk : ℕ)
+  (evk : Fin P.columns → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P),
+  (∀ (i : Fin P.columns),
+      TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Encrypts P t'
+        (↑(TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.keyBits P s i).toNat) βk (evk i)) →
+    ∀ {g : BoolCircuit.DAGGate},
+      g.IsNAND →
+        ∀ (vals : List Bool) (cts : List (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P)),
+          (∀ a ∈ g.args,
+              TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decrypt P s (cts.getD a 0) =
+                vals.getD a Bool.false) →
+            TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Encrypts P t' (↑(g.eval vals).toNat)
+              (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootNoise P βk)
+              (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootGate P evk g cts)
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.encrypts_bootNAND : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters)
+  {t' : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus}
+  (s : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Secret P) (βk : ℕ)
+  (evk : Fin P.columns → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P),
+  (∀ (i : Fin P.columns),
+      TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Encrypts P t'
+        (↑(TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.keyBits P s i).toNat) βk (evk i)) →
+    ∀ (C₁ C₂ : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P),
+      TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Encrypts P t'
+        (↑(!(TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decrypt P s C₁ &&
+                TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decrypt P s C₂)).toNat)
+        (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootNoise P βk)
+        (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootNAND P evk C₁ C₂)
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.encrypts_evalKey : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters)
+  (A : Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus))
+  (s : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Secret P) (e : Fin P.lwe.samples → ℤ) (B : ℕ),
+  (∀ (i : Fin P.lwe.samples), (e i).natAbs ≤ B) →
+    ∀ (R : Fin P.columns → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Coins P) (i : Fin P.columns),
+      TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Encrypts P
+        (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.secretVector P s)
+        (↑(TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.keyBits P s i).toNat) (P.lwe.samples * B)
+        (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.evalKey P
+          (A, TCSlib.Cryptography.LWE.noisyValues P.lwe A s e) s R i)
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.evalKey : (P :
+    TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters) →
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.PublicKey P →
+    TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Secret P →
+      (Fin P.columns → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Coins P) →
+        Fin P.columns → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.evalKey_eq : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters)
+  (pk : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.PublicKey P)
+  (s : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Secret P)
+  (R : Fin P.columns → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Coins P) (i : Fin P.columns),
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.evalKey P pk s R i =
+    TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.encrypt P pk
+      (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.keyBits P s i) (R i)
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.fheEval : (P :
+    TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters) →
+  (Fin P.columns → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P) →
+    {k : ℕ} →
+      BoolCircuit.DAGCircuit k →
+        (Fin k → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P) →
+          TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.fheEvalCircuit : (P :
+    TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters) →
+  (Fin P.columns → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P) →
+    {k : ℕ} →
+      (Cc : BoolCircuit.DAGCircuit k) →
+        (∀ g ∈ Cc.gates, g.args.length ≤ 2) →
+          (Fin k → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P) →
+            TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.fheEvalCircuit_eq : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters)
+  (evk : Fin P.columns → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P) {k : ℕ}
+  (Cc : BoolCircuit.DAGCircuit k) (hC : ∀ g ∈ Cc.gates, g.args.length ≤ 2)
+  (cts : Fin k → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P),
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.fheEvalCircuit P evk Cc hC cts =
+    TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.fheEval P evk (Cc.toNANDForm hC) cts
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.fheEval_eq : ∀
+  (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters)
+  (evk : Fin P.columns → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P) {k : ℕ}
+  (Cc : BoolCircuit.DAGCircuit k) (cts : Fin k → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P),
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.fheEval P evk Cc cts =
+    (BoolCircuit.runWith (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootGate P evk) Cc.gates
+          (List.ofFn cts)).getD
+      Cc.output 0
+time: elapsed=1.99 s, maxrss=2564124 KiB, exit=0

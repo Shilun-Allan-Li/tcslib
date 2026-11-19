@@ -1,0 +1,54 @@
+# C6 reader census (gsw-6b-u14-u16, HEAD 9852429ef14ce063fcf11ff860e7262f92063d55): every definition (own or foreign) the seven proofs and the helper read, with the published reader used and its path:line at HEAD. MISSING: none.
+definition (owner)	reader	path:line
+own Bootstrap: bootNAND	bootNAND_eq	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:134
+own Bootstrap: bootNoise	bootNoise_eq	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:123
+own Bootstrap: bootGate	bootGate_of_args_eq_nil	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:152
+own Bootstrap: bootGate	bootGate_of_args_eq_singleton	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:160
+own Bootstrap: bootGate	bootGate_of_args_eq_cons_cons	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:168
+own Bootstrap: fheEval	fheEval_eq	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:186
+own Bootstrap: fheEvalCircuit	fheEvalCircuit_eq	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:201
+own Bootstrap: evalKey (through G11)	encrypts_evalKey	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:400
+own Leveled: levelGate	levelGate_of_lt	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean:146
+own Leveled: leveledEval	leveledEval_eq	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean:173
+own Leveled: leveledEvalCircuit	leveledEvalCircuit_eq	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean:192
+own Leveled: literalCts	literalCts_castAdd	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean:125
+own Leveled: literalCts	literalCts_natAdd	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean:131
+own Leveled: levelKey (through L1)	encrypts_levelKey	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean:208
+DAGCircuit: runWith (H19)	runWith_rel	TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean:637
+DAGCircuit: DAGCircuit.eval	eval_eq	TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean:492
+DAGCircuit: DAGCircuit.values	values_eq	TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean:484
+DAGCircuit: DAGCircuit.depth	depth_eq	TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean:621
+DAGCircuit: DAGCircuit.depthAt	depthAt_input	TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean:554
+DAGCircuit: DAGCircuit.depthAt	depthAt_gate	TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean:569
+DAGCircuit: DAGGate.depth	DAGGate.depth_eq	TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean:583
+NANDForm: DAGGate.IsNAND	DAGGate.isNAND_iff	TCSlib/Complexity/CircuitComplexity/NANDForm.lean:87
+NANDForm: DAGCircuit.IsNANDForm	DAGCircuit.isNANDForm_iff	TCSlib/Complexity/CircuitComplexity/NANDForm.lean:99
+NANDForm: DAGGate.eval (NAND gates)	DAGGate.eval_of_isNAND	TCSlib/Complexity/CircuitComplexity/NANDForm.lean:112
+NANDForm: DAGCircuit.toNANDForm	DAGCircuit.toNANDForm_eval	TCSlib/Complexity/CircuitComplexity/NANDForm.lean:476
+NANDForm: DAGCircuit.toNANDForm	DAGCircuit.toNANDForm_isNANDForm	TCSlib/Complexity/CircuitComplexity/NANDForm.lean:485
+NANDLayering: DAGCircuit.IsLayered	DAGCircuit.isLayered_iff	TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:112
+NANDLayering: litInput	litInput_castAdd	TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:131
+NANDLayering: litInput	litInput_natAdd	TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:135
+NANDLayering: DAGCircuit.layerNAND	DAGCircuit.layerNAND_eval	TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:873
+NANDLayering: DAGCircuit.layerNAND	DAGCircuit.layerNAND_isLayered	TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:890
+NANDLayering: DAGCircuit.layerNAND	DAGCircuit.layerNAND_isNANDForm	TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:912
+NANDLayering: DAGCircuit.layerNAND	DAGCircuit.layerNAND_depth	TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:921
+Noise: Encrypts	Encrypts.mono	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean:138
+Noise: Encrypts	Encrypts.sub	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean:177
+Noise: Encrypts / gadget	encrypts_gadget	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Noise.lean:118
+Scheme: decrypt	decrypt_of_encrypts	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:285
+Scheme: encrypt (honest key)	encrypts_keygen_encrypt	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:207
+Eval: homNot	homNot_eq	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:82
+Eval: homAnd	homAnd_singleton	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:70
+Branching: homEvalFormula	encrypts_homEvalFormula	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Branching.lean:171
+DecryptFormula: nandFormula (value)	nandFormula_eval	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean:176
+DecryptFormula: nandFormula (depth)	depth_nandFormula_le	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean:188
+DecryptFormula: nandFormula (fan-in)	maxFanin_nandFormula_le	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean:198
+DecryptFormula: decDepth	decDepth_le	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean:211
+DecryptFormula: N ≥ 1	Parameters.neZero_columns	TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/DecryptFormula.lean:65
+Regev: Regev.keygen	keygen_fst	TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean:53
+Regev: Regev.keygen	keygen_snd	TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean:59
+LWE: LWE.sample	sample_fst	TCSlib/Cryptography/LWE/Basic.lean:109
+LWE: LWE.sample	sample_snd	TCSlib/Cryptography/LWE/Basic.lean:116
+LWE: LWE.Noise.Bounded	bounded_iff	TCSlib/Cryptography/LWE/Noise.lean:61
+# fields used (structure projections, not definitions): DAGCircuit.args_lt, DAGCircuit.output_lt, LWE.Parameters.modulus_ge_two; Mathlib/core: List.getD_eq_getElem, List.getElem_ofFn, List.length_ofFn, List.getElem_mem, List.eq_nil_of_length_eq_zero, Fin.ext, Fin.val_succ, Fin.coe_castSucc, Fin.addCases, max_cases, Nat.pow_pred_clog_lt_self, Nat.clog_pos, Nat.clog_one_right, Nat.pow_le_pow_left/right, pow_mul, pow_add.

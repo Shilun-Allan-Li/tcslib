@@ -1,0 +1,10 @@
+# Lean process pool (COMMON §3; addendum, Lean parallelism)
+nproc: 4
+MemTotal:       16473756 kB
+MemAvailable:   16020412 kB
+start size = min(nproc, MemAvailable / 4 GB) = min(4, 4) = 4; chosen size 3, the local-host cap of 3 Lean processes per machine (COMMON §3), which satisfies either reading of this container (local host or cloud worker). One agent (the lead; no sub-agent was used), so the pool is not shared. Lean processes on the machine at start (2026-11-19T00:26:02Z): 0.
+pool size: 3
+2026-11-19T00:26:02Z start list=/workspace/exchange/inbox/fills/gsw-6b-u14-u16/evidence/logs/order.txt modules=224 already-done=0 pool=3 nproc=4 MemAvailable=16395485184
+2026-11-19T00:33:14Z end done=224/224 failed=None peak-concurrency=3 MemAvailable=16347254784
+2026-11-19T00:40:01Z start list=/workspace/exchange/inbox/fills/gsw-6b-u14-u16/evidence/logs/unit-down.txt modules=9 already-done=0 pool=3 nproc=4 MemAvailable=16374583296
+2026-11-19T00:40:37Z end done=9/9 failed=None peak-concurrency=2 MemAvailable=16341528576

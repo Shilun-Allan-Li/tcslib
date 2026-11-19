@@ -1,0 +1,35 @@
+# Preflight (addendum v1, Part 1 item 1), 2026-11-19T00:22:33Z
+host: vm; uptime:  00:22:33 up 4 min,  0 user,  load average: 0.51, 0.39, 0.18
+nproc: 4
+## cgroup
+cgroup v1
+limit_in_bytes: 9223372036854771712
+usage_in_bytes: 4218548224
+cache 40980480
+rss 8830976
+shmem 13139968
+total_cache 4202500096
+total_rss 16084992
+total_shmem 13139968
+## /proc/meminfo
+MemTotal:       16473756 kB
+MemFree:        12037968 kB
+MemAvailable:   16043920 kB
+SwapFree:              0 kB
+Shmem:             12832 kB
+## df -B1 / df -T (clone /workspace/u1416, scratch /workspace/u1416-work, /tmp)
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 25240051712 18632216576  58% /
+/dev/vda       270553174016 25240051712 18632216576  58% /
+/dev/vda       270553174016 25240051712 18632216576  58% /
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 24648488  18195524  58% /
+/dev/vda       ext4 264212084 24648488  18195524  58% /
+/dev/vda       ext4 264212084 24648488  18195524  58% /
+## space made before the preflight
+1. Removed the git worktree /workspace/u13 (fill/gsw-6b-u13, delivered final at exchange 87012e786 and landed as #392; branch kept).
+2. The exchange worktree /workspace/exchange was switched to a sparse checkout of inbox/fills/gsw-6b-u14-u16 only (git sparse-checkout set --cone; 9.9 GB of other deliveries no longer checked out; the branch and its history are untouched). No dependency tree was copied, moved or deleted.
+## computation
+disk free 18632216576 B = 17.35 GiB (floor 12 GiB)
+cgroup limit: 9223372036854771712 (unlimited) -> headroom = MemAvailable = 16426508288 B = 15.3 GiB (floor 4 GiB)
+PREFLIGHT PASS

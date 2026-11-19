@@ -1,0 +1,23 @@
+# StmtDump base vs head (lines after the header). Bootstrap: expected exactly the added encrypts_bootGate block. Leveled: expected identical.
+## Bootstrap
+130a131,147
+> TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.encrypts_bootGate : ∀
+>   (P : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters)
+>   {t' : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus}
+>   (s : TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Secret P) (βk : ℕ)
+>   (evk : Fin P.columns → TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P),
+>   (∀ (i : Fin P.columns),
+>       TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Encrypts P t'
+>         (↑(TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.keyBits P s i).toNat) βk (evk i)) →
+>     ∀ {g : BoolCircuit.DAGGate},
+>       g.IsNAND →
+>         ∀ (vals : List Bool) (cts : List (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext P)),
+>           (∀ a ∈ g.args,
+>               TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decrypt P s (cts.getD a 0) =
+>                 vals.getD a Bool.false) →
+>             TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Encrypts P t' (↑(g.eval vals).toNat)
+>               (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootNoise P βk)
+>               (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootGate P evk g cts)
+diff exit=1
+## Leveled
+IDENTICAL

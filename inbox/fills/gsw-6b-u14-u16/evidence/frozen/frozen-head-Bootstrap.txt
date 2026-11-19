@@ -1,0 +1,35 @@
+== TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean: base 28 declarations, head 30
+IDENTICAL	Coins
+IDENTICAL	Coins_eq
+IDENTICAL	KeySeed
+IDENTICAL	KeySeed_eq
+IDENTICAL	PublicKey
+IDENTICAL	PublicKey_eq
+IDENTICAL	Secret
+IDENTICAL	Secret_eq
+IDENTICAL	bootGate
+IDENTICAL	bootGate_of_args_eq_cons_cons
+IDENTICAL	bootGate_of_args_eq_nil
+IDENTICAL	bootGate_of_args_eq_singleton
+IDENTICAL	bootNAND
+IDENTICAL	bootNAND_eq
+IDENTICAL	bootNoise
+IDENTICAL	bootNoise_eq
+TARGET(prose and header identical; sketch refreshed; body filled)	bootNoise_le
+TARGET(prose and header identical; sketch refreshed; body filled)	decrypt_fheEval
+TARGET(prose and header identical; sketch unchanged; body filled)	decrypt_fheEvalCircuit
+TARGET(prose and header identical; sketch unchanged; body filled)	decrypt_keygen_fheEvalCircuit
+ADDED(public helper, ruled; between G9 and G10)	encrypts_bootGate
+TARGET(prose and header identical; sketch unchanged; body filled)	encrypts_bootNAND
+IDENTICAL	encrypts_evalKey
+IDENTICAL	evalKey
+IDENTICAL	evalKey_eq
+IDENTICAL	fheEval
+IDENTICAL	fheEvalCircuit
+IDENTICAL	fheEvalCircuit_eq
+IDENTICAL	fheEval_eq
+ADDED(private helper)	four_pow_clog_le
+TEXT(allowed: the ## Main results entry of encrypts_bootGate)	insert	-33..32 +33..34	* `encrypts_bootGate`: the bootstrapped gate, an encryption of a NAND gate's value from argument |   ciphertexts that decrypt to the argument values (the gate step of G10 and of L2).
+TEXT(allowed: module docstring, the admission sentence)	replace	-40..40 +42..42	The targets G9, G10, G12, G13 and G18 are admitted; G11 is proved. | The targets G9, G10, G12, G13 and G18 are proved, as is G11.
+TEXT(allowed: blank separator lines of the 2 added declarations)	insert	-103..102 +105..106	 | 
+RESULT violations=0

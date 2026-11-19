@@ -1,0 +1,161 @@
+# C11 searches (gsw-6b-u14-u16), 2026-11-19T00:49:24Z; base bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d, iO/phase-a-base 5ed465f62e4ae0f93ded1a1ba49e807591b589eb, cleanup/stage2-s2a 9f7f409c2e09749428db75b9ddd324f92695e4af; Mathlib/Batteries/core under .lake/packages
+## 1. target and helper names
+git grep -n -w encrypts_bootNAND <bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d> -- TCSlib audits: 4 lines
+git grep -n -w encrypts_bootNAND <5ed465f62e4ae0f93ded1a1ba49e807591b589eb> -- TCSlib audits: 0 lines
+git grep -n -w encrypts_bootNAND <9f7f409c2e09749428db75b9ddd324f92695e4af> -- TCSlib audits: 0 lines
+git grep -n -w decrypt_fheEval <bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d> -- TCSlib audits: 3 lines
+git grep -n -w decrypt_fheEval <5ed465f62e4ae0f93ded1a1ba49e807591b589eb> -- TCSlib audits: 0 lines
+git grep -n -w decrypt_fheEval <9f7f409c2e09749428db75b9ddd324f92695e4af> -- TCSlib audits: 0 lines
+git grep -n -w decrypt_fheEvalCircuit <bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d> -- TCSlib audits: 3 lines
+git grep -n -w decrypt_fheEvalCircuit <5ed465f62e4ae0f93ded1a1ba49e807591b589eb> -- TCSlib audits: 0 lines
+git grep -n -w decrypt_fheEvalCircuit <9f7f409c2e09749428db75b9ddd324f92695e4af> -- TCSlib audits: 0 lines
+git grep -n -w decrypt_keygen_fheEvalCircuit <bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d> -- TCSlib audits: 3 lines
+git grep -n -w decrypt_keygen_fheEvalCircuit <5ed465f62e4ae0f93ded1a1ba49e807591b589eb> -- TCSlib audits: 0 lines
+git grep -n -w decrypt_keygen_fheEvalCircuit <9f7f409c2e09749428db75b9ddd324f92695e4af> -- TCSlib audits: 0 lines
+git grep -n -w bootNoise_le <bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d> -- TCSlib audits: 4 lines
+git grep -n -w bootNoise_le <5ed465f62e4ae0f93ded1a1ba49e807591b589eb> -- TCSlib audits: 0 lines
+git grep -n -w bootNoise_le <9f7f409c2e09749428db75b9ddd324f92695e4af> -- TCSlib audits: 0 lines
+git grep -n -w encrypts_leveledEval <bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d> -- TCSlib audits: 2 lines
+git grep -n -w encrypts_leveledEval <5ed465f62e4ae0f93ded1a1ba49e807591b589eb> -- TCSlib audits: 0 lines
+git grep -n -w encrypts_leveledEval <9f7f409c2e09749428db75b9ddd324f92695e4af> -- TCSlib audits: 0 lines
+git grep -n -w decrypt_keygen_leveledEvalCircuit <bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d> -- TCSlib audits: 3 lines
+git grep -n -w decrypt_keygen_leveledEvalCircuit <5ed465f62e4ae0f93ded1a1ba49e807591b589eb> -- TCSlib audits: 0 lines
+git grep -n -w decrypt_keygen_leveledEvalCircuit <9f7f409c2e09749428db75b9ddd324f92695e4af> -- TCSlib audits: 0 lines
+git grep -n -w encrypts_bootGate <bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d> -- TCSlib audits: 0 lines
+git grep -n -w encrypts_bootGate <5ed465f62e4ae0f93ded1a1ba49e807591b589eb> -- TCSlib audits: 0 lines
+git grep -n -w encrypts_bootGate <9f7f409c2e09749428db75b9ddd324f92695e4af> -- TCSlib audits: 0 lines
+git grep -n -w four_pow_clog_le <bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d> -- TCSlib audits: 0 lines
+git grep -n -w four_pow_clog_le <5ed465f62e4ae0f93ded1a1ba49e807591b589eb> -- TCSlib audits: 0 lines
+git grep -n -w four_pow_clog_le <9f7f409c2e09749428db75b9ddd324f92695e4af> -- TCSlib audits: 0 lines
+## 2. shapes of the public helper (a gate step from argument decryptions)
+git grep -n -E theorem [a-zA-Z_]*(Gate|gate)[a-zA-Z_]*encrypt|encrypts_[a-zA-Z]*Gate|homGate_encrypts <base> -- TCSlib audits: 4 lines
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:26:* `homAnd_encrypts`, `homGate_encrypts`: per-gate noise `(N+1)·β` for fan-in at most two.
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:181:theorem homGate_encrypts (g : DAGGate) (hfan : g.args.length ≤ 2) (vals : List Bool)
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:248:`homGate_encrypts` multiplies by `N+1`. The output vertex is in range by `Cc.output_lt`;
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:285:      have hg := homGate_encrypts P Cc.gates[i] (hfan _ (List.getElem_mem hi)) vA vB _ harg
+git grep -n -E IsNAND.*Encrypts|Encrypts.*IsNAND <base> -- TCSlib audits: 0 lines
+git grep -n -E decrypt P s \(cts\.getD <base> -- TCSlib audits: 0 lines
+## 3. the runWith_rel pattern (near relatives)
+git grep -n -w runWith_rel <base> -- TCSlib audits: 7 lines
+    TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean:56:* `BoolCircuit.runWith_rel` — two evaluators run over one gate list stay related vertex by
+    TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean:637:theorem runWith_rel {α β : Type} (fA : DAGGate → List α → α) (fB : DAGGate → List β → β)
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:251:**Proof sketch.** Apply the host lemma `runWith_rel` (H19) to `DAGGate.eval` from
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:242:**Proof sketch.** Apply the shared `runWith_rel` to `DAGGate.eval` from `List.ofFn x` and
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:254:  -- Step 1: the per-vertex invariant `(N+1)^{depthAt v}·β`, by `runWith_rel`.
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:255:  have key := runWith_rel DAGGate.eval (homGate P)
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean:228:**Proof sketch.** Apply the host lemma `runWith_rel` (H19) to `DAGGate.eval` from
+git grep -n -w eval_encrypts <base> -- TCSlib audits: 5 lines
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:254:`bootNoise P βk` (a gate)", as `eval_encrypts` does for phase 5. Inputs: `hin`. A gat
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:27:* `eval_encrypts`: a fan-in-two circuit of depth `d` maps `β`-noisy bit encryptions to a
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:250:theorem eval_encrypts {k : ℕ} (Cc : DAGCircuit k) (hfan : ∀ g ∈ Cc.gates, g.args.leng
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:298:**Proof sketch.** `encrypts_keygen_encrypt` gives input noise `m·B`; `eval_encrypts` gives
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:314:  have hev := eval_encrypts P Cc hfan x _ _ hin
+git grep -n -w decrypt_keygen_eval <base> -- TCSlib audits: 2 lines
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:29:* `decrypt_keygen_eval`: **leveled correctness** for depth `≤ L` whenever
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:300:theorem decrypt_keygen_eval (χ : LWE.Noise)
+## 4. G13: 4^clog / 2^clog bounds
+git grep -n -E \^ Nat\.clog 2 [a-zA-Z(] <base> -- TCSlib audits: 15 lines
+    TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean:510:      _ ≤ (2 ^ Nat.clog 2 w) ^ w := Nat.pow_le_pow_left (Nat.le_pow_clog (by norm_num) w) w
+    TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:201:  have hq2 : ∀ i, a i < 2 ^ Nat.clog 2 q := fun i =>
+    TCSlib/Complexity/CircuitComplexity/FormulaArith/ModSum.lean:222:        _ ≤ 2 ^ Nat.clog 2 M * 2 ^ Nat.clog 2 q :=
+    TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:97:  Nat.find (Nat.exists_infinite_primes (2 ^ Nat.clog 2 (2 * n) + 1))
+    TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:101:  (Nat.find_spec (Nat.exists_infinite_primes (2 ^ Nat.clog 2 (2 * n) + 1))).2
+    TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:104:theorem two_pow_lt_lovaszPrime (n : ℕ) : 2 ^ Nat.clog 2 (2 * n) < lovaszPrime n :=
+    TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:105:  (Nat.find_spec (Nat.exists_infinite_primes (2 ^ Nat.clog 2 (2 * n) + 1))).1
+    TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:108:theorem not_prime_of_lt_lovaszPrime {n q : ℕ} (h1 : 2 ^ Nat.clog 2 (2 * n) < q)
+    TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:110:  Nat.find_min (Nat.exists_infinite_primes (2 ^ Nat.clog 2 (2 * n) + 1)) h2 ⟨h1, hq⟩
+    TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:114:  obtain ⟨p, hp, h1, h2⟩ := Nat.exists_prime_lt_and_le_two_mul (2 ^ Nat.clog 2 (2 * n))
+    TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:119:theorem two_pow_clog_le (n : ℕ) : 2 ^ Nat.clog 2 (2 * n) ≤ 4 * n + 1 := by
+    TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:339:    2 ^ Nat.clog 2 (2 * n) < c ∧ c ≤ lovaszPrime n ∧ 2 ≤ d ∧ d ≤ c ∧
+    TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:426:  refine ⟨2 ^ Nat.clog 2 (2 * z.length) + 1, 2, false, ?_, by omega, ?_, le_rfl, ?_,
+    TCSlib/Programs/Light/Lib/Logs.lean:133:  have hle : x ≤ 2 ^ Nat.clog 2 x := Nat.le_pow_clog (by norm_num) x
+    TCSlib/Programs/Light/Lib/Logs.lean:153:    generalize 2 ^ Nat.clog 2 x = q at hle
+git grep -n -E pow_pred_clog_lt_self <base> -- TCSlib audits: 3 lines
+    TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:76:  have hpred := Nat.pow_pred_clog_lt_self one_lt_two h1
+    TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:122:  have hpred := Nat.pow_pred_clog_lt_self one_lt_two (by omega : 1 < 2 * n)
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:339:`X = ℓ + ⌈log₂ N⌉ + 3 ≥ 1`. For `y ≥ 1`, `2^⌈log₂ y⌉ < 2y` (`Nat.pow
+grep -rnE 'theorem [a-zA-Z_]*clog[a-zA-Z_]*' .lake/packages: 45 lines
+    .lake/packages/mathlib/Mathlib/Tactic/NormNum/NatLog.lean:73:theorem nat_clog_helper {b m n : ℕ} (hb : Nat.blt 1 b = true)
+    .lake/packages/mathlib/Mathlib/Tactic/NormNum/NatLog.lean:81:private theorem isNat_clog : {b nb n nn k : ℕ} → IsNat b nb → IsNat n nn →
+    .lake/packages/mathlib/Mathlib/Analysis/SpecialFunctions/Complex/Analytic.lean:25:theorem analyticAt_clog (m : z ∈ slitPlane) : AnalyticAt ℂ log z := by
+    .lake/packages/mathlib/Mathlib/Analysis/SpecialFunctions/Complex/Log.lean:214:theorem continuousAt_clog {x : ℂ} (h : x ∈ slitPlane) : ContinuousAt log x := 
+    .lake/packages/mathlib/Mathlib/Data/Nat/Log.lean:271:theorem clog_of_left_le_one {b : ℕ} (hb : b ≤ 1) (n : ℕ) : clog b n = 0 := by
+    .lake/packages/mathlib/Mathlib/Data/Nat/Log.lean:274:theorem clog_of_right_le_one {n : ℕ} (hn : n ≤ 1) (b : ℕ) : clog b n = 0 := by
+    .lake/packages/mathlib/Mathlib/Data/Nat/Log.lean:282:theorem clog_one_left (n : ℕ) : clog 1 n = 0 :=
+    .lake/packages/mathlib/Mathlib/Data/Nat/Log.lean:286:theorem clog_one_right (b : ℕ) : clog b 1 = 0 :=
+    .lake/packages/mathlib/Mathlib/Data/Nat/Log.lean:289:theorem clog_of_two_le {b n : ℕ} (hb : 1 < b) (hn : 2 ≤ n) :
+    .lake/packages/mathlib/Mathlib/Data/Nat/Log.lean:292:theorem clog_pos {b n : ℕ} (hb : 1 < b) (hn : 2 ≤ n) : 0 < clog b n := by
+    .lake/packages/mathlib/Mathlib/Data/Nat/Log.lean:296:theorem clog_eq_one {b n : ℕ} (hn : 2 ≤ n) (h : n ≤ b) : clog b n = 1 := by
+    .lake/packages/mathlib/Mathlib/Data/Nat/Log.lean:301:theorem clog_le_iff_le_pow {b : ℕ} (hb : 1 < b) {x y : ℕ} : clog b x ≤ y ↔ x ≤ b ^ y := by
+    .lake/packages/mathlib/Mathlib/Data/Nat/Log.lean:318:theorem le_pow_iff_clog_le {b : ℕ} (hb : 1 < b) {x y : ℕ} : x ≤ b ^ y ↔ clog b x ≤ y :=
+    .lake/packages/mathlib/Mathlib/Data/Nat/Log.lean:321:theorem lt_clog_iff_pow_lt {b : ℕ} (hb : 1 < b) {x y : ℕ} : y < clog b x ↔ b ^ y < x :=
+    .lake/packages/mathlib/Mathlib/Data/Nat/Log.lean:325:theorem pow_lt_iff_lt_clog {b : ℕ} (hb : 1 < b) {x y : ℕ} : b ^ y < x ↔ y < clog b x :=
+    .lake/packages/mathlib/Mathlib/Data/Nat/Log.lean:329:theorem clog_pow (b x : ℕ) (hb : 1 < b) : clog b (b ^ x) = x :=
+    .lake/packages/mathlib/Mathlib/Data/Nat/Log.lean:332:theorem pow_pred_clog_lt_self {b : ℕ} (hb : 1 < b) {x : ℕ} (hx : 1 < x) :
+    .lake/packages/mathlib/Mathlib/Data/Nat/Log.lean:337:theorem le_pow_clog {b : ℕ} (hb : 1 < b) (x : ℕ) : x ≤ b ^ clog b x :=
+    .lake/packages/mathlib/Mathlib/Data/Nat/Log.lean:341:theorem clog_mono_right (b : ℕ) {n m : ℕ} (h : n ≤ m) : clog b n ≤ clog b m := by
+    .lake/packages/mathlib/Mathlib/Data/Nat/Log.lean:348:theorem clog_anti_left {b c n : ℕ} (hc : 1 < c) (hb : c ≤ b) : clog b n ≤ clog c n := by
+grep -rnE 'b \^ clog b [a-z]+ < b \* |pow_clog_lt|pow_clog_le_mul' .lake/packages: 0 lines
+## 5. L3 literal ciphertexts and level index
+git grep -n -E litInput_castAdd|litInput_natAdd <base> -- TCSlib audits: 7 lines
+    TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:131:theorem litInput_castAdd (x : Fin n → Bool) (i : Fin n) : litInput x (Fin.castAdd n i) = x i := by
+    TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:135:theorem litInput_natAdd (x : Fin n → Bool) (i : Fin n) : litInput x (Fin.natAdd n i) = !x i := by
+    TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:587:  rw [litInput_castAdd] at h1
+    TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:588:  rw [litInput_natAdd] at h2
+    TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:865:vertex `v` (`DAGCircuit.values_getD_input`, `litInput_castAdd`); the twin `NAND(¬xᵥ)` reads
+    TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:866:vertex `n + v` (`litInput_natAdd`) and gives `!!xᵥ = xᵥ` (`DAGGate.eval_of_isNAND`, N1).
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean:270:noise `0 + m·B`), matched with `litInput_castAdd`, `litInput_natAdd`; every `j : Fin (k
+git grep -n -E Fin\.addCases <base> -- TCSlib audits: 746 lines
+    TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/Tensorization.lean:88:  refine Fin.addCases (fun i => ?_) (fun j => ?_) k
+    TCSlib/Complexity/CircuitComplexity/MeyerMachine.lean:188:  ⟨im, Fin.addCases mw aw, o, q⟩
+    TCSlib/Complexity/CircuitComplexity/MeyerMachine.lean:300:  workTapes := Fin.addCases mt au
+    TCSlib/Complexity/CircuitComplexity/MeyerMachine.lean:301:  workTapePos := Fin.addCases mh ah
+    TCSlib/Complexity/CircuitComplexity/MeyerMachine.lean:312:**Proof sketch.** Extensionality on the five fields; on each tape block `Fin.addCases`
+    TCSlib/Complexity/CircuitComplexity/MeyerMachine.lean:326:    refine Fin.addCases ?_ ?_ i
+    TCSlib/Complexity/CircuitComplexity/MeyerMachine.lean:328:      simp only [Action.apply, tact, tcfg, Fin.addCases_left]
+    TCSlib/Complexity/CircuitComplexity/MeyerMachine.lean:331:      simp only [Action.apply, tact, tcfg, Fin.addCases_right]
+    TCSlib/Complexity/CircuitComplexity/MeyerMachine.lean:334:    refine Fin.addCases ?_ ?_ i <;> intro j <;> simp [Action.apply, tact, tcfg]
+    TCSlib/Complexity/CircuitComplexity/MeyerMachine.lean:343:        (Fin.addCases (fun i => mt i (mh i)) (fun j => au j (ah j)))).apply
+    TCSlib/Complexity/CircuitComplexity/MeyerMachine.lean:346:      Fin.addCases (fun i => mt i (mh i)) (fun j => au j (ah j)) := by
+    TCSlib/Complexity/CircuitComplexity/MeyerMachine.lean:348:    refine Fin.addCases ?_ ?_ i <;> intro j <;> simp [Cfg.workTapeSymbols, tcfg]
+git grep -n -E layerNAND_(eval|depth|isLayered|isNANDForm) <base> -- TCSlib audits: 15 lines
+    TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:79:* `BoolCircuit.DAGCircuit.layerNAND_eval` (N7) — semantics on the literal input.
+    TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:80:* `BoolCircuit.DAGCircuit.layerNAND_isLayered` (N8), `layerNAND_isNANDForm` (N9).
+    TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:81:* `BoolCircuit.DAGCircuit.layerNAND_depth` (N10) — depth preserved exactly.
+    TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:545:private theorem DAGCircuit.layerNAND_depthAt_snoc {gs : List DAGGate} {g : DAGGate}
+    TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:576:  · rw [C.layerNAND_depthAt_snoc h]; simp; omega
+    TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:742:      rw [C.layerNAND_depthAt_snoc hp, List.map_map,
+    TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:764:      · rw [C.layerNAND_depthAt_snoc hp, hδ, hb0, h5]; simp
+    TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:788:    have d1 := C.layerNAND_depthAt_snoc hp1
+    TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:873:theorem DAGCircuit.layerNAND_eval (hC : C.IsNANDForm) (x : Fin n → Bool) :
+    TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:890:theorem DAGCircuit.layerNAND_isLayered : C.layerNAND.IsLayered := by
+    TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:912:theorem DAGCircuit.layerNAND_isNANDForm (hC : C.IsNANDForm) : C.layerNAND.IsNANDForm := by
+    TCSlib/Complexity/CircuitComplexity/NANDLayering.lean:921:theorem DAGCircuit.layerNAND_depth : C.layerNAND.depth = C.depth := by
+git grep -n -E homNot_eq|homAnd_singleton <base> -- TCSlib audits: 5 lines
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:70:theorem homAnd_singleton (P : Parameters) (C : Ciphertext P) : homAnd P [C] = C := rfl
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:82:theorem homNot_eq (P : Parameters) (Cs : List (Ciphertext P)) :
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:155:      rw [homAnd_singleton, List.all_cons, List.all_nil, Bool.and_true]
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:232:    rw [homNot_eq, hm]
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean:269:`homNot_eq`, `homAnd_singleton`, `encrypts_gadget` and `Encrypts.sub` (`literalCts_natAd
+## 6. honest-key rewriting (G12)
+git grep -n -E LWE\.sample_fst P\.lwe χ <base> -- TCSlib audits: 1 lines
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:216:    Prod.ext (LWE.sample_fst P.lwe χ rg) (LWE.sample_snd P.lwe χ rg)
+git grep -n -E encrypts_keygen_encrypt <base> -- TCSlib audits: 10 lines
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:318:(`LWE.Noise.bounded_iff`). The inputs encrypt with noise `m·B` (`encrypts_keygen_encr
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:298:**Proof sketch.** `encrypts_keygen_encrypt` gives input noise `m·B`; `eval_encrypts` gives
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:313:    fun i => encrypts_keygen_encrypt P χ rg B hχ (x i) (R i)
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean:33:  `encrypts_keygen_encrypt`.
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean:206:A citation, proved: phase 5's `encrypts_keygen_encrypt` read through `levelKey_eq` and
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean:215:  exact encrypts_keygen_encrypt P χ (rgs d.succ) B hχ _ (R d j)
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean:268:`m·B`: the first half by `encrypts_keygen_encrypt` (`literalCts_castAdd`), the second h
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:207:theorem encrypts_keygen_encrypt (P : Parameters) (χ : LWE.Noise)
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:366:**Proof sketch.** `encrypts_keygen_encrypt`, then `decrypt_of_encrypts`. -/
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Scheme.lean:375:    (encrypts_keygen_encrypt P χ rg B hχ μ R) hsep
+git grep -n -w encrypts_evalKey <base> -- TCSlib audits: 3 lines
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:35:* `encrypts_evalKey` (G11): evaluation-key noise `m·B`, a proved citation of phase 5's
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:299:theorem encrypts_evalKey (P : Parameters)
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:319:the evaluation key with noise `m·B` (G11, `encrypts_evalKey`). Since `N ≥ 1`
+git grep -n -w encrypts_levelKey <base> -- TCSlib audits: 3 lines
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean:32:* `encrypts_levelKey` (L1): level-key noise `m·B`, a proved citation of phase 5's
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean:208:theorem encrypts_levelKey (P : Parameters) (χ : LWE.Noise) (B : ℕ) (hχ : χ.Bounded 
+    TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean:267:L1 (`encrypts_levelKey`). The literal ciphertexts encrypt `litInput x` under `s_0` with 

@@ -1,0 +1,54 @@
+# C10 clashes (gsw-6b-u14-u16), 2026-11-19T00:48:58Z
+Heads read: base bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d; origin/iO/phase-a-base 5ed465f62e4ae0f93ded1a1ba49e807591b589eb; origin/cleanup/stage2-s2a 9f7f409c2e09749428db75b9ddd324f92695e4af (fetched at this time).
+## (a) new full names
+Source level: decls2 ADDED exactly encrypts_bootGate in Bootstrap.lean, 0 in Leveled.lean (statements/decls2-*.txt); the frozen check adds the private helper four_pow_clog_le (frozen/frozen-head-Bootstrap.txt).
+Environment level: stored constants of the two owned modules at the head that are not at the base (axioms census, head vs base copies):
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootNoise_le._proof_1_1
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootNoise_le._proof_1_2
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootNoise_le._proof_1_3
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decrypt_fheEval._proof_1_1
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.decrypt_keygen_leveledEvalCircuit._proof_1_1
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.encrypts_bootGate
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.encrypts_bootGate._proof_1_1
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.encrypts_bootGate._proof_1_2
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.encrypts_leveledEval._proof_1_1
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.encrypts_leveledEval._proof_1_2
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.encrypts_leveledEval._proof_1_3
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.encrypts_leveledEval._proof_1_4
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.encrypts_leveledEval._proof_1_5
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.encrypts_leveledEval._proof_1_6
+  _private.TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Bootstrap.0.TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.four_pow_clog_le
+  _private.TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Bootstrap.0.TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.four_pow_clog_le._proof_1_1
+  _private.TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Bootstrap.0.TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.four_pow_clog_le._proof_1_2
+  _private.TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Bootstrap.0.TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.four_pow_clog_le._proof_1_3
+Searches (git grep -w for the names, -F for the auxiliary suffixes; TCSlib/ and audits/):
+  git grep -w 'encrypts_bootGate' bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d -- TCSlib audits: 0 files
+  git grep -w 'encrypts_bootGate' 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib audits: 0 files
+  git grep -w 'encrypts_bootGate' 9f7f409c2e09749428db75b9ddd324f92695e4af -- TCSlib audits: 0 files
+  git grep -w 'four_pow_clog_le' bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d -- TCSlib audits: 0 files
+  git grep -w 'four_pow_clog_le' 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib audits: 0 files
+  git grep -w 'four_pow_clog_le' 9f7f409c2e09749428db75b9ddd324f92695e4af -- TCSlib audits: 0 files
+  git grep -F 'bootNoise_le._proof_1_' bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d -- TCSlib audits: 0 files
+  git grep -F 'bootNoise_le._proof_1_' 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib audits: 0 files
+  git grep -F 'bootNoise_le._proof_1_' 9f7f409c2e09749428db75b9ddd324f92695e4af -- TCSlib audits: 0 files
+  git grep -F 'decrypt_fheEval._proof_1_' bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d -- TCSlib audits: 0 files
+  git grep -F 'decrypt_fheEval._proof_1_' 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib audits: 0 files
+  git grep -F 'decrypt_fheEval._proof_1_' 9f7f409c2e09749428db75b9ddd324f92695e4af -- TCSlib audits: 0 files
+  git grep -F 'decrypt_keygen_leveledEvalCircuit._proof_1_' bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d -- TCSlib audits: 0 files
+  git grep -F 'decrypt_keygen_leveledEvalCircuit._proof_1_' 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib audits: 0 files
+  git grep -F 'decrypt_keygen_leveledEvalCircuit._proof_1_' 9f7f409c2e09749428db75b9ddd324f92695e4af -- TCSlib audits: 0 files
+  git grep -F 'encrypts_bootGate._proof_1_' bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d -- TCSlib audits: 0 files
+  git grep -F 'encrypts_bootGate._proof_1_' 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib audits: 0 files
+  git grep -F 'encrypts_bootGate._proof_1_' 9f7f409c2e09749428db75b9ddd324f92695e4af -- TCSlib audits: 0 files
+  git grep -F 'encrypts_leveledEval._proof_1_' bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d -- TCSlib audits: 0 files
+  git grep -F 'encrypts_leveledEval._proof_1_' 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib audits: 0 files
+  git grep -F 'encrypts_leveledEval._proof_1_' 9f7f409c2e09749428db75b9ddd324f92695e4af -- TCSlib audits: 0 files
+  git grep -F 'four_pow_clog_le._proof_1_' bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d -- TCSlib audits: 0 files
+  git grep -F 'four_pow_clog_le._proof_1_' 5ed465f62e4ae0f93ded1a1ba49e807591b589eb -- TCSlib audits: 0 files
+  git grep -F 'four_pow_clog_le._proof_1_' 9f7f409c2e09749428db75b9ddd324f92695e4af -- TCSlib audits: 0 files
+  Mathlib/Batteries/core (.lake/packages, grep -rlw): encrypts_bootGate 0 files; four_pow_clog_le 0 files
+## (b) short-name resolution in the UNIT-DOWN modules
+The only new public short name is encrypts_bootGate; at the head it occurs in these files (git grep -lw, HEAD):
+  HEAD:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean
+  HEAD:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean
+No UNIT-DOWN module other than the two owned files mentions it, so no resolution can change; four_pow_clog_le is private to Bootstrap.lean.
