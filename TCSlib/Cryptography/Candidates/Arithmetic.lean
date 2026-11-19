@@ -72,6 +72,9 @@ computability on strings is a hypothesis, discharged by a future machine-buildin
 * `TCSlib.Cryptography.Candidates.subStr_self`,
   `TCSlib.Cryptography.Candidates.listToNat_mulStr`,
   `TCSlib.Cryptography.Candidates.val_inv_natCast_zmod_zero_le` — readings of the bundle's words.
+* `TCSlib.Cryptography.Candidates.mulStr_eq`, `addStr_eq`, `subStr_eq`, `divModStr_eq`,
+  `xgcdStr_eq`, `modExpStr_eq`, `leStr_eq` — the pair functions on every word, read through
+  the total projections `pairFstD`, `pairSndD`.
 * `TCSlib.Cryptography.Candidates.ArithmeticFP.le_poly`,
   `TCSlib.Cryptography.Candidates.ArithmeticFP.prime_poly` — comparisons and primality tests of
   polynomial-time words are polynomial-time.
@@ -453,6 +456,50 @@ theorem val_inv_natCast_zmod_zero_le (e : ℕ) : ((e : ZMod 0)⁻¹).val ≤ 1 :
 
 /-- `primeStr` is the primality test of `exists_samplePrime_nuppt`. -/
 theorem primeStr_eq : primeStr = fun w : List Bool => [decide (listToNat w).Prime] := rfl
+
+/-! ### Every-input equations -/
+
+/-- The defining equation of `mulStr` on every word: `mulStr z = ⟦⟦a⟧ · ⟦b⟧⟧_{|a| + |b|}` for
+`a = pairFstD z`, `b = pairSndD z`. -/
+theorem mulStr_eq (z : List Bool) :
+    mulStr z = natToList ((pairFstD z).length + (pairSndD z).length)
+      (listToNat (pairFstD z) * listToNat (pairSndD z)) := rfl
+
+/-- The defining equation of `addStr` on every word: `addStr z = ⟦⟦a⟧ + ⟦b⟧⟧_{|a| + |b|}`. -/
+theorem addStr_eq (z : List Bool) :
+    addStr z = natToList ((pairFstD z).length + (pairSndD z).length)
+      (listToNat (pairFstD z) + listToNat (pairSndD z)) := rfl
+
+/-- The defining equation of `subStr` on every word: `subStr z = ⟦⟦a⟧ ∸ ⟦b⟧⟧_{|a|}`. -/
+theorem subStr_eq (z : List Bool) :
+    subStr z = natToList (pairFstD z).length (listToNat (pairFstD z) - listToNat (pairSndD z)) :=
+  rfl
+
+/-- The defining equation of `divModStr` on every word:
+`divModStr z = ⟨⟦⟦a⟧ / ⟦b⟧⟧_{|a|}, ⟦⟦a⟧ mod ⟦b⟧⟧_{|b|}⟩`. -/
+theorem divModStr_eq (z : List Bool) :
+    divModStr z = pairEncode
+      (natToList (pairFstD z).length (listToNat (pairFstD z) / listToNat (pairSndD z)))
+      (natToList (pairSndD z).length (listToNat (pairFstD z) % listToNat (pairSndD z))) := rfl
+
+/-- The defining equation of `xgcdStr` on every word:
+`xgcdStr z = ⟨⟦gcd(⟦a⟧, ⟦b⟧)⟧_{|b|}, ⟦(⟦a⟧ : Z_{⟦b⟧})⁻¹⟧_{|b|}⟩`. -/
+theorem xgcdStr_eq (z : List Bool) :
+    xgcdStr z = pairEncode
+      (natToList (pairSndD z).length (Nat.gcd (listToNat (pairFstD z)) (listToNat (pairSndD z))))
+      (natToList (pairSndD z).length
+        ((listToNat (pairFstD z) : ZMod (listToNat (pairSndD z)))⁻¹).val) := rfl
+
+/-- The defining equation of `modExpStr` on every word:
+`modExpStr z = ⟦⟦a⟧^{⟦x⟧} mod ⟦N⟧⟧_{|N|}` for `z = ⟨a, ⟨x, N⟩⟩` read by the total projections. -/
+theorem modExpStr_eq (z : List Bool) :
+    modExpStr z = natToList (pairSndD (pairSndD z)).length
+      (listToNat (pairFstD z) ^ listToNat (pairFstD (pairSndD z)) %
+        listToNat (pairSndD (pairSndD z))) := rfl
+
+/-- The defining equation of `leStr` on every word: `leStr z = [⟦a⟧ ≤ ⟦b⟧]`. -/
+theorem leStr_eq (z : List Bool) :
+    leStr z = [decide (listToNat (pairFstD z) ≤ listToNat (pairSndD z))] := rfl
 
 /-- **Comparisons are polynomial-time tests**: for polynomial-time words `a`, `b`, the bit
 `[⟦a x⟧ ≤ ⟦b x⟧]` is polynomial-time (`H.le`, read through `leStr_pairEncode`). -/

@@ -45,9 +45,8 @@ The potential is the number of recursive calls of the textbook algorithm on `(r'
   `Nat.gcdA (a mod b) b`.
 * `TCSlib.Cryptography.Candidates.xgcdInvWord_spec` — the word is `bits ((a : Z_b)⁻¹).val`.
 * `TCSlib.Cryptography.Candidates.polyTimeComputable_xgcdStr_pairEncode` — the extended
-  Euclidean algorithm is polynomial-time ([PS10, Algorithm 43.2, Claim 43.3]), on re-paired
-  inputs (the step to `PolyTimeComputable xgcdStr` needs a reader of `xgcdStr` on every word,
-  a scope request; see `ArithmeticDischarge.lean`).
+  Euclidean algorithm is polynomial-time ([PS10, Algorithm 43.2, Claim 43.3]) on re-paired
+  inputs, and `polyTimeComputable_xgcdStr` (the field `ArithmeticFP.xgcd`) on every word.
 
 ## References
 
@@ -492,5 +491,11 @@ theorem polyTimeComputable_xgcdStr_pairEncode :
       polyTimeComputable_xgcdInvWord)).congr fun z => by
     rw [toLE_pair_eq, BinArith.gcd_pairEncode, xgcdInvWord_spec, fromLEPoly_var_bits,
       fromLEPoly_var_bits, xgcdStr_pairEncode]
+
+/-- **The extended Euclidean algorithm is polynomial-time** (the field `ArithmeticFP.xgcd`)
+[PS10, Algorithm 43.2, Claim 43.3]: `PolyTimeComputable xgcdStr`, from
+`polyTimeComputable_xgcdStr_pairEncode` and `xgcdStr_eq`. -/
+theorem polyTimeComputable_xgcdStr : PolyTimeComputable xgcdStr :=
+  polyTimeComputable_xgcdStr_pairEncode.congr fun z => by rw [xgcdStr_pairEncode, xgcdStr_eq]
 
 end TCSlib.Cryptography.Candidates

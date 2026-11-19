@@ -32,12 +32,9 @@ whose first component carries the width as its length (`|a| + |b|`, `|a|`, `|b|`
 `0`, so the machine runs it at the modulus `2^{|N|}` instead (`natToList_mod_two_pow`), never
 materializing `a^x`.
 
-**Readers (scope note).** `Arithmetic.lean` publishes readers of the string functions only on
-encoded pairs (`mulStr_pairEncode`, …), and `sizeStr_eq` on every word. So the six pair
-functions are proved here in the form `z ↦ f ⟨pairFstD z, pairSndD z⟩` (a re-paired input), and
-`sizeStr` in the bundle's own form. The step from the re-paired form to `PolyTimeComputable f`
-reads `f` on a malformed word and needs an every-input equation lemma `f_eq` in
-`Arithmetic.lean`, which is frozen for this job; it is a scope request of the job's report.
+**Readers.** `Arithmetic.lean` reads the string functions on encoded pairs (`mulStr_pairEncode`,
+…) and on every word (`mulStr_eq`, …). The machines are first proved on re-paired inputs
+`z ↦ f ⟨pairFstD z, pairSndD z⟩`, then on every word through `f_eq`.
 
 ## Main definitions
 
@@ -54,6 +51,9 @@ reads `f` on a malformed word and needs an every-input equation lemma `f_eq` in
   exponentiation [PS10, Algorithm 45.5, Theorem 45.6] on re-paired triples.
 * `TCSlib.Cryptography.Candidates.polyTimeComputable_sizeStr` — the bit length in unary
   (the field `ArithmeticFP.size`).
+* `TCSlib.Cryptography.Candidates.polyTimeComputable_mulStr`, `polyTimeComputable_addStr`,
+  `polyTimeComputable_subStr`, `polyTimeComputable_divModStr`, `polyTimeComputable_modExpStr`,
+  `polyTimeComputable_leStr` — the fields `mul`, `add`, `sub`, `divMod`, `modExp`, `le`.
 
 ## References
 
@@ -232,5 +232,39 @@ and the unary writer `polyTimeComputable_unaryPoly`. -/
 theorem polyTimeComputable_sizeStr : PolyTimeComputable sizeStr :=
   ((polyTimeComputable_unaryPoly .var).comp' polyTimeComputable_toLE).congr fun w => by
     rw [PolyExpr.eval_var, toLE_eq_natBits, Nat.size_eq_bits_len, sizeStr_eq]
+
+/-! ### The fields (with the every-input equations of `Arithmetic.lean`) -/
+
+/-- **Binary multiplication is polynomial-time** (the field `ArithmeticFP.mul`):
+`PolyTimeComputable mulStr`, from `polyTimeComputable_mulStr_pairEncode` and `mulStr_eq`. -/
+theorem polyTimeComputable_mulStr : PolyTimeComputable mulStr :=
+  polyTimeComputable_mulStr_pairEncode.congr fun z => by rw [mulStr_pairEncode, mulStr_eq]
+
+/-- **Binary addition is polynomial-time** (the field `ArithmeticFP.add`):
+`PolyTimeComputable addStr`. -/
+theorem polyTimeComputable_addStr : PolyTimeComputable addStr :=
+  polyTimeComputable_addStr_pairEncode.congr fun z => by rw [addStr_pairEncode, addStr_eq]
+
+/-- **Truncated subtraction is polynomial-time** (the field `ArithmeticFP.sub`):
+`PolyTimeComputable subStr`. -/
+theorem polyTimeComputable_subStr : PolyTimeComputable subStr :=
+  polyTimeComputable_subStr_pairEncode.congr fun z => by rw [subStr_pairEncode, subStr_eq]
+
+/-- **Division with remainder is polynomial-time** (the field `ArithmeticFP.divMod`):
+`PolyTimeComputable divModStr`. -/
+theorem polyTimeComputable_divModStr : PolyTimeComputable divModStr :=
+  polyTimeComputable_divModStr_pairEncode.congr fun z => by
+    rw [divModStr_pairEncode, divModStr_eq]
+
+/-- **Modular exponentiation is polynomial-time** (the field `ArithmeticFP.modExp`)
+[PS10, Algorithm 45.5, Theorem 45.6]: `PolyTimeComputable modExpStr`. -/
+theorem polyTimeComputable_modExpStr : PolyTimeComputable modExpStr :=
+  polyTimeComputable_modExpStr_pairEncode.congr fun z => by
+    rw [modExpStr_pairEncode, modExpStr_eq]
+
+/-- **Comparison is polynomial-time** (the field `ArithmeticFP.le`):
+`PolyTimeComputable leStr`. -/
+theorem polyTimeComputable_leStr : PolyTimeComputable leStr :=
+  polyTimeComputable_leStr_pairEncode.congr fun z => by rw [leStr_pairEncode, leStr_eq]
 
 end TCSlib.Cryptography.Candidates
