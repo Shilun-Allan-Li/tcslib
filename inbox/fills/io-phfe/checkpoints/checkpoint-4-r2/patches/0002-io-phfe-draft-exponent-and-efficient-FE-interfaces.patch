@@ -1,0 +1,670 @@
+From b6f3c80d60ac57581f297fc893b47c5fc0e3306d Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 01:20:53 -0800
+Subject: [PATCH 02/37] io-phfe: draft exponent and efficient FE interfaces
+
+---
+ .../FunctionalEncryption/Defs.lean            | 220 ++++++++++++
+ .../FunctionalEncryption/Defs/Efficient.lean  |  84 +++++
+ TCSlib/Cryptography/Pairing/Exponents.lean    | 334 ++++++++++++++++++
+ 3 files changed, 638 insertions(+)
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Efficient.lean
+ create mode 100644 TCSlib/Cryptography/Pairing/Exponents.lean
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs.lean
+new file mode 100644
+index 000000000..e91c64586
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs.lean
+@@ -0,0 +1,220 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Pairing.Group
++import TCSlib.Cryptography.CoinSampling.Contract
++import TCSlib.Cryptography.Games.Advantage
++import TCSlib.Cryptography.Foundations.Subexponential
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Function classes and public-key functional encryption
++
++The public and private inputs and function descriptions have fixed-width wire representations.
++The class parameter and evaluation codomain are arbitrary. A group-based public-parameter
++generator fixes the class parameter; it does not restrict which function classes can be used.
++
++## Main definitions
++
++* `FnClass`: a parameterized function class with public and private inputs.
++
++## Main results
++
++The syntax separates deterministic cores and finite exact draws from efficiency obligations.
++
++## References
++
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
++  revision of 3 January 2025, Definitions 4.1-4.3 and 4.6, and Section 9.
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive, Report 2020/1420, Section 2.2.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
++
++open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++
++/-- A function class has a public input, a private input, a function description, and an
++evaluation map into its parameter-dependent output type [GJLS21, Section 4, p. 18].
++
++The inputs and descriptions use fixed-width bit strings. The parameter and output type remain
++arbitrary; in partially hiding encryption the parameter is the drawn group's order, and the
++class evaluates in the exponent before the scheme embeds that value into the target group.
++This separates scalar simulator leakage from the decryption codomain. -/
++structure FnClass where
++  /-- The width of the public input. -/
++  pubLen : PolyExpr
++  /-- The width of the private input. -/
++  privLen : PolyExpr
++  /-- The width of a function description. -/
++  fnLen : PolyExpr
++  /-- The class parameter at each security parameter. -/
++  Prm : ℕ → Type
++  /-- The evaluation codomain before the scheme's output embedding. -/
++  Out : (κ : ℕ) → Prm κ → Type
++  /-- Evaluation of a function on the public and private inputs. -/
++  eval : (κ : ℕ) → (π : Prm κ) → (Fin (fnLen.eval κ) → Bool) →
++    (Fin (pubLen.eval κ) → Bool) → (Fin (privLen.eval κ) → Bool) → Out κ π
++
++/-- A group description is reachable when the bilinear generator outputs it on some coin
++string. Technical glue: the witness is a proposition, so it does not distinguish equal
++descriptions or supply advice to an algorithm. -/
++abbrev GroupDescription (G : BilinearGen) (κ : ℕ) : Type :=
++  {d : List Bool // ∃ r : G.gen.Coins κ, G.desc κ r = d}
++
++/-- The description type consists of strings in the image of the bilinear generator. -/
++theorem groupDescription_eq (G : BilinearGen) (κ : ℕ) :
++    GroupDescription G κ = {d : List Bool // ∃ r : G.gen.Coins κ, G.desc κ r = d} := rfl
++
++/-- Public parameters contain a reachable group description and a nonidentity generator
++[GJLS21, Definition 4.1; Wee20, Section 2.1]. The generator is sampled uniformly from the
++nonidentity source-group elements, separately after drawing the group description. -/
++structure PublicParams (G : BilinearGen) (κ : ℕ) where
++  /-- A description output by the group generator. -/
++  description : GroupDescription G κ
++  /-- The source-group generator used throughout this setup. -/
++  generator : (G.group κ description.val).G
++  /-- In a prime-order group every nonidentity element is a generator. -/
++  generator_ne_one : generator ≠ 1
++
++namespace PublicParams
++
++/-- Encode public parameters as the pair of the description and generator encoding.
++This is the wire representation of the public parameters [GJLS21, Definition 4.1]. -/
++def encode {G : BilinearGen} {κ : ℕ} (pp : PublicParams G κ) : List Bool :=
++  pairEncode pp.description.val
++    (List.ofFn ((G.group κ pp.description.val).encG pp.generator))
++
++/-- The public-parameter word pairs the group description and encoded generator. -/
++theorem encode_eq {G : BilinearGen} {κ : ℕ} (pp : PublicParams G κ) :
++    pp.encode = pairEncode pp.description.val
++      (List.ofFn ((G.group κ pp.description.val).encG pp.generator)) := rfl
++
++end PublicParams
++
++/-- A nonidentity group element is the additional draw made after the group description
++[Wee20, Section 2.1]. This is one draw type; no product sampler is constructed. -/
++abbrev GeneratorDraw (G : BilinearGen) (κ : ℕ) (d : GroupDescription G κ) : Type :=
++  {g : (G.group κ d.val).G // g ≠ 1}
++
++/-- The generator draw is the subtype of nonidentity source-group elements. -/
++theorem generatorDraw_eq (G : BilinearGen) (κ : ℕ) (d : GroupDescription G κ) :
++    GeneratorDraw G κ d = {g : (G.group κ d.val).G // g ≠ 1} := rfl
++
++/-- Attach a sampled generator to its public group description. This is the deterministic
++core of the second stage of public-parameter generation [GJLS21, Definition 4.1]. -/
++def publicParamsCore (G : BilinearGen) (κ : ℕ) (d : GroupDescription G κ)
++    (g : GeneratorDraw G κ d) : PublicParams G κ :=
++  ⟨d, g.val, g.property⟩
++
++/-- The public-parameter core attaches the nonidentity generator without changing it. -/
++theorem publicParamsCore_eq (G : BilinearGen) (κ : ℕ) (d : GroupDescription G κ)
++    (g : GeneratorDraw G κ d) : publicParamsCore G κ d g = ⟨d, g.val, g.property⟩ := rfl
++
++/-- The raw syntax of public-key functional encryption consists of deterministic cores and
++finite exact draws, with deterministic decryption [GJLS21, Definition 4.1].
++
++All key and ciphertext types depend on the public parameters so group-valued objects retain
++their drawn group. Inputs and function descriptions use the function class's fixed-width
++wire types. The output embedding is injective and fixed by the public parameters; it may map
++scalar function values into the target group. Efficiency is added by `FEScheme`. -/
++structure FEScheme.Raw (C : FnClass) where
++  /-- The uniform group-description generator. -/
++  G : BilinearGen
++  /-- The class parameter fixed by public parameters. -/
++  cprm : (κ : ℕ) → PublicParams G κ → C.Prm κ
++  /-- The width of an encoded master public key. -/
++  mpkLen : PolyExpr
++  /-- The width of an encoded master secret key. -/
++  mskLen : PolyExpr
++  /-- The width of an encoded function key. -/
++  skLen : PolyExpr
++  /-- The width of the ciphertext excluding its separately public input. -/
++  ctLen : PolyExpr
++  /-- The width of a successful decryption output. -/
++  decOutLen : PolyExpr
++  /-- Master public keys over the drawn group. -/
++  MPK : (κ : ℕ) → PublicParams G κ → Type
++  /-- Master secret keys over the drawn group. -/
++  MSK : (κ : ℕ) → PublicParams G κ → Type
++  /-- Functional decryption keys over the drawn group. -/
++  SK : (κ : ℕ) → PublicParams G κ → Type
++  /-- Ciphertexts over the drawn group. -/
++  CT : (κ : ℕ) → PublicParams G κ → Type
++  /-- The decryption codomain, before the optional failure marker. -/
++  DecOut : (κ : ℕ) → PublicParams G κ → Type
++  /-- Interpret a function value in the decryption codomain. -/
++  embed : (κ : ℕ) → (pp : PublicParams G κ) → C.Out κ (cprm κ pp) → DecOut κ pp
++  /-- The embedding loses no information about the function value. -/
++  embed_injective : ∀ κ pp, Function.Injective (embed κ pp)
++  /-- The single draw type of setup. -/
++  SetupDraw : (κ : ℕ) → PublicParams G κ → Type
++  /-- Setup draws have a finite uniform law. -/
++  [setupDrawFintype : ∀ κ pp, Fintype (SetupDraw κ pp)]
++  /-- Setup draws are nonempty. -/
++  [setupDrawNonempty : ∀ κ pp, Nonempty (SetupDraw κ pp)]
++  /-- The deterministic setup core. -/
++  setupCore : (κ : ℕ) → (pp : PublicParams G κ) → SetupDraw κ pp → MPK κ pp × MSK κ pp
++  /-- The single draw type of encryption. -/
++  EncDraw : (κ : ℕ) → PublicParams G κ → Type
++  /-- Encryption draws have a finite uniform law. -/
++  [encDrawFintype : ∀ κ pp, Fintype (EncDraw κ pp)]
++  /-- Encryption draws are nonempty. -/
++  [encDrawNonempty : ∀ κ pp, Nonempty (EncDraw κ pp)]
++  /-- The deterministic encryption core, with both public and private inputs. -/
++  encCore : (κ : ℕ) → (pp : PublicParams G κ) → MPK κ pp →
++    (Fin (C.pubLen.eval κ) → Bool) → (Fin (C.privLen.eval κ) → Bool) →
++    EncDraw κ pp → CT κ pp
++  /-- The single draw type of key generation. -/
++  KeyDraw : (κ : ℕ) → PublicParams G κ → Type
++  /-- Key-generation draws have a finite uniform law. -/
++  [keyDrawFintype : ∀ κ pp, Fintype (KeyDraw κ pp)]
++  /-- Key-generation draws are nonempty. -/
++  [keyDrawNonempty : ∀ κ pp, Nonempty (KeyDraw κ pp)]
++  /-- The deterministic key-generation core. -/
++  keyCore : (κ : ℕ) → (pp : PublicParams G κ) → MSK κ pp →
++    (Fin (C.fnLen.eval κ) → Bool) → KeyDraw κ pp → SK κ pp
++  /-- Deterministic decryption, including the public input and an optional failure result. -/
++  dec : (κ : ℕ) → (pp : PublicParams G κ) → SK κ pp →
++    (Fin (C.pubLen.eval κ) → Bool) → CT κ pp → Option (DecOut κ pp)
++  /-- The master public key's fixed-width encoding. -/
++  encMPK : (κ : ℕ) → (pp : PublicParams G κ) → MPK κ pp → Fin (mpkLen.eval κ) → Bool
++  /-- The master secret key's fixed-width encoding, used by efficiency specifications. -/
++  encMSK : (κ : ℕ) → (pp : PublicParams G κ) → MSK κ pp → Fin (mskLen.eval κ) → Bool
++  /-- The functional key's fixed-width encoding. -/
++  encSK : (κ : ℕ) → (pp : PublicParams G κ) → SK κ pp → Fin (skLen.eval κ) → Bool
++  /-- The ciphertext's fixed-width encoding. -/
++  encCT : (κ : ℕ) → (pp : PublicParams G κ) → CT κ pp → Fin (ctLen.eval κ) → Bool
++  /-- The successful output's fixed-width encoding. -/
++  encDecOut : (κ : ℕ) → (pp : PublicParams G κ) → DecOut κ pp →
++    Fin (decOutLen.eval κ) → Bool
++  /-- The encoding of the complete setup draw. -/
++  encSetupDraw : (κ : ℕ) → (pp : PublicParams G κ) → SetupDraw κ pp → List Bool
++  /-- The encoding of the complete encryption draw. -/
++  encEncDraw : (κ : ℕ) → (pp : PublicParams G κ) → EncDraw κ pp → List Bool
++  /-- The encoding of the complete key-generation draw. -/
++  encKeyDraw : (κ : ℕ) → (pp : PublicParams G κ) → KeyDraw κ pp → List Bool
++  /-- Public-key encodings distinguish every possible setup output at fixed parameters. -/
++  encMPK_inj : ∀ κ pp (r r' : SetupDraw κ pp),
++    encMPK κ pp (setupCore κ pp r).1 = encMPK κ pp (setupCore κ pp r').1 →
++      (setupCore κ pp r).1 = (setupCore κ pp r').1
++  /-- Function-key encodings distinguish possible keys under one master secret key. -/
++  encSK_inj : ∀ κ pp (r : SetupDraw κ pp) f f' (t t' : KeyDraw κ pp),
++    encSK κ pp (keyCore κ pp (setupCore κ pp r).2 f t) =
++      encSK κ pp (keyCore κ pp (setupCore κ pp r).2 f' t') →
++    keyCore κ pp (setupCore κ pp r).2 f t = keyCore κ pp (setupCore κ pp r).2 f' t'
++  /-- Ciphertext encodings distinguish possible ciphertexts under one public key. -/
++  encCT_inj : ∀ κ pp (r : SetupDraw κ pp) x y x' y' (t t' : EncDraw κ pp),
++    encCT κ pp (encCore κ pp (setupCore κ pp r).1 x y t) =
++      encCT κ pp (encCore κ pp (setupCore κ pp r).1 x' y' t') →
++    encCore κ pp (setupCore κ pp r).1 x y t = encCore κ pp (setupCore κ pp r).1 x' y' t'
++  /-- Successful decryption values have lossless encodings. -/
++  encDecOut_injective : ∀ κ pp, Function.Injective (encDecOut κ pp)
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Efficient.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Efficient.lean
+new file mode 100644
+index 000000000..8c511d2d0
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Efficient.lean
+@@ -0,0 +1,84 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Efficient functional-encryption interfaces
++
++Each sampler has one exact draw type and the shared uniform sampler-efficiency contract.
++Each deterministic core is implemented by one polynomial-time string function, chosen before
++the security parameter and the public parameters. No sampler is constructed here.
++
++## Main definitions
++
++* `FEScheme`: raw public-key functional encryption together with honest efficiency fields.
++
++## Main results
++
++The raw projection retains the algorithms; efficiency does not change their exact laws.
++
++## References
++
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
++  revision of 3 January 2025, Definition 4.1.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
++
++open Complexity Turing TCSlib.Cryptography.CoinSampling
++
++/-- An efficient public-key functional-encryption scheme carries uniform efficiency for
++public-parameter generation, setup, encryption, key generation, and decryption
++[GJLS21, Definition 4.1].
++
++The group-description generator is already uniformly efficient. The `pubGen_eff` field covers
++the subsequent nonidentity-generator draw, conditional on the description. This keeps public
++generation as sequential dependent draws without constructing a product sampler. -/
++structure FEScheme (C : FnClass) extends FEScheme.Raw C where
++  /-- Uniformly sample and attach the public generator after the group description. -/
++  pubGen_eff : SamplesEfficiently
++    (fun κ (d : GroupDescription G κ) => d.val)
++    (fun κ d (g : GeneratorDraw G κ d) => List.ofFn ((G.group κ d.val).encG g.val))
++    (fun _ _ (pp : PublicParams G _) => pp.encode) (publicParamsCore G)
++  /-- Uniformly sample the complete setup draw and compute the encoded key pair. -/
++  setup_eff : SamplesEfficiently
++    (fun _ (pp : PublicParams G _) => pp.encode) encSetupDraw
++    (fun κ pp (k : MPK κ pp × MSK κ pp) =>
++      pairEncode (List.ofFn (encMPK κ pp k.1)) (List.ofFn (encMSK κ pp k.2))) setupCore
++  /-- Uniformly sample encryption randomness with all other inputs on the parameter word. -/
++  enc_eff : SamplesEfficiently
++    (fun κ (π : Σ pp : PublicParams G κ,
++        MPK κ pp × (Fin (C.pubLen.eval κ) → Bool) × (Fin (C.privLen.eval κ) → Bool)) =>
++      pairEncode π.1.encode (pairEncode (List.ofFn (encMPK κ π.1 π.2.1))
++        (pairEncode (List.ofFn π.2.2.1) (List.ofFn π.2.2.2))))
++    (fun κ π => encEncDraw κ π.1)
++    (fun κ π (c : CT κ π.1) => List.ofFn (encCT κ π.1 c))
++    (fun κ π => encCore κ π.1 π.2.1 π.2.2.1 π.2.2.2)
++  /-- Uniformly sample key randomness with the master key and function on the input. -/
++  keyGen_eff : SamplesEfficiently
++    (fun κ (π : Σ pp : PublicParams G κ, MSK κ pp × (Fin (C.fnLen.eval κ) → Bool)) =>
++      pairEncode π.1.encode
++        (pairEncode (List.ofFn (encMSK κ π.1 π.2.1)) (List.ofFn π.2.2)))
++    (fun κ π => encKeyDraw κ π.1)
++    (fun κ π (k : SK κ π.1) => List.ofFn (encSK κ π.1 k))
++    (fun κ π => keyCore κ π.1 π.2.1 π.2.2)
++  /-- One polynomial-time decryption function works for every security and public parameter. -/
++  dec_eff : ∃ a : List Bool → List Bool, PolyTimeComputable a ∧
++    ∀ κ (pp : PublicParams G κ) (sk : SK κ pp)
++      (x : Fin (C.pubLen.eval κ) → Bool) (ct : CT κ pp),
++      a (NUPPT.advInput κ (pairEncode pp.encode
++        (pairEncode (List.ofFn (encSK κ pp sk))
++          (pairEncode (List.ofFn x) (List.ofFn (encCT κ pp ct)))))) =
++        match dec κ pp sk x ct with
++        | none => [false]
++        | some o => true :: List.ofFn (encDecOut κ pp o)
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
+diff --git a/TCSlib/Cryptography/Pairing/Exponents.lean b/TCSlib/Cryptography/Pairing/Exponents.lean
+new file mode 100644
+index 000000000..fddb5b8e4
+--- /dev/null
++++ b/TCSlib/Cryptography/Pairing/Exponents.lean
+@@ -0,0 +1,334 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.Pairing.Group
++import Mathlib.Data.Matrix.Mul
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Vectors and matrices in the exponent
++
++The implicit representation `[M]` sends every scalar entry to a power of a supplied group
++base. Known scalar vectors and matrices act on group entries through products and powers;
++these operations never recover an exponent from a group element. Pairing products implement
++matrix multiplication in the target group.
++
++## Main definitions
++
++* `groupDot`, `groupMulVec`, `groupVecMul`: products of known powers of group entries.
++* `groupMatMul`, `matMulGroup`: multiplication with a known scalar matrix on either side.
++* `BilinearGroup.expVec`, `BilinearGroup.expMat`: source-group implicit representations.
++* `BilinearGroup.expVecT`, `BilinearGroup.expMatT`: target-group implicit representations.
++* `BilinearGroup.pairVec`, `BilinearGroup.pairMat`, `BilinearGroup.pairTensor`: pairing
++  products and entrywise tensor pairings.
++
++## Main results
++
++* `BilinearGroup.expVec_add`, `BilinearGroup.expVec_smul`: scalar arithmetic in the exponent.
++* `BilinearGroup.expMat_mulVec`, `BilinearGroup.expVec_vecMul`: matrix actions in the exponent.
++* `BilinearGroup.pair_expVec`, `BilinearGroup.pair_expMat`: pairing products evaluate scalar
++  dot products and matrix products.
++* `BilinearGroup.expVec_tensor_left`, `BilinearGroup.expVec_tensor_right`: tensor products
++  with one known scalar factor can be formed in the source group.
++
++The index types are arbitrary finite types. Matrix orientation follows Mathlib: `mulVec`
++uses a column vector, while `vecMul` uses a row vector. Thus the row-vector notation of the
++source and its transposed column-vector form share the same implicit representation.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020, Cryptology ePrint Archive 2020/1420, §2.1, p. 4 (implicit representation),
++  §3.1, p. 6 (tensor products), §4.2, pp. 9–10 (pairing products).
++-/
++
++namespace TCSlib.Cryptography.Pairing
++
++open scoped BigOperators Matrix
++
++variable {ι κ υ : Type*} {p : ℕ}
++
++section GroupActions
++
++variable {H : Type*} [CommMonoid H]
++
++/-- Multiply group entries raised to the known scalar coordinates. This is technical glue
++for the implicit matrix arithmetic of [Wee20, §2.1, p. 4]. -/
++def groupDot [Fintype ι] (v : ι → H) (a : ι → ZMod p) : H :=
++  ∏ i, v i ^ (a i).val
++
++/-- `groupDot v a` is the product of the powers `v i ^ (a i).val`. -/
++theorem groupDot_eq [Fintype ι] (v : ι → H) (a : ι → ZMod p) :
++    groupDot v a = ∏ i, v i ^ (a i).val := rfl
++
++/-- Multiply a group-valued matrix by a known scalar column vector using group operations.
++This is the implicit representation of matrix action [Wee20, §2.1, p. 4]. -/
++def groupMulVec [Fintype κ] (M : Matrix ι κ H) (a : κ → ZMod p) : ι → H :=
++  fun i => groupDot (M i) a
++
++/-- Each coordinate of `groupMulVec M a` is the product of one row's known powers. -/
++theorem groupMulVec_apply [Fintype κ] (M : Matrix ι κ H) (a : κ → ZMod p) (i : ι) :
++    groupMulVec M a i = groupDot (M i) a := rfl
++
++/-- Multiply a known scalar row vector by a group-valued matrix using group operations.
++This follows the row-vector convention of [Wee20, §2.1, p. 4]. -/
++def groupVecMul [Fintype ι] (a : ι → ZMod p) (M : Matrix ι κ H) : κ → H :=
++  fun j => groupDot (fun i => M i j) a
++
++/-- Each coordinate of `groupVecMul a M` is the product of one column's known powers. -/
++theorem groupVecMul_apply [Fintype ι] (a : ι → ZMod p) (M : Matrix ι κ H) (j : κ) :
++    groupVecMul a M j = groupDot (fun i => M i j) a := rfl
++
++/-- Multiply a group-valued matrix on the right by a known scalar matrix, using products and
++powers only [Wee20, §2.1, p. 4; §4.2, p. 9]. -/
++def groupMatMul [Fintype κ] (M : Matrix ι κ H) (N : Matrix κ υ (ZMod p)) :
++    Matrix ι υ H := fun i j => groupDot (M i) (fun k => N k j)
++
++/-- An entry of `groupMatMul M N` is the product of powers along the shared index. -/
++theorem groupMatMul_apply [Fintype κ] (M : Matrix ι κ H) (N : Matrix κ υ (ZMod p))
++    (i : ι) (j : υ) :
++    groupMatMul M N i j = groupDot (M i) (fun k => N k j) := rfl
++
++/-- Multiply a group-valued matrix on the left by a known scalar matrix, using products and
++powers only [Wee20, §2.1, p. 4; §4.2, p. 10, (12)]. -/
++def matMulGroup [Fintype κ] (M : Matrix ι κ (ZMod p)) (N : Matrix κ υ H) :
++    Matrix ι υ H := fun i j => groupDot (fun k => N k j) (M i)
++
++/-- An entry of `matMulGroup M N` is the product of the known powers in a column of `N`. -/
++theorem matMulGroup_apply [Fintype κ] (M : Matrix ι κ (ZMod p)) (N : Matrix κ υ H)
++    (i : ι) (j : υ) :
++    matMulGroup M N i j = groupDot (fun k => N k j) (M i) := rfl
++
++end GroupActions
++
++namespace BilinearGroup
++
++variable {wG wT : ℕ} (B : BilinearGroup wG wT)
++
++/-- A source-group vector represents its scalar coordinates as powers of `g`
++[Wee20, §2.1, p. 4]. -/
++def expVec (g : B.G) (a : ι → ZMod B.order) : ι → B.G := fun i => g ^ (a i).val
++
++/-- A coordinate of the implicit vector is its scalar coordinate exponentiated at `g`. -/
++theorem expVec_apply (g : B.G) (a : ι → ZMod B.order) (i : ι) :
++    B.expVec g a i = g ^ (a i).val := rfl
++
++/-- A source-group matrix represents its scalar entries as powers of `g`
++[Wee20, §2.1, p. 4]. -/
++def expMat (g : B.G) (M : Matrix ι κ (ZMod B.order)) : Matrix ι κ B.G :=
++  fun i j => g ^ (M i j).val
++
++/-- An entry of the implicit matrix is its scalar entry exponentiated at `g`. -/
++theorem expMat_apply (g : B.G) (M : Matrix ι κ (ZMod B.order)) (i : ι) (j : κ) :
++    B.expMat g M i j = g ^ (M i j).val := rfl
++
++/-- A target-group vector represents its scalar coordinates as powers of `gT`
++[Wee20, §2.1, p. 4]. -/
++def expVecT (gT : B.GT) (a : ι → ZMod B.order) : ι → B.GT :=
++  fun i => gT ^ (a i).val
++
++/-- A coordinate of the target-group vector is its scalar coordinate raised at `gT`. -/
++theorem expVecT_apply (gT : B.GT) (a : ι → ZMod B.order) (i : ι) :
++    B.expVecT gT a i = gT ^ (a i).val := rfl
++
++/-- A target-group matrix represents its scalar entries as powers of `gT`
++[Wee20, §2.1, p. 4]. -/
++def expMatT (gT : B.GT) (M : Matrix ι κ (ZMod B.order)) : Matrix ι κ B.GT :=
++  fun i j => gT ^ (M i j).val
++
++/-- An entry of the target-group matrix is its scalar entry exponentiated at `gT`. -/
++theorem expMatT_apply (gT : B.GT) (M : Matrix ι κ (ZMod B.order)) (i : ι) (j : κ) :
++    B.expMatT gT M i j = gT ^ (M i j).val := rfl
++
++/-- Pair corresponding vector entries and multiply in the target group, implementing the
++implicit dot product [Wee20, §2.1, p. 4; §4.2, p. 9, (6)–(8)]. -/
++def pairVec [Fintype ι] (a b : ι → B.G) : B.GT := ∏ i, B.pair (a i) (b i)
++
++/-- The vector pairing is the product of the coordinate pairings. -/
++theorem pairVec_eq [Fintype ι] (a b : ι → B.G) :
++    B.pairVec a b = ∏ i, B.pair (a i) (b i) := rfl
++
++/-- Pair matrix rows against columns and multiply the pairings, implementing matrix
++multiplication in the exponent [Wee20, §2.1, p. 4; §4.2, p. 9, (6)–(7)]. -/
++def pairMat [Fintype κ] (M : Matrix ι κ B.G) (N : Matrix κ υ B.G) : Matrix ι υ B.GT :=
++  fun i j => B.pairVec (M i) (fun k => N k j)
++
++/-- Each entry of the matrix pairing is a row-column vector pairing. -/
++theorem pairMat_apply [Fintype κ] (M : Matrix ι κ B.G) (N : Matrix κ υ B.G)
++    (i : ι) (j : υ) :
++    B.pairMat M N i j = B.pairVec (M i) (fun k => N k j) := rfl
++
++/-- Pair all coordinate pairs of two source-group vectors. This supplies the target-group
++representation of their scalar tensor product [Wee20, §3.1, p. 6]. -/
++def pairTensor (a : ι → B.G) (b : κ → B.G) : ι × κ → B.GT :=
++  fun ij => B.pair (a ij.1) (b ij.2)
++
++/-- A tensor-pairing coordinate is the pairing of its two indexed source-group entries. -/
++theorem pairTensor_apply (a : ι → B.G) (b : κ → B.G) (ij : ι × κ) :
++    B.pairTensor a b ij = B.pair (a ij.1) (b ij.2) := rfl
++
++/-! ## Scalar arithmetic and implicit vectors -/
++
++/-- Target-group exponents add modulo the group order. Technical glue parallel to
++`BilinearGroup.pow_val_add` for the source group; no target-group version is in that API.
++
++**Proof sketch.** Use `ZMod.val_add`, `pow_add`, `pow_mod_card` and `B.card_GT`. -/
++theorem pow_val_add_GT (gT : B.GT) (a b : ZMod B.order) :
++    gT ^ (a + b).val = gT ^ a.val * gT ^ b.val := sorry
++
++/-- Negating a target-group exponent inverts the group element. Technical glue parallel to
++`BilinearGroup.pow_val_neg` for the source group.
++
++**Proof sketch.** Apply `pow_val_add_GT` to `-a` and `a`, whose sum is zero. -/
++theorem pow_val_neg_GT (gT : B.GT) (a : ZMod B.order) :
++    gT ^ (-a).val = (gT ^ a.val)⁻¹ := sorry
++
++/-- Adding scalar vectors multiplies their implicit source-group vectors
++[Wee20, §2.1, p. 4].
++
++**Proof sketch.** Apply the published source-group additive exponent law coordinatewise. -/
++theorem expVec_add (g : B.G) (a b : ι → ZMod B.order) :
++    B.expVec g (a + b) = B.expVec g a * B.expVec g b := sorry
++
++/-- Negating a scalar vector inverts its implicit source-group vector
++[Wee20, §2.1, p. 4].
++
++**Proof sketch.** Apply the published source-group negation law coordinatewise. -/
++theorem expVec_neg (g : B.G) (a : ι → ZMod B.order) :
++    B.expVec g (-a) = (B.expVec g a)⁻¹ := sorry
++
++/-- Scalar multiplication acts on the implicit vector by known powers
++[Wee20, §2.1, p. 4].
++
++**Proof sketch.** Use `pow_val_mul` and `pow_mul` at every coordinate. -/
++theorem expVec_smul (g : B.G) (c : ZMod B.order) (a : ι → ZMod B.order) :
++    B.expVec g (c • a) = fun i => (B.expVec g a i) ^ c.val := sorry
++
++/-- Adding scalar vectors multiplies their target-group representations
++[Wee20, §2.1, p. 4].
++
++**Proof sketch.** Apply `pow_val_add_GT` at every coordinate. -/
++theorem expVecT_add (gT : B.GT) (a b : ι → ZMod B.order) :
++    B.expVecT gT (a + b) = B.expVecT gT a * B.expVecT gT b := sorry
++
++/-- Negating scalar coordinates inverts the target-group representation
++[Wee20, §2.1, p. 4].
++
++**Proof sketch.** Apply `pow_val_neg_GT` at every coordinate. -/
++theorem expVecT_neg (gT : B.GT) (a : ι → ZMod B.order) :
++    B.expVecT gT (-a) = (B.expVecT gT a)⁻¹ := sorry
++
++/-- A known scalar multiplies target-group exponents through known powers
++[Wee20, §2.1, p. 4].
++
++**Proof sketch.** Use `pow_val_mul_GT` and `pow_mul` coordinatewise. -/
++theorem expVecT_smul (gT : B.GT) (c : ZMod B.order) (a : ι → ZMod B.order) :
++    B.expVecT gT (c • a) = fun i => (B.expVecT gT a i) ^ c.val := sorry
++
++/-- An implicit scalar dot product is a product of known powers of source-group elements
++[Wee20, §2.1, p. 4; §4.2, p. 9, (8)].
++
++**Proof sketch.** Induct over the finite index sum, using `pow_val_add`, `pow_val_mul` and
++`Finset.prod_pow_eq_pow_sum` to combine the powers. -/
++theorem groupDot_expVec [Fintype ι] (g : B.G) (a b : ι → ZMod B.order) :
++    groupDot (B.expVec g a) b = g ^ (dotProduct a b).val := sorry
++
++/-- A target-group scalar dot product is a product of known powers
++[Wee20, §4.2, p. 9, (8)].
++
++**Proof sketch.** Combine `pow_val_add_GT` and `pow_val_mul_GT` over the finite index sum. -/
++theorem groupDot_expVecT [Fintype ι] (gT : B.GT) (a b : ι → ZMod B.order) :
++    groupDot (B.expVecT gT a) b = gT ^ (dotProduct a b).val := sorry
++
++/-! ## Matrix actions -/
++
++/-- A known column-vector action commutes with the source-group implicit representation
++[Wee20, §2.1, p. 4].
++
++**Proof sketch.** At each row apply `groupDot_expVec` to the defining scalar dot product. -/
++theorem expMat_mulVec [Fintype κ] (g : B.G) (M : Matrix ι κ (ZMod B.order))
++    (a : κ → ZMod B.order) :
++    groupMulVec (B.expMat g M) a = B.expVec g (M *ᵥ a) := sorry
++
++/-- A known row-vector action commutes with the source-group implicit representation
++[Wee20, §2.1, p. 4].
++
++**Proof sketch.** At each column apply `groupDot_expVec`, commuting scalar factors. -/
++theorem expVec_vecMul [Fintype ι] (g : B.G) (a : ι → ZMod B.order)
++    (M : Matrix ι κ (ZMod B.order)) :
++    groupVecMul a (B.expMat g M) = B.expVec g (a ᵥ* M) := sorry
++
++/-- A scalar matrix on the right can be applied to a group-valued implicit matrix
++[Wee20, §4.2, p. 9, KeyGen].
++
++**Proof sketch.** Apply the vector dot-product law to every row-column entry. -/
++theorem expMat_mul [Fintype κ] (g : B.G) (M : Matrix ι κ (ZMod B.order))
++    (N : Matrix κ υ (ZMod B.order)) :
++    groupMatMul (B.expMat g M) N = B.expMat g (M * N) := sorry
++
++/-- A scalar matrix on the left can be applied to a group-valued implicit matrix
++[Wee20, §4.2, p. 10, (12)].
++
++**Proof sketch.** Apply the vector dot-product law entrywise and commute scalar factors. -/
++theorem expMat_mul_left [Fintype κ] (g : B.G) (M : Matrix ι κ (ZMod B.order))
++    (N : Matrix κ υ (ZMod B.order)) :
++    matMulGroup M (B.expMat g N) = B.expMat g (M * N) := sorry
++
++/-- Known powers also implement a target-group matrix-vector action
++[Wee20, §4.2, p. 9, (8)].
++
++**Proof sketch.** Apply `groupDot_expVecT` to every row. -/
++theorem expMatT_mulVec [Fintype κ] (gT : B.GT) (M : Matrix ι κ (ZMod B.order))
++    (a : κ → ZMod B.order) :
++    groupMulVec (B.expMatT gT M) a = B.expVecT gT (M *ᵥ a) := sorry
++
++/-! ## Pairings and tensor products -/
++
++/-- Pairing corresponding implicit coordinates evaluates their scalar dot product
++[Wee20, §2.1, p. 4; §4.2, p. 9, (6)–(8)].
++
++**Proof sketch.** Apply `bilinear_pow` coordinatewise, reduce products of exponents with
++`pow_val_mul_GT`, and combine powers with `pow_val_add_GT`. -/
++theorem pair_expVec [Fintype ι] (g h : B.G) (a b : ι → ZMod B.order) :
++    B.pairVec (B.expVec g a) (B.expVec h b) = B.pair g h ^ (dotProduct a b).val := sorry
++
++/-- Pairing implicit rows and columns evaluates the scalar matrix product
++[Wee20, §2.1, p. 4; §4.2, p. 9, (6)–(7)].
++
++**Proof sketch.** Apply `pair_expVec` to each row-column entry. -/
++theorem pair_expMat [Fintype κ] (g h : B.G) (M : Matrix ι κ (ZMod B.order))
++    (N : Matrix κ υ (ZMod B.order)) :
++    B.pairMat (B.expMat g M) (B.expMat h N) = B.expMatT (B.pair g h) (M * N) := sorry
++
++/-- Tensor pairings expose the product of their scalar coordinates in the target group
++[Wee20, §3.1, p. 6].
++
++**Proof sketch.** At each index pair apply `bilinear_pow` and `pow_val_mul_GT`. -/
++theorem pairTensor_expVec (g h : B.G) (a : ι → ZMod B.order) (b : κ → ZMod B.order) :
++    B.pairTensor (B.expVec g a) (B.expVec h b) =
++      B.expVecT (B.pair g h) (fun ij : ι × κ => a ij.1 * b ij.2) := sorry
++
++/-- A tensor product with its right scalar factor known is computable in the source group
++[Wee20, §3.3, p. 8, Game 3].
++
++**Proof sketch.** Apply `pow_val_mul` and `pow_mul` at every index pair. -/
++theorem expVec_tensor_left (g : B.G) (a : ι → ZMod B.order) (b : κ → ZMod B.order) :
++    (fun ij : ι × κ => B.expVec g a ij.1 ^ (b ij.2).val) =
++      B.expVec g (fun ij : ι × κ => a ij.1 * b ij.2) := sorry
++
++/-- A tensor product with its left scalar factor known is computable in the source group
++[Wee20, §3.3, p. 8, Game 4].
++
++**Proof sketch.** Apply `pow_val_mul`, `pow_mul` and scalar commutativity coordinatewise. -/
++theorem expVec_tensor_right (g : B.G) (a : ι → ZMod B.order) (b : κ → ZMod B.order) :
++    (fun ij : ι × κ => B.expVec g b ij.2 ^ (a ij.1).val) =
++      B.expVec g (fun ij : ι × κ => a ij.1 * b ij.2) := sorry
++
++end BilinearGroup
++
++end TCSlib.Cryptography.Pairing

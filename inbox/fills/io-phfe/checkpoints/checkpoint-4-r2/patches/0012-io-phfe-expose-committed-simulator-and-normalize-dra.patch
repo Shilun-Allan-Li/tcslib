@@ -1,0 +1,447 @@
+From 27215bc24c8d46c66014af9822d5c964c9ef7bb3 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 03:10:57 -0800
+Subject: [PATCH 12/37] io-phfe: expose committed simulator and normalize draft
+ layout
+
+---
+ .../SemiAdaptive/Data.lean                    |  1 +
+ .../SemiAdaptive/FromTwoStage.lean            |  1 +
+ .../SemiAdaptive/Games.lean                   |  1 +
+ .../SemiAdaptive/Security.lean                |  1 +
+ .../SemiAdaptive/Simulator.lean               |  1 +
+ .../FunctionalEncryption/Wee20/Linear.lean    | 12 +++--
+ .../Wee20/LinearCorrect.lean                  |  6 ++-
+ .../Wee20/LinearSecurity/Keys.lean            | 24 ++++++---
+ .../Wee20/LinearSimulator.lean                | 15 ++++--
+ .../Wee20/PHFE/CommittedSimulator.lean        | 54 +++++++++++++++++++
+ .../FunctionalEncryption/Wee20/PHFE/Data.lean |  3 +-
+ .../FunctionalEncryption/Wee20/PHFE/Raw.lean  |  6 ++-
+ .../Wee20/PHFE/Widths.lean                    |  6 ++-
+ .../FunctionalEncryption/Wee20/Quadratic.lean |  6 ++-
+ .../Wee20/QuadraticSimulator.lean             | 12 +++--
+ .../Pairing/MatrixDH/SelfReduction.lean       |  9 ++--
+ 16 files changed, 125 insertions(+), 33 deletions(-)
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/CommittedSimulator.lean
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean
+index 7f3056fd0..b2a18aa7c 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Data.lean
+@@ -40,6 +40,7 @@ The budget counts every oracle call, including the challenge and rejected calls.
+ 
+ namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
+ 
++open TCSlib.Cryptography.Pairing
+ open Complexity Turing TCSlib.Cryptography.Games
+ 
+ namespace FEScheme.Raw
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean
+index 004805cf0..3c7b3b458 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/FromTwoStage.lean
+@@ -42,6 +42,7 @@ No efficient simulator conversion or oracle-machine construction is claimed.
+ 
+ namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
+ 
++open TCSlib.Cryptography.Pairing
+ open Complexity Turing TCSlib.Cryptography.Games
+ 
+ namespace FEScheme.Raw.SASimulator.Raw
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Games.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Games.lean
+index c99f5e858..59ace0188 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Games.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Games.lean
+@@ -39,6 +39,7 @@ Handler case readers and complete experiment equations expose every branch.
+ 
+ namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
+ 
++open TCSlib.Cryptography.Pairing
+ open Complexity Turing TCSlib.Cryptography.Games
+ 
+ /-- The challenger retains the committed public/private pair to evaluate each
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Security.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Security.lean
+index 46d2049cb..f982230ca 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Security.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Security.lean
+@@ -37,6 +37,7 @@ uses the shared Foundations API.
+ 
+ namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.FEScheme.Raw
+ 
++open TCSlib.Cryptography.Pairing
+ open Complexity Turing TCSlib.Cryptography.Games
+ 
+ variable {C : FnClass} (S : FEScheme.Raw C)
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Simulator.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Simulator.lean
+index 345f3028a..468b457b5 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Simulator.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Simulator.lean
+@@ -37,6 +37,7 @@ Algorithm and layout readers expose the exact stateful laws without unfolding.
+ 
+ namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.FEScheme.Raw
+ 
++open TCSlib.Cryptography.Pairing
+ open Complexity Turing TCSlib.Cryptography.Games
+ open TCSlib.Cryptography.CoinSampling
+ 
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean
+index 651b8febd..196c099a6 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean
+@@ -214,8 +214,10 @@ def keyCore (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+   let tensorR := Matrix.kroneckerMap (fun a b => a * b)
+     (1 : Matrix (Fin (ℓ.eval κ)) (Fin (ℓ.eval κ)) (ZMod pp.group.order)) R
+   ⟨pp.group.expMat pp.generator Tbar ⊙ matMulGroup msk.W M,
+-    pp.group.expMat pp.generator (T * (show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ pp.orderParam f) + msk.U * tensorR),
+-    pp.group.expMat pp.generator (T * (show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam f) + msk.V * R),
++    pp.group.expMat pp.generator (T * (show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ
++      pp.orderParam f) + msk.U * tensorR),
++    pp.group.expMat pp.generator (T * (show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ
++      pp.orderParam f) + msk.V * R),
+     pp.group.expMat pp.generator R⟩
+ 
+ /-- Key generation is the displayed scalar garbling arithmetic and group matrix action. -/
+@@ -229,9 +231,11 @@ theorem keyCore_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ →
+         (1 : Matrix (Fin (ℓ.eval κ)) (Fin (ℓ.eval κ)) (ZMod pp.group.order)) ω.2
+       ⟨pp.group.expMat pp.generator (fun i j => ω.1 i (Sum.inr j)) ⊙ matMulGroup msk.W M,
+         pp.group.expMat pp.generator
+-          (ω.1 * (show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ pp.orderParam f) + msk.U * tensorR),
++          (ω.1 * (show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ pp.orderParam f) + msk.U *
++            tensorR),
+         pp.group.expMat pp.generator
+-          (ω.1 * (show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam f) + msk.V * ω.2),
++          (ω.1 * (show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam f) + msk.V *
++            ω.2),
+         pp.group.expMat pp.generator ω.2⟩ := rfl
+ 
+ /-- Decryption's first block is `e(c1,M)/e(c0,K1)`
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean
+index 48679ab92..bc97005d2 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean
+@@ -66,7 +66,8 @@ theorem rec_matrix_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ 
+     (f : Fn κ pp.orderParam) (x : Fin (ℓ.eval κ) → ZMod pp.group.order) :
+     ((show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ pp.orderParam f) *
+         PartialGarbling.publicTensor (p := pp.orderParam) (M := PG.MIdx κ pp.orderParam f) x +
+-      (show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam f)) *ᵥ (fun u => PG.recVec κ pp.orderParam f x (Sum.inr u)) =
++      (show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam f)) *ᵥ (fun u => PG.recVec κ
++        pp.orderParam f x (Sum.inr u)) =
+         Sum.elim (fun _ => 0) (PG.eval κ pp.orderParam f x) := sorry
+ 
+ /-- The leakage is the product of the supplied group-matrix entries raised to the known
+@@ -123,7 +124,8 @@ theorem decSecond_correct (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → 
+         (Matrix.vecMul (Matrix.vecMul (Matrix.vecMul s a.1) t.1)
+           ((show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ pp.orderParam f) *
+               PartialGarbling.publicTensor (p := pp.orderParam)
+-                (M := PG.MIdx κ pp.orderParam f) x + (show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam f))) := sorry
++                (M := PG.MIdx κ pp.orderParam f) x + (show Matrix _ _ (ZMod pp.group.order) from
++                  PG.L0 κ pp.orderParam f))) := sorry
+ 
+ /-- Π decrypts to `e(g,[zMf(x)^T])` for every honest draw and an arbitrary source-group
+ matrix `M` [Wee20, §4.2, p. 10, (11)]. This is perfect correctness in the exponent.
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean
+index 2d26f9ba7..2118f1012 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean
+@@ -107,9 +107,11 @@ def projectedKey (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Ty
+     (1 : Matrix (Fin (ℓ.eval κ)) (Fin (ℓ.eval κ)) (ZMod pp.group.order)) R
+   ⟨pp.group.expMat pp.generator (A * (fun i j => T i (Sum.inr j))) ⊙
+       matMulGroup (A * st.W) query.matrix,
+-    pp.group.expMat pp.generator ((A * T) * (show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ pp.orderParam query.fn)) ⊙
++    pp.group.expMat pp.generator ((A * T) * (show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ
++      pp.orderParam query.fn)) ⊙
+       matMulGroup (A * st.U) tensorR,
+-    pp.group.expMat pp.generator ((A * T) * (show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam query.fn)) ⊙
++    pp.group.expMat pp.generator ((A * T) * (show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ
++      pp.orderParam query.fn)) ⊙
+       matMulGroup (A * st.V) R⟩
+ 
+ /-- Projected key rows use known scalar coefficients and the supplied group matrix R. -/
+@@ -125,9 +127,11 @@ theorem projectedKey_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+
+         (1 : Matrix (Fin (ℓ.eval κ)) (Fin (ℓ.eval κ)) (ZMod pp.group.order)) R
+       ⟨pp.group.expMat pp.generator (A * (fun i j => T i (Sum.inr j))) ⊙
+           matMulGroup (A * st.W) query.matrix,
+-        pp.group.expMat pp.generator ((A * T) * (show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ pp.orderParam query.fn)) ⊙
++        pp.group.expMat pp.generator ((A * T) * (show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ
++          pp.orderParam query.fn)) ⊙
+           matMulGroup (A * st.U) tensorR,
+-        pp.group.expMat pp.generator ((A * T) * (show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam query.fn)) ⊙
++        pp.group.expMat pp.generator ((A * T) * (show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ
++          pp.orderParam query.fn)) ⊙
+           matMulGroup (A * st.V) R⟩ := rfl
+ 
+ /-- The middle key formula accepts GROUP R and GROUP uhat, allowing the two MDDH challenge
+@@ -147,9 +151,11 @@ def semiKey (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+     (M := PG.MIdx κ pp.orderParam query.fn) msg.1
+   let low1 := pp.group.expVec pp.generator (fun j => t (Sum.inr j)) *
+     groupVecMul (st.w - msg.2) query.matrix
+-  let low2 := pp.group.expVec pp.generator (Matrix.vecMul t ((show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ pp.orderParam query.fn))) *
++  let low2 := pp.group.expVec pp.generator (Matrix.vecMul t ((show Matrix _ _ (ZMod pp.group.order)
++    from PG.L1 κ pp.orderParam query.fn))) *
+     uhat
+-  let low3 := fun u => pp.generator ^ (Matrix.vecMul t ((show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam query.fn)) u).val *
++  let low3 := fun u => pp.generator ^ (Matrix.vecMul t ((show Matrix _ _ (ZMod pp.group.order) from
++    PG.L0 κ pp.orderParam query.fn)) u).val *
+     (groupDot uhat (fun i => X i u))⁻¹ * groupVecMul st.v R u
+   let C := fun i j => st.basisInv i (Fin.castSucc j)
+   let a := fun i => st.basisInv i (Fin.last 2)
+@@ -173,9 +179,11 @@ theorem semiKey_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ →
+       let low1 := pp.group.expVec pp.generator (fun j => t (Sum.inr j)) *
+         groupVecMul (st.w - msg.2) query.matrix
+       let low2 :=
+-        pp.group.expVec pp.generator (Matrix.vecMul t ((show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ pp.orderParam query.fn))) * uhat
++        pp.group.expVec pp.generator (Matrix.vecMul t ((show Matrix _ _ (ZMod pp.group.order) from
++          PG.L1 κ pp.orderParam query.fn))) * uhat
+       let low3 := fun u =>
+-        pp.generator ^ (Matrix.vecMul t ((show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam query.fn)) u).val *
++        pp.generator ^ (Matrix.vecMul t ((show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ
++          pp.orderParam query.fn)) u).val *
+           (groupDot uhat (fun i => X i u))⁻¹ * groupVecMul st.v R u
+       let C := fun i j => st.basisInv i (Fin.castSucc j)
+       let a := fun i => st.basisInv i (Fin.last 2)
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean
+index 21da559d5..d4f95e2cf 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean
+@@ -153,7 +153,8 @@ theorem simSetupDraw_eq (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ)
+ instance instSimSetupDrawFinite (G : BilinearGen) (ℓ z : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
+     Fintype (SimSetupDraw G ℓ z κ pp) := inferInstance
+ 
+-instance instSimSetupDrawNonempty (G : BilinearGen) (ℓ z : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++instance instSimSetupDrawNonempty (G : BilinearGen) (ℓ z : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++  :
+     Nonempty (SimSetupDraw G ℓ z κ pp) := inferInstance
+ 
+ /-- Simulator setup computes the public key and the total inverse basis
+@@ -278,9 +279,11 @@ def simKeyCore (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type
+   let high1 := pp.group.expMat pp.generator (A * (fun i j => T i (Sum.inr j))) ⊙
+     matMulGroup (A * st.W) M
+   let high2 := pp.group.expMat pp.generator
+-    ((A * T) * (show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ pp.orderParam f) + (A * st.U) * tensorR)
++    ((A * T) * (show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ pp.orderParam f) + (A * st.U) *
++      tensorR)
+   let high3 := pp.group.expMat pp.generator
+-    ((A * T) * (show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam f) + (A * st.V) * R)
++    ((A * T) * (show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam f) + (A * st.V) *
++      R)
+   let low1 := fun j => (pstar (Sum.inl j))⁻¹ * groupVecMul st.w M j
+   let low2 := pp.group.expVec pp.generator uhat
+   let low3 := fun u => pstar (Sum.inr u) *
+@@ -314,9 +317,11 @@ theorem simKeyCore_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ 
+       let high1 := pp.group.expMat pp.generator (A * (fun i j => T i (Sum.inr j))) ⊙
+         matMulGroup (A * st.W) M
+       let high2 := pp.group.expMat pp.generator
+-        ((A * T) * (show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ pp.orderParam f) + (A * st.U) * tensorR)
++        ((A * T) * (show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ pp.orderParam f) + (A * st.U)
++          * tensorR)
+       let high3 := pp.group.expMat pp.generator
+-        ((A * T) * (show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam f) + (A * st.V) * R)
++        ((A * T) * (show Matrix _ _ (ZMod pp.group.order) from PG.L0 κ pp.orderParam f) + (A * st.V)
++          * R)
+       let low1 := fun j => (pstar (Sum.inl j))⁻¹ * groupVecMul st.w M j
+       let low2 := pp.group.expVec pp.generator uhat
+       let low3 := fun u => pstar (Sum.inr u) *
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/CommittedSimulator.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/CommittedSimulator.lean
+new file mode 100644
+index 000000000..eb72d2d88
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/CommittedSimulator.lean
+@@ -0,0 +1,54 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Simulator
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.FromTwoStage
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The raw committed PHFE simulator
++
++The same stateful semi-adaptive simulator consumes the committed public input and the
++indexed function/value pairs. This raw conversion constructs no sampler. Its efficient
++interface has its own three explicit fields in the concrete simulator targets.
++
++## Main definitions
++
++* `Wee20.wee20Sim_raw`: the committed raw simulator obtained by the generic conversion.
++
++## Main results
++
++The conversion reader identifies the complete raw simulator without foreign unfolding.
++
++## References
++
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
++  revision of 3 January 2025, Definition 4.3 and Remark 4.6.
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Sections 2.2 and 3.2.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20
++
++open Complexity TCSlib.Cryptography.Pairing
++
++/-- The committed raw simulator runs the same stateful algorithms as the semi-adaptive
++one, with the allowed information projected from the commitment
++[GJLS21, Definition 4.3; Wee20, Section 2.2]. -/
++noncomputable def wee20Sim_raw (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) :
++    FEScheme.Raw.Simulator.Raw (wee20PHFE_raw G ℓ n d PG) :=
++  (wee20SASim_raw G ℓ n d PG).toSim
++
++/-- The committed raw simulator is precisely the generic raw conversion. -/
++theorem wee20Sim_raw_eq (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) :
++    wee20Sim_raw G ℓ n d PG = (wee20SASim_raw G ℓ n d PG).toSim := rfl
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Data.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Data.lean
+index 027a66de7..701bd453b 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Data.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Data.lean
+@@ -14,7 +14,8 @@ set_option autoImplicit false
+ 
+ The private input is used in both slots of Wee's quadratic scheme. The public input and
+ function descriptions are decoded modulo the order read from public parameters. Explicit
+-parameter and value codecs transport arbitrary class parameters and values to their residue interpretation;
++parameter and value codecs transport arbitrary class parameters and values to their residue
++  interpretation;
+ foreign class bundles need not be unfolded by a consumer.
+ 
+ ## Main definitions
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean
+index 3f1856534..a52ddf085 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean
+@@ -148,7 +148,8 @@ def mpkEquiv (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+ theorem mpkEquiv_eq (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+     (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
+     (pp : PublicParams (wee20PHFE_raw G ℓ n d PG).G κ) :
+-    mpkEquiv G ℓ n d PG κ pp = Equiv.refl (Quadratic.MPK G ℓ n n κ (publicParamsEquiv G ℓ n d PG κ pp)) := rfl
++    mpkEquiv G ℓ n d PG κ pp = Equiv.refl (Quadratic.MPK G ℓ n n κ (publicParamsEquiv G ℓ n d PG κ
++      pp)) := rfl
+ 
+ /-- Transport the raw bundle's SK values through its public-parameter codec. -/
+ def keyEquiv (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+@@ -174,7 +175,8 @@ def ctEquiv (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+ theorem ctEquiv_eq (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+     (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) (κ : ℕ)
+     (pp : PublicParams (wee20PHFE_raw G ℓ n d PG).G κ) :
+-    ctEquiv G ℓ n d PG κ pp = Equiv.refl (Quadratic.CT G n n κ (publicParamsEquiv G ℓ n d PG κ pp)) := rfl
++    ctEquiv G ℓ n d PG κ pp = Equiv.refl (Quadratic.CT G n n κ (publicParamsEquiv G ℓ n d PG κ pp))
++      := rfl
+ 
+ /-- Transport a raw class value to its scalar at the drawn public modulus. -/
+ def scalarValueEquiv (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Widths.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Widths.lean
+index 7ac2adb23..52c1e6157 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Widths.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Widths.lean
+@@ -41,7 +41,8 @@ open Complexity Turing TCSlib.Cryptography.Pairing
+ /-- The public key occupies `(16+24n+8ℓ)wG+10` bits in the nested-pair encoding.
+ This width is linear in the input dimensions [Wee20, Section 3.1]. -/
+ def mpkLen (G : BilinearGen) (ℓ n : PolyExpr) : PolyExpr :=
+-  (((PolyExpr.const 16).add ((PolyExpr.const 24).mul n)).add ((PolyExpr.const 8).mul ℓ)).mul G.wG |>.add (PolyExpr.const 10)
++  (((PolyExpr.const 16).add ((PolyExpr.const 24).mul n)).add ((PolyExpr.const 8).mul ℓ)).mul G.wG
++    |>.add (PolyExpr.const 10)
+ 
+ /-- The public-key width has the displayed numeric evaluation. -/
+ theorem mpkLen_eval (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ) :
+@@ -66,7 +67,8 @@ def skLen (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
+     (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) : PolyExpr :=
+   (((PolyExpr.const 2).mul (tensorFnLen ℓ (n.mul n) G.wG d)).add
+     (((((PolyExpr.const 8).mul (n.pow 3)).add ((PolyExpr.const 6).mul (n.pow 2))).add
+-      ((((PolyExpr.const 6).mul ℓ).add (PolyExpr.const 8)).mul PG.mBound)).mul G.wG)).add (PolyExpr.const 10)
++      ((((PolyExpr.const 6).mul ℓ).add (PolyExpr.const 8)).mul PG.mBound)).mul G.wG)).add
++        (PolyExpr.const 10)
+ 
+ /-- The function-key width has the displayed polynomial node-bound accounting. -/
+ theorem skLen_eval (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic.lean
+index 74d53448c..28a857820 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic.lean
+@@ -224,10 +224,12 @@ theorem encDraw_eq (G : BilinearGen) (κ : ℕ) (pp : PublicParams G κ) :
+       ((Fin 2 → ZMod pp.group.order) × (Fin 2 → ZMod pp.group.order) ×
+         Linear.EncDraw G κ pp) := rfl
+ 
+-instance instSetupDrawFinite (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++instance instSetupDrawFinite (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++  :
+     Fintype (SetupDraw G ℓ n1 n2 κ pp) := inferInstance
+ 
+-instance instSetupDrawNonempty (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++instance instSetupDrawNonempty (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G
++  κ) :
+     Nonempty (SetupDraw G ℓ n1 n2 κ pp) := inferInstance
+ 
+ instance instEncDrawFinite (G : BilinearGen) (κ : ℕ) (pp : PublicParams G κ) :
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSimulator.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSimulator.lean
+index eac222357..16a3384cd 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSimulator.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSimulator.lean
+@@ -85,16 +85,19 @@ theorem simEncDraw_eq (G : BilinearGen) (n1 n2 : PolyExpr) (κ : ℕ) (pp : Publ
+       ((Fin (n1.eval κ) → ZMod pp.group.order) ×
+         (Fin (n2.eval κ) → ZMod pp.group.order)) := rfl
+ 
+-instance instSimSetupDrawFinite (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++instance instSimSetupDrawFinite (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G
++  κ) :
+     Fintype (SimSetupDraw G ℓ n1 n2 κ pp) := inferInstance
+ 
+-instance instSimSetupDrawNonempty (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++instance instSimSetupDrawNonempty (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams
++  G κ) :
+     Nonempty (SimSetupDraw G ℓ n1 n2 κ pp) := inferInstance
+ 
+ instance instSimEncDrawFinite (G : BilinearGen) (n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
+     Fintype (SimEncDraw G n1 n2 κ pp) := inferInstance
+ 
+-instance instSimEncDrawNonempty (G : BilinearGen) (n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++instance instSimEncDrawNonempty (G : BilinearGen) (n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++  :
+     Nonempty (SimEncDraw G n1 n2 κ pp) := inferInstance
+ 
+ /-- Simulator setup computes its public group matrices and retains the fixed group matrix
+@@ -225,6 +228,7 @@ theorem simKey_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
+     (κ : ℕ) (pp : PublicParams G κ) (st : SimState G ℓ n1 n2 κ pp)
+     (f : Fn κ pp.orderParam) (x : Fin (ℓ.eval κ) → ZMod pp.group.order) (mu : pp.group.G) :
+     simKey G n1 n2 PG κ pp st f x mu =
+-      (simKeyCore G n1 n2 PG κ pp st f x mu <$> (ProbComp.sample (Linear.SimKeyDraw G PG κ pp f))) := rfl
++      (simKeyCore G n1 n2 PG κ pp st f x mu <$> (ProbComp.sample (Linear.SimKeyDraw G PG κ pp f)))
++        := rfl
+ 
+ end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
+diff --git a/TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean b/TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean
+index 75043b0cc..3fc9196ab 100644
+--- a/TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean
++++ b/TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean
+@@ -141,16 +141,19 @@ theorem mddhAdviceEnc_eq (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order =
+ /-- A polynomial bounds the parameter, dimension and one-hot headers and scalar blocks.
+ This is reduction-encoding glue. Binary lengths are bounded by their values plus one. -/
+ def mddhAdviceLen (d ℓ : PolyExpr) : PolyExpr :=
+-  ((((PolyExpr.var.mul (PolyExpr.const 2)).add ((PolyExpr.const 2).mul d)).add ((PolyExpr.const 2).mul ℓ)).add
++  ((((PolyExpr.var.mul (PolyExpr.const 2)).add ((PolyExpr.const 2).mul d)).add ((PolyExpr.const
++    2).mul ℓ)).add
+     (PolyExpr.const 10)).add ((d.add (PolyExpr.const 1)).add
+       ((((ℓ.mul (PolyExpr.const 3)).add ((PolyExpr.const 2).mul d)).add (ℓ.mul d)).mul G.wG))
+ 
+ /-- The advice-length expression has one term for each serialized block. -/
+ theorem mddhAdviceLen_eq (d ℓ : PolyExpr) :
+     G.mddhAdviceLen d ℓ =
+-      ((((PolyExpr.var.mul (PolyExpr.const 2)).add ((PolyExpr.const 2).mul d)).add ((PolyExpr.const 2).mul ℓ)).add
++      ((((PolyExpr.var.mul (PolyExpr.const 2)).add ((PolyExpr.const 2).mul d)).add ((PolyExpr.const
++        2).mul ℓ)).add
+         (PolyExpr.const 10)).add ((d.add (PolyExpr.const 1)).add
+-          ((((ℓ.mul (PolyExpr.const 3)).add ((PolyExpr.const 2).mul d)).add (ℓ.mul d)).mul G.wG)) := rfl
++          ((((ℓ.mul (PolyExpr.const 3)).add ((PolyExpr.const 2).mul d)).add (ℓ.mul d)).mul G.wG)) :=
++            rfl
+ 
+ /-- Every advice family has the same polynomial length bound. Technical glue.
+ 
