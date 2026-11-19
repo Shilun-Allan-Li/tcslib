@@ -6,6 +6,7 @@ Authors: TCSlib contributors
 import TCSlib.Cryptography.Candidates.Arithmetic
 import TCSlib.Cryptography.Candidates.ArithmeticDischarge
 import TCSlib.Cryptography.Candidates.ExtendedEuclidMachine
+import TCSlib.Cryptography.Candidates.PrimesBridge
 import TCSlib.Cryptography.Candidates.PrimesInP
 import TCSlib.Cryptography.Candidates.Concrete
 import TCSlib.Cryptography.Candidates.Factoring
@@ -44,6 +45,9 @@ polynomial-time computability is an explicit hypothesis, never an axiom.
   length `polyTimeComputable_sizeStr`.
 * `ExtendedEuclidMachine` — the extended Euclidean algorithm as a polynomial-time loop
   [PS10, Algorithm 43.2, Claim 43.3]: the gcd and Mathlib's `ZMod` inverse for every modulus.
+* `PrimesBridge` — the bounded reader bridge for `Randomized.PRIMES` and `Randomized.PRIMESBin`
+  (a recorded Rule-10 exception, ruling EF-H1-R2 (B), ledger DL-69; deleted when the Complexity
+  owner readers land).
 * `PrimesInP` — `PRIMES ∈ P` as the named hypothesis `PrimesInP` (true by
   Agrawal–Kayal–Saxena, [PS10, §2.6.5]) and the equivalence of the bundle's primality test with
   the little-endian one.
