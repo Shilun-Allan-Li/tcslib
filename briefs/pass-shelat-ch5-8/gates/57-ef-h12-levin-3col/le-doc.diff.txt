@@ -1,0 +1,258 @@
+diff --git a/TCSlib/Cryptography/ZeroKnowledge.lean b/TCSlib/Cryptography/ZeroKnowledge.lean
+index baff2e784..ac1119fda 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge.lean
+@@ -60,8 +60,8 @@ zero-knowledge theorems are statistical (D8, D10).
+   Propositions 127.6 and 128.8] (a sub-facade over `ThreeColoring/{Language,Protocol,Simulator}`).
+ * `NP` — Levin reductions and zero-knowledge proofs for NP
+   [PS10, Theorem 124.1].
+-* `LevinHardness` — `3COL` is NP-hard with Levin reductions (`levinNPHard_L3COL`), making
+-  [PS10, Theorem 124.1] unconditional.
++* `LevinHardness` — `3COL` is NP-hard with Levin reductions (`levinNPHard_L3COL`; Karp form:
++  [St73, Theorem, p. 22]), making [PS10, Theorem 124.1] unconditional.
+ * `Encryption` — zero-knowledge encryption and its equivalence with
+   single-message security [PS10, Definition 111.1, Theorem 112.2].
+ 
+@@ -69,4 +69,8 @@ zero-knowledge theorems are statistical (D8, D10).
+ 
+ * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
+   (Chapter 4, Knowledge.)
++* [St73] L. Stockmeyer, *Planar 3-Colorability is Polynomial Complete*, ACM SIGACT News 5(3),
++  July 1973, pp. 19–25. (Theorem, p. 22; proof pp. 21–22; Fig. 1, p. 24. The printed pages of
++  this issue are bound out of order: the proof of part 1), the reduction from 3SAT, runs from
++  p. 22 back to p. 21.)
+ -/
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness.lean b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness.lean
+index ad580557b..d20acb5a3 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness.lean
+@@ -24,9 +24,9 @@ set_option autoImplicit false
+ # `3COL` is NP-hard with Levin reductions
+ 
+ The string-level Levin reduction of every witness relation to `(3COL, R_3COL)` along the circuit
+-route [AB09, Lemmas 6.10 and 6.11, p. 111] and the course 3SAT → 3-colouring reduction, which
+-proves `TCSlib.Cryptography.LevinNPHard L3COL R3COL` and makes [PS10, Theorem 124.1]
+-unconditional.
++route [AB09, Lemmas 6.10 and 6.11, p. 111] and the 3SAT → 3-colouring reduction of [St73] in
++the course material's variant, which proves `TCSlib.Cryptography.LevinNPHard L3COL R3COL` and
++makes [PS10, Theorem 124.1] unconditional.
+ 
+ ## Contents
+ 
+@@ -50,4 +50,10 @@ unconditional.
+   University Press, 2009. (§6.1.2, Lemmas 6.10 and 6.11, p. 111.)
+ * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
+   (§4.7, Theorem 124.1.)
++* [St73] L. Stockmeyer, *Planar 3-Colorability is Polynomial Complete*, ACM SIGACT News 5(3),
++  July 1973, pp. 19–25. (Theorem, p. 22; proof pp. 21–22; Fig. 1, p. 24. The printed pages of
++  this issue are bound out of order: the proof of part 1), the reduction from 3SAT, runs from
++  p. 22 back to p. 21.)
++* CS 294-268 course material (UC Berkeley, Spring 2026, V. Guruswami), the 3SAT →
++  3-colouring reduction as formalized in `Complexity/NPReductions/ThreeSATToColoring.lean`.
+ -/
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/CircuitWitness.lean b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/CircuitWitness.lean
+index 212eec4d1..aeb947a99 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/CircuitWitness.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/CircuitWitness.lean
+@@ -47,7 +47,7 @@ is read by a one-pass transducer on the reversed string (`descPrefix`).
+ * `TCSlib.Cryptography.LevinHardness.polyTimeComputable_wireValues` — the witness map is
+   polynomial-time.
+ * `TCSlib.Cryptography.LevinHardness.R_3SAT_wireValues` — the witness map maps
+-  `R_CKT` into `R_3SAT` (given the equation of the Tseitin formula, see below).
++  `R_CKT` into `R_3SAT`.
+ * `TCSlib.Cryptography.LevinHardness.exists_eval_of_R_3SAT` — a witness of the Tseitin image
+   of a fan-in-two circuit gives a satisfying input.
+ 
+@@ -55,14 +55,14 @@ is read by a one-pass transducer on the reversed string (`descPrefix`).
+ `R_3SAT_wireValues` and `exists_eval_of_R_3SAT` follow the pattern of
+ `BoolCircuit.DAGCircuit.satisfiable_iff_toCNF_satisfiable` (`DAGCircuitSat.lean:354`) and
+ `Complexity.TQBFHard.toCNF_extension_iff` (`TQBFHardTseitin.lean:67`), with an explicit
+-witness. `BoolCircuit.DAGCircuit.toCNF` has no published equation; the first theorem
+-therefore takes it as the hypothesis
+-`∀ n (C : DAGCircuit n), C.toCNF = [(C.output, true)] :: tseitinGates n C.gates`.
++witness. `BoolCircuit.DAGCircuit.toCNF` has no published equation; the first theorem reads it
++through the quarantined reader `Bridge.toCNF_eq`,
++`C.toCNF = [(C.output, true)] :: tseitinGates n C.gates`.
+ 
+ ## References
+ 
+ * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*, Cambridge
+-  University Press, 2009. (§6.1.2, Definition 6.9, Lemma 6.11, p. 111.)
++  University Press, 2009. (Definition 6.1; §6.1.2, Lemma 6.11, p. 111.)
+ * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
+   (§4.7, Theorem 124.1, step 2.)
+ -/
+@@ -307,7 +307,7 @@ theorem wireValue_encode {n : ℕ} (C : DAGCircuit n) (hC : C.IsFaninTwo) (u : L
+     · rw [padInput_eq, List.length_append, List.length_replicate]; omega
+     · rw [hx, eval_withOutput]; exact h
+ 
+-/-- **The wire values are the circuit's vertex values** [AB09, Def 6.9]: for a fan-in-two
++/-- **The wire values are the circuit's vertex values** [AB09, Def 6.1]: for a fan-in-two
+ `C : DAGCircuit n` and every `v`,
+ `(wireValues C.encode u).getD v false = (C.values (fun i => u.getD i false)).getD v false`.
+ 
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringWitness.lean b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringWitness.lean
+index d1f1b2fd3..c67f0c17c 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringWitness.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/ColoringWitness.lean
+@@ -27,6 +27,9 @@ nodes of a clause gadget get the colours of the course table `clauseGadgetColor`
+ (`gadgetNodeColor` here). The proof that it is proper is redone here by a case analysis over the
+ edge families of `gadgetEdge`.
+ 
++This is the completeness colouring of [St73]'s reduction, which the paper leaves as "the converse
++is similar" [St73, p. 21], made explicit (disclosed re-derivation of the course's `sat3Coloring`).
++
+ ## Main definitions
+ 
+ * `TCSlib.Cryptography.LevinHardness.gadgetNodeColor` — the colours of the six gadget nodes.
+@@ -48,6 +51,10 @@ edge families of `gadgetEdge`.
+   reduction as formalized in `Complexity/NPReductions/ThreeSATToColoring.lean`.
+ * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*, Cambridge
+   University Press, 2009. (§2.3.)
++* [St73] L. Stockmeyer, *Planar 3-Colorability is Polynomial Complete*, ACM SIGACT News 5(3),
++  July 1973, pp. 19–25. (Theorem, p. 22; proof pp. 21–22; Fig. 1, p. 24. The printed pages of
++  this issue are bound out of order: the proof of part 1), the reduction from 3SAT, runs from
++  p. 22 back to p. 21.)
+ -/
+ 
+ namespace TCSlib.Cryptography.LevinHardness
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Gadget.lean b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Gadget.lean
+index 7ffe9a440..476f50226 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Gadget.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Gadget.lean
+@@ -30,6 +30,12 @@ its negation; the gadget triangles `{0,1,2}`, `{3,4,5}` and the edge `{2,3}` ins
+ each clause **of the formula** (the test `mem`); gadget nodes `0, 1, 4` to the clause's first,
+ second and third literal; gadget node `5` to the base and to the false node.
+ 
++This is the graph of Stockmeyer's reduction from 3SAT [St73, proof of the Theorem, part 1),
++p. 22, Fig. 1 p. 24] in the course material's variant: gadget nodes `0, …, 5` are [St73]'s
++`v₁, v₂, v₄, v₅, v₃, v₆`, with the literals attached at `0, 1, 4` as at `v₁, v₂, v₃`; the
++palette is a triangle (base, true, false) instead of [St73]'s arc `{t₁, t₂}` (base, false), and
++gadget node `5` is joined to the base as well as to the false node, which [St73] does not do.
++
+ ## Main definitions
+ 
+ * `TCSlib.Cryptography.LevinHardness.gadgetN` — the number of vertices `N = 3 + 2K + 6(2K)³`.
+@@ -51,7 +57,11 @@ second and third literal; gadget node `5` to the base and to the false node.
+ * CS 294-268 course material (UC Berkeley, Spring 2026, V. Guruswami), the 3SAT → 3-colouring
+   reduction as formalized in `Complexity/NPReductions/ThreeSATToColoring.lean`.
+ * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*, Cambridge
+-  University Press, 2009. (§2.3.)
++  University Press, 2009.
++* [St73] L. Stockmeyer, *Planar 3-Colorability is Polynomial Complete*, ACM SIGACT News 5(3),
++  July 1973, pp. 19–25. (Theorem, p. 22; proof pp. 21–22; Fig. 1, p. 24. The printed pages of
++  this issue are bound out of order: the proof of part 1), the reduction from 3SAT, runs from
++  p. 22 back to p. 21.)
+ -/
+ 
+ namespace TCSlib.Cryptography.LevinHardness
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Hardness.lean b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Hardness.lean
+index 4e61ab2c4..3a27e9c21 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Hardness.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Hardness.lean
+@@ -19,8 +19,9 @@ set_option autoImplicit false
+ # `3COL` is NP-hard with Levin reductions
+ 
+ The assembly of the Levin reduction `(L, R) → (3COL, R_3COL)` for every witness relation, along
+-the circuit route [AB09, Lemmas 6.10 and 6.11, p. 111] followed by the 3SAT → 3-colouring gadget
+-of the course material:
++the circuit route [AB09, Lemmas 6.10 and 6.11, p. 111] followed by the 3SAT → 3-colouring
++reduction of [St73, proof of the Theorem, part 1), pp. 21–22], in the variant formalized in the
++course material:
+ 
+ * `f₁ = tabInst …` prints the tableau circuit of the verifier (`Verifier.lean`), witness map the
+   certificate `certOf q x y`;
+@@ -35,7 +36,9 @@ of the course material:
+ 
+ This proves `LevinNPHard L3COL R3COL` ([PS10, §4.7, Theorem 124.1, step 2]; the hypothesis of
+ `zk_proof_of_witnessRelation` and `zk_proof_of_mem_NP` in `ZeroKnowledge/NP.lean`), and with it
+-the unconditional forms of [PS10, Theorem 124.1].
++the unconditional forms of [PS10, Theorem 124.1]. In Karp form, the polynomial completeness of
++3-colourability is [St73, Theorem, p. 22]; this file proves the stronger Levin form, with a
++witness map and exact output lengths.
+ 
+ ## Main definitions
+ 
+@@ -60,6 +63,10 @@ None: the instance and witness maps of the reduction are explicit terms in the p
+   (§4.7, Theorem 124.1, step 2.)
+ * CS 294-268 course material (UC Berkeley, Spring 2026, V. Guruswami), the 3SAT → 3-colouring
+   reduction of `Complexity/NPReductions/ThreeSATToColoring.lean`.
++* [St73] L. Stockmeyer, *Planar 3-Colorability is Polynomial Complete*, ACM SIGACT News 5(3),
++  July 1973, pp. 19–25. (Theorem, p. 22; proof pp. 21–22; Fig. 1, p. 24. The printed pages of
++  this issue are bound out of order: the proof of part 1), the reduction from 3SAT, runs from
++  p. 22 back to p. 21.)
+ -/
+ 
+ namespace TCSlib.Cryptography.LevinHardness
+@@ -196,10 +203,16 @@ namespace TCSlib.Cryptography
+ open Complexity Turing BoolCircuit LevinHardness
+ 
+ /-- **`3COL` is NP-hard with Levin reductions** [PS10, §4.7, Theorem 124.1, step 2 (the
+-hypothesis of the "every language in NP" form)]; [AB09, Lemmas 6.10 and 6.11, p. 111] for the
+-circuit route and the course 3SAT → 3-colouring reduction: every language `L` with a witness
+-relation `R` has a Levin reduction `(f, w)` to `(3COL, R_3COL)` with length polynomial `p ≥ id`,
+-`LevinNPHard L3COL R3COL`.
++hypothesis of the "every language in NP" form)]: every language `L` with a witness relation `R`
++has a Levin reduction `(f, w)` to `(3COL, R_3COL)` with length polynomial `p ≥ id`,
++`LevinNPHard L3COL R3COL`. In Karp form this is the polynomial completeness of 3-COLORABILITY
++[St73, Theorem, p. 22]. *Deviation:* [St73] gives an instance map only; this theorem adds a
++polynomial-time witness map and an exact output length (padding), reaches 3SAT along the circuit
++route [AB09, Lemmas 6.10 and 6.11, p. 111], and ends with [St73]'s reduction from 3SAT
++[St73, proof of the Theorem, part 1), pp. 21–22, Fig. 1] in the variant of the course material
++(a palette triangle in place of [St73]'s arc `{t₁, t₂}`, and each gadget's output node joined to
++the base as well as to the false node). The witness colouring, which [St73] leaves as "the
++converse is similar", is explicit here.
+ 
+ **Proof sketch.** Let `q, M, C, c` and the tableau instance map `f₁` come from
+ `exists_tabReduction`; `f₂ = dagCktSatToSAT3`, `f₃ = colorInst`. The composite `f₃ ∘ f₂ ∘ f₁` is
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Padding.lean b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Padding.lean
+index d7a40e706..bd4616482 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Padding.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Padding.lean
+@@ -42,7 +42,7 @@ both polynomial-time with `B` given in unary. Framework glue, no textbook counte
+ ## References
+ 
+ * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*, Cambridge
+-  University Press, 2009. (§2.3.)
++  University Press, 2009.
+ * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
+   (§4.7, Theorem 124.1, step 2.)
+ -/
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Relations.lean b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Relations.lean
+index a492e2b38..d4cbc8577 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Relations.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/Relations.lean
+@@ -19,8 +19,9 @@ The two intermediate witness relations of the Levin reduction
+ files of `ZeroKnowledge/LevinHardness/` read them through their readers.
+ 
+ * `R_CKT d u`: the string `d` describes (`BoolCircuit.DAGCircuit.encode`) a fan-in-two circuit
+-  that outputs `1` on the input read from `u` with default `false` (the certificate convention
+-  of `BoolCircuit.CVALPrefix`, [AB09, Def 6.9]).
++  that outputs `1` on the input read from `u` with default `false` ([AB09, Def 6.9] takes
++  `u ∈ {0,1}ⁿ`; reading `u` with default `false` is TCSlib's certificate convention, that of
++  `BoolCircuit.CVALPrefix`).
+ * `R_3SAT s a`: the formula `CNF.decode s` is a 3-CNF satisfied by the assignment read from the
+   word `a` with default `false`.
+ 
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/UnaryArith.lean b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/UnaryArith.lean
+index c6ec61d87..99ec33d93 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/UnaryArith.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/LevinHardness/UnaryArith.lean
+@@ -15,7 +15,7 @@ set_option autoImplicit false
+ 
+ Polynomial-time rows on unary functions `x ↦ 1^(f x)` used by the instance map
+ (`LevinHardness/ColoringGraph.lean`) and the colouring witness map
+-(`LevinHardness/ColoringWitness.lean`) of the Levin reduction `3SAT → 3COL` ([AB09, §2.3]):
++(`LevinHardness/ColoringWitness.lean`) of the Levin reduction `3SAT → 3COL`:
+ quotient and remainder by a constant, the literal codes `clauseLit` of a clause code, and the
+ truth value `litVal` of a literal code under an assignment word. All are read off the public rows
+ of `ZeroKnowledge/EncodingMachines.lean` (`divNum_poly`, `modNum_poly`, `unaryPolyOf_poly`,
+@@ -38,7 +38,7 @@ None: the file states polynomial-time rows only.
+ ## References
+ 
+ * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*, Cambridge
+-  University Press, 2009. (§2.3.)
++  University Press, 2009.
+ -/
+ 
+ namespace TCSlib.Cryptography.LevinHardness
