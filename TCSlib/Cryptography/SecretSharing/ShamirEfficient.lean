@@ -848,7 +848,7 @@ theorem coe_coinModulus (b : PolyExpr) (κ : ℕ) (π : {π // shamirAdm b κ π
 
 /-- **The dealer's coins are sampled efficiently**: one uniform residue `r < p^{k−1}`, written
 `Nat.bits r`, drawn by the bucket sampler (`CoinSampling.samplesEfficiently_residue`, reindexed by
-`samplesEfficiently_comap`, read through `ZMod.finEquiv` and re-encoded by
+`CoinSampling.samplesEfficiently_comap`, read through `ZMod.finEquiv` and re-encoded by
 `Encoding.BinaryArith.toLE`), with the parameter word `p^{k−1}` computed by `dealerWord b`.
 [PS10, Def 152.1] (`Share` is probabilistic polynomial-time)
 
@@ -864,8 +864,8 @@ theorem dealerSamples_shamir (b : PolyExpr) :
       ShamirParams.encode fun _ r => Nat.bits r := by
   set ε : ∀ κ (π : {π // shamirAdm b κ π}), ZMod ((coinModulus b κ π).1 : ℕ) ≃
       Fin (π.1.p ^ (π.1.k - 1)) := fun κ π => (ZMod.finEquiv _).symm.toEquiv with hε
-  have h1 := samplesEfficiently_comap (Cryptography.CoinSampling.samplesEfficiently_residue b)
-    (coinModulus b)
+  have h1 := Cryptography.CoinSampling.samplesEfficiently_comap
+    (Cryptography.CoinSampling.samplesEfficiently_residue b) (coinModulus b)
   have h2 := h1.map_output (encOut' := fun κ (π : {π // shamirAdm b κ π}) (r : Fin
       (π.1.p ^ (π.1.k - 1))) => Nat.bits r) (fun κ π a => ε κ π a)
     Cryptography.Encoding.BinaryArith.polyTimeComputable_toLE fun κ π a => by

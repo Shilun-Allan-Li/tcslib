@@ -53,7 +53,6 @@ whose correctness and privacy transfer from the unrestricted scheme
 * `Scheme.restrict_correct`, `Scheme.restrict_localReconstruct`,
   `Scheme.restrict_perfectPrivacy`: transfer to a restriction.
 * `AccessStructure.threshold_map_auth`: the threshold structure is read through an injection.
-* `samplesEfficiently_comap`: an efficient sampler reindexed along a map of public inputs.
 * `addModW_resWord`, `subModW_resWord`, `mulModW_resWord`, `invModW_resWord` and their
   `polyTimeComputable_*` lemmas: the residue layer is polynomial-time and exact.
 
@@ -150,21 +149,6 @@ theorem restrict_perfectPrivacy {Γ : AccessStructure P} {Γ' : AccessStructure 
 end Scheme
 
 /-! ### The dealer's coins -/
-
-/-- **Reindexing an efficient sampler along a map of public inputs** `φ κ : P' κ → P κ`: the
-same sampler, read at `φ κ π'` (the same `UniformSampler`, coin polynomial and core machine;
-`CoinSampling.samplesEfficiently_iff_exists`). Glue; a candidate for `CoinSampling.Contract`. -/
-theorem samplesEfficiently_comap {P P' : ℕ → Type} {Draw β : (κ : ℕ) → P κ → Type}
-    {y : ∀ κ, P κ → List Bool} {encDraw : ∀ κ π, Draw κ π → List Bool}
-    {encOut : ∀ κ π, β κ π → List Bool} {core : ∀ κ π, Draw κ π → β κ π}
-    (h : CoinSampling.SamplesEfficiently y encDraw encOut core) (φ : ∀ κ, P' κ → P κ) :
-    CoinSampling.SamplesEfficiently (Draw := fun κ π => Draw κ (φ κ π))
-      (β := fun κ π => β κ (φ κ π)) (fun κ π => y κ (φ κ π)) (fun κ π => encDraw κ (φ κ π))
-      (fun κ π => encOut κ (φ κ π)) fun κ π => core κ (φ κ π) := by
-  obtain ⟨U, c, e, f, he, hc, hf, hfe⟩ := (CoinSampling.samplesEfficiently_iff_exists _ _ _ _).1 h
-  exact (CoinSampling.samplesEfficiently_iff_exists _ _ _ _).2
-    ⟨U, c, fun κ π => e κ (φ κ π), f, fun κ π => he κ (φ κ π), fun κ π => hc κ (φ κ π), hf,
-      fun κ π => hfe κ (φ κ π)⟩
 
 /-- **The dealer's coins are sampled efficiently**: at every security parameter `κ` and every
 public parameter `π` admissible at `κ` (`Adm κ π`, typically a bit-length bound on the coin space
