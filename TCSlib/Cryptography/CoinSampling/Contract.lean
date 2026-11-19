@@ -1,0 +1,460 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
+-/
+import TCSlib.Cryptography.CoinSampling.Efficiency
+import Mathlib.Data.ZMod.Basic
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# The efficiency contract of an honest sampler
+
+An honest sampler of a primitive is stated with an **exact law**: a deterministic core
+`core κ π : Draw κ π → β κ π` applied to one uniform draw `Games.ProbComp.sample (Draw κ π)` of a
+finite type, at the security parameter `κ` and the public input `π` (the modulus, the public
+parameters, an index). `SamplesEfficiently y encDraw encOut core` says that this sampler is
+efficient in the uniform sense of [PS10, Definition 23.4] (one machine, uniform coins), split into
+two halves:
+
+* `DrawSamplable y encDraw`, **the draw half**: a `UniformSampler` `U` (one polynomial-time string
+  map for every parameter word, with no advice, no κ-indexed program and no hard-wired modulus),
+  a coin polynomial `c` and an equivalence `U.Ω (y κ π) ≃ Draw κ π` compatible with the
+  encodings, such that `U`'s coin sampler fails with probability at most `2^{-κ}` at `c(κ)`
+  coins. On success the coin sampler is exactly uniform (`CoinSampler.uniform_of_some`), so the
+  law stays the exact `sample (Draw κ π)` and the failure term is the only slack.
+* `CoreComputable y encDraw encOut core`, **the core half**: one `PolyTimeComputable` map `f`,
+  quantified before `κ` and `π`, writes the encoded core on the input `⟨1^κ, ⟨y κ π, d⟩⟩`.
+
+Here `y κ π` is the **parameter word** that the machine reads from its input: the encoded public
+input (for a modulus, its numeral). Nothing computes it, and the machine is the same for every
+`κ` and every `π`.
+
+**Uniformity.** This contract is for **honest** samplers, which are uniform: neither half has an
+advice string, a family of machines indexed by `κ` or a hard-wired public input. Reductions,
+which may use advice, are realised by `Complexity.NUPPT.RealizesOn` instead.
+
+## Main definitions
+
+* `CoinSampling.DrawSamplable y encDraw`: the uniform coin sampler of the draws.
+* `CoinSampling.CoreComputable y encDraw encOut core`: the polynomial-time core.
+* `CoinSampling.SamplesEfficiently y encDraw encOut core`: both halves.
+* `CoinSampling.BoundedModulus b κ`, `modulusWord b`, `residueEnc b`: moduli `0 < q ≤ 2^{b(κ)}`,
+  their numerals, and residues modulo `q` written as numerals.
+* `CoinSampling.seedModulusWord n`: the numeral `⦃2^n⦄_{n+1} = 1 0^n`, the word on which the
+  bucket sampler draws an `n`-bit seed.
+
+## Main results
+
+* `drawSamplable_iff`, `coreComputable_iff`, `samplesEfficiently_iff`,
+  `samplesEfficiently_iff_exists`, `SamplesEfficiently.drawSamplable`,
+  `SamplesEfficiently.coreComputable`, `SamplesEfficiently.intro`: the readers.
+* `coreComputable_id`: the identity core is computable on every draw.
+* `CoreComputable.map`, `CoreComputable.map_output`, `CoreComputable.pair`,
+  `DrawSamplable.congr`, and their `SamplesEfficiently` forms: pushforward of the output along a
+  polynomial-time map, pairing of two cores on one draw, and transport of the draw along an
+  equivalence.
+* `DrawSamplable.comap`, `samplesEfficiently_comap`, `drawSamplable_restrict`: reindexing a
+  sampler along a map of public inputs, and its restriction to a section.
+* `natToList_two_pow`, `polyTimeComputable_twoPowWord`: the numeral of `2^w` is `1 0^w`, and
+  `1 0^{W(|x|)}` is written in polynomial time.
+* `drawSamplable_residue`, `samplesEfficiently_residue`: non-vacuity, uniform `ZMod q` through
+  the bucket sampler `bucketSampler`, with `q` read from the input.
+
+## References
+
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
+  Definition 23.4 (probabilistic polynomial-time machines: one machine, uniform coins).
+* [Lem19] D. Lemire, *Fast Random Integer Generation in an Interval*, ACM Trans. Model. Comput.
+  Simul. 29(1), 2019; arXiv:1805.10941v4, §3.2, Algorithm 4 (the bucket sampler, one round).
+
+**Products of draws.** A product of two draws is not derived here: a `UniformSampler` fixes its
+coin sampler from the coin count alone, so splitting the coins between two samplers needs a
+concrete product sampler and its machine (`CoinSampler.prod` with a polynomial-time coin
+splitter). Pairing two cores on **one** draw is `CoreComputable.pair`.
+-/
+
+namespace TCSlib.Cryptography.CoinSampling
+
+open Complexity Turing
+open TCSlib.Cryptography.NumberTheory (listToNat)
+
+variable {P : ℕ → Type} {Draw Draw' β γ : (κ : ℕ) → P κ → Type}
+
+/-! ### The contract -/
+
+/-- **The draw half of a sampler's efficiency**: a `UniformSampler` `U` (one polynomial-time
+machine for every parameter word, uniform [PS10, Definition 23.4]), a coin polynomial `c` and,
+at every `κ` and public input `π`, an equivalence `e κ π : U.Ω (y κ π) ≃ Draw κ π` with
+`U.enc (y κ π) w = encDraw κ π (e κ π w)`, such that `U`'s coin sampler on the parameter word
+`y κ π` with `c(κ)` coins fails with probability at most `2^{-κ}`. The machine then writes
+`encDraw` of an exactly uniform draw on success. `e` need not be computable: the machine's output
+is fixed by `U.raw` and the encoding equation. For honest samplers, which are uniform. -/
+def DrawSamplable (y : ∀ κ, P κ → List Bool) (encDraw : ∀ κ π, Draw κ π → List Bool) : Prop :=
+  ∃ (U : UniformSampler) (c : PolyExpr) (e : ∀ κ π, U.Ω (y κ π) ≃ Draw κ π),
+    (∀ κ π w, U.enc (y κ π) w = encDraw κ π (e κ π w)) ∧
+    ∀ κ π, (U.sampler (y κ π) (c.eval κ)).fail ≤ (2 : ℝ)⁻¹ ^ κ
+
+/-- The defining equation of `DrawSamplable`. -/
+theorem drawSamplable_iff (y : ∀ κ, P κ → List Bool) (encDraw : ∀ κ π, Draw κ π → List Bool) :
+    DrawSamplable y encDraw ↔
+      ∃ (U : UniformSampler) (c : PolyExpr) (e : ∀ κ π, U.Ω (y κ π) ≃ Draw κ π),
+        (∀ κ π w, U.enc (y κ π) w = encDraw κ π (e κ π w)) ∧
+        ∀ κ π, (U.sampler (y κ π) (c.eval κ)).fail ≤ (2 : ℝ)⁻¹ ^ κ := Iff.rfl
+
+/-- **The core half of a sampler's efficiency**: one polynomial-time map `f`, chosen before `κ`
+and the public input `π`, computes the core on the encoded draw with the parameter word on the
+input: `f ⟨1^κ, ⟨y κ π, encDraw κ π d⟩⟩ = encOut κ π (core κ π d)` (the adversary input
+`NUPPT.advInput`). Uniform: no advice and no κ-indexed program. -/
+def CoreComputable (y : ∀ κ, P κ → List Bool) (encDraw : ∀ κ π, Draw κ π → List Bool)
+    (encOut : ∀ κ π, β κ π → List Bool) (core : ∀ κ π, Draw κ π → β κ π) : Prop :=
+  ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
+    ∀ κ π d, f (NUPPT.advInput κ (pairEncode (y κ π) (encDraw κ π d))) =
+      encOut κ π (core κ π d)
+
+/-- The defining equation of `CoreComputable`. -/
+theorem coreComputable_iff (y : ∀ κ, P κ → List Bool) (encDraw : ∀ κ π, Draw κ π → List Bool)
+    (encOut : ∀ κ π, β κ π → List Bool) (core : ∀ κ π, Draw κ π → β κ π) :
+    CoreComputable y encDraw encOut core ↔
+      ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
+        ∀ κ π d, f (NUPPT.advInput κ (pairEncode (y κ π) (encDraw κ π d))) =
+          encOut κ π (core κ π d) := Iff.rfl
+
+/-- **The efficiency contract of an honest sampler** `core κ π <$> sample (Draw κ π)`: its draw
+is sampled from fair coins by a `UniformSampler`, exactly on success and with failure at most
+`2^{-κ}` (`DrawSamplable`), and its core is polynomial-time on the encoded draw
+(`CoreComputable`), with the parameter word `y κ π` (the encoded public input) on the machine's
+input in both. This is the uniform notion of [PS10, Definition 23.4] (one machine, uniform
+coins): it is for **honest** samplers, and admits no advice, no κ-indexed program and no
+hard-wired modulus. The law of the sampler stays the exact one; the contract only adds its
+efficiency. -/
+def SamplesEfficiently (y : ∀ κ, P κ → List Bool) (encDraw : ∀ κ π, Draw κ π → List Bool)
+    (encOut : ∀ κ π, β κ π → List Bool) (core : ∀ κ π, Draw κ π → β κ π) : Prop :=
+  DrawSamplable y encDraw ∧ CoreComputable y encDraw encOut core
+
+/-- The defining equation of `SamplesEfficiently`: both halves. -/
+theorem samplesEfficiently_iff (y : ∀ κ, P κ → List Bool)
+    (encDraw : ∀ κ π, Draw κ π → List Bool) (encOut : ∀ κ π, β κ π → List Bool)
+    (core : ∀ κ π, Draw κ π → β κ π) :
+    SamplesEfficiently y encDraw encOut core ↔
+      DrawSamplable y encDraw ∧ CoreComputable y encDraw encOut core := Iff.rfl
+
+/-- **`SamplesEfficiently` in one existential**: a `UniformSampler` `U`, a coin polynomial `c`, an
+equivalence `e` compatible with the encodings, failure at most `2^{-κ}`, and a polynomial-time
+`f` computing the core on `⟨1^κ, ⟨y κ π, encDraw κ π d⟩⟩`. Glue: the halves'
+existentials are independent (`drawSamplable_iff`, `coreComputable_iff`). -/
+theorem samplesEfficiently_iff_exists (y : ∀ κ, P κ → List Bool)
+    (encDraw : ∀ κ π, Draw κ π → List Bool) (encOut : ∀ κ π, β κ π → List Bool)
+    (core : ∀ κ π, Draw κ π → β κ π) :
+    SamplesEfficiently y encDraw encOut core ↔
+      ∃ (U : UniformSampler) (c : PolyExpr) (e : ∀ κ π, U.Ω (y κ π) ≃ Draw κ π)
+        (f : List Bool → List Bool),
+        (∀ κ π w, U.enc (y κ π) w = encDraw κ π (e κ π w)) ∧
+        (∀ κ π, (U.sampler (y κ π) (c.eval κ)).fail ≤ (2 : ℝ)⁻¹ ^ κ) ∧
+        PolyTimeComputable f ∧
+        ∀ κ π d, f (NUPPT.advInput κ (pairEncode (y κ π) (encDraw κ π d))) =
+          encOut κ π (core κ π d) := by
+  rw [samplesEfficiently_iff, drawSamplable_iff, coreComputable_iff]
+  constructor
+  · rintro ⟨⟨U, c, e, he, hc⟩, f, hf, hfe⟩
+    exact ⟨U, c, e, f, he, hc, hf, hfe⟩
+  · rintro ⟨U, c, e, f, he, hc, hf, hfe⟩
+    exact ⟨⟨U, c, e, he, hc⟩, f, hf, hfe⟩
+
+/-- The draw half of an efficient sampler (`samplesEfficiently_iff`). -/
+theorem SamplesEfficiently.drawSamplable {y : ∀ κ, P κ → List Bool}
+    {encDraw : ∀ κ π, Draw κ π → List Bool} {encOut : ∀ κ π, β κ π → List Bool}
+    {core : ∀ κ π, Draw κ π → β κ π} (h : SamplesEfficiently y encDraw encOut core) :
+    DrawSamplable y encDraw :=
+  ((samplesEfficiently_iff y encDraw encOut core).1 h).1
+
+/-- The core half of an efficient sampler (`samplesEfficiently_iff`). -/
+theorem SamplesEfficiently.coreComputable {y : ∀ κ, P κ → List Bool}
+    {encDraw : ∀ κ π, Draw κ π → List Bool} {encOut : ∀ κ π, β κ π → List Bool}
+    {core : ∀ κ π, Draw κ π → β κ π} (h : SamplesEfficiently y encDraw encOut core) :
+    CoreComputable y encDraw encOut core :=
+  ((samplesEfficiently_iff y encDraw encOut core).1 h).2
+
+/-- An efficient sampler from its two halves (`samplesEfficiently_iff`). -/
+theorem SamplesEfficiently.intro {y : ∀ κ, P κ → List Bool}
+    {encDraw : ∀ κ π, Draw κ π → List Bool} {encOut : ∀ κ π, β κ π → List Bool}
+    {core : ∀ κ π, Draw κ π → β κ π} (hd : DrawSamplable y encDraw)
+    (hc : CoreComputable y encDraw encOut core) : SamplesEfficiently y encDraw encOut core :=
+  (samplesEfficiently_iff y encDraw encOut core).2 ⟨hd, hc⟩
+
+/-! ### Closure -/
+
+/-- **The identity core** is computable on every draw: `f = pairSndD ∘ pairSndD` reads the
+encoded draw back from `⟨1^κ, ⟨y κ π, encDraw κ π d⟩⟩` (`NUPPT.advInput_eq`,
+`pairSndD_pairEncode`, `polyTimeComputable_pairSndD`). Glue. -/
+theorem coreComputable_id (y : ∀ κ, P κ → List Bool) (encDraw : ∀ κ π, Draw κ π → List Bool) :
+    CoreComputable y encDraw encDraw (fun _ _ d => d) :=
+  (coreComputable_iff _ _ _ _).2 ⟨fun z => pairSndD (pairSndD z),
+    polyTimeComputable_pairSndD.comp' polyTimeComputable_pairSndD, fun κ π d => by
+      dsimp only
+      rw [NUPPT.advInput_eq, pairSndD_pairEncode, pairSndD_pairEncode]⟩
+
+/-- **Pushforward of a core** along a map `g` that a polynomial-time `h` computes with the
+parameter word on the input: if `h ⟨1^κ, ⟨y κ π, encOut κ π b⟩⟩ = encOut' κ π (g κ π b)`, then
+`g ∘ core` is computable. Glue: `f' z = h ⟨fst z, ⟨fst (snd z), f z⟩⟩`
+(`PolyTimeComputable.pairEncode`, `polyTimeComputable_pairFstD`, `polyTimeComputable_pairSndD`).
+-/
+theorem CoreComputable.map {y : ∀ κ, P κ → List Bool} {encDraw : ∀ κ π, Draw κ π → List Bool}
+    {encOut : ∀ κ π, β κ π → List Bool} {core : ∀ κ π, Draw κ π → β κ π}
+    {encOut' : ∀ κ π, γ κ π → List Bool} (hc : CoreComputable y encDraw encOut core)
+    (g : ∀ κ π, β κ π → γ κ π) {h : List Bool → List Bool} (hh : PolyTimeComputable h)
+    (hg : ∀ κ π b, h (NUPPT.advInput κ (pairEncode (y κ π) (encOut κ π b))) =
+      encOut' κ π (g κ π b)) :
+    CoreComputable y encDraw encOut' fun κ π d => g κ π (core κ π d) := by
+  obtain ⟨f, hf, hfe⟩ := (coreComputable_iff _ _ _ _).1 hc
+  refine (coreComputable_iff _ _ _ _).2
+    ⟨fun z => h (pairEncode (pairFstD z) (pairEncode (pairFstD (pairSndD z)) (f z))),
+      hh.comp' (polyTimeComputable_pairFstD.pairEncode
+        ((polyTimeComputable_pairFstD.comp' polyTimeComputable_pairSndD).pairEncode hf)),
+      fun κ π d => ?_⟩
+  dsimp only
+  rw [hfe, ← hg]
+  simp only [NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode]
+
+/-- **Pushforward of a core** along a map `g` that a polynomial-time `h` computes on the encoded
+output alone, `h (encOut κ π b) = encOut' κ π (g κ π b)` (`CoreComputable.map` with
+`h ∘ pairSndD ∘ pairSndD`). Glue. -/
+theorem CoreComputable.map_output {y : ∀ κ, P κ → List Bool}
+    {encDraw : ∀ κ π, Draw κ π → List Bool} {encOut : ∀ κ π, β κ π → List Bool}
+    {core : ∀ κ π, Draw κ π → β κ π} {encOut' : ∀ κ π, γ κ π → List Bool}
+    (hc : CoreComputable y encDraw encOut core) (g : ∀ κ π, β κ π → γ κ π)
+    {h : List Bool → List Bool} (hh : PolyTimeComputable h)
+    (hg : ∀ κ π b, h (encOut κ π b) = encOut' κ π (g κ π b)) :
+    CoreComputable y encDraw encOut' fun κ π d => g κ π (core κ π d) :=
+  hc.map g (hh.comp' (polyTimeComputable_pairSndD.comp' polyTimeComputable_pairSndD))
+    fun κ π b => by rw [NUPPT.advInput_eq, pairSndD_pairEncode, pairSndD_pairEncode, hg]
+
+/-- **Pairing two cores on one draw**: if `core₁` and `core₂` are computable on the same draw,
+so is `d ↦ (core₁ d, core₂ d)`, with output `⟨encOut₁, encOut₂⟩`. Glue: `f z = ⟨f₁ z, f₂ z⟩`
+(`PolyTimeComputable.pairEncode`). -/
+theorem CoreComputable.pair {y : ∀ κ, P κ → List Bool} {encDraw : ∀ κ π, Draw κ π → List Bool}
+    {encOut₁ : ∀ κ π, β κ π → List Bool} {core₁ : ∀ κ π, Draw κ π → β κ π}
+    {encOut₂ : ∀ κ π, γ κ π → List Bool} {core₂ : ∀ κ π, Draw κ π → γ κ π}
+    (h₁ : CoreComputable y encDraw encOut₁ core₁) (h₂ : CoreComputable y encDraw encOut₂ core₂) :
+    CoreComputable y encDraw (fun κ π o => pairEncode (encOut₁ κ π o.1) (encOut₂ κ π o.2))
+      fun κ π d => (core₁ κ π d, core₂ κ π d) := by
+  obtain ⟨f₁, hf₁, hfe₁⟩ := (coreComputable_iff _ _ _ _).1 h₁
+  obtain ⟨f₂, hf₂, hfe₂⟩ := (coreComputable_iff _ _ _ _).1 h₂
+  exact (coreComputable_iff _ _ _ _).2 ⟨fun z => pairEncode (f₁ z) (f₂ z), hf₁.pairEncode hf₂,
+    fun κ π d => by dsimp only; rw [hfe₁, hfe₂]⟩
+
+/-- **Transport of a draw** along equivalences `ε κ π : Draw κ π ≃ Draw' κ π` that preserve the
+encoding, `encDraw' κ π (ε κ π d) = encDraw κ π d`: the same sampler, read through
+`e κ π ≫ ε κ π`. Glue. -/
+theorem DrawSamplable.congr {y : ∀ κ, P κ → List Bool} {encDraw : ∀ κ π, Draw κ π → List Bool}
+    {encDraw' : ∀ κ π, Draw' κ π → List Bool} (h : DrawSamplable y encDraw)
+    (ε : ∀ κ π, Draw κ π ≃ Draw' κ π)
+    (hε : ∀ κ π d, encDraw' κ π (ε κ π d) = encDraw κ π d) : DrawSamplable y encDraw' := by
+  obtain ⟨U, c, e, he, hc⟩ := (drawSamplable_iff _ _).1 h
+  exact (drawSamplable_iff _ _).2 ⟨U, c, fun κ π => (e κ π).trans (ε κ π),
+    fun κ π w => by rw [Equiv.trans_apply, hε, he], hc⟩
+
+/-- **Pushforward of an efficient sampler** along a map computed with the parameter word on the
+input (`CoreComputable.map`; the draw half is unchanged). Glue. -/
+theorem SamplesEfficiently.map {y : ∀ κ, P κ → List Bool}
+    {encDraw : ∀ κ π, Draw κ π → List Bool} {encOut : ∀ κ π, β κ π → List Bool}
+    {core : ∀ κ π, Draw κ π → β κ π} {encOut' : ∀ κ π, γ κ π → List Bool}
+    (hs : SamplesEfficiently y encDraw encOut core) (g : ∀ κ π, β κ π → γ κ π)
+    {h : List Bool → List Bool} (hh : PolyTimeComputable h)
+    (hg : ∀ κ π b, h (NUPPT.advInput κ (pairEncode (y κ π) (encOut κ π b))) =
+      encOut' κ π (g κ π b)) :
+    SamplesEfficiently y encDraw encOut' fun κ π d => g κ π (core κ π d) :=
+  .intro hs.drawSamplable (hs.coreComputable.map g hh hg)
+
+/-- **Pushforward of an efficient sampler** along a map computed on the encoded output alone
+(`CoreComputable.map_output`). Glue. -/
+theorem SamplesEfficiently.map_output {y : ∀ κ, P κ → List Bool}
+    {encDraw : ∀ κ π, Draw κ π → List Bool} {encOut : ∀ κ π, β κ π → List Bool}
+    {core : ∀ κ π, Draw κ π → β κ π} {encOut' : ∀ κ π, γ κ π → List Bool}
+    (hs : SamplesEfficiently y encDraw encOut core) (g : ∀ κ π, β κ π → γ κ π)
+    {h : List Bool → List Bool} (hh : PolyTimeComputable h)
+    (hg : ∀ κ π b, h (encOut κ π b) = encOut' κ π (g κ π b)) :
+    SamplesEfficiently y encDraw encOut' fun κ π d => g κ π (core κ π d) :=
+  .intro hs.drawSamplable (hs.coreComputable.map_output g hh hg)
+
+/-- **Pairing an efficient sampler with a second computable core** on the same draw
+(`CoreComputable.pair`). Glue. -/
+theorem SamplesEfficiently.pair {y : ∀ κ, P κ → List Bool}
+    {encDraw : ∀ κ π, Draw κ π → List Bool} {encOut₁ : ∀ κ π, β κ π → List Bool}
+    {core₁ : ∀ κ π, Draw κ π → β κ π} {encOut₂ : ∀ κ π, γ κ π → List Bool}
+    {core₂ : ∀ κ π, Draw κ π → γ κ π} (h₁ : SamplesEfficiently y encDraw encOut₁ core₁)
+    (h₂ : CoreComputable y encDraw encOut₂ core₂) :
+    SamplesEfficiently y encDraw (fun κ π o => pairEncode (encOut₁ κ π o.1) (encOut₂ κ π o.2))
+      fun κ π d => (core₁ κ π d, core₂ κ π d) :=
+  .intro h₁.drawSamplable (h₁.coreComputable.pair h₂)
+
+/-- **Transport of an efficient sampler's draw** along encoding-preserving equivalences
+`ε κ π : Draw κ π ≃ Draw' κ π`, with the core read through `(ε κ π).symm`
+(`DrawSamplable.congr`; the core's map is unchanged). Glue. -/
+theorem SamplesEfficiently.congr {y : ∀ κ, P κ → List Bool}
+    {encDraw : ∀ κ π, Draw κ π → List Bool} {encDraw' : ∀ κ π, Draw' κ π → List Bool}
+    {encOut : ∀ κ π, β κ π → List Bool} {core : ∀ κ π, Draw κ π → β κ π}
+    (hs : SamplesEfficiently y encDraw encOut core) (ε : ∀ κ π, Draw κ π ≃ Draw' κ π)
+    (hε : ∀ κ π d, encDraw' κ π (ε κ π d) = encDraw κ π d) :
+    SamplesEfficiently y encDraw' encOut fun κ π d => core κ π ((ε κ π).symm d) := by
+  obtain ⟨f, hf, hfe⟩ := (coreComputable_iff _ _ _ _).1 hs.coreComputable
+  refine .intro (hs.drawSamplable.congr ε hε) ((coreComputable_iff _ _ _ _).2 ⟨f, hf, ?_⟩)
+  intro κ π d
+  rw [← hfe, ← hε κ π ((ε κ π).symm d), Equiv.apply_symm_apply]
+
+/-- **Reindexing the draw half along a map of public inputs** `φ κ : P' κ → P κ`: if the draws
+`Draw κ π` are `DrawSamplable` at the words `y κ π`, so are the draws `Draw κ (φ κ π')` at the
+words `y κ (φ κ π')`, by the same `UniformSampler`, coin polynomial and equivalences, read at
+`φ κ π'` (`drawSamplable_iff`). Glue. -/
+theorem DrawSamplable.comap {P P' : ℕ → Type} {Draw : (κ : ℕ) → P κ → Type}
+    {y : ∀ κ, P κ → List Bool} {encDraw : ∀ κ π, Draw κ π → List Bool}
+    (h : DrawSamplable y encDraw) (φ : ∀ κ, P' κ → P κ) :
+    DrawSamplable (Draw := fun κ π => Draw κ (φ κ π)) (fun κ π => y κ (φ κ π))
+      (fun κ π => encDraw κ (φ κ π)) := by
+  obtain ⟨U, c, e, he, hc⟩ := (drawSamplable_iff _ _).1 h
+  exact (drawSamplable_iff _ _).2
+    ⟨U, c, fun κ π => e κ (φ κ π), fun κ π w => he κ (φ κ π) w, fun κ π => hc κ (φ κ π)⟩
+
+/-- **Restriction of the draw half along a section**: if draws indexed by public inputs `π` are
+`DrawSamplable`, so are the draws at the fixed public input `s κ`, with the public input `Unit`
+(the same sampler, coin polynomial and equivalences, read at `π = s κ`: `DrawSamplable.comap`
+along the constant map `_ ↦ s κ`). Glue. -/
+theorem drawSamplable_restrict {P : ℕ → Type} {Draw : (κ : ℕ) → P κ → Type}
+    {y : ∀ κ, P κ → List Bool} {encDraw : ∀ κ π, Draw κ π → List Bool}
+    (h : DrawSamplable y encDraw) (s : ∀ κ, P κ) :
+    DrawSamplable (P := fun _ => Unit) (Draw := fun κ _ => Draw κ (s κ))
+      (fun κ _ => y κ (s κ)) (fun κ _ => encDraw κ (s κ)) :=
+  h.comap fun κ _ => s κ
+
+/-- **Reindexing an efficient sampler along a map of public inputs** `φ κ : P' κ → P κ`: the
+same sampler, read at `φ κ π'` (the same `UniformSampler`, coin polynomial and core machine;
+`samplesEfficiently_iff_exists`). Glue. -/
+theorem samplesEfficiently_comap {P P' : ℕ → Type} {Draw β : (κ : ℕ) → P κ → Type}
+    {y : ∀ κ, P κ → List Bool} {encDraw : ∀ κ π, Draw κ π → List Bool}
+    {encOut : ∀ κ π, β κ π → List Bool} {core : ∀ κ π, Draw κ π → β κ π}
+    (h : SamplesEfficiently y encDraw encOut core) (φ : ∀ κ, P' κ → P κ) :
+    SamplesEfficiently (Draw := fun κ π => Draw κ (φ κ π))
+      (β := fun κ π => β κ (φ κ π)) (fun κ π => y κ (φ κ π)) (fun κ π => encDraw κ (φ κ π))
+      (fun κ π => encOut κ (φ κ π)) fun κ π => core κ (φ κ π) := by
+  obtain ⟨U, c, e, f, he, hc, hf, hfe⟩ := (samplesEfficiently_iff_exists _ _ _ _).1 h
+  exact (samplesEfficiently_iff_exists _ _ _ _).2
+    ⟨U, c, fun κ π => e κ (φ κ π), f, fun κ π => he κ (φ κ π), fun κ π => hc κ (φ κ π), hf,
+      fun κ π => hfe κ (φ κ π)⟩
+
+/-! ### Non-vacuity: uniform residues with the modulus on the input -/
+
+/-- **Moduli of polynomial bit length**: the public input `q` with `0 < q ≤ 2^{b(κ)}`. Glue. -/
+abbrev BoundedModulus (b : PolyExpr) (κ : ℕ) : Type := {q : ℕ+ // (q : ℕ) ≤ 2 ^ b.eval κ}
+
+/-- `BoundedModulus b κ = {q : ℕ+ // q ≤ 2^{b(κ)}}`. -/
+theorem boundedModulus_eq (b : PolyExpr) (κ : ℕ) :
+    BoundedModulus b κ = {q : ℕ+ // (q : ℕ) ≤ 2 ^ b.eval κ} := rfl
+
+/-- **The parameter word of a modulus**: the numeral of `q`, most significant bit first, of width
+`b(κ) + 1` (`Candidates.natToList`). It is the word the sampler's machine reads. Glue. -/
+def modulusWord (b : PolyExpr) (κ : ℕ) (q : BoundedModulus b κ) : List Bool :=
+  Candidates.natToList (b.eval κ + 1) (q.1 : ℕ)
+
+/-- `modulusWord b κ q = natToList (b(κ) + 1) q`. -/
+theorem modulusWord_eq (b : PolyExpr) (κ : ℕ) (q : BoundedModulus b κ) :
+    modulusWord b κ q = Candidates.natToList (b.eval κ + 1) (q.1 : ℕ) := rfl
+
+/-- The numeral of a modulus reads back as the modulus: `⟦modulusWord b κ q⟧ = q`
+(`Candidates.listToNat_natToList`, as `q ≤ 2^{b(κ)} < 2^{b(κ)+1}`). Glue. -/
+theorem listToNat_modulusWord (b : PolyExpr) (κ : ℕ) (q : BoundedModulus b κ) :
+    listToNat (modulusWord b κ q) = (q.1 : ℕ) := by
+  rw [modulusWord_eq]
+  exact Candidates.listToNat_natToList
+    (q.2.trans_lt (Nat.pow_lt_pow_right (by norm_num) (Nat.lt_succ_self _)))
+
+/-- **The numeral of `2^w` at width `w + 1`** is `1 0^w`. Glue
+(`Candidates.natToList_length_listToNat`, `NumberTheory.listToNat_cons`). -/
+theorem natToList_two_pow (w : ℕ) :
+    Candidates.natToList (w + 1) (2 ^ w) = true :: List.replicate w false := by
+  have h := Candidates.natToList_length_listToNat (true :: List.replicate w false)
+  rw [List.length_cons, List.length_replicate, NumberTheory.listToNat_cons,
+    Candidates.listToNat_replicate_false, List.length_replicate, if_pos rfl, one_mul,
+    add_zero] at h
+  exact h
+
+/-- **The word `1 0^{W(|x|)}` is polynomial-time** (`EnsembleLemmas.polyTimeComputable_zeros`,
+`BinArith.polyTimeComputable_cons`). Glue. -/
+theorem polyTimeComputable_twoPowWord (W : PolyExpr) :
+    PolyTimeComputable fun x : List Bool => true :: List.replicate (W.eval x.length) false :=
+  BinArith.polyTimeComputable_cons (p := fun _ => true) (polyTimeComputable_const [true])
+    (EnsembleLemmas.polyTimeComputable_zeros W polyTimeComputable_id)
+
+/-- **The parameter word of an `n`-bit seed draw**: the numeral `⦃2^n⦄_{n+1}`, on which
+`bucketSampler` [Lem19, §3.2, Algorithm 4] draws a uniform element of `Fin (2^n)`. It is
+`modulusWord` at the modulus `2^n` and width `n`. Glue. -/
+def seedModulusWord (n : ℕ) : List Bool := Candidates.natToList (n + 1) (2 ^ n)
+
+/-- `seedModulusWord n = natToList (n + 1) (2^n)`. -/
+theorem seedModulusWord_eq (n : ℕ) :
+    seedModulusWord n = Candidates.natToList (n + 1) (2 ^ n) := rfl
+
+/-- `seedModulusWord n = 1 0^n` (`natToList_two_pow`). -/
+theorem seedModulusWord_eq_cons (n : ℕ) :
+    seedModulusWord n = true :: List.replicate n false := by
+  rw [seedModulusWord_eq, natToList_two_pow]
+
+/-- The seed word reads as `2^n` (`Candidates.listToNat_natToList`). -/
+theorem listToNat_seedModulusWord (n : ℕ) : listToNat (seedModulusWord n) = 2 ^ n := by
+  rw [seedModulusWord_eq]
+  exact Candidates.listToNat_natToList (Nat.pow_lt_pow_right (by norm_num) (Nat.lt_succ_self n))
+
+/-- The seed word has length `n + 1`. -/
+theorem length_seedModulusWord (n : ℕ) : (seedModulusWord n).length = n + 1 := by
+  rw [seedModulusWord_eq, Candidates.length_natToList]
+
+/-- **A residue modulo `q` as a numeral**: `a` written through Mathlib's `ZMod.finEquiv q` at the
+modulus' width `b(κ) + 1`. Glue. -/
+def residueEnc (b : PolyExpr) (κ : ℕ) (q : BoundedModulus b κ) (a : ZMod (q.1 : ℕ)) :
+    List Bool :=
+  Candidates.natToList (b.eval κ + 1) ((ZMod.finEquiv (q.1 : ℕ)).symm a : ℕ)
+
+/-- `residueEnc b κ q a = natToList (b(κ) + 1) (finEquiv q).symm a`. -/
+theorem residueEnc_eq (b : PolyExpr) (κ : ℕ) (q : BoundedModulus b κ) (a : ZMod (q.1 : ℕ)) :
+    residueEnc b κ q a =
+      Candidates.natToList (b.eval κ + 1) ((ZMod.finEquiv (q.1 : ℕ)).symm a : ℕ) := rfl
+
+/-- **Non-vacuity of the draw half**: uniform `ZMod q`, for moduli `0 < q ≤ 2^{b(κ)}` read from
+the input as numerals, is sampled by `bucketSampler` [Lem19, §3.2, Algorithm 4] (one round) with
+`b(κ) + κ` coins, through `Fin ⟦y⟧ = Fin q ≃ ZMod q` (`ZMod.finEquiv`).
+
+**Proof sketch.** The parameter word reads back as `q` (`listToNat_modulusWord`), and the draws of
+`bucketSampler` on it are `Fin ⟦y⟧` (`bucketSampler_Ω`). The encodings agree: `bucketSampler`
+writes a draw `a` as a numeral of the word's width `b(κ) + 1` (`bucketSampler_enc_cast`,
+`Candidates.length_natToList`), and `residueEnc` writes `(finEquiv q).symm (finEquiv q a) = a`.
+The failure is the bucket sampler's with `b(κ) + κ` coins and `q ≤ 2^{b(κ)}`, at most `2^{-κ}`
+(`bucketSampler_fail`, `fail_bucket_le`). -/
+theorem drawSamplable_residue (b : PolyExpr) :
+    DrawSamplable (modulusWord b) (residueEnc b) := by
+  refine (drawSamplable_iff _ _).2 ⟨bucketSampler, b.add .var,
+    fun κ q => (Equiv.cast (bucketSampler_Ω _)).trans
+      ((finCongr (listToNat_modulusWord b κ q)).trans (ZMod.finEquiv (q.1 : ℕ)).toEquiv),
+    fun κ q w => ?_, fun κ q => ?_⟩
+  · -- the encodings agree: same width, same value
+    have hlen : (modulusWord b κ q).length = b.eval κ + 1 := by
+      rw [modulusWord_eq, Candidates.length_natToList]
+    rw [bucketSampler_enc_cast, residueEnc_eq, hlen]
+    congr 1
+    rw [Equiv.trans_apply, Equiv.trans_apply, RingEquiv.toEquiv_eq_coe, RingEquiv.coe_toEquiv,
+      RingEquiv.symm_apply_apply, Equiv.cast_apply]
+    exact (Fin.coe_cast (listToNat_modulusWord b κ q) _).symm
+  · -- the failure is at most `2^{-κ}`
+    have hq := listToNat_modulusWord b κ q
+    rw [bucketSampler_fail, PolyExpr.eval_add, PolyExpr.eval_var]
+    exact fail_bucket_le (by rw [hq]; exact q.1.pos) (by rw [hq]; exact q.2) κ
+
+/-- **Non-vacuity of the contract**: the uniform sampler of `ZMod q` (identity core), with the
+modulus `0 < q ≤ 2^{b(κ)}` on the input, is efficient (`drawSamplable_residue`,
+`coreComputable_id`). -/
+theorem samplesEfficiently_residue (b : PolyExpr) :
+    SamplesEfficiently (modulusWord b) (residueEnc b) (residueEnc b) fun _ _ a => a :=
+  .intro (drawSamplable_residue b) (coreComputable_id _ _)
+
+end TCSlib.Cryptography.CoinSampling

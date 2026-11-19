@@ -9,6 +9,7 @@ import TCSlib.Cryptography.CoinSampling.Transfer
 import TCSlib.Cryptography.CoinSampling.Asymptotic
 import TCSlib.Cryptography.CoinSampling.Instances
 import TCSlib.Cryptography.CoinSampling.Efficiency
+import TCSlib.Cryptography.CoinSampling.Contract
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -53,4 +54,7 @@ reachable encodings) exact:
   seed and the LWE challenge from fair coins.
 * `TCSlib.Cryptography.CoinSampling.Efficiency`: `UniformSampler`, its uniform machine, and the
   polynomial-time bucket decoder.
+* `TCSlib.Cryptography.CoinSampling.Contract`: `SamplesEfficiently`, the efficiency contract of
+  an honest sampler (a uniform coin sampler of the draw and a polynomial-time core), its closure
+  lemmas, and uniform residues with the modulus on the input.
 -/
