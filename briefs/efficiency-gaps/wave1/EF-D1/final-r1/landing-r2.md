@@ -1,15 +1,18 @@
 # EF-D1 · final r1 · landing r2: promotion into #384's `Contract.lean`, readers on #378, SR1 and re-point on #387
 
-**Status: HELD at round r2b. Nothing is pushed.** Remote heads: `foundations/coin-sampling` `51dc7672…`,
-`foundations/coin-contract` `8e01b720…`, `iO/phase-a-base` `5ed465f6…`, `land/ef-d1-lattice-families`
-`bd4c6f2d…`.
+**Status: LANDED (round r2b), pushed 2026-11-19 as fast-forwards with no force:**
 
-All four local branches are built, signed and re-checked. Q-L2-1 (b) is carried out, and Contract's coe-A seal
-is now **0**. Two points need sign-off before the push:
-- **Q-L2-2:** the reader edit needed three `rfl` readers, not one.
-- **Q-L2-3:** `Efficiency.lean`'s own coe-A seal has 3 pre-existing errors in another owner's readers.
+| Branch | Old head | New head |
+|---|---|---|
+| `foundations/coin-sampling` (#378) | `51dc7672` | `3473adda66d9c61c51ba640ed4c701e5cde0b6b1` |
+| `foundations/coin-contract` (#384) | `8e01b720` | `40e12f64293833056e311ab7aaf5a62fb3006353` |
+| `iO/phase-a-base` | `5ed465f6` | `5382668bc9cc496355c83e7b77909d9647e089b3` |
+| `land/ef-d1-lattice-families` (#387) | `bd4c6f2d` | `18dd79c18c6f92e3bb3aea0e37b7f10221508c83` |
 
-Both are under *Open questions*.
+`git ls-remote` after the push shows exactly these four heads. Each push succeeded on its first attempt.
+
+Q-L2-1 (b) is carried out, and Contract's coe-A seal is now **0**. Q-L2-2 and Q-L2-3 are settled; see
+*Dispositions*.
 
 - **Rulings:**
   - EF-D1-W2 (B) with DL-66 (EF-H11-R5 (A)).
@@ -132,7 +135,7 @@ From 94 to 85:
 - **Other changes:** the remaining statement-text changes are SR1's 6 or the `CoinSampling.` prefix (8, prefix
   only).
 
-## Open questions (block the push)
+## Dispositions
 
 - **Q-L2-2. Three readers, not one.** The ruling named `bucketSampler_Ω` only. The sealed probe shows that it
   is not enough on its own:
@@ -144,7 +147,8 @@ From 94 to 85:
     `bucketSampler_fail`. Both are `rfl`, in our own file, so they fall under EF-W1-R (A).
   - **Also found:** the r2 seal had reported only 3 errors in `drawSamplable_residue`. The first error masked the
     encoding step, which had also been reading `bucketSampler`'s definition.
-  - **Question:** are the two extra readers accepted?
+  - **Disposition (coordinator, 2026-11-19): accepted.** The three `rfl` readers in our own `Efficiency.lean`
+    are covered by EF-W1-R (A).
 - **Q-L2-3. `Efficiency.lean`'s own coe-A seal: 3 errors (pre-existing).**
   - **Where:** the private readers `binArith_lt_pairEncode`, `binArith_sub_pairEncode` and
     `binArith_mod_pairEncode` (`Efficiency.lean:205–222`, #378) read `Complexity.BinArith.lt`, `sub` and `mod`
@@ -159,9 +163,11 @@ From 94 to 85:
     - (a) Ledger it as recorded debt and push now.
     - (b) Wait for the Complexity owner PR.
 
-**Push once both are answered,** fast-forward only:
-- `git push origin tmp-land-378:foundations/coin-sampling tmp-land-384:foundations/coin-contract tmp-land-iobase:iO/phase-a-base`
-- `git push origin tmp-land-387:land/ef-d1-lattice-families`
+- **Disposition of Q-L2-3 (coordinator, 2026-11-19): (a).** Land now, on the footing of EF-H1-R2 (B) and
+  EF-H12-R1 (A):
+  - the three `binArith_{lt,sub,mod}_pairEncode` reads are recorded as bounded ledger debt (the coordinator
+    records the row);
+  - the `BinArith.lt`/`sub`/`mod` readers go on the Complexity owner PR list.
 
 ## Draft PR-description paragraphs
 
@@ -219,7 +225,7 @@ From 94 to 85:
 ## State kept
 
 - **Worktrees** under `$SP/land-384-387/`:
-  - `wt378`, `wt384`, `wtio` and `wt387`: the local `tmp-land-*` branches hold the unpushed commits.
+  - `wt378`, `wt384`, `wtio` and `wt387`: the local `tmp-land-*` branches, now equal to the pushed heads.
   - `mergewt2` (check head `2291280b` with probes) and `mergewt393b`.
   - `basewt` (`9067223f`, the pre-edit seals) and `dwt` (the decls2 checkouts).
   - The r2 `mergewt` and `mergewt393` are superseded.

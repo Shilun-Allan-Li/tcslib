@@ -15,14 +15,14 @@ one Codex gate that Q-A10 (a) gives job S2-A of cleanup Stage 2 ("one PR for S2-
   `dispatch-r1.md` and the prompt name it. Since the S2-A base, the records branch merged Lean only through the GSW 6b
   statements (#376/#377) and the U12/U13 fills (#392): **12 Lean paths, none of them an S2-A path**. The records tip
   replayed here is `8836292693d7c611ee375d162f34766841635337` (`TCSlib` tree `745bf4b494b6581a5666ef9ca0a6e735a68ddcef`);
-  the records tip at staging, `a25338e0f78290dff74a754ba89a2988655ac046`, is records-only on top of it (same `TCSlib`,
+  the records tip at staging, `25c6a28ac31cd07c299afcb89fe030f4ada45b00`, is records-only on top of it (same `TCSlib`,
   `TCSlib.lean`, `audits/`, toolchain, manifest and lakefile; `source-head-r1.json`). The pin is records-only on top
   of that.
 - **Merged tree.** `git merge-tree --write-tree 88362926 9f7f409c` is clean, tree `84c0205e003688519b1bd13156066d09d0ebe6b4`,
   `TCSlib` tree **`73af3ec6968e023e87ce00af649db0e2e02f4353`**. The maintainer replayed it as the scratch commit
   `62c2794272bd5cbe4fe3f031d4186924e4e1a222` (parents `88362926`, `9f7f409c`; **on no ref, never pushed**). Its `TCSlib`
   is S2-A's 63 files blob-equal to the head and the records side's 12 files blob-equal to the tip, nothing else
-  (`verification-r1.md` §1). `merge-tree(a25338e0, 9f7f409c)` has the same `TCSlib` tree.
+  (`verification-r1.md` §1). `merge-tree(25c6a28a, 9f7f409c)` (`59529934…`) has the same `TCSlib` tree.
 - **Mathlib** `029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e`, **Batteries** `39260e31b7b3f7f05643da95242463b462dc05f1`
   (`lake-manifest.json`, unchanged by the PR), toolchain `leanprover/lean4:v4.25.0`.
 

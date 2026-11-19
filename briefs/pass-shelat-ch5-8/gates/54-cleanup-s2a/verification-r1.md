@@ -20,10 +20,10 @@ below are inside the ZIP.
 | PR #390 head | `9f7f409c2e09749428db75b9ddd324f92695e4af` (`TCSlib` tree `ae345736160511e6d3e7d8b47ad76c430c424500`) |
 | S2-A base = merge base | `61a5f0fb640622c15fdd33df56efa470b2bf26c8` (`TCSlib` tree `849ee9454cff17b1fb15a22183526d7e071a9669`) |
 | Records tip replayed | `8836292693d7c611ee375d162f34766841635337` (`TCSlib` tree `745bf4b494b6581a5666ef9ca0a6e735a68ddcef`) |
-| Records tip at staging | `a25338e0f78290dff74a754ba89a2988655ac046`: records-only on top of `88362926` (0 Lean, toolchain, manifest or lakefile paths changed) |
+| Records tip at the verification | `a25338e0f78290dff74a754ba89a2988655ac046`: records-only on top of `88362926` (0 Lean, toolchain, manifest or lakefile paths changed). The tip at staging, `25c6a28ac31cd07c299afcb89fe030f4ada45b00`, is records-only on top of that (`source-head-r1.json`) |
 | Merge tree | `git merge-tree --write-tree 88362926 9f7f409c` = `84c0205e003688519b1bd13156066d09d0ebe6b4`, clean; `TCSlib` tree **`73af3ec6968e023e87ce00af649db0e2e02f4353`** |
 | Scratch commit | `62c2794272bd5cbe4fe3f031d4186924e4e1a222` = commit-tree of that tree, parents `88362926`, `9f7f409c` (`merge/scratch-commit-62c27942.txt`). **On no ref, never pushed** |
-| Same Lean at the staging tip | `merge-tree(a25338e0, 9f7f409c)` = `3feb7cf2…`, `TCSlib` tree `73af3ec6` (`merge/staging-tip.txt`) |
+| Same Lean at later tips | `merge-tree(a25338e0, 9f7f409c)` = `3feb7cf2…` (`merge/staging-tip.txt`) and `merge-tree(25c6a28a, 9f7f409c)` = `59529934…`: both `TCSlib` tree `73af3ec6` |
 
 ## 1. The merge
 

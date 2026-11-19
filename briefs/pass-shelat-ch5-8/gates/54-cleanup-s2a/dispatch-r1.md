@@ -29,7 +29,7 @@ that evidence by reading it.
 - Check that every commit exists:
     for c in <RECORDS-G54> \
              9f7f409c2e09749428db75b9ddd324f92695e4af 61a5f0fb640622c15fdd33df56efa470b2bf26c8 \
-             8836292693d7c611ee375d162f34766841635337 a25338e0f78290dff74a754ba89a2988655ac046 \
+             8836292693d7c611ee375d162f34766841635337 25c6a28ac31cd07c299afcb89fe030f4ada45b00 \
              c119a3c4f1d8642b1328740f1d1d1165a92f5567 a1545eae990f82918ad4e344428e38668ab911ed \
              dff281b53746377cd72e57c3aeeadf3d1f59a332; do
       git cat-file -e "$c^{commit}" && echo "ok $c"; done
@@ -136,7 +136,7 @@ instructions. The user dispatches and merges.
 ## State at staging
 
 - Staged 2026-11-19 by a maintainer sub-agent on the records checkout; the records tip at staging is
-  `a25338e0f78290dff74a754ba89a2988655ac046` (records-only on top of the replayed tip `88362926`). The files of this
+  `25c6a28ac31cd07c299afcb89fe030f4ada45b00` (records-only on top of the replayed tip `88362926`). The files of this
   directory are written and **not committed**; the maintainer commits them with explicit paths, which makes the pin
   `<RECORDS-G54>`.
 - **PR at staging:** #390 is a draft at `9f7f409c2e09749428db75b9ddd324f92695e4af`, 43 commits, 63 files, +1,650/−897,
