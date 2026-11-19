@@ -33,7 +33,7 @@ set_option autoImplicit false
   fan-in two, and the closed form `9⌈log₂ N⌉ + 2⌈log₂(ℓ + ⌈log₂ N⌉ + 3)⌉ + 21`, with no term
   linear in `ℓ`.
 
-All are statement-phase targets (admitted); the definitions and the instance are proved.
+All are proved, as are the definitions and the instance.
 
 ## References
 
@@ -144,7 +144,12 @@ theorem vecMul_secretVector_eq_sum (P : Parameters)
     (s : Fin P.lwe.dimension → ZMod P.lwe.modulus) (C : Ciphertext P) :
     secretVector P s ⬝ᵥ decryptColumn P C =
       ∑ i, ((keyBits P s i).toNat : ZMod P.lwe.modulus) * decConstants P C i := by
-  sorry
+  -- `t = G·x` with `x` the lifted key bits
+  have ht : secretVector P s =
+      (gadget P).mulVec (fun i => ((keyBits P s i).toNat : ZMod P.lwe.modulus)) := by
+    rw [keyBits_eq, gadget_mulVec_decomposeVec]
+  rw [ht, dotProduct_comm, Matrix.dotProduct_mulVec, ← decConstants_eq, dotProduct_comm]
+  rfl
 
 /-- **G6. The decryption formula computes decryption.** On the key bits of `s`, the
 decryption formula of `C` evaluates to GSW decryption of `C` under `s`:
@@ -164,7 +169,26 @@ By G5, `⟨t, c⟩` is `∑ᵢ xᵢ·aᵢ` in `ZMod q`. Its representative is `(
 `omega`). Both sides are Booleans equal as propositions. -/
 theorem decryptFormula_eval (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus)
     (C : Ciphertext P) : (decryptFormula P C).eval (keyBits P s) = decrypt P s C := by
-  sorry
+  have hq := P.lwe.modulus_ge_two
+  -- the decoding interval lies in `[0, q]`
+  have hlh : LWE.BitEncoding.decodeLo P.lwe ≤ LWE.BitEncoding.decodeHi P.lwe := by
+    rw [LWE.BitEncoding.decodeLo_eq, LWE.BitEncoding.decodeHi_eq]; omega
+  have hhq : LWE.BitEncoding.decodeHi P.lwe ≤ P.lwe.modulus := by
+    rw [LWE.BitEncoding.decodeHi_eq]; omega
+  -- the representative of `⟨t, c⟩` is the natural subset sum modulo `q` (G5)
+  have hval : (secretVector P s ⬝ᵥ decryptColumn P C).val =
+      (∑ i, (keyBits P s i).toNat * (decConstants P C i).val) % P.lwe.modulus := by
+    have hcast : (∑ i, ((keyBits P s i).toNat : ZMod P.lwe.modulus) * decConstants P C i) =
+        ((∑ i, (keyBits P s i).toNat * (decConstants P C i).val : ℕ) : ZMod P.lwe.modulus) := by
+      rw [Nat.cast_sum]
+      exact Finset.sum_congr rfl fun i _ => by rw [Nat.cast_mul, ZMod.natCast_zmod_val]
+    rw [vecMul_secretVector_eq_sum, hcast, ZMod.val_natCast]
+  -- both sides are the interval test (O2 and F9)
+  rw [decrypt_eq_decode_dotProduct, decryptFormula_eq,
+    FormulaArith.modSumInterval_eval (a := fun i => (decConstants P C i).val)
+      (fun i => ZMod.val_lt _) hlh hhq]
+  refine Bool.eq_iff_iff.mpr ?_
+  rw [decide_eq_true_iff, LWE.BitEncoding.decode_iff_mem_Ico, hval]
 
 /-- **G7. The augmented NAND formula** computes the NAND of the two decryptions under the
 same key: `(nandFormula P C₁ C₂).eval (keyBits P s) = !(decrypt P s C₁ && decrypt P s C₂)`
@@ -176,7 +200,8 @@ the bits of the same `s` (r3 G7).
 theorem nandFormula_eval (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lwe.modulus)
     (C₁ C₂ : Ciphertext P) :
     (nandFormula P C₁ C₂).eval (keyBits P s) = !(decrypt P s C₁ && decrypt P s C₂) := by
-  sorry
+  rw [nandFormula_eq, TreeCircuit.neg_eval, TreeCircuit.and2_eval, decryptFormula_eval,
+    decryptFormula_eval]
 
 /-- **G8, depth.** The augmented NAND formula has depth at most `decDepth P + 1`:
 `(nandFormula P C₁ C₂).depth ≤ decDepth P + 1` [BV14, Lemma 4.4, p019-b001: depth
@@ -187,7 +212,15 @@ theorem nandFormula_eval (P : Parameters) (s : Fin P.lwe.dimension → ZMod P.lw
 operands, read through `decryptFormula_eq` and `decDepth_eq`; `max_le` and `omega`. -/
 theorem depth_nandFormula_le (P : Parameters) (C₁ C₂ : Ciphertext P) :
     (nandFormula P C₁ C₂).depth ≤ decDepth P + 1 := by
-  sorry
+  have h₁ := FormulaArith.depth_modSumInterval_le (fun i => (decConstants P C₁ i).val)
+    P.lwe.modulus (LWE.BitEncoding.decodeLo P.lwe) (LWE.BitEncoding.decodeHi P.lwe)
+  have h₂ := FormulaArith.depth_modSumInterval_le (fun i => (decConstants P C₂ i).val)
+    P.lwe.modulus (LWE.BitEncoding.decodeLo P.lwe) (LWE.BitEncoding.decodeHi P.lwe)
+  rw [← decryptFormula_eq, ← decDepth_eq] at h₁ h₂
+  have h₃ := TreeCircuit.depth_and2_le (decryptFormula P C₁) (decryptFormula P C₂)
+  have h₄ := max_le h₁ h₂
+  rw [nandFormula_eq, TreeCircuit.depth_neg]
+  omega
 
 /-- **G8, fan-in.** The augmented NAND formula has fan-in at most two:
 `(nandFormula P C₁ C₂).maxFanin ≤ 2` [BV11, Lemma 4.5, p029-b001: "fan-in 2 gates"].
@@ -197,7 +230,14 @@ theorem depth_nandFormula_le (P : Parameters) (C₁ C₂ : Ciphertext P) :
 both operands (`decryptFormula_eq`); `omega`. -/
 theorem maxFanin_nandFormula_le (P : Parameters) (C₁ C₂ : Ciphertext P) :
     (nandFormula P C₁ C₂).maxFanin ≤ 2 := by
-  sorry
+  have h₁ := FormulaArith.maxFanin_modSumInterval_le (fun i => (decConstants P C₁ i).val)
+    P.lwe.modulus (LWE.BitEncoding.decodeLo P.lwe) (LWE.BitEncoding.decodeHi P.lwe)
+  have h₂ := FormulaArith.maxFanin_modSumInterval_le (fun i => (decConstants P C₂ i).val)
+    P.lwe.modulus (LWE.BitEncoding.decodeLo P.lwe) (LWE.BitEncoding.decodeHi P.lwe)
+  rw [← decryptFormula_eq] at h₁ h₂
+  have h₃ := TreeCircuit.maxFanin_and2_le (decryptFormula P C₁) (decryptFormula P C₂)
+  rw [nandFormula_eq, TreeCircuit.maxFanin_neg]
+  omega
 
 /-- **G8, closed form.** The decryption depth is `O(log N + log log q)` with no term linear in
 `ℓ`: `decDepth P ≤ 9 * Nat.clog 2 P.columns + 2 * Nat.clog 2 (P.width + Nat.clog 2 P.columns
@@ -211,6 +251,14 @@ inner term `⌈log₂ q⌉ ≤ ℓ` because `q ≤ 2^ℓ` (`P.modulus_le`, `Nat.
 theorem decDepth_le (P : Parameters) :
     decDepth P ≤
       9 * Nat.clog 2 P.columns + 2 * Nat.clog 2 (P.width + Nat.clog 2 P.columns + 3) + 21 := by
-  sorry
+  -- `⌈log₂ q⌉ ≤ ℓ`, since `q ≤ 2^ℓ`
+  have hq : Nat.clog 2 P.lwe.modulus ≤ P.width :=
+    (Nat.clog_le_iff_le_pow (by norm_num)).mpr P.modulus_le
+  have hmono := Nat.clog_mono_right 2
+    (show Nat.clog 2 P.lwe.modulus + Nat.clog 2 P.columns + 3 ≤
+      P.width + Nat.clog 2 P.columns + 3 by omega)
+  have hF := FormulaArith.modSumDepth_le P.columns P.lwe.modulus
+  rw [decDepth_eq]
+  omega
 
 end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
