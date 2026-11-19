@@ -23,12 +23,14 @@ set_option autoImplicit false
 
 ## Main results
 
+* `Parameters.ofFamily_columns_le`: `N ≤ (d(κ) + 1)·ℓ(κ)` at `ofFamily F κ` (glue, shared by
+  G16 and the asymptotic forms of `GSW/Asymptotic.lean`).
 * `bootRatio_le_poly` (G16): `8·(ℓ·bootNoise (ofFamily F κ) (m·B κ)) ≤ pBoot(κ)·B(κ)`.
 * `decrypt_fheEval_of_ratio`, `decrypt_leveledEval_of_ratio` (G17, split into the pure and the
   leveled scheme): if `pBoot(κ)·B(κ) < q(κ)` and the noise is `B(κ)`-bounded, bootstrapped
   GSW at `κ` is correct on every circuit, pure (G12) and leveled (L3).
 
-All three are admitted statement-phase targets. With `LWE.Family.RatioBounded F B p` the
+All three are proved here. With `LWE.Family.RatioBounded F B p` the
 condition `pBoot(κ)·B(κ) < q(κ)` is the regime of a polynomial ratio `q/B` (assumption (A2)).
 
 **Sources and reconstruction (P6-Q19 B), for the leveled statement.** The key chain is
@@ -95,6 +97,17 @@ theorem pBoot_eq (F : LWE.Family) :
           (.const 3)) 4))
         F.samplesBound := rfl
 
+/-- **The ciphertext width of a family's parameters is polynomially bounded.** For every family
+`F` and `κ`, `N = (n + 1)·ℓ` at `ofFamily F κ` is at most `(d(κ) + 1)·ℓ(κ)` with
+`d = F.dimensionBound`, `ℓ(κ) = F.residueBits.eval κ`,
+`(Parameters.ofFamily F κ).columns ≤ (F.dimensionBound.eval κ + 1) * F.residueBits.eval κ`.
+Glue: `Parameters.columns_eq` read through `Parameters.ofFamily_lwe` and
+`Parameters.ofFamily_width`, and the family's `dimension_le`. -/
+theorem Parameters.ofFamily_columns_le (F : LWE.Family) (κ : ℕ) :
+    (Parameters.ofFamily F κ).columns ≤ (F.dimensionBound.eval κ + 1) * F.residueBits.eval κ := by
+  rw [Parameters.columns_eq, Parameters.ofFamily_lwe, Parameters.ofFamily_width]
+  exact Nat.mul_le_mul_right _ (Nat.add_le_add_right (F.dimension_le κ) 1)
+
 /-! ### Targets G16–G17 -/
 
 /-- **G16. The bootstrapped noise is polynomial in the noise bound.** For every family `F`,
@@ -104,17 +117,54 @@ noise bound `B` and `κ`, with `P = ofFamily F κ`, `ℓ = P.width` and `m = P.l
 module docstring.
 
 **Proof sketch.** `bootNoise_le` (G13) at `β = m·B`. Read `P` through
-`Parameters.ofFamily_lwe`, `Parameters.ofFamily_width`, `Parameters.columns_eq`, and `pBoot`
-through `pBoot_eq` and `PolyExpr.eval` (notation). Bound `n ≤ d(κ)` and `m ≤ s(κ)` by the family's
-`dimension_le` and `samples_le`, so `N = (n + 1)·ℓ ≤ N̂`; `⌈log₂ N⌉ ≤ N`
-(`Nat.clog_le_iff_le_pow` with `N < 2^N`, `Nat.lt_two_pow_self`), so `X ≤ ℓ + N̂ + 3`; then
-monotonicity of products and powers (`Nat.mul_le_mul`, `Nat.pow_le_pow_left`) and
-`8·4^33·2 = 2^70` (`norm_num`). -/
+`Parameters.ofFamily_lwe`, `Parameters.ofFamily_width`, and `pBoot` through `pBoot_eq` and the
+`PolyExpr.eval_*` equations. Bound `m ≤ s(κ)` by the family's `samples_le`, and
+`N = (n + 1)·ℓ ≤ N̂` by `Parameters.ofFamily_columns_le` (`Parameters.columns_eq` with
+`dimension_le`); `⌈log₂ N⌉ ≤ N` (`Nat.clog_le_iff_le_pow` with `N < 2^N`,
+`Nat.lt_two_pow_self`), so `X ≤ ℓ + N̂ + 3`; then `8·4^33·2 = 2^70` (`ring`) and monotonicity
+of products and powers (`gcongr`: `Nat.mul_le_mul`, `Nat.pow_le_pow_left`). -/
 theorem bootRatio_le_poly (F : LWE.Family) (B : ℕ → ℕ) (κ : ℕ) :
     8 * ((Parameters.ofFamily F κ).width *
         bootNoise (Parameters.ofFamily F κ) ((Parameters.ofFamily F κ).lwe.samples * B κ)) ≤
       (pBoot F).eval κ * B κ := by
-  sorry
+  -- Step 1: the readers of `ofFamily` and the family's bounds, `ℓ = r(κ)`, `m ≤ s(κ)`, `N ≤ N̂`.
+  have hw : (Parameters.ofFamily F κ).width = F.residueBits.eval κ :=
+    Parameters.ofFamily_width F κ
+  have hm : (Parameters.ofFamily F κ).lwe.samples ≤ F.samplesBound.eval κ := by
+    rw [Parameters.ofFamily_lwe]
+    exact F.samples_le κ
+  have hN := Parameters.ofFamily_columns_le F κ
+  -- Step 2: `⌈log₂ N⌉ ≤ N ≤ N̂`.
+  have hlog : Nat.clog 2 (Parameters.ofFamily F κ).columns ≤
+      (F.dimensionBound.eval κ + 1) * F.residueBits.eval κ :=
+    ((Nat.clog_le_iff_le_pow one_lt_two).2 Nat.lt_two_pow_self.le).trans hN
+  -- Step 3: G13 at `β = m·B`, the constant `8·4^33·2 = 2^70`, and monotonicity.
+  have hboot := bootNoise_le (Parameters.ofFamily F κ)
+    ((Parameters.ofFamily F κ).lwe.samples * B κ)
+  rw [pBoot_eq]
+  simp only [PolyExpr.eval_mul, PolyExpr.eval_pow, PolyExpr.eval_add, PolyExpr.eval_const]
+  set P := Parameters.ofFamily F κ
+  calc 8 * (P.width * bootNoise P (P.lwe.samples * B κ))
+      ≤ 8 * (P.width * (4 ^ 33 * P.columns ^ 19 * (P.width + Nat.clog 2 P.columns + 3) ^ 4 *
+          (2 * (P.lwe.samples * B κ)))) := by gcongr
+    _ = 2 ^ 70 * P.width * P.columns ^ 19 * (P.width + Nat.clog 2 P.columns + 3) ^ 4 *
+          P.lwe.samples * B κ := by ring
+    _ ≤ _ := by rw [hw]; gcongr
+
+/-- **The decryption condition at a polynomial ratio.** Glue. For every family `F`, noise bound
+`B` and `κ` with `pBoot(κ)·B(κ) < q(κ)` (`hq`), every `y` at most the bootstrapped noise
+`bootNoise P (m·B κ)` at `P = ofFamily F κ` satisfies
+`2 * (P.width * y) < P.lwe.modulus / 2`: G16 gives `8·(ℓ·y) < q`, and `q ≥ 2`. -/
+private theorem two_mul_width_lt_of_ratio (F : LWE.Family) (B : ℕ → ℕ) (κ : ℕ)
+    (hq : (pBoot F).eval κ * B κ < (F.parameters κ).modulus) {y : ℕ}
+    (hy : y ≤ bootNoise (Parameters.ofFamily F κ)
+      ((Parameters.ofFamily F κ).lwe.samples * B κ)) :
+    2 * ((Parameters.ofFamily F κ).width * y) < (Parameters.ofFamily F κ).lwe.modulus / 2 := by
+  have h16 := bootRatio_le_poly F B κ
+  have hy' := Nat.mul_le_mul_left (Parameters.ofFamily F κ).width hy
+  have h2 := (F.parameters κ).modulus_ge_two
+  rw [Parameters.ofFamily_lwe]
+  omega
 
 /-- **G17, pure scheme. Correctness at a polynomial ratio.** For every family `F`, noise bound
 `B` and `κ`, if the noise law `F.noise κ` is `B κ`-bounded and `pBoot(κ)·B(κ) < q(κ)`, then
@@ -126,10 +176,11 @@ p016-b001]. With `LWE.Family.RatioBounded F B p` (`ratioBounded_iff`) this is th
 polynomial ratio. Deviation: worst case.
 
 **Proof sketch.** G12 (`decrypt_keygen_fheEvalCircuit`) at `P`. Its condition
-`2·(ℓ·bootNoise P (m·B κ)) < ⌊q/2⌋` follows from G16 (`bootRatio_le_poly`) and `hq`:
-`8·y ≤ pBoot(κ)·B(κ) < q` gives `4·y + 2 ≤ q` when `y ≥ 1` (and trivially when `y = 0`, as
-`q ≥ 2`), hence `2·y < ⌊q/2⌋` (`omega`), with `y = ℓ·bootNoise`. `q` is read as
-`(ofFamily F κ).lwe.modulus` through `Parameters.ofFamily_lwe`. -/
+`2·(ℓ·bootNoise P (m·B κ)) < ⌊q/2⌋` follows from G16 (`bootRatio_le_poly`) and `hq` (the
+private glue `two_mul_width_lt_of_ratio`): `8·y ≤ pBoot(κ)·B(κ) < q` gives `4·y + 2 ≤ q` when
+`y ≥ 1` (and trivially when `y = 0`, as `q ≥ 2`), hence `2·y < ⌊q/2⌋` (`omega`), with
+`y = ℓ·bootNoise`. `q` is read as `(ofFamily F κ).lwe.modulus` through
+`Parameters.ofFamily_lwe`. -/
 theorem decrypt_fheEval_of_ratio (F : LWE.Family) (B : ℕ → ℕ) (κ : ℕ)
     (hχ : (F.noise κ).Bounded (B κ)) (hq : (pBoot F).eval κ * B κ < (F.parameters κ).modulus)
     (rg : KeySeed (Parameters.ofFamily F κ) (F.noise κ))
@@ -145,7 +196,8 @@ theorem decrypt_fheEval_of_ratio (F : LWE.Family) (B : ℕ → ℕ) (κ : ℕ)
           fun j => encrypt (Parameters.ofFamily F κ)
             (Regev.keygen (Parameters.ofFamily F κ).lwe (F.noise κ) rg).1 (x j) (R' j)) =
       Cc.eval x := by
-  sorry
+  exact decrypt_keygen_fheEvalCircuit (Parameters.ofFamily F κ) (F.noise κ) rg (B κ) hχ R Cc hC x
+    R' (two_mul_width_lt_of_ratio F B κ hq le_rfl)
 
 /-- **G17, leveled scheme. Correctness at a polynomial ratio.** For every family `F`, noise
 bound `B`, `κ` and level count `L`, if the noise law is `B κ`-bounded and
@@ -156,7 +208,8 @@ coins `R'` [BV14, §3.4, Thm 3.7, p016-b001; BV11, Thm 3.1, Def 3.6, p015-b001, 
 Deviations: worst case; the public output level; reconstruction disclosed (module docstring).
 
 **Proof sketch.** L3 (`decrypt_keygen_leveledEvalCircuit`) at `P`. Its two conditions follow
-from G16 (`bootRatio_le_poly`) and `hq` as in `decrypt_fheEval_of_ratio`; the input condition
+from G16 (`bootRatio_le_poly`) and `hq` as in `decrypt_fheEval_of_ratio`
+(`two_mul_width_lt_of_ratio` at `y = bootNoise P (m·B)` and at `y = m·B`); the input condition
 because `m·B ≤ bootNoise P (m·B)` (`bootNoise_eq`, `N ≥ 1` by `Parameters.neZero_columns`). -/
 theorem decrypt_leveledEval_of_ratio (F : LWE.Family) (B : ℕ → ℕ) (κ : ℕ)
     (hχ : (F.noise κ).Bounded (B κ)) (hq : (pBoot F).eval κ * B κ < (F.parameters κ).modulus)
@@ -174,6 +227,19 @@ theorem decrypt_leveledEval_of_ratio (F : LWE.Family) (B : ℕ → ℕ) (κ : �
           Cc hC fun j => encrypt (Parameters.ofFamily F κ)
             (Regev.keygen (Parameters.ofFamily F κ).lwe (F.noise κ) (rgs 0)).1 (x j) (R' j)) =
       Cc.eval x := by
-  sorry
+  -- The input noise `m·B` is at most `bootNoise P (m·B) = 4^(decDepth P + 1)·(2·(N·(m·B)))`.
+  have hin : (Parameters.ofFamily F κ).lwe.samples * B κ ≤
+      bootNoise (Parameters.ofFamily F κ) ((Parameters.ofFamily F κ).lwe.samples * B κ) := by
+    rw [bootNoise_eq]
+    have hN := Nat.pos_of_neZero (Parameters.ofFamily F κ).columns
+    calc (Parameters.ofFamily F κ).lwe.samples * B κ
+        ≤ 1 * (2 * ((Parameters.ofFamily F κ).columns *
+            ((Parameters.ofFamily F κ).lwe.samples * B κ))) := by
+          rw [one_mul]
+          exact (Nat.le_mul_of_pos_left _ hN).trans (Nat.le_mul_of_pos_left _ two_pos)
+      _ ≤ _ := Nat.mul_le_mul_right _ (Nat.one_le_pow _ _ (by norm_num))
+  exact decrypt_keygen_leveledEvalCircuit (Parameters.ofFamily F κ) (F.noise κ) (B κ) hχ rgs R Cc
+    hC hdepth x R' (two_mul_width_lt_of_ratio F B κ hq le_rfl)
+    (two_mul_width_lt_of_ratio F B κ hq hin)
 
 end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
