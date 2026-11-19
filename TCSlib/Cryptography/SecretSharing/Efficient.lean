@@ -94,11 +94,11 @@ namespace Scheme
 
 variable (S : Scheme P Secret Share Rand) (e : Q ↪ P) (ε : Rand' ≃ Rand) (s₀ : Share)
 
-/-- `(S.restrict e ε s₀).share sec r i = S.share sec (ε r) (e i)`. -/
+/-- `(S.restrict e ε s₀).share sec r i = S.share sec (ε r) (e i)`. Glue. -/
 theorem restrict_share (sec : Secret) (r : Rand') (i : Q) :
     (S.restrict e ε s₀).share sec r i = S.share sec (ε r) (e i) := rfl
 
-/-- `(S.restrict e ε s₀).reconstruct A f = S.reconstruct (A.map e) (extend e f s₀)`. -/
+/-- `(S.restrict e ε s₀).reconstruct A f = S.reconstruct (A.map e) (extend e f s₀)`. Glue. -/
 theorem restrict_reconstruct (A : Finset Q) (f : Q → Share) :
     (S.restrict e ε s₀).reconstruct A f =
       S.reconstruct (A.map e) (Function.extend e f fun _ => s₀) := rfl
@@ -167,7 +167,10 @@ def DealerSamples {Pub : Type} (Rand : Pub → Type) (Adm : ℕ → Pub → Prop
       ∀ κ π, g (NUPPT.advInput κ (encPub π.1)) = y κ π) ∧
     CoinSampling.SamplesEfficiently y encDraw (fun _ π => encRand π.1) fun _ _ r => r
 
-/-- The defining equation of `DealerSamples`. -/
+/-- `DealerSamples Rand Adm encPub encRand` holds iff there are parameter words `y κ π` and draw
+encodings `encDraw` such that one `PolyTimeComputable` map `g` computes `y κ π` from
+`NUPPT.advInput κ (encPub π) = ⟨1^κ, encPub π⟩`, and `SamplesEfficiently y encDraw encRand id`
+holds, at the `Adm κ`-admissible `π`: the defining equation of `DealerSamples`. Glue. -/
 theorem dealerSamples_iff {Pub : Type} (Rand : Pub → Type) (Adm : ℕ → Pub → Prop)
     (encPub : Pub → List Bool) (encRand : ∀ π, Rand π → List Bool) :
     DealerSamples Rand Adm encPub encRand ↔
@@ -247,13 +250,13 @@ variable (E : EfficientScheme)
 correct for its access structure (`Scheme.Correct`). [PS10, Def 152.1, item 2] -/
 def Correct : Prop := ∀ π, (E.scheme π).Correct (E.access π)
 
-/-- `E.Correct ↔ ∀ π, (E.scheme π).Correct (E.access π)`. -/
+/-- `E.Correct ↔ ∀ π, (E.scheme π).Correct (E.access π)`. Glue. -/
 theorem correct_iff : E.Correct ↔ ∀ π, (E.scheme π).Correct (E.access π) := Iff.rfl
 
-/-- **Local reconstruction** at every public parameter (`Scheme.LocalReconstruct`). -/
+/-- **Local reconstruction** at every public parameter (`Scheme.LocalReconstruct`). Glue. -/
 def LocalReconstruct : Prop := ∀ π, (E.scheme π).LocalReconstruct
 
-/-- `E.LocalReconstruct ↔ ∀ π, (E.scheme π).LocalReconstruct`. -/
+/-- `E.LocalReconstruct ↔ ∀ π, (E.scheme π).LocalReconstruct`. Glue. -/
 theorem localReconstruct_iff : E.LocalReconstruct ↔ ∀ π, (E.scheme π).LocalReconstruct :=
   Iff.rfl
 
@@ -262,7 +265,7 @@ perfectly private for its access structure (`Scheme.PerfectPrivacy`). [PS10, Def
 in the perfect form of `Scheme.PerfectPrivacy`. -/
 def PerfectPrivacy : Prop := ∀ π, (E.scheme π).PerfectPrivacy (E.access π)
 
-/-- `E.PerfectPrivacy ↔ ∀ π, (E.scheme π).PerfectPrivacy (E.access π)`. -/
+/-- `E.PerfectPrivacy ↔ ∀ π, (E.scheme π).PerfectPrivacy (E.access π)`. Glue. -/
 theorem perfectPrivacy_iff :
     E.PerfectPrivacy ↔ ∀ π, (E.scheme π).PerfectPrivacy (E.access π) := Iff.rfl
 
@@ -294,25 +297,25 @@ namespace ShamirParams
 /-- **The parameter word** of Shamir's public parameters: `⟨p, ⟨1^k, n⟩⟩`, with `p` and `n` as
 little-endian binary numerals (`Nat.bits`, the format of `Complexity.BinArith`) and `k` in unary,
 so that the share map's loop over the `k - 1` coefficients runs in time polynomial in the
-input. -/
+input. Glue. -/
 def encode (π : ShamirParams) : List Bool :=
   pairEncode (Nat.bits π.p) (pairEncode (List.replicate π.k true) (Nat.bits π.n))
 
-/-- `π.encode = ⟨bits p, ⟨1^k, bits n⟩⟩`. -/
+/-- `π.encode = ⟨bits p, ⟨1^k, bits n⟩⟩`. Glue. -/
 theorem encode_eq (π : ShamirParams) :
     π.encode = pairEncode (Nat.bits π.p) (pairEncode (List.replicate π.k true) (Nat.bits π.n)) :=
   rfl
 
-/-- The first slot of the parameter word is the numeral of `p`. -/
+/-- The first slot of the parameter word is the numeral of `p`. Glue. -/
 theorem pairFstD_encode (π : ShamirParams) : pairFstD π.encode = Nat.bits π.p := by
   rw [encode_eq, pairFstD_pairEncode]
 
-/-- The second slot of the parameter word is `1^k`. -/
+/-- The second slot of the parameter word is `1^k`. Glue. -/
 theorem pairFstD_pairSndD_encode (π : ShamirParams) :
     pairFstD (pairSndD π.encode) = List.replicate π.k true := by
   rw [encode_eq, pairSndD_pairEncode, pairFstD_pairEncode]
 
-/-- The third slot of the parameter word is the numeral of `n`. -/
+/-- The third slot of the parameter word is the numeral of `n`. Glue. -/
 theorem pairSndD_pairSndD_encode (π : ShamirParams) :
     pairSndD (pairSndD π.encode) = Nat.bits π.n := by
   rw [encode_eq, pairSndD_pairEncode, pairSndD_pairEncode]
@@ -326,28 +329,28 @@ section Residues
 variable {p : ℕ}
 
 /-- **A residue as a word**: `a : ZMod p` written as the little-endian binary numeral of its
-least nonnegative representative, `Nat.bits a.val` (the format of `Complexity.BinArith`). -/
+least nonnegative representative, `Nat.bits a.val` (the format of `Complexity.BinArith`). Glue. -/
 def resWord (a : ZMod p) : List Bool := Nat.bits a.val
 
-/-- `resWord a = Nat.bits a.val`. -/
+/-- `resWord a = Nat.bits a.val`. Glue. -/
 theorem resWord_eq (a : ZMod p) : resWord a = Nat.bits a.val := rfl
 
-/-- The numeral of a residue reads back as its representative. -/
+/-- The numeral of a residue reads back as its representative. Glue. -/
 theorem bitsVal_resWord (a : ZMod p) : bitsVal (resWord a) = a.val := by
   rw [resWord_eq, bitsVal_bits]
 
 /-- The word of the residue of a natural number `v < p` is `v`'s numeral
-(`ZMod.val_cast_of_lt`). -/
+(`ZMod.val_cast_of_lt`). Glue. -/
 theorem resWord_natCast_of_lt {v : ℕ} (h : v < p) : resWord (v : ZMod p) = Nat.bits v := by
   rw [resWord_eq, ZMod.val_cast_of_lt h]
 
-/-- A residue's word is no longer than the numeral of the modulus (`ZMod.val_lt`). -/
+/-- A residue's word is no longer than the numeral of the modulus (`ZMod.val_lt`). Glue. -/
 theorem length_resWord_le [NeZero p] (a : ZMod p) :
     (resWord a).length ≤ (Nat.bits p).length := by
   rw [resWord_eq, Nat.size_eq_bits_len, Nat.size_eq_bits_len]
   exact Nat.size_le_size (ZMod.val_lt a).le
 
-/-- Residue words are injective (`ZMod.val_injective`). -/
+/-- Residue words are injective (`ZMod.val_injective`). Glue. -/
 theorem resWord_injective [NeZero p] : Function.Injective (resWord (p := p)) := by
   intro a b h
   have := congrArg bitsVal h
@@ -366,36 +369,36 @@ loop envelopes below need. -/
 
 section Leaves
 
-/-- `(a + b) mod p` on `⟨p, ⟨a, b⟩⟩`, cut to the length of `p`. -/
+/-- `(a + b) mod p` on `⟨p, ⟨a, b⟩⟩`, cut to the length of `p`. Glue. -/
 def addModW (z : List Bool) : List Bool :=
   PrefixByLength.take (pairEncode (pairFstD z) (BinArith.mod (pairEncode (BinArith.add
     (pairEncode (pairFstD (pairSndD z)) (pairSndD (pairSndD z)))) (pairFstD z))))
 
-/-- `addModW z = take ⟨p, mod ⟨add ⟨a, b⟩, p⟩⟩` on `z = ⟨p, ⟨a, b⟩⟩`. -/
+/-- `addModW z = take ⟨p, mod ⟨add ⟨a, b⟩, p⟩⟩` on `z = ⟨p, ⟨a, b⟩⟩`. Glue. -/
 theorem addModW_eq (z : List Bool) :
     addModW z = PrefixByLength.take (pairEncode (pairFstD z) (BinArith.mod (pairEncode
       (BinArith.add (pairEncode (pairFstD (pairSndD z)) (pairSndD (pairSndD z)))) (pairFstD z))))
     := rfl
 
-/-- `(a · b) mod p` on `⟨p, ⟨a, b⟩⟩`, cut to the length of `p`. -/
+/-- `(a · b) mod p` on `⟨p, ⟨a, b⟩⟩`, cut to the length of `p`. Glue. -/
 def mulModW (z : List Bool) : List Bool :=
   PrefixByLength.take (pairEncode (pairFstD z) (BinArith.mod (pairEncode (BinArith.mul
     (pairEncode (pairFstD (pairSndD z)) (pairSndD (pairSndD z)))) (pairFstD z))))
 
-/-- `mulModW z = take ⟨p, mod ⟨mul ⟨a, b⟩, p⟩⟩` on `z = ⟨p, ⟨a, b⟩⟩`. -/
+/-- `mulModW z = take ⟨p, mod ⟨mul ⟨a, b⟩, p⟩⟩` on `z = ⟨p, ⟨a, b⟩⟩`. Glue. -/
 theorem mulModW_eq (z : List Bool) :
     mulModW z = PrefixByLength.take (pairEncode (pairFstD z) (BinArith.mod (pairEncode
       (BinArith.mul (pairEncode (pairFstD (pairSndD z)) (pairSndD (pairSndD z)))) (pairFstD z))))
     := rfl
 
 /-- `(a + p − b) mod p` on `⟨p, ⟨a, b⟩⟩`, cut to the length of `p`: the difference of two
-residues. -/
+residues. Glue. -/
 def subModW (z : List Bool) : List Bool :=
   PrefixByLength.take (pairEncode (pairFstD z) (BinArith.mod (pairEncode (BinArith.sub
     (pairEncode (BinArith.add (pairEncode (pairFstD (pairSndD z)) (pairFstD z)))
       (pairSndD (pairSndD z)))) (pairFstD z))))
 
-/-- `subModW z = take ⟨p, mod ⟨sub ⟨add ⟨a, p⟩, b⟩, p⟩⟩` on `z = ⟨p, ⟨a, b⟩⟩`. -/
+/-- `subModW z = take ⟨p, mod ⟨sub ⟨add ⟨a, p⟩, b⟩, p⟩⟩` on `z = ⟨p, ⟨a, b⟩⟩`. Glue. -/
 theorem subModW_eq (z : List Bool) :
     subModW z = PrefixByLength.take (pairEncode (pairFstD z) (BinArith.mod (pairEncode
       (BinArith.sub (pairEncode (BinArith.add (pairEncode (pairFstD (pairSndD z)) (pairFstD z)))
@@ -404,12 +407,12 @@ theorem subModW_eq (z : List Bool) :
 /-- **The inverse modulo a prime, by Fermat**: `a^{p−2} mod p` on `⟨p, a⟩`, through
 `BinArith.powMod`, cut to the length of `p`. This is the first public modular-inverse map of the
 library; its inline relative is the pivot inverse of `Complexity.BinArith.detWStep`
-(`BinaryArith/DetMod.lean`), which composes `powMod` and `sub` the same way. -/
+(`BinaryArith/DetMod.lean`), which composes `powMod` and `sub` the same way. Glue. -/
 def invModW (z : List Bool) : List Bool :=
   PrefixByLength.take (pairEncode (pairFstD z) (BinArith.powMod (pairEncode (pairSndD z)
     (pairEncode (BinArith.sub (pairEncode (pairFstD z) (Nat.bits 2))) (pairFstD z)))))
 
-/-- `invModW z = take ⟨p, powMod ⟨a, ⟨sub ⟨p, 2⟩, p⟩⟩⟩` on `z = ⟨p, a⟩`. -/
+/-- `invModW z = take ⟨p, powMod ⟨a, ⟨sub ⟨p, 2⟩, p⟩⟩⟩` on `z = ⟨p, a⟩`. Glue. -/
 theorem invModW_eq (z : List Bool) :
     invModW z = PrefixByLength.take (pairEncode (pairFstD z) (BinArith.powMod (pairEncode
       (pairSndD z) (pairEncode (BinArith.sub (pairEncode (pairFstD z) (Nat.bits 2)))
@@ -428,24 +431,24 @@ theorem take_pairEncode_resWord {p : ℕ} [NeZero p] (a : ZMod p) :
   rw [PrefixByLength.take_def, pairFstD_pairEncode, pairSndD_pairEncode]
   exact List.take_of_length_le (length_resWord_le a)
 
-/-- The leaves' outputs are no longer than the modulus word. -/
+/-- The leaves' outputs are no longer than the modulus word. Glue. -/
 theorem length_addModW_le (z : List Bool) : (addModW z).length ≤ (pairFstD z).length := by
   rw [addModW_eq]; exact length_take_pairEncode_le _ _
 
-/-- The leaves' outputs are no longer than the modulus word. -/
+/-- The leaves' outputs are no longer than the modulus word. Glue. -/
 theorem length_mulModW_le (z : List Bool) : (mulModW z).length ≤ (pairFstD z).length := by
   rw [mulModW_eq]; exact length_take_pairEncode_le _ _
 
 variable {p : ℕ} [NeZero p]
 
-/-- `addModW ⟨p, ⟨a, b⟩⟩ = a + b` on residue words (`ZMod.val_add`). -/
+/-- `addModW ⟨p, ⟨a, b⟩⟩ = a + b` on residue words (`ZMod.val_add`). Glue. -/
 theorem addModW_resWord (a b : ZMod p) :
     addModW (pairEncode (Nat.bits p) (pairEncode (resWord a) (resWord b))) = resWord (a + b) := by
   rw [addModW_eq, pairSndD_pairEncode, pairFstD_pairEncode, pairFstD_pairEncode,
     pairSndD_pairEncode, resWord_eq, resWord_eq, BinArith.add_pairEncode,
     BinArith.mod_pairEncode, ← ZMod.val_add, ← resWord_eq, take_pairEncode_resWord]
 
-/-- `mulModW ⟨p, ⟨a, b⟩⟩ = a · b` on residue words (`ZMod.val_mul`). -/
+/-- `mulModW ⟨p, ⟨a, b⟩⟩ = a · b` on residue words (`ZMod.val_mul`). Glue. -/
 theorem mulModW_resWord (a b : ZMod p) :
     mulModW (pairEncode (Nat.bits p) (pairEncode (resWord a) (resWord b))) = resWord (a * b) := by
   rw [mulModW_eq, pairSndD_pairEncode, pairFstD_pairEncode, pairFstD_pairEncode,
@@ -460,7 +463,7 @@ theorem val_sub_eq_add_sub_mod (a b : ZMod p) : (a - b).val = (a.val + p - b.val
       ZMod.natCast_zmod_val]
   rw [← hcast, ZMod.val_natCast]
 
-/-- `subModW ⟨p, ⟨a, b⟩⟩ = a − b` on residue words. -/
+/-- `subModW ⟨p, ⟨a, b⟩⟩ = a − b` on residue words. Glue. -/
 theorem subModW_resWord (a b : ZMod p) :
     subModW (pairEncode (Nat.bits p) (pairEncode (resWord a) (resWord b))) = resWord (a - b) := by
   rw [subModW_eq, pairSndD_pairEncode, pairFstD_pairEncode, pairFstD_pairEncode,
@@ -479,7 +482,7 @@ theorem pow_sub_two_eq_inv {q : ℕ} [Fact q.Prime] {a : ZMod q} (ha : a ≠ 0) 
 
 omit [NeZero p] in
 /-- `invModW ⟨q, a⟩ = a⁻¹` on residue words, for `q` prime and `a ≠ 0`
-(`BinArith.powMod_pairEncode`, `pow_sub_two_eq_inv`). -/
+(`BinArith.powMod_pairEncode`, `pow_sub_two_eq_inv`). Glue. -/
 theorem invModW_resWord {q : ℕ} [Fact q.Prime] {a : ZMod q} (ha : a ≠ 0) :
     invModW (pairEncode (Nat.bits q) (resWord a)) = resWord a⁻¹ := by
   have hq : q ≠ 0 := (Fact.out : q.Prime).ne_zero
@@ -499,21 +502,21 @@ theorem PolyTimeComputable.takeTo {u g : List Bool → List Bool} (hu : PolyTime
     PolyTimeComputable fun z => PrefixByLength.take (pairEncode (u z) (g z)) :=
   polyTimeComputable_takePrefixByLength.comp' (hu.pairEncode hg)
 
-/-- `addModW` is polynomial-time (`BinArith.polyTimeComputable_add`, `_mod`). -/
+/-- `addModW` is polynomial-time (`BinArith.polyTimeComputable_add`, `_mod`). Glue. -/
 theorem polyTimeComputable_addModW : PolyTimeComputable addModW :=
   (PolyTimeComputable.takeTo polyTimeComputable_pairFstD (BinArith.polyTimeComputable_mod.comp
     ((BinArith.polyTimeComputable_add.comp (BinArith.polyTimeComputable_slot2.pairEncode
       BinArith.polyTimeComputable_slot3)).pairEncode polyTimeComputable_pairFstD))).congr
     fun z => (addModW_eq z).symm
 
-/-- `mulModW` is polynomial-time (`BinArith.polyTimeComputable_mul`, `_mod`). -/
+/-- `mulModW` is polynomial-time (`BinArith.polyTimeComputable_mul`, `_mod`). Glue. -/
 theorem polyTimeComputable_mulModW : PolyTimeComputable mulModW :=
   (PolyTimeComputable.takeTo polyTimeComputable_pairFstD (BinArith.polyTimeComputable_mod.comp
     ((BinArith.polyTimeComputable_mul.comp (BinArith.polyTimeComputable_slot2.pairEncode
       BinArith.polyTimeComputable_slot3)).pairEncode polyTimeComputable_pairFstD))).congr
     fun z => (mulModW_eq z).symm
 
-/-- `subModW` is polynomial-time (`BinArith.polyTimeComputable_add`, `_sub`, `_mod`). -/
+/-- `subModW` is polynomial-time (`BinArith.polyTimeComputable_add`, `_sub`, `_mod`). Glue. -/
 theorem polyTimeComputable_subModW : PolyTimeComputable subModW :=
   (PolyTimeComputable.takeTo polyTimeComputable_pairFstD (BinArith.polyTimeComputable_mod.comp
     ((BinArith.polyTimeComputable_sub.comp ((BinArith.polyTimeComputable_add.comp
@@ -521,7 +524,7 @@ theorem polyTimeComputable_subModW : PolyTimeComputable subModW :=
       BinArith.polyTimeComputable_slot3)).pairEncode polyTimeComputable_pairFstD))).congr
     fun z => (subModW_eq z).symm
 
-/-- `invModW` is polynomial-time (`BinArith.polyTimeComputable_powMod`, `_sub`). -/
+/-- `invModW` is polynomial-time (`BinArith.polyTimeComputable_powMod`, `_sub`). Glue. -/
 theorem polyTimeComputable_invModW : PolyTimeComputable invModW :=
   (PolyTimeComputable.takeTo polyTimeComputable_pairFstD
     (BinArith.polyTimeComputable_powMod.comp (polyTimeComputable_pairSndD.pairEncode

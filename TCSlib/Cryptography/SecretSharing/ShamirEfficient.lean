@@ -63,7 +63,7 @@ open Complexity.LogProg (bitsVal bitsVal_bits)
 
 /-! ### The parameters, the coins and the parties -/
 
-/-- Shamir's public parameters carry a prime modulus. -/
+/-- Shamir's public parameters carry a prime modulus. Glue. -/
 instance (π : ShamirParams) : Fact π.p.Prime := ⟨π.prime⟩
 
 /-- **Residues by representatives**: `Fin p ≃ ZMod p`, `a ↦ (a : ℕ)`, inverse `x ↦ x.val`.
@@ -75,11 +75,11 @@ def finZModEquiv (p : ℕ) [NeZero p] : Fin p ≃ ZMod p where
   left_inv a := Fin.ext (ZMod.val_cast_of_lt a.2)
   right_inv x := ZMod.natCast_zmod_val x
 
-/-- `finZModEquiv p a = (a : ℕ)`. -/
+/-- `finZModEquiv p a = (a : ℕ)`. Glue. -/
 theorem finZModEquiv_apply (p : ℕ) [NeZero p] (a : Fin p) :
     finZModEquiv p a = ((a : ℕ) : ZMod p) := rfl
 
-/-- `(finZModEquiv p).symm x = x.val`. -/
+/-- `(finZModEquiv p).symm x = x.val`. Glue. -/
 theorem finZModEquiv_symm_apply_val (p : ℕ) [NeZero p] (x : ZMod p) :
     (((finZModEquiv p).symm x : Fin p) : ℕ) = x.val := rfl
 
@@ -92,12 +92,12 @@ noncomputable def coinEquiv (π : ShamirParams) :
   finFunctionFinEquiv.symm.trans ((Equiv.piCongrRight fun _ => finZModEquiv π.p).trans
     (degreeLTEquiv (ZMod π.p) (π.k - 1)).toEquiv.symm)
 
-/-- `coinEquiv π r = (degreeLTEquiv).symm (j ↦ ⌊r / p^j⌋ mod p)`. -/
+/-- `coinEquiv π r = (degreeLTEquiv).symm (j ↦ ⌊r / p^j⌋ mod p)`. Glue. -/
 theorem coinEquiv_apply (π : ShamirParams) (r : Fin (π.p ^ (π.k - 1))) :
     coinEquiv π r = (degreeLTEquiv (ZMod π.p) (π.k - 1)).symm
       fun j => finZModEquiv π.p (finFunctionFinEquiv.symm r j) := rfl
 
-/-- The coefficients of the coin polynomial are the base-`p` digits of `r`. -/
+/-- The coefficients of the coin polynomial are the base-`p` digits of `r`. Glue. -/
 theorem coeff_coinEquiv (π : ShamirParams) (r : Fin (π.p ^ (π.k - 1))) {j : ℕ}
     (hj : j < π.k - 1) :
     (coinEquiv π r).1.coeff j = ((r / π.p ^ j % π.p : ℕ) : ZMod π.p) := by
@@ -106,7 +106,7 @@ theorem coeff_coinEquiv (π : ShamirParams) (r : Fin (π.p ^ (π.k - 1))) {j : �
   rw [finZModEquiv_apply, finFunctionFinEquiv_symm_apply_val] at h
   exact h
 
-/-- The coin polynomial evaluates to `∑_{j < k−1} digit_j(r) · x^j`. -/
+/-- The coin polynomial evaluates to `∑_{j < k−1} digit_j(r) · x^j`. Glue. -/
 theorem eval_coinEquiv (π : ShamirParams) (r : Fin (π.p ^ (π.k - 1))) (x : ZMod π.p) :
     (coinEquiv π r).1.eval x =
       ∑ j ∈ range (π.k - 1), ((r / π.p ^ j % π.p : ℕ) : ZMod π.p) * x ^ j := by
@@ -135,15 +135,15 @@ def partyEmb (π : ShamirParams) : Fin π.n ↪ Party (ZMod π.p) :=
         at this
       exact Fin.ext (by omega)⟩
 
-/-- `partyEmb π i = ⟨i + 1, _⟩`. -/
+/-- `partyEmb π i = ⟨i + 1, _⟩`. Glue. -/
 theorem partyEmb_apply (π : ShamirParams) (i : Fin π.n) :
     ((partyEmb π i : Party (ZMod π.p)) : ZMod π.p) = (((i : ℕ) + 1 : ℕ) : ZMod π.p) := rfl
 
-/-- `label (partyEmb π i) = i + 1`. -/
+/-- `label (partyEmb π i) = i + 1`. Glue. -/
 theorem label_partyEmb (π : ShamirParams) (i : Fin π.n) :
     label (partyEmb π i) = (((i : ℕ) + 1 : ℕ) : ZMod π.p) := rfl
 
-/-- The word of party `i`'s label is the numeral of `i + 1`. -/
+/-- The word of party `i`'s label is the numeral of `i + 1`. Glue. -/
 theorem resWord_label_partyEmb (π : ShamirParams) (i : Fin π.n) :
     resWord (label (partyEmb π i)) = Nat.bits ((i : ℕ) + 1) := by
   rw [label_partyEmb, resWord_natCast_of_lt (by have := i.2; have := π.n_lt_p; omega)]
@@ -155,11 +155,11 @@ noncomputable def shamirScheme (π : ShamirParams) :
     Scheme (Fin π.n) (ZMod π.p) (ZMod π.p) (Fin (π.p ^ (π.k - 1))) :=
   (scheme π.k (ZMod π.p)).restrict (partyEmb π) (coinEquiv π) 0
 
-/-- `shamirScheme π = (scheme k (ZMod p)).restrict (partyEmb π) (coinEquiv π) 0`. -/
+/-- `shamirScheme π = (scheme k (ZMod p)).restrict (partyEmb π) (coinEquiv π) 0`. Glue. -/
 theorem shamirScheme_eq (π : ShamirParams) :
     shamirScheme π = (scheme π.k (ZMod π.p)).restrict (partyEmb π) (coinEquiv π) 0 := rfl
 
-/-- Party `i`'s share is `Shamir.scheme`'s share of party `i + 1` with the decoded coins. -/
+/-- Party `i`'s share is `Shamir.scheme`'s share of party `i + 1` with the decoded coins. Glue. -/
 theorem shamirScheme_share (π : ShamirParams) (sec : ZMod π.p) (r : Fin (π.p ^ (π.k - 1)))
     (i : Fin π.n) :
     (shamirScheme π).share sec r i = (scheme π.k (ZMod π.p)).share sec (coinEquiv π r)
@@ -167,7 +167,7 @@ theorem shamirScheme_share (π : ShamirParams) (sec : ZMod π.p) (r : Fin (π.p 
   rw [shamirScheme_eq, Scheme.restrict_share]
 
 /-- Reconstruction by the listed set `A` is `recombine` over `A`'s parties, of any share
-assignment agreeing with `f` there. -/
+assignment agreeing with `f` there. Glue. -/
 theorem shamirScheme_reconstruct (π : ShamirParams) (A : Finset (Fin π.n)) (f : Fin π.n → ZMod π.p)
     (g : Party (ZMod π.p) → ZMod π.p) (hfg : ∀ i ∈ A, g (partyEmb π i) = f i) :
     (shamirScheme π).reconstruct A f = recombine (A.map (partyEmb π)) g := by
@@ -183,7 +183,7 @@ theorem shamirScheme_correct (π : ShamirParams) :
     fun A hA => (AccessStructure.threshold_map_auth π.k (partyEmb π) A).2 hA
 
 /-- Reconstruction by a listed set reads only its shares (`Shamir.localReconstruct`,
-`Scheme.restrict_localReconstruct`). -/
+`Scheme.restrict_localReconstruct`). Glue. -/
 theorem shamirScheme_localReconstruct (π : ShamirParams) :
     (shamirScheme π).LocalReconstruct := by
   rw [shamirScheme_eq]
@@ -202,7 +202,7 @@ theorem shamirScheme_perfectPrivacy (π : ShamirParams) :
 /-- **One round of the share loop** on `⟨⟨p, x⟩, ⟨r, ⟨w, acc⟩⟩⟩`: the low base-`p` digit
 `r mod p` of the remaining coins times the current power `w` of the point is added to `acc`, the
 coins lose their low digit (`⌊r / p⌋`, cut to the length of `r`) and `w` is multiplied by `x`.
-The context `⟨p, x⟩` is kept. The body of the counted loop `BinArith.forLoop`. -/
+The context `⟨p, x⟩` is kept. The body of the counted loop `BinArith.forLoop`. Glue. -/
 def shareStep (d : List Bool) : List Bool :=
   pairEncode (pairFstD d) (pairEncode
     (PrefixByLength.take (pairEncode (pairFstD (pairSndD d))
@@ -215,7 +215,10 @@ def shareStep (d : List Bool) : List Bool :=
           (BinArith.mod (pairEncode (pairFstD (pairSndD d)) (pairFstD (pairFstD d))))
           (pairFstD (pairSndD (pairSndD d)))))))))))
 
-/-- The defining equation of `shareStep`. -/
+/-- `shareStep ⟨⟨p, x⟩, ⟨r, ⟨w, acc⟩⟩⟩ = ⟨⟨p, x⟩, ⟨⌊r / p⌋, ⟨w · x, acc + (r mod p) · w⟩⟩⟩`, with
+`⌊r / p⌋` cut to the length of `r` and the residue operations `mulModW`, `addModW` mod `p`
+(formula: the body of `shareStep` above, on the projections of `d`): the defining equation of
+`shareStep`. Glue. -/
 theorem shareStep_eq (d : List Bool) :
     shareStep d = pairEncode (pairFstD d) (pairEncode
       (PrefixByLength.take (pairEncode (pairFstD (pairSndD d))
@@ -231,20 +234,21 @@ theorem shareStep_eq (d : List Bool) :
 
 /-- **The state of the share loop after `j` rounds**, for prime `p`, coins `r`, point `x` and
 secret `sec`: `⟨⟨p, x⟩, ⟨⌊r / p^j⌋, ⟨x^{j+1}, sec + ∑_{t<j} digit_t(r) · x^{t+1}⟩⟩⟩`, where
-`digit_t(r) = ⌊r / p^t⌋ mod p`. -/
+`digit_t(r) = ⌊r / p^t⌋ mod p`. Glue. -/
 def shareState (p : ℕ) (sec x : ZMod p) (r j : ℕ) : List Bool :=
   pairEncode (pairEncode (Nat.bits p) (resWord x)) (pairEncode (Nat.bits (r / p ^ j))
     (pairEncode (resWord (x ^ (j + 1)))
       (resWord (sec + ∑ t ∈ range j, ((r / p ^ t % p : ℕ) : ZMod p) * x ^ (t + 1)))))
 
-/-- The defining equation of `shareState`. -/
+/-- `shareState p sec x r j = ⟨⟨p, x⟩, ⟨⌊r / p^j⌋, ⟨x^{j+1}, sec + ∑_{t<j} digit_t(r) · x^{t+1}⟩⟩⟩`,
+as numerals and residue words: the defining equation of `shareState`. Glue. -/
 theorem shareState_eq (p : ℕ) (sec x : ZMod p) (r j : ℕ) :
     shareState p sec x r j = pairEncode (pairEncode (Nat.bits p) (resWord x))
       (pairEncode (Nat.bits (r / p ^ j)) (pairEncode (resWord (x ^ (j + 1)))
         (resWord (sec + ∑ t ∈ range j, ((r / p ^ t % p : ℕ) : ZMod p) * x ^ (t + 1))))) := rfl
 
 /-- **One round advances the share loop** (`BinArith.div_pairEncode`, `mod_pairEncode`,
-`mulModW_resWord`, `addModW_resWord`). -/
+`mulModW_resWord`, `addModW_resWord`). Glue. -/
 theorem shareStep_shareState {p : ℕ} [NeZero p] (sec x : ZMod p) (r j : ℕ) :
     shareStep (shareState p sec x r j) = shareState p sec x r (j + 1) := by
   have hp : 0 < p := Nat.pos_of_ne_zero (NeZero.ne p)
@@ -260,7 +264,7 @@ theorem shareStep_shareState {p : ℕ} [NeZero p] (sec x : ZMod p) (r j : ℕ) :
     pairFstD_pairEncode, pairSndD_pairEncode, List.take_of_length_le hlen, mulModW_resWord, hdig,
     mulModW_resWord, addModW_resWord, shareState_eq, Finset.sum_range_succ, ← pow_succ, ← add_assoc]
 
-/-- The share loop after `j` rounds from the state with no digit consumed. -/
+/-- The share loop after `j` rounds from the state with no digit consumed. Glue. -/
 theorem iterate_shareStep {p : ℕ} [NeZero p] (sec x : ZMod p) (r j : ℕ) :
     shareStep^[j] (shareState p sec x r 0) = shareState p sec x r j := by
   induction j with
@@ -278,7 +282,9 @@ def shareRaw (z : List Bool) : List Bool :=
         (pairEncode (pairFstD (pairSndD (pairSndD z)))
           (pairEncode (pairSndD (pairSndD (pairSndD z))) (pairFstD (pairSndD z))))))))))
 
-/-- The defining equation of `shareRaw`. -/
+/-- `shareRaw ⟨π, ⟨sec, ⟨r, x⟩⟩⟩` is the accumulator of the counted loop `forLoop shareStep` on
+the counter `1^{k−1}` from the state `⟨⟨p, x⟩, ⟨r, ⟨x, sec⟩⟩⟩` (formula: the body of `shareRaw`
+above, on the projections of `z`): the defining equation of `shareRaw`. Glue. -/
 theorem shareRaw_eq (z : List Bool) :
     shareRaw z = pairSndD (pairSndD (pairSndD (pairSndD (BinArith.forLoop shareStep
       (pairEncode ((pairFstD (pairSndD (pairFstD z))).drop 1)
@@ -310,12 +316,12 @@ theorem shareRaw_spec (π : ShamirParams) (sec : ZMod π.p) (r : Fin (π.p ^ (π
   congr 2
   exact Finset.sum_congr rfl fun t _ => by ring
 
-/-- `shareStep` keeps its context `⟨p, x⟩`. -/
+/-- `shareStep` keeps its context `⟨p, x⟩`. Glue. -/
 theorem pairFstD_shareStep (d : List Bool) : pairFstD (shareStep d) = pairFstD d := by
   rw [shareStep_eq, pairFstD_pairEncode]
 
 /-- `shareStep` grows a word by at most `3|⟨p, x⟩| + 6` letters: the coins only shrink, and the
-two residues are cut to the length of `p` (`length_take_pairEncode_le`). -/
+two residues are cut to the length of `p` (`length_take_pairEncode_le`). Glue. -/
 theorem length_shareStep_le (d : List Bool) :
     (shareStep d).length ≤ d.length + 6 * ((pairFstD d).length + 1) := by
   have h1 := length_pair_components_le d
@@ -333,7 +339,7 @@ theorem length_shareStep_le (d : List Bool) :
   rw [shareStep_eq, length_pairEncode, length_pairEncode, length_pairEncode]
   omega
 
-/-- **The share machine is polynomial-time.**
+/-- **The share machine is polynomial-time.** Glue.
 
 **Proof sketch.** `shareStep` is a pairing of projections, `BinArith.div` cut to a length
 (`polyTimeComputable_takePrefixByLength`) and the leaves `mulModW`, `addModW`, `BinArith.mod`.
@@ -380,24 +386,24 @@ section Lagrange
 variable {F : Type*} [Field F] [DecidableEq F]
 
 /-- **The numerator of `a`'s Lagrange coefficient at `0`** over a listed set `l`:
-`∏_{b ∈ l, b ≠ a} b`, written with the factor `1` at `b = a`. -/
+`∏_{b ∈ l, b ≠ a} b`, written with the factor `1` at `b = a`. Glue. -/
 def lagNum (l : List (Party F)) (a : Party F) : F :=
   (l.map fun b => if b = a then 1 else label b).prod
 
-/-- `lagNum l a = ∏_{b ∈ l} (if b = a then 1 else b)`. -/
+/-- `lagNum l a = ∏_{b ∈ l} (if b = a then 1 else b)`. Glue. -/
 theorem lagNum_eq (l : List (Party F)) (a : Party F) :
     lagNum l a = (l.map fun b => if b = a then 1 else label b).prod := rfl
 
 /-- **The denominator of `a`'s Lagrange coefficient at `0`** over a listed set `l`:
-`∏_{b ∈ l, b ≠ a} (b − a)`, written with the factor `1` at `b = a`. -/
+`∏_{b ∈ l, b ≠ a} (b − a)`, written with the factor `1` at `b = a`. Glue. -/
 def lagDen (l : List (Party F)) (a : Party F) : F :=
   (l.map fun b => if b = a then 1 else label b - label a).prod
 
-/-- `lagDen l a = ∏_{b ∈ l} (if b = a then 1 else b − a)`. -/
+/-- `lagDen l a = ∏_{b ∈ l} (if b = a then 1 else b − a)`. Glue. -/
 theorem lagDen_eq (l : List (Party F)) (a : Party F) :
     lagDen l a = (l.map fun b => if b = a then 1 else label b - label a).prod := rfl
 
-/-- The denominator is nonzero: party labels are distinct. -/
+/-- The denominator is nonzero: party labels are distinct. Glue. -/
 theorem lagDen_ne_zero (l : List (Party F)) (a : Party F) : lagDen l a ≠ 0 := by
   rw [lagDen_eq]
   refine List.prod_ne_zero fun h => ?_
@@ -447,7 +453,7 @@ end Lagrange
 
 /-- **One round of the coefficient loop** on `⟨⟨p, x⟩, ⟨rest, ⟨num, den⟩⟩⟩`, where `rest` is an
 encoded list of entries `⟨b, s_b⟩`: drop the head entry; if its label `b` differs from `x`,
-multiply `num` by `b` and `den` by `b − x` (mod `p`). The body of a counted loop. -/
+multiply `num` by `b` and `den` by `b − x` (mod `p`). The body of a counted loop. Glue. -/
 def lagStep (d : List Bool) : List Bool :=
   if BinArith.beq (pairEncode (pairFstD (pairFstD (pairFstD (pairSndD d))))
       (pairSndD (pairFstD d))) then
@@ -461,7 +467,10 @@ def lagStep (d : List Bool) : List Bool :=
             (pairEncode (pairFstD (pairFstD (pairFstD (pairSndD d))))
               (pairSndD (pairFstD d))))))))))
 
-/-- The defining equation of `lagStep`. -/
+/-- `lagStep ⟨⟨p, x⟩, ⟨rest, ⟨num, den⟩⟩⟩`, for `rest` with head entry `⟨b, s_b⟩` and tail
+`rest'`, is `⟨⟨p, x⟩, ⟨rest', ⟨num, den⟩⟩⟩` if `BinArith.beq ⟨b, x⟩`, and otherwise
+`⟨⟨p, x⟩, ⟨rest', ⟨num · b, den · (b − x)⟩⟩⟩` by `mulModW` and `subModW` (formula: the body of
+`lagStep` above, on the projections of `d`): the defining equation of `lagStep`. Glue. -/
 theorem lagStep_eq (d : List Bool) :
     lagStep d =
       if BinArith.beq (pairEncode (pairFstD (pairFstD (pairFstD (pairSndD d))))
@@ -477,12 +486,12 @@ theorem lagStep_eq (d : List Bool) :
                 (pairEncode (pairFstD (pairFstD (pairFstD (pairSndD d))))
                   (pairSndD (pairFstD d)))))))))) := rfl
 
-/-- **An entry of the listed shares**: `⟨b, f b⟩`, both as residue words. -/
+/-- **An entry of the listed shares**: `⟨b, f b⟩`, both as residue words. Glue. -/
 def entryWord {q : ℕ} [Fact q.Prime] (f : Party (ZMod q) → ZMod q) (b : Party (ZMod q)) :
     List Bool :=
   pairEncode (resWord (label b)) (resWord (f b))
 
-/-- `entryWord f b = ⟨b, f b⟩`. -/
+/-- `entryWord f b = ⟨b, f b⟩`. Glue. -/
 theorem entryWord_eq {q : ℕ} [Fact q.Prime] (f : Party (ZMod q) → ZMod q) (b : Party (ZMod q)) :
     entryWord f b = pairEncode (resWord (label b)) (resWord (f b)) := rfl
 
@@ -501,7 +510,7 @@ omit [Fact q.Prime] in
 theorem resWord_zero : resWord (0 : ZMod q) = [] := by
   rw [resWord_eq, ZMod.val_zero, Nat.zero_bits]
 
-/-- The test of `lagStep` compares labels: `beq ⟨b, a⟩ = decide (b = a)`. -/
+/-- The test of `lagStep` compares labels: `beq ⟨b, a⟩ = decide (b = a)`. Glue. -/
 theorem beq_resWord_label (a b : Party (ZMod q)) :
     BinArith.beq (pairEncode (resWord (label b)) (resWord (label a))) = decide (b = a) := by
   rw [BinArith.beq_def, pairFstD_pairEncode, pairSndD_pairEncode, bitsVal_resWord,
@@ -509,7 +518,7 @@ theorem beq_resWord_label (a b : Party (ZMod q)) :
   exact decide_eq_decide.2 ⟨fun h => Subtype.ext (ZMod.val_injective q h), fun h => h ▸ rfl⟩
 
 /-- **The coefficient loop over the listed entries `l`**, for the point `a`: `|l|` rounds
-multiply in `lagNum l a` and `lagDen l a`.
+multiply in `lagNum l a` and `lagDen l a`. Glue.
 
 **Proof sketch.** Induction on `l`. A round reads the head entry `⟨b, f b⟩`; its test compares
 labels (`beq_resWord_label`), so for `b = a` it only drops the entry, and otherwise it multiplies
@@ -541,7 +550,8 @@ end Machines
 
 /-- **The term of one listed party** on `⟨⟨p, L⟩, ⟨a, s⟩⟩`, with `L` the encoded entries: run the
 coefficient loop `lagStep` over `L` (the counted loop `BinArith.forLoop`, host H16, counter
-`BinArith.countW L`) from `num = den = 1`, and write `num · den^{p−2} · s mod p` (`invModW`). -/
+`BinArith.countW L`) from `num = den = 1`, and write `num · den^{p−2} · s mod p` (`invModW`).
+Glue. -/
 def lagTerm (w : List Bool) : List Bool :=
   mulModW (pairEncode (pairFstD (pairFstD w)) (pairEncode (mulModW (pairEncode
     (pairFstD (pairFstD w)) (pairEncode
@@ -555,7 +565,9 @@ def lagTerm (w : List Bool) : List Bool :=
             (pairFstD (pairFstD w)) (pairFstD (pairSndD w))) (pairEncode (pairSndD (pairFstD w))
               (pairEncode [true] [true])))))))))))))) (pairSndD (pairSndD w))))
 
-/-- The defining equation of `lagTerm`, through the loop's final state `S w`. -/
+/-- `lagTerm ⟨⟨p, L⟩, ⟨a, s⟩⟩ = num · den^{p−2} · s` by `mulModW` and `invModW`, where
+`⟨num, den⟩` is read from the final state `S` of the counted loop `forLoop lagStep` on the counter
+`BinArith.countW L` from `⟨⟨p, a⟩, ⟨L, ⟨1, 1⟩⟩⟩`: the defining equation of `lagTerm`. Glue. -/
 theorem lagTerm_eq (w : List Bool) :
     lagTerm w =
       let S := pairSndD (BinArith.forLoop lagStep (pairEncode
@@ -569,13 +581,15 @@ theorem lagTerm_eq (w : List Bool) :
 
 /-- **One round of the recombination loop** on `⟨⟨p, L⟩, ⟨rest, acc⟩⟩`: drop the head entry
 `⟨a, s⟩` of `rest` and add its term `lagTerm ⟨⟨p, L⟩, ⟨a, s⟩⟩` to `acc` (mod `p`). The body of
-a counted loop. -/
+a counted loop. Glue. -/
 def recStep (d : List Bool) : List Bool :=
   pairEncode (pairFstD d) (pairEncode (pairSndD (pairFstD (pairSndD d)))
     (addModW (pairEncode (pairFstD (pairFstD d)) (pairEncode (pairSndD (pairSndD d))
       (lagTerm (pairEncode (pairFstD d) (pairFstD (pairFstD (pairSndD d)))))))))
 
-/-- The defining equation of `recStep`. -/
+/-- `recStep ⟨⟨p, L⟩, ⟨rest, acc⟩⟩`, for `rest` with head entry `e` and tail `rest'`, is
+`⟨⟨p, L⟩, ⟨rest', acc + lagTerm ⟨⟨p, L⟩, e⟩⟩⟩`, the sum by `addModW` (formula: the body of
+`recStep` above, on the projections of `d`): the defining equation of `recStep`. Glue. -/
 theorem recStep_eq (d : List Bool) :
     recStep d = pairEncode (pairFstD d) (pairEncode (pairSndD (pairFstD (pairSndD d)))
       (addModW (pairEncode (pairFstD (pairFstD d)) (pairEncode (pairSndD (pairSndD d))
@@ -589,7 +603,9 @@ def recombineRaw (z : List Bool) : List Bool :=
   pairSndD (pairSndD (pairSndD (BinArith.forLoop recStep
     (pairEncode (BinArith.countW (pairSndD z)) (pairEncode z (pairEncode (pairSndD z) []))))))
 
-/-- The defining equation of `recombineRaw`. -/
+/-- `recombineRaw ⟨p, L⟩` is the accumulator of the counted loop `forLoop recStep` on the counter
+`BinArith.countW L` from the state `⟨⟨p, L⟩, ⟨L, []⟩⟩` (the empty numeral is `0`): the defining
+equation of `recombineRaw`. Glue. -/
 theorem recombineRaw_eq (z : List Bool) :
     recombineRaw z = pairSndD (pairSndD (pairSndD (BinArith.forLoop recStep
       (pairEncode (BinArith.countW (pairSndD z)) (pairEncode z (pairEncode (pairSndD z) [])))))) :=
@@ -600,7 +616,7 @@ section Machines
 variable {q : ℕ} [Fact q.Prime]
 
 /-- **The term machine** writes `a`'s Lagrange coefficient at `0` over the listed `l`, times
-`s` (`iterate_lagStep`, `invModW_resWord` with `lagDen_ne_zero`). -/
+`s` (`iterate_lagStep`, `invModW_resWord` with `lagDen_ne_zero`). Glue. -/
 theorem lagTerm_spec (l : List (Party (ZMod q))) (f : Party (ZMod q) → ZMod q)
     (a : Party (ZMod q)) (s : ZMod q) :
     lagTerm (pairEncode (pairEncode (Nat.bits q) (BinArith.encWords (l.map (entryWord f))))
@@ -617,7 +633,7 @@ theorem lagTerm_spec (l : List (Party (ZMod q))) (f : Party (ZMod q) → ZMod q)
   rw [invModW_resWord (lagDen_ne_zero l a), mulModW_resWord, mulModW_resWord]
 
 /-- **The recombination loop over the listed entries** `l'`, inside the context of all entries
-`l`: `|l'|` rounds add `∑_{a ∈ l'} lagNum l a · (lagDen l a)⁻¹ · f a` to the accumulator. -/
+`l`: `|l'|` rounds add `∑_{a ∈ l'} lagNum l a · (lagDen l a)⁻¹ · f a` to the accumulator. Glue. -/
 theorem iterate_recStep (l : List (Party (ZMod q))) (f : Party (ZMod q) → ZMod q) :
     ∀ (l' : List (Party (ZMod q))) (acc : ZMod q),
       recStep^[l'.length] (pairEncode (pairEncode (Nat.bits q)
@@ -658,12 +674,12 @@ theorem recombineRaw_spec (l : List (Party (ZMod q))) (hl : l.Nodup)
 
 end Machines
 
-/-- `lagStep` keeps its context `⟨p, x⟩`. -/
+/-- `lagStep` keeps its context `⟨p, x⟩`. Glue. -/
 theorem pairFstD_lagStep (d : List Bool) : pairFstD (lagStep d) = pairFstD d := by
   rw [lagStep_eq]; split_ifs <;> rw [pairFstD_pairEncode]
 
 /-- `lagStep` grows a word by at most `6(|⟨p, x⟩| + 1)` letters: the entries only shrink and the
-two products are cut to the length of `p`. -/
+two products are cut to the length of `p`. Glue. -/
 theorem length_lagStep_le (d : List Bool) :
     (lagStep d).length ≤ d.length + 6 * ((pairFstD d).length + 1) := by
   have h1 := length_pair_components_le d
@@ -682,11 +698,11 @@ theorem length_lagStep_le (d : List Bool) :
     rw [pairFstD_pairEncode] at h5 h6
     rw [length_pairEncode, length_pairEncode, length_pairEncode]; omega
 
-/-- `recStep` keeps its context `⟨p, L⟩`. -/
+/-- `recStep` keeps its context `⟨p, L⟩`. Glue. -/
 theorem pairFstD_recStep (d : List Bool) : pairFstD (recStep d) = pairFstD d := by
   rw [recStep_eq, pairFstD_pairEncode]
 
-/-- `recStep` grows a word by at most `4(|⟨p, L⟩| + 1)` letters. -/
+/-- `recStep` grows a word by at most `4(|⟨p, L⟩| + 1)` letters. Glue. -/
 theorem length_recStep_le (d : List Bool) :
     (recStep d).length ≤ d.length + 4 * ((pairFstD d).length + 1) := by
   have h1 := length_pair_components_le d
@@ -698,7 +714,7 @@ theorem length_recStep_le (d : List Bool) :
   rw [pairFstD_pairEncode] at h5
   rw [recStep_eq, length_pairEncode, length_pairEncode]; omega
 
-/-- **The recombination machine is polynomial-time.**
+/-- **The recombination machine is polynomial-time.** Glue.
 
 **Proof sketch.** Both loop bodies are pairings of projections and the leaves `mulModW`,
 `subModW`, `addModW`, `invModW`, with a branch on `BinArith.beq` (`polyTimeComputable_ite`); both
@@ -751,19 +767,20 @@ theorem polyTimeComputable_recombineRaw : PolyTimeComputable recombineRaw := by
 /-! ### The dealer's coins -/
 
 /-- **One round of the power loop** on `⟨p, acc⟩`: `acc := acc · p`, cut to `|acc| + |p|`
-letters (which a product never exceeds). The body of a counted loop. -/
+letters (which a product never exceeds). The body of a counted loop. Glue. -/
 def dealerPowStep (d : List Bool) : List Bool :=
   pairEncode (pairFstD d) (PrefixByLength.take (pairEncode (pairSndD d ++ pairFstD d)
     (BinArith.mul (pairEncode (pairSndD d) (pairFstD d)))))
 
-/-- The defining equation of `dealerPowStep`. -/
+/-- `dealerPowStep ⟨p, acc⟩ = ⟨p, acc · p⟩`, the product (`BinArith.mul`) cut to `|acc| + |p|`
+letters: the defining equation of `dealerPowStep`. Glue. -/
 theorem dealerPowStep_eq (d : List Bool) :
     dealerPowStep d = pairEncode (pairFstD d) (PrefixByLength.take
       (pairEncode (pairSndD d ++ pairFstD d)
       (BinArith.mul (pairEncode (pairSndD d) (pairFstD d))))) := rfl
 
 /-- `j` rounds of the power loop from `⟨p, 1⟩` give `⟨p, p^j⟩` (`BinArith.mul_pairEncode`;
-the numeral of a product is at most as long as the two numerals together). -/
+the numeral of a product is at most as long as the two numerals together). Glue. -/
 theorem iterate_dealerPowStep (p j : ℕ) :
     dealerPowStep^[j] (pairEncode (Nat.bits p) (Nat.bits 1)) =
       pairEncode (Nat.bits p) (Nat.bits (p ^ j)) := by
@@ -782,21 +799,23 @@ theorem iterate_dealerPowStep (p j : ℕ) :
 /-- **The dealer's parameter word machine** on `⟨1^κ, π⟩`: `p^{k−1}` by the counted loop
 `dealerPowStep` (host H16) over `1^{k−1}`, written as a numeral of width `b(κ) + 1`
 (`Encoding.BinaryArith.fromLEPoly`). Its output is the bucket sampler's parameter word
-`Cryptography.CoinSampling.modulusWord b κ (p^{k−1})`. -/
+`Cryptography.CoinSampling.modulusWord b κ (p^{k−1})`. Glue. -/
 def dealerWord (b : PolyExpr) (z : List Bool) : List Bool :=
   Cryptography.Encoding.BinaryArith.fromLEPoly (b.add (.const 1)) (pairEncode (pairFstD z)
     (pairSndD (pairSndD (BinArith.forLoop dealerPowStep (pairEncode
       ((pairFstD (pairSndD (pairSndD z))).drop 1)
       (pairEncode (pairFstD (pairSndD z)) [true]))))))
 
-/-- The defining equation of `dealerWord`. -/
+/-- `dealerWord b ⟨1^κ, π⟩ = fromLEPoly (b + 1) ⟨1^κ, w⟩`, where `w` is the accumulator of the
+counted loop `forLoop dealerPowStep` on the counter `1^{k−1}` from `⟨p, 1⟩` (formula: the body of
+`dealerWord` above, on the projections of `z`): the defining equation of `dealerWord`. Glue. -/
 theorem dealerWord_eq (b : PolyExpr) (z : List Bool) :
     dealerWord b z = Cryptography.Encoding.BinaryArith.fromLEPoly (b.add (.const 1))
       (pairEncode (pairFstD z) (pairSndD (pairSndD (BinArith.forLoop dealerPowStep (pairEncode
         ((pairFstD (pairSndD (pairSndD z))).drop 1)
         (pairEncode (pairFstD (pairSndD z)) [true])))))) := rfl
 
-/-- **The dealer's parameter word machine is polynomial-time**.
+/-- **The dealer's parameter word machine is polynomial-time**. Glue.
 
 **Proof sketch.** `dealerPowStep` is a pairing of projections with `BinArith.mul` cut to a length
 (`polyTimeComputable_takePrefixByLength`); it keeps `p` and grows by at most `|p| + 2` per round,
@@ -826,10 +845,10 @@ theorem polyTimeComputable_dealerWord (b : PolyExpr) : PolyTimeComputable (deale
           (polyTimeComputable_const _)))))))).congr fun z => (dealerWord_eq b z).symm
 
 /-- **Admissible parameters at `κ`**: the coin space `p^{k−1}` fits in `b(κ)` bits, so that the
-bucket sampler with `b(κ) + κ` coins fails with probability at most `2^{-κ}`. -/
+bucket sampler with `b(κ) + κ` coins fails with probability at most `2^{-κ}`. Glue. -/
 def shamirAdm (b : PolyExpr) (κ : ℕ) (π : ShamirParams) : Prop := π.p ^ (π.k - 1) ≤ 2 ^ b.eval κ
 
-/-- `shamirAdm b κ π ↔ p^{k−1} ≤ 2^{b(κ)}`. -/
+/-- `shamirAdm b κ π ↔ p^{k−1} ≤ 2^{b(κ)}`. Glue. -/
 theorem shamirAdm_iff (b : PolyExpr) (κ : ℕ) (π : ShamirParams) :
     shamirAdm b κ π ↔ π.p ^ (π.k - 1) ≤ 2 ^ b.eval κ := Iff.rfl
 
@@ -838,11 +857,11 @@ def coinModulus (b : PolyExpr) (κ : ℕ) (π : {π // shamirAdm b κ π}) :
     Cryptography.CoinSampling.BoundedModulus b κ :=
   ⟨⟨π.1.p ^ (π.1.k - 1), pow_pos π.1.prime.pos _⟩, π.2⟩
 
-/-- `coinModulus b κ π = ⟨p^{k−1}, _⟩`. -/
+/-- `coinModulus b κ π = ⟨p^{k−1}, _⟩`. Glue. -/
 theorem coinModulus_eq (b : PolyExpr) (κ : ℕ) (π : {π // shamirAdm b κ π}) :
     coinModulus b κ π = ⟨⟨π.1.p ^ (π.1.k - 1), pow_pos π.1.prime.pos _⟩, π.2⟩ := rfl
 
-/-- `coinModulus b κ π = p^{k−1}`. -/
+/-- `coinModulus b κ π = p^{k−1}`. Glue. -/
 theorem coe_coinModulus (b : PolyExpr) (κ : ℕ) (π : {π // shamirAdm b κ π}) :
     ((coinModulus b κ π).1 : ℕ) = π.1.p ^ (π.1.k - 1) := rfl
 
@@ -939,11 +958,11 @@ noncomputable def shamirEfficient (b : PolyExpr) : EfficientScheme where
         shamirScheme_reconstruct π A sh g fun i _ => hg i]⟩
   dealer_efficient := dealerSamples_shamir b
 
-/-- The typed scheme of `shamirEfficient b` at `π` is `shamirScheme π`. -/
+/-- The typed scheme of `shamirEfficient b` at `π` is `shamirScheme π`. Glue. -/
 theorem shamirEfficient_scheme (b : PolyExpr) (π : ShamirParams) :
     (shamirEfficient b).scheme π = shamirScheme π := rfl
 
-/-- The access structure of `shamirEfficient b` at `π` is `threshold k`. -/
+/-- The access structure of `shamirEfficient b` at `π` is `threshold k`. Glue. -/
 theorem shamirEfficient_access (b : PolyExpr) (π : ShamirParams) :
     (shamirEfficient b).access π = AccessStructure.threshold π.k := rfl
 
@@ -952,7 +971,7 @@ theorem shamirEfficient_access (b : PolyExpr) (π : ShamirParams) :
 theorem shamirEfficient_correct (b : PolyExpr) : (shamirEfficient b).Correct :=
   ((shamirEfficient b).correct_iff).2 fun π => shamirScheme_correct π
 
-/-- **Local reconstruction of efficient Shamir** (`shamirScheme_localReconstruct`). -/
+/-- **Local reconstruction of efficient Shamir** (`shamirScheme_localReconstruct`). Glue. -/
 theorem shamirEfficient_localReconstruct (b : PolyExpr) : (shamirEfficient b).LocalReconstruct :=
   ((shamirEfficient b).localReconstruct_iff).2 fun π => shamirScheme_localReconstruct π
 

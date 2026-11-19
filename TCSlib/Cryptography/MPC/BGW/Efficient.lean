@@ -88,7 +88,8 @@ noncomputable def shamirResharer (π : ShamirParams)
   reshare i x j := (scheme π.k (ZMod π.p)).share x (coinEquiv π (ρ i x)) j
   isSharing_reshare i x := isSharing_share π.k_pos x (coinEquiv π (ρ i x))
 
-/-- `(shamirResharer π ρ).reshare i x j = (scheme k (ZMod p)).share x (coinEquiv π (ρ i x)) j`. -/
+/-- `(shamirResharer π ρ).reshare i x j = (scheme k (ZMod p)).share x (coinEquiv π (ρ i x)) j`.
+Glue. -/
 theorem shamirResharer_reshare (π : ShamirParams)
     (ρ : Party (ZMod π.p) → ZMod π.p → Fin (π.p ^ (π.k - 1))) (i : Party (ZMod π.p))
     (x : ZMod π.p) (j : Party (ZMod π.p)) :
