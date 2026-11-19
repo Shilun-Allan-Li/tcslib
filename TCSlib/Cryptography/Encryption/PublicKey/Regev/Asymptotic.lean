@@ -290,7 +290,7 @@ its advice holds `n`, `m`, `q`, the width and the codepoint of `μ`.
    `r` the first `m` bits of `s` (`Fin.take`, `Fin.ofFn_take_eq_take_ofFn`).
 2. `NUPPT.exists_split B S` gives `D'` with coins `S + D.coins`, which hands its first `S(κ)`
    coins to `B` as the subset string.
-3. Coins: the relabelling `((t, v), u) ↦ t ++ u ++ v` (`Fin.appendEquiv`, `finCongr`) of
+3. Coins: the relabelling `((t, v), u) ↦ t ++ u ++ v` (`EnsembleLemmas.coinsEquiv`) of
    `({0,1}^m × D's coins) × {0,1}^{S - m}` onto `D'`'s coins makes `D'`'s verdict the
    reduction's on `(t, v)` (`hverdict`); `acceptProb_coins_equiv` and `acceptProb_coins_fst`
    (the unread `u`) turn both acceptance probabilities of the DLWE experiment into the
@@ -335,12 +335,13 @@ theorem exists_reductionMachine (F : LWE.Family) (μ : Bool) (D : NUPPT) :
     ((((Equiv.prodAssoc T (D.Coins κ) U).trans
       ((Equiv.refl T).prodCongr (Equiv.prodComm (D.Coins κ) U))).trans
         (Equiv.prodAssoc T U (D.Coins κ)).symm).trans
-      ((Fin.appendEquiv _ _).prodCongr (Equiv.refl (D.Coins κ)))).trans
-      ((Fin.appendEquiv _ _).trans (Equiv.arrowCongr (finCongr hlen) (Equiv.refl Bool)))
+      ((EnsembleLemmas.coinsEquiv rfl).prodCongr (Equiv.refl (D.Coins κ)))).trans
+      (EnsembleLemmas.coinsEquiv hlen.symm)
   have hφ (t : T) (v : D.Coins κ) (u : U) :
       List.ofFn (φ ((t, v), u)) = List.ofFn t ++ List.ofFn u ++ List.ofFn v := by
-    change List.ofFn (fun i => Fin.append (Fin.append t u) v (Fin.cast hlen.symm i)) = _
-    rw [← List.ofFn_congr hlen, List.ofFn_fin_append, List.ofFn_fin_append]
+    change List.ofFn (EnsembleLemmas.coinsEquiv hlen.symm
+      (EnsembleLemmas.coinsEquiv rfl (t, u), v)) = _
+    rw [EnsembleLemmas.ofFn_coinsEquiv, EnsembleLemmas.ofFn_coinsEquiv]
   let Dv := fun (v : (Matrix (Fin (F.parameters κ).samples) (Fin (F.parameters κ).dimension)
       (ZMod (F.parameters κ).modulus) ×
         (Fin (F.parameters κ).samples → ZMod (F.parameters κ).modulus)) ×
