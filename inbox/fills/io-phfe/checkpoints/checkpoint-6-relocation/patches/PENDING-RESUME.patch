@@ -1,0 +1,1482 @@
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption.lean
+index 9c0738443..da21c3c7a 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption.lean
+@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Run
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.FiniteRandomness
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.ReductionLaws
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PolynomialTensorAlgebra
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Classes
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling
+@@ -25,6 +26,7 @@ set_option autoImplicit false
+ * `Defs`: generic function classes, raw algorithms, correctness and efficient interfaces.
+ * `Run`: deterministic bounded stateful oracle runs.
+ * `FiniteRandomness`: uniform coordinate restriction with unused coordinates retained.
++* `ReductionLaws`: uniform coin transport for realised reduction verdicts.
+ * `PolynomialTensorAlgebra`: finite monomial padding for class completeness.
+ * `Classes`: polynomial public computation and quadratic private computation.
+ * `PartialGarbling`: corrected arithmetic partial garbling with exact privacy.
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity.lean
+index 6ecbb9d20..95294ef52 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity.lean
+@@ -2,6 +2,7 @@
+ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Coordinates
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Data
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Endpoint
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Fresh
+@@ -20,6 +21,7 @@ set_option autoImplicit false
+ 
+ ## Contents
+ 
++* `LinearSecurity.Coordinates`: complete padded scalar-tape coordinates.
+ * `LinearSecurity.Data`: typed queries, adversaries and public game data.
+ * `LinearSecurity.Endpoint`: fresh-to-padded endpoint law comparisons.
+ * `LinearSecurity.Fresh`: exact fresh-randomness endpoint experiments.
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Endpoint.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Endpoint.lean
+index 4fd07262e..776ffa19d 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Endpoint.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Endpoint.lean
+@@ -57,7 +57,587 @@ is imposed, so the singular total-inverse branch is coupled on the ideal side as
+ theorem saGame_eq_freshSaGame (G : BilinearGen) {ℓ n' : PolyExpr}
+     {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr)
+     (A : SAAdv G PG zDim) (ideal : Bool) (κ : ℕ) :
+-    accept (saGame G PG zDim A ideal κ) = accept (freshSaGame G PG zDim A ideal κ) := sorry
++    accept (saGame G PG zDim A ideal κ) = accept (freshSaGame G PG zDim A ideal κ) := by
++  let q : ℕ := A.budget.eval κ
++  let b : ℕ := PG.mBound.eval κ
++  let n : ℕ := n'.eval κ
++  let l : ℕ := ℓ.eval κ
++  let N : ℕ := (securityCount PG zDim A.budget).eval κ
++  let head : ℕ := 17 + 4 * zDim.eval κ + 8 * l
++  let base : ℕ := head + 2
++  let off := securityOffsets PG zDim A.budget κ
++  let mode : Fin 6 := if ideal then 5 else 0
++  let delta : ℕ := if ideal then 0 else 1
++  let K (pp : PublicParams G κ) : Type := ZMod pp.group.order
++  let Draw (pp : PublicParams G κ) : Type := SecurityDraw G PG zDim A.budget κ pp
++  let State (pp : PublicParams G κ) : Type := SAState G ℓ zDim κ pp
++  let start (pp : PublicParams G κ) : State pp := ⟨none, 0⟩
++  let bit (a : Bool) : ℝ := if a = true then 1 else 0
++  let ctx (pp : PublicParams G κ) (rho : Draw pp) :=
++    simSetupCore G ℓ zDim κ pp (setupAt G PG zDim A.budget κ pp rho)
++  let secret (pp : PublicParams G κ) (rho : Draw pp) : MSK G ℓ zDim κ pp :=
++    ⟨(ctx pp rho).2.W, (ctx pp rho).2.U, (ctx pp rho).2.V⟩
++  let c (pp : PublicParams G κ) (rho : Draw pp) (r : List Bool) :=
++    SAAdv.run G PG zDim A κ pp (ctx pp rho).1 r
++  -- A complete scalar array is one fixed coin type, independent of the adaptive function.
++  let ActualIdx (pp : PublicParams G κ) (f : Fn κ pp.orderParam) : Type :=
++    (Fin 3 × (PG.TIdx κ pp.orderParam f ⊕ Fin n)) ⊕
++      ((Fin l × PG.MIdx κ pp.orderParam f) ⊕
++        ((Fin 2 × PG.MIdx κ pp.orderParam f) ⊕
++          (PG.TIdx κ pp.orderParam f ⊕ Fin n)))
++  let actualPos (pp : PublicParams G κ) (j : ℕ) (f : Fn κ pp.orderParam) :
++      ActualIdx pp f → ℕ := fun
++    | Sum.inl (i, u) => off 0 + j * (3 * (b + n)) + i.val * (b + n) +
++        paddedDrawIndex PG κ pp.orderParam f u
++    | Sum.inr (Sum.inl (i, u)) => off 2 + j * (l * b) + i.val * b +
++        (PG.mCoord κ pp.orderParam f u).val
++    | Sum.inr (Sum.inr (Sum.inl (i, u))) => off 1 + j * (2 * b) + i.val * b +
++        (PG.mCoord κ pp.orderParam f u).val
++    | Sum.inr (Sum.inr (Sum.inr u)) => off 3 + j * (b + n) +
++        paddedDrawIndex PG κ pp.orderParam f u
++  have hTapeCount : N = base + q * (3 * (b + n)) + q * (2 * b) +
++      q * (l * b) + q * (b + n) := ?_
++  swap
++  · dsimp only [N, base, head, q, b, n, l]
++    rw [securityCount_eq]
++    simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
++    ring
++  have hTapeOffsets : off = ![base, base + q * (3 * (b + n)),
++      base + q * (3 * (b + n)) + q * (2 * b),
++      base + q * (3 * (b + n)) + q * (2 * b) + q * (l * b)] := ?_
++  swap
++  · dsimp only [off, base, head, q, b, n, l]
++    rw [securityOffsets_eq]
++    funext k
++    fin_cases k <;>
++      simp only [Matrix.cons_val_zero', Matrix.cons_val_succ'] <;> ring
++  have hActualBound : ∀ (pp : PublicParams G κ) (j : ℕ), j < q →
++      ∀ (f : Fn κ pp.orderParam) (i : ActualIdx pp f), actualPos pp j f i < N := by
++    intro pp j hj f u
++    rcases u with ⟨i, u⟩ | ⟨i, u⟩ | ⟨i, u⟩ | u
++    · let v : Fin (b + n) :=
++        ⟨paddedDrawIndex PG κ pp.orderParam f u, paddedDrawIndex_lt PG κ pp.orderParam f u⟩
++      have hRank := (finProdFinEquiv
++        ((⟨j, hj⟩ : Fin q), finProdFinEquiv (i, v))).isLt
++      change (paddedDrawIndex PG κ pp.orderParam f u + (b + n) * i.val) +
++        (3 * (b + n)) * j < q * (3 * (b + n)) at hRank
++      rw [Nat.mul_comm (b + n) i.val, Nat.mul_comm (3 * (b + n)) j] at hRank
++      dsimp only [actualPos]
++      rw [hTapeOffsets, hTapeCount]
++      refine (show base + j * (3 * (b + n)) + i.val * (b + n) +
++        paddedDrawIndex PG κ pp.orderParam f u <
++          base + q * (3 * (b + n)) + q * (2 * b) + q * (l * b) + q * (b + n) from ?_)
++      omega
++    · let v : Fin b :=
++        Fin.castLEEmb (PG.mCount_le_mBound κ pp.orderParam f) (PG.mCoord κ pp.orderParam f u)
++      have hRank := (finProdFinEquiv
++        ((⟨j, hj⟩ : Fin q), finProdFinEquiv (i, v))).isLt
++      change ((PG.mCoord κ pp.orderParam f u).val + b * i.val) +
++        (l * b) * j < q * (l * b) at hRank
++      rw [Nat.mul_comm b i.val, Nat.mul_comm (l * b) j] at hRank
++      dsimp only [actualPos]
++      rw [hTapeOffsets, hTapeCount]
++      refine (show base + q * (3 * (b + n)) + q * (2 * b) +
++        j * (l * b) + i.val * b + (PG.mCoord κ pp.orderParam f u).val <
++          base + q * (3 * (b + n)) + q * (2 * b) + q * (l * b) + q * (b + n) from ?_)
++      omega
++    · let v : Fin b :=
++        Fin.castLEEmb (PG.mCount_le_mBound κ pp.orderParam f) (PG.mCoord κ pp.orderParam f u)
++      have hRank := (finProdFinEquiv
++        ((⟨j, hj⟩ : Fin q), finProdFinEquiv (i, v))).isLt
++      change ((PG.mCoord κ pp.orderParam f u).val + b * i.val) +
++        (2 * b) * j < q * (2 * b) at hRank
++      rw [Nat.mul_comm b i.val, Nat.mul_comm (2 * b) j] at hRank
++      dsimp only [actualPos]
++      rw [hTapeOffsets, hTapeCount]
++      refine (show base + q * (3 * (b + n)) +
++        j * (2 * b) + i.val * b + (PG.mCoord κ pp.orderParam f u).val <
++          base + q * (3 * (b + n)) + q * (2 * b) + q * (l * b) + q * (b + n) from ?_)
++      omega
++    · let v : Fin (b + n) :=
++        ⟨paddedDrawIndex PG κ pp.orderParam f u, paddedDrawIndex_lt PG κ pp.orderParam f u⟩
++      have hRank := (finProdFinEquiv ((⟨j, hj⟩ : Fin q), v)).isLt
++      change paddedDrawIndex PG κ pp.orderParam f u + (b + n) * j < q * (b + n) at hRank
++      rw [Nat.mul_comm (b + n) j] at hRank
++      dsimp only [actualPos]
++      rw [hTapeOffsets, hTapeCount]
++      refine (show base + q * (3 * (b + n)) + q * (2 * b) + q * (l * b) +
++        j * (b + n) + paddedDrawIndex PG κ pp.orderParam f u <
++          base + q * (3 * (b + n)) + q * (2 * b) + q * (l * b) + q * (b + n) from ?_)
++      omega
++  have hActualInj : ∀ (pp : PublicParams G κ) (j : ℕ), j < q →
++      ∀ f : Fn κ pp.orderParam, Function.Injective (actualPos pp j f) := by
++    intro pp j hj f
++    have hAux : PG.auxCount κ pp.orderParam f ≤ b :=
++      (Nat.le_add_right (PG.auxCount κ pp.orderParam f) 1).trans
++        ((PG.auxCount_add_one κ pp.orderParam f).le.trans (PG.mCount_le_mBound κ pp.orderParam f))
++    let auxEmb : PG.TIdx κ pp.orderParam f ↪ Fin b :=
++      (PG.tCoord κ pp.orderParam f).toEmbedding.trans (Fin.castLEEmb hAux)
++    let padEmb : (PG.TIdx κ pp.orderParam f ⊕ Fin n) ↪ Fin (b + n) :=
++      (Function.Embedding.sumMap auxEmb (Function.Embedding.refl (Fin n))).trans
++        finSumFinEquiv.toEmbedding
++    let nodeEmb : PG.MIdx κ pp.orderParam f ↪ Fin b :=
++      (PG.mCoord κ pp.orderParam f).toEmbedding.trans
++        (Fin.castLEEmb (PG.mCount_le_mBound κ pp.orderParam f))
++    have hPadValue (u : PG.TIdx κ pp.orderParam f ⊕ Fin n) :
++        (padEmb u).val = paddedDrawIndex PG κ pp.orderParam f u := ?_
++    swap
++    · rw [paddedDrawIndex_eq]
++      cases u <;> rfl
++    let queryEmb (m : ℕ) : Fin m ↪ Fin (q * m) :=
++      (Function.Embedding.sectR (⟨j, hj⟩ : Fin q) (Fin m)).trans finProdFinEquiv.toEmbedding
++    let tSize := q * (3 * (b + n))
++    let rSize := q * (2 * b)
++    let uSize := q * (l * b)
++    let pSize := q * (b + n)
++    let tEmb : (Fin 3 × (PG.TIdx κ pp.orderParam f ⊕ Fin n)) ↪ Fin tSize :=
++      ((Function.Embedding.prodMap (Function.Embedding.refl (Fin 3)) padEmb).trans
++        finProdFinEquiv.toEmbedding).trans (queryEmb (3 * (b + n)))
++    let rEmb : (Fin 2 × PG.MIdx κ pp.orderParam f) ↪ Fin rSize :=
++      ((Function.Embedding.prodMap (Function.Embedding.refl (Fin 2)) nodeEmb).trans
++        finProdFinEquiv.toEmbedding).trans (queryEmb (2 * b))
++    let uEmb : (Fin l × PG.MIdx κ pp.orderParam f) ↪ Fin uSize :=
++      ((Function.Embedding.prodMap (Function.Embedding.refl (Fin l)) nodeEmb).trans
++        finProdFinEquiv.toEmbedding).trans (queryEmb (l * b))
++    let pEmb : (PG.TIdx κ pp.orderParam f ⊕ Fin n) ↪ Fin pSize :=
++      padEmb.trans (queryEmb (b + n))
++    let grouped : ActualIdx pp f ↪
++        Fin tSize ⊕ (Fin uSize ⊕ (Fin rSize ⊕ Fin pSize)) :=
++      Function.Embedding.sumMap tEmb
++        (Function.Embedding.sumMap uEmb (Function.Embedding.sumMap rEmb pEmb))
++    let swapUR : Fin uSize ⊕ (Fin rSize ⊕ Fin pSize) ≃
++        Fin rSize ⊕ (Fin uSize ⊕ Fin pSize) :=
++      ((Equiv.sumAssoc (Fin uSize) (Fin rSize) (Fin pSize)).symm.trans
++        (Equiv.sumCongr (Equiv.sumComm (Fin uSize) (Fin rSize))
++          (Equiv.refl (Fin pSize)))).trans
++        (Equiv.sumAssoc (Fin rSize) (Fin uSize) (Fin pSize))
++    let physical : ActualIdx pp f ↪
++        Fin tSize ⊕ (Fin rSize ⊕ (Fin uSize ⊕ Fin pSize)) :=
++      grouped.trans (Equiv.sumCongr (Equiv.refl (Fin tSize)) swapUR).toEmbedding
++    let concatenate : Fin tSize ⊕ (Fin rSize ⊕ (Fin uSize ⊕ Fin pSize)) ≃
++        Fin (tSize + (rSize + (uSize + pSize))) :=
++      (Equiv.sumCongr (Equiv.refl _)
++        ((Equiv.sumCongr (Equiv.refl _) finSumFinEquiv).trans finSumFinEquiv)).trans
++        finSumFinEquiv
++    let positionEmbedding : ActualIdx pp f ↪ ℕ :=
++      ((physical.trans concatenate.toEmbedding).trans (Fin.natAddEmb base)).trans Fin.valEmbedding
++    have hValue (u : ActualIdx pp f) : positionEmbedding u = actualPos pp j f u := ?_
++    swap
++    · rcases u with ⟨i, u⟩ | ⟨i, u⟩ | ⟨i, u⟩ | u
++      · dsimp only [actualPos]
++        rw [hTapeOffsets]
++        refine (show base + ((padEmb u).val + (b + n) * i.val + (3 * (b + n)) * j) =
++          base + j * (3 * (b + n)) + i.val * (b + n) +
++            paddedDrawIndex PG κ pp.orderParam f u from ?_)
++        rw [hPadValue]
++        ring
++      · dsimp only [actualPos]
++        rw [hTapeOffsets]
++        refine (show base + (q * (3 * (b + n)) + (q * (2 * b) +
++          ((PG.mCoord κ pp.orderParam f u).val + b * i.val + (l * b) * j))) =
++          base + q * (3 * (b + n)) + q * (2 * b) + j * (l * b) +
++            i.val * b + (PG.mCoord κ pp.orderParam f u).val from ?_)
++        ring
++      · dsimp only [actualPos]
++        rw [hTapeOffsets]
++        refine (show base + (q * (3 * (b + n)) +
++          ((PG.mCoord κ pp.orderParam f u).val + b * i.val + (2 * b) * j)) =
++          base + q * (3 * (b + n)) + j * (2 * b) + i.val * b +
++            (PG.mCoord κ pp.orderParam f u).val from ?_)
++        ring
++      · dsimp only [actualPos]
++        rw [hTapeOffsets]
++        refine (show base + (q * (3 * (b + n)) + (q * (2 * b) +
++          (q * (l * b) + ((padEmb u).val + (b + n) * j)))) =
++          base + q * (3 * (b + n)) + q * (2 * b) + q * (l * b) +
++            j * (b + n) + paddedDrawIndex PG κ pp.orderParam f u from ?_)
++        rw [hPadValue]
++        ring
++    intro u v h
++    exact positionEmbedding.injective ((hValue u).trans (h.trans (hValue v).symm))
++  let actualEmbedding (pp : PublicParams G κ) (j : ℕ) (hj : j < q)
++      (f : Fn κ pp.orderParam) : ActualIdx pp f ↪ Fin N :=
++    ⟨fun i => ⟨actualPos pp j f i, hActualBound pp j hj f i⟩,
++      fun _ _ h => hActualInj pp j hj f (congrArg Fin.val h)⟩
++  let pack (pp : PublicParams G κ) (f : Fn κ pp.orderParam) :
++      (ActualIdx pp f → K pp) ≃ SimKeyDraw G PG κ pp f :=
++    (Equiv.sumArrowEquivProdArrow _ _ (K pp)).trans
++      (Equiv.prodCongr (Equiv.curry _ _ (K pp))
++        ((Equiv.sumArrowEquivProdArrow _ _ (K pp)).trans
++          (Equiv.prodCongr (Equiv.refl _)
++            ((Equiv.sumArrowEquivProdArrow _ _ (K pp)).trans
++              (Equiv.prodCongr (Equiv.curry _ _ (K pp)) (Equiv.refl _))))))
++  have hSimRead : ∀ (pp : PublicParams G κ) (j : ℕ) (hj : j < q)
++      (f : Fn κ pp.orderParam) (xi : Draw pp),
++      simKeyAt G PG zDim A.budget κ pp xi j f =
++        pack pp f (fun i => xi (actualEmbedding pp j hj f i)) := by
++    intro pp j hj f xi
++    have hAt (a : ActualIdx pp f) :
++        securityAt G PG zDim A.budget κ pp xi (actualPos pp j f a) =
++          xi (actualEmbedding pp j hj f a) := ?_
++    swap
++    · rw [securityAt_eq, dif_pos (hActualBound pp j hj f a)]
++      rfl
++    rw [simKeyAt_eq, keyAt_eq]
++    refine Prod.ext ?_ (Prod.ext ?_ (Prod.ext ?_ ?_))
++    · funext i u
++      exact hAt (Sum.inl (i, u))
++    · funext u
++      exact hAt (Sum.inr (Sum.inl u))
++    · funext i u
++      exact hAt (Sum.inr (Sum.inr (Sum.inl (i, u))))
++    · funext u
++      exact hAt (Sum.inr (Sum.inr (Sum.inr u)))
++  have hSimUniform (pp : PublicParams G κ) (j : ℕ) (hj : j < q)
++      (f : Fn κ pp.orderParam) (F : SimKeyDraw G PG κ pp f → ℝ) :
++      ProbComp.expect (ProbComp.sample (Draw pp))
++          (fun xi => F (simKeyAt G PG zDim A.budget κ pp xi j f)) =
++        ProbComp.expect (ProbComp.sample (SimKeyDraw G PG κ pp f)) F := ?_
++  swap
++  · simp_rw [hSimRead pp j hj f]
++    have h := FiniteRandomness.expect_sample_embedding_independent
++      (actualEmbedding pp j hj f) (fun v _ => F (pack pp f v))
++      (fun _ _ _ _ => rfl)
++    simp only [ProbComp.expect_const] at h
++    exact h.trans (ProbComp.expect_sample_equiv (pack pp f) F)
++  have hKeyUniform : ∀ (pp : PublicParams G κ) (j : ℕ), j < q →
++      ∀ (f : Fn κ pp.orderParam) (F : KeyDraw G PG κ pp f → ℝ),
++      ProbComp.expect (ProbComp.sample (Draw pp))
++          (fun xi => F (keyAt G PG zDim A.budget κ pp xi j f)) =
++        ProbComp.expect (ProbComp.sample (KeyDraw G PG κ pp f)) F := by
++    intro pp j hj f F
++    have h := hSimUniform pp j hj f (fun w => F (w.1, w.2.2.1))
++    have hRead (xi : Draw pp) :
++        ((simKeyAt G PG zDim A.budget κ pp xi j f).1,
++          (simKeyAt G PG zDim A.budget κ pp xi j f).2.2.1) =
++          keyAt G PG zDim A.budget κ pp xi j f := ?_
++    swap
++    · simp only [simKeyAt_eq, keyAt_eq]
++    simp_rw [hRead] at h
++    let Extra : Type :=
++      ((Fin (ℓ.eval κ) × PG.MIdx κ pp.orderParam f) → K pp) ×
++        ((PG.TIdx κ pp.orderParam f ⊕ Fin (n'.eval κ)) → K pp)
++    let split : SimKeyDraw G PG κ pp f ≃ (KeyDraw G PG κ pp f × Extra) :=
++      (Equiv.prodAssoc _ _ _).symm.trans (Equiv.prodProdProdComm _ _ _ _)
++    have hReindex := ProbComp.expect_sample_equiv split
++      (fun o : KeyDraw G PG κ pp f × Extra => F o.1)
++    have hMarginal := Bridge.expect_sample_pair
++      (α := KeyDraw G PG κ pp f) (β := Extra)
++      (fun o : KeyDraw G PG κ pp f × Extra => F o.1)
++    simp only [ProbComp.expect_bind, ProbComp.expect_pure,
++      ProbComp.expect_const] at hMarginal
++    exact h.trans (hReindex.trans hMarginal.symm)
++  have hSeedBound : ∀ i : Fin 2, head + i.val < N := by
++    intro i
++    have hi : head + i.val < base := (Fin.natAddEmb head i).isLt
++    rw [hTapeCount]
++    omega
++  let seedEmbedding : Fin 2 ↪ Fin N :=
++    ⟨fun i => ⟨head + i.val, hSeedBound i⟩,
++      fun _ _ h => Fin.ext (Nat.add_left_cancel (congrArg Fin.val h))⟩
++  have hSeedRead : ∀ (pp : PublicParams G κ) (xi : Draw pp),
++      seedAt G PG zDim A.budget κ pp xi = fun i => xi (seedEmbedding i) := by
++    intro pp xi
++    funext i
++    have hi : 17 + 4 * zDim.eval κ + 8 * ℓ.eval κ + i.val <
++        (securityCount PG zDim A.budget).eval κ := hSeedBound i
++    simp only [seedAt_eq, securityAt_eq, dif_pos hi]
++    rfl
++  have hSeedUniform (pp : PublicParams G κ) (F : EncDraw G κ pp → ℝ) :
++      ProbComp.expect (ProbComp.sample (Draw pp))
++          (fun xi => F (seedAt G PG zDim A.budget κ pp xi)) =
++        ProbComp.expect (ProbComp.sample (EncDraw G κ pp)) F := ?_
++  swap
++  · simp_rw [hSeedRead pp]
++    simpa only [ProbComp.expect_const] using
++      (FiniteRandomness.expect_sample_embedding_independent seedEmbedding
++        (fun v _ => F v) (fun _ _ _ _ => rfl))
++  -- The complete original array is embedded diagonally in independent complete rows.
++  let rowOf (a : Fin N) : ℕ :=
++    if a.val < off 1 then (a.val - off 0) / (3 * (b + n))
++    else if a.val < off 2 then (a.val - off 1) / (2 * b)
++    else if a.val < off 3 then (a.val - off 2) / (l * b)
++    else (a.val - off 3) / (b + n)
++  have hRowBound : ∀ a : Fin N, base ≤ a.val → rowOf a + delta < q + 1 := by
++    intro a ha
++    have hOff0 : off 0 = base := congrFun hTapeOffsets 0
++    have hOff1 : off 1 = base + q * (3 * (b + n)) := congrFun hTapeOffsets 1
++    have hOff2 : off 2 = base + q * (3 * (b + n)) + q * (2 * b) :=
++      congrFun hTapeOffsets 2
++    have hOff3 : off 3 = base + q * (3 * (b + n)) + q * (2 * b) + q * (l * b) :=
++      congrFun hTapeOffsets 3
++    have hMax := a.isLt.trans_le hTapeCount.le
++    have hDelta : delta ≤ 1 := ?_
++    swap
++    · dsimp only [delta]
++      split <;> omega
++    have hRow : rowOf a < q := ?_
++    swap
++    · dsimp only [rowOf]
++      by_cases hT : a.val < off 1
++      · rw [if_pos hT]
++        apply Nat.div_lt_of_lt_mul
++        rw [Nat.mul_comm (3 * (b + n)) q]
++        omega
++      · rw [if_neg hT]
++        by_cases hR : a.val < off 2
++        · rw [if_pos hR]
++          apply Nat.div_lt_of_lt_mul
++          rw [Nat.mul_comm (2 * b) q]
++          omega
++        · rw [if_neg hR]
++          by_cases hU : a.val < off 3
++          · rw [if_pos hU]
++            apply Nat.div_lt_of_lt_mul
++            rw [Nat.mul_comm (l * b) q]
++            omega
++          · rw [if_neg hU]
++            apply Nat.div_lt_of_lt_mul
++            rw [Nat.mul_comm (b + n) q]
++            omega
++    omega
++  let slot (a : Fin N) : Option (Fin (q + 1)) :=
++    if hHead : a.val < head then none
++    else if hSeed : a.val < base then some 0
++    else some ⟨rowOf a + delta, hRowBound a (Nat.le_of_not_lt hSeed)⟩
++  let coordinateEmbedding : Fin N ↪ Option (Fin (q + 1)) × Fin N :=
++    ⟨fun a => (slot a, a), fun _ _ h => congrArg Prod.snd h⟩
++  let merge (pp : PublicParams G κ) (rho : Draw pp)
++      (T : Fin (q + 1) → Draw pp) : Draw pp :=
++    fun a => match slot a with | none => rho a | some k => T k a
++  let rowEquiv (pp : PublicParams G κ) :
++      ((Option (Fin (q + 1)) × Fin N) → K pp) ≃
++        (Draw pp × (Fin (q + 1) → Draw pp)) :=
++    (Equiv.curry _ _ _).trans Equiv.piOptionEquivProd
++  have hRowRead (pp : PublicParams G κ)
++      (W : (Option (Fin (q + 1)) × Fin N) → K pp) :
++      merge pp (rowEquiv pp W).1 (rowEquiv pp W).2 =
++        fun a => W (coordinateEmbedding a) := ?_
++  swap
++  · funext a
++    refine (show
++      (match slot a with | none => W (none, a) | some k => W (some k, a)) =
++        W (slot a, a) from ?_)
++    cases slot a <;> rfl
++  have hMergeLaw (pp : PublicParams G κ) (F : Draw pp → ℝ) :
++      ProbComp.expect (ProbComp.sample (Draw pp)) (fun rho =>
++        ProbComp.expect (ProbComp.sample (Fin (q + 1) → Draw pp))
++          (fun T => F (merge pp rho T))) =
++        ProbComp.expect (ProbComp.sample (Draw pp)) F := ?_
++  swap
++  · have h := FiniteRandomness.expect_sample_embedding_independent coordinateEmbedding
++      (fun v _ => F v) (fun _ _ _ _ => rfl)
++    simp only [ProbComp.expect_const] at h
++    have hRows := ProbComp.expect_sample_equiv (rowEquiv pp)
++      (fun p => F (merge pp p.1 p.2))
++    simp only [hRowRead] at hRows
++    rw [← Bridge.expect_sample_pair (α := Draw pp) (β := Fin (q + 1) → Draw pp)
++      (fun p => F (merge pp p.1 p.2))] at hRows
++    simp only [ProbComp.expect_bind, ProbComp.expect_pure] at hRows
++    exact hRows.symm.trans h
++  have hSetupMerged : ∀ (pp : PublicParams G κ) (rho : Draw pp)
++      (T : Fin (q + 1) → Draw pp),
++      setupAt G PG zDim A.budget κ pp (merge pp rho T) =
++        setupAt G PG zDim A.budget κ pp rho := sorry
++  -- Both channels use the same existing simulator host; this handler only issues draws.
++  let drawSpec (pp : PublicParams G κ) : OracleSpec Unit :=
++    { dom := fun _ => Unit, rng := fun _ => Draw pp }
++  let drawK (pp : PublicParams G κ) :
++      ∀ i, (drawSpec pp).dom i → Unit → Draw pp →
++        ProbComp ((drawSpec pp).rng i × Unit) := fun _ _ _ xi => .pure (xi, ())
++  let blockHandler (pp : PublicParams G κ) (rho : Draw pp) :
++      QueryImpl (saSpec G PG zDim κ pp) (State pp) (drawSpec pp) := fun
++    | false, msg, st => match st.challenge with
++      | some _ => .pure (none, st)
++      | none => if ideal then
++          .pure (some (simEncCore G ℓ zDim κ pp (ctx pp rho).2 msg.1),
++            ⟨some msg, st.used⟩)
++        else .query () () (fun xi => .pure
++          (some (encCore G ℓ zDim κ pp (ctx pp rho).1 msg.1
++            (pp.group.expVec pp.generator msg.2) (seedAt G PG zDim A.budget κ pp xi)),
++            ⟨some msg, st.used⟩))
++    | true, query, st => match st.challenge with
++      | none => .pure (none, st)
++      | some msg => if st.used < q then .query () () (fun xi =>
++          let sk := if ideal then
++              simKeyCore G PG zDim κ pp (ctx pp rho).2 query.fn query.matrix msg.1
++                (leak G PG zDim κ pp query.fn query.matrix msg.1 msg.2)
++                (simKeyAt G PG zDim A.budget κ pp xi st.used query.fn)
++            else keyCore G PG zDim κ pp (secret pp rho) query.fn query.matrix
++              (keyAt G PG zDim A.budget κ pp xi st.used query.fn)
++          .pure (some ⟨query.fn, sk⟩, ⟨st.challenge, st.used + 1⟩))
++        else .pure (none, st)
++  let inner (pp : PublicParams G κ) (rho : Draw pp) (r : List Bool) :=
++    simulate (blockHandler pp rho) (c pp rho r) (start pp)
++  let actualHandler (pp : PublicParams G κ) (rho : Draw pp) :
++      QueryImpl (saSpec G PG zDim κ pp) (State pp) unifSpec :=
++    if ideal then freshIdealHandler G PG zDim A.budget κ pp (ctx pp rho).2
++    else freshRealHandler G PG zDim A.budget κ pp (ctx pp rho).1 (secret pp rho)
++  have hOuterCost (pp : PublicParams G κ) (rho : Draw pp) (r : List Bool) :
++      (c pp rho r).CostBoundedBy (fun _ => 1) q := ?_
++  swap
++  · dsimp only [c, q]
++    rw [SAAdv.run_eq]
++    exact buildComp_costBoundedBy _ _ _ _
++  have hBlockCost : ∀ (pp : PublicParams G κ) (rho : Draw pp) i x st,
++      ((blockHandler pp rho) i x st).CostBoundedBy (fun _ => 1) 1 := by
++    intro pp rho i x st
++    cases i <;> dsimp only [blockHandler]
++    all_goals
++      split <;>
++        first
++        | exact OracleComp.costBoundedBy_pure _ _ _
++        | split <;>
++            first
++            | exact OracleComp.costBoundedBy_pure _ _ _
++            | exact (OracleComp.costBoundedBy_query _ _ _ _ _).2
++                ⟨Nat.le_refl 1, fun _ => OracleComp.costBoundedBy_pure _ _ _⟩
++  have hInnerCost (pp : PublicParams G κ) (rho : Draw pp) (r : List Bool) :
++      (inner pp rho r).CostBoundedBy (fun _ => 1) q :=
++    simulate_costBoundedBy (hBlockCost pp rho) (hOuterCost pp rho r) (start pp)
++  have hTapeLaw (pp : PublicParams G κ) (rho : Draw pp) (r : List Bool) :
++      ProbComp.expect (ProbComp.sample (Fin (q + 1) → Draw pp)) (fun T =>
++        ProbComp.expect (simulate (Games.tapeImpl (drawK pp) (Games.extTape T))
++          (inner pp rho r) ((), 0)) (fun p => bit p.1.1)) =
++        ProbComp.expect (simulate (Games.freshImpl (drawK pp)) (inner pp rho r) ())
++          (fun p => bit p.1.1) :=
++    Games.expect_simulate_tapeImpl (drawK pp) (q + 1) (fun p => bit p.1)
++      (inner pp rho r) q (hInnerCost pp rho r) () 0
++      ((Nat.zero_add q).le.trans (Nat.le_succ q))
++  -- Inner calls, not outer queries or keys alone, determine the coin counter.
++  let PadRel (pp : PublicParams G κ) :
++      State pp → (State pp × (Unit × ℕ)) → Prop := fun s t =>
++    s = t.1 ∧ t.2.2 = s.used + (if ideal then 0 else if s.challenge.isSome then 1 else 0) ∧
++      (s.challenge = none → s.used = 0) ∧ s.used ≤ q
++  let paddedImpl (pp : PublicParams G κ) (rho : Draw pp)
++      (T : Fin (q + 1) → Draw pp) :
++      QueryImpl (saSpec G PG zDim κ pp) (State pp) unifSpec :=
++    detImpl (gameHandler G PG zDim A.budget mode κ pp (ctx pp rho).2 (merge pp rho T))
++  let tapedComp (pp : PublicParams G κ) (rho : Draw pp)
++      (T : Fin (q + 1) → Draw pp) :=
++    (Games.tapeImpl (drawK pp) (Games.extTape T)).comp (blockHandler pp rho)
++  have hPadStart (pp : PublicParams G κ) : PadRel pp (start pp) (start pp, ((), 0)) := ?_
++  swap
++  · refine ⟨rfl, ?_, (fun _ => rfl), Nat.zero_le q⟩
++    cases ideal <;> rfl
++  have hPaddedCalls : ∀ (pp : PublicParams G κ) (rho : Draw pp)
++      (T : Fin (q + 1) → Draw pp) i x s t, PadRel pp s t →
++      ∀ (g0 : (saSpec G PG zDim κ pp).rng i × State pp → ℝ)
++        (g1 : (saSpec G PG zDim κ pp).rng i × (State pp × (Unit × ℕ)) → ℝ),
++      (∀ y s' t', PadRel pp s' t' → g0 (y, s') = g1 (y, t')) →
++      ProbComp.expect (paddedImpl pp rho T i x s) g0 =
++        ProbComp.expect (tapedComp pp rho T i x t) g1 := sorry
++  have hPaddedRel (pp : PublicParams G κ) (rho : Draw pp)
++      (T : Fin (q + 1) → Draw pp) (r : List Bool) :
++      ProbComp.expect (simulate (paddedImpl pp rho T) (c pp rho r) (start pp))
++          (fun p => bit p.1) =
++        ProbComp.expect (simulate (tapedComp pp rho T) (c pp rho r) (start pp, ((), 0)))
++          (fun p => bit p.1) :=
++    ProbComp.expect_simulate_rel (paddedImpl pp rho T) (tapedComp pp rho T) (PadRel pp)
++      (hPaddedCalls pp rho T) (c pp rho r) _ _ (fun _ _ _ _ => rfl) (hPadStart pp)
++  have hPadRead (pp : PublicParams G κ) (rho : Draw pp)
++      (T : Fin (q + 1) → Draw pp) (r : List Bool) :
++      bit (runGameDet G PG zDim A mode false κ pp (merge pp rho T) r) =
++        ProbComp.expect (simulate (paddedImpl pp rho T) (c pp rho r) (start pp))
++          (fun p => bit p.1) := ?_
++  swap
++  · dsimp only [paddedImpl, c]
++    rw [simulate_saRun_det, ProbComp.expect_pure, runGameDet_eq, hSetupMerged]
++    simp only [ctx, start, Bool.false_and, Bool.false_eq_true, if_false]
++  have hPaddedRun (pp : PublicParams G κ) (rho : Draw pp)
++      (T : Fin (q + 1) → Draw pp) (r : List Bool) :
++      bit (runGameDet G PG zDim A mode false κ pp (merge pp rho T) r) =
++        ProbComp.expect (simulate (Games.tapeImpl (drawK pp) (Games.extTape T))
++          (inner pp rho r) ((), 0)) (fun p => bit p.1.1) := ?_
++  swap
++  · have hCompose := congrArg
++      (fun d : ProbComp ((Bool × State pp) × (Unit × ℕ)) =>
++        ProbComp.expect d (fun p => bit p.1.1))
++      (simulate_comp (Games.tapeImpl (drawK pp) (Games.extTape T))
++        (blockHandler pp rho) (c pp rho r) (start pp) ((), 0))
++    simp only [ProbComp.expect_bind, ProbComp.expect_pure] at hCompose
++    exact (hPadRead pp rho T r).trans ((hPaddedRel pp rho T r).trans hCompose.symm)
++  let FreshRel (pp : PublicParams G κ) : State pp → (State pp × Unit) → Prop :=
++    fun s t => s = t.1
++  let freshComp (pp : PublicParams G κ) (rho : Draw pp) :=
++    (Games.freshImpl (drawK pp)).comp (blockHandler pp rho)
++  have hFreshCalls : ∀ (pp : PublicParams G κ) (rho : Draw pp) i x s t,
++      FreshRel pp s t →
++      ∀ (g0 : (saSpec G PG zDim κ pp).rng i × State pp → ℝ)
++        (g1 : (saSpec G PG zDim κ pp).rng i × (State pp × Unit) → ℝ),
++      (∀ y s' t', FreshRel pp s' t' → g0 (y, s') = g1 (y, t')) →
++      ProbComp.expect (actualHandler pp rho i x s) g0 =
++        ProbComp.expect (freshComp pp rho i x t) g1 := sorry
++  have hFreshRel (pp : PublicParams G κ) (rho : Draw pp) (r : List Bool) :
++      ProbComp.expect (simulate (actualHandler pp rho) (c pp rho r) (start pp))
++          (fun p => bit p.1) =
++        ProbComp.expect (simulate (freshComp pp rho) (c pp rho r) (start pp, ()))
++          (fun p => bit p.1) :=
++    ProbComp.expect_simulate_rel (actualHandler pp rho) (freshComp pp rho) (FreshRel pp)
++      (hFreshCalls pp rho) (c pp rho r) _ _ (fun _ _ _ _ => rfl) rfl
++  have hFreshRun (pp : PublicParams G κ) (rho : Draw pp) (r : List Bool) :
++      ProbComp.expect (simulate (actualHandler pp rho) (c pp rho r) (start pp))
++          (fun p => bit p.1) =
++        ProbComp.expect (simulate (Games.freshImpl (drawK pp)) (inner pp rho r) ())
++          (fun p => bit p.1.1) := ?_
++  swap
++  · have hCompose := congrArg
++      (fun d : ProbComp ((Bool × State pp) × Unit) =>
++        ProbComp.expect d (fun p => bit p.1.1))
++      (simulate_comp (Games.freshImpl (drawK pp)) (blockHandler pp rho)
++        (c pp rho r) (start pp) ())
++    simp only [ProbComp.expect_bind, ProbComp.expect_pure] at hCompose
++    exact (hFreshRel pp rho r).trans hCompose.symm
++  have hConditioned (pp : PublicParams G κ) (rho : Draw pp) (r : List Bool) :
++      ProbComp.expect (ProbComp.sample (Fin (q + 1) → Draw pp)) (fun T =>
++        bit (runGameDet G PG zDim A mode false κ pp (merge pp rho T) r)) =
++        ProbComp.expect (simulate (actualHandler pp rho) (c pp rho r) (start pp))
++          (fun p => bit p.1) := ?_
++  swap
++  · simp_rw [hPaddedRun pp rho]
++    exact (hTapeLaw pp rho r).trans (hFreshRun pp rho r).symm
++  have hRunLaw (pp : PublicParams G κ) (r : List Bool) :
++      ProbComp.expect (ProbComp.sample (Draw pp))
++          (fun omega => bit (runGameDet G PG zDim A mode false κ pp omega r)) =
++        ProbComp.expect (ProbComp.sample (Draw pp)) (fun rho =>
++          ProbComp.expect (simulate (actualHandler pp rho) (c pp rho r) (start pp))
++            (fun p => bit p.1)) :=
++    (hMergeLaw pp (fun omega => bit (runGameDet G PG zDim A mode false κ pp omega r))).symm.trans
++      (congrArg (ProbComp.expect (ProbComp.sample (Draw pp)))
++        (funext fun rho => hConditioned pp rho r))
++  -- Setup reindexing retains the extra scalar fields and imposes no rank condition.
++  have hSetupReal : ∀ (pp : PublicParams G κ)
++      (F : MPK G ℓ zDim κ pp × MSK G ℓ zDim κ pp → ℝ),
++      ProbComp.expect (ProbComp.sample (Draw pp))
++          (fun rho => F ((ctx pp rho).1, secret pp rho)) =
++        ProbComp.expect (setup G ℓ zDim κ pp) F := sorry
++  have hSetupIdeal : ∀ (pp : PublicParams G κ)
++      (F : MPK G ℓ zDim κ pp × SimState G ℓ zDim κ pp → ℝ),
++      ProbComp.expect (ProbComp.sample (Draw pp)) (fun rho => F (ctx pp rho)) =
++        ProbComp.expect (simSetup G ℓ zDim κ pp) F := sorry
++  have hPaddedOuter : accept (saGame G PG zDim A ideal κ) =
++      ProbComp.expect (publicParamsGen G κ) (fun pp =>
++        ProbComp.expect (ProbComp.sample (Fin (A.coins.eval κ) → Bool)) (fun r =>
++          ProbComp.expect (ProbComp.sample (Draw pp))
++            (fun omega => bit (runGameDet G PG zDim A mode false κ pp omega (List.ofFn r))))) := ?_
++  swap
++  · simp only [saGame_eq, accept_eq, ProbComp.prob_bind, ProbComp.prob_pure]
++    apply congrArg (ProbComp.expect (publicParamsGen G κ))
++    funext pp
++    exact ProbComp.expect_sample_comm (fun omega r =>
++      bit (runGameDet G PG zDim A mode false κ pp omega (List.ofFn r)))
++  have hFreshOuter : accept (freshSaGame G PG zDim A ideal κ) =
++      ProbComp.expect (publicParamsGen G κ) (fun pp =>
++        ProbComp.expect (ProbComp.sample (Fin (A.coins.eval κ) → Bool)) (fun r =>
++          ProbComp.expect (ProbComp.sample (Draw pp)) (fun rho =>
++            ProbComp.expect (simulate (actualHandler pp rho) (c pp rho (List.ofFn r))
++              (start pp)) (fun p => bit p.1)))) := sorry
++  rw [hPaddedOuter, hFreshOuter]
++  apply congrArg (ProbComp.expect (publicParamsGen G κ))
++  funext pp
++  apply congrArg (ProbComp.expect (ProbComp.sample (Fin (A.coins.eval κ) → Bool)))
++  funext r
++  exact hRunLaw pp (List.ofFn r)
+ 
+ /-- The padded and actual fresh raw simulation advantages coincide
+ [Wee20, §2.2, p. 5; Appendix B, Theorem 1, p. 12].
+@@ -67,7 +647,9 @@ from saGame_eq_freshSaGame, and use the published advantage/acceptance reader. -
+ theorem saSimAdv_eq_freshSaSimAdv (G : BilinearGen) {ℓ n' : PolyExpr}
+     {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr)
+     (A : SAAdv G PG zDim) (κ : ℕ) :
+-    saSimAdv G PG zDim A κ = freshSaSimAdv G PG zDim A κ := sorry
++    saSimAdv G PG zDim A κ = freshSaSimAdv G PG zDim A κ := by
++  rw [saSimAdv_eq, freshSaSimAdv_eq, advantage_eq, advantage_eq,
++    saGame_eq_freshSaGame, saGame_eq_freshSaGame]
+ 
+ /-- Every typed adversary against the ACTUAL fresh raw laws has one advice family for
+ which every pair of realising machines satisfies the two-MDDH bound with one exact rank
+@@ -86,6 +668,11 @@ theorem linear_freshSaSimAdv_le (G : BilinearGen) {ℓ n' : PolyExpr}
+         (red1 G PG zDim p hp A (ω 1)) →
+       ∀ κ, freshSaSimAdv G PG zDim A κ ≤
+         G.mddhAdv (PolyExpr.const 1) (PolyExpr.const 3) (D 0) κ +
+-        G.mddhAdv ℓ (PG.mBound.mul A.budget) (D 1) κ + linearSlack G κ := sorry
++        G.mddhAdv ℓ (PG.mBound.mul A.budget) (D 1) κ + linearSlack G κ := by
++  obtain ⟨ω, hω⟩ := linear_saSimAdv_le G PG zDim p hp A
++  refine ⟨ω, ?_⟩
++  intro D h0 h1 κ
++  rw [← saSimAdv_eq_freshSaSimAdv]
++  exact hω D h0 h1 κ
+ 
+ end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean
+index 66b49f862..7cfb14ca6 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean
+@@ -3,7 +3,9 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: TCSlib contributors
+ -/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Coordinates
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Reductions
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.ReductionLaws
+ import TCSlib.Cryptography.Games.Relational
+ import TCSlib.Cryptography.Games.Tapes
+ 
+@@ -171,7 +173,76 @@ theorem game0_game1_le (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+
+       D.RealizesOn (G.mddhEnc (PolyExpr.const 1) (PolyExpr.const 3)) A.coins (red0 G PG zDim p hp A
+         ω) →
+       ∀ κ, advantage (game G PG zDim A 0 κ) (game G PG zDim A 1 κ) ≤
+-        G.mddhAdv (PolyExpr.const 1) (PolyExpr.const 3) D κ := sorry
++        G.mddhAdv (PolyExpr.const 1) (PolyExpr.const 3) D κ := by
++  classical
++  let familyAt (κ : ℕ) (w : Advice PG zDim A.budget p κ) :
++      ∀ m, Advice PG zDim A.budget p m :=
++    Function.update (fun m => (0 : Advice PG zDim A.budget p m)) κ w
++  let redGame (κ : ℕ) (w : Advice PG zDim A.budget p κ) (real : Bool) : ProbComp Bool :=
++    (G.mddhSample (PolyExpr.const 1) (PolyExpr.const 3) real κ).bind fun c =>
++      (ProbComp.sample (Fin (A.coins.eval κ) → Bool)).bind fun ρ =>
++        .pure (decide (red0 G PG zDim p hp A (familyAt κ w) κ c (List.ofFn ρ) = [true]))
++  -- The mean law retains the full advice, including all unused scalar coordinates.
++  have hMean : ∀ (κ : ℕ) (real : Bool),
++      letI : NeZero (p κ) := orderSchedule_neZero G p hp κ
++      ProbComp.expect (ProbComp.sample (Advice PG zDim A.budget p κ))
++          (fun w => accept (redGame κ w real)) =
++        accept (game G PG zDim A (if real then 0 else 1) κ) := sorry
++  -- Fix one scalar tape at each parameter before quantifying over realising machines.
++  have hPoint : ∀ κ, ∃ w : Advice PG zDim A.budget p κ,
++      advantage (game G PG zDim A 0 κ) (game G PG zDim A 1 κ) ≤
++        advantage (redGame κ w false) (redGame κ w true) := ?_
++  swap
++  · intro κ
++    letI : NeZero (p κ) := orderSchedule_neZero G p hp κ
++    obtain ⟨w, hw⟩ :=
++      TCSlib.Cryptography.Authentication.LamportReduction.exists_expect_sample_le
++        (fun w : Advice PG zDim A.budget p κ =>
++          advantage (redGame κ w false) (redGame κ w true))
++    have hReal : ProbComp.expect (ProbComp.sample (Advice PG zDim A.budget p κ))
++        (fun w => accept (redGame κ w true)) = accept (game G PG zDim A 0 κ) := hMean κ true
++    have hRandom : ProbComp.expect (ProbComp.sample (Advice PG zDim A.budget p κ))
++        (fun w => accept (redGame κ w false)) = accept (game G PG zDim A 1 κ) := hMean κ false
++    refine ⟨w, ?_⟩
++    calc
++      _ = |ProbComp.expect (ProbComp.sample (Advice PG zDim A.budget p κ))
++            (fun w => accept (redGame κ w false)) -
++          ProbComp.expect (ProbComp.sample (Advice PG zDim A.budget p κ))
++            (fun w => accept (redGame κ w true))| := ?_
++      _ ≤ ProbComp.expect (ProbComp.sample (Advice PG zDim A.budget p κ))
++          (fun w => advantage (redGame κ w false) (redGame κ w true)) :=
++        ProbComp.abs_expect_sub_le_expect _ (fun w => le_of_eq (advantage_eq _ _).symm)
++      _ ≤ advantage (redGame κ w false) (redGame κ w true) := hw
++    rw [advantage_eq, ← hReal, ← hRandom]
++    exact abs_sub_comm _ _
++  let ω : ∀ κ, Advice PG zDim A.budget p κ := fun κ => Classical.choose (hPoint κ)
++  have hω : ∀ κ, advantage (game G PG zDim A 0 κ) (game G PG zDim A 1 κ) ≤
++      advantage (redGame κ (ω κ) false) (redGame κ (ω κ) true) :=
++    fun κ => Classical.choose_spec (hPoint κ)
++  refine ⟨ω, ?_⟩
++  intro D hD κ
++  -- The shared realiser reader is transported once through the prescribed uniform coin layout.
++  have hAccept (real : Bool) :
++      accept (G.mddhGame (PolyExpr.const 1) (PolyExpr.const 3) D real κ) =
++        accept (redGame κ (ω κ) real) := ?_
++  swap
++  · simp only [accept_eq, G.mddhGame_eq, redGame, ProbComp.prob_bind,
++      ProbComp.prob_pure, decide_eq_true_eq]
++    apply congrArg (ProbComp.expect
++      (G.mddhSample (PolyExpr.const 1) (PolyExpr.const 3) real κ))
++    funext c
++    rw [ReductionLaws.expect_realizesOn_verdict_eq hD κ c]
++    apply congrArg (ProbComp.expect (ProbComp.sample (Fin (A.coins.eval κ) → Bool)))
++    funext ρ
++    dsimp only [familyAt]
++    simp only [red0_eq, Function.update_self]
++  have hGap : advantage (redGame κ (ω κ) false) (redGame κ (ω κ) true) =
++      G.mddhAdv (PolyExpr.const 1) (PolyExpr.const 3) D κ := ?_
++  swap
++  · rw [G.mddhAdv_eq, advantage_eq, advantage_eq, hAccept false, hAccept true]
++  calc
++    _ ≤ advantage (redGame κ (ω κ) false) (redGame κ (ω κ) true) := hω κ
++    _ = _ := hGap
+ 
+ /-- The basis decomposition changes no good-event transcript
+ [Wee20, Appendix B, Game 2, p. 13].
+@@ -259,7 +330,295 @@ changes preserve projected T and create a fresh independent low row. Couple the
+ transcripts through `expect_simulate_rel`, retaining the same good-event filter. -/
+ theorem game2_game3_accept (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+     (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (A : SAAdv G PG zDim) (κ : ℕ) :
+-    accept (game G PG zDim A 2 κ) = accept (game G PG zDim A 3 κ) := sorry
++    accept (game G PG zDim A 2 κ) = accept (game G PG zDim A 3 κ) := by
++  classical
++  have hBlind : ∀ (pp : PublicParams G κ) (r : List Bool),
++      ∃ pickMsg : MPK G ℓ zDim κ pp → Option (Challenge G ℓ zDim κ pp),
++        ∀ (pk : MPK G ℓ zDim κ pp) (st : SimState G ℓ zDim κ pp)
++          (ω : SecurityDraw G PG zDim A.budget κ pp) (mode : Fin 6),
++          (runDet (A.next κ pp pk r) false
++            (gameHandler G PG zDim A.budget mode κ pp st ω)
++            (A.budget.eval κ) [] ⟨none, 0⟩).2.challenge = pickMsg pk := by
++    intro pp r
++    let q := A.budget.eval κ
++    let dummyCT : Challenge G ℓ zDim κ pp → CT G zDim κ pp :=
++      fun _ => ⟨(fun _ => 1), (fun _ => 1), (fun _ => 1)⟩
++    let dummyKey : ℕ → Challenge G ℓ zDim κ pp → KeyQuery G PG zDim κ pp →
++        KeyPack G PG κ pp :=
++      fun _ _ query => ⟨query.fn,
++        ⟨(fun _ _ => 1), (fun _ _ => 1), (fun _ _ => 1), (fun _ _ => 1)⟩⟩
++    have hSticky : ∀ (makeCT : Challenge G ℓ zDim κ pp → CT G zDim κ pp)
++        (makeKey : ℕ → Challenge G ℓ zDim κ pp → KeyQuery G PG zDim κ pp →
++          KeyPack G PG κ pp)
++        (next : QueryLog (saSpec G PG zDim κ pp) → Move (saSpec G PG zDim κ pp) Bool)
++        (fuel : ℕ) (hist : QueryLog (saSpec G PG zDim κ pp))
++        (msg : Challenge G ℓ zDim κ pp) (used : ℕ),
++        (runDet next false (protocolHandler G PG zDim q κ pp makeCT makeKey)
++          fuel hist ⟨some msg, used⟩).2.challenge = some msg := ?_
++    swap
++    · intro makeCT makeKey next fuel hist msg used
++      let handler := protocolHandler G PG zDim q κ pp makeCT makeKey
++      have hStep : ∀ i x (s : SAState G ℓ zDim κ pp), s.challenge = some msg →
++          (handler i x s).2.challenge = some msg := ?_
++      swap
++      · intro i x s hs
++        cases i with
++        | false => simp only [handler, protocolHandler_challenge, hs]
++        | true =>
++            by_cases hq : s.used < q
++            · simp only [handler, protocolHandler_key, hs, if_pos hq]
++            · simp only [handler, protocolHandler_key, hs, if_neg hq]
++      have hStick : ∀ i x (s : SAState G ℓ zDim κ pp), s.challenge = some msg →
++          ((detImpl (spec' := unifSpec) handler) i x s).AllOutputs
++            (fun ys => ys.2.challenge = some msg) := ?_
++      swap
++      · intro i x s hs
++        rw [detImpl_apply, OracleComp.allOutputs_pure]
++        exact hStep i x s hs
++      have hAll := simulate_allOutputs_bad
++        (impl := detImpl (spec' := unifSpec) handler)
++        (fun s : SAState G ℓ zDim κ pp => s.challenge = some msg) hStick
++        (buildComp next false fuel hist) (s := ⟨some msg, used⟩) rfl
++      rw [simulate_buildComp_detImpl_eq_pure, OracleComp.allOutputs_pure] at hAll
++      exact hAll
++    have hPrefix : ∀ (makeCT : Challenge G ℓ zDim κ pp → CT G zDim κ pp)
++        (makeKey : ℕ → Challenge G ℓ zDim κ pp → KeyQuery G PG zDim κ pp →
++          KeyPack G PG κ pp)
++        (next : QueryLog (saSpec G PG zDim κ pp) → Move (saSpec G PG zDim κ pp) Bool)
++        (fuel : ℕ) (hist : QueryLog (saSpec G PG zDim κ pp)) (used : ℕ),
++        (runDet next false (protocolHandler G PG zDim q κ pp makeCT makeKey)
++          fuel hist ⟨none, used⟩).2.challenge =
++        (runDet next false (protocolHandler G PG zDim q κ pp dummyCT dummyKey)
++          fuel hist ⟨none, used⟩).2.challenge := ?_
++    swap
++    · intro makeCT makeKey next fuel
++      induction fuel with
++      | zero =>
++          intro hist used
++          cases hn : next hist with
++          | ret a =>
++              rw [runDet_zero_of_ret next false _ hist _ hn,
++                runDet_zero_of_ret next false _ hist _ hn]
++          | query i x =>
++              rw [runDet_zero_of_query next false _ hist _ hn,
++                runDet_zero_of_query next false _ hist _ hn]
++      | succ fuel ih =>
++          intro hist used
++          cases hn : next hist with
++          | ret a =>
++              rw [runDet_succ_of_ret next false _ hist _ hn,
++                runDet_succ_of_ret next false _ hist _ hn]
++          | query i x =>
++              rw [runDet_succ_of_query next false _ hist _ hn,
++                runDet_succ_of_query next false _ hist _ hn]
++              cases i with
++              | false =>
++                  simp only [protocolHandler_challenge]
++                  exact (hSticky makeCT makeKey next fuel
++                    (hist ++ [⟨false, x, some (makeCT x)⟩]) x used).trans
++                    (hSticky dummyCT dummyKey next fuel
++                      (hist ++ [⟨false, x, some (dummyCT x)⟩]) x used).symm
++              | true =>
++                  simp only [protocolHandler_key]
++                  exact ih (hist ++ [⟨true, x, none⟩]) used
++    refine ⟨fun pk => (runDet (A.next κ pp pk r) false
++      (protocolHandler G PG zDim q κ pp dummyCT dummyKey) q [] ⟨none, 0⟩).2.challenge, ?_⟩
++    intro pk st ω mode
++    rw [gameHandler_eq]
++    exact hPrefix _ _ (A.next κ pp pk r) q [] 0
++  have hFixed : ∀ (pp : PublicParams G κ) (ρ : Fin (A.coins.eval κ) → Bool),
++      ProbComp.expect (ProbComp.sample (SecurityDraw G PG zDim A.budget κ pp))
++          (fun ω => if runGameDet G PG zDim A 2 true κ pp ω (List.ofFn ρ) = true then
++            (1 : ℝ) else 0) =
++        ProbComp.expect (ProbComp.sample (SecurityDraw G PG zDim A.budget κ pp))
++          (fun ω => if runGameDet G PG zDim A 3 true κ pp ω (List.ofFn ρ) = true then
++            (1 : ℝ) else 0) := ?_
++  swap
++  · intro pp ρ
++    let r := List.ofFn ρ
++    let Ω := SecurityDraw G PG zDim A.budget κ pp
++    let q := A.budget.eval κ
++    let b := PG.mBound.eval κ
++    let B := b + n'.eval κ
++    let off := securityOffsets PG zDim A.budget κ
++    let state : Ω → SimState G ℓ zDim κ pp := fun ω =>
++      (simSetupCore G ℓ zDim κ pp (setupAt G PG zDim A.budget κ pp ω)).2
++    let pkAt : Ω → MPK G ℓ zDim κ pp := fun ω =>
++      (simSetupCore G ℓ zDim κ pp (setupAt G PG zDim A.budget κ pp ω)).1
++    let bad : Ω → Prop := fun ω =>
++      (basisMatrix G κ pp (state ω).A (state ω).c).det = 0
++    let T : Ω → Fin q → Matrix (Fin 3) (Fin B) (ZMod pp.group.order) := fun ω j i k =>
++      securityAt G PG zDim A.budget κ pp ω
++        (off 0 + j.val * (3 * B) + i.val * B + k.val)
++    let t : Ω → Fin q → Fin B → ZMod pp.group.order := fun ω j k =>
++      securityAt G PG zDim A.budget κ pp ω (off 3 + j.val * B + k.val)
++    let R : Ω → Fin q → Matrix (Fin 2) (Fin b) (ZMod pp.group.order) := fun ω j i u =>
++      securityAt G PG zDim A.budget κ pp ω (off 1 + j.val * (2 * b) + i.val * b + u.val)
++    let uhat : Ω → Fin q → (Fin (ℓ.eval κ) × Fin b) → ZMod pp.group.order :=
++      fun ω j u => securityAt G PG zDim A.budget κ pp ω
++        (off 2 + j.val * (ℓ.eval κ * b) + u.1.val * b + u.2.val)
++    let globalRow : Ω → (Fin (ℓ.eval κ) × Fin 2) → ZMod pp.group.order :=
++      globalUAt G PG zDim A.budget κ pp
++    let seed : Ω → EncDraw G κ pp := seedAt G PG zDim A.budget κ pp
++    let X : Challenge G ℓ zDim κ pp →
++        Matrix (Fin (ℓ.eval κ) × Fin 2) (Fin 2) (ZMod pp.group.order) := fun msg =>
++      (show Matrix _ _ (ZMod pp.group.order) from
++        PartialGarbling.publicTensor (p := pp.orderParam) (M := Fin 2) msg.1)
++    obtain ⟨pickMsg, hChoose⟩ := hBlind pp r
++    have hTape : ∃ e : Ω ≃ Ω,
++        (∀ ω, pkAt (e ω) = pkAt ω) ∧
++        (∀ ω, (state (e ω)).A = (state ω).A ∧ (state (e ω)).c = (state ω).c ∧
++          (state (e ω)).basisInv = (state ω).basisInv) ∧
++        (∀ ω, bad ω ∨ pickMsg (pkAt ω) = none → e ω = ω) ∧
++        (∀ ω, bad ω ∨ pickMsg (pkAt ω) = none → e.symm ω = ω) ∧
++        (∀ ω msg, ¬ bad ω → pickMsg (pkAt ω) = some msg →
++          let st := state ω
++          let a := fun i => st.basisInv i (Fin.last 2)
++          (state (e ω)).W = st.W + Matrix.vecMulVec a (st.w - Matrix.vecMul st.c st.W) ∧
++          (state (e ω)).U = st.U + Matrix.vecMulVec a (globalRow ω - Matrix.vecMul st.c st.U) ∧
++          (state (e ω)).V = st.V + Matrix.vecMulVec a (st.v - Matrix.vecMul st.c st.V) ∧
++          (state (e ω)).w = Matrix.vecMul st.c st.W + msg.2 ∧
++          (state (e ω)).v = Matrix.vecMul st.c st.V +
++            Matrix.vecMul (Matrix.vecMul st.c st.U) (X msg) ∧
++          globalRow (e ω) = Matrix.vecMul st.c st.U ∧
++          (∀ j, T (e ω) j = T ω j + Matrix.vecMulVec a (t ω j - Matrix.vecMul st.c (T ω j))) ∧
++          (∀ j, t (e ω) j = Matrix.vecMul st.c (T ω j)) ∧
++          R (e ω) = R ω ∧ uhat (e ω) = uhat ω ∧ seed (e ω) = seed ω) ∧
++        (∀ ω msg, ¬ bad ω → pickMsg (pkAt ω) = some msg →
++          let st := state ω
++          let a := fun i => st.basisInv i (Fin.last 2)
++          (state (e.symm ω)).A = st.A ∧ (state (e.symm ω)).c = st.c ∧
++          (state (e.symm ω)).basisInv = st.basisInv ∧
++          (state (e.symm ω)).W = st.W +
++            Matrix.vecMulVec a (st.w - msg.2 - Matrix.vecMul st.c st.W) ∧
++          (state (e.symm ω)).U = st.U +
++            Matrix.vecMulVec a (globalRow ω - Matrix.vecMul st.c st.U) ∧
++          (state (e.symm ω)).V = st.V +
++            Matrix.vecMulVec a (st.v - Matrix.vecMul (globalRow ω) (X msg) -
++              Matrix.vecMul st.c st.V) ∧
++          (state (e.symm ω)).w = Matrix.vecMul st.c st.W ∧
++          (state (e.symm ω)).v = Matrix.vecMul st.c st.V ∧
++          globalRow (e.symm ω) = Matrix.vecMul st.c st.U ∧
++          (∀ j, T (e.symm ω) j = T ω j +
++            Matrix.vecMulVec a (t ω j - Matrix.vecMul st.c (T ω j))) ∧
++          (∀ j, t (e.symm ω) j = Matrix.vecMul st.c (T ω j)) ∧
++          R (e.symm ω) = R ω ∧ uhat (e.symm ω) = uhat ω ∧ seed (e.symm ω) = seed ω) := by
++      let K := ZMod pp.group.order
++      let L := ℓ.eval κ
++      let Z := zDim.eval κ
++      let Raw : Type :=
++        Matrix (Fin 3) (Fin 2) K × (Fin 3 → K) ×
++          Matrix (Fin 3) (Fin Z) K × Matrix (Fin 3) (Fin L × Fin 2) K ×
++          Matrix (Fin 3) (Fin 2) K × (Fin Z → K) × (Fin 2 → K) ×
++          ((Fin L × Fin 2) → K) × (Fin 2 → K) ×
++          (Fin q → Matrix (Fin 3) (Fin B) K) × (Fin q → Matrix (Fin 2) (Fin b) K) ×
++          (Fin q → (Fin L × Fin b) → K) × (Fin q → Fin B → K)
++      obtain ⟨phi, hCoordinates⟩ := exists_securityDraw_coordinates G PG zDim A.budget κ pp
++      have hReaders : ∀ ω : Ω, phi ω =
++          ⟨(state ω).A, (state ω).c, (state ω).W, (state ω).U, (state ω).V,
++            (state ω).w, (state ω).v, globalRow ω, seed ω, T ω, R ω, uhat ω, t ω⟩ :=
++        fun ω => (hCoordinates ω).trans
++          (congrArg (fun ctx : MPK G ℓ zDim κ pp × SimState G ℓ zDim κ pp =>
++            (show Raw from
++              ⟨ctx.2.A, ctx.2.c, ctx.2.W, ctx.2.U, ctx.2.V, ctx.2.w, ctx.2.v,
++                globalRow ω, seed ω, T ω, R ω, uhat ω, t ω⟩))
++            (simSetupCore_eq G ℓ zDim κ pp (setupAt G PG zDim A.budget κ pp ω))).symm
++      let rawPublic : Raw → MPK G ℓ zDim κ pp := fun ξ =>
++        let ⟨aa, cc, WW, UU, VV, ww, vv, gg, ss, TT, RR, hh, tt⟩ := ξ
++        ⟨pp.group.expMat pp.generator (Matrix.transpose aa),
++          pp.group.expMat pp.generator (Matrix.transpose aa * WW),
++          pp.group.expMat pp.generator (Matrix.transpose aa * UU),
++          pp.group.expMat pp.generator (Matrix.transpose aa * VV)⟩
++      let forwardFormula : Raw → Raw := fun ξ =>
++        let ⟨aa, cc, WW, UU, VV, ww, vv, gg, ss, TT, RR, hh, tt⟩ := ξ
++        let H := basisMatrix G κ pp aa cc
++        let a := fun i => H⁻¹ i (Fin.last 2)
++        if H.det = 0 then ξ else
++          match pickMsg (rawPublic ξ) with
++          | none => ξ
++          | some msg =>
++              ⟨aa, cc,
++                WW + Matrix.vecMulVec a (ww - Matrix.vecMul cc WW),
++                UU + Matrix.vecMulVec a (gg - Matrix.vecMul cc UU),
++                VV + Matrix.vecMulVec a (vv - Matrix.vecMul cc VV),
++                Matrix.vecMul cc WW + msg.2,
++                Matrix.vecMul cc VV + Matrix.vecMul (Matrix.vecMul cc UU) (X msg),
++                Matrix.vecMul cc UU, ss,
++                (fun j => TT j + Matrix.vecMulVec a (tt j - Matrix.vecMul cc (TT j))),
++                RR, hh, (fun j => Matrix.vecMul cc (TT j))⟩
++      let inverseFormula : Raw → Raw := fun ξ =>
++        let ⟨aa, cc, WW, UU, VV, ww, vv, gg, ss, TT, RR, hh, tt⟩ := ξ
++        let H := basisMatrix G κ pp aa cc
++        let a := fun i => H⁻¹ i (Fin.last 2)
++        if H.det = 0 then ξ else
++          match pickMsg (rawPublic ξ) with
++          | none => ξ
++          | some msg =>
++              ⟨aa, cc,
++                WW + Matrix.vecMulVec a (ww - msg.2 - Matrix.vecMul cc WW),
++                UU + Matrix.vecMulVec a (gg - Matrix.vecMul cc UU),
++                VV + Matrix.vecMulVec a
++                  (vv - Matrix.vecMul gg (X msg) - Matrix.vecMul cc VV),
++                Matrix.vecMul cc WW, Matrix.vecMul cc VV, Matrix.vecMul cc UU, ss,
++                (fun j => TT j + Matrix.vecMulVec a (tt j - Matrix.vecMul cc (TT j))),
++                RR, hh, (fun j => Matrix.vecMul cc (TT j))⟩
++      have hPermutation : ∃ psi : Raw ≃ Raw,
++          (∀ ξ, psi ξ = forwardFormula ξ) ∧
++          (∀ ξ, psi.symm ξ = inverseFormula ξ) := ?_
++      swap
++      · -- Build psi from WHOLE standard H-vector/Pi equivalences on good (aa,cc) fibres,
++        -- then the existing AdaptiveShear equivalence and standard product swaps.
++        -- Matrix row action is identity on singular fibres before canonical row splitting.
++        -- The good/some shifts keep hiddenU fixed until exchanges, hence preserve rawPublic
++        -- and the selected msg; bad/none fibres use identity. Exchange every full TT/tt column.
++        -- forwardFormula/inverseFormula are ONLY the explicit coordinate specifications:
++        -- do not create a bespoke Equiv record with handwritten inverse proofs.
++        sorry
++      obtain ⟨psi, hForwardRaw, hInverseRaw⟩ := hPermutation
++      let e : Ω ≃ Ω := (phi.trans psi).trans phi.symm
++      refine ⟨e, ?_⟩
++      -- Pure reader transport of the six source-contract conjuncts. Use Equiv.trans_apply,
++      -- apply_symm_apply/symm_apply_apply, hReaders and both raw coordinate equations.
++      -- simSetupCore_eq derives basisInv from aa,cc, so it is preserved automatically.
++      -- Keep the existing public MPK/pickMsg and all bad/none identity clauses, full forward
++      -- AND inverse arrays, and complete R/uhat/seed equalities. No game law is assumed here.
++      sorry
++    obtain ⟨e, hPublic, hBasis, hBadId, hBadInvId, hForward, hInverse⟩ := hTape
++    have hRuns : ∀ ω, runGameDet G PG zDim A 2 true κ pp ω r =
++        runGameDet G PG zDim A 3 true κ pp (e ω) r := ?_
++    swap
++    · intro ω
++      -- Read runGameDet_eq and the SAME basis filter. hBasis keeps it invariant.
++      -- hChoose/hPublic preserve the first accepted message and every prechallenge refusal.
++      -- hForward gives exact CT equality and all three decomposed/semi-key row equalities.
++      -- Consume PartialGarbling.kronecker_mul_publicTensor for the low3 cancellation.
++      -- Induct with existing runDet/protocol case readers on the UNCHANGED total budget.
++      -- Repeated challenges and exhausted-budget keys remain the same deterministic refusals.
++      sorry
++    calc
++      _ = ProbComp.expect (ProbComp.sample Ω) (fun ω =>
++          if runGameDet G PG zDim A 3 true κ pp (e ω) r = true then (1 : ℝ) else 0) := ?_
++      _ = _ := ProbComp.expect_sample_equiv e
++        (fun ω : Ω => if runGameDet G PG zDim A 3 true κ pp ω r = true then (1 : ℝ) else 0)
++    apply congrArg (ProbComp.expect (ProbComp.sample Ω))
++    funext ω
++    rw [hRuns ω]
++  simp only [accept_eq, game_eq, ProbComp.prob_bind, ProbComp.prob_pure]
++  apply congrArg (ProbComp.expect (publicParamsGen G κ))
++  funext pp
++  calc
++    _ = ProbComp.expect (ProbComp.sample (Fin (A.coins.eval κ) → Bool)) (fun ρ =>
++        ProbComp.expect (ProbComp.sample (SecurityDraw G PG zDim A.budget κ pp))
++          (fun ω => if runGameDet G PG zDim A 2 true κ pp ω (List.ofFn ρ) = true then
++            (1 : ℝ) else 0)) := ProbComp.expect_sample_comm _
++    _ = ProbComp.expect (ProbComp.sample (Fin (A.coins.eval κ) → Bool)) (fun ρ =>
++        ProbComp.expect (ProbComp.sample (SecurityDraw G PG zDim A.budget κ pp))
++          (fun ω => if runGameDet G PG zDim A 3 true κ pp ω (List.ofFn ρ) = true then
++            (1 : ℝ) else 0)) := ?_
++    _ = _ := (ProbComp.expect_sample_comm _).symm
++  apply congrArg (ProbComp.expect (ProbComp.sample (Fin (A.coins.eval κ) → Bool)))
++  funext ρ
++  exact hFixed pp ρ
+ 
+ /-- One MDDH^ℓ_{2,mBound*q} realiser bounds the filtered adaptive-key hop
+ [Wee20, Appendix B, Lemma 4, p. 14]. The shared predicate constrains only encoded
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/ReductionLaws.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/ReductionLaws.lean
+new file mode 100644
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/ReductionLaws.lean
+@@ -0,0 +1,61 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Asymptotic.Realization
++import TCSlib.Cryptography.Games.Probability
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Uniform-coin laws for realised reduction functions
++
++## Main definitions
++
++This module introduces no definitions.
++
++## Main results
++
++* `ReductionLaws.expect_realizesOn_verdict_eq`: the shared verdict reader under a
++  uniform expectation at the prescribed coin layout.
++
++## References
++
++* TCSlib contributors, *TCSlib*, `Cryptography/Asymptotic/Realization.lean`, the shared
++  realisation predicate and verdict reader; `Complexity/Randomized/PPT.lean`, the
++  coin-layout equivalence and its bit-list reader.
++
++The result is technical probability transport for those existing interfaces.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.ReductionLaws
++
++open Complexity TCSlib.Cryptography.Games
++
++/-- Uniform machine-coin acceptance on an encoded challenge equals acceptance of the
++realised word function on a uniform bit string of its stated coin layout. Acceptance
++means output exactly `[true]`; the realisation premise is needed only at layout-length
++coin strings. This transports the shared realiser verdict reader through uniform sampling.
++
++**Proof sketch.** Reindex machine coins by coinsEquivPoly, preserving their complete bit
++list. The published RealizesOn verdict reader identifies each integrand. No machine,
++encoding, reduction, coin splitter or sampler is constructed. -/
++theorem expect_realizesOn_verdict_eq {X : ℕ → Type} {D : NUPPT}
++    {enc : ∀ m, X m → List Bool} {c : PolyExpr}
++    {R : ∀ m, X m → List Bool → List Bool}
++    (h : D.RealizesOn enc c R) (κ : ℕ) (x : X κ) :
++    ProbComp.expect (ProbComp.sample (D.Coins κ))
++        (fun ρ => if D.distinguisherL κ (enc κ x) ρ = true then (1 : ℝ) else 0) =
++      ProbComp.expect (ProbComp.sample (Fin (c.eval κ) → Bool))
++        (fun w => if R κ x (List.ofFn w) = [true] then (1 : ℝ) else 0) := by
++  rw [← ProbComp.expect_sample_equiv (NUPPT.coinsEquivPoly h.coins_eq κ)
++    (fun w : Fin (c.eval κ) → Bool =>
++      if R κ x (List.ofFn w) = [true] then (1 : ℝ) else 0)]
++  apply congrArg (ProbComp.expect (ProbComp.sample (D.Coins κ)))
++  funext ρ
++  rw [h.distinguisherL_eq κ x ρ, NUPPT.coinsEquivPoly_ofFn h.coins_eq κ ρ]
++  simp only [decide_eq_true_eq]
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.ReductionLaws
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Coordinates.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Coordinates.lean
+new file mode 100644
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Coordinates.lean
+@@ -0,0 +1,263 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Data
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Complete scalar-tape coordinates for the linear building block
++
++## Main definitions
++
++This module introduces no runtime definition or sampler.
++
++## Main results
++
++* `Wee20.Linear.exists_securityDraw_coordinates`: the full padded tape is equivalent
++  to its thirteen actual scalar coordinate blocks, with their exact reader equations.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Appendix B, pp. 12–14.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
++
++open Complexity TCSlib.Cryptography.Pairing
++
++set_option maxHeartbeats 200000 in
++/-- The complete padded scalar tape is equivalent to its thirteen actual coordinate
++blocks. This is technical exact-law bookkeeping for the implementation of
++[Wee20, Appendix B, Games 0–5, pp. 12–14]. The independent unused masks, all padded
++columns and all key slots remain represented. No rank or positive-dimension premise
++is needed, and this statement constructs no sampler, decoder or efficient algorithm.
++
++**Proof sketch.** Normalize the explicit securityCount with its polynomial readers.
++Compose the existing finite sum/product index equivalences, function congruences,
++currying and product equivalences. Their apply readers identify each full block with
++setupAt, globalUAt, seedAt and the four securityOffsets restrictions. The canonical
++finite indices supply every in-bounds proof for the existing total tape reader. -/
++theorem exists_securityDraw_coordinates (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++    let K : Type := ZMod pp.group.order
++    let L := ℓ.eval κ
++    let Z := zDim.eval κ
++    let Q := q.eval κ
++    let b := PG.mBound.eval κ
++    let B := b + n'.eval κ
++    let Raw : Type :=
++      Matrix (Fin 3) (Fin 2) K × (Fin 3 → K) ×
++        Matrix (Fin 3) (Fin Z) K × Matrix (Fin 3) (Fin L × Fin 2) K ×
++        Matrix (Fin 3) (Fin 2) K × (Fin Z → K) × (Fin 2 → K) ×
++        ((Fin L × Fin 2) → K) × (Fin 2 → K) ×
++        (Fin Q → Matrix (Fin 3) (Fin B) K) × (Fin Q → Matrix (Fin 2) (Fin b) K) ×
++        (Fin Q → (Fin L × Fin b) → K) × (Fin Q → Fin B → K)
++    ∃ phi : SecurityDraw G PG zDim q κ pp ≃ Raw, ∀ ω,
++      let σ := setupAt G PG zDim q κ pp ω
++      let off := securityOffsets PG zDim q κ
++      let getScalar := securityAt G PG zDim q κ pp ω
++      phi ω =
++        ⟨σ.1, σ.2.1, σ.2.2.1, σ.2.2.2.1, σ.2.2.2.2.1,
++          σ.2.2.2.2.2.1, σ.2.2.2.2.2.2,
++          globalUAt G PG zDim q κ pp ω, seedAt G PG zDim q κ pp ω,
++          (fun (j : Fin Q) (i : Fin 3) (u : Fin B) =>
++            getScalar (off 0 + j.val * (3 * B) + i.val * B + u.val)),
++          (fun (j : Fin Q) (i : Fin 2) (u : Fin b) =>
++            getScalar (off 1 + j.val * (2 * b) + i.val * b + u.val)),
++          (fun (j : Fin Q) (u : Fin L × Fin b) =>
++            getScalar (off 2 + j.val * (L * b) + u.1.val * b + u.2.val)),
++          (fun (j : Fin Q) (u : Fin B) => getScalar (off 3 + j.val * B + u.val))⟩ := by
++  classical
++  let K := ZMod pp.group.order
++  let L := ℓ.eval κ
++  let Z := zDim.eval κ
++  let Q := q.eval κ
++  let b := PG.mBound.eval κ
++  let B := b + n'.eval κ
++  let Ω := SecurityDraw G PG zDim q κ pp
++  let split (m n : ℕ) : (Fin (m + n) → K) ≃ ((Fin m → K) × (Fin n → K)) :=
++    (Equiv.arrowCongr (finSumFinEquiv : Fin m ⊕ Fin n ≃ Fin (m + n)).symm
++      (Equiv.refl K)).trans
++        (Equiv.sumPiEquivProdPi (fun _ : Fin m ⊕ Fin n => K))
++  let pairIndex (m n : ℕ) : (Fin (m * n) → K) ≃ ((Fin m × Fin n) → K) :=
++    Equiv.arrowCongr (finProdFinEquiv : Fin m × Fin n ≃ Fin (m * n)).symm (Equiv.refl K)
++  let mat (m n : ℕ) : (Fin (m * n) → K) ≃ Matrix (Fin m) (Fin n) K :=
++    (pairIndex m n).trans (Equiv.curry (Fin m) (Fin n) K)
++  let tail12 := Q * B
++  let tail11 := Q * (L * b) + tail12
++  let tail10 := Q * (2 * b) + tail11
++  let tail9 := Q * (3 * B) + tail10
++  let tail8 := 2 + tail9
++  let tail7 := L * 2 + tail8
++  let tail6 := 2 + tail7
++  let tail5 := Z + tail6
++  let tail4 := 3 * 2 + tail5
++  let tail3 := 3 * (L * 2) + tail4
++  let tail2 := 3 * Z + tail3
++  let tail1 := 3 + tail2
++  let tail0 := 3 * 2 + tail1
++  let chart12 := mat Q B
++  let chart11 := (split (Q * (L * b)) tail12).trans
++    (Equiv.prodCongr ((mat Q (L * b)).trans
++      (Equiv.piCongrRight (fun _ : Fin Q => pairIndex L b))) chart12)
++  let chart10 := (split (Q * (2 * b)) tail11).trans
++    (Equiv.prodCongr ((mat Q (2 * b)).trans
++      (Equiv.piCongrRight (fun _ : Fin Q => mat 2 b))) chart11)
++  let chart9 := (split (Q * (3 * B)) tail10).trans
++    (Equiv.prodCongr ((mat Q (3 * B)).trans
++      (Equiv.piCongrRight (fun _ : Fin Q => mat 3 B))) chart10)
++  let chart8 := (split (2) tail9).trans
++    (Equiv.prodCongr (Equiv.refl (Fin 2 → K)) chart9)
++  let chart7 := (split (L * 2) tail8).trans
++    (Equiv.prodCongr (pairIndex L 2) chart8)
++  let chart6 := (split (2) tail7).trans
++    (Equiv.prodCongr (Equiv.refl (Fin 2 → K)) chart7)
++  let chart5 := (split (Z) tail6).trans
++    (Equiv.prodCongr (Equiv.refl (Fin Z → K)) chart6)
++  let chart4 := (split (3 * 2) tail5).trans
++    (Equiv.prodCongr (mat 3 2) chart5)
++  let chart3 := (split (3 * (L * 2)) tail4).trans
++    (Equiv.prodCongr ((mat 3 (L * 2)).trans
++      (Equiv.piCongrRight (fun _ : Fin 3 => pairIndex L 2))) chart4)
++  let chart2 := (split (3 * Z) tail3).trans
++    (Equiv.prodCongr (mat 3 Z) chart3)
++  let chart1 := (split (3) tail2).trans
++    (Equiv.prodCongr (Equiv.refl (Fin 3 → K)) chart2)
++  let chart0 := (split (3 * 2) tail1).trans
++    (Equiv.prodCongr (mat 3 2) chart1)
++  let Raw : Type :=
++    Matrix (Fin 3) (Fin 2) K × (Fin 3 → K) ×
++      Matrix (Fin 3) (Fin Z) K × Matrix (Fin 3) (Fin L × Fin 2) K ×
++      Matrix (Fin 3) (Fin 2) K × (Fin Z → K) × (Fin 2 → K) ×
++      ((Fin L × Fin 2) → K) × (Fin 2 → K) ×
++      (Fin Q → Matrix (Fin 3) (Fin B) K) × (Fin Q → Matrix (Fin 2) (Fin b) K) ×
++      (Fin Q → (Fin L × Fin b) → K) × (Fin Q → Fin B → K)
++  have hN : (securityCount PG zDim q).eval κ = tail0 := ?_
++  swap
++  · simp only [securityCount_eq, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
++    dsimp only [tail0, tail1, tail2, tail3, tail4, tail5, tail6, tail7,
++      tail8, tail9, tail10, tail11, tail12, Q, b, B, L, Z]
++    ring
++  let phi : Ω ≃ Raw :=
++    (Equiv.arrowCongr (finCongr hN) (Equiv.refl K)).trans chart0
++  refine ⟨phi, ?_⟩
++  intro ω
++  have hSplit (m n : ℕ) (f : Fin (m + n) → K) :
++      split m n f =
++        ((fun i : Fin m => f (Fin.castAdd n i)),
++          (fun j : Fin n => f (Fin.natAdd m j))) := ?_
++  swap
++  · simp only [split, Equiv.trans_apply, Equiv.arrowCongr_apply,
++      Equiv.sumPiEquivProdPi_apply, Equiv.refl_apply, Equiv.symm_symm,
++      Function.comp_apply, finSumFinEquiv_apply_left, finSumFinEquiv_apply_right]
++  have hRead : ∀ i : Fin ((securityCount PG zDim q).eval κ),
++      ω i = securityAt G PG zDim q κ pp ω i.val := ?_
++  swap
++  · intro i
++    rw [securityAt_eq, dif_pos i.isLt]
++  let f0 : Fin tail0 → K :=
++    (Equiv.arrowCongr (finCongr hN) (Equiv.refl K)) ω
++  let f1 : Fin tail1 → K := (split (3 * 2) tail1 f0).2
++  let f2 : Fin tail2 → K := (split 3 tail2 f1).2
++  let f3 : Fin tail3 → K := (split (3 * Z) tail3 f2).2
++  let f4 : Fin tail4 → K := (split (3 * (L * 2)) tail4 f3).2
++  let f5 : Fin tail5 → K := (split (3 * 2) tail5 f4).2
++  let f6 : Fin tail6 → K := (split Z tail6 f5).2
++  let f7 : Fin tail7 → K := (split 2 tail7 f6).2
++  let f8 : Fin tail8 → K := (split (L * 2) tail8 f7).2
++  let f9 : Fin tail9 → K := (split 2 tail9 f8).2
++  let f10 : Fin tail10 → K := (split (Q * (3 * B)) tail10 f9).2
++  let f11 : Fin tail11 → K := (split (Q * (2 * b)) tail11 f10).2
++  let f12 : Fin tail12 → K := (split (Q * (L * b)) tail12 f11).2
++  -- Normalize only the outer function-congruence application; keep chart0 named.
++  -- Each later field proof should use its immediate named suffix and hSplit.
++  let read0 : ℕ → K := securityAt G PG zDim q κ pp ω
++  let read1 : ℕ → K := fun i => read0 (3 * 2 + i)
++  let read2 : ℕ → K := fun i => read1 (3 + i)
++  let read3 : ℕ → K := fun i => read2 (3 * Z + i)
++  let read4 : ℕ → K := fun i => read3 (3 * (L * 2) + i)
++  let read5 : ℕ → K := fun i => read4 (3 * 2 + i)
++  let read6 : ℕ → K := fun i => read5 (Z + i)
++  let read7 : ℕ → K := fun i => read6 (2 + i)
++  let read8 : ℕ → K := fun i => read7 (L * 2 + i)
++  let read9 : ℕ → K := fun i => read8 (2 + i)
++  let read10 : ℕ → K := fun i => read9 (Q * (3 * B) + i)
++  let read11 : ℕ → K := fun i => read10 (Q * (2 * b) + i)
++  let read12 : ℕ → K := fun i => read11 (Q * (L * b) + i)
++  have hF0 : ∀ i : Fin tail0, f0 i = read0 i.val := ?_
++  swap
++  · intro i
++    simpa only [read0, f0, Equiv.arrowCongr_apply, Equiv.refl_apply,
++      Function.comp_apply, finCongr_symm_apply_coe] using
++      hRead ((finCongr hN).symm i)
++  have hF1 : ∀ i : Fin tail1, f1 i = read1 i.val :=
++    fun i =>
++      (congrFun (congrArg Prod.snd (hSplit (3 * 2) tail1 f0)) i).trans
++        ((hF0 (Fin.natAdd (3 * 2) i)).trans
++          (congrArg read0 (Fin.coe_natAdd (3 * 2) i)))
++  have hF2 : ∀ i : Fin tail2, f2 i = read2 i.val :=
++    fun i =>
++      (congrFun (congrArg Prod.snd (hSplit (3) tail2 f1)) i).trans
++        ((hF1 (Fin.natAdd (3) i)).trans
++          (congrArg read1 (Fin.coe_natAdd (3) i)))
++  have hF3 : ∀ i : Fin tail3, f3 i = read3 i.val :=
++    fun i =>
++      (congrFun (congrArg Prod.snd (hSplit (3 * Z) tail3 f2)) i).trans
++        ((hF2 (Fin.natAdd (3 * Z) i)).trans
++          (congrArg read2 (Fin.coe_natAdd (3 * Z) i)))
++  have hF4 : ∀ i : Fin tail4, f4 i = read4 i.val :=
++    fun i =>
++      (congrFun (congrArg Prod.snd (hSplit (3 * (L * 2)) tail4 f3)) i).trans
++        ((hF3 (Fin.natAdd (3 * (L * 2)) i)).trans
++          (congrArg read3 (Fin.coe_natAdd (3 * (L * 2)) i)))
++  have hF5 : ∀ i : Fin tail5, f5 i = read5 i.val :=
++    fun i =>
++      (congrFun (congrArg Prod.snd (hSplit (3 * 2) tail5 f4)) i).trans
++        ((hF4 (Fin.natAdd (3 * 2) i)).trans
++          (congrArg read4 (Fin.coe_natAdd (3 * 2) i)))
++  have hF6 : ∀ i : Fin tail6, f6 i = read6 i.val :=
++    fun i =>
++      (congrFun (congrArg Prod.snd (hSplit (Z) tail6 f5)) i).trans
++        ((hF5 (Fin.natAdd (Z) i)).trans
++          (congrArg read5 (Fin.coe_natAdd (Z) i)))
++  have hF7 : ∀ i : Fin tail7, f7 i = read7 i.val :=
++    fun i =>
++      (congrFun (congrArg Prod.snd (hSplit (2) tail7 f6)) i).trans
++        ((hF6 (Fin.natAdd (2) i)).trans
++          (congrArg read6 (Fin.coe_natAdd (2) i)))
++  have hF8 : ∀ i : Fin tail8, f8 i = read8 i.val :=
++    fun i =>
++      (congrFun (congrArg Prod.snd (hSplit (L * 2) tail8 f7)) i).trans
++        ((hF7 (Fin.natAdd (L * 2) i)).trans
++          (congrArg read7 (Fin.coe_natAdd (L * 2) i)))
++  have hF9 : ∀ i : Fin tail9, f9 i = read9 i.val :=
++    fun i =>
++      (congrFun (congrArg Prod.snd (hSplit (2) tail9 f8)) i).trans
++        ((hF8 (Fin.natAdd (2) i)).trans
++          (congrArg read8 (Fin.coe_natAdd (2) i)))
++  have hF10 : ∀ i : Fin tail10, f10 i = read10 i.val :=
++    fun i =>
++      (congrFun (congrArg Prod.snd (hSplit (Q * (3 * B)) tail10 f9)) i).trans
++        ((hF9 (Fin.natAdd (Q * (3 * B)) i)).trans
++          (congrArg read9 (Fin.coe_natAdd (Q * (3 * B)) i)))
++  have hF11 : ∀ i : Fin tail11, f11 i = read11 i.val :=
++    fun i =>
++      (congrFun (congrArg Prod.snd (hSplit (Q * (2 * b)) tail11 f10)) i).trans
++        ((hF10 (Fin.natAdd (Q * (2 * b)) i)).trans
++          (congrArg read10 (Fin.coe_natAdd (Q * (2 * b)) i)))
++  have hF12 : ∀ i : Fin tail12, f12 i = read12 i.val :=
++    fun i =>
++      (congrFun (congrArg Prod.snd (hSplit (Q * (L * b)) tail12 f11)) i).trans
++        ((hF11 (Fin.natAdd (Q * (L * b)) i)).trans
++          (congrArg read11 (Fin.coe_natAdd (Q * (L * b)) i)))
++  -- The complete thirteen-field chart reader is still the one remaining obligation.
++  -- Use these suffix laws independently before normalizing any source addresses.
++  sorry
++
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
+diff --git a/TCSlib/Cryptography/Pairing/MatrixDH/SingleColumn.lean b/TCSlib/Cryptography/Pairing/MatrixDH/SingleColumn.lean
+new file mode 100644
+--- /dev/null
++++ b/TCSlib/Cryptography/Pairing/MatrixDH/SingleColumn.lean
+@@ -0,0 +1,97 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Pairing.MatrixDH.Defs
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# A single-column observation law for uniform matrix Diffie-Hellman
++
++## Main definitions
++
++This module introduces no runtime definition or sampler.
++
++## Main results
++
++* `BilinearGen.expect_mddhSample_singleColumn`: a one-column matrix challenge has the
++  observation law of a uniform matrix, coefficient vector and independent response vector.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, §2.1, p. 4, Assumption 1.
++-/
++
++namespace TCSlib.Cryptography.Pairing.BilinearGen
++
++open Complexity TCSlib.Cryptography.Games
++
++/-- Every real-valued observation of the one-column matrix challenge has the law obtained
++by drawing an independent coefficient vector and response vector. The real response is
++matrix times coefficient vector; the random response is the independent vector
++[Wee20, §2.1, p. 4, Assumption 1]. Both draws are retained even when unused.
++
++**Proof sketch.** Read the exact dependent sampling law. Reindex each one-column scalar
++matrix by the whole unique-domain function equivalence, pointwise in its row. Apply uniform
++sampling invariance twice; the single column identifies matrix multiplication with mulVec.
++No field-order or positive-dimension assumption is needed. -/
++theorem expect_mddhSample_singleColumn (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (real : Bool)
++    (F : G.MDDHChallenge (PolyExpr.const 1) ℓ κ → ℝ) :
++    ProbComp.expect (G.mddhSample (PolyExpr.const 1) ℓ real κ) F =
++      ProbComp.expect (publicParamsGen G κ) (fun pp =>
++        ProbComp.expect
++          (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2) (ZMod pp.group.order))) (fun M =>
++          ProbComp.expect (ProbComp.sample (Fin 2 → ZMod pp.group.order)) (fun s =>
++            ProbComp.expect (ProbComp.sample (Fin (ℓ.eval κ) → ZMod pp.group.order)) (fun u =>
++              F ⟨pp, pp.group.expMat pp.generator M,
++                pp.group.expMat pp.generator (fun i (_ : Fin 1) =>
++                  if real then Matrix.mulVec M s i else u i)⟩)))) := by
++  classical
++  simp only [G.mddhSample_eq, ProbComp.expect_bind, ProbComp.expect_pure,
++    PolyExpr.eval_const, PublicParams.group_eq]
++  apply congrArg (ProbComp.expect (publicParamsGen G κ))
++  funext pp
++  let K := ZMod (G.group κ pp.description.val).order
++  apply congrArg (ProbComp.expect (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 2) K)))
++  funext M
++  let column (m : ℕ) : Matrix (Fin m) (Fin 1) K ≃ (Fin m → K) :=
++    Equiv.piCongrRight (fun _ : Fin m => Equiv.funUnique (Fin 1) K)
++  let observe (s : Fin 2 → K) (u : Fin (ℓ.eval κ) → K) : ℝ :=
++    F ⟨pp, (G.group κ pp.description.val).expMat pp.generator M,
++      (G.group κ pp.description.val).expMat pp.generator
++        (fun i (_ : Fin 1) => if real then Matrix.mulVec M s i else u i)⟩
++  calc
++    _ = ProbComp.expect (ProbComp.sample (Matrix (Fin 2) (Fin 1) K)) (fun S =>
++        ProbComp.expect (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 1) K))
++          (fun U => observe (column 2 S) (column (ℓ.eval κ) U))) := by
++      apply congrArg (ProbComp.expect (ProbComp.sample (Matrix (Fin 2) (Fin 1) K)))
++      funext S
++      apply congrArg
++        (ProbComp.expect (ProbComp.sample (Matrix (Fin (ℓ.eval κ)) (Fin 1) K)))
++      funext U
++      have hResponse : (if real then M * S else U) =
++          (fun i (_ : Fin 1) =>
++            if real then Matrix.mulVec M (column 2 S) i else column (ℓ.eval κ) U i) := by
++        funext i j
++        have hj : j = 0 := Subsingleton.elim _ _
++        subst j
++        cases real <;> rfl
++      change F ⟨pp, _, (G.group κ pp.description.val).expMat pp.generator
++        (if real then M * S else U)⟩ = observe (column 2 S) (column (ℓ.eval κ) U)
++      rw [hResponse]
++    _ = ProbComp.expect (ProbComp.sample (Matrix (Fin 2) (Fin 1) K)) (fun S =>
++        ProbComp.expect (ProbComp.sample (Fin (ℓ.eval κ) → K))
++          (fun u => observe (column 2 S) u)) := by
++      apply congrArg (ProbComp.expect (ProbComp.sample (Matrix (Fin 2) (Fin 1) K)))
++      funext S
++      exact ProbComp.expect_sample_equiv (column (ℓ.eval κ))
++        (fun u : Fin (ℓ.eval κ) → K => observe (column 2 S) u)
++    _ = _ := ProbComp.expect_sample_equiv (column 2)
++      (fun s : Fin 2 → K =>
++        ProbComp.expect (ProbComp.sample (Fin (ℓ.eval κ) → K)) (fun u => observe s u))
++
++end TCSlib.Cryptography.Pairing.BilinearGen

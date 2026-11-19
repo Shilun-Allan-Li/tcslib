@@ -1,0 +1,373 @@
+From 0863968d919936a5ede379dd767457c98eaecd22 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 02:51:36 -0800
+Subject: [PATCH 08/37] io-phfe: draft PHFE class adapter and share view
+ encoding
+
+---
+ .../PartialGarbling/Defs.lean                 |  12 +-
+ .../PartialGarbling/Layered.lean              |   4 +-
+ .../Simulation/Games.lean                     |  42 ++++-
+ .../FunctionalEncryption/Wee20/Linear.lean    |   4 +-
+ .../Wee20/LinearCorrect.lean                  |   4 +-
+ .../FunctionalEncryption/Wee20/PHFE/Data.lean | 168 ++++++++++++++++++
+ 6 files changed, 217 insertions(+), 17 deletions(-)
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Data.lean
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Defs.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Defs.lean
+index fdfea913f..838160e8d 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Defs.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Defs.lean
+@@ -228,11 +228,11 @@ structure Raw (l n : PolyExpr) (Fn : (kappa : ℕ) → ℕ+ → Type) where
+   L0 : ∀ kappa p f,
+     Matrix (TIdx kappa p f ⊕ Fin (n.eval kappa)) (MIdx kappa p f) (ZMod (p : ℕ))
+   /-- The reconstruction vector, with output coordinates followed by non-output ones. -/
+-  rec : ∀ kappa p f, (Fin (l.eval kappa) → ZMod (p : ℕ)) →
++  recVec : ∀ (kappa : ℕ) (p : ℕ+) (f : Fn kappa p), (Fin (l.eval kappa) → ZMod (p : ℕ)) →
+     (Fin (n.eval kappa) ⊕ MIdx kappa p f) → ZMod (p : ℕ)
+   /-- Every draw reconstructs the allowed scalar by the displayed dot product. -/
+   rec_spec : ∀ kappa p f x z t,
+-    dotProduct (pgbCore (L1 kappa p f) (L0 kappa p f) x z t) (rec kappa p f x) =
++    dotProduct (pgbCore (L1 kappa p f) (L0 kappa p f) x z t) (recVec kappa p f x) =
+       dotProduct z (eval kappa p f x)
+   /-- Real and simulated garblings have exactly equal expectations for every test. -/
+   privacy : ∀ kappa p f x z
+@@ -301,7 +301,7 @@ theorem reconstruct (kappa : ℕ) (p : ℕ+) (f : Fn kappa p)
+     (x : Fin (l.eval kappa) → ZMod (p : ℕ))
+     (z : Fin (n.eval kappa) → ZMod (p : ℕ))
+     (t : (S.TIdx kappa p f ⊕ Fin (n.eval kappa)) → ZMod (p : ℕ)) :
+-    dotProduct (S.pgb kappa p f x z t) (S.rec kappa p f x) =
++    dotProduct (S.pgb kappa p f x z t) (S.recVec kappa p f x) =
+       dotProduct z (S.eval kappa p f x) := S.rec_spec kappa p f x z t
+ 
+ /-- Real and simulated canonical garblings have identical laws, expressed by
+@@ -404,13 +404,13 @@ canonical garbling-coordinate order. Existing modular encodings are reused. -/
+ def encRec (kappa : ℕ) (p : ℕ+) (f : Fn kappa p)
+     (x : Fin (l.eval kappa) → ZMod (p : ℕ)) : List Bool :=
+   Encoding.Modular.encodeVector (Nat.size (p : ℕ))
+-    (fun i => S.rec kappa p f x ((S.outputCoord kappa p f).symm i))
++    (fun i => S.recVec kappa p f x ((S.outputCoord kappa p f).symm i))
+ 
+ /-- The reconstruction output is the displayed modular vector encoding. -/
+ theorem encRec_eq (kappa : ℕ) (p : ℕ+) (f : Fn kappa p)
+     (x : Fin (l.eval kappa) → ZMod (p : ℕ)) :
+     S.encRec kappa p f x = Encoding.Modular.encodeVector (Nat.size (p : ℕ))
+-      (fun i => S.rec kappa p f x ((S.outputCoord kappa p f).symm i)) := rfl
++      (fun i => S.recVec kappa p f x ((S.outputCoord kappa p f).symm i)) := rfl
+ 
+ /-- Matrix generation reads the unary security parameter and the pair of public
+ parameters with the function description. This is uniform input-layout glue. -/
+@@ -477,7 +477,7 @@ theorem toRaw_L1 : S.toRaw.L1 = S.L1 := rfl
+ theorem toRaw_L0 : S.toRaw.L0 = S.L0 := rfl
+ 
+ /-- The efficient interface's raw family has the same reconstruction vectors. -/
+-theorem toRaw_rec : S.toRaw.rec = S.rec := rfl
++theorem toRaw_rec : S.toRaw.recVec = S.recVec := rfl
+ 
+ /-- The efficient interface's raw family has the same evaluated vector functions. -/
+ theorem toRaw_eval : S.toRaw.eval = S.eval := rfl
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean
+index 152f0de1d..68217785d 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/PartialGarbling/Layered.lean
+@@ -403,7 +403,7 @@ def layeredPG_raw (l n : PolyExpr) (d : ℕ) :
+   eval := fun _ _ C => polyTensorEval C
+   L1 := fun _ _ C => PartialGarbling.Layered.L1 C
+   L0 := fun _ _ C => PartialGarbling.Layered.L0 C
+-  rec := fun _ _ C => PartialGarbling.Layered.rec C
++  recVec := fun _ _ C => PartialGarbling.Layered.rec C
+   rec_spec := fun _ _ C => PartialGarbling.Layered.rec_spec C
+   privacy := fun _ _ C => PartialGarbling.Layered.privacy C
+ 
+@@ -455,7 +455,7 @@ theorem layeredPG_raw_L0 (l n : PolyExpr) (d kappa : ℕ) (p : ℕ+)
+ /-- The raw reconstruction algorithm is the explicit forward path vector. -/
+ theorem layeredPG_raw_rec (l n : PolyExpr) (d kappa : ℕ) (p : ℕ+)
+     (C : PolyTensor p (l.eval kappa) (n.eval kappa) d) :
+-    (layeredPG_raw l n d).rec kappa p C = PartialGarbling.Layered.rec C := rfl
++    (layeredPG_raw l n d).recVec kappa p C = PartialGarbling.Layered.rec C := rfl
+ 
+ /-- The raw evaluated vector is the shared coefficient-tensor evaluation. -/
+ theorem layeredPG_raw_eval (l n : PolyExpr) (d kappa : ℕ) (p : ℕ+)
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Games.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Games.lean
+index 8bf4d82c9..0b944c31d 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Games.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Games.lean
+@@ -44,15 +44,35 @@ namespace FEScheme.Raw
+ 
+ variable {C : FnClass} (S : FEScheme.Raw C)
+ 
++/-- Encode an already represented public view, retaining the committed key order.
++This shared word constructor permits a wire adversary to retain answers without decoding
++arbitrary scheme objects [GJLS21, Definition 4.3]. -/
++def viewWordBits {q : PolyExpr} {κ : ℕ} (a : Commitment C q κ)
++    (pp : PublicParams S.G κ) (pk : Fin (S.mpkLen.eval κ) → Bool)
++    (keys : List (Fin (S.skLen.eval κ) → Bool))
++    (ct : Fin (S.ctLen.eval κ) → Bool) : List Bool :=
++  pairEncode a.state (pairEncode pp.encode
++    (pairEncode (List.ofFn pk)
++      (pairEncode ((keys.map List.ofFn).foldr pairEncode [])
++        (pairEncode (List.ofFn a.publicInput) (List.ofFn ct)))))
++
++/-- The represented view has the displayed nested encoding in committed key order. -/
++theorem viewWordBits_eq {q : PolyExpr} {κ : ℕ} (a : Commitment C q κ)
++    (pp : PublicParams S.G κ) (pk : Fin (S.mpkLen.eval κ) → Bool)
++    (keys : List (Fin (S.skLen.eval κ) → Bool))
++    (ct : Fin (S.ctLen.eval κ) → Bool) :
++    S.viewWordBits a pp pk keys ct = pairEncode a.state (pairEncode pp.encode
++      (pairEncode (List.ofFn pk)
++        (pairEncode ((keys.map List.ofFn).foldr pairEncode [])
++          (pairEncode (List.ofFn a.publicInput) (List.ofFn ct))))) := rfl
++
+ /-- Encode the first-stage state and the view `(pp, pk, keys, x, ct)` supplied to the
+ second machine [GJLS21, Definition 4.3, at epsilon one; Remark 4.6]. -/
+ def viewWord {q : PolyExpr} {κ : ℕ} (a : Commitment C q κ)
+     (pp : PublicParams S.G κ) (pk : S.MPK κ pp) (keys : List (S.SK κ pp))
+     (ct : S.CT κ pp) : List Bool :=
+-  pairEncode a.state (pairEncode pp.encode
+-    (pairEncode (List.ofFn (S.encMPK κ pp pk))
+-      (pairEncode ((keys.map fun sk => List.ofFn (S.encSK κ pp sk)).foldr pairEncode [])
+-        (pairEncode (List.ofFn a.publicInput) (List.ofFn (S.encCT κ pp ct))))))
++  S.viewWordBits a pp (S.encMPK κ pp pk) (keys.map (S.encSK κ pp))
++    (S.encCT κ pp ct)
+ 
+ /-- The second-stage word is the displayed nested pair in committed key order. -/
+ theorem viewWord_eq {q : PolyExpr} {κ : ℕ} (a : Commitment C q κ)
+@@ -61,7 +81,19 @@ theorem viewWord_eq {q : PolyExpr} {κ : ℕ} (a : Commitment C q κ)
+     S.viewWord a pp pk keys ct = pairEncode a.state (pairEncode pp.encode
+       (pairEncode (List.ofFn (S.encMPK κ pp pk))
+         (pairEncode ((keys.map fun sk => List.ofFn (S.encSK κ pp sk)).foldr pairEncode [])
+-          (pairEncode (List.ofFn a.publicInput) (List.ofFn (S.encCT κ pp ct)))))) := rfl
++          (pairEncode (List.ofFn a.publicInput) (List.ofFn (S.encCT κ pp ct)))))) :=
++  congrArg (fun k => pairEncode a.state (pairEncode pp.encode
++    (pairEncode (List.ofFn (S.encMPK κ pp pk))
++      (pairEncode (k.foldr pairEncode [])
++        (pairEncode (List.ofFn a.publicInput) (List.ofFn (S.encCT κ pp ct)))))))
++    (List.map_map (f := S.encSK κ pp) (g := List.ofFn) (l := keys))
++
++/-- Encoding the typed view applies the shared represented-view constructor to its encodings. -/
++theorem viewWord_eq_viewWordBits {q : PolyExpr} {κ : ℕ} (a : Commitment C q κ)
++    (pp : PublicParams S.G κ) (pk : S.MPK κ pp) (keys : List (S.SK κ pp))
++    (ct : S.CT κ pp) :
++    S.viewWord a pp pk keys ct = S.viewWordBits a pp (S.encMPK κ pp pk)
++      (keys.map (S.encSK κ pp)) (S.encCT κ pp ct) := rfl
+ 
+ /-- Produce the real view after the commitment is fixed. Keys are sampled in increasing
+ committed order using the shared monadic list traversal [GJLS21, Definition 4.3]. -/
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean
+index 3533159dc..62371bcdb 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean
+@@ -261,7 +261,7 @@ def dec (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+     (x : Fin (ℓ.eval κ) → ZMod pp.group.order) (sk : Key G PG κ pp f)
+     (ct : CT G zDim κ pp) : pp.group.GT :=
+   groupDot (Sum.elim (decFirst G PG zDim κ pp f M sk ct)
+-    (decSecond G PG zDim κ pp f x sk ct)) (PG.rec κ pp.orderParam f x)
++    (decSecond G PG zDim κ pp f x sk ct)) (PG.recVec κ pp.orderParam f x)
+ 
+ /-- Decryption is the known-power product specified by the reconstruction vector. -/
+ theorem dec_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+@@ -271,7 +271,7 @@ theorem dec_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type
+     (ct : CT G zDim κ pp) :
+     dec G PG zDim κ pp f M x sk ct =
+       groupDot (Sum.elim (decFirst G PG zDim κ pp f M sk ct)
+-        (decSecond G PG zDim κ pp f x sk ct)) (PG.rec κ pp.orderParam f x) := rfl
++        (decSecond G PG zDim κ pp f x sk ct)) (PG.recVec κ pp.orderParam f x) := rfl
+ 
+ /-- Compute `[z M f(x)^T]` from an arbitrary group matrix and the known scalar input and
+ function value [Wee20, §4, p. 8]. This is Π's simulator leakage. -/
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean
+index e0942b4ec..0c91ed344 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean
+@@ -53,7 +53,7 @@ theorem rec_output_eq_eval (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → 
+     (PG : PartialGarbling.Raw ℓ n' Fn) (κ : ℕ) (pp : PublicParams G κ)
+     (f : Fn κ pp.orderParam) (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
+     (j : Fin (n'.eval κ)) :
+-    PG.rec κ pp.orderParam f x (Sum.inl j) = PG.eval κ pp.orderParam f x j := sorry
++    PG.recVec κ pp.orderParam f x (Sum.inl j) = PG.eval κ pp.orderParam f x j := sorry
+ 
+ /-- The reconstruction vector cancels every garbling-draw coordinate. This is coefficient
+ form of the reconstruction law [AGW20, Lemma 2, p. 12; Appendix A, (29), p. 37].
+@@ -66,7 +66,7 @@ theorem rec_matrix_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ 
+     (f : Fn κ pp.orderParam) (x : Fin (ℓ.eval κ) → ZMod pp.group.order) :
+     (PG.L1 κ pp.orderParam f *
+         PartialGarbling.publicTensor (p := pp.orderParam) (M := PG.MIdx κ pp.orderParam f) x +
+-      PG.L0 κ pp.orderParam f) *ᵥ (fun u => PG.rec κ pp.orderParam f x (Sum.inr u)) =
++      PG.L0 κ pp.orderParam f) *ᵥ (fun u => PG.recVec κ pp.orderParam f x (Sum.inr u)) =
+         Sum.elim (fun _ => 0) (PG.eval κ pp.orderParam f x) := sorry
+ 
+ /-- The leakage is the product of the supplied group-matrix entries raised to the known
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Data.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Data.lean
+new file mode 100644
+index 000000000..4c5f7d7c1
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Data.lean
+@@ -0,0 +1,168 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Classes
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Wire
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The PHFE class adapter
++
++The private input is used in both slots of Wee's quadratic scheme. The public input and
++function descriptions are decoded modulo the order read from public parameters. Explicit
++class codecs transport arbitrary class parameters and values to their residue interpretation;
++foreign class bundles need not be unfolded by a consumer.
++
++## Main definitions
++
++* `Wee20.PHFE.TensorFn`: coefficient tensors for the quadratic output vector.
++* `Wee20.PHFE.classParam`, `embedValue`: the drawn modulus and target-group embedding.
++* `Wee20.PHFE.decodePublic`, `decodePrivate`, `decodeFunction`: the three input adapters.
++* `Wee20.PHFE.Key`: an original function word together with its typed quadratic key.
++* `Wee20.PHFE.PGSound`: semantic agreement of a supplied garbling with tensor evaluation.
++
++## Main results
++
++* `Wee20.PHFE.embedValue_injective`: values embed faithfully at every drawn generator.
++* Width and equation readers expose the adapters without foreign unfolding.
++
++## References
++
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
++  revision of 3 January 2025, Definitions 4.1-4.3 and Section 9.
++* [AGW20] M. Abdalla, J. Gong, H. Wee, *Functional Encryption for Attribute-Weighted
++  Sums from k-Lin*, 2020, Lemma 2 and Appendix A.
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Sections 3.1-3.2.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE
++
++open Complexity Turing TCSlib.Cryptography.Pairing
++
++/-- The PHFE function family is a polynomial vector with one output per private pair
++[GJLS21, Section 9; Wee20, Section 3.1]. -/
++abbrev TensorFn (ℓ n : PolyExpr) (d κ : ℕ) (p : ℕ+) : Type :=
++  PolyTensor p (ℓ.eval κ) (n.eval κ * n.eval κ) d
++
++/-- The tensor family has the displayed output and monomial coordinates. -/
++theorem tensorFn_eq (ℓ n : PolyExpr) (d κ : ℕ) (p : ℕ+) :
++    TensorFn ℓ n d κ p = PolyTensor p (ℓ.eval κ) (n.eval κ * n.eval κ) d := rfl
++
++/-- A supplied raw garbling computes the intended coefficient tensor evaluation.
++This is semantic agreement with the chosen function class, rather than an efficiency
++hypothesis [AGW20, Lemma 2, applied to the polynomial vector of GJLS21, Section 9]. -/
++def PGSound {ℓ n : PolyExpr} {d : ℕ}
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) : Prop :=
++  ∀ κ p f x, PG.eval κ p f x = polyTensorEval f x
++
++/-- Semantic agreement is pointwise equality with the polynomial-vector evaluation. -/
++theorem pgSound_iff {ℓ n : PolyExpr} {d : ℕ}
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d)) :
++    PGSound PG ↔ ∀ κ p f x, PG.eval κ p f x = polyTensorEval f x := Iff.rfl
++
++/-- The class parameter is the public group's order, packaged by the published class codec.
++No external prime schedule is evaluated by an honest algorithm [GJLS21, Definition 4.1]. -/
++def classParam (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ) (pp : PublicParams G κ) :
++    (phfeClass ℓ n G.wG d).Prm κ :=
++  (phfeClassParamEquiv ℓ n G.wG d κ).symm pp.orderParam
++
++/-- The parameter adapter packages precisely the modulus read from public parameters. -/
++theorem classParam_eq (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ)
++    (pp : PublicParams G κ) : classParam G ℓ n d κ pp =
++      (phfeClassParamEquiv ℓ n G.wG d κ).symm pp.orderParam := rfl
++
++/-- Embed the allowed scalar value in the target group at the public generator
++[GJLS21, Definition 4.2 and Section 9]. -/
++def embedValue (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ) (pp : PublicParams G κ)
++    (v : (phfeClass ℓ n G.wG d).Out κ (classParam G ℓ n d κ pp)) : pp.group.GT :=
++  pp.group.pair pp.generator pp.generator ^
++    (phfeClassValueEquiv ℓ n G.wG d κ pp.orderParam v).val
++
++/-- The embedding exponent is the scalar supplied by the published value codec. -/
++theorem embedValue_eq (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ)
++    (pp : PublicParams G κ)
++    (v : (phfeClass ℓ n G.wG d).Out κ (classParam G ℓ n d κ pp)) :
++    embedValue G ℓ n d κ pp v = pp.group.pair pp.generator pp.generator ^
++      (phfeClassValueEquiv ℓ n G.wG d κ pp.orderParam v).val := rfl
++
++/-- The target-group embedding preserves distinct class values at every public parameter. -/
++theorem embedValue_injective (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ)
++    (pp : PublicParams G κ) : Function.Injective (embedValue G ℓ n d κ pp) :=
++  (pp.group.pow_val_bijective pp.generator_ne_one).injective.comp
++    (phfeClassValueEquiv ℓ n G.wG d κ pp.orderParam).injective
++
++/-- The public word contains exactly ℓ residues at the source-group width. -/
++theorem publicWidth (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ) :
++    (phfeClass ℓ n G.wG d).pubLen.eval κ = ℓ.eval κ * G.wG.eval κ :=
++  congrArg (fun a : PolyExpr => a.eval κ) (phfeClass_pubLen ℓ n G.wG d)
++
++/-- The private word contains exactly n residues at the source-group width. -/
++theorem privateWidth (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ) :
++    (phfeClass ℓ n G.wG d).privLen.eval κ = n.eval κ * G.wG.eval κ :=
++  congrArg (fun a : PolyExpr => a.eval κ) (phfeClass_privLen ℓ n G.wG d)
++
++/-- The function word contains all padded tensor coefficients at the public width. -/
++theorem functionWidth (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ) :
++    (phfeClass ℓ n G.wG d).fnLen.eval κ =
++      n.eval κ * n.eval κ * (ℓ.eval κ + 1) ^ d * G.wG.eval κ :=
++  (congrArg (fun a : PolyExpr => a.eval κ) (phfeClass_fnLen ℓ n G.wG d)).trans
++    (tensorFnLen_eval ℓ (n.mul n) G.wG d κ)
++
++/-- Decode the public input modulo the drawn order, using its published wire-width reader. -/
++def decodePublic (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ) (pp : PublicParams G κ)
++    (x : Fin ((phfeClass ℓ n G.wG d).pubLen.eval κ) → Bool) :
++    Fin (ℓ.eval κ) → ZMod pp.group.order :=
++  decodeResidues pp.orderParam (ℓ.eval κ) (G.wG.eval κ)
++    (x ∘ (finCongr (publicWidth G ℓ n d κ)).symm)
++
++/-- Public decoding transports the fixed-width word and uses total modular decoding. -/
++theorem decodePublic_eq (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ)
++    (pp : PublicParams G κ) (x : Fin ((phfeClass ℓ n G.wG d).pubLen.eval κ) → Bool) :
++    decodePublic G ℓ n d κ pp x = decodeResidues pp.orderParam (ℓ.eval κ) (G.wG.eval κ)
++      (x ∘ (finCongr (publicWidth G ℓ n d κ)).symm) := rfl
++
++/-- Decode the private input once; both quadratic slots receive this same vector. -/
++def decodePrivate (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ) (pp : PublicParams G κ)
++    (y : Fin ((phfeClass ℓ n G.wG d).privLen.eval κ) → Bool) :
++    Fin (n.eval κ) → ZMod pp.group.order :=
++  decodeResidues pp.orderParam (n.eval κ) (G.wG.eval κ)
++    (y ∘ (finCongr (privateWidth G ℓ n d κ)).symm)
++
++/-- Private decoding transports the fixed-width word and uses total modular decoding. -/
++theorem decodePrivate_eq (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ)
++    (pp : PublicParams G κ) (y : Fin ((phfeClass ℓ n G.wG d).privLen.eval κ) → Bool) :
++    decodePrivate G ℓ n d κ pp y = decodeResidues pp.orderParam (n.eval κ) (G.wG.eval κ)
++      (y ∘ (finCongr (privateWidth G ℓ n d κ)).symm) := rfl
++
++/-- Decode the function word as its ordered coefficient tensor modulo the drawn order. -/
++def decodeFunction (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ) (pp : PublicParams G κ)
++    (f : Fin ((phfeClass ℓ n G.wG d).fnLen.eval κ) → Bool) : TensorFn ℓ n d κ pp.orderParam :=
++  decodeTensor pp.orderParam (ℓ.eval κ) (n.eval κ * n.eval κ) d (G.wG.eval κ)
++    (f ∘ (finCongr (functionWidth G ℓ n d κ)).symm)
++
++/-- Function decoding transports the word and reads its canonical tensor coordinates. -/
++theorem decodeFunction_eq (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ)
++    (pp : PublicParams G κ) (f : Fin ((phfeClass ℓ n G.wG d).fnLen.eval κ) → Bool) :
++    decodeFunction G ℓ n d κ pp f =
++      decodeTensor pp.orderParam (ℓ.eval κ) (n.eval κ * n.eval κ) d (G.wG.eval κ)
++        (f ∘ (finCongr (functionWidth G ℓ n d κ)).symm) := rfl
++
++/-- A PHFE key retains its original function word and the corresponding typed quadratic key.
++Keeping the word makes its fixed-width representation injective even when distinct words
++decode to the same residue tensor [GJLS21, Definition 4.1]. -/
++structure Key (G : BilinearGen) {ℓ n : PolyExpr} {d : ℕ}
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (TensorFn ℓ n d))
++    (κ : ℕ) (pp : PublicParams G κ) where
++  /-- The original wire function description. -/
++  function : Fin ((phfeClass ℓ n G.wG d).fnLen.eval κ) → Bool
++  /-- The quadratic key for its decoded coefficient tensor. -/
++  quadratic : Quadratic.Key G n n PG κ pp (decodeFunction G ℓ n d κ pp function)
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE

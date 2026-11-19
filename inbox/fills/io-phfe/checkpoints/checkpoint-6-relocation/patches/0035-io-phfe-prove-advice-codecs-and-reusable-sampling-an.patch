@@ -1,0 +1,554 @@
+From a0289e063a4b932692d4dca4e6c7eed66dbd33cc Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 12:49:47 -0800
+Subject: [PATCH 35/37] io-phfe: prove advice codecs and reusable sampling and
+ basis laws
+
+---
+ .../FunctionalEncryption.lean                 |  2 +
+ .../FiniteRandomness.lean                     | 96 +++++++++++++++++++
+ .../Wee20/LinearSecurity/Endpoint.lean        |  2 +
+ .../Wee20/LinearSecurity/Theorems.lean        | 94 ++++++++++++++++--
+ .../Wee20/LinearSimulator.lean                | 43 +++++++++
+ .../Wee20/QuadraticSecurity/Theorems.lean     | 60 ++++++++++--
+ TCSlib/Cryptography/Pairing/MatrixDH.lean     |  2 +
+ .../Pairing/MatrixDH/SelfReduction.lean       |  8 +-
+ .../Cryptography/Pairing/MatrixDH/Widths.lean | 49 ++++++++++
+ 9 files changed, 337 insertions(+), 19 deletions(-)
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/FiniteRandomness.lean
+ create mode 100644 TCSlib/Cryptography/Pairing/MatrixDH/Widths.lean
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption.lean
+index 9aba0f348..9c0738443 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption.lean
+@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Run
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.FiniteRandomness
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PolynomialTensorAlgebra
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Classes
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling
+@@ -23,6 +24,7 @@ set_option autoImplicit false
+ 
+ * `Defs`: generic function classes, raw algorithms, correctness and efficient interfaces.
+ * `Run`: deterministic bounded stateful oracle runs.
++* `FiniteRandomness`: uniform coordinate restriction with unused coordinates retained.
+ * `PolynomialTensorAlgebra`: finite monomial padding for class completeness.
+ * `Classes`: polynomial public computation and quadratic private computation.
+ * `PartialGarbling`: corrected arithmetic partial garbling with exact privacy.
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/FiniteRandomness.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/FiniteRandomness.lean
+new file mode 100644
+index 000000000..926e1c38a
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/FiniteRandomness.lean
+@@ -0,0 +1,96 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Games.Probability
++import TCSlib.Cryptography.Games.Bridges.Experiments
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Finite coordinate restriction under uniform sampling
++
++## Main definitions
++
++This module introduces no definitions.
++
++## Main results
++
++* `FiniteRandomness.expect_sample_embedding_independent`: a selected family of distinct
++  coordinates of a uniform finite function is fresh jointly with every residual test
++  that ignores those coordinates. The complementary coordinates remain sampled.
++
++## References
++
++* TCSlib contributors, *TCSlib*, `Cryptography/Games/Probability.lean`, the uniform
++  equivalence and single-coordinate sampling laws, and `Games/Bridges/Experiments.lean`,
++  the product sampling law.
++* The Mathlib community, *Mathlib*, `Logic/Equiv/Prod.lean` and
++  `Logic/Equiv/Fintype.lean`, finite-function image/complement and range equivalences.
++
++The theorem is technical finite-probability glue for the existing sampling interface.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.FiniteRandomness
++
++open TCSlib.Cryptography.Games
++
++/-- Restricting a uniform finite function to an embedded coordinate family gives fresh
++uniform values jointly with every residual test that ignores those coordinates. The full
++original function remains drawn on the right; no unused coordinate is deleted. Framework
++glue, generalizing the existing single-coordinate `ProbComp.expect_sample_coord` API.
++
++**Proof sketch.** Use the standard image/complement function splitting equivalence and
++reindex the image by the given embedding. Apply the published uniform equivalence and
++product laws. The residual-test hypothesis permits replacing the image component while
++retaining the complementary coordinates. No counting argument or sampler is constructed. -/
++theorem expect_sample_embedding_independent
++    {I J C : Type} [Fintype I] [DecidableEq I] [Fintype J] [DecidableEq J]
++    [Fintype C] [Nonempty C] (e : I ↪ J)
++    (F : (I → C) → (J → C) → ℝ)
++    (hF : ∀ (r : I → C) (T T' : J → C),
++      (∀ j, (∀ i, e i ≠ j) → T j = T' j) → F r T = F r T') :
++    ProbComp.expect (ProbComp.sample (J → C)) (fun T => F (fun i => T (e i)) T) =
++      ProbComp.expect (ProbComp.sample (I → C))
++        (fun r => ProbComp.expect (ProbComp.sample (J → C)) (F r)) := by
++  let inside : J → Prop := fun j => ∃ i : I, e i = j
++  letI : DecidablePred inside := fun _ => Classical.propDecidable _
++  let Outside : Type := {j : J // ¬inside j}
++  let indexEquiv : I ≃ {j : J // inside j} := e.toEquivRange
++  let split : (J → C) ≃ ((I → C) × (Outside → C)) :=
++    (Equiv.piEquivPiSubtypeProd inside (fun _ => C)).trans
++      (Equiv.prodCongr
++        (Equiv.arrowCongr indexEquiv.symm (Equiv.refl C)) (Equiv.refl (Outside → C)))
++  have hFst (T : J → C) : (split T).1 = fun i => T (e i) := rfl
++  -- The residual observer sees only the unchanged complement of the selected image.
++  have hIgnore (r r' : I → C) (u : Outside → C) :
++      F r (split.symm (r, u)) = F r (split.symm (r', u)) := ?_
++  swap
++  · apply hF
++    intro j hj
++    have hOut : ¬inside j := fun ⟨i, hi⟩ => hj i hi
++    refine (show
++      (if h : inside j then r (indexEquiv.symm ⟨j, h⟩) else u ⟨j, h⟩) =
++        (if h : inside j then r' (indexEquiv.symm ⟨j, h⟩) else u ⟨j, h⟩) from ?_)
++    simp only [dif_neg hOut]
++  -- Split the original uniform function into its selected image and full complement.
++  have hLeft := ProbComp.expect_sample_equiv split
++    (fun p : (I → C) × (Outside → C) => F p.1 (split.symm p))
++  simp only [hFst, split.symm_apply_apply] at hLeft
++  rw [hLeft, ← Bridge.expect_sample_pair (α := I → C) (β := Outside → C)
++    (fun p => F p.1 (split.symm p))]
++  simp only [ProbComp.expect_bind, ProbComp.expect_pure]
++  apply congrArg (ProbComp.expect (ProbComp.sample (I → C)))
++  funext r
++  -- Reindex the untouched full function on the right by the same existing equivalence.
++  have hRight := ProbComp.expect_sample_equiv split
++    (fun p : (I → C) × (Outside → C) => F r (split.symm p))
++  simp only [split.symm_apply_apply] at hRight
++  rw [hRight, ← Bridge.expect_sample_pair (α := I → C) (β := Outside → C)
++    (fun p => F r (split.symm p))]
++  simp only [ProbComp.expect_bind, ProbComp.expect_pure]
++  simp only [← hIgnore r, ProbComp.expect_const]
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.FiniteRandomness
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Endpoint.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Endpoint.lean
+index 1296b7a37..4fd07262e 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Endpoint.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Endpoint.lean
+@@ -6,6 +6,8 @@ Authors: TCSlib contributors
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Fresh
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Theorems
+ 
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.FiniteRandomness
++
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean
+index 170172e24..66b49f862 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean
+@@ -55,7 +55,19 @@ and evaluate `adviceLen`. -/
+ theorem length_adviceEnc_le (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+     (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (p : ℕ → ℕ)
+     (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) (ω : Advice PG zDim q p κ) :
+-    (adviceEnc G PG zDim q p hp κ ω).length ≤ (adviceLen G PG zDim q).eval κ := sorry
++    (adviceEnc G PG zDim q p hp κ ω).length ≤ (adviceLen G PG zDim q).eval κ := by
++  letI : NeZero (p κ) := orderSchedule_neZero G p hp κ
++  have hℓ := Turing.length_bits_le_self (ℓ.eval κ)
++  have hn := Turing.length_bits_le_self (n'.eval κ)
++  have hz := Turing.length_bits_le_self (zDim.eval κ)
++  have hq := Turing.length_bits_le_self (q.eval κ)
++  have hm := Turing.length_bits_le_self (PG.mBound.eval κ)
++  rw [Nat.size_eq_bits_len] at hℓ hn hz hq hm
++  rw [adviceEnc_eq, adviceMeta_eq, adviceLen_eq]
++  simp only [Turing.length_pairEncode, List.length_replicate, Candidates.length_natToList,
++    Encoding.Modular.encodeVector_length, PolyExpr.eval_add, PolyExpr.eval_mul,
++    PolyExpr.eval_var, PolyExpr.eval_const]
++  omega
+ 
+ /-- The advice word is injective on its complete scalar tape. Fixed-advice encoding glue.
+ 
+@@ -65,7 +77,13 @@ theorem length_adviceEnc_le (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ →
+ theorem adviceEnc_injective (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+     (PG : PartialGarbling.Raw ℓ n' Fn) (zDim q : PolyExpr) (p : ℕ → ℕ)
+     (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) :
+-    Function.Injective (adviceEnc G PG zDim q p hp κ) := sorry
++    Function.Injective (adviceEnc G PG zDim q p hp κ) := by
++  letI : NeZero (p κ) := orderSchedule_neZero G p hp κ
++  intro a b h
++  simp only [adviceEnc_eq] at h
++  exact Encoding.Modular.encodeVector_injective (q := p κ)
++    (length := (securityCount PG zDim q).eval κ) (G.wG.eval κ)
++    (orderSchedule_le_two_pow G p hp κ) ((pairEncode_eq_iff _ _ _ _).mp h).2
+ 
+ /-- Padded garbling draw coordinates fit the tape block. Technical size glue.
+ 
+@@ -132,7 +150,10 @@ For mode zero the optional middle-game filter is false, so both runs use exactly
+ same public parameters, scalar tape, coin string and honest handler. -/
+ theorem game0_real_accept (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+     (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (A : SAAdv G PG zDim) (κ : ℕ) :
+-    accept (game G PG zDim A 0 κ) = accept (saGame G PG zDim A false κ) := sorry
++    accept (game G PG zDim A 0 κ) = accept (saGame G PG zDim A false κ) := by
++  have hMode : decide (2 ≤ (0 : Fin 6).val) = false := rfl
++  simp only [game_eq, saGame_eq, Bool.false_eq_true, if_false,
++    runGameDet_eq, hMode, Bool.and_false, Bool.false_and]
+ 
+ /-- One MDDH¹_{2,3} realiser bounds the unfiltered ciphertext hop
+ [Wee20, Appendix B, Lemma 2, p. 13]. The shared predicate constrains only encoded
+@@ -155,9 +176,10 @@ theorem game0_game1_le (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+
+ /-- The basis decomposition changes no good-event transcript
+ [Wee20, Appendix B, Game 2, p. 13].
+ 
+-**Proof sketch.** On nonzero determinant, use the total inverse's published left/right
+-inverse laws and group matrix-action identities to reconstruct each honest key. Couple
+-all adaptive queries with `expect_simulate_rel`; both filtered games return false on bad H. -/
++**Proof sketch.** On nonzero determinant, read the total inverse's left-inverse law.
++Reconstruct all three honest key blocks by the shared group-row identity. The complete
++handlers are then equal, so their deterministic adaptive runs are equal with the same
++history, coins and total budget. Both filtered games return false on a singular basis. -/
+ theorem game1_good_eq_game2 (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+     (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (A : SAAdv G PG zDim)
+     (κ : ℕ) (pp : PublicParams G κ) (ω : SecurityDraw G PG zDim A.budget κ pp)
+@@ -166,7 +188,65 @@ theorem game1_good_eq_game2 (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ →
+           (setupAt G PG zDim A.budget κ pp ω).1
+           (setupAt G PG zDim A.budget κ pp ω).2.1).det = 0 then false
+       else runGameDet G PG zDim A 1 false κ pp ω r) =
+-      runGameDet G PG zDim A 2 true κ pp ω r := sorry
++      runGameDet G PG zDim A 2 true κ pp ω r := by
++  classical
++  letI : Fact (Nat.Prime pp.group.order) := ⟨pp.group.order_prime⟩
++  let θ := setupAt G PG zDim A.budget κ pp ω
++  let ctx := simSetupCore G ℓ zDim κ pp θ
++  let H := basisMatrix G κ pp θ.1 θ.2.1
++  have hRank : (basisMatrix G κ pp ctx.2.A ctx.2.c).det = H.det := ?_
++  swap
++  · simp only [ctx, H, simSetupCore_eq]
++  have hInv : ctx.2.basisInv = H⁻¹ := ?_
++  swap
++  · simp only [ctx, H, simSetupCore_eq]
++  have hr1 : runGameDet G PG zDim A 1 false κ pp ω r =
++      (runDet (A.next κ pp ctx.1 r) false
++        (gameHandler G PG zDim A.budget 1 κ pp ctx.2 ω)
++        (A.budget.eval κ) [] ⟨none, 0⟩).1 := ?_
++  swap
++  · simpa [ctx, θ, simSetupCore_eq] using
++      (runGameDet_eq G PG zDim A 1 false κ pp ω r)
++  have hr2 : runGameDet G PG zDim A 2 true κ pp ω r =
++      if H.det = 0 then false else
++        (runDet (A.next κ pp ctx.1 r) false
++          (gameHandler G PG zDim A.budget 2 κ pp ctx.2 ω)
++          (A.budget.eval κ) [] ⟨none, 0⟩).1 := ?_
++  swap
++  · simpa [ctx, θ, H, simSetupCore_eq] using
++      (runGameDet_eq G PG zDim A 2 true κ pp ω r)
++  change (if H.det = 0 then false else runGameDet G PG zDim A 1 false κ pp ω r) = _
++  rw [hr1, hr2]
++  by_cases hbad : H.det = 0
++  · simp only [if_pos hbad]
++  · simp only [if_neg hbad]
++    have hUnit : IsUnit H.det := isUnit_iff_ne_zero.mpr hbad
++    have hInvMul : ctx.2.basisInv * H = 1 := ?_
++    swap
++    · rw [hInv]
++      exact Matrix.nonsing_inv_mul H hUnit
++    have hReconstruct : ∀ {J : Type} (K : Matrix (Fin 3) J pp.group.G),
++        combineRows G κ pp
++          (fun i j => ctx.2.basisInv i (Fin.castSucc j))
++          (fun i => ctx.2.basisInv i (Fin.last 2))
++          (matMulGroup (Matrix.transpose ctx.2.A) K) (groupVecMul ctx.2.c K) = K := ?_
++    swap
++    · intro J K
++      apply combineRows_reconstruct
++      simpa only [ctx, H, simSetupCore_eq] using hInvMul
++    have hKey : ∀ (query : KeyQuery G PG zDim κ pp)
++        (kr : KeyDraw G PG κ pp query.fn),
++        decomposedKey G PG zDim κ pp ctx.2 query kr =
++          keyCore G PG zDim κ pp ⟨ctx.2.W, ctx.2.U, ctx.2.V⟩ query.fn query.matrix kr := ?_
++    swap
++    · intro query kr
++      rw [decomposedKey_eq]
++      simp only [hReconstruct]
++    have hHandlers : gameHandler G PG zDim A.budget 1 κ pp ctx.2 ω =
++        gameHandler G PG zDim A.budget 2 κ pp ctx.2 ω := ?_
++    swap
++    · simp [gameHandler_eq, hKey]
++    rw [hHandlers]
+ 
+ /-- The adaptive third-game change of variables is exact on the good basis event
+ [Wee20, Appendix B, Lemma 3, pp. 13–14]. This replaces the paper's guessing argument.
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean
+index 1a65f97de..5bdaf3f05 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean
+@@ -35,6 +35,8 @@ The exact failure probability is retained, rather than the printed `1/p` approxi
+ 
+ ## Main results
+ 
++* `combineRows_reconstruct`: arbitrary source-group rows from a known inverse basis.
++
+ * `Wee20.Linear.groupPGStar_lift`: the group algorithm agrees with scalar partial garbling
+   whenever its allowed group value is a known scalar power.
+ * `Wee20.Linear.simSetupCore_singular`: the singular branch uses the zero inverse.
+@@ -498,4 +500,45 @@ noncomputable def linearSlack (G : BilinearGen) (κ : ℕ) : ℝ :=
+ theorem linearSlack_eq (G : BilinearGen) (κ : ℕ) :
+     linearSlack G κ = ProbComp.expect (publicParamsGen G κ) rankSlack := rfl
+ 
++/-- The two public projection rows and the final hidden row reconstruct an arbitrary
++source-group matrix when their known coefficient matrix is a left inverse of the
++augmented basis [Wee20, §4.2, p. 10, (12); Appendix B, Game 2, p. 13]. This is technical
++group-arithmetic glue; all group entries remain arbitrary.
++
++**Proof sketch.** Join the two-plus-one products with Fin.prod_univ_castSucc and the
++published combineRows/basisMatrix readers. Consume groupVecMul_matMulGroup whole for
++each row, read the scalar matrix product, and apply the supplied left-inverse identity.
++Existing product-single and scalar identity-coordinate laws give the reconstructed row. -/
++theorem combineRows_reconstruct (G : BilinearGen) (κ : ℕ) (pp : PublicParams G κ) {J : Type}
++    (A : Matrix (Fin 3) (Fin 2) (ZMod pp.group.order)) (c : Fin 3 → ZMod pp.group.order)
++    (Q : Matrix (Fin 3) (Fin 3) (ZMod pp.group.order)) (K : Matrix (Fin 3) J pp.group.G)
++    (hQ : Q * basisMatrix G κ pp A c = 1) :
++    combineRows G κ pp (fun i j => Q i (Fin.castSucc j)) (fun i => Q i (Fin.last 2))
++      (matMulGroup Aᵀ K) (groupVecMul c K) = K := by
++  classical
++  let H := basisMatrix G κ pp A c
++  have hJoin :
++      combineRows G κ pp (fun i j => Q i (Fin.castSucc j)) (fun i => Q i (Fin.last 2))
++        (matMulGroup Aᵀ K) (groupVecMul c K) = matMulGroup Q (matMulGroup H K) := ?_
++  swap
++  · funext i j
++    simp only [combineRows_eq, Matrix.hadamard_apply, matMulGroup_apply,
++      groupVecMul_apply, groupDot_eq]
++    rw [Fin.prod_univ_castSucc (fun u : Fin 3 =>
++      (∏ k : Fin 3, K k j ^ (H u k).val) ^ (Q i u).val)]
++    simp only [H, basisMatrix_eq, Fin.snoc_castSucc, Fin.snoc_last, Matrix.transpose_apply]
++  rw [hJoin]
++  funext i j
++  change groupVecMul (Q i) (matMulGroup H K) j = K i j
++  rw [pp.group.groupVecMul_matMulGroup (Q i) H K]
++  have hScalar : Matrix.vecMul (Q i) H = (1 : Matrix (Fin 3) (Fin 3)
++      (ZMod pp.group.order)) i :=
++    (Matrix.mul_apply_eq_vecMul Q H i).symm.trans (congrFun hQ i)
++  rw [hScalar]
++  have hOne : (1 : ZMod pp.group.order).val = 1 :=
++    ZMod.val_one'' pp.group.order_prime.ne_one
++  simpa only [groupVecMul_apply, groupDot_eq, Matrix.one_apply, apply_ite,
++    hOne, ZMod.val_zero, pow_one, pow_zero] using
++      (Fintype.prod_ite_eq i (fun k : Fin 3 => K k j))
++
+ end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean
+index 3761af834..ef01118aa 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean
+@@ -50,7 +50,16 @@ width is G.wG. Evaluate maskAdviceLen and use the elementary numeral bound alrea
+ in the library. No new scalar encoder or dimension evaluator is introduced. -/
+ theorem length_maskAdviceEnc_le (G : BilinearGen) (n1 n2 : PolyExpr) (p : ℕ → ℕ)
+     (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) (ω : MaskAdvice n1 n2 p κ) :
+-    (maskAdviceEnc G n1 n2 p hp κ ω).length ≤ (maskAdviceLen G n1 n2).eval κ := sorry
++    (maskAdviceEnc G n1 n2 p hp κ ω).length ≤ (maskAdviceLen G n1 n2).eval κ := by
++  letI : NeZero (p κ) := orderSchedule_neZero G p hp κ
++  have hn1 := Turing.length_bits_le_self (n1.eval κ)
++  have hn2 := Turing.length_bits_le_self (n2.eval κ)
++  rw [Nat.size_eq_bits_len] at hn1 hn2
++  rw [maskAdviceEnc_eq, maskAdviceMeta_eq, maskAdviceLen_eq]
++  simp only [Turing.length_pairEncode, List.length_replicate, Candidates.length_natToList,
++    Encoding.Modular.encodeVector_length, PolyExpr.eval_add, PolyExpr.eval_mul,
++    PolyExpr.eval_var, PolyExpr.eval_const]
++  omega
+ 
+ /-- The derived adversary's mask advice word is injective. Fixed-advice bookkeeping.
+ 
+@@ -59,7 +68,14 @@ published modular-vector encoder injectivity with orderSchedule_neZero and the e
+ order_le_two_pow bound. This is the outer vector analogue of Linear.adviceEnc_injective. -/
+ theorem maskAdviceEnc_injective (G : BilinearGen) (n1 n2 : PolyExpr) (p : ℕ → ℕ)
+     (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) :
+-    Function.Injective (maskAdviceEnc G n1 n2 p hp κ) := sorry
++    Function.Injective (maskAdviceEnc G n1 n2 p hp κ) := by
++  letI : NeZero (p κ) := orderSchedule_neZero G p hp κ
++  intro a b h
++  have hWidth := orderSchedule_le_two_pow G p hp κ
++  simp only [maskAdviceEnc_eq] at h
++  exact Encoding.Modular.encodeVector_injective (q := p κ)
++    (length := (maskCount n1 n2).eval κ) (G.wG.eval κ) hWidth
++    ((pairEncode_eq_iff _ _ _ _).mp h).2
+ 
+ /-- Outer advice encoding is polynomially bounded. Fixed-advice bookkeeping.
+ 
+@@ -69,7 +85,12 @@ advice bound. The separate numeric n1,n2 headers require no hardwired polynomial
+ theorem length_adviceEnc_le (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
+     {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (p : ℕ → ℕ)
+     (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) (ω : Advice n1 n2 q PG p κ) :
+-    (adviceEnc G n1 n2 q PG p hp κ ω).length ≤ (adviceLen G n1 n2 q PG).eval κ := sorry
++    (adviceEnc G n1 n2 q PG p hp κ ω).length ≤ (adviceLen G n1 n2 q PG).eval κ := by
++  have hMask := length_maskAdviceEnc_le G n1 n2 p hp κ ω.1
++  have hLinear := Linear.length_adviceEnc_le G PG (piDim n1 n2) q p hp κ ω.2
++  rw [adviceEnc_eq, Turing.length_pairEncode, adviceLen_eq]
++  simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
++  omega
+ 
+ /-- Full advice encoding is injective. Fixed-advice bookkeeping.
+ 
+@@ -79,7 +100,12 @@ bound, and Linear.adviceEnc_injective for the second component. -/
+ theorem adviceEnc_injective (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
+     {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (p : ℕ → ℕ)
+     (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) :
+-    Function.Injective (adviceEnc G n1 n2 q PG p hp κ) := sorry
++    Function.Injective (adviceEnc G n1 n2 q PG p hp κ) := by
++  intro a b h
++  simp only [adviceEnc_eq] at h
++  obtain ⟨hMask, hLinear⟩ := (pairEncode_eq_iff _ _ _ _).mp h
++  exact Prod.ext (maskAdviceEnc_injective G n1 n2 p hp κ hMask)
++    (Linear.adviceEnc_injective G PG (piDim n1 n2) q p hp κ hLinear)
+ 
+ /-- Left mixed leakage equals the scalar tensor leakage whenever the supplied group
+ vector is the encoding of a KNOWN scalar vector [Wee20, §3.3, pp. 7–8].
+@@ -94,7 +120,18 @@ theorem crossLeakLeft_known (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr
+     (y1 : Fin (n1.eval κ) → ZMod pp.group.order)
+     (y2 : Fin (n2.eval κ) → ZMod pp.group.order) (mu : pp.group.G) :
+     crossLeakLeft G n1 n2 PG κ pp f x (pp.group.expVec pp.generator y1) y2 mu =
+-      pp.generator ^ (value G n1 n2 PG κ pp f x y1 y2).val * mu⁻¹ := sorry
++      pp.generator ^ (value G n1 n2 PG κ pp f x y1 y2).val * mu⁻¹ := by
++  have hTensor :
++      (fun i : Fin (n1.eval κ * n2.eval κ) =>
++        pp.group.expVec pp.generator y1 (finProdFinEquiv.symm i).1 ^
++          (y2 (finProdFinEquiv.symm i).2).val) =
++        pp.group.expVec pp.generator (privateTensor (p := pp.orderParam) y1 y2) := ?_
++  swap
++  · funext i
++    have h := congrFun (pp.group.expVec_tensor_left pp.generator y1 y2)
++      (finProdFinEquiv.symm i)
++    simpa only [pp.group.expVec_apply, privateTensor_eq, Matrix.kroneckerMap_apply] using h
++  rw [crossLeakLeft_eq, hTensor, pp.group.groupDot_expVec, value_eq]
+ 
+ /-- Right mixed leakage equals the scalar tensor leakage for a KNOWN scalar y2
+ [Wee20, §3.3, pp. 7–8].
+@@ -109,7 +146,18 @@ theorem crossLeakRight_known (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExp
+     (y1 : Fin (n1.eval κ) → ZMod pp.group.order)
+     (y2 : Fin (n2.eval κ) → ZMod pp.group.order) (mu : pp.group.G) :
+     crossLeakRight G n1 n2 PG κ pp f x y1 (pp.group.expVec pp.generator y2) mu =
+-      pp.generator ^ (value G n1 n2 PG κ pp f x y1 y2).val * mu⁻¹ := sorry
++      pp.generator ^ (value G n1 n2 PG κ pp f x y1 y2).val * mu⁻¹ := by
++  have hTensor :
++      (fun i : Fin (n1.eval κ * n2.eval κ) =>
++        pp.group.expVec pp.generator y2 (finProdFinEquiv.symm i).2 ^
++          (y1 (finProdFinEquiv.symm i).1).val) =
++        pp.group.expVec pp.generator (privateTensor (p := pp.orderParam) y1 y2) := ?_
++  swap
++  · funext i
++    have h := congrFun (pp.group.expVec_tensor_right pp.generator y1 y2)
++      (finProdFinEquiv.symm i)
++    simpa only [pp.group.expVec_apply, privateTensor_eq, Matrix.kroneckerMap_apply] using h
++  rw [crossLeakRight_eq, hTensor, pp.group.groupDot_expVec, value_eq]
+ 
+ /-- The pure derived adversary exactly reproduces the honest or Π-simulated outer
+ endpoint for every fixed tape and coin string [Wee20, §3.3, Game 0 to Game 1, p. 7].
+diff --git a/TCSlib/Cryptography/Pairing/MatrixDH.lean b/TCSlib/Cryptography/Pairing/MatrixDH.lean
+index 5874a2336..fb49501b2 100644
+--- a/TCSlib/Cryptography/Pairing/MatrixDH.lean
++++ b/TCSlib/Cryptography/Pairing/MatrixDH.lean
+@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.Pairing.MatrixDH.Parameters
++import TCSlib.Cryptography.Pairing.MatrixDH.Widths
+ import TCSlib.Cryptography.Pairing.MatrixDH.Diagonal
+ import TCSlib.Cryptography.Pairing.MatrixDH.FiniteLinear
+ import TCSlib.Cryptography.Pairing.MatrixDH.AdaptiveShear
+@@ -21,6 +22,7 @@ set_option autoImplicit false
+ ## Contents
+ 
+ * `Parameters`: generated group descriptions and public nonidentity generators.
++* `Widths`: scalar word bounds for fixed group-order schedules.
+ * `Diagonal`: exact finite-field bounds for random diagonal masks.
+ * `FiniteLinear`: uniform matrix images and exact small-row rank estimates.
+ * `AdaptiveShear`: kernel-valued translations preserving a public projection.
+diff --git a/TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean b/TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean
+index cdb3963a6..3a2cb30d2 100644
+--- a/TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean
++++ b/TCSlib/Cryptography/Pairing/MatrixDH/SelfReduction.lean
+@@ -10,7 +10,7 @@ import TCSlib.Cryptography.Asymptotic.Realization
+ import TCSlib.Cryptography.Asymptotic.EnsemblesLemmas
+ import TCSlib.Cryptography.Authentication.Signatures.Lamport.Averaging
+ import TCSlib.Cryptography.Encoding.Modular
+-import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenMachine.Draws
++import TCSlib.Cryptography.Pairing.MatrixDH.Widths
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -211,11 +211,7 @@ theorem mddhAdviceEnc_injective (p : ℕ → ℕ)
+       ((congrFun (List.ofFn_injective hIndexWord) ω₁.1).symm.trans
+         (decide_eq_true (Eq.refl ω₁.1)))
+   -- A generated instance supplies the existing no-truncation bound for each scalar word.
+-  have hWidth : p κ ≤ 2 ^ G.wG.eval κ := ?_
+-  swap
+-  · rw [← hp κ (fun _ => false), G.inst_eq κ (fun _ => false)]
+-    exact TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.order_le_two_pow
+-      G κ (G.desc κ (fun _ => false))
++  have hWidth := orderSchedule_le_two_pow G p hp κ
+   have hL : ω₁.2.1 = ω₂.2.1 :=
+     Encoding.Modular.encodeMatrix_injective
+       (q := p κ) (rows := ℓ.eval κ) (columns := 3) (G.wG.eval κ) hWidth hLWord
+diff --git a/TCSlib/Cryptography/Pairing/MatrixDH/Widths.lean b/TCSlib/Cryptography/Pairing/MatrixDH/Widths.lean
+new file mode 100644
+index 000000000..ca9a2ce86
+--- /dev/null
++++ b/TCSlib/Cryptography/Pairing/MatrixDH/Widths.lean
+@@ -0,0 +1,49 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Pairing.MatrixDH.Parameters
++import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenMachine.Draws
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Scalar word widths for fixed order schedules
++
++## Main definitions
++
++This module introduces no definitions.
++
++## Main results
++
++* `orderSchedule_le_two_pow`: every scheduled order fits the public source-group width.
++
++## References
++
++* TCSlib contributors, *TCSlib*, `Pairing/Group.lean`, generated group descriptions,
++  and `IdentityBased/BonehBoyenMachine/Draws.lean`, `order_le_two_pow`.
++
++This proof adapter keeps the description-width argument separate from public parameter types.
++-/
++
++namespace TCSlib.Cryptography.Pairing
++
++open Complexity
++
++/-- A fixed schedule agreeing with every generated group order fits the source-group
++encoding width: `p(κ) ≤ 2^{wG(κ)}`. This is scalar-word width transport from the existing
++injective group-encoding bound.
++
++**Proof sketch.** Use the all-false generator coins at κ. Read the schedule hypothesis
++and the generated-instance equation, then apply the existing whole group-order bound
++for that generated description. -/
++theorem orderSchedule_le_two_pow (G : BilinearGen) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) :
++    p κ ≤ 2 ^ (G.wG.eval κ) := by
++  rw [← hp κ (fun _ => false), G.inst_eq κ (fun _ => false)]
++  exact TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.order_le_two_pow
++    G κ (G.desc κ (fun _ => false))
++
++end TCSlib.Cryptography.Pairing

@@ -1,0 +1,332 @@
+From 5b5d8430e1d0f514a2edb6cad28847c44894acc4 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 03:34:51 -0800
+Subject: [PATCH 19/37] io-phfe: isolate embedding proof and correct fresh
+ experiment maps
+
+---
+ .../Wee20/LinearSecurity/Fresh.lean           | 30 ++++++------
+ .../FunctionalEncryption/Wee20/PHFE/Data.lean |  9 +---
+ .../Wee20/PHFE/Embedding.lean                 | 46 +++++++++++++++++++
+ .../FunctionalEncryption/Wee20/PHFE/Raw.lean  |  1 +
+ .../Wee20/QuadraticSecurity/Fresh.lean        | 31 +++++++------
+ .../Wee20/QuadraticSecurity/Theorems.lean     |  2 +-
+ 6 files changed, 81 insertions(+), 38 deletions(-)
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Embedding.lean
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean
+index e80b6602f..3f48dab36 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Fresh.lean
+@@ -42,13 +42,13 @@ noncomputable def freshRealHandler (G : BilinearGen) {ℓ n' : PolyExpr}
+     (msk : MSK G ℓ zDim κ pp) :
+     QueryImpl (saSpec G PG zDim κ pp) (SAState G ℓ zDim κ pp) unifSpec
+   | false, msg, st => match st.challenge with
+-    | none => (fun ct => (some ct, ⟨some msg, st.used⟩) <$> (enc G ℓ zDim κ pp pk msg.1
++    | none => ((fun ct => (some ct, ⟨some msg, st.used⟩)) <$> (enc G ℓ zDim κ pp pk msg.1
+       (pp.group.expVec pp.generator msg.2)))
+     | some _ => .pure (none, st)
+   | true, query, st => match st.challenge with
+     | none => .pure (none, st)
+     | some _ => if st.used < q.eval κ then
+-        (fun key => (some ⟨query.fn, key⟩, ⟨st.challenge, st.used + 1⟩) <$> (keyGen G PG zDim κ pp
++        ((fun key => (some ⟨query.fn, key⟩, ⟨st.challenge, st.used + 1⟩)) <$> (keyGen G PG zDim κ pp
+           msk query.fn query.matrix))
+       else .pure (none, st)
+ 
+@@ -60,7 +60,7 @@ theorem freshRealHandler_challenge (G : BilinearGen) {ℓ n' : PolyExpr}
+     (st : SAState G ℓ zDim κ pp) :
+     freshRealHandler G PG zDim q κ pp pk msk false msg st =
+       match st.challenge with
+-      | none => (fun ct => (some ct, ⟨some msg, st.used⟩) <$> (enc G ℓ zDim κ pp pk msg.1
++      | none => ((fun ct => (some ct, ⟨some msg, st.used⟩)) <$> (enc G ℓ zDim κ pp pk msg.1
+         (pp.group.expVec pp.generator msg.2)))
+       | some _ => .pure (none, st) := rfl
+ 
+@@ -74,8 +74,8 @@ theorem freshRealHandler_key (G : BilinearGen) {ℓ n' : PolyExpr}
+       match st.challenge with
+       | none => .pure (none, st)
+       | some _ => if st.used < q.eval κ then
+-          (fun key => (some ⟨query.fn, key⟩, ⟨st.challenge, st.used + 1⟩) <$> (keyGen G PG zDim κ pp
+-            msk query.fn query.matrix))
++          ((fun key => (some ⟨query.fn, key⟩, ⟨st.challenge, st.used + 1⟩)) <$> (keyGen G PG zDim κ
++            pp msk query.fn query.matrix))
+         else .pure (none, st) := rfl
+ 
+ /-- The ideal oracle calls the actual simulator laws at each accepted query
+@@ -86,12 +86,12 @@ noncomputable def freshIdealHandler (G : BilinearGen) {ℓ n' : PolyExpr}
+     (κ : ℕ) (pp : PublicParams G κ) (sim : SimState G ℓ zDim κ pp) :
+     QueryImpl (saSpec G PG zDim κ pp) (SAState G ℓ zDim κ pp) unifSpec
+   | false, msg, st => match st.challenge with
+-    | none => (fun ct => (some ct, ⟨some msg, st.used⟩) <$> (simEnc G ℓ zDim κ pp sim msg.1))
++    | none => ((fun ct => (some ct, ⟨some msg, st.used⟩)) <$> (simEnc G ℓ zDim κ pp sim msg.1))
+     | some _ => .pure (none, st)
+   | true, query, st => match st.challenge with
+     | none => .pure (none, st)
+     | some msg => if st.used < q.eval κ then
+-        (fun key => (some ⟨query.fn, key⟩, ⟨st.challenge, st.used + 1⟩) <$> (simKey G PG zDim κ pp
++        ((fun key => (some ⟨query.fn, key⟩, ⟨st.challenge, st.used + 1⟩)) <$> (simKey G PG zDim κ pp
+           sim query.fn query.matrix msg.1
+           (leak G PG zDim κ pp query.fn query.matrix msg.1 msg.2)))
+       else .pure (none, st)
+@@ -103,7 +103,7 @@ theorem freshIdealHandler_challenge (G : BilinearGen) {ℓ n' : PolyExpr}
+     (msg : Challenge G ℓ zDim κ pp) (st : SAState G ℓ zDim κ pp) :
+     freshIdealHandler G PG zDim q κ pp sim false msg st =
+       match st.challenge with
+-      | none => (fun ct => (some ct, ⟨some msg, st.used⟩) <$> (simEnc G ℓ zDim κ pp sim msg.1))
++      | none => ((fun ct => (some ct, ⟨some msg, st.used⟩)) <$> (simEnc G ℓ zDim κ pp sim msg.1))
+       | some _ => .pure (none, st) := rfl
+ 
+ /-- The fresh ideal key law uses the supplied matrix and its exact scalar-input leakage. -/
+@@ -115,8 +115,8 @@ theorem freshIdealHandler_key (G : BilinearGen) {ℓ n' : PolyExpr}
+       match st.challenge with
+       | none => .pure (none, st)
+       | some msg => if st.used < q.eval κ then
+-          (fun key => (some ⟨query.fn, key⟩, ⟨st.challenge, st.used + 1⟩) <$> (simKey G PG zDim κ pp
+-            sim query.fn query.matrix msg.1
++          ((fun key => (some ⟨query.fn, key⟩, ⟨st.challenge, st.used + 1⟩)) <$> (simKey G PG zDim κ
++            pp sim query.fn query.matrix msg.1
+             (leak G PG zDim κ pp query.fn query.matrix msg.1 msg.2)))
+         else .pure (none, st) := rfl
+ 
+@@ -129,10 +129,10 @@ noncomputable def freshSaGame (G : BilinearGen) {ℓ n' : PolyExpr}
+   (publicParamsGen G κ).bind fun pp =>
+   (ProbComp.sample (Fin (A.coins.eval κ) → Bool)).bind fun r =>
+   if ideal then (simSetup G ℓ zDim κ pp).bind fun ctx =>
+-    (Prod.fst <$> (simulate (freshIdealHandler G PG zDim A.budget κ pp ctx.2)
++    ((Prod.fst) <$> (simulate (freshIdealHandler G PG zDim A.budget κ pp ctx.2)
+       (SAAdv.run G PG zDim A κ pp ctx.1 (List.ofFn r)) ⟨none, 0⟩))
+   else (setup G ℓ zDim κ pp).bind fun ctx =>
+-    (Prod.fst <$> (simulate (freshRealHandler G PG zDim A.budget κ pp ctx.1 ctx.2)
++    ((Prod.fst) <$> (simulate (freshRealHandler G PG zDim A.budget κ pp ctx.1 ctx.2)
+       (SAAdv.run G PG zDim A κ pp ctx.1 (List.ofFn r)) ⟨none, 0⟩))
+ 
+ /-- The fresh experiment is the displayed setup and stateful simulation of its raw laws. -/
+@@ -143,14 +143,14 @@ theorem freshSaGame_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+
+       (publicParamsGen G κ).bind fun pp =>
+       (ProbComp.sample (Fin (A.coins.eval κ) → Bool)).bind fun r =>
+       if ideal then (simSetup G ℓ zDim κ pp).bind fun ctx =>
+-        (Prod.fst <$> (simulate (freshIdealHandler G PG zDim A.budget κ pp ctx.2)
++        ((Prod.fst) <$> (simulate (freshIdealHandler G PG zDim A.budget κ pp ctx.2)
+           (SAAdv.run G PG zDim A κ pp ctx.1 (List.ofFn r)) ⟨none, 0⟩))
+       else (setup G ℓ zDim κ pp).bind fun ctx =>
+-        (Prod.fst <$> (simulate (freshRealHandler G PG zDim A.budget κ pp ctx.1 ctx.2)
++        ((Prod.fst) <$> (simulate (freshRealHandler G PG zDim A.budget κ pp ctx.1 ctx.2)
+           (SAAdv.run G PG zDim A κ pp ctx.1 (List.ofFn r)) ⟨none, 0⟩)) := rfl
+ 
+ /-- Fresh-law simulation advantage compares the actual raw endpoints
+-[Wee20, Theorem 1, p. 8 and §2.2, p. 5]. -/
++[Wee20, Appendix B, Theorem 1, p. 12 and §2.2, p. 5]. -/
+ noncomputable def freshSaSimAdv (G : BilinearGen) {ℓ n' : PolyExpr}
+     {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr)
+     (A : SAAdv G PG zDim) (κ : ℕ) : ℝ :=
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Data.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Data.lean
+index 701bd453b..33d2253fe 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Data.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Data.lean
+@@ -28,7 +28,8 @@ foreign class bundles need not be unfolded by a consumer.
+ 
+ ## Main results
+ 
+-* `Wee20.PHFE.embedValue_injective`: values embed faithfully at every drawn generator.
++Embedding faithfulness is proved in `PHFE.Embedding`; the adapters have width and equation
++readers.
+ * Width and equation readers expose the adapters without foreign unfolding.
+ 
+ ## References
+@@ -93,12 +94,6 @@ theorem embedValue_eq (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ)
+     embedValue G ℓ n d κ pp v = pp.group.pair pp.generator pp.generator ^
+       (phfeClassValueEquiv ℓ n G.wG d κ pp.orderParam v).val := rfl
+ 
+-/-- The target-group embedding preserves distinct class values at every public parameter. -/
+-theorem embedValue_injective (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ)
+-    (pp : PublicParams G κ) : Function.Injective (embedValue G ℓ n d κ pp) :=
+-  (pp.group.pow_val_bijective pp.generator_ne_one).injective.comp
+-    (phfeClassValueEquiv ℓ n G.wG d κ pp.orderParam).injective
+-
+ /-- The public word contains exactly ℓ residues at the source-group width. -/
+ theorem publicWidth (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ) :
+     (phfeClass ℓ n G.wG d).pubLen.eval κ = ℓ.eval κ * G.wG.eval κ :=
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Embedding.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Embedding.lean
+new file mode 100644
+index 000000000..53c75dba4
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Embedding.lean
+@@ -0,0 +1,46 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Data
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Faithfulness of the PHFE value embedding
++
++## Main definitions
++
++No algorithm or representation is introduced here.
++
++## Main results
++
++* `Wee20.PHFE.embedValue_injective`: distinct scalar class values have distinct target values.
++
++The proof uses only injectivity from the existing prime-order exponent theorem. It chooses
++no exponent, defines no map from group elements to scalars, and belongs to the proof layer.
++
++## References
++
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
++  revision of 3 January 2025, Definition 4.2 and Section 9.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE
++
++open Complexity TCSlib.Cryptography.Pairing
++
++/-- The target-group embedding preserves distinct class values at every public parameter.
++This is the prime-order injectivity property, used only as a proof about supplied scalars. -/
++theorem embedValue_injective (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ)
++    (pp : PublicParams G κ) : Function.Injective (embedValue G ℓ n d κ pp) :=
++  fun a b h => (phfeClassValueEquiv ℓ n G.wG d κ pp.orderParam).injective
++    ((pp.group.pow_val_bijective pp.generator_ne_one).injective
++      ((embedValue_eq G ℓ n d κ pp a).symm.trans
++        (h.trans (embedValue_eq G ℓ n d κ pp b))))
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean
+index 84e670384..c37481fbe 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean
+@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Core
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Embedding
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Encodings
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs.Correctness
+ 
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Fresh.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Fresh.lean
+index 3c5a05321..bc1f79fd8 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Fresh.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Fresh.lean
+@@ -41,13 +41,14 @@ noncomputable def freshRealHandler (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q :
+     (msk : MSK G ℓ n1 n2 κ pp) :
+     QueryImpl (saSpec G n1 n2 PG κ pp) (SAState G ℓ n1 n2 κ pp) unifSpec
+   | false, msg, st => match st.challenge with
+-    | none => (fun ct => (some ct, ⟨some msg, st.used⟩) <$> (enc G ℓ n1 n2 κ pp pk msg.1 msg.2.1
++    | none => ((fun ct => (some ct, ⟨some msg, st.used⟩)) <$> (enc G ℓ n1 n2 κ pp pk msg.1 msg.2.1
+       msg.2.2))
+     | some _ => .pure (none, st)
+   | true, f, st => match st.challenge with
+     | none => .pure (none, st)
+     | some _ => if st.used < q.eval κ then
+-        (fun key => (some ⟨f, key⟩, ⟨st.challenge, st.used + 1⟩) <$> (keyGen G n1 n2 PG κ pp msk f))
++        ((fun key => (some ⟨f, key⟩, ⟨st.challenge, st.used + 1⟩)) <$> (keyGen G n1 n2 PG κ pp msk
++          f))
+       else .pure (none, st)
+ 
+ /-- A real challenge samples the actual honest encryption draw exactly once. -/
+@@ -58,7 +59,7 @@ theorem freshRealHandler_challenge (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q :
+     (st : SAState G ℓ n1 n2 κ pp) :
+     freshRealHandler G n1 n2 q PG κ pp pk msk false msg st =
+       match st.challenge with
+-      | none => (fun ct => (some ct, ⟨some msg, st.used⟩) <$> (enc G ℓ n1 n2 κ pp pk msg.1 msg.2.1
++      | none => ((fun ct => (some ct, ⟨some msg, st.used⟩)) <$> (enc G ℓ n1 n2 κ pp pk msg.1 msg.2.1
+         msg.2.2))
+       | some _ => .pure (none, st) := rfl
+ 
+@@ -71,7 +72,7 @@ theorem freshRealHandler_key (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyE
+       match st.challenge with
+       | none => .pure (none, st)
+       | some _ => if st.used < q.eval κ then
+-          (fun key => (some ⟨f, key⟩, ⟨st.challenge, st.used + 1⟩) <$> (keyGen G n1 n2 PG κ pp msk
++          ((fun key => (some ⟨f, key⟩, ⟨st.challenge, st.used + 1⟩)) <$> (keyGen G n1 n2 PG κ pp msk
+             f))
+         else .pure (none, st) := rfl
+ 
+@@ -92,14 +93,14 @@ noncomputable def freshIdealHandler (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q
+     (κ : ℕ) (pp : PublicParams G κ) :
+     QueryImpl (saSpec G n1 n2 PG κ pp) (FreshIdealState G ℓ n1 n2 κ pp) unifSpec
+   | false, msg, st => match st.protocol.challenge with
+-    | none => (fun out => (some out.1, ⟨⟨some msg, st.protocol.used⟩, out.2⟩) <$> (simEnc G ℓ n1 n2
+-      κ pp st.simulator msg.1))
++    | none => ((fun out => (some out.1, ⟨⟨some msg, st.protocol.used⟩, out.2⟩)) <$> (simEnc G ℓ n1
++      n2 κ pp st.simulator msg.1))
+     | some _ => .pure (none, st)
+   | true, f, st => match st.protocol.challenge with
+     | none => .pure (none, st)
+     | some msg => if st.protocol.used < q.eval κ then
+-        (fun key => (some ⟨f, key⟩,
+-            ⟨⟨st.protocol.challenge, st.protocol.used + 1⟩, st.simulator⟩) <$> (simKey G n1 n2 PG κ
++        ((fun key => (some ⟨f, key⟩,
++            ⟨⟨st.protocol.challenge, st.protocol.used + 1⟩, st.simulator⟩)) <$> (simKey G n1 n2 PG κ
+               pp st.simulator f msg.1
+           (pp.generator ^ (value G n1 n2 PG κ pp f msg.1 msg.2.1 msg.2.2).val)))
+       else .pure (none, st)
+@@ -111,7 +112,7 @@ theorem freshIdealHandler_challenge (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q
+     (st : FreshIdealState G ℓ n1 n2 κ pp) :
+     freshIdealHandler G n1 n2 q PG κ pp false msg st =
+       match st.protocol.challenge with
+-      | none => (fun out => (some out.1, ⟨⟨some msg, st.protocol.used⟩, out.2⟩) <$> (simEnc G ℓ n1
++      | none => ((fun out => (some out.1, ⟨⟨some msg, st.protocol.used⟩, out.2⟩)) <$> (simEnc G ℓ n1
+         n2 κ pp st.simulator msg.1))
+       | some _ => .pure (none, st) := rfl
+ 
+@@ -123,8 +124,8 @@ theorem freshIdealHandler_key (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : Poly
+       match st.protocol.challenge with
+       | none => .pure (none, st)
+       | some msg => if st.protocol.used < q.eval κ then
+-          (fun key => (some ⟨f, key⟩,
+-              ⟨⟨st.protocol.challenge, st.protocol.used + 1⟩, st.simulator⟩) <$> (simKey G n1 n2 PG
++          ((fun key => (some ⟨f, key⟩,
++              ⟨⟨st.protocol.challenge, st.protocol.used + 1⟩, st.simulator⟩)) <$> (simKey G n1 n2 PG
+                 κ pp st.simulator f msg.1
+             (pp.generator ^ (value G n1 n2 PG κ pp f msg.1 msg.2.1 msg.2.2).val)))
+         else .pure (none, st) := rfl
+@@ -137,11 +138,11 @@ noncomputable def freshSaGame (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyEx
+   (publicParamsGen G κ).bind fun pp =>
+   (ProbComp.sample (Fin (A.coins.eval κ) → Bool)).bind fun r =>
+   if ideal then (simSetup G ℓ n1 n2 κ pp).bind fun ctx =>
+-    (Prod.fst <$> (simulate (freshIdealHandler G n1 n2 A.budget PG κ pp)
++    ((Prod.fst) <$> (simulate (freshIdealHandler G n1 n2 A.budget PG κ pp)
+       (SAAdv.run G n1 n2 PG A κ pp ctx.1 (List.ofFn r))
+       ⟨⟨none, 0⟩, ctx.2⟩))
+   else (setup G ℓ n1 n2 κ pp).bind fun ctx =>
+-    (Prod.fst <$> (simulate (freshRealHandler G n1 n2 A.budget PG κ pp ctx.1 ctx.2)
++    ((Prod.fst) <$> (simulate (freshRealHandler G n1 n2 A.budget PG κ pp ctx.1 ctx.2)
+       (SAAdv.run G n1 n2 PG A κ pp ctx.1 (List.ofFn r)) ⟨none, 0⟩))
+ 
+ /-- Fresh endpoint laws expose their actual setup and stateful interaction. -/
+@@ -151,11 +152,11 @@ theorem freshSaGame_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
+       (publicParamsGen G κ).bind fun pp =>
+       (ProbComp.sample (Fin (A.coins.eval κ) → Bool)).bind fun r =>
+       if ideal then (simSetup G ℓ n1 n2 κ pp).bind fun ctx =>
+-        (Prod.fst <$> (simulate (freshIdealHandler G n1 n2 A.budget PG κ pp)
++        ((Prod.fst) <$> (simulate (freshIdealHandler G n1 n2 A.budget PG κ pp)
+           (SAAdv.run G n1 n2 PG A κ pp ctx.1 (List.ofFn r))
+           ⟨⟨none, 0⟩, ctx.2⟩))
+       else (setup G ℓ n1 n2 κ pp).bind fun ctx =>
+-        (Prod.fst <$> (simulate (freshRealHandler G n1 n2 A.budget PG κ pp ctx.1 ctx.2)
++        ((Prod.fst) <$> (simulate (freshRealHandler G n1 n2 A.budget PG κ pp ctx.1 ctx.2)
+           (SAAdv.run G n1 n2 PG A κ pp ctx.1 (List.ofFn r)) ⟨none, 0⟩)) := rfl
+ 
+ /-- Actual raw simulation advantage compares the two fresh stateful endpoints
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean
+index 93a01dc5e..73f95b1e0 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean
+@@ -34,7 +34,7 @@ four reductions. It assumes no realisability statement about all typed adversari
+ 
+ * [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
+   TCC 2020; full version, Cryptology ePrint Archive 2020/1420, §3, main claim, p. 6;
+-  §3.3, pp. 7–8, Games 0–4; §4, Theorem 1, p. 8 and Appendix B, pp. 12–14.
++  §3.3, pp. 7–8, Games 0–4; §4; Appendix B, Theorem 1, p. 12 and Appendix B, pp. 12–14.
+ -/
+ 
+ namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic

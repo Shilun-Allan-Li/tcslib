@@ -1,0 +1,1869 @@
+From 30a75332599e1c34a13f9c0176cbd8613175c895 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 03:26:38 -0800
+Subject: [PATCH 17/37] io-phfe: draft outer games and four-realiser security
+ bounds
+
+---
+ .../Wee20/LinearSecurity/Keys.lean            |  14 +-
+ .../Wee20/LinearSecurity/Slack.lean           |  89 ++++++
+ .../Wee20/LinearSecurity/Theorems.lean        |  12 +-
+ .../Wee20/QuadraticSecurity/Advice.lean       | 167 ++++++++++++
+ .../Wee20/QuadraticSecurity/Composition.lean  | 132 +++++++++
+ .../Wee20/QuadraticSecurity/Data.lean         | 238 ++++++++++++++++
+ .../Wee20/QuadraticSecurity/Derived.lean      | 187 +++++++++++++
+ .../Wee20/QuadraticSecurity/Fresh.lean        | 175 ++++++++++++
+ .../Wee20/QuadraticSecurity/Games.lean        | 240 +++++++++++++++++
+ .../Wee20/QuadraticSecurity/Reductions.lean   | 233 ++++++++++++++++
+ .../Wee20/QuadraticSecurity/Theorems.lean     | 255 ++++++++++++++++++
+ 11 files changed, 1732 insertions(+), 10 deletions(-)
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Slack.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Advice.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Composition.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Data.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Derived.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Fresh.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Games.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Reductions.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean
+index 4b11a592c..de35fabc9 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Keys.lean
+@@ -43,7 +43,8 @@ def maskedCipher (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ) (pp : Public
+     (msg : Challenge G ℓ zDim κ pp) : CT G zDim κ pp :=
+   ⟨c, pp.group.expVec pp.generator msg.2 * groupMatMul (fun _ : Fin 1 => c) st.W 0,
+     groupMatMul (fun _ : Fin 1 => c)
+-      (st.U * PartialGarbling.publicTensor (p := pp.orderParam) (M := Fin 2) msg.1 + st.V) 0⟩
++      (st.U * (show Matrix _ _ (ZMod pp.group.order) from PartialGarbling.publicTensor (p :=
++        pp.orderParam) (M := Fin 2) msg.1) + st.V) 0⟩
+ 
+ /-- The masked ciphertext is its displayed group row action and known-input mask. -/
+ theorem maskedCipher_eq (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ)
+@@ -52,7 +53,8 @@ theorem maskedCipher_eq (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ)
+     maskedCipher G ℓ zDim κ pp st c msg =
+       ⟨c, pp.group.expVec pp.generator msg.2 * groupMatMul (fun _ : Fin 1 => c) st.W 0,
+         groupMatMul (fun _ : Fin 1 => c)
+-          (st.U * PartialGarbling.publicTensor (p := pp.orderParam) (M := Fin 2) msg.1 + st.V)
++          (st.U * (show Matrix _ _ (ZMod pp.group.order) from PartialGarbling.publicTensor (p :=
++            pp.orderParam) (M := Fin 2) msg.1) + st.V)
+           0⟩ := rfl
+ 
+ /-- Rewrite the actual honest key through the known projected and hidden basis rows
+@@ -105,7 +107,9 @@ def projectedKey (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Ty
+   let A := st.Aᵀ
+   let tensorR := Matrix.kroneckerMap (fun a b => b ^ a.val)
+     (1 : Matrix (Fin (ℓ.eval κ)) (Fin (ℓ.eval κ)) (ZMod pp.group.order)) R
+-  ⟨pp.group.expMat pp.generator (A * (fun i j => T i (Sum.inr j))) ⊙
++  ⟨pp.group.expMat pp.generator (A * (show Matrix (Fin 3) (Fin (n'.eval κ)) (ZMod pp.group.order)
++    from
++      fun i j => T i (Sum.inr j))) ⊙
+       matMulGroup (A * st.W) query.matrix,
+     pp.group.expMat pp.generator ((A * T) * (show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ
+       pp.orderParam query.fn)) ⊙
+@@ -125,7 +129,9 @@ theorem projectedKey_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+
+       let A := st.Aᵀ
+       let tensorR := Matrix.kroneckerMap (fun a b => b ^ a.val)
+         (1 : Matrix (Fin (ℓ.eval κ)) (Fin (ℓ.eval κ)) (ZMod pp.group.order)) R
+-      ⟨pp.group.expMat pp.generator (A * (fun i j => T i (Sum.inr j))) ⊙
++      ⟨pp.group.expMat pp.generator (A * (show Matrix (Fin 3) (Fin (n'.eval κ)) (ZMod
++        pp.group.order) from
++      fun i j => T i (Sum.inr j))) ⊙
+           matMulGroup (A * st.W) query.matrix,
+         pp.group.expMat pp.generator ((A * T) * (show Matrix _ _ (ZMod pp.group.order) from PG.L1 κ
+           pp.orderParam query.fn)) ⊙
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Slack.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Slack.lean
+new file mode 100644
+index 000000000..06ac5c3b2
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Slack.lean
+@@ -0,0 +1,89 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSimulator
++import TCSlib.Cryptography.Foundations.Subexponential
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Bounds for the exact rank correction
++
++The actual unconditioned three-by-three rank correction is positive and bounded by 3/p.
++Its average over public parameters obeys the same bound for every fixed prime schedule.
++Exponential growth of the order makes this single statistical loss subexponentially small.
++
++## Main definitions
++
++This module introduces no algorithm, sampler, or additional security loss.
++
++## Main results
++
++* `Wee20.Linear.rankSlack_nonneg`, `rankSlack_le_three_div`: pointwise rank bounds.
++* `Wee20.Linear.linearSlack_nonneg`, `linearSlack_le_fixedOrder`: averaged bounds.
++* `Wee20.Linear.linearSlack_subexpSmall`, `linearSlack_negligible`: asymptotic consequences.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Section 4.2 and Appendix B,
++  Theorem 1, p.12. The exact three-by-three failure replaces its printed 1/p estimate.
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
++  Assumptions*, J. ACM 73(1), Article 1, 2026, Section 1.1.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
++
++open Complexity TCSlib.Cryptography.Pairing
++
++/-- The exact rank correction is nonnegative for every drawn prime-order group.
++
++**Proof sketch.** Each factor of the invertible-matrix fraction lies between zero and one
++because the prime order is at least two. Their product is at most one. -/
++theorem rankSlack_nonneg {G : BilinearGen} {κ : ℕ} (pp : PublicParams G κ) :
++    0 ≤ rankSlack pp := sorry
++
++/-- The exact three-by-three rank correction is at most 3/p.
++This coarse upper bound preserves the exact loss in the core inequality.
++
++**Proof sketch.** For factors in [0,1], one minus their product is at most the sum of
++one minus each factor. Bound 1/p² and 1/p³ by 1/p, using p≥2. -/
++theorem rankSlack_le_three_div {G : BilinearGen} {κ : ℕ} (pp : PublicParams G κ) :
++    rankSlack pp ≤ 3 / (pp.group.order : ℝ) := sorry
++
++/-- Averaging the nonnegative exact rank correction preserves nonnegativity.
++
++**Proof sketch.** Apply the shared expectation monotonicity and constant expectation readers
++to the pointwise nonnegative correction. -/
++theorem linearSlack_nonneg (G : BilinearGen) (κ : ℕ) : 0 ≤ linearSlack G κ := sorry
++
++/-- Every fixed prime schedule bounds the averaged correction by 3/p(κ).
++
++**Proof sketch.** Use order_eq_of_publicParams to replace every drawn order by p(κ),
++then average rankSlack_le_three_div and apply the constant expectation reader. -/
++theorem linearSlack_le_fixedOrder (G : BilinearGen) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) :
++    linearSlack G κ ≤ 3 / (p κ : ℝ) := sorry
++
++/-- Exponential order growth makes the exact rank correction subexponentially small at
++any positive exponent below one [JLS26, Section 1.1].
++
++**Proof sketch.** Bound the nonnegative correction by 3·2⁻κ using the fixed-order bound.
++Use subexpSmall_two_pow_neg and the shared constant-multiple and domination closures at
++the requested smaller exponent. No negligible estimate is reproved locally. -/
++theorem linearSlack_subexpSmall (G : BilinearGen) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (hpb : ∀ κ, 2 ^ κ ≤ p κ)
++    {c : ℝ} (hc₀ : 0 < c) (hc₁ : c < 1) : SubexpSmall c (linearSlack G) := sorry
++
++/-- Exponential order growth makes the exact rank correction negligible.
++
++**Proof sketch.** Apply linearSlack_subexpSmall at exponent one half and the shared
++SubexpSmall.negligible theorem. -/
++theorem linearSlack_negligible (G : BilinearGen) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (hpb : ∀ κ, 2 ^ κ ≤ p κ) :
++    Negligible (linearSlack G) := sorry
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean
+index fd5dc6730..442b86bd0 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity/Theorems.lean
+@@ -100,13 +100,13 @@ theorem simulate_saRun_det {ι' σ : Type} {spec' : OracleSpec ι'}
+     simulate (detImpl (spec' := spec') h) (SAAdv.run G PG zDim A κ pp pk r) s =
+       .pure (runDet (A.next κ pp pk r) false h (A.budget.eval κ) [] s) := sorry
+ 
+-/-- The padded-tape real endpoint has the same acceptance law as the semi-adaptive real
+-experiment [Wee20, §2.2, p. 5; Appendix B, Game 0, p. 12].
++/-- The two unfiltered padded real endpoint presentations coincide
++[Wee20, Appendix B, Game 0, p. 12]. The substantive connection to the actual fresh raw
++experiment is saGame_eq_freshSaGame in LinearSecurity.Endpoint.
+ 
+-**Proof sketch.** The real endpoint has no rank filter. Project each fresh per-key padded
+-block to its actual function coordinates through the supplied injective coordinate maps.
+-Use the shared tape/fresh-oracle equivalence and per-query relational simulation readers;
+-the accepted-key counter ensures each adaptive query reads a previously unused block. -/
++**Proof sketch.** Read the two indexed game laws and their deterministic run readers.
++For mode zero the optional middle-game filter is false, so both runs use exactly the
++same public parameters, scalar tape, coin string and honest handler. -/
+ theorem game0_real_accept (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+     (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (A : SAAdv G PG zDim) (κ : ℕ) :
+     accept (game G PG zDim A 0 κ) = accept (saGame G PG zDim A false κ) := sorry
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Advice.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Advice.lean
+new file mode 100644
+index 000000000..dcf31ec07
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Advice.lean
+@@ -0,0 +1,167 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Games
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Finite fixed-prime advice for quadratic security reductions
++
++## Main definitions
++
++* `Wee20.Quadratic.MaskAdvice`, `maskAdviceDraw`: scalar outer tape and public-order cast.
++* `Wee20.Quadratic.Advice`, `adviceDraw`: full outer and linear advice.
++* `Wee20.Quadratic.maskAdviceEnc`, `adviceEnc`, `adviceLen`: canonical words and bounds.
++
++## Main results
++
++Nonempty/finite statements and equation readers expose the advice. Length and injectivity
++proof obligations are stated in `Theorems`; no scalar or realisation codec is duplicated.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, §3.3, pp. 7–8, Games 0–4.
++  The finite tape is explicit fixed-advice bookkeeping for its reductions.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
++
++open Complexity TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++
++/-- Outer reduction advice is a scalar tape over the fixed order schedule. -/
++abbrev MaskAdvice (n1 n2 : PolyExpr) (p : ℕ → ℕ) (κ : ℕ) :=
++  Fin ((maskCount n1 n2).eval κ) → ZMod (p κ)
++
++/-- Outer advice has its displayed fixed-prime function type. -/
++theorem maskAdvice_eq (n1 n2 : PolyExpr) (p : ℕ → ℕ) (κ : ℕ) :
++    MaskAdvice n1 n2 p κ = (Fin ((maskCount n1 n2).eval κ) → ZMod (p κ)) := rfl
++
++/-- The zero vector inhabits every outer advice type. -/
++theorem maskAdvice_nonempty (n1 n2 : PolyExpr) (p : ℕ → ℕ) (κ : ℕ) :
++    Nonempty (MaskAdvice n1 n2 p κ) := ⟨0⟩
++
++/-- Outer advice is finite under the shared fixed-order hypothesis. -/
++theorem maskAdvice_finite (G : BilinearGen) (n1 n2 : PolyExpr) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) : Finite (MaskAdvice n1 n2 p κ) :=
++  letI : NeZero (p κ) := orderSchedule_neZero G p hp κ
++  inferInstance
++
++/-- Transport known outer advice to the actual public group order using the shared
++Mathlib ring equivalence; this never extracts a scalar from a group element. -/
++def maskAdviceDraw (G : BilinearGen) (n1 n2 : PolyExpr) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : MaskAdvice n1 n2 p κ) : MaskDraw G n1 n2 κ pp :=
++  fun i => ZMod.ringEquivCongr (order_eq_of_publicParams G p hp κ pp).symm (ω i)
++
++/-- The outer advice cast is coordinatewise ringEquivCongr. -/
++theorem maskAdviceDraw_eq (G : BilinearGen) (n1 n2 : PolyExpr) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : MaskAdvice n1 n2 p κ) : maskAdviceDraw G n1 n2 p hp κ pp ω =
++      fun i => ZMod.ringEquivCongr (order_eq_of_publicParams G p hp κ pp).symm (ω i) := rfl
++
++/-- Full outer reduction advice retains the independent linear tape as well. -/
++abbrev Advice {ℓ : PolyExpr} (n1 n2 q : PolyExpr) {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (p : ℕ → ℕ) (κ : ℕ) :=
++  MaskAdvice n1 n2 p κ × Linear.Advice PG (piDim n1 n2) q p κ
++
++/-- Full advice is the displayed pair of scalar tapes. -/
++theorem advice_eq {ℓ : PolyExpr} (n1 n2 q : PolyExpr) {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (p : ℕ → ℕ) (κ : ℕ) :
++    Advice n1 n2 q PG p κ = (MaskAdvice n1 n2 p κ × Linear.Advice PG (piDim n1 n2) q p κ) :=
++  rfl
++
++/-- The pair of zero tapes inhabits full advice. -/
++theorem advice_nonempty {ℓ : PolyExpr} (n1 n2 q : PolyExpr) {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (p : ℕ → ℕ) (κ : ℕ) :
++    Nonempty (Advice n1 n2 q PG p κ) := ⟨(0, 0)⟩
++
++/-- Full advice is finite without an extra positivity restriction. -/
++theorem advice_finite (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) : Finite (Advice n1 n2 q PG p κ) :=
++  letI : NeZero (p κ) := orderSchedule_neZero G p hp κ
++  inferInstance
++
++/-- Cast both known scalar tapes through the shared public-order equality. -/
++def adviceDraw (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : Advice n1 n2 q PG p κ) : SecurityDraw G n1 n2 q PG κ pp :=
++  (maskAdviceDraw G n1 n2 p hp κ pp ω.1,
++    Linear.adviceDraw G PG (piDim n1 n2) q p hp κ pp ω.2)
++
++/-- The full advice cast is the pair of its published component casts. -/
++theorem adviceDraw_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : Advice n1 n2 q PG p κ) : adviceDraw G n1 n2 q PG p hp κ pp ω =
++      (maskAdviceDraw G n1 n2 p hp κ pp ω.1,
++        Linear.adviceDraw G PG (piDim n1 n2) q p hp κ pp ω.2) := rfl
++
++/-- Public metadata encodes unary κ and both separate dimension numbers. -/
++def maskAdviceMeta (n1 n2 : PolyExpr) (κ : ℕ) : List Bool :=
++  let num := fun n => Candidates.natToList (Nat.size n) n
++  pairEncode (List.replicate κ true) (pairEncode (num (n1.eval κ)) (num (n2.eval κ)))
++
++/-- Metadata is the displayed unary/binary header. -/
++theorem maskAdviceMeta_eq (n1 n2 : PolyExpr) (κ : ℕ) : maskAdviceMeta n1 n2 κ =
++    let num := fun n => Candidates.natToList (Nat.size n) n
++    pairEncode (List.replicate κ true) (pairEncode (num (n1.eval κ)) (num (n2.eval κ))) := rfl
++
++/-- Encode known outer advice using the existing modular-vector encoder. -/
++def maskAdviceEnc (G : BilinearGen) (n1 n2 : PolyExpr) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) (ω : MaskAdvice n1 n2 p κ) : List Bool :=
++  letI : NeZero (p κ) := orderSchedule_neZero G p hp κ
++  pairEncode (maskAdviceMeta n1 n2 κ) (Encoding.Modular.encodeVector (G.wG.eval κ) ω)
++
++/-- Outer advice encoding exposes its header and modular vector. -/
++theorem maskAdviceEnc_eq (G : BilinearGen) (n1 n2 : PolyExpr) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) (ω : MaskAdvice n1 n2 p κ) :
++    maskAdviceEnc G n1 n2 p hp κ ω =
++      letI : NeZero (p κ) := orderSchedule_neZero G p hp κ
++      pairEncode (maskAdviceMeta n1 n2 κ) (Encoding.Modular.encodeVector (G.wG.eval κ) ω) := rfl
++
++/-- A polynomial bounds both the explicit dimension header and scalar mask word. -/
++def maskAdviceLen (G : BilinearGen) (n1 n2 : PolyExpr) : PolyExpr :=
++  ((((PolyExpr.const 4).mul PolyExpr.var).add ((PolyExpr.const 4).mul n1)).add
++    (((PolyExpr.const 2).mul n2).add (PolyExpr.const 20))).add ((maskCount n1 n2).mul G.wG)
++
++/-- The mask word bound is its displayed polynomial. -/
++theorem maskAdviceLen_eq (G : BilinearGen) (n1 n2 : PolyExpr) : maskAdviceLen G n1 n2 =
++    ((((PolyExpr.const 4).mul PolyExpr.var).add ((PolyExpr.const 4).mul n1)).add
++      (((PolyExpr.const 2).mul n2).add (PolyExpr.const 20))).add ((maskCount n1 n2).mul G.wG) := rfl
++
++/-- The full advice word pairs the existing outer and linear scalar encodings. -/
++def adviceEnc (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) (ω : Advice n1 n2 q PG p κ) : List Bool :=
++  pairEncode (maskAdviceEnc G n1 n2 p hp κ ω.1)
++    (Linear.adviceEnc G PG (piDim n1 n2) q p hp κ ω.2)
++
++/-- The full word is the displayed pair of component encodings. -/
++theorem adviceEnc_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) (ω : Advice n1 n2 q PG p κ) :
++    adviceEnc G n1 n2 q PG p hp κ ω = pairEncode (maskAdviceEnc G n1 n2 p hp κ ω.1)
++      (Linear.adviceEnc G PG (piDim n1 n2) q p hp κ ω.2) := rfl
++
++/-- The pair-length reader gives the full advice polynomial. -/
++def adviceLen (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) : PolyExpr :=
++  (((PolyExpr.const 2).mul (maskAdviceLen G n1 n2)).add (PolyExpr.const 2)).add
++    (Linear.adviceLen G PG (piDim n1 n2) q)
++
++/-- The full advice bound is twice the left bound plus two plus the right bound. -/
++theorem adviceLen_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) :
++    adviceLen G n1 n2 q PG =
++      (((PolyExpr.const 2).mul (maskAdviceLen G n1 n2)).add (PolyExpr.const 2)).add
++        (Linear.adviceLen G PG (piDim n1 n2) q) := rfl
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Composition.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Composition.lean
+new file mode 100644
+index 000000000..5ea98b4ec
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Composition.lean
+@@ -0,0 +1,132 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Theorems
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The four uniform-matrix losses in the DLIN composition
++
++## Main definitions
++
++* `Wee20.Quadratic.hopCols`, `hopRows`: exact dimensions of the four MDDH challenges.
++* `Wee20.Quadratic.quadraticSlack`: ONE exact Π rank loss and the four column-hybrid losses.
++
++## Main results
++
++* `Wee20.Quadratic.mddh_sum_le`: simultaneous composition through the shared explicit
++  dlinToMddh reduction, with one realiser per fixed-advice machine reduction.
++
++These machine-realiser statements apply after the typed core has selected its explicit
++reductions. They assert no machine realization for arbitrary typed adversaries.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, §2.1, p. 4 and §3.3, pp. 7–8.
++* [JLS26] A. Jain, H. Lin, and A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, J. ACM full version, 2026, §1.1, PDF p. 3 (canonical DLIN).
++  The direct canonical column reduction already accounts for zero-coordinate failures.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
++
++open Complexity TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++open scoped BigOperators
++
++/-- The four response-column counts are 1,ell,1,1
++[Wee20, Appendix B, Lemmas 2/4 and §3.3, pp. 7–8]. -/
++def hopCols (ℓ : PolyExpr) (i : Fin 4) : PolyExpr := if i.val = 1 then ℓ else .const 1
++
++/-- The response-column count is ell only for the adaptive Π-key hop. -/
++theorem hopCols_eq (ℓ : PolyExpr) (i : Fin 4) :
++    hopCols ℓ i = if i.val = 1 then ℓ else .const 1 := rfl
++
++/-- The base-row counts are 3,mBound*q,n1,n2, in core-bound order
++[Wee20, Appendix B, Lemmas 2/4 and §3.3, pp. 7–8, with uniform query padding]. -/
++def hopRows {ℓ : PolyExpr} (n1 n2 q : PolyExpr) {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (i : Fin 4) : PolyExpr :=
++  if i.val = 0 then .const 3 else if i.val = 1 then PG.mBound.mul q
++    else if i.val = 2 then n1 else n2
++
++/-- The base-row count is its displayed four-case formula. -/
++theorem hopRows_eq {ℓ : PolyExpr} (n1 n2 q : PolyExpr) {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (i : Fin 4) : hopRows n1 n2 q PG i =
++      if i.val = 0 then .const 3 else if i.val = 1 then PG.mBound.mul q
++        else if i.val = 2 then n1 else n2 := rfl
++
++/-- The combined statistical loss is one exact Π rank failure, three one-column MDDH
++losses and one ell-column MDDH loss. The direct canonical JLS reduction includes the
++zero-coordinate failure, so no additional DLIN matrix-presentation discrepancy is added. -/
++noncomputable def quadraticSlack (G : BilinearGen) (ℓ : PolyExpr) (p : ℕ → ℕ) (κ : ℕ) : ℝ :=
++  Linear.linearSlack G κ + 3 * BilinearGen.mddhSlack p (PolyExpr.const 1) κ +
++    BilinearGen.mddhSlack p ℓ κ
++
++/-- The total correction exposes its single rank term and four matrix losses. -/
++theorem quadraticSlack_eq (G : BilinearGen) (ℓ : PolyExpr) (p : ℕ → ℕ) (κ : ℕ) :
++    quadraticSlack G ℓ p κ = Linear.linearSlack G κ +
++      3 * BilinearGen.mddhSlack p (PolyExpr.const 1) κ + BilinearGen.mddhSlack p ℓ κ := rfl
++
++/-- Four machine MDDH advantages have a simultaneous explicit canonical-DLIN bound.
++Each machine's reduction has one fixed-advice family, and EVERY realising DLIN machine
++works [Wee20, §2.1, p. 4, explicit polynomial-loss implementation].
++
++**Proof sketch.** Apply the shared mddhAdv_le separately to each of the four fixed NUPPT
++machines, selecting its advice before the DLIN realiser. Sum the four inequalities using
++the finite-sum order lemma. Read hopCols: three factors are one and the adaptive Π-key
++factor is ell. The corresponding correction sum is 3*mddhSlack(1)+mddhSlack(ell).
++The matrix randomization already accounts for the canonical DLIN exceptional coordinates;
++there is no second Linear.dlinMatrixSlack term. -/
++theorem mddh_sum_le (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (D : Fin 4 → NUPPT) :
++    ∃ η : ∀ i : Fin 4, ∀ κ,
++      BilinearGen.MddhAdvice p (hopCols ℓ i) (hopRows n1 n2 q PG i) κ,
++    ∀ B : Fin 4 → NUPPT,
++      (∀ i, (B i).RealizesOn G.dlinEnc (D i).coins
++        (G.dlinToMddh p hp (hopCols ℓ i) (hopRows n1 n2 q PG i) (D i) (η i))) →
++      ∀ κ, (∑ i : Fin 4, G.mddhAdv (hopCols ℓ i) (hopRows n1 n2 q PG i) (D i) κ) ≤
++        (∑ i : Fin 4, ((hopCols ℓ i).eval κ : ℝ) * G.dlinAdv (B i) κ) +
++        3 * BilinearGen.mddhSlack p (PolyExpr.const 1) κ + BilinearGen.mddhSlack p ℓ κ := sorry
++
++/-- Every typed quadratic adversary has explicit fixed-advice L2 reductions for which
++EVERY four realising MDDH machines, and then EVERY four realising canonical-DLIN machines,
++satisfy the actual raw simulation bound with ONE rank loss and all four matrix corrections
++[Wee20, §3, p. 6, main claim with §3.3, pp. 7–8].
++
++**Proof sketch.** Choose the outer and Π advice using quadratic_saSimAdv_le, before any
++MDDH realiser. For each subsequent four machine realisers, use mddh_sum_le to select the
++four L1 advice families before their DLIN realisers. Sum the machine bounds and read
++quadraticSlack_eq. The finite response-column factors are 1,ell,1,1. This is a polynomial
++loss implementation of the source implication, not a claim of its cited tight reduction.
++Neither exact PG privacy nor the outer mask replacements add a second rank term. -/
++theorem quadratic_saSimAdv_dlin_le (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G n1 n2 PG) :
++    ∃ φ : ∀ κ, MaskAdvice n1 n2 p κ,
++    ∃ ωPi : Fin 2 → ∀ κ, Linear.Advice PG (piDim n1 n2) A.budget p κ,
++    ∃ ωOuter : Fin 2 → ∀ κ, Advice n1 n2 A.budget PG p κ,
++    ∀ D : Fin 4 → NUPPT,
++      (D 0).RealizesOn (G.mddhEnc (PolyExpr.const 1) (PolyExpr.const 3)) A.coins
++        (Linear.red0 G PG (piDim n1 n2) p hp (toLinear G n1 n2 PG p hp A φ) (ωPi 0)) →
++      (D 1).RealizesOn (G.mddhEnc ℓ (PG.mBound.mul A.budget)) A.coins
++        (Linear.red1 G PG (piDim n1 n2) p hp (toLinear G n1 n2 PG p hp A φ) (ωPi 1)) →
++      (D 2).RealizesOn (G.mddhEnc (PolyExpr.const 1) n1) A.coins
++        (red2 G n1 n2 PG p hp A (ωOuter 0)) →
++      (D 3).RealizesOn (G.mddhEnc (PolyExpr.const 1) n2) A.coins
++        (red3 G n1 n2 PG p hp A (ωOuter 1)) →
++    ∃ η : ∀ i : Fin 4, ∀ κ,
++      BilinearGen.MddhAdvice p (hopCols ℓ i) (hopRows n1 n2 A.budget PG i) κ,
++    ∀ B : Fin 4 → NUPPT,
++      (∀ i, (B i).RealizesOn G.dlinEnc (D i).coins
++        (G.dlinToMddh p hp (hopCols ℓ i) (hopRows n1 n2 A.budget PG i) (D i) (η i))) →
++      ∀ κ, freshSaSimAdv G n1 n2 PG A κ ≤
++        (∑ i : Fin 4, ((hopCols ℓ i).eval κ : ℝ) * G.dlinAdv (B i) κ) +
++        quadraticSlack G ℓ p κ := sorry
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Data.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Data.lean
+new file mode 100644
+index 000000000..af109dc0d
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Data.lean
+@@ -0,0 +1,238 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSimulator
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Endpoint
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Typed semi-adaptive data for the quadratic construction
++
++## Main definitions
++
++* `Wee20.Quadratic.Challenge`, `KeyPack`, `saSpec`: scalar input and function-only key queries.
++* `Wee20.Quadratic.SAAdv`, `SAAdv.run`: bounded typed next moves with a TOTAL call budget.
++* `Wee20.Quadratic.protocolHandler`: deterministic refusal and state rules.
++* `Wee20.Quadratic.MaskDraw`, `Masks`, `masksAt`, `SecurityDraw`: finite scalar tapes.
++
++## Main results
++
++Equation and case readers expose every new definition. The five games and reductions are
++in the sibling modules. No finite instance is declared for a dependent packed key answer.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, §2.2, p. 5 and §3.3,
++  pp. 7–8, Games 0–4. The present interface makes the source's polynomial call cap explicit.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
++
++open Complexity TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++
++/-- The challenge contains scalar public input and both scalar private blocks
++[Wee20, §2.2, p. 5; §3.1, p. 6]. -/
++abbrev Challenge (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :=
++  (Fin (ℓ.eval κ) → ZMod pp.group.order) ×
++    (Fin (n1.eval κ) → ZMod pp.group.order) × (Fin (n2.eval κ) → ZMod pp.group.order)
++
++/-- The outer challenge is the displayed triple of scalar vectors. -/
++theorem challenge_eq (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) : Challenge G ℓ n1 n2 κ pp =
++      ((Fin (ℓ.eval κ) → ZMod pp.group.order) ×
++        (Fin (n1.eval κ) → ZMod pp.group.order) ×
++        (Fin (n2.eval κ) → ZMod pp.group.order)) := rfl
++
++/-- A packed function key retains its type index. This dependent pair is data only;
++no sampler or finite-type instance on it is constructed. -/
++abbrev KeyPack (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) := Σ f : Fn κ pp.orderParam, Key G n1 n2 PG κ pp f
++
++/-- A packed outer key is a function index paired with its typed key. -/
++theorem keyPack_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) : KeyPack G n1 n2 PG κ pp =
++      (Σ f : Fn κ pp.orderParam, Key G n1 n2 PG κ pp f) := rfl
++
++/-- False is the once-only challenge; true queries a function using the fixed public
++matrix [Wee20, §2.2, p. 5; §3.1, p. 6]. Refused queries return none. -/
++def saSpec (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) : OracleSpec Bool where
++  dom := fun | false => Challenge G ℓ n1 n2 κ pp | true => Fn κ pp.orderParam
++  rng := fun | false => Option (CT G n1 n2 κ pp) | true => Option (KeyPack G n1 n2 PG κ pp)
++
++/-- The outer query and response families are the displayed two branches. -/
++theorem saSpec_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) : saSpec G n1 n2 PG κ pp =
++      { dom := fun | false => Challenge G ℓ n1 n2 κ pp | true => Fn κ pp.orderParam
++        rng := fun | false => Option (CT G n1 n2 κ pp)
++          | true => Option (KeyPack G n1 n2 PG κ pp) } := rfl
++
++/-- A typed adversary sees the public key before selecting its challenge and its later
++adaptive functions [Wee20, §2.2, p. 5]. Its budget counts every oracle call. -/
++structure SAAdv (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) where
++  /-- Shared adversary coin length. -/
++  coins : PolyExpr
++  /-- TOTAL call budget, including the challenge. -/
++  budget : PolyExpr
++  /-- Next move after the current typed history. -/
++  next : ∀ κ (pp : PublicParams G κ), MPK G ℓ n1 n2 κ pp → List Bool →
++    QueryLog (saSpec G n1 n2 PG κ pp) → Move (saSpec G n1 n2 PG κ pp) Bool
++
++/-- Run the outer adversary through the shared bounded interpreter, with no added call
++[Wee20, §2.2, p. 5]. -/
++def SAAdv.run (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (A : SAAdv G n1 n2 PG) (κ : ℕ) (pp : PublicParams G κ)
++    (pk : MPK G ℓ n1 n2 κ pp) (r : List Bool) :
++    OracleComp (saSpec G n1 n2 PG κ pp) Bool :=
++  buildComp (A.next κ pp pk r) false (A.budget.eval κ) []
++
++/-- The run is exactly buildComp at the total budget. -/
++theorem SAAdv.run_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (A : SAAdv G n1 n2 PG) (κ : ℕ) (pp : PublicParams G κ)
++    (pk : MPK G ℓ n1 n2 κ pp) (r : List Bool) :
++    SAAdv.run G n1 n2 PG A κ pp pk r =
++      buildComp (A.next κ pp pk r) false (A.budget.eval κ) [] := rfl
++
++/-- The protocol retains the scalar challenge and the next unused accepted-key block
++[Wee20, §2.2, p. 5]. -/
++structure SAState (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) where
++  /-- Committed challenge, absent until the unique accepted challenge call. -/
++  challenge : Option (Challenge G ℓ n1 n2 κ pp)
++  /-- Accepted-key counter. -/
++  used : ℕ
++
++/-- This deterministic protocol refuses pre-challenge keys, repeated challenges and keys
++beyond the total cap [Wee20, §2.2, p. 5, with explicit total behavior]. -/
++def protocolHandler (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (q κ : ℕ) (pp : PublicParams G κ)
++    (makeCT : Challenge G ℓ n1 n2 κ pp → CT G n1 n2 κ pp)
++    (makeKey : ℕ → Challenge G ℓ n1 n2 κ pp → Fn κ pp.orderParam → KeyPack G n1 n2 PG κ pp) :
++    ∀ i, (saSpec G n1 n2 PG κ pp).dom i → SAState G ℓ n1 n2 κ pp →
++      (saSpec G n1 n2 PG κ pp).rng i × SAState G ℓ n1 n2 κ pp
++  | false, msg, st => match st.challenge with
++    | none => (some (makeCT msg), ⟨some msg, st.used⟩)
++    | some _ => (none, st)
++  | true, f, st => match st.challenge with
++    | none => (none, st)
++    | some msg => if st.used < q then
++        (some (makeKey st.used msg f), ⟨st.challenge, st.used + 1⟩)
++      else (none, st)
++
++/-- A challenge commits once and otherwise leaves state unchanged. -/
++theorem protocolHandler_challenge (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (q κ : ℕ) (pp : PublicParams G κ)
++    (makeCT : Challenge G ℓ n1 n2 κ pp → CT G n1 n2 κ pp)
++    (makeKey : ℕ → Challenge G ℓ n1 n2 κ pp → Fn κ pp.orderParam → KeyPack G n1 n2 PG κ pp)
++    (msg : Challenge G ℓ n1 n2 κ pp) (st : SAState G ℓ n1 n2 κ pp) :
++    protocolHandler G n1 n2 PG q κ pp makeCT makeKey false msg st =
++      match st.challenge with
++      | none => (some (makeCT msg), ⟨some msg, st.used⟩)
++      | some _ => (none, st) := rfl
++
++/-- A key consumes a fresh block only after the challenge and below the cap. -/
++theorem protocolHandler_key (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (q κ : ℕ) (pp : PublicParams G κ)
++    (makeCT : Challenge G ℓ n1 n2 κ pp → CT G n1 n2 κ pp)
++    (makeKey : ℕ → Challenge G ℓ n1 n2 κ pp → Fn κ pp.orderParam → KeyPack G n1 n2 PG κ pp)
++    (f : Fn κ pp.orderParam) (st : SAState G ℓ n1 n2 κ pp) :
++    protocolHandler G n1 n2 PG q κ pp makeCT makeKey true f st =
++      match st.challenge with
++      | none => (none, st)
++      | some msg => if st.used < q then
++          (some (makeKey st.used msg f), ⟨st.challenge, st.used + 1⟩)
++        else (none, st) := rfl
++
++/-- The outer tape stores A1,A2,s1,s2 and fresh scalar y1,y2
++[Wee20, §3.3, pp. 7–8, Games 0–4]. -/
++def maskCount (n1 n2 : PolyExpr) : PolyExpr :=
++  ((PolyExpr.const 3).mul n1).add (((PolyExpr.const 3).mul n2).add (PolyExpr.const 4))
++
++/-- The mask tape length is 3*n1+3*n2+4. -/
++theorem maskCount_eq (n1 n2 : PolyExpr) : maskCount n1 n2 =
++    ((PolyExpr.const 3).mul n1).add (((PolyExpr.const 3).mul n2).add (PolyExpr.const 4)) := rfl
++
++/-- Outer masks are a uniform finite scalar vector, without a sampler construction. -/
++abbrev MaskDraw (G : BilinearGen) (n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :=
++  Fin ((maskCount n1 n2).eval κ) → ZMod pp.group.order
++
++/-- The outer scalar draw has exactly its displayed vector type. -/
++theorem maskDraw_eq (G : BilinearGen) (n1 n2 : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) : MaskDraw G n1 n2 κ pp =
++      (Fin ((maskCount n1 n2).eval κ) → ZMod pp.group.order) := rfl
++
++/-- The six known scalar blocks used in the proof games [Wee20, §3.3, pp. 7–8]. -/
++structure Masks (G : BilinearGen) (n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) where
++  /-- First public mask. -/
++  A1 : Matrix (Fin 2) (Fin (n1.eval κ)) (ZMod pp.group.order)
++  /-- Second public mask. -/
++  A2 : Matrix (Fin 2) (Fin (n2.eval κ)) (ZMod pp.group.order)
++  /-- Honest first encryption seed. -/
++  s1 : Fin 2 → ZMod pp.group.order
++  /-- Honest second encryption seed. -/
++  s2 : Fin 2 → ZMod pp.group.order
++  /-- Independent first simulated vector. -/
++  y1 : Fin (n1.eval κ) → ZMod pp.group.order
++  /-- Independent second simulated vector. -/
++  y2 : Fin (n2.eval κ) → ZMod pp.group.order
++
++/-- Total coordinate access defaults to zero beyond the allocated tape. Technical glue. -/
++def maskAt (G : BilinearGen) (n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : MaskDraw G n1 n2 κ pp) (i : ℕ) : ZMod pp.group.order :=
++  if h : i < (maskCount n1 n2).eval κ then ω ⟨i, h⟩ else 0
++
++/-- Mask coordinate access exposes its in-bounds/default split. -/
++theorem maskAt_eq (G : BilinearGen) (n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : MaskDraw G n1 n2 κ pp) (i : ℕ) : maskAt G n1 n2 κ pp ω i =
++      if h : i < (maskCount n1 n2).eval κ then ω ⟨i, h⟩ else 0 := rfl
++
++/-- Split the outer tape into disjoint row-major mask blocks
++[Wee20, §3.3, pp. 7–8, with explicit finite coordinates]. -/
++def masksAt (G : BilinearGen) (n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : MaskDraw G n1 n2 κ pp) : Masks G n1 n2 κ pp :=
++  let getScalar := maskAt G n1 n2 κ pp ω
++  let off := 2 * n1.eval κ + 2 * n2.eval κ
++  ⟨(fun i j => getScalar (i.val * n1.eval κ + j.val)),
++    (fun i j => getScalar (2 * n1.eval κ + i.val * n2.eval κ + j.val)),
++    (fun i => getScalar (off + i.val)), (fun i => getScalar (off + 2 + i.val)),
++    (fun i => getScalar (off + 4 + i.val)), (fun i => getScalar (off + 4 + n1.eval κ + i.val))⟩
++
++/-- The mask blocks use the displayed disjoint offsets. -/
++theorem masksAt_eq (G : BilinearGen) (n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : MaskDraw G n1 n2 κ pp) : masksAt G n1 n2 κ pp ω =
++      let getScalar := maskAt G n1 n2 κ pp ω
++      let off := 2 * n1.eval κ + 2 * n2.eval κ
++      ⟨(fun i j => getScalar (i.val * n1.eval κ + j.val)),
++        (fun i j => getScalar (2 * n1.eval κ + i.val * n2.eval κ + j.val)),
++        (fun i => getScalar (off + i.val)), (fun i => getScalar (off + 2 + i.val)),
++        (fun i => getScalar (off + 4 + i.val)),
++        (fun i => getScalar (off + 4 + n1.eval κ + i.val))⟩ := rfl
++
++/-- The common game draw combines outer masks with Π's padded scalar tape. Technical glue. -/
++abbrev SecurityDraw (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) :=
++  MaskDraw G n1 n2 κ pp × Linear.SecurityDraw G PG (piDim n1 n2) q κ pp
++
++/-- The common draw is exactly the product of the two finite vector tapes. -/
++theorem securityDraw_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) : SecurityDraw G n1 n2 q PG κ pp =
++      (MaskDraw G n1 n2 κ pp × Linear.SecurityDraw G PG (piDim n1 n2) q κ pp) := rfl
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Derived.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Derived.lean
+new file mode 100644
+index 000000000..2b51a1d2b
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Derived.lean
+@@ -0,0 +1,187 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Advice
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The explicit quadratic-to-linear semi-adaptive adversary
++
++## Main definitions
++
++* `Wee20.Quadratic.wrapLinearCT`, `wrapLinearKey`: typed response translation.
++* `Wee20.Quadratic.replayLinear`: replay the outer machine from a typed Π transcript.
++* `Wee20.Quadratic.derivedNext`, `toLinear`: pure next-move reduction with fixed scalar advice.
++
++## Main results
++
++Equation readers expose the complete reduction. Coins and TOTAL query budget are preserved
++exactly. No generic group-word decoder, oracle-machine construction or exponent extraction
++is introduced. The replay has explicit false output on malformed or mismatched histories.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, §3.3, Game 0 to Game 1,
++  p. 7, made explicit as a typed adaptive reduction.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
++
++open Complexity TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++open scoped Matrix
++
++/-- Translate a Π ciphertext by adjoining the two masks computed from known scalar advice
++[Wee20, §3.3, Game 0 to Game 1, p. 7]. -/
++def wrapLinearCT (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (m : Masks G n1 n2 κ pp) (msg : Challenge G ℓ n1 n2 κ pp)
++    (ct : Linear.CT G (piDim n1 n2) κ pp) : CT G n1 n2 κ pp :=
++  ⟨pp.group.expVec pp.generator (Matrix.vecMul m.s1 m.A1 + msg.2.1),
++    pp.group.expVec pp.generator (Matrix.vecMul m.s2 m.A2 + msg.2.2), ct⟩
++
++/-- Ciphertext translation is exactly the two exponentiated known masks and Π's answer. -/
++theorem wrapLinearCT_eq (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (m : Masks G n1 n2 κ pp) (msg : Challenge G ℓ n1 n2 κ pp)
++    (ct : Linear.CT G (piDim n1 n2) κ pp) : wrapLinearCT G ℓ n1 n2 κ pp m msg ct =
++      ⟨pp.group.expVec pp.generator (Matrix.vecMul m.s1 m.A1 + msg.2.1),
++        pp.group.expVec pp.generator (Matrix.vecMul m.s2 m.A2 + msg.2.2), ct⟩ := rfl
++
++/-- Key translation retains the fixed public GROUP matrix as metadata
++[Wee20, §3.1, p. 6; §4, p. 8]. The returned function index is data, not compared by a decoder. -/
++def wrapLinearKey (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ)
++    (M : Matrix (Fin ((piDim n1 n2).eval κ)) (Fin ((n1.mul n2).eval κ)) pp.group.G)
++    (key : Linear.KeyPack G PG κ pp) : KeyPack G n1 n2 PG κ pp :=
++  ⟨key.1, ⟨M, key.2⟩⟩
++
++/-- Key translation is the displayed dependent pair with public metadata. -/
++theorem wrapLinearKey_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ)
++    (M : Matrix (Fin ((piDim n1 n2).eval κ)) (Fin ((n1.mul n2).eval κ)) pp.group.G)
++    (key : Linear.KeyPack G PG κ pp) : wrapLinearKey G n1 n2 PG κ pp M key =
++      ⟨key.1, ⟨M, key.2⟩⟩ := rfl
++
++/-- Replay the outer adversary to reconstruct its typed log from Π's answers. On the
++reachable histories the query payload is exactly the translated outer move; on arbitrary
++histories only oracle indices are matched, and impossible continuations return none.
++This is total adaptive reduction glue for [Wee20, §3.3, pp. 7–8]. -/
++def replayLinear (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (A : SAAdv G n1 n2 PG) (κ : ℕ) (pp : PublicParams G κ)
++    (m : Masks G n1 n2 κ pp) (pk : MPK G ℓ n1 n2 κ pp) (r : List Bool) :
++    QueryLog (Linear.saSpec G PG (piDim n1 n2) κ pp) →
++      QueryLog (saSpec G n1 n2 PG κ pp) → Option (QueryLog (saSpec G n1 n2 PG κ pp))
++  | [], h => some h
++  | e :: es, h => match A.next κ pp pk r h, e with
++    | .query false msg, ⟨false, pair⟩ =>
++        let answer := pair.2.map (wrapLinearCT G ℓ n1 n2 κ pp m msg)
++        replayLinear G n1 n2 PG A κ pp m pk r es (h ++ [⟨false, msg, answer⟩])
++    | .query true f, ⟨true, pair⟩ =>
++        let answer := pair.2.map
++          (wrapLinearKey G n1 n2 PG κ pp (mixGroup G n1 n2 κ pp pk.A1 pk.A2))
++        replayLinear G n1 n2 PG A κ pp m pk r es (h ++ [⟨true, f, answer⟩])
++    | _, _ => none
++
++/-- Empty replay returns the accumulated outer history. -/
++theorem replayLinear_nil (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (A : SAAdv G n1 n2 PG) (κ : ℕ) (pp : PublicParams G κ)
++    (m : Masks G n1 n2 κ pp) (pk : MPK G ℓ n1 n2 κ pp) (r : List Bool)
++    (h : QueryLog (saSpec G n1 n2 PG κ pp)) :
++    replayLinear G n1 n2 PG A κ pp m pk r [] h = some h := rfl
++
++/-- Nonempty replay uses the displayed next move and answer translation. -/
++theorem replayLinear_cons (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (A : SAAdv G n1 n2 PG) (κ : ℕ) (pp : PublicParams G κ)
++    (m : Masks G n1 n2 κ pp) (pk : MPK G ℓ n1 n2 κ pp) (r : List Bool)
++    (e : Σ i, (Linear.saSpec G PG (piDim n1 n2) κ pp).dom i ×
++      (Linear.saSpec G PG (piDim n1 n2) κ pp).rng i)
++    (es : QueryLog (Linear.saSpec G PG (piDim n1 n2) κ pp))
++    (h : QueryLog (saSpec G n1 n2 PG κ pp)) :
++    replayLinear G n1 n2 PG A κ pp m pk r (e :: es) h =
++      match A.next κ pp pk r h, e with
++      | .query false msg, ⟨false, pair⟩ =>
++          let answer := pair.2.map (wrapLinearCT G ℓ n1 n2 κ pp m msg)
++          replayLinear G n1 n2 PG A κ pp m pk r es (h ++ [⟨false, msg, answer⟩])
++      | .query true f, ⟨true, pair⟩ =>
++          let answer := pair.2.map
++            (wrapLinearKey G n1 n2 PG κ pp (mixGroup G n1 n2 κ pp pk.A1 pk.A2))
++          replayLinear G n1 n2 PG A κ pp m pk r es (h ++ [⟨true, f, answer⟩])
++      | _, _ => none := rfl
++
++/-- Translate the next outer move into Π's typed scalar challenge or group-matrix key
++query [Wee20, §3.3, Game 0 to Game 1, p. 7]. Only known mask scalars enter signalScalar. -/
++def derivedNext (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (A : SAAdv G n1 n2 PG) (κ : ℕ) (pp : PublicParams G κ)
++    (m : Masks G n1 n2 κ pp) (pk : Linear.MPK G ℓ (piDim n1 n2) κ pp) (r : List Bool)
++    (h : QueryLog (Linear.saSpec G PG (piDim n1 n2) κ pp)) :
++    Move (Linear.saSpec G PG (piDim n1 n2) κ pp) Bool :=
++  let pub := publicFromMasks G ℓ n1 n2 κ pp m pk
++  match replayLinear G n1 n2 PG A κ pp m pub r h [] with
++  | none => .ret false
++  | some outer => match A.next κ pp pub r outer with
++    | .ret b => .ret b
++    | .query false msg => .query false (msg.1,
++        signalScalar (p := pp.orderParam) m.s1 msg.2.2 (Matrix.vecMul m.s1 m.A1 + msg.2.1) m.s2)
++    | .query true f => .query true ⟨f, mixGroup G n1 n2 κ pp pub.A1 pub.A2⟩
++
++/-- The derived next move is the displayed total replay-and-translation algorithm. -/
++theorem derivedNext_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (A : SAAdv G n1 n2 PG) (κ : ℕ) (pp : PublicParams G κ)
++    (m : Masks G n1 n2 κ pp) (pk : Linear.MPK G ℓ (piDim n1 n2) κ pp) (r : List Bool)
++    (h : QueryLog (Linear.saSpec G PG (piDim n1 n2) κ pp)) :
++    derivedNext G n1 n2 PG A κ pp m pk r h =
++      let pub := publicFromMasks G ℓ n1 n2 κ pp m pk
++      match replayLinear G n1 n2 PG A κ pp m pub r h [] with
++      | none => .ret false
++      | some outer => match A.next κ pp pub r outer with
++        | .ret b => .ret b
++        | .query false msg => .query false (msg.1,
++            signalScalar (p := pp.orderParam) m.s1 msg.2.2
++              (Matrix.vecMul m.s1 m.A1 + msg.2.1) m.s2)
++        | .query true f => .query true ⟨f, mixGroup G n1 n2 κ pp pub.A1 pub.A2⟩ := rfl
++
++/-- The explicit derived Π adversary fixes outer scalar randomness as nonuniform advice
++and keeps the original coins and TOTAL budget [Wee20, §3.3, pp. 7–8]. -/
++def toLinear (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G n1 n2 PG)
++    (ω : ∀ κ, MaskAdvice n1 n2 p κ) : Linear.SAAdv G PG (piDim n1 n2) where
++  coins := A.coins
++  budget := A.budget
++  next := fun κ pp pk r => derivedNext G n1 n2 PG A κ pp
++    (masksAt G n1 n2 κ pp (maskAdviceDraw G n1 n2 p hp κ pp (ω κ))) pk r
++
++/-- The derived adversary exposes all three fields. -/
++theorem toLinear_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G n1 n2 PG)
++    (ω : ∀ κ, MaskAdvice n1 n2 p κ) : toLinear G n1 n2 PG p hp A ω =
++      { coins := A.coins
++        budget := A.budget
++        next := fun κ pp pk r => derivedNext G n1 n2 PG A κ pp
++          (masksAt G n1 n2 κ pp (maskAdviceDraw G n1 n2 p hp κ pp (ω κ))) pk r } := rfl
++
++/-- The derived coin layout is exactly the outer layout. -/
++theorem toLinear_coins (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G n1 n2 PG)
++    (ω : ∀ κ, MaskAdvice n1 n2 p κ) : (toLinear G n1 n2 PG p hp A ω).coins = A.coins := rfl
++
++/-- The derived total call budget is exactly the outer budget. -/
++theorem toLinear_budget (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G n1 n2 PG)
++    (ω : ∀ κ, MaskAdvice n1 n2 p κ) : (toLinear G n1 n2 PG p hp A ω).budget = A.budget := rfl
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Fresh.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Fresh.lean
+new file mode 100644
+index 000000000..95ece24a1
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Fresh.lean
+@@ -0,0 +1,175 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Games
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The actual fresh quadratic semi-adaptive experiments
++
++## Main definitions
++
++* `Wee20.Quadratic.freshRealHandler`: actual fresh honest encryption and key generation.
++* `Wee20.Quadratic.FreshIdealState`, `freshIdealHandler`: actual stateful simulator calls.
++* `Wee20.Quadratic.freshSaGame`, `freshSaSimAdv`: fresh raw endpoint laws and advantage.
++
++## Main results
++
++Readers expose every fresh raw call and the simulator's updated state. The substantive
++padded-to-fresh endpoint coupling is stated in `Theorems`.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, §2.2, p. 5,
++  §3.1, p. 6 and §3.2, p. 7. The allowed value is supplied in the source group.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
++
++open Complexity TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++
++/-- Honest accepted queries invoke the actual fresh raw laws [Wee20, §3.1, p. 6]. -/
++noncomputable def freshRealHandler (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) (pk : MPK G ℓ n1 n2 κ pp)
++    (msk : MSK G ℓ n1 n2 κ pp) :
++    QueryImpl (saSpec G n1 n2 PG κ pp) (SAState G ℓ n1 n2 κ pp) unifSpec
++  | false, msg, st => match st.challenge with
++    | none => (enc G ℓ n1 n2 κ pp pk msg.1 msg.2.1 msg.2.2).map
++        (fun ct => (some ct, ⟨some msg, st.used⟩))
++    | some _ => .pure (none, st)
++  | true, f, st => match st.challenge with
++    | none => .pure (none, st)
++    | some _ => if st.used < q.eval κ then
++        (keyGen G n1 n2 PG κ pp msk f).map
++          (fun key => (some ⟨f, key⟩, ⟨st.challenge, st.used + 1⟩))
++      else .pure (none, st)
++
++/-- A real challenge samples the actual honest encryption draw exactly once. -/
++theorem freshRealHandler_challenge (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) (pk : MPK G ℓ n1 n2 κ pp)
++    (msk : MSK G ℓ n1 n2 κ pp) (msg : Challenge G ℓ n1 n2 κ pp)
++    (st : SAState G ℓ n1 n2 κ pp) :
++    freshRealHandler G n1 n2 q PG κ pp pk msk false msg st =
++      match st.challenge with
++      | none => (enc G ℓ n1 n2 κ pp pk msg.1 msg.2.1 msg.2.2).map
++          (fun ct => (some ct, ⟨some msg, st.used⟩))
++      | some _ => .pure (none, st) := rfl
++
++/-- An accepted real key samples its actual function-dependent draw. -/
++theorem freshRealHandler_key (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) (pk : MPK G ℓ n1 n2 κ pp)
++    (msk : MSK G ℓ n1 n2 κ pp) (f : Fn κ pp.orderParam)
++    (st : SAState G ℓ n1 n2 κ pp) : freshRealHandler G n1 n2 q PG κ pp pk msk true f st =
++      match st.challenge with
++      | none => .pure (none, st)
++      | some _ => if st.used < q.eval κ then
++          (keyGen G n1 n2 PG κ pp msk f).map
++            (fun key => (some ⟨f, key⟩, ⟨st.challenge, st.used + 1⟩))
++        else .pure (none, st) := rfl
++
++/-- The ideal experiment retains both protocol state and the actual updated simulator
++state [Wee20, §3.2, p. 7]. The y vectors are saved by its accepted encryption call. -/
++structure FreshIdealState (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) where
++  /-- Challenge and accepted-key counter. -/
++  protocol : SAState G ℓ n1 n2 κ pp
++  /-- Persistent simulator state. -/
++  simulator : SimState G ℓ n1 n2 κ pp
++
++/-- Ideal accepted queries invoke actual stateful simulator calls
++[Wee20, §3.2, p. 7]. The key's allowed value is exponentiated from the known scalar
++function value; no target-to-source conversion is attempted. -/
++noncomputable def freshIdealHandler (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) :
++    QueryImpl (saSpec G n1 n2 PG κ pp) (FreshIdealState G ℓ n1 n2 κ pp) unifSpec
++  | false, msg, st => match st.protocol.challenge with
++    | none => (simEnc G ℓ n1 n2 κ pp st.simulator msg.1).map
++        (fun out => (some out.1, ⟨⟨some msg, st.protocol.used⟩, out.2⟩))
++    | some _ => .pure (none, st)
++  | true, f, st => match st.protocol.challenge with
++    | none => .pure (none, st)
++    | some msg => if st.protocol.used < q.eval κ then
++        (simKey G n1 n2 PG κ pp st.simulator f msg.1
++          (pp.generator ^ (value G n1 n2 PG κ pp f msg.1 msg.2.1 msg.2.2).val)).map
++          (fun key => (some ⟨f, key⟩,
++            ⟨⟨st.protocol.challenge, st.protocol.used + 1⟩, st.simulator⟩))
++      else .pure (none, st)
++
++/-- Ideal encryption saves precisely the state returned by the actual simulator. -/
++theorem freshIdealHandler_challenge (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) (msg : Challenge G ℓ n1 n2 κ pp)
++    (st : FreshIdealState G ℓ n1 n2 κ pp) :
++    freshIdealHandler G n1 n2 q PG κ pp false msg st =
++      match st.protocol.challenge with
++      | none => (simEnc G ℓ n1 n2 κ pp st.simulator msg.1).map
++          (fun out => (some out.1, ⟨⟨some msg, st.protocol.used⟩, out.2⟩))
++      | some _ => .pure (none, st) := rfl
++
++/-- Ideal keys retain the simulator state and use the exact allowed scalar value. -/
++theorem freshIdealHandler_key (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) (f : Fn κ pp.orderParam)
++    (st : FreshIdealState G ℓ n1 n2 κ pp) : freshIdealHandler G n1 n2 q PG κ pp true f st =
++      match st.protocol.challenge with
++      | none => .pure (none, st)
++      | some msg => if st.protocol.used < q.eval κ then
++          (simKey G n1 n2 PG κ pp st.simulator f msg.1
++            (pp.generator ^ (value G n1 n2 PG κ pp f msg.1 msg.2.1 msg.2.2).val)).map
++            (fun key => (some ⟨f, key⟩,
++              ⟨⟨st.protocol.challenge, st.protocol.used + 1⟩, st.simulator⟩))
++        else .pure (none, st) := rfl
++
++/-- The actual raw endpoint experiment calls setup or simSetup, then the actual fresh
++stateful oracles [Wee20, §2.2, p. 5; §3.1–§3.2, pp. 6–7]. -/
++noncomputable def freshSaGame (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (A : SAAdv G n1 n2 PG) (ideal : Bool) (κ : ℕ) : ProbComp Bool :=
++  (publicParamsGen G κ).bind fun pp =>
++  (ProbComp.sample (Fin (A.coins.eval κ) → Bool)).bind fun r =>
++  if ideal then (simSetup G ℓ n1 n2 κ pp).bind fun ctx =>
++    (simulate (freshIdealHandler G n1 n2 A.budget PG κ pp)
++      (SAAdv.run G n1 n2 PG A κ pp ctx.1 (List.ofFn r))
++      ⟨⟨none, 0⟩, ctx.2⟩).map Prod.fst
++  else (setup G ℓ n1 n2 κ pp).bind fun ctx =>
++    (simulate (freshRealHandler G n1 n2 A.budget PG κ pp ctx.1 ctx.2)
++      (SAAdv.run G n1 n2 PG A κ pp ctx.1 (List.ofFn r)) ⟨none, 0⟩).map Prod.fst
++
++/-- Fresh endpoint laws expose their actual setup and stateful interaction. -/
++theorem freshSaGame_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (A : SAAdv G n1 n2 PG) (ideal : Bool) (κ : ℕ) : freshSaGame G n1 n2 PG A ideal κ =
++      (publicParamsGen G κ).bind fun pp =>
++      (ProbComp.sample (Fin (A.coins.eval κ) → Bool)).bind fun r =>
++      if ideal then (simSetup G ℓ n1 n2 κ pp).bind fun ctx =>
++        (simulate (freshIdealHandler G n1 n2 A.budget PG κ pp)
++          (SAAdv.run G n1 n2 PG A κ pp ctx.1 (List.ofFn r))
++          ⟨⟨none, 0⟩, ctx.2⟩).map Prod.fst
++      else (setup G ℓ n1 n2 κ pp).bind fun ctx =>
++        (simulate (freshRealHandler G n1 n2 A.budget PG κ pp ctx.1 ctx.2)
++          (SAAdv.run G n1 n2 PG A κ pp ctx.1 (List.ofFn r)) ⟨none, 0⟩).map Prod.fst := rfl
++
++/-- Actual raw simulation advantage compares the two fresh stateful endpoints
++[Wee20, §3, p. 6, main claim with §3.3, pp. 7–8]. -/
++noncomputable def freshSaSimAdv (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (A : SAAdv G n1 n2 PG) (κ : ℕ) : ℝ :=
++  advantage (freshSaGame G n1 n2 PG A false κ) (freshSaGame G n1 n2 PG A true κ)
++
++/-- The actual raw advantage is the shared advantage of the two fresh experiments. -/
++theorem freshSaSimAdv_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (A : SAAdv G n1 n2 PG) (κ : ℕ) : freshSaSimAdv G n1 n2 PG A κ =
++      advantage (freshSaGame G n1 n2 PG A false κ) (freshSaGame G n1 n2 PG A true κ) := rfl
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Games.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Games.lean
+new file mode 100644
+index 000000000..68a37f114
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Games.lean
+@@ -0,0 +1,240 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Data
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The five explicit quadratic security games
++
++## Main definitions
++
++* `Wee20.Quadratic.maskedVectors`: the two real or uniform scalar masks in each game.
++* `Wee20.Quadratic.gameHandler`: actual Games 0–4, including the distinct leakage formulas.
++* `Wee20.Quadratic.runGameDet`, `game`: deterministic bounded runs and exact draw laws.
++* `Wee20.Quadratic.saGame`, `saSimAdv`: the unfiltered endpoints and their advantage.
++
++## Main results
++
++Every handler and law has an equation reader. Π's singular-basis behavior remains total;
++no additional rank filter is added by the outer games.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, §3.3, pp. 7–8, Games 0–4,
++  with §3.1, equation (5), p. 6 and §3.2, p. 7. Leakage values are in the source group.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
++
++open Complexity TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++open scoped Matrix
++
++/-- Games 0–2 use both real masks, Game 3 replaces y1, and Game 4 replaces y2 as well
++[Wee20, §3.3, pp. 7–8]. All scalar values here come from explicit scalar draws. -/
++def maskedVectors (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (mode : Fin 5)
++    (κ : ℕ) (pp : PublicParams G κ) (m : Masks G n1 n2 κ pp)
++    (msg : Challenge G ℓ n1 n2 κ pp) :
++    (Fin (n1.eval κ) → ZMod pp.group.order) × (Fin (n2.eval κ) → ZMod pp.group.order) :=
++  (if 3 ≤ mode.val then m.y1 else Matrix.vecMul m.s1 m.A1 + msg.2.1,
++    if 4 ≤ mode.val then m.y2 else Matrix.vecMul m.s2 m.A2 + msg.2.2)
++
++/-- The two scalar mask choices expose the exact thresholds of the outer hybrids. -/
++theorem maskedVectors_eq (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (mode : Fin 5)
++    (κ : ℕ) (pp : PublicParams G κ) (m : Masks G n1 n2 κ pp)
++    (msg : Challenge G ℓ n1 n2 κ pp) : maskedVectors G ℓ n1 n2 mode κ pp m msg =
++      (if 3 ≤ mode.val then m.y1 else Matrix.vecMul m.s1 m.A1 + msg.2.1,
++        if 4 ≤ mode.val then m.y2 else Matrix.vecMul m.s2 m.A2 + msg.2.2) := rfl
++
++/-- Public outer matrices are exponentiated known setup draws, with the supplied Π key
++[Wee20, §3.1, p. 6]. -/
++def publicFromMasks (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (m : Masks G n1 n2 κ pp)
++    (pk : Linear.MPK G ℓ (piDim n1 n2) κ pp) : MPK G ℓ n1 n2 κ pp :=
++  ⟨pp.group.expMat pp.generator m.A1, pp.group.expMat pp.generator m.A2, pk⟩
++
++/-- Public-mask assembly is its two exponentiations and supplied linear public key. -/
++theorem publicFromMasks_eq (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (m : Masks G n1 n2 κ pp)
++    (pk : Linear.MPK G ℓ (piDim n1 n2) κ pp) : publicFromMasks G ℓ n1 n2 κ pp m pk =
++      ⟨pp.group.expMat pp.generator m.A1, pp.group.expMat pp.generator m.A2, pk⟩ := rfl
++
++/-- The five handlers use honest Π, simulated Π with actual signal leakage, its equation
++(5) rewrite, and two successive uniform-vector replacements [Wee20, §3.3, pp. 7–8].
++The first leakage is computed directly from the fixed GROUP matrix and known signal;
++the later leakage is the SOURCE-GROUP quotient. No target-group inversion is used. -/
++def gameHandler (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (mode : Fin 5)
++    (κ : ℕ) (pp : PublicParams G κ) (m : Masks G n1 n2 κ pp)
++    (pk : Linear.MPK G ℓ (piDim n1 n2) κ pp)
++    (st : Linear.SimState G ℓ (piDim n1 n2) κ pp)
++    (ω : Linear.SecurityDraw G PG (piDim n1 n2) q κ pp) :
++    ∀ i, (saSpec G n1 n2 PG κ pp).dom i → SAState G ℓ n1 n2 κ pp →
++      (saSpec G n1 n2 PG κ pp).rng i × SAState G ℓ n1 n2 κ pp :=
++  let pub := publicFromMasks G ℓ n1 n2 κ pp m pk
++  let M := mixGroup G n1 n2 κ pp pub.A1 pub.A2
++  protocolHandler G n1 n2 PG (q.eval κ) κ pp
++    (fun msg => if mode.val = 0 then encCore G ℓ n1 n2 κ pp pub msg.1 msg.2.1 msg.2.2
++      ⟨m.s1, m.s2, Linear.seedAt G PG (piDim n1 n2) q κ pp ω⟩
++    else
++      let ys := maskedVectors G ℓ n1 n2 mode κ pp m msg
++      ⟨pp.group.expVec pp.generator ys.1, pp.group.expVec pp.generator ys.2,
++        Linear.simEncCore G ℓ (piDim n1 n2) κ pp st msg.1⟩)
++    (fun j msg f =>
++      let ys := maskedVectors G ℓ n1 n2 mode κ pp m msg
++      let sr := Linear.simKeyAt G PG (piDim n1 n2) q κ pp ω j f
++      ⟨f, ⟨M, if mode.val = 0 then
++          Linear.keyCore G PG (piDim n1 n2) κ pp ⟨st.W, st.U, st.V⟩ f M
++            (Linear.keyAt G PG (piDim n1 n2) q κ pp ω j f)
++        else
++          let mu := if mode.val = 1 then Linear.leak G PG (piDim n1 n2) κ pp f M msg.1
++              (signalScalar (p := pp.orderParam) m.s1 msg.2.2 ys.1 m.s2)
++            else crossLeak G n1 n2 PG κ pp ⟨M, st, ys.1, ys.2⟩ f msg.1
++              (pp.generator ^ (value G n1 n2 PG κ pp f msg.1 msg.2.1 msg.2.2).val)
++          Linear.simKeyCore G PG (piDim n1 n2) κ pp st f M msg.1 mu sr⟩⟩)
++
++/-- The handler exposes the five distinct ciphertext and key formulas. -/
++theorem gameHandler_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (mode : Fin 5)
++    (κ : ℕ) (pp : PublicParams G κ) (m : Masks G n1 n2 κ pp)
++    (pk : Linear.MPK G ℓ (piDim n1 n2) κ pp)
++    (st : Linear.SimState G ℓ (piDim n1 n2) κ pp)
++    (ω : Linear.SecurityDraw G PG (piDim n1 n2) q κ pp) :
++    gameHandler G n1 n2 q PG mode κ pp m pk st ω =
++      let pub := publicFromMasks G ℓ n1 n2 κ pp m pk
++      let M := mixGroup G n1 n2 κ pp pub.A1 pub.A2
++      protocolHandler G n1 n2 PG (q.eval κ) κ pp
++        (fun msg => if mode.val = 0 then encCore G ℓ n1 n2 κ pp pub msg.1 msg.2.1 msg.2.2
++          ⟨m.s1, m.s2, Linear.seedAt G PG (piDim n1 n2) q κ pp ω⟩
++        else
++          let ys := maskedVectors G ℓ n1 n2 mode κ pp m msg
++          ⟨pp.group.expVec pp.generator ys.1, pp.group.expVec pp.generator ys.2,
++            Linear.simEncCore G ℓ (piDim n1 n2) κ pp st msg.1⟩)
++        (fun j msg f =>
++          let ys := maskedVectors G ℓ n1 n2 mode κ pp m msg
++          let sr := Linear.simKeyAt G PG (piDim n1 n2) q κ pp ω j f
++          ⟨f, ⟨M, if mode.val = 0 then
++              Linear.keyCore G PG (piDim n1 n2) κ pp ⟨st.W, st.U, st.V⟩ f M
++                (Linear.keyAt G PG (piDim n1 n2) q κ pp ω j f)
++            else
++              let mu := if mode.val = 1 then Linear.leak G PG (piDim n1 n2) κ pp f M msg.1
++                  (signalScalar (p := pp.orderParam) m.s1 msg.2.2 ys.1 m.s2)
++                else crossLeak G n1 n2 PG κ pp ⟨M, st, ys.1, ys.2⟩ f msg.1
++                  (pp.generator ^ (value G n1 n2 PG κ pp f msg.1 msg.2.1 msg.2.2).val)
++              Linear.simKeyCore G PG (piDim n1 n2) κ pp st f M msg.1 mu sr⟩⟩) := rfl
++
++section NamedHandlers
++
++variable (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr) {Fn : ℕ → ℕ+ → Type}
++  (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (κ : ℕ) (pp : PublicParams G κ)
++  (m : Masks G n1 n2 κ pp) (pk : Linear.MPK G ℓ (piDim n1 n2) κ pp)
++  (st : Linear.SimState G ℓ (piDim n1 n2) κ pp)
++  (ω : Linear.SecurityDraw G PG (piDim n1 n2) q κ pp)
++
++/-- Honest outer encryption and keys [Wee20, §3.3, Game 0, p. 7]. -/
++def game0Handler := gameHandler G n1 n2 q PG 0 κ pp m pk st ω
++/-- Actual simulated Π with actual group signal leakage [Wee20, §3.3, Game 1, p. 7]. -/
++def game1Handler := gameHandler G n1 n2 q PG 1 κ pp m pk st ω
++/-- The equivalent difference leakage [Wee20, §3.3, Game 2, p. 7]. -/
++def game2Handler := gameHandler G n1 n2 q PG 2 κ pp m pk st ω
++/-- The first uniformly replaced vector [Wee20, §3.3, Game 3, p. 8]. -/
++def game3Handler := gameHandler G n1 n2 q PG 3 κ pp m pk st ω
++/-- Both uniformly replaced vectors [Wee20, §3.3, Game 4, p. 8]. -/
++def game4Handler := gameHandler G n1 n2 q PG 4 κ pp m pk st ω
++
++/-- Game 0 is its explicit formula. -/
++theorem game0Handler_eq : game0Handler G n1 n2 q PG κ pp m pk st ω =
++    gameHandler G n1 n2 q PG 0 κ pp m pk st ω := rfl
++/-- Game 1 is its explicit formula. -/
++theorem game1Handler_eq : game1Handler G n1 n2 q PG κ pp m pk st ω =
++    gameHandler G n1 n2 q PG 1 κ pp m pk st ω := rfl
++/-- Game 2 is its explicit formula. -/
++theorem game2Handler_eq : game2Handler G n1 n2 q PG κ pp m pk st ω =
++    gameHandler G n1 n2 q PG 2 κ pp m pk st ω := rfl
++/-- Game 3 is its explicit formula. -/
++theorem game3Handler_eq : game3Handler G n1 n2 q PG κ pp m pk st ω =
++    gameHandler G n1 n2 q PG 3 κ pp m pk st ω := rfl
++/-- Game 4 is its explicit formula. -/
++theorem game4Handler_eq : game4Handler G n1 n2 q PG κ pp m pk st ω =
++    gameHandler G n1 n2 q PG 4 κ pp m pk st ω := rfl
++
++end NamedHandlers
++
++/-- The pure game fixes both finite tapes and uses the shared interpreter at the TOTAL
++budget [Wee20, §3.3, pp. 7–8]. There is no outer singular-basis filter. -/
++noncomputable def runGameDet (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (A : SAAdv G n1 n2 PG) (mode : Fin 5) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : SecurityDraw G n1 n2 A.budget PG κ pp) (r : List Bool) : Bool :=
++  let m := masksAt G n1 n2 κ pp ω.1
++  let ctx := Linear.simSetupCore G ℓ (piDim n1 n2) κ pp
++    (Linear.setupAt G PG (piDim n1 n2) A.budget κ pp ω.2)
++  (runDet (A.next κ pp (publicFromMasks G ℓ n1 n2 κ pp m ctx.1) r) false
++    (gameHandler G n1 n2 A.budget PG mode κ pp m ctx.1 ctx.2 ω.2)
++    (A.budget.eval κ) [] ⟨none, 0⟩).1
++
++/-- The pure game is its displayed setup and exact total-budget run. -/
++theorem runGameDet_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (A : SAAdv G n1 n2 PG) (mode : Fin 5) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : SecurityDraw G n1 n2 A.budget PG κ pp) (r : List Bool) :
++    runGameDet G n1 n2 PG A mode κ pp ω r =
++      let m := masksAt G n1 n2 κ pp ω.1
++      let ctx := Linear.simSetupCore G ℓ (piDim n1 n2) κ pp
++        (Linear.setupAt G PG (piDim n1 n2) A.budget κ pp ω.2)
++      (runDet (A.next κ pp (publicFromMasks G ℓ n1 n2 κ pp m ctx.1) r) false
++        (gameHandler G n1 n2 A.budget PG mode κ pp m ctx.1 ctx.2 ω.2)
++        (A.budget.eval κ) [] ⟨none, 0⟩).1 := rfl
++
++/-- Each of the five laws samples public parameters, the complete finite tapes and the
++adversary's independent coins [Wee20, §3.3, pp. 7–8]. -/
++noncomputable def game (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (A : SAAdv G n1 n2 PG) (mode : Fin 5) (κ : ℕ) : ProbComp Bool :=
++  (publicParamsGen G κ).bind fun pp =>
++  (ProbComp.sample (SecurityDraw G n1 n2 A.budget PG κ pp)).bind fun ω =>
++  (ProbComp.sample (Fin (A.coins.eval κ) → Bool)).bind fun r =>
++    .pure (runGameDet G n1 n2 PG A mode κ pp ω (List.ofFn r))
++
++/-- The game law is its exact draw-and-run sequence. -/
++theorem game_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (A : SAAdv G n1 n2 PG) (mode : Fin 5) (κ : ℕ) : game G n1 n2 PG A mode κ =
++      (publicParamsGen G κ).bind fun pp =>
++      (ProbComp.sample (SecurityDraw G n1 n2 A.budget PG κ pp)).bind fun ω =>
++      (ProbComp.sample (Fin (A.coins.eval κ) → Bool)).bind fun r =>
++        .pure (runGameDet G n1 n2 PG A mode κ pp ω (List.ofFn r)) := rfl
++
++/-- The endpoint experiment selects honest Game 0 or total ideal Game 4
++[Wee20, §2.2, p. 5; §3.3, pp. 7–8]. Fresh-law correspondence is stated separately. -/
++noncomputable def saGame (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (A : SAAdv G n1 n2 PG) (ideal : Bool) (κ : ℕ) : ProbComp Bool :=
++  game G n1 n2 PG A (if ideal then 4 else 0) κ
++
++/-- The endpoint choice is its displayed indexed game. -/
++theorem saGame_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (A : SAAdv G n1 n2 PG) (ideal : Bool) (κ : ℕ) : saGame G n1 n2 PG A ideal κ =
++      game G n1 n2 PG A (if ideal then 4 else 0) κ := rfl
++
++/-- Simulation advantage compares the two unfiltered outer endpoints
++[Wee20, §3, p. 6, main security claim; §3.3, pp. 7–8]. -/
++noncomputable def saSimAdv (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (A : SAAdv G n1 n2 PG) (κ : ℕ) : ℝ :=
++  advantage (saGame G n1 n2 PG A false κ) (saGame G n1 n2 PG A true κ)
++
++/-- The outer advantage is the shared two-experiment advantage. -/
++theorem saSimAdv_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (A : SAAdv G n1 n2 PG) (κ : ℕ) : saSimAdv G n1 n2 PG A κ =
++      advantage (saGame G n1 n2 PG A false κ) (saGame G n1 n2 PG A true κ) := rfl
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Reductions.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Reductions.lean
+new file mode 100644
+index 000000000..27216f4c8
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Reductions.lean
+@@ -0,0 +1,233 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Derived
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The two explicit outer MDDH reductions
++
++## Main definitions
++
++* `Wee20.Quadratic.crossLeakLeft`, `crossLeakRight`: source-group leakage from one unknown
++  GROUP vector and the other known scalar vector.
++* `Wee20.Quadratic.red2Handler`, `red3Handler`: deterministic adaptive handlers.
++* `Wee20.Quadratic.red2`, `red3`: singleton-bit L2 reductions for the two mask replacements.
++
++## Main results
++
++Equation readers expose the complete algorithms. No handler or reduction samples. The
++unknown challenge matrix and vector remain group elements; scalar advice supplies only
++independent setup masks, Π randomness and the known other vector.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, §3.3, pp. 7–8,
++  Game 2 to Game 3 and Game 3 to Game 4. The source-group value is read with §3.1, (5).
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
++
++open Complexity TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++open scoped Matrix
++
++/-- Compute the tensor leakage with GROUP y1 and known scalar y2, then divide by the
++allowed source-group value [Wee20, §3.3, pp. 7–8, Game 2 to Game 3]. -/
++def crossLeakLeft (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) (f : Fn κ pp.orderParam)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (y1 : Fin (n1.eval κ) → pp.group.G) (y2 : Fin (n2.eval κ) → ZMod pp.group.order)
++    (mu : pp.group.G) : pp.group.G :=
++  groupDot (fun i => let j := finProdFinEquiv.symm i; y1 j.1 ^ (y2 j.2).val)
++    (PG.eval κ pp.orderParam f x) * mu⁻¹
++
++/-- Left tensor leakage uses only known scalar powers of the supplied group vector. -/
++theorem crossLeakLeft_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) (f : Fn κ pp.orderParam)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (y1 : Fin (n1.eval κ) → pp.group.G) (y2 : Fin (n2.eval κ) → ZMod pp.group.order)
++    (mu : pp.group.G) : crossLeakLeft G n1 n2 PG κ pp f x y1 y2 mu =
++      groupDot (fun i => let j := finProdFinEquiv.symm i; y1 j.1 ^ (y2 j.2).val)
++        (PG.eval κ pp.orderParam f x) * mu⁻¹ := rfl
++
++/-- Compute tensor leakage with known scalar y1 and GROUP y2, then divide by the allowed
++source-group value [Wee20, §3.3, pp. 7–8, Game 3 to Game 4]. -/
++def crossLeakRight (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) (f : Fn κ pp.orderParam)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (y1 : Fin (n1.eval κ) → ZMod pp.group.order) (y2 : Fin (n2.eval κ) → pp.group.G)
++    (mu : pp.group.G) : pp.group.G :=
++  groupDot (fun i => let j := finProdFinEquiv.symm i; y2 j.2 ^ (y1 j.1).val)
++    (PG.eval κ pp.orderParam f x) * mu⁻¹
++
++/-- Right tensor leakage uses only known scalar powers of the supplied group vector. -/
++theorem crossLeakRight_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) (f : Fn κ pp.orderParam)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (y1 : Fin (n1.eval κ) → ZMod pp.group.order) (y2 : Fin (n2.eval κ) → pp.group.G)
++    (mu : pp.group.G) : crossLeakRight G n1 n2 PG κ pp f x y1 y2 mu =
++      groupDot (fun i => let j := finProdFinEquiv.symm i; y2 j.2 ^ (y1 j.1).val)
++        (PG.eval κ pp.orderParam f x) * mu⁻¹ := rfl
++
++/-- Replace the first vector using MDDH¹_{2,n1}. The public first matrix and ciphertext
++first vector remain GROUP data; all key leakage uses known scalar y2
++[Wee20, §3.3, pp. 7–8, Game 2 to Game 3]. -/
++def red2Handler (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (κ : ℕ)
++    (c : G.MDDHChallenge (PolyExpr.const 1) n1 κ) (m : Masks G n1 n2 κ c.pp)
++    (st : Linear.SimState G ℓ (piDim n1 n2) κ c.pp)
++    (ω : Linear.SecurityDraw G PG (piDim n1 n2) q κ c.pp) :
++    ∀ i, (saSpec G n1 n2 PG κ c.pp).dom i → SAState G ℓ n1 n2 κ c.pp →
++      (saSpec G n1 n2 PG κ c.pp).rng i × SAState G ℓ n1 n2 κ c.pp :=
++  let A2 := c.pp.group.expMat c.pp.generator m.A2
++  let M := mixGroup G n1 n2 κ c.pp c.matrixᵀ A2
++  let first := fun (msg : Challenge G ℓ n1 n2 κ c.pp) => (fun i => c.response i 0) *
++    c.pp.group.expVec c.pp.generator msg.2.1
++  let second := fun (msg : Challenge G ℓ n1 n2 κ c.pp) => Matrix.vecMul m.s2 m.A2 + msg.2.2
++  protocolHandler G n1 n2 PG (q.eval κ) κ c.pp
++    (fun msg => ⟨first msg, c.pp.group.expVec c.pp.generator (second msg),
++      Linear.simEncCore G ℓ (piDim n1 n2) κ c.pp st msg.1⟩)
++    (fun j msg f => ⟨f, ⟨M, Linear.simKeyCore G PG (piDim n1 n2) κ c.pp st f M msg.1
++      (crossLeakLeft G n1 n2 PG κ c.pp f msg.1 (first msg) (second msg)
++        (c.pp.generator ^ (value G n1 n2 PG κ c.pp f msg.1 msg.2.1 msg.2.2).val))
++      (Linear.simKeyAt G PG (piDim n1 n2) q κ c.pp ω j f)⟩⟩)
++
++/-- The first replacement handler is the displayed pure protocol. -/
++theorem red2Handler_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (κ : ℕ)
++    (c : G.MDDHChallenge (PolyExpr.const 1) n1 κ) (m : Masks G n1 n2 κ c.pp)
++    (st : Linear.SimState G ℓ (piDim n1 n2) κ c.pp)
++    (ω : Linear.SecurityDraw G PG (piDim n1 n2) q κ c.pp) :
++    red2Handler G n1 n2 q PG κ c m st ω =
++      let A2 := c.pp.group.expMat c.pp.generator m.A2
++      let M := mixGroup G n1 n2 κ c.pp c.matrixᵀ A2
++      let first := fun (msg : Challenge G ℓ n1 n2 κ c.pp) => (fun i => c.response i 0) *
++        c.pp.group.expVec c.pp.generator msg.2.1
++      let second := fun (msg : Challenge G ℓ n1 n2 κ c.pp) => Matrix.vecMul m.s2 m.A2 + msg.2.2
++      protocolHandler G n1 n2 PG (q.eval κ) κ c.pp
++        (fun msg => ⟨first msg, c.pp.group.expVec c.pp.generator (second msg),
++          Linear.simEncCore G ℓ (piDim n1 n2) κ c.pp st msg.1⟩)
++        (fun j msg f => ⟨f, ⟨M, Linear.simKeyCore G PG (piDim n1 n2) κ c.pp st f M msg.1
++          (crossLeakLeft G n1 n2 PG κ c.pp f msg.1 (first msg) (second msg)
++            (c.pp.generator ^ (value G n1 n2 PG κ c.pp f msg.1 msg.2.1 msg.2.2).val))
++          (Linear.simKeyAt G PG (piDim n1 n2) q κ c.pp ω j f)⟩⟩) := rfl
++
++/-- Replace the second vector using MDDH¹_{2,n2}; y1 is already a known uniform scalar
++advice vector [Wee20, §3.3, pp. 7–8, Game 3 to Game 4]. -/
++def red3Handler (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (κ : ℕ)
++    (c : G.MDDHChallenge (PolyExpr.const 1) n2 κ) (m : Masks G n1 n2 κ c.pp)
++    (st : Linear.SimState G ℓ (piDim n1 n2) κ c.pp)
++    (ω : Linear.SecurityDraw G PG (piDim n1 n2) q κ c.pp) :
++    ∀ i, (saSpec G n1 n2 PG κ c.pp).dom i → SAState G ℓ n1 n2 κ c.pp →
++      (saSpec G n1 n2 PG κ c.pp).rng i × SAState G ℓ n1 n2 κ c.pp :=
++  let A1 := c.pp.group.expMat c.pp.generator m.A1
++  let M := mixGroup G n1 n2 κ c.pp A1 c.matrixᵀ
++  let second := fun (msg : Challenge G ℓ n1 n2 κ c.pp) => (fun i => c.response i 0) *
++    c.pp.group.expVec c.pp.generator msg.2.2
++  protocolHandler G n1 n2 PG (q.eval κ) κ c.pp
++    (fun msg => ⟨c.pp.group.expVec c.pp.generator m.y1, second msg,
++      Linear.simEncCore G ℓ (piDim n1 n2) κ c.pp st msg.1⟩)
++    (fun j msg f => ⟨f, ⟨M, Linear.simKeyCore G PG (piDim n1 n2) κ c.pp st f M msg.1
++      (crossLeakRight G n1 n2 PG κ c.pp f msg.1 m.y1 (second msg)
++        (c.pp.generator ^ (value G n1 n2 PG κ c.pp f msg.1 msg.2.1 msg.2.2).val))
++      (Linear.simKeyAt G PG (piDim n1 n2) q κ c.pp ω j f)⟩⟩)
++
++/-- The second replacement handler is the displayed pure protocol. -/
++theorem red3Handler_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (κ : ℕ)
++    (c : G.MDDHChallenge (PolyExpr.const 1) n2 κ) (m : Masks G n1 n2 κ c.pp)
++    (st : Linear.SimState G ℓ (piDim n1 n2) κ c.pp)
++    (ω : Linear.SecurityDraw G PG (piDim n1 n2) q κ c.pp) :
++    red3Handler G n1 n2 q PG κ c m st ω =
++      let A1 := c.pp.group.expMat c.pp.generator m.A1
++      let M := mixGroup G n1 n2 κ c.pp A1 c.matrixᵀ
++      let second := fun (msg : Challenge G ℓ n1 n2 κ c.pp) => (fun i => c.response i 0) *
++        c.pp.group.expVec c.pp.generator msg.2.2
++      protocolHandler G n1 n2 PG (q.eval κ) κ c.pp
++        (fun msg => ⟨c.pp.group.expVec c.pp.generator m.y1, second msg,
++          Linear.simEncCore G ℓ (piDim n1 n2) κ c.pp st msg.1⟩)
++        (fun j msg f => ⟨f, ⟨M, Linear.simKeyCore G PG (piDim n1 n2) κ c.pp st f M msg.1
++          (crossLeakRight G n1 n2 PG κ c.pp f msg.1 m.y1 (second msg)
++            (c.pp.generator ^ (value G n1 n2 PG κ c.pp f msg.1 msg.2.1 msg.2.2).val))
++          (Linear.simKeyAt G PG (piDim n1 n2) q κ c.pp ω j f)⟩⟩) := rfl
++
++/-- The first outer L2 reduction fixes the finite advice and runs the original typed
++adversary without sampling [Wee20, §3.3, pp. 7–8, Game 2 to Game 3]. -/
++noncomputable def red2 (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G n1 n2 PG)
++    (ω : ∀ κ, Advice n1 n2 A.budget PG p κ) (κ : ℕ)
++    (c : G.MDDHChallenge (PolyExpr.const 1) n1 κ) (r : List Bool) : List Bool :=
++  let tape := adviceDraw G n1 n2 A.budget PG p hp κ c.pp (ω κ)
++  let m := masksAt G n1 n2 κ c.pp tape.1
++  let ctx := Linear.simSetupCore G ℓ (piDim n1 n2) κ c.pp
++    (Linear.setupAt G PG (piDim n1 n2) A.budget κ c.pp tape.2)
++  let pk : MPK G ℓ n1 n2 κ c.pp :=
++    ⟨c.matrixᵀ, c.pp.group.expMat c.pp.generator m.A2, ctx.1⟩
++  [(runDet (A.next κ c.pp pk r) false
++    (red2Handler G n1 n2 A.budget PG κ c m ctx.2 tape.2)
++    (A.budget.eval κ) [] ⟨none, 0⟩).1]
++
++/-- The first L2 reduction exposes its exact advice, public key and runDet result. -/
++theorem red2_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G n1 n2 PG)
++    (ω : ∀ κ, Advice n1 n2 A.budget PG p κ) (κ : ℕ)
++    (c : G.MDDHChallenge (PolyExpr.const 1) n1 κ) (r : List Bool) :
++    red2 G n1 n2 PG p hp A ω κ c r =
++      let tape := adviceDraw G n1 n2 A.budget PG p hp κ c.pp (ω κ)
++      let m := masksAt G n1 n2 κ c.pp tape.1
++      let ctx := Linear.simSetupCore G ℓ (piDim n1 n2) κ c.pp
++        (Linear.setupAt G PG (piDim n1 n2) A.budget κ c.pp tape.2)
++      let pk : MPK G ℓ n1 n2 κ c.pp :=
++        ⟨c.matrixᵀ, c.pp.group.expMat c.pp.generator m.A2, ctx.1⟩
++      [(runDet (A.next κ c.pp pk r) false
++        (red2Handler G n1 n2 A.budget PG κ c m ctx.2 tape.2)
++        (A.budget.eval κ) [] ⟨none, 0⟩).1] := rfl
++
++/-- The second outer L2 reduction fixes its independent finite advice and never samples
++[Wee20, §3.3, pp. 7–8, Game 3 to Game 4]. -/
++noncomputable def red3 (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G n1 n2 PG)
++    (ω : ∀ κ, Advice n1 n2 A.budget PG p κ) (κ : ℕ)
++    (c : G.MDDHChallenge (PolyExpr.const 1) n2 κ) (r : List Bool) : List Bool :=
++  let tape := adviceDraw G n1 n2 A.budget PG p hp κ c.pp (ω κ)
++  let m := masksAt G n1 n2 κ c.pp tape.1
++  let ctx := Linear.simSetupCore G ℓ (piDim n1 n2) κ c.pp
++    (Linear.setupAt G PG (piDim n1 n2) A.budget κ c.pp tape.2)
++  let pk : MPK G ℓ n1 n2 κ c.pp :=
++    ⟨c.pp.group.expMat c.pp.generator m.A1, c.matrixᵀ, ctx.1⟩
++  [(runDet (A.next κ c.pp pk r) false
++    (red3Handler G n1 n2 A.budget PG κ c m ctx.2 tape.2)
++    (A.budget.eval κ) [] ⟨none, 0⟩).1]
++
++/-- The second L2 reduction exposes its exact advice, public key and runDet result. -/
++theorem red3_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G n1 n2 PG)
++    (ω : ∀ κ, Advice n1 n2 A.budget PG p κ) (κ : ℕ)
++    (c : G.MDDHChallenge (PolyExpr.const 1) n2 κ) (r : List Bool) :
++    red3 G n1 n2 PG p hp A ω κ c r =
++      let tape := adviceDraw G n1 n2 A.budget PG p hp κ c.pp (ω κ)
++      let m := masksAt G n1 n2 κ c.pp tape.1
++      let ctx := Linear.simSetupCore G ℓ (piDim n1 n2) κ c.pp
++        (Linear.setupAt G PG (piDim n1 n2) A.budget κ c.pp tape.2)
++      let pk : MPK G ℓ n1 n2 κ c.pp :=
++        ⟨c.pp.group.expMat c.pp.generator m.A1, c.matrixᵀ, ctx.1⟩
++      [(runDet (A.next κ c.pp pk r) false
++        (red3Handler G n1 n2 A.budget PG κ c m ctx.2 tape.2)
++        (A.budget.eval κ) [] ⟨none, 0⟩).1] := rfl
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean
+new file mode 100644
+index 000000000..93a01dc5e
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity/Theorems.lean
+@@ -0,0 +1,255 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Fresh
++import
++  TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Reductions
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticCorrect
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The explicit quadratic semi-adaptive security bound
++
++## Main definitions
++
++This module introduces no alternate realisation or efficiency predicate.
++
++## Main results
++
++* `Wee20.Quadratic.derived_run_endpoint`, `game0_game1_le`: the actual derived Π adversary.
++* `Wee20.Quadratic.game1_game2_accept`: exact source-group leakage rewrite.
++* `Wee20.Quadratic.game2_game3_le`, `game3_game4_le`: the two outer MDDH hops.
++* `Wee20.Quadratic.saGame_eq_freshSaGame`: actual fresh stateful raw endpoint laws.
++* `Wee20.Quadratic.quadratic_saSimAdv_le`: four explicit realisers and ONE Π rank loss.
++
++The core quantifies over every typed adversary and then every realiser of the displayed
++four reductions. It assumes no realisability statement about all typed adversaries.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, §3, main claim, p. 6;
++  §3.3, pp. 7–8, Games 0–4; §4, Theorem 1, p. 8 and Appendix B, pp. 12–14.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
++
++open Complexity TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++open scoped Matrix
++
++/-- The mask advice used by the derived Π adversary has its explicit polynomial word
++bound. Fixed-advice bookkeeping.
++
++**Proof sketch.** Read maskAdviceEnc_eq and maskAdviceMeta_eq. Apply the shared pair-length,
++modular-vector-length and numeral-length readers; the count is maskCount and the scalar
++width is G.wG. Evaluate maskAdviceLen and use the elementary numeral bound already present
++in the library. No new scalar encoder or dimension evaluator is introduced. -/
++theorem length_maskAdviceEnc_le (G : BilinearGen) (n1 n2 : PolyExpr) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) (ω : MaskAdvice n1 n2 p κ) :
++    (maskAdviceEnc G n1 n2 p hp κ ω).length ≤ (maskAdviceLen G n1 n2).eval κ := sorry
++
++/-- The derived adversary's mask advice word is injective. Fixed-advice bookkeeping.
++
++**Proof sketch.** Separate the fixed metadata by pairEncode_injective, then reuse the
++published modular-vector encoder injectivity with orderSchedule_neZero and the existing
++order_le_two_pow bound. This is the outer vector analogue of Linear.adviceEnc_injective. -/
++theorem maskAdviceEnc_injective (G : BilinearGen) (n1 n2 : PolyExpr) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) :
++    Function.Injective (maskAdviceEnc G n1 n2 p hp κ) := sorry
++
++/-- Outer advice encoding is polynomially bounded. Fixed-advice bookkeeping.
++
++**Proof sketch.** Read maskAdviceEnc/adviceEnc and their header readers. Reuse the shared
++pair-length, modular-vector-length and numeral-length results, then Linear's corresponding
++advice bound. The separate numeric n1,n2 headers require no hardwired polynomial evaluator. -/
++theorem length_adviceEnc_le (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) (ω : Advice n1 n2 q PG p κ) :
++    (adviceEnc G n1 n2 q PG p hp κ ω).length ≤ (adviceLen G n1 n2 q PG).eval κ := sorry
++
++/-- Full advice encoding is injective. Fixed-advice bookkeeping.
++
++**Proof sketch.** Separate the two components using pairEncode_injective. Use the modular
++vector encoder's published injectivity with the shared prime schedule and existing width
++bound, and Linear.adviceEnc_injective for the second component. -/
++theorem adviceEnc_injective (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 q : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (κ : ℕ) :
++    Function.Injective (adviceEnc G n1 n2 q PG p hp κ) := sorry
++
++/-- Left mixed leakage equals the scalar tensor leakage whenever the supplied group
++vector is the encoding of a KNOWN scalar vector [Wee20, §3.3, pp. 7–8].
++
++**Proof sketch.** Read crossLeakLeft_eq and value_eq. Reuse the groupDot and exponent
++multiplication transport laws and the canonical privateTensor coordinate reader. The
++scalar y1 is supplied as a theorem parameter; no algorithm computes it from group y1. -/
++theorem crossLeakLeft_known (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) (f : Fn κ pp.orderParam)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (y1 : Fin (n1.eval κ) → ZMod pp.group.order)
++    (y2 : Fin (n2.eval κ) → ZMod pp.group.order) (mu : pp.group.G) :
++    crossLeakLeft G n1 n2 PG κ pp f x (pp.group.expVec pp.generator y1) y2 mu =
++      pp.generator ^ (value G n1 n2 PG κ pp f x y1 y2).val * mu⁻¹ := sorry
++
++/-- Right mixed leakage equals the scalar tensor leakage for a KNOWN scalar y2
++[Wee20, §3.3, pp. 7–8].
++
++**Proof sketch.** Use the same published exponent/tensor laws as crossLeakLeft_known,
++with scalar multiplication commuted in the tensor coordinate. No new generic group law
++is proved and no scalar is extracted from a group element. -/
++theorem crossLeakRight_known (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) (f : Fn κ pp.orderParam)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (y1 : Fin (n1.eval κ) → ZMod pp.group.order)
++    (y2 : Fin (n2.eval κ) → ZMod pp.group.order) (mu : pp.group.G) :
++    crossLeakRight G n1 n2 PG κ pp f x y1 (pp.group.expVec pp.generator y2) mu =
++      pp.generator ^ (value G n1 n2 PG κ pp f x y1 y2).val * mu⁻¹ := sorry
++
++/-- The pure derived adversary exactly reproduces the honest or Π-simulated outer
++endpoint for every fixed tape and coin string [Wee20, §3.3, Game 0 to Game 1, p. 7].
++
++**Proof sketch.** Use the shared runDet successor/zero readers and replayLinear's cases.
++Relate histories by wrapLinearCT/wrapLinearKey; challenge queries use the known scalar
++signal, whose group encoding agrees with signalGroup by signalGroup_exp. Key queries use
++the same fixed public M. Both handlers refuse pre-challenge keys and repeated challenges,
++and both count total calls identically. Induct along the common bounded interpreter;
++malformed-history defaults never occur on related reachable histories. Ideal leakage is
++Linear.leak of the supplied scalar signal by definition. No probability argument or basis
++condition is used in this pointwise identity. -/
++theorem derived_run_endpoint (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G n1 n2 PG)
++    (φ : ∀ κ, MaskAdvice n1 n2 p κ) (ideal : Bool) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : Linear.SecurityDraw G PG (piDim n1 n2) A.budget κ pp) (r : List Bool) :
++    runGameDet G n1 n2 PG A (if ideal then 1 else 0) κ pp
++      (maskAdviceDraw G n1 n2 p hp κ pp (φ κ), ω) r =
++    Linear.runGameDet G PG (piDim n1 n2) (toLinear G n1 n2 PG p hp A φ)
++      (if ideal then 5 else 0) false κ pp ω r := sorry
++
++/-- Fixing only outer scalar masks gives an explicit derived Π adversary whose ACTUAL
++fresh-law simulation advantage bounds the first outer hop [Wee20, §3.3, pp. 7–8].
++
++**Proof sketch.** Couple the padded deterministic endpoints by derived_run_endpoint.
++Transport the common outer draw to the fixed-prime advice type by ringEquivCongr. Apply
++abs_expect_sub_le_expect and the existing exists_expect_sample_le to select one mask tape
++at each parameter, before choosing any realiser. Use Linear.saSimAdv_eq_freshSaSimAdv to
++obtain the actual fresh raw Π advantage. This keeps all coins and the TOTAL budget. -/
++theorem game0_game1_le (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G n1 n2 PG) :
++    ∃ φ : ∀ κ, MaskAdvice n1 n2 p κ, ∀ κ,
++      advantage (game G n1 n2 PG A 0 κ) (game G n1 n2 PG A 1 κ) ≤
++        Linear.freshSaSimAdv G PG (piDim n1 n2) (toLinear G n1 n2 PG p hp A φ) κ := sorry
++
++/-- Equation (5) rewrites the actual source-group signal leakage without changing any
++transcript [Wee20, §3.1, (5), p. 6; §3.3, Game 1 to Game 2, p. 7].
++
++**Proof sketch.** Apply the existing tensor/mixing identity from QuadraticCorrect to the
++known sampled A1,A2,s1,s2,z1,z2. Read group leakage through Linear.leak_eq and reuse
++mixGroup_exp and exponent transport. The resulting source-group value equals crossLeak.
++Couple adaptive key calls pointwise using the shared relational simulation reader. -/
++theorem game1_game2_accept (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (A : SAAdv G n1 n2 PG) (κ : ℕ) :
++    accept (game G n1 n2 PG A 1 κ) = accept (game G n1 n2 PG A 2 κ) := sorry
++
++/-- One MDDH¹_{2,n1} realiser bounds the first outer mask replacement
++[Wee20, §3.3, Game 2 to Game 3, p. 8].
++
++**Proof sketch.** In red2 the challenge base is GROUP A1 and the response plus z1 is GROUP
++y1. Known advice supplies scalar A2,s2 and Π setup/key coins, so every later adaptive
++cross-term query is computed by crossLeakLeft, without unknown scalar multiplication.
++The real response gives the honest y1; the random response remains uniform after adding
++the challenge chosen from the fixed public history (Equiv.addRight). Couple the typed
++protocols, fix the remaining finite scalar tape by the shared averaging lemma, and
++transfer every realiser's verdict with RealizesOn.distinguisherL_eq. No rank term occurs. -/
++theorem game2_game3_le (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G n1 n2 PG) :
++    ∃ ω : ∀ κ, Advice n1 n2 A.budget PG p κ, ∀ D : NUPPT,
++      D.RealizesOn (G.mddhEnc (PolyExpr.const 1) n1) A.coins (red2 G n1 n2 PG p hp A ω) →
++      ∀ κ, advantage (game G n1 n2 PG A 2 κ) (game G n1 n2 PG A 3 κ) ≤
++        G.mddhAdv (PolyExpr.const 1) n1 D κ := sorry
++
++/-- One MDDH¹_{2,n2} realiser bounds the second outer mask replacement
++[Wee20, §3.3, Game 3 to Game 4, p. 8].
++
++**Proof sketch.** Red3 knows the already-uniform scalar y1 as advice and receives GROUP
++A2,y2 from the challenge. Use crossLeakRight for every adaptive key. Translate the
++independent random response by the selected z2 through Equiv.addRight, couple the exact
++protocols, fix advice by averaging, and apply the shared realiser verdict reader.
++The ideal Π setup is total, including singular H, so no further bad event is introduced. -/
++theorem game3_game4_le (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G n1 n2 PG) :
++    ∃ ω : ∀ κ, Advice n1 n2 A.budget PG p κ, ∀ D : NUPPT,
++      D.RealizesOn (G.mddhEnc (PolyExpr.const 1) n2) A.coins (red3 G n1 n2 PG p hp A ω) →
++      ∀ κ, advantage (game G n1 n2 PG A 3 κ) (game G n1 n2 PG A 4 κ) ≤
++        G.mddhAdv (PolyExpr.const 1) n2 D κ := sorry
++
++/-- The two padded outer endpoints have the acceptance laws of the ACTUAL fresh raw
++setup/encryption/key generation and stateful simulator [Wee20, §3.1–§3.2, pp. 6–7].
++
++**Proof sketch.** Read all honest/simulator core-plus-draw laws. Reindex disjoint outer
++mask coordinates to actual A1,A2,s1,s2 or fresh y1,y2 draws, discarding unused blocks.
++For adaptive key randomness reuse the same coordinate restriction and Games.Tapes route
++as Linear.saGame_eq_freshSaGame, using mCount_le_mBound for each function. Relate the ideal
++state to its stored y1,y2 after the accepted challenge; before it, every key is refused.
++Use the published runDet/buildComp bridge and relational state-abstraction theorem, then
++average public parameters and adversary coins. Neither side adds a rank filter. -/
++theorem saGame_eq_freshSaGame (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (A : SAAdv G n1 n2 PG) (ideal : Bool) (κ : ℕ) :
++    accept (saGame G n1 n2 PG A ideal κ) =
++      accept (freshSaGame G n1 n2 PG A ideal κ) := sorry
++
++/-- The actual fresh and padded outer advantages coincide [Wee20, §3.3, pp. 7–8].
++
++**Proof sketch.** Substitute both endpoint acceptance equalities into the shared
++advantage/acceptance reader after reading the two named advantage definitions. -/
++theorem saSimAdv_eq_freshSaSimAdv (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (A : SAAdv G n1 n2 PG) (κ : ℕ) :
++    saSimAdv G n1 n2 PG A κ = freshSaSimAdv G n1 n2 PG A κ := sorry
++
++/-- For every typed outer adversary, fixed scalar advice makes EVERY four realising
++machines satisfy the explicit ACTUAL raw semi-adaptive simulation bound
++[Wee20, §3, p. 6, main security claim with §3.3, pp. 7–8 and Appendix B, Theorem 1].
++The single statistical term is Π's exact unconditioned-basis failure probability.
++
++**Proof sketch.** Fix outer masks for game0_game1_le, then apply
++Linear.linear_freshSaSimAdv_le to that one explicit derived adversary, choosing its two
++advice families. Independently choose the two outer computational-hop advice families.
++Use game1_game2_accept and the shared triangle inequality for the five actual games.
++Transfer the endpoints to the actual fresh laws. All four realisers are quantified after
++these choices; toLinear_coins/toLinear_budget preserve their layouts exactly. Retain the
++one Linear.linearSlack from Π; the two outer MDDH replacements add no rank loss. -/
++theorem quadratic_saSimAdv_le (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (p : ℕ → ℕ)
++    (hp : ∀ κ r, (G.inst κ r).order = p κ) (A : SAAdv G n1 n2 PG) :
++    ∃ φ : ∀ κ, MaskAdvice n1 n2 p κ,
++    ∃ ωPi : Fin 2 → ∀ κ, Linear.Advice PG (piDim n1 n2) A.budget p κ,
++    ∃ ωOuter : Fin 2 → ∀ κ, Advice n1 n2 A.budget PG p κ,
++    ∀ D : Fin 4 → NUPPT,
++      (D 0).RealizesOn (G.mddhEnc (PolyExpr.const 1) (PolyExpr.const 3)) A.coins
++        (Linear.red0 G PG (piDim n1 n2) p hp (toLinear G n1 n2 PG p hp A φ) (ωPi 0)) →
++      (D 1).RealizesOn (G.mddhEnc ℓ (PG.mBound.mul A.budget)) A.coins
++        (Linear.red1 G PG (piDim n1 n2) p hp (toLinear G n1 n2 PG p hp A φ) (ωPi 1)) →
++      (D 2).RealizesOn (G.mddhEnc (PolyExpr.const 1) n1) A.coins
++        (red2 G n1 n2 PG p hp A (ωOuter 0)) →
++      (D 3).RealizesOn (G.mddhEnc (PolyExpr.const 1) n2) A.coins
++        (red3 G n1 n2 PG p hp A (ωOuter 1)) →
++      ∀ κ, freshSaSimAdv G n1 n2 PG A κ ≤
++        G.mddhAdv (PolyExpr.const 1) (PolyExpr.const 3) (D 0) κ +
++        G.mddhAdv ℓ (PG.mBound.mul A.budget) (D 1) κ +
++        G.mddhAdv (PolyExpr.const 1) n1 (D 2) κ + G.mddhAdv (PolyExpr.const 1) n2 (D 3) κ +
++        Linear.linearSlack G κ := sorry
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic

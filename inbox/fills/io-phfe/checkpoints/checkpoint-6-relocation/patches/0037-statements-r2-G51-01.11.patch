@@ -1,0 +1,1175 @@
+From 073d0a5a3ff88d958f94c2ae50a67bc92476f616 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 16:26:43 -0800
+Subject: [PATCH 37/37] statements r2: G51-01..11
+
+G51-01: clarify familywise security quantification.
+G51-02: add the supported-key Boolean-circuit size target; retain the TM target.
+G51-03: retain r1 fixed width and require explicit state/value encoding bounds.
+G51-04: prefix all sampler parameter maps with the security parameter.
+G51-05: remove the unused adversary binder from uniform MDDH preprocessing.
+G51-06..08: report W6 and the requested owner-API promotions.
+G51-09: reuse the existing list-of-words encoder.
+G51-10: remove unused Pairing references.
+G51-11: correct checkpoint-0 publication and freeze-start reporting.
+
+All dispositions and the exact frozen-header list are in the checkpoint REPORT.md.
+Source-only native parsing and static checks were run. The maintainer owns Lean replay.
+Saved proof development is excluded from this isolated statement-change commit.
+---
+ .../FunctionalEncryption/Defs/Efficient.lean  | 16 +--
+ .../FunctionalEncryption/Defs/Simulator.lean  | 27 +++--
+ .../SemiAdaptive/Simulator.lean               | 18 +++-
+ .../Simulation/Games.lean                     |  9 +-
+ .../Simulation/Security.lean                  |  4 +-
+ .../Wee20/PHFE/CommittedSimulator.lean        | 21 ++++
+ .../Wee20/PHFE/Encodings.lean                 | 30 +++++-
+ .../Wee20/PHFE/Headlines.lean                 |  9 +-
+ .../FunctionalEncryption/Wee20/PHFE/Raw.lean  | 25 +++++
+ .../Wee20/PHFE/Simulator.lean                 | 24 ++++-
+ .../FunctionalEncryption/Wee20/Targets.lean   |  3 +
+ .../Wee20/Targets/Assembly.lean               | 17 +++-
+ .../Wee20/Targets/CircuitEfficiency.lean      | 99 +++++++++++++++++++
+ .../Wee20/Targets/LinearEfficiency.lean       | 18 ++--
+ .../Wee20/Targets/MatrixDH.lean               | 26 ++---
+ .../Wee20/Targets/Scheme.lean                 | 32 +++---
+ .../Wee20/Targets/Sim.lean                    | 72 ++++++++++----
+ .../FunctionalEncryption/Wee20/WireDraws.lean | 82 +++++++--------
+ TCSlib/Cryptography/Pairing.lean              |  5 -
+ 19 files changed, 407 insertions(+), 130 deletions(-)
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/CircuitEfficiency.lean
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Efficient.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Efficient.lean
+index cff06d30e..6848059b1 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Efficient.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Efficient.lean
+@@ -46,28 +46,32 @@ generation as sequential dependent draws without constructing a product sampler.
+ structure FEScheme (C : FnClass) extends FEScheme.Raw C where
+   /-- Uniformly sample and attach the public generator after the group description. -/
+   pubGen_eff : SamplesEfficiently
+-    (fun κ (d : GroupDescription G κ) => d.val)
++    (fun κ (d : GroupDescription G κ) =>
++      NUPPT.advInput κ d.val)
+     (fun κ d (g : GeneratorDraw G κ d) => List.ofFn ((G.group κ d.val).encG g.val))
+     (fun κ _ (pp : PublicParams G κ) => pp.encode) (publicParamsCore G)
+   /-- Uniformly sample the complete setup draw and compute the encoded key pair. -/
+   setup_eff : SamplesEfficiently
+-    (fun κ (pp : PublicParams G κ) => pp.encode) encSetupDraw
++    (fun κ (pp : PublicParams G κ) =>
++      NUPPT.advInput κ pp.encode) encSetupDraw
+     (fun κ pp (k : MPK κ pp × MSK κ pp) =>
+       pairEncode (List.ofFn (encMPK κ pp k.1)) (List.ofFn (encMSK κ pp k.2))) setupCore
+   /-- Uniformly sample encryption randomness with all other inputs on the parameter word. -/
+   enc_eff : SamplesEfficiently
+     (fun κ (π : Σ pp : PublicParams G κ,
+         MPK κ pp × (Fin (C.pubLen.eval κ) → Bool) × (Fin (C.privLen.eval κ) → Bool)) =>
+-      pairEncode π.1.encode (pairEncode (List.ofFn (encMPK κ π.1 π.2.1))
+-        (pairEncode (List.ofFn π.2.2.1) (List.ofFn π.2.2.2))))
++      NUPPT.advInput κ
++        (pairEncode π.1.encode (pairEncode (List.ofFn (encMPK κ π.1 π.2.1))
++           (pairEncode (List.ofFn π.2.2.1) (List.ofFn π.2.2.2)))))
+     (fun κ π => encEncDraw κ π.1 π.2.1 π.2.2.1 π.2.2.2)
+     (fun κ π (c : CT κ π.1) => List.ofFn (encCT κ π.1 c))
+     (fun κ π => encCore κ π.1 π.2.1 π.2.2.1 π.2.2.2)
+   /-- Uniformly sample key randomness with the master key and function on the input. -/
+   keyGen_eff : SamplesEfficiently
+     (fun κ (π : Σ pp : PublicParams G κ, MSK κ pp × (Fin (C.fnLen.eval κ) → Bool)) =>
+-      pairEncode π.1.encode
+-        (pairEncode (List.ofFn (encMSK κ π.1 π.2.1)) (List.ofFn π.2.2)))
++      NUPPT.advInput κ
++        (pairEncode π.1.encode
++           (pairEncode (List.ofFn (encMSK κ π.1 π.2.1)) (List.ofFn π.2.2))))
+     (fun κ π => encKeyDraw κ π.1 π.2.1 π.2.2)
+     (fun κ π (k : SK κ π.1) => List.ofFn (encSK κ π.1 k))
+     (fun κ π => keyCore κ π.1 π.2.1 π.2.2)
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Simulator.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Simulator.lean
+index 571863780..9b1a65f6d 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Simulator.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Simulator.lean
+@@ -2,6 +2,7 @@
+ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
++import TCSlib.Cryptography.Encryption.PrivateKey.EnsembleSecurity
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs.Efficient
+ import TCSlib.Cryptography.Encoding.Modular
+ 
+@@ -68,15 +69,15 @@ This is encoding glue for the stateful simulator of [GJLS21, Definition 4.3]. -/
+ def encode {κ : ℕ} {pp : PublicParams S.G κ} (ω : S.Omega κ pp) : List Bool :=
+   pairEncode (Candidates.natToList (Nat.size ω.count) ω.count)
+     (pairEncode (List.ofFn ω.publicInput)
+-      ((List.ofFn fun j => pairEncode (List.ofFn (ω.functions j))
+-        (C.encValue κ (S.cprm κ pp) (ω.values j))).foldr pairEncode []))
++      (PrivateKeyScheme.encodeList (List.ofFn fun j => pairEncode (List.ofFn (ω.functions j))
++        (C.encValue κ (S.cprm κ pp) (ω.values j)))))
+ 
+ /-- The information encoding is the displayed nested pair in commitment order. -/
+ theorem encode_eq {κ : ℕ} {pp : PublicParams S.G κ} (ω : S.Omega κ pp) :
+     ω.encode = pairEncode (Candidates.natToList (Nat.size ω.count) ω.count)
+       (pairEncode (List.ofFn ω.publicInput)
+-        ((List.ofFn fun j => pairEncode (List.ofFn (ω.functions j))
+-          (C.encValue κ (S.cprm κ pp) (ω.values j))).foldr pairEncode [])) := rfl
++        (PrivateKeyScheme.encodeList (List.ofFn fun j => pairEncode (List.ofFn (ω.functions j))
++          (C.encValue κ (S.cprm κ pp) (ω.values j))))) := rfl
+ 
+ end Omega
+ 
+@@ -231,26 +232,36 @@ end Simulator.Raw
+ 
+ /-- A stateful simulation interface carries uniform efficiency for all three algorithms
+ [GJLS21, Definition 4.3]. Its private state has one fixed polynomial bit width. Every witness
+-precedes the security parameter and all inputs. -/
++precedes the security parameter and all inputs. State and allowed-value words also have
++uniform polynomial length bounds. -/
+ structure Simulator extends Simulator.Raw S where
+   /-- Setup sampling and its state/output encoding are uniformly efficient. -/
+   setup_eff : SamplesEfficiently
+-    (fun κ (pp : PublicParams S.G κ) => pp.encode) encSetupDraw
++    (fun κ (pp : PublicParams S.G κ) =>
++      NUPPT.advInput κ pp.encode) encSetupDraw
+     (fun κ pp (o : S.MPK κ pp × St κ pp) =>
+       pairEncode (List.ofFn (S.encMPK κ pp o.1)) (List.ofFn (encSt κ pp o.2))) setupCore
+   /-- Ciphertext simulation is uniformly efficient with its state and information on input. -/
+-  enc_eff : SamplesEfficiently toRaw.encInputWord
++  enc_eff : SamplesEfficiently (fun κ π => NUPPT.advInput κ (toRaw.encInputWord κ π))
+     (fun κ π => encEncDraw κ π.pp π.state π.omega)
+     (fun κ π (o : S.CT κ π.pp × St κ π.pp) =>
+       pairEncode (List.ofFn (S.encCT κ π.pp o.1)) (List.ofFn (encSt κ π.pp o.2)))
+     (fun κ π => encCore κ π.pp π.state π.omega)
+   /-- Indexed key simulation is uniformly efficient with all other inputs on its word. -/
+-  key_eff : SamplesEfficiently toRaw.keyInputWord
++  key_eff : SamplesEfficiently (fun κ π => NUPPT.advInput κ (toRaw.keyInputWord κ π))
+     (fun κ π => encKeyDraw κ π.pp π.state π.omega π.index)
+     (fun κ π (o : S.SK κ π.pp × St κ π.pp) =>
+       pairEncode (List.ofFn (S.encSK κ π.pp o.1)) (List.ofFn (encSt κ π.pp o.2)))
+     (fun κ π => keyCore κ π.pp π.state π.omega π.index)
+ 
++  /-- One polynomial bounds every encoded private state before all inputs. -/
++  state_bounded : ∃ b : PolyExpr, ∀ κ (pp : PublicParams S.G κ) (st : St κ pp),
++    (List.ofFn (encSt κ pp st)).length ≤ b.eval κ
++  /-- One polynomial bounds every allowed value word before all public parameters. -/
++  value_bounded : ∃ b : PolyExpr, ∀ κ (pp : PublicParams S.G κ)
++    (v : C.Out κ (S.cprm κ pp)),
++    (C.encValue κ (S.cprm κ pp) v).length ≤ b.eval κ
++
+ namespace Simulator
+ 
+ variable {S} (Sim : Simulator S)
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Simulator.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Simulator.lean
+index ac54cdb22..e59eb3dc0 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Simulator.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive/Simulator.lean
+@@ -210,26 +210,36 @@ end SASimulator.Raw
+ /-- A semi-adaptive simulation interface carries uniform efficiency for all three
+ samplers. [Wee20, §2.2, p.5; AGW20, §4.1, pp.11–12]. The shared contract chooses
+ one sampler/core witness before kappa and every public input. The private state has one
+-fixed polynomial bit width. -/
++fixed polynomial bit width. State and allowed-value words also have uniform polynomial
++length bounds. -/
+ structure SASimulator extends SASimulator.Raw S where
+   /-- Setup and its encoded public key/state output are uniformly efficient. -/
+   setup_eff : SamplesEfficiently
+-    (fun kappa (pp : PublicParams S.G kappa) => pp.encode) encSetupDraw
++    (fun kappa (pp : PublicParams S.G kappa) =>
++      NUPPT.advInput kappa pp.encode) encSetupDraw
+     (fun kappa pp (o : S.MPK kappa pp × St kappa pp) =>
+       pairEncode (List.ofFn (S.encMPK kappa pp o.1)) (List.ofFn (encSt kappa pp o.2))) setupCore
+   /-- Public-input-only ciphertext simulation is uniformly efficient. -/
+-  enc_eff : SamplesEfficiently toRaw.encInputWord
++  enc_eff : SamplesEfficiently (fun κ π => NUPPT.advInput κ (toRaw.encInputWord κ π))
+     (fun kappa pi => encEncDraw kappa pi.pp pi.state pi.publicInput)
+     (fun kappa pi (o : S.CT kappa pi.pp × St kappa pi.pp) =>
+       pairEncode (List.ofFn (S.encCT kappa pi.pp o.1)) (List.ofFn (encSt kappa pi.pp o.2)))
+     (fun kappa pi => encCore kappa pi.pp pi.state pi.publicInput)
+   /-- Key simulation is uniformly efficient with all permitted inputs on its word. -/
+-  key_eff : SamplesEfficiently toRaw.keyInputWord
++  key_eff : SamplesEfficiently (fun κ π => NUPPT.advInput κ (toRaw.keyInputWord κ π))
+     (fun kappa pi => encKeyDraw kappa pi.pp pi.state pi.publicInput pi.function pi.value)
+     (fun kappa pi (o : S.SK kappa pi.pp × St kappa pi.pp) =>
+       pairEncode (List.ofFn (S.encSK kappa pi.pp o.1)) (List.ofFn (encSt kappa pi.pp o.2)))
+     (fun kappa pi => keyCore kappa pi.pp pi.state pi.publicInput pi.function pi.value)
+ 
++  /-- One polynomial bounds every encoded private state before all inputs. -/
++  state_bounded : ∃ b : PolyExpr, ∀ kappa (pp : PublicParams S.G kappa) (st : St kappa pp),
++    (List.ofFn (encSt kappa pp st)).length ≤ b.eval kappa
++  /-- One polynomial bounds every allowed value word before all public parameters. -/
++  value_bounded : ∃ b : PolyExpr, ∀ kappa (pp : PublicParams S.G kappa)
++    (v : C.Out kappa (S.cprm kappa pp)),
++    (C.encValue kappa (S.cprm kappa pp) v).length ≤ b.eval kappa
++
+ namespace SASimulator
+ 
+ variable {S} (Sim : SASimulator S)
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Games.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Games.lean
+index 14d38758c..7dfdffe81 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Games.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Games.lean
+@@ -2,6 +2,7 @@
+ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
++import TCSlib.Cryptography.Encryption.PrivateKey.EnsembleSecurity
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Simulation.TwoStage
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs.Correctness
+ import TCSlib.Cryptography.Games.Advantage
+@@ -53,7 +54,7 @@ def viewWordBits {q : PolyExpr} {κ : ℕ} (a : Commitment C q κ)
+     (ct : Fin (S.ctLen.eval κ) → Bool) : List Bool :=
+   pairEncode a.state (pairEncode pp.encode
+     (pairEncode (List.ofFn pk)
+-      (pairEncode ((keys.map List.ofFn).foldr pairEncode [])
++      (pairEncode (PrivateKeyScheme.encodeList (keys.map List.ofFn))
+         (pairEncode (List.ofFn a.publicInput) (List.ofFn ct)))))
+ 
+ /-- The represented view has the displayed nested encoding in committed key order. -/
+@@ -63,7 +64,7 @@ theorem viewWordBits_eq {q : PolyExpr} {κ : ℕ} (a : Commitment C q κ)
+     (ct : Fin (S.ctLen.eval κ) → Bool) :
+     S.viewWordBits a pp pk keys ct = pairEncode a.state (pairEncode pp.encode
+       (pairEncode (List.ofFn pk)
+-        (pairEncode ((keys.map List.ofFn).foldr pairEncode [])
++        (pairEncode (PrivateKeyScheme.encodeList (keys.map List.ofFn))
+           (pairEncode (List.ofFn a.publicInput) (List.ofFn ct))))) := rfl
+ 
+ /-- Encode the first-stage state and the view `(pp, pk, keys, x, ct)` supplied to the
+@@ -80,11 +81,11 @@ theorem viewWord_eq {q : PolyExpr} {κ : ℕ} (a : Commitment C q κ)
+     (ct : S.CT κ pp) :
+     S.viewWord a pp pk keys ct = pairEncode a.state (pairEncode pp.encode
+       (pairEncode (List.ofFn (S.encMPK κ pp pk))
+-        (pairEncode ((keys.map fun sk => List.ofFn (S.encSK κ pp sk)).foldr pairEncode [])
++        (pairEncode (PrivateKeyScheme.encodeList (keys.map fun sk => List.ofFn (S.encSK κ pp sk)))
+           (pairEncode (List.ofFn a.publicInput) (List.ofFn (S.encCT κ pp ct)))))) :=
+   congrArg (fun k : List (List Bool) => pairEncode a.state (pairEncode pp.encode
+     (pairEncode (List.ofFn (S.encMPK κ pp pk))
+-      (pairEncode (k.foldr pairEncode [])
++      (pairEncode (PrivateKeyScheme.encodeList k)
+         (pairEncode (List.ofFn a.publicInput) (List.ofFn (S.encCT κ pp ct)))))))
+     (List.map_map (f := S.encSK κ pp) (g := List.ofFn) (l := keys))
+ 
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Security.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Security.lean
+index d26e06a73..45bf0c4d0 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Security.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Security.lean
+@@ -44,7 +44,9 @@ namespace FEScheme.Raw
+ variable {C : FnClass} (S : FEScheme.Raw C)
+ 
+ /-- A specified raw simulator gives negligible advantage against every pair of non-uniform
+-PPT machines and every polynomial key count [GJLS21, Definition 4.3; Remark 4.6]. -/
++PPT machines and every polynomial key count [GJLS21, Definition 4.3; Remark 4.6].
++The scheme and its polynomial parameter families are fixed before this predicate;
++negligibility is familywise, with no bound uniform over all such families. -/
+ def SimSecureWith (Sim : Simulator.Raw S) : Prop :=
+   ∀ A : TwoStage, ∀ q : PolyExpr, Negligible (S.simAdv Sim A q)
+ 
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/CommittedSimulator.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/CommittedSimulator.lean
+index eb72d2d88..8089fde77 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/CommittedSimulator.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/CommittedSimulator.lean
+@@ -51,4 +51,25 @@ theorem wee20Sim_raw_eq (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+     (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) :
+     wee20Sim_raw G ℓ n d PG = (wee20SASim_raw G ℓ n d PG).toSim := rfl
+ 
++/-- The complete encoded simulator state has one uniform polynomial length bound.
++
++**Proof sketch.** Choose its existing fixed width and use List.length_ofFn. -/
++theorem wee20Sim_raw_state_bounded (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) :
++    ∃ b : PolyExpr, ∀ κ (pp : PublicParams (wee20PHFE_raw G ℓ n d PG).G κ)
++      (st : (wee20Sim_raw G ℓ n d PG).St κ pp),
++      (List.ofFn ((wee20Sim_raw G ℓ n d PG).encSt κ pp st)).length ≤ b.eval κ :=
++  ⟨(wee20Sim_raw G ℓ n d PG).stLen, fun _ _ _ => le_of_eq List.length_ofFn⟩
++
++/-- Every allowed scalar value has a uniform polynomial encoding-length bound.
++
++**Proof sketch.** Reuse the scheme's value-word bound with the same public parameters. -/
++theorem wee20Sim_raw_value_bounded (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) :
++    ∃ b : PolyExpr, ∀ κ (pp : PublicParams (wee20PHFE_raw G ℓ n d PG).G κ)
++      (v : (phfeClass ℓ n G.wG d).Out κ ((wee20PHFE_raw G ℓ n d PG).cprm κ pp)),
++      ((phfeClass ℓ n G.wG d).encValue κ
++        ((wee20PHFE_raw G ℓ n d PG).cprm κ pp) v).length ≤ b.eval κ :=
++  wee20PHFE_raw_value_bounded G ℓ n d PG
++
+ end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean
+index db3f741f2..c40b710d7 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Encodings.lean
+@@ -460,7 +460,8 @@ theorem quadraticSimState_injective (G : BilinearGen) (ℓ n : PolyExpr) (κ : 
+     Function.Injective (Wire.quadraticSimState pp (ℓ := ℓ) (n1 := n) (n2 := n)) := by
+   intro a b h
+   simp only [Wire.quadraticSimState_eq, Wire.linearSimState_eq,
+-    List.foldr_cons, List.foldr_nil, pairEncode_eq_iff, eq_self_iff_true,
++    PrivateKeyScheme.encodeList_cons,
++    PrivateKeyScheme.encodeList_nil, pairEncode_eq_iff, eq_self_iff_true,
+     and_true] at h
+   rcases h with ⟨hM, ⟨hA, hW, hU, hV, hc, hw, hv, hInv⟩, hy1, hy2⟩
+   have hwidth : pp.group.order ≤ 2 ^ G.wG.eval κ := ?_
+@@ -524,7 +525,8 @@ theorem quadraticSimState_length (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ)
+     (pp : PublicParams G κ) (st : Quadratic.SimState G ℓ n n κ pp) :
+     (Wire.quadraticSimState pp st).length = (simStLen G ℓ n).eval κ := by
+   simp only [Wire.quadraticSimState_eq, Wire.linearSimState_eq,
+-    List.foldr_cons, List.foldr_nil, length_pairEncode, List.length_nil,
++    PrivateKeyScheme.encodeList_cons,
++    PrivateKeyScheme.encodeList_nil, length_pairEncode, List.length_nil,
+     Wire.groupMatrix_length, Wire.scalarMatrix_eq, Wire.scalarVector_eq,
+     Encoding.Modular.encodeMatrix_length, Encoding.Modular.encodeVector_length,
+     simStLen_eval, Quadratic.piDim_eq,
+@@ -564,4 +566,28 @@ theorem encSimState_injective (G : BilinearGen) (ℓ n : PolyExpr) (κ : ℕ)
+   rw [ofFn_encSimState, ofFn_encSimState] at hw
+   exact quadraticSimState_injective G ℓ n κ pp hw
+ 
++/-- Every PHFE scalar-value word has at most one bit more than the public group width.
++This bounds all class values at the drawn modulus, independently of the value itself.
++
++**Proof sketch.** Read the scalar class codec and singleton-vector encoding length. The
++modulus is at most two to the source-group width; monotonicity of Nat.size and size_pow
++then bound its binary width by the source-group width plus one. -/
++theorem valueEncoding_length_le (G : BilinearGen) (ℓ n : PolyExpr) (d κ : ℕ)
++    (pp : PublicParams G κ)
++    (v : (phfeClass ℓ n G.wG d).Out κ (classParam G ℓ n d κ pp)) :
++    ((phfeClass ℓ n G.wG d).encValue κ (classParam G ℓ n d κ pp) v).length ≤
++      G.wG.eval κ + 1 := by
++  have hword :
++      (phfeClass ℓ n G.wG d).encValue κ (classParam G ℓ n d κ pp) v =
++        encodeScalar pp.orderParam (valueEquiv G ℓ n d κ pp v) := ?_
++  swap
++  · simpa only [← valueEquiv_eq G ℓ n d κ pp, Equiv.symm_apply_apply, classParam_eq] using
++      (phfeClass_encValue_codec ℓ n G.wG d κ pp.orderParam
++        (valueEquiv G ℓ n d κ pp v))
++  rw [hword, encodeScalar_eq, Encoding.Modular.encodeVector_length, Nat.one_mul]
++  exact le_trans
++    (Nat.size_le_size (le_trans (le_of_eq (PublicParams.orderParam_val pp))
++      (IdentityBased.BB1Machine.order_le_two_pow G κ pp.description.val)))
++    (le_of_eq Nat.size_pow)
++
+ end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Headlines.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Headlines.lean
+index 8b83baf6c..59e5199d2 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Headlines.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Headlines.lean
+@@ -117,17 +117,18 @@ theorem wee20PHFE_subexpSASimSecure (p : ℕ → ℕ)
+     (P).toRaw.SubexpSASimSecure := sorry
+ 
+ /-- The assembled public-key PHFE has zero correctness error, many-key epsilon-one
+-simulation security and the one uniform linear-encryption target
++simulation security and the supported-key Boolean-circuit linear-encryption target
+ [GJLS21, Definitions 4.1-4.3 and 4.6, Remark 4.6 and Section 9].
+ The class is the original private quadratic polynomial class, with outputs embedded in
+ GT. The simulator receives allowed scalar values via the recorded Theorem 9.2 Hybrid 1
+-reading. The positive-size linear-time formulation is specified in LinearEfficient. -/
++reading. CircuitLinearEfficient specifies the positive-size circuit bound; Targets also
++retains the additional uniform-machine target LinearEfficient. -/
+ theorem wee20PHFE_gjls21 (p : ℕ → ℕ)
+     (hp : ∀ κ r, (G.inst κ r).order = p κ) (hpb : ∀ κ, 2 ^ κ ≤ p κ)
+     (hR : Wee20Realizable43 G ℓ n d PG p hp) (h : G.DLINAssumption) :
+-    (P).toRaw.CorrectExcept 0 ∧ (P).toRaw.SimSecure ∧ LinearEfficient G :=
++    (P).toRaw.CorrectExcept 0 ∧ (P).toRaw.SimSecure ∧ CircuitLinearEfficient G :=
+   ⟨wee20PHFE_correctExcept_zero G ℓ n d hT,
+-    wee20PHFE_simSecure G ℓ n d hT p hp hpb hR h, hT.linear⟩
++    wee20PHFE_simSecure G ℓ n d hT p hp hpb hR h, hT.circuitLinear⟩
+ 
+ end
+ 
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean
+index 654adbb33..cd1532961 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Raw.lean
+@@ -223,4 +223,29 @@ theorem scalarValueEquiv_eq (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+ 
+ end PHFE
+ 
++/-- One polynomial bounds every encoded PHFE class value at every drawn public parameter.
++The witness is the source-group width plus one; it is chosen before the security parameter.
++
++**Proof sketch.** Transport the class-parameter predicate through the published raw
++parameter reader. Reuse the concrete value-word bound and the polynomial evaluation readers. -/
++theorem wee20PHFE_raw_value_bounded (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) :
++    ∃ b : PolyExpr, ∀ κ (pp : PublicParams (wee20PHFE_raw G ℓ n d PG).G κ)
++      (v : (phfeClass ℓ n G.wG d).Out κ ((wee20PHFE_raw G ℓ n d PG).cprm κ pp)),
++      ((phfeClass ℓ n G.wG d).encValue κ
++        ((wee20PHFE_raw G ℓ n d PG).cprm κ pp) v).length ≤ b.eval κ :=
++  ⟨G.wG.add (PolyExpr.const 1), fun κ pp =>
++    Eq.mpr
++      (congrArg (fun π : (phfeClass ℓ n G.wG d).Prm κ =>
++        ∀ v : (phfeClass ℓ n G.wG d).Out κ π,
++          ((phfeClass ℓ n G.wG d).encValue κ π v).length ≤
++            (G.wG.add (PolyExpr.const 1)).eval κ)
++        (wee20PHFE_raw_cprm G ℓ n d κ PG pp))
++      (fun v => Eq.mpr
++        (congrArg (fun w : ℕ =>
++          ((phfeClass ℓ n G.wG d).encValue κ (PHFE.classParam G ℓ n d κ pp) v).length ≤ w)
++          ((PolyExpr.eval_add G.wG (PolyExpr.const 1) κ).trans
++            (congrArg (fun w : ℕ => G.wG.eval κ + w) (PolyExpr.eval_const 1 κ))))
++        (PHFE.valueEncoding_length_le G ℓ n d κ pp v))⟩
++
+ end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Simulator.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Simulator.lean
+index fde8f6a02..3d57718c0 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Simulator.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE/Simulator.lean
+@@ -2,6 +2,7 @@
+ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
++import TCSlib.Cryptography.Encryption.PrivateKey.EnsembleSecurity
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Raw
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.Simulator
+ 
+@@ -85,7 +86,7 @@ noncomputable def wee20SASim_raw (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+     Wire.quadraticSimSetupDraw (PHFE.publicParamsEquiv G ℓ n d PG _ pp)
+   encEncDraw := fun _ pp _ _ ω =>
+     let pp' := PHFE.publicParamsEquiv G ℓ n d PG _ pp
+-    [Wire.scalarVector pp' ω.1, Wire.scalarVector pp' ω.2].foldr pairEncode []
++    PrivateKeyScheme.encodeList [Wire.scalarVector pp' ω.1, Wire.scalarVector pp' ω.2]
+   encKeyDraw := fun _ pp _ _ _ _ =>
+     Wire.linearSimKeyDraw (PHFE.publicParamsEquiv G ℓ n d PG _ pp) PG
+ 
+@@ -144,4 +145,25 @@ theorem wee20SASim_raw_keyCore (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+         (pp'.generator ^ scalar.val) ω
+       ((PHFE.keyEquiv G ℓ n d PG κ pp).symm ⟨f, sk⟩, st) := rfl
+ 
++/-- The complete encoded simulator state has one uniform polynomial length bound.
++
++**Proof sketch.** Choose its existing fixed width and use List.length_ofFn. -/
++theorem wee20SASim_raw_state_bounded (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) :
++    ∃ b : PolyExpr, ∀ κ (pp : PublicParams (wee20PHFE_raw G ℓ n d PG).G κ)
++      (st : (wee20SASim_raw G ℓ n d PG).St κ pp),
++      (List.ofFn ((wee20SASim_raw G ℓ n d PG).encSt κ pp st)).length ≤ b.eval κ :=
++  ⟨(wee20SASim_raw G ℓ n d PG).stLen, fun _ _ _ => le_of_eq List.length_ofFn⟩
++
++/-- Every allowed scalar value has a uniform polynomial encoding-length bound.
++
++**Proof sketch.** Reuse the scheme's value-word bound with the same public parameters. -/
++theorem wee20SASim_raw_value_bounded (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
++    (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) :
++    ∃ b : PolyExpr, ∀ κ (pp : PublicParams (wee20PHFE_raw G ℓ n d PG).G κ)
++      (v : (phfeClass ℓ n G.wG d).Out κ ((wee20PHFE_raw G ℓ n d PG).cprm κ pp)),
++      ((phfeClass ℓ n G.wG d).encValue κ
++        ((wee20PHFE_raw G ℓ n d PG).cprm κ pp) v).length ≤ b.eval κ :=
++  wee20PHFE_raw_value_bounded G ℓ n d PG
++
+ end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets.lean
+index c7d92076b..25a783114 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets.lean
+@@ -2,6 +2,7 @@
+ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.CircuitEfficiency
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.Assembly
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.Garbling
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.LinearEfficiency
+@@ -18,6 +19,8 @@ set_option autoImplicit false
+ 
+ ## Contents
+ 
++* `Targets.CircuitEfficiency`: supported-key Boolean-circuit gate target.
++
+ * `Targets.Scheme`: the five honest-algorithm targets.
+ * `Targets.Sim`: the six targets for both concrete stateful simulators.
+ * `Targets.Garbling`: deterministic layered-garbling targets.
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Assembly.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Assembly.lean
+index 6d9feef26..7e1d07049 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Assembly.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Assembly.lean
+@@ -2,6 +2,7 @@
+ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.CircuitEfficiency
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.Scheme
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.Sim
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.Garbling
+@@ -65,16 +66,18 @@ structure Targets (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ) : Prop where
+   garbling : PGTargets ℓ (n.mul n) d
+   /-- The one uniform linear-time encryption target. -/
+   linear : LinearEfficient G
++  /-- The GJLS21 supported-key Boolean-circuit encryption target. -/
++  circuitLinear : CircuitLinearEfficient G
+   /-- Uniform L1 matrix-DH preprocessing. -/
+   mddh : MddhPreTargets G
+ 
+-/-- All targets are exactly their displayed conjunction. -/
++/-- All targets are exactly their displayed conjunction, including both the source
++circuit target and the additional uniform-machine target. -/
+ theorem targets_iff (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ) : Targets G ℓ n d ↔
+     SchemeTargets G ℓ n d ∧ SimTargets G ℓ n d ∧ PGTargets ℓ (n.mul n) d ∧
+-      LinearEfficient G ∧ MddhPreTargets G :=
+-  ⟨fun h => ⟨h.scheme, h.simulators, h.garbling, h.linear, h.mddh⟩,
+-    fun h => ⟨h.1, h.2.1, h.2.2.1, h.2.2.2.1, h.2.2.2.2⟩⟩
+-
++      LinearEfficient G ∧ CircuitLinearEfficient G ∧ MddhPreTargets G :=
++  ⟨fun h => ⟨h.scheme, h.simulators, h.garbling, h.linear, h.circuitLinear, h.mddh⟩,
++    fun h => ⟨h.1, h.2.1, h.2.2.1, h.2.2.2.1, h.2.2.2.2.1, h.2.2.2.2.2⟩⟩
+ /-- The efficient layered primitive is pure assembly of its raw family and two targets
+ [AGW20, Lemma 2, p.12; IW14, Definition 1 continuation, p.7]. No algorithm is selected or
+ changed by this assembly. -/
+@@ -114,6 +117,8 @@ noncomputable def wee20Sim (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+   setup_eff := hT.sim_setup_eff
+   enc_eff := hT.sim_enc_eff
+   key_eff := hT.sim_key_eff
++  state_bounded := hT.sim_state_bounded
++  value_bounded := hT.sim_value_bounded
+ 
+ /-- Efficient committed simulation retains the exact raw simulator. -/
+ theorem wee20Sim_toRaw (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+@@ -130,6 +135,8 @@ noncomputable def wee20SASim (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+   setup_eff := hT.sa_setup_eff
+   enc_eff := hT.sa_enc_eff
+   key_eff := hT.sa_key_eff
++  state_bounded := hT.sa_state_bounded
++  value_bounded := hT.sa_value_bounded
+ 
+ /-- Efficient semi-adaptive simulation retains the exact raw simulator. -/
+ theorem wee20SASim_toRaw (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/CircuitEfficiency.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/CircuitEfficiency.lean
+new file mode 100644
+index 000000000..ef8db247b
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/CircuitEfficiency.lean
+@@ -0,0 +1,99 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Raw
++import TCSlib.Complexity.CircuitComplexity.KarpLiptonSearch
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Supported-key Boolean-circuit linear encryption target
++
++One polynomial bounds circuit size, including input and internal gates, before all numeric
++dimensions, degrees
++and security parameters. For each supported public parameter and honestly generated
++public key, the circuit hard-wires those public values. Its variable input contains
++both message words and the complete existing encryption-draw word.
++
++## Main definitions
++
++* `CircuitLinearEfficient`: the supported-key circuit target of GJLS21 Definition 4.6.
++
++## Main results
++
++* `circuitLinearEfficient_iff`: the exact quantifier-order and encoding reader.
++
++## References
++
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
++  revision of 3 January 2025, Definition 4.6, printed p.22.
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Section 3.1.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20
++
++open Complexity TCSlib.Cryptography.Pairing
++
++/-- One polynomial bounds Boolean encryption circuit size, counting input and internal
++gates, before all
++numeric dimensions, degrees and security parameters [GJLS21, Definition 4.6, printed p.22].
++Each supported public parameter and honestly generated public key is hard-wired into
++its circuit. The circuit input arity and circuit are chosen before all public/private
++message words and complete six-scalar encryption draws. The input-length conjunct
++ensures the total bit reader supplies the complete existing paired draw encoding.
++The output is exactly the encoded deterministic core ciphertext.
++
++The positive-size domain is explicit. LinearEfficient remains an additional uniform
++machine target in its own module. Phase B obligation; not proved in this development.
++No circuit, machine, sampler or efficient primitive is constructed here. -/
++def CircuitLinearEfficient (G : BilinearGen) : Prop :=
++  ∃ q : PolyExpr, ∀ (ℓ n d κ : ℕ) (pp : PublicParams G κ)
++    (pk : Quadratic.MPK G (PolyExpr.const ℓ) (PolyExpr.const n) (PolyExpr.const n) κ pp)
++    (hHonest : ∃ ρ : Quadratic.SetupDraw G (PolyExpr.const ℓ) (PolyExpr.const n)
++        (PolyExpr.const n) κ pp,
++      (PHFE.setupCore G (PolyExpr.const ℓ) (PolyExpr.const n) κ pp ρ).1 = pk),
++    0 < ℓ + n →
++    ∃ N : ℕ, ∃ C : BoolCircuit.MultiDAGCircuit N,
++      C.IsFaninTwo ∧ C.size ≤ (ℓ + n) * q.eval κ ∧
++        ∀ (x : Fin ((phfeClass (PolyExpr.const ℓ) (PolyExpr.const n) G.wG d).pubLen.eval κ)
++              → Bool)
++          (y : Fin ((phfeClass (PolyExpr.const ℓ) (PolyExpr.const n) G.wG d).privLen.eval κ)
++              → Bool)
++          (ω : Quadratic.EncDraw G κ pp),
++          let input := List.ofFn x ++ List.ofFn y ++ Wire.quadraticEncDraw pp ω
++          input.length = N ∧
++            C.eval (fun i => input.getD i.val false) =
++              List.ofFn (PHFE.encCT G (PolyExpr.const n) κ pp
++                (PHFE.encCore G (PolyExpr.const ℓ) (PolyExpr.const n) d κ pp pk x y ω))
++
++/-- The circuit target chooses its single polynomial before every numeric size, and
++chooses each public-parameter/key-specific circuit before all message and draw inputs.
++
++**Proof sketch.** Read the target’s defining quantifiers and conjuncts. -/
++theorem circuitLinearEfficient_iff (G : BilinearGen) : CircuitLinearEfficient G ↔
++  ∃ q : PolyExpr, ∀ (ℓ n d κ : ℕ) (pp : PublicParams G κ)
++    (pk : Quadratic.MPK G (PolyExpr.const ℓ) (PolyExpr.const n) (PolyExpr.const n) κ pp)
++    (hHonest : ∃ ρ : Quadratic.SetupDraw G (PolyExpr.const ℓ) (PolyExpr.const n)
++        (PolyExpr.const n) κ pp,
++      (PHFE.setupCore G (PolyExpr.const ℓ) (PolyExpr.const n) κ pp ρ).1 = pk),
++    0 < ℓ + n →
++    ∃ N : ℕ, ∃ C : BoolCircuit.MultiDAGCircuit N,
++      C.IsFaninTwo ∧ C.size ≤ (ℓ + n) * q.eval κ ∧
++        ∀ (x : Fin ((phfeClass (PolyExpr.const ℓ) (PolyExpr.const n) G.wG d).pubLen.eval κ)
++              → Bool)
++          (y : Fin ((phfeClass (PolyExpr.const ℓ) (PolyExpr.const n) G.wG d).privLen.eval κ)
++              → Bool)
++          (ω : Quadratic.EncDraw G κ pp),
++          let input := List.ofFn x ++ List.ofFn y ++ Wire.quadraticEncDraw pp ω
++          input.length = N ∧
++            C.eval (fun i => input.getD i.val false) =
++              List.ofFn (PHFE.encCT G (PolyExpr.const n) κ pp
++                (PHFE.encCore G (PolyExpr.const ℓ) (PolyExpr.const n) d κ pp pk x y ω)) := Iff.rfl
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/LinearEfficiency.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/LinearEfficiency.lean
+index 4cbbeb8d8..595c96f8e 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/LinearEfficiency.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/LinearEfficiency.lean
+@@ -9,11 +9,13 @@ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+ /-!
+-# One uniform linear-time encryption target
++# An additional uniform linear-time encryption target
+ 
+ The deterministic encryption core includes its complete draw as input. The target uses
+ one finite Turing machine for all numeric dimensions and all public groups, with the
+-fixed polynomial factor depending only on the security parameter.
++fixed polynomial factor depending only on the security parameter. This is an additional
++uniform-machine obligation. The supported-key Boolean-circuit bound is stated separately
++in Targets/CircuitEfficiency.
+ 
+ ## Main definitions
+ 
+@@ -74,13 +76,13 @@ theorem linearEncInput_eq (G : BilinearGen) (ℓ n d κ : ℕ) (pp : PublicParam
+ end PHFE
+ 
+ /-- One finite Turing machine encrypts in `(ℓ+n)q(κ)` steps uniformly in the numeric
+-message dimensions, degree and security parameter [GJLS21, Definition 4.6, printed p.22].
+-Phase B obligation; not proved in this development.
++message dimensions, degree and security parameter. This is an additional uniform-machine
++obligation; the GJLS21 Definition 4.6 supported-key circuit target is stated separately by
++CircuitLinearEfficient. Phase B obligation; not proved in this development.
+ 
+-The target strengthens the source's circuit/supported-key formulation to one uniform
+-machine and all typed keys. The positive-size domain is explicit: the raw algorithms
+-remain total at zero size, while the source's multiplicative bound presumes nonempty
+-messages. The scalar word width is absorbed into the one polynomial `q`. -/
++The positive-size domain is explicit: raw algorithms remain total at zero size, while
++this multiplicative bound is required for nonempty messages. The scalar word width is
++absorbed into the one polynomial q. -/
+ def LinearEfficient (G : BilinearGen) : Prop :=
+   ∃ M : FinTM Bool, ∃ q : PolyExpr, ∀ (ℓ n d κ : ℕ) (pp : PublicParams G κ)
+     (pk : Quadratic.MPK G (PolyExpr.const ℓ) (PolyExpr.const n) (PolyExpr.const n) κ pp)
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/MatrixDH.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/MatrixDH.lean
+index 327134ad3..919490bff 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/MatrixDH.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/MatrixDH.lean
+@@ -38,19 +38,22 @@ open Complexity Turing TCSlib.Cryptography.Pairing
+ canonical DLIN challenge [Wee20, Section 2.1, p.4, polynomial-loss implementation].
+ Phase B obligation; not proved in this development.
+ 
+-The witness is chosen before κ, every advice value and every challenge. The fixed prime
+-schedule only indexes scalar advice; the modulus is read from the challenge. This is an
+-L1 preprocessing target, distinct from the L2 interactive-realiser hypotheses. -/
++For each fixed order schedule and dimension pair, one preprocessing witness is chosen
++before κ, every advice value and every challenge. The witness does not depend on a
++consumer adversary. The fixed prime schedule only indexes scalar advice; the modulus
++is read from the challenge. This is an L1 preprocessing target, distinct from the L2
++interactive-realiser hypotheses. -/
+ def MddhPreTargets (G : BilinearGen) : Prop :=
+-  ∀ (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order = p κ) (d ℓ : PolyExpr) (_D : NUPPT),
++  ∀ (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order = p κ) (d ℓ : PolyExpr),
+     ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
+       ∀ κ (ω : BilinearGen.MddhAdvice p d ℓ κ) (c : G.DLINChallenge κ),
+         f (pairEncode (G.mddhAdviceEnc p hp d ℓ κ ω) (G.dlinEnc κ c)) =
+           G.mddhPre p hp d ℓ κ ω c
+ 
+-/-- The preprocessing target is one polynomial-time map before all advice/challenge pairs. -/
++/-- The preprocessing witness depends only on the fixed schedule and dimensions and
++precedes every security parameter, advice value and challenge. -/
+ theorem mddhPreTargets_iff (G : BilinearGen) : MddhPreTargets G ↔
+-    ∀ (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order = p κ) (d ℓ : PolyExpr) (_D : NUPPT),
++    ∀ (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order = p κ) (d ℓ : PolyExpr),
+       ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
+         ∀ κ (ω : BilinearGen.MddhAdvice p d ℓ κ) (c : G.DLINChallenge κ),
+           f (pairEncode (G.mddhAdviceEnc p hp d ℓ κ ω) (G.dlinEnc κ c)) =
+@@ -61,15 +64,16 @@ family by the shared realisation theorem [Wee20, Section 2.1, p.4]. Realisers ar
+ only on encoded challenges and layout-length coins. No sampler or reduction machine is
+ constructed locally.
+ 
+-**Proof sketch.** Read `MddhPreTargets` and `mddhRealizable_iff`. Instantiate
+-`NUPPT.exists_realizesOn_of_preTarget_id` with `mddhAdviceEnc`, `mddhPre`, and the uniform
+-polynomial advice bound `length_mddhAdviceEnc_le`. Use `RealizesOn.congr` and
+-`dlinToMddh_eq` to identify the named reduction. -/
++**Proof sketch.** Read MddhPreTargets and mddhRealizable_iff. Select its common preprocessing
++map for p,hp,d,ell without an adversary argument. Instantiate
++NUPPT.exists_realizesOn_of_preTarget_id with mddhAdviceEnc, mddhPre, and the uniform
++polynomial advice bound length_mddhAdviceEnc_le. Use RealizesOn.congr and
++dlinToMddh_eq to identify the named reduction for the current consumer adversary. -/
+ theorem mddhRealizable_of_preTarget (G : BilinearGen) (hT : MddhPreTargets G)
+     (p : ℕ → ℕ) (hp : ∀ κ r, (G.inst κ r).order = p κ) (d ℓ : PolyExpr) :
+     G.MDDHRealizable p hp d ℓ :=
+   (G.mddhRealizable_iff p hp d ℓ).2 fun D ω =>
+-    Exists.elim ((mddhPreTargets_iff G).1 hT p hp d ℓ D) fun f hf =>
++    Exists.elim ((mddhPreTargets_iff G).1 hT p hp d ℓ) fun f hf =>
+       Exists.elim
+         (D.exists_realizesOn_of_preTarget_id G.dlinEnc (G.mddhAdviceEnc p hp d ℓ)
+           (G.mddhPre p hp d ℓ) hf.1 hf.2 ω (G.mddhAdviceLen d ℓ)
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Scheme.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Scheme.lean
+index a8b0e3b90..b51d40b0f 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Scheme.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Scheme.lean
+@@ -56,28 +56,32 @@ uniform description generator. Every sampler target uses one complete draw type.
+ structure SchemeTargets : Prop where
+   /-- Uniformly draw the nonidentity public generator after the group description. -/
+   pubGen_eff : SamplesEfficiently
+-    (fun κ (g : GroupDescription (S).G κ) => g.val)
++    (fun κ (g : GroupDescription (S).G κ) =>
++      NUPPT.advInput κ g.val)
+     (fun κ g (r : GeneratorDraw (S).G κ g) => List.ofFn (((S).G.group κ g.val).encG r.val))
+     (fun κ _ (pp : PublicParams (S).G κ) => pp.encode) (publicParamsCore (S).G)
+   /-- Uniformly sample the complete honest setup draw and encode both keys. -/
+   setup_eff : SamplesEfficiently
+-    (fun κ (pp : PublicParams (S).G κ) => pp.encode) (S).encSetupDraw
++    (fun κ (pp : PublicParams (S).G κ) =>
++      NUPPT.advInput κ pp.encode) (S).encSetupDraw
+     (fun κ pp (o : (S).MPK κ pp × (S).MSK κ pp) =>
+       pairEncode (List.ofFn ((S).encMPK κ pp o.1)) (List.ofFn ((S).encMSK κ pp o.2))) (S).setupCore
+   /-- Uniformly sample encryption with pp, the public key, and both inputs supplied. -/
+   enc_eff : SamplesEfficiently
+     (fun κ (π : Σ pp : PublicParams (S).G κ,
+         (S).MPK κ pp × (Fin ((C).pubLen.eval κ) → Bool) × (Fin ((C).privLen.eval κ) → Bool)) =>
+-      pairEncode π.1.encode (pairEncode (List.ofFn ((S).encMPK κ π.1 π.2.1))
+-        (pairEncode (List.ofFn π.2.2.1) (List.ofFn π.2.2.2))))
++      NUPPT.advInput κ
++        (pairEncode π.1.encode (pairEncode (List.ofFn ((S).encMPK κ π.1 π.2.1))
++           (pairEncode (List.ofFn π.2.2.1) (List.ofFn π.2.2.2)))))
+     (fun κ π => (S).encEncDraw κ π.1 π.2.1 π.2.2.1 π.2.2.2)
+     (fun κ π (o : (S).CT κ π.1) => List.ofFn ((S).encCT κ π.1 o))
+     (fun κ π => (S).encCore κ π.1 π.2.1 π.2.2.1 π.2.2.2)
+   /-- Uniformly sample a function key with pp, the master key, and function supplied. -/
+   keyGen_eff : SamplesEfficiently
+     (fun κ (π : Σ pp : PublicParams (S).G κ, (S).MSK κ pp × (Fin ((C).fnLen.eval κ) → Bool)) =>
+-      pairEncode π.1.encode
+-        (pairEncode (List.ofFn ((S).encMSK κ π.1 π.2.1)) (List.ofFn π.2.2)))
++      NUPPT.advInput κ
++        (pairEncode π.1.encode
++           (pairEncode (List.ofFn ((S).encMSK κ π.1 π.2.1)) (List.ofFn π.2.2))))
+     (fun κ π => (S).encKeyDraw κ π.1 π.2.1 π.2.2)
+     (fun κ π (o : (S).SK κ π.1) => List.ofFn ((S).encSK κ π.1 o))
+     (fun κ π => (S).keyCore κ π.1 π.2.1 π.2.2)
+@@ -99,26 +103,30 @@ the record from the conjuncts. -/
+ theorem schemeTargets_iff :
+     SchemeTargets G ℓ n d ↔
+       (SamplesEfficiently
+-        (fun κ (g : GroupDescription (S).G κ) => g.val)
++        (fun κ (g : GroupDescription (S).G κ) =>
++          NUPPT.advInput κ g.val)
+         (fun κ g (r : GeneratorDraw (S).G κ g) => List.ofFn (((S).G.group κ g.val).encG r.val))
+         (fun κ _ (pp : PublicParams (S).G κ) => pp.encode) (publicParamsCore (S).G)) ∧
+       (SamplesEfficiently
+-        (fun κ (pp : PublicParams (S).G κ) => pp.encode) (S).encSetupDraw
++        (fun κ (pp : PublicParams (S).G κ) =>
++          NUPPT.advInput κ pp.encode) (S).encSetupDraw
+         (fun κ pp (o : (S).MPK κ pp × (S).MSK κ pp) =>
+           pairEncode (List.ofFn ((S).encMPK κ pp o.1)) (List.ofFn ((S).encMSK κ pp o.2)))
+             (S).setupCore) ∧
+       (SamplesEfficiently
+         (fun κ (π : Σ pp : PublicParams (S).G κ,
+             (S).MPK κ pp × (Fin ((C).pubLen.eval κ) → Bool) × (Fin ((C).privLen.eval κ) → Bool)) =>
+-          pairEncode π.1.encode (pairEncode (List.ofFn ((S).encMPK κ π.1 π.2.1))
+-            (pairEncode (List.ofFn π.2.2.1) (List.ofFn π.2.2.2))))
++          NUPPT.advInput κ
++            (pairEncode π.1.encode (pairEncode (List.ofFn ((S).encMPK κ π.1 π.2.1))
++               (pairEncode (List.ofFn π.2.2.1) (List.ofFn π.2.2.2)))))
+         (fun κ π => (S).encEncDraw κ π.1 π.2.1 π.2.2.1 π.2.2.2)
+         (fun κ π (o : (S).CT κ π.1) => List.ofFn ((S).encCT κ π.1 o))
+         (fun κ π => (S).encCore κ π.1 π.2.1 π.2.2.1 π.2.2.2)) ∧
+       (SamplesEfficiently
+         (fun κ (π : Σ pp : PublicParams (S).G κ, (S).MSK κ pp × (Fin ((C).fnLen.eval κ) → Bool)) =>
+-          pairEncode π.1.encode
+-            (pairEncode (List.ofFn ((S).encMSK κ π.1 π.2.1)) (List.ofFn π.2.2)))
++          NUPPT.advInput κ
++            (pairEncode π.1.encode
++               (pairEncode (List.ofFn ((S).encMSK κ π.1 π.2.1)) (List.ofFn π.2.2))))
+         (fun κ π => (S).encKeyDraw κ π.1 π.2.1 π.2.2)
+         (fun κ π (o : (S).SK κ π.1) => List.ofFn ((S).encSK κ π.1 o))
+         (fun κ π => (S).keyCore κ π.1 π.2.1 π.2.2)) ∧
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Sim.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Sim.lean
+index c4b555524..4a60b55a9 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Sim.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets/Sim.lean
+@@ -12,16 +12,17 @@ set_option autoImplicit false
+ /-!
+ # Efficiency targets for both concrete PHFE simulators
+ 
+-The six obligations cover both simulator interfaces, with the exact state, permitted
++The six sampler obligations cover both simulator interfaces, with the exact state, permitted
+ information, draws, encodings and deterministic cores of the corresponding raw bundles.
++Four additional encoding-length bounds have concrete uniform polynomial witnesses.
+ 
+ ## Main definitions
+ 
+-* `SimTargets`: three shared sampler targets for each simulator.
++* `SimTargets`: three sampler targets and two encoded-length bounds for each simulator.
+ 
+ ## Main results
+ 
+-* `simTargets_iff`: the six-obligation conjunction reader.
++* `simTargets_iff`: the exact ten-field conjunction reader.
+ 
+ ## References
+ 
+@@ -50,48 +51,66 @@ local notation "SASim" => wee20SASim_raw G ℓ n d (layeredPG_raw ℓ (n.mul n)
+ 
+ /-- Both concrete stateful simulators carry their own three shared sampler obligations
+ [GJLS21, Definition 4.3; Wee20, Section 2.2].
+-Phase B obligation; not proved in this development.
++Sampler-efficiency part: Phase B obligation; not proved in this development.
++The four encoded-length bounds have concrete witnesses.
+ 
+ The committed targets include the full allowed information and its ordered index. They
+ are stated separately: no input-preprocessing or product-sampler closure is assumed. -/
+ structure SimTargets : Prop where
+   /-- The concrete committed simulator's setup draw and core satisfy the shared contract. -/
+   sim_setup_eff : SamplesEfficiently
+-    (fun κ (pp : PublicParams (S).G κ) => pp.encode) (Sim).encSetupDraw
++    (fun κ (pp : PublicParams (S).G κ) =>
++      NUPPT.advInput κ pp.encode) (Sim).encSetupDraw
+     (fun κ pp (o : (S).MPK κ pp × (Sim).St κ pp) =>
+       pairEncode (List.ofFn ((S).encMPK κ pp o.1))
+         (List.ofFn ((Sim).encSt κ pp o.2))) (Sim).setupCore
+   /-- The concrete committed simulator's enc draw and core satisfy the shared contract. -/
+-  sim_enc_eff : SamplesEfficiently (Sim).encInputWord
++  sim_enc_eff : SamplesEfficiently (fun κ π => NUPPT.advInput κ ((Sim).encInputWord κ π))
+     (fun κ π => (Sim).encEncDraw κ π.pp π.state π.omega)
+     (fun κ π (o : (S).CT κ π.pp × (Sim).St κ π.pp) =>
+       pairEncode (List.ofFn ((S).encCT κ π.pp o.1)) (List.ofFn ((Sim).encSt κ π.pp o.2)))
+     (fun κ π => (Sim).encCore κ π.pp π.state π.omega)
+   /-- The concrete committed simulator's key draw and core satisfy the shared contract. -/
+-  sim_key_eff : SamplesEfficiently (Sim).keyInputWord
++  sim_key_eff : SamplesEfficiently (fun κ π => NUPPT.advInput κ ((Sim).keyInputWord κ π))
+     (fun κ π => (Sim).encKeyDraw κ π.pp π.state π.omega π.index)
+     (fun κ π (o : (S).SK κ π.pp × (Sim).St κ π.pp) =>
+       pairEncode (List.ofFn ((S).encSK κ π.pp o.1)) (List.ofFn ((Sim).encSt κ π.pp o.2)))
+     (fun κ π => (Sim).keyCore κ π.pp π.state π.omega π.index)
+   /-- The concrete semi-adaptive simulator's setup draw and core satisfy the shared contract. -/
+   sa_setup_eff : SamplesEfficiently
+-    (fun κ (pp : PublicParams (S).G κ) => pp.encode) (SASim).encSetupDraw
++    (fun κ (pp : PublicParams (S).G κ) =>
++      NUPPT.advInput κ pp.encode) (SASim).encSetupDraw
+     (fun κ pp (o : (S).MPK κ pp × (SASim).St κ pp) =>
+       pairEncode (List.ofFn ((S).encMPK κ pp o.1))
+         (List.ofFn ((SASim).encSt κ pp o.2))) (SASim).setupCore
+   /-- The concrete semi-adaptive simulator's enc draw and core satisfy the shared contract. -/
+-  sa_enc_eff : SamplesEfficiently (SASim).encInputWord
++  sa_enc_eff : SamplesEfficiently (fun κ π => NUPPT.advInput κ ((SASim).encInputWord κ π))
+     (fun κ π => (SASim).encEncDraw κ π.pp π.state π.publicInput)
+     (fun κ π (o : (S).CT κ π.pp × (SASim).St κ π.pp) =>
+       pairEncode (List.ofFn ((S).encCT κ π.pp o.1)) (List.ofFn ((SASim).encSt κ π.pp o.2)))
+     (fun κ π => (SASim).encCore κ π.pp π.state π.publicInput)
+   /-- The concrete semi-adaptive simulator's key draw and core satisfy the shared contract. -/
+-  sa_key_eff : SamplesEfficiently (SASim).keyInputWord
++  sa_key_eff : SamplesEfficiently (fun κ π => NUPPT.advInput κ ((SASim).keyInputWord κ π))
+     (fun κ π => (SASim).encKeyDraw κ π.pp π.state π.publicInput π.function π.value)
+     (fun κ π (o : (S).SK κ π.pp × (SASim).St κ π.pp) =>
+       pairEncode (List.ofFn ((S).encSK κ π.pp o.1)) (List.ofFn ((SASim).encSt κ π.pp o.2)))
+     (fun κ π => (SASim).keyCore κ π.pp π.state π.publicInput π.function π.value)
+ 
++  /-- One polynomial bounds all committed-simulator private-state words. -/
++  sim_state_bounded : ∃ b : PolyExpr, ∀ κ (pp : PublicParams (S).G κ) (st : (Sim).St κ pp),
++    (List.ofFn ((Sim).encSt κ pp st)).length ≤ b.eval κ
++  /-- One polynomial bounds every class-value word for committed simulation. -/
++  sim_value_bounded : ∃ b : PolyExpr, ∀ κ (pp : PublicParams (S).G κ)
++    (v : (phfeClass ℓ n G.wG d).Out κ ((S).cprm κ pp)),
++    ((phfeClass ℓ n G.wG d).encValue κ ((S).cprm κ pp) v).length ≤ b.eval κ
++  /-- One polynomial bounds all semi-adaptive-simulator private-state words. -/
++  sa_state_bounded : ∃ b : PolyExpr, ∀ κ (pp : PublicParams (S).G κ) (st : (SASim).St κ pp),
++    (List.ofFn ((SASim).encSt κ pp st)).length ≤ b.eval κ
++  /-- One polynomial bounds every class-value word for semi-adaptive simulation. -/
++  sa_value_bounded : ∃ b : PolyExpr, ∀ κ (pp : PublicParams (S).G κ)
++    (v : (phfeClass ℓ n G.wG d).Out κ ((S).cprm κ pp)),
++    ((phfeClass ℓ n G.wG d).encValue κ ((S).cprm κ pp) v).length ≤ b.eval κ
++
+ /-- The target is exactly the conjunction of its displayed algorithm obligations. 
+ 
+ **Proof sketch.** Destructure the target record into its fields; in the reverse direction, assemble
+@@ -99,39 +118,54 @@ the record from the conjuncts. -/
+ theorem simTargets_iff :
+     SimTargets G ℓ n d ↔
+       (SamplesEfficiently
+-        (fun κ (pp : PublicParams (S).G κ) => pp.encode) (Sim).encSetupDraw
++        (fun κ (pp : PublicParams (S).G κ) =>
++          NUPPT.advInput κ pp.encode) (Sim).encSetupDraw
+         (fun κ pp (o : (S).MPK κ pp × (Sim).St κ pp) =>
+           pairEncode (List.ofFn ((S).encMPK κ pp o.1))
+             (List.ofFn ((Sim).encSt κ pp o.2))) (Sim).setupCore) ∧
+-      (SamplesEfficiently (Sim).encInputWord
++      (SamplesEfficiently (fun κ π => NUPPT.advInput κ ((Sim).encInputWord κ π))
+         (fun κ π => (Sim).encEncDraw κ π.pp π.state π.omega)
+         (fun κ π (o : (S).CT κ π.pp × (Sim).St κ π.pp) =>
+           pairEncode (List.ofFn ((S).encCT κ π.pp o.1)) (List.ofFn ((Sim).encSt κ π.pp o.2)))
+         (fun κ π => (Sim).encCore κ π.pp π.state π.omega)) ∧
+-      (SamplesEfficiently (Sim).keyInputWord
++      (SamplesEfficiently (fun κ π => NUPPT.advInput κ ((Sim).keyInputWord κ π))
+         (fun κ π => (Sim).encKeyDraw κ π.pp π.state π.omega π.index)
+         (fun κ π (o : (S).SK κ π.pp × (Sim).St κ π.pp) =>
+           pairEncode (List.ofFn ((S).encSK κ π.pp o.1)) (List.ofFn ((Sim).encSt κ π.pp o.2)))
+         (fun κ π => (Sim).keyCore κ π.pp π.state π.omega π.index)) ∧
+       (SamplesEfficiently
+-        (fun κ (pp : PublicParams (S).G κ) => pp.encode) (SASim).encSetupDraw
++        (fun κ (pp : PublicParams (S).G κ) =>
++          NUPPT.advInput κ pp.encode) (SASim).encSetupDraw
+         (fun κ pp (o : (S).MPK κ pp × (SASim).St κ pp) =>
+           pairEncode (List.ofFn ((S).encMPK κ pp o.1))
+             (List.ofFn ((SASim).encSt κ pp o.2))) (SASim).setupCore)
+             ∧
+-      (SamplesEfficiently (SASim).encInputWord
++      (SamplesEfficiently (fun κ π => NUPPT.advInput κ ((SASim).encInputWord κ π))
+         (fun κ π => (SASim).encEncDraw κ π.pp π.state π.publicInput)
+         (fun κ π (o : (S).CT κ π.pp × (SASim).St κ π.pp) =>
+           pairEncode (List.ofFn ((S).encCT κ π.pp o.1)) (List.ofFn ((SASim).encSt κ π.pp o.2)))
+         (fun κ π => (SASim).encCore κ π.pp π.state π.publicInput)) ∧
+-      (SamplesEfficiently (SASim).keyInputWord
++      (SamplesEfficiently (fun κ π => NUPPT.advInput κ ((SASim).keyInputWord κ π))
+         (fun κ π => (SASim).encKeyDraw κ π.pp π.state π.publicInput π.function π.value)
+         (fun κ π (o : (S).SK κ π.pp × (SASim).St κ π.pp) =>
+           pairEncode (List.ofFn ((S).encSK κ π.pp o.1)) (List.ofFn ((SASim).encSt κ π.pp o.2)))
+-        (fun κ π => (SASim).keyCore κ π.pp π.state π.publicInput π.function π.value)) :=
++        (fun κ π => (SASim).keyCore κ π.pp π.state π.publicInput π.function π.value)) ∧
++      (∃ b : PolyExpr, ∀ κ (pp : PublicParams (S).G κ) (st : (Sim).St κ pp),
++        (List.ofFn ((Sim).encSt κ pp st)).length ≤ b.eval κ) ∧
++      (∃ b : PolyExpr, ∀ κ (pp : PublicParams (S).G κ)
++        (v : (phfeClass ℓ n G.wG d).Out κ ((S).cprm κ pp)),
++        ((phfeClass ℓ n G.wG d).encValue κ ((S).cprm κ pp) v).length ≤ b.eval κ) ∧
++      (∃ b : PolyExpr, ∀ κ (pp : PublicParams (S).G κ) (st : (SASim).St κ pp),
++        (List.ofFn ((SASim).encSt κ pp st)).length ≤ b.eval κ) ∧
++      (∃ b : PolyExpr, ∀ κ (pp : PublicParams (S).G κ)
++        (v : (phfeClass ℓ n G.wG d).Out κ ((S).cprm κ pp)),
++        ((phfeClass ℓ n G.wG d).encValue κ ((S).cprm κ pp) v).length ≤ b.eval κ) :=
+   ⟨fun h => ⟨h.sim_setup_eff, h.sim_enc_eff, h.sim_key_eff,
+-      h.sa_setup_eff, h.sa_enc_eff, h.sa_key_eff⟩,
+-    fun h => ⟨h.1, h.2.1, h.2.2.1, h.2.2.2.1, h.2.2.2.2.1, h.2.2.2.2.2⟩⟩
++      h.sa_setup_eff, h.sa_enc_eff, h.sa_key_eff, h.sim_state_bounded,
++      h.sim_value_bounded, h.sa_state_bounded, h.sa_value_bounded⟩,
++    fun h => ⟨h.1, h.2.1, h.2.2.1, h.2.2.2.1, h.2.2.2.2.1,
++      h.2.2.2.2.2.1, h.2.2.2.2.2.2.1, h.2.2.2.2.2.2.2.1,
++      h.2.2.2.2.2.2.2.2.1, h.2.2.2.2.2.2.2.2.2⟩⟩
+ 
+ end
+ 
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/WireDraws.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/WireDraws.lean
+index c52406b56..237fc8f0d 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/WireDraws.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/WireDraws.lean
+@@ -2,6 +2,7 @@
+ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
++import TCSlib.Cryptography.Encryption.PrivateKey.EnsembleSecurity
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Wire
+ 
+ set_option maxHeartbeats 0
+@@ -62,135 +63,136 @@ theorem scalarMatrix_eq {m n : ℕ} (A : Matrix (Fin m) (Fin n) (ZMod pp.group.o
+ 
+ /-- Encode all four scalar blocks of a linear setup draw. -/
+ def linearSetupDraw {ℓ z : PolyExpr} (ω : Linear.SetupDraw G ℓ z κ pp) : List Bool :=
+-  [scalarMatrix pp ω.1, scalarMatrix pp ω.2.1,
++  PrivateKeyScheme.encodeList [scalarMatrix pp ω.1, scalarMatrix pp ω.2.1,
+     scalarMatrix pp (fun i j => ω.2.2.1 i (finProdFinEquiv.symm j)),
+-    scalarMatrix pp ω.2.2.2].foldr pairEncode []
++    scalarMatrix pp ω.2.2.2]
+ 
+ /-- The word retains exactly the displayed complete coordinate blocks. -/
+ theorem linearSetupDraw_eq {ℓ z : PolyExpr} (ω : Linear.SetupDraw G ℓ z κ pp) :
+     linearSetupDraw pp ω =
+-      [scalarMatrix pp ω.1, scalarMatrix pp ω.2.1,
++      PrivateKeyScheme.encodeList [scalarMatrix pp ω.1, scalarMatrix pp ω.2.1,
+         scalarMatrix pp (fun i j => ω.2.2.1 i (finProdFinEquiv.symm j)),
+-        scalarMatrix pp ω.2.2.2].foldr pairEncode [] := rfl
++        scalarMatrix pp ω.2.2.2] := rfl
+ 
+ /-- Encode the outer masks and the complete linear setup draw. -/
+ def quadraticSetupDraw {ℓ n1 n2 : PolyExpr}
+     (ω : Quadratic.SetupDraw G ℓ n1 n2 κ pp) : List Bool :=
+-  [scalarMatrix pp ω.1, scalarMatrix pp ω.2.1,
+-    linearSetupDraw pp ω.2.2].foldr pairEncode []
++  PrivateKeyScheme.encodeList [scalarMatrix pp ω.1, scalarMatrix pp ω.2.1,
++    linearSetupDraw pp ω.2.2]
+ 
+ /-- The word retains exactly the displayed complete coordinate blocks. -/
+ theorem quadraticSetupDraw_eq {ℓ n1 n2 : PolyExpr}
+     (ω : Quadratic.SetupDraw G ℓ n1 n2 κ pp) :
+     quadraticSetupDraw pp ω =
+-      [scalarMatrix pp ω.1, scalarMatrix pp ω.2.1,
+-        linearSetupDraw pp ω.2.2].foldr pairEncode [] := rfl
++      PrivateKeyScheme.encodeList [scalarMatrix pp ω.1, scalarMatrix pp ω.2.1,
++        linearSetupDraw pp ω.2.2] := rfl
+ 
+ /-- Encode all six scalar coordinates of an outer encryption draw. -/
+ def quadraticEncDraw (ω : Quadratic.EncDraw G κ pp) : List Bool :=
+-  [scalarVector pp ω.1, scalarVector pp ω.2.1,
+-    scalarVector pp ω.2.2].foldr pairEncode []
++  PrivateKeyScheme.encodeList [scalarVector pp ω.1, scalarVector pp ω.2.1,
++    scalarVector pp ω.2.2]
+ 
+ /-- The word retains exactly the displayed complete coordinate blocks. -/
+ theorem quadraticEncDraw_eq (ω : Quadratic.EncDraw G κ pp) :
+     quadraticEncDraw pp ω =
+-      [scalarVector pp ω.1, scalarVector pp ω.2.1,
+-        scalarVector pp ω.2.2].foldr pairEncode [] := rfl
++      PrivateKeyScheme.encodeList [scalarVector pp ω.1, scalarVector pp ω.2.1,
++        scalarVector pp ω.2.2] := rfl
+ 
+ /-- Encode the complete function-dependent T and R draw in its supplied coordinates. -/
+ def linearKeyDraw {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+     (PG : PartialGarbling.Raw ℓ n' Fn) {f : Fn κ pp.orderParam}
+     (ω : Linear.KeyDraw G PG κ pp f) : List Bool :=
+-  [scalarMatrix pp (fun i j => ω.1 i ((PG.rowCoord κ pp.orderParam f).symm j)),
+-    scalarMatrix pp (fun i j => ω.2 i ((PG.mCoord κ pp.orderParam f).symm j))].foldr
+-    pairEncode []
++  PrivateKeyScheme.encodeList
++    [scalarMatrix pp (fun i j => ω.1 i ((PG.rowCoord κ pp.orderParam f).symm j)),
++    scalarMatrix pp (fun i j => ω.2 i ((PG.mCoord κ pp.orderParam f).symm j))]
+ 
+ /-- The word retains exactly the displayed complete coordinate blocks. -/
+ theorem linearKeyDraw_eq {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+     (PG : PartialGarbling.Raw ℓ n' Fn) {f : Fn κ pp.orderParam}
+     (ω : Linear.KeyDraw G PG κ pp f) :
+     linearKeyDraw pp PG ω =
+-      [scalarMatrix pp (fun i j => ω.1 i ((PG.rowCoord κ pp.orderParam f).symm j)),
+-        scalarMatrix pp (fun i j => ω.2 i ((PG.mCoord κ pp.orderParam f).symm j))].foldr
+-        pairEncode [] := rfl
++      PrivateKeyScheme.encodeList
++        [scalarMatrix pp (fun i j => ω.1 i ((PG.rowCoord κ pp.orderParam f).symm j)),
++        scalarMatrix pp (fun i j => ω.2 i ((PG.mCoord κ pp.orderParam f).symm j))] := rfl
+ 
+ /-- Encode all seven independent scalar blocks of a linear simulator setup draw. -/
+ def linearSimSetupDraw {ℓ z : PolyExpr}
+     (ω : Linear.SimSetupDraw G ℓ z κ pp) : List Bool :=
+-  [scalarMatrix pp ω.1, scalarVector pp ω.2.1, scalarMatrix pp ω.2.2.1,
++  PrivateKeyScheme.encodeList [scalarMatrix pp ω.1, scalarVector pp ω.2.1, scalarMatrix pp ω.2.2.1,
+     scalarMatrix pp (fun i j => ω.2.2.2.1 i (finProdFinEquiv.symm j)),
+     scalarMatrix pp ω.2.2.2.2.1, scalarVector pp ω.2.2.2.2.2.1,
+-    scalarVector pp ω.2.2.2.2.2.2].foldr pairEncode []
++    scalarVector pp ω.2.2.2.2.2.2]
+ 
+ /-- The word retains exactly the displayed complete coordinate blocks. -/
+ theorem linearSimSetupDraw_eq {ℓ z : PolyExpr}
+     (ω : Linear.SimSetupDraw G ℓ z κ pp) :
+     linearSimSetupDraw pp ω =
+-      [scalarMatrix pp ω.1, scalarVector pp ω.2.1, scalarMatrix pp ω.2.2.1,
++      PrivateKeyScheme.encodeList
++        [scalarMatrix pp ω.1, scalarVector pp ω.2.1, scalarMatrix pp ω.2.2.1,
+         scalarMatrix pp (fun i j => ω.2.2.2.1 i (finProdFinEquiv.symm j)),
+         scalarMatrix pp ω.2.2.2.2.1, scalarVector pp ω.2.2.2.2.2.1,
+-        scalarVector pp ω.2.2.2.2.2.2].foldr pairEncode [] := rfl
++        scalarVector pp ω.2.2.2.2.2.2] := rfl
+ 
+ /-- Encode both outer masks and the complete linear simulator setup draw. -/
+ def quadraticSimSetupDraw {ℓ n1 n2 : PolyExpr}
+     (ω : Quadratic.SimSetupDraw G ℓ n1 n2 κ pp) : List Bool :=
+-  [scalarMatrix pp ω.1, scalarMatrix pp ω.2.1,
+-    linearSimSetupDraw pp ω.2.2].foldr pairEncode []
++  PrivateKeyScheme.encodeList [scalarMatrix pp ω.1, scalarMatrix pp ω.2.1,
++    linearSimSetupDraw pp ω.2.2]
+ 
+ /-- The word retains exactly the displayed complete coordinate blocks. -/
+ theorem quadraticSimSetupDraw_eq {ℓ n1 n2 : PolyExpr}
+     (ω : Quadratic.SimSetupDraw G ℓ n1 n2 κ pp) :
+     quadraticSimSetupDraw pp ω =
+-      [scalarMatrix pp ω.1, scalarMatrix pp ω.2.1,
+-        linearSimSetupDraw pp ω.2.2].foldr pairEncode [] := rfl
++      PrivateKeyScheme.encodeList [scalarMatrix pp ω.1, scalarMatrix pp ω.2.1,
++        linearSimSetupDraw pp ω.2.2] := rfl
+ 
+ /-- Encode all four blocks of a linear key-simulation draw. -/
+ def linearSimKeyDraw {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+     (PG : PartialGarbling.Raw ℓ n' Fn) {f : Fn κ pp.orderParam}
+     (ω : Linear.SimKeyDraw G PG κ pp f) : List Bool :=
+-  [scalarMatrix pp (fun i j => ω.1 i ((PG.rowCoord κ pp.orderParam f).symm j)),
++  PrivateKeyScheme.encodeList
++    [scalarMatrix pp (fun i j => ω.1 i ((PG.rowCoord κ pp.orderParam f).symm j)),
+     scalarVector pp (fun j => ω.2.1 ((PG.l1ColCoord κ pp.orderParam f).symm j)),
+     scalarMatrix pp (fun i j => ω.2.2.1 i ((PG.mCoord κ pp.orderParam f).symm j)),
+-    scalarVector pp (fun j => ω.2.2.2 ((PG.rowCoord κ pp.orderParam f).symm j))].foldr
+-    pairEncode []
++    scalarVector pp (fun j => ω.2.2.2 ((PG.rowCoord κ pp.orderParam f).symm j))]
+ 
+ /-- The word retains exactly the displayed complete coordinate blocks. -/
+ theorem linearSimKeyDraw_eq {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
+     (PG : PartialGarbling.Raw ℓ n' Fn) {f : Fn κ pp.orderParam}
+     (ω : Linear.SimKeyDraw G PG κ pp f) :
+     linearSimKeyDraw pp PG ω =
+-      [scalarMatrix pp (fun i j => ω.1 i ((PG.rowCoord κ pp.orderParam f).symm j)),
++      PrivateKeyScheme.encodeList
++        [scalarMatrix pp (fun i j => ω.1 i ((PG.rowCoord κ pp.orderParam f).symm j)),
+         scalarVector pp (fun j => ω.2.1 ((PG.l1ColCoord κ pp.orderParam f).symm j)),
+         scalarMatrix pp (fun i j => ω.2.2.1 i ((PG.mCoord κ pp.orderParam f).symm j)),
+-        scalarVector pp (fun j => ω.2.2.2 ((PG.rowCoord κ pp.orderParam f).symm j))].foldr
+-        pairEncode [] := rfl
++        scalarVector pp (fun j => ω.2.2.2 ((PG.rowCoord κ pp.orderParam f).symm j))] := rfl
+ 
+ /-- Encode every scalar field of the linear simulator state, including the total inverse. -/
+ def linearSimState {ℓ z : PolyExpr} (st : Linear.SimState G ℓ z κ pp) : List Bool :=
+-  [scalarMatrix pp st.A, scalarMatrix pp st.W,
++  PrivateKeyScheme.encodeList [scalarMatrix pp st.A, scalarMatrix pp st.W,
+     scalarMatrix pp (fun i j => st.U i (finProdFinEquiv.symm j)), scalarMatrix pp st.V,
+     scalarVector pp st.c, scalarVector pp st.w, scalarVector pp st.v,
+-    scalarMatrix pp st.basisInv].foldr pairEncode []
++    scalarMatrix pp st.basisInv]
+ 
+ /-- The word retains exactly the displayed complete coordinate blocks. -/
+ theorem linearSimState_eq {ℓ z : PolyExpr} (st : Linear.SimState G ℓ z κ pp) :
+     linearSimState pp st =
+-      [scalarMatrix pp st.A, scalarMatrix pp st.W,
++      PrivateKeyScheme.encodeList [scalarMatrix pp st.A, scalarMatrix pp st.W,
+         scalarMatrix pp (fun i j => st.U i (finProdFinEquiv.symm j)), scalarMatrix pp st.V,
+         scalarVector pp st.c, scalarVector pp st.w, scalarVector pp st.v,
+-        scalarMatrix pp st.basisInv].foldr pairEncode [] := rfl
++        scalarMatrix pp st.basisInv] := rfl
+ 
+ /-- Encode the outer matrix, complete linear state and both retained scalar masks. -/
+ def quadraticSimState {ℓ n1 n2 : PolyExpr}
+     (st : Quadratic.SimState G ℓ n1 n2 κ pp) : List Bool :=
+-  [groupMatrix pp st.matrix, linearSimState pp st.linear,
+-    scalarVector pp st.y1, scalarVector pp st.y2].foldr pairEncode []
++  PrivateKeyScheme.encodeList [groupMatrix pp st.matrix, linearSimState pp st.linear,
++    scalarVector pp st.y1, scalarVector pp st.y2]
+ 
+ /-- The word retains exactly the displayed complete coordinate blocks. -/
+ theorem quadraticSimState_eq {ℓ n1 n2 : PolyExpr}
+     (st : Quadratic.SimState G ℓ n1 n2 κ pp) :
+     quadraticSimState pp st =
+-      [groupMatrix pp st.matrix, linearSimState pp st.linear,
+-        scalarVector pp st.y1, scalarVector pp st.y2].foldr pairEncode [] := rfl
++      PrivateKeyScheme.encodeList [groupMatrix pp st.matrix, linearSimState pp st.linear,
++        scalarVector pp st.y1, scalarVector pp st.y2] := rfl
+ 
+ end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Wire
+diff --git a/TCSlib/Cryptography/Pairing.lean b/TCSlib/Cryptography/Pairing.lean
+index 4a27d862d..84ed8bb5f 100644
+--- a/TCSlib/Cryptography/Pairing.lean
++++ b/TCSlib/Cryptography/Pairing.lean
+@@ -41,11 +41,6 @@ set_option autoImplicit false
+   Definitions 4.1-4.3 and 4.6, Section 9 and Theorems 10.3-10.4.
+ * [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
+   TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Sections 2-4 and Appendix B.
+-* [AGW20] M. Abdalla, J. Gong, H. Wee, *Functional Encryption for Attribute-Weighted
+-  Sums from k-Lin*, CRYPTO 2020; full version, Cryptology ePrint Archive 2020/762,
+-  Lemma 2 and Appendix A, (28)-(32).
+-* [IW14] Y. Ishai, H. Wee, *Partial Garbling Schemes and Their Applications*, ICALP 2014;
+-  full version, Cryptology ePrint Archive 2014/995, Definition 1 and Theorem 3.
+ * [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
+   Assumptions*, J. ACM 73(1), Article 1, 2026, Section 1.4 and Theorem 5.1.
+ -/

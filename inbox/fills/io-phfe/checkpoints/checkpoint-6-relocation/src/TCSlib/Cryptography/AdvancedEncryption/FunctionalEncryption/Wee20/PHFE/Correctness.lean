@@ -1,0 +1,122 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Raw
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticCorrect
+import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.Layered
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Perfect correctness of the raw PHFE wrapper
+
+Correctness holds for every raw garbling of the prescribed polynomial-vector semantics.
+It includes every public parameter, every wire description and input, and every honest
+finite draw. Consequently the exact honest experiment has zero correctness error.
+
+## Main definitions
+
+This module introduces no additional algorithm or efficiency target.
+
+## Main results
+
+* `Wee20.PHFE.class_eval_eq`: decoded class evaluation agrees with the quadratic value.
+* `Wee20.wee20PHFE_raw_correct`: perfect correctness on all honest draws.
+* `Wee20.wee20PHFE_raw_correctExcept_zero`: correctness in GJLS21's bounded-error syntax.
+* `Wee20.PHFE.layeredPG_sound`: the layered instance has the prescribed tensor semantics.
+
+## References
+
+* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
+  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
+  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
+  revision of 3 January 2025, Definition 4.2 and Section 9.
+* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
+  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Section 3.1, (4)-(5).
+-/
+
+namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20
+
+open Complexity TCSlib.Cryptography.Pairing
+
+/-- The allowed class value is the quadratic scheme's scalar value on the duplicated
+private input [GJLS21, Section 9; Wee20, Section 3.1].
+
+**Proof sketch.** Read the published class evaluation and parameter/value codec equations.
+Transport the three input widths through the supplied equality readers. Substitute the
+supplied garbling's semantic agreement and use the diagonal class embedding identity. -/
+theorem PHFE.class_eval_eq (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+    (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) (hPG : PHFE.PGSound PG)
+    (κ : ℕ) (pp : PublicParams G κ)
+    (f : Fin ((phfeClass ℓ n G.wG d).fnLen.eval κ) → Bool)
+    (x : Fin ((phfeClass ℓ n G.wG d).pubLen.eval κ) → Bool)
+    (y : Fin ((phfeClass ℓ n G.wG d).privLen.eval κ) → Bool) :
+    PHFE.valueEquiv G ℓ n d κ pp
+        ((phfeClass ℓ n G.wG d).eval κ (PHFE.classParam G ℓ n d κ pp) f x y) =
+      Quadratic.value G n n PG κ pp (PHFE.decodeFunction G ℓ n d κ pp f)
+        (PHFE.decodePublic G ℓ n d κ pp x)
+        (PHFE.decodePrivate G ℓ n d κ pp y) (PHFE.decodePrivate G ℓ n d κ pp y) := by
+  rw [Quadratic.value_eq, (PHFE.pgSound_iff PG).mp hPG]
+  simp only [PHFE.valueEquiv_eq, phfeClassValueEquiv_eq, PHFE.classParam_eq,
+    phfeClassParamEquiv_eq, Equiv.refl_symm, Equiv.refl_apply,
+    phfeClass_eval, phfeEval_eq, quadEval_eq, PHFE.decodeFunction_eq,
+    PHFE.decodePublic_eq, PHFE.decodePrivate_eq, finCongr_refl,
+    Equiv.coe_refl, Function.comp_id]
+  rfl
+
+/-- The raw PHFE scheme is perfectly correct for every honest draw, in the target-group
+exponent [GJLS21, Definition 4.2; Wee20, Section 3.1, (4)-(5)].
+
+**Proof sketch.** Read the raw projection equations and honest experiment. Apply the typed
+quadratic correctness theorem to the decoded inputs and coefficient tensor. The class
+adapter identity identifies its scalar value with the generic class evaluation; the exact
+pushforward laws give AllOutputs of that result. -/
+theorem wee20PHFE_raw_correct (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+    (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) (hPG : PHFE.PGSound PG) :
+    (wee20PHFE_raw G ℓ n d PG).Correct := by
+  have hEmbed : (wee20PHFE_raw G ℓ n d PG).embed = PHFE.embedValue G ℓ n d :=
+    wee20PHFE_raw_embed G ℓ n d PG
+  refine ((wee20PHFE_raw G ℓ n d PG).correct_iff).2 ?_
+  intro κ f x y
+  rw [FEScheme.Raw.honestRun_eq]
+  simp only [FEScheme.Raw.setup_eq, FEScheme.Raw.enc_eq, FEScheme.Raw.keyGen_eq,
+    Games.OracleComp.map_eq_bind, Games.OracleComp.bind_assoc,
+    Games.OracleComp.pure_bind]
+  refine Games.OracleComp.AllOutputs.bind (Games.OracleComp.allOutputs_true _) ?_
+  intro pp _
+  refine Games.OracleComp.AllOutputs.bind (Games.OracleComp.allOutputs_true _) ?_
+  intro a _
+  refine Games.OracleComp.AllOutputs.bind (Games.OracleComp.allOutputs_true _) ?_
+  intro s _
+  refine Games.OracleComp.AllOutputs.bind (Games.OracleComp.allOutputs_true _) ?_
+  intro t _
+  apply Games.OracleComp.allOutputs_pure.mpr
+  simp only [wee20PHFE_raw_dec, wee20PHFE_raw_keyCore, wee20PHFE_raw_encCore,
+    wee20PHFE_raw_setupCore, wee20PHFE_raw_cprm, hEmbed,
+    PHFE.keyCore_eq, PHFE.encCore_eq, PHFE.setupCore_eq, PHFE.dec_eq,
+    PHFE.embedValue_eq, PHFE.class_eval_eq G ℓ n d PG hPG]
+  exact congrArg some (Quadratic.quadratic_dec_eq G n n PG κ pp
+    (PHFE.decodeFunction G ℓ n d κ pp f) (PHFE.decodePublic G ℓ n d κ pp x)
+    (PHFE.decodePrivate G ℓ n d κ pp y) (PHFE.decodePrivate G ℓ n d κ pp y) a s t)
+
+/-- Perfect PHFE correctness implies zero error in GJLS21's bounded-error syntax
+[GJLS21, Definition 4.2].
+
+**Proof sketch.** Apply the shared perfect-correctness-to-zero-error implication to the raw
+correctness theorem. No probabilistic approximation is introduced. -/
+theorem wee20PHFE_raw_correctExcept_zero (G : BilinearGen) (ℓ n : PolyExpr) (d : ℕ)
+    (PG : PartialGarbling.Raw ℓ (n.mul n) (PHFE.TensorFn ℓ n d)) (hPG : PHFE.PGSound PG) :
+    (wee20PHFE_raw G ℓ n d PG).CorrectExcept (fun _ => 0) := by
+  exact FEScheme.Raw.Correct.correctExcept_zero (wee20PHFE_raw G ℓ n d PG)
+    (wee20PHFE_raw_correct G ℓ n d PG hPG)
+
+/-- The layered raw garbling evaluates the coefficient tensor it represents.
+This is the semantic reader needed to instantiate raw PHFE correctness. -/
+theorem PHFE.layeredPG_sound (ℓ n : PolyExpr) (d : ℕ) :
+    PHFE.PGSound (layeredPG_raw ℓ (n.mul n) d) :=
+  fun κ p f x => congrFun (layeredPG_raw_eval ℓ (n.mul n) d κ p f) x
+
+end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20

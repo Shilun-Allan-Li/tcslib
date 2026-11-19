@@ -1,0 +1,210 @@
+From 70b85f9ba83f27393d98fa5bf88505aea3d22a8d Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 04:31:23 -0800
+Subject: [PATCH 25/37] io-phfe: export each security and interface module
+ through its facade
+
+---
+ .../FunctionalEncryption/SemiAdaptive.lean    |  4 ++
+ .../FunctionalEncryption/Simulation.lean      |  2 +
+ .../FunctionalEncryption/Wee20.lean           |  9 ++++
+ .../Wee20/LinearSecurity.lean                 | 47 +++++++++++++++++++
+ .../FunctionalEncryption/Wee20/PHFE.lean      | 11 +++++
+ .../Wee20/QuadraticSecurity.lean              | 47 +++++++++++++++++++
+ .../FunctionalEncryption/Wee20/Targets.lean   |  5 ++
+ 7 files changed, 125 insertions(+)
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity.lean
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive.lean
+index 29b0f0f54..54e16b240 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/SemiAdaptive.lean
+@@ -3,6 +3,10 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.FromTwoStage
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.Data
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.Games
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.Security
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.SemiAdaptive.Simulator
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation.lean
+index dc50950aa..3b17190bc 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation.lean
+@@ -3,6 +3,8 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Simulation.Security
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Simulation.Games
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Simulation.TwoStage
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20.lean
+index f78a41f6d..f3cbdd6d5 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20.lean
+@@ -5,6 +5,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Compose
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Slack
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearCorrect
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSimulator
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticCorrect
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSimulator
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Wire
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.WireDraws
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity.lean
+new file mode 100644
+index 000000000..6ecbb9d20
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSecurity.lean
+@@ -0,0 +1,47 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Data
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Endpoint
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Fresh
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Games
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Keys
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Reductions
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Slack
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSecurity.Theorems
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Semi-adaptive security of the linear building block
++
++## Contents
++
++* `LinearSecurity.Data`: typed queries, adversaries and public game data.
++* `LinearSecurity.Endpoint`: fresh-to-padded endpoint law comparisons.
++* `LinearSecurity.Fresh`: exact fresh-randomness endpoint experiments.
++* `LinearSecurity.Games`: explicit hybrid experiments and protocol handlers.
++* `LinearSecurity.Keys`: source-group formulas for the hybrid keys.
++* `LinearSecurity.Reductions`: deterministic reductions with explicit advice.
++* `LinearSecurity.Slack`: rank failure bounds and asymptotic slack.
++* `LinearSecurity.Theorems`: explicit advantage inequalities and corollaries.
++
++## References
++
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
++  Definitions 4.1-4.3 and 4.6, Section 9 and Theorems 10.3-10.4.
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Sections 2-4 and Appendix B.
++* [AGW20] M. Abdalla, J. Gong, H. Wee, *Functional Encryption for Attribute-Weighted
++  Sums from k-Lin*, CRYPTO 2020; full version, Cryptology ePrint Archive 2020/762,
++  Lemma 2 and Appendix A, (28)-(32).
++* [IW14] Y. Ishai, H. Wee, *Partial Garbling Schemes and Their Applications*, ICALP 2014;
++  full version, Cryptology ePrint Archive 2014/995, Definition 1 and Theorem 3.
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
++  Assumptions*, J. ACM 73(1), Article 1, 2026, Section 1.4 and Theorem 5.1.
++-/
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE.lean
+index c7a856ee1..f805e4608 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/PHFE.lean
+@@ -3,6 +3,17 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Headlines
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Adapter
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.CommittedSimulator
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Core
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Correctness
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Data
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Embedding
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Encodings
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Raw
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Security
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Simulator
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.PHFE.Widths
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity.lean
+new file mode 100644
+index 000000000..209b6cc8f
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSecurity.lean
+@@ -0,0 +1,47 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Advice
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Compose
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Data
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Derived
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Fresh
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Games
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Reduction
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.QuadraticSecurity.Theorems
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Semi-adaptive security of the quadratic construction
++
++## Contents
++
++* `QuadraticSecurity.Advice`: finite scalar tape layouts and encodings.
++* `QuadraticSecurity.Compose`: composition of the explicit DLIN advantage bounds.
++* `QuadraticSecurity.Data`: typed queries, adversaries and public game data.
++* `QuadraticSecurity.Derived`: the derived adaptive building-block adversary.
++* `QuadraticSecurity.Fresh`: exact fresh-randomness endpoint experiments.
++* `QuadraticSecurity.Games`: explicit hybrid experiments and protocol handlers.
++* `QuadraticSecurity.Reduction`: deterministic reductions with explicit advice.
++* `QuadraticSecurity.Theorems`: explicit advantage inequalities and corollaries.
++
++## References
++
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
++  Definitions 4.1-4.3 and 4.6, Section 9 and Theorems 10.3-10.4.
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, Sections 2-4 and Appendix B.
++* [AGW20] M. Abdalla, J. Gong, H. Wee, *Functional Encryption for Attribute-Weighted
++  Sums from k-Lin*, CRYPTO 2020; full version, Cryptology ePrint Archive 2020/762,
++  Lemma 2 and Appendix A, (28)-(32).
++* [IW14] Y. Ishai, H. Wee, *Partial Garbling Schemes and Their Applications*, ICALP 2014;
++  full version, Cryptology ePrint Archive 2014/995, Definition 1 and Theorem 3.
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from Well-Founded
++  Assumptions*, J. ACM 73(1), Article 1, 2026, Section 1.4 and Theorem 5.1.
++-/
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets.lean
+index f497ad879..c7d92076b 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Targets.lean
+@@ -3,6 +3,11 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.Assembly
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.Garbling
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.LinearEfficiency
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.MatrixDH
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.Scheme
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Targets.Sim
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false

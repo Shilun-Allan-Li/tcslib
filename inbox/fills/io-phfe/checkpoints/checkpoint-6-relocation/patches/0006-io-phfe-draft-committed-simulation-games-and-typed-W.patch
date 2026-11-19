@@ -1,0 +1,2247 @@
+From 4a0ba86726ae53578d82457aac19ed36d8759f34 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 18 Nov 2026 02:40:09 -0800
+Subject: [PATCH 06/37] io-phfe: draft committed simulation games and typed
+ Wee20 algorithms
+
+---
+ .../FunctionalEncryption.lean                 |   2 +
+ .../Defs/Correctness.lean                     |  16 +-
+ .../FunctionalEncryption/Defs/Simulator.lean  |  12 +-
+ .../Simulation/Games.lean                     | 142 +++++++
+ .../Simulation/Security.lean                  |  92 ++++
+ .../Simulation/TwoStage.lean                  | 103 +++++
+ .../FunctionalEncryption/Wee20/Linear.lean    | 368 ++++++++++++++++
+ .../Wee20/LinearCorrect.lean                  | 162 +++++++
+ .../Wee20/LinearSimulator.lean                | 384 +++++++++++++++++
+ .../FunctionalEncryption/Wee20/Quadratic.lean | 398 ++++++++++++++++++
+ .../Wee20/QuadraticCorrect.lean               | 142 +++++++
+ .../Wee20/QuadraticSimulator.lean             | 220 ++++++++++
+ .../Pairing/MatrixDH/Parameters.lean          |   6 +-
+ 13 files changed, 2030 insertions(+), 17 deletions(-)
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Games.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Security.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/TwoStage.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean
+ create mode 100644 TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSimulator.lean
+
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption.lean
+index ccb1fb562..c712ca300 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption.lean
+@@ -7,6 +7,8 @@ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Run
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Classes
+ import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling
+ 
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Simulation.Security
++
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Correctness.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Correctness.lean
+index 372f5bbd1..9f0199e78 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Correctness.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Correctness.lean
+@@ -52,11 +52,11 @@ theorem pubGen_eq (κ : ℕ) : S.pubGen κ = publicParamsGen S.G κ := rfl
+ [GJLS21, Definition 4.1]. -/
+ noncomputable def setup (κ : ℕ) (pp : PublicParams S.G κ) :
+     ProbComp (S.MPK κ pp × S.MSK κ pp) :=
+-  (ProbComp.sample (S.SetupDraw κ pp)).map (S.setupCore κ pp)
++  S.setupCore κ pp <$> ProbComp.sample (S.SetupDraw κ pp)
+ 
+ /-- Setup is the pushforward of its uniform draw by its deterministic core. -/
+ theorem setup_eq (κ : ℕ) (pp : PublicParams S.G κ) :
+-    S.setup κ pp = (ProbComp.sample (S.SetupDraw κ pp)).map (S.setupCore κ pp) := rfl
++    S.setup κ pp = S.setupCore κ pp <$> ProbComp.sample (S.SetupDraw κ pp) := rfl
+ 
+ /-- Encryption takes the public key and both input parts, then applies its core to one
+ uniform complete draw [GJLS21, Definition 4.1]. The public part is returned separately
+@@ -64,25 +64,25 @@ to the adversary and decryption algorithm. -/
+ noncomputable def enc (κ : ℕ) (pp : PublicParams S.G κ) (pk : S.MPK κ pp)
+     (x : Fin (C.pubLen.eval κ) → Bool) (y : Fin (C.privLen.eval κ) → Bool) :
+     ProbComp (S.CT κ pp) :=
+-  (ProbComp.sample (S.EncDraw κ pp pk x y)).map (S.encCore κ pp pk x y)
++  S.encCore κ pp pk x y <$> ProbComp.sample (S.EncDraw κ pp pk x y)
+ 
+ /-- Encryption is the pushforward of its uniform draw by its deterministic core. -/
+ theorem enc_eq (κ : ℕ) (pp : PublicParams S.G κ) (pk : S.MPK κ pp)
+     (x : Fin (C.pubLen.eval κ) → Bool) (y : Fin (C.privLen.eval κ) → Bool) :
+     S.enc κ pp pk x y =
+-      (ProbComp.sample (S.EncDraw κ pp pk x y)).map (S.encCore κ pp pk x y) := rfl
++      S.encCore κ pp pk x y <$> ProbComp.sample (S.EncDraw κ pp pk x y) := rfl
+ 
+ /-- Key generation takes the master secret key and function description, then applies
+ its core to one uniform complete draw [GJLS21, Definition 4.1]. -/
+ noncomputable def keyGen (κ : ℕ) (pp : PublicParams S.G κ) (msk : S.MSK κ pp)
+     (f : Fin (C.fnLen.eval κ) → Bool) : ProbComp (S.SK κ pp) :=
+-  (ProbComp.sample (S.KeyDraw κ pp msk f)).map (S.keyCore κ pp msk f)
++  S.keyCore κ pp msk f <$> ProbComp.sample (S.KeyDraw κ pp msk f)
+ 
+ /-- Key generation is the pushforward of its uniform draw by its deterministic core. -/
+ theorem keyGen_eq (κ : ℕ) (pp : PublicParams S.G κ) (msk : S.MSK κ pp)
+     (f : Fin (C.fnLen.eval κ) → Bool) :
+     S.keyGen κ pp msk f =
+-      (ProbComp.sample (S.KeyDraw κ pp msk f)).map (S.keyCore κ pp msk f) := rfl
++      S.keyCore κ pp msk f <$> ProbComp.sample (S.KeyDraw κ pp msk f) := rfl
+ 
+ /-- An honest outcome retains the public parameters, public key, function key and
+ ciphertext [GJLS21, Definition 4.2]. This record permits parameter-dependent group types
+@@ -105,7 +105,7 @@ noncomputable def honestRun (κ : ℕ) (f : Fin (C.fnLen.eval κ) → Bool)
+   (S.pubGen κ).bind fun pp =>
+   (S.setup κ pp).bind fun k =>
+   (S.enc κ pp k.1 x y).bind fun ct =>
+-  (S.keyGen κ pp k.2 f).map fun sk => ⟨pp, k.1, sk, ct⟩
++  (fun sk => ⟨pp, k.1, sk, ct⟩) <$> S.keyGen κ pp k.2 f
+ 
+ /-- The honest experiment is the displayed sequencing of its four algorithms. -/
+ theorem honestRun_eq (κ : ℕ) (f : Fin (C.fnLen.eval κ) → Bool)
+@@ -114,7 +114,7 @@ theorem honestRun_eq (κ : ℕ) (f : Fin (C.fnLen.eval κ) → Bool)
+       (S.pubGen κ).bind fun pp =>
+       (S.setup κ pp).bind fun k =>
+       (S.enc κ pp k.1 x y).bind fun ct =>
+-      (S.keyGen κ pp k.2 f).map fun sk => ⟨pp, k.1, sk, ct⟩ := rfl
++      (fun sk => ⟨pp, k.1, sk, ct⟩) <$> S.keyGen κ pp k.2 f := rfl
+ 
+ /-- Perfect correctness means that every honest outcome decrypts to the embedded
+ function value [GJLS21, Definition 4.2], strengthened to zero error. -/
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Simulator.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Simulator.lean
+index 71d486e19..97642027d 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Simulator.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Defs/Simulator.lean
+@@ -197,31 +197,31 @@ theorem keyInputWord_eq (κ : ℕ) (π : Sim.KeyInput κ) :
+ /-- Simulated setup is its exact complete draw followed by its deterministic core. -/
+ noncomputable def setup (κ : ℕ) (pp : PublicParams S.G κ) :
+     ProbComp (S.MPK κ pp × Sim.St κ pp) :=
+-  (ProbComp.sample (Sim.SetupDraw κ pp)).map (Sim.setupCore κ pp)
++  Sim.setupCore κ pp <$> ProbComp.sample (Sim.SetupDraw κ pp)
+ 
+ /-- The simulated setup law is the displayed pushforward. -/
+ theorem setup_eq (κ : ℕ) (pp : PublicParams S.G κ) : Sim.setup κ pp =
+-    (ProbComp.sample (Sim.SetupDraw κ pp)).map (Sim.setupCore κ pp) := rfl
++    Sim.setupCore κ pp <$> ProbComp.sample (Sim.SetupDraw κ pp) := rfl
+ 
+ /-- Simulated encryption threads its state through the exact complete draw. -/
+ noncomputable def enc (κ : ℕ) (pp : PublicParams S.G κ) (st : Sim.St κ pp)
+     (ω : S.Omega κ pp) : ProbComp (S.CT κ pp × Sim.St κ pp) :=
+-  (ProbComp.sample (Sim.EncDraw κ pp st ω)).map (Sim.encCore κ pp st ω)
++  Sim.encCore κ pp st ω <$> ProbComp.sample (Sim.EncDraw κ pp st ω)
+ 
+ /-- The simulated ciphertext law is the displayed pushforward. -/
+ theorem enc_eq (κ : ℕ) (pp : PublicParams S.G κ) (st : Sim.St κ pp) (ω : S.Omega κ pp) :
+     Sim.enc κ pp st ω =
+-      (ProbComp.sample (Sim.EncDraw κ pp st ω)).map (Sim.encCore κ pp st ω) := rfl
++      Sim.encCore κ pp st ω <$> ProbComp.sample (Sim.EncDraw κ pp st ω) := rfl
+ 
+ /-- Simulated key generation threads its state through the exact indexed draw. -/
+ noncomputable def key (κ : ℕ) (pp : PublicParams S.G κ) (st : Sim.St κ pp)
+     (ω : S.Omega κ pp) (j : Fin ω.count) : ProbComp (S.SK κ pp × Sim.St κ pp) :=
+-  (ProbComp.sample (Sim.KeyDraw κ pp st ω j)).map (Sim.keyCore κ pp st ω j)
++  Sim.keyCore κ pp st ω j <$> ProbComp.sample (Sim.KeyDraw κ pp st ω j)
+ 
+ /-- The simulated key law is the displayed pushforward. -/
+ theorem key_eq (κ : ℕ) (pp : PublicParams S.G κ) (st : Sim.St κ pp)
+     (ω : S.Omega κ pp) (j : Fin ω.count) : Sim.key κ pp st ω j =
+-    (ProbComp.sample (Sim.KeyDraw κ pp st ω j)).map (Sim.keyCore κ pp st ω j) := rfl
++    Sim.keyCore κ pp st ω j <$> ProbComp.sample (Sim.KeyDraw κ pp st ω j) := rfl
+ 
+ end Simulator.Raw
+ 
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Games.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Games.lean
+new file mode 100644
+index 000000000..8bf4d82c9
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Games.lean
+@@ -0,0 +1,142 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Simulation.TwoStage
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs.Correctness
++import TCSlib.Cryptography.Games.Advantage
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The committed simulation experiment
++
++The first machine runs before public-parameter generation. The real experiment uses honest
++setup, encryption and the ordered committed keys. The ideal experiment uses one simulator,
++threading its state through encryption and every key. Both feed the same encoded public view
++to the second machine. All draws are exact and are sequenced in their displayed order.
++
++## Main definitions
++
++* `FEScheme.Raw.viewWord`: the public view supplied to the second machine.
++* `FEScheme.Raw.realView`, `idealView`: the two public-view laws.
++* `FEScheme.Raw.simGame`, `simAdv`: the two-stage experiment and its advantage.
++
++## Main results
++
++Every experiment has an equation reader exposing its complete sampling law.
++
++## References
++
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
++  revision of 3 January 2025, Definition 4.3 and Remarks 4.3 and 4.6.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
++
++open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++
++namespace FEScheme.Raw
++
++variable {C : FnClass} (S : FEScheme.Raw C)
++
++/-- Encode the first-stage state and the view `(pp, pk, keys, x, ct)` supplied to the
++second machine [GJLS21, Definition 4.3, at epsilon one; Remark 4.6]. -/
++def viewWord {q : PolyExpr} {κ : ℕ} (a : Commitment C q κ)
++    (pp : PublicParams S.G κ) (pk : S.MPK κ pp) (keys : List (S.SK κ pp))
++    (ct : S.CT κ pp) : List Bool :=
++  pairEncode a.state (pairEncode pp.encode
++    (pairEncode (List.ofFn (S.encMPK κ pp pk))
++      (pairEncode ((keys.map fun sk => List.ofFn (S.encSK κ pp sk)).foldr pairEncode [])
++        (pairEncode (List.ofFn a.publicInput) (List.ofFn (S.encCT κ pp ct))))))
++
++/-- The second-stage word is the displayed nested pair in committed key order. -/
++theorem viewWord_eq {q : PolyExpr} {κ : ℕ} (a : Commitment C q κ)
++    (pp : PublicParams S.G κ) (pk : S.MPK κ pp) (keys : List (S.SK κ pp))
++    (ct : S.CT κ pp) :
++    S.viewWord a pp pk keys ct = pairEncode a.state (pairEncode pp.encode
++      (pairEncode (List.ofFn (S.encMPK κ pp pk))
++        (pairEncode ((keys.map fun sk => List.ofFn (S.encSK κ pp sk)).foldr pairEncode [])
++          (pairEncode (List.ofFn a.publicInput) (List.ofFn (S.encCT κ pp ct)))))) := rfl
++
++/-- Produce the real view after the commitment is fixed. Keys are sampled in increasing
++committed order using the shared monadic list traversal [GJLS21, Definition 4.3]. -/
++noncomputable def realView {q : PolyExpr} {κ : ℕ} (a : Commitment C q κ) :
++    ProbComp (List Bool) :=
++  (S.pubGen κ).bind fun pp =>
++  (S.setup κ pp).bind fun k =>
++  (S.enc κ pp k.1 a.publicInput a.privateInput).bind fun ct =>
++  (List.mapM (fun j => S.keyGen κ pp k.2 (a.functions j))
++    (List.finRange (q.eval κ))).bind fun keys =>
++      .pure (S.viewWord a pp k.1 keys ct)
++
++/-- The real view is exactly the displayed sequential experiment. -/
++theorem realView_eq {q : PolyExpr} {κ : ℕ} (a : Commitment C q κ) :
++    S.realView a =
++      (S.pubGen κ).bind fun pp =>
++      (S.setup κ pp).bind fun k =>
++      (S.enc κ pp k.1 a.publicInput a.privateInput).bind fun ct =>
++      (List.mapM (fun j => S.keyGen κ pp k.2 (a.functions j))
++        (List.finRange (q.eval κ))).bind fun keys =>
++          .pure (S.viewWord a pp k.1 keys ct) := rfl
++
++/-- Produce the ideal view from the allowed information. State is threaded through
++ciphertext simulation and then all committed keys [GJLS21, Definition 4.3]. -/
++noncomputable def idealView (Sim : Simulator.Raw S) {q : PolyExpr} {κ : ℕ}
++    (a : Commitment C q κ) : ProbComp (List Bool) :=
++  (S.pubGen κ).bind fun pp =>
++  (Sim.setup κ pp).bind fun k =>
++  (Sim.enc κ pp k.2 (a.omega S pp)).bind fun cst =>
++  (List.mapM (m := StateT (Sim.St κ pp) ProbComp)
++    (fun j st => Sim.key κ pp st (a.omega S pp) j)
++    (List.finRange (q.eval κ)) cst.2).bind fun keys =>
++      .pure (S.viewWord a pp k.1 keys.1 cst.1)
++
++/-- The ideal view is exactly the displayed state-threaded experiment. -/
++theorem idealView_eq (Sim : Simulator.Raw S) {q : PolyExpr} {κ : ℕ}
++    (a : Commitment C q κ) : S.idealView Sim a =
++      (S.pubGen κ).bind fun pp =>
++      (Sim.setup κ pp).bind fun k =>
++      (Sim.enc κ pp k.2 (a.omega S pp)).bind fun cst =>
++      (List.mapM (m := StateT (Sim.St κ pp) ProbComp)
++        (fun j st => Sim.key κ pp st (a.omega S pp) j)
++        (List.finRange (q.eval κ)) cst.2).bind fun keys =>
++          .pure (S.viewWord a pp k.1 keys.1 cst.1) := rfl
++
++/-- The committed simulation game draws first-stage coins before pp, then gives the
++chosen public view to the second machine with independent coins
++[GJLS21, Definition 4.3, epsilon one; Remark 4.6]. The Boolean flag selects real when true. -/
++noncomputable def simGame (Sim : Simulator.Raw S) (A : TwoStage)
++    (q : PolyExpr) (real : Bool) (κ : ℕ) : ProbComp Bool :=
++  (ProbComp.sample (A.first.Coins κ)).bind fun r₁ =>
++    let a := Commitment.decode C q κ (A.first.runAt κ [] r₁)
++    (if real then S.realView a else S.idealView Sim a).bind fun v =>
++    (ProbComp.sample (A.second.Coins κ)).bind fun r₂ =>
++      .pure (A.second.distinguisherL κ v r₂)
++
++/-- The simulation game is the displayed two-stage machine experiment. -/
++theorem simGame_eq (Sim : Simulator.Raw S) (A : TwoStage)
++    (q : PolyExpr) (real : Bool) (κ : ℕ) : S.simGame Sim A q real κ =
++      (ProbComp.sample (A.first.Coins κ)).bind fun r₁ =>
++        let a := Commitment.decode C q κ (A.first.runAt κ [] r₁)
++        (if real then S.realView a else S.idealView Sim a).bind fun v =>
++        (ProbComp.sample (A.second.Coins κ)).bind fun r₂ =>
++          .pure (A.second.distinguisherL κ v r₂) := rfl
++
++/-- Simulation advantage is the absolute difference of real and ideal acceptance
++probabilities [GJLS21, Definition 4.3, epsilon one]. -/
++noncomputable def simAdv (Sim : Simulator.Raw S) (A : TwoStage) (q : PolyExpr)
++    (κ : ℕ) : ℝ := advantage (S.simGame Sim A q true κ) (S.simGame Sim A q false κ)
++
++/-- Simulation advantage uses the common two-experiment convention. -/
++theorem simAdv_eq (Sim : Simulator.Raw S) (A : TwoStage) (q : PolyExpr) (κ : ℕ) :
++    S.simAdv Sim A q κ = advantage (S.simGame Sim A q true κ)
++      (S.simGame Sim A q false κ) := rfl
++
++end FEScheme.Raw
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Security.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Security.lean
+new file mode 100644
+index 000000000..9ff5eb9c4
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/Security.lean
+@@ -0,0 +1,92 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Simulation.Games
++import TCSlib.Cryptography.Foundations.Subexponential
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Committed simulation security
++
++Security names one universal stateful simulator before either adversarial machine and before
++the polynomial number of committed keys. Raw security predicates expose a specified raw
++simulator. The public security notions quantify over simulators with uniform efficiency.
++
++## Main definitions
++
++* `FEScheme.Raw.SimSecureWith`, `SimSecure`: negligible committed simulation advantage.
++* `FEScheme.Raw.SubexpSimSecureWith`, `SubexpSimSecure`: one common positive exponent.
++
++## Main results
++
++The proposition readers make the order of all quantifiers explicit.
++
++## References
++
++* [JLS26] A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Well-Founded Assumptions*, Journal of the ACM, 2026, Section 1.1.
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
++  revision of 3 January 2025, Definition 4.3 and Remarks 4.3 and 4.6.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
++
++open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++
++namespace FEScheme.Raw
++
++variable {C : FnClass} (S : FEScheme.Raw C)
++
++/-- A specified raw simulator gives negligible advantage against every pair of non-uniform
++PPT machines and every polynomial key count [GJLS21, Definition 4.3; Remark 4.6]. -/
++def SimSecureWith (Sim : Simulator.Raw S) : Prop :=
++  ∀ A : TwoStage, ∀ q : PolyExpr, Negligible (S.simAdv Sim A q)
++
++/-- Raw simulation security is negligible advantage for every machine pair and key count. -/
++theorem simSecureWith_iff (Sim : Simulator.Raw S) :
++    S.SimSecureWith Sim ↔ ∀ A : TwoStage, ∀ q : PolyExpr, Negligible (S.simAdv Sim A q) :=
++  Iff.rfl
++
++/-- Public-key simulation security has one efficient, stateful simulator before all
++adversaries and key counts [GJLS21, Definition 4.3, epsilon one; Remark 4.6]. -/
++def SimSecure : Prop := ∃ Sim : Simulator S, S.SimSecureWith Sim.toRaw
++
++/-- Simulation security quantifies over the efficient simulator interface. -/
++theorem simSecure_iff :
++    S.SimSecure ↔ ∃ Sim : Simulator S, S.SimSecureWith Sim.toRaw := Iff.rfl
++
++/-- A specified raw simulator has one positive subexponential exponent before every
++adversary and polynomial key count [JLS26, Section 1.1; GJLS21, Definition 4.3]. -/
++def SubexpSimSecureWith (Sim : Simulator.Raw S) : Prop :=
++  ∃ c : ℝ, 0 < c ∧ ∀ A : TwoStage, ∀ q : PolyExpr, SubexpSmall c (S.simAdv Sim A q)
++
++/-- The subexponential exponent precedes the adversaries and the key count. -/
++theorem subexpSimSecureWith_iff (Sim : Simulator.Raw S) :
++    S.SubexpSimSecureWith Sim ↔
++      ∃ c : ℝ, 0 < c ∧ ∀ A : TwoStage, ∀ q : PolyExpr, SubexpSmall c (S.simAdv Sim A q) :=
++  Iff.rfl
++
++/-- Subexponential simulation security has one efficient universal simulator and one
++positive common security exponent [JLS26, Section 1.1; GJLS21, Definition 4.3]. -/
++def SubexpSimSecure : Prop := ∃ Sim : Simulator S, S.SubexpSimSecureWith Sim.toRaw
++
++/-- Subexponential security quantifies over an efficient simulator. -/
++theorem subexpSimSecure_iff :
++    S.SubexpSimSecure ↔ ∃ Sim : Simulator S, S.SubexpSimSecureWith Sim.toRaw := Iff.rfl
++
++/-- Subexponential raw simulation security implies negligible raw simulation security.
++
++**Proof sketch.** Use the shared implication from subexponential smallness to negligibility
++for each machine pair and query polynomial, at the common positive exponent. -/
++theorem SubexpSimSecureWith.simSecureWith {Sim : Simulator.Raw S}
++    (h : S.SubexpSimSecureWith Sim) : S.SimSecureWith Sim := sorry
++
++end FEScheme.Raw
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/TwoStage.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/TwoStage.lean
+new file mode 100644
+index 000000000..e72cfc704
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Simulation/TwoStage.lean
+@@ -0,0 +1,103 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Defs.Simulator
++import TCSlib.Cryptography.Asymptotic.Adversary
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Committed two-stage adversaries
++
++The first machine commits to both input parts and all function descriptions before public
++parameters are drawn. The second machine receives the first machine's state and the public
++view. A total fixed-window parser interprets arbitrary first-stage outputs, padding short
++windows with false and leaving the remaining suffix as state.
++
++## Main definitions
++
++* `TwoStage`: the pair of non-uniform PPT machines.
++* `Commitment`: both input parts, the ordered function list, and the retained state.
++* `Commitment.decode`: the total parser of the first machine's output.
++
++## Main results
++
++Equation readers specify the parser and the allowed simulator information.
++
++## References
++
++* [GJLS21] R. Gay, A. Jain, H. Lin, A. Sahai, *Indistinguishability Obfuscation from
++  Simple-to-State Hard Problems: New Assumptions, New Techniques, and Simplification*,
++  EUROCRYPT 2021; full version, Cryptology ePrint Archive, Report 2020/764,
++  revision of 3 January 2025, Definition 4.3 and Remarks 4.3 and 4.6.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
++
++open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++
++/-- A two-stage adversary is a pair of non-uniform PPT machines. The first commits before
++public parameters, and the second distinguishes the resulting public view
++[GJLS21, Definition 4.3, at epsilon one; Remark 4.6, many keys]. -/
++structure TwoStage where
++  /-- The commitment machine. -/
++  first : NUPPT
++  /-- The final distinguishing machine. -/
++  second : NUPPT
++
++/-- A commitment contains both inputs, the ordered function descriptions, and arbitrary
++first-stage state [GJLS21, Definition 4.3]. The key count is the polynomial budget. -/
++structure Commitment (C : FnClass) (q : PolyExpr) (κ : ℕ) where
++  /-- The public challenge input. -/
++  publicInput : Fin (C.pubLen.eval κ) → Bool
++  /-- The private challenge input. -/
++  privateInput : Fin (C.privLen.eval κ) → Bool
++  /-- All committed function descriptions. -/
++  functions : Fin (q.eval κ) → Fin (C.fnLen.eval κ) → Bool
++  /-- The first machine's retained state. -/
++  state : List Bool
++
++namespace Commitment
++
++variable {C : FnClass} {q : PolyExpr} {κ : ℕ}
++
++/-- Decode successive public, private and function windows, followed by an arbitrary state
++suffix. Missing input bits are false. This total parser imposes no validity restriction on
++non-uniform adversaries [GJLS21, Definition 4.3]. -/
++def decode (C : FnClass) (q : PolyExpr) (κ : ℕ) (w : List Bool) : Commitment C q κ where
++  publicInput i := w.getD i.val false
++  privateInput i := w.getD (C.pubLen.eval κ + i.val) false
++  functions j i := w.getD
++    (C.pubLen.eval κ + C.privLen.eval κ + j.val * C.fnLen.eval κ + i.val) false
++  state := w.drop (C.pubLen.eval κ + C.privLen.eval κ + q.eval κ * C.fnLen.eval κ)
++
++/-- The commitment parser reads the displayed windows and retains their remaining suffix. -/
++theorem decode_eq (C : FnClass) (q : PolyExpr) (κ : ℕ) (w : List Bool) :
++    decode C q κ w =
++      ⟨(fun i => w.getD i.val false),
++        (fun i => w.getD (C.pubLen.eval κ + i.val) false),
++        (fun j i => w.getD
++          (C.pubLen.eval κ + C.privLen.eval κ + j.val * C.fnLen.eval κ + i.val) false),
++        w.drop (C.pubLen.eval κ + C.privLen.eval κ + q.eval κ * C.fnLen.eval κ)⟩ := rfl
++
++/-- Derive the simulator's allowed public input and ordered function/value pairs from a
++commitment [GJLS21, Definition 4.3; Theorem 9.2 proof, Hybrid 1]. -/
++def omega (a : Commitment C q κ) (S : FEScheme.Raw C) (pp : PublicParams S.G κ) :
++    S.Omega κ pp where
++  count := q.eval κ
++  publicInput := a.publicInput
++  functions := a.functions
++  values j := C.eval κ (S.cprm κ pp) (a.functions j) a.publicInput a.privateInput
++
++/-- Allowed information retains the committed functions and evaluates them on the input. -/
++theorem omega_eq (a : Commitment C q κ) (S : FEScheme.Raw C)
++    (pp : PublicParams S.G κ) :
++    a.omega S pp = ⟨q.eval κ, a.publicInput, a.functions,
++      fun j => C.eval κ (S.cprm κ pp) (a.functions j) a.publicInput a.privateInput⟩ := rfl
++
++end Commitment
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean
+new file mode 100644
+index 000000000..f65146d2d
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Linear.lean
+@@ -0,0 +1,368 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.Pairing.Exponents
++import TCSlib.Cryptography.Pairing.MatrixDH.Parameters
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.PartialGarbling.Defs
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The raw linear PHFE building block
++
++The internal scheme Π encrypts a group-valued private vector and issues keys carrying an
++arbitrary source-group matrix. All algorithms are explicit deterministic cores with one
++finite draw type for each randomized algorithm. A function's partial-garbling coordinates
++may depend on the function; its key draw has those same coordinates.
++
++## Main definitions
++
++* `Wee20.Linear.MPK`, `MSK`, `CT`, `Key`: the typed keys and ciphertext of Π.
++* `Wee20.Linear.SetupDraw`, `EncDraw`, `KeyDraw`: the honest algorithms' exact draw types.
++* `Wee20.Linear.setupCore`, `encCore`, `keyCore`, `dec`: the algorithms of Π.
++* `Wee20.Linear.setup`, `enc`, `keyGen`: the exact core-plus-draw laws.
++* `Wee20.Linear.leak`: source-group evaluation of a group matrix at known scalar inputs.
++* `Wee20.Linear.RawAlgorithms`, `scheme_raw`: the internal raw algorithm bundle.
++
++## Main results
++
++Equation readers expose every core, draw type, law and raw bundle. Correctness is stated in
++`LinearCorrect`; the simulator is in `LinearSimulator`.
++
++The private input length and function-vector output length are separate parameters. In
++particular, the last block of `T` has the function-vector output length, so `T̲+WM` is valid
++for the rectangular matrices used by the outer construction. No group element is decoded
++to a scalar, and no discrete logarithm is used.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, §4, p. 8 (group-matrix keys),
++  §4.2, pp. 9–10 (Π and correctness equations (6)–(11)).
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
++
++open Complexity TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++open scoped Matrix
++
++/-- Π's public key holds `[A]`, `[AW]`, `[AU]` and `[AV]`
++[Wee20, §4.2, p. 9, Setup]. -/
++structure MPK (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) where
++  /-- The two-by-three implicit matrix. -/
++  A : Matrix (Fin 2) (Fin 3) pp.group.G
++  /-- The implicit private-input mask. -/
++  AW : Matrix (Fin 2) (Fin (zDim.eval κ)) pp.group.G
++  /-- The implicit public-variable mask. -/
++  AU : Matrix (Fin 2) (Fin (ℓ.eval κ) × Fin 2) pp.group.G
++  /-- The implicit constant mask. -/
++  AV : Matrix (Fin 2) (Fin 2) pp.group.G
++
++/-- Π's master secret consists of its three scalar masking matrices
++[Wee20, §4.2, p. 9, Setup]. -/
++structure MSK (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) where
++  /-- The private-input masking matrix. -/
++  W : Matrix (Fin 3) (Fin (zDim.eval κ)) (ZMod pp.group.order)
++  /-- The public-variable masking matrix. -/
++  U : Matrix (Fin 3) (Fin (ℓ.eval κ) × Fin 2) (ZMod pp.group.order)
++  /-- The constant masking matrix. -/
++  V : Matrix (Fin 3) (Fin 2) (ZMod pp.group.order)
++
++/-- Π's ciphertext has its three source-group blocks, with the public input supplied
++separately to decryption [Wee20, §4.2, p. 9, Enc]. -/
++structure CT (G : BilinearGen) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) where
++  /-- The three-coordinate mask `[sA]`. -/
++  c0 : Fin 3 → pp.group.G
++  /-- The masked private input. -/
++  c1 : Fin (zDim.eval κ) → pp.group.G
++  /-- The two-coordinate public-input mask. -/
++  c2 : Fin 2 → pp.group.G
++
++/-- A function key contains the three garbling blocks and `[R]`
++[Wee20, §4.2, p. 9, KeyGen]. The function and its group matrix are explicit key metadata. -/
++structure Key (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) where
++  /-- The three-by-output first block. -/
++  K1 : Matrix (Fin 3) (Fin (n'.eval κ)) pp.group.G
++  /-- The public-variable garbling block. -/
++  K2 : Matrix (Fin 3) (Fin (ℓ.eval κ) × PG.MIdx κ pp.orderParam f) pp.group.G
++  /-- The constant garbling block. -/
++  K3 : Matrix (Fin 3) (PG.MIdx κ pp.orderParam f) pp.group.G
++  /-- The two-row reconstruction mask. -/
++  R : Matrix (Fin 2) (PG.MIdx κ pp.orderParam f) pp.group.G
++
++/-- Setup's single draw contains independent uniform `A,W,U,V`
++[Wee20, §4.2, p. 9, Setup]. -/
++abbrev SetupDraw (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :=
++  Matrix (Fin 2) (Fin 3) (ZMod pp.group.order) ×
++    Matrix (Fin 3) (Fin (zDim.eval κ)) (ZMod pp.group.order) ×
++    Matrix (Fin 3) (Fin (ℓ.eval κ) × Fin 2) (ZMod pp.group.order) ×
++    Matrix (Fin 3) (Fin 2) (ZMod pp.group.order)
++
++/-- The setup draw type is exactly its four scalar matrices. -/
++theorem setupDraw_eq (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++    SetupDraw G ℓ zDim κ pp =
++      (Matrix (Fin 2) (Fin 3) (ZMod pp.group.order) ×
++        Matrix (Fin 3) (Fin (zDim.eval κ)) (ZMod pp.group.order) ×
++        Matrix (Fin 3) (Fin (ℓ.eval κ) × Fin 2) (ZMod pp.group.order) ×
++        Matrix (Fin 3) (Fin 2) (ZMod pp.group.order)) := rfl
++
++/-- Encryption draws its two scalar coefficients [Wee20, §4.2, p. 9, Enc]. -/
++abbrev EncDraw (G : BilinearGen) (κ : ℕ) (pp : PublicParams G κ) :=
++  Fin 2 → ZMod pp.group.order
++
++/-- Encryption randomness is a two-coordinate scalar vector. -/
++theorem encDraw_eq (G : BilinearGen) (κ : ℕ) (pp : PublicParams G κ) :
++    EncDraw G κ pp = (Fin 2 → ZMod pp.group.order) := rfl
++
++/-- Key generation draws `T` and `R` in the function's actual garbling coordinates
++[Wee20, §4.2, p. 9, KeyGen]. The last block of `T` has output length `n'`. -/
++abbrev KeyDraw (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) :=
++  Matrix (Fin 3) (PG.TIdx κ pp.orderParam f ⊕ Fin (n'.eval κ)) (ZMod pp.group.order) ×
++    Matrix (Fin 2) (PG.MIdx κ pp.orderParam f) (ZMod pp.group.order)
++
++/-- The key draw type is the product of the `T` and `R` matrix types. -/
++theorem keyDraw_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) :
++    KeyDraw G PG κ pp f =
++      (Matrix (Fin 3) (PG.TIdx κ pp.orderParam f ⊕ Fin (n'.eval κ))
++          (ZMod pp.group.order) ×
++        Matrix (Fin 2) (PG.MIdx κ pp.orderParam f) (ZMod pp.group.order)) := rfl
++
++/-- Setup exponentiates the four public matrices and retains `W,U,V`
++[Wee20, §4.2, p. 9, Setup]. -/
++def setupCore (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : SetupDraw G ℓ zDim κ pp) : MPK G ℓ zDim κ pp × MSK G ℓ zDim κ pp :=
++  let A := ω.1
++  let W := ω.2.1
++  let U := ω.2.2.1
++  let V := ω.2.2.2
++  (⟨pp.group.expMat pp.generator A, pp.group.expMat pp.generator (A * W),
++    pp.group.expMat pp.generator (A * U), pp.group.expMat pp.generator (A * V)⟩,
++    ⟨W, U, V⟩)
++
++/-- Setup's core is the displayed public exponentiation and secret-matrix tuple. -/
++theorem setupCore_eq (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (ω : SetupDraw G ℓ zDim κ pp) :
++    setupCore G ℓ zDim κ pp ω =
++      (⟨pp.group.expMat pp.generator ω.1,
++        pp.group.expMat pp.generator (ω.1 * ω.2.1),
++        pp.group.expMat pp.generator (ω.1 * ω.2.2.1),
++        pp.group.expMat pp.generator (ω.1 * ω.2.2.2)⟩, ⟨ω.2.1, ω.2.2.1, ω.2.2.2⟩) := rfl
++
++/-- Encryption forms the three group ciphertext blocks from a group-valued private input
++[Wee20, §4.2, p. 9, Enc]. Only products and powers by known scalars are used. -/
++def encCore (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (pk : MPK G ℓ zDim κ pp) (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (z : Fin (zDim.eval κ) → pp.group.G) (s : EncDraw G κ pp) : CT G zDim κ pp :=
++  ⟨groupVecMul s pk.A, z * groupVecMul s pk.AW,
++    groupVecMul s (groupMatMul pk.AU
++      (PartialGarbling.publicTensor (p := pp.orderParam) (M := Fin 2) x)) *
++      groupVecMul s pk.AV⟩
++
++/-- The encryption core uses the canonical public tensor and the three public-key blocks. -/
++theorem encCore_eq (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (pk : MPK G ℓ zDim κ pp)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order) (z : Fin (zDim.eval κ) → pp.group.G)
++    (s : EncDraw G κ pp) :
++    encCore G ℓ zDim κ pp pk x z s =
++      ⟨groupVecMul s pk.A, z * groupVecMul s pk.AW,
++        groupVecMul s (groupMatMul pk.AU
++          (PartialGarbling.publicTensor (p := pp.orderParam) (M := Fin 2) x)) *
++          groupVecMul s pk.AV⟩ := rfl
++
++/-- Key generation computes `[T̲+WM]`, `[TL1+U(I⊗R)]`, `[TL0+VR]`, `[R]`
++[Wee20, §4.2, p. 9, KeyGen]. The matrix `M` is supplied only in the source group. -/
++def keyCore (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (msk : MSK G ℓ zDim κ pp) (f : Fn κ pp.orderParam)
++    (M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G)
++    (ω : KeyDraw G PG κ pp f) : Key G PG κ pp f :=
++  let T := ω.1
++  let R := ω.2
++  let Tbar := fun i j => T i (Sum.inr j)
++  let tensorR := Matrix.kroneckerMap (fun a b => a * b)
++    (1 : Matrix (Fin (ℓ.eval κ)) (Fin (ℓ.eval κ)) (ZMod pp.group.order)) R
++  ⟨pp.group.expMat pp.generator Tbar * matMulGroup msk.W M,
++    pp.group.expMat pp.generator (T * PG.L1 κ pp.orderParam f + msk.U * tensorR),
++    pp.group.expMat pp.generator (T * PG.L0 κ pp.orderParam f + msk.V * R),
++    pp.group.expMat pp.generator R⟩
++
++/-- Key generation is the displayed scalar garbling arithmetic and group matrix action. -/
++theorem keyCore_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (msk : MSK G ℓ zDim κ pp) (f : Fn κ pp.orderParam)
++    (M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G)
++    (ω : KeyDraw G PG κ pp f) :
++    keyCore G PG zDim κ pp msk f M ω =
++      let tensorR := Matrix.kroneckerMap (fun a b => a * b)
++        (1 : Matrix (Fin (ℓ.eval κ)) (Fin (ℓ.eval κ)) (ZMod pp.group.order)) ω.2
++      ⟨pp.group.expMat pp.generator (fun i j => ω.1 i (Sum.inr j)) * matMulGroup msk.W M,
++        pp.group.expMat pp.generator
++          (ω.1 * PG.L1 κ pp.orderParam f + msk.U * tensorR),
++        pp.group.expMat pp.generator
++          (ω.1 * PG.L0 κ pp.orderParam f + msk.V * ω.2),
++        pp.group.expMat pp.generator ω.2⟩ := rfl
++
++/-- Decryption's first block is `e(c1,M)/e(c0,K1)`
++[Wee20, §4.2, p. 9, (6)]. -/
++def decFirst (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) (M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G)
++    (sk : Key G PG κ pp f) (ct : CT G zDim κ pp) : Fin (n'.eval κ) → pp.group.GT :=
++  fun j => pp.group.pairVec ct.c1 (fun a => M a j) *
++    (pp.group.pairVec ct.c0 (fun i => sk.K1 i j))⁻¹
++
++/-- Each first-block coordinate is its two vector-pairing factors. -/
++theorem decFirst_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) (M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G)
++    (sk : Key G PG κ pp f) (ct : CT G zDim κ pp) :
++    decFirst G PG zDim κ pp f M sk ct = fun j =>
++      pp.group.pairVec ct.c1 (fun a => M a j) *
++        (pp.group.pairVec ct.c0 (fun i => sk.K1 i j))⁻¹ := rfl
++
++/-- Decryption's second block cancels the public-input mask by pairings
++[Wee20, §4.2, p. 9, (7)]. -/
++def decSecond (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (sk : Key G PG κ pp f) (ct : CT G zDim κ pp) : PG.MIdx κ pp.orderParam f → pp.group.GT :=
++  let K := groupMatMul sk.K2
++    (PartialGarbling.publicTensor (p := pp.orderParam) (M := PG.MIdx κ pp.orderParam f) x)
++  fun u => pp.group.pairVec ct.c0 (fun i => K i u * sk.K3 i u) *
++    (pp.group.pairVec ct.c2 (fun i => sk.R i u))⁻¹
++
++/-- The second block uses the canonical public tensor on the function's garbling nodes. -/
++theorem decSecond_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (sk : Key G PG κ pp f) (ct : CT G zDim κ pp) :
++    decSecond G PG zDim κ pp f x sk ct =
++      let K := groupMatMul sk.K2
++        (PartialGarbling.publicTensor (p := pp.orderParam)
++          (M := PG.MIdx κ pp.orderParam f) x)
++      fun u => pp.group.pairVec ct.c0 (fun i => K i u * sk.K3 i u) *
++        (pp.group.pairVec ct.c2 (fun i => sk.R i u))⁻¹ := rfl
++
++/-- Decryption applies the scalar reconstruction vector to the paired garbling blocks
++[Wee20, §4.2, p. 9, (8)]. It returns the result in the target group. -/
++def dec (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) (M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order) (sk : Key G PG κ pp f)
++    (ct : CT G zDim κ pp) : pp.group.GT :=
++  groupDot (Sum.elim (decFirst G PG zDim κ pp f M sk ct)
++    (decSecond G PG zDim κ pp f x sk ct)) (PG.rec κ pp.orderParam f x)
++
++/-- Decryption is the known-power product specified by the reconstruction vector. -/
++theorem dec_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) (M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order) (sk : Key G PG κ pp f)
++    (ct : CT G zDim κ pp) :
++    dec G PG zDim κ pp f M x sk ct =
++      groupDot (Sum.elim (decFirst G PG zDim κ pp f M sk ct)
++        (decSecond G PG zDim κ pp f x sk ct)) (PG.rec κ pp.orderParam f x) := rfl
++
++/-- Compute `[z M f(x)^T]` from an arbitrary group matrix and the known scalar input and
++function value [Wee20, §4, p. 8]. This is Π's simulator leakage. -/
++def leak (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) (M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (z : Fin (zDim.eval κ) → ZMod pp.group.order) : pp.group.G :=
++  groupDot (groupMulVec M (PG.eval κ pp.orderParam f x)) z
++
++/-- The leakage uses only known powers of the supplied group matrix. -/
++theorem leak_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) (M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (z : Fin (zDim.eval κ) → ZMod pp.group.order) :
++    leak G PG zDim κ pp f M x z =
++      groupDot (groupMulVec M (PG.eval κ pp.orderParam f x)) z := rfl
++
++/-- Honest setup is uniform sampling of its one draw type followed by the core
++[Wee20, §4.2, p. 9]. -/
++noncomputable def setup (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) : ProbComp (MPK G ℓ zDim κ pp × MSK G ℓ zDim κ pp) :=
++  (ProbComp.sample (SetupDraw G ℓ zDim κ pp)).map (setupCore G ℓ zDim κ pp)
++
++/-- Honest setup has the displayed core-plus-draw law. -/
++theorem setup_eq (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++    setup G ℓ zDim κ pp =
++      (ProbComp.sample (SetupDraw G ℓ zDim κ pp)).map (setupCore G ℓ zDim κ pp) := rfl
++
++/-- Honest encryption samples its two scalars and applies the core [Wee20, §4.2, p. 9]. -/
++noncomputable def enc (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (pk : MPK G ℓ zDim κ pp) (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (z : Fin (zDim.eval κ) → pp.group.G) : ProbComp (CT G zDim κ pp) :=
++  (ProbComp.sample (EncDraw G κ pp)).map (encCore G ℓ zDim κ pp pk x z)
++
++/-- Honest encryption has the displayed core-plus-draw law. -/
++theorem enc_eq (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (pk : MPK G ℓ zDim κ pp) (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (z : Fin (zDim.eval κ) → pp.group.G) :
++    enc G ℓ zDim κ pp pk x z =
++      (ProbComp.sample (EncDraw G κ pp)).map (encCore G ℓ zDim κ pp pk x z) := rfl
++
++/-- Honest key generation samples its actual function-dependent matrices and applies the
++core [Wee20, §4.2, p. 9]. This is one draw, not a product-sampler construction. -/
++noncomputable def keyGen (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (msk : MSK G ℓ zDim κ pp) (f : Fn κ pp.orderParam)
++    (M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G) :
++    ProbComp (Key G PG κ pp f) :=
++  (ProbComp.sample (KeyDraw G PG κ pp f)).map (keyCore G PG zDim κ pp msk f M)
++
++/-- Honest key generation has the displayed core-plus-draw law. -/
++theorem keyGen_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (msk : MSK G ℓ zDim κ pp) (f : Fn κ pp.orderParam)
++    (M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G) :
++    keyGen G PG zDim κ pp msk f M =
++      (ProbComp.sample (KeyDraw G PG κ pp f)).map (keyCore G PG zDim κ pp msk f M) := rfl
++
++/-- Π is an internal raw bundle of cores, with efficiency supplied only through the outer
++construction's targets [Wee20, §4.2, pp. 9–10]. -/
++structure RawAlgorithms (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) where
++  /-- Honest setup core. -/
++  setupCore : SetupDraw G ℓ zDim κ pp → MPK G ℓ zDim κ pp × MSK G ℓ zDim κ pp
++  /-- Honest encryption core on a source-group private vector. -/
++  encCore : MPK G ℓ zDim κ pp → (Fin (ℓ.eval κ) → ZMod pp.group.order) →
++    (Fin (zDim.eval κ) → pp.group.G) → EncDraw G κ pp → CT G zDim κ pp
++  /-- Honest function-dependent key-generation core. -/
++  keyCore : MSK G ℓ zDim κ pp → (f : Fn κ pp.orderParam) →
++    Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G →
++    KeyDraw G PG κ pp f → Key G PG κ pp f
++  /-- Deterministic decryption in the target group. -/
++  dec : (f : Fn κ pp.orderParam) →
++    Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G →
++    (Fin (ℓ.eval κ) → ZMod pp.group.order) → Key G PG κ pp f → CT G zDim κ pp → pp.group.GT
++
++/-- Assemble the four explicit cores into Π's internal raw bundle
++[Wee20, §4.2, pp. 9–10]. No efficient interface is instantiated here. -/
++def scheme_raw (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++    RawAlgorithms G PG zDim κ pp :=
++  ⟨setupCore G ℓ zDim κ pp, encCore G ℓ zDim κ pp,
++    keyCore G PG zDim κ pp, dec G PG zDim κ pp⟩
++
++/-- The raw bundle contains exactly the four explicitly defined cores. -/
++theorem scheme_raw_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++    scheme_raw G PG zDim κ pp =
++      ⟨setupCore G ℓ zDim κ pp, encCore G ℓ zDim κ pp,
++        keyCore G PG zDim κ pp, dec G PG zDim κ pp⟩ := rfl
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean
+new file mode 100644
+index 000000000..e0942b4ec
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearCorrect.lean
+@@ -0,0 +1,162 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Correctness of the raw linear PHFE building block
++
++The correctness statements allow arbitrary source-group key matrices. They do not choose
++scalar witnesses for their entries. Instead, the partial-garbling reconstruction law is
++specialized to scalar basis vectors, giving the coefficient identities needed to cancel
++randomness in products of known powers.
++
++## Main definitions
++
++This module introduces no algorithms or new data representations.
++
++## Main results
++
++* `Wee20.Linear.rec_output_eq_eval`, `rec_matrix_eq`: coefficient consequences of the
++  supplied raw partial-garbling reconstruction theorem.
++* `Wee20.Linear.decFirst_correct`, `decSecond_correct`: equations (9) and (10), with a
++  group-valued matrix and its known scalar inputs.
++* `Wee20.Linear.pi_dec_eq`, `scheme_raw_correct`: perfect correctness in the target group,
++  for every setup, encryption and key-generation draw.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, §4.2, pp. 9–10, (6)–(11).
++* [AGW20] M. Abdalla, J. Gong, and H. Wee, *Functional Encryption for Attribute-Weighted
++  Sums from k-Lin*, CRYPTO 2020; full version, Cryptology ePrint Archive 2020/762,
++  Lemma 2, p. 12, and Appendix A, (29)–(32), pp. 37–38.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
++
++open Complexity TCSlib.Cryptography.Pairing
++open scoped BigOperators Matrix
++
++/-- The output part of reconstruction equals the function value. This is coefficient glue
++from the reconstruction law [AGW20, Lemma 2, p. 12].
++
++**Proof sketch.** Apply `PG.reconstruct` with zero draw and a single unit in the private
++input. Use Mathlib's single-coordinate dot-product readers on both sides. -/
++theorem rec_output_eq_eval (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (j : Fin (n'.eval κ)) :
++    PG.rec κ pp.orderParam f x (Sum.inl j) = PG.eval κ pp.orderParam f x j := sorry
++
++/-- The reconstruction vector cancels every garbling-draw coordinate. This is coefficient
++form of the reconstruction law [AGW20, Lemma 2, p. 12; Appendix A, (29), p. 37].
++
++**Proof sketch.** Apply `PG.reconstruct` with zero private input and a single unit draw.
++Use `rec_output_eq_eval` for its final draw block; move that term across the equality and
++read the remaining coefficient through the single-coordinate dot-product lemmas. -/
++theorem rec_matrix_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) (x : Fin (ℓ.eval κ) → ZMod pp.group.order) :
++    (PG.L1 κ pp.orderParam f *
++        PartialGarbling.publicTensor (p := pp.orderParam) (M := PG.MIdx κ pp.orderParam f) x +
++      PG.L0 κ pp.orderParam f) *ᵥ (fun u => PG.rec κ pp.orderParam f x (Sum.inr u)) =
++        Sum.elim (fun _ => 0) (PG.eval κ pp.orderParam f x) := sorry
++
++/-- The leakage is the product of the supplied group-matrix entries raised to the known
++coefficients `z_a f_b(x)` [Wee20, §4, p. 8].
++
++**Proof sketch.** Read `leak_eq`, `groupMulVec_apply` and `groupDot_eq`. Distribute powers
++across finite products, use the source-group modular multiplication law, and commute the
++two known scalar factors. No exponent of a group element is recovered. -/
++theorem leak_product (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) (M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (z : Fin (zDim.eval κ) → ZMod pp.group.order) :
++    leak G PG zDim κ pp f M x z =
++      ∏ a, ∏ b, M a b ^ (z a * PG.eval κ pp.orderParam f x b).val := sorry
++
++/-- The first decryption block is the group-valued allowed input mask minus the last
++coordinates of `sAT` [Wee20, §4.2, p. 10, (9)].
++
++**Proof sketch.** Read the algorithm equations and transport the scalar actions with
++`expVec_vecMul`. Apply pairing bilinearity and multiplicativity. The `sAWM` products cancel
++entrywise, leaving the known-input action on the arbitrary group matrix and the `T` mask. -/
++theorem decFirst_correct (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) (M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (z : Fin (zDim.eval κ) → ZMod pp.group.order)
++    (a : SetupDraw G ℓ zDim κ pp) (s : EncDraw G κ pp) (t : KeyDraw G PG κ pp f) :
++    decFirst G PG zDim κ pp f M
++        (keyCore G PG zDim κ pp (setupCore G ℓ zDim κ pp a).2 f M t)
++        (encCore G ℓ zDim κ pp (setupCore G ℓ zDim κ pp a).1 x
++          (pp.group.expVec pp.generator z) s) =
++      fun j => pp.group.pair pp.generator (groupVecMul z M j) *
++        (pp.group.pair pp.generator pp.generator) ^
++          (-(Matrix.vecMul (Matrix.vecMul s a.1) t.1 (Sum.inr j))).val := sorry
++
++/-- The second decryption block is the second partial-garbling block at coins `sAT`
++[Wee20, §4.2, p. 10, (10)].
++
++**Proof sketch.** Use the known-scalar matrix and pairing transport laws. The mixed-product
++identity `(I⊗R)(x⊗I)=(x⊗I)R` identifies the two `U` terms. Cancel them and the two `V`
++terms; the remaining matrix expression is `(sAT)(L1(x⊗I)+L0)`. -/
++theorem decSecond_correct (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) (M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (z : Fin (zDim.eval κ) → ZMod pp.group.order)
++    (a : SetupDraw G ℓ zDim κ pp) (s : EncDraw G κ pp) (t : KeyDraw G PG κ pp f) :
++    decSecond G PG zDim κ pp f x
++        (keyCore G PG zDim κ pp (setupCore G ℓ zDim κ pp a).2 f M t)
++        (encCore G ℓ zDim κ pp (setupCore G ℓ zDim κ pp a).1 x
++          (pp.group.expVec pp.generator z) s) =
++      pp.group.expVecT (pp.group.pair pp.generator pp.generator)
++        (Matrix.vecMul (Matrix.vecMul (Matrix.vecMul s a.1) t.1)
++          (PG.L1 κ pp.orderParam f *
++              PartialGarbling.publicTensor (p := pp.orderParam)
++                (M := PG.MIdx κ pp.orderParam f) x + PG.L0 κ pp.orderParam f)) := sorry
++
++/-- Π decrypts to `e(g,[zMf(x)^T])` for every honest draw and an arbitrary source-group
++matrix `M` [Wee20, §4.2, p. 10, (11)]. This is perfect correctness in the exponent.
++
++**Proof sketch.** Substitute `decFirst_correct` and `decSecond_correct` into `dec_eq`.
++Use the two reconstruction coefficient identities to cancel all `sAT` powers and identify
++the remaining source-group product with `leak`. Multiplicativity of pairing gives the
++claimed target-group value. This proof does not introduce scalar witnesses for `M`. -/
++theorem pi_dec_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) (M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (z : Fin (zDim.eval κ) → ZMod pp.group.order)
++    (a : SetupDraw G ℓ zDim κ pp) (s : EncDraw G κ pp) (t : KeyDraw G PG κ pp f) :
++    dec G PG zDim κ pp f M x
++        (keyCore G PG zDim κ pp (setupCore G ℓ zDim κ pp a).2 f M t)
++        (encCore G ℓ zDim κ pp (setupCore G ℓ zDim κ pp a).1 x
++          (pp.group.expVec pp.generator z) s) =
++      pp.group.pair pp.generator (leak G PG zDim κ pp f M x z) := sorry
++
++/-- The internal raw algorithm bundle inherits perfect correctness for all its draws
++[Wee20, §4.2, p. 10, (11)]. It has no efficiency hypothesis.
++
++**Proof sketch.** Read `scheme_raw_eq` to expose its four cores, then apply `pi_dec_eq`. -/
++theorem scheme_raw_correct (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) (M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (z : Fin (zDim.eval κ) → ZMod pp.group.order)
++    (a : SetupDraw G ℓ zDim κ pp) (s : EncDraw G κ pp) (t : KeyDraw G PG κ pp f) :
++    let S := scheme_raw G PG zDim κ pp
++    S.dec f M x (S.keyCore (S.setupCore a).2 f M t)
++        (S.encCore (S.setupCore a).1 x (pp.group.expVec pp.generator z) s) =
++      pp.group.pair pp.generator (leak G PG zDim κ pp f M x z) := sorry
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean
+new file mode 100644
+index 000000000..3cb600452
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/LinearSimulator.lean
+@@ -0,0 +1,384 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
++import Mathlib.Data.Fin.Tuple.Basic
++import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
++import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Card
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The raw simulator for the linear PHFE building block
++
++The simulator uses the supplied source-group leakage directly. Its partial garbling is
++computed at scalar value zero and multiplied by the supplied group value only at the
++distinguished coordinate. All remaining operations are known scalar powers and products.
++
++Setup samples an unconditioned uniform three-by-two matrix and an independent column.
++Their transposed augmentation is inverted by Mathlib's total matrix inverse. On a singular
++matrix this inverse is zero, so the simulator has an explicit total behavior on that event.
++The exact failure probability is retained, rather than the printed `1/p` approximation.
++
++## Main definitions
++
++* `Wee20.Linear.groupPGStar`: simulated partial garbling from a group-valued allowed value.
++* `Wee20.Linear.basisMatrix`, `SimState`, `SimSetupDraw`, `SimKeyDraw`: simulator data.
++* `Wee20.Linear.simSetupCore`, `simEncCore`, `simKeyCore`: the explicit simulator algorithms.
++* `Wee20.Linear.simSetup`, `simEnc`, `simKey`: exact laws of those algorithms.
++* `Wee20.Linear.rankSlack`, `linearSlack`: exact full-rank failure terms.
++
++## Main results
++
++* `Wee20.Linear.groupPGStar_lift`: the group algorithm agrees with scalar partial garbling
++  whenever its allowed group value is a known scalar power.
++* `Wee20.Linear.simSetupCore_singular`: the singular branch uses the zero inverse.
++* `Wee20.Linear.simSetup_fullRank_prob`: the exact probability of the good setup event.
++
++This is an internal raw simulator. Its efficiency enters through the outer construction's
++uniform targets; no efficient simulator interface is instantiated in this module.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, §4.2, p. 10, Simulator and
++  (12); Appendix B, pp. 12–14, Lemmas 2–5.
++* [AGW20] M. Abdalla, J. Gong, and H. Wee, *Functional Encryption for Attribute-Weighted
++  Sums from k-Lin*, CRYPTO 2020; full version, Cryptology ePrint Archive 2020/762,
++  Lemma 2, p. 12, Appendix A, (30)–(32), pp. 37–38.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
++
++open Complexity TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++open scoped Matrix
++
++/-- Compute simulated partial garbling from the source-group allowed value. Start with
++scalar value zero and multiply the allowed value at `m0`
++[Wee20, §4.2, p. 10, KeyGen*; AGW20, Appendix A, (30)–(32), pp. 37–38]. -/
++def groupPGStar (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (mu : pp.group.G)
++    (t : (PG.TIdx κ pp.orderParam f ⊕ Fin (n'.eval κ)) → ZMod pp.group.order) :
++    (Fin (n'.eval κ) ⊕ PG.MIdx κ pp.orderParam f) → pp.group.G :=
++  let p0 := PG.pgbStar κ pp.orderParam f x 0 t
++  Sum.elim (fun j => pp.generator ^ (p0 (Sum.inl j)).val)
++    (fun u => pp.generator ^ (p0 (Sum.inr u)).val *
++      if u = PG.m0 κ pp.orderParam f then mu else 1)
++
++/-- The group garbling has the canonical zero-value exponents and one allowed-value factor. -/
++theorem groupPGStar_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (mu : pp.group.G)
++    (t : (PG.TIdx κ pp.orderParam f ⊕ Fin (n'.eval κ)) → ZMod pp.group.order) :
++    groupPGStar G PG κ pp f x mu t =
++      let p0 := PG.pgbStar κ pp.orderParam f x 0 t
++      Sum.elim (fun j => pp.generator ^ (p0 (Sum.inl j)).val)
++        (fun u => pp.generator ^ (p0 (Sum.inr u)).val *
++          if u = PG.m0 κ pp.orderParam f then mu else 1) := rfl
++
++/-- With a known scalar allowed value, group partial garbling is precisely its implicit
++representation [Wee20, §4.2, p. 10; AGW20, Appendix A, (30), p. 37].
++
++**Proof sketch.** Read `groupPGStar_eq`, `PG.pgbStar_eq` and the canonical block readers.
++At the distinguished coordinate apply the source-group additive exponent law; elsewhere
++the extra scalar is zero. The first block is unchanged. -/
++theorem groupPGStar_lift (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (mu : ZMod pp.group.order)
++    (t : (PG.TIdx κ pp.orderParam f ⊕ Fin (n'.eval κ)) → ZMod pp.group.order) :
++    groupPGStar G PG κ pp f x (pp.generator ^ mu.val) t =
++      pp.group.expVec pp.generator (PG.pgbStar κ pp.orderParam f x mu t) := sorry
++
++/-- The simulator's basis matrix is `(A|c)^T` with the final row supplied by `c`
++[Wee20, §4.2, p. 10, Setup*]. -/
++def basisMatrix (G : BilinearGen) (κ : ℕ) (pp : PublicParams G κ)
++    (A : Matrix (Fin 3) (Fin 2) (ZMod pp.group.order))
++    (c : Fin 3 → ZMod pp.group.order) : Matrix (Fin 3) (Fin 3) (ZMod pp.group.order) :=
++  fun i j => Fin.snoc (fun a : Fin 2 => A j a) (c j) i
++
++/-- Each column of the transposed augmentation appends its `c` entry after the two `A` entries. -/
++theorem basisMatrix_eq (G : BilinearGen) (κ : ℕ) (pp : PublicParams G κ)
++    (A : Matrix (Fin 3) (Fin 2) (ZMod pp.group.order)) (c : Fin 3 → ZMod pp.group.order) :
++    basisMatrix G κ pp A c = fun i j => Fin.snoc (fun a : Fin 2 => A j a) (c j) i := rfl
++
++/-- Π's simulator retains the scalar public-key masks, ideal ciphertext masks and inverse
++basis [Wee20, §4.2, p. 10, Setup*]. The inverse is total, including singular setups. -/
++structure SimState (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) where
++  /-- The three-by-two public-key basis. -/
++  A : Matrix (Fin 3) (Fin 2) (ZMod pp.group.order)
++  /-- The private-input mask. -/
++  W : Matrix (Fin 3) (Fin (zDim.eval κ)) (ZMod pp.group.order)
++  /-- The public-variable mask. -/
++  U : Matrix (Fin 3) (Fin (ℓ.eval κ) × Fin 2) (ZMod pp.group.order)
++  /-- The constant mask. -/
++  V : Matrix (Fin 3) (Fin 2) (ZMod pp.group.order)
++  /-- The ideal three-coordinate ciphertext mask. -/
++  c : Fin 3 → ZMod pp.group.order
++  /-- The ideal private-input ciphertext mask. -/
++  w : Fin (zDim.eval κ) → ZMod pp.group.order
++  /-- The ideal public-input ciphertext mask. -/
++  v : Fin 2 → ZMod pp.group.order
++  /-- The total inverse of the transposed augmentation. -/
++  basisInv : Matrix (Fin 3) (Fin 3) (ZMod pp.group.order)
++
++/-- Simulator setup draws `A,c,W,U,V,w,v` independently and uniformly
++[Wee20, §4.2, p. 10, Setup*]. -/
++abbrev SimSetupDraw (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :=
++  Matrix (Fin 3) (Fin 2) (ZMod pp.group.order) ×
++    (Fin 3 → ZMod pp.group.order) ×
++    Matrix (Fin 3) (Fin (zDim.eval κ)) (ZMod pp.group.order) ×
++    Matrix (Fin 3) (Fin (ℓ.eval κ) × Fin 2) (ZMod pp.group.order) ×
++    Matrix (Fin 3) (Fin 2) (ZMod pp.group.order) ×
++    (Fin (zDim.eval κ) → ZMod pp.group.order) × (Fin 2 → ZMod pp.group.order)
++
++/-- The simulator draw is exactly its seven independent scalar blocks. -/
++theorem simSetupDraw_eq (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) :
++    SimSetupDraw G ℓ zDim κ pp =
++      (Matrix (Fin 3) (Fin 2) (ZMod pp.group.order) ×
++        (Fin 3 → ZMod pp.group.order) ×
++        Matrix (Fin 3) (Fin (zDim.eval κ)) (ZMod pp.group.order) ×
++        Matrix (Fin 3) (Fin (ℓ.eval κ) × Fin 2) (ZMod pp.group.order) ×
++        Matrix (Fin 3) (Fin 2) (ZMod pp.group.order) ×
++        (Fin (zDim.eval κ) → ZMod pp.group.order) × (Fin 2 → ZMod pp.group.order)) := rfl
++
++/-- Simulator setup computes the public key and the total inverse basis
++[Wee20, §4.2, p. 10, Setup*]. Unlike the source's implicit full-rank proviso, singular
++inputs are defined: Mathlib's inverse is zero when the determinant is not a unit. -/
++noncomputable def simSetupCore (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (ω : SimSetupDraw G ℓ zDim κ pp) :
++    MPK G ℓ zDim κ pp × SimState G ℓ zDim κ pp :=
++  let A := ω.1
++  let c := ω.2.1
++  let W := ω.2.2.1
++  let U := ω.2.2.2.1
++  let V := ω.2.2.2.2.1
++  let w := ω.2.2.2.2.2.1
++  let v := ω.2.2.2.2.2.2
++  (⟨pp.group.expMat pp.generator Aᵀ, pp.group.expMat pp.generator (Aᵀ * W),
++    pp.group.expMat pp.generator (Aᵀ * U), pp.group.expMat pp.generator (Aᵀ * V)⟩,
++    ⟨A, W, U, V, c, w, v, (basisMatrix G κ pp A c)⁻¹⟩)
++
++/-- Simulator setup is the displayed public exponentiation and total inverse construction. -/
++theorem simSetupCore_eq (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (ω : SimSetupDraw G ℓ zDim κ pp) :
++    simSetupCore G ℓ zDim κ pp ω =
++      let A := ω.1
++      let c := ω.2.1
++      let W := ω.2.2.1
++      let U := ω.2.2.2.1
++      let V := ω.2.2.2.2.1
++      let w := ω.2.2.2.2.2.1
++      let v := ω.2.2.2.2.2.2
++      (⟨pp.group.expMat pp.generator Aᵀ, pp.group.expMat pp.generator (Aᵀ * W),
++        pp.group.expMat pp.generator (Aᵀ * U), pp.group.expMat pp.generator (Aᵀ * V)⟩,
++        ⟨A, W, U, V, c, w, v, (basisMatrix G κ pp A c)⁻¹⟩) := rfl
++
++/-- On a singular setup the simulator explicitly uses a zero inverse basis. This totalizes
++[Wee20, §4.2, p. 10, Setup*] without resampling or altering its unconditioned draws.
++
++**Proof sketch.** Read `simSetupCore_eq` and apply `Matrix.nonsing_inv_apply_not_isUnit`. -/
++theorem simSetupCore_singular (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (ω : SimSetupDraw G ℓ zDim κ pp)
++    (h : ¬ IsUnit (basisMatrix G κ pp ω.1 ω.2.1).det) :
++    (simSetupCore G ℓ zDim κ pp ω).2.basisInv = 0 := sorry
++
++/-- Simulated encryption reveals only the three preselected group masks
++[Wee20, §4.2, p. 10, Enc*]. The public input is accepted but does not affect these masks. -/
++def simEncCore (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (st : SimState G ℓ zDim κ pp) (_x : Fin (ℓ.eval κ) → ZMod pp.group.order) :
++    CT G zDim κ pp :=
++  ⟨pp.group.expVec pp.generator st.c, pp.group.expVec pp.generator st.w,
++    pp.group.expVec pp.generator st.v⟩
++
++/-- The ideal ciphertext is the three implicit masks retained in simulator state. -/
++theorem simEncCore_eq (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (st : SimState G ℓ zDim κ pp)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order) :
++    simEncCore G ℓ zDim κ pp st x =
++      ⟨pp.group.expVec pp.generator st.c, pp.group.expVec pp.generator st.w,
++        pp.group.expVec pp.generator st.v⟩ := rfl
++
++/-- Combine two projected group rows and one hidden row by a known inverse basis
++[Wee20, §4.2, p. 10, (12)]. This uses known scalar powers only. -/
++def combineRows (G : BilinearGen) (κ : ℕ) (pp : PublicParams G κ) {J : Type}
++    (C : Matrix (Fin 3) (Fin 2) (ZMod pp.group.order)) (a : Fin 3 → ZMod pp.group.order)
++    (hi : Matrix (Fin 2) J pp.group.G) (lo : J → pp.group.G) : Matrix (Fin 3) J pp.group.G :=
++  matMulGroup C hi * fun i j => lo j ^ (a i).val
++
++/-- The inverse-basis combination is its known-matrix action times the hidden-row powers. -/
++theorem combineRows_eq (G : BilinearGen) (κ : ℕ) (pp : PublicParams G κ) {J : Type}
++    (C : Matrix (Fin 3) (Fin 2) (ZMod pp.group.order)) (a : Fin 3 → ZMod pp.group.order)
++    (hi : Matrix (Fin 2) J pp.group.G) (lo : J → pp.group.G) :
++    combineRows G κ pp C a hi lo = matMulGroup C hi * fun i j => lo j ^ (a i).val := rfl
++
++/-- A simulated key draws `T`, the independent `uhat`, `R`, and partial-garbling coins
++[Wee20, §4.2, p. 10, KeyGen* and (12)]. -/
++abbrev SimKeyDraw (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) :=
++  Matrix (Fin 3) (PG.TIdx κ pp.orderParam f ⊕ Fin (n'.eval κ)) (ZMod pp.group.order) ×
++    ((Fin (ℓ.eval κ) × PG.MIdx κ pp.orderParam f) → ZMod pp.group.order) ×
++    Matrix (Fin 2) (PG.MIdx κ pp.orderParam f) (ZMod pp.group.order) ×
++    ((PG.TIdx κ pp.orderParam f ⊕ Fin (n'.eval κ)) → ZMod pp.group.order)
++
++/-- Simulated-key randomness has exactly its four scalar blocks. -/
++theorem simKeyDraw_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) :
++    SimKeyDraw G PG κ pp f =
++      (Matrix (Fin 3) (PG.TIdx κ pp.orderParam f ⊕ Fin (n'.eval κ))
++          (ZMod pp.group.order) ×
++        ((Fin (ℓ.eval κ) × PG.MIdx κ pp.orderParam f) → ZMod pp.group.order) ×
++        Matrix (Fin 2) (PG.MIdx κ pp.orderParam f) (ZMod pp.group.order) ×
++        ((PG.TIdx κ pp.orderParam f ⊕ Fin (n'.eval κ)) → ZMod pp.group.order)) := rfl
++
++/-- Simulated key generation computes equation (12) from the group-valued allowed value
++[Wee20, §4.2, p. 10]. The rectangular key matrix is used through group actions only. -/
++def simKeyCore (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (st : SimState G ℓ zDim κ pp) (f : Fn κ pp.orderParam)
++    (M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order) (mu : pp.group.G)
++    (ω : SimKeyDraw G PG κ pp f) : Key G PG κ pp f :=
++  let T := ω.1
++  let uhat := ω.2.1
++  let R := ω.2.2.1
++  let t := ω.2.2.2
++  let A := st.Aᵀ
++  let tensorR := Matrix.kroneckerMap (fun a b => a * b)
++    (1 : Matrix (Fin (ℓ.eval κ)) (Fin (ℓ.eval κ)) (ZMod pp.group.order)) R
++  let X := PartialGarbling.publicTensor (p := pp.orderParam)
++    (M := PG.MIdx κ pp.orderParam f) x
++  let pstar := groupPGStar G PG κ pp f x mu t
++  let high1 := pp.group.expMat pp.generator (A * (fun i j => T i (Sum.inr j))) *
++    matMulGroup (A * st.W) M
++  let high2 := pp.group.expMat pp.generator
++    ((A * T) * PG.L1 κ pp.orderParam f + (A * st.U) * tensorR)
++  let high3 := pp.group.expMat pp.generator
++    ((A * T) * PG.L0 κ pp.orderParam f + (A * st.V) * R)
++  let low1 := fun j => (pstar (Sum.inl j))⁻¹ * groupVecMul st.w M j
++  let low2 := pp.group.expVec pp.generator uhat
++  let low3 := fun u => pstar (Sum.inr u) *
++    pp.group.expVec pp.generator (Matrix.vecMul st.v R - Matrix.vecMul uhat X) u
++  let C := fun i j => st.basisInv i (Fin.castSucc j)
++  let a := fun i => st.basisInv i (Fin.last 2)
++  ⟨combineRows G κ pp C a high1 low1, combineRows G κ pp C a high2 low2,
++    combineRows G κ pp C a high3 low3, pp.group.expMat pp.generator R⟩
++
++/-- The simulated key's three blocks have the projected and hidden-row form of (12). -/
++theorem simKeyCore_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (st : SimState G ℓ zDim κ pp) (f : Fn κ pp.orderParam)
++    (M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order) (mu : pp.group.G)
++    (ω : SimKeyDraw G PG κ pp f) :
++    simKeyCore G PG zDim κ pp st f M x mu ω =
++      let T := ω.1
++      let uhat := ω.2.1
++      let R := ω.2.2.1
++      let t := ω.2.2.2
++      let A := st.Aᵀ
++      let tensorR := Matrix.kroneckerMap (fun a b => a * b)
++        (1 : Matrix (Fin (ℓ.eval κ)) (Fin (ℓ.eval κ)) (ZMod pp.group.order)) R
++      let X := PartialGarbling.publicTensor (p := pp.orderParam)
++        (M := PG.MIdx κ pp.orderParam f) x
++      let pstar := groupPGStar G PG κ pp f x mu t
++      let high1 := pp.group.expMat pp.generator (A * (fun i j => T i (Sum.inr j))) *
++        matMulGroup (A * st.W) M
++      let high2 := pp.group.expMat pp.generator
++        ((A * T) * PG.L1 κ pp.orderParam f + (A * st.U) * tensorR)
++      let high3 := pp.group.expMat pp.generator
++        ((A * T) * PG.L0 κ pp.orderParam f + (A * st.V) * R)
++      let low1 := fun j => (pstar (Sum.inl j))⁻¹ * groupVecMul st.w M j
++      let low2 := pp.group.expVec pp.generator uhat
++      let low3 := fun u => pstar (Sum.inr u) *
++        pp.group.expVec pp.generator (Matrix.vecMul st.v R - Matrix.vecMul uhat X) u
++      let C := fun i j => st.basisInv i (Fin.castSucc j)
++      let a := fun i => st.basisInv i (Fin.last 2)
++      ⟨combineRows G κ pp C a high1 low1, combineRows G κ pp C a high2 low2,
++        combineRows G κ pp C a high3 low3, pp.group.expMat pp.generator R⟩ := rfl
++
++/-- The simulator's exact setup law uses one uniform draw and the displayed total core
++[Wee20, §4.2, p. 10]. -/
++noncomputable def simSetup (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) : ProbComp (MPK G ℓ zDim κ pp × SimState G ℓ zDim κ pp) :=
++  (ProbComp.sample (SimSetupDraw G ℓ zDim κ pp)).map (simSetupCore G ℓ zDim κ pp)
++
++/-- Simulated setup has the displayed core-plus-draw law. -/
++theorem simSetup_eq (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++    simSetup G ℓ zDim κ pp =
++      (ProbComp.sample (SimSetupDraw G ℓ zDim κ pp)).map (simSetupCore G ℓ zDim κ pp) := rfl
++
++/-- Simulated encryption is deterministic after setup chooses its masks
++[Wee20, §4.2, p. 10, Enc*]. -/
++def simEnc (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (st : SimState G ℓ zDim κ pp) (x : Fin (ℓ.eval κ) → ZMod pp.group.order) :
++    ProbComp (CT G zDim κ pp) := .pure (simEncCore G ℓ zDim κ pp st x)
++
++/-- Simulated encryption returns its deterministic core output. -/
++theorem simEnc_eq (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (st : SimState G ℓ zDim κ pp) (x : Fin (ℓ.eval κ) → ZMod pp.group.order) :
++    simEnc G ℓ zDim κ pp st x = .pure (simEncCore G ℓ zDim κ pp st x) := rfl
++
++/-- Simulated key generation samples its one function-dependent draw and runs equation (12)
++[Wee20, §4.2, p. 10]. -/
++noncomputable def simKey (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (st : SimState G ℓ zDim κ pp) (f : Fn κ pp.orderParam)
++    (M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order) (mu : pp.group.G) :
++    ProbComp (Key G PG κ pp f) :=
++  (ProbComp.sample (SimKeyDraw G PG κ pp f)).map (simKeyCore G PG zDim κ pp st f M x mu)
++
++/-- Simulated keys have the displayed core-plus-draw law. -/
++theorem simKey_eq (G : BilinearGen) {ℓ n' : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ n' Fn) (zDim : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (st : SimState G ℓ zDim κ pp) (f : Fn κ pp.orderParam)
++    (M : Matrix (Fin (zDim.eval κ)) (Fin (n'.eval κ)) pp.group.G)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order) (mu : pp.group.G) :
++    simKey G PG zDim κ pp st f M x mu =
++      (ProbComp.sample (SimKeyDraw G PG κ pp f)).map (simKeyCore G PG zDim κ pp st f M x mu) :=
++  rfl
++
++/-- The exact failure probability of an unconditioned uniform three-by-three basis is
++one minus its general-linear-group fraction. This replaces the printed `1/p` bound in
++[Wee20, §4.2, p. 10, Setup*] for its actual unconditioned draws. -/
++def rankSlack {G : BilinearGen} {κ : ℕ} (pp : PublicParams G κ) : ℝ :=
++  1 - (1 - 1 / (pp.group.order : ℝ)) *
++    (1 - 1 / (pp.group.order : ℝ) ^ 2) * (1 - 1 / (pp.group.order : ℝ) ^ 3)
++
++/-- The exact rank correction is the displayed three-by-three singular fraction. -/
++theorem rankSlack_eq {G : BilinearGen} {κ : ℕ} (pp : PublicParams G κ) :
++    rankSlack pp = 1 - (1 - 1 / (pp.group.order : ℝ)) *
++      (1 - 1 / (pp.group.order : ℝ) ^ 2) * (1 - 1 / (pp.group.order : ℝ) ^ 3) := rfl
++
++/-- The good basis event has exactly the general-linear-group fraction, with no conditioning
++on the first two columns [Wee20, §4.2, p. 10, Setup*, exact reading of its draw].
++
++**Proof sketch.** Reindex the independent `A,c` coordinates as a uniform three-by-three
++matrix. Integrate unused masks. Count invertible matrices with `Matrix.card_GL_field` and
++divide by the cardinality of all matrices, using `ZMod.card`. -/
++theorem simSetup_fullRank_prob (G : BilinearGen) (ℓ zDim : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) :
++    ProbComp.prob (ProbComp.sample (SimSetupDraw G ℓ zDim κ pp))
++      (fun ω => IsUnit (basisMatrix G κ pp ω.1 ω.2.1).det) = 1 - rankSlack pp := sorry
++
++/-- Π's statistical correction averages its exact rank failure over sequential public-
++parameter generation [Wee20, Appendix B, Theorem 1, p. 12, with exact rank accounting]. -/
++noncomputable def linearSlack (G : BilinearGen) (κ : ℕ) : ℝ :=
++  ProbComp.expect (publicParamsGen G κ) rankSlack
++
++/-- The linear-layer correction is the expectation of its exact rank failure. -/
++theorem linearSlack_eq (G : BilinearGen) (κ : ℕ) :
++    linearSlack G κ = ProbComp.expect (publicParamsGen G κ) rankSlack := rfl
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic.lean
+new file mode 100644
+index 000000000..6aafbc45b
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/Quadratic.lean
+@@ -0,0 +1,398 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Linear
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Classes
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The raw quadratic PHFE construction
++
++The public key stores the two masking matrices in the source group and Π's public key.
++Encryption knows its private scalars and its fresh masks but only knows `y1` in the source
++group. The signal supplied to Π therefore uses known powers of group `y1`; it never
++recovers the sampled public matrix or the masked input as scalars.
++
++## Main definitions
++
++* `Wee20.Quadratic.piDim`, `signalCoord`: the linear input length and canonical coordinates.
++* `Wee20.Quadratic.mixScalar`, `mixGroup`: the two Kronecker blocks of the fixed matrix.
++* `Wee20.Quadratic.signalScalar`, `signalGroup`: the scalar proof representation and actual
++  group algorithm for the signal supplied to Π.
++* `Wee20.Quadratic.MPK`, `MSK`, `CT`, `Key`: the outer raw data.
++* `Wee20.Quadratic.setupCore`, `encCore`, `keyCore`, `dec`: the explicit outer algorithms.
++* `Wee20.Quadratic.setup`, `enc`, `keyGen`: their exact core-plus-draw laws.
++* `Wee20.Quadratic.value`, `RawAlgorithms`, `scheme_raw`: scalar evaluation and raw bundle.
++
++## Main results
++
++Every definition has an equation reader. Correctness is in `QuadraticCorrect` and the
++stateful raw simulator is in `QuadraticSimulator`.
++
++The fixed group matrix is public metadata retained with the master key and each function
++key, matching Π's per-key group-matrix form. In the symmetric group the two source-group
++copies of the first masking matrix coincide. No unused outer `s0` is sampled.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, §3.1, p. 6, Setup, Enc,
++  KeyGen, Dec, and equations (4)–(5); §4, p. 8 (per-key group matrices).
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
++
++open Complexity TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++open scoped Matrix
++
++/-- Π's private input has length `2*n2+n1*2`, the concatenated cross terms
++[Wee20, §3.1, p. 6, Enc, with k=k'=2]. -/
++def piDim (n1 n2 : PolyExpr) : PolyExpr :=
++  ((.const 2).mul n2).add (n1.mul (.const 2))
++
++/-- The linear private-input dimension is the displayed sum of two product dimensions. -/
++theorem piDim_eq (n1 n2 : PolyExpr) :
++    piDim n1 n2 = ((.const 2).mul n2).add (n1.mul (.const 2)) := rfl
++
++/-- Signal coordinates order the first tensor block before the second, using the existing
++finite-product and finite-sum equivalences [Wee20, §3.1, p. 6, Enc]. -/
++def signalCoord (n1 n2 : ℕ) :
++    ((Fin 2 × Fin n2) ⊕ (Fin n1 × Fin 2)) ≃ Fin (2 * n2 + n1 * 2) :=
++  (Equiv.sumCongr finProdFinEquiv finProdFinEquiv).trans finSumFinEquiv
++
++/-- The signal ordering is the canonical finite product/sum ordering. -/
++theorem signalCoord_eq (n1 n2 : ℕ) :
++    signalCoord n1 n2 =
++      (Equiv.sumCongr finProdFinEquiv finProdFinEquiv).trans finSumFinEquiv := rfl
++
++/-- The scalar matrix stacks `A1⊗I_n2` over `I_n1⊗A2`
++[Wee20, §3.1, p. 6, Setup]. It is used for algebraic statements about sampled setup coins. -/
++def mixScalar {p : ℕ+} {n1 n2 : ℕ}
++    (A1 : Matrix (Fin 2) (Fin n1) (ZMod (p : ℕ)))
++    (A2 : Matrix (Fin 2) (Fin n2) (ZMod (p : ℕ))) :
++    Matrix (Fin (2 * n2 + n1 * 2)) (Fin (n1 * n2)) (ZMod (p : ℕ)) :=
++  let top := Matrix.kroneckerMap (fun a b => a * b) A1
++    (1 : Matrix (Fin n2) (Fin n2) (ZMod (p : ℕ)))
++  let bottom := Matrix.kroneckerMap (fun a b => a * b)
++    (1 : Matrix (Fin n1) (Fin n1) (ZMod (p : ℕ))) A2
++  fun i j => Sum.elim (fun u => top u (finProdFinEquiv.symm j))
++    (fun u => bottom u (finProdFinEquiv.symm j)) ((signalCoord n1 n2).symm i)
++
++/-- The scalar mixing matrix is the displayed pair of canonical Kronecker blocks. -/
++theorem mixScalar_eq {p : ℕ+} {n1 n2 : ℕ}
++    (A1 : Matrix (Fin 2) (Fin n1) (ZMod (p : ℕ)))
++    (A2 : Matrix (Fin 2) (Fin n2) (ZMod (p : ℕ))) :
++    mixScalar (p := p) A1 A2 =
++      let top := Matrix.kroneckerMap (fun a b => a * b) A1
++        (1 : Matrix (Fin n2) (Fin n2) (ZMod (p : ℕ)))
++      let bottom := Matrix.kroneckerMap (fun a b => a * b)
++        (1 : Matrix (Fin n1) (Fin n1) (ZMod (p : ℕ))) A2
++      fun i j => Sum.elim (fun u => top u (finProdFinEquiv.symm j))
++        (fun u => bottom u (finProdFinEquiv.symm j)) ((signalCoord n1 n2).symm i) := rfl
++
++/-- Compute the fixed group matrix from public group matrices, using known identity-matrix
++powers only [Wee20, §3.1, p. 6, Setup]. -/
++def mixGroup (G : BilinearGen) (n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (A1 : Matrix (Fin 2) (Fin (n1.eval κ)) pp.group.G)
++    (A2 : Matrix (Fin 2) (Fin (n2.eval κ)) pp.group.G) :
++    Matrix (Fin ((piDim n1 n2).eval κ)) (Fin ((n1.mul n2).eval κ)) pp.group.G :=
++  let top := Matrix.kroneckerMap (fun a b => a ^ b.val) A1
++    (1 : Matrix (Fin (n2.eval κ)) (Fin (n2.eval κ)) (ZMod pp.group.order))
++  let bottom := Matrix.kroneckerMap (fun a b => b ^ a.val)
++    (1 : Matrix (Fin (n1.eval κ)) (Fin (n1.eval κ)) (ZMod pp.group.order)) A2
++  fun i j => Sum.elim (fun u => top u (finProdFinEquiv.symm j))
++    (fun u => bottom u (finProdFinEquiv.symm j))
++    ((signalCoord (n1.eval κ) (n2.eval κ)).symm i)
++
++/-- The group matrix is the canonical source-group Kronecker computation. -/
++theorem mixGroup_eq (G : BilinearGen) (n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (A1 : Matrix (Fin 2) (Fin (n1.eval κ)) pp.group.G)
++    (A2 : Matrix (Fin 2) (Fin (n2.eval κ)) pp.group.G) :
++    mixGroup G n1 n2 κ pp A1 A2 =
++      let top := Matrix.kroneckerMap (fun a b => a ^ b.val) A1
++        (1 : Matrix (Fin (n2.eval κ)) (Fin (n2.eval κ)) (ZMod pp.group.order))
++      let bottom := Matrix.kroneckerMap (fun a b => b ^ a.val)
++        (1 : Matrix (Fin (n1.eval κ)) (Fin (n1.eval κ)) (ZMod pp.group.order)) A2
++      fun i j => Sum.elim (fun u => top u (finProdFinEquiv.symm j))
++        (fun u => bottom u (finProdFinEquiv.symm j))
++        ((signalCoord (n1.eval κ) (n2.eval κ)).symm i) := rfl
++
++/-- The scalar cross-term signal concatenates `s1⊗z2` with `y1⊗s2`
++[Wee20, §3.1, p. 6, Enc]. This reuses the class's scalar tensor representation. -/
++def signalScalar {p : ℕ+} {n1 n2 : ℕ} (s1 : Fin 2 → ZMod (p : ℕ))
++    (z2 : Fin n2 → ZMod (p : ℕ)) (y1 : Fin n1 → ZMod (p : ℕ))
++    (s2 : Fin 2 → ZMod (p : ℕ)) : Fin (2 * n2 + n1 * 2) → ZMod (p : ℕ) :=
++  fun i => Sum.elim
++    (fun u => privateTensor (p := p) s1 z2 (finProdFinEquiv u))
++    (fun u => privateTensor (p := p) y1 s2 (finProdFinEquiv u)) ((signalCoord n1 n2).symm i)
++
++/-- The scalar signal uses the existing private-tensor and product/sum coordinate maps. -/
++theorem signalScalar_eq {p : ℕ+} {n1 n2 : ℕ} (s1 : Fin 2 → ZMod (p : ℕ))
++    (z2 : Fin n2 → ZMod (p : ℕ)) (y1 : Fin n1 → ZMod (p : ℕ))
++    (s2 : Fin 2 → ZMod (p : ℕ)) :
++    signalScalar (p := p) s1 z2 y1 s2 = fun i => Sum.elim
++      (fun u => privateTensor (p := p) s1 z2 (finProdFinEquiv u))
++      (fun u => privateTensor (p := p) y1 s2 (finProdFinEquiv u))
++      ((signalCoord n1 n2).symm i) := rfl
++
++/-- Encryption forms its signal from known `s1,z2,s2` and GROUP `y1`
++[Wee20, §3.1, p. 6, Enc]. The second block is computed by known powers of `y1`. -/
++def signalGroup (G : BilinearGen) (n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (s1 : Fin 2 → ZMod pp.group.order) (z2 : Fin (n2.eval κ) → ZMod pp.group.order)
++    (y1 : Fin (n1.eval κ) → pp.group.G) (s2 : Fin 2 → ZMod pp.group.order) :
++    Fin ((piDim n1 n2).eval κ) → pp.group.G :=
++  fun i => Sum.elim
++    (fun u => pp.group.expVec pp.generator
++      (privateTensor (p := pp.orderParam) s1 z2) (finProdFinEquiv u))
++    (fun u => y1 u.1 ^ (s2 u.2).val) ((signalCoord (n1.eval κ) (n2.eval κ)).symm i)
++
++/-- The actual signal exponentiates its known first block and powers its group second block. -/
++theorem signalGroup_eq (G : BilinearGen) (n1 n2 : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (s1 : Fin 2 → ZMod pp.group.order)
++    (z2 : Fin (n2.eval κ) → ZMod pp.group.order) (y1 : Fin (n1.eval κ) → pp.group.G)
++    (s2 : Fin 2 → ZMod pp.group.order) :
++    signalGroup G n1 n2 κ pp s1 z2 y1 s2 = fun i => Sum.elim
++      (fun u => pp.group.expVec pp.generator
++        (privateTensor (p := pp.orderParam) s1 z2) (finProdFinEquiv u))
++      (fun u => y1 u.1 ^ (s2 u.2).val) ((signalCoord (n1.eval κ) (n2.eval κ)).symm i) := rfl
++
++/-- The public key stores the two group masking matrices and Π's public key
++[Wee20, §3.1, p. 6, Setup]. Source-group copies coincide in the symmetric setting. -/
++structure MPK (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) where
++  /-- The first public group mask. -/
++  A1 : Matrix (Fin 2) (Fin (n1.eval κ)) pp.group.G
++  /-- The second public group mask. -/
++  A2 : Matrix (Fin 2) (Fin (n2.eval κ)) pp.group.G
++  /-- The linear building block's public key. -/
++  linear : Linear.MPK G ℓ (piDim n1 n2) κ pp
++
++/-- The master key retains Π's secret key and the fixed PUBLIC group matrix needed by
++per-key Π.KeyGen [Wee20, §3.1, p. 6; §4, p. 8, per-key matrix form]. -/
++structure MSK (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) where
++  /-- The fixed public group matrix. -/
++  matrix : Matrix (Fin ((piDim n1 n2).eval κ)) (Fin ((n1.mul n2).eval κ)) pp.group.G
++  /-- The linear master secret key. -/
++  linear : Linear.MSK G ℓ (piDim n1 n2) κ pp
++
++/-- The ciphertext contains the two group masks and Π's ciphertext
++[Wee20, §3.1, p. 6, Enc]. The public input remains separate. -/
++structure CT (G : BilinearGen) (n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) where
++  /-- The first masked private vector. -/
++  y1 : Fin (n1.eval κ) → pp.group.G
++  /-- The second masked private vector. -/
++  y2 : Fin (n2.eval κ) → pp.group.G
++  /-- The linear ciphertext for the group signal. -/
++  linear : Linear.CT G (piDim n1 n2) κ pp
++
++/-- A function key stores the public matrix metadata and the linear function key
++[Wee20, §3.1, p. 6, Dec; §4, p. 8]. -/
++structure Key (G : BilinearGen) (n1 n2 : PolyExpr) {ℓ : PolyExpr} {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) where
++  /-- The fixed public matrix, needed without a public-key argument to decryption. -/
++  matrix : Matrix (Fin ((piDim n1 n2).eval κ)) (Fin ((n1.mul n2).eval κ)) pp.group.G
++  /-- The linear key for this function and matrix. -/
++  linear : Linear.Key G PG κ pp f
++
++/-- Setup draws its two scalar public masks and the linear setup randomness
++[Wee20, §3.1, p. 6]. -/
++abbrev SetupDraw (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :=
++  Matrix (Fin 2) (Fin (n1.eval κ)) (ZMod pp.group.order) ×
++    Matrix (Fin 2) (Fin (n2.eval κ)) (ZMod pp.group.order) ×
++    Linear.SetupDraw G ℓ (piDim n1 n2) κ pp
++
++/-- The outer setup draw consists of its two masks and Π's setup draw. -/
++theorem setupDraw_eq (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++    SetupDraw G ℓ n1 n2 κ pp =
++      (Matrix (Fin 2) (Fin (n1.eval κ)) (ZMod pp.group.order) ×
++        Matrix (Fin 2) (Fin (n2.eval κ)) (ZMod pp.group.order) ×
++        Linear.SetupDraw G ℓ (piDim n1 n2) κ pp) := rfl
++
++/-- Encryption draws its two masks and Π's encryption randomness. The unused outer `s0`
++printed in [Wee20, §3.1, p. 6] is omitted. -/
++abbrev EncDraw (G : BilinearGen) (κ : ℕ) (pp : PublicParams G κ) :=
++  (Fin 2 → ZMod pp.group.order) × (Fin 2 → ZMod pp.group.order) × Linear.EncDraw G κ pp
++
++/-- Outer encryption randomness is exactly its two masks and Π's draw. -/
++theorem encDraw_eq (G : BilinearGen) (κ : ℕ) (pp : PublicParams G κ) :
++    EncDraw G κ pp =
++      ((Fin 2 → ZMod pp.group.order) × (Fin 2 → ZMod pp.group.order) ×
++        Linear.EncDraw G κ pp) := rfl
++
++/-- Setup exponentiates the two masking matrices, computes the fixed group matrix and
++runs Π's setup core [Wee20, §3.1, p. 6]. -/
++def setupCore (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (ω : SetupDraw G ℓ n1 n2 κ pp) : MPK G ℓ n1 n2 κ pp × MSK G ℓ n1 n2 κ pp :=
++  let A1 := pp.group.expMat pp.generator ω.1
++  let A2 := pp.group.expMat pp.generator ω.2.1
++  let linear := Linear.setupCore G ℓ (piDim n1 n2) κ pp ω.2.2
++  (⟨A1, A2, linear.1⟩, ⟨mixGroup G n1 n2 κ pp A1 A2, linear.2⟩)
++
++/-- Setup's output is the two group masks, fixed group matrix and Π's output. -/
++theorem setupCore_eq (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (ω : SetupDraw G ℓ n1 n2 κ pp) :
++    setupCore G ℓ n1 n2 κ pp ω =
++      let A1 := pp.group.expMat pp.generator ω.1
++      let A2 := pp.group.expMat pp.generator ω.2.1
++      let linear := Linear.setupCore G ℓ (piDim n1 n2) κ pp ω.2.2
++      (⟨A1, A2, linear.1⟩, ⟨mixGroup G n1 n2 κ pp A1 A2, linear.2⟩) := rfl
++
++/-- Encryption computes the group masks and the group-only signal sent to Π
++[Wee20, §3.1, p. 6]. -/
++def encCore (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (pk : MPK G ℓ n1 n2 κ pp) (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (z1 : Fin (n1.eval κ) → ZMod pp.group.order)
++    (z2 : Fin (n2.eval κ) → ZMod pp.group.order) (ω : EncDraw G κ pp) : CT G n1 n2 κ pp :=
++  let y1 := groupVecMul ω.1 pk.A1 * pp.group.expVec pp.generator z1
++  let y2 := groupVecMul ω.2.1 pk.A2 * pp.group.expVec pp.generator z2
++  ⟨y1, y2, Linear.encCore G ℓ (piDim n1 n2) κ pp pk.linear x
++    (signalGroup G n1 n2 κ pp ω.1 z2 y1 ω.2.1) ω.2.2⟩
++
++/-- Encryption uses only the two public group masks, known scalars and Π's group input. -/
++theorem encCore_eq (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (pk : MPK G ℓ n1 n2 κ pp)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (z1 : Fin (n1.eval κ) → ZMod pp.group.order)
++    (z2 : Fin (n2.eval κ) → ZMod pp.group.order) (ω : EncDraw G κ pp) :
++    encCore G ℓ n1 n2 κ pp pk x z1 z2 ω =
++      let y1 := groupVecMul ω.1 pk.A1 * pp.group.expVec pp.generator z1
++      let y2 := groupVecMul ω.2.1 pk.A2 * pp.group.expVec pp.generator z2
++      ⟨y1, y2, Linear.encCore G ℓ (piDim n1 n2) κ pp pk.linear x
++        (signalGroup G n1 n2 κ pp ω.1 z2 y1 ω.2.1) ω.2.2⟩ := rfl
++
++/-- Key generation forwards its function and fixed group matrix to Π
++[Wee20, §3.1, p. 6; §4, p. 8]. -/
++def keyCore (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr) {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (κ : ℕ) (pp : PublicParams G κ)
++    (msk : MSK G ℓ n1 n2 κ pp) (f : Fn κ pp.orderParam)
++    (ω : Linear.KeyDraw G PG κ pp f) : Key G n1 n2 PG κ pp f :=
++  ⟨msk.matrix, Linear.keyCore G PG (piDim n1 n2) κ pp msk.linear f msk.matrix ω⟩
++
++/-- The key stores its public matrix metadata and Π's function key. -/
++theorem keyCore_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) (msk : MSK G ℓ n1 n2 κ pp)
++    (f : Fn κ pp.orderParam) (ω : Linear.KeyDraw G PG κ pp f) :
++    keyCore G n1 n2 PG κ pp msk f ω =
++      ⟨msk.matrix, Linear.keyCore G PG (piDim n1 n2) κ pp msk.linear f msk.matrix ω⟩ := rfl
++
++/-- Scalar quadratic evaluation uses the existing private tensor and the supplied raw
++partial-garbling function evaluation [Wee20, §3, p. 6]. -/
++def value (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr) {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (z1 : Fin (n1.eval κ) → ZMod pp.group.order)
++    (z2 : Fin (n2.eval κ) → ZMod pp.group.order) : ZMod pp.group.order :=
++  dotProduct (privateTensor (p := pp.orderParam) z1 z2) (PG.eval κ pp.orderParam f x)
++
++/-- The allowed scalar is exactly the tensor/function-vector dot product. -/
++theorem value_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) (f : Fn κ pp.orderParam)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (z1 : Fin (n1.eval κ) → ZMod pp.group.order)
++    (z2 : Fin (n2.eval κ) → ZMod pp.group.order) :
++    value G n1 n2 PG κ pp f x z1 z2 =
++      dotProduct (privateTensor (p := pp.orderParam) z1 z2) (PG.eval κ pp.orderParam f x) := rfl
++
++/-- Decryption pairs the two outer masks, weights by the function value, and divides by
++Π's decryption [Wee20, §3.1, p. 6, Dec and (5)]. -/
++def dec (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr) {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (κ : ℕ) (pp : PublicParams G κ)
++    (f : Fn κ pp.orderParam) (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (sk : Key G n1 n2 PG κ pp f) (ct : CT G n1 n2 κ pp) : pp.group.GT :=
++  groupDot (fun i => pp.group.pairTensor ct.y1 ct.y2 (finProdFinEquiv.symm i))
++      (PG.eval κ pp.orderParam f x) *
++    (Linear.dec G PG (piDim n1 n2) κ pp f sk.matrix x sk.linear ct.linear)⁻¹
++
++/-- Decryption is the weighted tensor pairing divided by the linear decryption. -/
++theorem dec_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) (f : Fn κ pp.orderParam)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (sk : Key G n1 n2 PG κ pp f) (ct : CT G n1 n2 κ pp) :
++    dec G n1 n2 PG κ pp f x sk ct =
++      groupDot (fun i => pp.group.pairTensor ct.y1 ct.y2 (finProdFinEquiv.symm i))
++          (PG.eval κ pp.orderParam f x) *
++        (Linear.dec G PG (piDim n1 n2) κ pp f sk.matrix x sk.linear ct.linear)⁻¹ := rfl
++
++/-- The exact setup law samples its single product draw and applies the core. -/
++noncomputable def setup (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) : ProbComp (MPK G ℓ n1 n2 κ pp × MSK G ℓ n1 n2 κ pp) :=
++  (ProbComp.sample (SetupDraw G ℓ n1 n2 κ pp)).map (setupCore G ℓ n1 n2 κ pp)
++
++/-- Setup has the displayed exact core-plus-draw law. -/
++theorem setup_eq (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++    setup G ℓ n1 n2 κ pp =
++      (ProbComp.sample (SetupDraw G ℓ n1 n2 κ pp)).map (setupCore G ℓ n1 n2 κ pp) := rfl
++
++/-- The exact encryption law samples its two masks and Π's randomness. -/
++noncomputable def enc (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (pk : MPK G ℓ n1 n2 κ pp)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (z1 : Fin (n1.eval κ) → ZMod pp.group.order)
++    (z2 : Fin (n2.eval κ) → ZMod pp.group.order) : ProbComp (CT G n1 n2 κ pp) :=
++  (ProbComp.sample (EncDraw G κ pp)).map (encCore G ℓ n1 n2 κ pp pk x z1 z2)
++
++/-- Encryption has the displayed exact core-plus-draw law. -/
++theorem enc_eq (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (pk : MPK G ℓ n1 n2 κ pp) (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (z1 : Fin (n1.eval κ) → ZMod pp.group.order)
++    (z2 : Fin (n2.eval κ) → ZMod pp.group.order) :
++    enc G ℓ n1 n2 κ pp pk x z1 z2 =
++      (ProbComp.sample (EncDraw G κ pp)).map (encCore G ℓ n1 n2 κ pp pk x z1 z2) := rfl
++
++/-- The exact key law uses Π's function-dependent key draw. -/
++noncomputable def keyGen (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) (msk : MSK G ℓ n1 n2 κ pp)
++    (f : Fn κ pp.orderParam) : ProbComp (Key G n1 n2 PG κ pp f) :=
++  (ProbComp.sample (Linear.KeyDraw G PG κ pp f)).map (keyCore G n1 n2 PG κ pp msk f)
++
++/-- Key generation has the displayed exact core-plus-draw law. -/
++theorem keyGen_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) (msk : MSK G ℓ n1 n2 κ pp)
++    (f : Fn κ pp.orderParam) :
++    keyGen G n1 n2 PG κ pp msk f =
++      (ProbComp.sample (Linear.KeyDraw G PG κ pp f)).map (keyCore G n1 n2 PG κ pp msk f) := rfl
++
++/-- The quadratic construction is an internal raw algorithm bundle
++[Wee20, §3.1, p. 6]. Uniform efficiency is supplied by the outer targets. -/
++structure RawAlgorithms (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) where
++  /-- Honest setup core. -/
++  setupCore : SetupDraw G ℓ n1 n2 κ pp → MPK G ℓ n1 n2 κ pp × MSK G ℓ n1 n2 κ pp
++  /-- Honest encryption core. -/
++  encCore : MPK G ℓ n1 n2 κ pp → (Fin (ℓ.eval κ) → ZMod pp.group.order) →
++    (Fin (n1.eval κ) → ZMod pp.group.order) → (Fin (n2.eval κ) → ZMod pp.group.order) →
++    EncDraw G κ pp → CT G n1 n2 κ pp
++  /-- Honest function-key core. -/
++  keyCore : MSK G ℓ n1 n2 κ pp → (f : Fn κ pp.orderParam) →
++    Linear.KeyDraw G PG κ pp f → Key G n1 n2 PG κ pp f
++  /-- Deterministic decryption. -/
++  dec : (f : Fn κ pp.orderParam) → (Fin (ℓ.eval κ) → ZMod pp.group.order) →
++    Key G n1 n2 PG κ pp f → CT G n1 n2 κ pp → pp.group.GT
++
++/-- Assemble the explicit raw quadratic cores [Wee20, §3.1, p. 6]. -/
++def scheme_raw (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) : RawAlgorithms G n1 n2 PG κ pp :=
++  ⟨setupCore G ℓ n1 n2 κ pp, encCore G ℓ n1 n2 κ pp,
++    keyCore G n1 n2 PG κ pp, dec G n1 n2 PG κ pp⟩
++
++/-- The raw quadratic bundle contains exactly the four displayed cores. -/
++theorem scheme_raw_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) :
++    scheme_raw G n1 n2 PG κ pp =
++      ⟨setupCore G ℓ n1 n2 κ pp, encCore G ℓ n1 n2 κ pp,
++        keyCore G n1 n2 PG κ pp, dec G n1 n2 PG κ pp⟩ := rfl
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean
+new file mode 100644
+index 000000000..529dc74d6
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticCorrect.lean
+@@ -0,0 +1,142 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearCorrect
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Correctness of raw quadratic PHFE
++
++The scalar masking matrices occur only as the known setup draw in the correctness theorem.
++The honest encryption algorithm itself uses only the public group matrices. The proof
++connects those group computations to the scalar tensor identities (4) and (5), then applies
++Π's perfect correctness theorem.
++
++## Main definitions
++
++This module introduces no algorithms or alternative tensor representations.
++
++## Main results
++
++* `Wee20.Quadratic.mixGroup_exp`, `signalGroup_exp`: source-group algorithms agree with
++  their scalar proof representations on known scalar inputs.
++* `Wee20.Quadratic.cross_tensor_identity`: the two cross terms give equation (4).
++* `Wee20.Quadratic.cross_value_identity`: scalar evaluation gives equation (5).
++* `Wee20.Quadratic.quadratic_dec_eq`, `scheme_raw_correct`: perfect correctness in the
++  target group for every honest draw.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, §3.1, p. 6, (4)–(5),
++  and §4.2, p. 10, (11).
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
++
++open Complexity TCSlib.Cryptography.Pairing
++open scoped Matrix
++
++/-- The public group mixing matrix is the implicit representation of the two scalar
++Kronecker blocks [Wee20, §3.1, p. 6, Setup].
++
++**Proof sketch.** Read the two matrix definitions, split their canonical sum coordinate,
++and apply `kroneckerMap_apply`, the identity-matrix entry reader and the known-power
++exponent law. Zero and one coefficients yield the same source-group entries. -/
++theorem mixGroup_exp (G : BilinearGen) (n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (A1 : Matrix (Fin 2) (Fin (n1.eval κ)) (ZMod pp.group.order))
++    (A2 : Matrix (Fin 2) (Fin (n2.eval κ)) (ZMod pp.group.order)) :
++    mixGroup G n1 n2 κ pp (pp.group.expMat pp.generator A1)
++        (pp.group.expMat pp.generator A2) =
++      pp.group.expMat pp.generator (mixScalar (p := pp.orderParam) A1 A2) := sorry
++
++/-- When its group input is a known scalar vector, the encryption signal is exactly the
++implicit scalar cross-term signal [Wee20, §3.1, p. 6, Enc].
++
++**Proof sketch.** Read the canonical sum/product coordinates. The first block is already
++the implicit private tensor. For the second block use `expVec_tensor_left` and the existing
++private-tensor reader; no scalar is recovered from the group input. -/
++theorem signalGroup_exp (G : BilinearGen) (n1 n2 : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (s1 s2 : Fin 2 → ZMod pp.group.order)
++    (z2 : Fin (n2.eval κ) → ZMod pp.group.order)
++    (y1 : Fin (n1.eval κ) → ZMod pp.group.order) :
++    signalGroup G n1 n2 κ pp s1 z2 (pp.group.expVec pp.generator y1) s2 =
++      pp.group.expVec pp.generator (signalScalar (p := pp.orderParam) s1 z2 y1 s2) := sorry
++
++/-- The two cross terms account for the masked tensor product
++[Wee20, §3.1, p. 6, (4)].
++
++**Proof sketch.** Reindex by the canonical output pair. Apply the mixed-product property
++to each Kronecker block. The two block contributions are `(s1 A1)⊗z2` and `y1⊗(s2 A2)`.
++Expand `y1=s1 A1+z1` and `y2=s2 A2+z2`; distributivity gives the identity. -/
++theorem cross_tensor_identity {p : ℕ+} {n1 n2 : ℕ}
++    (A1 : Matrix (Fin 2) (Fin n1) (ZMod (p : ℕ)))
++    (A2 : Matrix (Fin 2) (Fin n2) (ZMod (p : ℕ)))
++    (s1 s2 : Fin 2 → ZMod (p : ℕ)) (z1 : Fin n1 → ZMod (p : ℕ))
++    (z2 : Fin n2 → ZMod (p : ℕ)) :
++    let y1 := Matrix.vecMul s1 A1 + z1
++    let y2 := Matrix.vecMul s2 A2 + z2
++    privateTensor (p := p) y1 y2 = privateTensor (p := p) z1 z2 +
++      Matrix.vecMul (signalScalar (p := p) s1 z2 y1 s2) (mixScalar (p := p) A1 A2) := sorry
++
++/-- Evaluating the cross-term identity isolates the desired private quadratic value
++[Wee20, §3.1, p. 6, (5)].
++
++**Proof sketch.** Take the scalar dot product of `cross_tensor_identity` with the supplied
++function vector. Reuse dot-product linearity and matrix-action associativity, then rearrange. -/
++theorem cross_value_identity {p : ℕ+} {n1 n2 : ℕ}
++    (A1 : Matrix (Fin 2) (Fin n1) (ZMod (p : ℕ)))
++    (A2 : Matrix (Fin 2) (Fin n2) (ZMod (p : ℕ)))
++    (s1 s2 : Fin 2 → ZMod (p : ℕ)) (z1 : Fin n1 → ZMod (p : ℕ))
++    (z2 : Fin n2 → ZMod (p : ℕ)) (fx : Fin (n1 * n2) → ZMod (p : ℕ)) :
++    let y1 := Matrix.vecMul s1 A1 + z1
++    let y2 := Matrix.vecMul s2 A2 + z2
++    dotProduct (privateTensor (p := p) z1 z2) fx =
++      dotProduct (privateTensor (p := p) y1 y2) fx -
++        dotProduct (signalScalar (p := p) s1 z2 y1 s2)
++          (mixScalar (p := p) A1 A2 *ᵥ fx) := sorry
++
++/-- The raw quadratic scheme decrypts perfectly to the allowed value in the target group
++for every honest setup, encryption and key draw [Wee20, §3.1, p. 6, (4)–(5)].
++
++**Proof sketch.** Read the cores and use `expVec_vecMul` to identify the known scalar
++masked vectors from the setup draw. Apply `mixGroup_exp` and `signalGroup_exp`, then Π's
++`pi_dec_eq`. Use `cross_value_identity` to cancel Π's result from the paired tensor term.
++Finish with the target-group additive and negation exponent laws. -/
++theorem quadratic_dec_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) (f : Fn κ pp.orderParam)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (z1 : Fin (n1.eval κ) → ZMod pp.group.order)
++    (z2 : Fin (n2.eval κ) → ZMod pp.group.order)
++    (a : SetupDraw G ℓ n1 n2 κ pp) (s : EncDraw G κ pp)
++    (t : Linear.KeyDraw G PG κ pp f) :
++    dec G n1 n2 PG κ pp f x
++        (keyCore G n1 n2 PG κ pp (setupCore G ℓ n1 n2 κ pp a).2 f t)
++        (encCore G ℓ n1 n2 κ pp (setupCore G ℓ n1 n2 κ pp a).1 x z1 z2 s) =
++      pp.group.pair pp.generator pp.generator ^ (value G n1 n2 PG κ pp f x z1 z2).val := sorry
++
++/-- The internal raw quadratic bundle inherits perfect correctness for every draw
++[Wee20, §3.1, p. 6, (4)–(5)]. No efficiency target is assumed.
++
++**Proof sketch.** Read `scheme_raw_eq` and apply `quadratic_dec_eq` to its four cores. -/
++theorem scheme_raw_correct (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) (f : Fn κ pp.orderParam)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (z1 : Fin (n1.eval κ) → ZMod pp.group.order)
++    (z2 : Fin (n2.eval κ) → ZMod pp.group.order)
++    (a : SetupDraw G ℓ n1 n2 κ pp) (s : EncDraw G κ pp)
++    (t : Linear.KeyDraw G PG κ pp f) :
++    let S := scheme_raw G n1 n2 PG κ pp
++    S.dec f x (S.keyCore (S.setupCore a).2 f t)
++        (S.encCore (S.setupCore a).1 x z1 z2 s) =
++      pp.group.pair pp.generator pp.generator ^ (value G n1 n2 PG κ pp f x z1 z2).val := sorry
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSimulator.lean b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSimulator.lean
+new file mode 100644
+index 000000000..f57039d58
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/FunctionalEncryption/Wee20/QuadraticSimulator.lean
+@@ -0,0 +1,220 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
++import TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.LinearSimulator
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The raw stateful quadratic simulator
++
++Setup creates the two group masking matrices and Π's simulated public key. Encryption
++chooses scalar masks `y1,y2`, publishes their group representations, and retains the scalars
++for all later adaptive key queries. Before encryption those retained vectors are defined
++as zero, giving a total core without extending the security notion to premature queries.
++
++## Main definitions
++
++* `Wee20.Quadratic.SimState`, `SimSetupDraw`, `SimEncDraw`: state and exact draw types.
++* `Wee20.Quadratic.simSetupCore`, `simEncCore`, `simKeyCore`: simulator algorithms.
++* `Wee20.Quadratic.crossLeak`: compute the source-group cross-term value from the allowed
++  SOURCE-GROUP value and retained scalar masks.
++* `Wee20.Quadratic.simSetup`, `simEnc`, `simKey`: exact core-plus-draw laws.
++
++## Main results
++
++* Equation readers expose every algorithm, draw type and law.
++* `Wee20.Quadratic.crossLeak_known_value`: with a known scalar allowed value the group
++  computation equals the corresponding difference in the exponent.
++
++The source's group-tag misprint in Enc* is read in its intended source group. The allowed
++value in KeyGen* and the computed cross-term value are source-group values, as Π requires;
++no target-group value is inverted to a source-group element.
++
++## References
++
++* [Wee20] H. Wee, *Functional Encryption for Quadratic Functions from k-Lin, Revisited*,
++  TCC 2020; full version, Cryptology ePrint Archive 2020/1420, §3.2, p. 7, Setup*, Enc*,
++  KeyGen* (group tags read with §3.1 and §3.3, Game 2), and §4.2, p. 10.
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
++
++open Complexity TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++
++/-- The simulator stores its fixed public group matrix, Π's state and its scalar ciphertext
++masks [Wee20, §3.2, p. 7]. Zero masks specify the state before the single challenge. -/
++structure SimState (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) where
++  /-- The fixed public group matrix used in every function key. -/
++  matrix : Matrix (Fin ((piDim n1 n2).eval κ)) (Fin ((n1.mul n2).eval κ)) pp.group.G
++  /-- The linear simulator's state. -/
++  linear : Linear.SimState G ℓ (piDim n1 n2) κ pp
++  /-- The retained first scalar ciphertext mask. -/
++  y1 : Fin (n1.eval κ) → ZMod pp.group.order
++  /-- The retained second scalar ciphertext mask. -/
++  y2 : Fin (n2.eval κ) → ZMod pp.group.order
++
++/-- Simulated setup draws its two scalar public masks and Π's simulator setup draw
++[Wee20, §3.2, p. 7, Setup*]. -/
++abbrev SimSetupDraw (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :=
++  Matrix (Fin 2) (Fin (n1.eval κ)) (ZMod pp.group.order) ×
++    Matrix (Fin 2) (Fin (n2.eval κ)) (ZMod pp.group.order) ×
++    Linear.SimSetupDraw G ℓ (piDim n1 n2) κ pp
++
++/-- The setup draw consists of its two outer masks and the linear simulator's draw. -/
++theorem simSetupDraw_eq (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) :
++    SimSetupDraw G ℓ n1 n2 κ pp =
++      (Matrix (Fin 2) (Fin (n1.eval κ)) (ZMod pp.group.order) ×
++        Matrix (Fin 2) (Fin (n2.eval κ)) (ZMod pp.group.order) ×
++        Linear.SimSetupDraw G ℓ (piDim n1 n2) κ pp) := rfl
++
++/-- Simulated encryption draws two independent scalar masks
++[Wee20, §3.2, p. 7, Enc*]. The scalar field is the order of the public group. -/
++abbrev SimEncDraw (G : BilinearGen) (n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :=
++  (Fin (n1.eval κ) → ZMod pp.group.order) × (Fin (n2.eval κ) → ZMod pp.group.order)
++
++/-- The encryption draw is exactly the pair of scalar vector masks. -/
++theorem simEncDraw_eq (G : BilinearGen) (n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++    SimEncDraw G n1 n2 κ pp =
++      ((Fin (n1.eval κ) → ZMod pp.group.order) ×
++        (Fin (n2.eval κ) → ZMod pp.group.order)) := rfl
++
++/-- Simulator setup computes its public group matrices and retains the fixed group matrix
++with Π's simulator state [Wee20, §3.2, p. 7, Setup*]. The two retained ciphertext masks are
++initialized to zero. Π's total scalar inverse also specifies singular setups. -/
++noncomputable def simSetupCore (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (ω : SimSetupDraw G ℓ n1 n2 κ pp) :
++    MPK G ℓ n1 n2 κ pp × SimState G ℓ n1 n2 κ pp :=
++  let A1 := pp.group.expMat pp.generator ω.1
++  let A2 := pp.group.expMat pp.generator ω.2.1
++  let linear := Linear.simSetupCore G ℓ (piDim n1 n2) κ pp ω.2.2
++  (⟨A1, A2, linear.1⟩, ⟨mixGroup G n1 n2 κ pp A1 A2, linear.2, 0, 0⟩)
++
++/-- Simulated setup exposes its public matrices, linear state and zero initial masks. -/
++theorem simSetupCore_eq (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (ω : SimSetupDraw G ℓ n1 n2 κ pp) :
++    simSetupCore G ℓ n1 n2 κ pp ω =
++      let A1 := pp.group.expMat pp.generator ω.1
++      let A2 := pp.group.expMat pp.generator ω.2.1
++      let linear := Linear.simSetupCore G ℓ (piDim n1 n2) κ pp ω.2.2
++      (⟨A1, A2, linear.1⟩, ⟨mixGroup G n1 n2 κ pp A1 A2, linear.2, 0, 0⟩) := rfl
++
++/-- Simulated encryption publishes its freshly drawn masks and retains their scalars for
++later keys [Wee20, §3.2, p. 7, Enc*]. Both group components use the source group, reading
++the second component's printed subscript with §3.1. -/
++def simEncCore (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (st : SimState G ℓ n1 n2 κ pp) (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (ω : SimEncDraw G n1 n2 κ pp) : CT G n1 n2 κ pp × SimState G ℓ n1 n2 κ pp :=
++  (⟨pp.group.expVec pp.generator ω.1, pp.group.expVec pp.generator ω.2,
++    Linear.simEncCore G ℓ (piDim n1 n2) κ pp st.linear x⟩,
++    ⟨st.matrix, st.linear, ω.1, ω.2⟩)
++
++/-- The ideal ciphertext masks and next state's retained masks are the same draw. -/
++theorem simEncCore_eq (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (st : SimState G ℓ n1 n2 κ pp)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order) (ω : SimEncDraw G n1 n2 κ pp) :
++    simEncCore G ℓ n1 n2 κ pp st x ω =
++      (⟨pp.group.expVec pp.generator ω.1, pp.group.expVec pp.generator ω.2,
++        Linear.simEncCore G ℓ (piDim n1 n2) κ pp st.linear x⟩,
++        ⟨st.matrix, st.linear, ω.1, ω.2⟩) := rfl
++
++/-- The cross-term leakage is `g^((y1⊗y2)f(x)^T) / [mu]` in the SOURCE group
++[Wee20, §3.2, p. 7, KeyGen*, read with §3.3, Game 2]. Only the retained scalar masks are
++used to form the first factor; the allowed source-group value is inverted as a group element. -/
++def crossLeak (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr) {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (κ : ℕ) (pp : PublicParams G κ)
++    (st : SimState G ℓ n1 n2 κ pp) (f : Fn κ pp.orderParam)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order) (mu : pp.group.G) : pp.group.G :=
++  pp.generator ^ (value G n1 n2 PG κ pp f x st.y1 st.y2).val * mu⁻¹
++
++/-- The allowed cross term is the displayed quotient in the source group. -/
++theorem crossLeak_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) (st : SimState G ℓ n1 n2 κ pp)
++    (f : Fn κ pp.orderParam) (x : Fin (ℓ.eval κ) → ZMod pp.group.order) (mu : pp.group.G) :
++    crossLeak G n1 n2 PG κ pp st f x mu =
++      pp.generator ^ (value G n1 n2 PG κ pp f x st.y1 st.y2).val * mu⁻¹ := rfl
++
++/-- With known scalar allowed value, the simulated cross term represents the corresponding
++scalar difference [Wee20, §3.3, p. 7, Game 2 and (5)].
++
++**Proof sketch.** Read `crossLeak_eq`, then use the published source-group additive and
++negation exponent laws. This uses a supplied scalar value, not an exponent extracted from mu. -/
++theorem crossLeak_known_value (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) (st : SimState G ℓ n1 n2 κ pp)
++    (f : Fn κ pp.orderParam) (x : Fin (ℓ.eval κ) → ZMod pp.group.order)
++    (mu : ZMod pp.group.order) :
++    crossLeak G n1 n2 PG κ pp st f x (pp.generator ^ mu.val) =
++      pp.generator ^ (value G n1 n2 PG κ pp f x st.y1 st.y2 - mu).val := sorry
++
++/-- Simulator key generation computes the cross-term group value and forwards it to Π's
++simulator [Wee20, §3.2, p. 7, KeyGen*]. The fixed public matrix is retained as key metadata. -/
++def simKeyCore (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr) {Fn : ℕ → ℕ+ → Type}
++    (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn) (κ : ℕ) (pp : PublicParams G κ)
++    (st : SimState G ℓ n1 n2 κ pp) (f : Fn κ pp.orderParam)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order) (mu : pp.group.G)
++    (ω : Linear.SimKeyDraw G PG κ pp f) : Key G n1 n2 PG κ pp f :=
++  ⟨st.matrix, Linear.simKeyCore G PG (piDim n1 n2) κ pp st.linear f st.matrix x
++    (crossLeak G n1 n2 PG κ pp st f x mu) ω⟩
++
++/-- The simulated key forwards precisely the group cross-term value to Π. -/
++theorem simKeyCore_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) (st : SimState G ℓ n1 n2 κ pp)
++    (f : Fn κ pp.orderParam) (x : Fin (ℓ.eval κ) → ZMod pp.group.order) (mu : pp.group.G)
++    (ω : Linear.SimKeyDraw G PG κ pp f) :
++    simKeyCore G n1 n2 PG κ pp st f x mu ω =
++      ⟨st.matrix, Linear.simKeyCore G PG (piDim n1 n2) κ pp st.linear f st.matrix x
++        (crossLeak G n1 n2 PG κ pp st f x mu) ω⟩ := rfl
++
++/-- Simulated setup has its exact core-plus-draw law [Wee20, §3.2, p. 7]. -/
++noncomputable def simSetup (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) : ProbComp (MPK G ℓ n1 n2 κ pp × SimState G ℓ n1 n2 κ pp) :=
++  (ProbComp.sample (SimSetupDraw G ℓ n1 n2 κ pp)).map (simSetupCore G ℓ n1 n2 κ pp)
++
++/-- Simulated setup is one uniform draw followed by its total core. -/
++theorem simSetup_eq (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ) :
++    simSetup G ℓ n1 n2 κ pp =
++      (ProbComp.sample (SimSetupDraw G ℓ n1 n2 κ pp)).map (simSetupCore G ℓ n1 n2 κ pp) := rfl
++
++/-- Simulated encryption draws the masks once and returns the ciphertext and updated state
++[Wee20, §3.2, p. 7]. -/
++noncomputable def simEnc (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ)
++    (pp : PublicParams G κ) (st : SimState G ℓ n1 n2 κ pp)
++    (x : Fin (ℓ.eval κ) → ZMod pp.group.order) :
++    ProbComp (CT G n1 n2 κ pp × SimState G ℓ n1 n2 κ pp) :=
++  (ProbComp.sample (SimEncDraw G n1 n2 κ pp)).map (simEncCore G ℓ n1 n2 κ pp st x)
++
++/-- Simulated encryption has the displayed stateful core-plus-draw law. -/
++theorem simEnc_eq (G : BilinearGen) (ℓ n1 n2 : PolyExpr) (κ : ℕ) (pp : PublicParams G κ)
++    (st : SimState G ℓ n1 n2 κ pp) (x : Fin (ℓ.eval κ) → ZMod pp.group.order) :
++    simEnc G ℓ n1 n2 κ pp st x =
++      (ProbComp.sample (SimEncDraw G n1 n2 κ pp)).map (simEncCore G ℓ n1 n2 κ pp st x) := rfl
++
++/-- Simulated function keys use Π's single function-dependent draw
++[Wee20, §3.2, p. 7]. -/
++noncomputable def simKey (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) (st : SimState G ℓ n1 n2 κ pp)
++    (f : Fn κ pp.orderParam) (x : Fin (ℓ.eval κ) → ZMod pp.group.order) (mu : pp.group.G) :
++    ProbComp (Key G n1 n2 PG κ pp f) :=
++  (ProbComp.sample (Linear.SimKeyDraw G PG κ pp f)).map
++    (simKeyCore G n1 n2 PG κ pp st f x mu)
++
++/-- Simulated keys have the displayed core-plus-draw law. -/
++theorem simKey_eq (G : BilinearGen) {ℓ : PolyExpr} (n1 n2 : PolyExpr)
++    {Fn : ℕ → ℕ+ → Type} (PG : PartialGarbling.Raw ℓ (n1.mul n2) Fn)
++    (κ : ℕ) (pp : PublicParams G κ) (st : SimState G ℓ n1 n2 κ pp)
++    (f : Fn κ pp.orderParam) (x : Fin (ℓ.eval κ) → ZMod pp.group.order) (mu : pp.group.G) :
++    simKey G n1 n2 PG κ pp st f x mu =
++      (ProbComp.sample (Linear.SimKeyDraw G PG κ pp f)).map
++        (simKeyCore G n1 n2 PG κ pp st f x mu) := rfl
++
++end TCSlib.Cryptography.AdvancedEncryption.FunctionalEncryption.Wee20.Quadratic
+diff --git a/TCSlib/Cryptography/Pairing/MatrixDH/Parameters.lean b/TCSlib/Cryptography/Pairing/MatrixDH/Parameters.lean
+index 1f33680ed..0a398ccf1 100644
+--- a/TCSlib/Cryptography/Pairing/MatrixDH/Parameters.lean
++++ b/TCSlib/Cryptography/Pairing/MatrixDH/Parameters.lean
+@@ -38,7 +38,7 @@ Equation readers expose the public encoding and the exact generation law.
+ 
+ namespace TCSlib.Cryptography.Pairing
+ 
+-open Complexity TCSlib.Cryptography.Games
++open Complexity Turing TCSlib.Cryptography.Games
+ 
+ /-- A group description is reachable when the bilinear generator outputs it on some coin
+ string. Technical glue: the witness is a proposition, so it does not distinguish equal
+@@ -119,14 +119,14 @@ noncomputable def publicParamsGen (G : BilinearGen) (κ : ℕ) :
+     ProbComp (PublicParams G κ) :=
+   (ProbComp.sample (G.gen.Coins κ)).bind fun r =>
+     let d : GroupDescription G κ := ⟨G.desc κ r, ⟨r, rfl⟩⟩
+-    (ProbComp.sample (GeneratorDraw G κ d)).map (publicParamsCore G κ d)
++    publicParamsCore G κ d <$> ProbComp.sample (GeneratorDraw G κ d)
+ 
+ /-- Public-parameter generation is the displayed pair of sequential dependent draws. -/
+ theorem publicParamsGen_eq (G : BilinearGen) (κ : ℕ) :
+     publicParamsGen G κ =
+       (ProbComp.sample (G.gen.Coins κ)).bind fun r =>
+         let d : GroupDescription G κ := ⟨G.desc κ r, ⟨r, rfl⟩⟩
+-        (ProbComp.sample (GeneratorDraw G κ d)).map (publicParamsCore G κ d) := rfl
++        publicParamsCore G κ d <$> ProbComp.sample (GeneratorDraw G κ d) := rfl
+ 
+ /-- A fixed order schedule agrees with the order of every reachable public parameter.
+ This is transport glue from the generated-instance reader, not an algorithm computing the
