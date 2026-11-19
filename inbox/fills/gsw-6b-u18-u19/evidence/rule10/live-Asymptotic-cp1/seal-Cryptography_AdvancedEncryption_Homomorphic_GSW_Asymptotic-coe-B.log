@@ -1,0 +1,30 @@
+SEAL-INSTALL live-Asymptotic-cp1/Cryptography_AdvancedEncryption_Homomorphic_GSW_Asymptotic/coe-B part 1: 400
+SEAL-INSTALL live-Asymptotic-cp1/Cryptography_AdvancedEncryption_Homomorphic_GSW_Asymptotic/coe-B part 2: 400
+SEAL-INSTALL live-Asymptotic-cp1/Cryptography_AdvancedEncryption_Homomorphic_GSW_Asymptotic/coe-B part 3: 400
+SEAL-INSTALL live-Asymptotic-cp1/Cryptography_AdvancedEncryption_Homomorphic_GSW_Asymptotic/coe-B part 4: 400
+SEAL-INSTALL live-Asymptotic-cp1/Cryptography_AdvancedEncryption_Homomorphic_GSW_Asymptotic/coe-B part 5: 54
+/work/tcslib/scratch/seal/live-Asymptotic-cp1/Seal_Cryptography_AdvancedEncryption_Homomorphic_GSW_Asymptotic_coeB.lean:581:2: error: Type mismatch
+  rfl
+has type
+  ?m.32 = ?m.32
+but is expected to have type
+  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.levelTerm P χ L μ e j D =
+    TCSlib.Cryptography.LWE.decisionAdvantage P.lwe χ
+          (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.levelReduction P χ L μ e j true D) +
+        TCSlib.Cryptography.LWE.decisionAdvantage P.lwe χ
+          (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.levelReduction P χ L μ e j false D) +
+      2 * (↑P.columns * TCSlib.Cryptography.Encryption.PublicKey.Regev.extractionError P.lwe)
+/work/tcslib/scratch/seal/live-Asymptotic-cp1/Seal_Cryptography_AdvancedEncryption_Homomorphic_GSW_Asymptotic_coeB.lean:595:2: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ).columns =
+    ((F.parameters κ).dimension + 1) * F.residueBits.eval κ
+SEAL-VERIFY live-Asymptotic-cp1/Cryptography_AdvancedEncryption_Homomorphic_GSW_Asymptotic/coe-B part 1: 400
+SEAL-VERIFY live-Asymptotic-cp1/Cryptography_AdvancedEncryption_Homomorphic_GSW_Asymptotic/coe-B part 2: 400
+SEAL-VERIFY live-Asymptotic-cp1/Cryptography_AdvancedEncryption_Homomorphic_GSW_Asymptotic/coe-B part 3: 400
+SEAL-VERIFY live-Asymptotic-cp1/Cryptography_AdvancedEncryption_Homomorphic_GSW_Asymptotic/coe-B part 4: 400
+SEAL-VERIFY live-Asymptotic-cp1/Cryptography_AdvancedEncryption_Homomorphic_GSW_Asymptotic/coe-B part 5: 54
+
+EXIT 1

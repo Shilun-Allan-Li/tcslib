@@ -1,0 +1,67 @@
+# preflight 2026-11-19T00:21:24Z
+nproc: 4
+cgroup.clone_children
+cgroup.event_control
+cgroup.procs
+memory.limit_in_bytes: 9223372036854771712
+memory.usage_in_bytes: 1633251328
+--- memory.stat
+cache 40878080
+rss 11022336
+rss_huge 0
+shmem 13058048
+mapped_file 28934144
+dirty 57344
+writeback 0
+workingset_refault_anon 0
+workingset_refault_file 0
+swap 0
+swapcached 0
+pgpgin 17383
+pgpgout 4758
+pgfault 9144
+pgmajfault 35
+inactive_anon 13602816
+active_anon 4096
+inactive_file 22663168
+active_file 5160960
+unevictable 10469376
+hierarchical_memory_limit 9223372036854771712
+hierarchical_memsw_limit 9223372036854771712
+total_cache 1615147008
+total_rss 18128896
+total_rss_huge 0
+total_shmem 13058048
+total_mapped_file 32591872
+total_dirty 729088
+total_writeback 0
+total_workingset_refault_anon 0
+total_workingset_refault_file 0
+total_swap 0
+total_swapcached 0
+total_pgpgin 572566
+total_pgpgout 197093
+total_pgfault 247152
+total_pgmajfault 634
+total_inactive_anon 19791872
+total_active_anon 24576
+total_inactive_file 1108402176
+--- /proc/meminfo
+MemTotal:       16473760 kB
+MemFree:        14695796 kB
+MemAvailable:   16103900 kB
+Buffers:           24352 kB
+Cached:          1552836 kB
+--- df
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 15313797120 27930083328  36% /
+/dev/vda       270553174016 15313797120 27930083328  36% /
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 14954880  27275472  36% /
+/dev/vda       ext4 264212084 14954880  27275472  36% /
+
+# memory headroom computation: memory.limit_in_bytes = 9223372036854771712 (no cgroup v1 limit), so the
+# headroom is MemAvailable = 16103900 kB = 15.36 GiB (floor 4 GiB): PASS. Disk: 27930083328 B = 26.01 GiB free
+# on ext4 /dev/vda (floor 12 GiB): PASS.
+# re-check before lake exe cache get (after the toolchain install and the clone): 19384913920 B = 18.05 GiB free
+# (floor 8 GiB): PASS.

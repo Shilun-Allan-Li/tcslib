@@ -1,0 +1,101 @@
+== [tcslib] /ofFamily_columns_le/ : 7 hits
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:26:* `Parameters.ofFamily_columns_le`: `N ≤ (d(κ) + 1)·ℓ(κ)` at `ofFamily F κ` (glue, shared by
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:106:theorem Parameters.ofFamily_columns_le (F : LWE.Family) (κ : ℕ) :
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:122:`N = (n + 1)·ℓ ≤ N̂` by `Parameters.ofFamily_columns_le` (`Parameters.columns_eq` with
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:136:  have hN := Parameters.ofFamily_columns_le F κ
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:326:  -- Step 4: `N ≤ N̂(κ)` (`Parameters.ofFamily_columns_le`), and `distAdv ≥ 0`.
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:331:    exact mul_le_mul_of_nonneg_right (by exact_mod_cast Parameters.ofFamily_columns_le F κ)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:396:    exact_mod_cast Parameters.ofFamily_columns_le F κ
+== [tcslib] /\.columns ≤/ : 11 hits
+TCSlib/Cryptography/SIS/Assumption.lean:80:  columns_le : ∀ κ, (parameters κ).columns ≤ columnsBound.eval κ
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:103:`(Parameters.ofFamily F κ).columns ≤ (F.dimensionBound.eval κ + 1) * F.residueBits.eval κ`.
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:107:    (Parameters.ofFamily F κ).columns ≤ (F.dimensionBound.eval κ + 1) * F.residueBits.eval κ := by
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:138:  have hlog : Nat.clog 2 (Parameters.ofFamily F κ).columns ≤
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Eval.lean:193:    have h1 : (g.args.length - 1) * P.columns ≤ 1 * P.columns :=
+TCSlib/Cryptography/Hashing/SIS/CollisionOutput.lean:312:    (hbound : P.columns ≤ P.sqNormBound) :
+TCSlib/Cryptography/Hashing/SIS/Universality.lean:230:  have hratio : (P.modulus : ℝ) ^ P.dimension / (2 : ℝ) ^ P.columns ≤
+TCSlib/Cryptography/Hashing/SIS/Basic.lean:104:    (hbound : P.columns ≤ P.sqNormBound) :
+TCSlib/Cryptography/Hashing/SIS/Basic.lean:155:    (hbound : P.columns ≤ P.sqNormBound) : ∃ z, IsSolution P A z := by
+TCSlib/Cryptography/Hashing/SIS/Experiments.lean:71:    (hbound : P.columns ≤ P.sqNormBound) :
+TCSlib/Cryptography/Hashing/SIS/Asymptotic.lean:73:    (hbound : ∀ κ, (F.parameters κ).columns ≤ (F.parameters κ).sqNormBound)
+== [tcslib] /columns_le/ : 12 hits
+TCSlib/Cryptography/SIS/Assumption.lean:80:  columns_le : ∀ κ, (parameters κ).columns ≤ columnsBound.eval κ
+TCSlib/Cryptography/SIS/Assumption.lean:118:  exact Nat.mul_le_mul_right _ (Nat.mul_le_mul (F.dimension_le κ) (F.columns_le κ))
+TCSlib/Cryptography/SIS/Assumption.lean:122:**Proof sketch.** Substitute `encodeSolution_length` and apply `columns_le`, with the
+TCSlib/Cryptography/SIS/Assumption.lean:130:  exact Nat.mul_le_mul_right _ (F.columns_le κ)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:26:* `Parameters.ofFamily_columns_le`: `N ≤ (d(κ) + 1)·ℓ(κ)` at `ofFamily F κ` (glue, shared by
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:106:theorem Parameters.ofFamily_columns_le (F : LWE.Family) (κ : ℕ) :
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:122:`N = (n + 1)·ℓ ≤ N̂` by `Parameters.ofFamily_columns_le` (`Parameters.columns_eq` with
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:136:  have hN := Parameters.ofFamily_columns_le F κ
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:326:  -- Step 4: `N ≤ N̂(κ)` (`Parameters.ofFamily_columns_le`), and `distAdv ≥ 0`.
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:331:    exact mul_le_mul_of_nonneg_right (by exact_mod_cast Parameters.ofFamily_columns_le F κ)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:396:    exact_mod_cast Parameters.ofFamily_columns_le F κ
+TCSlib/Cryptography/Hashing/SIS/Profiles.lean:87:  columns_le := fun κ => by
+== [tcslib] /dimensionBound\.eval [a-zκ]+ \+ 1\)/ : 3 hits
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:103:`(Parameters.ofFamily F κ).columns ≤ (F.dimensionBound.eval κ + 1) * F.residueBits.eval κ`.
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:107:    (Parameters.ofFamily F κ).columns ≤ (F.dimensionBound.eval κ + 1) * F.residueBits.eval κ := by
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:139:      (F.dimensionBound.eval κ + 1) * F.residueBits.eval κ :=
+== [tcslib] /Nat\.clog 2 [^ ]+ ≤/ : 4 hits
+TCSlib/Complexity/BranchingPrograms/BarringtonConverse.lean:506:  have hF : Nat.clog 2 F.card ≤ w * Nat.clog 2 w := by
+TCSlib/Complexity/CircuitComplexity/Parity.lean:348:  have hc : Nat.clog 2 n ≤ Nat.log 2 n + 1 := by
+TCSlib/Complexity/CircuitComplexity/DAGFanin.lean:290:    have hc : Nat.clog 2 args.dedup.length ≤ Nat.clog 2 K := Nat.clog_mono_right _ (by omega)
+TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean:281:      have hC : Nat.clog 2 cs.length ≤ Nat.clog 2 w := Nat.clog_mono_right 2 hlen
+== [lib] /theorem clog_le|lemma clog_le/ : 1 hits
+.lake/packages/mathlib/Mathlib/Data/Nat/Log.lean:301:theorem clog_le_iff_le_pow {b : ℕ} (hb : 1 < b) {x y : ℕ} : clog b x ≤ y ↔ x ≤ b ^ y := by
+== [lib] /clog [a-z] [a-z] ≤ [a-z]\b/ : 3 hits
+.lake/packages/mathlib/Mathlib/Data/Nat/Log.lean:301:theorem clog_le_iff_le_pow {b : ℕ} (hb : 1 < b) {x y : ℕ} : clog b x ≤ y ↔ x ≤ b ^ y := by
+.lake/packages/mathlib/Mathlib/Data/Nat/Log.lean:318:theorem le_pow_iff_clog_le {b : ℕ} (hb : 1 < b) {x y : ℕ} : x ≤ b ^ y ↔ clog b x ≤ y :=
+.lake/packages/mathlib/Mathlib/Data/Int/Log.lean:294:    r ≤ (b : R) ^ x ↔ clog b r ≤ x :=
+== [tcslib] /≤ bootNoise|le_bootNoise|bootNoise_pos|self_le_bootNoise/ : 3 hits
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:160:    (hy : y ≤ bootNoise (Parameters.ofFamily F κ)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:213:because `m·B ≤ bootNoise P (m·B)` (`bootNoise_eq`, `N ≥ 1` by `Parameters.neZero_columns`). -/
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:320:(`Parameters.neZero_columns`), `m·B ≤ bootNoise P (m·B)` (`bootNoise_eq`), so `hsep` also gives
+== [tcslib] /distAdv_nonneg|decisionAdvantage_nonneg|advantageAt_nonneg/ : 0 hits
+
+== [tcslib] /theorem negligible_polyExpr_mul|Negligible\.polyExpr_mul/ : 6 hits
+TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:34:* `TCSlib.Cryptography.Negligible.polyExpr_mul` bounds multiplication by a
+TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:267:theorem Negligible.polyExpr_mul {μ : ℕ → ℝ} (hμ : Negligible μ) (p : PolyExpr) :
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:377:theorem negligible_polyExpr_mul (p : PolyExpr) {μ : ℕ → ℝ} (hμ : Negligible μ) :
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA.lean:84:   by `Negligible.polyExpr_mul` (`Asymptotic/ReductionSupport`) with the polynomial `cap`. -/
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:480:   the product is negligible by `Negligible.polyExpr_mul` with `PolyExpr.var`. -/
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:110:theorem negligible_polyExpr_mul {μ : ℕ → ℝ} (hμ : Negligible μ) (p : PolyExpr) :
+== [tcslib] /two_extractionError_le/ : 5 hits
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:334:theorem two_extractionError_le (P : Parameters) (width κ : ℕ)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:285:**Proof sketch.** `distAdv_encrypt_le` and `Regev.two_extractionError_le`, multiplying the
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:298:  have hw := Regev.two_extractionError_le P.lwe w κ hq hm
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:356:every DLWE advantage in `levelTerm_eq` and `challengeTerm_eq`; `Regev.two_extractionError_le`
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:392:  have hε := Regev.two_extractionError_le (Parameters.ofFamily F κ).lwe (F.residueBits.eval κ) κ
+== [tcslib] /distAdv_encrypt_le_of_width/ : 4 hits
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:32:* `distAdv_encrypt_le_of_width`: with `(n+1)·w + 2κ ≤ m` the statistical term is at most
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:287:theorem distAdv_encrypt_le_of_width {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:289:**Proof sketch.** At each `κ`, phase 5's `distAdv_encrypt_le_of_width` with `w = ℓ`
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:323:  have hbound := distAdv_encrypt_le_of_width (Parameters.ofFamily F κ) (F.noise κ) false true
+== [tcslib] /lt_div_two|< [A-Za-z.()]+\.modulus / 2/ : 18 hits
+TCSlib/Cryptography/LWE/BitEncoding.lean:182:    (he : e.natAbs ≤ B) (hsep : 2 * B < P.modulus / 2) :
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean:150:    (he : ∀ i, (e i).natAbs ≤ B) (hsep : 2 * (P.samples * B) < P.modulus / 2) :
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean:165:    (hχ : χ.Bounded B) (hsep : 2 * (P.samples * B) < P.modulus / 2) :
+TCSlib/Cryptography/Encryption/Symmetric/Regev/Basic.lean:91:    (he : ∀ i, (e i).natAbs ≤ B) (hsep : 2 * B < P.modulus / 2) :
+TCSlib/Cryptography/Encryption/Symmetric/Regev/Basic.lean:111:    (hnoise : χ.Bounded B) (hsep : 2 * B < P.modulus / 2) :
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:157:`2 * (P.width * y) < P.lwe.modulus / 2`: G16 gives `8·(ℓ·y) < q`, and `q ≥ 2`. -/
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean:250:    (hβin : 2 * (P.width * βin) < P.lwe.modulus / 2)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean:251:    (hboot : 2 * (P.width * bootNoise P βk) < P.lwe.modulus / 2) :
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean:281:    (hsep : 2 * (P.width * bootNoise P (P.lwe.samples * B)) < P.lwe.modulus / 2)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Leveled.lean:282:    (hin : 2 * (P.width * (P.lwe.samples * B)) < P.lwe.modulus / 2) :
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:269:    (hβin : 2 * (P.width * βin) < P.lwe.modulus / 2)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:270:    (hboot : 2 * (P.width * bootNoise P βk) < P.lwe.modulus / 2) :
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:288:    (hβin : 2 * (P.width * βin) < P.lwe.modulus / 2)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:289:    (hboot : 2 * (P.width * bootNoise P βk) < P.lwe.modulus / 2) :
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Bootstrap.lean:325:    (hsep : 2 * (P.width * bootNoise P (P.lwe.samples * B)) < P.lwe.modulus / 2) :
+== [tcslib] /singleBitSecure_of_dlweAssumption|indCPA_of_dlwe\b|leveledINDCPA_of_dlwe\b/ : 0 hits
+
+== [tcslib] /negligible_collisions_of_SIS/ : 3 hits
+TCSlib/Cryptography/Hashing/SIS/Asymptotic.lean:71:theorem negligible_collisions_of_SIS (F : Family) (M : PolyExpr)
+TCSlib/Cryptography/Hashing/SIS/Asymptotic.lean:115:Apply `negligible_collisions_of_SIS`. This hypothesis is not derived from LWE. -/
+TCSlib/Cryptography/Hashing/SIS/Asymptotic.lean:119:  refine negligible_collisions_of_SIS dyadicFamily dyadicFamily.columnsBound
+== [tcslib] /two_mul_width_lt_of_ratio/ : 6 hits
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:158:private theorem two_mul_width_lt_of_ratio (F : LWE.Family) (B : ℕ → ℕ) (κ : ℕ)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:180:private glue `two_mul_width_lt_of_ratio`): `8·y ≤ pBoot(κ)·B(κ) < q` gives `4·y + 2 ≤ q` when
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:200:    R' (two_mul_width_lt_of_ratio F B κ hq le_rfl)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:212:(`two_mul_width_lt_of_ratio` at `y = bootNoise P (m·B)` and at `y = m·B`); the input condition
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:242:    hC hdepth x R' (two_mul_width_lt_of_ratio F B κ hq le_rfl)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:243:    (two_mul_width_lt_of_ratio F B κ hq hin)

@@ -1,0 +1,16 @@
+2026-11-19T00:26:40Z nproc=4 MemAvailable=15956960kB MemTotal=16473760kB no cgroup limit (memory.limit_in_bytes=9223372036854771712); pool=min(4, floor(15.4GiB/4GiB)=3)=3; one agent (no sub-agent)
+2026-11-19T00:31:54Z bootstrap restarted (first attempt aborted by a runner bug: subprocess reaped children; fixed by keeping Popen refs); pool=3
+2026-11-19T00:37:21Z bootstrap runner stopped silently after 145 modules (detached shell job ended); resumed under setsid, pool=3
+2026-11-19T00:53:11Z sweep cp1 at head 4672ed30d036feb624ca84b4199af19d77f5768f: the 5 UNIT-DOWN modules, pool 3
+2026-11-19T00:54:18Z seals cp1: head seals, two liveness runs, base seals (once): at most 3 Lean processes
+2026-11-19T00:58:16Z sweep cp1 at head 4672ed30d036feb624ca84b4199af19d77f5768f: the 5 UNIT-DOWN modules, pool 3
+2026-11-19T00:59:18Z seals cp1: head seals, two liveness runs, base seals (once): at most 3 Lean processes
+2026-11-19T01:11:32Z incidents during the bootstrap, both before any check: attempt 1 (00:26) stopped at a runner error
+  (ChildProcessError in sweep.py: subprocess reaped children it no longer referenced; fixed by keeping the Popen
+  objects); its logs and oleans were deleted and the bootstrap restarted from scratch at the base (owned files
+  restored to the base first). Attempt 2's runner (a plain background job) was gone after 145 modules with no
+  output; it was resumed under setsid from its TSV (rc-0 modules with an olean kept). During the resume the host
+  showed heavy I/O pressure (/proc/pressure/io some avg10 94, reads 1-4 MB/s after the page cache was emptied);
+  the three Lean processes waited on page reads for a few minutes, then finished. No shortage: no OOM, no exit
+  137, MemAvailable never below 15 GiB when sampled. Pool size 3 throughout, never resized.
+2026-11-19T01:11:32Z peak RSS per Lean process (wait4 ru_maxrss): bootstrap 2941712 kB (NumberTheory/Primality); sweep cp1 2935492 kB; host MemAvailable now 15960108 kB

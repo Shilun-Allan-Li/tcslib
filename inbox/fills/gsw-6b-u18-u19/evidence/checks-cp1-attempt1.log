@@ -1,0 +1,19 @@
+checks cp1 at head 4672ed30d036feb624ca84b4199af19d77f5768f 2026-11-19T00:53:11Z
+done 5 ok of 5
+RESULT modules=5 bad=0
+# diff base-sorries.txt (records) vs the head census (< base only, > head only)
+15,16d14
+< TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio: 3: bootRatio_le_poly, decrypt_fheEval_of_ratio, decrypt_leveledEval_of_ratio
+< TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic: 2: indCPA_of_dlweAssumption, leveledINDCPA_of_dlweAssumption
+sorry tokens in the owned files: 0 0
+admit/native_decide/axiom/opaque tokens in the owned files: /work/tcslib/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:0 /work/tcslib/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:0 
+TOTAL 37 in 14 modules
+RESULT TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean ADDED 1 CHANGED 0 REMOVED 0
+RESULT TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean ADDED 0 CHANGED 0 REMOVED 0
+StmtDump PolyRatio identical
+StmtDump Asymptotic identical
+RESULT files=2 differences=0 PASS
+TRACE _private.TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.PolyRatio.0.TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.two_mul_width_lt_of_ratio -> ['TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootNoise_le']
+constants 37; sorry-reaching 5; standard-only 32
+RESULT bad=0
+tail: option used in invalid context -- 3

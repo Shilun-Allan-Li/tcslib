@@ -1,0 +1,30 @@
+# Reader census (gsw-6b-u18-u19, C6): every definition of another file that the proofs of
+# PolyRatio.lean (helper, G16, G17 x2, private glue) and Asymptotic.lean (A1, A3) read, with the published
+# lemma or reader used (path:line at the base). No definition is unfolded (explicit-unfold scan: 0 foreign;
+# seals strict/coe A/B clean); none is MISSING. Paths: GSW/ = TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/.
+# definition (home)	read through (path:line)
+GSW.Parameters.ofFamily (GSW/PolyRatio.lean:71; own in PolyRatio, foreign in Asymptotic)	simps readers Parameters.ofFamily_lwe, Parameters.ofFamily_width (GSW/PolyRatio.lean:70); the helper Parameters.ofFamily_columns_le (GSW/PolyRatio.lean:106 at the head). Type-level Rule 10: its body is never read, in either file.
+GSW.Parameters.columns (GSW/Gadget.lean:70, reducible abbreviation: notation)	Parameters.columns_eq (GSW/Gadget.lean:73) in the helper; elsewhere only as a term
+GSW.pBoot (GSW/PolyRatio.lean:83, own)	pBoot_eq (GSW/PolyRatio.lean:92)
+Complexity.PolyExpr.eval (Complexity/Randomized/PolyExpr.lean:89, notation; sealed in variant B)	PolyExpr.eval_const :116, eval_add :122, eval_mul :125, eval_pow :128
+GSW.bootNoise (GSW/Bootstrap.lean:117)	bootNoise_le (G13, GSW/Bootstrap.lean:344), bootNoise_eq (GSW/Bootstrap.lean:121)
+GSW.decDepth (GSW/DecryptFormula.lean:124)	only as a term of bootNoise_eq's right-hand side (Nat.one_le_pow on 4^(decDepth P + 1)); never read
+GSW.Parameters.neZero_columns (GSW/DecryptFormula.lean:65, instance)	used as an instance by Nat.pos_of_neZero
+LWE.Family (LWE/Assumption.lean:65, structure)	fields dimension_le :77, samples_le :79, modulus_le_pow :81 (projections)
+LWE.Parameters.modulus_ge_two (LWE/Basic.lean:52, field)	projection
+GSW.decrypt, fheEvalCircuit, evalKey, encrypt, leveledEvalCircuit, levelKey, Regev.keygen	only as terms of G12 decrypt_keygen_fheEvalCircuit (GSW/Bootstrap.lean:322) and L3 decrypt_keygen_leveledEvalCircuit (GSW/Leveled.lean:277), applied as stated
+LWE.Noise.Bounded (LWE/Noise.lean:57)	passed through (hχ) to G12/L3; never read
+GSW.ReductionEfficient, GSW.LeveledReductionEfficient (GSW/Asymptotic.lean:218, :246, own)	reductionEfficient_iff (GSW/Asymptotic.lean:228), leveledReductionEfficient_iff (:263)
+LWE.DLWEAssumption (LWE/Assumption.lean:136)	LWE.dlweAssumption_iff (LWE/Assumption.lean:141)
+LWE.Family.advantageAt (LWE/Assumption.lean:117)	never read (an opaque real in the bounds)
+LWE.decisionAdvantage (LWE/Experiments.lean:44)	LWE.decisionAdvantage_eq (LWE/Experiments.lean:53), for nonnegativity only
+distAdv (Foundations/Experiments.lean:78)	distAdv_def (Foundations/Experiments.lean:102), for nonnegativity only
+GSW.levelTerm, GSW.challengeTerm (GSW/LeveledSecurity.lean:246, :288)	levelTerm_eq (:255), challengeTerm_eq (:296)
+GSW.realView, reduction (GSW/Security.lean), leveledView, levelReduction, challengeDist (GSW/LeveledSecurity.lean)	only as terms of distAdv_encrypt_le_of_width (GSW/Security.lean:287), L5 distAdv_leveledView_le (GSW/LeveledSecurity.lean:354) and the heff readers
+Regev.extractionError (Encryption/PublicKey/Regev/Experiments.lean:227)	Regev.two_extractionError_le (:334); never read
+Negligible (Foundations/Negligible.lean:57)	Negligible.mono :74, Negligible.add :86, Negligible.const_mul :143, negligible_two_pow_neg :153, EnsembleLemmas.negligible_polyExpr_mul (Asymptotic/EnsemblesLemmas.lean:377)
+GSW.encodeView, encodeLeveledView (GSW/Asymptotic.lean, own)	never read (terms of the distinguishers)
+# Core and Mathlib definitions (Nat.clog, Nat.pow, abs, Finset.sum) are read only through Mathlib/core lemmas
+# (Nat.clog_le_iff_le_pow, Nat.lt_two_pow_self, Nat.one_le_pow, Finset.sum_le_sum, Finset.sum_const, Finset.card_univ,
+# Fintype.card_fin, nsmul_eq_mul, abs_of_nonneg, abs_nonneg, le_abs_self), gcongr, ring, omega, linarith, positivity, push_cast.
+RESULT missing=0

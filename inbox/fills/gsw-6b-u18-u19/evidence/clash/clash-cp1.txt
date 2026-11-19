@@ -1,0 +1,30 @@
+# C10 clash scan (gsw-6b-u18-u19), head 4672ed30d036feb624ca84b4199af19d77f5768f (cp1).
+# new declarations (git diff bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d HEAD, owned files, declaration lines added):
+#   +theorem Parameters.ofFamily_columns_le (F : LWE.Family) (κ : ℕ) :
+#   +private theorem two_mul_width_lt_of_ratio (F : LWE.Family) (B : ℕ → ℕ) (κ : ℕ)
+# full names: TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily_columns_le (public);
+#   _private.TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.PolyRatio.0.TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.two_mul_width_lt_of_ratio (private)
+(a/b) git grep -n -w ofFamily_columns_le bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d (bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d) -- TCSlib audits: 0 hits
+(a/b) git grep -n -w ofFamily_columns_le origin/iO/phase-a-base (5ed465f62e4ae0f93ded1a1ba49e807591b589eb) -- TCSlib audits: 0 hits
+(a/b) git grep -n -w ofFamily_columns_le origin/cleanup/stage2-s2a (9f7f409c2e09749428db75b9ddd324f92695e4af) -- TCSlib audits: 0 hits
+(a/b) git grep -n -w ofFamily_columns_le origin/cryptography/pass-shelat-ch2-4 (a545f2d44a770c8c5805d6d5ed2b533bb42c3b6a) -- TCSlib audits: 0 hits
+(a/b) git grep -n -w two_mul_width_lt_of_ratio bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d (bff0567b6c4b6b724c8fd20ff3ef92258eb3fc9d) -- TCSlib audits: 0 hits
+(a/b) git grep -n -w two_mul_width_lt_of_ratio origin/iO/phase-a-base (5ed465f62e4ae0f93ded1a1ba49e807591b589eb) -- TCSlib audits: 0 hits
+(a/b) git grep -n -w two_mul_width_lt_of_ratio origin/cleanup/stage2-s2a (9f7f409c2e09749428db75b9ddd324f92695e4af) -- TCSlib audits: 0 hits
+(a/b) git grep -n -w two_mul_width_lt_of_ratio origin/cryptography/pass-shelat-ch2-4 (a545f2d44a770c8c5805d6d5ed2b533bb42c3b6a) -- TCSlib audits: 0 hits
+(c) uses of the new names in the UNIT-DOWN modules at the head (all qualified or in the defining file):
+    HEAD:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:26:* `Parameters.ofFamily_columns_le`: `N ≤ (d(κ) + 1)·ℓ(κ)` at `ofFamily F κ` (glue, shared by
+    HEAD:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:106:theorem Parameters.ofFamily_columns_le (F : LWE.Family) (κ : ℕ) :
+    HEAD:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:122:`N = (n + 1)·ℓ ≤ N̂` by `Parameters.ofFamily_columns_le` (`Parameters.columns_eq` with
+    HEAD:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:136:  have hN := Parameters.ofFamily_columns_le F κ
+    HEAD:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:158:private theorem two_mul_width_lt_of_ratio (F : LWE.Family) (B : ℕ → ℕ) (κ : ℕ)
+    HEAD:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:180:private glue `two_mul_width_lt_of_ratio`): `8·y ≤ pBoot(κ)·B(κ) < q` gives `4·y + 2 ≤ q` when
+    HEAD:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:200:    R' (two_mul_width_lt_of_ratio F B κ hq le_rfl)
+    HEAD:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:212:(`two_mul_width_lt_of_ratio` at `y = bootNoise P (m·B)` and at `y = m·B`); the input condition
+    HEAD:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:242:    hC hdepth x R' (two_mul_width_lt_of_ratio F B κ hq le_rfl)
+    HEAD:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:243:    (two_mul_width_lt_of_ratio F B κ hq hin)
+    HEAD:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:331:    exact mul_le_mul_of_nonneg_right (by exact_mod_cast Parameters.ofFamily_columns_le F κ)
+    HEAD:TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:396:    exact_mod_cast Parameters.ofFamily_columns_le F κ
+    Both names are new everywhere ((a/b): 0 hits), so no existing unqualified use can change its resolution;
+    the private name is invisible outside PolyRatio.lean; the head sweep of the 5 UNIT-DOWN modules is rc 0, 0 errors.
+RESULT new_names=2 existing_elsewhere=0

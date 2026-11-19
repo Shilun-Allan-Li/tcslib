@@ -1,0 +1,53 @@
+checks cp1 at head 4672ed30d036feb624ca84b4199af19d77f5768f 2026-11-19T00:58:16Z
+done 5 ok of 5
+RESULT modules=5 bad=0
+# diff base-sorries.txt (records) vs the head census (< base only, > head only)
+15,16d14
+< TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio: 3: bootRatio_le_poly, decrypt_fheEval_of_ratio, decrypt_leveledEval_of_ratio
+< TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic: 2: indCPA_of_dlweAssumption, leveledINDCPA_of_dlweAssumption
+sorry tokens in the owned files: 0 0
+admit/native_decide/axiom/opaque tokens in the owned files: /work/tcslib/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean:0 /work/tcslib/TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean:0 
+TOTAL 37 in 14 modules
+RESULT TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean ADDED 1 CHANGED 0 REMOVED 0
+RESULT TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean ADDED 0 CHANGED 0 REMOVED 0
+StmtDump PolyRatio identical
+StmtDump Asymptotic identical
+RESULT files=2 differences=0 PASS
+TRACE _private.TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.PolyRatio.0.TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.two_mul_width_lt_of_ratio -> ['TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.bootNoise_le']
+constants 37; sorry-reaching 5; standard-only 32
+RESULT bad=0
+==> /work/deliv/evidence/rule10/seals-cp1.out <==
+strict-A Cryptography_AdvancedEncryption_Homomorphic_GSW_Asymptotic exit 0 errors 0 [] requests 1654 14.7
+strict-B Cryptography_AdvancedEncryption_Homomorphic_GSW_Asymptotic exit 0 errors 0 [] requests 1655 14.7
+coe-A Cryptography_AdvancedEncryption_Homomorphic_GSW_Asymptotic exit 0 errors 0 [] requests 1653 14.4
+coe-B Cryptography_AdvancedEncryption_Homomorphic_GSW_Asymptotic exit 0 errors 0 [] requests 1654 15.0
+DONE
+
+==> /work/deliv/evidence/rule10/live-Asymptotic-cp1.out <==
+strict-A Cryptography_AdvancedEncryption_Homomorphic_GSW_Asymptotic exit 1 errors 0 [] requests 1654 14.6
+strict-B Cryptography_AdvancedEncryption_Homomorphic_GSW_Asymptotic exit 1 errors 0 [] requests 1655 14.8
+coe-A Cryptography_AdvancedEncryption_Homomorphic_GSW_Asymptotic exit 1 errors 0 [] requests 1653 15.0
+coe-B Cryptography_AdvancedEncryption_Homomorphic_GSW_Asymptotic exit 1 errors 0 [] requests 1654 15.0
+DONE
+
+==> /work/deliv/evidence/rule10/live-PolyRatio-cp1.out <==
+strict-A Cryptography_AdvancedEncryption_Homomorphic_GSW_PolyRatio exit 1 errors 0 [] requests 1395 13.9
+strict-B Cryptography_AdvancedEncryption_Homomorphic_GSW_PolyRatio exit 1 errors 0 [] requests 1396 13.8
+coe-A Cryptography_AdvancedEncryption_Homomorphic_GSW_PolyRatio exit 1 errors 0 [] requests 1394 14.2
+coe-B Cryptography_AdvancedEncryption_Homomorphic_GSW_PolyRatio exit 1 errors 0 [] requests 1395 13.8
+DONE
+ok TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean
+ok TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean
+RESULT foreign=0
+FAIL: base 92, head 92, new 0, gone 0
+WARN: base 103, head 103, new 0, gone 0
+
+rc 0
+RESULT TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean flagged=0
+RESULT TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean flagged=0
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean	base 179 lines, max width 98	head 245 lines, max width 98	fill +66
+RESULT TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/PolyRatio.lean over100=0 over1000=0
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean	base 340 lines, max width 99	head 458 lines, max width 99	fill +118
+RESULT TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Asymptotic.lean over100=0 over1000=0
+RESULT new_names=2 existing_elsewhere=0
+checks cp1 done 2026-11-19T01:03:31Z

@@ -1,0 +1,60 @@
+warning: declaration uses 'sorry'
+warning: declaration uses 'sorry'
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.indCPA_of_dlweAssumption : ∀
+  (F : TCSlib.Cryptography.LWE.Family),
+  TCSlib.Cryptography.LWE.DLWEAssumption F →
+    TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.ReductionEfficient F →
+      (∀ (κ : ℕ), ((F.parameters κ).dimension + 1) * F.residueBits.eval κ + 2 * κ ≤ (F.parameters κ).samples) →
+        ∀ (D : Complexity.NUPPT),
+          TCSlib.Cryptography.Negligible fun (κ : ℕ) =>
+            TCSlib.Cryptography.distAdv
+              (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.realView
+                (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ) (F.noise κ) Bool.false)
+              (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.realView
+                (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ) (F.noise κ) Bool.true)
+              fun
+                (v :
+                  (Matrix
+                        (Fin
+                          (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ).lwe.samples)
+                        (Fin
+                          (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F
+                                κ).lwe.dimension)
+                        (ZMod
+                          (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F
+                                κ).lwe.modulus) ×
+                      (Fin
+                          (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ).lwe.samples →
+                        ZMod
+                          (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F
+                                κ).lwe.modulus)) ×
+                    TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Ciphertext
+                      (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ))
+                (r : D.Coins κ) =>
+              D.distinguisherL κ
+                (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.encodeView
+                  (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ) v)
+                r
+TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.leveledINDCPA_of_dlweAssumption : ∀
+  (F : TCSlib.Cryptography.LWE.Family) (L : Complexity.PolyExpr),
+  TCSlib.Cryptography.LWE.DLWEAssumption F →
+    TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.LeveledReductionEfficient F L →
+      (∀ (κ : ℕ), ((F.parameters κ).dimension + 1) * F.residueBits.eval κ + 2 * κ ≤ (F.parameters κ).samples) →
+        ∀ (D : Complexity.NUPPT),
+          TCSlib.Cryptography.Negligible fun (κ : ℕ) =>
+            TCSlib.Cryptography.distAdv
+              (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.leveledView
+                (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ) (F.noise κ) (L.eval κ)
+                Bool.false)
+              (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.leveledView
+                (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ) (F.noise κ) (L.eval κ)
+                Bool.true)
+              fun
+                (v :
+                  TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.LeveledView
+                    (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ) (L.eval κ))
+                (r : D.Coins κ) =>
+              D.distinguisherL κ
+                (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.encodeLeveledView
+                  (TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Parameters.ofFamily F κ) (L.eval κ) v)
+                r
