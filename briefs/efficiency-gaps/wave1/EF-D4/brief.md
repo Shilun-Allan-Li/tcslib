@@ -2,8 +2,33 @@
 
 **Unit** `ef-d4-ltdf-interfaces` · **Route** Claude statement job (definitions, readers and small proved
 sanity theorems; no admitted targets), then a Codex gate before EF-H9/EF-R4/EF-R5 build on it ·
-**Base** REC `cf6a2266e9556ca8ad61e56f7232266ccc6d4e62` · **Size** 300–500 new Lean lines (±40%) ·
-**Rulings** Q9 A, Q1 A, Q11 A, Q-D4-1 A (the [PW10] §3.1–§3.2 ingest is done; anchors under Sources).
+**Base** REC `cf6a2266e9556ca8ad61e56f7232266ccc6d4e62` · **Size** 350–650 new Lean lines (±40%) ·
+**Rulings** Q9 A, Q1 A, Q11 A, Q-D4-1 A (the [PW10] §3.1–§3.2 ingest is done; anchors under Sources),
+**EF-D4-I (A)**: almost-always is the interface, exact is a strengthening (see *The interface ruling* below).
+
+## The interface ruling (EF-D4-I (A), Seyoon, 2026-11-18; binding)
+
+- **The interface is almost-always** ([PW10] §3.1, `pdf-74f48b0eff6f-p014-b004`/`pdf-74f48b0eff6f-p015-b001`;
+  §3.2, `pdf-74f48b0eff6f-p015-b004`). `Correct` (with injectivity) and `Lossy` hold **except with negligible
+  probability over the generator's coins**: for each, there is a negligible `ε` such that for every `n` the
+  probability, over uniform generator coins, that the property fails for the generated index is at most `ε n`.
+  State that probability with the existing coin-probability idiom of `Foundations/Experiments.lean`
+  (`acceptProb`/`uexp` over the generator's coin strings, as `distAdv` does); do not add a new probability
+  helper, and name the idiom you use in `REPORT.md`.
+- **The exact forms are strengthenings** ([PW10] §3.1, `pdf-74f48b0eff6f-p014-b002`; §3.2,
+  `pdf-74f48b0eff6f-p015-b003`): `CorrectExact`, `LossyExact` (every coin string), with **proved**
+  `correct_of_exact` and `lossy_of_exact` (exact ⇒ almost-always), for both structures.
+- **Consumers assume only the almost-always forms.** `Secure` is built from the almost-always predicates;
+  a `SecureExact` (exact correctness and lossiness, same indistinguishability) is optional, with
+  `secure_of_secureExact` if you add it.
+- **Disclosed specialisations** (each goes into `REPORT.md` as a gate question with its anchor):
+  1. branch sets fixed to `{0,1}^{b(κ)}`; [PW10] allows any branch collection `{B_λ}` (`p015-b003`);
+  2. `HiddenBranch` uses one negligible bound uniform over all branch pairs `(b₀*, b₁*)`, in place of
+     [PW10]'s adversary choosing the pair and keeping it in its view (`p015-b003`, property 2); expected
+     equivalent for non-uniform distinguishers (the pair can be hard-wired as advice); the gate confirms;
+  3. `k ≤ n` is a stated field (`lossBits_le`), as [PW10] requires (`p014-b001`);
+  4. distinguishers are `NUPPT` (non-uniform), where [PW10] states uniform PPT adversaries; the
+     non-uniform form is the stronger assumption and the TCSlib convention (rule 15).
 
 Read `../COMMON.md` first; it is part of this brief.
 
@@ -33,28 +58,38 @@ conventions of `Collection`/`TrapdoorCollection` (`Asymptotic/Collections.lean:1
    - `eval inv : List Bool → List Bool` (`⟨1^n, ⟨s, x⟩⟩ ↦ F_s(x)`, `⟨1^n, ⟨t, y⟩⟩ ↦ x`),
      `eval_poly : PolyTimeComputable eval`, `inv_poly : PolyTimeComputable inv`.
    With `LossyTDF.fn n s x`, the evaluation read back (reader `fn_eq`), and the predicates:
-   - `LossyTDF.Correct`: for every `n`, every injective-mode coin string and every `x`, `inv` on the
-     trapdoor and `fn n s x` returns `List.ofFn x` (perfect, every coin string, as
-     `TrapdoorCollection.inv_spec`); disclose any weaker variant you choose;
-   - `LossyTDF.Lossy`: for every `n` and every lossy-mode coin string, the image of `fn n s` has at most
+   - `lossBits_le : ∀ n, lossBits.eval n ≤ inLen.eval n` (`k ≤ n`, disclosure 3);
+   - `LossyTDF.CorrectExact`: for every `n`, every injective-mode coin string and every `x`, `inv` on the
+     trapdoor and `fn n s x` returns `List.ofFn x` (the form of `TrapdoorCollection.inv_spec`);
+   - `LossyTDF.Correct` (**the interface**): the injective-mode coin strings on which `CorrectExact`'s
+     condition fails for some `x` have negligible probability (the interface ruling);
+   - `LossyTDF.LossyExact`: for every `n` and every lossy-mode coin string, the image of `fn n s` has at most
      `2^{n(κ) − k(κ)}` elements;
+   - `LossyTDF.Lossy` (**the interface**): the lossy-mode coin strings whose image exceeds `2^{n(κ) − k(κ)}`
+     have negligible probability;
    - `LossyTDF.ModesIndist`: every `NUPPT` `D` has negligible advantage between the function indices of
      the two modes (`Negligible fun n => distAdv … (D.distinguisherL n)`);
-   - `LossyTDF.Secure := Correct ∧ Lossy ∧ ModesIndist`, with `_iff` readers for each.
+   - `LossyTDF.Secure := Correct ∧ Lossy ∧ ModesIndist` (almost-always), with `_iff` readers for each
+     predicate, exact ones included.
 2. `structure ABOTDF` — an all-but-one trapdoor function with branch set `{0,1}^{b(κ)}` [PW10, §3.2,
    p. 15] (`pdf-74f48b0eff6f-p015-b003` definition; `pdf-74f48b0eff6f-p015-b002` overview):
    - `inLen lossBits branchLen : PolyExpr`; `gen : NUPPT` run on the lossy branch `b*`
      (`gen.runAt n (List.ofFn b*) r = ⟨s, t⟩`), `gen_uniform`; `eval inv` on `⟨1^n, ⟨s, ⟨b, x⟩⟩⟩` and
      `⟨1^n, ⟨t, ⟨b, y⟩⟩⟩` with `eval_poly`, `inv_poly`.
-   Predicates `ABOTDF.Correct` (every branch `b ≠ b*` is inverted), `ABOTDF.Lossy` (the branch `b*` has
-   image at most `2^{n − k}`), `ABOTDF.HiddenBranch` (for every `NUPPT` `D` there is a negligible `ε` with,
+   `lossBits_le` as for `LossyTDF`. Predicates `ABOTDF.CorrectExact` (every branch `b ≠ b*` is inverted, on
+   every coin string) and its almost-always form `ABOTDF.Correct` (the interface), `ABOTDF.LossyExact` (the
+   branch `b*` has image at most `2^{n − k}` on every coin string) and its almost-always form `ABOTDF.Lossy`
+   (the interface), each almost-always form quantified over every lossy branch `b*`, `ABOTDF.HiddenBranch` (for every `NUPPT` `D` there is a negligible `ε` with,
    for all `n` and all `b₀*, b₁*`, the advantage between the function indices generated for `b₀*` and for
    `b₁*` at most `ε n`: the quantifier order of `PrivateKeyScheme.SingleMessageSecure`), and
-   `ABOTDF.Secure`, with readers.
-3. **Sanity theorems (proved)**: `LossyTDF.fn_injective_of_correct` (correctness makes every
-   injective-mode function injective), the analogue for ABO branches `b ≠ b*`, and
-   `LossyTDF.lossy_card_lt` (for `k ≥ 1` the lossy image is strictly smaller than the domain), so the
-   predicates are visibly non-trivial. **Skip** the formerly optional "an ABO with a one-bit branch set
+   `ABOTDF.Secure` (almost-always), with readers.
+3. **Theorems (proved)**: the strengthenings `LossyTDF.correct_of_exact`, `LossyTDF.lossy_of_exact`,
+   `ABOTDF.correct_of_exact`, `ABOTDF.lossy_of_exact` (the interface ruling); and sanity theorems
+   `LossyTDF.fn_injective_of_correctExact` (exact correctness makes every injective-mode function
+   injective), its almost-always form (the coin strings giving a non-injective function have negligible
+   probability, from `Correct`), the analogue for ABO branches `b ≠ b*`, and `LossyTDF.lossy_card_lt`
+   (for `k ≥ 1`, a lossy image within the bound is strictly smaller than the domain), so the predicates are
+   visibly non-trivial. **Skip** the formerly optional "an ABO with a one-bit branch set
    gives a `LossyTDF`": that is [PW10, Lemma 3.1] in §3.3 (pp. 15–16), outside the ingest (§3.1–§3.2
    only), so it has no anchor to cite.
 
@@ -75,13 +110,9 @@ conventions of `Collection`/`TrapdoorCollection` (`Asymptotic/Collections.lean:1
   | `pdf-74f48b0eff6f-p015-b003` | 15 | §3.2 definition of an `(n, k)`-ABO collection `(S_abo, G_abo, G_abo⁻¹)` with branch collection `𝓑 = {B_λ}`, properties 1–2 |
   | `pdf-74f48b0eff6f-p015-b004` | 15 | §3.2 almost-always ABOs |
 
-  Points where the targets above specialise [PW10], for the gate preparation list: [PW10] states
-  correctness and lossiness exactly (every index), with an almost-always relaxation over the generator's
-  coins (p014-b004, p015-b001, p015-b004); the brief's `Correct`/`Lossy` are the exact form. [PW10]
-  allows any branch collection `{B_λ}` (p015-b003); the brief fixes `{0,1}^{b(κ)}`. [PW10]'s hidden lossy
-  branch lets the adversary output `(b₀*, b₁*)` and keeps them in its view (p015-b003, property 2); the
-  brief's `HiddenBranch` quantifies over all pairs with one negligible bound and a `NUPPT` distinguisher.
-  [PW10] requires `k ≤ n` (p014-b001); the brief's fields leave it implicit. The remaining
+  How the targets relate to [PW10] is fixed by the interface ruling above: the almost-always relaxation
+  (p014-b004, p015-b001, p015-b004) is the interface, the exact definitions (p014-b002, p015-b003) are the
+  strengthenings, and the four disclosed specialisations are listed there. The remaining
   §6.2–§6.4 anchors (`pdf-74f48b0eff6f-p033-b001` …) are for remarks about the lattice instances only.
 - [PS10] Definitions 26.8 (`NUPPT`) and 23.4 (uniform PPT); the `Collection` and `TrapdoorCollection`
   conventions ([PS10] Definitions 55.1, 56.1) as `Asymptotic/Collections.lean` cites them.
@@ -121,17 +152,20 @@ declarations used here, except `Ensemble.copies_X`, which this job does not use)
 ## Checks and evidence (in addition to COMMON C1–C13)
 
 - **D4-P1 non-vacuity of the types**: a toy `LossyTDF` value in a probe file (identity evaluation on
-  `inLen = var`, `lossBits = 0`, constant generators) elaborates and satisfies `Correct` and `Lossy`;
+  `inLen = var`, `lossBits = 0`, constant generators) elaborates and satisfies `CorrectExact` and
+  `LossyExact`, hence `Correct` and `Lossy` through the proved strengthenings;
   `ModesIndist` is then trivially true (identical modes), which the probe states as a sanity remark only.
 - **D4-P2**: the same for `ABOTDF` with `branchLen = 1`.
 - **Gate preparation**: `REPORT.md` lists every definition with its readers and every design choice made
-  against the [PW10] definitions (perfect versus negligible correctness error, the key/trapdoor layout, the
-  form of indistinguishability, and the specialisations listed under Sources), each marked as a question
-  if it departs from [PW10], with the §3.1/§3.2 anchor it departs from.
+  against the [PW10] definitions (the almost-always interface and the coin-probability idiom used, the
+  key/trapdoor layout, the form of indistinguishability, and the four disclosed specialisations of the
+  interface ruling), each marked as a question if it departs from [PW10], with the §3.1/§3.2 anchor it
+  departs from.
 
 ## Size
 
-`LossyTDF` with predicates and readers 120–200; `ABOTDF` 120–200; sanity theorems 50–100.
+`LossyTDF` with predicates (almost-always and exact) and readers 150–250; `ABOTDF` 150–250; the
+strengthenings and sanity theorems 60–150.
 
 ## Questions for Seyoon
 

@@ -10,7 +10,8 @@ Prepared by the maintainer on 2026-11-18 from records tip `b1219429d8e2a15cb71f4
 
 ## 1. Inputs (records branch `cryptography/pass-shelat-ch2-4` at the records pin `<RECORDS>`)
 
-Read in full, and check the SHA-256 (taken at `b1219429`; if one differs at `<RECORDS>`, stop with
+Read in full, and check the SHA-256 (taken at `b1219429`; the hand-off and ledger rows re-taken on
+2026-11-19 for EF-D4, after rules 17–18 and DL-63–DL-71; if one differs at `<RECORDS>`, stop with
 **E-INPUT** and report both values):
 
 | File | SHA-256 |
@@ -18,11 +19,11 @@ Read in full, and check the SHA-256 (taken at `b1219429`; if one differs at `<RE
 | `briefs/efficiency-gaps/audit-r1.md` (§0 classes, §5 jobs) | `f2ca1ae4871dc3888159508a8e52d36ea4ffae461158c0c9510af901eb24dfae` |
 | `briefs/efficiency-gaps/rulings-r1.md` (Q1–Q11, binding) | `17ebe870ce0650723b7cb0e45d3b86ebff22402ba9aa312a390eca358c608b47` |
 | `briefs/efficiency-gaps/inventory-r1.md` | `9e997081242049a127d2563e47a6cfa8d066a0a7964a8f182b36f86fdb94d918` |
-| `briefs/pass-shelat-ch5-8/MAINTAINER-HANDOFF.md` §2 (standing rules; rule 15) | `21d39e47f671194b2fd4915f0ece10c74b37a425eb942b2c3ce4faf390887fe9` |
+| `briefs/pass-shelat-ch5-8/MAINTAINER-HANDOFF.md` §2 (standing rules; rule 15) | `c9b93227cddd0e5aa1784855dab939e8bec2d11b6aa812e26d1afb9082b07181` |
 | `policy.md` (§1 layout, facades, *Definitions land with their lemmas*, *Hosts come first*, *Duplication*, Rule 10; §2 attribution; §3 sketches) | `6599b12230e3879bc0e1fb22c0376ea6201bca8b7edd79dfc55da43986f991d4` |
 | `workflow.md` (§4 batch ground rules, §6 tooling) | `a89d9a4e38bf14a90271000376828d7c5246617c5a6f9f55f3366bf4d0dbed0e` |
 | `briefs/lattice-gsw/phase6/issued-6b-r1/fill-environment-addendum.md` (Part 1; *Lean parallelism*) | `0420f23ba1c520e566e695d329686a6ec3902c63c72e073fb150a1fa54205e3d` |
-| `briefs/pass-shelat-ch5-8/duplication-ledger.md` | `be12f234993895a1d9428227dcd1dcd5526a780ee2906515f89ebb1dd96c9e3d` |
+| `briefs/pass-shelat-ch5-8/duplication-ledger.md` | `250ccafec1e1e6afa82057ad78fc06accf0fc9dffece8b047b52e52ce7d44e70` |
 | `briefs/pass-shelat-ch5-8/EXCHANGE.md` (*Fills*, *Rules for exchange pushes*) | `d685d75511c2729b9f86e60a6036e9d68a8fd7edd236a53cc7fe39f8476e160e` |
 
 **Note on `workflow.md` §4.1.** The records-branch copy of `workflow.md` has no §4.1 heading. The

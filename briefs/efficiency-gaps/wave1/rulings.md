@@ -16,3 +16,7 @@ its brief > COMMON.md.
 - **Q-H12-2 (A):** the maintainer ingests [AB09] ch. 2 and ch. 6 and a 3-colouring source before the delivery
   review; the worker cites the anchors the brief lists and flags anything unverified.
 - **Q-H12-3 (A):** re-derive the private `sat3Coloring`, disclosed in REPORT.md; the course file stays read-only.
+- **EF-D4-I (A)** (2026-11-18, after the [PW10] §3.1–§3.2 ingest): almost-always is the interface, exact is a
+  strengthening with a proved `exact ⇒ almost-always`; consumers assume only almost-always; the brief
+  discloses four specialisations (branch sets `{0,1}^{b(κ)}`, one bound uniform over branch pairs, `k ≤ n`
+  stated, `NUPPT` distinguishers). Details in `EF-D4/brief.md`, *The interface ruling*.
