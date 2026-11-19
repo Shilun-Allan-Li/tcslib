@@ -191,7 +191,8 @@ def ofEquiv {Ω : Type} [Fintype Ω] {N : ℕ} (e : Ω ≃ Fin N) (s : ℕ) : Co
 
 /-- `(ofEquiv e s).dec c = (bucketDec N s c).map e.symm`. -/
 theorem ofEquiv_dec {Ω : Type} [Fintype Ω] {N : ℕ} (e : Ω ≃ Fin N) (s : ℕ) (c : Fin s → Bool) :
-    (ofEquiv e s).dec c = (bucketDec N s c).map e.symm := rfl
+    (ofEquiv e s).dec c = (bucketDec N s c).map e.symm := by
+  rw [ofEquiv, CoinSampler.congr_dec, bucket_dec]
 
 /-- `(ofEquiv e s).fail = (bucket N s).fail` (`CoinSampler.fail_congr`). -/
 theorem fail_ofEquiv {Ω : Type} [Fintype Ω] {N : ℕ} (e : Ω ≃ Fin N) (s : ℕ) :

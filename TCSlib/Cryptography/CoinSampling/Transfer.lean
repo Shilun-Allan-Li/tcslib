@@ -105,7 +105,7 @@ theorem expect_draw [Nonempty Ω] (S : CoinSampler Ω s) (F : Option Ω → ℝ)
 difference is `fail · (F none − 𝔼_a F(some a))`, of absolute value at most `fail`. -/
 theorem close_draw_bind [Nonempty Ω] (S : CoinSampler Ω s) (K : Option Ω → ProbComp β) :
     ProbComp.Close S.fail (S.draw.bind K)
-      ((ProbComp.sample Ω).bind fun a => K (some a)) := fun g hg => by
+      ((ProbComp.sample Ω).bind fun a => K (some a)) := (ProbComp.close_iff _ _ _).2 fun g hg => by
   rw [ProbComp.expect_bind, ProbComp.expect_bind, S.expect_draw]
   have h₀ := ProbComp.expect_mem_unit (K none) hg
   have h₁ := ProbComp.expect_mem_unit (ProbComp.sample Ω)
@@ -123,13 +123,14 @@ theorem close_draw_bind [Nonempty Ω] (S : CoinSampler Ω s) (K : Option Ω → 
 /-- **One draw, default fallback**: `S.drawD d >>= k` is `fail`-close to `sample Ω >>= k`
 (`close_draw_bind` with `K o = k (o.getD d)`). -/
 theorem close_drawD_bind [Nonempty Ω] (S : CoinSampler Ω s) (d : Ω) (k : Ω → ProbComp β) :
-    ProbComp.Close S.fail ((S.drawD d).bind k) ((ProbComp.sample Ω).bind k) := fun g hg => by
+    ProbComp.Close S.fail ((S.drawD d).bind k) ((ProbComp.sample Ω).bind k) :=
+    (ProbComp.close_iff _ _ _).2 fun g hg => by
   have e : ProbComp.expect ((S.drawD d).bind k) g =
       ProbComp.expect (S.draw.bind fun o => k (o.getD d)) g := by
     rw [ProbComp.expect_bind, ProbComp.expect_bind, drawD_eq, draw_eq, ProbComp.expect_map,
       ProbComp.expect_map]
   rw [e]
-  exact S.close_draw_bind (fun o => k (o.getD d)) g hg
+  exact (ProbComp.close_iff _ _ _).1 (S.close_draw_bind (fun o => k (o.getD d))) g hg
 
 /-- **A fresh draw per oracle query**: an oracle whose every call draws through `S` (body `K`,
 fallback `K … none`) is, over a computation with at most `m` queries, `m · fail`-close to the
@@ -150,7 +151,8 @@ theorem close_simulate_draw [Nonempty Ω] {ι σ α : Type} {spec : OracleSpec �
 exact draws are replaced by default-fallback coin draws keeps **every** `AllOutputs` property.
 Glue. -/
 theorem outputsSubset_drawD [Nonempty Ω] (S : CoinSampler Ω s) (d : Ω) :
-    OracleComp.OutputsSubset (S.drawD d) (ProbComp.sample Ω) := fun P hP => by
+    OracleComp.OutputsSubset (S.drawD d) (ProbComp.sample Ω) :=
+    (OracleComp.outputsSubset_iff _ _).2 fun P hP => by
   have hall := allOutputs_sample_iff.1 hP
   rw [drawD_eq, OracleComp.map_eq_bind]
   exact OracleComp.AllOutputs.bind (OracleComp.allOutputs_true _) fun c _ =>
