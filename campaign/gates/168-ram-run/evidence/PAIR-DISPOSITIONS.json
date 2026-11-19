@@ -1,12 +1,31 @@
 {
- "base_summary": "declarations screened: 62; copy pairs (target reproduces >= half of source): 26; reproduced text: 4,705 chars",
- "head_summary": "declarations screened: 152; copy pairs (target reproduces >= half of source): 41; reproduced text: 7,721 chars",
+ "base_summary": "declarations screened: 745; copy pairs (target reproduces >= half of source): 253; reproduced text: 44,183 chars",
+ "head_summary": "declarations screened: 837; copy pairs (target reproduces >= half of source): 277; reproduced text: 47,879 chars",
  "population_base": [
   "TCSlib/Complexity/RAMSimulation.lean",
   "TCSlib/Complexity/RAMSimulation/Simulation.lean",
   "TCSlib/Complexity/RAMSimulation/WordSize.lean",
   "TCSlib/Complexity/TuringMachine/Build/Embed.lean",
-  "TCSlib/Complexity/TuringMachine/NondeterministicSpace.lean"
+  "TCSlib/Complexity/TuringMachine/NondeterministicSpace.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/Encoding.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/Phases.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/Startup.lean",
+  "TCSlib/Complexity/SpaceComplexity/Basic.lean",
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Reach.lean",
+  "TCSlib/Complexity/TuringMachine/Build/KeyTable.lean",
+  "TCSlib/Complexity/TuringMachine/Build/NDHost.lean",
+  "TCSlib/Complexity/TuringMachine/Build/RecordTable.lean",
+  "TCSlib/Complexity/TuringMachine/Build/Seam.lean",
+  "TCSlib/Complexity/TuringMachine/Build/WordArith.lean",
+  "TCSlib/Complexity/TuringMachine/CfgFacts.lean",
+  "TCSlib/Complexity/TuringMachine/Configuration.lean",
+  "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+  "TCSlib/Complexity/TuringMachine/Finite.lean",
+  "TCSlib/Complexity/TuringMachine/NatBits.lean",
+  "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+  "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+  "TCSlib/Programs/WordRAM/Extended.lean",
+  "TCSlib/Programs/WordRAM/Steps.lean"
  ],
  "population_head": [
   "TCSlib/Complexity/RAMSimulation.lean",
@@ -30,11 +49,30 @@
   "TCSlib/Complexity/RAMSimulation/Simulation.lean",
   "TCSlib/Complexity/RAMSimulation/WordSize.lean",
   "TCSlib/Complexity/TuringMachine/Build/Embed.lean",
-  "TCSlib/Complexity/TuringMachine/NondeterministicSpace.lean"
+  "TCSlib/Complexity/TuringMachine/NondeterministicSpace.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/Encoding.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/Phases.lean",
+  "TCSlib/Complexity/RAMSimulation/Sim/Startup.lean",
+  "TCSlib/Complexity/SpaceComplexity/Basic.lean",
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Reach.lean",
+  "TCSlib/Complexity/TuringMachine/Build/KeyTable.lean",
+  "TCSlib/Complexity/TuringMachine/Build/NDHost.lean",
+  "TCSlib/Complexity/TuringMachine/Build/RecordTable.lean",
+  "TCSlib/Complexity/TuringMachine/Build/Seam.lean",
+  "TCSlib/Complexity/TuringMachine/Build/WordArith.lean",
+  "TCSlib/Complexity/TuringMachine/CfgFacts.lean",
+  "TCSlib/Complexity/TuringMachine/Configuration.lean",
+  "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+  "TCSlib/Complexity/TuringMachine/Finite.lean",
+  "TCSlib/Complexity/TuringMachine/NatBits.lean",
+  "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+  "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+  "TCSlib/Programs/WordRAM/Extended.lean",
+  "TCSlib/Programs/WordRAM/Steps.lean"
  ],
- "new": 15,
+ "new": 24,
  "gone": 0,
- "net_directed_pairs": "26 -> 41",
+ "net_directed_pairs": "253 -> 277",
  "pairs": [
   {
    "status": "NEW",
@@ -58,13 +96,23 @@
   },
   {
    "status": "NEW",
-   "target": "RunStep.lean::host_ordinary",
-   "source": "RunStep.lean::host_verdict",
-   "chars": 1152,
-   "source_chars": 1597,
-   "pct": 72,
-   "class": "shared-prelude",
-   "note": "DISCLOSED FOR THE AUDIT. The host's ordinary-phase and verdict-phase steps share a prelude of about 20 lines (the entry renaming `locald`, `phase_correct`, the word bookkeeping) before diverging into dispatch and halt. Raised in the pack."
+   "target": "NDHost.lean::guessCtlRunTM_stop_of_halted",
+   "source": "RunStartup.lean::host_initCfg",
+   "chars": 212,
+   "source_chars": 288,
+   "pct": 74,
+   "class": "parallel",
+   "note": "Both prove that the initial configuration with its state mapped is the host's initial configuration, field by field: `host_initCfg` through `Cfg.mapState_eq_of_fields`, and the library's inline `hinit` in `guessCtlRunTM_stop_of_halted` (a cited home, newly in the screen through `population_extra`) through `Cfg.ext`. `Cfg.mapState_init` (PR #391) states this once; the approved follow-up after #391 and #383 merge retires `host_initCfg` to a citation of it, and `NDHost`'s `hinit` is listed there as a further candidate."
+  },
+  {
+   "status": "NEW",
+   "target": "NDHost.lean::gr_handoff",
+   "source": "RunStartup.lean::host_initCfg",
+   "chars": 212,
+   "source_chars": 288,
+   "pct": 74,
+   "class": "parallel",
+   "note": "The same match as `guessCtlRunTM_stop_of_halted` above: the library's private `gr_handoff` proves the same mapped-initial-configuration equation inline (`hinit`, through `Cfg.ext`). Same disposition: `Cfg.mapState_init` (PR #391) states it once; the follow-up after #391 and #383 merge retires `host_initCfg` to a citation, with `NDHost`'s two inline copies listed as further candidates."
   },
   {
    "status": "NEW",
@@ -98,6 +146,16 @@
   },
   {
    "status": "NEW",
+   "target": "Startup.lean::startupErase_attach",
+   "source": "RunEncoding.lean::encodes_mapState",
+   "chars": 79,
+   "source_chars": 119,
+   "pct": 66,
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`); the match is pre-existing merged text against E's new lemma. Both discharge a `Cfg` equality field by field through the `Cfg.mapState_*` readers, for different equations; `encodes_mapState` is an `Encodes` invariance, `startupErase_attach` an erase-after-attach identity."
+  },
+  {
+   "status": "NEW",
    "target": "RunCosts.lean::blockTime_mono",
    "source": "RunCosts.lean::blockRadius_mono",
    "chars": 144,
@@ -118,6 +176,16 @@
   },
   {
    "status": "NEW",
+   "target": "RunStep.lean::host_ordinary",
+   "source": "RunStep.lean::host_verdict",
+   "chars": 764,
+   "source_chars": 1208,
+   "pct": 63,
+   "class": "citation-shape",
+   "note": "G168-01 repaired: the shared preparation is factored into `host_local` (local entry, encoding transport, reconstruction, heads), `words_headD` (the word/head obligation) and `host_envelope` (the selected/frame head-envelope split). What the two proofs still share is their local `let` bindings and one-line citations of these helpers and of `phase_correct`; they diverge into dispatch (`host_phase_dispatch`, `resumeTag_of_step`) and halt (`host_slice_prefix`). Round 1: 72%."
+  },
+  {
+   "status": "NEW",
    "target": "RunEncoding.lean::runBank_embed",
    "source": "RunEncoding.lean::runBank_reconstruct",
    "chars": 108,
@@ -125,6 +193,16 @@
    "pct": 63,
    "class": "citation-shape",
    "note": "The reverse direction of the pair above."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_payloadPost_markerPost",
+   "source": "RunEncoding.lean::encodes_mapState",
+   "chars": 75,
+   "source_chars": 119,
+   "pct": 63,
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`); the match is pre-existing merged text against E's new lemma. Both discharge a `Cfg` equality field by field through the `Cfg.mapState_*` readers, for different equations; `kt_payloadPost_markerPost` identifies a closed payload's post-configuration with the marker's, through `kt_closeContract_spec`."
   },
   {
    "status": "NEW",
@@ -158,6 +236,36 @@
   },
   {
    "status": "NEW",
+   "target": "KeyTable.lean::kt_compare_run",
+   "source": "RunEncoding.lean::runEntry_reconstruct",
+   "chars": 124,
+   "source_chars": 225,
+   "pct": 55,
+   "class": "citation-shape",
+   "note": "Cited home newly in the screen (`population_extra`); the match is pre-existing merged text against E's new lemma. Both cite `Cfg.mapState_eq_of_fields` with the same five reader obligations, to re-tag a configuration; `kt_compare_run` then runs the comparison phase."
+  },
+  {
+   "status": "NEW",
+   "target": "KeyTable.lean::kt_done_state",
+   "source": "RunEncoding.lean::runEntry_reconstruct",
+   "chars": 122,
+   "source_chars": 225,
+   "pct": 54,
+   "class": "citation-shape",
+   "note": "Cited home newly in the screen (`population_extra`); the match is pre-existing merged text against E's new lemma. Both cite `Cfg.mapState_eq_of_fields` with the same five reader obligations (`htag`, re-tagging a configuration); `kt_done_state` then runs the done phase."
+  },
+  {
+   "status": "NEW",
+   "target": "Startup.lean::startupErase_attach",
+   "source": "RunEncoding.lean::runEntry_reconstruct",
+   "chars": 120,
+   "source_chars": 225,
+   "pct": 53,
+   "class": "parallel",
+   "note": "Cited home newly in the screen (`population_extra`); the match is pre-existing merged text against E's new lemma. Both prove that re-tagging a configuration and then restoring its state gives it back, field by field: `runEntry_reconstruct` through `Cfg.mapState_eq_of_fields`, `startupErase_attach` (C's, private) through `Cfg.ext`. Listed for the approved follow-up after #391 and #383 merge, which retires C's private copies: `startupErase_attach` can cite `Cfg.mapState_eq_of_fields` there."
+  },
+  {
+   "status": "NEW",
    "target": "RunPhase.lean::RunPhase.branch_prefix_choice",
    "source": "RunPhase.lean::RunPhase.branch_slice",
    "chars": 153,
@@ -175,6 +283,26 @@
    "pct": 52,
    "class": "parallel",
    "note": "Appending a coin to a stream property versus reading the appended coin back; shared text is the `List.getD_append_right` step."
+  },
+  {
+   "status": "NEW",
+   "target": "NDHost.lean::guessCtlRunTM_stop_of_halted",
+   "source": "RunEncoding.lean::encodes_mapState",
+   "chars": 62,
+   "source_chars": 119,
+   "pct": 52,
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`); the match is pre-existing merged text against E's new lemma. Both discharge a `Cfg` equality field by field through the `Cfg.mapState_*` readers, for different equations; here the library's inline `hinit` (see the `host_initCfg` pair above)."
+  },
+  {
+   "status": "NEW",
+   "target": "NDHost.lean::gr_handoff",
+   "source": "RunEncoding.lean::encodes_mapState",
+   "chars": 62,
+   "source_chars": 119,
+   "pct": 52,
+   "class": "shape-match",
+   "note": "Cited home newly in the screen (`population_extra`); the match is pre-existing merged text against E's new lemma. Both discharge a `Cfg` equality field by field through the `Cfg.mapState_*` readers, for different equations; here the library's inline `hinit` (see the `host_initCfg` pair above)."
   },
   {
    "status": "NEW",

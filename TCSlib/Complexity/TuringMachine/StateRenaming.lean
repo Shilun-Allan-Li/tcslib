@@ -103,6 +103,19 @@ attribute [simps (config := { isSimp := false }) inputTape workTapes output stat
 attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
   Cfg.mapState
 
+/-- Renaming the state of an initial configuration gives the initial configuration of the renamed
+state: `(Cfg.init q₀ x).mapState f = Cfg.init (f q₀) x`.
+
+**Proof sketch.** Field by field: the renamed state is `some (f q₀)`, and every other field is
+the initial configuration's, by the field readers of `Cfg.mapState` and `Cfg.init`. -/
+theorem Cfg.mapState_init {State' : Type*} (f : State → State') (q₀ : State)
+    (input : List Symbol) :
+    (Cfg.init (k := k) q₀ input).mapState f = Cfg.init (f q₀) input := by
+  apply Cfg.ext <;> (try funext j) <;> (try funext q) <;>
+    simp only [Cfg.mapState_state, Cfg.mapState_inputPos, Cfg.mapState_workTapes,
+      Cfg.mapState_workTapePos, Cfg.mapState_output, Cfg.init_state, Cfg.init_inputPos,
+      Cfg.init_workTapes, Cfg.init_workTapePos, Cfg.init_output, Option.map_some]
+
 /-- State renaming commutes with applying an action (any function; no
 injectivity needed, since the action is supplied explicitly). -/
 lemma Cfg.mapState_apply {State' : Type*} {input : List Symbol} (f : State → State')
