@@ -120,8 +120,9 @@ theorem full_iterative_bound (m : ℕ) (layerSize : Fin m → ℕ) (s : ℕ)
 /-! ## Restriction Composition and Two-Stage Bound -/
 
 lemma restrictFn_composeRestr' (f : (Fin n → Bool) → Bool) (ρ₁ ρ₂ : Restriction n) :
-    restrictFn f (composeRestr ρ₁ ρ₂) = restrictFn (restrictFn f ρ₁) ρ₂ := by
-  unfold restrictFn composeRestr Restriction.extend; aesop
+    restrictFn f (composeRestr ρ₁ ρ₂) = restrictFn (restrictFn f ρ₁) ρ₂ := (by
+  exact restrictFn_composeRestr f ρ₁ ρ₂
+)
 
 theorem two_stage_bound'
     (p₁ p₂ : ℝ) (hp₁ : 0 < p₁) (hp₁_1 : p₁ ≤ 1) (hp₂ : 0 < p₂) (hp₂_1 : p₂ ≤ 1)
@@ -157,9 +158,9 @@ lemma bernoulliRestrProb_dtDepth_mono (p : ℝ) (hp : 0 ≤ p) (hp1 : p ≤ 1)
 lemma bernoulliRestrProb_congr_fn' {f g : (Fin n → Bool) → Bool}
     (h : ∀ x, f x = g x) :
     bernoulliRestrProb p (fun ρ => dtDepth (restrictFn f ρ) > t) =
-    bernoulliRestrProb p (fun ρ => dtDepth (restrictFn g ρ) > t) := by
-  have : f = g := funext h
-  subst this; rfl
+    bernoulliRestrProb p (fun ρ => dtDepth (restrictFn g ρ) > t) := (by
+  exact bernoulliRestrProb_congr_fn h p t
+)
 
 /-- Base case: depth-2 circuit → switching lemma bound. -/
 lemma depth2_circuit_switching_bound

@@ -19,12 +19,6 @@ variable {n : ℕ}
 
 set_option maxHeartbeats 800000
 
-/-! ## Restriction composition -/
-
-private lemma restrictFn_composeRestr (f : (Fin n → Bool) → Bool) (ρ₁ ρ₂ : Restriction n) :
-    restrictFn f (composeRestr ρ₁ ρ₂) = restrictFn (restrictFn f ρ₁) ρ₂ := by
-  unfold restrictFn composeRestr Restriction.extend; aesop
-
 /-! ## Circuit structure lemmas -/
 
 lemma children_depth_le (isAnd : Bool) (cs : List (TreeCircuit n)) (c : TreeCircuit n) (hc : c ∈ cs)

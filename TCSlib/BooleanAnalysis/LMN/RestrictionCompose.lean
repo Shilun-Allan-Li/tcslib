@@ -34,6 +34,17 @@ variable {n : ℕ}
 def composeRestr (ρ₁ ρ₂ : Restriction n) : Restriction n :=
   fun i => (ρ₁ i).orElse (fun _ => ρ₂ i)
 
+/--
+Restricting a function by the composition of two restrictions is the same
+    as restricting twice: first by `ρ₁`, then by `ρ₂`.
+-/
+theorem restrictFn_composeRestr (f : (Fin n → Bool) → Bool)
+    (ρ₁ ρ₂ : Restriction n) :
+    restrictFn f (composeRestr ρ₁ ρ₂) = restrictFn (restrictFn f ρ₁) ρ₂ := (by
+  unfold restrictFn composeRestr Restriction.extend
+  aesop
+)
+
 /-- Per-variable weight in the Bernoulli restriction model:
     free variables (`none`) have weight `p`,
     fixed variables (`some _`) have weight `(1-p)/2`. -/

@@ -8,6 +8,10 @@ import TCSlib.BooleanAnalysis.GaussianSpace.Noise
 import TCSlib.BooleanAnalysis.GaussianSpace.OrnsteinUhlenbeck.Derivative
 import TCSlib.BooleanAnalysis.GaussianSpace.OrnsteinUhlenbeck.Integration
 import TCSlib.BooleanAnalysis.GaussianSpace.OrnsteinUhlenbeck.TestFunctions
+import TCSlib.BooleanAnalysis.GaussianSpace.OrnsteinUhlenbeck.Energy
+import TCSlib.BooleanAnalysis.GaussianSpace.OrnsteinUhlenbeck.EntropyScalar
+import TCSlib.BooleanAnalysis.GaussianSpace.OrnsteinUhlenbeck.EntropyNormalized
+import TCSlib.BooleanAnalysis.GaussianSpace.OrnsteinUhlenbeck.Entropy
 import Mathlib.Analysis.Distribution.AEEqOfIntegralContDiff
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
@@ -24,6 +28,12 @@ set_option autoImplicit false
   generator limit.
 * `OrnsteinUhlenbeck.Integration`: Gaussian integration by parts against compact tests.
 * `OrnsteinUhlenbeck.TestFunctions`: weak identification of strong generator limits.
+* `OrnsteinUhlenbeck.Localization`: smooth cutoff sequences and Fatou integrability.
+* `OrnsteinUhlenbeck.LocalEnergy`: localized Green identities and energy estimates.
+* `OrnsteinUhlenbeck.Energy`: global gradient integrability and integration by parts.
+* `OrnsteinUhlenbeck.EntropyScalar`: power secants, entropy Fatou bounds, and rescaling.
+* `OrnsteinUhlenbeck.EntropyNormalized`: normalized Gaussian entropy bounds.
+* `OrnsteinUhlenbeck.Entropy`: Gaussian log-Sobolev from the strong generator limit.
 
 ## Main definitions
 
@@ -36,8 +46,10 @@ set_option autoImplicit false
 
 The strong generator is unique, commutes with Gaussian noise, is symmetric,
 and gives pointwise semigroup time and correlation derivatives. On smooth functions
-it agrees almost everywhere with the differential expression. Integration by parts
-and Gaussian log-Sobolev remain statement-only obligations.
+it agrees almost everywhere with the differential expression and satisfies Gaussian
+integration by parts. Gaussian log-Sobolev holds on the strong generator domain,
+including entropy integrability. Its smooth gradient corollary identifies the
+energy with the squared Euclidean gradient.
 The generator relation avoids choosing representatives of almost-everywhere
 equivalence classes and gives an explicit domain for the source's operator.
 
@@ -78,7 +90,9 @@ lemma HasGaussianGenerator_iff {n : ℕ} {f g : (Fin n → ℝ) → ℝ} :
       Tendsto (fun t : ℝ => eLpNorm
         (fun x => (f x - gaussianNoise (Real.exp (-t)) f x) / t - g x)
         2 (Measure.pi fun _ : Fin n => standardGaussianMeasure))
-        (𝓝[>] (0 : ℝ)) (𝓝 0) := Iff.rfl
+        (𝓝[>] (0 : ℝ)) (𝓝 0) := (by
+  rfl
+)
 
 /-- The strong L² domain of the positive Ornstein–Uhlenbeck generator.
 [OD14, Def. 11.24; Ex. 11.18] -/
@@ -111,6 +125,19 @@ noncomputable def gaussianEntropy {n : ℕ} (f : (Fin n → ℝ) → ℝ) : ℝ 
   (∫ x, f x * Real.log (f x) ∂(Measure.pi fun _ : Fin n => standardGaussianMeasure)) -
     (∫ x, f x ∂(Measure.pi fun _ : Fin n => standardGaussianMeasure)) *
       Real.log (∫ x, f x ∂(Measure.pi fun _ : Fin n => standardGaussianMeasure))
+
+/-- Gaussian entropy is the integral of the function times its logarithm
+minus its mass times the logarithm of that mass.
+[OD14, §11.1, Gaussian Log-Sobolev] -/
+lemma gaussianEntropy_eq {n : ℕ} (f : (Fin n → ℝ) → ℝ) :
+    gaussianEntropy f =
+      (∫ x, f x * Real.log (f x)
+        ∂(Measure.pi fun _ : Fin n => standardGaussianMeasure)) -
+      (∫ x, f x ∂(Measure.pi fun _ : Fin n => standardGaussianMeasure)) *
+        Real.log (∫ x, f x ∂(Measure.pi fun _ : Fin n => standardGaussianMeasure)) :=
+  (by
+  rfl
+)
 
 variable {n : ℕ}
 local notation "γ" => (Measure.pi fun _ : Fin n => standardGaussianMeasure)
@@ -385,27 +412,40 @@ theorem gaussianGenerator_selfAdjoint {f g u v : (Fin n → ℝ) → ℝ}
 /-- Gaussian integration by parts identifies generator pairing with gradient
 energy for smooth functions in its domain. [OD14, Prop. 11.28]
 
-**Proof sketch.** Integrate the Gaussian density derivative in each coordinate;
-the drift term cancels the derivative of the density. Approximate in the
-generator norm to justify the boundary terms and integrability. -/
+**Proof sketch.** Identify the generators with their differential expressions.
+Localized Gaussian integration by parts and a cutoff energy estimate put each
+coordinate derivative in L². Apply the localized identity to expanding compact
+cutoffs; dominated convergence removes the boundary terms and gives the result. -/
 theorem gaussianGenerator_integration_by_parts {f g u v : (Fin n → ℝ) → ℝ}
     (hfu : HasGaussianGenerator f u) (hgv : HasGaussianGenerator g v)
     (hf : ContDiff ℝ 3 f) (hg : ContDiff ℝ 3 g) :
     Integrable (fun x => ∑ i : Fin n,
       (fderiv ℝ f x) (Pi.single i 1) * (fderiv ℝ g x) (Pi.single i 1)) γ ∧
       (∫ x, f x * v x ∂γ) = ∫ x, ∑ i : Fin n,
-        (fderiv ℝ f x) (Pi.single i 1) * (fderiv ℝ g x) (Pi.single i 1) ∂γ := sorry
+        (fderiv ℝ f x) (Pi.single i 1) * (fderiv ℝ g x) (Pi.single i 1) ∂γ := (by
+  rcases HasGaussianGenerator_iff.mp hfu with ⟨hfl, hul, _⟩
+  rcases HasGaussianGenerator_iff.mp hgv with ⟨hgl, hvl, _⟩
+  apply gaussian_differential_integration_by_parts
+    (hf.of_le (by norm_num)) (hg.of_le (by norm_num)) hfl hul hgl hvl
+  · simpa only [gaussianOUDifferential_eq] using gaussianGenerator_eq_differential hfu hf
+  · simpa only [gaussianOUDifferential_eq] using gaussianGenerator_eq_differential hgv hg
+)
 
 /-- Gaussian log-Sobolev bounds entropy of `f²` by twice its generator energy.
 [OD14, §11.1, Gaussian Log-Sobolev] The entropy integrability is part of the
 conclusion, avoiding a vacuous use of a totalized integral.
 
-**Proof sketch.** Differentiate Gaussian hypercontractivity at exponent two and
-correlation one, then extend from smooth approximations in the generator norm. -/
+**Proof sketch.** The strong generator limit determines the noise-energy deficit.
+Hypercontractivity at exponents below two controls power secants; Fatou's
+inequality gives entropy integrability and the bound at unit square mass.
+Rescale by the input's square mass to obtain the general inequality. -/
 theorem gaussian_logSobolev {f g : (Fin n → ℝ) → ℝ}
     (hfg : HasGaussianGenerator f g) :
     Integrable (fun x => f x ^ 2 * Real.log (f x ^ 2)) γ ∧
-      gaussianEntropy (fun x => f x ^ 2) ≤ 2 * ∫ x, f x * g x ∂γ := sorry
+      gaussianEntropy (fun x => f x ^ 2) ≤ 2 * ∫ x, f x * g x ∂γ := (by
+  rcases HasGaussianGenerator_iff.mp hfg with ⟨hf, hg, hlim⟩
+  simpa only [gaussianEntropy_eq] using gaussian_entropy_of_strong_limit hf hg hlim
+)
 
 /-- The smooth form of Gaussian log-Sobolev uses the squared Euclidean gradient.
 [OD14, §11.1, Gaussian Log-Sobolev]
@@ -415,6 +455,10 @@ Gaussian integration by parts with the same smooth function in both slots. -/
 theorem gaussian_logSobolev_gradient {f g : (Fin n → ℝ) → ℝ}
     (hfg : HasGaussianGenerator f g) (hf : ContDiff ℝ 3 f) :
     gaussianEntropy (fun x => f x ^ 2) ≤
-      2 * ∫ x, ∑ i : Fin n, ((fderiv ℝ f x) (Pi.single i 1)) ^ 2 ∂γ := sorry
+      2 * ∫ x, ∑ i : Fin n, ((fderiv ℝ f x) (Pi.single i 1)) ^ 2 ∂γ := (by
+  have h := (gaussian_logSobolev hfg).2
+  rw [(gaussianGenerator_integration_by_parts hfg hfg hf hf).2] at h
+  simpa only [pow_two] using h
+)
 
 end BooleanAnalysis.GaussianSpace

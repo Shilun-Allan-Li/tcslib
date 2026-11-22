@@ -44,18 +44,6 @@ variable {n : ℕ}
 
 set_option maxHeartbeats 800000
 
-/-! ## Restriction Composition for Functions -/
-
-/-
-Restricting a function by the composition of two restrictions is the same
-    as restricting twice: first by `ρ₁`, then by `ρ₂`.
--/
-theorem restrictFn_composeRestr (f : (Fin n → Bool) → Bool)
-    (ρ₁ ρ₂ : Restriction n) :
-    restrictFn f (composeRestr ρ₁ ρ₂) = restrictFn (restrictFn f ρ₁) ρ₂ := by
-  unfold restrictFn composeRestr;
-  unfold Restriction.extend; aesop;
-
 /-
 If two functions agree everywhere, they have the same dtDepth.
 -/
@@ -188,8 +176,20 @@ For a non-tautological clause, deduplication preserves evaluation.
 -/
 lemma dedupClauseVars_eval_of_not_taut (c : List (Literal n)) (h : ¬clauseIsTaut c)
     (x : Fin n → Bool) :
-    (dedupClauseVars c).any (fun l => l.eval x) = c.any (fun l => l.eval x) := by
-  sorry -- TODO: grind failures in pwFilter induction; needs interactive debugging
+    (dedupClauseVars c).any (fun l => l.eval x) = c.any (fun l => l.eval x) := (by
+  have hdedup : ∀ c : List (Literal n), dedupClauseVars c = dedupTermVar c := by
+    intro c
+    unfold dedupClauseVars dedupTermVar List.pwFilter
+    induction c with
+    | nil => rfl
+    | cons a c ih =>
+      simp only [List.foldr_cons, ih]
+      split_ifs <;> simp_all <;> grind only
+  have hnc : termHasContradiction c = false := by
+    simpa [clauseIsTaut, termHasContradiction, List.any_eq_true] using h
+  rw [hdedup c]
+  exact dedupTermVar_preserves_clause_eval c x hnc
+)
 
 /-- Clean a CNF: remove tautological clauses, then deduplicate within each clause. -/
 def cleanCNF_D3 (ψ : CNF n) : CNF n :=
@@ -259,8 +259,9 @@ theorem exists_nice_cnf_of_cnf (ψ : CNF n) :
     (∀ x, CNF.eval ψ' x = CNF.eval ψ x) ∧
     (∀ c ∈ ψ'.clauses, c.Nodup) ∧
     (∀ c ∈ ψ'.clauses, ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂) :=
-  ⟨cleanCNF_D3 ψ, cleanCNF_D3_width_le ψ, fun x => cleanCNF_D3_eval ψ x,
-   cleanCNF_D3_nodup ψ, cleanCNF_D3_var_inj ψ⟩
+  (by
+  exact ⟨cleanCNF ψ, cleanCNF_width_le ψ, cleanCNF_eval ψ, cleanCNF_nodup ψ, cleanCNF_var_inj ψ⟩
+)
 
 /-- Any function with bounded dtDepth has a nice CNF representation. -/
 theorem dtDepth_le_implies_nice_cnf (f : (Fin n → Bool) → Bool) (d : ℕ)
@@ -325,23 +326,9 @@ theorem two_stage_bound
     (β : ℝ) (hβ : 0 ≤ β)
     (h_bound : ∀ ρ₁, ¬A ρ₁ →
       bernoulliRestrProb p₂ (fun ρ₂ => E (composeRestr ρ₁ ρ₂)) ≤ β) :
-    bernoulliRestrProb (p₁ * p₂) E ≤ bernoulliRestrProb p₁ A + β := by
-  -- Rewrite `bernoulliRestrProb (p₁ * p₂) E` using the `restriction_compose_eq` theorem.
-  have h_eq : bernoulliRestrProb (p₁ * p₂) E = ∑ ρ₁, bernoulliRestrWeight p₁ ρ₁ * bernoulliRestrProb p₂ (fun ρ₂ => E (composeRestr ρ₁ ρ₂)) := by
-    rw [ restriction_compose_eq ];
-    · grind;
-    · linarith;
-    · exact hp₂;
-    · linarith;
-  -- Apply the linearity of summation and the bounds from h_bound.
-  have h_sum_bound : ∑ ρ₁, bernoulliRestrWeight p₁ ρ₁ * bernoulliRestrProb p₂ (fun ρ₂ => E (composeRestr ρ₁ ρ₂)) ≤ ∑ ρ₁, bernoulliRestrWeight p₁ ρ₁ * (if A ρ₁ then 1 else β) := by
-    gcongr;
-    · exact bernoulliRestrWeight_nonneg' _ hp₁.le hp₁_1 _;
-    · split_ifs <;> [ exact bernoulliRestrProb_le_one' p₂ hp₂.le hp₂_1 _; exact h_bound _ ‹_› ];
-  refine le_trans h_eq.le <| h_sum_bound.trans ?_;
-  simp +decide [ Finset.sum_ite, bernoulliRestrProb ];
-  rw [ ← Finset.sum_mul _ _ _ ];
-  exact mul_le_of_le_one_left hβ ( le_trans ( Finset.sum_le_sum_of_subset_of_nonneg ( Finset.subset_univ _ ) fun _ _ _ => bernoulliRestrWeight_nonneg' _ hp₁.le hp₁_1 _ ) ( by simp [ bernoulliRestrWeight_sum_one _ hp₁.le hp₁_1 ] ) )
+    bernoulliRestrProb (p₁ * p₂) E ≤ bernoulliRestrProb p₁ A + β := (by
+  exact two_stage_bound' p₁ p₂ hp₁ hp₁_1 hp₂ hp₂_1 E A β hβ h_bound
+)
 
 /-! ## Helper: AND of functions with bounded dtDepth has nice CNF -/
 
@@ -401,28 +388,29 @@ lemma depth3_second_stage_bound
     (p₂ : ℝ) (hp₂_pos : 0 < p₂) (hp₂_le : p₂ ≤ 1 / (40 * ↑l)) (hp₂_1 : p₂ ≤ 1) :
     bernoulliRestrProb p₂
       (fun ρ₂ => dtDepth (restrictFn f (composeRestr ρ₁ ρ₂)) > t) ≤
-    (1 / 2 : ℝ) ^ t + Real.exp (-(↑n * p₂ / 3)) := by
-  convert switching_bernoulli_dtDepth_cnf _ _ _ _ _ _ _ _ _ _ using 1;
-  case convert_2 => exact ( Classical.choose ( depth3_restricted_has_nice_cnf f s₂ gates l ρ₁ h_f h_gates ) ) |> cleanCNF_D3;
-  case convert_3 => exact l;
-  any_goals assumption;
-  · constructor <;> intro h;
-    · convert switching_bernoulli_dtDepth_cnf _ _ _ _ _ _ _ _ _ _ using 1;
-      exact l;
-      any_goals assumption;
-      · exact le_trans ( cleanCNF_D3_width_le _ ) ( Classical.choose_spec ( depth3_restricted_has_nice_cnf f s₂ gates l ρ₁ h_f h_gates ) |>.1 );
-      · exact cleanCNF_D3_var_inj _
-      · exact cleanCNF_D3_nodup _;
-    · convert h hp₂_1 t using 1;
-      have := Classical.choose_spec ( depth3_restricted_has_nice_cnf f s₂ gates l ρ₁ h_f h_gates );
-      have h_eq : ∀ x, CNF.eval (cleanCNF_D3 (Classical.choose (depth3_restricted_has_nice_cnf f s₂ gates l ρ₁ h_f h_gates))) x = restrictFn f ρ₁ x := by
-        exact fun x => by rw [ ← this.2.2.2 x, cleanCNF_D3_eval ] ;
-      congr! 3;
-      exact dtDepth_congr _ _ fun x => by rw [ restrictFn_composeRestr, restrictFn_congr _ _ _ h_eq ] ;
-  · refine' le_trans _ ( Classical.choose_spec ( depth3_restricted_has_nice_cnf f s₂ gates l ρ₁ h_f h_gates ) |>.1 );
-    exact cleanCNF_D3_width_le (Classical.choose (depth3_restricted_has_nice_cnf f s₂ gates l ρ₁ h_f h_gates));
-  · exact Classical.choose_spec ( depth3_restricted_has_nice_cnf f s₂ gates l ρ₁ h_f h_gates ) |> fun h => cleanCNF_D3_var_inj _;
-  · exact fun c hc => cleanCNF_D3_nodup _ _ hc
+    (1 / 2 : ℝ) ^ t + Real.exp (-(↑n * p₂ / 3)) := (by
+    convert switching_bernoulli_dtDepth_cnf _ _ _ _ _ _ _ _ _ _ using 1;
+    case convert_2 => exact ( Classical.choose ( depth3_restricted_has_nice_cnf f s₂ gates l ρ₁ h_f h_gates ) ) |> cleanCNF;
+    case convert_3 => exact l;
+    any_goals assumption;
+    · constructor <;> intro h;
+      · convert switching_bernoulli_dtDepth_cnf _ _ _ _ _ _ _ _ _ _ using 1;
+        exact l;
+        any_goals assumption;
+        · exact le_trans ( cleanCNF_width_le _ ) ( Classical.choose_spec ( depth3_restricted_has_nice_cnf f s₂ gates l ρ₁ h_f h_gates ) |>.1 );
+        · exact cleanCNF_var_inj _
+        · exact cleanCNF_nodup _;
+      · convert h hp₂_1 t using 1;
+        have := Classical.choose_spec ( depth3_restricted_has_nice_cnf f s₂ gates l ρ₁ h_f h_gates );
+        have h_eq : ∀ x, CNF.eval (cleanCNF (Classical.choose (depth3_restricted_has_nice_cnf f s₂ gates l ρ₁ h_f h_gates))) x = restrictFn f ρ₁ x := by
+          exact fun x => by rw [ ← this.2.2.2 x, cleanCNF_eval ] ;
+        congr! 3;
+        exact dtDepth_congr _ _ fun x => by rw [ restrictFn_composeRestr, restrictFn_congr _ _ _ h_eq ] ;
+    · refine' le_trans _ ( Classical.choose_spec ( depth3_restricted_has_nice_cnf f s₂ gates l ρ₁ h_f h_gates ) |>.1 );
+      exact cleanCNF_width_le (Classical.choose (depth3_restricted_has_nice_cnf f s₂ gates l ρ₁ h_f h_gates));
+    · exact Classical.choose_spec ( depth3_restricted_has_nice_cnf f s₂ gates l ρ₁ h_f h_gates ) |> fun h => cleanCNF_var_inj _;
+    · exact fun c hc => cleanCNF_nodup _ _ hc
+)
 
 /-! ## Two-Stage Depth-3 Switching Bound -/
 
