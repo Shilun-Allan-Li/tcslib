@@ -6,6 +6,7 @@ Authors: TCSlib Contributors
 
 import TCSlib.BooleanAnalysis.GaussianSpace.GaussianDensity
 import Mathlib.MeasureTheory.Integral.Pi
+import Mathlib.Analysis.Convex.Mul
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -23,6 +24,7 @@ The existing real Gaussian laws and finite-product measures are reused.
 * A finite product of nondegenerate real Gaussian laws has the product density.
 * Integration against that product law equals integration against its density.
 * Coordinatewise affine maps preserve the specified Gaussian product laws.
+* The logarithm of a finite product of nondegenerate Gaussian densities is concave.
 
 These are the law and integration adapters for differentiating an averaged
 indicator against a fixed product Lebesgue measure. No new Gaussian measure
@@ -32,6 +34,8 @@ or noise operator is introduced.
 
 * [OD14] Ryan O'Donnell, *Analysis of Boolean Functions*, Cambridge University Press,
   2014; May 2021 arXiv edition, §11.1, Gaussian product laws and smoothing.
+* [LV05] László Lovász and Santosh Vempala, *The Geometry of Logconcave
+  Functions and Sampling Algorithms*, manuscript revised March 2005, §1 and §2.1.
 -/
 
 open MeasureTheory Filter ProbabilityTheory
@@ -178,5 +182,57 @@ lemma integral_centered_sq_gaussianCoordinate {ι : Type*} [Fintype ι]
     (show StronglyMeasurable (fun z : ℝ => (z - c i) ^ 2) from by fun_prop)
   rw [hp.map_eq] at h
   exact h.symm.trans (integral_centered_sq_gaussianReal (c i) v)
+
+/-- The logarithm of a finite product of nondegenerate real Gaussian
+densities is concave on the whole coordinate space.
+
+This is an elementary finite-index, common-variance specialization
+of [LV05, §1 and §2.1]: the Gaussian example occurs in §1, printed
+p. 2, and the log-concavity characterization in §2.1. It is stated directly
+for the existing scalar Gaussian density without introducing another
+product-density definition.
+
+**Proof sketch.** Positivity of every Gaussian factor allows the
+logarithm of the product to be written as a sum of logarithms. Each
+summand is a constant minus a positive multiple of the square of the
+affine coordinate `x i - c i`. The square is convex, affine
+precomposition preserves convexity, and negation turns convexity into
+concavity. Add the constants and the finitely many concave summands.
+For an empty index type the product is one and its logarithm is zero. -/
+theorem concaveOn_log_prod_gaussianPDFReal {ι : Type*} [Fintype ι]
+    (c : ι → ℝ) (v : ℝ≥0) (hv : v ≠ 0) :
+    ConcaveOn ℝ Set.univ
+      (fun x : ι → ℝ => Real.log (∏ i, gaussianPDFReal (c i) v (x i))) :=
+  (by
+    classical
+    have hvpos : (0 : ℝ) < v := NNReal.coe_pos.mpr (pos_iff_ne_zero.mpr hv)
+    have hpref : (Real.sqrt (2 * Real.pi * (v : ℝ)))⁻¹ ≠ 0 := by positivity
+    have hcoordinate (i : ι) : ConcaveOn ℝ Set.univ
+        (fun x : ι → ℝ => Real.log (gaussianPDFReal (c i) v (x i))) := by
+      let A : (ι → ℝ) →ᵃ[ℝ] ℝ := AffineMap.proj i - AffineMap.const ℝ (ι → ℝ) (c i)
+      have hsquare : ConvexOn ℝ Set.univ (fun x : ι → ℝ => (x i - c i) ^ 2) := by
+        simpa only [Set.preimage_univ] using
+          (Even.convexOn_pow (𝕜 := ℝ) (show Even 2 by decide)).comp_affineMap A
+      have hconc := ((ConvexOn.smul (inv_nonneg.mpr (by positivity : (0 : ℝ) ≤ 2 * v))
+        hsquare).neg).add_const (Real.log (Real.sqrt (2 * Real.pi * (v : ℝ)))⁻¹)
+      apply hconc.congr
+      intro x hx
+      rw [gaussianPDFReal_def]
+      dsimp only
+      rw [Real.log_mul hpref (Real.exp_ne_zero _), Real.log_exp]
+      simp only [Pi.add_apply, Pi.neg_apply, smul_eq_mul]
+      ring
+    have hsum (s : Finset ι) : ConcaveOn ℝ Set.univ
+        (fun x : ι → ℝ => ∑ i ∈ s, Real.log (gaussianPDFReal (c i) v (x i))) := by
+      induction s using Finset.induction_on with
+      | empty => simpa only [Finset.sum_empty] using concaveOn_const (0 : ℝ) (convex_univ : Convex ℝ (Set.univ : Set (ι → ℝ)))
+      | @insert i s hi ih =>
+        simpa only [Finset.sum_insert hi, Pi.add_apply] using (hcoordinate i).add ih
+    apply (hsum Finset.univ).congr
+    intro x hx
+    exact (Real.log_prod (fun i _ => (gaussianPDFReal_pos (c i) v (x i) hv).ne')).symm
+
+)
+
 
 end BooleanAnalysis.GaussianSpace

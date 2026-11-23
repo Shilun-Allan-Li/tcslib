@@ -59,6 +59,15 @@ variable {n : ℕ}
 noncomputable def kolmogorovDistance (μ ν : Measure ℝ) : ℝ :=
   sSup (Set.range fun t : ℝ ↦ |(μ (Set.Iic t)).toReal - (ν (Set.Iic t)).toReal|)
 
+/-- The Kolmogorov distance is the supremum of the absolute differences of
+the two measures' cumulative distribution functions. [OD14, §5.2] -/
+lemma kolmogorovDistance_eq (μ ν : Measure ℝ) :
+    kolmogorovDistance μ ν =
+      sSup (Set.range fun t : ℝ ↦
+        |(μ (Set.Iic t)).toReal - (ν (Set.Iic t)).toReal|) := (by
+  rfl
+)
+
 /-- The Berry-Esseen theorem bounds the Kolmogorov distance from a normalized sum of independent,
 mean-zero variables to the standard Gaussian by a universal constant times the sum of third
 absolute moments. [OD14, §5.2, Berry-Esseen Theorem; Ber41; Ess42]
